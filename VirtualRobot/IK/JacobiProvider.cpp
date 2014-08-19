@@ -81,7 +81,22 @@ Eigen::MatrixXf JacobiProvider::computePseudoInverseJacobianMatrix(const Eigen::
 				 float pinvtoler = 0.00001f;
 				 if (invParameter!=0.0f)
 					 pinvtoler = invParameter;
-				 pseudo = MathTools::getPseudoInverse(m, pinvtoler);
+
+                 if (jointWeights.rows() == m.cols())
+                 {
+                     Eigen::MatrixXf W_12(jointWeights.rows(), jointWeights.rows());
+                     W_12.setZero();
+                     for (int i = 0; i < jointWeights.rows(); i++) {
+                         THROW_VR_EXCEPTION_IF(jointWeights(i) <= 0.f, "joint weights cannot be negative or zero");
+                         W_12(i,i) = sqrt(1/jointWeights(i));
+                     }
+                     pseudo = W_12 * MathTools::getPseudoInverse(m * W_12, pinvtoler);
+                 }
+                 else
+                 {
+                     pseudo = MathTools::getPseudoInverse(m, pinvtoler);
+                 }
+
 				 break;
 		}
 	case eSVDDamped:
