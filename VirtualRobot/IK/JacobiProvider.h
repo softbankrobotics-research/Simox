@@ -73,6 +73,7 @@ public:
 		The error vector. the value depends on the implementation.
 	*/
 	virtual Eigen::VectorXf getError(float stepSize = 1.0f) = 0;
+    virtual bool checkTolerances() = 0;
 
 	bool isInitialized();
 	/*

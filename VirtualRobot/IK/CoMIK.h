@@ -57,7 +57,7 @@ public:
 
 	bool isValid(const Eigen::VectorXf &v) const;
 
-	bool checkTolerances() const;
+    virtual bool checkTolerances();
 	void checkImprovements( bool enable );
 	bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
 

@@ -45,7 +45,12 @@ Eigen::VectorXf JointLimitAvoidanceJacobi::getError(float stepSize)
 			error(i) = 0.0f;
 		}
 	}
-	return error;
+    return error;
+}
+
+bool JointLimitAvoidanceJacobi::checkTolerances()
+{
+    return false;
 }
 
 Eigen::MatrixXf JointLimitAvoidanceJacobi::getJacobianMatrix(SceneObjectPtr tcp)

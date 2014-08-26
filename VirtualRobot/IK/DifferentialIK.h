@@ -263,11 +263,11 @@ public:
 
 	//! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
     virtual void setMaxPositionStep(float s);
+    virtual bool checkTolerances();
 protected:
 	
     float invParam;
-	void setNRows();
-	bool checkTolerances();
+    void setNRows();
     std::vector<SceneObjectPtr> tcp_set;
 	RobotNodePtr coordSystem;
 

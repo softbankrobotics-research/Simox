@@ -52,6 +52,11 @@ public:
 	*/
 	virtual Eigen::VectorXf getError(float stepSize = 1.0f);
 
+    /*!
+     *  Not used, only implemented because of superclass JacobiProvider, always returns true
+     */
+    bool checkTolerances();
+
 protected:
 	std::vector<RobotNodePtr> nodes;
 };

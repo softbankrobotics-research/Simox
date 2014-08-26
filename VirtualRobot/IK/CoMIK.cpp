@@ -141,7 +141,7 @@ Eigen::VectorXf CoMIK::computeStep(float stepSize )
 	return getPseudoInverseJacobianMatrix() * error;
 }
 
-bool CoMIK::checkTolerances() const
+bool CoMIK::checkTolerances()
 {
     float error = (target - rnsBodies->getCoM().head(target.rows())).norm();
 	return error < tolerance;
