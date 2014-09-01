@@ -78,7 +78,7 @@ namespace VirtualRobot {
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox, Color color)
     {
         VisualizationNodePtr visualizationNode = VisualizationNodePtr(new VisualizationNode());
         SoSeparator *coinVisualization = new SoSeparator();
@@ -90,7 +90,7 @@ namespace VirtualRobot {
             Primitive::PrimitivePtr p = *it;
             currentTransform *= p->transform;
             SoSeparator *soSep = new SoSeparator();
-            SoNode *pNode = GetNodeFromPrimitive(p, boundingBox);
+            SoNode *pNode = GetNodeFromPrimitive(p, boundingBox, color);
             soSep->addChild(getMatrixTransformScaleMM2M(currentTransform));
             soSep->addChild(pNode);
             coinVisualization->addChild(soSep);
@@ -113,9 +113,12 @@ namespace VirtualRobot {
         return visualizationNode;
     }
 
-    SoNode* CoinVisualizationFactory::GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox)
+    SoNode* CoinVisualizationFactory::GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color)
     {
-        SoNode *coinVisualization;
+        SoSeparator *coinVisualization = new SoSeparator;
+        SoNode* c = getColorNode(color);
+        coinVisualization->addChild(c);
+
         if (primitive->type == Primitive::Box::TYPE)
         {
             Primitive::Box *box = boost::dynamic_pointer_cast<Primitive::Box>(primitive).get();
@@ -123,21 +126,19 @@ namespace VirtualRobot {
             soBox->width = box->width / 1000.f;
             soBox->height = box->height / 1000.f;
             soBox->depth = box->depth / 1000.f;
-            coinVisualization = soBox;
+            coinVisualization->addChild(soBox);
         } else if (primitive->type == Primitive::Sphere::TYPE)
         {
             Primitive::Sphere *sphere = boost::dynamic_pointer_cast<Primitive::Sphere>(primitive).get();
             SoSphere *soSphere = new SoSphere;
             soSphere->radius = sphere->radius / 1000.f;
-            coinVisualization = soSphere;
+            coinVisualization->addChild(soSphere);
         }
 
         if (boundingBox && coinVisualization)
         {
             SoSeparator* bboxVisu = CreateBoundingBox(coinVisualization, false);
-            bboxVisu->ref();
-            coinVisualization->unref();
-            coinVisualization = bboxVisu;
+            coinVisualization->addChild(bboxVisu);
         }
 
         return coinVisualization;
@@ -3015,6 +3016,14 @@ SoGroup* CoinVisualizationFactory::convertSoFileChildren(SoGroup* orig)
     }
     storeResult->unrefNoDelete();
     return storeResult;
+}
+
+SoNode* CoinVisualizationFactory::getColorNode( Color color )
+{
+    SoMaterial *m = new SoMaterial();
+    m->ambientColor.setValue(color.r,color.g,color.b);
+    m->diffuseColor.setValue(color.r,color.g,color.b);
+    return m;
 }
 
 

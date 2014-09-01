@@ -58,7 +58,14 @@ VirtualRobot::ObstaclePtr Obstacle::createBox( float width, float height, float 
 		VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
 		return result;
 	}
-	VisualizationNodePtr visu = visualizationFactory->createBox(width,height,depth,color.r,color.g,color.b);
+    /*
+    std::vector<Primitive::PrimitivePtr> primitives;
+    Primitive::PrimitivePtr p(new Primitive::Box(width,height,depth));
+    primitives.push_back(p);
+
+	VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
+    */
+    VisualizationNodePtr visu = visualizationFactory->createBox(width,height,depth,color.r,color.g,color.b);
 	if (!visu)
 	{
 		VR_ERROR << "Could not create box visualization with visu type " << visualizationType << endl;
@@ -97,6 +104,11 @@ VirtualRobot::ObstaclePtr Obstacle::createSphere( float radius, VisualizationFac
 		return result;
 	}
 	VisualizationNodePtr visu = visualizationFactory->createSphere(radius,color.r,color.g,color.b);
+    /*std::vector<Primitive::PrimitivePtr> primitives;
+    Primitive::PrimitivePtr p(new Primitive::Sphere(radius));
+    primitives.push_back(p);
+    VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
+    */
 	if (!visu)
 	{
 		VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;

@@ -1,13 +1,14 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
+#include <VirtualRobot/VirtualRobotImportExport.h>
 #include <Eigen/Geometry>
 #include <boost/format.hpp>
 
 namespace VirtualRobot {
 namespace Primitive {
 
-class Primitive {
+class VIRTUAL_ROBOT_IMPORT_EXPORT Primitive {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     static const int TYPE = 0;
@@ -24,20 +25,22 @@ private:
     Primitive() : type(TYPE) {}
 };
 
-class Box : public Primitive {
+class VIRTUAL_ROBOT_IMPORT_EXPORT Box : public Primitive {
 public:
     static const int TYPE = 1;
     Box() : Primitive(TYPE) {}
+    Box(float with, float height, float depth) : Primitive(TYPE), width(width), height(height), depth(depth) {}
     float width;
     float height;
     float depth;
     std::string toXMLString(int tabs = 0);
 };
 
-class Sphere : public Primitive {
+class VIRTUAL_ROBOT_IMPORT_EXPORT Sphere : public Primitive {
 public:
     static const int TYPE = 2;
     Sphere() : Primitive(TYPE) {}
+    Sphere(float radius) : Primitive(TYPE), radius(radius) {}
     float radius;
     std::string toXMLString(int tabs = 0);
 };

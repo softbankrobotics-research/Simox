@@ -416,9 +416,9 @@ bool WorkspaceDataArray::save(std::ofstream &file)
     CompressionBZip2Ptr bzip2(new CompressionBZip2(&file));
     unsigned char* emptyData = new unsigned char[getSizeRot()];
     memset(emptyData, 0, getSizeRot() * sizeof(unsigned char));
-    for (int x = 0; x < sizes[0]; x++)
-        for (int y = 0; y < sizes[1]; y++)
-            for (int z = 0; z < sizes[2]; z++)
+    for (unsigned int x = 0; x < sizes[0]; x++)
+        for (unsigned int y = 0; y < sizes[1]; y++)
+            for (unsigned int z = 0; z < sizes[2]; z++)
             {
                 void* dataBlock;
                 // this avoids that an empty data block is created within the workspace data when no data is available.

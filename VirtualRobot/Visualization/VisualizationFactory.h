@@ -74,7 +74,7 @@ public:
 	VisualizationFactory() {;}
 	virtual ~VisualizationFactory() {;}
 
-    virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox = false){return VisualizationNodePtr();}
+    virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox = false, Color color = Color::Gray()){return VisualizationNodePtr();}
 	virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false){return VisualizationNodePtr();}
     virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false){return VisualizationNodePtr();}
     /*!

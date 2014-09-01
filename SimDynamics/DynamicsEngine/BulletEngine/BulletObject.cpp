@@ -27,7 +27,7 @@ namespace SimDynamics {
 BulletObject::BulletObject(VirtualRobot::SceneObjectPtr o)
     : DynamicsObject(o)
 {
-	double interatiaFactor = 1.0f;
+	btScalar interatiaFactor = btScalar(1.0);
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
     interatiaFactor = 5.0f;
 #endif
@@ -185,9 +185,9 @@ btConvexHullShape* BulletObject::createConvexHullShape(VirtualRobot::TriMeshMode
 		sc = 0.001f;
 
 	for(size_t i = 0; i < trimesh->faces.size(); i++) {
-		btVector3 v1((trimesh->vertices[trimesh->faces[i].id1][0]-com[0])*sc,(trimesh->vertices[trimesh->faces[i].id1][1]-com[1])*sc,(trimesh->vertices[trimesh->faces[i].id1][2]-com[2])*sc);
-		btVector3 v2((trimesh->vertices[trimesh->faces[i].id2][0]-com[0])*sc,(trimesh->vertices[trimesh->faces[i].id2][1]-com[1])*sc,(trimesh->vertices[trimesh->faces[i].id2][2]-com[2])*sc);
-		btVector3 v3((trimesh->vertices[trimesh->faces[i].id3][0]-com[0])*sc,(trimesh->vertices[trimesh->faces[i].id3][1]-com[1])*sc,(trimesh->vertices[trimesh->faces[i].id3][2]-com[2])*sc);
+		btVector3 v1(btScalar((trimesh->vertices[trimesh->faces[i].id1][0]-com[0])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id1][1]-com[1])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id1][2]-com[2])*sc));
+		btVector3 v2(btScalar((trimesh->vertices[trimesh->faces[i].id2][0]-com[0])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id2][1]-com[1])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id2][2]-com[2])*sc));
+		btVector3 v3(btScalar((trimesh->vertices[trimesh->faces[i].id3][0]-com[0])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id3][1]-com[1])*sc),btScalar((trimesh->vertices[trimesh->faces[i].id3][2]-com[2])*sc));
 		btTrimesh->addTriangle(v1,v2,v3);
 	}
 

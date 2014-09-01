@@ -59,7 +59,7 @@ public:
 	CoinVisualizationFactory();
 	virtual ~CoinVisualizationFactory();
 
-    virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox = false);
+    virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox = false, Color color = Color::Gray());
     virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false);
     virtual VisualizationNodePtr getVisualizationFromSTLFile(const std::string& filename, bool boundingBox = false);
     virtual VisualizationNodePtr getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox = false);
@@ -174,6 +174,10 @@ public:
 	*/
 	static SoSeparator* CreateEndEffectorVisualization(EndEffectorPtr eef, SceneObject::VisualizationType = SceneObject::Full);
 
+    /*!
+        Creates a material node.
+    */
+    static SoNode* getColorNode(Color color);
 	/*!
 		Text visu. Offsets in mm.
 	*/
@@ -302,7 +306,7 @@ public:
 	*/
 	virtual void cleanup();
 protected:
-    static SoNode* GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox);
+    static SoNode* GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color);
     static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false);
 
 	static inline char IVToolsHelper_ReplaceSpaceWithUnderscore(char input) { if ( ' ' == input ) return '_'; else return input; }
