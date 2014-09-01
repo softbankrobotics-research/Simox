@@ -8,7 +8,7 @@ DynamicsObject::DynamicsObject(VirtualRobot::SceneObjectPtr o)
 {
 	THROW_VR_EXCEPTION_IF(!o,"NULL object");
 	sceneObject = o;
-    engineMutexPtr.reset(new boost::recursive_mutex()); // may be overwritten by another mutex!
+    //engineMutexPtr.reset(new boost::recursive_mutex()); // may be overwritten by another mutex!
 }
 	
 DynamicsObject::~DynamicsObject()
@@ -17,7 +17,6 @@ DynamicsObject::~DynamicsObject()
 
 std::string DynamicsObject::getName() const
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
 	return sceneObject->getName();
 }
 
@@ -28,7 +27,7 @@ VirtualRobot::SceneObject::Physics::SimulationType DynamicsObject::getSimType() 
 
 void DynamicsObject::setPose( const Eigen::Matrix4f &pose )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     if (sceneObject->getSimulationType()==VirtualRobot::SceneObject::Physics::eStatic)
 	{
 		VR_ERROR << "Could not move static object, aborting..." << endl;
@@ -39,7 +38,7 @@ void DynamicsObject::setPose( const Eigen::Matrix4f &pose )
 
 void DynamicsObject::setPosition( const Eigen::Vector3f &posMM )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	Eigen::Matrix4f pose = sceneObject->getGlobalPoseVisualization();
 	pose.block(0,3,3,1) = posMM;
 	setPose(pose);
@@ -90,6 +89,12 @@ void DynamicsObject::setSimType( VirtualRobot::SceneObject::Physics::SimulationT
     sceneObject->setSimulationType(s);
 }
 
-
+DynamicsObject::MutexLockPtr DynamicsObject::getScopedLock()
+{
+    boost::shared_ptr< boost::recursive_mutex::scoped_lock > scoped_lock;
+    if (engineMutexPtr)
+        scoped_lock.reset(new boost::recursive_mutex::scoped_lock(*engineMutexPtr));
+    return scoped_lock;
+}
 
 } // namespace SimDynamics

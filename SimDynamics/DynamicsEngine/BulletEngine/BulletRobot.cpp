@@ -61,7 +61,7 @@ BulletRobot::~BulletRobot()
 
 void BulletRobot::buildBulletModels(bool enableJointMotors)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	if (!robot)
 		return;
 
@@ -135,7 +135,7 @@ void BulletRobot::buildBulletModels(bool enableJointMotors)
 
 void BulletRobot::addIgnoredCollisionModels(RobotNodePtr rn)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT (rn);
     if (!rn->getCollisionModel())
         return; // nothing to do: no col model -> no bullet model -> no collisions
@@ -258,7 +258,7 @@ boost::shared_ptr<btTypedConstraint> BulletRobot::createFixedJoint(boost::shared
 
 void BulletRobot::createLink( VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, VirtualRobot::RobotNodePtr joint2, VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     // ensure dynamics nodes are created
     createDynamicsNode(bodyA);
     createDynamicsNode(bodyB);
@@ -396,7 +396,7 @@ void BulletRobot::createLink( VirtualRobot::RobotNodePtr bodyA, VirtualRobot::Ro
 
 bool BulletRobot::hasLink( VirtualRobot::RobotNodePtr node1, VirtualRobot::RobotNodePtr node2 )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	for (size_t i=0; i<links.size();i++)
 	{
 		if (links[i].nodeA == node1 && links[i].nodeB == node2)
@@ -430,7 +430,7 @@ void BulletRobot::ensureKinematicConstraints()
 
 void BulletRobot::actuateJoints(double dt)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     //cout << "=== === BulletRobot: actuateJoints() 1 === " << this << endl;
 
     std::map<VirtualRobot::RobotNodePtr, robotNodeActuationTarget>::iterator it = actuationTargets.begin();
@@ -571,7 +571,7 @@ void BulletRobot::actuateJoints(double dt)
 
 void BulletRobot::updateSensors(double dt)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     boost::unordered_set<std::string> contactObjectNames;
     // this seems stupid and it is, but that is abstract interfaces for you.
     for(std::vector<SensorPtr>::iterator it = sensors.begin(); it != sensors.end(); it++)
@@ -645,7 +645,7 @@ void BulletRobot::updateSensors(double dt)
 
 BulletRobot::LinkInfo BulletRobot::getLink( VirtualRobot::RobotNodePtr node )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	for (size_t i=0;i<links.size();i++)
 	{
 		if (links[i].nodeJoint == node || links[i].nodeJoint2 == node)
@@ -657,7 +657,7 @@ BulletRobot::LinkInfo BulletRobot::getLink( VirtualRobot::RobotNodePtr node )
 
 BulletRobot::LinkInfo BulletRobot::getLink(BulletObjectPtr object1, BulletObjectPtr object2)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     for (size_t i=0;i<links.size();i++)
     {
         if ( (links[i].dynNode1 == object1 && links[i].dynNode2 == object2) || (links[i].dynNode1 == object2 && links[i].dynNode2 == object1))
@@ -669,7 +669,7 @@ BulletRobot::LinkInfo BulletRobot::getLink(BulletObjectPtr object1, BulletObject
 
 std::vector<BulletRobot::LinkInfo> BulletRobot::getLinks( VirtualRobot::RobotNodePtr node )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     std::vector<BulletRobot::LinkInfo> result;
 	for (size_t i=0;i<links.size();i++)
 	{
@@ -681,7 +681,7 @@ std::vector<BulletRobot::LinkInfo> BulletRobot::getLinks( VirtualRobot::RobotNod
 
 std::vector<BulletRobot::LinkInfo> BulletRobot::getLinks(BulletObjectPtr node)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     std::vector<BulletRobot::LinkInfo> result;
     for (size_t i=0;i<links.size();i++)
     {
@@ -830,7 +830,7 @@ bool BulletRobot::detachObject(DynamicsObjectPtr object)
 
 bool BulletRobot::hasLink( VirtualRobot::RobotNodePtr node )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	for (size_t i=0;i<links.size();i++)
 	{
 		if (links[i].nodeJoint == node || links[i].nodeJoint2 == node)
@@ -841,7 +841,7 @@ bool BulletRobot::hasLink( VirtualRobot::RobotNodePtr node )
 
 void BulletRobot::actuateNode( VirtualRobot::RobotNodePtr node, double jointValue )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	VR_ASSERT(node);
 
 	if (node->isRotationalJoint())
@@ -895,7 +895,7 @@ void BulletRobot::actuateNode( VirtualRobot::RobotNodePtr node, double jointValu
 
 void BulletRobot::actuateNodeVel(RobotNodePtr node, double jointVelocity)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(node);
 
     if (node->isRotationalJoint())
@@ -949,7 +949,7 @@ void BulletRobot::actuateNodeVel(RobotNodePtr node, double jointVelocity)
 
 double BulletRobot::getJointAngle( VirtualRobot::RobotNodePtr rn )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	VR_ASSERT(rn);
 	if (!hasLink(rn))
 	{
@@ -998,7 +998,7 @@ double BulletRobot::getJointAngle( VirtualRobot::RobotNodePtr rn )
 
 double BulletRobot::getJointTargetSpeed( VirtualRobot::RobotNodePtr rn )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(rn);
     if (!hasLink(rn))
     {
@@ -1030,7 +1030,7 @@ double BulletRobot::getJointTargetSpeed( VirtualRobot::RobotNodePtr rn )
 
 double BulletRobot::getJointSpeed( VirtualRobot::RobotNodePtr rn )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(rn);
 	if (!hasLink(rn))
 	{
@@ -1067,7 +1067,7 @@ double BulletRobot::getJointSpeed( VirtualRobot::RobotNodePtr rn )
 
 double BulletRobot::getNodeTarget( VirtualRobot::RobotNodePtr node )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
     return DynamicsRobot::getNodeTarget(node);
 #else
@@ -1078,7 +1078,7 @@ double BulletRobot::getNodeTarget( VirtualRobot::RobotNodePtr node )
 
 Eigen::Vector3f BulletRobot::getJointTorques(RobotNodePtr rn)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(rn);
     Eigen::Vector3f result;
     result.setZero();
@@ -1100,7 +1100,7 @@ Eigen::Vector3f BulletRobot::getJointTorques(RobotNodePtr rn)
 
 double BulletRobot::getJointTorque(RobotNodePtr rn)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(rn);
     if (!hasLink(rn))
     {
@@ -1122,7 +1122,7 @@ double BulletRobot::getJointTorque(RobotNodePtr rn)
 
 Eigen::Vector3f BulletRobot::getJointForces(RobotNodePtr rn)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(rn);
     Eigen::Vector3f result;
     result.setZero();
@@ -1144,7 +1144,7 @@ Eigen::Vector3f BulletRobot::getJointForces(RobotNodePtr rn)
 
 Eigen::Matrix4f BulletRobot::getComGlobal( VirtualRobot::RobotNodePtr rn )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(rn));
     if (!bo)
     {
@@ -1156,7 +1156,7 @@ Eigen::Matrix4f BulletRobot::getComGlobal( VirtualRobot::RobotNodePtr rn )
 
 Eigen::Vector3f BulletRobot::getComGlobal( VirtualRobot::RobotNodeSetPtr set)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f com = Eigen::Vector3f::Zero();
 	double totalMass = 0.0;
 	for (unsigned int i = 0; i < set->getSize(); i++)
@@ -1174,7 +1174,7 @@ Eigen::Vector3f BulletRobot::getComGlobal( VirtualRobot::RobotNodeSetPtr set)
 
 Eigen::Vector3f BulletRobot::getComVelocityGlobal( VirtualRobot::RobotNodeSetPtr set)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f com = Eigen::Vector3f::Zero();
 	double totalMass = 0.0;
 	for (unsigned int i = 0; i < set->getSize(); i++)
@@ -1207,7 +1207,7 @@ Eigen::Vector3f BulletRobot::getComVelocityGlobal( VirtualRobot::RobotNodeSetPtr
 
 void BulletRobot::setPoseNonActuatedRobotNodes()
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     VR_ASSERT(robot);
     std::vector<RobotNodePtr> rns = robot->getRobotNodes();
     std::vector<RobotNodePtr> actuatedNodes;
@@ -1254,7 +1254,7 @@ void BulletRobot::setPoseNonActuatedRobotNodes()
 
 void BulletRobot::enableForceTorqueFeedback(const LinkInfo& link , bool enable)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     if (!link.joint->needsFeedback() && enable)
 	{
         link.joint->enableFeedback(true);
@@ -1273,7 +1273,7 @@ void BulletRobot::enableForceTorqueFeedback(const LinkInfo& link , bool enable)
 
 Eigen::VectorXf BulletRobot::getForceTorqueFeedbackA( const LinkInfo& link )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	Eigen::VectorXf r(6);
 	r.setZero();
 	if (!link.joint || !link.joint->needsFeedback())
@@ -1290,7 +1290,7 @@ Eigen::VectorXf BulletRobot::getForceTorqueFeedbackA( const LinkInfo& link )
 
 Eigen::VectorXf BulletRobot::getForceTorqueFeedbackB( const LinkInfo& link )
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
 	Eigen::VectorXf r(6);
 	r.setZero();
 	if (!link.joint || !link.joint->needsFeedback())
@@ -1307,7 +1307,7 @@ Eigen::VectorXf BulletRobot::getForceTorqueFeedbackB( const LinkInfo& link )
 
 Eigen::VectorXf BulletRobot::getJointForceTorqueGlobal(const BulletRobot::LinkInfo &link)
 {
-    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+    MutexLockPtr lock = getScopedLock();
     Eigen::VectorXf ftA = getForceTorqueFeedbackA(link);
     Eigen::VectorXf ftB = getForceTorqueFeedbackB(link);
 

@@ -54,11 +54,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string &sRobotFilename, Qt::WFlags fla
 	sceneSep->addChild(cc);
 	BulletEngineConfigPtr config(new BulletEngineConfig());
 	config->bulletSolverIterations = 2000;
-	config->bulletObjectRestitution = 0.1;
-	config->bulletObjectFriction = 1.0;
-	config->bulletSolverGlobalContactForceMixing = 0.00001;
-	config->bulletObjectDampingLinear = 0.3;
-	config->bulletObjectDampingAngular = 0.3;
+	config->bulletObjectRestitution = btScalar(0.1);
+	config->bulletObjectFriction = btScalar(1.0);
+	config->bulletSolverGlobalContactForceMixing = btScalar(0.00001);
+	config->bulletObjectDampingLinear = btScalar(0.3);
+	config->bulletObjectDampingAngular = btScalar(0.3);
 	dynamicsWorld = SimDynamics::DynamicsWorld::Init(config);
 	SIMDYNAMICS_ASSERT(dynamicsWorld);
 

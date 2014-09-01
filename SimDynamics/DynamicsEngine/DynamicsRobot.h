@@ -107,7 +107,23 @@ public:
     //! can be used to access the internal controllers
     std::map<VirtualRobot::RobotNodePtr, VelocityMotorController>& getControllers();
 
+    typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
+    /*!
+        This lock can be used to protect data access. It locks the mutex until deletion.
+        If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
+        \see setMutex
 
+        Exemplary usage:
+        {
+            MutexLockPtr lock = engine->getScopedLock();
+            // now the mutex is locked
+
+            // access data
+            // ...
+
+        } // end of scope -> lock gets deleted and mutex is released automatically
+    */
+    MutexLockPtr getScopedLock();
 protected:
 
 	virtual void createDynamicsNode(VirtualRobot::RobotNodePtr node);

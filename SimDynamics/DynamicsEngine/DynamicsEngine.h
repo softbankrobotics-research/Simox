@@ -167,6 +167,8 @@ public:
 
     /*!
         This lock can be used to protect data access. It locks the mutex until deletion.
+        If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
+        \see setMutex
 
         Exemplary usage:
         {
