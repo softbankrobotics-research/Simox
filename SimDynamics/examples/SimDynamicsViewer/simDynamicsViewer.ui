@@ -199,8 +199,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>600</y>
-         <width>201</width>
+         <y>610</y>
+         <width>381</width>
          <height>91</height>
         </rect>
        </property>
@@ -244,6 +244,32 @@
         </property>
         <property name="text">
          <string>Collision Model</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxAntiAliasing">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>40</y>
+          <width>42</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>6</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>20</y>
+          <width>111</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Anti Aliasing</string>
         </property>
        </widget>
       </widget>

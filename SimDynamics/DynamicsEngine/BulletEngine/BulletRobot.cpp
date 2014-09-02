@@ -694,7 +694,8 @@ std::vector<BulletRobot::LinkInfo> BulletRobot::getLinks(BulletObjectPtr node)
 
 bool BulletRobot::attachObject(const string &nodeName, DynamicsObjectPtr object)
 {
-    return attachObjectLink(nodeName,object);
+    BulletRobot::LinkInfoPtr li = attachObjectLink(nodeName, object);
+    return bool(li);
 }
 
 BulletRobot::LinkInfoPtr BulletRobot::attachObjectLink(const string &nodeName, DynamicsObjectPtr object)

@@ -155,6 +155,7 @@ void SimDynamicsWindow::setupUI()
     UI.horizontalSliderUpdateTimer->setValue(viewer->getUpdateTimerInterval());
     connect(UI.horizontalSliderFixedTimeStep, SIGNAL(valueChanged(int)), this, SLOT(fixedTimeStepChanged(int)));
     connect(UI.horizontalSliderUpdateTimer, SIGNAL(valueChanged(int)), this, SLOT(updateTimerChanged(int)));
+    connect(UI.spinBoxAntiAliasing, SIGNAL(valueChanged(int)), this, SLOT(updateAntiAliasing(int)));
 
 	/*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
 	connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
@@ -797,3 +798,8 @@ void SimDynamicsWindow::updateTimerChanged( int n )
     viewer->setUpdateInterval(n);
 }
 
+
+void SimDynamicsWindow::updateAntiAliasing(int n)
+{
+    viewer->setAntiAliasing(n);
+}

@@ -57,8 +57,9 @@ public slots:
 	void selectRobotNode(int n);
 	void jointValueChanged(int n);
 	void fixedTimeStepChanged(int n);
-	void updateTimerChanged(int n);
-    void comVisu();	
+    void updateTimerChanged(int n);
+    void updateAntiAliasing(int n);
+    void comVisu();
 	void updateJointInfo();
 
     void startStopEngine();

@@ -55,8 +55,9 @@ public:
 		Call this method to initialize the 3d viewer.
 		\param embedViewer The 3d viewer will be embedded in this QFrame.
 		\param scene The scene that should be displayed.
+        \param antiAliasingSteps If >0, anti aliasing is enabled. The parameter defines the number of rendering steps. This may slow down rendering on old gfx cards.
 	*/
-	virtual void initSceneGraph(QFrame* embedViewer, SoNode* scene);
+    virtual void initSceneGraph(QFrame* embedViewer, SoNode* scene, int antiAliasingSteps = 0);
 
     /*! 
         In this mode, the time between two updates is measures and the engine is stepped accordingly. (standard)
@@ -146,10 +147,34 @@ public:
     int getBulletSimMaxSubSteps() const { return bulletMaxSubSteps; }
     int getUpdateTimerInterval() const { return updateTimerIntervalMS; }
 
+    //! If steps==0 anti aliasing is disabled
+    void setAntiAliasing(int steps);
+
 	/*!
 	 * Adds callback that is called each time the engine is updated.
 	 */
 	void addStepCallback(BulletStepCallback callback, void* data);
+
+    //! If set, all actions are protected with this mutex
+    virtual void setMutex(boost::shared_ptr<boost::recursive_mutex> engineMutexPtr);
+
+    typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
+    /*!
+    This lock can be used to protect data access. It locks the mutex until deletion.
+    If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
+    \see setMutex
+
+    Exemplary usage:
+    {
+        MutexLockPtr lock = getScopedLock();
+        // now the mutex is locked
+
+        // access data
+        // ...
+
+    } // end of scope -> lock gets deleted and mutex is released automatically
+    */
+    MutexLockPtr getScopedLock();
 
 protected:
 
@@ -212,7 +237,7 @@ protected:
 	bool enablePhysicsUpdates;
     int updateTimerIntervalMS;
 
-	boost::recursive_mutex engineMutex;
+    boost::shared_ptr <boost::recursive_mutex> engineMutexPtr;
 };
 
 

@@ -27,6 +27,9 @@ BulletCoinQtViewer::BulletCoinQtViewer(DynamicsWorldPtr world)
 
     updateTimerIntervalMS = 5;
 
+    // no mutex for standard viewer
+    //engineMutexPtr.reset(new boost::recursive_mutex()); 
+
 	//const double TIMER_MS = 5.0f;
 
 	SIMDYNAMICS_ASSERT(world);
@@ -103,7 +106,7 @@ void BulletCoinQtViewer::timerCB(void * data, SoSensor * sensor)
 
 }
 
-void BulletCoinQtViewer::initSceneGraph( QFrame* embedViewer, SoNode* scene )
+void BulletCoinQtViewer::initSceneGraph( QFrame* embedViewer, SoNode* scene, int antiAliasingSteps /* =0 */ )
 {
 	viewer = new SoQtExaminerViewer(embedViewer,"",TRUE,SoQtExaminerViewer::BUILD_POPUP);
 
@@ -111,7 +114,7 @@ void BulletCoinQtViewer::initSceneGraph( QFrame* embedViewer, SoNode* scene )
 	viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
 	viewer->setAccumulationBuffer(true);
 
-	viewer->setAntialiasing(true, 4);
+	//viewer->setAntialiasing(true, 4);
 
 	viewer->setGLRenderAction(new SoBoxHighlightRenderAction);
 	viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
@@ -142,7 +145,10 @@ void BulletCoinQtViewer::initSceneGraph( QFrame* embedViewer, SoNode* scene )
 		sceneGraph->addChild(scene);
 
 	viewer->setSceneGraph(sceneGraphRoot);
-    viewer->setAntialiasing(true, 4);
+    if (antiAliasingSteps>0)
+        viewer->setAntialiasing(true, antiAliasingSteps);
+    else
+        viewer->setAntialiasing(false,0);
 
 	viewer->viewAll();
 }
@@ -154,7 +160,7 @@ void BulletCoinQtViewer::scheduleRedraw()
 
 void BulletCoinQtViewer::stepPhysics()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
+    MutexLockPtr lock = getScopedLock();
 
 	//simple dynamics world doesn't handle fixed-time-stepping
 	double ms = getDeltaTimeMicroseconds();
@@ -216,8 +222,8 @@ void BulletCoinQtViewer::viewAll()
 
 void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	//VR_ASSERT(so);
+    MutexLockPtr lock = getScopedLock();
+    //VR_ASSERT(so);
 	removeVisualization(robot);
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(visuType);
@@ -240,8 +246,8 @@ void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::SceneObj
 
 void BulletCoinQtViewer::addVisualization(SceneObjectPtr so, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(so);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(so);
 	removeVisualization(so);
 	SoNode * n = CoinVisualizationFactory::getCoinVisualization(so, visuType);
 	if (n)
@@ -261,8 +267,8 @@ void BulletCoinQtViewer::addVisualization(SceneObjectPtr so, VirtualRobot::Scene
 
 void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(o);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(o);
 	SceneObjectPtr so = o->getSceneObject();
 	VR_ASSERT(so);
 	removeVisualization(o);
@@ -289,8 +295,8 @@ void BulletCoinQtViewer::addStepCallback(BulletStepCallback callback, void* data
 
 void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(r);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(r);
 	RobotPtr ro = r->getRobot();
 	VR_ASSERT(ro);
 	removeVisualization(r);
@@ -320,8 +326,8 @@ void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::Scen
 
 void BulletCoinQtViewer::removeVisualization( RobotPtr o )
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(o);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(o);
 	if (addedSpriteRobotVisualizations.find(o) != addedSpriteRobotVisualizations.end())
 	{
 		sceneGraph->removeChild(addedSpriteRobotVisualizations[o]);
@@ -331,8 +337,8 @@ void BulletCoinQtViewer::removeVisualization( RobotPtr o )
 
 void BulletCoinQtViewer::removeVisualization( SceneObjectPtr o )
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(o);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(o);
 	if (addedSpriteVisualizations.find(o) != addedSpriteVisualizations.end())
 	{
 		sceneGraph->removeChild(addedSpriteVisualizations[o]);
@@ -342,8 +348,8 @@ void BulletCoinQtViewer::removeVisualization( SceneObjectPtr o )
 
 void BulletCoinQtViewer::removeVisualization( DynamicsObjectPtr o )
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(o);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(o);
 	if (addedVisualizations.find(o) != addedVisualizations.end())
 	{
 		sceneGraph->removeChild(addedVisualizations[o]);
@@ -353,8 +359,8 @@ void BulletCoinQtViewer::removeVisualization( DynamicsObjectPtr o )
 
 void BulletCoinQtViewer::removeVisualization( DynamicsRobotPtr r )
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(r);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(r);
 	if (addedRobotVisualizations.find(r) != addedRobotVisualizations.end())
 	{
 		sceneGraph->removeChild(addedRobotVisualizations[r]);
@@ -364,8 +370,8 @@ void BulletCoinQtViewer::removeVisualization( DynamicsRobotPtr r )
 
 void BulletCoinQtViewer::stopCB()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	if (timerSensor)
+    MutexLockPtr lock = getScopedLock();
+    if (timerSensor)
 	{
 		SoSensorManager *sensor_mgr = SoDB::getSensorManager();
 		sensor_mgr->removeTimerSensor(timerSensor);
@@ -381,39 +387,36 @@ void BulletCoinQtViewer::stopCB()
 
 void BulletCoinQtViewer::setBulletSimTimeStepMsec(int msec)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(msec > 0);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(msec > 0);
 	bulletTimeStepMsec = msec;
 }
 
 void BulletCoinQtViewer::setBulletSimMaxSubSteps(int n)
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	VR_ASSERT(n > 0);
+    MutexLockPtr lock = getScopedLock();
+    VR_ASSERT(n > 0);
 	bulletMaxSubSteps = n;
 }
 
 bool BulletCoinQtViewer::engineRunning()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	return enablePhysicsUpdates;
+    return enablePhysicsUpdates;
 }
 
 void BulletCoinQtViewer::stopEngine()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	enablePhysicsUpdates = false;
+    MutexLockPtr lock = getScopedLock();
+    enablePhysicsUpdates = false;
 }
 void BulletCoinQtViewer::startEngine()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-	enablePhysicsUpdates = true;
+    MutexLockPtr lock = getScopedLock();
+    enablePhysicsUpdates = true;
 }
 
 void BulletCoinQtViewer::updatePhysics()
 {
-	boost::recursive_mutex::scoped_lock scoped_lock(engineMutex);
-
 	if (enablePhysicsUpdates)
 		stepPhysics();
 }
@@ -435,6 +438,24 @@ void BulletCoinQtViewer::setUpdateInterval( int updateTimerIntervalMS )
         timerSensor->setInterval(SbTime(float(updateTimerIntervalMS)/1000.0f));
 }
 
+void BulletCoinQtViewer::setMutex(boost::shared_ptr<boost::recursive_mutex> engineMutexPtr)
+{
+    this->engineMutexPtr = engineMutexPtr;
+}
+
+BulletCoinQtViewer::MutexLockPtr BulletCoinQtViewer::getScopedLock()
+{
+    boost::shared_ptr< boost::recursive_mutex::scoped_lock > scoped_lock;
+    if (engineMutexPtr)
+        scoped_lock.reset(new boost::recursive_mutex::scoped_lock(*engineMutexPtr));
+    return scoped_lock;
+}
+
+void BulletCoinQtViewer::setAntiAliasing(int steps)
+{
+    MutexLockPtr lock = getScopedLock();
+    viewer->setAntialiasing(steps > 0, steps);
+}
 
 }
 
