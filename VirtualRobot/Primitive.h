@@ -29,7 +29,7 @@ class VIRTUAL_ROBOT_IMPORT_EXPORT Box : public Primitive {
 public:
     static const int TYPE = 1;
     Box() : Primitive(TYPE) {}
-    Box(float with, float height, float depth) : Primitive(TYPE), width(width), height(height), depth(depth) {}
+    Box(float width, float height, float depth) : Primitive(TYPE), width(width), height(height), depth(depth) {}
     float width;
     float height;
     float depth;
