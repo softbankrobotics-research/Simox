@@ -69,7 +69,8 @@ public:
     enum eOrientationType
     {
         RPY,            
-        EulerXYZ        // fixed frame (standard)
+        EulerXYZ,           // intrinsic
+        EulerXYZExtrinsic   // fixed frame (standard)
     };
 
 	WorkspaceRepresentation(RobotPtr robot);

@@ -27,8 +27,8 @@ WorkspaceRepresentation::WorkspaceRepresentation(RobotPtr robot)
 	this->robot = robot;
 	type = "WorkspaceRepresentation";
 	versionMajor = 2;
-	versionMinor = 6;
-    orientationType = EulerXYZ;
+	versionMinor = 7;
+    orientationType = EulerXYZExtrinsic;
 	reset();
 }
 
@@ -169,7 +169,9 @@ void WorkspaceRepresentation::load(const std::string &filename)
 				(version[0] == 1 && !(version[1] == 0 || version[1] == 2 || version[1] == 3)
 				),	"Wrong file format version");
 		}
-        if (version[0]>2 || (version[0]==2 && version[1]>5))
+        if (version[0]>2 || (version[0] == 2 && version[1] > 6))
+            orientationType = EulerXYZExtrinsic;
+        else if (version[0] == 2 && version[1] == 6)
             orientationType = EulerXYZ;
         else
             orientationType = RPY;
@@ -751,10 +753,20 @@ void WorkspaceRepresentation::print()
 		else 
 			cout << "<not set>" << endl;
         cout << "Orientation representation: ";
-        if (orientationType == EulerXYZ)
-            cout << "EulerXYZ" << endl;
-        else
+        switch (orientationType)
+        {
+        case RPY:
             cout << "RPY" << endl;
+            break;
+        case EulerXYZ:
+            cout << "EulerXYZ-Intrinsic" << endl;
+            break;
+        case EulerXYZExtrinsic:
+            cout << "EulerXYZ-Extrinsic" << endl;
+            break;
+        default:
+            cout << "NYI" << endl;
+        }
 		cout << "CollisionModel static: ";
 		if (staticCollisionModel)
 			cout << staticCollisionModel->getName() << endl;
@@ -1384,23 +1396,45 @@ bool WorkspaceRepresentation::hasEntry( unsigned int x, unsigned int y, unsigned
 
 void WorkspaceRepresentation::matrix2Vector( const Eigen::Matrix4f &m, float x[6] ) const
 {
-    if (orientationType == EulerXYZ)
+    switch (orientationType)
     {
-        x[0] = m(0,3);
-        x[1] = m(1,3);
-        x[2] = m(2,3);
+        case EulerXYZ:
+        {
+                         x[0] = m(0, 3);
+                         x[1] = m(1, 3);
+                         x[2] = m(2, 3);
 
-        Eigen::Matrix3f m_3 = m.block(0,0,3,3);
-        Eigen::Vector3f rotEulerxyz = m_3.eulerAngles(0,1,2);
+                         Eigen::Matrix3f m_3 = m.block(0, 0, 3, 3);
+                         Eigen::Vector3f rotEulerxyz = m_3.eulerAngles(0, 1, 2);
 
-        // extrinsic (fixed coord system) rotation (x y z)
-        x[3] = rotEulerxyz(0);
-        x[4] = rotEulerxyz(1);
-        x[5] = rotEulerxyz(2);
+                         // intrinsic rotation (x y z)
+                         x[3] = rotEulerxyz(0);
+                         x[4] = rotEulerxyz(1);
+                         x[5] = rotEulerxyz(2);
+        }
+        break;
+        case EulerXYZExtrinsic:
+        {
+                         x[0] = m(0, 3);
+                         x[1] = m(1, 3);
+                         x[2] = m(2, 3);
 
-    } else
-    {
-        MathTools::eigen4f2rpy(m,x);
+                         Eigen::Matrix3f m_3 = m.block(0, 0, 3, 3);
+                         Eigen::Vector3f rotEulerxyz = m_3.eulerAngles(0, 1, 2);
+
+                         // extrinsic (fixed coord system) rotation (x y z)
+                         x[5] = rotEulerxyz(0);
+                         x[4] = rotEulerxyz(1);
+                         x[3] = rotEulerxyz(2);
+        }
+        break;
+        case RPY:
+        {
+                    MathTools::eigen4f2rpy(m, x);
+        }
+        break;
+        default:
+            THROW_VR_EXCEPTION("mode nyi...");
     }
 }
 /*
@@ -1424,37 +1458,62 @@ m.block(0,0,3,3) = m_3;
 */
 void WorkspaceRepresentation::vector2Matrix( const float x[6], Eigen::Matrix4f &m ) const
 {
-    if (orientationType == EulerXYZ)
+    switch (orientationType)
     {
-        m.setIdentity();
-        m(0,3) = x[0];
-        m(1,3) = x[1];
-        m(2,3) = x[2];
-        Eigen::Matrix3f m_3;
-        m_3 =  Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitX())
-            * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
-            * Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitZ());
-        /*
-        float s1 = sin(x[3]);float s2 = sin(x[4]);float s3 = sin(x[5]);
-        float c1 = cos(x[3]);float c2 = cos(x[4]);float c3 = cos(x[5]);
-        // Euler XYZ
-        m_3(0,0) =  c2*c3;               m_3(0,1) =  -c2*s3;              m_3(0,2) =  s2;
-        m_3(1,0) =  c1*s3+c3*s1*s2;      m_3(1,1) =  c1*c3-s1*s2*s3;      m_3(1,2) =  -c2*s1;
-        m_3(2,0) =  s1*s3-c1*c3*s2;      m_3(2,1) =  c3*s1+c1*s2*s3;      m_3(2,2) =  c1*c2;
-        */
-         /*
+        case EulerXYZ:
+        {
+            m.setIdentity();
+            m(0, 3) = x[0];
+            m(1, 3) = x[1];
+            m(2, 3) = x[2];
+            Eigen::Matrix3f m_3;
+            m_3 = Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitX())
+                * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
+                * Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitZ());
+            /*m_3 = Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitZ())
+                * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
+                * Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitX());*/
+            /*
+            float s1 = sin(x[3]);float s2 = sin(x[4]);float s3 = sin(x[5]);
+            float c1 = cos(x[3]);float c2 = cos(x[4]);float c3 = cos(x[5]);
+            // Euler XYZ
+            m_3(0,0) =  c2*c3;               m_3(0,1) =  -c2*s3;              m_3(0,2) =  s2;
+            m_3(1,0) =  c1*s3+c3*s1*s2;      m_3(1,1) =  c1*c3-s1*s2*s3;      m_3(1,2) =  -c2*s1;
+            m_3(2,0) =  s1*s3-c1*c3*s2;      m_3(2,1) =  c3*s1+c1*s2*s3;      m_3(2,2) =  c1*c2;
+            */
+            /*
         // Euler ZYX
         m_3(0,0) =  c1*c2;    m_3(0,1) =  c1*s2*s3-c3*s1;   m_3(0,2) =  s1*s3+c1*c3*s2;
         m_3(1,0) =  c2*s1;    m_3(1,1) =  c1*c3+s1*s2*s3;   m_3(1,2) =  c3*s1*s2-c1*s3;
         m_3(2,0) =  -s2;      m_3(2,1) =  c2*s3;            m_3(2,2) =  c2*c3;
         */
-        
-        m.block(0,0,3,3) = m_3;
 
-
-    } else
-        MathTools::posrpy2eigen4f(x,m);
+            m.block(0, 0, 3, 3) = m_3;
+        }
+        break;
+        case EulerXYZExtrinsic:
+        {
+            m.setIdentity();
+            m(0, 3) = x[0];
+            m(1, 3) = x[1];
+            m(2, 3) = x[2];
+            Eigen::Matrix3f m_3;
+            m_3 = Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitX())
+                * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
+                * Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitZ());
+            m.block(0, 0, 3, 3) = m_3;
+        }
+        break;
+        case RPY:
+        {
+                    MathTools::posrpy2eigen4f(x, m);
+        }
+        break;
+        default:
+            THROW_VR_EXCEPTION("mode nyi...");
+    }
 }
+
 void WorkspaceRepresentation::vector2Matrix( const Eigen::Vector3f &pos, const Eigen::Vector3f &rot, Eigen::Matrix4f &m ) const
 {
     float x[6];
