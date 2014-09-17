@@ -15,6 +15,8 @@ namespace Collada {
         ~InventorRobotNode();
         void visualizeBoundingBox();
         virtual void initialize();
+    private:
+        bool m_bOwn;
     };
 
     // Adds a <instance_geometry_node> directly to a SoSeparator.

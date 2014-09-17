@@ -53,9 +53,12 @@ void addTransform(SoGroup* root, pugi::xml_node node){
     }
 }
 
-InventorRobotNode::InventorRobotNode(){}
+InventorRobotNode::InventorRobotNode(){
+    m_bOwn=false;
+}
 
 InventorRobotNode::InventorRobotNode(SoSeparator *_root){
+    m_bOwn=true;
     visualization = new SoSeparator;
     visualization->ref();
     preJointTransformation = new SoGroup;
@@ -66,8 +69,10 @@ InventorRobotNode::InventorRobotNode(SoSeparator *_root){
 }
 
 InventorRobotNode::~InventorRobotNode(){
-    visualization->unref();
-    collisionModel->unref();
+    if (m_bOwn) {
+        visualization->unref();
+        collisionModel->unref();
+    }
 }
 
 void InventorRobotNode::visualizeBoundingBox()
