@@ -10,6 +10,8 @@ if(NOT ("${CMAKE_VERSION}" VERSION_LESS 2.8.12))
 ENDIF()
 
 
+FIND_PACKAGE (RBDL)
+
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)  
   INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
@@ -102,6 +104,19 @@ Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 )
+
+if (RBDL_FOUND)
+    SET(SOURCES
+    ${SOURCES}
+    Dynamics/dynamics.cpp
+    )
+SET(INCLUDES
+${INCLUDES}
+Dynamics/dynamics.h
+)
+
+endif (RBDL_FOUND)
+
 
 SET(INCLUDES
 CollisionDetection/CollisionChecker.h

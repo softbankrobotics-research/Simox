@@ -155,6 +155,16 @@ IF (NOT Simox_CONFIGURED)
 	############################# SETUP MODULES #############################
 	MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
 	
+	### RBDL
+	FIND_PACKAGE (RBDL)
+	if (RBDL_FOUND)
+	    MESSAGE(STATUS "RBDL found at: ${RBDL_INCLUDE_DIR}")
+	    SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${RBDL_INCLUDE_DIR})
+	    SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${RBDL_LIBRARIES})
+	else (RBDL_FOUND)
+	    MESSAGE(STATUS "RBDL not found!")
+	endif (RBDL_FOUND)
+
 	#### Eigen
 	FIND_PACKAGE (Eigen3 REQUIRED)
 	if (Eigen3_FOUND)

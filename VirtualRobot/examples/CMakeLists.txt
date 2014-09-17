@@ -1,4 +1,10 @@
 
+FIND_PACKAGE (RBDL)
+
+if (RBDL_FOUND) 
+        ADD_SUBDIRECTORY(InverseDynamics)
+endif (RBDL_FOUND)
+
 ADD_SUBDIRECTORY(loadRobot)
 
 ADD_SUBDIRECTORY(RobotViewer)

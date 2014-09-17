@@ -215,4 +215,38 @@ std::string RobotNodeRevolute::_toXML( const std::string &modelPath )
     return ss.str();
 }
 
+float RobotNodeRevolute::getLMTC(RobotNodePtr child, float angle)
+{
+
+    Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
+    Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
+
+    float a = fromParent.col(3).head(3).norm();
+    float c = toChild.col(3).head(3).norm();
+
+    THROW_VR_EXCEPTION_IF (a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
+
+    float b_squared = a*a + c*c - 2*a*c*cos(angle);
+
+    return sqrt(b_squared);
+}
+
+
+float RobotNodeRevolute::getLMomentArm(RobotNodePtr child, float angle)
+{
+    Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
+    Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
+
+    float a = fromParent.col(3).head(3).norm();
+    float c = toChild.col(3).head(3).norm();
+
+    THROW_VR_EXCEPTION_IF (a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
+
+    float b = getLMTC(child,angle);
+
+    float lMomentArm = sqrt(2*(a*a*b*b + b*b*c*c + c*c*a*a) - (pow(a,4)+pow(b,4)+pow(c,4)))/(2*b);
+
+    return lMomentArm;
+}
+
 } // namespace
