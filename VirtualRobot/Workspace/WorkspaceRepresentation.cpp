@@ -165,7 +165,7 @@ void WorkspaceRepresentation::load(const std::string &filename)
 			// now check if an older version is used
 			THROW_VR_EXCEPTION_IF(
 				(version[0] > 2) || 
-				(version[0] == 2 && !(version[1] == 0 || version[1] == 1 || version[1] == 2 || version[1] == 3 || version[1] == 4 || version[1] == 5)) || 
+                (version[0] == 2 && !(version[1] == 0 || version[1] == 1 || version[1] == 2 || version[1] == 3 || version[1] == 4 || version[1] == 5 || version[1] == 6)) ||
 				(version[0] == 1 && !(version[1] == 0 || version[1] == 2 || version[1] == 3)
 				),	"Wrong file format version");
 		}
