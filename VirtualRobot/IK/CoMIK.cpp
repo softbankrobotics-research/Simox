@@ -201,9 +201,10 @@ bool CoMIK::computeSteps(float stepSize, float minumChange, int maxNStep)
 		lastDist = d;
 		step++;
 	}
-
-	VR_INFO << "IK failed, loop:" << step << endl;
-    VR_INFO << "error:" << (target - rns->getCoM().head(target.rows())).norm() << endl;
+	#ifndef NO_FAILURE_OUTPUT
+	//VR_INFO << "IK failed, loop:" << step << endl;
+    	//VR_INFO << "error:" << (target - rns->getCoM().head(target.rows())).norm() << endl;
+	#endif
 	return false;
 }
 
