@@ -1206,6 +1206,44 @@ Eigen::Vector3f BulletRobot::getComVelocityGlobal( VirtualRobot::RobotNodeSetPtr
 	return com;
 }
 
+Eigen::Vector3f BulletRobot::getLinearMomentumGlobal( VirtualRobot::RobotNodeSetPtr set)
+{
+    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+	Eigen::Vector3f linMomentum = Eigen::Vector3f::Zero();
+	for (unsigned int i = 0; i < set->getSize(); i++)
+	{
+		VirtualRobot::RobotNodePtr node = (*set)[i];
+		BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
+		Eigen::Vector3f vel = bo->getLinearVelocity();
+
+		linMomentum += node->getMass() * vel;
+	}
+
+	return linMomentum;
+}
+
+Eigen::Vector3f BulletRobot::getAngularMomentumGlobal( VirtualRobot::RobotNodeSetPtr set)
+{
+    boost::recursive_mutex::scoped_lock scoped_lock(*engineMutexPtr);
+	Eigen::Vector3f angMomentum = Eigen::Vector3f::Zero();
+	for (unsigned int i = 0; i < set->getSize(); i++)
+	{
+		VirtualRobot::RobotNodePtr node = (*set)[i];
+		BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
+		Eigen::Vector3f vel = bo->getLinearVelocity();
+		Eigen::Vector3f ang = bo->getAngularVelocity();
+		Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1);
+		double mass = node->getMass();
+
+		boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
+		Eigen::Matrix3f intertiaWorld = BulletEngine::getRotMatrix(body->getInvInertiaTensorWorld()).inverse();
+
+		angMomentum += com.cross(mass * vel) + intertiaWorld * ang;
+	}
+
+	return angMomentum;
+}
+
 void BulletRobot::setPoseNonActuatedRobotNodes()
 {
     MutexLockPtr lock = getScopedLock();
