@@ -8,6 +8,7 @@
 #include <Inventor/nodes/SoRotation.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
+#include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoPendulum.h>
@@ -145,7 +146,24 @@ std::vector<T> offsetSelection(std::vector<T> v, int offset, int stride){
     return result;
 }
 
+std::map<std::string, std::vector<float> > addMaterials(const pugi::xml_node &igeometry){
+    std::map<std::string, std::vector<float> > colormap;
+    BOOST_FOREACH(pugi::xpath_node imaterial, igeometry.select_nodes(".//instance_material")){
+        std::string symbol = imaterial.node().attribute("symbol").value();
+        pugi::xml_node material = resolveURL(imaterial.node(),"//library_materials");
+        pugi::xml_node ieffect = material.child("instance_effect");
+        pugi::xml_node effect = resolveURL(ieffect,"//library_effects");
+        pugi::xml_node phong = effect.child("profile_COMMON").child("technique").child("phong");
+//        pugi::xml_node diffuse = phong.child("specular").child("color");
+        pugi::xml_node diffuse = phong.child("diffuse").child("color");
+        colormap[symbol] = getVector<float>(diffuse.child_value());
+    }
+    return colormap;
+}
+
 void addGeometry(SoSeparator * separator,const pugi::xml_node &node){
+
+        std::map<std::string, std::vector<float> > colormap = addMaterials(node);
         pugi::xml_node geometry = resolveURL(node,"//library_geometries");
         pugi::xml_node mesh = geometry.child("mesh");
 
@@ -162,6 +180,15 @@ void addGeometry(SoSeparator * separator,const pugi::xml_node &node){
         }
 
         BOOST_FOREACH(pugi::xpath_node polylist, mesh.select_nodes(".//polylist")){
+
+            std::vector<float> color = colormap.at(polylist.node().attribute("material").value());
+
+            SoMaterial * mat  = new SoMaterial;
+            separator->addChild(mat);
+            mat->diffuseColor.setValue(color[0],color[1],color[2]);
+            std::cout << "color: " << color[0] << "," << color[1] << "," <<color[2] << "," <<color[3] << std::endl;
+            //mat->transparency.setValue(color[3]);
+
             SoCoordinate3 *coordinates =new SoCoordinate3;
             separator->addChild(coordinates);
             SoIndexedFaceSet *faceSet = new SoIndexedFaceSet;
