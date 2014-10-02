@@ -1218,7 +1218,7 @@ Eigen::Vector3f BulletRobot::getLinearMomentumGlobal( VirtualRobot::RobotNodeSet
 	{
 		VirtualRobot::RobotNodePtr node = (*set)[i];
 		BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-		Eigen::Vector3f vel = bo->getLinearVelocity();
+		Eigen::Vector3f vel = bo->getLinearVelocity()/1000.0;
 
 		linMomentum += node->getMass() * vel;
 	}
@@ -1234,9 +1234,9 @@ Eigen::Vector3f BulletRobot::getAngularMomentumGlobal( VirtualRobot::RobotNodeSe
 	{
 		VirtualRobot::RobotNodePtr node = (*set)[i];
 		BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-		Eigen::Vector3f vel = bo->getLinearVelocity();
-		Eigen::Vector3f ang = bo->getAngularVelocity();
-		Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1);
+		Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0;
+		Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
+		Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
 		double mass = node->getMass();
 
 		boost::shared_ptr<btRigidBody> body = bo->getRigidBody();

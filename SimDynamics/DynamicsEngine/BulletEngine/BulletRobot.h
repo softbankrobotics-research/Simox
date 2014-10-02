@@ -151,7 +151,15 @@ public:
     virtual Eigen::Matrix4f getComGlobal(VirtualRobot::RobotNodePtr rn);
 	Eigen::Vector3f getComGlobal(VirtualRobot::RobotNodeSetPtr set);
 	Eigen::Vector3f getComVelocityGlobal(VirtualRobot::RobotNodeSetPtr set);
+
+    /*!
+     * Returns the linear momentum in Ns for the bodies in the nodeset.
+     */
 	Eigen::Vector3f getLinearMomentumGlobal(VirtualRobot::RobotNodeSetPtr set);
+
+    /*!
+     * Returns the angular momentum in Nms for the bodies in the nodeset
+     */
 	Eigen::Vector3f getAngularMomentumGlobal(VirtualRobot::RobotNodeSetPtr set);
 
 	// experimental...
