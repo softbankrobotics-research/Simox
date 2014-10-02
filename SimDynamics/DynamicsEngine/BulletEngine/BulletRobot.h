@@ -148,19 +148,19 @@ public:
     /*!
         Returns the CoM pose, which is reported by bullet
     */
-    virtual Eigen::Matrix4f getComGlobal(VirtualRobot::RobotNodePtr rn);
-	Eigen::Vector3f getComGlobal(VirtualRobot::RobotNodeSetPtr set);
-	Eigen::Vector3f getComVelocityGlobal(VirtualRobot::RobotNodeSetPtr set);
+    virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::RobotNodePtr& rn);
+    virtual Eigen::Vector3f getComGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+    virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& set);
 
     /*!
      * Returns the linear momentum in Ns for the bodies in the nodeset.
      */
-	Eigen::Vector3f getLinearMomentumGlobal(VirtualRobot::RobotNodeSetPtr set);
+    virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
 
     /*!
      * Returns the angular momentum in Nms for the bodies in the nodeset
      */
-	Eigen::Vector3f getAngularMomentumGlobal(VirtualRobot::RobotNodeSetPtr set);
+    virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
 
 	// experimental...
 	virtual void ensureKinematicConstraints();

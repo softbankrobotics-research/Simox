@@ -1147,7 +1147,7 @@ Eigen::Vector3f BulletRobot::getJointForces(RobotNodePtr rn)
     return result;
 }
 
-Eigen::Matrix4f BulletRobot::getComGlobal( VirtualRobot::RobotNodePtr rn )
+Eigen::Matrix4f BulletRobot::getComGlobal(const VirtualRobot::RobotNodePtr& rn )
 {
     MutexLockPtr lock = getScopedLock();
     BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(rn));
@@ -1159,7 +1159,7 @@ Eigen::Matrix4f BulletRobot::getComGlobal( VirtualRobot::RobotNodePtr rn )
     return bo->getComGlobal();
 }
 
-Eigen::Vector3f BulletRobot::getComGlobal( VirtualRobot::RobotNodeSetPtr set)
+Eigen::Vector3f BulletRobot::getComGlobal(const VirtualRobot::RobotNodeSetPtr& set)
 {
     MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f com = Eigen::Vector3f::Zero();
@@ -1177,7 +1177,7 @@ Eigen::Vector3f BulletRobot::getComGlobal( VirtualRobot::RobotNodeSetPtr set)
 	return com;
 }
 
-Eigen::Vector3f BulletRobot::getComVelocityGlobal( VirtualRobot::RobotNodeSetPtr set)
+Eigen::Vector3f BulletRobot::getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& set)
 {
     MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f com = Eigen::Vector3f::Zero();
@@ -1210,7 +1210,7 @@ Eigen::Vector3f BulletRobot::getComVelocityGlobal( VirtualRobot::RobotNodeSetPtr
 	return com;
 }
 
-Eigen::Vector3f BulletRobot::getLinearMomentumGlobal( VirtualRobot::RobotNodeSetPtr set)
+Eigen::Vector3f BulletRobot::getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
 {
     MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f linMomentum = Eigen::Vector3f::Zero();
@@ -1226,7 +1226,7 @@ Eigen::Vector3f BulletRobot::getLinearMomentumGlobal( VirtualRobot::RobotNodeSet
 	return linMomentum;
 }
 
-Eigen::Vector3f BulletRobot::getAngularMomentumGlobal( VirtualRobot::RobotNodeSetPtr set)
+Eigen::Vector3f BulletRobot::getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
 {
     MutexLockPtr lock = getScopedLock();
 	Eigen::Vector3f angMomentum = Eigen::Vector3f::Zero();

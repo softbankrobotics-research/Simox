@@ -97,7 +97,13 @@ public:
     virtual double getJointSpeed(VirtualRobot::RobotNodePtr rn);
     virtual double getJointTargetSpeed(VirtualRobot::RobotNodePtr rn);
 
-    virtual Eigen::Matrix4f getComGlobal(VirtualRobot::RobotNodePtr rn);
+    virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::RobotNodePtr& rn);
+
+    virtual Eigen::Vector3f getComGlobal(const VirtualRobot::RobotNodeSetPtr& bodies);
+    virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& bodies);
+
+    virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+    virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
 
     virtual void setGlobalPose(Eigen::Matrix4f &gp);
 

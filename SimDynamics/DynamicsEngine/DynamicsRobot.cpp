@@ -286,13 +286,33 @@ double DynamicsRobot::getJointTargetSpeed( VirtualRobot::RobotNodePtr rn )
     return 0.0f;
 }
 
-Eigen::Matrix4f DynamicsRobot::getComGlobal( VirtualRobot::RobotNodePtr rn )
+Eigen::Matrix4f DynamicsRobot::getComGlobal(const VirtualRobot::RobotNodePtr& rn )
 {
     MutexLockPtr lock = getScopedLock();
     Eigen::Matrix4f com = Eigen::Matrix4f::Identity();
     com.block(0,3,3,1) = rn->getCoMLocal();
     com = rn->getGlobalPoseVisualization()*com;
     return com;
+}
+
+Eigen::Vector3f DynamicsRobot::getComGlobal(const VirtualRobot::RobotNodeSetPtr& bodies)
+{
+    return Eigen::Vector3f::Zero();
+}
+
+Eigen::Vector3f DynamicsRobot::getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& bodies)
+{
+    return Eigen::Vector3f::Zero();
+}
+
+Eigen::Vector3f DynamicsRobot::getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
+{
+    return Eigen::Vector3f::Zero();
+}
+
+Eigen::Vector3f DynamicsRobot::getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
+{
+    return Eigen::Vector3f::Zero();
 }
 
 void DynamicsRobot::setGlobalPose(Eigen::Matrix4f &gp)
