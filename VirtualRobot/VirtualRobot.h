@@ -224,6 +224,30 @@ namespace VirtualRobot
 	typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 	typedef boost::shared_ptr<ContactSensor> ContactSensorPtr;
 
+    /*
+     * Predefine for MathTools.h
+     */
+    namespace MathTools {
+        struct Quaternion;
+        struct SphericalCoord;
+        struct Segment2D;
+        struct ConvexHull2D;
+        struct ConvexHull3D;
+        struct ConvexHull6D;
+        struct Plane;
+        template<typename VectorT> struct BaseLine;
+        struct Segment;
+        struct OOBB;
+        struct ContactPoint;
+        struct TriangleFace;
+        struct TriangleFace6D;
+
+        typedef BaseLine<Eigen::Vector3f> Line;
+        typedef BaseLine<Eigen::Vector2f> Line2D;
+        typedef boost::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
+        typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
+        typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
+    };
 
 #define VR_INFO std::cout <<__FILE__ << ":" << __LINE__ << ": "
 #define VR_WARNING std::cerr <<__FILE__ << ":" << __LINE__ << " -Warning- "
