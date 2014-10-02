@@ -44,6 +44,7 @@ public:
 
 	struct ContactForce
 	{
+        std::string bodyName;
 		Eigen::Vector3f contactPoint;
 		double zForce;
 

@@ -593,15 +593,18 @@ void BulletRobot::updateSensors(double dt)
 
         float sign;
         std::string key;
+        std::string contactBody;
         if (contactObjectNames.find(contact.objectA->getName()) != contactObjectNames.end())
         {
             sign = 1.0f;
             key = contact.objectA->getName();
+            contactBody = contact.objectB->getName();
         }
         else if (contactObjectNames.find(contact.objectB->getName()) != contactObjectNames.end())
         {
             sign = -1.0f;
             key = contact.objectB->getName();
+            contactBody = contact.objectA->getName();
         }
         else
         {
@@ -613,6 +616,7 @@ void BulletRobot::updateSensors(double dt)
         VirtualRobot::ContactSensor::ContactForce cf;
         cf.contactPoint = contact.posGlobalB;
         cf.zForce = zForce;
+        cf.bodyName = contactBody;
         frame.forces.push_back(cf);
     }
 
