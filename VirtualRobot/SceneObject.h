@@ -129,7 +129,7 @@ public:
 			return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !intertiaMatrix.isIdentity() || ignoreCollisions.size()>0);
 		}
 
-		std::string toXML(int tabs)
+		virtual std::string toXML(int tabs)
 		{
 			std::string ta;
 			std::stringstream ss;

@@ -80,12 +80,12 @@ public:
 	void applyJointValues();
 
 	/** Configures the robot to threadsafe or not.
-	 * Per default the robot is threadsafe, i.e., updating the 
-	 * robot state and reading the Poses from the nodes is mutual 
-	 * exclusive. This feature can be turned off, however, in 
+	 * Per default the robot is threadsafe, i.e., updating the
+	 * robot state and reading the Poses from the nodes is mutual
+	 * exclusive. This feature can be turned off, however, in
 	 * order to be make data access faster in single threaded
 	 * applications.
-	 */ 
+	 */
 	void setThreadsafe(bool);
 
 
@@ -97,14 +97,14 @@ public:
 		 boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>();
 		 SoNode* visualisationNode = NULL;
 		 if (visualization)
-		     visualisationNode = visualization->getCoinVisualization();
+			 visualisationNode = visualization->getCoinVisualization();
 	*/
 	template <typename T> boost::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full, bool sensors = true);
-	/*! 
+	/*!
 		Shows the structure of the robot
 	*/
 	void showStructure(bool enable, const std::string &type="");
-	/*! 
+	/*!
 		Shows the coordinate systems of the robot nodes
 	*/
 	void showCoordinateSystems(bool enable, const std::string &type="");
@@ -139,8 +139,8 @@ public:
 	void setUpdateVisualization (bool enable);
 	bool getUpdateVisualizationStatus();
 
-    boost::shared_ptr<Robot> shared_from_this()       { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
-    //boost::shared_ptr<Robot> shared_from_this() const { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
+	boost::shared_ptr<Robot> shared_from_this()       { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
+	//boost::shared_ptr<Robot> shared_from_this() const { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
 
 	/*!
 		get the complete setup of all robot nodes
@@ -150,7 +150,7 @@ public:
 		Sets the configuration according to the RobotNodes, defined in c. All other nodes are not affected.
 	*/
 	bool setConfig(RobotConfigPtr c);
-	
+
 	/*!
 		This method is automatically called in RobotNode's initialization routine.
 	*/
@@ -184,7 +184,7 @@ public:
 	virtual void getEndEffectors(std::vector<EndEffectorPtr> &storeEEF)=0;
 
 	std::vector< CollisionModelPtr > getCollisionModels();
-		
+
 	CollisionCheckerPtr getCollisionChecker();
 
 	/*!
@@ -195,8 +195,8 @@ public:
 	*/
 	virtual void highlight (VisualizationPtr visualization, bool enable);
 
-	
-	/*! 
+
+	/*!
 		get number of faces (i.e. triangles) of this object
 		\p collisionModel Indicates weather the faces of the collision model or the full model should be returned.
 	*/
@@ -253,7 +253,7 @@ public:
 		Just storing the filename.
 	*/
 	void setFilename(const std::string &filename);
-	
+
 	/*!
 		Retrieve the stored filename.
 	*/
@@ -267,10 +267,10 @@ public:
 		{
 			ReadLockPtr lock = robot->getReadLock();
 			// now the mutex is locked
-			
+
 			// access data
 			// ...
-		
+
 		} // end of scope -> lock gets deleted and mutex is released automatically
 	*/
 	ReadLockPtr getReadLock();
@@ -282,10 +282,10 @@ public:
 		{
 			WriteLockPtr lock = robot->getWriteLock();
 			// now the mutex is locked
-			
+
 			// access data
 			// ...
-		
+
 		} // end of scope -> lock gets deleted and mutex is released automatically
 	*/
 	WriteLockPtr getWriteLock();
@@ -325,7 +325,7 @@ public:
 	/*!
 		Set joint values [rad].
 		The complete robot is updated to apply the new joint values.
-		\param rn The RobotNodes 
+		\param rn The RobotNodes
 		\param jointValues A vector with joint values, size must be equal to rn.
 	*/
 	void setJointValues(const std::vector<RobotNodePtr> rn, const std::vector<float> &jointValues);
@@ -351,7 +351,7 @@ public:
 	*/
 	void setJointValues(RobotNodeSetPtr rns, RobotConfigPtr config);
 	/*!
-		Apply configuration of trajectory at time t 
+		Apply configuration of trajectory at time t
 		\param trajectory The trajectory
 		\param t The time (0<=t<=1)
 	*/
@@ -374,17 +374,17 @@ public:
 	*/
 	std::vector<SensorPtr> getSensors();
 
-    /*!
-        Creates an XML string that defines the complete robot. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
-        @see RobotIO::saveXML.
-    */
-    std::string toXML(const std::string &modelPath = "models", bool storeEEF = true, bool storeRNS = true, bool storeSensors = true);
+	/*!
+		Creates an XML string that defines the complete robot. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
+		@see RobotIO::saveXML.
+	*/
+	virtual std::string toXML(const std::string &modelPath = "models", bool storeEEF = true, bool storeRNS = true, bool storeSensors = true);
 
 protected:
 	Robot();
 	/*!
 		Goes through all RobotNodes and if no visualization is present:
-		* the collision model is checked and in case it owns a visualization 
+		* the collision model is checked and in case it owns a visualization
 		* it is cloned and used as visualization.
 	*/
 	void createVisualizationFromCollisionModels();
@@ -432,9 +432,9 @@ boost::shared_ptr<T> Robot::getVisualization(SceneObject::VisualizationType visu
 
 class VIRTUAL_ROBOT_IMPORT_EXPORT LocalRobot : public Robot {
 public:
-	LocalRobot(const std::string &name, const std::string &type=""); 
+	LocalRobot(const std::string &name, const std::string &type="");
 	virtual ~LocalRobot();
-	
+
 	virtual void setRootNode(RobotNodePtr node);
 	virtual RobotNodePtr getRootNode();
 
@@ -444,7 +444,7 @@ public:
 	virtual bool hasRobotNode( RobotNodePtr node );
 	virtual RobotNodePtr getRobotNode(const std::string &robotNodeName);
 	virtual void getRobotNodes(std::vector< RobotNodePtr > &storeNodes, bool clearVector=true);
-	
+
 	virtual void registerRobotNodeSet(RobotNodeSetPtr nodeSet);
 	virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet);
 	virtual bool hasRobotNodeSet( const std::string &name );
@@ -456,8 +456,8 @@ public:
 	virtual EndEffectorPtr getEndEffector(const std::string& endEffectorName);
 	virtual void getEndEffectors(std::vector<EndEffectorPtr> &storeEEF);
 
-    virtual void setGlobalPose(const Eigen::Matrix4f &globalPose, bool applyJointValues = true);
-    virtual void setGlobalPose(const Eigen::Matrix4f &globalPose);
+	virtual void setGlobalPose(const Eigen::Matrix4f &globalPose, bool applyJointValues = true);
+	virtual void setGlobalPose(const Eigen::Matrix4f &globalPose);
 	virtual Eigen::Matrix4f getGlobalPose();
 
 
