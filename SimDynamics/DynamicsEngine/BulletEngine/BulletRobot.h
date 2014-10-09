@@ -183,6 +183,17 @@ public:
     */
     std::vector<LinkInfo> getLinks(BulletObjectPtr node);
 
+    /*!
+     * Sets the maxium motor impulse. Since this value
+     * is used as limit *per simulation step* it depends heavily
+     * on the duration of the simulation step.
+     */
+    void setMaximumMotorImpulse(double maxImpulse);
+
+    /*!
+     * Returns the currently used maxium motor impulse.
+     */
+    double getMaximumMotorImpulse() const;
 
 protected:
 	void buildBulletModels(bool enableJointMotors);

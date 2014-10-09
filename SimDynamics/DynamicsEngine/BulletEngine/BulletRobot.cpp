@@ -33,9 +33,9 @@ namespace SimDynamics {
 
 BulletRobot::BulletRobot(VirtualRobot::RobotPtr rob, bool enableJointMotors)
 	: DynamicsRobot(rob)
+    // should be enough for up to 10ms/step
+    , bulletMaxMotorImulse(5)
 {
-    bulletMaxMotorImulse = 800.0f;
-
 	buildBulletModels(enableJointMotors);
 
     // activate force torque sensors
@@ -1372,6 +1372,16 @@ Eigen::VectorXf BulletRobot::getJointForceTorqueGlobal(const BulletRobot::LinkIn
     result.head(3) = ftA.head(3); // force in joint is same as force on CoM of A
     result.tail(3) = torqueJointGlobal;
     return result;
+}
+
+void BulletRobot::setMaximumMotorImpulse(double maxImpulse)
+{
+    bulletMaxMotorImulse = maxImpulse;
+}
+
+double BulletRobot::getMaximumMotorImpulse() const
+{
+    return static_cast<double>(bulletMaxMotorImulse);
 }
 
 } // namespace VirtualRobot
