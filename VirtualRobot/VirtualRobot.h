@@ -149,6 +149,7 @@ namespace VirtualRobot
     class HierarchicalIK;
     class DHParameter;
     class RobotNode;
+    class RobotNodeRevolute;
     class RobotNodeFactory;
     class RobotNodeSet;
     class KinematicChain;
@@ -187,6 +188,7 @@ namespace VirtualRobot
     typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
     typedef boost::shared_ptr<DifferentialIK> DifferentialIKPtr;
     typedef boost::shared_ptr<RobotNode> RobotNodePtr;
+    typedef boost::shared_ptr<RobotNodeRevolute> RobotNodeRevolutePtr;
     typedef boost::shared_ptr<RobotNodeSet> RobotNodeSetPtr;
     typedef boost::shared_ptr<KinematicChain> KinematicChainPtr;
     typedef boost::weak_ptr<RobotNode> RobotNodeWeakPtr;
