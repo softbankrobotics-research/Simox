@@ -19,6 +19,12 @@ void BulletRobotLogger::stopLogging()
 
 void BulletRobotLogger::writeToFile(const std::string& path)
 {
+	// Nothing to log
+	if (targetAngleLog.size() == 0)
+	{
+		return;
+	}
+
 	std::ofstream output(path.c_str());
 
 	int num_frames = timestamps.size();
