@@ -69,10 +69,14 @@ namespace VirtualRobot
 			pathFound = pathFound | addDataPath(std::string(VirtualRobot_SRC_DATA_PATH),true);
 #endif
 			// check standard linux install path
-			if (!pathFound)
-			{
-				pathFound = addDataPath(std::string("/usr/local/data"),true);
-			}
+            if (!pathFound)
+            {
+                pathFound = addDataPath(std::string("/usr/local/data"),true);
+            }
+            if (!pathFound)
+            {
+                pathFound = addDataPath(std::string("/usr/data"),true);
+            }
 
 			// last chance, check for inbuild paths
 			if (!pathFound)
