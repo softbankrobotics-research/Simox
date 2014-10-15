@@ -5,6 +5,9 @@ CMAKE_POLICY(VERSION 2.6)
 
 MESSAGE (STATUS "***** CONFIGURING Simox project Saba *****")
 
+INCLUDE (Cxx11Test)
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
+
 ########################### TESTING #####################################
 MACRO(ADD_SABA_TEST TEST_NAME)
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})

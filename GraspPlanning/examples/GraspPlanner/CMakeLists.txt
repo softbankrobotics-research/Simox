@@ -6,6 +6,9 @@ CMAKE_POLICY(VERSION 2.6)
 
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
+INCLUDE (Cxx11Test)
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
+
 IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
 	# the variable "demo_SRCS" contains all .cpp files of this project

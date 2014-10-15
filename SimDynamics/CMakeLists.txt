@@ -10,6 +10,9 @@ GET_FILENAME_COMPONENT (CurrentSimDynamicsPath ${CMAKE_CURRENT_LIST_FILE} PATH)
 SET(SimDynamics_DIR ${CurrentSimDynamicsPath})
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SimDynamics_DIR}/CMakeModules)
 
+INCLUDE (Cxx11Test)
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
+
 ############################# SETUP PHYSICS ENGINE #############################
 OPTION(SimDynamics_USE_BULLET "Use Bullet Physics Engine" ON)
 SET (SimDynamics_DYNAMICSENGINE FALSE)
