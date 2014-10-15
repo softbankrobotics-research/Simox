@@ -122,11 +122,14 @@ install(EXPORT SimoxTargets DESTINATION
 #############################################################
 # PACKAGING (DEB)
 
-FIND_PACKAGE(Subversion)
+FIND_PACKAGE(Subversion QUIET)
 IF(Subversion_FOUND)
     Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} Project)
     MESSAGE("Current revision is ${Project_WC_REVISION}")
-ENDIF(Subversion_FOUND)
+ELSE()
+    SET(Project_WC_REVISION "Unknown")
+    MESSAGE("Could not determine current svn revision.")
+ENDIF()
 
 IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
     SET(CPACK_DEBIAN_ARCHITECTURE "amd64")
@@ -164,5 +167,19 @@ set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "Simox C++ Headers")
 SET(CPACK_COMPONENTS_ALL Applications Headers Libraries ApplicationData)
 INCLUDE(CPack)
 
+#############################################################
+# STYLE
+
+FIND_PACKAGE(AStyle QUIET)
+
+if(AStyle_FOUND)
+    add_custom_target(astyle
+                      COMMAND ${AStyle_EXECUTABLE} --options="${PROJECT_SOURCE_DIR}/armarx.astylerc" --recursive --preserve-date --formatted "*.cpp" "*.h" "*.hpp"
+                      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                      COMMENT "Formatting source files in: ${PROJECT_SOURCE_DIR}")
+else()
+    add_custom_target(astyle
+                      COMMENT "Unable to format source files: AStyle was not found!")
+endif()
 
 
