@@ -175,7 +175,6 @@ void BulletCoinQtViewer::stepPhysics()
 			VR_INFO << "Slow frame (" << ms << "us elapsed)! Limiting elapsed time (losing realtime capabilities for this frame)." << endl;
 			ms = minFPS;
 		} */
-        btScalar dt1;
         if (!simModeFixedTimeStep)
         {
 		    if ((ms / 1000.0f) > bulletMaxSubSteps * bulletTimeStepMsec) {
@@ -190,15 +189,16 @@ void BulletCoinQtViewer::stepPhysics()
 			    warned_norealtime = false;
 		    }
 
-		    dt1 = btScalar(ms / 1000000.0f);
-        } else
+            btScalar dt1 = btScalar(ms / 1000000.0f);
+            bulletEngine->stepSimulation(dt1, bulletMaxSubSteps, float(bulletTimeStepMsec) / 1000.0f);
+        }
+        else
         {
             // FIXED TIME STEP
-            dt1 = float(bulletTimeStepMsec) / 1000.0f;
+            btScalar dt1 = float(bulletTimeStepMsec) / 1000.0f;
+            bulletEngine->stepSimulation(dt1*bulletMaxSubSteps, bulletMaxSubSteps, dt1);
         }
 		// VR_INFO << "stepSimulation(" << dt1 << ", " << bulletMaxSubSteps << ", " << (bulletTimeStepMsec / 1000.0f) << ")" << endl;
-
-		bulletEngine->stepSimulation(dt1, bulletMaxSubSteps, float(bulletTimeStepMsec) / 1000.0f);
 
 		//optional but useful: debug drawing
 		//m_dynamicsWorld->debugDrawWorld();

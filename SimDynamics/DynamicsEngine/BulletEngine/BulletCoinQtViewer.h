@@ -62,13 +62,16 @@ public:
     /*! 
         In this mode, the time between two updates is measures and the engine is stepped accordingly. (standard)
         Could result in inaccurate simulation. Especially, if the steps tend to become large (e.g. on slow computers).
+        Also not deterministic.
     */
     void setSimModeRealTime();
 
     /*!
-        Sets the simulation mode to fixed time step.
+        Sets the simulation mode to fixed time step. This mode is deterministic.
         The time step can be specified in milli seconds:
         \see setBulletSimTimeStepMsec
+        In this mode bulletMaxSubsteps is used as the number of
+        full simulation steps bullet performs per frame.
     */
     void setSimModeFixedTimeStep();
 
@@ -133,6 +136,8 @@ public:
 		If this value is too low, the simulation will not run in real-time if the computer is not fast enough to render enough frames to
 		perform 1/timeStep time steps per second.
 		If this value is too high, more time is spent on simulation, increasing visualization lagginess on a slow computer.
+        In fixed timestep mode this parameter is used to specifiy how many steps per call to stepEngine()
+        are actually calculated by bullet. (Good to speed up simulation)
 	*/
 	void setBulletSimMaxSubSteps(int maxSubSteps);
 
