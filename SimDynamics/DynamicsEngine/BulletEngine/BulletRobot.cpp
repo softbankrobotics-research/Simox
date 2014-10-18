@@ -1240,7 +1240,7 @@ Eigen::Vector3f BulletRobot::getAngularMomentumGlobal(const VirtualRobot::RobotN
 		double mass = node->getMass();
 
 		boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
-		Eigen::Matrix3f intertiaWorld = BulletEngine::getRotMatrix(body->getInvInertiaTensorWorld()).inverse();
+		Eigen::Matrix3f intertiaWorld = BulletEngine::getRotMatrix(body->getInvInertiaTensorWorld()).inverse().block(0,0,3,3);
 
 		angMomentum += com.cross(mass * vel) + intertiaWorld * ang;
 	}

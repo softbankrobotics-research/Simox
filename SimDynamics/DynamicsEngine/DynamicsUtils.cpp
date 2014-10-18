@@ -138,7 +138,7 @@ double VelocityMotorController::update(double positionError, double targetVeloci
 	if (maxVelocity > 0.0 && fabs(output_velocity) > maxVelocity)
 	{
 		double sign = output_velocity > 0 ? 1.0 : -1.0;
-		std::cout << "Limiting velocity: " << output_velocity << " -> " << sign * maxVelocity << std::endl;
+		//std::cout << "Limiting velocity: " << output_velocity << " -> " << sign * maxVelocity << std::endl;
 		output_velocity = sign * maxVelocity;
 	}
 
@@ -147,7 +147,7 @@ double VelocityMotorController::update(double positionError, double targetVeloci
 	{
 		double sign = output_acceleration > 0 ? 1.0 : -1.0;
 
-		std::cout << "Limiting acceleration: " << output_acceleration << " -> " << sign * maxAcceleration << std::endl;
+		//std::cout << "Limiting acceleration: " << output_acceleration << " -> " << sign * maxAcceleration << std::endl;
 		output_acceleration = sign * maxAcceleration;
 		output_velocity = velocity + output_acceleration*dt;
 	}
