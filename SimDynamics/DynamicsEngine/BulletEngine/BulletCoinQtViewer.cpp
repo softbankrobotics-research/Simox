@@ -196,7 +196,10 @@ void BulletCoinQtViewer::stepPhysics()
         {
             // FIXED TIME STEP
             btScalar dt1 = float(bulletTimeStepMsec) / 1000.0f;
-            bulletEngine->stepSimulation(dt1*bulletMaxSubSteps, bulletMaxSubSteps, dt1);
+            for (int i = 0; i < bulletMaxSubSteps; i++)
+            {
+                bulletEngine->stepSimulation(dt1, 1, dt1);
+            }
         }
 		// VR_INFO << "stepSimulation(" << dt1 << ", " << bulletMaxSubSteps << ", " << (bulletTimeStepMsec / 1000.0f) << ")" << endl;
 
