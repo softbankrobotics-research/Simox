@@ -77,7 +77,7 @@ public:
 	virtual void setRootNode(RobotNodePtr node) = 0;
 	virtual RobotNodePtr getRootNode() = 0;
 
-	void applyJointValues();
+    virtual void applyJointValues();
 
 	/** Configures the robot to threadsafe or not.
 	 * Per default the robot is threadsafe, i.e., updating the
@@ -86,7 +86,7 @@ public:
 	 * order to be make data access faster in single threaded
 	 * applications.
 	 */
-	void setThreadsafe(bool);
+    virtual void setThreadsafe(bool);
 
 
 	/*!
@@ -125,8 +125,8 @@ public:
 	void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
 
 
-	std::string getName();
-	std::string getType();
+    virtual std::string getName();
+    virtual std::string getType();
 
 	/*!
 	Print status information.
@@ -145,11 +145,11 @@ public:
 	/*!
 		get the complete setup of all robot nodes
 	*/
-	RobotConfigPtr getConfig();
+    virtual RobotConfigPtr getConfig();
 	/*!
 		Sets the configuration according to the RobotNodes, defined in c. All other nodes are not affected.
 	*/
-	bool setConfig(RobotConfigPtr c);
+    virtual bool setConfig(RobotConfigPtr c);
 
 	/*!
 		This method is automatically called in RobotNode's initialization routine.
@@ -159,7 +159,7 @@ public:
 	virtual bool hasRobotNode( RobotNodePtr node )=0;
 	virtual bool hasRobotNode( const std::string &robotNodeName ) = 0;
 	virtual RobotNodePtr getRobotNode(const std::string &robotNodeName) = 0;
-	std::vector< RobotNodePtr > getRobotNodes();
+    virtual std::vector< RobotNodePtr > getRobotNodes();
 	virtual void getRobotNodes(std::vector< RobotNodePtr > &storeNodes, bool clearVector=true) = 0;
 
 	/*!
@@ -167,25 +167,25 @@ public:
 	*/
 	virtual void registerRobotNodeSet(RobotNodeSetPtr nodeSet)=0;
 	virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet)=0;
-	bool hasRobotNodeSet( RobotNodeSetPtr nodeSet );
+    virtual bool hasRobotNodeSet( RobotNodeSetPtr nodeSet );
 	virtual bool hasRobotNodeSet( const std::string &name ) = 0;
 	virtual RobotNodeSetPtr getRobotNodeSet(const std::string &nodeSetName) =0;
-	std::vector<RobotNodeSetPtr> getRobotNodeSets();
+    virtual std::vector<RobotNodeSetPtr> getRobotNodeSets();
 	virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr> &storeNodeSet)=0;
 
 	/**
 	 *
 	 */
 	virtual void registerEndEffector(EndEffectorPtr endEffector)=0;
-	bool hasEndEffector(EndEffectorPtr endEffector);
+    virtual bool hasEndEffector(EndEffectorPtr endEffector);
 	virtual bool hasEndEffector(const std::string& endEffectorName)=0;
 	virtual EndEffectorPtr getEndEffector(const std::string& endEffectorName)=0;
-	std::vector<EndEffectorPtr> getEndEffectors();
+    virtual std::vector<EndEffectorPtr> getEndEffectors();
 	virtual void getEndEffectors(std::vector<EndEffectorPtr> &storeEEF)=0;
 
-	std::vector< CollisionModelPtr > getCollisionModels();
+    virtual std::vector< CollisionModelPtr > getCollisionModels();
 
-	CollisionCheckerPtr getCollisionChecker();
+    virtual CollisionCheckerPtr getCollisionChecker();
 
 	/*!
 	  Convenient method for highlighting the visualization of this robot.
@@ -210,7 +210,7 @@ public:
 	/*!
 		Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
 	*/
-	void setGlobalPoseForRobotNode(const RobotNodePtr &node, const Eigen::Matrix4f &globalPoseNode);
+    virtual void setGlobalPoseForRobotNode(const RobotNodePtr &node, const Eigen::Matrix4f &globalPoseNode);
 
 	//virtual Eigen::Matrix4f getGlobalPose() = 0;
 
@@ -226,7 +226,7 @@ public:
 	/*!
 		Return accumulated mass of this robot.
 	*/
-	float getMass();
+    virtual float getMass();
 
 	/*!
 		Extract a sub kinematic from this robot and create a new robot instance.
@@ -238,7 +238,7 @@ public:
 		\param collisionChecker The new robot can be registered to a different collision checker. If not set, the collision checker of the original robot is used.
 		\param scaling Can be set to create a scaled version of this robot. Scaling is applied on kinematic, visual, and collision data.
 	*/
-	RobotPtr extractSubPart(RobotNodePtr startJoint, const std::string &newRobotType, const std::string &newRobotName, bool cloneRNS = true, bool cloneEEFs = true, CollisionCheckerPtr collisionChecker=CollisionCheckerPtr(), float scaling = 1.0f);
+    virtual RobotPtr extractSubPart(RobotNodePtr startJoint, const std::string &newRobotType, const std::string &newRobotName, bool cloneRNS = true, bool cloneEEFs = true, CollisionCheckerPtr collisionChecker=CollisionCheckerPtr(), float scaling = 1.0f);
 
 	/*!
 		Clones this robot.
@@ -247,17 +247,17 @@ public:
 		\param scaling Scale Can be set to create a scaled version of this robot. Scaling is applied on kinematic, visual, and collision data.
 
 	*/
-	RobotPtr clone(const std::string &name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+    virtual RobotPtr clone(const std::string &name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
 
 	/*!
 		Just storing the filename.
 	*/
-	void setFilename(const std::string &filename);
+    virtual void setFilename(const std::string &filename);
 
 	/*!
 		Retrieve the stored filename.
 	*/
-	std::string getFilename();
+    virtual std::string getFilename();
 
 	/*!
 		This readlock can be used to protect data access. It locks the mutex until deletion.
@@ -273,7 +273,7 @@ public:
 
 		} // end of scope -> lock gets deleted and mutex is released automatically
 	*/
-	ReadLockPtr getReadLock();
+    virtual ReadLockPtr getReadLock();
 	/*!
 		This writelock can be used to protect data access. It locks the mutex until deletion.
 		For internal use. API users will usually not need this functionality since all data access is protected automatically.
@@ -288,60 +288,60 @@ public:
 
 		} // end of scope -> lock gets deleted and mutex is released automatically
 	*/
-	WriteLockPtr getWriteLock();
+    virtual WriteLockPtr getWriteLock();
 
 	/*!
 		Set a joint value [rad].
 		The internal matrices and visualizations are updated accordingly.
 		If you intend to update multiple joints, use \ref setJointValues for faster access.
 	*/
-	void setJointValue(RobotNodePtr rn, float jointValue);
+    virtual void setJointValue(RobotNodePtr rn, float jointValue);
 	/*!
 		Set a joint value [rad].
 		The internal matrices and visualizations are updated accordingly.
 		If you intend to update multiple joints, use \ref setJointValues for faster access.
 	*/
-	void setJointValue(const std::string &nodeName, float jointValue);
+    virtual void setJointValue(const std::string &nodeName, float jointValue);
 
 	/*!
 		Set joint values [rad].
 		The complete robot is updated to apply the new joint values.
 		\param jointValues A map containing RobotNode names with according values.
 	*/
-	void setJointValues(const std::map< std::string, float > &jointValues );
+    virtual void setJointValues(const std::map< std::string, float > &jointValues );
 	/*!
 		Set joint values [rad].
 		The complete robot is updated to apply the new joint values.
 		\param jointValues A map containing RobotNodes with according values.
 	*/
-	void setJointValues(const std::map< RobotNodePtr, float > &jointValues );
+    virtual void setJointValues(const std::map< RobotNodePtr, float > &jointValues );
 	/*!
 		Set joint values [rad].
 		The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
 		\param rns The RobotNodeSet defines the joints
 		\param jointValues A vector with joint values, size must be equal to rns.
 	*/
-	void setJointValues(RobotNodeSetPtr rns, const std::vector<float> &jointValues);
+    virtual void setJointValues(RobotNodeSetPtr rns, const std::vector<float> &jointValues);
 	/*!
 		Set joint values [rad].
 		The complete robot is updated to apply the new joint values.
 		\param rn The RobotNodes
 		\param jointValues A vector with joint values, size must be equal to rn.
 	*/
-	void setJointValues(const std::vector<RobotNodePtr> rn, const std::vector<float> &jointValues);
+    virtual void setJointValues(const std::vector<RobotNodePtr> rn, const std::vector<float> &jointValues);
 	/*!
 		Set joint values [rad].
 		The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
 		\param rns The RobotNodeSet defines the joints
 		\param jointValues A vector with joint values, size must be equal to rns.
 	*/
-	void setJointValues(RobotNodeSetPtr rns, const Eigen::VectorXf &jointValues);
+    virtual void setJointValues(RobotNodeSetPtr rns, const Eigen::VectorXf &jointValues);
 	/*!
 		Set joint values [rad].
 		The complete robot is updated to apply the new joint values.
 		\param config The RobotConfig defines the RobotNodes and joint values.
 	*/
-	void setJointValues(RobotConfigPtr config);
+    virtual void setJointValues(RobotConfigPtr config);
 	/*!
 		Set joint values [rad].
 		Only those joints in config are affected which are present in rns.
@@ -349,30 +349,30 @@ public:
 		\param rns Only joints in this rns are updated.
 		\param config The RobotConfig defines the RobotNodes and joint values.
 	*/
-	void setJointValues(RobotNodeSetPtr rns, RobotConfigPtr config);
+    virtual void setJointValues(RobotNodeSetPtr rns, RobotConfigPtr config);
 	/*!
 		Apply configuration of trajectory at time t
 		\param trajectory The trajectory
 		\param t The time (0<=t<=1)
 	*/
-	void setJointValues(TrajectoryPtr trajectory, float t);
+    virtual void setJointValues(TrajectoryPtr trajectory, float t);
 
 	/*!
 		The (current) bounding box in global coordinate system.
 		\param collisionModel Either the collision or the visualization model is considered.
 		\return The bounding box.
 	*/
-	BoundingBox getBoundingBox(bool collisionModel = true);
+    virtual BoundingBox getBoundingBox(bool collisionModel = true);
 
 	/*!
 	 * Returns the sensor with the given name.
 	 */
-	SensorPtr getSensor(const std::string& name);
+    virtual SensorPtr getSensor(const std::string& name);
 
 	/*!
 		Returns all sensors that are defined within this robot.
 	*/
-	std::vector<SensorPtr> getSensors();
+    virtual std::vector<SensorPtr> getSensors();
 
 	/*!
 		Creates an XML string that defines the complete robot. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.

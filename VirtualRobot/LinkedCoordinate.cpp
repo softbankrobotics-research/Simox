@@ -9,6 +9,27 @@ using namespace std;
 
 
 
+LinkedCoordinate::LinkedCoordinate(const LinkedCoordinate &other)
+{
+    robot = other.robot;
+    pose = other.pose;
+    frame = other.frame;
+}
+
+LinkedCoordinate &LinkedCoordinate::operator=(const LinkedCoordinate &other)
+{
+    robot = other.robot;
+    pose = other.pose;
+    frame = other.frame;
+    return *this;
+}
+
+LinkedCoordinate::~LinkedCoordinate()
+{
+    frame.reset();
+    robot.reset();
+}
+
 void LinkedCoordinate::set( const RobotNodePtr &frame,const Eigen::Matrix4f &pose) {
 	if (!frame) 
 		THROW_VR_EXCEPTION(format("RobotNodePtr not assigned (LinkedCoordinate::%1%)") %  BOOST_CURRENT_FUNCTION);

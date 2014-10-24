@@ -756,7 +756,21 @@ void Robot::setJointValues( const std::map< std::string, float > &jointValues )
 		rn->setJointValueNoUpdate(it->second);
 		it++;
 	}
-	applyJointValuesNoLock();
+    applyJointValuesNoLock();
+}
+
+void Robot::setJointValues(const std::map<RobotNodePtr, float> &jointValues)
+{
+    WriteLock(mutex,use_mutex);
+
+    std::map< RobotNodePtr, float >::const_iterator it = jointValues.begin();
+    while (it != jointValues.end())
+    {
+        RobotNodePtr rn = it->first;
+        rn->setJointValueNoUpdate(it->second);
+        it++;
+    }
+    applyJointValuesNoLock();
 }
 
 void Robot::setJointValues( RobotNodeSetPtr rns, const std::vector<float> &jointValues )

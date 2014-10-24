@@ -55,7 +55,11 @@ public:
 	/** Creates a new intelligent coordinate.
 	 * @param virtualRobot Pointer to the virtual robot the coordinate is connected to.
 	 */
-	LinkedCoordinate(RobotPtr &virtualRobot) : robot(virtualRobot), pose(Eigen::Matrix4f::Identity()){};
+    LinkedCoordinate(RobotPtr &virtualRobot) : robot(virtualRobot), pose(Eigen::Matrix4f::Identity()){}
+    LinkedCoordinate( const LinkedCoordinate &other );  // copy constructor
+    LinkedCoordinate& operator=( const LinkedCoordinate& other );
+
+    virtual ~LinkedCoordinate();
 
 	/** Sets the frame of reference and the pose relative to it.
 	 * @param frame The name of the robot node that defines the reference frame of the coordinate.
