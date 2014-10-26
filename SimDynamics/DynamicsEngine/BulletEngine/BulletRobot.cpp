@@ -1248,6 +1248,35 @@ Eigen::Vector3f BulletRobot::getAngularMomentumGlobal(const VirtualRobot::RobotN
 	return angMomentum;
 }
 
+Eigen::Vector3f BulletRobot::getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set)
+{
+	MutexLockPtr lock = getScopedLock();
+	Eigen::Vector3f angMomentum = Eigen::Vector3f::Zero();
+	Eigen::Vector3f com = getComGlobal(set) / 1000.0;
+	Eigen::Vector3f comVel = getComVelocityGlobal(set) / 1000;
+	for (unsigned int i = 0; i < set->getSize(); i++)
+	{
+		VirtualRobot::RobotNodePtr node = (*set)[i];
+		BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
+		Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0;
+		Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
+		Eigen::Vector3f bodyCoM = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
+		double mass = node->getMass();
+
+		boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
+
+		btVector3 invIntertiaDiag = body->getInvInertiaDiagLocal();
+		Eigen::Matrix3f intertiaLocal = Eigen::Matrix3f::Zero();
+		intertiaLocal(0, 0) = 1 / invIntertiaDiag.getX();
+		intertiaLocal(1, 1) = 1 / invIntertiaDiag.getY();
+		intertiaLocal(2, 2) = 1 / invIntertiaDiag.getZ();
+
+		angMomentum += mass * (bodyCoM - com).cross(bodyVel - comVel) + intertiaLocal * ang;
+	}
+
+	return angMomentum;
+}
+
 void BulletRobot::setPoseNonActuatedRobotNodes()
 {
     MutexLockPtr lock = getScopedLock();

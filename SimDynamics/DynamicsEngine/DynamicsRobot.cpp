@@ -315,6 +315,11 @@ Eigen::Vector3f DynamicsRobot::getAngularMomentumGlobal(const VirtualRobot::Robo
     return Eigen::Vector3f::Zero();
 }
 
+Eigen::Vector3f DynamicsRobot::getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set)
+{
+    return Eigen::Vector3f::Zero();
+}
+
 void DynamicsRobot::setGlobalPose(Eigen::Matrix4f &gp)
 {
     MutexLockPtr lock = getScopedLock();

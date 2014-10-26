@@ -104,6 +104,7 @@ public:
 
     virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
     virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+    virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set);
 
     virtual void setGlobalPose(Eigen::Matrix4f &gp);
 

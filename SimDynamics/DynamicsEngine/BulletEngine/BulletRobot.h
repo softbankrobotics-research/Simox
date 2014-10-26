@@ -162,6 +162,11 @@ public:
      */
     virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
 
+    /*!
+     * Returns the angular momentum in Nms for the bodies in the nodeset relative to the CoM
+     */
+    virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set);
+
 	// experimental...
 	virtual void ensureKinematicConstraints();
 
