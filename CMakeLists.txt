@@ -42,7 +42,11 @@ if (Simox_BUILD_SimDynamics)
 
     list (APPEND Simox_EXTERNAL_LIBRARIES ${Simox_SimDynamics_EXTERNAL_LIBRARIES})
     list (APPEND Simox_EXTERNAL_INCLUDE_DIRS ${Simox_SimDynamics_INCLUDE_DIRS})
-    list (APPEND Simox_EXTERNAL_LIBRARY_FLAGS ${Simox_SimDynamics_COMPILE_FLAGS})
+    #MESSAGE ("Simox_EXTERNAL_LIBRARY_FLAGS::: ${Simox_EXTERNAL_LIBRARY_FLAGS} !!!!!!!!!!!!!!!!")
+    #MESSAGE ("Simox_SimDynamics_COMPILE_FLAGS::: ${Simox_SimDynamics_COMPILE_FLAGS} !!!!!!!!!!!!!!!!")
+    #list (APPEND Simox_EXTERNAL_LIBRARY_FLAGS ${Simox_SimDynamics_COMPILE_FLAGS})
+    set (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} ${Simox_SimDynamics_COMPILE_FLAGS}")
+    #MESSAGE ("Simox_EXTERNAL_LIBRARY_FLAGS::: ${Simox_EXTERNAL_LIBRARY_FLAGS} !!!!!!!!!!!!!!!!")
 
 
 
