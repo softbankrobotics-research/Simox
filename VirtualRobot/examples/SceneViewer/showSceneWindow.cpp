@@ -220,16 +220,53 @@ void showSceneWindow::loadScene()
     currentTrajectory.reset();
 	cout << "Loading Scene from " << sceneFile << endl;
 
+    scene.reset();
 	try
 	{
 		scene = SceneIO::loadScene(sceneFile);
 	}
 	catch (VirtualRobotException &e)
 	{
-		cout << " ERROR while creating scene" << endl;
-		cout << e.what();
-		return;
-	}
+        cout << "Could not find valid scene in file " << sceneFile << endl;
+    }
+
+    if (!scene)
+    {
+        // try manip object
+        try
+        {
+
+            ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(sceneFile);
+            if (mo)
+            {
+                scene.reset(new Scene(mo->getName()));
+                scene->registerManipulationObject(mo);
+            }
+        }
+        catch (VirtualRobotException &e)
+        {
+            cout << "Could not find valid manipulation object in file " << sceneFile << endl;
+        }
+    }
+
+    if (!scene)
+    {
+        // try object
+        try
+        {
+
+            ObstaclePtr mo = ObjectIO::loadObstacle(sceneFile);
+            if (mo)
+            {
+                scene.reset(new Scene(mo->getName()));
+                scene->registerObstacle(mo);
+            }
+        }
+        catch (VirtualRobotException &e)
+        {
+            cout << "Could not find valid obstacle in file " << sceneFile << endl;
+        }
+    }
 
 	if (!scene)
 	{
@@ -405,6 +442,8 @@ void showSceneWindow::updateGui()
 	UI.comboBoxRobot->clear();
 	UI.comboBoxRobotConfig->clear();
 	UI.comboBoxTrajectory->clear();
+    UI.comboBoxEEF->clear();
+
 
 	currentRobot.reset();
 	if (!scene)
