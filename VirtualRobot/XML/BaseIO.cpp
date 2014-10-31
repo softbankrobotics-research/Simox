@@ -1122,6 +1122,11 @@ std::string BaseIO::processFileNode( rapidxml::xml_node<char> *fileNode, const s
 		if (RuntimeEnvironment::getDataFileAbsolute(absFileName))
 			return absFileName;
 
+        absFileName = fileName;
+        makeAbsolutePath(basePath,absFileName);
+        if (RuntimeEnvironment::getDataFileAbsolute(absFileName))
+            return absFileName;
+
 		VR_ERROR << "Could not determine valid filename from " << fileName << endl;
 	}
 	return fileName;
