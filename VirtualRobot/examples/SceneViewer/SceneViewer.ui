@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>792</width>
-    <height>657</height>
+    <width>798</width>
+    <height>695</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,6 +242,19 @@
         </property>
        </widget>
       </widget>
+      <widget class="QCheckBox" name="checkBoxColModel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>590</y>
+         <width>181</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Collision Model</string>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -251,8 +264,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>792</width>
-     <height>21</height>
+     <width>798</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

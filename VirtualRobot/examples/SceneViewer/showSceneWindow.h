@@ -56,7 +56,8 @@ public slots:
 	void sliderMoved(int pos);
 
 	void closeHand();
-	void openHand();
+    void openHand();
+    void colModel();
 
 	SoQtExaminerViewer* getExaminerViewer(){return viewer;};
 

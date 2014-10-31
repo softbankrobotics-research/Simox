@@ -81,6 +81,7 @@ void showSceneWindow::setupUI()
 	connect(UI.pushButtonEEFOpen, SIGNAL(clicked()), this, SLOT(openHand()));
 	connect(UI.comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
 	connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
+    connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
 
 	/*
 	connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
@@ -88,7 +89,6 @@ void showSceneWindow::setupUI()
 	UI.checkBoxFullModel->setChecked(true);
 	connect(UI.checkBoxFullModel, SIGNAL(clicked()), this, SLOT(robotFullModel()));
 	connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked()), this, SLOT(robotCoordSystems()));
-	connect(UI.checkBoxShowCoordSystem, SIGNAL(clicked()), this, SLOT(showCoordSystem()));
 	connect(UI.comboBoxRobotNodeSet, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
 	connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
 	connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));*/
@@ -123,8 +123,13 @@ void showSceneWindow::resetSceneryAll()
 
 void showSceneWindow::closeEvent(QCloseEvent *event)
 {
-	quit();
-	QMainWindow::closeEvent(event);
+    quit();
+    QMainWindow::closeEvent(event);
+}
+
+void showSceneWindow::colModel()
+{
+    buildVisu();
 }
 
 
@@ -134,7 +139,11 @@ void showSceneWindow::buildVisu()
 	if (!scene)
 		return;
 	sceneVisuSep->removeAllChildren();
-	visualization = scene->getVisualization<CoinVisualization>();
+    SceneObject::VisualizationType visuType = SceneObject::Full;
+    if (UI.checkBoxColModel->isChecked())
+        visuType = SceneObject::Collision;
+
+    visualization = scene->getVisualization<CoinVisualization>(visuType);
 	SoNode* visualisationNode = NULL;
 	if (visualization)
 		visualisationNode = visualization->getCoinVisualization();
