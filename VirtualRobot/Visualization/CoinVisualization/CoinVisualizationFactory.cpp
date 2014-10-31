@@ -2670,12 +2670,13 @@ namespace VirtualRobot {
 			return false;
 		}
 
+        //we assume mm
 		SoPerspectiveCamera *cam = new SoPerspectiveCamera();
 		cam->ref();
 		// set camera position and orientation
 		Eigen::Matrix4f camPose = camNode->getGlobalPose();
 		Eigen::Vector3f camPos = MathTools::getTranslation(camPose);
-		float sc = 0.001f;
+        float sc = 1.0f;//0.001f;
 		cam->position.setValue(camPos[0]*sc,camPos[1]*sc,camPos[2]*sc);
 		SbRotation align(SbVec3f(1,0,0),(float)(M_PI)); // first align from  default direction -z to +z by rotating with 180 degree around x axis
 		SbRotation align2(SbVec3f(0,0,1),(float)(-M_PI/2.0)); // align up vector by rotating with -90 degree around z axis
@@ -2683,8 +2684,11 @@ namespace VirtualRobot {
 		cam->orientation.setValue( align2*align*trans ); // perform total transformation
 
 		// todo: check these values....
-		cam->nearDistance.setValue(0.0010f);
-		cam->farDistance.setValue(10.0f);
+        cam->nearDistance.setValue(10.0f);
+        cam->farDistance.setValue(100000.0f);
+
+        //cam->nearDistance.setValue(0.0010f);
+        //cam->farDistance.setValue(10.0f);
 
 		bool res = renderOffscreen(renderer,cam,scene,buffer);
 		cam->unref();
