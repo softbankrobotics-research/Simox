@@ -619,11 +619,11 @@ void BaseIO::makeRelativePath( const std::string &basePath, std::string &filenam
 		return;
 #if (BOOST_VERSION>=104800)
     // canonical needs boost version >=1.48
-    namespace fs = boost::filesystem;    
+    namespace fs = boost::filesystem;
 
     fs::path filepath;
     if(fs::path(filename).is_absolute() && boost::filesystem::exists(fs::path(basePath) / fs::path(filename)))
-    {        
+    {
         return;
     }
     else if(fs::path(filename).is_absolute() && boost::filesystem::exists(fs::path(filename)))
@@ -633,8 +633,8 @@ void BaseIO::makeRelativePath( const std::string &basePath, std::string &filenam
     else
 	{
 		// combine paths
-		fs::path res = fs::path(basePath) / fs::path(filename).filename();
-		filename = res.generic_string();
+	//	fs::path res = fs::path(basePath) / fs::path(filename).filename();
+	//	filename = res.generic_string();
 		return;
         //THROW_VR_EXCEPTION("Could not make path " + filename + " relative to " + basePath);
 	}
@@ -661,7 +661,7 @@ void BaseIO::makeRelativePath( const std::string &basePath, std::string &filenam
     filename = newPath.generic_string();
 #else
 	// version compatible with boost below version 1.48,
-	// may be buggy in some cases... 
+	// may be buggy in some cases...
 	boost::filesystem::path diffpath;
 	boost::filesystem::path tmppath = filename;
 	while(tmppath != basePath)
