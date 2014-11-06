@@ -42,7 +42,7 @@ public:
 	/*!
 	Creates an empty robot.
 	*/
-	static RobotPtr createRobot(const std::string &name);
+    static RobotPtr createRobot(const std::string &name, const std::string &type = "");
 
 	/*!
 		Initializes Robot and all RobotNodes. 

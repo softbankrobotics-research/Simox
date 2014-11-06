@@ -24,9 +24,9 @@ RobotFactory::~RobotFactory()
 }
 
 
-RobotPtr RobotFactory::createRobot( const std::string &name )
+RobotPtr RobotFactory::createRobot(const std::string &name, const std::string &type)
 {
-	RobotPtr result(new LocalRobot(name));
+	RobotPtr result(new LocalRobot(name, type));
 	return result;
 
 }
@@ -243,7 +243,7 @@ RobotPtr RobotFactory::cloneChangeStructure(RobotPtr robot, robotStructureDef &n
     }
 
     std::map<std::string, RobotNodePtr> newNodes;
-    RobotPtr newRobot = createRobot(robot->getName());
+    RobotPtr newRobot = createRobot(robot->getName(), robot->getType() + "_restructured_" + newStructure.rootName);
     RobotNodePtr rn = robot->getRobotNode(newStructure.rootName);
     rn = rn->clone(newRobot, false);
     newNodes[newStructure.rootName] = rn;
