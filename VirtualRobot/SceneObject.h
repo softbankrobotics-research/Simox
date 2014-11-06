@@ -197,9 +197,16 @@ public:
 	virtual Eigen::Matrix4f getGlobalPoseVisualization() const;
 
 	/*!
-		Update the pose of this object. The visualization and collision models are updated accordingly.
+        Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
+        \param pose The new pose of this object
 	*/
-	virtual void setGlobalPose(const Eigen::Matrix4f &pose);
+    virtual void setGlobalPoseNoChecks(const Eigen::Matrix4f &pose);
+    /*!
+        Update the pose of this object. The visualization and collision models are updated accordingly.
+        \param pose The new pose of this object
+        \param force: Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
+    */
+    virtual void setGlobalPose(const Eigen::Matrix4f &pose);
 
 	virtual CollisionModelPtr getCollisionModel();
 	virtual CollisionCheckerPtr getCollisionChecker();
@@ -422,7 +429,7 @@ public:
 	virtual std::vector<SceneObjectPtr> getChildren() const {return children;}
 
     //! Compute the global pose of this object 
-    virtual void updatePose( bool updateChildren = true);
+    virtual void updatePose(bool updateChildren = true);
 
     /*!
         Saves model files (visu and col model, if present) to model path.

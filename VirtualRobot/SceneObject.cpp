@@ -78,19 +78,25 @@ bool SceneObject::initialize(SceneObjectPtr parent, const std::vector<SceneObjec
 	return initializePhysics();	
 }
 
-void SceneObject::setGlobalPose( const Eigen::Matrix4f &pose )
+void SceneObject::setGlobalPose( const Eigen::Matrix4f &pose)
 {
-	SceneObjectPtr p = getParent();
-	if (p)
-	{
-		VR_ERROR << "Could not set pose of <" << name << ">. The object is attached to <" << p->getName() << ">" << endl;
-		return;
-	}
-	updatePose(pose);
+    SceneObjectPtr p = getParent();
+    if (p)
+    {
+        VR_ERROR << "Could not set pose of <" << name << ">. The object is attached to <" << p->getName() << ">" << endl;
+        return;
+    }
+
+    updatePose(pose);
+}
+
+void SceneObject::setGlobalPoseNoChecks(const Eigen::Matrix4f &pose)
+{
+    updatePose(pose);
 }
 
 
-void SceneObject::updatePose( bool updateChildren)
+void SceneObject::updatePose(bool updateChildren)
 {
 	Eigen::Matrix4f gp = getGlobalPoseVisualization();
 	if (visualizationModel)
