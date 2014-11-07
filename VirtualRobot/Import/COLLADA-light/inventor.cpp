@@ -180,8 +180,12 @@ void addGeometry(SoSeparator * separator,const pugi::xml_node &node){
         }
 
         BOOST_FOREACH(pugi::xpath_node polylist, mesh.select_nodes(".//polylist")){
-
-            std::vector<float> color = colormap.at(polylist.node().attribute("material").value());
+            //std::cout << "id: " << geometry.attribute("id").value() << std::endl;
+            std::vector<float> color;
+            if (polylist.node().attribute("material"))
+                color = colormap.at(polylist.node().attribute("material").value());
+            else
+                color = std::vector<float>(3,0.5);
 
             SoMaterial * mat  = new SoMaterial;
             separator->addChild(mat);

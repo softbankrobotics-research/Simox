@@ -15,7 +15,8 @@ int main(int argc, char **argv ){
     InventorRobot robot(root);
 
     if (argc==1)
-        robot.parse("../RobotEditorArmar4.dae");
+        //robot.parse("../RobotEditorArmar4.dae");
+        robot.parse("/media/sf_host/manikin_creo_4.dae");
     else
         robot.parse(argv[1]);
 
