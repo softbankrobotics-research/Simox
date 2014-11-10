@@ -865,7 +865,7 @@ std::vector<SensorPtr> Robot::getSensors()
 	return result;
 }
 
-std::string Robot::toXML( const std::string &modelPath /*= "models"*/, bool storeEEF, bool storeRNS, bool storeSensors )
+std::string Robot::toXML(const std::string &basePath,  const std::string &modelPath /*= "models"*/, bool storeEEF, bool storeRNS, bool storeSensors )
 {
     std::stringstream ss;
     ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
@@ -873,7 +873,7 @@ std::string Robot::toXML( const std::string &modelPath /*= "models"*/, bool stor
     std::vector<RobotNodePtr> nodes = getRobotNodes();
     for (size_t i=0;i<nodes.size();i++)
     {
-        ss << nodes[i]->toXML(modelPath, storeSensors) << endl;
+        ss << nodes[i]->toXML(basePath, modelPath, storeSensors) << endl;
     }
     ss << endl;
 	if (storeRNS)

@@ -291,7 +291,7 @@ public:
 		Creates an XML string that defines the robotnode. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
 		@see RobotIO::saveXML.
 	*/
-	virtual std::string toXML(const std::string &modelPath = "models", bool storeSensors = true);
+    virtual std::string toXML( const std::string &basePath, const std::string &modelPathRelative = "models", bool storeSensors = true);
 
 protected:
 

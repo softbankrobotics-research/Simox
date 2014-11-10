@@ -1212,7 +1212,7 @@ bool RobotIO::saveXML(RobotPtr robot, const std::string &filename, const std::st
         return false;
     }
 
-    std::string xmlRob = robot->toXML(modelDir, storeEEF, storeRNS, storeSensors);
+    std::string xmlRob = robot->toXML(basePath, modelDir, storeEEF, storeRNS, storeSensors);
     f << xmlRob;
     f.close();
 

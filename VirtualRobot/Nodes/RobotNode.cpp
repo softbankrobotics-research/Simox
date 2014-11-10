@@ -15,6 +15,7 @@
 
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/pointer_cast.hpp>
+#include <boost/filesystem.hpp>
 
 #include <Eigen/Core>
 
@@ -693,7 +694,7 @@ std::vector<SensorPtr> RobotNode::getSensors() const
 	return sensors;
 }
 
-std::string RobotNode::toXML( const std::string &modelPath /*= "models"*/, bool storeSensors )
+std::string RobotNode::toXML( const std::string &basePath, const std::string &modelPathRelative /*= "models"*/, bool storeSensors )
 {
     std::stringstream ss;
     ss << "\t<RobotNode name='" << name << "'>" << endl;
@@ -703,24 +704,35 @@ std::string RobotNode::toXML( const std::string &modelPath /*= "models"*/, bool 
         ss << BaseIO::toXML(localTransformation,"\t\t\t");
         ss << "\t\t</Transform>" << endl;
     }
-    ss << _toXML(modelPath);
+    ss << _toXML(modelPathRelative);
 	if (physics.isSet())
 		ss << physics.toXML(2);
-	if (visualizationModel && visualizationModel->getTriMeshModel() && visualizationModel->getTriMeshModel()->faces.size()>0)
+    boost::filesystem::path pBase(basePath);
+    if (visualizationModel && visualizationModel->getTriMeshModel() && visualizationModel->getTriMeshModel()->faces.size()>0)
 	{
 		std::string visuFile = getFilenameReplacementVisuModel();
-        ss << visualizationModel->toXML(modelPath,visuFile,2);
+
+        boost::filesystem::path pModel(modelPathRelative);
+        boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase,pModel);
+        boost::filesystem::path fn(visuFile);
+        boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete,fn);
+
+        ss << visualizationModel->toXML(pBase.string(),modelFileComplete.string(),2);
 	}
 	if (collisionModel && collisionModel->getTriMeshModel() && collisionModel->getTriMeshModel()->faces.size()>0)
 	{
 		std::string colFile = getFilenameReplacementColModel();
-        ss << collisionModel->toXML(modelPath,colFile,2);
+        boost::filesystem::path pModel(modelPathRelative);
+        boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase,pModel);
+        boost::filesystem::path fn(colFile);
+        boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete,fn);
+        ss << collisionModel->toXML(pBase.string(),modelFileComplete.string(),2);
 	}
     if (storeSensors)
 	{
 		for (size_t i=0;i<sensors.size();i++)
 		{
-			ss << sensors[i]->toXML(modelPath,2);
+            ss << sensors[i]->toXML(modelPathRelative,2);
 		}
 	}
 
