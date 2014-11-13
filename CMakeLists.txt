@@ -68,7 +68,6 @@ add_subdirectory(doc)
 ############################################
 MESSAGE (STATUS "** Simox: Generating CMake files for build and install setup")
 
-
 # Add all targets to the build-tree export set
 
 export(TARGETS ${SIMOX_EXPORT_TARGET_LIST}
@@ -87,11 +86,20 @@ set(Simox_MACROS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/CMakeModules")
 configure_file(CMakeModules/SimoxBuildTreeSettings.cmake.in
     "${PROJECT_BINARY_DIR}/SimoxBuildTreeSettings.cmake" @ONLY)
 
-
+MESSAGE ("INSTALL_CMAKE_DIR:${INSTALL_CMAKE_DIR}")
 # ... for the install tree
+#file(RELATIVE_PATH RELATIVE_INSTALL_DIR
+#     "${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR}"
+#     "${CMAKE_INSTALL_PREFIX}")
+# INSTALL_CMAKE_DIR is already absolute
 file(RELATIVE_PATH RELATIVE_INSTALL_DIR
-     "${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR}"
+     "${INSTALL_CMAKE_DIR}"
      "${CMAKE_INSTALL_PREFIX}")
+
+#MESSAGE ("RELATIVE_PATH:${RELATIVE_PATH}")
+#MESSAGE ("RELATIVE_INSTALL_DIR:${RELATIVE_INSTALL_DIR}")
+#MESSAGE ("CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
+#MESSAGE ("INSTALL_CMAKE_DIR:${INSTALL_CMAKE_DIR}")
 
 set(CONF_INCLUDE_DIRS "${INSTALL_INCLUDE_DIR}")
 set(Simox_DATA_PATH "${Simox_INSTALL_DATA_DIR}")
