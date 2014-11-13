@@ -30,13 +30,14 @@ IF (NOT Simox_CONFIGURED)
   set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
     "Installation directory for CMake files")
  
-  # Make relative paths absolute (needed later on)
-  foreach(p LIB BIN INCLUDE CMAKE)
-    set(var INSTALL_${p}_DIR)
-    if(NOT IS_ABSOLUTE "${${var}}")
-      set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-    endif()
-  endforeach()
+  # Make relative paths absolute (needed later on) 
+  # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
+  #foreach(p LIB BIN INCLUDE CMAKE)
+  #  set(var INSTALL_${p}_DIR)
+  #  if(NOT IS_ABSOLUTE "${${var}}")
+  #    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  #  endif()
+  #endforeach()
  
   # set up include-directories
   include_directories(
