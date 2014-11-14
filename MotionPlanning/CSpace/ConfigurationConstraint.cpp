@@ -4,13 +4,13 @@
 namespace Saba
 {
 
-ConfigurationConstraint::ConfigurationConstraint(unsigned int dimension)
-{
-	this->dimension = dimension;
-}
+    ConfigurationConstraint::ConfigurationConstraint(unsigned int dimension)
+    {
+        this->dimension = dimension;
+    }
 
-ConfigurationConstraint::~ConfigurationConstraint()
-{
-}
+    ConfigurationConstraint::~ConfigurationConstraint()
+    {
+    }
 
 }

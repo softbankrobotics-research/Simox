@@ -30,48 +30,48 @@
 
 namespace GraspStudio
 {
-	/*!
-	*
-	*
-	* This class generates grasping configs by sampling a random surface position of the object and setting the EEF to a surface normal aligned position.
-	* The remaining free DoF (the rotation around the normal) is set randomly. Then the EEF is moved along the normal until 
-	* a collision is detected or the GCP hits the object.
-	* If needed, the EEF is moved back until a collision-free pose is found.
-	*
-	* Internally the EEF is cloned.
-	*
-	*/
-class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementSurfaceNormal : public ApproachMovementGenerator
-{
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+    *
+    *
+    * This class generates grasping configs by sampling a random surface position of the object and setting the EEF to a surface normal aligned position.
+    * The remaining free DoF (the rotation around the normal) is set randomly. Then the EEF is moved along the normal until
+    * a collision is detected or the GCP hits the object.
+    * If needed, the EEF is moved back until a collision-free pose is found.
+    *
+    * Internally the EEF is cloned.
+    *
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementSurfaceNormal : public ApproachMovementGenerator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-	    To generate approach movements an object and an end effector has to be specified.
-		\param object The object.
-		\param eef The end effector.
-		\param graspPreshape An optional preshape that can be used in order to "open" the eef.
-		\param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
-	*/
-	ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string &graspPreshape = "", float maxRandDist = 0.0f);
-	//! destructor
-	virtual ~ApproachMovementSurfaceNormal();
+        /*!
+            To generate approach movements an object and an end effector has to be specified.
+            \param object The object.
+            \param eef The end effector.
+            \param graspPreshape An optional preshape that can be used in order to "open" the eef.
+            \param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
+        */
+        ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
+        //! destructor
+        virtual ~ApproachMovementSurfaceNormal();
 
-	//! Creates a new pose for approaching
-	virtual Eigen::Matrix4f createNewApproachPose();
+        //! Creates a new pose for approaching
+        virtual Eigen::Matrix4f createNewApproachPose();
 
-	//!  Returns a position with normal on the surface of the object
-	bool getPositionOnObject(Eigen::Vector3f &storePos, Eigen::Vector3f& storeApproachDir);
+        //!  Returns a position with normal on the surface of the object
+        bool getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir);
 
-	//! Sets EEF to a position so that the Z component of the GCP coord system is aligned with -approachDir
-	bool setEEFToApproachPose(const Eigen::Vector3f &position, const Eigen::Vector3f &approachDir);
+        //! Sets EEF to a position so that the Z component of the GCP coord system is aligned with -approachDir
+        bool setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir);
 
-	void moveEEFAway(const Eigen::Vector3f &approachDir, float step, int maxLoops = 1000);
+        void moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops = 1000);
 
-protected:
-	float randomDistanceMax;
+    protected:
+        float randomDistanceMax;
 
-};
+    };
 }
 
 #endif /* __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__ */

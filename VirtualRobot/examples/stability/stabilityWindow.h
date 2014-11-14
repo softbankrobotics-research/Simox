@@ -26,68 +26,68 @@
 
 class stabilityWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	stabilityWindow(std::string &sRobotFile, Qt::WFlags flags = 0);
-	~stabilityWindow();
+    stabilityWindow(std::string& sRobotFile, Qt::WFlags flags = 0);
+    ~stabilityWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
-	void resetSceneryAll();
-	void selectRobot();
-	void collisionModel();
-	void selectJoint(int nr);
-	void jointValueChanged(int pos);
-	void selectRNS(int nr);
-	void showCoM();
-	void showSupportPolygon();
-	void performCoMIK();
-	void comTargetMovedX(int value);
-	void comTargetMovedY(int value);
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
+    void resetSceneryAll();
+    void selectRobot();
+    void collisionModel();
+    void selectJoint(int nr);
+    void jointValueChanged(int pos);
+    void selectRNS(int nr);
+    void showCoM();
+    void showSupportPolygon();
+    void performCoMIK();
+    void comTargetMovedX(int value);
+    void comTargetMovedY(int value);
 
 
 protected:
-	void loadRobot();
-	void buildVisu();
-	
-	void setupUI();
-	QString formatString(const char *s, float f);
+    void loadRobot();
+    void buildVisu();
 
-	void updateJointBox();
-	void updateRNSBox();
-	void updateCoM();
-	void updateSupportVisu();
+    void setupUI();
+    QString formatString(const char* s, float f);
 
-	Ui::MainWindowStability UI;
-	SoQtExaminerViewer *m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    void updateJointBox();
+    void updateRNSBox();
+    void updateCoM();
+    void updateSupportVisu();
 
-	Eigen::Vector2f m_CoMTarget;
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotVisuSep;
-	SoSeparator *comVisu;
-	SoSeparator *comProjectionVisu;
-	SoSeparator *comTargetVisu;
-	SoSeparator *supportVisu;
-	
-	VirtualRobot::RobotPtr robot;
-	std::string robotFile;
-	
-	VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-	std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-	std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-	std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;	
-	
-	VirtualRobot::RobotNodePtr currentRobotNode;
-	
-	
-	bool useColModel;
+    Ui::MainWindowStability UI;
+    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+
+    Eigen::Vector2f m_CoMTarget;
+
+    SoSeparator* sceneSep;
+    SoSeparator* robotVisuSep;
+    SoSeparator* comVisu;
+    SoSeparator* comProjectionVisu;
+    SoSeparator* comTargetVisu;
+    SoSeparator* supportVisu;
+
+    VirtualRobot::RobotPtr robot;
+    std::string robotFile;
+
+    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
+    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
+    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
+    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+
+    VirtualRobot::RobotNodePtr currentRobotNode;
+
+
+    bool useColModel;
 
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;

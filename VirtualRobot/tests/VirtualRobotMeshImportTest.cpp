@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(VirtualRobotMeshImport)
 
 BOOST_AUTO_TEST_CASE(testParseSTL)
 {
-    const char *stlcontent = 
+    const char* stlcontent =
         "solid block100\n"
         "facet normal -1.000000e+000 0.000000e+000 0.000000e+000\n"
         "outer loop\n"
@@ -112,30 +112,30 @@ BOOST_AUTO_TEST_CASE(testParseSTL)
     istringstream ss(s);
     STLReaderPtr r(new STLReader());
     TriMeshModelPtr t(new TriMeshModel());
-    bool readSTLok = r->read(ss,STLReader::STLA,t);
+    bool readSTLok = r->read(ss, STLReader::STLA, t);
     BOOST_REQUIRE(readSTLok);
     BOOST_REQUIRE(t);
-    BOOST_CHECK_EQUAL(t->vertices.size(),8); // identical vertices are mapped to one vertex instance
-    BOOST_CHECK_EQUAL(t->faces.size(),12);
-    BOOST_CHECK_EQUAL(t->vertices.at(0)[0],0.0f);
-    BOOST_CHECK_EQUAL(t->vertices.at(0)[1],100.0f);
-    BOOST_CHECK_EQUAL(t->vertices.at(0)[2],100.0f);
+    BOOST_CHECK_EQUAL(t->vertices.size(), 8); // identical vertices are mapped to one vertex instance
+    BOOST_CHECK_EQUAL(t->faces.size(), 12);
+    BOOST_CHECK_EQUAL(t->vertices.at(0)[0], 0.0f);
+    BOOST_CHECK_EQUAL(t->vertices.at(0)[1], 100.0f);
+    BOOST_CHECK_EQUAL(t->vertices.at(0)[2], 100.0f);
 }
 
 BOOST_AUTO_TEST_CASE(testLoadSTL)
 {
 
-	std::string filename = "objects/stl/Piggy6.stl";
-	bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
-	BOOST_REQUIRE(fileOK);
+    std::string filename = "objects/stl/Piggy6.stl";
+    bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
+    BOOST_REQUIRE(fileOK);
 
     STLReaderPtr r(new STLReader());
     TriMeshModelPtr t(new TriMeshModel());
-    bool readSTLok = r->read(filename,t);
+    bool readSTLok = r->read(filename, t);
     BOOST_REQUIRE(readSTLok);
     BOOST_REQUIRE(t);
-    BOOST_CHECK_GT(int(t->vertices.size()),20);
-    BOOST_CHECK_GT(int(t->faces.size()),20);
+    BOOST_CHECK_GT(int(t->vertices.size()), 20);
+    BOOST_CHECK_GT(int(t->faces.size()), 20);
 }
 
 

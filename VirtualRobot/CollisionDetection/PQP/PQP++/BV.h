@@ -51,63 +51,66 @@
 namespace PQP
 {
 
-struct BV
-{
-  PQP_REAL R[3][3];     // orientation of RSS & OBB
+    struct BV
+    {
+        PQP_REAL R[3][3];     // orientation of RSS & OBB
 
 #if PQP_BV_TYPE & RSS_TYPE
-  PQP_REAL Tr[3];       // position of rectangle
-  PQP_REAL l[2];        // side lengths of rectangle
-  PQP_REAL r;           // radius of sphere summed with rectangle to form RSS
+        PQP_REAL Tr[3];       // position of rectangle
+        PQP_REAL l[2];        // side lengths of rectangle
+        PQP_REAL r;           // radius of sphere summed with rectangle to form RSS
 #endif
 
 #if PQP_BV_TYPE & OBB_TYPE
-  PQP_REAL To[3];       // position of obb
-  PQP_REAL d[3];        // (half) dimensions of obb
+        PQP_REAL To[3];       // position of obb
+        PQP_REAL d[3];        // (half) dimensions of obb
 #endif
 
-  int first_child;      // positive value is index of first_child bv
-                        // negative value is -(index + 1) of triangle
+        int first_child;      // positive value is index of first_child bv
+        // negative value is -(index + 1) of triangle
 
-  BV();
-  ~BV();
-  int      Leaf()    { return first_child < 0; }
-  PQP_REAL GetSize(); 
-  void     FitToTris(PQP_REAL O[3][3], Tri *tris, int num_tris);
+        BV();
+        ~BV();
+        int      Leaf()
+        {
+            return first_child < 0;
+        }
+        PQP_REAL GetSize();
+        void     FitToTris(PQP_REAL O[3][3], Tri* tris, int num_tris);
 
-  MatVec pqp_math;
-  PQP_REAL MaxOfTwo(PQP_REAL a, PQP_REAL b);
+        MatVec pqp_math;
+        PQP_REAL MaxOfTwo(PQP_REAL a, PQP_REAL b);
 
-};
+    };
 
-inline
-PQP_REAL 
-BV::GetSize()
-{
+    inline
+    PQP_REAL
+    BV::GetSize()
+    {
 #if PQP_BV_TYPE & RSS_TYPE
-  return (sqrt(l[0]*l[0] + l[1]*l[1]) + 2*r);
+        return (sqrt(l[0] * l[0] + l[1] * l[1]) + 2 * r);
 #else
-  return (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+        return (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
 #endif
-}
+    }
 
-class BV_Processor
-{
-public:
-int
-BV_Overlap(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2);
+    class BV_Processor
+    {
+    public:
+        int
+        BV_Overlap(PQP_REAL R[3][3], PQP_REAL T[3], BV* b1, BV* b2);
 
 #if PQP_BV_TYPE & RSS_TYPE
-PQP_REAL
-BV_Distance(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2);
+        PQP_REAL
+        BV_Distance(PQP_REAL R[3][3], PQP_REAL T[3], BV* b1, BV* b2);
 #endif
 
-private:
+    private:
 #if PQP_BV_TYPE & OBB_TYPE
-	OBB_Processor o;
+        OBB_Processor o;
 #endif
-	Rect_Processor p;
-};
+        Rect_Processor p;
+    };
 
 } // namespace
 

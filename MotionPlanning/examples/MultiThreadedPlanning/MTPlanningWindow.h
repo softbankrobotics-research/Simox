@@ -30,66 +30,69 @@
 
 class MTPlanningWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MTPlanningWindow(Qt::WFlags flags = 0);
-	~MTPlanningWindow();
+    MTPlanningWindow(Qt::WFlags flags = 0);
+    ~MTPlanningWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	//void loadRobot();
-	void buildScene();
-	void addThread();
-	void startThreads();
-	void stopThreads();
-	void startOptimize();
-	void stopOptimize();
-	void reset();
-	void selectColCheckerComboBoxChanged(int value);
+    //void loadRobot();
+    void buildScene();
+    void addThread();
+    void startThreads();
+    void stopThreads();
+    void startOptimize();
+    void stopOptimize();
+    void reset();
+    void selectColCheckerComboBoxChanged(int value);
 
-	SoQtExaminerViewer* getExaminerViewer(){return viewer;};
+    SoQtExaminerViewer* getExaminerViewer()
+    {
+        return viewer;
+    };
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Sequential Planing
-	//void plan();
-	//void optimizeSolution();
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Sequential Planing
+    //void plan();
+    //void optimizeSolution();
 
 protected:
-	//void setupMenus(); /*!< Setup the menus. */
-	void setupLayoutMTPlanning(); /*!< Create the contents of the window. */
+    //void setupMenus(); /*!< Setup the menus. */
+    void setupLayoutMTPlanning(); /*!< Create the contents of the window. */
 
-	static void timerCBPlanning(void * data, SoSensor * sensor);
-	static void timerCBOptimize(void * data, SoSensor * sensor);
-	
-	Ui::MainWindowMTPlanning UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    static void timerCBPlanning(void* data, SoSensor* sensor);
+    static void timerCBOptimize(void* data, SoSensor* sensor);
 
-	SoSeparator* sceneSep;
-	SoSeparator* robotSep;
-	SoSeparator* graspObjectSep;
+    Ui::MainWindowMTPlanning UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	MTPlanningScenery *scene;
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* graspObjectSep;
 
-	clock_t startTime;
-	clock_t endTime;
-	clock_t optiStartTime;
-	clock_t optiEndTime;
+    MTPlanningScenery* scene;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Sequential Planing
-	/*QPushButton *loadRobotButton;
-	QPushButton *setConfigButton;
-	QPushButton	*planButton;
-	QPushButton *optiShowButton;*/
+    clock_t startTime;
+    clock_t endTime;
+    clock_t optiStartTime;
+    clock_t optiEndTime;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Sequential Planing
+    /*QPushButton *loadRobotButton;
+    QPushButton *setConfigButton;
+    QPushButton *planButton;
+    QPushButton *optiShowButton;*/
 };
 
 #endif // __MTPlanning_WINDOW_H_

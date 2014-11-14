@@ -2,9 +2,9 @@
  * Power Crust software, by Nina Amenta, Sunghee Choi and Ravi Krishna Kolluri.
  * Copyright (c) 2000 by the University of Texas
  * Permission to use, copy, modify, and distribute this software for any
- * purpose without fee under the GNU Public License is hereby granted, 
- * provided that this entire notice  is included in all copies of any software 
- * which is or includes a copy or modification of this software and in all copies 
+ * purpose without fee under the GNU Public License is hereby granted,
+ * provided that this entire notice  is included in all copies of any software
+ * which is or includes a copy or modification of this software and in all copies
  * of the supporting documentation for such software.
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED
  * WARRANTY.  IN PARTICULAR, NEITHER THE AUTHORS NOR AT&T MAKE ANY
@@ -18,13 +18,13 @@
 namespace GraspStudio
 {
 
-namespace PowerCrust
-{
+    namespace PowerCrust
+    {
 
-typedef double Coord;
-typedef Coord* point;
+        typedef double Coord;
+        typedef Coord* point;
 
-}
+    }
 }
 
 #endif

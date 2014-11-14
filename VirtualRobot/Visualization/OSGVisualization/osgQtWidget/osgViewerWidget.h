@@ -50,90 +50,90 @@
 
 namespace VirtualRobot
 {
-/*!
-	A Qt widget showing an OpenSceneGraph scene. Have a look on the source code of RobtoViewerOSG for usage.
-	To use this widget follow these instructions:
-	* compile Simox with OSG support (and disable Coin support)
-	* Create a Qt-4 Window with QtDesigner where an empty QFrame is provided for embedding this widget
-	* In your C++ file,
-	** Load or create a osg scene:
-		<code>
-		robot = RobotIO::loadRobot(robotFilename,RobotIO::eFull);
-		visualization = robot->getVisualization<OSGVisualization>(false);
-		visualisationNode = visualization->getOSGVisualization();
-		osgRobot->addChild(visualisationNode);
-		osgRoot->addChild(osgRobot);
-		</code>
-	** Embed an instance of this widget with: 
-		<code>
-		osgWidget = new osgViewerWidget(osgRoot,UI.frameViewer);
-		</code>
-	** Now the scene will display your robot, and you can add or remove osg::Nodes to/from osgRoot
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT osgViewerWidget: public QGLWidget
-{
-	Q_OBJECT
+    /*!
+        A Qt widget showing an OpenSceneGraph scene. Have a look on the source code of RobtoViewerOSG for usage.
+        To use this widget follow these instructions:
+        * compile Simox with OSG support (and disable Coin support)
+        * Create a Qt-4 Window with QtDesigner where an empty QFrame is provided for embedding this widget
+        * In your C++ file,
+        ** Load or create a osg scene:
+            <code>
+            robot = RobotIO::loadRobot(robotFilename,RobotIO::eFull);
+            visualization = robot->getVisualization<OSGVisualization>(false);
+            visualisationNode = visualization->getOSGVisualization();
+            osgRobot->addChild(visualisationNode);
+            osgRoot->addChild(osgRobot);
+            </code>
+        ** Embed an instance of this widget with:
+            <code>
+            osgWidget = new osgViewerWidget(osgRoot,UI.frameViewer);
+            </code>
+        ** Now the scene will display your robot, and you can add or remove osg::Nodes to/from osgRoot
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT osgViewerWidget: public QGLWidget
+    {
+        Q_OBJECT
 
-	public:
-		explicit osgViewerWidget(osg::Node* scene, QWidget *parent = 0);
+    public:
+        explicit osgViewerWidget(osg::Node* scene, QWidget* parent = 0);
 
-		void viewAll();
-	public slots:
+        void viewAll();
+    public slots:
 
-		void timerCB();
-	
-	protected:
-		virtual void initializeGL();
-		virtual void resizeGL( int width, int height );
+        void timerCB();
 
-		virtual void paintGL();
+    protected:
+        virtual void initializeGL();
+        virtual void resizeGL(int width, int height);
 
-		void resizeEvent(QResizeEvent *event);
+        virtual void paintGL();
 
-		virtual void keyPressEvent( QKeyEvent* event );
-		virtual void keyReleaseEvent( QKeyEvent* event );
-		virtual void mousePressEvent( QMouseEvent* event );
-		virtual void mouseReleaseEvent( QMouseEvent* event );
-		virtual void mouseMoveEvent( QMouseEvent* event );
-		virtual void mouseDoubleClickEvent(QMouseEvent* event);
-		virtual void wheelEvent(QWheelEvent* event);
+        void resizeEvent(QResizeEvent* event);
 
-		void paintOSG();
-		void resizeOSG(int width, int height);
+        virtual void keyPressEvent(QKeyEvent* event);
+        virtual void keyReleaseEvent(QKeyEvent* event);
+        virtual void mousePressEvent(QMouseEvent* event);
+        virtual void mouseReleaseEvent(QMouseEvent* event);
+        virtual void mouseMoveEvent(QMouseEvent* event);
+        virtual void mouseDoubleClickEvent(QMouseEvent* event);
+        virtual void wheelEvent(QWheelEvent* event);
 
-protected:
+        void paintOSG();
+        void resizeOSG(int width, int height);
 
-		osg::ref_ptr<osgViewer::Viewer> viewer;
-		osg::observer_ptr<osgViewer::GraphicsWindowEmbedded> window;
-		osg::ref_ptr<osg::Node> loadedModel;
-		osg::ref_ptr<osg::MatrixTransform> transformation;
-		osgGA::TrackballManipulator* sceneManipulator;
+    protected:
 
-		//osgQt::GraphicsWindowQt* m_qt_win;
+        osg::ref_ptr<osgViewer::Viewer> viewer;
+        osg::observer_ptr<osgViewer::GraphicsWindowEmbedded> window;
+        osg::ref_ptr<osg::Node> loadedModel;
+        osg::ref_ptr<osg::MatrixTransform> transformation;
+        osgGA::TrackballManipulator* sceneManipulator;
 
-		QTimer paintTimer;
-		QSize canvasSize;
-};
+        //osgQt::GraphicsWindowQt* m_qt_win;
+
+        QTimer paintTimer;
+        QSize canvasSize;
+    };
 
 } // namespace VirtualRobot
 /*
 class osgViewerWidget : public QWidget, public osgViewer::CompositeViewer
 {
 public:
-	osgViewerWidget(osg::Node* scene, QWidget* parent = NULL, osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::SingleThreaded);
+    osgViewerWidget(osg::Node* scene, QWidget* parent = NULL, osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::SingleThreaded);
 
 
 
-	osg::Camera* createCamera( int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false );
+    osg::Camera* createCamera( int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false );
 
 
-	virtual void paintEvent( QPaintEvent* event );
-	QWidget* getQWidget();
+    virtual void paintEvent( QPaintEvent* event );
+    QWidget* getQWidget();
 
 protected:
-	osgViewer::View* view;
-	osg::Camera* camera;
-	QTimer _timer;
+    osgViewer::View* view;
+    osg::Camera* camera;
+    QTimer _timer;
 };*/
 
 

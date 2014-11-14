@@ -30,55 +30,55 @@
 
 namespace GraspStudio
 {
-/*!
-	\brief Creates approximated representations of contact cones.
-*/
-class GRASPSTUDIO_IMPORT_EXPORT ContactConeGenerator
-{
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+        \brief Creates approximated representations of contact cones.
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT ContactConeGenerator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    //! constructor
-	ContactConeGenerator(int coneSamples = 8, float frictionCoeff = 0.25f, float unitForce = 1.0f);
-	
-	//! destructor
-	~ContactConeGenerator();
+        //! constructor
+        ContactConeGenerator(int coneSamples = 8, float frictionCoeff = 0.25f, float unitForce = 1.0f);
 
-	/*! 
-		Computes the cone with normals. coneSamples computed points are appended to storeConePoints.
-	*/
-	void computeConePoints(const VirtualRobot::MathTools::ContactPoint &point, std::vector<VirtualRobot::MathTools::ContactPoint> &storeConePoints);
+        //! destructor
+        ~ContactConeGenerator();
 
-	//! Computes the cone points without normals. coneSamples computed points are appended to storeConePoints. 
-	void computeConePoints(const VirtualRobot::MathTools::ContactPoint &point, std::vector<Eigen::Vector3f> &storeConePoints);
+        /*!
+            Computes the cone with normals. coneSamples computed points are appended to storeConePoints.
+        */
+        void computeConePoints(const VirtualRobot::MathTools::ContactPoint& point, std::vector<VirtualRobot::MathTools::ContactPoint>& storeConePoints);
 
-	/*!
-		Returns the opening angle of a friction cone. [rad]
-	*/
-	float getConeAngle();
+        //! Computes the cone points without normals. coneSamples computed points are appended to storeConePoints.
+        void computeConePoints(const VirtualRobot::MathTools::ContactPoint& point, std::vector<Eigen::Vector3f>& storeConePoints);
 
-	/*!
-		Returns the radius a friction cone.
-	*/
-	float getConeRadius();
+        /*!
+            Returns the opening angle of a friction cone. [rad]
+        */
+        float getConeAngle();
 
-	/*!
-		Returns the height a friction cone.
-	*/
-	float getConeHeight();
+        /*!
+            Returns the radius a friction cone.
+        */
+        float getConeRadius();
 
-private:
+        /*!
+            Returns the height a friction cone.
+        */
+        float getConeHeight();
 
-	//Friction cone relevant parameters
-	double unitForce;
-	double frictionCoeff;
-	double frictionConeAngle;
-	double frictionConeRad;
-	double frictionConeHeight;
-	std::vector< Eigen::Vector3f > frictionConeRimPoints;
-	int frictionConeSamples;
+    private:
 
-};
+        //Friction cone relevant parameters
+        double unitForce;
+        double frictionCoeff;
+        double frictionConeAngle;
+        double frictionConeRad;
+        double frictionConeHeight;
+        std::vector< Eigen::Vector3f > frictionConeRimPoints;
+        int frictionConeSamples;
+
+    };
 }
 
 #endif /* __CONTACT_CONE_GENARTOR_H__ */

@@ -35,78 +35,78 @@
 namespace VirtualRobot
 {
 
-/*!
-	A specialized IK solver for gaze related tasks. The gaze is represented by a virtual translational joint and 
-    the IK problem is solved by searching a solution for the head joints and the virtual gaze joint so that the position
-    of the end point is at the requested gaze position.
-    By default joint limit avoidance is considered as secondary task in order to generate more naturally looking configurations.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK : public boost::enable_shared_from_this<GazeIK>
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
     /*!
-        Constructor
-        \param rns The RobotNodeSet containing the neck (optionally a common eye tilt joint) and the virtual translational joint that represents the gaze. 
-                   The TCP of the RNS is tried to position at the goal pose.
-        \param virtualTranslationJoint A prismatic joint (usually without any models and physics properties) that represents the gaze
+        A specialized IK solver for gaze related tasks. The gaze is represented by a virtual translational joint and
+        the IK problem is solved by searching a solution for the head joints and the virtual gaze joint so that the position
+        of the end point is at the requested gaze position.
+        By default joint limit avoidance is considered as secondary task in order to generate more naturally looking configurations.
     */
-	GazeIK(RobotNodeSetPtr rns, RobotNodePrismaticPtr virtualTranslationJoint);
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK : public boost::enable_shared_from_this<GazeIK>
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    /*!
-        The standard setup can be changed with this method.
-        \param maxPosError Specifies how exact the target should be reached (standard 5mm).
-        \param maxLoops Specifies how many seeds should be generate for starting a gradient descent search (standard 30)
-        \param maxGradientDecentSteps The maximum number of steps that should be taken to decent the gradient 
-    */
-    void setup(float maxPosError, int maxLoops, int maxGradientDecentSteps);
+        /*!
+            Constructor
+            \param rns The RobotNodeSet containing the neck (optionally a common eye tilt joint) and the virtual translational joint that represents the gaze.
+                       The TCP of the RNS is tried to position at the goal pose.
+            \param virtualTranslationJoint A prismatic joint (usually without any models and physics properties) that represents the gaze
+        */
+        GazeIK(RobotNodeSetPtr rns, RobotNodePrismaticPtr virtualTranslationJoint);
 
-    /*!
-        Joint Limit Avoidance is considered as secondary task. 
-        \param enable The joint limit avoidance can be enabled (standard) or disabled.
-    */
-    void enableJointLimitAvoidance(bool enable);
+        /*!
+            The standard setup can be changed with this method.
+            \param maxPosError Specifies how exact the target should be reached (standard 5mm).
+            \param maxLoops Specifies how many seeds should be generate for starting a gradient descent search (standard 30)
+            \param maxGradientDecentSteps The maximum number of steps that should be taken to decent the gradient
+        */
+        void setup(float maxPosError, int maxLoops, int maxGradientDecentSteps);
 
-    /*!
-        Compute a gradient descent step.
-        \param goal The goal position of the gaze in global coordinate system.
-        \param stepSize Can be used to limit the error step.
-        \return the joint delta vector
-    */
-    Eigen::VectorXf computeStep(Eigen::Vector3f goal, float stepSize = 0.3f);
+        /*!
+            Joint Limit Avoidance is considered as secondary task.
+            \param enable The joint limit avoidance can be enabled (standard) or disabled.
+        */
+        void enableJointLimitAvoidance(bool enable);
 
-    bool solve(Eigen::Vector3f goal, float stepSize = 0.3f);
+        /*!
+            Compute a gradient descent step.
+            \param goal The goal position of the gaze in global coordinate system.
+            \param stepSize Can be used to limit the error step.
+            \return the joint delta vector
+        */
+        Eigen::VectorXf computeStep(Eigen::Vector3f goal, float stepSize = 0.3f);
 
-	float getMaxPosError();
+        bool solve(Eigen::Vector3f goal, float stepSize = 0.3f);
 
-protected:
+        float getMaxPosError();
 
-    void setupIK();
-    void setJointsRandom();
-    bool trySolve(Eigen::Vector3f goal, float stepSize);
+    protected:
 
-    float getCurrentError(Eigen::Vector3f goal);
-    void applyJLA(Eigen::Vector3f goal, int steps, float stepSize);
+        void setupIK();
+        void setJointsRandom();
+        bool trySolve(Eigen::Vector3f goal, float stepSize);
 
-    bool checkTolerances(Eigen::Vector3f goal);
+        float getCurrentError(Eigen::Vector3f goal);
+        void applyJLA(Eigen::Vector3f goal, int steps, float stepSize);
 
-	std::vector<RobotNodePtr> nodes;
-    RobotNodeSetPtr rns;
-    RobotNodePrismaticPtr virtualTranslationJoint;
+        bool checkTolerances(Eigen::Vector3f goal);
 
-    HierarchicalIKPtr ikSolver;
-    DifferentialIKPtr ikGaze;
-    JointLimitAvoidanceJacobiPtr ikJointLimits;
+        std::vector<RobotNodePtr> nodes;
+        RobotNodeSetPtr rns;
+        RobotNodePrismaticPtr virtualTranslationJoint;
 
-    bool enableJLA;
-    int maxLoops;
-    int maxGradientDecentSteps;
-    float maxPosError;
-    bool verbose;
-};
+        HierarchicalIKPtr ikSolver;
+        DifferentialIKPtr ikGaze;
+        JointLimitAvoidanceJacobiPtr ikJointLimits;
 
-typedef boost::shared_ptr<GazeIK> GazeIKPtr;
+        bool enableJLA;
+        int maxLoops;
+        int maxGradientDecentSteps;
+        float maxPosError;
+        bool verbose;
+    };
+
+    typedef boost::shared_ptr<GazeIK> GazeIKPtr;
 
 } // namespace VirtualRobot
 

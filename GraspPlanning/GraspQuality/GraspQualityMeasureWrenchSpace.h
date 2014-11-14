@@ -31,119 +31,143 @@
 namespace GraspStudio
 {
 
-/*!
-	\brief An efficient implementation of the grasp wrench space algorithm for grasp quality evaluation.
+    /*!
+        \brief An efficient implementation of the grasp wrench space algorithm for grasp quality evaluation.
 
-	the grasp wrench space algorithm is widely used in the context of grasp planning. By analyzing
-	the grasp wrench space (GWS) of a given set of contact points, a quality score of a grasp
-	can be evaluated. 
-	In this implementation, additionally an object specific wrench space (WS) is calculated, which
-	approximatevly represents a "perfect" grasp. This object is used to normalize the quality score.
-*/
-class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasureWrenchSpace : public GraspQualityMeasure
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        the grasp wrench space algorithm is widely used in the context of grasp planning. By analyzing
+        the grasp wrench space (GWS) of a given set of contact points, a quality score of a grasp
+        can be evaluated.
+        In this implementation, additionally an object specific wrench space (WS) is calculated, which
+        approximatevly represents a "perfect" grasp. This object is used to normalize the quality score.
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasureWrenchSpace : public GraspQualityMeasure
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	GraspQualityMeasureWrenchSpace(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
-	// destructor
-	~GraspQualityMeasureWrenchSpace();
+        GraspQualityMeasureWrenchSpace(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+        // destructor
+        ~GraspQualityMeasureWrenchSpace();
 
-	
-	/*! 
-		The OWS should not change for an object, so if you have the data calculated once, you can set them here
-		(The values for the OWS can change slightly, since the facets used for generation of the OWS are sampled randomly, 
-		in case there are more than 400 of them)
-	*/
-	virtual void preCalculatedOWS(float minDist, float volume);
 
-	/*! 
-		Returns f_max_gws / f_max_OWS
-		with f_max_gws = max distance of GWS hull center to one of its facets
-		with f_max_ows = max distance of OWS hull center to one of its facets
-		-> also known as "epsilon" quality == radius of larges enclosing 6D ball
-	*/
-	virtual float getGraspQuality();
+        /*!
+            The OWS should not change for an object, so if you have the data calculated once, you can set them here
+            (The values for the OWS can change slightly, since the facets used for generation of the OWS are sampled randomly,
+            in case there are more than 400 of them)
+        */
+        virtual void preCalculatedOWS(float minDist, float volume);
 
-	/*! 
-		Volume grasp quality ratio of GWS volume / OWS volume
-		-> also known as "v" quality
-	*/
-	virtual float getVolumeGraspMeasure();
+        /*!
+            Returns f_max_gws / f_max_OWS
+            with f_max_gws = max distance of GWS hull center to one of its facets
+            with f_max_ows = max distance of OWS hull center to one of its facets
+            -> also known as "epsilon" quality == radius of larges enclosing 6D ball
+        */
+        virtual float getGraspQuality();
 
-	/*
-		Checks if wrench space origin is inside GWS-Hull
-	*/
-	virtual bool isGraspForceClosure();
+        /*!
+            Volume grasp quality ratio of GWS volume / OWS volume
+            -> also known as "v" quality
+        */
+        virtual float getVolumeGraspMeasure();
 
-	/*
-		Returns the internally calculated convex hull object (ObjectWrenchSpace)
-		This hull depends on the object
-	*/
-	virtual VirtualRobot::MathTools::ConvexHull6DPtr getConvexHullOWS(){return convexHullOWS;}
-	/*
-		Returns the internally calculated convex hull object (GraspWrenchSpace)
-		This hull depends on the contacts
-	*/
-	virtual VirtualRobot::MathTools::ConvexHull6DPtr getConvexHullGWS(){return convexHullGWS;}
+        /*
+            Checks if wrench space origin is inside GWS-Hull
+        */
+        virtual bool isGraspForceClosure();
 
-	void calculateOWS(int samplePoints = 300);
-	void calculateGWS();
-	bool OWSExists(){return OWSCalculated;}
-	bool GWSExists(){return GWSCalculated;}
+        /*
+            Returns the internally calculated convex hull object (ObjectWrenchSpace)
+            This hull depends on the object
+        */
+        virtual VirtualRobot::MathTools::ConvexHull6DPtr getConvexHullOWS()
+        {
+            return convexHullOWS;
+        }
+        /*
+            Returns the internally calculated convex hull object (GraspWrenchSpace)
+            This hull depends on the contacts
+        */
+        virtual VirtualRobot::MathTools::ConvexHull6DPtr getConvexHullGWS()
+        {
+            return convexHullGWS;
+        }
 
-	VirtualRobot::MathTools::ContactPoint getCenterGWS(){return convexHullCenterGWS;}
-	VirtualRobot::MathTools::ContactPoint getCenterOWS(){return convexHullCenterOWS;}
+        void calculateOWS(int samplePoints = 300);
+        void calculateGWS();
+        bool OWSExists()
+        {
+            return OWSCalculated;
+        }
+        bool GWSExists()
+        {
+            return GWSCalculated;
+        }
 
-	/*! 
-	setup contact information
-	the contact points are normalized by subtracting the COM
-	the contact normals are normalize to unit length
-	*/
-	virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint> &contactPoints);
-	virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector &contactPoints);
+        VirtualRobot::MathTools::ContactPoint getCenterGWS()
+        {
+            return convexHullCenterGWS;
+        }
+        VirtualRobot::MathTools::ContactPoint getCenterOWS()
+        {
+            return convexHullCenterOWS;
+        }
 
-	virtual bool calculateGraspQuality();
-	virtual bool calculateObjectProperties();
+        /*!
+        setup contact information
+        the contact points are normalized by subtracting the COM
+        the contact normals are normalize to unit length
+        */
+        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints);
+        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints);
 
-	//! Returns description of this object
-	virtual std::string getName();
+        virtual bool calculateGraspQuality();
+        virtual bool calculateObjectProperties();
 
-	virtual float getOWSMinOffset(){return minOffsetOWS;}
-	virtual float getOWSVolume(){return volumeOWS;}
+        //! Returns description of this object
+        virtual std::string getName();
 
-	static std::vector<VirtualRobot::MathTools::ContactPoint> createWrenchPoints(std::vector<VirtualRobot::MathTools::ContactPoint> &points, const Eigen::Vector3f &centerOfModel, float objectLengthMM);
-	
-	//! Goes through all facets of convex hull and searches the minimum distance to it's center
-	static float minOffset(VirtualRobot::MathTools::ConvexHull6DPtr ch);
+        virtual float getOWSMinOffset()
+        {
+            return minOffsetOWS;
+        }
+        virtual float getOWSVolume()
+        {
+            return volumeOWS;
+        }
 
-protected:
-	
-	//Methods
-	VirtualRobot::MathTools::ConvexHull6DPtr calculateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint> &points);
-	VirtualRobot::MathTools::ContactPoint calculateHullCenter(VirtualRobot::MathTools::ConvexHull6DPtr hull);
+        static std::vector<VirtualRobot::MathTools::ContactPoint> createWrenchPoints(std::vector<VirtualRobot::MathTools::ContactPoint>& points, const Eigen::Vector3f& centerOfModel, float objectLengthMM);
 
-	float minDistanceToGWSHull(VirtualRobot::MathTools::ContactPoint &point);
+        //! Goes through all facets of convex hull and searches the minimum distance to it's center
+        static float minOffset(VirtualRobot::MathTools::ConvexHull6DPtr ch);
 
-	
-	bool isOriginInGWSHull();
-	void printContacts(std::vector<VirtualRobot::MathTools::ContactPoint> &points);
-	static Eigen::Vector3f crossProductPosNormalInv( const VirtualRobot::MathTools::ContactPoint &v1);
+    protected:
 
-	//For safety
-	bool OWSCalculated;
-	bool GWSCalculated;
+        //Methods
+        VirtualRobot::MathTools::ConvexHull6DPtr calculateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint>& points);
+        VirtualRobot::MathTools::ContactPoint calculateHullCenter(VirtualRobot::MathTools::ConvexHull6DPtr hull);
 
-	//For Object and Grasp Wrench Space Calculation
-	VirtualRobot::MathTools::ConvexHull6DPtr convexHullOWS;
-	VirtualRobot::MathTools::ConvexHull6DPtr convexHullGWS;
-	VirtualRobot::MathTools::ContactPoint convexHullCenterGWS;
-	VirtualRobot::MathTools::ContactPoint convexHullCenterOWS;
+        float minDistanceToGWSHull(VirtualRobot::MathTools::ContactPoint& point);
 
-	// the minimal distance from center of OWS to one of it's facets
-	float minOffsetOWS;
-	float volumeOWS;
-};
+
+        bool isOriginInGWSHull();
+        void printContacts(std::vector<VirtualRobot::MathTools::ContactPoint>& points);
+        static Eigen::Vector3f crossProductPosNormalInv(const VirtualRobot::MathTools::ContactPoint& v1);
+
+        //For safety
+        bool OWSCalculated;
+        bool GWSCalculated;
+
+        //For Object and Grasp Wrench Space Calculation
+        VirtualRobot::MathTools::ConvexHull6DPtr convexHullOWS;
+        VirtualRobot::MathTools::ConvexHull6DPtr convexHullGWS;
+        VirtualRobot::MathTools::ContactPoint convexHullCenterGWS;
+        VirtualRobot::MathTools::ContactPoint convexHullCenterOWS;
+
+        // the minimal distance from center of OWS to one of it's facets
+        float minOffsetOWS;
+        float volumeOWS;
+    };
 
 } // namespace
 

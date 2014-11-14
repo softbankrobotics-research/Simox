@@ -36,73 +36,73 @@
 
 class GraspPlannerWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GraspPlannerWindow(std::string &robotFile, std::string &eefName, std::string &preshape, std::string &objectFile, Qt::WFlags flags = 0);
-	~GraspPlannerWindow();
+    GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile, Qt::WFlags flags = 0);
+    ~GraspPlannerWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
+    void resetSceneryAll();
 
 
-	void closeEEF();
-	void openEEF();
-	void colModel();
-	void frictionConeVisu();
-	void showGrasps();
+    void closeEEF();
+    void openEEF();
+    void colModel();
+    void frictionConeVisu();
+    void showGrasps();
 
-	void buildVisu();
+    void buildVisu();
 
-	void plan();
-	void save();
+    void plan();
+    void save();
 
 protected:
-    
+
     void loadRobot();
-	void loadObject();
-	
-	void setupUI();
+    void loadObject();
 
-	static void timerCB(void * data, SoSensor * sensor);
-	Ui::GraspPlanner UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotSep;
-	SoSeparator *objectSep;
-	SoSeparator *frictionConeSep;
-	SoSeparator *graspsSep;
+    void setupUI();
 
-	VirtualRobot::RobotPtr robot;
-	VirtualRobot::RobotPtr eefCloned;
-	VirtualRobot::ObstaclePtr object;
-	VirtualRobot::EndEffectorPtr eef;
-	    
-	VirtualRobot::GraspSetPtr grasps;
+    static void timerCB(void* data, SoSensor* sensor);
+    Ui::GraspPlanner UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* objectSep;
+    SoSeparator* frictionConeSep;
+    SoSeparator* graspsSep;
+
+    VirtualRobot::RobotPtr robot;
+    VirtualRobot::RobotPtr eefCloned;
+    VirtualRobot::ObstaclePtr object;
+    VirtualRobot::EndEffectorPtr eef;
+
+    VirtualRobot::GraspSetPtr grasps;
 
 
-	VirtualRobot::EndEffector::ContactInfoVector contacts;
+    VirtualRobot::EndEffector::ContactInfoVector contacts;
 
-	
-	std::string robotFile;
-	std::string objectFile;
-	std::string eefName;
-	std::string preshape;
 
-	SoSeparator *eefVisu;
+    std::string robotFile;
+    std::string objectFile;
+    std::string eefName;
+    std::string preshape;
 
-	GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
-	GraspStudio::ApproachMovementSurfaceNormalPtr approach;
-	GraspStudio::GenericGraspPlannerPtr planner;
+    SoSeparator* eefVisu;
+
+    GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
+    GraspStudio::ApproachMovementSurfaceNormalPtr approach;
+    GraspStudio::GenericGraspPlannerPtr planner;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;

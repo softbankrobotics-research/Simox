@@ -1,6 +1,6 @@
 /**
 * @package    VirtualRobot
-* @author     Manfred Kroehnert 
+* @author     Manfred Kroehnert
 * @copyright  2010 Manfred Kroehnert
 */
 

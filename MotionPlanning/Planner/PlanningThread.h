@@ -28,68 +28,69 @@
 #include "../CSpace/CSpacePath.h"
 #include <VirtualRobot/VirtualRobot.h>
 #include "MotionPlanner.h"
-#include <boost/thread.hpp> 
+#include <boost/thread.hpp>
 
-namespace Saba {
-
-/*!
- *
- * The GraspIkRrt planner combines the search for a feasible grasp and an IK solution with the search for a collision-free motion.
- *
- */
-class SABA_IMPORT_EXPORT PlanningThread
+namespace Saba
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    /*!
+     *
+     * The GraspIkRrt planner combines the search for a feasible grasp and an IK solution with the search for a collision-free motion.
+     *
+     */
+    class SABA_IMPORT_EXPORT PlanningThread
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 
-	/*! Constructor
-		The thread is not started until you call start()
-		\param planner The planner to be started.
-	*/
-	PlanningThread(MotionPlannerPtr planner);
-	
-	//! destructor
-	virtual ~PlanningThread();
-	
-	/*!
-		Start the planning in an own thread.
-	*/
-	virtual void start();
+        /*! Constructor
+            The thread is not started until you call start()
+            \param planner The planner to be started.
+        */
+        PlanningThread(MotionPlannerPtr planner);
 
-	/*!
-		Send an interrupt signal to thread.
-		\param waitUntilStopped If false this method returns immediately. Otherwise we wait until the thread has been successfully interrupted.
-	*/
-	virtual void interrupt (bool waitUntilStopped=false);
+        //! destructor
+        virtual ~PlanningThread();
 
-	/*!
-		Same as interrupt(true)
-	*/
-	void stop(); 
+        /*!
+            Start the planning in an own thread.
+        */
+        virtual void start();
 
-	/*!
-		\return True if the planning thread is operating
-	*/
-	bool isRunning();
+        /*!
+            Send an interrupt signal to thread.
+            \param waitUntilStopped If false this method returns immediately. Otherwise we wait until the thread has been successfully interrupted.
+        */
+        virtual void interrupt(bool waitUntilStopped = false);
 
-	MotionPlannerPtr getPlanner();
+        /*!
+            Same as interrupt(true)
+        */
+        void stop();
 
-protected:
-	
-	/*!
-		Here the planning takes place.
-	*/
-	void workingMethod();
+        /*!
+            \return True if the planning thread is operating
+        */
+        bool isRunning();
+
+        MotionPlannerPtr getPlanner();
+
+    protected:
+
+        /*!
+            Here the planning takes place.
+        */
+        void workingMethod();
 
 
-	bool threadStarted;
-	bool plannerFinished;
-	MotionPlannerPtr planner;
-	boost::thread planningThread;
-	boost::mutex mutex;
+        bool threadStarted;
+        bool plannerFinished;
+        MotionPlannerPtr planner;
+        boost::thread planningThread;
+        boost::mutex mutex;
 
-};
+    };
 
 }
 #endif // _Saba_PlanningThread_h

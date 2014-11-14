@@ -4,19 +4,27 @@
 #include <boost/thread.hpp>
 
 template <class T>
-class ConditionedLock {
-	private:
-		T _lock;
-		bool _enabled;
-	public:
-		ConditionedLock(boost::recursive_mutex  & mutex, bool enabled) : 
-			_lock(mutex, boost::defer_lock), _enabled(enabled){
-			if (_enabled) _lock.lock();
-		}	
-		~ConditionedLock()
-		{
-			if (_enabled) _lock.unlock();
-		}
+class ConditionedLock
+{
+private:
+    T _lock;
+    bool _enabled;
+public:
+    ConditionedLock(boost::recursive_mutex&   mutex, bool enabled) :
+        _lock(mutex, boost::defer_lock), _enabled(enabled)
+    {
+        if (_enabled)
+        {
+            _lock.lock();
+        }
+    }
+    ~ConditionedLock()
+    {
+        if (_enabled)
+        {
+            _lock.unlock();
+        }
+    }
 };
 
 typedef ConditionedLock<boost::unique_lock<boost::recursive_mutex> > ReadLock;

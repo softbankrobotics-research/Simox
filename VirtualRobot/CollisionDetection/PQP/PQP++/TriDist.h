@@ -46,33 +46,33 @@
 namespace PQP
 {
 
-class Tri_Processor
-{
-public:
-// TriDist()
-//
-// computes the closest points on two triangles, and returns the 
-// distance between them.
-// 
-// s and t are the triangles, stored tri[point][dimension].
-//
-// If the triangles are disjoint, p and q give the closest points of 
-// s and t respectively. However, if the triangles overlap, p and q 
-// are basically a random pair of points from the triangles, not 
-// coincident points on the intersection of the triangles, as might 
-// be expected.
+    class Tri_Processor
+    {
+    public:
+        // TriDist()
+        //
+        // computes the closest points on two triangles, and returns the
+        // distance between them.
+        //
+        // s and t are the triangles, stored tri[point][dimension].
+        //
+        // If the triangles are disjoint, p and q give the closest points of
+        // s and t respectively. However, if the triangles overlap, p and q
+        // are basically a random pair of points from the triangles, not
+        // coincident points on the intersection of the triangles, as might
+        // be expected.
 
-PQP_REAL 
-TriDist(PQP_REAL p[3], PQP_REAL q[3], 
-        const PQP_REAL s[3][3], const PQP_REAL t[3][3]);
-protected:
-	void
-	SegPoints(PQP_REAL VEC[3], 
-		PQP_REAL X[3], PQP_REAL Y[3],             // closest points
-		const PQP_REAL P[3], const PQP_REAL A[3], // seg 1 origin, vector
-		const PQP_REAL Q[3], const PQP_REAL B[3]); // seg 2 origin, vector
-  MatVec pqp_math;
-};
+        PQP_REAL
+        TriDist(PQP_REAL p[3], PQP_REAL q[3],
+                const PQP_REAL s[3][3], const PQP_REAL t[3][3]);
+    protected:
+        void
+        SegPoints(PQP_REAL VEC[3],
+                  PQP_REAL X[3], PQP_REAL Y[3],             // closest points
+                  const PQP_REAL P[3], const PQP_REAL A[3], // seg 1 origin, vector
+                  const PQP_REAL Q[3], const PQP_REAL B[3]); // seg 2 origin, vector
+        MatVec pqp_math;
+    };
 
 } // namespace
 

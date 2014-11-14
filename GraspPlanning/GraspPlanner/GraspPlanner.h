@@ -32,45 +32,45 @@
 namespace GraspStudio
 {
 
-/*!
-*
-* \brief An interface for grasp planners.
-*
-*/
-class GRASPSTUDIO_IMPORT_EXPORT GraspPlanner
-{
-public:
+    /*!
+    *
+    * \brief An interface for grasp planners.
+    *
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT GraspPlanner
+    {
+    public:
 
-	/*!
-	    Constructor
-	    \param graspSet Append planned grasps to this set.
-	*/
-	GraspPlanner(VirtualRobot::GraspSetPtr graspSet);
+        /*!
+            Constructor
+            \param graspSet Append planned grasps to this set.
+        */
+        GraspPlanner(VirtualRobot::GraspSetPtr graspSet);
 
-	//! destructor
-	virtual ~GraspPlanner();
-	
-	void setVerbose(bool enable);
+        //! destructor
+        virtual ~GraspPlanner();
 
-    
-	/*! 
-	    Creates new grasps.
-	    \param nrGrasps The number of grasps to be planned.
-	    \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
-	    \return Number of planned grasps.
-	*/
-	virtual int plan(int nrGrasps, int timeOutMS = 0) = 0;
-	
-	/*!
-	    Returns all grasps that have been generated. These grasps are also stored in the graspSet that was specified on construction.
-	*/
-	std::vector<VirtualRobot::GraspPtr> getPlannedGrasps();
+        void setVerbose(bool enable);
 
-protected:
-    bool verbose;
-    VirtualRobot::GraspSetPtr graspSet;
-    std::vector<VirtualRobot::GraspPtr> plannedGrasps;
-};
+
+        /*!
+            Creates new grasps.
+            \param nrGrasps The number of grasps to be planned.
+            \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
+            \return Number of planned grasps.
+        */
+        virtual int plan(int nrGrasps, int timeOutMS = 0) = 0;
+
+        /*!
+            Returns all grasps that have been generated. These grasps are also stored in the graspSet that was specified on construction.
+        */
+        std::vector<VirtualRobot::GraspPtr> getPlannedGrasps();
+
+    protected:
+        bool verbose;
+        VirtualRobot::GraspSetPtr graspSet;
+        std::vector<VirtualRobot::GraspPtr> plannedGrasps;
+    };
 }
 
 #endif /* __GENERAL_GRASP_PLANNER_H__ */

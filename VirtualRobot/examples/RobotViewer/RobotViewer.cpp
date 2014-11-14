@@ -27,39 +27,41 @@ using namespace VirtualRobot;
 bool useColModel = false;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"RobotViewer");
+    SoDB::init();
+    SoQt::init(argc, argv, "RobotViewer");
 
-	
-	VirtualRobot::RuntimeEnvironment::considerKey("robot");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
-	
-	cout << " --- START --- " << endl;
-	// --robot "robots/iCub/iCub.xml"
-	std::string filename("robots/ArmarIII/ArmarIII.xml");
-	//std::string filename("robots/ArmarIII/ArmarIII-RightArm.xml");
-	//std::string filename("C:/Projects/IIT_Projects/iCubRobot/robot/iCub.xml");
-	//std::string filename(DEMO_BASE_DIR "/robot/iCub_RightArm.xml");
-	//std::string filename(DEMO_BASE_DIR "/robot/iCub_RightHand.xml");
-	//std::string filename(DEMO_BASE_DIR "/robot/iCub_LeftHand.xml");
 
-	if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-	{
-		std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-		if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-		{
-			filename = robFile;
-		}
-	}
-	cout << "Using robot at " << filename << endl;
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
 
-	showRobotWindow rw(filename);
+    cout << " --- START --- " << endl;
+    // --robot "robots/iCub/iCub.xml"
+    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    //std::string filename("robots/ArmarIII/ArmarIII-RightArm.xml");
+    //std::string filename("C:/Projects/IIT_Projects/iCubRobot/robot/iCub.xml");
+    //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightArm.xml");
+    //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightHand.xml");
+    //std::string filename(DEMO_BASE_DIR "/robot/iCub_LeftHand.xml");
 
-	rw.main();
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
 
-	return 0;
+        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
+        {
+            filename = robFile;
+        }
+    }
+
+    cout << "Using robot at " << filename << endl;
+
+    showRobotWindow rw(filename);
+
+    rw.main();
+
+    return 0;
 
 }

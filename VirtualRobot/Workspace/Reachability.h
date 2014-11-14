@@ -30,62 +30,62 @@
 namespace VirtualRobot
 {
 
-/*!
-		This class represents an approximation of the reachability distribution of a kinematic chain (e.g. an arm).
-		Consists of voxels covering the 6D space for position (XYZ) and orientation (Tait–Bryan angles, EulerXYZ, static frame).
-		Each voxel holds a counter with the number of successful IK solver calls, 
-		representing the approximated probability that an IK solver call can be successfully answered.
-		The discretized reachability data can be written to and loaded from binary files.
+    /*!
+            This class represents an approximation of the reachability distribution of a kinematic chain (e.g. an arm).
+            Consists of voxels covering the 6D space for position (XYZ) and orientation (Tait–Bryan angles, EulerXYZ, static frame).
+            Each voxel holds a counter with the number of successful IK solver calls,
+            representing the approximated probability that an IK solver call can be successfully answered.
+            The discretized reachability data can be written to and loaded from binary files.
 
-		The reachability is linked to a base coordinate system which is defined by a robot joint.
-		This base system is used to align the data when the robot is moving.
-		I.E. think of an arm of a humanoid where the reachability is linked to the shoulder.
-		When the torso moves, the reachability also changes it's position according to the position of the shoulder.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT Reachability : public WorkspaceRepresentation, public boost::enable_shared_from_this<Reachability>
-{
-public:
-	friend class CoinVisualizationFactory;
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+            The reachability is linked to a base coordinate system which is defined by a robot joint.
+            This base system is used to align the data when the robot is moving.
+            I.E. think of an arm of a humanoid where the reachability is linked to the shoulder.
+            When the torso moves, the reachability also changes it's position according to the position of the shoulder.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Reachability : public WorkspaceRepresentation, public boost::enable_shared_from_this<Reachability>
+    {
+    public:
+        friend class CoinVisualizationFactory;
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	Reachability(RobotPtr robot);
+        Reachability(RobotPtr robot);
 
-	/*!
-		Returns true, if the corresponding reachability entry is non zero.
-	*/
-	bool isReachable(const Eigen::Matrix4f &globalPose);
+        /*!
+            Returns true, if the corresponding reachability entry is non zero.
+        */
+        bool isReachable(const Eigen::Matrix4f& globalPose);
 
-	/*!
-		Returns all reachable grasps that can be applied at the current position of object. 
-	*/
-	GraspSetPtr getReachableGrasps(GraspSetPtr grasps, ManipulationObjectPtr object);
+        /*!
+            Returns all reachable grasps that can be applied at the current position of object.
+        */
+        GraspSetPtr getReachableGrasps(GraspSetPtr grasps, ManipulationObjectPtr object);
 
 
-	/*!
-		Append current TCP pose of the corresponding robot to reachability data. 
-		This means that the entry of the corresponding WorkspaceData voxel is increased by 1.
-	*/
-	void addCurrentTCPPose();
+        /*!
+            Append current TCP pose of the corresponding robot to reachability data.
+            This means that the entry of the corresponding WorkspaceData voxel is increased by 1.
+        */
+        void addCurrentTCPPose();
 
-	/*!
-		Append a number of random TCP poses to Reachability Data
-		\param loops Number of poses that should be appended
-		\param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
-	*/
-	void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
+        /*!
+            Append a number of random TCP poses to Reachability Data
+            \param loops Number of poses that should be appended
+            \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
+        */
+        void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
 
-	//! returns a random pose that is covered by the workspace data.
-	Eigen::Matrix4f sampleReachablePose();
+        //! returns a random pose that is covered by the workspace data.
+        Eigen::Matrix4f sampleReachablePose();
 
-	/*!
-		Creates a deep copy of this data structure. A ReachabilityPtr is returned.
-	*/
-	virtual WorkspaceRepresentationPtr clone();
+        /*!
+            Creates a deep copy of this data structure. A ReachabilityPtr is returned.
+        */
+        virtual WorkspaceRepresentationPtr clone();
 
-protected:
+    protected:
 
-};
+    };
 
 
 } // namespace VirtualRobot

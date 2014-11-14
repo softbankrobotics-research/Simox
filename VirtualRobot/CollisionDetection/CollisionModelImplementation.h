@@ -35,52 +35,64 @@
 namespace VirtualRobot
 {
 
-class CollisionChecker;
-class CollisionModel;
+    class CollisionChecker;
+    class CollisionModel;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModelImplementation
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModelImplementation
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	friend class CollisionModel;
+        friend class CollisionModel;
 
-	/*!Standard Constructor
-	If collision checks should be done in parallel, different CollisionCheckers can be specified.
-	*/
-	CollisionModelImplementation(TriMeshModelPtr modelData, CollisionCheckerPtr pColChecker, int id)
-	{
-		this->modelData = modelData;
-		this->id = id;
-	};
+        /*!Standard Constructor
+        If collision checks should be done in parallel, different CollisionCheckers can be specified.
+        */
+        CollisionModelImplementation(TriMeshModelPtr modelData, CollisionCheckerPtr pColChecker, int id)
+        {
+            this->modelData = modelData;
+            this->id = id;
+        };
 
-	/*!Standard Destructor
-	*/
-	virtual ~CollisionModelImplementation(){};
-
-
-	/*!
-	Sets the position of the internal colModel data structure.
-	*/
-	void setGlobalPose (const Eigen::Matrix4f &m){globalPose = m;}
-	inline const Eigen::Matrix4f& getGlobalPose() const {return globalPose;}
+        /*!Standard Destructor
+        */
+        virtual ~CollisionModelImplementation() {};
 
 
-	virtual void print() {cout << "Dummy Collision Model Implementation..." << endl;};
+        /*!
+        Sets the position of the internal colModel data structure.
+        */
+        void setGlobalPose(const Eigen::Matrix4f& m)
+        {
+            globalPose = m;
+        }
+        inline const Eigen::Matrix4f& getGlobalPose() const
+        {
+            return globalPose;
+        }
 
-	TriMeshModelPtr getTriMeshModel(){return modelData;}
 
-protected:
+        virtual void print()
+        {
+            cout << "Dummy Collision Model Implementation..." << endl;
+        };
 
-	//! delete all data
-	virtual void destroyData() = 0;  
+        TriMeshModelPtr getTriMeshModel()
+        {
+            return modelData;
+        }
 
-	TriMeshModelPtr modelData;
+    protected:
 
-	int id;
+        //! delete all data
+        virtual void destroyData() = 0;
 
-	Eigen::Matrix4f globalPose;
-};
+        TriMeshModelPtr modelData;
+
+        int id;
+
+        Eigen::Matrix4f globalPose;
+    };
 
 
 

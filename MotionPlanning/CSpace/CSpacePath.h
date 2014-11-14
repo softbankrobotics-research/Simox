@@ -28,82 +28,83 @@
 #include <string>
 
 #include <Eigen/StdVector>
- 
+
 #include "CSpace.h"
 
 #include <VirtualRobot/Trajectory.h>
 
-namespace Saba {
-
-/*!
- *
- * \brief A path in c-space.
- *
- */
-class SABA_IMPORT_EXPORT CSpacePath : public VirtualRobot::Trajectory
+namespace Saba
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor. Dimension of this path is retrieved from cspace.
-		\param cspace Is used to retrieve the dimension of the corresponding c-space and the corresponding joints
-		\param name An optional string, identifying this path.
-	*/
-	CSpacePath(CSpacePtr cspace, const std::string &name="");
+    /*!
+     *
+     * \brief A path in c-space.
+     *
+     */
+    class SABA_IMPORT_EXPORT CSpacePath : public VirtualRobot::Trajectory
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	//! Destructor
-	virtual ~CSpacePath();
+        /*!
+            Constructor. Dimension of this path is retrieved from cspace.
+            \param cspace Is used to retrieve the dimension of the corresponding c-space and the corresponding joints
+            \param name An optional string, identifying this path.
+        */
+        CSpacePath(CSpacePtr cspace, const std::string& name = "");
 
-	
-	
-	/*!
-	  Creates a copy of the path instance.
-	  \return pointer to new instance (copy)
-	*/
-	CSpacePathPtr clone() const;
-
-	CSpacePathPtr createSubPath(unsigned int startIndex, unsigned int endIndex) const;
-
-	/*!
-		Return euclidean c-space length of complete path. 
-		Any weights that may be defined in the corresponding c-space are considered.
-	*/
-	virtual float getLength() const;
-
-	/*!
-		Return euclidean c-space length of complete path
-		\param useCSpaceWeights When set, the weight that might have been specified in the corresponding c-space
-		are used for computing the path length.
-	*/
-	float getLength(bool useCSpaceWeights) const;
-
-	/*!
-		Return length of part of the path (in CSpace!)
-		\param startIndex The start point
-		\param endIndex The end point
-		\param useCSpaceWeights When set, the weights that have been specified in the corresponding c-space are used for computing the path length.
-	*/
-	float getLength(unsigned int startIndex, unsigned int endIndex, bool useCSpaceWeights = true) const;
+        //! Destructor
+        virtual ~CSpacePath();
 
 
-	/*!
-		return position on path for time t (0<=t<=1)
-		If storeIndex!=NULL the index of the last path point is stored.
-		This method consideres weighting of c-space dimensions!
-	 */
-	virtual void interpolate(float t, Eigen::VectorXf &storePos, int *storeIndex = NULL) const;
 
-	//! return time t (0<=t<=1) for path entry with number nr
-	virtual float getTime(unsigned int nr);
+        /*!
+          Creates a copy of the path instance.
+          \return pointer to new instance (copy)
+        */
+        CSpacePathPtr clone() const;
+
+        CSpacePathPtr createSubPath(unsigned int startIndex, unsigned int endIndex) const;
+
+        /*!
+            Return euclidean c-space length of complete path.
+            Any weights that may be defined in the corresponding c-space are considered.
+        */
+        virtual float getLength() const;
+
+        /*!
+            Return euclidean c-space length of complete path
+            \param useCSpaceWeights When set, the weight that might have been specified in the corresponding c-space
+            are used for computing the path length.
+        */
+        float getLength(bool useCSpaceWeights) const;
+
+        /*!
+            Return length of part of the path (in CSpace!)
+            \param startIndex The start point
+            \param endIndex The end point
+            \param useCSpaceWeights When set, the weights that have been specified in the corresponding c-space are used for computing the path length.
+        */
+        float getLength(unsigned int startIndex, unsigned int endIndex, bool useCSpaceWeights = true) const;
 
 
-	CSpacePtr getCSpace();
-	std::vector<Eigen::Matrix4f > createWorkspacePath( VirtualRobot::RobotNodePtr r = VirtualRobot::RobotNodePtr() );
+        /*!
+            return position on path for time t (0<=t<=1)
+            If storeIndex!=NULL the index of the last path point is stored.
+            This method consideres weighting of c-space dimensions!
+         */
+        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = NULL) const;
 
-protected:
-	CSpacePtr cspace;
-};
+        //! return time t (0<=t<=1) for path entry with number nr
+        virtual float getTime(unsigned int nr);
+
+
+        CSpacePtr getCSpace();
+        std::vector<Eigen::Matrix4f > createWorkspacePath(VirtualRobot::RobotNodePtr r = VirtualRobot::RobotNodePtr());
+
+    protected:
+        CSpacePtr cspace;
+    };
 
 } // namespace Saba
 

@@ -25,38 +25,40 @@ using namespace VirtualRobot;
 
 #include "simDynamicsWindow.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"SimDynamicsViewer");
+    SoDB::init();
+    SoQt::init(argc, argv, "SimDynamicsViewer");
 
-	
-	VirtualRobot::RuntimeEnvironment::considerKey("robot");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
-	
-	cout << " --- START --- " << endl;
-	// --robot "robots/iCub/iCub.xml"
-	//std::string filename("robots/iCub/iCub.xml");
-	std::string filename("robots/ArmarIII/ArmarIII.xml");
-	//std::string filename("robots/examples/SimpleRobot/Joint6.xml");
+
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
+
+    cout << " --- START --- " << endl;
+    // --robot "robots/iCub/iCub.xml"
+    //std::string filename("robots/iCub/iCub.xml");
+    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    //std::string filename("robots/examples/SimpleRobot/Joint6.xml");
     //std::string filename("robots/ArmarIII/ArmarIII-RightArmTest6.xml");
 
 
-	if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-	{
-		std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-		if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-		{
-			filename = robFile;
-		}
-	}
-	cout << "Using robot at " << filename << endl;
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
 
-	SimDynamicsWindow rw(filename);
+        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
+        {
+            filename = robFile;
+        }
+    }
 
-	rw.main();
+    cout << "Using robot at " << filename << endl;
 
-	return 0;
+    SimDynamicsWindow rw(filename);
+
+    rw.main();
+
+    return 0;
 
 }

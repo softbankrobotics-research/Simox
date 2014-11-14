@@ -36,74 +36,74 @@
 namespace VirtualRobot
 {
 
-/*!
-	This class can be used to generate an approximated sphere representation. 
-	The sphere is represented by a set of uniformly sized triangles.
+    /*!
+        This class can be used to generate an approximated sphere representation.
+        The sphere is represented by a set of uniformly sized triangles.
 
-	You can use the method generateGraph to fill the data structure SphereApproximation.
+        You can use the method generateGraph to fill the data structure SphereApproximation.
 
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT SphereApproximator
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SphereApproximator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	SphereApproximator() {};
-	~SphereApproximator() {};
+        SphereApproximator() {};
+        ~SphereApproximator() {};
 
-	enum EPolyhedronType
-	{
-		eTetrahedron,
-		eOctahedron,
-		eIcosahedron
-	};
+        enum EPolyhedronType
+        {
+            eTetrahedron,
+            eOctahedron,
+            eIcosahedron
+        };
 
-	struct FaceIndex
-	{
-		std::vector<int> faceIds;
-	};
+        struct FaceIndex
+        {
+            std::vector<int> faceIds;
+        };
 
-	//! A data structure that represents a sphere
-	struct SphereApproximation
-	{
-		std::vector< Eigen::Vector3f >	vertices;
-		std::vector< MathTools::TriangleFace >	faces;
-		std::map<int,FaceIndex> mapVerticeIndxToFaceIndx;
-	};
+        //! A data structure that represents a sphere
+        struct SphereApproximation
+        {
+            std::vector< Eigen::Vector3f >  vertices;
+            std::vector< MathTools::TriangleFace >  faces;
+            std::map<int, FaceIndex> mapVerticeIndxToFaceIndx;
+        };
 
-	/*!
-		Generates a sphere representation and fills the data structure storeResult with the result.
-	*/
-	void generateGraph(SphereApproximation &storeResult, EPolyhedronType baseType, int levels, float radius);
+        /*!
+            Generates a sphere representation and fills the data structure storeResult with the result.
+        */
+        void generateGraph(SphereApproximation& storeResult, EPolyhedronType baseType, int levels, float radius);
 
-	TriMeshModelPtr generateTriMesh(const SphereApproximation &a);
+        TriMeshModelPtr generateTriMesh(const SphereApproximation& a);
 
-	int findVertex(const Eigen::Vector3f &position, float epsilon, std::vector<Eigen::Vector3f> &vertices);
-	float AngleVecVec(const Eigen::Vector3f &vector1, const Eigen::Vector3f &vector2);
+        int findVertex(const Eigen::Vector3f& position, float epsilon, std::vector<Eigen::Vector3f>& vertices);
+        float AngleVecVec(const Eigen::Vector3f& vector1, const Eigen::Vector3f& vector2);
 
-	bool check_intersect_tri(const Eigen::Vector3f &pt1, const Eigen::Vector3f &pt2, const Eigen::Vector3f &pt3, const Eigen::Vector3f &linept, const Eigen::Vector3f &vect, Eigen::Vector3f &storeIntersection);
+        bool check_intersect_tri(const Eigen::Vector3f& pt1, const Eigen::Vector3f& pt2, const Eigen::Vector3f& pt3, const Eigen::Vector3f& linept, const Eigen::Vector3f& vect, Eigen::Vector3f& storeIntersection);
 
-private:
+    private:
 
-	struct GraphData
-	{
-		std::vector<Eigen::Vector3f> vertices;
-		std::vector<MathTools::TriangleFace> faces;
-	};
-	bool check_same_clock_dir(const Eigen::Vector3f &pt1, const Eigen::Vector3f &pt2,const Eigen::Vector3f &pt3,const Eigen::Vector3f &norm);
+        struct GraphData
+        {
+            std::vector<Eigen::Vector3f> vertices;
+            std::vector<MathTools::TriangleFace> faces;
+        };
+        bool check_same_clock_dir(const Eigen::Vector3f& pt1, const Eigen::Vector3f& pt2, const Eigen::Vector3f& pt3, const Eigen::Vector3f& norm);
 
-	void buildVertexFaceMapping(SphereApproximation &storeResult);
-	void initBasePolyhedron(EPolyhedronType baseType, GraphData &gd);
-	void generateTetrahedron(GraphData &gd);
-	void generateOctahedron(GraphData &gd);
-	void generateIcosahedron(GraphData &gd);
-	void subDivide(GraphData &gd);
-	void projectToSphere(float radius, GraphData &gd);
-	void setVec(Eigen::Vector3f &v, float x, float y, float z);
-	void addVecVec(const Eigen::Vector3f &vector1, const Eigen::Vector3f &vector2, Eigen::Vector3f &result);
-	void mulVecScalar(const Eigen::Vector3f &vec, float scalar, Eigen::Vector3f &result);
+        void buildVertexFaceMapping(SphereApproximation& storeResult);
+        void initBasePolyhedron(EPolyhedronType baseType, GraphData& gd);
+        void generateTetrahedron(GraphData& gd);
+        void generateOctahedron(GraphData& gd);
+        void generateIcosahedron(GraphData& gd);
+        void subDivide(GraphData& gd);
+        void projectToSphere(float radius, GraphData& gd);
+        void setVec(Eigen::Vector3f& v, float x, float y, float z);
+        void addVecVec(const Eigen::Vector3f& vector1, const Eigen::Vector3f& vector2, Eigen::Vector3f& result);
+        void mulVecScalar(const Eigen::Vector3f& vec, float scalar, Eigen::Vector3f& result);
 
-};
+    };
 
 }
 

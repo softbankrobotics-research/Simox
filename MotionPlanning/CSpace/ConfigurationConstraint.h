@@ -27,32 +27,33 @@
 #include "../CSpace/CSpace.h"
 #include <vector>
 
-namespace Saba {
-
-/*!
-*
-* \brief An interface class for defining custom constraints
-*
-*/
-class SABA_IMPORT_EXPORT ConfigurationConstraint
+namespace Saba
 {
-public:
-	ConfigurationConstraint(unsigned int dimension);
-	virtual ~ConfigurationConstraint();
 
-	/*!
-		An derived class has to implement this method in order to check 
-		if a configuration c satisfies the constraint or not.
-		\param c The config to be tested.
-		\return True if c satisfies the constraint.
-	*/
-	virtual bool isValid(const Eigen::VectorXf &c) = 0;
+    /*!
+    *
+    * \brief An interface class for defining custom constraints
+    *
+    */
+    class SABA_IMPORT_EXPORT ConfigurationConstraint
+    {
+    public:
+        ConfigurationConstraint(unsigned int dimension);
+        virtual ~ConfigurationConstraint();
+
+        /*!
+            An derived class has to implement this method in order to check
+            if a configuration c satisfies the constraint or not.
+            \param c The config to be tested.
+            \return True if c satisfies the constraint.
+        */
+        virtual bool isValid(const Eigen::VectorXf& c) = 0;
 
 
-protected:
-	
-	unsigned int dimension;
-};
+    protected:
+
+        unsigned int dimension;
+    };
 
 }
 

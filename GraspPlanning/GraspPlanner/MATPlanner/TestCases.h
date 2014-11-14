@@ -7,26 +7,26 @@
 namespace GraspStudio
 {
 
-	class GRASPSTUDIO_IMPORT_EXPORT TestCases
-	{
-	public:
-		TestCases();
+    class GRASPSTUDIO_IMPORT_EXPORT TestCases
+    {
+    public:
+        TestCases();
 
-		//static void testSomeStuff();
+        //static void testSomeStuff();
 
-		static void testScaleMedialSphere();
-		static void testScaleMedialSphere(MedialSpherePtr ms, float scaleFactor);
+        static void testScaleMedialSphere();
+        static void testScaleMedialSphere(MedialSpherePtr ms, float scaleFactor);
 
-		static void testSphereSelection(std::vector<MedialSpherePtr>& spheres);
+        static void testSphereSelection(std::vector<MedialSpherePtr>& spheres);
 
-		static void testSetupGrid(std::vector<MedialSpherePtr>& spheres, std::vector<Eigen::Vector3f> surfacePoints);
+        static void testSetupGrid(std::vector<MedialSpherePtr>& spheres, std::vector<Eigen::Vector3f> surfacePoints);
 
-		static void testComputeCubeIndices(GridOfMedialSpheres& goms, Eigen::Vector3i seedIndex, Eigen::Vector3i maxCubeIndex, int maxCubeRadiusToSearch);
-		static std::vector<Eigen::Vector3i> testGetComputeCubeIndices(GridOfMedialSpheres& goms, Eigen::Vector3i seedIndex, Eigen::Vector3i maxCubeIndex, int maxCubeRadiusToSearch);
+        static void testComputeCubeIndices(GridOfMedialSpheres& goms, Eigen::Vector3i seedIndex, Eigen::Vector3i maxCubeIndex, int maxCubeRadiusToSearch);
+        static std::vector<Eigen::Vector3i> testGetComputeCubeIndices(GridOfMedialSpheres& goms, Eigen::Vector3i seedIndex, Eigen::Vector3i maxCubeIndex, int maxCubeRadiusToSearch);
 
-		static void testEigenMathFunctions();
+        static void testEigenMathFunctions();
 
 
-	};
+    };
 }
 #endif // TESTCASES_H

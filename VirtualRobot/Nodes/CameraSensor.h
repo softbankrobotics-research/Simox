@@ -29,54 +29,54 @@
 namespace VirtualRobot
 {
 
-class CameraSensor;
-typedef boost::shared_ptr<CameraSensor> CameraSensorPtr;
+    class CameraSensor;
+    typedef boost::shared_ptr<CameraSensor> CameraSensorPtr;
 
 
-/*!
-	A sensor for capturing simulated camera images.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT CameraSensor : public Sensor
-{
-public:
-	friend class Robot;
-	friend class RobotIO;
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+        A sensor for capturing simulated camera images.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CameraSensor : public Sensor
+    {
+    public:
+        friend class Robot;
+        friend class RobotIO;
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor with settings.
-	*/
-	CameraSensor(	RobotNodeWeakPtr robotNode, 
-			const std::string &name,
-			VisualizationNodePtr visualization = VisualizationNodePtr(),
-			const Eigen::Matrix4f &rnTrafo = Eigen::Matrix4f::Identity()
-			);
+        /*!
+            Constructor with settings.
+        */
+        CameraSensor(RobotNodeWeakPtr robotNode,
+                     const std::string& name,
+                     VisualizationNodePtr visualization = VisualizationNodePtr(),
+                     const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()
+                    );
 
-	/*!
-	*/
-	virtual ~CameraSensor();
-
-
-	/*!
-		Print status information.
-	*/
-	virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        /*!
+        */
+        virtual ~CameraSensor();
 
 
-    virtual std::string toXML(const std::string &modelPath, int tabs);
+        /*!
+            Print status information.
+        */
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
 
-protected:
+        virtual std::string toXML(const std::string& modelPath, int tabs);
 
 
-	CameraSensor(){};
+    protected:
 
-	/*!
-	Derived classes must implement their clone method here.
-	*/
-	virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
 
-};
+        CameraSensor() {};
+
+        /*!
+        Derived classes must implement their clone method here.
+        */
+        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
+
+    };
 
 } // namespace VirtualRobot
 

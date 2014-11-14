@@ -36,37 +36,37 @@ class SoPrimitiveVertex;
 
 namespace GraspStudio
 {
-/*!
-*
-* \class CoinConvexHullVisualization
-*
-* A Coin3D related visualization of a convex hull
-*/
-class GRASPSTUDIO_IMPORT_EXPORT CoinConvexHullVisualization : virtual public ConvexHullVisualization
-{
-public:
-	/*!
-		Constructor
-	*/
-	CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
-	CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
+    /*!
+    *
+    * \class CoinConvexHullVisualization
+    *
+    * A Coin3D related visualization of a convex hull
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT CoinConvexHullVisualization : virtual public ConvexHullVisualization
+    {
+    public:
+        /*!
+            Constructor
+        */
+        CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
+        CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
-	~CoinConvexHullVisualization();
+        ~CoinConvexHullVisualization();
 
-	SoSeparator* getCoinVisualization();
+        SoSeparator* getCoinVisualization();
 
-protected:
-    
-    void buildVisu();
-	SoSeparator* createConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr &convHull);
-	SoSeparator* createConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr &convHull, bool buseFirst3Coords);
+    protected:
 
-	
-	SoSeparator* visualization;
+        void buildVisu();
+        SoSeparator* createConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr& convHull);
+        SoSeparator* createConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr& convHull, bool buseFirst3Coords);
 
-};
 
-	typedef boost::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
+        SoSeparator* visualization;
+
+    };
+
+    typedef boost::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
 
 
 } // namespace Saba

@@ -29,66 +29,66 @@
 namespace VirtualRobot
 {
 
-class ForceTorqueSensor;
-typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
+    class ForceTorqueSensor;
+    typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 
 
-/*!
-    This is a force torque sensor in a joint
-    The force torque values are in world coordinates
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT ForceTorqueSensor : public Sensor
-{
-public:
-	friend class Robot;
-	friend class RobotIO;
+    /*!
+        This is a force torque sensor in a joint
+        The force torque values are in world coordinates
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ForceTorqueSensor : public Sensor
+    {
+    public:
+        friend class Robot;
+        friend class RobotIO;
 
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor with settings.
-	*/
-    ForceTorqueSensor(	RobotNodeWeakPtr robotNode,
-            const std::string &name
-			);
+        /*!
+            Constructor with settings.
+        */
+        ForceTorqueSensor(RobotNodeWeakPtr robotNode,
+                          const std::string& name
+                         );
 
-	/*!
-	*/
-    virtual ~ForceTorqueSensor();
+        /*!
+        */
+        virtual ~ForceTorqueSensor();
 
-    void updateSensors(const Eigen::VectorXf &newForceTorque);
-
-
-    const Eigen::VectorXf &getForceTorque();
-    Eigen::Vector3f getForce() const;
-    Eigen::Vector3f getTorque() const;
-
-	/**
-	 * Projects torque on joint axis
-	 */
-    Eigen::Vector3f getAxisTorque();
-
-	/*!
-		Print status information.
-	*/
-	virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void updateSensors(const Eigen::VectorXf& newForceTorque);
 
 
-    virtual std::string toXML(const std::string &modelPath, int tabs);
+        const Eigen::VectorXf& getForceTorque();
+        Eigen::Vector3f getForce() const;
+        Eigen::Vector3f getTorque() const;
 
-protected:
+        /**
+         * Projects torque on joint axis
+         */
+        Eigen::Vector3f getAxisTorque();
 
-    ForceTorqueSensor(){}
+        /*!
+            Print status information.
+        */
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
 
-	/*!
-	Derived classes must implement their clone method here.
-	*/
-	virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
-    Eigen::VectorXf forceTorqueValues;
-};
+        virtual std::string toXML(const std::string& modelPath, int tabs);
 
-typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
+    protected:
+
+        ForceTorqueSensor() {}
+
+
+        /*!
+        Derived classes must implement their clone method here.
+        */
+        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
+        Eigen::VectorXf forceTorqueValues;
+    };
+
+    typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 
 } // namespace VirtualRobot
 

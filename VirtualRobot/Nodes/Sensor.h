@@ -42,97 +42,106 @@
 namespace VirtualRobot
 {
 
-class Sensor;
-typedef boost::shared_ptr<Sensor> SensorPtr;
+    class Sensor;
+    typedef boost::shared_ptr<Sensor> SensorPtr;
 
-
-/*!
-	A sensor can be attached to a RobotNode.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT Sensor : public SceneObject
-{
-public:
-	friend class Robot;
-	friend class RobotIO;
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-	/*!
-		Constructor with settings.
-	*/
-	Sensor(	RobotNodeWeakPtr robotNode, 
-			const std::string &name,
-			VisualizationNodePtr visualization = VisualizationNodePtr(),
-			const Eigen::Matrix4f &rnTrafo = Eigen::Matrix4f::Identity()
-			);
-
-	/*!
-	*/
-	virtual ~Sensor();
-
-
-	RobotNodePtr getRobotNode() const;
-
-
-	/*!
-		The transformation that specifies the pose of the sensor relatively to the pose of the parent RobotNode.
-	*/
-	virtual Eigen::Matrix4f getRobotNodeToSensorTransformation() {return rnTransformation;}
-	
-	/*!
-		Calling this SceneObject method will cause an exception, since Sensors are controlled via their RobotNode parent.
-	*/
-	virtual void setGlobalPose( const Eigen::Matrix4f &pose );
-
-	/*!
-		Print status information.
-	*/
-	virtual void print(bool printChildren = false, bool printDecoration = true) const;
-
-
-	/*!
-		Clone this Sensor. 
-		\param newRobotNode The newly created Sensor belongs to newRobotNode.
-		\param scaling Scales the visualization and transformation data.
-	*/
-	virtual SensorPtr clone(RobotNodePtr newRobotNode, float scaling = 1.0f);
-
-
-	//! Forbid cloning method from SceneObject. We need to know the new robotnode for cloning
-	SceneObjectPtr clone( const std::string &name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f ) const {THROW_VR_EXCEPTION("Cloning not allowed this way...");}
 
     /*!
-		Compute/Update the transformations of this sensor. Therefore the parent is queried for its pose.
-	*/
-	virtual void updatePose(bool updateChildren = true);
+        A sensor can be attached to a RobotNode.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Sensor : public SceneObject
+    {
+    public:
+        friend class Robot;
+        friend class RobotIO;
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr> &children = std::vector<SceneObjectPtr>());
+        /*!
+            Constructor with settings.
+        */
+        Sensor(RobotNodeWeakPtr robotNode,
+               const std::string& name,
+               VisualizationNodePtr visualization = VisualizationNodePtr(),
+               const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()
+              );
 
-    virtual std::string toXML(const std::string &modelPath, int tabs = 1);
+        /*!
+        */
+        virtual ~Sensor();
 
-protected:
+
+        RobotNodePtr getRobotNode() const;
 
 
-	/*!
-		Update the pose according to parent pose
-	*/ 
-	virtual void updatePose( const Eigen::Matrix4f &parentPose, bool updateChildren = true );
+        /*!
+            The transformation that specifies the pose of the sensor relatively to the pose of the parent RobotNode.
+        */
+        virtual Eigen::Matrix4f getRobotNodeToSensorTransformation()
+        {
+            return rnTransformation;
+        }
 
-	Sensor(){};
+        /*!
+            Calling this SceneObject method will cause an exception, since Sensors are controlled via their RobotNode parent.
+        */
+        virtual void setGlobalPose(const Eigen::Matrix4f& pose);
 
-	
-	Eigen::Matrix4f rnTransformation;			//<! Transformation from parent's coordinate system to this sensor
+        /*!
+            Print status information.
+        */
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
-	RobotNodeWeakPtr robotNode;
 
-	/*!
-		Derived classes must implement their clone method here.
-		The visualization is already scaled, the kinematic information (i.e. transformations) have to be scaled by derived implementations.
-	*/
-	virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling) = 0;
+        /*!
+            Clone this Sensor.
+            \param newRobotNode The newly created Sensor belongs to newRobotNode.
+            \param scaling Scales the visualization and transformation data.
+        */
+        virtual SensorPtr clone(RobotNodePtr newRobotNode, float scaling = 1.0f);
 
-	virtual SceneObject* _clone( const std::string &name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f ) const {THROW_VR_EXCEPTION("Cloning not allowed this way...");}
 
-};
+        //! Forbid cloning method from SceneObject. We need to know the new robotnode for cloning
+        SceneObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const
+        {
+            THROW_VR_EXCEPTION("Cloning not allowed this way...");
+        }
+
+        /*!
+            Compute/Update the transformations of this sensor. Therefore the parent is queried for its pose.
+        */
+        virtual void updatePose(bool updateChildren = true);
+
+        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+
+        virtual std::string toXML(const std::string& modelPath, int tabs = 1);
+
+    protected:
+
+
+        /*!
+            Update the pose according to parent pose
+        */
+        virtual void updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren = true);
+
+        Sensor() {};
+
+
+        Eigen::Matrix4f rnTransformation;           //<! Transformation from parent's coordinate system to this sensor
+
+        RobotNodeWeakPtr robotNode;
+
+        /*!
+            Derived classes must implement their clone method here.
+            The visualization is already scaled, the kinematic information (i.e. transformations) have to be scaled by derived implementations.
+        */
+        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling) = 0;
+
+        virtual SceneObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const
+        {
+            THROW_VR_EXCEPTION("Cloning not allowed this way...");
+        }
+
+    };
 
 } // namespace VirtualRobot
 

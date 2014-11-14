@@ -25,22 +25,22 @@ using namespace VirtualRobot;
 #include "showSceneWindow.h"
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"showRobot");
-	cout << " --- START --- " << endl;
+    SoDB::init();
+    SoQt::init(argc, argv, "showRobot");
+    cout << " --- START --- " << endl;
     std::string filename("scenes/examples/SceneViewer/scene1.xml");
-	VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
-	VirtualRobot::RuntimeEnvironment::considerKey("scene");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
+    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
+    VirtualRobot::RuntimeEnvironment::considerKey("scene");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
 
-	filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("scene",filename);
-	showSceneWindow rw(filename);
+    filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("scene", filename);
+    showSceneWindow rw(filename);
 
-	rw.main();
+    rw.main();
 
-	return 0;
+    return 0;
 
 }

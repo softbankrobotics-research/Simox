@@ -28,20 +28,20 @@
 namespace GraspStudio
 {
 
-	class GridParameters
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GridParameters
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			GridParameters();
-		GridParameters(Eigen::Vector3i numCells, Eigen::Vector3f minPoint, Eigen::Vector3f maxPoint, float cellWidth);
+        GridParameters();
+        GridParameters(Eigen::Vector3i numCells, Eigen::Vector3f minPoint, Eigen::Vector3f maxPoint, float cellWidth);
 
-		Eigen::Vector3i numCells;
-		Eigen::Vector3i maxGridIndex;
-		Eigen::Vector3f minPoint;
-		Eigen::Vector3f maxPoint;
-		float cellWidth;
+        Eigen::Vector3i numCells;
+        Eigen::Vector3i maxGridIndex;
+        Eigen::Vector3f minPoint;
+        Eigen::Vector3f maxPoint;
+        float cellWidth;
 
-	};
+    };
 }
 #endif // GRIDPARAMETERS_H

@@ -4,12 +4,12 @@
 namespace GraspStudio
 {
 
-namespace PowerCrust
-{
+    namespace PowerCrust
+    {
 
-double double_rand(void);
-void init_rand(long seed);
+        double double_rand(void);
+        void init_rand(long seed);
 
-}
+    }
 }
 #endif

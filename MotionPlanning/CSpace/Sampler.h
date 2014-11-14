@@ -27,49 +27,50 @@
 #include "../CSpace/CSpace.h"
 #include <vector>
 
-namespace Saba {
-
-/*!
-*
-* \brief An interface class for custom sample algorithms 
-*
-*/
-class SABA_IMPORT_EXPORT Sampler
+namespace Saba
 {
-public:
-	Sampler(unsigned int dimension);
-	virtual ~Sampler();
 
-	virtual void sample(Eigen::VectorXf &stroreConfig, CSpacePtr space) = 0;
-	//virtual void sample(std::vector<float> &storeConfig, CSpacePtr cspace) = 0;
+    /*!
+    *
+    * \brief An interface class for custom sample algorithms
+    *
+    */
+    class SABA_IMPORT_EXPORT Sampler
+    {
+    public:
+        Sampler(unsigned int dimension);
+        virtual ~Sampler();
 
-	/*!
-		Enable metric weighting. This can be useful for different variance in each dimension.
-		Standard: disabled
-	*/
-	virtual void enableMetricWeights(const Eigen::VectorXf &weights);
-	virtual void disableMetricWeights();
+        virtual void sample(Eigen::VectorXf& stroreConfig, CSpacePtr space) = 0;
+        //virtual void sample(std::vector<float> &storeConfig, CSpacePtr cspace) = 0;
 
-protected:
-	//! Returns a uniformly generated random configuration with nDimension components
-	void getUniformlyRandomConfig(Eigen::VectorXf &stroreConfig, CSpacePtr space);
-	
-	/*! Returns a normal distributed random configuration with nDimension components.
-	    Note that we assume the covariance-matrix to be a diagonal matrix. This means,
-	    that the components of the configuration are uncorrelated.
-	    The result value is not checked against any boundaries of the configuration space.
-	*/ 
-	void getNormalRandomConfig(Eigen::VectorXf &stroreConfig, const Eigen::VectorXf &mean, const Eigen::MatrixXf &variance);
-	
-	/*! Returns a normal distributed random configuration with nDimension components.
-		This is a convenience function in case you want to apply the same variance in
-		every dimension.
-	*/
-	void getNormalRandomConfig(Eigen::VectorXf &stroreConfig, const Eigen::VectorXf &mean, float variance);
-	
-	unsigned int dimension;
-	Eigen::VectorXf metricWeights;
-};
+        /*!
+            Enable metric weighting. This can be useful for different variance in each dimension.
+            Standard: disabled
+        */
+        virtual void enableMetricWeights(const Eigen::VectorXf& weights);
+        virtual void disableMetricWeights();
+
+    protected:
+        //! Returns a uniformly generated random configuration with nDimension components
+        void getUniformlyRandomConfig(Eigen::VectorXf& stroreConfig, CSpacePtr space);
+
+        /*! Returns a normal distributed random configuration with nDimension components.
+            Note that we assume the covariance-matrix to be a diagonal matrix. This means,
+            that the components of the configuration are uncorrelated.
+            The result value is not checked against any boundaries of the configuration space.
+        */
+        void getNormalRandomConfig(Eigen::VectorXf& stroreConfig, const Eigen::VectorXf& mean, const Eigen::MatrixXf& variance);
+
+        /*! Returns a normal distributed random configuration with nDimension components.
+            This is a convenience function in case you want to apply the same variance in
+            every dimension.
+        */
+        void getNormalRandomConfig(Eigen::VectorXf& stroreConfig, const Eigen::VectorXf& mean, float variance);
+
+        unsigned int dimension;
+        Eigen::VectorXf metricWeights;
+    };
 
 }
 

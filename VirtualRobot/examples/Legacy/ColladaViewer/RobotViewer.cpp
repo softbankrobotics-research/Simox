@@ -27,36 +27,38 @@ using namespace VirtualRobot;
 bool useColModel = false;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"RobotViewer");
+    SoDB::init();
+    SoQt::init(argc, argv, "RobotViewer");
 
-	
-	VirtualRobot::RuntimeEnvironment::considerKey("robot");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
-	
-	cout << " --- START --- " << endl;
 
-	// std::string filename;
-	// std::string filename(DEMO_BASE_DIR "/data/MMMWinter.dae");
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
+
+    cout << " --- START --- " << endl;
+
+    // std::string filename;
+    // std::string filename(DEMO_BASE_DIR "/data/MMMWinter.dae");
     std::string filename(DEMO_BASE_DIR "/data/demo-lint.dae");
 
-	if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-	{
-		std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-		if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-		{
-			filename = robFile;
-		}
-	}
-	cout << "Using robot at " << filename << endl;
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
 
-	showRobotWindow rw(filename);
+        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
+        {
+            filename = robFile;
+        }
+    }
 
-	rw.main();
+    cout << "Using robot at " << filename << endl;
 
-	return 0;
+    showRobotWindow rw(filename);
+
+    rw.main();
+
+    return 0;
 
 }

@@ -3,13 +3,13 @@
 
 namespace Saba
 {
-	
-CSpaceNode::CSpaceNode()
-{
-}
 
-CSpaceNode::~CSpaceNode()
-{
-}
+    CSpaceNode::CSpaceNode()
+    {
+    }
+
+    CSpaceNode::~CSpaceNode()
+    {
+    }
 
 }

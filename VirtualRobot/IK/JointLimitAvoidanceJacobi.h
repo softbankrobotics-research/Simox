@@ -32,36 +32,36 @@
 namespace VirtualRobot
 {
 
-/*!
-		This class creates a dummy Jacobian matrix (identity) that can be used to specify a joint space task (e.g. a joint limit avoidance task)
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider, public boost::enable_shared_from_this<JointLimitAvoidanceJacobi>
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-	JointLimitAvoidanceJacobi(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
-
-	virtual Eigen::MatrixXf getJacobianMatrix();
-    virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::SceneObjectPtr tcp);
-
-	/*!
-	    Computes the complete error vector that is given by the distance to the center of the joint limits.
-        Translational Joints are ignored (error = 0)
-        \param stepSize The error can be reduced by this factor.
-	*/
-	virtual Eigen::VectorXf getError(float stepSize = 1.0f);
-
     /*!
-     *  Not used, only implemented because of superclass JacobiProvider, always returns true
-     */
-    bool checkTolerances();
+            This class creates a dummy Jacobian matrix (identity) that can be used to specify a joint space task (e.g. a joint limit avoidance task)
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider, public boost::enable_shared_from_this<JointLimitAvoidanceJacobi>
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-protected:
-	std::vector<RobotNodePtr> nodes;
-};
+        JointLimitAvoidanceJacobi(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
 
-typedef boost::shared_ptr<JointLimitAvoidanceJacobi> JointLimitAvoidanceJacobiPtr;
+        virtual Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::SceneObjectPtr tcp);
+
+        /*!
+            Computes the complete error vector that is given by the distance to the center of the joint limits.
+            Translational Joints are ignored (error = 0)
+            \param stepSize The error can be reduced by this factor.
+        */
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+
+        /*!
+         *  Not used, only implemented because of superclass JacobiProvider, always returns true
+         */
+        bool checkTolerances();
+
+    protected:
+        std::vector<RobotNodePtr> nodes;
+    };
+
+    typedef boost::shared_ptr<JointLimitAvoidanceJacobi> JointLimitAvoidanceJacobiPtr;
 
 } // namespace VirtualRobot
 

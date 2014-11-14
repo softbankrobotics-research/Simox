@@ -15,93 +15,103 @@ namespace VirtualRobot
 
 
 
-Reachability::Reachability(RobotPtr robot) : WorkspaceRepresentation (robot)
-{
-	type = "Reachability";
-}
+    Reachability::Reachability(RobotPtr robot) : WorkspaceRepresentation(robot)
+    {
+        type = "Reachability";
+    }
 
-void Reachability::addCurrentTCPPose()
-{	
-	THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No reachability data loaded");
+    void Reachability::addCurrentTCPPose()
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No reachability data loaded");
 
-	Eigen::Matrix4f p = tcpNode->getGlobalPose();
+        Eigen::Matrix4f p = tcpNode->getGlobalPose();
 
-	addPose(p);
-}
+        addPose(p);
+    }
 
-void Reachability::addRandomTCPPoses( unsigned int loops, bool checkForSelfCollisions )
-{
-	THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Reachability data not initialized");
+    void Reachability::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Reachability data not initialized");
 
-	std::vector<float> c;
-	nodeSet->getJointValues(c);
-	bool visuSate = robot->getUpdateVisualizationStatus();
-	robot->setUpdateVisualization(false);
+        std::vector<float> c;
+        nodeSet->getJointValues(c);
+        bool visuSate = robot->getUpdateVisualizationStatus();
+        robot->setUpdateVisualization(false);
 
-	for (unsigned int i=0;i<loops;i++)
-	{
-		if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
-			addCurrentTCPPose();
-		else
-			VR_WARNING << "Could not find collision-free configuration...";
-	}
-	robot->setUpdateVisualization(visuSate);
-	robot->setJointValues(nodeSet,c);
-}
+        for (unsigned int i = 0; i < loops; i++)
+        {
+            if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
+            {
+                addCurrentTCPPose();
+            }
+            else
+            {
+                VR_WARNING << "Could not find collision-free configuration...";
+            }
+        }
 
-bool Reachability::isReachable( const Eigen::Matrix4f &globalPose )
-{
-	return isCovered(globalPose);
-}
+        robot->setUpdateVisualization(visuSate);
+        robot->setJointValues(nodeSet, c);
+    }
 
-VirtualRobot::GraspSetPtr Reachability::getReachableGrasps( GraspSetPtr grasps, ManipulationObjectPtr object )
-{
-	THROW_VR_EXCEPTION_IF(!object,"no object");
-	THROW_VR_EXCEPTION_IF(!grasps,"no grasps");
+    bool Reachability::isReachable(const Eigen::Matrix4f& globalPose)
+    {
+        return isCovered(globalPose);
+    }
 
-	GraspSetPtr result(new GraspSet(grasps->getName(),grasps->getRobotType(),grasps->getEndEffector()));
-	for (unsigned int i=0; i<grasps->getSize(); i++)
-	{
-		Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
-		if (isReachable(m))
-			result->addGrasp(grasps->getGrasp(i));
-	}
-	return result;
-}
+    VirtualRobot::GraspSetPtr Reachability::getReachableGrasps(GraspSetPtr grasps, ManipulationObjectPtr object)
+    {
+        THROW_VR_EXCEPTION_IF(!object, "no object");
+        THROW_VR_EXCEPTION_IF(!grasps, "no grasps");
 
-Eigen::Matrix4f Reachability::sampleReachablePose()
-{
-    return sampleCoveredPose();
-}
+        GraspSetPtr result(new GraspSet(grasps->getName(), grasps->getRobotType(), grasps->getEndEffector()));
 
-VirtualRobot::WorkspaceRepresentationPtr Reachability::clone()
-{
-	VirtualRobot::ReachabilityPtr res(new Reachability(robot));
-	res->setOrientationType(this->orientationType);
-	res->versionMajor = this->versionMajor;
-	res->versionMinor = this->versionMinor;
-	res->nodeSet = this->nodeSet;
-	res->type = this->type;
+        for (unsigned int i = 0; i < grasps->getSize(); i++)
+        {
+            Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
 
-	res->baseNode = this->baseNode;
-	res->tcpNode = this->tcpNode;
-	res->staticCollisionModel = this->staticCollisionModel;
-	res->dynamicCollisionModel = this->dynamicCollisionModel;
-	res->buildUpLoops = this->buildUpLoops;
-	res->collisionConfigs = this->collisionConfigs;
-	res->discretizeStepTranslation = this->discretizeStepTranslation;
-	res->discretizeStepRotation = this->discretizeStepRotation;
-	memcpy(res->minBounds,this->minBounds,sizeof(float)*6);
-	memcpy(res->maxBounds,this->maxBounds,sizeof(float)*6);	
-	memcpy(res->numVoxels,this->numVoxels,sizeof(float)*6);	
-	memcpy(res->achievedMinValues,this->achievedMinValues,sizeof(float)*6);	
-	memcpy(res->achievedMaxValues,this->achievedMaxValues,sizeof(float)*6);	
-	memcpy(res->spaceSize,this->spaceSize,sizeof(float)*6);	
+            if (isReachable(m))
+            {
+                result->addGrasp(grasps->getGrasp(i));
+            }
+        }
 
-	res->adjustOnOverflow = this->adjustOnOverflow;
-    res->data.reset(this->data->clone());
+        return result;
+    }
 
-	return res;
-}
+    Eigen::Matrix4f Reachability::sampleReachablePose()
+    {
+        return sampleCoveredPose();
+    }
+
+    VirtualRobot::WorkspaceRepresentationPtr Reachability::clone()
+    {
+        VirtualRobot::ReachabilityPtr res(new Reachability(robot));
+        res->setOrientationType(this->orientationType);
+        res->versionMajor = this->versionMajor;
+        res->versionMinor = this->versionMinor;
+        res->nodeSet = this->nodeSet;
+        res->type = this->type;
+
+        res->baseNode = this->baseNode;
+        res->tcpNode = this->tcpNode;
+        res->staticCollisionModel = this->staticCollisionModel;
+        res->dynamicCollisionModel = this->dynamicCollisionModel;
+        res->buildUpLoops = this->buildUpLoops;
+        res->collisionConfigs = this->collisionConfigs;
+        res->discretizeStepTranslation = this->discretizeStepTranslation;
+        res->discretizeStepRotation = this->discretizeStepRotation;
+        memcpy(res->minBounds, this->minBounds, sizeof(float) * 6);
+        memcpy(res->maxBounds, this->maxBounds, sizeof(float) * 6);
+        memcpy(res->numVoxels, this->numVoxels, sizeof(float) * 6);
+        memcpy(res->achievedMinValues, this->achievedMinValues, sizeof(float) * 6);
+        memcpy(res->achievedMaxValues, this->achievedMaxValues, sizeof(float) * 6);
+        memcpy(res->spaceSize, this->spaceSize, sizeof(float) * 6);
+
+        res->adjustOnOverflow = this->adjustOnOverflow;
+        res->data.reset(this->data->clone());
+
+        return res;
+    }
 
 } // namespace VirtualRobot

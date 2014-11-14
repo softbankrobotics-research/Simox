@@ -26,16 +26,16 @@ using namespace VirtualRobot;
 bool useColModel = false;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"Ik demo");
-	cout << " --- START --- " << endl;
-	std::string filename("robots/ArmarIII/ArmarIII.xml");
-	VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
-	JacobiWindow rw(filename);
+    SoDB::init();
+    SoQt::init(argc, argv, "Ik demo");
+    cout << " --- START --- " << endl;
+    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
+    JacobiWindow rw(filename);
 
-	rw.main();
+    rw.main();
 
-	return 0;
+    return 0;
 }

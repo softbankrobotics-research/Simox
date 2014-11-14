@@ -37,61 +37,61 @@ namespace VirtualRobot
 {
 
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public boost::enable_shared_from_this<JacobiProvider>
-{
-public:
-	
-    /*!
-      @brief Several methods are offered for inverting the Jacobi (i.e. building the Pseudoinverse)
-    */
-    enum InverseJacobiMethod
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public boost::enable_shared_from_this<JacobiProvider>
     {
-		eSVD,       //<! PseudoInverse Jacobian. Performing SVD and setting very small eigen values to zero results in a quite stable inverting of the Jacobi. (default)
-		eSVDDamped, //<! Using the damped PseudoInverse algorithm
-		eTranspose  //<! The Jacobi Transpose method is faster than SVD and works well for redundant kinematic chains.
+    public:
+
+        /*!
+          @brief Several methods are offered for inverting the Jacobi (i.e. building the Pseudoinverse)
+        */
+        enum InverseJacobiMethod
+        {
+            eSVD,       //<! PseudoInverse Jacobian. Performing SVD and setting very small eigen values to zero results in a quite stable inverting of the Jacobi. (default)
+            eSVDDamped, //<! Using the damped PseudoInverse algorithm
+            eTranspose  //<! The Jacobi Transpose method is faster than SVD and works well for redundant kinematic chains.
+        };
+
+        /*!
+
+        */
+        JacobiProvider(RobotNodeSetPtr rns, InverseJacobiMethod invJacMethod = eSVD);
+
+        virtual ~JacobiProvider();
+
+        virtual Eigen::MatrixXf getJacobianMatrix() = 0;
+        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) = 0;
+
+        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
+        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);
+
+        VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
+
+
+        /*!
+            The error vector. the value depends on the implementation.
+        */
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) = 0;
+        virtual bool checkTolerances() = 0;
+
+        bool isInitialized();
+        /*
+            If set, a weighted inverse Jacobian is computed. The weighting is only applied in eTranspose mode!
+            jointScaling.rows() must be nDoF
+            Large entries result in small joint deltas.
+        */
+        void setJointWeights(const Eigen::VectorXf& jointWeights);
+    protected:
+
+        RobotNodeSetPtr rns;
+        InverseJacobiMethod inverseMethod;
+        bool initialized;
+        Eigen::VectorXf jointWeights; // only used in eTranspose mode
+
     };
 
-	/*!
-
-	*/
-	JacobiProvider(RobotNodeSetPtr rns, InverseJacobiMethod invJacMethod = eSVD);
-
-	virtual ~JacobiProvider();
-
-	virtual Eigen::MatrixXf getJacobianMatrix() = 0;
-    virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) = 0;
-
-	virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m, float invParameter) const;
-	virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m) const;
-	virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
-    virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);
-
-	VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
-
-
-	/*!
-		The error vector. the value depends on the implementation.
-	*/
-	virtual Eigen::VectorXf getError(float stepSize = 1.0f) = 0;
-    virtual bool checkTolerances() = 0;
-
-	bool isInitialized();
-	/*
-		If set, a weighted inverse Jacobian is computed. The weighting is only applied in eTranspose mode!
-		jointScaling.rows() must be nDoF
-		Large entries result in small joint deltas.
-	*/
-	void setJointWeights(const Eigen::VectorXf &jointWeights);
-protected:
-    
-	RobotNodeSetPtr rns; 
-	InverseJacobiMethod inverseMethod;
-	bool initialized;
-	Eigen::VectorXf jointWeights; // only used in eTranspose mode
-	
-};
-
-typedef boost::shared_ptr<JacobiProvider> JacobiProviderPtr;
+    typedef boost::shared_ptr<JacobiProvider> JacobiProviderPtr;
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_JacobiProvider_h_

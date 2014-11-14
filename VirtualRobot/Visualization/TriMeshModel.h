@@ -31,46 +31,47 @@
 #include <vector>
 #include <utility>
 
-namespace VirtualRobot {
-
-class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel
+namespace VirtualRobot
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
-    void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal,
-                             VisualizationFactory::Color color1 = VisualizationFactory::Color::Gray(),
-                             VisualizationFactory::Color color2 = VisualizationFactory::Color::Gray(),
-                             VisualizationFactory::Color color3 = VisualizationFactory::Color::Gray());
-    void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
-	static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
-	void addFace(const MathTools::TriangleFace& face);
-	void addVertex(const Eigen::Vector3f& vertex);
-	void addNormal(const Eigen::Vector3f& normal);
-	void addColor(const VisualizationFactory::Color& color);
-    void addColor(const Eigen::Vector4f& color);
-    void addMaterial(const VisualizationFactory::PhongMaterial& material);
-	void clear();
-	void flipVertexOrientations();
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	void print();
-	Eigen::Vector3f getCOM();
-	bool getSize(Eigen::Vector3f &storeMinSize, Eigen::Vector3f &storeMaxSize);
-	bool checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
-	unsigned int checkAndCorrectNormals(bool inverted);
+        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
+        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal,
+                                 VisualizationFactory::Color color1 = VisualizationFactory::Color::Gray(),
+                                 VisualizationFactory::Color color2 = VisualizationFactory::Color::Gray(),
+                                 VisualizationFactory::Color color3 = VisualizationFactory::Color::Gray());
+        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
+        static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
+        void addFace(const MathTools::TriangleFace& face);
+        void addVertex(const Eigen::Vector3f& vertex);
+        void addNormal(const Eigen::Vector3f& normal);
+        void addColor(const VisualizationFactory::Color& color);
+        void addColor(const Eigen::Vector4f& color);
+        void addMaterial(const VisualizationFactory::PhongMaterial& material);
+        void clear();
+        void flipVertexOrientations();
 
-    virtual void scale(Eigen::Vector3f &scaleFactor);
-    TriMeshModelPtr clone ();
-    TriMeshModelPtr clone (Eigen::Vector3f &scaleFactor);
+        void print();
+        Eigen::Vector3f getCOM();
+        bool getSize(Eigen::Vector3f& storeMinSize, Eigen::Vector3f& storeMaxSize);
+        bool checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
+        unsigned int checkAndCorrectNormals(bool inverted);
 
-	std::vector<Eigen::Vector3f> normals;
-	std::vector<Eigen::Vector3f> vertices;
-	std::vector<VisualizationFactory::Color> colors;
-	std::vector<MathTools::TriangleFace> faces;
-    std::vector<VisualizationFactory::PhongMaterial> materials;
-	BoundingBox boundingBox;
-};
+        virtual void scale(Eigen::Vector3f& scaleFactor);
+        TriMeshModelPtr clone();
+        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor);
+
+        std::vector<Eigen::Vector3f> normals;
+        std::vector<Eigen::Vector3f> vertices;
+        std::vector<VisualizationFactory::Color> colors;
+        std::vector<MathTools::TriangleFace> faces;
+        std::vector<VisualizationFactory::PhongMaterial> materials;
+        BoundingBox boundingBox;
+    };
 } // namespace VirtualRobot
 
 #endif /* _VirtualRobot_TriMeshModel_h_ */

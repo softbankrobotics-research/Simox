@@ -28,20 +28,20 @@ using namespace Eigen;
 namespace GraspStudio
 {
 
-	GridParameters::GridParameters()
-	{
-	}
+    GridParameters::GridParameters()
+    {
+    }
 
-	GridParameters::GridParameters(Vector3i numCells, Vector3f minPoint, Vector3f maxPoint, float cellWidth)
-	{
-		this->numCells = numCells;
-		this->minPoint = minPoint;
-		this->maxPoint = maxPoint;
-		this->cellWidth = cellWidth;
+    GridParameters::GridParameters(Vector3i numCells, Vector3f minPoint, Vector3f maxPoint, float cellWidth)
+    {
+        this->numCells = numCells;
+        this->minPoint = minPoint;
+        this->maxPoint = maxPoint;
+        this->cellWidth = cellWidth;
 
-		maxGridIndex(0) = numCells(0) - 1;
-		maxGridIndex(1) = numCells(1) - 1;
-		maxGridIndex(2) = numCells(2) - 1;
-	}
+        maxGridIndex(0) = numCells(0) - 1;
+        maxGridIndex(1) = numCells(1) - 1;
+        maxGridIndex(2) = numCells(2) - 1;
+    }
 
 }

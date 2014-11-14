@@ -25,163 +25,167 @@
 namespace GraspStudio
 {
 
-	LocalNeighborhood::LocalNeighborhood()
-	{
-	}
+    LocalNeighborhood::LocalNeighborhood()
+    {
+    }
 
-	LocalNeighborhood::LocalNeighborhood(MedialSpherePtr seedSphere, std::vector<MedialSpherePtr>& spheresInNeighborhood, float neighborhoodRadius)
-	{
-		centerSphere = seedSphere;
-		center = seedSphere->center;
-		spheres = spheresInNeighborhood;
-		radius = neighborhoodRadius;
-		numberOfSpheres = spheres.size();
+    LocalNeighborhood::LocalNeighborhood(MedialSpherePtr seedSphere, std::vector<MedialSpherePtr>& spheresInNeighborhood, float neighborhoodRadius)
+    {
+        centerSphere = seedSphere;
+        center = seedSphere->center;
+        spheres = spheresInNeighborhood;
+        radius = neighborhoodRadius;
+        numberOfSpheres = spheres.size();
 
-		if (numberOfSpheres > 1)
-			isEmpty = false;
-		else
-			isEmpty = true;
+        if (numberOfSpheres > 1)
+        {
+            isEmpty = false;
+        }
+        else
+        {
+            isEmpty = true;
+        }
 
-		hasBeenAnalyzed = false;
-	}
+        hasBeenAnalyzed = false;
+    }
 
-	void LocalNeighborhood::analyze()
-	{
-		determineEigenvectorsAndEigenvalues_viaSVD();
-		computeCenterOfGravity();
+    void LocalNeighborhood::analyze()
+    {
+        determineEigenvectorsAndEigenvalues_viaSVD();
+        computeCenterOfGravity();
 
-		hasBeenAnalyzed = true;
-	}
+        hasBeenAnalyzed = true;
+    }
 
-	void LocalNeighborhood::determineEigenvectorsAndEigenvalues_viaSVD()
-	{
-		std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
-		Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
+    void LocalNeighborhood::determineEigenvectorsAndEigenvalues_viaSVD()
+    {
+        std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
+        Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
 
-		//normalize the data
-		Eigen::Vector3f meanVect = sphereCentersAsMatrix.rowwise().mean();
-		Eigen::MatrixXf sphereCentersAsMatrixNormalized = sphereCentersAsMatrix.colwise() - meanVect;
+        //normalize the data
+        Eigen::Vector3f meanVect = sphereCentersAsMatrix.rowwise().mean();
+        Eigen::MatrixXf sphereCentersAsMatrixNormalized = sphereCentersAsMatrix.colwise() - meanVect;
 
-		Eigen::JacobiSVD<Eigen::MatrixXf> svd(sphereCentersAsMatrixNormalized,
-			Eigen::ComputeThinU | Eigen::ComputeThinV);
+        Eigen::JacobiSVD<Eigen::MatrixXf> svd(sphereCentersAsMatrixNormalized,
+                                              Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-		//    std::cout << "Its singular values are: " << std::endl << svd.singularValues() << std::endl;
-		//    std::cout << "Its left singular vectors are the columns of the thin U matrix: "
-		//                 << std::endl << svd.matrixU() << std::endl;
+        //    std::cout << "Its singular values are: " << std::endl << svd.singularValues() << std::endl;
+        //    std::cout << "Its left singular vectors are the columns of the thin U matrix: "
+        //                 << std::endl << svd.matrixU() << std::endl;
 
-		eigenvalue1 = svd.singularValues()[0] * svd.singularValues()[0];
-		eigenvalue2 = svd.singularValues()[1] * svd.singularValues()[1];
+        eigenvalue1 = svd.singularValues()[0] * svd.singularValues()[0];
+        eigenvalue2 = svd.singularValues()[1] * svd.singularValues()[1];
 
-		eigenvector1 = svd.matrixU().block<3, 1>(0, 0);
-		eigenvector2 = svd.matrixU().block<3, 1>(0, 1);
+        eigenvector1 = svd.matrixU().block<3, 1>(0, 0);
+        eigenvector2 = svd.matrixU().block<3, 1>(0, 1);
 
-		ratioOfEigenvalues = eigenvalue2 / eigenvalue1;
-	}
+        ratioOfEigenvalues = eigenvalue2 / eigenvalue1;
+    }
 
-	//void LocalNeighborhood::determineEigenvectorsAndEigenvalues_viaCovMatrix()
-	//{
-	//    std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
-	//    Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
+    //void LocalNeighborhood::determineEigenvectorsAndEigenvalues_viaCovMatrix()
+    //{
+    //    std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
+    //    Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
 
-	//    //normalize the data
-	//    Eigen::Vector3f meanVect = sphereCentersAsMatrix.rowwise().mean();
-	//    Eigen::MatrixXf sphereCentersAsMatrixNormalized = sphereCentersAsMatrix.colwise() - meanVect;
+    //    //normalize the data
+    //    Eigen::Vector3f meanVect = sphereCentersAsMatrix.rowwise().mean();
+    //    Eigen::MatrixXf sphereCentersAsMatrixNormalized = sphereCentersAsMatrix.colwise() - meanVect;
 
-	//    Eigen::MatrixXf cov = sphereCentersAsMatrixNormalized * sphereCentersAsMatrixNormalized.transpose();
+    //    Eigen::MatrixXf cov = sphereCentersAsMatrixNormalized * sphereCentersAsMatrixNormalized.transpose();
 
-	//    Eigen::EigenSolver<Eigen::MatrixXf> es(cov,true);
+    //    Eigen::EigenSolver<Eigen::MatrixXf> es(cov,true);
 
-	////    std::cout << "eigenvalues: " << es.eigenvalues() << std::endl;
-	////    std::cout << "eigenvectors: " << es.eigenvectors() << std::endl;
+    ////    std::cout << "eigenvalues: " << es.eigenvalues() << std::endl;
+    ////    std::cout << "eigenvectors: " << es.eigenvectors() << std::endl;
 
-	//    eigenvalue1 = std::real(es.eigenvalues()[0]);
-	//    eigenvalue2 = std::real(es.eigenvalues()[1]);
+    //    eigenvalue1 = std::real(es.eigenvalues()[0]);
+    //    eigenvalue2 = std::real(es.eigenvalues()[1]);
 
-	//    if (eigenvalue1 > eigenvalue2)
-	//    {
-	//        //everything OK
-	//        eigenvector1 << std::real(es.eigenvectors().col(0)[0]),
-	//                      std::real(es.eigenvectors().col(0)[1]),
-	//                      std::real(es.eigenvectors().col(0)[2]);
-	//        eigenvector2 << std::real(es.eigenvectors().col(1)[0]),
-	//                      std::real(es.eigenvectors().col(1)[1]),
-	//                      std::real(es.eigenvectors().col(1)[2]);
-	//    }
-	//    else
-	//    {
-	//        //swap stuff
-	//        eigenvalue1 = std::real(es.eigenvalues()[1]);
-	//        eigenvalue2 = std::real(es.eigenvalues()[0]);
-	//        eigenvector1 << std::real(es.eigenvectors().col(1)[0]),
-	//                      std::real(es.eigenvectors().col(1)[1]),
-	//                      std::real(es.eigenvectors().col(1)[2]);
-	//        eigenvector2 << std::real(es.eigenvectors().col(0)[0]),
-	//                      std::real(es.eigenvectors().col(0)[1]),
-	//                      std::real(es.eigenvectors().col(0)[2]);
-	//    }
+    //    if (eigenvalue1 > eigenvalue2)
+    //    {
+    //        //everything OK
+    //        eigenvector1 << std::real(es.eigenvectors().col(0)[0]),
+    //                      std::real(es.eigenvectors().col(0)[1]),
+    //                      std::real(es.eigenvectors().col(0)[2]);
+    //        eigenvector2 << std::real(es.eigenvectors().col(1)[0]),
+    //                      std::real(es.eigenvectors().col(1)[1]),
+    //                      std::real(es.eigenvectors().col(1)[2]);
+    //    }
+    //    else
+    //    {
+    //        //swap stuff
+    //        eigenvalue1 = std::real(es.eigenvalues()[1]);
+    //        eigenvalue2 = std::real(es.eigenvalues()[0]);
+    //        eigenvector1 << std::real(es.eigenvectors().col(1)[0]),
+    //                      std::real(es.eigenvectors().col(1)[1]),
+    //                      std::real(es.eigenvectors().col(1)[2]);
+    //        eigenvector2 << std::real(es.eigenvectors().col(0)[0]),
+    //                      std::real(es.eigenvectors().col(0)[1]),
+    //                      std::real(es.eigenvectors().col(0)[2]);
+    //    }
 
-	////    std::cout << "eigenvalue1: " << eigenvalue1 << " eigenvalue2: " << eigenvalue2 << std::endl;
-	////    std::cout << "eigenvector1: " << eigenvector1 << std::endl;
-	////    std::cout << "eigenvector2: " << eigenvector2 << std::endl;
+    ////    std::cout << "eigenvalue1: " << eigenvalue1 << " eigenvalue2: " << eigenvalue2 << std::endl;
+    ////    std::cout << "eigenvector1: " << eigenvector1 << std::endl;
+    ////    std::cout << "eigenvector2: " << eigenvector2 << std::endl;
 
-	//    //    std::cout << "eigenvectors: " << es.eigenvectors() << std::endl;
+    //    //    std::cout << "eigenvectors: " << es.eigenvectors() << std::endl;
 
-	//    ratioOfEigenvalues = eigenvalue2 / eigenvalue1;
+    //    ratioOfEigenvalues = eigenvalue2 / eigenvalue1;
 
-	//}
+    //}
 
-	void LocalNeighborhood::computeCenterOfGravity()
-	{
-		std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
-		Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
+    void LocalNeighborhood::computeCenterOfGravity()
+    {
+        std::vector<Eigen::Vector3f> sphereCenters = SphereHelpers::getSphereCenters(spheres);
+        Eigen::MatrixXf sphereCentersAsMatrix = SphereHelpers::toMatrix_3xN(sphereCenters);
 
-		centerOfGravity = sphereCentersAsMatrix.rowwise().mean();
-	}
+        centerOfGravity = sphereCentersAsMatrix.rowwise().mean();
+    }
 
-	void LocalNeighborhood::printDebug()
-	{
-		std::cout << "=== LocalNeighborhood ===" << std::endl;
-		std::cout << "center: " << StrOutHelpers::toString(center) << std::endl;
-		std::cout << "radius: " << radius << std::endl;
-		std::cout << "numberOfSpheres: " << numberOfSpheres << std::endl;
-		std::cout << "isEmpty: " << isEmpty << std::endl;
-		std::cout << "hasBeenAnalyzed: " << hasBeenAnalyzed << std::endl;
+    void LocalNeighborhood::printDebug()
+    {
+        std::cout << "=== LocalNeighborhood ===" << std::endl;
+        std::cout << "center: " << StrOutHelpers::toString(center) << std::endl;
+        std::cout << "radius: " << radius << std::endl;
+        std::cout << "numberOfSpheres: " << numberOfSpheres << std::endl;
+        std::cout << "isEmpty: " << isEmpty << std::endl;
+        std::cout << "hasBeenAnalyzed: " << hasBeenAnalyzed << std::endl;
 
-		if (hasBeenAnalyzed)
-		{
-			std::cout << "eigenvector1: " << StrOutHelpers::toString(eigenvector1) << std::endl;
-			std::cout << "eigenvector2: " << StrOutHelpers::toString(eigenvector2) << std::endl;
-			std::cout << "eigenvalue1: " << eigenvalue1 << std::endl;
-			std::cout << "eigenvalue2: " << eigenvalue2 << std::endl;
-			std::cout << "ratioOfEigenvalues: " << ratioOfEigenvalues << std::endl;
-			std::cout << "centerOfGravity: " << StrOutHelpers::toString(centerOfGravity) << std::endl;
-		}
-	}
+        if (hasBeenAnalyzed)
+        {
+            std::cout << "eigenvector1: " << StrOutHelpers::toString(eigenvector1) << std::endl;
+            std::cout << "eigenvector2: " << StrOutHelpers::toString(eigenvector2) << std::endl;
+            std::cout << "eigenvalue1: " << eigenvalue1 << std::endl;
+            std::cout << "eigenvalue2: " << eigenvalue2 << std::endl;
+            std::cout << "ratioOfEigenvalues: " << ratioOfEigenvalues << std::endl;
+            std::cout << "centerOfGravity: " << StrOutHelpers::toString(centerOfGravity) << std::endl;
+        }
+    }
 
-	bool LocalNeighborhood::isValid()
-	{
-		if (ratioOfEigenvalues < 0.0)
-		{
-			VR_WARNING << "WARNING: LocalNeighborhood::isValid(): ratioOfEigenvalues negative! Discarding this local neighborhood!" << std::endl;
-			printDebug();
-			return false;
-		}
+    bool LocalNeighborhood::isValid()
+    {
+        if (ratioOfEigenvalues < 0.0)
+        {
+            VR_WARNING << "WARNING: LocalNeighborhood::isValid(): ratioOfEigenvalues negative! Discarding this local neighborhood!" << std::endl;
+            printDebug();
+            return false;
+        }
 
-		if (eigenvalue1 <= 0.0)
-		{
-			VR_WARNING << "WARNING: LocalNeighborhood::isValid(): eigenvalue1 zero/negative! Discarding this local neighborhood!" << std::endl;
-			printDebug();
-			return false;
-		}
+        if (eigenvalue1 <= 0.0)
+        {
+            VR_WARNING << "WARNING: LocalNeighborhood::isValid(): eigenvalue1 zero/negative! Discarding this local neighborhood!" << std::endl;
+            printDebug();
+            return false;
+        }
 
-		if (eigenvalue2 < 0.0)
-		{
-			VR_WARNING << "WARNING: LocalNeighborhood::isValid(): eigenvalue2 negative! Discarding this local neighborhood!" << std::endl;
-			printDebug();
-			return false;
-		}
+        if (eigenvalue2 < 0.0)
+        {
+            VR_WARNING << "WARNING: LocalNeighborhood::isValid(): eigenvalue2 negative! Discarding this local neighborhood!" << std::endl;
+            printDebug();
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

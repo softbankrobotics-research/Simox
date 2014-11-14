@@ -28,63 +28,66 @@
 
 class showSceneWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	showSceneWindow(std::string &sSceneFile, Qt::WFlags flags = 0);
-	~showSceneWindow();
+    showSceneWindow(std::string& sSceneFile, Qt::WFlags flags = 0);
+    ~showSceneWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
-	void loadScene();
-	void selectScene();
+    void resetSceneryAll();
+    void loadScene();
+    void selectScene();
 
-	void selectRobot(int nr);
-	void selectObject(int nr);
-	void selectGrasp(int nr);
-	void selectEEF(int nr);
-	void selectRobotConfig(int nr);
-	void selectTrajectory(int nr);
-	void sliderMoved(int pos);
+    void selectRobot(int nr);
+    void selectObject(int nr);
+    void selectGrasp(int nr);
+    void selectEEF(int nr);
+    void selectRobotConfig(int nr);
+    void selectTrajectory(int nr);
+    void sliderMoved(int pos);
 
-	void closeHand();
+    void closeHand();
     void openHand();
     void colModel();
 
-	SoQtExaminerViewer* getExaminerViewer(){return viewer;};
+    SoQtExaminerViewer* getExaminerViewer()
+    {
+        return viewer;
+    };
 
 protected:
 
-	void updateGui();
-	void updateGrasps();
-	void updateGraspVisu();
-	void setupUI();
-	QString formatString(const char *s, float f);
-	void buildVisu();
+    void updateGui();
+    void updateGrasps();
+    void updateGraspVisu();
+    void setupUI();
+    QString formatString(const char* s, float f);
+    void buildVisu();
 
-	Ui::MainWindowShowScene UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *sceneVisuSep;
-	SoSeparator *graspVisu;
-	VirtualRobot::GraspPtr currentGrasp;
-	VirtualRobot::GraspSetPtr currentGraspSet;
-	VirtualRobot::SceneObjectPtr currentObject;
-	VirtualRobot::RobotPtr currentRobot;
-	VirtualRobot::TrajectoryPtr currentTrajectory;
-	VirtualRobot::EndEffectorPtr currentEEF;
+    Ui::MainWindowShowScene UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::ScenePtr scene;
-	std::string sceneFile;
+    SoSeparator* sceneSep;
+    SoSeparator* sceneVisuSep;
+    SoSeparator* graspVisu;
+    VirtualRobot::GraspPtr currentGrasp;
+    VirtualRobot::GraspSetPtr currentGraspSet;
+    VirtualRobot::SceneObjectPtr currentObject;
+    VirtualRobot::RobotPtr currentRobot;
+    VirtualRobot::TrajectoryPtr currentTrajectory;
+    VirtualRobot::EndEffectorPtr currentEEF;
+
+    VirtualRobot::ScenePtr scene;
+    std::string sceneFile;
 
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;

@@ -33,83 +33,83 @@
 
 #include "CSpace/CSpaceNode.h"
 
-namespace Saba 
+namespace Saba
 {
 
-/*!
-* This discretization class can be used to encode approach directions. 
-* Internally all approach directions are mapped onto the surface of a discretized sphere.
-* Each face of the PoseRelationSphere holds a list with corresponding RRT nodes, 
-* lying in the direction that is covered by the triangle. 
-* The method getGoodRatedNode can be used to retrieve RRT-nodes for which the approach directions are uniformly sampled.
-* (further details can be found in "Integrated Grasp and Motion Planning", ICRA 2010, Vahrenkamp et al.)
-* 
-*/
+    /*!
+    * This discretization class can be used to encode approach directions.
+    * Internally all approach directions are mapped onto the surface of a discretized sphere.
+    * Each face of the PoseRelationSphere holds a list with corresponding RRT nodes,
+    * lying in the direction that is covered by the triangle.
+    * The method getGoodRatedNode can be used to retrieve RRT-nodes for which the approach directions are uniformly sampled.
+    * (further details can be found in "Integrated Grasp and Motion Planning", ICRA 2010, Vahrenkamp et al.)
+    *
+    */
 
-class SABA_IMPORT_EXPORT ApproachDiscretization
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class SABA_IMPORT_EXPORT ApproachDiscretization
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	ApproachDiscretization(float radius = 100.0f, int steps = 3);
-	virtual ~ApproachDiscretization();
+        ApproachDiscretization(float radius = 100.0f, int steps = 3);
+        virtual ~ApproachDiscretization();
 
-	Eigen::Matrix4f getGlobalPose() const;
-	    
-	/*!
-	    Set the location (only position is used)
-	*/
-	void setGlobalPose(const Eigen::Matrix4f &pose);
+        Eigen::Matrix4f getGlobalPose() const;
 
-	/*!
-		Returns Id of the surface vertex which is nearest to line through center of sphere and pose
-		\param pose in global coordinate system, (center of sphere is at globalPose)
-	*/
-	int getNearestVertexId(const Eigen::Matrix4f &pose);
-	int getNearestVertexIdVec(const Eigen::Vector3f &pos);
+        /*!
+            Set the location (only position is used)
+        */
+        void setGlobalPose(const Eigen::Matrix4f& pose);
 
-	/*!
-		Returns Id of the surface face which is nearest to line through center of sphere and pose
-		\param pose in global coordinate system, (center of sphere is at globalPose)
-	*/
-	int getNearestFaceId(const Eigen::Matrix4f &pose);
-	int getNearestFaceIdVec(const Eigen::Vector3f &pos);
+        /*!
+            Returns Id of the surface vertex which is nearest to line through center of sphere and pose
+            \param pose in global coordinate system, (center of sphere is at globalPose)
+        */
+        int getNearestVertexId(const Eigen::Matrix4f& pose);
+        int getNearestVertexIdVec(const Eigen::Vector3f& pos);
 
-	void removeCSpaceNode(const Eigen::Vector3f &cartPose, CSpaceNodePtr node);
-	void removeCSpaceNode(int faceId, CSpaceNodePtr node);
-	
-	/*!
-	Add a node of the RRT with corresponding Cartesian pose. The pose should be the resulting EEF's pose.
-	*/
-	void addCSpaceNode(const Eigen::Vector3f &cartPos, CSpaceNodePtr node);
-	void addCSpaceNode(int faceId, CSpaceNodePtr node);
-	
-	//! Reset
-	void clearCSpaceNodeMapping();
+        /*!
+            Returns Id of the surface face which is nearest to line through center of sphere and pose
+            \param pose in global coordinate system, (center of sphere is at globalPose)
+        */
+        int getNearestFaceId(const Eigen::Matrix4f& pose);
+        int getNearestFaceIdVec(const Eigen::Vector3f& pos);
 
-	/*!
-		Return a RRT node, so that the corresponding Cartesian poses are uniformly sampled over the sphere.
-		Removes the selected RRT node from the internal data. 
-		This method just checks loops faces of the sphere, so that the result is approximated.
-	*/
-	CSpaceNodePtr getGoodRatedNode(int loops = 30);
+        void removeCSpaceNode(const Eigen::Vector3f& cartPose, CSpaceNodePtr node);
+        void removeCSpaceNode(int faceId, CSpaceNodePtr node);
+
+        /*!
+        Add a node of the RRT with corresponding Cartesian pose. The pose should be the resulting EEF's pose.
+        */
+        void addCSpaceNode(const Eigen::Vector3f& cartPos, CSpaceNodePtr node);
+        void addCSpaceNode(int faceId, CSpaceNodePtr node);
+
+        //! Reset
+        void clearCSpaceNodeMapping();
+
+        /*!
+            Return a RRT node, so that the corresponding Cartesian poses are uniformly sampled over the sphere.
+            Removes the selected RRT node from the internal data.
+            This method just checks loops faces of the sphere, so that the result is approximated.
+        */
+        CSpaceNodePtr getGoodRatedNode(int loops = 30);
 
 
-private:
+    private:
 
-	struct CSpaceNodeMapping
-	{
-		int count;
-		std::vector<CSpaceNodePtr> cspaceNodes;
-	};
+        struct CSpaceNodeMapping
+        {
+            int count;
+            std::vector<CSpaceNodePtr> cspaceNodes;
+        };
 
-	Eigen::Matrix4f globalPose;
-	VirtualRobot::SphereApproximator::SphereApproximation sphere;
-	VirtualRobot::SphereApproximatorPtr sphereGenerator;
+        Eigen::Matrix4f globalPose;
+        VirtualRobot::SphereApproximator::SphereApproximation sphere;
+        VirtualRobot::SphereApproximatorPtr sphereGenerator;
 
-	std::map<int,CSpaceNodeMapping> faceIdToCSpaceNodesMapping;
-	std::vector<int> activeFaces;
-};
+        std::map<int, CSpaceNodeMapping> faceIdToCSpaceNodesMapping;
+        std::vector<int> activeFaces;
+    };
 
 }
 

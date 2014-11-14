@@ -10,7 +10,7 @@ using namespace VirtualRobot;
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     std::string filename("robots/ArmarIII/ArmarIII.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
@@ -21,8 +21,9 @@ int main(int argc, char *argv[])
 
     try
     {
-        rob = RobotIO::loadRobot(filename,RobotIO::eStructure);
-    } catch (VirtualRobotException &e)
+        rob = RobotIO::loadRobot(filename, RobotIO::eStructure);
+    }
+    catch (VirtualRobotException& e)
     {
         cout << "Error: " << e.what() << endl;
         return -1;
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
         Eigen::VectorXd qdot = Eigen::VectorXd::Random(nDof);
         Eigen::VectorXd qddot = Eigen::VectorXd::Random(nDof);
 
-        cout << "inverse dynamics: " << endl << dynamics.getInverseDynamics(q,qdot,qddot) << endl;
+        cout << "inverse dynamics: " << endl << dynamics.getInverseDynamics(q, qdot, qddot) << endl;
         cout << "joint space inertia matrix: " << endl << dynamics.getInertiaMatrix(q) << endl;
 
 

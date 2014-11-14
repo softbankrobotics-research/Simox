@@ -28,80 +28,83 @@
 namespace VirtualRobot
 {
 
-class ContactSensor;
-typedef boost::shared_ptr<ContactSensor> ContactSensorPtr;
+    class ContactSensor;
+    typedef boost::shared_ptr<ContactSensor> ContactSensorPtr;
 
-/*!
- * 	This ia a contact sensor that reports all contact points with other objects.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT ContactSensor : public Sensor
-{
-public:
-	friend class Robot;
-	friend class RobotIO;
-
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-	struct ContactForce
-	{
-        std::string bodyName;
-		Eigen::Vector3f contactPoint;
-		double zForce;
-
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	};
-	struct ContactFrame
-	{
-		std::vector<ContactForce> forces;
-	};
-
-	/*!
-	  Constructor with settings.
-	  */
-	ContactSensor(RobotNodeWeakPtr robotNode, const std::string &name);
-
-	/*!
-	*/
-	virtual ~ContactSensor();
-
-	/*!
-	 * Set the new contact frame for this node.
-	 */
-	void updateSensors(const ContactSensor::ContactFrame& frame, double dt);
-
-	/*!
-	 * Returns contact frame
-	 */
-	const ContactSensor::ContactFrame& getContacts() { return frame; }
-
-	/*!
-	 * Returns true of this node as contact with another object.
-	 */
-	bool hasContact()
+    /*!
+     *  This ia a contact sensor that reports all contact points with other objects.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ContactSensor : public Sensor
     {
-        return (frame.forces.size() > 0);
-    }
+    public:
+        friend class Robot;
+        friend class RobotIO;
 
-	/*!
-	  Print status information.
-	  */
-	virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+        struct ContactForce
+        {
+            std::string bodyName;
+            Eigen::Vector3f contactPoint;
+            double zForce;
+
+            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        };
+        struct ContactFrame
+        {
+            std::vector<ContactForce> forces;
+        };
+
+        /*!
+          Constructor with settings.
+          */
+        ContactSensor(RobotNodeWeakPtr robotNode, const std::string& name);
+
+        /*!
+        */
+        virtual ~ContactSensor();
+
+        /*!
+         * Set the new contact frame for this node.
+         */
+        void updateSensors(const ContactSensor::ContactFrame& frame, double dt);
+
+        /*!
+         * Returns contact frame
+         */
+        const ContactSensor::ContactFrame& getContacts()
+        {
+            return frame;
+        }
+
+        /*!
+         * Returns true of this node as contact with another object.
+         */
+        bool hasContact()
+        {
+            return (frame.forces.size() > 0);
+        }
+
+        /*!
+          Print status information.
+          */
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
 
-	virtual std::string toXML(const std::string &modelPath, int tabs);
+        virtual std::string toXML(const std::string& modelPath, int tabs);
 
-protected:
+    protected:
 
-	ContactSensor(){}
+        ContactSensor() {}
 
-	/*!
-	Derived classes must implement their clone method here.
-	*/
-	virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
+        /*!
+        Derived classes must implement their clone method here.
+        */
+        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
 
-	ContactFrame frame;
-    double timestamp;
-};
+        ContactFrame frame;
+        double timestamp;
+    };
 
 } // namespace VirtualRobot
 

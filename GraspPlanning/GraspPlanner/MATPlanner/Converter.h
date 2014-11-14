@@ -32,19 +32,19 @@
 namespace GraspStudio
 {
 
-	class GRASPSTUDIO_IMPORT_EXPORT Converter
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT Converter
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			Converter();
+        Converter();
 
-		static std::vector<MedialSpherePtr> convertPowerCrustPolarBallsToMedialSpheres(std::vector<GraspStudio::PowerCrust::PolarBall>& polarBalls);
+        static std::vector<MedialSpherePtr> convertPowerCrustPolarBallsToMedialSpheres(std::vector<GraspStudio::PowerCrust::PolarBall>& polarBalls);
 
-		static MedialSpherePtr convertPowerCrustPolarBallToMedialSphere(GraspStudio::PowerCrust::PolarBall& polarBall);
+        static MedialSpherePtr convertPowerCrustPolarBallToMedialSphere(GraspStudio::PowerCrust::PolarBall& polarBall);
 
 
-	};
+    };
 }
 
 #endif // CONVERTER_H

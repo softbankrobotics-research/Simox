@@ -34,58 +34,58 @@
 namespace GraspStudio
 {
 
-	class GridOfMedialSpheres;
-	typedef boost::shared_ptr<GridOfMedialSpheres> GridOfMedialSpheresPtr;
+    class GridOfMedialSpheres;
+    typedef boost::shared_ptr<GridOfMedialSpheres> GridOfMedialSpheresPtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT GridOfMedialSpheres
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT GridOfMedialSpheres
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			GridOfMedialSpheres(bool verbose = false);
-		~GridOfMedialSpheres();
+        GridOfMedialSpheres(bool verbose = false);
+        ~GridOfMedialSpheres();
 
-		void setup(std::vector< Eigen::Vector3f > surfacePoints, std::vector<MedialSpherePtr> spheres, int gridConstant = 4);
+        void setup(std::vector< Eigen::Vector3f > surfacePoints, std::vector<MedialSpherePtr> spheres, int gridConstant = 4);
 
-		void reset();
+        void reset();
 
-		void allocateGrid(Eigen::Vector3i numCells);
-		std::vector<Eigen::Vector3i> computeCubeIndices(Eigen::Vector3i seedIndex, Eigen::Vector3i maxCoords, int cubeRadiusToSearch);
+        void allocateGrid(Eigen::Vector3i numCells);
+        std::vector<Eigen::Vector3i> computeCubeIndices(Eigen::Vector3i seedIndex, Eigen::Vector3i maxCoords, int cubeRadiusToSearch);
 
 
-		//methods for access
-		void insertSphere(MedialSpherePtr s);
+        //methods for access
+        void insertSphere(MedialSpherePtr s);
 
-		std::vector<MedialSpherePtr> getSpheresFromGrid(std::vector<Eigen::Vector3i> gridIndices);
-		std::vector<MedialSpherePtr> getSpheresInNeighborhood(MedialSpherePtr s, float searchRadius);
+        std::vector<MedialSpherePtr> getSpheresFromGrid(std::vector<Eigen::Vector3i> gridIndices);
+        std::vector<MedialSpherePtr> getSpheresInNeighborhood(MedialSpherePtr s, float searchRadius);
 
-		Eigen::Vector3i calcGridIndex(Eigen::Vector3f sphereCenter);
-		bool isGridIndexValid(Eigen::Vector3i gridIndex);
+        Eigen::Vector3i calcGridIndex(Eigen::Vector3f sphereCenter);
+        bool isGridIndexValid(Eigen::Vector3i gridIndex);
 
-		//for debugging
-		void printDebugGridCells();
+        //for debugging
+        void printDebugGridCells();
 
-	protected:
+    protected:
 
-		//methods for setting up the grid
-		void computeGrid();
+        //methods for setting up the grid
+        void computeGrid();
 
-		GridParameters determineGridParameters(std::vector<Eigen::Vector3f> surfacePoints, std::vector<MedialSpherePtr> spheres, int gridConstant);
-		void findMinMax(std::vector<Eigen::Vector3f> surfacePoints, Eigen::Vector3f& minPoint, Eigen::Vector3f& maxPoint);
-		void determineCellNumbers(std::vector<Eigen::Vector3f> surfacePoints, Eigen::Vector3f minPoint, Eigen::Vector3f maxPoint, int gridConstant, Eigen::Vector3i& numCells, float& cellWidth);
-		void buildGrid(std::vector<MedialSpherePtr> spheres, GridParameters gridParams);
+        GridParameters determineGridParameters(std::vector<Eigen::Vector3f> surfacePoints, std::vector<MedialSpherePtr> spheres, int gridConstant);
+        void findMinMax(std::vector<Eigen::Vector3f> surfacePoints, Eigen::Vector3f& minPoint, Eigen::Vector3f& maxPoint);
+        void determineCellNumbers(std::vector<Eigen::Vector3f> surfacePoints, Eigen::Vector3f minPoint, Eigen::Vector3f maxPoint, int gridConstant, Eigen::Vector3i& numCells, float& cellWidth);
+        void buildGrid(std::vector<MedialSpherePtr> spheres, GridParameters gridParams);
 
-		bool verbose;
+        bool verbose;
 
-		GridParameters gridParameters;
+        GridParameters gridParameters;
 
-		//the actual grid of spheres
-		std::vector< std::vector< std::vector< std::vector< MedialSpherePtr > > > > grid;
+        //the actual grid of spheres
+        std::vector< std::vector< std::vector< std::vector< MedialSpherePtr > > > > grid;
 
-		int numberOfSpheres;
-		float minRadius;
-		float maxRadius;
+        int numberOfSpheres;
+        float minRadius;
+        float maxRadius;
 
-	};
+    };
 }
 #endif // GRIDOFMEDIALSPHERES_H

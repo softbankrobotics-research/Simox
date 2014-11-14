@@ -50,170 +50,194 @@ namespace PQP
 
 
 
-struct BVT 
-{ 
-  PQP_REAL d;       // distance between the bvs
-  int b1, b2;       // bv numbers - b1 is from model 1, b2 from model 2
-  PQP_REAL R[3][3]; // the relative rotation from b1 to b2
-  PQP_REAL T[3];    // the relative translation from b1 to b2
-  int pindex;       // the index of the pointer that points to this -
-                    // needed when filling the hole left by an ExtractMin
-};
+    struct BVT
+    {
+        PQP_REAL d;       // distance between the bvs
+        int b1, b2;       // bv numbers - b1 is from model 1, b2 from model 2
+        PQP_REAL R[3][3]; // the relative rotation from b1 to b2
+        PQP_REAL T[3];    // the relative translation from b1 to b2
+        int pindex;       // the index of the pointer that points to this -
+        // needed when filling the hole left by an ExtractMin
+    };
 
-class BVTQ 
-{ 
-  int size;       // max number of bv tests
-  int numtests;   // number of bv tests in queue
-  BVT *bvt;       // an array of bv tests - seems faster than 'new' for each
-  BVT **bvtp;     // the queue: an array of pointers to elts of bvt
+    class BVTQ
+    {
+        int size;       // max number of bv tests
+        int numtests;   // number of bv tests in queue
+        BVT* bvt;       // an array of bv tests - seems faster than 'new' for each
+        BVT** bvtp;     // the queue: an array of pointers to elts of bvt
 
-public:
-  BVTQ(int sz) 
-  {
-    size = sz;              
-    bvt = new BVT[size];    
-    bvtp = new BVT*[size];  
-    numtests = 0;
-  }
-  ~BVTQ() { delete [] bvt; delete [] bvtp; }
-  int Empty() { return (numtests == 0); }
-  int GetNumTests() { return numtests; }
-  int GetSize() { return size; }
-  PQP_REAL MinTest() { return bvtp[0]->d; }
-  BVT ExtractMinTest();
-  void AddTest(BVT &);
+    public:
+        BVTQ(int sz)
+        {
+            size = sz;
+            bvt = new BVT[size];
+            bvtp = new BVT*[size];
+            numtests = 0;
+        }
+        ~BVTQ()
+        {
+            delete [] bvt;
+            delete [] bvtp;
+        }
+        int Empty()
+        {
+            return (numtests == 0);
+        }
+        int GetNumTests()
+        {
+            return numtests;
+        }
+        int GetSize()
+        {
+            return size;
+        }
+        PQP_REAL MinTest()
+        {
+            return bvtp[0]->d;
+        }
+        BVT ExtractMinTest();
+        void AddTest(BVT&);
 
-private:
-  inline
-  int 
-  LChild(int p)  
-  { 
-	  return (2*p + 1); 
-  }
+    private:
+        inline
+        int
+        LChild(int p)
+        {
+            return (2 * p + 1);
+        }
 
-  inline 
-  int 
-  Parent(int c)  
-  { 
-	  return ((c - 1)/2); 
-  }
-};
+        inline
+        int
+        Parent(int c)
+        {
+            return ((c - 1) / 2);
+        }
+    };
 
-inline
-void 
-BVTQ::AddTest(BVT &t)
-{
-  bvtp[numtests] = &bvt[numtests];
+    inline
+    void
+    BVTQ::AddTest(BVT& t)
+    {
+        bvtp[numtests] = &bvt[numtests];
 
-  *bvtp[numtests] = t;
-  bvtp[numtests]->pindex = numtests;
-  
-  BVT *temp;
-  int c = numtests;
-  int p;
-  
-  while ((c != 0) && (bvtp[(p = Parent(c))]->d >= bvtp[c]->d)) 
-  {
-    // swap p and c pointers
+        *bvtp[numtests] = t;
+        bvtp[numtests]->pindex = numtests;
 
-    temp = bvtp[p];
-    bvtp[p] = bvtp[c];
-    bvtp[c] = temp;	 
+        BVT* temp;
+        int c = numtests;
+        int p;
 
-    // the bv tests pointed to by p and c need new indices
+        while ((c != 0) && (bvtp[(p = Parent(c))]->d >= bvtp[c]->d))
+        {
+            // swap p and c pointers
 
-    bvtp[p]->pindex = p;
-    bvtp[c]->pindex = c;
+            temp = bvtp[p];
+            bvtp[p] = bvtp[c];
+            bvtp[c] = temp;
 
-    c = p;
-  } 
-  numtests++; 
-}
+            // the bv tests pointed to by p and c need new indices
 
-inline
-BVT
-BVTQ::ExtractMinTest()
-{
-  // store min test to be extracted
+            bvtp[p]->pindex = p;
+            bvtp[c]->pindex = c;
 
-  BVT min_test = *bvtp[0];
+            c = p;
+        }
 
-  // copy last bvt to the empty space;
-  // reset the pointer to this moved bvt
+        numtests++;
+    }
 
-  *bvtp[0] = bvt[numtests-1];
-  bvtp[bvt[numtests-1].pindex] = bvtp[0];
+    inline
+    BVT
+    BVTQ::ExtractMinTest()
+    {
+        // store min test to be extracted
 
-  // copy the last pointer to the first
+        BVT min_test = *bvtp[0];
 
-  bvtp[0] = bvtp[numtests-1];
+        // copy last bvt to the empty space;
+        // reset the pointer to this moved bvt
 
-  numtests--; 
+        *bvtp[0] = bvt[numtests - 1];
+        bvtp[bvt[numtests - 1].pindex] = bvtp[0];
 
-  BVT *temp;
-  int p = 0; 
-  int c1,c2,c; 
+        // copy the last pointer to the first
 
-  while(1) 
-  {     
-    c1 = LChild(p); 
-    c2 = c1+1; 
-  
-    if (c1 < numtests) 
-    { 
-      if (c2 < numtests) 
-      { 	
-        // p has both children, promote the minimum 
+        bvtp[0] = bvtp[numtests - 1];
 
-        if (bvtp[c1]->d < bvtp[c2]->d) c = c1; else c = c2; 
+        numtests--;
 
-        if (bvtp[c]->d < bvtp[p]->d) 
-        { 
-          temp = bvtp[p];
-          bvtp[p] = bvtp[c];
-          bvtp[c] = temp; 
+        BVT* temp;
+        int p = 0;
+        int c1, c2, c;
 
-          bvtp[p]->pindex = p;
-          bvtp[c]->pindex = c;
+        while (1)
+        {
+            c1 = LChild(p);
+            c2 = c1 + 1;
 
-          p = c; 
-        } 
-        else 
-        { 
-          break; 
-        } 
-      } 
-      else  
-      { 	
-        // p has only left child 
+            if (c1 < numtests)
+            {
+                if (c2 < numtests)
+                {
+                    // p has both children, promote the minimum
 
-        if (bvtp[c1]->d < bvtp[p]->d) 
-        { 
-          temp = bvtp[p]; 
-          bvtp[p] = bvtp[c1]; 
-          bvtp[c1] = temp; 
+                    if (bvtp[c1]->d < bvtp[c2]->d)
+                    {
+                        c = c1;
+                    }
+                    else
+                    {
+                        c = c2;
+                    }
 
-          bvtp[p]->pindex = p;
-          bvtp[c1]->pindex = c1;
+                    if (bvtp[c]->d < bvtp[p]->d)
+                    {
+                        temp = bvtp[p];
+                        bvtp[p] = bvtp[c];
+                        bvtp[c] = temp;
 
-          p = c1;	 
-        } 
-        else 
-        { 
-          break; 
-        } 
-      } 
-    } 
-    else 
-    {   
-      // p has no children 
+                        bvtp[p]->pindex = p;
+                        bvtp[c]->pindex = c;
 
-      break; 
-    } 
-  } 
+                        p = c;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    // p has only left child
 
-  return min_test;
-}
+                    if (bvtp[c1]->d < bvtp[p]->d)
+                    {
+                        temp = bvtp[p];
+                        bvtp[p] = bvtp[c1];
+                        bvtp[c1] = temp;
+
+                        bvtp[p]->pindex = p;
+                        bvtp[c1]->pindex = c1;
+
+                        p = c1;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // p has no children
+
+                break;
+            }
+        }
+
+        return min_test;
+    }
 
 } // namespace
 

@@ -33,41 +33,44 @@ class SoNode;
 namespace VirtualRobot
 {
 
-/*!
-	A Coin3D based implementation of a visualization.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization
-{
-public:
-	//EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+        A Coin3D based implementation of a visualization.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization
+    {
+    public:
+        //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	CoinVisualization(const VisualizationNodePtr visualizationNode);
-	CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
-	virtual ~CoinVisualization();
+        CoinVisualization(const VisualizationNodePtr visualizationNode);
+        CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
+        virtual ~CoinVisualization();
 
-	/*!
-		To see the visualizations in an SoExaminerViewer enable an highlight render action
-		e.g. viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-	*/
-	virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
-	virtual bool highlight(unsigned int which, bool enable);
-	virtual bool highlight(bool enable);
-	virtual bool highlight(SoNode* visu, bool enable);
+        /*!
+            To see the visualizations in an SoExaminerViewer enable an highlight render action
+            e.g. viewer->setGLRenderAction(new SoLineHighlightRenderAction);
+        */
+        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
+        virtual bool highlight(unsigned int which, bool enable);
+        virtual bool highlight(bool enable);
+        virtual bool highlight(SoNode* visu, bool enable);
 
-	virtual VisualizationPtr clone();
+        virtual VisualizationPtr clone();
 
-	SoNode* getCoinVisualization();
+        SoNode* getCoinVisualization();
 
-    void exportToVRML2(std::string filename);
+        void exportToVRML2(std::string filename);
 
-	static std::string getFactoryName(){return "inventor";}
+        static std::string getFactoryName()
+        {
+            return "inventor";
+        }
 
-	//virtual void setGlobalPose(const Eigen::Matrix4f &p);
+        //virtual void setGlobalPose(const Eigen::Matrix4f &p);
 
-protected:
+    protected:
         bool buildVisualization();
-        SoSelection *selection;
-};
+        SoSelection* selection;
+    };
 
 } // namespace VirtualRobot
 

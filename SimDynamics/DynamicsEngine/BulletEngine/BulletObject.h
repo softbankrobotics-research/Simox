@@ -30,77 +30,80 @@
 
 namespace SimDynamics
 {
-class SIMDYNAMICS_IMPORT_EXPORT BulletObject : public DynamicsObject
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class SIMDYNAMICS_IMPORT_EXPORT BulletObject : public DynamicsObject
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor
-	*/
-    BulletObject(VirtualRobot::SceneObjectPtr o);
+        /*!
+            Constructor
+        */
+        BulletObject(VirtualRobot::SceneObjectPtr o);
 
-	/*!
-	*/
-	virtual ~BulletObject();
+        /*!
+        */
+        virtual ~BulletObject();
 
-	
-	boost::shared_ptr<btRigidBody> getRigidBody();
 
-	
-	/*!
-		Set world position [MM].
-	*/
-	virtual void setPosition(const Eigen::Vector3f &posMM);
+        boost::shared_ptr<btRigidBody> getRigidBody();
 
-	/*!
-		Set world pose [mm].
-	*/
-	virtual void setPose(const Eigen::Matrix4f &pose);
 
-	Eigen::Vector3f getCom(){return com;}
+        /*!
+            Set world position [MM].
+        */
+        virtual void setPosition(const Eigen::Vector3f& posMM);
 
-	virtual Eigen::Vector3f getLinearVelocity();
-	virtual Eigen::Vector3f getAngularVelocity();
+        /*!
+            Set world pose [mm].
+        */
+        virtual void setPose(const Eigen::Matrix4f& pose);
 
-    virtual void setLinearVelocity(const Eigen::Vector3f &vel);
-    virtual void setAngularVelocity(const Eigen::Vector3f &vel);
+        Eigen::Vector3f getCom()
+        {
+            return com;
+        }
 
-    //! This is the world pose which is set by bullet
-    Eigen::Matrix4f getComGlobal();
+        virtual Eigen::Vector3f getLinearVelocity();
+        virtual Eigen::Vector3f getAngularVelocity();
 
-    /*!
-     * \brief applyForce Applies an external force on this object. The force is applied at the CoM position.
-     * \param force The force to apply (value with respect to one second). The force will be deleted after one simulation step.
-     */
-    virtual void applyForce(const Eigen::Vector3f &force);
+        virtual void setLinearVelocity(const Eigen::Vector3f& vel);
+        virtual void setAngularVelocity(const Eigen::Vector3f& vel);
 
-    /*!
-     * \brief applyTorque Applies an external torque on this object. The torque is applied at the CoM position.
-     * \param torque The torque to apply (value with respect to one second). The torque will be deleted after one simulation step.
-     */
-    virtual void applyTorque(const Eigen::Vector3f &torque);
+        //! This is the world pose which is set by bullet
+        Eigen::Matrix4f getComGlobal();
 
-    virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
+        /*!
+         * \brief applyForce Applies an external force on this object. The force is applied at the CoM position.
+         * \param force The force to apply (value with respect to one second). The force will be deleted after one simulation step.
+         */
+        virtual void applyForce(const Eigen::Vector3f& force);
 
-protected:
+        /*!
+         * \brief applyTorque Applies an external torque on this object. The torque is applied at the CoM position.
+         * \param torque The torque to apply (value with respect to one second). The torque will be deleted after one simulation step.
+         */
+        virtual void applyTorque(const Eigen::Vector3f& torque);
 
-    void setPoseIntern(const Eigen::Matrix4f &pose);
-    btCollisionShape* getShapeFromPrimitive(VirtualRobot::Primitive::PrimitivePtr primitive);
+        virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
 
-	btConvexHullShape* createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh);
+    protected:
 
-	boost::shared_ptr<btRigidBody> rigidBody;
-    boost::shared_ptr<btCollisionShape> collisionShape; // bullet collision shape
-	
-	Eigen::Vector3f com; // com offset of trimesh
+        void setPoseIntern(const Eigen::Matrix4f& pose);
+        btCollisionShape* getShapeFromPrimitive(VirtualRobot::Primitive::PrimitivePtr primitive);
 
-	btScalar btMargin;
-	SimoxMotionState* motionState;
+        btConvexHullShape* createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh);
 
-};
+        boost::shared_ptr<btRigidBody> rigidBody;
+        boost::shared_ptr<btCollisionShape> collisionShape; // bullet collision shape
 
-typedef boost::shared_ptr<BulletObject> BulletObjectPtr;
+        Eigen::Vector3f com; // com offset of trimesh
+
+        btScalar btMargin;
+        SimoxMotionState* motionState;
+
+    };
+
+    typedef boost::shared_ptr<BulletObject> BulletObjectPtr;
 
 } // namespace SimDynamics
 

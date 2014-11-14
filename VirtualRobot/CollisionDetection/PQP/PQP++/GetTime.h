@@ -51,26 +51,26 @@
 namespace PQP
 {
 
-class Timer
-{
-public:
+    class Timer
+    {
+    public:
 
-  inline
-  double 
-  GetTime()
-  {
+        inline
+        double
+        GetTime()
+        {
 #ifdef WIN32
-    struct _timeb thistime;
-    _ftime(&thistime);    
-    return (thistime.time + thistime.millitm * 1e-3);
+            struct _timeb thistime;
+            _ftime(&thistime);
+            return (thistime.time + thistime.millitm * 1e-3);
 #else
-    struct timeval thistime;
-    gettimeofday(&thistime, 0);    
-    return (thistime.tv_sec + thistime.tv_usec * 1e-6);
+            struct timeval thistime;
+            gettimeofday(&thistime, 0);
+            return (thistime.tv_sec + thistime.tv_usec * 1e-6);
 #endif
-  }
+        }
 
 #endif
-};
+    };
 
 } // namespace

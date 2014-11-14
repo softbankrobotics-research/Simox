@@ -70,268 +70,284 @@
 namespace VirtualRobot
 {
 
-boost::mutex CompressionRLE::mutex;
+    boost::mutex CompressionRLE::mutex;
 
-/*************************************************************************
-*                           INTERNAL FUNCTIONS                           *
-*************************************************************************/
+    /*************************************************************************
+    *                           INTERNAL FUNCTIONS                           *
+    *************************************************************************/
 
 
-/*************************************************************************
-* _RLE_WriteRep() - Encode a repetition of 'symbol' repeated 'count'
-* times.
-*************************************************************************/
+    /*************************************************************************
+    * _RLE_WriteRep() - Encode a repetition of 'symbol' repeated 'count'
+    * times.
+    *************************************************************************/
 
-void CompressionRLE::_RLE_WriteRep( unsigned char *out, unsigned int *outpos,
-    unsigned char marker, unsigned char symbol, unsigned int count )
-{
-    unsigned int i, idx;
-
-    idx = *outpos;
-    if( count <= 3 )
+    void CompressionRLE::_RLE_WriteRep(unsigned char* out, unsigned int* outpos,
+                                       unsigned char marker, unsigned char symbol, unsigned int count)
     {
-        if( symbol == marker )
+        unsigned int i, idx;
+
+        idx = *outpos;
+
+        if (count <= 3)
         {
-            out[ idx ++ ] = marker;
-            out[ idx ++ ] = count-1;
+            if (symbol == marker)
+            {
+                out[ idx ++ ] = marker;
+                out[ idx ++ ] = count - 1;
+            }
+            else
+            {
+                for (i = 0; i < count; ++ i)
+                {
+                    out[ idx ++ ] = symbol;
+                }
+            }
         }
         else
         {
-            for( i = 0; i < count; ++ i )
+            out[ idx ++ ] = marker;
+            -- count;
+
+            if (count >= 128)
             {
-                out[ idx ++ ] = symbol;
+                out[ idx ++ ] = (count >> 8) | 0x80;
+            }
+
+            out[ idx ++ ] = count & 0xff;
+            out[ idx ++ ] = symbol;
+        }
+
+        *outpos = idx;
+    }
+
+
+    /*************************************************************************
+    * _RLE_WriteNonRep() - Encode a non-repeating symbol, 'symbol'. 'marker'
+    * is the marker symbol, and special care has to be taken for the case
+    * when 'symbol' == 'marker'.
+    *************************************************************************/
+
+    void CompressionRLE::_RLE_WriteNonRep(unsigned char* out, unsigned int* outpos,
+                                          unsigned char marker, unsigned char symbol)
+    {
+        unsigned int idx;
+
+        idx = *outpos;
+
+        if (symbol == marker)
+        {
+            out[ idx ++ ] = marker;
+            out[ idx ++ ] = 0;
+        }
+        else
+        {
+            out[ idx ++ ] = symbol;
+        }
+
+        *outpos = idx;
+    }
+
+
+
+    /*************************************************************************
+    *                            PUBLIC FUNCTIONS                            *
+    *************************************************************************/
+
+
+    /*************************************************************************
+    * RLE_Compress() - Compress a block of data using an RLE coder.
+    *  in     - Input (uncompressed) buffer.
+    *  out    - Output (compressed) buffer. This buffer must be 0.4% larger
+    *           than the input buffer, plus one byte.
+    *  insize - Number of input bytes.
+    * The function returns the size of the compressed data.
+    *************************************************************************/
+
+    int CompressionRLE::RLE_Compress(const unsigned char* in, unsigned char* out,
+                                     unsigned int insize)
+    {
+        // lock our mutex as long we are in the scope of this method
+        boost::mutex::scoped_lock lock(mutex);
+
+        unsigned char byte1, byte2, marker;
+        unsigned int  inpos, outpos, count, i, histogram[ 256 ];
+
+
+        /* Do we have anything to compress? */
+        if (insize < 1)
+        {
+            return 0;
+        }
+
+        /* Create histogram */
+        for (i = 0; i < 256; ++ i)
+        {
+            histogram[ i ] = 0;
+        }
+
+        for (i = 0; i < insize; ++ i)
+        {
+            ++ histogram[ in[ i ] ];
+        }
+
+        /* Find the least common byte, and use it as the repetition marker */
+        marker = 0;
+
+        for (i = 1; i < 256; ++ i)
+        {
+            if (histogram[ i ] < histogram[ marker ])
+            {
+                marker = i;
             }
         }
-    }
-    else
-    {
-        out[ idx ++ ] = marker;
-        -- count;
-        if( count >= 128 )
+
+        /* Remember the repetition marker for the decoder */
+        out[ 0 ] = marker;
+        outpos = 1;
+
+        /* Start of compression */
+        byte1 = in[ 0 ];
+        inpos = 1;
+        count = 1;
+
+        /* Are there at least two bytes? */
+        if (insize >= 2)
         {
-            out[ idx ++ ] = (count >> 8) | 0x80;
-        }
-        out[ idx ++ ] = count & 0xff;
-        out[ idx ++ ] = symbol;
-    }
-    *outpos = idx;
-}
+            byte2 = in[ inpos ++ ];
+            count = 2;
 
-
-/*************************************************************************
-* _RLE_WriteNonRep() - Encode a non-repeating symbol, 'symbol'. 'marker'
-* is the marker symbol, and special care has to be taken for the case
-* when 'symbol' == 'marker'.
-*************************************************************************/
-
-void CompressionRLE::_RLE_WriteNonRep( unsigned char *out, unsigned int *outpos,
-    unsigned char marker, unsigned char symbol )
-{
-    unsigned int idx;
-
-    idx = *outpos;
-    if( symbol == marker )
-    {
-        out[ idx ++ ] = marker;
-        out[ idx ++ ] = 0;
-    }
-    else
-    {
-        out[ idx ++ ] = symbol;
-    }
-    *outpos = idx;
-}
-
-
-
-/*************************************************************************
-*                            PUBLIC FUNCTIONS                            *
-*************************************************************************/
-
-
-/*************************************************************************
-* RLE_Compress() - Compress a block of data using an RLE coder.
-*  in     - Input (uncompressed) buffer.
-*  out    - Output (compressed) buffer. This buffer must be 0.4% larger
-*           than the input buffer, plus one byte.
-*  insize - Number of input bytes.
-* The function returns the size of the compressed data.
-*************************************************************************/
-
-int CompressionRLE::RLE_Compress( const unsigned char *in, unsigned char *out,
-    unsigned int insize )
-{
-	// lock our mutex as long we are in the scope of this method
-	boost::mutex::scoped_lock lock(mutex);
-
-    unsigned char byte1, byte2, marker;
-    unsigned int  inpos, outpos, count, i, histogram[ 256 ];
-
-
-    /* Do we have anything to compress? */
-    if( insize < 1 )
-    {
-        return 0;
-    }
-
-    /* Create histogram */
-    for( i = 0; i < 256; ++ i )
-    {
-        histogram[ i ] = 0;
-    }
-    for( i = 0; i < insize; ++ i )
-    {
-        ++ histogram[ in[ i ] ];
-    }
-
-    /* Find the least common byte, and use it as the repetition marker */
-    marker = 0;
-    for( i = 1; i < 256; ++ i )
-    {
-        if( histogram[ i ] < histogram[ marker ] )
-        {
-            marker = i;
-        }
-    }
-
-    /* Remember the repetition marker for the decoder */
-    out[ 0 ] = marker;
-    outpos = 1;
-
-    /* Start of compression */
-    byte1 = in[ 0 ];
-    inpos = 1;
-    count = 1;
-
-    /* Are there at least two bytes? */
-    if( insize >= 2 )
-    {
-        byte2 = in[ inpos ++ ];
-        count = 2;
-
-        /* Main compression loop */
-        do
-        {
-            if( byte1 == byte2 )
+            /* Main compression loop */
+            do
             {
-                /* Do we meet only a sequence of identical bytes? */
-                while( (inpos < insize) && (byte1 == byte2) &&
-                       (count < 32768) )
+                if (byte1 == byte2)
                 {
-                    byte2 = in[ inpos ++ ];
-                    ++ count;
-                }
-                if( byte1 == byte2 )
-                {
-                    _RLE_WriteRep( out, &outpos, marker, byte1, count );
-                    if( inpos < insize )
+                    /* Do we meet only a sequence of identical bytes? */
+                    while ((inpos < insize) && (byte1 == byte2) &&
+                           (count < 32768))
                     {
-                        byte1 = in[ inpos ++ ];
-                        count = 1;
+                        byte2 = in[ inpos ++ ];
+                        ++ count;
+                    }
+
+                    if (byte1 == byte2)
+                    {
+                        _RLE_WriteRep(out, &outpos, marker, byte1, count);
+
+                        if (inpos < insize)
+                        {
+                            byte1 = in[ inpos ++ ];
+                            count = 1;
+                        }
+                        else
+                        {
+                            count = 0;
+                        }
                     }
                     else
                     {
-                        count = 0;
+                        _RLE_WriteRep(out, &outpos, marker, byte1, count - 1);
+                        byte1 = byte2;
+                        count = 1;
                     }
                 }
                 else
                 {
-                    _RLE_WriteRep( out, &outpos, marker, byte1, count-1 );
+                    /* No, then don't handle the last byte */
+                    _RLE_WriteNonRep(out, &outpos, marker, byte1);
                     byte1 = byte2;
                     count = 1;
                 }
+
+                if (inpos < insize)
+                {
+                    byte2 = in[ inpos ++ ];
+                    count = 2;
+                }
+            }
+            while ((inpos < insize) || (count >= 2));
+        }
+
+        /* One byte left? */
+        if (count == 1)
+        {
+            _RLE_WriteNonRep(out, &outpos, marker, byte1);
+        }
+
+        return outpos;
+    }
+
+
+    /*************************************************************************
+    * RLE_Uncompress() - Uncompress a block of data using an RLE decoder.
+    *  in      - Input (compressed) buffer.
+    *  out     - Output (uncompressed) buffer. This buffer must be large
+    *            enough to hold the uncompressed data.
+    *  insize  - Number of input bytes.
+    *************************************************************************/
+
+    void CompressionRLE::RLE_Uncompress(const unsigned char* in, unsigned char* out,
+                                        unsigned int insize)
+    {
+        // lock our mutex as long we are in the scope of this method
+        boost::mutex::scoped_lock lock(mutex);
+
+        unsigned char marker, symbol;
+        unsigned int  i, inpos, outpos, count;
+
+        /* Do we have anything to uncompress? */
+        if (insize < 1)
+        {
+            return;
+        }
+
+        /* Get marker symbol from input stream */
+        inpos = 0;
+        marker = in[ inpos ++ ];
+
+        /* Main decompression loop */
+        outpos = 0;
+
+        do
+        {
+            symbol = in[ inpos ++ ];
+
+            if (symbol == marker)
+            {
+                /* We had a marker byte */
+                count = in[ inpos ++ ];
+
+                if (count <= 2)
+                {
+                    /* Counts 0, 1 and 2 are used for marker byte repetition
+                       only */
+                    for (i = 0; i <= count; ++ i)
+                    {
+                        out[ outpos ++ ] = marker;
+                    }
+                }
+                else
+                {
+                    if (count & 0x80)
+                    {
+                        count = ((count & 0x7f) << 8) + in[ inpos ++ ];
+                    }
+
+                    symbol = in[ inpos ++ ];
+
+                    for (i = 0; i <= count; ++ i)
+                    {
+                        out[ outpos ++ ] = symbol;
+                    }
+                }
             }
             else
             {
-                /* No, then don't handle the last byte */
-                _RLE_WriteNonRep( out, &outpos, marker, byte1 );
-                byte1 = byte2;
-                count = 1;
-            }
-            if( inpos < insize )
-            {
-                byte2 = in[ inpos ++ ];
-                count = 2;
+                /* No marker, plain copy */
+                out[ outpos ++ ] = symbol;
             }
         }
-        while( (inpos < insize) || (count >= 2) );
+        while (inpos < insize);
     }
-
-    /* One byte left? */
-    if( count == 1 )
-    {
-        _RLE_WriteNonRep( out, &outpos, marker, byte1 );
-    }
-
-    return outpos;
-}
-
-
-/*************************************************************************
-* RLE_Uncompress() - Uncompress a block of data using an RLE decoder.
-*  in      - Input (compressed) buffer.
-*  out     - Output (uncompressed) buffer. This buffer must be large
-*            enough to hold the uncompressed data.
-*  insize  - Number of input bytes.
-*************************************************************************/
-
-void CompressionRLE::RLE_Uncompress( const unsigned char *in, unsigned char *out,
-    unsigned int insize )
-{
-	// lock our mutex as long we are in the scope of this method
-	boost::mutex::scoped_lock lock(mutex);
-	
-	unsigned char marker, symbol;
-    unsigned int  i, inpos, outpos, count;
-
-    /* Do we have anything to uncompress? */
-    if( insize < 1 )
-    {
-        return;
-    }
-
-    /* Get marker symbol from input stream */
-    inpos = 0;
-    marker = in[ inpos ++ ];
-
-    /* Main decompression loop */
-    outpos = 0;
-    do
-    {
-        symbol = in[ inpos ++ ];
-        if( symbol == marker )
-        {
-            /* We had a marker byte */
-            count = in[ inpos ++ ];
-            if( count <= 2 )
-            {
-                /* Counts 0, 1 and 2 are used for marker byte repetition
-                   only */
-                for( i = 0; i <= count; ++ i )
-                {
-                    out[ outpos ++ ] = marker;
-                }
-            }
-            else
-            {
-                if( count & 0x80 )
-                {
-                    count = ((count & 0x7f) << 8) + in[ inpos ++ ];
-                }
-                symbol = in[ inpos ++ ];
-                for( i = 0; i <= count; ++ i )
-                {
-                    out[ outpos ++ ] = symbol;
-                }
-            }
-        }
-        else
-        {
-            /* No marker, plain copy */
-            out[ outpos ++ ] = symbol;
-        }
-    }
-    while( inpos < insize );
-}
 
 }

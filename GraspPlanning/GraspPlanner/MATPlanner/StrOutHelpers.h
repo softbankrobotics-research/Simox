@@ -32,19 +32,19 @@
 namespace GraspStudio
 {
 
-	class GRASPSTUDIO_IMPORT_EXPORT StrOutHelpers
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT StrOutHelpers
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			StrOutHelpers();
+        StrOutHelpers();
 
-		static std::string toString(std::vector<Eigen::Vector3f> v, bool lineBreak = false);
-		static std::string toString(std::vector<Eigen::Vector3i> v, bool lineBreak = false);
+        static std::string toString(std::vector<Eigen::Vector3f> v, bool lineBreak = false);
+        static std::string toString(std::vector<Eigen::Vector3i> v, bool lineBreak = false);
 
-		static std::string toString(Eigen::Vector3f v);
-		static std::string toString(Eigen::Vector3i v);
+        static std::string toString(Eigen::Vector3f v);
+        static std::string toString(Eigen::Vector3i v);
 
-	};
+    };
 }
 #endif // STROUTHELPERS_H

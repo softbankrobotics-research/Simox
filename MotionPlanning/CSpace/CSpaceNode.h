@@ -28,36 +28,37 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace Saba {
-
-/*!
- *
- * \class CSpaceNode
- *
- * A CSpaceNode is used to store a configuration in cspace.
- *
- * @see CSpaceTree
- *
- */
-class SABA_IMPORT_EXPORT CSpaceNode
+namespace Saba
 {
-public:
 
-	CSpaceNode();
-	virtual ~CSpaceNode();
+    /*!
+     *
+     * \class CSpaceNode
+     *
+     * A CSpaceNode is used to store a configuration in cspace.
+     *
+     * @see CSpaceTree
+     *
+     */
+    class SABA_IMPORT_EXPORT CSpaceNode
+    {
+    public:
 
-	Eigen::VectorXf configuration;			//!< the configuration vector
-	int parentID;							//!< id of parent (root node if < 0)
-	unsigned int ID;						//!< id of CSpaceNode
+        CSpaceNode();
+        virtual ~CSpaceNode();
 
-	bool allocated;
+        Eigen::VectorXf configuration;          //!< the configuration vector
+        int parentID;                           //!< id of parent (root node if < 0)
+        unsigned int ID;                        //!< id of CSpaceNode
 
-	// optional
-	int status;
-	float obstacleDistance;					//!< work space distance to obstacles (-1 if the dist was not calculated)
-	float dynDomRadius;						//!< radius for this node (used by dynamic domain RRTs)
-	std::vector<CSpaceNodePtr> children;	//!< children of this node
-};
+        bool allocated;
+
+        // optional
+        int status;
+        float obstacleDistance;                 //!< work space distance to obstacles (-1 if the dist was not calculated)
+        float dynDomRadius;                     //!< radius for this node (used by dynamic domain RRTs)
+        std::vector<CSpaceNodePtr> children;    //!< children of this node
+    };
 
 } // nameaspace
 

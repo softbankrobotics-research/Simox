@@ -70,13 +70,13 @@ This library can be used to simulate physical interactions and dynamic systems.
 namespace SimDynamics
 {
     // only valid within the SimDynamics namespace
-	using std::cout;
-	using std::endl;
+    using std::cout;
+    using std::endl;
 
-	class DynamicsWorld;
+    class DynamicsWorld;
 
-	typedef boost::shared_ptr<DynamicsWorld> DynamicsWorldPtr;
-	
+    typedef boost::shared_ptr<DynamicsWorld> DynamicsWorldPtr;
+
 
 #define SIMDYNAMICS_INFO VR_INFO
 #define SIMDYNAMICS_WARNING VR_WARNING

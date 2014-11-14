@@ -33,33 +33,42 @@
 namespace SimDynamics
 {
 
-/*!
-	An interface for a physics engine factory.
-	Currently, the first registered factory is used to create the physics engine abstraction, so multiple coexisting factories are not yet supported.
-	@see BulletEngineFactory
-*/
-class SIMDYNAMICS_IMPORT_EXPORT DynamicsEngineFactory  : public AbstractFactoryMethod<DynamicsEngineFactory, void*>
-{
-public:
+    /*!
+        An interface for a physics engine factory.
+        Currently, the first registered factory is used to create the physics engine abstraction, so multiple coexisting factories are not yet supported.
+        @see BulletEngineFactory
+    */
+    class SIMDYNAMICS_IMPORT_EXPORT DynamicsEngineFactory  : public AbstractFactoryMethod<DynamicsEngineFactory, void*>
+    {
+    public:
 
-	DynamicsEngineFactory() {;}
-	virtual ~DynamicsEngineFactory() {;}
+        DynamicsEngineFactory()
+        {
+            ;
+        }
+        virtual ~DynamicsEngineFactory()
+        {
+            ;
+        }
 
-	//! Derived classes must return the correct engine implementation.
-	virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr()){return DynamicsEnginePtr();}
+        //! Derived classes must return the correct engine implementation.
+        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr())
+        {
+            return DynamicsEnginePtr();
+        }
 
-    virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o)
-	{
-        return DynamicsObjectPtr(new DynamicsObject(o));
-	}
-	virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot)
-	{
-		return DynamicsRobotPtr(new DynamicsRobot(robot));
-	}
+        virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o)
+        {
+            return DynamicsObjectPtr(new DynamicsObject(o));
+        }
+        virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot)
+        {
+            return DynamicsRobotPtr(new DynamicsRobot(robot));
+        }
 
-};
+    };
 
-typedef boost::shared_ptr<DynamicsEngineFactory> DynamicsEngineFactoryPtr;
+    typedef boost::shared_ptr<DynamicsEngineFactory> DynamicsEngineFactoryPtr;
 
 } // namespace SimDynamics
 

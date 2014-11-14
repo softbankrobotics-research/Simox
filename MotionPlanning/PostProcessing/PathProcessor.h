@@ -27,47 +27,47 @@
 
 namespace Saba
 {
-/*!
- *
- * \brief An abstract interface for path processing classes.
- *
- */
-class SABA_IMPORT_EXPORT PathProcessor
-{
-public:
+    /*!
+     *
+     * \brief An abstract interface for path processing classes.
+     *
+     */
+    class SABA_IMPORT_EXPORT PathProcessor
+    {
+    public:
 
-	/*!
-		Constructor
-		Creates a local copy of p.
-	*/
-	PathProcessor(CSpacePathPtr p, bool verbose = false);
-	
-	/*!
-		Destructor
-		Deletes local optimized path.
-	*/
-	virtual ~PathProcessor();
+        /*!
+            Constructor
+            Creates a local copy of p.
+        */
+        PathProcessor(CSpacePathPtr p, bool verbose = false);
+
+        /*!
+            Destructor
+            Deletes local optimized path.
+        */
+        virtual ~PathProcessor();
 
 
-	/*!
-		Here the path processing is executed, the number of optimizing steps can be specified.
-	*/
-	virtual CSpacePathPtr optimize(int optimizeSteps) = 0;
+        /*!
+            Here the path processing is executed, the number of optimizing steps can be specified.
+        */
+        virtual CSpacePathPtr optimize(int optimizeSteps) = 0;
 
-	//! Stop the execution from outside.
-	virtual void stopExecution();
-	
-	CSpacePathPtr getOptimizedPath();
+        //! Stop the execution from outside.
+        virtual void stopExecution();
 
-protected:
+        CSpacePathPtr getOptimizedPath();
 
-	CSpacePathPtr optimizedPath;		// the optimized path
-	CSpacePathPtr path;					// stores the original path
-	unsigned int dim;
-	bool verbose;
+    protected:
 
-	bool stopOptimization; // allows to stop a running optimization process
-};
+        CSpacePathPtr optimizedPath;        // the optimized path
+        CSpacePathPtr path;                 // stores the original path
+        unsigned int dim;
+        bool verbose;
+
+        bool stopOptimization; // allows to stop a running optimization process
+    };
 
 } // namespace
 

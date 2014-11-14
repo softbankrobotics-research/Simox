@@ -38,96 +38,96 @@ namespace SimDynamics
 
 
 
-/*!
-	A derived class can be added to a SimoxMotionState and it will get notified whenever the motion is updated.
-	To use this class you have to implement the poseChanged method in a derived class.
-*/
-struct SIMDYNAMICS_IMPORT_EXPORT SimoxMotionStateCallback
-{
-    SimoxMotionStateCallback() {}
-    virtual ~SimoxMotionStateCallback() {}
-    virtual void poseChanged( const btTransform& worldPose ) = 0;
-};
+    /*!
+        A derived class can be added to a SimoxMotionState and it will get notified whenever the motion is updated.
+        To use this class you have to implement the poseChanged method in a derived class.
+    */
+    struct SIMDYNAMICS_IMPORT_EXPORT SimoxMotionStateCallback
+    {
+        SimoxMotionStateCallback() {}
+        virtual ~SimoxMotionStateCallback() {}
+        virtual void poseChanged(const btTransform& worldPose) = 0;
+    };
 
 #ifdef _WIN32
 #pragma warning(disable: 4275)
 #endif
 
-class SIMDYNAMICS_IMPORT_EXPORT SimoxMotionState : public btDefaultMotionState
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    /*!
-		Constructor.
-		The object is queried for current globalpose and center of mass.
+    class SIMDYNAMICS_IMPORT_EXPORT SimoxMotionState : public btDefaultMotionState
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        /*!
+            Constructor.
+            The object is queried for current globalpose and center of mass.
 
-		\param sceneObject The obvject.
-    */
-    SimoxMotionState(VirtualRobot::SceneObjectPtr sceneObject);
-    /*! 
-		Destructor. 
-	*/
-    virtual ~SimoxMotionState();
+            \param sceneObject The obvject.
+        */
+        SimoxMotionState(VirtualRobot::SceneObjectPtr sceneObject);
+        /*!
+            Destructor.
+        */
+        virtual ~SimoxMotionState();
 
-    /*!
-		Interface for changing poses of rigid body and VirtualRobot objects.
-    
-		Bullet sets and gets the rigid body world pose using
-		setWorldTransform() and getWorldTransform().
-	*/
-    virtual void setWorldTransform(const btTransform& worldPose);
+        /*!
+            Interface for changing poses of rigid body and VirtualRobot objects.
 
-    /*!
-		Interface for getting poses of rigid body and VirtualRobot objects.
-    
-		Bullet sets and gets the rigid body world pose using
-		setWorldTransform() and getWorldTransform().
-	*/
-    virtual void getWorldTransform(btTransform& worldPose ) const;
+            Bullet sets and gets the rigid body world pose using
+            setWorldTransform() and getWorldTransform().
+        */
+        virtual void setWorldTransform(const btTransform& worldPose);
 
-    /*!
-		Set center of mass.
-		Since Bullet assumes that the local origin is equal to its COM but in Simox this is not assumed 
-		we have to take care of a local COM transformation.
+        /*!
+            Interface for getting poses of rigid body and VirtualRobot objects.
 
-		\param com The com position in local coordinate system (corresponds to the origin in bullet). 
-	*/
-    void setCOM( const Eigen::Vector3f& com );
-    Eigen::Vector3f getCOM() const;
+            Bullet sets and gets the rigid body world pose using
+            setWorldTransform() and getWorldTransform().
+        */
+        virtual void getWorldTransform(btTransform& worldPose) const;
 
-    /*!
-		Derive a class from SimoxMotionStateCallback, overwrite the poseChanged method and register it 
-		to this SimoxMotionState.
-		The callbeck will be executed at the beginning of the setWorldTransform() function. 
-	*/
-	void registerCallback(SimoxMotionStateCallback* cb);
-    std::vector<SimoxMotionStateCallback*> getCallbacks();
-	
-    /*!
-		Set the pose.
-	*/
-    void setGlobalPose( const Eigen::Matrix4f &pose );
+        /*!
+            Set center of mass.
+            Since Bullet assumes that the local origin is equal to its COM but in Simox this is not assumed
+            we have to take care of a local COM transformation.
 
-protected:
-	void updateTransform();
-	void _setCOM( const Eigen::Vector3f& com );
+            \param com The com position in local coordinate system (corresponds to the origin in bullet).
+        */
+        void setCOM(const Eigen::Vector3f& com);
+        Eigen::Vector3f getCOM() const;
 
-    void setGlobalPoseSimox( const Eigen::Matrix4f& worldPose );
+        /*!
+            Derive a class from SimoxMotionStateCallback, overwrite the poseChanged method and register it
+            to this SimoxMotionState.
+            The callbeck will be executed at the beginning of the setWorldTransform() function.
+        */
+        void registerCallback(SimoxMotionStateCallback* cb);
+        std::vector<SimoxMotionStateCallback*> getCallbacks();
 
-    Eigen::Matrix4f initalGlobalPose;
-    Eigen::Vector3f com;
+        /*!
+            Set the pose.
+        */
+        void setGlobalPose(const Eigen::Matrix4f& pose);
 
-	VirtualRobot::SceneObjectPtr sceneObject;
-	VirtualRobot::RobotNodeActuatorPtr robotNodeActuator; // in case sceneObject is of type RobotNode, we  can actuate it with this actuator.
+    protected:
+        void updateTransform();
+        void _setCOM(const Eigen::Vector3f& com);
 
-    // This is the bullet transformation.
-	btTransform _transform;
-	btTransform _graphicsTransfrom;
-	btTransform _comOffset;
+        void setGlobalPoseSimox(const Eigen::Matrix4f& worldPose);
+
+        Eigen::Matrix4f initalGlobalPose;
+        Eigen::Vector3f com;
+
+        VirtualRobot::SceneObjectPtr sceneObject;
+        VirtualRobot::RobotNodeActuatorPtr robotNodeActuator; // in case sceneObject is of type RobotNode, we  can actuate it with this actuator.
+
+        // This is the bullet transformation.
+        btTransform _transform;
+        btTransform _graphicsTransfrom;
+        btTransform _comOffset;
 
 
-    std::vector<SimoxMotionStateCallback*> callbacks;
-};
+        std::vector<SimoxMotionStateCallback*> callbacks;
+    };
 
 }
 

@@ -32,139 +32,142 @@
 namespace VirtualRobot
 {
 
-class TriMeshModel;
+    class TriMeshModel;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationNode
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationNode
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    std::vector<Primitive::PrimitivePtr> primitives;
+        std::vector<Primitive::PrimitivePtr> primitives;
 
-	/*!
-	Constructor
-	*/
-	VisualizationNode();
+        /*!
+        Constructor
+        */
+        VisualizationNode();
 
-	/*!
-	*/
-	virtual ~VisualizationNode();
+        /*!
+        */
+        virtual ~VisualizationNode();
 
-	/*!
-		Creates a triangulated model.
-	*/
-	virtual TriMeshModelPtr getTriMeshModel();
+        /*!
+            Creates a triangulated model.
+        */
+        virtual TriMeshModelPtr getTriMeshModel();
 
-	/*!
-		Sets the position of the internal data structure.
-	*/
-	virtual void setGlobalPose (const Eigen::Matrix4f &m)
-	{
-		globalPose = m;
-	}
-	inline const Eigen::Matrix4f& getGlobalPose() const
-	{
-		return globalPose;
-	}
+        /*!
+            Sets the position of the internal data structure.
+        */
+        virtual void setGlobalPose(const Eigen::Matrix4f& m)
+        {
+            globalPose = m;
+        }
+        inline const Eigen::Matrix4f& getGlobalPose() const
+        {
+            return globalPose;
+        }
 
-	/*!
-		Clone this visualization.
-		\param deepCopy When true, the underlying visualization is copied, otherwise a reference to the existing visualization is passed.
-		\param scaling Scale Can be set to create a scaled version of this visual data.
-		Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
-	*/
-	virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
+        /*!
+            Clone this visualization.
+            \param deepCopy When true, the underlying visualization is copied, otherwise a reference to the existing visualization is passed.
+            \param scaling Scale Can be set to create a scaled version of this visual data.
+            Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
+        */
+        virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
 
-	/*!
-		Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
-		If there is already a visualization attached with the given name, it is quietly replaced.
-	*/
-	virtual void attachVisualization(const std::string &name, VisualizationNodePtr v);
+        /*!
+            Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
+            If there is already a visualization attached with the given name, it is quietly replaced.
+        */
+        virtual void attachVisualization(const std::string& name, VisualizationNodePtr v);
 
-	/*!
-		Remove an attached visualization.
-	*/
-	virtual void detachVisualization(const std::string &name);
+        /*!
+            Remove an attached visualization.
+        */
+        virtual void detachVisualization(const std::string& name);
 
-	/*!
-		Check for an attached visualization.
-	*/
-	virtual bool hasAttachedVisualization(const std::string &name);
+        /*!
+            Check for an attached visualization.
+        */
+        virtual bool hasAttachedVisualization(const std::string& name);
 
-	/*!
-		Get for an attached visualization.
-	*/
-	virtual VisualizationNodePtr getAttachedVisualization(const std::string &name);
+        /*!
+            Get for an attached visualization.
+        */
+        virtual VisualizationNodePtr getAttachedVisualization(const std::string& name);
 
-	/*!
-		Setup the visualization of this object.
-		\param showVisualization If false, the visualization is disabled.
-		\param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
-	*/
-	virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        /*!
+            Setup the visualization of this object.
+            \param showVisualization If false, the visualization is disabled.
+            \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
+        */
+        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
 
-	/*!
-		Enables/Disables the visualization updates.
-		Usually if a SceneObject or a RobotNode changes its state, the visualization is automatically updated.
-		This behavior can be changed here.
-	*/
-	void setUpdateVisualization (bool enable);
-	bool getUpdateVisualizationStatus();
+        /*!
+            Enables/Disables the visualization updates.
+            Usually if a SceneObject or a RobotNode changes its state, the visualization is automatically updated.
+            This behavior can be changed here.
+        */
+        void setUpdateVisualization(bool enable);
+        bool getUpdateVisualizationStatus();
 
 
-	//! print information about this visualization object.
-	virtual void print();
+        //! print information about this visualization object.
+        virtual void print();
 
-	//! get number of faces (i.e. triangles) of this object
-	virtual int getNumFaces();
+        //! get number of faces (i.e. triangles) of this object
+        virtual int getNumFaces();
 
-	//! optional filename tag
-	std::string getFilename();
-	bool usedBoundingBoxVisu();
+        //! optional filename tag
+        std::string getFilename();
+        bool usedBoundingBoxVisu();
 
-	//! Just stores the filename, no loading is performed!
-	void setFilename(const std::string &filename, bool boundingBox);
+        //! Just stores the filename, no loading is performed!
+        void setFilename(const std::string& filename, bool boundingBox);
 
-	virtual std::string getType(){return VisualizationFactory::getName();}
+        virtual std::string getType()
+        {
+            return VisualizationFactory::getName();
+        }
 
-	std::string toXML(const std::string &basePath, int tabs);
+        std::string toXML(const std::string& basePath, int tabs);
 
-	/*!
-		Ctreate XML string and replace filename
-	*/
-	std::string toXML(const std::string &basePath, const std::string &filename, int tabs);
+        /*!
+            Ctreate XML string and replace filename
+        */
+        std::string toXML(const std::string& basePath, const std::string& filename, int tabs);
 
-	/*!
-		Create a united visualization. Behavior depends on the derived implementation,
-		but usually the visualizations are copied and united to one object.
-	*/
-	static VisualizationNodePtr CreateUnitedVisualization(const std::vector<VisualizationNodePtr> &visualizations);
+        /*!
+            Create a united visualization. Behavior depends on the derived implementation,
+            but usually the visualizations are copied and united to one object.
+        */
+        static VisualizationNodePtr CreateUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations);
 
-	/*!
-		Returns (current) bounding box in global coordinate system.
-	*/
-	BoundingBox getBoundingBox();
+        /*!
+            Returns (current) bounding box in global coordinate system.
+        */
+        BoundingBox getBoundingBox();
 
-	/*!
-		Saves model file to model path.
-		\param modelPath The directory.
-	*/
-	virtual bool saveModel(const std::string &modelPath, const std::string &filename);
+        /*!
+            Saves model file to model path.
+            \param modelPath The directory.
+        */
+        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
 
-	virtual void scale(Eigen::Vector3f &scaleFactor);
+        virtual void scale(Eigen::Vector3f& scaleFactor);
 
-protected:
-	bool boundingBox; //!< Indicates, if the bounding box model was used
-	std::string filename; //!< if the visualization was build from a file, the filename is stored here
+    protected:
+        bool boundingBox; //!< Indicates, if the bounding box model was used
+        std::string filename; //!< if the visualization was build from a file, the filename is stored here
 
-	Eigen::Matrix4f globalPose;
-	bool updateVisualization;
+        Eigen::Matrix4f globalPose;
+        bool updateVisualization;
 
-	bool showVisualization;
-	bool showAttachedVisualizations;
+        bool showVisualization;
+        bool showAttachedVisualizations;
 
-	std::map< std::string, VisualizationNodePtr > attachedVisualizations;	//< These optional visualizations will not show up in the TriMeshModel
-};
+        std::map< std::string, VisualizationNodePtr > attachedVisualizations;   //< These optional visualizations will not show up in the TriMeshModel
+    };
 
 } // namespace VirtualRobot
 

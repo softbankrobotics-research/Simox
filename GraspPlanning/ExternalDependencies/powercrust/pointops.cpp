@@ -23,91 +23,107 @@
 namespace GraspStudio
 {
 
-namespace PowerCrust
-{
-
-	
-
-#define NEARZERO(d)	((d) < FLT_EPSILON && (d) > -FLT_EPSILON)
-Coord PowerCrustHull::maxdist(int dim, point p1, point p2) {
-	Coord	x,y,
-		d = 0;
-	int i = dim;
+    namespace PowerCrust
+    {
 
 
-	while (i--) {
-		x = *p1++;
-		y = *p2++;
-		d += (x<y) ? y-x : x-y ;
-	}
 
-	return d;
-}
-
-void PowerCrustHull::print_point(FILE *F, int dim, point p) {
-	int j;
-	if (!p) {
-		fprintf(F, "NULL");
-		return;
-	}
-	for (j=0;j<dim;j++) fprintf(F, "%g  ", *p++);
-}
-
-void PowerCrustHull::print_point_int(FILE *F, int dim, point p) {
-	int j;
-	if (!p) {
-		fprintf(F, "NULL");
-		return;
-	}
-	for (j=0;j<dim;j++) fprintf(F, "%.20g  ", *p++);
-}
-
-/*
-int PowerCrustHull::scale(int dim, point p) {
-	Coord max = 0;
-	int i;
-	Coord abs,val;
-	for (i=0;i<dim;i++) {
-		val = p[i];
-		abs = (val > 0) ? val: -val;
-		max = (abs > max) ? abs : max;
-	}
+#define NEARZERO(d) ((d) < FLT_EPSILON && (d) > -FLT_EPSILON)
+        Coord PowerCrustHull::maxdist(int dim, point p1, point p2)
+        {
+            Coord   x, y,
+                    d = 0;
+            int i = dim;
 
 
-	if (max< 100*DBL_EPSILON) {
-		fprintf(stderr, "fails to scale: ");
-		print_point(stderr, dim,p);fflush(stderr);
-		fprintf(stderr, "\n");
-		return 1;
-	}
+            while (i--)
+            {
+                x = *p1++;
+                y = *p2++;
+                d += (x < y) ? y - x : x - y ;
+            }
 
-	for (i=0;i<dim;i++) p[i] /= max;
+            return d;
+        }
 
-	return 0;
-}
-*/
+        void PowerCrustHull::print_point(FILE* F, int dim, point p)
+        {
+            int j;
 
-/*
-  int normalize(int dim, point p) {
-  Coord norm;
-  int i;
+            if (!p)
+            {
+                fprintf(F, "NULL");
+                return;
+            }
 
-  norm = norm2(dim,p);
+            for (j = 0; j < dim; j++)
+            {
+                fprintf(F, "%g  ", *p++);
+            }
+        }
 
-  if (norm < 3*FLT_EPSILON) {
-  fprintf(stderr, "fails to normalize: ");
-  print_point(dim,p);fflush(stdout);
-  fprintf(stderr, "\n");
-  return 1;
-  }
+        void PowerCrustHull::print_point_int(FILE* F, int dim, point p)
+        {
+            int j;
+
+            if (!p)
+            {
+                fprintf(F, "NULL");
+                return;
+            }
+
+            for (j = 0; j < dim; j++)
+            {
+                fprintf(F, "%.20g  ", *p++);
+            }
+        }
+
+        /*
+        int PowerCrustHull::scale(int dim, point p) {
+            Coord max = 0;
+            int i;
+            Coord abs,val;
+            for (i=0;i<dim;i++) {
+                val = p[i];
+                abs = (val > 0) ? val: -val;
+                max = (abs > max) ? abs : max;
+            }
 
 
-  for (i=0;i<dim;i++) p[i] /= norm;
+            if (max< 100*DBL_EPSILON) {
+                fprintf(stderr, "fails to scale: ");
+                print_point(stderr, dim,p);fflush(stderr);
+                fprintf(stderr, "\n");
+                return 1;
+            }
 
-  return 0;
-  }
+            for (i=0;i<dim;i++) p[i] /= max;
 
-*/
+            return 0;
+        }
+        */
 
-}
+        /*
+          int normalize(int dim, point p) {
+          Coord norm;
+          int i;
+
+          norm = norm2(dim,p);
+
+          if (norm < 3*FLT_EPSILON) {
+          fprintf(stderr, "fails to normalize: ");
+          print_point(dim,p);fflush(stdout);
+          fprintf(stderr, "\n");
+          return 1;
+          }
+
+
+          for (i=0;i<dim;i++) p[i] /= norm;
+
+          return 0;
+          }
+
+        */
+
+    }
 }

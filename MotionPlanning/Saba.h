@@ -71,45 +71,45 @@ mobile manipulators or service and humanoid robots.
 
 namespace Saba
 {
-	// only valid within the Saba namespace
-	using std::cout;
-	using std::endl;
+    // only valid within the Saba namespace
+    using std::cout;
+    using std::endl;
 
-	class CSpace;
-	class CSpaceSampled;
-	class CSpacePath;
-	class CSpaceTree;
-	class CSpaceNode;
-	class Sampler;
-	class ConfigurationConstraint;
-	class Rrt;
-	class MotionPlanner;
-	class BiRrt;
-	class GraspIkRrt;
-	class GraspRrt;
-	class PathProcessor;
-	class ShortcutProcessor;
-	class ApproachDiscretization;
-	class PlanningThread;
-	class PathProcessingThread;
+    class CSpace;
+    class CSpaceSampled;
+    class CSpacePath;
+    class CSpaceTree;
+    class CSpaceNode;
+    class Sampler;
+    class ConfigurationConstraint;
+    class Rrt;
+    class MotionPlanner;
+    class BiRrt;
+    class GraspIkRrt;
+    class GraspRrt;
+    class PathProcessor;
+    class ShortcutProcessor;
+    class ApproachDiscretization;
+    class PlanningThread;
+    class PathProcessingThread;
 
-	typedef boost::shared_ptr<CSpace> CSpacePtr;
-	typedef boost::shared_ptr<CSpaceSampled> CSpaceSampledPtr;
-	typedef boost::shared_ptr<CSpacePath> CSpacePathPtr;
-	typedef boost::shared_ptr<Sampler> SamplerPtr;
-	typedef boost::shared_ptr<CSpaceTree> CSpaceTreePtr;
-	typedef boost::shared_ptr<CSpaceNode> CSpaceNodePtr;
-	typedef boost::shared_ptr<MotionPlanner> MotionPlannerPtr;
-	typedef boost::shared_ptr<Rrt> RrtPtr;
-	typedef boost::shared_ptr<BiRrt> BiRrtPtr;
-	typedef boost::shared_ptr<GraspIkRrt> GraspIkRrtPtr;
-	typedef boost::shared_ptr<GraspRrt> GraspRrtPtr;
-	typedef boost::shared_ptr<PathProcessor> PathProcessorPtr;
-	typedef boost::shared_ptr<ShortcutProcessor> ShortcutProcessorPtr;
-	typedef boost::shared_ptr<ConfigurationConstraint> ConfigurationConstraintPtr;
-	typedef boost::shared_ptr<ApproachDiscretization> ApproachDiscretizationPtr;
-	typedef boost::shared_ptr<PlanningThread> PlanningThreadPtr;
-	typedef boost::shared_ptr<PathProcessingThread> PathProcessingThreadPtr;
+    typedef boost::shared_ptr<CSpace> CSpacePtr;
+    typedef boost::shared_ptr<CSpaceSampled> CSpaceSampledPtr;
+    typedef boost::shared_ptr<CSpacePath> CSpacePathPtr;
+    typedef boost::shared_ptr<Sampler> SamplerPtr;
+    typedef boost::shared_ptr<CSpaceTree> CSpaceTreePtr;
+    typedef boost::shared_ptr<CSpaceNode> CSpaceNodePtr;
+    typedef boost::shared_ptr<MotionPlanner> MotionPlannerPtr;
+    typedef boost::shared_ptr<Rrt> RrtPtr;
+    typedef boost::shared_ptr<BiRrt> BiRrtPtr;
+    typedef boost::shared_ptr<GraspIkRrt> GraspIkRrtPtr;
+    typedef boost::shared_ptr<GraspRrt> GraspRrtPtr;
+    typedef boost::shared_ptr<PathProcessor> PathProcessorPtr;
+    typedef boost::shared_ptr<ShortcutProcessor> ShortcutProcessorPtr;
+    typedef boost::shared_ptr<ConfigurationConstraint> ConfigurationConstraintPtr;
+    typedef boost::shared_ptr<ApproachDiscretization> ApproachDiscretizationPtr;
+    typedef boost::shared_ptr<PlanningThread> PlanningThreadPtr;
+    typedef boost::shared_ptr<PathProcessingThread> PathProcessingThreadPtr;
 
 #define SABA_INFO VR_INFO
 #define SABA_WARNING VR_WARNING

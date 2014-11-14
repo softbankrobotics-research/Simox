@@ -36,64 +36,64 @@
 
 namespace VirtualRobot
 {
-/**
-* \class PoseQualityMeasurement
-*
-* An interface definition for quality measurements of poses.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT PoseQualityMeasurement
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /**
+    * \class PoseQualityMeasurement
+    *
+    * An interface definition for quality measurements of poses.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PoseQualityMeasurement
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	PoseQualityMeasurement(VirtualRobot::RobotNodeSetPtr rns);
-	~PoseQualityMeasurement();
+        PoseQualityMeasurement(VirtualRobot::RobotNodeSetPtr rns);
+        ~PoseQualityMeasurement();
 
-	/*!
-		The main method for determining the pose quality. 
-		The current configuration of the corresponding RNS is analyzed and the quality is returned.
-		See derived classes for details.
-	*/
-	virtual float getPoseQuality();
+        /*!
+            The main method for determining the pose quality.
+            The current configuration of the corresponding RNS is analyzed and the quality is returned.
+            See derived classes for details.
+        */
+        virtual float getPoseQuality();
 
-	/*!
-		The quality is determined for a given Cartesian direction.  
-		The current configuration of the corresponding RNS is analyzed and the quality is returned.
-		See derived classes for details.
-		\param direction A 3d or 6d vector with the Cartesian direction to investigate.
-	*/
-	virtual float getPoseQuality(const Eigen::VectorXf &direction);
+        /*!
+            The quality is determined for a given Cartesian direction.
+            The current configuration of the corresponding RNS is analyzed and the quality is returned.
+            See derived classes for details.
+            \param direction A 3d or 6d vector with the Cartesian direction to investigate.
+        */
+        virtual float getPoseQuality(const Eigen::VectorXf& direction);
 
 
-	void setVerbose(bool v);
+        void setVerbose(bool v);
 
-	/*!
-		Returns the RobotNodeSte that is used for computing the manipulability.
-	*/
-	VirtualRobot::RobotNodeSetPtr getRNS();
+        /*!
+            Returns the RobotNodeSte that is used for computing the manipulability.
+        */
+        VirtualRobot::RobotNodeSetPtr getRNS();
 
-	//! A string that identifies the type of pose quality measure.
-	std::string getName();
+        //! A string that identifies the type of pose quality measure.
+        std::string getName();
 
-	//! Indicates if joint limits are considered.
-	virtual bool consideringJointLimits();
+        //! Indicates if joint limits are considered.
+        virtual bool consideringJointLimits();
 
-	/*!
-		Consider obstacles. Here, the shortest distance on the surface of the RNS to an obstacle is set (in TCP coords). 
-		This obstacle vector may be considered by any further calculations (depending on the implementation).
-	*/
-	virtual void setObstacleDistanceVector(const Eigen::Vector3f &directionSurfaceToObstance);
-	virtual void disableObstacleDistance();
+        /*!
+            Consider obstacles. Here, the shortest distance on the surface of the RNS to an obstacle is set (in TCP coords).
+            This obstacle vector may be considered by any further calculations (depending on the implementation).
+        */
+        virtual void setObstacleDistanceVector(const Eigen::Vector3f& directionSurfaceToObstance);
+        virtual void disableObstacleDistance();
 
-protected:
-	std::string name;
-    VirtualRobot::RobotNodeSetPtr rns;
+    protected:
+        std::string name;
+        VirtualRobot::RobotNodeSetPtr rns;
 
-	bool considerObstacle;
-	Eigen::Vector3f obstacleDir;
+        bool considerObstacle;
+        Eigen::Vector3f obstacleDir;
 
-	bool verbose;
-};
+        bool verbose;
+    };
 
 }
 

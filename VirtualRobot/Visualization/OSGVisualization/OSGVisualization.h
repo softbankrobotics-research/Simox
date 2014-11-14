@@ -31,31 +31,34 @@
 namespace VirtualRobot
 {
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT OSGVisualization : public Visualization
-{
-public:
+    class VIRTUAL_ROBOT_IMPORT_EXPORT OSGVisualization : public Visualization
+    {
+    public:
 
-	OSGVisualization(const VisualizationNodePtr visualizationNode);
-	OSGVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
-	virtual ~OSGVisualization();
+        OSGVisualization(const VisualizationNodePtr visualizationNode);
+        OSGVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
+        virtual ~OSGVisualization();
 
-	virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
-	virtual bool highlight(unsigned int which, bool enable);
-	virtual bool highlight(bool enable);	
-	virtual bool highlight(osg::Node* visu, bool enable);
+        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
+        virtual bool highlight(unsigned int which, bool enable);
+        virtual bool highlight(bool enable);
+        virtual bool highlight(osg::Node* visu, bool enable);
 
-	virtual VisualizationPtr clone();
+        virtual VisualizationPtr clone();
 
-	osg::Node* getOSGVisualization();
+        osg::Node* getOSGVisualization();
 
-	static std::string getFactoryName(){return "osg";}
+        static std::string getFactoryName()
+        {
+            return "osg";
+        }
 
-	//virtual void setGlobalPose(const Eigen::Matrix4f &p);
+        //virtual void setGlobalPose(const Eigen::Matrix4f &p);
 
-protected:
+    protected:
         bool buildVisualization();
-		osg::Group* visu;
-};
+        osg::Group* visu;
+    };
 
 } // namespace VirtualRobot
 

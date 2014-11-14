@@ -54,70 +54,70 @@
 
 class showRobotWindow : public QMainWindow
 {
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	Q_OBJECT
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    Q_OBJECT
 public:
-	showRobotWindow(std::string &sRobotFilename, Qt::WFlags flags = 0);
-	~showRobotWindow();
+    showRobotWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    ~showRobotWindow();
 
-	/*!< Executes the mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
-	void collisionModel();
-	void showRobot();
-	void loadRobot();
-	void selectJoint(int nr);
-	void selectRNS(int nr);
-	void jointValueChanged(int pos);
-	void showCoordSystem();
-	void robotStructure();
-	void robotCoordSystems();
-	void robotFullModel();
-	void closeHand();
-	void openHand();
-	void selectEEF(int nr);
-	void selectRobot();
+    void resetSceneryAll();
+    void collisionModel();
+    void showRobot();
+    void loadRobot();
+    void selectJoint(int nr);
+    void selectRNS(int nr);
+    void jointValueChanged(int pos);
+    void showCoordSystem();
+    void robotStructure();
+    void robotCoordSystems();
+    void robotFullModel();
+    void closeHand();
+    void openHand();
+    void selectEEF(int nr);
+    void selectRobot();
 
 protected:
-	void setupUI();
-	QString formatString(const char *s, float f);
-	void updateJointBox();
-	void updateRNSBox();
-	void updateEEFBox();
-	void displayTriangles();
-	Ui::MainWindowShowRobot UI;
-	//SoQtExaminerViewer *m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	//SoSeparator *sceneSep;
-	//SoSeparator *robotSep;
+    void setupUI();
+    QString formatString(const char* s, float f);
+    void updateJointBox();
+    void updateRNSBox();
+    void updateEEFBox();
+    void displayTriangles();
+    Ui::MainWindowShowRobot UI;
+    //SoQtExaminerViewer *m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::RobotPtr robot;
-	std::string m_sRobotFilename;
-	std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-	std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-	std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
-	std::vector < VirtualRobot::EndEffectorPtr > eefs;
-	VirtualRobot::EndEffectorPtr currentEEF;
-	VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-	VirtualRobot::RobotNodePtr currentRobotNode;
+    //SoSeparator *sceneSep;
+    //SoSeparator *robotSep;
 
-
-	bool useColModel;
-	bool structureEnabled;
+    VirtualRobot::RobotPtr robot;
+    std::string m_sRobotFilename;
+    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
+    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
+    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+    std::vector < VirtualRobot::EndEffectorPtr > eefs;
+    VirtualRobot::EndEffectorPtr currentEEF;
+    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
+    VirtualRobot::RobotNodePtr currentRobotNode;
 
 
-	VirtualRobot::osgViewerWidget* osgWidget;
-	osg::Group* osgRoot;	 
-	osg::Group* osgRobot;
-	boost::shared_ptr<VirtualRobot::OSGVisualization> visualization;
+    bool useColModel;
+    bool structureEnabled;
+
+
+    VirtualRobot::osgViewerWidget* osgWidget;
+    osg::Group* osgRoot;
+    osg::Group* osgRobot;
+    boost::shared_ptr<VirtualRobot::OSGVisualization> visualization;
 
 };
 

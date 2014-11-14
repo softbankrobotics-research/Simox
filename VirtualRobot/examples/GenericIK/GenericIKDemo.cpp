@@ -26,34 +26,36 @@ using namespace VirtualRobot;
 bool useColModel = false;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"Generic IK demo");
-	cout << " --- START --- " << endl;
+    SoDB::init();
+    SoQt::init(argc, argv, "Generic IK demo");
+    cout << " --- START --- " << endl;
 
 
-	VirtualRobot::RuntimeEnvironment::considerKey("robot");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
 
-	std::string filename("robots/ArmarIII/ArmarIII.xml");
-	//std::string filename("robots/iCub/iCub.xml");
-	VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
+    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    //std::string filename("robots/iCub/iCub.xml");
+    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
 
-	if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-	{
-		std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-		if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-		{
-			filename = robFile;
-		}
-	}
-	cout << "Using robot at " << filename << endl;
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
 
-	GenericIKWindow rw(filename);
+        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
+        {
+            filename = robFile;
+        }
+    }
 
-	rw.main();
+    cout << "Using robot at " << filename << endl;
 
-	return 0;
+    GenericIKWindow rw(filename);
+
+    rw.main();
+
+    return 0;
 }

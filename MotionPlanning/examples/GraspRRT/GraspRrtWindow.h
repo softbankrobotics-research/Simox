@@ -35,123 +35,123 @@
 
 class GraspRrtWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GraspRrtWindow(	const std::string &sceneFile, const std::string &sConf, const std::string &gConf, 
-					const std::string &rns, const std::string &rnsB, const std::string &eefName, const std::string &eefNameB, 
-					const std::string &colModelRob1, const std::string &colModelRob1B, const std::string &colModelRob2,const std::string &colModelRob2B, 
-					const std::string &colModelEnv, Qt::WFlags flags = 0);
-	~GraspRrtWindow();
+    GraspRrtWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
+                   const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
+                   const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
+                   const std::string& colModelEnv, Qt::WFlags flags = 0);
+    ~GraspRrtWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
-	void redraw();
+    void redraw();
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void loadSceneWindow();
+    void loadSceneWindow();
 
-	void selectStart(int nr);
-	void selectTargetObject(int nr);
-	void selectRNS(int nr);
-	void selectEEF(int nr);
-	
-	void selectColModelRobA(int nr);
-	void selectColModelRobB(int nr);
-	void selectColModelEnv(int nr);
+    void selectStart(int nr);
+    void selectTargetObject(int nr);
+    void selectRNS(int nr);
+    void selectEEF(int nr);
 
-	void colModel();
-	void solutionSelected();
+    void selectColModelRobA(int nr);
+    void selectColModelRobB(int nr);
+    void selectColModelEnv(int nr);
 
-	void sliderSolution(int pos);
+    void colModel();
+    void solutionSelected();
 
-	void buildVisu();
+    void sliderSolution(int pos);
 
-	void plan();
+    void buildVisu();
 
-	void testGraspPose();
+    void plan();
 
-	void openEEF();
-	void closeEEF();
+    void testGraspPose();
+
+    void openEEF();
+    void closeEEF();
 
 protected:
 
-	struct planSet
-	{
-		std::string eef;
-		std::string rns;
-		std::string colModelRob1;
-		std::string colModelRob2;
-		std::string colModelEnv;
-	};
+    struct planSet
+    {
+        std::string eef;
+        std::string rns;
+        std::string colModelRob1;
+        std::string colModelRob2;
+        std::string colModelEnv;
+    };
 
-	planSet planSetA,planSetB;
+    planSet planSetA, planSetB;
 
-    
+
     void loadScene();
 
-	void setupUI();
-	QString formatString(const char *s, float f);
-	void buildRRTVisu();
-	void selectStart(const std::string &conf);
-	void selectTargetObject(const std::string &conf);
-	void selectRNS(const std::string &rns);
-	void selectEEF(const std::string &eefName);
+    void setupUI();
+    QString formatString(const char* s, float f);
+    void buildRRTVisu();
+    void selectStart(const std::string& conf);
+    void selectTargetObject(const std::string& conf);
+    void selectRNS(const std::string& rns);
+    void selectEEF(const std::string& eefName);
 
-	static void timerCB(void * data, SoSensor * sensor);
-	void buildRrtVisu();
-	void selectColModelRobA(const std::string &colModel);
-	void selectColModelRobB(const std::string &colModel);
-	void selectColModelEnv(const std::string &colModel);
-	void selectPlanSet(int nr);
+    static void timerCB(void* data, SoSensor* sensor);
+    void buildRrtVisu();
+    void selectColModelRobA(const std::string& colModel);
+    void selectColModelRobB(const std::string& colModel);
+    void selectColModelEnv(const std::string& colModel);
+    void selectPlanSet(int nr);
 
-	void testInit();
+    void testInit();
 
-	Ui::MainWindowGraspRRTDemo UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *allSep;
-	SoSeparator *sceneFileSep;
-	SoSeparator *graspsSep;
-	SoSeparator *rrtSep;
+    Ui::MainWindowGraspRRTDemo UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::RobotPtr robot;
-	//VirtualRobot::RobotPtr robotStart;
-	//VirtualRobot::RobotPtr robotGoal;
+    SoSeparator* allSep;
+    SoSeparator* sceneFileSep;
+    SoSeparator* graspsSep;
+    SoSeparator* rrtSep;
 
-	Saba::CSpaceSampledPtr cspace;
-	Eigen::VectorXf startConfig;
-	Eigen::VectorXf goalConfig;
+    VirtualRobot::RobotPtr robot;
+    //VirtualRobot::RobotPtr robotStart;
+    //VirtualRobot::RobotPtr robotGoal;
 
-	VirtualRobot::RobotNodeSetPtr rns;
-	VirtualRobot::EndEffectorPtr eef;
-	VirtualRobot::SceneObjectSetPtr colModelRobA;
-	VirtualRobot::SceneObjectSetPtr colModelRobB;
-	VirtualRobot::SceneObjectSetPtr colModelEnv;
+    Saba::CSpaceSampledPtr cspace;
+    Eigen::VectorXf startConfig;
+    Eigen::VectorXf goalConfig;
 
-	std::vector< VirtualRobot::RobotConfigPtr > configs;
-	std::vector< VirtualRobot::ObstaclePtr > obstacles;
-	VirtualRobot::ObstaclePtr targetObject;
+    VirtualRobot::RobotNodeSetPtr rns;
+    VirtualRobot::EndEffectorPtr eef;
+    VirtualRobot::SceneObjectSetPtr colModelRobA;
+    VirtualRobot::SceneObjectSetPtr colModelRobB;
+    VirtualRobot::SceneObjectSetPtr colModelEnv;
 
-	std::vector<VirtualRobot::GraspPtr> grasps;
-	
-	std::string sceneFile;
-	VirtualRobot::ScenePtr scene;
+    std::vector< VirtualRobot::RobotConfigPtr > configs;
+    std::vector< VirtualRobot::ObstaclePtr > obstacles;
+    VirtualRobot::ObstaclePtr targetObject;
 
-	Saba::CSpacePathPtr solution; 
-	Saba::CSpacePathPtr solutionOptimized; 
-	Saba::CSpaceTreePtr tree; 
-	GraspStudio::GraspQualityMeasureWrenchSpacePtr graspQuality;
+    std::vector<VirtualRobot::GraspPtr> grasps;
 
-	boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    std::string sceneFile;
+    VirtualRobot::ScenePtr scene;
 
-	Saba::GraspRrtPtr test_graspRrt;
-	Saba::CSpaceSampledPtr test_cspace;
+    Saba::CSpacePathPtr solution;
+    Saba::CSpacePathPtr solutionOptimized;
+    Saba::CSpaceTreePtr tree;
+    GraspStudio::GraspQualityMeasureWrenchSpacePtr graspQuality;
+
+    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+
+    Saba::GraspRrtPtr test_graspRrt;
+    Saba::CSpaceSampledPtr test_cspace;
 };
 
 #endif // __GraspRrt_WINDOW_H__

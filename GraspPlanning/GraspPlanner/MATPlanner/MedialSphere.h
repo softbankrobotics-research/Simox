@@ -32,35 +32,35 @@
 namespace GraspStudio
 {
 
-	class MedialSphere;
-	typedef boost::shared_ptr<MedialSphere> MedialSpherePtr;
+    class MedialSphere;
+    typedef boost::shared_ptr<MedialSphere> MedialSpherePtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT MedialSphere
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT MedialSphere
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			MedialSphere();
-		MedialSphere(Eigen::Vector3f center, float radius, std::vector<Eigen::Vector3f> surfacePointCoordinates);
+        MedialSphere();
+        MedialSphere(Eigen::Vector3f center, float radius, std::vector<Eigen::Vector3f> surfacePointCoordinates);
 
-		~MedialSphere();
+        ~MedialSphere();
 
-		MedialSpherePtr clone();
-		void printDebug();
-		void scale(float scaleFactor);
+        MedialSpherePtr clone();
+        void printDebug();
+        void scale(float scaleFactor);
 
-		//data members
-		Eigen::Vector3f center;
-		float radius;
+        //data members
+        Eigen::Vector3f center;
+        float radius;
 
-		std::vector<Eigen::Vector3f> surfacePointCoordinates;
-		std::vector<Eigen::Vector3f> vectorsToSurfacePoints;
+        std::vector<Eigen::Vector3f> surfacePointCoordinates;
+        std::vector<Eigen::Vector3f> vectorsToSurfacePoints;
 
-		float objectAngle;  //The biggest angle included between two vectors from the sphere's center to two different surface points.
+        float objectAngle;  //The biggest angle included between two vectors from the sphere's center to two different surface points.
 
-	protected:
-		void computeVectorsToSurfacePointsAndObjectAngle();
+    protected:
+        void computeVectorsToSurfacePointsAndObjectAngle();
 
-	};
+    };
 }
 #endif // MEDIALSPHERE_H

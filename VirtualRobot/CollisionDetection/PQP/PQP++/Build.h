@@ -46,30 +46,30 @@
 namespace PQP
 {
 
-class Builder
-{
-public:
-int
-build_model(PQP_Model *m);
+    class Builder
+    {
+    public:
+        int
+        build_model(PQP_Model* m);
 
-private:
-	PQP_REAL max(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d);
-	PQP_REAL min(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d);
-	void get_centroid_triverts(PQP_REAL c[3], Tri *tris, int num_tris);
-	void get_covariance_triverts(PQP_REAL M[3][3], Tri *tris, int num_tris);
-	int split_tris(Tri *tris, int num_tris, PQP_REAL a[3], PQP_REAL c);
-	int build_recurse(PQP_Model *m, int bn, int first_tri, int num_tris);
-	void make_parent_relative(PQP_Model *m, int bn, const PQP_REAL parentR[3][3]
+    private:
+        PQP_REAL max(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d);
+        PQP_REAL min(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d);
+        void get_centroid_triverts(PQP_REAL c[3], Tri* tris, int num_tris);
+        void get_covariance_triverts(PQP_REAL M[3][3], Tri* tris, int num_tris);
+        int split_tris(Tri* tris, int num_tris, PQP_REAL a[3], PQP_REAL c);
+        int build_recurse(PQP_Model* m, int bn, int first_tri, int num_tris);
+        void make_parent_relative(PQP_Model* m, int bn, const PQP_REAL parentR[3][3]
 #if PQP_BV_TYPE & RSS_TYPE
-	,const PQP_REAL parentTr[3]
+                                  , const PQP_REAL parentTr[3]
 #endif
 #if PQP_BV_TYPE & OBB_TYPE
-	,const PQP_REAL parentTo[3]
+                                  , const PQP_REAL parentTo[3]
 #endif
-	);
+                                 );
 
-	MatVec pqp_math;
-};
+        MatVec pqp_math;
+    };
 }
 
 #endif

@@ -29,59 +29,59 @@
 namespace GraspStudio
 {
 
-	class GRASPSTUDIO_IMPORT_EXPORT SphereConstraintsSet
-	{
-	public:
-		SphereConstraintsSet();
-		SphereConstraintsSet(float r_min, float r_max, float alpha_min, float alpha_max, int numSpheres = -1);
+    class GRASPSTUDIO_IMPORT_EXPORT SphereConstraintsSet
+    {
+    public:
+        SphereConstraintsSet();
+        SphereConstraintsSet(float r_min, float r_max, float alpha_min, float alpha_max, int numSpheres = -1);
 
-		void printDebug();
+        void printDebug();
 
-		float minRadius;
-		float maxRadius;
-		float minObjectAngle;
-		float maxObjectAngle;
+        float minRadius;
+        float maxRadius;
+        float minObjectAngle;
+        float maxObjectAngle;
 
-		int numberOfSpheres;
-	};
+        int numberOfSpheres;
+    };
 
-	class GRASPSTUDIO_IMPORT_EXPORT SphereHelpers
-	{
-	public:
-		SphereHelpers();
+    class GRASPSTUDIO_IMPORT_EXPORT SphereHelpers
+    {
+    public:
+        SphereHelpers();
 
-		static float findMinSphereRadius(std::vector<MedialSpherePtr>& spheres);
-		static float findMaxSphereRadius(std::vector<MedialSpherePtr>& spheres);
+        static float findMinSphereRadius(std::vector<MedialSpherePtr>& spheres);
+        static float findMaxSphereRadius(std::vector<MedialSpherePtr>& spheres);
 
-		static float findMinObjectAngleDegrees(std::vector<MedialSpherePtr>& spheres);
-		static float findMaxObjectAngleDegrees(std::vector<MedialSpherePtr>& spheres);
+        static float findMinObjectAngleDegrees(std::vector<MedialSpherePtr>& spheres);
+        static float findMaxObjectAngleDegrees(std::vector<MedialSpherePtr>& spheres);
 
-		static void scaleMedialSpheres(std::vector<MedialSpherePtr>& spheres, float scaleFactor);
+        static void scaleMedialSpheres(std::vector<MedialSpherePtr>& spheres, float scaleFactor);
 
-		static void selectSpheresWithMinRadius(std::vector<MedialSpherePtr>& spheres, float minRadius);
-		static void selectSpheresWithMaxRadius(std::vector<MedialSpherePtr>& spheres, float maxRadius);
+        static void selectSpheresWithMinRadius(std::vector<MedialSpherePtr>& spheres, float minRadius);
+        static void selectSpheresWithMaxRadius(std::vector<MedialSpherePtr>& spheres, float maxRadius);
 
-		static void selectSpheresWithMinObjectAngle(std::vector<MedialSpherePtr>& spheres, float minObjectAngle);
-		static void selectSpheresWithMaxObjectAngle(std::vector<MedialSpherePtr>& spheres, float maxObjectAngle);
+        static void selectSpheresWithMinObjectAngle(std::vector<MedialSpherePtr>& spheres, float minObjectAngle);
+        static void selectSpheresWithMaxObjectAngle(std::vector<MedialSpherePtr>& spheres, float maxObjectAngle);
 
-		static void selectSpheresWithConstraints(std::vector<MedialSpherePtr>& spheres, SphereConstraintsSet constraints);
+        static void selectSpheresWithConstraints(std::vector<MedialSpherePtr>& spheres, SphereConstraintsSet constraints);
 
-		static SphereConstraintsSet getSphereConstraintsSet(std::vector<MedialSpherePtr>& spheres);
+        static SphereConstraintsSet getSphereConstraintsSet(std::vector<MedialSpherePtr>& spheres);
 
-		static void filterSpheres(std::vector<MedialSpherePtr>& spheres, float minObjAngle, float minRadiusRelative, bool verbose = false);
+        static void filterSpheres(std::vector<MedialSpherePtr>& spheres, float minObjAngle, float minRadiusRelative, bool verbose = false);
 
-		static std::vector<MedialSpherePtr> getSpheresInsideSearchRadius(std::vector<MedialSpherePtr>& spheresToBeFiltered, MedialSpherePtr querySphere, float searchRadius);
+        static std::vector<MedialSpherePtr> getSpheresInsideSearchRadius(std::vector<MedialSpherePtr>& spheresToBeFiltered, MedialSpherePtr querySphere, float searchRadius);
 
-		static std::vector<Eigen::Vector3f> getSphereCenters(std::vector<MedialSpherePtr>& spheres);
+        static std::vector<Eigen::Vector3f> getSphereCenters(std::vector<MedialSpherePtr>& spheres);
 
-		//calc angle in radians
-		static float calcAngleBetweenTwoVectorsRad(Eigen::Vector3f v1, Eigen::Vector3f v2);
-		//calc angle in degrees
-		static float calcAngleBetweenTwoVectorsDeg(Eigen::Vector3f v1, Eigen::Vector3f v2);
+        //calc angle in radians
+        static float calcAngleBetweenTwoVectorsRad(Eigen::Vector3f v1, Eigen::Vector3f v2);
+        //calc angle in degrees
+        static float calcAngleBetweenTwoVectorsDeg(Eigen::Vector3f v1, Eigen::Vector3f v2);
 
-		static Eigen::MatrixXf toMatrix_3xN(std::vector<Eigen::Vector3f> points);
+        static Eigen::MatrixXf toMatrix_3xN(std::vector<Eigen::Vector3f> points);
 
-	};
+    };
 }
 
 #endif // SPHEREHELPERS_H

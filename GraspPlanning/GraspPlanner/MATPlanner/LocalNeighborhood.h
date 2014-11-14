@@ -34,41 +34,41 @@
 namespace GraspStudio
 {
 
-	class LocalNeighborhood;
-	typedef boost::shared_ptr<LocalNeighborhood> LocalNeighborhoodPtr;
+    class LocalNeighborhood;
+    typedef boost::shared_ptr<LocalNeighborhood> LocalNeighborhoodPtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT LocalNeighborhood
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT LocalNeighborhood
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			LocalNeighborhood();
-		LocalNeighborhood(MedialSpherePtr seedSphere, std::vector<MedialSpherePtr>& spheresInNeighborhood, float neighborhoodRadius);
+        LocalNeighborhood();
+        LocalNeighborhood(MedialSpherePtr seedSphere, std::vector<MedialSpherePtr>& spheresInNeighborhood, float neighborhoodRadius);
 
-		MedialSpherePtr centerSphere;
-		Eigen::Vector3f center;
-		std::vector<MedialSpherePtr> spheres;
-		float radius;
-		size_t numberOfSpheres;
-		bool isEmpty;
-		bool hasBeenAnalyzed;
+        MedialSpherePtr centerSphere;
+        Eigen::Vector3f center;
+        std::vector<MedialSpherePtr> spheres;
+        float radius;
+        size_t numberOfSpheres;
+        bool isEmpty;
+        bool hasBeenAnalyzed;
 
-		//evaluation of local symmetry properties
-		Eigen::Vector3f eigenvector1;
-		Eigen::Vector3f eigenvector2;
-		float eigenvalue1;
-		float eigenvalue2;
-		float ratioOfEigenvalues;
+        //evaluation of local symmetry properties
+        Eigen::Vector3f eigenvector1;
+        Eigen::Vector3f eigenvector2;
+        float eigenvalue1;
+        float eigenvalue2;
+        float ratioOfEigenvalues;
 
-		Eigen::Vector3f centerOfGravity;
+        Eigen::Vector3f centerOfGravity;
 
-		void determineEigenvectorsAndEigenvalues_viaSVD();
-		//void determineEigenvectorsAndEigenvalues_viaCovMatrix();
-		void computeCenterOfGravity();
-		void analyze();
-		void printDebug();
-		bool isValid();
+        void determineEigenvectorsAndEigenvalues_viaSVD();
+        //void determineEigenvectorsAndEigenvalues_viaCovMatrix();
+        void computeCenterOfGravity();
+        void analyze();
+        void printDebug();
+        bool isValid();
 
-	};
+    };
 }
 #endif // LOCALNEIGHBORHOOD_H

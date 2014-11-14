@@ -25,7 +25,7 @@
 
 #ifndef BOOST_TEST_DYN_LINK
 #define BOOST_TEST_DYN_LINK
-#endif 
+#endif
 
 #include "VirtualRobotImportExport.h"
 //#include "definesVR.h"
@@ -35,24 +35,24 @@
 
 struct OutputConfiguration
 {
-	OutputConfiguration()
-	{
+    OutputConfiguration()
+    {
         std::string logFileName;
 #ifdef Simox_TEST_DIR
-		logFileName = std::string(Simox_TEST_DIR);
+        logFileName = std::string(Simox_TEST_DIR);
 #endif
-		logFileName.append(boost::unit_test::framework::master_test_suite().p_name);
-		logFileName.append(".xml");
-		logFile.open(logFileName.c_str());
-		boost::unit_test::unit_test_log.set_stream(logFile);
-	}
-	~OutputConfiguration()
-	{
-		logFile << "</TestLog>" << std::flush;
-		logFile.close();
-		boost::unit_test::unit_test_log.set_stream(std::cout);
-	}
-	std::ofstream logFile;
+        logFileName.append(boost::unit_test::framework::master_test_suite().p_name);
+        logFileName.append(".xml");
+        logFile.open(logFileName.c_str());
+        boost::unit_test::unit_test_log.set_stream(logFile);
+    }
+    ~OutputConfiguration()
+    {
+        logFile << "</TestLog>" << std::flush;
+        logFile.close();
+        boost::unit_test::unit_test_log.set_stream(std::cout);
+    }
+    std::ofstream logFile;
 };
 
 BOOST_GLOBAL_FIXTURE(OutputConfiguration);

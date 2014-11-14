@@ -30,57 +30,57 @@ namespace GraspStudio
 {
 
 
-	CandidateGrasp::CandidateGrasp()
-	{
-		graspTargetPoint.setZero();
-		handApproachDirection.setZero();
-		handOrientation.setZero();
-		handPreshape.setZero();
-		candidateGraspType = "None";
+    CandidateGrasp::CandidateGrasp()
+    {
+        graspTargetPoint.setZero();
+        handApproachDirection.setZero();
+        handOrientation.setZero();
+        handPreshape.setZero();
+        candidateGraspType = "None";
 
-		tested = false;
-		finalHandPose.setZero();
-		quality = -1.0;
+        tested = false;
+        finalHandPose.setZero();
+        quality = -1.0;
 
-	}
+    }
 
-	void CandidateGrasp::printDebug()
-	{
-		cout << "=== CandidateGrasp: ===" << std::endl;
-		cout << "graspTargetPoint: " << StrOutHelpers::toString(graspTargetPoint) << endl;
-		cout << "handApproachDirection: " << StrOutHelpers::toString(handApproachDirection) << endl;
-		cout << "handOrientation: " << StrOutHelpers::toString(handOrientation) << endl;
-		//cout << "handPreshape: " << StrOutHelpers::toString(handPreshape) << endl;
-		cout << "candidateGraspType: " << candidateGraspType.c_str() << endl;
-		cout << "tested: " << tested << endl;
+    void CandidateGrasp::printDebug()
+    {
+        cout << "=== CandidateGrasp: ===" << std::endl;
+        cout << "graspTargetPoint: " << StrOutHelpers::toString(graspTargetPoint) << endl;
+        cout << "handApproachDirection: " << StrOutHelpers::toString(handApproachDirection) << endl;
+        cout << "handOrientation: " << StrOutHelpers::toString(handOrientation) << endl;
+        //cout << "handPreshape: " << StrOutHelpers::toString(handPreshape) << endl;
+        cout << "candidateGraspType: " << candidateGraspType.c_str() << endl;
+        cout << "tested: " << tested << endl;
 
-		if (tested)
-		{
-			//        cout << "finalHandPose: " << finalHandPose << endl;
-			//cout << "finalJointAngles: " << StrOutHelpers::toString(finalJointAngles) << endl;
-			//        cout << "qualityVolume: " << qualityVolume << endl;
-			cout << "quality: " << quality << endl;
-		}
+        if (tested)
+        {
+            //        cout << "finalHandPose: " << finalHandPose << endl;
+            //cout << "finalJointAngles: " << StrOutHelpers::toString(finalJointAngles) << endl;
+            //        cout << "qualityVolume: " << qualityVolume << endl;
+            cout << "quality: " << quality << endl;
+        }
 
-	}
+    }
 
-	Matrix4f CandidateGrasp::toMatrix4f(float positionScaleFactor)
-	{
-		//approach dir now has to point TOWARDS the object (not away from it)
-		Eigen::Vector3f tempHandApproachDir = -1 * handApproachDirection;
+    Matrix4f CandidateGrasp::toMatrix4f(float positionScaleFactor)
+    {
+        //approach dir now has to point TOWARDS the object (not away from it)
+        Eigen::Vector3f tempHandApproachDir = -1 * handApproachDirection;
 
-		//hand orientation: new y axis
-		//approach direction: new z axis
-		//new x axis: cross(y,z)
+        //hand orientation: new y axis
+        //approach direction: new z axis
+        //new x axis: cross(y,z)
 
-		Matrix4f cgAsMatrix;
-		cgAsMatrix.setZero();
-		cgAsMatrix.block<3, 1>(0, 1) = handOrientation;
-		cgAsMatrix.block<3, 1>(0, 2) = tempHandApproachDir;
-		cgAsMatrix.block<3, 1>(0, 0) = handOrientation.cross(tempHandApproachDir);
-		cgAsMatrix.block<3, 1>(0, 3) = positionScaleFactor * graspTargetPoint;
-		cgAsMatrix(3, 3) = 1.0f;
+        Matrix4f cgAsMatrix;
+        cgAsMatrix.setZero();
+        cgAsMatrix.block<3, 1>(0, 1) = handOrientation;
+        cgAsMatrix.block<3, 1>(0, 2) = tempHandApproachDir;
+        cgAsMatrix.block<3, 1>(0, 0) = handOrientation.cross(tempHandApproachDir);
+        cgAsMatrix.block<3, 1>(0, 3) = positionScaleFactor * graspTargetPoint;
+        cgAsMatrix(3, 3) = 1.0f;
 
-		return cgAsMatrix;
-	}
+        return cgAsMatrix;
+    }
 }

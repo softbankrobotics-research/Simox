@@ -69,28 +69,28 @@ implementation of the 6d wrench space algorithm for grasp quality measurement.
 
 namespace GraspStudio
 {
-	// only valid within the GraspStudio namespace
-	using std::cout;
-	using std::endl;
+    // only valid within the GraspStudio namespace
+    using std::cout;
+    using std::endl;
 
-	class GraspQualityMeasure;
-	class GraspQualityMeasureWrenchSpace;
-	class ContactConeGenerator;
+    class GraspQualityMeasure;
+    class GraspQualityMeasureWrenchSpace;
+    class ContactConeGenerator;
 
-	class GraspQualityMeasure;
-	class ApproachMovementGenerator;
-	class ApproachMovementSurfaceNormal;
-	class GraspPlanner;
-	class GenericGraspPlanner;
+    class GraspQualityMeasure;
+    class ApproachMovementGenerator;
+    class ApproachMovementSurfaceNormal;
+    class GraspPlanner;
+    class GenericGraspPlanner;
 
-	typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
-	typedef boost::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
-	typedef boost::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
-	typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
-	typedef boost::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;
-	typedef boost::shared_ptr<ApproachMovementSurfaceNormal> ApproachMovementSurfaceNormalPtr;
-	typedef boost::shared_ptr<GraspPlanner> GraspPlannerPtr;
-	typedef boost::shared_ptr<GenericGraspPlanner> GenericGraspPlannerPtr;
+    typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
+    typedef boost::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
+    typedef boost::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
+    typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
+    typedef boost::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;
+    typedef boost::shared_ptr<ApproachMovementSurfaceNormal> ApproachMovementSurfaceNormalPtr;
+    typedef boost::shared_ptr<GraspPlanner> GraspPlannerPtr;
+    typedef boost::shared_ptr<GenericGraspPlanner> GenericGraspPlannerPtr;
 
 #define GRASPSTUDIO_INFO VR_INFO
 #define GRASPSTUDIO_WARNING VR_WARNING

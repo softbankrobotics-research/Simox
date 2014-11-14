@@ -30,60 +30,60 @@
 
 class GenericIKWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GenericIKWindow(std::string &sRobotFilename, Qt::WFlags flags = 0);
-	~GenericIKWindow();
+    GenericIKWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    ~GenericIKWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
-	void collisionModel();
-	void loadRobot();
-	void selectKC(int nr);
-	void sliderReleased();
-	void sliderPressed();
+    void resetSceneryAll();
+    void collisionModel();
+    void loadRobot();
+    void selectKC(int nr);
+    void sliderReleased();
+    void sliderPressed();
 
-	void box2TCP();
-	void solve();
+    void box2TCP();
+    void solve();
 
 
 protected:
-	void setupUI();
-	QString formatString(const char *s, float f);
-	void updateKCBox();
+    void setupUI();
+    QString formatString(const char* s, float f);
+    void updateKCBox();
 
-	void updatBoxPos(float x, float y,float z, float a, float b, float g);
+    void updatBoxPos(float x, float y, float z, float a, float b, float g);
 
-	static void updateCB(void * data, SoSensor * sensor);
+    static void updateCB(void* data, SoSensor* sensor);
 
 
-	Ui::MainWindowGenericIKDemo UI;
-	SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator* sceneSep;
-	SoSeparator* robotSep;
-	SoSeparator* boxSep;
+    Ui::MainWindowGenericIKDemo UI;
+    SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::RobotPtr robot;
-	std::string robotFilename;
-	VirtualRobot::RobotNodePtr tcp;
-	VirtualRobot::RobotNodeSetPtr kc;
-	std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* boxSep;
 
-	VirtualRobot::GenericIKSolverPtr ikSolver;
-	VirtualRobot::GazeIKPtr ikGazeSolver;
-	VirtualRobot::ObstaclePtr box;
+    VirtualRobot::RobotPtr robot;
+    std::string robotFilename;
+    VirtualRobot::RobotNodePtr tcp;
+    VirtualRobot::RobotNodeSetPtr kc;
+    std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 
-	bool useColModel;
+    VirtualRobot::GenericIKSolverPtr ikSolver;
+    VirtualRobot::GazeIKPtr ikGazeSolver;
+    VirtualRobot::ObstaclePtr box;
+
+    bool useColModel;
 };
 
 #endif // __Generic_WINDOW_H_

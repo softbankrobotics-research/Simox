@@ -20,572 +20,678 @@ namespace VirtualRobot
 {
 
 
-Manipulability::Manipulability(RobotPtr robot) : WorkspaceRepresentation (robot)
-{
-	type = "Manipulability";
-	maxManip = 1.0f;
-	measureName = "<not set>";
-	considerJL = false;
-	considerSelfDist = false;
-}
+    Manipulability::Manipulability(RobotPtr robot) : WorkspaceRepresentation(robot)
+    {
+        type = "Manipulability";
+        maxManip = 1.0f;
+        measureName = "<not set>";
+        considerJL = false;
+        considerSelfDist = false;
+    }
 
-void Manipulability::addCurrentTCPPose()
-{	
-	THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No Manipulability data loaded");
-	addPose(tcpNode->getGlobalPose());
-}
+    void Manipulability::addCurrentTCPPose()
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No Manipulability data loaded");
+        addPose(tcpNode->getGlobalPose());
+    }
 
-void Manipulability::addRandomTCPPoses( unsigned int loops, bool checkForSelfCollisions )
-{
-	THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Manipulability data not initialized");
+    void Manipulability::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Manipulability data not initialized");
 
-	std::vector<float> c;
-	nodeSet->getJointValues(c);
-	bool visuSate = robot->getUpdateVisualizationStatus();
-	robot->setUpdateVisualization(false);
+        std::vector<float> c;
+        nodeSet->getJointValues(c);
+        bool visuSate = robot->getUpdateVisualizationStatus();
+        robot->setUpdateVisualization(false);
 
-	//updateBaseTransformation();
+        //updateBaseTransformation();
 
-	for (unsigned int i=0;i<loops;i++)
-	{
-		if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
-			addCurrentTCPPose();
-		else
-			VR_WARNING << "Could not find collision-free configuration...";
-	}
-	robot->setUpdateVisualization(visuSate);
-	nodeSet->setJointValues(c);
-}
+        for (unsigned int i = 0; i < loops; i++)
+        {
+            if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
+            {
+                addCurrentTCPPose();
+            }
+            else
+            {
+                VR_WARNING << "Could not find collision-free configuration...";
+            }
+        }
 
-void Manipulability::addPose( const Eigen::Matrix4f &pose )
-{
-	Eigen::Matrix4f p = pose;
-	toLocal(p);
+        robot->setUpdateVisualization(visuSate);
+        nodeSet->setJointValues(c);
+    }
 
-	float x[6];
+    void Manipulability::addPose(const Eigen::Matrix4f& pose)
+    {
+        Eigen::Matrix4f p = pose;
+        toLocal(p);
 
-	matrix2Vector(p,x);
-	//MathTools::eigen4f2rpy(p,x);
+        float x[6];
 
-	// check for achieved values
-	for (int i=0;i<6;i++)
-	{
-		if (x[i] < achievedMinValues[i])
-			achievedMinValues[i] = x[i];
-		if (x[i] > achievedMaxValues[i])
-			achievedMaxValues[i] = x[i];
-	}
+        matrix2Vector(p, x);
+        //MathTools::eigen4f2rpy(p,x);
 
-	// get voxels
-	unsigned int v[6];
-	if (getVoxelFromPose(x,v))
-	{
-		float m = getCurrentManipulability();
-		float mSc = m / maxManip;
-		if (mSc>1)
-		{
-			if (mSc>1.05)
-				VR_WARNING << "Manipulability is larger than max value. Current Manip:" << m << ", maxManip:" << maxManip << ", percent:" << mSc << endl;
-			mSc = 1.0f;
-		}
-		if (m<0)
-			mSc = 0;
-		unsigned char e = (unsigned char)(mSc * (float)UCHAR_MAX + 0.5f);
+        // check for achieved values
+        for (int i = 0; i < 6; i++)
+        {
+            if (x[i] < achievedMinValues[i])
+            {
+                achievedMinValues[i] = x[i];
+            }
 
-		// add at least 1, since the pose is reachable
-		if (e==0)
-			e = 1;
+            if (x[i] > achievedMaxValues[i])
+            {
+                achievedMaxValues[i] = x[i];
+            }
+        }
 
-		if (e>data->get(v))
-			data->setDatum(v,e);
-	}
+        // get voxels
+        unsigned int v[6];
 
-	buildUpLoops++;
-}
+        if (getVoxelFromPose(x, v))
+        {
+            float m = getCurrentManipulability();
+            float mSc = m / maxManip;
 
-float Manipulability::getCurrentManipulability()
-{
-	if (!measure)
-		return 0.0f;
+            if (mSc > 1)
+            {
+                if (mSc > 1.05)
+                {
+                    VR_WARNING << "Manipulability is larger than max value. Current Manip:" << m << ", maxManip:" << maxManip << ", percent:" << mSc << endl;
+                }
 
-	if (considerSelfDist && selfDistStatic && selfDistDynamic)
-	{
-		int id1;
-		int id2;
-		Eigen::Vector3f p1;
-		Eigen::Vector3f p2;
-		float d = selfDistStatic->getCollisionChecker()->calculateDistance(selfDistStatic,selfDistDynamic,p1,p2,&id1,&id2);
-		//cout << "#### dist:" << d << ", ";
-		Eigen::Matrix4f obstDistPos1 = Eigen::Matrix4f::Identity();
-		Eigen::Matrix4f obstDistPos2 = Eigen::Matrix4f::Identity();
-		obstDistPos1.block(0,3,3,1) = p1;
-		obstDistPos2.block(0,3,3,1) = p2;
+                mSc = 1.0f;
+            }
 
-		// transform to tcp
-		Eigen::Matrix4f p1_tcp = tcpNode->toLocalCoordinateSystem(obstDistPos1);
-		Eigen::Matrix4f p2_tcp = tcpNode->toLocalCoordinateSystem(obstDistPos2);
-		Eigen::Vector3f minDistVector = p1_tcp.block(0,3,3,1) - p2_tcp.block(0,3,3,1);
+            if (m < 0)
+            {
+                mSc = 0;
+            }
 
-		measure->setObstacleDistanceVector(minDistVector);
+            unsigned char e = (unsigned char)(mSc * (float)UCHAR_MAX + 0.5f);
 
-	}
+            // add at least 1, since the pose is reachable
+            if (e == 0)
+            {
+                e = 1;
+            }
+
+            if (e > data->get(v))
+            {
+                data->setDatum(v, e);
+            }
+        }
+
+        buildUpLoops++;
+    }
+
+    float Manipulability::getCurrentManipulability()
+    {
+        if (!measure)
+        {
+            return 0.0f;
+        }
+
+        if (considerSelfDist && selfDistStatic && selfDistDynamic)
+        {
+            int id1;
+            int id2;
+            Eigen::Vector3f p1;
+            Eigen::Vector3f p2;
+            float d = selfDistStatic->getCollisionChecker()->calculateDistance(selfDistStatic, selfDistDynamic, p1, p2, &id1, &id2);
+            //cout << "#### dist:" << d << ", ";
+            Eigen::Matrix4f obstDistPos1 = Eigen::Matrix4f::Identity();
+            Eigen::Matrix4f obstDistPos2 = Eigen::Matrix4f::Identity();
+            obstDistPos1.block(0, 3, 3, 1) = p1;
+            obstDistPos2.block(0, 3, 3, 1) = p2;
+
+            // transform to tcp
+            Eigen::Matrix4f p1_tcp = tcpNode->toLocalCoordinateSystem(obstDistPos1);
+            Eigen::Matrix4f p2_tcp = tcpNode->toLocalCoordinateSystem(obstDistPos2);
+            Eigen::Vector3f minDistVector = p1_tcp.block(0, 3, 3, 1) - p2_tcp.block(0, 3, 3, 1);
+
+            measure->setObstacleDistanceVector(minDistVector);
+
+        }
+
 #ifdef MANIPULABILITY_USE_UPRIGHT_DIRECTION
-	// check for upright manipulability
-	Eigen::VectorXf p(6);
-	p.setZero();
-	p(2) = 1.0f;
-	return measure->getPoseQuality(p);
+        // check for upright manipulability
+        Eigen::VectorXf p(6);
+        p.setZero();
+        p(2) = 1.0f;
+        return measure->getPoseQuality(p);
 #endif
-	return measure->getPoseQuality();
-}
+        return measure->getPoseQuality();
+    }
 
-bool Manipulability::customStringRead(std::ifstream &file, std::string &res)
-{
-	int length;
-	file.read((char *)&length, sizeof(int));
-	if(length <= 0)
-	{
-		VR_WARNING << "Bad string length: " << length << std::endl;
-	} else
-	{
-		char *data = new char[length+1];
-		file.read(data, length);
-		data[length] = '\0';
-		res = data;
-		delete[] data;
-		return true;
-	}
-	return false;
-}
+    bool Manipulability::customStringRead(std::ifstream& file, std::string& res)
+    {
+        int length;
+        file.read((char*)&length, sizeof(int));
 
-bool Manipulability::customLoad( std::ifstream &file )
-{
-	std::string res;
-	//bool lOK = readString(res,file);
-	bool lOK = false;
-	//int length = read<int>(file);
-	lOK = FileIO::readString(res,file);
-	if (!lOK)
-	{
-		VR_ERROR << "Could not get manip measure name from file?!" << endl;
-		return false;
-	}
+        if (length <= 0)
+        {
+            VR_WARNING << "Bad string length: " << length << std::endl;
+        }
+        else
+        {
+            char* data = new char[length + 1];
+            file.read(data, length);
+            data[length] = '\0';
+            res = data;
+            delete[] data;
+            return true;
+        }
 
-	if (measure && (res != measure->getName()))
-	{
-		VR_WARNING << "Different manipulability measure implementations!" << endl;
-		cout << "Manip File :" << res << endl;
-		cout << "Instance:" << measure->getName() << endl;
-		cout << "-> This may cause problems if you intend to extend the manipulability representation." << endl;
-		cout << "-> Otherwise you can ignore this warning." << endl;
-	}
-	measureName = res;
-	//int cjl = read<int>(file);
-	int cjl = (int)(FileIO::read<ioIntTypeRead>(file));
-	//file.read((char *)&cjl, sizeof(int));
-	if (cjl == 0)
-		considerJL = false;
-	else
-		considerJL = true;
+        return false;
+    }
 
-	file.read((char *)&maxManip, sizeof(float));
+    bool Manipulability::customLoad(std::ifstream& file)
+    {
+        std::string res;
+        //bool lOK = readString(res,file);
+        bool lOK = false;
+        //int length = read<int>(file);
+        lOK = FileIO::readString(res, file);
 
-	considerSelfDist = false;
-	selfDistStatic.reset();
-	selfDistDynamic.reset();
+        if (!lOK)
+        {
+            VR_ERROR << "Could not get manip measure name from file?!" << endl;
+            return false;
+        }
 
-	if (versionMajor>=2 && versionMinor>=3)
-	{
-		// read self collision data
-		cjl = (int)(FileIO::read<ioIntTypeRead>(file));;
-		//file.read((char *)&cjl, sizeof(int));
-		if (cjl == 0)
-			considerSelfDist = false;
-		else
-			considerSelfDist = true;
+        if (measure && (res != measure->getName()))
+        {
+            VR_WARNING << "Different manipulability measure implementations!" << endl;
+            cout << "Manip File :" << res << endl;
+            cout << "Instance:" << measure->getName() << endl;
+            cout << "-> This may cause problems if you intend to extend the manipulability representation." << endl;
+            cout << "-> Otherwise you can ignore this warning." << endl;
+        }
 
-		std::string selfDist1,selfDist2;
-		bool sd1 = FileIO::readString(selfDist1,file);//customStringRead(file,selfDist1);
-		bool sd2 = FileIO::readString(selfDist2,file);//customStringRead(file,selfDist2);
-		if (!sd1 || !sd2)
-		{
-			VR_ERROR << "Could not get rns for self dist name from file?!" << endl;
-			return false;
-		}
-		if (considerSelfDist)
-		{
-			selfDistStatic = robot->getRobotNodeSet(selfDist1);
-			selfDistDynamic = robot->getRobotNodeSet(selfDist2);
-			if (!selfDistStatic)
-			{
-				VR_ERROR << " No rns with name " << selfDist1 << " found..." << endl;
-				considerSelfDist = false;
-				selfDistDynamic.reset();
-			} 
-			if (!selfDistDynamic)
-			{
-				VR_ERROR << " No rns with name " << selfDist2 << " found..." << endl;
-				considerSelfDist = false;
-				selfDistStatic.reset();
-			}
-		}
-	}
-	return true;
-}
+        measureName = res;
+        //int cjl = read<int>(file);
+        int cjl = (int)(FileIO::read<ioIntTypeRead>(file));
 
+        //file.read((char *)&cjl, sizeof(int));
+        if (cjl == 0)
+        {
+            considerJL = false;
+        }
+        else
+        {
+            considerJL = true;
+        }
 
-bool Manipulability::customSave( std::ofstream &file )
-{
-	FileIO::writeString(file, measureName);
-	//int len = measureName.length();
-	//file.write((char *)&len, sizeof(int));
-	//file.write(measureName.c_str(), len);
+        file.read((char*)&maxManip, sizeof(float));
 
-	int cjl = 0;
-	if (considerJL)
-		cjl = 1;
-;
-	FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
-	//file.write((char *)&cjl, sizeof(int));
+        considerSelfDist = false;
+        selfDistStatic.reset();
+        selfDistDynamic.reset();
 
-	FileIO::write<float>(file, maxManip);
-	//file.write((char *)&maxManip, sizeof(float));
+        if (versionMajor >= 2 && versionMinor >= 3)
+        {
+            // read self collision data
+            cjl = (int)(FileIO::read<ioIntTypeRead>(file));;
 
-	// write self collision data
-	cjl = 0;
-	if (considerSelfDist)
-		cjl = 1;
-	FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
-	//file.write((char *)&cjl, sizeof(int));
+            //file.read((char *)&cjl, sizeof(int));
+            if (cjl == 0)
+            {
+                considerSelfDist = false;
+            }
+            else
+            {
+                considerSelfDist = true;
+            }
 
-	std::string selfDistRNS1 = "<not set>";
-	if (selfDistStatic && considerSelfDist)
-		selfDistRNS1 = selfDistStatic->getName();
-	std::string selfDistRNS2 = "<not set>";
-	if (selfDistDynamic && considerSelfDist)
-		selfDistRNS2 = selfDistDynamic->getName();
+            std::string selfDist1, selfDist2;
+            bool sd1 = FileIO::readString(selfDist1, file); //customStringRead(file,selfDist1);
+            bool sd2 = FileIO::readString(selfDist2, file); //customStringRead(file,selfDist2);
 
-	FileIO::writeString(file, selfDistRNS1);
-	//len = selfDistRNS1.length();
-	//file.write((char *)&len, sizeof(int));
-	//file.write(selfDistRNS1.c_str(), len);
+            if (!sd1 || !sd2)
+            {
+                VR_ERROR << "Could not get rns for self dist name from file?!" << endl;
+                return false;
+            }
 
-	FileIO::writeString(file, selfDistRNS2);
-	//len = selfDistRNS2.length();
-	//file.write((char *)&len, sizeof(int));
-	//file.write(selfDistRNS2.c_str(), len);
+            if (considerSelfDist)
+            {
+                selfDistStatic = robot->getRobotNodeSet(selfDist1);
+                selfDistDynamic = robot->getRobotNodeSet(selfDist2);
 
-	return true;
-}
+                if (!selfDistStatic)
+                {
+                    VR_ERROR << " No rns with name " << selfDist1 << " found..." << endl;
+                    considerSelfDist = false;
+                    selfDistDynamic.reset();
+                }
+
+                if (!selfDistDynamic)
+                {
+                    VR_ERROR << " No rns with name " << selfDist2 << " found..." << endl;
+                    considerSelfDist = false;
+                    selfDistStatic.reset();
+                }
+            }
+        }
+
+        return true;
+    }
 
 
-void Manipulability::setManipulabilityMeasure( PoseQualityMeasurementPtr m )
-{
-	measure = m;
-	if (measure)
-	{
-		measureName = measure->getName();
-		considerJL = measure->consideringJointLimits();
-	}
-	else
-	{
-		measureName = "<not set>";
-		considerJL = false;
-	}
-}
+    bool Manipulability::customSave(std::ofstream& file)
+    {
+        FileIO::writeString(file, measureName);
+        //int len = measureName.length();
+        //file.write((char *)&len, sizeof(int));
+        //file.write(measureName.c_str(), len);
+
+        int cjl = 0;
+
+        if (considerJL)
+        {
+            cjl = 1;
+        }
+
+        ;
+
+        FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
+
+        //file.write((char *)&cjl, sizeof(int));
+
+        FileIO::write<float>(file, maxManip);
+
+        //file.write((char *)&maxManip, sizeof(float));
+
+        // write self collision data
+        cjl = 0;
+
+        if (considerSelfDist)
+        {
+            cjl = 1;
+        }
+
+        FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
+        //file.write((char *)&cjl, sizeof(int));
+
+        std::string selfDistRNS1 = "<not set>";
+
+        if (selfDistStatic && considerSelfDist)
+        {
+            selfDistRNS1 = selfDistStatic->getName();
+        }
+
+        std::string selfDistRNS2 = "<not set>";
+
+        if (selfDistDynamic && considerSelfDist)
+        {
+            selfDistRNS2 = selfDistDynamic->getName();
+        }
+
+        FileIO::writeString(file, selfDistRNS1);
+        //len = selfDistRNS1.length();
+        //file.write((char *)&len, sizeof(int));
+        //file.write(selfDistRNS1.c_str(), len);
+
+        FileIO::writeString(file, selfDistRNS2);
+        //len = selfDistRNS2.length();
+        //file.write((char *)&len, sizeof(int));
+        //file.write(selfDistRNS2.c_str(), len);
+
+        return true;
+    }
 
 
-std::string Manipulability::getMeasureName() const
-{
-	return measureName;
-}
+    void Manipulability::setManipulabilityMeasure(PoseQualityMeasurementPtr m)
+    {
+        measure = m;
+
+        if (measure)
+        {
+            measureName = measure->getName();
+            considerJL = measure->consideringJointLimits();
+        }
+        else
+        {
+            measureName = "<not set>";
+            considerJL = false;
+        }
+    }
 
 
-bool Manipulability::consideringJointLimits() const
-{
-	return considerJL;
-}
+    std::string Manipulability::getMeasureName() const
+    {
+        return measureName;
+    }
 
 
-void Manipulability::customPrint()
-{
-	cout << "Manipulability Measure: " << measureName << endl;
-	cout << "Considered Joint Limits:";
-	if (considerJL)
-		cout << " yes" << endl;
-	else
-		cout << " no" << endl;
-	cout << "Maximal manipulability (as defined on construction):" << maxManip << endl;
-	cout << "Considered Self-Distance:";
-	if (considerSelfDist && selfDistStatic && selfDistDynamic)
-	{
-		cout << " yes" << endl;
-		cout << " - Self Dist Col Model Static:" << selfDistStatic->getName() << endl;
-		cout << " - Self Dist Col Model Dynamic:" << selfDistDynamic->getName() << endl;
-	} else
-		cout << " no" << endl;
-}
+    bool Manipulability::consideringJointLimits() const
+    {
+        return considerJL;
+    }
 
 
-void Manipulability::setMaxManipulability( float maximalManip )
-{
-	maxManip = maximalManip;
-}
+    void Manipulability::customPrint()
+    {
+        cout << "Manipulability Measure: " << measureName << endl;
+        cout << "Considered Joint Limits:";
+
+        if (considerJL)
+        {
+            cout << " yes" << endl;
+        }
+        else
+        {
+            cout << " no" << endl;
+        }
+
+        cout << "Maximal manipulability (as defined on construction):" << maxManip << endl;
+        cout << "Considered Self-Distance:";
+
+        if (considerSelfDist && selfDistStatic && selfDistDynamic)
+        {
+            cout << " yes" << endl;
+            cout << " - Self Dist Col Model Static:" << selfDistStatic->getName() << endl;
+            cout << " - Self Dist Col Model Dynamic:" << selfDistDynamic->getName() << endl;
+        }
+        else
+        {
+            cout << " no" << endl;
+        }
+    }
 
 
-float Manipulability::getManipulabilityAtPose( const Eigen::Matrix4f &globalPose )
-{
-	if (!data)
-	{
-		VR_ERROR << "NULL DATA" << endl;
-		return 0.0f;
-	}
-
-	// get voxels
-	unsigned int v[6];
-	if (getVoxelFromPose(globalPose,v)) // assumes global_pose, transformation to  basenode is done
-	{
-		unsigned char e = data->get(v);
-		float ef = (float)e / 255.0f;
-		return ef * maxManip;
-	} 
-		
-	// position is outside WorkspaceRepresentation data
-	return 0.0f;
-}
+    void Manipulability::setMaxManipulability(float maximalManip)
+    {
+        maxManip = maximalManip;
+    }
 
 
-bool Manipulability::checkForParameters( RobotNodeSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float &storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, RobotNodePtr tcpNode /*= RobotNodePtr()*/ )
-{
-	if (!WorkspaceRepresentation::checkForParameters(nodeSet,steps,storeMinBounds,storeMaxBounds,baseNode,tcpNode))
-		return false;
+    float Manipulability::getManipulabilityAtPose(const Eigen::Matrix4f& globalPose)
+    {
+        if (!data)
+        {
+            VR_ERROR << "NULL DATA" << endl;
+            return 0.0f;
+        }
 
-	if (!measure)
-	{
-		VR_WARNING << "No manipulability measure given?!" << endl;
-		storeMaxManipulability = 1.0f;
-		return true;
-	}
-	Eigen::VectorXf c;
-	nodeSet->getJointValues(c);
-	bool visuSate = robot->getUpdateVisualizationStatus();
-	robot->setUpdateVisualization(false);
+        // get voxels
+        unsigned int v[6];
 
-	storeMaxManipulability = 0.0f;
-	for (int i=0;i<steps;i++)
-	{
-		setRobotNodesToRandomConfig(nodeSet,false);
+        if (getVoxelFromPose(globalPose, v)) // assumes global_pose, transformation to  basenode is done
+        {
+            unsigned char e = data->get(v);
+            float ef = (float)e / 255.0f;
+            return ef * maxManip;
+        }
+
+        // position is outside WorkspaceRepresentation data
+        return 0.0f;
+    }
+
+
+    bool Manipulability::checkForParameters(RobotNodeSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float& storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, RobotNodePtr tcpNode /*= RobotNodePtr()*/)
+    {
+        if (!WorkspaceRepresentation::checkForParameters(nodeSet, steps, storeMinBounds, storeMaxBounds, baseNode, tcpNode))
+        {
+            return false;
+        }
+
+        if (!measure)
+        {
+            VR_WARNING << "No manipulability measure given?!" << endl;
+            storeMaxManipulability = 1.0f;
+            return true;
+        }
+
+        Eigen::VectorXf c;
+        nodeSet->getJointValues(c);
+        bool visuSate = robot->getUpdateVisualizationStatus();
+        robot->setUpdateVisualization(false);
+
+        storeMaxManipulability = 0.0f;
+
+        for (int i = 0; i < steps; i++)
+        {
+            setRobotNodesToRandomConfig(nodeSet, false);
 #ifdef MANIPULABILITY_USE_UPRIGHT_DIRECTION
-		// check for upright manipulability
-		Eigen::VectorXf p(6);
-		p.setZero();
-		p(2) = 1.0f;
-		float q = measure->getPoseQuality(p);
+            // check for upright manipulability
+            Eigen::VectorXf p(6);
+            p.setZero();
+            p(2) = 1.0f;
+            float q = measure->getPoseQuality(p);
 #else
-		float q = measure->getPoseQuality();
+            float q = measure->getPoseQuality();
 #endif
-		if (q>storeMaxManipulability)
-			storeMaxManipulability = q;
-	}
-	nodeSet->setJointValues(c);
-	robot->setUpdateVisualization(visuSate);
 
-	if (storeMaxManipulability==0.0f)
-	{
-		VR_ERROR << "Maximum manipulability == 0 ??" << endl;
-		storeMaxManipulability = 1.0f;
-		return false;
-	}
+            if (q > storeMaxManipulability)
+            {
+                storeMaxManipulability = q;
+            }
+        }
 
-	// assume a slightly higher max value
-	storeMaxManipulability *= 1.1f;
-	return true;
-}
+        nodeSet->setJointValues(c);
+        robot->setUpdateVisualization(visuSate);
 
+        if (storeMaxManipulability == 0.0f)
+        {
+            VR_ERROR << "Maximum manipulability == 0 ??" << endl;
+            storeMaxManipulability = 1.0f;
+            return false;
+        }
 
-std::vector< Manipulability::ManipulabiliyGrasp > Manipulability::analyseGrasps( GraspSetPtr grasps, ManipulationObjectPtr object )
-{
-	THROW_VR_EXCEPTION_IF(!object,"no object");
-	THROW_VR_EXCEPTION_IF(!grasps,"no grasps");
-
-	std::vector< Manipulability::ManipulabiliyGrasp > result;
-	for (unsigned int i=0; i<grasps->getSize(); i++)
-	{
-		GraspPtr g = grasps->getGrasp(i);
-		Eigen::Matrix4f m = g->getTcpPoseGlobal(object->getGlobalPose());
-		float ma = getManipulabilityAtPose(m);
-		if (ma>0)
-		{
-			ManipulabiliyGrasp e;
-			e.manipulability = ma;
-			e.grasp = g;
-			result.push_back(e);
-		}
-	}
-	std::sort(result.begin(),result.end());
-	std::reverse(result.begin(),result.end());
-
-	return result;
-}
+        // assume a slightly higher max value
+        storeMaxManipulability *= 1.1f;
+        return true;
+    }
 
 
-Manipulability::ManipulabiliyGrasp Manipulability::analyseGrasp( GraspPtr grasp, ManipulationObjectPtr object )
-{
-	THROW_VR_EXCEPTION_IF(!object,"no object");
-	THROW_VR_EXCEPTION_IF(!grasp,"no grasp");
+    std::vector< Manipulability::ManipulabiliyGrasp > Manipulability::analyseGrasps(GraspSetPtr grasps, ManipulationObjectPtr object)
+    {
+        THROW_VR_EXCEPTION_IF(!object, "no object");
+        THROW_VR_EXCEPTION_IF(!grasps, "no grasps");
 
-	Eigen::Matrix4f m = grasp->getTcpPoseGlobal(object->getGlobalPose());
-	ManipulabiliyGrasp e;
-	e.manipulability = getManipulabilityAtPose(m);
-	e.grasp = grasp;
-	return e;
-}
+        std::vector< Manipulability::ManipulabiliyGrasp > result;
 
+        for (unsigned int i = 0; i < grasps->getSize(); i++)
+        {
+            GraspPtr g = grasps->getGrasp(i);
+            Eigen::Matrix4f m = g->getTcpPoseGlobal(object->getGlobalPose());
+            float ma = getManipulabilityAtPose(m);
 
-void Manipulability::initSelfDistanceCheck( RobotNodeSetPtr staticModel, RobotNodeSetPtr dynamicModel )
-{
-	considerSelfDist = (staticModel && dynamicModel);
-	selfDistStatic = staticModel;
-	selfDistDynamic = dynamicModel;
-}
+            if (ma > 0)
+            {
+                ManipulabiliyGrasp e;
+                e.manipulability = ma;
+                e.grasp = g;
+                result.push_back(e);
+            }
+        }
 
+        std::sort(result.begin(), result.end());
+        std::reverse(result.begin(), result.end());
 
-bool Manipulability::smooth(unsigned int minNeighbors)
-{
-	if (!data)
-		return false;
-
-	if (minNeighbors<=0)
-		minNeighbors = 1;
-
-	// copy data
-    WorkspaceDataPtr newData(data->clone());
-
-	int s = 1;
-	for (int a=s;a<(int)data->getSize(0)-s;a++)
-	{
-		cout << "#";
-		for (int b=s;b<(int)data->getSize(1)-s;b++)
-		{
-			for (int c=s;c<(int)data->getSize(2)-s;c++)
-			{
-				for (int d=s;d<(int)data->getSize(3)-s;d++)
-				{
-					for (int e=s;e<(int)data->getSize(4)-s;e++)
-					{
-						for (int f=s;f<(int)data->getSize(5)-s;f++)
-						{
-
-							//unsigned int posOrigTr;
-							//unsigned int posOrigRo;
-							//data->getPos(a,b,c,d,e,f, posOrigTr, posOrigRo);
-
-							long v = 0;
-							long count = 0;
-							for (int a2=-s;a2<=s;a2++)
-							{
-								for (int b2=-s;b2<=s;b2++)
-								{
-									for (int c2=-s;c2<=s;c2++)
-									{
-										for (int d2=-s;d2<=s;d2++)
-										{
-											for (int e2=-s;e2<=s;e2++)
-											{
-												for (int f2=-s;f2<=s;f2++)
-												{
-													//unsigned int posTr,posRo;
-													//data->getPos(a+a2,b+b2,c+c2,d+d2,e+e2,f+f2, posTr,posRo);
-													long entry = (long)data->get(a+a2,b+b2,c+c2,d+d2,e+e2,f+f2);
-													if (entry>0)
-													{
-														v+=entry;
-														count++;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-							if (count>=(int)(minNeighbors))
-							{
-								unsigned char newVal = (unsigned char) ((double)v / (double)count);
-								if (newVal>0)
-									newData->setDatum(a,b,c,d,e,f, newVal);
-								//data->data[posOrig] = (unsigned int) ((double)v / (double)count);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	data = newData;
-	return true;
-}
+        return result;
+    }
 
 
-GraspSetPtr Manipulability::getReachableGrasps( GraspSetPtr grasps, ManipulationObjectPtr object )
-{
-	THROW_VR_EXCEPTION_IF(!object,"no object");
-	THROW_VR_EXCEPTION_IF(!grasps,"no grasps");
+    Manipulability::ManipulabiliyGrasp Manipulability::analyseGrasp(GraspPtr grasp, ManipulationObjectPtr object)
+    {
+        THROW_VR_EXCEPTION_IF(!object, "no object");
+        THROW_VR_EXCEPTION_IF(!grasp, "no grasp");
 
-	GraspSetPtr result(new GraspSet(grasps->getName(),grasps->getRobotType(),grasps->getEndEffector()));
-	for (unsigned int i=0; i<grasps->getSize(); i++)
-	{
-		Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
-		if (isCovered(m))
-			result->addGrasp(grasps->getGrasp(i));
-	}
-	return result;
-}
+        Eigen::Matrix4f m = grasp->getTcpPoseGlobal(object->getGlobalPose());
+        ManipulabiliyGrasp e;
+        e.manipulability = getManipulabilityAtPose(m);
+        e.grasp = grasp;
+        return e;
+    }
 
 
-void Manipulability::getSelfDistConfig( bool &storeConsiderSelfDist, RobotNodeSetPtr &storeStatic, RobotNodeSetPtr &storeDynamic )
-{
-	storeConsiderSelfDist = considerSelfDist;
-	storeStatic = selfDistStatic;
-	storeDynamic = selfDistDynamic;
-}
+    void Manipulability::initSelfDistanceCheck(RobotNodeSetPtr staticModel, RobotNodeSetPtr dynamicModel)
+    {
+        considerSelfDist = (staticModel && dynamicModel);
+        selfDistStatic = staticModel;
+        selfDistDynamic = dynamicModel;
+    }
 
 
-VirtualRobot::WorkspaceRepresentationPtr Manipulability::clone()
-{
-	VirtualRobot::ManipulabilityPtr res(new Manipulability(robot));
-	res->setOrientationType(this->orientationType);
-	res->versionMajor = this->versionMajor;
-	res->versionMinor = this->versionMinor;
-	res->nodeSet = this->nodeSet;
-	res->type = this->type;
+    bool Manipulability::smooth(unsigned int minNeighbors)
+    {
+        if (!data)
+        {
+            return false;
+        }
 
-	res->baseNode = this->baseNode;
-	res->tcpNode = this->tcpNode;
-	res->staticCollisionModel = this->staticCollisionModel;
-	res->dynamicCollisionModel = this->dynamicCollisionModel;
-	res->buildUpLoops = this->buildUpLoops;
-	res->collisionConfigs = this->collisionConfigs;
-	res->discretizeStepTranslation = this->discretizeStepTranslation;
-	res->discretizeStepRotation = this->discretizeStepRotation;
-	memcpy(res->minBounds,this->minBounds,sizeof(float)*6);
-	memcpy(res->maxBounds,this->maxBounds,sizeof(float)*6);	
-	memcpy(res->numVoxels,this->numVoxels,sizeof(float)*6);	
-	memcpy(res->achievedMinValues,this->achievedMinValues,sizeof(float)*6);	
-	memcpy(res->achievedMaxValues,this->achievedMaxValues,sizeof(float)*6);	
-	memcpy(res->spaceSize,this->spaceSize,sizeof(float)*6);	
+        if (minNeighbors <= 0)
+        {
+            minNeighbors = 1;
+        }
 
-	res->adjustOnOverflow = this->adjustOnOverflow;
-    res->data.reset(this->data->clone());
+        // copy data
+        WorkspaceDataPtr newData(data->clone());
 
-	res->measure = this->measure;
-	res->maxManip = this->maxManip;
-	res->measureName = this->measureName;
-	res->considerJL = this->considerJL;
-	res->considerSelfDist = this->considerSelfDist;
-	res->selfDistStatic = this->selfDistStatic;
-	res->selfDistDynamic = this->selfDistDynamic;
+        int s = 1;
 
-	return res;
-}
+        for (int a = s; a < (int)data->getSize(0) - s; a++)
+        {
+            cout << "#";
+
+            for (int b = s; b < (int)data->getSize(1) - s; b++)
+            {
+                for (int c = s; c < (int)data->getSize(2) - s; c++)
+                {
+                    for (int d = s; d < (int)data->getSize(3) - s; d++)
+                    {
+                        for (int e = s; e < (int)data->getSize(4) - s; e++)
+                        {
+                            for (int f = s; f < (int)data->getSize(5) - s; f++)
+                            {
+
+                                //unsigned int posOrigTr;
+                                //unsigned int posOrigRo;
+                                //data->getPos(a,b,c,d,e,f, posOrigTr, posOrigRo);
+
+                                long v = 0;
+                                long count = 0;
+
+                                for (int a2 = -s; a2 <= s; a2++)
+                                {
+                                    for (int b2 = -s; b2 <= s; b2++)
+                                    {
+                                        for (int c2 = -s; c2 <= s; c2++)
+                                        {
+                                            for (int d2 = -s; d2 <= s; d2++)
+                                            {
+                                                for (int e2 = -s; e2 <= s; e2++)
+                                                {
+                                                    for (int f2 = -s; f2 <= s; f2++)
+                                                    {
+                                                        //unsigned int posTr,posRo;
+                                                        //data->getPos(a+a2,b+b2,c+c2,d+d2,e+e2,f+f2, posTr,posRo);
+                                                        long entry = (long)data->get(a + a2, b + b2, c + c2, d + d2, e + e2, f + f2);
+
+                                                        if (entry > 0)
+                                                        {
+                                                            v += entry;
+                                                            count++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (count >= (int)(minNeighbors))
+                                {
+                                    unsigned char newVal = (unsigned char)((double)v / (double)count);
+
+                                    if (newVal > 0)
+                                    {
+                                        newData->setDatum(a, b, c, d, e, f, newVal);
+                                    }
+
+                                    //data->data[posOrig] = (unsigned int) ((double)v / (double)count);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        data = newData;
+        return true;
+    }
+
+
+    GraspSetPtr Manipulability::getReachableGrasps(GraspSetPtr grasps, ManipulationObjectPtr object)
+    {
+        THROW_VR_EXCEPTION_IF(!object, "no object");
+        THROW_VR_EXCEPTION_IF(!grasps, "no grasps");
+
+        GraspSetPtr result(new GraspSet(grasps->getName(), grasps->getRobotType(), grasps->getEndEffector()));
+
+        for (unsigned int i = 0; i < grasps->getSize(); i++)
+        {
+            Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
+
+            if (isCovered(m))
+            {
+                result->addGrasp(grasps->getGrasp(i));
+            }
+        }
+
+        return result;
+    }
+
+
+    void Manipulability::getSelfDistConfig(bool& storeConsiderSelfDist, RobotNodeSetPtr& storeStatic, RobotNodeSetPtr& storeDynamic)
+    {
+        storeConsiderSelfDist = considerSelfDist;
+        storeStatic = selfDistStatic;
+        storeDynamic = selfDistDynamic;
+    }
+
+
+    VirtualRobot::WorkspaceRepresentationPtr Manipulability::clone()
+    {
+        VirtualRobot::ManipulabilityPtr res(new Manipulability(robot));
+        res->setOrientationType(this->orientationType);
+        res->versionMajor = this->versionMajor;
+        res->versionMinor = this->versionMinor;
+        res->nodeSet = this->nodeSet;
+        res->type = this->type;
+
+        res->baseNode = this->baseNode;
+        res->tcpNode = this->tcpNode;
+        res->staticCollisionModel = this->staticCollisionModel;
+        res->dynamicCollisionModel = this->dynamicCollisionModel;
+        res->buildUpLoops = this->buildUpLoops;
+        res->collisionConfigs = this->collisionConfigs;
+        res->discretizeStepTranslation = this->discretizeStepTranslation;
+        res->discretizeStepRotation = this->discretizeStepRotation;
+        memcpy(res->minBounds, this->minBounds, sizeof(float) * 6);
+        memcpy(res->maxBounds, this->maxBounds, sizeof(float) * 6);
+        memcpy(res->numVoxels, this->numVoxels, sizeof(float) * 6);
+        memcpy(res->achievedMinValues, this->achievedMinValues, sizeof(float) * 6);
+        memcpy(res->achievedMaxValues, this->achievedMaxValues, sizeof(float) * 6);
+        memcpy(res->spaceSize, this->spaceSize, sizeof(float) * 6);
+
+        res->adjustOnOverflow = this->adjustOnOverflow;
+        res->data.reset(this->data->clone());
+
+        res->measure = this->measure;
+        res->maxManip = this->maxManip;
+        res->measureName = this->measureName;
+        res->considerJL = this->considerJL;
+        res->considerSelfDist = this->considerSelfDist;
+        res->selfDistStatic = this->selfDistStatic;
+        res->selfDistDynamic = this->selfDistDynamic;
+
+        return res;
+    }
 
 } // namespace VirtualRobot

@@ -49,38 +49,38 @@
 namespace SimDynamics
 {
 
-class SIMDYNAMICS_IMPORT_EXPORT BulletOpenGLViewer : public PlatformDemoApplication
-{
-public:
-	BulletOpenGLViewer(DynamicsWorldPtr world);
-	virtual ~BulletOpenGLViewer();
+    class SIMDYNAMICS_IMPORT_EXPORT BulletOpenGLViewer : public PlatformDemoApplication
+    {
+    public:
+        BulletOpenGLViewer(DynamicsWorldPtr world);
+        virtual ~BulletOpenGLViewer();
 
-	virtual void clientMoveAndDisplay();
-	virtual void displayCallback();
-	virtual void keyboardCallback(unsigned char key, int x, int y);
-	virtual void initPhysics();
-	virtual void myinit();
+        virtual void clientMoveAndDisplay();
+        virtual void displayCallback();
+        virtual void keyboardCallback(unsigned char key, int x, int y);
+        virtual void initPhysics();
+        virtual void myinit();
 
-	virtual void enableContraintsDebugDrawing();
-protected:
-
-
-	/*static DemoApplication* Create()
-	{
-		BulletOpenGLViewer* demo = new BulletOpenGLViewer;
-		demo->myinit();
-		demo->initPhysics();
-		return demo;
-	}*/
-
-	void updateRobotConstraints();
-	GLDebugDrawer debugDrawer;
-
-	BulletEnginePtr bulletEngine;
-};
+        virtual void enableContraintsDebugDrawing();
+    protected:
 
 
-typedef boost::shared_ptr<BulletOpenGLViewer> BulletOpenGLViewerPtr;
+        /*static DemoApplication* Create()
+        {
+            BulletOpenGLViewer* demo = new BulletOpenGLViewer;
+            demo->myinit();
+            demo->initPhysics();
+            return demo;
+        }*/
+
+        void updateRobotConstraints();
+        GLDebugDrawer debugDrawer;
+
+        BulletEnginePtr bulletEngine;
+    };
+
+
+    typedef boost::shared_ptr<BulletOpenGLViewer> BulletOpenGLViewerPtr;
 
 } // namespace
 

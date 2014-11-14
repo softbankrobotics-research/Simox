@@ -32,39 +32,39 @@
 namespace GraspStudio
 {
 
-	class CandidateGrasp;
-	typedef boost::shared_ptr<CandidateGrasp> CandidateGraspPtr;
+    class CandidateGrasp;
+    typedef boost::shared_ptr<CandidateGrasp> CandidateGraspPtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT CandidateGrasp
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-
-		CandidateGrasp();
-		bool tested;
-		bool forceClosure;
-		float quality;
-		VirtualRobot::EndEffector::ContactInfoVector contacts;
-		Eigen::Vector3f graspTargetPoint;
-		Eigen::Vector3f handApproachDirection;
-		Eigen::Vector3f handOrientation;
-		Eigen::VectorXf handPreshape;
-
-		std::string candidateGraspType;
-		MedialSpherePtr medialSphere;
-		LocalNeighborhoodPtr localNeighborhood;
+    class GRASPSTUDIO_IMPORT_EXPORT CandidateGrasp
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 
+        CandidateGrasp();
+        bool tested;
+        bool forceClosure;
+        float quality;
+        VirtualRobot::EndEffector::ContactInfoVector contacts;
+        Eigen::Vector3f graspTargetPoint;
+        Eigen::Vector3f handApproachDirection;
+        Eigen::Vector3f handOrientation;
+        Eigen::VectorXf handPreshape;
 
-		Eigen::Matrix4f finalHandPose;
-		VirtualRobot::RobotConfigPtr finalJointAngles;
+        std::string candidateGraspType;
+        MedialSpherePtr medialSphere;
+        LocalNeighborhoodPtr localNeighborhood;
 
-		
-		void printDebug();
 
-		Eigen::Matrix4f toMatrix4f(float positionScaleFactor = 1.0);
-	};
+
+        Eigen::Matrix4f finalHandPose;
+        VirtualRobot::RobotConfigPtr finalJointAngles;
+
+
+        void printDebug();
+
+        Eigen::Matrix4f toMatrix4f(float positionScaleFactor = 1.0);
+    };
 
 }
 #endif // CANDIDATEGRASP_H

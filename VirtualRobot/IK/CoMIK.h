@@ -34,49 +34,49 @@
 
 namespace VirtualRobot
 {
-class VIRTUAL_ROBOT_IMPORT_EXPORT CoMIK :
-		public JacobiProvider,
-		public boost::enable_shared_from_this<CoMIK>
-{
-public:
-	/*!
-		Initialize with a rns that contains joints and one that contains the bodies.
-	*/
-    CoMIK(RobotNodeSetPtr rnsJoints, RobotNodeSetPtr rnsBodies, RobotNodePtr coordSystem = RobotNodePtr(), int dimensions = 2);
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoMIK :
+        public JacobiProvider,
+        public boost::enable_shared_from_this<CoMIK>
+    {
+    public:
+        /*!
+            Initialize with a rns that contains joints and one that contains the bodies.
+        */
+        CoMIK(RobotNodeSetPtr rnsJoints, RobotNodeSetPtr rnsBodies, RobotNodePtr coordSystem = RobotNodePtr(), int dimensions = 2);
 
-    void setGoal(const Eigen::VectorXf &goal, float tolerance=5.0f);
+        void setGoal(const Eigen::VectorXf& goal, float tolerance = 5.0f);
 
-	Eigen::MatrixXf getJacobianOfCoM(RobotNodePtr node);
-	virtual Eigen::MatrixXf getJacobianMatrix();
-    virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp); // ignored for CoM IK but needed for interface
+        Eigen::MatrixXf getJacobianOfCoM(RobotNodePtr node);
+        virtual Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp); // ignored for CoM IK but needed for interface
 
-    virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
 
-	Eigen::VectorXf computeStep(float stepSize );
-	bool computeSteps(float stepSize, float minumChange, int maxNStep);
+        Eigen::VectorXf computeStep(float stepSize);
+        bool computeSteps(float stepSize, float minumChange, int maxNStep);
 
-	bool isValid(const Eigen::VectorXf &v) const;
+        bool isValid(const Eigen::VectorXf& v) const;
 
-    virtual bool checkTolerances();
-	void checkImprovements( bool enable );
-	bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
+        virtual bool checkTolerances();
+        void checkImprovements(bool enable);
+        bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
 
-private:
-	RobotNodePtr coordSystem;
-	RobotNodeSetPtr rnsBodies;
+    private:
+        RobotNodePtr coordSystem;
+        RobotNodeSetPtr rnsBodies;
 
-	std::vector< RobotNodePtr > bodyNodes;
-	std::map< VirtualRobot::RobotNodePtr, std::vector<VirtualRobot::RobotNodePtr> > bodyNodeParents;
+        std::vector< RobotNodePtr > bodyNodes;
+        std::map< VirtualRobot::RobotNodePtr, std::vector<VirtualRobot::RobotNodePtr> > bodyNodeParents;
 
-	float tolerance;
-	bool checkImprovement;
-    Eigen::VectorXf target;
+        float tolerance;
+        bool checkImprovement;
+        Eigen::VectorXf target;
 
-    int numDimensions;
-};
+        int numDimensions;
+    };
 
 
-typedef boost::shared_ptr<CoMIK> CoMIKPtr;
+    typedef boost::shared_ptr<CoMIK> CoMIKPtr;
 
 }
 

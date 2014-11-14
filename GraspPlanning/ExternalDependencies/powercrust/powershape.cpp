@@ -8,9 +8,9 @@
  * Power Crust software, by Nina Amenta, Sunghee Choi and Ravi Krishna Kolluri.
  * Copyright (c) 2000 by the University of Texas
  * Permission to use, copy, modify, and distribute this software for any
- * purpose without fee under the GNU Public License is hereby granted, 
- * provided that this entire notice  is included in all copies of any software 
- * which is or includes a copy or modification of this software and in all copies 
+ * purpose without fee under the GNU Public License is hereby granted,
+ * provided that this entire notice  is included in all copies of any software
+ * which is or includes a copy or modification of this software and in all copies
  * of the supporting documentation for such software.
  * THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED
  * WARRANTY.  IN PARTICULAR, NEITHER THE AUTHORS NOR AT&T MAKE ANY
@@ -65,7 +65,7 @@ void powershape::readInput(ifstream& inFile) {
 
         if(stat==0)
             pl=UNLABELED;
-        else 
+        else
             if(stat==1)
                 pl=EXT;
             else
@@ -86,22 +86,22 @@ void powershape::readInput(ifstream& inFile) {
 
         // actually add edges to the graph
 
-		for(size_t j=0;j<findices.size()-1;j++) 
+        for(size_t j=0;j<findices.size()-1;j++)
             addEdge(findices[j],findices[j+1]);
-      
+
         if(findices.size()>2)
             addEdge(findices[0],findices[findices.size()-1]);
-    
+
     }
 }
 
-      
+
 
 void powershape::noiseRemove() {
 
     int numPoints=0;
 
-    for(size_t i=0;i<verts.size();i++) 
+    for(size_t i=0;i<verts.size();i++)
         if(verts[i].distance<= noiseThreshold){
             verts[i].status=REMOVED;
             numPoints++;
@@ -120,7 +120,7 @@ int compare(const void *n1,const void *n2){
         cout<<"Error!..\n"<<index1<<"\t"<<index2<<"\n";
         return 0;
     }
-    
+
     if(pshape.verts[index1].radius > pshape.verts[index2].radius) return -1;
     if(pshape.verts[index1].radius <  pshape.verts[index2].radius) return 1;
 
@@ -138,7 +138,7 @@ int compareDistance(const void *n1,const void *n2){
         cout<<"Error!..\n"<<index1<<"\t"<<index2<<"\n";
         return 0;
     }
-   
+
     if(pshape.verts[index1].distance > pshape.verts[index2].distance) return 1;
     if(pshape.verts[index1].distance <  pshape.verts[index2].distance) return -1;
 
@@ -153,7 +153,7 @@ void powershape::outputPlot(ofstream& outFile) {
     for(size_t i=0;i<verts.size();i++) pqueue[i]=i;
 
     qsort(pqueue,verts.size(),sizeof(int),compareDistance);
-  
+
 
     for(size_t i=0;i<verts.size();i++) {
         outFile<<i<<"\t"<<verts[pqueue[i]].distance<<"\n";
@@ -169,25 +169,25 @@ double powershape::distance(int i,int j) {
 
 }
 
-void powershape::redRemove() { 
+void powershape::redRemove() {
 
     int *pqueue;
     int currnode,currneighbor;
     int numPoints=0;
 
     pqueue=(int *)malloc(verts.size()*sizeof(int));
- 
- 
 
-    for(size_t i=0;i<verts.size();i++)  pqueue[i]=i; 
-  
+
+
+    for(size_t i=0;i<verts.size();i++)  pqueue[i]=i;
+
     qsort(pqueue,verts.size(),sizeof(int),compare);
-  
- 
+
+
 
     for(size_t i=0;i<verts.size();i++) {
-    
-  
+
+
 
         currnode=pqueue[i];
 
@@ -195,7 +195,7 @@ void powershape::redRemove() {
             continue;
 
         verts[currnode].status=FIXED;
-    
+
         for(size_t j=0;j<verts[currnode].neighbors.size();j++) {
             currneighbor=verts[currnode].neighbors[j];
             if(verts[currneighbor].status==REMOVED || verts[currneighbor].status==FIXED)
@@ -228,7 +228,7 @@ void powershape::outputPoles(ofstream& outFile) {
     outFile.precision(12);
     int numverts=0;
     for(size_t i=0;i<verts.size();i++)
-        if(verts[i].status!=REMOVED && 
+        if(verts[i].status!=REMOVED &&
            (verts[i].label!=UNLABELED || outputUnlabeled))
             numverts++;
 
@@ -237,8 +237,8 @@ void powershape::outputPoles(ofstream& outFile) {
 
 
 
-    for(int i=0;i<(int)(verts.size());i++) 
-        if(verts[i].status!=REMOVED && 
+    for(int i=0;i<(int)(verts.size());i++)
+        if(verts[i].status!=REMOVED &&
            (verts[i].label!=UNLABELED || outputUnlabeled))
             outFile<<verts[i].x<<"\t"
                    <<verts[i].y<<"\t"
@@ -247,7 +247,7 @@ void powershape::outputPoles(ofstream& outFile) {
                    <<verts[i].label<<"\t"
                    <<verts[i].distance<<"\n";
 
-		
+
 }
 
 
@@ -285,17 +285,17 @@ int parseCommand(int argc,char **argv) {
     return 1;
 
 }
-	     
-	     
-	     
 
-    
-    
+
+
+
+
+
 
 int mainPowershape (int argc,char** argv) {
 
-  
-  
+
+
     if(!parseCommand(argc,argv)) {
         cout<<"Error in arguments..\n";
         exit(0);
@@ -303,7 +303,7 @@ int mainPowershape (int argc,char** argv) {
 
     ifstream inFile(inFileName);
     ofstream outFile(outFileName);
-  
+
     pshape.readInput(inFile);
 
     cout<<"Number of vertices in the input File \t"<< pshape.verts.size()<<"\n";
@@ -311,16 +311,16 @@ int mainPowershape (int argc,char** argv) {
     cout<<"The output file is\t"<<outFileName<<"\n";
     cout<<"The noise threshold is\t "<<nt<<"\n";
     cout<<"The redundancy threshold  is\t"<<rt<<"\n";
-  
 
 
-  
+
+
     ofstream plotLog("distancelog");
 
-  
+
     pshape.noiseThreshold=nt;
     pshape.redThreshold=rt;
- 
+
 
     if(plotGraph)
         pshape.outputPlot(plotLog);
@@ -330,7 +330,7 @@ int mainPowershape (int argc,char** argv) {
 
     pshape.outputPoles(outFile);
 
-	return 0;
+    return 0;
 }
 
 }

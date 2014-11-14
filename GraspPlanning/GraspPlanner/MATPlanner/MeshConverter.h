@@ -31,19 +31,19 @@
 namespace GraspStudio
 {
 
-	class GRASPSTUDIO_IMPORT_EXPORT MeshConverter
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT MeshConverter
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			static VirtualRobot::ObstaclePtr refineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist);
+        static VirtualRobot::ObstaclePtr refineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist);
 
-		//! Returns -1 if obj is not part of vectList, otherwise the index of vectList is returned.
-		static int hasVertex(std::vector< Eigen::Vector3f> &vectList, Eigen::Vector3f &obj);
-		static void checkAndSplitVertex(VirtualRobot::TriMeshModelPtr tm, int faceIdx, float maxDist);
+        //! Returns -1 if obj is not part of vectList, otherwise the index of vectList is returned.
+        static int hasVertex(std::vector< Eigen::Vector3f>& vectList, Eigen::Vector3f& obj);
+        static void checkAndSplitVertex(VirtualRobot::TriMeshModelPtr tm, int faceIdx, float maxDist);
 
-		static float getMaxVertexDistance(VirtualRobot::TriMeshModelPtr tm);
+        static float getMaxVertexDistance(VirtualRobot::TriMeshModelPtr tm);
 
-	};
+    };
 }
 #endif // MESHCONVERTER_H

@@ -27,61 +27,67 @@ using namespace std;
 namespace GraspStudio
 {
 
-	StrOutHelpers::StrOutHelpers()
-	{
-	}
+    StrOutHelpers::StrOutHelpers()
+    {
+    }
 
-	string StrOutHelpers::toString(vector<Eigen::Vector3f> v, bool lineBreak)
-	{
-		stringstream sstr;
-		sstr << endl;
+    string StrOutHelpers::toString(vector<Eigen::Vector3f> v, bool lineBreak)
+    {
+        stringstream sstr;
+        sstr << endl;
 
-		string endLine("");
-		if (lineBreak)
-			endLine = "\n";
+        string endLine("");
 
-		for (size_t i = 0; i < v.size(); i++)
-		{
-			sstr << "[" << (v.at(i))(0) << " " << (v.at(i))(1) << " " << (v.at(i))(2)
-				<< "]; " << endLine;
-		}
+        if (lineBreak)
+        {
+            endLine = "\n";
+        }
 
-		return sstr.str();
-	}
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            sstr << "[" << (v.at(i))(0) << " " << (v.at(i))(1) << " " << (v.at(i))(2)
+                 << "]; " << endLine;
+        }
 
-	string StrOutHelpers::toString(vector<Eigen::Vector3i> v, bool lineBreak)
-	{
-		stringstream sstr;
-		sstr << endl;
+        return sstr.str();
+    }
 
-		string endLine("");
-		if (lineBreak)
-			endLine = "\n";
+    string StrOutHelpers::toString(vector<Eigen::Vector3i> v, bool lineBreak)
+    {
+        stringstream sstr;
+        sstr << endl;
 
-		for (size_t i = 0; i < v.size(); i++)
-		{
-			sstr << "[" << (v.at(i))(0) << " " << (v.at(i))(1) << " " << (v.at(i))(2)
-				<< "]; " << endLine;
-		}
+        string endLine("");
 
-		return sstr.str();
-	}
+        if (lineBreak)
+        {
+            endLine = "\n";
+        }
 
-	string StrOutHelpers::toString(Eigen::Vector3f v)
-	{
-		stringstream sstr;
-		sstr << endl;
-		sstr << "[" << v(0) << " " << v(1) << " " << v(2) << "]; ";
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            sstr << "[" << (v.at(i))(0) << " " << (v.at(i))(1) << " " << (v.at(i))(2)
+                 << "]; " << endLine;
+        }
 
-		return sstr.str();
-	}
+        return sstr.str();
+    }
 
-	string StrOutHelpers::toString(Eigen::Vector3i v)
-	{
-		stringstream sstr;
-		sstr << endl;
-		sstr << "[" << v(0) << " " << v(1) << " " << v(2) << "]; ";
+    string StrOutHelpers::toString(Eigen::Vector3f v)
+    {
+        stringstream sstr;
+        sstr << endl;
+        sstr << "[" << v(0) << " " << v(1) << " " << v(2) << "]; ";
 
-		return sstr.str();
-	}
+        return sstr.str();
+    }
+
+    string StrOutHelpers::toString(Eigen::Vector3i v)
+    {
+        stringstream sstr;
+        sstr << endl;
+        sstr << "[" << v(0) << " " << v(1) << " " << v(2) << "]; ";
+
+        return sstr.str();
+    }
 }

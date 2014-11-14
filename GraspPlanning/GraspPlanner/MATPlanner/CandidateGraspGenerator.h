@@ -33,27 +33,27 @@
 namespace GraspStudio
 {
 
-	class CandidateGraspGenerator;
-	typedef boost::shared_ptr<CandidateGraspGenerator> CandidateGraspGeneratorPtr;
+    class CandidateGraspGenerator;
+    typedef boost::shared_ptr<CandidateGraspGenerator> CandidateGraspGeneratorPtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT CandidateGraspGenerator
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT CandidateGraspGenerator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			CandidateGraspGenerator();
-		CandidateGraspGenerator(bool verbose);
+        CandidateGraspGenerator();
+        CandidateGraspGenerator(bool verbose);
 
-		std::vector<CandidateGraspPtr> generateCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
-		std::vector<CandidateGraspPtr> generateSymmetryAxisOrthogonalCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
-		std::vector<CandidateGraspPtr> generateSymmetryPlaneParallelCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
+        std::vector<CandidateGraspPtr> generateCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
+        std::vector<CandidateGraspPtr> generateSymmetryAxisOrthogonalCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
+        std::vector<CandidateGraspPtr> generateSymmetryPlaneParallelCandidateGrasps(LocalNeighborhoodPtr nbhd, GraspPlannerConfigurationPtr gpConfig);
 
-	private:
-		std::vector<Eigen::Vector3f> generatePointsOnCircle(Eigen::Vector3f circleCenter, Eigen::Vector3f rotationAxis, int numberOfPoints, float radius);
+    private:
+        std::vector<Eigen::Vector3f> generatePointsOnCircle(Eigen::Vector3f circleCenter, Eigen::Vector3f rotationAxis, int numberOfPoints, float radius);
 
-		bool verbose;
+        bool verbose;
 
-	};
+    };
 
 }
 #endif // CANDIDATEGRASPGENERATOR_H

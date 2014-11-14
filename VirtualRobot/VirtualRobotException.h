@@ -32,25 +32,25 @@
 namespace VirtualRobot
 {
 
-/**
- * This class defines a custom exception which is used in the VirtualRobot library.
- * Use the macros THROW_VR_EXCEPTION and THROW_VR_EXCEPTION_IF to create and
- * throw exceptions of this kind.
- */
-class VIRTUAL_ROBOT_IMPORT_EXPORT VirtualRobotException : public std::exception
-{
-public:
-	VirtualRobotException(const std::string &what);
-	VirtualRobotException(const char *what);
+    /**
+     * This class defines a custom exception which is used in the VirtualRobot library.
+     * Use the macros THROW_VR_EXCEPTION and THROW_VR_EXCEPTION_IF to create and
+     * throw exceptions of this kind.
+     */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VirtualRobotException : public std::exception
+    {
+    public:
+        VirtualRobotException(const std::string& what);
+        VirtualRobotException(const char* what);
 
-	virtual ~VirtualRobotException() throw();
+        virtual ~VirtualRobotException() throw();
 
-	virtual const char * what() const throw();
-	//virtual const char * what() const;
+        virtual const char* what() const throw();
+        //virtual const char * what() const;
 
-protected:
-	std::string exception;
-};
+    protected:
+        std::string exception;
+    };
 
 } // namespace VirtualRobot
 

@@ -25,39 +25,39 @@
 
 #include "../VirtualRobotImportExport.h"
 
-#include "RobotNode.h" 
+#include "RobotNode.h"
 #include <Eigen/Core>
 
 namespace VirtualRobot
 {
-/*!
-	An interface definition for RobotNode actuators.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT RobotNodeActuator
-{
-public:
-	/*!
-		Constructor
-	*/
-	RobotNodeActuator(RobotNodePtr node);				//!< The node to actuate
+    /*!
+        An interface definition for RobotNode actuators.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT RobotNodeActuator
+    {
+    public:
+        /*!
+            Constructor
+        */
+        RobotNodeActuator(RobotNodePtr node);               //!< The node to actuate
 
-	/*!
-	*/
-	virtual ~RobotNodeActuator();
+        /*!
+        */
+        virtual ~RobotNodeActuator();
 
-	virtual void updateVisualizationPose (const Eigen::Matrix4f& pose, bool updateChildren = false);
-    virtual void updateVisualizationPose (const Eigen::Matrix4f& pose, float jointValue, bool updateChildren = false);
-    //! Just sets the joint angle without performing any calculations, model updates
-    virtual void updateJointAngle(float jointValue);
+        virtual void updateVisualizationPose(const Eigen::Matrix4f& pose, bool updateChildren = false);
+        virtual void updateVisualizationPose(const Eigen::Matrix4f& pose, float jointValue, bool updateChildren = false);
+        //! Just sets the joint angle without performing any calculations, model updates
+        virtual void updateJointAngle(float jointValue);
 
-    RobotNodePtr getRobotNode();
-protected:
+        RobotNodePtr getRobotNode();
+    protected:
 
-	RobotNodePtr robotNode;
-};
+        RobotNodePtr robotNode;
+    };
 
 
-typedef boost::shared_ptr<RobotNodeActuator> RobotNodeActuatorPtr;
+    typedef boost::shared_ptr<RobotNodeActuator> RobotNodeActuatorPtr;
 
 } // namespace VirtualRobot
 

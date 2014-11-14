@@ -31,58 +31,58 @@
 
 namespace GraspStudio
 {
-	class GraspPlannerConfiguration;
-	typedef boost::shared_ptr<GraspPlannerConfiguration> GraspPlannerConfigurationPtr;
+    class GraspPlannerConfiguration;
+    typedef boost::shared_ptr<GraspPlannerConfiguration> GraspPlannerConfigurationPtr;
 
-	class GRASPSTUDIO_IMPORT_EXPORT GraspPlannerConfiguration
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT GraspPlannerConfiguration
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-		GraspPlannerConfiguration();
+        GraspPlannerConfiguration();
 
-		void printDebug();
+        void printDebug();
 
-		int gridConstant;
+        int gridConstant;
 
-		//some constants for candidate grasp generation
-		float thresholdSymmetryAxis;
-		float thresholdSymmetryPlane;
-		float minimumObjectAngle;
-		float minimumSphereRadiusRelative;
-		float neighborhoodSearchRadius;
-		float maxGraspDiameterOfCurrentRobotHand;
+        //some constants for candidate grasp generation
+        float thresholdSymmetryAxis;
+        float thresholdSymmetryPlane;
+        float minimumObjectAngle;
+        float minimumSphereRadiusRelative;
+        float neighborhoodSearchRadius;
+        float maxGraspDiameterOfCurrentRobotHand;
 
-		bool generateFlippedCandidates;
-		int numberOfApproachDirectionsForLocalSymmetryAxis;
+        bool generateFlippedCandidates;
+        int numberOfApproachDirectionsForLocalSymmetryAxis;
 
-		float fractionOfSpheresToAnalyze;
-		int stopAfterAnalyzingThisNumberOfSpheres;
+        float fractionOfSpheresToAnalyze;
+        int stopAfterAnalyzingThisNumberOfSpheres;
 
 
-		//visualization options
-		//basic stuff
-		bool drawSurfacePointCloud;
-		bool drawMedialSpheresBeforeFiltering;
-		bool drawMedialAxisPointCloudBeforeFiltering;
-		bool drawMedialSpheresAfterFiltering;
-		bool drawMedialAxisPointCloudAfterFiltering;
+        //visualization options
+        //basic stuff
+        bool drawSurfacePointCloud;
+        bool drawMedialSpheresBeforeFiltering;
+        bool drawMedialAxisPointCloudBeforeFiltering;
+        bool drawMedialSpheresAfterFiltering;
+        bool drawMedialAxisPointCloudAfterFiltering;
 
-		//results of analysis
-		bool drawNeighborhoods;
-		bool drawNeighborhoodCenterOfGravity;
-		bool drawNeighborhoodEigenvectors;
-		bool drawNeighborhoodSearchRadius;
-		float drawScale;
-		float drawPointSize;
-		bool drawCandidateGrasps;
+        //results of analysis
+        bool drawNeighborhoods;
+        bool drawNeighborhoodCenterOfGravity;
+        bool drawNeighborhoodEigenvectors;
+        bool drawNeighborhoodSearchRadius;
+        float drawScale;
+        float drawPointSize;
+        bool drawCandidateGrasps;
 
-		//debug output
-		bool printMedialSpheres;
-		bool printNeighborhoods;
-		bool printCandidateGrasps;
+        //debug output
+        bool printMedialSpheres;
+        bool printNeighborhoods;
+        bool printCandidateGrasps;
 
-	};
+    };
 
 }
 #endif // GRASPPLANNERCONFIGURATION_H

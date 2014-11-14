@@ -3,35 +3,36 @@
 
 using namespace VirtualRobot;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	SoDB::init();
-	SoQt::init(argc,argv,"stability demo");
-	cout << " --- START --- " << endl;
-	//std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
-	std::string filenameRob("robots/iCub/iCub.xml");
-	VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob);
-	
-	VirtualRobot::RuntimeEnvironment::considerKey("robot");
-	VirtualRobot::RuntimeEnvironment::processCommandLine(argc,argv);
-	VirtualRobot::RuntimeEnvironment::print();
+    SoDB::init();
+    SoQt::init(argc, argv, "stability demo");
+    cout << " --- START --- " << endl;
+    //std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
+    std::string filenameRob("robots/iCub/iCub.xml");
+    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob);
 
-	cout << " --- START --- " << endl;
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
 
-	if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-	{
-		std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-		if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-		{
-			filenameRob = robFile;
-		}
-	}
-	
-	cout << "Using robot at " << filenameRob << endl;
+    cout << " --- START --- " << endl;
 
-	stabilityWindow rw(filenameRob);
-	rw.main();
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
 
-	return 0;
+        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
+        {
+            filenameRob = robFile;
+        }
+    }
+
+    cout << "Using robot at " << filenameRob << endl;
+
+    stabilityWindow rw(filenameRob);
+    rw.main();
+
+    return 0;
 
 }

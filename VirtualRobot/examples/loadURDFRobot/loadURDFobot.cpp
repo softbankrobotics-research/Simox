@@ -17,7 +17,7 @@ using std::endl;
 using namespace VirtualRobot;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     SimoxURDFFactory f;
 
@@ -38,5 +38,5 @@ int main(int argc, char *argv[])
     std::string outPath = boost::filesystem::initial_path().generic_string();
     cout << "Saving converted file to " << outPath << "/urdf_output.xml..." << endl;
 
-    RobotIO::saveXML(r,"urdf_output.xml",outPath);
+    RobotIO::saveXML(r, "urdf_output.xml", outPath);
 }

@@ -38,135 +38,151 @@
 #include "Dummy/CollisionModelDummy.h"
 #endif
 
-namespace VirtualRobot {
-
-class CollisionChecker;
-
-/*!
-	An abstract representation of an object that can be used for collision queries.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModel
+namespace VirtualRobot
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-		
 
-	/*!
-		Standard Constructor
-		If collision checks should be done in parallel, different CollisionCheckers can be specified.
-		\param visu A visualization that is used for creating an internal triangle based representation of the object.
-		\param name The name of this object.
-		\param colChecker If not specified, the global singleton instance is used. Only useful, when parallel collision checks should be performed.
-		\param id A user id.
-	*/
-	CollisionModel(const VisualizationNodePtr visu, const std::string &name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666);
+    class CollisionChecker;
 
-	/*!Standard Destructor
-	*/
-	virtual ~CollisionModel();
-
-
-	/*! Returns name of this model.
-	*/
-	std::string getName();
-
-	/*!
-		Return bounding box of this object.
-		\param global If set, the boundignBox is transformed to globalCoordinate system. Otherwise the local BBox is returned.
-	*/
-	BoundingBox getBoundingBox(bool global = true);
-
-
-	/*!
-	The global pose defines the position of the joint in the world. This value is used for visualization.
-	*/
-	inline Eigen::Matrix4f getGlobalPose() {return globalPose;}
-	virtual void setGlobalPose(const Eigen::Matrix4f &pose);
-
-	CollisionCheckerPtr getCollisionChecker(){return colChecker;}
-
-#if defined(VR_COLLISION_DETECTION_PQP)
-	boost::shared_ptr< CollisionModelPQP > getCollisionModelImplementation(){return collisionModelImplementation;}
-#else
-	boost::shared_ptr< CollisionModelDummy > getCollisionModelImplementation(){return collisionModelImplementation;}
-#endif
-
-
-	CollisionModelPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f);
-
-	int getId();
-
-	/*!
-		Enables/Disables the visualization updates of the collision model. 
-		This just handles the visualization, the collision data is not affected.
-	*/
-	void setUpdateVisualization (bool enable);
-	bool getUpdateVisualizationStatus();
-
-	VisualizationNodePtr getVisualization();
-	VisualizationNodePtr getModelDataVisualization();
-
-	//! get number of faces (i.e. triangles) of this object
-	virtual int getNumFaces();
-
-	/*!
-		Print information about this model.
-	*/
-	virtual void print();
-
-	/*!
-		Return a vector with all vertices of this object at the current global pose.
-	*/
-	std::vector< Eigen::Vector3f > getModelVeticesGlobal();
-
-	TriMeshModelPtr getTriMeshModel(){return collisionModelImplementation->getTriMeshModel();}
-
-	std::string toXML(const std::string &basePath, int tabs);
-	std::string toXML(const std::string &basePath, const std::string &filename, int tabs);
-
-	/*!
-		Create a united collision model. 
-		All triangle data is copied to one model which usually improves the collision detection performance.
-	*/
-	static CollisionModelPtr CreateUnitedCollisionModel(const std::vector<CollisionModelPtr> &colModels);
-
-        
     /*!
-        Saves model file to model path.
-		\param modelPath The directory.
-		\param filename The new filename without path.
+        An abstract representation of an object that can be used for collision queries.
     */
-    virtual bool saveModel(const std::string &modelPath, const std::string &filename);
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModel
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    virtual void scale(Eigen::Vector3f &scaleFactor);
 
-protected:
+        /*!
+            Standard Constructor
+            If collision checks should be done in parallel, different CollisionCheckers can be specified.
+            \param visu A visualization that is used for creating an internal triangle based representation of the object.
+            \param name The name of this object.
+            \param colChecker If not specified, the global singleton instance is used. Only useful, when parallel collision checks should be performed.
+            \param id A user id.
+        */
+        CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666);
 
-	//! delete all data
-	void destroyData();  
-	VisualizationNodePtr visualization;			// this is the original visualization
-	VisualizationNodePtr modelVisualization;	// this is the visualization of the trimeshmodel
-	bool updateVisualization;
-    TriMeshModelPtr model;
+        /*!Standard Destructor
+        */
+        virtual ~CollisionModel();
 
-	BoundingBox bbox;
 
-	//! the name
-	std::string name;
+        /*! Returns name of this model.
+        */
+        std::string getName();
 
-	int id;
+        /*!
+            Return bounding box of this object.
+            \param global If set, the boundignBox is transformed to globalCoordinate system. Otherwise the local BBox is returned.
+        */
+        BoundingBox getBoundingBox(bool global = true);
 
-	CollisionCheckerPtr colChecker;
-	
-	Eigen::Matrix4f globalPose;		//< The transformation that is used for visualization and for updating the col model
+
+        /*!
+        The global pose defines the position of the joint in the world. This value is used for visualization.
+        */
+        inline Eigen::Matrix4f getGlobalPose()
+        {
+            return globalPose;
+        }
+        virtual void setGlobalPose(const Eigen::Matrix4f& pose);
+
+        CollisionCheckerPtr getCollisionChecker()
+        {
+            return colChecker;
+        }
+
+#if defined(VR_COLLISION_DETECTION_PQP)
+        boost::shared_ptr< CollisionModelPQP > getCollisionModelImplementation()
+        {
+            return collisionModelImplementation;
+        }
+#else
+        boost::shared_ptr< CollisionModelDummy > getCollisionModelImplementation()
+        {
+            return collisionModelImplementation;
+        }
+#endif
+
+
+        CollisionModelPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+
+        int getId();
+
+        /*!
+            Enables/Disables the visualization updates of the collision model.
+            This just handles the visualization, the collision data is not affected.
+        */
+        void setUpdateVisualization(bool enable);
+        bool getUpdateVisualizationStatus();
+
+        VisualizationNodePtr getVisualization();
+        VisualizationNodePtr getModelDataVisualization();
+
+        //! get number of faces (i.e. triangles) of this object
+        virtual int getNumFaces();
+
+        /*!
+            Print information about this model.
+        */
+        virtual void print();
+
+        /*!
+            Return a vector with all vertices of this object at the current global pose.
+        */
+        std::vector< Eigen::Vector3f > getModelVeticesGlobal();
+
+        TriMeshModelPtr getTriMeshModel()
+        {
+            return collisionModelImplementation->getTriMeshModel();
+        }
+
+        std::string toXML(const std::string& basePath, int tabs);
+        std::string toXML(const std::string& basePath, const std::string& filename, int tabs);
+
+        /*!
+            Create a united collision model.
+            All triangle data is copied to one model which usually improves the collision detection performance.
+        */
+        static CollisionModelPtr CreateUnitedCollisionModel(const std::vector<CollisionModelPtr>& colModels);
+
+
+        /*!
+            Saves model file to model path.
+            \param modelPath The directory.
+            \param filename The new filename without path.
+        */
+        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
+
+        virtual void scale(Eigen::Vector3f& scaleFactor);
+
+    protected:
+
+        //! delete all data
+        void destroyData();
+        VisualizationNodePtr visualization;         // this is the original visualization
+        VisualizationNodePtr modelVisualization;    // this is the visualization of the trimeshmodel
+        bool updateVisualization;
+        TriMeshModelPtr model;
+
+        BoundingBox bbox;
+
+        //! the name
+        std::string name;
+
+        int id;
+
+        CollisionCheckerPtr colChecker;
+
+        Eigen::Matrix4f globalPose;     //< The transformation that is used for visualization and for updating the col model
 
 
 #if defined(VR_COLLISION_DETECTION_PQP)
-	boost::shared_ptr< CollisionModelPQP > collisionModelImplementation;
+        boost::shared_ptr< CollisionModelPQP > collisionModelImplementation;
 #else
-	boost::shared_ptr< CollisionModelDummy > collisionModelImplementation;
+        boost::shared_ptr< CollisionModelDummy > collisionModelImplementation;
 #endif
-};
+    };
 
 } // namespace VirtualRobot
 

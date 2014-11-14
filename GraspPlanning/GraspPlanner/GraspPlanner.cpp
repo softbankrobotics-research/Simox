@@ -2,25 +2,25 @@
 
 namespace GraspStudio
 {
-GraspPlanner::GraspPlanner( VirtualRobot::GraspSetPtr graspSet )
-    : graspSet(graspSet)
-{
-    verbose = false;
-}
+    GraspPlanner::GraspPlanner(VirtualRobot::GraspSetPtr graspSet)
+        : graspSet(graspSet)
+    {
+        verbose = false;
+    }
 
-GraspPlanner::~GraspPlanner()
-{
+    GraspPlanner::~GraspPlanner()
+    {
 
-}
+    }
 
-void GraspPlanner::setVerbose(bool enable)
-{
-    verbose = enable;
-}
+    void GraspPlanner::setVerbose(bool enable)
+    {
+        verbose = enable;
+    }
 
-std::vector<VirtualRobot::GraspPtr> GraspPlanner::getPlannedGrasps()
-{
-    return plannedGrasps;
-}
-        
+    std::vector<VirtualRobot::GraspPtr> GraspPlanner::getPlannedGrasps()
+    {
+        return plannedGrasps;
+    }
+
 }

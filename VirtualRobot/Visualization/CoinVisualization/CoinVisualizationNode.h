@@ -38,84 +38,87 @@ class SoMatrixTransform;
 
 namespace VirtualRobot
 {
-class TriMeshModel;
+    class TriMeshModel;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualizationNode : virtual public VisualizationNode
-{
-	friend class CoinVisualizationFactory;
-public:
-    CoinVisualizationNode(SoNode* visualizationNode);
-	~CoinVisualizationNode();
-	virtual TriMeshModelPtr getTriMeshModel();
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualizationNode : virtual public VisualizationNode
+    {
+        friend class CoinVisualizationFactory;
+    public:
+        CoinVisualizationNode(SoNode* visualizationNode);
+        ~CoinVisualizationNode();
+        virtual TriMeshModelPtr getTriMeshModel();
 
-	SoNode* getCoinVisualization();
+        SoNode* getCoinVisualization();
 
-	virtual void setGlobalPose (const Eigen::Matrix4f &m);
+        virtual void setGlobalPose(const Eigen::Matrix4f& m);
 
-	virtual void print();
+        virtual void print();
 
-    virtual void scale(Eigen::Vector3f &scaleFactor);
+        virtual void scale(Eigen::Vector3f& scaleFactor);
 
-	/*!
-		Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
-		If there is already a visualization attached with the given name, it is quietly replaced.
-	*/
-	virtual void attachVisualization(const std::string &name, VisualizationNodePtr v);
+        /*!
+            Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
+            If there is already a visualization attached with the given name, it is quietly replaced.
+        */
+        virtual void attachVisualization(const std::string& name, VisualizationNodePtr v);
 
-	/*!
-		Remove an attached visualization.
-	*/
-	virtual void detachVisualization(const std::string &name);
+        /*!
+            Remove an attached visualization.
+        */
+        virtual void detachVisualization(const std::string& name);
 
-	/*!
-		Setup the visualization of this object.
-		\param showVisualization If false, the visualization is disabled.
-		\param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
-	*/
-	virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        /*!
+            Setup the visualization of this object.
+            \param showVisualization If false, the visualization is disabled.
+            \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
+        */
+        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
 
 
-/*!
-		Clone this visualization.
-		\param deepCopy When true, the underlying visualization is copied, otherwise a reference to the existing visualization is passed. 
-		\param scaling Scale Can be set to create a scaled version of this visual data.
-		Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
-	*/
-	virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
+        /*!
+                Clone this visualization.
+                \param deepCopy When true, the underlying visualization is copied, otherwise a reference to the existing visualization is passed.
+                \param scaling Scale Can be set to create a scaled version of this visual data.
+                Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
+            */
+        virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
 
-	virtual std::string getType(){return CoinVisualizationFactory::getName();}
+        virtual std::string getType()
+        {
+            return CoinVisualizationFactory::getName();
+        }
 
-    /*!
-        Saves model file to model path.
-		\param modelPath The directory.
-		\param filename The new filename.
-    */
-	virtual bool saveModel(const std::string &modelPath, const std::string &filename);
+        /*!
+            Saves model file to model path.
+            \param modelPath The directory.
+            \param filename The new filename.
+        */
+        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
 
-protected:
-	void createTriMeshModel();
+    protected:
+        void createTriMeshModel();
 
-	/*!
-		Replace current visualization of this node. 
-		Be careful: any former grabbed trimeshmodels do no longer represent the new datastructure!
-	*/
-	void setVisualization(SoNode* newVisu);
+        /*!
+            Replace current visualization of this node.
+            Be careful: any former grabbed trimeshmodels do no longer represent the new datastructure!
+        */
+        void setVisualization(SoNode* newVisu);
 
-	SoNode* visualization;
-	SoSeparator* visualizationAtGlobalPose;
-	SoSeparator* attachedVisualizationsSeparator;
-    SoSeparator* scaledVisualization;
-	std::map< std::string, SoNode* > attachedCoinVisualizations;	//< These optional visualizations will not show up in the TriMeshModel
+        SoNode* visualization;
+        SoSeparator* visualizationAtGlobalPose;
+        SoSeparator* attachedVisualizationsSeparator;
+        SoSeparator* scaledVisualization;
+        std::map< std::string, SoNode* > attachedCoinVisualizations;    //< These optional visualizations will not show up in the TriMeshModel
 
-	SoMatrixTransform *globalPoseTransform;
-    TriMeshModelPtr triMeshModel;
-    SoScale* scaling;
+        SoMatrixTransform* globalPoseTransform;
+        TriMeshModelPtr triMeshModel;
+        SoScale* scaling;
 
-	static void InventorTriangleCB(void* data, SoCallbackAction* action,
-	                               const SoPrimitiveVertex* v1,
-	                               const SoPrimitiveVertex* v2,
-	                               const SoPrimitiveVertex* v3);
-};
+        static void InventorTriangleCB(void* data, SoCallbackAction* action,
+                                       const SoPrimitiveVertex* v1,
+                                       const SoPrimitiveVertex* v2,
+                                       const SoPrimitiveVertex* v3);
+    };
 
 } // namespace VirtualRobot
 

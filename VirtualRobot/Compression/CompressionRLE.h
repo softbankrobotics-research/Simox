@@ -27,39 +27,40 @@
 
 #include "../VirtualRobotImportExport.h"
 
-#include <boost/thread.hpp> 
+#include <boost/thread.hpp>
 
-namespace VirtualRobot {
-
-class VIRTUAL_ROBOT_IMPORT_EXPORT CompressionRLE
+namespace VirtualRobot
 {
-public:
 
-    /*************************************************************************
-    * RLE_Compress() - Compress a block of data using an RLE coder.
-    *  in     - Input (uncompressed) buffer.
-    *  out    - Output (compressed) buffer. This buffer must be 0.4% larger
-    *           than the input buffer, plus one byte.
-    *  insize - Number of input bytes.
-    * The function returns the size of the compressed data.
-    *************************************************************************/
-    static int RLE_Compress( const unsigned char *in, unsigned char *out, unsigned int insize );
-    
-    /*************************************************************************
-    * RLE_Uncompress() - Uncompress a block of data using an RLE decoder.
-    *  in      - Input (compressed) buffer.
-    *  out     - Output (uncompressed) buffer. This buffer must be large
-    *            enough to hold the uncompressed data.
-    *  insize  - Number of input bytes.
-    *************************************************************************/
-    static void RLE_Uncompress( const unsigned char *in, unsigned char *out, unsigned int insize );
-    
-protected:
-    static void _RLE_WriteRep( unsigned char *out, unsigned int *outpos, unsigned char marker, unsigned char symbol, unsigned int count );
-    static void _RLE_WriteNonRep( unsigned char *out, unsigned int *outpos, unsigned char marker, unsigned char symbol );
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CompressionRLE
+    {
+    public:
 
-	static boost::mutex mutex;
-};
+        /*************************************************************************
+        * RLE_Compress() - Compress a block of data using an RLE coder.
+        *  in     - Input (uncompressed) buffer.
+        *  out    - Output (compressed) buffer. This buffer must be 0.4% larger
+        *           than the input buffer, plus one byte.
+        *  insize - Number of input bytes.
+        * The function returns the size of the compressed data.
+        *************************************************************************/
+        static int RLE_Compress(const unsigned char* in, unsigned char* out, unsigned int insize);
+
+        /*************************************************************************
+        * RLE_Uncompress() - Uncompress a block of data using an RLE decoder.
+        *  in      - Input (compressed) buffer.
+        *  out     - Output (uncompressed) buffer. This buffer must be large
+        *            enough to hold the uncompressed data.
+        *  insize  - Number of input bytes.
+        *************************************************************************/
+        static void RLE_Uncompress(const unsigned char* in, unsigned char* out, unsigned int insize);
+
+    protected:
+        static void _RLE_WriteRep(unsigned char* out, unsigned int* outpos, unsigned char marker, unsigned char symbol, unsigned int count);
+        static void _RLE_WriteNonRep(unsigned char* out, unsigned int* outpos, unsigned char marker, unsigned char symbol);
+
+        static boost::mutex mutex;
+    };
 
 } // namespace VirtualRobot
 

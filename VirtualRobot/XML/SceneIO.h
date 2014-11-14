@@ -30,52 +30,52 @@
 // using forward declarations here, so that the rapidXML header does not have to be parsed when this file is included
 namespace rapidxml
 {
-	template<class Ch>
-	class xml_node;
+    template<class Ch>
+    class xml_node;
 };
 
 namespace VirtualRobot
 {
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT SceneIO : public BaseIO
-{
-public:
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SceneIO : public BaseIO
+    {
+    public:
 
-	/*!
-        Load scene from file.
-		\param xmlFile The file.
-        \return Returns an empty pointer, when file access failed.
-	*/
-	static ScenePtr loadScene(const std::string &xmlFile);
+        /*!
+            Load scene from file.
+            \param xmlFile The file.
+            \return Returns an empty pointer, when file access failed.
+        */
+        static ScenePtr loadScene(const std::string& xmlFile);
 
-	/*!
-		Save a scene to file.
-		\param s The scene to be saved.
-		\param xmlFile The absolute filename.
-		\return true on success.
-	*/
-	static bool saveScene(ScenePtr s, const std::string &xmlFile);
-	
-	/*!
-        Creates scene from string.
-		\param xmlString The input.
-        \param basePath If any robot tags are given, the base path for searching the robot files can be specified.
-    */
-    static ScenePtr createSceneFromString(const std::string &xmlString, const std::string &basePath = "");
+        /*!
+            Save a scene to file.
+            \param s The scene to be saved.
+            \param xmlFile The absolute filename.
+            \return true on success.
+        */
+        static bool saveScene(ScenePtr s, const std::string& xmlFile);
 
-protected:
+        /*!
+            Creates scene from string.
+            \param xmlString The input.
+            \param basePath If any robot tags are given, the base path for searching the robot files can be specified.
+        */
+        static ScenePtr createSceneFromString(const std::string& xmlString, const std::string& basePath = "");
 
-	// instantiation not allowed
-	SceneIO();
-	virtual ~SceneIO();
-	static ScenePtr processScene(rapidxml::xml_node<char>* sceneXMLNode, const std::string& basePath);
-	static ScenePtr processSceneAttributes(rapidxml::xml_node<char>* sceneXMLNode);
-	static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath );
-	static bool processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath );
-	static bool processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene );
-	static bool processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath );
-	static bool processSceneObjectSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene );
-};
+    protected:
+
+        // instantiation not allowed
+        SceneIO();
+        virtual ~SceneIO();
+        static ScenePtr processScene(rapidxml::xml_node<char>* sceneXMLNode, const std::string& basePath);
+        static ScenePtr processSceneAttributes(rapidxml::xml_node<char>* sceneXMLNode);
+        static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
+        static bool processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
+        static bool processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
+        static bool processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
+        static bool processSceneObjectSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
+    };
 
 }
 

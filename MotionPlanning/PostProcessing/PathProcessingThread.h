@@ -28,76 +28,76 @@
 #include "PathProcessor.h"
 #include "../CSpace/CSpacePath.h"
 
-#include <boost/thread.hpp> 
+#include <boost/thread.hpp>
 
 namespace Saba
 {
-/*!
- *
- * \brief This class can be used to start a path processing algorithm in a thread.
- *
- */
-class SABA_IMPORT_EXPORT PathProcessingThread
-{
-    
+    /*!
+     *
+     * \brief This class can be used to start a path processing algorithm in a thread.
+     *
+     */
+    class SABA_IMPORT_EXPORT PathProcessingThread
+    {
+
     public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 
-	/*! Constructor
-		The thread is not started until you call start()
-		\param processor An initialized path processor to be started.
-	*/
-	PathProcessingThread(PathProcessorPtr processor);
-	
-	//! destructor
-	virtual ~PathProcessingThread();
-	
-	/*!
-		Start the path processing in an own thread.
-	*/
-	virtual void start(int optimizeSteps);
+        /*! Constructor
+            The thread is not started until you call start()
+            \param processor An initialized path processor to be started.
+        */
+        PathProcessingThread(PathProcessorPtr processor);
 
-	/*!
-		Send an interrupt signal to thread.
-		\param waitUntilStopped If false this method returns immediately. Otherwise we wait until the thread has been successfully interrupted.
-	*/
-	virtual void interrupt (bool waitUntilStopped=false);
+        //! destructor
+        virtual ~PathProcessingThread();
 
-	/*!
-		Same as interrupt(true)
-	*/
-	void stop(); 
+        /*!
+            Start the path processing in an own thread.
+        */
+        virtual void start(int optimizeSteps);
 
-	/*!
-		\return True if the planning thread is operating
-	*/
-	bool isRunning();
+        /*!
+            Send an interrupt signal to thread.
+            \param waitUntilStopped If false this method returns immediately. Otherwise we wait until the thread has been successfully interrupted.
+        */
+        virtual void interrupt(bool waitUntilStopped = false);
 
-	PathProcessorPtr getPathProcessor();
-	
-	//! Returns the optimized path (when optimizer is finished)
-	CSpacePathPtr getProcessedPath();
+        /*!
+            Same as interrupt(true)
+        */
+        void stop();
 
-protected:
-	
-	/*!
-		Here the post processing takes place.
-	*/
-	void workingMethod();
+        /*!
+            \return True if the planning thread is operating
+        */
+        bool isRunning();
+
+        PathProcessorPtr getPathProcessor();
+
+        //! Returns the optimized path (when optimizer is finished)
+        CSpacePathPtr getProcessedPath();
+
+    protected:
+
+        /*!
+            Here the post processing takes place.
+        */
+        void workingMethod();
 
 
-	bool threadStarted;
-	bool processingFinished;
-	PathProcessorPtr pathProcessor;
-	boost::thread processingThread;
-	boost::mutex mutex;
+        bool threadStarted;
+        bool processingFinished;
+        PathProcessorPtr pathProcessor;
+        boost::thread processingThread;
+        boost::mutex mutex;
 
-	CSpacePathPtr resultPath;
-	int optimizeSteps;
+        CSpacePathPtr resultPath;
+        int optimizeSteps;
 
-};
+    };
 
-}    
+}
 
 #endif // _PostprocessingThread_h

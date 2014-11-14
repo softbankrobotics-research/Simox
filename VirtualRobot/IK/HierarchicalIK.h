@@ -33,49 +33,49 @@
 namespace VirtualRobot
 {
 
-/*!
-	With hierarchical IK methods several tasks/constraints can be considered for IK solving.
-    Internally a hierarchical gradient descent is generated where the Nullspace of the preceding task definition 
-    is used for the computation of the joint delta in the current task.
+    /*!
+        With hierarchical IK methods several tasks/constraints can be considered for IK solving.
+        Internally a hierarchical gradient descent is generated where the Nullspace of the preceding task definition
+        is used for the computation of the joint delta in the current task.
 
-	This implementation is based on the following publication:
-	"A general framework for managing multiple tasks in highly redundant robotic systems.", Siciliano, B. ; Slotine, J.-J.E., 
-	Advanced Robotics, 1991. 'Robots in Unstructured Environments', 91 ICAR., Fifth International Conference on 
-	
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT HierarchicalIK : public boost::enable_shared_from_this<HierarchicalIK>
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        This implementation is based on the following publication:
+        "A general framework for managing multiple tasks in highly redundant robotic systems.", Siciliano, B. ; Slotine, J.-J.E.,
+        Advanced Robotics, 1991. 'Robots in Unstructured Environments', 91 ICAR., Fifth International Conference on
 
-	HierarchicalIK(RobotNodeSetPtr rns);
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT HierarchicalIK : public boost::enable_shared_from_this<HierarchicalIK>
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	virtual ~HierarchicalIK();
+        HierarchicalIK(RobotNodeSetPtr rns);
 
-	struct JacobiDefinition
-	{
-		JacobiProviderPtr jacProvider; // generates the Jacobi and the PseudoInverse
-		// not needed any more, we use the getError method
-//		Eigen::VectorXf delta;		   // Specifies the delta for the Jacobi (e.g. in workspace). delta.rows() must be equal to jacobi.rows().
-	};
+        virtual ~HierarchicalIK();
 
-	/*!
-		computes hierarchical Jacobi step
-        \param jacDefs All Jacobians an the corresponding error vectors that should be considered for computing a gradient step. 
-                       The jacProviders specify the Jacobian and InverseJacobian functions. Jacobians must cover the same RobotNodeSet (i.e., the same number of DoF).
-		               The deltas specify the error for each Jacobian (e.g. in workspace). deltas[i].rows() must be equal to jacobies[i].rows().
-        \param stepSize The deltas can be reduced in order to avoid oscillating behavior.
-	*/
-	Eigen::VectorXf computeStep(std::vector<JacobiDefinition> jacDefs, float stepSize = 0.2f);
+        struct JacobiDefinition
+        {
+            JacobiProviderPtr jacProvider; // generates the Jacobi and the PseudoInverse
+            // not needed any more, we use the getError method
+            //      Eigen::VectorXf delta;         // Specifies the delta for the Jacobi (e.g. in workspace). delta.rows() must be equal to jacobi.rows().
+        };
 
-	void setVerbose(bool v);
-protected:
+        /*!
+            computes hierarchical Jacobi step
+            \param jacDefs All Jacobians an the corresponding error vectors that should be considered for computing a gradient step.
+                           The jacProviders specify the Jacobian and InverseJacobian functions. Jacobians must cover the same RobotNodeSet (i.e., the same number of DoF).
+                           The deltas specify the error for each Jacobian (e.g. in workspace). deltas[i].rows() must be equal to jacobies[i].rows().
+            \param stepSize The deltas can be reduced in order to avoid oscillating behavior.
+        */
+        Eigen::VectorXf computeStep(std::vector<JacobiDefinition> jacDefs, float stepSize = 0.2f);
 
-	RobotNodeSetPtr rns;
-	bool verbose;
-};
+        void setVerbose(bool v);
+    protected:
 
-typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
+        RobotNodeSetPtr rns;
+        bool verbose;
+    };
+
+    typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
 
 } // namespace VirtualRobot
 

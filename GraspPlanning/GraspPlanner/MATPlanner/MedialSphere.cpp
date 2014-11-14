@@ -27,89 +27,92 @@ using namespace std;
 namespace GraspStudio
 {
 
-	MedialSphere::MedialSphere()
-	{
-	}
+    MedialSphere::MedialSphere()
+    {
+    }
 
-	MedialSphere::MedialSphere(Eigen::Vector3f center, float radius, vector<Eigen::Vector3f> surfacePointCoordinates)
-	{
-		this->center = center;
-		this->radius = radius;
-		this->surfacePointCoordinates = surfacePointCoordinates;
+    MedialSphere::MedialSphere(Eigen::Vector3f center, float radius, vector<Eigen::Vector3f> surfacePointCoordinates)
+    {
+        this->center = center;
+        this->radius = radius;
+        this->surfacePointCoordinates = surfacePointCoordinates;
 
-		this->computeVectorsToSurfacePointsAndObjectAngle();
+        this->computeVectorsToSurfacePointsAndObjectAngle();
 
-	}
+    }
 
-	MedialSphere::~MedialSphere()
-	{
-	}
+    MedialSphere::~MedialSphere()
+    {
+    }
 
-	MedialSpherePtr MedialSphere::clone()
-	{
-		MedialSpherePtr cloneSphere = MedialSpherePtr(new MedialSphere);
-		cloneSphere->center = this->center;
-		cloneSphere->radius = this->radius;
-		cloneSphere->surfacePointCoordinates = this->surfacePointCoordinates;
-		cloneSphere->vectorsToSurfacePoints = this->vectorsToSurfacePoints;
-		cloneSphere->objectAngle = this->objectAngle;
+    MedialSpherePtr MedialSphere::clone()
+    {
+        MedialSpherePtr cloneSphere = MedialSpherePtr(new MedialSphere);
+        cloneSphere->center = this->center;
+        cloneSphere->radius = this->radius;
+        cloneSphere->surfacePointCoordinates = this->surfacePointCoordinates;
+        cloneSphere->vectorsToSurfacePoints = this->vectorsToSurfacePoints;
+        cloneSphere->objectAngle = this->objectAngle;
 
-		return cloneSphere;
-	}
+        return cloneSphere;
+    }
 
 
-	void MedialSphere::computeVectorsToSurfacePointsAndObjectAngle()
-	{
-		Eigen::Vector3f v;
+    void MedialSphere::computeVectorsToSurfacePointsAndObjectAngle()
+    {
+        Eigen::Vector3f v;
 
-		vectorsToSurfacePoints.clear();
+        vectorsToSurfacePoints.clear();
 
-		for (size_t i = 0; i < surfacePointCoordinates.size(); i++)
-		{
-			v = surfacePointCoordinates.at(i) - center;
-			this->vectorsToSurfacePoints.push_back(v);
-		}
+        for (size_t i = 0; i < surfacePointCoordinates.size(); i++)
+        {
+            v = surfacePointCoordinates.at(i) - center;
+            this->vectorsToSurfacePoints.push_back(v);
+        }
 
-		float currentAngleDeg = -1;
-		float maxAngleDeg = -1;
+        float currentAngleDeg = -1;
+        float maxAngleDeg = -1;
 
-		for (size_t j = 0; j < vectorsToSurfacePoints.size(); j++)
-		for (size_t k = j + 1; k<vectorsToSurfacePoints.size(); k++)
-		{
-			currentAngleDeg = SphereHelpers::calcAngleBetweenTwoVectorsDeg(vectorsToSurfacePoints.at(j), vectorsToSurfacePoints.at(k));
-			if (currentAngleDeg > maxAngleDeg)
-				maxAngleDeg = currentAngleDeg;
-		}
+        for (size_t j = 0; j < vectorsToSurfacePoints.size(); j++)
+            for (size_t k = j + 1; k < vectorsToSurfacePoints.size(); k++)
+            {
+                currentAngleDeg = SphereHelpers::calcAngleBetweenTwoVectorsDeg(vectorsToSurfacePoints.at(j), vectorsToSurfacePoints.at(k));
 
-		this->objectAngle = maxAngleDeg;
+                if (currentAngleDeg > maxAngleDeg)
+                {
+                    maxAngleDeg = currentAngleDeg;
+                }
+            }
 
-	}
+        this->objectAngle = maxAngleDeg;
 
-	void MedialSphere::printDebug()
-	{
-		std::cout << "=== MedialSphere ===" << std::endl;
-		std::cout << "center: " << center(0) << " " << center(1) << " " << center(2) << std::endl;
-		std::cout << "radius: " << radius << std::endl;
-		std::cout << "surfacePointCoordinates: " << StrOutHelpers::toString(surfacePointCoordinates) << std::endl;
-		std::cout << "vectorsToSurfacePoints: " << StrOutHelpers::toString(vectorsToSurfacePoints) << std::endl;
-		std::cout << "objectAngle: " << objectAngle << std::endl;
-	}
+    }
 
-	void MedialSphere::scale(float scaleFactor)
-	{
-		radius = scaleFactor * radius;
-		center = scaleFactor * center;
+    void MedialSphere::printDebug()
+    {
+        std::cout << "=== MedialSphere ===" << std::endl;
+        std::cout << "center: " << center(0) << " " << center(1) << " " << center(2) << std::endl;
+        std::cout << "radius: " << radius << std::endl;
+        std::cout << "surfacePointCoordinates: " << StrOutHelpers::toString(surfacePointCoordinates) << std::endl;
+        std::cout << "vectorsToSurfacePoints: " << StrOutHelpers::toString(vectorsToSurfacePoints) << std::endl;
+        std::cout << "objectAngle: " << objectAngle << std::endl;
+    }
 
-		//objectAngle stays the same! No scaling!
+    void MedialSphere::scale(float scaleFactor)
+    {
+        radius = scaleFactor * radius;
+        center = scaleFactor * center;
 
-		for (size_t i = 0; i < surfacePointCoordinates.size(); i++)
-		{
-			surfacePointCoordinates.at(i) = scaleFactor * surfacePointCoordinates.at(i);
-		}
+        //objectAngle stays the same! No scaling!
 
-		computeVectorsToSurfacePointsAndObjectAngle();
+        for (size_t i = 0; i < surfacePointCoordinates.size(); i++)
+        {
+            surfacePointCoordinates.at(i) = scaleFactor * surfacePointCoordinates.at(i);
+        }
 
-	}
+        computeVectorsToSurfacePointsAndObjectAngle();
+
+    }
 
 
 }

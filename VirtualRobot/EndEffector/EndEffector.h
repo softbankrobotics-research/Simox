@@ -34,163 +34,163 @@
 
 namespace VirtualRobot
 {
-class EndEffectorActor;
+    class EndEffectorActor;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffector : public boost::enable_shared_from_this<EndEffector>
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffector : public boost::enable_shared_from_this<EndEffector>
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	struct ContactInfo
-	{
-		EndEffectorPtr eef;				// the eef
-		EndEffectorActorPtr actor;		// an eef may have multiple actors
-		RobotNodePtr robotNode;			// an actor may have multiple robotNodes
-		SceneObjectPtr obstacle;
-		float distance;
-		Eigen::Vector3f contactPointFingerLocal;		// given in coord system of the object
-		Eigen::Vector3f contactPointObstacleLocal;		// given in coord system of the object
-		Eigen::Vector3f contactPointFingerGlobal;		// given in global coord system 
-		Eigen::Vector3f contactPointObstacleGlobal;		// given in global coord system 
+        struct ContactInfo
+        {
+            EndEffectorPtr eef;             // the eef
+            EndEffectorActorPtr actor;      // an eef may have multiple actors
+            RobotNodePtr robotNode;         // an actor may have multiple robotNodes
+            SceneObjectPtr obstacle;
+            float distance;
+            Eigen::Vector3f contactPointFingerLocal;        // given in coord system of the object
+            Eigen::Vector3f contactPointObstacleLocal;      // given in coord system of the object
+            Eigen::Vector3f contactPointFingerGlobal;       // given in global coord system
+            Eigen::Vector3f contactPointObstacleGlobal;     // given in global coord system
 
-		Eigen::Vector3f approachDirectionGlobal;	// the movement of the contact point while closing the finger (in this direction force can be applied)
-	};
+            Eigen::Vector3f approachDirectionGlobal;    // the movement of the contact point while closing the finger (in this direction force can be applied)
+        };
 
-	//! We need an Eigen::aligned_allocator here, otherwise access to a std::vector could crash
-	typedef std::vector< ContactInfo, Eigen::aligned_allocator<ContactInfo> > ContactInfoVector;
+        //! We need an Eigen::aligned_allocator here, otherwise access to a std::vector could crash
+        typedef std::vector< ContactInfo, Eigen::aligned_allocator<ContactInfo> > ContactInfoVector;
 
-	EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr = RobotNodePtr(), std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
+        EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr = RobotNodePtr(), std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
 
-	virtual ~EndEffector();
-	/*!
-		Clones this eef and performs all necessary registrations.
-		(Be careful: no need to call registerEEF with newly created eef, since this is already done)
-	*/
-	EndEffectorPtr clone(RobotPtr newRobot);
+        virtual ~EndEffector();
+        /*!
+            Clones this eef and performs all necessary registrations.
+            (Be careful: no need to call registerEEF with newly created eef, since this is already done)
+        */
+        EndEffectorPtr clone(RobotPtr newRobot);
 
-	std::string getName();
-
-
-	/*!
-		Return name of Base RobotNode.
-	*/
-	std::string getBaseNodeName();
+        std::string getName();
 
 
-	/*!
-		Return name of TCP RobotNode.
-	*/
-	std::string getTcpName();
+        /*!
+            Return name of Base RobotNode.
+        */
+        std::string getBaseNodeName();
 
-	RobotNodePtr getTcp();
-	RobotNodePtr getBase();
 
-	/*!
-		Returns the grasp center point. If it was not defined, the TCP is returned.
-	*/
-	RobotNodePtr getGCP();
+        /*!
+            Return name of TCP RobotNode.
+        */
+        std::string getTcpName();
 
-	/*!
-		Return associated robot
-	*/
-	RobotPtr getRobot();
+        RobotNodePtr getTcp();
+        RobotNodePtr getBase();
 
-	CollisionCheckerPtr getCollisionChecker();
+        /*!
+            Returns the grasp center point. If it was not defined, the TCP is returned.
+        */
+        RobotNodePtr getGCP();
 
-	/*!
-		Return the type of the associated robot
-	*/
-	std::string getRobotType();
+        /*!
+            Return associated robot
+        */
+        RobotPtr getRobot();
 
-	void getActors(std::vector<EndEffectorActorPtr> &actors);
-	void getStatics(std::vector<RobotNodePtr> &statics);
+        CollisionCheckerPtr getCollisionChecker();
 
-	/*!
-		Closes each actor until a joint limit is hit or a collision occurred.
-		This method is intended for gripper or hand-like end-effectors.
-	*/
-	ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
-	ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02);
+        /*!
+            Return the type of the associated robot
+        */
+        std::string getRobotType();
 
-	/*!
-		Opens each actor until a joint limit is hit or a collision occurred.
-		This method is intended for hand-like end-effectors.
-		Note that the same effect can be realized by calling closeActors with a negative step size
-	*/
-	void openActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
+        void getActors(std::vector<EndEffectorActorPtr>& actors);
+        void getStatics(std::vector<RobotNodePtr>& statics);
 
-	/*!
-		Build a SceneObjectSet that covers all RobotNodes of this EndEffector.
-		\note The set can be used for collision detection, e.g. to check if the eef is in collision with an obstacle.
-	*/
-	SceneObjectSetPtr createSceneObjectSet(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
-	
-	/*!
-		Construct a robot that consists only of this eef. 
-		All corresponding robot nodes with visualization and collision models are cloned.
-		The resulting robot will have one end effector defined which is identical to this object.
-	*/
-	RobotPtr createEefRobot( const std::string &newRobotType, const std::string &newRobotName, CollisionCheckerPtr collisionChecker=CollisionCheckerPtr());
+        /*!
+            Closes each actor until a joint limit is hit or a collision occurred.
+            This method is intended for gripper or hand-like end-effectors.
+        */
+        ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
+        ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02);
 
-	/*!
-		Register a preshape to this EEF. An exception is thrown if preshape covers joints that are not part of this eef.
-		If there is already a preshape with name preshape->getName(), it is replaced.
-	*/
-	void registerPreshape(RobotConfigPtr preshape);
+        /*!
+            Opens each actor until a joint limit is hit or a collision occurred.
+            This method is intended for hand-like end-effectors.
+            Note that the same effect can be realized by calling closeActors with a negative step size
+        */
+        void openActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
 
-	RobotConfigPtr getPreshape(const std::string &name);
+        /*!
+            Build a SceneObjectSet that covers all RobotNodes of this EndEffector.
+            \note The set can be used for collision detection, e.g. to check if the eef is in collision with an obstacle.
+        */
+        SceneObjectSetPtr createSceneObjectSet(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
-	bool hasPreshape(const std::string &name);
+        /*!
+            Construct a robot that consists only of this eef.
+            All corresponding robot nodes with visualization and collision models are cloned.
+            The resulting robot will have one end effector defined which is identical to this object.
+        */
+        RobotPtr createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr());
 
-	/*!
-		Set joints of this eef to preshape with given name.
-		\param name The name of the registered preshape.
-		\return false if preshape was not registered, otherwise true
-	*/
-	bool setPreshape(const std::string &name);
+        /*!
+            Register a preshape to this EEF. An exception is thrown if preshape covers joints that are not part of this eef.
+            If there is already a preshape with name preshape->getName(), it is replaced.
+        */
+        void registerPreshape(RobotConfigPtr preshape);
 
-	/*!
-		Returns vector of all registered preshape names.
-	*/
-	std::vector<std::string> getPreshapes();
+        RobotConfigPtr getPreshape(const std::string& name);
 
-	/*!
-		Check, if node is part of this eef.
-	*/
-	bool hasNode(RobotNodePtr node);
+        bool hasPreshape(const std::string& name);
 
-	void print();
+        /*!
+            Set joints of this eef to preshape with given name.
+            \param name The name of the registered preshape.
+            \return false if preshape was not registered, otherwise true
+        */
+        bool setPreshape(const std::string& name);
 
-	/*!
-		Return current configuration as robot config.
-	*/
-	RobotConfigPtr getConfiguration();
+        /*!
+            Returns vector of all registered preshape names.
+        */
+        std::vector<std::string> getPreshapes();
 
-	//! Return all associated robot nodes
-	std::vector< RobotNodePtr > getAllNodes();
+        /*!
+            Check, if node is part of this eef.
+        */
+        bool hasNode(RobotNodePtr node);
 
-	//! Returns true, if nodes (only name strings are checked)  are sufficient for building this eef
-	bool nodesSufficient(std::vector<RobotNodePtr> nodes) const;
+        void print();
 
-	/*!
-		returns an approximation about the length of this eef.
-	*/
-	float getApproximatedLength();
+        /*!
+            Return current configuration as robot config.
+        */
+        RobotConfigPtr getConfiguration();
 
-    /*!
-        Creates an XML string of this EEF.
-    */
-    virtual std::string toXML(int ident = 1);
+        //! Return all associated robot nodes
+        std::vector< RobotNodePtr > getAllNodes();
 
-private:
-	std::string name;
-	std::vector<EndEffectorActorPtr> actors;
-	std::vector<RobotNodePtr> statics;
-	std::map< std::string, RobotConfigPtr > preshapes;
-	RobotNodePtr baseNode;
-	RobotNodePtr tcpNode;
-	RobotNodePtr gcpNode;
-};
+        //! Returns true, if nodes (only name strings are checked)  are sufficient for building this eef
+        bool nodesSufficient(std::vector<RobotNodePtr> nodes) const;
+
+        /*!
+            returns an approximation about the length of this eef.
+        */
+        float getApproximatedLength();
+
+        /*!
+            Creates an XML string of this EEF.
+        */
+        virtual std::string toXML(int ident = 1);
+
+    private:
+        std::string name;
+        std::vector<EndEffectorActorPtr> actors;
+        std::vector<RobotNodePtr> statics;
+        std::map< std::string, RobotConfigPtr > preshapes;
+        RobotNodePtr baseNode;
+        RobotNodePtr tcpNode;
+        RobotNodePtr gcpNode;
+    };
 
 } // namespace VirtualRobot
 

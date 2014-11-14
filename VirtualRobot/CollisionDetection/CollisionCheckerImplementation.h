@@ -32,27 +32,38 @@
 #include <Eigen/Geometry>
 
 
-namespace VirtualRobot {
-class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerImplementation
+namespace VirtualRobot
 {
-public:
-	friend class CollisionChecker;
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerImplementation
+    {
+    public:
+        friend class CollisionChecker;
 
-	CollisionCheckerImplementation(){automaticSizeCheck = true; debugOutput=false;}
-	virtual ~CollisionCheckerImplementation(){}
+        CollisionCheckerImplementation()
+        {
+            automaticSizeCheck = true;
+            debugOutput = false;
+        }
+        virtual ~CollisionCheckerImplementation() {}
 
-    virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f &P1, Eigen::Vector3f &P2, int* trID1 = NULL, int* trID2 = NULL) = 0;
-	virtual bool checkCollision (CollisionModelPtr model1, CollisionModelPtr model2) = 0;//, Eigen::Vector3f *storeContact = NULL) = 0;
+        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL) = 0;
+        virtual bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) = 0; //, Eigen::Vector3f *storeContact = NULL) = 0;
 
-	virtual void setAutomaticSizeCheck(bool checkSizeOnColModelCreation){automaticSizeCheck = checkSizeOnColModelCreation;}
+        virtual void setAutomaticSizeCheck(bool checkSizeOnColModelCreation)
+        {
+            automaticSizeCheck = checkSizeOnColModelCreation;
+        }
 
-	virtual void enableDebugOutput(bool e){debugOutput = e;}
+        virtual void enableDebugOutput(bool e)
+        {
+            debugOutput = e;
+        }
 
-	bool debugOutput;
+        bool debugOutput;
 
-protected:
-	bool automaticSizeCheck;
-};
+    protected:
+        bool automaticSizeCheck;
+    };
 
 } // namespace
 

@@ -38,92 +38,107 @@
 
 namespace VirtualRobot
 {
-class WorkspaceRepresentation;
-/*!
-	Stores a 6-dimensional array for the vertex data of a workspace representation.
-	Internally unsigned char data types are used (0...255)
-*/
-
-class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public boost::enable_shared_from_this<WorkspaceData>
-{
-public:
-
-	//! Return the amount of data in bytes
-    virtual unsigned int getSizeTr() const = 0;
-    virtual unsigned int getSizeRot() const = 0;
-
-    virtual void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) = 0;
-
-    virtual void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
-                         unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value) = 0;
-
-    virtual void setDatum(unsigned int x[6], unsigned char value) = 0;
-
-    virtual void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) = 0;
-
-    virtual void increaseDatum(float x[], const WorkspaceRepresentation *workspace) = 0;
-
+    class WorkspaceRepresentation;
     /*!
-    virtual void increaseDatum(	unsigned int x0, unsigned int x1, unsigned int x2,
-                                unsigned int x3, unsigned int x4, unsigned int x5) = 0;
-
-    virtual void increaseDatum(	unsigned int x[6] ) = 0;
+        Stores a 6-dimensional array for the vertex data of a workspace representation.
+        Internally unsigned char data types are used (0...255)
     */
-	/*!
-		Set rotation data for given x,y,z position.
-	*/
-    virtual void setDataRot(unsigned char *data, unsigned int x, unsigned int y, unsigned int z) = 0;
-	/*!
-		Get rotation data for given x,y,z position.
-	*/
-    virtual const unsigned char *getDataRot(unsigned int x, unsigned int y, unsigned int z) = 0;
 
-    virtual bool hasEntry(unsigned int x, unsigned int y, unsigned int z) = 0;
+    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public boost::enable_shared_from_this<WorkspaceData>
+    {
+    public:
 
-    virtual unsigned char get(float x[], const WorkspaceRepresentation *workspace) = 0;
+        //! Return the amount of data in bytes
+        virtual unsigned int getSizeTr() const = 0;
+        virtual unsigned int getSizeRot() const = 0;
 
-    //! Simulates a multi-dimensional array access
-    virtual unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
-                             unsigned int x3, unsigned int x4, unsigned int x5) = 0;
+        virtual void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) = 0;
 
-    //! Simulates a multi-dimensional array access
-    virtual unsigned char get( unsigned int x[6] ) = 0;
+        virtual void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
+                              unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value) = 0;
 
-    // clear all entrys
-    virtual void clear() = 0;
+        virtual void setDatum(unsigned int x[6], unsigned char value) = 0;
 
-    virtual void binarize() = 0;
+        virtual void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) = 0;
 
-    virtual void bisectData() = 0;
+        virtual void increaseDatum(float x[], const WorkspaceRepresentation* workspace) = 0;
 
-    virtual unsigned int getSize(int dim) = 0;
+        /*!
+        virtual void increaseDatum( unsigned int x0, unsigned int x1, unsigned int x2,
+                                    unsigned int x3, unsigned int x4, unsigned int x5) = 0;
 
-    virtual unsigned char** getRawData() = 0;
+        virtual void increaseDatum( unsigned int x[6] ) = 0;
+        */
+        /*!
+            Set rotation data for given x,y,z position.
+        */
+        virtual void setDataRot(unsigned char* data, unsigned int x, unsigned int y, unsigned int z) = 0;
+        /*!
+            Get rotation data for given x,y,z position.
+        */
+        virtual const unsigned char* getDataRot(unsigned int x, unsigned int y, unsigned int z) = 0;
 
-    virtual WorkspaceData* clone() = 0;
+        virtual bool hasEntry(unsigned int x, unsigned int y, unsigned int z) = 0;
 
-    virtual bool save(std::ofstream &file) = 0;
+        virtual unsigned char get(float x[], const WorkspaceRepresentation* workspace) = 0;
 
-    virtual void setVoxelFilledCount(int c){voxelFilledCount = c;}
+        //! Simulates a multi-dimensional array access
+        virtual unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
+                                  unsigned int x3, unsigned int x4, unsigned int x5) = 0;
 
-    virtual unsigned char getMaxEntry() {return maxEntry;}
+        //! Simulates a multi-dimensional array access
+        virtual unsigned char get(unsigned int x[6]) = 0;
 
-    virtual void setMaxEntry(unsigned char m){maxEntry = m;}
+        // clear all entrys
+        virtual void clear() = 0;
 
-    virtual unsigned int getVoxelFilledCount() const {return voxelFilledCount;}
+        virtual void binarize() = 0;
 
-	//! Min valid value is 1 by default. In cases some values are needed to indicate special flags (e.g. stability) the minimum valid number can be set here
-    virtual void setMinValidValue(unsigned char v) {minValidValue = v;}
+        virtual void bisectData() = 0;
 
-protected:
+        virtual unsigned int getSize(int dim) = 0;
 
-    unsigned char minValidValue;
+        virtual unsigned char** getRawData() = 0;
 
-    unsigned char maxEntry;
-    unsigned int voxelFilledCount;
-    bool adjustOnOverflow;
+        virtual WorkspaceData* clone() = 0;
 
-};
+        virtual bool save(std::ofstream& file) = 0;
+
+        virtual void setVoxelFilledCount(int c)
+        {
+            voxelFilledCount = c;
+        }
+
+        virtual unsigned char getMaxEntry()
+        {
+            return maxEntry;
+        }
+
+        virtual void setMaxEntry(unsigned char m)
+        {
+            maxEntry = m;
+        }
+
+        virtual unsigned int getVoxelFilledCount() const
+        {
+            return voxelFilledCount;
+        }
+
+        //! Min valid value is 1 by default. In cases some values are needed to indicate special flags (e.g. stability) the minimum valid number can be set here
+        virtual void setMinValidValue(unsigned char v)
+        {
+            minValidValue = v;
+        }
+
+    protected:
+
+        unsigned char minValidValue;
+
+        unsigned char maxEntry;
+        unsigned int voxelFilledCount;
+        bool adjustOnOverflow;
+
+    };
 
 } // namespace VirtualRobot
 

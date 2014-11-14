@@ -34,55 +34,55 @@
 
 namespace GraspStudio
 {
-/*!
-	\brief An interface class for grasp quality algorithms that offer a force closure test.
+    /*!
+        \brief An interface class for grasp quality algorithms that offer a force closure test.
 
-	@see GraspQualityMeasureWrenchSpace
-	@see VirtualRobot::BasicGraspQualityMeasure
-*/
-class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasure : public VirtualRobot::BasicGraspQualityMeasure
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        @see GraspQualityMeasureWrenchSpace
+        @see VirtualRobot::BasicGraspQualityMeasure
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasure : public VirtualRobot::BasicGraspQualityMeasure
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
-	
-	// destructor
-	virtual ~GraspQualityMeasure();
+        GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+
+        // destructor
+        virtual ~GraspQualityMeasure();
 
 
-	/*
-		Checks if grasp is force closure
-	*/
-	virtual bool isGraspForceClosure() = 0;
+        /*
+            Checks if grasp is force closure
+        */
+        virtual bool isGraspForceClosure() = 0;
 
-	
-	//! This method is used to compute a reference value that describes a perfect grasp
-	virtual bool calculateObjectProperties() = 0;
 
-	virtual VirtualRobot::MathTools::ContactPoint getSampledObjectPointsCenter();
+        //! This method is used to compute a reference value that describes a perfect grasp
+        virtual bool calculateObjectProperties() = 0;
 
-	virtual std::string getName();
+        virtual VirtualRobot::MathTools::ContactPoint getSampledObjectPointsCenter();
 
-	virtual bool isValid();
+        virtual std::string getName();
 
-	virtual ContactConeGeneratorPtr getConeGenerator();
-protected:
-	
-	//Methods
-	bool sampleObjectPoints(int nMaxFaces = 400);
+        virtual bool isValid();
 
-	//Friction cone relevant parameters
-	float unitForce;
-	float frictionCoeff;
-	int frictionConeSamples;
-	ContactConeGeneratorPtr coneGenerator;
+        virtual ContactConeGeneratorPtr getConeGenerator();
+    protected:
 
-	//For Object and Grasp Wrench Space Calculation
-	std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPoints;  // in MM
-	std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPointsM; // converted to M
+        //Methods
+        bool sampleObjectPoints(int nMaxFaces = 400);
 
-};
+        //Friction cone relevant parameters
+        float unitForce;
+        float frictionCoeff;
+        int frictionConeSamples;
+        ContactConeGeneratorPtr coneGenerator;
+
+        //For Object and Grasp Wrench Space Calculation
+        std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPoints;  // in MM
+        std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPointsM; // converted to M
+
+    };
 
 } // namespace
 

@@ -32,30 +32,30 @@
 
 namespace VirtualRobot
 {
-class Sensor;
+    class Sensor;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT ContactSensorFactory  : public SensorFactory
-{
-public:
-	ContactSensorFactory();
-	virtual ~ContactSensorFactory();
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ContactSensorFactory  : public SensorFactory
+    {
+    public:
+        ContactSensorFactory();
+        virtual ~ContactSensorFactory();
 
-	//! Standard init method
-	virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
-			const Eigen::Matrix4f &rnTrafo = Eigen::Matrix4f::Identity() ) const;
+        //! Standard init method
+        virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
+                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const;
 
-	/*!
-	  Create sensor from XML tag. 
-	  */
-	virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string() ) const;
+        /*!
+          Create sensor from XML tag.
+          */
+        virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const;
 
-// AbstractFactoryMethod
-public:
-	static std::string getName();
-	static boost::shared_ptr<SensorFactory> createInstance(void*);
-private:
-	static SubClassRegistry registry;
-};
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static boost::shared_ptr<SensorFactory> createInstance(void*);
+    private:
+        static SubClassRegistry registry;
+    };
 
 } // namespace VirtualRobot
 

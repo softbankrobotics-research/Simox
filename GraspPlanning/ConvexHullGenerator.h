@@ -26,43 +26,43 @@
 #include "GraspStudio.h"
 #include "VirtualRobot/MathTools.h"
 #include <vector>
-#include <boost/thread.hpp> 
+#include <boost/thread.hpp>
 
 namespace GraspStudio
 {
-/*!
-* This class can be used as an interface for qhull. 
-* A convex hull can be generated out of point arrays.
-* This class is thread safe, which means that multiple threads 
-* are allowed to use the static methods of ConvexHullGenerator.
-*/
-class GRASPSTUDIO_IMPORT_EXPORT ConvexHullGenerator
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	/*! 
-		Creates a convex hull of the points stored in pointsInput.
-	*/
-	static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(std::vector<Eigen::Vector3f> &pointsInput, bool lockMutex = true);
-	static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(VirtualRobot::TriMeshModelPtr pointsInput, bool lockMutex = true);
-	static VirtualRobot::MathTools::ConvexHull6DPtr CreateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint> &pointsInput, bool lockMutex = true);
+    /*!
+    * This class can be used as an interface for qhull.
+    * A convex hull can be generated out of point arrays.
+    * This class is thread safe, which means that multiple threads
+    * are allowed to use the static methods of ConvexHullGenerator.
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT ConvexHullGenerator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        /*!
+            Creates a convex hull of the points stored in pointsInput.
+        */
+        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(std::vector<Eigen::Vector3f>& pointsInput, bool lockMutex = true);
+        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(VirtualRobot::TriMeshModelPtr pointsInput, bool lockMutex = true);
+        static VirtualRobot::MathTools::ConvexHull6DPtr CreateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput, bool lockMutex = true);
 
-	static void PrintStatistics(VirtualRobot::MathTools::ConvexHull6DPtr convHull);
+        static void PrintStatistics(VirtualRobot::MathTools::ConvexHull6DPtr convHull);
 
-	/*!
-		Convert points to qhull format
-	*/
-	static bool ConvertPoints(std::vector<Eigen::Vector3f> &points, double *storePointsQHull, bool lockMutex = true);
-	static bool ConvertPoints(std::vector<VirtualRobot::MathTools::ContactPoint> &points, double *storePointsQHull, bool lockMutex = true);
+        /*!
+            Convert points to qhull format
+        */
+        static bool ConvertPoints(std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex = true);
+        static bool ConvertPoints(std::vector<VirtualRobot::MathTools::ContactPoint>& points, double* storePointsQHull, bool lockMutex = true);
 
-	static void PrintVertices(std::vector<VirtualRobot::MathTools::ContactPoint> &pointsInput);
+        static void PrintVertices(std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput);
 
-	static bool checkVerticeOrientation (const Eigen::Vector3f &v1, const Eigen::Vector3f &v2, const Eigen::Vector3f &v3, const Eigen::Vector3f &n);
-		
-protected:
-	//! QHull is not thread safe, so protect qHull calls with a mutex
-	static boost::mutex qhull_mutex;
-};
+        static bool checkVerticeOrientation(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3, const Eigen::Vector3f& n);
+
+    protected:
+        //! QHull is not thread safe, so protect qHull calls with a mutex
+        static boost::mutex qhull_mutex;
+    };
 
 }
 

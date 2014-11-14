@@ -28,117 +28,135 @@
 #include "../CSpace/CSpaceNode.h"
 #include "../CSpace/CSpaceTree.h"
 
-namespace Saba 
+namespace Saba
 {
-/*!
- *
- * \brief An abstract base class of a motion planner. 
- *
- */
-class SABA_IMPORT_EXPORT MotionPlanner
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+     *
+     * \brief An abstract base class of a motion planner.
+     *
+     */
+    class SABA_IMPORT_EXPORT MotionPlanner
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*! 
-		constructor
-	*/
-	MotionPlanner(CSpacePtr cspace);
+        /*!
+            constructor
+        */
+        MotionPlanner(CSpacePtr cspace);
 
-	//! destructor
-	virtual ~MotionPlanner();
-	
-	/*! 
-		do the planning (blocking method)
-		\return true if solution was found, otherwise false
-	*/
-	virtual bool plan(bool bQuiet = false) = 0;
+        //! destructor
+        virtual ~MotionPlanner();
 
-	/*! 
-		Returns the solution path.
-	*/
-	CSpacePathPtr getSolution();
-	
-	/*! 
-		Set maximal cycles. Initially set to 50000.
-	*/
-	void setMaxCycles(unsigned int mc);
-	
-	//! return start configuration
-	Eigen::VectorXf getStartConfig(){return startConfig;}
-	
-	//! return goal configuration
-	Eigen::VectorXf getGoalConfig(){return goalConfig;}
+        /*!
+            do the planning (blocking method)
+            \return true if solution was found, otherwise false
+        */
+        virtual bool plan(bool bQuiet = false) = 0;
 
-	//! reset the planner
-	virtual void reset();
-	
-	//! set start configuration
-	virtual bool setStart(const Eigen::VectorXf &c);
-	
-	//! set goal configuration
-	virtual bool setGoal(const Eigen::VectorXf &c);
-	
-	//! check that planner is initialized
-	//virtual bool isInitialized();
-	
-	/*!
-		Return number of cycles that were needed for motion planning 
-	*/
-	unsigned int getNrOfCycles(){return cycles;}
+        /*!
+            Returns the solution path.
+        */
+        CSpacePathPtr getSolution();
 
-	/*!
-		Print setup of planner.
-		\param printOnlyParams If set the decorating start and end is skipped (can be used to print derived classes).
-	*/
-	virtual void printConfig(bool printOnlyParams = false);
+        /*!
+            Set maximal cycles. Initially set to 50000.
+        */
+        void setMaxCycles(unsigned int mc);
 
-	//! The CSpace
-	CSpacePtr getCSpace(){return cspace;}
+        //! return start configuration
+        Eigen::VectorXf getStartConfig()
+        {
+            return startConfig;
+        }
 
-	/*!
-		Sets stop flag, so that this planner can be notified to abort the search.
-		Only useful for threaded planners.
-	*/
-	virtual void stopExecution(){stopSearch = true;}
+        //! return goal configuration
+        Eigen::VectorXf getGoalConfig()
+        {
+            return goalConfig;
+        }
 
-	//! Give the planner a name
-	void setName(std::string sName);
+        //! reset the planner
+        virtual void reset();
 
-	//! The name of the planner.
-	std::string getName();
+        //! set start configuration
+        virtual bool setStart(const Eigen::VectorXf& c);
 
-	/*!
-		Returns the time needed for planning (in milliseconds).
-	*/
-	float getPlanningTimeMS(){return planningTime;}
+        //! set goal configuration
+        virtual bool setGoal(const Eigen::VectorXf& c);
 
-	//! returns true, when start and goal config have been set
-	virtual bool isInitialized();
+        //! check that planner is initialized
+        //virtual bool isInitialized();
 
-protected:
-	
-	//! create the solution
-	virtual bool createSolution(bool bQuiet = false) = 0;
-	CSpacePtr cspace;					//!< the cspace on which are operating
-	CSpacePathPtr solution;				//!< the solution
+        /*!
+            Return number of cycles that were needed for motion planning
+        */
+        unsigned int getNrOfCycles()
+        {
+            return cycles;
+        }
 
-	bool stopSearch;					//!< indicates that the search should be interrupted
-	
-	unsigned int dimension;				//!< dimension of c-space
-	
-	Eigen::VectorXf startConfig;		//!< start config
-	bool startValid;
-	Eigen::VectorXf goalConfig;			//!< goal config
-	bool goalValid;
-	
-	unsigned int maxCycles;				//!< maximum cycles for searching
-	unsigned int cycles;				//!< current cycles done in the run method
+        /*!
+            Print setup of planner.
+            \param printOnlyParams If set the decorating start and end is skipped (can be used to print derived classes).
+        */
+        virtual void printConfig(bool printOnlyParams = false);
 
-	std::string name;					//!< Name of this planner (standard: "Motion Planner")
+        //! The CSpace
+        CSpacePtr getCSpace()
+        {
+            return cspace;
+        }
 
-	float planningTime;					//! Planning time in milliseconds
-};
+        /*!
+            Sets stop flag, so that this planner can be notified to abort the search.
+            Only useful for threaded planners.
+        */
+        virtual void stopExecution()
+        {
+            stopSearch = true;
+        }
+
+        //! Give the planner a name
+        void setName(std::string sName);
+
+        //! The name of the planner.
+        std::string getName();
+
+        /*!
+            Returns the time needed for planning (in milliseconds).
+        */
+        float getPlanningTimeMS()
+        {
+            return planningTime;
+        }
+
+        //! returns true, when start and goal config have been set
+        virtual bool isInitialized();
+
+    protected:
+
+        //! create the solution
+        virtual bool createSolution(bool bQuiet = false) = 0;
+        CSpacePtr cspace;                   //!< the cspace on which are operating
+        CSpacePathPtr solution;             //!< the solution
+
+        bool stopSearch;                    //!< indicates that the search should be interrupted
+
+        unsigned int dimension;             //!< dimension of c-space
+
+        Eigen::VectorXf startConfig;        //!< start config
+        bool startValid;
+        Eigen::VectorXf goalConfig;         //!< goal config
+        bool goalValid;
+
+        unsigned int maxCycles;             //!< maximum cycles for searching
+        unsigned int cycles;                //!< current cycles done in the run method
+
+        std::string name;                   //!< Name of this planner (standard: "Motion Planner")
+
+        float planningTime;                 //! Planning time in milliseconds
+    };
 }
 
 #endif // _Saba_MotionPlanner_

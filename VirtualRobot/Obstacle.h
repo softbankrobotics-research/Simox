@@ -31,67 +31,70 @@
 #include "CollisionDetection/CollisionModel.h"
 #include "SceneObject.h"
 
-namespace VirtualRobot 
+namespace VirtualRobot
 {
-/*!
-	An obstacle is an object that owns a visualization and a collision model.
-	It can be moved around and used for collision detection.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT Obstacle : public SceneObject
-{
-public:
+    /*!
+        An obstacle is an object that owns a visualization and a collision model.
+        It can be moved around and used for collision detection.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Obstacle : public SceneObject
+    {
+    public:
 
-	/*!
-	*/
-	Obstacle(const std::string &name, VisualizationNodePtr visualization = VisualizationNodePtr(), CollisionModelPtr collisionModel = CollisionModelPtr(), const SceneObject::Physics &p = SceneObject::Physics(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        /*!
+        */
+        Obstacle(const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(), CollisionModelPtr collisionModel = CollisionModelPtr(), const SceneObject::Physics& p = SceneObject::Physics(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
-	/*!
-	*/
-	virtual ~Obstacle();
+        /*!
+        */
+        virtual ~Obstacle();
 
-	virtual void print(bool printDecoration = true);
+        virtual void print(bool printDecoration = true);
 
-	/*!
-		Clones this object. If no col checker is given, the one of the original object is used.
-	*/
-	ObstaclePtr clone( const std::string &name, CollisionCheckerPtr colChecker = CollisionCheckerPtr() )  const {return ObstaclePtr(_clone(name,colChecker));}
+        /*!
+            Clones this object. If no col checker is given, the one of the original object is used.
+        */
+        ObstaclePtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr())  const
+        {
+            return ObstaclePtr(_clone(name, colChecker));
+        }
 
-	int getID();
+        int getID();
 
-	/*!
-		Create a standard obstacle. 
-		\param width The width of the box.
-		\param height The height of the box.
-		\param depth The depth of the box.
-		\param color Specify the color.
-		\param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
-		\param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
-	*/
-	static ObstaclePtr createBox(float width, float height, float depth, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
-	/*!
-		Create a standard obstacle. 
-		\param radius The radius of the sphere.
-		\param color Specify the color.
-		\param visualizationType Here the typo of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
-		\param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
-	*/
-	static ObstaclePtr createSphere(float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
-	virtual std::string toXML(const std::string &basePath, int tabs=0);
-	
-	void setFilename(const std::string &filename);
-	std::string getFilename();
-	
-protected:
+        /*!
+            Create a standard obstacle.
+            \param width The width of the box.
+            \param height The height of the box.
+            \param depth The depth of the box.
+            \param color Specify the color.
+            \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
+            \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
+        */
+        static ObstaclePtr createBox(float width, float height, float depth, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        /*!
+            Create a standard obstacle.
+            \param radius The radius of the sphere.
+            \param color Specify the color.
+            \param visualizationType Here the typo of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
+            \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
+        */
+        static ObstaclePtr createSphere(float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        virtual std::string toXML(const std::string& basePath, int tabs = 0);
 
-	virtual Obstacle* _clone( const std::string &name, CollisionCheckerPtr colChecker = CollisionCheckerPtr() ) const;
+        void setFilename(const std::string& filename);
+        std::string getFilename();
 
-	std::string filename;
-	
-	// a counter for internal ids
-	static int idCounter;
-	// my id
-	int id;
-};
+    protected:
+
+        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+
+        std::string filename;
+
+        // a counter for internal ids
+        static int idCounter;
+        // my id
+        int id;
+    };
 
 } // namespace
 

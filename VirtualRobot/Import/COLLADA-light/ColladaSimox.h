@@ -21,38 +21,43 @@
 
 
 
-namespace Collada {
+namespace Collada
+{
 
 
 
-struct ColladaSimoxRobotNode : InventorRobotNode {
-    ColladaSimoxRobotNode(VirtualRobot::RobotPtr simoxRobot, float scaleFactor) ;
+    struct ColladaSimoxRobotNode : InventorRobotNode
+    {
+        ColladaSimoxRobotNode(VirtualRobot::RobotPtr simoxRobot, float scaleFactor) ;
 
-    ~ColladaSimoxRobotNode();
-    virtual void initialize();
-    VirtualRobot::RobotPtr simoxRobot;
-    VirtualRobot::RobotNodePtr simoxRobotNode;
-    float scaleFactor;
-};
+        ~ColladaSimoxRobotNode();
+        virtual void initialize();
+        VirtualRobot::RobotPtr simoxRobot;
+        VirtualRobot::RobotNodePtr simoxRobotNode;
+        float scaleFactor;
+    };
 
-class ColladaSimoxRobot : public InventorRobot{
-private:
-    VirtualRobot::RobotPtr simoxRobot;
-    float scaleFactor;
-public:
-    ColladaSimoxRobot(float scaleFactor) ;
-    virtual ColladaRobotNodePtr robotNodeFactory()        {
-        return ColladaRobotNodePtr(new ColladaSimoxRobotNode(simoxRobot,scaleFactor));
-    }
+    class ColladaSimoxRobot : public InventorRobot
+    {
+    private:
+        VirtualRobot::RobotPtr simoxRobot;
+        float scaleFactor;
+    public:
+        ColladaSimoxRobot(float scaleFactor) ;
+        virtual ColladaRobotNodePtr robotNodeFactory()
+        {
+            return ColladaRobotNodePtr(new ColladaSimoxRobotNode(simoxRobot, scaleFactor));
+        }
 
-    void initialize();
-    VirtualRobot::RobotPtr getSimoxRobot(){
-        return simoxRobot;
-    }
+        void initialize();
+        VirtualRobot::RobotPtr getSimoxRobot()
+        {
+            return simoxRobot;
+        }
 
-    ~ColladaSimoxRobot();
+        ~ColladaSimoxRobot();
 
-};
+    };
 
 
 } //namespace

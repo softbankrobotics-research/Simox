@@ -31,69 +31,69 @@
 
 namespace VirtualRobot
 {
-/*!
-	\brief An interface class for grasp quality algorithms.
-	A basic quality score, relying on the number of contacts, is served by this implementation
+    /*!
+        \brief An interface class for grasp quality algorithms.
+        A basic quality score, relying on the number of contacts, is served by this implementation
 
-	@see GraspStudio::GraspQualityMeasureWrenchSpace
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT BasicGraspQualityMeasure
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        @see GraspStudio::GraspQualityMeasureWrenchSpace
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT BasicGraspQualityMeasure
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	BasicGraspQualityMeasure(VirtualRobot::SceneObjectPtr object);
-	
-	// destructor
-	virtual ~BasicGraspQualityMeasure();
+        BasicGraspQualityMeasure(VirtualRobot::SceneObjectPtr object);
 
-	/*! 
-		setup contact information
-		the contact points are normalized by subtracting the COM
-		the contact normals are normalize to unit length
-	*/
-	virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector &contactPoints);
-	virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint> &contactPoints6d);
+        // destructor
+        virtual ~BasicGraspQualityMeasure();
 
-	/*! 
-		Returns calculated grasp quality
-	*/
-	virtual float getGraspQuality();
+        /*!
+            setup contact information
+            the contact points are normalized by subtracting the COM
+            the contact normals are normalize to unit length
+        */
+        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints);
+        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints6d);
+
+        /*!
+            Returns calculated grasp quality
+        */
+        virtual float getGraspQuality();
 
 
-	//! Compute the grasp quality for the given contact points
-	virtual bool calculateGraspQuality();
+        //! Compute the grasp quality for the given contact points
+        virtual bool calculateGraspQuality();
 
-	virtual Eigen::Vector3f getCoM();
+        virtual Eigen::Vector3f getCoM();
 
-	virtual VirtualRobot::MathTools::ContactPoint getContactPointsCenter();
+        virtual VirtualRobot::MathTools::ContactPoint getContactPointsCenter();
 
-	virtual void setVerbose(bool enable);
+        virtual void setVerbose(bool enable);
 
-	//! Returns description of this object
-	virtual std::string getName();
+        //! Returns description of this object
+        virtual std::string getName();
 
-	VirtualRobot::SceneObjectPtr getObject();
+        VirtualRobot::SceneObjectPtr getObject();
 
-	virtual bool isValid();
+        virtual bool isValid();
 
-protected:
-	
+    protected:
 
-	//Object relevant parameters
-	Eigen::Vector3f centerOfModel;
-	float objectLength;
-	float graspQuality;
 
-	int maxContacts;
+        //Object relevant parameters
+        Eigen::Vector3f centerOfModel;
+        float objectLength;
+        float graspQuality;
 
-	VirtualRobot::SceneObjectPtr object;
+        int maxContacts;
 
-	// object properties
-	std::vector<VirtualRobot::MathTools::ContactPoint> contactPoints;  // in MM
-	std::vector<VirtualRobot::MathTools::ContactPoint> contactPointsM; // converted to M
-	bool verbose;
-};
+        VirtualRobot::SceneObjectPtr object;
+
+        // object properties
+        std::vector<VirtualRobot::MathTools::ContactPoint> contactPoints;  // in MM
+        std::vector<VirtualRobot::MathTools::ContactPoint> contactPointsM; // converted to M
+        bool verbose;
+    };
 
 } // namespace
 

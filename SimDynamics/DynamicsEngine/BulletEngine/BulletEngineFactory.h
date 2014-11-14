@@ -29,31 +29,31 @@
 namespace SimDynamics
 {
 
-/*!
-	A bullet based implementation.
-	This factory creates a BulletEngine. 
-	No need to use this class directly, use DynamicsWorld::Init() to automatically create the correct factory and engine.
-*/
-class SIMDYNAMICS_IMPORT_EXPORT BulletEngineFactory : public DynamicsEngineFactory
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+        A bullet based implementation.
+        This factory creates a BulletEngine.
+        No need to use this class directly, use DynamicsWorld::Init() to automatically create the correct factory and engine.
+    */
+    class SIMDYNAMICS_IMPORT_EXPORT BulletEngineFactory : public DynamicsEngineFactory
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	BulletEngineFactory();
-	virtual ~BulletEngineFactory();
+        BulletEngineFactory();
+        virtual ~BulletEngineFactory();
 
-	virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
+        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
 
-    virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o);
-	virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot);
+        virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o);
+        virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot);
 
-// AbstractFactoryMethod
-public:
-	static std::string getName();
-	static boost::shared_ptr<DynamicsEngineFactory> createInstance(void*);
-private:
-	static SubClassRegistry registry;
-};
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static boost::shared_ptr<DynamicsEngineFactory> createInstance(void*);
+    private:
+        static SubClassRegistry registry;
+    };
 
 } // namespace VirtualRobot
 

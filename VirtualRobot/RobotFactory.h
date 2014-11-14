@@ -33,60 +33,60 @@
 namespace VirtualRobot
 {
 
-class Robot;
-class RobotNode;
+    class Robot;
+    class RobotNode;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT RobotFactory
-{
-public:
-	/*!
-	Creates an empty robot.
-	*/
-    static RobotPtr createRobot(const std::string &name, const std::string &type = "");
-
-	/*!
-		Initializes Robot and all RobotNodes. 
-		\param robotNodes All nodes of the robot. Must contain rootNode.
-		\param childrenMap Parent-child relations are built according to this data.
-		\param rootNode The root.
-	*/
-	static bool initializeRobot(RobotPtr robot, 
-								std::vector<RobotNodePtr > &robotNodes, 
-								std::map< RobotNodePtr, std::vector<std::string> > childrenMap,
-								RobotNodePtr rootNode);
-
-
-    struct robotNodeDef
+    class VIRTUAL_ROBOT_IMPORT_EXPORT RobotFactory
     {
-        std::string name;
-        std::vector<std::string> children;
-        // used to mark children whose transformation should be inverted
-        std::vector<bool> invertTransformation;
+    public:
+        /*!
+        Creates an empty robot.
+        */
+        static RobotPtr createRobot(const std::string& name, const std::string& type = "");
+
+        /*!
+            Initializes Robot and all RobotNodes.
+            \param robotNodes All nodes of the robot. Must contain rootNode.
+            \param childrenMap Parent-child relations are built according to this data.
+            \param rootNode The root.
+        */
+        static bool initializeRobot(RobotPtr robot,
+                                    std::vector<RobotNodePtr >& robotNodes,
+                                    std::map< RobotNodePtr, std::vector<std::string> > childrenMap,
+                                    RobotNodePtr rootNode);
+
+
+        struct robotNodeDef
+        {
+            std::string name;
+            std::vector<std::string> children;
+            // used to mark children whose transformation should be inverted
+            std::vector<bool> invertTransformation;
+        };
+
+        struct robotStructureDef
+        {
+            std::string rootName;
+            std::vector<robotNodeDef> parentChildMapping;
+        };
+
+        static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
+
+        static RobotPtr cloneChangeStructure(RobotPtr robot, robotStructureDef& newStructure);
+
+        /*! Clone kinematic chain and reverse direction.
+         *
+         * \param startNode Name of the start node of the original kinematic chain.
+         * \param endNode Name of the end node of the original kinematic chain. Will be the new root.
+         */
+        static RobotPtr cloneChangeStructure(RobotPtr robot, const std::string& startNode, const std::string& endNode);
+    protected:
+        // instantiation not allowed
+        RobotFactory();
+        virtual ~RobotFactory();
+
+        //static bool initRobotNode(RobotNodePtr n, RobotNodePtr parent, std::vector< RobotNodePtr > &robotNodes);
     };
-
-    struct robotStructureDef
-    {
-        std::string rootName;
-        std::vector<robotNodeDef> parentChildMapping;
-    };
-
-    static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
-
-    static RobotPtr cloneChangeStructure(RobotPtr robot, robotStructureDef &newStructure);
-
-    /*! Clone kinematic chain and reverse direction.
-     *
-     * \param startNode Name of the start node of the original kinematic chain.
-     * \param endNode Name of the end node of the original kinematic chain. Will be the new root.
-     */
-    static RobotPtr cloneChangeStructure(RobotPtr robot, const std::string &startNode, const std::string &endNode);
-protected:
-	// instantiation not allowed
-	RobotFactory();
-	virtual ~RobotFactory();
-
-	//static bool initRobotNode(RobotNodePtr n, RobotNodePtr parent, std::vector< RobotNodePtr > &robotNodes);
-};
 
 }
 

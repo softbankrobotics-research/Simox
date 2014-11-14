@@ -29,83 +29,83 @@
 
 class GraspEditorWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GraspEditorWindow(std::string &objFile, std::string &robotFile, Qt::WFlags flags = 0);
-	~GraspEditorWindow();
+    GraspEditorWindow(std::string& objFile, std::string& robotFile, Qt::WFlags flags = 0);
+    ~GraspEditorWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
-	void loadObject();	
-	void loadRobot();
+    void resetSceneryAll();
+    void loadObject();
+    void loadRobot();
 
-	void selectRobot();
-	void selectObject();
-	void saveObject();
-	void selectEEF(int n);
-	void selectGrasp(int n);
+    void selectRobot();
+    void selectObject();
+    void saveObject();
+    void selectEEF(int n);
+    void selectGrasp(int n);
 
-	void closeEEF();
-	void openEEF();
+    void closeEEF();
+    void openEEF();
 
-	void addGrasp();
-	void renameGrasp();
+    void addGrasp();
+    void renameGrasp();
 
-	void sliderReleased_ObjectX();
-	void sliderReleased_ObjectY();
-	void sliderReleased_ObjectZ();
-	void sliderReleased_ObjectA();
-	void sliderReleased_ObjectB();
-	void sliderReleased_ObjectG();
+    void sliderReleased_ObjectX();
+    void sliderReleased_ObjectY();
+    void sliderReleased_ObjectZ();
+    void sliderReleased_ObjectA();
+    void sliderReleased_ObjectB();
+    void sliderReleased_ObjectG();
 
-	void buildVisu();
+    void buildVisu();
 
-	void showCoordSystem();
+    void showCoordSystem();
 
 protected:
-	void setupUI();
-	QString formatString(const char *s, float f);
-	
-	void updateEEFBox();
-	void updateGraspBox();
+    void setupUI();
+    QString formatString(const char* s, float f);
 
-	void buildGraspSetVisu();
+    void updateEEFBox();
+    void updateGraspBox();
 
-	void updateEEF(float x[6]);
+    void buildGraspSetVisu();
 
-	static void timerCB(void * data, SoSensor * sensor);
-	void setCurrentGrasp(Eigen::Matrix4f &p);
-	Ui::MainWindowGraspEditor UI;
-	SoQtExaminerViewer *m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotSep;
-	SoSeparator *objectSep;
-	SoSeparator *graspsSep;
-	SoSeparator *eefVisu;
-	SoSeparator *graspSetVisu;
+    void updateEEF(float x[6]);
 
-	VirtualRobot::RobotPtr robot;
-	VirtualRobot::RobotPtr robotEEF;
-	VirtualRobot::ManipulationObjectPtr object;
-	std::vector<VirtualRobot::EndEffectorPtr> eefs;
-	VirtualRobot::EndEffectorPtr currentEEF; // the eef of robot
-	VirtualRobot::EndEffectorPtr robotEEF_EEF; // the eef of robotEEF
+    static void timerCB(void* data, SoSensor* sensor);
+    void setCurrentGrasp(Eigen::Matrix4f& p);
+    Ui::MainWindowGraspEditor UI;
+    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::GraspSetPtr currentGraspSet;
-	VirtualRobot::GraspPtr currentGrasp;
-	
-	std::string robotFile;
-	std::string objectFile;
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* objectSep;
+    SoSeparator* graspsSep;
+    SoSeparator* eefVisu;
+    SoSeparator* graspSetVisu;
+
+    VirtualRobot::RobotPtr robot;
+    VirtualRobot::RobotPtr robotEEF;
+    VirtualRobot::ManipulationObjectPtr object;
+    std::vector<VirtualRobot::EndEffectorPtr> eefs;
+    VirtualRobot::EndEffectorPtr currentEEF; // the eef of robot
+    VirtualRobot::EndEffectorPtr robotEEF_EEF; // the eef of robotEEF
+
+    VirtualRobot::GraspSetPtr currentGraspSet;
+    VirtualRobot::GraspPtr currentGrasp;
+
+    std::string robotFile;
+    std::string objectFile;
 
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;

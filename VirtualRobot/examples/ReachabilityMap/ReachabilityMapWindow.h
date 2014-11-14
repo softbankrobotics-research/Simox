@@ -30,73 +30,73 @@
 
 class ReachabilityMapWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ReachabilityMapWindow(std::string &sRobotFile,std::string &reachFile,std::string &objFile, std::string &eef, Qt::WFlags flags = 0);
-	~ReachabilityMapWindow();
+    ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef, Qt::WFlags flags = 0);
+    ~ReachabilityMapWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
-	void resetSceneryAll();
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
+    void resetSceneryAll();
 
-	void updateVisu();
-	void selectEEF();
-	void selectGrasp();
-	void setObjectRandom();
+    void updateVisu();
+    void selectEEF();
+    void selectGrasp();
+    void setObjectRandom();
 
 protected:
-	void selectEEF(std::string &eef);
-	void selectEEF(int nr);
-	void loadRobot();
-	void updateEEFBox();
-	void buildRobotVisu();
-	void buildObjectVisu();
-	void buildReachVisu();
-	void buildGraspVisu();
+    void selectEEF(std::string& eef);
+    void selectEEF(int nr);
+    void loadRobot();
+    void updateEEFBox();
+    void buildRobotVisu();
+    void buildObjectVisu();
+    void buildReachVisu();
+    void buildGraspVisu();
 
-	bool buildReachMapAll();
-	bool buildReachMap(VirtualRobot::GraspPtr g);
+    bool buildReachMapAll();
+    bool buildReachMap(VirtualRobot::GraspPtr g);
 
-	void setupUI();
-	QString formatString(const char *s, float f);
+    void setupUI();
+    QString formatString(const char* s, float f);
 
-	void loadReachFile(std::string filename);
-	void loadObjectFile(std::string filename);
-	void setupEnvironment();
+    void loadReachFile(std::string filename);
+    void loadObjectFile(std::string filename);
+    void setupEnvironment();
 
-	Ui::MainWindowReachability UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotVisuSep;
-	SoSeparator *reachabilityVisuSep;
-	SoSeparator *allGraspsVisuSep;
-	SoSeparator *graspVisuSep;
-	SoSeparator *objectVisuSep;
+    Ui::MainWindowReachability UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::RobotPtr robot;
-	VirtualRobot::EndEffectorPtr eef;
-	VirtualRobot::GraspSetPtr grasps;
-	VirtualRobot::ManipulationObjectPtr graspObject;
-	VirtualRobot::ManipulationObjectPtr environment;
-	std::string robotFile;
-	std::string reachFile;
-	std::string objectFile;
-	VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-	std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-	std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-	std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;	
+    SoSeparator* sceneSep;
+    SoSeparator* robotVisuSep;
+    SoSeparator* reachabilityVisuSep;
+    SoSeparator* allGraspsVisuSep;
+    SoSeparator* graspVisuSep;
+    SoSeparator* objectVisuSep;
 
-	VirtualRobot::ReachabilityPtr reachSpace;
-	VirtualRobot::WorkspaceGridPtr reachGrid;
-	VirtualRobot::RobotNodePtr currentRobotNode;
+    VirtualRobot::RobotPtr robot;
+    VirtualRobot::EndEffectorPtr eef;
+    VirtualRobot::GraspSetPtr grasps;
+    VirtualRobot::ManipulationObjectPtr graspObject;
+    VirtualRobot::ManipulationObjectPtr environment;
+    std::string robotFile;
+    std::string reachFile;
+    std::string objectFile;
+    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
+    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
+    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
+    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+
+    VirtualRobot::ReachabilityPtr reachSpace;
+    VirtualRobot::WorkspaceGridPtr reachGrid;
+    VirtualRobot::RobotNodePtr currentRobotNode;
 
 };
 

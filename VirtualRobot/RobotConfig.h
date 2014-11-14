@@ -34,104 +34,104 @@
 
 namespace VirtualRobot
 {
-class Robot;
+    class Robot;
 
-/*!
-	A RobotConfig is a set of joint values, associated with a robot.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT RobotConfig
-{
-public:
+    /*!
+        A RobotConfig is a set of joint values, associated with a robot.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT RobotConfig
+    {
+    public:
 
-	struct Configuration
-	{
-		std::string name;	//!< The name of the robot node
-		float value;		//!< The corresponding value
-	};
+        struct Configuration
+        {
+            std::string name;   //!< The name of the robot node
+            float value;        //!< The corresponding value
+        };
 
-	/*!
-		Constructor
-		\param robot The associated robot.
-		\param name A name, which identifies this object.
-	*/
-	RobotConfig(RobotWeakPtr robot, const std::string &name);
-	RobotConfig(RobotWeakPtr robot, const std::string &name, const std::map< RobotNodePtr, float > &configs);
-	RobotConfig(RobotWeakPtr robot, const std::string &name, const std::vector< Configuration > &configs);
-	RobotConfig(RobotWeakPtr robot, const std::string &name, const std::vector< std::string > &robotNodes, const std::vector< float > &values);
-	RobotConfig(RobotWeakPtr robot, const std::string &name, const std::vector< RobotNodePtr > &robotNodes, const std::vector< float > &values);
+        /*!
+            Constructor
+            \param robot The associated robot.
+            \param name A name, which identifies this object.
+        */
+        RobotConfig(RobotWeakPtr robot, const std::string& name);
+        RobotConfig(RobotWeakPtr robot, const std::string& name, const std::map< RobotNodePtr, float >& configs);
+        RobotConfig(RobotWeakPtr robot, const std::string& name, const std::vector< Configuration >& configs);
+        RobotConfig(RobotWeakPtr robot, const std::string& name, const std::vector< std::string >& robotNodes, const std::vector< float >& values);
+        RobotConfig(RobotWeakPtr robot, const std::string& name, const std::vector< RobotNodePtr >& robotNodes, const std::vector< float >& values);
 
-	/*!
-		Creates a copy of this object with the given robot
-		\param newRobot If not given, the current robot is used. otherwise the newRobot is used.
-	 */
-	RobotConfigPtr clone(RobotPtr newRobot = RobotPtr());
+        /*!
+            Creates a copy of this object with the given robot
+            \param newRobot If not given, the current robot is used. otherwise the newRobot is used.
+         */
+        RobotConfigPtr clone(RobotPtr newRobot = RobotPtr());
 
-	/*!
-		Returns name of this RobotConfig.
-	*/
-	std::string getName() const;
+        /*!
+            Returns name of this RobotConfig.
+        */
+        std::string getName() const;
 
-	void print() const;
+        void print() const;
 
-	/*!
-		The robot.
-		\return A shared_ptr instance of the internally stored weak pointer.
-	*/
-	RobotPtr getRobot();
+        /*!
+            The robot.
+            \return A shared_ptr instance of the internally stored weak pointer.
+        */
+        RobotPtr getRobot();
 
-	/*!
-		Appends a configuration to this instance.
-		\return True on success. False if robot is not present any more (may happen due to the use of weak pointers).
-	*/
-	bool setConfig (const Configuration &c);
-	bool setConfig (RobotNodePtr node, float value);
-	bool setConfig (const std::string &node, float value);
+        /*!
+            Appends a configuration to this instance.
+            \return True on success. False if robot is not present any more (may happen due to the use of weak pointers).
+        */
+        bool setConfig(const Configuration& c);
+        bool setConfig(RobotNodePtr node, float value);
+        bool setConfig(const std::string& node, float value);
 
-	/*!
-		Apply the stored configurations to the corresponding robot.
-		RobotNodes that are not stored in this RobotConfig are not affected.
-		\return True on success. False if robot is not present any more (may happen due to the use of weak pointers).
-	*/
-	bool setJointValues();
-	
-	/*!
-		Usually setJointValues() is sufficient for applying the joint values. But in some cases one might want to
-		apply the joint values to a cloned robot. Therefore this method can be used.
-	*/
-	bool setJointValues(RobotPtr r);
+        /*!
+            Apply the stored configurations to the corresponding robot.
+            RobotNodes that are not stored in this RobotConfig are not affected.
+            \return True on success. False if robot is not present any more (may happen due to the use of weak pointers).
+        */
+        bool setJointValues();
 
-	/*!
-		Check if a configuration for a RobotNode with name is stored.
-	*/
-	bool hasConfig(const std::string & name) const;
-	/*!
-		Return the corresponding stored value. If no RobotNode with name is stored, 0.0f is returned.
-	*/
-	float getConfig(const std::string & name) const;
+        /*!
+            Usually setJointValues() is sufficient for applying the joint values. But in some cases one might want to
+            apply the joint values to a cloned robot. Therefore this method can be used.
+        */
+        bool setJointValues(RobotPtr r);
 
-	/*!
-		Return vector of all nodes that are covered by this RobotConfig.
-	*/
-	std::vector< RobotNodePtr > getNodes() const;
+        /*!
+            Check if a configuration for a RobotNode with name is stored.
+        */
+        bool hasConfig(const std::string& name) const;
+        /*!
+            Return the corresponding stored value. If no RobotNode with name is stored, 0.0f is returned.
+        */
+        float getConfig(const std::string& name) const;
 
-	/*!
-		Returns map of RobotNodeNames with corresponding joint values.
-	*/
-	std::map < std::string, float > getRobotNodeJointValueMap();
+        /*!
+            Return vector of all nodes that are covered by this RobotConfig.
+        */
+        std::vector< RobotNodePtr > getNodes() const;
 
-	/*!
-		Create an XML string that defines this object.
-	*/
-	std::string toXML(int tabs=0);
+        /*!
+            Returns map of RobotNodeNames with corresponding joint values.
+        */
+        std::map < std::string, float > getRobotNodeJointValueMap();
 
-	static std::string createXMLString(const std::map< std::string, float > &config, const std::string &name, int tabs=0);
+        /*!
+            Create an XML string that defines this object.
+        */
+        std::string toXML(int tabs = 0);
 
-protected:
-	std::string name;
+        static std::string createXMLString(const std::map< std::string, float >& config, const std::string& name, int tabs = 0);
 
-	std::map< RobotNodePtr, float > configs;
-	RobotWeakPtr robot;
-};
+    protected:
+        std::string name;
+
+        std::map< RobotNodePtr, float > configs;
+        RobotWeakPtr robot;
+    };
 
 
 } // namespace VirtualRobot

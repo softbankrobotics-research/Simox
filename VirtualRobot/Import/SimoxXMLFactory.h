@@ -32,29 +32,29 @@
 
 namespace VirtualRobot
 {
-class Robot;
+    class Robot;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxXMLFactory  : public RobotImporterFactory
-{
-public:
-	SimoxXMLFactory();
-	virtual ~SimoxXMLFactory();
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxXMLFactory  : public RobotImporterFactory
+    {
+    public:
+        SimoxXMLFactory();
+        virtual ~SimoxXMLFactory();
 
-	virtual RobotPtr loadFromFile(const std::string &filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
 
-// AbstractFactoryMethod
-public:
-	static std::string getName();
-	static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
-private:
-	static SubClassRegistry registry;
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
+    private:
+        static SubClassRegistry registry;
 
 
-    // RobotImporterFactory interface
-public:
-    virtual std::string getFileFilter();
-    virtual std::string getFileExtension();
-};
+        // RobotImporterFactory interface
+    public:
+        virtual std::string getFileFilter();
+        virtual std::string getFileExtension();
+    };
 
 } // namespace VirtualRobot
 

@@ -28,56 +28,57 @@
 #include "../CSpace/CSpacePath.h"
 #include "Rrt.h"
 
-namespace Saba {
-
-
-/*!
- * The standard implementation of the bidirectional RRT planner.
- * Two search trees are started, one from the start and one from the goal node.
- *
- */
-class SABA_IMPORT_EXPORT BiRrt : public Rrt
+namespace Saba
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	
-	/*!
-		Constructor
-		\param cspace An initialized cspace object.
-		\param modeA Specify the RRT method that should be used to build the first tree
-		\param modeB Specify the RRT method that should be used to build the second tree
-	*/
-	BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect );
-	virtual ~BiRrt();
-	
-	/*! 
-		do the planning (blocking method)
-		\return true if solution was found, otherwise false
-	*/	
-	virtual bool plan(bool bQuiet = false);
-	
-	
-	virtual void printConfig(bool printOnlyParams = false);
-	
-	virtual void reset();
-	
-	//! set start configuration
-	virtual bool setStart(const Eigen::VectorXf &c);
 
-	//! set goal configuration
-	virtual bool setGoal(const Eigen::VectorXf &c);
 
-	CSpaceTreePtr getTree2();
+    /*!
+     * The standard implementation of the bidirectional RRT planner.
+     * Two search trees are started, one from the start and one from the goal node.
+     *
+     */
+    class SABA_IMPORT_EXPORT BiRrt : public Rrt
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-protected:
-	
-	virtual bool createSolution(bool bQuiet = false);
+        /*!
+            Constructor
+            \param cspace An initialized cspace object.
+            \param modeA Specify the RRT method that should be used to build the first tree
+            \param modeB Specify the RRT method that should be used to build the second tree
+        */
+        BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect);
+        virtual ~BiRrt();
 
-	CSpaceTreePtr tree2;					//!< the second tree
+        /*!
+            do the planning (blocking method)
+            \return true if solution was found, otherwise false
+        */
+        virtual bool plan(bool bQuiet = false);
 
-	int lastAddedID2;				//!< ID of last added node
-	RrtMethod rrtMode2;
-};
+
+        virtual void printConfig(bool printOnlyParams = false);
+
+        virtual void reset();
+
+        //! set start configuration
+        virtual bool setStart(const Eigen::VectorXf& c);
+
+        //! set goal configuration
+        virtual bool setGoal(const Eigen::VectorXf& c);
+
+        CSpaceTreePtr getTree2();
+
+    protected:
+
+        virtual bool createSolution(bool bQuiet = false);
+
+        CSpaceTreePtr tree2;                    //!< the second tree
+
+        int lastAddedID2;               //!< ID of last added node
+        RrtMethod rrtMode2;
+    };
 
 } // namespace
 

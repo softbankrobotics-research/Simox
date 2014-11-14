@@ -35,43 +35,46 @@
 #include "PQP++/PQP_Compile.h"
 #include "PQP++/PQP.h"
 
-namespace VirtualRobot 
+namespace VirtualRobot
 {
 
-class CollisionChecker;
-class CollisionCheckerPQP;
+    class CollisionChecker;
+    class CollisionCheckerPQP;
 
-/*!
-	A PQP related implementation of a collision model.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModelPQP : public CollisionModelImplementation
-{
-public:
-	friend class CollisionModel;
+    /*!
+        A PQP related implementation of a collision model.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionModelPQP : public CollisionModelImplementation
+    {
+    public:
+        friend class CollisionModel;
 
-	/*!Standard Constructor
-	Ptr If collision checks should be done in parallel, different CollisionCheckers can be specified.
-	*/
-	CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id);
+        /*!Standard Constructor
+        Ptr If collision checks should be done in parallel, different CollisionCheckers can be specified.
+        */
+        CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id);
 
-	/*!Standard Destructor
-	*/
-	virtual ~CollisionModelPQP();
+        /*!Standard Destructor
+        */
+        virtual ~CollisionModelPQP();
 
-	boost::shared_ptr<PQP::PQP_Model> getPQPModel(){return pqpModel;}
+        boost::shared_ptr<PQP::PQP_Model> getPQPModel()
+        {
+            return pqpModel;
+        }
 
-	virtual void print();
+        virtual void print();
 
-protected:
+    protected:
 
-	//! delete all data
-	virtual void destroyData();
-	void createPQPModel();
+        //! delete all data
+        virtual void destroyData();
+        void createPQPModel();
 
-	boost::shared_ptr<PQP::PQP_Model> pqpModel;
+        boost::shared_ptr<PQP::PQP_Model> pqpModel;
 
-	boost::shared_ptr<CollisionCheckerPQP> colCheckerPQP;
-};
+        boost::shared_ptr<CollisionCheckerPQP> colCheckerPQP;
+    };
 
 } // namespace
 

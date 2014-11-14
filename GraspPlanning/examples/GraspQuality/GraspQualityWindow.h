@@ -34,82 +34,82 @@
 
 class GraspQualityWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GraspQualityWindow(std::string &robotFile, std::string &objectFile,  Qt::WFlags flags = 0);
-	~GraspQualityWindow();
+    GraspQualityWindow(std::string& robotFile, std::string& objectFile,  Qt::WFlags flags = 0);
+    ~GraspQualityWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
+    void resetSceneryAll();
 
 
-	void closeEEF();
-	void openEEF();
-	void colModel();
-	void frictionConeVisu();
+    void closeEEF();
+    void openEEF();
+    void colModel();
+    void frictionConeVisu();
 
-	void sliderReleased_ObjectX();
-	void sliderReleased_ObjectY();
-	void sliderReleased_ObjectZ();
-	void sliderReleased_ObjectA();
-	void sliderReleased_ObjectB();
-	void sliderReleased_ObjectG();
+    void sliderReleased_ObjectX();
+    void sliderReleased_ObjectY();
+    void sliderReleased_ObjectZ();
+    void sliderReleased_ObjectA();
+    void sliderReleased_ObjectB();
+    void sliderReleased_ObjectG();
 
-	void buildVisu();
+    void buildVisu();
 
-	void selectEEF(int nr);
-	void objectToTCP();
-	void graspQuality();
-	void showGWS();
-	void showOWS();
+    void selectEEF(int nr);
+    void objectToTCP();
+    void graspQuality();
+    void showGWS();
+    void showOWS();
 
 protected:
-    
+
     void loadRobot();
-	void loadObject();
-	
-	void setupUI();
+    void loadObject();
 
-	void updateObject(float x[6]);
+    void setupUI();
 
-	static void timerCB(void * data, SoSensor * sensor);
-	void buildRrtVisu();
-	void setEEFComboBox();
-	Ui::MainWindowGraspQuality UI;
-	SoQtExaminerViewer *m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotSep;
-	SoSeparator *objectSep;
-	SoSeparator *frictionConeSep;
-	SoSeparator *gws1Sep;
-	SoSeparator *gws2Sep;
-	SoSeparator *ows1Sep;
-	SoSeparator *ows2Sep;
+    void updateObject(float x[6]);
 
-	VirtualRobot::RobotPtr robot;
-	VirtualRobot::ObstaclePtr object;
+    static void timerCB(void* data, SoSensor* sensor);
+    void buildRrtVisu();
+    void setEEFComboBox();
+    Ui::MainWindowGraspQuality UI;
+    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::EndEffectorPtr eef;
-	std::vector< VirtualRobot::EndEffectorPtr > eefs;
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* objectSep;
+    SoSeparator* frictionConeSep;
+    SoSeparator* gws1Sep;
+    SoSeparator* gws2Sep;
+    SoSeparator* ows1Sep;
+    SoSeparator* ows2Sep;
 
-	VirtualRobot::EndEffector::ContactInfoVector contacts;
+    VirtualRobot::RobotPtr robot;
+    VirtualRobot::ObstaclePtr object;
 
-	
-	std::string robotFile;
-	std::string objectFile;
-	std::string eefName;
+    VirtualRobot::EndEffectorPtr eef;
+    std::vector< VirtualRobot::EndEffectorPtr > eefs;
 
-	GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
+    VirtualRobot::EndEffector::ContactInfoVector contacts;
+
+
+    std::string robotFile;
+    std::string objectFile;
+    std::string eefName;
+
+    GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;

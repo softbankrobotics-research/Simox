@@ -10,182 +10,195 @@ using namespace std;
 
 CustomLogger::CustomLogger(LogType lt, std::string filename)
 {
-	stdSep = ",";
-	logtype = eConsole;
-	if (lt==eFile && !filename.empty())
-	{
-		logfile.open(filename.c_str());
-		if (logfile.is_open())
-		{
-			cout << "Logging to file " << filename.c_str() << endl;
-			logtype = eFile;
-		} else
-		{
-			cout << "Failed to open file " << filename.c_str() << " for logging" << endl;
-			logtype = eConsole;
-		}
-	}
+    stdSep = ",";
+    logtype = eConsole;
+
+    if (lt == eFile && !filename.empty())
+    {
+        logfile.open(filename.c_str());
+
+        if (logfile.is_open())
+        {
+            cout << "Logging to file " << filename.c_str() << endl;
+            logtype = eFile;
+        }
+        else
+        {
+            cout << "Failed to open file " << filename.c_str() << " for logging" << endl;
+            logtype = eConsole;
+        }
+    }
 }
 
 CustomLogger::~CustomLogger()
 {
-	close();
+    close();
 }
 
-void CustomLogger::logString(const std::string &s, const std::string &sep, bool endline)
+void CustomLogger::logString(const std::string& s, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	o << s.c_str();
-	logTool(o,sep,endline);
+    ostream& o = getLogTarget();
+    o << s.c_str();
+    logTool(o, sep, endline);
 }
 
 ostream& CustomLogger::getLogTarget()
 {
-	switch (logtype)
-	{
-	case eFile:
-		return logfile;
-		break;
-	default:
-		return cout;
-		break;
-	}
-	return cout;
+    switch (logtype)
+    {
+        case eFile:
+            return logfile;
+            break;
+
+        default:
+            return cout;
+            break;
+    }
+
+    return cout;
 }
 
-void CustomLogger::logFloat(const float &f, const std::string &sep, bool endline)
+void CustomLogger::logFloat(const float& f, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	o << f;
-	logTool(o,sep,endline);
+    ostream& o = getLogTarget();
+    o << f;
+    logTool(o, sep, endline);
 }
 
-void CustomLogger::logInt(const int &f, const std::string &sep, bool endline)
+void CustomLogger::logInt(const int& f, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	o << f;
-	logTool(o,sep,endline);
+    ostream& o = getLogTarget();
+    o << f;
+    logTool(o, sep, endline);
 }
 
-void CustomLogger::logLong(const long &f, const std::string &sep, bool endline)
+void CustomLogger::logLong(const long& f, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	o << f;
-	logTool(o,sep,endline);
+    ostream& o = getLogTarget();
+    o << f;
+    logTool(o, sep, endline);
 }
 
-void CustomLogger::logDouble(const double &f, const std::string &sep, bool endline)
+void CustomLogger::logDouble(const double& f, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	o << f;
-	logTool(o,sep,endline);
+    ostream& o = getLogTarget();
+    o << f;
+    logTool(o, sep, endline);
 }
 
 void CustomLogger::logNewLine()
 {
-	ostream &o = getLogTarget();
-	logTool(o,"",true);
+    ostream& o = getLogTarget();
+    logTool(o, "", true);
 }
 
-void CustomLogger::logTool(ostream &o, const std::string &sep, bool endline)
+void CustomLogger::logTool(ostream& o, const std::string& sep, bool endline)
 {
-	if (!sep.empty())
-		o << " " << sep.c_str() << " ";
-	if (endline)
-	{
-		o << endl;
-		if (!preLogMessage.empty())
-			o << preLogMessage.c_str();
-	}
+    if (!sep.empty())
+    {
+        o << " " << sep.c_str() << " ";
+    }
+
+    if (endline)
+    {
+        o << endl;
+
+        if (!preLogMessage.empty())
+        {
+            o << preLogMessage.c_str();
+        }
+    }
 }
 
-void CustomLogger::logFloatVector(vector<float> f, const std::string &sep, bool endline)
+void CustomLogger::logFloatVector(vector<float> f, const std::string& sep, bool endline)
 {
-	ostream &o = getLogTarget();
-	for (size_t i=0;i<f.size();i++)
-	{
-		o << f[i];
-		logTool(o,sep,false);
-	}
-	logTool(o,"",endline);
+    ostream& o = getLogTarget();
+
+    for (size_t i = 0; i < f.size(); i++)
+    {
+        o << f[i];
+        logTool(o, sep, false);
+    }
+
+    logTool(o, "", endline);
 }
 
 void CustomLogger::close()
 {
-	if (logfile.is_open())
-	{
-		logfile.close();
-		logtype = eConsole;
-	}
+    if (logfile.is_open())
+    {
+        logfile.close();
+        logtype = eConsole;
+    }
 }
 
-void CustomLogger::setLogPreMessage( const std::string& m )
+void CustomLogger::setLogPreMessage(const std::string& m)
 {
-	preLogMessage = m;
+    preLogMessage = m;
 }
 
-void CustomLogger::logTimeStamp( bool endline /*= true*/ )
+void CustomLogger::logTimeStamp(bool endline /*= true*/)
 {
-	ostream &o = getLogTarget();
-	
-	// current date/time based on current system
-	time_t now = time(0);
+    ostream& o = getLogTarget();
 
-	// convert now to string form
-	char* dt = ctime(&now);
-	o << dt;
+    // current date/time based on current system
+    time_t now = time(0);
 
-	logTool(o,"",endline);
+    // convert now to string form
+    char* dt = ctime(&now);
+    o << dt;
+
+    logTool(o, "", endline);
 }
 
-void CustomLogger::log( double f )
+void CustomLogger::log(double f)
 {
-	logDouble(f,stdSep,false);
+    logDouble(f, stdSep, false);
 }
 
-void CustomLogger::log( int f )
+void CustomLogger::log(int f)
 {
-	logInt(f,stdSep,false);
+    logInt(f, stdSep, false);
 }
 
-void CustomLogger::log( float f )
+void CustomLogger::log(float f)
 {
-	logFloat(f,stdSep,false);
+    logFloat(f, stdSep, false);
 }
 
-void CustomLogger::log( long f )
+void CustomLogger::log(long f)
 {
-	logLong(f,stdSep,false);
+    logLong(f, stdSep, false);
 }
 
-void CustomLogger::log( const std::string &s )
+void CustomLogger::log(const std::string& s)
 {
-	logString(s,stdSep,false);
+    logString(s, stdSep, false);
 }
 
-void CustomLogger::logNewLine( double f )
+void CustomLogger::logNewLine(double f)
 {
-	logDouble(f,"",true);
+    logDouble(f, "", true);
 }
 
-void CustomLogger::logNewLine( int f )
+void CustomLogger::logNewLine(int f)
 {
-	logInt(f,"",true);
+    logInt(f, "", true);
 }
 
-void CustomLogger::logNewLine( float f )
+void CustomLogger::logNewLine(float f)
 {
-	logFloat(f,"",true);
+    logFloat(f, "", true);
 }
 
-void CustomLogger::logNewLine( long f )
+void CustomLogger::logNewLine(long f)
 {
-	logLong(f,"",true);
+    logLong(f, "", true);
 }
 
-void CustomLogger::logNewLine( const std::string &s )
+void CustomLogger::logNewLine(const std::string& s)
 {
-	logString(s,"",true);
+    logString(s, "", true);
 }
 #ifdef WIN32
 #pragma warning(pop)

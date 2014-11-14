@@ -31,83 +31,105 @@
 template <class T>
 class daeTArray_iterator : public boost::iterator_facade< daeTArray_iterator<T>, T, boost::forward_traversal_tag >
 {
-    public:
-        daeTArray_iterator()
-            : array(0), index(-1) {
-            assert(0);
-            }
+public:
+    daeTArray_iterator()
+        : array(0), index(-1)
+    {
+        assert(0);
+    }
 
-        explicit daeTArray_iterator(daeTArray<T>* _array, unsigned int _index)
-            : array(_array), index(_index) {}
+    explicit daeTArray_iterator(daeTArray<T>* _array, unsigned int _index)
+        : array(_array), index(_index) {}
 
-    private:
-        friend class boost::iterator_core_access;
+private:
+    friend class boost::iterator_core_access;
 
-        void increment() { this->index++; }
+    void increment()
+    {
+        this->index++;
+    }
 
-        bool equal(daeTArray_iterator const& other) const
+    bool equal(daeTArray_iterator const& other) const
+    {
+        if (this->array->getCount() == 0)
         {
-            if (this->array->getCount()==0) return true;
-            return this->index == other.index;
+            return true;
         }
 
-        T& dereference() const { return this->array->get(this->index); }
+        return this->index == other.index;
+    }
 
-        daeTArray<T> *array;
-        unsigned int index;
+    T& dereference() const
+    {
+        return this->array->get(this->index);
+    }
+
+    daeTArray<T>* array;
+    unsigned int index;
 };
 
 template <class T>
 class daeTArray_const_iterator : public boost::iterator_facade< daeTArray_const_iterator<T>, T const, boost::forward_traversal_tag >
 {
-    public:
-        daeTArray_const_iterator()
-            : array(0), index(-1) {
-            assert(0);
-        }
+public:
+    daeTArray_const_iterator()
+        : array(0), index(-1)
+    {
+        assert(0);
+    }
 
-        explicit daeTArray_const_iterator(const daeTArray<T>* _array, unsigned int _index)
-            : array(_array), index(_index) {}
+    explicit daeTArray_const_iterator(const daeTArray<T>* _array, unsigned int _index)
+        : array(_array), index(_index) {}
 
-    private:
-        friend class boost::iterator_core_access;
+private:
+    friend class boost::iterator_core_access;
 
-        void increment() { this->index++; }
+    void increment()
+    {
+        this->index++;
+    }
 
-        bool equal(daeTArray_const_iterator const& other) const
+    bool equal(daeTArray_const_iterator const& other) const
+    {
+        if (this->array->getCount() == 0)
         {
-            if (this->array->getCount()==0) return true;
-            return this->index == other.index;
+            return true;
         }
 
-        T const &dereference() const { return this->array->get(this->index); }
+        return this->index == other.index;
+    }
 
-        daeTArray<T> const *array;
-        unsigned int index;
+    T const& dereference() const
+    {
+        return this->array->get(this->index);
+    }
+
+    daeTArray<T> const* array;
+    unsigned int index;
 };
 
 template <class T>
-inline daeTArray_iterator<T> range_begin( daeTArray<T> & x )
+inline daeTArray_iterator<T> range_begin(daeTArray<T>& x)
 {
-    return daeTArray_iterator<T>(&x,0) ;
+    return daeTArray_iterator<T>(&x, 0) ;
 }
 
 template <class T>
-inline daeTArray_iterator<T>  range_end( daeTArray<T> & x )
+inline daeTArray_iterator<T>  range_end(daeTArray<T>& x)
 {
-    return daeTArray_iterator<T>(&x,x.getCount()) ;
+    return daeTArray_iterator<T>(&x, x.getCount()) ;
 }
 
 template <class T>
-inline daeTArray_const_iterator<T> range_begin( daeTArray<T> const & x )
+inline daeTArray_const_iterator<T> range_begin(daeTArray<T> const& x)
 {
-    return daeTArray_const_iterator<T>(&x,0) ;
+    return daeTArray_const_iterator<T>(&x, 0) ;
 }
 
 template <class T>
-inline daeTArray_const_iterator<T>  range_end( daeTArray<T> const & x )
+inline daeTArray_const_iterator<T>  range_end(daeTArray<T> const& x)
 {
-    return daeTArray_const_iterator<T>(&x,x.getCount()) ;
+    return daeTArray_const_iterator<T>(&x, x.getCount()) ;
 }
 
 //}

@@ -6,92 +6,97 @@
 
 using namespace std;
 
-namespace Saba {
-
-//! constructor
-PlanningThread::PlanningThread(MotionPlannerPtr planner)
+namespace Saba
 {
-	this->planner = planner;
-	THROW_VR_EXCEPTION_IF(!planner,"NULL data");
-	threadStarted = false;
-	plannerFinished = false;
-}
 
-//! destructor
-PlanningThread::~PlanningThread()
-{
-	stop();
-}
+    //! constructor
+    PlanningThread::PlanningThread(MotionPlannerPtr planner)
+    {
+        this->planner = planner;
+        THROW_VR_EXCEPTION_IF(!planner, "NULL data");
+        threadStarted = false;
+        plannerFinished = false;
+    }
 
-void PlanningThread::start()
-{
-	boost::lock_guard<boost::mutex> lock(mutex); 
-	if (threadStarted)
-	{
-		// thread already started, nothing to do
-		return;
-	}
+    //! destructor
+    PlanningThread::~PlanningThread()
+    {
+        stop();
+    }
 
-	// since the start method is the only way to start the thread we can set the varaibles for indicating the state.
-	threadStarted = true;
-	plannerFinished = false;
+    void PlanningThread::start()
+    {
+        boost::lock_guard<boost::mutex> lock(mutex);
 
-	planningThread = boost::thread(&PlanningThread::workingMethod, this);  
-}
+        if (threadStarted)
+        {
+            // thread already started, nothing to do
+            return;
+        }
 
-void PlanningThread::interrupt (bool waitUntilStopped)
-{
-	if (!isRunning())
-	{
-		// thread not started, nothing to do
-		return;
-	}
+        // since the start method is the only way to start the thread we can set the varaibles for indicating the state.
+        threadStarted = true;
+        plannerFinished = false;
 
-	// this is not perfect: we are setting a bool without protecting it with a mutex. But it works...
-	if (planner)
-		planner->stopExecution();
+        planningThread = boost::thread(&PlanningThread::workingMethod, this);
+    }
 
-	// todo: catch boost::thread_interrupted in MotionPlanners and be sure to call boost::threa::interrupt points during planning... 
-	//thread.interrupt();
+    void PlanningThread::interrupt(bool waitUntilStopped)
+    {
+        if (!isRunning())
+        {
+            // thread not started, nothing to do
+            return;
+        }
 
-	if (waitUntilStopped)
-	{
-		planningThread.join();
-	}
-}
+        // this is not perfect: we are setting a bool without protecting it with a mutex. But it works...
+        if (planner)
+        {
+            planner->stopExecution();
+        }
+
+        // todo: catch boost::thread_interrupted in MotionPlanners and be sure to call boost::threa::interrupt points during planning...
+        //thread.interrupt();
+
+        if (waitUntilStopped)
+        {
+            planningThread.join();
+        }
+    }
 
 
-void PlanningThread::stop()
-{
-	interrupt(true);
-}
+    void PlanningThread::stop()
+    {
+        interrupt(true);
+    }
 
-bool PlanningThread::isRunning()
-{
-	boost::lock_guard<boost::mutex> lock(mutex); 
-	return threadStarted;
-}
+    bool PlanningThread::isRunning()
+    {
+        boost::lock_guard<boost::mutex> lock(mutex);
+        return threadStarted;
+    }
 
-MotionPlannerPtr PlanningThread::getPlanner()
-{
-	return planner;
-}
+    MotionPlannerPtr PlanningThread::getPlanner()
+    {
+        return planner;
+    }
 
-void PlanningThread::workingMethod()
-{
-	if (!threadStarted)
-	{
-		VR_WARNING << "Thread should be in started mode?!" << endl;
-	}
-	VR_ASSERT(planner);
+    void PlanningThread::workingMethod()
+    {
+        if (!threadStarted)
+        {
+            VR_WARNING << "Thread should be in started mode?!" << endl;
+        }
 
-	bool res = planner->plan(true);
+        VR_ASSERT(planner);
 
-	mutex.lock();
-	threadStarted = false;
-	plannerFinished = res;
-	mutex.unlock();
-}
+        bool res = planner->plan(true);
+
+        mutex.lock();
+        threadStarted = false;
+        plannerFinished = res;
+        mutex.unlock();
+    }
 
 }
 

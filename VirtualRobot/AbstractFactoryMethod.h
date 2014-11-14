@@ -47,8 +47,8 @@ public:
         instance->setDescription(name);
         return instance;
     }
-	   
-	/**
+
+    /**
     * Function which can be used to retrieve the first registered object.
     */
     static boost::shared_ptr<Base> first(constructorArg params)
@@ -94,12 +94,18 @@ public:
     /**
      * Set a description on the instance it is called on.
      */
-    void setDescription(const std::string& newDescription) {description = newDescription;}
+    void setDescription(const std::string& newDescription)
+    {
+        description = newDescription;
+    }
 
     /**
      * Return the description of the current instance.
      */
-    std::string getDescription() const {return description;}
+    std::string getDescription() const
+    {
+        return description;
+    }
 
     /**
      * Return a list of all registered subclasses.
@@ -108,10 +114,12 @@ public:
     {
         std::vector<std::string> subclassList;
         typename std::map<std::string, initialisationFunction>::const_iterator iter = subTypes()->begin();
+
         for (; iter != subTypes()->end(); ++iter)
         {
             subclassList.push_back(iter->first);
         }
+
         return subclassList;
     }
 

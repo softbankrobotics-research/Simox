@@ -33,59 +33,59 @@
 
 namespace VirtualRobot
 {
-class Robot;
+    class Robot;
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxURDFFactory  : public RobotImporterFactory
-{
-public:
-	SimoxURDFFactory();
-	virtual ~SimoxURDFFactory();
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxURDFFactory  : public RobotImporterFactory
+    {
+    public:
+        SimoxURDFFactory();
+        virtual ~SimoxURDFFactory();
 
-    /*!
-        Load an urdf model and convert it to a simox robot.
-        The 3D model files are assumed to be accessible through the VirtualRobot::RuntimeEnvironment paths; be sure to add any 3d model paths there.
-        \param filename The urdf model file
-        \param loadMode Currently only full loading is supported (ignored)
-    */
-	virtual RobotPtr loadFromFile(const std::string &filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        /*!
+            Load an urdf model and convert it to a simox robot.
+            The 3D model files are assumed to be accessible through the VirtualRobot::RuntimeEnvironment paths; be sure to add any 3d model paths there.
+            \param filename The urdf model file
+            \param loadMode Currently only full loading is supported (ignored)
+        */
+        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
 
-    /*!
-        \param useColModelsIfNoVisuModel If set (standard), a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
-    */
-    void set3DModelMode(bool useColModelsIfNoVisuModel);
-
-
-    /*!
-        Convert an urdf model.
-        \param urdfModel The model
-        \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
-    */
-    RobotPtr createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, bool useColModelsIfNoVisuModel = true);
-    
-// AbstractFactoryMethod
-public:
-	static std::string getName();
-	static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
-private:
-	static SubClassRegistry registry;
+        /*!
+            \param useColModelsIfNoVisuModel If set (standard), a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
+        */
+        void set3DModelMode(bool useColModelsIfNoVisuModel);
 
 
-    // RobotImporterFactory interface
-public:
-    virtual std::string getFileExtension();
-    virtual std::string getFileFilter();
+        /*!
+            Convert an urdf model.
+            \param urdfModel The model
+            \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
+        */
+        RobotPtr createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, bool useColModelsIfNoVisuModel = true);
+
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
+    private:
+        static SubClassRegistry registry;
 
 
-protected:
-    RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, bool useColModelsIfNoVisuModel = true);
-    RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
-    Eigen::Matrix4f convertPose(urdf::Pose &p);
-    VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose);
-    std::string getFilename(const std::string &f);
+        // RobotImporterFactory interface
+    public:
+        virtual std::string getFileExtension();
+        virtual std::string getFileFilter();
 
-    bool useColModelsIfNoVisuModel;
-};
+
+    protected:
+        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, bool useColModelsIfNoVisuModel = true);
+        RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
+        Eigen::Matrix4f convertPose(urdf::Pose& p);
+        VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose);
+        std::string getFilename(const std::string& f);
+
+        bool useColModelsIfNoVisuModel;
+    };
 
 } // namespace VirtualRobot
 
-#endif 
+#endif

@@ -29,56 +29,56 @@
 namespace VirtualRobot
 {
 
-class PositionSensor;
-typedef boost::shared_ptr<PositionSensor> PositionSensorPtr;
+    class PositionSensor;
+    typedef boost::shared_ptr<PositionSensor> PositionSensorPtr;
 
 
-/*!
-	This is a dummy sensor that can be queried for positions (Via the getGlobalPose method, defined in SceneObject)
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT PositionSensor : public Sensor
-{
-public:
-	friend class Robot;
-	friend class RobotIO;
+    /*!
+        This is a dummy sensor that can be queried for positions (Via the getGlobalPose method, defined in SceneObject)
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PositionSensor : public Sensor
+    {
+    public:
+        friend class Robot;
+        friend class RobotIO;
 
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor with settings.
-	*/
-	PositionSensor(	RobotNodeWeakPtr robotNode, 
-			const std::string &name,
-			VisualizationNodePtr visualization = VisualizationNodePtr(),
-			const Eigen::Matrix4f &rnTrafo = Eigen::Matrix4f::Identity()
-			);
+        /*!
+            Constructor with settings.
+        */
+        PositionSensor(RobotNodeWeakPtr robotNode,
+                       const std::string& name,
+                       VisualizationNodePtr visualization = VisualizationNodePtr(),
+                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()
+                      );
 
-	/*!
-	*/
-	virtual ~PositionSensor();
-
-
-	/*!
-		Print status information.
-	*/
-	virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        /*!
+        */
+        virtual ~PositionSensor();
 
 
-    virtual std::string toXML(const std::string &modelPath, int tabs);
+        /*!
+            Print status information.
+        */
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
-protected:
+
+        virtual std::string toXML(const std::string& modelPath, int tabs);
+
+    protected:
 
 
-	PositionSensor(){};
+        PositionSensor() {};
 
-	/*!
-	Derived classes must implement their clone method here.
-	*/
-	virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
+        /*!
+        Derived classes must implement their clone method here.
+        */
+        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
 
-};
+    };
 
-typedef boost::shared_ptr<PositionSensor> PositionSensorPtr;
+    typedef boost::shared_ptr<PositionSensor> PositionSensorPtr;
 
 } // namespace VirtualRobot
 

@@ -36,31 +36,43 @@
 // using forward declarations here, so that the rapidXML header does not have to be parsed when this file is included
 namespace rapidxml
 {
-	template<class Ch>
-	class xml_node;
+    template<class Ch>
+    class xml_node;
 };
 
 
 namespace VirtualRobot
 {
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT SensorFactory  : public AbstractFactoryMethod<SensorFactory, void*>
-{
-public:
-	SensorFactory() {;}
-	virtual ~SensorFactory() {;}
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SensorFactory  : public AbstractFactoryMethod<SensorFactory, void*>
+    {
+    public:
+        SensorFactory()
+        {
+            ;
+        }
+        virtual ~SensorFactory()
+        {
+            ;
+        }
 
-	//! Standard init method
-	virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
-		const Eigen::Matrix4f &rnTrafo = Eigen::Matrix4f::Identity() ) const {return SensorPtr();}
+        //! Standard init method
+        virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
+                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const
+        {
+            return SensorPtr();
+        }
 
-	/*!
-		Create sensor from XML tag. Factories of custom sensors can initialize with this method.
-	*/
-	virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string() ) const {return SensorPtr();}
-};
+        /*!
+            Create sensor from XML tag. Factories of custom sensors can initialize with this method.
+        */
+        virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const
+        {
+            return SensorPtr();
+        }
+    };
 
-typedef boost::shared_ptr<SensorFactory> SensorFactoryPtr;
+    typedef boost::shared_ptr<SensorFactory> SensorFactoryPtr;
 
 } // namespace VirtualRobot
 

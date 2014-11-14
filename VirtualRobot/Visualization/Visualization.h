@@ -30,48 +30,54 @@
 namespace VirtualRobot
 {
 
-class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization
-{
-public:
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization
+    {
+    public:
 
-	Visualization(const VisualizationNodePtr visualizationNode);
-	Visualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
-	virtual ~Visualization();
+        Visualization(const VisualizationNodePtr visualizationNode);
+        Visualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
+        virtual ~Visualization();
 
-	/*!
-		Highlight a visualization node.
+        /*!
+            Highlight a visualization node.
 
-		@param visualizationNode This node must be part of this visualization, passed to the constructor.
-		@param enable Do/Undo highlighting.
-	*/
-	virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
+            @param visualizationNode This node must be part of this visualization, passed to the constructor.
+            @param enable Do/Undo highlighting.
+        */
+        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
 
-	/*!
-	    Highlight a visualization node.
+        /*!
+            Highlight a visualization node.
 
-		@param which The index of the visualionNodes, passed to the constructor.
-		@param enable Do/Undo highlighting.
-	*/
-	virtual bool highlight(unsigned int which, bool enable);
+            @param which The index of the visualionNodes, passed to the constructor.
+            @param enable Do/Undo highlighting.
+        */
+        virtual bool highlight(unsigned int which, bool enable);
 
-	virtual bool isVisualizationNodeRegistered(VisualizationNodePtr visualizationNode);
+        virtual bool isVisualizationNodeRegistered(VisualizationNodePtr visualizationNode);
 
-	virtual VisualizationPtr clone();
+        virtual VisualizationPtr clone();
 
-	//! get total number of faces (i.e. triangles) of all visualizations that are stored in this object
-	virtual int getNumFaces();
+        //! get total number of faces (i.e. triangles) of all visualizations that are stored in this object
+        virtual int getNumFaces();
 
-	static std::string getFactoryName(){return "AbstractFactoryMethod";}
+        static std::string getFactoryName()
+        {
+            return "AbstractFactoryMethod";
+        }
 
-	std::vector<VisualizationNodePtr> getVisualizationNodes(){return visualizationNodes;}
+        std::vector<VisualizationNodePtr> getVisualizationNodes()
+        {
+            return visualizationNodes;
+        }
 
-	//virtual void setGlobalPose(const Eigen::Matrix4f &p);
+        //virtual void setGlobalPose(const Eigen::Matrix4f &p);
 
-protected:
-	std::vector<VisualizationNodePtr> visualizationNodes;
+    protected:
+        std::vector<VisualizationNodePtr> visualizationNodes;
 
-	//Eigen::Matrix4f globalPose;
-};
+        //Eigen::Matrix4f globalPose;
+    };
 
 } // namespace VirtualRobot
 

@@ -33,72 +33,72 @@
 namespace GraspStudio
 {
 
-/*!
-*
-* An interface for generating approach movements of an end-effector toward an object resulting in grasp hypothesis.
-*/
-class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementGenerator
-{
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+    *
+    * An interface for generating approach movements of an end-effector toward an object resulting in grasp hypothesis.
+    */
+    class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementGenerator
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-	    To generate approach movements an object and an end effector has to be specified.
-		Internally a clone of the EEF is used.
-		\param object The object.
-		\param eef The eef.
-		\param graspPreshape An optional preshape that can be used in order to "open" the eef.
-	*/
-	ApproachMovementGenerator(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string &graspPreshape="");
-	    
-	//! destructor
-	virtual ~ApproachMovementGenerator();
+        /*!
+            To generate approach movements an object and an end effector has to be specified.
+            Internally a clone of the EEF is used.
+            \param object The object.
+            \param eef The eef.
+            \param graspPreshape An optional preshape that can be used in order to "open" the eef.
+        */
+        ApproachMovementGenerator(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "");
 
-	//! Creates a new pose for approaching
-	virtual Eigen::Matrix4f createNewApproachPose() = 0;
+        //! destructor
+        virtual ~ApproachMovementGenerator();
 
-	//! Applies a random grasp hypothesis to the cloned EEF
-	virtual bool setEEFToRandomApproachPose();
+        //! Creates a new pose for approaching
+        virtual Eigen::Matrix4f createNewApproachPose() = 0;
 
-	//! This robot is moved around
-	VirtualRobot::RobotPtr getEEFRobotClone();
+        //! Applies a random grasp hypothesis to the cloned EEF
+        virtual bool setEEFToRandomApproachPose();
 
-	//! move EEF to pose (uses coord system of GCP)
-	bool setEEFPose(const Eigen::Matrix4f &pose);
+        //! This robot is moved around
+        VirtualRobot::RobotPtr getEEFRobotClone();
 
-	//! update pose of EEF (GCP)
-	bool updateEEFPose(const Eigen::Matrix4f &deltaPose);
-	bool updateEEFPose(const Eigen::Vector3f &deltaPosition);
+        //! move EEF to pose (uses coord system of GCP)
+        bool setEEFPose(const Eigen::Matrix4f& pose);
 
-	//! get pose of EEF (coord system of GCP)
-	Eigen::Matrix4f getEEFPose();
+        //! update pose of EEF (GCP)
+        bool updateEEFPose(const Eigen::Matrix4f& deltaPose);
+        bool updateEEFPose(const Eigen::Vector3f& deltaPosition);
 
-	std::string getGCPJoint();
+        //! get pose of EEF (coord system of GCP)
+        Eigen::Matrix4f getEEFPose();
 
-	VirtualRobot::SceneObjectPtr getObject();
+        std::string getGCPJoint();
 
-	/*!
-		This is the cloned eef!
-	*/
-	VirtualRobot::EndEffectorPtr getEEF();
-	VirtualRobot::EndEffectorPtr getEEFOriginal();
+        VirtualRobot::SceneObjectPtr getObject();
 
-	std::string getName();
-protected:
+        /*!
+            This is the cloned eef!
+        */
+        VirtualRobot::EndEffectorPtr getEEF();
+        VirtualRobot::EndEffectorPtr getEEFOriginal();
 
-	virtual void openHand();
+        std::string getName();
+    protected:
 
-	VirtualRobot::SceneObjectPtr object;
-	VirtualRobot::TriMeshModelPtr objectModel;
-	VirtualRobot::EndEffectorPtr eef;
+        virtual void openHand();
 
- 	//! This robot is moved around
- 	VirtualRobot::RobotPtr eefRobot;
-	VirtualRobot::EndEffectorPtr eef_cloned;
+        VirtualRobot::SceneObjectPtr object;
+        VirtualRobot::TriMeshModelPtr objectModel;
+        VirtualRobot::EndEffectorPtr eef;
 
-	std::string name;
-	std::string graspPreshape;
-};
+        //! This robot is moved around
+        VirtualRobot::RobotPtr eefRobot;
+        VirtualRobot::EndEffectorPtr eef_cloned;
+
+        std::string name;
+        std::string graspPreshape;
+    };
 
 }
 

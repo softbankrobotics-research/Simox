@@ -30,66 +30,67 @@
 #include <VirtualRobot/IK/IKSolver.h>
 #include "BiRrt.h"
 
-namespace Saba {
-
-/*!
- *
- * The GraspIkRrt planner combines the search for a feasible grasp and an IK solution with the search for a collision-free motion.
- *
- */
-class SABA_IMPORT_EXPORT GraspIkRrt : public BiRrt
+namespace Saba
 {
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	
-	/*!
-		Constructor
-		\param cspace The C-Space that should be used for collision detection
-		\param object The object to be grasped
-		\param ikSolver The ikSolver that should be used
-		\param graspSet The grasps, defining potential goal configurations.
-		\param probabSampleGoal Probability with which a goal config is created during planning loop.
-	*/
-	GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::IKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal = 0.1f);
-	virtual ~GraspIkRrt();
-	
-	/*! 
-		do the planning (blocking method)
-		\return true if solution was found, otherwise false
-	*/	
-	virtual bool plan(bool bQuiet = false);
-	
-	
-	virtual void printConfig(bool printOnlyParams = false);
 
-	//! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
-	virtual bool setGoal(const Eigen::VectorXf &c);
+    /*!
+     *
+     * The GraspIkRrt planner combines the search for a feasible grasp and an IK solution with the search for a collision-free motion.
+     *
+     */
+    class SABA_IMPORT_EXPORT GraspIkRrt : public BiRrt
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	//! reset the planner
-	virtual void reset();
+        /*!
+            Constructor
+            \param cspace The C-Space that should be used for collision detection
+            \param object The object to be grasped
+            \param ikSolver The ikSolver that should be used
+            \param graspSet The grasps, defining potential goal configurations.
+            \param probabSampleGoal Probability with which a goal config is created during planning loop.
+        */
+        GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::IKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal = 0.1f);
+        virtual ~GraspIkRrt();
 
-protected:
-	
-	//virtual bool createSolution(bool bQuiet = false);
-	bool doPlanningCycle();
-	bool searchNewGoal();
-	bool checkGoalConfig(Eigen::VectorXf &config);
-	bool addIKSolution(Eigen::VectorXf &config, VirtualRobot::GraspPtr grasp);
-	float sampleGoalProbab;
+        /*!
+            do the planning (blocking method)
+            \return true if solution was found, otherwise false
+        */
+        virtual bool plan(bool bQuiet = false);
 
-	VirtualRobot::ManipulationObjectPtr object;
-	VirtualRobot::IKSolverPtr ikSolver;
-	VirtualRobot::GraspSetPtr graspSet;
-	VirtualRobot::RobotNodeSetPtr rns;
 
-	VirtualRobot::GraspSetPtr graspSetWorking;
+        virtual void printConfig(bool printOnlyParams = false);
 
-	bool found; //!< Indicates if a solution was found
+        //! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
+        virtual bool setGoal(const Eigen::VectorXf& c);
 
-	std::map < VirtualRobot::GraspPtr, Saba::CSpaceNodePtr > graspNodeMapping;
-	std::vector< Eigen::VectorXf > ikSolutions;
+        //! reset the planner
+        virtual void reset();
 
-};
+    protected:
+
+        //virtual bool createSolution(bool bQuiet = false);
+        bool doPlanningCycle();
+        bool searchNewGoal();
+        bool checkGoalConfig(Eigen::VectorXf& config);
+        bool addIKSolution(Eigen::VectorXf& config, VirtualRobot::GraspPtr grasp);
+        float sampleGoalProbab;
+
+        VirtualRobot::ManipulationObjectPtr object;
+        VirtualRobot::IKSolverPtr ikSolver;
+        VirtualRobot::GraspSetPtr graspSet;
+        VirtualRobot::RobotNodeSetPtr rns;
+
+        VirtualRobot::GraspSetPtr graspSetWorking;
+
+        bool found; //!< Indicates if a solution was found
+
+        std::map < VirtualRobot::GraspPtr, Saba::CSpaceNodePtr > graspNodeMapping;
+        std::vector< Eigen::VectorXf > ikSolutions;
+
+    };
 
 } // namespace
 

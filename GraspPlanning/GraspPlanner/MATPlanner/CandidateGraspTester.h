@@ -32,37 +32,37 @@
 
 namespace GraspStudio
 {
-	class CandidateGraspTester;
-	typedef boost::shared_ptr<CandidateGraspTester> CandidateGraspTesterPtr;
+    class CandidateGraspTester;
+    typedef boost::shared_ptr<CandidateGraspTester> CandidateGraspTesterPtr;
 
 
-	class GRASPSTUDIO_IMPORT_EXPORT CandidateGraspTester
-	{
-	public:
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    class GRASPSTUDIO_IMPORT_EXPORT CandidateGraspTester
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-			CandidateGraspTester(VirtualRobot::RobotPtr robot, VirtualRobot::SceneObjectPtr object,
-			std::string eefName, GraspQualityMeasureWrenchSpacePtr qualityMeasure, bool verbose);
+        CandidateGraspTester(VirtualRobot::RobotPtr robot, VirtualRobot::SceneObjectPtr object,
+                             std::string eefName, GraspQualityMeasureWrenchSpacePtr qualityMeasure, bool verbose);
 
-		void testCandidate(CandidateGraspPtr candidate);
+        void testCandidate(CandidateGraspPtr candidate);
 
-	protected:
-		void closeEEFAndTest(CandidateGraspPtr candidate, float positionScaleFactor);
-		void openEEF();
-		void setEEF(Eigen::Matrix4f &poseGCP);
-		void moveEEFAway(const Eigen::Vector3f &approachDir, float step, int maxLoops);
-		bool updateEEFPose(const Eigen::Vector3f &deltaPosition);
-		bool updateEEFPose(const Eigen::Matrix4f &deltaPose);
+    protected:
+        void closeEEFAndTest(CandidateGraspPtr candidate, float positionScaleFactor);
+        void openEEF();
+        void setEEF(Eigen::Matrix4f& poseGCP);
+        void moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops);
+        bool updateEEFPose(const Eigen::Vector3f& deltaPosition);
+        bool updateEEFPose(const Eigen::Matrix4f& deltaPose);
 
-		VirtualRobot::RobotPtr robot;
-		VirtualRobot::SceneObjectPtr object;
-		VirtualRobot::EndEffectorPtr eef;
-		VirtualRobot::RobotPtr eefRobot;
-		VirtualRobot::EndEffectorPtr eefCloned;
-		std::string eefName;
-		GraspQualityMeasureWrenchSpacePtr qualityMeasure;
-		bool verbose;
-	};
+        VirtualRobot::RobotPtr robot;
+        VirtualRobot::SceneObjectPtr object;
+        VirtualRobot::EndEffectorPtr eef;
+        VirtualRobot::RobotPtr eefRobot;
+        VirtualRobot::EndEffectorPtr eefCloned;
+        std::string eefName;
+        GraspQualityMeasureWrenchSpacePtr qualityMeasure;
+        bool verbose;
+    };
 }
 
 #endif // CANDIDATEGRASPTESTER_H

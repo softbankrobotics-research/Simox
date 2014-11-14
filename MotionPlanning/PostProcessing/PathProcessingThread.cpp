@@ -9,110 +9,121 @@
 
 using namespace std;
 
-namespace Saba {
-
-//! constructor
-PathProcessingThread::PathProcessingThread(PathProcessorPtr processor)
+namespace Saba
 {
-	pathProcessor = processor;
-	THROW_VR_EXCEPTION_IF(!processor,"NULL data");
-	threadStarted = false;
-	processingFinished = false;
-}
 
-//! destructor
-PathProcessingThread::~PathProcessingThread()
-{
-	stop();
-}
+    //! constructor
+    PathProcessingThread::PathProcessingThread(PathProcessorPtr processor)
+    {
+        pathProcessor = processor;
+        THROW_VR_EXCEPTION_IF(!processor, "NULL data");
+        threadStarted = false;
+        processingFinished = false;
+    }
 
-void PathProcessingThread::start(int optimizeSteps)
-{
-	boost::lock_guard<boost::mutex> lock(mutex); 
-	if (threadStarted)
-	{
-		// thread already started, nothing to do
-		return;
-	}
+    //! destructor
+    PathProcessingThread::~PathProcessingThread()
+    {
+        stop();
+    }
 
-	// since the start method is the only way to start the thread we can set the variables for indicating the state.
-	threadStarted = true;
-	processingFinished = false;
-	this->optimizeSteps = optimizeSteps;
-	resultPath.reset();
+    void PathProcessingThread::start(int optimizeSteps)
+    {
+        boost::lock_guard<boost::mutex> lock(mutex);
 
-	processingThread = boost::thread(&PathProcessingThread::workingMethod, this);  
-}
+        if (threadStarted)
+        {
+            // thread already started, nothing to do
+            return;
+        }
 
-void PathProcessingThread::interrupt (bool waitUntilStopped)
-{
-	if (!isRunning())
-	{
-		// thread not started, nothing to do
-		return;
-	}
+        // since the start method is the only way to start the thread we can set the variables for indicating the state.
+        threadStarted = true;
+        processingFinished = false;
+        this->optimizeSteps = optimizeSteps;
+        resultPath.reset();
 
-	// this is not perfect: we are setting a bool without protecting it with a mutex. But it works...
-	if (pathProcessor)
-		pathProcessor->stopExecution();
+        processingThread = boost::thread(&PathProcessingThread::workingMethod, this);
+    }
 
-	// todo: catch boost::thread_interrupted in MotionPlanners and be sure to call boost::threa::interrupt points during planning... 
-	//thread.interrupt();
+    void PathProcessingThread::interrupt(bool waitUntilStopped)
+    {
+        if (!isRunning())
+        {
+            // thread not started, nothing to do
+            return;
+        }
 
-	if (waitUntilStopped)
-	{
-		processingThread.join();
-	}
-}
+        // this is not perfect: we are setting a bool without protecting it with a mutex. But it works...
+        if (pathProcessor)
+        {
+            pathProcessor->stopExecution();
+        }
+
+        // todo: catch boost::thread_interrupted in MotionPlanners and be sure to call boost::threa::interrupt points during planning...
+        //thread.interrupt();
+
+        if (waitUntilStopped)
+        {
+            processingThread.join();
+        }
+    }
 
 
-void PathProcessingThread::stop()
-{
-	interrupt(true);
-}
+    void PathProcessingThread::stop()
+    {
+        interrupt(true);
+    }
 
-bool PathProcessingThread::isRunning()
-{
-	boost::lock_guard<boost::mutex> lock(mutex); 
-	return threadStarted;
-}
+    bool PathProcessingThread::isRunning()
+    {
+        boost::lock_guard<boost::mutex> lock(mutex);
+        return threadStarted;
+    }
 
-PathProcessorPtr PathProcessingThread::getPathProcessor()
-{
-	return pathProcessor;
-}
+    PathProcessorPtr PathProcessingThread::getPathProcessor()
+    {
+        return pathProcessor;
+    }
 
-void PathProcessingThread::workingMethod()
-{
-	if (!threadStarted)
-	{
-		VR_WARNING << "Thread should be in started mode?!" << endl;
-	}
-	VR_ASSERT(pathProcessor);
+    void PathProcessingThread::workingMethod()
+    {
+        if (!threadStarted)
+        {
+            VR_WARNING << "Thread should be in started mode?!" << endl;
+        }
 
-	CSpacePathPtr res = pathProcessor->optimize(optimizeSteps);
+        VR_ASSERT(pathProcessor);
 
-	mutex.lock();
+        CSpacePathPtr res = pathProcessor->optimize(optimizeSteps);
 
-	if (res)
-		processingFinished = true;
-	else
-		processingFinished = false;
+        mutex.lock();
 
-	resultPath = res;
+        if (res)
+        {
+            processingFinished = true;
+        }
+        else
+        {
+            processingFinished = false;
+        }
 
-    // the thread ends here
-    threadStarted = false;
-	mutex.unlock();
-}
+        resultPath = res;
 
-Saba::CSpacePathPtr PathProcessingThread::getProcessedPath()
-{
-	if (isRunning())
-		return Saba::CSpacePathPtr(); // no results yet
+        // the thread ends here
+        threadStarted = false;
+        mutex.unlock();
+    }
 
-	return resultPath;
-}
+    Saba::CSpacePathPtr PathProcessingThread::getProcessedPath()
+    {
+        if (isRunning())
+        {
+            return Saba::CSpacePathPtr();    // no results yet
+        }
+
+        return resultPath;
+    }
 
 }
 

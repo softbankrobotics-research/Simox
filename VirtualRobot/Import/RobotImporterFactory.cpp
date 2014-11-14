@@ -31,34 +31,41 @@ using namespace std;
 namespace VirtualRobot
 {
 
-string RobotImporterFactory::getAllFileFilters(){
-    vector<string> filter;
-    BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList()){
-        filter.push_back(RobotImporterFactory::fromName(subclass,NULL)->getFileFilter());
-    }
-    return boost::algorithm::join(filter,";;");
-}
-
-string RobotImporterFactory::getAllExtensions(){
-    vector<string> filter;
-    BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList()){
-        string extension = RobotImporterFactory::fromName(subclass,NULL)->getFileExtension();
-        filter.push_back("*." + extension);
-    }
-    return boost::algorithm::join(filter," ");
-}
-
-RobotImporterFactoryPtr RobotImporterFactory::fromFileExtension(string type, void *params)
-{
-    BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList()){
-        string subclassType = RobotImporterFactory::fromName(subclass,NULL)->getFileExtension();
-        if (type.compare(subclassType)==0){
-            return RobotImporterFactory::fromName(subclass,params);
+    string RobotImporterFactory::getAllFileFilters()
+    {
+        vector<string> filter;
+        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        {
+            filter.push_back(RobotImporterFactory::fromName(subclass, NULL)->getFileFilter());
         }
+        return boost::algorithm::join(filter, ";;");
     }
-    THROW_VR_EXCEPTION(string("Unkown file extension: ") + type);
-    return RobotImporterFactoryPtr();
-}
+
+    string RobotImporterFactory::getAllExtensions()
+    {
+        vector<string> filter;
+        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        {
+            string extension = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
+            filter.push_back("*." + extension);
+        }
+        return boost::algorithm::join(filter, " ");
+    }
+
+    RobotImporterFactoryPtr RobotImporterFactory::fromFileExtension(string type, void* params)
+    {
+        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        {
+            string subclassType = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
+
+            if (type.compare(subclassType) == 0)
+            {
+                return RobotImporterFactory::fromName(subclass, params);
+            }
+        }
+        THROW_VR_EXCEPTION(string("Unkown file extension: ") + type);
+        return RobotImporterFactoryPtr();
+    }
 
 
 } // namespace VirtualRobot

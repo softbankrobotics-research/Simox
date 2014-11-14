@@ -33,103 +33,103 @@
 
 class IKRRTWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	IKRRTWindow(std::string &sceneFile, std::string &reachFile, std::string &rns, std::string &eef, std::string &colModel, std::string &colModelRob, Qt::WFlags flags = 0);
-	~IKRRTWindow();
+    IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob, Qt::WFlags flags = 0);
+    ~IKRRTWindow();
 
-	/*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-	int main();
+    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
+    int main();
 
-	void redraw();
+    void redraw();
 public slots:
-	/*! Closes the window and exits SoQt runloop. */
-	void quit();
+    /*! Closes the window and exits SoQt runloop. */
+    void quit();
 
-	/*!< Overriding the close event, so we know when the window was closed by the user. */
-	void closeEvent(QCloseEvent *event);
+    /*!< Overriding the close event, so we know when the window was closed by the user. */
+    void closeEvent(QCloseEvent* event);
 
-	void resetSceneryAll();
+    void resetSceneryAll();
 
 
-	void closeEEF();
-	void openEEF();
-	void searchIK();
+    void closeEEF();
+    void openEEF();
+    void searchIK();
 
-	void colModel();
+    void colModel();
 
-	void sliderReleased_ObjectX();
-	void sliderReleased_ObjectY();
-	void sliderReleased_ObjectZ();
-	void sliderReleased_ObjectA();
-	void sliderReleased_ObjectB();
-	void sliderReleased_ObjectG();
-	void sliderSolution(int pos);
+    void sliderReleased_ObjectX();
+    void sliderReleased_ObjectY();
+    void sliderReleased_ObjectZ();
+    void sliderReleased_ObjectA();
+    void sliderReleased_ObjectB();
+    void sliderReleased_ObjectG();
+    void sliderSolution(int pos);
 
-	void buildVisu();
+    void buildVisu();
 
-	void showCoordSystem();
-	void reachVisu();
+    void showCoordSystem();
+    void reachVisu();
 
-	void planIKRRT();
+    void planIKRRT();
 
-	void playAndSave();
+    void playAndSave();
 
 protected:
-    
+
     void loadScene();
-	void loadReach();
-	
-	void setupUI();
-	QString formatString(const char *s, float f);
+    void loadReach();
 
-	void buildGraspSetVisu();
+    void setupUI();
+    QString formatString(const char* s, float f);
 
-	void buildRRTVisu();
+    void buildGraspSetVisu();
 
-	void updateObject(float x[6]);
+    void buildRRTVisu();
 
-	static void timerCB(void * data, SoSensor * sensor);
-	void buildRrtVisu();
-	void saveScreenshot();
-	Ui::MainWindowIKRRT UI;
-	SoQtExaminerViewer *viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-		
-	SoSeparator *sceneSep;
-	SoSeparator *robotSep;
-	SoSeparator *objectSep;
-	SoSeparator *graspsSep;
-	SoSeparator *reachableGraspsSep;
-	SoSeparator *reachabilitySep;
-	SoSeparator *obstaclesSep;
-	SoSeparator *rrtSep;
+    void updateObject(float x[6]);
 
-	VirtualRobot::RobotPtr robot;
-	std::vector< VirtualRobot::ObstaclePtr > obstacles;
-	VirtualRobot::ManipulationObjectPtr object;
-	VirtualRobot::ReachabilityPtr reachSpace;
+    static void timerCB(void* data, SoSensor* sensor);
+    void buildRrtVisu();
+    void saveScreenshot();
+    Ui::MainWindowIKRRT UI;
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-	VirtualRobot::EndEffectorPtr eef;
-	Saba::CSpaceSampledPtr cspace;
-	Eigen::VectorXf startConfig;
+    SoSeparator* sceneSep;
+    SoSeparator* robotSep;
+    SoSeparator* objectSep;
+    SoSeparator* graspsSep;
+    SoSeparator* reachableGraspsSep;
+    SoSeparator* reachabilitySep;
+    SoSeparator* obstaclesSep;
+    SoSeparator* rrtSep;
 
-	VirtualRobot::GraspSetPtr graspSet;
-	VirtualRobot::RobotNodeSetPtr rns;
-	
-	std::string sceneFile;
-	std::string reachFile;
-	std::string eefName;
-	std::string rnsName;
-	std::string colModelName;
-	std::string colModelNameRob;
+    VirtualRobot::RobotPtr robot;
+    std::vector< VirtualRobot::ObstaclePtr > obstacles;
+    VirtualRobot::ManipulationObjectPtr object;
+    VirtualRobot::ReachabilityPtr reachSpace;
 
-	Saba::CSpacePathPtr solution; 
-	Saba::CSpacePathPtr solutionOptimized; 
-	Saba::CSpaceTreePtr tree; 
-	Saba::CSpaceTreePtr tree2; 
+    VirtualRobot::EndEffectorPtr eef;
+    Saba::CSpaceSampledPtr cspace;
+    Eigen::VectorXf startConfig;
 
-	bool playbackMode;
-	int playCounter;
+    VirtualRobot::GraspSetPtr graspSet;
+    VirtualRobot::RobotNodeSetPtr rns;
+
+    std::string sceneFile;
+    std::string reachFile;
+    std::string eefName;
+    std::string rnsName;
+    std::string colModelName;
+    std::string colModelNameRob;
+
+    Saba::CSpacePathPtr solution;
+    Saba::CSpacePathPtr solutionOptimized;
+    Saba::CSpaceTreePtr tree;
+    Saba::CSpaceTreePtr tree2;
+
+    bool playbackMode;
+    int playCounter;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;

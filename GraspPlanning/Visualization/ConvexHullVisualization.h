@@ -31,34 +31,34 @@
 
 namespace GraspStudio
 {
-/*!
- *
- * \brief A visualization of a convex hull
- * @see CoinConvexHullVisualization
- *
- */
-class GRASPSTUDIO_IMPORT_EXPORT ConvexHullVisualization
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+     *
+     * \brief A visualization of a convex hull
+     * @see CoinConvexHullVisualization
+     *
+     */
+    class GRASPSTUDIO_IMPORT_EXPORT ConvexHullVisualization
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	/*!
-		Constructor
-	*/
-	ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
-	ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
+        /*!
+            Constructor
+        */
+        ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
+        ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
-	/*!
-	*/
-	virtual ~ConvexHullVisualization();
+        /*!
+        */
+        virtual ~ConvexHullVisualization();
 
-protected:
-	
-	VirtualRobot::MathTools::ConvexHull3DPtr convHull3D;
-	VirtualRobot::MathTools::ConvexHull6DPtr convHull6D;
-	bool useFirst3Coords;
+    protected:
 
-};
+        VirtualRobot::MathTools::ConvexHull3DPtr convHull3D;
+        VirtualRobot::MathTools::ConvexHull6DPtr convHull6D;
+        bool useFirst3Coords;
+
+    };
 
 } // namespace GraspStudio
 

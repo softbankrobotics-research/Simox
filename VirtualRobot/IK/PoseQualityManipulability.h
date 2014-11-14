@@ -30,89 +30,89 @@
 namespace VirtualRobot
 {
 
-/**
-* 
-* \class PoseQualityManipulability
-*
-* This measurement computes the Yoshikawa's manipulability index by computing the Singular value Decomposition (SVD) of the Jacobian.
-* Two modes are offered: Either all singular values are multiplied
-* or the ratio of minimum and maximum singular value is returned (also known as (inverted) Condition number).
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT PoseQualityManipulability :  public PoseQualityMeasurement
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /**
+    *
+    * \class PoseQualityManipulability
+    *
+    * This measurement computes the Yoshikawa's manipulability index by computing the Singular value Decomposition (SVD) of the Jacobian.
+    * Two modes are offered: Either all singular values are multiplied
+    * or the ratio of minimum and maximum singular value is returned (also known as (inverted) Condition number).
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PoseQualityManipulability :  public PoseQualityMeasurement
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	enum ManipulabilityIndexType
-	{
-		eMultiplySV,	// multiply all singular values
-		eMinMaxRatio	// ratio of max and min singular value (aka (inverted) Condition number)
-	};
+        enum ManipulabilityIndexType
+        {
+            eMultiplySV,    // multiply all singular values
+            eMinMaxRatio    // ratio of max and min singular value (aka (inverted) Condition number)
+        };
 
-	PoseQualityManipulability(VirtualRobot::RobotNodeSetPtr rns, ManipulabilityIndexType i = eMinMaxRatio);
-	~PoseQualityManipulability();
+        PoseQualityManipulability(VirtualRobot::RobotNodeSetPtr rns, ManipulabilityIndexType i = eMinMaxRatio);
+        ~PoseQualityManipulability();
 
-	/*!
-		Returns the manipulability of the current configuration.
-	*/
-	virtual float getPoseQuality();
-	virtual float getManipulability(ManipulabilityIndexType i);
+        /*!
+            Returns the manipulability of the current configuration.
+        */
+        virtual float getPoseQuality();
+        virtual float getManipulability(ManipulabilityIndexType i);
 
-	/*!
-		The quality is determined for a given Cartesian direction.  
-		The current configuration of the corresponding RNS is analyzed and the quality is returned.
-		See derived classes for details.
-		\param direction A 3d or 6d vector with the Cartesian direction to investigate.
-	*/
-	virtual float getPoseQuality(const Eigen::VectorXf &direction);
-	virtual float getManipulability(const Eigen::VectorXf &direction, int considerFirstSV = -1);
+        /*!
+            The quality is determined for a given Cartesian direction.
+            The current configuration of the corresponding RNS is analyzed and the quality is returned.
+            See derived classes for details.
+            \param direction A 3d or 6d vector with the Cartesian direction to investigate.
+        */
+        virtual float getPoseQuality(const Eigen::VectorXf& direction);
+        virtual float getManipulability(const Eigen::VectorXf& direction, int considerFirstSV = -1);
 
-	/*!
-		Considers the first considerFirstSV singular values and ignores any remaining entries in the sv vector.
-		This can be useful, when constrained motions should be analyzed (e.g. 2d motions in 3d)
-	*/
-	virtual float getManipulability(ManipulabilityIndexType i, int considerFirstSV);
+        /*!
+            Considers the first considerFirstSV singular values and ignores any remaining entries in the sv vector.
+            This can be useful, when constrained motions should be analyzed (e.g. 2d motions in 3d)
+        */
+        virtual float getManipulability(ManipulabilityIndexType i, int considerFirstSV);
 
-	/*!
-		Returns the singular values of the current Jacobian. The values are ordered, starting with the largest value.
-	*/
-	Eigen::VectorXf getSingularValues();
+        /*!
+            Returns the singular values of the current Jacobian. The values are ordered, starting with the largest value.
+        */
+        Eigen::VectorXf getSingularValues();
 
-	/*
-		Computes the scaled singular vectors (U) of the Jacobian with SVD.
-		The columns of the returned matrix are the Cartesian singular vectors of the Jacobi, scaled with 1/maxSingularValue.
-		The columns of U are called 'Cartesian Vectors' since they describe the Cartesian relationship. 
-		SVD:  J = USV'
-	*/
-	Eigen::MatrixXf getSingularVectorCartesian();
+        /*
+            Computes the scaled singular vectors (U) of the Jacobian with SVD.
+            The columns of the returned matrix are the Cartesian singular vectors of the Jacobi, scaled with 1/maxSingularValue.
+            The columns of U are called 'Cartesian Vectors' since they describe the Cartesian relationship.
+            SVD:  J = USV'
+        */
+        Eigen::MatrixXf getSingularVectorCartesian();
 
-	/*
-		Enable or disable joint limit considerations.
-		If enabled, joint limits are considered by applying this penalize function:
-		P(\theta_i) = 1 - \exp (-k \prod_{i=1}^n { \frac{(\theta_i - l_i^-)(l_i^+ - \theta_i)} { (l_i^+ - l_i^-)^2 } } ).
+        /*
+            Enable or disable joint limit considerations.
+            If enabled, joint limits are considered by applying this penalize function:
+            P(\theta_i) = 1 - \exp (-k \prod_{i=1}^n { \frac{(\theta_i - l_i^-)(l_i^+ - \theta_i)} { (l_i^+ - l_i^-)^2 } } ).
 
-		The joint limits are given by l_i^- and l_i^+  and k is a factor that can be used to adjust the behavior
-	*/
-	virtual void penalizeJointLimits(bool enable, float k = 50.0f);
+            The joint limits are given by l_i^- and l_i^+  and k is a factor that can be used to adjust the behavior
+        */
+        virtual void penalizeJointLimits(bool enable, float k = 50.0f);
 
-	virtual bool consideringJointLimits();
+        virtual bool consideringJointLimits();
 
-	static std::string getTypeName();
-protected:
+        static std::string getTypeName();
+    protected:
 
-	float getJointLimitPenalizationFactor();
+        float getJointLimitPenalizationFactor();
 
-	VirtualRobot::DifferentialIKPtr jacobian;
-	ManipulabilityIndexType manipulabilityType;
+        VirtualRobot::DifferentialIKPtr jacobian;
+        ManipulabilityIndexType manipulabilityType;
 
-	bool penJointLimits;
-	float penJointLimits_k;
+        bool penJointLimits;
+        float penJointLimits_k;
 
-	float penalizeRotationFactor; // to align translational and rotational components
+        float penalizeRotationFactor; // to align translational and rotational components
 
-	//! if set, the Jacobian is computed in [m], while assuming the kinematic definitions to be in [mm]
-	bool convertMMtoM;
-};
+        //! if set, the Jacobian is computed in [m], while assuming the kinematic definitions to be in [mm]
+        bool convertMMtoM;
+    };
 
 }
 
