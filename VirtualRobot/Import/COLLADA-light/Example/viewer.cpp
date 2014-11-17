@@ -17,17 +17,19 @@ int main(int argc, char** argv)
 
     if (argc == 1)
         //robot.parse("../RobotEditorArmar4.dae");
-    {
-        robot.parse("/media/sf_host/manikin_creo_4.dae");
+        //robot.parse("/media/sf_host/manikin_creo_4.dae");
+        std::cout << "Usage collada <collada file> [<inventor export>]" <<std::endl;
+        return 1;
     }
-    else
-    {
+    else {
         robot.parse(argv[1]);
+        if (argc==3){
+            SoWriteAction writeAction;
+            writeAction.getOutput()->openFile(argv[2]);
+            writeAction.apply(root);
+        }
     }
-
-    SoWriteAction writeAction;
-    writeAction.getOutput()->openFile("test.iv");
-    writeAction.apply(root);
+    }
 
     SoQtExaminerViewer* viewer = new SoQtExaminerViewer(mainwin);
     viewer->setSceneGraph(root);
@@ -39,4 +41,5 @@ int main(int argc, char** argv)
     SoQt::mainLoop();
 
     root->unref();
+    return 1;
 }
