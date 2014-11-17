@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     root->ref();
     InventorRobot robot(root);
 
-    if (argc == 1)
+    if (argc == 1){
         //robot.parse("../RobotEditorArmar4.dae");
         //robot.parse("/media/sf_host/manikin_creo_4.dae");
         std::cout << "Usage collada <collada file> [<inventor export>]" <<std::endl;
@@ -28,7 +28,6 @@ int main(int argc, char** argv)
             writeAction.getOutput()->openFile(argv[2]);
             writeAction.apply(root);
         }
-    }
     }
 
     SoQtExaminerViewer* viewer = new SoQtExaminerViewer(mainwin);
