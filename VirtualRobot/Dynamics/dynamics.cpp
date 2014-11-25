@@ -29,12 +29,11 @@ using namespace RigidBodyDynamics::Math;
 
 
 
-VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns)
-{
-    if (!rns)
-    {
-        THROW_VR_EXCEPTION("Null data");
-    }
+VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns) {
+   if(!rns)
+   {
+       THROW_VR_EXCEPTION("RobotNodeSetPtr is zero pointer");
+   }
 
     gravity = Vector3d(0, 0, -9.81);
     model = boost::shared_ptr<RigidBodyDynamics::Model>(new Model());
@@ -76,12 +75,37 @@ int Dynamics::getnDoF()
 
 int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
 {
+    RobotNodePtr physicsFromChild;
     int nodeID = parentID;
     // need to define body, joint and spatial transform
     // body first
     float mass = node->getMass();
     Vector3d com = node->getCoMLocal().cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
     Matrix3d inertia = node->getInertiaMatrix().cast<double>();
+
+
+    // if mass is 0, check children for translational joint. In case there is one, take its mass, com and inertia. Probably a bit hacky right now!
+    if (fabs(mass) < 0.000001)
+    {
+        BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
+        {
+            boost::shared_ptr<RobotNode> childPtr = boost::dynamic_pointer_cast<RobotNode>(child);
+            if(childPtr != 0 && childPtr->isTranslationalJoint())
+            {
+                mass = childPtr->getMass();
+                com = child->getCoMLocal().cast<double>()/1000;
+                inertia = child->getInertiaMatrix().cast<double>();
+                physicsFromChild = childPtr;
+                break;
+            }
+        }
+    }
+    /*
+    cout << "Mass: " << mass << endl;
+    cout << "CoM:" << com << endl;
+    cout << "Inertia: " << inertia << endl;
+    */
+
     Body body = Body(mass, com, inertia);
 
 
@@ -123,6 +147,9 @@ int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNod
         nodeID = model->AddBody(parentID, spatial_transform, joint, body);
     }
 
+    if(physicsFromChild != 0)
+        node = physicsFromChild;
+
     BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
     {
         boost::shared_ptr<RobotNode> childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
@@ -133,7 +160,6 @@ int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNod
             {
                 node = parentNode;
             }
-
             toRBDL(model, childRobotNode, node, nodeID);
 
         }

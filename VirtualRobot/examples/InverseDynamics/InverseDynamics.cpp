@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
 
     if (rob)
     {
+
         RobotNodeSetPtr ns = rob->getRobotNodeSet("RightArm");
 
         VirtualRobot::Dynamics dynamics = VirtualRobot::Dynamics(ns);
@@ -41,8 +42,6 @@ int main(int argc, char* argv[])
 
         cout << "inverse dynamics: " << endl << dynamics.getInverseDynamics(q, qdot, qddot) << endl;
         cout << "joint space inertia matrix: " << endl << dynamics.getInertiaMatrix(q) << endl;
-
-
     }
     else
     {
