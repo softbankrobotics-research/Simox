@@ -36,7 +36,7 @@ namespace VirtualRobot
         Eigen::Vector3d gravity;
 
     private:
-        int toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode = RobotNodePtr(), int parentID = 0);
+        void toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode = RobotNodePtr(), int parentID = 0);
     };
 }
 

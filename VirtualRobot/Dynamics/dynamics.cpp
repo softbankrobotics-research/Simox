@@ -45,7 +45,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns) {
 
         RobotNodePtr root = rns->getKinematicRoot();
 
-    int rootID = Dynamics::toRBDL(model, root);
+    Dynamics::toRBDL(model, root);
 }
 
 Eigen::VectorXd Dynamics::getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd qddot)
@@ -73,7 +73,7 @@ int Dynamics::getnDoF()
 }
 
 
-int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
+void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
 {
     RobotNodePtr physicsFromChild;
     int nodeID = parentID;
@@ -92,19 +92,15 @@ int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNod
             boost::shared_ptr<RobotNode> childPtr = boost::dynamic_pointer_cast<RobotNode>(child);
             if(childPtr != 0 && childPtr->isTranslationalJoint())
             {
+                Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
                 mass = childPtr->getMass();
-                com = child->getCoMLocal().cast<double>()/1000;
+                com = child->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
                 inertia = child->getInertiaMatrix().cast<double>();
                 physicsFromChild = childPtr;
                 break;
             }
         }
     }
-    /*
-    cout << "Mass: " << mass << endl;
-    cout << "CoM:" << com << endl;
-    cout << "Inertia: " << inertia << endl;
-    */
 
     Body body = Body(mass, com, inertia);
 
@@ -147,10 +143,20 @@ int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNod
         nodeID = model->AddBody(parentID, spatial_transform, joint, body);
     }
 
-    if(physicsFromChild != 0)
-        node = physicsFromChild;
+    std::vector<SceneObjectPtr> children;
 
-    BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
+
+    // pick correct children to proceed the recursion
+    if(physicsFromChild != 0)
+    {
+        children = physicsFromChild->getChildren();
+    }
+    else
+    {
+        children = node->getChildren();
+    }
+
+    BOOST_FOREACH(SceneObjectPtr child, children)
     {
         boost::shared_ptr<RobotNode> childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
 
@@ -165,5 +171,5 @@ int Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNod
         }
     }
 
-    return nodeID;
+    return;
 }
