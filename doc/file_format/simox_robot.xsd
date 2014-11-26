@@ -202,12 +202,40 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:complexType name="Coordinate-Type">
-		<xs:attribute name="enale"    type="xs:boolean" default="true"/>
-		<xs:attribute name="scaling"  type="xs:decimal" default="1.0"/>
-		<xs:attribute name="text"     type="xs:string" default=""/>
-	</xs:complexType>
+  <xs:complexType name="Coordinate-Type">
+    <xs:attribute name="enale"    type="xs:boolean" default="true"/>
+    <xs:attribute name="scaling"  type="xs:decimal" default="1.0"/>
+    <xs:attribute name="text"     type="xs:string" default=""/>
+  </xs:complexType>
 
+  <xs:complexType name="PropagateJointValue-Type">
+    <xs:attribute name="factor"  type="xs:decimal" default="1.0"/>
+    <xs:attribute name="name"     type="xs:string" default=""/>
+  </xs:complexType>
+
+  <xs:complexType name="PrimitiveBox-Type">
+    <xs:all>
+      <xs:element name="Transform" type="Transform-Type" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="width" type="xs:decimal" default="0.0"/>
+    <xs:attribute name="height" type="xs:decimal" default="0.0"/>
+    <xs:attribute name="depth" type="xs:decimal" default="0.0"/>
+  </xs:complexType>
+
+  <xs:complexType name="PrimitiveSphere-Type">
+    <xs:all>
+      <xs:element name="Transform" type="Transform-Type" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="radius" type="xs:decimal" default="1.0"/>
+  </xs:complexType>
+
+  <xs:complexType name="Primitive-Type">
+    <xs:all>
+      <xs:element name="box" type="PrimitiveBox-Type" minOccurs="0"/>
+      <xs:element name="sphere" type="PrimitiveSphere-Type" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+  
 	<xs:complexType name="JointElement">
 		<xs:all>
 			<xs:element name="limits"               type="Limits-Type" minOccurs="1"/>
@@ -216,6 +244,7 @@
 			<xs:element name="maxvelocity"          type="Velocity-Type" minOccurs="1"/>
 			<xs:element name="maxacceleration"      type="Acceleration-Type" minOccurs="1"/>
 			<xs:element name="maxtorque"            type="Torque-Type" minOccurs="1"/>
+      <xs:element name="propagatejointvalue"  type="PropagateJointValue-Type" minOccurs="0"/>
 		</xs:all>
 		<xs:attribute name="type" type="Joint-Type" default="fixed"/>
 	</xs:complexType>
@@ -230,8 +259,9 @@
 
 	<xs:complexType name="VisualizationElement">
 		<xs:all>
-			<xs:element name="File"           type="File-Type" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="CoordinateAxis" type="Coordinate-Type" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="File"           type="File-Type" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Primitives"     type="Primitive-Type" minOccurs="0"/>
+      <xs:element name="CoordinateAxis" type="Coordinate-Type" minOccurs="0" maxOccurs="1"/>
 		</xs:all>
 		<xs:attribute name="enable"               type="xs:boolean" default="true"/>
 		<xs:attribute name="useAsCollisionModel"  type="xs:boolean" default="false"/>
@@ -240,6 +270,7 @@
 	<xs:complexType name="CollisionElement">
 		<xs:all>
 			<xs:element name="File"           type="Col-File-Type" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Primitives"     type="Primitive-Type" minOccurs="0"/>
 		</xs:all>
 		<xs:attribute name="enable"               type="xs:boolean" default="true"/>
 	</xs:complexType>

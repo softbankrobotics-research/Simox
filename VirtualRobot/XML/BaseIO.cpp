@@ -749,9 +749,12 @@ namespace VirtualRobot
         {
             return;
         }
-        else if (fs::path(filename).is_absolute() && boost::filesystem::exists(fs::path(filename)))
+        else if (fs::path(filename).is_absolute())
         {
-            filepath = fs::canonical(fs::path(filename));
+            if (boost::filesystem::exists(fs::path(filename)))
+                filepath = fs::canonical(fs::path(filename));
+            else
+                filepath = fs::path(filename);
         }
         else
         {
