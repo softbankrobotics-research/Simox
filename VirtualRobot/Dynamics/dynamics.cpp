@@ -55,6 +55,40 @@ Eigen::VectorXd Dynamics::getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd 
     return tau;
 }
 
+Eigen::VectorXd Dynamics::getForwardDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd tau)
+{
+    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+    InverseDynamics(*model.get(), q, qdot, tau, qddot);
+    return qddot;
+}
+
+
+Eigen::VectorXd Dynamics::getGravityMatrix(Eigen::VectorXd q, int nDof)
+{
+
+    Eigen::VectorXd qdot = Eigen::VectorXd::Zero(nDof);
+    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
+
+    Eigen::VectorXd tauGravity = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+    InverseDynamics(*model.get(), q, qdot, qddot, tauGravity);
+    return tauGravity;
+}
+
+Eigen::VectorXd Dynamics::getCoriolisMatrix(Eigen::VectorXd q, Eigen::VectorXd qdot, int nDof)
+{
+
+    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
+    Eigen::VectorXd tauGravity = getGravityMatrix(q, nDof);
+    Eigen::VectorXd tau= Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+
+    Eigen::MatrixXd tauCoriolis = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+    InverseDynamics(*model.get(), q, qdot, qddot, tau);
+    tauCoriolis=tau-tauGravity;
+    return tauCoriolis;
+}
+
+
+
 Eigen::MatrixXd Dynamics::getInertiaMatrix(Eigen::VectorXd q)
 {
     Eigen::MatrixXd inertia = Eigen::MatrixXd::Zero(model->dof_count, model->dof_count);

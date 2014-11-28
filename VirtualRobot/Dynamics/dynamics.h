@@ -24,6 +24,12 @@ namespace VirtualRobot
         /// Calculates the Inverse Dynamics for given motion state defined by q, qdot and qddot
         Eigen::VectorXd getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd qddot);
         /// Calculates the joint space inertia matrix given a joint position vector q
+        Eigen::VectorXd getGravityMatrix(Eigen::VectorXd q, int nDof);
+        /// Calculates the joint space Gravity Matrix given a joint position vector q and Number of DOF
+        Eigen::VectorXd getCoriolisMatrix(Eigen::VectorXd q, Eigen::VectorXd qdot, int nDof);
+        /// Calculates the coriolis matrix given position vector q, velocity vector qdot and Number of DOF
+        Eigen::VectorXd getForwardDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd tau);
+        /// Calculates forward dynamics given position vector q velocity vector qdot and joint torques tau
         Eigen::MatrixXd getInertiaMatrix(Eigen::VectorXd q);
         /// Sets the gravity vector of the dynamics system
         void setGravity(Eigen::Vector3d gravity);

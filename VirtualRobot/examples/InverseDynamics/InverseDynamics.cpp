@@ -39,9 +39,14 @@ int main(int argc, char* argv[])
         Eigen::VectorXd q = Eigen::VectorXd::Random(nDof);
         Eigen::VectorXd qdot = Eigen::VectorXd::Random(nDof);
         Eigen::VectorXd qddot = Eigen::VectorXd::Random(nDof);
+        Eigen::VectorXd tau = Eigen::VectorXd::Random(nDof);
 
-        cout << "inverse dynamics: " << endl << dynamics.getInverseDynamics(q, qdot, qddot) << endl;
-        cout << "joint space inertia matrix: " << endl << dynamics.getInertiaMatrix(q) << endl;
+
+        cout << "joint torques from inverse dynamics: " << endl << dynamics.getInverseDynamics(q, qdot, qddot) << endl;
+        cout << "joint asdasdspace inertia matrix: " << endl << dynamics.getInertiaMatrix(q) << endl;
+        cout << "joint space gravitational matrix:" << endl << dynamics.getGravityMatrix(q, nDof) << endl;
+        cout << "joint space coriolis matrix:" << endl << dynamics.getCoriolisMatrix(q, qdot, nDof) << endl;
+        cout << "joint space accelerations from forward dynamics:" << endl << dynamics.getForwardDynamics(q, qdot, tau) << endl;
     }
     else
     {
