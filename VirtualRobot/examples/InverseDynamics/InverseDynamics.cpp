@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
         cout << "joint space gravitational matrix:" << endl << dynamics.getGravityMatrix(q, nDof) << endl;
         cout << "joint space coriolis matrix:" << endl << dynamics.getCoriolisMatrix(q, qdot, nDof) << endl;
         cout << "joint space accelerations from forward dynamics:" << endl << dynamics.getForwardDynamics(q, qdot, tau) << endl;
+        cout << "Identifier for Elbow R:" << endl << dynamics.getIdentifier("Elbow R") << endl;
+
     }
     else
     {

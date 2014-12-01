@@ -36,14 +36,19 @@ namespace VirtualRobot
         /// returns the number of Degrees of Freedom of the dynamics system
         int getnDoF();
 
+        int getIdentifier(std::string name){return identifierMap.at(name);}
+
     protected:
         RobotNodeSetPtr rns;
         boost::shared_ptr<RigidBodyDynamics::Model> model;
         Eigen::Vector3d gravity;
+        std::map<std::string,  int> identifierMap;
 
     private:
         void toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode = RobotNodePtr(), int parentID = 0);
     };
+
+    typedef boost::shared_ptr<Dynamics> DynamicsPtr;
 }
 
 #endif
