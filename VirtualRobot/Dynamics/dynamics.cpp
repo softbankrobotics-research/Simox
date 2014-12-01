@@ -175,6 +175,8 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     if (joint.mJointType != JointTypeFixed)
     {
         nodeID = model->AddBody(parentID, spatial_transform, joint, body);
+        this->identifierMap[node->getName()] = nodeID;
+        //cout << node->getName() << ", " << nodeID << endl; // Debugging Info
     }
 
     std::vector<SceneObjectPtr> children;
