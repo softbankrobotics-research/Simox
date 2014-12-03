@@ -322,7 +322,7 @@ namespace VirtualRobot
 
             if (deepCopy)
             {
-                newModel->addChild(visualization->copy(FALSE));
+                newModel->addChild(visualization->copy(TRUE));
             }
             else
             {

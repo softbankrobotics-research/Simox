@@ -18,6 +18,9 @@
 #include <string>
 #include <iostream>
 
+#include <rbdl/rbdl_utils.h>
+
+
 using std::cout;
 using std::cin;
 using namespace VirtualRobot;
@@ -106,6 +109,19 @@ int Dynamics::getnDoF()
     return model->dof_count;
 }
 
+void Dynamics::print()
+{
+    std::string result = RigidBodyDynamics::Utils::GetModelHierarchy (*model.get());
+    cout << "RBDL hierarchy of RNS:" << rns->getName() << endl;
+    cout << result;
+    result = RigidBodyDynamics::Utils::GetNamedBodyOriginsOverview (*model.get());
+    cout << "RBDL origins of RNS:" << rns->getName() << endl;
+    cout << result;
+    result = RigidBodyDynamics::Utils::GetModelDOFOverview (*model.get());
+    cout << "RBDL DoF of RNS:" << rns->getName() << endl;
+    cout << result;
+}
+
 
 void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
 {
@@ -187,9 +203,17 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
 
     if (joint.mJointType != JointTypeFixed)
     {
-        nodeID = model->AddBody(parentID, spatial_transform, joint, body);
+        nodeID = model->AddBody(parentID, spatial_transform, joint, body, node->getName());
         this->identifierMap[node->getName()] = nodeID;
-        cout << node->getName() << ", " << nodeID << endl; // Debugging Info
+
+        cout << node->getName() << ", " << nodeID << " <<:" <<endl; // Debugging Info
+        cout << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
+        cout << "** MASS: " << body.mMass << endl;
+        cout << "** COM: " << body.mCenterOfMass.transpose() << endl;
+        cout << "** INERTIA: " << endl << body.mInertia << endl;
+        cout << "** mIsVirtual: " << body.mIsVirtual << endl;
+        if (joint.mJointAxes)
+            cout << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
     }
 
     std::vector<SceneObjectPtr> children;

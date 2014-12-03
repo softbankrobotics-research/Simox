@@ -38,6 +38,8 @@ namespace VirtualRobot
 
         int getIdentifier(std::string name){return identifierMap.at(name);}
 
+        void print();
+
     protected:
         RobotNodeSetPtr rns;
         boost::shared_ptr<RigidBodyDynamics::Model> model;
