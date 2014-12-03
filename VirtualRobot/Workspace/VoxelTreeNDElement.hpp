@@ -50,16 +50,26 @@ namespace VirtualRobot
         {
             VR_ASSERT(master);
             this->tree = master;
-            //num_children = pow_int(2,N);
-            children = new VoxelTreeNDElement*[master->getNumChildren()];
-
-            for (int i = 0; i < master->getNumChildren(); i++)
-            {
-                children[i] = NULL;
-            }
 
             entry = NULL;
-            leaf = false;
+
+            if (level >= (tree->getMaxLevels() - 1))
+            {
+                leaf = true;
+                children = NULL;
+            } else
+            {
+                leaf = false;
+                //num_children = pow_int(2,N);
+                children = new VoxelTreeNDElement*[master->getNumChildren()];
+
+                for (int i = 0; i < master->getNumChildren(); i++)
+                {
+                    children[i] = NULL;
+                }
+            }
+
+
             memcpy(&(this->pos[0]), &(p[0]), sizeof(float)*N);
             //memcpy (&(this->extends[0]),&(extends[0]),sizeof(float)*N);
             this->level = level;
@@ -377,12 +387,7 @@ namespace VirtualRobot
         bool read(const datablock& data, const std::map< unsigned int, VoxelTreeNDElement* >& idElementMapping)
         {
             deleteData();
-            children = new VoxelTreeNDElement*[tree->getNumChildren()];
-
-            for (int i = 0; i < tree->getNumChildren(); i++)
-            {
-                children[i] = NULL;
-            }
+            
 
             entry = NULL;
             leaf = false;
@@ -395,6 +400,12 @@ namespace VirtualRobot
 
             if (!leaf)
             {
+                children = new VoxelTreeNDElement*[tree->getNumChildren()];
+
+                for (int i = 0; i < tree->getNumChildren(); i++)
+                {
+                    children[i] = NULL;
+                }
                 for (int i = 0; i < num_children; i++)
                 {
                     if (data.children[i] > 0)
@@ -415,6 +426,7 @@ namespace VirtualRobot
             }
             else
             {
+                children = NULL;
                 entry = new T(data.entry);
             }
 
@@ -425,6 +437,7 @@ namespace VirtualRobot
 
         VoxelTreeNDElement<T, N>* createChild(float p[N])
         {
+            VR_ASSERT (!leaf);
             int indx = getChildIndx(p);
 
             if (indx < 0)
@@ -521,6 +534,32 @@ namespace VirtualRobot
             return true;
         };
 
+        void accumulateMemoryConsumtion(long &storeMemStructure, long &storeMemData)
+        {
+            storeMemStructure += sizeof(VoxelTreeNDElement<T,N>);
+
+            if (entry)
+            {
+                VR_ASSERT(leaf);
+                storeMemData += sizeof(T);
+            }
+            else
+            {
+                VR_ASSERT(!leaf);
+                
+                // size of children array 
+                storeMemStructure += tree->getNumChildren() * sizeof (VoxelTreeNDElement*);
+
+                for (int i = 0; i < tree->getNumChildren(); i++)
+                {
+                    if (children[i])
+                    {
+                        children[i]->accumulateMemoryConsumtion(storeMemStructure,storeMemData);
+                    }
+                }
+            }
+        }
+
         void collectElements(std::vector<VoxelTreeNDElement*>& elements)
         {
             elements.push_back(this);
@@ -590,12 +629,14 @@ namespace VirtualRobot
 
         void deleteData()
         {
-            for (int i = 0; i < tree->getNumChildren(); i++)
+            if (children)
             {
-                delete children[i];
+                for (int i = 0; i < tree->getNumChildren(); i++)
+                {
+                    delete children[i];
+                }
+                delete[] children;
             }
-
-            delete[] children;
             delete entry;
             children = NULL;
             entry = NULL;
@@ -603,6 +644,7 @@ namespace VirtualRobot
 
         VoxelTreeNDElement<T, N>* getNextChild(int startIndex, int& storeElementNr)
         {
+            VR_ASSERT(!leaf);
             for (int i = startIndex; i < tree->getNumChildren(); i++)
             {
                 if (children[i])
@@ -614,7 +656,6 @@ namespace VirtualRobot
 
             return NULL;
         }
-        //bool checkAllChildren();
 
         VoxelTreeNDElement** children;
         T* entry;

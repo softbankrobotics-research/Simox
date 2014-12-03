@@ -781,6 +781,17 @@ namespace VirtualRobot
             return root;
         }
 
+        void getMemoryConsumtion(long &storeMemStructure, long &storeMemData)
+        {
+            storeMemStructure = 0;
+            storeMemData = 0;
+            storeMemStructure += sizeof(VoxelTreeND<T,N>);
+            if (root)
+            {
+                root->accumulateMemoryConsumtion(storeMemStructure,storeMemData);
+            }
+        }
+
     protected:
         /*!
             Returns voxel extends of element in given level (0<=level<maxLevels) and dimension dim (0<=dim<N)
