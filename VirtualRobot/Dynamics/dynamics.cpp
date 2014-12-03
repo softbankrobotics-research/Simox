@@ -35,7 +35,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns) {
        THROW_VR_EXCEPTION("RobotNodeSetPtr is zero pointer");
    }
 
-    gravity = Vector3d(0, 0, -9.81);
+    gravity = Vector3d(0, 0,-9.81);
     model = boost::shared_ptr<RigidBodyDynamics::Model>(new Model());
 
     model->gravity = gravity;
@@ -44,7 +44,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns) {
         THROW_VR_EXCEPTION("RobotNodeSet is no kinematic chain!")
 
         RobotNodePtr root = rns->getKinematicRoot();
-
+//cout << "Root name: "<<root->getName()<<endl;
     Dynamics::toRBDL(model, root);
 }
 
@@ -58,7 +58,7 @@ Eigen::VectorXd Dynamics::getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd 
 Eigen::VectorXd Dynamics::getForwardDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd tau)
 {
     Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
-    InverseDynamics(*model.get(), q, qdot, tau, qddot);
+    ForwardDynamics(*model.get(), q, qdot, tau, qddot);
     return qddot;
 }
 
@@ -145,6 +145,15 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     if (parentNode)
     {
         trafo = node->getTransformationFrom(parentNode).cast<double>();
+        //cout <<"parent Node: "<< parentNode->getName()<<endl;
+        //cout << "transformation RBDL" << endl << trafo << endl;
+    }
+    else if (!parentNode)
+    {
+        if (node->getParent())
+            trafo = node->getParent()->getGlobalPose().cast<double>();
+        else if (node->getRobot())
+            trafo = node->getRobot()->getGlobalPose().cast<double>();
     }
 
     Matrix3d spatial_rotation = trafo.block(0, 0, 3, 3);
@@ -162,6 +171,8 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         Vector3d joint_axis = rev->getJointRotationAxisInJointCoordSystem().cast<double>();
 
         joint = Joint(joint_type, joint_axis);
+
+        cout << "Rotational Joint added:" << endl;
     }
     else if (node->isTranslationalJoint())
     {
@@ -170,13 +181,15 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         Vector3d joint_axis = prism->getJointTranslationDirectionJointCoordSystem().cast<double>();
 
         joint = Joint(joint_type, joint_axis);
+
+         cout << "translational Joint added" << endl;
     }
 
     if (joint.mJointType != JointTypeFixed)
     {
         nodeID = model->AddBody(parentID, spatial_transform, joint, body);
         this->identifierMap[node->getName()] = nodeID;
-        //cout << node->getName() << ", " << nodeID << endl; // Debugging Info
+        cout << node->getName() << ", " << nodeID << endl; // Debugging Info
     }
 
     std::vector<SceneObjectPtr> children;
