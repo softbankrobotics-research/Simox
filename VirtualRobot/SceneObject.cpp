@@ -1133,7 +1133,7 @@ namespace VirtualRobot
         return res;
     }
 
-    std::string SceneObject::getFilenameReplacementVisuModel()
+    std::string SceneObject::getFilenameReplacementVisuModel(const std::string standardExtension)
     {
         std::string fnV = visualizationModel->getFilename();
         boost::filesystem::path fn(fnV);
@@ -1143,7 +1143,7 @@ namespace VirtualRobot
 
         if (extStr.empty())
         {
-            extStr = ".iv";    // try with iv
+            extStr = standardExtension;    // try with wrl
         }
 
         std::string newFilename = name;
@@ -1152,7 +1152,7 @@ namespace VirtualRobot
         return newFilename;
     }
 
-    std::string SceneObject::getFilenameReplacementColModel()
+    std::string SceneObject::getFilenameReplacementColModel(const std::string standardExtension)
     {
         std::string newFilename = name;
         newFilename += "_col";
@@ -1167,7 +1167,7 @@ namespace VirtualRobot
 
         if (extStr.empty())
         {
-            extStr = ".iv";    // try with iv
+            extStr = standardExtension;    // try with wrl
         }
 
         newFilename += extStr;

@@ -493,8 +493,8 @@ namespace VirtualRobot
 
 
 
-        std::string getFilenameReplacementVisuModel();
-        std::string getFilenameReplacementColModel();
+        std::string getFilenameReplacementVisuModel(const std::string standardExtension = ".wrl");
+        std::string getFilenameReplacementColModel(const std::string standardExtension = ".wrl");
 
         SceneObject() {}
 

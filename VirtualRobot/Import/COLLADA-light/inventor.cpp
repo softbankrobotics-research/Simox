@@ -222,7 +222,7 @@ namespace Collada
             SoMaterial* mat  = new SoMaterial;
             separator->addChild(mat);
             mat->diffuseColor.setValue(color[0], color[1], color[2]);
-            std::cout << "color: " << color[0] << "," << color[1] << "," << color[2] << "," << color[3] << std::endl;
+            //std::cout << "color: " << color[0] << "," << color[1] << "," << color[2] << "," << color[3] << std::endl;
             //mat->transparency.setValue(color[3]);
 
             SoCoordinate3* coordinates = new SoCoordinate3;

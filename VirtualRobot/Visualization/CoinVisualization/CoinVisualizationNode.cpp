@@ -22,6 +22,10 @@
 #include <Inventor/nodes/SoScale.h>
 #include <Inventor/actions/SoWriteAction.h>
 
+#include <Inventor/actions/SoToVRML2Action.h>
+
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
+
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 
@@ -422,6 +426,7 @@ namespace VirtualRobot
     bool CoinVisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
     {
         std::string outFile = filename;
+        bool vrml = true; // may be changed later according to file extension
 
         boost::filesystem::path completePath(modelPath);
         boost::filesystem::path fn(outFile);
@@ -444,13 +449,36 @@ namespace VirtualRobot
             VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
         }
 
+        boost::filesystem::path extension = completeFile.extension();
+        std::string extStr = extension.string();
+        BaseIO::getLowerCase(extStr);
+        if (extStr == ".iv")
+            vrml = false;
+        else
+            vrml = true;
+
+
         SoGroup* n = new SoGroup;
         n->ref();
         n->addChild(visualization);
         SoGroup* newVisu = CoinVisualizationFactory::convertSoFileChildren(n);
         newVisu->ref();
-        SoWriteAction wa(so);
-        wa.apply(newVisu);
+        if (vrml)
+        {
+            SoToVRML2Action tovrml2;
+            tovrml2.apply(newVisu);
+            SoVRMLGroup *newroot = tovrml2.getVRML2SceneGraph();
+            newroot->ref();
+            so->setHeaderString("#VRML V2.0 utf8");
+            SoWriteAction wra(so);
+            wra.apply(newroot);
+            newroot->unref();
+        }
+        else
+        {
+            SoWriteAction wa(so);
+            wa.apply(newVisu);
+        }
         so->closeFile();
 
         newVisu->unref();
