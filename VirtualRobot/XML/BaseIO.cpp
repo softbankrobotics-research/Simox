@@ -840,10 +840,10 @@ namespace VirtualRobot
         std::string visuCoordType = "";
         useAsColModel = false;
         std::string visuFileType = "";
-        std::string visuFile = "";
         rapidxml::xml_attribute<>* attr;
         std::vector<Primitive::PrimitivePtr> primitives;
         VisualizationNodePtr visualizationNode;
+        std::vector<VisualizationNodePtr> visualizationNodes;
 
         if (!visuXMLNode)
         {
@@ -866,51 +866,16 @@ namespace VirtualRobot
 
         if (enableVisu)
         {
-            rapidxml::xml_node<>* visuFileXMLNode = visuXMLNode->first_node("file", 0, false);
-
-            if (visuFileXMLNode)
-            {
-                attr = visuFileXMLNode->first_attribute("type", 0, false);
-
-                //THROW_VR_EXCEPTION_IF(!attr, "Missing 'type' attribute in <Visualization> tag of node " << tagName << "." << endl)
-                if (!attr)
-                {
-                    if (VisualizationFactory::first(NULL))
-                    {
-                        visuFileType = VisualizationFactory::first(NULL)->getDescription();
-                    }
-                    else
-                    {
-                        VR_WARNING << "No visualization present..." << endl;
-                    }
-                }
-                else
-                {
-                    visuFileType = attr->value();
-                }
-
-                getLowerCase(visuFileType);
-                visuFile = processFileNode(visuFileXMLNode, basePath);
-                //visuFile = visuFileXMLNode->value();
-                //makeAbsolutePath(basePath,visuFile);
-            }
-
+            visualizationNodes = processVisuFiles(visuXMLNode, basePath, visuFileType);
             primitives = processPrimitives(visuXMLNode);
-            THROW_VR_EXCEPTION_IF(primitives.size() != 0 && visuFileXMLNode, "Multiple visualization sources defined (file and primitives)" << endl);
+            THROW_VR_EXCEPTION_IF(primitives.size() != 0 && visualizationNodes.size() != 0, "Multiple visualization sources defined (file and primitives)" << endl);
 
-            if (visuFile != "")
+            if (visualizationNodes.size() != 0)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, NULL);
-
-                if (visualizationFactory)
-                {
-                    visualizationNode = visualizationFactory->getVisualizationFromFile(visuFile);
-                }
-                else
-                {
-                    VR_WARNING << "VisualizationFactory of type '" << visuFileType << "' not present. Ignoring Visualization data in Node <" << tagName << ">" << endl;
-                }
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+                visualizationNode = visualizationFactory->createUnitedVisualization(visualizationNodes);
             }
+
             else if (primitives.size() != 0)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
@@ -1099,6 +1064,61 @@ namespace VirtualRobot
         }
 
         return collisionModel;
+    }
+
+    std::vector<VisualizationNodePtr> BaseIO::processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType)
+    {
+        rapidxml::xml_node<>* node = visualizationXMLNode;
+        std::vector<VisualizationNodePtr> result;
+
+        if (!node)
+        {
+            return result;
+        }
+
+        rapidxml::xml_node<>* visuFileXMLNode = node->first_node("file", 0, false);
+
+        while (visuFileXMLNode)
+        {
+            std::string visuFile = "";
+
+            rapidxml::xml_attribute<>* attr = visuFileXMLNode->first_attribute("type", 0, false);
+            if (!attr)
+            {
+                if (VisualizationFactory::first(NULL))
+                {
+                    fileType = VisualizationFactory::first(NULL)->getDescription();
+                }
+                else
+                {
+                    VR_WARNING << "No visualization present..." << endl;
+                }
+            }
+            else
+            {
+                fileType = attr->value();
+            }
+
+            getLowerCase(fileType);
+            visuFile = processFileNode(visuFileXMLNode, basePath);
+
+            if (visuFile != "") {
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(fileType, NULL);
+
+                if (visualizationFactory)
+                {
+                    result.push_back(visualizationFactory->getVisualizationFromFile(visuFile));
+                }
+                else
+                {
+                    VR_WARNING << "VisualizationFactory of type '" << fileType << "' not present. Ignoring Visualization data from " << visuFileXMLNode->value() << endl;
+                }
+            }
+
+            visuFileXMLNode = visuFileXMLNode->next_sibling("file", 0, false);
+        }
+
+        return result;
     }
 
     std::vector<Primitive::PrimitivePtr> BaseIO::processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode)

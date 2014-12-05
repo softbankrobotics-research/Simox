@@ -102,6 +102,7 @@ namespace VirtualRobot
 
         static std::string toXML(const Eigen::Matrix4f& m, std::string ident = "\t");
 
+        static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char> *visualizationXMLNode, const std::string &basePath, std::string &fileType);
     protected:
         // instantiation not allowed
         BaseIO();
