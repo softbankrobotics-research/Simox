@@ -56,10 +56,18 @@ namespace VirtualRobot
 
     Eigen::MatrixXf JacobiProvider::computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const
     {
+        Eigen::MatrixXf result(m.cols(),m.rows());
+        updatePseudoInverseJacobianMatrix(result,m,invParameter);
+        return result;
+    }
+
+    void JacobiProvider::updatePseudoInverseJacobianMatrix(Eigen::MatrixXf &invJac, const Eigen::MatrixXf& m, float invParameter) const
+    {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
 #endif
-        MatrixXf pseudo;
+
+        VR_ASSERT(m.rows()>0 && m.cols()>0 && invJac.cols() == m.rows() && invJac.rows() == m.cols());
 
         switch (inverseMethod)
         {
@@ -69,11 +77,11 @@ namespace VirtualRobot
                 {
                     Eigen::MatrixXf W = jointWeights.asDiagonal();
                     Eigen::MatrixXf W_1 = W.inverse();
-                    pseudo = W_1 * m.transpose() * (m * W_1 * m.transpose()).inverse();
+                    invJac = W_1 * m.transpose() * (m * W_1 * m.transpose()).inverse();
                 }
                 else
                 {
-                    pseudo = m.transpose() * (m * m.transpose()).inverse();
+                    invJac = m.transpose() * (m * m.transpose()).inverse();
                 }
 
                 break;
@@ -99,11 +107,11 @@ namespace VirtualRobot
                         W_12(i, i) = sqrt(1 / jointWeights(i));
                     }
 
-                    pseudo = W_12 * MathTools::getPseudoInverse(m * W_12, pinvtoler);
+                    invJac = W_12 * MathTools::getPseudoInverse(m * W_12, pinvtoler);
                 }
                 else
                 {
-                    pseudo = MathTools::getPseudoInverse(m, pinvtoler);
+                    invJac = MathTools::getPseudoInverse(m, pinvtoler);
                 }
 
                 break;
@@ -118,7 +126,7 @@ namespace VirtualRobot
                     pinvtoler = invParameter;
                 }
 
-                pseudo = MathTools::getPseudoInverseDamped(m, pinvtoler);
+                invJac = MathTools::getPseudoInverseDamped(m, pinvtoler);
                 break;
             }
 
@@ -132,7 +140,6 @@ namespace VirtualRobot
         //if (diffClock>10.0f)
         cout << "Inverse Jacobi time:" << diffClock << endl;
 #endif
-        return pseudo;
     }
 
     VirtualRobot::RobotNodeSetPtr JacobiProvider::getRobotNodeSet()

@@ -42,6 +42,8 @@ namespace VirtualRobot
         convertMMtoM = false;
         verbose = false;
         positionMaxStep = -1.0f;
+
+        tmpUpdateErrorDelta.resize(6);
     }
 
 
@@ -95,19 +97,25 @@ namespace VirtualRobot
             tcp_set.push_back(tcp);
         }
 
-        this->setNRows();
-        initialized = true;
+        this->initialize();
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix()
     {
-        if (nRows == 0)
-        {
-            this->setNRows();
-        }
+        updateJacobianMatrix(currentJacobian);
+        return currentJacobian;
+    }
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf &jacobian)
+    {
+        VR_ASSERT(initialized);
 
-        size_t nDoF = nodes.size();
-        MatrixXf Jacobian(nRows, nDoF);
+#ifdef ALLOW_RESIZE
+        if (jacobian.rows()!=nRows || jacobian.cols() != nDoF)
+        {
+            jacobian.resize(nRows, nDoF);
+        }
+#endif
+        VR_ASSERT(jacobian.rows()==nRows && jacobian.cols() == nodes.size());
 
         size_t index = 0;
 
@@ -117,26 +125,27 @@ namespace VirtualRobot
 
             if (this->targets.find(tcp) != this->targets.end())
             {
-                IKSolver::CartesianSelection mode = this->modes[tcp];
-                MatrixXf partJacobian = this->getJacobianMatrix(tcp, mode);
-                Jacobian.block(index, 0, partJacobian.rows(), nDoF) = partJacobian;
+                updateJacobianMatrix(partJacobians[tcp], tcp, this->modes[tcp]);
+                //updatePartJacobian(tcp, mode, jacobian.block(index, 0,  partJacobians[tcp].rows(), nDoF));
+                //MatrixXf partJacobian = this->getJacobianMatrix(tcp, mode);
+                jacobian.block(index, 0,  partJacobians[tcp].rows(), nDoF) =  partJacobians[tcp];
 
-                if (mode & IKSolver::X)
+                if (this->modes[tcp] & IKSolver::X)
                 {
                     index++;
                 }
 
-                if (mode & IKSolver::Y)
+                if (this->modes[tcp] & IKSolver::Y)
                 {
                     index++;
                 }
 
-                if (mode & IKSolver::Z)
+                if (this->modes[tcp] & IKSolver::Z)
                 {
                     index++;
                 }
 
-                if (mode & IKSolver::Orientation)
+                if (this->modes[tcp] & IKSolver::Orientation)
                 {
                     index += 3;
                 }
@@ -146,19 +155,27 @@ namespace VirtualRobot
                 VR_ERROR << "Internal error?!" << endl;    // Error
             }
         }
-
-        return Jacobian;
     }
 
     VectorXf DifferentialIK::getError(float stepSize)
     {
-        if (nRows == 0)
-        {
-            this->setNRows();
-        }
+        updateError(currentError);
+        return currentError;
+    }
 
-        size_t nDoF = nodes.size();
-        VectorXf error(nRows);
+    void DifferentialIK::updateError(VectorXf& error, float stepSize)
+    {
+        VR_ASSERT(initialized);
+
+#ifdef ALLOW_RESIZE
+        if (error.rows()!=nRows)
+        {
+            error.resize(nRows);
+        }
+#endif
+        VR_ASSERT(error.rows()==nRows);
+
+        //VectorXf error(nRows);
 
         // compute error
         size_t index = 0;
@@ -169,40 +186,41 @@ namespace VirtualRobot
 
             if (this->targets.find(tcp) != this->targets.end())
             {
-                Eigen::VectorXf delta = getDeltaToGoal(tcp);
+                //Eigen::VectorXf delta = 
+                updateDeltaToGoal(tmpUpdateErrorDelta, tcp);
                 IKSolver::CartesianSelection mode = this->modes[tcp];
-                Vector3f position = delta.head(3);
-                position *= stepSize;
+                tmpUpdateErrorPosition = tmpUpdateErrorDelta.head(3);
+                tmpUpdateErrorPosition *= stepSize;
 
                 if (positionMaxStep > 0)
                 {
-                    if (position.norm() > positionMaxStep)
+                    if (tmpUpdateErrorPosition.norm() > positionMaxStep)
                     {
-                        position *= positionMaxStep / position.norm();
+                        tmpUpdateErrorPosition *= positionMaxStep / tmpUpdateErrorPosition.norm();
                     }
                 }
 
                 if (mode & IKSolver::X)
                 {
-                    error(index) = position(0);
+                    error(index) = tmpUpdateErrorPosition(0);
                     index++;
                 }
 
                 if (mode & IKSolver::Y)
                 {
-                    error(index) = position(1);
+                    error(index) = tmpUpdateErrorPosition(1);
                     index++;
                 }
 
                 if (mode & IKSolver::Z)
                 {
-                    error(index) = position(2);
+                    error(index) = tmpUpdateErrorPosition(2);
                     index++;
                 }
 
                 if (mode & IKSolver::Orientation)
                 {
-                    error.segment(index, 3) = delta.tail(3) * stepSize;
+                    error.segment(index, 3) = tmpUpdateErrorDelta.tail(3) * stepSize;
                     index += 3;
                 }
 
@@ -212,9 +230,6 @@ namespace VirtualRobot
                 VR_ERROR << "Internal error?!" << endl;    // Error
             }
         }
-
-        return error;
-
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix(SceneObjectPtr tcp)
@@ -229,12 +244,73 @@ namespace VirtualRobot
 
     MatrixXf DifferentialIK::getJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
     {
-        // Get number of degrees of freedom
-        size_t nDoF = nodes.size();
+        if (!initialized)
+            initialize();
+        int partSize = 0;
+
+        if (mode & IKSolver::X)
+        {
+            partSize++;
+        }
+
+        if (mode & IKSolver::Y)
+        {
+            partSize++;
+        }
+
+        if (mode & IKSolver::Z)
+        {
+            partSize++;
+        }
+
+        if (mode & IKSolver::Orientation)
+        {
+
+            partSize += 3;
+        }
+
+        Eigen::MatrixXf jac(partSize, nDoF);
+        updateJacobianMatrix(jac,tcp,mode);
+        return jac;
+    }
+
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf &jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
+    {
+
+        if (!initialized)
+            initialize();
+
+        // obtain the size of the matrix.
+        unsigned int size = 0;
+
+        if (mode & IKSolver::X)
+        {
+            size++;
+        }
+
+        if (mode & IKSolver::Y)
+        {
+            size++;
+        }
+
+        if (mode & IKSolver::Z)
+        {
+            size++;
+        }
+
+        if (mode & IKSolver::Orientation)
+        {
+            size += 3;
+        }
+#ifdef ALLOW_RESIZE
+        if (jac.rows()!=size || jac.cols()!=nDoF)
+        {
+            jac.resize(size, nDof);
+        }
+#endif
+        VR_ASSERT(jac.rows()==size && jac.cols()==nDoF);
 
         // Create matrices for the position and the orientation part of the jacobian.
-        MatrixXf position = MatrixXf::Zero(3, nDoF);
-        MatrixXf orientation = MatrixXf::Zero(3, nDoF);
 
         if (!tcp)
         {
@@ -245,12 +321,18 @@ namespace VirtualRobot
 
         RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
 
+        Eigen::Vector3f axis;
+        Eigen::Vector3f toTCP;
+        tmpUpdateJacobianPosition.setZero();
+        tmpUpdateJacobianOrientation.setZero();
+
         if (!tcpRN)
         {
             if (!tcp->getParent())
             {
                 VR_ERROR << "tcp not linked to a parent!!!" << endl;
-                return Eigen::MatrixXf();
+                jac.setZero();
+                return;
             }
 
             tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp->getParent());
@@ -258,15 +340,9 @@ namespace VirtualRobot
             if (!tcpRN)
             {
                 VR_ERROR << "tcp not linked to robotNode!!!" << endl;
-                return Eigen::MatrixXf();
+                jac.setZero();
+                return;
             }
-        }
-
-        // check if we already computed the parents for tcp
-        if (parents.find(tcpRN) == parents.end())
-        {
-            parents[tcpRN] = tcpRN->getAllParents(rns);
-            parents[tcpRN].push_back(tcpRN);
         }
 
         // Iterate over all degrees of freedom
@@ -292,12 +368,11 @@ namespace VirtualRobot
                         = boost::dynamic_pointer_cast<RobotNodeRevolute>(dof);
                     THROW_VR_EXCEPTION_IF(!revolute, "Internal error: expecting revolute joint");
                     // todo: find a better way of handling different joint types
-                    Eigen::Vector3f axis = revolute->getJointRotationAxis(coordSystem);
+                    axis = revolute->getJointRotationAxis(coordSystem);
 
                     // if necessary calculate the position part of the Jacobian
                     if (mode & IKSolver::Position)
                     {
-                        Vector3f toTCP;
 
                         if (coordSystem)
                         {
@@ -317,13 +392,13 @@ namespace VirtualRobot
 
                         //cout << "toTCP: " << tcp->getName() << endl;
                         //cout << toTCP << endl;
-                        position.block(0, i, 3, 1) = axis.cross(toTCP);
+                        tmpUpdateJacobianPosition.block(0, i, 3, 1) = axis.cross(toTCP);
                     }
 
                     // and the orientation part
                     if (mode & IKSolver::Orientation)
                     {
-                        orientation.block(0, i, 3, 1) = axis;
+                        tmpUpdateJacobianOrientation.block(0, i, 3, 1) = axis;
                     }
                 }
                 else if (dof->isTranslationalJoint())
@@ -333,14 +408,14 @@ namespace VirtualRobot
                         = boost::dynamic_pointer_cast<RobotNodePrismatic>(dof);
                     THROW_VR_EXCEPTION_IF(!prismatic, "Internal error: expecting prismatic joint");
                     // todo: find a better way of handling different joint types
-                    Eigen::Vector3f axis = prismatic->getJointTranslationDirection(coordSystem);
+                    axis = prismatic->getJointTranslationDirection(coordSystem);
 
                     //if (!convertMMtoM)
                     //  axis *= 1000.0f; // we have a mm jacobian -> no, we say how much the joint moves when applying 1 'unit', this can be mm or m and depends only on the error vector
                     // if necessary calculate the position part of the Jacobian
                     if (mode & IKSolver::Position)
                     {
-                        position.block(0, i, 3, 1) = axis;
+                        tmpUpdateJacobianPosition.block(0, i, 3, 1) = axis;
                     }
 
                     // no orientation part required with prismatic joints
@@ -363,55 +438,32 @@ namespace VirtualRobot
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
 #endif
-        // obtain the size of the matrix.
-        unsigned int size = 0;
 
-        if (mode & IKSolver::X)
-        {
-            size++;
-        }
-
-        if (mode & IKSolver::Y)
-        {
-            size++;
-        }
-
-        if (mode & IKSolver::Z)
-        {
-            size++;
-        }
-
-        if (mode & IKSolver::Orientation)
-        {
-            size += 3;
-        }
-
-        MatrixXf result(size, nDoF);
 
         // copy only what is required (and was previously calculated)
         unsigned int index = 0;
 
         if (mode & IKSolver::X)
         {
-            result.row(index) = position.row(0);
+            jac.row(index) = tmpUpdateJacobianPosition.row(0);
             index++;
         }
 
         if (mode & IKSolver::Y)
         {
-            result.row(index) = position.row(1);
+            jac.row(index) = tmpUpdateJacobianPosition.row(1);
             index++;
         }
 
         if (mode & IKSolver::Z)
         {
-            result.row(index) = position.row(2);
+            jac.row(index) = tmpUpdateJacobianPosition.row(2);
             index++;
         }
 
         if (mode & IKSolver::Orientation)
         {
-            result.block(index, 0, 3, nDoF) = orientation;
+            jac.block(index, 0, 3, nDoF) = tmpUpdateJacobianOrientation;
         }
 
         //cout << "partial JACOBIAN: (row 1-3)" << endl;
@@ -434,8 +486,6 @@ namespace VirtualRobot
             //Eigen::MatrixXf W_1 = W.inverse();
             result = result * W;
         }*/
-
-        return result;
     };
 
 
@@ -469,34 +519,54 @@ namespace VirtualRobot
     }
 
 
-    void DifferentialIK::setNRows()
+    void DifferentialIK::initialize()
     {
         this->nRows = 0;
+        nDoF = nodes.size();
+
+        partJacobians.clear();
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
             SceneObjectPtr tcp = tcp_set[i];
+            int partSize = 0;
 
             if (this->modes[tcp] & IKSolver::X)
             {
-                this->nRows++;
+                partSize++;
             }
 
             if (this->modes[tcp] & IKSolver::Y)
             {
-                this->nRows++;
+                partSize++;
             }
 
             if (this->modes[tcp] & IKSolver::Z)
             {
-                this->nRows++;
+                partSize++;
             }
 
             if (this->modes[tcp] & IKSolver::Orientation)
             {
-                this->nRows += 3;
+
+                partSize += 3;
             }
+            nRows += partSize;
+
+            Eigen::MatrixXf jac(partSize, nDoF);
+            partJacobians[tcp] = jac;
+
         }
+        currentError.resize(nRows);
+        currentJacobian.resize(nRows, nDoF);
+        currentInvJacobian.resize(nDoF, nRows);
+
+        tmpUpdateJacobianPosition = MatrixXf::Zero(3, nDoF);
+        tmpUpdateJacobianOrientation = MatrixXf::Zero(3, nDoF);
+
+        tmpComputeStepTheta.resize(nDoF);
+
+        initialized = true;
     };
 
     void DifferentialIK::setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation)
@@ -512,7 +582,7 @@ namespace VirtualRobot
         return rns->getTCP();
     }
 
-    Eigen::VectorXf DifferentialIK::getDeltaToGoal(SceneObjectPtr tcp)
+    void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp)
     {
         if (!tcp)
         {
@@ -520,63 +590,62 @@ namespace VirtualRobot
         }
 
         VR_ASSERT(tcp);
-        IKSolver::CartesianSelection mode = this->modes[tcp];
-        Eigen::Matrix4f current = tcp->getGlobalPose();
-        Eigen::Matrix4f goal = this->targets[tcp];
-        return getDelta(current, goal, this->modes[tcp]);
+        //IKSolver::CartesianSelection mode = this->modes[tcp];
+        //Eigen::Matrix4f current = tcp->getGlobalPose();
+        //Eigen::Matrix4f goal = this->targets[tcp];
+        updateDelta(delta, tcp->getGlobalPose(), this->targets[tcp], this->modes[tcp]);
     }
 
-    Eigen::VectorXf DifferentialIK::getDelta(const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
+    void DifferentialIK::updateDelta(Eigen::VectorXf &delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
     {
-        Eigen::VectorXf result(6);
-        result.setZero();
+#ifdef ALLOW_RESIZE
+        if (delta.rows()!=6)
+        {
+            delta.resize(6);
+        }
+#endif
+        VR_ASSERT(delta.rows()==6);
+
+        delta.setZero();
 
         Vector3f position = goal.block(0, 3, 3, 1) - current.block(0, 3, 3, 1);
 
         if (mode & IKSolver::X)
         {
-            result(0) = position(0);
+            delta(0) = position(0);
         }
 
         if (mode & IKSolver::Y)
         {
-            result(1) = position(1);
+            delta(1) = position(1);
         }
 
         if (mode & IKSolver::Z)
         {
-            result(2) = position(2);
+            delta(2) = position(2);
         }
 
         if (mode & IKSolver::Orientation)
         {
-            Matrix4f orientation = goal * current.inverse();
-            AngleAxis<float> aa(orientation.block<3, 3>(0, 0));
+            tmpDeltaOrientation = goal * current.inverse();
+            tmpDeltaAA = tmpDeltaOrientation.block<3, 3>(0, 0);
+            //AngleAxis<float> aa(orientation.block<3, 3>(0, 0));
             // TODO: make sure that angle is >0!?
-            result.tail(3) = aa.axis() * aa.angle();
+            delta.tail(3) = tmpDeltaAA.axis() * tmpDeltaAA.angle();
         }
-
-        return result;
     }
 
     VectorXf DifferentialIK::computeStep(float stepSize)
     {
+        VR_ASSERT(initialized);
 
-        if (nRows == 0)
-        {
-            this->setNRows();
-        }
+        updateError(currentError, stepSize);
+        updateJacobianMatrix(currentJacobian);
+        //VectorXf dTheta(nDoF);
 
-        size_t nDoF = nodes.size();
+        updatePseudoInverseJacobianMatrix(currentInvJacobian, currentJacobian);
 
-
-        VectorXf error = getError(stepSize);
-        MatrixXf Jacobian = getJacobianMatrix();
-        VectorXf dTheta(nDoF);
-
-        MatrixXf pseudo = computePseudoInverseJacobianMatrix(Jacobian);
-
-        dTheta = pseudo * error;
+        tmpComputeStepTheta = currentInvJacobian * currentError;
 
         /*if (jointWeights.rows() == dTheta.rows())
         {
@@ -585,13 +654,13 @@ namespace VirtualRobot
         }*/
         if (verbose)
         {
-            VR_INFO << "ERROR (TASK):" << endl << error << endl;
-            VR_INFO << "JACOBIAN:" << endl << Jacobian << endl;
-            VR_INFO << "PSEUDOINVERSE JACOBIAN:" << endl << pseudo << endl;
-            VR_INFO << "THETA (JOINT):" << endl << dTheta << endl;
+            VR_INFO << "ERROR (TASK):" << endl << currentError << endl;
+            VR_INFO << "JACOBIAN:" << endl << currentJacobian << endl;
+            VR_INFO << "PSEUDOINVERSE JACOBIAN:" << endl << currentInvJacobian << endl;
+            VR_INFO << "THETA (JOINT):" << endl << tmpComputeStepTheta << endl;
         }
 
-        return dTheta;
+        return tmpComputeStepTheta;
     }
 
     float DifferentialIK::getErrorPosition(SceneObjectPtr tcp)

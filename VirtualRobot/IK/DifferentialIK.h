@@ -108,6 +108,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT DifferentialIK : public JacobiProvider, public boost::enable_shared_from_this<DifferentialIK>
     {
     public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /*!
             @brief Initialize a Jacobian object.
@@ -178,7 +179,7 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getJacobianMatrix(IKSolver::CartesianSelection mode);
 
         /*!
-            Computes the complete Jacobian that consideres all defined TCPs and goal poses.
+            Computes the complete Jacobian that considers all defined TCPs and goal poses.
         */
         virtual Eigen::MatrixXf getJacobianMatrix();
 
@@ -186,6 +187,7 @@ namespace VirtualRobot
             Computes the complete error vector, considering all TCPs and goals.
         */
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        void updateError(Eigen::VectorXf& error, float stepSize = 1.0f);
 
         /*! @brief Returns the pseudo inverse of the Jacobian matrix for a given tcp of the robot.
          * @see getJacobianMatrix
@@ -195,6 +197,9 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode = IKSolver::All);
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
+
+        void updateJacobianMatrix(Eigen::MatrixXf &jac);
+        void updateJacobianMatrix(Eigen::MatrixXf &jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode);
         //Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m);
 
 
@@ -257,26 +262,28 @@ namespace VirtualRobot
         /*!
             Returns 6D workspace delta that is used for Jacobi calculation.
         */
-        virtual Eigen::VectorXf getDeltaToGoal(SceneObjectPtr tcp = SceneObjectPtr());
-        virtual Eigen::VectorXf getDelta(const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
+        virtual void updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp = SceneObjectPtr());
+        virtual void updateDelta(Eigen::VectorXf &delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
 
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
         virtual bool checkTolerances();
     protected:
+        virtual void initialize();
 
         float invParam;
-        void setNRows();
         std::vector<SceneObjectPtr> tcp_set;
         RobotNodePtr coordSystem;
 
-        bool checkImprovement; //!< Indicates if the jacobian steps must improve the result, otherwise the loop is cancled.
+        bool checkImprovement; //!< Indicates if the jacobian steps must improve the result, otherwise the loop is canceld.
 
         std::size_t nRows;
+        std::size_t nDoF;
 
         // need a specialized Eigen allocator here, see http://eigen.tuxfamily.org/dox/TopicStlContainers.html
         std::map<SceneObjectPtr, Eigen::Matrix4f, std::less<SceneObjectPtr>, Eigen::aligned_allocator<std::pair<const SceneObjectPtr, Eigen::Matrix4f> > > targets;
+        std::map<SceneObjectPtr, Eigen::MatrixXf, std::less<SceneObjectPtr>, Eigen::aligned_allocator<std::pair<const SceneObjectPtr, Eigen::MatrixXf> > > partJacobians;
         std::map<SceneObjectPtr, IKSolver::CartesianSelection> modes;
         std::map<SceneObjectPtr, float> tolerancePosition;
         std::map<SceneObjectPtr, float> toleranceRotation;
@@ -285,6 +292,25 @@ namespace VirtualRobot
 
         std::vector <RobotNodePtr> nodes;
         std::map< RobotNodePtr, std::vector<RobotNodePtr> > parents;
+
+        Eigen::VectorXf currentError;
+        Eigen::MatrixXf currentJacobian;
+        Eigen::MatrixXf currentInvJacobian;
+
+
+        // temporary variables
+        Eigen::Matrix4f tmpDeltaOrientation;
+        Eigen::AngleAxis<float> tmpDeltaAA;
+
+        Eigen::VectorXf tmpUpdateErrorDelta;
+        Eigen::Vector3f tmpUpdateErrorPosition;
+
+        Eigen::MatrixXf tmpUpdateJacobianPosition;
+        Eigen::MatrixXf tmpUpdateJacobianOrientation;
+
+        Eigen::VectorXf tmpComputeStepTheta;
+
+       
 
         float positionMaxStep;
         bool verbose;

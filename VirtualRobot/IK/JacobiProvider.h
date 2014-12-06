@@ -40,6 +40,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public boost::enable_shared_from_this<JacobiProvider>
     {
     public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /*!
           @brief Several methods are offered for inverting the Jacobi (i.e. building the Pseudoinverse)
@@ -61,8 +62,9 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getJacobianMatrix() = 0;
         virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) = 0;
 
-        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
+        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
+        virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf &invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);
 
