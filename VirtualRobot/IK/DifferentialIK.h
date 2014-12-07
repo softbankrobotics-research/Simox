@@ -271,6 +271,7 @@ namespace VirtualRobot
         virtual bool checkTolerances();
     protected:
         virtual void initialize();
+        virtual void setNRows();
 
         float invParam;
         std::vector<SceneObjectPtr> tcp_set;

@@ -518,6 +518,10 @@ namespace VirtualRobot
         return res;
     }
 
+    void DifferentialIK::setNRows()
+    {
+        initialize();
+    }
 
     void DifferentialIK::initialize()
     {
