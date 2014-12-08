@@ -792,6 +792,13 @@ namespace VirtualRobot
             }
         }
 
+        /*!
+         *  Retruns number of all Nodes, including inner and leaf nodes.
+         */
+        long getNumNodes() {
+            root->countNodesRecursive();
+        }
+
     protected:
         /*!
             Returns voxel extends of element in given level (0<=level<maxLevels) and dimension dim (0<=dim<N)

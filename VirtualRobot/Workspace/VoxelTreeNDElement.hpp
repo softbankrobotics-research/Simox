@@ -297,6 +297,20 @@ namespace VirtualRobot
 
             return c;
         }
+
+        long countNodesRecursive() {
+            long counter = 0;
+            if (!leaf) {
+                int index = 0;
+                VoxelTreeNDElement<T, N> *nextChild = getNextChild(index, index);
+                    while (nextChild) {
+                        counter += nextChild->countNodesRecursive();
+                        nextChild = getNextChild(index + 1, index);
+                    }
+            }
+            return counter + 1;
+        }
+
     protected:
         std::vector<int> getAllChildrenIndx(const Eigen::VectorXf& p)
         {
