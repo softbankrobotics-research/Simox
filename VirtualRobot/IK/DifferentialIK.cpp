@@ -586,17 +586,27 @@ namespace VirtualRobot
         return rns->getTCP();
     }
 
+    Eigen::VectorXf DifferentialIK::getDeltaToGoal(SceneObjectPtr tcp)
+    {
+        Eigen::VectorXf result(6, 0.0f);
+        updateDeltaToGoal(result, tcp);
+        return result;
+    }
+
+    Eigen::VectorXf DifferentialIK::getDelta(const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
+    {
+        Eigen::VectorXf result(6, 0.0f);
+        updateDelta(result, current, goal, mode);
+        return result;
+    }
+
     void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp)
     {
         if (!tcp)
         {
             tcp = getDefaultTCP();
         }
-
         VR_ASSERT(tcp);
-        //IKSolver::CartesianSelection mode = this->modes[tcp];
-        //Eigen::Matrix4f current = tcp->getGlobalPose();
-        //Eigen::Matrix4f goal = this->targets[tcp];
         updateDelta(delta, tcp->getGlobalPose(), this->targets[tcp], this->modes[tcp]);
     }
 

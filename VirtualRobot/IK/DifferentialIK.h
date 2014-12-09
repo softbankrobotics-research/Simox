@@ -261,9 +261,18 @@ namespace VirtualRobot
 
         /*!
             Returns 6D workspace delta that is used for Jacobi calculation.
+            Updates the currentDeltaToGoal vector
         */
         virtual void updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp = SceneObjectPtr());
         virtual void updateDelta(Eigen::VectorXf &delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
+        /*!
+        Returns 6D workspace delta that is used for Jacobi calculation.
+        */
+        /*!
+            Returns 6D workspace delta that is used for Jacobi calculation.
+        */
+        virtual Eigen::VectorXf getDeltaToGoal(SceneObjectPtr tcp = SceneObjectPtr());
+        virtual Eigen::VectorXf getDelta(const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
 
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
