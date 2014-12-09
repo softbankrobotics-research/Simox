@@ -588,14 +588,14 @@ namespace VirtualRobot
 
     Eigen::VectorXf DifferentialIK::getDeltaToGoal(SceneObjectPtr tcp)
     {
-        Eigen::VectorXf result(6, 0.0f);
+        Eigen::VectorXf result(6);
         updateDeltaToGoal(result, tcp);
         return result;
     }
 
     Eigen::VectorXf DifferentialIK::getDelta(const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
     {
-        Eigen::VectorXf result(6, 0.0f);
+        Eigen::VectorXf result(6);
         updateDelta(result, current, goal, mode);
         return result;
     }
