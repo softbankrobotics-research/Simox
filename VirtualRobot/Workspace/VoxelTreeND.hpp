@@ -796,7 +796,7 @@ namespace VirtualRobot
          *  Retruns number of all Nodes, including inner and leaf nodes.
          */
         long getNumNodes() {
-            root->countNodesRecursive();
+            return root->countNodesRecursive();
         }
 
     protected:
