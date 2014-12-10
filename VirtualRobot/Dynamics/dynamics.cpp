@@ -122,6 +122,34 @@ void Dynamics::print()
     cout << result;
 }
 
+// this method just selects the first node with an attached mass that is no Joint
+RobotNodePtr Dynamics::checkForConnectedMass(RobotNodePtr node)
+{
+    if (!node)
+        return RobotNodePtr();
+
+    BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
+    {
+        RobotNodePtr childPtr = boost::dynamic_pointer_cast<RobotNode>(child);
+        if(     childPtr != 0 &&                // existing
+                childPtr->getMass()>0 &&        // has mass
+                (childPtr->isTranslationalJoint() // is translational joint
+                 || (!childPtr->isTranslationalJoint() && !childPtr->isRotationalJoint()))) // or fixed joint
+        {
+            return childPtr;
+        }
+    }
+    BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
+    {
+        RobotNodePtr rnPtr = boost::dynamic_pointer_cast<RobotNode>(child);
+        RobotNodePtr childPtr;
+        if (rnPtr && !rnPtr->isRotationalJoint()) // break recursion if child is rot joint
+            childPtr = checkForConnectedMass(rnPtr);
+        if (childPtr)
+            return childPtr;
+    }
+    return RobotNodePtr();
+}
 
 void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
 {
@@ -137,18 +165,16 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     // if mass is 0, check children for translational joint. In case there is one, take its mass, com and inertia. Probably a bit hacky right now!
     if (fabs(mass) < 0.000001)
     {
-        BOOST_FOREACH(SceneObjectPtr child, node->getChildren())
+        // todo: throw an error, when multiple connected masses are present, currently just the first is chosen...
+        RobotNodePtr childPtr = checkForConnectedMass(node);
+        if (childPtr)
         {
-            boost::shared_ptr<RobotNode> childPtr = boost::dynamic_pointer_cast<RobotNode>(child);
-            if(childPtr != 0 && childPtr->isTranslationalJoint())
-            {
-                Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
-                mass = childPtr->getMass();
-                com = child->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
-                inertia = child->getInertiaMatrix().cast<double>();
-                physicsFromChild = childPtr;
-                break;
-            }
+            cout << "Joint without mass (" << node->getName() << "), using mass of " << childPtr->getName() << endl;
+            //Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
+            mass = childPtr->getMass();
+            com = node->toLocalCoordinateSystemVec(childPtr->getCoMGlobal()).cast<double>() / 1000;//childPtr->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
+            inertia = childPtr->getInertiaMatrix().cast<double>();
+            physicsFromChild = childPtr;
         }
     }
 
@@ -174,6 +200,8 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
 
     Matrix3d spatial_rotation = trafo.block(0, 0, 3, 3);
     Vector3d spatial_translation = trafo.col(3).head(3) / 1000;
+
+    cout << "****** spatial_translation: " << spatial_translation.transpose() << endl;
 
     SpatialTransform spatial_transform = SpatialTransform(spatial_rotation, spatial_translation);
 

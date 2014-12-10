@@ -46,6 +46,7 @@ namespace VirtualRobot
         Eigen::Vector3d gravity;
         std::map<std::string,  int> identifierMap;
 
+        RobotNodePtr checkForConnectedMass(RobotNodePtr node);
     private:
         void toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode = RobotNodePtr(), int parentID = 0);
     };
