@@ -16,6 +16,7 @@
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoUnits.h>
 
 //#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
@@ -39,6 +40,9 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename, Qt::WFlags flags)
     m_sRobotFilename = sRobotFilename;
     sceneSep = new SoSeparator;
     sceneSep->ref();
+    /*SoUnits *u = new SoUnits;
+    u->units = SoUnits::MILLIMETERS;
+    sceneSep->addChild(u);*/
     robotSep = new SoSeparator;
     extraSep = new SoSeparator;
     sceneSep->addChild(extraSep);
@@ -680,6 +684,12 @@ void showRobotWindow::loadRobot()
         cout << " ERROR while creating robot" << endl;
         return;
     }
+
+    // just a simple test that inverts the kinemtco structure of the robot
+#if 0 
+    if (robot->hasRobotNode("Index L J1"))
+        robot = RobotFactory::cloneInversed(robot, "Index L J1");
+#endif
 
     updatRobotInfo();
 }

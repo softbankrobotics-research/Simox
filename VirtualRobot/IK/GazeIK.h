@@ -80,6 +80,8 @@ namespace VirtualRobot
 
         float getMaxPosError();
 
+        void setVerbose(bool v);
+
     protected:
 
         void setupIK();

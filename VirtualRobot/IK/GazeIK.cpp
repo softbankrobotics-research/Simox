@@ -30,6 +30,12 @@ namespace VirtualRobot
         setupIK();
     }
 
+    void GazeIK::setVerbose(bool v)
+    {
+        verbose = v;
+        setupIK();
+    }
+
     void GazeIK::setup(float maxPosError, int maxLoops, int maxGradientDecentSteps)
     {
         this->maxLoops = maxLoops;
@@ -220,6 +226,11 @@ namespace VirtualRobot
         while (step < steps)
         {
             Eigen::VectorXf dTheta = this->computeStep(goal, stepSize);
+            if (verbose)
+            {
+                VR_INFO << "applyJLA step " << step << ", theta:" << dTheta.transpose() << endl;
+            }
+
 
             for (unsigned int i = 0; i < nodes.size(); i++)
             {
@@ -276,6 +287,11 @@ namespace VirtualRobot
         while (step < maxGradientDecentSteps)
         {
             Eigen::VectorXf dTheta = this->computeStep(goal, stepSize);
+
+            if (verbose)
+            {
+                VR_INFO << "step " << step << ", theta:" << dTheta.transpose() << endl;
+            }
 
             for (unsigned int i = 0; i < nodes.size(); i++)
             {

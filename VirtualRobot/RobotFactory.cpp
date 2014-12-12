@@ -273,12 +273,14 @@ namespace VirtualRobot
 
         std::string nodeName;
         typedef std::map<RobotNodePtr,
-                Eigen::Matrix4f,
-                std::less<RobotNodePtr>,
-                Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4f> > >
-                NodeTransformationMapT;
+            Eigen::Matrix4f,
+            std::less<RobotNodePtr>,
+            Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4f> > >
+            NodeTransformationMapT;
 
         NodeTransformationMapT localTransformations;
+        std::map<RobotNodePtr, VisualizationNodePtr> visuMap;
+        std::map<RobotNodePtr, CollisionModelPtr> colMap;
         std::map<RobotNodePtr, bool> directionInversion;
 
         for (size_t i = 0; i < newStructure.parentChildMapping.size(); i++)
@@ -323,17 +325,50 @@ namespace VirtualRobot
 
                 if (newStructure.parentChildMapping[i].invertTransformation[j])
                 {
-                    //Eigen::Matrix4f tr = child->getLocalTransformation().inverse();
-                    //localTransformations[parent] = tr;
                     Eigen::Matrix4f tr = parent->getLocalTransformation().inverse();
                     localTransformations[child] = tr;
                     // we also need to invert the direction
                     directionInversion[child] = true;
+
+                    // check for models
+                    if (child->getVisualization())
+                    {
+                        VisualizationNodePtr v = child->getVisualization();
+                        VisualizationFactoryPtr vf = VisualizationFactory::first(NULL);
+                        Eigen::Matrix4f tr2 = tr;
+                        tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
+                        vf->applyDisplacement(v, tr2);
+                        visuMap[parent] = v;
+
+                        for (size_t pr = 0; pr < v->primitives.size(); pr++)
+                        {
+                            v->primitives[pr]->transform = tr * v->primitives[pr]->transform;
+                        }
+                    }
+                    if (child->getCollisionModel())
+                    {
+                        CollisionModelPtr c = child->getCollisionModel();
+                        VisualizationNodePtr v = child->getCollisionModel()->getVisualization();
+                        VisualizationFactoryPtr vf = VisualizationFactory::first(NULL);
+                        Eigen::Matrix4f tr2 = tr;
+                        tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
+                        vf->applyDisplacement(v, tr2);
+                        colMap[parent] = c;
+
+                        for (size_t pr = 0; pr < v->primitives.size(); pr++)
+                        {
+                            v->primitives[pr]->transform = tr * v->primitives[pr]->transform;
+                        }
+                    }
                 }
                 else
                 {
                     localTransformations[child] = child->getLocalTransformation();
                     directionInversion[child] = false;
+                    if (child->getVisualization())
+                        visuMap[child] = child->getVisualization();
+                    if (child->getCollisionModel())
+                        colMap[child] = child->getCollisionModel();
                 }
             }
 
@@ -361,6 +396,23 @@ namespace VirtualRobot
             }
 
             it++;
+        }
+
+        std::vector<RobotNodePtr> nodes = newRobot->getRobotNodes();
+        for (size_t i = 0; i < nodes.size(); i++)
+        {
+            if (visuMap.find(nodes[i]) != visuMap.end())
+            {
+                nodes[i]->setVisualization(visuMap[nodes[i]]);
+            } else
+                nodes[i]->setVisualization(VisualizationNodePtr());
+
+            if (colMap.find(nodes[i]) != colMap.end())
+            {
+                nodes[i]->setCollisionModel(colMap[nodes[i]]);
+            }
+            else
+                nodes[i]->setCollisionModel(CollisionModelPtr());
         }
 
         newRobot->getRootNode()->initialize();
