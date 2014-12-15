@@ -979,13 +979,12 @@ namespace VirtualRobot
     CollisionModelPtr BaseIO::processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath)
     {
         rapidxml::xml_attribute<>* attr;
-        std::string collisionFile = "";
         std::string collisionFileType = "";
         VisualizationNodePtr visualizationNode;
         CollisionModelPtr collisionModel;
         std::vector<Primitive::PrimitivePtr> primitives;
+        std::vector<VisualizationNodePtr> visuNodes;
         bool enableCol = true;
-        bool bbox = false;
 
         attr = colXMLNode->first_attribute("enable", 0, false);
 
@@ -996,51 +995,18 @@ namespace VirtualRobot
 
         if (enableCol)
         {
-            rapidxml::xml_node<>* colFileXMLNode = colXMLNode->first_node("file", 0, false);
 
-            if (colFileXMLNode)
-            {
-                attr = colFileXMLNode->first_attribute("type", 0, false);
-
-                //THROW_VR_EXCEPTION_IF(!attr, "Expecting 'type' attribute in <Collisionmodel> tag of node " << tagName << "." << endl);
-                //collisionFileType = attr->value();
-                if (!attr)
-                {
-                    if (VisualizationFactory::first(NULL))
-                    {
-                        collisionFileType = VisualizationFactory::first(NULL)->getDescription();
-                    }
-                    else
-                    {
-                        VR_WARNING << "No visualization present..." << endl;
-                    }
-                }
-                else
-                {
-                    collisionFileType = attr->value();
-                }
-
-                getLowerCase(collisionFileType);
-                collisionFile = processFileNode(colFileXMLNode, basePath);
-
-                attr = colFileXMLNode->first_attribute("boundingbox", 0, false);
-
-                if (attr)
-                {
-                    bbox = isTrue(attr->value());
-                }
-            }
-
+            visuNodes = processVisuFiles(colXMLNode, basePath, collisionFileType);
             primitives = processPrimitives(colXMLNode);
-            THROW_VR_EXCEPTION_IF(primitives.size() != 0 && colFileXMLNode, "Multiple collision model sources defined (file and primitives)" << endl);
+            THROW_VR_EXCEPTION_IF(primitives.size() != 0 && visuNodes.size() != 0, "Multiple collision model sources defined (file and primitives)" << endl);
 
-            if (collisionFile != "")
+            if (visuNodes.size() != 0)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, NULL);
 
                 if (visualizationFactory)
                 {
-                    visualizationNode = visualizationFactory->getVisualizationFromFile(collisionFile, bbox);
+                    visualizationNode = visualizationFactory->createUnitedVisualization(visuNodes);
                 }
                 else
                 {
@@ -1070,6 +1036,7 @@ namespace VirtualRobot
     {
         rapidxml::xml_node<>* node = visualizationXMLNode;
         std::vector<VisualizationNodePtr> result;
+        bool bbox = false;
 
         if (!node)
         {
@@ -1081,13 +1048,14 @@ namespace VirtualRobot
         while (visuFileXMLNode)
         {
             std::string visuFile = "";
+            std::string tmpFileType = "";
 
             rapidxml::xml_attribute<>* attr = visuFileXMLNode->first_attribute("type", 0, false);
             if (!attr)
             {
                 if (VisualizationFactory::first(NULL))
                 {
-                    fileType = VisualizationFactory::first(NULL)->getDescription();
+                    tmpFileType = VisualizationFactory::first(NULL)->getDescription();
                 }
                 else
                 {
@@ -1096,7 +1064,18 @@ namespace VirtualRobot
             }
             else
             {
-                fileType = attr->value();
+                tmpFileType = attr->value();
+            }
+
+            if (fileType == "") {
+                fileType = tmpFileType;
+            }
+
+            attr = visuFileXMLNode->first_attribute("boundingbox", 0, false);
+
+            if (attr)
+            {
+                bbox = isTrue(attr->value());
             }
 
             getLowerCase(fileType);
@@ -1107,7 +1086,14 @@ namespace VirtualRobot
 
                 if (visualizationFactory)
                 {
-                    result.push_back(visualizationFactory->getVisualizationFromFile(visuFile));
+                    if (tmpFileType == fileType)
+                    {
+                        result.push_back(visualizationFactory->getVisualizationFromFile(visuFile,bbox));
+                    }
+                    else
+                    {
+                        VR_WARNING << "Ignoring data from " << visuFileXMLNode->value() << ": visualization type does not match to data from before." << endl;
+                    }
                 }
                 else
                 {
