@@ -1056,6 +1056,7 @@ namespace VirtualRobot
                 if (VisualizationFactory::first(NULL))
                 {
                     tmpFileType = VisualizationFactory::first(NULL)->getDescription();
+                    getLowerCase(tmpFileType);
                 }
                 else
                 {
@@ -1065,6 +1066,7 @@ namespace VirtualRobot
             else
             {
                 tmpFileType = attr->value();
+                getLowerCase(tmpFileType);
             }
 
             if (fileType == "") {

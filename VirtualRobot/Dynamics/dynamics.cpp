@@ -234,7 +234,7 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         nodeID = model->AddBody(parentID, spatial_transform, joint, body, node->getName());
         this->identifierMap[node->getName()] = nodeID;
 
-        cout << node->getName() << ", " << nodeID << " <<:" <<endl; // Debugging Info
+        cout << "New body:" << node->getName() << ", " << nodeID << " :" <<endl; // Debugging Info
         cout << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
         cout << "** MASS: " << body.mMass << endl;
         cout << "** COM: " << body.mCenterOfMass.transpose() << endl;
