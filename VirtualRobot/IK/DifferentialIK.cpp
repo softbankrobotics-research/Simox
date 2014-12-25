@@ -47,7 +47,7 @@ namespace VirtualRobot
     }
 
 
-    void DifferentialIK::setGoal(const Eigen::Matrix4f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation)
+    void DifferentialIK::setGoal(const Eigen::Matrix4f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
     {
         if (!tcp)
         {
@@ -96,8 +96,8 @@ namespace VirtualRobot
         {
             tcp_set.push_back(tcp);
         }*/
-
-        initialize();
+        if (performInitialization)
+            initialize();
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix()
@@ -573,12 +573,12 @@ namespace VirtualRobot
         initialized = true;
     };
 
-    void DifferentialIK::setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation)
+    void DifferentialIK::setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
     {
         Matrix4f trafo;
         trafo.setIdentity();
         trafo.block(0, 3, 3, 1) = goal;
-        this->setGoal(trafo, tcp, mode, tolerancePosition, toleranceRotation);
+        this->setGoal(trafo, tcp, mode, tolerancePosition, toleranceRotation, performInitialization);
     }
 
     RobotNodePtr DifferentialIK::getDefaultTCP()

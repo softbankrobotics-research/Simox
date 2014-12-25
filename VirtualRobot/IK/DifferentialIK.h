@@ -125,8 +125,9 @@ namespace VirtualRobot
             \param mode Allows to include only a subset of the Cartesian coordinates in the Jacobian (e.g., X|Y if the z-component is unimportant)
             @param tolerancePosition The threshold when to accept a solution.
             @param toleranceRotation The threshold when to accept a solution in radians.
+            @param performInitialization If multiple goals will be set, the internal initialization can be omitted in order to speed up the setup procedure (Ensure, to call initialize() after setting all goals).
         */
-        virtual void setGoal(const Eigen::Matrix4f& goal, SceneObjectPtr tcp = SceneObjectPtr(), IKSolver::CartesianSelection mode = IKSolver::All, float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
+        virtual void setGoal(const Eigen::Matrix4f& goal, SceneObjectPtr tcp = SceneObjectPtr(), IKSolver::CartesianSelection mode = IKSolver::All, float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI, bool performInitialization = true);
 
 
         /*! @brief Sets the target position for (one of) the tcp(s).
@@ -135,8 +136,9 @@ namespace VirtualRobot
             \param mode Allows to include only a subset of the Cartesian coordinates in the Jacobian (e.g., X|Y if the z-component is unimportant)
             @param tolerancePosition The threshold when to accept a solution.
             @param toleranceRotation The threshold when to accept a solution in radians.
+            @param performInitialization If multiple goals will be set, the internal initialization can be omitted in order to speed up the setup procedure (Ensure, to call initialize() after setting all goals).
         */
-        virtual void setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp = SceneObjectPtr(), IKSolver::CartesianSelection mode = IKSolver::Position, float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
+        virtual void setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp = SceneObjectPtr(), IKSolver::CartesianSelection mode = IKSolver::Position, float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI, bool performInitialization = true);
 
 
         /*! @brief Returns the Jacobian matrix for a given tcp.
@@ -278,8 +280,13 @@ namespace VirtualRobot
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
         virtual bool checkTolerances();
-    protected:
+
+        /*!
+            Initializes the internal data structures according to setGoal setup. 
+            Usually no need to call this method explicitly, unless performInitialization was not requested in setGoal.
+        */
         virtual void initialize();
+    protected:
         virtual void setNRows();
 
         float invParam;
