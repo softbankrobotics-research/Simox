@@ -92,12 +92,12 @@ namespace VirtualRobot
         }
 
         // tcp not in list yet?
-        if (find(tcp_set.begin(), tcp_set.end(), tcp) == tcp_set.end())
+        /*if (find(tcp_set.begin(), tcp_set.end(), tcp) == tcp_set.end())
         {
             tcp_set.push_back(tcp);
-        }
+        }*/
 
-        this->initialize();
+        initialize();
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix()
@@ -159,7 +159,7 @@ namespace VirtualRobot
 
     VectorXf DifferentialIK::getError(float stepSize)
     {
-        updateError(currentError);
+        updateError(currentError, stepSize);
         return currentError;
     }
 
