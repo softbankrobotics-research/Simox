@@ -44,10 +44,12 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns) {
     model->gravity = gravity;
 
     if (!rns->isKinematicChain())
-        THROW_VR_EXCEPTION("RobotNodeSet is no kinematic chain!")
+        THROW_VR_EXCEPTION("RobotNodeSet is not a kinematic chain!")
 
-        RobotNodePtr root = rns->getKinematicRoot();
-//cout << "Root name: "<<root->getName()<<endl;
+    RobotNodePtr root = rns->getKinematicRoot();
+    //cout << "Root name: "<<root->getName()<<endl;
+
+    //Dynamics::toRBDLRecursive(model, root, root->getGlobalPose(), Eigen::Matrix4f::Identity());
     Dynamics::toRBDL(model, root);
 }
 
@@ -151,6 +153,137 @@ RobotNodePtr Dynamics::checkForConnectedMass(RobotNodePtr node)
     return RobotNodePtr();
 }
 
+// rbdl: (trafo->joint->body) -> (trafo->joint->body) -> (trafo->joint->body) ...
+void Dynamics::toRBDLRecursive(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, Eigen::Matrix4f accumulatedTransformPreJoint, Eigen::Matrix4f accumulatedTransformPostJoint, RobotNodePtr jointNode, int parentID)
+{
+    VR_ASSERT(model);
+    VR_ASSERT(node);
+    int nodeID = parentID; // might be overwritten when adding new body
+    float mass = node->getMass();
+
+
+
+    if (!jointNode)
+    {
+        accumulatedTransformPreJoint *= node->getLocalTransformation();
+        if (Dynamics::rns->hasRobotNode(node) && (node->isRotationalJoint() || node->isTranslationalJoint()))
+            jointNode = node;
+    }
+    else
+    {
+        accumulatedTransformPostJoint *= node->getLocalTransformation();
+        if (Dynamics::rns->hasRobotNode(node) && (node->isRotationalJoint() || node->isTranslationalJoint()))
+        {
+            VR_ERROR << "Skipping joint " << node->getName() << ": multiple joints in row without masses inbetween..." << endl;
+        }
+    }
+
+
+    if (mass>0 && Dynamics::rns->hasRobotNode(node))
+    {
+        // create a body
+        //Vector3d com = node->getCoMLocal().cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
+        //Matrix3d inertia = node->getInertiaMatrix().cast<double>();
+
+        // apply postJoint transform
+        Eigen::Vector4f comTr;
+        comTr.head(3) = node->getCoMLocal();
+        comTr(3) = 1.0f;
+        Vector3d com = (accumulatedTransformPostJoint * comTr).head(3).cast<double>() / 1000.0;
+
+        // convert inertia from node to jointFrame (I_new = R * I_old * R^T)
+        Eigen::Matrix3f trafo = accumulatedTransformPostJoint.block(0,0,3,3);
+        Eigen::Matrix3f inertia2 = trafo * node->getInertiaMatrix() * trafo.transpose();
+        Matrix3d inertia = inertia2.cast<double>();
+
+
+        Body body = Body(mass, com, inertia);
+
+        Matrix3d spatial_rotation = accumulatedTransformPreJoint.block(0, 0, 3, 3).cast<double>();
+        Vector3d spatial_translation = accumulatedTransformPreJoint.col(3).head(3).cast<double>() / 1000.0;
+        SpatialTransform spatial_transform = SpatialTransform(spatial_rotation, spatial_translation);
+        cout << "****** spatial_translation: " << spatial_translation.transpose() << endl;
+
+        // joint
+        Joint joint = Joint(JointTypeFixed);
+
+        if (jointNode && jointNode->isRotationalJoint())
+        {
+            JointType joint_type = JointTypeRevolute;
+            boost::shared_ptr<RobotNodeRevolute> rev = boost::dynamic_pointer_cast<RobotNodeRevolute>(jointNode);
+            VR_ASSERT(rev);
+            Vector3d joint_axis = rev->getJointRotationAxisInJointCoordSystem().cast<double>();
+
+            joint = Joint(joint_type, joint_axis);
+
+            VR_INFO << "Adding Rotational Joint" << endl;
+        }
+        else if (jointNode && jointNode->isTranslationalJoint())
+        {
+            JointType joint_type = JointTypePrismatic;
+            boost::shared_ptr<RobotNodePrismatic> prism = boost::dynamic_pointer_cast<RobotNodePrismatic>(jointNode);
+            Vector3d joint_axis = prism->getJointTranslationDirectionJointCoordSystem().cast<double>();
+
+            joint = Joint(joint_type, joint_axis);
+
+             VR_INFO << "Adding Translational Joint" << endl;
+        }
+        std::string nodeName;
+        if (jointNode)
+            nodeName = jointNode->getName();
+        else
+            nodeName = node->getName();
+
+        nodeID = model->AddBody(parentID, spatial_transform, joint, body, nodeName);
+        this->identifierMap[nodeName] = nodeID;
+
+        cout << "New body:" << node->getName() << ", " << nodeID << " :" <<endl; // Debugging Info
+        cout << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
+        cout << "** MASS: " << body.mMass << endl;
+        cout << "** COM: " << body.mCenterOfMass.transpose() << endl;
+        cout << "** INERTIA: " << endl << body.mInertia << endl;
+        cout << "** mIsVirtual: " << body.mIsVirtual << endl;
+        if (jointNode)
+            cout << "** Joint: " << jointNode->getName() << endl;
+        else
+            cout << "** Joint: none" << endl;
+        if (joint.mJointAxes)
+            cout << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
+
+        // reset pre and post trafos and jointNode
+        accumulatedTransformPreJoint = Eigen::Matrix4f::Identity();
+        accumulatedTransformPostJoint = Eigen::Matrix4f::Identity();
+        jointNode.reset();
+
+    } /*else
+    {
+
+        // node without mass, check how to proceed
+
+    }*/
+
+    std::vector<SceneObjectPtr> children = node->getChildren();
+
+    BOOST_FOREACH(SceneObjectPtr child, children)
+    {
+        boost::shared_ptr<RobotNode> childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
+
+        if (childRobotNode) // if cast returns 0 pointer, child is a sensor and can be omitted. also, child must be contained in the robotnodeset
+        {
+            //if (Dynamics::rns->hasRobotNode(childRobotNode))
+            //{
+                toRBDLRecursive(model, childRobotNode, accumulatedTransformPreJoint, accumulatedTransformPostJoint, jointNode, nodeID);
+            //} else
+            //{
+            //    VR_INFO << "skipping RN " << childRobotNode->getName() << " since it is not part of RNS" << endl;
+            //}
+        }
+    }
+
+}
+
+
+
 void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
 {
     RobotNodePtr physicsFromChild;
@@ -173,7 +306,12 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
             //Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
             mass = childPtr->getMass();
             com = node->toLocalCoordinateSystemVec(childPtr->getCoMGlobal()).cast<double>() / 1000;//childPtr->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
-            inertia = childPtr->getInertiaMatrix().cast<double>();
+
+            // convert inertia from child to current frame (I_new = R * I_old * R^T)
+            Eigen::Matrix3f trafo = node->toLocalCoordinateSystem(childPtr->getGlobalPose()).block(0,0,3,3);
+            Eigen::Matrix3f inertia2 = trafo * childPtr->getInertiaMatrix() * trafo.transpose();
+            inertia = inertia2.cast<double>();
+
             physicsFromChild = childPtr;
         }
     }
@@ -192,10 +330,12 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     }
     else if (!parentNode)
     {
+        trafo = node->getGlobalPose().cast<double>();
+        /*
         if (node->getParent())
             trafo = node->getParent()->getGlobalPose().cast<double>();
         else if (node->getRobot())
-            trafo = node->getRobot()->getGlobalPose().cast<double>();
+            trafo = node->getRobot()->getGlobalPose().cast<double>();*/
     }
 
     Matrix3d spatial_rotation = trafo.block(0, 0, 3, 3);

@@ -14,12 +14,16 @@ namespace VirtualRobot
 {
 
     /** @brief
-     * Encapsulates dynamics simulations for the virtual robot.
+     * Encapsulates dynamics simulations based on the RBDL library for the virtual robot.
+     *
      */
     class Dynamics
     {
     public:
-        /// Creates a Dynamics object given a RobotNodeSet
+        /// Creates a Dynamics object given a RobotNodeSet.
+        /// The rns has to be completely connected (avoid missing RobotNodes).
+        /// The rns should end with a RobotNode that has a mass>0 specified, otherwise the last joint can not be added to the internal RBDL model
+        ///
         Dynamics(RobotNodeSetPtr rns);
         /// Calculates the Inverse Dynamics for given motion state defined by q, qdot and qddot
         Eigen::VectorXd getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd qddot);
@@ -49,6 +53,8 @@ namespace VirtualRobot
         RobotNodePtr checkForConnectedMass(RobotNodePtr node);
     private:
         void toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode = RobotNodePtr(), int parentID = 0);
+        void toRBDLRecursive(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr currentNode, Eigen::Matrix4f accumulatedTransformPreJoint, Eigen::Matrix4f accumulatedTransformPostJoint, RobotNodePtr jointNode = RobotNodePtr(), int parentID = 0);
+
     };
 
     typedef boost::shared_ptr<Dynamics> DynamicsPtr;

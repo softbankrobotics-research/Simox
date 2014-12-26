@@ -114,10 +114,13 @@ if (RBDL_FOUND)
     ${SOURCES}
     Dynamics/dynamics.cpp
     )
+
 SET(INCLUDES
-${INCLUDES}
-Dynamics/dynamics.h
+    ${INCLUDES}
+    Dynamics/dynamics.h
 )
+
+ADD_SUBDIRECTORY(Dynamics/tests)
 
 endif (RBDL_FOUND)
 
