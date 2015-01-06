@@ -22,6 +22,9 @@ namespace VirtualRobot
         obstacleDir.setZero();
         obstacle_alpha = 1.0f;
         obstacle_beta = 1.0f;
+
+        joints = rns->getAllRobotNodes();
+        tmpJac.resize(6, joints.size());
     }
 
     PoseQualityExtendedManipulability::~PoseQualityExtendedManipulability()
@@ -40,9 +43,9 @@ namespace VirtualRobot
 
     float PoseQualityExtendedManipulability::getPoseQuality(DifferentialIKPtr jac, RobotNodeSetPtr rns, PoseQualityManipulability::ManipulabilityIndexType i, int considerFirstSV)
     {
-        extManipData d;
-
-        if (!getDetailedAnalysis(jac, rns, d, considerFirstSV))
+        //extManipData d;
+        currentManipData.reset();
+        if (!getDetailedAnalysis(jac, rns, currentManipData, considerFirstSV))
         {
             VR_ERROR << "ERROR" << endl;
             return 0;
@@ -52,13 +55,13 @@ namespace VirtualRobot
         {
             case eMultiplySV:
             {
-                return d.extManip_Volume;
+                return currentManipData.extManip_Volume;
             }
             break;
 
             case eMinMaxRatio:
             {
-                return d.extManip_InvCondNumber;
+                return currentManipData.extManip_InvCondNumber;
             }
             break;
 
@@ -349,9 +352,11 @@ namespace VirtualRobot
 
         for (int i = 0; i < sv.rows(); i++)
         {
-            Eigen::MatrixXf Bl = U.block(0, i, U.rows(), 1); // cart sing vectors are normed (norm == 1)
+            /*Eigen::MatrixXf Bl = U.block(0, i, U.rows(), 1); // cart sing vectors are normed (norm == 1)
             Bl *= sv(i);// / maxEV;
-            singVectors.block(0, i, U.rows(), 1) = Bl;
+            singVectors.block(0, i, U.rows(), 1) = Bl;*/
+
+            singVectors.block(0, i, U.rows(), 1) = U.block(0, i, U.rows(), 1) * sv(i);
         }
 
         if (printInfo)
@@ -364,19 +369,20 @@ namespace VirtualRobot
         return true;
     }
 
-    bool PoseQualityExtendedManipulability::getDetailedAnalysis(extManipData& storeData, bool dims[6], int considerFirstSV)
+    bool PoseQualityExtendedManipulability::getDetailedAnalysis(extManipData& storeData, bool (&dims)[6], int considerFirstSV)
     {
         return getDetailedAnalysis(jacobian, rns, storeData, dims, considerFirstSV);
     }
 
-    bool PoseQualityExtendedManipulability::getDetailedAnalysis(DifferentialIKPtr jac, RobotNodeSetPtr rns, extManipData& storeData, bool dims[6], int considerFirstSV)
+    bool PoseQualityExtendedManipulability::getDetailedAnalysis(DifferentialIKPtr jac, RobotNodeSetPtr rns, extManipData& storeData, bool (&dims)[6], int considerFirstSV)
     {
-        Eigen::MatrixXf j = jac->getJacobianMatrix(rns->getTCP());
-        std::vector<RobotNodePtr> joints = rns->getAllRobotNodes();
-        return getDetailedAnalysis(j, joints, storeData, dims, considerFirstSV);
+        jac->updateJacobianMatrix(tmpJac, rns->getTCP(), IKSolver::All);
+
+        //Eigen::MatrixXf j = jac->getJacobianMatrix(rns->getTCP());
+        return getDetailedAnalysis(tmpJac, joints, storeData, dims, considerFirstSV);
     }
 
-    bool PoseQualityExtendedManipulability::getDetailedAnalysis(const Eigen::MatrixXf& jac, const std::vector<RobotNodePtr>& joints, extManipData& storeData, bool dims[6], int considerFirstSV)
+    bool PoseQualityExtendedManipulability::getDetailedAnalysis(const Eigen::MatrixXf& jac, const std::vector<RobotNodePtr>& joints, extManipData& storeData, bool (&dims)[6], int considerFirstSV)
     {
         storeData.jac = jac;
         storeData.nrJoints = storeData.jac.cols();

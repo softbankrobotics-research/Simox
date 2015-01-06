@@ -41,6 +41,8 @@ namespace VirtualRobot
         booktitle = {Proceedings of IEEE-RAS International Conference on Humanoid Robots (Humanoids)},
         year = {2012}
         }
+
+        For performance reasons this class is not thread safe and cannot be used from different threads in parallel.
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT PoseQualityExtendedManipulability :  public VirtualRobot::PoseQualityManipulability
     {
@@ -71,6 +73,10 @@ namespace VirtualRobot
         struct extManipData
         {
             extManipData()
+            {
+                reset();
+            }
+            void reset()
             {
                 extManip_InvCondNumber = -1.0f;
                 extManip_Volume = -1.0f;
@@ -117,7 +123,7 @@ namespace VirtualRobot
         };
 
         bool getDetailedAnalysis(extManipData& storeData, int considerFirstSV = 0);
-        bool getDetailedAnalysis(extManipData& storeData, bool dims[6], int considerFirstSV = 0);
+        bool getDetailedAnalysis(extManipData& storeData, bool (&dims)[6], int considerFirstSV = 0);
         std::vector < std::vector<float> > getPermutationVector();
 
         /*!
@@ -134,8 +140,8 @@ namespace VirtualRobot
     protected:
 
         bool getDetailedAnalysis(DifferentialIKPtr jacobian, RobotNodeSetPtr rns, extManipData& storeData, int considerFirstSV = 0);
-        bool getDetailedAnalysis(DifferentialIKPtr jacobian, RobotNodeSetPtr rns, extManipData& storeData, bool dims[6], int considerFirstSV = 0);
-        bool getDetailedAnalysis(const Eigen::MatrixXf& jac, const std::vector<RobotNodePtr>& joints, extManipData& storeData, bool dims[6], int considerFirstSV = 0);
+        bool getDetailedAnalysis(DifferentialIKPtr jacobian, RobotNodeSetPtr rns, extManipData& storeData, bool (&dims)[6], int considerFirstSV = 0);
+        bool getDetailedAnalysis(const Eigen::MatrixXf& jac, const std::vector<RobotNodePtr>& joints, extManipData& storeData, bool (&dims)[6], int considerFirstSV = 0);
 
         float getPoseQuality(DifferentialIKPtr jacobian,  RobotNodeSetPtr rns, PoseQualityManipulability::ManipulabilityIndexType i, int considerFirstSV);
 
@@ -172,6 +178,10 @@ namespace VirtualRobot
         std::vector< std::vector<float> > cartDimPermutations;
 
         float obstacle_alpha, obstacle_beta;
+
+        extManipData currentManipData;
+        Eigen::MatrixXf tmpJac;
+        std::vector<RobotNodePtr> joints;
     };
 
     typedef boost::shared_ptr<PoseQualityExtendedManipulability> PoseQualityExtendedManipulabilityPtr;

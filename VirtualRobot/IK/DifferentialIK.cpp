@@ -317,9 +317,16 @@ namespace VirtualRobot
             tcp = this->getDefaultTCP();
         }
 
+
         //  THROW_VR_EXCEPTION_IF(!tcp,boost::format("No tcp defined in node set \"%1%\" of robot %2% (DifferentialIK::%3% )") % this->rns->getName() % this->rns->getRobot()->getName() % BOOST_CURRENT_FUNCTION);
 
         RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+
+        if (parents.find(tcpRN) == parents.end())
+        {
+            parents[tcpRN] = tcpRN->getAllParents(rns);
+            parents[tcpRN].push_back(tcpRN);
+        }
 
         Eigen::Vector3f axis;
         Eigen::Vector3f toTCP;
