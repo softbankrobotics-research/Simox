@@ -108,7 +108,7 @@ namespace SimDynamics
         //  createDynamicsNode(node);
 
 
-#if 1
+#if 0
 
         if (node->getName() == "Elbow R")
         {
