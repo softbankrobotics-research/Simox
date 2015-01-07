@@ -870,7 +870,10 @@ namespace VirtualRobot
             primitives = processPrimitives(visuXMLNode);
             THROW_VR_EXCEPTION_IF(primitives.size() != 0 && visualizationNodes.size() != 0, "Multiple visualization sources defined (file and primitives)" << endl);
 
-            if (visualizationNodes.size() != 0)
+            if (visualizationNodes.size() == 1)
+            {
+                visualizationNode = visualizationNodes.at(0);
+            } else if (visualizationNodes.size() > 1)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
                 visualizationNode = visualizationFactory->createUnitedVisualization(visualizationNodes);
@@ -1002,17 +1005,20 @@ namespace VirtualRobot
 
             if (visuNodes.size() != 0)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, NULL);
-
-                if (visualizationFactory)
-                {
-                    visualizationNode = visualizationFactory->createUnitedVisualization(visuNodes);
-                }
+                if (visuNodes.size() == 1)
+                    visualizationNode = visuNodes.at(0);
                 else
                 {
-                    VR_WARNING << "VisualizationFactory of type '" << collisionFileType << "' not present. Ignoring Visualization data in Robot Node <" << tagName << ">" << endl;
+                    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, NULL);
+                    if (visualizationFactory)
+                    {
+                        visualizationNode = visualizationFactory->createUnitedVisualization(visuNodes);
+                    }
+                    else
+                    {
+                        VR_WARNING << "VisualizationFactory of type '" << collisionFileType << "' not present. Ignoring Visualization data in Robot Node <" << tagName << ">" << endl;
+                    }
                 }
-
             }
             else if (primitives.size() != 0)
             {
