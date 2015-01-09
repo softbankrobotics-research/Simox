@@ -51,19 +51,27 @@ namespace SimDynamics
             {
                 std::vector<Primitive::PrimitivePtr> primitives = colModel->getVisualization()->primitives;
 
-                if (primitives.size() == 1)
+                /*if (primitives.size() == 1 && primitives[0]->transform.isIdentity())
                 {
                     collisionShape.reset(getShapeFromPrimitive(primitives[0]));
-                }
-                else if (primitives.size() > 1)
+                } else
+                */
+                if (primitives.size() > 0)
                 {
                     btCompoundShape* compoundShape = new btCompoundShape(false);
                     std::vector<Primitive::PrimitivePtr>::const_iterator it;
                     Eigen::Matrix4f currentTransform = Eigen::Matrix4f::Identity();
 
+                    Eigen::Matrix4f localComTransform;
+                    localComTransform.setIdentity();
+                    localComTransform.block(0,3,3,1) = -o->getCoMLocal();
+                    cout << "localComTransform:\n" << localComTransform;
+
+
                     for (it = primitives.begin(); it != primitives.end(); it++)
                     {
-                        currentTransform *= (*it)->transform;
+                        //currentTransform *= (*it)->transform;
+                        currentTransform = localComTransform*(*it)->transform;
                         compoundShape->addChildShape(BulletEngine::getPoseBullet(currentTransform), getShapeFromPrimitive(*it));
                     }
 
@@ -162,6 +170,7 @@ namespace SimDynamics
 
         if (primitive->type == Primitive::Box::TYPE)
         {
+
             Primitive::Box* box = boost::dynamic_pointer_cast<Primitive::Box>(primitive).get();
             // w/h/d have to be halved
             btBoxShape* boxShape = new btBoxShape(btVector3(box->width / 2000.f, box->height / 2000.f, box->depth / 2000.f));

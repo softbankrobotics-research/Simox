@@ -79,6 +79,7 @@ namespace VirtualRobot
         std::string objectXML(buffer.str());
 
         VirtualRobot::ManipulationObjectPtr res = createManipulationObjectFromString(objectXML, basePath);
+        res->initialize();
         THROW_VR_EXCEPTION_IF(!res, "Error while parsing file.");
         return res;
     }

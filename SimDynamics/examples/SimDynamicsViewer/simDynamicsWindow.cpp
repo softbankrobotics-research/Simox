@@ -73,6 +73,7 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags fla
 
     ManipulationObjectPtr vitalis;
     std::string vitalisPath = "objects/VitalisWithPrimitives.xml";
+    //std::string vitalisPath = "/home/SMBAD/vahrenka/.armarx/mongo/.cache/files/vitaliscereal.xml";
 
     if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(vitalisPath))
     {
