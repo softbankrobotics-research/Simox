@@ -5,10 +5,14 @@
 #include "pugixml/pugixml.hpp"
 #include <map>
 #include <vector>
+
+#ifndef Q_MOC_RUN
 #include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
+#endif
+
 
 #define COLLADA_IMPORT_USE_SENSORS
 

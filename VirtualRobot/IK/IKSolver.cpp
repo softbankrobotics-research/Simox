@@ -15,7 +15,7 @@
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CDManager.h"
 
-#include <boost/pointer_cast.hpp>
+
 
 #include <algorithm>
 

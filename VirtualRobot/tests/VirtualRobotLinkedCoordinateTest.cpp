@@ -7,7 +7,6 @@
 #define BOOST_TEST_MODULE VirtualRobot_CoordinatesTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-//#include <boost/test/unit_test.hpp>
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Robot.h>

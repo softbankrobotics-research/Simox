@@ -14,7 +14,7 @@
 #include "../CollisionDetection/CollisionChecker.h"
 #include "EndEffector.h"
 #include "../SceneObjectSet.h"
-#include <boost/pointer_cast.hpp>
+
 
 namespace VirtualRobot
 {

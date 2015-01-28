@@ -39,7 +39,7 @@
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoCamera.h>
 
-#include <boost/shared_ptr.hpp>
+
 
 #include <string>
 #include <fstream>

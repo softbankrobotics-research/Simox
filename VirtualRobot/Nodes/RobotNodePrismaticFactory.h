@@ -27,7 +27,7 @@
 #include "../SceneObject.h"
 #include "RobotNodeFactory.h"
 
-#include <boost/shared_ptr.hpp>
+
 
 
 namespace VirtualRobot

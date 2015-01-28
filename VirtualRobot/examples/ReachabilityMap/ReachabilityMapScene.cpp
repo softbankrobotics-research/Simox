@@ -9,7 +9,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/SoQt.h>
-#include <boost/shared_ptr.hpp>
+
 #include <string>
 #include <iostream>
 #include <Eigen/Core>

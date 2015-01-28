@@ -42,7 +42,7 @@ namespace SimDynamics
     void DynamicsObject::setPosition(const Eigen::Vector3f& posMM)
     {
         MutexLockPtr lock = getScopedLock();
-        Eigen::Matrix4f pose = sceneObject->getGlobalPoseVisualization();
+        Eigen::Matrix4f pose = sceneObject->getGlobalPose();
         pose.block(0, 3, 3, 1) = posMM;
         setPose(pose);
     }

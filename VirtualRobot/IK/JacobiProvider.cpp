@@ -1,7 +1,7 @@
 #include <Eigen/Geometry>
 #include "JacobiProvider.h"
 
-#include <boost/pointer_cast.hpp>
+
 
 #include <algorithm>
 

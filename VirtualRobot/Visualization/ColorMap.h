@@ -25,7 +25,7 @@
 
 #include "../VirtualRobotImportExport.h"
 #include "VisualizationFactory.h"
-#include <boost/shared_ptr.hpp>
+
 #include <string>
 
 namespace VirtualRobot

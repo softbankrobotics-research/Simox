@@ -8,7 +8,7 @@
 #include "Visualization//VisualizationFactory.h"
 #include "VirtualRobotException.h"
 
-#include <boost/pointer_cast.hpp>
+
 #include <algorithm>
 #include <deque>
 

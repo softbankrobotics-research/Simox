@@ -27,7 +27,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <boost/thread.hpp>
 
 namespace Saba
 {

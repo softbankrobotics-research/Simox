@@ -6,11 +6,7 @@
 #include "../Nodes/RobotNodeRevolute.h"
 #include "../VirtualRobotException.h"
 #include "../CollisionDetection/CollisionChecker.h"
-#include <boost/format.hpp>
 
-#include <boost/bind.hpp>
-
-#include <boost/math/special_functions/fpclassify.hpp>
 
 #include <algorithm>
 #include <float.h>
@@ -384,12 +380,12 @@ namespace VirtualRobot
                         if (coordSystem)
                         {
                             toTCP = coordSystem->toLocalCoordinateSystem(tcp->getGlobalPose()).block(0, 3, 3, 1)
-                                    - coordSystem->toLocalCoordinateSystem(dof->getGlobalPoseJoint()).block(0, 3, 3, 1);
+                                    - coordSystem->toLocalCoordinateSystem(dof->getGlobalPose()).block(0, 3, 3, 1);
                         }
                         else
                         {
                             toTCP = tcp->getGlobalPose().block(0, 3, 3, 1)
-                                    - dof->getGlobalPoseJoint().block(0, 3, 3, 1);
+                                    - dof->getGlobalPose().block(0, 3, 3, 1);
                         }
 
                         if (convertMMtoM)

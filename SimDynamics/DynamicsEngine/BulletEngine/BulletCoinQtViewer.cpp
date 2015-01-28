@@ -10,7 +10,7 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
-#include <boost/foreach.hpp>
+
 
 using namespace VirtualRobot;
 

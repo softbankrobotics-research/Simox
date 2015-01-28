@@ -23,13 +23,14 @@
 #ifndef GRIDOFMEDIALSPHERES_H
 #define GRIDOFMEDIALSPHERES_H
 
-#include <vector>
-#include <Eigen/Geometry>
-#include <boost/shared_ptr.hpp>
+
 #include "../../GraspStudio.h"
 #include "MedialSphere.h"
 #include "GridParameters.h"
 #include "SphereHelpers.h"
+
+#include <vector>
+#include <Eigen/Geometry>
 
 namespace GraspStudio
 {

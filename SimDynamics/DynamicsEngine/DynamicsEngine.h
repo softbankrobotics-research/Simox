@@ -26,7 +26,7 @@
 #include "../SimDynamics.h"
 #include "DynamicsObject.h"
 #include "DynamicsRobot.h"
-#include <boost/thread/recursive_mutex.hpp>
+
 
 namespace SimDynamics
 {

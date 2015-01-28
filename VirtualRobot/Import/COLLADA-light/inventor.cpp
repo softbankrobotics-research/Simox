@@ -1,7 +1,7 @@
 #include "inventor.h"
 
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
+
+
 
 #include <Inventor/nodes/SoSphere.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -23,7 +23,9 @@
 #include <iostream>
 
 #ifdef TIMER_DEBUG
+#ifndef Q_MOC_RUN
 #include <boost/timer/timer.hpp>
+#endif
 #endif
 
 using namespace std;

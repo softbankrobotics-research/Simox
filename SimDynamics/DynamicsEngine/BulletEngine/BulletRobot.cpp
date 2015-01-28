@@ -16,12 +16,6 @@
 // either hinge or generic6DOF constraints can be used
 //#define USE_BULLET_GENERIC_6DOF_CONSTRAINT
 
-#include <boost/pointer_cast.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
-
-#include <boost/math/special_functions/fpclassify.hpp>
-
 //#define DEBUG_FIXED_OBJECTS
 //#define DEBUG_SHOW_LINKS
 using namespace VirtualRobot;
@@ -108,8 +102,8 @@ namespace SimDynamics
                             // check for hinge2 joint
                             THROW_VR_EXCEPTION_IF(joint2, "three joints in a row not supported:" << joint->getName() << ", " << joint2->getName() << "," << parent->getName());
                             joint2 = parent;
-                            Eigen::Matrix4f p1 = joint->getGlobalPoseJoint();
-                            Eigen::Matrix4f p2 = joint2->getGlobalPoseJoint();
+                            Eigen::Matrix4f p1 = joint->getGlobalPose();
+                            Eigen::Matrix4f p2 = joint2->getGlobalPose();
 
                             double d = (p1.block(0, 3, 3, 1) - p2.block(0, 3, 3, 1)).norm();
                             THROW_VR_EXCEPTION_IF((d > 1e-6), "Could not create hinge2 joint: Joint coord systems must be located at the same position:" << joint->getName() << ", " << joint2->getName());
@@ -307,11 +301,11 @@ namespace SimDynamics
         VR_ASSERT(btBody2);
 
 
-        Eigen::Matrix4f coordSystemNode1 = bodyA->getGlobalPoseJoint(); // todo: what if joint is not at 0 ?!
-        Eigen::Matrix4f coordSystemNode2 = bodyB->getGlobalPoseJoint();
-        Eigen::Matrix4f coordSystemJoint = joint->getGlobalPoseJoint();
+        Eigen::Matrix4f coordSystemNode1 = bodyA->getGlobalPose(); // todo: what if joint is not at 0 ?!
+        Eigen::Matrix4f coordSystemNode2 = bodyB->getGlobalPose();
+        Eigen::Matrix4f coordSystemJoint = joint->getGlobalPose();
 
-        Eigen::Matrix4f anchorPointGlobal = joint->getGlobalPoseJoint();//node1->getGlobalPose() * node2->getPreJointTransformation(); //
+        Eigen::Matrix4f anchorPointGlobal = joint->getGlobalPose();//node1->getGlobalPose() * node2->getPreJointTransformation(); //
 
         Eigen::Matrix4f anchor_inNode1 = coordSystemNode1.inverse() * anchorPointGlobal;
         Eigen::Matrix4f anchor_inNode2 = coordSystemNode2.inverse() * anchorPointGlobal;
@@ -358,7 +352,7 @@ namespace SimDynamics
                 // UNIVERSAL/HINGE2 joint
                 boost::shared_ptr<RobotNodeRevolute> rnRevJoint2 = boost::dynamic_pointer_cast<RobotNodeRevolute>(joint2);
                 THROW_VR_EXCEPTION_IF(!rnRevJoint2, "Second joint must be a revolute joint...");
-                Eigen::Matrix4f coordSystemJoint2 = joint2->getGlobalPoseJoint();
+                Eigen::Matrix4f coordSystemJoint2 = joint2->getGlobalPose();
 
                 Eigen::Vector4f axisLocalJoint2 = Eigen::Vector4f::Zero();
                 axisLocalJoint2.block(0, 0, 3, 1) =  rnRevJoint2->getJointRotationAxisInJointCoordSystem();

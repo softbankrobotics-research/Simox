@@ -15,8 +15,8 @@
 #include "../RobotConfig.h"
 #include "../RuntimeEnvironment.h"
 #include "rapidxml.hpp"
-#include <boost/pointer_cast.hpp>
-#include <boost/filesystem.hpp>
+
+
 #include <vector>
 #include <fstream>
 #include <iostream>

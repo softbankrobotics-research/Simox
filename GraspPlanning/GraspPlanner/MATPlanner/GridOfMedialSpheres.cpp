@@ -20,10 +20,10 @@
 *             GNU Lesser General Public License
 *
 */
+#include "GridOfMedialSpheres.h"
 #include <cmath>
 #include <iostream>
 
-#include "GridOfMedialSpheres.h"
 
 using namespace std;
 using namespace Eigen;

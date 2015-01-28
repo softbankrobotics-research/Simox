@@ -501,7 +501,7 @@ namespace SimDynamics
         for (size_t i = 0; i < objects.size(); i++)
         {
             cout << "++ Object " << i << ":" << objects[i]->getName() << endl;
-            Eigen::Matrix4f m = objects[i]->getSceneObject()->getGlobalPoseVisualization();
+            Eigen::Matrix4f m = objects[i]->getSceneObject()->getGlobalPose();
             cout << "   pos (simox)  " << m(0, 3) << "," << m(1, 3) << "," << m(2, 3) << endl;
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(objects[i]);
             boost::shared_ptr<btRigidBody> rb = bo->getRigidBody();

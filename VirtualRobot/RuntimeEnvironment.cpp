@@ -7,10 +7,7 @@
 #include "RuntimeEnvironment.h"
 #include "VirtualRobotException.h"
 #include "Visualization/VisualizationFactory.h"
-#include <boost/filesystem.hpp>
-#include <boost/program_options.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+
 
 namespace VirtualRobot
 {

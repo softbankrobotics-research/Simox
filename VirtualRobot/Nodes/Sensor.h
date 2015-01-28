@@ -33,7 +33,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <boost/enable_shared_from_this.hpp>
+
 
 #include <string>
 #include <vector>

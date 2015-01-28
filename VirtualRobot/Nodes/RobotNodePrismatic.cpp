@@ -3,7 +3,7 @@
 #include "../Robot.h"
 #include <cmath>
 #include <algorithm>
-#include <boost/bind.hpp>
+
 #include <Eigen/Geometry>
 #include "../VirtualRobotException.h"
 

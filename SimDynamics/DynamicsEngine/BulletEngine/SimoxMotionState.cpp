@@ -3,8 +3,8 @@
 #include "BulletEngine.h"
 #include "../../DynamicsWorld.h"
 
-#include <boost/pointer_cast.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+
+
 
 using namespace VirtualRobot;
 
@@ -20,7 +20,7 @@ namespace SimDynamics
 
         if (sceneObject)
         {
-            initalGlobalPose = sceneObject->getGlobalPoseVisualization();
+            initalGlobalPose = sceneObject->getGlobalPose();
         }
 
         _transform.setIdentity();
@@ -40,7 +40,7 @@ namespace SimDynamics
             Eigen::Matrix4f t;
             t.setIdentity();
             t.block(0, 3, 3, 1) = rn->getCoMGlobal();
-            t = rn->getGlobalPoseVisualization().inverse() * t;
+            t = rn->getGlobalPose().inverse() * t;
             com = t.block(0, 3, 3, 1);
         }
 
@@ -183,9 +183,9 @@ namespace SimDynamics
     {
         initalGlobalPose = pose;
         /* convert to local coord system, apply comoffset and convert back*/
-        Eigen::Matrix4f poseLocal = sceneObject->getGlobalPoseVisualization().inverse() * pose;
+        Eigen::Matrix4f poseLocal = sceneObject->getGlobalPose().inverse() * pose;
         poseLocal.block(0, 3, 3, 1) += com;
-        Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPoseVisualization() * poseLocal;
+        Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPose() * poseLocal;
         m_startWorldTrans = BulletEngine::getPoseBullet(poseGlobal);
         //m_startWorldTrans.getOrigin() -= _comOffset.getOrigin();
         updateTransform();

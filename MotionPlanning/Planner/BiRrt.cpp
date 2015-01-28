@@ -6,7 +6,7 @@
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
 #include <time.h>
-#include <boost/pointer_cast.hpp>
+
 
 //#define LOCAL_DEBUG(a) {SABA_INFO << a;};
 #define LOCAL_DEBUG(a)

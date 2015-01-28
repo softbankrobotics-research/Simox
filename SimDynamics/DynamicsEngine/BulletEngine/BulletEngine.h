@@ -28,7 +28,7 @@
 #include "BulletRobot.h"
 
 #include "btBulletDynamicsCommon.h"
-#include <boost/enable_shared_from_this.hpp>
+
 
 namespace SimDynamics
 {

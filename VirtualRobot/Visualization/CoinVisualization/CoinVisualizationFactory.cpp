@@ -57,7 +57,7 @@
 #include <Inventor/nodes/SoLightModel.h>
 #include <iostream>
 #include <algorithm>
-#include <boost/pointer_cast.hpp>
+
 
 namespace VirtualRobot
 {

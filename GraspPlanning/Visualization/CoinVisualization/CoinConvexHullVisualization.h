@@ -27,8 +27,6 @@
 #include "../../GraspStudio.h"
 #include "../ConvexHullVisualization.h"
 
-#include <boost/shared_ptr.hpp>
-
 class SoNode;
 class SoSeparator;
 class SoCallbackAction;

@@ -13,10 +13,6 @@
 #include "../Transformation/DHParameter.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "rapidxml.hpp"
-#include <boost/pointer_cast.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/version.hpp>
-
 
 namespace VirtualRobot
 {

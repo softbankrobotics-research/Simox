@@ -3,7 +3,7 @@
 #include "Robot.h"
 #include "VirtualRobotException.h"
 
-#include <boost/bind.hpp>
+
 #include <algorithm>
 
 namespace VirtualRobot

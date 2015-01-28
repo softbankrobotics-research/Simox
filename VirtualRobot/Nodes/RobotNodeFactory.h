@@ -29,7 +29,7 @@
 #include "RobotNode.h"
 
 #include <Eigen/Core>
-#include <boost/shared_ptr.hpp>
+
 
 
 namespace VirtualRobot

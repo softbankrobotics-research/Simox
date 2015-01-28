@@ -6,7 +6,6 @@
 #include "VirtualRobotException.h"
 #include "CollisionDetection/CollisionChecker.h"
 
-#include <boost/bind.hpp>
 #include <algorithm>
 
 namespace VirtualRobot

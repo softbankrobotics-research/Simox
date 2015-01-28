@@ -321,7 +321,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         Eigen::Matrix4f com = Eigen::Matrix4f::Identity();
         com.block(0, 3, 3, 1) = rn->getCoMLocal();
-        com = rn->getGlobalPoseVisualization() * com;
+        com = rn->getGlobalPose() * com;
         return com;
     }
 

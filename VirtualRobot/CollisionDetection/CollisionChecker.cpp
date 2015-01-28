@@ -17,7 +17,7 @@
 #define COL_CHECKER_IMPL CollisionCheckerDummy
 #endif
 
-#include <boost/thread.hpp>
+
 
 
 namespace VirtualRobot

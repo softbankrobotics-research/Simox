@@ -40,8 +40,6 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <boost/thread/recursive_mutex.hpp>
-
 namespace SimDynamics
 {
 

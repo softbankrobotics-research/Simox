@@ -43,13 +43,13 @@
 #include <vector>
 #include <map>
 #include <cmath>
-#include <boost/foreach.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+
+
+
+
 
 #ifdef TIMER_DEBUG
-#include <boost/timer/timer.hpp>
+//#include <boost/timer/timer.hpp>
 #endif
 
 #define IN_ARTICULATED_SYSTEMS "//library_articulated_systems"

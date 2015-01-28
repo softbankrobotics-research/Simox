@@ -419,7 +419,7 @@ namespace VirtualRobot
             // idMaterial == position in material array
             unsigned int idMaterial;
 
-            // per face normal (used when nor idNormals are given)
+            // per face normal (used when no idNormals are given)
             Eigen::Vector3f normal;
         };
         struct TriangleFace6D
@@ -605,6 +605,9 @@ namespace VirtualRobot
             std::vector<Eigen::Vector3f> vertices;
             std::vector<TriangleFace> faces;
             float volume;
+
+            Eigen::Vector3f center;
+            float maxDistFacetCenter; // maximum distance of faces to center
         };
         typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
 

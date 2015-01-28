@@ -28,7 +28,7 @@
 #include "../CSpace/CSpacePath.h"
 #include <VirtualRobot/VirtualRobot.h>
 #include "MotionPlanner.h"
-#include <boost/thread.hpp>
+
 
 namespace Saba
 {

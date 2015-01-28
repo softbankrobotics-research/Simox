@@ -27,9 +27,9 @@
 #include "../VirtualRobotImportExport.h"
 #include "../Compression/CompressionBZip2.h"
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/mpl/assert.hpp>
+
+
+
 
 #include <vector>
 

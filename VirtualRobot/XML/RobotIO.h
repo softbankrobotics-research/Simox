@@ -35,7 +35,7 @@
 #include <map>
 #include <fstream>
 
-#include <boost/thread.hpp>
+
 
 // using forward declarations here, so that the rapidXML header does not have to be parsed when this file is included
 namespace rapidxml

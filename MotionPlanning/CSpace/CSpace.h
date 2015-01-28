@@ -29,7 +29,6 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include <iostream>
 #include <vector>
-#include <boost/thread.hpp>
 
 namespace Saba
 {

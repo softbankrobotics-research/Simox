@@ -5,7 +5,7 @@
 #include "VirtualRobotException.h"
 #include "CollisionDetection/CollisionChecker.h"
 #include "EndEffector/EndEffector.h"
-#include <boost/foreach.hpp>
+
 
 namespace VirtualRobot
 {

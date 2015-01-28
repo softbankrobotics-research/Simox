@@ -22,9 +22,9 @@
 */
 #include "RobotImporterFactory.h"
 #include <Eigen/Core>
-#include <boost/shared_ptr.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
+
+
+
 
 using namespace std;
 

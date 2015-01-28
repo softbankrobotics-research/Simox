@@ -28,7 +28,6 @@
 #include "PathProcessor.h"
 #include "../CSpace/CSpacePath.h"
 
-#include <boost/thread.hpp>
 
 namespace Saba
 {

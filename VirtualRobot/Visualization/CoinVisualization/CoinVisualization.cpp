@@ -11,7 +11,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoUnits.h>
-#include <boost/foreach.hpp>
+
 #include <algorithm>
 
 // For the VRML2.0 export

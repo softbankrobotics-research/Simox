@@ -27,7 +27,7 @@
 
 #include "../VirtualRobotImportExport.h"
 
-#include <boost/thread.hpp>
+
 
 namespace VirtualRobot
 {

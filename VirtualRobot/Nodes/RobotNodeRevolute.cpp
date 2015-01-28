@@ -3,7 +3,7 @@
 #include "../Robot.h"
 #include <cmath>
 #include <algorithm>
-#include <boost/bind.hpp>
+
 #include <Eigen/Geometry>
 #include "../VirtualRobotException.h"
 
@@ -147,7 +147,7 @@ namespace VirtualRobot
         ReadLockPtr lock = getRobot()->getReadLock();
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = jointRotationAxis;
-        result4f = getGlobalPoseJoint() * result4f;
+        result4f = globalPose * result4f;
 
         if (coordSystem)
         {

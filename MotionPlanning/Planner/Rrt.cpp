@@ -5,7 +5,7 @@
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
 #include <time.h>
-#include <boost/pointer_cast.hpp>
+
 
 using namespace std;
 using namespace VirtualRobot;

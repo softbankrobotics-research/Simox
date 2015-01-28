@@ -45,8 +45,8 @@ This library can be used to simulate physical interactions and dynamic systems.
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/VirtualRobotException.h"
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+
+
 #include <iostream>
 #include <sstream>
 #include <cmath>

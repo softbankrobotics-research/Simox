@@ -14,7 +14,7 @@
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <string>
-#include <boost/filesystem.hpp>
+
 
 using namespace VirtualRobot;
 

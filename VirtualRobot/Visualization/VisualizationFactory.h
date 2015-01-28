@@ -28,7 +28,7 @@
 #include "../MathTools.h"
 #include "../BoundingBox.h"
 #include "../Primitive.h"
-#include <boost/shared_ptr.hpp>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <string>

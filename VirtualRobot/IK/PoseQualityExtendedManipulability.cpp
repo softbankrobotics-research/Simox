@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 #include <float.h>
 
-#include <boost/math/special_functions/fpclassify.hpp>
+
 
 using namespace std;
 

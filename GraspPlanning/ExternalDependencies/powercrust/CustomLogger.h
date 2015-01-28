@@ -5,8 +5,10 @@
 #include <ostream>
 #include <fstream>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
+#ifndef Q_MOC_RUN
+#include <boost/shared_ptr.hpp>
+#endif
 
 class CustomLogger
 {

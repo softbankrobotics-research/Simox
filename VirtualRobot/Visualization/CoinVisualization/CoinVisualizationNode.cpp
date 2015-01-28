@@ -26,8 +26,8 @@
 
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
 
-#include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
+
+
 
 namespace VirtualRobot
 {

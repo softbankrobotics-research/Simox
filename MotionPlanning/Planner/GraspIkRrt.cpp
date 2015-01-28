@@ -8,7 +8,7 @@
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <time.h>
-#include <boost/pointer_cast.hpp>
+
 
 //#define LOCAL_DEBUG(a) {SABA_INFO << a;};
 #define LOCAL_DEBUG(a)

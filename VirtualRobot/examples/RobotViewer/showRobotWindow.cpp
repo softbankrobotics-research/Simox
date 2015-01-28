@@ -17,10 +17,6 @@
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoUnits.h>
-
-//#include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 #include <sstream>
 
 using namespace std;
@@ -685,7 +681,7 @@ void showRobotWindow::loadRobot()
         return;
     }
 
-    // just a simple test that inverts the kinemtco structure of the robot
+    // just a simple test that inverts the kinematic structure of the robot
 #if 0 
     if (robot->hasRobotNode("Index L J1"))
         robot = RobotFactory::cloneInversed(robot, "Index L J1");

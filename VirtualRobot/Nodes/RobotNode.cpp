@@ -10,12 +10,12 @@
 #include "../XML/BaseIO.h"
 #include <cmath>
 #include <iomanip>
-#include <boost/bind.hpp>
+
 #include <algorithm>
 
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/pointer_cast.hpp>
-#include <boost/filesystem.hpp>
+
+
+
 
 #include <Eigen/Core>
 
@@ -786,22 +786,24 @@ namespace VirtualRobot
         SceneObject::updatePose(updateChildren);
     }
 
-    Eigen::Matrix4f RobotNode::getGlobalPoseJoint() const
-    {
-        ReadLockPtr lock = getRobot()->getReadLock();
-        return globalPose;
-    }
-
-    Eigen::Matrix4f RobotNode::getGlobalPoseVisualization() const
-    {
-        ReadLockPtr lock = getRobot()->getReadLock();
-        return globalPose;
-    }
-
     Eigen::Matrix4f RobotNode::getGlobalPose() const
     {
         ReadLockPtr lock = getRobot()->getReadLock();
         return globalPose;
+    }
+
+    Eigen::Matrix4f RobotNode::getPoseInRootFrame() const
+    {
+        RobotPtr r = getRobot();
+        ReadLockPtr lock = r->getReadLock();
+        return r->getRootNode()->toLocalCoordinateSystem(globalPose);
+    }
+
+    Eigen::Vector3f RobotNode::getPositionInRootFrame() const
+    {
+        RobotPtr r = getRobot();
+        ReadLockPtr lock = r->getReadLock();
+        return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0,3,3,1));
     }
 
     RobotNode::RobotNodeType RobotNode::getType()

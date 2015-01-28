@@ -5,7 +5,7 @@
 #include "../CollisionDetection/CollisionModel.h"
 #include <cmath>
 #include <algorithm>
-#include <boost/bind.hpp>
+
 #include "../VirtualRobotException.h"
 
 namespace VirtualRobot

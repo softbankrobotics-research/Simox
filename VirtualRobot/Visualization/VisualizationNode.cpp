@@ -12,7 +12,7 @@
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/XML/BaseIO.h"
-#include <boost/filesystem.hpp>
+
 
 namespace VirtualRobot
 {

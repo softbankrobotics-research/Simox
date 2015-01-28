@@ -3,7 +3,7 @@
 
 #include <VirtualRobot/VirtualRobotImportExport.h>
 #include <Eigen/Geometry>
-#include <boost/format.hpp>
+
 
 namespace VirtualRobot
 {

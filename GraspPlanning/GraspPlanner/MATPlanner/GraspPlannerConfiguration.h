@@ -1,9 +1,6 @@
 #ifndef GRASPPLANNERCONFIGURATION_H
 #define GRASPPLANNERCONFIGURATION_H
 
-#include <iostream>
-#include <boost/shared_ptr.hpp>
-
 /**
 * This file is part of Simox.
 *
@@ -26,6 +23,8 @@
 *             GNU Lesser General Public License
 *
 */
+
+#include <iostream>
 
 #include "../../GraspStudio.h"
 

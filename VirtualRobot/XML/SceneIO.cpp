@@ -2,8 +2,8 @@
 #include "SceneIO.h"
 #include "../VirtualRobotException.h"
 #include "rapidxml.hpp"
-#include <boost/pointer_cast.hpp>
-#include <boost/filesystem.hpp>
+
+
 #include "RobotIO.h"
 #include "ObjectIO.h"
 #include "../Trajectory.h"

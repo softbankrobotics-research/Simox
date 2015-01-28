@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+
 
 /**
 * A template that can be used as a superclass of a class hierarchy that

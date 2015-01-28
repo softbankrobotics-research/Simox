@@ -27,7 +27,7 @@
 #include "../VisualizationNode.h"
 #include "CoinVisualizationFactory.h"
 
-#include <boost/shared_ptr.hpp>
+
 
 class SoNode;
 class SoSeparator;

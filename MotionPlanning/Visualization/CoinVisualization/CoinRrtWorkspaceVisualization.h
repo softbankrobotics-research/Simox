@@ -24,7 +24,7 @@
 #include "../../Saba.h"
 #include "../RrtWorkspaceVisualization.h"
 
-#include <boost/shared_ptr.hpp>
+
 
 class SoNode;
 class SoSeparator;

@@ -26,7 +26,7 @@
 #include "GraspStudio.h"
 #include "VirtualRobot/MathTools.h"
 #include <vector>
-#include <boost/thread.hpp>
+
 
 namespace GraspStudio
 {

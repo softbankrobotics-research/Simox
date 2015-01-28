@@ -38,8 +38,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread.hpp>
 
 #include <string>
 #include <vector>
@@ -146,23 +144,23 @@ namespace VirtualRobot
         virtual void setGlobalPose(const Eigen::Matrix4f& pose);
 
         /*
-            The global pose of a joint is not identical with the pose of it's visualization,
-            since the visualization is linked to the joint coordinate system but the complete
-            transformation of the robot node must consider the post-joint transformation.
-            So, the ScenObject's getGlobalPose method is overwritten in order to serve the valid global pose.
+            This call locks the robot's mutex.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
 
         /*!
-            DEPRECATED: same as GlobalPose
+            The pose of this node in the root coordinate system of the robot.
+            \return The pose in root frame
+
         */
-        virtual Eigen::Matrix4f getGlobalPoseVisualization() const;
+        virtual Eigen::Matrix4f getPoseInRootFrame() const;
 
         /*!
-            DEPRECATED: same as GlobalPose
-        */
-        virtual Eigen::Matrix4f getGlobalPoseJoint() const;
+            The position of this node in the root coordinate system of the robot.
+            \return The position in root frame
 
+        */
+        virtual Eigen::Vector3f getPositionInRootFrame() const;
 
         /*!
             Display the coordinate system of this RobotNode. This is the global pose of it's visualization.

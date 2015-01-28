@@ -29,17 +29,10 @@
 #include "Nodes/RobotNode.h"
 #include "Nodes/ConditionedLock.h"
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread/shared_mutex.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/mpl/assert.hpp>
-#include <boost/bind.hpp>
-
 #include <string>
 #include <map>
 #include <vector>
 
-#include <boost/mem_fn.hpp>
 #include <algorithm>
 
 #include <Eigen/Core>

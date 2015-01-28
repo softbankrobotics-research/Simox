@@ -6,7 +6,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 
-#include <boost/shared_ptr.hpp>
+
 #include <string>
 #include <iostream>
 

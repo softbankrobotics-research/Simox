@@ -29,11 +29,6 @@
 #include "../MathTools.h"
 #include "../XML/FileIO.h"
 
-
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/mpl/assert.hpp>
-
 #include <vector>
 
 #include <Eigen/Core>

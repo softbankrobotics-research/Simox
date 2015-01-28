@@ -25,7 +25,7 @@
 
 #include "../SimDynamics.h"
 #include <VirtualRobot/SceneObject.h>
-#include <boost/thread/recursive_mutex.hpp>
+
 
 namespace SimDynamics
 {

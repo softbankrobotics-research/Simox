@@ -675,7 +675,7 @@ void SimDynamicsWindow::updateJointInfo()
         info += "/";
         info += (const char*)tmp.toAscii();
 
-        gp = rn->getGlobalPoseVisualization();
+        gp = rn->getGlobalPose();
         qVisu = QString("VISU (simox):");
         qVisu += QString::number(gp(0, 3), 'f', 2);
         qVisu += QString("/");

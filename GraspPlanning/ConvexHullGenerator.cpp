@@ -174,9 +174,40 @@ namespace GraspStudio
             //cout << "Volume: " << qh totvol << endl;
             result->volume = qh totvol;
 
+
+            double pCenter[3];
+
+            for (int u = 0; u < 3; u++)
+            {
+                pCenter[u] = 0;
+            }
+
+            int nVcertexCount = 0;
+            FORALLvertices
+            {
+                for (int u = 0; u < 3; u++)
+                {
+                    pCenter[u] += vertex->point[u];
+                }
+
+                nVcertexCount++;
+            }
+
+            if (nVcertexCount > 0)
+                for (int u = 0; u < 3; u++)
+                {
+                    pCenter[u] /= (float)nVcertexCount;
+                }
+
+            result->center[0] = pCenter[0];
+            result->center[1] = pCenter[1];
+            result->center[2] = pCenter[2];
+
+            float maxDist = 0;
+
             FORALLfacets
             {
-
+                
                 int c = 0;
 #ifdef CONVEXHULL_DEBUG_OUTPUT
                 cout << "FACET " << nFacets << ":" << endl;
@@ -209,14 +240,22 @@ namespace GraspStudio
                 f.normal[1] = facet->normal[1];
                 f.normal[2] = facet->normal[2];
                 //cout << "Normal: " << f.m_Normal.x << "," << f.m_Normal.y << "," << f.m_Normal.z << endl;
+
+                double dist = qh_distnorm(3, pCenter, facet->normal, &(facet->offset));
+                if (fabs(dist) > maxDist)
+                    maxDist = fabs(dist);
+
+
                 result->faces.push_back(f);
                 nFacets++;
             }
+            result->maxDistFacetCenter = maxDist;
             /*
             cout << "QHULL result: nVertices: " << storeResult.vertices.size() << endl;
             cout << "QHULL result: nFactes: " << nFacets << endl;
             */
         }
+
 
         qh_freeqhull(!qh_ALL);
         qh_memfreeshort(&curlong, &totlong);

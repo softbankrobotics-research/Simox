@@ -14,7 +14,7 @@
 #include "../RobotConfig.h"
 #include "../CollisionDetection/CollisionChecker.h"
 
-#include <boost/pointer_cast.hpp>
+
 
 namespace VirtualRobot
 {

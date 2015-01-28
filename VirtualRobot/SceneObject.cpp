@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <Eigen/Dense>
 
-#include <boost/filesystem.hpp>
+
 
 namespace VirtualRobot
 {
@@ -118,22 +118,20 @@ namespace VirtualRobot
 
     void SceneObject::updatePose(bool updateChildren)
     {
-        Eigen::Matrix4f gp = getGlobalPoseVisualization();
-
         if (visualizationModel)
         {
-            visualizationModel->setGlobalPose(gp);
+            visualizationModel->setGlobalPose(globalPose);
         }
 
         if (collisionModel)
         {
-            collisionModel->setGlobalPose(gp);
+            collisionModel->setGlobalPose(globalPose);
         }
 
         if (updateChildren)
             for (size_t i = 0; i < children.size(); i++)
             {
-                children[i]->updatePose(getGlobalPose());
+                children[i]->updatePose(globalPose);
             }
     }
 
@@ -324,8 +322,8 @@ namespace VirtualRobot
 
             // now we have transformation in RobotNode (end) coordsystem
             // we need to transform to RobotNode's visualization system
-
-            m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
+            // -> not needed here, since we don't use postr joint transformations any more
+            //m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
 
             // convert mm to m
             m.block(0, 3, 3, 1) *= 0.001f;
@@ -437,7 +435,8 @@ namespace VirtualRobot
 
                 // now we have transformation in RobotNode (end) coordsystem
                 // we need to transform to RobotNode's visualization system
-                m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
+                // not needed, we don't have post joint transformations any more
+                //m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
 
                 // convert mm to m
                 m.block(0, 3, 3, 1) *= 0.001f;
@@ -603,11 +602,6 @@ namespace VirtualRobot
     }
 
     Eigen::Matrix4f SceneObject::getGlobalPose() const
-    {
-        return globalPose;
-    }
-
-    Eigen::Matrix4f SceneObject::getGlobalPoseVisualization() const
     {
         return globalPose;
     }

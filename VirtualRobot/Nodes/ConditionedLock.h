@@ -1,7 +1,7 @@
 #ifndef __CONDITIONED_LOCK__
 #define __CONDITIONED_LOCK__
 
-#include <boost/thread.hpp>
+
 
 template <class T>
 class ConditionedLock

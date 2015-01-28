@@ -1,7 +1,7 @@
 
 #include "DynamicsWorld.h"
 #include "DynamicsEngine/DynamicsEngineFactory.h"
-#include <boost/thread.hpp>
+
 
 namespace SimDynamics
 {

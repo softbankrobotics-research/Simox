@@ -28,8 +28,6 @@
 #endif
 
 #include "VirtualRobotImportExport.h"
-//#include "definesVR.h"
-#include <boost/test/unit_test.hpp>
 #include <string>
 #include <fstream>
 

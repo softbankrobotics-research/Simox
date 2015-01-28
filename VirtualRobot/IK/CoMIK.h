@@ -30,7 +30,7 @@
 #include "JacobiProvider.h"
 #include "DifferentialIK.h"
 
-#include <boost/shared_ptr.hpp>
+
 
 namespace VirtualRobot
 {

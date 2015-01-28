@@ -5,7 +5,7 @@
 #include "Visualization//VisualizationNode.h"
 #include "RobotNodeSet.h"
 #include "Obstacle.h"
-#include <boost/pointer_cast.hpp>
+
 
 namespace VirtualRobot
 {

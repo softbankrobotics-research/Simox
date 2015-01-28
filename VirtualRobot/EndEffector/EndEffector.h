@@ -25,7 +25,7 @@
 
 #include "../VirtualRobotImportExport.h"
 
-#include <boost/enable_shared_from_this.hpp>
+
 
 #include <string>
 #include <vector>

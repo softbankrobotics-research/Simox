@@ -154,7 +154,7 @@ namespace SimDynamics
         cout << "TEST3" << endl;
 #endif
 
-        setPoseIntern(o->getGlobalPoseVisualization());
+        setPoseIntern(o->getGlobalPose());
     }
 
     BulletObject::~BulletObject()
@@ -202,7 +202,7 @@ namespace SimDynamics
         Eigen::Matrix4f comLoc;
         comLoc.setIdentity();
         comLoc.block(0, 3, 3, 1) = sceneObject->getCoMGlobal();
-        comLoc = (sceneObject->getGlobalPoseVisualization().inverse() * comLoc);
+        comLoc = (sceneObject->getGlobalPose().inverse() * comLoc);
         com = comLoc.block(0, 3, 3, 1);
 
         double sc = 1.0f;

@@ -6,7 +6,7 @@
 #include "../XML/BaseIO.h"
 #include <algorithm>
 
-#include <boost/filesystem.hpp>
+
 
 namespace VirtualRobot
 {

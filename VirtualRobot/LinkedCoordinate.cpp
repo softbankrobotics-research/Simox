@@ -1,7 +1,6 @@
 #include "LinkedCoordinate.h"
 #include "Robot.h"
-#include <boost/format.hpp>
-#include <boost/current_function.hpp>
+
 
 using namespace VirtualRobot;
 using namespace boost;

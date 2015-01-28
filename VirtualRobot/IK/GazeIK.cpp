@@ -2,7 +2,7 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/RobotNodeSet.h>
-#include <boost/math/special_functions/fpclassify.hpp>
+
 #include <algorithm>
 #include <float.h>
 

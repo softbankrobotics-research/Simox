@@ -110,12 +110,35 @@ namespace VirtualRobot
                 JA_i_min1.block(rowPos, 0, jacobies[j].rows(), jacobies[j].cols()) = jacobies[j];
                 rowPos += jacobies[j].rows();
             }
+            if (verbose)
+            {
+                VR_INFO << "JA_i_min1 " << i << ":\n" << endl << JA_i_min1 << endl;
+            }
 
             JAinv_i_min1 = MathTools::getPseudoInverse(JA_i_min1, pinvtoler);
+            if (verbose)
+            {
+                VR_INFO << "JAinv_i_min1 " << i << ":\n" << endl << JAinv_i_min1 << endl;
+            }
             PA_i_min1 = id_ndof - JAinv_i_min1 * JA_i_min1;
-
+            if (verbose)
+            {
+                VR_INFO << "PA_i_min1 " << i << ":\n" << endl << PA_i_min1 << endl;
+            }
             Eigen::MatrixXf J_tilde_i = J_i * PA_i_min1;
+            if (verbose)
+            {
+                VR_INFO << "J_tilde_i " << i << ":\n" << endl << J_tilde_i << endl;
+            }
             Eigen::MatrixXf Jinv_tilde_i = MathTools::getPseudoInverse(J_tilde_i, pinvtoler);
+            if (verbose)
+            {
+                VR_INFO << "Jinv_tilde_i " << i << ":\n" << endl << Jinv_tilde_i << endl;
+            }
+            if (verbose)
+            {
+                VR_INFO << "jacDefs[i].jacProvider->getError() " << i << ":\n" << endl << jacDefs[i].jacProvider->getError().transpose() << endl;
+            }
 
             result_i = result_i_min1 + Jinv_tilde_i * (jacDefs[i].jacProvider->getError() * stepSize - J_i * result_i_min1);
 

@@ -32,9 +32,9 @@
 #include <string>
 #include <iomanip>
 #include <vector>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/mpl/assert.hpp>
-#include <boost/enable_shared_from_this.hpp>
+
+
+
 
 namespace VirtualRobot
 {
@@ -228,11 +228,7 @@ namespace VirtualRobot
             The global pose defines the position of the object in the world. For non-joint objects it is identical with the visualization frame.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
-        /*!
-            DEPRECATED: same as GlobalPose
-        */
-        virtual Eigen::Matrix4f getGlobalPoseVisualization() const;
-
+        
         /*!
             Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
             \param pose The new pose of this object
@@ -241,7 +237,6 @@ namespace VirtualRobot
         /*!
             Update the pose of this object. The visualization and collision models are updated accordingly.
             \param pose The new pose of this object
-            \param force: Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& pose);
 
