@@ -18,9 +18,6 @@
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoUnits.h>
 
-//#include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 #include <sstream>
 
 using namespace std;

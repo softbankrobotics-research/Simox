@@ -27,7 +27,6 @@
 #include "../SceneObject.h"
 #include "SensorFactory.h"
 
-#include <boost/shared_ptr.hpp>
 
 
 namespace VirtualRobot

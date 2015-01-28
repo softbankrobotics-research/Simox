@@ -8,7 +8,6 @@
 #include "OSGVisualization.h"
 #include "OSGVisualizationNode.h"
 
-#include <boost/foreach.hpp>
 #include <algorithm>
 
 namespace VirtualRobot

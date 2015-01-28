@@ -17,7 +17,6 @@
 #include "../../Workspace/Reachability.h"
 #include <iostream>
 #include <algorithm>
-#include <boost/pointer_cast.hpp>
 
 #include <osgDB/ReadFile>
 #include <osg/ShapeDrawable>

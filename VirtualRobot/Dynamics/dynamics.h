@@ -7,8 +7,6 @@
 #include "../RobotNodeSet.h"
 #include <rbdl/rbdl.h>
 
-#include <boost/shared_ptr.hpp>
-
 
 namespace VirtualRobot
 {

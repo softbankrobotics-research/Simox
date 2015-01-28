@@ -7,8 +7,6 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/URDF/SimoxURDFFactory.h>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/filesystem.hpp>
 #include <string>
 #include <iostream>
 

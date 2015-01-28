@@ -16,7 +16,6 @@
 #include <VirtualRobot/Nodes/RobotNodeRevoluteFactory.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 
-#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace urdf;

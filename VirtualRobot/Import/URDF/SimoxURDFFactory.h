@@ -27,7 +27,6 @@
 #include <VirtualRobot/VirtualRobotImportExport.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
-#include <boost/shared_ptr.hpp>
 
 #include <urdf_model/model.h>
 

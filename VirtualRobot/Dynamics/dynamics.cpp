@@ -13,8 +13,6 @@
 
 #include <math.h>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
 #include <string>
 #include <iostream>
 

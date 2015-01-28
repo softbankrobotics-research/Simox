@@ -29,7 +29,6 @@
 
 #include "../TriMeshModel.h"
 
-#include <boost/shared_ptr.hpp>
 
 #include <osg/Node>
 #include <osg/Group>

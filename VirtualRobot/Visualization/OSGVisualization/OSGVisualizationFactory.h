@@ -31,8 +31,6 @@
 #include "../../EndEffector/EndEffector.h"
 #include "../ColorMap.h"
 
-#include <boost/shared_ptr.hpp>
-
 #include <string>
 
 #include <osg/Node>
