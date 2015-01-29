@@ -49,7 +49,9 @@
 
 
 #ifdef TIMER_DEBUG
-//#include <boost/timer/timer.hpp>
+#ifndef Q_MOC_RUN
+#include <boost/timer/timer.hpp>
+#endif
 #endif
 
 #define IN_ARTICULATED_SYSTEMS "//library_articulated_systems"
