@@ -140,7 +140,6 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/timer/timer.hpp>
 #include <boost/version.hpp>
 #include <boost/format.hpp>
 #include <boost/mpl/assert.hpp>
