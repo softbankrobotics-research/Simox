@@ -43,7 +43,7 @@ class VIRTUAL_ROBOT_IMPORT_EXPORT SupportPolygon : public boost::enable_shared_f
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	SupportPolygon(RobotNodeSetPtr contactModels);
+    SupportPolygon(SceneObjectSetPtr contactModels);
 
 	//! Recalculate contacts and compute polygon
 	MathTools::ConvexHull2DPtr updateSupportPolygon(float maxFloorDist = 5.0f);
@@ -59,13 +59,13 @@ public:
 	*/
 	float getStabilityIndex(RobotNodeSetPtr rns);
 
-	VirtualRobot::RobotNodeSetPtr getContactModels();
+    SceneObjectSetPtr getContactModels();
 
 protected:
 
 	float getSquaredDistLine(Eigen::Vector2f &p, Eigen::Vector2f &pt1, Eigen::Vector2f &pt2 );
 
-	RobotNodeSetPtr contactModels;
+    SceneObjectSetPtr contactModels;
 
 	std::vector< CollisionModelPtr > colModels; 
 	std::vector< Eigen::Vector2f > currentContactPoints2D; 

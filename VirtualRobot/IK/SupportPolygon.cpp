@@ -6,7 +6,7 @@ namespace VirtualRobot
 {
 
 
-SupportPolygon::SupportPolygon(RobotNodeSetPtr contactModels)
+SupportPolygon::SupportPolygon(SceneObjectSetPtr contactModels)
 	: contactModels(contactModels)
 {
 	floor =  MathTools::getFloorPlane();
@@ -14,8 +14,8 @@ SupportPolygon::SupportPolygon(RobotNodeSetPtr contactModels)
 	VR_ASSERT(this->contactModels);
 	for (size_t i=0;i<contactModels->getSize();i++)
 	{
-		if (contactModels->getNode(i)->getCollisionModel())
-			colModels.push_back(contactModels->getNode(i)->getCollisionModel());
+        if (contactModels->getSceneObject(i)->getCollisionModel())
+            colModels.push_back(contactModels->getSceneObject(i)->getCollisionModel());
 	}
 
 	THROW_VR_EXCEPTION_IF(colModels.size()==0,"RobotNodeSet does not contain any collision models");
@@ -139,7 +139,7 @@ float SupportPolygon::getStabilityIndex(VirtualRobot::RobotNodeSetPtr rns)
 	return res;
 }
 
-VirtualRobot::RobotNodeSetPtr SupportPolygon::getContactModels()
+VirtualRobot::SceneObjectSetPtr SupportPolygon::getContactModels()
 {
 	return contactModels;
 }
