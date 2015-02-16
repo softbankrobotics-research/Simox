@@ -110,6 +110,8 @@ namespace VirtualRobot
         */
         void setMaxManipulability(float maximalManip);
 
+        float getMaxManipulability();
+
         /*!
             Returns the maximal manipulability that can approximatively be achieved at globalPose.
             Therefore, the entry of the discretized manipulability data is used and projected to [0,maxManip]

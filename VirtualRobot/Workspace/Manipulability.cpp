@@ -694,4 +694,9 @@ namespace VirtualRobot
         return res;
     }
 
+    float Manipulability::getMaxManipulability()
+    {
+        return maxManip;
+    }
+
 } // namespace VirtualRobot
