@@ -72,11 +72,13 @@ float SupportPolygon::getSquaredDistLine(Eigen::Vector2f &p, Eigen::Vector2f &pt
 }
 
 
-float SupportPolygon::getStabilityIndex(VirtualRobot::RobotNodeSetPtr rns)
+float SupportPolygon::getStabilityIndex(VirtualRobot::RobotNodeSetPtr rns, bool update)
 {
 	if (!rns)
 		return 0.0f;
-	updateSupportPolygon();
+
+    if (update)
+        updateSupportPolygon();
 
 	// check if com is outside support polygon
 	MathTools::ConvexHull2DPtr ch = getSupportPolygon2D();

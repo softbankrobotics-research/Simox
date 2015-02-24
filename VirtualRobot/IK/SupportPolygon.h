@@ -57,7 +57,7 @@ public:
 		1 means that the current 2D CoM lies at the center of the support polygon
 		0 means it is outside.
 	*/
-	float getStabilityIndex(RobotNodeSetPtr rns);
+    float getStabilityIndex(RobotNodeSetPtr rns, bool update=true);
 
     SceneObjectSetPtr getContactModels();
 
