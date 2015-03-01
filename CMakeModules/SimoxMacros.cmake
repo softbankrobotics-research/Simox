@@ -37,7 +37,7 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
     setupSimoxExternalLibraries() 
     MESSAGE (STATUS "Qt Moc'ing: ${mocFiles}")
     # need this option to work around a qt/boost bug
-    qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+    qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     MESSAGE (STATUS "Qt ui files: ${uiFiles}")
     qt4_wrap_ui(generatedUiFiles ${uiFiles})
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
