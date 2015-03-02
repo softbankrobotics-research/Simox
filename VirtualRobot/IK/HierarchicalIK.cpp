@@ -24,7 +24,7 @@ namespace VirtualRobot
         verbose = v;
     }
 
-    Eigen::VectorXf HierarchicalIK::computeStep(std::vector<JacobiDefinition> jacDefs, float stepSize)
+    Eigen::VectorXf HierarchicalIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
     {
         VR_ASSERT(jacDefs.size() > 0 && jacDefs[0].jacProvider && jacDefs[0].jacProvider->getRobotNodeSet());
 
@@ -33,7 +33,7 @@ namespace VirtualRobot
             VR_INFO << "Compute Step" << endl;
         }
 
-        int ndof = jacDefs[0].jacProvider->getRobotNodeSet()->getSize();
+        int ndof = jacDefs[0]->getRobotNodeSet()->getSize();
         Eigen::VectorXf result(ndof);
         result.setZero();
         std::vector<Eigen::MatrixXf> jacobies;
@@ -41,8 +41,8 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < jacDefs.size(); i++)
         {
-            THROW_VR_EXCEPTION_IF(!jacDefs[i].jacProvider->isInitialized(), "JacobiProvider is not initialized...");
-            Eigen::MatrixXf j = jacDefs[i].jacProvider->getJacobianMatrix();// jacDefs[i].tcp);
+            THROW_VR_EXCEPTION_IF(!jacDefs[i]->isInitialized(), "JacobiProvider is not initialized...");
+            Eigen::MatrixXf j = jacDefs[i]->getJacobianMatrix();// jacDefs[i].tcp);
             jacobies.push_back(j);
 
             if (verbose)
@@ -50,7 +50,7 @@ namespace VirtualRobot
                 VR_INFO << "Jacoby " << i << ":\n" << j << endl;
             }
 
-            j = jacDefs[i].jacProvider->computePseudoInverseJacobianMatrix(j);// jacDefs[i].tcp);
+            j = jacDefs[i]->computePseudoInverseJacobianMatrix(j);// jacDefs[i].tcp);
             invJacobies.push_back(j);
 
             if (verbose)
@@ -63,9 +63,9 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("Expecting " << ndof << " DOFs, but Jacobi " << i << " has " << jacobies[i].cols() << " columns ");
             }
 
-            if (jacobies[i].rows() != jacDefs[i].jacProvider->getError().rows())
+            if (jacobies[i].rows() != jacDefs[i]->getError().rows())
             {
-                THROW_VR_EXCEPTION("Jacobi " << i << " has " << jacobies[i].rows() << " rows, but delta has " << jacDefs[i].jacProvider->getError().rows() << " rows ");
+                THROW_VR_EXCEPTION("Jacobi " << i << " has " << jacobies[i].rows() << " rows, but delta has " << jacDefs[i]->getError().rows() << " rows ");
             }
         }
 
@@ -77,7 +77,7 @@ namespace VirtualRobot
 
 
         Eigen::MatrixXf Jinv_i_min1;
-        Eigen::VectorXf result_i = Jinv_i * jacDefs[0].jacProvider->getError() * stepSize;
+        Eigen::VectorXf result_i = Jinv_i * jacDefs[0]->getError() * stepSize;
 
         if (verbose)
         {
@@ -137,10 +137,10 @@ namespace VirtualRobot
             }
             if (verbose)
             {
-                VR_INFO << "jacDefs[i].jacProvider->getError() " << i << ":\n" << endl << jacDefs[i].jacProvider->getError().transpose() << endl;
+                VR_INFO << "jacDefs[i].jacProvider->getError() " << i << ":\n" << endl << jacDefs[i]->getError().transpose() << endl;
             }
 
-            result_i = result_i_min1 + Jinv_tilde_i * (jacDefs[i].jacProvider->getError() * stepSize - J_i * result_i_min1);
+            result_i = result_i_min1 + Jinv_tilde_i * (jacDefs[i]->getError() * stepSize - J_i * result_i_min1);
 
             if (verbose)
             {

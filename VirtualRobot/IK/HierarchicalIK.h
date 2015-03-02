@@ -52,13 +52,6 @@ namespace VirtualRobot
 
         virtual ~HierarchicalIK();
 
-        struct JacobiDefinition
-        {
-            JacobiProviderPtr jacProvider; // generates the Jacobi and the PseudoInverse
-            // not needed any more, we use the getError method
-            //      Eigen::VectorXf delta;         // Specifies the delta for the Jacobi (e.g. in workspace). delta.rows() must be equal to jacobi.rows().
-        };
-
         /*!
             computes hierarchical Jacobi step
             \param jacDefs All Jacobians an the corresponding error vectors that should be considered for computing a gradient step.
@@ -66,7 +59,7 @@ namespace VirtualRobot
                            The deltas specify the error for each Jacobian (e.g. in workspace). deltas[i].rows() must be equal to jacobies[i].rows().
             \param stepSize The deltas can be reduced in order to avoid oscillating behavior.
         */
-        Eigen::VectorXf computeStep(std::vector<JacobiDefinition> jacDefs, float stepSize = 0.2f);
+        Eigen::VectorXf computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize = 0.2f);
 
         void setVerbose(bool v);
     protected:

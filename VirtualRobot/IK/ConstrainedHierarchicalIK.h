@@ -34,16 +34,16 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedHierarchicalIK>
     {
         public:
-            ConstrainedHierarchicalIK(VirtualRobot::RobotPtr &robot, const VirtualRobot::RobotNodeSetPtr &nodeSet);
+            ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet);
 
             bool initialize();
             bool solveStep();
 
         protected:
-            VirtualRobot::RobotNodeSetPtr nodeSet;
-            VirtualRobot::HierarchicalIKPtr ik;
+            RobotNodeSetPtr nodeSet;
+            HierarchicalIKPtr ik;
 
-            std::vector<VirtualRobot::HierarchicalIK::JacobiDefinition> jacobians;
+            std::vector<JacobiProviderPtr> jacobians;
     };
 
     typedef boost::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;

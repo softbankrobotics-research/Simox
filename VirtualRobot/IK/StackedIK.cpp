@@ -44,19 +44,19 @@ namespace VirtualRobot
         verbose = v;
     }
 
-    Eigen::VectorXf StackedIK::computeStep(std::vector<HierarchicalIK::JacobiDefinition> jacDefs, float stepSize)
+    Eigen::VectorXf StackedIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
     {
         VR_ASSERT(jacDefs.size() > 0 && jacDefs[0].jacProvider && jacDefs[0].jacProvider->getRobotNodeSet());
 
         // Get dimensions of stacked jacobian
         int total_rows = 0;
-        int total_cols = jacDefs[0].jacProvider->getJacobianMatrix().cols();
+        int total_cols = jacDefs[0]->getJacobianMatrix().cols();
         for(int i = 0; i < jacDefs.size(); i++)
         {
-            THROW_VR_EXCEPTION_IF(!jacDefs[0].jacProvider->isInitialized(), "JacobiProvider is not initialized");
+            THROW_VR_EXCEPTION_IF(!jacDefs[0]->isInitialized(), "JacobiProvider is not initialized");
 
-            Eigen::MatrixXf J = jacDefs[i].jacProvider->getJacobianMatrix();
-            Eigen::VectorXf e = jacDefs[i].jacProvider->getError();
+            Eigen::MatrixXf J = jacDefs[i]->getJacobianMatrix();
+            Eigen::VectorXf e = jacDefs[i]->getError();
 
             THROW_VR_EXCEPTION_IF(J.cols() != total_cols, "Jacobian size mismatch");
             THROW_VR_EXCEPTION_IF(J.rows() != e.rows(), "Jacobian matrix and error vector don't match");
@@ -71,9 +71,9 @@ namespace VirtualRobot
         int current_row = 0;
         for(int i = 0; i < jacDefs.size(); i++)
         {
-            Eigen::MatrixXf J = jacDefs[i].jacProvider->getJacobianMatrix();
+            Eigen::MatrixXf J = jacDefs[i]->getJacobianMatrix();
             jacobian.block(current_row, 0, J.rows(), J.cols()) = J;
-            error.block(current_row, 0, J.rows(), 1) = jacDefs[i].jacProvider->getError();
+            error.block(current_row, 0, J.rows(), 1) = jacDefs[i]->getError();
 
             current_row += J.rows();
         }

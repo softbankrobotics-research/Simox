@@ -86,7 +86,7 @@ namespace VirtualRobot
     {
         VR_ASSERT(ikSolver && ikGaze && virtualTranslationJoint);
 
-        std::vector<HierarchicalIK::JacobiDefinition> jacobies;
+        std::vector<JacobiProviderPtr> jacobies;
 
         Eigen::Matrix4f currentPose = rns->getTCP()->getGlobalPose(); // the "tcp" of the gaze RNS -> the gaze point which is moved via a virtual translational joint
         Eigen::Matrix4f g;
@@ -101,18 +101,12 @@ namespace VirtualRobot
             VR_INFO << "ikGaze delta:\n" << deltaGaze.head(3) << endl;
         }
 
-        HierarchicalIK::JacobiDefinition jd;
-        jd.jacProvider = ikGaze;
-        //jd.delta = deltaGaze.head(3);
-        jacobies.push_back(jd);
+        jacobies.push_back(ikGaze);
 
         // 2. jl avoidance
         if (ikJointLimits)
         {
-            HierarchicalIK::JacobiDefinition jd2;
-            jd2.jacProvider = ikJointLimits;
-            //jd2.delta = ikJointLimits->getError();
-            jacobies.push_back(jd2);
+            jacobies.push_back(ikJointLimits);
         }
 
         //compute step

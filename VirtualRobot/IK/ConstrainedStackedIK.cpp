@@ -16,9 +16,7 @@ bool ConstrainedStackedIK::initialize()
 
     for(auto &constraint : constraints)
     {
-        HierarchicalIK::JacobiDefinition jac;
-        jac.jacProvider = constraint;
-        jacobians.push_back(jac);
+        jacobians.push_back(constraint);
     }
 
     ConstrainedIK::initialize();

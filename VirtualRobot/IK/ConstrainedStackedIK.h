@@ -45,7 +45,7 @@ namespace VirtualRobot
             RobotNodeSetPtr nodeSet;
             StackedIKPtr ik;
 
-            std::vector<HierarchicalIK::JacobiDefinition> jacobians;
+            std::vector<JacobiProviderPtr> jacobians;
 
             JacobiProvider::InverseJacobiMethod method;
     };

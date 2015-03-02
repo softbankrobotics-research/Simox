@@ -42,7 +42,7 @@ namespace VirtualRobot
 
         virtual ~StackedIK();
 
-        Eigen::VectorXf computeStep(std::vector<HierarchicalIK::JacobiDefinition> jacDefs, float stepSize = 0.2f);
+        Eigen::VectorXf computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize = 0.2f);
 
         void setVerbose(bool v);
 
