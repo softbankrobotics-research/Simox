@@ -77,6 +77,13 @@ IK/GazeIK.cpp
 IK/StackedIK.cpp
 IK/SupportPolygon.cpp
 IK/FeetPosture.cpp
+IK/ConstrainedIK.cpp
+IK/ConstrainedHierarchicalIK.cpp
+IK/ConstrainedStackedIK.cpp
+IK/Constraint.cpp
+IK/constraints/BalanceConstraint.cpp
+IK/constraints/PoseConstraint.cpp
+IK/constraints/TSRConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
 Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
@@ -177,6 +184,13 @@ IK/GazeIK.h
 IK/StackedIK.h
 IK/SupportPolygon.h
 IK/FeetPosture.h
+IK/ConstrainedIK.h
+IK/ConstrainedHierarchicalIK.h
+IK/ConstrainedStackedIK.h
+IK/Constraint.h
+IK/constraints/BalanceConstraint.h
+IK/constraints/PoseConstraint.h
+IK/constraints/TSRConstraint.h
 Workspace/WorkspaceData.h
 Workspace/WorkspaceDataArray.h
 Workspace/WorkspaceRepresentation.h

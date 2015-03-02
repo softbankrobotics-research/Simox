@@ -1,0 +1,36 @@
+#include "ConstrainedStackedIK.h"
+
+using namespace VirtualRobot;
+
+ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, JacobiProvider::InverseJacobiMethod method) :
+    ConstrainedIK(robot),
+    nodeSet(nodeSet),
+    method(method)
+{
+}
+
+bool ConstrainedStackedIK::initialize()
+{
+    ik.reset(new StackedIK(nodeSet, method));
+    jacobians.clear();
+
+    for(auto &constraint : constraints)
+    {
+        HierarchicalIK::JacobiDefinition jac;
+        jac.jacProvider = constraint;
+        jacobians.push_back(jac);
+    }
+
+    ConstrainedIK::initialize();
+}
+
+bool ConstrainedStackedIK::solveStep()
+{
+    Eigen::VectorXf jointValues;
+    Eigen::VectorXf delta = ik->computeStep(jacobians);
+
+    nodeSet->getJointValues(jointValues);
+    nodeSet->setJointValues(jointValues + delta);
+
+    return true;
+}
