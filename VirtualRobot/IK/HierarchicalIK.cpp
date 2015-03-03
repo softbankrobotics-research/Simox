@@ -26,7 +26,7 @@ namespace VirtualRobot
 
     Eigen::VectorXf HierarchicalIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
     {
-        VR_ASSERT(jacDefs.size() > 0 && jacDefs[0].jacProvider && jacDefs[0].jacProvider->getRobotNodeSet());
+        VR_ASSERT(jacDefs.size() > 0 && jacDefs[0] && jacDefs[0]->getRobotNodeSet());
 
         if (verbose)
         {
@@ -137,7 +137,7 @@ namespace VirtualRobot
             }
             if (verbose)
             {
-                VR_INFO << "jacDefs[i].jacProvider->getError() " << i << ":\n" << endl << jacDefs[i]->getError().transpose() << endl;
+                VR_INFO << "jacDefs[i]->getError() " << i << ":\n" << endl << jacDefs[i]->getError().transpose() << endl;
             }
 
             result_i = result_i_min1 + Jinv_tilde_i * (jacDefs[i]->getError() * stepSize - J_i * result_i_min1);
