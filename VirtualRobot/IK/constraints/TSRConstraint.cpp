@@ -10,7 +10,7 @@
 using namespace VirtualRobot;
 
 TSRConstraint::TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef,
-                             const Eigen::Matrix4f transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds) :
+                             const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
@@ -18,8 +18,8 @@ TSRConstraint::TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeS
     transformation(transformation),
     eefOffset(eefOffset),
     bounds(bounds),
-    toleranceTranslation(1),
-    toleranceRotation(0.1)
+    toleranceTranslation(1.0f),
+    toleranceRotation(0.1f)
 {
     ik.reset(new DifferentialIK(nodeSet));
 

@@ -18,7 +18,7 @@ bool ConstrainedHierarchicalIK::initialize()
         jacobians.push_back(constraint);
     }
 
-    ConstrainedIK::initialize();
+    return ConstrainedIK::initialize();
 }
 
 bool ConstrainedHierarchicalIK::solveStep()

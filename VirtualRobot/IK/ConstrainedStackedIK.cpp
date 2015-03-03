@@ -19,7 +19,7 @@ bool ConstrainedStackedIK::initialize()
         jacobians.push_back(constraint);
     }
 
-    ConstrainedIK::initialize();
+    return ConstrainedIK::initialize();
 }
 
 bool ConstrainedStackedIK::solveStep()

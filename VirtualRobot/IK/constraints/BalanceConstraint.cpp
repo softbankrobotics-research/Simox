@@ -93,7 +93,7 @@ void BalanceConstraint::visualize(SoSeparator *sep)
     s1->addChild(d);
 
     SoCoordinate3 *coordinate = new SoCoordinate3;
-    for(int i = 0; i < convexHull->segments.size(); i++)
+    for (size_t i = 0; i < convexHull->segments.size(); i++)
     {
         int i1 = convexHull->segments[i].id1;
         int i2 = convexHull->segments[i].id2;

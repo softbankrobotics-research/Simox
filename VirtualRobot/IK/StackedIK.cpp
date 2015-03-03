@@ -46,12 +46,12 @@ namespace VirtualRobot
 
     Eigen::VectorXf StackedIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
     {
-        VR_ASSERT(jacDefs.size() > 0 && jacDefs[0].jacProvider && jacDefs[0].jacProvider->getRobotNodeSet());
+        VR_ASSERT(jacDefs.size() > 0);
 
         // Get dimensions of stacked jacobian
         int total_rows = 0;
         int total_cols = jacDefs[0]->getJacobianMatrix().cols();
-        for(int i = 0; i < jacDefs.size(); i++)
+        for(size_t i = 0; i < jacDefs.size(); i++)
         {
             THROW_VR_EXCEPTION_IF(!jacDefs[0]->isInitialized(), "JacobiProvider is not initialized");
 
@@ -69,7 +69,7 @@ namespace VirtualRobot
         Eigen::VectorXf error(total_rows);
 
         int current_row = 0;
-        for(int i = 0; i < jacDefs.size(); i++)
+        for (size_t i = 0; i < jacDefs.size(); i++)
         {
             Eigen::MatrixXf J = jacDefs[i]->getJacobianMatrix();
             jacobian.block(current_row, 0, J.rows(), J.cols()) = J;
@@ -87,7 +87,7 @@ namespace VirtualRobot
                 break;
 
             case JacobiProvider::eSVD:
-                J_inv = MathTools::getPseudoInverse(jacobian, 0.00001);
+                J_inv = MathTools::getPseudoInverse(jacobian, 0.00001f);
                 break;
 
             case JacobiProvider::eSVDDamped:
