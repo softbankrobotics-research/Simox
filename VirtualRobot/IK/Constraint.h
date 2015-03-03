@@ -45,12 +45,8 @@ namespace VirtualRobot
 
             virtual std::string getConstraintType() = 0;
 
-            void setPriority(int priority);
-            int getPriority();
-
         protected:
             Eigen::Vector4f visualizationColor;
-            int priority;
     };
 
     typedef boost::shared_ptr<Constraint> ConstraintPtr;

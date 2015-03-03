@@ -3,8 +3,7 @@
 using namespace VirtualRobot;
 
 Constraint::Constraint(const RobotNodeSetPtr &nodeSet) :
-    JacobiProvider(nodeSet, JacobiProvider::eSVD),
-    priority(0)
+    JacobiProvider(nodeSet, JacobiProvider::eSVD)
 {
 
 }
@@ -28,13 +27,4 @@ void Constraint::setVisualizationColor(const Eigen::Vector4f &color)
     visualizationColor = color;
 }
 
-void Constraint::setPriority(int priority)
-{
-    this->priority = priority;
-}
-
-int Constraint::getPriority()
-{
-    return priority;
-}
 

@@ -11,10 +11,11 @@ ConstrainedIK::ConstrainedIK(RobotPtr &robot) :
 
 }
 
-void ConstrainedIK::addConstraint(const ConstraintPtr &constraint)
+void ConstrainedIK::addConstraint(const ConstraintPtr &constraint, int priority)
 {
     constraints.push_back(constraint);
-    std::sort(constraints.begin(), constraints.end(), [](const ConstraintPtr& lhs, const ConstraintPtr& rhs){return lhs->getPriority() > rhs->getPriority();});
+    priorities[constraint] = priority;
+    std::sort(constraints.begin(), constraints.end(), [this](const ConstraintPtr& lhs, const ConstraintPtr& rhs){return priorities[lhs] > priorities[rhs];});
 }
 
 std::vector<ConstraintPtr> ConstrainedIK::getConstraints()

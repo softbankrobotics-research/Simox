@@ -37,7 +37,7 @@ namespace VirtualRobot
         public:
             ConstrainedIK(RobotPtr &robot);
 
-            void addConstraint(const ConstraintPtr &constraint);
+            void addConstraint(const ConstraintPtr &constraint, int priority=0);
             std::vector<ConstraintPtr> getConstraints();
 
             virtual bool initialize();
@@ -53,6 +53,7 @@ namespace VirtualRobot
 
         protected:
             std::vector<ConstraintPtr> constraints;
+            std::map<ConstraintPtr, int> priorities;
             RobotPtr robot;
 
             int maxIterations;
