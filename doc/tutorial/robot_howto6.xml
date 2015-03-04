@@ -8,7 +8,6 @@
   
   <RobotNode name="Finger Joint1">
     <Joint type="revolute">
-      <DH a="14.8" d="0" theta="0" alpha="90" units="degree"/>
       <Limits unit="degree" lo="-25" hi="25"/>
     </Joint>
     <Visualization enable="true">
@@ -21,15 +20,17 @@
   </RobotNode>
   
   <RobotNode name="BaseToFinger">
-    <Joint type="fixed">
-      <DH a="0" d="1.75" theta="0" alpha="0" units="degree"/>
-    </Joint>
+    <Transform>
+      <DH a="14.8" d="0" theta="0" alpha="90" units="degree"/>
+    </Transform>
     <Child name="Finger Joint2"/>
   </RobotNode>
   
   <RobotNode name="Finger Joint2">
+    <Transform>
+      <DH a="0" d="1.75" theta="0" alpha="0" units="degree"/>
+    </Transform>
     <Joint type="revolute">
-      <DH a="25.9" d="0" theta="0" alpha="0" units="degree"/>
       <Limits unit="degree" lo="0" hi="90"/>
     </Joint>
     <Visualization enable="true">
@@ -42,8 +43,10 @@
   </RobotNode>
   
   <RobotNode name="Finger Joint3">
+    <Transform>
+      <DH a="25.9" d="0" theta="0" alpha="0" units="degree"/>
+    </Transform>
     <Joint type="revolute">
-      <DH a="22" d="0" theta="0" alpha="0" units="degree"/>
       <Limits unit="degree" lo="0" hi="90"/>
     </Joint>
     <Visualization enable="true">
@@ -56,8 +59,10 @@
   </RobotNode>
 
   <RobotNode name="Finger Joint4">
+    <Transform>
+      <DH a="22" d="0" theta="0" alpha="0" units="degree"/>
+    </Transform>
     <Joint type="revolute">
-      <DH a="0" d="0" theta="0" alpha="0" units="degree"/>
       <Limits unit="degree" lo="0" hi="90"/>
     </Joint>
     <Visualization enable="true">

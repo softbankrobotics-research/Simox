@@ -47,9 +47,6 @@
     </RobotNode>
     
     <RobotNode name="joint 3">
-	    <Transform>
-	        <Translation x="0" y="500" z="0"/>
-	    </Transform>
       <Joint type="revolute">
 				<Axis x="1" y="0" z="0"/>
 	    </Joint>
