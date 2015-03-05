@@ -56,6 +56,10 @@ namespace VirtualRobot
             std::string getConstraintType();
 
         protected:
+            void initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+                            float tolerance, float minimumStability, float maxSupportDistance);
+
+        protected:
             CoMIKPtr comIK;
             SupportPolygonPtr supportPolygon;
 

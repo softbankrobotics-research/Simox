@@ -17,27 +17,36 @@ using namespace VirtualRobot;
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
                                      float tolerance, float minimumStability, float maxSupportDistance) :
-    Constraint(joints),
-    joints(joints),
-    bodies(bodies),
-    minimumStability(minimumStability)
+    Constraint(joints)
 {
+    initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance);
+}
+
+BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
+                                     float tolerance, float minimumStability, float maxSupportDistance) :
+    Constraint(joints)
+{
+    initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance);
+}
+
+void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes, float tolerance, float minimumStability, float maxSupportDistance)
+{
+    this->joints = joints;
+    this->bodies = bodies;
+    this->minimumStability = minimumStability;
+
     supportPolygon.reset(new SupportPolygon(contactNodes));
     supportPolygon->updateSupportPolygon(maxSupportDistance);
 
     MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
+    THROW_VR_EXCEPTION_IF(!convexHull, "Empty support polygon for balance constraint");
+
     Eigen::Vector2f supportPolygonCenter = MathTools::getConvexHullCenter(convexHull);
 
     comIK.reset(new CoMIK(joints, bodies));
     comIK->setGoal(supportPolygonCenter, tolerance);
 
     initialized = true;
-}
-
-BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                                     float tolerance, float minimumStability, float maxSupportDistance) :
-    BalanceConstraint(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance)
-{
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
@@ -155,4 +164,5 @@ std::string BalanceConstraint::getConstraintType()
 {
     return "Balance(" + joints->getName() + ")";
 }
+
 
