@@ -15,12 +15,8 @@
 
 using namespace VirtualRobot;
 
-BalanceConstraint::BalanceConstraint(const RobotPtr &robot,
-                                     const RobotNodeSetPtr &joints,
-                                     const RobotNodeSetPtr &bodies,
-                                     const SceneObjectSetPtr &contactNodes,
-                                     float tolerance,
-                                     float minimumStability) :
+BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+                                     float tolerance, float minimumStability) :
     Constraint(joints),
     joints(joints),
     bodies(bodies),
@@ -36,6 +32,12 @@ BalanceConstraint::BalanceConstraint(const RobotPtr &robot,
     comIK->setGoal(supportPolygonCenter, tolerance);
 
     initialized = true;
+}
+
+BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
+                                     float tolerance, float minimumStability) :
+    BalanceConstraint(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability)
+{
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()

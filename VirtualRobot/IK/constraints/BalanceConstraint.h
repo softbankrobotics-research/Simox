@@ -38,10 +38,9 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public boost::enable_shared_from_this<BalanceConstraint>
     {
         public:
-            BalanceConstraint(const RobotPtr &robot,
-                              const RobotNodeSetPtr &joints,
-                              const RobotNodeSetPtr &bodies,
-                              const SceneObjectSetPtr &contactNodes,
+            BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+                              float tolerance, float minimumStability);
+            BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
                               float tolerance, float minimumStability);
 
             Eigen::MatrixXf getJacobianMatrix();
