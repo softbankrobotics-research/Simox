@@ -39,13 +39,13 @@ namespace VirtualRobot
     {
         public:
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                              float tolerance, float minimumStability);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f);
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                              float tolerance, float minimumStability);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f);
 
             Eigen::MatrixXf getJacobianMatrix();
             Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-            Eigen::VectorXf getError(float stepSize);
+            Eigen::VectorXf getError(float stepSize = 1.0f);
             bool checkTolerances();
 
             bool getRobotPoseForConstraint(RobotPtr &robot, Eigen::Matrix4f &pose);

@@ -2,9 +2,9 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr &robot) :
+ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations) :
     robot(robot),
-    maxIterations(10000),
+    maxIterations(maxIterations),
     currentIteration(0),
     running(false)
 {
@@ -40,7 +40,7 @@ bool ConstrainedIK::initialize()
     }
     else if(moves > 1)
     {
-        std::cout << "Error: Multiple constraints requested to move the robot" << std::endl;
+        VR_ERROR << "Multiple constraints requested to move the robot" << std::endl;
         return false;
     }
 

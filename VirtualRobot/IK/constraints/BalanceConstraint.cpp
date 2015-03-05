@@ -16,14 +16,14 @@
 using namespace VirtualRobot;
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                                     float tolerance, float minimumStability) :
+                                     float tolerance, float minimumStability, float maxSupportDistance) :
     Constraint(joints),
     joints(joints),
     bodies(bodies),
     minimumStability(minimumStability)
 {
     supportPolygon.reset(new SupportPolygon(contactNodes));
-    supportPolygon->updateSupportPolygon(10);
+    supportPolygon->updateSupportPolygon(maxSupportDistance);
 
     MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
     Eigen::Vector2f supportPolygonCenter = MathTools::getConvexHullCenter(convexHull);
@@ -35,8 +35,8 @@ BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPt
 }
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                                     float tolerance, float minimumStability) :
-    BalanceConstraint(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability)
+                                     float tolerance, float minimumStability, float maxSupportDistance) :
+    BalanceConstraint(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance)
 {
 }
 

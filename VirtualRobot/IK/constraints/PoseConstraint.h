@@ -35,13 +35,14 @@ namespace VirtualRobot
     {
         public:
             PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef, const Eigen::Matrix4f &target,
-                           IKSolver::CartesianSelection cartesianSelection = IKSolver::All);
+                           IKSolver::CartesianSelection cartesianSelection = IKSolver::All,
+                           float tolerancePosition=5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
             void setVisualization(const SceneObjectSetPtr &visualizationNodeSet);
 
             Eigen::MatrixXf getJacobianMatrix();
             Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-            Eigen::VectorXf getError(float stepSize);
+            Eigen::VectorXf getError(float stepSize = 1.0f);
             bool checkTolerances();
 
             bool getRobotPoseForConstraint(Eigen::Matrix4f &pose);

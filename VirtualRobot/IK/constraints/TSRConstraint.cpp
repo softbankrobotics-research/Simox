@@ -10,7 +10,8 @@
 using namespace VirtualRobot;
 
 TSRConstraint::TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef,
-                             const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds) :
+                             const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds,
+                             float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
@@ -25,14 +26,14 @@ TSRConstraint::TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeS
 
     // Just for setting the TCP (IK will not actually be solved)
     Eigen::Matrix4f goal = Eigen::Matrix4f::Identity();
-    ik->setGoal(goal, eef);
+    ik->setGoal(goal, eef, IKSolver::All, tolerancePosition, toleranceRotation);
 
     initialized = true;
 }
 
 Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
 {
-    Eigen::VectorXf error = getError(1);
+    Eigen::VectorXf error = getError();
     Eigen::MatrixXf J = ik->getJacobianMatrix();
 
     for(int i = 0; i < 6; i++)
@@ -50,7 +51,7 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 {
     if(tcp->getName() != eef->getName())
     {
-        std::cout << "Warning: EndEffectorPoseConstraing Jacobina calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
+        VR_WARNING << "EndEffectorPoseConstraing Jacobian calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
     }
 
     return getJacobianMatrix();

@@ -35,11 +35,12 @@ namespace VirtualRobot
     {
         public:
             TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef,
-                          const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds);
+                          const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds,
+                          float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
             Eigen::MatrixXf getJacobianMatrix();
             Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-            Eigen::VectorXf getError(float stepSize);
+            Eigen::VectorXf getError(float stepSize = 1.0f);
             bool checkTolerances();
 
             std::string getConstraintType();

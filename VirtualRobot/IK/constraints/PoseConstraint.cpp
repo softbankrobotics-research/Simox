@@ -8,7 +8,8 @@
 
 using namespace VirtualRobot;
 
-PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef, const Eigen::Matrix4f &target, IKSolver::CartesianSelection cartesianSelection) :
+PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef, const Eigen::Matrix4f &target, IKSolver::CartesianSelection cartesianSelection,
+                               float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
@@ -17,8 +18,7 @@ PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nod
     cartesianSelection(cartesianSelection)
 {
     ik.reset(new DifferentialIK(nodeSet));
-    ik->setGoal(target, eef, cartesianSelection);
-
+    ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
     initialized = true;
 }
 
@@ -36,7 +36,7 @@ Eigen::MatrixXf PoseConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 {
     if(tcp->getName() != eef->getName())
     {
-        std::cout << "Warning: EndEffectorPoseConstraing Jacobina calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
+        VR_WARNING << "EndEffectorPoseConstraing Jacobina calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
     }
 
     return ik->getJacobianMatrix(tcp);
