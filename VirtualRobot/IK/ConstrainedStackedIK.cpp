@@ -2,8 +2,8 @@
 
 using namespace VirtualRobot;
 
-ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, JacobiProvider::InverseJacobiMethod method) :
-    ConstrainedIK(robot),
+ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, int maxIterations, JacobiProvider::InverseJacobiMethod method) :
+    ConstrainedIK(robot, maxIterations),
     nodeSet(nodeSet),
     method(method),
     stepSize(stepSize)

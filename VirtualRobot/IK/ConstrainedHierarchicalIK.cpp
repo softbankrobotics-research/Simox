@@ -2,7 +2,7 @@
 
 using namespace VirtualRobot;
 
-ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, int maxIterations, float stepSize) :
+ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, int maxIterations) :
     ConstrainedIK(robot, maxIterations),
     nodeSet(nodeSet),
     stepSize(stepSize)
