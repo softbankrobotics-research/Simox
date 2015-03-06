@@ -11,10 +11,11 @@ ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations) :
 
 }
 
-void ConstrainedIK::addConstraint(const ConstraintPtr &constraint, int priority)
+void ConstrainedIK::addConstraint(const ConstraintPtr &constraint, int priority, bool hard_constraint)
 {
     constraints.push_back(constraint);
     priorities[constraint] = priority;
+    hardConstraints[constraint] = hard_constraint;
     std::sort(constraints.begin(), constraints.end(), [this](const ConstraintPtr& lhs, const ConstraintPtr& rhs){return priorities[lhs] > priorities[rhs];});
 }
 
@@ -62,7 +63,7 @@ bool ConstrainedIK::solve(bool stepwise)
         bool goalReached = true;
         for(auto &constraint : constraints)
         {
-            if(!constraint->checkTolerances())
+            if(hardConstraints[constraint] && !constraint->checkTolerances())
             {
                 goalReached = false;
             }
