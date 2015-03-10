@@ -59,7 +59,7 @@ namespace VirtualRobot
         /*!
             Registers a copy of this node set with the given robot
          */
-        RobotNodeSetPtr clone(RobotPtr newRobot);
+        RobotNodeSetPtr clone(RobotPtr newRobot, const RobotNodePtr newKinematicRoot = RobotNodePtr());
 
         bool hasRobotNode(RobotNodePtr robotNode) const;
 
@@ -73,6 +73,8 @@ namespace VirtualRobot
             This node is usually defined in the RobotNodeSet's XML definition.
         */
         RobotNodePtr getKinematicRoot() const;
+
+        void setKinematicRoot(RobotNodePtr robotNode);
 
         /*!
             Returns the TCP.
@@ -197,6 +199,11 @@ namespace VirtualRobot
         //! this is forbidden for RobotNodeSets, a call will throw an exception
         virtual bool removeSceneObject(SceneObjectPtr sceneObject);
 
+    protected:
+        /*!
+         * Tests if the given robot node is a valid kinematic root
+         */
+        bool isKinematicRoot(RobotNodePtr robotNode);
 
     protected:
         /*!

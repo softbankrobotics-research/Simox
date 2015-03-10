@@ -27,6 +27,11 @@ namespace VirtualRobot
         {
             this->kinematicRoot = rob->getRootNode();
         }
+        if (!isKinematicRoot(this->kinematicRoot))
+        {
+            VR_WARNING << "RobotNodeSet initialized with invalid kinematic root: Falling back to robot root node" << endl;
+            this->kinematicRoot = rob->getRootNode();
+        }
 
         if (!tcp && robotNodes.size() > 0)
         {
@@ -178,7 +183,7 @@ namespace VirtualRobot
         return tcp;
     }
 
-    RobotNodeSetPtr RobotNodeSet::clone(RobotPtr newRobot)
+    RobotNodeSetPtr RobotNodeSet::clone(RobotPtr newRobot, const RobotNodePtr newKinematicRoot)
     {
         if (!newRobot)
         {
@@ -198,6 +203,10 @@ namespace VirtualRobot
         if (kinematicRoot)
         {
             kinRootName = kinematicRoot->getName();
+        }
+        if (newKinematicRoot)
+        {
+            kinRootName = newKinematicRoot->getName();
         }
 
         std::string tcpName = "";
@@ -240,6 +249,11 @@ namespace VirtualRobot
     RobotNodePtr RobotNodeSet::getKinematicRoot() const
     {
         return kinematicRoot;
+    }
+
+    void RobotNodeSet::setKinematicRoot(RobotNodePtr robotNode)
+    {
+        kinematicRoot = robotNode;
     }
 
     unsigned int RobotNodeSet::getSize() const
@@ -668,6 +682,19 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;
+    }
+
+    bool RobotNodeSet::isKinematicRoot(RobotNodePtr robotNode)
+    {
+        for(auto &node : robotNodes)
+        {
+            if(node != robotNode && !robotNode->hasChild(node, true))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
