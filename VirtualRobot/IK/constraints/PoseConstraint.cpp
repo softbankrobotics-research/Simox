@@ -5,6 +5,8 @@
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoTransform.h>
 
 using namespace VirtualRobot;
 
@@ -83,9 +85,22 @@ void PoseConstraint::visualize(SoSeparator *sep)
     mat->setOverride(true);
     s->addChild(mat);
 
-    for(auto &object : visualizationNodeSet->getSceneObjects())
+    if(visualizationNodeSet)
     {
-        s->addChild(object->getVisualization<CoinVisualization>()->getCoinVisualization());
+        for(auto &object : visualizationNodeSet->getSceneObjects())
+        {
+            s->addChild(object->getVisualization<CoinVisualization>()->getCoinVisualization());
+        }
+    }
+    else
+    {
+        SoTransform *t = new SoTransform;
+        t->translation.setValue(target(0,3), target(1,3), target(2,3));
+        s->addChild(t);
+
+        SoSphere *sphere = new SoSphere;
+        sphere->radius = 50;
+        s->addChild(sphere);
     }
 }
 
