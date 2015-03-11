@@ -16,37 +16,46 @@
 using namespace VirtualRobot;
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                                     float tolerance, float minimumStability, float maxSupportDistance) :
+                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates) :
     Constraint(joints)
 {
-    initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance);
+    initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates);
 }
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                                     float tolerance, float minimumStability, float maxSupportDistance) :
+                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates) :
     Constraint(joints)
 {
-    initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance);
+    initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates);
 }
 
-void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes, float tolerance, float minimumStability, float maxSupportDistance)
+void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes, float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates)
 {
     this->joints = joints;
     this->bodies = bodies;
     this->minimumStability = minimumStability;
+    this->maxSupportDistance = maxSupportDistance;
+    this->tolerance = tolerance;
+    this->supportPolygonUpdates = supportPolygonUpdates;
 
     supportPolygon.reset(new SupportPolygon(contactNodes));
+
+    comIK.reset(new CoMIK(joints, bodies));
+
+    updateSupportPolygon();
+
+    initialized = true;
+}
+
+void BalanceConstraint::updateSupportPolygon()
+{
     supportPolygon->updateSupportPolygon(maxSupportDistance);
 
     MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
     THROW_VR_EXCEPTION_IF(!convexHull, "Empty support polygon for balance constraint");
 
     Eigen::Vector2f supportPolygonCenter = MathTools::getConvexHullCenter(convexHull);
-
-    comIK.reset(new CoMIK(joints, bodies));
     comIK->setGoal(supportPolygonCenter, tolerance);
-
-    initialized = true;
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
@@ -61,6 +70,11 @@ Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 
 Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 {
+    if(supportPolygonUpdates)
+    {
+        updateSupportPolygon();
+    }
+
     float stability = supportPolygon->getStabilityIndex(bodies, false);
 
     if(stability < minimumStability)
@@ -75,14 +89,44 @@ Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 
 bool BalanceConstraint::checkTolerances()
 {
-    return (supportPolygon->getStabilityIndex(bodies, false) >= minimumStability);
+    return (supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability);
 }
 
 void BalanceConstraint::visualize(SoSeparator *sep)
 {
     // The visualization assumes the support polygon to be horizontal, i.e. the normal of the floor plane
     // should point into z direction
+}
 
+void BalanceConstraint::visualizeContinuously(SoSeparator *sep)
+{
+    SoSeparator *s3 = new SoSeparator;
+    sep->addChild(s3);
+
+    SoMaterial *m = new SoMaterial;
+    m->diffuseColor.setValue(1, 0, 0);
+    m->ambientColor.setValue(1, 0, 0);
+    s3->addChild(m);
+
+    Eigen::Vector3f com = bodies->getCoM();
+    SoTransform *t = new SoTransform;
+    t->translation.setValue(com(0), com(1), 0);
+    s3->addChild(t);
+
+    SoSphere *s = new SoSphere;
+    s->radius = 10;
+    s3->addChild(s);
+
+    t = new SoTransform();
+    t->translation.setValue(0, 0, com(2));
+    s3->addChild(t);
+    s3->addChild(s);
+
+    visualizeSupportPolygon(sep);
+}
+
+void BalanceConstraint::visualizeSupportPolygon(SoSeparator *sep)
+{
     MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
     MathTools::Plane floor = supportPolygon->getFloorPlane();
 
@@ -133,31 +177,6 @@ void BalanceConstraint::visualize(SoSeparator *sep)
     SoSphere *s = new SoSphere;
     s->radius = 10;
     s2->addChild(s);
-}
-
-void BalanceConstraint::visualizeContinuously(SoSeparator *sep)
-{
-    SoSeparator *s3 = new SoSeparator;
-    sep->addChild(s3);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(1, 0, 0);
-    m->ambientColor.setValue(1, 0, 0);
-    s3->addChild(m);
-
-    Eigen::Vector3f com = bodies->getCoM();
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(com(0), com(1), 0);
-    s3->addChild(t);
-
-    SoSphere *s = new SoSphere;
-    s->radius = 10;
-    s3->addChild(s);
-
-    t = new SoTransform();
-    t->translation.setValue(0, 0, com(2));
-    s3->addChild(t);
-    s3->addChild(s);
 }
 
 std::string BalanceConstraint::getConstraintType()

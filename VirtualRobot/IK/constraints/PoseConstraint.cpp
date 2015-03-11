@@ -67,6 +67,12 @@ bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f &pose)
 
 void PoseConstraint::visualize(SoSeparator *sep)
 {
+    // Use full transparency as visualization switch
+    if(visualizationColor(3) == 1)
+    {
+        return;
+    }
+
     SoSeparator *s = new SoSeparator;
     sep->addChild(s);
 

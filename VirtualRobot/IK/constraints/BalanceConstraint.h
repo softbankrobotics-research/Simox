@@ -39,9 +39,9 @@ namespace VirtualRobot
     {
         public:
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true);
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true);
 
             Eigen::MatrixXf getJacobianMatrix();
             Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
@@ -57,7 +57,11 @@ namespace VirtualRobot
 
         protected:
             void initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                            float tolerance, float minimumStability, float maxSupportDistance);
+                            float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates);
+
+            void updateSupportPolygon();
+
+            void visualizeSupportPolygon(SoSeparator *sep);
 
         protected:
             CoMIKPtr comIK;
@@ -67,6 +71,9 @@ namespace VirtualRobot
             RobotNodeSetPtr bodies;
 
             float minimumStability;
+            float maxSupportDistance;
+            float tolerance;
+            bool supportPolygonUpdates;
     };
 
     typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;

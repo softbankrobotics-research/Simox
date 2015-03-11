@@ -98,6 +98,12 @@ void TSRConstraint::visualize(SoSeparator *sep)
 {
     // TODO: Visualization only works for symmetric bounds
 
+    // Use full transparency as visualization switch
+    if(visualizationColor(3) == 1)
+    {
+        return;
+    }
+
     SoSeparator *s = new SoSeparator;
     sep->addChild(s);
 
