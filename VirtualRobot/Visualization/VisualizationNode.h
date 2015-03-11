@@ -156,6 +156,9 @@ namespace VirtualRobot
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
 
+        //! update trimesh model
+        virtual void createTriMeshModel();
+
     protected:
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::string filename; //!< if the visualization was build from a file, the filename is stored here

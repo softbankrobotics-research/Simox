@@ -30,24 +30,9 @@ namespace VirtualRobot
             VR_WARNING << "no col checker..." << endl;
         }
 
-        visualization = visu;
         updateVisualization = true;
 
-        if (visualization)
-        {
-            model = visualization->getTriMeshModel();
-
-            if (model)
-            {
-                bbox = model->boundingBox;
-            }
-        }
-
-#if defined(VR_COLLISION_DETECTION_PQP)
-        collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
-#else
-        collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
-#endif
+        setVisualization(visu);
     }
 
 
@@ -98,6 +83,29 @@ namespace VirtualRobot
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());
         return p;
+    }
+
+    void CollisionModel::setVisualization(const VisualizationNodePtr visu)
+    {
+        visualization = visu;
+        model.reset();
+        bbox.clear();
+
+        if (visu)
+        {
+            model = visu->getTriMeshModel();
+
+            if (model)
+            {
+                bbox = model->boundingBox;
+            }
+        }
+
+#if defined(VR_COLLISION_DETECTION_PQP)
+        collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
+#else
+        collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
+#endif
     }
 
     int CollisionModel::getId()

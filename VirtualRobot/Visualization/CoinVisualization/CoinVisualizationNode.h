@@ -95,8 +95,10 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename);
 
+        virtual void createTriMeshModel();
+
     protected:
-        void createTriMeshModel();
+
 
         /*!
             Replace current visualization of this node.

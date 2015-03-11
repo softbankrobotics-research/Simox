@@ -353,6 +353,8 @@ namespace VirtualRobot
                         Eigen::Matrix4f tr2 = tr;
                         tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
                         vf->applyDisplacement(v, tr2);
+                        v->createTriMeshModel(); // update trimesh model
+                        c->setVisualization(v);
                         colMap[parent] = c;
 
                         for (size_t pr = 0; pr < v->primitives.size(); pr++)

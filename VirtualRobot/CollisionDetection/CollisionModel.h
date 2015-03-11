@@ -107,6 +107,8 @@ namespace VirtualRobot
 
         CollisionModelPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f);
 
+        void setVisualization(const VisualizationNodePtr visu);
+
         int getId();
 
         /*!

@@ -245,4 +245,9 @@ namespace VirtualRobot
         VR_WARNING << "not implemented..." << endl;
     }
 
+    void VisualizationNode::createTriMeshModel()
+    {
+
+    }
+
 } // namespace VirtualRobot
