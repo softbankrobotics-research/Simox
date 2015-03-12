@@ -60,8 +60,8 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 Eigen::VectorXf TSRConstraint::getError(float stepSize)
 {
     float eef_pose[6], target[6];
-    MathTools::eigen4f2rpy(eef->getGlobalPose(), eef_pose);
-    MathTools::eigen4f2rpy(transformation * eefOffset, target);
+    MathTools::eigen4f2rpy(eef->getGlobalPose() * eefOffset, eef_pose);
+    MathTools::eigen4f2rpy(transformation, target);
 
     Eigen::VectorXf error(6);
     for(int i = 0; i < 6; i++)
