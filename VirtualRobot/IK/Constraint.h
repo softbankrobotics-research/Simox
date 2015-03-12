@@ -39,14 +39,7 @@ namespace VirtualRobot
 
             virtual bool getRobotPoseForConstraint(Eigen::Matrix4f &pose);
 
-            virtual void visualize(SoSeparator *sep);
-            virtual void visualizeContinuously(SoSeparator *sep);
-            void setVisualizationColor(const Eigen::Vector4f &color);
-
             virtual std::string getConstraintType() = 0;
-
-        protected:
-            Eigen::Vector4f visualizationColor;
     };
 
     typedef boost::shared_ptr<Constraint> ConstraintPtr;

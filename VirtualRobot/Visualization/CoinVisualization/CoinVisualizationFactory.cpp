@@ -15,6 +15,10 @@
 #include "../../Trajectory.h"
 #include "../../Grasping/GraspSet.h"
 #include "../../SceneObject.h"
+#include "../../IK/constraints/TSRConstraint.h"
+#include "../../IK/constraints/BalanceConstraint.h"
+#include "../../IK/constraints/PoseConstraint.h"
+#include "../../IK/SupportPolygon.h"
 #include "../TriMeshModel.h"
 #include "../../Workspace/Reachability.h"
 #include "../../Workspace/WorkspaceGrid.h"
@@ -2023,6 +2027,140 @@ namespace VirtualRobot
             }
 
             i++;
+        }
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoNode *CoinVisualizationFactory::getCoinVisualization(TSRConstraintPtr constraint, const Color &color)
+    {
+        SoSeparator *res = new SoSeparator;
+
+        SoMaterial *m = new SoMaterial;
+        m->diffuseColor.setValue(color.r, color.g, color.b);
+        m->ambientColor.setValue(color.r, color.g, color.b);
+        m->transparency.setValue(color.transparency);
+        res->addChild(m);
+
+        SoTransform *t = new SoTransform;
+        t->translation.setValue(constraint->getTransformation()(0,3), constraint->getTransformation()(1,3), constraint->getTransformation()(2,3));
+        MathTools::Quaternion q = MathTools::eigen4f2quat(constraint->getTransformation());
+        t->rotation.setValue(q.x, q.y, q.z, q.w);
+        res->addChild(t);
+
+        SoCube *c = new SoCube;
+        c->width = fabs(constraint->getBounds()(0,0) - constraint->getBounds()(0,1));
+        c->height = fabs(constraint->getBounds()(1,0) - constraint->getBounds()(1,1));
+        c->depth = fabs(constraint->getBounds()(2,0) - constraint->getBounds()(2,1));
+        res->addChild(c);
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoNode *CoinVisualizationFactory::getCoinVisualization(BalanceConstraintPtr constraint, const Color& color)
+    {
+        SoSeparator *res = new SoSeparator;
+
+        SoSeparator *s1 = new SoSeparator;
+        res->addChild(s1);
+
+        SoMaterial *m = new SoMaterial;
+        m->diffuseColor.setValue(1, 0, 0);
+        m->ambientColor.setValue(1, 0, 0);
+        s1->addChild(m);
+
+        Eigen::Vector3f com = constraint->getCoM();
+        SoTransform *t = new SoTransform;
+        t->translation.setValue(com(0), com(1), 0);
+        s1->addChild(t);
+
+        SoSphere *s = new SoSphere;
+        s->radius = 10;
+        s1->addChild(s);
+
+        t = new SoTransform();
+        t->translation.setValue(0, 0, com(2));
+        s1->addChild(t);
+        s1->addChild(s);
+
+        res->addChild(getCoinVisualization(constraint->getSupportPolygon(), color));
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoNode *CoinVisualizationFactory::getCoinVisualization(PoseConstraintPtr constraint, const Color &color)
+    {
+        SoSeparator *res = new SoSeparator;
+
+        SoMaterial *mat = new SoMaterial;
+        mat->diffuseColor.setValue(color.r, color.g, color.b);
+        mat->ambientColor.setValue(color.r, color.g, color.b);
+        mat->transparency.setValue(color.transparency);
+        mat->setOverride(true);
+        res->addChild(mat);
+
+        SoTransform *t = new SoTransform;
+        t->translation.setValue(constraint->getTarget()(0,3), constraint->getTarget()(1,3), constraint->getTarget()(2,3));
+        res->addChild(t);
+
+        SoSphere *sphere = new SoSphere;
+        sphere->radius = 50;
+        res->addChild(sphere);
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoNode* CoinVisualizationFactory::getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color)
+    {
+        SoSeparator *res = new SoSeparator;
+
+        MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
+        MathTools::Plane floor = supportPolygon->getFloorPlane();
+
+        if(convexHull)
+        {
+            SoMaterial *mat = new SoMaterial;
+            mat->diffuseColor.setValue(color.r, color.g, color.b);
+            mat->ambientColor.setValue(color.r, color.g, color.b);
+            res->addChild(mat);
+
+            SoDrawStyle *d = new SoDrawStyle;
+            d->lineWidth.setValue(3);
+            res->addChild(d);
+
+            SoCoordinate3 *coordinate = new SoCoordinate3;
+            for (size_t i = 0; i < convexHull->segments.size(); i++)
+            {
+                int i1 = convexHull->segments[i].id1;
+                int i2 = convexHull->segments[i].id2;
+
+                if(i == 0)
+                {
+                    coordinate->point.set1Value(i, convexHull->vertices[i1].x(), convexHull->vertices[i1].y(), floor.p.z());
+                }
+
+                coordinate->point.set1Value(i+1, convexHull->vertices[i2].x(), convexHull->vertices[i2].y(), floor.p.z());
+            }
+            res->addChild(coordinate);
+
+            SoLineSet *lineSet = new SoLineSet;
+            res->addChild(lineSet);
+
+            SoSeparator *s2 = new SoSeparator;
+            res->addChild(s2);
+
+            Eigen::Vector2f center = MathTools::getConvexHullCenter(convexHull);
+            SoTransform *t = new SoTransform;
+            t->translation.setValue(center.x(), center.y(), floor.p.z());
+            res->addChild(t);
+
+            SoSphere *s = new SoSphere;
+            s->radius = 10;
+            res->addChild(s);
         }
 
         res->unrefNoDelete();

@@ -94,36 +94,14 @@ std::string TSRConstraint::getConstraintType()
     return "TSR(" + eef->getName() + ")";
 }
 
-void TSRConstraint::visualize(SoSeparator *sep)
+const Eigen::Matrix4f &TSRConstraint::getTransformation()
 {
-    // TODO: Visualization only works for symmetric bounds
+    return transformation;
+}
 
-    // Use full transparency as visualization switch
-    if(visualizationColor(3) == 1)
-    {
-        return;
-    }
-
-    SoSeparator *s = new SoSeparator;
-    sep->addChild(s);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    m->ambientColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    m->transparency.setValue(visualizationColor(3));
-    s->addChild(m);
-
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(transformation(0,3), transformation(1,3), transformation(2,3));
-    MathTools::Quaternion q = MathTools::eigen4f2quat(transformation);
-    t->rotation.setValue(q.x, q.y, q.z, q.w);
-    s->addChild(t);
-
-    SoCube *c = new SoCube;
-    c->width = fabs(bounds(0,0) - bounds(0,1));
-    c->height = fabs(bounds(1,0) - bounds(1,1));
-    c->depth = fabs(bounds(2,0) - bounds(2,1));
-    s->addChild(c);
+const Eigen::Matrix<float, 6, 2> &TSRConstraint::getBounds()
+{
+    return bounds;
 }
 
 

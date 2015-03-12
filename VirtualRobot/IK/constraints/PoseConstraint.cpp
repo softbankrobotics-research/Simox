@@ -69,46 +69,14 @@ bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f &pose)
     return false;
 }
 
-void PoseConstraint::visualize(SoSeparator *sep)
-{
-    // Use full transparency as visualization switch
-    if(visualizationColor(3) == 1)
-    {
-        return;
-    }
-
-    SoSeparator *s = new SoSeparator;
-    sep->addChild(s);
-
-    SoMaterial *mat = new SoMaterial;
-    mat->diffuseColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    mat->ambientColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    mat->transparency.setValue(visualizationColor(3));
-    mat->setOverride(true);
-    s->addChild(mat);
-
-    if(visualizationNodeSet)
-    {
-        for(auto &object : visualizationNodeSet->getSceneObjects())
-        {
-            s->addChild(object->getVisualization<CoinVisualization>()->getCoinVisualization());
-        }
-    }
-    else
-    {
-        SoTransform *t = new SoTransform;
-        t->translation.setValue(target(0,3), target(1,3), target(2,3));
-        s->addChild(t);
-
-        SoSphere *sphere = new SoSphere;
-        sphere->radius = 50;
-        s->addChild(sphere);
-    }
-}
-
 std::string PoseConstraint::getConstraintType()
 {
     return "Pose(" + eef->getName() + ")";
+}
+
+const Eigen::Matrix4f &PoseConstraint::getTarget()
+{
+    return target;
 }
 
 void PoseConstraint::updateTarget(const Eigen::Matrix4f &newTarget)

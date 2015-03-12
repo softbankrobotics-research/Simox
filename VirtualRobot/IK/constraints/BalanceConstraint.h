@@ -49,9 +49,8 @@ namespace VirtualRobot
             bool checkTolerances();
 
             bool getRobotPoseForConstraint(RobotPtr &robot, Eigen::Matrix4f &pose);
-
-            void visualize(SoSeparator *sep);
-            void visualizeContinuously(SoSeparator *sep);
+            Eigen::Vector3f getCoM();
+            SupportPolygonPtr getSupportPolygon();
 
             std::string getConstraintType();
 

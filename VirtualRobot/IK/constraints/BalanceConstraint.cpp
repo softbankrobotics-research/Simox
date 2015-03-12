@@ -92,91 +92,14 @@ bool BalanceConstraint::checkTolerances()
     return (supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability);
 }
 
-void BalanceConstraint::visualize(SoSeparator *sep)
+Eigen::Vector3f BalanceConstraint::getCoM()
 {
-    // The visualization assumes the support polygon to be horizontal, i.e. the normal of the floor plane
-    // should point into z direction
+    return bodies->getCoM();
 }
 
-void BalanceConstraint::visualizeContinuously(SoSeparator *sep)
+SupportPolygonPtr BalanceConstraint::getSupportPolygon()
 {
-    SoSeparator *s3 = new SoSeparator;
-    sep->addChild(s3);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(1, 0, 0);
-    m->ambientColor.setValue(1, 0, 0);
-    s3->addChild(m);
-
-    Eigen::Vector3f com = bodies->getCoM();
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(com(0), com(1), 0);
-    s3->addChild(t);
-
-    SoSphere *s = new SoSphere;
-    s->radius = 10;
-    s3->addChild(s);
-
-    t = new SoTransform();
-    t->translation.setValue(0, 0, com(2));
-    s3->addChild(t);
-    s3->addChild(s);
-
-    visualizeSupportPolygon(sep);
-}
-
-void BalanceConstraint::visualizeSupportPolygon(SoSeparator *sep)
-{
-    MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
-    MathTools::Plane floor = supportPolygon->getFloorPlane();
-
-    if(!convexHull)
-    {
-        return;
-    }
-
-    SoSeparator *s1 = new SoSeparator;
-    sep->addChild(s1);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    m->ambientColor.setValue(visualizationColor(0), visualizationColor(1), visualizationColor(2));
-    s1->addChild(m);
-
-    SoDrawStyle *d = new SoDrawStyle;
-    d->lineWidth.setValue(3);
-    s1->addChild(d);
-
-    SoCoordinate3 *coordinate = new SoCoordinate3;
-    for (size_t i = 0; i < convexHull->segments.size(); i++)
-    {
-        int i1 = convexHull->segments[i].id1;
-        int i2 = convexHull->segments[i].id2;
-
-        if(i == 0)
-        {
-            coordinate->point.set1Value(i, convexHull->vertices[i1].x(), convexHull->vertices[i1].y(), floor.p.z());
-        }
-
-        coordinate->point.set1Value(i+1, convexHull->vertices[i2].x(), convexHull->vertices[i2].y(), floor.p.z());
-    }
-    s1->addChild(coordinate);
-
-    SoLineSet *lineSet = new SoLineSet;
-    s1->addChild(lineSet);
-
-    SoSeparator *s2 = new SoSeparator;
-    sep->addChild(s2);
-    s2->addChild(m);
-
-    Eigen::Vector2f center = MathTools::getConvexHullCenter(convexHull);
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(center.x(), center.y(), floor.p.z());
-    s2->addChild(t);
-
-    SoSphere *s = new SoSphere;
-    s->radius = 10;
-    s2->addChild(s);
+    return supportPolygon;
 }
 
 std::string BalanceConstraint::getConstraintType()

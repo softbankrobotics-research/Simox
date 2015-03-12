@@ -44,8 +44,8 @@ namespace VirtualRobot
             bool checkTolerances();
 
             std::string getConstraintType();
-
-            void visualize(SoSeparator *sep);
+            const Eigen::Matrix4f &getTransformation();
+            const Eigen::Matrix<float, 6, 2> &getBounds();
 
         protected:
             RobotPtr robot;

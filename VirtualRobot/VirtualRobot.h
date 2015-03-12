@@ -173,6 +173,11 @@ namespace VirtualRobot
     class CoMIK;
     class DifferentialIK;
     class HierarchicalIK;
+    class Constraint;
+    class TSRConstraint;
+    class BalanceConstraint;
+    class PoseConstraint;
+    class SupportPolygon;
     class DHParameter;
     class RobotNode;
     class RobotNodeRevolute;
@@ -213,7 +218,12 @@ namespace VirtualRobot
     typedef boost::shared_ptr<CoMIK> CoMIKPtr;
     typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
     typedef boost::shared_ptr<DifferentialIK> DifferentialIKPtr;
+    typedef boost::shared_ptr<Constraint> ConstraintPtr;
+    typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
+    typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
+    typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
     typedef boost::shared_ptr<RobotNode> RobotNodePtr;
+    typedef boost::shared_ptr<SupportPolygon> SupportPolygonPtr;
     typedef boost::shared_ptr<RobotNodeRevolute> RobotNodeRevolutePtr;
     typedef boost::shared_ptr<RobotNodeSet> RobotNodeSetPtr;
     typedef boost::shared_ptr<KinematicChain> KinematicChainPtr;

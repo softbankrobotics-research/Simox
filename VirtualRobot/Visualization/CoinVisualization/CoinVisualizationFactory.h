@@ -233,6 +233,12 @@ namespace VirtualRobot
         //! helper method: create nrBestEntries arrows in direction of maximum orientation for voxelPosition (a,b,c)
         static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, int a, int b, int c, int nrBestEntries, SoSeparator* arrow, const VirtualRobot::ColorMap& cm, bool transformToGlobalPose, unsigned char minValue);
 
+        static SoNode* getCoinVisualization(TSRConstraintPtr constraint, const Color& color);
+        static SoNode* getCoinVisualization(BalanceConstraintPtr constraint, const Color& color);
+        static SoNode* getCoinVisualization(PoseConstraintPtr constraint, const Color& color);
+
+        static SoNode* getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color);
+
         /*!
             Create a SoMatrixTransform from the given pose
             \param m The pose with translation given in meter.
