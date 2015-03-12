@@ -51,6 +51,8 @@ namespace VirtualRobot
 
             std::string getConstraintType();
 
+            void updateTarget(const Eigen::Matrix4f &newTarget);
+
         protected:
             RobotPtr robot;
             RobotNodeSetPtr nodeSet;

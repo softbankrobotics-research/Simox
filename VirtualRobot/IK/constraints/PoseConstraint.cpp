@@ -109,3 +109,8 @@ std::string PoseConstraint::getConstraintType()
     return "Pose(" + eef->getName() + ")";
 }
 
+void PoseConstraint::updateTarget(const Eigen::Matrix4f &newTarget)
+{
+    target = newTarget;
+}
+
