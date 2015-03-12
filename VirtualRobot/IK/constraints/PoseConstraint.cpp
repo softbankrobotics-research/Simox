@@ -17,7 +17,9 @@ PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nod
     nodeSet(nodeSet),
     eef(eef),
     target(target),
-    cartesianSelection(cartesianSelection)
+    cartesianSelection(cartesianSelection),
+    tolerancePosition(tolerancePosition),
+    toleranceRotation(toleranceRotation)
 {
     ik.reset(new DifferentialIK(nodeSet));
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
@@ -112,5 +114,6 @@ std::string PoseConstraint::getConstraintType()
 void PoseConstraint::updateTarget(const Eigen::Matrix4f &newTarget)
 {
     target = newTarget;
+    ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
 }
 

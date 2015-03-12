@@ -62,6 +62,9 @@ namespace VirtualRobot
             DifferentialIKPtr ik;
             IKSolver::CartesianSelection cartesianSelection;
 
+            float tolerancePosition;
+            float toleranceRotation;
+
             SceneObjectSetPtr visualizationNodeSet;
     };
 
