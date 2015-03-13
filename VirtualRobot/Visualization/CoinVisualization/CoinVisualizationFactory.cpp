@@ -2037,6 +2037,10 @@ namespace VirtualRobot
     {
         SoSeparator *res = new SoSeparator;
 
+        SoUnits *u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        res->addChild(u);
+
         SoMaterial *m = new SoMaterial;
         m->diffuseColor.setValue(color.r, color.g, color.b);
         m->ambientColor.setValue(color.r, color.g, color.b);
@@ -2062,6 +2066,10 @@ namespace VirtualRobot
     SoNode *CoinVisualizationFactory::getCoinVisualization(BalanceConstraintPtr constraint, const Color& color)
     {
         SoSeparator *res = new SoSeparator;
+
+        SoUnits *u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        res->addChild(u);
 
         SoSeparator *s1 = new SoSeparator;
         res->addChild(s1);
@@ -2095,6 +2103,10 @@ namespace VirtualRobot
     {
         SoSeparator *res = new SoSeparator;
 
+        SoUnits *u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        res->addChild(u);
+
         SoMaterial *mat = new SoMaterial;
         mat->diffuseColor.setValue(color.r, color.g, color.b);
         mat->ambientColor.setValue(color.r, color.g, color.b);
@@ -2117,6 +2129,10 @@ namespace VirtualRobot
     SoNode* CoinVisualizationFactory::getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color)
     {
         SoSeparator *res = new SoSeparator;
+
+        SoUnits *u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        res->addChild(u);
 
         MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
         MathTools::Plane floor = supportPolygon->getFloorPlane();
