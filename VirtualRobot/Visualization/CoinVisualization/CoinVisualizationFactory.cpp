@@ -2036,6 +2036,7 @@ namespace VirtualRobot
     SoNode *CoinVisualizationFactory::getCoinVisualization(TSRConstraintPtr constraint, const Color &color)
     {
         SoSeparator *res = new SoSeparator;
+        res->ref();
 
         SoUnits *u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
@@ -2066,6 +2067,7 @@ namespace VirtualRobot
     SoNode *CoinVisualizationFactory::getCoinVisualization(BalanceConstraintPtr constraint, const Color& color)
     {
         SoSeparator *res = new SoSeparator;
+        res->ref();
 
         SoUnits *u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
@@ -2102,6 +2104,7 @@ namespace VirtualRobot
     SoNode *CoinVisualizationFactory::getCoinVisualization(PoseConstraintPtr constraint, const Color &color)
     {
         SoSeparator *res = new SoSeparator;
+        res->ref();
 
         SoUnits *u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
@@ -2129,6 +2132,7 @@ namespace VirtualRobot
     SoNode* CoinVisualizationFactory::getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color)
     {
         SoSeparator *res = new SoSeparator;
+        res->ref();
 
         SoUnits *u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
