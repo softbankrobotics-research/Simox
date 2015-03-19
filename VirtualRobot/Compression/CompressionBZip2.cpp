@@ -596,9 +596,9 @@ namespace VirtualRobot
                 }
 
                 {
-                    register UChar  rtmp;
-                    register UChar* ryy_j;
-                    register UChar  rll_i;
+                    UChar  rtmp;
+                    UChar* ryy_j;
+                    UChar  rll_i;
                     rtmp  = yy[1];
                     yy[1] = yy[0];
                     ryy_j = &(yy[1]);
