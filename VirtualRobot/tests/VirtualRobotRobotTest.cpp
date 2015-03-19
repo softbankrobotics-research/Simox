@@ -436,7 +436,6 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
     BOOST_REQUIRE(comOK);
 
     inertia = rn1->getInertiaMatrix();
-    expectedMat;
     expectedMat << 0.001f, 0.002f, 0.003f, 0.004f, 0.005f, 0.006f, 0.007f, 0.008f, 0.009f;
     inertiaMatrixOK = inertia.isApprox(expectedMat);
     BOOST_REQUIRE(inertiaMatrixOK);
