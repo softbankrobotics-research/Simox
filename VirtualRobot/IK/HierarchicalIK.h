@@ -59,7 +59,7 @@ namespace VirtualRobot
                            The deltas specify the error for each Jacobian (e.g. in workspace). deltas[i].rows() must be equal to jacobies[i].rows().
             \param stepSize The deltas can be reduced in order to avoid oscillating behavior.
         */
-        Eigen::VectorXf computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize = 0.2f);
+        Eigen::VectorXf computeStep(const std::vector<JacobiProviderPtr> &jacDefs, float stepSize = 0.2f);
 
         void setVerbose(bool v);
     protected:

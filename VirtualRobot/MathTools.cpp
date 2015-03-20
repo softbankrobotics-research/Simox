@@ -6,6 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>
+#include <algorithm>
 
 
 
@@ -313,7 +314,7 @@ namespace VirtualRobot
     // SoftSurfer makes no warranty for this code, and cannot be held
     // liable for any real or imagined damage resulting from its use.
     // Users of this code must verify correctness for their application.
-    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(std::vector< Eigen::Vector2f > points)
+    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(const std::vector<Eigen::Vector2f> &points)
     {
         std::vector< Eigen::Vector2f > P = sortPoints(points);
         int n = (int)P.size();
@@ -477,61 +478,19 @@ namespace VirtualRobot
 
         return hull;
     }
-    Eigen::Vector2f MathTools::getAndRemoveSmallestPoint(std::vector< Eigen::Vector2f >& points)
-    {
-        if (points.size() == 0)
-        {
-            VR_ERROR << "No point in vector!!" << endl;
-            return Eigen::Vector2f();
-        }
-
-        float mx = points[0](0);
-        float my = points[0](1);
-        int i = 0;
-
-        for (size_t u = 0; u < points.size(); u++)
-        {
-            if ((points[u](0) < mx) || (points[u](0) == mx && points[u](1) < my))
-            {
-                mx = points[u](0);
-                my = points[u](1);
-                i = u;
-            }
-        }
-
-        // remove i
-        points.erase(points.begin() + i);
-        return Eigen::Vector2f(mx, my);
-    }
 
     std::vector< Eigen::Vector2f > MathTools::sortPoints(const std::vector< Eigen::Vector2f >& points)
     {
         std::vector< Eigen::Vector2f > tmp = points;
 
-        std::vector< Eigen::Vector2f > res;
-
-        while (tmp.size() > 0)
+        // Remove double entries
+        for(auto point = tmp.begin(); point != tmp.end(); point++)
         {
-            Eigen::Vector2f p = getAndRemoveSmallestPoint(tmp);
-            // check for double entries
-            bool doubled = false;
-
-            for (size_t j = 0; j < res.size(); j++)
-            {
-                if ((res[j] - p).squaredNorm() < 1e-8)
-                {
-                    doubled = true;
-                    break;
-                }
-            }
-
-            if (!doubled)
-            {
-                res.push_back(p);
-            }
+            tmp.erase(std::remove_if(point+1, tmp.end(), [&](const Eigen::Vector2f &p) { return ((*point) - p).squaredNorm() < 1e-8; }), tmp.end());
         }
 
-        return res;
+        std::sort(tmp.begin(), tmp.end(), [](const Eigen::Vector2f &a, const Eigen::Vector2f &b) { return a(0) < b(0) || (a(0) == b(0) && a(1) < b(1)); });
+        return tmp;
     }
 
     bool MathTools::isInside(const Eigen::Vector2f& p, ConvexHull2DPtr hull)

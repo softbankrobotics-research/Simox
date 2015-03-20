@@ -44,7 +44,7 @@ namespace VirtualRobot
         verbose = v;
     }
 
-    Eigen::VectorXf StackedIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
+    Eigen::VectorXf StackedIK::computeStep(const std::vector<JacobiProviderPtr> &jacDefs, float stepSize)
     {
         VR_ASSERT(jacDefs.size() > 0);
 

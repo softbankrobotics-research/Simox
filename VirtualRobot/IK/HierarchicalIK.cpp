@@ -24,7 +24,7 @@ namespace VirtualRobot
         verbose = v;
     }
 
-    Eigen::VectorXf HierarchicalIK::computeStep(std::vector<JacobiProviderPtr> jacDefs, float stepSize)
+    Eigen::VectorXf HierarchicalIK::computeStep(const std::vector<JacobiProviderPtr> &jacDefs, float stepSize)
     {
         VR_ASSERT(jacDefs.size() > 0 && jacDefs[0] && jacDefs[0]->getRobotNodeSet());
 
@@ -38,6 +38,7 @@ namespace VirtualRobot
         result.setZero();
         std::vector<Eigen::MatrixXf> jacobies;
         std::vector<Eigen::MatrixXf> invJacobies;
+        std::vector<Eigen::VectorXf> errors;
 
         for (size_t i = 0; i < jacDefs.size(); i++)
         {
@@ -53,6 +54,8 @@ namespace VirtualRobot
             j = jacDefs[i]->computePseudoInverseJacobianMatrix(j);// jacDefs[i].tcp);
             invJacobies.push_back(j);
 
+            errors.push_back(jacDefs[i]->getError());
+
             if (verbose)
             {
                 VR_INFO << "Inv Jacoby " << i << ":\n" << j << endl;
@@ -63,7 +66,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("Expecting " << ndof << " DOFs, but Jacobi " << i << " has " << jacobies[i].cols() << " columns ");
             }
 
-            if (jacobies[i].rows() != jacDefs[i]->getError().rows())
+            if (jacobies[i].rows() != errors[i].rows())
             {
                 THROW_VR_EXCEPTION("Jacobi " << i << " has " << jacobies[i].rows() << " rows, but delta has " << jacDefs[i]->getError().rows() << " rows ");
             }
@@ -77,7 +80,7 @@ namespace VirtualRobot
 
 
         Eigen::MatrixXf Jinv_i_min1;
-        Eigen::VectorXf result_i = Jinv_i * jacDefs[0]->getError() * stepSize;
+        Eigen::VectorXf result_i = Jinv_i * errors[0] * stepSize;
 
         if (verbose)
         {
@@ -137,10 +140,10 @@ namespace VirtualRobot
             }
             if (verbose)
             {
-                VR_INFO << "jacDefs[i]->getError() " << i << ":\n" << endl << jacDefs[i]->getError().transpose() << endl;
+                VR_INFO << "jacDefs[i]->getError() " << i << ":\n" << endl << errors[i].transpose() << endl;
             }
 
-            result_i = result_i_min1 + Jinv_tilde_i * (jacDefs[i]->getError() * stepSize - J_i * result_i_min1);
+            result_i = result_i_min1 + Jinv_tilde_i * (errors[i] * stepSize - J_i * result_i_min1);
 
             if (verbose)
             {

@@ -327,7 +327,7 @@ namespace VirtualRobot
 
         Eigen::VectorXf tmpComputeStepTheta;
 
-       
+
 
         float positionMaxStep;
         bool verbose;

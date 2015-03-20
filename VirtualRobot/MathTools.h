@@ -638,10 +638,7 @@ namespace VirtualRobot
             return (P1(0) - P0(0)) * (P2(1) - P0(1)) - (P2(0) - P0(0)) * (P1(1) - P0(1));
         }
 
-        //! Consider first coordinate. If two points share the first coord, the second one is used to decide which is "smaller"
-        Eigen::Vector2f getAndRemoveSmallestPoint(std::vector< Eigen::Vector2f >& points);
-
-        ConvexHull2DPtr VIRTUAL_ROBOT_IMPORT_EXPORT createConvexHull2D(std::vector< Eigen::Vector2f > points);
+        ConvexHull2DPtr VIRTUAL_ROBOT_IMPORT_EXPORT createConvexHull2D(const std::vector< Eigen::Vector2f > &points);
         Eigen::Vector2f VIRTUAL_ROBOT_IMPORT_EXPORT getConvexHullCenter(ConvexHull2DPtr ch);
         bool VIRTUAL_ROBOT_IMPORT_EXPORT isInside(const Eigen::Vector2f& p, ConvexHull2DPtr hull);
 
