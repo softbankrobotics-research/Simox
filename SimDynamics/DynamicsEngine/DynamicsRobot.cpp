@@ -350,7 +350,7 @@ namespace SimDynamics
         return Eigen::Vector3f::Zero();
     }
 
-    void DynamicsRobot::setGlobalPose(Eigen::Matrix4f& gp)
+    void DynamicsRobot::setGlobalPose(const Eigen::Matrix4f& gp)
     {
         MutexLockPtr lock = getScopedLock();
         Eigen::Matrix4f currentPose = robot->getGlobalPose();
