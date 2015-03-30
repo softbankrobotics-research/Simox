@@ -28,6 +28,7 @@ namespace Saba
         : Rrt(cspace), probabGraspHypothesis(probabGraspHypothesis), graspQualityMinScore(graspQualityMinScore)
     {
         plannerInitialized = false;
+		minGraspContacts = 3;
         name = "GraspRrt";
         THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getRobotNodeSet() || !cspace->getRobot() || !measure, "NULL data");
         rns = cspace->getRobotNodeSet();
@@ -921,7 +922,7 @@ namespace Saba
 
         eef->openActors();
 
-        if (contacts.size() <= 2)
+		if ((int)contacts.size() < minGraspContacts)
         {
             if (verbose)
             {
@@ -1158,4 +1159,8 @@ namespace Saba
 
     }
 
+	void GraspRrt::setMinGraspContacts(int nr)
+	{
+		minGraspContacts = nr;
+	}
 }

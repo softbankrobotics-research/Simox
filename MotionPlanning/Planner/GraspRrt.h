@@ -174,6 +174,10 @@ namespace Saba
             Can be used for custom initialization. Usually this method is automatically called at the beginning of a planning query.
         */
         virtual bool init();
+
+		/*! By default min 3 contacts are needed, this number can be adjusted here.
+		*/
+		void setMinGraspContacts(int nr);
     protected:
 
         bool doPlanningCycle();
@@ -199,7 +203,7 @@ namespace Saba
 
         PlanningPerformance performanceMeasure;
 
-
+		int minGraspContacts;
 
 
         MoveArmResult connectRandomGraspPositionJacobian();
