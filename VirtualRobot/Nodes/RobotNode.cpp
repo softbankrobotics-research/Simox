@@ -858,6 +858,12 @@ namespace VirtualRobot
             this->attachChild(sensor);
         }
 
+        // if we are already initialized, be sure the sensor is also intialized
+        if (initialized)
+        {
+            sensor->initialize(shared_from_this());
+        }
+
         return true;
     }
 
