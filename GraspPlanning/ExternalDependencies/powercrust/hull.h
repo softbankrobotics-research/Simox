@@ -162,14 +162,14 @@ namespace GraspStudio
             }                           \
         */
         /*
-        #define SBCHECK(s) /*                               \
+        #define SBCHECK(s)                                \
                                                             {double Sb_check=0;                             \
                                                             int i;                                      \
                                                             for (i=1;i<cdim;i++) if (s->neigh[i].basis)             \
                                                             Sb_check+=s->neigh[i].basis->sqb;       \
                                                             if ((float)(Sb_check - s->Sb) !=0.0)                            \
-                                                            {DEBTR DEB(bad Sb); DEBEXP(s->Sb) DEBEXP(Sb_check);print_simplex(s); exit(1);}}*/\
-
+                                                            {DEBTR DEB(bad Sb); DEBEXP(s->Sb) DEBEXP(Sb_check);print_simplex(s); exit(1);}}\
+        */
 
 
 

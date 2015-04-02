@@ -79,7 +79,7 @@ namespace VirtualRobot
             fileXMLNode = fileXMLNode->next_sibling("file", 0, false);
         }
 
-        THROW_VR_EXCEPTION_IF((!counter == 0), "Missing file for <ChildFromRobot> tag (in node '" << nodeName << "')." << endl);
+        THROW_VR_EXCEPTION_IF(((!counter) == 0), "Missing file for <ChildFromRobot> tag (in node '" << nodeName << "')." << endl);
     }
 
 

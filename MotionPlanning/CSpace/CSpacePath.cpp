@@ -61,7 +61,6 @@ namespace Saba
         {
             c[i] += moveVector[i];
         }
-    /*
         // apply part of moveVector to sideSteps positions next to pos
         if (sideSteps>0 && dimension>0)
         {

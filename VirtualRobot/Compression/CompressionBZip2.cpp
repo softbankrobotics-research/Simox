@@ -606,7 +606,7 @@ namespace VirtualRobot
 
                     while (rll_i != rtmp)
                     {
-                        register UChar rtmp2;
+                        UChar rtmp2;
                         ryy_j++;
                         rtmp2  = rtmp;
                         rtmp   = *ryy_j;
@@ -841,8 +841,8 @@ namespace VirtualRobot
                 if (nGroups == 6 && 50 == ge - gs + 1)
                 {
                     /*--- fast track the common case ---*/
-                    register UInt32 cost01, cost23, cost45;
-                    register UInt16 icv;
+                    UInt32 cost01, cost23, cost45;
+                    UInt16 icv;
                     cost01 = cost23 = cost45 = 0;
 
 #           define BZ_ITER(nn)                \

@@ -47,6 +47,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public boost::enable_shared_from_this<WorkspaceData>
     {
     public:
+        virtual ~WorkspaceData() {}
 
         //! Return the amount of data in bytes
         virtual unsigned int getSizeTr() const = 0;

@@ -29,13 +29,13 @@ namespace GraspStudio
     {
 
         // in powercrust.h
-        //extern double est_r;  /* guess for r */
+        //extern double est_r;  // guess for r
         //extern double bound[8][3], omins[3], omaxs[3];
         //extern long num_sites;
 
         /*
         extern struct simplex **pole1, **pole2;
-        extern double* lfs_lb; /* array of estimated lower bounds on lfs * /
+        extern double* lfs_lb; // array of estimated lower bounds on lfs
 
         extern struct polelabel *adjlist;
         extern struct plist **opplist;
