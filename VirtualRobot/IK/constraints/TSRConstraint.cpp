@@ -59,28 +59,46 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 
 Eigen::VectorXf TSRConstraint::getError(float stepSize)
 {
-    float eef_pose[6], target[6];
-    MathTools::eigen4f2rpy(eef->getGlobalPose() * eefOffset, eef_pose);
-    MathTools::eigen4f2rpy(transformation, target);
+    float d_w[6];
+    Eigen::MatrixXf eef_global = eef->getGlobalPose();
+    Eigen::MatrixXf T = transformation.inverse() * eef_global * eefOffset;
+    MathTools::eigen4f2rpy(T, d_w);
 
-    Eigen::VectorXf error(6);
+    Eigen::VectorXf target(6);
     for(int i = 0; i < 6; i++)
     {
-        if(eef_pose[i] < target[i] + bounds(i,0))
+        if(d_w[i] < bounds(i,0))
         {
-            error(i) = target[i] + bounds(i,0) - eef_pose[i];
+            target(i) = bounds(i,0);
         }
-        else if(eef_pose[i] > target[i] + bounds(i,1))
+        else if(d_w[i] > bounds(i,1))
         {
-            error(i) = target[i] + bounds(i,1) - eef_pose[i];
+            target(i) = bounds(i,1);
         }
         else
         {
-            error(i) = 0;
+            target(i) = d_w[i];
         }
     }
 
-    return error * stepSize;
+    Eigen::Matrix4f T_dx;
+    MathTools::posrpy2eigen4f(target.block<3,1>(0,0), target.block<3,1>(3,0), T_dx);
+
+    float target_global[6];
+    MathTools::eigen4f2rpy(transformation * T_dx, target_global);
+
+    float e_global[6];
+    MathTools::eigen4f2rpy(eef_global, e_global);
+
+    Eigen::VectorXf dx(6);
+    dx << (target_global[0] - e_global[0]),
+          (target_global[1] - e_global[1]),
+          (target_global[2] - e_global[2]),
+          (target_global[3] - e_global[3]),
+          (target_global[4] - e_global[4]),
+          (target_global[5] - e_global[5]);
+
+    return dx * stepSize;
 }
 
 bool TSRConstraint::checkTolerances()
