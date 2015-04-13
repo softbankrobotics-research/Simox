@@ -88,7 +88,7 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     MathTools::eigen4f2rpy(transformation * T_dx, target_global);
 
     float e_global[6];
-    MathTools::eigen4f2rpy(eef_global, e_global);
+    MathTools::eigen4f2rpy(eef_global * eefOffset, e_global);
 
     Eigen::VectorXf dx(6);
     dx << (target_global[0] - e_global[0]),
