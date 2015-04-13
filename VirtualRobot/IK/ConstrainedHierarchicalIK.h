@@ -34,7 +34,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedHierarchicalIK>
     {
         public:
-            ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize=0.2f, int maxIterations=1000, float stall_epsilon = 0.0001);
+            ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize=0.2f, int maxIterations=1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
             bool initialize();
             bool solveStep();

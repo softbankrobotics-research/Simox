@@ -37,9 +37,17 @@ namespace VirtualRobot
         public:
             Constraint(const RobotNodeSetPtr &nodeSet);
 
+            void initialize();
+
             virtual bool getRobotPoseForConstraint(Eigen::Matrix4f &pose);
 
+            float getErrorDifference();
+
             virtual std::string getConstraintType() = 0;
+
+        protected:
+            float lastError;
+            float lastLastError;
     };
 
     typedef boost::shared_ptr<Constraint> ConstraintPtr;

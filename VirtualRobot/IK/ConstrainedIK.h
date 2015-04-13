@@ -35,7 +35,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public boost::enable_shared_from_this<ConstrainedIK>
     {
         public:
-            ConstrainedIK(RobotPtr &robot, int maxIterations = 1000, float stall_epsilon = 0.0001);
+            ConstrainedIK(RobotPtr &robot, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
 
             void addConstraint(const ConstraintPtr &constraint, int priority=0, bool hard_constraint=true);
             std::vector<ConstraintPtr> getConstraints();
@@ -60,7 +60,9 @@ namespace VirtualRobot
             int maxIterations;
             int currentIteration;
             bool running;
+
             float stallEpsilon;
+            float raiseEpsilon;
     };
 
     typedef boost::shared_ptr<ConstrainedIK> ConstrainedIKPtr;

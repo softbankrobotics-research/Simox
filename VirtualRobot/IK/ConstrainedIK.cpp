@@ -2,12 +2,13 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations, float stall_epsilon) :
+ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations, float stall_epsilon, float raise_epsilon) :
     robot(robot),
     maxIterations(maxIterations),
     currentIteration(0),
     running(false),
-    stallEpsilon(stall_epsilon)
+    stallEpsilon(stall_epsilon),
+    raiseEpsilon(raise_epsilon)
 {
 
 }
@@ -32,6 +33,7 @@ bool ConstrainedIK::initialize()
 
     for(auto &constraint : constraints)
     {
+        constraint->initialize();
         moves += constraint->getRobotPoseForConstraint(P);
     }
 

@@ -65,6 +65,9 @@ namespace VirtualRobot
             float toleranceRotation;
 
             SceneObjectSetPtr visualizationNodeSet;
+
+            float lastError;
+            float lastLastError;
     };
 
     typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;

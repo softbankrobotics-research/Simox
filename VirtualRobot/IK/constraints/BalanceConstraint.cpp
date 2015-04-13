@@ -103,17 +103,20 @@ Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 
     float stability = supportPolygon->getStabilityIndex(bodies, false);
 
+    Eigen::VectorXf e;
     if(stability < minimumStability)
     {
-        return comIK->getError(stepSize);
+        e = comIK->getError(stepSize);
     }
     else
     {
         if (considerCoMHeight)
-            return Eigen::Vector3f(0,0,0);
+            e = Eigen::Vector3f(0,0,0);
         else
-            return Eigen::Vector2f(0,0);
+            e = Eigen::Vector2f(0,0);
     }
+
+    return e;
 }
 
 bool BalanceConstraint::checkTolerances()
