@@ -2,11 +2,12 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations) :
+ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations, float stall_epsilon) :
     robot(robot),
     maxIterations(maxIterations),
     currentIteration(0),
-    running(false)
+    running(false),
+    stallEpsilon(stall_epsilon)
 {
 
 }

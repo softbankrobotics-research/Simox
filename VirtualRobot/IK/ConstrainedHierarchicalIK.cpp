@@ -2,8 +2,8 @@
 
 using namespace VirtualRobot;
 
-ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, int maxIterations) :
-    ConstrainedIK(robot, maxIterations),
+ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, int maxIterations, float stall_epsilon) :
+    ConstrainedIK(robot, maxIterations, stall_epsilon),
     nodeSet(nodeSet),
     stepSize(stepSize)
 {
@@ -28,6 +28,14 @@ bool ConstrainedHierarchicalIK::solveStep()
 
     Eigen::VectorXf jointValues;
     Eigen::VectorXf delta = ik->computeStep(jacobians, stepSize);
+
+    // Check the stall condition
+    if(lastDelta.rows() > 0 && (delta - lastDelta).norm() < stallEpsilon)
+    {
+        VR_INFO << "Constrained IK failed due to stall condition" << std::endl;
+        return false;
+    }
+    lastDelta = delta;
 
     nodeSet->getJointValues(jointValues);
     nodeSet->setJointValues(jointValues + delta);

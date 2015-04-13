@@ -34,7 +34,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedHierarchicalIK>
     {
         public:
-            ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize=0.2f, int maxIterations=1000);
+            ConstrainedHierarchicalIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize=0.2f, int maxIterations=1000, float stall_epsilon = 0.0001);
 
             bool initialize();
             bool solveStep();
@@ -46,6 +46,7 @@ namespace VirtualRobot
             std::vector<JacobiProviderPtr> jacobians;
 
             float stepSize;
+            Eigen::VectorXf lastDelta;
     };
 
     typedef boost::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;
