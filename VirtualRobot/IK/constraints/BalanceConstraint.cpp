@@ -16,20 +16,21 @@
 using namespace VirtualRobot;
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool consderCoMHeight) :
+                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
-    initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates);
+    initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
 BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool consderCoMHeight) :
+                                     float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
-    initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates);
+    initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
-void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes, float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates)
+void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+                                   float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight)
 {
     this->joints = joints;
     this->bodies = bodies;
@@ -48,11 +49,12 @@ void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr 
         dim = 3;
         setCoMHeight(height);
     }
-    else{
+    else
+    {
         height = robot->getCoMGlobal()(2);
         setCoMHeight(height);
     }
-    comIK.reset(new CoMIK(joints, bodies,RobotNodePtr(),dim));
+    comIK.reset(new CoMIK(joints, bodies, RobotNodePtr(), dim));
 
     updateSupportPolygon();
 
@@ -87,7 +89,7 @@ void BalanceConstraint::setCoMHeight(float currentheight)
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
 {
     Eigen::MatrixXf J = comIK->getJacobianMatrix();
-    if(supportPolygon->getStabilityIndex(bodies, false) >= minimumStability)
+    if(supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability)
     {
         // Set jacobian to zero in order to allow any type of motion within the stability zone
         J.setZero();
@@ -103,31 +105,25 @@ Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 
 Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 {
-    if(supportPolygonUpdates)
-    {
-        updateSupportPolygon();
-    }
+    float stability = supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates);
 
-    float stability = supportPolygon->getStabilityIndex(bodies, false);
-
-    Eigen::VectorXf e;
     if(stability < minimumStability)
     {
-        e = comIK->getError(stepSize);
+        return comIK->getError(stepSize);
+    }
+    else if(considerCoMHeight)
+    {
+        return Eigen::Vector3f(0,0,0);
     }
     else
     {
-        if (considerCoMHeight)
-            e = Eigen::Vector3f(0,0,0);
-        else
-            e = Eigen::Vector2f(0,0);
+        return Eigen::Vector2f(0,0);
     }
-
-    return e;
 }
 
 bool BalanceConstraint::checkTolerances()
 {
+    VR_INFO << "Stability: " << supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) << std::endl;
     return (supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability);
 }
 

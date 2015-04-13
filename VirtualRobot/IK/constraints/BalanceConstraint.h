@@ -39,9 +39,9 @@ namespace VirtualRobot
     {
         public:
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool consderCoMHeight = false);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool considerCoMHeight = false);
             BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool consderCoMHeight = false);
+                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool considerCoMHeight = false);
 
             Eigen::MatrixXf getJacobianMatrix();
             Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
@@ -53,10 +53,10 @@ namespace VirtualRobot
             SupportPolygonPtr getSupportPolygon();
 
             std::string getConstraintType();
-void        setCoMHeight(float height);
+            void setCoMHeight(float height);
         protected:
             void initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                            float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates);
+                            float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
 
             void updateSupportPolygon();
 
