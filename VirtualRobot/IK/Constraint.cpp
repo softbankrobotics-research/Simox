@@ -28,8 +28,6 @@ float Constraint::getErrorDifference()
     lastLastError = lastError;
     lastError = e.norm();
 
-    VR_INFO << "Error Difference of " << getConstraintType() << ": " << lastError << " - " << lastLastError << std::endl;
-
     if(lastLastError <= 0)
     {
         return 0;
