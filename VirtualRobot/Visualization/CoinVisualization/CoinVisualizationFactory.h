@@ -306,6 +306,8 @@ namespace VirtualRobot
         */
         static SoGroup* convertSoFileChildren(SoGroup* orig);
 
+        static SoNode* copyNode(SoNode* n);
+
         /*!
             Here, a manual cleanup can be called, no Coin3D access possible after this.
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.

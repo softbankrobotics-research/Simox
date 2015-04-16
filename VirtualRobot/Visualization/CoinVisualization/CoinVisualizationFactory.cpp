@@ -59,6 +59,7 @@
 #include <Inventor/VRMLnodes/SoVRMLBillboard.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/actions/SoSearchAction.h>
 #include <iostream>
 #include <algorithm>
 
@@ -3522,6 +3523,49 @@ namespace VirtualRobot
 
         storeResult->unrefNoDelete();
         return storeResult;
+    }
+
+    SoNode *CoinVisualizationFactory::copyNode(SoNode *n)
+    {
+        if (!n)
+            return NULL;
+        bool copyImages = true;
+        std::vector<SoSFImage *> changedImages;
+        if( copyImages )
+        {
+            // find all SoTexture2 nodes
+            SoSearchAction search;
+            search.setType( SoTexture2::getClassTypeId());
+            search.setInterest( SoSearchAction::ALL );
+            search.setSearchingAll( TRUE );
+            search.apply( n );
+            SoPathList & list = search.getPaths();
+
+            //VR_INFO << "copy: copying " <<  list.getLength() << " textures" << std::endl;
+
+            // set their images to not default to copy the contents
+            for( int i = 0; i < list.getLength(); i++ )
+            {
+                SoFullPath * path = (SoFullPath *) list[i];
+                assert( path->getTail()->isOfType( SoTexture2::getClassTypeId()));
+                SoSFImage * image = &((SoTexture2 *)path->getTail())->image;
+                if(image->isDefault() == TRUE)
+                {
+                    ((SoTexture2 *)path->getTail())->image.setDefault( FALSE );
+                    changedImages.push_back( image );
+                }
+            }
+
+        }
+        // the actual copy operation
+        SoNode * result = n->copy(TRUE);
+        // reset the changed ones back
+        for( std::vector<SoSFImage *>::iterator it = changedImages.begin();
+             it != changedImages.end(); it++ )
+        {
+            (*it)->setDefault( TRUE );
+        }
+        return result;
     }
 
     SoNode* CoinVisualizationFactory::getColorNode(Color color)

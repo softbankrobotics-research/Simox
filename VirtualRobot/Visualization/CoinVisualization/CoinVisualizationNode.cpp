@@ -326,7 +326,8 @@ namespace VirtualRobot
 
             if (deepCopy)
             {
-                newModel->addChild(visualization->copy(TRUE));
+                SoNode* deepCopiedNode = CoinVisualizationFactory::copyNode(visualization);
+                newModel->addChild(deepCopiedNode);
             }
             else
             {
