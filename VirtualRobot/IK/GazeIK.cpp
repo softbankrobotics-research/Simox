@@ -59,7 +59,7 @@ namespace VirtualRobot
         }
 
         ikSolver.reset(new HierarchicalIK(rns));
-        ikSolver->setVerbose(verbose);
+        //ikSolver->setVerbose(verbose);
 
         // 1. gaze
         ikGaze.reset(new DifferentialIK(rns , RobotNodePtr(), VirtualRobot::JacobiProvider::eSVDDamped));
@@ -89,7 +89,7 @@ namespace VirtualRobot
 
         std::vector<JacobiProviderPtr> jacobies;
 
-        Eigen::Matrix4f currentPose = rns->getTCP()->getGlobalPose(); // the "tcp" of the gaze RNS -> the gaze point which is moved via a virtual translational joint
+        //Eigen::Matrix4f currentPose = rns->getTCP()->getGlobalPose(); // the "tcp" of the gaze RNS -> the gaze point which is moved via a virtual translational joint
         Eigen::Matrix4f g;
         g.setIdentity();
         g.block(0, 3, 3, 1) = goal;
@@ -114,19 +114,6 @@ namespace VirtualRobot
 
         Eigen::VectorXf delta = ikSolver->computeStep(jacobies, stepSize);
         return delta;
-        /*Eigen::VectorXf jv(delta.rows());
-        rns->getJointValues(jv);
-        if (verbose)
-        {
-            VR_INFO << "delta joints:\n" << delta << endl;
-        }
-        jv += delta;
-        if (verbose)
-        {
-            VR_INFO << "current joint values:\n" << jv << endl;
-        }
-        rns->setJointValues(jv);
-        return true;*/
     }
 
     bool GazeIK::solve(const Eigen::Vector3f &goal, float stepSize)
@@ -141,33 +128,41 @@ namespace VirtualRobot
         // initialize the virtualGazeJoint with a guess
         float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
         virtualTranslationJoint->setJointValue(v);
+        VR_INFO << "virtualTranslationJoint jv:" << v << endl;
+
 
         // first run: start with current joint angles
-        /*if (trySolve(goal, stepSize))
+        if (trySolve(goal, stepSize))
         {
             return true;
-        }*/
+        }
+
+        VR_INFO << "No solution from current configuration, trying with random seeded configuration" << endl;
 
         float posDist = getCurrentError(goal);
         jvBest = rns->getJointValues();
         bestDist = posDist;
 
-
         // if here we failed
         for (int i = 1; i < maxLoops; i++)
         {
+            VR_INFO << "loop " << i << endl;
             // set rotational joints randomly
             setJointsRandom(goal, randomTriesToGetBestConfig);
 
             // update translational joint with initial guess
             float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
             virtualTranslationJoint->setJointValue(v);
+            VR_INFO << "virtualTranslationJoint jv:" << v << endl;
+
 
             // check if there is a gradient to the solution
             if (trySolve(goal, stepSize))
             {
+                //VR_INFO << "Solution found " << endl;
                 return true;
             }
+
             posDist = getCurrentError(goal);
             if (posDist < bestDist)
             {
