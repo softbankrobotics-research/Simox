@@ -74,9 +74,9 @@ namespace VirtualRobot
             \param stepSize Can be used to limit the error step.
             \return the joint delta vector
         */
-        Eigen::VectorXf computeStep(Eigen::Vector3f goal, float stepSize = 0.3f);
+        Eigen::VectorXf computeStep(const Eigen::Vector3f &goal, float stepSize = 0.6f);
 
-        bool solve(Eigen::Vector3f goal, float stepSize = 0.3f);
+        bool solve(const Eigen::Vector3f &goal, float stepSize = 0.6f);
 
         float getMaxPosError();
 
@@ -86,12 +86,13 @@ namespace VirtualRobot
 
         void setupIK();
         void setJointsRandom();
-        bool trySolve(Eigen::Vector3f goal, float stepSize);
+        void setJointsRandom(const Eigen::Vector3f &goal, int bestOfTries); // do random joint config bestOfTries times and determine the best in terms of tcp to goal distance (good guess)
+        bool trySolve(const Eigen::Vector3f &goal, float stepSize);
 
-        float getCurrentError(Eigen::Vector3f goal);
-        void applyJLA(Eigen::Vector3f goal, int steps, float stepSize);
+        float getCurrentError(const Eigen::Vector3f &goal);
+        void applyJLA(const Eigen::Vector3f &goal, int steps, float stepSize);
 
-        bool checkTolerances(Eigen::Vector3f goal);
+        bool checkTolerances(const Eigen::Vector3f &goal);
 
         std::vector<RobotNodePtr> nodes;
         RobotNodeSetPtr rns;
@@ -105,6 +106,7 @@ namespace VirtualRobot
         int maxLoops;
         int maxGradientDecentSteps;
         float maxPosError;
+        int randomTriesToGetBestConfig;
         bool verbose;
     };
 

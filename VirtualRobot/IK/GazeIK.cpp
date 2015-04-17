@@ -23,9 +23,10 @@ namespace VirtualRobot
         VR_ASSERT(virtualTranslationJoint->getParent());
         VR_ASSERT(rns->hasRobotNode(virtualTranslationJoint));
         enableJLA = true;
-        maxLoops = 30; // nr of seeds for gradient descent
+        maxLoops = 50; // nr of seeds for gradient descent
         maxPosError = 5.0f; //mm
-        maxGradientDecentSteps = 100;
+        maxGradientDecentSteps = 30;
+        randomTriesToGetBestConfig = 40; // nr of random samples that are evaluated to determine the "best" starting point for gradient decent
         verbose = false;
         setupIK();
     }
@@ -82,7 +83,7 @@ namespace VirtualRobot
     }
 
 
-    Eigen::VectorXf GazeIK::computeStep(Eigen::Vector3f goal, float stepSize)
+    Eigen::VectorXf GazeIK::computeStep(const Eigen::Vector3f &goal, float stepSize)
     {
         VR_ASSERT(ikSolver && ikGaze && virtualTranslationJoint);
 
@@ -128,28 +129,35 @@ namespace VirtualRobot
         return true;*/
     }
 
-    bool GazeIK::solve(Eigen::Vector3f goal, float stepSize)
+    bool GazeIK::solve(const Eigen::Vector3f &goal, float stepSize)
     {
         if (!ikSolver || !ikGaze || !virtualTranslationJoint)
         {
             return false;
         }
+        float bestDist = FLT_MAX;
+        std::vector<float> jvBest;
 
         // initialize the virtualGazeJoint with a guess
         float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
         virtualTranslationJoint->setJointValue(v);
 
         // first run: start with current joint angles
-        if (trySolve(goal, stepSize))
+        /*if (trySolve(goal, stepSize))
         {
             return true;
-        }
+        }*/
+
+        float posDist = getCurrentError(goal);
+        jvBest = rns->getJointValues();
+        bestDist = posDist;
+
 
         // if here we failed
         for (int i = 1; i < maxLoops; i++)
         {
             // set rotational joints randomly
-            setJointsRandom();
+            setJointsRandom(goal, randomTriesToGetBestConfig);
 
             // update translational joint with initial guess
             float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
@@ -160,11 +168,43 @@ namespace VirtualRobot
             {
                 return true;
             }
+            posDist = getCurrentError(goal);
+            if (posDist < bestDist)
+            {
+                //VR_INFO << "New best solution, dist:" << posDist << endl;
+                jvBest = rns->getJointValues();
+                bestDist = posDist;
+            }
         }
+
+        VR_INFO << "Setting joint values ot best achieved config, dist to target:" << bestDist << endl;
+        rns->setJointValues(jvBest);
 
         return false;
     }
 
+
+    void GazeIK::setJointsRandom(const Eigen::Vector3f &goal, int bestOfTries)
+    {
+        if (bestOfTries <= 0)
+            bestOfTries = 1;
+
+        float bestDist = FLT_MAX;
+        float posDist;
+        std::vector<float> jvBest;
+        for (int i = 0; i < bestOfTries; i++)
+        {
+            setJointsRandom();
+            posDist = getCurrentError(goal);
+            if (posDist < bestDist)
+            {
+                //VR_INFO << "joints random, best dist:" << posDist << endl;
+                bestDist = posDist;
+                jvBest = rns->getJointValues();
+            }
+        }
+        rns->setJointValues(jvBest);
+    }
 
     void GazeIK::setJointsRandom()
     {
@@ -179,7 +219,7 @@ namespace VirtualRobot
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
             RobotNodePtr ro =  rns->getNode(i);
-            float v = 0.0f;
+            float v = ro->getJointValue();
 
             if (ro->isRotationalJoint())
             {
@@ -190,11 +230,10 @@ namespace VirtualRobot
             jv.push_back(v);
         }
 
-        RobotPtr rob = rns->getRobot();
-        rob->setJointValues(rns, jv);
+        rns->setJointValues(jv);
     }
 
-    float GazeIK::getCurrentError(Eigen::Vector3f goal)
+    float GazeIK::getCurrentError(const Eigen::Vector3f &goal)
     {
         if (!rns)
         {
@@ -205,12 +244,12 @@ namespace VirtualRobot
         return position.norm();
     }
 
-    bool GazeIK::checkTolerances(Eigen::Vector3f goal)
+    bool GazeIK::checkTolerances(const Eigen::Vector3f &goal)
     {
         return (getCurrentError(goal) <= maxPosError);
     }
 
-    void GazeIK::applyJLA(Eigen::Vector3f goal, int steps, float stepSize)
+    void GazeIK::applyJLA(const Eigen::Vector3f &goal, int steps, float stepSize)
     {
         float minJLAChange = 1e-6f;
         std::vector<float> jv(nodes.size(), 0.0f);
@@ -265,12 +304,12 @@ namespace VirtualRobot
         }
     }
 
-    bool GazeIK::trySolve(Eigen::Vector3f goal, float stepSize)
+    bool GazeIK::trySolve(const Eigen::Vector3f &goal, float stepSize)
     {
         VR_ASSERT(rns);
         RobotPtr robot = rns->getRobot();
         VR_ASSERT(robot);
-        bool checkImprovement = true;
+        float bestDist = FLT_MAX;
         int jlaSteps = 15;
         float minumChange = 1e-5f;
         std::vector<float> jv(nodes.size(), 0.0f);
@@ -335,7 +374,12 @@ namespace VirtualRobot
                 return false;
             }
 
-            jvBest = jv;
+            float posDist = getCurrentError(goal);
+            if (posDist < bestDist)
+            {
+                jvBest = jv;
+                bestDist = posDist;
+            }
             step++;
         }
 
