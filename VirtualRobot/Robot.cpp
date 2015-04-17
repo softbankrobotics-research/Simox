@@ -779,7 +779,9 @@ namespace VirtualRobot
 
     VirtualRobot::RobotPtr Robot::clone(const std::string& name, CollisionCheckerPtr collisionChecker, float scaling)
     {
-        return extractSubPart(this->getRootNode(), this->getType(), name, true, true, collisionChecker, scaling);
+        VirtualRobot::RobotPtr result = extractSubPart(this->getRootNode(), this->getType(), name, true, true, collisionChecker, scaling);
+        result->setGlobalPose(getGlobalPose());
+        return result;
     }
 
     void Robot::createVisualizationFromCollisionModels()
