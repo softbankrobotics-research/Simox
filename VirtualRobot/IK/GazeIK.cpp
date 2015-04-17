@@ -128,7 +128,7 @@ namespace VirtualRobot
         // initialize the virtualGazeJoint with a guess
         float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
         virtualTranslationJoint->setJointValue(v);
-        VR_INFO << "virtualTranslationJoint jv:" << v << endl;
+        //VR_INFO << "virtualTranslationJoint jv:" << v << endl;
 
 
         // first run: start with current joint angles
@@ -146,14 +146,14 @@ namespace VirtualRobot
         // if here we failed
         for (int i = 1; i < maxLoops; i++)
         {
-            VR_INFO << "loop " << i << endl;
+            //VR_INFO << "loop " << i << endl;
             // set rotational joints randomly
             setJointsRandom(goal, randomTriesToGetBestConfig);
 
             // update translational joint with initial guess
             float v = (goal - virtualTranslationJoint->getParent()->getGlobalPose().block(0, 3, 3, 1)).norm();
             virtualTranslationJoint->setJointValue(v);
-            VR_INFO << "virtualTranslationJoint jv:" << v << endl;
+            //VR_INFO << "virtualTranslationJoint jv:" << v << endl;
 
 
             // check if there is a gradient to the solution
