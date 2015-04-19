@@ -37,6 +37,8 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile, Qt::WFlags flags)
     sceneSep->addChild(sceneVisuSep);
     graspVisu = new SoSeparator;
     sceneSep->addChild(graspVisu);
+    coordVisu = new SoSeparator;
+    sceneSep->addChild(coordVisu);
 
     setupUI();
 
@@ -82,6 +84,7 @@ void showSceneWindow::setupUI()
     connect(UI.comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
     connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
+    connect(UI.checkBoxRoot, SIGNAL(clicked()), this, SLOT(showRoot()));
 
     /*
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
@@ -146,6 +149,10 @@ void showSceneWindow::colModel()
 }
 
 
+void showSceneWindow::showRoot()
+{
+    buildVisu();
+}
 
 void showSceneWindow::buildVisu()
 {
@@ -173,6 +180,13 @@ void showSceneWindow::buildVisu()
     if (visualisationNode)
     {
         sceneVisuSep->addChild(visualisationNode);
+    }
+
+    coordVisu->removeAllChildren();
+    if (UI.checkBoxRoot->isChecked())
+    {
+        std::string rootText="ROOT";
+        coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f,&rootText));
     }
 
     updateGraspVisu();
@@ -270,9 +284,12 @@ void showSceneWindow::loadScene()
         {
 
             ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(sceneFile);
+            //mo = mo->clone(mo->getName());
 
             if (mo)
             {
+                VR_INFO << "Loaded Manipulation object:" << endl;
+                mo->print();
                 scene.reset(new Scene(mo->getName()));
                 scene->registerManipulationObject(mo);
             }
@@ -293,6 +310,8 @@ void showSceneWindow::loadScene()
 
             if (mo)
             {
+                VR_INFO << "Loaded obstacle:" << endl;
+                mo->print();
                 scene.reset(new Scene(mo->getName()));
                 scene->registerObstacle(mo);
             }

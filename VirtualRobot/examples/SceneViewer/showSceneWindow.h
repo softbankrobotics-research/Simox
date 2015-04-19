@@ -58,6 +58,7 @@ public slots:
     void closeHand();
     void openHand();
     void colModel();
+    void showRoot();
 
     SoQtExaminerViewer* getExaminerViewer()
     {
@@ -79,6 +80,7 @@ protected:
     SoSeparator* sceneSep;
     SoSeparator* sceneVisuSep;
     SoSeparator* graspVisu;
+    SoSeparator* coordVisu;
     VirtualRobot::GraspPtr currentGrasp;
     VirtualRobot::GraspSetPtr currentGraspSet;
     VirtualRobot::SceneObjectPtr currentObject;

@@ -200,7 +200,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>470</y>
+         <y>450</y>
          <width>181</width>
          <height>101</height>
         </rect>
@@ -246,13 +246,26 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>590</y>
+         <y>570</y>
          <width>181</width>
          <height>22</height>
         </rect>
        </property>
        <property name="text">
         <string>Collision Model</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBoxRoot">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>600</y>
+         <width>181</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>show root</string>
        </property>
       </widget>
      </widget>
