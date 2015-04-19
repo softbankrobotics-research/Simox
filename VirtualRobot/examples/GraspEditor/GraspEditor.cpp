@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename2);
 
     VirtualRobot::RuntimeEnvironment::considerKey("object");
+    VirtualRobot::RuntimeEnvironment::considerKey("robot");
 
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
@@ -49,6 +50,11 @@ int main(int argc, char* argv[])
     if (!objFile.empty() && VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(objFile))
     {
         filename1 = objFile;
+    }
+
+    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
+    {
+        filename2 = VirtualRobot::RuntimeEnvironment::getValue("robot");
     }
 
     GraspEditorWindow rw(filename1, filename2);
