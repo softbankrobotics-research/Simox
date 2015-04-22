@@ -48,6 +48,9 @@ namespace VirtualRobot
             const Eigen::Matrix<float, 6, 2> &getBounds();
 
         protected:
+            void resolveRPYAmbiguities(float *pose, const float *reference);
+            float getShortestDistanceForRPYComponent(float from, float to);
+
             RobotPtr robot;
             RobotNodeSetPtr nodeSet;
             RobotNodePtr eef;

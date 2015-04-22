@@ -40,7 +40,7 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
     {
         if(error(i) == 0)
         {
-            J.row(i).setZero();
+            //J.row(i).setZero();
         }
     }
 
@@ -90,13 +90,15 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     float e_global[6];
     MathTools::eigen4f2rpy(eef_global * eefOffset, e_global);
 
+    resolveRPYAmbiguities(e_global, target_global);
+
     Eigen::VectorXf dx(6);
     dx << (target_global[0] - e_global[0]),
           (target_global[1] - e_global[1]),
           (target_global[2] - e_global[2]),
-          (target_global[3] - e_global[3]),
-          (target_global[4] - e_global[4]),
-          (target_global[5] - e_global[5]);
+          getShortestDistanceForRPYComponent(e_global[3], target_global[3]),
+          getShortestDistanceForRPYComponent(e_global[4], target_global[4]),
+          getShortestDistanceForRPYComponent(e_global[5], target_global[5]);
 
     return dx * stepSize;
 }
@@ -120,6 +122,57 @@ const Eigen::Matrix4f &TSRConstraint::getTransformation()
 const Eigen::Matrix<float, 6, 2> &TSRConstraint::getBounds()
 {
     return bounds;
+}
+
+void TSRConstraint::resolveRPYAmbiguities(float *pose, const float *reference)
+{
+    Eigen::Vector3f ref;
+    ref << reference[3], reference[4], reference[5];
+
+    Eigen::Vector3f tmp;
+
+    Eigen::Vector3f best;
+    best << pose[3], pose[4], pose[5];
+
+    for(int i = -1; i <= 1; i += 2)
+    {
+        for(int j = -1; j <= 1; j += 2)
+        {
+            for(int k = -1; k <= 1; k += 2)
+            {
+                tmp << reference[3] + i * M_PI,
+                       reference[4] + j * M_PI,
+                       reference[5] + k * M_PI;
+
+                if((tmp - ref).norm() < (best - ref).norm())
+                {
+                    best = tmp;
+                }
+            }
+        }
+    }
+
+    pose[3] = best(0);
+    pose[4] = best(1);
+    pose[5] = best(2);
+}
+
+float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
+{
+    float direct = to - from;
+
+    if(direct > M_PI)
+    {
+        return -2*M_PI + direct;
+    }
+    else if(direct < -M_PI)
+    {
+        return 2*M_PI - direct;
+    }
+    else
+    {
+        return direct;
+    }
 }
 
 
