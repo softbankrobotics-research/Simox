@@ -3,7 +3,7 @@
 using namespace VirtualRobot;
 
 Constraint::Constraint(const RobotNodeSetPtr &nodeSet) :
-    JacobiProvider(nodeSet, JacobiProvider::eSVD),
+    JacobiProvider(nodeSet, JacobiProvider::eSVDDamped),
     lastError(-1),
     lastLastError(-1)
 {

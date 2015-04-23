@@ -84,21 +84,33 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     Eigen::Matrix4f T_dx;
     MathTools::posrpy2eigen4f(target.block<3,1>(0,0), target.block<3,1>(3,0), T_dx);
 
-    float target_global[6];
-    MathTools::eigen4f2rpy(transformation * T_dx, target_global);
+    Eigen::Matrix4f P_target = transformation * T_dx;
+    //float target_global[6];
+    //MathTools::eigen4f2rpy(P_target, target_global);
 
-    float e_global[6];
-    MathTools::eigen4f2rpy(eef_global * eefOffset, e_global);
+    Eigen::Matrix4f P_eef = eef_global * eefOffset;
+    //float e_global[6];
+    //MathTools::eigen4f2rpy(P_eef, e_global);
 
-    resolveRPYAmbiguities(e_global, target_global);
+    Eigen::Matrix4f P_delta = P_target * P_eef.inverse();
+    Eigen::AngleAxis<float> P_delta_AA;
+    P_delta_AA = P_delta.block<3, 3>(0, 0);
 
     Eigen::VectorXf dx(6);
+    dx.head(3) = Eigen::Vector3f(
+                P_target(0,3) - P_eef(0,3),
+                P_target(1,3) - P_eef(1,3),
+                P_target(2,3) - P_eef(2,3)
+                );
+    dx.tail(3) = P_delta_AA.axis() * P_delta_AA.angle();
+
+    /*resolveRPYAmbiguities(e_global, target_global);
     dx << (target_global[0] - e_global[0]),
           (target_global[1] - e_global[1]),
           (target_global[2] - e_global[2]),
           getShortestDistanceForRPYComponent(e_global[3], target_global[3]),
           getShortestDistanceForRPYComponent(e_global[4], target_global[4]),
-          getShortestDistanceForRPYComponent(e_global[5], target_global[5]);
+          getShortestDistanceForRPYComponent(e_global[5], target_global[5]);*/
 
     return dx * stepSize;
 }
