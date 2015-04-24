@@ -5,6 +5,8 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Workspace/Manipulability.h>
+#include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -23,6 +25,7 @@
 //#define ENDLESS
 
 //#define ICUB
+//#define ARMAR3B
 
 // --robot robots/iCub/iCub_LeftHand_Extended.xml
 
@@ -34,7 +37,7 @@ using namespace VirtualRobot;
 
 void endlessExtend(std::string robotFile, std::string reachFile)
 {
-    int steps = 1000000;
+    int steps = 100000;
 
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFile);
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(reachFile);
@@ -60,8 +63,41 @@ void endlessExtend(std::string robotFile, std::string reachFile)
     }
 
     // load reach file
-    ReachabilityPtr reachSpace(new Reachability(robot));
-    reachSpace->load(reachFile);
+    WorkspaceRepresentationPtr reachSpace;
+    bool loadOK = true;
+
+    // try manipulability file
+    try
+    {
+        reachSpace.reset(new Manipulability(robot));
+        reachSpace->load(reachFile);
+    } catch (...)
+    {
+        loadOK = false;
+    }
+
+    if (!loadOK)
+    {
+        // try reachability file
+
+        loadOK = true;
+        try {
+            reachSpace.reset(new Reachability(robot));
+            reachSpace->load(reachFile);
+        } catch (...)
+        {
+            loadOK = false;
+        }
+    }
+
+    if (!loadOK)
+    {
+        VR_ERROR << "Could not load reach/manip file" << endl;
+        reachSpace.reset();
+        return;
+    }
+
+
     reachSpace->print();
 
     time_t time_now = time(NULL);
@@ -90,11 +126,20 @@ int main(int argc, char* argv[])
     cout << " --- START --- " << endl;
 
     std::string filenameReach;
-#ifdef ICUB
+#if defined(ICUB)
     std::string filenameRob("robots/iCub/iCub.xml");
     Eigen::Vector3f axisTCP(1.0f, 0, 0);
     filenameReach = "reachability/iCub_HipRightArm.bin";
+#elif defined(ARMAR3B)
+
+    std::cout << "Using ARMAR3B" << std::endl;
+    std::string filenameRob("/home/SMBAD/yamanobe/home/armarx/Armar3/data/Armar3/robotmodel/ArmarIIIb.xml");
+    Eigen::Vector3f axisTCP(0, 0, 1.0f);
+    //filenameReach = "/home/SMBAD/yamanobe/home/armarx/Armar3/data/Armar3/reachability/ArmarIIIb_LeftArm.bin";
+    //filenameReach = "/home/SMBAD/yamanobe/home/armarx/Armar3/data/Armar3/reachability/ArmarIIIb_RightArm.bin";
+    filenameReach = "/home/SMBAD/yamanobe/home/armarx/simox/build_release/ReachabilityData_ENDLESS_2015_04_17__18_03_22__2024.bin";
 #else
+    std::cout << "Using ARMAR3" << std::endl;
     std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
     Eigen::Vector3f axisTCP(0, 0, 1.0f);
     filenameReach = "reachability/ArmarIII_PlatformHipRightArm.bin";

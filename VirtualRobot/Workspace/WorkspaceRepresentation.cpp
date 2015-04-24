@@ -1099,6 +1099,8 @@ namespace VirtualRobot
         }
 
         data.reset(new WorkspaceDataArray(numVoxels[0], numVoxels[1], numVoxels[2], numVoxels[3], numVoxels[4], numVoxels[5], adjustOnOverflow));
+
+        customInitialize();
     }
 
     void WorkspaceRepresentation::binarize()
@@ -1611,6 +1613,13 @@ namespace VirtualRobot
         return discretizeStepRotation;
     }
 
+    void WorkspaceRepresentation::addCurrentTCPPose()
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No reachability data loaded");
+        Eigen::Matrix4f p = tcpNode->getGlobalPose();
+        addPose(p);
+    }
+
     void WorkspaceRepresentation::setEntry(const Eigen::Matrix4f& poseGlobal, unsigned char e)
     {
         setEntryCheckNeighbors(poseGlobal, e, 0);
@@ -1882,6 +1891,31 @@ namespace VirtualRobot
     VirtualRobot::WorkspaceDataPtr WorkspaceRepresentation::getData()
     {
         return data;
+    }
+
+    void WorkspaceRepresentation::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Workspace data not initialized");
+
+        std::vector<float> c;
+        nodeSet->getJointValues(c);
+        bool visuSate = robot->getUpdateVisualizationStatus();
+        robot->setUpdateVisualization(false);
+
+        for (unsigned int i = 0; i < loops; i++)
+        {
+            if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
+            {
+                addCurrentTCPPose();
+            }
+            else
+            {
+                VR_WARNING << "Could not find collision-free configuration...";
+            }
+        }
+
+        robot->setUpdateVisualization(visuSate);
+        nodeSet->setJointValues(c);
     }
 
 } // namespace VirtualRobot

@@ -103,7 +103,7 @@ protected:
     std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
     std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
 
-    VirtualRobot::ReachabilityPtr reachSpace;
+    VirtualRobot::WorkspaceRepresentationPtr reachSpace;
     VirtualRobot::RobotNodePtr currentRobotNode;
     /*
 

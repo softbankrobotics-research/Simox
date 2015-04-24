@@ -62,19 +62,6 @@ namespace VirtualRobot
         GraspSetPtr getReachableGrasps(GraspSetPtr grasps, ManipulationObjectPtr object);
 
 
-        /*!
-            Append current TCP pose of the corresponding robot to reachability data.
-            This means that the entry of the corresponding WorkspaceData voxel is increased by 1.
-        */
-        void addCurrentTCPPose();
-
-        /*!
-            Append a number of random TCP poses to Reachability Data
-            \param loops Number of poses that should be appended
-            \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
-        */
-        void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
-
         //! returns a random pose that is covered by the workspace data.
         Eigen::Matrix4f sampleReachablePose();
 

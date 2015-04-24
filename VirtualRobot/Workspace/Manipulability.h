@@ -75,20 +75,6 @@ namespace VirtualRobot
         std::vector< ManipulabiliyGrasp > analyseGrasps(GraspSetPtr grasps, ManipulationObjectPtr object);
         ManipulabiliyGrasp analyseGrasp(GraspPtr grasp, ManipulationObjectPtr object);
 
-
-        /*!
-            Compute the manipulability of the current pose and add entry to manipulability voxel data
-            (if is larger than the existing entry).
-        */
-        virtual void addCurrentTCPPose();
-
-        /*!
-            Append a number of random TCP poses to manipulability data.
-            \param loops Number of poses that should be appended
-            \param checkForSelfCollisions Build a collision-free configurations. If true, random configs are generated until one is collision-free.
-        */
-        virtual void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
-
         /*!
             The manipulability measure can be defined here
         */
@@ -175,6 +161,8 @@ namespace VirtualRobot
         virtual bool customLoad(std::ifstream& file);
         virtual bool customSave(std::ofstream& file);
         virtual void customPrint();
+
+        virtual void customInitialize();
 
         bool customStringRead(std::ifstream& file, std::string& res);
 

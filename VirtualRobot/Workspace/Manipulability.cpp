@@ -6,6 +6,7 @@
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
+#include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -29,38 +30,6 @@ namespace VirtualRobot
         considerSelfDist = false;
     }
 
-    void Manipulability::addCurrentTCPPose()
-    {
-        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No Manipulability data loaded");
-        addPose(tcpNode->getGlobalPose());
-    }
-
-    void Manipulability::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
-    {
-        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Manipulability data not initialized");
-
-        std::vector<float> c;
-        nodeSet->getJointValues(c);
-        bool visuSate = robot->getUpdateVisualizationStatus();
-        robot->setUpdateVisualization(false);
-
-        //updateBaseTransformation();
-
-        for (unsigned int i = 0; i < loops; i++)
-        {
-            if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
-            {
-                addCurrentTCPPose();
-            }
-            else
-            {
-                VR_WARNING << "Could not find collision-free configuration...";
-            }
-        }
-
-        robot->setUpdateVisualization(visuSate);
-        nodeSet->setJointValues(c);
-    }
 
     void Manipulability::addPose(const Eigen::Matrix4f& pose)
     {
@@ -211,6 +180,15 @@ namespace VirtualRobot
         }
 
         measureName = res;
+        if (!measure && measureName==PoseQualityManipulability::getTypeName() )
+        {
+            VR_INFO << "Creating manipulability measure" << endl;
+            measure.reset(new PoseQualityManipulability(nodeSet));
+        } else if (!measure && measureName==PoseQualityExtendedManipulability::getTypeName() )
+        {
+            VR_INFO << "Creating extended manipulability measure" << endl;
+            measure.reset(new PoseQualityExtendedManipulability(nodeSet));
+        }
         //int cjl = read<int>(file);
         int cjl = (int)(FileIO::read<ioIntTypeRead>(file));
 
@@ -283,18 +261,12 @@ namespace VirtualRobot
     bool Manipulability::customSave(std::ofstream& file)
     {
         FileIO::writeString(file, measureName);
-        //int len = measureName.length();
-        //file.write((char *)&len, sizeof(int));
-        //file.write(measureName.c_str(), len);
 
         int cjl = 0;
-
         if (considerJL)
         {
             cjl = 1;
         }
-
-        ;
 
         FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
 
@@ -398,6 +370,16 @@ namespace VirtualRobot
         else
         {
             cout << " no" << endl;
+        }
+    }
+
+    void Manipulability::customInitialize()
+    {
+        if (!measure)
+        {
+            VR_INFO << "Creating manipulability measure" << endl;
+            measure.reset(new PoseQualityManipulability(nodeSet));
+            measureName = measure->getName();
         }
     }
 

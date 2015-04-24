@@ -20,15 +20,7 @@ namespace VirtualRobot
         type = "Reachability";
     }
 
-    void Reachability::addCurrentTCPPose()
-    {
-        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "No reachability data loaded");
-
-        Eigen::Matrix4f p = tcpNode->getGlobalPose();
-
-        addPose(p);
-    }
-
+/*
     void Reachability::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
     {
         THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Reachability data not initialized");
@@ -52,7 +44,7 @@ namespace VirtualRobot
 
         robot->setUpdateVisualization(visuSate);
         robot->setJointValues(nodeSet, c);
-    }
+    }*/
 
     bool Reachability::isReachable(const Eigen::Matrix4f& globalPose)
     {

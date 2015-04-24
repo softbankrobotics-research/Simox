@@ -2,6 +2,8 @@
 #include "reachabilityWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
+#include "VirtualRobot/Workspace/Manipulability.h"
+#include "VirtualRobot/IK/PoseQualityExtendedManipulability.h"
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include <VirtualRobot/RuntimeEnvironment.h>
@@ -486,6 +488,10 @@ void reachabilityWindow::createReach()
         UICreate.comboBoxColModelStatic->addItem(QString(allRNS[i]->getName().c_str()));
     }
 
+    UICreate.comboBoxQualityMeasure->addItem(QString("Reachability"));
+    UICreate.comboBoxQualityMeasure->addItem(QString("Manipulability"));
+    UICreate.comboBoxQualityMeasure->addItem(QString("Ext. Manipulability"));
+
     if (diag.exec())
     {
 
@@ -517,7 +523,21 @@ void reachabilityWindow::createReach()
         float discrTr = UICreate.doubleSpinBoxDiscrTrans->value();
         float discrRo = UICreate.doubleSpinBoxDiscrRot->value();
 
+        std::string measure = std::string(UICreate.comboBoxQualityMeasure->currentText().toAscii());
+        if (measure!="Reachability")
+        {
+            reachSpace.reset(new Manipulability(robot));
+            ManipulabilityPtr manipSpace = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+            manipSpace->setMaxManipulability(UICreate.doubleSpinBoxMaxManip->value());
+        }
+
         reachSpace->initialize(currentRobotNodeSet, discrTr, discrRo, minB, maxB, staticModel, dynamicModel, baseNode, tcpNode); //200.0f,0.4f,minB,maxB,staticModel,dynamicModel,baseNode);
+        if (measure == "Ext. Manipulability")
+        {
+            ManipulabilityPtr man = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+            PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
+            man->setManipulabilityMeasure(manMeasure);
+        }
         reachSpace->print();
 
         reachSpace->addCurrentTCPPose();
@@ -576,8 +596,39 @@ void reachabilityWindow::loadReachFile(std::string filename)
     }
 
     reachFile = filename;
-    reachSpace.reset(new Reachability(robot));
-    reachSpace->load(reachFile);
+    bool loadOK = true;
+
+    // try manipulability file
+    try
+    {
+        reachSpace.reset(new Manipulability(robot));
+        reachSpace->load(reachFile);
+    } catch (...)
+    {
+        loadOK = false;
+    }
+
+    if (!loadOK)
+    {
+        // try reachability file
+
+        loadOK = true;
+        try {
+            reachSpace.reset(new Reachability(robot));
+            reachSpace->load(reachFile);
+        } catch (...)
+        {
+            loadOK = false;
+        }
+    }
+
+    if (!loadOK)
+    {
+        VR_ERROR << "Could not load reach/manip file" << endl;
+        reachSpace.reset();
+        return;
+    }
+
     reachSpace->print();
 
     if (reachSpace->getNodeSet())

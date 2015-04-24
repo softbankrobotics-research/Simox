@@ -80,10 +80,10 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>30</y>
-      <width>81</width>
-      <height>16</height>
+      <width>131</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -93,10 +93,10 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>60</y>
-      <width>91</width>
-      <height>16</height>
+      <width>131</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -108,7 +108,7 @@
      <rect>
       <x>150</x>
       <y>30</y>
-      <width>62</width>
+      <width>71</width>
       <height>22</height>
      </rect>
     </property>
@@ -127,7 +127,7 @@
      <rect>
       <x>150</x>
       <y>60</y>
-      <width>62</width>
+      <width>71</width>
       <height>22</height>
      </rect>
     </property>
@@ -142,6 +142,61 @@
     </property>
     <property name="value">
      <double>0.200000000000000</double>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxQualityMeasure">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>60</y>
+      <width>281</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>30</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Quality Measure</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxManip">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>30</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.010000000000000</double>
+    </property>
+    <property name="value">
+     <double>0.200000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>30</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Max Manip</string>
     </property>
    </widget>
   </widget>
@@ -641,7 +696,7 @@
      <rect>
       <x>20</x>
       <y>60</y>
-      <width>181</width>
+      <width>251</width>
       <height>16</height>
      </rect>
     </property>
@@ -654,7 +709,7 @@
      <rect>
       <x>320</x>
       <y>60</y>
-      <width>221</width>
+      <width>291</width>
       <height>16</height>
      </rect>
     </property>
@@ -668,7 +723,7 @@
       <x>320</x>
       <y>90</y>
       <width>281</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
    </widget>
