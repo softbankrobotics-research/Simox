@@ -38,6 +38,7 @@ namespace VirtualRobot
             ConstrainedIK(RobotPtr &robot, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
 
             void addConstraint(const ConstraintPtr &constraint, int priority=0, bool hard_constraint=true);
+            void removeConstraint(const ConstraintPtr &constraint);
             std::vector<ConstraintPtr> getConstraints();
 
             virtual bool initialize();

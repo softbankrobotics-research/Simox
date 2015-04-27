@@ -21,6 +21,18 @@ void ConstrainedIK::addConstraint(const ConstraintPtr &constraint, int priority,
     std::sort(constraints.begin(), constraints.end(), [this](const ConstraintPtr& lhs, const ConstraintPtr& rhs){return priorities[lhs] > priorities[rhs];});
 }
 
+void ConstrainedIK::removeConstraint(const ConstraintPtr &constraint)
+{
+    auto position = std::find(constraints.begin(), constraints.end(), constraint);
+
+    if(position != constraints.end())
+    {
+        constraints.erase(position);
+        priorities.erase(constraint);
+        hardConstraints.erase(constraint);
+    }
+}
+
 std::vector<ConstraintPtr> ConstrainedIK::getConstraints()
 {
     return constraints;
