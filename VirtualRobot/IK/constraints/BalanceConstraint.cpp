@@ -100,6 +100,11 @@ Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 {
     float stability = supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates);
 
+    if(supportPolygonUpdates)
+    {
+        updateSupportPolygon();
+    }
+
     if(stability < minimumStability)
     {
         return comIK->getError(stepSize);
@@ -116,7 +121,6 @@ Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 
 bool BalanceConstraint::checkTolerances()
 {
-    VR_INFO << "Stability: " << supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) << std::endl;
     return (supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability);
 }
 
