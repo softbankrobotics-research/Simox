@@ -88,14 +88,7 @@ void BalanceConstraint::setCoMHeight(float currentheight)
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
 {
-    Eigen::MatrixXf J = comIK->getJacobianMatrix();
-    if(supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability)
-    {
-        // Set jacobian to zero in order to allow any type of motion within the stability zone
-        J.setZero();
-    }
-
-    return J;
+    return comIK->getJacobianMatrix();
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(SceneObjectPtr tcp)
