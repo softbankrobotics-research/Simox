@@ -214,6 +214,7 @@ namespace VirtualRobot
     class WorkspaceDataArray;
     class ForceTorqueSensor;
     class ContactSensor;
+    class LocalRobot;
 
     typedef boost::shared_ptr<CoMIK> CoMIKPtr;
     typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
@@ -261,6 +262,7 @@ namespace VirtualRobot
     typedef boost::shared_ptr<WorkspaceGrid> WorkspaceGridPtr;
     typedef boost::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
     typedef boost::shared_ptr<ContactSensor> ContactSensorPtr;
+    typedef boost::shared_ptr<LocalRobot> LocalRobotPtr;
 
     /*
      * Predefine for MathTools.h
