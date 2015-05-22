@@ -33,7 +33,7 @@ namespace GraspStudio
     {
     }
 
-    int GenericGraspPlanner::plan(int nrGrasps, int timeOutMS)
+    int GenericGraspPlanner::plan(int nrGrasps, int timeOutMS, VirtualRobot::SceneObjectSetPtr obstacles)
     {
         startTime = clock();
         this->timeOutMS = timeOutMS;
@@ -50,7 +50,7 @@ namespace GraspStudio
 
         while (!timeout() && nGraspsCreated < nrGrasps)
         {
-            VirtualRobot::GraspPtr g = planGrasp();
+            VirtualRobot::GraspPtr g = planGrasp(obstacles);
 
             if (g)
             {
@@ -74,7 +74,7 @@ namespace GraspStudio
         return nGraspsCreated;
     }
 
-    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp()
+    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(VirtualRobot::SceneObjectSetPtr obstacles)
     {
 
         std::string sGraspPlanner("Simox - GraspStudio - ");
@@ -95,8 +95,31 @@ namespace GraspStudio
             return VirtualRobot::GraspPtr();
         }
 
+	if (obstacles)
+        {
+		VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+        VR_ASSERT(eef->getRobot());
+        VR_ASSERT(obstacles);
+	
+		if (colChecker->checkCollision(eef->createSceneObjectSet(),obstacles)) {
+//                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
+            return VirtualRobot::GraspPtr();
+}
+        }
+
         VirtualRobot::EndEffector::ContactInfoVector contacts;
         contacts = eef->closeActors(object);
+
+	if (obstacles)
+        {
+		VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+        VR_ASSERT(eef->getRobot());
+        VR_ASSERT(obstacles);
+		if (colChecker->checkCollision(eef->createSceneObjectSet(),obstacles)) {
+  //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
+            return VirtualRobot::GraspPtr();
+}
+        }
 
         if (contacts.size() < 2)
         {

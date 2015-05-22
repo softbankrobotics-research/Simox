@@ -674,6 +674,81 @@
 			<Node name="WRJ1" unit="radian" value="0.0"/>
 			<Node name="WRJ2" unit="radian" value="0.0"/>
 		</Preshape>
+		<Preshape name="Grasp Preshape Plate Opened">
+			<Node name="FFJ1" unit="radian" value="0.0"/>
+			<Node name="FFJ2" unit="radian" value="0.0"/>
+			<Node name="FFJ3" unit="radian" value="1.52"/>
+			<Node name="LFJ1" unit="radian" value="0.0"/>
+			<Node name="LFJ2" unit="radian" value="0.0"/>
+			<Node name="LFJ3" unit="radian" value="1.42"/>
+			<Node name="LFJ4" unit="radian" value="0.0"/>
+			<Node name="LFJ5" unit="radian" value="0.0"/>
+			<Node name="MFJ1" unit="radian" value="0.0"/>
+			<Node name="MFJ2" unit="radian" value="0.0"/>
+			<Node name="MFJ3" unit="radian" value="1.57"/>
+			<Node name="MFJ4" unit="radian" value="0.0"/>
+			<Node name="RFJ1" unit="radian" value="0.0"/>
+			<Node name="RFJ2" unit="radian" value="0.0"/>
+			<Node name="RFJ3" unit="radian" value="1.52"/>
+			<Node name="RFJ4" unit="radian" value="0.0"/>
+			<Node name="THJ1" unit="radian" value="0.0"/>
+			<Node name="THJ2" unit="radian" value="-0.3"/>
+			<Node name="THJ3" unit="radian" value="0.3"/>
+			<Node name="THJ4" unit="radian" value="1.1"/>
+			<Node name="THJ5" unit="radian" value="0.3"/>
+			<Node name="WRJ1" unit="radian" value="0.78"/>
+			<Node name="WRJ2" unit="radian" value="0.0"/>
+		</Preshape>
+		<Preshape name="Grasp Preshape Plate Closed">
+			<Node name="FFJ1" unit="radian" value="0.0"/>
+			<Node name="FFJ2" unit="radian" value="0.0"/>
+			<Node name="FFJ3" unit="radian" value="1.52"/>
+			<Node name="LFJ1" unit="radian" value="0.0"/>
+			<Node name="LFJ2" unit="radian" value="0.0"/>
+			<Node name="LFJ3" unit="radian" value="1.42"/>
+			<Node name="LFJ4" unit="radian" value="0.0"/>
+			<Node name="LFJ5" unit="radian" value="0.0"/>
+			<Node name="MFJ1" unit="radian" value="0.0"/>
+			<Node name="MFJ2" unit="radian" value="0.0"/>
+			<Node name="MFJ3" unit="radian" value="1.57"/>
+			<Node name="MFJ4" unit="radian" value="0.0"/>
+			<Node name="RFJ1" unit="radian" value="0.0"/>
+			<Node name="RFJ2" unit="radian" value="0.0"/>
+			<Node name="RFJ3" unit="radian" value="1.52"/>
+			<Node name="RFJ4" unit="radian" value="0.0"/>
+			<Node name="THJ1" unit="radian" value="0.0"/>
+			<Node name="THJ2" unit="radian" value="0.25"/>
+			<Node name="THJ3" unit="radian" value="0.7"/>
+			<Node name="THJ4" unit="radian" value="1.1"/>
+			<Node name="THJ5" unit="radian" value="0.3"/>
+			<Node name="WRJ1" unit="radian" value="0.78"/>
+			<Node name="WRJ2" unit="radian" value="0.0"/>
+		</Preshape>
+		<Preshape name="Grasp Preshape Can">
+			<Node name="FFJ1" unit="radian" value="0.0"/>
+			<Node name="FFJ2" unit="radian" value="0.0"/>
+			<Node name="FFJ3" unit="radian" value="0.0"/>
+			<Node name="LFJ1" unit="radian" value="0.0"/>
+			<Node name="LFJ2" unit="radian" value="0.0"/>
+			<Node name="LFJ3" unit="radian" value="0.0"/>
+			<Node name="LFJ4" unit="radian" value="0.0"/>
+			<Node name="LFJ5" unit="radian" value="0.0"/>
+			<Node name="MFJ1" unit="radian" value="0.0"/>
+			<Node name="MFJ2" unit="radian" value="0.0"/>
+			<Node name="MFJ3" unit="radian" value="0.0"/>
+			<Node name="MFJ4" unit="radian" value="0.0"/>
+			<Node name="RFJ1" unit="radian" value="0.0"/>
+			<Node name="RFJ2" unit="radian" value="0.0"/>
+			<Node name="RFJ3" unit="radian" value="0.0"/>
+			<Node name="RFJ4" unit="radian" value="0.0"/>
+			<Node name="THJ1" unit="radian" value="0.0"/>
+			<Node name="THJ2" unit="radian" value="0.3"/>
+			<Node name="THJ3" unit="radian" value="0.3"/>
+			<Node name="THJ4" unit="radian" value="1.1"/>
+			<Node name="THJ5" unit="radian" value="0.3"/>
+			<Node name="WRJ1" unit="radian" value="0.0"/>
+			<Node name="WRJ2" unit="radian" value="0.0"/>
+		</Preshape>
 		<Static>
 			<Node name="forearm"/>
 			<Node name="WRJ1"/>

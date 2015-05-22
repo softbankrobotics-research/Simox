@@ -203,7 +203,7 @@ void GraspPlannerWindow::buildVisu()
 
     if (object)
     {
-        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::CollisionData : SceneObject::Full;
+        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
         if (visualisationNode)

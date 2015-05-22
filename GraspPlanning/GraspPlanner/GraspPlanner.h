@@ -59,7 +59,7 @@ namespace GraspStudio
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of planned grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0) = 0;
+        virtual int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr()) = 0;
 
         /*!
             Returns all grasps that have been generated. These grasps are also stored in the graspSet that was specified on construction.

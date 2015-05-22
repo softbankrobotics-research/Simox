@@ -255,7 +255,7 @@ namespace GraspStudio
         return (candidateGrasps.size() > 0);
     }
 
-    int MatGraspPlanner::plan(int nrGrasps, int timeOutMS)
+    int MatGraspPlanner::plan(int nrGrasps, int timeOutMS, VirtualRobot::SceneObjectSetPtr obstacles)
     {
         if (!initialized)
         {
