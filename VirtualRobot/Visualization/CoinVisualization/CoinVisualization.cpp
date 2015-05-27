@@ -160,21 +160,6 @@ namespace VirtualRobot
         return VisualizationPtr(new CoinVisualization(visualizationNodes));
     }
 
-    /*void CoinVisualization::setGlobalPose( const Eigen::Matrix4f &p )
-    {
-        globalPose = p;
-        if (selection && selection->getNumChildren()>0)
-        {
-            SoMatrixTransform *mTr = dynamic_cast<SoMatrixTransform*>(selection->getChild(0));
-            if (mTr)
-            {
-                SbMatrix m(reinterpret_cast<SbMat*>(globalPose.data()));
-                mTr->matrix.setValue(m);
-            }
-
-        }
-    }*/
-
     void CoinVisualization::exportToVRML2(std::string filename)
     {
 

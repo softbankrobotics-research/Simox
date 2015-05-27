@@ -8,7 +8,6 @@
 namespace VirtualRobot
 {
 
-
     ManipulationObject::ManipulationObject(const std::string& name, VisualizationNodePtr visualization, CollisionModelPtr collisionModel, const SceneObject::Physics& p, CollisionCheckerPtr colChecker)
         : Obstacle(name, visualization, collisionModel, p, colChecker)
     {
@@ -186,17 +185,54 @@ namespace VirtualRobot
 
         return result;
     }
-    /*
-    void ManipulationObject::setFilename( const std::string &filename )
-    {
-        this->filename = filename;
-    }
 
-    std::string ManipulationObject::getFilename()
+    VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, std::string visualizationType, CollisionCheckerPtr colChecker)
     {
-        return filename;
+        THROW_VR_EXCEPTION_IF(!mesh, "Null data");
+
+        ManipulationObjectPtr result;
+        VisualizationFactoryPtr visualizationFactory;
+
+        if (visualizationType.empty())
+        {
+            visualizationFactory = VisualizationFactory::first(NULL);
+        }
+        else
+        {
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+        }
+
+        if (!visualizationFactory)
+        {
+            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
+            return result;
+        }
+
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        VisualizationNodePtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+
+        if (!visu)
+        {
+            VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;
+            return result;
+        }
+
+        int id = idCounter;
+        idCounter++;
+
+        std::stringstream ss;
+        ss << "Mesh_" << id;
+
+        std::string name = ss.str();
+
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
+        result.reset(new ManipulationObject(name, visu, colModel, SceneObject::Physics(), colChecker));
+
+        result->initialize();
+
+        return result;
     }
-    */
 
 
 } //  namespace

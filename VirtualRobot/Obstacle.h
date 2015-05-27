@@ -75,10 +75,19 @@ namespace VirtualRobot
             Create a standard obstacle.
             \param radius The radius of the sphere.
             \param color Specify the color.
-            \param visualizationType Here the typo of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
+            \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
             \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
         static ObstaclePtr createSphere(float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+
+        /*!
+        Create a standard obstacle from a mesh.
+        \param mesh The mesh.
+        \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
+        \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
+        */
+        static ObstaclePtr createFromMesh(TriMeshModelPtr mesh, std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+
         virtual std::string toXML(const std::string& basePath, int tabs = 0);
 
         void setFilename(const std::string& filename);

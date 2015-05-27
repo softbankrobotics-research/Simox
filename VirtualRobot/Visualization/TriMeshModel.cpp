@@ -15,6 +15,17 @@
 namespace VirtualRobot
 {
 
+
+    TriMeshModel::TriMeshModel()
+    {
+    }
+
+    TriMeshModel::TriMeshModel(std::vector <triangle> &triangles)
+    {
+        for (size_t i = 0; i < triangles.size(); i++)
+            addTriangleWithFace(triangles[i].vertex1, triangles[i].vertex2, triangles[i].vertex3);
+    }
+
     /**
      * This method adds the vertices \p vertex1,
      * \p vertex2 and \p vertex3 to TriMeshModel::vertices and creates a new

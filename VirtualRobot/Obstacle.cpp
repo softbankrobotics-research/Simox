@@ -6,6 +6,7 @@
 #include "Visualization/VisualizationFactory.h"
 #include <vector>
 
+
 namespace VirtualRobot
 {
 
@@ -141,6 +142,55 @@ namespace VirtualRobot
 
         std::stringstream ss;
         ss << "Sphere_" << id;
+
+        std::string name = ss.str();
+
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
+        result.reset(new Obstacle(name, visu, colModel, SceneObject::Physics(), colChecker));
+
+        result->initialize();
+
+        return result;
+    }
+
+
+    VirtualRobot::ObstaclePtr Obstacle::createFromMesh(TriMeshModelPtr mesh, std::string visualizationType , CollisionCheckerPtr colChecker)
+    {
+        THROW_VR_EXCEPTION_IF(!mesh, "Null data");
+
+        ObstaclePtr result;
+        VisualizationFactoryPtr visualizationFactory;
+
+        if (visualizationType.empty())
+        {
+            visualizationFactory = VisualizationFactory::first(NULL);
+        }
+        else
+        {
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+        }
+
+        if (!visualizationFactory)
+        {
+            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
+            return result;
+        }
+
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        VisualizationNodePtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+        
+        if (!visu)
+        {
+            VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;
+            return result;
+        }
+
+        int id = idCounter;
+        idCounter++;
+
+        std::stringstream ss;
+        ss << "Mesh_" << id;
 
         std::string name = ss.str();
 

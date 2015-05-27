@@ -71,12 +71,8 @@ namespace VirtualRobot
             return visualizationNodes;
         }
 
-        //virtual void setGlobalPose(const Eigen::Matrix4f &p);
-
     protected:
         std::vector<VisualizationNodePtr> visualizationNodes;
-
-        //Eigen::Matrix4f globalPose;
     };
 
 } // namespace VirtualRobot

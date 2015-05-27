@@ -91,8 +91,13 @@ namespace VirtualRobot
             return ManipulationObjectPtr(_clone(name, colChecker));
         }
 
-        //void setFilename(const std::string &filename);
-        //std::string getFilename();
+        /*!
+        Create a standard obstacle from a mesh.
+        \param mesh The mesh.
+        \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
+        \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
+        */
+        static ManipulationObjectPtr createFromMesh(TriMeshModelPtr mesh, std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
     protected:
 

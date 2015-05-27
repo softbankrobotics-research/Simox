@@ -65,8 +65,6 @@ namespace VirtualRobot
             return "inventor";
         }
 
-        //virtual void setGlobalPose(const Eigen::Matrix4f &p);
-
     protected:
         bool buildVisualization();
         SoSelection* selection;
