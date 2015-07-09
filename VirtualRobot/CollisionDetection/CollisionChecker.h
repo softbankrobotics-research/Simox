@@ -186,6 +186,8 @@ namespace VirtualRobot
         }
 #endif
 
+		protected:
+			SceneObjectSetPtr getRobotModels(RobotPtr r);
     private:
         // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++
         friend class Cleanup;

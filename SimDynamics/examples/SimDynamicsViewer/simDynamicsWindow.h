@@ -66,6 +66,8 @@ public slots:
     void stepEngine();
 
     void checkBoxFixedTimeStep();
+
+	void addObject();
 protected:
     bool loadRobot(std::string robotFilename);
     void setupUI();
@@ -80,7 +82,7 @@ protected:
     SimDynamics::DynamicsRobotPtr dynamicsRobot;
     SimDynamics::DynamicsObjectPtr dynamicsObject;
     SimDynamics::DynamicsObjectPtr dynamicsObject2;
-    SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis;
+    std::vector<SimDynamics::DynamicsObjectPtr> dynamicsObjects;
 
     Ui::MainWindowBulletViewer UI;
 

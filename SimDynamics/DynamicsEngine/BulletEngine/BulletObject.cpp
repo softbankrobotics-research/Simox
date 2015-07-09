@@ -58,14 +58,14 @@ namespace SimDynamics
                 */
                 if (primitives.size() > 0)
                 {
-                    btCompoundShape* compoundShape = new btCompoundShape(false);
+                    btCompoundShape* compoundShape = new btCompoundShape(true);
                     std::vector<Primitive::PrimitivePtr>::const_iterator it;
                     Eigen::Matrix4f currentTransform = Eigen::Matrix4f::Identity();
 
                     Eigen::Matrix4f localComTransform;
                     localComTransform.setIdentity();
                     localComTransform.block(0,3,3,1) = -o->getCoMLocal();
-                    cout << "localComTransform:\n" << localComTransform;
+                    //cout << "localComTransform:\n" << localComTransform;
 
 
                     for (it = primitives.begin(); it != primitives.end(); it++)

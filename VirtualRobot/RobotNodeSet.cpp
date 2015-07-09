@@ -686,8 +686,10 @@ namespace VirtualRobot
 
     bool RobotNodeSet::isKinematicRoot(RobotNodePtr robotNode)
     {
-        for(auto &node : robotNodes)
+        RobotNodePtr node;
+        for(size_t i=0; i<robotNodes.size(); i++)
         {
+            node = robotNodes.at(i);
             if(node != robotNode && !robotNode->hasChild(node, true))
             {
                 return false;

@@ -590,6 +590,19 @@
         </property>
        </widget>
       </widget>
+      <widget class="QPushButton" name="pushButtonAddObject">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>10</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add Object</string>
+       </property>
+      </widget>
      </widget>
     </item>
     <item row="0" column="0">
