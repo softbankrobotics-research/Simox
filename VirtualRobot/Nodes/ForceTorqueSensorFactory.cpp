@@ -51,11 +51,11 @@ namespace VirtualRobot
 
 
         // visu data
-        bool visuProcessed = false;
-        bool enableVisu = true;
-        bool useAsColModel = false;
+        //bool visuProcessed = false;
+        //bool enableVisu = true;
+        //bool useAsColModel = false;
 
-        VisualizationNodePtr visualizationNode;
+        //VisualizationNodePtr visualizationNode;
 
         Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 
@@ -72,10 +72,11 @@ namespace VirtualRobot
             //              visualizationNode = BaseIO::processVisualizationTag(nodeXML, sensorName, basePath, useAsColModel);
             //              visuProcessed = true;
             //          }// else silently ignore tag
-            //      } else if (nodeName == "transform")
-            //      {
-            //          BaseIO::processTransformNode(sensorXMLNode,sensorName,transformMatrix);
             //      } else
+            if (nodeName == "transform")
+            {
+                BaseIO::processTransformNode(sensorXMLNode,sensorName,transformMatrix);
+            } else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in Sensor <" << sensorName << ">." << endl);
             }
@@ -85,7 +86,7 @@ namespace VirtualRobot
 
 
 
-        SensorPtr Sensor(new ForceTorqueSensor(node, sensorName));
+        SensorPtr Sensor(new ForceTorqueSensor(node, sensorName, transformMatrix));
 
         return Sensor;
     }

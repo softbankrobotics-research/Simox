@@ -9,7 +9,9 @@ namespace VirtualRobot
 {
 
     ForceTorqueSensor::ForceTorqueSensor(RobotNodeWeakPtr robotNode,
-                                         const std::string& name) : Sensor(robotNode, name),
+                                         const std::string& name,
+                                         const Eigen::Matrix4f& rnTrafo) :
+        Sensor(robotNode, name, VisualizationNodePtr(), rnTrafo),
         forceTorqueValues(6)
     {
         forceTorqueValues.setZero();
@@ -40,8 +42,8 @@ namespace VirtualRobot
         Eigen::Vector3f torqueVector = forceTorqueValues.tail(3);
 
         // project onto joint axis
-        RobotNodePtr rn(robotNode);
-        Eigen::Vector3f zAxis = rn->getGlobalPose().block(0, 2, 3, 1);
+        //RobotNodePtr rn(robotNode);
+        Eigen::Vector3f zAxis = this->globalPose.block(0, 2, 3, 1);
         Eigen::Vector3f axisTorque = (torqueVector.dot(zAxis)) * zAxis;
 
         return axisTorque;
@@ -78,10 +80,14 @@ namespace VirtualRobot
             pre += t;
         }
 
-        ss << pre << "<Sensor type='" << ForceTorqueSensorFactory::getName() << "'/>" << endl;
+        ss << pre << "<Sensor type='" << ForceTorqueSensorFactory::getName() << "' name='" << name << "'>" << endl;
         std::string pre2 = pre + t;
+        ss << pre << "<Transform>" << endl;
+        ss << BaseIO::toXML(rnTransformation, pre2);
+        ss << pre << "</Transform>" << endl;
 
 
+        ss << pre << "</Sensor>" << endl;
         return ss.str();
     }
 

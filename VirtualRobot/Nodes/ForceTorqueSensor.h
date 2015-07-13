@@ -49,7 +49,8 @@ namespace VirtualRobot
             Constructor with settings.
         */
         ForceTorqueSensor(RobotNodeWeakPtr robotNode,
-                          const std::string& name
+                          const std::string& name,
+                          const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()
                          );
 
         /*!
