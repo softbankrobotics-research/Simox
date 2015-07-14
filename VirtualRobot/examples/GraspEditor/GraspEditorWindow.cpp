@@ -26,15 +26,23 @@
 #include <Inventor/nodes/SoEventCallback.h>
 
 #include <sstream>
+
+#include "ui_GraspEditor.h"
+
+
 using namespace std;
 using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile, Qt::WFlags flags)
-    : QMainWindow(NULL)
-{
+GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
+                                     bool embeddedGraspEditor, Qt::WFlags flags)
+    : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
+{    
     VR_INFO << " start " << endl;
+
+    // Indicates whether this program is started inside another extern program
+    this->embeddedGraspEditor = embeddedGraspEditor;
 
     objectFile = objFile;
     this->robotFile = robotFile;
@@ -88,7 +96,7 @@ GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFil
     m_pExViewer->viewAll();
 
     SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
+    timer = new SoTimerSensor(timerCB, this);
     timer->setInterval(SbTime(TIMER_MS / 1000.0f));
     sensor_mgr->insertTimerSensor(timer);
 }
@@ -96,6 +104,9 @@ GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFil
 
 GraspEditorWindow::~GraspEditorWindow()
 {
+    timer->unschedule();
+    delete m_pExViewer;
+    delete UI;
     sceneSep->unref();
 }
 
@@ -104,12 +115,12 @@ void GraspEditorWindow::timerCB(void* data, SoSensor* sensor)
 {
     GraspEditorWindow* ikWindow = static_cast<GraspEditorWindow*>(data);
     float x[6];
-    x[0] = (float)ikWindow->UI.horizontalSliderX->value();
-    x[1] = (float)ikWindow->UI.horizontalSliderY->value();
-    x[2] = (float)ikWindow->UI.horizontalSliderZ->value();
-    x[3] = (float)ikWindow->UI.horizontalSliderRo->value();
-    x[4] = (float)ikWindow->UI.horizontalSliderPi->value();
-    x[5] = (float)ikWindow->UI.horizontalSliderYa->value();
+    x[0] = (float)ikWindow->UI->horizontalSliderX->value();
+    x[1] = (float)ikWindow->UI->horizontalSliderY->value();
+    x[2] = (float)ikWindow->UI->horizontalSliderZ->value();
+    x[3] = (float)ikWindow->UI->horizontalSliderRo->value();
+    x[4] = (float)ikWindow->UI->horizontalSliderPi->value();
+    x[5] = (float)ikWindow->UI->horizontalSliderYa->value();
     x[0] /= 10.0f;
     x[1] /= 10.0f;
     x[2] /= 10.0f;
@@ -126,8 +137,8 @@ void GraspEditorWindow::timerCB(void* data, SoSensor* sensor)
 
 void GraspEditorWindow::setupUI()
 {
-    UI.setupUi(this);
-    m_pExViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    UI->setupUi(this);
+    m_pExViewer = new SoQtExaminerViewer(UI->frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
     // setup
     m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
@@ -143,26 +154,33 @@ void GraspEditorWindow::setupUI()
     m_pExViewer->setSceneGraph(sceneSep);
     m_pExViewer->viewAll();
 
-    connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
-    connect(UI.pushButtonLoadObject, SIGNAL(clicked()), this, SLOT(selectObject()));
-    connect(UI.pushButtonSave, SIGNAL(clicked()), this, SLOT(saveObject()));
-    connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
-    connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
-    connect(UI.pushButtonLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
-    connect(UI.comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
-    connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
-    connect(UI.pushButtonAddGrasp, SIGNAL(clicked()), this, SLOT(addGrasp()));
-    connect(UI.pushButtonRenameGrasp, SIGNAL(clicked()), this, SLOT(renameGrasp()));
-    connect(UI.checkBoxTCP, SIGNAL(clicked()), this, SLOT(buildVisu()));
+    connect(UI->pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
+    connect(UI->pushButtonLoadObject, SIGNAL(clicked()), this, SLOT(selectObject()));
+    connect(UI->pushButtonSave, SIGNAL(clicked()), this, SLOT(saveObject()));
+    connect(UI->pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
+    connect(UI->pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
+    connect(UI->pushButtonLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
+    connect(UI->comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
+    connect(UI->comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
+    connect(UI->pushButtonAddGrasp, SIGNAL(clicked()), this, SLOT(addGrasp()));
+    connect(UI->pushButtonRenameGrasp, SIGNAL(clicked()), this, SLOT(renameGrasp()));
+    connect(UI->checkBoxTCP, SIGNAL(clicked()), this, SLOT(buildVisu()));
 
-    connect(UI.horizontalSliderX, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectX()));
-    connect(UI.horizontalSliderY, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectY()));
-    connect(UI.horizontalSliderZ, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectZ()));
-    connect(UI.horizontalSliderRo, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectA()));
-    connect(UI.horizontalSliderPi, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectB()));
-    connect(UI.horizontalSliderYa, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectG()));
-    connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(buildVisu()));
-    connect(UI.checkBoxGraspSet, SIGNAL(clicked()), this, SLOT(buildVisu()));
+    connect(UI->horizontalSliderX, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectX()));
+    connect(UI->horizontalSliderY, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectY()));
+    connect(UI->horizontalSliderZ, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectZ()));
+    connect(UI->horizontalSliderRo, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectA()));
+    connect(UI->horizontalSliderPi, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectB()));
+    connect(UI->horizontalSliderYa, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectG()));
+    connect(UI->checkBoxColModel, SIGNAL(clicked()), this, SLOT(buildVisu()));
+    connect(UI->checkBoxGraspSet, SIGNAL(clicked()), this, SLOT(buildVisu()));
+
+
+    // In case of embedded use of this program it should not be possible to load an object after the editor is started
+    if (embeddedGraspEditor)
+    {
+        UI->pushButtonLoadObject->setVisible(false);
+    }
 }
 
 QString GraspEditorWindow::formatString(const char* s, float f)
@@ -220,9 +238,9 @@ void GraspEditorWindow::buildVisu()
     eefVisu->removeAllChildren();
 
     showCoordSystem();
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    SceneObject::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
 
-    if (!UI.checkBoxTCP->isChecked())
+    if (!UI->checkBoxTCP->isChecked())
     {
         if (robotEEF)
         {
@@ -293,10 +311,20 @@ void GraspEditorWindow::selectRobot()
     loadRobot();
 }
 
-void GraspEditorWindow::selectObject()
+void GraspEditorWindow::selectObject(std::string file)
 {
-    QString fi = QFileDialog::getOpenFileName(this, tr("Open ManipulationObject File"), QString(), tr("XML Files (*.xml)"));
-    std::string s = std::string(fi.toAscii());
+    std::string s;
+
+    // The object must be selected manually, cannot be done in the constructor
+    if (embeddedGraspEditor)
+    {
+        s = file;
+    }
+    else
+    {
+        QString fi = QFileDialog::getOpenFileName(this, tr("Open ManipulationObject File"), QString(), tr("XML Files (*.xml)"));
+        s = std::string(fi.toAscii());
+    }
 
     if (s != "")
     {
@@ -312,8 +340,13 @@ void GraspEditorWindow::saveObject()
         return;
     }
 
-    QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
-    objectFile = std::string(fi.toAscii());
+    // No need to select a file where the object is saved, it is the same as the input file
+    if (!embeddedGraspEditor)
+    {
+        QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
+        objectFile = std::string(fi.toAscii());
+    }
+
     bool ok = false;
 
     try
@@ -331,6 +364,19 @@ void GraspEditorWindow::saveObject()
     {
         cout << " ERROR while saving object" << endl;
         return;
+    }
+    else
+    {
+        if (embeddedGraspEditor)
+        {
+            cout << "Changes successful saved to " << objectFile << endl;
+            QMessageBox msgBox;
+            msgBox.setText(QString::fromStdString("Changes successful saved to " + objectFile));
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+        }
     }
 
 }
@@ -466,6 +512,18 @@ void GraspEditorWindow::loadObject()
     {
         cout << " ERROR while creating object" << endl;
         cout << e.what();
+
+        if (embeddedGraspEditor)
+        {
+            QMessageBox msgBox;
+            msgBox.setText(QString::fromStdString(" ERROR while creating object."));
+            msgBox.setInformativeText("Please select a valid manipulation file.");
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+        }
+
         return;
     }
 
@@ -484,17 +542,17 @@ void GraspEditorWindow::loadObject()
 
 void GraspEditorWindow::updateEEFBox()
 {
-    UI.comboBoxEEF->clear();
+    UI->comboBoxEEF->clear();
 
     for (size_t i = 0; i < eefs.size(); i++)
     {
-        UI.comboBoxEEF->addItem(QString(eefs[i]->getName().c_str()));
+        UI->comboBoxEEF->addItem(QString(eefs[i]->getName().c_str()));
     }
 }
 
 void GraspEditorWindow::updateGraspBox()
 {
-    UI.comboBoxGrasp->clear();
+    UI->comboBoxGrasp->clear();
 
     if (!currentGraspSet || currentGraspSet->getSize() == 0)
     {
@@ -503,7 +561,7 @@ void GraspEditorWindow::updateGraspBox()
 
     for (unsigned int i = 0; i < currentGraspSet->getSize(); i++)
     {
-        UI.comboBoxGrasp->addItem(QString(currentGraspSet->getGrasp(i)->getName().c_str()));
+        UI->comboBoxGrasp->addItem(QString(currentGraspSet->getGrasp(i)->getName().c_str()));
     }
 }
 
@@ -568,8 +626,8 @@ void GraspEditorWindow::addGrasp()
     GraspPtr g(new Grasp(name, robot->getType(), currentEEF->getName(), pose, std::string("GraspEditor")));
     currentGraspSet->addGrasp(g);
     updateGraspBox();
-    UI.comboBoxGrasp->setCurrentIndex(UI.comboBoxGrasp->count() - 1);
-    selectGrasp(UI.comboBoxGrasp->count() - 1);
+    UI->comboBoxGrasp->setCurrentIndex(UI->comboBoxGrasp->count() - 1);
+    selectGrasp(UI->comboBoxGrasp->count() - 1);
     buildVisu();
 }
 
@@ -592,32 +650,32 @@ void GraspEditorWindow::updateEEF(float x[6])
 
 void GraspEditorWindow::sliderReleased_ObjectX()
 {
-    UI.horizontalSliderX->setValue(0);
+    UI->horizontalSliderX->setValue(0);
 }
 
 void GraspEditorWindow::sliderReleased_ObjectY()
 {
-    UI.horizontalSliderY->setValue(0);
+    UI->horizontalSliderY->setValue(0);
 }
 
 void GraspEditorWindow::sliderReleased_ObjectZ()
 {
-    UI.horizontalSliderZ->setValue(0);
+    UI->horizontalSliderZ->setValue(0);
 }
 
 void GraspEditorWindow::sliderReleased_ObjectA()
 {
-    UI.horizontalSliderRo->setValue(0);
+    UI->horizontalSliderRo->setValue(0);
 }
 
 void GraspEditorWindow::sliderReleased_ObjectB()
 {
-    UI.horizontalSliderPi->setValue(0);
+    UI->horizontalSliderPi->setValue(0);
 }
 
 void GraspEditorWindow::sliderReleased_ObjectG()
 {
-    UI.horizontalSliderYa->setValue(0);
+    UI->horizontalSliderYa->setValue(0);
 }
 
 
@@ -646,12 +704,12 @@ void GraspEditorWindow::showCoordSystem()
             return;
         }
 
-        tcp->showCoordinateSystem(UI.checkBoxTCP->isChecked());
+        tcp->showCoordinateSystem(UI->checkBoxTCP->isChecked());
     }
 
     if (object)
     {
-        object->showCoordinateSystem(UI.checkBoxTCP->isChecked());
+        object->showCoordinateSystem(UI->checkBoxTCP->isChecked());
     }
 }
 
@@ -660,7 +718,7 @@ void GraspEditorWindow::buildGraspSetVisu()
 {
     graspSetVisu->removeAllChildren();
 
-    if (UI.checkBoxGraspSet->isChecked() && robotEEF && robotEEF_EEF && currentGraspSet && object)
+    if (UI->checkBoxGraspSet->isChecked() && robotEEF && robotEEF_EEF && currentGraspSet && object)
     {
         GraspSetPtr gs = currentGraspSet->clone();
         gs->removeGrasp(currentGrasp);
@@ -672,4 +730,3 @@ void GraspEditorWindow::buildGraspSetVisu()
         }
     }
 }
-

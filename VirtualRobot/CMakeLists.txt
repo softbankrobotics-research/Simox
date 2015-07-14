@@ -29,7 +29,6 @@ MACRO(ADD_VR_TEST TEST_NAME)
 	         COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
 ENDMACRO()
 
-
 #################################### FILES ##################################
 SET(SOURCES
 CollisionDetection/CollisionChecker.cpp
@@ -232,6 +231,14 @@ Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
 
+
+
+
+
+
+
+
+
 ADD_SUBDIRECTORY(Visualization/tests)
 ADD_SUBDIRECTORY(Workspace/tests)
 ADD_SUBDIRECTORY(Compression/tests)
@@ -355,6 +362,21 @@ ADD_SUBDIRECTORY(Transformation/tests/)
 
 # include examples
 ADD_SUBDIRECTORY(examples/)
+
+
+# -----------------------------------------------------------------------------------
+# Adding the example GraspEditor to the library, because it is used in other projects
+
+SET(SOURCES ${SOURCES} examples/GraspEditor/GraspEditorWindow.cpp)
+SET(INCLUDES ${INCLUDES} examples/GraspEditor/GraspEditorWindow.h)
+set(UI examples/GraspEditor/GraspEditor.ui)
+QT4_WRAP_UI(UIC ${UI})
+QT4_WRAP_CPP(MOC_SRC examples/GraspEditor/GraspEditorWindow.h)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/VirtualRobot/examples/GraspEditor)
+SET(SOURCES ${SOURCES} ${UIC} ${MOC_SRC})
+
+# Finished adding the example GraspEditor to the library
+#-----------------------------------------------------------------------------------
 
 
 ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})

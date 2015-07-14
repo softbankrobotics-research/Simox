@@ -25,14 +25,18 @@
 
 #include <vector>
 
-#include "ui_GraspEditor.h"
+// #include "ui_GraspEditor.h"
+
+namespace Ui {
+    class MainWindowGraspEditor;
+}
 
 class GraspEditorWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GraspEditorWindow(std::string& objFile, std::string& robotFile, Qt::WFlags flags = 0);
-    ~GraspEditorWindow();
+    GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false, Qt::WFlags flags = 0);
+    virtual ~GraspEditorWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -49,7 +53,7 @@ public slots:
     void loadRobot();
 
     void selectRobot();
-    void selectObject();
+    void selectObject(std::string file = "");
     void saveObject();
     void selectEEF(int n);
     void selectGrasp(int n);
@@ -72,6 +76,7 @@ public slots:
     void showCoordSystem();
 
 protected:
+
     void setupUI();
     QString formatString(const char* s, float f);
 
@@ -84,7 +89,12 @@ protected:
 
     static void timerCB(void* data, SoSensor* sensor);
     void setCurrentGrasp(Eigen::Matrix4f& p);
-    Ui::MainWindowGraspEditor UI;
+
+    Ui::MainWindowGraspEditor *UI;
+
+    // Indicates whether this program is started embedded
+    bool embeddedGraspEditor;
+
     SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     SoSeparator* sceneSep;
@@ -106,6 +116,8 @@ protected:
 
     std::string robotFile;
     std::string objectFile;
+
+    SoTimerSensor* timer;
 
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
