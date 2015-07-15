@@ -27,7 +27,7 @@
 
 #include <sstream>
 
-#include "ui_GraspEditor.h"
+#include <VirtualRobot/examples/GraspEditor/ui_GraspEditor.h>
 
 
 using namespace std;
