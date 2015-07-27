@@ -18,6 +18,7 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/nodes/SoRotation.h>
 
 namespace VirtualRobot
 {
@@ -165,6 +166,15 @@ namespace VirtualRobot
 
         SoSeparator* root = new SoSeparator;
         root->ref();
+        SoRotation* rotationX = new SoRotation();
+        rotationX->ref();
+        rotationX->rotation.setValue( SbVec3f(-1,0,0), M_PI/2);
+        SoRotation* rotationZ = new SoRotation();
+        rotationZ->ref();
+        rotationZ->rotation.setValue( SbVec3f(0,0,1), M_PI);
+
+        root->addChild(rotationX);
+        root->addChild(rotationZ);
         root->addChild(this->getCoinVisualization());
 
         printf("Converting...\n");
@@ -173,6 +183,8 @@ namespace VirtualRobot
         SoVRMLGroup* newroot = tovrml2.getVRML2SceneGraph();
         newroot->ref();
         root->unref();
+        rotationZ->unref();
+        rotationX->unref();
 
         printf("Writing...\n");
 

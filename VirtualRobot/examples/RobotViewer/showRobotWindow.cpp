@@ -4,6 +4,7 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -396,6 +397,8 @@ void showRobotWindow::exportVRML()
 
     if (!s.empty())
     {
+        if (!boost::algorithm::ends_with(s, ".wrl"))
+            s += ".wrl";
         SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
         visualization = robot->getVisualization<CoinVisualization>(colModel);
         visualization->exportToVRML2(s);

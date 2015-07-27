@@ -59,7 +59,7 @@ namespace VirtualRobot
             \param urdfModel The model
             \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
         */
-        RobotPtr createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, bool useColModelsIfNoVisuModel = true);
+        RobotPtr createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
 
         // AbstractFactoryMethod
     public:
@@ -76,10 +76,10 @@ namespace VirtualRobot
 
 
     protected:
-        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, bool useColModelsIfNoVisuModel = true);
+        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
         RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
-        VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose);
+        VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose, const std::string& basePath);
         std::string getFilename(const std::string& f);
 
         bool useColModelsIfNoVisuModel;
