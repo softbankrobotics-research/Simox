@@ -591,10 +591,11 @@ namespace SimDynamics
                 }
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
-                /*if (it->second.node->getMaxTorque()>0)
+                if (it->second.node->getMaxTorque()>0)
                 {
                     maxImpulse = it->second.node->getMaxTorque() * btScalar(dt);
-                }*/
+                    //cout << "node:" << it->second.node->getName() << ", max impulse: " << maxImpulse << ", dt:" << dt << ", maxImp:" << it->second.node->getMaxTorque() << endl;
+                }
 #if PRINT_TEST_DEBUG_MESSAGES
 
                 if (it->first->getName() == "Elbow R")

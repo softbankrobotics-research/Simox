@@ -203,6 +203,8 @@ void GraspPlannerWindow::buildVisu()
 
     if (object)
     {
+
+#if 1
         SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
@@ -210,7 +212,21 @@ void GraspPlannerWindow::buildVisu()
         {
             objectSep->addChild(visualisationNode);
         }
-
+#else
+        if (UI.checkBoxColModel->isChecked())
+        {
+            VirtualRobot::MathTools::ConvexHull3DPtr ch = ConvexHullGenerator::CreateConvexHull(object->getCollisionModel()->getTriMeshModel());
+            CoinConvexHullVisualizationPtr chv(new CoinConvexHullVisualization(ch));
+            SoSeparator* s = chv->getCoinVisualization();
+            if (s)
+                objectSep->addChild(s);
+        } else
+        {
+            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, SceneObject::Full);
+            if (visualisationNode)
+                objectSep->addChild(visualisationNode);
+        }
+#endif
         /*SoNode *s = CoinVisualizationFactory::getCoinVisualization(object->getCollisionModel()->getTriMeshModel(),true);
         if (s)
             objectSep->addChild(s);   */

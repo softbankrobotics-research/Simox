@@ -84,8 +84,14 @@ namespace VirtualRobot
             Large entries result in small joint deltas.
         */
         void setJointWeights(const Eigen::VectorXf& jointWeights);
+
+        /*!
+         * \brief print Print current status of the IK solver
+         */
+        virtual void print();
     protected:
 
+        std::string name;
         RobotNodeSetPtr rns;
         InverseJacobiMethod inverseMethod;
         bool initialized;

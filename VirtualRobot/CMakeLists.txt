@@ -12,7 +12,9 @@ ENDIF()
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
-FIND_PACKAGE (RBDL)
+if (Simox_USE_RBDL)
+	FIND_PACKAGE (RBDL)
+endif()
 
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)  
@@ -116,20 +118,20 @@ Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 )
 
-if (RBDL_FOUND)
+if (Simox_USE_RBDL AND RBDL_FOUND)
     SET(SOURCES
-    ${SOURCES}
-    Dynamics/dynamics.cpp
+		${SOURCES}
+		Dynamics/dynamics.cpp
     )
 
-SET(INCLUDES
-    ${INCLUDES}
-    Dynamics/dynamics.h
-)
+	SET(INCLUDES
+		${INCLUDES}
+		Dynamics/dynamics.h
+	)
 
-ADD_SUBDIRECTORY(Dynamics/tests)
+	ADD_SUBDIRECTORY(Dynamics/tests)
 
-endif (RBDL_FOUND)
+endif ()
 
 
 SET(INCLUDES
@@ -319,38 +321,40 @@ endif ()
 
 
 #check for URDF
-include(SearchForTinyXML)
-FIND_PACKAGE(urdfdom)
-#FIND_PACKAGE(PkgConfig)
-#PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
-#PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
+if (Simox_USE_URDF)
+	include(SearchForTinyXML)
+	FIND_PACKAGE(urdfdom)
+	#FIND_PACKAGE(PkgConfig)
+	#PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
+	#PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
 
-if (tinyxml_library AND URDF_FOUND)
-   MESSAGE(STATUS " ** Including URDF importer")
+	if (tinyxml_library AND URDF_FOUND)
+	   MESSAGE(STATUS " ** Including URDF importer")
 
-    include_directories(${tinyxml_include_dirs})
-    link_directories(${tinyxml_library_dirs})
-    add_definitions(${tinyxml_cflags})
-    add_definitions(" -DTIXML_USE_STL ")
+		include_directories(${tinyxml_include_dirs})
+		link_directories(${tinyxml_library_dirs})
+		add_definitions(${tinyxml_cflags})
+		add_definitions(" -DTIXML_USE_STL ")
 
-    INCLUDE_DIRECTORIES (
-	    ${URDFDOM_INCLUDE_DIRS}
-	    ${URDFDOM_PARSER_INCLUDE_DIRS}
-	    ${URDFDOM_HEADERS_INCLUDE_DIRS}
-    )
+		INCLUDE_DIRECTORIES (
+			${URDFDOM_INCLUDE_DIRS}
+			${URDFDOM_PARSER_INCLUDE_DIRS}
+			${URDFDOM_HEADERS_INCLUDE_DIRS}
+		)
 
-    SET(SOURCES
-      ${SOURCES}
-	    Import/URDF/SimoxURDFFactory.cpp
-	    )
-    SET(INCLUDES
-      ${INCLUDES}
-	    Import/URDF/SimoxURDFFactory.h
-	    )
+		SET(SOURCES
+		  ${SOURCES}
+			Import/URDF/SimoxURDFFactory.cpp
+			)
+		SET(INCLUDES
+		  ${INCLUDES}
+			Import/URDF/SimoxURDFFactory.h
+			)
 
-    SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
-else()
-    MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
+		SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
+	else()
+		MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
+	endif()
 endif()
 
 # include collision detection
@@ -367,13 +371,13 @@ ADD_SUBDIRECTORY(examples/)
 # -----------------------------------------------------------------------------------
 # Adding the example GraspEditor to the library, because it is used in other projects
 
-SET(SOURCES ${SOURCES} examples/GraspEditor/GraspEditorWindow.cpp)
-SET(INCLUDES ${INCLUDES} examples/GraspEditor/GraspEditorWindow.h)
-set(UI examples/GraspEditor/GraspEditor.ui)
-QT4_WRAP_UI(UIC ${UI})
-QT4_WRAP_CPP(MOC_SRC examples/GraspEditor/GraspEditorWindow.h)
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/VirtualRobot/examples/GraspEditor)
-SET(SOURCES ${SOURCES} ${UIC} ${MOC_SRC})
+#SET(SOURCES ${SOURCES} examples/GraspEditor/GraspEditorWindow.cpp)
+#SET(INCLUDES ${INCLUDES} examples/GraspEditor/GraspEditorWindow.h)
+#set(UI examples/GraspEditor/GraspEditor.ui)
+#QT4_WRAP_UI(UIC ${UI})
+#QT4_WRAP_CPP(MOC_SRC examples/GraspEditor/GraspEditorWindow.h)
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+#SET(SOURCES ${SOURCES} ${UIC} ${MOC_SRC})
 
 # Finished adding the example GraspEditor to the library
 #-----------------------------------------------------------------------------------

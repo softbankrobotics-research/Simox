@@ -13,7 +13,7 @@ namespace VirtualRobot
 {
 
     JacobiProvider::JacobiProvider(RobotNodeSetPtr rns, InverseJacobiMethod invJacMethod) :
-        rns(rns), inverseMethod(invJacMethod)
+        name("JacobiProvvider"), rns(rns), inverseMethod(invJacMethod)
     {
         initialized = false;
     }
@@ -150,6 +150,13 @@ namespace VirtualRobot
     void JacobiProvider::setJointWeights(const Eigen::VectorXf& jointWeights)
     {
         this->jointWeights = jointWeights;
+    }
+
+    void JacobiProvider::print()
+    {
+        cout << "IK solver:" << name << endl;
+        cout << "==========================" << endl;
+        cout << "RNS:" << rns->getName() << " with " << rns->getSize() << " joints" << endl;
     }
 
     bool JacobiProvider::isInitialized()

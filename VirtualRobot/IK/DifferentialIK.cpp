@@ -20,6 +20,7 @@ namespace VirtualRobot
     DifferentialIK::DifferentialIK(RobotNodeSetPtr _rns, RobotNodePtr _coordSystem, JacobiProvider::InverseJacobiMethod invJacMethod, float invParam) :
         JacobiProvider(_rns, invJacMethod), coordSystem(_coordSystem), invParam(invParam), nRows(0)
     {
+        name = "DifferentialIK";
         if (!rns)
         {
             THROW_VR_EXCEPTION("Null data");
@@ -574,7 +575,51 @@ namespace VirtualRobot
         tmpComputeStepTheta.resize(nDoF);
 
         initialized = true;
-    };
+    }
+
+    void DifferentialIK::print()
+    {
+        JacobiProvider::print();
+        if (coordSystem)
+            cout << "Coordsystem: " << coordSystem->getName() << endl;
+        else
+            cout << "Coordsystem: global" << endl;
+        cout << "TCPs:" << endl;
+        for (size_t t=0;t<tcp_set.size();t++)
+        {
+            SceneObjectPtr tcp = tcp_set[t];
+            RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+            if (!tcpRN)
+                continue;
+            cout << "* " << tcpRN->getName() << endl;
+            cout << "** Target: " << endl << this->targets[tcp] << endl;
+            cout << "** Error: " << getDeltaToGoal(tcp).transpose() << endl;
+            cout << "** mode:";
+            if (this->modes[tcp] == IKSolver::All)
+                cout << "all" << endl;
+            else if (this->modes[tcp] == IKSolver::Position)
+                cout << "position" << endl;
+            else if (this->modes[tcp] == IKSolver::Orientation)
+                cout << "orientation" << endl;
+            else
+                cout << "unknown" << endl;
+            cout << "** tolerances pos: " << this->tolerancePosition[tcp] << ", rot:" << this->toleranceRotation[tcp] << endl;
+            cout << "** Nodes:";
+
+            // Iterate over all degrees of freedom
+            for (size_t i = 0; i < nDoF; i++)
+            {
+                RobotNodePtr dof = this->nodes[i];
+
+                //check if the tcp is affected by this DOF
+                if (find(parents[tcpRN].begin(), parents[tcpRN].end(), dof) != parents[tcpRN].end())
+                {
+                    cout << dof->getName() << ",";
+                }
+            }
+            cout << endl;
+        }
+    }
 
     void DifferentialIK::setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
     {

@@ -9,6 +9,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoScale.h>
+#include <Inventor/nodes/SoNormal.h>
 
 
 #include <Inventor/nodes/SoComplexity.h>
@@ -113,18 +114,22 @@ namespace GraspStudio
         //Face3D f;
         //Vec3D v1,v2,v3;
 
-        Eigen::Vector3f v1, v2, v3;
-        SbVec3f* pVertexArray = new SbVec3f[nVertices];
+         //SoNormal *pNormals = new SoNormal;
+         //SbVec3f* normalsArray = new SbVec3f[nFaces];
 
+        // compute points and normals
+        SbVec3f* pVertexArray = new SbVec3f[nVertices];
         int nVertexCount = 0;
 
         for (int i = 0; i < nFaces; i++)
         {
-            v1 = convHull->vertices.at(convHull->faces[i].id1);
-            v2 = convHull->vertices.at(convHull->faces[i].id2);
-            v3 = convHull->vertices.at(convHull->faces[i].id3);
+            Eigen::Vector3f &v1 = convHull->vertices.at(convHull->faces[i].id1);
+            Eigen::Vector3f &v2 = convHull->vertices.at(convHull->faces[i].id2);
+            Eigen::Vector3f &v3 = convHull->vertices.at(convHull->faces[i].id3);
 
-            bool bNeedFlip = ConvexHullGenerator::checkVerticeOrientation(v1, v2, v3, convHull->faces[i].normal);
+            Eigen::Vector3f &n = convHull->faces[i].normal;
+
+            bool bNeedFlip = ConvexHullGenerator::checkVerticeOrientation(v1, v2, v3, n);
 
             // COUNTER CLOCKWISE
             if (bNeedFlip)
@@ -151,23 +156,51 @@ namespace GraspStudio
 
             nVertexCount++;
 
+            /*if (bNeedFlip)
+            {
+                normalsArray[i][0] = n(0);
+                normalsArray[i][1] = n(1);
+                normalsArray[i][2] = n(2);
+            } else
+            {
+                normalsArray[i][0] = -n(0);
+                normalsArray[i][1] = -n(1);
+                normalsArray[i][2] = -n(2);
+            }*/
+            //VR_INFO << "Face " << i << ": v1: " << v1(0) << "," << v1(1) << "," << v1(2) << endl;
+            //VR_INFO << "     " << i << ": v2: " << v2(0) << "," << v2(1) << "," << v2(2) << endl;
+            //VR_INFO << "     " << i << ": v3: " << v3(0) << "," << v3(1) << "," << v3(2) << endl;
+
+
         }
 
+        // set normals
+        //pNormals->vector.setValues(0, nFaces, normalsArray);
+        //result->addChild(pNormals);
+        SoNormalBinding *pNormalBinding = new SoNormalBinding;
+        pNormalBinding->value = SoNormalBinding::NONE;
+        result->addChild(pNormalBinding);
+
+        // set points
         pCoords->point.setValues(0, nVertices, pVertexArray);
-        long* nNumVertices = new long[nFaces];
+        result->addChild(pCoords);
+
+        // set faces
+        int32_t* nNumVertices = new int32_t[nFaces];
 
         for (int i = 0; i < nFaces; i++)
         {
             nNumVertices[i] = 3;
         }
+        pFaceSet->numVertices.setValues(0, nFaces, nNumVertices);
 
         pFaceSet->numVertices.setValues(0, nFaces, (const int32_t*)nNumVertices);
 
         result->addChild(pCoords);
         result->addChild(pFaceSet);
-        delete []pVertexArray;
-        delete []nNumVertices;
-        result->unrefNoDelete();
+        //delete []pVertexArray;
+        //delete []nNumVertices;
+        //result->unrefNoDelete();
 
         return result;
     }

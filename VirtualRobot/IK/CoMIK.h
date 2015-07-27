@@ -61,6 +61,7 @@ namespace VirtualRobot
         void checkImprovements(bool enable);
         bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
 
+        virtual void print();
     private:
         RobotNodePtr coordSystem;
         RobotNodeSetPtr rnsBodies;

@@ -5,6 +5,7 @@
 #include "Nodes/RobotNodeRevolute.h"
 #include "Nodes/RobotNodePrismatic.h"
 #include "Nodes/RobotNodeFixed.h"
+#include "Nodes/RobotNodeFixedFactory.h"
 #include "Visualization//VisualizationFactory.h"
 #include "VirtualRobotException.h"
 
@@ -254,6 +255,42 @@ namespace VirtualRobot
         return RobotFactory::cloneChangeStructure(robot, newStructure);
     }
 
+    bool RobotFactory::attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f &transformation)
+    {
+        if (!robot || !o || !rn)
+            return false;
+        std::string name = o->getName();
+        if (robot->hasRobotNode(name))
+        {
+            VR_WARNING << "RN with name " << name << " already present" << endl;
+            return false;
+        }
+        SceneObject::Physics p = o->physics;
+        VisualizationNodePtr v;
+        if (o->getVisualization())
+            v = o->getVisualization()->clone();
+        CollisionModelPtr c;
+        if (o->getCollisionModel())
+            c = o->getCollisionModel()->clone();
+
+        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        RobotNodePtr newRN = rnf->createRobotNode(robot, name, v, c, 0,0,0, transformation, Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
+        newRN->attachChild(newRN);
+        robot->registerRobotNode(newRN);
+        return true;
+    }
+
+    bool RobotFactory::detach(RobotPtr robot, RobotNodePtr rn)
+    {
+        if (!robot || !rn || !rn->getParent())
+            return false;
+        if (!robot->hasRobotNode(rn))
+            return false;
+        rn->getParent()->detachChild(rn);
+        robot->deregisterRobotNode(rn);
+        return true;
+    }
+
     RobotPtr RobotFactory::cloneChangeStructure(RobotPtr robot, robotStructureDef& newStructure)
     {
         VR_ASSERT(robot);
@@ -281,6 +318,8 @@ namespace VirtualRobot
         NodeTransformationMapT localTransformations;
         std::map<RobotNodePtr, VisualizationNodePtr> visuMap;
         std::map<RobotNodePtr, CollisionModelPtr> colMap;
+        std::map<RobotNodePtr, SceneObject::Physics> physicsMap;
+        std::map<RobotNodePtr, std::vector<SensorPtr> > sensorMap;
         std::map<RobotNodePtr, bool> directionInversion;
 
         for (size_t i = 0; i < newStructure.parentChildMapping.size(); i++)
@@ -361,7 +400,30 @@ namespace VirtualRobot
                         {
                             v->primitives[pr]->transform = tr * v->primitives[pr]->transform;
                         }
+
                     }
+                    // exchange physics
+                    physicsMap[parent] = child->physics;
+                    if (physicsMap.find(child) == physicsMap.end())
+                    {
+                        // no entry for child, set it to empty, may be overwritten later on
+                        physicsMap[child] = SceneObject::Physics();
+                    }
+
+                    // exchange sensors
+                    std::vector<SceneObjectPtr> childChildren = robot->getRobotNode(nodeName)->getChildren();
+                    for (auto cc : childChildren)
+                    {
+                        SensorPtr cs = boost::dynamic_pointer_cast<Sensor>(cc);
+                        if (cs)
+                        {
+                            // cloning sensor
+                            SensorPtr newSensor = cs->clone(parent);
+                            sensorMap[parent].push_back(newSensor);
+                        }
+
+                    }
+
                 }
                 else
                 {
@@ -371,6 +433,20 @@ namespace VirtualRobot
                         visuMap[child] = child->getVisualization();
                     if (child->getCollisionModel())
                         colMap[child] = child->getCollisionModel();
+
+                    // clone sensors
+                    std::vector<SceneObjectPtr> childChildren = robot->getRobotNode(nodeName)->getChildren();
+                    for (auto cc : childChildren)
+                    {
+                        SensorPtr cs = boost::dynamic_pointer_cast<Sensor>(cc);
+                        if (cs)
+                        {
+                            // cloning sensor
+                            SensorPtr newSensor = cs->clone(child);
+                            sensorMap[child].push_back(newSensor);
+                        }
+
+                    }
                 }
             }
 
@@ -415,6 +491,17 @@ namespace VirtualRobot
             }
             else
                 nodes[i]->setCollisionModel(CollisionModelPtr());
+
+            if (physicsMap.find(nodes[i]) != physicsMap.end())
+            {
+                nodes[i]->physics = physicsMap[nodes[i]];
+            }
+            if (sensorMap.find(nodes[i]) != sensorMap.end())
+            {
+                auto sensors = sensorMap[nodes[i]];
+                for (auto s : sensors)
+                    nodes[i]->registerSensor(s);
+            }
         }
 
         newRobot->getRootNode()->initialize();

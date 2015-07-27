@@ -80,6 +80,19 @@ namespace VirtualRobot
          * \param endNode Name of the end node of the original kinematic chain. Will be the new root.
          */
         static RobotPtr cloneChangeStructure(RobotPtr robot, const std::string& startNode, const std::string& endNode);
+
+        /*!
+         * \brief attach Attach an object to a robot. The object is cloned.
+         * \param robot
+         * \param o The object and its visualization model is cloned
+         * \param rn The robot node to which the object should be attached
+         * \param transformation The RN to object transformation
+         * \return true on succes
+         */
+        static bool attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f & transformation);
+
+        static bool detach(RobotPtr robot, RobotNodePtr rn);
+
     protected:
         // instantiation not allowed
         RobotFactory();

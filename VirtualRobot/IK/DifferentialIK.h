@@ -286,6 +286,8 @@ namespace VirtualRobot
             Usually no need to call this method explicitly, unless performInitialization was not requested in setGoal.
         */
         virtual void initialize();
+
+        virtual void print();
     protected:
         virtual void setNRows();
 

@@ -42,6 +42,7 @@ namespace VirtualRobot
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT SceneObject : public boost::enable_shared_from_this<SceneObject>
     {
+        friend class RobotFactory;
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

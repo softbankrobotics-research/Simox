@@ -14,6 +14,7 @@ namespace VirtualRobot
     {
         VR_ASSERT(rns);
         VR_ASSERT(rnsBodies);
+        name = "CoMIK";
         checkImprovement = false;
         this->rnsBodies = rnsBodies;
         numDimensions = dimensions;
@@ -231,5 +232,19 @@ namespace VirtualRobot
         return computeSteps(stepSize, minChange, maxSteps);
     }
 
+    void CoMIK::print()
+    {
+        JacobiProvider::print();
+        if (coordSystem)
+            cout << "Coordsystem: " << coordSystem->getName() << endl;
+        else
+            cout << "Coordsystem: global" << endl;
 
+        cout << "Target:" << endl << this->target.transpose() << endl;
+        cout << "Tolerances pos: " << this->tolerance << endl;
+        cout << "RNS bodies:" << rnsBodies->getName() << endl;
+        cout << "CoM:" << rnsBodies->getCoM().head(target.rows()).transpose() << endl;
+        cout << "Error:" << endl << getError().transpose() << endl;
+
+    }
 }
