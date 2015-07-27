@@ -1019,6 +1019,12 @@ namespace VirtualRobot
     {
         VR_ASSERT(child);
 
+        if (this == child.get())
+        {
+            VR_WARNING << "Trying to attach object to it self object! name: " << getName() << endl;
+            return false;
+        }
+
         if (hasChild(child))
         {
             VR_WARNING << " Trying to attach already attached object: " << getName() << "->" << child->getName() << endl;

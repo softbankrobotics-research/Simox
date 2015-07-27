@@ -275,8 +275,8 @@ namespace VirtualRobot
 
         auto rnf = RobotNodeFixedFactory::createInstance(NULL);
         RobotNodePtr newRN = rnf->createRobotNode(robot, name, v, c, 0,0,0, transformation, Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
-        newRN->attachChild(newRN);
-        robot->registerRobotNode(newRN);
+        rn->attachChild(newRN);
+        newRN->initialize(rn);
         return true;
     }
 
