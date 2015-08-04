@@ -50,6 +50,17 @@ namespace VirtualRobot
             std::string toXMLString(int tabs = 0);
         };
 
+        class VIRTUAL_ROBOT_IMPORT_EXPORT Cylinder : public Primitive
+        {
+        public:
+            static const int TYPE = 3;
+            Cylinder() : Primitive(TYPE) {}
+            Cylinder(float radius, float height) : Primitive(TYPE), radius(radius), height(height) {}
+            float radius;
+            float height;
+            std::string toXMLString(int tabs = 0);
+        };
+
         typedef boost::shared_ptr<Primitive> PrimitivePtr;
 
     } //namespace Primitive

@@ -136,6 +136,10 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+        virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        {
+            return VisualizationNodePtr();
+        }
         virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10)
         {
             return VisualizationNodePtr();

@@ -1169,6 +1169,13 @@ namespace VirtualRobot
                 sphere->radius = convertToFloat(primitiveXMLNode->first_attribute("radius", 0, false)->value()) * lenFactor;
                 primitive.reset(sphere);
             }
+            else if (pName == "cylinder")
+            {
+                Primitive::Cylinder* cylinder = new Primitive::Cylinder;
+                cylinder->radius = convertToFloat(primitiveXMLNode->first_attribute("radius", 0, false)->value()) * lenFactor;
+                cylinder->height = convertToFloat(primitiveXMLNode->first_attribute("height", 0, false)->value()) * lenFactor;
+                primitive.reset(cylinder);
+            }
             else
             {
                 VR_ERROR << "Unknown primitive type \"" << pName << "\"; skipping";

@@ -56,5 +56,13 @@ namespace VirtualRobot
                        tabs);
         }
 
+        std::string Cylinder::toXMLString(int tabs)
+        {
+            return getXMLString(
+                       "Cylinder",
+                       (boost::format("radius=\"%f\" height=\"%f\"") % radius % height).str(),
+                       tabs);
+        }
+
     } //namespace Primitive
 } //namespace VirtualRobot

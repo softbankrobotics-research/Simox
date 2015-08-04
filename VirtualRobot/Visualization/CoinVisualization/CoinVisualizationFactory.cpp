@@ -31,6 +31,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoCone.h>
@@ -141,6 +142,14 @@ namespace VirtualRobot
             SoSphere* soSphere = new SoSphere;
             soSphere->radius = sphere->radius / 1000.f;
             coinVisualization->addChild(soSphere);
+        }
+        else if (primitive->type == Primitive::Cylinder::TYPE)
+        {
+            Primitive::Cylinder* cylinder = boost::dynamic_pointer_cast<Primitive::Cylinder>(primitive).get();
+            SoCylinder* soCylinder = new SoCylinder;
+            soCylinder->radius = cylinder->radius / 1000.f;
+            soCylinder->height = cylinder->height / 1000.f;
+            coinVisualization->addChild(soCylinder);
         }
 
         if (boundingBox && coinVisualization)
@@ -496,6 +505,29 @@ namespace VirtualRobot
         SoSphere* c = new SoSphere();
         s->addChild(c);
         c->radius = radius;
+
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
+        s->unref();
+        return visualizationNode;
+    }
+
+    VisualizationNodePtr CoinVisualizationFactory::createCylinder(float radius, float height, float colorR, float colorG, float colorB)
+    {
+        SoSeparator* s = new SoSeparator();
+        s->ref();
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        s->addChild(u);
+
+        SoMaterial* m = new SoMaterial();
+        s->addChild(m);
+        m->ambientColor.setValue(colorR, colorG, colorB);
+        m->diffuseColor.setValue(colorR, colorG, colorB);
+
+        SoCylinder* c = new SoCylinder();
+        s->addChild(c);
+        c->radius = radius;
+        c->height = height;
 
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
