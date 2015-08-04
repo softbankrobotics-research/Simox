@@ -168,10 +168,10 @@ namespace VirtualRobot
         root->ref();
         SoRotation* rotationX = new SoRotation();
         rotationX->ref();
-        rotationX->rotation.setValue( SbVec3f(-1,0,0), M_PI/2);
+        rotationX->rotation.setValue(SbVec3f(-1, 0, 0), float(M_PI / 2));
         SoRotation* rotationZ = new SoRotation();
         rotationZ->ref();
-        rotationZ->rotation.setValue( SbVec3f(0,0,1), M_PI);
+        rotationZ->rotation.setValue(SbVec3f(0, 0, 1), float(M_PI));
 
         root->addChild(rotationX);
         root->addChild(rotationZ);

@@ -152,9 +152,9 @@ void TSRConstraint::resolveRPYAmbiguities(float *pose, const float *reference)
         {
             for(int k = -1; k <= 1; k += 2)
             {
-                tmp << reference[3] + i * M_PI,
-                       reference[4] + j * M_PI,
-                       reference[5] + k * M_PI;
+                tmp << reference[3] + float(i) * float(M_PI),
+                    reference[4] + float(j) * float(M_PI),
+                    reference[5] + float(k) * float(M_PI);
 
                 if((tmp - ref).norm() < (best - ref).norm())
                 {
@@ -175,11 +175,11 @@ float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
 
     if(direct > M_PI)
     {
-        return -2*M_PI + direct;
+        return float(-2 * M_PI + direct);
     }
     else if(direct < -M_PI)
     {
-        return 2*M_PI - direct;
+        return float(2 * M_PI - direct);
     }
     else
     {

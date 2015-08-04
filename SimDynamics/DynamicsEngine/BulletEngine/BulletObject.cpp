@@ -13,6 +13,7 @@
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
+#include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <BulletCollision/CollisionShapes/btCompoundShape.h>
 
 //#define DEBUG_FIXED_OBJECTS
@@ -170,7 +171,6 @@ namespace SimDynamics
 
         if (primitive->type == Primitive::Box::TYPE)
         {
-
             Primitive::Box* box = boost::dynamic_pointer_cast<Primitive::Box>(primitive).get();
             // w/h/d have to be halved
             btBoxShape* boxShape = new btBoxShape(btVector3(box->width / 2000.f, box->height / 2000.f, box->depth / 2000.f));
@@ -181,6 +181,12 @@ namespace SimDynamics
             Primitive::Sphere* sphere = boost::dynamic_pointer_cast<Primitive::Sphere>(primitive).get();
             btSphereShape* sphereShape = new btSphereShape(btScalar(sphere->radius / 1000.f));
             result = sphereShape;
+        }
+        else if (primitive->type == Primitive::Cylinder::TYPE)
+        {
+            Primitive::Cylinder* cyl = boost::dynamic_pointer_cast<Primitive::Cylinder>(primitive).get();
+            btCylinderShape* cylShape = new btCylinderShape(btVector3(cyl->radius / 1000.f, cyl->height / 1000.f, cyl->radius / 1000.f));
+            result = cylShape;
         }
         else
         {
