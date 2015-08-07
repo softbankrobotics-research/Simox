@@ -634,7 +634,7 @@ void RrtGuiWindow::plan()
         cdm->addCollisionModel(colModelEnv);
     }
 
-    cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns));
+	cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 1000000));
     float sampl = (float)UI.doubleSpinBoxCSpaceSampling->value();
     float samplDCD = (float)UI.doubleSpinBoxColChecking->value();
     cspace->setSamplingSize(sampl);

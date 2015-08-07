@@ -1459,10 +1459,20 @@ namespace VirtualRobot
                     VR_ERROR << "No units attribute at <" << storeConfigName << ">" << endl;
                 }
 
-                if (getUnitsAttribute(node, Units::eAngle).isDegree())
+                /*if (getUnitsAttribute(node, Units::eAngle).isDegree())
                 {
                     c.value = c.value / 180.0f * (float)M_PI;
-                }
+                }*/
+
+				Units u = getUnitsAttribute(node, Units::eIgnore);
+				if (u.isDegree())
+				{
+					c.value = c.value / 180.0f * (float)M_PI;
+				}
+				else if (u.isMeter())
+				{
+					c.value = c.value / 1000.0f;
+				}
 
                 storeConfigDefinitions.push_back(c);
             }
