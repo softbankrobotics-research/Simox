@@ -93,6 +93,7 @@ Workspace/WorkspaceGrid.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
+Grasping/GraspEditor/GraspEditorWindow.cpp
 MathTools.cpp
 Robot.cpp
 RobotConfig.cpp
@@ -116,6 +117,7 @@ SphereApproximator.cpp
 Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
+
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
@@ -205,6 +207,7 @@ Workspace/WorkspaceGrid.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
+Grasping/GraspEditor/GraspEditorWindow.h
 AbstractFactoryMethod.h
 VirtualRobot.h
 MathTools.h
@@ -369,17 +372,20 @@ ADD_SUBDIRECTORY(examples/)
 
 
 # -----------------------------------------------------------------------------------
-# Adding the example GraspEditor to the library, because it is used in other projects
+# Adding the UI files to the library
 
-#SET(SOURCES ${SOURCES} examples/GraspEditor/GraspEditorWindow.cpp)
-#SET(INCLUDES ${INCLUDES} examples/GraspEditor/GraspEditorWindow.h)
-#set(UI examples/GraspEditor/GraspEditor.ui)
-#QT4_WRAP_UI(UIC ${UI})
-#QT4_WRAP_CPP(MOC_SRC examples/GraspEditor/GraspEditorWindow.h)
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-#SET(SOURCES ${SOURCES} ${UIC} ${MOC_SRC})
+set(UI
+    Grasping/GraspEditor/GraspEditor.ui
+)
+QT4_WRAP_UI(UI_HEADERS ${UI})
+set(INCLUDES ${INCLUDES} ${UI_HEADERS})
+QT4_WRAP_CPP(MOC_SRC
+    Grasping/GraspEditor/GraspEditorWindow.h
+)
 
-# Finished adding the example GraspEditor to the library
+SET(SOURCES ${SOURCES} ${MOC_SRC})
+
+# Finished adding UI files
 #-----------------------------------------------------------------------------------
 
 
@@ -412,9 +418,9 @@ install(TARGETS ${PROJECT_NAME}
   COMPONENT dev)
 #  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/VirtualRobot"
  
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION "${Simox_INSTALL_HEADER_DIR}"
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION "${Simox_INSTALL_HEADER_DIR}"
 	COMPONENT Headers
-       FILES_MATCHING 
+        FILES_MATCHING
         PATTERN "*.h"
         PATTERN "*.hpp"
         PATTERN ".svn" EXCLUDE

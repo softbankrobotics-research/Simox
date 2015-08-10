@@ -9,17 +9,8 @@ INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
 	# the variable "demo_SRCS" contains all .cpp files of this project
-	FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/GraspEditor.cpp ${PROJECT_SOURCE_DIR}/GraspEditorWindow.cpp)
-	FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/GraspEditorWindow.h)
+        FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/GraspEditor.cpp)
 
-	################################## moc'ing ##############################
-	set(GUI_MOC_HDRS
-		${PROJECT_SOURCE_DIR}/GraspEditorWindow.h
-	)
-
-	set(GUI_UIS
-		${PROJECT_SOURCE_DIR}/GraspEditor.ui
-	)
 
 	# create the executable
 	VirtualRobotQtApplication(${PROJECT_NAME} "${demo_SRCS}" "${demo_INCS}" "${GUI_MOC_HDRS}" "${GUI_UIS}")
