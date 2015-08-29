@@ -16,11 +16,18 @@ ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 
 ########### QHULL #################
-OPTION(BUILD_qhull "if on builds qhull external library" ON)
+OPTION(BUILD_qhull "if on builds qhull external library" OFF)
 IF(BUILD_qhull)
 	ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
-ENDIF(BUILD_qhull)
+    set(QHULL_LIBRARIES simox-qhull)
+else()
+    find_package(QHULL REQUIRED)
+    include_directories(${QHULL_INCLUDE_DIRS})
+endif()
 ########### END QHULL #################
+
+
+
 
 
 ########### POWERCRUST #################
@@ -126,7 +133,8 @@ ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 
 
 ADD_LIBRARY (GraspStudio SHARED ${SOURCES} ${INCLUDES})
-TARGET_LINK_LIBRARIES (GraspStudio Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} simox-qhull powercrust)
+
+TARGET_LINK_LIBRARIES (GraspStudio Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES} powercrust)
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
