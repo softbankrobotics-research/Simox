@@ -74,6 +74,7 @@ IK/PoseQualityMeasurement.cpp
 IK/PoseQualityManipulability.cpp
 IK/PoseQualityExtendedManipulability.cpp
 IK/HierarchicalIK.cpp
+IK/HierarchicalIKSolver.cpp
 IK/JointLimitAvoidanceJacobi.cpp
 IK/GazeIK.cpp
 IK/StackedIK.cpp
@@ -183,6 +184,7 @@ IK/PoseQualityMeasurement.h
 IK/PoseQualityManipulability.h
 IK/PoseQualityExtendedManipulability.h
 IK/HierarchicalIK.h
+IK/HierarchicalIKSolver.h
 IK/JointLimitAvoidanceJacobi.h
 IK/GazeIK.h
 IK/StackedIK.h

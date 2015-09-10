@@ -309,6 +309,7 @@ namespace VirtualRobot
         */
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeSensors = true);
 
+        void updateTransformationMatrices(Eigen::Matrix4f &newLocalTransformation);
     protected:
 
         /*!
