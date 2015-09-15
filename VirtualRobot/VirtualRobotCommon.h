@@ -81,7 +81,7 @@
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/VirtualRobotTest.h>
+//#include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/BoundingBox.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
