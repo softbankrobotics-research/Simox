@@ -27,6 +27,8 @@
 #define BOOST_TEST_DYN_LINK
 #endif
 
+#include <boost/test/unit_test.hpp>
+
 #include "VirtualRobotImportExport.h"
 #include <string>
 #include <fstream>

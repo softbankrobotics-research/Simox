@@ -144,7 +144,6 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #include <boost/format.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-#include <boost/test/unit_test.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/current_function.hpp>
