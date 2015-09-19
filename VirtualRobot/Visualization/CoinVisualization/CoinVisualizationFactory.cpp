@@ -3215,9 +3215,14 @@ namespace VirtualRobot
         bool ok = renderer->render(root) == TRUE ? true : false;
         root->unref();
 
+        static bool renderErrorPrinted = false;
         if (!ok)
         {
-            VR_ERROR << "Rendering not successful!" << endl;
+            if (!renderErrorPrinted)
+            {
+                VR_ERROR << "Rendering not successful! This error is printed only once." << endl;
+                renderErrorPrinted = true;
+            }
             return false;
         }
 
