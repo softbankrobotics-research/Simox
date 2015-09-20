@@ -87,6 +87,51 @@ namespace VirtualRobot
         }
     }
 
+    void LocalRobot::moveRootNode(RobotNodePtr newRootNode)
+    {
+        RobotNodePtr newRoot = robotNodeMap[newRootNode->getName()];
+        if (newRoot) {
+            std::vector< SceneObjectPtr > nodes;
+            SceneObjectPtr curNode = newRoot;
+
+            while (curNode != rootNode) {
+                nodes.push_back(curNode);
+                curNode = curNode->getParent();
+            }
+            nodes.push_back(rootNode);
+
+            //set parents and transformations for all nodes except the new root
+            for (int i = nodes.size() - 1; i > 0; i--) {
+                RobotNodePtr cur = robotNodeMap[nodes[i]->getName()];
+                RobotNodePtr prev = robotNodeMap[nodes[i - 1]->getName()];
+
+                //set new child
+                cur->detachChild(prev);
+                if (i < nodes.size() - 1) {
+                    cur->attachChild(nodes[i + 1]);
+                }
+
+                if (cur->isRotationalJoint()) {
+                    RobotNodeRevolute *c = (RobotNodeRevolute*) cur.get();
+                    c->setJointRotationAxis(-c->getJointRotationAxis());
+                }
+
+                //set new transformations
+                Eigen::Matrix4f inverse = prev->getLocalTransformation().inverse();
+                cur->updateTransformationMatrices(inverse);
+            }
+
+            //detache new root and set transformation matrix
+            if (nodes.size() > 1)
+                newRoot->attachChild(nodes[1]);
+            Eigen::Matrix4f identity = Eigen::Matrix4f::Identity();
+            newRoot->updateTransformationMatrices(identity);
+
+            //set new root node
+            rootNode = newRoot;
+        }
+    }
+
     void Robot::setThreadsafe(bool flag)
     {
         use_mutex = flag;

@@ -142,6 +142,10 @@ namespace VirtualRobot
         return true;
     }
 
+    void RobotNodeRevolute::setJointRotationAxis(Eigen::Vector3f newAxis) {
+        this->jointRotationAxis = newAxis;
+    }
+
     Eigen::Vector3f RobotNodeRevolute::getJointRotationAxis(const SceneObjectPtr coordSystem) const
     {
         ReadLockPtr lock = getRobot()->getReadLock();

@@ -113,6 +113,7 @@ namespace VirtualRobot
      */
     virtual float getLMomentArm(float angle);
 
+        void setJointRotationAxis(Eigen::Vector3f newAxis);
     protected:
         /*!
             Can be called by a RobotNodeActuator in order to set the pose of this node.

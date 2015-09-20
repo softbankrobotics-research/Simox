@@ -27,7 +27,9 @@
 #include "SceneObject.h"
 #include "Nodes/Sensor.h"
 #include "Nodes/RobotNode.h"
+#include "Nodes/RobotNodeRevolute.h"
 #include "Nodes/ConditionedLock.h"
+#include <boost/pointer_cast.hpp>
 
 #include <string>
 #include <map>
@@ -202,6 +204,12 @@ namespace VirtualRobot
             Set the global position of this robot
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues = true) = 0;
+
+        /*!
+         * move the robots root node
+         * \param newRootNode new root node ptr
+         */
+        virtual void moveRootNode(RobotNodePtr newRootNode) = 0;
 
         /*!
             Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
@@ -463,6 +471,7 @@ namespace VirtualRobot
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues = true);
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose);
         virtual Eigen::Matrix4f getGlobalPose();
+        virtual void moveRootNode(RobotNodePtr newRootNode);
 
 
     protected:
