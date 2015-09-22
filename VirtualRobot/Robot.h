@@ -206,12 +206,6 @@ namespace VirtualRobot
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues = true) = 0;
 
         /*!
-         * move the robots root node
-         * \param newRootNode new root node ptr
-         */
-        virtual void moveRootNode(RobotNodePtr newRootNode) = 0;
-
-        /*!
             Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
         */
         virtual void setGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
@@ -471,8 +465,6 @@ namespace VirtualRobot
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues = true);
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose);
         virtual Eigen::Matrix4f getGlobalPose();
-        virtual void moveRootNode(RobotNodePtr newRootNode);
-
 
     protected:
         //Eigen::Matrix4f globalPose; //!< The pose of this robot in the world

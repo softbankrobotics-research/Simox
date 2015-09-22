@@ -17,7 +17,6 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-
     boost::shared_ptr<Robot> robot = RobotFactory::createRobot("Robbi");
     std::vector< boost::shared_ptr<RobotNode> > robotNodes;
     VirtualRobot::RobotNodeRevoluteFactory revoluteNodeFactory;

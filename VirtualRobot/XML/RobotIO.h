@@ -61,7 +61,7 @@ namespace VirtualRobot
         /*!
                 Loads robot from file.
                 @param xmlFile The file
-                @param loadMode Standard: eFull, When eStructure is used no visualization oand collision models are loaded for faster access.
+                @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
                 @return Returns an empty pointer, when file access failed.
         */
         static RobotPtr loadRobot(const std::string& xmlFile, RobotDescription loadMode = eFull);
