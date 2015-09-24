@@ -34,7 +34,7 @@ support.
 
 License
 -------
-GNU Library General Public License, version 2 or any later version.
+GNU Library General Public License, version 2.1 or any later version.
 (see license.txt)
 
 Copyright
