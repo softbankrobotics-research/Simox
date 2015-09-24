@@ -34,7 +34,8 @@ support.
 
 License
 -------
-GNU LGPL 2 (see license.txt)
+GNU Library General Public License, version 2 or any later version.
+(see license.txt)
 
 Copyright
 ---------
