@@ -6,6 +6,7 @@ namespace SimDynamics
 
     BulletOpenGLViewer::BulletOpenGLViewer(DynamicsWorldPtr world)
     {
+        this->world = world;
         SIMDYNAMICS_ASSERT(world);
         m_sundirection = btVector3(1, 1, -2) * 1000;
 
@@ -77,15 +78,15 @@ namespace SimDynamics
 
     void BulletOpenGLViewer::keyboardCallback(unsigned char key, int x, int y)
     {
-        DemoApplication::keyboardCallback(key, x, y);
-        /*switch (key)
+        //DemoApplication::keyboardCallback(key, x, y);
+        switch (key)
         {
-        case 'e':
-            spawnRagdoll(true);
+        case 'p':
+            bulletEngine->print();
             break;
         default:
             DemoApplication::keyboardCallback(key, x, y);
-        }*/
+        }
     }
 
     BulletOpenGLViewer::~BulletOpenGLViewer()

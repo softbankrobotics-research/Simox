@@ -160,19 +160,34 @@ int main(int argc, char* argv[])
     world->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(100.0f, 100.0f, 100.0f);
+    o->setSimulationType(SceneObject::Physics::eDynamic);
+    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+    gp.block(0,3,3,1) = Eigen::Vector3f(2800, 10400, 5000.0f);
+    o->setGlobalPose(gp);
     o->setMass(1.0f); // 1kg
 
     SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o);
-    dynObj->setPosition(Eigen::Vector3f(3000, 3000, 1000.0f));
     world->addObject(dynObj);
+    o->print();
+
 
 #if 0
     std::string f = "/home/niko/coding/armarx/SimulationX/data/environment/KIT_Robot_Kitchen.xml";
     ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(f);
     SimDynamics::DynamicsObjectPtr dynObj2 = world->CreateDynamicsObject(mo, DynamicsObject::eKinematic);
+    world->addObject(dynObj2);
+#endif
+
+
+#if 0
+    std::string f = "/home/SMBAD/vahrenka/.armarx/mongo/.cache/files/lowersink.xml";
+    ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(f);
+    SimDynamics::DynamicsObjectPtr dynObj2 = world->CreateDynamicsObject(mo);
     //dynObj->setPosition(Eigen::Vector3f(3000,3000,1000.0f));
     world->addObject(dynObj2);
 #endif
+
+
 
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile);
     VirtualRobot::RobotPtr robot = VirtualRobot::RobotIO::loadRobot(robFile);

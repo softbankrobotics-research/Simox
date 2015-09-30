@@ -73,6 +73,8 @@ namespace SimDynamics
             return demo;
         }*/
 
+        DynamicsWorldPtr world;
+
         void updateRobotConstraints();
         GLDebugDrawer debugDrawer;
 

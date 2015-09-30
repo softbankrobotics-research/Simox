@@ -52,13 +52,11 @@ namespace SimDynamics
             {
                 std::vector<Primitive::PrimitivePtr> primitives = colModel->getVisualization()->primitives;
 
-                /*if (primitives.size() == 1 && primitives[0]->transform.isIdentity())
-                {
-                    collisionShape.reset(getShapeFromPrimitive(primitives[0]));
-                } else
-                */
                 if (primitives.size() > 0)
                 {
+                    //cout << "Object:" << o->getName() << endl;
+                    //o->print();
+
                     btCompoundShape* compoundShape = new btCompoundShape(true);
                     std::vector<Primitive::PrimitivePtr>::const_iterator it;
                     Eigen::Matrix4f currentTransform = Eigen::Matrix4f::Identity();
@@ -66,17 +64,27 @@ namespace SimDynamics
                     Eigen::Matrix4f localComTransform;
                     localComTransform.setIdentity();
                     localComTransform.block(0,3,3,1) = -o->getCoMLocal();
-                    //cout << "localComTransform:\n" << localComTransform;
+                    //cout << "localComTransform:\n" << localComTransform << endl;
 
 
                     for (it = primitives.begin(); it != primitives.end(); it++)
                     {
                         //currentTransform *= (*it)->transform;
                         currentTransform = localComTransform*(*it)->transform;
+                        //cout << "primitive: (*it)->transform:\n" << (*it)->transform << endl;
+                        //cout << "primitive: currentTransform:\n" << currentTransform << endl;
+
                         compoundShape->addChildShape(BulletEngine::getPoseBullet(currentTransform), getShapeFromPrimitive(*it));
                     }
 
                     collisionShape.reset(compoundShape);
+
+                    // update com
+                    Eigen::Matrix4f comLoc;
+                    comLoc.setIdentity();
+                    comLoc.block(0, 3, 3, 1) = o->getCoMGlobal();
+                    comLoc = (o->getGlobalPose().inverse() * comLoc);
+                    com = comLoc.block(0, 3, 3, 1);
                 }
                 else
                 {

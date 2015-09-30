@@ -82,6 +82,17 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags fla
     dynamicsWorld->addObject(dynamicsObject2);
 #endif
 
+#if 0
+    std::string f = "/home/SMBAD/vahrenka/.armarx/mongo/.cache/files/lowersink.xml";
+    ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(f);
+    mo->setSimulationType(SceneObject::Physics::eDynamic);
+    SimDynamics::DynamicsObjectPtr dynObj2 = dynamicsWorld->CreateDynamicsObject(mo);
+    //dynObj2->setSimType(VirtualRobot::SceneObject::Physics::eDynamic);
+    dynObj2->setPosition(Eigen::Vector3f(0,0,-200.0f));
+    dynamicsWorld->addObject(dynObj2);
+    dynamicsObjects.push_back(dynObj2);
+#endif
+
     setupUI();
     loadRobot(robotFilename);
 

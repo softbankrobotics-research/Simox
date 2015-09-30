@@ -640,6 +640,9 @@ namespace SimDynamics
         {
             const SimDynamics::DynamicsEngine::DynamicsContactInfo& contact = *it;
 
+            if (!contact.objectA || !contact.objectB)
+                continue;
+
             float sign;
             std::string key;
             std::string contactBody;
