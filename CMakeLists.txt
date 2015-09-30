@@ -127,14 +127,34 @@ install(EXPORT SimoxTargets DESTINATION
 #############################################################
 # PACKAGING (DEB)
 
-FIND_PACKAGE(Subversion QUIET)
-IF(Subversion_FOUND)
-    Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} Project)
-    MESSAGE("Current revision is ${Project_WC_REVISION}")
-ELSE()
-    SET(Project_WC_REVISION "Unknown")
-    MESSAGE("Could not determine current svn revision.")
-ENDIF()
+# git version not used any more!
+find_package(Git QUIET)
+if(GIT_FOUND)
+    # output format <tag>-<commit-id>-dirty or <tag>-<commit-id> or <commit-id>
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --long --tags --dirty --always
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE  GIT_EXIT_STATUS
+        OUTPUT_VARIABLE SIMOX_PACKAGE_GIT_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    if(NOT GIT_EXIT_STATUS EQUAL 0)
+        message(WARNING "no git repository or unable to run git describe")
+        set(Project_WC_REVISION "Unknown")
+    else()
+        # string(REGEX REPLACE "\n" "" SIMOX_PACKAGE_GIT_VERSION ${SIMOX_PACKAGE_GIT_VERSION})
+        message(STATUS "simox git version: ${SIMOX_PACKAGE_GIT_VERSION}")
+        set(Project_WC_REVISION ${SIMOX_PACKAGE_GIT_VERSION})
+    endif()
+endif()
+
+#FIND_PACKAGE(Subversion QUIET)
+#IF(Subversion_FOUND)
+#    Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} Project)
+#    MESSAGE("Current revision is ${Project_WC_REVISION}")
+#ELSE()
+#    SET(Project_WC_REVISION "Unknown")
+#    MESSAGE("Could not determine current svn revision.")
+#ENDIF()
 
 IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
     SET(CPACK_DEBIAN_ARCHITECTURE "amd64")
@@ -153,7 +173,8 @@ SET(CPACK_PACKAGE_VENDOR "KIT")
 SET(CPACK_PACKAGE_CONTACT "Nikolaus Vahrenkamp <vahrenkamp@kit.edu>")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${Simox_MAJOR_VERSION}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${Simox_MINOR_VERSION}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${Simox_PATCH_VERSION}-r${Project_WC_REVISION}")
+#SET(CPACK_PACKAGE_VERSION_PATCH "${Simox_PATCH_VERSION}-r${Project_WC_REVISION}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${Simox_PATCH_VERSION}")
 SET(CPACK_PACKAGE_FILE_NAME "simox_${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION}-r${Project_WC_REVISION}_${CPACK_DEBIAN_ARCHITECTURE}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "simox_${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION}-r${Project_WC_REVISION}")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
