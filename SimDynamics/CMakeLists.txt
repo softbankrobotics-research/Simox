@@ -258,6 +258,7 @@ if (SimDynamics_DYNAMICSENGINE)
           PATTERN "*.h"
           PATTERN "*.hpp"
           PATTERN ".svn" EXCLUDE
+          PATTERN ".git" EXCLUDE
           PATTERN "CMakeModules" EXCLUDE
           PATTERN "tests" EXCLUDE
           PATTERN "build*" EXCLUDE
