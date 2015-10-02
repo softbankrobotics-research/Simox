@@ -60,13 +60,20 @@ namespace VirtualRobot
         virtual ~JacobiProvider();
 
         virtual Eigen::MatrixXf getJacobianMatrix() = 0;
+        virtual Eigen::MatrixXd getJacobianMatrixD();
         virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) = 0;
+        virtual Eigen::MatrixXd getJacobianMatrixD(SceneObjectPtr tcp);
 
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
+        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m) const;
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
+        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, double invParameter) const;
         virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf &invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
+        virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd &invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(SceneObjectPtr tcp);
 
         VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
 

@@ -7,8 +7,8 @@ namespace VirtualRobot
 {
 
 
-    HierarchicalIK::HierarchicalIK(VirtualRobot::RobotNodeSetPtr rns)
-        : rns(rns)
+    HierarchicalIK::HierarchicalIK(VirtualRobot::RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod method)
+        : rns(rns), method(method)
     {
         VR_ASSERT(this->rns);
         verbose = false;
@@ -26,6 +26,8 @@ namespace VirtualRobot
 
     Eigen::VectorXf HierarchicalIK::computeStep(const std::vector<JacobiProviderPtr> &jacDefs, float stepSize)
     {
+        const double invDamped_lamba = 10.0;
+
         VR_ASSERT(jacDefs.size() > 0 && jacDefs[0] && jacDefs[0]->getRobotNodeSet());
 
         if (verbose)
@@ -36,14 +38,14 @@ namespace VirtualRobot
         int ndof = jacDefs[0]->getRobotNodeSet()->getSize();
         Eigen::VectorXf result(ndof);
         result.setZero();
-        std::vector<Eigen::MatrixXf> jacobies;
-        std::vector<Eigen::MatrixXf> invJacobies;
-        std::vector<Eigen::VectorXf> errors;
+        std::vector<Eigen::MatrixXd> jacobies;
+        std::vector<Eigen::MatrixXd> invJacobies;
+        std::vector<Eigen::VectorXd> errors;
 
         for (size_t i = 0; i < jacDefs.size(); i++)
         {
             THROW_VR_EXCEPTION_IF(!jacDefs[i]->isInitialized(), "JacobiProvider is not initialized...");
-            Eigen::MatrixXf j = jacDefs[i]->getJacobianMatrix();// jacDefs[i].tcp);
+            Eigen::MatrixXd j = jacDefs[i]->getJacobianMatrixD();// jacDefs[i].tcp);
             jacobies.push_back(j);
 
             if (verbose)
@@ -51,10 +53,10 @@ namespace VirtualRobot
                 VR_INFO << "Jacoby " << i << ":\n" << j << endl;
             }
 
-            j = jacDefs[i]->computePseudoInverseJacobianMatrix(j);// jacDefs[i].tcp);
+            j = jacDefs[i]->computePseudoInverseJacobianMatrixD(j);// jacDefs[i].tcp);
             invJacobies.push_back(j);
 
-            errors.push_back(jacDefs[i]->getError());
+            errors.push_back(jacDefs[i]->getError().cast<double>());
 
             if (verbose)
             {
@@ -75,28 +77,28 @@ namespace VirtualRobot
         // generate hierarchical gradient descent
 
         // init with first jacobi
-        Eigen::MatrixXf J_i = jacobies[0];
-        Eigen::MatrixXf Jinv_i = invJacobies[0];
+        Eigen::MatrixXd J_i = jacobies[0];
+        Eigen::MatrixXd Jinv_i = invJacobies[0];
 
 
-        Eigen::MatrixXf Jinv_i_min1;
-        Eigen::VectorXf result_i = Jinv_i * errors[0] * stepSize;
+        Eigen::MatrixXd Jinv_i_min1;
+        Eigen::VectorXd result_i = Jinv_i * errors[0] * stepSize;
 
         if (verbose)
         {
             VR_INFO << "result_i 0:\n" << result_i << endl;
         }
 
-        Eigen::VectorXf result_i_min1;
-        Eigen::MatrixXf PA_i_min1;
-        Eigen::MatrixXf JA_i_min1;
-        Eigen::MatrixXf JAinv_i_min1;
-        Eigen::MatrixXf id_ndof(ndof, ndof);
+        Eigen::VectorXd result_i_min1;
+        Eigen::MatrixXd PA_i_min1;
+        Eigen::MatrixXd JA_i_min1;
+        Eigen::MatrixXd JAinv_i_min1;
+        Eigen::MatrixXd id_ndof(ndof, ndof);
         id_ndof.setIdentity();
 
         int accRowCount = J_i.rows();
 
-        float pinvtoler = 0.00001f;
+        double pinvtoler = 0.00001f;
 
         for (size_t i = 1; i < jacobies.size(); i++)
         {
@@ -118,7 +120,23 @@ namespace VirtualRobot
                 VR_INFO << "JA_i_min1 " << i << ":\n" << endl << JA_i_min1 << endl;
             }
 
-            JAinv_i_min1 = MathTools::getPseudoInverse(JA_i_min1, pinvtoler);
+            switch(method)
+            {
+                case JacobiProvider::eTranspose:
+                    JAinv_i_min1 = JA_i_min1.transpose();
+                    break;
+
+                case JacobiProvider::eSVD:
+                    JAinv_i_min1 = MathTools::getPseudoInverseD(JA_i_min1, pinvtoler);
+                    break;
+
+                case JacobiProvider::eSVDDamped:
+                    JAinv_i_min1 = MathTools::getPseudoInverseDampedD(JA_i_min1, invDamped_lamba);
+                    break;
+            }
+
+
+            //JAinv_i_min1 = MathTools::getPseudoInverse(JA_i_min1, pinvtoler);
             if (verbose)
             {
                 VR_INFO << "JAinv_i_min1 " << i << ":\n" << endl << JAinv_i_min1 << endl;
@@ -128,12 +146,28 @@ namespace VirtualRobot
             {
                 VR_INFO << "PA_i_min1 " << i << ":\n" << endl << PA_i_min1 << endl;
             }
-            Eigen::MatrixXf J_tilde_i = J_i * PA_i_min1;
+            Eigen::MatrixXd J_tilde_i = J_i * PA_i_min1;
             if (verbose)
             {
                 VR_INFO << "J_tilde_i " << i << ":\n" << endl << J_tilde_i << endl;
             }
-            Eigen::MatrixXf Jinv_tilde_i = MathTools::getPseudoInverse(J_tilde_i, pinvtoler);
+            Eigen::MatrixXd Jinv_tilde_i;
+            switch(method)
+            {
+                case JacobiProvider::eTranspose:
+                    Jinv_tilde_i = J_tilde_i.transpose();
+                    break;
+
+                case JacobiProvider::eSVD:
+                    Jinv_tilde_i = MathTools::getPseudoInverseD(J_tilde_i, pinvtoler);
+                    break;
+
+                case JacobiProvider::eSVDDamped:
+                    Jinv_tilde_i = MathTools::getPseudoInverseDampedD(J_tilde_i, invDamped_lamba);
+                    break;
+            }
+            //Eigen::MatrixXf Jinv_tilde_i = MathTools::getPseudoInverse(J_tilde_i, pinvtoler);
+
             if (verbose)
             {
                 VR_INFO << "Jinv_tilde_i " << i << ":\n" << endl << Jinv_tilde_i << endl;
@@ -153,7 +187,7 @@ namespace VirtualRobot
             accRowCount += J_i.rows();
         }
 
-        return result_i;
+        return result_i.cast<float>();
 
     }
 

@@ -48,7 +48,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        HierarchicalIK(RobotNodeSetPtr rns);
+        HierarchicalIK(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
         virtual ~HierarchicalIK();
 
@@ -66,6 +66,8 @@ namespace VirtualRobot
 
         RobotNodeSetPtr rns;
         bool verbose;
+
+        JacobiProvider::InverseJacobiMethod method;
     };
 
     typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
