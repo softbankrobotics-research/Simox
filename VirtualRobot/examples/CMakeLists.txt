@@ -1,9 +1,9 @@
 
 FIND_PACKAGE (RBDL)
 
-if (RBDL_FOUND) 
+if (Simox_USE_RBDL AND RBDL_FOUND) 
         ADD_SUBDIRECTORY(InverseDynamics)
-endif (RBDL_FOUND)
+endif ()
 
 ADD_SUBDIRECTORY(loadRobot)
 
