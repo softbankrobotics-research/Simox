@@ -425,7 +425,7 @@ void GraspPlannerWindow::closeEEF()
         bool isFC = qualityMeasure->isGraspForceClosure();
         std::stringstream ss;
         ss << std::setprecision(3);
-        ss << "Grasp Nr " << grasps->getSize() << "\nQuality (wrench space): " << qual << "\nForce closure: ";
+        ss << "Grasp Nr " << grasps->getSize() << "\nQuality: " << qual << "\nForce closure: ";
 
         if (isFC)
         {
