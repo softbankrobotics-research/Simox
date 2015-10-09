@@ -696,10 +696,12 @@ namespace VirtualRobot
             Returns the Pseudo inverse matrix.
         */
         Eigen::MatrixXf VIRTUAL_ROBOT_IMPORT_EXPORT getPseudoInverse(const Eigen::MatrixXf& m, float tol = 1e-5f);
+        Eigen::MatrixXd VIRTUAL_ROBOT_IMPORT_EXPORT getPseudoInverseD(const Eigen::MatrixXd& m, double tol = 1e-5);
         /*!
             Returns the damped Pseudo inverse matrix.
         */
         Eigen::MatrixXf VIRTUAL_ROBOT_IMPORT_EXPORT getPseudoInverseDamped(const Eigen::MatrixXf& m, float lambda = 1.0f);
+        Eigen::MatrixXd VIRTUAL_ROBOT_IMPORT_EXPORT getPseudoInverseDampedD(const Eigen::MatrixXd& m, double lambda = 1.0);
 
         /*!
             Check if all entries of v are valid numbers (i.e. all entries of v are not NaN and not INF)

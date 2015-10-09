@@ -102,6 +102,7 @@ namespace VirtualRobot
         updateJacobianMatrix(currentJacobian);
         return currentJacobian;
     }
+
     void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf &jacobian)
     {
         VR_ASSERT(initialized);

@@ -16,13 +16,21 @@ ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 
 ########### QHULL #################
-OPTION(BUILD_qhull "if on builds qhull external library" OFF)
-find_package(QHULL)
-IF (NOT QHULL_FOUND)
-	MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
-	SET (BUILD_qhull ON)
-	SET (BUILD_qhull ON PARENT_SCOPE)
+OPTION(BUILD_qhull "if on builds qhull external library" ON)
+IF (NOT BUILD_qhull)
+	find_package(QHULL)
+	IF (NOT QHULL_FOUND)
+		MESSAGE (STATUS "Could not find QHULL, please use internal version")
+	ENDIF()
 ENDIF()
+
+#OPTION(BUILD_qhull "if on builds qhull external library" OFF)
+#find_package(QHULL)
+#IF (NOT QHULL_FOUND)
+#	MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
+#	SET (BUILD_qhull ON)
+#	SET (BUILD_qhull ON PARENT_SCOPE)
+#ENDIF()
 
 IF(BUILD_qhull)
 		ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
@@ -175,6 +183,7 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}
 	COMPONENT Headers
         FILES_MATCHING PATTERN "*.h"
         PATTERN ".svn" EXCLUDE
+        PATTERN ".git" EXCLUDE
         PATTERN "CMakeModules" EXCLUDE
         PATTERN "tests" EXCLUDE
         PATTERN "build*" EXCLUDE

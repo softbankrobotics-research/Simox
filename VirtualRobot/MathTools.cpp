@@ -1679,6 +1679,26 @@ namespace VirtualRobot
         return (V * sv.asDiagonal() * U.transpose());
     }
 
+    Eigen::MatrixXd VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getPseudoInverseD(const Eigen::MatrixXd& m, double tol /*= 1e-5f*/)
+    {
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(m, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        Eigen::MatrixXd U = svd.matrixU();
+        Eigen::MatrixXd V = svd.matrixV();
+        Eigen::VectorXd sv = svd.singularValues();
+
+        for (int i = 0; i < sv.rows(); i++)
+            if (sv(i) > tol)
+            {
+                sv(i) = 1.0 / sv(i);
+            }
+            else
+            {
+                sv(i) = 0;
+            }
+
+        return (V * sv.asDiagonal() * U.transpose());
+    }
+
 
     Eigen::MatrixXf VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getPseudoInverseDamped(const Eigen::MatrixXf& m, float lambda /*= 1.0f*/)
     {
@@ -1686,6 +1706,21 @@ namespace VirtualRobot
         Eigen::MatrixXf U = svd.matrixU();
         Eigen::MatrixXf V = svd.matrixV();
         Eigen::VectorXf sv = svd.singularValues();
+
+        for (int i = 0; i < sv.rows(); i++)
+        {
+            sv(i) = sv(i) / (sv(i) * sv(i) + lambda * lambda);
+        }
+
+        return (V * sv.asDiagonal() * U.transpose());
+    }
+
+    Eigen::MatrixXd VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getPseudoInverseDampedD(const Eigen::MatrixXd& m, double lambda /*= 1.0f*/)
+    {
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(m, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        Eigen::MatrixXd U = svd.matrixU();
+        Eigen::MatrixXd V = svd.matrixV();
+        Eigen::VectorXd sv = svd.singularValues();
 
         for (int i = 0; i < sv.rows(); i++)
         {

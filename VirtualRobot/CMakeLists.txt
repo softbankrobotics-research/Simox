@@ -426,6 +426,7 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION 
         PATTERN "*.h"
         PATTERN "*.hpp"
         PATTERN ".svn" EXCLUDE
+        PATTERN ".git" EXCLUDE
         PATTERN "CMakeModules" EXCLUDE
         PATTERN "tests" EXCLUDE
         PATTERN "build*" EXCLUDE
@@ -448,6 +449,7 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
         PATTERN "*.jpg"
         PATTERN "*.bin"
         PATTERN ".svn" EXCLUDE
-	)
+        PATTERN ".git" EXCLUDE
+        )
    
 MESSAGE (STATUS "***** Finished CONFIGURING Simox project VirtualRobot *****\n")
