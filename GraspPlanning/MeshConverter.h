@@ -23,7 +23,7 @@
 #ifndef MESHCONVERTER_H
 #define MESHCONVERTER_H
 
-#include "../../GraspStudio.h"
+#include "GraspStudio.h"
 #include <vector>
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
@@ -36,7 +36,12 @@ namespace GraspStudio
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        static VirtualRobot::ObstaclePtr refineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist);
+        /*!
+            Create an object. The visualization and collision model is created from the convex hull.
+        */
+        static VirtualRobot::ManipulationObjectPtr CreateManipulationObject(const std::string &name, VirtualRobot::MathTools::ConvexHull3DPtr hull);
+        static VirtualRobot::TriMeshModelPtr CreateTriMeshModel(VirtualRobot::MathTools::ConvexHull3DPtr hull);
+        static VirtualRobot::ObstaclePtr RefineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist);
 
         //! Returns -1 if obj is not part of vectList, otherwise the index of vectList is returned.
         static int hasVertex(std::vector< Eigen::Vector3f>& vectList, Eigen::Vector3f& obj);

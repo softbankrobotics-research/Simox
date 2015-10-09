@@ -444,7 +444,7 @@ void MatGraspPlannerWindow::loadObject()
         object = Obstacle::createBox(100.0f, 100.0f, 40.0f);
     }
 
-    object = MeshConverter::refineObjectSurface(object, 4.0f);
+    object = MeshConverter::RefineObjectSurface(object, 4.0f);
 
 
     qualityMeasure.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(object));
@@ -460,7 +460,7 @@ void MatGraspPlannerWindow::loadObjectFromFile(string objectFilename)
     if (UI.checkBoxRefineMesh->isChecked())
     {
         cout << "Refining surface mesh..." << endl;
-        object = MeshConverter::refineObjectSurface(object, 4.0f);
+        object = MeshConverter::RefineObjectSurface(object, 4.0f);
         cout << "Refining surface mesh: Done." << endl;
     }
 

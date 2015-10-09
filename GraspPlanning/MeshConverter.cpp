@@ -22,6 +22,7 @@
 */
 #include "MeshConverter.h"
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <GraspPlanning/ConvexHullGenerator.h>
 
 using namespace std;
 using namespace Eigen;
@@ -29,7 +30,73 @@ using namespace VirtualRobot;
 
 namespace GraspStudio
 {
+    VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string &name, VirtualRobot::MathTools::ConvexHull3DPtr hull)
+    {
+        VirtualRobot::ManipulationObjectPtr res;
 
+        if (!hull)
+        {
+            return res;
+        }
+
+        TriMeshModelPtr tm = MeshConverter::CreateTriMeshModel(hull);
+
+        if (!tm)
+        {
+            return res;
+        }
+
+        VisualizationFactoryPtr cv = VisualizationFactory::first(NULL);
+        if (!cv)
+        {
+            return res;
+        }
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        VisualizationNodePtr visu = cv->createTriMeshModelVisualization(tm, false, gp, false);
+        CollisionModelPtr cm(new CollisionModel(visu));
+        res.reset(new ManipulationObject(name, visu, cm));
+
+        return res;
+    }
+
+
+    VirtualRobot::TriMeshModelPtr MeshConverter::CreateTriMeshModel(VirtualRobot::MathTools::ConvexHull3DPtr hull)
+    {
+        VirtualRobot::TriMeshModelPtr res(new TriMeshModel());
+
+        if (!hull || hull->vertices.size() == 0 || hull->faces.size() == 0)
+        {
+            return res;
+        }
+
+        int nFaces = (int)hull->faces.size();
+        int nVertices = nFaces * 3;
+
+        int nVertexCount = 0;
+
+        for (int i = 0; i < nFaces; i++)
+        {
+            Eigen::Vector3f &v1 = hull->vertices.at(hull->faces[i].id1);
+            Eigen::Vector3f &v2 = hull->vertices.at(hull->faces[i].id2);
+            Eigen::Vector3f &v3 = hull->vertices.at(hull->faces[i].id3);
+
+            Eigen::Vector3f &n = hull->faces[i].normal;
+
+            bool bNeedFlip = ConvexHullGenerator::checkVerticeOrientation(v1, v2, v3, n);
+
+            if (bNeedFlip)
+            {
+                res->addTriangleWithFace(v3, v2, v1);
+            }
+            else
+            {
+                res->addTriangleWithFace(v1, v2, v3);
+            }
+            nVertexCount+=3;
+        }
+        return res;
+    }
 
     int MeshConverter::hasVertex(std::vector< Eigen::Vector3f>& vectList, Eigen::Vector3f& obj)
     {
@@ -44,7 +111,7 @@ namespace GraspStudio
         return -1;
     }
 
-    VirtualRobot::ObstaclePtr MeshConverter::refineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist)
+    VirtualRobot::ObstaclePtr MeshConverter::RefineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist)
     {
         VirtualRobot::ObstaclePtr res;
 

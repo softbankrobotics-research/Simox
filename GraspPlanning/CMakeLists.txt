@@ -50,6 +50,7 @@ ConvexHullGenerator.cpp
 ContactConeGenerator.cpp
 ApproachMovementGenerator.cpp
 ApproachMovementSurfaceNormal.cpp
+MeshConverter.cpp
 GraspPlanner/GraspPlanner.cpp
 GraspPlanner/GenericGraspPlanner.cpp
 GraspQuality/GraspQualityMeasure.cpp
@@ -63,6 +64,7 @@ ConvexHullGenerator.h
 ContactConeGenerator.h
 ApproachMovementGenerator.h
 ApproachMovementSurfaceNormal.h
+MeshConverter.h
 GraspPlanner/GraspPlanner.h
 GraspPlanner/GenericGraspPlanner.h
 GraspQuality/GraspQualityMeasure.h
@@ -85,7 +87,6 @@ IF(BUILD_powercrust)
 		GraspPlanner/MATPlanner/LocalNeighborhood.cpp
 		GraspPlanner/MATPlanner/MatGraspPlanner.cpp
 		GraspPlanner/MATPlanner/MedialSphere.cpp
-		GraspPlanner/MATPlanner/MeshConverter.cpp
 		GraspPlanner/MATPlanner/SphereHelpers.cpp
 		GraspPlanner/MATPlanner/StrOutHelpers.cpp
 		GraspPlanner/MATPlanner/TestCases.cpp
@@ -103,7 +104,6 @@ IF(BUILD_powercrust)
 		GraspPlanner/MATPlanner/LocalNeighborhood.h
 		GraspPlanner/MATPlanner/MatGraspPlanner.h
 		GraspPlanner/MATPlanner/MedialSphere.h
-		GraspPlanner/MATPlanner/MeshConverter.h
 		GraspPlanner/MATPlanner/SphereHelpers.h
 		GraspPlanner/MATPlanner/StrOutHelpers.h
 		GraspPlanner/MATPlanner/TestCases.h

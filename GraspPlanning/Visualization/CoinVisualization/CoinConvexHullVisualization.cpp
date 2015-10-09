@@ -111,11 +111,6 @@ namespace GraspStudio
 
         int nFaces = (int)convHull->faces.size();
         int nVertices = nFaces * 3;
-        //Face3D f;
-        //Vec3D v1,v2,v3;
-
-         //SoNormal *pNormals = new SoNormal;
-         //SbVec3f* normalsArray = new SbVec3f[nFaces];
 
         // compute points and normals
         SbVec3f* pVertexArray = new SbVec3f[nVertices];
@@ -155,23 +150,6 @@ namespace GraspStudio
             }
 
             nVertexCount++;
-
-            /*if (bNeedFlip)
-            {
-                normalsArray[i][0] = n(0);
-                normalsArray[i][1] = n(1);
-                normalsArray[i][2] = n(2);
-            } else
-            {
-                normalsArray[i][0] = -n(0);
-                normalsArray[i][1] = -n(1);
-                normalsArray[i][2] = -n(2);
-            }*/
-            //VR_INFO << "Face " << i << ": v1: " << v1(0) << "," << v1(1) << "," << v1(2) << endl;
-            //VR_INFO << "     " << i << ": v2: " << v2(0) << "," << v2(1) << "," << v2(2) << endl;
-            //VR_INFO << "     " << i << ": v3: " << v3(0) << "," << v3(1) << "," << v3(2) << endl;
-
-
         }
 
         // set normals
@@ -204,28 +182,6 @@ namespace GraspStudio
 
         return result;
     }
-
-    /*
-    void addVertex(Vec3D &v1,Vec3D &v2,Vec3D &v3,Vec3D &normal,SbVec3f *pVertexArray, int& nVertexCount)
-    {
-        bool bNeedFlip = GraspStudioHelpers::checkVerticeOrientation(v1,v2,v3,normal);
-
-        // COUNTER CLOCKWISE
-        if (bNeedFlip)
-            pVertexArray[nVertexCount].setValue((float)v3.x,(float)v3.y,(float)v3.z);
-        else
-            pVertexArray[nVertexCount].setValue((float)v1.x,(float)v1.y,(float)v1.z);
-        nVertexCount++;
-
-        pVertexArray[nVertexCount].setValue((float)v2.x,(float)v2.y,(float)v2.z);
-        nVertexCount++;
-
-        if (bNeedFlip)
-            pVertexArray[nVertexCount].setValue((float)v1.x,(float)v1.y,(float)v1.z);
-        else
-            pVertexArray[nVertexCount].setValue((float)v3.x,(float)v3.y,(float)v3.z);
-        nVertexCount++;
-    }*/
 
 
     SoSeparator* CoinConvexHullVisualization::createConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr& convHull, bool buseFirst3Coords)
@@ -293,117 +249,7 @@ namespace GraspStudio
         result->addChild(hullV);
         result->unrefNoDelete();
         return result;
-        /*
-            // creates 3d-projection of all 6d facets
-            int nVertices = nFaces*12;
-        SoCoordinate3* pCoords = new SoCoordinate3();
-        SoFaceSet* pFaceSet = new SoFaceSet();
-        Face6d f;
-        Vec3d v1,v2,v3,v4,v5,v6;
-        Vec3d normal;
-
-        SbVec3f *pVertexArray = new SbVec3f[nVertices];
-
-        int nVertexCount = 0;
-        bool bNeedFlip = false;
-
-        for (int i=0;i<nFaces;i++)
-        {
-            f = convHull.faces.at(i);
-            if (buseFirst3Coords)
-            {
-                v1.x = convHull.vertices.at(f.id[0]).x;
-                v1.y = convHull.vertices.at(f.id[0]).y;
-                v1.z = convHull.vertices.at(f.id[0]).z;
-                v2.x = convHull.vertices.at(f.id[1]).x;
-                v2.y = convHull.vertices.at(f.id[1]).y;
-                v2.z = convHull.vertices.at(f.id[1]).z;
-                v3.x = convHull.vertices.at(f.id[2]).x;
-                v3.y = convHull.vertices.at(f.id[2]).y;
-                v3.z = convHull.vertices.at(f.id[2]).z;
-                v4.x = convHull.vertices.at(f.id[3]).x;
-                v4.y = convHull.vertices.at(f.id[3]).y;
-                v4.z = convHull.vertices.at(f.id[3]).z;
-                v5.x = convHull.vertices.at(f.id[4]).x;
-                v5.y = convHull.vertices.at(f.id[4]).y;
-                v5.z = convHull.vertices.at(f.id[4]).z;
-                v6.x = convHull.vertices.at(f.id[5]).x;
-                v6.y = convHull.vertices.at(f.id[5]).y;
-                v6.z = convHull.vertices.at(f.id[5]).z;
-                normal.x = f.normal.x;
-                normal.y = f.normal.y;
-                normal.z = f.normal.z;
-            } else
-            {
-                v1.x = convHull.vertices.at(f.id[0]).nx;
-                v1.y = convHull.vertices.at(f.id[0]).ny;
-                v1.z = convHull.vertices.at(f.id[0]).nz;
-                v2.x = convHull.vertices.at(f.id[1]).nx;
-                v2.y = convHull.vertices.at(f.id[1]).ny;
-                v2.z = convHull.vertices.at(f.id[1]).nz;
-                v3.x = convHull.vertices.at(f.id[2]).nx;
-                v3.y = convHull.vertices.at(f.id[2]).ny;
-                v3.z = convHull.vertices.at(f.id[2]).nz;
-                v4.x = convHull.vertices.at(f.id[3]).nx;
-                v4.y = convHull.vertices.at(f.id[3]).ny;
-                v4.z = convHull.vertices.at(f.id[3]).nz;
-                v5.x = convHull.vertices.at(f.id[4]).nx;
-                v5.y = convHull.vertices.at(f.id[4]).ny;
-                v5.z = convHull.vertices.at(f.id[4]).nz;
-                v6.x = convHull.vertices.at(f.id[5]).nx;
-                v6.y = convHull.vertices.at(f.id[5]).ny;
-                v6.z = convHull.vertices.at(f.id[5]).nz;
-                normal.x = f.normal.nx;
-                normal.y = f.normal.ny;
-                normal.z = f.normal.nz;
-            }
-            bool bNeedFlip = GraspStudioHelpers::checkVerticeOrientation(v1,v2,v3,normal);
-            if (bNeedFlip)
-            {
-                pVertexArray[nVertexCount].setValue((float)v6.x,(float)v6.y,(float)v6.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v5.x,(float)v5.y,(float)v5.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v4.x,(float)v4.y,(float)v4.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v3.x,(float)v3.y,(float)v3.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v2.x,(float)v2.y,(float)v2.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v1.x,(float)v1.y,(float)v1.z);
-                nVertexCount++;
-            } else
-            {
-                pVertexArray[nVertexCount].setValue((float)v1.x,(float)v1.y,(float)v1.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v2.x,(float)v2.y,(float)v2.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v3.x,(float)v3.y,(float)v3.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v4.x,(float)v4.y,(float)v4.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v5.x,(float)v5.y,(float)v5.z);
-                nVertexCount++;
-                pVertexArray[nVertexCount].setValue((float)v6.x,(float)v6.y,(float)v6.z);
-                nVertexCount++;
-            }
-        }
-        pCoords->point.setValues(0,nVertices,pVertexArray);
-        long *nNumVertices = new long[nFaces];
-        for (int i=0;i<nFaces;i++)
-            nNumVertices[i] = 6;
-        pFaceSet->numVertices.setValues(0,nFaces,(const int32_t*)nNumVertices);
-
-        pStoreResult->addChild(pCoords);
-        pStoreResult->addChild(pFaceSet);
-        delete []pVertexArray;
-        delete []nNumVertices;
-
-        qhull_mutex.unlock();
-
-        return true;
-        */
     }
 
 
-} // namespace Saba
+}

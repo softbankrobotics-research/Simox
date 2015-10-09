@@ -2,6 +2,7 @@
 #include "GraspPlannerWindow.h"
 #include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
 #include "GraspPlanning/ContactConeGenerator.h"
+#include "GraspPlanning/MeshConverter.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/ManipulationObject.h"
@@ -301,6 +302,12 @@ void GraspPlannerWindow::loadObject()
     {
         object = Obstacle::createBox(50.0f, 50.0f, 10.0f);
     }
+
+#if 0
+    TriMeshModelPtr tm = object->getVisualization()->getTriMeshModel();
+    MathTools::ConvexHull3DPtr cv = ConvexHullGenerator::CreateConvexHull(tm->vertices);
+    object = GraspStudio::MeshConverter::CreateManipulationObject(object->getName(),cv);
+#endif
 
     //Eigen::Vector3f minS,maxS;
     //object->getCollisionModel()->getTriMeshModel()->getSize(minS,maxS);

@@ -53,7 +53,7 @@
 #include "GraspPlanning/GraspStudio.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 #include "GraspPlanning/GraspPlanner/MATPlanner/MatGraspPlanner.h"
-#include "GraspPlanning/GraspPlanner/MATPlanner/MeshConverter.h"
+#include "GraspPlanning/MeshConverter.h"
 #include "GraspPlanning/GraspPlanner/MATPlanner/GraspPlannerConfiguration.h"
 
 class MatGraspPlannerWindow : public QMainWindow
