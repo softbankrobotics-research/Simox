@@ -58,6 +58,7 @@ namespace VirtualRobot
     {
     public:
         friend class Robot;
+        friend class LocalRobot;
         friend class RobotIO;
         friend class RobotNodeSet;
         friend class RobotConfig;
@@ -126,7 +127,7 @@ namespace VirtualRobot
         /*!
             The preJoint/preVisualization transformation. This transformation is applied before the joint and the visualization.
         */
-        virtual Eigen::Matrix4f getLocalTransformation()
+        virtual const Eigen::Matrix4f& getLocalTransformation()
         {
             return localTransformation;
         }
@@ -203,8 +204,9 @@ namespace VirtualRobot
 
         /*!
             Find all robot nodes whose movements affect this RobotNode
+            \param rns If set, the search is limited to the rns.
         */
-        virtual std::vector<RobotNodePtr> getAllParents(RobotNodeSetPtr rns);
+        virtual std::vector<RobotNodePtr> getAllParents(RobotNodeSetPtr rns = RobotNodeSetPtr());
 
         /*!
             Clone this RobotNode.

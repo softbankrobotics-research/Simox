@@ -210,9 +210,7 @@ namespace VirtualRobot
 
     void RobotNode::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
-        this->globalPose = parentPose * getLocalTransformation();
-
-        //globalPosePostJoint = this->globalPose*getPostJointTransformation();
+        this->globalPose = parentPose * getLocalTransformation(); // localTransformation
     }
 
 
@@ -707,12 +705,16 @@ namespace VirtualRobot
     {
         std::vector<RobotNodePtr> result;
 
-        if (!rns)
+        std::vector<RobotNodePtr> rn;
+        if (rns)
         {
-            return result;
+            rn = rns->getAllRobotNodes();
         }
-
-        std::vector<RobotNodePtr> rn = rns->getAllRobotNodes();
+        else
+        {
+            RobotPtr r = this->getRobot();
+            rn = r->getRobotNodes();
+        }
 
         for (unsigned int i = 0; i < rn.size(); i++)
         {

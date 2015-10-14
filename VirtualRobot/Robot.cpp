@@ -325,6 +325,16 @@ namespace VirtualRobot
         }
     }
 
+
+    /**
+    * Can be called internally, when lock is already set.
+    */
+    void LocalRobot::applyJointValuesNoLock()
+    {
+        rootNode->updatePose(globalPose);
+    }
+
+
     std::vector<EndEffectorPtr> Robot::getEndEffectors()
     {
         std::vector<EndEffectorPtr> res;
@@ -418,6 +428,7 @@ namespace VirtualRobot
     void Robot::applyJointValuesNoLock()
     {
         this->getRootNode()->updatePose(this->getGlobalPose());
+        //rootNode->updatePose(globalPose);
     }
 
     /**
@@ -453,24 +464,30 @@ namespace VirtualRobot
 
     void Robot::setUpdateVisualization(bool enable)
     {
-        updateVisualization = enable;
+        SceneObject::setUpdateVisualization(enable);
 
         std::vector<RobotNodePtr> robotNodes = this->getRobotNodes();
         std::vector<RobotNodePtr> ::const_iterator iterator = robotNodes.begin();
 
-        //  std::map< std::string, RobotNodePtr>::const_iterator iterator = robotNodeMap.begin();
-        //  while(robotNodeMap.end() != iterator)
         while (robotNodes.end() != iterator)
         {
-            //iterator->second->setUpdateVisualization(enable);
             (*iterator)->setUpdateVisualization(enable);
             ++iterator;
         }
     }
 
-    bool Robot::getUpdateVisualizationStatus()
+    void Robot::setUpdateCollisionModel(bool enable)
     {
-        return updateVisualization;
+        SceneObject::setUpdateCollisionModel(enable);
+
+        std::vector<RobotNodePtr> robotNodes = this->getRobotNodes();
+        std::vector<RobotNodePtr> ::const_iterator iterator = robotNodes.begin();
+
+        while (robotNodes.end() != iterator)
+        {
+            (*iterator)->setUpdateCollisionModel(enable);
+            ++iterator;
+        }
     }
 
     RobotNodeSetPtr LocalRobot::getRobotNodeSet(const std::string& nodeSetName)

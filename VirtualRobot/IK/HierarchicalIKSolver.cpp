@@ -55,7 +55,7 @@ bool HierarchicalIKSolver::computeSteps(float stepSize, float minChange, int max
 }
 
 bool HierarchicalIKSolver::checkTolerances() {
-    for(int i = 0; i < jacobies.size(); i++) {
+    for(size_t i = 0; i < jacobies.size(); i++) {
         if (!jacobies[i]->checkTolerances())
             return false;
     }

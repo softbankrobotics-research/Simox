@@ -264,8 +264,10 @@ namespace VirtualRobot
         /*!
             Enables/Disables the visualization updates of collision model and visualization model.
         */
-        void setUpdateVisualization(bool enable);
+        virtual void setUpdateVisualization(bool enable);
         bool getUpdateVisualizationStatus();
+        virtual void setUpdateCollisionModel(bool enable);
+        bool getUpdateCollisionModelStatus();
 
         /*!
             Setup the visualization of this object.
@@ -511,6 +513,7 @@ namespace VirtualRobot
         VisualizationNodePtr visualizationModel;                                //< This is the main visualization
 
         bool updateVisualization;
+        bool updateCollisionModel;
 
         virtual bool initializePhysics();
         Physics physics;
