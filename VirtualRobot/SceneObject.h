@@ -71,7 +71,7 @@ namespace VirtualRobot
             {
 
                 localCoM.setZero();
-                intertiaMatrix.setIdentity();
+                inertiaMatrix.setIdentity();
                 massKg = 0.0f;
                 comLocation = eVisuBBoxCenter;
                 simType = eUnknown;
@@ -131,7 +131,7 @@ namespace VirtualRobot
                     // scope
                     std::ostringstream sos;
                     sos << std::setiosflags(std::ios::fixed);
-                    sos << " ** inertial matrix [kg*m^2]:" << std::endl << intertiaMatrix << std::endl;
+                    sos << " ** inertial matrix [kg*m^2]:" << std::endl << inertiaMatrix << std::endl;
                     std::cout << sos.str();
                 } // scope
 
@@ -148,7 +148,7 @@ namespace VirtualRobot
 
             bool isSet()
             {
-                return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !intertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
+                return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !inertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
             }
 
             virtual std::string toXML(int tabs)
@@ -181,7 +181,7 @@ namespace VirtualRobot
                 }
 
                 ss << ta << "\t<InertiaMatrix>\n";
-                ss << MathTools::getTransformXMLString(intertiaMatrix, tabs + 2, true);
+                ss << MathTools::getTransformXMLString(inertiaMatrix, tabs + 2, true);
                 ss << ta << "\t</InertiaMatrix>\n";
 
                 for (size_t i = 0; i < ignoreCollisions.size(); i++)
@@ -204,7 +204,7 @@ namespace VirtualRobot
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
             float massKg;               //!< The mass of this object
             CoMLocation comLocation;    //!< Where is the CoM located
-            Eigen::Matrix3f intertiaMatrix; //! in kg*m^2
+            Eigen::Matrix3f inertiaMatrix; //! in kg*m^2
             SimulationType simType;
             std::vector< std::string > ignoreCollisions; // ignore collisions with other objects (only used within collision engines)
         };
@@ -229,7 +229,7 @@ namespace VirtualRobot
             The global pose defines the position of the object in the world. For non-joint objects it is identical with the visualization frame.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
-        
+
         /*!
             Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
             \param pose The new pose of this object

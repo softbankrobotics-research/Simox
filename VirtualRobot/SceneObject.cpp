@@ -339,7 +339,7 @@ namespace VirtualRobot
         {
             // create inertia visu
             //cout << "INERTIA MATRIX:" << endl << physics.intertiaMatrix << endl;
-            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(physics.intertiaMatrix);
+            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(physics.inertiaMatrix);
 
             if (eigensolver.info() == Eigen::Success)
             {
@@ -683,12 +683,12 @@ namespace VirtualRobot
         }
 
         // check for inertia matrix determination
-        if (physics.intertiaMatrix.isZero())
+        if (physics.inertiaMatrix.isZero())
         {
             if (physics.massKg <= 0)
             {
                 // standard box
-                physics.intertiaMatrix.setIdentity();
+                physics.inertiaMatrix.setIdentity();
             }
             else
             {
@@ -710,9 +710,9 @@ namespace VirtualRobot
                 if (!tm)
                 {
                     // standard box
-                    physics.intertiaMatrix.setIdentity();
-                    physics.intertiaMatrix *= 0.01f; // 10 cm bbox
-                    physics.intertiaMatrix *= physics.massKg;
+                    physics.inertiaMatrix.setIdentity();
+                    physics.inertiaMatrix *= 0.01f; // 10 cm bbox
+                    physics.inertiaMatrix *= physics.massKg;
                 }
                 else
                 {
@@ -727,13 +727,13 @@ namespace VirtualRobot
                     Eigen::Vector3f l = bbox.maxBB - bbox.minBB;
                     l *= 0.001f; // mm -> m
 
-                    physics.intertiaMatrix.setZero();
-                    physics.intertiaMatrix(0, 0) = (l(1) * l(1) + l(2) * l(2)) / 12.0f;
-                    physics.intertiaMatrix(1, 1) = (l(0) * l(0) + l(2) * l(2)) / 12.0f;
-                    physics.intertiaMatrix(2, 2) = (l(0) * l(0) + l(1) * l(1)) / 12.0f;
+                    physics.inertiaMatrix.setZero();
+                    physics.inertiaMatrix(0, 0) = (l(1) * l(1) + l(2) * l(2)) / 12.0f;
+                    physics.inertiaMatrix(1, 1) = (l(0) * l(0) + l(2) * l(2)) / 12.0f;
+                    physics.inertiaMatrix(2, 2) = (l(0) * l(0) + l(1) * l(1)) / 12.0f;
 
                     float mass = physics.massKg;
-                    physics.intertiaMatrix *= mass;
+                    physics.inertiaMatrix *= mass;
                 }
             }
         }
@@ -920,7 +920,7 @@ namespace VirtualRobot
 
     Eigen::Matrix3f SceneObject::getInertiaMatrix()
     {
-        return physics.intertiaMatrix;
+        return physics.inertiaMatrix;
     }
 
     std::string SceneObject::getSceneObjectXMLString(const std::string& basePath, int tabs)
@@ -980,7 +980,7 @@ namespace VirtualRobot
 
     void SceneObject::setInertiaMatrix(const Eigen::Matrix3f& im)
     {
-        physics.intertiaMatrix = im;
+        physics.inertiaMatrix = im;
     }
 
     bool SceneObject::hasChild(SceneObjectPtr child, bool recursive) const

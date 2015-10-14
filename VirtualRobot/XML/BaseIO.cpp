@@ -1282,7 +1282,7 @@ namespace VirtualRobot
 
         if (inMatXMLNode)
         {
-            physics.intertiaMatrix = process3x3Matrix(inMatXMLNode);
+            physics.inertiaMatrix = process3x3Matrix(inMatXMLNode);
             std::vector< Units > unitsAttr = getUnitsAttributes(inMatXMLNode);
             Units uWeight("kg");
             Units uLength("m");
@@ -1317,12 +1317,12 @@ namespace VirtualRobot
                 factor *= 0.000001f;
             }
 
-            physics.intertiaMatrix *= factor;
+            physics.inertiaMatrix *= factor;
 
         }
         else
         {
-            physics.intertiaMatrix.setZero(); // this will trigger an automatically determination of the inertia matrix during initialization
+            physics.inertiaMatrix.setZero(); // this will trigger an automatically determination of the inertia matrix during initialization
         }
 
         rapidxml::xml_node<>* ignoreColXMLNode = physicsXMLNode->first_node("ignorecollision", 0, false);
