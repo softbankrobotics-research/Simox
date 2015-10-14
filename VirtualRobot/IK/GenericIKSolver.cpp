@@ -19,7 +19,7 @@ namespace VirtualRobot
 {
 
     GenericIKSolver::GenericIKSolver(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod) :
-        IKSolver(rns)
+        AdvancedIKSolver(rns)
     {
         this->invJacMethod = invJacMethod;
         _init();
@@ -72,12 +72,12 @@ namespace VirtualRobot
 
     VirtualRobot::GraspPtr GenericIKSolver::solve(ManipulationObjectPtr object, CartesianSelection selection /*= All*/, int maxLoops)
     {
-        return IKSolver::solve(object, selection, maxLoops);
+        return AdvancedIKSolver::solve(object, selection, maxLoops);
     }
 
     bool GenericIKSolver::solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection /*= All*/, int maxLoops)
     {
-        return IKSolver::solve(object, grasp, selection, maxLoops);
+        return AdvancedIKSolver::solve(object, grasp, selection, maxLoops);
     }
 
     void GenericIKSolver::setJointsRandom()

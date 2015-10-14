@@ -19,7 +19,7 @@ using namespace VirtualRobot;
 namespace Saba
 {
 
-    GraspIkRrt::GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::IKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal)
+    GraspIkRrt::GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::AdvancedIKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal)
         : BiRrt(cspace, Rrt::eConnect, Rrt::eConnect), object(object), ikSolver(ikSolver), graspSet(graspSet), sampleGoalProbab(probabSampleGoal)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");

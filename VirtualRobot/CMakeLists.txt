@@ -65,6 +65,7 @@ XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
 IK/IKSolver.cpp
+IK/AdvancedIKSolver.cpp
 IK/DifferentialIK.cpp
 IK/GenericIKSolver.cpp
 IK/CoMIK.cpp
@@ -175,6 +176,7 @@ XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
 IK/IKSolver.h
+IK/AdvancedIKSolver.h
 IK/DifferentialIK.h
 IK/GenericIKSolver.h
 IK/CoMIK.h

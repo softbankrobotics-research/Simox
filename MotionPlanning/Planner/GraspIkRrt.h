@@ -27,7 +27,7 @@
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/IK/IKSolver.h>
+#include <VirtualRobot/IK/AdvancedIKSolver.h>
 #include "BiRrt.h"
 
 namespace Saba
@@ -51,7 +51,7 @@ namespace Saba
             \param graspSet The grasps, defining potential goal configurations.
             \param probabSampleGoal Probability with which a goal config is created during planning loop.
         */
-        GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::IKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal = 0.1f);
+        GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::AdvancedIKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal = 0.1f);
         virtual ~GraspIkRrt();
 
         /*!
@@ -79,7 +79,7 @@ namespace Saba
         float sampleGoalProbab;
 
         VirtualRobot::ManipulationObjectPtr object;
-        VirtualRobot::IKSolverPtr ikSolver;
+        VirtualRobot::AdvancedIKSolverPtr ikSolver;
         VirtualRobot::GraspSetPtr graspSet;
         VirtualRobot::RobotNodeSetPtr rns;
 

@@ -24,7 +24,7 @@
 #define _VirtualRobot_GenericIKSolver_h_
 
 #include "../VirtualRobotImportExport.h"
-#include "IKSolver.h"
+#include "AdvancedIKSolver.h"
 #include "DifferentialIK.h"
 #include "../ManipulationObject.h"
 
@@ -32,7 +32,7 @@ namespace VirtualRobot
 {
 
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT GenericIKSolver : public IKSolver
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GenericIKSolver : public AdvancedIKSolver
     {
     public:
 
