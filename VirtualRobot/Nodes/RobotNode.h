@@ -127,7 +127,7 @@ namespace VirtualRobot
         /*!
             The preJoint/preVisualization transformation. This transformation is applied before the joint and the visualization.
         */
-        virtual const Eigen::Matrix4f& getLocalTransformation()
+        virtual Eigen::Matrix4f getLocalTransformation()
         {
             return localTransformation;
         }

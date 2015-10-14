@@ -91,7 +91,7 @@ namespace VirtualRobot
     void RobotNodePrismatic::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
         Eigen::Affine3f tmpT(Eigen::Translation3f((this->getJointValue() + jointValueOffset)*jointTranslationDirection));
-        globalPose = parentPose * getLocalTransformation() * tmpT.matrix();
+        globalPose = parentPose * localTransformation /*getLocalTransformation()*/ * tmpT.matrix();
 
         if (visuScaling)
         {

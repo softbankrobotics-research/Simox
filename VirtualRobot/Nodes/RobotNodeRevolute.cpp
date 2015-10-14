@@ -87,7 +87,7 @@ namespace VirtualRobot
     void RobotNodeRevolute::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
         Eigen::Affine3f tmpT(Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis));
-        globalPose = parentPose * getLocalTransformation() * tmpT.matrix();
+        globalPose = parentPose * localTransformation /*getLocalTransformation()*/ * tmpT.matrix();
     }
 
     void RobotNodeRevolute::print(bool printChildren, bool printDecoration) const
