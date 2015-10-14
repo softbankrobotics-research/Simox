@@ -70,6 +70,31 @@ namespace VirtualRobot
             std::vector<robotNodeDef> parentChildMapping;
         };
 
+        /*!
+            Clones the robot.
+            \param robot The robot to clone
+            \param name The new name
+            \param collisionChecker Optional: A collision checker to which the robot should be registered. If not set, the collision checker of the input robot is used.
+            \param scaling Scale the resulting robot.
+        */
+        static RobotPtr clone(RobotPtr robot, const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+
+        /*!
+        Clones the robot, but only leave the defined joints active. ALl other joints are accumulated and set to one model which is fixed (may result in faster updates)
+        \param robot The robot to clone
+        \param rns The robot node set of active joints. The joints must be given as an ordered set, i.e. the first node must be located before the second node in the kinemtic structure of the robot.
+        \param name The new name
+        */
+        static RobotPtr cloneSubSet(RobotPtr robot, RobotNodeSetPtr rns, const std::string& name);
+
+
+
+        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr > &nodes, RobotNodePtr parent = RobotNodePtr());
+
+        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB);
+
+        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr> &appendNodes);
+
         static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
 
         static RobotPtr cloneChangeStructure(RobotPtr robot, robotStructureDef& newStructure);

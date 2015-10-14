@@ -132,7 +132,7 @@ namespace VirtualRobot
             Enables/Disables the visualization updates of collision model and visualization model.
         */
         void setUpdateVisualization(bool enable);
-        bool getUpdateVisualizationStatus();
+        void setUpdateCollisionModel(bool enable);
 
         boost::shared_ptr<Robot> shared_from_this()
         {
@@ -388,7 +388,7 @@ namespace VirtualRobot
         void createVisualizationFromCollisionModels();
 
         //! It is assumed that the mutex is already set
-        void applyJointValuesNoLock();
+        virtual void applyJointValuesNoLock();
 
 
         std::string filename; // RobotIO stores the filename here
@@ -469,6 +469,7 @@ namespace VirtualRobot
     protected:
         //Eigen::Matrix4f globalPose; //!< The pose of this robot in the world
         RobotNodePtr rootNode;
+        virtual void applyJointValuesNoLock();
 
         std::map< std::string, RobotNodePtr > robotNodeMap;
         std::map< std::string, RobotNodeSetPtr > robotNodeSetMap;

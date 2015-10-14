@@ -23,10 +23,12 @@ namespace VirtualRobot
         this->visualizationModel = visualization;
         this->collisionModel = collisionModel;
 
+
         this->physics = p;
         this->globalPose = Eigen::Matrix4f::Identity();
         this->initialized = false;
         updateVisualization = true;
+        updateCollisionModel = true;
 
         if (visualization)
         {
@@ -118,12 +120,12 @@ namespace VirtualRobot
 
     void SceneObject::updatePose(bool updateChildren)
     {
-        if (visualizationModel)
+        if (visualizationModel && updateVisualization)
         {
             visualizationModel->setGlobalPose(globalPose);
         }
 
-        if (collisionModel)
+        if (collisionModel && updateCollisionModel)
         {
             collisionModel->setGlobalPose(globalPose);
         }
@@ -479,10 +481,19 @@ namespace VirtualRobot
             collisionModel->setUpdateVisualization(enable);
         }
     }
+    void SceneObject::setUpdateCollisionModel(bool enable)
+    {
+        updateCollisionModel = enable;
+    }
 
     bool SceneObject::getUpdateVisualizationStatus()
     {
         return updateVisualization;
+    }
+
+    bool SceneObject::getUpdateCollisionModelStatus()
+    {
+        return updateCollisionModel;
     }
 
     void SceneObject::setVisualization(VisualizationNodePtr visualization)
@@ -773,6 +784,15 @@ namespace VirtualRobot
         else
         {
             cout << "<not set>" << endl;
+        }
+        cout << " * Update collision model status: ";
+        if (updateCollisionModel)
+        {
+            cout << "enabled" << endl;
+        }
+        else
+        {
+            cout << "disabled" << endl;
         }
 
         std::vector<SceneObjectPtr> children = this->getChildren();

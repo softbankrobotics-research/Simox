@@ -2,6 +2,7 @@
 #include "RobotFactory.h"
 #include "Robot.h"
 #include "Nodes/RobotNode.h"
+#include "RobotNodeSet.h"
 #include "Nodes/RobotNodeRevolute.h"
 #include "Nodes/RobotNodePrismatic.h"
 #include "Nodes/RobotNodeFixed.h"
@@ -508,5 +509,156 @@ namespace VirtualRobot
 
         return newRobot;
     }
+
+
+    RobotPtr RobotFactory::clone(RobotPtr robot, const std::string& name, CollisionCheckerPtr collisionChecker, float scaling)
+    {
+        THROW_VR_EXCEPTION_IF(!robot, "NULL data");
+        if (!collisionChecker)
+            collisionChecker = robot->getCollisionChecker();
+        VirtualRobot::RobotPtr result = robot->extractSubPart(robot->getRootNode(), robot->getType(), name, true, true, collisionChecker, scaling);
+        result->setGlobalPose(robot->getGlobalPose());
+        return result;
+    }
+
+    void RobotFactory::getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr> &appendNodes)
+    {
+        THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
+        std::vector < SceneObjectPtr > children = nodeA->getChildren();
+        std::vector<RobotNodePtr> childNodes;
+        for (size_t i = 0; i < children.size(); i++)
+        {
+            SceneObjectPtr c = children[i];
+            RobotNodePtr cRN = boost::dynamic_pointer_cast<RobotNode>(c);
+            if (cRN && cRN != nodeExclude)
+            {
+                appendNodes.push_back(cRN);
+                getChildNodes(cRN, nodeExclude, appendNodes);
+            }
+        }
+    }
+
+    RobotNodePtr RobotFactory::accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB)
+    {
+        THROW_VR_EXCEPTION_IF(!robot, "NULL data");
+        THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
+        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        SceneObject::Physics p;
+        VisualizationNodePtr v;
+        CollisionModelPtr c;
+        if (nodeA == nodeB)
+        {
+            RobotNodePtr newRN = rnf->createRobotNode(robot, nodeA->getName() + nodeB->getName(), v, c, 0, 0, 0, Eigen::Matrix4f::Identity(), Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
+            return newRN;
+        }
+
+        std::vector<RobotNodePtr> childNodes;
+
+        std::vector < SceneObjectPtr > children = nodeA->getChildren();
+
+        for (size_t i = 0; i < children.size(); i++)
+        {
+            SceneObjectPtr c = children[i];
+            RobotNodePtr cRN = boost::dynamic_pointer_cast<RobotNode>(c);
+            if (cRN)
+                getChildNodes(cRN, nodeB, childNodes);
+        }
+        return createUnitedRobotNode(robot, childNodes, nodeA);
+    }
+
+    RobotNodePtr RobotFactory::createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr > &nodes, RobotNodePtr parent)
+    {
+        THROW_VR_EXCEPTION_IF(!robot, "NULL data");
+
+        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        SceneObject::Physics p;
+        VisualizationNodePtr v;
+        CollisionModelPtr c;
+        if (nodes.size() == 0)
+        {
+            RobotNodePtr newRN = rnf->createRobotNode(robot, "root", v, c, 0, 0, 0, Eigen::Matrix4f::Identity(), Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
+            if (parent)
+                parent->attachChild(newRN);
+            return newRN;
+        }
+
+        VisualizationFactoryPtr vf = VisualizationFactory::first(NULL);
+        std::vector < VisualizationNodePtr > visus;
+        std::vector < VisualizationNodePtr > colVisus;
+        float kg = 0;
+
+        for (size_t i = 0; i < nodes.size(); i++)
+        {
+            if (nodes[i]->getVisualization())
+                visus.push_back(nodes[i]->getVisualization());
+            if (nodes[i]->getCollisionModel() && nodes[i]->getCollisionModel()->getVisualization())
+                colVisus.push_back(nodes[i]->getCollisionModel()->getVisualization());
+            kg += nodes[i]->getMass();
+        }
+        if (visus.size()>0)
+            v = vf->createUnitedVisualization(visus)->clone();
+        if (colVisus.size() > 0)
+        {
+            VisualizationNodePtr colVisu = vf->createUnitedVisualization(colVisus)->clone();
+            c.reset(new CollisionModel(colVisu, nodes[0]->getName()));
+        }
+        p.massKg = kg;
+
+        RobotNodePtr newRN = rnf->createRobotNode(robot, "root", v, c, 0, 0, 0, Eigen::Matrix4f::Identity(), Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
+        if (parent)
+            parent->attachChild(newRN);
+
+        return newRN;
+    }
+
+
+    RobotPtr RobotFactory::cloneSubSet(RobotPtr robot, RobotNodeSetPtr rns, const std::string& name)
+    {
+        THROW_VR_EXCEPTION_IF(!robot, "NULL data");
+        THROW_VR_EXCEPTION_IF(!rns, "NULL data");
+        THROW_VR_EXCEPTION_IF(rns->getRobot() != robot, "Inconsitent data");
+
+        std::vector< RobotNodePtr > nodes = rns->getAllRobotNodes();
+        THROW_VR_EXCEPTION_IF(nodes.size()==0, "0 data");
+        for (size_t i = 1; i < nodes.size(); i++)
+        {
+            RobotNodePtr a = nodes[i - 1];
+            RobotNodePtr b = nodes[i];
+
+            if (!a->hasChild(b, true))
+            {
+                std::stringstream ss;
+                ss << "Node " << a->getName() << " is not parent of " << b->getName();
+                THROW_VR_EXCEPTION(ss.str());
+            }
+        }
+
+        // first create initial node
+        std::vector< RobotNodePtr > initialNodes = nodes[0]->getAllParents();
+
+        RobotPtr result(new LocalRobot(name, robot->getType()));
+
+        RobotNodePtr rootNode = createUnitedRobotNode(result, initialNodes);
+        result->setRootNode(rootNode);
+        RobotNodePtr currentParent = rootNode;
+        for (size_t i = 0; i < nodes.size(); i++)
+        {
+            RobotNodePtr newNode = nodes[i]->clone(result, false, currentParent);
+            currentParent = newNode;
+
+            RobotNodePtr secondNode;
+            if (i < nodes.size() - 1)
+            {
+                secondNode = nodes[i + 1];
+            }
+            RobotNodePtr newNodeFixed = accumulateTransformations(result, nodes[i], secondNode);
+            if (newNodeFixed)
+                currentParent = newNodeFixed;
+        }
+
+        result->setGlobalPose(robot->getGlobalPose());
+        return result;
+    }
+
 
 } // namespace VirtualRobot
