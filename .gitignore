@@ -1,6 +1,4 @@
-/build/*
-/build_debug/*
-/build_release/*
+build*
 !/build/.gitkeep
 !.gitkeep
 !.gitignore
@@ -36,5 +34,3 @@ moc_*
 .metadata
 .cproject
 .project
-
-
