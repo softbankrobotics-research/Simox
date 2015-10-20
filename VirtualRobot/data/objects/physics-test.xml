@@ -1,0 +1,18 @@
+<ManipulationObject name='RiceBox'>
+<Visualization>
+        <File type='inventor'>iv/ricefit.iv</File>
+</Visualization>
+<CollisionModel>
+        <File type='inventor'>iv/ricefit.iv</File>
+</CollisionModel>
+<Physics>
+        <SimulationType value='Static'/>
+        <Mass unit='kg' value='0'/>
+        <CoM location='VisualizationBBoxCenter'/>
+        <InertiaMatrix>
+                        <row1 c1='0' c2='0' c3='0'/>
+                        <row2 c1='0' c2='0' c3='0'/>
+                        <row3 c1='0' c2='0' c3='0'/>
+        </InertiaMatrix>
+</Physics>
+</ManipulationObject>

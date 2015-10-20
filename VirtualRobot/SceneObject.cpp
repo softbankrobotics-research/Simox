@@ -1290,7 +1290,7 @@ namespace VirtualRobot
 
     bool SceneObject::Physics::isSet()
     {
-        return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !inertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
+        return (simType != eUnknown || massKg != 0.0f || comLocation != eVisuBBoxCenter || !inertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
     }
 
     std::string SceneObject::Physics::toXML(int tabs)
