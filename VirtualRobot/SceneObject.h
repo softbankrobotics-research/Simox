@@ -67,140 +67,20 @@ namespace VirtualRobot
                 eDynamic,       // full dynamic simulation
                 eUnknown        // not specified
             };
-            Physics()
-            {
 
-                localCoM.setZero();
-                inertiaMatrix.setIdentity();
-                massKg = 0.0f;
-                comLocation = eVisuBBoxCenter;
-                simType = eUnknown;
-            }
-            std::string getString(SimulationType s) const
-            {
-                std::string r;
+            // methods
+            Physics();
+            std::string getString(SimulationType s) const;
 
-                switch (s)
-                {
-                    case eStatic:
-                        r = "Static";
-                        break;
+            void print() const;
 
-                    case eKinematic:
-                        r = "Kinematic";
-                        break;
+            bool isSet();
 
-                    case eDynamic:
-                        r = "Dynamic";
-                        break;
+            virtual std::string toXML(int tabs);
 
-                    default:
-                        r = "Unknown";
-                }
+            Physics scale(float scaling) const;
 
-                return r;
-            }
-
-            void print() const
-            {
-                std::cout << " ** Simulation Type: " << getString(simType) << endl;
-                std::cout << " ** Mass: ";
-
-                if (massKg <= 0)
-                {
-                    std::cout << "<not set>" << std::endl;
-                }
-                else
-                {
-                    std::cout << massKg << " [kg]" << std::endl;
-                }
-
-                cout << " ** local CoM [mm] ";
-
-                if (comLocation == SceneObject::Physics::eVisuBBoxCenter)
-                {
-                    std::cout << "(center of visualization's bounding box):";
-                }
-                else
-                {
-                    std::cout << ":";
-                }
-
-                std::cout << localCoM(0) << ", " << localCoM(1) << ", " << localCoM(2) << std::endl;
-                {
-                    // scope
-                    std::ostringstream sos;
-                    sos << std::setiosflags(std::ios::fixed);
-                    sos << " ** inertial matrix [kg*m^2]:" << std::endl << inertiaMatrix << std::endl;
-                    std::cout << sos.str();
-                } // scope
-
-                if (ignoreCollisions.size() > 0)
-                {
-                    std::cout << " ** Ignore Collisions with:" << std::endl;
-
-                    for (size_t i = 0; i < ignoreCollisions.size(); i++)
-                    {
-                        std::cout << " **** " << ignoreCollisions[i] << std::endl;
-                    }
-                }
-            }
-
-            bool isSet()
-            {
-                return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !inertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
-            }
-
-            virtual std::string toXML(int tabs)
-            {
-                std::string ta;
-                std::stringstream ss;
-
-                for (int i = 0; i < tabs; i++)
-                {
-                    ta += "\t";
-                }
-
-                ss << ta << "<Physics>\n";
-
-                if (simType != eUnknown)
-                {
-                    ss << ta << "\t<SimulationType value='" << getString(simType) << "'/>\n";
-                }
-
-                ss << ta << "\t<Mass unit='kg' value='" << massKg << "'/>\n";
-                ss << ta << "\t<CoM location=";
-
-                if (comLocation == eVisuBBoxCenter)
-                {
-                    ss << "'VisualizationBBoxCenter'/>\n";
-                }
-                else
-                {
-                    ss << "'Custom' x='" << localCoM(0) << "' y='" << localCoM(1) << "' z='" << localCoM(2) << "'/>\n";
-                }
-
-                ss << ta << "\t<InertiaMatrix>\n";
-                ss << MathTools::getTransformXMLString(inertiaMatrix, tabs + 2, true);
-                ss << ta << "\t</InertiaMatrix>\n";
-
-                for (size_t i = 0; i < ignoreCollisions.size(); i++)
-                {
-                    ss << ta << "\t<IgnoreCollisions name='" << ignoreCollisions[i] << "'/>\n";
-                }
-
-                ss << ta << "</Physics>\n";
-                return ss.str();
-            }
-
-            Physics scale(float scaling) const
-            {
-                THROW_VR_EXCEPTION_IF(scaling <= 0, "Scaling must be > 0");
-                Physics res = *this;
-                res.localCoM *= scaling;
-                return res;
-            }
-
+            // data members
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
             float massKg;               //!< The mass of this object
             CoMLocation comLocation;    //!< Where is the CoM located
