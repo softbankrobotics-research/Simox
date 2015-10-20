@@ -31,13 +31,13 @@ BOOST_AUTO_TEST_CASE(testRobotLoadXML)
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getRobotNodes();
-    BOOST_REQUIRE(rn.size() > 0);
+    BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
-    BOOST_REQUIRE(eefs.size() > 0);
+    BOOST_REQUIRE_GT(eefs.size(), 0);
 
     std::vector<RobotNodeSetPtr> rns = r->getRobotNodeSets();
-    BOOST_REQUIRE(rns.size() > 0);
+    BOOST_REQUIRE_GT(rns.size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotSaveXML)
