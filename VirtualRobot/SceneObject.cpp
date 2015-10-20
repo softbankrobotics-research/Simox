@@ -882,6 +882,11 @@ namespace VirtualRobot
         //  visualization->highlight(getVisualization(CollisionData),enable);
     }
 
+    SceneObjectPtr SceneObject::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
+    {
+        return SceneObjectPtr(_clone(name, colChecker, scaling));
+    }
+
     void SceneObject::setName(const std::string& name)
     {
         this->name = name;
@@ -926,7 +931,6 @@ namespace VirtualRobot
     std::string SceneObject::getSceneObjectXMLString(const std::string& basePath, int tabs)
     {
         std::stringstream ss;
-        std::string t = "\t";
         std::string pre = "";
 
         for (int i = 0; i < tabs; i++)
@@ -1084,6 +1088,11 @@ namespace VirtualRobot
     {
         SceneObjectPtr p = parent.lock();
         return p;
+    }
+
+    std::vector<SceneObjectPtr> SceneObject::getChildren() const
+    {
+        return children;
     }
 
     void SceneObject::detachedFromParent()
