@@ -987,6 +987,11 @@ namespace VirtualRobot
         physics.inertiaMatrix = im;
     }
 
+    SceneObject::Physics SceneObject::getPhysics()
+    {
+        return physics;
+    }
+
     bool SceneObject::hasChild(SceneObjectPtr child, bool recursive) const
     {
         VR_ASSERT(child);

@@ -391,6 +391,8 @@ namespace VirtualRobot
 
         void setInertiaMatrix(const Eigen::Matrix3f& im);
 
+        SceneObject::Physics getPhysics();
+
         /*!
             Collisions with these models are ignored by physics engine (only considered within the SimDynamics package!).
         */
