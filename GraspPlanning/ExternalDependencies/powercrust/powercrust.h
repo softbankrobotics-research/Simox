@@ -201,7 +201,7 @@ namespace GraspStudio
 
             long(PowerCrust::*shuf)(long);
             site(PowerCrust::*get_site_n)(long);
-            void make_output(simplex* root, void* (PowerCrustHull::*visit_gen)(simplex*, visit_func visit), visit_func visit, out_func out_funcp, FILE* F, boost::shared_ptr<PowerCrustHull> hull);
+            void make_output(simplex* root, void * (PowerCrustHull::*visit_gen)(simplex*, visit_func visit), visit_func visit, out_func out_funcp, FILE* F, boost::shared_ptr<PowerCrustHull> hull);
 
 
             // step 1

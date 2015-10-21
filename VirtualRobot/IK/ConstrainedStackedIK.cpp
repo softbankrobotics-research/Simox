@@ -2,7 +2,7 @@
 
 using namespace VirtualRobot;
 
-ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize, int maxIterations, JacobiProvider::InverseJacobiMethod method) :
+ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize, int maxIterations, JacobiProvider::InverseJacobiMethod method) :
     ConstrainedIK(robot, maxIterations),
     nodeSet(nodeSet),
     method(method),
@@ -15,7 +15,7 @@ bool ConstrainedStackedIK::initialize()
     ik.reset(new StackedIK(nodeSet, method));
     jacobians.clear();
 
-    for(auto &constraint : constraints)
+    for (auto & constraint : constraints)
     {
         jacobians.push_back(constraint);
     }

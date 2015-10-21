@@ -28,7 +28,7 @@ namespace Saba
         : Rrt(cspace), probabGraspHypothesis(probabGraspHypothesis), graspQualityMinScore(graspQualityMinScore)
     {
         plannerInitialized = false;
-		minGraspContacts = 3;
+        minGraspContacts = 3;
         name = "GraspRrt";
         THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getRobotNodeSet() || !cspace->getRobot() || !measure, "NULL data");
         rns = cspace->getRobotNodeSet();
@@ -590,15 +590,15 @@ namespace Saba
             // check result
             switch (res)
             {
-                // ERROR -> abort
+                    // ERROR -> abort
                 case eError:
                 case eFatalError:
                     return res;
                     break;
 
-                // COLLISION -> don't apply step, but try to close hand
-                // todo: here just the eCollision_Environment is used,
-                //    maybe it's better to check only the TCP collisions
+                    // COLLISION -> don't apply step, but try to close hand
+                    // todo: here just the eCollision_Environment is used,
+                    //    maybe it's better to check only the TCP collisions
                 case eCollision_Environment:
                 {
                     // check grasp score of last valid config
@@ -922,7 +922,7 @@ namespace Saba
 
         eef->openActors();
 
-		if ((int)contacts.size() < minGraspContacts)
+        if ((int)contacts.size() < minGraspContacts)
         {
             if (verbose)
             {
@@ -1159,8 +1159,8 @@ namespace Saba
 
     }
 
-	void GraspRrt::setMinGraspContacts(int nr)
-	{
-		minGraspContacts = nr;
-	}
+    void GraspRrt::setMinGraspContacts(int nr)
+    {
+        minGraspContacts = nr;
+    }
 }

@@ -2066,60 +2066,60 @@ namespace VirtualRobot
         return res;
     }
 
-    SoNode *CoinVisualizationFactory::getCoinVisualization(TSRConstraintPtr constraint, const Color &color)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(TSRConstraintPtr constraint, const Color& color)
     {
-        SoSeparator *res = new SoSeparator;
+        SoSeparator* res = new SoSeparator;
         res->ref();
 
-        SoUnits *u = new SoUnits();
+        SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
-        SoMaterial *m = new SoMaterial;
+        SoMaterial* m = new SoMaterial;
         m->diffuseColor.setValue(color.r, color.g, color.b);
         m->ambientColor.setValue(color.r, color.g, color.b);
         m->transparency.setValue(color.transparency);
         res->addChild(m);
 
-        SoTransform *t = new SoTransform;
-        t->translation.setValue(constraint->getTransformation()(0,3), constraint->getTransformation()(1,3), constraint->getTransformation()(2,3));
+        SoTransform* t = new SoTransform;
+        t->translation.setValue(constraint->getTransformation()(0, 3), constraint->getTransformation()(1, 3), constraint->getTransformation()(2, 3));
         MathTools::Quaternion q = MathTools::eigen4f2quat(constraint->getTransformation());
         t->rotation.setValue(q.x, q.y, q.z, q.w);
         res->addChild(t);
 
-        SoCube *c = new SoCube;
-        c->width = fabs(constraint->getBounds()(0,0) - constraint->getBounds()(0,1));
-        c->height = fabs(constraint->getBounds()(1,0) - constraint->getBounds()(1,1));
-        c->depth = fabs(constraint->getBounds()(2,0) - constraint->getBounds()(2,1));
+        SoCube* c = new SoCube;
+        c->width = fabs(constraint->getBounds()(0, 0) - constraint->getBounds()(0, 1));
+        c->height = fabs(constraint->getBounds()(1, 0) - constraint->getBounds()(1, 1));
+        c->depth = fabs(constraint->getBounds()(2, 0) - constraint->getBounds()(2, 1));
         res->addChild(c);
 
         res->unrefNoDelete();
         return res;
     }
 
-    SoNode *CoinVisualizationFactory::getCoinVisualization(BalanceConstraintPtr constraint, const Color& color)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(BalanceConstraintPtr constraint, const Color& color)
     {
-        SoSeparator *res = new SoSeparator;
+        SoSeparator* res = new SoSeparator;
         res->ref();
 
-        SoUnits *u = new SoUnits();
+        SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
-        SoSeparator *s1 = new SoSeparator;
+        SoSeparator* s1 = new SoSeparator;
         res->addChild(s1);
 
-        SoMaterial *m = new SoMaterial;
+        SoMaterial* m = new SoMaterial;
         m->diffuseColor.setValue(1, 0, 0);
         m->ambientColor.setValue(1, 0, 0);
         s1->addChild(m);
 
         Eigen::Vector3f com = constraint->getCoM();
-        SoTransform *t = new SoTransform;
+        SoTransform* t = new SoTransform;
         t->translation.setValue(com(0), com(1), 0);
         s1->addChild(t);
 
-        SoSphere *s = new SoSphere;
+        SoSphere* s = new SoSphere;
         s->radius = 10;
         s1->addChild(s);
 
@@ -2134,27 +2134,27 @@ namespace VirtualRobot
         return res;
     }
 
-    SoNode *CoinVisualizationFactory::getCoinVisualization(PoseConstraintPtr constraint, const Color &color)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(PoseConstraintPtr constraint, const Color& color)
     {
-        SoSeparator *res = new SoSeparator;
+        SoSeparator* res = new SoSeparator;
         res->ref();
 
-        SoUnits *u = new SoUnits();
+        SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
-        SoMaterial *mat = new SoMaterial;
+        SoMaterial* mat = new SoMaterial;
         mat->diffuseColor.setValue(color.r, color.g, color.b);
         mat->ambientColor.setValue(color.r, color.g, color.b);
         mat->transparency.setValue(color.transparency);
         mat->setOverride(true);
         res->addChild(mat);
 
-        SoTransform *t = new SoTransform;
-        t->translation.setValue(constraint->getTarget()(0,3), constraint->getTarget()(1,3), constraint->getTarget()(2,3));
+        SoTransform* t = new SoTransform;
+        t->translation.setValue(constraint->getTarget()(0, 3), constraint->getTarget()(1, 3), constraint->getTarget()(2, 3));
         res->addChild(t);
 
-        SoSphere *sphere = new SoSphere;
+        SoSphere* sphere = new SoSphere;
         sphere->radius = 50;
         res->addChild(sphere);
 
@@ -2164,54 +2164,56 @@ namespace VirtualRobot
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color)
     {
-        SoSeparator *res = new SoSeparator;
+        SoSeparator* res = new SoSeparator;
         res->ref();
 
-        SoUnits *u = new SoUnits();
+        SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
         MathTools::ConvexHull2DPtr convexHull = supportPolygon->getSupportPolygon2D();
         MathTools::Plane floor = supportPolygon->getFloorPlane();
 
-        if(convexHull)
+        if (convexHull)
         {
-            SoMaterial *mat = new SoMaterial;
+            SoMaterial* mat = new SoMaterial;
             mat->diffuseColor.setValue(color.r, color.g, color.b);
             mat->ambientColor.setValue(color.r, color.g, color.b);
             res->addChild(mat);
 
-            SoDrawStyle *d = new SoDrawStyle;
+            SoDrawStyle* d = new SoDrawStyle;
             d->lineWidth.setValue(3);
             res->addChild(d);
 
-            SoCoordinate3 *coordinate = new SoCoordinate3;
+            SoCoordinate3* coordinate = new SoCoordinate3;
+
             for (size_t i = 0; i < convexHull->segments.size(); i++)
             {
                 int i1 = convexHull->segments[i].id1;
                 int i2 = convexHull->segments[i].id2;
 
-                if(i == 0)
+                if (i == 0)
                 {
                     coordinate->point.set1Value(i, convexHull->vertices[i1].x(), convexHull->vertices[i1].y(), floor.p.z());
                 }
 
-                coordinate->point.set1Value(i+1, convexHull->vertices[i2].x(), convexHull->vertices[i2].y(), floor.p.z());
+                coordinate->point.set1Value(i + 1, convexHull->vertices[i2].x(), convexHull->vertices[i2].y(), floor.p.z());
             }
+
             res->addChild(coordinate);
 
-            SoLineSet *lineSet = new SoLineSet;
+            SoLineSet* lineSet = new SoLineSet;
             res->addChild(lineSet);
 
-            SoSeparator *s2 = new SoSeparator;
+            SoSeparator* s2 = new SoSeparator;
             res->addChild(s2);
 
             Eigen::Vector2f center = MathTools::getConvexHullCenter(convexHull);
-            SoTransform *t = new SoTransform;
+            SoTransform* t = new SoTransform;
             t->translation.setValue(center.x(), center.y(), floor.p.z());
             res->addChild(t);
 
-            SoSphere *s = new SoSphere;
+            SoSphere* s = new SoSphere;
             s->radius = 10;
             res->addChild(s);
         }
@@ -3216,6 +3218,7 @@ namespace VirtualRobot
         root->unref();
 
         static bool renderErrorPrinted = false;
+
         if (!ok)
         {
             if (!renderErrorPrinted)
@@ -3223,6 +3226,7 @@ namespace VirtualRobot
                 VR_ERROR << "Rendering not successful! This error is printed only once." << endl;
                 renderErrorPrinted = true;
             }
+
             return false;
         }
 
@@ -3562,46 +3566,54 @@ namespace VirtualRobot
         return storeResult;
     }
 
-    SoNode *CoinVisualizationFactory::copyNode(SoNode *n)
+    SoNode* CoinVisualizationFactory::copyNode(SoNode* n)
     {
         if (!n)
+        {
             return NULL;
+        }
+
         bool copyImages = true;
-        std::vector<SoSFImage *> changedImages;
-        if( copyImages )
+        std::vector<SoSFImage*> changedImages;
+
+        if (copyImages)
         {
             // find all SoTexture2 nodes
             SoSearchAction search;
-            search.setType( SoTexture2::getClassTypeId());
-            search.setInterest( SoSearchAction::ALL );
-            search.setSearchingAll( TRUE );
-            search.apply( n );
-            SoPathList & list = search.getPaths();
+            search.setType(SoTexture2::getClassTypeId());
+            search.setInterest(SoSearchAction::ALL);
+            search.setSearchingAll(TRUE);
+            search.apply(n);
+            SoPathList& list = search.getPaths();
 
             //VR_INFO << "copy: copying " <<  list.getLength() << " textures" << std::endl;
 
             // set their images to not default to copy the contents
-            for( int i = 0; i < list.getLength(); i++ )
+            for (int i = 0; i < list.getLength(); i++)
             {
-                SoFullPath * path = (SoFullPath *) list[i];
-                assert( path->getTail()->isOfType( SoTexture2::getClassTypeId()));
-                SoSFImage * image = &((SoTexture2 *)path->getTail())->image;
-                if(image->isDefault() == TRUE)
+                SoFullPath* path = (SoFullPath*) list[i];
+                assert(path->getTail()->isOfType(SoTexture2::getClassTypeId()));
+                SoSFImage* image = &((SoTexture2*)path->getTail())->image;
+
+                if (image->isDefault() == TRUE)
                 {
-                    ((SoTexture2 *)path->getTail())->image.setDefault( FALSE );
-                    changedImages.push_back( image );
+                    ((SoTexture2*)path->getTail())->image.setDefault(FALSE);
+                    changedImages.push_back(image);
                 }
             }
 
         }
+
         // the actual copy operation
-        SoNode * result = n->copy(TRUE);
+        SoNode* result = n->copy(TRUE);
+
         // reset the changed ones back
-        for( std::vector<SoSFImage *>::iterator it = changedImages.begin();
-             it != changedImages.end(); it++ )
+        for (std::vector<SoSFImage*>::iterator it = changedImages.begin();
+             it != changedImages.end(); it++)
         {
-            (*it)->setDefault( TRUE );
+            (*it)->setDefault(TRUE);
         }
+
         return result;
     }
 

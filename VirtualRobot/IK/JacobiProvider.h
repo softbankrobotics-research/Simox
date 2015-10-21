@@ -68,8 +68,8 @@ namespace VirtualRobot
         virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m) const;
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
         virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, double invParameter) const;
-        virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf &invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
-        virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd &invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
+        virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
+        virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);

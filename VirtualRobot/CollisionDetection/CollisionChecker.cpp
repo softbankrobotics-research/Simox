@@ -97,78 +97,90 @@ namespace VirtualRobot
     float CollisionChecker::calculateDistance(SceneObjectPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		if (r)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return calculateDistance(robotModels, model2);
-		}
-		else
-			return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, NULL, NULL);
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+
+        if (r)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return calculateDistance(robotModels, model2);
+        }
+        else
+        {
+            return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, NULL, NULL);
+        }
     }
 
     float CollisionChecker::calculateDistance(SceneObjectPtr model1, SceneObjectPtr model2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
-		if (r && r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return calculateDistance(robotModels, robotModels2);
-		}
-		else if (r && !r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return calculateDistance(model2, robotModels);
-		}
-		else if (!r && r2)
-		{
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return calculateDistance(model1, robotModels2);
-		}
-		else
-			return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, NULL, NULL);
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+        RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
+
+        if (r && r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return calculateDistance(robotModels, robotModels2);
+        }
+        else if (r && !r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return calculateDistance(model2, robotModels);
+        }
+        else if (!r && r2)
+        {
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return calculateDistance(model1, robotModels2);
+        }
+        else
+        {
+            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, NULL, NULL);
+        }
     }
 
 
     float CollisionChecker::calculateDistance(SceneObjectPtr model1, SceneObjectSetPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		if (r)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return calculateDistance(robotModels, model2, P1, P2, trID1, trID2);
-		}
-		else
-			return calculateDistance(model1->getCollisionModel(), model2, P1, P2, trID1, trID2);
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+
+        if (r)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return calculateDistance(robotModels, model2, P1, P2, trID1, trID2);
+        }
+        else
+        {
+            return calculateDistance(model1->getCollisionModel(), model2, P1, P2, trID1, trID2);
+        }
     }
 
     float CollisionChecker::calculateDistance(SceneObjectPtr model1, SceneObjectPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
-		if (r && r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return calculateDistance(robotModels, robotModels2, P1, P2, trID1, trID2);
-		}
-		else if (r && !r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return calculateDistance(model2, robotModels, P2, P1, trID2, trID1);
-		}
-		else if (!r && r2)
-		{
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return calculateDistance(model1, robotModels2, P1, P2, trID1, trID2);
-		}
-		else
-        return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), P1, P2, trID1, trID2);
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+        RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
+
+        if (r && r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return calculateDistance(robotModels, robotModels2, P1, P2, trID1, trID2);
+        }
+        else if (r && !r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return calculateDistance(model2, robotModels, P2, P1, trID2, trID1);
+        }
+        else if (!r && r2)
+        {
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return calculateDistance(model1, robotModels2, P1, P2, trID1, trID2);
+        }
+        else
+        {
+            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), P1, P2, trID1, trID2);
+        }
     }
 
     float CollisionChecker::calculateDistance(SceneObjectSetPtr model1, SceneObjectSetPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
@@ -356,26 +368,34 @@ namespace VirtualRobot
     bool CollisionChecker::checkCollision(SceneObjectPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		if (r)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return checkCollision(robotModels, model2);
-		} else
-			return checkCollision(model1->getCollisionModel(), model2);
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+
+        if (r)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return checkCollision(robotModels, model2);
+        }
+        else
+        {
+            return checkCollision(model1->getCollisionModel(), model2);
+        }
     }
 
-	SceneObjectSetPtr CollisionChecker::getRobotModels(RobotPtr r)
-	{
-		SceneObjectSetPtr result(new SceneObjectSet(r->getName(), shared_from_this()));
-		std::vector<RobotNodePtr> cm = r->getRobotNodes();
-		for (size_t i = 0; i < cm.size(); i++)
-		{
-			if (cm[i]->getCollisionModel())
-				result->addSceneObject(cm[i]);
-		}
-		return result;
-	}
+    SceneObjectSetPtr CollisionChecker::getRobotModels(RobotPtr r)
+    {
+        SceneObjectSetPtr result(new SceneObjectSet(r->getName(), shared_from_this()));
+        std::vector<RobotNodePtr> cm = r->getRobotNodes();
+
+        for (size_t i = 0; i < cm.size(); i++)
+        {
+            if (cm[i]->getCollisionModel())
+            {
+                result->addSceneObject(cm[i]);
+            }
+        }
+
+        return result;
+    }
 
 
     bool CollisionChecker::checkCollision(CollisionModelPtr model1, SceneObjectSetPtr model2)
@@ -411,26 +431,29 @@ namespace VirtualRobot
     bool CollisionChecker::checkCollision(SceneObjectPtr model1, SceneObjectPtr model2)
     {
         VR_ASSERT(model1 && model2);
-		RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
-		RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
-		if (r && r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return checkCollision(robotModels, robotModels2);
-		}
-		else if (r && !r2)
-		{
-			SceneObjectSetPtr robotModels = getRobotModels(r);
-			return checkCollision(model2, robotModels);
-		}
-		else if (!r && r2)
-		{
-			SceneObjectSetPtr robotModels2 = getRobotModels(r2);
-			return checkCollision(model1, robotModels2);
-		}
-		else
-			return checkCollision(model1->getCollisionModel(), model2->getCollisionModel());
+        RobotPtr r = boost::dynamic_pointer_cast<Robot>(model1);
+        RobotPtr r2 = boost::dynamic_pointer_cast<Robot>(model2);
+
+        if (r && r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return checkCollision(robotModels, robotModels2);
+        }
+        else if (r && !r2)
+        {
+            SceneObjectSetPtr robotModels = getRobotModels(r);
+            return checkCollision(model2, robotModels);
+        }
+        else if (!r && r2)
+        {
+            SceneObjectSetPtr robotModels2 = getRobotModels(r2);
+            return checkCollision(model1, robotModels2);
+        }
+        else
+        {
+            return checkCollision(model1->getCollisionModel(), model2->getCollisionModel());
+        }
     }
 
     bool CollisionChecker::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2)

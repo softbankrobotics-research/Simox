@@ -9,8 +9,8 @@
 
 using namespace VirtualRobot;
 
-TSRConstraint::TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef,
-                             const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds,
+TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,
+                             const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
                              float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
@@ -36,9 +36,9 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
     Eigen::VectorXf error = getError();
     Eigen::MatrixXf J = ik->getJacobianMatrix();
 
-    for(int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        if(error(i) == 0)
+        if (error(i) == 0)
         {
             //J.row(i).setZero();
         }
@@ -49,7 +49,7 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
 
 Eigen::MatrixXf TSRConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 {
-    if(tcp->getName() != eef->getName())
+    if (tcp->getName() != eef->getName())
     {
         VR_WARNING << "EndEffectorPoseConstraing Jacobian calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
     }
@@ -65,15 +65,16 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     MathTools::eigen4f2rpy(T, d_w);
 
     Eigen::VectorXf target(6);
-    for(int i = 0; i < 6; i++)
+
+    for (int i = 0; i < 6; i++)
     {
-        if(d_w[i] < bounds(i,0))
+        if (d_w[i] < bounds(i, 0))
         {
-            target(i) = bounds(i,0);
+            target(i) = bounds(i, 0);
         }
-        else if(d_w[i] > bounds(i,1))
+        else if (d_w[i] > bounds(i, 1))
         {
-            target(i) = bounds(i,1);
+            target(i) = bounds(i, 1);
         }
         else
         {
@@ -82,7 +83,7 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     }
 
     Eigen::Matrix4f T_dx;
-    MathTools::posrpy2eigen4f(target.block<3,1>(0,0), target.block<3,1>(3,0), T_dx);
+    MathTools::posrpy2eigen4f(target.block<3, 1>(0, 0), target.block<3, 1>(3, 0), T_dx);
 
     Eigen::Matrix4f P_target = transformation * T_dx;
     //float target_global[6];
@@ -98,10 +99,10 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
 
     Eigen::VectorXf dx(6);
     dx.head(3) = Eigen::Vector3f(
-                P_target(0,3) - P_eef(0,3),
-                P_target(1,3) - P_eef(1,3),
-                P_target(2,3) - P_eef(2,3)
-                );
+                     P_target(0, 3) - P_eef(0, 3),
+                     P_target(1, 3) - P_eef(1, 3),
+                     P_target(2, 3) - P_eef(2, 3)
+                 );
     dx.tail(3) = P_delta_AA.axis() * P_delta_AA.angle();
 
     /*resolveRPYAmbiguities(e_global, target_global);
@@ -126,17 +127,17 @@ std::string TSRConstraint::getConstraintType()
     return "TSR(" + eef->getName() + ")";
 }
 
-const Eigen::Matrix4f &TSRConstraint::getTransformation()
+const Eigen::Matrix4f& TSRConstraint::getTransformation()
 {
     return transformation;
 }
 
-const Eigen::Matrix<float, 6, 2> &TSRConstraint::getBounds()
+const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds()
 {
     return bounds;
 }
 
-void TSRConstraint::resolveRPYAmbiguities(float *pose, const float *reference)
+void TSRConstraint::resolveRPYAmbiguities(float* pose, const float* reference)
 {
     Eigen::Vector3f ref;
     ref << reference[3], reference[4], reference[5];
@@ -146,17 +147,17 @@ void TSRConstraint::resolveRPYAmbiguities(float *pose, const float *reference)
     Eigen::Vector3f best;
     best << pose[3], pose[4], pose[5];
 
-    for(int i = -1; i <= 1; i += 2)
+    for (int i = -1; i <= 1; i += 2)
     {
-        for(int j = -1; j <= 1; j += 2)
+        for (int j = -1; j <= 1; j += 2)
         {
-            for(int k = -1; k <= 1; k += 2)
+            for (int k = -1; k <= 1; k += 2)
             {
                 tmp << reference[3] + float(i) * float(M_PI),
                     reference[4] + float(j) * float(M_PI),
                     reference[5] + float(k) * float(M_PI);
 
-                if((tmp - ref).norm() < (best - ref).norm())
+                if ((tmp - ref).norm() < (best - ref).norm())
                 {
                     best = tmp;
                 }
@@ -173,11 +174,11 @@ float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
 {
     float direct = to - from;
 
-    if(direct > M_PI)
+    if (direct > M_PI)
     {
         return float(-2 * M_PI + direct);
     }
-    else if(direct < -M_PI)
+    else if (direct < -M_PI)
     {
         return float(2 * M_PI - direct);
     }

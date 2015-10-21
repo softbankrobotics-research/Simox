@@ -213,20 +213,30 @@ void GraspPlannerWindow::buildVisu()
         {
             objectSep->addChild(visualisationNode);
         }
+
 #else
+
         if (UI.checkBoxColModel->isChecked())
         {
             VirtualRobot::MathTools::ConvexHull3DPtr ch = ConvexHullGenerator::CreateConvexHull(object->getCollisionModel()->getTriMeshModel());
             CoinConvexHullVisualizationPtr chv(new CoinConvexHullVisualization(ch));
             SoSeparator* s = chv->getCoinVisualization();
+
             if (s)
+            {
                 objectSep->addChild(s);
-        } else
+            }
+        }
+        else
         {
             SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, SceneObject::Full);
+
             if (visualisationNode)
+            {
                 objectSep->addChild(visualisationNode);
+            }
         }
+
 #endif
         /*SoNode *s = CoinVisualizationFactory::getCoinVisualization(object->getCollisionModel()->getTriMeshModel(),true);
         if (s)
@@ -306,7 +316,7 @@ void GraspPlannerWindow::loadObject()
 #if 0
     TriMeshModelPtr tm = object->getVisualization()->getTriMeshModel();
     MathTools::ConvexHull3DPtr cv = ConvexHullGenerator::CreateConvexHull(tm->vertices);
-    object = GraspStudio::MeshConverter::CreateManipulationObject(object->getName(),cv);
+    object = GraspStudio::MeshConverter::CreateManipulationObject(object->getName(), cv);
 #endif
 
     //Eigen::Vector3f minS,maxS;

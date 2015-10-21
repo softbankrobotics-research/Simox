@@ -10,7 +10,7 @@
 
 using namespace VirtualRobot;
 
-PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef, const Eigen::Matrix4f &target, IKSolver::CartesianSelection cartesianSelection,
+PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
                                float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
@@ -26,7 +26,7 @@ PoseConstraint::PoseConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nod
     initialized = true;
 }
 
-void PoseConstraint::setVisualization(const SceneObjectSetPtr &visualizationNodeSet)
+void PoseConstraint::setVisualization(const SceneObjectSetPtr& visualizationNodeSet)
 {
     this->visualizationNodeSet = visualizationNodeSet;
 }
@@ -38,7 +38,7 @@ Eigen::MatrixXf PoseConstraint::getJacobianMatrix()
 
 Eigen::MatrixXf PoseConstraint::getJacobianMatrix(SceneObjectPtr tcp)
 {
-    if(tcp->getName() != eef->getName())
+    if (tcp->getName() != eef->getName())
     {
         VR_WARNING << "EndEffectorPoseConstraing Jacobina calculation for differing EEF ('" << tcp->getName() << "' instead of '" << eef->getName() << "')" << std::endl;
     }
@@ -56,9 +56,9 @@ bool PoseConstraint::checkTolerances()
     return ik->checkTolerances();
 }
 
-bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f &pose)
+bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f& pose)
 {
-    if(robot->getRootNode()->getName() == eef->getName())
+    if (robot->getRootNode()->getName() == eef->getName())
     {
         // If the end effector to move equals the robot root, we initially move the whole robot to this
         // position in order to satisfy this constraint
@@ -74,12 +74,12 @@ std::string PoseConstraint::getConstraintType()
     return "Pose(" + eef->getName() + ")";
 }
 
-const Eigen::Matrix4f &PoseConstraint::getTarget()
+const Eigen::Matrix4f& PoseConstraint::getTarget()
 {
     return target;
 }
 
-void PoseConstraint::updateTarget(const Eigen::Matrix4f &newTarget)
+void PoseConstraint::updateTarget(const Eigen::Matrix4f& newTarget)
 {
     target = newTarget;
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);

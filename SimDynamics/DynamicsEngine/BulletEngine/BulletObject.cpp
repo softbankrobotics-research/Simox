@@ -63,14 +63,14 @@ namespace SimDynamics
 
                     Eigen::Matrix4f localComTransform;
                     localComTransform.setIdentity();
-                    localComTransform.block(0,3,3,1) = -o->getCoMLocal();
+                    localComTransform.block(0, 3, 3, 1) = -o->getCoMLocal();
                     //cout << "localComTransform:\n" << localComTransform << endl;
 
 
                     for (it = primitives.begin(); it != primitives.end(); it++)
                     {
                         //currentTransform *= (*it)->transform;
-                        currentTransform = localComTransform*(*it)->transform;
+                        currentTransform = localComTransform * (*it)->transform;
                         //cout << "primitive: (*it)->transform:\n" << (*it)->transform << endl;
                         //cout << "primitive: currentTransform:\n" << currentTransform << endl;
 

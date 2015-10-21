@@ -89,7 +89,7 @@ namespace VirtualRobot
         return URDFFactory;
     }
 
-    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, const std::string &basePath, bool useColModelsIfNoVisuModel)
+    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel)
     {
         THROW_VR_EXCEPTION_IF(!urdfModel, "NULL data");
         std::string robotType = urdfModel->getName();
@@ -177,7 +177,7 @@ namespace VirtualRobot
         return result;
     }
 
-    VirtualRobot::VisualizationNodePtr SimoxURDFFactory::convertVisu(boost::shared_ptr<Geometry> g, urdf::Pose& pose, const std::string &basePath)
+    VirtualRobot::VisualizationNodePtr SimoxURDFFactory::convertVisu(boost::shared_ptr<Geometry> g, urdf::Pose& pose, const std::string& basePath)
     {
         const float scale = 1000.0f; // mm
         VirtualRobot::VisualizationNodePtr res;
@@ -207,7 +207,7 @@ namespace VirtualRobot
             case urdf::Geometry::MESH:
             {
                 boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
-//                std::string filename = getFilename(m->filename);
+                //                std::string filename = getFilename(m->filename);
                 std::string filename = m->filename;
                 BaseIO::makeAbsolutePath(basePath, filename);
                 res = factory->getVisualizationFromFile(filename);
@@ -227,7 +227,7 @@ namespace VirtualRobot
         return res;
     }
 
-    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string &basePath, bool useColModelsIfNoVisuModel)
+    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, bool useColModelsIfNoVisuModel)
     {
         const float scale = 1000.0f; // mm
         RobotNodePtr result;

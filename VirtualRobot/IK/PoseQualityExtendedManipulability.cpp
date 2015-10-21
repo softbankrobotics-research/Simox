@@ -45,6 +45,7 @@ namespace VirtualRobot
     {
         //extManipData d;
         currentManipData.reset();
+
         if (!getDetailedAnalysis(jac, rns, currentManipData, considerFirstSV))
         {
             VR_ERROR << "ERROR" << endl;

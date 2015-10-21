@@ -785,7 +785,9 @@ namespace VirtualRobot
         {
             cout << "<not set>" << endl;
         }
+
         cout << " * Update collision model status: ";
+
         if (updateCollisionModel)
         {
             cout << "enabled" << endl;
@@ -882,7 +884,7 @@ namespace VirtualRobot
         //  visualization->highlight(getVisualization(CollisionData),enable);
     }
 
-    SceneObjectPtr SceneObject::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
+    SceneObjectPtr SceneObject::clone(const std::string& name, CollisionCheckerPtr colChecker, float scaling) const
     {
         return SceneObjectPtr(_clone(name, colChecker, scaling));
     }
@@ -1224,20 +1226,20 @@ namespace VirtualRobot
 
         switch (s)
         {
-        case eStatic:
-            r = "Static";
-            break;
+            case eStatic:
+                r = "Static";
+                break;
 
-        case eKinematic:
-            r = "Kinematic";
-            break;
+            case eKinematic:
+                r = "Kinematic";
+                break;
 
-        case eDynamic:
-            r = "Dynamic";
-            break;
+            case eDynamic:
+                r = "Dynamic";
+                break;
 
-        default:
-            r = "Unknown";
+            default:
+                r = "Unknown";
         }
 
         return r;

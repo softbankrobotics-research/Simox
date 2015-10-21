@@ -27,7 +27,8 @@
 
 // #include "ui_GraspEditor.h"
 
-namespace Ui {
+namespace Ui
+{
     class MainWindowGraspEditor;
 }
 
@@ -45,7 +46,7 @@ namespace VirtualRobot
         /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
         int main();
 
-        public slots:
+    public slots:
         /*! Closes the window and exits SoQt runloop. */
         void quit();
 
@@ -94,7 +95,7 @@ namespace VirtualRobot
         static void timerCB(void* data, SoSensor* sensor);
         void setCurrentGrasp(Eigen::Matrix4f& p);
 
-        Ui::MainWindowGraspEditor *UI;
+        Ui::MainWindowGraspEditor* UI;
 
         // Indicates whether this program is started embedded
         bool embeddedGraspEditor;

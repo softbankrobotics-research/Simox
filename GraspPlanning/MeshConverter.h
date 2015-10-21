@@ -39,7 +39,7 @@ namespace GraspStudio
         /*!
             Create an object. The visualization and collision model is created from the convex hull.
         */
-        static VirtualRobot::ManipulationObjectPtr CreateManipulationObject(const std::string &name, VirtualRobot::MathTools::ConvexHull3DPtr hull);
+        static VirtualRobot::ManipulationObjectPtr CreateManipulationObject(const std::string& name, VirtualRobot::MathTools::ConvexHull3DPtr hull);
         static VirtualRobot::TriMeshModelPtr CreateTriMeshModel(VirtualRobot::MathTools::ConvexHull3DPtr hull);
         static VirtualRobot::ObstaclePtr RefineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist);
 

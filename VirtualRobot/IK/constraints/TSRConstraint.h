@@ -33,36 +33,36 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint, public boost::enable_shared_from_this<TSRConstraint>
     {
-        public:
-            TSRConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const RobotNodePtr &eef,
-                          const Eigen::Matrix4f &transformation, const Eigen::Matrix4f &eefOffset, const Eigen::Matrix<float, 6, 2> &bounds,
-                          float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
+    public:
+        TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,
+                      const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
+                      float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
-            Eigen::MatrixXf getJacobianMatrix();
-            Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-            Eigen::VectorXf getError(float stepSize = 1.0f);
-            bool checkTolerances();
+        Eigen::MatrixXf getJacobianMatrix();
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::VectorXf getError(float stepSize = 1.0f);
+        bool checkTolerances();
 
-            std::string getConstraintType();
-            const Eigen::Matrix4f &getTransformation();
-            const Eigen::Matrix<float, 6, 2> &getBounds();
+        std::string getConstraintType();
+        const Eigen::Matrix4f& getTransformation();
+        const Eigen::Matrix<float, 6, 2>& getBounds();
 
-        protected:
-            void resolveRPYAmbiguities(float *pose, const float *reference);
-            float getShortestDistanceForRPYComponent(float from, float to);
+    protected:
+        void resolveRPYAmbiguities(float* pose, const float* reference);
+        float getShortestDistanceForRPYComponent(float from, float to);
 
-            RobotPtr robot;
-            RobotNodeSetPtr nodeSet;
-            RobotNodePtr eef;
+        RobotPtr robot;
+        RobotNodeSetPtr nodeSet;
+        RobotNodePtr eef;
 
-            Eigen::Matrix4f transformation;
-            Eigen::Matrix4f eefOffset;
-            Eigen::Matrix<float, 6, 2> bounds;
+        Eigen::Matrix4f transformation;
+        Eigen::Matrix4f eefOffset;
+        Eigen::Matrix<float, 6, 2> bounds;
 
-            DifferentialIKPtr ik;
+        DifferentialIKPtr ik;
 
-            float toleranceTranslation;
-            float toleranceRotation;
+        float toleranceTranslation;
+        float toleranceRotation;
     };
 
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;

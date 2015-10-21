@@ -89,32 +89,32 @@ namespace VirtualRobot
         return computePseudoInverseJacobianMatrix(m, 0.0f);
     }
 
-    MatrixXd JacobiProvider::computePseudoInverseJacobianMatrixD(const MatrixXd &m) const
+    MatrixXd JacobiProvider::computePseudoInverseJacobianMatrixD(const MatrixXd& m) const
     {
         return computePseudoInverseJacobianMatrixD(m, 0.0);
     }
 
     Eigen::MatrixXf JacobiProvider::computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const
     {
-        Eigen::MatrixXf result(m.cols(),m.rows());
-        updatePseudoInverseJacobianMatrix(result,m,invParameter);
+        Eigen::MatrixXf result(m.cols(), m.rows());
+        updatePseudoInverseJacobianMatrix(result, m, invParameter);
         return result;
     }
 
     Eigen::MatrixXd JacobiProvider::computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, double invParameter) const
     {
-        Eigen::MatrixXd result(m.cols(),m.rows());
-        updatePseudoInverseJacobianMatrixD(result,m,invParameter);
+        Eigen::MatrixXd result(m.cols(), m.rows());
+        updatePseudoInverseJacobianMatrixD(result, m, invParameter);
         return result;
     }
 
-    void JacobiProvider::updatePseudoInverseJacobianMatrix(Eigen::MatrixXf &invJac, const Eigen::MatrixXf& m, float invParameter) const
+    void JacobiProvider::updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter) const
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
 #endif
 
-        VR_ASSERT(m.rows()>0 && m.cols()>0 && invJac.cols() == m.rows() && invJac.rows() == m.cols());
+        VR_ASSERT(m.rows() > 0 && m.cols() > 0 && invJac.cols() == m.rows() && invJac.rows() == m.cols());
 
         switch (inverseMethod)
         {
@@ -190,13 +190,13 @@ namespace VirtualRobot
     }
 
 
-    void JacobiProvider::updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd &invJac, const Eigen::MatrixXd& m, double invParameter) const
+    void JacobiProvider::updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter) const
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
 #endif
 
-        VR_ASSERT(m.rows()>0 && m.cols()>0 && invJac.cols() == m.rows() && invJac.rows() == m.cols());
+        VR_ASSERT(m.rows() > 0 && m.cols() > 0 && invJac.cols() == m.rows() && invJac.rows() == m.cols());
 
         switch (inverseMethod)
         {

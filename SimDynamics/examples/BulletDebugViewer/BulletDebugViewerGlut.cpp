@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(100.0f, 100.0f, 100.0f);
     o->setSimulationType(SceneObject::Physics::eDynamic);
     Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-    gp.block(0,3,3,1) = Eigen::Vector3f(2800, 10400, 5000.0f);
+    gp.block(0, 3, 3, 1) = Eigen::Vector3f(2800, 10400, 5000.0f);
     o->setGlobalPose(gp);
     o->setMass(1.0f); // 1kg
 

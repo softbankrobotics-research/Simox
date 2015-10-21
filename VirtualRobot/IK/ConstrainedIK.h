@@ -34,36 +34,36 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public boost::enable_shared_from_this<ConstrainedIK>
     {
-        public:
-            ConstrainedIK(RobotPtr &robot, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
+    public:
+        ConstrainedIK(RobotPtr& robot, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
 
-            void addConstraint(const ConstraintPtr &constraint, int priority=0, bool hard_constraint=true);
-            void removeConstraint(const ConstraintPtr &constraint);
-            std::vector<ConstraintPtr> getConstraints();
+        void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
+        void removeConstraint(const ConstraintPtr& constraint);
+        std::vector<ConstraintPtr> getConstraints();
 
-            virtual bool initialize();
+        virtual bool initialize();
 
-            virtual bool solveStep() = 0;
-            bool solve(bool stepwise = false);
+        virtual bool solveStep() = 0;
+        bool solve(bool stepwise = false);
 
-            void setMaxIterations(int maxIterations);
-            int getMaxIterations();
+        void setMaxIterations(int maxIterations);
+        int getMaxIterations();
 
-            bool getRunning();
-            int getCurrentIteration();
+        bool getRunning();
+        int getCurrentIteration();
 
-        protected:
-            std::vector<ConstraintPtr> constraints;
-            std::map<ConstraintPtr, int> priorities;
-            std::map<ConstraintPtr, bool> hardConstraints;
-            RobotPtr robot;
+    protected:
+        std::vector<ConstraintPtr> constraints;
+        std::map<ConstraintPtr, int> priorities;
+        std::map<ConstraintPtr, bool> hardConstraints;
+        RobotPtr robot;
 
-            int maxIterations;
-            int currentIteration;
-            bool running;
+        int maxIterations;
+        int currentIteration;
+        bool running;
 
-            float stallEpsilon;
-            float raiseEpsilon;
+        float stallEpsilon;
+        float raiseEpsilon;
     };
 
     typedef boost::shared_ptr<ConstrainedIK> ConstrainedIKPtr;

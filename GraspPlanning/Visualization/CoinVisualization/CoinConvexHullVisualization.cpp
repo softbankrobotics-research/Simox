@@ -118,11 +118,11 @@ namespace GraspStudio
 
         for (int i = 0; i < nFaces; i++)
         {
-            Eigen::Vector3f &v1 = convHull->vertices.at(convHull->faces[i].id1);
-            Eigen::Vector3f &v2 = convHull->vertices.at(convHull->faces[i].id2);
-            Eigen::Vector3f &v3 = convHull->vertices.at(convHull->faces[i].id3);
+            Eigen::Vector3f& v1 = convHull->vertices.at(convHull->faces[i].id1);
+            Eigen::Vector3f& v2 = convHull->vertices.at(convHull->faces[i].id2);
+            Eigen::Vector3f& v3 = convHull->vertices.at(convHull->faces[i].id3);
 
-            Eigen::Vector3f &n = convHull->faces[i].normal;
+            Eigen::Vector3f& n = convHull->faces[i].normal;
 
             bool bNeedFlip = ConvexHullGenerator::checkVerticeOrientation(v1, v2, v3, n);
 
@@ -155,7 +155,7 @@ namespace GraspStudio
         // set normals
         //pNormals->vector.setValues(0, nFaces, normalsArray);
         //result->addChild(pNormals);
-        SoNormalBinding *pNormalBinding = new SoNormalBinding;
+        SoNormalBinding* pNormalBinding = new SoNormalBinding;
         pNormalBinding->value = SoNormalBinding::NONE;
         result->addChild(pNormalBinding);
 
@@ -170,6 +170,7 @@ namespace GraspStudio
         {
             nNumVertices[i] = 3;
         }
+
         pFaceSet->numVertices.setValues(0, nFaces, nNumVertices);
 
         pFaceSet->numVertices.setValues(0, nFaces, (const int32_t*)nNumVertices);

@@ -506,7 +506,7 @@ namespace GraspStudio
 
 
         void PowerCrust::make_output(simplex* root,
-                                     void* (PowerCrustHull::*visit_gen)(simplex*, visit_func visit),
+                                     void * (PowerCrustHull::*visit_gen)(simplex*, visit_func visit),
                                      visit_func visit,
                                      out_func out_funcp,
                                      FILE* F,

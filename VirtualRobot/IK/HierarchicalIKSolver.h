@@ -5,7 +5,8 @@
 
 using namespace VirtualRobot;
 
-class HierarchicalIKSolver : public HierarchicalIK, public boost::enable_shared_from_this<HierarchicalIKSolver> {
+class HierarchicalIKSolver : public HierarchicalIK, public boost::enable_shared_from_this<HierarchicalIKSolver>
+{
 
 public:
     HierarchicalIKSolver(RobotNodeSetPtr allRobotNodes);

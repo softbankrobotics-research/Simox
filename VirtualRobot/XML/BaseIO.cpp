@@ -748,9 +748,13 @@ namespace VirtualRobot
         else if (fs::path(filename).is_absolute())
         {
             if (boost::filesystem::exists(fs::path(filename)))
+            {
                 filepath = fs::canonical(fs::path(filename));
+            }
             else
+            {
                 filepath = fs::path(filename);
+            }
         }
         else
         {
@@ -869,7 +873,8 @@ namespace VirtualRobot
             if (visualizationNodes.size() == 1)
             {
                 visualizationNode = visualizationNodes.at(0);
-            } else if (visualizationNodes.size() > 1)
+            }
+            else if (visualizationNodes.size() > 1)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
                 visualizationNode = visualizationFactory->createUnitedVisualization(visualizationNodes);
@@ -1002,10 +1007,13 @@ namespace VirtualRobot
             if (visuNodes.size() != 0)
             {
                 if (visuNodes.size() == 1)
+                {
                     visualizationNode = visuNodes.at(0);
+                }
                 else
                 {
                     VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, NULL);
+
                     if (visualizationFactory)
                     {
                         visualizationNode = visualizationFactory->createUnitedVisualization(visuNodes);
@@ -1053,6 +1061,7 @@ namespace VirtualRobot
             std::string tmpFileType = "";
 
             rapidxml::xml_attribute<>* attr = visuFileXMLNode->first_attribute("type", 0, false);
+
             if (!attr)
             {
                 if (VisualizationFactory::first(NULL))
@@ -1071,7 +1080,8 @@ namespace VirtualRobot
                 getLowerCase(tmpFileType);
             }
 
-            if (fileType == "") {
+            if (fileType == "")
+            {
                 fileType = tmpFileType;
             }
 
@@ -1085,14 +1095,15 @@ namespace VirtualRobot
             getLowerCase(fileType);
             visuFile = processFileNode(visuFileXMLNode, basePath);
 
-            if (visuFile != "") {
+            if (visuFile != "")
+            {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(fileType, NULL);
 
                 if (visualizationFactory)
                 {
                     if (tmpFileType == fileType)
                     {
-                        result.push_back(visualizationFactory->getVisualizationFromFile(visuFile,bbox));
+                        result.push_back(visualizationFactory->getVisualizationFromFile(visuFile, bbox));
                     }
                     else
                     {
@@ -1464,15 +1475,16 @@ namespace VirtualRobot
                     c.value = c.value / 180.0f * (float)M_PI;
                 }*/
 
-				Units u = getUnitsAttribute(node, Units::eIgnore);
-				if (u.isDegree())
-				{
-					c.value = c.value / 180.0f * (float)M_PI;
-				}
-				else if (u.isMeter())
-				{
-					c.value = c.value / 1000.0f;
-				}
+                Units u = getUnitsAttribute(node, Units::eIgnore);
+
+                if (u.isDegree())
+                {
+                    c.value = c.value / 180.0f * (float)M_PI;
+                }
+                else if (u.isMeter())
+                {
+                    c.value = c.value / 1000.0f;
+                }
 
                 storeConfigDefinitions.push_back(c);
             }

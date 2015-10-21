@@ -180,15 +180,18 @@ namespace VirtualRobot
         }
 
         measureName = res;
-        if (!measure && measureName==PoseQualityManipulability::getTypeName() )
+
+        if (!measure && measureName == PoseQualityManipulability::getTypeName())
         {
             VR_INFO << "Creating manipulability measure" << endl;
             measure.reset(new PoseQualityManipulability(nodeSet));
-        } else if (!measure && measureName==PoseQualityExtendedManipulability::getTypeName() )
+        }
+        else if (!measure && measureName == PoseQualityExtendedManipulability::getTypeName())
         {
             VR_INFO << "Creating extended manipulability measure" << endl;
             measure.reset(new PoseQualityExtendedManipulability(nodeSet));
         }
+
         //int cjl = read<int>(file);
         int cjl = (int)(FileIO::read<ioIntTypeRead>(file));
 
@@ -263,6 +266,7 @@ namespace VirtualRobot
         FileIO::writeString(file, measureName);
 
         int cjl = 0;
+
         if (considerJL)
         {
             cjl = 1;

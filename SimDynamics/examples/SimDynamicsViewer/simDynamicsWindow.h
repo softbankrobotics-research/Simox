@@ -67,7 +67,7 @@ public slots:
 
     void checkBoxFixedTimeStep();
 
-	void addObject();
+    void addObject();
 protected:
     bool loadRobot(std::string robotFilename);
     void setupUI();

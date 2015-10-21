@@ -71,9 +71,9 @@ void Win32DemoApplication::specialKeyboard(int key, int x, int y)
             stepBack();
             break;
 
-        //  case GLUT_KEY_PAGE_UP : zoomIn(); break;
-        //  case GLUT_KEY_PAGE_DOWN : zoomOut(); break;
-        //  case GLUT_KEY_HOME : toggleIdle(); break;
+            //  case GLUT_KEY_PAGE_UP : zoomIn(); break;
+            //  case GLUT_KEY_PAGE_DOWN : zoomOut(); break;
+            //  case GLUT_KEY_HOME : toggleIdle(); break;
 
         default:
             //        std::cout << "unused (special) key : " << key << std::endl;

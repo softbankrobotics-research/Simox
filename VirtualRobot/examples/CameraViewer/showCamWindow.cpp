@@ -52,11 +52,11 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     visuObject = VirtualRobot::Obstacle::createSphere(400.0f);
     Eigen::Matrix4f m;
     m.setIdentity();
-    m(1,3) = 1500.0f;
-    m(2,3) = 1500.0f;
+    m(1, 3) = 1500.0f;
+    m(2, 3) = 1500.0f;
     visuObject->setGlobalPose(m);
-    SoNode* objectSep = VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObject,VirtualRobot::SceneObject::Full);
-    extraSep->addChild(objectSep); 
+    SoNode* objectSep = VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObject, VirtualRobot::SceneObject::Full);
+    extraSep->addChild(objectSep);
 
     /*SoShapeHints * shapeHints = new SoShapeHints;
     shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
@@ -400,6 +400,7 @@ void showCamWindow::loadRobot()
         cout << " ERROR while creating robot" << endl;
         return;
     }
+
     updateCameras();
     updatRobotInfo();
 }
@@ -414,18 +415,28 @@ void showCamWindow::updateCameras()
     cam1Buffer = NULL;
     delete []cam2Buffer;
     cam2Buffer = NULL;
+
     if (!robot)
+    {
         return;
+    }
+
     if (robot->hasRobotNode(cam1Name))
+    {
         cam1 = robot->getRobotNode(cam1Name);
+    }
+
     if (robot->hasRobotNode(cam2Name))
+    {
         cam2 = robot->getRobotNode(cam2Name);
+    }
 
     if (cam1)
     {
         cam1Renderer = CoinVisualizationFactory::createOffscreenRenderer(UI.cam1->size().width(), UI.cam1->size().height());
         cam1Buffer = new unsigned char [UI.cam1->size().width() * UI.cam1->size().height() * 3];
     }
+
     if (cam2)
     {
         cam2Renderer = CoinVisualizationFactory::createOffscreenRenderer(UI.cam2->size().width(), UI.cam2->size().height());
@@ -443,26 +454,27 @@ void showCamWindow::renderCam()
         QImage img1(cam1Buffer, UI.cam1->size().width(), UI.cam1->size().height(), QImage::Format_RGB888);
         //UI.cam1->setPixmap(QPixmap::fromImage(img1));
 
-        QGraphicsScene *scene = new QGraphicsScene();
+        QGraphicsScene* scene = new QGraphicsScene();
         //scene->addPixmap(QPixmap::fromImage(qimg2.mirrored(true,false))); // we need to mirror the image, since different coord systems are assumed
-        scene->addPixmap(QPixmap::fromImage(img1.mirrored(false,true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
-        QGraphicsScene *oldScene = UI.cam1->scene();
+        scene->addPixmap(QPixmap::fromImage(img1.mirrored(false, true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
+        QGraphicsScene* oldScene = UI.cam1->scene();
         UI.cam1->setScene(scene);
-        delete oldScene; 
+        delete oldScene;
 
     }
+
     if (cam2 && cam2Renderer)
     {
         CoinVisualizationFactory::renderOffscreen(cam2Renderer, cam2, sceneSep, &cam2Buffer);
         QImage img2(cam2Buffer, UI.cam2->size().width(), UI.cam2->size().height(), QImage::Format_RGB888);
         //UI.cam2->setPixmap(QPixmap::fromImage(img2));
 
-        QGraphicsScene *scene = new QGraphicsScene();
+        QGraphicsScene* scene = new QGraphicsScene();
         //scene->addPixmap(QPixmap::fromImage(qimg2.mirrored(true,false))); // we need to mirror the image, since different coord systems are assumed
-        scene->addPixmap(QPixmap::fromImage(img2.mirrored(false,true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
-        QGraphicsScene *oldScene = UI.cam2->scene();
+        scene->addPixmap(QPixmap::fromImage(img2.mirrored(false, true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
+        QGraphicsScene* oldScene = UI.cam2->scene();
         UI.cam2->setScene(scene);
-        delete oldScene; 
+        delete oldScene;
     }
 }
 
@@ -472,6 +484,7 @@ void showCamWindow::updatRobotInfo()
     {
         return;
     }
+
     // get nodes
     robot->getRobotNodes(allRobotNodes);
     robot->getRobotNodeSets(robotNodeSets);

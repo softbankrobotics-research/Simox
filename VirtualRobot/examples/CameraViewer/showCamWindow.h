@@ -91,8 +91,8 @@ protected:
 
     VirtualRobot::ObstaclePtr visuObject;
 
-    unsigned char *cam1Buffer;
-    unsigned char *cam2Buffer;
+    unsigned char* cam1Buffer;
+    unsigned char* cam2Buffer;
     std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
     std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
     std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;

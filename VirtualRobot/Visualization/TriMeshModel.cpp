@@ -20,10 +20,12 @@ namespace VirtualRobot
     {
     }
 
-    TriMeshModel::TriMeshModel(std::vector <triangle> &triangles)
+    TriMeshModel::TriMeshModel(std::vector <triangle>& triangles)
     {
         for (size_t i = 0; i < triangles.size(); i++)
+        {
             addTriangleWithFace(triangles[i].vertex1, triangles[i].vertex2, triangles[i].vertex3);
+        }
     }
 
     /**

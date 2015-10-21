@@ -175,9 +175,9 @@ namespace Saba
         */
         virtual bool init();
 
-		/*! By default min 3 contacts are needed, this number can be adjusted here.
-		*/
-		void setMinGraspContacts(int nr);
+        /*! By default min 3 contacts are needed, this number can be adjusted here.
+        */
+        void setMinGraspContacts(int nr);
     protected:
 
         bool doPlanningCycle();
@@ -203,7 +203,7 @@ namespace Saba
 
         PlanningPerformance performanceMeasure;
 
-		int minGraspContacts;
+        int minGraspContacts;
 
 
         MoveArmResult connectRandomGraspPositionJacobian();
@@ -262,7 +262,7 @@ namespace Saba
 
         bool verbose;
 
-        std::map<CSpaceNodePtr, Eigen::Matrix4f, std::less<CSpaceNodePtr>,
+        std::map < CSpaceNodePtr, Eigen::Matrix4f, std::less<CSpaceNodePtr>,
             Eigen::aligned_allocator<std::pair<const CSpaceNodePtr, Eigen::Matrix4f> > > mapConfigTcp; //!< Store the tcp (gcp) poses that correspond with the config
 
         // grasp measurement

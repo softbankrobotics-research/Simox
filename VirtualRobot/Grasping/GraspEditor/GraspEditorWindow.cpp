@@ -39,7 +39,7 @@ namespace VirtualRobot
 {
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
-        bool embeddedGraspEditor, Qt::WFlags flags)
+                                         bool embeddedGraspEditor, Qt::WFlags flags)
         : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
@@ -68,10 +68,10 @@ namespace VirtualRobot
         Eigen::MatrixXf d(10, 10);
 
         for (int x = 0; x < 10; x++)
-        for (int y = 0; y < 10; y++)
-        {
-            d(x, y) = (float)(x + y) / 20.0f;
-        }
+            for (int y = 0; y < 10; y++)
+            {
+                d(x, y) = (float)(x + y) / 20.0f;
+            }
 
         SoSeparator* sep1 = CoinVisualizationFactory::Create2DMap(d, 10.0f, 10.0f, VirtualRobot::ColorMap::ColorMap(VirtualRobot::ColorMap::eHot), true);
         SoSeparator* sep2 = CoinVisualizationFactory::Create2DHeightMap(d, 10.0f, 10.0f, 50.0f);
@@ -592,8 +592,8 @@ namespace VirtualRobot
     {
         bool ok;
         QString text = QInputDialog::getText(this, tr("Rename Grasp"),
-            tr("New name:"), QLineEdit::Normal,
-            tr(currentGrasp->getName().c_str()), &ok);
+                                             tr("New name:"), QLineEdit::Normal,
+                                             tr(currentGrasp->getName().c_str()), &ok);
 
 
         if (ok && !text.isEmpty())

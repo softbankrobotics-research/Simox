@@ -34,23 +34,23 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedStackedIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedStackedIK>
     {
-        public:
-            ConstrainedStackedIK(RobotPtr &robot, const RobotNodeSetPtr &nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
-                                 JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
+    public:
+        ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
+                             JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
-            bool initialize();
+        bool initialize();
 
-            virtual bool solveStep();
+        virtual bool solveStep();
 
-        protected:
-            RobotNodeSetPtr nodeSet;
-            StackedIKPtr ik;
+    protected:
+        RobotNodeSetPtr nodeSet;
+        StackedIKPtr ik;
 
-            std::vector<JacobiProviderPtr> jacobians;
+        std::vector<JacobiProviderPtr> jacobians;
 
-            JacobiProvider::InverseJacobiMethod method;
+        JacobiProvider::InverseJacobiMethod method;
 
-            float stepSize;
+        float stepSize;
     };
 
     typedef boost::shared_ptr<ConstrainedStackedIK> ConstrainedStackedIKPtr;

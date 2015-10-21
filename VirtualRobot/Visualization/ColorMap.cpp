@@ -110,10 +110,10 @@ namespace VirtualRobot
                 addColorKey(255, 0, 0, 255, 1.0f);
                 break;
 
-            /*case eGrayToRed:
-                addColorKey(64, 64, 64, 255, 0.0f);
-                addColorKey(255, 0, 0, 255, 1.0f);
-                break;*/
+                /*case eGrayToRed:
+                    addColorKey(64, 64, 64, 255, 0.0f);
+                    addColorKey(255, 0, 0, 255, 1.0f);
+                    break;*/
             case eGreen:
                 addColorKey(0, 0, 0, 255, 0.0f);
                 addColorKey(0, 255, 0, 255, 1.0f);

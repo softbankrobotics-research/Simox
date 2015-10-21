@@ -56,14 +56,19 @@ int main(int argc, char* argv[])
     }
 
     if (VirtualRobot::RuntimeEnvironment::hasValue("cam1"))
+    {
         cam1Name = VirtualRobot::RuntimeEnvironment::getValue("cam1");
+    }
+
     if (VirtualRobot::RuntimeEnvironment::hasValue("cam2"))
+    {
         cam2Name = VirtualRobot::RuntimeEnvironment::getValue("cam2");
+    }
 
 
     cout << "Using robot:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
 
-    showCamWindow rw(filename,cam1Name,cam2Name);
+    showCamWindow rw(filename, cam1Name, cam2Name);
 
     rw.main();
 

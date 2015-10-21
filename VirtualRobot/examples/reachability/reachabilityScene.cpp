@@ -71,7 +71,8 @@ void endlessExtend(std::string robotFile, std::string reachFile)
     {
         reachSpace.reset(new Manipulability(robot));
         reachSpace->load(reachFile);
-    } catch (...)
+    }
+    catch (...)
     {
         loadOK = false;
     }
@@ -81,10 +82,13 @@ void endlessExtend(std::string robotFile, std::string reachFile)
         // try reachability file
 
         loadOK = true;
-        try {
+
+        try
+        {
             reachSpace.reset(new Reachability(robot));
             reachSpace->load(reachFile);
-        } catch (...)
+        }
+        catch (...)
         {
             loadOK = false;
         }

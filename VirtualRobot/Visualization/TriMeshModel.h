@@ -42,12 +42,12 @@ namespace VirtualRobot
         TriMeshModel();
 
         struct triangle
-        {   
+        {
             Eigen::Vector3f vertex1;
             Eigen::Vector3f vertex2;
             Eigen::Vector3f vertex3;
         };
-        TriMeshModel(std::vector <triangle> &triangles);
+        TriMeshModel(std::vector <triangle>& triangles);
 
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal,

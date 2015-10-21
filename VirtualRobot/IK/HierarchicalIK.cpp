@@ -24,7 +24,7 @@ namespace VirtualRobot
         verbose = v;
     }
 
-    Eigen::VectorXf HierarchicalIK::computeStep(const std::vector<JacobiProviderPtr> &jacDefs, float stepSize)
+    Eigen::VectorXf HierarchicalIK::computeStep(const std::vector<JacobiProviderPtr>& jacDefs, float stepSize)
     {
         const double invDamped_lamba = 10.0;
 
@@ -115,12 +115,13 @@ namespace VirtualRobot
                 JA_i_min1.block(rowPos, 0, jacobies[j].rows(), jacobies[j].cols()) = jacobies[j];
                 rowPos += jacobies[j].rows();
             }
+
             if (verbose)
             {
                 VR_INFO << "JA_i_min1 " << i << ":\n" << endl << JA_i_min1 << endl;
             }
 
-            switch(method)
+            switch (method)
             {
                 case JacobiProvider::eTranspose:
                     JAinv_i_min1 = JA_i_min1.transpose();
@@ -141,18 +142,24 @@ namespace VirtualRobot
             {
                 VR_INFO << "JAinv_i_min1 " << i << ":\n" << endl << JAinv_i_min1 << endl;
             }
+
             PA_i_min1 = id_ndof - JAinv_i_min1 * JA_i_min1;
+
             if (verbose)
             {
                 VR_INFO << "PA_i_min1 " << i << ":\n" << endl << PA_i_min1 << endl;
             }
+
             Eigen::MatrixXd J_tilde_i = J_i * PA_i_min1;
+
             if (verbose)
             {
                 VR_INFO << "J_tilde_i " << i << ":\n" << endl << J_tilde_i << endl;
             }
+
             Eigen::MatrixXd Jinv_tilde_i;
-            switch(method)
+
+            switch (method)
             {
                 case JacobiProvider::eTranspose:
                     Jinv_tilde_i = J_tilde_i.transpose();
@@ -166,12 +173,14 @@ namespace VirtualRobot
                     Jinv_tilde_i = MathTools::getPseudoInverseDampedD(J_tilde_i, invDamped_lamba);
                     break;
             }
+
             //Eigen::MatrixXf Jinv_tilde_i = MathTools::getPseudoInverse(J_tilde_i, pinvtoler);
 
             if (verbose)
             {
                 VR_INFO << "Jinv_tilde_i " << i << ":\n" << endl << Jinv_tilde_i << endl;
             }
+
             if (verbose)
             {
                 VR_INFO << "jacDefs[i]->getError() " << i << ":\n" << endl << errors[i].transpose() << endl;
