@@ -273,17 +273,17 @@ namespace VirtualRobot
         if (urdfBody->inertial)
         {
             physics.massKg = urdfBody->inertial->mass;
-            physics.intertiaMatrix(0, 0) = urdfBody->inertial->ixx;
-            physics.intertiaMatrix(0, 1) = urdfBody->inertial->ixy;
-            physics.intertiaMatrix(0, 2) = urdfBody->inertial->ixz;
+            physics.inertiaMatrix(0, 0) = urdfBody->inertial->ixx;
+            physics.inertiaMatrix(0, 1) = urdfBody->inertial->ixy;
+            physics.inertiaMatrix(0, 2) = urdfBody->inertial->ixz;
 
-            physics.intertiaMatrix(1, 0) = urdfBody->inertial->ixy;
-            physics.intertiaMatrix(1, 1) = urdfBody->inertial->iyy;
-            physics.intertiaMatrix(1, 2) = urdfBody->inertial->iyz;
+            physics.inertiaMatrix(1, 0) = urdfBody->inertial->ixy;
+            physics.inertiaMatrix(1, 1) = urdfBody->inertial->iyy;
+            physics.inertiaMatrix(1, 2) = urdfBody->inertial->iyz;
 
-            physics.intertiaMatrix(2, 0) = urdfBody->inertial->ixz;
-            physics.intertiaMatrix(2, 1) = urdfBody->inertial->iyz;
-            physics.intertiaMatrix(2, 2) = urdfBody->inertial->izz;
+            physics.inertiaMatrix(2, 0) = urdfBody->inertial->ixz;
+            physics.inertiaMatrix(2, 1) = urdfBody->inertial->iyz;
+            physics.inertiaMatrix(2, 2) = urdfBody->inertial->izz;
 
             physics.comLocation = VirtualRobot::SceneObject::Physics::eCustom;
             physics.localCoM = convertPose(urdfBody->inertial->origin).block(0, 3, 3, 1);
