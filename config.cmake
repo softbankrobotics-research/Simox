@@ -47,7 +47,7 @@ IF (NOT Simox_CONFIGURED)
 	############################# VERSION #################################
 	set(Simox_MAJOR_VERSION 2)
 	set(Simox_MINOR_VERSION 3)
-	set(Simox_PATCH_VERSION 14)
+        set(Simox_PATCH_VERSION 15)
 	set(Simox_VERSION
     ${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION})
 
