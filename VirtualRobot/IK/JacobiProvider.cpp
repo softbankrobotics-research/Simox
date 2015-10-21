@@ -166,7 +166,7 @@ namespace VirtualRobot
 
             case eSVDDamped:
             {
-                float pinvtoler = 10.0f;
+                float pinvtoler = 1.0f;
 
                 if (invParameter != 0.0f)
                 {
