@@ -95,30 +95,33 @@ namespace GraspStudio
             return VirtualRobot::GraspPtr();
         }
 
-	if (obstacles)
+        if (obstacles)
         {
-		VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
-        VR_ASSERT(eef->getRobot());
-        VR_ASSERT(obstacles);
-	
-		if (colChecker->checkCollision(eef->createSceneObjectSet(),obstacles)) {
-//                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
-            return VirtualRobot::GraspPtr();
-}
+            VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+            VR_ASSERT(eef->getRobot());
+            VR_ASSERT(obstacles);
+
+            if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+            {
+                //                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
+                return VirtualRobot::GraspPtr();
+            }
         }
 
         VirtualRobot::EndEffector::ContactInfoVector contacts;
         contacts = eef->closeActors(object);
 
-	if (obstacles)
+        if (obstacles)
         {
-		VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
-        VR_ASSERT(eef->getRobot());
-        VR_ASSERT(obstacles);
-		if (colChecker->checkCollision(eef->createSceneObjectSet(),obstacles)) {
-  //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
-            return VirtualRobot::GraspPtr();
-}
+            VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+            VR_ASSERT(eef->getRobot());
+            VR_ASSERT(obstacles);
+
+            if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+            {
+                //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
+                return VirtualRobot::GraspPtr();
+            }
         }
 
         if (contacts.size() < 2)

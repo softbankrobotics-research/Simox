@@ -201,7 +201,7 @@ namespace Collada
             physics.comLocation = VirtualRobot::SceneObject::Physics::eCustom;
             physics.localCoM = com;
             physics.massKg = mass;
-            physics.intertiaMatrix = massFrameTransformation.block<3, 3>(0, 0) * inertia;
+            physics.inertiaMatrix = massFrameTransformation.block<3, 3>(0, 0) * inertia;
 
             if (this->name.compare("RRKnee_joint") == 0)
             {

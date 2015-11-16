@@ -21,6 +21,7 @@ namespace VirtualRobot
         JacobiProvider(_rns, invJacMethod), coordSystem(_coordSystem), invParam(invParam), nRows(0)
     {
         name = "DifferentialIK";
+
         if (!rns)
         {
             THROW_VR_EXCEPTION("Null data");
@@ -94,7 +95,9 @@ namespace VirtualRobot
             tcp_set.push_back(tcp);
         }*/
         if (performInitialization)
+        {
             initialize();
+        }
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix()
@@ -103,17 +106,19 @@ namespace VirtualRobot
         return currentJacobian;
     }
 
-    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf &jacobian)
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jacobian)
     {
         VR_ASSERT(initialized);
 
 #ifdef ALLOW_RESIZE
-        if (jacobian.rows()!=nRows || jacobian.cols() != nDoF)
+
+        if (jacobian.rows() != nRows || jacobian.cols() != nDoF)
         {
             jacobian.resize(nRows, nDoF);
         }
+
 #endif
-        VR_ASSERT(jacobian.rows()==nRows && jacobian.cols() == nodes.size());
+        VR_ASSERT(jacobian.rows() == nRows && jacobian.cols() == nodes.size());
 
         size_t index = 0;
 
@@ -166,12 +171,14 @@ namespace VirtualRobot
         VR_ASSERT(initialized);
 
 #ifdef ALLOW_RESIZE
-        if (error.rows()!=nRows)
+
+        if (error.rows() != nRows)
         {
             error.resize(nRows);
         }
+
 #endif
-        VR_ASSERT(error.rows()==nRows);
+        VR_ASSERT(error.rows() == nRows);
 
         //VectorXf error(nRows);
 
@@ -184,7 +191,7 @@ namespace VirtualRobot
 
             if (this->targets.find(tcp) != this->targets.end())
             {
-                //Eigen::VectorXf delta = 
+                //Eigen::VectorXf delta =
                 updateDeltaToGoal(tmpUpdateErrorDelta, tcp);
                 IKSolver::CartesianSelection mode = this->modes[tcp];
                 tmpUpdateErrorPosition = tmpUpdateErrorDelta.head(3);
@@ -243,7 +250,10 @@ namespace VirtualRobot
     MatrixXf DifferentialIK::getJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
     {
         if (!initialized)
+        {
             initialize();
+        }
+
         int partSize = 0;
 
         if (mode & IKSolver::X)
@@ -268,15 +278,17 @@ namespace VirtualRobot
         }
 
         Eigen::MatrixXf jac(partSize, nDoF);
-        updateJacobianMatrix(jac,tcp,mode);
+        updateJacobianMatrix(jac, tcp, mode);
         return jac;
     }
 
-    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf &jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
     {
 
         if (!initialized)
+        {
             initialize();
+        }
 
         // obtain the size of the matrix.
         unsigned int size = 0;
@@ -300,13 +312,16 @@ namespace VirtualRobot
         {
             size += 3;
         }
+
 #ifdef ALLOW_RESIZE
-        if (jac.rows()!=size || jac.cols()!=nDoF)
+
+        if (jac.rows() != size || jac.cols() != nDoF)
         {
             jac.resize(size, nDof);
         }
+
 #endif
-        VR_ASSERT(jac.rows()==size && jac.cols()==nDoF);
+        VR_ASSERT(jac.rows() == size && jac.cols() == nDoF);
 
         // Create matrices for the position and the orientation part of the jacobian.
 
@@ -319,6 +334,7 @@ namespace VirtualRobot
         //  THROW_VR_EXCEPTION_IF(!tcp,boost::format("No tcp defined in node set \"%1%\" of robot %2% (DifferentialIK::%3% )") % this->rns->getName() % this->rns->getRobot()->getName() % BOOST_CURRENT_FUNCTION);
 
         RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+
         if (!tcpRN)
         {
             if (!tcp->getParent())
@@ -560,12 +576,14 @@ namespace VirtualRobot
 
                 partSize += 3;
             }
+
             nRows += partSize;
 
             Eigen::MatrixXf jac(partSize, nDoF);
             partJacobians[tcp] = jac;
 
         }
+
         currentError.resize(nRows);
         currentJacobian.resize(nRows, nDoF);
         currentInvJacobian.resize(nDoF, nRows);
@@ -581,29 +599,50 @@ namespace VirtualRobot
     void DifferentialIK::print()
     {
         JacobiProvider::print();
+
         if (coordSystem)
+        {
             cout << "Coordsystem: " << coordSystem->getName() << endl;
+        }
         else
+        {
             cout << "Coordsystem: global" << endl;
+        }
+
         cout << "TCPs:" << endl;
-        for (size_t t=0;t<tcp_set.size();t++)
+
+        for (size_t t = 0; t < tcp_set.size(); t++)
         {
             SceneObjectPtr tcp = tcp_set[t];
             RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+
             if (!tcpRN)
+            {
                 continue;
+            }
+
             cout << "* " << tcpRN->getName() << endl;
             cout << "** Target: " << endl << this->targets[tcp] << endl;
             cout << "** Error: " << getDeltaToGoal(tcp).transpose() << endl;
             cout << "** mode:";
+
             if (this->modes[tcp] == IKSolver::All)
+            {
                 cout << "all" << endl;
+            }
             else if (this->modes[tcp] == IKSolver::Position)
+            {
                 cout << "position" << endl;
+            }
             else if (this->modes[tcp] == IKSolver::Orientation)
+            {
                 cout << "orientation" << endl;
+            }
             else
+            {
                 cout << "unknown" << endl;
+            }
+
             cout << "** tolerances pos: " << this->tolerancePosition[tcp] << ", rot:" << this->toleranceRotation[tcp] << endl;
             cout << "** Nodes:";
 
@@ -618,6 +657,7 @@ namespace VirtualRobot
                     cout << dof->getName() << ",";
                 }
             }
+
             cout << endl;
         }
     }
@@ -649,25 +689,28 @@ namespace VirtualRobot
         return result;
     }
 
-    void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp)
+    void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf& delta, SceneObjectPtr tcp)
     {
         if (!tcp)
         {
             tcp = getDefaultTCP();
         }
+
         VR_ASSERT(tcp);
         updateDelta(delta, tcp->getGlobalPose(), this->targets[tcp], this->modes[tcp]);
     }
 
-    void DifferentialIK::updateDelta(Eigen::VectorXf &delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
+    void DifferentialIK::updateDelta(Eigen::VectorXf& delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode)
     {
 #ifdef ALLOW_RESIZE
-        if (delta.rows()!=6)
+
+        if (delta.rows() != 6)
         {
             delta.resize(6);
         }
+
 #endif
-        VR_ASSERT(delta.rows()==6);
+        VR_ASSERT(delta.rows() == 6);
 
         delta.setZero();
 

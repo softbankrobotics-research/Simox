@@ -200,8 +200,8 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
 
-        void updateJacobianMatrix(Eigen::MatrixXf &jac);
-        void updateJacobianMatrix(Eigen::MatrixXf &jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode);
+        void updateJacobianMatrix(Eigen::MatrixXf& jac);
+        void updateJacobianMatrix(Eigen::MatrixXf& jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode);
         //Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m);
 
 
@@ -265,8 +265,8 @@ namespace VirtualRobot
             Returns 6D workspace delta that is used for Jacobi calculation.
             Updates the currentDeltaToGoal vector
         */
-        virtual void updateDeltaToGoal(Eigen::VectorXf &delta, SceneObjectPtr tcp = SceneObjectPtr());
-        virtual void updateDelta(Eigen::VectorXf &delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
+        virtual void updateDeltaToGoal(Eigen::VectorXf& delta, SceneObjectPtr tcp = SceneObjectPtr());
+        virtual void updateDelta(Eigen::VectorXf& delta, const Eigen::Matrix4f& current, const Eigen::Matrix4f& goal, IKSolver::CartesianSelection mode = IKSolver::All);
         /*!
         Returns 6D workspace delta that is used for Jacobi calculation.
         */
@@ -282,7 +282,7 @@ namespace VirtualRobot
         virtual bool checkTolerances();
 
         /*!
-            Initializes the internal data structures according to setGoal setup. 
+            Initializes the internal data structures according to setGoal setup.
             Usually no need to call this method explicitly, unless performInitialization was not requested in setGoal.
         */
         virtual void initialize();

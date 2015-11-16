@@ -33,48 +33,48 @@
 namespace VirtualRobot
 {
 
-/*!
-		The support polygon is defined through the contacts between a set of CollisionModels and the floor plane.
-		In this implementation, contacts are defined as all surface points of the passed collision models which have 
-        a distance to MathTools::FloorPlane that is lower than 5mm.
-*/
-class VIRTUAL_ROBOT_IMPORT_EXPORT SupportPolygon : public boost::enable_shared_from_this<SupportPolygon>
-{
-public:
-	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    /*!
+            The support polygon is defined through the contacts between a set of CollisionModels and the floor plane.
+            In this implementation, contacts are defined as all surface points of the passed collision models which have
+            a distance to MathTools::FloorPlane that is lower than 5mm.
+    */
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SupportPolygon : public boost::enable_shared_from_this<SupportPolygon>
+    {
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    SupportPolygon(SceneObjectSetPtr contactModels);
+        SupportPolygon(SceneObjectSetPtr contactModels);
 
-	//! Recalculate contacts and compute polygon
-	MathTools::ConvexHull2DPtr updateSupportPolygon(float maxFloorDist = 5.0f);
+        //! Recalculate contacts and compute polygon
+        MathTools::ConvexHull2DPtr updateSupportPolygon(float maxFloorDist = 5.0f);
 
-	MathTools::ConvexHull2DPtr getSupportPolygon2D();
+        MathTools::ConvexHull2DPtr getSupportPolygon2D();
 
-	MathTools::Plane getFloorPlane();
+        MathTools::Plane getFloorPlane();
 
-	/*! 
-		Computes quality index between 0 and 1 of the CoM projection of the robotNodeSet.
-		1 means that the current 2D CoM lies at the center of the support polygon
-		0 means it is outside.
-	*/
-    float getStabilityIndex(RobotNodeSetPtr rns, bool update=true);
+        /*!
+            Computes quality index between 0 and 1 of the CoM projection of the robotNodeSet.
+            1 means that the current 2D CoM lies at the center of the support polygon
+            0 means it is outside.
+        */
+        float getStabilityIndex(RobotNodeSetPtr rns, bool update = true);
 
-    SceneObjectSetPtr getContactModels();
+        SceneObjectSetPtr getContactModels();
 
-protected:
+    protected:
 
-	float getSquaredDistLine(Eigen::Vector2f &p, Eigen::Vector2f &pt1, Eigen::Vector2f &pt2 );
+        float getSquaredDistLine(Eigen::Vector2f& p, Eigen::Vector2f& pt1, Eigen::Vector2f& pt2);
 
-    SceneObjectSetPtr contactModels;
+        SceneObjectSetPtr contactModels;
 
-	std::vector< CollisionModelPtr > colModels; 
-	std::vector< Eigen::Vector2f > currentContactPoints2D; 
+        std::vector< CollisionModelPtr > colModels;
+        std::vector< Eigen::Vector2f > currentContactPoints2D;
 
-	MathTools::Plane floor;
-	MathTools::ConvexHull2DPtr suportPolygonFloor;
-};
+        MathTools::Plane floor;
+        MathTools::ConvexHull2DPtr suportPolygonFloor;
+    };
 
-typedef boost::shared_ptr<SupportPolygon> SupportPolygonPtr;
+    typedef boost::shared_ptr<SupportPolygon> SupportPolygonPtr;
 
 } // namespace VirtualRobot
 

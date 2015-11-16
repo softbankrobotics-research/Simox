@@ -71,7 +71,7 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags fla
     dynamicsObject->setPosition(Eigen::Vector3f(1000, 2000, 1000.0f));
     dynamicsWorld->addObject(dynamicsObject);
 
-	addObject();
+    addObject();
 
 #if 0
     std::string f = "/home/niko/coding/armarx/SimulationX/data/environment/KIT_Robot_Kitchen.xml";
@@ -88,7 +88,7 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags fla
     mo->setSimulationType(SceneObject::Physics::eDynamic);
     SimDynamics::DynamicsObjectPtr dynObj2 = dynamicsWorld->CreateDynamicsObject(mo);
     //dynObj2->setSimType(VirtualRobot::SceneObject::Physics::eDynamic);
-    dynObj2->setPosition(Eigen::Vector3f(0,0,-200.0f));
+    dynObj2->setPosition(Eigen::Vector3f(0, 0, -200.0f));
     dynamicsWorld->addObject(dynObj2);
     dynamicsObjects.push_back(dynObj2);
 #endif
@@ -155,7 +155,7 @@ void SimDynamicsWindow::setupUI()
     connect(UI.horizontalSliderUpdateTimer, SIGNAL(valueChanged(int)), this, SLOT(updateTimerChanged(int)));
     connect(UI.spinBoxAntiAliasing, SIGNAL(valueChanged(int)), this, SLOT(updateAntiAliasing(int)));
 
-	connect(UI.pushButtonAddObject, SIGNAL(clicked()), this, SLOT(addObject()));
+    connect(UI.pushButtonAddObject, SIGNAL(clicked()), this, SLOT(addObject()));
 
     /*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
@@ -220,9 +220,9 @@ void SimDynamicsWindow::buildVisualization()
     viewer->addVisualization(dynamicsRobot, colModel);
     viewer->addVisualization(dynamicsObject, colModel);
 
-	for (size_t i = 0; i < dynamicsObjects.size();i++)
+    for (size_t i = 0; i < dynamicsObjects.size(); i++)
     {
-		viewer->addVisualization(dynamicsObjects[i], colModel);
+        viewer->addVisualization(dynamicsObjects[i], colModel);
     }
 
     if (dynamicsObject2)
@@ -709,11 +709,13 @@ void SimDynamicsWindow::updateJointInfo()
     UI.label_RNPosCom->setText(qCom);
 
 #if 0
+
     // print some joint info
     if (viewer->engineRunning())
     {
         cout << info << endl;
     }
+
 #endif
 }
 
@@ -919,39 +921,43 @@ void SimDynamicsWindow::updateAntiAliasing(int n)
 
 void SimDynamicsWindow::addObject()
 {
-	ManipulationObjectPtr vitalis;
-	std::string vitalisPath = "objects/VitalisWithPrimitives.xml";
+    ManipulationObjectPtr vitalis;
+    std::string vitalisPath = "objects/VitalisWithPrimitives.xml";
 
-	if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(vitalisPath))
-	{
-		vitalis = ObjectIO::loadManipulationObject(vitalisPath);
-	}
+    if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(vitalisPath))
+    {
+        vitalis = ObjectIO::loadManipulationObject(vitalisPath);
+    }
 
-	if (vitalis)
-	{
-		vitalis->setMass(0.5f);
-		float x, y, z;
-		int counter = 0;
-		do
-		{
-			x = float(rand() % 2000 - 1000);
-			y = float(rand() % 2000 - 1000);
-			z = float(rand() % 2000 + 100);
-			Eigen::Matrix4f gp = vitalis->getGlobalPose();
-			gp.block(0, 3, 3, 1) = Eigen::Vector3f(x, y, z);
-			vitalis->setGlobalPose(gp);
-			counter++;
-			if (counter > 100)
-			{
-				cout << "Error, could not find valid pose" << endl;
-				return;
-			}
-		} while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
-		SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis);
-		dynamicsObjectVitalis->setPosition(Eigen::Vector3f(x, y, z));
-		dynamicsObjects.push_back(dynamicsObjectVitalis);
-		dynamicsWorld->addObject(dynamicsObjectVitalis);
-		buildVisualization();
-	}
+    if (vitalis)
+    {
+        vitalis->setMass(0.5f);
+        float x, y, z;
+        int counter = 0;
+
+        do
+        {
+            x = float(rand() % 2000 - 1000);
+            y = float(rand() % 2000 - 1000);
+            z = float(rand() % 2000 + 100);
+            Eigen::Matrix4f gp = vitalis->getGlobalPose();
+            gp.block(0, 3, 3, 1) = Eigen::Vector3f(x, y, z);
+            vitalis->setGlobalPose(gp);
+            counter++;
+
+            if (counter > 100)
+            {
+                cout << "Error, could not find valid pose" << endl;
+                return;
+            }
+        }
+        while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
+
+        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis);
+        dynamicsObjectVitalis->setPosition(Eigen::Vector3f(x, y, z));
+        dynamicsObjects.push_back(dynamicsObjectVitalis);
+        dynamicsWorld->addObject(dynamicsObjectVitalis);
+        buildVisualization();
+    }
 
 }

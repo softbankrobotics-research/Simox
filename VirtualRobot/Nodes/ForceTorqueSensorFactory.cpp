@@ -64,6 +64,7 @@ namespace VirtualRobot
         while (nodeXML)
         {
             std::string nodeName = BaseIO::getLowerCase(nodeXML->name());
+
             //      if (nodeName == "visualization")
             //      {
             //          if (loadMode==RobotIO::eFull)
@@ -75,8 +76,9 @@ namespace VirtualRobot
             //      } else
             if (nodeName == "transform")
             {
-                BaseIO::processTransformNode(sensorXMLNode,sensorName,transformMatrix);
-            } else
+                BaseIO::processTransformNode(sensorXMLNode, sensorName, transformMatrix);
+            }
+            else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in Sensor <" << sensorName << ">." << endl);
             }

@@ -482,7 +482,7 @@ namespace VirtualRobot
         for (int i=0;i<nFaces;i++)
             nNumVertices[i] = 3;
         pFaceSet->numVertices.setValues(0,nFaces,(const int32_t*)nNumVertices);
-     
+
         pResult->addChild(pCoords);
         pResult->addChild(pFaceSeperator);
         delete []pVertexArray;

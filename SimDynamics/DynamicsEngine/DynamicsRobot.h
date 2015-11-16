@@ -109,7 +109,7 @@ namespace SimDynamics
         virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
         virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set);
 
-        virtual void setGlobalPose(const Eigen::Matrix4f &gp);
+        virtual void setGlobalPose(const Eigen::Matrix4f& gp);
 
         //! If set, all actions are protected with this mutex
         virtual void setMutex(boost::shared_ptr <boost::recursive_mutex> engineMutexPtr);

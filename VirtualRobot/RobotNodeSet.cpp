@@ -27,6 +27,7 @@ namespace VirtualRobot
         {
             this->kinematicRoot = rob->getRootNode();
         }
+
         if (!isKinematicRoot(this->kinematicRoot))
         {
             VR_WARNING << "RobotNodeSet initialized with invalid kinematic root: Falling back to robot root node" << endl;
@@ -204,6 +205,7 @@ namespace VirtualRobot
         {
             kinRootName = kinematicRoot->getName();
         }
+
         if (newKinematicRoot)
         {
             kinRootName = newKinematicRoot->getName();
@@ -687,10 +689,12 @@ namespace VirtualRobot
     bool RobotNodeSet::isKinematicRoot(RobotNodePtr robotNode)
     {
         RobotNodePtr node;
-        for(size_t i=0; i<robotNodes.size(); i++)
+
+        for (size_t i = 0; i < robotNodes.size(); i++)
         {
             node = robotNodes.at(i);
-            if(node != robotNode && !robotNode->hasChild(node, true))
+
+            if (node != robotNode && !robotNode->hasChild(node, true))
             {
                 return false;
             }

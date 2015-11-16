@@ -781,21 +781,23 @@ namespace VirtualRobot
             return root;
         }
 
-        void getMemoryConsumtion(long &storeMemStructure, long &storeMemData)
+        void getMemoryConsumtion(long& storeMemStructure, long& storeMemData)
         {
             storeMemStructure = 0;
             storeMemData = 0;
-            storeMemStructure += sizeof(VoxelTreeND<T,N>);
+            storeMemStructure += sizeof(VoxelTreeND<T, N>);
+
             if (root)
             {
-                root->accumulateMemoryConsumtion(storeMemStructure,storeMemData);
+                root->accumulateMemoryConsumtion(storeMemStructure, storeMemData);
             }
         }
 
         /*!
          *  Retruns number of all Nodes, including inner and leaf nodes.
          */
-        long getNumNodes() {
+        long getNumNodes()
+        {
             return root->countNodesRecursive();
         }
 

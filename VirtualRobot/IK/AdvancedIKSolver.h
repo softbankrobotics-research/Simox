@@ -37,13 +37,13 @@
 namespace VirtualRobot
 {
 
-    /*! 
+    /*!
     * An advanced IK solver:
     * Can reject configurations that are in collision.
     * Can consider reachability information.
     * Can handle ManipulationObjects and associated grasping information.
     */
-        class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver, public boost::enable_shared_from_this<AdvancedIKSolver>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver, public boost::enable_shared_from_this<AdvancedIKSolver>
     {
     public:
 

@@ -453,10 +453,15 @@ namespace VirtualRobot
         boost::filesystem::path extension = completeFile.extension();
         std::string extStr = extension.string();
         BaseIO::getLowerCase(extStr);
+
         if (extStr == ".iv")
+        {
             vrml = false;
+        }
         else
+        {
             vrml = true;
+        }
 
 
         SoGroup* n = new SoGroup;
@@ -464,11 +469,12 @@ namespace VirtualRobot
         n->addChild(visualization);
         SoGroup* newVisu = CoinVisualizationFactory::convertSoFileChildren(n);
         newVisu->ref();
+
         if (vrml)
         {
             SoToVRML2Action tovrml2;
             tovrml2.apply(newVisu);
-            SoVRMLGroup *newroot = tovrml2.getVRML2SceneGraph();
+            SoVRMLGroup* newroot = tovrml2.getVRML2SceneGraph();
             newroot->ref();
             so->setHeaderString("#VRML V2.0 utf8");
             SoWriteAction wra(so);
@@ -480,6 +486,7 @@ namespace VirtualRobot
             SoWriteAction wa(so);
             wa.apply(newVisu);
         }
+
         so->closeFile();
 
         newVisu->unref();

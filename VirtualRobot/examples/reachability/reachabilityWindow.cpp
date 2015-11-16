@@ -524,7 +524,8 @@ void reachabilityWindow::createReach()
         float discrRo = UICreate.doubleSpinBoxDiscrRot->value();
 
         std::string measure = std::string(UICreate.comboBoxQualityMeasure->currentText().toAscii());
-        if (measure!="Reachability")
+
+        if (measure != "Reachability")
         {
             reachSpace.reset(new Manipulability(robot));
             ManipulabilityPtr manipSpace = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
@@ -532,12 +533,14 @@ void reachabilityWindow::createReach()
         }
 
         reachSpace->initialize(currentRobotNodeSet, discrTr, discrRo, minB, maxB, staticModel, dynamicModel, baseNode, tcpNode); //200.0f,0.4f,minB,maxB,staticModel,dynamicModel,baseNode);
+
         if (measure == "Ext. Manipulability")
         {
             ManipulabilityPtr man = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
             PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
             man->setManipulabilityMeasure(manMeasure);
         }
+
         reachSpace->print();
 
         reachSpace->addCurrentTCPPose();
@@ -603,7 +606,8 @@ void reachabilityWindow::loadReachFile(std::string filename)
     {
         reachSpace.reset(new Manipulability(robot));
         reachSpace->load(reachFile);
-    } catch (...)
+    }
+    catch (...)
     {
         loadOK = false;
     }
@@ -613,10 +617,13 @@ void reachabilityWindow::loadReachFile(std::string filename)
         // try reachability file
 
         loadOK = true;
-        try {
+
+        try
+        {
             reachSpace.reset(new Reachability(robot));
             reachSpace->load(reachFile);
-        } catch (...)
+        }
+        catch (...)
         {
             loadOK = false;
         }

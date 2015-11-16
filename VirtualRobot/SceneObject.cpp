@@ -339,7 +339,7 @@ namespace VirtualRobot
         {
             // create inertia visu
             //cout << "INERTIA MATRIX:" << endl << physics.intertiaMatrix << endl;
-            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(physics.intertiaMatrix);
+            Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(physics.inertiaMatrix);
 
             if (eigensolver.info() == Eigen::Success)
             {
@@ -683,12 +683,12 @@ namespace VirtualRobot
         }
 
         // check for inertia matrix determination
-        if (physics.intertiaMatrix.isZero())
+        if (physics.inertiaMatrix.isZero())
         {
             if (physics.massKg <= 0)
             {
                 // standard box
-                physics.intertiaMatrix.setIdentity();
+                physics.inertiaMatrix.setIdentity();
             }
             else
             {
@@ -710,9 +710,9 @@ namespace VirtualRobot
                 if (!tm)
                 {
                     // standard box
-                    physics.intertiaMatrix.setIdentity();
-                    physics.intertiaMatrix *= 0.01f; // 10 cm bbox
-                    physics.intertiaMatrix *= physics.massKg;
+                    physics.inertiaMatrix.setIdentity();
+                    physics.inertiaMatrix *= 0.01f; // 10 cm bbox
+                    physics.inertiaMatrix *= physics.massKg;
                 }
                 else
                 {
@@ -727,13 +727,13 @@ namespace VirtualRobot
                     Eigen::Vector3f l = bbox.maxBB - bbox.minBB;
                     l *= 0.001f; // mm -> m
 
-                    physics.intertiaMatrix.setZero();
-                    physics.intertiaMatrix(0, 0) = (l(1) * l(1) + l(2) * l(2)) / 12.0f;
-                    physics.intertiaMatrix(1, 1) = (l(0) * l(0) + l(2) * l(2)) / 12.0f;
-                    physics.intertiaMatrix(2, 2) = (l(0) * l(0) + l(1) * l(1)) / 12.0f;
+                    physics.inertiaMatrix.setZero();
+                    physics.inertiaMatrix(0, 0) = (l(1) * l(1) + l(2) * l(2)) / 12.0f;
+                    physics.inertiaMatrix(1, 1) = (l(0) * l(0) + l(2) * l(2)) / 12.0f;
+                    physics.inertiaMatrix(2, 2) = (l(0) * l(0) + l(1) * l(1)) / 12.0f;
 
                     float mass = physics.massKg;
-                    physics.intertiaMatrix *= mass;
+                    physics.inertiaMatrix *= mass;
                 }
             }
         }
@@ -785,7 +785,9 @@ namespace VirtualRobot
         {
             cout << "<not set>" << endl;
         }
+
         cout << " * Update collision model status: ";
+
         if (updateCollisionModel)
         {
             cout << "enabled" << endl;
@@ -882,6 +884,11 @@ namespace VirtualRobot
         //  visualization->highlight(getVisualization(CollisionData),enable);
     }
 
+    SceneObjectPtr SceneObject::clone(const std::string& name, CollisionCheckerPtr colChecker, float scaling) const
+    {
+        return SceneObjectPtr(_clone(name, colChecker, scaling));
+    }
+
     void SceneObject::setName(const std::string& name)
     {
         this->name = name;
@@ -920,13 +927,12 @@ namespace VirtualRobot
 
     Eigen::Matrix3f SceneObject::getInertiaMatrix()
     {
-        return physics.intertiaMatrix;
+        return physics.inertiaMatrix;
     }
 
     std::string SceneObject::getSceneObjectXMLString(const std::string& basePath, int tabs)
     {
         std::stringstream ss;
-        std::string t = "\t";
         std::string pre = "";
 
         for (int i = 0; i < tabs; i++)
@@ -980,7 +986,12 @@ namespace VirtualRobot
 
     void SceneObject::setInertiaMatrix(const Eigen::Matrix3f& im)
     {
-        physics.intertiaMatrix = im;
+        physics.inertiaMatrix = im;
+    }
+
+    SceneObject::Physics SceneObject::getPhysics()
+    {
+        return physics;
     }
 
     bool SceneObject::hasChild(SceneObjectPtr child, bool recursive) const
@@ -1084,6 +1095,11 @@ namespace VirtualRobot
     {
         SceneObjectPtr p = parent.lock();
         return p;
+    }
+
+    std::vector<SceneObjectPtr> SceneObject::getChildren() const
+    {
+        return children;
     }
 
     void SceneObject::detachedFromParent()
@@ -1192,6 +1208,141 @@ namespace VirtualRobot
 
         newFilename += extStr;
         return newFilename;
+    }
+
+    SceneObject::Physics::Physics()
+    {
+
+        localCoM.setZero();
+        inertiaMatrix.setIdentity();
+        massKg = 0.0f;
+        comLocation = eVisuBBoxCenter;
+        simType = eUnknown;
+    }
+
+    std::string SceneObject::Physics::getString(SceneObject::Physics::SimulationType s) const
+    {
+        std::string r;
+
+        switch (s)
+        {
+            case eStatic:
+                r = "Static";
+                break;
+
+            case eKinematic:
+                r = "Kinematic";
+                break;
+
+            case eDynamic:
+                r = "Dynamic";
+                break;
+
+            default:
+                r = "Unknown";
+        }
+
+        return r;
+    }
+
+    void SceneObject::Physics::print() const
+    {
+        std::cout << " ** Simulation Type: " << getString(simType) << endl;
+        std::cout << " ** Mass: ";
+
+        if (massKg <= 0)
+        {
+            std::cout << "<not set>" << std::endl;
+        }
+        else
+        {
+            std::cout << massKg << " [kg]" << std::endl;
+        }
+
+        cout << " ** local CoM [mm] ";
+
+        if (comLocation == SceneObject::Physics::eVisuBBoxCenter)
+        {
+            std::cout << "(center of visualization's bounding box):";
+        }
+        else
+        {
+            std::cout << ":";
+        }
+
+        std::cout << localCoM(0) << ", " << localCoM(1) << ", " << localCoM(2) << std::endl;
+        {
+            // scope
+            std::ostringstream sos;
+            sos << std::setiosflags(std::ios::fixed);
+            sos << " ** inertial matrix [kg*m^2]:" << std::endl << inertiaMatrix << std::endl;
+            std::cout << sos.str();
+        } // scope
+
+        if (ignoreCollisions.size() > 0)
+        {
+            std::cout << " ** Ignore Collisions with:" << std::endl;
+
+            for (size_t i = 0; i < ignoreCollisions.size(); i++)
+            {
+                std::cout << " **** " << ignoreCollisions[i] << std::endl;
+            }
+        }
+    }
+
+    bool SceneObject::Physics::isSet()
+    {
+        return (simType != eUnknown || massKg != 0.0f || comLocation != eVisuBBoxCenter || !inertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
+    }
+
+    std::string SceneObject::Physics::toXML(int tabs)
+    {
+        std::string ta;
+        std::stringstream ss;
+
+        for (int i = 0; i < tabs; i++)
+        {
+            ta += "\t";
+        }
+
+        ss << ta << "<Physics>\n";
+
+        if (simType != eUnknown)
+        {
+            ss << ta << "\t<SimulationType value='" << getString(simType) << "'/>\n";
+        }
+
+        ss << ta << "\t<Mass unit='kg' value='" << massKg << "'/>\n";
+        ss << ta << "\t<CoM location=";
+
+        if (comLocation == eVisuBBoxCenter)
+        {
+            ss << "'VisualizationBBoxCenter'/>\n";
+        }
+        else
+        {
+            ss << "'Custom' x='" << localCoM(0) << "' y='" << localCoM(1) << "' z='" << localCoM(2) << "'/>\n";
+        }
+
+        ss << ta << "\t<InertiaMatrix>\n";
+        ss << MathTools::getTransformXMLString(inertiaMatrix, tabs + 2, true);
+        ss << ta << "\t</InertiaMatrix>\n";
+
+        for (size_t i = 0; i < ignoreCollisions.size(); i++)
+        {
+            ss << ta << "\t<IgnoreCollisions name='" << ignoreCollisions[i] << "'/>\n";
+        }
+
+        ss << ta << "</Physics>\n";
+        return ss.str();
+    }
+
+    SceneObject::Physics SceneObject::Physics::scale(float scaling) const
+    {
+        THROW_VR_EXCEPTION_IF(scaling <= 0, "Scaling must be > 0");
+        Physics res = *this;
+        res.localCoM *= scaling;
+        return res;
     }
 
 } // namespace

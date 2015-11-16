@@ -67,144 +67,24 @@ namespace VirtualRobot
                 eDynamic,       // full dynamic simulation
                 eUnknown        // not specified
             };
-            Physics()
-            {
 
-                localCoM.setZero();
-                intertiaMatrix.setIdentity();
-                massKg = 0.0f;
-                comLocation = eVisuBBoxCenter;
-                simType = eUnknown;
-            }
-            std::string getString(SimulationType s) const
-            {
-                std::string r;
+            // methods
+            Physics();
+            std::string getString(SimulationType s) const;
 
-                switch (s)
-                {
-                    case eStatic:
-                        r = "Static";
-                        break;
+            void print() const;
 
-                    case eKinematic:
-                        r = "Kinematic";
-                        break;
+            bool isSet();
 
-                    case eDynamic:
-                        r = "Dynamic";
-                        break;
+            virtual std::string toXML(int tabs);
 
-                    default:
-                        r = "Unknown";
-                }
+            Physics scale(float scaling) const;
 
-                return r;
-            }
-
-            void print() const
-            {
-                std::cout << " ** Simulation Type: " << getString(simType) << endl;
-                std::cout << " ** Mass: ";
-
-                if (massKg <= 0)
-                {
-                    std::cout << "<not set>" << std::endl;
-                }
-                else
-                {
-                    std::cout << massKg << " [kg]" << std::endl;
-                }
-
-                cout << " ** local CoM [mm] ";
-
-                if (comLocation == SceneObject::Physics::eVisuBBoxCenter)
-                {
-                    std::cout << "(center of visualization's bounding box):";
-                }
-                else
-                {
-                    std::cout << ":";
-                }
-
-                std::cout << localCoM(0) << ", " << localCoM(1) << ", " << localCoM(2) << std::endl;
-                {
-                    // scope
-                    std::ostringstream sos;
-                    sos << std::setiosflags(std::ios::fixed);
-                    sos << " ** inertial matrix [kg*m^2]:" << std::endl << intertiaMatrix << std::endl;
-                    std::cout << sos.str();
-                } // scope
-
-                if (ignoreCollisions.size() > 0)
-                {
-                    std::cout << " ** Ignore Collisions with:" << std::endl;
-
-                    for (size_t i = 0; i < ignoreCollisions.size(); i++)
-                    {
-                        std::cout << " **** " << ignoreCollisions[i] << std::endl;
-                    }
-                }
-            }
-
-            bool isSet()
-            {
-                return (massKg != 0.0f || comLocation != eVisuBBoxCenter || !intertiaMatrix.isIdentity() || ignoreCollisions.size() > 0);
-            }
-
-            virtual std::string toXML(int tabs)
-            {
-                std::string ta;
-                std::stringstream ss;
-
-                for (int i = 0; i < tabs; i++)
-                {
-                    ta += "\t";
-                }
-
-                ss << ta << "<Physics>\n";
-
-                if (simType != eUnknown)
-                {
-                    ss << ta << "\t<SimulationType value='" << getString(simType) << "'/>\n";
-                }
-
-                ss << ta << "\t<Mass unit='kg' value='" << massKg << "'/>\n";
-                ss << ta << "\t<CoM location=";
-
-                if (comLocation == eVisuBBoxCenter)
-                {
-                    ss << "'VisualizationBBoxCenter'/>\n";
-                }
-                else
-                {
-                    ss << "'Custom' x='" << localCoM(0) << "' y='" << localCoM(1) << "' z='" << localCoM(2) << "'/>\n";
-                }
-
-                ss << ta << "\t<InertiaMatrix>\n";
-                ss << MathTools::getTransformXMLString(intertiaMatrix, tabs + 2, true);
-                ss << ta << "\t</InertiaMatrix>\n";
-
-                for (size_t i = 0; i < ignoreCollisions.size(); i++)
-                {
-                    ss << ta << "\t<IgnoreCollisions name='" << ignoreCollisions[i] << "'/>\n";
-                }
-
-                ss << ta << "</Physics>\n";
-                return ss.str();
-            }
-
-            Physics scale(float scaling) const
-            {
-                THROW_VR_EXCEPTION_IF(scaling <= 0, "Scaling must be > 0");
-                Physics res = *this;
-                res.localCoM *= scaling;
-                return res;
-            }
-
+            // data members
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
             float massKg;               //!< The mass of this object
             CoMLocation comLocation;    //!< Where is the CoM located
-            Eigen::Matrix3f intertiaMatrix; //! in kg*m^2
+            Eigen::Matrix3f inertiaMatrix; //! in kg*m^2
             SimulationType simType;
             std::vector< std::string > ignoreCollisions; // ignore collisions with other objects (only used within collision engines)
         };
@@ -229,7 +109,7 @@ namespace VirtualRobot
             The global pose defines the position of the object in the world. For non-joint objects it is identical with the visualization frame.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
-        
+
         /*!
             Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
             \param pose The new pose of this object
@@ -391,6 +271,8 @@ namespace VirtualRobot
 
         void setInertiaMatrix(const Eigen::Matrix3f& im);
 
+        SceneObject::Physics getPhysics();
+
         /*!
             Collisions with these models are ignored by physics engine (only considered within the SimDynamics package!).
         */
@@ -426,10 +308,7 @@ namespace VirtualRobot
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
         */
-        SceneObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const
-        {
-            return SceneObjectPtr(_clone(name, colChecker, scaling));
-        }
+        SceneObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         /*!
             Attach a connected object. The connected object is linked to this SceneObject and moves accordingly.
@@ -464,10 +343,7 @@ namespace VirtualRobot
         */
         virtual SceneObjectPtr getParent() const;
 
-        virtual std::vector<SceneObjectPtr> getChildren() const
-        {
-            return children;
-        }
+        virtual std::vector<SceneObjectPtr> getChildren() const;
 
         //! Compute the global pose of this object
         virtual void updatePose(bool updateChildren = true);
@@ -501,16 +377,19 @@ namespace VirtualRobot
 
         ///////////////////////// SETUP ////////////////////////////////////
         std::string name;
-        bool initialized;                                                       //< Invalid object when false
+        //< Invalid object when false
+        bool initialized;
         ///////////////////////// SETUP ////////////////////////////////////
 
-        Eigen::Matrix4f globalPose;                                             //< The transformation that is used for visualization
+        //< The transformation that is used for visualization
+        Eigen::Matrix4f globalPose;
 
         std::vector<SceneObjectPtr> children;
         SceneObjectWeakPtr parent;
 
         CollisionModelPtr collisionModel;
-        VisualizationNodePtr visualizationModel;                                //< This is the main visualization
+        //< This is the main visualization
+        VisualizationNodePtr visualizationModel;
 
         bool updateVisualization;
         bool updateCollisionModel;

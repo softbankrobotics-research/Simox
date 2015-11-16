@@ -57,7 +57,8 @@ namespace VirtualRobot
             {
                 leaf = true;
                 children = NULL;
-            } else
+            }
+            else
             {
                 leaf = false;
                 //num_children = pow_int(2,N);
@@ -298,16 +299,22 @@ namespace VirtualRobot
             return c;
         }
 
-        long countNodesRecursive() {
+        long countNodesRecursive()
+        {
             long counter = 0;
-            if (!leaf) {
+
+            if (!leaf)
+            {
                 int index = 0;
-                VoxelTreeNDElement<T, N> *nextChild = getNextChild(index, index);
-                    while (nextChild) {
-                        counter += nextChild->countNodesRecursive();
-                        nextChild = getNextChild(index + 1, index);
-                    }
+                VoxelTreeNDElement<T, N>* nextChild = getNextChild(index, index);
+
+                while (nextChild)
+                {
+                    counter += nextChild->countNodesRecursive();
+                    nextChild = getNextChild(index + 1, index);
+                }
             }
+
             return counter + 1;
         }
 
@@ -401,7 +408,7 @@ namespace VirtualRobot
         bool read(const datablock& data, const std::map< unsigned int, VoxelTreeNDElement* >& idElementMapping)
         {
             deleteData();
-            
+
 
             entry = NULL;
             leaf = false;
@@ -420,6 +427,7 @@ namespace VirtualRobot
                 {
                     children[i] = NULL;
                 }
+
                 for (int i = 0; i < num_children; i++)
                 {
                     if (data.children[i] > 0)
@@ -451,7 +459,7 @@ namespace VirtualRobot
 
         VoxelTreeNDElement<T, N>* createChild(float p[N])
         {
-            VR_ASSERT (!leaf);
+            VR_ASSERT(!leaf);
             int indx = getChildIndx(p);
 
             if (indx < 0)
@@ -548,9 +556,9 @@ namespace VirtualRobot
             return true;
         };
 
-        void accumulateMemoryConsumtion(long &storeMemStructure, long &storeMemData)
+        void accumulateMemoryConsumtion(long& storeMemStructure, long& storeMemData)
         {
-            storeMemStructure += sizeof(VoxelTreeNDElement<T,N>);
+            storeMemStructure += sizeof(VoxelTreeNDElement<T, N>);
 
             if (entry)
             {
@@ -560,15 +568,15 @@ namespace VirtualRobot
             else
             {
                 VR_ASSERT(!leaf);
-                
-                // size of children array 
-                storeMemStructure += tree->getNumChildren() * sizeof (VoxelTreeNDElement*);
+
+                // size of children array
+                storeMemStructure += tree->getNumChildren() * sizeof(VoxelTreeNDElement*);
 
                 for (int i = 0; i < tree->getNumChildren(); i++)
                 {
                     if (children[i])
                     {
-                        children[i]->accumulateMemoryConsumtion(storeMemStructure,storeMemData);
+                        children[i]->accumulateMemoryConsumtion(storeMemStructure, storeMemData);
                     }
                 }
             }
@@ -649,8 +657,10 @@ namespace VirtualRobot
                 {
                     delete children[i];
                 }
+
                 delete[] children;
             }
+
             delete entry;
             children = NULL;
             entry = NULL;
@@ -659,6 +669,7 @@ namespace VirtualRobot
         VoxelTreeNDElement<T, N>* getNextChild(int startIndex, int& storeElementNr)
         {
             VR_ASSERT(!leaf);
+
             for (int i = startIndex; i < tree->getNumChildren(); i++)
             {
                 if (children[i])

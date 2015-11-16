@@ -183,10 +183,11 @@ void showSceneWindow::buildVisu()
     }
 
     coordVisu->removeAllChildren();
+
     if (UI.checkBoxRoot->isChecked())
     {
-        std::string rootText="ROOT";
-        coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f,&rootText));
+        std::string rootText = "ROOT";
+        coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f, &rootText));
     }
 
     updateGraspVisu();

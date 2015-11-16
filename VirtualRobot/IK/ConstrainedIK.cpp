@@ -2,7 +2,7 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations, float stall_epsilon, float raise_epsilon) :
+ConstrainedIK::ConstrainedIK(RobotPtr& robot, int maxIterations, float stall_epsilon, float raise_epsilon) :
     robot(robot),
     maxIterations(maxIterations),
     currentIteration(0),
@@ -13,19 +13,22 @@ ConstrainedIK::ConstrainedIK(RobotPtr &robot, int maxIterations, float stall_eps
 
 }
 
-void ConstrainedIK::addConstraint(const ConstraintPtr &constraint, int priority, bool hard_constraint)
+void ConstrainedIK::addConstraint(const ConstraintPtr& constraint, int priority, bool hard_constraint)
 {
     constraints.push_back(constraint);
     priorities[constraint] = priority;
     hardConstraints[constraint] = hard_constraint;
-    std::sort(constraints.begin(), constraints.end(), [this](const ConstraintPtr& lhs, const ConstraintPtr& rhs){return priorities[lhs] > priorities[rhs];});
+    std::sort(constraints.begin(), constraints.end(), [this](const ConstraintPtr & lhs, const ConstraintPtr & rhs)
+    {
+        return priorities[lhs] > priorities[rhs];
+    });
 }
 
-void ConstrainedIK::removeConstraint(const ConstraintPtr &constraint)
+void ConstrainedIK::removeConstraint(const ConstraintPtr& constraint)
 {
     auto position = std::find(constraints.begin(), constraints.end(), constraint);
 
-    if(position != constraints.end())
+    if (position != constraints.end())
     {
         constraints.erase(position);
         priorities.erase(constraint);
@@ -43,18 +46,18 @@ bool ConstrainedIK::initialize()
     Eigen::Matrix4f P;
     int moves = 0;
 
-    for(auto &constraint : constraints)
+    for (auto & constraint : constraints)
     {
         constraint->initialize();
         moves += constraint->getRobotPoseForConstraint(P);
     }
 
-    if(moves == 1)
+    if (moves == 1)
     {
         // Only one constraint requested to move the robot => No conflicts
         robot->setGlobalPose(P);
     }
-    else if(moves > 1)
+    else if (moves > 1)
     {
         VR_ERROR << "Multiple constraints requested to move the robot" << std::endl;
         return false;
@@ -67,24 +70,25 @@ bool ConstrainedIK::initialize()
 
 bool ConstrainedIK::solve(bool stepwise)
 {
-    while(currentIteration < maxIterations)
+    while (currentIteration < maxIterations)
     {
-        if(!solveStep())
+        if (!solveStep())
         {
             running = false;
             return false;
         }
 
         bool goalReached = true;
-        for(auto &constraint : constraints)
+
+        for (auto & constraint : constraints)
         {
-            if(hardConstraints[constraint] && !constraint->checkTolerances())
+            if (hardConstraints[constraint] && !constraint->checkTolerances())
             {
                 goalReached = false;
             }
         }
 
-        if(goalReached)
+        if (goalReached)
         {
             running = false;
             return true;
@@ -92,7 +96,7 @@ bool ConstrainedIK::solve(bool stepwise)
 
         currentIteration++;
 
-        if(stepwise)
+        if (stepwise)
         {
             // Identify this case via running variable
             return false;

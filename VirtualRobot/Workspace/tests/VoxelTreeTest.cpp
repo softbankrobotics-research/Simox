@@ -236,6 +236,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDMem)
     VirtualRobot::VoxelTreeND<unsigned char, N> v(minB, maxB, discr, true);
 
     float pos[N];
+
     for (int j = 0; j < N; j++)
     {
         pos[j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
@@ -245,9 +246,9 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDMem)
 
     long structMem;
     long dataMem;
-    v.getMemoryConsumtion(structMem,dataMem);
+    v.getMemoryConsumtion(structMem, dataMem);
     long expectedStructMem = sizeof(VirtualRobot::VoxelTreeND<unsigned char, N>) + sizeof(VirtualRobot::VoxelTreeNDElement<unsigned char, N>) * v.getMaxLevels(); // the basic data structures
-    expectedStructMem += (sizeof (VirtualRobot::VoxelTreeNDElement<unsigned char, N>*) * VirtualRobot::MathTools::pow_int(2, N)) * (N-1) ; // all except the leaf have to store an array of 64 pointers to the leafs
+    expectedStructMem += (sizeof(VirtualRobot::VoxelTreeNDElement<unsigned char, N>*) * VirtualRobot::MathTools::pow_int(2, N)) * (N - 1) ; // all except the leaf have to store an array of 64 pointers to the leafs
     BOOST_CHECK_EQUAL(structMem, expectedStructMem);
     BOOST_CHECK_EQUAL(dataMem, 1);
 }

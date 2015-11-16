@@ -636,7 +636,7 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y)
             clientMoveAndDisplay();
             break;
 
-        //    case ' ' : newRandom(); break;
+            //    case ' ' : newRandom(); break;
         case ' ':
             clientResetScene();
             break;

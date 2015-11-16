@@ -235,10 +235,15 @@ namespace VirtualRobot
     void CoMIK::print()
     {
         JacobiProvider::print();
+
         if (coordSystem)
+        {
             cout << "Coordsystem: " << coordSystem->getName() << endl;
+        }
         else
+        {
             cout << "Coordsystem: global" << endl;
+        }
 
         cout << "Target:" << endl << this->target.transpose() << endl;
         cout << "Tolerances pos: " << this->tolerance << endl;

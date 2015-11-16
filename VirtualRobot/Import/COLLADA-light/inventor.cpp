@@ -212,7 +212,7 @@ namespace Collada
             //std::cout << "id: " << geometry.attribute("id").value() << std::endl;
             std::vector<float> color;
 
-            if (polylist.node().attribute("material") && polylist.node().attribute("material").value() && colormap.size()>0)
+            if (polylist.node().attribute("material") && polylist.node().attribute("material").value() && colormap.size() > 0)
             {
                 color = colormap.at(polylist.node().attribute("material").value());
             }

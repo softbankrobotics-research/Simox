@@ -127,7 +127,7 @@ namespace VirtualRobot
         /*!
             The preJoint/preVisualization transformation. This transformation is applied before the joint and the visualization.
         */
-        virtual const Eigen::Matrix4f& getLocalTransformation()
+        virtual Eigen::Matrix4f getLocalTransformation()
         {
             return localTransformation;
         }
@@ -312,7 +312,6 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeSensors = true);
 
         void updateTransformationMatrices(Eigen::Matrix4f &newLocalTransformation);
-    protected:
 
         /*!
             Set the joint value without updating the internal matrices.
@@ -325,7 +324,7 @@ namespace VirtualRobot
         */
         virtual void setJointValueNoUpdate(float q);
 
-
+        protected:
         /*!
             Queries parent for global pose and updates visualization accordingly
         */

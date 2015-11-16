@@ -8,11 +8,13 @@
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ObjectIO.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Nodes/Sensor.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/ManipulationObject.h>
 #include <string>
 
 
@@ -31,13 +33,13 @@ BOOST_AUTO_TEST_CASE(testRobotLoadXML)
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getRobotNodes();
-    BOOST_REQUIRE(rn.size() > 0);
+    BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
-    BOOST_REQUIRE(eefs.size() > 0);
+    BOOST_REQUIRE_GT(eefs.size(), 0);
 
     std::vector<RobotNodeSetPtr> rns = r->getRobotNodeSets();
-    BOOST_REQUIRE(rns.size() > 0);
+    BOOST_REQUIRE_GT(rns.size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotSaveXML)
@@ -65,8 +67,30 @@ BOOST_AUTO_TEST_CASE(testRobotSaveXML)
     RobotPtr r2;
     BOOST_REQUIRE_NO_THROW(r2 = RobotIO::loadRobot(filenameTmp.string()));
     BOOST_REQUIRE(r2);
-
 }
+
+BOOST_AUTO_TEST_CASE(testLoadStoreManipulationObjectPhysics)
+{
+    std::string filename("objects/physics-test.xml");
+    bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
+    BOOST_REQUIRE(fileOK);
+
+    ManipulationObjectPtr manipulatioObject = ObjectIO::loadManipulationObject(filename);
+
+    SceneObject::Physics physicsObject = manipulatioObject->getPhysics();
+
+    BOOST_CHECK_EQUAL(physicsObject.simType, SceneObject::Physics::eStatic);
+    BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
+    BOOST_CHECK_EQUAL(physicsObject.comLocation, SceneObject::Physics::eVisuBBoxCenter);
+
+    ManipulationObjectPtr savedObject = ObjectIO::createManipulationObjectFromString(manipulatioObject->toXML());
+    physicsObject = savedObject->getPhysics();
+
+    BOOST_CHECK_EQUAL(physicsObject.simType, SceneObject::Physics::eStatic);
+    BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
+    BOOST_CHECK_EQUAL(physicsObject.comLocation, SceneObject::Physics::eVisuBBoxCenter);
+}
+
 
 
 BOOST_AUTO_TEST_SUITE_END()

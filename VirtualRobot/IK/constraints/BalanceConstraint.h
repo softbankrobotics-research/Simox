@@ -37,47 +37,47 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public boost::enable_shared_from_this<BalanceConstraint>
     {
-        public:
-            BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool considerCoMHeight = false);
-            BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
-                              float tolerance=0.1f, float minimumStability=0.5f, float maxSupportDistance=10.0f, bool supportPolygonUpdates=true, bool considerCoMHeight = false);
+    public:
+        BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+                          float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
+        BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
+                          float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
 
-            Eigen::MatrixXf getJacobianMatrix();
-            Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-            Eigen::VectorXf getError(float stepSize = 1.0f);
-            bool checkTolerances();
+        Eigen::MatrixXf getJacobianMatrix();
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::VectorXf getError(float stepSize = 1.0f);
+        bool checkTolerances();
 
-            bool getRobotPoseForConstraint(RobotPtr &robot, Eigen::Matrix4f &pose);
-            Eigen::Vector3f getCoM();
-            SupportPolygonPtr getSupportPolygon();
+        bool getRobotPoseForConstraint(RobotPtr& robot, Eigen::Matrix4f& pose);
+        Eigen::Vector3f getCoM();
+        SupportPolygonPtr getSupportPolygon();
 
-            std::string getConstraintType();
-            void setCoMHeight(float height);
-        protected:
-            void initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
-                            float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
+        std::string getConstraintType();
+        void setCoMHeight(float height);
+    protected:
+        void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+                        float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
 
-            void updateSupportPolygon();
+        void updateSupportPolygon();
 
-            void visualizeSupportPolygon(SoSeparator *sep);
+        void visualizeSupportPolygon(SoSeparator* sep);
 
 
 
-        protected:
-            CoMIKPtr comIK;
-            SupportPolygonPtr supportPolygon;
+    protected:
+        CoMIKPtr comIK;
+        SupportPolygonPtr supportPolygon;
 
-            float height;
-            bool considerCoMHeight;
+        float height;
+        bool considerCoMHeight;
 
-            RobotNodeSetPtr joints;
-            RobotNodeSetPtr bodies;
+        RobotNodeSetPtr joints;
+        RobotNodeSetPtr bodies;
 
-            float minimumStability;
-            float maxSupportDistance;
-            float tolerance;
-            bool supportPolygonUpdates;
+        float minimumStability;
+        float maxSupportDistance;
+        float tolerance;
+        bool supportPolygonUpdates;
     };
 
     typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;

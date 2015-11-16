@@ -34,20 +34,20 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public boost::enable_shared_from_this<Constraint>
     {
-        public:
-            Constraint(const RobotNodeSetPtr &nodeSet);
+    public:
+        Constraint(const RobotNodeSetPtr& nodeSet);
 
-            void initialize();
+        void initialize();
 
-            virtual bool getRobotPoseForConstraint(Eigen::Matrix4f &pose);
+        virtual bool getRobotPoseForConstraint(Eigen::Matrix4f& pose);
 
-            float getErrorDifference();
+        float getErrorDifference();
 
-            virtual std::string getConstraintType() = 0;
+        virtual std::string getConstraintType() = 0;
 
-        protected:
-            float lastError;
-            float lastLastError;
+    protected:
+        float lastError;
+        float lastLastError;
     };
 
     typedef boost::shared_ptr<Constraint> ConstraintPtr;

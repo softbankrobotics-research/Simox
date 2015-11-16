@@ -15,21 +15,21 @@
 
 using namespace VirtualRobot;
 
-BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+BalanceConstraint::BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
                                      float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
     initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
-BalanceConstraint::BalanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SupportPolygonPtr &supportPolygon,
+BalanceConstraint::BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
                                      float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
     initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
-void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const SceneObjectSetPtr &contactNodes,
+void BalanceConstraint::initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
                                    float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight)
 {
     this->joints = joints;
@@ -44,6 +44,7 @@ void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr 
 
     VR_INFO << "COM height:" << height << endl;
     int dim = 2;
+
     if (considerCoMHeight)
     {
         dim = 3;
@@ -54,6 +55,7 @@ void BalanceConstraint::initialize(const RobotPtr &robot, const RobotNodeSetPtr 
         height = robot->getCoMGlobal()(2);
         setCoMHeight(height);
     }
+
     comIK.reset(new CoMIK(joints, bodies, RobotNodePtr(), dim));
 
     updateSupportPolygon();
@@ -77,8 +79,11 @@ void BalanceConstraint::updateSupportPolygon()
         goal(2) = height;
         comIK->setGoal(goal, tolerance);
         VR_INFO << "CoM Height of Inversed Robot set to:" << goal(2) << endl;
-    } else
+    }
+    else
+    {
         comIK->setGoal(supportPolygonCenter, tolerance);
+    }
 }
 
 void BalanceConstraint::setCoMHeight(float currentheight)
@@ -100,22 +105,22 @@ Eigen::VectorXf BalanceConstraint::getError(float stepSize)
 {
     float stability = supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates);
 
-    if(supportPolygonUpdates)
+    if (supportPolygonUpdates)
     {
         updateSupportPolygon();
     }
 
-    if(stability < minimumStability)
+    if (stability < minimumStability)
     {
         return comIK->getError(stepSize);
     }
-    else if(considerCoMHeight)
+    else if (considerCoMHeight)
     {
-        return Eigen::Vector3f(0,0,0);
+        return Eigen::Vector3f(0, 0, 0);
     }
     else
     {
-        return Eigen::Vector2f(0,0);
+        return Eigen::Vector2f(0, 0);
     }
 }
 

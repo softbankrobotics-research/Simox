@@ -210,7 +210,7 @@ namespace VirtualRobot
 
     void RobotNode::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
-        this->globalPose = parentPose * getLocalTransformation(); // localTransformation
+        this->globalPose = parentPose * localTransformation; // getLocalTransformation();
     }
 
 

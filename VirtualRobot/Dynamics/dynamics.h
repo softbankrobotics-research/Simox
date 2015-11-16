@@ -38,7 +38,10 @@ namespace VirtualRobot
         /// returns the number of Degrees of Freedom of the dynamics system
         int getnDoF();
 
-        int getIdentifier(std::string name){return identifierMap.at(name);}
+        int getIdentifier(std::string name)
+        {
+            return identifierMap.at(name);
+        }
 
         void print();
 

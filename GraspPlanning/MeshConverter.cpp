@@ -30,7 +30,7 @@ using namespace VirtualRobot;
 
 namespace GraspStudio
 {
-    VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string &name, VirtualRobot::MathTools::ConvexHull3DPtr hull)
+    VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string& name, VirtualRobot::MathTools::ConvexHull3DPtr hull)
     {
         VirtualRobot::ManipulationObjectPtr res;
 
@@ -47,6 +47,7 @@ namespace GraspStudio
         }
 
         VisualizationFactoryPtr cv = VisualizationFactory::first(NULL);
+
         if (!cv)
         {
             return res;
@@ -77,11 +78,11 @@ namespace GraspStudio
 
         for (int i = 0; i < nFaces; i++)
         {
-            Eigen::Vector3f &v1 = hull->vertices.at(hull->faces[i].id1);
-            Eigen::Vector3f &v2 = hull->vertices.at(hull->faces[i].id2);
-            Eigen::Vector3f &v3 = hull->vertices.at(hull->faces[i].id3);
+            Eigen::Vector3f& v1 = hull->vertices.at(hull->faces[i].id1);
+            Eigen::Vector3f& v2 = hull->vertices.at(hull->faces[i].id2);
+            Eigen::Vector3f& v3 = hull->vertices.at(hull->faces[i].id3);
 
-            Eigen::Vector3f &n = hull->faces[i].normal;
+            Eigen::Vector3f& n = hull->faces[i].normal;
 
             bool bNeedFlip = ConvexHullGenerator::checkVerticeOrientation(v1, v2, v3, n);
 
@@ -93,8 +94,10 @@ namespace GraspStudio
             {
                 res->addTriangleWithFace(v1, v2, v3);
             }
-            nVertexCount+=3;
+
+            nVertexCount += 3;
         }
+
         return res;
     }
 

@@ -1819,7 +1819,7 @@ namespace rapidxml
                         switch (src[1])
                         {
 
-                            // &amp; &apos;
+                                // &amp; &apos;
                             case Ch('a'):
                                 if (src[2] == Ch('m') && src[3] == Ch('p') && src[4] == Ch(';'))
                                 {
@@ -1839,7 +1839,7 @@ namespace rapidxml
 
                                 break;
 
-                            // &quot;
+                                // &quot;
                             case Ch('q'):
                                 if (src[2] == Ch('u') && src[3] == Ch('o') && src[4] == Ch('t') && src[5] == Ch(';'))
                                 {
@@ -1851,7 +1851,7 @@ namespace rapidxml
 
                                 break;
 
-                            // &gt;
+                                // &gt;
                             case Ch('g'):
                                 if (src[2] == Ch('t') && src[3] == Ch(';'))
                                 {
@@ -1863,7 +1863,7 @@ namespace rapidxml
 
                                 break;
 
-                            // &lt;
+                                // &lt;
                             case Ch('l'):
                                 if (src[2] == Ch('t') && src[3] == Ch(';'))
                                 {
@@ -1875,7 +1875,7 @@ namespace rapidxml
 
                                 break;
 
-                            // &#...; - assumes ASCII
+                                // &#...; - assumes ASCII
                             case Ch('#'):
                                 if (src[2] == Ch('x'))
                                 {
@@ -1929,7 +1929,7 @@ namespace rapidxml
 
                                 continue;
 
-                            // Something else
+                                // Something else
                             default:
                                 // Ignore, just copy '&' verbatim
                                 break;
@@ -2091,8 +2091,8 @@ namespace rapidxml
                 switch (*text)
                 {
 
-                    // If '[' encountered, scan for matching ending ']' using naive algorithm with depth
-                    // This works for all W3C test files except for 2 most wicked
+                        // If '[' encountered, scan for matching ending ']' using naive algorithm with depth
+                        // This works for all W3C test files except for 2 most wicked
                     case Ch('['):
                     {
                         ++text;     // Skip '['
@@ -2124,7 +2124,7 @@ namespace rapidxml
                     case Ch('\0'):
                         RAPIDXML_PARSE_ERROR("unexpected end of data", text);
 
-                    // Other character, skip it
+                        // Other character, skip it
                     default:
                         ++text;
 
@@ -2410,12 +2410,12 @@ namespace rapidxml
             switch (text[0])
             {
 
-                // <...
+                    // <...
                 default:
                     // Parse and append element node
                     return parse_element<Flags>(text);
 
-                // <?...
+                    // <?...
                 case Ch('?'):
                     ++text;     // Skip ?
 
@@ -2434,14 +2434,14 @@ namespace rapidxml
                         return parse_pi<Flags>(text);
                     }
 
-                // <!...
+                    // <!...
                 case Ch('!'):
 
                     // Parse proper subset of <! node
                     switch (text[1])
                     {
 
-                        // <!-
+                            // <!-
                         case Ch('-'):
                             if (text[2] == Ch('-'))
                             {
@@ -2452,7 +2452,7 @@ namespace rapidxml
 
                             break;
 
-                        // <![
+                            // <![
                         case Ch('['):
                             if (text[2] == Ch('C') && text[3] == Ch('D') && text[4] == Ch('A') &&
                                 text[5] == Ch('T') && text[6] == Ch('A') && text[7] == Ch('['))
@@ -2464,7 +2464,7 @@ namespace rapidxml
 
                             break;
 
-                        // <!D
+                            // <!D
                         case Ch('D'):
                             if (text[2] == Ch('O') && text[3] == Ch('C') && text[4] == Ch('T') &&
                                 text[5] == Ch('Y') && text[6] == Ch('P') && text[7] == Ch('E') &&
@@ -2518,7 +2518,7 @@ after_data_node:
                 switch (next_char)
                 {
 
-                    // Node closing or child node
+                        // Node closing or child node
                     case Ch('<'):
                         if (text[1] == Ch('/'))
                         {
@@ -2566,11 +2566,11 @@ after_data_node:
 
                         break;
 
-                    // End of data - error
+                        // End of data - error
                     case Ch('\0'):
                         RAPIDXML_PARSE_ERROR("unexpected end of data", text);
 
-                    // Data node
+                        // Data node
                     default:
                         next_char = parse_and_append_data<Flags>(node, text, contents_start);
                         goto after_data_node;   // Bypass regular processing after data nodes
@@ -2637,11 +2637,11 @@ after_data_node:
 
                 if (quote == Ch('\''))
                 {
-                    end = skip_and_expand_character_refs<attribute_value_pred<Ch('\'')>, attribute_value_pure_pred<Ch('\'')>, AttFlags>(text);
+                    end = skip_and_expand_character_refs < attribute_value_pred < Ch('\'') > , attribute_value_pure_pred < Ch('\'') > , AttFlags > (text);
                 }
                 else
                 {
-                    end = skip_and_expand_character_refs<attribute_value_pred<Ch('"')>, attribute_value_pure_pred<Ch('"')>, AttFlags>(text);
+                    end = skip_and_expand_character_refs < attribute_value_pred < Ch('"') > , attribute_value_pure_pred < Ch('"') > , AttFlags > (text);
                 }
 
                 // Set attribute value

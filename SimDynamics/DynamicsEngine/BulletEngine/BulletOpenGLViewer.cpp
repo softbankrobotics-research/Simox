@@ -81,11 +81,12 @@ namespace SimDynamics
         //DemoApplication::keyboardCallback(key, x, y);
         switch (key)
         {
-        case 'p':
-            bulletEngine->print();
-            break;
-        default:
-            DemoApplication::keyboardCallback(key, x, y);
+            case 'p':
+                bulletEngine->print();
+                break;
+
+            default:
+                DemoApplication::keyboardCallback(key, x, y);
         }
     }
 

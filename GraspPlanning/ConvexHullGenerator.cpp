@@ -207,7 +207,7 @@ namespace GraspStudio
 
             FORALLfacets
             {
-                
+
                 int c = 0;
 #ifdef CONVEXHULL_DEBUG_OUTPUT
                 cout << "FACET " << nFacets << ":" << endl;
@@ -242,8 +242,11 @@ namespace GraspStudio
                 //cout << "Normal: " << f.m_Normal.x << "," << f.m_Normal.y << "," << f.m_Normal.z << endl;
 
                 double dist = qh_distnorm(3, pCenter, facet->normal, &(facet->offset));
+
                 if (fabs(dist) > maxDist)
+                {
                     maxDist = fabs(dist);
+                }
 
 
                 result->faces.push_back(f);

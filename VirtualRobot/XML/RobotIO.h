@@ -103,8 +103,8 @@ namespace VirtualRobot
                                            RobotPtr robo,
                                            const std::string& robotRoot,
                                            const std::string& basePath,
-                                           std::map< RobotNodePtr,
-                                           std::vector<ChildFromRobotDef> >& childrenFromRobotFilesMap,
+                                           std::map < RobotNodePtr,
+                                           std::vector<ChildFromRobotDef> > & childrenFromRobotFilesMap,
                                            std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                            std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
                                            RobotDescription loadMode = eFull);
