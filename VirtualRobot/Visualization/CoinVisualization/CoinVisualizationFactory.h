@@ -280,12 +280,16 @@ namespace VirtualRobot
             \param scene The scene that should be rendered.
             \param buffer The result is stored here. The origin of the 2D image is at the left bottom!
             The resulting buffer has the size width*height*3, with the extends as defined in the createOffscreenRenderer method.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param fov The fov in rad. (vertical)
+         * \param focal The focal distance.
 
             \return true on success
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4, float focal = 5.f);
 
         /*!
         Use a custom camera for rendering
