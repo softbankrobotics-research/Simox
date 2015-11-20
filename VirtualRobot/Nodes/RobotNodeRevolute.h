@@ -97,21 +97,21 @@ namespace VirtualRobot
         */
         Eigen::Vector3f getJointRotationAxisInJointCoordSystem() const;
 
-    /*!
-     * \brief getLMTC Calculates the spatial distance between the parent of a revolute joint and a given child with the joint set to a given angle (e.g. the length of a muscle-tendon complex attached to the parent and the given child)
-     * \param child The child node
-     * \param angle The angle of the revolute joint in radians
-     * \return The spatial distance between parent and given child at given angle
-     */
-    virtual float getLMTC(float angle);
+        /*!
+         * \brief getLMTC Calculates the spatial distance between the parent of a revolute joint and a given child with the joint set to a given angle (e.g. the length of a muscle-tendon complex attached to the parent and the given child)
+         * \param child The child node
+         * \param angle The angle of the revolute joint in radians
+         * \return The spatial distance between parent and given child at given angle
+         */
+        virtual float getLMTC(float angle);
 
-    /*!
-     * \brief getLMomentArm Calculates the spatial length of a moment arm defined through the triangle given by the node's parent, the specified child and the specified angle at the revolulte joint.
-     * \param child The child node
-     * \param angle The angle of the revolute joint in radians
-     * \return The spatial length of the moment arm
-     */
-    virtual float getLMomentArm(float angle);
+        /*!
+         * \brief getLMomentArm Calculates the spatial length of a moment arm defined through the triangle given by the node's parent, the specified child and the specified angle at the revolulte joint.
+         * \param child The child node
+         * \param angle The angle of the revolute joint in radians
+         * \return The spatial length of the moment arm
+         */
+        virtual float getLMomentArm(float angle);
 
         void setJointRotationAxis(Eigen::Vector3f newAxis);
     protected:
@@ -138,6 +138,7 @@ namespace VirtualRobot
         */
         virtual std::string _toXML(const std::string& modelPath);
 
+        Eigen::Matrix4f tmpRotMat;
     };
 
     typedef boost::shared_ptr<RobotNodeRevolute> RobotNodeRevolutePtr;

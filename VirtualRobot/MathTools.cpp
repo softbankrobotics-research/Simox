@@ -314,7 +314,7 @@ namespace VirtualRobot
     // SoftSurfer makes no warranty for this code, and cannot be held
     // liable for any real or imagined damage resulting from its use.
     // Users of this code must verify correctness for their application.
-    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(const std::vector<Eigen::Vector2f> &points)
+    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(const std::vector<Eigen::Vector2f>& points)
     {
         std::vector< Eigen::Vector2f > P = sortPoints(points);
         int n = (int)P.size();
@@ -484,12 +484,18 @@ namespace VirtualRobot
         std::vector< Eigen::Vector2f > tmp = points;
 
         // Remove double entries
-        for(auto point = tmp.begin(); point != tmp.end(); point++)
+        for (auto point = tmp.begin(); point != tmp.end(); point++)
         {
-            tmp.erase(std::remove_if(point+1, tmp.end(), [&](const Eigen::Vector2f &p) { return ((*point) - p).squaredNorm() < 1e-8; }), tmp.end());
+            tmp.erase(std::remove_if(point + 1, tmp.end(), [&](const Eigen::Vector2f & p)
+            {
+                return ((*point) - p).squaredNorm() < 1e-8;
+            }), tmp.end());
         }
 
-        std::sort(tmp.begin(), tmp.end(), [](const Eigen::Vector2f &a, const Eigen::Vector2f &b) { return a(0) < b(0) || (a(0) == b(0) && a(1) < b(1)); });
+        std::sort(tmp.begin(), tmp.end(), [](const Eigen::Vector2f & a, const Eigen::Vector2f & b)
+        {
+            return a(0) < b(0) || (a(0) == b(0) && a(1) < b(1));
+        });
         return tmp;
     }
 
@@ -1246,6 +1252,32 @@ namespace VirtualRobot
         Eigen::Matrix4f res4 = Eigen::Matrix4f::Identity();
         res4.block(0, 0, 3, 3) =  axisangle2eigen3f(axis, angle);
         return res4;
+    }
+
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::axisangle2eigen4f(const Eigen::Vector3f& axis, float angle, Eigen::Matrix4f& storeResult)
+    {
+        float c = cosf(angle);
+        float s = sinf(angle);
+        float t = 1.0 - c;
+
+        storeResult(0, 0) = c + axis(0) * axis(0) * t;
+        storeResult(1, 1) = c + axis(1) * axis(1) * t;
+        storeResult(2, 2) = c + axis(2) * axis(2) * t;
+
+
+        float tmp1 = axis(0) * axis(1) * t;
+        float tmp2 = axis(2) * s;
+        storeResult(1, 0) = tmp1 + tmp2;
+        storeResult(0, 1) = tmp1 - tmp2;
+        tmp1 = axis(0) * axis(2) * t;
+        tmp2 = axis(1) * s;
+        storeResult(2, 0) = tmp1 - tmp2;
+        storeResult(0, 2) = tmp1 + tmp2;
+        tmp1 = axis(1) * axis(2) * t;
+        tmp2 = axis(0) * s;
+        storeResult(2, 1) = tmp1 + tmp2;
+        storeResult(1, 2) = tmp1 - tmp2;
     }
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getAngle(const Quaternion& q)

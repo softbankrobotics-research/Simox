@@ -89,12 +89,6 @@ namespace VirtualRobot
 
 
 
-        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr > &nodes, RobotNodePtr parent = RobotNodePtr());
-
-        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB);
-
-        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr> &appendNodes);
-
         static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
 
         static RobotPtr cloneChangeStructure(RobotPtr robot, robotStructureDef& newStructure);
@@ -114,9 +108,17 @@ namespace VirtualRobot
          * \param transformation The RN to object transformation
          * \return true on succes
          */
-        static bool attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f & transformation);
+        static bool attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f& transformation);
 
         static bool detach(RobotPtr robot, RobotNodePtr rn);
+
+
+        // some internal stuff
+
+        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr >& nodes, RobotNodePtr parent, const Eigen::Matrix4f& trafo);
+        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB, Eigen::Matrix4f& storeTrafo);
+        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr>& appendNodes);
+
 
     protected:
         // instantiation not allowed

@@ -136,6 +136,7 @@ namespace VirtualRobot
 
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2axisangle(const Eigen::Matrix4f& m, Eigen::Vector3f& storeAxis, float& storeAngle);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT axisangle2eigen4f(const Eigen::Vector3f& axis, float angle);
+        void VIRTUAL_ROBOT_IMPORT_EXPORT axisangle2eigen4f(const Eigen::Vector3f& axis, float angle, Eigen::Matrix4f& storeResult);
         Eigen::Matrix3f VIRTUAL_ROBOT_IMPORT_EXPORT axisangle2eigen3f(const Eigen::Vector3f& axis, float angle);
         Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT axisangle2quat(const Eigen::Vector3f& axis, float angle);
 
@@ -638,7 +639,7 @@ namespace VirtualRobot
             return (P1(0) - P0(0)) * (P2(1) - P0(1)) - (P2(0) - P0(0)) * (P1(1) - P0(1));
         }
 
-        ConvexHull2DPtr VIRTUAL_ROBOT_IMPORT_EXPORT createConvexHull2D(const std::vector< Eigen::Vector2f > &points);
+        ConvexHull2DPtr VIRTUAL_ROBOT_IMPORT_EXPORT createConvexHull2D(const std::vector< Eigen::Vector2f >& points);
         Eigen::Vector2f VIRTUAL_ROBOT_IMPORT_EXPORT getConvexHullCenter(ConvexHull2DPtr ch);
         bool VIRTUAL_ROBOT_IMPORT_EXPORT isInside(const Eigen::Vector2f& p, ConvexHull2DPtr hull);
 

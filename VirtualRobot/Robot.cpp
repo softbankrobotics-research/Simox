@@ -865,12 +865,26 @@ namespace VirtualRobot
 
     ReadLockPtr Robot::getReadLock()
     {
-        return ReadLockPtr(new ReadLock(mutex, use_mutex));
+        if (!use_mutex)
+        {
+            return ReadLockPtr();
+        }
+        else
+        {
+            return ReadLockPtr(new ReadLock(mutex, use_mutex));
+        }
     }
 
     WriteLockPtr Robot::getWriteLock()
     {
-        return WriteLockPtr(new WriteLock(mutex, use_mutex));
+        if (!use_mutex)
+        {
+            return WriteLockPtr();
+        }
+        else
+        {
+            return WriteLockPtr(new WriteLock(mutex, use_mutex));
+        }
     }
 
     void Robot::setJointValue(const std::string& nodeName, float jointValue)
