@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1114</width>
-    <height>855</height>
+    <width>1178</width>
+    <height>955</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,208 +36,304 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QPushButton" name="pushButtonReset">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>20</y>
-         <width>171</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Reset</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButtonLoad">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>20</y>
-         <width>171</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Select Robot File</string>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QWidget" name="widget_2" native="true">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>60</y>
-         <width>391</width>
-         <height>131</height>
+         <y>0</y>
+         <width>400</width>
+         <height>250</height>
         </rect>
        </property>
-       <property name="title">
-        <string>Joints</string>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="flat">
-        <bool>false</bool>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButtonReset">
+          <property name="text">
+           <string>Reset</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButtonLoad">
+          <property name="text">
+           <string>Select Robot File</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Joints</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboBoxJoint"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QComboBox" name="comboBoxRobotNodeSet"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Select RobotNodeSet</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Select RobotNode</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QSlider" name="horizontalSliderPos">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="pageStep">
+              <number>50</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="labelMinPos">
+               <property name="text">
+                <string>-1.57</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcdNumberJointValue">
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="smallDecimalPoint">
+                <bool>true</bool>
+               </property>
+               <property name="digitCount">
+                <number>5</number>
+               </property>
+               <property name="segmentStyle">
+                <enum>QLCDNumber::Filled</enum>
+               </property>
+               <property name="value" stdset="0">
+                <double>0.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelMaxPos">
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>1.57</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Joint Value</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Robot y-position</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSlider" name="horizontalSliderRobotY">
+          <property name="minimum">
+           <number>-750</number>
+          </property>
+          <property name="maximum">
+           <number>750</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="invertedAppearance">
+           <bool>false</bool>
+          </property>
+          <property name="invertedControls">
+           <bool>false</bool>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBelow</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>260</y>
+         <width>400</width>
+         <height>621</height>
+        </rect>
        </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <widget class="QLabel" name="label_2">
+       <widget class="QCheckBox" name="checkBoxDepthCam1">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>80</y>
-          <width>81</width>
-          <height>16</height>
+          <x>0</x>
+          <y>0</y>
+          <width>391</width>
+          <height>22</height>
          </rect>
         </property>
         <property name="text">
-         <string>Joint Value</string>
+         <string>Depth image (linear scale, clipping at                              )</string>
         </property>
        </widget>
-       <widget class="QLCDNumber" name="lcdNumberJointValue">
+       <widget class="QGraphicsView" name="cam1">
         <property name="geometry">
          <rect>
-          <x>80</x>
-          <y>70</y>
-          <width>91</width>
-          <height>31</height>
+          <x>0</x>
+          <y>60</y>
+          <width>400</width>
+          <height>260</height>
          </rect>
         </property>
-        <property name="smallDecimalPoint">
-         <bool>true</bool>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="digitCount">
-         <number>5</number>
+        <property name="minimumSize">
+         <size>
+          <width>11</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="value" stdset="0">
-         <double>0.000000000000000</double>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
        </widget>
-       <widget class="QSlider" name="horizontalSliderPos">
+       <widget class="QCheckBox" name="checkBoxDepthCam2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>330</y>
+          <width>391</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Depth image (nonlinear (                       *z-buffer))</string>
+        </property>
+       </widget>
+       <widget class="QGraphicsView" name="cam2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>360</y>
+          <width>400</width>
+          <height>260</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+       </widget>
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxNonLinFactor">
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>80</y>
-          <width>181</width>
-          <height>20</height>
+          <y>330</y>
+          <width>69</width>
+          <height>27</height>
          </rect>
         </property>
         <property name="maximum">
-         <number>1000</number>
+         <double>1000.000000000000000</double>
         </property>
-        <property name="pageStep">
-         <number>50</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+        <property name="value">
+         <double>10.000000000000000</double>
         </property>
        </widget>
-       <widget class="QLabel" name="labelMinPos">
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxDepthLinClip">
         <property name="geometry">
          <rect>
-          <x>200</x>
-          <y>100</y>
+          <x>280</x>
+          <y>0</y>
           <width>91</width>
-          <height>21</height>
+          <height>27</height>
          </rect>
         </property>
-        <property name="text">
-         <string>-1.57</string>
+        <property name="minimum">
+         <double>11.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>4000.000000000000000</double>
         </property>
        </widget>
-       <widget class="QLabel" name="labelMaxPos">
+       <widget class="QCheckBox" name="checkBoxShowDepthVoxel">
         <property name="geometry">
          <rect>
-          <x>300</x>
-          <y>100</y>
-          <width>81</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>1.57</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboBoxJoint">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>40</y>
-          <width>181</width>
+          <x>0</x>
+          <y>30</y>
+          <width>381</width>
           <height>22</height>
          </rect>
         </property>
-       </widget>
-       <widget class="QComboBox" name="comboBoxRobotNodeSet">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>181</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>131</width>
-          <height>16</height>
-         </rect>
-        </property>
         <property name="text">
-         <string>Select RobotNodeSet</string>
+         <string>Show voxel</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_4">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>20</y>
-          <width>131</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select RobotNode</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QGraphicsView" name="cam2">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>520</y>
-         <width>320</width>
-         <height>240</height>
-        </rect>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-      </widget>
-      <widget class="QGraphicsView" name="cam1">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>260</y>
-         <width>320</width>
-         <height>240</height>
-        </rect>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
       </widget>
      </widget>
     </item>
@@ -248,8 +344,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1114</width>
-     <height>21</height>
+     <width>1178</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -96,17 +96,18 @@ namespace VirtualRobot
         */
         static ObstaclePtr createObstacleFromString(const std::string& xmlString, const std::string& basePath = "");
 
+        static ObstaclePtr processObstacle(rapidxml::xml_node<char>* objectXMLNode, const std::string& basePath);
+        static ManipulationObjectPtr processManipulationObject(rapidxml::xml_node<char>* objectXMLNode, const std::string& basePath);
+        static GraspSetPtr processGraspSet(rapidxml::xml_node<char>* graspSetXMLNode, const std::string& objName);
+        static GraspPtr processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& objName);
+
     protected:
 
         // instantiation not allowed
         ObjectIO();
         virtual ~ObjectIO();
-        static ManipulationObjectPtr processManipulationObject(rapidxml::xml_node<char>* objectXMLNode, const std::string& basePath);
-        static ObstaclePtr processObstacle(rapidxml::xml_node<char>* objectXMLNode, const std::string& basePath);
 
         static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
-        static GraspSetPtr processGraspSet(rapidxml::xml_node<char>* graspSetXMLNode, const std::string& objName);
-        static GraspPtr processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& objName);
     };
 
 }

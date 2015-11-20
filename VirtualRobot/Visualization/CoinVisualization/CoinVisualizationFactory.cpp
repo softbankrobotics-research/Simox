@@ -3152,7 +3152,7 @@ namespace VirtualRobot
         return offscreenRenderer;
     }
 
-    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer)
+    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov, float focal)
     {
         if (!camNode)
         {
@@ -3174,8 +3174,10 @@ namespace VirtualRobot
         cam->orientation.setValue(align2 * align * trans); // perform total transformation
 
         // todo: check these values....
-        cam->nearDistance.setValue(10.0f);
-        cam->farDistance.setValue(100000.0f);
+        cam->nearDistance.setValue(zNear);
+        cam->farDistance.setValue(zFar);
+        cam->heightAngle.setValue(fov);
+        cam->focalDistance.setValue(focal);
 
         //cam->nearDistance.setValue(0.0010f);
         //cam->farDistance.setValue(10.0f);
