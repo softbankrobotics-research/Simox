@@ -3152,12 +3152,17 @@ namespace VirtualRobot
         return offscreenRenderer;
     }
 
-    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov, float focal)
+    std::pair<bool,float> CoinVisualizationFactory::renderOffscreenAndGetFocalLength(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov)
     {
+        // cam->focalDistance is always 5
+        //fov = 2 * atan(frameSize/(2*focalLength))
+        const float frameSize= renderer->getViewportRegion().getWindowSize()[1];
+        const float focal = frameSize/(2*std::tan(fov/2));
+
         if (!camNode)
         {
             VR_ERROR << "No cam node to render..." << endl;
-            return false;
+            return std::make_pair(false, focal);
         }
 
         //we assume mm
@@ -3177,14 +3182,10 @@ namespace VirtualRobot
         cam->nearDistance.setValue(zNear);
         cam->farDistance.setValue(zFar);
         cam->heightAngle.setValue(fov);
-        cam->focalDistance.setValue(focal);
-
-        //cam->nearDistance.setValue(0.0010f);
-        //cam->farDistance.setValue(10.0f);
 
         bool res = renderOffscreen(renderer, cam, scene, buffer);
         cam->unref();
-        return res;
+        return std::make_pair(res, focal);
     }
 
 

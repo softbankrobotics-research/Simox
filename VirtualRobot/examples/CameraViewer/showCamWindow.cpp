@@ -156,7 +156,7 @@ void showCamWindow::setupUI()
     connect(UI.horizontalSliderRobotY, SIGNAL(valueChanged(int)), this, SLOT(updateRobotY(int)));
     connect(UI.doubleSpinBoxNonLinFactor, SIGNAL(valueChanged(double)), this, SLOT(renderCam()));
     connect(UI.doubleSpinBoxDepthLinClip, SIGNAL(valueChanged(double)), this, SLOT(renderCam()));
-    connect(UI.checkBoxShowDepthVoxel, SIGNAL(clicked()), this, SLOT(renderCam()));
+//    connect(UI.checkBoxShowDepthVoxel, SIGNAL(clicked()), this, SLOT(renderCam()));
 }
 
 QString showCamWindow::formatString(const char* s, float f)
@@ -516,9 +516,9 @@ void showCamWindow::renderCam()
     const float zNear = 10;
     const float zFar = 100000;
     const float fov = M_PI / 4;
-    const float focal = 50.f;
     const float maxZCut = UI.doubleSpinBoxDepthLinClip->value();
     const float voxelSize= 10.f;
+    float focal;
 
     if (cam1 && cam1Renderer)
     {
@@ -528,7 +528,7 @@ void showCamWindow::renderCam()
         voxelObjects.clear();
 
         //render image
-        CoinVisualizationFactory::renderOffscreen(cam1Renderer, cam1, sceneSep, &cam1Buffer, zNear, zFar, fov, focal);
+        std::tie(std::ignore, focal) = CoinVisualizationFactory::renderOffscreenAndGetFocalLength(cam1Renderer, cam1, sceneSep, &cam1Buffer, zNear, zFar, fov);
         if(UI.checkBoxDepthCam1->isChecked())
         {
             //transform
@@ -555,7 +555,7 @@ void showCamWindow::renderCam()
 
     if (cam2 && cam2Renderer)
     {
-        CoinVisualizationFactory::renderOffscreen(cam2Renderer, cam2, sceneSep, &cam2Buffer, zNear, zFar, fov, focal);
+        CoinVisualizationFactory::renderOffscreen(cam2Renderer, cam2, sceneSep, &cam2Buffer, zNear, zFar, fov);
         if(UI.checkBoxDepthCam2->isChecked())
         {
             //transform
@@ -577,92 +577,72 @@ void showCamWindow::renderCam()
         UI.cam2->setScene(scene);
         delete oldScene;
     }
-    //draw voxel
-    if (cam1 && cam1Renderer && UI.checkBoxShowDepthVoxel->isChecked())
-    {
-        //add transform and canvas separator
-        Eigen::Matrix4f cam1Transform = cam1->getGlobalPose().transpose().inverse();
-        SoMatrixTransform* cam1TransformSep = new SoMatrixTransform();
+//    //draw voxel
+//    if (cam1 && cam1Renderer && UI.checkBoxShowDepthVoxel->isChecked())
+//    {
+//        //add transform and canvas separator
+//        Eigen::Matrix4f cam1Transform = cam1->getGlobalPose().transpose().inverse();
+//        SoMatrixTransform* cam1TransformSep = new SoMatrixTransform();
 
-        cam1TransformSep->matrix.setValue(
-            cam1Transform(0,0), cam1Transform(0,1), cam1Transform(0,2), cam1Transform(0,3),
-            cam1Transform(1,0), cam1Transform(1,1), cam1Transform(1,2), cam1Transform(1,3),
-            cam1Transform(2,0), cam1Transform(2,1), cam1Transform(2,2), cam1Transform(2,3),
-            cam1Transform(3,0), cam1Transform(3,1), cam1Transform(3,2), cam1Transform(3,3)
-        );
+//        cam1TransformSep->matrix.setValue(
+//            cam1Transform(0,0), cam1Transform(0,1), cam1Transform(0,2), cam1Transform(0,3),
+//            cam1Transform(1,0), cam1Transform(1,1), cam1Transform(1,2), cam1Transform(1,3),
+//            cam1Transform(2,0), cam1Transform(2,1), cam1Transform(2,2), cam1Transform(2,3),
+//            0,0,0, cam1Transform(3,3)
+//        );
 
-        std::cout<<cam1Transform<<"\tti\n\n";
-        std::cout<<cam1->getGlobalPose().inverse().transpose()<<"\tit\n\n";
-        std::cout<<cam1->getGlobalPose().inverse().transpose()-cam1Transform<<"\tdiff\n\n";
-        std::cout<<cam1->getGlobalPose().transpose()<<"\tt\n\n";
-        std::cout<<cam1->getGlobalPose().inverse()<<"\ti\n\n";
-        std::cout<<cam1->getGlobalPose()<<"\torg\n\n";
+//        cam1VoxelSep->addChild(cam1TransformSep);
 
+//        SoSeparator* voxelCanvasSep = new SoSeparator();
+//        cam1VoxelSep->addChild(voxelCanvasSep);
 
+//        //calculate parameters
+//        //image's half height (aka height meassured from focal point to top)
+//        const float height = tan(fov)*focal;
+//        //#pixel from focal point to top/side of the image
+//        const auto pCntX = UI.cam1->size().width() /2;
+//        const auto pCntY = UI.cam1->size().height() /2;
+//        const float pixelHeight = height / pCntY;
 
+//        const Eigen::Vector3f focalAxis(focal, 0, 0);
+//        const Eigen::Vector3f e2(0,1,0);
+//        const Eigen::Vector3f e3(0,0,1);
 
+//        Eigen::Matrix4f m;
+//        m.setIdentity();
 
-        cam1TransformSep->matrix.setValue(
-            cam1Transform(0,0), cam1Transform(0,1), cam1Transform(0,2), cam1Transform(0,3),
-            cam1Transform(1,0), cam1Transform(1,1), cam1Transform(1,2), cam1Transform(1,3),
-            cam1Transform(2,0), cam1Transform(2,1), cam1Transform(2,2), cam1Transform(2,3),
-            0,0,0, cam1Transform(3,3)
-        );
+//        //draw voxel
+//        for(int x = 0; x < UI.cam1->size().width(); x+=10)
+//        {
+//            for(int y = 0; y < UI.cam1->size().height(); y+=10)
+//            {
+//                //pixel coords relative to focal point
+//                const int xI = (x - pCntX);
+//                const int yI = (y - pCntY);
 
-        cam1VoxelSep->addChild(cam1TransformSep);
+//                const unsigned int index = x + y * UI.cam1->size().width();
+//                const float distance = -convertDepthToZEye(cam1DepthBuffer[index],zNear,zFar);
+//                const unsigned char value = (distance>=maxZCut)?255:distance/maxZCut*255.f;
+//                const float restoredDistance = value/255.f*maxZCut;
 
-        SoSeparator* voxelCanvasSep = new SoSeparator();
-        cam1VoxelSep->addChild(voxelCanvasSep);
+//                 Eigen::Vector3f pixelPos = focalAxis+ pixelHeight*(xI*e2+yI*e3);
 
-        //calculate parameters
-        //image's half height (aka height meassured from focal point to top)
-        const float height = tan(fov)*focal;
-        //#pixel from focal point to top/side of the image
-        const auto pCntX = UI.cam1->size().width() /2;
-        const auto pCntY = UI.cam1->size().height() /2;
-        const float pixelHeight = height / pCntY;
+//                pixelPos.normalize();
+//                const Eigen::Vector3f position = pixelPos*restoredDistance;
 
-        std::cout<<"pixelh "<< pixelHeight<<"\n";
+//                //rotate+mirror
+//                const float scale = 0.8;
+//                m(0, 3) = position(0) * scale - cam1Transform(3,2);
+//                m(1, 3) = position(2) * scale - cam1Transform(3,0);
+//                m(2, 3) = position(1) * scale - cam1Transform(3,1);
 
-        const Eigen::Vector3f focalAxis(focal, 0, 0);
-        const Eigen::Vector3f e2(0,1,0);
-        const Eigen::Vector3f e3(0,0,1);
+//                voxelObjects.emplace_back(VirtualRobot::Obstacle::createBox(voxelSize,voxelSize,voxelSize,VisualizationFactory::Color::Green()));
+//                voxelObjects.back()->setGlobalPose(m);
+//                voxelCanvasSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(voxelObjects.back(), VirtualRobot::SceneObject::Full));
 
-        Eigen::Matrix4f m;
-        m.setIdentity();
-
-        //draw voxel
-        for(int x = 0; x < UI.cam1->size().width(); x+=10)
-        {
-            for(int y = 0; y < UI.cam1->size().height(); y+=10)
-            {
-                //pixel coords relative to focal point
-                const int xI = (x - pCntX);
-                const int yI = (y - pCntY);
-
-                const unsigned int index = x + y * UI.cam1->size().width();
-                const float distance = -convertDepthToZEye(cam1DepthBuffer[index],zNear,zFar);
-                const unsigned char value = (distance>=maxZCut)?255:distance/maxZCut*255.f;
-                const float restoredDistance = value/255.f*maxZCut;
-
-                 Eigen::Vector3f pixelPos = focalAxis+ pixelHeight*(xI*e2+yI*e3);
-
-                pixelPos.normalize();
-                const Eigen::Vector3f position = pixelPos*restoredDistance;
-
-                //rotate+mirror
-                const float scale = 0.8;
-                m(0, 3) = position(0) * scale - cam1Transform(3,2);
-                m(1, 3) = position(2) * scale - cam1Transform(3,0);
-                m(2, 3) = position(1) * scale - cam1Transform(3,1);
-
-                voxelObjects.emplace_back(VirtualRobot::Obstacle::createBox(voxelSize,voxelSize,voxelSize,VisualizationFactory::Color::Green()));
-                voxelObjects.back()->setGlobalPose(m);
-                voxelCanvasSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(voxelObjects.back(), VirtualRobot::SceneObject::Full));
-
-            }
-        }
-    }
+//            }
+//        }
+//    }
 }
 
 void showCamWindow::updatRobotInfo()

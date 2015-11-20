@@ -321,19 +321,6 @@
          <double>4000.000000000000000</double>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBoxShowDepthVoxel">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>30</y>
-          <width>381</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Show voxel</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>

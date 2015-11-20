@@ -283,13 +283,34 @@ namespace VirtualRobot
          * \param zNear The near plane's distance.
          * \param zFar The far plane's distance
          * \param fov The fov in rad. (vertical)
-         * \param focal The focal distance.
 
             \return true on success
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4, float focal = 5.f);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4)
+        {
+            return renderOffscreenAndGetFocalLength(renderer, camNode, scene, buffer, zNear, zFar, fov).first;
+        }
+
+        /*!
+            The cam node has to be oriented as follows:
+            The camera is pointing along the positive z axis and the positive x axis is pointing upwards.
+
+            \param renderer The renderer should have been created with the createOffscreenRenderer method
+            \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+            \param scene The scene that should be rendered.
+            \param buffer The result is stored here. The origin of the 2D image is at the left bottom!
+            The resulting buffer has the size width*height*3, with the extends as defined in the createOffscreenRenderer method.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param fov The fov in rad. (vertical)
+
+            \return first: true on success, second: the used focal length
+
+            \see createOffscreenRenderer
+        */
+        static std::pair<bool,float> renderOffscreenAndGetFocalLength(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
 
         /*!
         Use a custom camera for rendering
