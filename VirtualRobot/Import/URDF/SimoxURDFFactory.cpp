@@ -158,20 +158,33 @@ namespace VirtualRobot
         return res;
     }
 
-    std::string SimoxURDFFactory::getFilename(const std::string& f)
+    std::string SimoxURDFFactory::getFilename(const std::string& f, const string &basePath)
     {
         std::string result = f;
 
         std::string part1 = result.substr(0, 10);
 
-        if (part1 == "package://")
+        if (part1 != "package://")
         {
-            result = result.substr(10, result.length() - 10);
+            // No ROS package structure, just try to find the file in the data directory
+            if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+            {
+                VR_ERROR << "Could not determine absolute path of " << result << endl;
+            }
         }
-
-        if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+        else
         {
-            VR_ERROR << "Could not determine absolute path of " << result << endl;
+            // ROS Package structure, we have to be more intelligent
+            result = result.substr(10, result.length() - 10);
+
+            std::string package_name = result.substr(0, result.find("_description/") + 12);
+            std::string package_base = basePath.substr(0, basePath.rfind(package_name));
+
+            boost::filesystem::path p_f(result);
+            boost::filesystem::path p_base(package_base);
+            result = (p_base / p_f).string();
+
+            VR_INFO << "Converted filename: " << result << endl;
         }
 
         return result;
@@ -207,9 +220,7 @@ namespace VirtualRobot
             case urdf::Geometry::MESH:
             {
                 boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
-                //                std::string filename = getFilename(m->filename);
-                std::string filename = m->filename;
-                BaseIO::makeAbsolutePath(basePath, filename);
+                std::string filename = getFilename(m->filename, basePath);
                 res = factory->getVisualizationFromFile(filename);
             }
             break;

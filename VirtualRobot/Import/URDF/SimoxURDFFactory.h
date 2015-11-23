@@ -80,7 +80,7 @@ namespace VirtualRobot
         RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
         VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose, const std::string& basePath);
-        std::string getFilename(const std::string& f);
+        std::string getFilename(const std::string& f, const std::string& basePath);
 
         bool useColModelsIfNoVisuModel;
     };
