@@ -177,14 +177,17 @@ namespace VirtualRobot
             // ROS Package structure, we have to be more intelligent
             result = result.substr(10, result.length() - 10);
 
-            std::string package_name = result.substr(0, result.find("_description/") + 12);
-            std::string package_base = basePath.substr(0, basePath.rfind(package_name));
+            std::string package_base = basePath;
+
+            if(result.find("_description/") != std::string::npos)
+            {
+                std::string package_name = result.substr(0, result.find("_description/") + 12);
+                package_base = basePath.substr(0, basePath.rfind(package_name));
+            }
 
             boost::filesystem::path p_f(result);
             boost::filesystem::path p_base(package_base);
             result = (p_base / p_f).string();
-
-            VR_INFO << "Converted filename: " << result << endl;
         }
 
         return result;
