@@ -169,7 +169,7 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         // passing an empty string to SoInput and trying to open it aborts the program
         if (filename.empty())
@@ -186,8 +186,13 @@ namespace VirtualRobot
 
             if (ending == ".stl" || ending == "stla" || ending == "stlb")
             {
-                return getVisualizationFromSTLFile(filename, boundingBox);
+                return getVisualizationFromSTLFile(filename, boundingBox, scaleX, scaleY, scaleZ);
             }
+        }
+
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported for Coin3D files" << endl;
         }
 
         return getVisualizationFromCoin3DFile(filename, boundingBox);
@@ -213,7 +218,7 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
         // try to read from file
@@ -231,14 +236,19 @@ namespace VirtualRobot
         }
 
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
-        visualizationNode = createTriMeshModelVisualization(t, id);
+        visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
 
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
+
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported" << endl;
+        }
 
         // passing an empty string to SoInput and trying to open it aborts the program
         if (!ifs)
@@ -1874,13 +1884,29 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX, float scaleY, float scaleZ)
     {
         SoSeparator* res = new SoSeparator;
+
+        SoScale* sc = new SoScale;
+        sc->scaleFactor.setValue(scaleX, scaleY, scaleZ);
+        res->addChild(sc);
+
+        if(scaleX * scaleY * scaleZ < 0)
+        {
+            // Some robot models use negative scaling for flipping parts of the visualization.
+            // In this case we need to change the vertex order accordingly.
+            SoShapeHints *sh = new SoShapeHints;
+            sh->vertexOrdering.setValue(SoShapeHints::CLOCKWISE);
+            res->addChild(sh);
+        }
+
         SoNode* res1 = CoinVisualizationFactory::getCoinVisualization(model);
         SoMatrixTransform* mt = getMatrixTransformScaleMM2M(pose);
+
         res->addChild(mt);
         res->addChild(res1);
+
 
         VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;

@@ -109,11 +109,11 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false)
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false)
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
         {
             return VisualizationNodePtr();
         }

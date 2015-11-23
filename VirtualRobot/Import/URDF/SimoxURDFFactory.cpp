@@ -224,7 +224,7 @@ namespace VirtualRobot
             {
                 boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
                 std::string filename = getFilename(m->filename, basePath);
-                res = factory->getVisualizationFromFile(filename);
+                res = factory->getVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
             }
             break;
 
