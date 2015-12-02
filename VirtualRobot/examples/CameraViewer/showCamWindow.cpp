@@ -20,7 +20,7 @@
 
 #include <sstream>
 
-#include <GL/gl.h>
+//#include <GL/gl.h>
 
 using namespace std;
 using namespace VirtualRobot;
