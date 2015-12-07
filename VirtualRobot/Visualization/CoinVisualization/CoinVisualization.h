@@ -27,6 +27,7 @@
 #include "../Visualization.h"
 
 #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoMaterial.h>
 
 class SoNode;
 
@@ -54,6 +55,8 @@ namespace VirtualRobot
         virtual bool highlight(bool enable);
         virtual bool highlight(SoNode* visu, bool enable);
 
+        virtual void colorize(VisualizationFactory::Color c);
+
         virtual VisualizationPtr clone();
 
         SoNode* getCoinVisualization();
@@ -68,6 +71,8 @@ namespace VirtualRobot
     protected:
         bool buildVisualization();
         SoSelection* selection;
+
+        SoMaterial *color;
     };
 
 } // namespace VirtualRobot

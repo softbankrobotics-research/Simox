@@ -1599,7 +1599,7 @@ namespace SimDynamics
 
     void BulletRobot::setMaximumMotorImpulse(double maxImpulse)
     {
-        bulletMaxMotorImulse = maxImpulse;
+		bulletMaxMotorImulse = (btScalar)maxImpulse;
     }
 
     double BulletRobot::getMaximumMotorImpulse() const

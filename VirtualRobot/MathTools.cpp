@@ -1259,7 +1259,7 @@ namespace VirtualRobot
     {
         float c = cosf(angle);
         float s = sinf(angle);
-        float t = 1.0 - c;
+        float t = 1.0f - c;
 
         storeResult(0, 0) = c + axis(0) * axis(0) * t;
         storeResult(1, 1) = c + axis(1) * axis(1) * t;

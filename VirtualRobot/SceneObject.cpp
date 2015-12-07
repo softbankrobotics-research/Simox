@@ -1212,7 +1212,6 @@ namespace VirtualRobot
 
     SceneObject::Physics::Physics()
     {
-
         localCoM.setZero();
         inertiaMatrix.setIdentity();
         massKg = 0.0f;

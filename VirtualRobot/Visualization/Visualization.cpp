@@ -48,6 +48,10 @@ namespace VirtualRobot
     {
         return false;
     }
+    void Visualization::colorize(VisualizationFactory::Color c)
+    {
+
+    }
 
     int Visualization::getNumFaces()
     {
