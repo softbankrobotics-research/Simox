@@ -95,7 +95,6 @@ Workspace/WorkspaceGrid.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
-Grasping/GraspEditor/GraspEditorWindow.cpp
 MathTools.cpp
 Robot.cpp
 RobotConfig.cpp
@@ -211,7 +210,6 @@ Workspace/WorkspaceGrid.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
-Grasping/GraspEditor/GraspEditorWindow.h
 AbstractFactoryMethod.h
 VirtualRobot.h
 MathTools.h
@@ -377,8 +375,7 @@ ADD_SUBDIRECTORY(examples/)
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
-
-if (QT_FOUND OR Qt4_FOUND)
+if (QT_FOUND AND Simox_USE_COIN_VISUALIZATION)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
 	set(UI
 		Grasping/GraspEditor/GraspEditor.ui
@@ -389,7 +386,8 @@ if (QT_FOUND OR Qt4_FOUND)
 		Grasping/GraspEditor/GraspEditorWindow.h
 	)
 
-	SET(SOURCES ${SOURCES} ${MOC_SRC})
+	SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
+	SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
 endif()
 
 # Finished adding UI files
