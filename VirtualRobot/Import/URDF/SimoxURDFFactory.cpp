@@ -167,9 +167,18 @@ namespace VirtualRobot
         if (part1 != "package://")
         {
             // No ROS package structure, just try to find the file in the data directory
+
+            boost::filesystem::path p_base(basePath);
+            boost::filesystem::path p_f(f);
+            result = (p_base / p_f).string();
+
             if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
             {
-                VR_ERROR << "Could not determine absolute path of " << result << endl;
+                result = f;
+                if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+                {
+                    VR_ERROR << "Could not determine absolute path of " << result << endl;
+                }
             }
         }
         else
