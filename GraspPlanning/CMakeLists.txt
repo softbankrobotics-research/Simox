@@ -17,6 +17,15 @@ ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 ########### QHULL #################
 OPTION(BUILD_qhull "if on builds qhull external library" OFF)
+IF(NOT BUILD_qhull)
+    find_package(QHULL QUIET)
+    IF (NOT qhull_FOUND)
+		MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
+		SET (BUILD_qhull ON)
+		SET (BUILD_qhull ON PARENT_SCOPE)
+    ENDIF()
+ENDIF()
+
 IF(BUILD_qhull)
     ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
     set(QHULL_LIBRARIES simox-qhull)
