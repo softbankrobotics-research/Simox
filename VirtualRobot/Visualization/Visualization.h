@@ -24,6 +24,8 @@
 #define _VirtualRobot_Visualization_h_
 
 #include "../VirtualRobotImportExport.h"
+#include "VisualizationFactory.h"
+
 #include <vector>
 #include <Eigen/Core>
 
@@ -53,6 +55,12 @@ namespace VirtualRobot
             @param enable Do/Undo highlighting.
         */
         virtual bool highlight(unsigned int which, bool enable);
+
+        /*!
+            Colorize this visualization.
+            @param c The color to apply. To disable the colorization apply Color::None()
+        */
+        virtual void colorize(VisualizationFactory::Color c);
 
         virtual bool isVisualizationNodeRegistered(VisualizationNodePtr visualizationNode);
 

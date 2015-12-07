@@ -27,12 +27,14 @@ namespace VirtualRobot
         Visualization(visualizationNode)
     {
         selection = NULL;
+        color = NULL;
     }
 
     CoinVisualization::CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes) :
         Visualization(visualizationNodes)
     {
         selection = NULL;
+        color = NULL;
     }
 
     CoinVisualization::~CoinVisualization()
@@ -40,6 +42,10 @@ namespace VirtualRobot
         if (selection)
         {
             selection->unref();
+        }
+        if (color)
+        {
+            color->unref();
         }
     }
 
@@ -159,6 +165,32 @@ namespace VirtualRobot
     VirtualRobot::VisualizationPtr CoinVisualization::clone()
     {
         return VisualizationPtr(new CoinVisualization(visualizationNodes));
+    }
+
+    void CoinVisualization::colorize(VisualizationFactory::Color c)
+    {
+        if (!selection)
+            return;
+
+        if (!color)
+        {
+            color = new SoMaterial();
+            color->ref();
+            selection->addChild(color);
+        }
+
+        if (c.isNone())
+        {
+
+            color->setOverride(FALSE);
+        }
+        else
+        {
+            color->diffuseColor = SbColor(c.r, c.g, c.b);
+            color->ambientColor = SbColor(0, 0, 0);
+            color->transparency = std::max(0.0f, c.transparency);
+            color->setOverride(TRUE);
+        }
     }
 
     void CoinVisualization::exportToVRML2(std::string filename)
