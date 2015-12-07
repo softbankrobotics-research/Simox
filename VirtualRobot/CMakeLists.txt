@@ -378,16 +378,19 @@ ADD_SUBDIRECTORY(examples/)
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
 
-set(UI
-    Grasping/GraspEditor/GraspEditor.ui
-)
-QT4_WRAP_UI(UI_HEADERS ${UI})
-set(INCLUDES ${INCLUDES} ${UI_HEADERS})
-QT4_WRAP_CPP(MOC_SRC
-    Grasping/GraspEditor/GraspEditorWindow.h
-)
+if (QT_FOUND OR Qt4_FOUND)
+    MESSAGE (STATUS " ** Adding GraspEditor gui")
+	set(UI
+		Grasping/GraspEditor/GraspEditor.ui
+	)
+	QT4_WRAP_UI(UI_HEADERS ${UI})
+	set(INCLUDES ${INCLUDES} ${UI_HEADERS})
+	QT4_WRAP_CPP(MOC_SRC
+		Grasping/GraspEditor/GraspEditorWindow.h
+	)
 
-SET(SOURCES ${SOURCES} ${MOC_SRC})
+	SET(SOURCES ${SOURCES} ${MOC_SRC})
+endif()
 
 # Finished adding UI files
 #-----------------------------------------------------------------------------------
