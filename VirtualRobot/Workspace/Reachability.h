@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Reachability_h_
 #define _VirtualRobot_Reachability_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "WorkspaceRepresentation.h"
 
 

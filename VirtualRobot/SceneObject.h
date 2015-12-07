@@ -25,7 +25,7 @@
 
 #include "VirtualRobot.h"
 #include "VirtualRobotException.h"
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "Visualization/VisualizationNode.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CoinVisualization_h_
 #define _VirtualRobot_CoinVisualization_h_
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 #include "../Visualization.h"
 
 #include <Inventor/nodes/SoSelection.h>
@@ -56,6 +56,7 @@ namespace VirtualRobot
         virtual bool highlight(SoNode* visu, bool enable);
 
         virtual void colorize(VisualizationFactory::Color c);
+        virtual void setTransparency(float transparency);
 
         virtual VisualizationPtr clone();
 

@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_ConstrainedIK_h_
 #define _VirtualRobot_ConstrainedIK_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/IK/Constraint.h>
-#include <VirtualRobot/Robot.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/Constraint.h"
+#include "VirtualRobot/Robot.h"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>

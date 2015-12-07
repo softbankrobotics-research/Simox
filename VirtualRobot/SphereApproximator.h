@@ -24,7 +24,7 @@
 #ifndef _VR_GRAPH_GENERATOR_H_
 #define _VR_GRAPH_GENERATOR_H_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "MathTools.h"
 #include <vector>
 #include <map>

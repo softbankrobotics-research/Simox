@@ -118,7 +118,7 @@ SphereApproximator.cpp
 Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
-
+VirtualRobot.cpp
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)

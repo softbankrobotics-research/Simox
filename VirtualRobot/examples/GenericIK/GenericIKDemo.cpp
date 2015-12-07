@@ -28,8 +28,7 @@ bool useColModel = false;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "Generic IK demo");
+    VirtualRobot::init(argc, argv, "Generic IK Demo");
     cout << " --- START --- " << endl;
 
 

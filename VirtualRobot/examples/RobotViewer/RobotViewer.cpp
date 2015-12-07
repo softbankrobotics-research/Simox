@@ -29,9 +29,7 @@ bool useColModel = false;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "RobotViewer");
-
+    VirtualRobot::init(argc, argv, "Simox Robot Viewer");
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);

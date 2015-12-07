@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CameraSensorFactory_h_
 #define _VirtualRobot_CameraSensorFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../SceneObject.h"
 #include "SensorFactory.h"
 

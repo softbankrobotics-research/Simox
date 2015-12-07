@@ -77,6 +77,14 @@ namespace VirtualRobot
     {
     }
 
+    void CoinVisualizationFactory::init(int argc, char* argv[], const std::string appName)
+    {
+        if (!SoDB::isInitialized())
+            SoDB::init();
+        SoQt::init(argc, argv, appName.c_str());
+        (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
+    }
+
     /**
     * This method creates a VirtualRobot::CoinVisualizationNode from a given vector of \p primitives.
     * An instance of VirtualRobot::VisualizationNode is returned in case of an occured error.

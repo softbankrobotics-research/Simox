@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_ConstrainedHierarchicalIK_h_
 #define _VirtualRobot_ConstrainedHierarchicalIK_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/IK/ConstrainedIK.h>
-#include <VirtualRobot/IK/HierarchicalIK.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/ConstrainedIK.h"
+#include "VirtualRobot/IK/HierarchicalIK.h"
 
 #include <boost/shared_ptr.hpp>
 

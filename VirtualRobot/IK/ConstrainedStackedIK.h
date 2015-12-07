@@ -23,10 +23,10 @@
 #ifndef _VirtualRobot_ConstrainedStackedIK_h_
 #define _VirtualRobot_ConstrainedStackedIK_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/IK/ConstrainedIK.h>
-#include <VirtualRobot/IK/JacobiProvider.h>
-#include <VirtualRobot/IK/StackedIK.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/ConstrainedIK.h"
+#include "VirtualRobot/IK/JacobiProvider.h"
+#include "VirtualRobot/IK/StackedIK.h"
 
 #include <boost/shared_ptr.hpp>
 

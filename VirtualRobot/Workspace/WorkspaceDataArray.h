@@ -24,7 +24,7 @@
 #define _VirtualRobot_WorkspaceDataArray_h_
 
 #include "WorkspaceData.h"
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../Compression/CompressionBZip2.h"
 
 

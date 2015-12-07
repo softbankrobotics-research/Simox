@@ -23,8 +23,7 @@
 #ifndef _VirtualRobot_CogIK_h_
 #define _VirtualRobot_CogIK_h_
 
-#include "../VirtualRobotImportExport.h"
-
+#include "../VirtualRobot.h"
 #include "../Nodes/RobotNode.h"
 #include "../RobotNodeSet.h"
 #include "JacobiProvider.h"

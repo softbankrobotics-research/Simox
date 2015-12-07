@@ -43,10 +43,10 @@ namespace VirtualRobot
         {
             selection->unref();
         }
-        if (color)
+        /*if (color)
         {
             color->unref();
-        }
+        }*/
     }
 
     bool CoinVisualization::buildVisualization()
@@ -67,6 +67,10 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::METERS;
         visualization->addChild(u);
+
+        color = new SoMaterial();
+        visualization->addChild(color);
+
         selection->addChild(visualization);
 
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
@@ -169,15 +173,8 @@ namespace VirtualRobot
 
     void CoinVisualization::colorize(VisualizationFactory::Color c)
     {
-        if (!selection)
+        if (!selection || !color)
             return;
-
-        if (!color)
-        {
-            color = new SoMaterial();
-            color->ref();
-            selection->addChild(color);
-        }
 
         if (c.isNone())
         {
@@ -189,6 +186,30 @@ namespace VirtualRobot
             color->diffuseColor = SbColor(c.r, c.g, c.b);
             color->ambientColor = SbColor(0, 0, 0);
             color->transparency = std::max(0.0f, c.transparency);
+            color->diffuseColor.setIgnored(FALSE);
+            color->setOverride(TRUE);
+        }
+    }
+
+    void CoinVisualization::setTransparency(float transparency)
+    {
+        if (!selection || !color)
+            return;
+
+        if (transparency < 0)
+            transparency = 0;
+        if (transparency > 1.0f)
+            transparency = 1.0f;
+
+        if (transparency==1)
+        {
+            color->diffuseColor.setIgnored(FALSE);
+            color->setOverride(FALSE);
+        }
+        else
+        {
+            color->transparency = transparency;
+            color->diffuseColor.setIgnored(TRUE);
             color->setOverride(TRUE);
         }
     }

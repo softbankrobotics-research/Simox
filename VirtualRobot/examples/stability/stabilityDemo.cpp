@@ -5,9 +5,10 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "stability demo");
+
+    VirtualRobot::init(argc, argv, "Stability Demo"); 
     cout << " --- START --- " << endl;
+
     //std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
     std::string filenameRob("robots/iCub/iCub.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob);

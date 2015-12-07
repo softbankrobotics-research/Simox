@@ -16,8 +16,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "IKRRT");
+    VirtualRobot::init(argc, argv, "Grasp Quality Demo");
     cout << " --- START --- " << endl;
 
     std::string robot("robots/ArmarIII/ArmarIII.xml");

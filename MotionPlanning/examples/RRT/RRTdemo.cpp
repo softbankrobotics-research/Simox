@@ -211,7 +211,7 @@ void startRRTVisualization()
 int main(int argc, char** argv)
 {
     SoDB::init();
-    win = SoQt::init("RoboViewer", "RoboViewer");
+    win = SoQt::init("RRT Demo", "RRT Demo");
     cout << " --- START --- " << endl;
 
     try

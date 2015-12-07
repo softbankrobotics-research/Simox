@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_FileIO_h_
 #define _VirtualRobot_FileIO_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #include <vector>
 #include <fstream>

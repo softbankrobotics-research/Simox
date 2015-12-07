@@ -23,7 +23,7 @@
 #ifndef _WORKSPACE_GRID_H_
 #define _WORKSPACE_GRID_H_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include <string>
 #include <vector>
 #include "WorkspaceRepresentation.h"

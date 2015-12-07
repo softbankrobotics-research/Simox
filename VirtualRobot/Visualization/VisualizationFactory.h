@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VisualizationFactory_h_
 #define _VirtualRobot_VisualizationFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../AbstractFactoryMethod.h"
 #include "../MathTools.h"
 #include "../BoundingBox.h"
@@ -103,6 +103,10 @@ namespace VirtualRobot
         virtual ~VisualizationFactory()
         {
             ;
+        }
+
+        virtual void init(int argc, char* argv[], const std::string appName)
+        {
         }
 
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray())

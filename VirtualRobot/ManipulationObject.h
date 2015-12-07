@@ -23,13 +23,12 @@
 #ifndef _VirtualRobot_ManipulationObject_h_
 #define _VirtualRobot_ManipulationObject_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
+#include "Obstacle.h"
+#include "EndEffector/EndEffector.h"
 
 #include <string>
 #include <vector>
-
-#include "Obstacle.h"
-#include "EndEffector/EndEffector.h"
 #include <Eigen/Core>
 
 namespace VirtualRobot

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_WorkspaceData_h_
 #define _VirtualRobot_WorkspaceData_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "WorkspaceRepresentation.h"
 
 

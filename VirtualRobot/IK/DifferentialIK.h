@@ -24,7 +24,7 @@
 #ifndef _VirtualRobot_DiffIK_h_
 #define _VirtualRobot_DiffIK_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #include "../Nodes/RobotNode.h"
 #include "../RobotNodeSet.h"

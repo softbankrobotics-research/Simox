@@ -23,6 +23,7 @@
 #ifndef _VirtualRobot_BasicDefinitions_h_
 #define _VirtualRobot_BasicDefinitions_h_
 
+#include "VirtualRobotImportExport.h"
 
 /*! \defgroup VirtualRobot The VirtualRobot Library
 * With the VirtualRobot library you can define complex robot structures,
@@ -165,6 +166,7 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 
 namespace VirtualRobot
 {
+
     // only valid within the VirtualRobot namespace
     using std::cout;
     using std::endl;
@@ -287,7 +289,9 @@ namespace VirtualRobot
         typedef boost::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
         typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
         typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
-    };
+
+   };
+
 
 #define VR_INFO std::cout <<__FILE__ << ":" << __LINE__ << ": "
 #define VR_WARNING std::cerr <<__FILE__ << ":" << __LINE__ << " -Warning- "
@@ -308,6 +312,12 @@ namespace VirtualRobot
 #define VR_ASSERT(a)
 #define VR_ASSERT_MESSAGE(a,b)
 #endif
+
+
+    /*!
+    Initialize the runtime envionment. This method calls VisualizationFactory::init().
+    */
+    void VIRTUAL_ROBOT_IMPORT_EXPORT init(int argc, char* argv[], const std::string appName);
 
 } // namespace
 

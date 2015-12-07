@@ -27,8 +27,8 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "showRobot");
+    VirtualRobot::init(argc, argv, "Simox Scene Viewer");
+
     cout << " --- START --- " << endl;
     std::string filename("scenes/examples/SceneViewer/scene1.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);

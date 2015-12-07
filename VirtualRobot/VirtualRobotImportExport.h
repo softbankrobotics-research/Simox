@@ -23,8 +23,6 @@
 #ifndef _VirtualRobotImportExportSymbols_h
 #define _VirtualRobotImportExportSymbols_h
 
-#include "VirtualRobot.h"
-
 namespace VirtualRobot
 {
 #ifdef WIN32

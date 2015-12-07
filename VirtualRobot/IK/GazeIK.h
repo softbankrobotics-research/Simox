@@ -23,13 +23,13 @@
 #ifndef _VirtualRobot_GazeIK_h_
 #define _VirtualRobot_GazeIK_h_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/IK/DifferentialIK.h>
-#include <VirtualRobot/IK/JointLimitAvoidanceJacobi.h>
-#include <VirtualRobot/IK/HierarchicalIK.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/Nodes/RobotNodePrismatic.h>
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/DifferentialIK.h"
+#include "VirtualRobot/IK/JointLimitAvoidanceJacobi.h"
+#include "VirtualRobot/IK/HierarchicalIK.h"
+#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/Nodes/RobotNodePrismatic.h"
+#include "VirtualRobot/VirtualRobot.h"
 
 
 namespace VirtualRobot
