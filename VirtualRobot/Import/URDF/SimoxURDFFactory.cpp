@@ -225,7 +225,15 @@ namespace VirtualRobot
             case urdf::Geometry::SPHERE:
             {
                 boost::shared_ptr<Sphere> s = boost::dynamic_pointer_cast<Sphere>(g);
-                res = factory->createSphere(s->radius);
+                res = factory->createSphere(s->radius * scale);
+            }
+            break;
+
+
+            case urdf::Geometry::CYLINDER:
+            {
+                boost::shared_ptr<Cylinder> c = boost::dynamic_pointer_cast<Cylinder>(g);
+                res = factory->createCylinder(c->radius * scale, c->length * scale);
             }
             break;
 
@@ -250,6 +258,52 @@ namespace VirtualRobot
         return res;
     }
 
+    VisualizationNodePtr SimoxURDFFactory::convertVisuArray(std::vector<boost::shared_ptr<urdf::Collision> > visu_array, const string &basePath)
+    {
+        VirtualRobot::VisualizationNodePtr res;
+        boost::shared_ptr<VisualizationFactory> factory = CoinVisualizationFactory::createInstance(NULL);
+
+        if (visu_array.size()==0)
+        {
+            return res;
+        }
+
+        std::vector< VisualizationNodePtr > visus;
+        for (size_t i=0; i<visu_array.size(); i++)
+        {
+            VirtualRobot::VisualizationNodePtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
+            if (v)
+            {
+                visus.push_back(v);
+            }
+        }
+        res = factory->createUnitedVisualization(visus);
+        return res;
+    }
+
+    VisualizationNodePtr SimoxURDFFactory::convertVisuArray(std::vector<boost::shared_ptr<urdf::Visual> > visu_array, const string &basePath)
+    {
+        VirtualRobot::VisualizationNodePtr res;
+        boost::shared_ptr<VisualizationFactory> factory = CoinVisualizationFactory::createInstance(NULL);
+
+        if (visu_array.size()==0)
+        {
+            return res;
+        }
+
+        std::vector< VisualizationNodePtr > visus;
+        for (size_t i=0; i<visu_array.size(); i++)
+        {
+            VirtualRobot::VisualizationNodePtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
+            if (v)
+            {
+                visus.push_back(v);
+            }
+        }
+        res = factory->createUnitedVisualization(visus);
+        return res;
+    }
+
     RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, bool useColModelsIfNoVisuModel)
     {
         const float scale = 1000.0f; // mm
@@ -270,12 +324,22 @@ namespace VirtualRobot
 
         if (urdfBody->visual && urdfBody->visual)
         {
-            rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
+            if (urdfBody->visual_array.size() > 1)
+            {
+                // visual points to first entry in array
+                rnVisu = convertVisuArray(urdfBody->visual_array, basePath);
+            } else
+                rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
         }
 
         if (urdfBody->collision && urdfBody->collision)
         {
-            VisualizationNodePtr v = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
+            VisualizationNodePtr v;
+            if (urdfBody->collision_array.size() > 1)
+            {
+                v = convertVisuArray(urdfBody->collision_array, basePath);
+            } else
+                v = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
 
             if (v)
             {
@@ -360,7 +424,8 @@ namespace VirtualRobot
 
         switch (urdfJoint->type)
         {
-            case urdf::Joint::REVOLUTE:
+        case urdf::Joint::REVOLUTE:
+        case urdf::Joint::CONTINUOUS:
                 result = revoluteNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, axis, idVec3, physics);
                 break;
 

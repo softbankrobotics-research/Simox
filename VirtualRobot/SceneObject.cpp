@@ -328,7 +328,7 @@ namespace VirtualRobot
             //m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
 
             // convert mm to m
-            m.block(0, 3, 3, 1) *= 0.001f;
+            //m.block(0, 3, 3, 1) *= 0.001f;
 
             visualizationFactory->applyDisplacement(comModelClone, m);
 
@@ -441,7 +441,7 @@ namespace VirtualRobot
                 //m = getGlobalPoseVisualization().inverse() * getGlobalPose() * m;
 
                 // convert mm to m
-                m.block(0, 3, 3, 1) *= 0.001f;
+                //m.block(0, 3, 3, 1) *= 0.001f;
 
                 visualizationFactory->applyDisplacement(inertiaVisu, m);
 

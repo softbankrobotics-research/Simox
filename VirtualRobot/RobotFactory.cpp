@@ -394,7 +394,7 @@ namespace VirtualRobot
                         VisualizationNodePtr v = child->getVisualization();
                         VisualizationFactoryPtr vf = VisualizationFactory::first(NULL);
                         Eigen::Matrix4f tr2 = tr;
-                        tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
+                        //tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
                         vf->applyDisplacement(v, tr2);
                         visuMap[parent] = v;
 
@@ -410,7 +410,7 @@ namespace VirtualRobot
                         VisualizationNodePtr v = child->getCollisionModel()->getVisualization();
                         VisualizationFactoryPtr vf = VisualizationFactory::first(NULL);
                         Eigen::Matrix4f tr2 = tr;
-                        tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
+                        //tr2.block(0, 3, 3, 1) *= 0.001f; // m is needed here?
                         vf->applyDisplacement(v, tr2);
                         v->createTriMeshModel(); // update trimesh model
                         c->setVisualization(v);

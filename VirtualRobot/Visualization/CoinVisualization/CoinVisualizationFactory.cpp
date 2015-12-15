@@ -3533,7 +3533,7 @@ namespace VirtualRobot
             {
                 SoSeparator* s = new SoSeparator;
                 s->ref();
-                SoMatrixTransform* ma = getMatrixTransform(m);
+                SoMatrixTransform* ma = getMatrixTransformScaleMM2M(m);
                 s->addChild(ma);
                 s->addChild(n->copy(FALSE));
 

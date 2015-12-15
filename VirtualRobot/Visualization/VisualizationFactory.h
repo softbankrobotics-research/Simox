@@ -199,7 +199,7 @@ namespace VirtualRobot
             return VisualizationNodePtr();
         }
         /*!
-            Move local visualization by homogeneous matrix m.
+            Move local visualization by homogeneous matrix m. (MM)
         */
         virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m) {}
 

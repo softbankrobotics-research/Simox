@@ -98,7 +98,7 @@ namespace VirtualRobot
         */
         virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f);
         /*!
-            Move local visualization by homogeneous matrix m.
+            Move local visualization by homogeneous matrix m. MM is used.
         */
         virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m);
 
