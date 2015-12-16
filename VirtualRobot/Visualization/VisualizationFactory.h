@@ -37,7 +37,7 @@ namespace VirtualRobot
 {
     class VisualizationNode;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public AbstractFactoryMethod<VisualizationFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public ::AbstractFactoryMethod<VisualizationFactory, void*>
     {
     public:
 
