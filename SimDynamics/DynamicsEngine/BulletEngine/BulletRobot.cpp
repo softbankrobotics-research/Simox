@@ -642,7 +642,7 @@ namespace SimDynamics
         {
             const SimDynamics::DynamicsEngine::DynamicsContactInfo& contact = *it;
 
-            if (!contact.objectA || !contact.objectB)
+            if (contact.objectAName.empty() || contact.objectBName.empty())
             {
                 continue;
             }
@@ -651,17 +651,17 @@ namespace SimDynamics
             std::string key;
             std::string contactBody;
 
-            if (contactObjectNames.find(contact.objectA->getName()) != contactObjectNames.end())
+            if (contactObjectNames.find(contact.objectAName) != contactObjectNames.end())
             {
                 sign = 1.0f;
-                key = contact.objectA->getName();
-                contactBody = contact.objectB->getName();
+                key = contact.objectAName;
+                contactBody = contact.objectBName;
             }
-            else if (contactObjectNames.find(contact.objectB->getName()) != contactObjectNames.end())
+            else if (contactObjectNames.find(contact.objectBName) != contactObjectNames.end())
             {
                 sign = -1.0f;
-                key = contact.objectB->getName();
-                contactBody = contact.objectA->getName();
+                key = contact.objectBName;
+                contactBody = contact.objectAName;
             }
             else
             {

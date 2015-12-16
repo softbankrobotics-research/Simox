@@ -18,6 +18,8 @@ namespace SimDynamics
 
     std::string DynamicsObject::getName() const
     {
+        if (!sceneObject)
+            return std::string();
         return sceneObject->getName();
     }
 
