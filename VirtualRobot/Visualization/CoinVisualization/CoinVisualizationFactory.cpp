@@ -61,6 +61,7 @@
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/Qt/SoQt.h>
 #include <iostream>
 #include <algorithm>
 

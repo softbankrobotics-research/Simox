@@ -38,7 +38,6 @@
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoCamera.h>
-#include <Inventor/Qt/SoQt.h>
 
 
 #include <string>
