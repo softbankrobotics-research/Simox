@@ -63,7 +63,7 @@ namespace VirtualRobot
             Initialises SoDB and SoQt.
             Sets the COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE environment variable to enable a Coin3D transparency extension.
         */
-        virtual void init(int argc, char* argv[], const std::string appName);
+        virtual void init(int &argc, char* argv[], const std::string &appName);
 
 
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray());

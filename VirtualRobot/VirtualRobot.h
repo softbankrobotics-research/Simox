@@ -317,7 +317,10 @@ namespace VirtualRobot
     /*!
     Initialize the runtime envionment. This method calls VisualizationFactory::init().
     */
-    void VIRTUAL_ROBOT_IMPORT_EXPORT init(int argc, char* argv[], const std::string appName);
+    void VIRTUAL_ROBOT_IMPORT_EXPORT init(int &argc, char* argv[], const std::string &appName);
+
+    // init method is storing appName, since the c_string is passed by refrence to QT -> we must ensure that the string stays alive
+    VIRTUAL_ROBOT_IMPORT_EXPORT extern std::string globalAppName;
 
 } // namespace
 

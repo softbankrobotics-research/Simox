@@ -77,7 +77,7 @@ namespace VirtualRobot
     {
     }
 
-    void CoinVisualizationFactory::init(int argc, char* argv[], const std::string appName)
+    void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
         if (!SoDB::isInitialized())
             SoDB::init();

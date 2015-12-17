@@ -105,7 +105,7 @@ namespace VirtualRobot
             ;
         }
 
-        virtual void init(int argc, char* argv[], const std::string appName)
+        virtual void init(int &argc, char* argv[], const std::string &appName)
         {
         }
 
