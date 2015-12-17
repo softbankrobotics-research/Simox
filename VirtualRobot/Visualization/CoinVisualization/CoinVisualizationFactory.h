@@ -269,7 +269,7 @@ namespace VirtualRobot
 
             \see renderOffscreen
         */
-        static SoOffscreenRenderer* createOffscreenRenderer(int width, int height);
+        static SoOffscreenRenderer* createOffscreenRenderer(unsigned int width, unsigned int height);
 
         /*!
             The cam node has to be oriented as follows:
@@ -288,29 +288,65 @@ namespace VirtualRobot
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4)
-        {
-            return renderOffscreenAndGetFocalLength(renderer, camNode, scene, buffer, zNear, zFar, fov).first;
-        }
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
 
         /*!
-            The cam node has to be oriented as follows:
-            The camera is pointing along the positive z axis and the positive x axis is pointing upwards.
-
-            \param renderer The renderer should have been created with the createOffscreenRenderer method
-            \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
-            \param scene The scene that should be rendered.
-            \param buffer The result is stored here. The origin of the 2D image is at the left bottom!
-            The resulting buffer has the size width*height*3, with the extends as defined in the createOffscreenRenderer method.
+         * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
+         * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+         * \param scene The scene that should be rendered.
+         * \param width The used image width. (>0)
+         * \param height The used image height. (>0)
+         * \param renderRgbImage Whether to output the rgb image.
+         * \param rgbImage The rgb image's output parameter.
+         * \param renderDepthImgae Whether to output the depth image.
+         * \param depthImage The depth image's output parameter.
+         * \param renderPointcloud Whether to output the point cloud.
+         * \param pointCloud The pointcloud's output parameter.
          * \param zNear The near plane's distance.
          * \param zFar The far plane's distance
-         * \param fov The fov in rad. (vertical)
+         * \param vertFov The fov in rad. (vertical)
+         * \return true on success
+         */
+        static bool renderOffscreenRgbDepthPointcloud
+            (
+                RobotNodePtr camNode, SoNode* scene,
+                short width, short height,
+                bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+                bool renderDepthImgae, std::vector<float>& depthImage,
+                bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
 
-            \return first: true on success, second: the used focal length
+            );
 
-            \see createOffscreenRenderer
-        */
-        static std::pair<bool,float> renderOffscreenAndGetFocalLength(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
+        /*!
+         * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
+         * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+         * \param scene The scene that should be rendered.
+         * \param width The used image width. (>0)
+         * \param height The used image height. (>0)
+         * \param renderRgbImage Whether to output the rgb image.
+         * \param rgbImage The rgb image's output parameter.
+         * \param renderDepthImgae Whether to output the depth image.
+         * \param depthImage The depth image's output parameter.
+         * \param renderPointcloud Whether to output the point cloud.
+         * \param pointCloud The pointcloud's output parameter.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param vertFov The fov in rad. (vertical)
+         * \return true on success
+         */
+        static bool renderOffscreenRgbDepthPointcloud
+            (
+                RobotNodePtr camNode, SoNode* scene,
+                short width, short height,
+                std::vector<unsigned char>& rgbImage,
+                std::vector<float>& depthImage,
+                std::vector<Eigen::Vector3f>& pointCloud,
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
+            )
+        {
+            return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov);
+        }
 
         /*!
         Use a custom camera for rendering
@@ -323,7 +359,7 @@ namespace VirtualRobot
 
         \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, SoCamera* cam, SoNode* scene, unsigned char** buffer);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer);
 
         /*!
             When SoFiles are used, Coin3D just stores references to files instead of the real contents.

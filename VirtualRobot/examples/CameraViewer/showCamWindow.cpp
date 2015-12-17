@@ -517,8 +517,8 @@ void showCamWindow::renderCam()
     const float zFar = 100000;
     const float fov = M_PI / 4;
     const float maxZCut = UI.doubleSpinBoxDepthLinClip->value();
-    const float voxelSize= 10.f;
-    float focal;
+//    const float voxelSize= 10.f;
+//    float focal =  static_cast<float>(UI.cam1->size().height()) / (2 * std::tan(fov / 2));
 
     if (cam1 && cam1Renderer)
     {
@@ -528,7 +528,7 @@ void showCamWindow::renderCam()
         voxelObjects.clear();
 
         //render image
-        std::tie(std::ignore, focal) = CoinVisualizationFactory::renderOffscreenAndGetFocalLength(cam1Renderer, cam1, sceneSep, &cam1Buffer, zNear, zFar, fov);
+        CoinVisualizationFactory::renderOffscreen(cam1Renderer, cam1, sceneSep, &cam1Buffer, zNear, zFar, fov);
         if(UI.checkBoxDepthCam1->isChecked())
         {
             //transform
