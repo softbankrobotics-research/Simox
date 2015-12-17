@@ -63,6 +63,9 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <GL/gl.h>
+
+#include <Inventor/Qt/SoQt.h>
+
 #include <iostream>
 #include <algorithm>
 
@@ -77,6 +80,14 @@ namespace VirtualRobot
 
     CoinVisualizationFactory::~CoinVisualizationFactory()
     {
+    }
+
+    void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
+    {
+        if (!SoDB::isInitialized())
+            SoDB::init();
+        SoQt::init(argc, argv, appName.c_str());
+        (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
     }
 
     /**
@@ -3762,7 +3773,7 @@ namespace VirtualRobot
             {
                 SoSeparator* s = new SoSeparator;
                 s->ref();
-                SoMatrixTransform* ma = getMatrixTransform(m);
+                SoMatrixTransform* ma = getMatrixTransformScaleMM2M(m);
                 s->addChild(ma);
                 s->addChild(n->copy(FALSE));
 

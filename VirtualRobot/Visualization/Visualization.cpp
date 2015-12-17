@@ -44,9 +44,20 @@ namespace VirtualRobot
     {
         return false;
     }
+
     bool Visualization::highlight(unsigned int which, bool enable)
     {
         return false;
+    }
+
+    void Visualization::colorize(VisualizationFactory::Color c)
+    {
+
+    }
+
+    void Visualization::setTransparency(float transparency)
+    {
+
     }
 
     int Visualization::getNumFaces()

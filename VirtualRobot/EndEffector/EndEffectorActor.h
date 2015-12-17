@@ -23,10 +23,8 @@
 #ifndef _VirtualRobot_EndEffectorActor_h_
 #define _VirtualRobot_EndEffectorActor_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "EndEffector.h"
-
-
 
 #include <string>
 #include <vector>

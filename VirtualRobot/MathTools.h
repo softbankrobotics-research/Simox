@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_MathTools_h_
 #define _VirtualRobot_MathTools_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 
 #include <algorithm>
 #include <string>

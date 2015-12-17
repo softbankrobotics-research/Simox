@@ -25,8 +25,8 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "ReachabilityMap");
+    VirtualRobot::init(argc, argv, "Reachability Map Demo");
+
     cout << " --- START --- " << endl;
 
     std::string filenameReach;

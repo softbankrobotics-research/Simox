@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RobotNodeFactory_h_
 #define _VirtualRobot_RobotNodeFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../AbstractFactoryMethod.h"
 #include "../Transformation/DHParameter.h"
 #include "RobotNode.h"

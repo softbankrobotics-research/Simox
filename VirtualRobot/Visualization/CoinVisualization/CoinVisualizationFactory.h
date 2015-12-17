@@ -24,7 +24,7 @@
 #define _VirtualRobot_CoinVisualizationFactory_h_
 
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 #include "../VisualizationFactory.h"
 #include "../../BoundingBox.h"
 #include "../../SceneObject.h"
@@ -38,7 +38,6 @@
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoCamera.h>
-
 
 
 #include <string>
@@ -58,6 +57,13 @@ namespace VirtualRobot
 
         CoinVisualizationFactory();
         virtual ~CoinVisualizationFactory();
+
+        /*!
+            Initialises SoDB and SoQt.
+            Sets the COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE environment variable to enable a Coin3D transparency extension.
+        */
+        virtual void init(int &argc, char* argv[], const std::string &appName);
+
 
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray());
         virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
@@ -91,7 +97,7 @@ namespace VirtualRobot
         */
         virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f);
         /*!
-            Move local visualization by homogeneous matrix m.
+            Move local visualization by homogeneous matrix m. MM is used.
         */
         virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m);
 

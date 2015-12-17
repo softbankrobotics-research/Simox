@@ -27,9 +27,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "SimDynamicsViewer");
-
+    VirtualRobot::init(argc, argv, "SimDynamicsViewer");
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);

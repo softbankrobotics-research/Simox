@@ -24,7 +24,7 @@
 #ifndef _VirtualRobot_DHParameters_h_
 #define _VirtualRobot_DHParameters_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include <Eigen/Core>
 
 namespace VirtualRobot

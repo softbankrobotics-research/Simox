@@ -28,7 +28,7 @@ set(Simox_EXECUTABLE "@Simox_EXECUTABLE@")
 
 if(EXISTS "${Simox_CMAKE_DIR}/CMakeCache.txt")
     # In build tree
-    message(STATUS "Using Simox Source-Build from: ${Simox_CURRENT_CMAKE_DIR}")
+    message(STATUS "Using Simox Source-Build from: ${Simox_CMAKE_DIR}")
     include("${Simox_CMAKE_DIR}/SimoxBuildTreeSettings.cmake")
 else()
     # Installed project
@@ -58,6 +58,6 @@ SET(Simox_EXTERNAL_CMAKE_INCLUDE "@Simox_EXTERNAL_CMAKE_INCLUDE@")
 
 
 if (NOT (Simox_FIND_QUIETLY OR VirtualRobot_FIND_QUIETLY))
-    MESSAGE(STATUS " * Including ${Simox_CMAKE_DIR}/SimoxMacros.cmake")
+    MESSAGE(STATUS " * Including ${Simox_MACROS_INCLUDE_DIR}/SimoxMacros.cmake")
 endif()
 include(${Simox_MACROS_INCLUDE_DIR}/SimoxMacros.cmake)

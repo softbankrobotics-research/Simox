@@ -23,12 +23,11 @@
 #ifndef _VirtualRobot_Grasp_h_
 #define _VirtualRobot_Grasp_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
+#include "VirtualRobot/EndEffector/EndEffector.h"
 
 #include <string>
 #include <vector>
-
-#include <VirtualRobot/EndEffector/EndEffector.h>
 #include <Eigen/Core>
 
 namespace VirtualRobot

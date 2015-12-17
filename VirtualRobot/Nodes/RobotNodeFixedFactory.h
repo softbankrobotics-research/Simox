@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RobotNodeFixedFactory_h_
 #define _VirtualRobot_RobotNodeFixedFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../SceneObject.h"
 #include "RobotNodeFactory.h"
 

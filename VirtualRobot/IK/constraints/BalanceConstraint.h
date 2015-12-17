@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_BalanceConstraint_h_
 #define _VirtualRobot_BalanceConstraint_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/IK/Constraint.h>
 #include <VirtualRobot/IK/CoMIK.h>
 #include <VirtualRobot/IK/SupportPolygon.h>

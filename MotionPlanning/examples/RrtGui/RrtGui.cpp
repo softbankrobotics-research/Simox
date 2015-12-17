@@ -26,8 +26,8 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "RrtGui");
+    VirtualRobot::init(argc, argv, "RRT Demo Gui");
+
     cout << " --- START --- " << endl;
 
     std::string filenameScene("scenes/examples/RrtGui/planning.xml");

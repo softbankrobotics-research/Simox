@@ -23,8 +23,8 @@
 #ifndef _VirtualRobot_Constraint_h_
 #define _VirtualRobot_Constraint_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/IK/JacobiProvider.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/JacobiProvider.h"
 
 #include <boost/shared_ptr.hpp>
 

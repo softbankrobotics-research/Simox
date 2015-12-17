@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VoxelTree6DElement_h_
 #define _VirtualRobot_VoxelTree6DElement_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #include <string>
 #include <vector>

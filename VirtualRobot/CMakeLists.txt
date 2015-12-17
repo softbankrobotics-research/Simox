@@ -95,7 +95,6 @@ Workspace/WorkspaceGrid.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
-Grasping/GraspEditor/GraspEditorWindow.cpp
 MathTools.cpp
 Robot.cpp
 RobotConfig.cpp
@@ -119,7 +118,7 @@ SphereApproximator.cpp
 Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
-
+VirtualRobot.cpp
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
@@ -211,7 +210,6 @@ Workspace/WorkspaceGrid.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
-Grasping/GraspEditor/GraspEditorWindow.h
 AbstractFactoryMethod.h
 VirtualRobot.h
 MathTools.h
@@ -377,17 +375,20 @@ ADD_SUBDIRECTORY(examples/)
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
+if (QT_FOUND AND Simox_USE_COIN_VISUALIZATION)
+    MESSAGE (STATUS " ** Adding GraspEditor gui")
+	set(UI
+		Grasping/GraspEditor/GraspEditor.ui
+	)
+	QT4_WRAP_UI(UI_HEADERS ${UI})
+	set(INCLUDES ${INCLUDES} ${UI_HEADERS})
+	QT4_WRAP_CPP(MOC_SRC
+		Grasping/GraspEditor/GraspEditorWindow.h
+	)
 
-set(UI
-    Grasping/GraspEditor/GraspEditor.ui
-)
-QT4_WRAP_UI(UI_HEADERS ${UI})
-set(INCLUDES ${INCLUDES} ${UI_HEADERS})
-QT4_WRAP_CPP(MOC_SRC
-    Grasping/GraspEditor/GraspEditorWindow.h
-)
-
-SET(SOURCES ${SOURCES} ${MOC_SRC})
+	SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
+	SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
+endif()
 
 # Finished adding UI files
 #-----------------------------------------------------------------------------------

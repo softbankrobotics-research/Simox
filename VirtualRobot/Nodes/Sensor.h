@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Sensor_h_
 #define _VirtualRobot_Sensor_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../VirtualRobotException.h"
 #include "../VirtualRobot.h"
 

@@ -23,15 +23,12 @@
 #ifndef _VirtualRobot_JacobiProvider_h_
 #define _VirtualRobot_JacobiProvider_h_
 
-#include "../VirtualRobotImportExport.h"
-
+#include "../VirtualRobot.h"
 #include "../Nodes/RobotNode.h"
 #include "../RobotNodeSet.h"
 
 #include <string>
 #include <vector>
-
-
 
 namespace VirtualRobot
 {

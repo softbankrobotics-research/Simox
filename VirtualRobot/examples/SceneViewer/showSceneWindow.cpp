@@ -69,6 +69,7 @@ void showSceneWindow::setupUI()
     viewer->setFeedbackVisibility(true);
     viewer->setSceneGraph(sceneSep);
     viewer->viewAll();
+    viewer->setAntialiasing(true, 4);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectScene()));

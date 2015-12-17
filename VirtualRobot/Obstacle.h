@@ -23,13 +23,13 @@
 #ifndef _VirtualRobot_Obstacle_h_
 #define _VirtualRobot_Obstacle_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
+#include "CollisionDetection/CollisionModel.h"
+#include "SceneObject.h"
 
 #include <string>
 #include <vector>
 
-#include "CollisionDetection/CollisionModel.h"
-#include "SceneObject.h"
 
 namespace VirtualRobot
 {

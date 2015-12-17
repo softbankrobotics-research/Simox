@@ -28,8 +28,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "IKRRT");
+    VirtualRobot::init(argc, argv, "IK-RRT Demo");
     cout << " --- START --- " << endl;
 
 #ifdef ARMAR

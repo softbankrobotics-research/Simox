@@ -27,12 +27,14 @@ namespace VirtualRobot
         Visualization(visualizationNode)
     {
         selection = NULL;
+        color = NULL;
     }
 
     CoinVisualization::CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes) :
         Visualization(visualizationNodes)
     {
         selection = NULL;
+        color = NULL;
     }
 
     CoinVisualization::~CoinVisualization()
@@ -41,6 +43,10 @@ namespace VirtualRobot
         {
             selection->unref();
         }
+        /*if (color)
+        {
+            color->unref();
+        }*/
     }
 
     bool CoinVisualization::buildVisualization()
@@ -61,6 +67,10 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::METERS;
         visualization->addChild(u);
+
+        color = new SoMaterial();
+        visualization->addChild(color);
+
         selection->addChild(visualization);
 
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
@@ -159,6 +169,49 @@ namespace VirtualRobot
     VirtualRobot::VisualizationPtr CoinVisualization::clone()
     {
         return VisualizationPtr(new CoinVisualization(visualizationNodes));
+    }
+
+    void CoinVisualization::colorize(VisualizationFactory::Color c)
+    {
+        if (!selection || !color)
+            return;
+
+        if (c.isNone())
+        {
+
+            color->setOverride(FALSE);
+        }
+        else
+        {
+            color->diffuseColor = SbColor(c.r, c.g, c.b);
+            color->ambientColor = SbColor(0, 0, 0);
+            color->transparency = std::max(0.0f, c.transparency);
+            color->diffuseColor.setIgnored(FALSE);
+            color->setOverride(TRUE);
+        }
+    }
+
+    void CoinVisualization::setTransparency(float transparency)
+    {
+        if (!selection || !color)
+            return;
+
+        if (transparency < 0)
+            transparency = 0;
+        if (transparency > 1.0f)
+            transparency = 1.0f;
+
+        if (transparency==1)
+        {
+            color->diffuseColor.setIgnored(FALSE);
+            color->setOverride(FALSE);
+        }
+        else
+        {
+            color->transparency = transparency;
+            color->diffuseColor.setIgnored(TRUE);
+            color->setOverride(TRUE);
+        }
     }
 
     void CoinVisualization::exportToVRML2(std::string filename)

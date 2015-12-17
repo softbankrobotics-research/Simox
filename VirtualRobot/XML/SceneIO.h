@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_SceneIO_h_
 #define _VirtualRobot_SceneIO_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "BaseIO.h"
 #include "../Scene.h"
 

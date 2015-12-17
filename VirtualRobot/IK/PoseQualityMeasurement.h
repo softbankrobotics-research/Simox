@@ -23,7 +23,7 @@
 #ifndef __PoseQualityMeasurement_H_
 #define __PoseQualityMeasurement_H_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../Robot.h"
 #include "../VirtualRobotException.h"
 #include "../Nodes/RobotNode.h"

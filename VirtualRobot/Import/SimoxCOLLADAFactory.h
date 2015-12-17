@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_SimoxCOLLADAFactory_h_
 #define _VirtualRobot_SimoxCOLLADAFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../Robot.h"
 #include "RobotImporterFactory.h"
 

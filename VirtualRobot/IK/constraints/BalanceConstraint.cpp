@@ -78,7 +78,7 @@ void BalanceConstraint::updateSupportPolygon()
         goal.head(2) = supportPolygonCenter;
         goal(2) = height;
         comIK->setGoal(goal, tolerance);
-        VR_INFO << "CoM Height of Inversed Robot set to:" << goal(2) << endl;
+        //VR_INFO << "CoM Height of Inversed Robot set to:" << goal(2) << endl;
     }
     else
     {

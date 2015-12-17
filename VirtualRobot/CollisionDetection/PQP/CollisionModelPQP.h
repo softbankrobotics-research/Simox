@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CollisionModelPQP_h_
 #define _VirtualRobot_CollisionModelPQP_h_
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 
 #include "../CollisionModelImplementation.h"
 

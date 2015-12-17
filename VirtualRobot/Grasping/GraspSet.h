@@ -23,13 +23,12 @@
 #ifndef _VirtualRobot_GraspSet_h_
 #define _VirtualRobot_GraspSet_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
+#include "VirtualRobot/CollisionDetection/CollisionModel.h"
+#include "Grasp.h"
 
 #include <string>
 #include <vector>
-
-#include <VirtualRobot/CollisionDetection/CollisionModel.h>
-#include "Grasp.h"
 #include <Eigen/Core>
 
 namespace VirtualRobot

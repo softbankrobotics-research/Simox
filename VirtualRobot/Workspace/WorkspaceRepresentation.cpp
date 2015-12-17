@@ -603,9 +603,11 @@ namespace VirtualRobot
         gp.block(0, 3, 3, 1) = position_global;
 
         // get voxels
-        unsigned int v[6];
 
-        if (!getVoxelFromPose(gp, v))
+        // get voxels
+        unsigned int v[3];
+
+        if (!getVoxelFromPosition(gp, v))
         {
             return 0;
         }
@@ -783,14 +785,49 @@ namespace VirtualRobot
     bool WorkspaceRepresentation::getVoxelFromPose(const Eigen::Matrix4f& globalPose, unsigned int v[6]) const
     {
         float x[6];
-
         Eigen::Matrix4f p = globalPose;
         toLocal(p);
-
         matrix2Vector(p, x);
-        //MathTools::eigen4f2rpy(p,x);
         return getVoxelFromPose(x, v);
     }
+
+
+
+    bool WorkspaceRepresentation::getVoxelFromPosition(float x[3], unsigned int v[3]) const
+    {
+        int a;
+
+        for (int i = 0; i < 3; i++)
+        {
+            a = (int)(((x[i] - minBounds[i]) / spaceSize[i]) * (float)numVoxels[i]);
+            if (a < 0)
+            {
+                return false;    //pos[i] = 0; // if pose is outside of voxel space, ignore it
+            }
+            else if (a >= numVoxels[i])
+            {
+                return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
+            }
+
+            v[i] = a;
+        }
+
+        return true;
+    }
+    
+    bool WorkspaceRepresentation::getVoxelFromPosition(const Eigen::Matrix4f &globalPose, unsigned int v[3]) const
+    {
+        float x[6];
+        Eigen::Matrix4f p = globalPose;
+        toLocal(p);
+        matrix2Vector(p, x);
+        float x2[3];
+        x2[0] = x[0];
+        x2[1] = x[1];
+        x2[2] = x[2];
+        return getVoxelFromPosition(x2, v);
+    }
+
 
     bool WorkspaceRepresentation::setRobotNodesToRandomConfig(VirtualRobot::RobotNodeSetPtr nodeSet, bool checkForSelfCollisions /*= true*/)
     {

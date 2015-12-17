@@ -26,8 +26,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "GraspEditor");
+    VirtualRobot::init(argc, argv, "GraspEditor");
     cout << " --- START --- " << endl;
 
     std::string filename1("objects/plate.xml");

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RuntimeEnv_h_
 #define _VirtualRobot_RuntimeEnv_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 
 #include <string>
 #include <vector>

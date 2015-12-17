@@ -281,11 +281,16 @@ namespace VirtualRobot
 
         if (object)
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel);
+
+            SoNode* visualisationNode = NULL;
+            boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
+            if (visualizationObject)
+                visualisationNode = visualizationObject->getCoinVisualization();
 
             if (visualisationNode)
             {
                 objectSep->addChild(visualisationNode);
+                //visualizationObject->setTransparency(0.5);
             }
         }
 

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RobotNodeRevolute_h_
 #define _VirtualRobot_RobotNodeRevolute_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #include "RobotNode.h"
 #include "../RobotFactory.h"

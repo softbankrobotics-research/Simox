@@ -144,8 +144,10 @@ namespace SimDynamics
 
         struct DynamicsContactInfo
         {
-            DynamicsObject* objectA;
-            DynamicsObject* objectB;
+            std::string objectAName;
+            std::string objectBName;
+            //DynamicsObject* objectA;
+            //DynamicsObject* objectB;
             Eigen::Vector3f posGlobalA;
             Eigen::Vector3f posGlobalB;
             Eigen::Vector3f normalGlobalB;

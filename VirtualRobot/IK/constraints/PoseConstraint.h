@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_PoseConstraint_h_
 #define _VirtualRobot_PoseConstraint_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/IK/Constraint.h>
-#include <VirtualRobot/IK/DifferentialIK.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/Constraint.h"
+#include "VirtualRobot/IK/DifferentialIK.h"
 
 #include <boost/shared_ptr.hpp>
 

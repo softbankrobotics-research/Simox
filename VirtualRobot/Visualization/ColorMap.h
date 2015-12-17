@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ColorMap_h_
 #define _VirtualRobot_ColorMap_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "VisualizationFactory.h"
 
 #include <string>

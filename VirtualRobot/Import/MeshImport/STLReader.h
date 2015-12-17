@@ -7,8 +7,8 @@
 #define __VirtualRobot_STLREADER_H__
 
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include "VirtualRobot/VirtualRobot.h"
+
 #include <stdio.h>
 #include <string>
 

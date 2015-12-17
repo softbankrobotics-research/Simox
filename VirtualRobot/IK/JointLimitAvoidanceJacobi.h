@@ -23,10 +23,9 @@
 #ifndef _VirtualRobot_JointLimitAvoidanceJacobi_h_
 #define _VirtualRobot_JointLimitAvoidanceJacobi_h_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/IK/JacobiProvider.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/JacobiProvider.h"
+#include "VirtualRobot/RobotNodeSet.h"
 
 
 namespace VirtualRobot

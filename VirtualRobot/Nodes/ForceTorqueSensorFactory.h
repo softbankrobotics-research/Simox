@@ -23,11 +23,9 @@
 #ifndef _VirtualRobot_ForceTorqueSensorFactory_h_
 #define _VirtualRobot_ForceTorqueSensorFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../SceneObject.h"
 #include "SensorFactory.h"
-
-
 
 
 namespace VirtualRobot

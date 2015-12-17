@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VisualizationFactory_h_
 #define _VirtualRobot_VisualizationFactory_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../AbstractFactoryMethod.h"
 #include "../MathTools.h"
 #include "../BoundingBox.h"
@@ -37,7 +37,7 @@ namespace VirtualRobot
 {
     class VisualizationNode;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public AbstractFactoryMethod<VisualizationFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public ::AbstractFactoryMethod<VisualizationFactory, void*>
     {
     public:
 
@@ -103,6 +103,10 @@ namespace VirtualRobot
         virtual ~VisualizationFactory()
         {
             ;
+        }
+
+        virtual void init(int &argc, char* argv[], const std::string &appName)
+        {
         }
 
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray())
@@ -195,7 +199,7 @@ namespace VirtualRobot
             return VisualizationNodePtr();
         }
         /*!
-            Move local visualization by homogeneous matrix m.
+            Move local visualization by homogeneous matrix m. (MM)
         */
         virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m) {}
 

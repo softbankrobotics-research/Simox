@@ -28,8 +28,8 @@ bool useColModel = false;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "Ik demo");
+    VirtualRobot::init(argc, argv, "Jacobi Demo");
+
     cout << " --- START --- " << endl;
     std::string filename("robots/ArmarIII/ArmarIII.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);

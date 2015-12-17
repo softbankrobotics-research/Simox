@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CoinVisualizationNode_h_
 #define _VirtualRobot_CoinVisualizationNode_h_
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 #include "../VisualizationNode.h"
 #include "CoinVisualizationFactory.h"
 

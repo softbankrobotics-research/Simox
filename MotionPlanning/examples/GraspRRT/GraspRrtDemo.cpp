@@ -26,8 +26,8 @@ using namespace VirtualRobot;
 
 int main(int argc, char** argv)
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "GraspRrtDemo");
+    VirtualRobot::init(argc, argv, "GraspRrtDemo");
+ 
     cout << " --- START --- " << endl;
 
     std::string filenameScene("/scenes/examples/GraspRrt/planning.xml");

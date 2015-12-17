@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_WorkspaceRepresentation_h_
 #define _VirtualRobot_WorkspaceRepresentation_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "WorkspaceData.h"
 #include "WorkspaceDataArray.h"
 #include "../MathTools.h"
@@ -224,6 +224,12 @@ namespace VirtualRobot
         virtual bool getVoxelFromPose(const Eigen::Matrix4f& globalPose, unsigned int v[6]) const;
 
         /*!
+            Get the corresponding voxel coordinates.
+            If false is returned the position is outside the covered workspace.
+        */
+        virtual bool getVoxelFromPosition(const Eigen::Matrix4f& globalPose, unsigned int v[3]) const;
+        
+        /*!
             Computes center of corresponding voxel in global coord system.
         */
         Eigen::Matrix4f getPoseFromVoxel(unsigned int v[6], bool transformToGlobalPose = true);
@@ -360,6 +366,7 @@ namespace VirtualRobot
         void vector2Matrix(const float x[6], Eigen::Matrix4f& m) const;
         void vector2Matrix(const Eigen::Vector3f& pos, const Eigen::Vector3f& rot, Eigen::Matrix4f& m) const;
         virtual bool getVoxelFromPose(float x[6], unsigned int v[6]) const;
+        virtual bool getVoxelFromPosition(float x[3], unsigned int v[3]) const;
 
         /*!
             Usually not needed. Don't call this method after data has been loaded or created!
