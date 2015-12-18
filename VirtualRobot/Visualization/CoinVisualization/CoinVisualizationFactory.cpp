@@ -62,6 +62,13 @@
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
+
+#ifdef WIN32
+/* gl.h assumes windows.h is already included */
+// avoid std::min, std::max errors
+#define NOMINMAX
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 
 #include <Inventor/Qt/SoQt.h>
@@ -3223,7 +3230,7 @@ namespace VirtualRobot
 
         bool res = renderOffscreen(renderer, cam, scene, buffer);
         cam->unref();
-        res;
+        return res;
     }
 
 
