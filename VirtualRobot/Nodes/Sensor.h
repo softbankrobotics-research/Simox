@@ -82,6 +82,11 @@ namespace VirtualRobot
         }
 
         /*!
+            Set the local transformation.
+        */
+        virtual void setRobotNodeToSensorTransformation(const Eigen::Matrix4f& t);
+
+        /*!
             Calling this SceneObject method will cause an exception, since Sensors are controlled via their RobotNode parent.
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& pose);

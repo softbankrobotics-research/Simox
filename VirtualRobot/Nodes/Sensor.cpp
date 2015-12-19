@@ -151,7 +151,10 @@ namespace VirtualRobot
         return result;
     }
 
-
+    void Sensor::setRobotNodeToSensorTransformation(const Eigen::Matrix4f& t)
+    {
+        this->rnTransformation = t;
+    }
 
     void Sensor::updatePose(bool updateChildren)
     {
@@ -162,7 +165,8 @@ namespace VirtualRobot
         if (p)
         {
             this->globalPose = p->getGlobalPose() * rnTransformation;
-        }
+        } else
+            this->globalPose = rnTransformation;
 
         // update collision and visualization model and children
         SceneObject::updatePose(updateChildren);

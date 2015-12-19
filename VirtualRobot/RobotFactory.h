@@ -25,6 +25,7 @@
 
 #include "VirtualRobot.h"
 #include "MathTools.h"
+#include "Nodes/Sensor.h"
 
 #include <string>
 #include <vector>
@@ -113,21 +114,18 @@ namespace VirtualRobot
         static bool detach(RobotPtr robot, RobotNodePtr rn);
 
 
-        // some internal stuff
-
-        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr >& nodes, RobotNodePtr parent, const Eigen::Matrix4f& trafo);
-        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB, Eigen::Matrix4f& storeTrafo);
-        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr>& appendNodes);
-
-
     protected:
+
+        // some internal stuff
+        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr >& nodes, RobotNodePtr parent, RobotNodePtr parentClone, const Eigen::Matrix4f& trafo, const std::vector<SensorPtr> &sensors);
+        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeAClone, RobotNodePtr nodeB, Eigen::Matrix4f& storeTrafo);
+        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr>& appendNodes);
+        static void getChildSensorNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<SensorPtr>& appendNodes);
+
         // instantiation not allowed
         RobotFactory();
         virtual ~RobotFactory();
-
-        //static bool initRobotNode(RobotNodePtr n, RobotNodePtr parent, std::vector< RobotNodePtr > &robotNodes);
     };
-
 }
 
 #endif // _VirtualRobot_RobotFactory_h_
