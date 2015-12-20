@@ -238,7 +238,18 @@ namespace VirtualRobot
                 return true;
             }
         }
+        return false;
+    }
 
+    bool RobotNodeSet::hasRobotNode(const std::string &nodeName) const
+    {
+        for (unsigned int i = 0; i < robotNodes.size(); i++)
+        {
+            if (robotNodes[i]->getName() == nodeName)
+            {
+                return true;
+            }
+        }
         return false;
     }
 

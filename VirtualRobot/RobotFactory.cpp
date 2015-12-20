@@ -858,5 +858,106 @@ namespace VirtualRobot
         return result;
     }
 
+    RobotPtr RobotFactory::cloneUniteSubsets(RobotPtr robot, const std::string& name, std::vector<std::string> uniteWithAllChildren)
+    {
+        THROW_VR_EXCEPTION_IF(!robot, "NULL data");
+        if (uniteWithAllChildren.size() == 0)
+            return RobotFactory::clone(robot, robot->getName());
+
+        for (size_t i = 0; i < uniteWithAllChildren.size(); i++)
+        {
+            THROW_VR_EXCEPTION_IF(!robot->hasRobotNode(uniteWithAllChildren[i]), "Could not find RobotNode in robot");
+        }
+
+
+        RobotPtr result(new LocalRobot(name, robot->getType()));
+
+
+        RobotNodePtr currentNode = robot->getRootNode();
+        RobotNodePtr currentNodeClone = currentNode->clone(result, false);
+        result->setRootNode(currentNodeClone);
+
+        cloneRecursiveUnite(result, currentNode, currentNodeClone, uniteWithAllChildren);
+
+        // clone RNS
+        std::vector<RobotNodeSetPtr> rnsets = robot->getRobotNodeSets();
+        for (size_t i = 0; i < rnsets.size(); i++)
+        {
+            RobotNodeSetPtr rns = rnsets[i];
+            
+            bool ok = true;
+            for (size_t j = 0; j < uniteWithAllChildren.size(); j++)
+            {
+                RobotNodePtr rn = robot->getRobotNode(uniteWithAllChildren[j]);
+                std::vector<RobotNodePtr> allChildren;
+                rn->collectAllRobotNodes(allChildren);
+                for (size_t k = 0; k < allChildren.size(); k++)
+                {
+                    if (allChildren[k] == rn)
+                        continue;
+                    if (rns->hasRobotNode(allChildren[k]->getName()))
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if (ok)
+            {
+                rns->clone(result);
+            }
+        }
+
+        result->setGlobalPose(robot->getGlobalPose());
+        return result;
+    }
+
+    void RobotFactory::cloneRecursiveUnite(RobotPtr robot, RobotNodePtr currentNode, RobotNodePtr currentNodeClone, std::vector<std::string> uniteWithAllChildren)
+    {
+        std::vector<SceneObjectPtr> c = currentNode->getChildren();
+
+
+        for (size_t i = 0; i < c.size(); i++)
+        {
+            if (std::find(uniteWithAllChildren.begin(), uniteWithAllChildren.end(), c[i]->getName()) != uniteWithAllChildren.end())
+            {
+                RobotNodePtr currentRN = boost::dynamic_pointer_cast<RobotNode>(c[i]);
+                THROW_VR_EXCEPTION_IF(!currentRN, "Only RN allowed in list");
+                RobotNodePtr currentRNClone = currentRN->clone(robot, false, currentNodeClone);
+
+                std::vector<RobotNodePtr> childNodes;
+                std::vector<SensorPtr> childSensorNodes;
+
+                getChildNodes(currentRN, RobotNodePtr(), childNodes);
+                getChildSensorNodes(currentRN, RobotNodePtr(), childSensorNodes);
+
+                if (childNodes.size() > 0)
+                {
+                    RobotNodePtr res = createUnitedRobotNode(robot, childNodes, currentRN, currentRNClone, Eigen::Matrix4f::Identity(), childSensorNodes);
+                    // res is automatically added
+                }
+            }
+            else
+            {
+                RobotNodePtr currentRN = boost::dynamic_pointer_cast<RobotNode>(c[i]);
+                if (currentRN)
+                {
+                    RobotNodePtr currentRNClone = currentRN->clone(robot, false, currentNodeClone);
+                    cloneRecursiveUnite(robot, currentRN, currentRNClone, uniteWithAllChildren);
+                }
+                else
+                {
+                    SensorPtr s = boost::dynamic_pointer_cast<Sensor>(c[i]);
+                    if (s)
+                    {
+                        s->clone(currentNodeClone);
+                    } else
+                        VR_INFO << "Skipping node " << c[i]->getName() << endl;
+                }
+            }
+ 
+        }
+
+    }
 
 } // namespace VirtualRobot
