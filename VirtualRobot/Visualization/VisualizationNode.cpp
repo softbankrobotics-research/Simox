@@ -113,7 +113,7 @@ namespace VirtualRobot
 
         if (p)
         {
-            return p->faces.size();
+            return (int)p->faces.size();
         }
 
         return 0;

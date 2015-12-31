@@ -36,7 +36,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 200.0f;
 
 RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
-                           const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv, Qt::WFlags flags)
+                           const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -255,7 +255,7 @@ void RrtGuiWindow::loadSceneWindow()
         return;
     }
 
-    sceneFile = std::string(fi.toAscii());
+    sceneFile = std::string(fi.toLatin1());
     loadScene();
 }
 

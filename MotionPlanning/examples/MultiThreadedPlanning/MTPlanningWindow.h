@@ -33,7 +33,7 @@ class MTPlanningWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MTPlanningWindow(Qt::WFlags flags = 0);
+    MTPlanningWindow();
     ~MTPlanningWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

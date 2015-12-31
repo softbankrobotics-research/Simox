@@ -39,7 +39,7 @@ float TIMER_MS = 200.0f;
 GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& sConf, const std::string& goalObject,
                                const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                                const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
-                               const std::string& colModelEnv, Qt::WFlags flags)
+                               const std::string& colModelEnv)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -271,7 +271,7 @@ void GraspRrtWindow::loadSceneWindow()
         return;
     }
 
-    sceneFile = std::string(fi.toAscii());
+    sceneFile = std::string(fi.toLatin1());
     loadScene();
 }
 

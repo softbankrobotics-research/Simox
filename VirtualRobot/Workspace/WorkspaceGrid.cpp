@@ -92,7 +92,7 @@ namespace VirtualRobot
         }
 
         storeEntry = data[getDataPos(nPosX, nPosY)];
-        int nLinks = graspLink[getDataPos(nPosX, nPosY)].size();
+        size_t nLinks = graspLink[getDataPos(nPosX, nPosY)].size();
 
         if (nLinks > 0)
         {
@@ -157,7 +157,7 @@ namespace VirtualRobot
         }
 
         storeEntry = data[getDataPos(cellX, cellY)];
-        int nLinks = graspLink[getDataPos(cellX, cellY)].size();
+        size_t nLinks = graspLink[getDataPos(cellX, cellY)].size();
 
         if (nLinks > 0)
         {

@@ -35,7 +35,7 @@ class IKRRTWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob, Qt::WFlags flags = 0);
+    IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob);
     ~IKRRTWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

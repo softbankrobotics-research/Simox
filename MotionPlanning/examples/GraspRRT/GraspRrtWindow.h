@@ -40,7 +40,7 @@ public:
     GraspRrtWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
                    const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                    const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
-                   const std::string& colModelEnv, Qt::WFlags flags = 0);
+                   const std::string& colModelEnv);
     ~GraspRrtWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

@@ -32,7 +32,7 @@ class ReachabilityMapWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef, Qt::WFlags flags = 0);
+    ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef);
     ~ReachabilityMapWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

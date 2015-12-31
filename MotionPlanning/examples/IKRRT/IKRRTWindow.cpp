@@ -37,7 +37,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob, Qt::WFlags flags)
+IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;

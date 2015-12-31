@@ -936,10 +936,10 @@ namespace VirtualRobot
     // overwrites given basis
     bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::GramSchmidt(std::vector< Eigen::VectorXf >& basis)
     {
-        int dim = basis.size();
+        size_t dim = basis.size();
         THROW_VR_EXCEPTION_IF(dim == 0, "Need basis vectors");
 
-        for (int i = 0; i < dim; i++)
+        for (size_t i = 0; i < dim; i++)
         {
             VR_ASSERT_MESSAGE((int)basis[i].rows() == dim, "Length of basis vectors is wrong");
         }
@@ -961,7 +961,7 @@ namespace VirtualRobot
             std::vector< Eigen::VectorXf > tmpBasisV;
 
             // remain order of basis vectors
-            for (int i = 0; i < dim; i++)
+            for (size_t i = 0; i < dim; i++)
             {
                 if (containsVector(basisVectors, basis[i]))
                 {
@@ -969,7 +969,7 @@ namespace VirtualRobot
                 }
             }
 
-            for (int j = startWithDet; j < dim; j++)
+            for (size_t j = startWithDet; j < dim; j++)
             {
                 Eigen::VectorXf newBasisVector;
 
@@ -977,7 +977,7 @@ namespace VirtualRobot
                 {
                     VR_ERROR << "Could not find linearly independent basis vector?! " << endl;
 
-                    for (int i = 0; i < dim; i++)
+                    for (size_t i = 0; i < dim; i++)
                     {
                         cout << "vec " << i << ":\n" << basis[i] << endl;
                     }
@@ -1045,16 +1045,16 @@ namespace VirtualRobot
         // norm the first vector
         basis[0].normalize();
         int startWith = 0;
-        int pos = 1;
+		size_t pos = 1;
 
         while (pos < dim)
         {
-            for (int i = 0; i < pos; i++)
+            for (size_t i = 0; i < pos; i++)
             {
                 if (basis[i].dot(basis[pos]) != 0)
                 {
                     startWith = pos;
-                    pos = dim + 1; // end loop
+                    pos = (int)dim + 1; // end loop
                     break;
                 }
             }
@@ -1071,12 +1071,12 @@ namespace VirtualRobot
 
         float scPr;
 
-        for (int i = startWith; i < dim; i++) // each basis vector
+        for (size_t i = startWith; i < dim; i++) // each basis vector
         {
             // store original vector
             Eigen::Vector3f tmp = basis[i];
 
-            for (int j = 0; j < i; j++) // subtract scalar products of former basises
+            for (size_t j = 0; j < i; j++) // subtract scalar products of former basises
             {
                 // create scalar product
                 scPr = tmp.dot(basis[j]);

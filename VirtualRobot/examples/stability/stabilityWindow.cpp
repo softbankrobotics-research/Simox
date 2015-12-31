@@ -31,7 +31,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-stabilityWindow::stabilityWindow(std::string& sRobotFile, Qt::WFlags flags)
+stabilityWindow::stabilityWindow(std::string& sRobotFile)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -522,7 +522,7 @@ void stabilityWindow::selectJoint(int nr)
 void stabilityWindow::selectRobot()
 {
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-    robotFile = std::string(fi.toAscii());
+    robotFile = std::string(fi.toLatin1());
     loadRobot();
 }
 

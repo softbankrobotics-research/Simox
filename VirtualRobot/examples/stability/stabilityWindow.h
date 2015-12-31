@@ -28,7 +28,7 @@ class stabilityWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    stabilityWindow(std::string& sRobotFile, Qt::WFlags flags = 0);
+    stabilityWindow(std::string& sRobotFile);
     ~stabilityWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

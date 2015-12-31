@@ -39,7 +39,7 @@ namespace VirtualRobot
 {
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
-                                         bool embeddedGraspEditor, Qt::WFlags flags)
+                                         bool embeddedGraspEditor)
         : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
@@ -315,7 +315,7 @@ namespace VirtualRobot
     void GraspEditorWindow::selectRobot()
     {
         QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-        robotFile = std::string(fi.toAscii());
+        robotFile = std::string(fi.toLatin1());
         loadRobot();
     }
 
@@ -331,7 +331,7 @@ namespace VirtualRobot
         else
         {
             QString fi = QFileDialog::getOpenFileName(this, tr("Open ManipulationObject File"), QString(), tr("XML Files (*.xml)"));
-            s = std::string(fi.toAscii());
+            s = std::string(fi.toLatin1());
         }
 
         if (s != "")
@@ -352,7 +352,7 @@ namespace VirtualRobot
         if (!embeddedGraspEditor)
         {
             QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
-            objectFile = std::string(fi.toAscii());
+            objectFile = std::string(fi.toLatin1());
         }
 
         bool ok = false;

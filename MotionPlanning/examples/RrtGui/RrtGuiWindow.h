@@ -36,7 +36,7 @@ class RrtGuiWindow : public QMainWindow
     Q_OBJECT
 public:
     RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf, const std::string& rns,
-                 const std::string& colModelRob1, const std::string& colModelRob2, const std::string& colModelEnv, Qt::WFlags flags = 0);
+                 const std::string& colModelRob1, const std::string& colModelRob2, const std::string& colModelEnv);
     ~RrtGuiWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

@@ -38,7 +38,7 @@ class GraspPlannerWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile, Qt::WFlags flags = 0);
+    GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile);
     ~GraspPlannerWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

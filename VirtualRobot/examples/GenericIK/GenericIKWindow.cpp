@@ -13,7 +13,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-GenericIKWindow::GenericIKWindow(std::string& sRobotFilename, Qt::WFlags flags)
+GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;

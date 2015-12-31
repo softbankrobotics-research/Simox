@@ -12,7 +12,7 @@
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/ManipulationObject.h>
 #include <string.h>
-#include <QtCore/QtGlobal>
+#include <QtWidgets/QtWidgets>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
@@ -40,7 +40,7 @@ namespace VirtualRobot
     {
         Q_OBJECT
     public:
-        GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false, Qt::WFlags flags = 0);
+        GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false);
         virtual ~GraspEditorWindow();
 
         /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

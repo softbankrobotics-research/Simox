@@ -31,7 +31,7 @@ class reachabilityWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP, Qt::WFlags flags = 0);
+    reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP);
     ~reachabilityWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

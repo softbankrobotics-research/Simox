@@ -28,6 +28,9 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#ifdef WIN32
+#pragma warning(disable:4275)
+#endif
 
 namespace VirtualRobot
 {
@@ -67,5 +70,9 @@ namespace VirtualRobot
  * with the parameter \a messageString if the condition is true.
  */
 #define THROW_VR_EXCEPTION_IF(condition, messageString) do{if (condition) THROW_VR_EXCEPTION(messageString);}while(0);
+
+#ifdef WIN32
+#pragma warning(default:4275)  
+#endif
 
 #endif // _VirtualRobot_VirtualRobotException_h_

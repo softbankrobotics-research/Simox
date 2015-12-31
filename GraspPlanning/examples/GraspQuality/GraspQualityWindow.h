@@ -36,7 +36,7 @@ class GraspQualityWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GraspQualityWindow(std::string& robotFile, std::string& objectFile,  Qt::WFlags flags = 0);
+    GraspQualityWindow(std::string& robotFile, std::string& objectFile);
     ~GraspQualityWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

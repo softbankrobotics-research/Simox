@@ -27,7 +27,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name, Qt::WFlags flags)
+showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -391,7 +391,7 @@ void showCamWindow::selectRobot()
     string supported = "Supported Formats, " + supportedExtensions + " (" + supportedExtensions + ")";
     string filter = supported + ";;" + RobotImporterFactory::getAllFileFilters();
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr(filter.c_str()));
-    std::string s = m_sRobotFilename = std::string(fi.toAscii());
+    std::string s = m_sRobotFilename = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
@@ -412,7 +412,7 @@ void showCamWindow::loadRobot()
     try
     {
         QFileInfo fileInfo(m_sRobotFilename.c_str());
-        std::string suffix(fileInfo.suffix().toAscii());
+        std::string suffix(fileInfo.suffix().toLatin1());
         RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
 
         if (!importer)

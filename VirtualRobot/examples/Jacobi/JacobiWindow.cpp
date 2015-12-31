@@ -14,7 +14,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-JacobiWindow::JacobiWindow(std::string& sRobotFilename, Qt::WFlags flags)
+JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;

@@ -62,7 +62,7 @@ class MatGraspPlannerWindow : public QMainWindow
 
     Q_OBJECT
 public:
-    MatGraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile, Qt::WFlags flags = 0);
+    MatGraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile);
     ~MatGraspPlannerWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

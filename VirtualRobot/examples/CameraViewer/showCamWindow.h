@@ -34,7 +34,7 @@ class showCamWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name, Qt::WFlags flags = 0);
+    showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name);
     ~showCamWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

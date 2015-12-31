@@ -25,7 +25,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-showSceneWindow::showSceneWindow(std::string& sSceneFile, Qt::WFlags flags)
+showSceneWindow::showSceneWindow(std::string& sSceneFile)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -253,7 +253,7 @@ void showSceneWindow::sliderMoved(int pos)
 void showSceneWindow::selectScene()
 {
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Scene File"), QString(), tr("XML Files (*.xml)"));
-    sceneFile = std::string(fi.toAscii());
+    sceneFile = std::string(fi.toLatin1());
     loadScene();
 }
 
@@ -394,7 +394,7 @@ void showSceneWindow::selectRobot(int nr)
         return;
     }
 
-    std::string robName(UI.comboBoxRobot->currentText().toAscii());
+    std::string robName(UI.comboBoxRobot->currentText().toLatin1());
     currentRobot = scene->getRobot(robName);
 
     if (!currentRobot)
@@ -451,7 +451,7 @@ void showSceneWindow::selectRobotConfig(int nr)
         return;
     }
 
-    std::string s(UI.comboBoxRobotConfig->currentText().toAscii());
+    std::string s(UI.comboBoxRobotConfig->currentText().toLatin1());
     VirtualRobot::RobotConfigPtr rc = scene->getRobotConfig(currentRobot->getName(), s);
 
     if (!rc)
@@ -474,7 +474,7 @@ void showSceneWindow::selectTrajectory(int nr)
     }
 
     UI.horizontalSlider->setEnabled(true);
-    std::string s(UI.comboBoxTrajectory->currentText().toAscii());
+    std::string s(UI.comboBoxTrajectory->currentText().toLatin1());
     currentTrajectory = scene->getTrajectory(s);
     sliderMoved(0);
 }
@@ -487,7 +487,7 @@ void showSceneWindow::selectEEF(int nr)
         return;
     }
 
-    std::string eefStr(UI.comboBoxEEF->currentText().toAscii());
+    std::string eefStr(UI.comboBoxEEF->currentText().toLatin1());
     currentEEF = currentRobot->getEndEffector(eefStr);
     updateGrasps();
 }
@@ -499,7 +499,7 @@ void showSceneWindow::selectObject(int nr)
         return;
     }
 
-    std::string ob(UI.comboBoxObject->currentText().toAscii());
+    std::string ob(UI.comboBoxObject->currentText().toLatin1());
     currentObject.reset();
 
     if (scene->hasManipulationObject(ob))
@@ -520,7 +520,7 @@ void showSceneWindow::selectGrasp(int nr)
         return;
     }
 
-    std::string grStr(UI.comboBoxGrasp->currentText().toAscii());
+    std::string grStr(UI.comboBoxGrasp->currentText().toLatin1());
 
     if (currentGraspSet->hasGrasp(grStr))
     {
@@ -620,12 +620,12 @@ void showSceneWindow::closeHand()
     {
         if (UI.comboBoxObject->currentIndex() < (int)scene->getManipulationObjects().size())
         {
-            std::string s(UI.comboBoxObject->currentText().toAscii());
+            std::string s(UI.comboBoxObject->currentText().toLatin1());
             so = scene->getManipulationObject(s);
         }
         else
         {
-            std::string s(UI.comboBoxObject->currentText().toAscii());
+            std::string s(UI.comboBoxObject->currentText().toLatin1());
             so = scene->getObstacle(s);
         }
     }

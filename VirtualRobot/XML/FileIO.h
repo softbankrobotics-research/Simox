@@ -109,7 +109,7 @@ namespace VirtualRobot
 
         inline void writeString(std::ofstream& file, const std::string& value)
         {
-            int32_t len = value.length();
+            size_t len = value.length();
             file.write((char*)&len, sizeof(int32_t));
             file.write(value.c_str(), len);
         }
