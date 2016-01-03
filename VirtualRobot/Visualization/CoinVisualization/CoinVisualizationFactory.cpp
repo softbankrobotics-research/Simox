@@ -62,6 +62,7 @@
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/SbTime.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -94,7 +95,18 @@ namespace VirtualRobot
         if (!SoDB::isInitialized())
             SoDB::init();
         SoQt::init(argc, argv, appName.c_str());
+
+        // enable Coin3D extension: transparent settings without color
         (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
+
+        // neded since some Linux gfx drivers seem to report zero max pbuffer size -> offscreen renderer is disabled
+        (void)coin_setenv("COIN_OFFSCREENRENDERER_TILEWIDTH", "2048", TRUE);
+        (void)coin_setenv("COIN_OFFSCREENRENDERER_TILEHEIGHT", "2048", TRUE);
+
+        // we can enable coin debug messages
+        //(void)coin_setenv("COIN_DEBUG_SOOFFSCREENRENDERER", "1", TRUE);
+        //(void)coin_setenv("COIN_DEBUG_GLGLUE", "1", TRUE);
+
     }
 
     /**
@@ -3237,6 +3249,7 @@ namespace VirtualRobot
 
     bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer)
     {
+        //SbTime t1 = SbTime::getTimeOfDay(); // for profiling
         if (!renderer || !cam || !scene || buffer == NULL)
         {
             return false;
@@ -3246,18 +3259,13 @@ namespace VirtualRobot
         SoSeparator* root = new SoSeparator();
         root->ref();
 
-        // we use MM in VirtualRobot
-//        SoUnits* unit = new SoUnits();
-//        unit->units = SoUnits::MILLIMETERS;
-//        root->addChild(unit);
-
         SoDirectionalLight* light = new SoDirectionalLight;
         root->addChild(light);
 
         // easy light model, no shadows or something
-        //SoLightModel *lightModel = new SoLightModel();
-        //lightModel->model = SoLightModel::BASE_COLOR;
-        //root->addChild(lightModel);
+        /*SoLightModel *lightModel = new SoLightModel();
+        lightModel->model = SoLightModel::BASE_COLOR;
+        root->addChild(lightModel);*/
 
         const auto camPos =cam->position.getValue();
         SoPerspectiveCamera* camInMeters = static_cast<SoPerspectiveCamera*>(cam->copy());
@@ -3272,9 +3280,16 @@ namespace VirtualRobot
         root->addChild(camInMeters);
 
         root->addChild(scene);
+        //VR_INFO << "*** preRender took " << (SbTime::getTimeOfDay() - t1).getValue() * 1000 << " ms" << endl;
 
-
+        SbTime t = SbTime::getTimeOfDay(); // for profiling
         bool ok = renderer->render(root) == TRUE ? true : false;
+
+        // check if rendering is slow (worse than 3 fps)
+        float msec = (SbTime::getTimeOfDay() - t).getValue() * 1000;
+        if (msec>300)
+            VR_WARNING << "************ offscreen rendering took " << msec << " ms" << endl;
+
         root->unref();
 
         static bool renderErrorPrinted = false;
@@ -3289,8 +3304,13 @@ namespace VirtualRobot
 
             return false;
         }
-
+        SbTime t2a = SbTime::getTimeOfDay();
         *buffer = renderer->getBuffer();
+        // getBuffer might be slow due to an internal call of glReadPixels
+        // glReadPixels is very slow with some gl drivers (experienced with an older ATI crad, glReadpixels took more that 500 ms?!)
+        float msec2 = (SbTime::getTimeOfDay() - t2a).getValue() * 1000;
+        if (msec2>300)
+            VR_WARNING << "************ getBuffer took " << msec2 << " ms" << endl;
         return true;
     }
 
