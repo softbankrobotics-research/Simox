@@ -76,6 +76,8 @@ namespace VirtualRobot
         SoMaterial *color;
     };
 
+    typedef boost::shared_ptr<CoinVisualization> CoinVisualizationPtr;
+
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_CoinVisualization_h_

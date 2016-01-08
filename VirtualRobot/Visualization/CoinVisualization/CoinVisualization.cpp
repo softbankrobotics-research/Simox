@@ -173,8 +173,12 @@ namespace VirtualRobot
 
     void CoinVisualization::colorize(VisualizationFactory::Color c)
     {
+
+        buildVisualization();
         if (!selection || !color)
+        {
             return;
+        }
 
         if (c.isNone())
         {
@@ -193,8 +197,11 @@ namespace VirtualRobot
 
     void CoinVisualization::setTransparency(float transparency)
     {
+        buildVisualization();
         if (!selection || !color)
+        {
             return;
+        }
 
         if (transparency < 0)
             transparency = 0;
