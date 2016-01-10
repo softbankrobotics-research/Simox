@@ -593,8 +593,10 @@ namespace SimDynamics
             {
                 btManifoldPoint& pt = contactManifold->getContactPoint(j);
                 DynamicsContactInfo i;
-                i.objectAName = dynObjA->getName();
-                i.objectBName = dynObjB->getName();
+                if (dynObjA)
+                    i.objectAName = dynObjA->getName();
+                if (dynObjB)
+                    i.objectBName = dynObjB->getName();
                 const btVector3& ptA = pt.getPositionWorldOnA();
                 const btVector3& ptB = pt.getPositionWorldOnB();
                 const btVector3& normalOnB = pt.m_normalWorldOnB;
