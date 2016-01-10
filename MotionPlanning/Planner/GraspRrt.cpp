@@ -68,7 +68,7 @@ namespace Saba
         performanceMeasure.rrtTimeMS = 0.0f;
         foundSolution = false;
         verbose = false;
-#ifdef _DEBUG
+#ifndef NDEBUG
         verbose = true;
 #endif
         targetObjectPosition = targetObject->getGlobalPose().block(0, 3, 3, 1);

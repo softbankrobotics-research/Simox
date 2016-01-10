@@ -1,9 +1,5 @@
 PROJECT ( loadURDFRobot )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4)
-
-CMAKE_POLICY(VERSION 2.6)
-
 if (tinyxml_library AND URDF_FOUND)
 
   include_directories(${tinyxml_include_dirs})

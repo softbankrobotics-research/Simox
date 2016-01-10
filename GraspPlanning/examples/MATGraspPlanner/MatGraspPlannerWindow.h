@@ -45,12 +45,12 @@
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <vector>
-
+#include "GraspPlanning/GraspStudio.h"
 #include "ui_MatGraspPlanner.h"
 
 #include "GraspPlanning/GraspPlanner/MATPlanner/TestCases.h"
 #include "GraspPlanning/GraspPlanner/MATPlanner/StrOutHelpers.h"
-#include "GraspPlanning/GraspStudio.h"
+
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 #include "GraspPlanning/GraspPlanner/MATPlanner/MatGraspPlanner.h"
 #include "GraspPlanning/MeshConverter.h"

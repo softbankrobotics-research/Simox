@@ -6,29 +6,32 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
 
 if(NOT ("${CMAKE_VERSION}" VERSION_LESS 2.8.12))
-	cmake_policy(SET CMP0022 OLD) # avoid INTERFACE_LINK_LIBRARIES warnings
+    cmake_policy(SET CMP0022 OLD) # avoid INTERFACE_LINK_LIBRARIES warnings
 ENDIF()
+if(POLICY CMP0020)
+    cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
+endif()
 
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
 if (Simox_USE_RBDL)
-	FIND_PACKAGE (RBDL)
+    FIND_PACKAGE (RBDL)
 endif()
 
 ########################### TESTING #####################################
-MACRO(ADD_VR_TEST TEST_NAME)  
-  INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
-  INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
-  INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
-  ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
-  ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK) 
-  ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-        TARGET_LINK_LIBRARIES(${TEST_NAME} VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
-	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
-	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "VirtualRobot Tests")
-	ADD_TEST(NAME VirtualRobot_${TEST_NAME}
-	         COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
+    MACRO(ADD_VR_TEST TEST_NAME)  
+    INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
+    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
+    ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
+    ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK) 
+    ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
+    TARGET_LINK_LIBRARIES(${TEST_NAME} VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
+    SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
+    SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "VirtualRobot Tests")
+    ADD_TEST(NAME VirtualRobot_${TEST_NAME}
+        COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
 ENDMACRO()
 
 #################################### FILES ##################################
@@ -123,17 +126,16 @@ VirtualRobot.cpp
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
     SET(SOURCES
-		${SOURCES}
-		Dynamics/dynamics.cpp
+        ${SOURCES}
+        Dynamics/dynamics.cpp
     )
 
-	SET(INCLUDES
-		${INCLUDES}
-		Dynamics/dynamics.h
-	)
+    SET(INCLUDES
+        ${INCLUDES}
+        Dynamics/dynamics.h
+    )
 
-	ADD_SUBDIRECTORY(Dynamics/tests)
-
+    ADD_SUBDIRECTORY(Dynamics/tests)
 endif ()
 
 
@@ -238,24 +240,16 @@ Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
 
-
-
-
-
-
-
-
-
 ADD_SUBDIRECTORY(Visualization/tests)
 ADD_SUBDIRECTORY(Workspace/tests)
 ADD_SUBDIRECTORY(Compression/tests)
 
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
-	SET(SOURCES
-	${SOURCES}
-	Visualization/CoinVisualization/CoinVisualizationFactory.cpp
-	Visualization/CoinVisualization/CoinVisualizationNode.cpp
+    SET(SOURCES
+    ${SOURCES}
+    Visualization/CoinVisualization/CoinVisualizationFactory.cpp
+    Visualization/CoinVisualization/CoinVisualizationNode.cpp
     Visualization/CoinVisualization/CoinVisualization.cpp
     Import/COLLADA-light/ColladaSimox.cpp
     Import/COLLADA-light/collada.cpp
@@ -264,10 +258,10 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/SimoxCOLLADAFactory.cpp
     )
 
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/CoinVisualization/CoinVisualizationFactory.h
-	Visualization/CoinVisualization/CoinVisualizationNode.h
+    SET(INCLUDES
+    ${INCLUDES}
+    Visualization/CoinVisualization/CoinVisualizationFactory.h
+    Visualization/CoinVisualization/CoinVisualizationNode.h
     Visualization/CoinVisualization/CoinVisualization.h
     Import/COLLADA-light/ColladaSimox.h
     Import/COLLADA-light/collada.h
@@ -275,34 +269,37 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/SimoxCOLLADAFactory.cpp
     Import/COLLADA-light/inventor.h
     Import/SimoxCOLLADAFactory.h
-	)
-	ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
+    )
+    ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
 
 elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
 
-	SET(SOURCES
-	${SOURCES}
-	Visualization/OSGVisualization/OSGVisualizationFactory.cpp
-	Visualization/OSGVisualization/OSGVisualizationNode.cpp
+    SET(SOURCES
+    ${SOURCES}
+    Visualization/OSGVisualization/OSGVisualizationFactory.cpp
+    Visualization/OSGVisualization/OSGVisualizationNode.cpp
     Visualization/OSGVisualization/OSGVisualization.cpp
     Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.cpp
-	)
+    )
 
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/OSGVisualization/OSGVisualizationFactory.h
-	Visualization/OSGVisualization/OSGVisualizationNode.h
+    SET(INCLUDES
+    ${INCLUDES}
+    Visualization/OSGVisualization/OSGVisualizationFactory.h
+    Visualization/OSGVisualization/OSGVisualizationNode.h
     Visualization/OSGVisualization/OSGVisualization.h
     Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
-	)
+    )
 
-	set(GUI_MOC_HDRS
+    set(GUI_MOC_HDRS
         Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
     )
-    qt4_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
+    if (Simox_USE_QT4)
+        qt4_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
+        else()
+        qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
+    endif()
 
-	ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
-	#ADD_SUBDIRECTORY(Visualization/OSGVisualization/osgQtViewer)
+    ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
 
 endif ()
 
@@ -327,39 +324,39 @@ endif ()
 
 #check for URDF
 if (Simox_USE_URDF)
-	include(SearchForTinyXML)
-	FIND_PACKAGE(urdfdom)
-	#FIND_PACKAGE(PkgConfig)
-	#PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
-	#PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
+    include(SearchForTinyXML)
+    FIND_PACKAGE(urdfdom)
+    #FIND_PACKAGE(PkgConfig)
+    #PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
+    #PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
 
-	if (tinyxml_library AND URDF_FOUND)
-	   MESSAGE(STATUS " ** Including URDF importer")
+    if (tinyxml_library AND URDF_FOUND)
+        MESSAGE(STATUS " ** Including URDF importer")
 
-		include_directories(${tinyxml_include_dirs})
-		link_directories(${tinyxml_library_dirs})
-		add_definitions(${tinyxml_cflags})
-		add_definitions(" -DTIXML_USE_STL ")
+        include_directories(${tinyxml_include_dirs})
+        link_directories(${tinyxml_library_dirs})
+        add_definitions(${tinyxml_cflags})
+        add_definitions(" -DTIXML_USE_STL ")
 
-		INCLUDE_DIRECTORIES (
-			${URDFDOM_INCLUDE_DIRS}
-			${URDFDOM_PARSER_INCLUDE_DIRS}
-			${URDFDOM_HEADERS_INCLUDE_DIRS}
-		)
+        INCLUDE_DIRECTORIES (
+            ${URDFDOM_INCLUDE_DIRS}
+            ${URDFDOM_PARSER_INCLUDE_DIRS}
+            ${URDFDOM_HEADERS_INCLUDE_DIRS}
+        )
 
-		SET(SOURCES
-		  ${SOURCES}
-			Import/URDF/SimoxURDFFactory.cpp
-			)
-		SET(INCLUDES
-		  ${INCLUDES}
-			Import/URDF/SimoxURDFFactory.h
-			)
+        SET(SOURCES
+          ${SOURCES}
+            Import/URDF/SimoxURDFFactory.cpp
+            )
+        SET(INCLUDES
+          ${INCLUDES}
+            Import/URDF/SimoxURDFFactory.h
+            )
 
-		SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
-	else()
-		MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
-	endif()
+        SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
+    else()
+        MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
+    endif()
 endif()
 
 # include collision detection
@@ -375,28 +372,36 @@ ADD_SUBDIRECTORY(examples/)
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
-if (QT_FOUND AND Simox_USE_COIN_VISUALIZATION)
+if (Simox_USE_COIN_VISUALIZATION)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
-	set(UI
-		Grasping/GraspEditor/GraspEditor.ui
-	)
-	QT4_WRAP_UI(UI_HEADERS ${UI})
-	set(INCLUDES ${INCLUDES} ${UI_HEADERS})
-	QT4_WRAP_CPP(MOC_SRC
-		Grasping/GraspEditor/GraspEditorWindow.h
-	)
+    set(UI
+        Grasping/GraspEditor/GraspEditor.ui
+    )
+    
+  if (Simox_USE_QT4)
+        QT4_WRAP_UI(UI_HEADERS ${UI})
+        QT4_WRAP_CPP(MOC_SRC
+            Grasping/GraspEditor/GraspEditorWindow.h
+        )
+    else()
+        QT5_WRAP_UI(UI_HEADERS ${UI})
+        QT5_WRAP_CPP(MOC_SRC
+            Grasping/GraspEditor/GraspEditorWindow.h
+        )
+  endif()
 
-	SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
-	SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
+    
+    set(INCLUDES ${INCLUDES} ${UI_HEADERS})
+
+    SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
+    SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
 endif()
 
 # Finished adding UI files
 #-----------------------------------------------------------------------------------
 
-
 ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
 TARGET_LINK_LIBRARIES(VirtualRobot ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
-
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
@@ -410,21 +415,20 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simo
 ############################ Setup for installation ###################################
 #######################################################################################
 
-
 #set_target_properties(${PROJECT_NAME} PROPERTIES
 #  PUBLIC_HEADER "${INCLUDES}")
 
 install(TARGETS ${PROJECT_NAME}
-  # IMPORTANT: Add the library to the "export-set"
-  EXPORT SimoxTargets
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
-  COMPONENT dev)
-#  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/VirtualRobot"
+    # IMPORTANT: Add the library to the "export-set"
+    EXPORT SimoxTargets
+    RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+    LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
+    ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
+    COMPONENT dev)
+    #  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/VirtualRobot"
  
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION "${Simox_INSTALL_HEADER_DIR}"
-	COMPONENT Headers
+    COMPONENT Headers
         FILES_MATCHING
         PATTERN "*.h"
         PATTERN "*.hpp"
@@ -435,10 +439,10 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION 
         PATTERN "build*" EXCLUDE
         PATTERN "data" EXCLUDE
         PATTERN "examples" EXCLUDE
-	)
+    )
 
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
-	COMPONENT ApplicationData
+    COMPONENT ApplicationData
         FILES_MATCHING 
         PATTERN "*.xml"
         PATTERN "*.XML"

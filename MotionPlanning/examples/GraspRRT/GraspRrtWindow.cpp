@@ -589,7 +589,7 @@ void GraspRrtWindow::selectTargetObject(int nr)
     targetObject = obstacles[nr];
     graspQuality.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(targetObject));
     int points = 400;
-#ifdef _DEBUG
+#ifndef NDEBUG
     points = 100;
 #endif
     graspQuality->calculateOWS(points);

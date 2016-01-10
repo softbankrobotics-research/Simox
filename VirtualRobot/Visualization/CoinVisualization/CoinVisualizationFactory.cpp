@@ -67,8 +67,9 @@
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
 // avoid std::min, std::max errors
-#define NOMINMAX
-#include <windows.h>
+#  define NOMINMAX
+#  include <winsock2.h>
+#  include <windows.h>
 #endif
 #include <GL/gl.h>
 

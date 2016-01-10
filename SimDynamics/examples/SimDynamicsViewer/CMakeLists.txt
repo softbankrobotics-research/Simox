@@ -1,9 +1,5 @@
 PROJECT ( SimDynamicsViewer )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4)
-
-CMAKE_POLICY(VERSION 2.6)
-
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
 IF(Simox_USE_COIN_VISUALIZATION)

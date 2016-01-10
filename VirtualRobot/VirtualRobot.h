@@ -298,19 +298,22 @@ namespace VirtualRobot
 #define VR_ERROR std::cerr <<__FILE__ << ":" << __LINE__ << " - ERROR - "
 
 
-#ifdef _DEBUG
-    /*!
-        This assert macro does nothing on RELEASE builds.
-    */
-#define VR_ASSERT( a )  BOOST_ASSERT( a )
-    //THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << ")" );
+#ifdef NDEBUG
 
-    // we have to switch to boost 1.48 to allow messages (BOOST_ASSERT_MSG) ....
-#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT(a)
-    //THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << "): " << b );
-#else
 #define VR_ASSERT(a)
 #define VR_ASSERT_MESSAGE(a,b)
+
+#else
+	/*!
+	This assert macro does nothing on RELEASE builds.
+	*/
+#define VR_ASSERT( a )  BOOST_ASSERT( a )
+	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << ")" );
+
+	// we have to switch to boost 1.48 to allow messages (BOOST_ASSERT_MSG) ....
+#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT(a)
+	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << "): " << b );
+
 #endif
 
 

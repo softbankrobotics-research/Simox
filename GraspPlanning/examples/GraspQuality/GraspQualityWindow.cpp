@@ -115,11 +115,9 @@ void GraspQualityWindow::setupUI()
     // setup
     m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     m_pExViewer->setAccumulationBuffer(true);
-#ifdef WIN32
-#ifndef _DEBUG
+
     m_pExViewer->setAntialiasing(true, 4);
-#endif
-#endif
+
     m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
     m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
     m_pExViewer->setFeedbackVisibility(true);

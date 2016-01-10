@@ -25,7 +25,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-showRobotWindow::showRobotWindow(std::string& sRobotFilename, Qt::WFlags flags)
+showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -99,11 +99,9 @@ void showRobotWindow::setupUI()
     // setup
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     viewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    //#ifndef _DEBUG
+
     viewer->setAntialiasing(true, 4);
-    //#endif
-#endif
+
     viewer->setGLRenderAction(new SoLineHighlightRenderAction);
     viewer->setTransparencyType(SoGLRenderAction::BLEND);
     viewer->setFeedbackVisibility(true);
@@ -393,7 +391,7 @@ void showRobotWindow::exportVRML()
 #endif
     // VRML
     QString fi = QFileDialog::getSaveFileName(this, tr("VRML 2.0 File"), QString(), tr("VRML Files (*.wrl)"));
-    std::string s = std::string(fi.toAscii());
+    std::string s = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
@@ -415,7 +413,7 @@ void showRobotWindow::exportXML()
 
     // XML
     QString fi = QFileDialog::getSaveFileName(this, tr("xml File"), QString(), tr("xml Files (*.xml)"));
-    std::string s = std::string(fi.toAscii());
+    std::string s = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
@@ -636,13 +634,105 @@ void showRobotWindow::selectRobot()
     string supported = "Supported Formats, " + supportedExtensions + " (" + supportedExtensions + ")";
     string filter = supported + ";;" + RobotImporterFactory::getAllFileFilters();
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr(filter.c_str()));
-    std::string s = m_sRobotFilename = std::string(fi.toAscii());
+    std::string s = m_sRobotFilename = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
         m_sRobotFilename = s;
         loadRobot();
     }
+}
+
+void showRobotWindow::testPerformance(RobotPtr robot, RobotNodeSetPtr rns)
+{
+    int loops = 10000;
+    Eigen::VectorXf limitMin(rns->getSize());
+    Eigen::VectorXf limitMax(rns->getSize());
+    for (size_t i = 0; i < rns->getSize(); i++)
+    {
+        limitMin[i] = rns->getNode(i)->getJointLimitLo();
+        limitMax[i] = rns->getNode(i)->getJointLimitHi();
+    }
+    Eigen::VectorXf v(rns->getSize());
+    //float minV = rn->getJointLimitLo();
+    //float maxV = rn->getJointLimitHi();
+
+    clock_t start = clock();
+    robot->setupVisualization(true, false);
+    robot->setUpdateVisualization(true);
+    robot->setUpdateCollisionModel(true);
+    robot->setThreadsafe(true);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    clock_t end = clock();
+    float timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu on, thread on): " << timeMS / (float)loops << endl;
+
+    start = clock();
+    robot->setupVisualization(false, false);
+    robot->setUpdateVisualization(false);
+    robot->setUpdateCollisionModel(false);
+    robot->setThreadsafe(true);
+    for (int i = 0; i < loops; i++)
+    {
+        /*float v = float(rand() % 1000) / 1000.0f;
+        v = minV + v * (maxV - minV);
+        rn->setJointValue(v);*/
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu off, thread on): " << timeMS / (float)loops << endl;
+
+    start = clock();
+    robot->setupVisualization(true, false);
+    robot->setUpdateVisualization(true);
+    robot->setUpdateCollisionModel(true);
+    robot->setThreadsafe(false);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu on, thread off): " << timeMS / (float)loops << endl;
+
+
+    start = clock();
+    robot->setupVisualization(false, false);
+    robot->setUpdateVisualization(false);
+    robot->setUpdateCollisionModel(false);
+    robot->setThreadsafe(false);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu off, thread off): " << timeMS / (float)loops << endl;
+
 }
 
 void showRobotWindow::loadRobot()
@@ -658,7 +748,7 @@ void showRobotWindow::loadRobot()
     try
     {
         QFileInfo fileInfo(m_sRobotFilename.c_str());
-        std::string suffix(fileInfo.suffix().toAscii());
+        std::string suffix(fileInfo.suffix().toLatin1());
         RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
 
         if (!importer)
@@ -688,6 +778,32 @@ void showRobotWindow::loadRobot()
 #if 0 
     if (robot->hasRobotNode("Index L J1"))
         robot = RobotFactory::cloneInversed(robot, "Index L J1");
+#endif
+
+#if 0
+    if (robot->hasRobotNodeSet("LeftArm"))
+        robot = RobotFactory::cloneSubSet(robot, robot->getRobotNodeSet("LeftArm"), "LeftArmRobot");
+#endif
+
+#if 0
+    if (robot->hasRobotNode("Wrist 2 L") && robot->hasRobotNode("Wrist 2 R"))
+    {
+        std::vector<std::string> l;
+        l.push_back("Wrist 2 L");
+        l.push_back("Wrist 2 R");
+        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
+    }
+    VR_INFO << "=========== PERFORMANCE orig ============" << endl;
+    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));
+    if (robot->hasRobotNode("LWy_joint") && robot->hasRobotNode("RWy_joint"))
+    {
+        std::vector<std::string> l;
+        l.push_back("LWy_joint");
+        l.push_back("RWy_joint");
+        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
+    }
+    VR_INFO << "=========== PERFORMANCE clone ============" << endl;
+    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));// ("BPy_joint"));
 #endif
 
     updatRobotInfo();

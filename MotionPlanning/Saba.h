@@ -117,13 +117,12 @@ namespace Saba
 
 #define THROW_SABA_EXCEPTION(a) THROW_VR_EXCEPTION(a)
 
-#ifdef _DEBUG
-#define SABA_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << ")" )};
-#define SABA_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
-
-#else
+#ifdef NDEBUG
 #define SABA_ASSERT(a)
 #define SABA_ASSERT_MESSAGE(a,b)
+#else
+#define SABA_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << ")" )};
+#define SABA_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
 #endif
 
 }

@@ -153,11 +153,7 @@ void IKRRTWindow::setupUI()
     // setup
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     viewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    //#ifndef _DEBUG
-    viewer->setAntialiasing(true, 8);
-    //#endif
-#endif
+    viewer->setAntialiasing(true, 4);
     viewer->setGLRenderAction(new SoLineHighlightRenderAction);
     viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
     viewer->setFeedbackVisibility(false);

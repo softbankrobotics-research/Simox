@@ -33,7 +33,7 @@ class showRobotWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    showRobotWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    showRobotWindow(std::string& sRobotFilename);
     ~showRobotWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
@@ -103,6 +103,8 @@ protected:
     bool physicsInertiaEnabled;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+
+    void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };
 
 #endif // __ShowRobot_WINDOW_H_
