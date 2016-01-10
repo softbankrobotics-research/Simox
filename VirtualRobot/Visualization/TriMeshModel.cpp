@@ -107,10 +107,13 @@ namespace VirtualRobot
 
         float l = normal.norm();
 
-        if (l < 1e-10 && !warningPrinted)
+        if (l < 1e-10)
         {
-            VR_INFO << ": Warning: tiny normal found in TriMeshModel. This error is printed only once!\n";
-            warningPrinted = true;
+            if (!warningPrinted)
+            {
+                VR_INFO << ": Warning: tiny normal found in TriMeshModel. This error is printed only once!\n";
+                warningPrinted = true;
+            }
         }
         else
         {
