@@ -53,7 +53,7 @@ namespace VirtualRobot
         this->addColor(color2);
         this->addColor(color3);
 
-        if (normal.norm() < 1e-10)
+        if (normal.norm() < 1e-10 || isnan(normal[0]) || isnan(normal[1]) || isnan(normal[2]))
         {
             normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         }
@@ -73,6 +73,10 @@ namespace VirtualRobot
         face.idColor3 = this->colors.size() - 1;
 
         face.normal = normal;
+        if (isnan(face.normal[0]) || isnan(face.normal[1]) || isnan(face.normal[2]))
+        {
+            VR_ERROR << "*** NANNNNNNNNNNNNNNNNNNNNN" << endl;
+        }
 
         this->addFace(face);
     }
@@ -114,8 +118,7 @@ namespace VirtualRobot
                 VR_INFO << ": Warning: tiny normal found in TriMeshModel. This error is printed only once!\n";
                 warningPrinted = true;
             }
-        }
-        else
+        } else
         {
             normal /= l;
         }
@@ -138,6 +141,11 @@ namespace VirtualRobot
     */
     void TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
     {
+        if (isnan(vertex[0]) || isnan(vertex[1]) || isnan(vertex[2]))
+        {
+            VR_ERROR << "NAN vertex added!!!" << endl;
+            return;
+        }
         vertices.push_back(vertex);
         boundingBox.addPoint(vertex);
     }

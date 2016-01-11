@@ -122,6 +122,8 @@ namespace VirtualRobot
                                        const SoPrimitiveVertex* v3);
     };
 
+    typedef boost::shared_ptr<CoinVisualizationNode> CoinVisualizationNodePtr;
+
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_CoinVisualizationNode_h_
