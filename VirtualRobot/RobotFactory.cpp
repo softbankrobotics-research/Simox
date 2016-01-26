@@ -670,7 +670,7 @@ namespace VirtualRobot
 
             if (parentClone)
             {
-                parentClone->attachChild(newRN);
+                newRN->initialize(parentClone);
             }
 
             // attach sensors
@@ -931,7 +931,7 @@ namespace VirtualRobot
                 getChildNodes(currentRN, RobotNodePtr(), childNodes);
                 getChildSensorNodes(currentRN, RobotNodePtr(), childSensorNodes);
 
-                if (childNodes.size() > 0)
+                if (childNodes.size() > 0 || childSensorNodes.size() > 0)
                 {
                     RobotNodePtr res = createUnitedRobotNode(robot, childNodes, currentRN, currentRNClone, Eigen::Matrix4f::Identity(), childSensorNodes);
                     // res is automatically added
