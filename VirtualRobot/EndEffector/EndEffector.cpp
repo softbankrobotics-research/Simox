@@ -628,5 +628,39 @@ namespace VirtualRobot
         return ss.str();
     }
 
+    int EndEffector::addStaticPartContacts(SceneObjectPtr obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
+    {
+        if (!obstacle)
+            return 0;
+
+        for (size_t i = 0; i < statics.size(); i++)
+        {
+            RobotNodePtr n = statics[i];
+            int id1, id2;
+            Eigen::Vector3f p1,p2;
+            float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(),obstacle->getCollisionModel(),p1,p2,&id1,&id2);
+            VR_INFO << n->getName() << " - DIST: " << dist << endl;
+            if (dist<=maxDistance)
+            {
+                EndEffector::ContactInfo ci;
+                ci.eef = shared_from_this();
+                //ci.actor = ;
+                ci.robotNode = n;
+                ci.obstacle = obstacle;
+
+                ci.distance = dist;
+                ci.contactPointFingerGlobal = p1;
+                ci.contactPointObstacleGlobal = p2;
+                ci.contactPointFingerLocal = ci.obstacle->toLocalCoordinateSystemVec(p1);
+                ci.contactPointObstacleLocal = ci.obstacle->toLocalCoordinateSystemVec(p2);
+
+                ci.approachDirectionGlobal = -approachDirGlobal;
+
+                contacts.push_back(ci);
+            }
+
+        }
+    }
+
 
 } // namespace VirtualRobot

@@ -182,6 +182,8 @@ namespace VirtualRobot
         */
         virtual std::string toXML(int ident = 1);
 
+        int addStaticPartContacts(SceneObjectPtr obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
+
     private:
         std::string name;
         std::vector<EndEffectorActorPtr> actors;

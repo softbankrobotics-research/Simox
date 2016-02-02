@@ -91,6 +91,8 @@ namespace VirtualRobot
 
         void scale(Eigen::Vector3f& scaleFactor);
 
+        std::string toXML(int tabs = 2, bool skipMatrixTag = false);
+
     protected:
         Eigen::Vector3f min;
         Eigen::Vector3f max;

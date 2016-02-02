@@ -161,20 +161,23 @@ namespace VirtualRobot
         return VisualizationPtr(new CoinVisualization(visualizationNodes));
     }
 
-    void CoinVisualization::exportToVRML2(std::string filename)
+    void CoinVisualization::exportToVRML2(std::string filename, bool useRotation)
     {
 
         SoSeparator* root = new SoSeparator;
         root->ref();
         SoRotation* rotationX = new SoRotation();
         rotationX->ref();
-        rotationX->rotation.setValue(SbVec3f(-1, 0, 0), float(M_PI / 2));
         SoRotation* rotationZ = new SoRotation();
         rotationZ->ref();
-        rotationZ->rotation.setValue(SbVec3f(0, 0, 1), float(M_PI));
 
-        root->addChild(rotationX);
-        root->addChild(rotationZ);
+        if(useRotation)
+        {
+            rotationX->rotation.setValue(SbVec3f(-1, 0, 0), float(M_PI / 2));
+            rotationZ->rotation.setValue(SbVec3f(0, 0, 1), float(M_PI));
+            root->addChild(rotationX);
+            root->addChild(rotationZ);
+        }
         root->addChild(this->getCoinVisualization());
 
         printf("Converting...\n");
