@@ -41,7 +41,6 @@ namespace GraspStudio
         int nVert3 = (objectModel->faces[nRandFace]).id3;
 
         storePos = VirtualRobot::MathTools::randomPointInTriangle(objectModel->vertices[nVert1], objectModel->vertices[nVert2], objectModel->vertices[nVert3]);
-
         //storePos = (objectModel->vertices[nVert1] + objectModel->vertices[nVert2] + objectModel->vertices[nVert3]) / 3.0f;
         /*position(0) = (objectModel->vertices[nVert1].x + objectModel->vertices[nVert2].x + objectModel->vertices[nVert3].x) / 3.0f;
         position(1) = (objectModel->vertices[nVert1].y + objectModel->vertices[nVert2].y + objectModel->vertices[nVert3].y) / 3.0f;
@@ -65,12 +64,14 @@ namespace GraspStudio
             return pose;
         }
 
+        this->aporachDirGlobal = approachDir;
 
         // set new pose
-        setEEFToApproachPose(position, approachDir);
+        setEEFToApproachPose(position,approachDir);
+
 
         // move away until valid
-        moveEEFAway(approachDir, 3.0f);
+        moveEEFAway(approachDir, 1.0f);
 
         Eigen::Matrix4f poseB = getEEFPose();
 
@@ -196,5 +197,4 @@ namespace GraspStudio
             loop++;
         }
     }
-
 }
