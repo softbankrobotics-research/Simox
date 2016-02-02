@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Sensor_h_
 #define _VirtualRobot_Sensor_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../VirtualRobotException.h"
 #include "../VirtualRobot.h"
 
@@ -80,6 +80,11 @@ namespace VirtualRobot
         {
             return rnTransformation;
         }
+
+        /*!
+            Set the local transformation.
+        */
+        virtual void setRobotNodeToSensorTransformation(const Eigen::Matrix4f& t);
 
         /*!
             Calling this SceneObject method will cause an exception, since Sensors are controlled via their RobotNode parent.

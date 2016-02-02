@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Robot_h_
 #define _VirtualRobot_Robot_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "SceneObject.h"
 #include "Nodes/Sensor.h"
 #include "Nodes/RobotNode.h"

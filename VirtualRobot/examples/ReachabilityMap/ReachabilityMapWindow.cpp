@@ -27,7 +27,7 @@ float TIMER_MS = 30.0f;
 
 //#define ENDLESS
 
-ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef, Qt::WFlags flags)
+ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -333,7 +333,7 @@ void ReachabilityMapWindow::buildGraspVisu()
     if (UI.radioButtonOneGrasp->isChecked())
     {
         QString qs(UI.comboBoxGrasp->currentText());
-        std::string s(qs.toAscii());
+        std::string s(qs.toLatin1());
         GraspPtr g = gs->getGrasp(s);
 
         if (!g)

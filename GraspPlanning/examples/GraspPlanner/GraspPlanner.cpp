@@ -16,8 +16,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "GraspPlanner");
+    VirtualRobot::init(argc, argv, "Simox Grasp Planner");
     cout << " --- START --- " << endl;
 
     // --robot robots/iCub/iCub.xml --endeffector "Left Hand" --preshape "Grasp Preshape"

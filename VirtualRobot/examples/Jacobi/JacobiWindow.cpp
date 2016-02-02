@@ -14,7 +14,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-JacobiWindow::JacobiWindow(std::string& sRobotFilename, Qt::WFlags flags)
+JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -66,13 +66,8 @@ void JacobiWindow::setupUI()
     // setup
     exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     exViewer->setAccumulationBuffer(true);
-#ifdef WIN32
 
-#ifndef _DEBUG
     exViewer->setAntialiasing(true, 4);
-#endif
-
-#endif
 
     exViewer->setTransparencyType(SoGLRenderAction::BLEND);
     exViewer->setFeedbackVisibility(true);

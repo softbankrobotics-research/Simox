@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RobotNodeSet_h_
 #define _VirtualRobot_RobotNodeSet_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "Nodes/RobotNode.h"
 #include "SceneObjectSet.h"
 #include <string>
@@ -62,6 +62,7 @@ namespace VirtualRobot
         RobotNodeSetPtr clone(RobotPtr newRobot, const RobotNodePtr newKinematicRoot = RobotNodePtr());
 
         bool hasRobotNode(RobotNodePtr robotNode) const;
+        bool hasRobotNode(const std::string &nodeName) const;
 
         /*!
             Returns all nodes.

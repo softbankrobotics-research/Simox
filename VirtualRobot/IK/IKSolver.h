@@ -23,8 +23,7 @@
 #ifndef _VirtualRobot_IKSolver_h_
 #define _VirtualRobot_IKSolver_h_
 
-#include "../VirtualRobotImportExport.h"
-
+#include "../VirtualRobot.h"
 #include "../Nodes/RobotNode.h"
 #include "../RobotNodeSet.h"
 

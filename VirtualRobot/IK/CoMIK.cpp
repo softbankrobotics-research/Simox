@@ -54,7 +54,7 @@ namespace VirtualRobot
         // Iterate over all degrees of freedom
         for (size_t i = 0; i < nDoF; i++)
         {
-            RobotNodePtr dof = rns->getNode(i);// bodyNodes[i];
+            RobotNodePtr dof = rns->getNode((int)i);// bodyNodes[i];
 
             // Check if the tcp is affected by this DOF
             if (find(parentsN.begin(), parentsN.end(), dof) != parentsN.end())

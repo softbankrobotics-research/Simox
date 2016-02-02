@@ -125,8 +125,8 @@ void endlessExtend(std::string robotFile, std::string reachFile)
 
 int main(int argc, char* argv[])
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "showRobot");
+    VirtualRobot::init(argc, argv, "Reachability Demo");
+
     cout << " --- START --- " << endl;
 
     std::string filenameReach;

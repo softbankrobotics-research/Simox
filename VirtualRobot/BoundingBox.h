@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_BoundingBox_h_
 #define _VirtualRobot_BoundingBox_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "MathTools.h"
 #include "CollisionDetection/CollisionChecker.h"
 

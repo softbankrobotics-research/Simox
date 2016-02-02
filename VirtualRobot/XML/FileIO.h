@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_FileIO_h_
 #define _VirtualRobot_FileIO_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #include <vector>
 #include <fstream>
@@ -109,7 +109,7 @@ namespace VirtualRobot
 
         inline void writeString(std::ofstream& file, const std::string& value)
         {
-            int32_t len = value.length();
+            size_t len = value.length();
             file.write((char*)&len, sizeof(int32_t));
             file.write(value.c_str(), len);
         }

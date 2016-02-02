@@ -39,7 +39,7 @@ using namespace GraspStudio;
 
 float TIMER_MS = 30.0f;
 
-GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile, Qt::WFlags flags)
+GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -496,7 +496,7 @@ void GraspPlannerWindow::save()
     ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), object->getVisualization()->clone(), object->getCollisionModel()->clone()));
     objectM->addGraspSet(grasps);
     QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
-    objectFile = std::string(fi.toAscii());
+    objectFile = std::string(fi.toLatin1());
     bool ok = false;
 
     try

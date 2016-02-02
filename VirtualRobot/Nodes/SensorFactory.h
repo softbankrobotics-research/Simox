@@ -24,7 +24,7 @@
 #define _VirtualRobot_SensorFactory_h_
 
 #include "../VirtualRobot.h"
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../AbstractFactoryMethod.h"
 #include "Sensor.h"
 #include "RobotNode.h"

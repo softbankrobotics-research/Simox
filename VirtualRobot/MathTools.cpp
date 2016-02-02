@@ -314,7 +314,7 @@ namespace VirtualRobot
     // SoftSurfer makes no warranty for this code, and cannot be held
     // liable for any real or imagined damage resulting from its use.
     // Users of this code must verify correctness for their application.
-    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(const std::vector<Eigen::Vector2f> &points)
+    MathTools::ConvexHull2DPtr MathTools::createConvexHull2D(const std::vector<Eigen::Vector2f>& points)
     {
         std::vector< Eigen::Vector2f > P = sortPoints(points);
         int n = (int)P.size();
@@ -484,12 +484,18 @@ namespace VirtualRobot
         std::vector< Eigen::Vector2f > tmp = points;
 
         // Remove double entries
-        for(auto point = tmp.begin(); point != tmp.end(); point++)
+        for (auto point = tmp.begin(); point != tmp.end(); point++)
         {
-            tmp.erase(std::remove_if(point+1, tmp.end(), [&](const Eigen::Vector2f &p) { return ((*point) - p).squaredNorm() < 1e-8; }), tmp.end());
+            tmp.erase(std::remove_if(point + 1, tmp.end(), [&](const Eigen::Vector2f & p)
+            {
+                return ((*point) - p).squaredNorm() < 1e-8;
+            }), tmp.end());
         }
 
-        std::sort(tmp.begin(), tmp.end(), [](const Eigen::Vector2f &a, const Eigen::Vector2f &b) { return a(0) < b(0) || (a(0) == b(0) && a(1) < b(1)); });
+        std::sort(tmp.begin(), tmp.end(), [](const Eigen::Vector2f & a, const Eigen::Vector2f & b)
+        {
+            return a(0) < b(0) || (a(0) == b(0) && a(1) < b(1));
+        });
         return tmp;
     }
 
@@ -930,10 +936,10 @@ namespace VirtualRobot
     // overwrites given basis
     bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::GramSchmidt(std::vector< Eigen::VectorXf >& basis)
     {
-        int dim = basis.size();
+        size_t dim = basis.size();
         THROW_VR_EXCEPTION_IF(dim == 0, "Need basis vectors");
 
-        for (int i = 0; i < dim; i++)
+        for (size_t i = 0; i < dim; i++)
         {
             VR_ASSERT_MESSAGE((int)basis[i].rows() == dim, "Length of basis vectors is wrong");
         }
@@ -955,7 +961,7 @@ namespace VirtualRobot
             std::vector< Eigen::VectorXf > tmpBasisV;
 
             // remain order of basis vectors
-            for (int i = 0; i < dim; i++)
+            for (size_t i = 0; i < dim; i++)
             {
                 if (containsVector(basisVectors, basis[i]))
                 {
@@ -963,7 +969,7 @@ namespace VirtualRobot
                 }
             }
 
-            for (int j = startWithDet; j < dim; j++)
+            for (size_t j = startWithDet; j < dim; j++)
             {
                 Eigen::VectorXf newBasisVector;
 
@@ -971,7 +977,7 @@ namespace VirtualRobot
                 {
                     VR_ERROR << "Could not find linearly independent basis vector?! " << endl;
 
-                    for (int i = 0; i < dim; i++)
+                    for (size_t i = 0; i < dim; i++)
                     {
                         cout << "vec " << i << ":\n" << basis[i] << endl;
                     }
@@ -1039,16 +1045,16 @@ namespace VirtualRobot
         // norm the first vector
         basis[0].normalize();
         int startWith = 0;
-        int pos = 1;
+		size_t pos = 1;
 
         while (pos < dim)
         {
-            for (int i = 0; i < pos; i++)
+            for (size_t i = 0; i < pos; i++)
             {
                 if (basis[i].dot(basis[pos]) != 0)
                 {
                     startWith = pos;
-                    pos = dim + 1; // end loop
+                    pos = (int)dim + 1; // end loop
                     break;
                 }
             }
@@ -1065,12 +1071,12 @@ namespace VirtualRobot
 
         float scPr;
 
-        for (int i = startWith; i < dim; i++) // each basis vector
+        for (size_t i = startWith; i < dim; i++) // each basis vector
         {
             // store original vector
             Eigen::Vector3f tmp = basis[i];
 
-            for (int j = 0; j < i; j++) // subtract scalar products of former basises
+            for (size_t j = 0; j < i; j++) // subtract scalar products of former basises
             {
                 // create scalar product
                 scPr = tmp.dot(basis[j]);
@@ -1246,6 +1252,32 @@ namespace VirtualRobot
         Eigen::Matrix4f res4 = Eigen::Matrix4f::Identity();
         res4.block(0, 0, 3, 3) =  axisangle2eigen3f(axis, angle);
         return res4;
+    }
+
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::axisangle2eigen4f(const Eigen::Vector3f& axis, float angle, Eigen::Matrix4f& storeResult)
+    {
+        float c = cosf(angle);
+        float s = sinf(angle);
+        float t = 1.0f - c;
+
+        storeResult(0, 0) = c + axis(0) * axis(0) * t;
+        storeResult(1, 1) = c + axis(1) * axis(1) * t;
+        storeResult(2, 2) = c + axis(2) * axis(2) * t;
+
+
+        float tmp1 = axis(0) * axis(1) * t;
+        float tmp2 = axis(2) * s;
+        storeResult(1, 0) = tmp1 + tmp2;
+        storeResult(0, 1) = tmp1 - tmp2;
+        tmp1 = axis(0) * axis(2) * t;
+        tmp2 = axis(1) * s;
+        storeResult(2, 0) = tmp1 - tmp2;
+        storeResult(0, 2) = tmp1 + tmp2;
+        tmp1 = axis(1) * axis(2) * t;
+        tmp2 = axis(0) * s;
+        storeResult(2, 1) = tmp1 + tmp2;
+        storeResult(1, 2) = tmp1 - tmp2;
     }
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getAngle(const Quaternion& q)

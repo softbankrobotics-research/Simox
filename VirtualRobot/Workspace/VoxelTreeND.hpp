@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VoxelTreeND_h_
 #define _VirtualRobot_VoxelTreeND_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../VirtualRobotException.h"
 #include "../MathTools.h"
 #include "../XML/FileIO.h"

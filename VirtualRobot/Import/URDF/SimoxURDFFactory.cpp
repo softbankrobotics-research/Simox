@@ -158,20 +158,45 @@ namespace VirtualRobot
         return res;
     }
 
-    std::string SimoxURDFFactory::getFilename(const std::string& f)
+    std::string SimoxURDFFactory::getFilename(const std::string& f, const string &basePath)
     {
         std::string result = f;
 
         std::string part1 = result.substr(0, 10);
 
-        if (part1 == "package://")
+        if (part1 != "package://")
         {
-            result = result.substr(10, result.length() - 10);
-        }
+            // No ROS package structure, just try to find the file in the data directory
 
-        if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+            boost::filesystem::path p_base(basePath);
+            boost::filesystem::path p_f(f);
+            result = (p_base / p_f).string();
+
+            if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+            {
+                result = f;
+                if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
+                {
+                    VR_ERROR << "Could not determine absolute path of " << result << endl;
+                }
+            }
+        }
+        else
         {
-            VR_ERROR << "Could not determine absolute path of " << result << endl;
+            // ROS Package structure, we have to be more intelligent
+            result = result.substr(10, result.length() - 10);
+
+            std::string package_base = basePath;
+
+            if(result.find("_description/") != std::string::npos)
+            {
+                std::string package_name = result.substr(0, result.find("_description/") + 12);
+                package_base = basePath.substr(0, basePath.rfind(package_name));
+            }
+
+            boost::filesystem::path p_f(result);
+            boost::filesystem::path p_base(package_base);
+            result = (p_base / p_f).string();
         }
 
         return result;
@@ -200,17 +225,23 @@ namespace VirtualRobot
             case urdf::Geometry::SPHERE:
             {
                 boost::shared_ptr<Sphere> s = boost::dynamic_pointer_cast<Sphere>(g);
-                res = factory->createSphere(s->radius);
+                res = factory->createSphere(s->radius * scale);
+            }
+            break;
+
+
+            case urdf::Geometry::CYLINDER:
+            {
+                boost::shared_ptr<Cylinder> c = boost::dynamic_pointer_cast<Cylinder>(g);
+                res = factory->createCylinder(c->radius * scale, c->length * scale);
             }
             break;
 
             case urdf::Geometry::MESH:
             {
                 boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
-                //                std::string filename = getFilename(m->filename);
-                std::string filename = m->filename;
-                BaseIO::makeAbsolutePath(basePath, filename);
-                res = factory->getVisualizationFromFile(filename);
+                std::string filename = getFilename(m->filename, basePath);
+                res = factory->getVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
             }
             break;
 
@@ -224,6 +255,52 @@ namespace VirtualRobot
             factory->applyDisplacement(res, p);
         }
 
+        return res;
+    }
+
+    VisualizationNodePtr SimoxURDFFactory::convertVisuArray(std::vector<boost::shared_ptr<urdf::Collision> > visu_array, const string &basePath)
+    {
+        VirtualRobot::VisualizationNodePtr res;
+        boost::shared_ptr<VisualizationFactory> factory = CoinVisualizationFactory::createInstance(NULL);
+
+        if (visu_array.size()==0)
+        {
+            return res;
+        }
+
+        std::vector< VisualizationNodePtr > visus;
+        for (size_t i=0; i<visu_array.size(); i++)
+        {
+            VirtualRobot::VisualizationNodePtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
+            if (v)
+            {
+                visus.push_back(v);
+            }
+        }
+        res = factory->createUnitedVisualization(visus);
+        return res;
+    }
+
+    VisualizationNodePtr SimoxURDFFactory::convertVisuArray(std::vector<boost::shared_ptr<urdf::Visual> > visu_array, const string &basePath)
+    {
+        VirtualRobot::VisualizationNodePtr res;
+        boost::shared_ptr<VisualizationFactory> factory = CoinVisualizationFactory::createInstance(NULL);
+
+        if (visu_array.size()==0)
+        {
+            return res;
+        }
+
+        std::vector< VisualizationNodePtr > visus;
+        for (size_t i=0; i<visu_array.size(); i++)
+        {
+            VirtualRobot::VisualizationNodePtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
+            if (v)
+            {
+                visus.push_back(v);
+            }
+        }
+        res = factory->createUnitedVisualization(visus);
         return res;
     }
 
@@ -247,12 +324,22 @@ namespace VirtualRobot
 
         if (urdfBody->visual && urdfBody->visual)
         {
-            rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
+            if (urdfBody->visual_array.size() > 1)
+            {
+                // visual points to first entry in array
+                rnVisu = convertVisuArray(urdfBody->visual_array, basePath);
+            } else
+                rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
         }
 
         if (urdfBody->collision && urdfBody->collision)
         {
-            VisualizationNodePtr v = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
+            VisualizationNodePtr v;
+            if (urdfBody->collision_array.size() > 1)
+            {
+                v = convertVisuArray(urdfBody->collision_array, basePath);
+            } else
+                v = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
 
             if (v)
             {
@@ -337,11 +424,16 @@ namespace VirtualRobot
 
         switch (urdfJoint->type)
         {
-            case urdf::Joint::REVOLUTE:
+        case urdf::Joint::REVOLUTE:
+        case urdf::Joint::CONTINUOUS:
                 result = revoluteNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, axis, idVec3, physics);
                 break;
 
             case urdf::Joint::PRISMATIC:
+                result = prismaticNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, axis, idVec3, physics);
+                break;
+
+           case urdf::Joint::FIXED:
                 result = prismaticNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, axis, idVec3, physics);
                 break;
 

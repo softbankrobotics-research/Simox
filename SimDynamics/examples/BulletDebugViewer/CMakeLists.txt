@@ -1,9 +1,5 @@
 PROJECT ( BulletDebugViewer )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4)
-
-CMAKE_POLICY(VERSION 2.6)
-
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
 IF (SimDynamics_USE_BULLET_USE_GLUT)

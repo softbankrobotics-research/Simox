@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_RobotConfig_h_
 #define _VirtualRobot_RobotConfig_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 
 #include "Robot.h"
 

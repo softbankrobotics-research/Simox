@@ -61,6 +61,20 @@
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/SbTime.h>
+
+#ifdef WIN32
+/* gl.h assumes windows.h is already included */
+// avoid std::min, std::max errors
+#  define NOMINMAX
+#  include <winsock2.h>
+#  include <windows.h>
+#endif
+#include <GL/gl.h>
+
+#include <Inventor/Qt/SoQt.h>
+
 #include <iostream>
 #include <algorithm>
 
@@ -75,6 +89,25 @@ namespace VirtualRobot
 
     CoinVisualizationFactory::~CoinVisualizationFactory()
     {
+    }
+
+    void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
+    {
+        if (!SoDB::isInitialized())
+            SoDB::init();
+        SoQt::init(argc, argv, appName.c_str());
+
+        // enable Coin3D extension: transparent settings without color
+        (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
+
+        // neded since some Linux gfx drivers seem to report zero max pbuffer size -> offscreen renderer is disabled
+        (void)coin_setenv("COIN_OFFSCREENRENDERER_TILEWIDTH", "2048", TRUE);
+        (void)coin_setenv("COIN_OFFSCREENRENDERER_TILEHEIGHT", "2048", TRUE);
+
+        // we can enable coin debug messages
+        //(void)coin_setenv("COIN_DEBUG_SOOFFSCREENRENDERER", "1", TRUE);
+        //(void)coin_setenv("COIN_DEBUG_GLGLUE", "1", TRUE);
+
     }
 
     /**
@@ -169,7 +202,7 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         // passing an empty string to SoInput and trying to open it aborts the program
         if (filename.empty())
@@ -186,8 +219,13 @@ namespace VirtualRobot
 
             if (ending == ".stl" || ending == "stla" || ending == "stlb")
             {
-                return getVisualizationFromSTLFile(filename, boundingBox);
+                return getVisualizationFromSTLFile(filename, boundingBox, scaleX, scaleY, scaleZ);
             }
+        }
+
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported for Coin3D files" << endl;
         }
 
         return getVisualizationFromCoin3DFile(filename, boundingBox);
@@ -213,7 +251,7 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
         // try to read from file
@@ -231,14 +269,19 @@ namespace VirtualRobot
         }
 
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
-        visualizationNode = createTriMeshModelVisualization(t, id);
+        visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
 
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
+
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported" << endl;
+        }
 
         // passing an empty string to SoInput and trying to open it aborts the program
         if (!ifs)
@@ -1874,13 +1917,29 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX, float scaleY, float scaleZ)
     {
         SoSeparator* res = new SoSeparator;
+
+        SoScale* sc = new SoScale;
+        sc->scaleFactor.setValue(scaleX, scaleY, scaleZ);
+        res->addChild(sc);
+
+        if(scaleX * scaleY * scaleZ < 0)
+        {
+            // Some robot models use negative scaling for flipping parts of the visualization.
+            // In this case we need to change the vertex order accordingly.
+            SoShapeHints *sh = new SoShapeHints;
+            sh->vertexOrdering.setValue(SoShapeHints::CLOCKWISE);
+            res->addChild(sh);
+        }
+
         SoNode* res1 = CoinVisualizationFactory::getCoinVisualization(model);
         SoMatrixTransform* mt = getMatrixTransformScaleMM2M(pose);
+
         res->addChild(mt);
         res->addChild(res1);
+
 
         VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
@@ -3142,7 +3201,7 @@ namespace VirtualRobot
         return result;
     }
 
-    SoOffscreenRenderer* CoinVisualizationFactory::createOffscreenRenderer(int width, int height)
+    SoOffscreenRenderer* CoinVisualizationFactory::createOffscreenRenderer(unsigned int width, unsigned int height)
     {
         // Set up the offscreen renderer
         SbViewportRegion vpRegion(width, height);
@@ -3152,13 +3211,16 @@ namespace VirtualRobot
         return offscreenRenderer;
     }
 
-    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer)
+    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov)
     {
         if (!camNode)
         {
             VR_ERROR << "No cam node to render..." << endl;
             return false;
         }
+
+        const float width = renderer->getViewportRegion().getWindowSize()[0];
+        const float height = renderer->getViewportRegion().getWindowSize()[1];
 
         //we assume mm
         SoPerspectiveCamera* cam = new SoPerspectiveCamera();
@@ -3174,11 +3236,10 @@ namespace VirtualRobot
         cam->orientation.setValue(align2 * align * trans); // perform total transformation
 
         // todo: check these values....
-        cam->nearDistance.setValue(10.0f);
-        cam->farDistance.setValue(100000.0f);
-
-        //cam->nearDistance.setValue(0.0010f);
-        //cam->farDistance.setValue(10.0f);
+        cam->nearDistance.setValue(zNear);
+        cam->farDistance.setValue(zFar);
+        cam->heightAngle.setValue(fov);
+        cam->aspectRatio.setValue(width/height);
 
         bool res = renderOffscreen(renderer, cam, scene, buffer);
         cam->unref();
@@ -3187,34 +3248,49 @@ namespace VirtualRobot
 
 
 
-    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, SoCamera* cam, SoNode* scene, unsigned char** buffer)
+    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer)
     {
+        //SbTime t1 = SbTime::getTimeOfDay(); // for profiling
         if (!renderer || !cam || !scene || buffer == NULL)
         {
             return false;
         }
 
-        // we use MM in VirtualRobot
-        SoUnits* unit = new SoUnits();
-        unit->units = SoUnits::MILLIMETERS;
-
         // add all to a inventor scene graph
         SoSeparator* root = new SoSeparator();
         root->ref();
+
         SoDirectionalLight* light = new SoDirectionalLight;
         root->addChild(light);
 
         // easy light model, no shadows or something
-        //SoLightModel *lightModel = new SoLightModel();
-        //lightModel->model = SoLightModel::BASE_COLOR;
-        //root->addChild(lightModel);
+        /*SoLightModel *lightModel = new SoLightModel();
+        lightModel->model = SoLightModel::BASE_COLOR;
+        root->addChild(lightModel);*/
 
-        root->addChild(unit);
-        root->addChild(cam);
+        const auto camPos =cam->position.getValue();
+        SoPerspectiveCamera* camInMeters = static_cast<SoPerspectiveCamera*>(cam->copy());
+        float sc = 0.001f;
+        camInMeters->position.setValue(camPos[0]*sc, camPos[1]*sc, camPos[2]*sc);
+        camInMeters->orientation.setValue(cam->orientation.getValue()); // perform total transformation
+
+        // todo: check these values....
+        camInMeters->nearDistance.setValue(sc*cam->nearDistance.getValue());
+        camInMeters->farDistance.setValue(sc*cam->farDistance.getValue());
+        camInMeters->heightAngle.setValue(cam->heightAngle.getValue());
+        root->addChild(camInMeters);
+
         root->addChild(scene);
+        //VR_INFO << "*** preRender took " << (SbTime::getTimeOfDay() - t1).getValue() * 1000 << " ms" << endl;
 
-
+        SbTime t = SbTime::getTimeOfDay(); // for profiling
         bool ok = renderer->render(root) == TRUE ? true : false;
+
+        // check if rendering is slow (worse than 3 fps)
+        float msec = (SbTime::getTimeOfDay() - t).getValue() * 1000;
+        if (msec>300)
+            VR_WARNING << "************ offscreen rendering took " << msec << " ms" << endl;
+
         root->unref();
 
         static bool renderErrorPrinted = false;
@@ -3229,8 +3305,237 @@ namespace VirtualRobot
 
             return false;
         }
-
+        SbTime t2a = SbTime::getTimeOfDay();
         *buffer = renderer->getBuffer();
+        // getBuffer might be slow due to an internal call of glReadPixels
+        // glReadPixels is very slow with some gl drivers (experienced with an older ATI crad, glReadpixels took more that 500 ms?!)
+        float msec2 = (SbTime::getTimeOfDay() - t2a).getValue() * 1000;
+        if (msec2>300)
+            VR_WARNING << "************ getBuffer took " << msec2 << " ms" << endl;
+        return true;
+    }
+
+    /**
+     * @brief Used for a Coin3d callback to store the zBuffer.
+     * @see renderOffscreenRgbDepthPointcloud
+     */
+    struct DepthRenderData
+    {
+        float* buffer;
+        unsigned int w;
+        unsigned int h;
+    };
+
+    /**
+     * @brief Used for a Coin3d callback to store the zBuffer.
+     * @param userdata The datastructure to store the data to.
+     * @see renderOffscreenRgbDepthPointcloud
+     */
+    void getZBuffer(void* userdata)
+    {
+        DepthRenderData* ud = reinterpret_cast<DepthRenderData*>(userdata);
+        try
+        {
+            glReadPixels(0, 0, ud->w, ud->h, GL_DEPTH_COMPONENT, GL_FLOAT, ud->buffer);
+        }
+        catch (...)
+        {
+            VR_ERROR << "renderOffscreenRgbDepthPointcloud: Error while reading the z-buffer (the read data may be partial)";
+        }
+    }
+
+    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud
+        (
+            RobotNodePtr camNode, SoNode* scene, //scene
+            short width, short height,//instead of renderer (the render action will be overwritten and can't be restored
+            bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
+            bool renderDepthImage, std::vector<float>& depthImage,
+            bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+            float zNear, float zFar, float vertFov//render param
+        )
+    {
+        //check input
+        if (!camNode)
+        {
+            VR_ERROR << "No cam node to render..." << endl;
+            return false;
+        }
+        if (!scene)
+        {
+            VR_ERROR << "No scene to render..." << endl;
+            return false;
+        }
+        if(width<=0||height<=0)
+        {
+            VR_ERROR << "Invalid image dimensions..." << endl;
+            return false;
+        }
+        //setup
+        const bool calculateDepth = renderDepthImage || renderPointcloud;
+        const unsigned int numPixel=width*height;
+
+        SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
+        offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
+        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
+
+        //required to get the zBuffer
+        DepthRenderData userdata;
+        std::vector<float> zBuffer;
+        if(calculateDepth)
+        {
+            if(renderDepthImage)
+            {
+                //we can overwrite the depth image. maybe it already has enough mem
+                std::swap(zBuffer,depthImage);
+            }
+            zBuffer.resize(numPixel);
+
+            userdata.h = height;
+            userdata.w = width;
+            userdata.buffer = zBuffer.data();
+
+            offscreenRenderer.getGLRenderAction()->setPassCallback(getZBuffer, static_cast<void*>(&userdata));
+            ///TODO find way to only render rgb once
+            offscreenRenderer.getGLRenderAction()->setNumPasses(2);
+        }
+
+        //render
+        // add all to a inventor scene graph
+        SoSeparator* root = new SoSeparator;
+        root->ref();
+        root->addChild(new SoDirectionalLight);
+
+        //setup cam
+        float sc = 0.001f;//cam has to be in m but values are in mm. (if the cam is set to mm with a unit node the robot visu disapperars)
+        SoPerspectiveCamera* camInMeters = new SoPerspectiveCamera;
+        Eigen::Matrix4f camPose = camNode->getGlobalPose();
+        Eigen::Vector3f camPos = MathTools::getTranslation(camPose);
+        camInMeters->position.setValue(camPos[0]*sc, camPos[1]*sc, camPos[2]*sc);
+        SbRotation align(SbVec3f(1, 0, 0), (float)(M_PI)); // first align from  default direction -z to +z by rotating with 180 degree around x axis
+        SbRotation align2(SbVec3f(0, 0, 1), (float)(-M_PI / 2.0)); // align up vector by rotating with -90 degree around z axis
+        SbRotation trans(CoinVisualizationFactory::getSbMatrix(camPose)); // get rotation from global pose
+        camInMeters->orientation.setValue(align2 * align * trans); // perform total transformation
+        camInMeters->nearDistance.setValue(sc*zNear);
+        camInMeters->farDistance.setValue(sc*zFar);
+        camInMeters->heightAngle.setValue(vertFov);
+        camInMeters->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
+
+        root->addChild(camInMeters);
+
+        root->addChild(scene);
+
+        static bool renderErrorPrinted = false;
+        const bool renderOk=offscreenRenderer.render(root);
+        root->unref();
+        if (!renderOk)
+        {
+            if (!renderErrorPrinted)
+            {
+                VR_ERROR << "Rendering not successful! This error is printed only once." << endl;
+                renderErrorPrinted = true;
+            }
+            return false;
+        }
+        //rgb
+        if(renderRgbImage)
+        {
+            const unsigned char* glBuffer = offscreenRenderer.getBuffer();
+            const unsigned int numValues = numPixel*3;
+            rgbImage.resize(numValues);
+            std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
+        }
+        //per pixel
+        if(!calculateDepth)
+        {
+            return true;
+        }
+        if(renderPointcloud)
+        {
+            pointCloud.resize(numPixel);
+        }
+
+        const float focalLength = static_cast<float>(height) / (2 * std::tan(vertFov / 2));
+
+        for(unsigned int y=0;y<height;++y)
+        {
+            for(unsigned int x=0;x<width;++x)
+            {
+                const unsigned int pixelIndex = x+width*y;
+                const float bufferVal = zBuffer.at(pixelIndex);
+                /*
+                // projection matrix (https://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml)
+                // [Sx  0 Kx  0]
+                // [ 0 Sy Ky  0]
+                // [ 0  0  A  B]
+                // [ 0  0 -1  0]
+                //
+                // right = width/2, left = -right;
+                // top = height/2, bottom = -top;
+                // Sx = (2*zNear)/(right-left) => (2*zNear)/width
+                // Sy = (2*zNear)/(top-bottom) => (2*zNear)/height
+                // Kx = (right + left)/(right - left) => 0
+                // Ky = (top + bottom)/(top - bottom) => 0
+                // A  = (zFar + zNear)/(zNear - zFar)
+                // B  = (2 * zFar * zNear)/(zNear - zFar)
+                //
+                // horizontalFOV = 2 * atan(width/(2*focalLength))
+                // verticalFOV = 2 * atan(height/(2*focalLength))
+                //
+                // formulars from:
+                // https://www.opengl.org/discussion_boards/showthread.php/197819-simulate-depth-sensor?p=1280162
+                */
+
+                assert(bufferVal >= -1e-6);
+                assert(bufferVal < 1 + 1e-6);
+
+                //bufferVal = (Zndc+1)/2 => zNDC = 2*bufferVal-1
+                assert(std::abs(2 * bufferVal - 1) < 1 + 1e-6);
+                /*
+                //zNDC = zClip/wClip
+                //zClip = zEye*A+B
+                //wClip = -zEye
+                //=> zNDC = (zEye*A+B)/-zEye = -(A+B/zEye)
+                //=> 2*bufferVal-1 = -A -B/zEye
+                //=> 2*bufferVal-1 +A = -B/zEye
+                //=> zEye = -B/(2*bufferVal-1 +A) = B/(1-A-2*bufferVal)
+                // A = (zFar + zNear)/(zNear - zFar);
+                // B = (2 * zFar * zNear)/(zNear - zFar);
+                // => zEye = (2 * zFar * zNear)/((zNear - zFar)(1-(zFar + zNear)/(zNear - zFar)-2*bufferVal))
+                // => zEye = (2 * zFar * zNear)/(zNear - zFar -(zFar+zNear) -2*bufferVal*(zNear-zFar))
+                // => zEye = (2 * zFar * zNear)/( - 2*zFar -2*bufferVal*(zNear-zFar))
+                // => zEye = -(zFar * zNear)/(zFar +bufferVal*(zNear-zFar))
+                */
+
+                const float zEye = -(zFar * zNear) / (zFar + bufferVal * (zNear - zFar));
+
+                assert(zEye < 1e-6);
+                assert(std::abs(zEye) < zFar + 1e-6);
+                assert(std::abs(zEye) < zNear - 1e-6);
+
+                //the cam is at (x,y)=(0,0) => shift x and y to image center
+                const float xShifted = static_cast<float>(x) - static_cast<float>(width ) / 2.f;
+                const float yShifted = static_cast<float>(y) - static_cast<float>(height) / 2.f;
+                const float xEye = xShifted / focalLength * (zEye);
+                const float yEye = yShifted / focalLength * (zEye);
+
+                if(renderDepthImage)
+                {
+                    zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                }
+
+                if(renderPointcloud)
+                {
+                    //the cam looks along -z => rotate aroud y 180°
+                    pointCloud.at(pixelIndex)[0]=-xEye;
+                    pointCloud.at(pixelIndex)[1]= yEye;
+                    pointCloud.at(pixelIndex)[2]=-zEye;
+                }
+            }
+        }
+        if(renderDepthImage)
+        {
+            depthImage = std::move(zBuffer);
+        }
         return true;
     }
 
@@ -3496,7 +3801,7 @@ namespace VirtualRobot
             {
                 SoSeparator* s = new SoSeparator;
                 s->ref();
-                SoMatrixTransform* ma = getMatrixTransform(m);
+                SoMatrixTransform* ma = getMatrixTransformScaleMM2M(m);
                 s->addChild(ma);
                 s->addChild(n->copy(FALSE));
 

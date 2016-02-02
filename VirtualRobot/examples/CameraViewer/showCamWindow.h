@@ -17,6 +17,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
+#include <QtOpenGL/QtOpenGL>
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
@@ -33,7 +34,7 @@ class showCamWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name, Qt::WFlags flags = 0);
+    showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name);
     ~showCamWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
@@ -63,6 +64,9 @@ public slots:
         return viewer;
     };
 
+    void updateRobotY(int pos);
+    void renderCam();
+
 protected:
     void setupUI();
     QString formatString(const char* s, float f);
@@ -70,7 +74,6 @@ protected:
     void updateRNSBox();
 
     void updateCameras();
-    void renderCam();
 
     void updatRobotInfo();
     Ui::MainWindowCamera UI;
@@ -79,6 +82,7 @@ protected:
     SoSeparator* sceneSep;
     SoSeparator* robotSep;
     SoSeparator* extraSep;
+    SoSeparator* cam1VoxelSep;
 
     VirtualRobot::RobotPtr robot;
     std::string m_sRobotFilename;
@@ -86,13 +90,16 @@ protected:
     std::string cam2Name;
     VirtualRobot::RobotNodePtr cam1;
     VirtualRobot::RobotNodePtr cam2;
-    SoOffscreenRenderer* cam1Renderer;
     SoOffscreenRenderer* cam2Renderer;
 
-    VirtualRobot::ObstaclePtr visuObject;
+    std::vector<VirtualRobot::ObstaclePtr> visuObjects;
+    std::vector<VirtualRobot::ObstaclePtr> voxelObjects;
 
-    unsigned char* cam1Buffer;
+    std::vector<unsigned char> cam1RGBBuffer;
+    std::vector<float> cam1DepthBuffer;
+    std::vector<Eigen::Vector3f> cam1PointCloud;
     unsigned char* cam2Buffer;
+    float* cam2DepthBuffer;
     std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
     std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
     std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
@@ -102,6 +109,17 @@ protected:
     bool useColModel;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+
+    struct DepthRenderData
+    {
+        float* buffer;
+        std::size_t w;
+        std::size_t h;
+    };
+    DepthRenderData userdata2;
+
+    static void getDepthImage(void *userdata);
+
 };
 
 #endif // __ShowCamera_WINDOW_H_

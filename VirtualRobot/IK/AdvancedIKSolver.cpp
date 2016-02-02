@@ -25,7 +25,7 @@ namespace VirtualRobot
 {
 
     AdvancedIKSolver::AdvancedIKSolver(RobotNodeSetPtr rns) :
-        rns(rns)
+        IKSolver(), rns(rns)
     {
         verbose = false;
         THROW_VR_EXCEPTION_IF(!rns, "Null data");

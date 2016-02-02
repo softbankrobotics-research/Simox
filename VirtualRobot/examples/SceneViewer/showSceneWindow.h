@@ -30,7 +30,7 @@ class showSceneWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    showSceneWindow(std::string& sSceneFile, Qt::WFlags flags = 0);
+    showSceneWindow(std::string& sSceneFile);
     ~showSceneWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

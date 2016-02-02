@@ -29,7 +29,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 
-reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP, Qt::WFlags flags)
+reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -75,11 +75,9 @@ void reachabilityWindow::setupUI()
     // setup
     m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     m_pExViewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    //#ifndef _DEBUG
-    m_pExViewer->setAntialiasing(true, 8);
-    //#endif
-#endif
+
+    m_pExViewer->setAntialiasing(true, 4);
+
     m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
     m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
     m_pExViewer->setFeedbackVisibility(true);
@@ -361,7 +359,7 @@ void reachabilityWindow::showCoordSystem()
 void reachabilityWindow::selectRobot()
 {
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-    robotFile = std::string(fi.toAscii());
+    robotFile = std::string(fi.toLatin1());
     loadRobot();
 }
 
@@ -514,8 +512,8 @@ void reachabilityWindow::createReach()
 
         if (UICreate.checkBoxColDetecion->isChecked())
         {
-            std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toAscii());
-            std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toAscii());
+            std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
+            std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
             staticModel = robot->getRobotNodeSet(staticM);
             dynamicModel = robot->getRobotNodeSet(dynM);
         }
@@ -523,7 +521,7 @@ void reachabilityWindow::createReach()
         float discrTr = UICreate.doubleSpinBoxDiscrTrans->value();
         float discrRo = UICreate.doubleSpinBoxDiscrRot->value();
 
-        std::string measure = std::string(UICreate.comboBoxQualityMeasure->currentText().toAscii());
+        std::string measure = std::string(UICreate.comboBoxQualityMeasure->currentText().toLatin1());
 
         if (measure != "Reachability")
         {
@@ -587,7 +585,7 @@ void reachabilityWindow::saveReach()
         return;
     }
 
-    reachFile = std::string(fi.toAscii());
+    reachFile = std::string(fi.toLatin1());
     reachSpace->save(reachFile);
 
 }
@@ -670,6 +668,6 @@ void reachabilityWindow::loadReach()
         return;
     }
 
-    reachFile = std::string(fi.toAscii());
+    reachFile = std::string(fi.toLatin1());
     loadReachFile(reachFile);
 }

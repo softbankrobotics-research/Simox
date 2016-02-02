@@ -37,7 +37,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob, Qt::WFlags flags)
+IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -153,11 +153,7 @@ void IKRRTWindow::setupUI()
     // setup
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     viewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    //#ifndef _DEBUG
-    viewer->setAntialiasing(true, 8);
-    //#endif
-#endif
+    viewer->setAntialiasing(true, 4);
     viewer->setGLRenderAction(new SoLineHighlightRenderAction);
     viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
     viewer->setFeedbackVisibility(false);

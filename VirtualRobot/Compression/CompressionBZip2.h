@@ -28,7 +28,7 @@
 #ifndef _VirtualRobot_Compression_BZIP2_h_
 #define _VirtualRobot_Compression_BZIP2_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 
 #define BZ_RAND_DECLS                          \
     Int32 rNToGo;                               \

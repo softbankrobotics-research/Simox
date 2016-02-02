@@ -29,6 +29,8 @@ namespace VirtualRobot
         optionalDHParameter.isSet = false;
         this->localTransformation = preJointTransform;
         this->jointRotationAxis = axis;
+        this->jointRotationAxis.normalize();
+        tmpRotMat.setIdentity();
         checkValidRobotNodeType();
     }
 
@@ -71,6 +73,7 @@ namespace VirtualRobot
 
         this->localTransformation = RotTheta * TransD * TransA * RotAlpha;
         this->jointRotationAxis = Eigen::Vector3f(0, 0, 1);         // rotation around z axis
+        tmpRotMat.setIdentity();
         checkValidRobotNodeType();
     }
 
@@ -86,8 +89,10 @@ namespace VirtualRobot
 
     void RobotNodeRevolute::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
-        Eigen::Affine3f tmpT(Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis));
-        globalPose = parentPose * localTransformation /*getLocalTransformation()*/ * tmpT.matrix();
+        //Eigen::Affine3f tmpT(Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis));
+        //MathTools::axisangle2eigen4f(jointRotationAxis, jointValue + jointValueOffset, tmpRotMat);
+        tmpRotMat.block(0, 0, 3, 3) = Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis).matrix();
+        globalPose = parentPose * localTransformation /*getLocalTransformation()*/ * tmpRotMat;
     }
 
     void RobotNodeRevolute::print(bool printChildren, bool printDecoration) const
@@ -142,7 +147,8 @@ namespace VirtualRobot
         return true;
     }
 
-    void RobotNodeRevolute::setJointRotationAxis(Eigen::Vector3f newAxis) {
+    void RobotNodeRevolute::setJointRotationAxis(Eigen::Vector3f newAxis)
+    {
         this->jointRotationAxis = newAxis;
     }
 
@@ -207,8 +213,8 @@ namespace VirtualRobot
     }
 
 
-   std::string RobotNodeRevolute::_toXML(const std::string& modelPath)
-   {
+    std::string RobotNodeRevolute::_toXML(const std::string& modelPath)
+    {
         std::stringstream ss;
         ss << "\t\t<Joint type='revolute'>" << endl;
         ss << "\t\t\t<axis x='" << jointRotationAxis[0] << "' y='" << jointRotationAxis[1] << "' z='" << jointRotationAxis[2] << "'/>" << endl;
@@ -217,22 +223,6 @@ namespace VirtualRobot
         ss << "\t\t\t<MaxVelocity value='" << maxVelocity << "'/>" << endl;
         ss << "\t\t\t<MaxTorque value='" << maxTorque << "'/>" << endl;
         std::map< std::string, float >::iterator propIt = propagatedJointValues.begin();
-        while (propIt != propagatedJointValues.end())
-        {
-            ss << "\t\t\t<PropagateJointValue name='" << propIt->first << "' factor='" << propIt->second << "'/>" << endl;
-            propIt++;
-        }
-        ss << "\t\t</Joint>" << endl;
-        return ss.str();
-}
-
-float RobotNodeRevolute::getLMTC(float angle)
-{
-
-    return sqrt(2 - 2 * cos(angle));
-    /*
-    Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
-    Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
 
         while (propIt != propagatedJointValues.end())
         {
@@ -241,48 +231,66 @@ float RobotNodeRevolute::getLMTC(float angle)
         }
 
         ss << "\t\t</Joint>" << endl;
-
         return ss.str();
     }
 
-    return sqrt(b_squared);
-    */
-}
+    float RobotNodeRevolute::getLMTC(float angle)
+    {
 
-        //Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
-        //Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
+        return sqrt(2 - 2 * cos(angle));
+        /*
+        Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
+        Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
 
-float RobotNodeRevolute::getLMomentArm(float angle)
-{
-    float b = getLMTC(angle);
+            while (propIt != propagatedJointValues.end())
+            {
+                ss << "\t\t\t<PropagateJointValue name='" << propIt->first << "' factor='" << propIt->second << "'/>" << endl;
+                propIt++;
+            }
 
-    return sqrt(4*pow(b,2)-pow(b,4))/(2*b);
-    /*
-    Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
-    Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
+            ss << "\t\t</Joint>" << endl;
 
-        THROW_VR_EXCEPTION_IF(a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
-
-        float b_squared = a * a + c * c - 2 * a * c * cos(angle);
+            return ss.str();
+        }
 
         return sqrt(b_squared);
+        */
     }
 
+    //Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
+    //Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
 
-    return lMomentArm;
-    */
-}
+    float RobotNodeRevolute::getLMomentArm(float angle)
+    {
+        float b = getLMTC(angle);
+
+        return sqrt(4 * pow(b, 2) - pow(b, 4)) / (2 * b);
         /*
-        float a = fromParent.col(3).head(3).norm();
-        float c = toChild.col(3).head(3).norm();
+        Eigen::Matrix4f fromParent = getTransformationFrom(getParent());
+        Eigen::Matrix4f toChild = child->getTransformationFrom(child->getParent());
 
-        THROW_VR_EXCEPTION_IF(a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
+            THROW_VR_EXCEPTION_IF(a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
 
-        float b = getLMTC(child, angle);
+            float b_squared = a * a + c * c - 2 * a * c * cos(angle);
 
-        float lMomentArm = sqrt(2 * (a * a * b * b + b * b * c * c + c * c * a * a) - (pow(a, 4) + pow(b, 4) + pow(c, 4))) / (2 * b);
+            return sqrt(b_squared);
+        }
+
 
         return lMomentArm;
+        */
+    }
+    /*
+    float a = fromParent.col(3).head(3).norm();
+    float c = toChild.col(3).head(3).norm();
+
+    THROW_VR_EXCEPTION_IF(a < 0.0000001 || c < 0.0000001, "Node has no spatial offset to either parent or child");
+
+    float b = getLMTC(child, angle);
+
+    float lMomentArm = sqrt(2 * (a * a * b * b + b * b * c * c + c * c * a * a) - (pow(a, 4) + pow(b, 4) + pow(c, 4))) / (2 * b);
+
+    return lMomentArm;
 
     }*/
 

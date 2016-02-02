@@ -30,7 +30,7 @@ class JacobiWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    JacobiWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    JacobiWindow(std::string& sRobotFilename);
     ~JacobiWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

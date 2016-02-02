@@ -23,11 +23,10 @@
 #ifndef _VirtualRobot_HierarchicalIK_h_
 #define _VirtualRobot_HierarchicalIK_h_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/IK/JacobiProvider.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/IK/JacobiProvider.h"
+#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/Nodes/RobotNode.h"
 
 
 namespace VirtualRobot

@@ -13,8 +13,14 @@ using namespace VirtualRobot::MathTools;
 
 extern "C"
 {
-#include "ExternalDependencies/qhull-2003.1/include/qhull/qhull_a.h"
+#include "qhull/qhull_a.h"
 }
+
+//extern "C"
+//{
+//#include "ExternalDependencies/qhull-2003.1/include/qhull/qhull_a.h"
+//}
+
 namespace GraspStudio
 {
     boost::mutex ConvexHullGenerator::qhull_mutex;

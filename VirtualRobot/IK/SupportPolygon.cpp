@@ -15,9 +15,9 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < contactModels->getSize(); i++)
         {
-            if (contactModels->getSceneObject(i)->getCollisionModel())
+            if (contactModels->getSceneObject((int)i)->getCollisionModel())
             {
-                colModels.push_back(contactModels->getSceneObject(i)->getCollisionModel());
+                colModels.push_back(contactModels->getSceneObject((int)i)->getCollisionModel());
             }
         }
 

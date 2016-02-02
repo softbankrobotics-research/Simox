@@ -1,7 +1,7 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
+#include <VirtualRobot/VirtualRobot.h>
 #include <Eigen/Geometry>
 
 

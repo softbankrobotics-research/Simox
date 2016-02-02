@@ -1,12 +1,12 @@
 #include "TSRConstraint.h"
 
 #include <VirtualRobot/MathTools.h>
-
+/*
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoCube.h>
-
+*/
 using namespace VirtualRobot;
 
 TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,

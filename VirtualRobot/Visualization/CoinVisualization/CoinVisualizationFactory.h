@@ -24,7 +24,7 @@
 #define _VirtualRobot_CoinVisualizationFactory_h_
 
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 #include "../VisualizationFactory.h"
 #include "../../BoundingBox.h"
 #include "../../SceneObject.h"
@@ -38,7 +38,6 @@
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoCamera.h>
-
 
 
 #include <string>
@@ -59,11 +58,18 @@ namespace VirtualRobot
         CoinVisualizationFactory();
         virtual ~CoinVisualizationFactory();
 
+        /*!
+            Initialises SoDB and SoQt.
+            Sets the COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE environment variable to enable a Coin3D transparency extension.
+        */
+        virtual void init(int &argc, char* argv[], const std::string &appName);
+
+
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray());
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false);
-        virtual VisualizationNodePtr getVisualizationFromSTLFile(const std::string& filename, bool boundingBox = false);
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+        virtual VisualizationNodePtr getVisualizationFromSTLFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
         virtual VisualizationNodePtr getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox = false);
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false);
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
         virtual VisualizationNodePtr getVisualizationFromString(const std::string& modelString, bool boundingBox = false);
         virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
@@ -73,7 +79,7 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
         virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false);
         virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose);
+        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
         virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines = true);
         virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray());
@@ -91,7 +97,7 @@ namespace VirtualRobot
         */
         virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f);
         /*!
-            Move local visualization by homogeneous matrix m.
+            Move local visualization by homogeneous matrix m. MM is used.
         */
         virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m);
 
@@ -269,7 +275,7 @@ namespace VirtualRobot
 
             \see renderOffscreen
         */
-        static SoOffscreenRenderer* createOffscreenRenderer(int width, int height);
+        static SoOffscreenRenderer* createOffscreenRenderer(unsigned int width, unsigned int height);
 
         /*!
             The cam node has to be oriented as follows:
@@ -280,12 +286,73 @@ namespace VirtualRobot
             \param scene The scene that should be rendered.
             \param buffer The result is stored here. The origin of the 2D image is at the left bottom!
             The resulting buffer has the size width*height*3, with the extends as defined in the createOffscreenRenderer method.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param fov The fov in rad. (vertical)
 
             \return true on success
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
+
+        /*!
+         * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
+         * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+         * \param scene The scene that should be rendered.
+         * \param width The used image width. (>0)
+         * \param height The used image height. (>0)
+         * \param renderRgbImage Whether to output the rgb image.
+         * \param rgbImage The rgb image's output parameter.
+         * \param renderDepthImgae Whether to output the depth image.
+         * \param depthImage The depth image's output parameter.
+         * \param renderPointcloud Whether to output the point cloud.
+         * \param pointCloud The pointcloud's output parameter.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param vertFov The fov in rad. (vertical)
+         * \return true on success
+         */
+        static bool renderOffscreenRgbDepthPointcloud
+            (
+                RobotNodePtr camNode, SoNode* scene,
+                short width, short height,
+                bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+                bool renderDepthImgae, std::vector<float>& depthImage,
+                bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
+
+            );
+
+        /*!
+         * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
+         * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+         * \param scene The scene that should be rendered.
+         * \param width The used image width. (>0)
+         * \param height The used image height. (>0)
+         * \param renderRgbImage Whether to output the rgb image.
+         * \param rgbImage The rgb image's output parameter.
+         * \param renderDepthImgae Whether to output the depth image.
+         * \param depthImage The depth image's output parameter.
+         * \param renderPointcloud Whether to output the point cloud.
+         * \param pointCloud The pointcloud's output parameter.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param vertFov The fov in rad. (vertical)
+         * \return true on success
+         */
+        static bool renderOffscreenRgbDepthPointcloud
+            (
+                RobotNodePtr camNode, SoNode* scene,
+                short width, short height,
+                std::vector<unsigned char>& rgbImage,
+                std::vector<float>& depthImage,
+                std::vector<Eigen::Vector3f>& pointCloud,
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
+            )
+        {
+            return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov);
+        }
 
         /*!
         Use a custom camera for rendering
@@ -298,7 +365,7 @@ namespace VirtualRobot
 
         \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, SoCamera* cam, SoNode* scene, unsigned char** buffer);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer);
 
         /*!
             When SoFiles are used, Coin3D just stores references to files instead of the real contents.

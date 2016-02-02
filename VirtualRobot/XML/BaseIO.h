@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_BaseIO_h_
 #define _VirtualRobot_BaseIO_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
 #include "../Units.h"
 #include "../MathTools.h"
 #include "../Robot.h"

@@ -2,6 +2,9 @@ PROJECT ( GraspStudio )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
+if(POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
+endif()
 
 MESSAGE (STATUS "***** CONFIGURING Simox project GraspStudio *****")
 
@@ -16,41 +19,25 @@ ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 
 ########### QHULL #################
-OPTION(BUILD_qhull "if on builds qhull external library" ON)
-IF (NOT BUILD_qhull)
-	find_package(QHULL)
-	IF (NOT QHULL_FOUND)
-		MESSAGE (STATUS "Could not find QHULL, please use internal version")
-	ENDIF()
+OPTION(BUILD_qhull "if on builds qhull external library" OFF)
+IF(NOT BUILD_qhull)
+    find_package(QHULL QUIET)
+    IF (NOT QHULL_FOUND)
+		MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
+		SET (BUILD_qhull ON)
+		SET (BUILD_qhull ON PARENT_SCOPE)
+    ENDIF()
 ENDIF()
 
-#OPTION(BUILD_qhull "if on builds qhull external library" OFF)
-#find_package(QHULL)
-#IF (NOT QHULL_FOUND)
-#	MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
-#	SET (BUILD_qhull ON)
-#	SET (BUILD_qhull ON PARENT_SCOPE)
-#ENDIF()
-
 IF(BUILD_qhull)
-		ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
-  	set(QHULL_LIBRARIES simox-qhull)
+    ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
+    set(QHULL_LIBRARIES simox-qhull)
+    include_directories("ExternalDependencies/qhull-2003.1/include/")
 else()
     find_package(QHULL REQUIRED)
     include_directories(${QHULL_INCLUDE_DIRS})
 endif()
 ########### END QHULL #################
-
-
-
-
-
-########### POWERCRUST #################
-OPTION(BUILD_powercrust "if on builds powercrust external library" ON)
-IF(BUILD_powercrust)
-	ADD_SUBDIRECTORY(ExternalDependencies/powercrust)
-ENDIF(BUILD_powercrust)
-########### END POWERCRUST #################
 
 
 SET(SOURCES
@@ -79,56 +66,7 @@ GraspQuality/GraspQualityMeasure.h
 GraspQuality/GraspQualityMeasureWrenchSpace.h
 Visualization/ConvexHullVisualization.h
 )
-#${GRASPSTUDIO_SimoxDir}/VirtualRobot/definesVR.h
 
-
-IF(BUILD_powercrust)
-	# Adding MATGraspPlanner
-	SET(SOURCES
-		${SOURCES}
-		GraspPlanner/MATPlanner/CandidateGrasp.cpp
-		GraspPlanner/MATPlanner/CandidateGraspGenerator.cpp
-		GraspPlanner/MATPlanner/Converter.cpp
-		GraspPlanner/MATPlanner/GraspPlannerConfiguration.cpp
-		GraspPlanner/MATPlanner/GridOfMedialSpheres.cpp
-		GraspPlanner/MATPlanner/GridParameters.cpp
-		GraspPlanner/MATPlanner/LocalNeighborhood.cpp
-		GraspPlanner/MATPlanner/MatGraspPlanner.cpp
-		GraspPlanner/MATPlanner/MedialSphere.cpp
-		GraspPlanner/MATPlanner/SphereHelpers.cpp
-		GraspPlanner/MATPlanner/StrOutHelpers.cpp
-		GraspPlanner/MATPlanner/TestCases.cpp
-		GraspPlanner/MATPlanner/CandidateGraspTester.cpp
-	)
-
-	SET(INCLUDES
-		${INCLUDES}
-		GraspPlanner/MATPlanner/CandidateGrasp.h
-		GraspPlanner/MATPlanner/CandidateGraspGenerator.h
-		GraspPlanner/MATPlanner/Converter.h
-		GraspPlanner/MATPlanner/GraspPlannerConfiguration.h
-		GraspPlanner/MATPlanner/GridOfMedialSpheres.h
-		GraspPlanner/MATPlanner/GridParameters.h
-		GraspPlanner/MATPlanner/LocalNeighborhood.h
-		GraspPlanner/MATPlanner/MatGraspPlanner.h
-		GraspPlanner/MATPlanner/MedialSphere.h
-		GraspPlanner/MATPlanner/SphereHelpers.h
-		GraspPlanner/MATPlanner/StrOutHelpers.h
-		GraspPlanner/MATPlanner/TestCases.h
-		GraspPlanner/MATPlanner/CandidateGraspTester.h
-	)
-
-	if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
-		SET(SOURCES
-			${SOURCES}
-			GraspPlanner/MATPlanner/CoinVisualization/DrawHelpers.cpp
-		)
-		SET(INCLUDES
-			${INCLUDES}
-			GraspPlanner/MATPlanner/CoinVisualization/DrawHelpers.h
-		)
-	endif()
-ENDIF()
 
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 	SET(SOURCES
@@ -149,7 +87,7 @@ ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 
 ADD_LIBRARY (GraspStudio SHARED ${SOURCES} ${INCLUDES})
 
-TARGET_LINK_LIBRARIES (GraspStudio Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES} powercrust)
+TARGET_LINK_LIBRARIES (GraspStudio Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES})
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})

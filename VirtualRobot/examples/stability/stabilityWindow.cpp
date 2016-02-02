@@ -31,7 +31,7 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-stabilityWindow::stabilityWindow(std::string& sRobotFile, Qt::WFlags flags)
+stabilityWindow::stabilityWindow(std::string& sRobotFile)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -79,11 +79,9 @@ void stabilityWindow::setupUI()
     // setup
     m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     m_pExViewer->setAccumulationBuffer(true);
-    //#ifdef WIN32
-    //#ifndef _DEBUG
+
     m_pExViewer->setAntialiasing(true, 4);
-    //#endif
-    //#endif
+
     m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
     m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
     m_pExViewer->setFeedbackVisibility(true);
@@ -522,7 +520,7 @@ void stabilityWindow::selectJoint(int nr)
 void stabilityWindow::selectRobot()
 {
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-    robotFile = std::string(fi.toAscii());
+    robotFile = std::string(fi.toLatin1());
     loadRobot();
 }
 

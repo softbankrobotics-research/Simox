@@ -2,6 +2,9 @@ PROJECT ( Saba )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
+if(POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
+endif()
 
 MESSAGE (STATUS "***** CONFIGURING Simox project Saba *****")
 

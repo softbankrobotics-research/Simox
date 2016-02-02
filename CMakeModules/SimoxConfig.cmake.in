@@ -8,6 +8,9 @@
 #  Simox_EXECUTABLE         - the executables
 #  Simox_VISUALIZATION      - if visualization is enabled
 #  Simox_USE_COIN_VISUALIZATION   - if Coin3D visualization was selected
+#  Simox_USE_OPENSCENEGRAPH_VISUALIZATION   - if osg visualization was selected
+#  Simox_USE_QT4   - if qt4 was selected
+#  Simox_USE_QT5   - if qt5 was selected
 
 if(Simox_FOUND)
     return()
@@ -28,7 +31,7 @@ set(Simox_EXECUTABLE "@Simox_EXECUTABLE@")
 
 if(EXISTS "${Simox_CMAKE_DIR}/CMakeCache.txt")
     # In build tree
-    message(STATUS "Using Simox Source-Build from: ${Simox_CURRENT_CMAKE_DIR}")
+    message(STATUS "Using Simox Source-Build from: ${Simox_CMAKE_DIR}")
     include("${Simox_CMAKE_DIR}/SimoxBuildTreeSettings.cmake")
 else()
     # Installed project
@@ -47,6 +50,8 @@ SET(Simox_USE_COIN_VISUALIZATION "@Simox_USE_COIN_VISUALIZATION@")
 SET(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "@Simox_USE_OPENSCENEGRAPH_VISUALIZATION@")
 SET(Simox_USE_COLLADA "@Simox_USE_COLLADA@")
 SET(Simox_USE_RBDL "@Simox_USE_RBDL@")
+SET(Simox_USE_QT4 "@Simox_USE_QT4@")
+SET(Simox_USE_QT5 "@Simox_USE_QT5@")
 
 
 SET(Simox_EXTERNAL_INCLUDE_DIRS "@Simox_EXTERNAL_INCLUDE_DIRS@")
@@ -58,6 +63,6 @@ SET(Simox_EXTERNAL_CMAKE_INCLUDE "@Simox_EXTERNAL_CMAKE_INCLUDE@")
 
 
 if (NOT (Simox_FIND_QUIETLY OR VirtualRobot_FIND_QUIETLY))
-    MESSAGE(STATUS " * Including ${Simox_CMAKE_DIR}/SimoxMacros.cmake")
+    MESSAGE(STATUS " * Including ${Simox_MACROS_INCLUDE_DIR}/SimoxMacros.cmake")
 endif()
 include(${Simox_MACROS_INCLUDE_DIR}/SimoxMacros.cmake)

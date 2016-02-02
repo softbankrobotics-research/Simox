@@ -218,7 +218,7 @@
 #define BZFREE(ppp)  (strm->bzfree)(strm->opaque,(ppp))
 
 
-#if _DEBUG
+#ifndef NDEBUG
 #define AssertD(cond,msg) \
     { if (!(cond)) {       \
             fprintf ( stderr,   \

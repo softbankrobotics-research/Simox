@@ -97,13 +97,13 @@ namespace GraspStudio
 
 #define THROW_GRASPSTUDIO_EXCEPTION(a) THROW_VR_EXCEPTION(a)
 
-#ifdef _DEBUG
-#define GRASPSTUDIO_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << ")" )};
-#define GRASPSTUDIO_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
-
-#else
+#ifdef NDEBUG
 #define GRASPSTUDIO_ASSERT(a)
 #define GRASPSTUDIO_ASSERT_MESSAGE(a,b)
+
+#else
+#define GRASPSTUDIO_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << ")" )};
+#define GRASPSTUDIO_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
 #endif
 
 }

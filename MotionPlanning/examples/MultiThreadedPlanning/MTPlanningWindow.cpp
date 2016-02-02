@@ -30,7 +30,7 @@ float TIMER_MS = 30.0f;
 bool runtimeDisplayed = false;
 bool optiTimeDisplayed = false;
 
-MTPlanningWindow::MTPlanningWindow(Qt::WFlags flags)
+MTPlanningWindow::MTPlanningWindow()
     : QMainWindow(NULL)
 {
     //resize(1100, 768);

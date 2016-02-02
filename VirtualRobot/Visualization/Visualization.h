@@ -23,7 +23,9 @@
 #ifndef _VirtualRobot_Visualization_h_
 #define _VirtualRobot_Visualization_h_
 
-#include "../VirtualRobotImportExport.h"
+#include "../VirtualRobot.h"
+#include "VisualizationFactory.h"
+
 #include <vector>
 #include <Eigen/Core>
 
@@ -53,6 +55,18 @@ namespace VirtualRobot
             @param enable Do/Undo highlighting.
         */
         virtual bool highlight(unsigned int which, bool enable);
+
+        /*!
+        Colorize this visualization.
+        @param c The color to apply. To disable the colorization apply Color::None()
+        */
+        virtual void colorize(VisualizationFactory::Color c);
+
+        /*!
+            Colorize this visualization, but just set the transparency flag (no additional colorization is performed).
+            @param transparency The transparent value in [0..1].
+        */
+        virtual void setTransparency(float transparency);
 
         virtual bool isVisualizationNodeRegistered(VisualizationNodePtr visualizationNode);
 

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CoinVisualizationNode_h_
 #define _VirtualRobot_CoinVisualizationNode_h_
 
-#include "../../VirtualRobotImportExport.h"
+#include "../../VirtualRobot.h"
 #include "../VisualizationNode.h"
 #include "CoinVisualizationFactory.h"
 
@@ -121,6 +121,8 @@ namespace VirtualRobot
                                        const SoPrimitiveVertex* v2,
                                        const SoPrimitiveVertex* v3);
     };
+
+    typedef boost::shared_ptr<CoinVisualizationNode> CoinVisualizationNodePtr;
 
 } // namespace VirtualRobot
 

@@ -1,8 +1,5 @@
 PROJECT(simox-qhull)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
-CMAKE_POLICY(VERSION 2.6)
-
 MESSAGE (STATUS " **** Configuring qhull")
 
 # Specify sources and headers

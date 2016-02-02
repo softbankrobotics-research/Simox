@@ -39,7 +39,7 @@ namespace VirtualRobot
 {
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
-                                         bool embeddedGraspEditor, Qt::WFlags flags)
+                                         bool embeddedGraspEditor)
         : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
@@ -146,11 +146,9 @@ namespace VirtualRobot
         // setup
         m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
         m_pExViewer->setAccumulationBuffer(true);
-#ifdef WIN32
-#ifndef _DEBUG
+
         m_pExViewer->setAntialiasing(true, 4);
-#endif
-#endif
+
         m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
         m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
         m_pExViewer->setFeedbackVisibility(true);
@@ -281,11 +279,16 @@ namespace VirtualRobot
 
         if (object)
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel);
+
+            SoNode* visualisationNode = NULL;
+            boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
+            if (visualizationObject)
+                visualisationNode = visualizationObject->getCoinVisualization();
 
             if (visualisationNode)
             {
                 objectSep->addChild(visualisationNode);
+                //visualizationObject->setTransparency(0.5);
             }
         }
 
@@ -310,7 +313,7 @@ namespace VirtualRobot
     void GraspEditorWindow::selectRobot()
     {
         QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-        robotFile = std::string(fi.toAscii());
+        robotFile = std::string(fi.toLatin1());
         loadRobot();
     }
 
@@ -326,7 +329,7 @@ namespace VirtualRobot
         else
         {
             QString fi = QFileDialog::getOpenFileName(this, tr("Open ManipulationObject File"), QString(), tr("XML Files (*.xml)"));
-            s = std::string(fi.toAscii());
+            s = std::string(fi.toLatin1());
         }
 
         if (s != "")
@@ -347,7 +350,7 @@ namespace VirtualRobot
         if (!embeddedGraspEditor)
         {
             QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
-            objectFile = std::string(fi.toAscii());
+            objectFile = std::string(fi.toLatin1());
         }
 
         bool ok = false;

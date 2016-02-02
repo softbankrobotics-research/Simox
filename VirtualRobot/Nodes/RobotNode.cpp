@@ -203,7 +203,8 @@ namespace VirtualRobot
         }
     }
 
-    void RobotNode::updateTransformationMatrices(Eigen::Matrix4f& newLocalTransformation) {
+    void RobotNode::setLocalTransformation(Eigen::Matrix4f& newLocalTransformation)
+    {
         this->localTransformation = newLocalTransformation;
 
     }
@@ -706,6 +707,7 @@ namespace VirtualRobot
         std::vector<RobotNodePtr> result;
 
         std::vector<RobotNodePtr> rn;
+
         if (rns)
         {
             rn = rns->getAllRobotNodes();
@@ -810,7 +812,7 @@ namespace VirtualRobot
     {
         RobotPtr r = getRobot();
         ReadLockPtr lock = r->getReadLock();
-        return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0,3,3,1));
+        return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
     }
 
     RobotNode::RobotNodeType RobotNode::getType()

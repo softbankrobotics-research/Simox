@@ -32,7 +32,7 @@ class GenericIKWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GenericIKWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    GenericIKWindow(std::string& sRobotFilename);
     ~GenericIKWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */

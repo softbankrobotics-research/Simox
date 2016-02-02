@@ -23,8 +23,9 @@
 #ifndef _VirtualRobot_RobotFactory_h_
 #define _VirtualRobot_RobotFactory_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "MathTools.h"
+#include "Nodes/Sensor.h"
 
 #include <string>
 #include <vector>
@@ -82,21 +83,27 @@ namespace VirtualRobot
         /*!
         Clones the robot, but only leave the defined joints active. ALl other joints are accumulated and set to one model which is fixed (may result in faster updates)
         \param robot The robot to clone
-        \param rns The robot node set of active joints. The joints must be given as an ordered set, i.e. the first node must be located before the second node in the kinemtic structure of the robot.
+        \param rns The robot node set of active joints. The joints must be given as an ordered set, i.e. node i must be located before node i+1 in the kinematic structure of the robot.
         \param name The new name
         */
         static RobotPtr cloneSubSet(RobotPtr robot, RobotNodeSetPtr rns, const std::string& name);
 
+        /*!
+            Creates a robot clone with reduced structure.
+            \param robot The robot to clone.
+            \param uniteWithAllChildren List of RobotNodeNames. Each listed robot ndoe is united with all of its children to one fixed RobotNode. 
+                                        This means that all related coordinate systems and joints will not be present in the clone. The visualizations are united.
+        */
+        static RobotPtr cloneUniteSubsets(RobotPtr robot, const std::string& name, std::vector<std::string> uniteWithAllChildren);
 
-
-        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr > &nodes, RobotNodePtr parent = RobotNodePtr());
-
-        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeB);
-
-        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr> &appendNodes);
-
+        /*!
+            Creates a clone with changed structure, so that the given robot node is the new root of the resulting kinematic tree.
+        */
         static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
 
+        /*!
+            Chenge the structure of the clone according to the given defintion.
+        */
         static RobotPtr cloneChangeStructure(RobotPtr robot, robotStructureDef& newStructure);
 
         /*! Clone kinematic chain and reverse direction.
@@ -114,18 +121,25 @@ namespace VirtualRobot
          * \param transformation The RN to object transformation
          * \return true on succes
          */
-        static bool attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f & transformation);
+        static bool attach(RobotPtr robot, SceneObjectPtr o, RobotNodePtr rn, const Eigen::Matrix4f& transformation);
 
         static bool detach(RobotPtr robot, RobotNodePtr rn);
 
+
     protected:
+
+        // some internal stuff
+        static RobotNodePtr createUnitedRobotNode(RobotPtr robot, const std::vector< RobotNodePtr >& nodes, RobotNodePtr parent, RobotNodePtr parentClone, const Eigen::Matrix4f& trafo, const std::vector<SensorPtr> &sensors);
+        static RobotNodePtr accumulateTransformations(RobotPtr robot, RobotNodePtr nodeA, RobotNodePtr nodeAClone, RobotNodePtr nodeB, Eigen::Matrix4f& storeTrafo);
+        static void getChildNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<RobotNodePtr>& appendNodes);
+        static void getChildSensorNodes(RobotNodePtr nodeA, RobotNodePtr nodeExclude, std::vector<SensorPtr>& appendNodes);
+
+        static void cloneRecursiveUnite(RobotPtr robot, RobotNodePtr currentNode, RobotNodePtr currentNodeClone, std::vector<std::string> uniteWithAllChildren);
+
         // instantiation not allowed
         RobotFactory();
         virtual ~RobotFactory();
-
-        //static bool initRobotNode(RobotNodePtr n, RobotNodePtr parent, std::vector< RobotNodePtr > &robotNodes);
     };
-
 }
 
 #endif // _VirtualRobot_RobotFactory_h_

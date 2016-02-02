@@ -785,7 +785,7 @@ void SimDynamicsWindow::updateContactVisu()
 
     for (size_t i = 0; i < c.size(); i++)
     {
-        cout << "Contact: " << c[i].objectA->getName() << " + " << c[i].objectB->getName() << endl;
+        cout << "Contact: " << c[i].objectAName << " + " << c[i].objectBName << endl;
         SoSeparator* normal = new SoSeparator;
         SoMatrixTransform* m = new SoMatrixTransform;
         SbMatrix ma;

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Trajectory_h_
 #define _VirtualRobot_Trajectory_h_
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include "MathTools.h"
 #include "RobotNodeSet.h"
 

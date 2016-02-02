@@ -23,6 +23,7 @@
 #ifndef _VirtualRobot_BasicDefinitions_h_
 #define _VirtualRobot_BasicDefinitions_h_
 
+#include "VirtualRobotImportExport.h"
 
 /*! \defgroup VirtualRobot The VirtualRobot Library
 * With the VirtualRobot library you can define complex robot structures,
@@ -165,6 +166,7 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 
 namespace VirtualRobot
 {
+
     // only valid within the VirtualRobot namespace
     using std::cout;
     using std::endl;
@@ -287,27 +289,42 @@ namespace VirtualRobot
         typedef boost::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
         typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
         typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
-    };
+
+   };
+
 
 #define VR_INFO std::cout <<__FILE__ << ":" << __LINE__ << ": "
 #define VR_WARNING std::cerr <<__FILE__ << ":" << __LINE__ << " -Warning- "
 #define VR_ERROR std::cerr <<__FILE__ << ":" << __LINE__ << " - ERROR - "
 
 
-#ifdef _DEBUG
-    /*!
-        This assert macro does nothing on RELEASE builds.
-    */
-#define VR_ASSERT( a )  BOOST_ASSERT( a )
-    //THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << ")" );
+#ifdef NDEBUG
 
-    // we have to switch to boost 1.48 to allow messages (BOOST_ASSERT_MSG) ....
-#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT(a)
-    //THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << "): " << b );
-#else
 #define VR_ASSERT(a)
 #define VR_ASSERT_MESSAGE(a,b)
+
+#else
+	/*!
+	This assert macro does nothing on RELEASE builds.
+	*/
+#define VR_ASSERT( a )  BOOST_ASSERT( a )
+	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << ")" );
+
+	// we have to switch to boost 1.48 to allow messages (BOOST_ASSERT_MSG) ....
+#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT(a)
+	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << "): " << b );
+
 #endif
+
+
+    /*!
+    Initialize the runtime envionment. This method calls VisualizationFactory::init().
+    */
+    void VIRTUAL_ROBOT_IMPORT_EXPORT init(int &argc, char* argv[], const std::string &appName);
+    void VIRTUAL_ROBOT_IMPORT_EXPORT init(const std::string &appName);
+
+    // init method is storing appName, since the c_string is passed by refrence to QT -> we must ensure that the string stays alive
+    VIRTUAL_ROBOT_IMPORT_EXPORT extern std::string globalAppName;
 
 } // namespace
 

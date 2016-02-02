@@ -16,7 +16,6 @@
 #include <VirtualRobot/Nodes/RobotNodePrismaticFactory.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include "../../VirtualRobotImportExport.h"
 
 
 

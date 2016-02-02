@@ -29,7 +29,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "VirtualRobotImportExport.h"
+#include "VirtualRobot.h"
 #include <string>
 #include <fstream>
 
