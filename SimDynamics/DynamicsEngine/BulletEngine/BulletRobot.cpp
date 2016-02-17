@@ -1100,6 +1100,8 @@ namespace SimDynamics
         return (a2 - link.jointValueOffset); // inverted joint direction in bullet
 #else
         boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+        if (!hinge)
+            return 0.0f;
 
         /*if (!hinge)
         {
@@ -1487,7 +1489,7 @@ namespace SimDynamics
                     // parent is at correct pose, we can update *it
                     if (parent)
                     {
-                        //(*it)->updatePose(false);
+                        (*it)->updatePose(false);
                     }
 
                     // if root, we also have to delete node from list

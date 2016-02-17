@@ -1843,6 +1843,10 @@ namespace VirtualRobot
 
     SoSeparator* CoinVisualizationFactory::CreateArrow(const Eigen::Vector3f& n, float length, float width, const Color& color)
     {
+        Eigen::Vector3f n2 = n;
+        if (n2.norm()<1e-10)
+            n2 << 0,0,1;
+        n2.normalize();
         float coneHeight = width * 6.0f;
         float coneBotomRadius = width * 2.5f;
         SoSeparator* res = new SoSeparator;
@@ -1851,12 +1855,12 @@ namespace VirtualRobot
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
-        SbVec3f objNormal(n(0), n(1), n(2));
+        SbVec3f objNormal(n2(0), n2(1), n2(2));
         SbMatrix objNormalTrafo;
         objNormalTrafo.makeIdentity();
         SbRotation objNormalRot(SbVec3f(0, 1.0f, 0), objNormal);
 
-        // get rif of warnings when angle==0
+        // get rid of warnings when angle==0
         SbVec3f axis;
         float angle;
         objNormalRot.getValue(axis, angle);
