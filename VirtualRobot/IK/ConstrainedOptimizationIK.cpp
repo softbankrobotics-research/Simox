@@ -26,9 +26,75 @@
 
 using namespace VirtualRobot;
 
-ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet) :
-    ConstrainedIK(robot, maxIterations),
-    nodeSet(nodeSet)
+ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
+    ConstrainedIK(robot),
+    nodeSet(nodeSet),
+    timeout(timeout),
+    tolerance(tolerance)
 {
+}
+
+bool ConstrainedOptimizationIK::initialize()
+{
+    int size = nodeSet->getSize();
+
+    optimizer.reset(new nlopt::opt(nlopt::LN_SBPLX, size));
+
+    std::vector<double> low(size);
+    std::vector<double> high(size);
+
+    for(int i = 0; i < size; i++)
+    {
+        low[i] = nodeSet->getNode(i)->getJointLimitLo();
+        high[i] = nodeSet->getNode(i)->getJointLimitHi();
+    }
+
+    optimizer->set_lower_bounds(low);
+    optimizer->set_upper_bounds(high);
+
+    optimizer->set_maxtime(timeout);
+    optimizer->set_stopval(tolerance);
+    optimizer->set_ftol_rel(1e-6);
+    optimizer->set_xtol_rel(1e-6);
+
+    optimizer->set_min_objective(optimizationFunctionWrapper, this);
+}
+
+bool ConstrainedOptimizationIK::solve(bool stepwise)
+{
+    THROW_VR_EXCEPTION_IF(!optimizer, "IK not initialized, did you forget to call initialize()?");
+
+    int size = nodeSet->getSize();
+    std::vector<double> iv(size);
+    for(int i = 0; i < size; i++)
+    {
+        iv[i] = nodeSet->getNode(i)->getJointValue();
+    }
+
+    double min_f;
+
+    try
+    {
+        nlopt::result result = optimizer->optimize(iv, min_f);
+    }
+    catch(const nlopt::roundoff_limited &e)
+    {
+        // This means that we optimize below the precision limit
+        // The result might still be usable though
+    }
+    catch(const std::exception &e)
+    {
+        THROW_VR_EXCEPTION("NLOPT exception while optimizing!");
+    }
+}
+
+double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data)
+{
+    return 0;
+}
+
+double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)
+{
+    return static_cast<ConstrainedOptimizationIK *>(data)->optimizationFunction(x, gradient, NULL);
 }
 
