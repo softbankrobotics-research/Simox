@@ -54,6 +54,9 @@ namespace VirtualRobot
 
         std::string getConstraintType();
         void setCoMHeight(float height);
+
+        double optimizationFunction(Eigen::VectorXf &gradient);
+
     protected:
         void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
                         float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);

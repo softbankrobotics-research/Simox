@@ -90,7 +90,45 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
 double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data)
 {
-    return 0;
+    std::vector<float> q(x.begin(), x.end());
+    nodeSet->setJointValues(q);
+
+    bool useGradient = (gradient.size() > 0);
+    Eigen::VectorXf gradientSum;
+
+    if(useGradient)
+    {
+        gradientSum.resize(gradient.size());
+        gradientSum.setZero();
+    }
+
+    float result = 0;
+    for(auto &constraint : constraints)
+    {
+        Eigen::VectorXf g;
+
+        if(useGradient)
+        {
+            g.resize(gradient.size());
+        }
+
+        result += constraint->optimizationFunction(g);
+
+        if(useGradient)
+        {
+            gradientSum += g;
+        }
+    }
+
+    if(useGradient)
+    {
+        for(unsigned int i = 0; i < gradient.size(); i++)
+        {
+            gradient[i] = gradientSum(i);
+        }
+    }
+
+    return result;
 }
 
 double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)

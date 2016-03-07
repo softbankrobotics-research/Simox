@@ -90,6 +90,11 @@ void BalanceConstraint::setCoMHeight(float currentheight)
     height = currentheight;
 }
 
+double BalanceConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+{
+    return 0;
+}
+
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
 {
     return comIK->getJacobianMatrix();

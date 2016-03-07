@@ -137,6 +137,11 @@ const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds()
     return bounds;
 }
 
+double TSRConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+{
+    return 0;
+}
+
 void TSRConstraint::resolveRPYAmbiguities(float* pose, const float* reference)
 {
     Eigen::Vector3f ref;

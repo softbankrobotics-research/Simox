@@ -47,6 +47,8 @@ namespace VirtualRobot
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
+        double optimizationFunction(Eigen::VectorXf &gradient);
+
     protected:
         void resolveRPYAmbiguities(float* pose, const float* reference);
         float getShortestDistanceForRPYComponent(float from, float to);

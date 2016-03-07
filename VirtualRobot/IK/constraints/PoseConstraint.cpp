@@ -84,3 +84,8 @@ void PoseConstraint::updateTarget(const Eigen::Matrix4f& newTarget)
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
 }
 
+double PoseConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+{
+    return 0;
+}
+

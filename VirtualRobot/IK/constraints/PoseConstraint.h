@@ -52,6 +52,8 @@ namespace VirtualRobot
 
         void updateTarget(const Eigen::Matrix4f& newTarget);
 
+        double optimizationFunction(Eigen::VectorXf &gradient);
+
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
