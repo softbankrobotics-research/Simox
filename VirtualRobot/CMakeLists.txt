@@ -86,6 +86,7 @@ IK/FeetPosture.cpp
 IK/ConstrainedIK.cpp
 IK/ConstrainedHierarchicalIK.cpp
 IK/ConstrainedStackedIK.cpp
+IK/ConstrainedOptimizationIK.cpp
 IK/Constraint.cpp
 IK/constraints/BalanceConstraint.cpp
 IK/constraints/PoseConstraint.cpp
@@ -195,6 +196,7 @@ IK/FeetPosture.h
 IK/ConstrainedIK.h
 IK/ConstrainedHierarchicalIK.h
 IK/ConstrainedStackedIK.h
+IK/ConstrainedOptimizationIK.h
 IK/Constraint.h
 IK/constraints/BalanceConstraint.h
 IK/constraints/PoseConstraint.h
