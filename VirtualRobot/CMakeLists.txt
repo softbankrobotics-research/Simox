@@ -19,6 +19,10 @@ if (Simox_USE_RBDL)
     FIND_PACKAGE (RBDL)
 endif()
 
+if (Simox_USE_NLOPT)
+    FIND_PACKAGE (NLOPT)
+endif()
+
 ########################### TESTING #####################################
     MACRO(ADD_VR_TEST TEST_NAME)  
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
@@ -86,7 +90,6 @@ IK/FeetPosture.cpp
 IK/ConstrainedIK.cpp
 IK/ConstrainedHierarchicalIK.cpp
 IK/ConstrainedStackedIK.cpp
-IK/ConstrainedOptimizationIK.cpp
 IK/Constraint.cpp
 IK/constraints/BalanceConstraint.cpp
 IK/constraints/PoseConstraint.cpp
@@ -196,7 +199,6 @@ IK/FeetPosture.h
 IK/ConstrainedIK.h
 IK/ConstrainedHierarchicalIK.h
 IK/ConstrainedStackedIK.h
-IK/ConstrainedOptimizationIK.h
 IK/Constraint.h
 IK/constraints/BalanceConstraint.h
 IK/constraints/PoseConstraint.h
@@ -245,6 +247,16 @@ Import/MeshImport/STLReader.h
 ADD_SUBDIRECTORY(Visualization/tests)
 ADD_SUBDIRECTORY(Workspace/tests)
 ADD_SUBDIRECTORY(Compression/tests)
+
+if (Simox_USE_NLOPT AND NLOPT_FOUND)
+    SET(SOURCES ${SOURCES}
+        IK/ConstrainedOptimizationIK.cpp
+    )
+
+    SET(INCLUDES ${INCLUDES}
+        IK/ConstrainedOptimizationIK.h
+    )
+endif ()
 
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
