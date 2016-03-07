@@ -166,6 +166,19 @@ IF (NOT Simox_CONFIGURED)
     #urdf
     OPTION (Simox_USE_URDF "Use URDF" OFF)
 
+    #### NLOPT
+    OPTION (Simox_USE_NLOPT "Use NLOPT" OFF)
+    if (Simox_USE_NLOPT)
+        FIND_PACKAGE(NLOPT)
+        if (NLOPT_FOUND)
+            MESSAGE(STATUS "NLOPT found at: ${NLOPT_INCLUDE_DIRS}")
+            SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${NLOPT_INCLUDE_DIRS})
+            SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${NLOPT_LIBRARIES})
+        else ()
+            MESSAGE(STATUS "NLOPT not found")
+        endif ()
+    endif ()
+
     #### Eigen
     FIND_PACKAGE (Eigen3 REQUIRED)
     if (Eigen3_FOUND)
