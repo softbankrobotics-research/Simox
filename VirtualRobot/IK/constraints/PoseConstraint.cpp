@@ -86,6 +86,30 @@ void PoseConstraint::updateTarget(const Eigen::Matrix4f& newTarget)
 
 double PoseConstraint::optimizationFunction(Eigen::VectorXf &gradient)
 {
-    return 0;
+    // Compute optimization function value
+    Eigen::Vector3f rpy;
+    float tradeoff = 1000;
+
+    Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
+    MathTools::eigen4f2rpy(diff, rpy);
+
+    Eigen::Vector3f d = diff.block<3,1>(0,3);
+    float value = d.dot(d) + tradeoff * tradeoff * rpy.dot(rpy);
+
+    // Compute gradient
+    int size = gradient.rows();
+    if(size > 0)
+    {
+        Eigen::VectorXf g(Eigen::VectorXf::Zero(size));
+        Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
+
+        g += 2 * d.transpose() * J.block(0, 0, 3, size);
+        g += 2 * tradeoff * tradeoff * rpy.transpose() * J.block(3, 0, 3, size);
+        g *= (1 / g.norm());
+
+        gradient += g;
+    }
+
+    return value;
 }
 
