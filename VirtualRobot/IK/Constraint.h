@@ -45,6 +45,9 @@ namespace VirtualRobot
 
         virtual std::string getConstraintType() = 0;
 
+        // For optimization-based approaches
+        virtual double optimizationFunction(Eigen::VectorXf &gradient) = 0;
+
     protected:
         float lastError;
         float lastLastError;
