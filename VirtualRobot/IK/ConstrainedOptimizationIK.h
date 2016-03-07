@@ -27,17 +27,32 @@
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
 
+#include <nlopt.hpp>
+
 #include <boost/shared_ptr.hpp>
 
 namespace VirtualRobot
 {
+    typedef boost::shared_ptr<nlopt::opt> OptimizerPtr;
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedOptimizationIK>
     {
     public:
-        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
+        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 10, float tolerance = 0.1);
+
+        bool initialize();
+        bool solve(bool stepwise = false);
+
+    protected:
+        static double optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);
+        double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data);
 
     protected:
         RobotNodeSetPtr nodeSet;
+        OptimizerPtr optimizer;
+
+        float timeout;
+        float tolerance;
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
