@@ -89,7 +89,7 @@ void PoseConstraint::updateTarget(const Eigen::Matrix4f& newTarget)
 double PoseConstraint::optimizationFunction()
 {
     Eigen::Vector3f rpy;
-    float tradeoff = 1000;
+    float tradeoff = 100;
 
     Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
     Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
@@ -128,7 +128,7 @@ double PoseConstraint::optimizationFunction()
 
 Eigen::VectorXf PoseConstraint::optimizationGradient()
 {
-    float tradeoff = 1000;
+    float tradeoff = 100;
     int size = nodeSet->getSize();
 
     Eigen::VectorXf g(Eigen::VectorXf::Zero(size));

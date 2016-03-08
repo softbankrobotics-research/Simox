@@ -2,6 +2,8 @@
 #include "GenericIKWindow.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
+#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
+#include "VirtualRobot/IK/constraints/PoseConstraint.h"
 
 #include <time.h>
 #include <vector>
@@ -66,10 +68,10 @@ void GenericIKWindow::setupUI()
 
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
     connect(UI.comboBoxKC, SIGNAL(activated(int)), this, SLOT(selectKC(int)));
+    connect(UI.comboBoxIKMethod, SIGNAL(activated(int)), this, SLOT(selectIK(int)));
 
     connect(UI.pushButtonBox2TCP, SIGNAL(clicked()), this, SLOT(box2TCP()));
     connect(UI.pushButtonSolve, SIGNAL(clicked()), this, SLOT(solve()));
-
 
     connect(UI.horizontalSliderX, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(UI.horizontalSliderY, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
@@ -319,6 +321,14 @@ void GenericIKWindow::selectKC(int nr)
     collisionModel();
 }
 
+void GenericIKWindow::selectIK(int nr)
+{
+    if(nr == 0)
+    {
+        UI.comboBoxKC->setCurrentIndex(0);
+    }
+}
+
 void GenericIKWindow::sliderReleased()
 {
     UI.horizontalSliderX->setSliderPosition(0);
@@ -363,13 +373,25 @@ void GenericIKWindow::solve()
     }*/
     clock_t startT = clock();
 
-    if (ikGazeSolver)
+    if (UI.comboBoxIKMethod->currentIndex() == 0)
     {
+        cout << "Solving with Gaze IK" << endl;
         ikGazeSolver->solve(targetPose.block(0, 3, 3, 1));
+    }
+    else if(UI.comboBoxIKMethod->currentIndex() == 1)
+    {
+        cout << "Solving with Differential IK" << endl;
+        ikSolver->solve(targetPose, s, 50);
     }
     else
     {
-        ikSolver->solve(targetPose, s, 50);
+        cout << "Solving with Constrained IK" << endl;
+        ConstrainedOptimizationIK solver(robot, kc);
+        solver.initialize();
+
+        PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, targetPose, s));
+        solver.addConstraint(pc);
+        solver.solve();
     }
 
     clock_t endT = clock();
