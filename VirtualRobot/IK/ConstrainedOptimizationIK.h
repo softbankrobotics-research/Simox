@@ -42,6 +42,7 @@ namespace VirtualRobot
 
         bool initialize();
         bool solve(bool stepwise = false);
+        bool solveStep();
 
     protected:
         static double optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);

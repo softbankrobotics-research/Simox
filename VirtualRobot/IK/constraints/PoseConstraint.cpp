@@ -7,6 +7,8 @@
 #include <Inventor/nodes/SoSphere.h>
 #include <Inventor/nodes/SoTransform.h>
 
+#include <iostream>
+
 using namespace VirtualRobot;
 
 PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
@@ -84,32 +86,36 @@ void PoseConstraint::updateTarget(const Eigen::Matrix4f& newTarget)
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
 }
 
-double PoseConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+double PoseConstraint::optimizationFunction()
 {
-    // Compute optimization function value
     Eigen::Vector3f rpy;
     float tradeoff = 1000;
 
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
     Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
     MathTools::eigen4f2rpy(diff, rpy);
 
-    Eigen::Vector3f d = diff.block<3,1>(0,3);
-    float value = d.dot(d) + tradeoff * tradeoff * rpy.dot(rpy);
+    return d.dot(d) + tradeoff * tradeoff * rpy.dot(rpy);
+}
 
-    // Compute gradient
-    int size = gradient.rows();
-    if(size > 0)
-    {
-        Eigen::VectorXf g(Eigen::VectorXf::Zero(size));
-        Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
+Eigen::VectorXf PoseConstraint::optimizationGradient()
+{
+    float tradeoff = 1000;
+    int size = nodeSet->getSize();
 
-        g += 2 * d.transpose() * J.block(0, 0, 3, size);
-        g += 2 * tradeoff * tradeoff * rpy.transpose() * J.block(3, 0, 3, size);
-        g *= (1 / g.norm());
+    Eigen::VectorXf g(Eigen::VectorXf::Zero(size));
+    Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
 
-        gradient += g;
-    }
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
 
-    return value;
+    Eigen::Vector3f rpy;
+    MathTools::eigen4f2rpy(diff, rpy);
+
+    g += 2 * d.transpose() * J.block(0, 0, 3, size);
+    g += 2 * tradeoff * tradeoff * rpy.transpose() * J.block(3, 0, 3, size);
+    g *= (1 / g.norm());
+
+    return g;
 }
 

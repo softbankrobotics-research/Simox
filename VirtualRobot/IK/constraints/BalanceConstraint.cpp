@@ -90,7 +90,7 @@ void BalanceConstraint::setCoMHeight(float currentheight)
     height = currentheight;
 }
 
-double BalanceConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+double BalanceConstraint::optimizationFunction()
 {
     return 0;
 }
@@ -148,4 +148,7 @@ std::string BalanceConstraint::getConstraintType()
     return "Balance(" + joints->getName() + ")";
 }
 
+Eigen::VectorXf BalanceConstraint::optimizationGradient()
+{
 
+}

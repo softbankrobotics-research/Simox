@@ -137,7 +137,7 @@ const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds()
     return bounds;
 }
 
-double TSRConstraint::optimizationFunction(Eigen::VectorXf &gradient)
+double TSRConstraint::optimizationFunction()
 {
     return 0;
 }
@@ -193,4 +193,6 @@ float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
     }
 }
 
-
+Eigen::VectorXf TSRConstraint::optimizationGradient()
+{
+}
