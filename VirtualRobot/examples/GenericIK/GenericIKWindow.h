@@ -12,6 +12,7 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/IK/GenericIKSolver.h>
 #include <VirtualRobot/IK/GazeIK.h>
+#include <VirtualRobot/IK/ConstrainedIK.h>
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -49,6 +50,7 @@ public slots:
     void collisionModel();
     void loadRobot();
     void selectKC(int nr);
+    void selectIK(int nr);
     void sliderReleased();
     void sliderPressed();
 
@@ -81,6 +83,7 @@ protected:
 
     VirtualRobot::GenericIKSolverPtr ikSolver;
     VirtualRobot::GazeIKPtr ikGazeSolver;
+    VirtualRobot::ConstrainedIKPtr ikConstrainedSolver;
     VirtualRobot::ObstaclePtr box;
 
     bool useColModel;
