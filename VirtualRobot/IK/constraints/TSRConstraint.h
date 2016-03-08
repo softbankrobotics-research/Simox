@@ -47,7 +47,8 @@ namespace VirtualRobot
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
-        double optimizationFunction(Eigen::VectorXf &gradient);
+        double optimizationFunction();
+        Eigen::VectorXf optimizationGradient();
 
     protected:
         void resolveRPYAmbiguities(float* pose, const float* reference);

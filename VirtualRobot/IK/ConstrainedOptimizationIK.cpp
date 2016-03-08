@@ -38,7 +38,7 @@ bool ConstrainedOptimizationIK::initialize()
 {
     int size = nodeSet->getSize();
 
-    optimizer.reset(new nlopt::opt(nlopt::LN_SBPLX, size));
+    optimizer.reset(new nlopt::opt(nlopt::LD_SLSQP, size));
 
     std::vector<double> low(size);
     std::vector<double> high(size);
@@ -62,6 +62,7 @@ bool ConstrainedOptimizationIK::initialize()
 
 bool ConstrainedOptimizationIK::solve(bool stepwise)
 {
+    THROW_VR_EXCEPTION_IF(stepwise, "Stepwise solving not possible with optimization IK");
     THROW_VR_EXCEPTION_IF(!optimizer, "IK not initialized, did you forget to call initialize()?");
 
     int size = nodeSet->getSize();
@@ -88,6 +89,11 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     }
 }
 
+bool ConstrainedOptimizationIK::solveStep()
+{
+    THROW_VR_EXCEPTION("Stepwise solving not possible with optimization IK");
+}
+
 double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data)
 {
     std::vector<float> q(x.begin(), x.end());
@@ -105,18 +111,11 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
     float result = 0;
     for(auto &constraint : constraints)
     {
-        Eigen::VectorXf g;
+        result += constraint->optimizationFunction();
 
         if(useGradient)
         {
-            g.resize(gradient.size());
-        }
-
-        result += constraint->optimizationFunction(g);
-
-        if(useGradient)
-        {
-            gradientSum += g;
+            gradientSum += constraint->optimizationGradient();
         }
     }
 

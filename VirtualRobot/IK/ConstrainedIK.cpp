@@ -10,7 +10,6 @@ ConstrainedIK::ConstrainedIK(RobotPtr& robot, int maxIterations, float stall_eps
     stallEpsilon(stall_epsilon),
     raiseEpsilon(raise_epsilon)
 {
-
 }
 
 void ConstrainedIK::addConstraint(const ConstraintPtr& constraint, int priority, bool hard_constraint)
