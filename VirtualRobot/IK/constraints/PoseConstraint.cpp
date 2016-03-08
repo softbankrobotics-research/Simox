@@ -95,7 +95,35 @@ double PoseConstraint::optimizationFunction()
     Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
     MathTools::eigen4f2rpy(diff, rpy);
 
-    return d.dot(d) + tradeoff * tradeoff * rpy.dot(rpy);
+    float value = 0;
+    switch(cartesianSelection)
+    {
+        case IKSolver::CartesianSelection::X:
+            value = d.x() * d.x();
+            break;
+
+        case IKSolver::CartesianSelection::Y:
+            value = d.y() * d.y();
+            break;
+
+        case IKSolver::CartesianSelection::Z:
+            value = d.z() * d.z();
+            break;
+
+        case IKSolver::CartesianSelection::Position:
+            value = d.dot(d);
+            break;
+
+        case IKSolver::CartesianSelection::Orientation:
+            value = rpy.dot(rpy);
+            break;
+
+        case IKSolver::CartesianSelection::All:
+            value = d.dot(d) + tradeoff * tradeoff * rpy.dot(rpy);
+            break;
+    }
+
+    return value;
 }
 
 Eigen::VectorXf PoseConstraint::optimizationGradient()
@@ -112,10 +140,33 @@ Eigen::VectorXf PoseConstraint::optimizationGradient()
     Eigen::Vector3f rpy;
     MathTools::eigen4f2rpy(diff, rpy);
 
-    g += 2 * d.transpose() * J.block(0, 0, 3, size);
-    g += 2 * tradeoff * tradeoff * rpy.transpose() * J.block(3, 0, 3, size);
-    g *= (1 / g.norm());
+    switch(cartesianSelection)
+    {
+        case IKSolver::CartesianSelection::X:
+            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitX())).transpose() * J.block(0, 0, 3, size);
+            break;
 
-    return g;
+        case IKSolver::CartesianSelection::Y:
+            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitY())).transpose() * J.block(0, 0, 3, size);
+            break;
+
+        case IKSolver::CartesianSelection::Z:
+            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitZ())).transpose() * J.block(0, 0, 3, size);
+            break;
+
+        case IKSolver::CartesianSelection::Position:
+            g += 2 * d.transpose() * J.block(0, 0, 3, size);
+            break;
+
+        case IKSolver::CartesianSelection::Orientation:
+            g += 2 * rpy.transpose() * J.block(3, 0, 3, size);
+            break;
+
+        case IKSolver::CartesianSelection::All:
+            g += 2 * d.transpose() * J.block(0, 0, 3, size) + 2 * tradeoff * tradeoff * rpy.transpose() * J.block(3, 0, 3, size);
+            break;
+    }
+
+    return g / g.norm();
 }
 
