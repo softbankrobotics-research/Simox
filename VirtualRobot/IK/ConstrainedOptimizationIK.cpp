@@ -54,10 +54,23 @@ bool ConstrainedOptimizationIK::initialize()
 
     optimizer->set_maxtime(timeout);
     optimizer->set_stopval(tolerance);
-    optimizer->set_ftol_rel(1e-6);
-    optimizer->set_xtol_rel(1e-6);
+    //optimizer->set_ftol_abs(1e-6);
+    //optimizer->set_xtol_abs(1e-6);
 
     optimizer->set_min_objective(optimizationFunctionWrapper, this);
+
+    for(auto &constraint : constraints)
+    {
+        for(auto &c : constraint->getEqualityConstraints())
+        {
+            optimizer->add_equality_constraint(optimizationConstraintWrapper, new std::pair<OptimizationFunctionSetup, ConstrainedOptimizationIK *>(c, this), 1e-6);
+        }
+
+        for(auto &c : constraint->getInequalityConstraints())
+        {
+            optimizer->add_inequality_constraint(optimizationConstraintWrapper, new std::pair<OptimizationFunctionSetup, ConstrainedOptimizationIK *>(c, this), 1e-6);
+        }
+    }
 }
 
 bool ConstrainedOptimizationIK::solve(bool stepwise)
@@ -85,8 +98,30 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     }
     catch(const std::exception &e)
     {
+        throw;
         THROW_VR_EXCEPTION("NLOPT exception while optimizing!");
     }
+
+    std::cout << "Solution: " << std::endl;
+    unsigned int i = 0;
+    for(auto &constraint : constraints)
+    {
+        auto eq = constraint->getEqualityConstraints();
+        auto ineq = constraint->getInequalityConstraints();
+
+        for(auto &c : eq)
+        {
+            std::cout << "    - Eq. Constraint " << i << ": " << c.constraint->optimizationFunction(c.id) << std::endl;
+            i++;
+        }
+
+        for(auto &c : ineq)
+        {
+            std::cout << "    - Ineq. Constraint " << i << ": " << c.constraint->optimizationFunction(c.id) << std::endl;
+            i++;
+        }
+    }
+
 }
 
 bool ConstrainedOptimizationIK::solveStep()
@@ -94,44 +129,68 @@ bool ConstrainedOptimizationIK::solveStep()
     THROW_VR_EXCEPTION("Stepwise solving not possible with optimization IK");
 }
 
-double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data)
+double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient)
 {
-    std::vector<float> q(x.begin(), x.end());
-    nodeSet->setJointValues(q);
-
-    bool useGradient = (gradient.size() > 0);
-    Eigen::VectorXf gradientSum;
-
-    if(useGradient)
+    if(x != currentX)
     {
-        gradientSum.resize(gradient.size());
-        gradientSum.setZero();
+        std::vector<float> q(x.begin(), x.end());
+        nodeSet->setJointValues(q);
+        currentX = x;
     }
 
-    float result = 0;
+    unsigned int size = gradient.size();
+    if(size > 0)
+    {
+        for(unsigned int i = 0; i < size; i++)
+        {
+            gradient[i] = 0;
+        }
+    }
+
+    double value = 0;
+
     for(auto &constraint : constraints)
     {
-        result += constraint->optimizationFunction();
-
-        if(useGradient)
+        for(auto &function : constraint->getOptimizationFunctions())
         {
-            gradientSum += constraint->optimizationGradient();
+            value += function.constraint->optimizationFunction(function.id);
+            function.constraint->optimizationGradient(function.id, gradient);
         }
     }
 
-    if(useGradient)
+    //std::cout << "Optimization value: " << value << std::endl;
+
+    return value;
+}
+
+double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup)
+{
+    if(x != currentX)
     {
-        for(unsigned int i = 0; i < gradient.size(); i++)
-        {
-            gradient[i] = gradientSum(i);
-        }
+        std::vector<float> q(x.begin(), x.end());
+        nodeSet->setJointValues(q);
+        currentX = x;
     }
 
-    return result;
+    if(gradient.size() > 0)
+    {
+        setup.constraint->optimizationGradient(setup.id, gradient);
+    }
+
+    float value = setup.constraint->optimizationFunction(setup.id);
+
+    std::cout << setup.id << ": Opt. value: " << value << std::endl;
+    return value;
 }
 
 double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)
 {
-    return static_cast<ConstrainedOptimizationIK *>(data)->optimizationFunction(x, gradient, NULL);
+    return static_cast<ConstrainedOptimizationIK *>(data)->optimizationFunction(x, gradient);
+}
+
+double ConstrainedOptimizationIK::optimizationConstraintWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)
+{
+    return (static_cast<std::pair<OptimizationFunctionSetup, ConstrainedOptimizationIK *> *>(data)->second)->optimizationConstraint(
+                x, gradient, static_cast<std::pair<OptimizationFunctionSetup, ConstrainedOptimizationIK *> *>(data)->first);
 }
 
