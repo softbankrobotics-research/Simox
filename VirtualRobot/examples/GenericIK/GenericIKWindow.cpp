@@ -387,10 +387,11 @@ void GenericIKWindow::solve()
     {
         cout << "Solving with Constrained IK" << endl;
         ConstrainedOptimizationIK solver(robot, kc);
-        solver.initialize();
 
         PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, targetPose, s));
         solver.addConstraint(pc);
+
+        solver.initialize();
         solver.solve();
     }
 

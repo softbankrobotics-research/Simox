@@ -7,7 +7,6 @@ Constraint::Constraint(const RobotNodeSetPtr& nodeSet) :
     lastError(-1),
     lastLastError(-1)
 {
-
 }
 
 void Constraint::initialize()
@@ -34,4 +33,43 @@ float Constraint::getErrorDifference()
     }
 
     return lastLastError - lastError;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getEqualityConstraints()
+{
+    return equalityConstraints;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getInequalityConstraints()
+{
+    return inequalityConstraints;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getOptimizationFunctions()
+{
+    return optimizationFunctions;
+}
+
+void Constraint::addEqualityConstraint(unsigned int id)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    equalityConstraints.push_back(setup);
+}
+
+void Constraint::addInequalityConstraint(unsigned int id)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    inequalityConstraints.push_back(setup);
+}
+
+void Constraint::addOptimizationFunction(unsigned int id)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    optimizationFunctions.push_back(setup);
 }

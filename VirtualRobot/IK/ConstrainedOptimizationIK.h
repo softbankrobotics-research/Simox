@@ -26,6 +26,7 @@
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
+#include "VirtualRobot/IK/Constraint.h"
 
 #include <nlopt.hpp>
 
@@ -38,7 +39,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedOptimizationIK>
     {
     public:
-        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 10, float tolerance = 0.01);
+        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 10, float tolerance = 0.0001);
 
         bool initialize();
         bool solve(bool stepwise = false);
@@ -46,7 +47,10 @@ namespace VirtualRobot
 
     protected:
         static double optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);
-        double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient, void *data);
+        static double optimizationConstraintWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);
+
+        double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient);
+        double optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup);
 
     protected:
         RobotNodeSetPtr nodeSet;
@@ -54,6 +58,8 @@ namespace VirtualRobot
 
         float timeout;
         float tolerance;
+
+        std::vector<double> currentX;
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;

@@ -28,10 +28,22 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <nlopt.hpp>
+
 class SoSeparator;
 
 namespace VirtualRobot
 {
+    class Constraint;
+    typedef double (*OptimizationFunction)(std::vector<double> &gradient);
+
+    class OptimizationFunctionSetup
+    {
+        public:
+            unsigned int id;
+            Constraint *constraint;
+    };
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public boost::enable_shared_from_this<Constraint>
     {
     public:
@@ -45,11 +57,23 @@ namespace VirtualRobot
 
         virtual std::string getConstraintType() = 0;
 
-        // For optimization-based approaches
-        virtual double optimizationFunction() = 0;
-        virtual Eigen::VectorXf optimizationGradient() = 0;
+        const std::vector<OptimizationFunctionSetup> &getEqualityConstraints();
+        const std::vector<OptimizationFunctionSetup> &getInequalityConstraints();
+        const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();
+
+        virtual double optimizationFunction(unsigned int id) = 0;
+        virtual void optimizationGradient(unsigned int id, std::vector<double> &gradient) = 0;
 
     protected:
+        void addEqualityConstraint(unsigned int id);
+        void addInequalityConstraint(unsigned int id);
+        void addOptimizationFunction(unsigned int id);
+
+    protected:
+        std::vector<OptimizationFunctionSetup> equalityConstraints;
+        std::vector<OptimizationFunctionSetup> inequalityConstraints;
+        std::vector<OptimizationFunctionSetup> optimizationFunctions;
+
         float lastError;
         float lastLastError;
     };
