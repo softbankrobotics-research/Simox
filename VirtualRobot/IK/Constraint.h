@@ -62,7 +62,7 @@ namespace VirtualRobot
         const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();
 
         virtual double optimizationFunction(unsigned int id) = 0;
-        virtual void optimizationGradient(unsigned int id, std::vector<double> &gradient) = 0;
+        virtual Eigen::VectorXf optimizationGradient(unsigned int id) = 0;
 
     protected:
         void addEqualityConstraint(unsigned int id);
