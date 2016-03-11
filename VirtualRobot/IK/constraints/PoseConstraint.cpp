@@ -20,7 +20,8 @@ PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nod
     target(target),
     cartesianSelection(cartesianSelection),
     tolerancePosition(tolerancePosition),
-    toleranceRotation(toleranceRotation)
+    toleranceRotation(toleranceRotation),
+    posRotTradeoff(0.1)
 {
     ik.reset(new DifferentialIK(nodeSet));
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
@@ -105,26 +106,24 @@ double PoseConstraint::optimizationFunction(unsigned int id)
     }
 }
 
-void PoseConstraint::optimizationGradient(unsigned int id, std::vector<double> &gradient)
+Eigen::VectorXf PoseConstraint::optimizationGradient(unsigned int id)
 {
     switch(id)
     {
         case 0:
-            positionOptimizationGradient(gradient);
-            break;
+            return positionOptimizationGradient();
 
         case 1:
-            orientationOptimizationGradient(gradient);
-            break;
+            return orientationOptimizationGradient();
 
         default:
-            break;
+            return Eigen::VectorXf();
     }
 }
 
 double PoseConstraint::positionOptimizationFunction()
 {
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Vector3f d = posRotTradeoff * (eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3));
 
     switch(cartesianSelection)
     {
@@ -146,52 +145,30 @@ double PoseConstraint::positionOptimizationFunction()
     }
 }
 
-void PoseConstraint::positionOptimizationGradient(std::vector<double> &gradient)
+Eigen::VectorXf PoseConstraint::positionOptimizationGradient()
 {
-    int size = gradient.size();
+    int size = nodeSet->getSize();
 
-    if(size == 0)
-    {
-        return;
-    }
-
-    Eigen::VectorXf g(Eigen::VectorXf::Zero(size));
-    Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
-
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(0, 0, 3, size);
+    Eigen::Vector3f d = posRotTradeoff * (eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3));
 
     switch(cartesianSelection)
     {
         case IKSolver::CartesianSelection::X:
-            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitX())).transpose() * J.block(0, 0, 3, size);
-            break;
+            return 2 * Eigen::Vector3f(d.x(), 0, 0).transpose() * J;
 
         case IKSolver::CartesianSelection::Y:
-            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitY())).transpose() * J.block(0, 0, 3, size);
-            break;
+            return 2 * Eigen::Vector3f(0, d.y(), 0).transpose() * J;
 
         case IKSolver::CartesianSelection::Z:
-            g += 2 * Eigen::Vector3f(d.dot(Eigen::Vector3f::UnitZ())).transpose() * J.block(0, 0, 3, size);
-            break;
+            return 2 * Eigen::Vector3f(0, 0, d.z()).transpose() * J;
 
         case IKSolver::CartesianSelection::Position:
         case IKSolver::CartesianSelection::All:
-            g += 2 * d.transpose() * J.block(0, 0, 3, size);
-            break;
+            return 2 * d.transpose() * J;
 
         case IKSolver::CartesianSelection::Orientation:
-            break;
-    }
-
-    float n = g.norm();
-    if(n > 0)
-    {
-        g /= n;
-    }
-
-    for(unsigned int i = 0; i < size; i++)
-    {
-        gradient[i] += g(i);
+            return Eigen::VectorXf::Zero(size);
     }
 }
 
@@ -222,18 +199,11 @@ double PoseConstraint::orientationOptimizationFunction()
     return value;
 }
 
-void PoseConstraint::orientationOptimizationGradient(std::vector<double> &gradient)
+Eigen::VectorXf PoseConstraint::orientationOptimizationGradient()
 {
-    int size = gradient.size();
+    int size = nodeSet->getSize();
 
-    if(size == 0)
-    {
-        return;
-    }
-
-    Eigen::VectorXf g(Eigen::VectorXf::Zero(size));
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
-
     Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
 
     Eigen::Vector3f rpy;
@@ -247,22 +217,10 @@ void PoseConstraint::orientationOptimizationGradient(std::vector<double> &gradie
         case IKSolver::CartesianSelection::Y:
         case IKSolver::CartesianSelection::Z:
         case IKSolver::CartesianSelection::Position:
-            break;
+            return Eigen::VectorXf::Zero(size);
 
         case IKSolver::CartesianSelection::Orientation:
         case IKSolver::CartesianSelection::All:
-            g += 2 * rpy.transpose() * J.block(3, 0, 3, size);
-            break;
-    }
-
-    float n = g.norm();
-    if(n > 0)
-    {
-        g /= n;
-    }
-
-    for(unsigned int i = 0; i < size; i++)
-    {
-        gradient[i] += g(i);
+            return 2 * rpy.transpose() * J.block(3, 0, 3, size);
     }
 }

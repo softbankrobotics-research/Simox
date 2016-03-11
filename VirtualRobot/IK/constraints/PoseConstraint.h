@@ -53,14 +53,14 @@ namespace VirtualRobot
         void updateTarget(const Eigen::Matrix4f& newTarget);
 
         double optimizationFunction(unsigned int id);
-        void optimizationGradient(unsigned int id, std::vector<double> &gradient);
+        Eigen::VectorXf optimizationGradient(unsigned int id);
 
     protected:
         double positionOptimizationFunction();
-        void positionOptimizationGradient(std::vector<double> &gradient);
+        Eigen::VectorXf positionOptimizationGradient();
 
         double orientationOptimizationFunction();
-        void orientationOptimizationGradient(std::vector<double> &gradient);
+        Eigen::VectorXf orientationOptimizationGradient();
 
     protected:
         RobotPtr robot;
@@ -78,6 +78,8 @@ namespace VirtualRobot
 
         float lastError;
         float lastLastError;
+
+        float posRotTradeoff;
     };
 
     typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
