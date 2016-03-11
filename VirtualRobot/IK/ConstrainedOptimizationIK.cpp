@@ -30,7 +30,8 @@ ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const Robo
     ConstrainedIK(robot),
     nodeSet(nodeSet),
     timeout(timeout),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    maxAttempts(30)
 {
 }
 
@@ -53,9 +54,9 @@ bool ConstrainedOptimizationIK::initialize()
     optimizer->set_upper_bounds(high);
 
     optimizer->set_maxtime(timeout);
-    optimizer->set_stopval(tolerance);
-    //optimizer->set_ftol_abs(1e-6);
-    //optimizer->set_xtol_abs(1e-6);
+    optimizer->set_stopval(tolerance * tolerance);
+    optimizer->set_ftol_abs(1e-6);
+    optimizer->set_xtol_abs(1e-4);
 
     optimizer->set_min_objective(optimizationFunctionWrapper, this);
 
@@ -78,50 +79,57 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     THROW_VR_EXCEPTION_IF(stepwise, "Stepwise solving not possible with optimization IK");
     THROW_VR_EXCEPTION_IF(!optimizer, "IK not initialized, did you forget to call initialize()?");
 
-    int size = nodeSet->getSize();
-    std::vector<double> iv(size);
-    for(int i = 0; i < size; i++)
+    for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
     {
-        iv[i] = nodeSet->getNode(i)->getJointValue();
-    }
+        numIterations = 0;
 
-    double min_f;
-
-    try
-    {
-        nlopt::result result = optimizer->optimize(iv, min_f);
-    }
-    catch(const nlopt::roundoff_limited &e)
-    {
-        // This means that we optimize below the precision limit
-        // The result might still be usable though
-    }
-    catch(const std::exception &e)
-    {
-        throw;
-        THROW_VR_EXCEPTION("NLOPT exception while optimizing!");
-    }
-
-    std::cout << "Solution: " << std::endl;
-    unsigned int i = 0;
-    for(auto &constraint : constraints)
-    {
-        auto eq = constraint->getEqualityConstraints();
-        auto ineq = constraint->getInequalityConstraints();
-
-        for(auto &c : eq)
+        int size = nodeSet->getSize();
+        std::vector<double> x(size);
+        for(int i = 0; i < size; i++)
         {
-            std::cout << "    - Eq. Constraint " << i << ": " << c.constraint->optimizationFunction(c.id) << std::endl;
-            i++;
+            if(attempt == 0)
+            {
+                // First try zero-position
+                x[i] = 0;
+            }
+            else
+            {
+                // If zero position fails, try random positions
+                float t = (rand()%1000) / 1000.0;
+                x[i] = nodeSet->getNode(i)->getJointLimitLo() + t * (nodeSet->getNode(i)->getJointLimitHi() - nodeSet->getNode(i)->getJointLimitLo());
+            }
         }
 
-        for(auto &c : ineq)
+        double min_f;
+
+        try
         {
-            std::cout << "    - Ineq. Constraint " << i << ": " << c.constraint->optimizationFunction(c.id) << std::endl;
-            i++;
+            nlopt::result result = optimizer->optimize(x, min_f);
+        }
+        catch(const nlopt::roundoff_limited &e)
+        {
+            // This means that we optimize below the precision limit
+            // The result might still be usable though
+        }
+        catch(const std::exception &e)
+        {
+            std::cout << "NLOPT exception while optimizing" << std::endl;
+            //THROW_VR_EXCEPTION("NLOPT exception while optimizing!");
+        }
+
+        for(int i = 0; i < size; i++)
+        {
+            nodeSet->getNode(i)->setJointValue(x[i]);
+        }
+
+        if(min_f < tolerance * tolerance)
+        {
+            // Success
+            return true;
         }
     }
 
+    return false;
 }
 
 bool ConstrainedOptimizationIK::solveStep()
@@ -131,6 +139,8 @@ bool ConstrainedOptimizationIK::solveStep()
 
 double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient)
 {
+    numIterations++;
+
     if(x != currentX)
     {
         std::vector<float> q(x.begin(), x.end());
@@ -139,14 +149,7 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
     }
 
     unsigned int size = gradient.size();
-    if(size > 0)
-    {
-        for(unsigned int i = 0; i < size; i++)
-        {
-            gradient[i] = 0;
-        }
-    }
-
+    Eigen::VectorXf grad = Eigen::VectorXf::Zero(size);
     double value = 0;
 
     for(auto &constraint : constraints)
@@ -154,17 +157,37 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
         for(auto &function : constraint->getOptimizationFunctions())
         {
             value += function.constraint->optimizationFunction(function.id);
-            function.constraint->optimizationGradient(function.id, gradient);
+
+            if(size > 0)
+            {
+                Eigen::VectorXf g = function.constraint->optimizationGradient(function.id);
+
+                float n = g.norm();
+                if(n > 1)
+                {
+                    g /= n;
+                }
+
+                grad += g;
+            }
         }
     }
 
-    //std::cout << "Optimization value: " << value << std::endl;
+    if(size > 0)
+    {
+        for(unsigned int i = 0; i < gradient.size(); i++)
+        {
+            gradient[i] = grad(i);
+        }
+    }
 
     return value;
 }
 
 double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup)
 {
+    numIterations++;
+
     if(x != currentX)
     {
         std::vector<float> q(x.begin(), x.end());
@@ -174,13 +197,15 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
 
     if(gradient.size() > 0)
     {
-        setup.constraint->optimizationGradient(setup.id, gradient);
+        Eigen::VectorXf g = setup.constraint->optimizationGradient(setup.id);
+
+        for(unsigned int i = 0; i < gradient.size(); i++)
+        {
+            gradient[i] = g(i);
+        }
     }
 
-    float value = setup.constraint->optimizationFunction(setup.id);
-
-    std::cout << setup.id << ": Opt. value: " << value << std::endl;
-    return value;
+    return setup.constraint->optimizationFunction(setup.id);
 }
 
 double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)
