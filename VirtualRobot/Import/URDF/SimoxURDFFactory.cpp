@@ -234,6 +234,7 @@ namespace VirtualRobot
             {
                 boost::shared_ptr<Cylinder> c = boost::dynamic_pointer_cast<Cylinder>(g);
                 res = factory->createCylinder(c->radius * scale, c->length * scale);
+                
             }
             break;
 
@@ -252,6 +253,11 @@ namespace VirtualRobot
         if (res)
         {
             Eigen::Matrix4f p = convertPose(pose);
+            if (g->type == urdf::Geometry::CYLINDER)
+            {
+				// inventor and urdf differ in the conventions for cylinders
+                p = p * MathTools::axisangle2eigen4f(Eigen::Vector3f::UnitX(), M_PI_2);
+            }
             factory->applyDisplacement(res, p);
         }
 
