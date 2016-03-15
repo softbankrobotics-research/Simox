@@ -11,6 +11,9 @@
 
 using namespace VirtualRobot;
 
+#define POSITION_COMPONENT      0
+#define ORIENTATION_COMPONENT   1
+
 PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
                                float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
@@ -26,8 +29,8 @@ PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nod
     ik.reset(new DifferentialIK(nodeSet));
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
 
-    addOptimizationFunction(0);
-    addOptimizationFunction(1);
+    addOptimizationFunction(POSITION_COMPONENT);
+    addOptimizationFunction(ORIENTATION_COMPONENT);
 
     initialized = true;
 }
@@ -95,10 +98,10 @@ double PoseConstraint::optimizationFunction(unsigned int id)
 {
     switch(id)
     {
-        case 0:
+        case POSITION_COMPONENT:
             return positionOptimizationFunction();
 
-        case 1:
+        case ORIENTATION_COMPONENT:
             return orientationOptimizationFunction();
 
         default:
@@ -110,10 +113,10 @@ Eigen::VectorXf PoseConstraint::optimizationGradient(unsigned int id)
 {
     switch(id)
     {
-        case 0:
+        case POSITION_COMPONENT:
             return positionOptimizationGradient();
 
-        case 1:
+        case ORIENTATION_COMPONENT:
             return orientationOptimizationGradient();
 
         default:
