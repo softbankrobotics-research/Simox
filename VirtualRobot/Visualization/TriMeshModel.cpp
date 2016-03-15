@@ -53,7 +53,7 @@ namespace VirtualRobot
         this->addColor(color2);
         this->addColor(color3);
 
-        if (normal.norm() < 1e-10 || isnan(normal[0]) || isnan(normal[1]) || isnan(normal[2]))
+        if (normal.norm() < 1e-10 || std::isnan(normal[0]) || std::isnan(normal[1]) || std::isnan(normal[2]))
         {
             normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         }
@@ -73,7 +73,7 @@ namespace VirtualRobot
         face.idColor3 = this->colors.size() - 1;
 
         face.normal = normal;
-        if (isnan(face.normal[0]) || isnan(face.normal[1]) || isnan(face.normal[2]))
+        if (std::isnan(face.normal[0]) || std::isnan(face.normal[1]) || std::isnan(face.normal[2]))
         {
             VR_ERROR << "*** NANNNNNNNNNNNNNNNNNNNNN" << endl;
         }
@@ -141,7 +141,7 @@ namespace VirtualRobot
     */
     void TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
     {
-        if (isnan(vertex[0]) || isnan(vertex[1]) || isnan(vertex[2]))
+        if (std::isnan(vertex[0]) || std::isnan(vertex[1]) || std::isnan(vertex[2]))
         {
             VR_ERROR << "NAN vertex added!!!" << endl;
             return;
