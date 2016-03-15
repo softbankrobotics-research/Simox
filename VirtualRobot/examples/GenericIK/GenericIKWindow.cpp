@@ -2,8 +2,11 @@
 #include "GenericIKWindow.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
+
+#ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
 #include "VirtualRobot/IK/constraints/PoseConstraint.h"
+#endif
 
 #include <time.h>
 #include <vector>
@@ -385,6 +388,7 @@ void GenericIKWindow::solve()
     }
     else
     {
+#ifdef USE_NLOPT
         cout << "Solving with Constrained IK" << endl;
         ConstrainedOptimizationIK solver(robot, kc);
 
@@ -393,6 +397,9 @@ void GenericIKWindow::solve()
 
         solver.initialize();
         solver.solve();
+#else
+        cout << "Constrained IK not available (requires NLopt)" << endl;
+#endif
     }
 
     clock_t endT = clock();
