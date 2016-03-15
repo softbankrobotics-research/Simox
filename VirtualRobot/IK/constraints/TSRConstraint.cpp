@@ -1,13 +1,11 @@
 #include "TSRConstraint.h"
 
 #include <VirtualRobot/MathTools.h>
-/*
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoCube.h>
-*/
+
 using namespace VirtualRobot;
+
+#define POSITION_COMPONENT      0
+#define ORIENTATION_COMPONENT   1
 
 TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,
                              const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
@@ -20,13 +18,17 @@ TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeS
     eefOffset(eefOffset),
     bounds(bounds),
     toleranceTranslation(1.0f),
-    toleranceRotation(0.1f)
+    toleranceRotation(0.1f),
+    posRotTradeoff(0.1)
 {
     ik.reset(new DifferentialIK(nodeSet));
 
     // Just for setting the TCP (IK will not actually be solved)
     Eigen::Matrix4f goal = Eigen::Matrix4f::Identity();
     ik->setGoal(goal, eef, IKSolver::All, tolerancePosition, toleranceRotation);
+
+    addOptimizationFunction(POSITION_COMPONENT);
+    addOptimizationFunction(ORIENTATION_COMPONENT);
 
     initialized = true;
 }
@@ -86,13 +88,7 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     MathTools::posrpy2eigen4f(target.block<3, 1>(0, 0), target.block<3, 1>(3, 0), T_dx);
 
     Eigen::Matrix4f P_target = transformation * T_dx;
-    //float target_global[6];
-    //MathTools::eigen4f2rpy(P_target, target_global);
-
     Eigen::Matrix4f P_eef = eef_global * eefOffset;
-    //float e_global[6];
-    //MathTools::eigen4f2rpy(P_eef, e_global);
-
     Eigen::Matrix4f P_delta = P_target * P_eef.inverse();
     Eigen::AngleAxis<float> P_delta_AA;
     P_delta_AA = P_delta.block<3, 3>(0, 0);
@@ -104,14 +100,6 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
                      P_target(2, 3) - P_eef(2, 3)
                  );
     dx.tail(3) = P_delta_AA.axis() * P_delta_AA.angle();
-
-    /*resolveRPYAmbiguities(e_global, target_global);
-    dx << (target_global[0] - e_global[0]),
-          (target_global[1] - e_global[1]),
-          (target_global[2] - e_global[2]),
-          getShortestDistanceForRPYComponent(e_global[3], target_global[3]),
-          getShortestDistanceForRPYComponent(e_global[4], target_global[4]),
-          getShortestDistanceForRPYComponent(e_global[5], target_global[5]);*/
 
     return dx * stepSize;
 }
@@ -137,9 +125,60 @@ const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds()
     return bounds;
 }
 
-double TSRConstraint::optimizationFunction()
+double TSRConstraint::optimizationFunction(unsigned int id)
 {
-    return 0;
+    switch(id)
+    {
+        case POSITION_COMPONENT:
+            return positionOptimizationFunction();
+
+        case ORIENTATION_COMPONENT:
+            return orientationOptimizationFunction();
+
+        default:
+            return 0;
+    }
+}
+
+Eigen::VectorXf TSRConstraint::optimizationGradient(unsigned int id)
+{
+    switch(id)
+    {
+        case POSITION_COMPONENT:
+            return positionOptimizationGradient();
+
+        case ORIENTATION_COMPONENT:
+            return orientationOptimizationGradient();
+
+        default:
+            return Eigen::VectorXf();
+    }
+}
+
+double TSRConstraint::positionOptimizationFunction()
+{
+    Eigen::VectorXf e = posRotTradeoff * getError().head(3);
+    return e.dot(e);
+}
+
+Eigen::VectorXf TSRConstraint::positionOptimizationGradient()
+{
+    Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(0, 0, 3, nodeSet->getSize());
+    Eigen::VectorXf e = posRotTradeoff * getError().head(3);
+    return 2 * e.transpose() * J;
+}
+
+double TSRConstraint::orientationOptimizationFunction()
+{
+    Eigen::VectorXf e = getError().tail(3);
+    return e.dot(e);
+}
+
+Eigen::VectorXf TSRConstraint::orientationOptimizationGradient()
+{
+    Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(3, 0, 3, nodeSet->getSize());
+    Eigen::VectorXf e = posRotTradeoff * getError().tail(3);
+    return 2 * e.transpose() * J;
 }
 
 void TSRConstraint::resolveRPYAmbiguities(float* pose, const float* reference)
@@ -191,8 +230,4 @@ float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
     {
         return direct;
     }
-}
-
-Eigen::VectorXf TSRConstraint::optimizationGradient()
-{
 }

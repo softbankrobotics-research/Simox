@@ -47,8 +47,15 @@ namespace VirtualRobot
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
-        double optimizationFunction();
-        Eigen::VectorXf optimizationGradient();
+        double optimizationFunction(unsigned int id);
+        Eigen::VectorXf optimizationGradient(unsigned int id);
+
+    protected:
+        double positionOptimizationFunction();
+        Eigen::VectorXf positionOptimizationGradient();
+
+        double orientationOptimizationFunction();
+        Eigen::VectorXf orientationOptimizationGradient();
 
     protected:
         void resolveRPYAmbiguities(float* pose, const float* reference);
@@ -66,6 +73,8 @@ namespace VirtualRobot
 
         float toleranceTranslation;
         float toleranceRotation;
+
+        float posRotTradeoff;
     };
 
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
