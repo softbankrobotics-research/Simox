@@ -181,8 +181,13 @@ IF (NOT Simox_CONFIGURED)
         SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Boost_LIBRARIES})
         FIND_PACKAGE(Boost 1.46.0 COMPONENTS unit_test_framework REQUIRED)
         SET (Boost_TEST_LIB "${Boost_LIBRARIES}")
-        # disable boost auto linking
-        SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_SYSTEM_DYN_LINK -DBOOST_THREAD_DYN_LINK")
+        # disable boost auto linking 
+        if (Boost_USE_STATIC_LIBS)
+            SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN")
+        else (Boost_USE_STATIC_LIBS)
+            # enable dynamic linking for specific boost libraries
+            SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_SYSTEM_DYN_LINK -DBOOST_THREAD_DYN_LINK")
+        endif (Boost_USE_STATIC_LIBS)
     else (Boost_FOUND)
         MESSAGE ("!! Could not find Boost !!")
     endif (Boost_FOUND)
