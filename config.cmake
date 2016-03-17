@@ -29,6 +29,9 @@ IF (NOT Simox_CONFIGURED)
     endif()
     set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
         "Installation directory for CMake files")
+
+    # Almost all examples require soqt. It will be set to ON if soqt is found.
+    set(Simox_BUILD_EXAMPLES OFF CACHE BOOL "Build example applications")
  
     # Make relative paths absolute (needed later on) 
     # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
@@ -228,8 +231,10 @@ IF (NOT Simox_CONFIGURED)
         FIND_PACKAGE(Coin3D REQUIRED)
         if (COIN3D_FOUND)
             MESSAGE (STATUS "Found Coin3D: " ${COIN3D_INCLUDE_DIRS})
-            ##INCLUDE_DIRECTORIES(${COIN3D_INCLUDE_DIRS})
-            ##ADD_DEFINITIONS(-DCOIN_DLL)
+            SET (Simox_VISUALIZATION TRUE)
+            SET (Simox_VISUALIZATION_LIBS ${COIN3D_LIBRARIES})
+            SET (Simox_VISUALIZATION_INCLUDE_PATHS ${COIN3D_INCLUDE_DIRS} )
+            SET (Simox_VISUALIZATION_COMPILE_FLAGS "-DCOIN_DLL")
         endif (COIN3D_FOUND)
         
         
@@ -263,9 +268,10 @@ IF (NOT Simox_CONFIGURED)
             if (SOQT_FOUND AND COIN3D_FOUND)
                 MESSAGE (STATUS "Enabling Coin3D/Qt/SoQt support")
                 SET (Simox_VISUALIZATION TRUE)
-                SET (Simox_VISUALIZATION_LIBS ${COIN3D_LIBRARIES} ${SoQt_LIBRARIES} )
-                SET (Simox_VISUALIZATION_INCLUDE_PATHS ${SoQt_INCLUDE_DIRS} ${COIN3D_INCLUDE_DIRS} )
-                SET (Simox_VISUALIZATION_COMPILE_FLAGS " -DCOIN_DLL -DSOQT_DLL ")
+                SET (Simox_VISUALIZATION_LIBS ${Simox_VISUALIZATION_LIBS} ${SoQt_LIBRARIES} )
+                SET (Simox_VISUALIZATION_INCLUDE_PATHS  ${Simox_VISUALIZATION_INCLUDE_PATHS} ${SoQt_INCLUDE_DIRS})
+                SET (Simox_VISUALIZATION_COMPILE_FLAGS "${Simox_VISUALIZATION_COMPILE_FLAGS} -DSOQT_DLL -DSIMOX_USE_SOQT")
+                set(Simox_BUILD_EXAMPLES ON)
 
                 if (QT_FOUND)
                     # QT4

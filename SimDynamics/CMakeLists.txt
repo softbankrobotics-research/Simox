@@ -191,7 +191,7 @@ if (SimDynamics_DYNAMICSENGINE)
           MESSAGE (STATUS " ** Bullet's OpenGLSupport library not found: Skipping BulletOpenGLViewer")
       endif()
   
-  if (Simox_USE_COIN_VISUALIZATION)
+  if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
       	SET(SOURCES
         	${SOURCES}
         	DynamicsEngine/BulletEngine/BulletCoinQtViewer.cpp
@@ -231,8 +231,10 @@ if (SimDynamics_DYNAMICSENGINE)
   # .lib path (this is needed for setting the DLL-import library path on windows)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
   
-  # include examples
-  ADD_SUBDIRECTORY(examples/)
+  if(Simox_BUILD_EXAMPLES)
+      # include examples
+      ADD_SUBDIRECTORY(examples/)
+  endif()
   
   # include unit tests
   #ADD_SUBDIRECTORY(tests/)

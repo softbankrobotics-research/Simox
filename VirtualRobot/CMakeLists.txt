@@ -20,7 +20,7 @@ if (Simox_USE_RBDL)
 endif()
 
 ########################### TESTING #####################################
-    MACRO(ADD_VR_TEST TEST_NAME)  
+MACRO(ADD_VR_TEST TEST_NAME)
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
@@ -135,7 +135,9 @@ if (Simox_USE_RBDL AND RBDL_FOUND)
         Dynamics/dynamics.h
     )
 
-    ADD_SUBDIRECTORY(Dynamics/tests)
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Dynamics/tests)
+    endif()
 endif ()
 
 
@@ -240,9 +242,11 @@ Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
 
-ADD_SUBDIRECTORY(Visualization/tests)
-ADD_SUBDIRECTORY(Workspace/tests)
-ADD_SUBDIRECTORY(Compression/tests)
+if(BUILD_TESTING)
+    ADD_SUBDIRECTORY(Visualization/tests)
+    ADD_SUBDIRECTORY(Workspace/tests)
+    ADD_SUBDIRECTORY(Compression/tests)
+endif()
 
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
@@ -270,7 +274,10 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/COLLADA-light/inventor.h
     Import/SimoxCOLLADAFactory.h
     )
-    ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
+    endif()
 
 elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
 
@@ -299,8 +306,9 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
         qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
     endif()
 
-    ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
-
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
+    endif()
 endif ()
 
 #if (Simox_USE_COLLADA)
@@ -362,17 +370,20 @@ endif()
 # include collision detection
 INCLUDE (CollisionDetection/CMakeLists.txt)
 
-# include unit tests
-ADD_SUBDIRECTORY(tests/)
-ADD_SUBDIRECTORY(Transformation/tests/)
+if(BUILD_TESTING)
+    # include unit tests
+    ADD_SUBDIRECTORY(tests/)
+    ADD_SUBDIRECTORY(Transformation/tests/)
+endif()
 
-# include examples
-ADD_SUBDIRECTORY(examples/)
-
+if(Simox_BUILD_EXAMPLES)
+    # include examples
+    ADD_SUBDIRECTORY(examples/)
+endif()
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
-if (Simox_USE_COIN_VISUALIZATION)
+if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
     set(UI
         Grasping/GraspEditor/GraspEditor.ui
