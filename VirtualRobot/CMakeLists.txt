@@ -311,6 +311,28 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
     if(BUILD_TESTING)
         ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
     endif()
+
+
+elseif (Simox_VISUALIZATION AND Simox_USE_OGRE_VISUALIZATION)
+
+    SET(SOURCES
+    ${SOURCES}
+    Visualization/OgreVisualization/OgreVisualizationFactory.cpp
+    Visualization/OgreVisualization/OgreVisualizationNode.cpp
+    Visualization/OgreVisualization/OgreVisualization.cpp
+    )
+
+    SET(INCLUDES
+    ${INCLUDES}
+    Visualization/OgreVisualization/OgreVisualizationFactory.h
+    Visualization/OgreVisualization/OgreVisualizationNode.h
+    Visualization/OgreVisualization/OgreVisualization.h
+    )
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/OgreVisualization/tests)
+    endif()
+
 endif ()
 
 #if (Simox_USE_COLLADA)
