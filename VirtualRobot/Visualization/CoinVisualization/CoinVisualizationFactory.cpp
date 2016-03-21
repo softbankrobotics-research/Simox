@@ -73,7 +73,9 @@
 #endif
 #include <GL/gl.h>
 
+#ifdef SIMOX_USE_SOQT
 #include <Inventor/Qt/SoQt.h>
+#endif
 
 #include <iostream>
 #include <algorithm>
@@ -94,9 +96,12 @@ namespace VirtualRobot
     void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
         if (!SoDB::isInitialized())
+		{
             SoDB::init();
+		}
+#ifdef SIMOX_USE_SOQT
         SoQt::init(argc, argv, appName.c_str());
-
+#endif
         // enable Coin3D extension: transparent settings without color
         (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
 
