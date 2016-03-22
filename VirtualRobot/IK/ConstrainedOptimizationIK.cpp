@@ -79,6 +79,12 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     THROW_VR_EXCEPTION_IF(stepwise, "Stepwise solving not possible with optimization IK");
     THROW_VR_EXCEPTION_IF(!optimizer, "IK not initialized, did you forget to call initialize()?");
 
+    bool updateVisualization = robot->getUpdateVisualizationStatus();
+    bool updateCollisionModel = robot->getUpdateCollisionModelStatus();
+
+    robot->setUpdateVisualization(false);
+    robot->setUpdateVisualization(false);
+
     for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
     {
         numIterations = 0;
@@ -113,8 +119,9 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         }
         catch(const std::exception &e)
         {
-            std::cout << "NLOPT exception while optimizing" << std::endl;
-            //THROW_VR_EXCEPTION("NLOPT exception while optimizing!");
+            // This is something more severe, we still check the result and proceed
+            // with the next attempt.
+            VR_INFO << "Warning: NLOPT exception while optimizing" << std::endl;
         }
 
         for(int i = 0; i < size; i++)
@@ -125,10 +132,15 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         if(min_f < tolerance * tolerance)
         {
             // Success
+            robot->setUpdateVisualization(updateVisualization);
+            robot->setUpdateCollisionModel(updateCollisionModel);
             return true;
         }
     }
 
+    // Failure
+    robot->setUpdateVisualization(updateVisualization);
+    robot->setUpdateCollisionModel(updateCollisionModel);
     return false;
 }
 
@@ -162,6 +174,7 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
             {
                 Eigen::VectorXf g = function.constraint->optimizationGradient(function.id);
 
+                // Crop gradients to a maximum size
                 float n = g.norm();
                 if(n > 1)
                 {
