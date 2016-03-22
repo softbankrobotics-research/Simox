@@ -28,8 +28,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <nlopt.hpp>
-
 class SoSeparator;
 
 namespace VirtualRobot
