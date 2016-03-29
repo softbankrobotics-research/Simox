@@ -174,14 +174,26 @@ namespace Collada
         std::map<std::string, std::vector<float> > colormap;
         BOOST_FOREACH(pugi::xpath_node imaterial, igeometry.select_nodes(".//instance_material"))
         {
+            std::vector<float> diffuse_color = {0.5, 0.5, 0.5, 1};
             std::string symbol = imaterial.node().attribute("symbol").value();
             pugi::xml_node material = resolveURL(imaterial.node(), "//library_materials");
             pugi::xml_node ieffect = material.child("instance_effect");
             pugi::xml_node effect = resolveURL(ieffect, "//library_effects");
-            pugi::xml_node phong = effect.child("profile_COMMON").child("technique").child("phong");
-            //        pugi::xml_node diffuse = phong.child("specular").child("color");
-            pugi::xml_node diffuse = phong.child("diffuse").child("color");
-            colormap[symbol] = getVector<float>(diffuse.child_value());
+
+            pugi::xml_node shader_phong = effect.child("profile_COMMON").child("technique").child("phong");
+            pugi::xml_node shader_lambert = effect.child("profile_COMMON").child("technique").child("lambert");
+
+            if(shader_phong && !shader_lambert)
+            {
+                pugi::xml_node diffuse = shader_phong.child("diffuse").child("color");
+                diffuse_color = getVector<float>(diffuse.child_value());
+            }
+            else if (!shader_phong && shader_lambert)
+            {
+                pugi::xml_node diffuse = shader_lambert.child("diffuse").child("color");
+                diffuse_color = getVector<float>(diffuse.child_value());
+            }
+            colormap[symbol] = diffuse_color;
         }
         return colormap;
     }
