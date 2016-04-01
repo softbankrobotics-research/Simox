@@ -1318,9 +1318,9 @@ namespace VirtualRobot
 
             // Define colors for the faces
             SoMaterial* myMaterials = new SoMaterial;
-            myMaterials->diffuseColor.setValues(0, model->materials.size(), matDif);
-            myMaterials->ambientColor.setValues(0, model->materials.size(), matAmb);
-            myMaterials->transparency.setValues(0, model->materials.size(), transp);
+            myMaterials->diffuseColor.setValues(0, model->colors.size(), matDif);
+            myMaterials->ambientColor.setValues(0, model->colors.size(), matAmb);
+            myMaterials->transparency.setValues(0, model->colors.size(), transp);
             res->addChild(myMaterials);
             delete[] matAmb;
             delete[] matDif;
