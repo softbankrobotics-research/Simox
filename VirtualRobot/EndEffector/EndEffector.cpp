@@ -633,6 +633,8 @@ namespace VirtualRobot
         if (!obstacle)
             return 0;
 
+		int result = 0;
+
         for (size_t i = 0; i < statics.size(); i++)
         {
             RobotNodePtr n = statics[i];
@@ -657,9 +659,11 @@ namespace VirtualRobot
                 ci.approachDirectionGlobal = -approachDirGlobal;
 
                 contacts.push_back(ci);
+				result++;
             }
 
         }
+		return result;
     }
 
 
