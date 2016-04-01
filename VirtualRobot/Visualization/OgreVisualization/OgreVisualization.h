@@ -26,8 +26,6 @@
 #include "../../VirtualRobot.h"
 #include "../Visualization.h"
 
-#include <Inventor/nodes/SoSelection.h>
-#include <Inventor/nodes/SoMaterial.h>
 
 class SoNode;
 

@@ -171,6 +171,7 @@ namespace VirtualRobot
     {
         // todo!!!
         //return visualizationAtGlobalPose;
+		return NULL;
     }
 
     void OgreVisualizationNode::setGlobalPose(const Eigen::Matrix4f& m)
