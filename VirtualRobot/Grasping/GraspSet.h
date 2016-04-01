@@ -29,6 +29,11 @@
 
 #include <string>
 #include <vector>
+
+
+#include <VirtualRobot/CollisionDetection/CollisionModel.h>
+#include "Grasp.h"
+
 #include <Eigen/Core>
 
 namespace VirtualRobot
@@ -53,11 +58,13 @@ namespace VirtualRobot
 
         void addGrasp(GraspPtr grasp);
         bool hasGrasp(GraspPtr grasp);
+
         bool hasGrasp(const std::string& name);
         bool removeGrasp(GraspPtr grasp);
         void removeAllGrasps();
         bool isCompatibleGrasp(GraspPtr grasp);
         void clear();
+        void includeGraspSet(GraspSetPtr grasps);
 
         /*!
             Return number of grasps stored in this set.

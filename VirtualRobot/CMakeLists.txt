@@ -20,12 +20,14 @@ if (Simox_USE_RBDL)
 endif()
 
 ########################### TESTING #####################################
-    MACRO(ADD_VR_TEST TEST_NAME)  
+MACRO(ADD_VR_TEST TEST_NAME)
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
     ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
-    ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK) 
+    if (NOT Boost_USE_STATIC_LIBS)
+        ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+    endif (NOT Boost_USE_STATIC_LIBS)
     ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
     TARGET_LINK_LIBRARIES(${TEST_NAME} VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
@@ -135,7 +137,9 @@ if (Simox_USE_RBDL AND RBDL_FOUND)
         Dynamics/dynamics.h
     )
 
-    ADD_SUBDIRECTORY(Dynamics/tests)
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Dynamics/tests)
+    endif()
 endif ()
 
 
@@ -240,9 +244,11 @@ Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
 
-ADD_SUBDIRECTORY(Visualization/tests)
-ADD_SUBDIRECTORY(Workspace/tests)
-ADD_SUBDIRECTORY(Compression/tests)
+if(BUILD_TESTING)
+    ADD_SUBDIRECTORY(Visualization/tests)
+    ADD_SUBDIRECTORY(Workspace/tests)
+    ADD_SUBDIRECTORY(Compression/tests)
+endif()
 
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
@@ -270,7 +276,10 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/COLLADA-light/inventor.h
     Import/SimoxCOLLADAFactory.h
     )
-    ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
+    endif()
 
 elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
 
@@ -299,8 +308,9 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
         qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
     endif()
 
-    ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
-
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
+    endif()
 endif ()
 
 #if (Simox_USE_COLLADA)
@@ -362,17 +372,20 @@ endif()
 # include collision detection
 INCLUDE (CollisionDetection/CMakeLists.txt)
 
-# include unit tests
-ADD_SUBDIRECTORY(tests/)
-ADD_SUBDIRECTORY(Transformation/tests/)
+if(BUILD_TESTING)
+    # include unit tests
+    ADD_SUBDIRECTORY(tests/)
+    ADD_SUBDIRECTORY(Transformation/tests/)
+endif()
 
-# include examples
-ADD_SUBDIRECTORY(examples/)
-
+if(Simox_BUILD_EXAMPLES)
+    # include examples
+    ADD_SUBDIRECTORY(examples/)
+endif()
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
-if (Simox_USE_COIN_VISUALIZATION)
+if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
     set(UI
         Grasping/GraspEditor/GraspEditor.ui

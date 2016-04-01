@@ -63,6 +63,8 @@ namespace GraspStudio
         virtual int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
 
 
+        VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
+
     protected:
 
         bool timeout();
@@ -74,7 +76,7 @@ namespace GraspStudio
 
         clock_t startTime;
         int timeOutMS;
-
+        VirtualRobot::EndEffector::ContactInfoVector contacts;
         GraspStudio::GraspQualityMeasurePtr graspQuality;
         GraspStudio::ApproachMovementGeneratorPtr approach;
         float minQuality;

@@ -47,6 +47,26 @@ namespace VirtualRobot
         this->graspSets.push_back(graspSet);
     }
 
+    void ManipulationObject::includeGraspSet(GraspSetPtr toBeIncludedGraspSet)  //maybe delete
+    {
+        THROW_VR_EXCEPTION_IF(!toBeIncludedGraspSet,"NULL data");
+        std::string robotType=toBeIncludedGraspSet->getRobotType();
+        std::string eef=toBeIncludedGraspSet->getEndEffector();
+
+        //include new Grasps
+        //check if grasp is existing
+        int index=-1;
+        for(size_t i = 0 ; i < graspSets.size(); i++ )
+        {
+            if (graspSets.at(i)->getRobotType() == robotType && graspSets.at(i)->getEndEffector() == eef)
+            {
+                index = i;
+            }
+        }
+        THROW_VR_EXCEPTION_IF(index==-1,"Index wrong defined");
+        graspSets.at(index)->includeGraspSet(toBeIncludedGraspSet);
+    }
+
     bool ManipulationObject::hasGraspSet(GraspSetPtr graspSet)
     {
         VR_ASSERT_MESSAGE(graspSet, "NULL data");
@@ -100,6 +120,11 @@ namespace VirtualRobot
             }
 
         return GraspSetPtr();
+    }
+
+    std::vector<GraspSetPtr> ManipulationObject::getAllGraspSets()
+    {
+        return graspSets;
     }
 
     std::string ManipulationObject::toXML(const std::string& basePath, int tabs, bool storeLinkToFile)

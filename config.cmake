@@ -29,6 +29,9 @@ IF (NOT Simox_CONFIGURED)
     endif()
     set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
         "Installation directory for CMake files")
+
+    # Almost all examples require soqt. It will be set to ON if soqt is found.
+    set(Simox_BUILD_EXAMPLES OFF CACHE BOOL "Build example applications")
  
     # Make relative paths absolute (needed later on) 
     # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
@@ -47,7 +50,7 @@ IF (NOT Simox_CONFIGURED)
     ############################# VERSION #################################
     set(Simox_MAJOR_VERSION 2)
     set(Simox_MINOR_VERSION 3)
-    set(Simox_PATCH_VERSION 23)
+    set(Simox_PATCH_VERSION 30)
     set(Simox_VERSION
     ${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION})
 
@@ -178,8 +181,13 @@ IF (NOT Simox_CONFIGURED)
         SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Boost_LIBRARIES})
         FIND_PACKAGE(Boost 1.46.0 COMPONENTS unit_test_framework REQUIRED)
         SET (Boost_TEST_LIB "${Boost_LIBRARIES}")
-        # disable boost auto linking
-        SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_SYSTEM_DYN_LINK -DBOOST_THREAD_DYN_LINK")
+        # disable boost auto linking 
+        if (Boost_USE_STATIC_LIBS)
+            SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN")
+        else (Boost_USE_STATIC_LIBS)
+            # enable dynamic linking for specific boost libraries
+            SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_SYSTEM_DYN_LINK -DBOOST_THREAD_DYN_LINK")
+        endif (Boost_USE_STATIC_LIBS)
     else (Boost_FOUND)
         MESSAGE ("!! Could not find Boost !!")
     endif (Boost_FOUND)
@@ -228,8 +236,10 @@ IF (NOT Simox_CONFIGURED)
         FIND_PACKAGE(Coin3D REQUIRED)
         if (COIN3D_FOUND)
             MESSAGE (STATUS "Found Coin3D: " ${COIN3D_INCLUDE_DIRS})
-            ##INCLUDE_DIRECTORIES(${COIN3D_INCLUDE_DIRS})
-            ##ADD_DEFINITIONS(-DCOIN_DLL)
+            SET (Simox_VISUALIZATION TRUE)
+            SET (Simox_VISUALIZATION_LIBS ${COIN3D_LIBRARIES})
+            SET (Simox_VISUALIZATION_INCLUDE_PATHS ${COIN3D_INCLUDE_DIRS} )
+            SET (Simox_VISUALIZATION_COMPILE_FLAGS "-DCOIN_DLL")
         endif (COIN3D_FOUND)
         
         
@@ -263,9 +273,10 @@ IF (NOT Simox_CONFIGURED)
             if (SOQT_FOUND AND COIN3D_FOUND)
                 MESSAGE (STATUS "Enabling Coin3D/Qt/SoQt support")
                 SET (Simox_VISUALIZATION TRUE)
-                SET (Simox_VISUALIZATION_LIBS ${COIN3D_LIBRARIES} ${SoQt_LIBRARIES} )
-                SET (Simox_VISUALIZATION_INCLUDE_PATHS ${SoQt_INCLUDE_DIRS} ${COIN3D_INCLUDE_DIRS} )
-                SET (Simox_VISUALIZATION_COMPILE_FLAGS " -DCOIN_DLL -DSOQT_DLL ")
+                SET (Simox_VISUALIZATION_LIBS ${Simox_VISUALIZATION_LIBS} ${SoQt_LIBRARIES} )
+                SET (Simox_VISUALIZATION_INCLUDE_PATHS  ${Simox_VISUALIZATION_INCLUDE_PATHS} ${SoQt_INCLUDE_DIRS})
+                SET (Simox_VISUALIZATION_COMPILE_FLAGS "${Simox_VISUALIZATION_COMPILE_FLAGS} -DSOQT_DLL -DSIMOX_USE_SOQT")
+                set(Simox_BUILD_EXAMPLES ON)
 
                 if (QT_FOUND)
                     # QT4

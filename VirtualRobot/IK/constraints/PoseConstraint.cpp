@@ -1,7 +1,6 @@
 #include "PoseConstraint.h"
 
 #include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMaterial.h>

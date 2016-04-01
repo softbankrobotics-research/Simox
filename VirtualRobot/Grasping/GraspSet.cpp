@@ -63,6 +63,19 @@ namespace VirtualRobot
         grasps.clear();
     }
 
+    void GraspSet::includeGraspSet(GraspSetPtr grasps)
+    {
+        std::vector<GraspPtr> includedGrasp=grasps->getGrasps();
+
+        for(size_t i=0;i<includedGrasp.size();i++)
+        {
+            if(!hasGrasp(includedGrasp.at(i)))
+            {
+                addGrasp(includedGrasp.at(i));
+            }
+        }
+    }
+
     void GraspSet::print()
     {
         cout << "**** Grasp set ****" << endl;

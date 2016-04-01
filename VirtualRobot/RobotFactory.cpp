@@ -498,11 +498,19 @@ namespace VirtualRobot
             it->first->localTransformation = it->second;
             std::map<RobotNodePtr, bool>::iterator inv_it = directionInversion.find(it->first);
             VR_ASSERT(inv_it != directionInversion.end());
-            RobotNodeRevolutePtr rotJoint = boost::dynamic_pointer_cast<RobotNodeRevolute>(it->first);
-
-            if (inv_it->second && rotJoint)
+            if (inv_it->second)
             {
-                rotJoint->jointRotationAxis *= -1.0f;
+                RobotNodeRevolutePtr rotJoint = boost::dynamic_pointer_cast<RobotNodeRevolute>(it->first);
+                if (rotJoint)
+                {
+                    rotJoint->jointRotationAxis *= -1.0f;
+                }
+
+                RobotNodePrismaticPtr prismaticJoint = boost::dynamic_pointer_cast<RobotNodePrismatic>(it->first);
+                if (prismaticJoint)
+                {
+                    prismaticJoint->jointTranslationDirection *= -1.0f;
+                }
             }
 
             it++;
@@ -670,7 +678,7 @@ namespace VirtualRobot
 
             if (parentClone)
             {
-                parentClone->attachChild(newRN);
+                newRN->initialize(parentClone);
             }
 
             // attach sensors
@@ -931,7 +939,7 @@ namespace VirtualRobot
                 getChildNodes(currentRN, RobotNodePtr(), childNodes);
                 getChildSensorNodes(currentRN, RobotNodePtr(), childSensorNodes);
 
-                if (childNodes.size() > 0)
+                if (childNodes.size() > 0 || childSensorNodes.size() > 0)
                 {
                     RobotNodePtr res = createUnitedRobotNode(robot, childNodes, currentRN, currentRNClone, Eigen::Matrix4f::Identity(), childSensorNodes);
                     // res is automatically added

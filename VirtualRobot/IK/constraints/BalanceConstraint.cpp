@@ -1,7 +1,6 @@
 #include "BalanceConstraint.h"
 
 #include <VirtualRobot/MathTools.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMaterial.h>

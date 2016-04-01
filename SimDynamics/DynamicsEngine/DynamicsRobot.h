@@ -62,6 +62,8 @@ namespace SimDynamics
             An empty DynamicsObjectPtr is returned in case no dynamic version has been created so far.
         */
         DynamicsObjectPtr getDynamicsRobotNode(VirtualRobot::RobotNodePtr node);
+        DynamicsObjectPtr getDynamicsRobotNode(const std::string &nodeName);
+
 
         /*!
             Enable joint actuation for given node.
@@ -156,7 +158,6 @@ namespace SimDynamics
             double jointVelocityTarget;
             double jointTorqueTarget;
             VirtualRobot::RobotNodePtr node;
-            //DynamicsObjectPtr dynNode; // if node is a joint without model, there is no dyn node!
             ActuationMode actuation;
         };
 

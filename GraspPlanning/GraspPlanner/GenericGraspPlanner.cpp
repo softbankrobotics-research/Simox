@@ -108,8 +108,10 @@ namespace GraspStudio
             }
         }
 
-        VirtualRobot::EndEffector::ContactInfoVector contacts;
+
         contacts = eef->closeActors(object);
+
+        eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
 
         if (obstacles)
         {
@@ -165,6 +167,11 @@ namespace GraspStudio
         g->setConfiguration(configValues);
         return g;
     }
+    VirtualRobot::EndEffector::ContactInfoVector GenericGraspPlanner::getContacts() const
+    {
+        return contacts;
+    }
+
 
     bool GenericGraspPlanner::timeout()
     {

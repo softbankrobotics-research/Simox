@@ -37,6 +37,7 @@ namespace GraspStudio
             THROW_VR_EXCEPTION_IF(!eef_cloned->hasPreshape(graspPreshape), "Preshape with name " << graspPreshape << " not present in EEF");
             eef_cloned->setPreshape(graspPreshape);
         }
+        aporachDirGlobal << 1.0f, 0, 0;
     }
 
     ApproachMovementGenerator::~ApproachMovementGenerator()
@@ -99,6 +100,11 @@ namespace GraspStudio
     VirtualRobot::EndEffectorPtr ApproachMovementGenerator::getEEFOriginal()
     {
         return eef;
+    }
+
+    Eigen::Vector3f ApproachMovementGenerator::getApproachDirGlobal()
+    {
+        return aporachDirGlobal;
     }
 
     std::string ApproachMovementGenerator::getName()

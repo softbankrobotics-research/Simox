@@ -357,7 +357,8 @@ namespace Collada
         // Parse the visual scene.
         assert(scene);
         pugi::xml_node visualScene = resolveURL(scene.child("instance_visual_scene"), IN_VISUAL_SCENES);
-        visualScene.traverse(*(this->visualSceneWalkerFactory(visualizationMap, physicsMap)));
+        ColladaWalkerPtr walker = this->visualSceneWalkerFactory(visualizationMap, physicsMap);
+        visualScene.traverse(*walker);
 
 #ifdef TIMER_DEBUG
         timer.reset(new boost::timer::auto_cpu_timer(1, "Add collision models (walker): %t sec CPU, %w sec real\n"));

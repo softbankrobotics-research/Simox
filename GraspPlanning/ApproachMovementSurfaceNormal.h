@@ -64,9 +64,10 @@ namespace GraspStudio
         bool getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir);
 
         //! Sets EEF to a position so that the Z component of the GCP coord system is aligned with -approachDir
-        bool setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir);
+        bool virtual setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir);
 
         void moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops = 1000);
+
 
     protected:
         float randomDistanceMax;

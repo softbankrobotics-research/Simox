@@ -62,7 +62,7 @@ namespace VirtualRobot
 
         SoNode* getCoinVisualization();
 
-        void exportToVRML2(std::string filename);
+        void exportToVRML2(std::string filename, bool useRotation=true);
 
         static std::string getFactoryName()
         {

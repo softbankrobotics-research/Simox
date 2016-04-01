@@ -385,8 +385,21 @@ namespace SimDynamics
         localInertia.setZero();
         CollisionModelPtr colModel = sceneObject->getCollisionModel();
 
+
+        int btColFlag = btCollisionObject::CF_STATIC_OBJECT;
+        float mass = 0.0f;
         switch (s)
         {
+            case VirtualRobot::SceneObject::Physics::eStatic:
+                btColFlag = btCollisionObject::CF_STATIC_OBJECT;
+                mass = 0;
+                break;
+
+            case VirtualRobot::SceneObject::Physics::eKinematic:
+                btColFlag = btCollisionObject::CF_KINEMATIC_OBJECT;
+                mass = 0;
+                break;
+
             case VirtualRobot::SceneObject::Physics::eDynamic:
             case VirtualRobot::SceneObject::Physics::eUnknown:
                 if (colModel)
@@ -397,14 +410,16 @@ namespace SimDynamics
                 {
                     localInertia.setValue(btScalar(1), btScalar(1), btScalar(1));    // give Object a dummy inertia matrix
                 }
-
-                rigidBody->setMassProps(sceneObject->getMass(), localInertia);
+                mass = sceneObject->getMass();
+                btColFlag = 0;
                 break;
 
             default:
-                // static
-                rigidBody->setMassProps(0, localInertia);
+            break;
         }
+
+        rigidBody->setMassProps(mass, localInertia);
+        rigidBody->setCollisionFlags(btColFlag);
 
         DynamicsObject::setSimType(s);
     }
