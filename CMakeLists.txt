@@ -63,7 +63,7 @@ endif()
   MESSAGE(STATUS "** Simox_EXTERNAL_CMAKE_INCLUDE:${Simox_EXTERNAL_CMAKE_INCLUDE}")
 
 add_subdirectory(doc)
-
+add_subdirectory(Gui)
 
 #######################################################################
 # Setup for installation
