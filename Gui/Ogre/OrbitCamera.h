@@ -21,43 +21,41 @@
 *
 */
 
-#ifndef _Gui_CoinViewer_h_
-#define _Gui_CoinViewer_h_
+#ifndef _Gui_OrbitCamera_h_
+#define _Gui_OrbitCamera_h_
 
-#include "../ViewerInterface.h"
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
+#include <OGRE/Ogre.h>
+#include <QMouseEvent>
 
 namespace Gui
 {
 
-class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
+class OrbitCamera
 {
     public:
-        CoinViewer(QWidget *parent);
-        ~CoinViewer();
+        OrbitCamera(Ogre::Camera *camera);
 
-        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
-        void removeVisualization(const std::string &layer, const std::string &id);
+        virtual void setTarget(Ogre::SceneNode *target);
+        virtual void setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist);
 
-        void clearLayer(const std::string &layer);
-
-        void start(QWidget *mainWindow);
-        void stop();
+        virtual void injectMouseMove(const QMouseEvent *event);
+        virtual void injectMouseDown(const QMouseEvent *event);
+        virtual void injectMouseUp(const QMouseEvent *event);
 
     protected:
-        void addLayer(const std::string &layer);
+        void initialize();
 
     protected:
-        SoSeparator *sceneSep;
+        Ogre::Camera *camera;
+        Ogre::SceneNode *target;
+        bool orbiting;
+        bool zooming;
 
-        std::map<std::string, SoSeparator *> layers;
-        std::map<std::string, SoNode *> visualizations;
-
-        QWidget *parent;
+        int lastMouseX;
+        int lastMouseY;
 };
 
 }
 
-#endif 
+#endif

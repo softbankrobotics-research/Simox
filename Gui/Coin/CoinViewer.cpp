@@ -16,7 +16,7 @@
 *
 * @package    Gui
 * @author     Peter Kaiser
-* @copyright  2015 Peter Kaiser
+* @copyright  2016 Peter Kaiser
 *             GNU Lesser General Public License
 *
 */
