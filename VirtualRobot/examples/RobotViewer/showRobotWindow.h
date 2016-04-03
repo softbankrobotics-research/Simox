@@ -13,6 +13,8 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
+#include <Gui/Coin/CoinViewer.h>
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -20,7 +22,6 @@
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
 
@@ -66,11 +67,6 @@ public slots:
     void exportVRML();
     void exportXML();
 
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
 protected:
     void setupUI();
     QString formatString(const char* s, float f);
@@ -80,9 +76,9 @@ protected:
     void displayTriangles();
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* sceneSep;
+    CoinViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+
     SoSeparator* robotSep;
     SoSeparator* extraSep;
 

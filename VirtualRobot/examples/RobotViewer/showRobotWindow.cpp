@@ -35,14 +35,10 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     m_sRobotFilename = sRobotFilename;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
+
     /*SoUnits *u = new SoUnits;
     u->units = SoUnits::MILLIMETERS;
     sceneSep->addChild(u);*/
-    robotSep = new SoSeparator;
-    extraSep = new SoSeparator;
-    sceneSep->addChild(extraSep);
 
     /*SoShapeHints * shapeHints = new SoShapeHints;
     shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
@@ -51,8 +47,6 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     /*SoLightModel * lightModel = new SoLightModel;
     lightModel->model = SoLightModel::BASE_COLOR;
     sceneSep->addChild(lightModel);*/
-
-    sceneSep->addChild(robotSep);
 
     setupUI();
 
@@ -65,7 +59,6 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
 showRobotWindow::~showRobotWindow()
 {
     robot.reset();
-    sceneSep->unref();
 }
 
 /*
@@ -94,19 +87,13 @@ void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    viewer = new CoinViewer(UI.frameViewer);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
+    extraSep = new SoSeparator;
+    viewer->getScene()->addChild(extraSep);
 
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
+    robotSep = new SoSeparator;
+    viewer->getScene()->addChild(robotSep);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
