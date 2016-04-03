@@ -197,6 +197,8 @@ namespace VirtualRobot
     class Visualization;
     class VisualizationNode;
     class VisualizationFactory;
+    class CoinVisualization;
+    class CoinVisualizationNode;
     class Scene;
     class RobotConfig;
     class Grasp;
@@ -245,6 +247,8 @@ namespace VirtualRobot
     typedef boost::shared_ptr<Visualization> VisualizationPtr;
     typedef boost::shared_ptr<VisualizationNode> VisualizationNodePtr;
     typedef boost::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
+    typedef boost::shared_ptr<CoinVisualization> CoinVisualizationPtr;
+    typedef boost::shared_ptr<CoinVisualizationNode> CoinVisualizationNodePtr;
     typedef boost::shared_ptr<WorkspaceData> WorkspaceDataPtr;
     typedef boost::shared_ptr<WorkspaceDataArray> WorkspaceDataArrayPtr;
     typedef boost::shared_ptr<WorkspaceRepresentation> WorkspaceRepresentationPtr;

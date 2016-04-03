@@ -15,17 +15,11 @@
 
 #include <Gui/Coin/CoinViewer.h>
 
-#include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
-
+#include <string>
 #include <vector>
 
 #include "ui_RobotViewer.h"
@@ -37,11 +31,9 @@ public:
     showRobotWindow(std::string& sRobotFilename);
     ~showRobotWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
 
 public slots:
-    /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
@@ -77,10 +69,7 @@ protected:
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
 
-    CoinViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* robotSep;
-    SoSeparator* extraSep;
+    CoinViewer* viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string m_sRobotFilename;
@@ -98,7 +87,7 @@ protected:
     bool physicsCoMEnabled;
     bool physicsInertiaEnabled;
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    VirtualRobot::CoinVisualizationPtr visualization;
 
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };

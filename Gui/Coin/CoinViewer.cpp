@@ -23,10 +23,14 @@
 
 #include "CoinViewer.h"
 
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
+#include <Inventor/Qt/SoQt.h>
 
 CoinViewer::CoinViewer(QWidget *parent) :
-    SoQtExaminerViewer(parent, "", true, BUILD_POPUP)
+    SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
+    parent(parent)
 {
     sceneSep = new SoSeparator;
     sceneSep->ref();
@@ -50,3 +54,49 @@ SoSeparator *CoinViewer::getScene()
 {
     return sceneSep;
 }
+
+void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
+{
+    VirtualRobot::CoinVisualizationPtr coinVisu = boost::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
+
+    addLayer(layer);
+
+    visualizations[id] = coinVisu->getCoinVisualization();
+    layers[layer]->addChild(visualizations[id]);
+}
+
+void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)
+{
+    layers[layer]->removeChild(visualizations[id]);
+    visualizations.erase(id);
+}
+
+void CoinViewer::clearLayer(const std::string &layer)
+{
+    addLayer(layer);
+    layers[layer]->removeAllChildren();
+}
+
+void CoinViewer::start(QWidget *mainWindow)
+{
+    SoQt::show(mainWindow);
+    SoQt::mainLoop();
+}
+
+void CoinViewer::stop()
+{
+    SoQt::exitMainLoop();
+}
+
+void CoinViewer::addLayer(const std::string &layer)
+{
+    if(layers.find(layer) != layers.end())
+    {
+        // Layer already exists
+        return;
+    }
+
+    layers[layer] = new SoSeparator;
+    sceneSep->addChild(layers[layer]);
+}
+

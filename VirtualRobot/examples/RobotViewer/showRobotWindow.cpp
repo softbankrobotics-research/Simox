@@ -13,11 +13,6 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoUnits.h>
 #include <sstream>
 
 using namespace std;
@@ -87,13 +82,8 @@ void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
+
     viewer = new CoinViewer(UI.frameViewer);
-
-    extraSep = new SoSeparator;
-    viewer->getScene()->addChild(extraSep);
-
-    robotSep = new SoSeparator;
-    viewer->getScene()->addChild(robotSep);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -232,24 +222,15 @@ void showRobotWindow::rebuildVisualization()
         return;
     }
 
-    robotSep->removeAllChildren();
+    viewer->clearLayer("robotLayer");
+
     //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
 
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
-
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
+    VisualizationPtr visu = robot->getVisualization<CoinVisualization>(colModel);
+    viewer->addVisualization("robotLayer", "robot", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -424,22 +405,17 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
     QMainWindow::closeEvent(event);
 }
 
-
-
-
 int showRobotWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
-
 
 void showRobotWindow::quit()
 {
     std::cout << "CShowRobotWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void showRobotWindow::updateJointBox()
@@ -724,7 +700,8 @@ void showRobotWindow::testPerformance(RobotPtr robot, RobotNodeSetPtr rns)
 
 void showRobotWindow::loadRobot()
 {
-    robotSep->removeAllChildren();
+    viewer->clearLayer("robotLayer");
+
     cout << "Loading Robot from " << m_sRobotFilename << endl;
     currentEEF.reset();
     currentRobotNode.reset();
