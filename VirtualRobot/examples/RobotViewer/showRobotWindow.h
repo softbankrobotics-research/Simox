@@ -69,7 +69,7 @@ protected:
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
 
-    CoinViewer* viewer;
+    Gui::CoinViewer* viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string m_sRobotFilename;
@@ -80,7 +80,6 @@ protected:
     VirtualRobot::EndEffectorPtr currentEEF;
     VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
     VirtualRobot::RobotNodePtr currentRobotNode;
-
 
     bool useColModel;
     bool structureEnabled;

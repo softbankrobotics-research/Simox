@@ -29,6 +29,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 
+namespace Gui
+{
+
 class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 {
     public:
@@ -54,5 +57,7 @@ class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 
         QWidget *parent;
 };
+
+}
 
 #endif 

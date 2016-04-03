@@ -28,6 +28,8 @@
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
 
+using namespace Gui;
+
 CoinViewer::CoinViewer(QWidget *parent) :
     SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
     parent(parent)

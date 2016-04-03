@@ -29,6 +29,9 @@
 
 #include <string>
 
+namespace Gui
+{
+
 class ViewerInterface
 {
     public:
@@ -40,6 +43,8 @@ class ViewerInterface
         virtual void start(QWidget *mainWindow) = 0;
         virtual void stop() = 0;
 };
+
+}
 
 #endif
 
