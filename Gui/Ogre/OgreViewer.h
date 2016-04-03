@@ -28,25 +28,36 @@
 
 #include <QWidget>
 
+#include "../ViewerInterface.h"
 #include "OrbitCamera.h"
 
 namespace Gui
 {
 
-class OgreViewer : public QWidget
+class OgreViewer : public QWidget, public ViewerInterface
 {
     Q_OBJECT
 
     public:
         OgreViewer(QWidget *parent = NULL);
-        virtual ~OgreViewer();
+        ~OgreViewer();
 
+        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
+        void removeVisualization(const std::string &layer, const std::string &id);
+
+        void clearLayer(const std::string &layer);
+
+        void start(QWidget *mainWindow);
+        void stop();
+
+        void resetView();
+
+    protected:
         void createRenderWindow();
 
         Ogre::SceneManager *getSceneManager();
         OrbitCamera *getCameraController();
 
-    protected:
         virtual void paintEvent(QPaintEvent* event);
         virtual void resizeEvent(QResizeEvent* event);
         virtual void moveEvent(QMoveEvent *event);

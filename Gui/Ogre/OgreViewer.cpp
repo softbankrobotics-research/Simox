@@ -33,28 +33,73 @@ OgreViewer::OgreViewer(QWidget *parent) :
     ogreWindow(NULL),
     ogreCamera(NULL),
     ogreViewport(NULL),
-    ogreSceneManager(NULL)
+    ogreSceneManager(NULL),
+    cameraController(NULL)
 {
-    assert(parent);
-
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_PaintOnScreen);
     setAttribute(Qt::WA_NoBackground);
+
+    QVBoxLayout *layout = new QVBoxLayout(parent);
+    layout->addWidget(this);
+    parent->setLayout(layout);
 }
 
 OgreViewer::~OgreViewer()
 {
-    ogreRoot->shutdown();
-    delete ogreRoot;
-    delete cameraController;
+    if(ogreRoot)
+    {
+        ogreRoot->shutdown();
+        delete ogreRoot;
+    }
+
+    if(cameraController)
+    {
+        delete cameraController;
+    }
+
     destroy();
+}
+
+void OgreViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
+{
+
+}
+
+void OgreViewer::removeVisualization(const std::string &layer, const std::string &id)
+{
+
+}
+
+void OgreViewer::clearLayer(const std::string &layer)
+{
+
+}
+
+void OgreViewer::start(QWidget *mainWindow)
+{
+    //QApplication app(0, NULL);
+    //mainWindow->show();
+    //app.exec();
+}
+
+void OgreViewer::stop()
+{
+
+}
+
+void OgreViewer::resetView()
+{
+
 }
 
 void OgreViewer::createRenderWindow()
 {
     resize(width(), height());
 
-    ogreRoot = new Ogre::Root("config/ogre_plugins.cfg", "config/ogre.cfg", "config/ogre.log");
+    ogreRoot = new Ogre::Root("", "", "");
+    ogreRoot->loadPlugin(OGRE_RENDERING_PLUGIN);
+    VR_INFO << "Loading rendering plugin: " << OGRE_RENDERING_PLUGIN << std::endl;
 
     Ogre::RenderSystemList renderers = ogreRoot->getAvailableRenderers();
     std::cout << "Number of renderers found: " << renderers.size() << std::endl;

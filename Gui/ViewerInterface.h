@@ -42,6 +42,8 @@ class ViewerInterface
 
         virtual void start(QWidget *mainWindow) = 0;
         virtual void stop() = 0;
+
+        virtual void resetView() = 0;
 };
 
 }

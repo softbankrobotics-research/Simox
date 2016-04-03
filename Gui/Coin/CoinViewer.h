@@ -46,6 +46,8 @@ class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
         void start(QWidget *mainWindow);
         void stop();
 
+        void resetView();
+
     protected:
         void addLayer(const std::string &layer);
 
