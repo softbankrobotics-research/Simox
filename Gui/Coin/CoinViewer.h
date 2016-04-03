@@ -24,20 +24,16 @@
 #ifndef _Gui_CoinViewer_h_
 #define _Gui_CoinViewer_h_
 
-#include <VirtualRobot/VirtualRobot.h>
+#include "../ViewerInterface.h"
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 
-#include <string>
-
-class CoinViewer : public SoQtExaminerViewer
+class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 {
     public:
         CoinViewer(QWidget *parent);
         ~CoinViewer();
-
-        SoSeparator *getScene();
 
         void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
         void removeVisualization(const std::string &layer, const std::string &id);

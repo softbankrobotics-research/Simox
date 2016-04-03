@@ -50,11 +50,6 @@ CoinViewer::~CoinViewer()
     sceneSep->unref();
 }
 
-SoSeparator *CoinViewer::getScene()
-{
-    return sceneSep;
-}
-
 void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
 {
     VirtualRobot::CoinVisualizationPtr coinVisu = boost::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);

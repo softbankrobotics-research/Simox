@@ -1,5 +1,6 @@
 set(INCLUDES
     CoinViewer.h
+    ../ViewerInterface.h
 )
 
 set(SOURCES
