@@ -810,9 +810,9 @@ namespace VirtualRobot
         {
             RobotNodePtr rn = *iterator;
 
-            if (rn->getVisualization(SceneObject::Full) && rn->getVisualization(SceneObject::Collision))
+            if (rn->getVisualization(VisualizationFactory::Full) && rn->getVisualization(VisualizationFactory::Collision))
             {
-                VisualizationNodePtr v = rn->getVisualization(SceneObject::Collision)->clone();
+                VisualizationNodePtr v = rn->getVisualization(VisualizationFactory::Collision)->clone();
                 rn->setVisualization(v);
             }
 

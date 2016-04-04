@@ -94,7 +94,7 @@ namespace VirtualRobot
              if (visualization)
                  visualisationNode = visualization->getCoinVisualization();
         */
-        template <typename T> boost::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full, bool sensors = true);
+        template <typename T> boost::shared_ptr<T> getVisualization(VisualizationFactory::VisualizationType visuType = VisualizationFactory::Full, bool sensors = true);
         /*!
             Shows the structure of the robot
         */
@@ -408,7 +408,7 @@ namespace VirtualRobot
      * A compile time error is thrown if a different class type is used as template argument.
      */
     template <typename T>
-    boost::shared_ptr<T> Robot::getVisualization(SceneObject::VisualizationType visuType, bool sensors)
+    boost::shared_ptr<T> Robot::getVisualization(VisualizationFactory::VisualizationType visuType, bool sensors)
     {
         const bool IS_SUBCLASS_OF_VISUALIZATION = ::boost::is_base_of<Visualization, T>::value;
         BOOST_MPL_ASSERT_MSG(IS_SUBCLASS_OF_VISUALIZATION, TEMPLATE_PARAMETER_FOR_VirtualRobot_getVisualization_MUST_BT_A_SUBCLASS_OF_VirtualRobot__Visualization, (T));

@@ -123,6 +123,7 @@ SphereApproximator.cpp
 Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
+Visualization/VisualizationFactory.cpp
 VirtualRobot.cpp
 )
 

@@ -61,27 +61,27 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     m(1, 3) = 1500.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::SceneObject::Full));
+    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::VisualizationFactory::Full));
 
     m(0, 3) = 700.0f;
     m(1, 3) = 900.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(300.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::SceneObject::Full));
+    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::VisualizationFactory::Full));
 
     m(0, 3) = 0.0f;
     m(1, 3) = 2000.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::SceneObject::Full));
+    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::VisualizationFactory::Full));
 
     m(0, 3) = 500.0f;
     m(1, 3) = 1500.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::SceneObject::Full));
+    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::VisualizationFactory::Full));
 
     /*SoShapeHints * shapeHints = new SoShapeHints;
     shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
@@ -209,7 +209,7 @@ void showCamWindow::rebuildVisualization()
     //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
     useColModel = false;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = useColModel ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;

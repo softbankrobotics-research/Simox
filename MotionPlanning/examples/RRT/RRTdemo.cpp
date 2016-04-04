@@ -172,7 +172,7 @@ void startRRTVisualization()
 
     // display robot
     SoSeparator* sep = new SoSeparator();
-    SceneObject::VisualizationType colModel = SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = VisualizationFactory::Full;
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;

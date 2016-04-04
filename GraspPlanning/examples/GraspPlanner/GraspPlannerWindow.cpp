@@ -174,7 +174,7 @@ void GraspPlannerWindow::buildVisu()
 {
 
     robotSep->removeAllChildren();
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     if (eefCloned)
     {
@@ -206,7 +206,7 @@ void GraspPlannerWindow::buildVisu()
     {
 
 #if 1
-        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        VisualizationFactory::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
         if (visualisationNode)
@@ -229,7 +229,7 @@ void GraspPlannerWindow::buildVisu()
         }
         else
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, SceneObject::Full);
+            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, VisualizationFactory::Full);
 
             if (visualisationNode)
             {

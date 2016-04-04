@@ -191,7 +191,7 @@ void GraspRrtWindow::buildVisu()
 {
     sceneFileSep->removeAllChildren();
 
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     if (scene)
     {
@@ -786,7 +786,7 @@ void GraspRrtWindow::testGraspPose()
     o->setGlobalPose(globalGrasp);
     o->showCoordinateSystem(true);
     graspsSep->removeAllChildren();
-    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::SceneObject::Full));
+    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::VisualizationFactory::Full));
 
     // move towards object
     Eigen::Matrix4f p = eef->getGCP()->getGlobalPose();

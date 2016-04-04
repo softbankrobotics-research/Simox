@@ -46,13 +46,6 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        enum VisualizationType
-        {
-            Full,           //!< the full model
-            Collision,      //!< the collision model
-            CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualized!)
-        };
-
 		struct VIRTUAL_ROBOT_IMPORT_EXPORT Physics
         {
             enum CoMLocation
@@ -134,7 +127,7 @@ namespace VirtualRobot
             Return visualization object.
             \param visuType Set the type of visualization.
         */
-        virtual VisualizationNodePtr getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full);
+        virtual VisualizationNodePtr getVisualization(VisualizationFactory::VisualizationType visuType = VisualizationFactory::Full);
 
         /*!
             Initialize this object. Optionally the parents and children can be specified.
@@ -292,7 +285,7 @@ namespace VirtualRobot
 
             @see CoinVisualizationFactory::getCoinVisualization() for convenient access!
         */
-        template <typename T> boost::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full);
+        template <typename T> boost::shared_ptr<T> getVisualization(VisualizationFactory::VisualizationType visuType = VisualizationFactory::Full);
 
         /*!
           Convenient method for highlighting the visualization of this object.
@@ -408,7 +401,7 @@ namespace VirtualRobot
      * A compile time error is thrown if a different class type is used as template argument.
      */
     template <typename T>
-    boost::shared_ptr<T> SceneObject::getVisualization(SceneObject::VisualizationType visuType)
+    boost::shared_ptr<T> SceneObject::getVisualization(VisualizationFactory::VisualizationType visuType)
     {
         const bool IS_SUBCLASS_OF_VISUALIZATION = ::boost::is_base_of<Visualization, T>::value;
         BOOST_MPL_ASSERT_MSG(IS_SUBCLASS_OF_VISUALIZATION, TEMPLATE_PARAMETER_FOR_VirtualRobot_getVisualization_MUST_BT_A_SUBCLASS_OF_VirtualRobot__Visualization, (T));

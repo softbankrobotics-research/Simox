@@ -163,11 +163,11 @@ void showSceneWindow::buildVisu()
     }
 
     sceneVisuSep->removeAllChildren();
-    SceneObject::VisualizationType visuType = SceneObject::Full;
+    VisualizationFactory::VisualizationType visuType = VisualizationFactory::Full;
 
     if (UI.checkBoxColModel->isChecked())
     {
-        visuType = SceneObject::Collision;
+        visuType = VisualizationFactory::Collision;
     }
 
     visualization = scene->getVisualization<CoinVisualization>(visuType);

@@ -171,15 +171,15 @@ namespace VirtualRobot
             \param pose The grasp set is visualized relatively to this pose (e.g. use the object position here)
             \param visu The visualization type of the EEFs.
         */
-        static SoSeparator* CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), SceneObject::VisualizationType visu = SceneObject::Full);
+        static SoSeparator* CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), VisualizationFactory::VisualizationType visu = VisualizationFactory::Full);
         static SoSeparator* CreateGraspVisualization(GraspPtr grasp, SoSeparator* eefVisu, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity());
-        static SoSeparator* CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), SceneObject::VisualizationType visu = SceneObject::Full);
+        static SoSeparator* CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), VisualizationFactory::VisualizationType visu = VisualizationFactory::Full);
 
         /*!
             Create a visualization of the end effector.
             The visualization is moved, so that the origin is identical with the coordinate system of the TCP.
         */
-        static SoSeparator* CreateEndEffectorVisualization(EndEffectorPtr eef, SceneObject::VisualizationType = SceneObject::Full);
+        static SoSeparator* CreateEndEffectorVisualization(EndEffectorPtr eef, VisualizationFactory::VisualizationType = VisualizationFactory::Full);
 
         /*!
             Creates a material node.
@@ -197,11 +197,11 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a robot
         */
-        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType);
+        static SoNode* getCoinVisualization(RobotPtr robot, VisualizationFactory::VisualizationType visuType);
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */
-        static SoNode* getCoinVisualization(SceneObjectPtr object, SceneObject::VisualizationType visuType);
+        static SoNode* getCoinVisualization(SceneObjectPtr object, VisualizationFactory::VisualizationType visuType);
 
         /*!
             Convenient method to retrieve a coin visualization for a set of contacts.

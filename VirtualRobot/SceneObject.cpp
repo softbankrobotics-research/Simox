@@ -158,9 +158,9 @@ namespace VirtualRobot
         return collisionChecker;
     }
 
-    VirtualRobot::VisualizationNodePtr SceneObject::getVisualization(SceneObject::VisualizationType visuType)
+    VirtualRobot::VisualizationNodePtr SceneObject::getVisualization(VisualizationFactory::VisualizationType visuType)
     {
-        if (visuType == SceneObject::Full)
+        if (visuType == VisualizationFactory::Full)
         {
             return visualizationModel;
         }
@@ -168,7 +168,7 @@ namespace VirtualRobot
         {
             if (collisionModel)
             {
-                if (visuType == SceneObject::Collision)
+                if (visuType == VisualizationFactory::Collision)
                 {
                     return collisionModel->getVisualization();
                 }
@@ -830,7 +830,7 @@ namespace VirtualRobot
             return;    // nothing to do
         }
 
-        if (!ensureVisualization())
+        if (!ensureVisualization() || !visualizationModel)
         {
             return;
         }
@@ -869,14 +869,14 @@ namespace VirtualRobot
             return;
         }
 
-        if (getVisualization(Full) && visualization->isVisualizationNodeRegistered(getVisualization(Full)))
+        if (getVisualization(VisualizationFactory::Full) && visualization->isVisualizationNodeRegistered(getVisualization(VisualizationFactory::Full)))
         {
-            visualization->highlight(getVisualization(Full), enable);
+            visualization->highlight(getVisualization(VisualizationFactory::Full), enable);
         }
 
-        if (getVisualization(Collision) && visualization->isVisualizationNodeRegistered(getVisualization(Collision)))
+        if (getVisualization(VisualizationFactory::Collision) && visualization->isVisualizationNodeRegistered(getVisualization(VisualizationFactory::Collision)))
         {
-            visualization->highlight(getVisualization(Collision), enable);
+            visualization->highlight(getVisualization(VisualizationFactory::Collision), enable);
         }
 
         // collision model data will be created if calling these methods->huge models may be built (arrows that show the normals are build for every triangle) -> disabling highlight option for col model data

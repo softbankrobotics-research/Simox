@@ -36,7 +36,7 @@
 */
 #include <iostream>
 #include <algorithm>
-
+#include <QApplication>
 
 namespace VirtualRobot
 {
@@ -52,8 +52,8 @@ namespace VirtualRobot
 
     void OgreVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
-
-
+        // Initi qt (qapplication singleton)
+        QApplication* app = new QApplication(argc, argv);
     }
 
     /**
@@ -85,6 +85,12 @@ namespace VirtualRobot
     {
         // todo !!!
         return VisualizationNodePtr();
+    }
+
+    VisualizationPtr OgreVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
+    {
+        boost::shared_ptr<OgreVisualization> v(new OgreVisualization(visus));
+        return v;
     }
 
 } // namespace VirtualRobot

@@ -125,7 +125,7 @@ namespace SimDynamics
             // standard box visu:
             /*
             SceneObjectPtr so = bulletEngine->getFloor()->getSceneObject();
-            SoNode * n = CoinVisualizationFactory::getCoinVisualization(so,SceneObject::Full);
+            SoNode * n = CoinVisualizationFactory::getCoinVisualization(so,VisualizationFactory::Full);
             */
 
             // better grid visu
@@ -237,7 +237,7 @@ namespace SimDynamics
         //viewer->viewAll();
     }
 
-    void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::VisualizationFactory::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         //VR_ASSERT(so);
@@ -263,7 +263,7 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::addVisualization(SceneObjectPtr so, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(SceneObjectPtr so, VirtualRobot::VisualizationFactory::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(so);
@@ -287,7 +287,7 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::VisualizationFactory::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
@@ -318,7 +318,7 @@ namespace SimDynamics
         bulletEngine->addExternalCallback(callback, data);
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::VisualizationFactory::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r);

@@ -96,6 +96,14 @@ namespace VirtualRobot
             float refractionIndex;
         };
 
+        enum VisualizationType
+        {
+            Full,           //!< the full model
+            Collision,      //!< the collision model
+            CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualized!)
+        };
+
+
         VisualizationFactory()
         {
             ;
@@ -121,6 +129,23 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+
+
+        /*!
+            Create a robot Visualization.
+        */
+        virtual VisualizationPtr getVisualization(RobotPtr robot, VisualizationType visuType, bool sensors = true);
+
+        /*!
+            Create a visualization of a SceneObject.
+        */
+        virtual VisualizationNodePtr getVisualization(SceneObjectPtr so, VisualizationType visuType);
+
+        virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus)
+        {
+            return VisualizationPtr();
+        }
+
         /*!
             A box, dimensions are given in mm.
         */

@@ -87,16 +87,16 @@ namespace SimDynamics
             Visualize dynamics object.
         */
         void addVisualization(VirtualRobot::RobotPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::VisualizationFactory::VisualizationType visuType = VirtualRobot::VisualizationFactory::Full,
                               SoSeparator* container = NULL);
         void addVisualization(VirtualRobot::SceneObjectPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::VisualizationFactory::VisualizationType visuType = VirtualRobot::VisualizationFactory::Full,
                               SoSeparator* container = NULL);
         void addVisualization(DynamicsObjectPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::VisualizationFactory::VisualizationType visuType = VirtualRobot::VisualizationFactory::Full,
                               SoSeparator* container = NULL);
         void addVisualization(DynamicsRobotPtr r,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::VisualizationFactory::VisualizationType visuType = VirtualRobot::VisualizationFactory::Full,
                               SoSeparator* container = NULL);
 
         /*!

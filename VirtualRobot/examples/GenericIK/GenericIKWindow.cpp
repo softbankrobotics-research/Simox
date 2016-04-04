@@ -187,7 +187,7 @@ void GenericIKWindow::collisionModel()
 
     robotSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = useColModel ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;

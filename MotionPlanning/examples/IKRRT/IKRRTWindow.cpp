@@ -280,7 +280,7 @@ void IKRRTWindow::buildVisu()
 
     robotSep->removeAllChildren();
     //bool colModel = (UI.checkBoxColModel->isChecked());
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     if (robot)
     {
@@ -298,7 +298,7 @@ void IKRRTWindow::buildVisu()
 
     if (object)
     {
-        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        VisualizationFactory::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
         if (visualisationNode)

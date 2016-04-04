@@ -216,7 +216,7 @@ void SimDynamicsWindow::buildVisualization()
     }
 
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = useColModel ? VisualizationFactory::Collision : VisualizationFactory::Full;
     viewer->addVisualization(dynamicsRobot, colModel);
     viewer->addVisualization(dynamicsObject, colModel);
 

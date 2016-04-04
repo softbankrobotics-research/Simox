@@ -204,7 +204,7 @@ void reachabilityWindow::buildVisu()
 
     robotVisuSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;

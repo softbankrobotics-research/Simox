@@ -81,6 +81,10 @@ void OgreViewer::start(QWidget *mainWindow)
     //QApplication app(0, NULL);
     //mainWindow->show();
     //app.exec();
+
+    QCoreApplication* app = QCoreApplication::instance();
+    mainWindow->show();
+    app->exec();
 }
 
 void OgreViewer::stop()

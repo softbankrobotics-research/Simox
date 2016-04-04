@@ -227,7 +227,7 @@ void showRobotWindow::rebuildVisualization()
     //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     VisualizationPtr visu = robot->getVisualization<CoinVisualization>(colModel);
     viewer->addVisualization("robotLayer", "robot", visu);
@@ -365,7 +365,7 @@ void showRobotWindow::exportVRML()
     {
         if (!boost::algorithm::ends_with(s, ".wrl"))
             s += ".wrl";
-        SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
         visualization = robot->getVisualization<CoinVisualization>(colModel);
         visualization->exportToVRML2(s);
     }
@@ -824,7 +824,7 @@ void showRobotWindow::updatRobotInfo()
     r2->setGlobalPose(gp);
     extraSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = r2->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;

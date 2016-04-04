@@ -183,7 +183,7 @@ void RrtGuiWindow::buildVisu()
 {
     sceneFileSep->removeAllChildren();
 
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     if (scene)
     {

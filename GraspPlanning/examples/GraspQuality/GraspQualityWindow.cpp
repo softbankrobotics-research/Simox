@@ -167,7 +167,7 @@ void GraspQualityWindow::buildVisu()
 
     robotSep->removeAllChildren();
     //bool colModel = (UI.checkBoxColModel->isChecked());
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     if (robot)
     {

@@ -8,6 +8,7 @@
 #  Simox_EXECUTABLE                         - the executables
 #  Simox_VISUALIZATION                      - if visualization is enabled
 #  Simox_USE_COIN_VISUALIZATION             - if Coin3D visualization was selected
+#  Simox_USE_OGRE_VISUALIZATION             - if Ogre visualization was selected
 #  Simox_USE_OPENSCENEGRAPH_VISUALIZATION   - if osg visualization was selected
 #  Simox_USE_QT4                            - if qt4 was selected
 #  Simox_USE_QT5                            - if qt5 was selected
@@ -49,6 +50,7 @@ endif()
 
 SET(Simox_VISUALIZATION "@Simox_VISUALIZATION@")
 SET(Simox_USE_COIN_VISUALIZATION "@Simox_USE_COIN_VISUALIZATION@")
+SET(Simox_USE_OGRE_VISUALIZATION "@Simox_USE_OGRE_VISUALIZATION@")
 SET(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "@Simox_USE_OPENSCENEGRAPH_VISUALIZATION@")
 SET(Simox_USE_COLLADA "@Simox_USE_COLLADA@")
 SET(Simox_USE_RBDL "@Simox_USE_RBDL@")

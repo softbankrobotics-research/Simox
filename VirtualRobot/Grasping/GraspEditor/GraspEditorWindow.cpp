@@ -239,7 +239,7 @@ namespace VirtualRobot
         eefVisu->removeAllChildren();
 
         showCoordSystem();
-        SceneObject::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        VisualizationFactory::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
         if (!UI->checkBoxTCP->isChecked())
         {

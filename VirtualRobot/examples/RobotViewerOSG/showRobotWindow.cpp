@@ -235,7 +235,7 @@ void showRobotWindow::collisionModel()
 
     //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
     visualization = robot->getVisualization<OSGVisualization>(colModel);
     osg::Node* visualisationNode = NULL;
@@ -507,13 +507,13 @@ void showRobotWindow::loadRobot()
     robotStructure();
 
 
-    /*boost::shared_ptr<VirtualRobot::OSGVisualization> visualizationCol = robot->getVisualization<OSGVisualization>(SceneObject::Collision);
+    /*boost::shared_ptr<VirtualRobot::OSGVisualization> visualizationCol = robot->getVisualization<OSGVisualization>(VisualizationFactory::Collision);
     osg::Node* visualisationNodeCol = NULL;
     if (visualizationCol)
         visualisationNodeCol = visualizationCol->getOSGVisualization();
     osgDB::writeNodeFile(*visualisationNodeCol, std::string(SIMOX_BASE_DIR "/colModel.osg"));
 
-    boost::shared_ptr<VirtualRobot::OSGVisualization> visualizationFul = robot->getVisualization<OSGVisualization>(SceneObject::Collision);
+    boost::shared_ptr<VirtualRobot::OSGVisualization> visualizationFul = robot->getVisualization<OSGVisualization>(VisualizationFactory::Collision);
     osg::Node* visualisationNodeFul = NULL;
     if (visualizationFul)
         visualisationNodeFul = visualizationFul->getOSGVisualization();

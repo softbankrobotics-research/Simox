@@ -1,9 +1,11 @@
 
 #include "showRobotWindow.h"
-#include <VirtualRobot/COLLADA/ColladaIO.h>
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
 #include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Import/RobotImporterFactory.h>
+#include <VirtualRobot/Visualization/OgreVisualization/OgreVisualization.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -12,115 +14,60 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-
 #include <sstream>
+
 using namespace std;
 using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-showRobotWindow::showRobotWindow(std::string& sRobotFilename, Qt::WFlags flags)
+showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     m_sRobotFilename = sRobotFilename;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-
-    /*SoShapeHints * shapeHints = new SoShapeHints;
-    shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
-    shapeHints->shapeType = SoShapeHints::UNKNOWN_SHAPE_TYPE;
-    sceneSep->addChild(shapeHints);*/
-    /*SoLightModel * lightModel = new SoLightModel;
-    lightModel->model = SoLightModel::BASE_COLOR;
-    sceneSep->addChild(lightModel);*/
-
-    sceneSep->addChild(robotSep);
 
     setupUI();
 
     loadRobot();
 
-    viewer->viewAll();
+    //viewer->viewAll();
 }
 
 
 showRobotWindow::~showRobotWindow()
 {
     robot.reset();
-    sceneSep->unref();
 }
-
-/*
-void CShowRobotWindow::saveScreenshot()
-{
-    static int counter = 0;
-    SbString framefile;
-
-    framefile.sprintf("MPL_Render_Frame%06d.png", counter);
-    counter++;
-
-    viewer->getSceneManager()->render();
-    viewer->getSceneManager()->scheduleRedraw();
-    QGLWidget* w = (QGLWidget*)viewer->getGLWidget();
-
-    QImage i = w->grabFrameBuffer();
-    bool bRes = i.save(framefile.getString(), "PNG");
-    if (bRes)
-        cout << "wrote image " << counter << endl;
-    else
-        cout << "failed writing image " << counter << endl;
-
-}*/
 
 void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    //#ifndef _DEBUG
-    viewer->setAntialiasing(true, 4);
-    //#endif
-#endif
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
+    viewer = new Gui::OgreViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
-    connect(UI.pushButtonSave, SIGNAL(clicked()), this, SLOT(saveRobot()));
 
-    /*connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
+    connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
+    connect(UI.ExportXML, SIGNAL(clicked()), this, SLOT(exportXML()));
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openHand()));
-    connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));*/
+    connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
 
     connect(UI.checkBoxPhysicsCoM, SIGNAL(clicked()), this, SLOT(displayPhysics()));
     connect(UI.checkBoxPhysicsInertia, SIGNAL(clicked()), this, SLOT(displayPhysics()));
 
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(rebuildVisualization()));
+    connect(UI.checkBoxRobotSensors, SIGNAL(clicked()), this, SLOT(showSensors()));
     connect(UI.checkBoxStructure, SIGNAL(clicked()), this, SLOT(robotStructure()));
     UI.checkBoxFullModel->setChecked(true);
     connect(UI.checkBoxFullModel, SIGNAL(clicked()), this, SLOT(robotFullModel()));
     connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked()), this, SLOT(robotCoordSystems()));
     connect(UI.checkBoxShowCoordSystem, SIGNAL(clicked()), this, SLOT(showCoordSystem()));
-    connect(UI.checkBoxSensors, SIGNAL(clicked()), this, SLOT(showSensors()));
     connect(UI.comboBoxRobotNodeSet, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
     connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
     connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));
@@ -239,31 +186,47 @@ void showRobotWindow::rebuildVisualization()
         return;
     }
 
-    robotSep->removeAllChildren();
-    //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
+    viewer->clearLayer("robotLayer");
+
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
+    //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
 
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
+    VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);//robot->getVisualization<OgreVisualization>(colModel);
+    viewer->addVisualization("robotLayer", "robot", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
     UI.checkBoxStructure->setEnabled(!useColModel);
+    UI.checkBoxRobotSensors->setEnabled(!useColModel);
     UI.checkBoxFullModel->setEnabled(!useColModel);
     UI.checkBoxRobotCoordSystems->setEnabled(!useColModel);
 
 }
+
+void showRobotWindow::showSensors()
+{
+    if (!robot)
+    {
+        return;
+    }
+
+    bool showSensors = UI.checkBoxRobotSensors->isChecked();
+
+    std::vector<SensorPtr> sensors = robot->getSensors();
+
+    for (size_t i = 0; i < sensors.size(); i++)
+    {
+        sensors[i]->setupVisualization(showSensors, showSensors);
+        sensors[i]->showCoordinateSystem(showSensors);
+    }
+
+    // rebuild visualization
+    rebuildVisualization();
+}
+
 
 
 void showRobotWindow::displayPhysics()
@@ -281,6 +244,7 @@ void showRobotWindow::displayPhysics()
     rebuildVisualization();
 
 }
+
 void showRobotWindow::showRobot()
 {
     //m_pGraspScenery->showRobot(m_pShowRobot->state() == QCheckBox::On);
@@ -292,22 +256,17 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
     QMainWindow::closeEvent(event);
 }
 
-
-
-
 int showRobotWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
-
 
 void showRobotWindow::quit()
 {
     std::cout << "CShowRobotWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void showRobotWindow::updateJointBox()
@@ -385,7 +344,6 @@ void showRobotWindow::selectJoint(int nr)
     currentRobotNode = currentRobotNodes[nr];
     currentRobotNode->showBoundingBox(true, true);
     currentRobotNode->print();
-    std::cout << "Offset: "  << currentRobotNode->getJointValueOffset() << std::endl;
     float mi = currentRobotNode->getJointLimitLo();
     float ma = currentRobotNode->getJointLimitHi();
     QString qMin = QString::number(mi);
@@ -416,14 +374,14 @@ void showRobotWindow::selectJoint(int nr)
         UI.checkBoxShowCoordSystem->setCheckState(Qt::Unchecked);
     }
 
-    /*
-        cout << "HIGHLIGHTING node " << currentRobotNodes[nr]->getName() << endl;
+    cout << "HIGHLIGHTING node " << currentRobotNodes[nr]->getName() << endl;
 
-        if (visualization)
-        {
-            robot->highlight(visualization,false);
-            currentRobotNode->highlight(visualization,true);
-        }*/
+    if (visualization)
+    {
+        robot->highlight(visualization, false);
+        currentRobotNode->highlight(visualization, true);
+    }
+
     displayTriangles();
 }
 
@@ -465,41 +423,7 @@ void showRobotWindow::showCoordSystem()
         return;
     }
 
-    // first check if robot node has a visualization
-    /*VisualizationNodePtr visu = robotNodes[nr]->getVisualization();
-    if (!visu)
-    {
-        // create dummy visu
-        SoSeparator *s = new SoSeparator();
-        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
-        robotNodes[nr]->setVisualization(visualizationNode);
-        //visualizationNode->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
-
-    }*/
-
     currentRobotNodes[nr]->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
-    // rebuild visualization
-    rebuildVisualization();
-}
-
-
-void showRobotWindow::showSensors()
-{
-    if (!robot)
-    {
-        return;
-    }
-
-    bool showSensors = UI.checkBoxSensors->isChecked();
-
-    std::vector<SensorPtr> sensors = robot->getSensors();
-
-    for (size_t i = 0; i < sensors.size(); i++)
-    {
-        sensors[i]->setupVisualization(showSensors, showSensors);
-        sensors[i]->showCoordinateSystem(showSensors);
-    }
-
     // rebuild visualization
     rebuildVisualization();
 }
@@ -508,8 +432,11 @@ void showRobotWindow::showSensors()
 
 void showRobotWindow::selectRobot()
 {
-    QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("Collada Files (*.dae)"));
-    std::string s = m_sRobotFilename = std::string(fi.toAscii());
+    string supportedExtensions = RobotImporterFactory::getAllExtensions();
+    string supported = "Supported Formats, " + supportedExtensions + " (" + supportedExtensions + ")";
+    string filter = supported + ";;" + RobotImporterFactory::getAllFileFilters();
+    QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr(filter.c_str()));
+    std::string s = m_sRobotFilename = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
@@ -518,9 +445,102 @@ void showRobotWindow::selectRobot()
     }
 }
 
+void showRobotWindow::testPerformance(RobotPtr robot, RobotNodeSetPtr rns)
+{
+    int loops = 10000;
+    Eigen::VectorXf limitMin(rns->getSize());
+    Eigen::VectorXf limitMax(rns->getSize());
+    for (size_t i = 0; i < rns->getSize(); i++)
+    {
+        limitMin[i] = rns->getNode(i)->getJointLimitLo();
+        limitMax[i] = rns->getNode(i)->getJointLimitHi();
+    }
+    Eigen::VectorXf v(rns->getSize());
+    //float minV = rn->getJointLimitLo();
+    //float maxV = rn->getJointLimitHi();
+
+    clock_t start = clock();
+    robot->setupVisualization(true, false);
+    robot->setUpdateVisualization(true);
+    robot->setUpdateCollisionModel(true);
+    robot->setThreadsafe(true);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    clock_t end = clock();
+    float timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu on, thread on): " << timeMS / (float)loops << endl;
+
+    start = clock();
+    robot->setupVisualization(false, false);
+    robot->setUpdateVisualization(false);
+    robot->setUpdateCollisionModel(false);
+    robot->setThreadsafe(true);
+    for (int i = 0; i < loops; i++)
+    {
+        /*float v = float(rand() % 1000) / 1000.0f;
+        v = minV + v * (maxV - minV);
+        rn->setJointValue(v);*/
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu off, thread on): " << timeMS / (float)loops << endl;
+
+    start = clock();
+    robot->setupVisualization(true, false);
+    robot->setUpdateVisualization(true);
+    robot->setUpdateCollisionModel(true);
+    robot->setThreadsafe(false);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu on, thread off): " << timeMS / (float)loops << endl;
+
+
+    start = clock();
+    robot->setupVisualization(false, false);
+    robot->setUpdateVisualization(false);
+    robot->setUpdateCollisionModel(false);
+    robot->setThreadsafe(false);
+    for (int i = 0; i < loops; i++)
+    {
+        for (size_t k = 0; k < rns->getSize(); k++)
+        {
+            float p = float(rand() % 1000) / 1000.0f;
+            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
+        }
+        rns->setJointValues(v);
+    }
+    end = clock();
+    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
+    VR_INFO << "Time (visu off, thread off): " << timeMS / (float)loops << endl;
+
+}
+
 void showRobotWindow::loadRobot()
 {
-    robotSep->removeAllChildren();
+    viewer->clearLayer("robotLayer");
+
     cout << "Loading Robot from " << m_sRobotFilename << endl;
     currentEEF.reset();
     currentRobotNode.reset();
@@ -530,8 +550,19 @@ void showRobotWindow::loadRobot()
 
     try
     {
-        robot = ColladaIO::loadRobot(m_sRobotFilename, 1000.0f);
-        //robot = RobotIO::loadRobot(m_sRobotFilename,RobotIO::eFull);
+        QFileInfo fileInfo(m_sRobotFilename.c_str());
+        std::string suffix(fileInfo.suffix().toLatin1());
+        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+
+        if (!importer)
+        {
+            cout << " ERROR while grabbing importer" << endl;
+            return;
+        }
+
+        robot = importer->loadFromFile(m_sRobotFilename, RobotIO::eFull);
+
+
     }
     catch (VirtualRobotException& e)
     {
@@ -543,6 +574,37 @@ void showRobotWindow::loadRobot()
     if (!robot)
     {
         cout << " ERROR while creating robot" << endl;
+        return;
+    }
+    updatRobotInfo();
+}
+
+void showRobotWindow::exportXML()
+{
+    if (!robot)
+    {
+        return;
+    }
+
+    // XML
+    QString fi = QFileDialog::getSaveFileName(this, tr("xml File"), QString(), tr("xml Files (*.xml)"));
+    std::string s = std::string(fi.toLatin1());
+
+    if (!s.empty())
+    {
+
+        boost::filesystem::path p1(s);
+        std::string fn = p1.filename().generic_string();
+        std::string fnPath = p1.parent_path().generic_string();
+        RobotIO::saveXML(robot, fn, fnPath);
+    }
+
+}
+
+void showRobotWindow::updatRobotInfo()
+{
+    if (!robot)
+    {
         return;
     }
 
@@ -558,7 +620,7 @@ void showRobotWindow::loadRobot()
     robot->getRobotNodes(allRobotNodes);
     robot->getRobotNodeSets(robotNodeSets);
     robot->getEndEffectors(eefs);
-    //updateEEFBox();
+    updateEEFBox();
     updateRNSBox();
     selectRNS(0);
 
@@ -571,10 +633,14 @@ void showRobotWindow::loadRobot()
         selectJoint(0);
     }
 
-    /*if (eefs.size()==0)
+    if (eefs.size() == 0)
+    {
         selectEEF(-1);
+    }
     else
-        selectEEF(0);*/
+    {
+        selectEEF(0);
+    }
 
     displayTriangles();
 
@@ -582,7 +648,7 @@ void showRobotWindow::loadRobot()
     rebuildVisualization();
     robotStructure();
     displayPhysics();
-    viewer->viewAll();
+    //viewer->viewAll();
 }
 
 void showRobotWindow::robotStructure()
@@ -598,56 +664,6 @@ void showRobotWindow::robotStructure()
     rebuildVisualization();
 }
 
-void showRobotWindow::saveRobot()
-{
-
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                       "",
-                       tr("Simox XML (*.xml)"));
-
-    if (fileName.isEmpty())
-    {
-        return;
-    }
-
-    std::string outFile = fileName.toLocal8Bit().constData();
-    //std::string outFile("robot.xml");
-    //store robot to file
-    boost::filesystem::path relOutFile(outFile);
-    boost::filesystem::path outFilename = relOutFile.filename();
-    boost::filesystem::path relOutDir = relOutFile.parent_path();
-    boost::filesystem::path absOutFile = boost::filesystem::absolute(relOutDir);
-    std::string modelDir;
-    modelDir = outFilename.stem().string();
-    modelDir += "_models";
-    //cout << "Rel Out File: " << relOutFile << endl;
-    //cout << "Rel Out Dir: " << relOutDir << endl;
-    cout << "Storing model to directory: " << absOutFile << endl;
-    cout << "Model filename: " << outFilename << endl;
-    cout << "IV Models directory: " << modelDir << endl;
-
-
-
-    if (!boost::filesystem::is_directory(absOutFile))
-    {
-        cout << "Not a valid directory:" << absOutFile.string() << endl;
-        return;
-    }
-
-    bool saveOK = false;
-
-    try
-    {
-        saveOK = RobotIO::saveXML(robot, outFilename.string(), absOutFile.string(), modelDir);
-    }
-    catch (VirtualRobotException& e)
-    {
-        cout << " ERROR while creating robot" << endl;
-        cout << e.what();
-        return;
-    }
-}
-
 void showRobotWindow::robotCoordSystems()
 {
     if (!robot)
@@ -660,56 +676,32 @@ void showRobotWindow::robotCoordSystems()
     // rebuild visualization
     rebuildVisualization();
 }
-/*
+
 void showRobotWindow::closeHand()
 {
     if (currentEEF)
+    {
         currentEEF->closeActors();
+    }
 }
 
 void showRobotWindow::openHand()
 {
-#if 0
-    if (robot)
-    {
-        float randMult = (float)(1.0/(double)(RAND_MAX));
-        std::vector<RobotNodePtr> rn = robot->getRobotNodes();
-        std::vector<RobotNodePtr> rnJoints;
-        for (size_t j=0;j<rn.size();j++)
-        {
-            if (rn[j]->isRotationalJoint())
-                rnJoints.push_back(rn[j]);
-        }
-        int loops = 10000;
-        clock_t startT = clock();
-        for (int i=0;i<loops;i++)
-        {
-            std::vector<float> jv;
-            for (size_t j=0;j<rnJoints.size();j++)
-            {
-                float t = (float)rand() * randMult; // value from 0 to 1
-                t = rnJoints[j]->getJointLimitLo() + (rnJoints[j]->getJointLimitHi() - rnJoints[j]->getJointLimitLo())*t;
-                jv.push_back(t);
-            }
-            robot->setJointValues(rnJoints,jv);
-        }
-        clock_t endT = clock();
-
-        float diffClock = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
-        cout << "RobotNodes:" << rn.size() << endl;
-        cout << "Joints:" << rnJoints.size() << endl;
-        cout << "loops:" << loops << ". time (ms):" << diffClock << ". Per loop:" << diffClock/(float)loops << endl;
-    }
-#endif
     if (currentEEF)
+    {
         currentEEF->openActors();
+    }
 }
 
-void showRobotWindow::selectEEF( int nr )
+void showRobotWindow::selectEEF(int nr)
 {
     cout << "Selecting EEF nr " << nr << endl;
-    if (nr<0 || nr>=(int)eefs.size())
+
+    if (nr < 0 || nr >= (int)eefs.size())
+    {
         return;
+    }
+
     currentEEF = eefs[nr];
 }
 
@@ -717,8 +709,8 @@ void showRobotWindow::updateEEFBox()
 {
     UI.comboBoxEndEffector->clear();
 
-    for (unsigned int i=0;i<eefs.size();i++)
+    for (unsigned int i = 0; i < eefs.size(); i++)
     {
         UI.comboBoxEndEffector->addItem(QString(eefs[i]->getName().c_str()));
     }
-}*/
+}
