@@ -52,7 +52,7 @@ namespace VirtualRobot
 
     void OgreVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
-        // Initi qt (qapplication singleton)
+        // Init qt (qapplication singleton)
         QApplication* app = new QApplication(argc, argv);
     }
 
