@@ -415,7 +415,7 @@ namespace VirtualRobot
         std::string f = T::getFactoryName();
         VisualizationFactoryPtr vf = VisualizationFactory::fromName(f,NULL);
         if (vf)
-            return vf->getVisualization(shared_from_this(), visuType, sensors);
+            return boost::dynamic_pointer_cast<T>(vf->getVisualization(shared_from_this(), visuType, sensors));
         return boost::shared_ptr<T>();
         /*
         std::vector<RobotNodePtr> collectedRobotNodes;

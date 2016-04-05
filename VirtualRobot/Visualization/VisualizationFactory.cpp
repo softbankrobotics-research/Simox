@@ -105,7 +105,7 @@ namespace VirtualRobot
 
             for (size_t i = 0; i < collectedTrajectories.size(); i++)
             {
-                collectedVisualizationNodes.push_back(collectedTrajectories[i]->getVisualization(getName()));
+                collectedVisualizationNodes.push_back(createTrajectory(collectedTrajectories[i]));
             }
         }
 

@@ -61,7 +61,7 @@ class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 
         QWidget *parent;
 };
-
+    typedef boost::shared_ptr<CoinViewer> CoinViewerPtr;
 }
 
 #endif 

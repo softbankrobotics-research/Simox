@@ -222,7 +222,7 @@ namespace VirtualRobot
         std::string f = T::getFactoryName();
         VisualizationFactoryPtr vf = VisualizationFactory::fromName(f,NULL);
         if (vf)
-            return vf->getVisualization(this->shared_from_this(), visuType, addRobots, addObstacles, addManipulationObjects, addTrajectories, addSceneObjectSets);
+            return boost::dynamic_pointer_cast<T>(vf->getVisualization(this->shared_from_this(), visuType, addRobots, addObstacles, addManipulationObjects, addTrajectories, addSceneObjectSets));
         return boost::shared_ptr<T>();
 /*
         std::vector<VisualizationNodePtr> collectedVisualizationNodes;

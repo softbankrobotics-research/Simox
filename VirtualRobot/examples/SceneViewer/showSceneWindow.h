@@ -20,7 +20,7 @@
 #ifdef Simox_USE_OGRE_VISUALIZATION
 #include <Gui/Ogre/OgreViewerFactory.h>
 #endif
-#ifdef Simox_USE_OGRE_VISUALIZATION
+#ifdef Simox_USE_COIN_VISUALIZATION
 #include <Gui/Coin/CoinViewerFactory.h>
 #endif
 /*
