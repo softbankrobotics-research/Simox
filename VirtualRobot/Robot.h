@@ -412,6 +412,12 @@ namespace VirtualRobot
     {
         const bool IS_SUBCLASS_OF_VISUALIZATION = ::boost::is_base_of<Visualization, T>::value;
         BOOST_MPL_ASSERT_MSG(IS_SUBCLASS_OF_VISUALIZATION, TEMPLATE_PARAMETER_FOR_VirtualRobot_getVisualization_MUST_BT_A_SUBCLASS_OF_VirtualRobot__Visualization, (T));
+        std::string f = T::getFactoryName();
+        VisualizationFactoryPtr vf = VisualizationFactory::fromName(f,NULL);
+        if (vf)
+            return vf->getVisualization(shared_from_this(), visuType, sensors);
+        return boost::shared_ptr<T>();
+        /*
         std::vector<RobotNodePtr> collectedRobotNodes;
         getRobotNodes(collectedRobotNodes);
         std::vector<VisualizationNodePtr> collectedVisualizationNodes;
@@ -432,7 +438,7 @@ namespace VirtualRobot
         }
 
         boost::shared_ptr<T> visualization(new T(collectedVisualizationNodes));
-        return visualization;
+        return visualization;*/
     }
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT LocalRobot : public Robot

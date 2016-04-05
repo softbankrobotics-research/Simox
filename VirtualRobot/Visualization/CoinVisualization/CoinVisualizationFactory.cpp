@@ -371,7 +371,17 @@ namespace VirtualRobot
         coinVisualization->unref();
     }
 
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
+    {
+        boost::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));
+        return v;
+    }
 
+    VisualizationPtr CoinVisualizationFactory::getVisualization(VisualizationNodePtr visu)
+    {
+        boost::shared_ptr<CoinVisualization> v(new CoinVisualization(visu));
+        return v;
+    }
 
     SoSeparator* CoinVisualizationFactory::CreateBoundingBox(SoNode* ivModel, bool wireFrame)
     {

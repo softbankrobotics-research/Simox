@@ -48,6 +48,8 @@ class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 
         void resetView();
 
+        virtual void viewAll();
+
     protected:
         void addLayer(const std::string &layer);
 

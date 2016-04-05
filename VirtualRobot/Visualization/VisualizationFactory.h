@@ -135,6 +135,7 @@ namespace VirtualRobot
             Create a robot Visualization.
         */
         virtual VisualizationPtr getVisualization(RobotPtr robot, VisualizationType visuType, bool sensors = true);
+        virtual VisualizationPtr getVisualization(ScenePtr scene, VisualizationType visuType, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
         /*!
             Create a visualization of a SceneObject.
@@ -142,6 +143,11 @@ namespace VirtualRobot
         virtual VisualizationNodePtr getVisualization(SceneObjectPtr so, VisualizationType visuType);
 
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus)
+        {
+            return VisualizationPtr();
+        }
+
+        virtual VisualizationPtr getVisualization(VisualizationNodePtr visu)
         {
             return VisualizationPtr();
         }

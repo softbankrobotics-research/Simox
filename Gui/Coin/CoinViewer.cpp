@@ -90,6 +90,11 @@ void CoinViewer::resetView()
     viewAll();
 }
 
+void CoinViewer::viewAll()
+{
+    SoQtExaminerViewer::viewAll();
+}
+
 void CoinViewer::addLayer(const std::string &layer)
 {
     if(layers.find(layer) != layers.end())

@@ -58,6 +58,7 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
 
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
+        virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
 
 
     protected:

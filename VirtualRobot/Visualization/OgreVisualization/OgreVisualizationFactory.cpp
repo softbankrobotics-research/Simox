@@ -93,4 +93,10 @@ namespace VirtualRobot
         return v;
     }
 
+    VisualizationPtr OgreVisualizationFactory::getVisualization(VisualizationNodePtr visu)
+    {
+        boost::shared_ptr<OgreVisualization> v(new OgreVisualization(visu));
+        return v;
+    }
+
 } // namespace VirtualRobot

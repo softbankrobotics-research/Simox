@@ -15,41 +15,40 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    Gui
-* @author     Peter Kaiser
-* @copyright  2015 Peter Kaiser
+* @author     Nikolaus Vahrenkamp
+* @copyright  2016 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-
-#ifndef _Gui_ViewerInterface_h_
-#define _Gui_ViewerInterface_h_
+#ifndef _Gui_ViewerFactory_h_
+#define _Gui_ViewerFactory_h_
 
 #include <VirtualRobot/VirtualRobot.h>
-#include <QtGui/QtGui>
-
+#include <VirtualRobot/AbstractFactoryMethod.h>
 #include <string>
+
+#include "ViewerInterface.h"
 
 namespace Gui
 {
 
-class ViewerInterface
-{
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
+    {
     public:
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization) = 0;
-        virtual void removeVisualization(const std::string &layer, const std::string &id) = 0;
 
-        virtual void clearLayer(const std::string &layer) = 0;
+        ViewerFactory()
+        {
+            ;
+        }
+        virtual ~ViewerFactory()
+        {
+            ;
+        }
 
-        virtual void start(QWidget *mainWindow) = 0;
-        virtual void stop() = 0;
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) = 0;
+    };
+    typedef boost::shared_ptr<ViewerFactory> ViewerFactoryPtr;
 
-        virtual void resetView() = 0;
-
-        virtual void viewAll() = 0;
-};
-typedef boost::shared_ptr<ViewerInterface> ViewerInterfacePtr;
-
-}
+} // namespace Gui
 
 #endif
-

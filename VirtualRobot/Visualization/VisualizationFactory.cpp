@@ -23,6 +23,7 @@
 #include "VisualizationFactory.h"
 #include "../Robot.h"
 #include "../SceneObject.h"
+#include "../Scene.h"
 
 
 namespace VirtualRobot
@@ -48,6 +49,78 @@ namespace VirtualRobot
             for (size_t i = 0; i < sn.size(); i++)
             {
                 collectedVisualizationNodes.push_back(getVisualization(sn[i], visuType));
+            }
+        }
+
+        return getVisualization(collectedVisualizationNodes);
+    }
+
+    VisualizationPtr VisualizationFactory::getVisualization(ScenePtr scene, VisualizationFactory::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    {
+        if (!scene)
+            return VisualizationPtr();
+
+        std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+
+        if (addRobots)
+        {
+            std::vector<VirtualRobot::RobotPtr> collectedRobots = scene->getRobots();
+            // collect all robotnodes
+            std::vector<VirtualRobot::RobotNodePtr> collectedRobotNodes;
+
+            for (size_t i = 0; i < collectedRobots.size(); i++)
+            {
+                collectedRobots[i]->getRobotNodes(collectedRobotNodes, false);
+            }
+
+            for (size_t i = 0; i < collectedRobotNodes.size(); i++)
+            {
+                collectedVisualizationNodes.push_back(collectedRobotNodes[i]->getVisualization(visuType));
+            }
+        }
+
+        if (addObstacles)
+        {
+            std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
+
+            for (size_t i = 0; i < collectedObstacles.size(); i++)
+            {
+                collectedVisualizationNodes.push_back(collectedObstacles[i]->getVisualization(visuType));
+            }
+        }
+
+        if (addManipulationObjects)
+        {
+            std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
+
+            for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
+            {
+                collectedVisualizationNodes.push_back(collectedManipulationObjects[i]->getVisualization(visuType));
+            }
+        }
+
+        if (addTrajectories)
+        {
+            std::vector<VirtualRobot::TrajectoryPtr> collectedTrajectories = scene->getTrajectories();
+
+            for (size_t i = 0; i < collectedTrajectories.size(); i++)
+            {
+                collectedVisualizationNodes.push_back(collectedTrajectories[i]->getVisualization(getName()));
+            }
+        }
+
+        if (addSceneObjectSets)
+        {
+            std::vector<VirtualRobot::SceneObjectSetPtr> collectedSceneObjectSets = scene->getSceneObjectSets();
+
+            for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
+            {
+                std::vector< SceneObjectPtr > sos = collectedSceneObjectSets[i]->getSceneObjects();
+
+                for (size_t j = 0; j < sos.size(); j++)
+                {
+                    collectedVisualizationNodes.push_back(sos[j]->getVisualization(visuType));
+                }
             }
         }
 

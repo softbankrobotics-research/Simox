@@ -14,11 +14,11 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
+/*
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
-
+*/
 #include <sstream>
 using namespace std;
 using namespace VirtualRobot;
@@ -31,6 +31,7 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
     VR_INFO << " start " << endl;
 
     sceneFile = sSceneFile;
+    /*
     sceneSep = new SoSeparator;
     sceneSep->ref();
     sceneVisuSep = new SoSeparator;
@@ -38,7 +39,7 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
     graspVisu = new SoSeparator;
     sceneSep->addChild(graspVisu);
     coordVisu = new SoSeparator;
-    sceneSep->addChild(coordVisu);
+    sceneSep->addChild(coordVisu);*/
 
     setupUI();
 
@@ -50,16 +51,21 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
 
 showSceneWindow::~showSceneWindow()
 {
-    sceneSep->unref();
+    //sceneSep->unref();
 }
 
 
 void showSceneWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    Gui::ViewerFactoryPtr viewerFactory = Gui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+
+    viewer = viewerFactory->createViewer(UI.frameViewer);
+            //new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
     // setup
+    /*
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     viewer->setAccumulationBuffer(true);
     viewer->setAntialiasing(true, 4);
@@ -69,7 +75,7 @@ void showSceneWindow::setupUI()
     viewer->setFeedbackVisibility(true);
     viewer->setSceneGraph(sceneSep);
     viewer->viewAll();
-    viewer->setAntialiasing(true, 4);
+    viewer->setAntialiasing(true, 4);*/
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectScene()));
@@ -162,7 +168,10 @@ void showSceneWindow::buildVisu()
         return;
     }
 
-    sceneVisuSep->removeAllChildren();
+    viewer->clearLayer("sceneLayer");
+    viewer->clearLayer("graspLayer");
+    viewer->clearLayer("coordLayer");
+
     VisualizationFactory::VisualizationType visuType = VisualizationFactory::Full;
 
     if (UI.checkBoxColModel->isChecked())
@@ -170,67 +179,66 @@ void showSceneWindow::buildVisu()
         visuType = VisualizationFactory::Collision;
     }
 
-    visualization = scene->getVisualization<CoinVisualization>(visuType);
-    SoNode* visualisationNode = NULL;
+    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
 
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        sceneVisuSep->addChild(visualisationNode);
-    }
-
-    coordVisu->removeAllChildren();
+    visualization = visualizationFactory->getVisualization(scene, visuType);//scene->getVisualization<CoinVisualization>(visuType);
+    viewer->addVisualization("sceneLayer", "scene", visualization);
 
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
-        coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f, &rootText));
+        VisualizationNodePtr cv = visualizationFactory->createCoordSystem(2.0f, &rootText);
+        VisualizationPtr v = visualizationFactory->getVisualization(cv);
+        viewer->addVisualization("coordLayer", "root", v);
+        //coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f, &rootText));
     }
-
     updateGraspVisu();
-
-
 }
 
 void showSceneWindow::updateGraspVisu()
 {
     // build grasp visu
-    graspVisu->removeAllChildren();
+    viewer->clearLayer("graspLayer");
+    //graspVisu->removeAllChildren();
 
     if (UI.comboBoxGrasp->currentIndex() > 0 && currentObject && currentEEF && currentGrasp)
     {
         //SoSeparator* visu = CoinVisualizationFactory::CreateGraspVisualization(currentGrasp, currentEEF,currentObject->getGlobalPose());
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
-        SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(gp);
-        graspVisu->addChild(mt);
 
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
         std::string t = currentGrasp->getName();
-        SoSeparator* visu = CoinVisualizationFactory::CreateCoordSystemVisualization(1.0f, &t);
+        VisualizationNodePtr cv = visualizationFactory->createCoordSystem(2.0f, &t);
+        visualizationFactory->applyDisplacement(cv,gp);
+        VisualizationPtr v = visualizationFactory->getVisualization(cv);
+        viewer->addVisualization("graspLayer", t, v);
+        //SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(gp);
+        //graspVisu->addChild(mt);
 
-        if (visu)
-        {
-            graspVisu->addChild(visu);
-        }
+        //SoSeparator* visu = CoinVisualizationFactory::CreateCoordSystemVisualization(1.0f, &t);
+
+        //if (visu)
+        //{
+        //    graspVisu->addChild(visu);
+        //}
     }
 }
 
 int showSceneWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
+    //SoQt::show(this);
+    //SoQt::mainLoop();
     return 0;
 }
 
 
 void showSceneWindow::quit()
 {
-    std::cout << "showSceneWindow: Closing" << std::endl;
+    VR_INFO << "Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
+    //SoQt::exitMainLoop();
 }
 
 
@@ -259,7 +267,7 @@ void showSceneWindow::selectScene()
 
 void showSceneWindow::loadScene()
 {
-    sceneVisuSep->removeAllChildren();
+    viewer->clearLayer("sceneLayer");
     currentEEF.reset();
     currentGrasp.reset();
     currentGraspSet.reset();

@@ -20,11 +20,14 @@ if(OGRE_FOUND)
         OgreViewer.h
         OrbitCamera.h
         ../ViewerInterface.h
+        ../ViewerFactory.h
+        OgreViewerFactory.h
     )
 
     set(SOURCES
         OgreViewer.cpp
         OrbitCamera.cpp
+        OgreViewerFactory.cpp
         ${generatedMocFiles}
     )
 

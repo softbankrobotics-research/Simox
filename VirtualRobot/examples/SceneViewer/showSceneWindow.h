@@ -15,12 +15,21 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
+#include <Gui/ViewerInterface.h>
+#include <Gui/ViewerFactory.h>
+#ifdef Simox_USE_OGRE_VISUALIZATION
+#include <Gui/Ogre/OgreViewerFactory.h>
+#endif
+#ifdef Simox_USE_OGRE_VISUALIZATION
+#include <Gui/Coin/CoinViewerFactory.h>
+#endif
+/*
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
+*/
 
 #include <vector>
 
@@ -60,11 +69,6 @@ public slots:
     void colModel();
     void showRoot();
 
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
 protected:
 
     void updateGui();
@@ -75,12 +79,16 @@ protected:
     void buildVisu();
 
     Ui::MainWindowShowScene UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+#ifdef Simox_USE_OGRE_VISUALIZATION
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise ogre Gui lib is not loaded since it is not referenced by us)
+    Gui::OgreViewerFactory f;
+#endif
+#ifdef Simox_USE_COIN_VISUALIZATION
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    Gui::CoinViewerFactory f;
+#endif
+    Gui::ViewerInterfacePtr viewer;
 
-    SoSeparator* sceneSep;
-    SoSeparator* sceneVisuSep;
-    SoSeparator* graspVisu;
-    SoSeparator* coordVisu;
     VirtualRobot::GraspPtr currentGrasp;
     VirtualRobot::GraspSetPtr currentGraspSet;
     VirtualRobot::SceneObjectPtr currentObject;
@@ -92,7 +100,7 @@ protected:
     std::string sceneFile;
 
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    boost::shared_ptr<VirtualRobot::Visualization> visualization;
 };
 
 #endif // __ShowScene_WINDOW_H_

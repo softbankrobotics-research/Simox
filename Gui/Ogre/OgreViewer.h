@@ -52,6 +52,8 @@ class OgreViewer : public QWidget, public ViewerInterface
 
         void resetView();
 
+        void viewAll();
+
     protected:
         void createRenderWindow();
 
@@ -77,7 +79,7 @@ class OgreViewer : public QWidget, public ViewerInterface
 
         OrbitCamera *cameraController;
 };
-
+    typedef boost::shared_ptr<OgreViewer> OgreViewerPtr;
 }
 
 #endif

@@ -97,6 +97,11 @@ void OgreViewer::resetView()
 
 }
 
+void OgreViewer::viewAll()
+{
+
+}
+
 void OgreViewer::createRenderWindow()
 {
     resize(width(), height());

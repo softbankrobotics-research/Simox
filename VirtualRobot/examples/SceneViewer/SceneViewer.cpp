@@ -7,11 +7,11 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 
-
+/*
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/SoQt.h>
-
+*/
 #include <string>
 #include <iostream>
 
