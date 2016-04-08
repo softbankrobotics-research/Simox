@@ -83,7 +83,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     bool updateCollisionModel = robot->getUpdateCollisionModelStatus();
 
     robot->setUpdateVisualization(false);
-    robot->setUpdateVisualization(false);
+    robot->setUpdateCollisionModel(false);
 
     for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
     {
