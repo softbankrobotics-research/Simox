@@ -28,11 +28,13 @@
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
 #include "VirtualRobot/IK/constraints/PoseConstraint.h"
+#include "VirtualRobot/IK/constraints/TSRConstraint.h"
 #endif
 
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoUnits.h>
+#include <Inventor/nodes/SoSphere.h>
 
 #include <time.h>
 #include <vector>
@@ -60,11 +62,14 @@ ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
 
     loadRobot();
 
-    boxSep = new SoSeparator();
+    boxSep = new SoSeparator;
     sceneSep->addChild(boxSep);
 
-    tsrSep = new SoSeparator();
+    tsrSep = new SoSeparator;
     sceneSep->addChild(tsrSep);
+
+    poseSep = new SoSeparator;
+    sceneSep->addChild(poseSep);
 
     exViewer->viewAll();
 }
@@ -110,6 +115,16 @@ void ConstrainedIKWindow::setupUI()
 
     connect(UI.tsrRandom, SIGNAL(clicked()), this, SLOT(randomTSR()));
     connect(UI.tsrGroup, SIGNAL(clicked()), this, SLOT(enableTSR()));
+
+    connect(UI.poseX, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+    connect(UI.poseY, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+    connect(UI.poseZ, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+    connect(UI.poseRoll, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+    connect(UI.posePitch, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+    connect(UI.poseYaw, SIGNAL(valueChanged(double)), this, SLOT(updatePose(double)));
+
+    connect(UI.poseRandom, SIGNAL(clicked()), this, SLOT(randomPose()));
+    connect(UI.poseGroup, SIGNAL(clicked()), this, SLOT(enablePose()));
 }
 
 void ConstrainedIKWindow::resetSceneryAll()
@@ -257,15 +272,27 @@ void ConstrainedIKWindow::solve()
     cout << "Solving with Constrained IK" << endl;
     ConstrainedOptimizationIK solver(robot, kc);
 
-#if 0
-    PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, targetPose, s));
-    solver.addConstraint(pc);
-#endif
+    if(UI.tsrGroup->isChecked())
+    {
+        Eigen::Matrix<float, 6, 2> bounds;
+        bounds << UI.tsrLowX->value(), UI.tsrHighX->value(),
+                  UI.tsrLowY->value(), UI.tsrHighY->value(),
+                  UI.tsrLowZ->value(), UI.tsrHighZ->value(),
+                  UI.tsrLowPitch->value(), UI.tsrHighPitch->value(),
+                  UI.tsrLowRoll->value(), UI.tsrHighRoll->value(),
+                  UI.tsrLowYaw->value(), UI.tsrHighYaw->value();
+
+        TSRConstraintPtr tsr(new TSRConstraint(robot, kc, tcp, Eigen::Matrix4f::Identity(), Eigen::Matrix4f::Identity(), bounds));
+        solver.addConstraint(tsr);
+    }
 
     solver.initialize();
     solver.solve();
 
     clock_t endT = clock();
+
+    float runtime = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
+    VR_INFO << "Solution took " << runtime << "ms" << std::endl;
 
 #if 0
     Eigen::Matrix4f actPose = tcp->getGlobalPose();
@@ -405,6 +432,77 @@ void ConstrainedIKWindow::enableTSR()
     else
     {
         tsrSep->removeAllChildren();
+    }
+}
+
+void ConstrainedIKWindow::updatePose(double value)
+{
+    poseSep->removeAllChildren();
+
+    SoUnits *u = new SoUnits;
+    u->units.setValue(SoUnits::MILLIMETERS);
+    poseSep->addChild(u);
+
+    SoTransform *t = new SoTransform;
+    t->translation.setValue(UI.poseX->value(), UI.poseY->value(), UI.poseZ->value());
+    poseSep->addChild(t);
+
+    SoMaterial *m = new SoMaterial;
+    m->diffuseColor.setValue(1, 0, 0);
+    m->ambientColor.setValue(1, 0, 0);
+    m->transparency = 0.5;
+    poseSep->addChild(m);
+
+    SoSphere *sphere = new SoSphere;
+    sphere->radius = 50;
+    poseSep->addChild(sphere);
+}
+
+void ConstrainedIKWindow::randomPose()
+{
+    // Store joint angles
+    RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
+    kc->getJointValues(originalConfig);
+
+    // Apply random joint angles
+    for(unsigned int i = 0; i < kc->getSize(); i++)
+    {
+        RobotNodePtr node = kc->getNode(i);
+
+        float v = node->getJointLimitLo() + (node->getJointLimitHi() - node->getJointLimitLo()) * (rand()%1000 / 1000.0);
+        node->setJointValue(v);
+    }
+
+    // Obtain TCP pose
+    Eigen::Matrix4f tcpPose = kc->getTCP()->getGlobalPose();
+
+    VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+
+    Eigen::Vector3f rpy;
+    MathTools::eigen4f2rpy(tcpPose, rpy);
+
+    // Apply TSR
+    UI.poseX->setValue(tcpPose(0,3));
+    UI.poseY->setValue(tcpPose(1,3));
+    UI.poseZ->setValue(tcpPose(2,3));
+    UI.poseRoll->setValue(rpy.x());
+    UI.posePitch->setValue(rpy.y());
+    UI.poseYaw->setValue(rpy.z());
+
+    updatePose(0);
+
+    // Restore original joint angles
+    kc->setJointValues(originalConfig);}
+
+void ConstrainedIKWindow::enablePose()
+{
+    if(UI.poseGroup->isChecked())
+    {
+        updatePose(0);
+    }
+    else
+    {
+        poseSep->removeAllChildren();
     }
 }
 

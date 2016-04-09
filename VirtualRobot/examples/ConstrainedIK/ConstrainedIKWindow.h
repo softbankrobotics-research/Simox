@@ -79,6 +79,10 @@ public slots:
     void randomTSR();
     void enableTSR();
 
+    void updatePose(double value);
+    void randomPose();
+    void enablePose();
+
 protected:
     void setupUI();
     void updateKCBox();
@@ -90,6 +94,7 @@ protected:
     SoSeparator* robotSep;
     SoSeparator* boxSep;
     SoSeparator* tsrSep;
+    SoSeparator* poseSep;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
