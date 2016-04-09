@@ -348,15 +348,7 @@ void ConstrainedIKWindow::solve()
 
     if(UI.poseGroup->isChecked())
     {
-        Eigen::Vector3f pos, rpy;
-        pos << UI.poseX->value(), UI.poseY->value(), UI.poseZ->value();
-        rpy << UI.poseRoll->value(), UI.posePitch->value(), UI.poseYaw->value();
-
-        Eigen::Matrix4f pose;
-        MathTools::posrpy2eigen4f(pos, rpy, pose);
-
-        PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, pose));
-        solver.addConstraint(pc);
+        solver.addConstraint(poseConstraint);
     }
 
     solver.initialize();
@@ -411,13 +403,7 @@ void ConstrainedIKWindow::updateTSR(double value)
 
     tsrConstraint.reset(new TSRConstraint(robot, kc, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
 
-
     tsrSep->removeAllChildren();
-
-    SoUnits *u = new SoUnits;
-    u->units.setValue(SoUnits::MILLIMETERS);
-    tsrSep->addChild(u);
-
     VisualizationFactory::Color color(1, 0, 0, 0.5);
     tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
 }
@@ -502,25 +488,18 @@ void ConstrainedIKWindow::enableTSR()
 
 void ConstrainedIKWindow::updatePose(double value)
 {
+    Eigen::Vector3f pos, rpy;
+    pos << UI.poseX->value(), UI.poseY->value(), UI.poseZ->value();
+    rpy << UI.poseRoll->value(), UI.posePitch->value(), UI.poseYaw->value();
+
+    Eigen::Matrix4f pose;
+    MathTools::posrpy2eigen4f(pos, rpy, pose);
+
+    poseConstraint.reset(new PoseConstraint(robot, kc, tcp, pose));
+
     poseSep->removeAllChildren();
-
-    SoUnits *u = new SoUnits;
-    u->units.setValue(SoUnits::MILLIMETERS);
-    poseSep->addChild(u);
-
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(UI.poseX->value(), UI.poseY->value(), UI.poseZ->value());
-    poseSep->addChild(t);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(1, 0, 0);
-    m->ambientColor.setValue(1, 0, 0);
-    m->transparency = 0.5;
-    poseSep->addChild(m);
-
-    SoSphere *sphere = new SoSphere;
-    sphere->radius = 50;
-    poseSep->addChild(sphere);
+    VisualizationFactory::Color color(1, 0, 0, 0.5);
+    poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(poseConstraint, color));
 }
 
 void ConstrainedIKWindow::randomPose()
