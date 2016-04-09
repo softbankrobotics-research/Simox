@@ -54,6 +54,18 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>IK Solver</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QComboBox" name="ikSolver"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
            <string>Kinematic Chain</string>

@@ -24,6 +24,8 @@
 #include "ConstrainedIKWindow.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
+#include "VirtualRobot/IK/ConstrainedHierarchicalIK.h"
+#include "VirtualRobot/IK/ConstrainedStackedIK.h"
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -125,6 +127,15 @@ void ConstrainedIKWindow::setupUI()
 
     connect(UI.poseRandom, SIGNAL(clicked()), this, SLOT(randomPose()));
     connect(UI.poseGroup, SIGNAL(clicked()), this, SLOT(enablePose()));
+
+    UI.ikSolver->addItem("Constrained Hierarchical IK");
+    UI.ikSolver->addItem("Constrained Stacked IK");
+    UI.ikSolver->setCurrentIndex(0);
+
+#ifdef USE_NLOPT
+    UI.ikSolver->addItem("Constrained Optimization IK");
+    UI.ikSolver->setCurrentIndex(2);
+#endif
 }
 
 void ConstrainedIKWindow::resetSceneryAll()
@@ -269,6 +280,32 @@ void ConstrainedIKWindow::solve()
 
     clock_t startT = clock();
 
+    ConstrainedIKPtr ik;
+
+    switch(UI.ikSolver->currentIndex())
+    {
+        case 0:
+            VR_INFO << "Using Constrainbed Hierarchical IK" << std::endl;
+            ik.reset(new ConstrainedHierarchicalIK(robot, kc));
+            break;
+
+        case 1:
+            VR_INFO << "Using Constrained Stacked IK" << std::endl;
+            ik.reset(new ConstrainedStackedIK(robot, kc));
+            break;
+
+#ifdef USE_NLOPT
+        case 2:
+            VR_INFO << "Using Constrained Optimization IK" << std::endl;
+            ik.reset(new ConstrainedOptimizationIK(robot, kc));
+            break;
+#endif
+
+        default:
+            VR_ERROR << "Unknown IK solver selected" << std::endl;
+            return;
+    }
+
     cout << "Solving with Constrained IK" << endl;
     ConstrainedOptimizationIK solver(robot, kc);
 
@@ -286,6 +323,19 @@ void ConstrainedIKWindow::solve()
         solver.addConstraint(tsr);
     }
 
+    if(UI.poseGroup->isChecked())
+    {
+        Eigen::Vector3f pos, rpy;
+        pos << UI.poseX->value(), UI.poseY->value(), UI.poseZ->value();
+        rpy << UI.poseRoll->value(), UI.posePitch->value(), UI.poseYaw->value();
+
+        Eigen::Matrix4f pose;
+        MathTools::posrpy2eigen4f(pos, rpy, pose);
+
+        PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, pose));
+        solver.addConstraint(pc);
+    }
+
     solver.initialize();
     solver.solve();
 
@@ -293,6 +343,14 @@ void ConstrainedIKWindow::solve()
 
     float runtime = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
     VR_INFO << "Solution took " << runtime << "ms" << std::endl;
+
+    std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
+
+    std::cout << "Joint values: " << endl;
+    for (auto &node : nodes)
+    {
+        std::cout << node->getName() << ": " << node->getJointValue() << endl;
+    }
 
 #if 0
     Eigen::Matrix4f actPose = tcp->getGlobalPose();
