@@ -30,6 +30,10 @@
 #include "VirtualRobot/IK/constraints/PoseConstraint.h"
 #endif
 
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoUnits.h>
+
 #include <time.h>
 #include <vector>
 #include <iostream>
@@ -59,6 +63,9 @@ ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
     boxSep = new SoSeparator();
     sceneSep->addChild(boxSep);
 
+    tsrSep = new SoSeparator();
+    sceneSep->addChild(tsrSep);
+
     exViewer->viewAll();
 }
 
@@ -87,6 +94,22 @@ void ConstrainedIKWindow::setupUI()
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
     connect(UI.comboBoxKC, SIGNAL(activated(int)), this, SLOT(selectKC(int)));
     connect(UI.pushButtonSolve, SIGNAL(clicked()), this, SLOT(solve()));
+
+    connect(UI.tsrLowX, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrLowY, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrLowZ, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrLowPitch, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrLowRoll, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrLowYaw, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighX, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighY, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighZ, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighPitch, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighRoll, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+    connect(UI.tsrHighYaw, SIGNAL(valueChanged(double)), this, SLOT(updateTSR(double)));
+
+    connect(UI.tsrRandom, SIGNAL(clicked()), this, SLOT(randomTSR()));
+    connect(UI.tsrGroup, SIGNAL(clicked()), this, SLOT(enableTSR()));
 }
 
 void ConstrainedIKWindow::resetSceneryAll()
@@ -276,6 +299,113 @@ void ConstrainedIKWindow::solve()
 #endif
 
     exViewer->render();
+}
+
+void ConstrainedIKWindow::updateTSR(double value)
+{
+    tsrSep->removeAllChildren();
+
+    SoUnits *u = new SoUnits;
+    u->units.setValue(SoUnits::MILLIMETERS);
+    tsrSep->addChild(u);
+
+    SoTransform *t = new SoTransform;
+    t->translation.setValue(
+                UI.tsrHighX->value() + (UI.tsrHighX->value() - UI.tsrLowX->value()) / 2,
+                UI.tsrHighY->value() + (UI.tsrHighY->value() - UI.tsrLowY->value()) / 2,
+                UI.tsrHighZ->value() + (UI.tsrHighZ->value() - UI.tsrLowZ->value()) / 2
+                );
+    tsrSep->addChild(t);
+
+    SoMaterial *m = new SoMaterial;
+    m->diffuseColor.setValue(1, 0, 0);
+    m->ambientColor.setValue(1, 0, 0);
+    m->transparency = 0.5;
+    tsrSep->addChild(m);
+
+    SoCube *cube = new SoCube;
+    cube->width = UI.tsrHighX->value() - UI.tsrLowX->value();
+    cube->height = UI.tsrHighY->value() - UI.tsrLowY->value();
+    cube->depth = UI.tsrHighZ->value() - UI.tsrLowZ->value();
+    tsrSep->addChild(cube);
+}
+
+void ConstrainedIKWindow::randomTSR()
+{
+    // Store joint angles
+    RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
+    kc->getJointValues(originalConfig);
+
+    // Apply random joint angles
+    for(unsigned int i = 0; i < kc->getSize(); i++)
+    {
+        RobotNodePtr node = kc->getNode(i);
+
+        float v = node->getJointLimitLo() + (node->getJointLimitHi() - node->getJointLimitLo()) * (rand()%1000 / 1000.0);
+        node->setJointValue(v);
+    }
+
+    // Obtain TCP pose
+    Eigen::Matrix4f tcpPose = kc->getTCP()->getGlobalPose();
+
+    VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+
+    // Relax TCP pose randomly to form a TSR
+    float lowX = tcpPose(0,3) - rand()%100;
+    float highX = tcpPose(0,3) + rand()%100;
+    float lowY = tcpPose(1,3) - rand()%100;
+    float highY = tcpPose(1,3) + rand()%100;
+    float lowZ = tcpPose(2,3) - rand()%100;
+    float highZ = tcpPose(2,3) + rand()%100;
+
+    Eigen::Vector3f rpy;
+    MathTools::eigen4f2rpy(tcpPose, rpy);
+
+    float lowRoll = rpy.x() - (M_PI / 4) * (rand()%100 / 100.0);
+    float highRoll = rpy.x() + (M_PI / 4) * (rand()%100 / 100.0);
+    float lowPitch = rpy.y() - (M_PI / 4) * (rand()%100 / 100.0);
+    float highPitch = rpy.y() + (M_PI / 4) * (rand()%100 / 100.0);
+    float lowYaw = rpy.z() - (M_PI / 4) * (rand()%100 / 100.0);
+    float highYaw = rpy.z() + (M_PI / 4) * (rand()%100 / 100.0);
+
+    VR_INFO << "Random TSR: " << std::endl
+            << "    [" << lowX << ", " << highX << "]," << std::endl
+            << "    [" << lowY << ", " << highY << "]," << std::endl
+            << "    [" << lowZ << ", " << highZ << "]," << std::endl
+            << "    [" << lowRoll << ", " << highRoll << "]," << std::endl
+            << "    [" << lowPitch << ", " << highPitch << "]," << std::endl
+            << "    [" << lowYaw << ", " << highYaw << "]," << std::endl;
+
+    // Apply TSR
+    UI.tsrLowX->setValue(lowX);
+    UI.tsrHighX->setValue(highX);
+    UI.tsrLowY->setValue(lowY);
+    UI.tsrHighY->setValue(highY);
+    UI.tsrLowZ->setValue(lowZ);
+    UI.tsrHighZ->setValue(highZ);
+    UI.tsrLowRoll->setValue(lowRoll);
+    UI.tsrHighRoll->setValue(highRoll);
+    UI.tsrLowPitch->setValue(lowPitch);
+    UI.tsrHighPitch->setValue(highPitch);
+    UI.tsrLowYaw->setValue(lowYaw);
+    UI.tsrHighYaw->setValue(highYaw);
+
+    updateTSR(0);
+
+    // Restore original joint angles
+    kc->setJointValues(originalConfig);
+}
+
+void ConstrainedIKWindow::enableTSR()
+{
+    if(UI.tsrGroup->isChecked())
+    {
+        updateTSR(0);
+    }
+    else
+    {
+        tsrSep->removeAllChildren();
+    }
 }
 
 void ConstrainedIKWindow::loadRobot()
