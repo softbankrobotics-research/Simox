@@ -23,14 +23,13 @@
 
 #include "ConstrainedIKWindow.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/ConstrainedHierarchicalIK.h"
 #include "VirtualRobot/IK/ConstrainedStackedIK.h"
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
-#include "VirtualRobot/IK/constraints/PoseConstraint.h"
-#include "VirtualRobot/IK/constraints/TSRConstraint.h"
 #endif
 
 #include <Inventor/nodes/SoCube.h>
@@ -344,16 +343,7 @@ void ConstrainedIKWindow::solve()
 
     if(UI.tsrGroup->isChecked())
     {
-        Eigen::Matrix<float, 6, 2> bounds;
-        bounds << UI.tsrLowX->value(), UI.tsrHighX->value(),
-                  UI.tsrLowY->value(), UI.tsrHighY->value(),
-                  UI.tsrLowZ->value(), UI.tsrHighZ->value(),
-                  UI.tsrLowPitch->value(), UI.tsrHighPitch->value(),
-                  UI.tsrLowRoll->value(), UI.tsrHighRoll->value(),
-                  UI.tsrLowYaw->value(), UI.tsrHighYaw->value();
-
-        TSRConstraintPtr tsr(new TSRConstraint(robot, kc, tcp, Eigen::Matrix4f::Identity(), Eigen::Matrix4f::Identity(), bounds));
-        solver.addConstraint(tsr);
+        solver.addConstraint(tsrConstraint);
     }
 
     if(UI.poseGroup->isChecked())
@@ -370,9 +360,10 @@ void ConstrainedIKWindow::solve()
     }
 
     solver.initialize();
-    solver.solve();
+    bool result = solver.solve();
 
     clock_t endT = clock();
+    VR_INFO << "IK " << (result? "Successful" : "Failed") << std::endl;
 
     float runtime = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
     QString qd = "Time: ";
@@ -402,31 +393,33 @@ void ConstrainedIKWindow::solve()
 
 void ConstrainedIKWindow::updateTSR(double value)
 {
+    Eigen::Matrix<float, 6, 2> bounds;
+    bounds << -fabs(UI.tsrLowX->value() - UI.tsrHighX->value()) / 2, fabs(UI.tsrLowX->value() - UI.tsrHighX->value()) / 2,
+              -fabs(UI.tsrLowY->value() - UI.tsrHighY->value()) / 2, fabs(UI.tsrLowY->value() - UI.tsrHighY->value()) / 2,
+              -fabs(UI.tsrLowZ->value() - UI.tsrHighZ->value()) / 2, fabs(UI.tsrLowZ->value() - UI.tsrHighZ->value()) / 2,
+              -M_PI, M_PI,
+              -M_PI, M_PI,
+              -M_PI, M_PI;
+              /*UI.tsrLowRoll->value(), UI.tsrHighRoll->value(),
+              UI.tsrLowPitch->value(), UI.tsrHighPitch->value(),
+              UI.tsrLowYaw->value(), UI.tsrHighYaw->value();*/
+
+    Eigen::Matrix4f transformation = Eigen::Matrix4f::Identity();
+    transformation(0,3) = UI.tsrLowX->value() + fabs(UI.tsrLowX->value() - UI.tsrHighX->value()) / 2;
+    transformation(1,3) = UI.tsrLowY->value() + fabs(UI.tsrLowY->value() - UI.tsrHighY->value()) / 2;
+    transformation(2,3) = UI.tsrLowZ->value() + fabs(UI.tsrLowZ->value() - UI.tsrHighZ->value()) / 2;
+
+    tsrConstraint.reset(new TSRConstraint(robot, kc, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
+
+
     tsrSep->removeAllChildren();
 
     SoUnits *u = new SoUnits;
     u->units.setValue(SoUnits::MILLIMETERS);
     tsrSep->addChild(u);
 
-    SoTransform *t = new SoTransform;
-    t->translation.setValue(
-                UI.tsrHighX->value() + (UI.tsrHighX->value() - UI.tsrLowX->value()) / 2,
-                UI.tsrHighY->value() + (UI.tsrHighY->value() - UI.tsrLowY->value()) / 2,
-                UI.tsrHighZ->value() + (UI.tsrHighZ->value() - UI.tsrLowZ->value()) / 2
-                );
-    tsrSep->addChild(t);
-
-    SoMaterial *m = new SoMaterial;
-    m->diffuseColor.setValue(1, 0, 0);
-    m->ambientColor.setValue(1, 0, 0);
-    m->transparency = 0.5;
-    tsrSep->addChild(m);
-
-    SoCube *cube = new SoCube;
-    cube->width = UI.tsrHighX->value() - UI.tsrLowX->value();
-    cube->height = UI.tsrHighY->value() - UI.tsrLowY->value();
-    cube->depth = UI.tsrHighZ->value() - UI.tsrLowZ->value();
-    tsrSep->addChild(cube);
+    VisualizationFactory::Color color(1, 0, 0, 0.5);
+    tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
 }
 
 void ConstrainedIKWindow::randomTSR()

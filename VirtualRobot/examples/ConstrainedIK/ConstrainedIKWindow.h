@@ -34,6 +34,9 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/IK/GazeIK.h>
 #include <VirtualRobot/IK/ConstrainedIK.h>
+#include <VirtualRobot/IK/constraints/PoseConstraint.h>
+#include <VirtualRobot/IK/constraints/TSRConstraint.h>
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -105,7 +108,8 @@ protected:
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 
-    VirtualRobot::ConstrainedIKPtr ikConstrainedSolver;
+    VirtualRobot::PoseConstraintPtr poseConstraint;
+    VirtualRobot::TSRConstraintPtr tsrConstraint;
 };
 
 #endif // __Constrained_WINDOW_H_
