@@ -134,6 +134,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             // Success
             robot->setUpdateVisualization(updateVisualization);
             robot->setUpdateCollisionModel(updateCollisionModel);
+            robot->updatePose(true);
             return true;
         }
     }
@@ -141,6 +142,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     // Failure
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
+    robot->updatePose(true);
     return false;
 }
 
