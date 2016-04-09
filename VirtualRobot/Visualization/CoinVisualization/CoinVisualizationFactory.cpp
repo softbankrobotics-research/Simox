@@ -2149,8 +2149,14 @@ namespace VirtualRobot
         m->transparency.setValue(color.transparency);
         res->addChild(m);
 
+        Eigen::Vector3f translation(
+            constraint->getTransformation()(0, 3) + constraint->getBounds()(0, 0) + fabs(constraint->getBounds()(0, 0) - constraint->getBounds()(0, 1))/2,
+            constraint->getTransformation()(1, 3) + constraint->getBounds()(1, 0) + fabs(constraint->getBounds()(1, 0) - constraint->getBounds()(1, 1))/2,
+            constraint->getTransformation()(2, 3) + constraint->getBounds()(2, 0) + fabs(constraint->getBounds()(2, 0) - constraint->getBounds()(2, 1))/2
+            );
+
         SoTransform* t = new SoTransform;
-        t->translation.setValue(constraint->getTransformation()(0, 3), constraint->getTransformation()(1, 3), constraint->getTransformation()(2, 3));
+        t->translation.setValue(translation.x(), translation.y(), translation.z());
         MathTools::Quaternion q = MathTools::eigen4f2quat(constraint->getTransformation());
         t->rotation.setValue(q.x, q.y, q.z, q.w);
         res->addChild(t);
