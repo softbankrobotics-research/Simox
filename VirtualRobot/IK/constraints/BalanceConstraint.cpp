@@ -92,6 +92,7 @@ void BalanceConstraint::setCoMHeight(float currentheight)
 
 double BalanceConstraint::optimizationFunction()
 {
+    THROW_VR_EXCEPTION("Balance constraint not yet integrated into ConstrainedOptimizationIK");
     return 0;
 }
 
@@ -150,5 +151,5 @@ std::string BalanceConstraint::getConstraintType()
 
 Eigen::VectorXf BalanceConstraint::optimizationGradient()
 {
-
+    THROW_VR_EXCEPTION("Balance constraint not yet integrated into ConstrainedOptimizationIK");
 }
