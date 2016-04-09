@@ -226,6 +226,39 @@ void ConstrainedIKWindow::updateKCBox()
     }
 }
 
+void ConstrainedIKWindow::computePoseError()
+{
+    // Compute target pose
+    Eigen::Vector3f pos, rpy;
+    pos << UI.poseX->value(), UI.poseY->value(), UI.poseZ->value();
+    rpy << UI.poseRoll->value(), UI.posePitch->value(), UI.poseYaw->value();
+
+    Eigen::Matrix4f targetPose;
+    MathTools::posrpy2eigen4f(pos, rpy, targetPose);
+
+    Eigen::Matrix4f currentPose = tcp->getGlobalPose();
+
+    float errorPos = (currentPose.block(0, 3, 3, 1) - targetPose.block(0, 3, 3, 1)).norm();
+    MathTools::Quaternion q1 = MathTools::eigen4f2quat(currentPose);
+    MathTools::Quaternion q2 = MathTools::eigen4f2quat(targetPose);
+    MathTools::Quaternion d = getDelta(q1, q2);
+    float errorOri = fabs(180.0f - (d.w + 1.0f) * 90.0f);
+
+    QString qd2 = "Error Pos: : ";
+    qd2 += QString::number(errorPos, 'f', 2);
+    qd2 += " mm";
+    UI.labelPos->setText(qd2);
+    QString qd3 = "Error Ori: : ";
+    qd3 += QString::number(errorOri, 'f', 2);
+    qd3 += " deg";
+    UI.labelOri->setText(qd3);
+}
+
+void ConstrainedIKWindow::computeTSRError()
+{
+
+}
+
 void ConstrainedIKWindow::selectKC(int nr)
 {
     cout << "Selecting kinematic chain nr " << nr << endl;
@@ -342,7 +375,10 @@ void ConstrainedIKWindow::solve()
     clock_t endT = clock();
 
     float runtime = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
-    VR_INFO << "Solution took " << runtime << "ms" << std::endl;
+    QString qd = "Time: ";
+    qd += QString::number(runtime, 'f', 2);
+    qd += " ms";
+    UI.labelTime->setText(qd);
 
     std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
 
@@ -352,36 +388,14 @@ void ConstrainedIKWindow::solve()
         std::cout << node->getName() << ": " << node->getJointValue() << endl;
     }
 
-#if 0
-    Eigen::Matrix4f actPose = tcp->getGlobalPose();
-    float errorPos = (actPose.block(0, 3, 3, 1) - targetPose.block(0, 3, 3, 1)).norm();
-    MathTools::Quaternion q1 = MathTools::eigen4f2quat(actPose);
-    MathTools::Quaternion q2 = MathTools::eigen4f2quat(targetPose);
-    MathTools::Quaternion d = getDelta(q1, q2);
-    float errorOri = fabs(180.0f - (d.w + 1.0f) * 90.0f);
-
-    float diffClock = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
-    QString qd = "Time: ";
-    qd += QString::number(diffClock, 'f', 2);
-    qd += " ms";
-    UI.labelTime->setText(qd);
-    QString qd2 = "Error Pos: : ";
-    qd2 += QString::number(errorPos, 'f', 2);
-    qd2 += " mm";
-    UI.labelPos->setText(qd2);
-    QString qd3 = "Error Ori: : ";
-    qd3 += QString::number(errorOri, 'f', 2);
-    qd3 += " deg";
-    UI.labelOri->setText(qd3);
-
-    cout << "Joint values:" << endl;
-    std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
-
-    for (size_t i = 0; i < nodes.size(); i++)
+    if(UI.poseGroup->isChecked())
     {
-        cout << nodes[i]->getJointValue() << endl;
+        computePoseError();
     }
-#endif
+    if(UI.poseGroup->isChecked())
+    {
+        computeTSRError();
+    }
 
     exViewer->render();
 }

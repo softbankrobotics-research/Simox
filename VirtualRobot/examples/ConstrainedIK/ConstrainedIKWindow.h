@@ -87,6 +87,9 @@ protected:
     void setupUI();
     void updateKCBox();
 
+    void computePoseError();
+    void computeTSRError();
+
     Ui::MainWindowConstrainedIKDemo UI;
     SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
