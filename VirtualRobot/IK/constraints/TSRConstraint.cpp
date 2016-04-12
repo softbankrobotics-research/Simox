@@ -58,18 +58,7 @@ TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeS
 
 Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
 {
-    Eigen::VectorXf error = getError();
-    Eigen::MatrixXf J = ik->getJacobianMatrix();
-
-    for (int i = 0; i < 6; i++)
-    {
-        if (error(i) == 0)
-        {
-            //J.row(i).setZero();
-        }
-    }
-
-    return J;
+    return ik->getJacobianMatrix();
 }
 
 Eigen::MatrixXf TSRConstraint::getJacobianMatrix(SceneObjectPtr tcp)
@@ -90,21 +79,9 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     MathTools::eigen4f2rpy(T, d_w);
 
     Eigen::VectorXf target(6);
-
     for (int i = 0; i < 6; i++)
     {
-        if (d_w[i] < bounds(i, 0))
-        {
-            target(i) = bounds(i, 0);
-        }
-        else if (d_w[i] > bounds(i, 1))
-        {
-            target(i) = bounds(i, 1);
-        }
-        else
-        {
-            target(i) = d_w[i];
-        }
+        target(i) = (d_w[i] <= bounds(i, 0))? bounds(i, 0) : bounds(i, 1);
     }
 
     Eigen::Matrix4f T_dx;
@@ -175,7 +152,8 @@ Eigen::VectorXf TSRConstraint::optimizationGradient(unsigned int id)
 
 double TSRConstraint::positionOptimizationFunction()
 {
-    Eigen::VectorXf e = posRotTradeoff * getError().head(3);
+    Eigen::VectorXf e = /*posRotTradeoff */ getError().head(3);
+    VR_INFO << "Position error: " << e << std::endl;
     return e.dot(e);
 }
 
@@ -188,6 +166,7 @@ Eigen::VectorXf TSRConstraint::positionOptimizationGradient()
 
 double TSRConstraint::orientationOptimizationFunction()
 {
+    return 0;
     Eigen::VectorXf e = getError().tail(3);
     return e.dot(e);
 }
@@ -196,7 +175,5 @@ Eigen::VectorXf TSRConstraint::orientationOptimizationGradient()
 {
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(3, 0, 3, nodeSet->getSize());
     Eigen::VectorXf e = posRotTradeoff * getError().tail(3);
-    return 2 * e.transpose() * J;
-}
     return 0 * 2 * e.transpose() * J;
 }
