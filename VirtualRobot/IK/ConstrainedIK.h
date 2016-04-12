@@ -44,7 +44,7 @@ namespace VirtualRobot
         virtual bool initialize();
 
         virtual bool solveStep() = 0;
-        bool solve(bool stepwise = false);
+        virtual bool solve(bool stepwise = false);
 
         void setMaxIterations(int maxIterations);
         int getMaxIterations();

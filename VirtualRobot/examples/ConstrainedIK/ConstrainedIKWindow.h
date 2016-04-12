@@ -79,12 +79,14 @@ public slots:
     void solve();
 
     void updateTSR(double value);
-    void randomTSR();
+    void randomTSR(bool quiet=false);
     void enableTSR();
 
     void updatePose(double value);
-    void randomPose();
+    void randomPose(bool quiet=false);
     void enablePose();
+
+    void performanceEvaluation();
 
 protected:
     void setupUI();

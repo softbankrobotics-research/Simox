@@ -127,6 +127,8 @@ void ConstrainedIKWindow::setupUI()
     connect(UI.poseRandom, SIGNAL(clicked()), this, SLOT(randomPose()));
     connect(UI.poseGroup, SIGNAL(clicked()), this, SLOT(enablePose()));
 
+    connect(UI.evaluationStart, SIGNAL(clicked()), this, SLOT(performanceEvaluation()));
+
     UI.ikSolver->addItem("Constrained Hierarchical IK");
     UI.ikSolver->addItem("Constrained Stacked IK");
     UI.ikSolver->setCurrentIndex(0);
@@ -310,7 +312,6 @@ void ConstrainedIKWindow::solve()
         return;
     }
 
-    clock_t startT = clock();
 
     ConstrainedIKPtr ik;
 
@@ -349,9 +350,11 @@ void ConstrainedIKWindow::solve()
     }
 
     ik->initialize();
-    bool result = ik->solve();
 
+    clock_t startT = clock();
+    bool result = ik->solve();
     clock_t endT = clock();
+
     VR_INFO << "IK " << (result? "Successful" : "Failed") << std::endl;
 
     float runtime = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
@@ -405,7 +408,7 @@ void ConstrainedIKWindow::updateTSR(double value)
     tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
 }
 
-void ConstrainedIKWindow::randomTSR()
+void ConstrainedIKWindow::randomTSR(bool quiet)
 {
     // Store joint angles
     RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
@@ -423,7 +426,10 @@ void ConstrainedIKWindow::randomTSR()
     // Obtain TCP pose
     Eigen::Matrix4f tcpPose = kc->getTCP()->getGlobalPose();
 
-    VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+    if(!quiet)
+    {
+        VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+    }
 
     // Relax TCP pose randomly to form a TSR
     float lowX = tcpPose(0,3) - rand()%100;
@@ -443,13 +449,16 @@ void ConstrainedIKWindow::randomTSR()
     float lowYaw = rpy.z() - (M_PI / 4) * (rand()%100 / 100.0);
     float highYaw = rpy.z() + (M_PI / 4) * (rand()%100 / 100.0);
 
-    VR_INFO << "Random TSR: " << std::endl
-            << "    [" << lowX << ", " << highX << "]," << std::endl
-            << "    [" << lowY << ", " << highY << "]," << std::endl
-            << "    [" << lowZ << ", " << highZ << "]," << std::endl
-            << "    [" << lowRoll << ", " << highRoll << "]," << std::endl
-            << "    [" << lowPitch << ", " << highPitch << "]," << std::endl
-            << "    [" << lowYaw << ", " << highYaw << "]," << std::endl;
+    if(!quiet)
+    {
+        VR_INFO << "Random TSR: " << std::endl
+                << "    [" << lowX << ", " << highX << "]," << std::endl
+                << "    [" << lowY << ", " << highY << "]," << std::endl
+                << "    [" << lowZ << ", " << highZ << "]," << std::endl
+                << "    [" << lowRoll << ", " << highRoll << "]," << std::endl
+                << "    [" << lowPitch << ", " << highPitch << "]," << std::endl
+                << "    [" << lowYaw << ", " << highYaw << "]," << std::endl;
+    }
 
     // Apply TSR
     UI.tsrLowX->setValue(lowX);
@@ -499,7 +508,7 @@ void ConstrainedIKWindow::updatePose(double value)
     poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(poseConstraint, color));
 }
 
-void ConstrainedIKWindow::randomPose()
+void ConstrainedIKWindow::randomPose(bool quiet)
 {
     // Store joint angles
     RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
@@ -517,12 +526,14 @@ void ConstrainedIKWindow::randomPose()
     // Obtain TCP pose
     Eigen::Matrix4f tcpPose = kc->getTCP()->getGlobalPose();
 
-    VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+    if(!quiet)
+    {
+        VR_INFO << "Sampled TCP Pose: " << std::endl << tcpPose << std::endl;
+    }
 
     Eigen::Vector3f rpy;
     MathTools::eigen4f2rpy(tcpPose, rpy);
 
-    // Apply TSR
     UI.poseX->setValue(tcpPose(0,3));
     UI.poseY->setValue(tcpPose(1,3));
     UI.poseZ->setValue(tcpPose(2,3));
@@ -533,7 +544,8 @@ void ConstrainedIKWindow::randomPose()
     updatePose(0);
 
     // Restore original joint angles
-    kc->setJointValues(originalConfig);}
+    kc->setJointValues(originalConfig);
+}
 
 void ConstrainedIKWindow::enablePose()
 {
@@ -545,6 +557,76 @@ void ConstrainedIKWindow::enablePose()
     {
         poseSep->removeAllChildren();
     }
+}
+
+void ConstrainedIKWindow::performanceEvaluation()
+{
+    srand(UI.evaluationRandomSeed->value());
+
+    ConstrainedIKPtr ik;
+    int ikSolver = UI.ikSolver->currentIndex();
+
+    int resultSuccessful = 0;
+    float totalTime = 0;
+
+    int num = UI.evaluationNumberOfRuns->value();
+    for(int i = 0; i < num; i++)
+    {
+        VR_INFO << "Evaluation run " << (i+1) << std::endl;
+
+        // Reset joint angles to zero
+        std::vector<RobotNodePtr> rn;
+        robot->getRobotNodes(rn);
+        std::vector<float> jv(rn.size(), 0.0f);
+        robot->setJointValues(rn, jv);
+
+        switch(ikSolver)
+        {
+            case 0:
+                ik.reset(new ConstrainedHierarchicalIK(robot, kc));
+                break;
+
+            case 1:
+                ik.reset(new ConstrainedStackedIK(robot, kc));
+                break;
+
+#ifdef USE_NLOPT
+            case 2:
+                ik.reset(new ConstrainedOptimizationIK(robot, kc));
+                break;
+#endif
+
+            default:
+                VR_ERROR << "Unknown IK solver selected" << std::endl;
+                return;
+        }
+
+        if(UI.tsrGroup->isChecked())
+        {
+            randomTSR(true);
+            ik->addConstraint(tsrConstraint);
+        }
+
+        if(UI.poseGroup->isChecked())
+        {
+            randomPose(true);
+            ik->addConstraint(poseConstraint);
+        }
+
+        ik->initialize();
+
+        clock_t startT = clock();
+        bool result = ik->solve();
+        clock_t endT = clock();
+
+        resultSuccessful += (int)result;
+        totalTime += (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
+    }
+
+    VR_INFO << std::endl << "Evaluation result:"
+            << std::endl << "    Success rate: " << (100 * (resultSuccessful / (float)num)) << "%"
+            << std::endl << "    Avg. runtime: " << (totalTime / num) << "ms"
+            << std::endl;
 }
 
 void ConstrainedIKWindow::loadRobot()
