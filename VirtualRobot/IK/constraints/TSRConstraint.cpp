@@ -133,11 +133,6 @@ bool TSRConstraint::checkTolerances()
     return (error.head(3).norm() < toleranceTranslation) && (error.tail(3).norm() < toleranceRotation);
 }
 
-std::string TSRConstraint::getConstraintType()
-{
-    return "TSR(" + eef->getName() + ")";
-}
-
 const Eigen::Matrix4f& TSRConstraint::getTransformation()
 {
     return transformation;
@@ -203,54 +198,5 @@ Eigen::VectorXf TSRConstraint::orientationOptimizationGradient()
     Eigen::VectorXf e = posRotTradeoff * getError().tail(3);
     return 2 * e.transpose() * J;
 }
-
-void TSRConstraint::resolveRPYAmbiguities(float* pose, const float* reference)
-{
-    Eigen::Vector3f ref;
-    ref << reference[3], reference[4], reference[5];
-
-    Eigen::Vector3f tmp;
-
-    Eigen::Vector3f best;
-    best << pose[3], pose[4], pose[5];
-
-    for (int i = -1; i <= 1; i += 2)
-    {
-        for (int j = -1; j <= 1; j += 2)
-        {
-            for (int k = -1; k <= 1; k += 2)
-            {
-                tmp << reference[3] + float(i) * float(M_PI),
-                    reference[4] + float(j) * float(M_PI),
-                    reference[5] + float(k) * float(M_PI);
-
-                if ((tmp - ref).norm() < (best - ref).norm())
-                {
-                    best = tmp;
-                }
-            }
-        }
-    }
-
-    pose[3] = best(0);
-    pose[4] = best(1);
-    pose[5] = best(2);
-}
-
-float TSRConstraint::getShortestDistanceForRPYComponent(float from, float to)
-{
-    float direct = to - from;
-
-    if (direct > M_PI)
-    {
-        return float(-2 * M_PI + direct);
-    }
-    else if (direct < -M_PI)
-    {
-        return float(2 * M_PI - direct);
-    }
-    else
-    {
-        return direct;
-    }
+    return 0 * 2 * e.transpose() * J;
 }

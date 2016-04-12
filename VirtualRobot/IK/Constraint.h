@@ -53,8 +53,6 @@ namespace VirtualRobot
 
         float getErrorDifference();
 
-        virtual std::string getConstraintType() = 0;
-
         const std::vector<OptimizationFunctionSetup> &getEqualityConstraints();
         const std::vector<OptimizationFunctionSetup> &getInequalityConstraints();
         const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();

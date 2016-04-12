@@ -48,7 +48,6 @@ namespace VirtualRobot
 
         bool getRobotPoseForConstraint(Eigen::Matrix4f& pose);
 
-        std::string getConstraintType();
         const Eigen::Matrix4f& getTarget();
 
         void updateTarget(const Eigen::Matrix4f& newTarget);

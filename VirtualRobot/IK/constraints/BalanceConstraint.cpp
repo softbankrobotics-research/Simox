@@ -167,11 +167,6 @@ SupportPolygonPtr BalanceConstraint::getSupportPolygon()
     return supportPolygon;
 }
 
-std::string BalanceConstraint::getConstraintType()
-{
-    return "Balance(" + joints->getName() + ")";
-}
-
 Eigen::VectorXf BalanceConstraint::optimizationGradient()
 {
     THROW_VR_EXCEPTION("Balance constraint not yet integrated into ConstrainedOptimizationIK");

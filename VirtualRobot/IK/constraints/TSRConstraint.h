@@ -43,7 +43,6 @@ namespace VirtualRobot
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
-        std::string getConstraintType();
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
@@ -58,9 +57,6 @@ namespace VirtualRobot
         Eigen::VectorXf orientationOptimizationGradient();
 
     protected:
-        void resolveRPYAmbiguities(float* pose, const float* reference);
-        float getShortestDistanceForRPYComponent(float from, float to);
-
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
         RobotNodePtr eef;

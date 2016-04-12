@@ -53,7 +53,6 @@ namespace VirtualRobot
         Eigen::Vector3f getCoM();
         SupportPolygonPtr getSupportPolygon();
 
-        std::string getConstraintType();
         void setCoMHeight(float height);
 
         double optimizationFunction();

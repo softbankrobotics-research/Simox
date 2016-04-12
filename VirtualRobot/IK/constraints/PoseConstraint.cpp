@@ -101,11 +101,6 @@ bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f& pose)
     return false;
 }
 
-std::string PoseConstraint::getConstraintType()
-{
-    return "Pose(" + eef->getName() + ")";
-}
-
 const Eigen::Matrix4f& PoseConstraint::getTarget()
 {
     return target;

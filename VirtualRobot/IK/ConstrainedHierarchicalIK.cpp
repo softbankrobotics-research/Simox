@@ -43,7 +43,7 @@ bool ConstrainedHierarchicalIK::solveStep()
     {
         if (hardConstraints[constraint] && (constraint->getErrorDifference() < -raiseEpsilon))
         {
-            VR_INFO << "Constrained IK failed due to error raise for hard constraint " << constraint->getConstraintType() << std::endl;
+            VR_INFO << "Constrained IK failed due to error raise for hard constraint " << std::endl;
             return false;
         }
     }
