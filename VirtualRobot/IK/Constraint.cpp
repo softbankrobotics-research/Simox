@@ -80,26 +80,29 @@ bool Constraint::checkTolerances()
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
-void Constraint::addEqualityConstraint(unsigned int id)
+void Constraint::addEqualityConstraint(unsigned int id, bool soft)
 {
     OptimizationFunctionSetup setup;
     setup.id = id;
     setup.constraint = this;
+    setup.soft = soft;
     equalityConstraints.push_back(setup);
 }
 
-void Constraint::addInequalityConstraint(unsigned int id)
+void Constraint::addInequalityConstraint(unsigned int id, bool soft)
 {
     OptimizationFunctionSetup setup;
     setup.id = id;
     setup.constraint = this;
+    setup.soft = soft;
     inequalityConstraints.push_back(setup);
 }
 
-void Constraint::addOptimizationFunction(unsigned int id)
+void Constraint::addOptimizationFunction(unsigned int id, bool soft)
 {
     OptimizationFunctionSetup setup;
     setup.id = id;
     setup.constraint = this;
+    setup.soft = soft;
     optimizationFunctions.push_back(setup);
 }

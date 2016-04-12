@@ -129,7 +129,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
 
-        if(min_f < tolerance * tolerance)
+        // We determine success based on hard constraints only
+        if(hardOptimizationFunction(x) < tolerance * tolerance)
         {
             // Success
             robot->setUpdateVisualization(updateVisualization);
@@ -221,6 +222,34 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
     }
 
     return setup.constraint->optimizationFunction(setup.id);
+}
+
+double ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x)
+{
+    if(x != currentX)
+    {
+        std::vector<float> q(x.begin(), x.end());
+        nodeSet->setJointValues(q);
+        currentX = x;
+    }
+
+    double value = 0;
+
+    for(auto &constraint : constraints)
+    {
+        for(auto &function : constraint->getOptimizationFunctions())
+        {
+            if(function.soft)
+            {
+                // Soft constraints do not count for hard optimization value
+                continue;
+            }
+
+            value += function.constraint->optimizationFunction(function.id);
+        }
+    }
+
+    return value;
 }
 
 double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)

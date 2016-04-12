@@ -349,9 +349,6 @@ void ConstrainedIKWindow::solve()
         ik->addConstraint(poseConstraint);
     }
 
-    JointLimitAvoidanceConstraintPtr jointLimitConstraint(new JointLimitAvoidanceConstraint(robot, kc));
-    ik->addConstraint(jointLimitConstraint);
-
     ik->initialize();
 
     clock_t startT = clock();
@@ -616,6 +613,12 @@ void ConstrainedIKWindow::performanceEvaluation()
             randomPose(true);
             ik->addConstraint(poseConstraint);
         }
+
+#if 0
+        JointLimitAvoidanceConstraintPtr jointLimitConstraint(new JointLimitAvoidanceConstraint(robot, kc));
+        ik->addConstraint(jointLimitConstraint);
+        VR_INFO << "JLAC Added" << std::endl;
+#endif
 
         ik->initialize();
 

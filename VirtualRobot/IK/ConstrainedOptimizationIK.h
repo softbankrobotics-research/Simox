@@ -52,6 +52,8 @@ namespace VirtualRobot
         double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient);
         double optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup);
 
+        double hardOptimizationFunction(const std::vector<double> &x);
+
     protected:
         RobotNodeSetPtr nodeSet;
         OptimizerPtr optimizer;

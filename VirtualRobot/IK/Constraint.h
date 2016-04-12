@@ -40,6 +40,7 @@ namespace VirtualRobot
         public:
             unsigned int id;
             Constraint *constraint;
+            bool soft;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public boost::enable_shared_from_this<Constraint>
@@ -68,9 +69,9 @@ namespace VirtualRobot
         virtual bool checkTolerances();
 
     protected:
-        void addEqualityConstraint(unsigned int id);
-        void addInequalityConstraint(unsigned int id);
-        void addOptimizationFunction(unsigned int id);
+        void addEqualityConstraint(unsigned int id, bool soft=false);
+        void addInequalityConstraint(unsigned int id, bool soft=false);
+        void addOptimizationFunction(unsigned int id, bool soft=false);
 
     protected:
         std::vector<OptimizationFunctionSetup> equalityConstraints;
