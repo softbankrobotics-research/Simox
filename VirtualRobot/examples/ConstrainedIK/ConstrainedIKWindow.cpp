@@ -338,21 +338,18 @@ void ConstrainedIKWindow::solve()
             return;
     }
 
-    cout << "Solving with Constrained IK" << endl;
-    ConstrainedOptimizationIK solver(robot, kc);
-
     if(UI.tsrGroup->isChecked())
     {
-        solver.addConstraint(tsrConstraint);
+        ik->addConstraint(tsrConstraint);
     }
 
     if(UI.poseGroup->isChecked())
     {
-        solver.addConstraint(poseConstraint);
+        ik->addConstraint(poseConstraint);
     }
 
-    solver.initialize();
-    bool result = solver.solve();
+    ik->initialize();
+    bool result = ik->solve();
 
     clock_t endT = clock();
     VR_INFO << "IK " << (result? "Successful" : "Failed") << std::endl;
