@@ -36,6 +36,7 @@
 #include <VirtualRobot/IK/ConstrainedIK.h>
 #include <VirtualRobot/IK/constraints/PoseConstraint.h>
 #include <VirtualRobot/IK/constraints/TSRConstraint.h>
+#include <VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>

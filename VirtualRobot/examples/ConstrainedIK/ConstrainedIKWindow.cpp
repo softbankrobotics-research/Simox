@@ -349,6 +349,9 @@ void ConstrainedIKWindow::solve()
         ik->addConstraint(poseConstraint);
     }
 
+    JointLimitAvoidanceConstraintPtr jointLimitConstraint(new JointLimitAvoidanceConstraint(robot, kc));
+    ik->addConstraint(jointLimitConstraint);
+
     ik->initialize();
 
     clock_t startT = clock();
@@ -568,6 +571,7 @@ void ConstrainedIKWindow::performanceEvaluation()
 
     int resultSuccessful = 0;
     float totalTime = 0;
+    float totalJointAngles = 0;
 
     int num = UI.evaluationNumberOfRuns->value();
     for(int i = 0; i < num; i++)
@@ -621,11 +625,17 @@ void ConstrainedIKWindow::performanceEvaluation()
 
         resultSuccessful += (int)result;
         totalTime += (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
+
+        for(int i = 0; i < kc->getSize(); i++)
+        {
+            totalJointAngles += fabs(kc->getNode(i)->getJointValue());
+        }
     }
 
     VR_INFO << std::endl << "Evaluation result:"
             << std::endl << "    Success rate: " << (100 * (resultSuccessful / (float)num)) << "%"
             << std::endl << "    Avg. runtime: " << (totalTime / num) << "ms"
+            << std::endl << "    Joint angle sum: " << totalJointAngles << "rad"
             << std::endl;
 }
 
