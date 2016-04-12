@@ -11,6 +11,7 @@
 #  Simox_USE_OPENSCENEGRAPH_VISUALIZATION   - if osg visualization was selected
 #  Simox_USE_QT4                            - if qt4 was selected
 #  Simox_USE_QT5                            - if qt5 was selected
+#  Simox_USE_NLOPT                          - if NLopt was selected
 #  SimDynamics_USE_BULLET                   - if SimDynamics is build and BULLET is selected as physics engine
 #  SimDynamics_USE_BULLET_DOUBLE_PRECISION  - if Bullet is build with double precision support
 
@@ -54,6 +55,7 @@ SET(Simox_USE_COLLADA "@Simox_USE_COLLADA@")
 SET(Simox_USE_RBDL "@Simox_USE_RBDL@")
 SET(Simox_USE_QT4 "@Simox_USE_QT4@")
 SET(Simox_USE_QT5 "@Simox_USE_QT5@")
+SET(Simox_USE_NLOPT "@Simox_USE_NLOPT@")
 SET(SimDynamics_USE_BULLET "@SimDynamics_USE_BULLET@")
 SET(SimDynamics_USE_BULLET_DOUBLE_PRECISION "@SimDynamics_USE_BULLET_DOUBLE_PRECISION@")
 
