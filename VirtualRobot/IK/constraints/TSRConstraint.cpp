@@ -152,28 +152,59 @@ Eigen::VectorXf TSRConstraint::optimizationGradient(unsigned int id)
 
 double TSRConstraint::positionOptimizationFunction()
 {
-    Eigen::VectorXf e = /*posRotTradeoff */ getError().head(3);
-    VR_INFO << "Position error: " << e << std::endl;
+    Eigen::VectorXf e = posRotTradeoff * getPositionError();
     return e.dot(e);
 }
 
 Eigen::VectorXf TSRConstraint::positionOptimizationGradient()
 {
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(0, 0, 3, nodeSet->getSize());
-    Eigen::VectorXf e = posRotTradeoff * getError().head(3);
+    Eigen::VectorXf e = posRotTradeoff * getPositionError();
     return 2 * e.transpose() * J;
 }
 
 double TSRConstraint::orientationOptimizationFunction()
 {
-    return 0;
-    Eigen::VectorXf e = getError().tail(3);
+    Eigen::VectorXf e = getOrientationError();
     return e.dot(e);
 }
 
 Eigen::VectorXf TSRConstraint::orientationOptimizationGradient()
 {
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(3, 0, 3, nodeSet->getSize());
-    Eigen::VectorXf e = posRotTradeoff * getError().tail(3);
-    return 0 * 2 * e.transpose() * J;
+    Eigen::VectorXf e = getOrientationError();
+    return 2 * e.transpose() * J;
+}
+
+Eigen::Vector3f TSRConstraint::getPositionError()
+{
+    Eigen::MatrixXf eef_global = eef->getGlobalPose();
+    Eigen::MatrixXf T = transformation.inverse() * eef_global * eefOffset;
+
+    Eigen::Vector3f current = T.block<3,1>(0,3);
+    Eigen::Vector3f target;
+    target <<
+        ((current.x() <= bounds(0, 0))? bounds(0, 0) : bounds(0, 1)),
+        ((current.y() <= bounds(1, 0))? bounds(1, 0) : bounds(1, 1)),
+        ((current.z() <= bounds(2, 0))? bounds(2, 0) : bounds(2, 1));
+
+    return current - target;
+}
+
+Eigen::Vector3f TSRConstraint::getOrientationError()
+{
+    Eigen::MatrixXf eef_global = eef->getGlobalPose();
+    Eigen::MatrixXf T = transformation.inverse() * eef_global * eefOffset;
+
+    Eigen::AngleAxis<float> aa;
+    aa = T.block<3, 3>(0, 0);
+    Eigen::Vector3f current = aa.axis() * aa.angle();
+
+    Eigen::Vector3f target;
+    target <<
+        ((current.x() <= bounds(3, 0))? bounds(3, 0) : bounds(3, 1)),
+        ((current.y() <= bounds(4, 0))? bounds(4, 0) : bounds(4, 1)),
+        ((current.z() <= bounds(5, 0))? bounds(5, 0) : bounds(5, 1));
+
+    return current - target;
 }

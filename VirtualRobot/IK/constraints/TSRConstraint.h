@@ -57,6 +57,9 @@ namespace VirtualRobot
         Eigen::VectorXf orientationOptimizationGradient();
 
     protected:
+        Eigen::Vector3f getPositionError();
+        Eigen::Vector3f getOrientationError();
+
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
         RobotNodePtr eef;
