@@ -113,12 +113,6 @@ void BalanceConstraint::setCoMHeight(float currentheight)
     height = currentheight;
 }
 
-double BalanceConstraint::optimizationFunction()
-{
-    THROW_VR_EXCEPTION("Balance constraint not yet integrated into ConstrainedOptimizationIK");
-    return 0;
-}
-
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
 {
     return comIK->getJacobianMatrix();
@@ -165,9 +159,4 @@ Eigen::Vector3f BalanceConstraint::getCoM()
 SupportPolygonPtr BalanceConstraint::getSupportPolygon()
 {
     return supportPolygon;
-}
-
-Eigen::VectorXf BalanceConstraint::optimizationGradient()
-{
-    THROW_VR_EXCEPTION("Balance constraint not yet integrated into ConstrainedOptimizationIK");
 }

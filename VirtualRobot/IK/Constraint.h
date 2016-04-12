@@ -57,8 +57,15 @@ namespace VirtualRobot
         const std::vector<OptimizationFunctionSetup> &getInequalityConstraints();
         const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();
 
-        virtual double optimizationFunction(unsigned int id) = 0;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) = 0;
+        // Interface for NLopt-based solvers (default implementations)
+        virtual double optimizationFunction(unsigned int id);
+        virtual Eigen::VectorXf optimizationGradient(unsigned int id);
+
+        // Interface for Jacobian-based solvers (default implementations)
+        virtual Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual bool checkTolerances();
 
     protected:
         void addEqualityConstraint(unsigned int id);

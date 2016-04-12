@@ -55,9 +55,6 @@ namespace VirtualRobot
 
         void setCoMHeight(float height);
 
-        double optimizationFunction();
-        Eigen::VectorXf optimizationGradient();
-
     protected:
         void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
                         float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
