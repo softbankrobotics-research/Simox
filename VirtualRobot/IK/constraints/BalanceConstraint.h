@@ -20,6 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
+
 #ifndef _VirtualRobot_BalanceConstraint_h_
 #define _VirtualRobot_BalanceConstraint_h_
 

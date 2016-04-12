@@ -20,6 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
+
 #ifndef _VirtualRobot_PoseConstraint_h_
 #define _VirtualRobot_PoseConstraint_h_
 
