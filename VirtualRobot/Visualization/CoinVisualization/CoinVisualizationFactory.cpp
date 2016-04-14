@@ -3519,7 +3519,7 @@ namespace VirtualRobot
 
                 assert(zEye < 1e-6);
                 assert(std::abs(zEye) < zFar + 1e-6);
-                assert(std::abs(zEye) < zNear - 1e-6);
+                assert(std::abs(zEye) > zNear - 1e-6);
 
                 //the cam is at (x,y)=(0,0) => shift x and y to image center
                 const float xShifted = static_cast<float>(x) - static_cast<float>(width ) / 2.f;
