@@ -2,8 +2,8 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations, float stall_epsilon, float raise_epsilon) :
-    robot(robot),
+ConstrainedIK::ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations, float stall_epsilon, float raise_epsilon, bool reduceRobot) :
+    originalRobot(robot),
     nodeSet(nodeSet),
     maxIterations(maxIterations),
     currentIteration(0),
@@ -12,6 +12,18 @@ ConstrainedIK::ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, in
     raiseEpsilon(raise_epsilon)
 {
     addSeed(eSeedInitial);
+
+    // Reduce the provided robot to only those nodes requested for the IK. This has the advantage that
+    // joints not necessary for the IK (e.g. finger joints) are not updated
+    if(reduceRobot)
+    {
+        VR_WARNING << "Robot reduction is EXPERIMENTAL" << std::endl;
+        this->robot = buildReducedRobot(originalRobot);
+    }
+    else
+    {
+        this->robot = originalRobot;
+    }
 }
 
 void ConstrainedIK::addConstraint(const ConstraintPtr& constraint, int priority, bool hard_constraint)
@@ -145,4 +157,62 @@ int ConstrainedIK::getCurrentIteration()
 {
     return currentIteration;
 }
+
+void ConstrainedIK::getUnitableNodes(const RobotNodePtr &robotNode, const RobotNodeSetPtr &nodeSet, std::vector<std::string> &unitable)
+{
+    std::vector<RobotNodePtr> descendants;
+    robotNode->collectAllRobotNodes(descendants);
+
+    for (std::vector<RobotNodePtr>::const_iterator i = descendants.begin(); i != descendants.end(); i++)
+    {
+        // Skip current robot node
+        if (*i == robotNode)
+        {
+            continue;
+        }
+
+        if(nodeSet->hasRobotNode(*i) || *i == nodeSet->getTCP())
+        {
+            // Actuated joint in subtree -> recursive descent
+            std::vector<SceneObjectPtr> children = robotNode->getChildren();
+            for (auto &child : children)
+            {
+                RobotNodePtr childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
+                if (childRobotNode)
+                {
+                    getUnitableNodes(childRobotNode, nodeSet, unitable);
+                }
+            }
+
+            return;
+        }
+    }
+
+    // No actuated joint in subtree
+    if (!robotNode->getChildren().empty())
+    {
+        unitable.push_back(robotNode->getName());
+    }
+}
+
+RobotPtr ConstrainedIK::buildReducedRobot(const RobotPtr &original)
+{
+    std::vector<std::string> names;
+    for(int i = 0; i < nodeSet->getSize(); i++)
+    {
+        names.push_back(nodeSet->getNode(i)->getName());
+    }
+
+    std::vector<std::string> unitable;
+    getUnitableNodes(original->getRootNode(), nodeSet, unitable);
+
+    VR_INFO << "Reducing robot model by uniting " << unitable.size() << " nodes:" << std::endl;
+    for(auto &node : unitable)
+    {
+        VR_INFO << "    " << node << std::endl;
+    }
+
+    return RobotFactory::cloneUniteSubsets(original, "ConstrainedIK_Reduced_Robot", unitable);
+}
+
 

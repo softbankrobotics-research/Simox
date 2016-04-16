@@ -48,7 +48,7 @@ namespace VirtualRobot
         };
 
     public:
-        ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
+        ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8, bool reduceRobot = false);
 
         void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
         void removeConstraint(const ConstraintPtr& constraint);
@@ -69,10 +69,15 @@ namespace VirtualRobot
         int getCurrentIteration();
 
     protected:
+        void getUnitableNodes(const RobotNodePtr &robotNode, const RobotNodeSetPtr &nodeSet, std::vector<std::string> &unitable);
+        RobotPtr buildReducedRobot(const RobotPtr &original);
+
+    protected:
         std::vector<ConstraintPtr> constraints;
         std::map<ConstraintPtr, int> priorities;
         std::map<ConstraintPtr, bool> hardConstraints;
 
+        RobotPtr originalRobot;
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
         Eigen::VectorXf initialConfig;
