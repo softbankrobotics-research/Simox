@@ -2,14 +2,16 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr& robot, int maxIterations, float stall_epsilon, float raise_epsilon) :
+ConstrainedIK::ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations, float stall_epsilon, float raise_epsilon) :
     robot(robot),
+    nodeSet(nodeSet),
     maxIterations(maxIterations),
     currentIteration(0),
     running(false),
     stallEpsilon(stall_epsilon),
     raiseEpsilon(raise_epsilon)
 {
+    addSeed(eSeedInitial);
 }
 
 void ConstrainedIK::addConstraint(const ConstraintPtr& constraint, int priority, bool hard_constraint)
@@ -40,10 +42,22 @@ std::vector<ConstraintPtr> ConstrainedIK::getConstraints()
     return constraints;
 }
 
+void ConstrainedIK::addSeed(ConstrainedIK::SeedType type, const Eigen::VectorXf seed)
+{
+    seeds.push_back(std::pair<SeedType, Eigen::VectorXf>(type, seed));
+}
+
+void ConstrainedIK::clearSeeds()
+{
+    seeds.clear();
+}
+
 bool ConstrainedIK::initialize()
 {
     Eigen::Matrix4f P;
     int moves = 0;
+
+    nodeSet->getJointValues(initialConfig);
 
     for (auto & constraint : constraints)
     {
@@ -69,6 +83,12 @@ bool ConstrainedIK::initialize()
 
 bool ConstrainedIK::solve(bool stepwise)
 {
+    if(seeds.size() != 1)
+    {
+        // TODO: Implement seeds for IKs other that ConstrainedOptimizationIK
+        VR_WARNING << "Seeds not supported by this IK implementation" << std::endl;
+    }
+
     while (currentIteration < maxIterations)
     {
         if (!solveStep())

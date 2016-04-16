@@ -27,17 +27,21 @@
 using namespace VirtualRobot;
 
 ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
-    ConstrainedIK(robot),
+    ConstrainedIK(robot, nodeSet),
     nodeSet(nodeSet),
     timeout(timeout),
     tolerance(tolerance),
     maxAttempts(30)
 {
+    clearSeeds();
+    addSeed(eSeedInitial);
+    addSeed(eSeedZero);
 }
 
 bool ConstrainedOptimizationIK::initialize()
 {
     int size = nodeSet->getSize();
+    nodeSet->getJointValues(initialConfig);
 
     optimizer.reset(new nlopt::opt(nlopt::LD_SLSQP, size));
 
@@ -91,18 +95,44 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
         int size = nodeSet->getSize();
         std::vector<double> x(size);
-        for(int i = 0; i < size; i++)
+
+        if(attempt >= seeds.size())
         {
-            if(attempt == 0)
+            // Try random configurations
+            for(int i = 0; i < size; i++)
             {
-                // First try zero-position
-                x[i] = 0;
-            }
-            else
-            {
-                // If zero position fails, try random positions
                 float t = (rand()%1000) / 1000.0;
                 x[i] = nodeSet->getNode(i)->getJointLimitLo() + t * (nodeSet->getNode(i)->getJointLimitHi() - nodeSet->getNode(i)->getJointLimitLo());
+            }
+        }
+        else
+        {
+            switch(seeds[attempt].first)
+            {
+                case eSeedZero:
+                    // Try zero configuration
+                    for(int i = 0; i < size; i++)
+                    {
+                        x[i] = 0;
+                    }
+                    break;
+
+                case eSeedInitial:
+                    // Try initial configuration
+                    for(int i = 0; i < size; i++)
+                    {
+                        x[i] = initialConfig(i);
+                    }
+                    break;
+
+                case eSeedOther:
+                    // Try used specified seed
+                    Eigen::VectorXf s = seeds[attempt].second;
+                    for(int i = 0; i < size; i++)
+                    {
+                        x[i] = s(i);
+                    }
+                    break;
             }
         }
 

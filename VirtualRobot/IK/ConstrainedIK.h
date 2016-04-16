@@ -35,11 +35,27 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public boost::enable_shared_from_this<ConstrainedIK>
     {
     public:
-        ConstrainedIK(RobotPtr& robot, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
+        enum SeedType
+        {
+            // Zero configuration
+            eSeedZero,
+
+            // The configuration that was applied when initialize() was called
+            eSeedInitial,
+
+            // Some other configuration
+            eSeedOther
+        };
+
+    public:
+        ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);
 
         void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
         void removeConstraint(const ConstraintPtr& constraint);
         std::vector<ConstraintPtr> getConstraints();
+
+        void addSeed(SeedType type, const Eigen::VectorXf seed = Eigen::VectorXf());
+        void clearSeeds();
 
         virtual bool initialize();
 
@@ -56,7 +72,12 @@ namespace VirtualRobot
         std::vector<ConstraintPtr> constraints;
         std::map<ConstraintPtr, int> priorities;
         std::map<ConstraintPtr, bool> hardConstraints;
+
         RobotPtr robot;
+        RobotNodeSetPtr nodeSet;
+        Eigen::VectorXf initialConfig;
+
+        std::vector<std::pair<SeedType, Eigen::VectorXf>> seeds;
 
         int maxIterations;
         int currentIteration;
