@@ -1,8 +1,13 @@
 
 FIND_PACKAGE (RBDL)
+FIND_PACKAGE (NLOPT)
 
 if (Simox_USE_RBDL AND RBDL_FOUND) 
-        ADD_SUBDIRECTORY(InverseDynamics)
+    ADD_SUBDIRECTORY(InverseDynamics)
+endif ()
+
+if (NLOPT_FOUND)
+    ADD_SUBDIRECTORY(ConstrainedIK)
 endif ()
 
 ADD_SUBDIRECTORY(loadRobot)

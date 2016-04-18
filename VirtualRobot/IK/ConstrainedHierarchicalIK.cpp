@@ -3,7 +3,7 @@
 using namespace VirtualRobot;
 
 ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize, int maxIterations, float stall_epsilon, float raise_epsilon) :
-    ConstrainedIK(robot, maxIterations, stall_epsilon, raise_epsilon),
+    ConstrainedIK(robot, nodeSet, maxIterations, stall_epsilon, raise_epsilon),
     nodeSet(nodeSet),
     stepSize(stepSize)
 {
@@ -43,7 +43,7 @@ bool ConstrainedHierarchicalIK::solveStep()
     {
         if (hardConstraints[constraint] && (constraint->getErrorDifference() < -raiseEpsilon))
         {
-            VR_INFO << "Constrained IK failed due to error raise for hard constraint " << constraint->getConstraintType() << std::endl;
+            VR_INFO << "Constrained IK failed due to error raise for hard constraint " << std::endl;
             return false;
         }
     }
