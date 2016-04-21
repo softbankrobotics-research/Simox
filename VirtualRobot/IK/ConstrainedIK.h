@@ -82,7 +82,7 @@ namespace VirtualRobot
         RobotNodeSetPtr nodeSet;
         Eigen::VectorXf initialConfig;
 
-        std::vector<std::pair<SeedType, Eigen::VectorXf>> seeds;
+        std::vector<std::pair<SeedType, Eigen::VectorXf> > seeds;
 
         int maxIterations;
         int currentIteration;
