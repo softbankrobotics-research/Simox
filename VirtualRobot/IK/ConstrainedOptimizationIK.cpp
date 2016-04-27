@@ -26,16 +26,18 @@
 
 using namespace VirtualRobot;
 
-ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
+ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance, unsigned int maxAttempts) :
     ConstrainedIK(robot, nodeSet),
     nodeSet(nodeSet),
     timeout(timeout),
     tolerance(tolerance),
-    maxAttempts(30)
+    maxAttempts(maxAttempts)
 {
     clearSeeds();
     addSeed(eSeedInitial);
     addSeed(eSeedZero);
+
+    THROW_VR_EXCEPTION_IF(!maxAttempts, "maxAttempts must be larger than zero")
 }
 
 bool ConstrainedOptimizationIK::initialize()
@@ -89,11 +91,14 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->setUpdateVisualization(false);
     robot->setUpdateCollisionModel(false);
 
+    Eigen::VectorXf bestConfiguration;
+    double bestHardObjectiveValue = std::numeric_limits<double>::infinity();
+    int size = nodeSet->getSize();
+
     for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
     {
         numIterations = 0;
 
-        int size = nodeSet->getSize();
         std::vector<double> x(size);
 
         if(attempt >= seeds.size())
@@ -159,8 +164,10 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
 
+        double hardObjectiveValue = hardOptimizationFunction(x);
+
         // We determine success based on hard constraints only
-        if(hardOptimizationFunction(x) < tolerance * tolerance)
+        if(hardObjectiveValue < tolerance * tolerance)
         {
             // Success
             robot->setUpdateVisualization(updateVisualization);
@@ -168,12 +175,23 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             robot->updatePose(true);
             return true;
         }
+        else if(hardObjectiveValue < bestHardObjectiveValue)
+        {
+            bestHardObjectiveValue = hardObjectiveValue;
+            nodeSet->getJointValues(bestConfiguration);
+        }
     }
 
     // Failure
+    for(int i = 0; i < size; i++)
+    {
+        nodeSet->getNode(i)->setJointValue(bestConfiguration[i]);
+    }
+
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
     robot->updatePose(true);
+
     return false;
 }
 
