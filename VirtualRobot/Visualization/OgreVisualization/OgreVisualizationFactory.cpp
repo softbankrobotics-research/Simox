@@ -88,6 +88,7 @@ namespace VirtualRobot
             return VisualizationNodePtr();
         Ogre::Entity* e = renderer->getSceneManager()->createEntity("Box", Ogre::SceneManager::PT_CUBE);
         Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+        sn->attachObject(e);
         VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
         return ovn;
     }

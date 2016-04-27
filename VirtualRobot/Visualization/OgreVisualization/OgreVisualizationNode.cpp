@@ -163,7 +163,6 @@ namespace VirtualRobot
     * */
 
 
-    // todo: pointer type
     /**
      * This mehtod returns the internal OgreVisualizationNode::sceneNode.
      */

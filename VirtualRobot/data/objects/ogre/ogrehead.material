@@ -1,0 +1,76 @@
+material Ogre/Earring
+{
+   technique
+   {
+      pass
+      {
+         ambient 0.5 0.5 0
+         diffuse 1 1 0
+      }
+   }
+}
+material Ogre/Skin
+{
+   technique
+   {
+      pass
+      {
+         ambient 0.7 0.7 0.7
+         cull_hardware none
+      }
+   }
+}
+material Ogre/Tusks
+{
+   technique
+   {
+      pass
+      {
+         ambient 0.5 0.5 0.4
+         diffuse 1 1 0.8
+      }
+   }
+}
+material Ogre/Eyes
+{
+   technique
+   {
+      pass
+      {
+      }
+   }
+}
+material Cursor/default
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+      }
+   }
+}
+material Core/StatsBlockBorder/Down
+{
+   technique
+   {
+      pass
+      {
+         lighting off
+         scene_blend alpha_blend
+         depth_check off
+      }
+   }
+}
+material Core/StatsBlockBorder/Up
+{
+   technique
+   {
+      pass
+      {
+         lighting off
+         scene_blend alpha_blend
+         depth_check off
+      }
+   }
+}

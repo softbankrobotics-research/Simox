@@ -50,11 +50,11 @@ void showRobotWindow::setupUI()
 
     viewer = new SimoxGui::OgreViewer(UI.frameViewer);
 
-    VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
-    THROW_VR_EXCEPTION_IF(!visuFactory,"No visu factory?!");
-
-    VirtualRobot::VisualizationNodePtr box = visuFactory->createBox(100,100,100);
-    viewer->addVisualization("test","id1",box);
+    // test with box:
+    //VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
+    //THROW_VR_EXCEPTION_IF(!visuFactory,"No visu factory?!");
+    //VirtualRobot::VisualizationNodePtr box = visuFactory->createBox(100,100,100);
+    //viewer->addVisualization("test","id1",box);
 
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
@@ -201,7 +201,7 @@ void showRobotWindow::rebuildVisualization()
 
     VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
 
-    VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);//robot->getVisualization<OgreVisualization>(colModel);
+    VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);
     viewer->addVisualization("robotLayer", "robot", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());

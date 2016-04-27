@@ -94,6 +94,12 @@ void OgreViewer::addLayer(const std::string &layer)
 
 void OgreViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
 {
+    /*Ogre::Entity* entity = ogreSceneManager->createEntity("objects/ogre/ogrehead.mesh");
+    Ogre::SceneNode* node = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
+    node->attachObject(entity);
+
+    cameraController->setTarget(node);*/
+
     addLayer(layer);
     removeVisualization(layer,id);
     Ogre::SceneNode* ln = layers[layer];

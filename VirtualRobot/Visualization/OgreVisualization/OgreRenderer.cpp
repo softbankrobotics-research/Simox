@@ -105,8 +105,8 @@ OgreRenderer::OgreRenderer() :
     ogreRoot->initialise(false);
     createRenderWindow( dummy_window_id_, 1, 1 );
     detectGlVersion();
-    //  setupResources();
-    //  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    setupResources();
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     ogreSceneManager = ogreRoot->createSceneManager(Ogre::ST_GENERIC);
 }
 
@@ -249,7 +249,11 @@ void OgreRenderer::setupRenderSystem()
 
 void OgreRenderer::setupResources()
 {
-
+    std::vector<std::string> dps = VirtualRobot::RuntimeEnvironment::getDataPaths();
+    for (auto d : dps)
+    {
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation( d, "FileSystem", "Simox" );
+    }
 }
 
 // On Intel graphics chips under X11, there sometimes comes a
