@@ -37,7 +37,7 @@ using namespace VirtualRobot;
 #define POSITION_COMPONENT      0
 #define ORIENTATION_COMPONENT   1
 
-PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
+PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
                                float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
