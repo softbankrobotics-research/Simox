@@ -31,6 +31,7 @@
 #include "../../EndEffector/EndEffector.h"
 #include "../ColorMap.h"
 #include "../../Workspace/WorkspaceRepresentation.h"
+#include "OgreRenderer.h"
 
 #include <string>
 #include <fstream>
@@ -62,6 +63,8 @@ namespace VirtualRobot
 
 
     protected:
+
+        OgreRenderer *renderer;
 
         // AbstractFactoryMethod
     public:

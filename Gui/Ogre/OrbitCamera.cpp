@@ -23,7 +23,7 @@
 
 #include "OrbitCamera.h"
 
-using namespace Gui;
+using namespace SimoxGui;
 
 OrbitCamera::OrbitCamera(Ogre::Camera *camera) :
     camera(camera),

@@ -26,7 +26,7 @@
 
 #include "../ViewerFactory.h"
 
-namespace Gui
+namespace SimoxGui
 {
     /*!
         A Ogre based implementation of a GuiFactory.
@@ -53,6 +53,6 @@ namespace Gui
 
     typedef boost::shared_ptr<OgreViewerFactory> OgreViewerFactoryPtr;
 
-} // namespace Gui
+} // namespace SimoxGui
 
 #endif

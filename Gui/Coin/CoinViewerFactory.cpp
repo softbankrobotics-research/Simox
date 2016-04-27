@@ -7,7 +7,7 @@
 #include "CoinViewerFactory.h"
 #include "CoinViewer.h"
 
-namespace Gui
+namespace SimoxGui
 {
 
     CoinViewerFactory::CoinViewerFactory()
@@ -51,4 +51,4 @@ namespace Gui
         return CoinFactory;
     }
 
-} // namespace Gui
+} // namespace SimoxGui

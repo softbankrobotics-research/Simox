@@ -22,13 +22,17 @@
 */
 
 #include "OgreViewer.h"
+#include <OGRE/OgreNode.h>
 
 #include <QX11Info>
+#include <VirtualRobot/Visualization/OgreVisualization/OgreVisualization.h>
+#include <VirtualRobot/Visualization/OgreVisualization/OgreVisualizationNode.h>
 
-using namespace Gui;
+using namespace SimoxGui;
 
 OgreViewer::OgreViewer(QWidget *parent) :
     QWidget(parent),
+    renderer(VirtualRobot::OgreRenderer::getOgreRenderer()),
     ogreRoot(NULL),
     ogreWindow(NULL),
     ogreCamera(NULL),
@@ -43,37 +47,96 @@ OgreViewer::OgreViewer(QWidget *parent) :
     QVBoxLayout *layout = new QVBoxLayout(parent);
     layout->addWidget(this);
     parent->setLayout(layout);
+
+    createRenderWindow();
+
+    assert(ogreRoot);
+    assert(ogreSceneManager);
+
+    viewerNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
 }
 
 OgreViewer::~OgreViewer()
 {
+    if(cameraController)
+        delete cameraController;
+    if (ogreWindow)
+    {
+        ogreWindow->removeViewport( 0 );
+        ogreWindow->destroy();
+    }
+
+    ogreWindow = 0;
+    destroy();
+
     if(ogreRoot)
     {
         ogreRoot->shutdown();
         delete ogreRoot;
     }
 
-    if(cameraController)
+    /*if(cameraController)
     {
         delete cameraController;
-    }
+    }*/
 
     destroy();
 }
 
+void OgreViewer::addLayer(const std::string &layer)
+{
+    if (hasLayer(layer))
+        return;
+
+    layers[layer] = viewerNode->createChildSceneNode(layer);
+}
+
+
 void OgreViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
 {
+    addLayer(layer);
+    removeVisualization(layer,id);
+    Ogre::SceneNode* ln = layers[layer];
+    VirtualRobot::OgreVisualizationPtr ov = boost::dynamic_pointer_cast<VirtualRobot::OgreVisualization>(visualization);
+    if (!ov)
+        return;
+    Ogre::SceneNode* ovisu = ov->getOgreVisualization();
+    ln->addChild(ovisu);
+}
 
+void OgreViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization)
+{
+    VirtualRobot::OgreVisualizationNodePtr cvn = boost::dynamic_pointer_cast<VirtualRobot::OgreVisualizationNode>(visualization);
+    VirtualRobot::OgreVisualizationPtr ogreVisu(new VirtualRobot::OgreVisualization(cvn));
+    addVisualization(layer, id, ogreVisu);
 }
 
 void OgreViewer::removeVisualization(const std::string &layer, const std::string &id)
 {
-
+    if (!hasLayer(layer))
+        return;
+    Ogre::SceneNode* ln = layers[layer];
+    if (!hasNode(ln, id))
+        return;
+    ln->removeChild(id);
 }
 
 void OgreViewer::clearLayer(const std::string &layer)
 {
+    if (!hasLayer(layer))
+        return;
+    Ogre::SceneNode* ln = layers[layer];
+    ln->removeAllChildren();
+}
 
+bool OgreViewer::hasLayer(const std::string &layer)
+{
+    if(layers.find(layer) != layers.end())
+    {
+        // Layer exists
+        return true;
+    }
+    return false;
 }
 
 void OgreViewer::start(QWidget *mainWindow)
@@ -104,7 +167,7 @@ void OgreViewer::viewAll()
 
 void OgreViewer::createRenderWindow()
 {
-    resize(width(), height());
+    /*resize(width(), height());
 
     ogreRoot = new Ogre::Root("", "", "");
     ogreRoot->loadPlugin(OGRE_RENDERING_PLUGIN);
@@ -145,7 +208,43 @@ void OgreViewer::createRenderWindow()
 
     ogreWindow->setActive(true);
     ogreWindow->setVisible(true);
-    ogreWindow->setAutoUpdated(false);
+    ogreWindow->setAutoUpdated(false);*/
+
+
+    //#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    //    // It is not clear to me why, but having this frame sub-widget
+    //    // inside the main widget makes an important difference (under X at
+    //    // least).  Without the frame and using this widget's winId()
+    //    // below causes trouble when using RenderWidget as a child
+    //    // widget.  The frame graphics are completely covered up by the 3D
+    //    // render, so using it does not affect the appearance at all.
+    //    this->renderFrame = new QFrame;
+    //    this->renderFrame->setLineWidth(1);
+    //    this->renderFrame->setFrameShadow(QFrame::Sunken);
+    //    this->renderFrame->setFrameShape(QFrame::Box);
+    //    this->renderFrame->show();
+
+    //    QVBoxLayout *mainLayout = new QVBoxLayout;
+    //    mainLayout->setContentsMargins( 0, 0, 0, 0 );
+    //    mainLayout->addWidget(this->renderFrame);
+    //    this->setLayout(mainLayout);
+    //#endif
+
+    //#ifdef Q_OS_MAC
+    //    uintptr_t win_id = winId();
+    //#else
+    //# if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    //    unsigned int win_id = renderFrame->winId();
+    //# else
+    //    unsigned int win_id = winId();
+    //# endif
+    //#endif
+
+    uintptr_t win_id = winId();
+    QApplication::flush();
+
+    ogreWindow = renderer->createRenderWindow( win_id, width(), height() );
+    ogreRoot = renderer->getOgreRoot();
 
     initializeScene();
 }
@@ -170,7 +269,7 @@ void OgreViewer::paintEvent(QPaintEvent *event)
     }
     else
     {
-        createRenderWindow();
+        //createRenderWindow();
     }
 
     QWidget::paintEvent(event);
@@ -257,5 +356,19 @@ void OgreViewer::initializeScene()
     cameraController = new OrbitCamera(ogreCamera);
 
     resizeEvent(NULL);
+}
+
+bool OgreViewer::hasNode(Ogre::SceneNode *sn, const std::string &id)
+{
+    if (!sn)
+        return false;
+    Ogre::Node::ChildNodeIterator it = sn->getChildIterator();
+    while ( it.hasMoreElements() )
+    {
+        Ogre::Node *cn = it.getNext();
+          if (cn->getName() == id);
+          return true;
+    }
+    return false;
 }
 

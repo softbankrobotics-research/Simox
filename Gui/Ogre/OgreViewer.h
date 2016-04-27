@@ -30,8 +30,9 @@
 
 #include "../ViewerInterface.h"
 #include "OrbitCamera.h"
+#include <VirtualRobot/Visualization/OgreVisualization/OgreRenderer.h>
 
-namespace Gui
+namespace SimoxGui
 {
 
 class OgreViewer : public QWidget, public ViewerInterface
@@ -43,6 +44,7 @@ class OgreViewer : public QWidget, public ViewerInterface
         ~OgreViewer();
 
         void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
+        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
         void removeVisualization(const std::string &layer, const std::string &id);
 
         void clearLayer(const std::string &layer);
@@ -54,7 +56,8 @@ class OgreViewer : public QWidget, public ViewerInterface
 
         void viewAll();
 
-    protected:
+        bool hasLayer(const std::string &layer);
+protected:
         void createRenderWindow();
 
         Ogre::SceneManager *getSceneManager();
@@ -71,6 +74,9 @@ class OgreViewer : public QWidget, public ViewerInterface
         void initializeScene();
 
     protected:
+
+        void addLayer(const std::string &layer);
+        bool hasNode(Ogre::SceneNode *sn, const std::string &id);
         Ogre::Root *ogreRoot;
         Ogre::RenderWindow *ogreWindow;
         Ogre::Camera *ogreCamera;
@@ -78,7 +84,15 @@ class OgreViewer : public QWidget, public ViewerInterface
         Ogre::SceneManager *ogreSceneManager;
 
         OrbitCamera *cameraController;
+
+        VirtualRobot::OgreRenderer *renderer;
+
+        Ogre::SceneNode *viewerNode;
+        std::map<std::string, Ogre::SceneNode *> layers;
+        //std::map<std::string, Ogre::SceneNode *> visualizations;
+        //QFrame* renderFrame;
 };
+
     typedef boost::shared_ptr<OgreViewer> OgreViewerPtr;
 }
 

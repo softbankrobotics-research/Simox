@@ -321,6 +321,7 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OGRE_VISUALIZATION)
     Visualization/OgreVisualization/OgreVisualizationFactory.cpp
     Visualization/OgreVisualization/OgreVisualizationNode.cpp
     Visualization/OgreVisualization/OgreVisualization.cpp
+    Visualization/OgreVisualization/OgreRenderer.cpp
     )
 
     SET(INCLUDES
@@ -328,6 +329,7 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OGRE_VISUALIZATION)
     Visualization/OgreVisualization/OgreVisualizationFactory.h
     Visualization/OgreVisualization/OgreVisualizationNode.h
     Visualization/OgreVisualization/OgreVisualization.h
+    Visualization/OgreVisualization/OgreRenderer.h
     )
 
     if(BUILD_TESTING)

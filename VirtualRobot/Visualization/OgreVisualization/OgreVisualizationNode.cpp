@@ -19,8 +19,8 @@ namespace VirtualRobot
      * Store a reference to \p visualizationNode in the member
      * OgreVisualizationNode::visualization.
      */
-    OgreVisualizationNode::OgreVisualizationNode(void* visualizationNode)
-        //: visualization(visualizationNode)
+    OgreVisualizationNode::OgreVisualizationNode(Ogre::SceneNode *visualizationNode)
+        : sceneNode(visualizationNode)
     {
          // todo !!!
        /*
@@ -165,29 +165,19 @@ namespace VirtualRobot
 
     // todo: pointer type
     /**
-     * This mehtod returns the internal OgreVisualizationNode::visualization.
+     * This mehtod returns the internal OgreVisualizationNode::sceneNode.
      */
-    void* OgreVisualizationNode::getOgreVisualization()
+    Ogre::SceneNode* OgreVisualizationNode::getOgreVisualization()
     {
-        // todo!!!
-        //return visualizationAtGlobalPose;
-		return NULL;
+        return sceneNode;
     }
 
     void OgreVisualizationNode::setGlobalPose(const Eigen::Matrix4f& m)
     {
         globalPose = m;
-
-        // todo !!!
-        /*if (globalPoseTransform && updateVisualization)
-        {
-            SbMatrix m(reinterpret_cast<SbMat*>(globalPose.data()));
-            // mm -> m
-            m[3][0] *= 0.001f;
-            m[3][1] *= 0.001f;
-            m[3][2] *= 0.001f;
-            globalPoseTransform->matrix.setValue(m);
-        }*/
+        sceneNode->setPosition(m(0,3), m(1,3), m(2,3));
+        MathTools::Quaternion q = MathTools::eigen4f2quat(m);
+        sceneNode->setOrientation(q.w, q.x, q.y, q.z);
     }
 
     void OgreVisualizationNode::print()

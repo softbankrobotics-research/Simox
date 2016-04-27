@@ -42,6 +42,7 @@ namespace VirtualRobot
 {
 
     OgreVisualizationFactory::OgreVisualizationFactory()
+        :renderer(OgreRenderer::getOgreRenderer())
     {
     }
 
@@ -72,7 +73,7 @@ namespace VirtualRobot
 
 
     /**
-    * \return new instance of OgreVisualizationFactory and call SoDB::init()
+    * \return new instance of OgreVisualizationFactory
     * if it has not already been called.
     */
     boost::shared_ptr<VisualizationFactory> OgreVisualizationFactory::createInstance(void*)
@@ -83,8 +84,12 @@ namespace VirtualRobot
 
     VirtualRobot::VisualizationNodePtr OgreVisualizationFactory::createBox(float width, float height, float depth, float colorR, float colorG, float colorB)
     {
-        // todo !!!
-        return VisualizationNodePtr();
+        if (!renderer)
+            return VisualizationNodePtr();
+        Ogre::Entity* e = renderer->getSceneManager()->createEntity("Box", Ogre::SceneManager::PT_CUBE);
+        Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
     }
 
     VisualizationPtr OgreVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)

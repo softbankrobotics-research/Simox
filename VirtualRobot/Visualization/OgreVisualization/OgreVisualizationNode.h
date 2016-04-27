@@ -26,6 +26,7 @@
 #include "../../VirtualRobot.h"
 #include "../VisualizationNode.h"
 #include "OgreVisualizationFactory.h"
+#include "OgreRenderer.h"
 
 namespace VirtualRobot
 {
@@ -36,13 +37,12 @@ namespace VirtualRobot
         friend class OgreVisualizationFactory;
     public:
         // todo!!!
-        OgreVisualizationNode(void* visualizationNode);
+        OgreVisualizationNode(Ogre::SceneNode* visualizationNode);
         
         ~OgreVisualizationNode();
         virtual TriMeshModelPtr getTriMeshModel();
 
-        // todo !!!
-        void* getOgreVisualization();
+        Ogre::SceneNode* getOgreVisualization();
 
         virtual void setGlobalPose(const Eigen::Matrix4f& m);
 
@@ -96,6 +96,9 @@ namespace VirtualRobot
 
 
         TriMeshModelPtr triMeshModel;
+
+        OgreRenderer* ogreRenderer;
+        Ogre::SceneNode* sceneNode;
 
         /*!
             Replace current visualization of this node.

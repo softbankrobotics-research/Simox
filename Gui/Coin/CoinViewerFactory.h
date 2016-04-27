@@ -26,7 +26,7 @@
 
 #include "../ViewerFactory.h"
 
-namespace Gui
+namespace SimoxGui
 {
     /*!
         A Coin based implementation of a ViewerFactory.
@@ -53,6 +53,6 @@ namespace Gui
 
     typedef boost::shared_ptr<CoinViewerFactory> CoinViewerFactoryPtr;
 
-} // namespace Gui
+} // namespace SimoxGui
 
 #endif

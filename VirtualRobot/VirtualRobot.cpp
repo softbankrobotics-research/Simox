@@ -8,7 +8,7 @@ namespace VirtualRobot
 
     void init(const std::string &appName)
     {
-        // cnstruct some standard values
+        // construct some standard values
 
         static int argc = 1;
         static char** argv = new char*[1];

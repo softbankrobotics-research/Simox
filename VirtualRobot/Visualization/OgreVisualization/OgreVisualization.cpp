@@ -18,15 +18,17 @@ namespace VirtualRobot
     OgreVisualization::OgreVisualization(const VisualizationNodePtr visualizationNode) :
         Visualization(visualizationNode)
     {
-        selection = NULL;
+        sceneNode = NULL;
         color = NULL;
+        ogreRenderer = OgreRenderer::getOgreRenderer();
     }
 
     OgreVisualization::OgreVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes) :
         Visualization(visualizationNodes)
     {
-        selection = NULL;
+        sceneNode = NULL;
         color = NULL;
+        ogreRenderer = OgreRenderer::getOgreRenderer();
     }
 
     OgreVisualization::~OgreVisualization()
@@ -44,36 +46,26 @@ namespace VirtualRobot
 
     bool OgreVisualization::buildVisualization()
     {
-        // todo !!!
-        /*
-        if (selection)
+        if (sceneNode)
         {
             return true;
         }
 
-        selection = new SoSelection;
-        selection->ref();
-        selection->policy = SoSelection::TOGGLE;
-        SoSeparator* visualization = new SoSeparator();
+        sceneNode = ogreRenderer->getSceneManager()->createSceneNode();
 
-        SoUnits* u = new SoUnits();
-        u->units = SoUnits::METERS;
-        visualization->addChild(u);
-
-        color = new SoMaterial();
-        visualization->addChild(color);
-
-        selection->addChild(visualization);
+        //color = new SoMaterial();
+        //visualization->addChild(color);
+        //selection->addChild(visualization);
 
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
         {
-            boost::shared_ptr<OgreVisualizationNode> OgreVisualizationNode = boost::dynamic_pointer_cast<OgreVisualizationNode>(visualizationNode);
+            OgreVisualizationNodePtr ovn = boost::dynamic_pointer_cast<VirtualRobot::OgreVisualizationNode>(visualizationNode);
 
-            if (OgreVisualizationNode && OgreVisualizationNode->getOgreVisualization())
+            if (ovn && ovn->getOgreVisualization())
             {
-                visualization->addChild(OgreVisualizationNode->getOgreVisualization());
+                sceneNode->addChild(ovn->getOgreVisualization());
             }
-        }*/
+        }
         return true;
     }
 
@@ -117,10 +109,10 @@ namespace VirtualRobot
     }
 
 
-    void* OgreVisualization::getOgreVisualization()
+    Ogre::SceneNode *OgreVisualization::getOgreVisualization()
     {
         buildVisualization();
-        return selection;
+        return sceneNode;
     }
 
     /**

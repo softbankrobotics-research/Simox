@@ -79,15 +79,8 @@ protected:
     void buildVisu();
 
     Ui::MainWindowShowScene UI;
-#ifdef Simox_USE_OGRE_VISUALIZATION
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise ogre Gui lib is not loaded since it is not referenced by us)
-    Gui::OgreViewerFactory f;
-#endif
-#ifdef Simox_USE_COIN_VISUALIZATION
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    Gui::CoinViewerFactory f;
-#endif
-    Gui::ViewerInterfacePtr viewer;
+
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::GraspPtr currentGrasp;
     VirtualRobot::GraspSetPtr currentGraspSet;
@@ -98,7 +91,6 @@ protected:
 
     VirtualRobot::ScenePtr scene;
     std::string sceneFile;
-
 
     boost::shared_ptr<VirtualRobot::Visualization> visualization;
 };

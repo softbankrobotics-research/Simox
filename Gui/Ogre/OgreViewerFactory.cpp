@@ -7,7 +7,7 @@
 #include "OgreViewerFactory.h"
 #include "OgreViewer.h"
 
-namespace Gui
+namespace SimoxGui
 {
 
     OgreViewerFactory::OgreViewerFactory()
@@ -42,7 +42,7 @@ namespace Gui
 
 
     /**
-    * \return new instance of OgreVisualizationFactory and call SoDB::init()
+    * \return new instance of OgreVisualizationFactory
     * if it has not already been called.
     */
     ViewerFactoryPtr OgreViewerFactory::createInstance(void*)
@@ -51,4 +51,4 @@ namespace Gui
         return OgreFactory;
     }
 
-} // namespace Gui
+} // namespace SimoxGui

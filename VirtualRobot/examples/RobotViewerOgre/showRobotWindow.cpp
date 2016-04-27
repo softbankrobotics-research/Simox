@@ -48,7 +48,14 @@ void showRobotWindow::setupUI()
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
 
-    viewer = new Gui::OgreViewer(UI.frameViewer);
+    viewer = new SimoxGui::OgreViewer(UI.frameViewer);
+
+    VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
+    THROW_VR_EXCEPTION_IF(!visuFactory,"No visu factory?!");
+
+    VirtualRobot::VisualizationNodePtr box = visuFactory->createBox(100,100,100);
+    viewer->addVisualization("test","id1",box);
+
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));

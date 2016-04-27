@@ -29,7 +29,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 
-namespace Gui
+namespace SimoxGui
 {
 
 class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
@@ -39,6 +39,7 @@ class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
         ~CoinViewer();
 
         void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
+        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
         void removeVisualization(const std::string &layer, const std::string &id);
 
         void clearLayer(const std::string &layer);

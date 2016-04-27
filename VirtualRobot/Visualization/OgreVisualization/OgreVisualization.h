@@ -25,6 +25,7 @@
 
 #include "../../VirtualRobot.h"
 #include "../Visualization.h"
+#include "OgreRenderer.h"
 
 
 class SoNode;
@@ -52,8 +53,7 @@ namespace VirtualRobot
 
         virtual VisualizationPtr clone();
 
-        // todo !!!
-        void* getOgreVisualization();
+        Ogre::SceneNode* getOgreVisualization();
 
         static std::string getFactoryName()
         {
@@ -62,9 +62,10 @@ namespace VirtualRobot
 
     protected:
         bool buildVisualization();
-        
-        // todo !!!
-        void* selection;
+
+        OgreRenderer* ogreRenderer;
+
+        Ogre::SceneNode* sceneNode;
 
         // todo !!!
         void* color;

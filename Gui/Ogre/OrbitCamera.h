@@ -28,7 +28,7 @@
 #include <OGRE/Ogre.h>
 #include <QMouseEvent>
 
-namespace Gui
+namespace SimoxGui
 {
 
 class OrbitCamera

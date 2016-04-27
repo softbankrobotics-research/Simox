@@ -24,11 +24,12 @@
 #include "CoinViewer.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
 
-using namespace Gui;
+using namespace SimoxGui;
 
 CoinViewer::CoinViewer(QWidget *parent) :
     SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
@@ -60,6 +61,13 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
 
     visualizations[id] = coinVisu->getCoinVisualization();
     layers[layer]->addChild(visualizations[id]);
+}
+
+void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization)
+{
+    VirtualRobot::CoinVisualizationNodePtr cvn = boost::dynamic_pointer_cast<VirtualRobot::CoinVisualizationNode>(visualization);
+    VirtualRobot::CoinVisualizationPtr coinVisu(new VirtualRobot::CoinVisualization(cvn));
+    addVisualization(layer, id, coinVisu);
 }
 
 void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)

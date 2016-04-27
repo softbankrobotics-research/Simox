@@ -29,7 +29,7 @@
 
 #include "ViewerInterface.h"
 
-namespace Gui
+namespace SimoxGui
 {
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
@@ -49,6 +49,6 @@ namespace Gui
     };
     typedef boost::shared_ptr<ViewerFactory> ViewerFactoryPtr;
 
-} // namespace Gui
+} // namespace SimoxGui
 
 #endif
