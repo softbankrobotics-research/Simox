@@ -195,12 +195,8 @@ Eigen::VectorXf PoseConstraint::positionOptimizationGradient()
 
 double PoseConstraint::orientationOptimizationFunction()
 {
-    Eigen::Vector3f rpy;
-    Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
-
-    Eigen::AngleAxisf aa;
-    aa = diff.block<3,3>(0,0);
-    rpy = aa.angle() * aa.axis();
+    Eigen::Matrix3f diff = target.block<3,3>(0,0) * eef->getGlobalPose().block<3,3>(0,0).inverse();
+    Eigen::AngleAxisf aa(diff);
 
     float value = 0;
     switch(cartesianSelection)
@@ -213,7 +209,7 @@ double PoseConstraint::orientationOptimizationFunction()
 
         case IKSolver::CartesianSelection::Orientation:
         case IKSolver::CartesianSelection::All:
-            value = rpy.dot(rpy);
+            value = aa.angle() * aa.angle();
             break;
     }
 
