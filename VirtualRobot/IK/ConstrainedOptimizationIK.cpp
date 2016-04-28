@@ -89,7 +89,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->setUpdateVisualization(false);
     robot->setUpdateCollisionModel(false);
 
-    for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
+    std::vector<float> bestJointValues;
+    double currentMinError = std::numeric_limits<double>::max();
     {
         numIterations = 0;
 
@@ -158,9 +159,10 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         {
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
+        double currentError = hardOptimizationFunction(x);
 
         // We determine success based on hard constraints only
-        if(hardOptimizationFunction(x) < tolerance * tolerance)
+        if(currentError < tolerance * tolerance)
         {
             // Success
             robot->setUpdateVisualization(updateVisualization);
@@ -168,8 +170,17 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             robot->updatePose(true);
             return true;
         }
-    }
+        else if(currentMinError > currentError)
+        {
+            currentMinError = currentError;
+            bestJointValues = nodeSet->getJointValues();
+        }
 
+    }
+    if(bestJointValues.size() > 0)
+    {
+        nodeSet->setJointValues(bestJointValues);
+    }
     // Failure
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
