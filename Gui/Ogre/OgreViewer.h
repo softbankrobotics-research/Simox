@@ -27,6 +27,7 @@
 #include <OGRE/Ogre.h>
 
 #include <QWidget>
+#include <QFrame>
 
 #include "../ViewerInterface.h"
 #include "OrbitCamera.h"
@@ -35,7 +36,7 @@
 namespace SimoxGui
 {
 
-class OgreViewer : public QWidget, public ViewerInterface
+class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWidget, public ViewerInterface
 {
     Q_OBJECT
 
@@ -57,7 +58,7 @@ class OgreViewer : public QWidget, public ViewerInterface
         void viewAll();
 
         bool hasLayer(const std::string &layer);
-protected:
+
         void createRenderWindow();
 
         Ogre::SceneManager *getSceneManager();

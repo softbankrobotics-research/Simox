@@ -27,6 +27,10 @@
 #include <stdint.h>
 #include "../../VirtualRobot.h"
 
+#include <QtCore/QtGlobal>
+#include <QtGui/QtGui>
+#include <QtCore/QtCore>
+
 namespace VirtualRobot
 {
 
@@ -39,6 +43,8 @@ public:
   static OgreRenderer* getOgreRenderer();
 
   Ogre::RenderWindow* createRenderWindow( intptr_t window_id, unsigned int width, unsigned int height );
+  static std::string getOgreHandle(intptr_t window_id);
+  static std::string getOgreHandle(QWidget *w);
 
   Ogre::Root* getOgreRoot() { return ogreRoot; }
   Ogre::SceneManager* getSceneManager() { return ogreSceneManager; }
@@ -72,11 +78,18 @@ public:
   static void setOgreConfigFile(const std::string & configFile);
   static void setOgrePluginsFile(const std::string & pluginsFile);
   static void setOgreLogFile(const std::string & logFile);
+  // list of (potential) plugin paths
+  static std::vector<std::string> getOgrePluginPaths();
+  static void addOgrePluginPath(const std::string &p);
+
+protected:
+	static std::vector<std::string> ogrePaths;
 
 private:
   OgreRenderer();
   void setupDummyWindowId();
   void loadOgrePlugins();
+
 
   // helper for makeRenderWindow()
   Ogre::RenderWindow* tryMakeRenderWindow(const std::string& name,

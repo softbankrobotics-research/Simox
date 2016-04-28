@@ -31,7 +31,7 @@ namespace SimoxGui
     /*!
         A Ogre based implementation of a GuiFactory.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT OgreViewerFactory  : public ViewerFactory
+    class SIMOX_GUI_IMPORT_EXPORT OgreViewerFactory  : public ViewerFactory
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

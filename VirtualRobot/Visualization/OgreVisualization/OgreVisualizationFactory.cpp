@@ -37,14 +37,15 @@
 #include <iostream>
 #include <algorithm>
 #include <QApplication>
+#include <boost/algorithm/string.hpp>
 
 namespace VirtualRobot
 {
-
     OgreVisualizationFactory::OgreVisualizationFactory()
-        :renderer(OgreRenderer::getOgreRenderer())
+        :renderer(NULL)
     {
-    }
+		renderer = OgreRenderer::getOgreRenderer();
+	}
 
 
     OgreVisualizationFactory::~OgreVisualizationFactory()
@@ -55,7 +56,7 @@ namespace VirtualRobot
     {
         // Init qt (qapplication singleton)
         QApplication* app = new QApplication(argc, argv);
-    }
+	}
 
     /**
     * register this class in the super class factory

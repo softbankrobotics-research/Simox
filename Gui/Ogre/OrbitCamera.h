@@ -27,11 +27,12 @@
 
 #include <OGRE/Ogre.h>
 #include <QMouseEvent>
+#include "../ViewerInterface.h"
 
 namespace SimoxGui
 {
 
-class OrbitCamera
+class SIMOX_GUI_IMPORT_EXPORT OrbitCamera
 {
     public:
         OrbitCamera(Ogre::Camera *camera);

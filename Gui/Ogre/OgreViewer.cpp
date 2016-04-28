@@ -23,8 +23,15 @@
 
 #include "OgreViewer.h"
 #include <OGRE/OgreNode.h>
+#include <QVBoxLayout>
+#include <QtCore/QtGlobal>
+#include <QtGui/QtGui>
+#include <QtCore/QtCore>
+#include <QApplication>
 
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 #include <VirtualRobot/Visualization/OgreVisualization/OgreVisualization.h>
 #include <VirtualRobot/Visualization/OgreVisualization/OgreVisualizationNode.h>
 
@@ -45,7 +52,9 @@ OgreViewer::OgreViewer(QWidget *parent) :
     setAttribute(Qt::WA_NoBackground);
 
     QVBoxLayout *layout = new QVBoxLayout(parent);
-    layout->addWidget(this);
+
+	
+	layout->addWidget(this);
     parent->setLayout(layout);
 
     createRenderWindow();
@@ -176,7 +185,13 @@ void OgreViewer::createRenderWindow()
     /*resize(width(), height());
 
     ogreRoot = new Ogre::Root("", "", "");
-    ogreRoot->loadPlugin(OGRE_RENDERING_PLUGIN);
+	//std::string pluginStr(OGRE_RENDERING_PLUGIN);
+#ifdef _DEBUG
+	std::string pluginStr("RenderSystem_GL_d.dll");
+#else
+	std::string pluginStr("GL_RenderSystem");
+#endif
+	ogreRoot->loadPlugin(pluginStr);
     VR_INFO << "Loading rendering plugin: " << OGRE_RENDERING_PLUGIN << std::endl;
 
     Ogre::RenderSystemList renderers = ogreRoot->getAvailableRenderers();
@@ -189,14 +204,13 @@ void OgreViewer::createRenderWindow()
 
     ogreRoot->setRenderSystem(renderer);
     ogreRoot->initialise(false);
+	Ogre::NameValuePairList params;
 
-    QX11Info info = x11Info();
-    Ogre::String handle = Ogre::StringConverter::toString((unsigned long)(info.display())) + ":";
-    handle += Ogre::StringConverter::toString((unsigned int)(info.screen())) + ":";
-    handle += Ogre::StringConverter::toString((unsigned long)(dynamic_cast<QWidget*>(parent())->winId()));
 
-    Ogre::NameValuePairList params;
-    params["externalWindowHandle"] = handle;
+	std::string ogreHandle = getOgreHandle();
+
+	params["externalWindowHandle"] = ogreHandle;
+
 
     ogreWindow = ogreRoot->createRenderWindow("QOgreWidget_RenderWindow", width(), height(), false, &params);
     ogreWindow->setActive(true);
@@ -354,7 +368,7 @@ void OgreViewer::initializeScene()
     ogreCamera = ogreSceneManager->createCamera("Camera");
     ogreCamera->setPosition(Ogre::Vector3(0, 1.5, 0));
     ogreCamera->lookAt(Ogre::Vector3(0, 0, 0));
-    ogreCamera->setNearClipDistance(0.1);
+    ogreCamera->setNearClipDistance(Ogre::Real(0.1));
 
     ogreViewport = ogreWindow->addViewport(ogreCamera);
     ogreViewport->setBackgroundColour(Ogre::ColourValue(1, 1, 1));
@@ -372,8 +386,8 @@ bool OgreViewer::hasNode(Ogre::SceneNode *sn, const std::string &id)
     while ( it.hasMoreElements() )
     {
         Ogre::Node *cn = it.getNext();
-          if (cn->getName() == id);
-          return true;
+        if (cn->getName() == id)
+			return true;
     }
     return false;
 }

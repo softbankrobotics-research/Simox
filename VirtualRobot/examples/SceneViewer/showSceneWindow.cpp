@@ -5,7 +5,7 @@
 #include "VirtualRobot/ManipulationObject.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+//#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>

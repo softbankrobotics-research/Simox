@@ -73,8 +73,6 @@ PostProcessing/ShortcutProcessor.h
 PostProcessing/PathProcessingThread.h
 ApproachDiscretization.h
 )
-#../VirtualRobot/definesVR.h
-
 
 if (Simox_USE_COIN_VISUALIZATION)
 	SET(SOURCES

@@ -16,23 +16,36 @@
 *
 * @package    Gui
 * @author     Peter Kaiser
-* @copyright  2015 Peter Kaiser
+* @copyright  2016 Peter Kaiser
 *             GNU Lesser General Public License
 *
 */
 
-#ifndef _Gui_ViewerInterface_h_
-#define _Gui_ViewerInterface_h_
+#ifndef _SimoxGui_ViewerInterface_h_
+#define _SimoxGui_ViewerInterface_h_
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <QtGui/QtGui>
 
 #include <string>
 
+#ifdef WIN32
+#  include <winsock2.h>
+#  include <windows.h>
+#  pragma warning ( disable : 4251 )
+#  if defined(SimoxOgreGui_EXPORTS) || defined(SimoxCoinGui_EXPORTS)
+#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllexport)
+#  else
+#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllimport)
+#  endif
+#else
+#  define SIMOX_GUI_IMPORT_EXPORT
+#endif
+
 namespace SimoxGui
 {
 
-class ViewerInterface
+class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 {
     public:
         virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization) = 0;

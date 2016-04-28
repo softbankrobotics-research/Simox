@@ -32,7 +32,7 @@
 namespace SimoxGui
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
+    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
     {
     public:
 

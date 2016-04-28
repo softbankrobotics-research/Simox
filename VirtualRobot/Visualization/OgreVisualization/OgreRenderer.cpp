@@ -4,7 +4,7 @@
 // This is required for QT_MAC_USE_COCOA to be set
 #include <QtCore/qglobal.h>
 
-#ifndef Q_OS_MAC
+#if defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
@@ -29,6 +29,8 @@
 #include "OgreRenderer.h"
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/XML/FileIO.h>
+#include <VirtualRobot/Visualization/OgreVisualization/OgreVisualizationFactory.h>
 
 #include <QMessageBox>
 
@@ -41,7 +43,10 @@ bool OgreRenderer::use_anti_aliasing_ = true;
 bool OgreRenderer::force_no_stereo_ = false;
 std::string OgreRenderer::configFile("config/ogre/ogre.cfg");
 std::string OgreRenderer::logFile("config/ogre/ogre.log");
-std::string OgreRenderer::pluginsFile("config/ogre/ogre_plugins.cfg");
+//std::string OgreRenderer::pluginsFile("config/ogre/ogre_plugins.cfg");
+std::string OgreRenderer::pluginsFile("");
+std::vector<std::string> OgreRenderer::ogrePaths;
+
 
 OgreRenderer* OgreRenderer::getOgreRenderer()
 {
@@ -89,6 +94,15 @@ OgreRenderer::OgreRenderer() :
 //    ogre_overlay_system_(NULL),
     stereo_supported_(false)
 {
+	// consider compile time paths
+#ifdef OGRE_PLUGIN_DIRECTORIES
+	std::string dirs(OGRE_PLUGIN_DIRECTORIES);
+	std::vector<std::string> paths;
+	boost::split(paths, dirs, boost::is_any_of(";,"));
+	for (auto p : paths)
+		ogrePaths.push_back(p);
+#endif
+
     setupDummyWindowId();
     std::string configFileAbs = configFile;
     std::string pluginsFileAbs = pluginsFile;
@@ -100,7 +114,7 @@ OgreRenderer::OgreRenderer() :
     //#if ((OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR >= 9) || OGRE_VERSION_MAJOR >= 2 )
     //  ogre_overlay_system_ = new Ogre::OverlaySystem();
     //#endif
-    //  loadOgrePlugins();
+    loadOgrePlugins();
     setupRenderSystem();
     ogreRoot->initialise(false);
     createRenderWindow( dummy_window_id_, 1, 1 );
@@ -120,7 +134,7 @@ OgreRenderer::OgreRenderer() :
 
 void OgreRenderer::setupDummyWindowId()
 {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(WIN32)
   dummy_window_id_ = 0;
 #else
   Display *display = XOpenDisplay(0);
@@ -143,8 +157,74 @@ void OgreRenderer::setupDummyWindowId()
 #endif
 }
 
+void OgreRenderer::addOgrePluginPath(const std::string &p)
+{
+	ogrePaths.push_back(p);
+}
+
+std::vector<std::string> OgreRenderer::getOgrePluginPaths()
+{
+	return ogrePaths;
+}
+
+
 void OgreRenderer::loadOgrePlugins()
 {
+	std::list<std::string>::iterator iter;
+	//std::vector<std::string> ogrePaths = VirtualRobot::OgreVisualizationFactory::getOgrePluginPaths();
+	//common::SystemPaths::Instance()->GetOgrePaths();
+
+	for (std::string path : ogrePaths)
+	{
+		boost::filesystem::path p(path);
+		if (!boost::filesystem::is_directory(p) && !boost::filesystem::is_symlink(p))
+		{
+			continue;
+		}
+		
+		std::vector<std::string> plugins;
+		std::vector<std::string>::iterator piter;
+
+#if defined(__APPLE__)
+		std::string prefix = "lib";
+		std::string extension = ".dylib";
+#elif defined(WIN32)
+		std::string prefix = "";
+		std::string extension = ".dll";
+#else
+		std::string prefix = "";
+		std::string extension = ".so";
+#endif
+
+		plugins.push_back(path + "/" + prefix + "RenderSystem_GL");
+		plugins.push_back(path + "/" + prefix + "Plugin_ParticleFX");
+		plugins.push_back(path + "/" + prefix + "Plugin_BSPSceneManager");
+		plugins.push_back(path + "/" + prefix + "Plugin_OctreeSceneManager");
+
+		for (piter = plugins.begin(); piter != plugins.end(); ++piter)
+		{
+			try
+			{
+				// Load the plugin into OGRE
+				this->ogreRoot->loadPlugin(*piter + extension);
+			}
+			catch (Ogre::Exception &e)
+			{
+				try
+				{
+					// Load the debug plugin into OGRE
+					this->ogreRoot->loadPlugin(*piter + "_d" + extension);
+				}
+				catch (Ogre::Exception &ed)
+				{
+					if ((*piter).find("RenderSystem") != std::string::npos)
+					{
+						VR_ERROR << "Unable to load Ogre Plugin[" << *piter << "]." << endl;
+					}
+				}
+			}
+		}
+	}
 //  std::string plugin_prefix = get_ogre_plugin_path() + "/";
 //#ifdef Q_OS_MAC
 //  plugin_prefix += "lib";
@@ -285,20 +365,40 @@ int checkBadDrawable( Display* display, XErrorEvent* error )
 }
 #endif // Q_WS_X11
 
-Ogre::RenderWindow* OgreRenderer::createRenderWindow( intptr_t window_id, unsigned int width, unsigned int height )
+
+std::string OgreRenderer::getOgreHandle(intptr_t winId)
+{
+	std::string ogreHandle;
+#if defined(WIN32)
+	ogreHandle = Ogre::StringConverter::toString(winId);
+#else
+	QX11Info info = x11Info();
+	Ogre::String handle = Ogre::StringConverter::toString((unsigned long)(info.display())) + ":";
+	handle += Ogre::StringConverter::toString((unsigned int)(info.screen())) + ":";
+	handle += Ogre::StringConverter::toString((unsigned long)(winId));
+	ogreHandle = handle;
+#endif
+	return ogreHandle;
+}
+
+std::string OgreRenderer::getOgreHandle(QWidget *w)
+{
+	return getOgreHandle(w->winId());
+}
+
+
+Ogre::RenderWindow* OgreRenderer::createRenderWindow(intptr_t window_id, unsigned int width, unsigned int height )
 {
   static int windowCounter = 0; // Every RenderWindow needs a unique name
 
   Ogre::NameValuePairList params;
   Ogre::RenderWindow *window = NULL;
+  std::string id = getOgreHandle(window_id);
 
-  std::stringstream window_handle_stream;
-  window_handle_stream << window_id;
-
-#ifdef Q_OS_MAC
-  params["externalWindowHandle"] = window_handle_stream.str();
+#if defined(Q_OS_MAC) || defined(WIN32)
+  params["externalWindowHandle"] = id;
 #else
-  params["parentWindowHandle"] = window_handle_stream.str();
+  params["parentWindowHandle"] = id;
 #endif
 
   params["externalGLControl"] = true;

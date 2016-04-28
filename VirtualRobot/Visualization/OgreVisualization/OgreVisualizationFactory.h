@@ -60,8 +60,7 @@ namespace VirtualRobot
 
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
         virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
-
-
+		
     protected:
 
         OgreRenderer *renderer;

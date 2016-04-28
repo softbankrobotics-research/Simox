@@ -8,7 +8,7 @@
 #include <VirtualRobot/Nodes/RobotNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+//#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Obstacle.h>
 #include <string.h>
 #include <QtCore/QtGlobal>

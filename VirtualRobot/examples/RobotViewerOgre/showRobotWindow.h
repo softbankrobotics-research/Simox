@@ -10,8 +10,6 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
 #include <Gui/Ogre/OgreViewer.h>
 
@@ -86,7 +84,7 @@ protected:
     bool physicsCoMEnabled;
     bool physicsInertiaEnabled;
 
-    VirtualRobot::CoinVisualizationPtr visualization;
+    VirtualRobot::VisualizationPtr visualization;
 
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };
