@@ -30,8 +30,7 @@ ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const Robo
     ConstrainedIK(robot, nodeSet),
     nodeSet(nodeSet),
     timeout(timeout),
-    tolerance(tolerance),
-    maxAttempts(30)
+    tolerance(tolerance)
 {
     clearSeeds();
     addSeed(eSeedInitial);
@@ -91,6 +90,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
     std::vector<float> bestJointValues;
     double currentMinError = std::numeric_limits<double>::max();
+    for(unsigned int attempt = 0; attempt < maxIterations; attempt++)
     {
         numIterations = 0;
 
