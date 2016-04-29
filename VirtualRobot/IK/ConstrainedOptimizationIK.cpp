@@ -24,6 +24,8 @@
 
 #include "ConstrainedOptimizationIK.h"
 
+#include <nlopt.hpp>
+
 using namespace VirtualRobot;
 
 ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
