@@ -267,16 +267,6 @@ if (Simox_USE_NLOPT AND NLOPT_FOUND)
     )
 endif ()
 
-if (Simox_USE_NLOPT AND NLOPT_FOUND)
-    SET(SOURCES ${SOURCES}
-        IK/ConstrainedOptimizationIK.cpp
-    )
-
-    SET(INCLUDES ${INCLUDES}
-        IK/ConstrainedOptimizationIK.h
-    )
-endif ()
-
 if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
     SET(SOURCES
