@@ -29,7 +29,7 @@
 using namespace VirtualRobot;
 
 ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
-    ConstrainedIK(robot, nodeSet),
+    ConstrainedIK(robot, nodeSet, 30),
     nodeSet(nodeSet),
     timeout(timeout),
     tolerance(tolerance)
