@@ -56,6 +56,10 @@ namespace VirtualRobot
         */
         virtual void init(int &argc, char* argv[], const std::string &appName);
 
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+        virtual VisualizationNodePtr getVisualizationFromOgreMeshFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+        virtual VisualizationNodePtr getVisualizationFromColladaFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+
         virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
 
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);

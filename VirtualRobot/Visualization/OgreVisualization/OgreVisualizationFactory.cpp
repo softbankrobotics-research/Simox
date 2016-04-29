@@ -82,6 +82,97 @@ namespace VirtualRobot
         return OgreFactory;
     }
 
+
+    /**
+    * This method creates a VirtualRobot::OgreVisualizationNode from a given \p filename.
+    * An instance of VirtualRobot::VisualizationNode is returned in case of an occured error.
+    *
+    * \param filename file to load the visualization from.
+    * \param boundingBox Use bounding box instead of full model.
+    * \return instance of VirtualRobot::OgreVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
+    */
+    VisualizationNodePtr OgreVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    {
+        if (filename.empty())
+        {
+            std::cerr <<  "No filename given" << std::endl;
+            return VisualizationNodePtr();
+        }
+
+        // check for STL file (.stl, .stla, .stlb)
+        if (filename.length() >= 4)
+        {
+            std::string ending = filename.substr(filename.length() - 4, 4);
+            BaseIO::getLowerCase(ending);
+
+            if (ending == ".stl" || ending == "stla" || ending == "stlb")
+            {
+                return getVisualizationFromSTLFile(filename, boundingBox, scaleX, scaleY, scaleZ);
+            }
+            if (ending == "mesh")
+            {
+                return getVisualizationFromOgreMeshFile(filename, boundingBox, scaleX, scaleY, scaleZ);
+            }
+        }
+
+        return getVisualizationFromColladaFile(filename, boundingBox, scaleX, scaleY, scaleZ);
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::getVisualizationFromOgreMeshFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    {
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported..." << endl;
+        }
+
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
+
+        /*
+        // try to open the given file
+        SoInput fileInput;
+
+        if (!fileInput.openFile(filename.c_str()))
+        {
+            std::cerr <<  "Cannot open file " << filename << std::endl;
+            return visualizationNode;
+        }
+
+        CoinVisualizationFactory::GetVisualizationFromSoInput(fileInput, visualizationNode, boundingBox);
+
+        fileInput.closeFile();
+        visualizationNode->setFilename(filename, boundingBox);
+*/
+        return visualizationNode;
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::getVisualizationFromColladaFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    {
+        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        {
+            VR_WARNING << "Scaling not yet supported..." << endl;
+        }
+
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
+
+        /*
+        // try to open the given file
+        SoInput fileInput;
+
+        if (!fileInput.openFile(filename.c_str()))
+        {
+            std::cerr <<  "Cannot open file " << filename << std::endl;
+            return visualizationNode;
+        }
+
+        CoinVisualizationFactory::GetVisualizationFromSoInput(fileInput, visualizationNode, boundingBox);
+
+        fileInput.closeFile();
+        visualizationNode->setFilename(filename, boundingBox);
+*/
+        return visualizationNode;
+    }
+
+
     VirtualRobot::VisualizationNodePtr OgreVisualizationFactory::createBox(float width, float height, float depth, float colorR, float colorG, float colorB)
     {
         if (!renderer)

@@ -23,7 +23,6 @@
 #include "../../Workspace/Reachability.h"
 #include "../../Workspace/WorkspaceGrid.h"
 #include "../../XML/BaseIO.h"
-#include "../../Import/MeshImport/STLReader.h"
 #include <Inventor/SoDB.h>
 #include <Inventor/nodes/SoFile.h>
 #include <Inventor/nodes/SoNode.h>
@@ -252,29 +251,6 @@ namespace VirtualRobot
 
         fileInput.closeFile();
         visualizationNode->setFilename(filename, boundingBox);
-
-        return visualizationNode;
-    }
-
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
-    {
-        VisualizationNodePtr visualizationNode(new VisualizationNode);
-        // try to read from file
-        visualizationNode->setFilename(filename, boundingBox);
-
-        TriMeshModelPtr t(new TriMeshModel());
-        STLReaderPtr r(new STLReader());
-        r->setScaling(1000.0f); // mm
-        bool readOK = r->read(filename, t);
-
-        if (!readOK)
-        {
-            VR_ERROR << "Could not read stl file " << filename << endl;
-            return visualizationNode;
-        }
-
-        Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
-        visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
 
         return visualizationNode;
     }
