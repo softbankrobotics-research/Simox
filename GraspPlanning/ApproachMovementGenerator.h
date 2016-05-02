@@ -83,6 +83,8 @@ namespace GraspStudio
         VirtualRobot::EndEffectorPtr getEEF();
         VirtualRobot::EndEffectorPtr getEEFOriginal();
 
+        Eigen::Vector3f getApproachDirGlobal();
+
         std::string getName();
     protected:
 
@@ -91,6 +93,8 @@ namespace GraspStudio
         VirtualRobot::SceneObjectPtr object;
         VirtualRobot::TriMeshModelPtr objectModel;
         VirtualRobot::EndEffectorPtr eef;
+
+        Eigen::Vector3f aporachDirGlobal;
 
         //! This robot is moved around
         VirtualRobot::RobotPtr eefRobot;

@@ -11,11 +11,16 @@ MESSAGE (STATUS "***** CONFIGURING Simox project Saba *****")
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
+
+
 ########################### TESTING #####################################
 MACRO(ADD_SABA_TEST TEST_NAME)
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
+    if (NOT Boost_USE_STATIC_LIBS)
+        ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+    endif (NOT Boost_USE_STATIC_LIBS)
     ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
     ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
     TARGET_LINK_LIBRARIES(${TEST_NAME} VirtualRobot Saba ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
@@ -97,11 +102,15 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simo
 # .lib path (this is needed for setting the DLL-import library path on windows)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
 
-# include examples
-ADD_SUBDIRECTORY(examples/)
+if(Simox_BUILD_EXAMPLES)
+    # include examples
+    ADD_SUBDIRECTORY(examples/)
+endif()
 
-# include unit tests
-ADD_SUBDIRECTORY(tests/)
+if(BUILD_TESTING)
+    # include unit tests
+    ADD_SUBDIRECTORY(tests/)
+endif()
 
 #######################################################################################
 ############################ Setup for installation ###################################

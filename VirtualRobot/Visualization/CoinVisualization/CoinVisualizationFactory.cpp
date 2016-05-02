@@ -73,7 +73,9 @@
 #endif
 #include <GL/gl.h>
 
+#ifdef SIMOX_USE_SOQT
 #include <Inventor/Qt/SoQt.h>
+#endif
 
 #include <iostream>
 #include <algorithm>
@@ -94,9 +96,12 @@ namespace VirtualRobot
     void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
         if (!SoDB::isInitialized())
+		{
             SoDB::init();
+		}
+#ifdef SIMOX_USE_SOQT
         SoQt::init(argc, argv, appName.c_str());
-
+#endif
         // enable Coin3D extension: transparent settings without color
         (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
 
@@ -1318,9 +1323,9 @@ namespace VirtualRobot
 
             // Define colors for the faces
             SoMaterial* myMaterials = new SoMaterial;
-            myMaterials->diffuseColor.setValues(0, model->materials.size(), matDif);
-            myMaterials->ambientColor.setValues(0, model->materials.size(), matAmb);
-            myMaterials->transparency.setValues(0, model->materials.size(), transp);
+            myMaterials->diffuseColor.setValues(0, model->colors.size(), matDif);
+            myMaterials->ambientColor.setValues(0, model->colors.size(), matAmb);
+            myMaterials->transparency.setValues(0, model->colors.size(), transp);
             res->addChild(myMaterials);
             delete[] matAmb;
             delete[] matDif;
@@ -1843,6 +1848,10 @@ namespace VirtualRobot
 
     SoSeparator* CoinVisualizationFactory::CreateArrow(const Eigen::Vector3f& n, float length, float width, const Color& color)
     {
+        Eigen::Vector3f n2 = n;
+        if (n2.norm()<1e-10)
+            n2 << 0,0,1;
+        n2.normalize();
         float coneHeight = width * 6.0f;
         float coneBotomRadius = width * 2.5f;
         SoSeparator* res = new SoSeparator;
@@ -1851,12 +1860,12 @@ namespace VirtualRobot
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
 
-        SbVec3f objNormal(n(0), n(1), n(2));
+        SbVec3f objNormal(n2(0), n2(1), n2(2));
         SbMatrix objNormalTrafo;
         objNormalTrafo.makeIdentity();
         SbRotation objNormalRot(SbVec3f(0, 1.0f, 0), objNormal);
 
-        // get rif of warnings when angle==0
+        // get rid of warnings when angle==0
         SbVec3f axis;
         float angle;
         objNormalRot.getValue(axis, angle);
@@ -2140,8 +2149,14 @@ namespace VirtualRobot
         m->transparency.setValue(color.transparency);
         res->addChild(m);
 
+        Eigen::Vector3f translation(
+            constraint->getTransformation()(0, 3) + constraint->getBounds()(0, 0) + fabs(constraint->getBounds()(0, 0) - constraint->getBounds()(0, 1))/2,
+            constraint->getTransformation()(1, 3) + constraint->getBounds()(1, 0) + fabs(constraint->getBounds()(1, 0) - constraint->getBounds()(1, 1))/2,
+            constraint->getTransformation()(2, 3) + constraint->getBounds()(2, 0) + fabs(constraint->getBounds()(2, 0) - constraint->getBounds()(2, 1))/2
+            );
+
         SoTransform* t = new SoTransform;
-        t->translation.setValue(constraint->getTransformation()(0, 3), constraint->getTransformation()(1, 3), constraint->getTransformation()(2, 3));
+        t->translation.setValue(translation.x(), translation.y(), translation.z());
         MathTools::Quaternion q = MathTools::eigen4f2quat(constraint->getTransformation());
         t->rotation.setValue(q.x, q.y, q.z, q.w);
         res->addChild(t);
@@ -3510,11 +3525,11 @@ namespace VirtualRobot
 
                 assert(zEye < 1e-6);
                 assert(std::abs(zEye) < zFar + 1e-6);
-                assert(std::abs(zEye) < zNear - 1e-6);
+                assert(std::abs(zEye) > zNear - 1e-6);
 
                 //the cam is at (x,y)=(0,0) => shift x and y to image center
-                const float xShifted = static_cast<float>(x) - static_cast<float>(width) / 2.f;
-                const float yShifted = static_cast<float>(y) - static_cast<float>(width) / 2.f;
+                const float xShifted = static_cast<float>(x) - static_cast<float>(width ) / 2.f;
+                const float yShifted = static_cast<float>(y) - static_cast<float>(height) / 2.f;
                 const float xEye = xShifted / focalLength * (zEye);
                 const float yEye = yShifted / focalLength * (zEye);
 

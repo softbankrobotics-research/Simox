@@ -908,8 +908,13 @@ namespace VirtualRobot
         while (it != jointValues.end())
         {
             RobotNodePtr rn = getRobotNode(it->first);
-            VR_ASSERT(rn);
-            rn->setJointValueNoUpdate(it->second);
+            if (!rn)
+            {
+				VR_WARNING << "No joint with name " << it->first << endl;
+			} else
+			{
+				rn->setJointValueNoUpdate(it->second);
+			}
             it++;
         }
 

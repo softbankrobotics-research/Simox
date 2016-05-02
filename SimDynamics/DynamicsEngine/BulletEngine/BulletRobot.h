@@ -51,7 +51,7 @@ namespace SimDynamics
             VirtualRobot::RobotNodePtr nodeA; // parent
             VirtualRobot::RobotNodePtr nodeB; // child
             VirtualRobot::RobotNodePtr nodeJoint; // joint
-            VirtualRobot::RobotNodePtr nodeJoint2; // joint2 (only used for hinge2/universal joints)
+            //VirtualRobot::RobotNodePtr nodeJoint2; // joint2 (only used for hinge2/universal joints)
             BulletObjectPtr dynNode1; // parent
             BulletObjectPtr dynNode2; // child
             std::vector< std::pair<DynamicsObjectPtr, DynamicsObjectPtr> > disabledCollisionPairs;
@@ -215,7 +215,7 @@ namespace SimDynamics
         // fixed                (joint=fixed        !joint2)
         // hinge                (joint=revolute     !joint2)
         // universal (hinge2)   (joint=revolute     joint2=revolute) // experimental
-        void createLink(VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, VirtualRobot::RobotNodePtr joint2, VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors = true);
+        void createLink(VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, /*VirtualRobot::RobotNodePtr joint2,*/ VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors = true);
 
         void createLink(VirtualRobot::RobotNodePtr node1, VirtualRobot::RobotNodePtr node2, bool enableJointMotors);
 
@@ -233,6 +233,9 @@ namespace SimDynamics
         btScalar bulletMaxMotorImulse;
         boost::shared_ptr<btTypedConstraint> createFixedJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2);
         boost::shared_ptr<btTypedConstraint> createHingeJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& coordSystemNode1, Eigen::Matrix4f& coordSystemNode2,  Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f& axisGlobal, Eigen::Vector3f& axisLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT);
+
+
+        bool ignoreTranslationalJoints;
     };
 
     typedef boost::shared_ptr<BulletRobot> BulletRobotPtr;

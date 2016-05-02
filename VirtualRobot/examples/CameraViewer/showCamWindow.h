@@ -90,14 +90,14 @@ protected:
     std::string cam2Name;
     VirtualRobot::RobotNodePtr cam1;
     VirtualRobot::RobotNodePtr cam2;
-    SoOffscreenRenderer* cam1Renderer;
     SoOffscreenRenderer* cam2Renderer;
 
     std::vector<VirtualRobot::ObstaclePtr> visuObjects;
     std::vector<VirtualRobot::ObstaclePtr> voxelObjects;
 
-    unsigned char* cam1Buffer;
-    float* cam1DepthBuffer;
+    std::vector<unsigned char> cam1RGBBuffer;
+    std::vector<float> cam1DepthBuffer;
+    std::vector<Eigen::Vector3f> cam1PointCloud;
     unsigned char* cam2Buffer;
     float* cam2DepthBuffer;
     std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
@@ -116,7 +116,6 @@ protected:
         std::size_t w;
         std::size_t h;
     };
-    DepthRenderData userdata1;
     DepthRenderData userdata2;
 
     static void getDepthImage(void *userdata);

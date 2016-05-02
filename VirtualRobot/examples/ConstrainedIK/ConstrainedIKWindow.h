@@ -1,6 +1,28 @@
+/**
+* This file is part of Simox.
+*
+* Simox is free software; you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Simox is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package    VirtualRobot
+* @author     Peter Kaiser
+* @copyright  2016 Peter Kaiser
+*             GNU Lesser General Public License
+*
+*/
 
-#ifndef __Generic_WINDOW_H_
-#define __Generic_WINDOW_H_
+#ifndef __Constrained_WINDOW_H_
+#define __Constrained_WINDOW_H_
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -10,9 +32,12 @@
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/IK/GenericIKSolver.h>
 #include <VirtualRobot/IK/GazeIK.h>
 #include <VirtualRobot/IK/ConstrainedIK.h>
+#include <VirtualRobot/IK/constraints/PoseConstraint.h>
+#include <VirtualRobot/IK/constraints/TSRConstraint.h>
+#include <VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h>
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -27,14 +52,14 @@
 
 #include <vector>
 
-#include "ui_GenericIK.h"
+#include "ui_ConstrainedIK.h"
 
-class GenericIKWindow : public QMainWindow
+class ConstrainedIKWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GenericIKWindow(std::string& sRobotFilename);
-    ~GenericIKWindow();
+    ConstrainedIKWindow(std::string& sRobotFilename);
+    ~ConstrainedIKWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -51,29 +76,34 @@ public slots:
     void loadRobot();
     void selectKC(int nr);
     void selectIK(int nr);
-    void sliderReleased();
-    void sliderPressed();
 
-    void box2TCP();
     void solve();
 
+    void updateTSR(double value);
+    void randomTSR(bool quiet=false);
+    void enableTSR();
+
+    void updatePose(double value);
+    void randomPose(bool quiet=false);
+    void enablePose();
+
+    void performanceEvaluation();
 
 protected:
     void setupUI();
-    QString formatString(const char* s, float f);
     void updateKCBox();
 
-    void updatBoxPos(float x, float y, float z, float a, float b, float g);
+    void computePoseError();
+    void computeTSRError();
 
-    static void updateCB(void* data, SoSensor* sensor);
-
-
-    Ui::MainWindowGenericIKDemo UI;
+    Ui::MainWindowConstrainedIKDemo UI;
     SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     SoSeparator* sceneSep;
     SoSeparator* robotSep;
     SoSeparator* boxSep;
+    SoSeparator* tsrSep;
+    SoSeparator* poseSep;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
@@ -81,12 +111,8 @@ protected:
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 
-    VirtualRobot::GenericIKSolverPtr ikSolver;
-    VirtualRobot::GazeIKPtr ikGazeSolver;
-    VirtualRobot::ConstrainedIKPtr ikConstrainedSolver;
-    VirtualRobot::ObstaclePtr box;
-
-    bool useColModel;
+    VirtualRobot::PoseConstraintPtr poseConstraint;
+    VirtualRobot::TSRConstraintPtr tsrConstraint;
 };
 
-#endif // __Generic_WINDOW_H_
+#endif // __Constrained_WINDOW_H_

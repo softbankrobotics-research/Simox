@@ -7,7 +7,6 @@ Constraint::Constraint(const RobotNodeSetPtr& nodeSet) :
     lastError(-1),
     lastLastError(-1)
 {
-
 }
 
 void Constraint::initialize()
@@ -34,4 +33,76 @@ float Constraint::getErrorDifference()
     }
 
     return lastLastError - lastError;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getEqualityConstraints()
+{
+    return equalityConstraints;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getInequalityConstraints()
+{
+    return inequalityConstraints;
+}
+
+const std::vector<OptimizationFunctionSetup> &Constraint::getOptimizationFunctions()
+{
+    return optimizationFunctions;
+}
+
+double Constraint::optimizationFunction(unsigned int id)
+{
+    THROW_VR_EXCEPTION("Constraint does not support NLopt-based solvers.");
+}
+
+Eigen::VectorXf Constraint::optimizationGradient(unsigned int id)
+{
+    THROW_VR_EXCEPTION("Constraint does not support NLopt-based solvers.");
+}
+
+Eigen::MatrixXf Constraint::getJacobianMatrix()
+{
+    THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
+}
+
+Eigen::MatrixXf Constraint::getJacobianMatrix(SceneObjectPtr tcp)
+{
+    THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
+}
+
+Eigen::VectorXf Constraint::getError(float stepSize)
+{
+    THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
+}
+
+bool Constraint::checkTolerances()
+{
+    THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
+}
+
+void Constraint::addEqualityConstraint(unsigned int id, bool soft)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    setup.soft = soft;
+    equalityConstraints.push_back(setup);
+}
+
+void Constraint::addInequalityConstraint(unsigned int id, bool soft)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    setup.soft = soft;
+    inequalityConstraints.push_back(setup);
+}
+
+void Constraint::addOptimizationFunction(unsigned int id, bool soft)
+{
+    OptimizationFunctionSetup setup;
+    setup.id = id;
+    setup.constraint = this;
+    setup.soft = soft;
+    optimizationFunctions.push_back(setup);
 }

@@ -3,14 +3,17 @@
 
 # - Config file for the Simox package
 # It defines the following variables
-#  Simox_INCLUDE_DIRS       - include directories for Simox
-#  Simox_LIBRARIES          - libraries to link against
-#  Simox_EXECUTABLE         - the executables
-#  Simox_VISUALIZATION      - if visualization is enabled
-#  Simox_USE_COIN_VISUALIZATION   - if Coin3D visualization was selected
+#  Simox_INCLUDE_DIRS                       - include directories for Simox
+#  Simox_LIBRARIES                          - libraries to link against
+#  Simox_EXECUTABLE                         - the executables
+#  Simox_VISUALIZATION                      - if visualization is enabled
+#  Simox_USE_COIN_VISUALIZATION             - if Coin3D visualization was selected
 #  Simox_USE_OPENSCENEGRAPH_VISUALIZATION   - if osg visualization was selected
-#  Simox_USE_QT4   - if qt4 was selected
-#  Simox_USE_QT5   - if qt5 was selected
+#  Simox_USE_QT4                            - if qt4 was selected
+#  Simox_USE_QT5                            - if qt5 was selected
+#  Simox_USE_NLOPT                          - if NLopt was selected
+#  SimDynamics_USE_BULLET                   - if SimDynamics is build and BULLET is selected as physics engine
+#  SimDynamics_USE_BULLET_DOUBLE_PRECISION  - if Bullet is build with double precision support
 
 if(Simox_FOUND)
     return()
@@ -52,6 +55,9 @@ SET(Simox_USE_COLLADA "@Simox_USE_COLLADA@")
 SET(Simox_USE_RBDL "@Simox_USE_RBDL@")
 SET(Simox_USE_QT4 "@Simox_USE_QT4@")
 SET(Simox_USE_QT5 "@Simox_USE_QT5@")
+SET(Simox_USE_NLOPT "@Simox_USE_NLOPT@")
+SET(SimDynamics_USE_BULLET "@SimDynamics_USE_BULLET@")
+SET(SimDynamics_USE_BULLET_DOUBLE_PRECISION "@SimDynamics_USE_BULLET_DOUBLE_PRECISION@")
 
 
 SET(Simox_EXTERNAL_INCLUDE_DIRS "@Simox_EXTERNAL_INCLUDE_DIRS@")

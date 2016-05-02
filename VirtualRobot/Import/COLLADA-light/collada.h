@@ -116,7 +116,11 @@ namespace Collada
         std::vector<T> result;
         boost::algorithm::split(splitted, text, boost::algorithm::is_space());
         BOOST_FOREACH(std::string number, splitted)
-        result.push_back(boost::lexical_cast<T>(number));
+        {
+            result.push_back(boost::lexical_cast<T>(number));
+        }
+
+
         return result;
     }
 

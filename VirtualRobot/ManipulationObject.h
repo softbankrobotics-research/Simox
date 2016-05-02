@@ -55,6 +55,12 @@ namespace VirtualRobot
         void addGraspSet(GraspSetPtr graspSet);
 
         /*!
+         * \brief includeGraspSet
+         * \param graspSet
+         */
+        void includeGraspSet(GraspSetPtr graspSet);
+
+        /*!
             Get grasp set for the given end effector. In case multiple grasp sets for the eef are present, the first one is returned.
             An empty GraspSetPtr is returned when no GraspSet for eef is found.
         */
@@ -72,6 +78,11 @@ namespace VirtualRobot
             \return An empty GraspSetPtr is returned when no GraspSet with the given name is found.
         */
         GraspSetPtr getGraspSet(const std::string& name);
+
+        /*!
+            Get grasp set vector
+        */
+        std::vector<GraspSetPtr> getAllGraspSets();
 
         /*!
             Creates an XML representation of this object.

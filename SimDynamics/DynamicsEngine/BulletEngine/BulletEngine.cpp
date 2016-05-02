@@ -237,8 +237,9 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         dynamicsWorld->removeConstraint(l.joint.get());
-        this->resetCollisions(static_cast<DynamicsObject*>(l.dynNode1.get()));
-        this->resetCollisions(static_cast<DynamicsObject*>(l.dynNode2.get()));
+        this->enableCollision(static_cast<DynamicsObject*>(l.dynNode1.get()), static_cast<DynamicsObject*>(l.dynNode2.get()));
+        //this->resetCollisions(static_cast<DynamicsObject*>(l.dynNode1.get()));
+        //this->resetCollisions(static_cast<DynamicsObject*>(l.dynNode2.get()));
         return true;
     }
 

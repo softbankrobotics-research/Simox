@@ -2,6 +2,3 @@
 
 ADD_SUBDIRECTORY(GraspQuality)
 ADD_SUBDIRECTORY(GraspPlanner)
-IF(BUILD_powercrust)
-	ADD_SUBDIRECTORY(MATGraspPlanner)
-ENDIF()

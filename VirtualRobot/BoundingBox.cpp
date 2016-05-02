@@ -174,5 +174,29 @@ namespace VirtualRobot
         }
     }
 
+    std::string BoundingBox::toXML(int tabs, bool skipMatrixTag)
+    {
+            std::stringstream ss;
+            std::string t;
 
+            for (int i = 0; i < tabs; i++)
+            {
+                t += "\t";
+            }
+
+            if (!skipMatrixTag)
+            {
+                ss << t << "<BoundingBox>\n";
+            }
+
+            ss << t << "\t<min x='" << min(0) << "' y='" << min(1) << "' z='" << min(2) << "'/>\n";
+            ss << t << "\t<max x='" << max(0) << "' y='" << max(1) << "' z='" << max(2) << "'/>\n";
+
+            if (!skipMatrixTag)
+            {
+                ss << t << "</BoundingBox>\n";
+            }
+
+            return ss.str();
+    }
 }

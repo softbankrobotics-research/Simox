@@ -43,13 +43,22 @@ namespace VirtualRobot
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
-        std::string getConstraintType();
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
+        double optimizationFunction(unsigned int id);
+        Eigen::VectorXf optimizationGradient(unsigned int id);
+
     protected:
-        void resolveRPYAmbiguities(float* pose, const float* reference);
-        float getShortestDistanceForRPYComponent(float from, float to);
+        double positionOptimizationFunction();
+        Eigen::VectorXf positionOptimizationGradient();
+
+        double orientationOptimizationFunction();
+        Eigen::VectorXf orientationOptimizationGradient();
+
+    protected:
+        Eigen::Vector3f getPositionError();
+        Eigen::Vector3f getOrientationError();
 
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
@@ -63,6 +72,8 @@ namespace VirtualRobot
 
         float toleranceTranslation;
         float toleranceRotation;
+
+        float posRotTradeoff;
     };
 
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;

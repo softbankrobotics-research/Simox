@@ -20,6 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
+
 #ifndef _VirtualRobot_BalanceConstraint_h_
 #define _VirtualRobot_BalanceConstraint_h_
 
@@ -52,8 +53,8 @@ namespace VirtualRobot
         Eigen::Vector3f getCoM();
         SupportPolygonPtr getSupportPolygon();
 
-        std::string getConstraintType();
         void setCoMHeight(float height);
+
     protected:
         void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
                         float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);

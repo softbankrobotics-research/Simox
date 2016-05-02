@@ -32,6 +32,17 @@ class SoSeparator;
 
 namespace VirtualRobot
 {
+    class Constraint;
+    typedef double (*OptimizationFunction)(std::vector<double> &gradient);
+
+    class OptimizationFunctionSetup
+    {
+        public:
+            unsigned int id;
+            Constraint *constraint;
+            bool soft;
+    };
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public boost::enable_shared_from_this<Constraint>
     {
     public:
@@ -43,9 +54,30 @@ namespace VirtualRobot
 
         float getErrorDifference();
 
-        virtual std::string getConstraintType() = 0;
+        const std::vector<OptimizationFunctionSetup> &getEqualityConstraints();
+        const std::vector<OptimizationFunctionSetup> &getInequalityConstraints();
+        const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();
+
+        // Interface for NLopt-based solvers (default implementations)
+        virtual double optimizationFunction(unsigned int id);
+        virtual Eigen::VectorXf optimizationGradient(unsigned int id);
+
+        // Interface for Jacobian-based solvers (default implementations)
+        virtual Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual bool checkTolerances();
 
     protected:
+        void addEqualityConstraint(unsigned int id, bool soft=false);
+        void addInequalityConstraint(unsigned int id, bool soft=false);
+        void addOptimizationFunction(unsigned int id, bool soft=false);
+
+    protected:
+        std::vector<OptimizationFunctionSetup> equalityConstraints;
+        std::vector<OptimizationFunctionSetup> inequalityConstraints;
+        std::vector<OptimizationFunctionSetup> optimizationFunctions;
+
         float lastError;
         float lastLastError;
     };

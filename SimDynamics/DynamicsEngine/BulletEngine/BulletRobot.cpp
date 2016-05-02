@@ -31,6 +31,8 @@ namespace SimDynamics
         // should be enough for up to 10ms/step
         , bulletMaxMotorImulse(5)
     {
+        ignoreTranslationalJoints = true;
+
         buildBulletModels(enableJointMotors);
 
         // activate force torque sensors
@@ -80,9 +82,9 @@ namespace SimDynamics
                 RobotNodePtr bodyA;
                 RobotNodePtr bodyB = rn;
                 RobotNodePtr joint;
-                RobotNodePtr joint2;
+                //RobotNodePtr joint2;
 
-                if (rn->isTranslationalJoint() || rn->isRotationalJoint())
+                if ( (rn->isTranslationalJoint() && !ignoreTranslationalJoints) || rn->isRotationalJoint())
                 {
                     joint = rn;
                 }
@@ -91,13 +93,16 @@ namespace SimDynamics
 
                 while (parent && !bodyA)
                 {
-                    if (!parent->getCollisionModel() && (parent->isTranslationalJoint() || parent->isRotationalJoint()))
+                    if (!parent->getCollisionModel() && ( (parent->isTranslationalJoint() && !ignoreTranslationalJoints) || parent->isRotationalJoint()))
                     {
                         if (!joint)
                         {
                             joint = parent;
+                        } else
+                        {
+                            VR_WARNING << "No body between " << parent->getName() << " and " << joint->getName() << ", skipping " << parent->getName() << endl;
                         }
-                        else
+                        /*else
                         {
                             // check for hinge2 joint
                             THROW_VR_EXCEPTION_IF(joint2, "three joints in a row not supported:" << joint->getName() << ", " << joint2->getName() << "," << parent->getName());
@@ -114,7 +119,7 @@ namespace SimDynamics
                             Eigen::Vector3f ax2 = rev2->getJointRotationAxis();
                             double ang = MathTools::getAngle(ax1, ax2);
                             THROW_VR_EXCEPTION_IF(fabs(fabs(ang) - M_PI_2) > 1e-6, "Could not create hinge2 joint: Joint axes must be orthogonal to each other:" << joint->getName() << ", " << joint2->getName());
-                        }
+                        }*/
                     }
 
                     if (parent->getCollisionModel())
@@ -137,7 +142,7 @@ namespace SimDynamics
                     joint = bodyB;
                 }
 
-                createLink(bodyA, joint, joint2, bodyB);
+                createLink(bodyA, joint, /*joint2,*/ bodyB);
             }
 
         }
@@ -279,9 +284,10 @@ namespace SimDynamics
     }
 
 
-    void BulletRobot::createLink(VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, VirtualRobot::RobotNodePtr joint2, VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors)
+    void BulletRobot::createLink(VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, /*VirtualRobot::RobotNodePtr joint2,*/ VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors)
     {
         MutexLockPtr lock = getScopedLock();
+
         // ensure dynamics nodes are created
         createDynamicsNode(bodyA);
         createDynamicsNode(bodyB);
@@ -327,7 +333,8 @@ namespace SimDynamics
 
         double vr2bulletOffset = 0.0f;
 
-        THROW_VR_EXCEPTION_IF(joint->isTranslationalJoint(), "Translational joints nyi...");
+
+        THROW_VR_EXCEPTION_IF((!ignoreTranslationalJoints && joint->isTranslationalJoint()), "Translational joints nyi...");
 
         if (joint->isRotationalJoint())
         {
@@ -345,7 +352,7 @@ namespace SimDynamics
             limMin = joint->getJointLimitLo();
             limMax = joint->getJointLimitHi();
 
-            if (joint2)
+            /*if (joint2)
             {
 
                 VR_WARNING << "HINGE2 Joints are experimental (1:" << joint->getName() << ", 2:" << joint2->getName() << "): Assuming hing2/universal joint is defined as needed by bullet (see universal constraint header documentation)" << endl;
@@ -373,7 +380,7 @@ namespace SimDynamics
                 hinge2->setUpperLimit(btScalar(limMax), btScalar(limMax2));
                 jointbt = hinge2;
             }
-            else
+            else*/
             {
                 Eigen::Vector3f axisGlobal = rnRevJoint->getJointRotationAxis();
                 Eigen::Vector3f axisLocal = rnRevJoint->getJointRotationAxisInJointCoordSystem();
@@ -402,7 +409,7 @@ namespace SimDynamics
         i.dynNode1 = drn1;
         i.dynNode2 = drn2;
         i.nodeJoint = joint;
-        i.nodeJoint2 = joint2;
+        //i.nodeJoint2 = joint2;
         i.joint = jointbt;
         i.jointValueOffset = vr2bulletOffset;
 
@@ -712,7 +719,7 @@ namespace SimDynamics
 
         for (size_t i = 0; i < links.size(); i++)
         {
-            if (links[i].nodeJoint == node || links[i].nodeJoint2 == node)
+            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
             {
                 return links[i];
             }
@@ -745,7 +752,7 @@ namespace SimDynamics
 
         for (size_t i = 0; i < links.size(); i++)
         {
-            if (links[i].nodeJoint == node || links[i].nodeJoint2 == node || links[i].nodeA == node || links[i].nodeB == node)
+            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/ || links[i].nodeA == node || links[i].nodeB == node)
             {
                 result.push_back(links[i]);
             }
@@ -931,7 +938,7 @@ namespace SimDynamics
 
         for (size_t i = 0; i < links.size(); i++)
         {
-            if (links[i].nodeJoint == node || links[i].nodeJoint2 == node)
+            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
             {
                 return true;
             }
@@ -966,7 +973,7 @@ namespace SimDynamics
 #else
             boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
 
-            if (!hinge)
+            /*if (!hinge)
             {
                 // hinge2 / universal joint
                 boost::shared_ptr<btUniversalConstraint> hinge2 = boost::dynamic_pointer_cast<btUniversalConstraint>(link.joint);
@@ -991,14 +998,14 @@ namespace SimDynamics
             else
             {
                 //hinge->enableAngularMotor(true,0.0f,bulletMaxMotorImulse);// is max impulse ok?! (10 seems to be ok, 1 oscillates)
-            }
+            }*/
 
             DynamicsRobot::actuateNode(node, jointValue);
 #endif
         }
         else
         {
-            VR_ERROR << "Only Revolute joints implemented so far..." << endl;
+            VR_ERROR << "Only Revolute joints implemented so far (ignoring node " << node->getName() << ")." << endl;
         }
     }
 
@@ -1028,7 +1035,7 @@ namespace SimDynamics
 #else
             boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
 
-            if (!hinge)
+            /*if (!hinge)
             {
                 // hinge2 / universal joint
                 boost::shared_ptr<btUniversalConstraint> hinge2 = boost::dynamic_pointer_cast<btUniversalConstraint>(link.joint);
@@ -1053,7 +1060,7 @@ namespace SimDynamics
             else
             {
                 //hinge->enableAngularMotor(true,jointVelocity,bulletMaxMotorImulse);// is max impulse ok?! (10 seems to be ok, 1 oscillates)
-            }
+            }*/
 
             DynamicsRobot::actuateNodeVel(node, jointVelocity); // inverted joint direction in bullet
 #endif
@@ -1093,8 +1100,10 @@ namespace SimDynamics
         return (a2 - link.jointValueOffset); // inverted joint direction in bullet
 #else
         boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
-
         if (!hinge)
+            return 0.0f;
+
+        /*if (!hinge)
         {
             // hinge2 / universal joint
             boost::shared_ptr<btUniversalConstraint> hinge2 = boost::dynamic_pointer_cast<btUniversalConstraint>(link.joint);
@@ -1123,7 +1132,7 @@ namespace SimDynamics
             hinge2->calculateTransforms();
             double a2 = m->m_currentPosition;
             return (a2 - link.jointValueOffset); // inverted joint direction in bullet
-        }
+        }*/
 
         return (hinge->getHingeAngle() - link.jointValueOffset); // inverted joint direction in bullet
 #endif
@@ -1143,7 +1152,7 @@ namespace SimDynamics
         LinkInfo link = getLink(rn);
         boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
 
-        if (!hinge)
+        /*if (!hinge)
         {
             // hinge2 / universal joint
             boost::shared_ptr<btUniversalConstraint> hinge2 = boost::dynamic_pointer_cast<btUniversalConstraint>(link.joint);
@@ -1170,7 +1179,7 @@ namespace SimDynamics
 
             VR_ASSERT(m);
             return m->m_targetVelocity;
-        }
+        }*/
 
         return hinge->getMotorTargetVelosity();
     }

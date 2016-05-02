@@ -12,9 +12,9 @@ function(setupSimoxExternalLibraries)
     ENDIF()
     
     if (Simox_USE_QT4)
-	    FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
-		else()
-    	FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
+        FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
+        else()
+        FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
     endif()
   ENDIF()
   INCLUDE_DIRECTORIES(${Simox_INCLUDE_DIRS})
@@ -40,17 +40,19 @@ endfunction()
 
 function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
     setupSimoxExternalLibraries() 
-    MESSAGE (STATUS "Qt Moc'ing: ${mocFiles}")
-    MESSAGE (STATUS "Qt ui files: ${uiFiles}")
     
     if (Simox_USE_QT4)
-    	# need this option to work around a qt/boost bug
-    	qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-    	qt4_wrap_ui(generatedUiFiles ${uiFiles})
-		else()
-	    # need this option to work around a qt/boost bug
-  	  qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-    	qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        MESSAGE (STATUS "Qt4 Moc'ing: ${mocFiles}")
+        MESSAGE (STATUS "Qt4 ui files: ${uiFiles}")
+        # need this option to work around a qt/boost bug
+        qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        qt4_wrap_ui(generatedUiFiles ${uiFiles})
+    else()
+        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+        # need this option to work around a qt/boost bug
+        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        qt5_wrap_ui(generatedUiFiles ${uiFiles})
     endif()
     
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )

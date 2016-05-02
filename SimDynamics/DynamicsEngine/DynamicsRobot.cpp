@@ -73,6 +73,22 @@ namespace SimDynamics
         return true;
     }
 
+    DynamicsObjectPtr DynamicsRobot::getDynamicsRobotNode(const std::string &nodeName)
+    {
+        MutexLockPtr lock = getScopedLock();
+        std::map<VirtualRobot::RobotNodePtr, DynamicsObjectPtr>::iterator it = dynamicRobotNodes.begin();
+        std::vector<DynamicsObjectPtr> res;
+
+        while (it != dynamicRobotNodes.end())
+        {
+            if (it->first->getName() == nodeName)
+                return it->second;
+            it++;
+        }
+        return DynamicsObjectPtr();
+    }
+
+
     DynamicsObjectPtr DynamicsRobot::getDynamicsRobotNode(VirtualRobot::RobotNodePtr node)
     {
         MutexLockPtr lock = getScopedLock();

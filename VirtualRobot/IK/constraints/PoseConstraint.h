@@ -20,6 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
+
 #ifndef _VirtualRobot_PoseConstraint_h_
 #define _VirtualRobot_PoseConstraint_h_
 
@@ -47,10 +48,19 @@ namespace VirtualRobot
 
         bool getRobotPoseForConstraint(Eigen::Matrix4f& pose);
 
-        std::string getConstraintType();
         const Eigen::Matrix4f& getTarget();
 
         void updateTarget(const Eigen::Matrix4f& newTarget);
+
+        double optimizationFunction(unsigned int id);
+        Eigen::VectorXf optimizationGradient(unsigned int id);
+
+    protected:
+        double positionOptimizationFunction();
+        Eigen::VectorXf positionOptimizationGradient();
+
+        double orientationOptimizationFunction();
+        Eigen::VectorXf orientationOptimizationGradient();
 
     protected:
         RobotPtr robot;
@@ -68,6 +78,8 @@ namespace VirtualRobot
 
         float lastError;
         float lastLastError;
+
+        float posRotTradeoff;
     };
 
     typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
