@@ -226,7 +226,7 @@ namespace VirtualRobot
 
         std::string name = ss.str();
 
-        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
+        CollisionModelPtr colModel(new CollisionModel(visu->clone(), name, colChecker, id));
         result.reset(new ManipulationObject(name, visu, colModel, SceneObject::Physics(), colChecker));
 
         result->initialize();

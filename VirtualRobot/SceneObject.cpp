@@ -1134,6 +1134,7 @@ namespace VirtualRobot
             if (replaceFilenames)
             {
                 newFilename = getFilenameReplacementVisuModel();
+                this->visualizationModel->setFilename(newFilename, false);
             }
             else
             {
@@ -1154,6 +1155,7 @@ namespace VirtualRobot
             if (replaceFilenames || !collisionModel->getVisualization())
             {
                 newFilename = getFilenameReplacementColModel();
+                collisionModel->getVisualization()->setFilename(newFilename, false);
             }
             else
             {
