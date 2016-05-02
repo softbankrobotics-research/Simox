@@ -21,7 +21,9 @@ endif()
 
 if (Simox_USE_NLOPT)
     FIND_PACKAGE (NLOPT)
-    ADD_DEFINITIONS(-DUSE_NLOPT)
+    if (NLOPT_FOUND)
+        ADD_DEFINITIONS(-DUSE_NLOPT)
+    endif()
 endif()
 
 ########################### TESTING #####################################

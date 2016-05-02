@@ -42,7 +42,7 @@ TSRConstraint::TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeS
     bounds(bounds),
     toleranceTranslation(1.0f),
     toleranceRotation(0.1f),
-    posRotTradeoff(0.1)
+    posRotTradeoff(0.1f)
 {
     ik.reset(new DifferentialIK(nodeSet));
 

@@ -29,7 +29,7 @@ JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &rob
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
-    factor(0.001)
+    factor(0.001f)
 {
     // Joint limit avoidance is considered a soft constraint
     addOptimizationFunction(0, true);
@@ -41,7 +41,7 @@ double JointLimitAvoidanceConstraint::optimizationFunction(unsigned int id)
 {
     double value = 0;
 
-    for(int i = 0; i < nodeSet->getSize(); i++)
+    for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
         RobotNodePtr node = nodeSet->getNode(i);
         value += factor * node->getJointValue() * node->getJointValue();
@@ -54,7 +54,7 @@ Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int
 {
     Eigen::VectorXf gradient(nodeSet->getSize());
 
-    for(int i = 0; i < nodeSet->getSize(); i++)
+    for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
         gradient(i) = 2 * factor * nodeSet->getNode(i)->getJointValue();
     }

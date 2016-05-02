@@ -47,7 +47,7 @@ PoseConstraint::PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nod
     cartesianSelection(cartesianSelection),
     tolerancePosition(tolerancePosition),
     toleranceRotation(toleranceRotation),
-    posRotTradeoff(0.1)
+    posRotTradeoff(0.1f)
 {
     ik.reset(new DifferentialIK(nodeSet));
     ik->setGoal(target, eef, cartesianSelection, tolerancePosition, toleranceRotation);
@@ -164,6 +164,7 @@ double PoseConstraint::positionOptimizationFunction()
         case IKSolver::CartesianSelection::Orientation:
             return 0;
     }
+    return 0;
 }
 
 Eigen::VectorXf PoseConstraint::positionOptimizationGradient()
@@ -191,6 +192,7 @@ Eigen::VectorXf PoseConstraint::positionOptimizationGradient()
         case IKSolver::CartesianSelection::Orientation:
             return Eigen::VectorXf::Zero(size);
     }
+    return Eigen::VectorXf::Zero(size);
 }
 
 double PoseConstraint::orientationOptimizationFunction()
@@ -240,4 +242,5 @@ Eigen::VectorXf PoseConstraint::orientationOptimizationGradient()
         case IKSolver::CartesianSelection::All:
             return 2 * rpy.transpose() * J.block(3, 0, 3, size);
     }
+    return Eigen::VectorXf::Zero(size);
 }
