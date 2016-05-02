@@ -167,7 +167,7 @@ IF (NOT Simox_CONFIGURED)
     OPTION (Simox_USE_URDF "Use URDF" OFF)
 
     #### NLOPT
-    OPTION (Simox_USE_NLOPT "Use NLOPT" OFF)
+    OPTION (Simox_USE_NLOPT "Use NLOPT" ON)
     if (Simox_USE_NLOPT)
         FIND_PACKAGE(NLOPT)
         if (NLOPT_FOUND)

@@ -35,7 +35,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT PoseConstraint : public Constraint, public boost::enable_shared_from_this<PoseConstraint>
     {
     public:
-        PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef, const Eigen::Matrix4f& target,
+        PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Matrix4f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All,
                        float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
@@ -65,7 +65,7 @@ namespace VirtualRobot
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
-        RobotNodePtr eef;
+        SceneObjectPtr eef;
         Eigen::Matrix4f target;
 
         DifferentialIKPtr ik;

@@ -24,14 +24,15 @@
 
 #include "ConstrainedOptimizationIK.h"
 
+#include <nlopt.hpp>
+
 using namespace VirtualRobot;
 
 ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
-    ConstrainedIK(robot, nodeSet),
+    ConstrainedIK(robot, nodeSet, 30),
     nodeSet(nodeSet),
     timeout(timeout),
-    tolerance(tolerance),
-    maxAttempts(30)
+    tolerance(tolerance)
 {
     clearSeeds();
     addSeed(eSeedInitial);
@@ -89,7 +90,9 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->setUpdateVisualization(false);
     robot->setUpdateCollisionModel(false);
 
-    for(unsigned int attempt = 0; attempt < maxAttempts; attempt++)
+    std::vector<double> bestJointValues;
+    double currentMinError = std::numeric_limits<double>::max();
+    for(unsigned int attempt = 0; attempt < maxIterations; attempt++)
     {
         numIterations = 0;
 
@@ -158,18 +161,29 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         {
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
-
+        double currentError = hardOptimizationFunction(x);
+        std::cout << "Current error " << currentError << " vs tol²" << tolerance *tolerance << std::endl;
         // We determine success based on hard constraints only
-        if(hardOptimizationFunction(x) < tolerance * tolerance)
+        if(currentError < tolerance * tolerance)
         {
             // Success
             robot->setUpdateVisualization(updateVisualization);
             robot->setUpdateCollisionModel(updateCollisionModel);
             robot->updatePose(true);
+            nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()));
             return true;
         }
-    }
+        else if(currentMinError > currentError)
+        {
+            currentMinError = currentError;
+            bestJointValues = x;
+        }
 
+    }
+    if(bestJointValues.size() > 0)
+    {
+        nodeSet->setJointValues(std::vector<float>(bestJointValues.begin(), bestJointValues.end()));
+    }
     // Failure
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
@@ -281,6 +295,7 @@ double ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<dou
 
     return value;
 }
+
 
 double ConstrainedOptimizationIK::optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data)
 {

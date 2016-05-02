@@ -28,9 +28,12 @@
 #include "VirtualRobot/IK/ConstrainedIK.h"
 #include "VirtualRobot/IK/Constraint.h"
 
-#include <nlopt.hpp>
-
 #include <boost/shared_ptr.hpp>
+
+namespace nlopt
+{
+    class opt;
+}
 
 namespace VirtualRobot
 {
@@ -44,6 +47,7 @@ namespace VirtualRobot
         bool initialize();
         bool solve(bool stepwise = false);
         bool solveStep();
+
 
     protected:
         static double optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);
@@ -64,7 +68,6 @@ namespace VirtualRobot
         std::vector<double> currentX;
 
         unsigned int numIterations;
-        unsigned int maxAttempts;
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
