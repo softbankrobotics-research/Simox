@@ -132,23 +132,6 @@ Import/MeshImport/STLReader.cpp
 VirtualRobot.cpp
 )
 
-if (Simox_USE_RBDL AND RBDL_FOUND)
-    SET(SOURCES
-        ${SOURCES}
-        Dynamics/dynamics.cpp
-    )
-
-    SET(INCLUDES
-        ${INCLUDES}
-        Dynamics/dynamics.h
-    )
-
-    if(BUILD_TESTING)
-        ADD_SUBDIRECTORY(Dynamics/tests)
-    endif()
-endif ()
-
-
 SET(INCLUDES
 CollisionDetection/CollisionChecker.h
 CollisionDetection/CollisionModel.h
@@ -250,6 +233,22 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
+
+if (Simox_USE_RBDL AND RBDL_FOUND)
+    SET(SOURCES
+        ${SOURCES}
+        Dynamics/dynamics.cpp
+    )
+
+    SET(INCLUDES
+        ${INCLUDES}
+        Dynamics/dynamics.h
+    )
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Dynamics/tests)
+    endif()
+endif ()
 
 if(BUILD_TESTING)
     ADD_SUBDIRECTORY(Visualization/tests)
