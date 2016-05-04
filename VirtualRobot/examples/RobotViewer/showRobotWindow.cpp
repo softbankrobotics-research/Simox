@@ -83,7 +83,7 @@ void showRobotWindow::setupUI()
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
 
-    viewer = new Gui::CoinViewer(UI.frameViewer);
+    viewer = new SimoxGui::CoinViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));

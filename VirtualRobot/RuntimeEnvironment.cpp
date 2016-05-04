@@ -340,6 +340,19 @@ namespace VirtualRobot
         return (keyValues.find(key) != keyValues.end());
     }
 
+
+    float RuntimeEnvironment::toFloat(const std::string& s)
+    {
+        float a = (float)atof(s.c_str());
+        return a;
+    }
+
+    int RuntimeEnvironment::toInt(const std::string& s)
+    {
+        int a = (float)atoi(s.c_str());
+        return a;
+    }
+
     bool RuntimeEnvironment::toVector3f(const std::string& s, Eigen::Vector3f& storeResult)
     {
         if (s.length() < 3)

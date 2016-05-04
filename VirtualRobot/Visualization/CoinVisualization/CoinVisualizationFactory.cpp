@@ -2481,7 +2481,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose, float maxZGlobal)
     {
         SoSeparator* res = new SoSeparator;
         res->ref();
@@ -2507,6 +2507,7 @@ namespace VirtualRobot
         {
             minS = size(2);
         }
+
 
         VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         float radius = minS * 0.5f * 0.75f;
@@ -2558,6 +2559,9 @@ namespace VirtualRobot
                             reachSpace->toGlobalVec(resPos);
                             //voxelPosition = reachSpace->baseNode->toGlobalCoordinateSystemVec(voxelPosition);
                         }
+
+                        if (resPos(2)>maxZGlobal)
+                            continue;
 
                         float intensity = (float)value;
 

@@ -295,6 +295,14 @@ namespace VirtualRobot
         WorkspaceCut2DPtr createCut(const Eigen::Matrix4f& referencePose, float cellSize) const;
 
         /*!
+        * \brief createCut Create a cut at a specific height (assuming z is upwards).
+        * \param heightPercent Value in [0,1]
+        * \param cellSize The discretization step size of the result
+        * \return
+        */
+        WorkspaceCut2DPtr createCut(float heightPercent, float cellSize) const;
+
+        /*!
             Build all transformations from referenceNode to cutXY data.h Only entries>0 are considered.
             If referenceNode is set, the transformations are given in the corresponding coordinate system.
         */

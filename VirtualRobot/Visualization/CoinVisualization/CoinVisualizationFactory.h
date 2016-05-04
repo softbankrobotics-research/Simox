@@ -236,7 +236,7 @@ namespace VirtualRobot
         /*!
             Create a visualization of the reachability data.
         */
-        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true);
+        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10);
         /*!
             Creates a visualization of the reachability data. For each 3D point, the orientation with maximum entry is determined and visualized as an arrow. The direction of this arrow is aligned to the param axis.
         */

@@ -35,10 +35,8 @@ using namespace VirtualRobot;
 
 
 
-void endlessExtend(std::string robotFile, std::string reachFile)
+void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 {
-    int steps = 100000;
-
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFile);
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(reachFile);
 
@@ -128,9 +126,11 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Reachability Demo");
 
     cout << " --- START --- " << endl;
+    cout << "Hint: use '--extendReach' to start a refinement of the reachability data. This is an endless mode which creates intermediate data files and that can be running e.g. over night." << std::endl;
 
     std::string filenameReach;
 #if defined(ICUB)
+    std::cout << "Using ICUB" << std::endl;
     std::string filenameRob("robots/iCub/iCub.xml");
     Eigen::Vector3f axisTCP(1.0f, 0, 0);
     filenameReach = "reachability/iCub_HipRightArm.bin";
@@ -143,7 +143,6 @@ int main(int argc, char* argv[])
     //filenameReach = "/home/SMBAD/yamanobe/home/armarx/Armar3/data/Armar3/reachability/ArmarIIIb_RightArm.bin";
     filenameReach = "/home/SMBAD/yamanobe/home/armarx/simox/build_release/ReachabilityData_ENDLESS_2015_04_17__18_03_22__2024.bin";
 #else
-    std::cout << "Using ARMAR3" << std::endl;
     std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
     Eigen::Vector3f axisTCP(0, 0, 1.0f);
     filenameReach = "reachability/ArmarIII_PlatformHipRightArm.bin";
@@ -152,6 +151,8 @@ int main(int argc, char* argv[])
 
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::considerKey("extendReach");
+    VirtualRobot::RuntimeEnvironment::considerKey("extendReachStepsSave");
     VirtualRobot::RuntimeEnvironment::considerKey("reachability");
     VirtualRobot::RuntimeEnvironment::considerKey("visualizationTCPAxis");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
@@ -176,10 +177,14 @@ int main(int argc, char* argv[])
     cout << "Using robot at " << filenameRob << endl;
     cout << "Using reachability file from " << filenameReach << endl;
 
-#ifdef ENDLESS
-    endlessExtend(filenameRob, filenameReach);
-    return 0;
-#endif
+    if (VirtualRobot::RuntimeEnvironment::hasValue("extendReach"))
+    {
+        int stepsSave = 100000;
+        if (VirtualRobot::RuntimeEnvironment::hasValue("extendReachStepsSave"))
+                stepsSave = VirtualRobot::RuntimeEnvironment::toInt("extendReachStepsSave");
+        endlessExtend(filenameRob, filenameReach, stepsSave);
+        return 0;
+    }
 
     reachabilityWindow rw(filenameRob, filenameReach, axisTCP);
     rw.main();

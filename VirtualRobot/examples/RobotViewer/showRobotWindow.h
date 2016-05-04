@@ -69,7 +69,7 @@ protected:
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
 
-    Gui::CoinViewer* viewer;
+    SimoxGui::CoinViewer* viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string m_sRobotFilename;

@@ -19,6 +19,7 @@
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoSeparator.h>
 
 #include "ui_reachabilityCreate.h"
 
@@ -95,10 +96,16 @@ void reachabilityWindow::setupUI()
 
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
     connect(UI.checkBoxReachabilityVisu, SIGNAL(clicked()), this, SLOT(reachVisu()));
+    connect(UI.checkBoxReachabilityCut, SIGNAL(clicked()), this, SLOT(reachVisu()));
     connect(UI.comboBoxRNS, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
 
     connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
     connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));
+    connect(UI.sliderCutReach, SIGNAL(sliderReleased()), this, SLOT(reachVisu()));
+
+    UI.sliderCutReach->setValue(50);
+    UI.sliderCutReach->setEnabled(false);
+    UI.checkBoxReachabilityCut->setEnabled(false);
 }
 
 QString reachabilityWindow::formatString(const char* s, float f)
@@ -165,26 +172,45 @@ void reachabilityWindow::reachVisu()
     }
 
     reachabilityVisuSep->removeAllChildren();
+    SoSeparator* visualisationNode = new SoSeparator;
 
     if (UI.checkBoxReachabilityVisu->checkState() == Qt::Checked)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(reachSpace, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), axisTCP, true);
 
-        // different visualization
-        /*
-        std::vector< VirtualRobot::VisualizationFactory::Color > colors;
-        VirtualRobot::VisualizationFactory::Color c1(0.5f,0.1f,0.1f,0.0f);
-        VirtualRobot::VisualizationFactory::Color c2(1.0f,0.1f,0.1f,0.0f);
-        colors.push_back(c1);
-        colors.push_back(c2);
-        VirtualRobot::ColorMap c = VirtualRobot::ColorMap::customColorMap(colors);
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(reachSpace,c,true);
-        */
-
-        if (visualisationNode)
+        UI.checkBoxReachabilityCut->setEnabled(true);
+        float heightPercent = 1.0f;
+        if (UI.checkBoxReachabilityCut->checkState() == Qt::Checked)
         {
-            reachabilityVisuSep->addChild(visualisationNode);
+            UI.sliderCutReach->setEnabled(true);
+            int dist = UI.sliderCutReach->maximum() - UI.sliderCutReach->minimum();
+            float pos = (float)(UI.sliderCutReach->value() - UI.sliderCutReach->minimum()) / (float)dist;
+            heightPercent = pos;
+            VR_INFO << "Slider pos: " << pos  << endl;
+
+            WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation());
+            SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ());
+            visualisationNode->addChild(reachvisu2);
+
+        } else
+        {
+            UI.sliderCutReach->setEnabled(false);
         }
+
+        Eigen::Vector3f minBB, maxBB;
+        reachSpace->getWorkspaceExtends(minBB, maxBB);
+        float zDist = maxBB(2) - minBB(2);
+        float maxZ =  minBB(2) + heightPercent*zDist;
+        SoNode *reachvisu =  CoinVisualizationFactory::getCoinVisualization(reachSpace, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), true, maxZ);
+        visualisationNode->addChild(reachvisu);
+
+    } else
+    {
+        UI.sliderCutReach->setEnabled(false);
+        UI.checkBoxReachabilityCut->setEnabled(false);
+    }
+    if (visualisationNode)
+    {
+        reachabilityVisuSep->addChild(visualisationNode);
     }
 }
 
@@ -301,7 +327,6 @@ void reachabilityWindow::jointValueChanged(int pos)
     UI.lcdNumberJointValue->display((double)fPos);
 
 }
-
 
 
 void reachabilityWindow::selectJoint(int nr)
@@ -425,26 +450,12 @@ void reachabilityWindow::extendReach()
     }
 
     int steps = UI.spinBoxExtend->value();
-    /*#ifdef ENDLESS
-        time_t time_now = time(NULL);
-        struct tm * timeinfo;
-        timeinfo = localtime (&time_now);
-        char buffer [255];
-        strftime (buffer,255,"ReachabilityData_ENDLESS_%Y_%m_%d__%H_%M_%S_",timeinfo);
-        int nr = 0;
-        while (true)
-        {
-            reachSpace->addRandomTCPPoses(steps);
-            reachSpace->print();
-            std::stringstream ss;
-            ss << buffer << "_" << nr << ".bin";
-            reachSpace->save(ss.str());
-            nr++;
-        }
-
-    #endif*/
     reachSpace->addRandomTCPPoses(steps);
     reachSpace->print();
+    UI.checkBoxReachabilityVisu->setChecked(false);
+    UI.sliderCutReach->setEnabled(false);
+    UI.checkBoxReachabilityCut->setEnabled(false);
+    reachabilityVisuSep->removeAllChildren();
 }
 
 void reachabilityWindow::createReach()
@@ -463,10 +474,10 @@ void reachabilityWindow::createReach()
     UICreate.labelRNS->setText(QString("RobotNodeSet: ") + QString(currentRobotNodeSet->getName().c_str()));
     UICreate.labelBaseNode->setText(QString("Base: ") + QString(baseNode->getName().c_str()));
     UICreate.labelTCP->setText(QString("TCP: ") + QString(tcpNode->getName().c_str()));
-    reachSpace.reset(new Reachability(robot));
+    ReachabilityPtr reachSpaceTest(new Reachability(robot));
     float minB[6];// = {-1000.0f,-1000.0f,-1000.0f,(float)-M_PI,(float)-M_PI,(float)-M_PI};
     float maxB[6];// ={1000.0f,1000.0f,1000.0f,(float)M_PI,(float)M_PI,(float)M_PI};
-    reachSpace->checkForParameters(currentRobotNodeSet, 1000, minB, maxB, baseNode, tcpNode);
+    reachSpaceTest->checkForParameters(currentRobotNodeSet, 1000, minB, maxB, baseNode, tcpNode);
 
     //float ex = currentRobotNodeSet->getMaximumExtension();
     UICreate.doubleSpinBoxMinX->setValue(minB[0]);
@@ -492,7 +503,7 @@ void reachabilityWindow::createReach()
 
     if (diag.exec())
     {
-
+        reachSpace.reset(new Reachability(robot));
 
         minB[0] = UICreate.doubleSpinBoxMinX->value();
         minB[1] = UICreate.doubleSpinBoxMinY->value();

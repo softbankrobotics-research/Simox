@@ -1478,7 +1478,7 @@ namespace VirtualRobot
         for (int i = 0; i < 6; i++)
         {
             float sizex = storeMaxBounds[i] - storeMinBounds[i];
-            float factor = 0.1f;
+            float factor = 0.2f;
 
             if (i > 2)
             {
@@ -1528,6 +1528,61 @@ namespace VirtualRobot
             {
                 tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
                 result->entries(a, b) = getEntry(tmpPose);
+            }
+        }
+
+        return result;
+    }
+
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize) const
+    {
+        THROW_VR_EXCEPTION_IF(cellSize <= 0.0f, "Invalid parameter");
+        THROW_VR_EXCEPTION_IF(heightPercent < 0.0f || heightPercent>1.0f, "Invalid parameter");
+
+        WorkspaceCut2DPtr result(new WorkspaceCut2D());
+
+        Eigen::Vector3f minBB, maxBB;
+
+        getWorkspaceExtends(minBB, maxBB);
+        result->minBounds[0] = minBB(0);
+        result->maxBounds[0] = maxBB(0);
+        result->minBounds[1] = minBB(1);
+        result->maxBounds[1] = maxBB(1);
+
+        float sizeX = result->maxBounds[0] - result->minBounds[0];
+        int numVoxelsX = (int)(sizeX / cellSize);
+        float sizeY = result->maxBounds[1] - result->minBounds[1];
+        int numVoxelsY = (int)(sizeY / cellSize);
+
+        float sizeZGlobal = maxBB(2) - minBB(2);
+        float poseZGlobal = minBB(2) + heightPercent*sizeZGlobal;
+
+        result->entries.resize(numVoxelsX, numVoxelsY);
+
+        Eigen::Matrix4f refPose = getToGlobalTransformation();
+        refPose(2,3) = poseZGlobal;
+        result->referenceGlobalPose = refPose;
+
+        Eigen::Matrix4f tmpPose = refPose;
+        Eigen::Matrix4f localPose;
+        float x[6];
+        unsigned int v[6];
+
+        for (int a = 0; a < numVoxelsX; a++)
+        {
+            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
+
+            for (int b = 0; b < numVoxelsY; b++)
+            {
+                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
+                localPose = tmpPose;
+                toLocal(localPose);
+                matrix2Vector(localPose,x);
+
+                if (!getVoxelFromPose(x, v))
+                    continue;
+                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
             }
         }
 
