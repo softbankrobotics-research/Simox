@@ -51,6 +51,7 @@ public slots:
     void fillHoles();
     void binarize();
 
+    void computeVolume();
     void collisionModel();
     void reachVisu();
     void selectRNS(int nr);

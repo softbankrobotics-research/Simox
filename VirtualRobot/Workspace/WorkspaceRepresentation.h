@@ -68,6 +68,17 @@ namespace VirtualRobot
             EulerXYZExtrinsic   // fixed frame (standard)
         };
 
+        struct VolumeInfo
+        {
+            unsigned int voxelCount3D;              // overall number of 3d voxels
+            unsigned int filledVoxelCount3D;        // number of filled voxels (nr of 3d position voxels for which at least one 6D cell exists that is filled)
+            unsigned int borderVoxelCount3D;        // number of border voxels (3d voxels with at least 2 emoty neighbors in 3d)
+            float volumeVoxel3D;                    // volume of one voxel (m^3)
+            float volumeFilledVoxels3D;             // accumulated volume of all filled voxels (m^3)
+            float volume3D;                         // (filledVoxelCount3D - 0.5*borderVoxelCount3D) * volumeVoxel3D
+        };
+
+
         WorkspaceRepresentation(RobotPtr robot);
 
         /*!
@@ -391,6 +402,8 @@ namespace VirtualRobot
         */
         WorkspaceDataPtr getData();
         bool getPoseFromVoxel(unsigned int x[], float v[]) const;
+
+        virtual VolumeInfo computeVolumeInformation();
     protected:
 
         /*!

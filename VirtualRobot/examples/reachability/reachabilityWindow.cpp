@@ -93,6 +93,7 @@ void reachabilityWindow::setupUI()
     connect(UI.pushButtonSaveReachability, SIGNAL(clicked()), this, SLOT(saveReach()));
     connect(UI.pushButtonFillHoles, SIGNAL(clicked()), this, SLOT(fillHoles()));
     connect(UI.pushButtonBinarize, SIGNAL(clicked()), this, SLOT(binarize()));
+    connect(UI.pushButtonVolume, SIGNAL(clicked()), this, SLOT(computeVolume()));
 
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
     connect(UI.checkBoxReachabilityVisu, SIGNAL(clicked()), this, SLOT(reachVisu()));
@@ -580,6 +581,23 @@ void reachabilityWindow::binarize()
     cout << "Binarizing reachability space" << endl;
     reachSpace->binarize();
     reachSpace->print();
+}
+
+void reachabilityWindow::computeVolume()
+{
+    if (!reachSpace)
+        return;
+
+    VirtualRobot::WorkspaceRepresentation::VolumeInfo vi;
+    vi = reachSpace->computeVolumeInformation();
+
+    cout << "Reachability Volume Information:" << endl;
+    cout << "Nr 3d Voxels:" << vi.voxelCount3D << endl;
+    cout << "Nr filled 3d Voxels:" << vi.filledVoxelCount3D << endl;
+    cout << "Nr border 3d Voxels:" << vi.borderVoxelCount3D << endl;
+    cout << "Volume per 3d Voxel:" << vi.volumeVoxel3D << " m^3" << endl;
+    cout << "Volume of all filled 3d Voxels:" << vi.volumeFilledVoxels3D << " m^3" << endl;
+    cout << "Volume of filledVoxels - borderVoxels*0.5:" << vi.volume3D << " m^3" << endl;
 }
 
 void reachabilityWindow::saveReach()
