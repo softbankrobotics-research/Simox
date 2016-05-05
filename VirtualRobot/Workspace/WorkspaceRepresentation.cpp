@@ -1204,6 +1204,59 @@ namespace VirtualRobot
         return true;
     }
 
+    WorkspaceRepresentation::VolumeInfo WorkspaceRepresentation::computeVolumeInformation()
+    {
+        WorkspaceRepresentation::VolumeInfo result;
+        result.borderVoxelCount3D = 0;
+        result.filledVoxelCount3D = 0;
+        result.volume3D = 0;
+        result.volumeFilledVoxels3D = 0;
+        result.volumeVoxel3D = 0;
+        result.voxelCount3D = numVoxels[0]*numVoxels[1]*numVoxels[2];
+        for (int a = 0; a < numVoxels[0]; a++)
+        {
+            for (int b = 0; b < numVoxels[1]; b++)
+            {
+                for (int c = 0; c < numVoxels[2]; c++)
+                {
+                    int value = sumAngleReachabilities(a, b, c);
+
+                    if (value > 0)
+                    {
+                        result.filledVoxelCount3D++;
+                        if (a==0 || b==0 || c==0 || a==numVoxels[0]-1 || b==numVoxels[1]-1 || c==numVoxels[2]-1)
+                            result.borderVoxelCount3D++;
+                        else
+                        {
+                            int neighborEmptyCount = 0;
+                            if (sumAngleReachabilities(a-1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a+1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b-1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b+1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c-1)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c+1)==0)
+                                neighborEmptyCount++;
+                            if (neighborEmptyCount>1)
+                                result.borderVoxelCount3D++;
+                        }
+                    }
+                }
+            }
+        }
+        double discrM = discretizeStepTranslation * 0.001;
+        double voxelVolume = discrM * discrM * discrM;
+        result.volumeVoxel3D = (float)voxelVolume;
+        result.volumeFilledVoxels3D = (float)((double)result.filledVoxelCount3D * voxelVolume);
+        result.volume3D = (float)(((double)result.filledVoxelCount3D - 0.5*(double)result.borderVoxelCount3D) * voxelVolume);
+
+        return result;
+    }
+
     Eigen::Matrix4f WorkspaceRepresentation::getPoseFromVoxel(float v[6], bool transformToGlobalPose /*= true*/)
     {
         float x[6];
