@@ -65,8 +65,15 @@ namespace VirtualRobot
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
         virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
 
+        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray());
+
+        Ogre::SceneNode* createOgreBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
+        Ogre::SceneNode *createOgreSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
 
     protected:
+        Ogre::SceneNode* getNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color, const Eigen::Matrix4f &trafo);
+
+
 
         OgreRenderer *renderer;
 
