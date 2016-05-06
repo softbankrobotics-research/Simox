@@ -273,8 +273,9 @@ namespace VirtualRobot
 
         /*!
             Create quads according to cutXY plane. Normal can be UnitX, UnitY or UnitZ.
+            \param maxEntry If 0 the maximal entry of the cut plane is used as refernce.
         */
-        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY());
+        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY(), float maxEntry = 0.0f);
 
         /*!
             Create an offscreen renderer object with the given width and height.

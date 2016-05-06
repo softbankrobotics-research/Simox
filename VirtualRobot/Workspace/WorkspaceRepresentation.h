@@ -216,6 +216,7 @@ namespace VirtualRobot
             Sums all angle (x3,x4,x5) entries for the given position.
         */
         virtual int sumAngleReachabilities(int x0, int x1, int x2) const;
+        virtual int avgAngleReachabilities(int x0, int x1, int x2) const;
 
         /*!
             Searches all angle entries (x3,x4,x5) for maximum entry.

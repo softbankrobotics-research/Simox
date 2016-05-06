@@ -37,6 +37,7 @@ using namespace VirtualRobot;
 
 void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 {
+    VR_INFO << "Extending workspace information, saving each " << steps << " steps." << endl;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFile);
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(reachFile);
 
@@ -126,7 +127,7 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Reachability Demo");
 
     cout << " --- START --- " << endl;
-    cout << "Hint: use '--extendReach' to start a refinement of the reachability data. This is an endless mode which creates intermediate data files and that can be running e.g. over night." << std::endl;
+    cout << "Hint: use '--extendReach true' to start a refinement of the reachability data. This is an endless mode which creates intermediate data files and that can be running e.g. over night." << std::endl;
 
     std::string filenameReach;
 #if defined(ICUB)
@@ -181,7 +182,7 @@ int main(int argc, char* argv[])
     {
         int stepsSave = 100000;
         if (VirtualRobot::RuntimeEnvironment::hasValue("extendReachStepsSave"))
-                stepsSave = VirtualRobot::RuntimeEnvironment::toInt("extendReachStepsSave");
+                stepsSave = VirtualRobot::RuntimeEnvironment::toInt(VirtualRobot::RuntimeEnvironment::getValue("extendReachStepsSave"));
         endlessExtend(filenameRob, filenameReach, stepsSave);
         return 0;
     }

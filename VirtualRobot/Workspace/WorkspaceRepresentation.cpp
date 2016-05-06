@@ -56,6 +56,32 @@ namespace VirtualRobot
     }
 
 
+    int WorkspaceRepresentation::avgAngleReachabilities(int x0, int x1, int x2) const
+    {
+        int res = 0;
+
+        if (!data->hasEntry(x0, x1, x2))
+        {
+            return 0;
+        }
+
+        for (int d = 0; d < numVoxels[3]; d++)
+        {
+            for (int e = 0; e < numVoxels[4]; e++)
+            {
+                for (int f = 0; f < numVoxels[5]; f++)
+                {
+                    res += data->get(x0, x1, x2, d, e, f);
+                }
+            }
+        }
+
+        res /=  numVoxels[3]* numVoxels[4]* numVoxels[5];
+
+        return res;
+    }
+
+
     void WorkspaceRepresentation::uncompressData(const unsigned char* source, int size, unsigned char* dest)
     {
         unsigned char count;
@@ -1612,6 +1638,7 @@ namespace VirtualRobot
         float poseZGlobal = minBB(2) + heightPercent*sizeZGlobal;
 
         result->entries.resize(numVoxelsX, numVoxelsY);
+        result->entries.setZero();
 
         Eigen::Matrix4f refPose = getToGlobalTransformation();
         refPose(2,3) = poseZGlobal;
@@ -1634,7 +1661,10 @@ namespace VirtualRobot
                 matrix2Vector(localPose,x);
 
                 if (!getVoxelFromPose(x, v))
+                {
+                    //result->entries(a, b) = 0;
                     continue;
+                }
                 result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
             }
         }

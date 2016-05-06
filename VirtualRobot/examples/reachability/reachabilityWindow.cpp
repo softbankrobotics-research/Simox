@@ -107,6 +107,10 @@ void reachabilityWindow::setupUI()
     UI.sliderCutReach->setValue(50);
     UI.sliderCutReach->setEnabled(false);
     UI.checkBoxReachabilityCut->setEnabled(false);
+
+    m_pExViewer->setAccumulationBuffer(true);
+    m_pExViewer->setAntialiasing(true, 4);
+
 }
 
 QString reachabilityWindow::formatString(const char* s, float f)
@@ -186,10 +190,11 @@ void reachabilityWindow::reachVisu()
             int dist = UI.sliderCutReach->maximum() - UI.sliderCutReach->minimum();
             float pos = (float)(UI.sliderCutReach->value() - UI.sliderCutReach->minimum()) / (float)dist;
             heightPercent = pos;
-            VR_INFO << "Slider pos: " << pos  << endl;
+
 
             WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation());
-            SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ());
+            VR_INFO << "Slider pos: " << pos  << ", maxEntry:" << reachSpace->getMaxSummedAngleReachablity() << ", cut maxCoeff:" << cutData->entries.maxCoeff() << endl;
+            SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), reachSpace->getMaxSummedAngleReachablity());
             visualisationNode->addChild(reachvisu2);
 
         } else

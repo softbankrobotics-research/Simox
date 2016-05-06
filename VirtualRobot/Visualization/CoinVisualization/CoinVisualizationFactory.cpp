@@ -2512,26 +2512,10 @@ namespace VirtualRobot
         VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         float radius = minS * 0.5f * 0.75f;
         Eigen::Vector3f voxelPosition;
-        int step = 1;
-        int maxValue = 0;
-
-        for (int a = 0; a < reachSpace->numVoxels[0]; a += step)
-        {
-            for (int b = 0; b < reachSpace->numVoxels[1]; b += step)
-            {
-                for (int c = 0; c < reachSpace->numVoxels[2]; c += step)
-                {
-                    int value = reachSpace->sumAngleReachabilities(a, b, c);
-
-                    if (value >= maxValue)
-                    {
-                        maxValue = value;
-                    }
-                }
-            }
-        }
+        int maxValue = reachSpace->getMaxSummedAngleReachablity();
 
         Eigen::Vector3f resPos;
+        int step = 1;
 
         for (int a = 0; a < reachSpace->numVoxels[0]; a += step)
         {
@@ -2815,7 +2799,7 @@ namespace VirtualRobot
 
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal, float maxEntry)
     {
         SoSeparator* res = new SoSeparator;
 
@@ -2863,11 +2847,11 @@ namespace VirtualRobot
             cube->height = sizeY;
         }
 
-        int maxEntry = cutXY->entries.maxCoeff();
-
-        if (maxEntry == 0)
+        if (maxEntry==0.0f)
         {
-            maxEntry = 1;
+            maxEntry = cutXY->entries.maxCoeff();
+            if (maxEntry == 0)
+                maxEntry = 1;
         }
 
 
