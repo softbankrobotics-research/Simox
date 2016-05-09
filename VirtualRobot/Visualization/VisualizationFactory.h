@@ -156,7 +156,7 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
-        
+
         virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
         {
 	        return VisualizationNodePtr();

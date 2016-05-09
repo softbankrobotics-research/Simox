@@ -198,7 +198,7 @@ void ConstrainedIK::getUnitableNodes(const RobotNodePtr &robotNode, const RobotN
 RobotPtr ConstrainedIK::buildReducedRobot(const RobotPtr &original)
 {
     std::vector<std::string> names;
-    for(int i = 0; i < nodeSet->getSize(); i++)
+    for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
         names.push_back(nodeSet->getNode(i)->getName());
     }
