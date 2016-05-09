@@ -34,16 +34,17 @@ support.
 
 License
 -------
-GNU Library General Public License, version 2.1 or any later version.
+GNU Lesser General Public License, version 2.1 or any later version.
 (see license.txt)
 
 Copyright
 ---------
- 2015 Nikolaus Vahrenkamp
+ 2010-2016 Nikolaus Vahrenkamp
 
 Contact
 -------
 Nikolaus Vahrenkamp
-vahrenkamp at users dot sf dot net
-http://wwwiaim.ira.uka.de/users/vahrenka
-http://simox.sourceforge.net
+vahrenkamp at kit dot edu
+
+https://gitlab.com/Simox/simox
+https://groups.google.com/d/forum/simox
