@@ -182,7 +182,7 @@ set(CPACK_COMPONENT_APPLICATIONDATA_DISPLAY_NAME "Simox Data")
 set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Simox Libraries")
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "Simox C++ Headers")
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libbullet-dev, libbulletmultithreaded2.82, libqhull-dev")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libbullet-dev, libbulletmultithreaded2.82, libqhull-dev, libnlopt-dev")
 
 SET(CPACK_COMPONENTS_ALL Applications Headers Libraries ApplicationData)
 INCLUDE(CPack)
