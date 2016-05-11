@@ -229,9 +229,10 @@ namespace VirtualRobot
 
         if (boundingBox)
         {
-            Ogre::SceneNode* bboxVisu = CreateBoundingBox(sn, false);
+            //Ogre::SceneNode* bboxVisu = CreateBoundingBox(sn, false);
+            VR_WARNING << "NYI" << endl;
             delete sn;
-            sn = bboxVisu;
+            //sn = bboxVisu;
         }
 
         visualizationNode.reset(new OgreVisualizationNode(sn));
