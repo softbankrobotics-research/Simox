@@ -1267,7 +1267,7 @@ namespace VirtualRobot
                                 neighborEmptyCount++;
                             if (sumAngleReachabilities(a, b, c+1)==0)
                                 neighborEmptyCount++;
-                            if (neighborEmptyCount>1)
+                            if (neighborEmptyCount>=1)
                                 result.borderVoxelCount3D++;
                         }
                     }
