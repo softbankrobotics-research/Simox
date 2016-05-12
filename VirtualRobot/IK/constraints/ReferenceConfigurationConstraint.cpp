@@ -21,41 +21,50 @@
 *
 */
 
-#include "JointLimitAvoidanceConstraint.h"
+#include "ReferenceConfigurationConstraint.h"
 
 using namespace VirtualRobot;
 
-JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet) :
+ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const Eigen::VectorXf &reference) :
     Constraint(nodeSet),
     robot(robot),
-    nodeSet(nodeSet)
+    nodeSet(nodeSet),
+    reference(reference)
 {
+    if(nodeSet->getSize() != reference.rows())
+    {
+        THROW_VR_EXCEPTION("Reference configuration does not match node set size.");
+        return;
+    }
+
     // Joint limit avoidance is considered a soft constraint
     addOptimizationFunction(0, true);
 
     initialized = true;
 }
 
-double JointLimitAvoidanceConstraint::optimizationFunction(unsigned int id)
+double ReferenceConfigurationConstraint::optimizationFunction(unsigned int id)
 {
     double value = 0;
 
+    float v;
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
         RobotNodePtr node = nodeSet->getNode(i);
-        value += node->getJointValue() * node->getJointValue();
+        v = (node->getJointValue() - reference(i));
+        value += v * v;
     }
 
     return optimizationFunctionFactor * value;
 }
 
-Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf ReferenceConfigurationConstraint::optimizationGradient(unsigned int id)
 {
     Eigen::VectorXf gradient(nodeSet->getSize());
 
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        gradient(i) = 2 * nodeSet->getNode(i)->getJointValue();
+        gradient(i) = 2 * (nodeSet->getNode(i)->getJointValue() - reference(i));
     }
 
     return optimizationFunctionFactor * gradient;

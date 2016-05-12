@@ -99,7 +99,7 @@ IK/Constraint.cpp
 IK/constraints/BalanceConstraint.cpp
 IK/constraints/PoseConstraint.cpp
 IK/constraints/TSRConstraint.cpp
-IK/constraints/JointLimitAvoidanceConstraint.cpp
+IK/constraints/ReferenceConfigurationConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
 Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
@@ -194,7 +194,7 @@ IK/Constraint.h
 IK/constraints/BalanceConstraint.h
 IK/constraints/PoseConstraint.h
 IK/constraints/TSRConstraint.h
-IK/constraints/JointLimitAvoidanceConstraint.h
+IK/constraints/ReferenceConfigurationConstraint.h
 Workspace/WorkspaceData.h
 Workspace/WorkspaceDataArray.h
 Workspace/WorkspaceRepresentation.h

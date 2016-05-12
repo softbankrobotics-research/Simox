@@ -21,8 +21,8 @@
 *
 */
 
-#ifndef _VirtualRobot_JointLimitAvoidanceConstraint_h_
-#define _VirtualRobot_JointLimitAvoidanceConstraint_h_
+#ifndef _VirtualRobot_ReferenceConfigurationConstraint_h_
+#define _VirtualRobot_ReferenceConfigurationConstraint_h_
 
 #include "VirtualRobot/IK/Constraint.h"
 
@@ -30,10 +30,10 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceConstraint : public Constraint, public boost::enable_shared_from_this<JointLimitAvoidanceConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public boost::enable_shared_from_this<ReferenceConfigurationConstraint>
     {
     public:
-        JointLimitAvoidanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
+        ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const Eigen::VectorXf &reference);
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);
@@ -41,9 +41,10 @@ namespace VirtualRobot
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
+        Eigen::VectorXf reference;
     };
 
-    typedef boost::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;
+    typedef boost::shared_ptr<ReferenceConfigurationConstraint> ReferenceConfigurationConstraintPtr;
 }
 
 #endif
