@@ -58,6 +58,18 @@ namespace VirtualRobot
         const std::vector<OptimizationFunctionSetup> &getInequalityConstraints();
         const std::vector<OptimizationFunctionSetup> &getOptimizationFunctions();
 
+        /*!
+         * Each constraint implements its own optimization function that contributes to a combined
+         * optimization function of a constrained IK problem.
+         *
+         * The individual optimization function value of a constraint is multiplied by the given factor
+         * in order to weigh the contribution of the individual constraint.
+         *
+         * The default value of this factor is 1.
+         */
+        void setOptimizationFunctionFactor(float factor);
+        float getOptimizationFunctionFactor();
+
         // Interface for NLopt-based solvers (default implementations)
         virtual double optimizationFunction(unsigned int id);
         virtual Eigen::VectorXf optimizationGradient(unsigned int id);
@@ -80,6 +92,8 @@ namespace VirtualRobot
 
         float lastError;
         float lastLastError;
+
+        float optimizationFunctionFactor;
     };
 
     typedef boost::shared_ptr<Constraint> ConstraintPtr;

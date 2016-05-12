@@ -28,8 +28,7 @@ using namespace VirtualRobot;
 JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet) :
     Constraint(nodeSet),
     robot(robot),
-    nodeSet(nodeSet),
-    factor(0.001f)
+    nodeSet(nodeSet)
 {
     // Joint limit avoidance is considered a soft constraint
     addOptimizationFunction(0, true);
@@ -44,10 +43,10 @@ double JointLimitAvoidanceConstraint::optimizationFunction(unsigned int id)
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
         RobotNodePtr node = nodeSet->getNode(i);
-        value += factor * node->getJointValue() * node->getJointValue();
+        value += node->getJointValue() * node->getJointValue();
     }
 
-    return value;
+    return optimizationFunctionFactor * value;
 }
 
 Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int id)
@@ -56,8 +55,8 @@ Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int
 
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        gradient(i) = 2 * factor * nodeSet->getNode(i)->getJointValue();
+        gradient(i) = 2 * nodeSet->getNode(i)->getJointValue();
     }
 
-    return gradient;
+    return optimizationFunctionFactor * gradient;
 }

@@ -117,10 +117,10 @@ double PoseConstraint::optimizationFunction(unsigned int id)
     switch(id)
     {
         case POSITION_COMPONENT:
-            return positionOptimizationFunction();
+            return optimizationFunctionFactor * positionOptimizationFunction();
 
         case ORIENTATION_COMPONENT:
-            return orientationOptimizationFunction();
+            return optimizationFunctionFactor * orientationOptimizationFunction();
 
         default:
             return 0;
@@ -132,10 +132,10 @@ Eigen::VectorXf PoseConstraint::optimizationGradient(unsigned int id)
     switch(id)
     {
         case POSITION_COMPONENT:
-            return positionOptimizationGradient();
+            return optimizationFunctionFactor * positionOptimizationGradient();
 
         case ORIENTATION_COMPONENT:
-            return orientationOptimizationGradient();
+            return optimizationFunctionFactor * orientationOptimizationGradient();
 
         default:
             return Eigen::VectorXf();

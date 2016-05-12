@@ -41,8 +41,6 @@ namespace VirtualRobot
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
-
-        float factor;
     };
 
     typedef boost::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;

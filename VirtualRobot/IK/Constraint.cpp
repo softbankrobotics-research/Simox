@@ -5,7 +5,8 @@ using namespace VirtualRobot;
 Constraint::Constraint(const RobotNodeSetPtr& nodeSet) :
     JacobiProvider(nodeSet, JacobiProvider::eSVDDamped),
     lastError(-1),
-    lastLastError(-1)
+    lastLastError(-1),
+    optimizationFunctionFactor(1)
 {
 }
 
@@ -13,6 +14,7 @@ void Constraint::initialize()
 {
     lastError = -1;
     lastLastError = -1;
+    optimizationFunctionFactor = 1;
 }
 
 bool Constraint::getRobotPoseForConstraint(Eigen::Matrix4f& pose)
@@ -48,6 +50,16 @@ const std::vector<OptimizationFunctionSetup> &Constraint::getInequalityConstrain
 const std::vector<OptimizationFunctionSetup> &Constraint::getOptimizationFunctions()
 {
     return optimizationFunctions;
+}
+
+void Constraint::setOptimizationFunctionFactor(float factor)
+{
+    optimizationFunctionFactor = factor;
+}
+
+float Constraint::getOptimizationFunctionFactor()
+{
+    return optimizationFunctionFactor;
 }
 
 double Constraint::optimizationFunction(unsigned int id)
