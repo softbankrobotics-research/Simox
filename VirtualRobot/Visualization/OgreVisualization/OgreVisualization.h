@@ -28,8 +28,6 @@
 #include "OgreRenderer.h"
 
 
-class SoNode;
-
 namespace VirtualRobot
 {
 

@@ -24,10 +24,35 @@
 #include "../Robot.h"
 #include "../SceneObject.h"
 #include "../Scene.h"
-
+#include "../Import/MeshImport/STLReader.h"
+#include "TriMeshModel.h"
 
 namespace VirtualRobot
 {
+
+    VisualizationNodePtr VisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    {
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
+        // try to read from file
+        visualizationNode->setFilename(filename, boundingBox);
+
+        TriMeshModelPtr t(new TriMeshModel());
+        STLReaderPtr r(new STLReader());
+        r->setScaling(1000.0f); // mm
+        bool readOK = r->read(filename, t);
+
+        if (!readOK)
+        {
+            VR_ERROR << "Could not read stl file " << filename << endl;
+            return visualizationNode;
+        }
+
+        Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
+        visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
+
+        return visualizationNode;
+    }
+
     VisualizationPtr VisualizationFactory::getVisualization(RobotPtr robot, VisualizationFactory::VisualizationType visuType, bool sensors)
     {
         if (!robot)

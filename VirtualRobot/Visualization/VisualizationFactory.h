@@ -117,6 +117,8 @@ namespace VirtualRobot
         {
         }
 
+        virtual VisualizationNodePtr getVisualizationFromSTLFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+
         virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray())
         {
             return VisualizationNodePtr();

@@ -56,6 +56,32 @@ namespace VirtualRobot
     }
 
 
+    int WorkspaceRepresentation::avgAngleReachabilities(int x0, int x1, int x2) const
+    {
+        int res = 0;
+
+        if (!data->hasEntry(x0, x1, x2))
+        {
+            return 0;
+        }
+
+        for (int d = 0; d < numVoxels[3]; d++)
+        {
+            for (int e = 0; e < numVoxels[4]; e++)
+            {
+                for (int f = 0; f < numVoxels[5]; f++)
+                {
+                    res += data->get(x0, x1, x2, d, e, f);
+                }
+            }
+        }
+
+        res /=  numVoxels[3]* numVoxels[4]* numVoxels[5];
+
+        return res;
+    }
+
+
     void WorkspaceRepresentation::uncompressData(const unsigned char* source, int size, unsigned char* dest)
     {
         unsigned char count;
@@ -1204,6 +1230,59 @@ namespace VirtualRobot
         return true;
     }
 
+    WorkspaceRepresentation::VolumeInfo WorkspaceRepresentation::computeVolumeInformation()
+    {
+        WorkspaceRepresentation::VolumeInfo result;
+        result.borderVoxelCount3D = 0;
+        result.filledVoxelCount3D = 0;
+        result.volume3D = 0;
+        result.volumeFilledVoxels3D = 0;
+        result.volumeVoxel3D = 0;
+        result.voxelCount3D = numVoxels[0]*numVoxels[1]*numVoxels[2];
+        for (int a = 0; a < numVoxels[0]; a++)
+        {
+            for (int b = 0; b < numVoxels[1]; b++)
+            {
+                for (int c = 0; c < numVoxels[2]; c++)
+                {
+                    int value = sumAngleReachabilities(a, b, c);
+
+                    if (value > 0)
+                    {
+                        result.filledVoxelCount3D++;
+                        if (a==0 || b==0 || c==0 || a==numVoxels[0]-1 || b==numVoxels[1]-1 || c==numVoxels[2]-1)
+                            result.borderVoxelCount3D++;
+                        else
+                        {
+                            int neighborEmptyCount = 0;
+                            if (sumAngleReachabilities(a-1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a+1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b-1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b+1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c-1)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c+1)==0)
+                                neighborEmptyCount++;
+                            if (neighborEmptyCount>1)
+                                result.borderVoxelCount3D++;
+                        }
+                    }
+                }
+            }
+        }
+        double discrM = discretizeStepTranslation * 0.001;
+        double voxelVolume = discrM * discrM * discrM;
+        result.volumeVoxel3D = (float)voxelVolume;
+        result.volumeFilledVoxels3D = (float)((double)result.filledVoxelCount3D * voxelVolume);
+        result.volume3D = (float)(((double)result.filledVoxelCount3D - 0.5*(double)result.borderVoxelCount3D) * voxelVolume);
+
+        return result;
+    }
+
     Eigen::Matrix4f WorkspaceRepresentation::getPoseFromVoxel(float v[6], bool transformToGlobalPose /*= true*/)
     {
         float x[6];
@@ -1478,7 +1557,7 @@ namespace VirtualRobot
         for (int i = 0; i < 6; i++)
         {
             float sizex = storeMaxBounds[i] - storeMinBounds[i];
-            float factor = 0.1f;
+            float factor = 0.2f;
 
             if (i > 2)
             {
@@ -1528,6 +1607,65 @@ namespace VirtualRobot
             {
                 tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
                 result->entries(a, b) = getEntry(tmpPose);
+            }
+        }
+
+        return result;
+    }
+
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize) const
+    {
+        THROW_VR_EXCEPTION_IF(cellSize <= 0.0f, "Invalid parameter");
+        THROW_VR_EXCEPTION_IF(heightPercent < 0.0f || heightPercent>1.0f, "Invalid parameter");
+
+        WorkspaceCut2DPtr result(new WorkspaceCut2D());
+
+        Eigen::Vector3f minBB, maxBB;
+
+        getWorkspaceExtends(minBB, maxBB);
+        result->minBounds[0] = minBB(0);
+        result->maxBounds[0] = maxBB(0);
+        result->minBounds[1] = minBB(1);
+        result->maxBounds[1] = maxBB(1);
+
+        float sizeX = result->maxBounds[0] - result->minBounds[0];
+        int numVoxelsX = (int)(sizeX / cellSize);
+        float sizeY = result->maxBounds[1] - result->minBounds[1];
+        int numVoxelsY = (int)(sizeY / cellSize);
+
+        float sizeZGlobal = maxBB(2) - minBB(2);
+        float poseZGlobal = minBB(2) + heightPercent*sizeZGlobal;
+
+        result->entries.resize(numVoxelsX, numVoxelsY);
+        result->entries.setZero();
+
+        Eigen::Matrix4f refPose = getToGlobalTransformation();
+        refPose(2,3) = poseZGlobal;
+        result->referenceGlobalPose = refPose;
+
+        Eigen::Matrix4f tmpPose = refPose;
+        Eigen::Matrix4f localPose;
+        float x[6];
+        unsigned int v[6];
+
+        for (int a = 0; a < numVoxelsX; a++)
+        {
+            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
+
+            for (int b = 0; b < numVoxelsY; b++)
+            {
+                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
+                localPose = tmpPose;
+                toLocal(localPose);
+                matrix2Vector(localPose,x);
+
+                if (!getVoxelFromPose(x, v))
+                {
+                    //result->entries(a, b) = 0;
+                    continue;
+                }
+                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
             }
         }
 

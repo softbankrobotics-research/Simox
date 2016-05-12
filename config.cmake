@@ -392,14 +392,17 @@ IF (NOT Simox_CONFIGURED)
         
         if ( (QT_FOUND OR Qt5_FOUND) AND OGRE_FOUND)
             MESSAGE (STATUS "Enabling Ogre/Qt support")
-            MESSAGE(STATUS "OPENSCENEGRAPH_LIBRARIES: ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES}")
+            MESSAGE(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES} assimp")
             SET (Simox_VISUALIZATION TRUE)
           
+            # todo: check for assimp lib
             LIST (APPEND Simox_VISUALIZATION_LIBS ${OGRE_LIBRARIES})
             LIST (APPEND Simox_VISUALIZATION_LIBS ${OGRE_Overlay_LIBRARIES})
+            LIST (APPEND Simox_VISUALIZATION_LIBS assimp)
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_INCLUDE_DIRS})
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_SAMPLES_INCLUDEPATH}) # not sure if we need this path
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_Overlay_INCLUDE_DIRS})
+            set(Simox_BUILD_EXAMPLES ON)
             if (UNIX)
                 MESSAGE (STATUS "Searching GL libraries")
                 FIND_PACKAGE(OpenGL)
