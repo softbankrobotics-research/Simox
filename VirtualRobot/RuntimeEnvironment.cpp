@@ -349,7 +349,7 @@ namespace VirtualRobot
 
     int RuntimeEnvironment::toInt(const std::string& s)
     {
-        int a = (float)atoi(s.c_str());
+        int a = (int)atoi(s.c_str());
         return a;
     }
 

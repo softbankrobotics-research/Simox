@@ -52,8 +52,6 @@ if (Simox_BUILD_SimDynamics)
     set (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} ${Simox_SimDynamics_COMPILE_FLAGS}")
     #MESSAGE ("Simox_EXTERNAL_LIBRARY_FLAGS::: ${Simox_EXTERNAL_LIBRARY_FLAGS} !!!!!!!!!!!!!!!!")
 
-
-
 endif()
 
   MESSAGE(STATUS "** Simox_EXTERNAL_INCLUDE_DIRS:${Simox_EXTERNAL_INCLUDE_DIRS}")

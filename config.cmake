@@ -389,19 +389,24 @@ IF (NOT Simox_CONFIGURED)
         else ()
             MESSAGE (STATUS "Did not find Qt. Disabling Qt/OGRE support.")
         endif ()
+		
+		FIND_PACKAGE(ASSIMP)
         
-        if ( (QT_FOUND OR Qt5_FOUND) AND OGRE_FOUND)
-            MESSAGE (STATUS "Enabling Ogre/Qt support")
-            MESSAGE(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES} assimp")
+        if ( (QT_FOUND OR Qt5_FOUND) AND OGRE_FOUND AND ASSIMP_FOUND)
+            MESSAGE (STATUS "Enabling Ogre/Qt/Assimp support")
+            MESSAGE(STATUS "OGRE_LIBRARIES: ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES} ${ASSIMP_LIBRARIES}")
+            MESSAGE(STATUS "ASSIMP LIBRARY DIR: ${ASSIMP_LIBRARY_DIRS}")
             SET (Simox_VISUALIZATION TRUE)
-          
-            # todo: check for assimp lib
+         
             LIST (APPEND Simox_VISUALIZATION_LIBS ${OGRE_LIBRARIES})
             LIST (APPEND Simox_VISUALIZATION_LIBS ${OGRE_Overlay_LIBRARIES})
-            LIST (APPEND Simox_VISUALIZATION_LIBS assimp)
+            LIST (APPEND Simox_VISUALIZATION_LIBS ${ASSIMP_LIBRARIES})
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_INCLUDE_DIRS})
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_SAMPLES_INCLUDEPATH}) # not sure if we need this path
             LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${OGRE_Overlay_INCLUDE_DIRS})
+	        LIST (APPEND Simox_VISUALIZATION_INCLUDE_PATHS ${ASSIMP_INCLUDE_DIRS})
+	        LIST (APPEND Simox_EXTERNAL_LIBRARY_DIRS ${ASSIMP_LIBRARY_DIRS})
+			
             set(Simox_BUILD_EXAMPLES ON)
             if (UNIX)
                 MESSAGE (STATUS "Searching GL libraries")
@@ -455,6 +460,7 @@ IF (NOT Simox_CONFIGURED)
 
   
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+	LINK_DIRECTORIES( ${Simox_EXTERNAL_LIBRARY_DIRS} )
     ADD_DEFINITIONS( ${Simox_EXTERNAL_LIBRARY_FLAGS} )
 
 ENDIF(NOT Simox_CONFIGURED)
