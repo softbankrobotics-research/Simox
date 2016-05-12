@@ -58,7 +58,7 @@ namespace VirtualRobot
 
         /*!
         Colorize this visualization.
-        @param c The color to apply. To disable the colorization apply Color::None()
+        @param c The color to apply. To disable the colorization apply Color::NoColor()
         */
         virtual void colorize(VisualizationFactory::Color c);
 

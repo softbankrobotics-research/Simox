@@ -105,7 +105,7 @@ namespace VirtualRobot
         bool write(std::ostream* file, const char* value, int num);
 
         typedef char            Char;
-        typedef unsigned char   Bool;
+        typedef unsigned char   Compr_Bool;
         typedef unsigned char   UChar;
         typedef int             Int32;
         typedef unsigned int    UInt32;
@@ -175,7 +175,7 @@ namespace VirtualRobot
 
             /* map of bytes used in block */
             Int32    nInUse;
-            Bool     inUse[256];
+            Compr_Bool     inUse[256];
             UChar    unseqToSeq[256];
 
             /* the buffer for bit stream creation */
@@ -218,7 +218,7 @@ namespace VirtualRobot
             /* for doing the final run-length decoding */
             UChar    state_out_ch;
             Int32    state_out_len;
-            Bool     blockRandomised;
+            Compr_Bool     blockRandomised;
             BZ_RAND_DECLS;
 
             /* the buffer for bit stream reading */
@@ -227,7 +227,7 @@ namespace VirtualRobot
 
             /* misc administratium */
             Int32    blockSize100k;
-            Bool     smallDecompress;
+            Compr_Bool     smallDecompress;
             Int32    currBlockNo;
             Int32    verbosity;
 
@@ -255,8 +255,8 @@ namespace VirtualRobot
 
             /* map of bytes used in block */
             Int32    nInUse;
-            Bool     inUse[256];
-            Bool     inUse16[16];
+            Compr_Bool     inUse[256];
+            Compr_Bool     inUse16[16];
             UChar    seqToUnseq[256];
 
             /* for decoding the MTF values */
@@ -304,18 +304,18 @@ namespace VirtualRobot
 
         static void BZ2_bsInitWrite(EState* s);
         Int32 BZ2_decompress(DState* s);
-        static void BZ2_compressBlock(EState* s, Bool is_last_block);
+        static void BZ2_compressBlock(EState* s, Compr_Bool is_last_block);
 
-        static CompressionBZip2::Bool myfeof(std::istream* f);  // FILE* f );
+        static CompressionBZip2::Compr_Bool myfeof(std::istream* f);  // FILE* f );
 
         static int bz_config_ok(void);
 
         static void add_pair_to_block(EState* s);
-        static Bool copy_input_until_stop(EState* s);
-        static Bool copy_output_until_stop(EState* s);
+        static Compr_Bool copy_input_until_stop(EState* s);
+        static Compr_Bool copy_output_until_stop(EState* s);
 
-        static Bool unRLE_obuf_to_output_SMALL(DState* s);
-        static Bool unRLE_obuf_to_output_FAST(DState* s);
+        static Compr_Bool unRLE_obuf_to_output_SMALL(DState* s);
+        static Compr_Bool unRLE_obuf_to_output_FAST(DState* s);
 
 
 
@@ -381,10 +381,10 @@ namespace VirtualRobot
             std::ostream*   handleOut;
             Char      buf[BZ_MAX_UNUSED];
             Int32     bufN;
-            Bool      writing;
+            Compr_Bool      writing;
             bz_stream strm;
             Int32     lastErr;
-            Bool      initialisedOk;
+            Compr_Bool      initialisedOk;
         }
         bzFile;
 
@@ -403,10 +403,10 @@ namespace VirtualRobot
         static void default_bzfree(void* opaque, void* addr);
         static void init_RL(EState* s);
         static void prepare_new_block(EState* s);
-        static Bool isempty_RL(EState* s);
+        static Compr_Bool isempty_RL(EState* s);
         static void flush_RL(EState* s);
 
-        static Bool handle_compress(bz_stream* strm);
+        static Compr_Bool handle_compress(bz_stream* strm);
 
         int BZ2_bzCompress(bz_stream* strm, int action);
         static Int32 BZ2_indexIntoF(Int32 indx, Int32* cftab);
@@ -465,7 +465,7 @@ namespace VirtualRobot
                                    Int32   d,
                                    Int32*  budget);
 
-        static Bool mainGtU(UInt32  i1,
+        static Compr_Bool mainGtU(UInt32  i1,
                             UInt32  i2,
                             UChar*  block,
                             UInt16* quadrant,

@@ -218,7 +218,7 @@ namespace VirtualRobot
                 }
         }
 
-        storeColor = VirtualRobot::VisualizationFactory::Color::None();
+        storeColor = VirtualRobot::VisualizationFactory::Color::NoColor();
         return false;
     }
 

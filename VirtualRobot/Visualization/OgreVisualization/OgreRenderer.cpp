@@ -1,10 +1,13 @@
 
+#include "OgreRenderer.h"
+
 #include <QMetaType>
 
 // This is required for QT_MAC_USE_COCOA to be set
 #include <QtCore/qglobal.h>
 
 #if defined(__linux__)
+#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <GL/glx.h>
@@ -26,7 +29,6 @@
 //#include <OgreOverlaySystem.h>
 //#endif
 
-#include "OgreRenderer.h"
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/XML/FileIO.h>
@@ -96,7 +98,7 @@ OgreRenderer::OgreRenderer() :
 {
 	// consider compile time paths
 #ifdef OGRE_PLUGIN_DIRECTORIES
-	std::string dirs(OGRE_PLUGIN_DIRECTORIES);
+    std::string dirs(OGRE_PLUGIN_DIRECTORIES);
 	std::vector<std::string> paths;
 	boost::split(paths, dirs, boost::is_any_of(";,"));
 	for (auto p : paths)
@@ -369,15 +371,15 @@ int checkBadDrawable( Display* display, XErrorEvent* error )
 std::string OgreRenderer::getOgreHandle(intptr_t winId)
 {
 	std::string ogreHandle;
-#if defined(WIN32)
+//#if defined(WIN32)
 	ogreHandle = Ogre::StringConverter::toString(winId);
-#else
+/*#else
 	QX11Info info = x11Info();
 	Ogre::String handle = Ogre::StringConverter::toString((unsigned long)(info.display())) + ":";
 	handle += Ogre::StringConverter::toString((unsigned int)(info.screen())) + ":";
 	handle += Ogre::StringConverter::toString((unsigned long)(winId));
 	ogreHandle = handle;
-#endif
+#endif*/
 	return ogreHandle;
 }
 

@@ -20,8 +20,8 @@
 #define BZ_OUTBUFF_FULL      (-8)
 #define BZ_CONFIG_ERROR      (-9)
 
-#define BZ_True  ((Bool)1)
-#define BZ_False ((Bool)0)
+#define BZ_True  ((Compr_Bool)1)
+#define BZ_False ((Compr_Bool)0)
 
 #define BZ_M_IDLE      1
 #define BZ_M_RUNNING   2
@@ -1109,7 +1109,7 @@ namespace VirtualRobot
 
         /*--- Transmit the mapping table. ---*/
         {
-            Bool inUse16[16];
+            Compr_Bool inUse16[16];
 
             for (i = 0; i < 16; i++)
             {
@@ -1321,7 +1321,7 @@ namespace VirtualRobot
 
 
     /*---------------------------------------------------*/
-    void CompressionBZip2::BZ2_compressBlock(EState* s, Bool is_last_block)
+    void CompressionBZip2::BZ2_compressBlock(EState* s, Compr_Bool is_last_block)
     {
         if (s->nblock > 0)
         {
@@ -1533,7 +1533,7 @@ namespace VirtualRobot
     {
         Int32  i, j, k, ss, sb;
         Int32  runningOrder[256];
-        Bool   bigDone[256];
+        Compr_Bool   bigDone[256];
         Int32  copyStart[256];
         Int32  copyEnd  [256];
         UChar  c1;
@@ -1884,7 +1884,7 @@ zero:
     /*---------------------------------------------*/
 
     /*---------------------------------------------*/
-    CompressionBZip2::Bool CompressionBZip2::mainGtU(UInt32  i1,
+    CompressionBZip2::Compr_Bool CompressionBZip2::mainGtU(UInt32  i1,
             UInt32  i2,
             UChar*  block,
             UInt16* quadrant,
@@ -4211,7 +4211,7 @@ save_state_and_return:
     }
 
 
-    CompressionBZip2::Bool CompressionBZip2::isempty_RL(CompressionBZip2::EState* s)
+    CompressionBZip2::Compr_Bool CompressionBZip2::isempty_RL(CompressionBZip2::EState* s)
     {
         if (s->state_in_ch < 256 && s->state_in_len > 0)
         {
@@ -4523,7 +4523,7 @@ save_state_and_return:
     /*---------------------------------------------------*/
     int CompressionBZip2::BZ2_bzCompress(CompressionBZip2::bz_stream* strm, int action)
     {
-        Bool progress;
+        Compr_Bool progress;
         EState* s;
 
         if (strm == NULL)
@@ -4629,10 +4629,10 @@ preswitch:
 
 
     /*---------------------------------------------------*/
-    CompressionBZip2::Bool CompressionBZip2::handle_compress(CompressionBZip2::bz_stream* strm)
+    CompressionBZip2::Compr_Bool CompressionBZip2::handle_compress(CompressionBZip2::bz_stream* strm)
     {
-        Bool progress_in  = BZ_False;
-        Bool progress_out = BZ_False;
+        Compr_Bool progress_in  = BZ_False;
+        Compr_Bool progress_out = BZ_False;
         EState* s = (EState*)strm->state;
 
         while (BZ_True)
@@ -4672,7 +4672,7 @@ preswitch:
                 if (s->mode != BZ_M_RUNNING && s->avail_in_expect == 0)
                 {
                     flush_RL(s);
-                    BZ2_compressBlock(s, (Bool)(s->mode == BZ_M_FINISHING));
+                    BZ2_compressBlock(s, (Compr_Bool)(s->mode == BZ_M_FINISHING));
                     s->state = BZ_S_OUTPUT;
                 }
                 else if (s->nblock >= s->nblockMAX)
@@ -4702,9 +4702,9 @@ preswitch:
     }
 
     /*---------------------------------------------------*/
-    CompressionBZip2::Bool CompressionBZip2::copy_input_until_stop(CompressionBZip2::EState* s)
+    CompressionBZip2::Compr_Bool CompressionBZip2::copy_input_until_stop(CompressionBZip2::EState* s)
     {
-        Bool progress_in = BZ_False;
+        Compr_Bool progress_in = BZ_False;
 
         if (s->mode == BZ_M_RUNNING)
         {
@@ -4781,9 +4781,9 @@ preswitch:
 
 
     /*---------------------------------------------------*/
-    CompressionBZip2::Bool CompressionBZip2::copy_output_until_stop(CompressionBZip2::EState* s)
+    CompressionBZip2::Compr_Bool CompressionBZip2::copy_output_until_stop(CompressionBZip2::EState* s)
     {
-        Bool progress_out = BZ_False;
+        Compr_Bool progress_out = BZ_False;
 
         while (BZ_True)
         {
@@ -5104,7 +5104,7 @@ preswitch:
 
 
     /*---------------------------------------------*/
-    CompressionBZip2::Bool CompressionBZip2::myfeof(std::istream* f)  //FILE* f )
+    CompressionBZip2::Compr_Bool CompressionBZip2::myfeof(std::istream* f)  //FILE* f )
     {
         if (!f)
         {
@@ -5126,7 +5126,7 @@ preswitch:
     /*---------------------------------------------------*/
     int CompressionBZip2::BZ2_bzDecompress(CompressionBZip2::bz_stream* strm)
     {
-        Bool    corrupt;
+        Compr_Bool    corrupt;
         DState* s;
 
         if (strm == NULL)
@@ -5236,7 +5236,7 @@ preswitch:
        Returns False if there is no problem.
     */
 
-    CompressionBZip2::Bool CompressionBZip2::unRLE_obuf_to_output_FAST(CompressionBZip2::DState* s)
+    CompressionBZip2::Compr_Bool CompressionBZip2::unRLE_obuf_to_output_FAST(CompressionBZip2::DState* s)
     {
         UChar k1;
 
@@ -5529,7 +5529,7 @@ return_notr:
     /* Return  True iff data corruption is discovered.
        Returns False if there is no problem.
     */
-    CompressionBZip2::Bool CompressionBZip2::unRLE_obuf_to_output_SMALL(CompressionBZip2::DState* s)
+    CompressionBZip2::Compr_Bool CompressionBZip2::unRLE_obuf_to_output_SMALL(CompressionBZip2::DState* s)
     {
         UChar k1;
 
@@ -5818,7 +5818,7 @@ return_notr:
         strm->total_in_hi32      = 0;
         strm->total_out_lo32     = 0;
         strm->total_out_hi32     = 0;
-        s->smallDecompress = (Bool)smallValue;
+        s->smallDecompress = (Compr_Bool)smallValue;
         s->ll4                   = NULL;
         s->ll16                  = NULL;
         s->tt                    = NULL;
@@ -5976,7 +5976,7 @@ return_notr:
            for both the heap and nodes is a sentinel.
         --*/
         Int32 nNodes, nHeap, n1, n2, i, j, k;
-        Bool  tooLong;
+        Compr_Bool  tooLong;
 
         Int32 heap   [ BZ_MAX_ALPHA_SIZE + 2 ];
         Int32 weight [ BZ_MAX_ALPHA_SIZE * 2 ];
