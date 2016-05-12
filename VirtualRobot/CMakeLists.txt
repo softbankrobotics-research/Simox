@@ -98,6 +98,8 @@ IK/ConstrainedStackedIK.cpp
 IK/Constraint.cpp
 IK/constraints/BalanceConstraint.cpp
 IK/constraints/PoseConstraint.cpp
+IK/constraints/PositionConstraint.cpp
+IK/constraints/OrientationConstraint.cpp
 IK/constraints/TSRConstraint.cpp
 IK/constraints/ReferenceConfigurationConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
@@ -193,6 +195,8 @@ IK/ConstrainedStackedIK.h
 IK/Constraint.h
 IK/constraints/BalanceConstraint.h
 IK/constraints/PoseConstraint.h
+IK/constraints/PositionConstraint.h
+IK/constraints/OrientationConstraint.h
 IK/constraints/TSRConstraint.h
 IK/constraints/ReferenceConfigurationConstraint.h
 Workspace/WorkspaceData.h
