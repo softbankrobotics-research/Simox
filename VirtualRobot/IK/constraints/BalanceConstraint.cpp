@@ -25,16 +25,6 @@
 
 #include <VirtualRobot/MathTools.h>
 
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoNode.h>
-#include <Inventor/nodes/SoSelection.h>
-#include <Inventor/nodes/SoLineSet.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoSphere.h>
-#include <Inventor/nodes/SoTransform.h>
-
 using namespace VirtualRobot;
 
 BalanceConstraint::BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,

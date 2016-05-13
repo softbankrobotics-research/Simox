@@ -25,11 +25,6 @@
 
 #include <VirtualRobot/Robot.h>
 
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoSphere.h>
-#include <Inventor/nodes/SoTransform.h>
-
 #include <iostream>
 
 using namespace VirtualRobot;
