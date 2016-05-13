@@ -33,7 +33,11 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public boost::enable_shared_from_this<ReferenceConfigurationConstraint>
     {
     public:
+        ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
         ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const Eigen::VectorXf &reference);
+
+        void setReferenceConfiguration(const Eigen::VectorXf &config);
+        Eigen::VectorXf getReferenceConfiguration();
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);

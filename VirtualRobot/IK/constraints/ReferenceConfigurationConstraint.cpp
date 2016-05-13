@@ -25,11 +25,35 @@
 
 using namespace VirtualRobot;
 
+ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet) :
+    Constraint(nodeSet),
+    robot(robot),
+    nodeSet(nodeSet)
+{
+    // Use zero reference by default
+    setReferenceConfiguration(Eigen::VectorXf::Zero(nodeSet->getSize()));
+
+    // Joint limit avoidance is considered a soft constraint
+    addOptimizationFunction(0, true);
+
+    initialized = true;
+}
+
 ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const Eigen::VectorXf &reference) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
     reference(reference)
+{
+    setReferenceConfiguration(reference);
+
+    // Joint limit avoidance is considered a soft constraint
+    addOptimizationFunction(0, true);
+
+    initialized = true;
+}
+
+void ReferenceConfigurationConstraint::setReferenceConfiguration(const Eigen::VectorXf &config)
 {
     if(nodeSet->getSize() != reference.rows())
     {
@@ -37,10 +61,12 @@ ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPt
         return;
     }
 
-    // Joint limit avoidance is considered a soft constraint
-    addOptimizationFunction(0, true);
+    reference = config;
+}
 
-    initialized = true;
+Eigen::VectorXf ReferenceConfigurationConstraint::getReferenceConfiguration()
+{
+    return reference;
 }
 
 double ReferenceConfigurationConstraint::optimizationFunction(unsigned int id)
