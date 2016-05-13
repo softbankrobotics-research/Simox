@@ -69,12 +69,17 @@ void showSceneWindow::setupUI()
     UI.setupUi(this);
     SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
 
-    VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
-
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
 
     viewer = viewerFactory->createViewer(UI.frameViewer);
-            //new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+
+    // just a test!!!
+    VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
+    VirtualRobot::VisualizationNodePtr box = visuFactory->createBox(100,100,100);
+    viewer->addVisualization("test","id1",box);
+
+
+    //new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
     // setup
     /*
