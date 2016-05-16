@@ -162,7 +162,6 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
         double currentError = hardOptimizationFunction(x);
-        std::cout << "Current error " << currentError << " vs tol²" << tolerance *tolerance << std::endl;
         // We determine success based on hard constraints only
         if(currentError < tolerance * tolerance)
         {
