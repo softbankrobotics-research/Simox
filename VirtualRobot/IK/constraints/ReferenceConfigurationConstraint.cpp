@@ -55,9 +55,11 @@ ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPt
 
 void ReferenceConfigurationConstraint::setReferenceConfiguration(const Eigen::VectorXf &config)
 {
-    if(nodeSet->getSize() != reference.rows())
+    if(nodeSet->getSize() != config.rows())
     {
-        THROW_VR_EXCEPTION("Reference configuration does not match node set size.");
+        std::stringstream sstr;
+        sstr << "Reference configuration does not match node set size: "  << " nodeSet size: " << nodeSet->getSize() << " reference joint set size: " << reference.rows();
+        THROW_VR_EXCEPTION(sstr.str());
         return;
     }
 

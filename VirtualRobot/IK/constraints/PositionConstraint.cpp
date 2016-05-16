@@ -36,12 +36,16 @@ PositionConstraint::PositionConstraint(const VirtualRobot::RobotPtr &robot, cons
     target(target),
     cartesianSelection(cartesianSelection)
 {
+    ik.reset(new DifferentialIK(nodeSet));
+    Eigen::Matrix4f target4x4 = Eigen::Matrix4f::Identity();
+    target4x4.block<3,1>(0,3) = target;
+    ik->setGoal(target, eef, cartesianSelection);
     addOptimizationFunction(0, false);
 }
 
 double PositionConstraint::optimizationFunction(unsigned int id)
 {
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
 
     switch(cartesianSelection)
     {
@@ -70,7 +74,7 @@ Eigen::VectorXf PositionConstraint::optimizationGradient(unsigned int id)
     int size = nodeSet->getSize();
 
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(0, 0, 3, size);
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
 
     switch(cartesianSelection)
     {

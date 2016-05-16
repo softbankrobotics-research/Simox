@@ -36,6 +36,11 @@ OrientationConstraint::OrientationConstraint(const VirtualRobot::RobotPtr &robot
     target(target),
     cartesianSelection(cartesianSelection)
 {
+    ik.reset(new DifferentialIK(nodeSet));
+    Eigen::Matrix4f target4x4 = Eigen::Matrix4f::Identity();
+    target4x4.block<3,3>(0,0) = target;
+    ik->setGoal(target4x4, eef, cartesianSelection);
+    addOptimizationFunction(0, false);
 }
 
 double OrientationConstraint::optimizationFunction(unsigned int id)
