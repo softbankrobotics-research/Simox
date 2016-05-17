@@ -28,13 +28,14 @@
 using namespace VirtualRobot;
 
 OrientationConstraint::OrientationConstraint(const VirtualRobot::RobotPtr &robot, const VirtualRobot::RobotNodeSetPtr &nodeSet, const VirtualRobot::SceneObjectPtr &eef,
-                                                           const Eigen::Matrix3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection) :
+                                                           const Eigen::Matrix3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
     eef(eef),
     target(target),
-    cartesianSelection(cartesianSelection)
+    cartesianSelection(cartesianSelection),
+    tolerance(tolerance)
 {
     ik.reset(new DifferentialIK(nodeSet));
     Eigen::Matrix4f target4x4 = Eigen::Matrix4f::Identity();
@@ -92,4 +93,30 @@ Eigen::VectorXf OrientationConstraint::optimizationGradient(unsigned int id)
     }
 
     return Eigen::VectorXf::Zero(size);
+}
+
+bool OrientationConstraint::checkTolerances()
+{
+
+
+    switch(cartesianSelection)
+    {
+        case IKSolver::CartesianSelection::X:
+        case IKSolver::CartesianSelection::Y:
+        case IKSolver::CartesianSelection::Z:
+        case IKSolver::CartesianSelection::Position:
+            return true;
+            break;
+
+        case IKSolver::CartesianSelection::Orientation:
+        case IKSolver::CartesianSelection::All:
+        {
+            Eigen::Matrix3f diff = target * eef->getGlobalPose().block<3,3>(0,0).inverse();
+            Eigen::AngleAxisf aa(diff);
+
+            return aa.angle() <= tolerance;
+        }
+            break;
+    }
+
 }

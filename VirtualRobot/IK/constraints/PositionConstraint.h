@@ -36,10 +36,11 @@ namespace VirtualRobot
     {
     public:
         PositionConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Vector3f& target,
-                       IKSolver::CartesianSelection cartesianSelection = IKSolver::All);
+                       IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 3.0f);
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);
+        bool checkTolerances();
 
     protected:
         RobotPtr robot;
@@ -49,6 +50,7 @@ namespace VirtualRobot
 
         DifferentialIKPtr ik;
         IKSolver::CartesianSelection cartesianSelection;
+        float tolerance;
     };
 
     typedef boost::shared_ptr<PositionConstraint> PositionConstraintPtr;
