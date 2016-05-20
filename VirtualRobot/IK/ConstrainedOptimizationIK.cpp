@@ -161,9 +161,10 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         {
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
-        double currentError = hardOptimizationFunction(x);
+        double currentError;
+        bool success = hardOptimizationFunction(x, currentError);
         // We determine success based on hard constraints only
-        if(currentError < tolerance * tolerance)
+        if(success)
         {
             // Success
             robot->setUpdateVisualization(updateVisualization);
@@ -267,7 +268,7 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
     return setup.constraint->optimizationFunction(setup.id);
 }
 
-double ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x)
+bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x, double & error)
 {
     if(x != currentX)
     {
@@ -275,9 +276,8 @@ double ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<dou
         nodeSet->setJointValues(q);
         currentX = x;
     }
-
-    double value = 0;
-
+    bool result = true;
+    error = 0;
     for(auto &constraint : constraints)
     {
         for(auto &function : constraint->getOptimizationFunctions())
@@ -288,11 +288,12 @@ double ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<dou
                 continue;
             }
 
-            value += function.constraint->optimizationFunction(function.id);
+            result &= function.constraint->checkTolerances();
+            error += function.constraint->optimizationFunction(function.id);
         }
     }
 
-    return value;
+    return result;
 }
 
 
