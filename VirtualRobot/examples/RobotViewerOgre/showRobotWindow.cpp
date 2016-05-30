@@ -16,6 +16,8 @@
 #include <cmath>
 #include <sstream>
 
+#include <VirtualRobot/Visualization/OgreVisualization/OgreVisualizationNode.h>
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -37,7 +39,6 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     //viewer->viewAll();
 }
 
-
 showRobotWindow::~showRobotWindow()
 {
     robot.reset();
@@ -49,13 +50,6 @@ void showRobotWindow::setupUI()
     //centralWidget()->setLayout(UI.gridLayoutViewer);
 
     viewer = new SimoxGui::OgreViewer(UI.frameViewer);
-
-    // test with box:
-    //VirtualRobot::VisualizationFactoryPtr visuFactory = VirtualRobot::VisualizationFactory::fromName("ogre", NULL);
-    //THROW_VR_EXCEPTION_IF(!visuFactory,"No visu factory?!");
-    //VirtualRobot::VisualizationNodePtr box = visuFactory->createBox(100,100,100);
-    //viewer->addVisualization("test","id1",box);
-
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -199,7 +193,27 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
 
+#if 0
+    // Test the box creation and visualization
     VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+
+    auto boxA = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 1.0f, 0.0f, 0.0f);
+    auto* realBoxA = dynamic_cast<OgreVisualizationNode*>(boxA.get());
+    realBoxA->getOgreVisualization()->setPosition(0.0f, 0.0f, 0.0f);
+    viewer->addVisualization("robotLayer", "boxA", boxA);
+
+    auto boxB = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 0.0f, 0.7f, 0.0f);
+    auto* realBoxB = dynamic_cast<OgreVisualizationNode*>(boxB.get());
+    realBoxB->getOgreVisualization()->setPosition(20.0f, 0.0f, 0.0f);
+    viewer->addVisualization("robotLayer", "boxB", boxB);
+
+    auto boxC = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 0.7f);
+    auto* realBoxC = dynamic_cast<OgreVisualizationNode*>(boxC.get());
+    realBoxC->getOgreVisualization()->setPosition(-20.0f, 0.0f, 0.0f);
+    viewer->addVisualization("robotLayer", "boxC", boxC);
+
+    viewer->setCameraTarget(boxA);
+#endif
 
     VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);
     viewer->addVisualization("robotLayer", "robot", visu);

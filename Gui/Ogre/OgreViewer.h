@@ -27,7 +27,6 @@
 #include <OGRE/Ogre.h>
 
 #include <QWidget>
-#include <QFrame>
 
 #include "../ViewerInterface.h"
 #include "OrbitCamera.h"
@@ -36,7 +35,7 @@
 namespace SimoxGui
 {
 
-class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWidget, public ViewerInterface
+class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWindow, public ViewerInterface
 {
     Q_OBJECT
 
@@ -59,20 +58,28 @@ class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWidget, public ViewerInterfac
 
         bool hasLayer(const std::string &layer);
 
+        void setCameraTarget(const VirtualRobot::VisualizationNodePtr &visualization);
+
+    protected:
         void createRenderWindow();
 
         Ogre::SceneManager *getSceneManager();
         OrbitCamera *getCameraController();
 
-        virtual void paintEvent(QPaintEvent* event);
-        virtual void resizeEvent(QResizeEvent* event);
-        virtual void moveEvent(QMoveEvent *event);
-
         virtual void mouseMoveEvent(QMouseEvent *event);
         virtual void mousePressEvent(QMouseEvent *event);
         virtual void mouseReleaseEvent(QMouseEvent *event);
 
+        virtual void exposeEvent(QExposeEvent *event);
+        virtual bool event(QEvent *event);
+
         void initializeScene();
+
+    public slots:
+        virtual void renderLater();
+        virtual void renderNow();
+
+        virtual bool eventFilter(QObject *target, QEvent *event);
 
     protected:
 
@@ -92,6 +99,8 @@ class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWidget, public ViewerInterfac
         std::map<std::string, Ogre::SceneNode *> layers;
         //std::map<std::string, Ogre::SceneNode *> visualizations;
         //QFrame* renderFrame;
+
+        bool mUpdatePending;
 };
 
     typedef boost::shared_ptr<OgreViewer> OgreViewerPtr;

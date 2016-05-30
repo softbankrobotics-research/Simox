@@ -34,3 +34,4 @@ moc_*
 .metadata
 .cproject
 .project
+/VirtualRobot/data/config/ogre/ogre.log

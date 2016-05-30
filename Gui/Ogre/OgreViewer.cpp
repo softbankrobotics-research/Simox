@@ -38,31 +38,30 @@
 using namespace SimoxGui;
 
 OgreViewer::OgreViewer(QWidget *parent) :
-    QWidget(parent),
+    QWindow(),
     renderer(VirtualRobot::OgreRenderer::getOgreRenderer()),
     ogreRoot(NULL),
     ogreWindow(NULL),
     ogreCamera(NULL),
     ogreViewport(NULL),
     ogreSceneManager(NULL),
-    cameraController(NULL)
+    cameraController(NULL),
+    mUpdatePending(false)
 {
-    setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_PaintOnScreen);
-    setAttribute(Qt::WA_NoBackground);
+    createRenderWindow();
 
     QVBoxLayout *layout = new QVBoxLayout(parent);
-
-	
-	layout->addWidget(this);
+    QWidget *renderingContainer = QWidget::createWindowContainer(this);
+	layout->addWidget(renderingContainer);
     parent->setLayout(layout);
-
-    createRenderWindow();
 
     assert(ogreRoot);
     assert(ogreSceneManager);
 
     viewerNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
+
+    installEventFilter(this);
+    parent->installEventFilter(this);
 }
 
 OgreViewer::~OgreViewer()
@@ -152,6 +151,17 @@ bool OgreViewer::hasLayer(const std::string &layer)
         return true;
     }
     return false;
+}
+
+void OgreViewer::setCameraTarget(const VirtualRobot::VisualizationNodePtr &visualization)
+{
+    VirtualRobot::OgreVisualizationNodePtr ov = boost::dynamic_pointer_cast<VirtualRobot::OgreVisualizationNode>(visualization);
+    if (!ov)
+        return;
+    Ogre::SceneNode* ovisu = ov->getOgreVisualization();
+    cameraController->setTarget(ovisu);
+    cameraController->setYawPitchDist(Ogre::Degree(0), Ogre::Degree(0), 100.0f);
+    renderLater();
 }
 
 void OgreViewer::start(QWidget *mainWindow)
@@ -279,58 +289,13 @@ OrbitCamera *OgreViewer::getCameraController()
     return cameraController;
 }
 
-void OgreViewer::paintEvent(QPaintEvent *event)
-{
-    if(ogreWindow)
-    {
-        ogreRoot->_fireFrameStarted();
-        ogreWindow->update();
-        ogreRoot->_fireFrameEnded();
-    }
-    else
-    {
-        //createRenderWindow();
-    }
-
-    QWidget::paintEvent(event);
-}
-
-void OgreViewer::resizeEvent(QResizeEvent *event)
-{
-    if(ogreWindow)
-    {
-        ogreWindow->reposition(x(), y());
-        ogreWindow->resize(width(), height());
-        ogreWindow->windowMovedOrResized();
-    }
-
-    if(ogreCamera)
-    {
-       ogreCamera->setAspectRatio(width() / (float)height());
-    }
-
-    QWidget::resizeEvent(event);
-}
-
-void OgreViewer::moveEvent(QMoveEvent *event)
-{
-    if(ogreWindow)
-    {
-        ogreWindow->windowMovedOrResized();
-        update();
-    }
-
-    QWidget::moveEvent(event);
-}
-
 void OgreViewer::mouseMoveEvent(QMouseEvent *event)
 {
     if(cameraController)
     {
         cameraController->injectMouseMove(event);
+        renderLater();
     }
-
-    update();
 }
 
 void OgreViewer::mousePressEvent(QMouseEvent *event)
@@ -338,9 +303,8 @@ void OgreViewer::mousePressEvent(QMouseEvent *event)
     if(cameraController)
     {
         cameraController->injectMouseDown(event);
+        renderLater();
     }
-
-    update();
 }
 
 void OgreViewer::mouseReleaseEvent(QMouseEvent *event)
@@ -348,9 +312,68 @@ void OgreViewer::mouseReleaseEvent(QMouseEvent *event)
     if(cameraController)
     {
         cameraController->injectMouseUp(event);
+        renderLater();
     }
+}
 
-    update();
+bool OgreViewer::event(QEvent *evt)
+{
+    switch (evt->type())
+    {
+    case QEvent::UpdateRequest:
+        mUpdatePending = false;
+        renderNow();
+        return true;
+
+    default:
+        return QWindow::event(evt);
+    }
+}
+
+bool OgreViewer::eventFilter(QObject *target, QEvent *evt)
+{
+    if (evt->type() == QEvent::UpdateRequest)
+    {
+        renderNow();
+    }
+    if (target == this && evt->type() == QEvent::Resize && isExposed() && ogreWindow != NULL)
+    {
+        ogreWindow->reposition(x(), y());
+        ogreWindow->resize(width(), height());
+        ogreWindow->windowMovedOrResized();
+
+        if (ogreCamera)
+        {
+            ogreCamera->setAspectRatio(width() / (float)height());
+        }
+    }
+    return false;
+}
+
+void OgreViewer::exposeEvent(QExposeEvent *evt)
+{
+    Q_UNUSED(evt);
+
+    if (isExposed())
+        renderNow();
+}
+
+void OgreViewer::renderLater()
+{
+    if (!mUpdatePending)
+    {
+        mUpdatePending = true;
+        QApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    }
+}
+
+void OgreViewer::renderNow()
+{
+    if (!isExposed())
+        return;
+
+    Ogre::WindowEventUtilities::messagePump();
+    ogreRoot->renderOneFrame();
 }
 
 void OgreViewer::initializeScene()
@@ -359,7 +382,10 @@ void OgreViewer::initializeScene()
     rgm.addResourceLocation("./models", "FileSystem");
     rgm.initialiseAllResourceGroups();
 
-    ogreSceneManager = ogreRoot->createSceneManager(Ogre::ST_GENERIC);
+    // Note: Use the existing SceneManager because it is used in OgreVisualizationFactory.
+    //  SceneNodes created by different SceneManager objects do not cause exceptions or assertions
+    //  but are not displayed on the screen either.
+    ogreSceneManager = renderer->getSceneManager();
     ogreSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
     Ogre::Light* light = ogreSceneManager->createLight("MainLight");
@@ -374,8 +400,6 @@ void OgreViewer::initializeScene()
     ogreViewport->setBackgroundColour(Ogre::ColourValue(1, 1, 1));
 
     cameraController = new OrbitCamera(ogreCamera);
-
-    resizeEvent(NULL);
 }
 
 bool OgreViewer::hasNode(Ogre::SceneNode *sn, const std::string &id)
@@ -387,7 +411,7 @@ bool OgreViewer::hasNode(Ogre::SceneNode *sn, const std::string &id)
     {
         Ogre::Node *cn = it.getNext();
         if (cn->getName() == id)
-			return true;
+            return true;
     }
     return false;
 }
