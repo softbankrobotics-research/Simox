@@ -72,6 +72,8 @@ void BalanceConstraint::initialize(const RobotPtr& robot, const RobotNodeSetPtr&
 
     updateSupportPolygon();
 
+    addOptimizationFunction(0);
+
     initialized = true;
 }
 
@@ -101,6 +103,21 @@ void BalanceConstraint::updateSupportPolygon()
 void BalanceConstraint::setCoMHeight(float currentheight)
 {
     height = currentheight;
+}
+
+double BalanceConstraint::optimizationFunction(unsigned int id)
+{
+    VR_INFO << "Balance constraint optimization function" << std::endl;
+
+    return 0;
+}
+
+Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int id)
+{
+    VR_INFO << "Balance constraint optimization gradient" << std::endl;
+
+    Eigen::VectorXf result;
+    return result;
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
