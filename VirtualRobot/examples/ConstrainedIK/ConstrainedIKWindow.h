@@ -34,9 +34,11 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/IK/GazeIK.h>
 #include <VirtualRobot/IK/ConstrainedIK.h>
+
 #include <VirtualRobot/IK/constraints/PoseConstraint.h>
 #include <VirtualRobot/IK/constraints/TSRConstraint.h>
 #include <VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h>
+#include <VirtualRobot/IK/constraints/BalanceConstraint.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -87,6 +89,8 @@ public slots:
     void randomPose(bool quiet=false);
     void enablePose();
 
+    void enableBalance();
+
     void performanceEvaluation();
 
 protected:
@@ -113,6 +117,7 @@ protected:
 
     VirtualRobot::PoseConstraintPtr poseConstraint;
     VirtualRobot::TSRConstraintPtr tsrConstraint;
+    VirtualRobot::BalanceConstraintPtr balanceConstraint;
 };
 
 #endif // __Constrained_WINDOW_H_

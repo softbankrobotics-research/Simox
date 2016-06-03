@@ -50,10 +50,6 @@ float TIMER_MS = 30.0f;
 ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
-    VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
-
     robotFilename = sRobotFilename;
     sceneSep = new SoSeparator();
     sceneSep->ref();
@@ -126,6 +122,8 @@ void ConstrainedIKWindow::setupUI()
 
     connect(UI.poseRandom, SIGNAL(clicked()), this, SLOT(randomPose()));
     connect(UI.poseGroup, SIGNAL(clicked()), this, SLOT(enablePose()));
+
+    connect(UI.balanceGroup, SIGNAL(clicked()), this, SLOT(enableBalance()));
 
     connect(UI.evaluationStart, SIGNAL(clicked()), this, SLOT(performanceEvaluation()));
 
@@ -349,6 +347,11 @@ void ConstrainedIKWindow::solve()
         ik->addConstraint(poseConstraint);
     }
 
+    if(UI.balanceGroup->isChecked())
+    {
+        ik->addConstraint(balanceConstraint);
+    }
+
     ik->initialize();
 
     clock_t startT = clock();
@@ -559,6 +562,19 @@ void ConstrainedIKWindow::enablePose()
     }
 }
 
+void ConstrainedIKWindow::enableBalance()
+{
+    if(UI.balanceGroup->isChecked())
+    {
+        RobotNodePtr contactNode = robot->getRobotNode(UI.lineEditContactNode->text().toStdString());
+
+        SceneObjectSetPtr contactNodes(new SceneObjectSet);
+        contactNodes->addSceneObject(contactNode);
+
+        balanceConstraint.reset(new BalanceConstraint(robot, kc, kc, contactNodes));
+    }
+}
+
 void ConstrainedIKWindow::performanceEvaluation()
 {
     srand(UI.evaluationRandomSeed->value());
@@ -612,6 +628,11 @@ void ConstrainedIKWindow::performanceEvaluation()
         {
             randomPose(true);
             ik->addConstraint(poseConstraint);
+        }
+
+        if(UI.balanceGroup->isChecked())
+        {
+            ik->addConstraint(balanceConstraint);
         }
 
 #if 0
