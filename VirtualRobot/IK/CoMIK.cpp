@@ -111,8 +111,6 @@ namespace VirtualRobot
 
     Eigen::MatrixXf CoMIK::getJacobianMatrix()
     {
-        //const std::vector<RobotNodePtr> nodes = rns->getAllRobotNodes();
-
         Eigen::MatrixXf Jsum(0, 0);
 
         for (std::vector<RobotNodePtr>::const_iterator n = bodyNodes.begin(); n != bodyNodes.end(); n++)

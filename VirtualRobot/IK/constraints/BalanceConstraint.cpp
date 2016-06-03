@@ -107,17 +107,16 @@ void BalanceConstraint::setCoMHeight(float currentheight)
 
 double BalanceConstraint::optimizationFunction(unsigned int id)
 {
-    VR_INFO << "Balance constraint optimization function" << std::endl;
-
-    return 0;
+    Eigen::VectorXf d = comIK->getError();
+    return d.dot(d);
 }
 
 Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int id)
 {
-    VR_INFO << "Balance constraint optimization gradient" << std::endl;
+    Eigen::VectorXf d = comIK->getError();
+    Eigen::MatrixXf J = getJacobianMatrix();
 
-    Eigen::VectorXf result;
-    return result;
+    return 2 * d.transpose() * J;
 }
 
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
