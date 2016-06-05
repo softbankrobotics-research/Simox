@@ -36,6 +36,30 @@ class SoNode;
 
 namespace VirtualRobot
 {
+    class BalanceConstraintOptimizationFunction
+    {
+    public:
+        BalanceConstraintOptimizationFunction(const SupportPolygonPtr &supportPolygon);
+
+        void updateSupportPolygon();
+
+        double evaluateOptimizationFunction(const Eigen::Vector2f &com);
+        Eigen::VectorXf evaluateOptimizationGradient(const Eigen::Vector2f &com, const Eigen::MatrixXf &Jcom);
+
+    protected:
+        void update();
+
+        double sigmoid(double x);
+        double sigmoid_prime(double x);
+
+    protected:
+        SupportPolygonPtr supportPolygon;
+
+        std::vector<Eigen::Matrix2f> matrices;
+        std::vector<Eigen::Vector2f> displacements;
+    };
+    typedef boost::shared_ptr<BalanceConstraintOptimizationFunction> BalanceConstraintOptimizationFunctionPtr;
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public boost::enable_shared_from_this<BalanceConstraint>
     {
     public:
@@ -65,8 +89,10 @@ namespace VirtualRobot
         void updateSupportPolygon();
         void visualizeSupportPolygon(SoSeparator* sep);
 
+        float getDifferentiableStabilityIndex();
+        Eigen::VectorXf getDifferentiableStabilityIndexGradient();
+
     protected:
-        CoMIKPtr comIK;
         SupportPolygonPtr supportPolygon;
 
         float height;
@@ -79,6 +105,10 @@ namespace VirtualRobot
         float maxSupportDistance;
         float tolerance;
         bool supportPolygonUpdates;
+
+    public:
+        CoMIKPtr comIK;
+        BalanceConstraintOptimizationFunctionPtr differnentiableStability;
     };
 
     typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
