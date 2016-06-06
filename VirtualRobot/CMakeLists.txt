@@ -103,6 +103,7 @@ IK/constraints/OrientationConstraint.cpp
 IK/constraints/TSRConstraint.cpp
 IK/constraints/ReferenceConfigurationConstraint.cpp
 IK/constraints/JointLimitAvoidanceConstraint.cpp
+IK/constraints/CoMConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
 Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
@@ -201,6 +202,7 @@ IK/constraints/OrientationConstraint.h
 IK/constraints/TSRConstraint.h
 IK/constraints/ReferenceConfigurationConstraint.h
 IK/constraints/JointLimitAvoidanceConstraint.h
+IK/constraints/CoMConstraint.h
 Workspace/WorkspaceData.h
 Workspace/WorkspaceDataArray.h
 Workspace/WorkspaceRepresentation.h
