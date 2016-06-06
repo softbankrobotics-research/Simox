@@ -9,6 +9,11 @@
 #include "VirtualRobot/BoundingBox.h"
 #include "VirtualRobot/IK/CoMIK.h"
 
+#ifdef USE_NLOPT
+#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
+#include "VirtualRobot/IK/constraints/CoMConstraint.h"
+#endif
+
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
@@ -573,6 +578,18 @@ void stabilityWindow::performCoMIK()
         return;
     }
 
+#ifdef USE_NLOPT
+    ConstrainedOptimizationIKPtr ik(new ConstrainedOptimizationIK(robot, currentRobotNodeSet, 0.01));
+    CoMConstraintPtr comConstraint(new CoMConstraint(robot, currentRobotNodeSet, currentRobotNodeSet, m_CoMTarget, 5.0f));
+    ik->addConstraint(comConstraint);
+    ik->initialize();
+
+    if(!ik->solve())
+    {
+        std::cout << "IK solver did not succeed" << std::endl;
+    }
+
+#else
     CoMIK comIK(currentRobotNodeSet, currentRobotNodeSet);
     comIK.setGoal(m_CoMTarget);
 
@@ -580,6 +597,7 @@ void stabilityWindow::performCoMIK()
     {
         std::cout << "IK solver did not succeed" << std::endl;
     }
+#endif
 
     updateCoM();
 }
