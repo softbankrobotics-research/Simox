@@ -137,6 +137,15 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     }
                     break;
             }
+
+            // Check initial configuration against joint limits
+            for(unsigned int i = 0; i < nodeSet->getSize(); i++)
+            {
+                if(x[i] < nodeSet->getNode(i)->getJointLimitLo() || x[i] > nodeSet->getNode(i)->getJointLimitHi())
+                {
+                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits");
+                }
+            }
         }
 
         double min_f;
@@ -154,7 +163,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         {
             // This is something more severe, we still check the result and proceed
             // with the next attempt.
-            VR_INFO << "Warning: NLOPT exception while optimizing" << std::endl;
+            VR_INFO << "Warning: NLOPT exception while optimizing: " << e.what() << std::endl;
         }
 
         for(int i = 0; i < size; i++)
@@ -178,7 +187,6 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             currentMinError = currentError;
             bestJointValues = x;
         }
-
     }
     if(bestJointValues.size() > 0)
     {
