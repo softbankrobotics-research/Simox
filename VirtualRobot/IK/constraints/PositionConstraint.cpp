@@ -28,20 +28,25 @@
 using namespace VirtualRobot;
 
 PositionConstraint::PositionConstraint(const VirtualRobot::RobotPtr &robot, const VirtualRobot::RobotNodeSetPtr &nodeSet, const VirtualRobot::SceneObjectPtr &eef,
-                                                     const Eigen::Vector3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection) :
+                                                     const Eigen::Vector3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
     eef(eef),
     target(target),
-    cartesianSelection(cartesianSelection)
+    cartesianSelection(cartesianSelection),
+    tolerance(tolerance)
 {
+    ik.reset(new DifferentialIK(nodeSet));
+    Eigen::Matrix4f target4x4 = Eigen::Matrix4f::Identity();
+    target4x4.block<3,1>(0,3) = target;
+    ik->setGoal(target, eef, cartesianSelection);
     addOptimizationFunction(0, false);
 }
 
 double PositionConstraint::optimizationFunction(unsigned int id)
 {
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
 
     switch(cartesianSelection)
     {
@@ -70,7 +75,7 @@ Eigen::VectorXf PositionConstraint::optimizationGradient(unsigned int id)
     int size = nodeSet->getSize();
 
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(0, 0, 3, size);
-    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target.block<3,1>(0,3);
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
 
     switch(cartesianSelection)
     {
@@ -92,4 +97,27 @@ Eigen::VectorXf PositionConstraint::optimizationGradient(unsigned int id)
     }
 
     return Eigen::VectorXf::Zero(size);
+}
+
+bool PositionConstraint::checkTolerances()
+{
+    Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
+    switch(cartesianSelection)
+    {
+        case IKSolver::CartesianSelection::X:
+            return d.x() <= tolerance;
+
+        case IKSolver::CartesianSelection::Y:
+            return d.y() <= tolerance;
+
+        case IKSolver::CartesianSelection::Z:
+            return d.z() <= tolerance;
+
+        case IKSolver::CartesianSelection::Position:
+        case IKSolver::CartesianSelection::All:
+            return d.norm() <= tolerance;
+
+        case IKSolver::CartesianSelection::Orientation:
+            return true;
+    }
 }
