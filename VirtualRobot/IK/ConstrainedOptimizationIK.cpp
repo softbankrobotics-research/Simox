@@ -116,7 +116,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try zero configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = 0;
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), 0.0f));
                     }
                     break;
 
@@ -124,7 +124,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try initial configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = initialConfig(i);
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), initialConfig(i)));
                     }
                     break;
 
@@ -133,7 +133,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     Eigen::VectorXf s = seeds[attempt].second;
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = s(i);
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), s(i)));
                     }
                     break;
             }
@@ -143,7 +143,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             {
                 if(x[i] < nodeSet->getNode(i)->getJointLimitLo() || x[i] > nodeSet->getNode(i)->getJointLimitHi())
                 {
-                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits");
+                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits: joints['" << nodeSet->getNode(i)->getName() << "'] = " << x[i] << ", Limits = [" << nodeSet->getNode(i)->getJointLimitLo() << ", " << nodeSet->getNode(i)->getJointLimitHi() << "]");
                 }
             }
         }
