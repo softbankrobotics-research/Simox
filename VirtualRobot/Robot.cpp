@@ -12,6 +12,7 @@ namespace VirtualRobot
 
     Robot::Robot(const std::string& name, const std::string& type)
         : SceneObject(name)
+        ,scaling(1.0f)
     {
         this->type = type;
         updateVisualization = true;
@@ -722,6 +723,7 @@ namespace VirtualRobot
         RobotNodePtr rootNew = startJoint->clone(result, true, RobotNodePtr(), colChecker, scaling);
         THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
         result->setRootNode(rootNew);
+        result->setScaling(scaling);
 
         std::vector<RobotNodePtr> rn = result->getRobotNodes();
 
@@ -1089,6 +1091,16 @@ namespace VirtualRobot
         ss << "</Robot>" << endl;
 
         return ss.str();
+    }
+
+    float Robot::getScaling()
+    {
+        return scaling;
+    }
+
+    void Robot::setScaling(float scaling)
+    {
+        this->scaling = scaling;
     }
 
 } // namespace VirtualRobot

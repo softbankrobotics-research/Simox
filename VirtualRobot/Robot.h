@@ -378,6 +378,8 @@ namespace VirtualRobot
         */
         virtual std::string toXML(const std::string& basePath = ".", const std::string& modelPath = "models", bool storeEEF = true, bool storeRNS = true, bool storeSensors = true);
 
+        float getScaling();
+        void setScaling(float scaling);
     protected:
         Robot();
         /*!
@@ -390,7 +392,7 @@ namespace VirtualRobot
         //! It is assumed that the mutex is already set
         virtual void applyJointValuesNoLock();
 
-
+        float scaling;
         std::string filename; // RobotIO stores the filename here
         std::string type;
 
