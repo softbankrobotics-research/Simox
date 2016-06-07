@@ -42,7 +42,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedOptimizationIK>
     {
     public:
-        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 0.5, float tolerance = 0.01);
+        ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 0.5, float globalTolerance = std::numeric_limits<float>::quiet_NaN());
 
         bool initialize();
         bool solve(bool stepwise = false);
@@ -63,7 +63,7 @@ namespace VirtualRobot
         OptimizerPtr optimizer;
 
         float timeout;
-        float tolerance;
+        float globalTolerance;
 
         std::vector<double> currentX;
 

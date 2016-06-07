@@ -28,11 +28,11 @@
 
 using namespace VirtualRobot;
 
-ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float tolerance) :
+ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float globalTolerance) :
     ConstrainedIK(robot, nodeSet, 30),
     nodeSet(nodeSet),
     timeout(timeout),
-    tolerance(tolerance)
+    globalTolerance(globalTolerance)
 {
     clearSeeds();
     addSeed(eSeedInitial);
@@ -58,8 +58,12 @@ bool ConstrainedOptimizationIK::initialize()
     optimizer->set_lower_bounds(low);
     optimizer->set_upper_bounds(high);
 
+    if(!std::isnan(globalTolerance))
+    {
+        optimizer->set_stopval(globalTolerance * globalTolerance);
+    }
+
     optimizer->set_maxtime(timeout);
-    optimizer->set_stopval(tolerance * tolerance);
     optimizer->set_ftol_abs(1e-6);
     optimizer->set_xtol_abs(1e-4);
 
