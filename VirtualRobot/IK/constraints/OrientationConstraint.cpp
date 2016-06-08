@@ -28,7 +28,7 @@
 using namespace VirtualRobot;
 
 OrientationConstraint::OrientationConstraint(const VirtualRobot::RobotPtr &robot, const VirtualRobot::RobotNodeSetPtr &nodeSet, const VirtualRobot::SceneObjectPtr &eef,
-                                                           const Eigen::Matrix3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance) :
+                                                           const Eigen::Matrix3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance, bool soft) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
@@ -41,7 +41,7 @@ OrientationConstraint::OrientationConstraint(const VirtualRobot::RobotPtr &robot
     Eigen::Matrix4f target4x4 = Eigen::Matrix4f::Identity();
     target4x4.block<3,3>(0,0) = target;
     ik->setGoal(target4x4, eef, cartesianSelection);
-    addOptimizationFunction(0, false);
+    addOptimizationFunction(0, soft);
 }
 
 double OrientationConstraint::optimizationFunction(unsigned int id)
@@ -97,8 +97,6 @@ Eigen::VectorXf OrientationConstraint::optimizationGradient(unsigned int id)
 
 bool OrientationConstraint::checkTolerances()
 {
-
-
     switch(cartesianSelection)
     {
         case IKSolver::CartesianSelection::X:
@@ -114,7 +112,7 @@ bool OrientationConstraint::checkTolerances()
             Eigen::Matrix3f diff = target * eef->getGlobalPose().block<3,3>(0,0).inverse();
             Eigen::AngleAxisf aa(diff);
 
-            return aa.angle() <= tolerance;
+            return fabs(aa.angle()) <= tolerance;
         }
             break;
     }

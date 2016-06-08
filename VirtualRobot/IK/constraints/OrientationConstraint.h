@@ -36,7 +36,7 @@ namespace VirtualRobot
     {
     public:
         OrientationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Matrix3f& target,
-                       IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 1.0f * M_PI / 180.0f);
+                       IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 1.0f * M_PI / 180.0f, bool soft=false);
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);
