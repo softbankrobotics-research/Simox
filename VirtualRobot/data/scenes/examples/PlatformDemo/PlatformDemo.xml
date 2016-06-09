@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Scene name="PlanningScene">
+
+        <Robot name="Armar-III" initConfig="start">
+            <File>/robots/ArmarIII/ArmarIII_withPlatformJoints.xml</File>
+
+            <Configuration name="start">
+                <Node name="X_Platform" unit="mm" value="-1400"/>
+                <Node name="Y_Platform" unit="mm" value="1000"/>
+                <Node name="Yaw_Platform" unit="radian" value="-1.57"/>
+            </Configuration>
+
+            <Configuration name="goal">
+                <Node name="X_Platform" unit="mm" value="1500"/>
+                <Node name="Y_Platform" unit="mm" value="900"/>
+                <Node name="Yaw_Platform" unit="radian" value="1.57"/>
+            </Configuration>
+		
+            <!-- These joints are considered for motion planning-->
+            <RobotNodeSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
+                    <Node name="X_Platform"/>
+                    <Node name="Y_Platform"/>
+                    <Node name="Yaw_Platform"/>
+            </RobotNodeSet>
+    	
+            <!-- The second collision model (torso, head and platform)-->
+            <RobotNodeSet name="ColModel Robot Body">
+                <Node name="Platform"/>
+    		<Node name="Hip Yaw"/>
+    		<Node name="Head_Tilt"/>
+            </RobotNodeSet>
+
+            <GlobalPose>
+                <Transform>
+                    <Translation x="-6115.0" y="3580.0" z="0"/>
+                    <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/>
+                </Transform>
+            </GlobalPose>
+	</Robot>
+
+	<Obstacle name="Environment">
+	    <Visualization>
+    		<File type='inventor'>environment/KIT_kitchen.wrl</File>
+	    </Visualization>
+    	<CollisionModel>
+            <!--File type='inventor'>environment/KIT_kitchen_sideboard.wrl</File-->
+            <File type='inventor'>environment/KIT_kitchen.wrl</File>
+        </CollisionModel>
+        <GlobalPose>
+            <Transform>
+                <Translation x="0" y="0" z="-80"/>
+                <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/>
+            </Transform>
+        </GlobalPose>
+ 	</Obstacle>
+	
+        <SceneObjectSet name="ColModel Obstacles">
+ 	    <SceneObject name="Environment"/>
+ 	</SceneObjectSet>
+
+</Scene>
