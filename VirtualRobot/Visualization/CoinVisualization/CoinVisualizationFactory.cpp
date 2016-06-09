@@ -1082,7 +1082,7 @@ namespace VirtualRobot
         return CoinVisualizationFactory::CreatePolygonVisualization(cvHull3d, colorInner, colorLine, lineSize);
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable)
     {
         if (!robot)
         {
@@ -1095,7 +1095,7 @@ namespace VirtualRobot
         {
             SoSeparator* result = new SoSeparator();
             result->ref();
-            result->addChild(visualizationRobot->getCoinVisualization());
+            result->addChild(visualizationRobot->getCoinVisualization(selectable));
             result->unrefNoDelete();
             return result;
         }
