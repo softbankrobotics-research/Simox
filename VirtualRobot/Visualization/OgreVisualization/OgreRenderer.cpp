@@ -385,7 +385,7 @@ std::string OgreRenderer::getOgreHandle(intptr_t winId)
 
 std::string OgreRenderer::getOgreHandle(QWidget *w)
 {
-	return getOgreHandle(w->winId());
+	return getOgreHandle((intptr_t)w->winId());
 }
 
 

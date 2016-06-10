@@ -26,7 +26,7 @@
 
 #include <OGRE/Ogre.h>
 
-#include <QWidget>
+#include <QtOpenGL/QGLWidget>
 
 #include "../ViewerInterface.h"
 #include "OrbitCamera.h"
@@ -35,7 +35,7 @@
 namespace SimoxGui
 {
 
-class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWindow, public ViewerInterface
+class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWidget, public ViewerInterface
 {
     Q_OBJECT
 
@@ -66,20 +66,16 @@ class SIMOX_GUI_IMPORT_EXPORT OgreViewer : public QWindow, public ViewerInterfac
         Ogre::SceneManager *getSceneManager();
         OrbitCamera *getCameraController();
 
-        virtual void mouseMoveEvent(QMouseEvent *event);
-        virtual void mousePressEvent(QMouseEvent *event);
-        virtual void mouseReleaseEvent(QMouseEvent *event);
+        virtual QPaintEngine* paintEngine() const;
 
-        virtual void exposeEvent(QExposeEvent *event);
-        virtual bool event(QEvent *event);
+        virtual void paintEvent(QPaintEvent *pEvent);
+        virtual void resizeEvent(QResizeEvent *rEvent);
+        virtual void update();
+        virtual void mousePressEvent(QMouseEvent* event);
+        virtual void mouseReleaseEvent(QMouseEvent* event);
+        virtual void mouseMoveEvent(QMouseEvent* event);
 
         void initializeScene();
-
-    public slots:
-        virtual void renderLater();
-        virtual void renderNow();
-
-        virtual bool eventFilter(QObject *target, QEvent *event);
 
     protected:
 

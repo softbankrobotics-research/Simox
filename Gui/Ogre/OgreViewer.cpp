@@ -38,7 +38,7 @@
 using namespace SimoxGui;
 
 OgreViewer::OgreViewer(QWidget *parent) :
-    QWindow(),
+    QWidget(parent),
     renderer(VirtualRobot::OgreRenderer::getOgreRenderer()),
     ogreRoot(NULL),
     ogreWindow(NULL),
@@ -48,20 +48,19 @@ OgreViewer::OgreViewer(QWidget *parent) :
     cameraController(NULL),
     mUpdatePending(false)
 {
-    createRenderWindow();
+    setAttribute(Qt::WA_PaintOnScreen, true);
+    setAttribute(Qt::WA_NoSystemBackground, true);
 
     QVBoxLayout *layout = new QVBoxLayout(parent);
-    QWidget *renderingContainer = QWidget::createWindowContainer(this);
-	layout->addWidget(renderingContainer);
+	layout->addWidget(this);
     parent->setLayout(layout);
+
+    createRenderWindow();
 
     assert(ogreRoot);
     assert(ogreSceneManager);
 
     viewerNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
-
-    installEventFilter(this);
-    parent->installEventFilter(this);
 }
 
 OgreViewer::~OgreViewer()
@@ -161,7 +160,6 @@ void OgreViewer::setCameraTarget(const VirtualRobot::VisualizationNodePtr &visua
     Ogre::SceneNode* ovisu = ov->getOgreVisualization();
     cameraController->setTarget(ovisu);
     cameraController->setYawPitchDist(Ogre::Degree(0), Ogre::Degree(0), 100.0f);
-    renderLater();
 }
 
 void OgreViewer::start(QWidget *mainWindow)
@@ -270,7 +268,7 @@ void OgreViewer::createRenderWindow()
     //# endif
     //#endif
 
-    uintptr_t win_id = winId();
+    intptr_t win_id = (intptr_t)winId();
     QApplication::flush();
 
     ogreWindow = renderer->createRenderWindow( win_id, width(), height() );
@@ -294,7 +292,6 @@ void OgreViewer::mouseMoveEvent(QMouseEvent *event)
     if(cameraController)
     {
         cameraController->injectMouseMove(event);
-        renderLater();
     }
 }
 
@@ -303,7 +300,6 @@ void OgreViewer::mousePressEvent(QMouseEvent *event)
     if(cameraController)
     {
         cameraController->injectMouseDown(event);
-        renderLater();
     }
 }
 
@@ -312,67 +308,44 @@ void OgreViewer::mouseReleaseEvent(QMouseEvent *event)
     if(cameraController)
     {
         cameraController->injectMouseUp(event);
-        renderLater();
     }
 }
 
-bool OgreViewer::event(QEvent *evt)
+QPaintEngine* OgreViewer::paintEngine() const
 {
-    switch (evt->type())
-    {
-    case QEvent::UpdateRequest:
-        mUpdatePending = false;
-        renderNow();
-        return true;
-
-    default:
-        return QWindow::event(evt);
-    }
+    // This method returns NULL in order to suppress any attempts at
+    // painting the underlying widget. The QWidget usually returns
+    // a paint engine which causes flickering under Windows.
+    return NULL;
 }
 
-bool OgreViewer::eventFilter(QObject *target, QEvent *evt)
+void OgreViewer::paintEvent(QPaintEvent *pEvent)
 {
-    if (evt->type() == QEvent::UpdateRequest)
+    update();
+}
+
+void OgreViewer::resizeEvent(QResizeEvent *rEvent)
+{
+    if (rEvent) 
     {
-        renderNow();
+        QWidget::resizeEvent(rEvent);
     }
-    if (target == this && evt->type() == QEvent::Resize && isExposed() && ogreWindow != NULL)
+
+    if (ogreWindow) 
     {
         ogreWindow->reposition(x(), y());
         ogreWindow->resize(width(), height());
         ogreWindow->windowMovedOrResized();
-
         if (ogreCamera)
         {
             ogreCamera->setAspectRatio(width() / (float)height());
         }
     }
-    return false;
 }
 
-void OgreViewer::exposeEvent(QExposeEvent *evt)
+void OgreViewer::update()
 {
-    Q_UNUSED(evt);
-
-    if (isExposed())
-        renderNow();
-}
-
-void OgreViewer::renderLater()
-{
-    if (!mUpdatePending)
-    {
-        mUpdatePending = true;
-        QApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-    }
-}
-
-void OgreViewer::renderNow()
-{
-    if (!isExposed())
-        return;
-
-    Ogre::WindowEventUtilities::messagePump();
+    QWidget::update();
     ogreRoot->renderOneFrame();
 }
 
