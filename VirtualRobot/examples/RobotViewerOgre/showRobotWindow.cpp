@@ -192,10 +192,11 @@ void showRobotWindow::rebuildVisualization()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     VisualizationFactory::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? VisualizationFactory::Collision : VisualizationFactory::Full;
-
-#if 0
-    // Test the box creation and visualization
+   
     VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+
+#if 1
+    // Test the box creation and visualization
 
     auto boxA = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 1.0f, 0.0f, 0.0f);
     auto* realBoxA = dynamic_cast<OgreVisualizationNode*>(boxA.get());
