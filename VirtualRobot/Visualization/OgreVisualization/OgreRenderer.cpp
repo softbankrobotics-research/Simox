@@ -468,7 +468,8 @@ Ogre::RenderWindow* OgreRenderer::createRenderWindow(intptr_t window_id, unsigne
   {
     window->setActive(true);
     //window->setVisible(true);
-    window->setAutoUpdated(false);
+    // Autoupdated = false does not work in Windows
+    //window->setAutoUpdated(false);
   }
 
   stereo_supported_ = is_stereo;
