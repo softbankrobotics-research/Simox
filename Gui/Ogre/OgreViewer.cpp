@@ -321,6 +321,13 @@ QPaintEngine* OgreViewer::paintEngine() const
 
 void OgreViewer::paintEvent(QPaintEvent *pEvent)
 {
+    if(ogreWindow)
+    {
+        ogreRoot->_fireFrameStarted();
+        ogreWindow->update();
+        ogreRoot->_fireFrameEnded();
+    }
+
     update();
 }
 
