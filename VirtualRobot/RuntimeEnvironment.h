@@ -91,6 +91,9 @@ namespace VirtualRobot
         //! return all key value pairs
         static std::map< std::string, std::string > getKeyValuePairs();
 
+        //! return all unrecognized options
+        static std::vector< std::string > getUnrecognizedOptions();
+
         /*!
             Converts strings as '(a,b,c)' to 3dim Vectors.
         */
