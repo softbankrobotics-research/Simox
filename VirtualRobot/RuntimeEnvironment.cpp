@@ -245,6 +245,10 @@ namespace VirtualRobot
         return keyValues;
     }
 
+    std::vector< std::string> RuntimeEnvironment::getUnrecognizedOptions()
+    {
+        return unrecognizedOptions;
+    }
 
 
     std::vector< std::string > RuntimeEnvironment::getDataPaths()
