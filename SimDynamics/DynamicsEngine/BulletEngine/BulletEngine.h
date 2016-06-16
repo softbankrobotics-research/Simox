@@ -29,6 +29,13 @@
 
 #include "btBulletDynamicsCommon.h"
 
+namespace internal
+{
+    inline void suppressUnusedVariableBtInfinityMask()
+    {
+        (void)sizeof(btInfinityMask);
+    }
+}
 
 namespace SimDynamics
 {
