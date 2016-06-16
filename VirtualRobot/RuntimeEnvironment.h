@@ -96,6 +96,14 @@ namespace VirtualRobot
         */
         static bool toVector3f(const std::string& s, Eigen::Vector3f& storeResult);
 
+        /*!
+         * \brief toFloat Get command line parameter as float
+         * \param s
+         * \return
+         */
+        static float toFloat(const std::string& s);
+        static int toInt(const std::string& s);
+
 
         /*!
             Check if command line parameters specify a valid filename and

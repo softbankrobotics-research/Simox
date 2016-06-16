@@ -71,6 +71,13 @@ namespace VirtualRobot
         virtual VisualizationNodePtr getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox = false);
         virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
         virtual VisualizationNodePtr getVisualizationFromString(const std::string& modelString, bool boundingBox = false);
+
+
+
+        virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
+        virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
+
+
         virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
@@ -230,7 +237,7 @@ namespace VirtualRobot
         /*!
             Create a visualization of the reachability data.
         */
-        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true);
+        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10);
         /*!
             Creates a visualization of the reachability data. For each 3D point, the orientation with maximum entry is determined and visualized as an arrow. The direction of this arrow is aligned to the param axis.
         */
@@ -267,8 +274,9 @@ namespace VirtualRobot
 
         /*!
             Create quads according to cutXY plane. Normal can be UnitX, UnitY or UnitZ.
+            \param maxEntry If 0 the maximal entry of the cut plane is used as refernce.
         */
-        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY());
+        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY(), float maxEntry = 0.0f);
 
         /*!
             Create an offscreen renderer object with the given width and height.

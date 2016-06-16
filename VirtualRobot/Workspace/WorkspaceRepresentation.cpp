@@ -27,8 +27,8 @@ namespace VirtualRobot
         this->robot = robot;
         type = "WorkspaceRepresentation";
         versionMajor = 2;
-        versionMinor = 7;
-        orientationType = EulerXYZExtrinsic;
+        versionMinor = 8;
+        orientationType = Hopf;//EulerXYZExtrinsic;
         reset();
     }
 
@@ -51,6 +51,32 @@ namespace VirtualRobot
                 }
             }
         }
+
+        return res;
+    }
+
+
+    int WorkspaceRepresentation::avgAngleReachabilities(int x0, int x1, int x2) const
+    {
+        int res = 0;
+
+        if (!data->hasEntry(x0, x1, x2))
+        {
+            return 0;
+        }
+
+        for (int d = 0; d < numVoxels[3]; d++)
+        {
+            for (int e = 0; e < numVoxels[4]; e++)
+            {
+                for (int f = 0; f < numVoxels[5]; f++)
+                {
+                    res += data->get(x0, x1, x2, d, e, f);
+                }
+            }
+        }
+
+        res /=  numVoxels[3]* numVoxels[4]* numVoxels[5];
 
         return res;
     }
@@ -183,12 +209,15 @@ namespace VirtualRobot
                 // now check if an older version is used
                 THROW_VR_EXCEPTION_IF(
                     (version[0] > 2) ||
-                    (version[0] == 2 && !(version[1] == 0 || version[1] == 1 || version[1] == 2 || version[1] == 3 || version[1] == 4 || version[1] == 5 || version[1] == 6)) ||
+                    (version[0] == 2 && !(version[1]>=0 && version[1] <= 8)) ||
                     (version[0] == 1 && !(version[1] == 0 || version[1] == 2 || version[1] == 3)
                     ),  "Wrong file format version");
             }
-
-            if (version[0] > 2 || (version[0] == 2 && version[1] > 6))
+            if (version[0] > 2 || (version[0] == 2 && version[1] > 7))
+            {
+                orientationType = Hopf;
+            }
+            else if (version[0] == 2 && version[1] > 6)
             {
                 orientationType = EulerXYZExtrinsic;
             }
@@ -244,13 +273,17 @@ namespace VirtualRobot
             if (version[0] > 1 || (version[0] == 1 &&  version[1] > 0))
             {
                 FileIO::readString(tmpString, file);
-                baseNode = robot->getRobotNode(tmpString);
-                THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Joint");
-                //updateBaseTransformation();
+                if (tmpString.empty() || !robot->hasRobotNode(tmpString))
+                {
+                    VR_WARNING << "Base ndoe not gifven/known:" << tmpString << endl;
+                }
+                else
+                {
+                    baseNode = robot->getRobotNode(tmpString);
+                    THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Joint");
+                }
             }
 
-            //else
-            //baseTransformation.setIdentity();
 
             // Static collision model
             FileIO::readString(tmpString, file);
@@ -505,7 +538,11 @@ namespace VirtualRobot
             FileIO::writeString(file, tcpNode->getName());
 
             // Base Joint name
-            FileIO::writeString(file, baseNode->getName());
+            std::string bNode;
+            if (baseNode)
+                bNode = baseNode->getName();
+
+            FileIO::writeString(file, bNode);
 
             // Collision models
             if (staticCollisionModel)
@@ -963,6 +1000,10 @@ namespace VirtualRobot
                     cout << "EulerXYZ-Extrinsic" << endl;
                     break;
 
+                case Hopf:
+                    cout << "Hopf" << endl;
+                    break;
+
                 default:
                     cout << "NYI" << endl;
             }
@@ -992,7 +1033,7 @@ namespace VirtualRobot
             cout << "Used " << buildUpLoops << " loops for building the random configs " << endl;
             cout << "Discretization step sizes: Translation: " << discretizeStepTranslation << " - Rotation: " << discretizeStepRotation << endl;
             cout << type << " data extends: " << numVoxels[0] << "x" << numVoxels[1] << "x" << numVoxels[2] << "x" << numVoxels[3] << "x" << numVoxels[4] << "x" << numVoxels[5] << endl;
-            long long nv = numVoxels[0] * numVoxels[1] * numVoxels[2] * numVoxels[3] * numVoxels[4] * numVoxels[5];
+            long long nv = (long long)numVoxels[0] * (long long)numVoxels[1] * (long long)numVoxels[2] * (long long)numVoxels[3] * (long long)numVoxels[4] * (long long)numVoxels[5];
             cout << "Filled " << data->getVoxelFilledCount() << " of " << nv << " voxels" << endl;
             cout << "Collisions: " << collisionConfigs << endl;
             cout << "Maximum entry in a voxel: " << (int)data->getMaxEntry() << endl;
@@ -1202,6 +1243,59 @@ namespace VirtualRobot
         }
 
         return true;
+    }
+
+    WorkspaceRepresentation::VolumeInfo WorkspaceRepresentation::computeVolumeInformation()
+    {
+        WorkspaceRepresentation::VolumeInfo result;
+        result.borderVoxelCount3D = 0;
+        result.filledVoxelCount3D = 0;
+        result.volume3D = 0;
+        result.volumeFilledVoxels3D = 0;
+        result.volumeVoxel3D = 0;
+        result.voxelCount3D = numVoxels[0]*numVoxels[1]*numVoxels[2];
+        for (int a = 0; a < numVoxels[0]; a++)
+        {
+            for (int b = 0; b < numVoxels[1]; b++)
+            {
+                for (int c = 0; c < numVoxels[2]; c++)
+                {
+                    int value = sumAngleReachabilities(a, b, c);
+
+                    if (value > 0)
+                    {
+                        result.filledVoxelCount3D++;
+                        if (a==0 || b==0 || c==0 || a==numVoxels[0]-1 || b==numVoxels[1]-1 || c==numVoxels[2]-1)
+                            result.borderVoxelCount3D++;
+                        else
+                        {
+                            int neighborEmptyCount = 0;
+                            if (sumAngleReachabilities(a-1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a+1, b, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b-1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b+1, c)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c-1)==0)
+                                neighborEmptyCount++;
+                            if (sumAngleReachabilities(a, b, c+1)==0)
+                                neighborEmptyCount++;
+                            if (neighborEmptyCount>=1)
+                                result.borderVoxelCount3D++;
+                        }
+                    }
+                }
+            }
+        }
+        double discrM = discretizeStepTranslation * 0.001;
+        double voxelVolume = discrM * discrM * discrM;
+        result.volumeVoxel3D = (float)voxelVolume;
+        result.volumeFilledVoxels3D = (float)((double)result.filledVoxelCount3D * voxelVolume);
+        result.volume3D = (float)(((double)result.filledVoxelCount3D - 0.5*(double)result.borderVoxelCount3D) * voxelVolume);
+
+        return result;
     }
 
     Eigen::Matrix4f WorkspaceRepresentation::getPoseFromVoxel(float v[6], bool transformToGlobalPose /*= true*/)
@@ -1478,7 +1572,7 @@ namespace VirtualRobot
         for (int i = 0; i < 6; i++)
         {
             float sizex = storeMaxBounds[i] - storeMinBounds[i];
-            float factor = 0.1f;
+            float factor = 0.2f;
 
             if (i > 2)
             {
@@ -1528,6 +1622,65 @@ namespace VirtualRobot
             {
                 tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
                 result->entries(a, b) = getEntry(tmpPose);
+            }
+        }
+
+        return result;
+    }
+
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize) const
+    {
+        THROW_VR_EXCEPTION_IF(cellSize <= 0.0f, "Invalid parameter");
+        THROW_VR_EXCEPTION_IF(heightPercent < 0.0f || heightPercent>1.0f, "Invalid parameter");
+
+        WorkspaceCut2DPtr result(new WorkspaceCut2D());
+
+        Eigen::Vector3f minBB, maxBB;
+
+        getWorkspaceExtends(minBB, maxBB);
+        result->minBounds[0] = minBB(0);
+        result->maxBounds[0] = maxBB(0);
+        result->minBounds[1] = minBB(1);
+        result->maxBounds[1] = maxBB(1);
+
+        float sizeX = result->maxBounds[0] - result->minBounds[0];
+        int numVoxelsX = (int)(sizeX / cellSize);
+        float sizeY = result->maxBounds[1] - result->minBounds[1];
+        int numVoxelsY = (int)(sizeY / cellSize);
+
+        float sizeZGlobal = maxBB(2) - minBB(2);
+        float poseZGlobal = minBB(2) + heightPercent*sizeZGlobal;
+
+        result->entries.resize(numVoxelsX, numVoxelsY);
+        result->entries.setZero();
+
+        Eigen::Matrix4f refPose = getToGlobalTransformation();
+        refPose(2,3) = poseZGlobal;
+        result->referenceGlobalPose = refPose;
+
+        Eigen::Matrix4f tmpPose = refPose;
+        Eigen::Matrix4f localPose;
+        float x[6];
+        unsigned int v[6];
+
+        for (int a = 0; a < numVoxelsX; a++)
+        {
+            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
+
+            for (int b = 0; b < numVoxelsY; b++)
+            {
+                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
+                localPose = tmpPose;
+                toLocal(localPose);
+                matrix2Vector(localPose,x);
+
+                if (!getVoxelFromPose(x, v))
+                {
+                    //result->entries(a, b) = 0;
+                    continue;
+                }
+                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
             }
         }
 
@@ -1793,6 +1946,18 @@ namespace VirtualRobot
                 MathTools::eigen4f2rpy(m, x);
             }
             break;
+            case Hopf:
+            {
+                MathTools::Quaternion q = MathTools::eigen4f2quat(m);
+                Eigen::Vector3f h = MathTools::quat2hopf(q);
+                x[0] = m(0,3);
+                x[1] = m(1,3);
+                x[2] = m(2,3);
+                x[3] = h(0);
+                x[4] = h(1);
+                x[5] = h(2);
+            }
+            break;
 
             default:
                 THROW_VR_EXCEPTION("mode nyi...");
@@ -1828,9 +1993,9 @@ namespace VirtualRobot
                 m(1, 3) = x[1];
                 m(2, 3) = x[2];
                 Eigen::Matrix3f m_3;
-                m_3 = Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitX())
+                m_3 = Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitX())
                       * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
-                      * Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitZ());
+                      * Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitZ());
                 /*m_3 = Eigen::AngleAxisf(x[3], Eigen::Vector3f::UnitZ())
                     * Eigen::AngleAxisf(x[4], Eigen::Vector3f::UnitY())
                     * Eigen::AngleAxisf(x[5], Eigen::Vector3f::UnitX());*/
@@ -1873,6 +2038,18 @@ namespace VirtualRobot
             }
             break;
 
+
+            case Hopf:
+            {
+                Eigen::Vector3f h;
+                h << x[3],x[4],x[5];
+                MathTools::Quaternion q = MathTools::hopf2quat(h);
+                m = MathTools::quat2eigen4f(q);
+                m(0, 3) = x[0];
+                m(1, 3) = x[1];
+                m(2, 3) = x[2];
+            }
+            break;
             default:
                 THROW_VR_EXCEPTION("mode nyi...");
         }

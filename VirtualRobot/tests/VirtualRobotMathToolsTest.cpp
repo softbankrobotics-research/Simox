@@ -13,6 +13,57 @@
 
 BOOST_AUTO_TEST_SUITE(MathTools)
 
+
+BOOST_AUTO_TEST_CASE(testMathToolsHopf)
+{
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+    const int NR_TESTS = 1000;
+    for (int i=0;i<NR_TESTS;i++)
+    {
+        Eigen::Vector3f ax = Eigen::Vector3f::Random();
+        ax.normalize();
+        float ang = rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI;
+        float xa = rand() % 1000 / 1000.0f * 100.0f;
+        float ya = rand() % 1000 / 1000.0f * 100.0f;
+        float za = rand() % 1000 / 1000.0f * 100.0f;
+        Eigen::Matrix3f m3 = Eigen::AngleAxisf(ang, ax).matrix();
+        m.block(0, 0, 3, 3) = m3;
+
+        VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(m);
+
+        Eigen::Vector3f h = VirtualRobot::MathTools::quat2hopf(q);
+
+        BOOST_CHECK_LE(h(0), 2.0f*(float)M_PI);
+        BOOST_CHECK_LE(h(1), 2.0f*(float)M_PI);
+        BOOST_CHECK_LE(h(2), 2.0f*(float)M_PI);
+
+        BOOST_CHECK_GE(h(0), 0.0f);
+        BOOST_CHECK_GE(h(1), 0.0f);
+        BOOST_CHECK_GE(h(2), 0.0f);
+
+        //BOOST_CHECK_LE(fabs(h(1)), (float)M_PI);
+        //BOOST_CHECK_LE(fabs(h(2)), (float)M_PI);
+
+        /*BOOST_CHECK_LE(fabs(h(0)), 2.0f*(float)M_PI);
+        BOOST_CHECK_LE(fabs(h(1)), (float)M_PI);
+        BOOST_CHECK_LE(fabs(h(2)), 2.0f*(float)M_PI);
+*/
+        VirtualRobot::MathTools::Quaternion q2 = VirtualRobot::MathTools::hopf2quat(h);
+
+        /*
+        if (fabs(q.w-q2.w) > 0.1 || fabs(q.x-q2.x) > 0.1 || fabs(q.y-q2.y) > 0.1 || fabs(q.z-q2.z) > 0.1)
+        {
+            std::cout << "H:" << h.transpose() << ", Q:" << q.w << ", " << q.x << "," << q.y << "," << q.z << " / Q2:"<< q2.w << ", " << q2.x << "," << q2.y << "," << q2.z << std::endl;
+        }*/
+        BOOST_CHECK_SMALL((float)fabs(q.w-q2.w),0.1f);
+        BOOST_CHECK_SMALL((float)fabs(q.x-q2.x),0.1f);
+        BOOST_CHECK_SMALL((float)fabs(q.y-q2.y),0.1f);
+        BOOST_CHECK_SMALL((float)fabs(q.z-q2.z),0.1f);
+
+    }
+
+}
+
 BOOST_AUTO_TEST_CASE(testMathToolsRPY)
 {
     float r = (float)M_PI * 0.25f;

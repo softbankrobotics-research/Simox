@@ -153,6 +153,10 @@ namespace VirtualRobot
         float VIRTUAL_ROBOT_IMPORT_EXPORT rad2deg(float rad);
         float VIRTUAL_ROBOT_IMPORT_EXPORT deg2rad(float deg);
 
+        // [0,2PI]x[0,2PI]x[0,2PI]
+        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT quat2hopf(const Quaternion &q);
+        Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT hopf2quat(const Eigen::Vector3f &hopf);
+
         /************************************************************************/
         /* GEOMETRY                                                             */
         /************************************************************************/
@@ -582,6 +586,15 @@ namespace VirtualRobot
         */
         float VIRTUAL_ROBOT_IMPORT_EXPORT getCartesianPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float rotInfluence = 3.0f);
 
+        /*!
+         * \brief getPoseDiff Computes the translational and rotational difference between two poses.
+         * \param p1 First Pose.
+         * \param p2 Second Pose.
+         * \param storePosDiff The translational absolute distance between p1 and p2 is stored here
+         * \param storeRotDiffRad The rotational absolute distance between p1 and p2 is stored here (radian)
+         * \return
+         */
+        void VIRTUAL_ROBOT_IMPORT_EXPORT getPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float &storePosDiff, float &storeRotDiffRad);
 
         /************************************************************************/
         /* CONVEX HULLS                                                         */

@@ -109,6 +109,11 @@ Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
 Workspace/Manipulability.cpp
 Workspace/WorkspaceGrid.cpp
+Workspace/ReachabilityInversion/InverseReachability.cpp
+Workspace/ReachabilityInversion/OrientedWorkspaceGrid.cpp
+Workspace/ReachabilityInversion/ReachabilityProcessor.cpp
+Workspace/ReachabilityInversion/RobotPlacementIK.cpp
+Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
@@ -213,6 +218,11 @@ Workspace/VoxelTree6DElement.hpp
 Workspace/VoxelTreeND.hpp
 Workspace/VoxelTreeNDElement.hpp
 Workspace/WorkspaceGrid.h
+Workspace/ReachabilityInversion/InverseReachability.h
+Workspace/ReachabilityInversion/OrientedWorkspaceGrid.h
+Workspace/ReachabilityInversion/ReachabilityProcessor.h
+Workspace/ReachabilityInversion/RobotPlacementIK.h
+Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
@@ -288,6 +298,7 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/COLLADA-light/inventor.cpp
     Import/COLLADA-light/pugixml/pugixml.cpp
     Import/SimoxCOLLADAFactory.cpp
+    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.cpp
     )
 
     SET(INCLUDES
@@ -301,6 +312,7 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Import/SimoxCOLLADAFactory.cpp
     Import/COLLADA-light/inventor.h
     Import/SimoxCOLLADAFactory.h
+    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.h
     )
 
     if(BUILD_TESTING)
