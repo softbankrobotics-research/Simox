@@ -17,7 +17,7 @@ namespace VirtualRobot
     }
 
 
-    RobotPtr SimoxCOLLADAFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode)
+    RobotPtr SimoxCOLLADAFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription /*loadMode*/)
     {
         RobotPtr robot;
 

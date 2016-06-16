@@ -81,6 +81,7 @@ bool ConstrainedOptimizationIK::initialize()
             optimizer->add_inequality_constraint(optimizationConstraintWrapper, new std::pair<OptimizationFunctionSetup, ConstrainedOptimizationIK *>(c, this), 1e-6);
         }
     }
+    return true;
 }
 
 bool ConstrainedOptimizationIK::solve(bool stepwise)
@@ -96,7 +97,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
     std::vector<double> bestJointValues;
     double currentMinError = std::numeric_limits<double>::max();
-    for(unsigned int attempt = 0; attempt < maxIterations; attempt++)
+    assert(maxIterations >= 0);
+    for(unsigned int attempt = 0; attempt < static_cast<std::size_t>(maxIterations); attempt++)
     {
         numIterations = 0;
 
@@ -156,9 +158,9 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
         try
         {
-            nlopt::result result = optimizer->optimize(x, min_f);
+            /*nlopt::result result =*/ optimizer->optimize(x, min_f);
         }
-        catch(const nlopt::roundoff_limited &e)
+        catch(const nlopt::roundoff_limited &/*e*/)
         {
             // This means that we optimize below the precision limit
             // The result might still be usable though

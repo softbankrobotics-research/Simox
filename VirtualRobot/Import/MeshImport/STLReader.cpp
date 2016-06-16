@@ -327,7 +327,7 @@ namespace VirtualRobot
                         f.setNormal(noId, noId, noId);
                     }
 
-                    int fh = int(t->faces.size());
+                    //int fh = int(t->faces.size());
                     t->addFace(f);
                     //_bi.add_face(vhandles);
                     facet_normal = false;
@@ -493,7 +493,7 @@ namespace VirtualRobot
                 t->addNormal(n);
                 f.setNormal(noId, noId, noId);
                 //}
-                int fh = int(t->faces.size());
+                //int fh = int(t->faces.size());
                 t->addFace(f);
                 //FaceHandle fh = _bi.add_face(vhandles);
             }
@@ -514,7 +514,7 @@ namespace VirtualRobot
             int i;
             unsigned char c[4];
         } ic;
-        size_t bytesRead = fread((char*)ic.c, 1, 4, _in);
+        /*size_t bytesRead =*/ fread((char*)ic.c, 1, 4, _in);
 
         if (_swap)
         {
@@ -532,7 +532,7 @@ namespace VirtualRobot
             float f;
             unsigned char c[4];
         } fc;
-        size_t bytesRead = fread((char*)fc.c, 1, 4, _in);
+        /*size_t bytesRead =*/ fread((char*)fc.c, 1, 4, _in);
 
         if (_swap)
         {
@@ -569,7 +569,7 @@ namespace VirtualRobot
 
         // read number of triangles
         char dummy[100];
-        size_t bytesRead = fread(dummy, 1, 80, in);
+        /*size_t bytesRead =*/ fread(dummy, 1, 80, in);
         size_t nT = read_int(in, swapFlag);
 
 

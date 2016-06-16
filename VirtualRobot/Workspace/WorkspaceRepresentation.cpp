@@ -216,7 +216,7 @@ namespace VirtualRobot
             {
                 int nrNodes = (int)(FileIO::read<ioIntTypeRead>(file));
 
-                THROW_VR_EXCEPTION_IF(nodeSet->getSize() != nrNodes, "Node Sets don't match (size differs).");
+                THROW_VR_EXCEPTION_IF(nrNodes >= 0 && nodeSet->getSize() != static_cast<std::size_t>(nrNodes), "Node Sets don't match (size differs).");
 
                 // Check joint limits
                 std::vector<RobotNodePtr> nodes = nodeSet->getAllRobotNodes();
@@ -1184,7 +1184,7 @@ namespace VirtualRobot
     {
         for (int i = 0; i < 6; i++)
         {
-            if ((x[i] < 0) || (x[i] >= (unsigned int)(numVoxels[i])))
+            if (/*(x[i] < 0) ||*/ (x[i] >= (unsigned int)(numVoxels[i])))
             {
                 return false;
             }
@@ -1347,8 +1347,8 @@ namespace VirtualRobot
 
     unsigned char WorkspaceRepresentation::getVoxelEntry(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned int e, unsigned int f) const
     {
-        if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0
-            || int(a) >= numVoxels[0] || int(b) >= numVoxels[1] || int(c) >= numVoxels[2] || int(d) >= numVoxels[3] || int(e) >= numVoxels[4] || int(f) >= numVoxels[5])
+        if (/*a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0 ||*/
+                int(a) >= numVoxels[0] || int(b) >= numVoxels[1] || int(c) >= numVoxels[2] || int(d) >= numVoxels[3] || int(e) >= numVoxels[4] || int(f) >= numVoxels[5])
         {
             return 0;
         }

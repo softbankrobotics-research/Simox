@@ -509,7 +509,7 @@ namespace VirtualRobot
 
     bool WorkspaceDataArray::hasEntry(unsigned int x, unsigned int y, unsigned int z)
     {
-        if (x < 0 || y < 0 || z < 0 || x >= sizes[0] || y >= sizes[1] || z >= sizes[2])
+        if (/*x < 0 || y < 0 || z < 0 ||*/ x >= sizes[0] || y >= sizes[1] || z >= sizes[2])
         {
             return false;
         }

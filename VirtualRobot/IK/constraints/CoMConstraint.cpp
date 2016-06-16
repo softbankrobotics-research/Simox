@@ -57,7 +57,7 @@ CoMConstraint::CoMConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joint
     addOptimizationFunction(0, false);
 }
 
-double CoMConstraint::optimizationFunction(unsigned int id)
+double CoMConstraint::optimizationFunction(unsigned int /*id*/)
 {
     if(dimensions == 2)
     {
@@ -73,7 +73,7 @@ double CoMConstraint::optimizationFunction(unsigned int id)
     return 0;
 }
 
-Eigen::VectorXf CoMConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf CoMConstraint::optimizationGradient(unsigned int /*id*/)
 {
     int size = nodeSetJoints->getSize();
 

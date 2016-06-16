@@ -72,7 +72,7 @@ namespace GraspStudio
         }
 
         int nFaces = (int)hull->faces.size();
-        int nVertices = nFaces * 3;
+        //int nVertices = nFaces * 3;
 
         int nVertexCount = 0;
 

@@ -99,7 +99,7 @@ namespace GraspStudio
             qhull_mutex.lock();
         }
 
-        clock_t startT = clock();
+        //clock_t startT = clock();
 
         ConvexHull3DPtr result(new ConvexHull3D());
         result->faces.clear();
@@ -158,12 +158,12 @@ namespace GraspStudio
         if (!exitcode)                    /* if no error */
         {
             facetT* facet_list = qh facet_list;
-            int convexNumFaces = qh num_facets;
-            int convexNumVert = qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            //int convexNumFaces = qh num_facets;
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
 
             qh_triangulate(); // need this for triangulated output!
-            int convexNumFaces2 = qh num_facets;
-            int convexNumVert2 = qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            //int convexNumFaces2 = qh num_facets;
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
             /*
             cout << "Numfacets1:" << convexNumFaces << endl;
             cout << "Numvertices1:" << convexNumVert << endl;
@@ -273,8 +273,8 @@ namespace GraspStudio
             fprintf(errfile, "qhull internal warning (main): did not free %d bytes of long memory (%d pieces)\n",
                     totlong, curlong);
 
-        clock_t endT = clock();
-        long timeMS = (long)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0);
+        //clock_t endT = clock();
+        //long timeMS = (long)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0);
 
         //cout << __FUNCTION__ << ": Created convex hull in " << timeMS << " ms" << endl;
         if (lockMutex)
@@ -292,7 +292,7 @@ namespace GraspStudio
             qhull_mutex.lock();
         }
 
-        clock_t startT = clock();
+        //clock_t startT = clock();
 
         ConvexHull6DPtr result(new ConvexHull6D());
 
@@ -352,12 +352,12 @@ namespace GraspStudio
         if (!exitcode)                    /* if no error */
         {
             facetT* facet_list = qh facet_list;
-            int convexNumFaces = qh num_facets;
-            int convexNumVert = qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            //int convexNumFaces = qh num_facets;
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
 
             qh_triangulate(); // need this for triangulated output!
-            int convexNumFaces2 = qh num_facets;
-            int convexNumVert2 = qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            //int convexNumFaces2 = qh num_facets;
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
             double pCenter[6];
 
             for (int u = 0; u < 6; u++)
@@ -505,8 +505,8 @@ namespace GraspStudio
             fprintf(errfile, "qhull internal warning (main): did not free %d bytes of long memory (%d pieces)\n",
                     totlong, curlong);
 
-        clock_t endT = clock();
-        long timeMS = (long)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0);
+        //clock_t endT = clock();
+        //long timeMS = (long)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0);
 
         //cout << __FUNCTION__ << ": Created 6D convex hull in " << timeMS << " ms" << endl;
         if (lockMutex)

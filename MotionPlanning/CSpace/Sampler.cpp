@@ -22,7 +22,7 @@ namespace Saba
         }
     }
 
-    void Sampler::getNormalRandomConfig(Eigen::VectorXf& stroreConfig, const Eigen::VectorXf& mean, const Eigen::MatrixXf& variance)
+    void Sampler::getNormalRandomConfig(Eigen::VectorXf& /*stroreConfig*/, const Eigen::VectorXf& /*mean*/, const Eigen::MatrixXf& /*variance*/)
     {
         //for(unsigned int i = 0; i < dimension; i++)
         //  pStoreConfig[i] = MathHelpers::getNormalRandom(mean[i], variance[i]);
@@ -30,7 +30,7 @@ namespace Saba
 
     }
 
-    void Sampler::getNormalRandomConfig(Eigen::VectorXf& stroreConfig, const Eigen::VectorXf& mean, float variance)
+    void Sampler::getNormalRandomConfig(Eigen::VectorXf& /*stroreConfig*/, const Eigen::VectorXf& /*mean*/, float /*variance*/)
     {
         //for(unsigned int i = 0; i < dimension; i++)
         //  pStoreConfig[i] = MathHelpers::getNormalRandom(mean[i], variance);
@@ -38,7 +38,7 @@ namespace Saba
 
     }
 
-    void Sampler::enableMetricWeights(const Eigen::VectorXf& weights)
+    void Sampler::enableMetricWeights(const Eigen::VectorXf& /*weights*/)
     {
         /*delete [] m_pMetricWeights;
         m_pMetricWeights = NULL;

@@ -239,7 +239,7 @@ void BalanceConstraint::setCoMHeight(float currentheight)
     height = currentheight;
 }
 
-double BalanceConstraint::optimizationFunction(unsigned int id)
+double BalanceConstraint::optimizationFunction(unsigned int /*id*/)
 {
     if(supportPolygonUpdates)
     {
@@ -255,7 +255,7 @@ double BalanceConstraint::optimizationFunction(unsigned int id)
     return differnentiableStability->evaluateOptimizationFunction(com);
 }
 
-Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int /*id*/)
 {
     if(supportPolygonUpdates)
     {

@@ -71,7 +71,7 @@ Eigen::VectorXf ReferenceConfigurationConstraint::getReferenceConfiguration()
     return reference;
 }
 
-double ReferenceConfigurationConstraint::optimizationFunction(unsigned int id)
+double ReferenceConfigurationConstraint::optimizationFunction(unsigned int /*id*/)
 {
     double value = 0;
 
@@ -86,7 +86,7 @@ double ReferenceConfigurationConstraint::optimizationFunction(unsigned int id)
     return optimizationFunctionFactor * value;
 }
 
-Eigen::VectorXf ReferenceConfigurationConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf ReferenceConfigurationConstraint::optimizationGradient(unsigned int /*id*/)
 {
     Eigen::VectorXf gradient(nodeSet->getSize());
 

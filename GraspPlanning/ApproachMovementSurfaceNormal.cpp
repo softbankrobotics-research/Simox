@@ -102,7 +102,7 @@ namespace GraspStudio
         VirtualRobot::RobotNodePtr graspNode = eef_cloned->getGCP();
 
         // current pose
-        Eigen::Matrix4f pose = graspNode->getGlobalPose();
+        //Eigen::Matrix4f pose = graspNode->getGlobalPose();
 
         // target pose
         Eigen::Matrix4f poseFinal = Eigen::Matrix4f::Identity();

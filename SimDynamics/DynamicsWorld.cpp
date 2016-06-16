@@ -10,7 +10,7 @@ namespace SimDynamics
     namespace
     {
         boost::mutex mutex;
-    };
+    }
 
     DynamicsWorldPtr DynamicsWorld::world;
 

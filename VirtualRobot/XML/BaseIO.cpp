@@ -1132,7 +1132,7 @@ namespace VirtualRobot
             return result;
         }
 
-        if (primitivesXMLNode->name() == "primitives")
+        if (primitivesXMLNode->name() == std::string{"primitives"})
         {
             node = primitivesXMLNode;
         }
@@ -1378,7 +1378,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!fileNode, "NULL data");
         std::string fileName = fileNode->value();
         THROW_VR_EXCEPTION_IF(fileName.empty(), "Invalid file defined in FILE tag");
-        bool relative = true;
+        //bool relative = true;
         std::string pathStr("path");
         std::string pathAttribute = processStringAttribute(pathStr, fileNode, true);
 
@@ -1685,7 +1685,8 @@ namespace VirtualRobot
         RobotNodeSetPtr rns = r->getRobotNodeSet(nodeSetName);
         THROW_VR_EXCEPTION_IF(!rns, "Could not find RNS with name " << nodeSetName << " in robot " << robotName);
 
-        if (dim != rns->getSize())
+        assert(dim>=0);
+        if (static_cast<unsigned int>(dim) != rns->getSize())
         {
             VR_WARNING << " Invalid dim attribute (" << dim << "). Setting dimension to " << rns->getSize() << endl;
             dim = rns->getSize();

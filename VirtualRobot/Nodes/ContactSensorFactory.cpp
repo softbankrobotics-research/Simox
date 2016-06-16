@@ -25,15 +25,15 @@ namespace VirtualRobot
      *
      * \return instance of VirtualRobot::ContactSensor.
      */
-    SensorPtr ContactSensorFactory::createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization,
-            const Eigen::Matrix4f& rnTrafo) const
+    SensorPtr ContactSensorFactory::createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr /*visualization*/,
+            const Eigen::Matrix4f& /*rnTrafo*/) const
     {
         SensorPtr Sensor(new ContactSensor(node, name));
 
         return Sensor;
     }
 
-    SensorPtr ContactSensorFactory::createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode, const std::string basePath) const
+    SensorPtr ContactSensorFactory::createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription /*loadMode*/, const std::string /*basePath*/) const
     {
         THROW_VR_EXCEPTION_IF(!sensorXMLNode, "NULL data");
         THROW_VR_EXCEPTION_IF(!node, "NULL data");
@@ -51,13 +51,13 @@ namespace VirtualRobot
 
 
         // visu data
-        bool visuProcessed = false;
-        bool enableVisu = true;
-        bool useAsColModel = false;
+        //bool visuProcessed = false;
+        //bool enableVisu = true;
+        //bool useAsColModel = false;
 
-        VisualizationNodePtr visualizationNode;
+        //VisualizationNodePtr visualizationNode;
 
-        Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
+        //Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 
         rapidxml::xml_node<>* nodeXML = sensorXMLNode->first_node();
 

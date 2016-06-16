@@ -52,7 +52,7 @@ namespace VirtualRobot
 
         // visu data
         bool visuProcessed = false;
-        bool enableVisu = true;
+        //bool enableVisu = true;
         bool useAsColModel = false;
 
         VisualizationNodePtr visualizationNode;

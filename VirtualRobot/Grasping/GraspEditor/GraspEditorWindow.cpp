@@ -114,7 +114,7 @@ namespace VirtualRobot
     }
 
 
-    void GraspEditorWindow::timerCB(void* data, SoSensor* sensor)
+    void GraspEditorWindow::timerCB(void* data, SoSensor* /*sensor*/)
     {
         GraspEditorWindow* ikWindow = static_cast<GraspEditorWindow*>(data);
         float x[6];

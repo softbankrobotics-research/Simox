@@ -720,7 +720,7 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT convertMM2M(const std::vector<ContactPoint> points, std::vector<ContactPoint>& storeResult);
 
 
-    };
+    }
 } // namespace VirtualRobot
 
 #endif //_VirtualRobot_MathTools_h_

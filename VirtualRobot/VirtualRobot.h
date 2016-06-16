@@ -290,7 +290,7 @@ namespace VirtualRobot
         typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
         typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
 
-   };
+   }
 
 
 #define VR_INFO std::cout <<__FILE__ << ":" << __LINE__ << ": "

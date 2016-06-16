@@ -4979,7 +4979,7 @@ preswitch:
                 if (bzf->handleIn)
                 {
                     // set position in stream according to processed bytes (we have read more bytes than we processed)
-                    std::streampos p = bzf->handleIn->tellg();
+                    /*std::streampos p =*/ bzf->handleIn->tellg();
                     std::streamoff o(-(int)(bzf->strm.avail_in));
                     /*if (p>o)
                     {
@@ -5858,13 +5858,13 @@ return_notr:
         return true;
     }
 
-    void* CompressionBZip2::default_bzalloc(void* opaque, CompressionBZip2::Int32 items, CompressionBZip2::Int32 size)
+    void* CompressionBZip2::default_bzalloc(void* /*opaque*/, CompressionBZip2::Int32 items, CompressionBZip2::Int32 size)
     {
         void* v = malloc(items * size);
         return v;
     }
 
-    void CompressionBZip2::default_bzfree(void* opaque, void* addr)
+    void CompressionBZip2::default_bzfree(void* /*opaque*/, void* addr)
     {
         if (addr != NULL)
         {

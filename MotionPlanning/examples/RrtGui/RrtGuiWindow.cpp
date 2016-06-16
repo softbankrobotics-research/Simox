@@ -108,7 +108,7 @@ RrtGuiWindow::~RrtGuiWindow()
 }
 
 
-void RrtGuiWindow::timerCB(void* data, SoSensor* sensor)
+void RrtGuiWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     RrtGuiWindow* ikWindow = static_cast<RrtGuiWindow*>(data);
     ikWindow->redraw();
@@ -641,7 +641,7 @@ void RrtGuiWindow::plan()
     cspace->setSamplingSizeDCD(samplDCD);
     Saba::Rrt::RrtMethod mode;
     Saba::Rrt::RrtMethod mode2;
-    bool planOk = false;
+    //bool planOk = false;
     Saba::RrtPtr mp;
     Saba::BiRrtPtr mpBi;
     bool biRRT = false;

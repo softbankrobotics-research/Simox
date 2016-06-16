@@ -27,7 +27,7 @@ namespace VirtualRobot
      *
      * \return instance of VirtualRobot::RobotNodeRevolute.
      */
-    RobotNodePtr RobotNodeRevoluteFactory::createRobotNode(RobotPtr robot, const std::string& nodeName, VisualizationNodePtr visualizationModel, CollisionModelPtr collisionModel, float limitLow, float limitHigh, float jointValueOffset, const Eigen::Matrix4f& preJointTransform, const Eigen::Vector3f& axis, const Eigen::Vector3f& translationDirection, const SceneObject::Physics& p, RobotNode::RobotNodeType rntype) const
+    RobotNodePtr RobotNodeRevoluteFactory::createRobotNode(RobotPtr robot, const std::string& nodeName, VisualizationNodePtr visualizationModel, CollisionModelPtr collisionModel, float limitLow, float limitHigh, float jointValueOffset, const Eigen::Matrix4f& preJointTransform, const Eigen::Vector3f& axis, const Eigen::Vector3f& /*translationDirection*/, const SceneObject::Physics& p, RobotNode::RobotNodeType rntype) const
     {
         RobotNodePtr robotNode(new RobotNodeRevolute(robot, nodeName, limitLow, limitHigh, preJointTransform, axis, visualizationModel, collisionModel, jointValueOffset, p,  CollisionCheckerPtr(), rntype));
 

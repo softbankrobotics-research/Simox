@@ -108,7 +108,7 @@ namespace VirtualRobot
             int id2;
             Eigen::Vector3f p1;
             Eigen::Vector3f p2;
-            float d = selfDistStatic->getCollisionChecker()->calculateDistance(selfDistStatic, selfDistDynamic, p1, p2, &id1, &id2);
+            /*float d =*/ selfDistStatic->getCollisionChecker()->calculateDistance(selfDistStatic, selfDistDynamic, p1, p2, &id1, &id2);
             //cout << "#### dist:" << d << ", ";
             Eigen::Matrix4f obstDistPos1 = Eigen::Matrix4f::Identity();
             Eigen::Matrix4f obstDistPos2 = Eigen::Matrix4f::Identity();

@@ -125,7 +125,7 @@ GraspRrtWindow::~GraspRrtWindow()
 }
 
 
-void GraspRrtWindow::timerCB(void* data, SoSensor* sensor)
+void GraspRrtWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     GraspRrtWindow* ikWindow = static_cast<GraspRrtWindow*>(data);
     ikWindow->redraw();
@@ -849,7 +849,7 @@ void GraspRrtWindow::plan()
 
     graspRrt->setStart(startConfig);
 
-    bool planOk = false;
+    //bool planOk = false;
     bool planOK = graspRrt->plan();
 
     if (planOK)
