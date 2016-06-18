@@ -61,6 +61,7 @@ namespace VirtualRobot
         virtual VisualizationNodePtr getVisualizationFromColladaFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
 
         virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
+        virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
 
         virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
         virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);

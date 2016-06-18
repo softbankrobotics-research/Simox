@@ -24,6 +24,7 @@
 #include "../../XML/BaseIO.h"
 #include "../../Import/MeshImport/STLReader.h"
 #include "meshes/ProceduralBoxGenerator.h"
+#include "meshes/ProceduralSphereGenerator.h"
 /*
 #ifdef WIN32
 // gl.h assumes windows.h is already included 
@@ -181,6 +182,13 @@ namespace VirtualRobot
         return ovn;
     }
 
+    VisualizationNodePtr OgreVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)
+    {
+        Ogre::SceneNode* sn = createOgreSphere(radius, colorR, colorG, colorB);
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
+    }
+
     Ogre::SceneNode *OgreVisualizationFactory::createOgreBox(float width, float height, float depth, float colorR, float colorG, float colorB)
     {
         if (!renderer)
@@ -214,9 +222,26 @@ namespace VirtualRobot
     {
         if (!renderer)
             return NULL;
-        Ogre::Entity* e = renderer->getSceneManager()->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
+        static std::size_t index = 0;
+        ++index;
+        std::string entityName = "Sphere" + std::to_string(index);
+        Procedural::SphereGenerator().setRadius(radius).setNumRings(32).setNumSegments(32).realizeMesh(entityName);
+        Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName);
         Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
         sn->attachObject(e);
+
+        std::string materialName = entityName + "Material";
+        Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
+            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+        material->getTechnique(0)->getPass(0)->setAmbient(colorR, colorG, colorB);
+        material->getTechnique(0)->getPass(0)->setDiffuse(0.3 * colorR, 0.3 * colorG, 0.3 * colorB, 1.0f);
+        material->getTechnique(0)->getPass(0)->setSpecular(std::max<float>(2 * colorR, 1.0f),
+            std::max<float>(2 * colorG, 1.0f),
+            std::max<float>(2 * colorB, 1.0f),
+            1.0f);
+
+        e->setMaterialName(materialName);
+
         return sn;
     }
 

@@ -213,7 +213,22 @@ void showRobotWindow::rebuildVisualization()
     realBoxC->getOgreVisualization()->setPosition(-3.0f, 0.0f, 0.0f);
     viewer->addVisualization("robotLayer", "boxC", boxC);
 
-    viewer->setCameraTarget(boxA);
+    auto sphereA = visualizationFactory->createSphere(1.0f, 1.0f, 0.0f, 0.0f);
+    auto* realSphereA = dynamic_cast<OgreVisualizationNode*>(sphereA.get());
+    realSphereA->getOgreVisualization()->setPosition(0.0f, 0.0f, -3.0f);
+    viewer->addVisualization("robotLayer", "sphereA", sphereA);
+
+    auto sphereB = visualizationFactory->createSphere(1.0f, 0.0f, 0.7f, 0.0f);
+    auto* realSphereB = dynamic_cast<OgreVisualizationNode*>(sphereB.get());
+    realSphereB->getOgreVisualization()->setPosition(3.0f, 0.0f, -3.0f);
+    viewer->addVisualization("robotLayer", "sphereB", sphereB);
+
+    auto sphereC = visualizationFactory->createSphere(1.0f, 0.0f, 0.0f, 0.7f);
+    auto* realSphereC = dynamic_cast<OgreVisualizationNode*>(sphereC.get());
+    realSphereC->getOgreVisualization()->setPosition(-3.0f, 0.0f, -3.0f);
+    viewer->addVisualization("robotLayer", "sphereC", sphereC);
+
+    viewer->setCameraTarget(sphereA);
 #endif
 
     VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);
