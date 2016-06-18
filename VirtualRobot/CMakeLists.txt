@@ -323,6 +323,11 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OGRE_VISUALIZATION)
     Visualization/OgreVisualization/OgreVisualization.cpp
     Visualization/OgreVisualization/OgreRenderer.cpp
     Import/MeshImport/OgreMeshImporter.cpp
+    Visualization/OgreVisualization/meshes/ProceduralBoxGenerator.cpp
+    Visualization/OgreVisualization/meshes/ProceduralPlaneGenerator.cpp
+    Visualization/OgreVisualization/meshes/ProceduralTriangleBuffer.cpp
+    Visualization/OgreVisualization/meshes/ProceduralUtils.cpp
+
     )
 
     SET(INCLUDES
@@ -332,6 +337,11 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OGRE_VISUALIZATION)
     Visualization/OgreVisualization/OgreVisualization.h
     Visualization/OgreVisualization/OgreRenderer.h
     Import/MeshImport/OgreMeshImporter.h
+    Visualization/OgreVisualization/meshes/ProceduralBoxGenerator.h
+    Visualization/OgreVisualization/meshes/ProceduralMeshGenerator.h
+    Visualization/OgreVisualization/meshes/ProceduralPlaneGenerator.h
+    Visualization/OgreVisualization/meshes/ProceduralUtils.h
+    Visualization/OgreVisualization/meshes/ProceduralTriangleBuffer.h
     )
 
 	if(OGRE_PLUGIN_DIR_DBG AND OGRE_PLUGIN_DIR_REL)

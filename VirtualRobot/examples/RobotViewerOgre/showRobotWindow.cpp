@@ -198,19 +198,19 @@ void showRobotWindow::rebuildVisualization()
 #if 1
     // Test the box creation and visualization
 
-    auto boxA = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 1.0f, 0.0f, 0.0f);
+    auto boxA = visualizationFactory->createBox(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
     auto* realBoxA = dynamic_cast<OgreVisualizationNode*>(boxA.get());
     realBoxA->getOgreVisualization()->setPosition(0.0f, 0.0f, 0.0f);
     viewer->addVisualization("robotLayer", "boxA", boxA);
 
-    auto boxB = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 0.0f, 0.7f, 0.0f);
+    auto boxB = visualizationFactory->createBox(1.0f, 1.0f, 1.0f, 0.0f, 0.7f, 0.0f);
     auto* realBoxB = dynamic_cast<OgreVisualizationNode*>(boxB.get());
-    realBoxB->getOgreVisualization()->setPosition(20.0f, 0.0f, 0.0f);
+    realBoxB->getOgreVisualization()->setPosition(3.0f, 0.0f, 0.0f);
     viewer->addVisualization("robotLayer", "boxB", boxB);
 
-    auto boxC = visualizationFactory->createBox(0.1f, 0.1f, 0.1f, 0.0f, 0.0f, 0.7f);
+    auto boxC = visualizationFactory->createBox(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.7f);
     auto* realBoxC = dynamic_cast<OgreVisualizationNode*>(boxC.get());
-    realBoxC->getOgreVisualization()->setPosition(-20.0f, 0.0f, 0.0f);
+    realBoxC->getOgreVisualization()->setPosition(-3.0f, 0.0f, 0.0f);
     viewer->addVisualization("robotLayer", "boxC", boxC);
 
     viewer->setCameraTarget(boxA);

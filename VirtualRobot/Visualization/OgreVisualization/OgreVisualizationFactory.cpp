@@ -23,7 +23,7 @@
 #include "../../Workspace/WorkspaceGrid.h"
 #include "../../XML/BaseIO.h"
 #include "../../Import/MeshImport/STLReader.h"
-
+#include "meshes/ProceduralBoxGenerator.h"
 /*
 #ifdef WIN32
 // gl.h assumes windows.h is already included 
@@ -188,10 +188,12 @@ namespace VirtualRobot
         static std::size_t index = 0;
         ++index;
         std::string entityName = "Box" + std::to_string(index);
-        Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName, Ogre::SceneManager::PT_CUBE);
+        Procedural::BoxGenerator().setSize(Ogre::Vector3(width, height, depth)).realizeMesh(entityName);
+        Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName);
+        //Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName, Ogre::SceneManager::PT_CUBE);
         Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
         sn->attachObject(e);
-        sn->setScale(width, height, depth);
+        //sn->setScale(width, height, depth);
 
         std::string materialName = entityName + "Material";
         Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(

@@ -159,7 +159,7 @@ void OgreViewer::setCameraTarget(const VirtualRobot::VisualizationNodePtr &visua
         return;
     Ogre::SceneNode* ovisu = ov->getOgreVisualization();
     cameraController->setTarget(ovisu);
-    cameraController->setYawPitchDist(Ogre::Degree(0), Ogre::Degree(0), 100.0f);
+    cameraController->setYawPitchDist(Ogre::Degree(35), Ogre::Degree(35), 20.0f);
 }
 
 void OgreViewer::start(QWidget *mainWindow)
