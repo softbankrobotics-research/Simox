@@ -18,6 +18,8 @@
 
 #include <VirtualRobot/Visualization/OgreVisualization/OgreVisualizationNode.h>
 
+#include "VirtualRobot/MathTools.h"
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -227,6 +229,15 @@ void showRobotWindow::rebuildVisualization()
     auto* realSphereC = dynamic_cast<OgreVisualizationNode*>(sphereC.get());
     realSphereC->getOgreVisualization()->setPosition(-3.0f, 0.0f, -3.0f);
     viewer->addVisualization("robotLayer", "sphereC", sphereC);
+
+    auto lineA = visualizationFactory->createLine(Eigen::Vector3f(4, -0.5f, 3), Eigen::Vector3f(-4, -0.5f, 3), 1.0f, 1, 0, 0);
+    viewer->addVisualization("robotLayer", "lineA", lineA);
+
+    auto lineB = visualizationFactory->createLine(Eigen::Vector3f(4, 0 , 3), Eigen::Vector3f(-4, 0 , 3), 1.0f, 0, 1, 0);
+    viewer->addVisualization("robotLayer", "lineB", lineB);
+
+    auto lineC = visualizationFactory->createLine(Eigen::Vector3f(4, 0.5f, 3), Eigen::Vector3f(-4, 0.5f, 3), 1.0f, 0, 0, 1);
+    viewer->addVisualization("robotLayer", "lineC", lineC);
 
     viewer->setCameraTarget(sphereA);
 #endif

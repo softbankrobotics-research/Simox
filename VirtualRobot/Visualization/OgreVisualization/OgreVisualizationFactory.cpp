@@ -182,6 +182,35 @@ namespace VirtualRobot
         return ovn;
     }
 
+    VisualizationNodePtr OgreVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width, float colorR, float colorG, float colorB)
+    {
+        if (!renderer)
+            return NULL;
+        static std::size_t index = 0;
+        ++index;
+        std::string entityName = "Line" + std::to_string(index);
+
+        std::string materialName = entityName + "Material";
+        Ogre::MaterialPtr myManualObjectMaterial = Ogre::MaterialManager::getSingleton().create(materialName ,Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        myManualObjectMaterial->setReceiveShadows(false);
+        myManualObjectMaterial->getTechnique(0)->setLightingEnabled(true);
+        myManualObjectMaterial->getTechnique(0)->getPass(0)->setDiffuse(colorR,colorG,colorB,0);
+        myManualObjectMaterial->getTechnique(0)->getPass(0)->setAmbient(colorR,colorG,colorB);
+        myManualObjectMaterial->getTechnique(0)->getPass(0)->setSelfIllumination(colorR,colorG,colorB);
+
+        Ogre::ManualObject* manual = renderer->getSceneManager()->createManualObject(entityName);
+        manual->begin(materialName, Ogre::RenderOperation::OT_LINE_LIST);
+        manual->position(from(0), from(1), from(2));
+        manual->position(to(0), to(1), to(2));
+        manual->end();
+
+        Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+        sn->attachObject(manual);
+
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
+    }
+
     VisualizationNodePtr OgreVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)
     {
         Ogre::SceneNode* sn = createOgreSphere(radius, colorR, colorG, colorB);
@@ -205,7 +234,7 @@ namespace VirtualRobot
 
         std::string materialName = entityName + "Material";
         Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
-            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         material->getTechnique(0)->getPass(0)->setAmbient(colorR, colorG, colorB);
         material->getTechnique(0)->getPass(0)->setDiffuse(0.3 * colorR, 0.3 * colorG, 0.3 * colorB, 1.0f);
         material->getTechnique(0)->getPass(0)->setSpecular(std::max<float>(2 * colorR, 1.0f),
@@ -232,7 +261,7 @@ namespace VirtualRobot
 
         std::string materialName = entityName + "Material";
         Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
-            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         material->getTechnique(0)->getPass(0)->setAmbient(colorR, colorG, colorB);
         material->getTechnique(0)->getPass(0)->setDiffuse(0.3 * colorR, 0.3 * colorG, 0.3 * colorB, 1.0f);
         material->getTechnique(0)->getPass(0)->setSpecular(std::max<float>(2 * colorR, 1.0f),
