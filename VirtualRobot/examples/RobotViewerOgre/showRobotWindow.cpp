@@ -220,12 +220,12 @@ void showRobotWindow::rebuildVisualization()
     realSphereA->getOgreVisualization()->setPosition(0.0f, 0.0f, -3.0f);
     viewer->addVisualization("robotLayer", "sphereA", sphereA);
 
-    auto sphereB = visualizationFactory->createSphere(1.0f, 0.0f, 0.7f, 0.0f);
+    auto sphereB = visualizationFactory->createSphere(1.0f, 0.0f, 1.0f, 0.0f);
     auto* realSphereB = dynamic_cast<OgreVisualizationNode*>(sphereB.get());
     realSphereB->getOgreVisualization()->setPosition(3.0f, 0.0f, -3.0f);
     viewer->addVisualization("robotLayer", "sphereB", sphereB);
 
-    auto sphereC = visualizationFactory->createSphere(1.0f, 0.0f, 0.0f, 0.7f);
+    auto sphereC = visualizationFactory->createSphere(1.0f, 0.0f, 0.0f, 1.0f);
     auto* realSphereC = dynamic_cast<OgreVisualizationNode*>(sphereC.get());
     realSphereC->getOgreVisualization()->setPosition(-3.0f, 0.0f, -3.0f);
     viewer->addVisualization("robotLayer", "sphereC", sphereC);
@@ -238,6 +238,21 @@ void showRobotWindow::rebuildVisualization()
 
     auto lineC = visualizationFactory->createLine(Eigen::Vector3f(4, 0.5f, 3), Eigen::Vector3f(-4, 0.5f, 3), 1.0f, 0, 0, 1);
     viewer->addVisualization("robotLayer", "lineC", lineC);
+
+    auto cylinderA = visualizationFactory->createCylinder(1.0f, 2.0f, 1.0f, 0.0f, 0.0f);
+    auto* realCylinderA = dynamic_cast<OgreVisualizationNode*>(cylinderA.get());
+    realCylinderA->getOgreVisualization()->setPosition(0.0f, -1.0f, -6.0f);
+    viewer->addVisualization("robotLayer", "cylinderA", cylinderA);
+
+    auto cylinderB = visualizationFactory->createCylinder(1.0f, 2.0f, 0.0f, 1.0f, 0.0f);
+    auto* realCylinderB = dynamic_cast<OgreVisualizationNode*>(cylinderB.get());
+    realCylinderB->getOgreVisualization()->setPosition(3.0f, -1.0f, -6.0f);
+    viewer->addVisualization("robotLayer", "cylinderB", cylinderB);
+
+    auto cylinderC = visualizationFactory->createCylinder(1.0f, 2.0f, 0.0f, 0.0f, 1.0f);
+    auto* realCylinderC = dynamic_cast<OgreVisualizationNode*>(cylinderC.get());
+    realCylinderC->getOgreVisualization()->setPosition(-3.0f, -1.0f, -6.0f);
+    viewer->addVisualization("robotLayer", "cylinderC", cylinderC);
 
     viewer->setCameraTarget(sphereA);
 #endif
