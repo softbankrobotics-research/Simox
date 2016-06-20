@@ -26,6 +26,7 @@
 #include "meshes/ProceduralBoxGenerator.h"
 #include "meshes/ProceduralSphereGenerator.h"
 #include "meshes/ProceduralCylinderGenerator.h"
+#include "meshes/ProceduralPlaneGenerator.h"
 /*
 #ifdef WIN32
 // gl.h assumes windows.h is already included 
@@ -252,6 +253,40 @@ namespace VirtualRobot
 
         VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
         return ovn;
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::createPlane(const Eigen::Vector3f &position, const Eigen::Vector3f &normal, float extend, float transparency, float colorR, float colorG, float colorB)
+    {
+        if (!renderer)
+            return NULL;
+        static std::size_t index = 0;
+        ++index;
+        std::string entityName = "Plane" + std::to_string(index);
+
+        std::string materialName = entityName + "Material";
+        Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(materialName ,Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+        material->getTechnique(0)->getPass(0)->setCullingMode(Ogre::CULL_NONE);
+        material->getTechnique(0)->getPass(0)->setDiffuse(0.3 * colorR,0.3 * colorG,0.3 * colorB, transparency);
+        material->getTechnique(0)->getPass(0)->setAmbient(colorR,colorG,colorB);
+        material->getTechnique(0)->getPass(0)->setSpecular(std::max<float>(2 * colorR, 1.0f),
+            std::max<float>(2 * colorG, 1.0f),
+            std::max<float>(2 * colorB, 1.0f),
+            1.0f);
+
+        Procedural::PlaneGenerator().setNormal(Ogre::Vector3(normal(0), normal(1), normal(2))).setPosition(Ogre::Vector3(position(0), position(1), position(2))).setSize(Ogre::Vector2(extend, extend)).realizeMesh(entityName);
+        Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName);
+        e->setMaterialName(materialName);
+        Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+        sn->attachObject(e);
+
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::createPlane(const MathTools::Plane &plane, float extend, float transparency, float colorR, float colorG, float colorB)
+    {
+        return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
     }
 
     Ogre::SceneNode *OgreVisualizationFactory::createOgreBox(float width, float height, float depth, float colorR, float colorG, float colorB)

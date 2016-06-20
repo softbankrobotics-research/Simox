@@ -254,6 +254,9 @@ void showRobotWindow::rebuildVisualization()
     realCylinderC->getOgreVisualization()->setPosition(-3.0f, -1.0f, -6.0f);
     viewer->addVisualization("robotLayer", "cylinderC", cylinderC);
 
+    auto planeA = visualizationFactory->createPlane(Eigen::Vector3f(0, -2, -1.5f), Eigen::Vector3f(0, 1, 0), 10, 1.0, 0.8, 0.8, 0.8 );
+    viewer->addVisualization("robotLayer", "planeA", planeA);
+
     viewer->setCameraTarget(sphereA);
 #endif
 
