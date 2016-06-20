@@ -212,6 +212,13 @@ namespace VirtualRobot
         return ovn;
     }
 
+    VisualizationNodePtr OgreVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width, float colorR, float colorG, float colorB)
+    {
+        Eigen::Vector3f from_vec(from(0 ,4), from(1, 4), from(2, 4));
+        Eigen::Vector3f to_vec(to(0, 4), to(1, 4), to(2, 4));
+        return createLine(from_vec, to_vec, width, colorR, colorG, colorB);
+    }
+
     VisualizationNodePtr OgreVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)
     {
         Ogre::SceneNode* sn = createOgreSphere(radius, colorR, colorG, colorB);
