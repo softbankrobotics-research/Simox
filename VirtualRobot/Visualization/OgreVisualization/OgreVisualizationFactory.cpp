@@ -27,6 +27,7 @@
 #include "meshes/ProceduralSphereGenerator.h"
 #include "meshes/ProceduralCylinderGenerator.h"
 #include "meshes/ProceduralPlaneGenerator.h"
+#include "meshes/ProceduralConeGenerator.h"
 /*
 #ifdef WIN32
 // gl.h assumes windows.h is already included 
@@ -316,6 +317,49 @@ namespace VirtualRobot
     VisualizationNodePtr OgreVisualizationFactory::createPlane(const MathTools::Plane &plane, float extend, float transparency, float colorR, float colorG, float colorB)
     {
         return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width, const VisualizationFactory::Color &color)
+    {
+        if (!renderer)
+            return NULL;
+        static std::size_t index = 0;
+        ++index;
+        std::string entityNameCone = "Arrow" + std::to_string(index) + "Cone";
+        std::string entityNameCylinder = "Arrow" + std::to_string(index) + "Cylinder";
+
+        std::string materialName = entityNameCone + "Material";
+        Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(
+            materialName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        material->getTechnique(0)->getPass(0)->setAmbient(color.r, color.g, color.b);
+        material->getTechnique(0)->getPass(0)->setDiffuse(0.3 * color.r, 0.3 * color.g, 0.3 * color.b, 1.0f);
+        material->getTechnique(0)->getPass(0)->setSpecular(std::max<float>(2 * color.r, 1.0f),
+            std::max<float>(2 * color.g, 1.0f),
+            std::max<float>(2 * color.b, 1.0f),
+            1.0f);
+
+        Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+
+        Procedural::CylinderGenerator().setNumSegBase(32).setNumSegHeight(16).setHeight(length).setRadius(width / 2).realizeMesh(entityNameCylinder);
+        Ogre::Entity* cylinder = renderer->getSceneManager()->createEntity(entityNameCylinder);
+        cylinder->setMaterialName(materialName);
+        sn->attachObject(cylinder);
+
+        Ogre::SceneNode* coneNode = renderer->getSceneManager()->createSceneNode();
+        float coneHeight = width * 4.0f;
+        float coneBottomRadius = (width * 2.5f) / 2;
+
+        Procedural::ConeGenerator().setHeight(coneHeight).setRadius(coneBottomRadius).realizeMesh(entityNameCone);
+        Ogre::Entity* cone = renderer->getSceneManager()->createEntity(entityNameCone);
+        cone->setMaterialName(materialName);
+        coneNode->attachObject(cone);
+        coneNode->translate(0, length, 0);
+        sn->addChild(coneNode);
+
+        sn->setDirection(Ogre::Vector3(n(0), n(1), n(2)), Ogre::SceneNode::TS_LOCAL, Ogre::Vector3::UNIT_Y);
+
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
     }
 
     Ogre::SceneNode *OgreVisualizationFactory::createOgreBox(float width, float height, float depth, float colorR, float colorG, float colorB, bool wireframe)

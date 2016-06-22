@@ -266,7 +266,7 @@ void showRobotWindow::rebuildVisualization()
     auto planeA = visualizationFactory->createPlane(Eigen::Vector3f(0, -2, -1.5f), Eigen::Vector3f(0, 1, 0), 10, 1.0, 0.8, 0.8, 0.8 );
     viewer->addVisualization("robotLayer", "planeA", planeA);
 
-    auto arrowA = visualizationFactory->createArrow(Eigen::Vector3f(0, 0, 1), 2.0f, 0.1f);
+    auto arrowA = visualizationFactory->createArrow(Eigen::Vector3f(0, 0, 1 ), 2.0f, 0.1f);
     viewer->addVisualization("robotLayer", "arrowA", arrowA);
 
     viewer->setCameraTarget(sphereA);
