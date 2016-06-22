@@ -255,6 +255,27 @@ namespace VirtualRobot
         return ovn;
     }
 
+    VisualizationNodePtr OgreVisualizationFactory::createBoundingBox(const BoundingBox &bbox, bool wireFrame)
+    {
+        Eigen::Vector3f mi = bbox.getMin();
+        Eigen::Vector3f ma = bbox.getMax();
+        float x1 = std::min(mi(0), ma(0));
+        float x2 = std::max(mi(0), ma(0));
+        float y1 = std::min(mi(1), ma(1));
+        float y2 = std::max(mi(1), ma(1));
+        float z1 = std::min(mi(2), ma(2));
+        float z2 = std::max(mi(2), ma(2));
+        float x = x1 + (x2 - x1) * 0.5f;
+        float y = y1 + (y2 - y1) * 0.5f;
+        float z = z1 + (z2 - z1) * 0.5f;
+
+        Ogre::SceneNode* sn = createOgreBox(x2 - x1, y2 - y1, z2 - z1, 0.0f, 0.0f, 0.65f, wireFrame);
+        sn->translate(x, y, z);
+
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
+    }
+
     VisualizationNodePtr OgreVisualizationFactory::createVertexVisualization(const Eigen::Vector3f &position, float radius, float transparency, float colorR, float colorG, float colorB)
     {
         Ogre::SceneNode* sphere = createOgreSphere(radius, colorR, colorG, colorB, transparency, 8, 8);
@@ -297,7 +318,7 @@ namespace VirtualRobot
         return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
     }
 
-    Ogre::SceneNode *OgreVisualizationFactory::createOgreBox(float width, float height, float depth, float colorR, float colorG, float colorB)
+    Ogre::SceneNode *OgreVisualizationFactory::createOgreBox(float width, float height, float depth, float colorR, float colorG, float colorB, bool wireframe)
     {
         if (!renderer)
             return NULL;
@@ -320,6 +341,10 @@ namespace VirtualRobot
             std::max<float>(2 * colorG, 1.0f),
             std::max<float>(2 * colorB, 1.0f),
             1.0f);
+        if(wireframe)
+        {
+            material->getTechnique(0)->getPass(0)->setPolygonMode(Ogre::PM_WIREFRAME);
+        }
 
         e->setMaterialName(materialName);
 
