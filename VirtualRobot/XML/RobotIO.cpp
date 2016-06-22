@@ -611,7 +611,7 @@ namespace VirtualRobot
 
         // visu data
         bool visuProcessed = false;
-        bool enableVisu = true;
+        //bool enableVisu = true;
         bool useAsColModel;
 
         // collision information
@@ -727,13 +727,13 @@ namespace VirtualRobot
     }
 
 
-    VisualizationNodePtr RobotIO::checkUseAsColModel(rapidxml::xml_node<>* visuXMLNode, const std::string& robotNodeName, const std::string& basePath)
+    VisualizationNodePtr RobotIO::checkUseAsColModel(rapidxml::xml_node<>* visuXMLNode, const std::string& /*robotNodeName*/, const std::string& basePath)
     {
         bool enableVisu = true;
-        bool coordAxis = false;
-        float coordAxisFactor = 1.0f;
-        std::string coordAxisText = "";
-        std::string visuCoordType = "";
+        //bool coordAxis = false;
+        //float coordAxisFactor = 1.0f;
+        //std::string coordAxisText = "";
+        //std::string visuCoordType = "";
         std::string visuFileType = "";
         std::string visuFile = "";
         rapidxml::xml_attribute<>* attr;

@@ -105,68 +105,68 @@ namespace VirtualRobot
             ;
         }
 
-        virtual void init(int &argc, char* argv[], const std::string &appName)
+        virtual void init(int &/*argc*/, char* /*argv*/[], const std::string &/*appName*/)
         {
         }
 
-        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray())
+        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& /*primitives*/, bool /*boundingBox*/ = false, Color /*color*/ = Color::Gray())
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& /*filename*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& /*ifs*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
         {
             return VisualizationNodePtr();
         }
         /*!
             A box, dimensions are given in mm.
         */
-        virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createBox(float /*width*/, float /*height*/, float /*depth*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createLine(const Eigen::Vector3f& /*from*/, const Eigen::Vector3f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& /*from*/, const Eigen::Matrix4f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createSphere(float /*radius*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createCylinder(float /*radius*/, float /*height*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10)
+        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = NULL, float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false)
+        virtual VisualizationNodePtr createBoundingBox(const BoundingBox& /*bbox*/, bool /*wireFrame*/ = false)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& /*position*/, float /*radius*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
 
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
+        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, Eigen::Matrix4f& /*pose*/, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
         {
 	        return VisualizationNodePtr();
         }
         
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines = true)
+        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, bool /*showNormals*/, Eigen::Matrix4f& /*pose*/, bool /*showLines*/ = true)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
+        virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
         }
@@ -174,15 +174,15 @@ namespace VirtualRobot
         {
             return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
         }
-        virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray())
+        virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& /*n*/, float /*length*/ = 50.0f, float /*width*/ = 2.0f, const Color& /*color*/ = Color::Gray())
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createTrajectory(TrajectoryPtr t, Color colorNode = Color::Blue(), Color colorLine = Color::Gray(), float nodeSize = 15.0f, float lineSize = 4.0f)
+        virtual VisualizationNodePtr createTrajectory(TrajectoryPtr /*t*/, Color /*colorNode*/ = Color::Blue(), Color /*colorLine*/ = Color::Gray(), float /*nodeSize*/ = 15.0f, float /*lineSize*/ = 4.0f)
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createText(const std::string& text, bool billboard = false, float scaling = 1.0f, Color c = Color::Black(), float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f)
+        virtual VisualizationNodePtr createText(const std::string& /*text*/, bool /*billboard*/ = false, float /*scaling*/ = 1.0f, Color /*c*/ = Color::Black(), float /*offsetX*/ = 20.0f, float /*offsetY*/ = 20.0f, float /*offsetZ*/ = 0.0f)
         {
             return VisualizationNodePtr();
         }
@@ -196,14 +196,14 @@ namespace VirtualRobot
             \param axesWidth The width of the axes.
             \return A VisualizationNode containing the visualization.
         */
-        virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f)
+        virtual VisualizationNodePtr createEllipse(float /*x*/, float /*y*/, float /*z*/, bool /*showAxes*/ = true, float /*axesHeight*/ = 4.0f, float /*axesWidth*/ = 8.0f)
         {
             return VisualizationNodePtr();
         }
         /*!
             Move local visualization by homogeneous matrix m. (MM)
         */
-        virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m) {}
+        virtual void applyDisplacement(VisualizationNodePtr /*o*/, Eigen::Matrix4f& /*m*/) {}
 
         /*!
             Create an empty VisualizationNode.
@@ -216,7 +216,7 @@ namespace VirtualRobot
         /*!
             Create a united visualization.
         */
-        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations) const
+        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& /*visualizations*/) const
         {
             return VisualizationNodePtr();
         }

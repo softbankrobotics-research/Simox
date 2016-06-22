@@ -147,6 +147,6 @@ namespace Collada
         }
     };
 
-};
+}
 
 #endif

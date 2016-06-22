@@ -405,7 +405,7 @@ namespace GraspStudio
         float fRes = FLT_MAX;
         int nWrongFacets = 0;
 
-        for (size_t i = 0; i < (int)ch->faces.size(); i++)
+        for (size_t i = 0; i < ch->faces.size(); i++)
         {
             if (ch->faces[i].distNormCenter > 0)
             {

@@ -84,7 +84,7 @@ namespace VirtualRobot
         return getManipulability(i, -1);
     }
 
-    float PoseQualityManipulability::getManipulability(const Eigen::VectorXf& direction, int considerFirstSV)
+    float PoseQualityManipulability::getManipulability(const Eigen::VectorXf& direction, int /*considerFirstSV*/)
     {
         VR_ASSERT(direction.rows() == 3 || direction.rows() == 6);
         Eigen::VectorXf d(6);

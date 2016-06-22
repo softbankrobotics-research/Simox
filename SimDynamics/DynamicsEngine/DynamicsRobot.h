@@ -86,7 +86,7 @@ namespace SimDynamics
             \param dt Timestep
         */
         virtual void actuateJoints(double dt);
-        virtual void updateSensors(double dt) {}
+        virtual void updateSensors(double) {}
 
         // experimental...
         virtual void ensureKinematicConstraints();

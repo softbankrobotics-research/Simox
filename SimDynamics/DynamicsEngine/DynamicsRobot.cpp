@@ -285,7 +285,7 @@ namespace SimDynamics
             it++;
         }
     }
-    void DynamicsRobot::actuateJoints(double dt)
+    void DynamicsRobot::actuateJoints(double /*dt*/)
     {
 
     }
@@ -317,17 +317,17 @@ namespace SimDynamics
 
     }
 
-    double DynamicsRobot::getJointAngle(VirtualRobot::RobotNodePtr rn)
+    double DynamicsRobot::getJointAngle(VirtualRobot::RobotNodePtr /*rn*/)
     {
         return 0.0f;
     }
 
-    double DynamicsRobot::getJointSpeed(VirtualRobot::RobotNodePtr rn)
+    double DynamicsRobot::getJointSpeed(VirtualRobot::RobotNodePtr /*rn*/)
     {
         return 0.0f;
     }
 
-    double DynamicsRobot::getJointTargetSpeed(VirtualRobot::RobotNodePtr rn)
+    double DynamicsRobot::getJointTargetSpeed(VirtualRobot::RobotNodePtr /*rn*/)
     {
         return 0.0f;
     }
@@ -341,27 +341,27 @@ namespace SimDynamics
         return com;
     }
 
-    Eigen::Vector3f DynamicsRobot::getComGlobal(const VirtualRobot::RobotNodeSetPtr& bodies)
+    Eigen::Vector3f DynamicsRobot::getComGlobal(const VirtualRobot::RobotNodeSetPtr& /*bodies*/)
     {
         return Eigen::Vector3f::Zero();
     }
 
-    Eigen::Vector3f DynamicsRobot::getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& bodies)
+    Eigen::Vector3f DynamicsRobot::getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& /*bodies*/)
     {
         return Eigen::Vector3f::Zero();
     }
 
-    Eigen::Vector3f DynamicsRobot::getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
+    Eigen::Vector3f DynamicsRobot::getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& /*set*/)
     {
         return Eigen::Vector3f::Zero();
     }
 
-    Eigen::Vector3f DynamicsRobot::getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set)
+    Eigen::Vector3f DynamicsRobot::getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& /*set*/)
     {
         return Eigen::Vector3f::Zero();
     }
 
-    Eigen::Vector3f DynamicsRobot::getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set)
+    Eigen::Vector3f DynamicsRobot::getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& /*set*/)
     {
         return Eigen::Vector3f::Zero();
     }
@@ -393,11 +393,11 @@ namespace SimDynamics
         return actuationControllers;
     }
 
-    bool DynamicsRobot::attachObject(const std::string& nodeName, DynamicsObjectPtr object)
+    bool DynamicsRobot::attachObject(const std::string& /*nodeName*/, DynamicsObjectPtr /*object*/)
     {
         return false;
     }
-    bool DynamicsRobot::detachObject(DynamicsObjectPtr object)
+    bool DynamicsRobot::detachObject(DynamicsObjectPtr /*object*/)
     {
         return false;
     }

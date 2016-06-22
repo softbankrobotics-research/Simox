@@ -393,7 +393,7 @@ namespace VirtualRobot
 
     void RobotNodeSet::setJointValues(const Eigen::VectorXf& jointValues)
     {
-        THROW_VR_EXCEPTION_IF(jointValues.rows() != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
+        THROW_VR_EXCEPTION_IF(static_cast<std::size_t>(jointValues.rows()) != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
         RobotPtr rob = robot.lock();
         VR_ASSERT(rob);
         WriteLockPtr lock = rob->getWriteLock();
@@ -582,7 +582,7 @@ namespace VirtualRobot
         }
 
         std::vector<RobotNodePtr>::const_iterator j = nodes.begin();
-        bool ok = false;
+        //bool ok = false;
 
         while (j != nodes.end())
         {
@@ -650,7 +650,7 @@ namespace VirtualRobot
 
     bool RobotNodeSet::checkJointLimits(Eigen::VectorXf& jointValues, bool verbose /*= false*/) const
     {
-        THROW_VR_EXCEPTION_IF(jointValues.size() != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
+        THROW_VR_EXCEPTION_IF(static_cast<std::size_t>(jointValues.size()) != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         bool res = true;
 
@@ -667,31 +667,31 @@ namespace VirtualRobot
         return res;
     }
 
-    bool RobotNodeSet::addSceneObject(SceneObjectPtr sceneObject)
+    bool RobotNodeSet::addSceneObject(SceneObjectPtr /*sceneObject*/)
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;
     }
 
-    bool RobotNodeSet::addSceneObjects(SceneObjectSetPtr sceneObjectSet)
+    bool RobotNodeSet::addSceneObjects(SceneObjectSetPtr /*sceneObjectSet*/)
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;
     }
 
-    bool RobotNodeSet::addSceneObjects(RobotNodeSetPtr robotNodeSet)
+    bool RobotNodeSet::addSceneObjects(RobotNodeSetPtr /*robotNodeSet*/)
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;
     }
 
-    bool RobotNodeSet::addSceneObjects(std::vector<RobotNodePtr> robotNodes)
+    bool RobotNodeSet::addSceneObjects(std::vector<RobotNodePtr> /*robotNodes*/)
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;
     }
 
-    bool RobotNodeSet::removeSceneObject(SceneObjectPtr sceneObject)
+    bool RobotNodeSet::removeSceneObject(SceneObjectPtr /*sceneObject*/)
     {
         THROW_VR_EXCEPTION("Not allowed for RobotNodeSets.");
         return false;

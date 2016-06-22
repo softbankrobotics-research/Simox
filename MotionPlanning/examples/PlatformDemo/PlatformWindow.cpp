@@ -77,7 +77,7 @@ PlatformWindow::~PlatformWindow()
 }
 
 
-void PlatformWindow::timerCB(void* data, SoSensor* sensor)
+void PlatformWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     PlatformWindow* ikWindow = static_cast<PlatformWindow*>(data);
     ikWindow->redraw();
@@ -375,7 +375,7 @@ void PlatformWindow::plan()
     rrt->setStart(startConfig);
     rrt->setGoal(goalConfig);
 
-    bool planOk = false;
+    //bool planOk = false;
     bool planOK = rrt->plan();
 
     if (planOK)
@@ -436,7 +436,7 @@ void PlatformWindow::redraw()
 }
 
 
-void PlatformWindow::selectPlanSet(int nr)
+void PlatformWindow::selectPlanSet(int /*nr*/)
 {
     /*if (nr == 0)
     {

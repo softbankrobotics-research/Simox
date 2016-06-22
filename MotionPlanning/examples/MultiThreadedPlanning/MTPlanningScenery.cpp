@@ -638,7 +638,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
     if ((int)robots.size() == 1)
     {
         boost::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
-        SoNode* visualisationNode = NULL;
+        //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
         if (visualization)
@@ -763,7 +763,7 @@ void MTPlanningScenery::setRobotModelShape(bool collisionModel)
     if (robots.size() > 0)
     {
         boost::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
-        SoNode* visualisationNode = NULL;
+        //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
         if (visualization)

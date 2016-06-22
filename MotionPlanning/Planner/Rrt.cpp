@@ -97,7 +97,7 @@ namespace Saba
             robot->setUpdateVisualization(false);
         }
 
-        ExtensionResult extResult;
+        ExtensionResult extResult = eError;
 
         // the extension loop
         do

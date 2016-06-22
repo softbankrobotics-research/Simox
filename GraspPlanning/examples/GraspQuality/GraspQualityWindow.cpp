@@ -83,7 +83,7 @@ GraspQualityWindow::~GraspQualityWindow()
 }
 
 
-void GraspQualityWindow::timerCB(void* data, SoSensor* sensor)
+void GraspQualityWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     GraspQualityWindow* ikWindow = static_cast<GraspQualityWindow*>(data);
     float x[6];

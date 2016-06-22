@@ -347,9 +347,9 @@ namespace VirtualRobot
                 cout << "Here's a matrix whose columns are eigenvectors of A \n"
                     << "corresponding to these eigenvalues:\n"
                     << eigensolver.eigenvectors() << endl;*/
-                Eigen::Vector3f v1 = eigensolver.eigenvectors().block(0, 0, 3, 1);
-                Eigen::Vector3f v2 = eigensolver.eigenvectors().block(0, 1, 3, 1);
-                Eigen::Vector3f v3 = eigensolver.eigenvectors().block(0, 2, 3, 1);
+                //Eigen::Vector3f v1 = eigensolver.eigenvectors().block(0, 0, 3, 1);
+                //Eigen::Vector3f v2 = eigensolver.eigenvectors().block(0, 1, 3, 1);
+                //Eigen::Vector3f v3 = eigensolver.eigenvectors().block(0, 2, 3, 1);
                 /*cout << "v1:" << v1 << endl;
                 cout << "v2:" << v2 << endl;
                 cout << "v3:" << v3 << endl;*/

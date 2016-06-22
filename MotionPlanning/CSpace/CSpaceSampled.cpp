@@ -171,16 +171,16 @@ namespace Saba
             return p;
         }
 
-        Eigen::VectorXf lastConfig = start;
+        //Eigen::VectorXf lastConfig = start;
 
         // init tmp values
         tmpConfig = start;
 
         float nodeDist = 0.0f;
         float colCheckDist = getSamplingSizeDCD();
-        float samplingSize = getSamplingSize();
+        //float samplingSize = getSamplingSize();
         bool endLoop = false;
-        bool lastNode = false;
+        //bool lastNode = false;
 
         do
         {

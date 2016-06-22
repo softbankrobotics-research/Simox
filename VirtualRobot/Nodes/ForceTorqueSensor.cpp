@@ -62,14 +62,14 @@ namespace VirtualRobot
     }
 
 
-    SensorPtr ForceTorqueSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling)
+    SensorPtr ForceTorqueSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float /*scaling*/)
     {
         SensorPtr result(new ForceTorqueSensor(newRobotNode, name));
         return result;
     }
 
 
-    std::string ForceTorqueSensor::toXML(const std::string& modelPath, int tabs)
+    std::string ForceTorqueSensor::toXML(const std::string& /*modelPath*/, int tabs)
     {
         std::stringstream ss;
         std::string t = "\t";

@@ -71,7 +71,7 @@ namespace VirtualRobot
     {
     }
 
-    void BasicGraspQualityMeasure::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints6d)
+    void BasicGraspQualityMeasure::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& /*contactPoints6d*/)
     {
         this->contactPoints.clear();
         this->contactPointsM.clear();

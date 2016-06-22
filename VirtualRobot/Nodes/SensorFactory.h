@@ -38,7 +38,7 @@ namespace rapidxml
 {
     template<class Ch>
     class xml_node;
-};
+}
 
 
 namespace VirtualRobot
@@ -57,8 +57,8 @@ namespace VirtualRobot
         }
 
         //! Standard init method
-        virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
-                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const
+        virtual SensorPtr createSensor(RobotNodePtr /*node*/, const std::string& /*name*/, VisualizationNodePtr /*visualization*/ = VisualizationNodePtr(),
+                                       const Eigen::Matrix4f& /*rnTrafo*/ = Eigen::Matrix4f::Identity()) const
         {
             return SensorPtr();
         }
@@ -66,7 +66,7 @@ namespace VirtualRobot
         /*!
             Create sensor from XML tag. Factories of custom sensors can initialize with this method.
         */
-        virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const
+        virtual SensorPtr createSensor(RobotNodePtr /*node*/, rapidxml::xml_node<char>* /*sensorXMLNode*/, RobotIO::RobotDescription /*loadMode*/ = RobotIO::eFull, const std::string /*basePath*/ = std::string()) const
         {
             return SensorPtr();
         }

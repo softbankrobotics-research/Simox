@@ -213,7 +213,7 @@ namespace VirtualRobot
     }
 
 
-    std::string RobotNodeRevolute::_toXML(const std::string& modelPath)
+    std::string RobotNodeRevolute::_toXML(const std::string& /*modelPath*/)
     {
         std::stringstream ss;
         ss << "\t\t<Joint type='revolute'>" << endl;

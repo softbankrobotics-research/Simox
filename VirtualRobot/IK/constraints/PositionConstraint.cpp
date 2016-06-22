@@ -44,7 +44,7 @@ PositionConstraint::PositionConstraint(const VirtualRobot::RobotPtr &robot, cons
     addOptimizationFunction(0, false);
 }
 
-double PositionConstraint::optimizationFunction(unsigned int id)
+double PositionConstraint::optimizationFunction(unsigned int /*id*/)
 {
     Eigen::Vector3f d = eef->getGlobalPose().block<3,1>(0,3) - target;
 
@@ -70,7 +70,7 @@ double PositionConstraint::optimizationFunction(unsigned int id)
     return 0;
 }
 
-Eigen::VectorXf PositionConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf PositionConstraint::optimizationGradient(unsigned int /*id*/)
 {
     int size = nodeSet->getSize();
 
@@ -120,4 +120,7 @@ bool PositionConstraint::checkTolerances()
         case IKSolver::CartesianSelection::Orientation:
             return true;
     }
+    std::stringstream ss;
+    ss << "PositionConstraint::checkTolerances(): unknown value for cartesianSelection = " << cartesianSelection;
+    throw std::logic_error{ss.str()};
 }

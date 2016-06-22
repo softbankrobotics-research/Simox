@@ -106,7 +106,7 @@ namespace VirtualRobot
 
 
         //! Forbid cloning method from SceneObject. We need to know the new robotnode for cloning
-        SceneObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const
+        SceneObjectPtr clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const
         {
             THROW_VR_EXCEPTION("Cloning not allowed this way...");
         }
@@ -141,7 +141,7 @@ namespace VirtualRobot
         */
         virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling) = 0;
 
-        virtual SceneObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const
+        virtual SceneObject* _clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const
         {
             THROW_VR_EXCEPTION("Cloning not allowed this way...");
         }

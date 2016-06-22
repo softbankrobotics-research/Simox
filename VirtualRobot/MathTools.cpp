@@ -941,7 +941,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < dim; i++)
         {
-            VR_ASSERT_MESSAGE((int)basis[i].rows() == dim, "Length of basis vectors is wrong");
+            VR_ASSERT_MESSAGE(static_cast<std::size_t>(basis[i].rows()) == dim, "Length of basis vectors is wrong");
         }
 
         int rows = basis[0].rows();
@@ -956,7 +956,8 @@ namespace VirtualRobot
         Eigen::MatrixXf basisVectors = lu_decomp.image(mBasis);
         int startWithDet = (int)(basisVectors.cols());
 
-        if (startWithDet != dim)
+        assert(0<= startWithDet);
+        if (static_cast<std::size_t>(startWithDet) != dim)
         {
             std::vector< Eigen::VectorXf > tmpBasisV;
 
@@ -1124,7 +1125,7 @@ namespace VirtualRobot
 
                 Eigen::FullPivLU<Eigen::MatrixXf> lu_decomp(m);
 
-                if (lu_decomp.rank() == basis.size() + 1)
+                if (static_cast<std::size_t>(lu_decomp.rank()) == basis.size() + 1)
                 {
                     return true;
                 }

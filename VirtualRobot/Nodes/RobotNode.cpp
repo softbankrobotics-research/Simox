@@ -316,7 +316,7 @@ namespace VirtualRobot
 
         return res;
     }
-    void RobotNode::setGlobalPose(const Eigen::Matrix4f& pose)
+    void RobotNode::setGlobalPose(const Eigen::Matrix4f& /*pose*/)
     {
         THROW_VR_EXCEPTION("Use setJointValues to control the position of a RobotNode");
     }

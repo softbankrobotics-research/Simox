@@ -40,22 +40,22 @@ namespace VirtualRobot
     }
 
 
-    bool Visualization::highlight(VisualizationNodePtr visualizationNode, bool enable)
+    bool Visualization::highlight(VisualizationNodePtr /*visualizationNode*/, bool /*enable*/)
     {
         return false;
     }
 
-    bool Visualization::highlight(unsigned int which, bool enable)
+    bool Visualization::highlight(unsigned int /*which*/, bool /*enable*/)
     {
         return false;
     }
 
-    void Visualization::colorize(VisualizationFactory::Color c)
+    void Visualization::colorize(VisualizationFactory::Color /*c*/)
     {
 
     }
 
-    void Visualization::setTransparency(float transparency)
+    void Visualization::setTransparency(float /*transparency*/)
     {
 
     }

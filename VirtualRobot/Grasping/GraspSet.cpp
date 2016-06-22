@@ -12,7 +12,7 @@ namespace VirtualRobot
 
 
     GraspSet::GraspSet(const std::string& name, const std::string& robotType, const std::string& eef, const std::vector< GraspPtr >& grasps)
-        : name(name), robotType(robotType), eef(eef), grasps(grasps)
+        : grasps(grasps), name(name), robotType(robotType), eef(eef)
     {
 
     }

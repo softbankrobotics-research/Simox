@@ -84,7 +84,7 @@ namespace VirtualRobot
         return res;
     }
 
-    GraspPtr ObjectIO::processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& objName)
+    GraspPtr ObjectIO::processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& /*objName*/)
     {
         THROW_VR_EXCEPTION_IF(!graspXMLNode, "No <Grasp> tag ?!");
         // get name

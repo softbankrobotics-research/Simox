@@ -386,7 +386,7 @@ void ConstrainedIKWindow::solve()
     exViewer->render();
 }
 
-void ConstrainedIKWindow::updateTSR(double value)
+void ConstrainedIKWindow::updateTSR(double /*value*/)
 {
     Eigen::Matrix<float, 6, 2> bounds;
     bounds << -fabs(UI.tsrLowX->value() - UI.tsrHighX->value()) / 2, fabs(UI.tsrLowX->value() - UI.tsrHighX->value()) / 2,
@@ -495,7 +495,7 @@ void ConstrainedIKWindow::enableTSR()
     }
 }
 
-void ConstrainedIKWindow::updatePose(double value)
+void ConstrainedIKWindow::updatePose(double /*value*/)
 {
     Eigen::Vector3f pos, rpy;
     pos << UI.poseX->value(), UI.poseY->value(), UI.poseZ->value();
@@ -650,7 +650,7 @@ void ConstrainedIKWindow::performanceEvaluation()
         resultSuccessful += (int)result;
         totalTime += (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
 
-        for(int i = 0; i < kc->getSize(); i++)
+        for(unsigned int i = 0; i < kc->getSize(); i++)
         {
             totalJointAngles += fabs(kc->getNode(i)->getJointValue());
         }
