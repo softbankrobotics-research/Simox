@@ -266,10 +266,22 @@ void showRobotWindow::rebuildVisualization()
     auto planeA = visualizationFactory->createPlane(Eigen::Vector3f(0, -2, -1.5f), Eigen::Vector3f(0, 1, 0), 10, 1.0, 0.8, 0.8, 0.8 );
     viewer->addVisualization("robotLayer", "planeA", planeA);
 
-    auto arrowA = visualizationFactory->createArrow(Eigen::Vector3f(0, 0, 1), 2.0f, 0.1f);
+    auto arrowA = visualizationFactory->createArrow(Eigen::Vector3f(1, 0, 0), 2.0f, 0.1f);
+    auto* realArrowA = dynamic_cast<OgreVisualizationNode*>(arrowA.get());
+    realArrowA->getOgreVisualization()->setPosition(0.0f, 0.0f, 6.0f);
     viewer->addVisualization("robotLayer", "arrowA", arrowA);
 
-    viewer->setCameraTarget(sphereA);
+    auto arrowB = visualizationFactory->createArrow(Eigen::Vector3f(0, 1, 0), 2.0f, 0.1f);
+    auto* realArrowB = dynamic_cast<OgreVisualizationNode*>(arrowB.get());
+    realArrowB->getOgreVisualization()->setPosition(3.0f, 0.0f, 6.0f);
+    viewer->addVisualization("robotLayer", "arrowB", arrowB);
+
+    auto arrowC = visualizationFactory->createArrow(Eigen::Vector3f(0, 0, 1), 2.0f, 0.1f);
+    auto* realArrowC = dynamic_cast<OgreVisualizationNode*>(arrowC.get());
+    realArrowC->getOgreVisualization()->setPosition(-3.0f, 0.0f, 6.0f);
+    viewer->addVisualization("robotLayer", "arrowC", arrowC);
+
+    viewer->setCameraTarget(boxA);
 #endif
 
     VisualizationPtr visu = visualizationFactory->getVisualization(robot, colModel);
