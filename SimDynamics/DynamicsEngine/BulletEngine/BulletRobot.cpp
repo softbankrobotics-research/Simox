@@ -1210,7 +1210,7 @@ namespace SimDynamics
 
         boost::shared_ptr<RobotNodeRevolute> rnRevJoint = boost::dynamic_pointer_cast<RobotNodeRevolute>(link.nodeJoint);
 
-        Eigen::Vector3f deltaVel = link.dynNode1->getAngularVelocity() - link.dynNode2->getAngularVelocity();
+        Eigen::Vector3f deltaVel = link.dynNode2->getAngularVelocity() - link.dynNode1->getAngularVelocity();
         double speed = deltaVel.dot(rnRevJoint->getJointRotationAxis());
         return speed;//hinge->getMotorTargetVelosity();
 
