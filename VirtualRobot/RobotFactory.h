@@ -99,7 +99,7 @@ namespace VirtualRobot
         /*!
             Creates a clone with changed structure, so that the given robot node is the new root of the resulting kinematic tree.
         */
-        static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName);
+        static RobotPtr cloneInversed(RobotPtr robot, const std::string& newRootName, bool cloneRNS = true, bool cloneEEF = true);
 
         /*!
             Chenge the structure of the clone according to the given defintion.

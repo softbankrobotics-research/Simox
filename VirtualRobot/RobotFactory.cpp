@@ -7,6 +7,7 @@
 #include "Nodes/RobotNodePrismatic.h"
 #include "Nodes/RobotNodeFixed.h"
 #include "Nodes/RobotNodeFixedFactory.h"
+#include "EndEffector/EndEffector.h"
 #include "Visualization//VisualizationFactory.h"
 #include "VirtualRobotException.h"
 
@@ -116,7 +117,7 @@ namespace VirtualRobot
         std::vector<robotNodeDef> parentChildMapping;
     };
 
-    RobotPtr RobotFactory::cloneInversed(RobotPtr robot, const std::string& newRootName)
+    RobotPtr RobotFactory::cloneInversed(RobotPtr robot, const std::string& newRootName, bool cloneRNS, bool cloneEEF)
     {
         VR_ASSERT(robot);
 
@@ -189,7 +190,27 @@ namespace VirtualRobot
         }
 
 
-        return RobotFactory::cloneChangeStructure(robot, newStructure);
+        RobotPtr r = RobotFactory::cloneChangeStructure(robot, newStructure);
+
+        if (cloneRNS)
+        {
+            std::vector<VirtualRobot::RobotNodeSetPtr> robotNodeSets;
+            for (RobotNodeSetPtr rns : robot->getRobotNodeSets())
+            {
+                robotNodeSets.push_back(robot->getRobotNodeSet(rns->getName())->clone(r));
+            }
+        }
+
+        if (cloneEEF)
+        {
+            // Copy end effectors
+            for(auto &eef : robot->getEndEffectors())
+            {
+                eef->clone(r);
+            }
+        }
+
+        return r;
     }
 
 
