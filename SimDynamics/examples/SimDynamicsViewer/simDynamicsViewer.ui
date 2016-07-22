@@ -290,7 +290,7 @@
          <rect>
           <x>14</x>
           <y>20</y>
-          <width>91</width>
+          <width>101</width>
           <height>31</height>
          </rect>
         </property>
@@ -304,7 +304,7 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>120</x>
+          <x>130</x>
           <y>20</y>
           <width>91</width>
           <height>31</height>
@@ -479,7 +479,7 @@
         <rect>
          <x>20</x>
          <y>50</y>
-         <width>361</width>
+         <width>371</width>
          <height>111</height>
         </rect>
        </property>
@@ -505,8 +505,8 @@
        <widget class="QComboBox" name="comboBoxRobotNode">
         <property name="geometry">
          <rect>
-          <x>120</x>
-          <y>30</y>
+          <x>160</x>
+          <y>40</y>
           <width>211</width>
           <height>22</height>
          </rect>
@@ -515,8 +515,8 @@
        <widget class="QLabel" name="label_7">
         <property name="geometry">
          <rect>
-          <x>120</x>
-          <y>10</y>
+          <x>170</x>
+          <y>20</y>
           <width>131</width>
           <height>16</height>
          </rect>
@@ -595,8 +595,8 @@
         <rect>
          <x>270</x>
          <y>10</y>
-         <width>75</width>
-         <height>23</height>
+         <width>101</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
@@ -623,7 +623,7 @@
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

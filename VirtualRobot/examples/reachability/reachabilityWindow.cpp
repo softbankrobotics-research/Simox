@@ -554,6 +554,14 @@ void reachabilityWindow::createReach()
             ManipulabilityPtr man = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
             PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
             man->setManipulabilityMeasure(manMeasure);
+            if (UICreate.checkBoxColDetecion->isChecked())
+            {
+                std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
+                std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
+                RobotNodeSetPtr m1 = robot->getRobotNodeSet(staticM);
+                RobotNodeSetPtr m2 = robot->getRobotNodeSet(dynM);
+                man->initSelfDistanceCheck(m1, m2);
+            }
         }
 
         reachSpace->print();

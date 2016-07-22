@@ -7,7 +7,7 @@ IF (SimDynamics_USE_BULLET_USE_GLUT)
 	message("GLUT_INCLUDE_DIR:${GLUT_INCLUDE_DIR}")
 	# create the executable
 	SimoxApplication(${PROJECT_NAME} "BulletDebugViewerGlut.cpp" "")
-	TARGET_LINK_LIBRARIES(${PROJECT_NAME} SimDynamics BulletOpenGLSupport)
+        TARGET_LINK_LIBRARIES(${PROJECT_NAME} SimDynamics BulletOpenGLSupport ${Simox_EXTERNAL_LIBRARIES})
 ELSE(SimDynamics_USE_BULLET_USE_GLUT)
 
 	IF(WIN32)
