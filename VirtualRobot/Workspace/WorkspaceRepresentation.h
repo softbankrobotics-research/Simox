@@ -65,8 +65,20 @@ namespace VirtualRobot
         {
             RPY,
             EulerXYZ,           // intrinsic
-            EulerXYZExtrinsic   // fixed frame (standard)
+            EulerXYZExtrinsic,  // fixed frame (standard)
+            Hopf                // hopf coordinates
         };
+
+        struct VolumeInfo
+        {
+            unsigned int voxelCount3D;              // overall number of 3d voxels
+            unsigned int filledVoxelCount3D;        // number of filled voxels (nr of 3d position voxels for which at least one 6D cell exists that is filled)
+            unsigned int borderVoxelCount3D;        // number of border voxels (3d voxels with at least 2 emoty neighbors in 3d)
+            float volumeVoxel3D;                    // volume of one voxel (m^3)
+            float volumeFilledVoxels3D;             // accumulated volume of all filled voxels (m^3)
+            float volume3D;                         // (filledVoxelCount3D - 0.5*borderVoxelCount3D) * volumeVoxel3D
+        };
+
 
         WorkspaceRepresentation(RobotPtr robot);
 
@@ -205,6 +217,7 @@ namespace VirtualRobot
             Sums all angle (x3,x4,x5) entries for the given position.
         */
         virtual int sumAngleReachabilities(int x0, int x1, int x2) const;
+        virtual int avgAngleReachabilities(int x0, int x1, int x2) const;
 
         /*!
             Searches all angle entries (x3,x4,x5) for maximum entry.
@@ -295,6 +308,14 @@ namespace VirtualRobot
         WorkspaceCut2DPtr createCut(const Eigen::Matrix4f& referencePose, float cellSize) const;
 
         /*!
+        * \brief createCut Create a cut at a specific height (assuming z is upwards).
+        * \param heightPercent Value in [0,1]
+        * \param cellSize The discretization step size of the result
+        * \return
+        */
+        WorkspaceCut2DPtr createCut(float heightPercent, float cellSize) const;
+
+        /*!
             Build all transformations from referenceNode to cutXY data.h Only entries>0 are considered.
             If referenceNode is set, the transformations are given in the corresponding coordinate system.
         */
@@ -383,6 +404,8 @@ namespace VirtualRobot
         */
         WorkspaceDataPtr getData();
         bool getPoseFromVoxel(unsigned int x[], float v[]) const;
+
+        virtual VolumeInfo computeVolumeInformation();
     protected:
 
         /*!

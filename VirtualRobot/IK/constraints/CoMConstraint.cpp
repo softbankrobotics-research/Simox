@@ -57,6 +57,16 @@ CoMConstraint::CoMConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joint
     addOptimizationFunction(0, false);
 }
 
+void CoMConstraint::updateTarget(const Eigen::Vector3f &target)
+{
+    ik->setGoal(target);
+}
+
+void CoMConstraint::updateTarget(const Eigen::Vector2f &target)
+{
+    ik->setGoal(target);
+}
+
 double CoMConstraint::optimizationFunction(unsigned int /*id*/)
 {
     if(dimensions == 2)

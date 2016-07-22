@@ -1535,7 +1535,10 @@ namespace VirtualRobot
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getCartesianPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float rotInfluence /*= 3.0f*/)
     {
-        float tr = (p2.block(0, 3, 3, 1) - p1.block(0, 3, 3, 1)).norm();
+        float tr, ro;
+        getPoseDiff(p1,p2,tr,ro);
+
+        /*float tr = (p2.block(0, 3, 3, 1) - p1.block(0, 3, 3, 1)).norm();
         Quaternion q1 = eigen4f2quat(p1);
         Quaternion q2 = eigen4f2quat(p2);
         Quaternion d = getDelta(q1, q2);
@@ -1556,8 +1559,20 @@ namespace VirtualRobot
             VR_WARNING << "oops,calcCartesianPoseDiff: rotdist>180:" << ro << std::endl;
             ro = 180.0f;
         }
-
+        */
         return (tr + ro * rotInfluence);
+    }
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float &storePosDiff, float &storeRotDiffRad)
+    {
+        Eigen::Matrix4f tmp = p1.inverse() * p2;
+
+        storePosDiff = tmp.block(0, 3, 3, 1).norm();
+
+        Eigen::Vector3f as;
+        float a;
+        MathTools::eigen4f2axisangle(tmp, as, a);
+        storeRotDiffRad = a;
     }
 
     MathTools::IntersectionResult VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::intersectSegmentPlane(const Segment& segment, const Plane& plane, Eigen::Vector3f& storeResult)
@@ -1804,6 +1819,116 @@ namespace VirtualRobot
         return c;
     }
 
+    /*
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
+    {
+        Eigen::Vector3f resF;
+        Eigen::Vector3d res;
+
+        res(2) = 2* atan2((double)q.x, (double)q.w);
+
+        double s1 = cos(res(2) * 0.5);
+        double s2 = sin(res(2) * 0.5);
+        double a0 = 2*acos((double)q.w / s1);
+        double b0 = 2*acos((double)q.x / s2);
+        if (fabs(a0-b0) > 1e-8)
+            std::cout << "0: " << a0 << "!=" << b0 << endl;
+        res(0) = a0;
+
+        s1 = sin((double)res(0) * 0.5);
+        double a = acos((double)q.y/s1) - res(2)*0.5;
+        double b = asin((double)q.z/s1) - res(2)*0.5;
+
+        if (fabs(a-b) > 1e-8)
+        {
+            std::cout << "1: " << a << "!=" << b << endl;
+            Eigen::Vector3f test1;
+            test1 << (float)res(0) , float(a) , float(res(2));
+            Quaternion q1 = hopf2quat(test1);
+            if (fabs(q1.w-q.w)<1e-6 && fabs(q1.x-q.x)<1e-6 && fabs(q1.y-q.y)<1e-6 && fabs(q1.z-q.z)<1e-6)
+            {
+                cout << "TEST 1 ok" << endl;
+                res(1) = a;
+            } else
+            {
+                test1 << (float)res(0) , float(b), float(res(2));
+                Quaternion q2 = hopf2quat(test1);
+                if (fabs(q2.w-q.w)<1e-6 && fabs(q2.x-q.x)<1e-6 && fabs(q2.y-q.y)<1e-6 && fabs(q2.z-q.z)<1e-6)
+                {
+                    cout << "TEST 2 ok" << endl;
+                    res(1) = b;
+                }
+                            cout << "TEST 1-4 failed!!!" << endl;
+                        res(1) = a;
+
+
+            }
+        }
+
+        resF = res.cast<float>();
+
+        return resF;
+    }*/
+
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
+    {
+        Eigen::Vector3f resF;
+
+        Eigen::Matrix4f m4 = quat2eigen4f(q);
+        Eigen::Matrix3f m3 = m4.block(0,0,3,3);
+
+        // ZYZ Euler
+        Eigen::Vector3f ea = m3.eulerAngles(2, 1, 2);
+
+        resF(2) = -ea(2);
+        resF(1) = ea(1);
+        resF(0) = ea(0)-resF(2);
+
+        // from -PI,2PI to -PI,PI
+        if (resF(0)>M_PI)
+            resF(0) -= 2*M_PI;
+
+        if (resF(0)<0)
+            resF(0) = 2*M_PI + resF(0); // -PI,PI -> 0,2PI
+        if (resF(1)<0)
+            resF(1) = 2*M_PI + resF(1); // -PI,PI -> 0,2PI
+        if (resF(2)<0)
+            resF(2) = 2*M_PI + resF(2); // -PI,PI -> 0,2PI
+
+        return resF;
+    }
+
+    MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::hopf2quat(const Eigen::Vector3f &hopf)
+    {
+        MathTools::Quaternion q;
+        /*q.w = cos(hopf(0)*0.5f) * cos(hopf(2)*0.5f);
+        q.x = cos(hopf(0)*0.5f) * sin(hopf(2)*0.5f);
+        q.y = sin(hopf(0)*0.5f) * cos(hopf(1) + hopf(2)*0.5f);
+        q.z = sin(hopf(0)*0.5f) * sin(hopf(1) + hopf(2)*0.5f);*/
+
+        Eigen::Vector3f h2 = hopf;
+        if (h2(0)>M_PI)
+            h2(0) = h2(0) - 2*M_PI ; // 0,2PI -> -PI,PI
+        if (h2(1)>M_PI)
+            h2(1) = h2(1) - 2*M_PI ; // 0,2PI -> -PI,PI
+        if (h2(0)>M_PI)
+            h2(2) = h2(2) - 2*M_PI ; // 0,2PI -> -PI,PI
+
+        // formular form
+        // Open-source code for manifold-based 3D rotation recovery of X-ray scattering patterns
+        // by Aliakbar Jafarpour
+        Eigen::Matrix3f m;
+        m = Eigen::AngleAxisf(h2(0)+h2(2), Eigen::Vector3f::UnitZ())
+        * Eigen::AngleAxisf(h2(1), Eigen::Vector3f::UnitY())
+        * Eigen::AngleAxisf(-h2(2), Eigen::Vector3f::UnitZ());
+        Eigen::Quaternion<float> qE(m);
+        q.x = qE.x();
+        q.y = qE.y();
+        q.z = qE.z();
+        q.w = qE.w();
+
+        return q;
+    }
 
 
 } // namespace
