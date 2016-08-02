@@ -28,6 +28,8 @@
 #include "meshes/ProceduralCylinderGenerator.h"
 #include "meshes/ProceduralPlaneGenerator.h"
 #include "meshes/ProceduralConeGenerator.h"
+
+#include "../../Import/MeshImport/OgreMeshImporter.h"
 /*
 #ifdef WIN32
 // gl.h assumes windows.h is already included 
@@ -125,29 +127,47 @@ namespace VirtualRobot
 
     VisualizationNodePtr OgreVisualizationFactory::getVisualizationFromOgreMeshFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
-        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
-        {
-            VR_WARNING << "Scaling not yet supported..." << endl;
-        }
-
-        VisualizationNodePtr visualizationNode(new VisualizationNode);
 
         /*
-        // try to open the given file
-        SoInput fileInput;
+         * UNTESTED! Taken from Ogre Wiki Forum
+         */
 
-        if (!fileInput.openFile(filename.c_str()))
+        static std::size_t index = 0;
+        ++index;
+        std::string entityName = "OgreMeshFile" + std::to_string(index);
+
+        FILE* pFile = fopen( filename.c_str(), "rb" );
+        if (!pFile)
         {
-            std::cerr <<  "Cannot open file " << filename << std::endl;
+            VR_WARNING << "File " + filename + " not found."<< endl;
+            VisualizationNodePtr visualizationNode(new VisualizationNode);
             return visualizationNode;
         }
 
-        CoinVisualizationFactory::GetVisualizationFromSoInput(fileInput, visualizationNode, boundingBox);
+        struct stat tagStat;
+        stat( filename.c_str(), &tagStat );
+        Ogre::MemoryDataStream* memstream = new Ogre::MemoryDataStream(filename, tagStat.st_size, true);
+        fread( (void*)memstream->getPtr(), tagStat.st_size, 1, pFile );
+        fclose( pFile );
 
-        fileInput.closeFile();
-        visualizationNode->setFilename(filename, boundingBox);
-*/
-        return visualizationNode;
+        // give the resource a name -- it can be the full pathname if you like, since it's
+        // just going to be the key in an STL associative tree container
+        Ogre::MeshPtr pMesh = Ogre::MeshManager::getSingleton().createManual(entityName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+        // this part does the actual load into the live Mesh object created above
+        Ogre::MeshSerializer meshSerializer;
+        Ogre::DataStreamPtr stream(memstream);
+        meshSerializer.importMesh(stream, pMesh.getPointer());
+
+        // and finally, now that we have a named Mesh resource, we can use it
+        // in our createEntity() call...
+        Ogre::Entity* e = renderer->getSceneManager()->createEntity(entityName + "_ENT", entityName);
+
+        Ogre::SceneNode* sn = renderer->getSceneManager()->createSceneNode();
+        sn->attachObject(e);
+
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(sn));
+        return ovn;
     }
 
     VisualizationNodePtr OgreVisualizationFactory::getVisualizationFromColladaFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
@@ -157,24 +177,17 @@ namespace VirtualRobot
             VR_WARNING << "Scaling not yet supported..." << endl;
         }
 
-        VisualizationNodePtr visualizationNode(new VisualizationNode);
+        static std::size_t index = 0;
+        ++index;
+        std::string entityName = "ColladaMeshFile" + std::to_string(index);
 
-        /*
-        // try to open the given file
-        SoInput fileInput;
+        Ogre::Entity *entity = OgreMeshImporter::load(filename, entityName, renderer->getSceneManager());
 
-        if (!fileInput.openFile(filename.c_str()))
-        {
-            std::cerr <<  "Cannot open file " << filename << std::endl;
-            return visualizationNode;
-        }
+        Ogre::SceneNode *node = renderer->getSceneManager()->createSceneNode();
+        node->attachObject(entity);
 
-        CoinVisualizationFactory::GetVisualizationFromSoInput(fileInput, visualizationNode, boundingBox);
-
-        fileInput.closeFile();
-        visualizationNode->setFilename(filename, boundingBox);
-*/
-        return visualizationNode;
+        VirtualRobot::OgreVisualizationNodePtr ovn(new VirtualRobot::OgreVisualizationNode(node));
+        return ovn;
     }
 
 
@@ -269,6 +282,13 @@ namespace VirtualRobot
         float x = x1 + (x2 - x1) * 0.5f;
         float y = y1 + (y2 - y1) * 0.5f;
         float z = z1 + (z2 - z1) * 0.5f;
+
+        if(x2 - x1 == 0 || y2 - y1 == 0 || z2 - z1 == 0)
+        {
+            VR_WARNING << "Bounding Box Visualization can not have 0 size, returning emtpy visu node" << endl;
+            VisualizationNodePtr visualizationNode(new VisualizationNode);
+            return visualizationNode;
+        }
 
         Ogre::SceneNode* sn = createOgreBox(x2 - x1, y2 - y1, z2 - z1, 0.0f, 0.0f, 0.65f, wireFrame);
         sn->translate(x, y, z);
@@ -420,6 +440,87 @@ namespace VirtualRobot
         e->setMaterialName(materialName);
 
         return sn;
+    }
+
+    void OgreVisualizationFactory::applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f &m)
+    {
+        if (!o)
+        {
+            return;
+        }
+
+        if (o->getType() != getName())
+        {
+            VR_ERROR << "Skipping Visualization type " << o->getType() << ", but factory is of type " << getName() << endl;
+            return;
+        }
+
+        OgreVisualizationNode* cvn = dynamic_cast<OgreVisualizationNode*>(o.get());
+
+        if (cvn)
+        {
+            Ogre::SceneNode* n = cvn->getOgreVisualization();
+
+            if (n)
+            {
+                //Get rotation from matrix
+                Eigen::Matrix3f rotation;
+                rotation << m(0,0), m(0,1), m(0,2), m(1,0), m(1,1), m(1,2), m(2,0), m(2,1), m(2,2);
+                Eigen::Quaternionf rotationQuat(rotation);
+
+
+                n->setPosition(m(0,3), m(1,3), m(2,3));
+                n->setOrientation(rotationQuat.w(), rotationQuat.x(), rotationQuat.y(), rotationQuat.z());
+            }
+        }
+        else
+        {
+            VR_WARNING << "Invalid type casting to CoinVisualizationNode?!" << endl;
+        }
+    }
+
+    VisualizationNodePtr OgreVisualizationFactory::createUnitedVisualization(const std::vector<VisualizationNodePtr> &visualizations) const
+    {
+        if (visualizations.size() == 0)
+        {
+            return VisualizationNodePtr();
+        }
+
+        Ogre::SceneNode* resultNode = renderer->getSceneManager()->createSceneNode();
+
+        for (size_t i = 0; i < visualizations.size(); i++)
+        {
+            if (visualizations[i]->getType() == VisualizationFactory::getName())
+            {
+                //skip empty visus
+                continue;
+            }
+
+            if (visualizations[i]->getType() != getName())
+            {
+                VR_ERROR << "Skipping Visualization " << i << ": Is type " << visualizations[i]->getType() << ", but factory is of type " << getName() << endl;
+                continue;
+            }
+
+            OgreVisualizationNode* ovn = dynamic_cast<OgreVisualizationNode*>(visualizations[i].get());
+
+            if (ovn)
+            {
+                Ogre::SceneNode* osn = ovn->getOgreVisualization();
+
+                if (osn)
+                {
+                    resultNode->addChild(osn);
+                }
+            }
+            else
+            {
+                VR_WARNING << "Invalid type casting to OgreVisualizationNode?!" << endl;
+            }
+        }
+
+        VisualizationNodePtr result(new OgreVisualizationNode(resultNode));
+        return result;
     }
 
     VisualizationPtr OgreVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)

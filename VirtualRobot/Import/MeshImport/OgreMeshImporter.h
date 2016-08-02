@@ -40,7 +40,7 @@ class VIRTUAL_ROBOT_IMPORT_EXPORT OgreMeshImporter
         static Ogre::Entity *load(const std::string &filename, const std::string &name, Ogre::SceneManager *sceneManager);
 
     protected:
-        static void loadMaterials(const std::string &resource_path, const aiScene *scene, std::vector<Ogre::MaterialPtr> &material_table_out);
+        static void loadMaterials(const std::string &filename, const std::string &name, const aiScene *scene, std::vector<Ogre::MaterialPtr> &material_table_out);
         static void buildMesh(const aiScene* scene, const aiNode* node, const Ogre::MeshPtr& mesh, Ogre::AxisAlignedBox& aabb, float& radius, const float scale, std::vector<Ogre::MaterialPtr>& material_table);
         static float getMeshUnitRescale(const std::string& resource_path);
         static void loadTexture(const std::string& resource_path);

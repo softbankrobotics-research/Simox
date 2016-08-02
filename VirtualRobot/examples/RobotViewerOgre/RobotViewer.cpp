@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     cout << " --- START --- " << endl;
     // --robot "robots/iCub/iCub.xml"
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    std::string filename("robots/urdf/atlas_description/urdf/atlas_v3.urdf");
     //std::string filename("robots/ArmarIII/ArmarIII-RightArm.xml");
     //std::string filename("C:/Projects/IIT_Projects/iCubRobot/robot/iCub.xml");
     //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightArm.xml");

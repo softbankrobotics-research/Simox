@@ -197,7 +197,7 @@ void showRobotWindow::rebuildVisualization()
    
     VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
 
-#if 1
+#if 0
     // Test the box creation and visualization
 
     auto boxA = visualizationFactory->createBox(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
@@ -736,8 +736,8 @@ void showRobotWindow::updatRobotInfo()
 
     // build visualization
     rebuildVisualization();
-    robotStructure();
-    displayPhysics();
+    //robotStructure();
+    //displayPhysics();
     //viewer->viewAll();
 }
 

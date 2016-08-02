@@ -27,7 +27,7 @@ Ogre::Entity *OgreMeshImporter::load(const std::string &filename, const std::str
     }
 
     std::vector<Ogre::MaterialPtr> materials;
-    loadMaterials(name, scene, materials);
+    loadMaterials(filename, name, scene, materials);
 
     Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().createManual(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
@@ -53,20 +53,20 @@ Ogre::Entity *OgreMeshImporter::load(const std::string &filename, const std::str
 
     std::cout << "Mesh imported: " << vertex_count << " vertices, " << index_count << " indices" << std::endl;
 
-    for(int i = 0; i < vertex_count; i++)
+    /*for(int i = 0; i < vertex_count; i++)
     {
         std::cout << i << ": <" << vertices[i].x << ", " << vertices[i].y << ", " << vertices[i].z << ">" << std::endl;
-    }
+    }*/
 
     return sceneManager->createEntity(mesh);
 }
 
-void OgreMeshImporter::loadMaterials(const std::string &resource_path, const aiScene *scene, std::vector<Ogre::MaterialPtr> &material_table_out)
+void OgreMeshImporter::loadMaterials(const std::string &filename, const std::string &name, const aiScene *scene, std::vector<Ogre::MaterialPtr> &material_table_out)
 {
     for (uint32_t i = 0; i < scene->mNumMaterials; i++)
     {
         std::stringstream ss;
-        ss << resource_path << "Material" << i;
+        ss << name << "Material" << i;
         Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
         material_table_out.push_back(mat);
 
@@ -92,7 +92,7 @@ void OgreMeshImporter::loadMaterials(const std::string &resource_path, const aiS
                 amat->GetTexture(aiTextureType_DIFFUSE,0, &texName, &mapping, &uvIndex);
 
                 // Assume textures are in paths relative to the mesh
-                std::string texture_path = /*boost::filesystem::path(resource_path).parent_path().string() + "/" +*/ texName.data;
+                std::string texture_path = boost::filesystem::path(filename).parent_path().string() + "/" + texName.data;
                 loadTexture(texture_path);
                 Ogre::TextureUnitState* tu = pass->createTextureUnitState();
                 tu->setTextureName(texture_path);
@@ -284,7 +284,7 @@ void OgreMeshImporter::buildMesh(const aiScene *scene, const aiNode *node, const
         for (uint32_t j = 0; j < input_mesh->mNumVertices; j++)
         {
             aiVector3D p = input_mesh->mVertices[j];
-            //p *= transform;
+            p *= transform;
             p *= scale;
             *vertices++ = p.x;
             *vertices++ = p.y;

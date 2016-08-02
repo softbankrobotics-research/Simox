@@ -85,6 +85,10 @@ namespace VirtualRobot
         Ogre::SceneNode* createOgreBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f,  bool wireframe = false);
         Ogre::SceneNode *createOgreSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 1.0f, int numRings = 32, int numSegments = 32);
 
+        virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m);
+
+        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations) const;
+
     protected:
         Ogre::SceneNode* getNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color, const Eigen::Matrix4f &trafo);
 

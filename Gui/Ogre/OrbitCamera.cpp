@@ -116,5 +116,5 @@ void OrbitCamera::initialize()
 {
     setTarget(target? target: camera->getSceneManager()->getRootSceneNode());
     camera->setFixedYawAxis(true);
-    setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
+    setYawPitchDist(Ogre::Degree(90), Ogre::Degree(0), 5);
 }
