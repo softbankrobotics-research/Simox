@@ -1,0 +1,211 @@
+/**
+* This file is part of Simox.
+*
+* Simox is free software; you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Simox is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package    VirtualRobot
+* @author     Adrian Knobloch
+* @copyright  2016 Adrian Knobloch
+*             GNU Lesser General Public License
+*
+*/
+#ifndef _VirtualRobot_ModelJoint_h_
+#define _VirtualRobot_ModelJoint_h_
+
+#include "ModelNode.h"
+
+namespace VirtualRobot
+{
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelJoint : ModelNode
+    {
+    protected:
+        /*!
+         * Constructor with settings.
+         *
+         * Only used by subclasses.
+         *
+         * @param model A pointer to the Model, which uses this Node.
+         * @param name The name of this ModelNode. This name must be unique for the Model.
+         * @param localTransformation The transformation from the parent of this node to this node.
+         * @param jointLimitLo The lower limit of this joint.
+         * @param jointLimitHi The upper limit of this joint.
+         * @param jointValueOffset The offset for the value of this joint.
+         */
+        ModelJoint(ModelWeakPtr model,
+                   const std::string& name,
+                   Eigen::Matrix4f& localTransformation,
+                   float jointLimitLo,
+                   float jointLimitHi,
+                   float jointValueOffset = 0.0f);
+
+    public:
+        /*!
+         * Destructor.
+         */
+        virtual ~ModelJoint();
+
+        /*!
+         * Set a joint value [rad/mm].
+         * The internal matrices and visualizations are updated accordingly.
+         * If you intend to update multiple joints, use \ref setJointValues for faster access.
+         *
+         * @param q The joint value in rad/mm.
+         */
+        void setJointValue(float q);
+
+        /*!
+         * Set the joint value without updating the internal matrices.
+         * After setting all joint values the transformations are calculated by calling \ref applyJointValues()
+         * This method is used when multiple joints should be updated at once.
+         * Access by ModelNodeSets, Models or ModelConfigs must be protected by a \ref WriteLock.
+         *
+         * @param q The joint value in rad/mm.
+         */
+        virtual void setJointValueNoUpdate(float q);
+
+        /*!
+         * Get the value [rad/mm] of this joint.
+         *
+         * @return the joint value in rad/mm.
+         */
+        virtual float getJointValue() const;
+
+        /*!
+         * Checks if jointValue is within joint limits. If verbose is set a warning is printed.
+         *
+         * @param jointValue The value to check.
+         * @param verbose If set to true, a warning is printed, if the value does not respect the limits.
+         */
+        bool checkJointLimits(float jointValue, bool verbose = false) const;
+
+        /*!
+         * Checks if jointValue is within joint limits. If not jointValue is adjusted.
+         *
+         * @param jointValue The value to check and adjust.
+         */
+        void respectJointLimits(float& jointValue) const;
+
+        /*!
+         * Set joint limits [rad/mm].
+         *
+         * @param lo The lower limit in rad/mm.
+         * @param hi The higher limit in rad/mm.
+         */
+        virtual void setJointLimits(float lo, float hi);
+
+        /*!
+         * Get the offset of the joint value.
+         *
+         * @return The offset.
+         */
+        inline float getJointValueOffset() const
+        {
+            return jointValueOffset;
+        }
+
+        /*!
+         * Get the upper joint limit.
+         *
+         * @return The upper joint limit in rad/mm.
+         */
+        inline float getJointLimitHigh() const
+        {
+            ReadLockPtr lock = getModel()->getReadLock();
+            return jointLimitHi;
+        }
+
+        /*!
+         * Get the lower joint limit.
+         *
+         * @return The lower joint limit in rad/mm.
+         */
+        inline float getJointLimitLow() const
+        {
+            ReadLockPtr lock = getModel()->getReadLock();
+            return jointLimitLo;
+        }
+
+        /*!
+         * Set maximum velocity of this joint in rad/s or m/s.
+         * To disbale max. velocity set to -1.0f.
+         *
+         * @param maxVel The new maximum velocity in rad/s or m/s.
+         */
+        virtual void setMaxVelocity(float maxVel);
+
+        /*!
+         * Set maximum acceleration pf this joint in rad/s^2 or m/s^2.
+         * To disbale max. acceleration set to -1.0f.
+         *
+         * @param maxVel The new maximum acceleration in rad/s^2 or m/s^2.
+         */
+        virtual void setMaxAcceleration(float maxAcc);
+
+        /*!
+         * Set maximum torque pf this joint in Nm.
+         * To disbale max. torque set to -1.0f.
+         *
+         * @param maxVel The new maximum torque in Nm.
+         */
+        virtual void setMaxTorque(float maxTo);
+
+        /*!
+         * Maximum velocity in rad/s or m/s.
+         * Returns -1.0f if no maximum value is set.
+         *
+         * @return The maximum velocity in rad/s or m/s, or -1.0f if no value is set.
+         */
+        float getMaxVelocity();
+
+        /*!
+         * Maximum acceleration in rad/s^2 or m/s^2.
+         * Returns -1.0f if no maximum value is set.
+         *
+         * @return The maximum acceleration in rad/s^2 or m/s^2, or -1.0f if no value is set.
+         */
+        float getMaxAcceleration();
+
+        /*!
+         * Maximum torque in Nm.
+         * Returns -1.0f if no maximum value is set.
+         *
+         * @return The maximum torque in Nm, or -1.0f if no value is set.
+         */
+        float getMaxTorque();
+
+        /*!
+         * Automatically propagate the joint value to another joint.
+         *
+         * @param jointName The name of the other joint. must be part of the same robot.
+         * @param factor The propagated joint value is scaled according to this value.
+         */
+        virtual void propagateJointValue(const std::string& jointName, float factor = 1.0f);
+
+    protected:
+        void setJointValueNotInitialized(float q);
+
+    private:
+        float jointValue;           //!< The joint value
+        float jointValueOffset;
+        float jointLimitLo;
+        float jointLimitHi;
+        float maxVelocity;          //!< given in m/s
+        float maxAcceleration;      //!< given in m/s^2
+        float maxTorque;            //!< given in Nm
+
+        std::map< std::string, float > propagatedJointValues;
+    };
+}
+
+#endif
