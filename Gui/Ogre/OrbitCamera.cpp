@@ -115,6 +115,6 @@ void OrbitCamera::injectMouseUp(const QMouseEvent *event)
 void OrbitCamera::initialize()
 {
     setTarget(target? target: camera->getSceneManager()->getRootSceneNode());
-    camera->setFixedYawAxis(true);
+    camera->setFixedYawAxis(false);
     setYawPitchDist(Ogre::Degree(90), Ogre::Degree(0), 5);
 }
