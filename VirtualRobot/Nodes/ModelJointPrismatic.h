@@ -27,7 +27,7 @@
 
 namespace VirtualRobot
 {
-    class ModelJointPrismatic : ModelJoint
+    class ModelJointPrismatic : public ModelJoint
     {
     protected:
         /*!

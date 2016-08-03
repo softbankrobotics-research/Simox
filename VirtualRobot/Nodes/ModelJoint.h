@@ -23,11 +23,12 @@
 #ifndef _VirtualRobot_ModelJoint_h_
 #define _VirtualRobot_ModelJoint_h_
 
+#include "../ConditionedLock.h"
 #include "ModelNode.h"
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelJoint : ModelNode
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelJoint : public ModelNode
     {
     protected:
         /*!
