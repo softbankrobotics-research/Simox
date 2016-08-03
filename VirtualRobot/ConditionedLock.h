@@ -1,7 +1,9 @@
 #ifndef __CONDITIONED_LOCK__
 #define __CONDITIONED_LOCK__
 
-
+#include <boost/shared_ptr.hpp>
+#include <boost/thread/lock_concepts.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 template <class T>
 class ConditionedLock

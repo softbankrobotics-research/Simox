@@ -24,6 +24,7 @@
 #define _VirtualRobot_ModelNode_h_
 
 #include "../VirtualRobot.h"
+#include "../Model.h"
 
 #include <vector>
 #include <string>
@@ -137,7 +138,7 @@ namespace VirtualRobot
          *
          * @return The child Nodes.
          */
-        std::vector<ModelNodePtr> getChildJoints() const;
+        std::vector<ModelNodePtr> getChildLinks() const;
 
         /*!
          * All children and their children (and so on) are collected.
@@ -177,7 +178,7 @@ namespace VirtualRobot
             ModelNode::localTransformation = localTransformation;
             if(updatePose)
             {
-                updatePose(true);
+                ModelNode::updatePose(true);
             }
         }
 
@@ -321,7 +322,7 @@ namespace VirtualRobot
          * @param otherObject The object to transform from.
          * @return The transform matrix.
          */
-        Eigen::Matrix4f getTransformationFrom(const SceneObjectPtr otherObject);
+        Eigen::Matrix4f getTransformationFrom(const ModelNodePtr otherObject);
 
     protected:
         /*!

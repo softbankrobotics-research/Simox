@@ -27,7 +27,7 @@
 
 namespace VirtualRobot
 {
-    class ModelJointFixed : ModelJoint
+    class ModelJointFixed : public ModelJoint
     {
     protected:
         /*!

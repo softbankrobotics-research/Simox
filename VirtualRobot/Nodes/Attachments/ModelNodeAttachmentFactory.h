@@ -23,8 +23,8 @@
 #ifndef _VirtualRobot_ModelNodeAttachmentFactory_h_
 #define _VirtualRobot_ModelNodeAttachmentFactory_h_
 
-#include "../VirtualRobot.h"
-#include "../AbstractFactoryMethod.h"
+#include "../../VirtualRobot.h"
+#include "../../AbstractFactoryMethod.h"
 #include "ModelNodeAttachment.h"
 
 namespace VirtualRobot

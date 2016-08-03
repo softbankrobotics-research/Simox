@@ -27,7 +27,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelLink : ModelNode
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelLink : public ModelNode
     {
     public:
         struct VIRTUAL_ROBOT_IMPORT_EXPORT Physics
@@ -64,6 +64,13 @@ namespace VirtualRobot
             Eigen::Matrix3f inertiaMatrix; //! in kg*m^2
             SimulationType simType;
             std::vector< std::string > ignoreCollisions; // ignore collisions with other objects (only used within collision engines)
+        };
+
+        enum VisualizationType
+        {
+            Full,           //!< the full model
+            Collision,      //!< the collision model
+            CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualiz
         };
 
     protected:
@@ -131,7 +138,7 @@ namespace VirtualRobot
          * @param visuType Set the type of visualization.
          * @return The visualisation of this link.
          */
-        VisualizationNodePtr getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full);
+        VisualizationNodePtr getVisualization(VisualizationType visuType = VisualizationType::Full);
 
         /*!
          * Get number of faces (i.e. triangles) of this object.

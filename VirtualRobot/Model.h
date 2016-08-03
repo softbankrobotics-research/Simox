@@ -24,6 +24,8 @@
 #define _VirtualRobot_Model_h_
 
 #include "VirtualRobot.h"
+#include "BoundingBox.h"
+#include <ConditionedLock.h>
 #include "Nodes/ModelNode.h"
 
 #include <Eigen/Core>

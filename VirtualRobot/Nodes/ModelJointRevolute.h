@@ -27,7 +27,7 @@
 
 namespace VirtualRobot
 {
-    class ModelJointRevolute : ModelJoint
+    class ModelJointRevolute : public ModelJoint
     {
     protected:
         /*!
