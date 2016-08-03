@@ -366,10 +366,7 @@ void OgreViewer::initializeScene()
     //  SceneNodes created by different SceneManager objects do not cause exceptions or assertions
     //  but are not displayed on the screen either.
     ogreSceneManager = renderer->getSceneManager();
-    ogreSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-
-    Ogre::Light* light = ogreSceneManager->createLight("MainLight");
-    light->setPosition(20, 80, 50);
+    ogreSceneManager->setAmbientLight(Ogre::ColourValue(2, 2, 2));
 
     ogreCamera = ogreSceneManager->createCamera("Camera");
     ogreCamera->setPosition(Ogre::Vector3(0, 1.5, 0));
@@ -377,7 +374,7 @@ void OgreViewer::initializeScene()
     ogreCamera->setNearClipDistance(Ogre::Real(0.1));
 
     ogreViewport = ogreWindow->addViewport(ogreCamera);
-    ogreViewport->setBackgroundColour(Ogre::ColourValue(1, 1, 1));
+    ogreViewport->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
 
     cameraController = new OrbitCamera(ogreCamera);
 }
