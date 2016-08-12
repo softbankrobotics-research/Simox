@@ -56,7 +56,6 @@ Nodes/ModelJoint.cpp
 Nodes/ModelJointFixed.cpp
 Nodes/ModelJointPrismatic.cpp
 Nodes/ModelJointRevolute.cpp
-Nodes/Attachments/ModelNodeAttachment.cpp
 Visualization/Visualization.cpp
 Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
