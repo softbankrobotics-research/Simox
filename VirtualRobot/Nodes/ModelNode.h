@@ -25,16 +25,21 @@
 
 #include "../VirtualRobot.h"
 #include "../Model.h"
+#include "../ModelNodeSet.h"
+#include "Attachments/ModelNodeAttachment.h"
 
 #include <vector>
+#include <map>
 #include <string>
 #include <cstdint>
 
 #include <Eigen/Core>
 
+#include <boost/enable_shared_from_this.hpp>
+
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode : public boost::enable_shared_from_this<ModelNode>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -63,12 +68,10 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param type The type of this Node.
          * @param localTransformation The transformation from the parent of this node to this node.
          */
         ModelNode(ModelWeakPtr model,
                   const std::string& name,
-                  ModelNodeType type,
                   Eigen::Matrix4f& localTransformation);
 
     public:
@@ -81,6 +84,9 @@ namespace VirtualRobot
          * Initialize ModelNode. Here pointers to parent and children are created from names.
          * Be sure all children are created and registered to the Model before calling initialize.
          * Usually RobotFactory manages the initialization.
+         *
+         * @param parent The parent of this node.
+         * @param children The children of this node.
          */
         virtual void initialize(ModelNodePtr parent = ModelNodePtr(), const std::vector<ModelNodePtr>& children = std::vector<ModelNodePtr>());
 
@@ -99,7 +105,30 @@ namespace VirtualRobot
         ModelPtr getModel() const;
 
         /*!
+         * Get the name of this node.
+         *
+         * @return The name.
+         */
+        inline std::string getName() const;
+
+        /*!
+         * Check if this node is initialized.
+         *
+         * @return True, if this node is initialized; false otherwise.
+         */
+        inline bool isInitialized() const;
+
+        /*!
+         * Get the child with the given name.
+         *
+         * @param name The name of the child.
+         * @return The child or a empty pointer, if this node does not have a child with the given name.
+         */
+        ModelNodePtr getChildByName(std::string& name) const;
+
+        /*!
          * Get the parent Node.
+         * If this node does not have a parent, this returns an empty pointer.
          *
          * @return The parent node.
          */
@@ -108,14 +137,14 @@ namespace VirtualRobot
         /*!
          * Get the first parent, which is a link.
          *
-         * @return The parent node.
+         * @return The parent node or an empty pointer, if no parent link exists.
          */
         ModelNodePtr getParentLink() const;
 
         /*!
          * Get the first parent, which is a joint.
          *
-         * @return The parent node.
+         * @return The parent node or an empty pointer, if no parent joint exists.
          */
         ModelNodePtr getParentJoint() const;
 
@@ -144,28 +173,65 @@ namespace VirtualRobot
          * All children and their children (and so on) are collected.
          * The current instance is also added.
          *
-         * @param storeNodes A initialized and empty vector to store the collected nodes in.
+         * @param storeNodes A initialized vector to store the collected nodes in.
+         * @param clearVector If true, the store vector is cleared.
         */
-        void collectAllNodes(std::vector<ModelNodePtr>& storeNodes) const;
+        void collectAllNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector = true) const;
 
         /*!
          * Find all ModelNodes whose movements affect this ModelNode.
          *
-         * @param rns If set, the search is limited to the rns.
-         *
+         * @param set If set, the search is limited to the rns.
          * @return The ModelNodes.
         */
-        virtual std::vector<RobotNodePtr> getAllParents(RobotNodeSetPtr rns = RobotNodeSetPtr());
+        virtual std::vector<ModelNodePtr> getAllParents(ModelNodeSetPtr set = ModelNodeSetPtr());
+
+        /*!
+         * Check if node is a child from this node.
+         *
+         * @param node The node to check for.
+         * @return True, if node is a child from this node; false otherwise.
+         */
+        bool hasChild(ModelNodePtr node) const;
+
+        /*!
+         * Check if this node has a child with the given name.
+         *
+         * @param nodeName The name of the node to check for.
+         * @return True, if this node has a child with the given name; false otherwise.
+         */
+        bool hasChild(std::string nodeName) const;
+
+        /*!
+         * Attach a new Child to this node.
+         *
+         * @param newNode The new node.
+         * @return True, if the node could be attached; false otherwise.
+         */
+        bool attachChild(ModelNodePtr newNode);
+
+        /*!
+         * Detach a node from this node.
+         *
+         * @param node The node to detach.
+         * @return True, if the node was a child and could be detached; false otherwise.
+         */
+        bool detachChild(ModelNodePtr node);
+
+        /*!
+         * Detach a node from this node.
+         *
+         * @param nodeName The name of the node to detach.
+         * @return True, if the node was a child and could be detached; false otherwise.
+         */
+        bool detachChild(std::string& nodeName);
 
         /*!
          * The preJoint/preVisualization transformation. This transformation is applied before the joint and the visualization.
          *
          * @return The local transformation.
          */
-        virtual Eigen::Matrix4f getLocalTransformation()
-        {
-            return localTransformation;
-        }
+        virtual Eigen::Matrix4f getLocalTransformation() const;
 
         /*!
          * Set a new local transformation.
@@ -173,14 +239,7 @@ namespace VirtualRobot
          * @param localTransformation The new transformation.
          * @param updatePose If set to true, the pose of all children will be updated recursively.
          */
-        virtual void setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose = true)
-        {
-            ModelNode::localTransformation = localTransformation;
-            if(updatePose)
-            {
-                ModelNode::updatePose(true);
-            }
-        }
+        virtual void setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose = true);
 
         /*!
          * Get the globalPose of this node.
@@ -211,8 +270,9 @@ namespace VirtualRobot
          * This method is called by the model in order to update the pose matrices.
          *
          * @param updateChildren If set to true, the children are updated recursively.
+         * @param updateAttachments If set to true, the attachments are updated.
          */
-        virtual void updatePose(bool updateChildren = true);
+        void updatePose(bool updateChildren = true, bool updateAttachments = true);
 
         /*!
          * Attach a new attachment to this node.
@@ -241,6 +301,22 @@ namespace VirtualRobot
          * @return True, if the attachment was attached; false otherwise.
          */
         bool detach(ModelNodeAttachmentPtr attachment);
+
+        /*!
+         * Get all attachments with the given type.
+         * If no type is given all attachments are returned.
+         *
+         * @param type The type of the attachments to get.
+         * @return The attachments.
+         */
+        std::vector<ModelNodeAttachmentPtr> getAttachments(std::string type = "");
+
+        /*!
+         * Get all attachments with visualisation.
+         *
+         * @return The attachments.
+         */
+        std::vector<ModelNodeAttachmentPtr> getAttachmentsWithVisualisation() const;
 
         /*!
          * Print status information.
@@ -325,10 +401,7 @@ namespace VirtualRobot
         Eigen::Matrix4f getTransformationFrom(const ModelNodePtr otherObject);
 
     protected:
-        /*!
-         * Queries parent for global pose and updates visualization accordingly
-         */
-        virtual void updateTransformationMatrices();
+        virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
 
     private:
         bool initialized;
@@ -339,6 +412,10 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> children;
 
         Eigen::Matrix4f localTransformation;
+        Eigen::Matrix4f globalPose;
+
+        std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
+        std::vector<ModelNodeAttachmentPtr> attachmentsWithVisualisation;
     };
 }
 
