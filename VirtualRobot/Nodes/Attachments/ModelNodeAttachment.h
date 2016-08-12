@@ -26,22 +26,25 @@
 #include "../../VirtualRobot.h"
 
 #include <cstdint>
+#include <string>
 
 namespace VirtualRobot
 {
     class ModelNodeAttachment
     {
+        friend class ModelNode;
+
     protected:
         /*!
          * Constructor.
          */
-        ModelNodeAttachment();
+        ModelNodeAttachment() {};
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachment();
+        virtual ~ModelNodeAttachment() {};
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -77,6 +80,38 @@ namespace VirtualRobot
          * @return The type of this attachment.
          */
         virtual std::string getType() = 0;
+
+        /*!
+         * Get the node, this attachment is attached to.
+         *
+         * @return The node.
+         */
+        ModelNodePtr getNode() const
+        {
+            ModelNodePtr nodeShared = node.lock();
+
+            if (nodeShared)
+            {
+                return nodeShared;
+            }
+
+            return ModelNodePtr();
+        }
+
+    private:
+        void setNode(ModelNodePtr node)
+        {
+            if (node)
+            {
+                this->node = node;
+            }
+            else
+            {
+                this->node.reset();
+            }
+        }
+
+        ModelNodeWeakPtr node;
     };
 }
 
