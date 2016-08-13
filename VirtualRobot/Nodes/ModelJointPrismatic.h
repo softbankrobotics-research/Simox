@@ -29,13 +29,13 @@ namespace VirtualRobot
 {
     class ModelJointPrismatic : public ModelJoint
     {
-    protected:
+    public:
         /*!
          * Constructor with settings.
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param localTransformation The transformation from the parent of this node to this node.
+         * @param staticTransformation The transformation from the parent of this node to this node.
          * @param jointLimitLo The lower limit of this joint.
          * @param jointLimitHi The upper limit of this joint.
          * @param jointValueOffset The offset for the value of this joint.
@@ -43,29 +43,25 @@ namespace VirtualRobot
          */
         ModelJointPrismatic(ModelWeakPtr model,
                             const std::string& name,
-                            Eigen::Matrix4f& localTransformation,
+                            Eigen::Matrix4f& staticTransformation,
                             float jointLimitLo,
                             float jointLimitHi,
                             float jointValueOffset = 0.0f,
-                            const Eigen::Vector3f& translationDirection);
+                            Eigen::Vector3f& translationDirection);
 
-    public:
         /*!
          * Destructor.
          */
         virtual ~ModelJointPrismatic();
 
-        virtual ModelNodeType getType()
-        {
-            return ModelNode::ModelNodeType::JointRevolute;
-        }
+        virtual ModelNodeType getType() const override;
 
         /*!
          * In global coord system.
          *
          * @param coordSystem The coordinate system to get the direction in.
          */
-        Eigen::Vector3f getJointTranslationDirection(Eigen::Matrix4f coordSystem) const;
+        Eigen::Vector3f getJointTranslationDirection(Eigen::Matrix4f coordSystem = Eigen::Matrix4f::Identity()) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.
@@ -73,6 +69,11 @@ namespace VirtualRobot
          * @return The translation direction in the local coordinate system of this node.
          */
         Eigen::Vector3f getJointTranslationDirectionJointCoordSystem() const;
+
+        virtual Eigen::Matrix4f getNodeTransformation() const override;
+
+    private:
+        Eigen::Vector3f& translationDirection;
     };
 }
 
