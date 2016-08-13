@@ -56,6 +56,8 @@ namespace VirtualRobot
          */
         virtual ~ModelJoint();
 
+        virtual ModelNodeType getType() const override;
+
         /*!
          * Set a joint value [rad/mm].
          * The internal matrices and visualizations are updated accordingly.
@@ -69,7 +71,6 @@ namespace VirtualRobot
          * Set the joint value without updating the internal matrices.
          * After setting all joint values the transformations are calculated by calling \ref applyJointValues()
          * This method is used when multiple joints should be updated at once.
-         * Access by ModelNodeSets, Models or ModelConfigs must be protected by a \ref WriteLock.
          *
          * @param q The joint value in rad/mm.
          */
@@ -110,32 +111,21 @@ namespace VirtualRobot
          *
          * @return The offset.
          */
-        inline float getJointValueOffset() const
-        {
-            return jointValueOffset;
-        }
+        inline float getJointValueOffset() const;
 
         /*!
          * Get the upper joint limit.
          *
          * @return The upper joint limit in rad/mm.
          */
-        inline float getJointLimitHigh() const
-        {
-            ReadLockPtr lock = getModel()->getReadLock();
-            return jointLimitHi;
-        }
+        inline float getJointLimitHigh() const;
 
         /*!
          * Get the lower joint limit.
          *
          * @return The lower joint limit in rad/mm.
          */
-        inline float getJointLimitLow() const
-        {
-            ReadLockPtr lock = getModel()->getReadLock();
-            return jointLimitLo;
-        }
+        inline float getJointLimitLow() const;
 
         /*!
          * Set maximum velocity of this joint in rad/s or m/s.
@@ -188,13 +178,13 @@ namespace VirtualRobot
         /*!
          * Automatically propagate the joint value to another joint.
          *
-         * @param jointName The name of the other joint. must be part of the same robot.
+         * @param jointName The name of the other joint. Must be part of the same robot.
          * @param factor The propagated joint value is scaled according to this value.
+         *               If this factor is 0.0f the propagation is deleted.
          */
         virtual void propagateJointValue(const std::string& jointName, float factor = 1.0f);
 
-    protected:
-        void setJointValueNotInitialized(float q);
+        virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
 
     private:
         float jointValue;           //!< The joint value
