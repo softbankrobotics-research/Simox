@@ -29,7 +29,7 @@ namespace VirtualRobot
 {
     class ModelJointFixed : public ModelJoint
     {
-    protected:
+    public:
         /*!
          * Constructor with settings.
          *
@@ -41,16 +41,55 @@ namespace VirtualRobot
                         const std::string& name,
                         Eigen::Matrix4f& localTransformation);
 
-    public:
         /*!
          * Destructor.
          */
         virtual ~ModelJointFixed();
 
-        virtual ModelNodeType getType()
-        {
-            return ModelNode::ModelNodeType::JointFixed;
-        }
+        virtual ModelNodeType getType() const override;
+
+        /*!
+         * Disable changing of joint value.
+         *
+         * @param q This does nothing.
+         */
+        virtual void setJointValue(float q) override;
+
+        /*!
+         * Disable changing of joint value.
+         *
+         * @param q This does nothing.
+         */
+        virtual void setJointValueNoUpdate(float q) override;
+
+        /*!
+         * Disable changing of joint limits.
+         *
+         * @param lo This does nothing.
+         * @param hi This does nothing.
+         */
+        virtual void setJointLimits(float lo, float hi) override;
+
+        /*!
+         * Disable changing of max velocity.
+         *
+         * @param maxVel This does nothing.
+         */
+        virtual void setMaxVelocity(float maxVel) override;
+
+        /*!
+         * Disable changing of max acceleration.
+         *
+         * @param maxAcc This does nothing.
+         */
+        virtual void setMaxAcceleration(float maxAcc) override;
+
+        /*!
+         * Disable changing of max torque.
+         *
+         * @param maxTo This does nothing.
+         */
+        virtual void setMaxTorque(float maxTo) override;
     };
 }
 

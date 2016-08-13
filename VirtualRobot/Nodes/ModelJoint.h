@@ -65,7 +65,7 @@ namespace VirtualRobot
          *
          * @param q The joint value in rad/mm.
          */
-        void setJointValue(float q);
+        virtual void setJointValue(float q);
 
         /*!
          * Set the joint value without updating the internal matrices.
