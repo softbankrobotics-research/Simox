@@ -35,7 +35,7 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param localTransformation The transformation from the parent of this node to this node.
+         * @param staticTransformation The transformation from the parent of this node to this node.
          * @param jointLimitLo The lower limit of this joint.
          * @param jointLimitHi The upper limit of this joint.
          * @param jointValueOffset The offset for the value of this joint.

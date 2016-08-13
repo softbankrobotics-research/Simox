@@ -4,13 +4,13 @@
 
 namespace VirtualRobot
 {
-    ModelNode::ModelNode(ModelWeakPtr model, const std::string& name, Eigen::Matrix4f& localTransformation)
+    ModelNode::ModelNode(ModelWeakPtr model, const std::string& name, Eigen::Matrix4f& staticTransformation)
         : initialized(false),
           model(model),
           name(name),
           parent(ModelNodeWeakPtr()),
           children(),
-          localTransformation(localTransformation),
+          staticTransformation(staticTransformation),
           globalPose(Eigen::Matrix4f::Identity()),
           attachments(),
           attachmentsWithVisualisation()
@@ -259,16 +259,21 @@ namespace VirtualRobot
         return false;
     }
 
-    Eigen::Matrix4f ModelNode::getLocalTransformation() const
+    Eigen::Matrix4f ModelNode::getStaticTransformation() const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        return localTransformation;
+        return staticTransformation;
     }
 
-    void ModelNode::setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose)
+    Eigen::Matrix4f ModelNode::getNodeTransformation() const
+    {
+        return getStaticTransformation();
+    }
+
+    void ModelNode::setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose)
     {
         WriteLockPtr w = getModel()->getWriteLock();
-        this->localTransformation = localTransformation;
+        this->staticTransformation = staticTransformation;
 
         if (updatePose)
         {
@@ -303,13 +308,13 @@ namespace VirtualRobot
 
         if (parentShared)
         {
-            this->globalPose = parentShared->getGlobalPose() * localTransformation;
+            this->globalPose = parentShared->getGlobalPose() * getNodeTransformation();
         }
         else // this is the root node
         {
             ModelPtr modelShared = getModel();
             VR_ASSERT(modelShared->getRootNode().get() == this);
-            this->globalPose = modelShared->getGlobalPose() * localTransformation;
+            this->globalPose = modelShared->getGlobalPose() * getNodeTransformation();
         }
 
         updatePoseInternally(updateChildren, updateAttachments);

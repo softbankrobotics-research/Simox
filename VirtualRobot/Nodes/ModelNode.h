@@ -74,11 +74,11 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param localTransformation The transformation from the parent of this node to this node.
+         * @param staticTransformation The transformation from the parent of this node to this node.
          */
         ModelNode(ModelWeakPtr model,
                   const std::string& name,
-                  Eigen::Matrix4f& localTransformation);
+                  Eigen::Matrix4f& staticTransformation);
 
     public:
         /*!
@@ -239,15 +239,23 @@ namespace VirtualRobot
          *
          * @return The local transformation.
          */
-        virtual Eigen::Matrix4f getLocalTransformation() const;
+        Eigen::Matrix4f getStaticTransformation() const;
 
         /*!
-         * Set a new local transformation.
+         * Get the transformation performed by this node.
+         * This includes the joint transformation.
          *
-         * @param localTransformation The new transformation.
+         * @return The transformation.
+         */
+        virtual Eigen::Matrix4f getNodeTransformation() const;
+
+        /*!
+         * Set a new preJoint/preVisualization transformation.
+         *
+         * @param staticTransformation The new transformation.
          * @param updatePose If set to true, the pose of all children will be updated recursively.
          */
-        virtual void setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose = true);
+        virtual void setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose = true);
 
         /*!
          * Get the globalPose of this node.
@@ -420,7 +428,7 @@ namespace VirtualRobot
         ModelNodeWeakPtr parent;
         std::vector<ModelNodePtr> children;
 
-        Eigen::Matrix4f localTransformation;
+        Eigen::Matrix4f staticTransformation;
         Eigen::Matrix4f globalPose;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
