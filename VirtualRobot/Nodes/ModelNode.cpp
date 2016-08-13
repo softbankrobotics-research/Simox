@@ -24,6 +24,7 @@ namespace VirtualRobot
 
     void ModelNode::initialize(ModelNodePtr parent, const std::vector<ModelNodePtr>& children)
     {
+        THROW_VR_EXCEPTION_IF(isInitialized(), "ModelNode " + getName() + "is already initialized.");
         ModelPtr modelShared = getModel();
         THROW_VR_EXCEPTION_IF(!modelShared->hasModelNode(shared_from_this()),
                               "ModelNode \"" + getName() + "\" is not registered to model \""
@@ -42,6 +43,7 @@ namespace VirtualRobot
 
         updatePose(true);
 
+        // i think no lock is needed for "initialized"
         initialized = true;
     }
 
@@ -54,16 +56,19 @@ namespace VirtualRobot
 
     std::string ModelNode::getName() const
     {
+        // never updated -> no lock needed
         return name;
     }
 
     bool ModelNode::isInitialized() const
     {
+        // only updated in "initialize" -> no lock needed
         return initialized;
     }
 
     ModelNodePtr ModelNode::getChildByName(std::string& name) const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
         for (ModelNodePtr child : getChildNodes())
         {
@@ -78,6 +83,7 @@ namespace VirtualRobot
 
     ModelNodePtr ModelNode::getParentNode(ModelNodeType type) const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         ModelNodePtr parentLink = parent.lock();
@@ -102,6 +108,7 @@ namespace VirtualRobot
 
     std::vector<ModelNodePtr> ModelNode::getChildNodes(ModelNodeType type) const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         if (type == ModelNode::ModelNodeType::Node)
@@ -129,6 +136,7 @@ namespace VirtualRobot
 
     void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, ModelNodeType type, bool clearVector)
     {
+        ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
         if (clearVector)
         {
@@ -148,6 +156,7 @@ namespace VirtualRobot
 
     std::vector<ModelNodePtr> ModelNode::getAllParents(ModelNodeSetPtr set, ModelNodeType type)
     {
+        ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
@@ -174,6 +183,7 @@ namespace VirtualRobot
             return false;
         }
 
+        WriteLockPtr w = getModel()->getWriteLock();
         if (hasChild(newNode))
         {
             VR_WARNING << " Trying to attach already attached object: " << getName() << "->"
@@ -205,6 +215,7 @@ namespace VirtualRobot
 
     bool ModelNode::hasChild(ModelNodePtr node) const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         return std::find(children.begin(), children.end(), node) != children.end();
@@ -212,6 +223,7 @@ namespace VirtualRobot
 
     bool ModelNode::hasChild(std::string nodeName) const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
         for (ModelNodePtr child : getChildNodes())
         {
@@ -226,6 +238,7 @@ namespace VirtualRobot
 
     bool ModelNode::detachChild(ModelNodePtr node)
     {
+        WriteLockPtr w = getModel()->getWriteLock();
         if (hasChild(node))
         {
             children.erase(std::find(children.begin(), children.end(), node));
@@ -248,11 +261,13 @@ namespace VirtualRobot
 
     Eigen::Matrix4f ModelNode::getLocalTransformation() const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         return localTransformation;
     }
 
     void ModelNode::setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose)
     {
+        WriteLockPtr w = getModel()->getWriteLock();
         this->localTransformation = localTransformation;
 
         if (updatePose)
@@ -283,6 +298,7 @@ namespace VirtualRobot
 
     void ModelNode::updatePose(bool updateChildren, bool updateAttachments)
     {
+        WriteLockPtr w = getModel()->getWriteLock();
         ModelNodePtr parentShared = getParentNode();
 
         if (parentShared)
@@ -324,6 +340,7 @@ namespace VirtualRobot
 
     bool ModelNode::attach(ModelNodeAttachmentPtr attachment)
     {
+        WriteLockPtr w = getModel()->getWriteLock();
         if (!attachment || isAttached(attachment) || !attachment->isAttachable(shared_from_this()))
         {
             return false;
@@ -345,6 +362,7 @@ namespace VirtualRobot
 
     bool ModelNode::isAttached(ModelNodeAttachmentPtr attachment)
     {
+        ReadLockPtr r = getModel()->getReadLock();
         if (!attachment)
         {
             return false;
@@ -356,6 +374,7 @@ namespace VirtualRobot
 
     bool ModelNode::detach(ModelNodeAttachmentPtr attachment)
     {
+        WriteLockPtr w = getModel()->getWriteLock();
         if (isAttached(attachment))
         {
             attachment->setNode(ModelNodePtr());
@@ -377,6 +396,7 @@ namespace VirtualRobot
 
     std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachments(std::string type)
     {
+        ReadLockPtr r = getModel()->getReadLock();
         if (type == "")
         {
             std::vector<ModelNodeAttachmentPtr> all;
@@ -395,6 +415,7 @@ namespace VirtualRobot
 
     std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachmentsWithVisualisation() const
     {
+        ReadLockPtr r = getModel()->getReadLock();
         return attachmentsWithVisualisation;
     }
 
