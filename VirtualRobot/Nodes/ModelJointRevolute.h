@@ -29,7 +29,7 @@ namespace VirtualRobot
 {
     class ModelJointRevolute : public ModelJoint
     {
-    protected:
+    public:
         /*!
          * Constructor with settings.
          *
@@ -43,21 +43,18 @@ namespace VirtualRobot
          */
         ModelJointRevolute(ModelWeakPtr model,
                            const std::string& name,
-                           Eigen::Matrix4f& localTransformation,
+                           Eigen::Matrix4f& staticTransformation,
                            float jointLimitLo,
                            float jointLimitHi,
                            float jointValueOffset = 0.0f,
-                           const Eigen::Vector3f& axis);
-    public:
+                           Eigen::Vector3f& axis);
+
         /*!
          * Destructor.
          */
         virtual ~ModelJointRevolute();
 
-        virtual ModelNodeType getType()
-        {
-            return ModelNode::ModelNodeType::JointRevolute;
-        }
+        virtual ModelNodeType getType() const override;
 
         /*!
          * Get the joint axis in defined coordinate system.
@@ -74,23 +71,10 @@ namespace VirtualRobot
          */
         Eigen::Vector3f getJointRotationAxisInJointCoordSystem() const;
 
-        /*!
-         * This calculates the spatial distance between the parent of a revolute joint and a given child with the joint set to a given angle (e.g. the length of a muscle-tendon complex attached to the parent and the given child).
-         *
-         * @param child The child node.
-         * @param angle The angle of the revolute joint in radians.
-         * @return The spatial distance between parent and given child at given angle.
-         */
-        virtual float getLMTC(float angle);
+        virtual Eigen::Matrix4f getNodeTransformation() const override;
 
-        /*!
-         * This calculates the spatial length of a moment arm defined through the triangle given by the node's parent, the specified child and the specified angle at the revolulte joint.
-         *
-         * @param child The child node.
-         * @param angle The angle of the revolute joint in radians.
-         * @return The spatial length of the moment arm.
-         */
-        virtual float getLMomentArm(float angle);
+    private:
+        Eigen::Vector3f& axis;
     };
 }
 
