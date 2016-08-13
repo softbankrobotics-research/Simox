@@ -45,19 +45,25 @@ namespace VirtualRobot
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /*!
-         * The type of the node described as uint8_t.
+         * The type of the node described as uint16_t.
          *
-         * The last 4 bit can be used to determinate the main type of the node.
-         * Currently there are the Types Link (0x01) and Joint (0X02).
+         * The last 8 bit can be used to determinate the main type of the node.
+         * Currently there are the Types Link (0x0001) and Joint (0x0002).
+         *
+         * The first 8 bit can be used to determinate the sub type.
+         *
+         * Each sub/main type is only allowed to use one bit.
          */
-        enum ModelNodeType : uint8_t
+        enum ModelNodeType : uint16_t
         {
-            Link            = 0x01,
+            Node            = 0x0000,
 
-            Joint           = 0X02,
-            JointFixed      = 0x12,
-            JointPrismatic  = 0x22,
-            JointRevolute   = 0x32
+            Link            = 0x0001,
+
+            Joint           = 0X0002,
+            JointFixed      = 0x0102,
+            JointPrismatic  = 0x0202,
+            JointRevolute   = 0x0402
         };
 
     protected:
@@ -95,7 +101,7 @@ namespace VirtualRobot
          *
          * @return The type of this node.
          */
-        virtual ModelNodeType getType() = 0;
+        virtual ModelNodeType getType() const = 0;
 
         /*!
          * Get the corresponding Model.
@@ -128,63 +134,65 @@ namespace VirtualRobot
 
         /*!
          * Get the parent Node.
-         * If this node does not have a parent, this returns an empty pointer.
+         * If a type is given, the first parent of this type is returned.
+         * If this node does not have a parent of the given type, this returns an empty pointer.
          *
+         * Example:
+         * A1
+         * |
+         * A2
+         * |
+         * B3
+         * |
+         * A4
+         * A4.getParentNode(A) == A2
+         *
+         * @param type The type of the nodes to return.
          * @return The parent node.
          */
-        ModelNodePtr getParentNode() const;
-
-        /*!
-         * Get the first parent, which is a link.
-         *
-         * @return The parent node or an empty pointer, if no parent link exists.
-         */
-        ModelNodePtr getParentLink() const;
-
-        /*!
-         * Get the first parent, which is a joint.
-         *
-         * @return The parent node or an empty pointer, if no parent joint exists.
-         */
-        ModelNodePtr getParentJoint() const;
+        ModelNodePtr getParentNode(ModelNodeType type = ModelNodeType::Node) const;
 
         /*!
          * Get all child Nodes.
+         * If a type is given all nodes of the given type are returned, which are directly connected to this node,
+         * or only separated by nodes of a other type.
          *
+         * Example:
+         * A1
+         * | \
+         * B2 A3
+         * |  | \
+         * B4 B5 B6
+         * A1.getChildNodes(B) == {B2, B5, B6}
+         *
+         * @param type The type of the nodes to return.
          * @return The child Nodes.
          */
-        std::vector<ModelNodePtr> getChildNodes() const;
-
-        /*!
-         * Get all joint nodes, which are directly connected to this node, or only separated by link nodes.
-         *
-         * @return The child Nodes.
-         */
-        std::vector<ModelNodePtr> getChildJoints() const;
-
-        /*!
-         * Get all link nodes, which are directly connected to this node, or only separated by joint nodes.
-         *
-         * @return The child Nodes.
-         */
-        std::vector<ModelNodePtr> getChildLinks() const;
+        std::vector<ModelNodePtr> getChildNodes(ModelNodeType type = ModelNodeType::Node) const;
 
         /*!
          * All children and their children (and so on) are collected.
+         * If the type is given, only nodes of the given type are added.
          * The current instance is also added.
          *
          * @param storeNodes A initialized vector to store the collected nodes in.
+         * @param type The type of the nodes to return.
          * @param clearVector If true, the store vector is cleared.
         */
-        void collectAllNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector = true) const;
+        void collectAllNodes(std::vector<ModelNodePtr>& storeNodes,
+                             ModelNodeType type = ModelNodeType::Node,
+                             bool clearVector = true);
 
         /*!
          * Find all ModelNodes whose movements affect this ModelNode.
+         * If the type is given, only nodes of the given type are returned.
          *
          * @param set If set, the search is limited to the rns.
+         * @param type The type of the nodes to return.
          * @return The ModelNodes.
         */
-        virtual std::vector<ModelNodePtr> getAllParents(ModelNodeSetPtr set = ModelNodeSetPtr());
+        virtual std::vector<ModelNodePtr> getAllParents(ModelNodeSetPtr set = ModelNodeSetPtr(),
+                                                        ModelNodeType type = ModelNodeType::Node);
 
         /*!
          * Check if node is a child from this node.
@@ -402,6 +410,7 @@ namespace VirtualRobot
 
     protected:
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
+        inline bool checkNodeOfType(ModelNodePtr node, ModelNodeType type) const;
 
     private:
         bool initialized;

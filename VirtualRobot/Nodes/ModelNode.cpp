@@ -2,8 +2,6 @@
 #include "../VirtualRobotException.h"
 #include "../ConditionedLock.h"
 
-#include <algorithm>
-
 namespace VirtualRobot
 {
     ModelNode::ModelNode(ModelWeakPtr model, const std::string& name, Eigen::Matrix4f& localTransformation)
@@ -78,33 +76,20 @@ namespace VirtualRobot
         return ModelNodePtr();
     }
 
-    ModelNodePtr ModelNode::getParentNode() const
+    ModelNodePtr ModelNode::getParentNode(ModelNodeType type) const
     {
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
-        ModelNodePtr parentShared = parent.lock();
-
-        if (!parentShared)
-        {
-            return ModelNodePtr();
-        }
-
-        return parentShared;
-    }
-
-    ModelNodePtr ModelNode::getParentLink() const
-    {
-        // initialisation is checked in getParentNode
-        ModelNodePtr parentLink = getParentNode();
+        ModelNodePtr parentLink = parent.lock();
 
         if (!parentLink)
         {
             return ModelNodePtr();
         }
 
-        while (parentLink->getType() & 0x0F != ModelNodeType::Link)
+        while (!checkNodeOfType(parentLink, type))
         {
-            parentLink = parentLink->getParentNode();
+            parentLink = parentLink->parent.lock();
 
             if (!parentLink)
             {
@@ -115,67 +100,22 @@ namespace VirtualRobot
         return parentLink;
     }
 
-    ModelNodePtr ModelNode::getParentJoint() const
-    {
-        // initialisation is checked in getParentNode
-        ModelNodePtr parentJoint = getParentNode();
-
-        if (!parentJoint)
-        {
-            return ModelNodePtr();
-        }
-
-        while (parentJoint->getType() & 0x0F != ModelNodeType::Joint)
-        {
-            parentJoint = parentJoint->getParentNode();
-
-            if (!parentJoint)
-            {
-                return ModelNodePtr();
-            }
-        }
-
-        return parentJoint;
-    }
-
-    std::vector<ModelNodePtr> ModelNode::getChildNodes() const
+    std::vector<ModelNodePtr> ModelNode::getChildNodes(ModelNodeType type) const
     {
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
-        return children;
-    }
-
-    std::vector<ModelNodePtr> ModelNode::getChildJoints() const
-    {
-        // initialisation is checked in getChildNodes
-        std::vector<ModelNodePtr> childJoints;
-
-        for (ModelNodePtr child : getChildNodes())
+        if (type == ModelNode::ModelNodeType::Node)
         {
-            if (child->getType() & 0x0F != ModelNodeType::Joint)
-            {
-                std::vector<ModelNodePtr> childJointsOfChild = child->getChildJoints();
-                childJoints.insert(childJoints.end(), childJointsOfChild.begin(), childJointsOfChild.end());
-            }
-            else
-            {
-                childJoints.push_back(child);
-            }
+            return children;
         }
 
-        return childJoints;
-    }
-
-    std::vector<ModelNodePtr> ModelNode::getChildLinks() const
-    {
-        // initialisation is checked in getChildNodes
         std::vector<ModelNodePtr> childLinks;
 
-        for (ModelNodePtr child : getChildNodes())
+        for (ModelNodePtr child : children)
         {
-            if (child->getType() & 0x0F != ModelNodeType::Link)
+            if (!checkNodeOfType(child, type))
             {
-                std::vector<ModelNodePtr> childLinksOfChild = child->getChildLinks();
+                std::vector<ModelNodePtr> childLinksOfChild = child->getChildNodes(type);
                 childLinks.insert(childLinks.end(), childLinksOfChild.begin(), childLinksOfChild.end());
             }
             else
@@ -187,7 +127,7 @@ namespace VirtualRobot
         return childLinks;
     }
 
-    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector) const
+    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, ModelNodeType type, bool clearVector)
     {
         // initialisation is checked in getChildNodes
         if (clearVector)
@@ -195,24 +135,27 @@ namespace VirtualRobot
             storeNodes.clear();
         }
 
-        storeNodes.push_back(static_pointer_cast<ModelNode>(shared_from_this()));
+        if (checkNodeOfType(shared_from_this(), type))
+        {
+            storeNodes.push_back(shared_from_this());
+        }
 
         for (ModelNodePtr child : getChildNodes())
         {
-            child->collectAllNodes(storeNodes, false);
+            child->collectAllNodes(storeNodes, type, false);
         }
     }
 
-    std::vector<ModelNodePtr> ModelNode::getAllParents(ModelNodeSetPtr set)
+    std::vector<ModelNodePtr> ModelNode::getAllParents(ModelNodeSetPtr set, ModelNodeType type)
     {
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
         ModelNodePtr p = shared_from_this();
 
-        while (p = p->getParentNode())
+        while (p = p->getParentNode(type))
         {
-            if (set && set->hasModelNode(p))
+            if (!set || set->hasModelNode(p))
             {
                 result.push_back(p);
             }
@@ -295,14 +238,11 @@ namespace VirtualRobot
 
     bool ModelNode::detachChild(std::string& nodeName)
     {
-        if (hasChild(nodeName))
+        ModelNodePtr node = getChildByName(nodeName);
+        if (node)
         {
-            ModelNodePtr node = getChildByName(nodeName);
-            children.erase(std::find(children.begin(), children.end(), node));
-            node->parent.reset();
-            return true;
+            return detachChild(node);
         }
-
         return false;
     }
 
@@ -511,5 +451,10 @@ namespace VirtualRobot
     Eigen::Matrix4f ModelNode::getTransformationFrom(const ModelNodePtr otherObject)
     {
         return otherObject->getGlobalPose().inverse() * getGlobalPose();
+    }
+
+    bool ModelNode::checkNodeOfType(ModelNodePtr node, ModelNode::ModelNodeType type) const
+    {
+        return (node->getType() & type) == type;
     }
 }
