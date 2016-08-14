@@ -99,10 +99,9 @@ namespace VirtualRobot
          */
         virtual ~ModelLink();
 
-        virtual ModelNodeType getType()
-        {
-            return ModelNode::ModelNodeType::Link;
-        }
+        virtual void initialize(ModelNodePtr parent, const std::vector<ModelNodePtr>& children) override;
+
+        virtual ModelNodeType getType() const override;
 
         /*!
          * Get the collision model of this link.
@@ -115,8 +114,9 @@ namespace VirtualRobot
          * Set a new collision model.
          *
          * @param colModel The new collision model.
+         * @param keepUpdateVisualization If true, update visualisation of colModel is set to the status of the previous model.
          */
-        void setCollisionModel(CollisionModelPtr colModel);
+        void setCollisionModel(CollisionModelPtr colModel, bool keepUpdateVisualization = true);
 
         /*!
          * Get the collision checker of this node.
@@ -129,8 +129,9 @@ namespace VirtualRobot
          * Set a new visualisation.
          *
          * @param visualization The new visualisation.
+         * @param keepUpdateVisualization If true, update visualisation of visualization is set to the status of the previous model.
          */
-        void setVisualization(VisualizationNodePtr visualization);
+        void setVisualization(VisualizationNodePtr visualization, bool keepUpdateVisualization = true);
 
         /*!
          * Get visualization object.
@@ -150,6 +151,7 @@ namespace VirtualRobot
 
         /*!
          * Get the physics information of this node.
+         * This is a copy of the physics object and gets no updates.
          *
          * @return A physics object containing all physics information.
          */
@@ -223,6 +225,16 @@ namespace VirtualRobot
          * @param im The inertia matrix in kg*m^2.
          */
         void setInertiaMatrix(const Eigen::Matrix3f& im);
+
+    protected:
+        bool initializePhysics();
+        virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
+
+    private:
+        VisualizationNodePtr visualizationModel;
+        CollisionModelPtr collisionModel;
+        ModelLink::Physics physics;
+        CollisionCheckerPtr collisionChecker;
     };
 }
 
