@@ -479,7 +479,7 @@ namespace VirtualRobot
         return otherObject->getGlobalPose().inverse() * getGlobalPose();
     }
 
-    bool ModelNode::checkNodeOfType(ModelNodePtr node, ModelNode::ModelNodeType type) const
+    static bool ModelNode::checkNodeOfType(ModelNodePtr node, ModelNode::ModelNodeType type)
     {
         return (node->getType() & type) == type;
     }

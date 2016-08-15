@@ -416,9 +416,17 @@ namespace VirtualRobot
          */
         Eigen::Matrix4f getTransformationFrom(const ModelNodePtr otherObject);
 
+        /*!
+         * Check if node has the given type.
+         *
+         * @param node The node to check.
+         * @param type The type to check.
+         * @return True, if the node has tthe given type; false otherwise.
+         */
+        inline static bool checkNodeOfType(ModelNodePtr node, ModelNodeType type);
+
     protected:
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
-        inline bool checkNodeOfType(ModelNodePtr node, ModelNodeType type) const;
 
     private:
         bool initialized;
