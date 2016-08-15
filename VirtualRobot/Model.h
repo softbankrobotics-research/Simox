@@ -25,19 +25,21 @@
 
 #include "VirtualRobot.h"
 #include "BoundingBox.h"
-#include <ConditionedLock.h>
-#include "Nodes/ModelNode.h"
+#include "ConditionedLock.h"
 
 #include <Eigen/Core>
+#include <map>
+#include <VirtualRobot/Nodes/ModelNode.h>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace VirtualRobot
 {
     /*!
      * This is the main object defining the kinematic structure of a model.
      *
-     * \see RobotIO, RobotNode, RobotNodeSet, EndEffector
+     * \see RobotIO, ModelNode, ModelNodeSet
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Model
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public boost::enable_shared_from_this<Model>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -46,7 +48,8 @@ namespace VirtualRobot
          * Constructor.
          *
          * @param name Specifies the name of this instance.
-         * @param type Specifies the type of the robot (e.g. multiple robots of the same type could exists with different names)
+         * @param type Specifies the type of the model
+         *             (e.g. multiple models of the same type could exists with different names)
          */
         Model(const std::string& name, const std::string& type = "");
 
@@ -77,7 +80,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(ModelNodePtr node);
+        virtual bool hasModelNode(ModelNodePtr node) const;
 
         /*!
          * Check, if the node is registered to this model.
@@ -85,7 +88,7 @@ namespace VirtualRobot
          * @param modelNodeName The name of the node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const std::string& modelNodeName);
+        virtual bool hasModelNode(const std::string& modelNodeName) const;
 
         /*!
          * Get a pointer to the ModelNode, identified by the given name.
@@ -93,22 +96,25 @@ namespace VirtualRobot
          * @param modelNodeName The name of the ModelNode.
          * @return A pointer to the ModelNode.
          */
-        virtual ModelNodePtr getModelNode(const std::string& modelNodeName);
+        virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
 
         /*!
          * Get all nodes, registered to this model.
          *
+         * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes();
+        virtual std::vector< ModelNodePtr > getModelNodes(ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
         /*!
          * Get all nodes, registered to this model.
          *
          * @param storeNodes The vector to store the nodes.
          * @param clearVector If true, the vector is cleared bevor storing nodes.
+         * @param type If set, only nodes of this type are returned.
          */
-        virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true);
+        virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
+                                   ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
         /*!
          * Register a new ModelNodeSet to this model.
@@ -130,7 +136,7 @@ namespace VirtualRobot
          * @param nodeSet The node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(ModelNodeSetPtr nodeSet);
+        virtual bool hasModelNodeSet(ModelNodeSetPtr nodeSet) const;
 
         /*!
          * Check, if the node set is registered to this model.
@@ -138,7 +144,7 @@ namespace VirtualRobot
          * @param nodeSet The name of the node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(const std::string& name);
+        virtual bool hasModelNodeSet(const std::string& name) const;
 
         /*!
          * Get a pointer to the ModelNodeSet, identified by the given name.
@@ -146,14 +152,14 @@ namespace VirtualRobot
          * @param modelNodeName The name of the ModelNodeSet.
          * @return A pointer to the ModelNodeSet.
          */
-        virtual ModelNodeSetPtr getModelNodeSet(const std::string& nodeSetName);
+        virtual ModelNodeSetPtr getModelNodeSet(const std::string& nodeSetName) const;
 
         /*!
          * Get all node sets, registered to this model.
          *
          * @return The registered node sets.
          */
-        virtual std::vector<ModelNodeSetPtr> getModelNodeSets();
+        virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
 
         /*!
          * Get all node sets, registered to this model.
@@ -161,10 +167,10 @@ namespace VirtualRobot
          * @param storeNodeSet The vector to store the node sets.
          * @param clearVector If true, the vector is cleared bevor storing nodes.
          */
-        virtual void getModelNodeSets(std::vector<ModelNodeSetPtr>& storeNodeSet, bool clearVector = true);
+        virtual void getModelNodeSets(std::vector<ModelNodeSetPtr>& storeNodeSet, bool clearVector = true) const;
 
         /*!
-         * The root node is the first RobotNode of this robot.
+         * The root node is the first ModelNode of this model.
          *
          * @param node The new root node.
          */
@@ -175,21 +181,21 @@ namespace VirtualRobot
          *
          * @return The current root node.
          */
-        virtual ModelNodePtr getRootNode();
+        virtual ModelNodePtr getRootNode() const;
 
         /*!
          * Get the name of this model.
          *
          * @return The name.
          */
-        virtual std::string getName();
+        virtual std::string getName() const;
 
         /*!
          * Get the type of this model.
          *
          * @return The type.
          */
-        virtual std::string getType();
+        virtual std::string getType() const;
 
         /*!
          * Configures the model to threadsafe or not.
@@ -216,38 +222,38 @@ namespace VirtualRobot
          *
          * @return The global pose.
          */
-        virtual Eigen::Matrix4f getGlobalPose();
+        virtual Eigen::Matrix4f getGlobalPose() const;
 
         /*!
-         * Set the global pose of this model so that the RobotNode node is at position globalPoseNode.
+         * Set the global pose of this model so that the ModelNode node is at position globalPoseNode.
          *
          * @param node The node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
-        virtual void setGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForModelNode(const ModelNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
-         * Return center of mass of this robot in local coordinate frame.
-         * All RobotNodes of this robot are considered according to their mass.
+         * Return center of mass of this model in local coordinate frame.
+         * All ModelNodes of this model are considered according to their mass.
          *
          * @return The center of mass in local coordinate frame.
          */
-        virtual Eigen::Vector3f getCoMLocal();
+        virtual Eigen::Vector3f getCoMLocal() const;
 
         /*!
-         * Return Center of Mass of this robot in global coordinates.
-         * All RobotNodes of this robot are considered according to their mass.
+         * Return Center of Mass of this model in global coordinates.
+         * All ModelNodes of this model are considered according to their mass.
          *
          * @return The center of mass in global coordinate frame.
          */
-        virtual Eigen::Vector3f getCoMGlobal();
+        virtual Eigen::Vector3f getCoMGlobal() const;
 
         /*!
          * Get the scaling of this model.
          *
          * @return The scaling.
          */
-        float getScaling();
+        float getScaling() const;
 
         /*!
          * Set the scaling of this model.
@@ -262,18 +268,25 @@ namespace VirtualRobot
         virtual void applyJointValues();
 
         /*!
-            Shows the structure of the robot
-        */
-        void showStructure(bool enable, const std::string& type = "");
+         * Shows the structure of the model.
+         * This adds or removes a Attachment.
+         *
+         * @param enable If true, the structure is shown; if false it is removed.
+         */
+        void showStructure(bool enable);
 
         /*!
-            Shows the coordinate systems of the robot nodes
-        */
-        void showCoordinateSystems(bool enable, const std::string& type = "");
+         * Shows the coordinate systems of the model nodes.
+         * This adds or removes a Attachment.
+         *
+         * @param enable If true, the coordinate system is shown; if false it is removed.
+         */
+        void showCoordinateSystems(bool enable);
 
         /*!
-         * Convenient method for highlighting the visualization of this robot.
+         * Convenient method for highlighting the visualization of this model.
          * It is automatically checked whether the collision model or the full model is part of the visualization.
+         *
          * @param visualization The visualization for which the highlighting should be performed.
          * @param enable On or off
          */
@@ -282,11 +295,14 @@ namespace VirtualRobot
         /*!
          * Display some physics debugging information.
          *
-         * @param enableCoM If true, the center of mass is shown (if given). If a comModel is given it is used for visualization, otherwise a standrad marker is shown.
+         * @param enableCoM If true, the center of mass is shown (if given).
+         *                  If a comModel is given it is used for visualization, otherwise a standrad marker is shown.
          * @param enableInertial If true, a visualization of the inertial matrix is shown (if given).
-         * @param comModel If set, this visualization is used to display the CoM location. If not set, a standard marker is used.
+         * @param comModel If set, this visualization is used to display the CoM location.
+         *                 If not set, a standard marker is used.
          */
-        void showPhysicsInformation(bool enableCoM, bool enableInertial, VisualizationNodePtr comModel = VisualizationNodePtr());
+        void showPhysicsInformation(bool enableCoM, bool enableInertial,
+                                    VisualizationNodePtr comModel = VisualizationNodePtr());
 
         /*!
          * Setup the full model visualization.
@@ -329,10 +345,10 @@ namespace VirtualRobot
          * The internal matrices and visualizations are updated accordingly.
          * If you intend to update multiple joints, use \ref setJointValues for faster access.
          *
-         * @param rn The model node.
+         * @param node The model node.
          * @param jointValue The new joint value.
          */
-        virtual void setJointValue(ModelNodePtr rn, float jointValue);
+        virtual void setJointValue(ModelNodePtr node, float jointValue);
 
         /*!
          * Set a joint value [rad].
@@ -369,16 +385,6 @@ namespace VirtualRobot
         virtual void setJointValues(RobotConfigPtr config);
 
         /*!
-         * Set joint values [rad].
-         * Only those joints in config are affected which are present in rns.
-         * The subpart of the model, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
-         *
-         * @param rns Only joints in this rns are updated.
-         * @param config The ModelConfig defines the ModelNodes and joint values.
-         */
-        virtual void setJointValues(ModelNodeSetPtr rns, RobotConfigPtr config); //TODO: to ModelNodeSet
-
-        /*!
          * Apply configuration of trajectory at time t
          *
          * @param trajectory The trajectory
@@ -409,35 +415,47 @@ namespace VirtualRobot
         virtual std::vector<CollisionModelPtr> getCollisionModels();
 
         /*!
-         * Return accumulated mass of this robot.
+         * Get the collision checker of this model.
+         *
+         * @return The collision checker.
+         */
+        virtual CollisionCheckerPtr getCollisionChecker() const;
+
+        /*!
+         * Return accumulated mass of this model.
          *
          * @return The mass.
          */
-        virtual float getMass();
+        virtual float getMass() const;
 
         /*!
-         * Extract a sub kinematic from this robot and create a new robot instance.
+         * Extract a sub kinematic from this model and create a new model instance.
          *
-         * @param startJoint The kinematic starts with this RobotNode
-         * @param newRobotType The name of the newly created robot type
-         * @param newRobotName The name of the newly created robot
-         * @param cloneRNS Clone all robot node sets that belong to the original robot and for which the remaining robot nodes of the subPart are sufficient.
-         * @param cloneEEFs Clone all end effectors that belong to the original robot and for which the remaining robot nodes of the subPart are sufficient.
-         * @param collisionChecker The new robot can be registered to a different collision checker. If not set, the collision checker of the original robot is used.
-         * @param scaling Can be set to create a scaled version of this robot. Scaling is applied on kinematic, visual, and collision data.
+         * @param startNode The kinematic starts with this ModelNode
+         * @param newModelType The name of the newly created model type
+         * @param newModelName The name of the newly created model
+         * @param cloneRNS Clone all model node sets that belong to the original model and for which the remaining model nodes of the subPart are sufficient.
+         * @param cloneEEFs Clone all end effectors that belong to the original model and for which the remaining model nodes of the subPart are sufficient.
+         * @param collisionChecker The new model can be registered to a different collision checker. If not set, the collision checker of the original model is used.
+         * @param scaling Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual RobotPtr extractSubPart(RobotNodePtr startJoint, const std::string& newRobotType, const std::string& newRobotName, bool cloneRNS = true, bool cloneEEFs = true, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+        virtual ModelPtr extractSubPart(ModelNodePtr startNode, const std::string& newModelType,
+                                        const std::string& newModelName, bool cloneRNS = true,
+                                        CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
+                                        float scaling = 1.0f);
 
         /*!
          * Attach a new ModelNode to this model.
+         * This registeres the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachChildTo(ModelNodePtr newNode, ModelNodePtr existingNode);
+        void attachNodeTo(ModelNodePtr newNode, ModelNodePtr existingNode);
 
         /*!
          * Attach a new ModelNode to this model.
+         * This registeres the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
@@ -446,7 +464,7 @@ namespace VirtualRobot
 
         /*!
          * Removes the node from this model.
-         * This also removes all its children.
+         * This also removes all its children and deregisters the nodes.
          *
          * @param node The node to remove.
          */
@@ -454,7 +472,7 @@ namespace VirtualRobot
 
         /*!
          * Removes the node from this model.
-         * This also removes all its children.
+         * This also removes all its children and deregisters the nodes.
          *
          * @param nodeName The name of the node to remove.
          */
@@ -475,17 +493,18 @@ namespace VirtualRobot
         virtual std::string getFilename();
 
         /*!
-         * Creates an XML string that defines the complete robot. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
+         * Creates an XML string that defines the complete model.
+         * Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
          * \see RobotIO::saveXML.
          *
          * @param basePath TODO: Documentation
          * @param modelPath TODO: Documentation
-         * @param storeEEF TODO: Documentation
          * @param storeRNS TODO: Documentation
          * @param storeAttachments If set to true, all attachments are stored in the XML.
          * @return The generated XML string.
          */
-        virtual std::string toXML(const std::string& basePath = ".", const std::string& modelPath = "models", bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true);
+        virtual std::string toXML(const std::string& basePath = ".", const std::string& modelPath = "models",
+                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true);
 
         /*!
          * Print status information.
@@ -498,7 +517,7 @@ namespace VirtualRobot
          *
          * Exemplary usage:
          * {
-         *     ReadLockPtr lock = robot->getReadLock();
+         *     ReadLockPtr lock = model->getReadLock();
          *     // now the mutex is locked
          *
          *     // access data
@@ -508,7 +527,7 @@ namespace VirtualRobot
          *
          * @return The lock object.
          */
-        virtual ReadLockPtr getReadLock();
+        virtual ReadLockPtr getReadLock() const;
 
         /*!
          * This writelock can be used to protect data access. It locks the mutex until deletion.
@@ -516,7 +535,7 @@ namespace VirtualRobot
          *
          * Exemplary usage:
          * {
-         *     WriteLockPtr lock = robot->getWriteLock();
+         *     WriteLockPtr lock = model->getWriteLock();
          *     // now the mutex is locked
          *
          *     // access data
@@ -526,16 +545,68 @@ namespace VirtualRobot
          *
          * @return The lock object.
          */
-        virtual WriteLockPtr getWriteLock();
+        virtual WriteLockPtr getWriteLock() const;
 
         /*!
-         * Clones this robot.
+         * Clones this model.
          *
          * @param name The new name.
-         * @param collisionChecker If set, the returned robot is registered with this col checker, otherwise the CollisionChecker of the original robot is used.
-         * @param scaling Scale Can be set to create a scaled version of this robot. Scaling is applied on kinematic, visual, and collision data.
+         * @param collisionChecker If set, the returned model is registered with this col checker, otherwise the CollisionChecker of the original model is used.
+         * @param scaling Scale Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual RobotPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+        virtual ModelPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
+                               float scaling = 1.0f);
+
+        /*!
+         * Transforms the pose, given in global coordinate system, to the local coordinate system of this node.
+         *
+         * @param poseGlobal The pose, given in global coordinate system, that should be transformed to the local coordinate system of this node.
+         * @return The transformed pose.
+         */
+        Eigen::Matrix4f toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const;
+
+        /*!
+         * Transforms a position, given in global coordinate system, to the local coordinate system of this node.
+         *
+         * @param positionGlobal The position, given in global coordinate system, that should be transformed to the local coordinate system of this node.
+         * @return The transformed position.
+         */
+        Eigen::Vector3f toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const;
+
+        /*!
+         * Transforms the pose, given in local coordinate system, to the global coordinate system.
+         *
+         * @param poseLocal The pose, given in local coordinate system of this node, that should be transformed to the global coordinate system.
+         * @return The transformed pose.
+         */
+        Eigen::Matrix4f toGlobalCoordinateSystem(const Eigen::Matrix4f& poseLocal) const;
+
+        /*!
+         * Transforms the position, given in local coordinate system, to the global coordinate system.
+         *
+         * @param positionLocal The position, given in local coordinate system of this node, that should be transformed to the global coordinate system.
+         * @return The transformed position.
+         */
+        Eigen::Vector3f toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const;
+
+    private:
+        std::string name;
+        std::string type;
+        float scaling;
+
+        bool threadsafe;
+        boost::recursive_mutex mutex;
+
+        ModelNodePtr rootNode;
+
+        Eigen::Matrix4f globalPose;
+
+        CollisionCheckerPtr collisionChecker;
+
+        std::map<std::string, ModelNodePtr> modelNodeMap;
+        std::map<std::string, ModelNodeSetPtr> modelNodeSetMap;
+
+        std::string filename;
     };
 }
 
