@@ -27,7 +27,7 @@
 #include "../DynamicsEngine.h"
 #include "BulletRobot.h"
 
-#include "btBulletDynamicsCommon.h"
+#include <bullet/btBulletDynamicsCommon.h>
 
 namespace internal
 {
@@ -47,7 +47,7 @@ namespace SimDynamics
     public:
         BulletEngineConfig() : DynamicsEngineConfig()
         {
-            bulletObjectRestitution = btScalar(0.2);
+            bulletObjectRestitution = btScalar(0.0);
             bulletObjectFriction = btScalar(0.5f);
             bulletObjectDampingLinear = btScalar(0.05f);
             //bulletObjectDampingAngular = btScalar(0.85f);
@@ -58,7 +58,7 @@ namespace SimDynamics
 
             bulletSolverIterations = 100;
             bulletSolverGlobalContactForceMixing = 0;
-            bulletSolverGlobalErrorReductionParameter = btScalar(0.2);//0.1);
+            bulletSolverGlobalErrorReductionParameter = btScalar(1);//0.1);
             bulletSolverSuccessiveOverRelaxation = btScalar(1.3);
             bulletSolverContactSurfaceLayer = btScalar(0.001);
             bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);

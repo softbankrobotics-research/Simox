@@ -138,7 +138,7 @@ namespace SimDynamics
     }
 
     VelocityMotorController::VelocityMotorController(double maxVelocity, double maxAcceleration, double maxJerk)
-        : positionController(100.0, 0.0, 0.0)
+        : positionController(10.0, 0.0, 0.0)
         , maxVelocity(maxVelocity)
         , maxAcceleration(maxAcceleration)
         , maxJerk(maxJerk > 0 ? maxJerk : 15000)

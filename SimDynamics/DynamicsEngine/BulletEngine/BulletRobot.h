@@ -26,7 +26,7 @@
 #include "../DynamicsRobot.h"
 #include "BulletObject.h"
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 namespace SimDynamics
 {

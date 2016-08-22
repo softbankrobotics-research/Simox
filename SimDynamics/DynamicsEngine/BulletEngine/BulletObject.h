@@ -26,7 +26,7 @@
 #include "../DynamicsObject.h"
 #include "SimoxMotionState.h"
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 namespace SimDynamics
 {

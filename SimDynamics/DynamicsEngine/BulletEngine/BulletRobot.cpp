@@ -21,7 +21,7 @@
 using namespace VirtualRobot;
 using namespace std;
 
-//#define PRINT_TEST_DEBUG_MESSAGES
+#define PRINT_TEST_DEBUG_MESSAGES
 
 namespace SimDynamics
 {
@@ -29,7 +29,7 @@ namespace SimDynamics
     BulletRobot::BulletRobot(VirtualRobot::RobotPtr rob, bool enableJointMotors)
         : DynamicsRobot(rob)
         // should be enough for up to 10ms/step
-        , bulletMaxMotorImulse(5)
+        , bulletMaxMotorImulse(10)
     {
         ignoreTranslationalJoints = true;
 
@@ -241,17 +241,18 @@ namespace SimDynamics
         tr2.getOrigin() = pivot2;
 
         boost::shared_ptr<btHingeConstraint> hinge(new btHingeConstraint(*btBody1, *btBody2, tr1, tr2, true));
-
+//        hinge->setDbgDrawSize(0.15);
 
         // todo: check effects of parameters...
         hinge->setParam(BT_CONSTRAINT_STOP_ERP, 0.9f);
-        /*
-        hinge->setParam(BT_CONSTRAINT_CFM,0.9f);
-        hinge->setParam(BT_CONSTRAINT_STOP_CFM,0.01f);*/
-        //hinge->setLimit(limMin,limMax);//,btScalar(1.0f));
-        //hinge->setParam(BT_CONSTRAINT_CFM,1.0f);
-        hinge->setLimit(btScalar(limMinBT), btScalar(limMaxBT));
+//        hinge->setParam(BT_CONSTRAINT_ERP, 2.f);
 
+
+//        hinge->setParam(BT_CONSTRAINT_CFM,0);
+//        hinge->setParam(BT_CONSTRAINT_STOP_CFM,0.f);
+        //hinge->setLimit(limMin,limMax);//,btScalar(1.0f));
+//        hinge->setParam(BT_CONSTRAINT_CFM,0.0f);
+        hinge->setLimit(btScalar(limMinBT), btScalar(limMaxBT));
         return hinge;
     }
 
@@ -494,7 +495,7 @@ namespace SimDynamics
 
                 btScalar posTarget = btScalar(it->second.jointValueTarget + link.jointValueOffset);
                 btScalar posActual = btScalar(getJointAngle(it->first));
-                //btScalar velActual = btScalar(getJointSpeed(it->first));
+                btScalar velActual = btScalar(getJointSpeed(it->first));
                 btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
 
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
@@ -535,15 +536,15 @@ namespace SimDynamics
                 }
 
                 double targetVelocity;
-
+//                std::cout << "offset: "<< link.jointValueOffset << endl;
                 if (actuation.modes.position && actuation.modes.velocity)
                 {
-                    //cout << "################### posActual:" << posActual << ", posTarget" << posTarget << ", velTarget:" << velocityTarget << endl;
+//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", velTarget:" << velocityTarget << endl;
                     targetVelocity = controller.update(posTarget - posActual, velocityTarget, actuation, btScalar(dt));
                 }
                 else if (actuation.modes.position)
                 {
-                    // cout << "################### posActual:" << posActual << ", posTarget" << posTarget << endl;
+//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", posTarget " << posTarget << endl;
                     targetVelocity = controller.update(posTarget - posActual, 0.0, actuation, btScalar(dt));
                 }
                 else if (actuation.modes.velocity)
@@ -604,12 +605,12 @@ namespace SimDynamics
                     maxImpulse = it->second.node->getMaxTorque() * btScalar(dt);
                     //cout << "node:" << it->second.node->getName() << ", max impulse: " << maxImpulse << ", dt:" << dt << ", maxImp:" << it->second.node->getMaxTorque() << endl;
                 }
+#ifdef PRINT_TEST_DEBUG_MESSAGES
 
-#if PRINT_TEST_DEBUG_MESSAGES
-
-                if (it->first->getName() == "Elbow R")
+//                if (it->first->getName() == "Elbow R")
+                if(posTarget - posActual > 0.05)
                 {
-                    cout << "################### " << it->first->getName() << ": posActual:" << posActual << ", posTarget:" << posTarget << ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse" << maxImpulse << endl;
+                    cout << "################### " << it->first->getName() <<" error: " << (posTarget - posActual)<< ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse: " << maxImpulse << endl;
                 }
 
 #endif
