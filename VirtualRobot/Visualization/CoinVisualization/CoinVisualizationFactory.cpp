@@ -18,6 +18,8 @@
 #include "../../IK/constraints/TSRConstraint.h"
 #include "../../IK/constraints/BalanceConstraint.h"
 #include "../../IK/constraints/PoseConstraint.h"
+#include "../../IK/constraints/PositionConstraint.h"
+#include "../../IK/constraints/OrientationConstraint.h"
 #include "../../IK/SupportPolygon.h"
 #include "../TriMeshModel.h"
 #include "../../Workspace/Reachability.h"
@@ -2236,6 +2238,34 @@ namespace VirtualRobot
 
         SoTransform* t = new SoTransform;
         t->translation.setValue(constraint->getTarget()(0, 3), constraint->getTarget()(1, 3), constraint->getTarget()(2, 3));
+        res->addChild(t);
+
+        SoSphere* sphere = new SoSphere;
+        sphere->radius = 50;
+        res->addChild(sphere);
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoNode* CoinVisualizationFactory::getCoinVisualization(PositionConstraintPtr constraint, const Color& color)
+    {
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        res->addChild(u);
+
+        SoMaterial* mat = new SoMaterial;
+        mat->diffuseColor.setValue(color.r, color.g, color.b);
+        mat->ambientColor.setValue(color.r, color.g, color.b);
+        mat->transparency.setValue(color.transparency);
+        mat->setOverride(true);
+        res->addChild(mat);
+
+        SoTransform* t = new SoTransform;
+        t->translation.setValue(constraint->getTarget().x(), constraint->getTarget().y(), constraint->getTarget().z());
         res->addChild(t);
 
         SoSphere* sphere = new SoSphere;

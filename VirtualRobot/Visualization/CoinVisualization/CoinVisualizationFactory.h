@@ -250,6 +250,7 @@ namespace VirtualRobot
         static SoNode* getCoinVisualization(TSRConstraintPtr constraint, const Color& color);
         static SoNode* getCoinVisualization(BalanceConstraintPtr constraint, const Color& color);
         static SoNode* getCoinVisualization(PoseConstraintPtr constraint, const Color& color);
+        static SoNode* getCoinVisualization(PositionConstraintPtr constraint, const Color& color);
 
         static SoNode* getCoinVisualization(SupportPolygonPtr supportPolygon, const Color& color);
 
