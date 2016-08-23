@@ -39,6 +39,8 @@
 #include <VirtualRobot/IK/constraints/TSRConstraint.h>
 #include <VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h>
 #include <VirtualRobot/IK/constraints/BalanceConstraint.h>
+#include <VirtualRobot/IK/constraints/PositionConstraint.h>
+#include <VirtualRobot/IK/constraints/OrientationConstraint.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -115,7 +117,8 @@ protected:
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 
-    VirtualRobot::PoseConstraintPtr poseConstraint;
+    VirtualRobot::PositionConstraintPtr positionConstraint;
+    VirtualRobot::OrientationConstraintPtr orientationConstraint;
     VirtualRobot::TSRConstraintPtr tsrConstraint;
     VirtualRobot::BalanceConstraintPtr balanceConstraint;
 };

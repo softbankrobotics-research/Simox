@@ -344,7 +344,8 @@ void ConstrainedIKWindow::solve()
 
     if(UI.poseGroup->isChecked())
     {
-        ik->addConstraint(poseConstraint);
+        ik->addConstraint(positionConstraint);
+        ik->addConstraint(orientationConstraint);
     }
 
     if(UI.balanceGroup->isChecked())
@@ -504,11 +505,12 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     Eigen::Matrix4f pose;
     MathTools::posrpy2eigen4f(pos, rpy, pose);
 
-    poseConstraint.reset(new PoseConstraint(robot, kc, tcp, pose));
+    positionConstraint.reset(new PositionConstraint(robot, kc, tcp, pose.block<3,1>(0,3)));
+    orientationConstraint.reset(new OrientationConstraint(robot, kc, tcp, pose.block<3,3>(0,0)));
 
     poseSep->removeAllChildren();
     VisualizationFactory::Color color(1, 0, 0, 0.5);
-    poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(poseConstraint, color));
+    poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(positionConstraint, color));
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)
@@ -627,7 +629,8 @@ void ConstrainedIKWindow::performanceEvaluation()
         if(UI.poseGroup->isChecked())
         {
             randomPose(true);
-            ik->addConstraint(poseConstraint);
+            ik->addConstraint(positionConstraint);
+            ik->addConstraint(orientationConstraint);
         }
 
         if(UI.balanceGroup->isChecked())
