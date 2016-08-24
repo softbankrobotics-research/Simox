@@ -199,7 +199,9 @@ namespace SimDynamics
 
         robotNodeActuationTarget target;
         target.actuation.modes.velocity = 1;
+        target.actuation.modes.position = 0;
         target.node = node;
+        target.jointValueTarget = node->getJointValue();
         target.jointVelocityTarget = jointVelocity;
 
         actuationTargets[node] = target;

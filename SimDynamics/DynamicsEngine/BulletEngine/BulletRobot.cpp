@@ -550,7 +550,11 @@ namespace SimDynamics
                 else if (actuation.modes.velocity)
                 {
                     //cout << "################### velActual:" << velActual << ", velTarget" << velocityTarget << endl;
-                    targetVelocity = controller.update(0.0, velocityTarget, actuation, btScalar(dt));
+                    // bullet is buggy here and cannot reach velocity targets for some joint, use a position mode as workaround
+                    target.jointValueTarget += velocityTarget * dt;
+                    ActuationMode tempAct = actuation;
+                    tempAct.modes.position = 1;
+                    targetVelocity = controller.update(target.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
                 }
                 // FIXME this bypasses the controller (and doesn't work..)
                 else if (actuation.modes.torque)
