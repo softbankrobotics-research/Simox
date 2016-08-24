@@ -96,7 +96,8 @@ namespace SimDynamics
         //only enable split impulse position correction when the penetration is deeper than this m_splitImpulsePenetrationThreshold, otherwise use the regular velocity/position constraint coupling (Baumgarte).
         solverInfo.m_splitImpulsePenetrationThreshold = config->bulletSolverSplitImpulsePenetrationThreshold;
 
-        dynamicsWorld->setInternalTickCallback(externalCallbacks, this, true);
+//        dynamicsWorld->setInternalTickCallback(externalCallbacks, this, true);
+        dynamicsWorld->addAction(this);
         return true;
     }
 
@@ -714,3 +715,24 @@ namespace SimDynamics
     }
 
 } // namespace SimDynamics
+
+#include <chrono>
+void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep)
+{
+    auto start = std::chrono::system_clock::now();
+    // apply lock
+    MutexLockPtr lock = getScopedLock();
+
+    updateRobots(deltaTimeStep);
+
+    for (unsigned int i = 0; i < callbacks.size(); i++)
+    {
+        callbacks[i].first(callbacks[i].second, deltaTimeStep);
+    }
+    std::chrono::duration<double> diff = (std::chrono::system_clock::now()-start);
+//    cout << "duration: " << diff.count() << endl;
+}
+
+void SimDynamics::BulletEngine::debugDraw(btIDebugDraw *debugDrawer)
+{
+}
