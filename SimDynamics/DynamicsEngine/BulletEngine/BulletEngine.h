@@ -48,18 +48,18 @@ namespace SimDynamics
         BulletEngineConfig() : DynamicsEngineConfig()
         {
             bulletObjectRestitution = btScalar(0.0);
-            bulletObjectFriction = btScalar(0.5f);
+            bulletObjectFriction = btScalar(1.5f);
             bulletObjectDampingLinear = btScalar(0.05f);
-            //bulletObjectDampingAngular = btScalar(0.85f);
-            bulletObjectDampingAngular = btScalar(0.1f);
+            bulletObjectDampingAngular = btScalar(0.85f);
+//            bulletObjectDampingAngular = btScalar(0.1f);
             bulletObjectDeactivation = btScalar(5.0);//1.0);
             bulletObjectSleepingThresholdLinear = btScalar(0.005f);//1.5);
-            bulletObjectSleepingThresholdAngular = btScalar(0.005f);//2.5);
+            bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
 
             bulletSolverIterations = 100;
-            bulletSolverGlobalContactForceMixing = 0;
-            bulletSolverGlobalErrorReductionParameter = btScalar(1);//0.1);
-            bulletSolverSuccessiveOverRelaxation = btScalar(1.3);
+            bulletSolverGlobalContactForceMixing = 0.0;
+            bulletSolverGlobalErrorReductionParameter = btScalar(0.6);//0.1);
+            bulletSolverSuccessiveOverRelaxation = btScalar(0.0);
             bulletSolverContactSurfaceLayer = btScalar(0.001);
             bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);
         }
