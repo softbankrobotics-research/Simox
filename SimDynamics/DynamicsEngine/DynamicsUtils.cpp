@@ -217,6 +217,16 @@ namespace SimDynamics
         positionController.getPID(storeP, storeI, storeD);
     }
 
+    std::string VelocityMotorController::getName() const
+    {
+        return name;
+    }
+
+    void VelocityMotorController::setName(const std::string &value)
+    {
+        name = value;
+    }
+
     void VelocityMotorController::debug()
     {
         positionController.debug();
@@ -224,4 +234,4 @@ namespace SimDynamics
 
 
 
-}
+    }

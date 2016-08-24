@@ -119,6 +119,7 @@ namespace SimDynamics
 
         void setCurrentVelocity(double vel);
 
+
         double update(double positionError, double targetVelocity, ActuationMode actuation, double dt);
 
         void reset();
@@ -128,6 +129,9 @@ namespace SimDynamics
         void debug();
 
         void getPosPID(double& storeP, double& storeI, double& storeD);
+        std::string getName() const;
+        void setName(const std::string &value);
+
     private:
         PIDController positionController;
         double maxVelocity;
@@ -135,6 +139,7 @@ namespace SimDynamics
         double maxJerk;
         double velocity;
         double acceleration;
+        std::string name;
     };
 
 }
