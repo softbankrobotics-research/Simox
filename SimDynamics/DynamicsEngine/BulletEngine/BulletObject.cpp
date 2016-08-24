@@ -98,7 +98,7 @@ namespace SimDynamics
             {
                 // the floor needs a primitive shape, works better with collision handling
                 VirtualRobot::BoundingBox bb = colModel->getBoundingBox();
-                Eigen::Vector3f half_size = (bb.getMax() - bb.getMin()) / 1000.0 / 2;
+                Eigen::Vector3f half_size = (bb.getMax() - bb.getMin()) / 1000.0  * ScaleFactor / 2;
                 btBoxShape* box = new btBoxShape(btVector3(half_size.x(), half_size.y(), half_size.z()));
                 collisionShape.reset(box);
             }
@@ -181,19 +181,19 @@ namespace SimDynamics
         {
             Primitive::Box* box = boost::dynamic_pointer_cast<Primitive::Box>(primitive).get();
             // w/h/d have to be halved
-            btBoxShape* boxShape = new btBoxShape(btVector3(box->width / 2000.f, box->height / 2000.f, box->depth / 2000.f));
+            btBoxShape* boxShape = new btBoxShape(btVector3(box->width / 2000.f * ScaleFactor, box->height / 2000.f * ScaleFactor, box->depth / 2000.f * ScaleFactor));
             result = boxShape;
         }
         else if (primitive->type == Primitive::Sphere::TYPE)
         {
             Primitive::Sphere* sphere = boost::dynamic_pointer_cast<Primitive::Sphere>(primitive).get();
-            btSphereShape* sphereShape = new btSphereShape(btScalar(sphere->radius / 1000.f));
+            btSphereShape* sphereShape = new btSphereShape(btScalar(sphere->radius / 1000.0  * ScaleFactor));
             result = sphereShape;
         }
         else if (primitive->type == Primitive::Cylinder::TYPE)
         {
             Primitive::Cylinder* cyl = boost::dynamic_pointer_cast<Primitive::Cylinder>(primitive).get();
-            btCylinderShape* cylShape = new btCylinderShape(btVector3(cyl->radius / 1000.f, cyl->height / 1000.f, cyl->radius / 1000.f));
+            btCylinderShape* cylShape = new btCylinderShape(btVector3(cyl->radius / 1000.0  * ScaleFactor, cyl->height / 1000.0  * ScaleFactor, cyl->radius / 1000.0  * ScaleFactor));
             result = cylShape;
         }
         else
@@ -219,11 +219,11 @@ namespace SimDynamics
         comLoc = (sceneObject->getGlobalPose().inverse() * comLoc);
         com = comLoc.block(0, 3, 3, 1);
 
-        double sc = 1.0f;
+        double sc = ScaleFactor;
 
         if (DynamicsWorld::convertMM2M)
         {
-            sc = 0.001f;
+            sc = 0.001f * ScaleFactor;
         }
 
         for (size_t i = 0; i < trimesh->faces.size(); i++)
@@ -375,7 +375,7 @@ namespace SimDynamics
             return;
         }
 
-        btVector3 btVel = BulletEngine::getVecBullet(torque, false);
+        btVector3 btVel = BulletEngine::getVecBullet(torque, false) * BulletObject::ScaleFactor;
         rigidBody->applyTorque(btVel);
     }
 

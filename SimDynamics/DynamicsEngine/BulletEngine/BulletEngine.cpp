@@ -71,7 +71,9 @@ namespace SimDynamics
 
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, constraintSolver, collision_config);
 
-        dynamicsWorld->setGravity(btVector3(btScalar(config->gravity[0]), btScalar(config->gravity[1]), btScalar(config->gravity[2])));
+        dynamicsWorld->setGravity(btVector3(btScalar(config->gravity[0] * BulletObject::ScaleFactor),
+                                  btScalar(config->gravity[1] * BulletObject::ScaleFactor),
+                btScalar(config->gravity[2] * BulletObject::ScaleFactor)));
 
         collisionFilterCallback = new BulletEngine::CustomCollisionCallback(this);
         dynamicsWorld->getPairCache()->setOverlapFilterCallback(collisionFilterCallback);
@@ -138,7 +140,9 @@ namespace SimDynamics
 
         bulletConfig = newConfig;
 
-        dynamicsWorld->setGravity(btVector3(btScalar(newConfig->gravity[0]), btScalar(newConfig->gravity[1]), btScalar(newConfig->gravity[2])));
+        dynamicsWorld->setGravity(btVector3(btScalar(newConfig->gravity[0] * BulletObject::ScaleFactor),
+                                  btScalar(newConfig->gravity[1] * BulletObject::ScaleFactor),
+                btScalar(newConfig->gravity[2] * BulletObject::ScaleFactor)));
 
         btContactSolverInfo& solverInfo = dynamicsWorld->getSolverInfo();
         solverInfo.m_numIterations = newConfig->bulletSolverIterations;
@@ -319,7 +323,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 0.001f;    // mm -> m
+            sc = 0.001f * BulletObject::ScaleFactor;    // mm -> m
         }
 
         btVector3 pos(pose(0, 3)*sc, pose(1, 3)*sc, pose(2, 3)*sc);
@@ -337,7 +341,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 1000.0f;    // m -> mm
+            sc = 1000.0f / BulletObject::ScaleFactor;    // m -> mm
         }
 
         /*btQuaternion q = pose.getRotation();
@@ -361,7 +365,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 0.001f;    // mm -> m
+            sc = 0.001f * BulletObject::ScaleFactor;    // mm -> m
         }
 
         btVector3 pos(vec(0)*sc, vec(1)*sc, vec(2)*sc);
@@ -374,7 +378,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 1000.0f;    // m -> mm
+            sc = 1000.0f / BulletObject::ScaleFactor;    // m -> mm
         }
 
         Eigen::Vector3f res;

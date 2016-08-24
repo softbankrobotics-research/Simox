@@ -29,7 +29,7 @@ namespace SimDynamics
     BulletRobot::BulletRobot(VirtualRobot::RobotPtr rob, bool enableJointMotors)
         : DynamicsRobot(rob)
         // should be enough for up to 10ms/step
-        , bulletMaxMotorImulse(10)
+        , bulletMaxMotorImulse(30 * BulletObject::ScaleFactor)
     {
         ignoreTranslationalJoints = true;
 
@@ -1396,7 +1396,7 @@ namespace SimDynamics
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0;
+            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
 
             linMomentum += node->getMass() * vel;
         }
@@ -1413,9 +1413,9 @@ namespace SimDynamics
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0;
-            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
-            Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
+            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0  * BulletObject::ScaleFactor;
             double mass = node->getMass();
 
             boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
@@ -1431,16 +1431,16 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         Eigen::Vector3f angMomentum = Eigen::Vector3f::Zero();
-        Eigen::Vector3f com = getComGlobal(set) / 1000.0;
+        Eigen::Vector3f com = getComGlobal(set) / 1000.0  * BulletObject::ScaleFactor;
         Eigen::Vector3f comVel = getComVelocityGlobal(set) / 1000;
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0;
-            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
-            Eigen::Vector3f bodyCoM = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
+            Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f bodyCoM = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0  * BulletObject::ScaleFactor;
             double mass = node->getMass();
 
             boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
@@ -1600,7 +1600,7 @@ namespace SimDynamics
         Eigen::Vector3f torqueBGlobal =  ftB.tail(3);
 
         // the lever from Object B CoM to Joint
-        Eigen::Vector3f leverOnJoint = (comBGlobal - jointGlobal) * 0.001f;
+        Eigen::Vector3f leverOnJoint = (comBGlobal - jointGlobal) * 0.001f * BulletObject::ScaleFactor;
         // Calculate the torque in Joint by taking the torque that presses on the CoM of BodyB and the Torque of BodyB on the joint
         // forceOnBGlobal is inverted in next line because it is the force of A on B to hold it in position
         // torqueBGlobal is inverted in next line because it is the torque on B from A to compensate torque of other objects (which is the torque we would like) to hold it in place and therefore needs to be inverted as well

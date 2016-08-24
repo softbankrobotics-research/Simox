@@ -85,6 +85,7 @@ namespace SimDynamics
         virtual void applyTorque(const Eigen::Vector3f& torque);
 
         virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
+        static constexpr float ScaleFactor = 2;
 
     protected:
 

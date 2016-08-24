@@ -8,7 +8,7 @@ namespace SimDynamics
     {
         this->world = world;
         SIMDYNAMICS_ASSERT(world);
-        m_sundirection = btVector3(1, 1, -2) * 1000;
+        m_sundirection = btVector3(1, 1, -2) * BulletObject::ScaleFactor * 1000 ;
 
         bulletEngine = boost::dynamic_pointer_cast<BulletEngine>(world->getEngine());
 

@@ -53,7 +53,7 @@ namespace SimDynamics
             bulletObjectDampingAngular = btScalar(0.85f);
 //            bulletObjectDampingAngular = btScalar(0.1f);
             bulletObjectDeactivation = btScalar(5.0);//1.0);
-            bulletObjectSleepingThresholdLinear = btScalar(0.005f);//1.5);
+            bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);//1.5);
             bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
 
             bulletSolverIterations = 100;
