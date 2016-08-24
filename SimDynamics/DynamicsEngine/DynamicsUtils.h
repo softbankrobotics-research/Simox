@@ -32,9 +32,17 @@ namespace SimDynamics
     // use bit field because enums are a pain
     union SIMDYNAMICS_IMPORT_EXPORT ActuationMode
     {
+        ActuationMode()
+        {
+            modes.position = 0;
+            modes.velocity = 0;
+            modes.torque = 0;
+            mode = 0;
+        }
+
         struct
         {
-            unsigned char position: 1;
+            unsigned char position: 1 ;
             unsigned char velocity: 1;
             unsigned char torque: 1;
         } modes;
