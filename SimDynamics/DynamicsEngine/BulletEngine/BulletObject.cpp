@@ -34,11 +34,10 @@ namespace SimDynamics
         interatiaFactor = 5.0f;
 #endif
 
-        btMargin = (btScalar)(0.000001);
+        btMargin = (btScalar)(0.0001);
         com.setZero();
         THROW_VR_EXCEPTION_IF(!o, "NULL object");
         CollisionModelPtr colModel = o->getCollisionModel();
-
         if (!colModel)
         {
             VR_WARNING << "Building empty collision shape for object " << o->getName() << endl;
