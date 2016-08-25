@@ -43,8 +43,8 @@ namespace SimDynamics
     {
         SimoxCollisionDispatcher(BulletEngine* engine, btCollisionConfiguration* collisionConfiguration);
         virtual ~SimoxCollisionDispatcher();
-        virtual bool    needsCollision(/*const*/ btCollisionObject* body0,/*const*/ btCollisionObject* body1);
-        virtual bool    needsResponse(/*const*/ btCollisionObject* body0,/*const*/ btCollisionObject* body1);
+        virtual bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1);
+        virtual bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1);
 
     protected:
         BulletEngine* engine;

@@ -18,7 +18,7 @@ namespace SimDynamics
     {
 
     }
-    bool SimoxCollisionDispatcher::needsCollision(/*const*/ btCollisionObject* body0,/*const*/ btCollisionObject* body1)
+    bool SimoxCollisionDispatcher::needsCollision(const btCollisionObject* body0, const btCollisionObject* body1)
     {
         SimDynamics::BulletObject* o0 = static_cast<SimDynamics::BulletObject*>(body0->getUserPointer());
         SimDynamics::BulletObject* o1 = static_cast<SimDynamics::BulletObject*>(body1->getUserPointer());
@@ -31,7 +31,7 @@ namespace SimDynamics
         return false;
     }
 
-    bool SimoxCollisionDispatcher::needsResponse(/*const*/ btCollisionObject* body0,/*const*/ btCollisionObject* body1)
+    bool SimoxCollisionDispatcher::needsResponse(const btCollisionObject *body0, const btCollisionObject *body1)
     {
         SimDynamics::BulletObject* o0 = static_cast<SimDynamics::BulletObject*>(body0->getUserPointer());
         SimDynamics::BulletObject* o1 = static_cast<SimDynamics::BulletObject*>(body1->getUserPointer());
