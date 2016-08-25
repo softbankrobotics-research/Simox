@@ -46,9 +46,9 @@ namespace SimDynamics
 
         if (m_dynamicsWorld)
         {
-            btScalar dt1 = btScalar(ms / 1000000.0f);
-
-            m_dynamicsWorld->stepSimulation(dt1, 4);
+            btScalar dt1 = 0.015;//btScalar(ms / 1000000.0f);
+            std::cout << "dt1: " << dt1  << " internal: " << (1./140.f) << endl;
+            m_dynamicsWorld->stepSimulation(dt1, 100, 1./140.f);
 
             //optional but useful: debug drawing
             m_dynamicsWorld->debugDrawWorld();
