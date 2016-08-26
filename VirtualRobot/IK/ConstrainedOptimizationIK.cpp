@@ -242,22 +242,15 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
 
             if(size > 0)
             {
-                Eigen::VectorXf g = function.constraint->optimizationGradient(function.id);
-
-                // Crop gradients to a maximum size
-                float n = g.norm();
-                if(n > 1)
-                {
-                    g /= n;
-                }
-
-                grad += g;
+                grad += function.constraint->optimizationGradient(function.id);
             }
         }
     }
 
     if(size > 0)
     {
+        grad.normalize();
+
         for(unsigned int i = 0; i < gradient.size(); i++)
         {
             gradient[i] = grad(i);
