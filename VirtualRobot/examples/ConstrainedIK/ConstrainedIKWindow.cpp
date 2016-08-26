@@ -506,7 +506,9 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     MathTools::posrpy2eigen4f(pos, rpy, pose);
 
     positionConstraint.reset(new PositionConstraint(robot, kc, tcp, pose.block<3,1>(0,3)));
+
     orientationConstraint.reset(new OrientationConstraint(robot, kc, tcp, pose.block<3,3>(0,0)));
+    orientationConstraint->setOptimizationFunctionFactor(1000);
 
     poseSep->removeAllChildren();
     VisualizationFactory::Color color(1, 0, 0, 0.5);
