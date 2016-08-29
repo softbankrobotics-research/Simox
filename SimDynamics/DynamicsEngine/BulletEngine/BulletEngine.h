@@ -42,7 +42,7 @@ namespace SimDynamics
 
     typedef void (*BulletStepCallback)(void* data, btScalar timeStep);
 
-    class BulletEngineConfig : public DynamicsEngineConfig
+    class SIMDYNAMICS_IMPORT_EXPORT BulletEngineConfig : public DynamicsEngineConfig
     {
     public:
         BulletEngineConfig();

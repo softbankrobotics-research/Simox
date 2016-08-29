@@ -35,7 +35,7 @@ class SimDynamicsWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags flags = 0);
+    SimDynamicsWindow(std::string& sRobotFilename);
     ~SimDynamicsWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
