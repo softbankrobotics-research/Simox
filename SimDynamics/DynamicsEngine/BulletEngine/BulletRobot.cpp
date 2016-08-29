@@ -58,6 +58,22 @@ namespace SimDynamics
     {
     }
 
+    void BulletRobot::enableSelfCollisions(bool enable)
+    {
+        // deactivate all self collisions
+        for (size_t i = 0; i < robotNodes.size(); i++)
+        {
+            auto drn1 = getDynamicsRobotNode(robotNodes.at(i));
+             for (size_t j = 0; j < robotNodes.size(); j++)
+             {
+                 auto drn2 = getDynamicsRobotNode(robotNodes.at(j));
+                 if(enable)
+                     DynamicsWorld::GetWorld()->getEngine()->enableCollision(drn1.get(), drn2.get());
+                 else
+                     DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(), drn2.get());
+             }
+        }
+    }
     void BulletRobot::buildBulletModels(bool /*enableJointMotors*/)
     {
         MutexLockPtr lock = getScopedLock();
