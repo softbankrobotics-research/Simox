@@ -21,7 +21,7 @@
 using namespace VirtualRobot;
 using namespace std;
 
-#define PRINT_TEST_DEBUG_MESSAGES
+//#define PRINT_TEST_DEBUG_MESSAGES
 
 namespace SimDynamics
 {
@@ -58,22 +58,8 @@ namespace SimDynamics
     {
     }
 
-    void BulletRobot::enableSelfCollisions(bool enable)
-    {
-        // deactivate all self collisions
-        for (size_t i = 0; i < robotNodes.size(); i++)
-        {
-            auto drn1 = getDynamicsRobotNode(robotNodes.at(i));
-             for (size_t j = 0; j < robotNodes.size(); j++)
-             {
-                 auto drn2 = getDynamicsRobotNode(robotNodes.at(j));
-                 if(enable)
-                     DynamicsWorld::GetWorld()->getEngine()->enableCollision(drn1.get(), drn2.get());
-                 else
-                     DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(), drn2.get());
-             }
-        }
-    }
+
+
     void BulletRobot::buildBulletModels(bool /*enableJointMotors*/)
     {
         MutexLockPtr lock = getScopedLock();
@@ -84,6 +70,7 @@ namespace SimDynamics
         }
 
         robotNodes = robot->getRobotNodes();
+
 
         for (size_t i = 0; i < robotNodes.size(); i++)
         {
@@ -162,6 +149,9 @@ namespace SimDynamics
             }
 
         }
+
+        enableSelfCollisions(false);
+
     }
 
     void BulletRobot::addIgnoredCollisionModels(RobotNodePtr rn)
@@ -308,7 +298,6 @@ namespace SimDynamics
         // ensure dynamics nodes are created
         createDynamicsNode(bodyA);
         createDynamicsNode(bodyB);
-
         if (hasLink(bodyA, bodyB))
         {
             THROW_VR_EXCEPTION("Joints are already connected:" << bodyA->getName() << "," << bodyB->getName());
@@ -322,6 +311,7 @@ namespace SimDynamics
         boost::shared_ptr<btRigidBody> btBody2 = drn2->getRigidBody();
         VR_ASSERT(btBody1);
         VR_ASSERT(btBody2);
+        DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(),drn2.get());
 
 
         Eigen::Matrix4f coordSystemNode1 = bodyA->getGlobalPose(); // todo: what if joint is not at 0 ?!
@@ -552,7 +542,6 @@ namespace SimDynamics
                 }
 
                 double targetVelocity;
-//                std::cout << "offset: "<< link.jointValueOffset << endl;
                 if (actuation.modes.position && actuation.modes.velocity)
                 {
 //                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", velTarget:" << velocityTarget << endl;
@@ -570,6 +559,8 @@ namespace SimDynamics
                     ActuationMode tempAct = actuation;
                     tempAct.modes.position = 1;
                     targetVelocity = controller.update(it->second.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
+//                    if (it->first->getName() == "Upperarm R")
+//                        cout << "################### " << target.node->getName() << " velActual:" << velActual << ", velTarget " << velocityTarget << " targetVelocity " << targetVelocity <<  " pos target: " << target.jointValueTarget <<  " posActual: " << posActual << endl;
                 }
                 // FIXME this bypasses the controller (and doesn't work..)
                 else if (actuation.modes.torque)
@@ -618,7 +609,7 @@ namespace SimDynamics
                 }
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
-
+//                controller.setCurrentVelocity(velActual);
                 if (it->second.node->getMaxTorque() > 0)
                 {
                     maxImpulse = it->second.node->getMaxTorque() * btScalar(dt) * BulletObject::ScaleFactor  * BulletObject::ScaleFactor * BulletObject::ScaleFactor;
@@ -626,10 +617,13 @@ namespace SimDynamics
                 }
 #ifdef PRINT_TEST_DEBUG_MESSAGES
 
-//                if (it->first->getName() == "Elbow R")
-                if(posTarget - posActual > 0.05)
+                if (it->first->getName() == "LegL_Ank1_joint")
+//                if(posTarget - posActual > 0.05)
                 {
-                    cout << "################### " << it->first->getName() <<" error: " << (posTarget - posActual)<< ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse: " << maxImpulse << endl;
+                    double p,i,d;
+                    controller.getPosPID(p,i,d);
+                    std::cout << it->first->getName() << ": " << (actuation.modes.velocity?true:false) << " " << (actuation.modes.position?true:false) << " p: " << p;
+                    cout << "################### " << it->first->getName() <<" error: " << (posTarget - posActual)<< ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse: " << maxImpulse << " applied impulse " << hinge->internalGetAppliedImpulse() << endl;
                 }
 
 #endif
@@ -638,7 +632,6 @@ namespace SimDynamics
                     link.dynNode1->getRigidBody()->activate();
                     link.dynNode2->getRigidBody()->activate();
                 }
-
                 hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
 
 #endif
@@ -1038,7 +1031,6 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(node);
-
         if (node->isRotationalJoint())
         {
             if (!hasLink(node))

@@ -139,6 +139,13 @@ namespace SimDynamics
 
         void setPIDParameters(float p, float i, float d);
 
+        /**
+         * @brief Will enable or disable all collisions between the bodies of this robot.
+         * @param enable
+         * @note If true, this will overwrite all ignored collisions, that were individually set.
+         */
+        virtual void enableSelfCollisions(bool enable);
+
     protected:
 
         virtual void createDynamicsNode(VirtualRobot::RobotNodePtr node);
