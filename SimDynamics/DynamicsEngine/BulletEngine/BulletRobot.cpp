@@ -244,7 +244,7 @@ namespace SimDynamics
 //        hinge->setDbgDrawSize(0.15);
 
         // todo: check effects of parameters...
-        hinge->setParam(BT_CONSTRAINT_STOP_ERP, 0.9f);
+//        hinge->setParam(BT_CONSTRAINT_STOP_ERP, 2.0f);
 //        hinge->setParam(BT_CONSTRAINT_ERP, 2.f);
 
 
