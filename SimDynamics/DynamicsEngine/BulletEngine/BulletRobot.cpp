@@ -617,6 +617,11 @@ namespace SimDynamics
                 }
 
 #endif
+                if(fabs(targetVelocity) > 0.00001)
+                {
+                    link.dynNode1->getRigidBody()->activate();
+                    link.dynNode2->getRigidBody()->activate();
+                }
 
                 hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
 
