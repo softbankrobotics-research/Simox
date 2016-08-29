@@ -477,7 +477,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         //cout << "=== === BulletRobot: actuateJoints() 1 === " << this << endl;
 
-        std::map<VirtualRobot::RobotNodePtr, robotNodeActuationTarget>::iterator it = actuationTargets.begin();
+        auto  it = actuationTargets.begin();
 
         //int jointCounter = 0;
         //cout << "**** Control Values: ";
@@ -497,7 +497,7 @@ namespace SimDynamics
                 btScalar posActual = btScalar(getJointAngle(it->first));
                 btScalar velActual = btScalar(getJointSpeed(it->first));
                 btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
-
+                controller.setName(it->first->getName());
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
                 boost::shared_ptr<btGeneric6DofConstraint> dof = boost::dynamic_pointer_cast<btGeneric6DofConstraint>(link.joint);
                 VR_ASSERT(dof);
@@ -549,12 +549,11 @@ namespace SimDynamics
                 }
                 else if (actuation.modes.velocity)
                 {
-                    //cout << "################### velActual:" << velActual << ", velTarget" << velocityTarget << endl;
-                    // bullet is buggy here and cannot reach velocity targets for some joint, use a position mode as workaround
-                    target.jointValueTarget += velocityTarget * dt;
+                    // bullet is buggy here and cannot reach velocity targets for some joints, use a position-velocity mode as workaround
+                    it->second.jointValueTarget += velocityTarget * dt;
                     ActuationMode tempAct = actuation;
                     tempAct.modes.position = 1;
-                    targetVelocity = controller.update(target.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
+                    targetVelocity = controller.update(it->second.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
                 }
                 // FIXME this bypasses the controller (and doesn't work..)
                 else if (actuation.modes.torque)
@@ -606,7 +605,7 @@ namespace SimDynamics
 
                 if (it->second.node->getMaxTorque() > 0)
                 {
-                    maxImpulse = it->second.node->getMaxTorque() * btScalar(dt);
+                    maxImpulse = it->second.node->getMaxTorque() * btScalar(dt) * BulletObject::ScaleFactor  * BulletObject::ScaleFactor * BulletObject::ScaleFactor;
                     //cout << "node:" << it->second.node->getName() << ", max impulse: " << maxImpulse << ", dt:" << dt << ", maxImp:" << it->second.node->getMaxTorque() << endl;
                 }
 #ifdef PRINT_TEST_DEBUG_MESSAGES
