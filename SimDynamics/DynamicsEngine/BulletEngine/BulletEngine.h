@@ -45,24 +45,7 @@ namespace SimDynamics
     class BulletEngineConfig : public DynamicsEngineConfig
     {
     public:
-        BulletEngineConfig() : DynamicsEngineConfig()
-        {
-            bulletObjectRestitution = btScalar(0.0);
-            bulletObjectFriction = btScalar(1.5f);
-            bulletObjectDampingLinear = btScalar(0.05f);
-            bulletObjectDampingAngular = btScalar(0.85f);
-//            bulletObjectDampingAngular = btScalar(0.1f);
-            bulletObjectDeactivation = btScalar(5.0);//1.0);
-            bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);//1.5);
-            bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
-
-            bulletSolverIterations = 100;
-            bulletSolverGlobalContactForceMixing = 0.0;
-            bulletSolverGlobalErrorReductionParameter = btScalar(0.6);//0.1);
-            bulletSolverSuccessiveOverRelaxation = btScalar(0.0);
-            bulletSolverContactSurfaceLayer = btScalar(0.001);
-            bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);
-        }
+        BulletEngineConfig();
 
         virtual ~BulletEngineConfig() {}
 
