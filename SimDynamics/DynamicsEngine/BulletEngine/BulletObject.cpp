@@ -26,6 +26,9 @@ using namespace VirtualRobot;
 namespace SimDynamics
 {
 
+    float BulletObject::ScaleFactor = 2.0f;
+    float BulletObject::MassFactor = 0.1f;
+
     BulletObject::BulletObject(VirtualRobot::SceneObjectPtr o)
         : DynamicsObject(o)
     {
@@ -152,7 +155,7 @@ namespace SimDynamics
 #endif
         localInertia *= interatiaFactor;
         motionState = new SimoxMotionState(o);
-        btRigidBody::btRigidBodyConstructionInfo btRBInfo(mass, motionState, collisionShape.get(), localInertia);
+        btRigidBody::btRigidBodyConstructionInfo btRBInfo(mass*MassFactor, motionState, collisionShape.get(), localInertia);
         //btRBInfo.m_additionalDamping = true;
 
         rigidBody.reset(new btRigidBody(btRBInfo));

@@ -85,7 +85,11 @@ namespace SimDynamics
         virtual void applyTorque(const Eigen::Vector3f& torque);
 
         virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
-        static constexpr float ScaleFactor = 2;
+
+        //! All object's sizes are scaled by this factor for bullet. (Small objects (<5cm) do not work well with bullet).
+        static float ScaleFactor;
+        //! All object's masses are scaled by this factor. (Heavy objects do not work well with motors.)
+        static float MassFactor;
 
     protected:
 
