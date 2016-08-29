@@ -132,6 +132,15 @@ namespace SimDynamics
         std::string getName() const;
         void setName(const std::string &value);
 
+        double getMaxVelocity() const;
+        void setMaxVelocity(double value);
+
+        double getMaxAcceleration() const;
+        void setMaxAcceleration(double value);
+
+        double getMaxJerk() const;
+        void setMaxJerk(double value);
+
     private:
         PIDController positionController;
         double maxVelocity;
