@@ -32,9 +32,17 @@ namespace SimDynamics
     // use bit field because enums are a pain
     union SIMDYNAMICS_IMPORT_EXPORT ActuationMode
     {
+        ActuationMode()
+        {
+            modes.position = 0;
+            modes.velocity = 0;
+            modes.torque = 0;
+            mode = 0;
+        }
+
         struct
         {
-            unsigned char position: 1;
+            unsigned char position: 1 ;
             unsigned char velocity: 1;
             unsigned char torque: 1;
         } modes;
@@ -111,6 +119,7 @@ namespace SimDynamics
 
         void setCurrentVelocity(double vel);
 
+
         double update(double positionError, double targetVelocity, ActuationMode actuation, double dt);
 
         void reset();
@@ -120,6 +129,18 @@ namespace SimDynamics
         void debug();
 
         void getPosPID(double& storeP, double& storeI, double& storeD);
+        std::string getName() const;
+        void setName(const std::string &value);
+
+        double getMaxVelocity() const;
+        void setMaxVelocity(double value);
+
+        double getMaxAcceleration() const;
+        void setMaxAcceleration(double value);
+
+        double getMaxJerk() const;
+        void setMaxJerk(double value);
+
     private:
         PIDController positionController;
         double maxVelocity;
@@ -127,6 +148,7 @@ namespace SimDynamics
         double maxJerk;
         double velocity;
         double acceleration;
+        std::string name;
     };
 
 }

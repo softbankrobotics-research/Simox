@@ -138,13 +138,19 @@ namespace SimDynamics
     }
 
     VelocityMotorController::VelocityMotorController(double maxVelocity, double maxAcceleration, double maxJerk)
-        : positionController(100.0, 0.0, 0.0)
+        : positionController(10.0, 0.0, 0.0)
         , maxVelocity(maxVelocity)
         , maxAcceleration(maxAcceleration)
         , maxJerk(maxJerk > 0 ? maxJerk : 15000)
         , velocity(0)
         , acceleration(0)
     {
+    }
+
+    void VelocityMotorController::setCurrentVelocity(double vel)
+    {
+//        std::cout << "Velocity of " << name << " is now " << vel << endl;
+        velocity = vel;
     }
 
     double VelocityMotorController::update(double positionError, double targetVelocity, ActuationMode actuation, double dt)
@@ -217,6 +223,45 @@ namespace SimDynamics
         positionController.getPID(storeP, storeI, storeD);
     }
 
+    std::string VelocityMotorController::getName() const
+    {
+        return name;
+    }
+
+    void VelocityMotorController::setName(const std::string &value)
+    {
+        name = value;
+    }
+
+    double VelocityMotorController::getMaxVelocity() const
+    {
+        return maxVelocity;
+    }
+
+    void VelocityMotorController::setMaxVelocity(double value)
+    {
+        maxVelocity = value;
+    }
+
+    double VelocityMotorController::getMaxAcceleration() const
+    {
+        return maxAcceleration;
+    }
+
+    void VelocityMotorController::setMaxAcceleration(double value)
+    {
+        maxAcceleration = value;
+    }
+
+    double VelocityMotorController::getMaxJerk() const
+    {
+        return maxJerk;
+    }
+
+    void VelocityMotorController::setMaxJerk(double value)
+    {
+        maxJerk = value;
+    }
     void VelocityMotorController::debug()
     {
         positionController.debug();
@@ -224,4 +269,4 @@ namespace SimDynamics
 
 
 
-}
+    }

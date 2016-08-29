@@ -10,6 +10,26 @@
 namespace SimDynamics
 {
 
+    BulletEngineConfig::BulletEngineConfig() : DynamicsEngineConfig()
+    {
+        bulletObjectRestitution = btScalar(0.0);
+        bulletObjectFriction = btScalar(1.5f);
+        bulletObjectDampingLinear = btScalar(0.05f);
+        bulletObjectDampingAngular = btScalar(0.85f);
+        //            bulletObjectDampingAngular = btScalar(0.1f);
+        bulletObjectDeactivation = btScalar(5.0);//1.0);
+        bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);//1.5);
+        bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
+
+        bulletSolverIterations = 100;
+        bulletSolverGlobalContactForceMixing = 0.0;
+        bulletSolverGlobalErrorReductionParameter = btScalar(0.6);//0.1);
+        bulletSolverSuccessiveOverRelaxation = btScalar(0.0);
+        bulletSolverContactSurfaceLayer = btScalar(0.001);
+        bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);
+    }
+
+
     BulletEngine::BulletEngine(boost::shared_ptr <boost::recursive_mutex> engineMutex)
         : DynamicsEngine(engineMutex)
     {
@@ -71,7 +91,9 @@ namespace SimDynamics
 
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, constraintSolver, collision_config);
 
-        dynamicsWorld->setGravity(btVector3(btScalar(config->gravity[0]), btScalar(config->gravity[1]), btScalar(config->gravity[2])));
+        dynamicsWorld->setGravity(btVector3(btScalar(config->gravity[0] * BulletObject::ScaleFactor),
+                                  btScalar(config->gravity[1] * BulletObject::ScaleFactor),
+                btScalar(config->gravity[2] * BulletObject::ScaleFactor)));
 
         collisionFilterCallback = new BulletEngine::CustomCollisionCallback(this);
         dynamicsWorld->getPairCache()->setOverlapFilterCallback(collisionFilterCallback);
@@ -94,7 +116,8 @@ namespace SimDynamics
         //only enable split impulse position correction when the penetration is deeper than this m_splitImpulsePenetrationThreshold, otherwise use the regular velocity/position constraint coupling (Baumgarte).
         solverInfo.m_splitImpulsePenetrationThreshold = config->bulletSolverSplitImpulsePenetrationThreshold;
 
-        dynamicsWorld->setInternalTickCallback(externalCallbacks, this, true);
+//        dynamicsWorld->setInternalTickCallback(externalCallbacks, this, true);
+        dynamicsWorld->addAction(this);
         return true;
     }
 
@@ -138,7 +161,9 @@ namespace SimDynamics
 
         bulletConfig = newConfig;
 
-        dynamicsWorld->setGravity(btVector3(btScalar(newConfig->gravity[0]), btScalar(newConfig->gravity[1]), btScalar(newConfig->gravity[2])));
+        dynamicsWorld->setGravity(btVector3(btScalar(newConfig->gravity[0] * BulletObject::ScaleFactor),
+                                  btScalar(newConfig->gravity[1] * BulletObject::ScaleFactor),
+                btScalar(newConfig->gravity[2] * BulletObject::ScaleFactor)));
 
         btContactSolverInfo& solverInfo = dynamicsWorld->getSolverInfo();
         solverInfo.m_numIterations = newConfig->bulletSolverIterations;
@@ -319,7 +344,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 0.001f;    // mm -> m
+            sc = 0.001f * BulletObject::ScaleFactor;    // mm -> m
         }
 
         btVector3 pos(pose(0, 3)*sc, pose(1, 3)*sc, pose(2, 3)*sc);
@@ -337,7 +362,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 1000.0f;    // m -> mm
+            sc = 1000.0f / BulletObject::ScaleFactor;    // m -> mm
         }
 
         /*btQuaternion q = pose.getRotation();
@@ -361,7 +386,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 0.001f;    // mm -> m
+            sc = 0.001f * BulletObject::ScaleFactor;    // mm -> m
         }
 
         btVector3 pos(vec(0)*sc, vec(1)*sc, vec(2)*sc);
@@ -374,7 +399,7 @@ namespace SimDynamics
 
         if (scaling && DynamicsWorld::convertMM2M)
         {
-            sc = 1000.0f;    // m -> mm
+            sc = 1000.0f / BulletObject::ScaleFactor;    // m -> mm
         }
 
         Eigen::Vector3f res;
@@ -710,3 +735,24 @@ namespace SimDynamics
     }
 
 } // namespace SimDynamics
+
+#include <chrono>
+void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep)
+{
+    auto start = std::chrono::system_clock::now();
+    // apply lock
+    MutexLockPtr lock = getScopedLock();
+
+    updateRobots(deltaTimeStep);
+
+    for (unsigned int i = 0; i < callbacks.size(); i++)
+    {
+        callbacks[i].first(callbacks[i].second, deltaTimeStep);
+    }
+    std::chrono::duration<double> diff = (std::chrono::system_clock::now()-start);
+//    cout << "duration: " << diff.count() << endl;
+}
+
+void SimDynamics::BulletEngine::debugDraw(btIDebugDraw *debugDrawer)
+{
+}

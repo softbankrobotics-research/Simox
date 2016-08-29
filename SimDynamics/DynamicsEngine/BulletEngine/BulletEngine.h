@@ -27,7 +27,7 @@
 #include "../DynamicsEngine.h"
 #include "BulletRobot.h"
 
-#include "btBulletDynamicsCommon.h"
+#include <bullet/btBulletDynamicsCommon.h>
 
 namespace internal
 {
@@ -45,24 +45,7 @@ namespace SimDynamics
     class BulletEngineConfig : public DynamicsEngineConfig
     {
     public:
-        BulletEngineConfig() : DynamicsEngineConfig()
-        {
-            bulletObjectRestitution = btScalar(0.2);
-            bulletObjectFriction = btScalar(0.5f);
-            bulletObjectDampingLinear = btScalar(0.05f);
-            //bulletObjectDampingAngular = btScalar(0.85f);
-            bulletObjectDampingAngular = btScalar(0.1f);
-            bulletObjectDeactivation = btScalar(5.0);//1.0);
-            bulletObjectSleepingThresholdLinear = btScalar(0.005f);//1.5);
-            bulletObjectSleepingThresholdAngular = btScalar(0.005f);//2.5);
-
-            bulletSolverIterations = 100;
-            bulletSolverGlobalContactForceMixing = 0;
-            bulletSolverGlobalErrorReductionParameter = btScalar(0.2);//0.1);
-            bulletSolverSuccessiveOverRelaxation = btScalar(1.3);
-            bulletSolverContactSurfaceLayer = btScalar(0.001);
-            bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);
-        }
+        BulletEngineConfig();
 
         virtual ~BulletEngineConfig() {}
 
@@ -88,7 +71,7 @@ namespace SimDynamics
         This class encapsulates all calls to the bullet physics engine.
         Usually there is no need to instantiate this object by your own, it is automatically created when calling DynamicsWorld::Init().
     */
-    class SIMDYNAMICS_IMPORT_EXPORT BulletEngine : public DynamicsEngine, public boost::enable_shared_from_this<BulletEngine>
+    class SIMDYNAMICS_IMPORT_EXPORT BulletEngine : public DynamicsEngine, public btActionInterface, public boost::enable_shared_from_this<BulletEngine>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -219,6 +202,11 @@ namespace SimDynamics
         BulletEngineConfigPtr bulletConfig;
 
         double simTime;
+
+        // btActionInterface interface
+    public:
+        void updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep);
+        void debugDraw(btIDebugDraw *debugDrawer);
     };
 
     typedef boost::shared_ptr<BulletEngine> BulletEnginePtr;
