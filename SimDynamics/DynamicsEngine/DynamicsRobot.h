@@ -136,6 +136,9 @@ namespace SimDynamics
             } // end of scope -> lock gets deleted and mutex is released automatically
         */
         MutexLockPtr getScopedLock();
+
+        void setPIDParameters(float p, float i, float d);
+
     protected:
 
         virtual void createDynamicsNode(VirtualRobot::RobotNodePtr node);
@@ -170,6 +173,9 @@ namespace SimDynamics
 
         std::vector<VirtualRobot::RobotNodePtr> robotNodes;
         std::map<VirtualRobot::RobotNodePtr, DynamicsObjectPtr> dynamicRobotNodes;
+        float PID_p = 10.f;
+        float PID_i = 0.f;
+        float PID_d = 0.f;
 
         boost::shared_ptr <boost::recursive_mutex> engineMutexPtr;
     };

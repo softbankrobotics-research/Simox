@@ -143,6 +143,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -169,6 +170,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -209,6 +211,8 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
+
         }
         else
         {
@@ -247,6 +251,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -415,6 +420,17 @@ namespace SimDynamics
         }
 
         return scoped_lock;
+    }
+
+    void DynamicsRobot::setPIDParameters(float p, float i, float d)
+    {
+        PID_p = p;
+        PID_i = i;
+        PID_d = d;
+        for(auto& pair : actuationControllers)
+        {
+            pair.second.reset(p,i,d);
+        }
     }
 
     /*
