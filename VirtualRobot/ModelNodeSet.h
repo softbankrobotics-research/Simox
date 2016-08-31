@@ -30,6 +30,12 @@ namespace VirtualRobot
     class ModelNodeSet
     {
     protected:
+        std::string name;
+        ModelWeakPtr model;
+        std::vector<ModelNodePtr> modelNodes;
+        ModelNodePtr kinematicRoot;
+        ModelNodePtr tcp;
+
         /*!
          * Initialize this set with a vector of RobotNodes.
          *
@@ -48,6 +54,8 @@ namespace VirtualRobot
                      const ModelNodePtr tcp = ModelNodePtr());
 
     public:
+        ModelNodeSet();
+
         /*!
          * Destructor.
          */
