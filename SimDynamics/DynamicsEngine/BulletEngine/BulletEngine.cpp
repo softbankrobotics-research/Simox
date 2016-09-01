@@ -13,7 +13,7 @@ namespace SimDynamics
     BulletEngineConfig::BulletEngineConfig() : DynamicsEngineConfig()
     {
         bulletObjectRestitution = btScalar(0.0);
-        bulletObjectFriction = btScalar(1.5f);
+        bulletObjectFriction = btScalar(0.5f);
         bulletObjectDampingLinear = btScalar(0.05f);
         bulletObjectDampingAngular = btScalar(0.85f);
         //            bulletObjectDampingAngular = btScalar(0.1f);
