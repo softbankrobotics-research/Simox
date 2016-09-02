@@ -54,8 +54,6 @@ namespace VirtualRobot
                      const ModelNodePtr tcp = ModelNodePtr());
 
     public:
-        ModelNodeSet();
-
         /*!
          * Destructor.
          */
@@ -70,7 +68,10 @@ namespace VirtualRobot
          * @param kinematicRootName The name of the kinematic root.
          *                          This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
          *                          The kinematic root does not have to be a node of this set.
+         *                          If no name provided, the first node of the given model nodes will be set as the kinematic root.
          * @param tcpName The name of the tcp.
+         *                The tcp does not have to be a node of this set.
+         *                If no name provided, the last node of the given model nodes will be set as the tcp node.
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
@@ -88,7 +89,10 @@ namespace VirtualRobot
          * @param modelNodes The nodes to add to this set.
          * @param kinematicRoot This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
          *                      The kinematic root does not have to be a node of this set.
+         *                      If no kinematic root provided, the first node of the given model nodes will be set as the kinematic root.
          * @param tcp The tcp.
+         *            The tcp does not have to be a node of this set.
+         *                If no tcp provided, the last node of the given model nodes will be set as the tcp node.
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
