@@ -368,6 +368,12 @@ void OgreViewer::initializeScene()
     ogreSceneManager = renderer->getSceneManager();
     ogreSceneManager->setAmbientLight(Ogre::ColourValue(2, 2, 2));
 
+    Ogre::Light* directionalLight = ogreSceneManager->createLight();
+    directionalLight->setType(Ogre::Light::LT_DIRECTIONAL);
+    directionalLight->setDiffuseColour(Ogre::ColourValue(1, 1, 1));
+    directionalLight->setSpecularColour(Ogre::ColourValue(1, 1, 1));
+    directionalLight->setDirection(Ogre::Vector3(0, -1, 1));
+
     ogreCamera = ogreSceneManager->createCamera("Camera");
     ogreCamera->setPosition(Ogre::Vector3(0, 1.5, 0));
     ogreCamera->lookAt(Ogre::Vector3(0, 0, 0));
