@@ -1371,6 +1371,18 @@ namespace VirtualRobot
 
             // otherwise eUnknown remains
         }
+        rapidxml::xml_node<>* frictionXMLNode = physicsXMLNode->first_node("friction", 0, false);
+
+        if (frictionXMLNode)
+        {
+            physics.friction = getFloatByAttributeName(frictionXMLNode, "value");
+        }
+        else
+        {
+            physics.friction = -1.0f;
+        }
+
+
     }
 
     std::string BaseIO::processFileNode(rapidxml::xml_node<char>* fileNode, const std::string& basePath)

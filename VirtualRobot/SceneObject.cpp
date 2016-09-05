@@ -1217,6 +1217,7 @@ namespace VirtualRobot
         localCoM.setZero();
         inertiaMatrix.setIdentity();
         massKg = 0.0f;
+        friction = -1.0f;
         comLocation = eVisuBBoxCenter;
         simType = eUnknown;
     }

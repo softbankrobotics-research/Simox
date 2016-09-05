@@ -83,6 +83,7 @@ namespace VirtualRobot
             // data members
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
             float massKg;               //!< The mass of this object
+            float friction;             //!< Friction of this object. Use -1.0 to use simulator's default value.
             CoMLocation comLocation;    //!< Where is the CoM located
             Eigen::Matrix3f inertiaMatrix; //! in kg*m^2
             SimulationType simType;
