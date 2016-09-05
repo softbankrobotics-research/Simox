@@ -34,12 +34,9 @@ http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 #ifndef OGRETOOLS_H
 #define OGRETOOLS_H
 
-#include "FrapperPrerequisites.h"
-#include "Parameter.h"
 #include "Ogre.h"
-#include "OgreContainer.h"
 
-namespace Frapper {
+namespace VirtualRobot {
 
 //!
 //! Class containing camera properties.
@@ -65,7 +62,7 @@ public: // data
 //!
 //! Static class with helper functions working on OGRE objects.
 //!
-class FRAPPER_CORE_EXPORT OgreTools
+class OgreTools
 {
 
 public: // static functions
@@ -81,7 +78,7 @@ public: // static functions
     //! \param sceneManager The scene manager to use for creating the object.
     //! \return The cloned object.
     //!
-    static Ogre::MovableObject * cloneMovableObject ( Ogre::MovableObject *movableObject, const QString &name, Ogre::SceneManager *sceneManager = 0 );
+    static Ogre::MovableObject * cloneMovableObject ( Ogre::MovableObject *movableObject, const std::string &name, Ogre::SceneManager *sceneManager = 0 );
 
     //!
     //! Creates a deep copy of the given scene node.
@@ -91,7 +88,7 @@ public: // static functions
     //! \param namePrefix The prefix to use for names of copied objects.
     //! \param sceneManager The scene manager to use for creating the object.
     //!
-    static void deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode *&sceneNodeCopy, const QString &namePrefix, Ogre::SceneManager *sceneManager = 0 );
+    static void deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode *&sceneNodeCopy, const std::string &namePrefix, Ogre::SceneManager *sceneManager = 0 );
 
     //!
     //! Creates a copy of the given scene node.
@@ -101,7 +98,7 @@ public: // static functions
     //! \param sceneManager The scene manager to use for creating the scene node.
     //! \return A copy of the given scene node.
     //!
-    static Ogre::SceneNode * copySceneNode ( Ogre::SceneNode *sceneNode, const QString &name, Ogre::SceneManager *sceneManager = 0 );
+    static Ogre::SceneNode * copySceneNode ( Ogre::SceneNode *sceneNode, const std::string &name, Ogre::SceneManager *sceneManager = 0 );
 
     //!
     //! Deletes a whole scene node tree (including attached objects).
@@ -111,134 +108,8 @@ public: // static functions
     //! \param deleteRoot Flag to control whether to delete the given scene node.
     //!
     static void deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneManager *sceneManager = 0, bool deleteRoot = false );
-
-    //!
-    //! Delete user any from the given scene node / movable object
-    //!
-    //! \param sceneNode The scene node containing the tree to delete.
-    //! \param sceneManager The scene manager to use for destroying the scene node.
-    //! \param deleteRoot Flag to control whether to delete the given scene node.
-    //!
-    static void deleteUserAnyFromSceneNode( Ogre::SceneNode *sceneNode );
-    static void deleteUserAnyFromMovableObject( Ogre::MovableObject *movableObject );
-
-    //!
-    //! Returns the first entity attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the entity from.
-    //! \return The first entity attached to the given scene node.
-    //!
-    static Ogre::Entity * getFirstEntity ( Ogre::SceneNode *sceneNode );
-
-    //!
-    //! Returns the first camera attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the camera from.
-    //! \return The first camera attached to the given scene node.
-    //!
-    static Ogre::Camera * getFirstCamera ( Ogre::SceneNode *sceneNode );
-
-    //!
-    //! Returns the first light attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the light from.
-    //! \return The first light attached to the given scene node.
-    //!
-    static Ogre::Light * getFirstLight ( Ogre::SceneNode *sceneNode );
-
-    //!
-    //! As the name suggests, this method returns the first attached object of a scene node, if there is one
-    //!
-    //! \param sceneNode The scene node to get the attached object from
-    //! \return The first movable object attached to the given scene node.
-    //!
-    static Ogre::MovableObject* OgreTools::getFirstMovableObject( Ogre::SceneNode *sceneNode );
-
-
-    //!
-    //! Returns the all lights attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the light from.
-    //! \param lightsList The list where the lights are stored in.
-    //!
-    static void OgreTools::getAllLights( Ogre::SceneNode* sceneNode, QList<Ogre::Light*>& lightsList );
-
-    //!
-    //! Returns the all cameras attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the cameras from.
-    //! \param camerasList The list where the cameras are stored in.
-    //!
-    static void OgreTools::getAllCameras( Ogre::SceneNode* sceneNode, QList<Ogre::Camera*>& camerasList );
-
-    //!
-    //! Returns the all entity attached to the given scene node.
-    //!
-    //! \param sceneNode The scene node to return the entity from.
-    //! \param entityList The list where the entity are stored in.
-    //!
-    static void OgreTools::getAllEntities( Ogre::SceneNode* sceneNode, QList<Ogre::Entity*>& entityList );
-
-
-    //!
-    //! Returns all child scene nodes of a given scene node whose name contains the given string
-    //!
-    //! \param sceneNode The scene node to start the search at.
-    //! \return A list of scene nodes containing the given name.
-    //!
-    static void getSceneNodesByName( Ogre::SceneNode* root, QString name, QList<Ogre::SceneNode*>& sceneNodes );
-
-    //!
-    //! Returns a pointer to the OgreContainer of a given scene node.
-    //!
-    //! \param sceneNode The scene node to get the OgreContainer for
-    //!
-    static OgreContainer* getOgreContainer( Ogre::SceneNode* sceneNode);
-
-    //!
-    //! Destroy the node's Ogre resource group.
-    //!
-    static void destroyResourceGroup ( const QString &name );
-
-    //!
-    //! Create the node's Ogre resource group.
-    //!
-    static void createResourceGroup ( const QString &name, const QString &path );
-
-private: // static functions
-
-    //!
-    //! Returns the first movable object of the given type name contained in
-    //! the given scene node.
-    //!
-    //! \param sceneNode The scene node to find the first object in.
-    //! \param typeName The name of the type of objects to look for.
-    //! \return The first movable object of the given type name contained in the given scene node.
-    //!
-    template <typename T>
-    static T findFirstObject ( Ogre::SceneNode *sceneNode );
-
-    //!
-    //! Returns all movable objects of the given type contained in
-    //! the given scene node and its ancestors.
-    //!
-    //! \param sceneNode The scene node to find all objects in.
-    //! \param typeName The name of the type of objects to look for.
-    //! \return The first movable object of the given type name contained in the given scene node.
-    //!
-    template <typename T>
-    static void findAllObjects ( Ogre::SceneNode *sceneNode, QList<T>& objectsList );
-
-    //!
-    //! Delete user any from given object / scene node
-    //!
-    //! \typename T The type to delete the user any from
-    //! \param t The object to delete the user any from
-    //!
-    template <typename T>
-    static void deleteUserAnyFrom( T t );
 };
 
-} // end namespace Frapper
+}
 
 #endif

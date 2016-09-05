@@ -32,9 +32,8 @@ http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 //!
 
 #include "OgreTools.h"
-#include "OgreContainer.h"
 
-namespace Frapper {
+namespace VirtualRobot {
 
 ///
 /// Public Static Functions
@@ -52,11 +51,11 @@ namespace Frapper {
 //! \param sceneManager The scene manager to use for creating the object.
 //! \return The cloned object.
 //!
-Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movableObject, const QString &name, Ogre::SceneManager *sceneManager /* =  0 */ )
+Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movableObject, const std::string &name, Ogre::SceneManager *sceneManager /* =  0 */ )
 {
     // make sure the given object is valid
     if (!movableObject) {
-        Log::error("The given movable object is invalid.", "OgreTools::cloneMovableObject");
+        //Log::error("The given movable object is invalid.", "OgreTools::cloneMovableObject");
         return 0;
     }
 
@@ -64,7 +63,7 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
     if (!sceneManager)
         sceneManager = movableObject->_getManager();
     if (!sceneManager) {
-        Log::error("No valid scene manager available.", "OgreTools::cloneMovableObject");
+        //Log::error("No valid scene manager available.", "OgreTools::cloneMovableObject");
         return 0;
     }
 
@@ -77,7 +76,7 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
 
             // create a copy of the entity
             Ogre::Entity *entity = dynamic_cast<Ogre::Entity *>(movableObject);
-            Ogre::Entity *entityCopy = sceneManager->createEntity( name.toStdString(), entity->getMesh()->getName());
+            Ogre::Entity *entityCopy = sceneManager->createEntity( name, entity->getMesh()->getName());
 
             // set the same blend mode on entity copy
             if (entity && entityCopy)
@@ -108,7 +107,7 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
                         }
                         catch (Ogre::Exception &e)
                         {
-                            QString message = QString::fromStdString("Subentity %1 of "+entity->getName()+" does not have a custom parameter 0: "+e.getDescription()).arg(i);
+                            //QString message = QString::fromStdString("Subentity %1 of "+entity->getName()+" does not have a custom parameter 0: "+e.getDescription()).arg(i);
                             //Frapper::Log::debug( message, "OgreTools::cloneMoveableObject");
                         }
                 }
@@ -129,39 +128,13 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
                     }
                 }
 
-                // create a new container for the cloned entity
-                OgreContainer *entityCopyContainer = new OgreContainer(entityCopy);
-                entityCopy->setUserAny(Ogre::Any(entityCopyContainer));
-
-                if (!entity->getUserAny().isEmpty())
-                {
-                    try
-                    {
-                        OgreContainer *entityContainer = Ogre::any_cast<OgreContainer *>(entity->getUserAny());
-                        if (entityContainer)
-                        {
-                            if( entityContainer->getEntity())
-                            {
-                                QObject::connect( entityContainer, SIGNAL(animationStateUpdated(const QString &, double, float)), entityCopyContainer, SLOT(updateAnimationState(const QString &, double, float)));
-                                if( entityContainer->getEntity()->hasSkeleton())
-                                    QObject::connect(
-                                        entityContainer, SIGNAL(boneTransformUpdated(const QString &, const float &, const float &, const float &, const float &, const float &, const float &)),
-                                        entityCopyContainer, SLOT(updateBoneTransform(const QString &, const float &, const float &, const float &, const float &, const float &, const float &)));
-                            }
-                        }
-                    }
-                    catch (Ogre::Exception& e)
-                    {
-                        Frapper::Log::error(QString::fromStdString( "Ogre::any_cast to OgreContainer for entity "+entity->getName()+" failed: "+e.getDescription()), "OgreTools::cloneMoveableObject");
-                    }
-                }
                 result = dynamic_cast<Ogre::MovableObject *>(entityCopy);
             } // end if (entity && entityCopy)
         }
         else if (typeName == "ManualObject")
         {
             Ogre::ManualObject *manualObj = dynamic_cast<Ogre::ManualObject *>(movableObject);
-            Ogre::ManualObject *manualObjCopy = sceneManager->createManualObject(name.toStdString());
+            Ogre::ManualObject *manualObjCopy = sceneManager->createManualObject(name);
 
             for (unsigned int i=0; i<manualObj->getNumSections(); ++i) {
                 Ogre::ManualObject::ManualObjectSection *section = manualObj->getSection(i);
@@ -242,32 +215,12 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
                         break;
                     }
                     default: {
-                        Log::error(QString("Max supported attributes size is 4"), "OgreTools::cloneMovableObject");
+                        //Log::error(QString("Max supported attributes size is 4"), "OgreTools::cloneMovableObject");
                         break;
                     }
                 }  // end switch block
                 manualObjCopy->end();
                 bufferPtr->unlock();
-            }
-            // create a new container for the cloned manual object
-            OgreContainer *manualObjCopyContainer = new OgreContainer(manualObjCopy);
-            manualObjCopy->setUserAny(Ogre::Any(manualObjCopyContainer));
-
-            if (!manualObj->getUserAny().isEmpty())
-            {
-                try
-                {
-                    OgreContainer *manualObjContainer = Ogre::any_cast<OgreContainer *>(manualObj->getUserAny());
-                    if (manualObjContainer)
-                    {
-                        if( manualObjContainer->getEntity())
-                            QObject::connect( manualObjContainer, SIGNAL(vertexBufferUpdated(ParameterGroup)), manualObjCopyContainer, SLOT(updateVertexBuffer(ParameterGroup)));
-                    }
-                }
-                catch (Ogre::Exception& e)
-                {
-                    Frapper::Log::error(QString::fromStdString( "Ogre::any_cast to OgreContainer for entity "+manualObj->getName()+" failed: "+e.getDescription()), "OgreTools::cloneMoveableObject");
-                }
             }
 
             result = dynamic_cast<Ogre::MovableObject *>(manualObjCopy);
@@ -276,7 +229,7 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
         {
             // clone light
             Ogre::Light *light = dynamic_cast<Ogre::Light *>(movableObject);
-            Ogre::Light *lightCopy = sceneManager->createLight(name.toStdString());
+            Ogre::Light *lightCopy = sceneManager->createLight(name);
             lightCopy->setType(light->getType());
             lightCopy->setDiffuseColour(light->getDiffuseColour());
             lightCopy->setSpecularColour(light->getSpecularColour());
@@ -288,29 +241,13 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
             lightCopy->setPowerScale(light->getPowerScale());
             lightCopy->setCastShadows(light->getCastShadows());
 
-            // create a new container for the cloned light
-            OgreContainer *lightCopyContainer = new OgreContainer(lightCopy);
-            lightCopy->setUserAny(Ogre::Any(lightCopyContainer));
-            if (!light->getUserAny().isEmpty())
-            {
-                try
-                {
-                    OgreContainer *lightContainer = Ogre::any_cast<OgreContainer *>(light->getUserAny());
-                    if (lightContainer && lightContainer->getLight())
-                        QObject::connect(lightContainer, SIGNAL(sceneNodeUpdated()), lightCopyContainer, SLOT(updateLight()));
-                }
-                catch (Ogre::Exception& e)
-                {
-                    Frapper::Log::error(QString::fromStdString( "Ogre::any_cast to OgreContainer for light "+light->getName()+" failed: "+e.getDescription()), "OgreTools::cloneMoveableObject");
-                }
-            }
             result = dynamic_cast<Ogre::MovableObject *>(lightCopy);
         }
         else if (typeName == "Camera")
         {
             // clone camera
             Ogre::Camera *camera = dynamic_cast<Ogre::Camera *>(movableObject);
-            Ogre::Camera *cameraCopy = sceneManager->createCamera(name.toStdString());
+            Ogre::Camera *cameraCopy = sceneManager->createCamera(name);
             cameraCopy->setAspectRatio(camera->getAspectRatio());
             cameraCopy->setAutoAspectRatio(camera->getAutoAspectRatio());
             cameraCopy->setCastShadows(camera->getCastsShadows());
@@ -358,23 +295,26 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
             //cameraCopy->setRenderSystemData(camera->getRenderSystemData());
             //cameraCopy->setUserAny(camera->getUserAny());
             */
-            if (!movableObject->getUserAny().isEmpty())
-            {
-                try
-                {
-                    CameraInfo *sourceCameraInfo = Ogre::any_cast<CameraInfo *>(movableObject->getUserAny());
-                    if( sourceCameraInfo ) {
-                        CameraInfo *targetCameraInfo = new CameraInfo();
-                        targetCameraInfo->width = sourceCameraInfo->width;
-                        targetCameraInfo->height = sourceCameraInfo->height;
-                        dynamic_cast<Ogre::MovableObject *>(cameraCopy)->setUserAny(Ogre::Any(targetCameraInfo));
-                    }
-                }
-                catch (Ogre::Exception& e)
-                {
-                    Frapper::Log::error(QString::fromStdString( "Ogre::any_cast to CameraInfo for camera "+camera->getName()+" failed: "+e.getDescription()), "OgreTools::cloneMoveableObject");
-                }
-            }
+
+            //The following seems to be deprecated so I disabled it.
+
+//            if (!movableObject->getUserAny().isEmpty())
+//            {
+//                try
+//                {
+//                    CameraInfo *sourceCameraInfo = Ogre::any_cast<CameraInfo *>(movableObject->getUserAny());
+//                    if( sourceCameraInfo ) {
+//                        CameraInfo *targetCameraInfo = new CameraInfo();
+//                        targetCameraInfo->width = sourceCameraInfo->width;
+//                        targetCameraInfo->height = sourceCameraInfo->height;
+//                        dynamic_cast<Ogre::MovableObject *>(cameraCopy)->setUserAny(Ogre::Any(targetCameraInfo));
+//                    }
+//                }
+//                catch (Ogre::Exception& e)
+//                {
+//                    //Frapper::Log::error(QString::fromStdString( "Ogre::any_cast to CameraInfo for camera "+camera->getName()+" failed: "+e.getDescription()), "OgreTools::cloneMoveableObject");
+//                }
+//            }
 
             //// Setup connections for instances
             //SceneNode *targetSceneNode = new SceneNode(cameraCopy);
@@ -391,7 +331,7 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
     }
     catch (Ogre::Exception& e)
     {
-        Log::error(QString::fromStdString("Could not clone movable object "+movableObject->getName()+" of type "+typeName+": "+e.getDescription()), "OgreTools::cloneMovableObject");
+        //Log::error(QString::fromStdString("Could not clone movable object "+movableObject->getName()+" of type "+typeName+": "+e.getDescription()), "OgreTools::cloneMovableObject");
         return NULL;
     }
 
@@ -407,11 +347,11 @@ Ogre::MovableObject * OgreTools::cloneMovableObject ( Ogre::MovableObject *movab
 //! \param namePrefix The prefix to use for names of copied objects.
 //! \param sceneManager The scene manager to use for creating the object.
 //!
-void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode *&sceneNodeCopy, const QString &namePrefix, Ogre::SceneManager *sceneManager /* = 0 */ )
+void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode *&sceneNodeCopy, const std::string &namePrefix, Ogre::SceneManager *sceneManager /* = 0 */ )
 {
     // make sure the given scene node is valid
     if (!sceneNode) {
-        Log::error("The given scene node is invalid.", "OgreTools::deepCopySceneNode");
+        //Log::error("The given scene node is invalid.", "OgreTools::deepCopySceneNode");
         return;
     }
 
@@ -419,16 +359,16 @@ void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode 
     if (!sceneManager)
         sceneManager = sceneNode->getCreator();
     if (!sceneManager) {
-        Log::error("No valid scene manager available.", "OgreTools::deepCopySceneNode");
+        //Log::error("No valid scene manager available.", "OgreTools::deepCopySceneNode");
         return;
     }
 
     // create the target scene node if it doesn't exist yet
     if (!sceneNodeCopy) {
-        QString sceneNodeCopyName = QString("%1_%2Copy").arg(namePrefix).arg(sceneNode->getName().c_str());
+        std::string sceneNodeCopyName = namePrefix + "_" + sceneNode->getName().c_str() + "Copy";
         sceneNodeCopy = copySceneNode(sceneNode, sceneNodeCopyName, sceneManager);
         if (!sceneNodeCopy) {
-            Log::error("The scene node could not be copied.", "OgreTools::deepCopySceneNode");
+            //Log::error("The scene node could not be copied.", "OgreTools::deepCopySceneNode");
             return;
         }
     }
@@ -438,7 +378,7 @@ void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode 
     while (objectIterator.hasMoreElements()) {
         Ogre::MovableObject *movableObject = objectIterator.getNext();
         if (movableObject) {
-            QString entityCopyName = QString("%1_%2Copy").arg(namePrefix).arg(movableObject->getName().c_str());
+            std::string entityCopyName = namePrefix + "_" + movableObject->getName().c_str() + "Copy";
             Ogre::MovableObject *movableObjectCopy = cloneMovableObject(movableObject, entityCopyName, sceneManager);
             if (movableObjectCopy)
                 sceneNodeCopy->attachObject(movableObjectCopy);
@@ -449,7 +389,7 @@ void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode 
     Ogre::SceneNode::ChildNodeIterator childNodeIterator = sceneNode->getChildIterator();
     while (childNodeIterator.hasMoreElements() ) {
         Ogre::SceneNode *childSceneNode = (Ogre::SceneNode *) childNodeIterator.getNext();
-        QString childSceneNodeCopyName = QString("%1_%2Copy").arg(namePrefix).arg(childSceneNode->getName().c_str());
+        std::string childSceneNodeCopyName = namePrefix + "_" + childSceneNode->getName().c_str() + "Copy";
         Ogre::SceneNode *childSceneNodeCopy = copySceneNode(childSceneNode, childSceneNodeCopyName, sceneManager);
         if (childSceneNodeCopy) {
             sceneNodeCopy->addChild(childSceneNodeCopy);
@@ -467,11 +407,11 @@ void OgreTools::deepCopySceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneNode 
 //! \param sceneManager The scene manager to use for creating the scene node.
 //! \return A copy of the given scene node.
 //!
-Ogre::SceneNode * OgreTools::copySceneNode ( Ogre::SceneNode *sceneNode, const QString &name, Ogre::SceneManager *sceneManager /* = 0 */ )
+Ogre::SceneNode * OgreTools::copySceneNode ( Ogre::SceneNode *sceneNode, const std::string &name, Ogre::SceneManager *sceneManager /* = 0 */ )
 {
     // make sure the given scene node is valid
     if (!sceneNode) {
-        Log::error("The given scene node is invalid.", "OgreTools::copySceneNode");
+        //Log::error("The given scene node is invalid.", "OgreTools::copySceneNode");
         return 0;
     }
 
@@ -479,52 +419,21 @@ Ogre::SceneNode * OgreTools::copySceneNode ( Ogre::SceneNode *sceneNode, const Q
     if (!sceneManager)
         sceneManager = sceneNode->getCreator();
     if (!sceneManager) {
-        Log::error("No valid scene manager available.", "OgreTools::copySceneNode");
+        //Log::error("No valid scene manager available.", "OgreTools::copySceneNode");
         return 0;
     }
 
     // check if a scene node of the given name already exists
-    if (sceneManager->hasSceneNode(name.toStdString())) {
-        Log::error(QString("The scene manager already contains a scene node named \"%1\".").arg(name), "OgreTools::copySceneNode");
+    if (sceneManager->hasSceneNode(name)) {
+        //Log::error(QString("The scene manager already contains a scene node named \"%1\".").arg(name), "OgreTools::copySceneNode");
         return 0;
     }
 
     // create the scene node copy
-    Ogre::SceneNode *sceneNodeCopy = sceneManager->createSceneNode(name.toStdString());
+    Ogre::SceneNode *sceneNodeCopy = sceneManager->createSceneNode(name);
     if (!sceneNodeCopy) {
-        Log::error("The scene node copy could not be created.", "OgreTools::copySceneNode");
+        //Log::error("The scene node copy could not be created.", "OgreTools::copySceneNode");
         return 0;
-    }
-
-    // create a container for the scene node copy
-    OgreContainer *sceneNodeCopyContainer = new OgreContainer(sceneNodeCopy);
-    sceneNodeCopy->setUserAny(Ogre::Any(sceneNodeCopyContainer));
-
-    if (!sceneNode->getUserAny().isEmpty())
-    {
-        try
-        {
-            OgreContainer *sceneNodeContainer = Ogre::any_cast<OgreContainer *>(sceneNode->getUserAny());
-            if (sceneNodeContainer)
-            {
-                // connect update signal of scene node with update slot of copy
-                if( sceneNodeContainer->getSceneNode() )
-                    QObject::connect(sceneNodeContainer, SIGNAL(sceneNodeUpdated()), sceneNodeCopyContainer, SLOT(updateSceneNode()));
-
-                // connect update signal of light with update slot of copy
-                if( sceneNodeContainer->getLight())
-                    QObject::connect(sceneNodeContainer, SIGNAL(sceneNodeUpdated()), sceneNodeCopyContainer, SLOT(updateLight()));
-
-                // connect update signal of camera with update slot of copy
-                if( sceneNodeContainer->getCamera())
-                    QObject::connect(sceneNodeContainer, SIGNAL(sceneNodeUpdated()), sceneNodeCopyContainer, SLOT(updateCamera()));
-            }
-        }
-        catch (Ogre::Exception& e)
-        {
-            QString sceneNodeName = QString::fromStdString(sceneNode->getName());
-            Frapper::Log::error("Ogre::any_cast to OgreContainer for "+sceneNodeName+" failed:"+QString::fromStdString(e.getFullDescription()), "OgreTools::copySceneNode");
-        }
     }
 
 
@@ -571,7 +480,7 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
 {
     // make sure the given scene node is valid
     if (!sceneNode) {
-        Log::error("The given scene node is invalid.", "OgreTools::deepDeleteSceneNode");
+        //Log::error("The given scene node is invalid.", "OgreTools::deepDeleteSceneNode");
         return;
     }
 
@@ -579,7 +488,7 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
     if (!sceneManager)
         sceneManager = sceneNode->getCreator();
     if (!sceneManager) {
-        Log::error("No valid scene manager available.", "OgreTools::deepDeleteSceneNode");
+        //Log::error("No valid scene manager available.", "OgreTools::deepDeleteSceneNode");
         return;
     }
 
@@ -594,7 +503,9 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
             objectName = movableObject->getName();
             sceneNode->detachObject(movableObject);
 
-            deleteUserAnyFromMovableObject(movableObject);
+            //Disabled, because it seems unnecessary to add even more lines of code.
+            //Look into original implementation in case of unexpected behaviour.
+            //deleteUserAnyFromMovableObject(movableObject);
 
             if( dynamic_cast<Ogre::Camera *>(movableObject) )
             {
@@ -616,7 +527,7 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
         }
         catch ( Ogre::Exception& e)
         {
-            Frapper::Log::error( QString::fromStdString("Deleting object "+objectName+" failed: " + e.getDescription()), "OgreTools::deepDeleteSceneNode");
+            //Frapper::Log::error( QString::fromStdString("Deleting object "+objectName+" failed: " + e.getDescription()), "OgreTools::deepDeleteSceneNode");
         }
     }
 
@@ -627,7 +538,8 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
         Ogre::SceneNode *childSceneNode = dynamic_cast<Ogre::SceneNode *>(childNodeIterator.getNext());
         if (childSceneNode) {
 
-            deleteUserAnyFromSceneNode(childSceneNode);
+            //See comment above
+            //deleteUserAnyFromSceneNode(childSceneNode);
 
             deepDeleteSceneNode(childSceneNode, sceneManager);
         }
@@ -639,262 +551,12 @@ void OgreTools::deepDeleteSceneNode ( Ogre::SceneNode *sceneNode, Ogre::SceneMan
     // check if the given scene node should be destroyed as well
     if (deleteRoot) {
 
-        deleteUserAnyFromSceneNode(sceneNode);
+        //See comment above
+        //deleteUserAnyFromSceneNode(sceneNode);
 
         sceneManager->destroySceneNode(sceneNode);
         sceneNode = NULL; // Don't use this SN after it was deleted!
     }
  }
-
-
-//!
-//! Returns the first entity attached to the given scene node.
-//!
-//! \param sceneNode The scene node to return the entity from.
-//! \return The first entity attached to the given scene node.
-//!
-Ogre::Entity * OgreTools::getFirstEntity ( Ogre::SceneNode *sceneNode )
-{
-    return findFirstObject<Ogre::Entity *>(sceneNode);
-}
-
-//!
-//! Returns the first camera attached to the given scene node.
-//!
-//! \param sceneNode The scene node to return the camera from.
-//! \return The first camera attached to the given scene node.
-//!
-Ogre::Camera * OgreTools::getFirstCamera ( Ogre::SceneNode *sceneNode )
-{
-    return findFirstObject<Ogre::Camera *>(sceneNode);
-}
-
-//!
-//! Returns the first light attached to the given scene node.
-//!
-//! \param sceneNode The scene node to return the light from.
-//! \return The first light attached to the given scene node.
-//!
-Ogre::Light * OgreTools::getFirstLight ( Ogre::SceneNode *sceneNode )
-{
-    return findFirstObject<Ogre::Light *>(sceneNode);
-}
-
-//!
-//! Returns the first movable object attached to the given scene node.
-//!
-//! \param sceneNode The scene node to return the light from.
-//! \return The first light attached to the given scene node.
-//!
-Ogre::MovableObject* OgreTools::getFirstMovableObject( Ogre::SceneNode *sceneNode )
-{
-    return findFirstObject<Ogre::MovableObject*>(sceneNode);
-}
-
-///
-/// Private Static Functions
-///
-
-
-//!
-//! Returns the first movable object of the given type name contained in
-//! the given scene node.
-//!
-//! \param sceneNode The scene node to find the first object in.
-//! \param typeName The name of the type of objects to look for.
-//! \return The first movable object of the given type name contained in the given scene node.
-//!
-template <typename T>
-T OgreTools::findFirstObject ( Ogre::SceneNode *sceneNode )
-{
-    // make sure the given scene node is valid
-    if (!sceneNode) {
-        Log::error("The given scene node is invalid.", "OgreTools::findFirstObject");
-        return 0;
-    }
-
-    // iterate over the list of attached objects
-    Ogre::SceneNode::ObjectIterator objectIterator = sceneNode->getAttachedObjectIterator();
-    while (objectIterator.hasMoreElements()) {
-        T object = dynamic_cast<T>(objectIterator.getNext());
-        if(object) return object;
-    }
-
-    // iterate over the list of child nodes
-    Ogre::SceneNode::ChildNodeIterator childIter = sceneNode->getChildIterator();
-    while( childIter.hasMoreElements() ) {
-        Ogre::SceneNode *childSceneNode = (Ogre::SceneNode *) childIter.getNext();
-        return findFirstObject<T>( childSceneNode );
-    }
-    return 0;
-}
-
-void OgreTools::getAllLights( Ogre::SceneNode* sceneNode, QList<Ogre::Light*>& lightsList )
-{
-    findAllObjects<Ogre::Light*>( sceneNode, lightsList);
-}
-void OgreTools::getAllCameras( Ogre::SceneNode* sceneNode, QList<Ogre::Camera*>& camerasList )
-{
-    findAllObjects<Ogre::Camera*>( sceneNode, camerasList);
-}
-void OgreTools::getAllEntities( Ogre::SceneNode* sceneNode, QList<Ogre::Entity*>& entityList )
-{
-    findAllObjects<Ogre::Entity*>( sceneNode, entityList);
-}
-
-//!
-//! Returns all movable objects of the given type contained in
-//! the given scene node and its ancestors.
-//!
-//! \param sceneNode The scene node to find all objects in.
-//! \return The first movable object of the given type name contained in the given scene node.
-//!
-template <typename T>
-static void OgreTools::findAllObjects ( Ogre::SceneNode *sceneNode, QList<T>& objectsList )
-{
-    // make sure the given scene node is valid
-    if (!sceneNode) {
-        Log::error("The given scene node is invalid.", "OgreTools::findAllObjects");
-    }
-
-    // iterate over the list of attached objects
-    Ogre::SceneNode::ObjectIterator objectIterator = sceneNode->getAttachedObjectIterator();
-    while (objectIterator.hasMoreElements())
-    {
-        T object = dynamic_cast<T>(objectIterator.getNext());
-        if ( object )
-            objectsList.append(object);
-    }
-
-    // iterate over the list of child nodes
-    Ogre::SceneNode::ChildNodeIterator childIter = sceneNode->getChildIterator();
-    while( childIter.hasMoreElements() ) {
-        Ogre::SceneNode *childSceneNode = dynamic_cast<Ogre::SceneNode*>(childIter.getNext());
-        findAllObjects<T>( childSceneNode, objectsList );
-    }
-}
-
-//!
-//! Destroy the node's Ogre resource group.
-//!
-void OgreTools::destroyResourceGroup ( const QString &name )
-{
-    Ogre::StringVector groupNames = Ogre::ResourceGroupManager::getSingleton().getResourceGroups();
-    if (std::find(groupNames.begin(), groupNames.end(), name.toStdString()) != groupNames.end()) {
-        Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup(name.toStdString());
-    }
-}
-
-//!
-//! Create the node's Ogre resource group.
-//!
-void OgreTools::createResourceGroup ( const QString &name, const QString &path )
-{
-    Ogre::ResourceGroupManager::getSingleton().createResourceGroup(name.toStdString());
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(path.toStdString(), "FileSystem", name.toStdString());
-    Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(name.toStdString());
-    Ogre::ResourceGroupManager::getSingleton().loadResourceGroup(name.toStdString());
-}
-
-void OgreTools::getSceneNodesByName( Ogre::SceneNode* root, QString name, QList<Ogre::SceneNode*>& sceneNodes )
-{
-    // make sure the given scene node is valid
-    if (!root)
-        return;
-
-    if( QString::fromStdString(root->getName()).contains(name, Qt::CaseInsensitive) )
-    {
-        sceneNodes.append(root);
-    }
-
-    // iterate over the list of child nodes
-    Ogre::SceneNode::ChildNodeIterator childNodeIterator = root->getChildIterator();
-    while (childNodeIterator.hasMoreElements() )
-    {
-        Ogre::SceneNode *child = (Ogre::SceneNode *) childNodeIterator.getNext();
-        getSceneNodesByName( child, name, sceneNodes);
-    }
-}
-
-OgreContainer* OgreTools::getOgreContainer( Ogre::SceneNode* sceneNode )
-{
-    if( !sceneNode )
-    {
-        Frapper::Log::error( "OgreTools::getOgreContainer called with undefined scene node!", "OgreTools::getOgreContainer");
-        return NULL;
-    }
-
-    OgreContainer* result = NULL;
-
-    const Ogre::Any& sceneNodeAny = sceneNode->getUserAny();
-    if( sceneNodeAny.isEmpty())
-    {
-        result = new OgreContainer( sceneNode );
-        sceneNode->setUserAny( Ogre::Any( result ));
-    }
-    else
-    {
-        try
-        {
-            result = Ogre::any_cast<OgreContainer*>(sceneNodeAny);
-        }
-        catch( Ogre::Exception& e)
-        {
-            Frapper::Log::error( QString::fromStdString("Ogre::Any_cast for scene node "+sceneNode->getName()+" failed: "+e.getDescription()),"OgreTools::getOgreContainer" );
-        }
-    }
-    return result;
-}
-
-
- template <typename T>
- void OgreTools::deleteUserAnyFrom( T t )
- {
-     if( !t)
-         return;
-
-     QString objectName = QString::fromStdString(t->getName());
-
-     // delete user any, if any
-     const Ogre::Any& userAny = t->getUserAny();
-
-     if (!userAny.isEmpty())
-     {
-         if( userAny.getType() == typeid( OgreContainer* ) )
-         {
-             try {
-                 OgreContainer *ogreContainer = Ogre::any_cast<OgreContainer *>(userAny);
-                 delete ogreContainer;
-                 ogreContainer = 0;
-             }
-             catch (Ogre::Exception& e ) {
-                 Frapper::Log::error("Ogre::any_cast to OgreContainer* for movableObject \""+objectName+"\" failed:"+QString::fromStdString( e.getDescription() ), "OgreTools::deleteUserAnyFrom");
-             }
-         }
-         if( userAny.getType() == typeid( CameraInfo* ) )
-         {
-             try {
-                 CameraInfo *cameraInfo = Ogre::any_cast<CameraInfo *>(userAny);
-                 delete cameraInfo;
-                 cameraInfo = 0;
-             }
-             catch (Ogre::Exception& e ) {
-                 Frapper::Log::error("Ogre::any_cast to CameraInfo* for movableObject \""+objectName+"\" failed:"+QString::fromStdString( e.getDescription() ), "OgreTools::deleteUserAnyFrom");
-             }
-         }
-     }
- }
-
-void OgreTools::deleteUserAnyFromSceneNode( Ogre::SceneNode *sceneNode )
-{
-    deleteUserAnyFrom<Ogre::SceneNode*>(sceneNode);
-}
-
-void OgreTools::deleteUserAnyFromMovableObject( Ogre::MovableObject *movableObject )
-{
-    deleteUserAnyFrom<Ogre::MovableObject*>(movableObject);
-}
-
-
 
 } // end namespace Frapper
