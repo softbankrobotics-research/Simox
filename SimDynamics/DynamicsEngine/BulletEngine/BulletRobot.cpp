@@ -150,8 +150,6 @@ namespace SimDynamics
 
         }
 
-        enableSelfCollisions(false);
-
     }
 
     void BulletRobot::addIgnoredCollisionModels(RobotNodePtr rn)
