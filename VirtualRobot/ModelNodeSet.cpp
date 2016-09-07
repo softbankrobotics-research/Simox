@@ -1,5 +1,4 @@
 #include "ModelNodeSet.h"
-#include "VirtualRobot.h"
 #include "Model.h"
 #include "Nodes/ModelNode.h"
 #include "VirtualRobotException.h"
