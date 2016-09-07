@@ -8,14 +8,13 @@ namespace VirtualRobot
 {
 
     ModelNodeSet::ModelNodeSet(const std::string &name, ModelWeakPtr model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const ModelNodePtr tcp)
+                               const ModelNodePtr kinematicRoot, const ModelNodePtr tcp) :
+            name(name),
+            model(model),
+            modelNodes(modelNodes),
+            kinematicRoot(kinematicRoot),
+            tcp(tcp)
     {
-        this->name = name;
-        this->model = model;
-        this->modelNodes = modelNodes;
-        this->kinematicRoot = kinematicRoot;
-        this->tcp = tcp;
-
         if (modelNodes.size() > 0)
         {
             if (!kinematicRoot)
