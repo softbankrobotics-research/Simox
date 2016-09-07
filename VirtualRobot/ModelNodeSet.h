@@ -30,12 +30,6 @@ namespace VirtualRobot
     class ModelNodeSet
     {
     protected:
-        std::string name;
-        ModelWeakPtr model;
-        std::vector<ModelNodePtr> modelNodes;
-        ModelNodePtr kinematicRoot;
-        ModelNodePtr tcp;
-
         /*!
          * Initialize this set with a vector of RobotNodes.
          *
@@ -350,6 +344,13 @@ namespace VirtualRobot
          * @return The generated XML string.
          */
         virtual std::string toXML(int tabs);
+
+    private:
+        std::string name;
+        ModelWeakPtr model;
+        std::vector<ModelNodePtr> modelNodes;
+        ModelNodePtr kinematicRoot;
+        ModelNodePtr tcp;
     };
 }
 
