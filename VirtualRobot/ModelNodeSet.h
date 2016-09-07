@@ -275,6 +275,7 @@ namespace VirtualRobot
          * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
          */
         virtual void setJointValues(const std::vector<float>& jointValues);
+
         /*!
          * Set joint values [rad].
          * The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
