@@ -181,8 +181,10 @@ namespace SimDynamics
                 VR_ERROR << "Skipping non-BULLET object " << (*i)->getName() << "!" << endl;
                 continue;
             }
+            auto friction = btObject->getSceneObject()->getPhysics().friction;
 
             btObject->getRigidBody()->setRestitution(bulletConfig->bulletObjectRestitution);
+            btObject->getRigidBody()->setFriction(friction>0.0?friction:bulletConfig->bulletObjectFriction);
             btObject->getRigidBody()->setFriction(bulletConfig->bulletObjectFriction);
             btObject->getRigidBody()->setDamping(bulletConfig->bulletObjectDampingLinear, bulletConfig->bulletObjectDampingAngular);
             btObject->getRigidBody()->setDeactivationTime(bulletConfig->bulletObjectDeactivation);
@@ -224,10 +226,10 @@ namespace SimDynamics
                 break;
 
         }
-
+        auto friction = o->getSceneObject()->getPhysics().friction;
         btObject->getRigidBody()->setCollisionFlags(btColFlag);
         btObject->getRigidBody()->setRestitution(bulletConfig->bulletObjectRestitution);
-        btObject->getRigidBody()->setFriction(bulletConfig->bulletObjectFriction);
+        btObject->getRigidBody()->setFriction(friction>0.0?friction:bulletConfig->bulletObjectFriction);
         btObject->getRigidBody()->setDamping(bulletConfig->bulletObjectDampingLinear, bulletConfig->bulletObjectDampingAngular);
         btObject->getRigidBody()->setDeactivationTime(bulletConfig->bulletObjectDeactivation);//5.0f);
         btObject->getRigidBody()->setSleepingThresholds(bulletConfig->bulletObjectSleepingThresholdLinear, bulletConfig->bulletObjectSleepingThresholdAngular); //0.05f, 0.05f);
