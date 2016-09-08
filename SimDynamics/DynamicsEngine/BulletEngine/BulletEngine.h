@@ -27,7 +27,7 @@
 #include "../DynamicsEngine.h"
 #include "BulletRobot.h"
 
-#include <bullet/btBulletDynamicsCommon.h>
+#include "btBulletDynamicsCommon.h"
 
 namespace internal
 {
