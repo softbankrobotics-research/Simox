@@ -31,15 +31,16 @@ namespace VirtualRobot
     {
     protected:
         /*!
-         * Initialize this set with a vector of RobotNodes.
+         * Initialize this set with a vector of ModelNodes.
          *
          * @param name The name of this ModelNodeSet.
          * @param model The associated model.
          * @param modelNodes The model nodes to add to this ModelNodeSet.
          * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
          *                         kinematicRoot does not have to be a node of this set.
-         *                         If not given, the first entry of modelNodes is used.
-         * @param tcp The tcp.
+         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
+         * @param tcp   The tcp.
+         *              If not given, the last entry of modelNodes will be set as the tcp.
          */
         ModelNodeSet(const std::string& name,
                      ModelWeakPtr model,
@@ -86,7 +87,7 @@ namespace VirtualRobot
          *                      If no kinematic root provided, the first node of the given model nodes will be set as the kinematic root.
          * @param tcp The tcp.
          *            The tcp does not have to be a node of this set.
-         *                If no tcp provided, the last node of the given model nodes will be set as the tcp node.
+         *            If no tcp provided, the last node of the given model nodes will be set as the tcp node.
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
@@ -182,13 +183,15 @@ namespace VirtualRobot
          */
         ModelNodePtr getTCP() const;
 
-        //! Print out some information.
+        /*!
+         * Print out some information.
+         */
         void print() const;
 
         /*!
          * Get the size of this set.
          *
-         * @return The number of associated robot nodes.
+         * @return The number of associated model nodes.
          */
         virtual unsigned int getSize() const;
 
@@ -294,7 +297,7 @@ namespace VirtualRobot
         /*!
          * Checks if this set of robot nodes form a valid kinematic chain.
          *
-         * @return True, if the nodes form a valid kinematic chain.
+         * @return True, if the nodes form a valid kinematic chain, i.e. node i+1 in the nodeset must be a child (transitively) of node i.
          */
         bool isKinematicChain();
 
@@ -332,6 +335,7 @@ namespace VirtualRobot
 
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
+         * A set of nodes is sufficient, if it contains atleast all nodes of this ModelNodeSet.
          *
          * @param  nodes The nodes to check.
          * @return True, if the nodes are sufficient; false otherwise.
@@ -348,10 +352,14 @@ namespace VirtualRobot
 
     private:
         std::string name;
-        ModelWeakPtr model;
+        ModelWeakPtr weakModel;
         std::vector<ModelNodePtr> modelNodes;
         ModelNodePtr kinematicRoot;
         ModelNodePtr tcp;
+
+        // helper to conveniently get a set of subtypes
+        std::vector<ModelJointPtr> getModelJoints() const;
+        std::vector<ModelLinkPtr> getModelLinks() const;
     };
 }
 
