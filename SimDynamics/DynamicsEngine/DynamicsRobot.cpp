@@ -198,12 +198,23 @@ namespace SimDynamics
         //    createDynamicsNode(node);
 
         //DynamicsObjectPtr dnyRN = getDynamicsRobotNode(node);
-
+        auto oldTargetIt = actuationTargets.find(node);
         robotNodeActuationTarget target;
         target.actuation.modes.velocity = 1;
         target.actuation.modes.position = 0;
         target.node = node;
-        target.jointValueTarget = node->getJointValue();
+        bool modeChanged = oldTargetIt == actuationTargets.end() ||
+                                          oldTargetIt->second.actuation.modes.velocity != 1 ||
+                                          oldTargetIt->second.actuation.modes.position != 0;
+//        if(!modeChanged)
+//        {
+//            target.jointValueTarget = oldTargetIt->second.jointValueTarget;
+//        }
+//        else
+        {
+            target.jointValueTarget = node->getJointValue();
+        }
+
         target.jointVelocityTarget = jointVelocity;
 
         actuationTargets[node] = target;
@@ -216,7 +227,10 @@ namespace SimDynamics
         }
         else
         {
-            actuationControllers[node].reset();
+            if(modeChanged)
+            {
+                actuationControllers[node].reset();
+            }
         }
     }
 
