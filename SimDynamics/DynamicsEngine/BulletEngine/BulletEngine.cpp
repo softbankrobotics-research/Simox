@@ -21,7 +21,7 @@ namespace SimDynamics
         bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);//1.5);
         bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
 
-        bulletSolverIterations = 100;
+        bulletSolverIterations = 250;
         bulletSolverGlobalContactForceMixing = 0.0;
         bulletSolverGlobalErrorReductionParameter = btScalar(0.6);//0.1);
         bulletSolverSuccessiveOverRelaxation = btScalar(0.0);
