@@ -839,7 +839,6 @@ namespace VirtualRobot
     {
 
         TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
-        VR_WARNING << "Creating torus" << std::endl;
 
         triMesh->addColor(VirtualRobot::VisualizationFactory::Color(colorR, colorG, colorB, transparency));
 
@@ -879,7 +878,7 @@ namespace VirtualRobot
                 short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
                 short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
                 MathTools::TriangleFace face;
-                face.normal = -TriMeshModel::CreateNormal(triMesh->vertices[lt],
+                face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
                                                          triMesh->vertices[rt],
                                                          triMesh->vertices[lb]);
                 face.id1 = lt;
@@ -898,7 +897,7 @@ namespace VirtualRobot
 
 
                 MathTools::TriangleFace face2;
-                face2.normal = -TriMeshModel::CreateNormal(triMesh->vertices[rt],
+                face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
                                                           triMesh->vertices[rb],
                                                           triMesh->vertices[lb]);
                 face2.id1 = rt;
@@ -2154,7 +2153,8 @@ namespace VirtualRobot
         VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
         completion = std::min<float>(1.0f, completion);
         completion = std::max<float>(-1.0f, completion);
-        auto torusNode = createTorus(radius, tubeRadius, completion - 1.0f/rings, colorR, colorG, colorB, transparency);
+        int sign = completion >=0?1:-1;
+        auto torusNode = createTorus(radius, tubeRadius, completion - 1.0f/rings*sign, colorR, colorG, colorB, transparency);
         SoNode* torus = boost::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
 
         SoSeparator* s = new SoSeparator();
@@ -2188,6 +2188,7 @@ namespace VirtualRobot
 
 
         VisualizationNodePtr node(new CoinVisualizationNode(s));
+        s->unref();
         return node;
     }
 
