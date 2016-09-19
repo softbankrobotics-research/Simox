@@ -549,40 +549,17 @@ namespace VirtualRobot
         float offset = 0;
         for (int i = 0; i < numberOfCircleParts; ++i)
         {
-//            if(i < numberOfCircleParts-1)
-//                offset = (float)(0.5)/numberOfCircleParts* 2 * M_PI * circleCompletion;
-//            else
-//                offset = 0;
+
             SbVec3f point;
             float angle0 = (float)(i)/numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
             float x0 = radius * cos(angle0);
             float y0 = radius * sin(angle0);
-//            float angle1 = (float)(i+1)/numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
-//            float x1 = radius * cos(angle1);
-//            float y1 = radius * sin(angle1);
+
 
             point.setValue(x0,y0,0);
             coordinate3->point.set1Value(i, point);
 
-//            SoSeparator* subSep = new SoSeparator();
-//            s->addChild(subSep);
-//            SoTransform* tr = new SoTransform;
-//            tr->translation.setValue(x0, y0, 0);
 
-//            tr->rotation.setValue(SbVec3f(0,0,1), angle0);
-//            subSep->addChild(tr);
-//            float length = (Eigen::Vector2f(x1,y1)-Eigen::Vector2f(x0,y0)).norm();
-//            if(i < numberOfCircleParts-1)
-//            {
-//                SoCylinder* c = new SoCylinder();
-//                c->radius = width;
-//                c->height = length;
-//                subSep->addChild(c);
-//            }
-//            else
-//            {
-//                subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*circleCompletion, length, width, Color(colorR, colorG, colorB)));
-//            }
         }
         s->addChild(coordinate3);
 
