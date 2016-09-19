@@ -140,6 +140,21 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+        virtual VisualizationNodePtr createCircle(float radius, float circleCompletion, float width, float colorR = 1.0f, float colorG = 0.5f, float colorB = 0.5f, size_t numberOfCircleParts = 30)
+        {
+            return VisualizationNodePtr();
+        }
+
+        virtual VisualizationNodePtr createTorus(float radius, float tubeRadius, float completion = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30)
+        {
+            return VisualizationNodePtr();
+        }
+
+        virtual VisualizationNodePtr createCircleArrow(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30)
+        {
+            return VisualizationNodePtr();
+        }
+
         virtual VisualizationNodePtr createCylinder(float /*radius*/, float /*height*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();

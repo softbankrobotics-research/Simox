@@ -531,6 +531,81 @@ namespace VirtualRobot
         return s;
     }
 
+    SoNode* CoinVisualizationFactory::createCoinPartCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts)
+    {
+        SoSeparator* s = new SoSeparator();
+        s->ref();
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        s->addChild(u);
+
+        SoMaterial* m = new SoMaterial();
+        s->addChild(m);
+        m->ambientColor.setValue(colorR, colorG, colorB);
+        m->diffuseColor.setValue(colorR, colorG, colorB);
+        SoCoordinate3* coordinate3 = new SoCoordinate3;
+        circleCompletion = std::min<float>(1.0f, circleCompletion);
+        circleCompletion = std::max<float>(-1.0f, circleCompletion);
+        float offset = 0;
+        for (int i = 0; i < numberOfCircleParts; ++i)
+        {
+//            if(i < numberOfCircleParts-1)
+//                offset = (float)(0.5)/numberOfCircleParts* 2 * M_PI * circleCompletion;
+//            else
+//                offset = 0;
+            SbVec3f point;
+            float angle0 = (float)(i)/numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
+            float x0 = radius * cos(angle0);
+            float y0 = radius * sin(angle0);
+//            float angle1 = (float)(i+1)/numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
+//            float x1 = radius * cos(angle1);
+//            float y1 = radius * sin(angle1);
+
+            point.setValue(x0,y0,0);
+            coordinate3->point.set1Value(i, point);
+
+//            SoSeparator* subSep = new SoSeparator();
+//            s->addChild(subSep);
+//            SoTransform* tr = new SoTransform;
+//            tr->translation.setValue(x0, y0, 0);
+
+//            tr->rotation.setValue(SbVec3f(0,0,1), angle0);
+//            subSep->addChild(tr);
+//            float length = (Eigen::Vector2f(x1,y1)-Eigen::Vector2f(x0,y0)).norm();
+//            if(i < numberOfCircleParts-1)
+//            {
+//                SoCylinder* c = new SoCylinder();
+//                c->radius = width;
+//                c->height = length;
+//                subSep->addChild(c);
+//            }
+//            else
+//            {
+//                subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*circleCompletion, length, width, Color(colorR, colorG, colorB)));
+//            }
+        }
+        s->addChild(coordinate3);
+
+
+
+        SoDrawStyle* lineSolutionStyle = new SoDrawStyle();
+        lineSolutionStyle->lineWidth.setValue(width);
+        s->addChild(lineSolutionStyle);
+
+
+
+
+        SoLineSet* lineSet = new SoLineSet;
+        lineSet->numVertices.setValue(numberOfCircleParts);
+        lineSet->startIndex.setValue(0);
+        s->addChild(lineSet);
+        s->unrefNoDelete();
+
+
+
+        return s;
+    }
+
     VisualizationNodePtr CoinVisualizationFactory::createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width, float colorR, float colorG, float colorB)
     {
         SoNode* s = createCoinLine(from, to, width, colorR, colorG, colorB);
@@ -589,6 +664,14 @@ namespace VirtualRobot
         c->radius = radius;
         c->height = height;
 
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
+        s->unref();
+        return visualizationNode;
+    }
+
+    VisualizationNodePtr CoinVisualizationFactory::createCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts)
+    {
+        SoNode* s = createCoinPartCircle(radius, circleCompletion, width, colorR, colorB, colorG, numberOfCircleParts);
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
         return visualizationNode;
@@ -772,6 +855,100 @@ namespace VirtualRobot
 
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(res));
         res->unref();
+        return visualizationNode;
+    }
+
+    VisualizationNodePtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
+    {
+
+        TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
+        VR_WARNING << "Creating torus" << std::endl;
+
+        triMesh->addColor(VirtualRobot::VisualizationFactory::Color(colorR, colorG, colorB, transparency));
+
+        int numVerticesPerRow = sides + 1;
+        int numVerticesPerColumn = rings + 1;
+
+
+        float theta = 0.0f;
+        float phi = 0.0f;
+        float verticalAngularStride = (float)(M_PI * 2.0f) / (float)rings;
+        float horizontalAngularStride = ((float)M_PI * 2.0f) / (float)sides;
+
+        for (int verticalIt = 0; verticalIt < numVerticesPerColumn; verticalIt++)
+        {
+            theta = verticalAngularStride * verticalIt * completion;
+
+            for (int horizontalIt = 0; horizontalIt < numVerticesPerRow; horizontalIt++)
+            {
+                phi = horizontalAngularStride * horizontalIt;
+
+                // position
+                float x = (float)cos(theta) * (radius + tubeRadius * (float)cos(phi));
+                float y = (float)sin(theta) * (radius + tubeRadius * (float)cos(phi));
+                float z = tubeRadius * (float)sin(phi);
+                triMesh->addVertex(Eigen::Vector3f(x, y, z));
+            }
+        }
+
+
+        for (int verticalIt = 0; verticalIt < rings; verticalIt++)
+        {
+            for (int horizontalIt = 0; horizontalIt < sides; horizontalIt++)
+            {
+                short lt = (short)(horizontalIt + verticalIt * (numVerticesPerRow));
+                short rt = (short)((horizontalIt + 1) + verticalIt * (numVerticesPerRow));
+
+                short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
+                short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
+                MathTools::TriangleFace face;
+                face.normal = -TriMeshModel::CreateNormal(triMesh->vertices[lt],
+                                                         triMesh->vertices[rt],
+                                                         triMesh->vertices[lb]);
+                face.id1 = lt;
+                face.idColor1 = 0;
+
+                face.id2 = rt;
+
+                face.idColor2 = 0;
+
+                face.id3 = lb;
+
+                face.idColor3 = 0;
+
+                triMesh->addFace(face);
+
+
+
+                MathTools::TriangleFace face2;
+                face2.normal = -TriMeshModel::CreateNormal(triMesh->vertices[rt],
+                                                          triMesh->vertices[rb],
+                                                          triMesh->vertices[lb]);
+                face2.id1 = rt;
+                face2.idColor1 = 0;
+
+                face2.id2 = rb;
+
+                face2.idColor2 = 0;
+
+                face2.id3 = lb;
+
+                face2.idColor3 = 0;
+
+                triMesh->addFace(face2);
+
+
+            }
+        }
+
+
+        SoSeparator* sep = new SoSeparator();
+        sep->ref();
+        SoNode* c = CoinVisualizationFactory::getCoinVisualization(triMesh);
+        sep->addChild(c);
+
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(sep));
+        sep->unref();
         return visualizationNode;
     }
 
@@ -1991,6 +2168,49 @@ namespace VirtualRobot
         SoSeparator* res = CreateArrow(n, length, width, color);
 
         VisualizationNodePtr node(new CoinVisualizationNode(res));
+        return node;
+    }
+
+    VisualizationNodePtr CoinVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
+    {
+        VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
+        VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
+        completion = std::min<float>(1.0f, completion);
+        completion = std::max<float>(-1.0f, completion);
+        auto torusNode = createTorus(radius, tubeRadius, completion - 1.0f/rings, colorR, colorG, colorB, transparency);
+        SoNode* torus = boost::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
+
+        SoSeparator* s = new SoSeparator();
+        s->ref();
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        s->addChild(u);
+
+        SoMaterial* m = new SoMaterial();
+        s->addChild(m);
+        m->ambientColor.setValue(colorR, colorG, colorB);
+        m->diffuseColor.setValue(colorR, colorG, colorB);
+
+
+        s->addChild(torus);
+
+        float angle0 = (float)(rings-2)/rings * 2 * M_PI * completion;
+        float x0 = radius * cos(angle0);
+        float y0 = radius * sin(angle0);
+        float angle1 = (float)(rings-1)/rings * 2 * M_PI * completion;
+
+        SoSeparator* subSep = new SoSeparator();
+        s->addChild(subSep);
+        SoTransform* tr = new SoTransform;
+        tr->translation.setValue(x0, y0, 0);
+
+        tr->rotation.setValue(SbVec3f(0,0,1), angle1);
+        subSep->addChild(tr);
+
+        subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*completion, 0, tubeRadius, Color(colorR, colorG, colorB)));
+
+
+        VisualizationNodePtr node(new CoinVisualizationNode(s));
         return node;
     }
 
