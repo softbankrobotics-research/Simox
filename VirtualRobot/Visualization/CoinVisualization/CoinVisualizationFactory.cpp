@@ -2018,7 +2018,8 @@ namespace VirtualRobot
             n2 << 0,0,1;
         n2.normalize();
         float coneHeight = width * 6.0f;
-        float coneBotomRadius = width * 2.5f;
+        float coneBottomRadius = width * 2.5f;
+        float baseLength = length - coneHeight;
         SoSeparator* res = new SoSeparator;
         res->ref();
         SoUnits* u = new SoUnits();
@@ -2055,21 +2056,21 @@ namespace VirtualRobot
 
 
         SoTranslation* tr = new SoTranslation;
-        tr->translation.setValue(0, length * 0.5f, 0);
+        tr->translation.setValue(0, baseLength * 0.5f, 0);
         res->addChild(tr);
 
 
         SoCylinder* c = new SoCylinder();
         c->radius = width;
-        c->height = length;
+        c->height = baseLength;
         res->addChild(c);
 
         SoTranslation* transl = new SoTranslation;
-        transl->translation.setValue(0, length * 0.5f + coneHeight * 0.5f, 0);
+        transl->translation.setValue(0, length * 0.5f, 0);
         res->addChild(transl);
 
         SoCone* cone = new SoCone();
-        cone->bottomRadius.setValue(coneBotomRadius);
+        cone->bottomRadius.setValue(coneBottomRadius);
         cone->height.setValue(coneHeight);
         res->addChild(cone);
 

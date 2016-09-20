@@ -311,6 +311,11 @@ namespace SimDynamics
         VR_ASSERT(btBody2);
         DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(),drn2.get());
 
+        if (joint->getJointValue()!=0.0f)
+        {
+            VR_WARNING << joint->getName() << ": joint values != 0 may produce a wrong setup, setting joint value to zero" << endl;
+            joint->setJointValue(0);
+        }
 
         Eigen::Matrix4f coordSystemNode1 = bodyA->getGlobalPose(); // todo: what if joint is not at 0 ?!
         Eigen::Matrix4f coordSystemNode2 = bodyB->getGlobalPose();
@@ -394,6 +399,7 @@ namespace SimDynamics
                 limMinBT = btScalar(limMin) + diff;//diff - limMax;//
                 limMaxBT = btScalar(limMax) + diff;//diff - limMin;//
                 jointbt = createHingeJoint(btBody1, btBody2, coordSystemNode1, coordSystemNode2, anchor_inNode1, anchor_inNode2, axisGlobal, axisLocal, coordSystemJoint, limMinBT, limMaxBT);
+
 
                 //btScalar startAngle = joint->getJointValue();
                 //btScalar startAngleBT = hinge->getHingeAngle();

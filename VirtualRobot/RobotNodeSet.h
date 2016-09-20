@@ -69,6 +69,7 @@ namespace VirtualRobot
         */
         const std::vector< RobotNodePtr > getAllRobotNodes() const;
 
+        std::vector< std::string > getNodeNames() const;
         /*!
             Returns the topmost node of the robot's kinematic tree to be used for updating all members of this set.
             This node is usually defined in the RobotNodeSet's XML definition.
@@ -94,6 +95,8 @@ namespace VirtualRobot
         void getJointValues(std::vector<float>& fillVector) const;
         void getJointValues(Eigen::VectorXf& fillVector) const;
         void getJointValues(RobotConfigPtr fillVector) const;
+
+        std::map< std::string, float > getJointValueMap() const;
 
         /*!
         Cut

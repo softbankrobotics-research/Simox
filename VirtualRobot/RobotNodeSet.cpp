@@ -259,6 +259,14 @@ namespace VirtualRobot
         return robotNodes;
     }
 
+    std::vector<std::string> RobotNodeSet::getNodeNames() const
+    {
+        std::vector<std::string> res;
+        for (auto n: robotNodes)
+            res.push_back(n->getName());
+        return res;
+    }
+
     RobotNodePtr RobotNodeSet::getKinematicRoot() const
     {
         return kinematicRoot;
@@ -339,6 +347,16 @@ namespace VirtualRobot
         {
             fillVector->setConfig(robotNodes[i]->getName(), robotNodes[i]->getJointValue());
         }
+    }
+
+    std::map<std::string, float> RobotNodeSet::getJointValueMap() const
+    {
+        std::map<std::string, float> res;
+        for (auto n: robotNodes)
+        {
+            res[n->getName()] = n->getJointValue();
+        }
+        return res;
     }
 
     std::vector<float> RobotNodeSet::getJointValues() const
