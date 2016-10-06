@@ -837,91 +837,94 @@ namespace VirtualRobot
 
     VisualizationNodePtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
     {
-
-        TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
-
-        triMesh->addColor(VirtualRobot::VisualizationFactory::Color(colorR, colorG, colorB, transparency));
-
-        int numVerticesPerRow = sides + 1;
-        int numVerticesPerColumn = rings + 1;
-
-
-        float theta = 0.0f;
-        float phi = 0.0f;
-        float verticalAngularStride = (float)(M_PI * 2.0f) / (float)rings;
-        float horizontalAngularStride = ((float)M_PI * 2.0f) / (float)sides;
-
-        for (int verticalIt = 0; verticalIt < numVerticesPerColumn; verticalIt++)
-        {
-            theta = verticalAngularStride * verticalIt * completion;
-
-            for (int horizontalIt = 0; horizontalIt < numVerticesPerRow; horizontalIt++)
-            {
-                phi = horizontalAngularStride * horizontalIt;
-
-                // position
-                float x = (float)cos(theta) * (radius + tubeRadius * (float)cos(phi));
-                float y = (float)sin(theta) * (radius + tubeRadius * (float)cos(phi));
-                float z = tubeRadius * (float)sin(phi);
-                triMesh->addVertex(Eigen::Vector3f(x, y, z));
-            }
-        }
-
-
-        for (int verticalIt = 0; verticalIt < rings; verticalIt++)
-        {
-            for (int horizontalIt = 0; horizontalIt < sides; horizontalIt++)
-            {
-                short lt = (short)(horizontalIt + verticalIt * (numVerticesPerRow));
-                short rt = (short)((horizontalIt + 1) + verticalIt * (numVerticesPerRow));
-
-                short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
-                short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
-                MathTools::TriangleFace face;
-                face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
-                                                         triMesh->vertices[rt],
-                                                         triMesh->vertices[lb]);
-                face.id1 = lt;
-                face.idColor1 = 0;
-
-                face.id2 = rt;
-
-                face.idColor2 = 0;
-
-                face.id3 = lb;
-
-                face.idColor3 = 0;
-
-                triMesh->addFace(face);
-
-
-
-                MathTools::TriangleFace face2;
-                face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
-                                                          triMesh->vertices[rb],
-                                                          triMesh->vertices[lb]);
-                face2.id1 = rt;
-                face2.idColor1 = 0;
-
-                face2.id2 = rb;
-
-                face2.idColor2 = 0;
-
-                face2.id3 = lb;
-
-                face2.idColor3 = 0;
-
-                triMesh->addFace(face2);
-
-
-            }
-        }
-
-
         SoSeparator* sep = new SoSeparator();
         sep->ref();
-        SoNode* c = CoinVisualizationFactory::getCoinVisualization(triMesh);
-        sep->addChild(c);
+            if(fabs(completion) > 0.01)
+        {
+            TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
+
+            triMesh->addColor(VirtualRobot::VisualizationFactory::Color(colorR, colorG, colorB, transparency));
+
+            int numVerticesPerRow = sides + 1;
+            int numVerticesPerColumn = rings + 1;
+
+
+            float theta = 0.0f;
+            float phi = 0.0f;
+            float verticalAngularStride = (float)(M_PI * 2.0f) / (float)rings;
+            float horizontalAngularStride = ((float)M_PI * 2.0f) / (float)sides;
+
+            for (int verticalIt = 0; verticalIt < numVerticesPerColumn; verticalIt++)
+            {
+                theta = verticalAngularStride * verticalIt * completion;
+
+                for (int horizontalIt = 0; horizontalIt < numVerticesPerRow; horizontalIt++)
+                {
+                    phi = horizontalAngularStride * horizontalIt;
+
+                    // position
+                    float x = (float)cos(theta) * (radius + tubeRadius * (float)cos(phi));
+                    float y = (float)sin(theta) * (radius + tubeRadius * (float)cos(phi));
+                    float z = tubeRadius * (float)sin(phi);
+                    triMesh->addVertex(Eigen::Vector3f(x, y, z));
+                }
+            }
+
+
+            for (int verticalIt = 0; verticalIt < rings; verticalIt++)
+            {
+                for (int horizontalIt = 0; horizontalIt < sides; horizontalIt++)
+                {
+                    short lt = (short)(horizontalIt + verticalIt * (numVerticesPerRow));
+                    short rt = (short)((horizontalIt + 1) + verticalIt * (numVerticesPerRow));
+
+                    short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
+                    short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
+                    MathTools::TriangleFace face;
+                    face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
+                                                                         triMesh->vertices[rt],
+                                                                         triMesh->vertices[lb]);
+                    face.id1 = lt;
+                    face.idColor1 = 0;
+
+                    face.id2 = rt;
+
+                    face.idColor2 = 0;
+
+                    face.id3 = lb;
+
+                    face.idColor3 = 0;
+
+                    triMesh->addFace(face);
+
+
+
+                    MathTools::TriangleFace face2;
+                    face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
+                                                                          triMesh->vertices[rb],
+                                                                          triMesh->vertices[lb]);
+                    face2.id1 = rt;
+                    face2.idColor1 = 0;
+
+                    face2.id2 = rb;
+
+                    face2.idColor2 = 0;
+
+                    face2.id3 = lb;
+
+                    face2.idColor3 = 0;
+
+                    triMesh->addFace(face2);
+
+
+                }
+            }
+
+
+
+            SoNode* c = CoinVisualizationFactory::getCoinVisualization(triMesh);
+            sep->addChild(c);
+        }
 
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(sep));
         sep->unref();
@@ -2020,6 +2023,7 @@ namespace VirtualRobot
         float coneHeight = width * 6.0f;
         float coneBottomRadius = width * 2.5f;
         float baseLength = length - coneHeight;
+        baseLength = std::max(0.0f,baseLength);
         SoSeparator* res = new SoSeparator;
         res->ref();
         SoUnits* u = new SoUnits();
@@ -2155,7 +2159,10 @@ namespace VirtualRobot
         completion = std::min<float>(1.0f, completion);
         completion = std::max<float>(-1.0f, completion);
         int sign = completion >=0?1:-1;
-        auto torusNode = createTorus(radius, tubeRadius, completion - 1.0f/rings*sign, colorR, colorG, colorB, transparency);
+        float torusCompletion = completion - 1.0f/rings*sign;
+        if(torusCompletion * sign < 0)
+            torusCompletion = 0;
+        auto torusNode = createTorus(radius, tubeRadius, torusCompletion, colorR, colorG, colorB, transparency);
         SoNode* torus = boost::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
 
         SoSeparator* s = new SoSeparator();
@@ -2185,7 +2192,7 @@ namespace VirtualRobot
         tr->rotation.setValue(SbVec3f(0,0,1), angle1);
         subSep->addChild(tr);
 
-        subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*completion, 0, tubeRadius, Color(colorR, colorG, colorB)));
+        subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*sign, 0, tubeRadius, Color(colorR, colorG, colorB)));
 
 
         VisualizationNodePtr node(new CoinVisualizationNode(s));
