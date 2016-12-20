@@ -77,6 +77,7 @@ namespace VirtualRobot
         static Units getUnitsAttribute(rapidxml::xml_node<char>* node, Units::UnitsType u);
         static std::string processNameAttribute(rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
         static float processFloatAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
+        static int processIntAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
         static float getFloatByAttributeName(rapidxml::xml_node<char>* xmlNode, const std::string& attributeName);
         static float getOptionalFloatByAttributeName(rapidxml::xml_node<char>* xmlNode, const std::string& attributeName, float standardValue);
 

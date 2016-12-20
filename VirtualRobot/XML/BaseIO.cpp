@@ -627,7 +627,7 @@ namespace VirtualRobot
 
     /**
     * This method takes a rapidxml::xml_node and returns the value of the
-    * first tag it finds with name \p atributeName.
+    * first tag it finds with name \p attributeName.
     * If an error occurs an exception is thrown
     * If more than one name attribute is found an exception is thrown.
     * If no attribute can be found 0.0 is returned.
@@ -642,7 +642,7 @@ namespace VirtualRobot
 
         bool result = false;
         float value = 0.0f;
-        std::string nodeNameAttr("");
+        //std::string nodeNameAttr("");
         rapidxml::xml_attribute<char>* attr = node->first_attribute();
 
         while (attr)
@@ -669,9 +669,54 @@ namespace VirtualRobot
         return value;
     }
 
+
+    /**
+    * This method takes a rapidxml::xml_node and returns the value of the
+    * first tag it finds with name \p attributeName.
+    * If an error occurs an exception is thrown
+    * If more than one name attribute is found an exception is thrown.
+    * If no attribute can be found 0 is returned.
+    *
+    * \warning Do NOT use this method if there are several attributes which need to be processed (or set \p allowOtherAttributes to silently ignore other attributes)
+    *
+    * \return the value of the attribute or 0.0 if no attribute was found
+    */
+    int BaseIO::processIntAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes /* = false */)
+    {
+        THROW_VR_EXCEPTION_IF(!node, "Can not process name attribute of NULL node" << endl);
+
+        bool result = false;
+        int value = 0;
+        //std::string nodeNameAttr("");
+        rapidxml::xml_attribute<char>* attr = node->first_attribute();
+
+        while (attr)
+        {
+            std::string name = getLowerCase(attr->name());
+
+            if (attributeName == name)
+            {
+                THROW_VR_EXCEPTION_IF(result, "<" << node->name() << "> tag contains multiple attributes with name " << attributeName);
+                value = convertToInt(attr->value());
+                result = true;
+            }
+            else
+            {
+                if (!allowOtherAttributes)
+                {
+                    THROW_VR_EXCEPTION("<" << node->name() << "> tag contains unknown attribute: " << attr->name());
+                }
+            }
+
+            attr = attr->next_attribute();
+        }
+
+        return value;
+    }
+
     /**
         * This method takes a rapidxml::xml_node and returns the value of the
-        * first tag it finds with name \p atributeName.
+        * first tag it finds with name \p attributeName.
         * If an error occurs a message is logged to the console and "" is
         * returned.
         * If more than one name attribute is found an exception is thrown.

@@ -638,6 +638,9 @@ namespace VirtualRobot
         for (size_t i = 0; i < statics.size(); i++)
         {
             RobotNodePtr n = statics[i];
+
+            if (!n->getCollisionModel())
+                continue;
             int id1, id2;
             Eigen::Vector3f p1,p2;
             float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(),obstacle->getCollisionModel(),p1,p2,&id1,&id2);

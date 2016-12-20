@@ -92,6 +92,8 @@ namespace VirtualRobot
         std::string getPreshapeName();
         float getQuality();
 
+        void setQuality(float q);
+
         /*!
             Return the transformation of this grasp.
             The transformation is given in the coordinate system of the tcp (whereas the tcp belongs to the eef).
