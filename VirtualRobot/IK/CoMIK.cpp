@@ -25,6 +25,9 @@ namespace VirtualRobot
         {
             // get all joints that influence the body
             std::vector<RobotNodePtr> parentsN = bodyNodes[i]->getAllParents(rns);
+            // maybe this node is joint and body
+            if (rnsJoints->hasRobotNode(bodyNodes[i]))
+                parentsN.push_back(bodyNodes[i]);
             bodyNodeParents[bodyNodes[i]] = parentsN;
         }
 
@@ -70,7 +73,9 @@ namespace VirtualRobot
                     Eigen::Vector3f axis = revolute->getJointRotationAxis(coordSystem);
 
                     // For CoM-Jacobians only the positional part is necessary
-                    Eigen::Vector3f toTCP = node->getCoMLocal() + node->getGlobalPose().block(0, 3, 3, 1)
+                    //Eigen::Vector3f toTCP = node->getCoMLocal() + node->getGlobalPose().block(0, 3, 3, 1)
+                    //                        - dof->getGlobalPose().block(0, 3, 3, 1);
+                    Eigen::Vector3f toTCP = node->getCoMGlobal()
                                             - dof->getGlobalPose().block(0, 3, 3, 1);
                     position.block(0, i, 3, 1) = axis.cross(toTCP);
                 }
