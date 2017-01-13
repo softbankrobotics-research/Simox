@@ -23,5 +23,6 @@ ADD_SUBDIRECTORY(stability)
 ADD_SUBDIRECTORY(GraspEditor)
 
 ADD_SUBDIRECTORY(ReachabilityMap)
+ADD_SUBDIRECTORY(ReachabilityInversion)
 ADD_SUBDIRECTORY(loadURDFRobot)
 
