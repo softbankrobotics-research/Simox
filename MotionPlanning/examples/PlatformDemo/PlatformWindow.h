@@ -92,7 +92,8 @@ protected:
     void buildRrtVisu();
     void selectColModelRob(const std::string& colModel);
     void selectColModelEnv(const std::string& colModel);
-    void selectPlanSet(int nr);
+
+    void updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b);
 
     Ui::MainWindowPlatformdemo UI;
     SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
@@ -100,6 +101,7 @@ protected:
     SoSeparator* allSep;
     SoSeparator* sceneFileSep;
     SoSeparator* rrtSep;
+    SoSeparator* distSep;
 
     VirtualRobot::RobotPtr robot;
 
@@ -117,6 +119,9 @@ protected:
 
     std::string sceneFile;
     VirtualRobot::ScenePtr scene;
+
+    VirtualRobot::CDManagerPtr cdmPlayback;
+
 
     Saba::CSpacePathPtr solution;
     Saba::CSpacePathPtr solutionOptimized;

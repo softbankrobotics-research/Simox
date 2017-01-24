@@ -50,9 +50,11 @@ PlatformWindow::PlatformWindow(const std::string& sceneFile,
     allSep->ref();
     sceneFileSep = new SoSeparator;
     rrtSep = new SoSeparator;
+    distSep = new SoSeparator;
 
     allSep->addChild(sceneFileSep);
     allSep->addChild(rrtSep);
+    allSep->addChild(distSep);
 
     planSetA.rns = rns;
     planSetA.colModelRob = colModelRob;
@@ -107,6 +109,7 @@ void PlatformWindow::setupUI()
     connect(UI.checkBoxShowSolution, SIGNAL(clicked()), this, SLOT(buildVisu()));
     connect(UI.checkBoxShowSolutionOpti, SIGNAL(clicked()), this, SLOT(buildVisu()));
     connect(UI.checkBoxShowRRT, SIGNAL(clicked()), this, SLOT(buildVisu()));
+    connect(UI.checkBoxShowDistance, SIGNAL(clicked()), this, SLOT(buildVisu()));
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
     connect(UI.pushButtonPlan, SIGNAL(clicked()), this, SLOT(plan()));
     connect(UI.horizontalSliderPos, SIGNAL(sliderMoved(int)), this, SLOT(sliderSolution(int)));
@@ -146,6 +149,8 @@ void PlatformWindow::buildVisu()
         }
     }
 
+    distSep->removeAllChildren();
+
     buildRRTVisu();
 
     redraw();
@@ -182,6 +187,12 @@ void PlatformWindow::loadSceneWindow()
 void PlatformWindow::loadScene()
 {
     robot.reset();
+    solution.reset();
+    solutionOptimized.reset();
+    cdmPlayback.reset();
+    tree.reset();
+    tree2.reset();
+
     scene = SceneIO::loadScene(sceneFile);
 
     if (!scene)
@@ -299,6 +310,23 @@ void PlatformWindow::selectColModelEnv(const std::string &name)
     this->colModelEnv = scene->getSceneObjectSet(name);
 }
 
+void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b)
+{
+    distSep->removeAllChildren();
+    if (UI.checkBoxShowDistance->isChecked())
+    {
+        Eigen::Matrix4f from;
+        Eigen::Matrix4f to;
+        from.setIdentity();
+        to.setIdentity();
+        from.block(0,3,3,1) = a;
+        to.block(0,3,3,1) = b;
+
+        SoNode * c = CoinVisualizationFactory::createCoinLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
+        distSep->addChild(c);
+    }
+}
+
 void PlatformWindow::buildRRTVisu()
 {
     rrtSep->removeAllChildren();
@@ -350,15 +378,18 @@ void PlatformWindow::plan()
 
     // setup collision detection
     CDManagerPtr cdm(new CDManager());
+    cdmPlayback.reset(new CDManager());
 
     if (colModelRob)
     {
         cdm->addCollisionModel(colModelRob);
+        cdmPlayback->addCollisionModel(colModelRob);
     }
 
     if (colModelEnv)
     {
         cdm->addCollisionModel(colModelEnv);
+        cdmPlayback->addCollisionModel(colModelEnv);
     }
 
     cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 500000));
@@ -382,8 +413,17 @@ void PlatformWindow::plan()
     {
         VR_INFO << " Planning succeeded " << endl;
         solution = rrt->getSolution();
+
+        int nrSteps = UI.spinBox_smoothing->value();
+        VR_INFO << " Smoothing solution with " << nrSteps << " steps " << endl;
+
         Saba::ShortcutProcessorPtr postProcessing(new Saba::ShortcutProcessor(solution, cspace, false));
-        solutionOptimized = postProcessing->optimize(100);
+        if (nrSteps<=0)
+            solutionOptimized = solution->clone();
+        else
+            solutionOptimized = postProcessing->optimize(nrSteps);
+
+        VR_INFO << " Smoothing done" << endl;
         tree = rrt->getTree();
         tree2 = rrt->getTree2();
     }
@@ -423,6 +463,29 @@ void PlatformWindow::sliderSolution(int pos)
     Eigen::VectorXf iPos;
     s->interpolate(p, iPos);
     robot->setJointValues(rns, iPos);
+
+    std::stringstream d2;
+    d2 << setprecision(2) << fixed << "Pos: ";
+    for (int i=0;i<rns->getSize();i++)
+        d2 << rns->getNode(i)->getJointValue() << ", ";
+    QString t2(d2.str().c_str());
+    UI.labelPos->setText(t2);
+
+    // update distance
+    if (cdmPlayback)
+    {
+        Eigen::Vector3f P1;
+        Eigen::Vector3f P2;
+        int trID1;
+        int trID2;
+        float dist = cdmPlayback->getDistance(P1, P2, trID1, trID2);
+        std::stringstream d;
+        d << setprecision(2) << fixed << dist;
+        QString t(d.str().c_str());
+        UI.labelDist->setText(t);
+
+        updateDistVisu(P1,P2);
+    }
     redraw();
 }
 
@@ -435,27 +498,5 @@ void PlatformWindow::redraw()
     viewer->scheduleRedraw();
 }
 
-
-void PlatformWindow::selectPlanSet(int /*nr*/)
-{
-    /*if (nr == 0)
-    {
-        selectRNS(planSetA.rns);
-        selectEEF(planSetA.eef);
-        selectColModelRobA(planSetA.colModelRob1);
-        selectColModelRobB(planSetA.colModelRob2);
-        selectColModelEnv(planSetA.colModelEnv);
-        selectStart(UI.comboBoxStart->currentIndex());
-    }
-    else
-    {
-        selectRNS(planSetB.rns);
-        selectEEF(planSetB.eef);
-        selectColModelRobA(planSetB.colModelRob1);
-        selectColModelRobB(planSetB.colModelRob2);
-        selectColModelEnv(planSetB.colModelEnv);
-        selectStart(UI.comboBoxStart->currentIndex());
-    }*/
-}
 
 
