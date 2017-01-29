@@ -148,10 +148,12 @@ void InverseReachability::buildData(float factorTranslation, float factorOrienta
 		else
 			maxL[i] = fabs(ws->getMaxBound(i));
 
+    // get the biggest possible translation from tcp to base
 	float maxDiag = sqrtf(maxL[0]*maxL[0] + maxL[1]*maxL[1] + maxL[2]*maxL[2]);
 	for (int i=0;i<3;i++)
 	{
-		minBounds[i] = -maxDiag; // invert
+        // the biggest possible translation from tcp to base determines the size of the bounding box
+        minBounds[i] = -maxDiag;
 		maxBounds[i] = maxDiag;
 		//maxBounds[i] = -ws->getMinBound(i); // invert
 		//minBounds[i] = -ws->getMaxBound(i);
@@ -206,8 +208,8 @@ void InverseReachability::buildData(float factorTranslation, float factorOrienta
 	unsigned int v[6];
     //float xL[6];
     //unsigned int vL[6];
-	int nPos = 1;
-	int nPos2 = 1;
+    int nPos = 1;
+    int nPos2 = 1;
 	for (v[0]=0;v[0]<(unsigned int)ws->getNumVoxels(0);v[0]+=nPos)
 	{
 		cout << "Starting x=" << v[0] << endl;
@@ -223,49 +225,51 @@ void InverseReachability::buildData(float factorTranslation, float factorOrienta
 							unsigned char e = ws->getVoxelEntry(v[0],v[1],v[2],v[3],v[4],v[5]);
 
 							if (e>0)
-							{
+							{                            
+                                m = ws->getPoseFromVoxel(v,false);
+                                addInverseData(m,e);
 
-                                // add inv data according to voxel extends
-                                float v2[6];
+//                                // add inv data according to voxel extends
+//                                float v2[6];
 
-                                float minX[6];
-                                float maxX[6];
-                                for (int i=0;i<6;i++)
-                                {
-                                    minX[i] = float(v[i]);
-                                    if (i<3)
-                                        minX[i] /= factorTranslation;
-                                    else
-                                        minX[i] /= factorOrientation;
+//                                float minX[6];
+//                                float maxX[6];
+//                                for (int i=0;i<6;i++)
+//                                {
+//                                    minX[i] = float(v[i]);
+//                                    if (i<3)
+//                                        minX[i] /= factorTranslation;
+//                                    else
+//                                        minX[i] /= factorOrientation;
 
-                                    maxX[i] = minX[i] + 1.0f;
-                                    if (minX[i]<0)
-                                        minX[i] = 0;
-                                    if (maxX[i]>=(float)data->getSize(i))
-                                        maxX[i] = float(data->getSize(i)-1);
-                                    VR_ASSERT(minX[i]<(float)data->getSize(i));
-                                    VR_ASSERT(maxX[i]<(float)data->getSize(i));
-                                    VR_ASSERT(minX[i]>=0);
-                                    VR_ASSERT(maxX[i]>=0);
-                                }
-                                float vStep = 0.5f;
-                                for (v2[0]=minX[0]; v2[0]<=maxX[0]; v2[0]+=vStep)
-                                    for (v2[1]=minX[1]; v2[1]<=maxX[1]; v2[1]+=vStep)
-                                        for (v2[2]=minX[2]; v2[2]<=maxX[2]; v2[2]+=vStep)
-                                            for (v2[3]=minX[3]; v2[3]<=maxX[3]; v2[3]+=vStep)
-                                                for (v2[4]=minX[4]; v2[4]<=maxX[4]; v2[4]+=vStep)
-                                                    for (v2[5]=minX[5]; v2[5]<=maxX[5]; v2[5]+=vStep)
-                                                    {
-                                                        m = ws->getPoseFromVoxel(v2,false);
-#ifdef PRINT_INV_DEBUG
-                                                            cout << "Voxel:";
-                                                            for (int i=0;i<6;i++)
-                                                                cout << v2[i] << ",";
-                                                            cout << endl;
-#endif
+//                                    maxX[i] = minX[i] + 1.0f;
+//                                    if (minX[i]<0)
+//                                        minX[i] = 0;
+//                                    if (maxX[i]>=(float)data->getSize(i))
+//                                        maxX[i] = float(data->getSize(i)-1);
+//                                    VR_ASSERT(minX[i]<(float)data->getSize(i));
+//                                    VR_ASSERT(maxX[i]<(float)data->getSize(i));
+//                                    VR_ASSERT(minX[i]>=0);
+//                                    VR_ASSERT(maxX[i]>=0);
+//                                }
+//                                float vStep = 0.5f;
+//                                for (v2[0]=minX[0]; v2[0]<=maxX[0]; v2[0]+=vStep)
+//                                    for (v2[1]=minX[1]; v2[1]<=maxX[1]; v2[1]+=vStep)
+//                                        for (v2[2]=minX[2]; v2[2]<=maxX[2]; v2[2]+=vStep)
+//                                            for (v2[3]=minX[3]; v2[3]<=maxX[3]; v2[3]+=vStep)
+//                                                for (v2[4]=minX[4]; v2[4]<=maxX[4]; v2[4]+=vStep)
+//                                                    for (v2[5]=minX[5]; v2[5]<=maxX[5]; v2[5]+=vStep)
+//                                                    {
+//                                                        m = ws->getPoseFromVoxel(v2,false);
+//#ifdef PRINT_INV_DEBUG
+//                                                            cout << "Voxel:";
+//                                                            for (int i=0;i<6;i++)
+//                                                                cout << v2[i] << ",";
+//                                                            cout << endl;
+//#endif
 
-                                                        addInverseData(m,e);
-                                                    }
+//                                                        addInverseData(m,e);
+//                                                    }
 
 
                             }

@@ -121,9 +121,10 @@ InvReachWindow::InvReachWindow(std::string &sRobotFile, std::string &reachFile, 
 		invReach->print();
 	} else
 	{
-		cout << "Building INV reach file and saving to " << invReachFile << endl;
+        cout << "Building IRD..." << endl;
 		invReach.reset(new InverseReachability(reachSpace,1.0f,1.0f));
-		invReach->save(invReachFile);
+        cout << "Saving IRD file to " << invReachFile << endl;
+        invReach->save(invReachFile);
 	}
     if (footL && footR)
     {
@@ -146,6 +147,7 @@ InvReachWindow::InvReachWindow(std::string &sRobotFile, std::string &reachFile, 
 		selectEEF(eef);
 	}
 
+    setObjectRandom();
 	viewer->viewAll();
 }
 
@@ -186,7 +188,7 @@ void InvReachWindow::setupUI()
 
 	connect(UI.pushButtonTargetRandom, SIGNAL(clicked()), this, SLOT(setObjectRandom()));
 	//connect(UI.pushButton1, SIGNAL(clicked()), this, SLOT(test1()));
-	connect(UI.pushButton2, SIGNAL(clicked()), this, SLOT(createFullReachGrid()));
+    connect(UI.btnBuildCompleteReachMap, SIGNAL(clicked()), this, SLOT(createFullReachGrid()));
 	//connect(UI.pushButtonTraj, SIGNAL(clicked()), this, SLOT(testTrajectory()));
 	connect(UI.pushButtonRobotPose, SIGNAL(clicked()), this, SLOT(ikRobotPose()));
 	connect(UI.pushButtonIK, SIGNAL(clicked()), this, SLOT(ikAll()));
@@ -194,7 +196,7 @@ void InvReachWindow::setupUI()
 	connect(UI.checkBoxRobot, SIGNAL(clicked()), this, SLOT(updateVisu()));
 	connect(UI.checkBoxTarget, SIGNAL(clicked()), this, SLOT(updateVisu()));
 	//connect(UI.checkBoxObject, SIGNAL(clicked()), this, SLOT(updateVisu()));
-	connect(UI.checkBoxReachabilityVisu, SIGNAL(clicked()), this, SLOT(updateVisu()));
+    connect(UI.checkBoxReachabilityVisu, SIGNAL(clicked()), this, SLOT(updateVisu()));
 	connect(UI.checkBoxReachabilityMapVisu, SIGNAL(clicked()), this, SLOT(updateVisu()));
 	connect(UI.checkBoxFloor, SIGNAL(clicked()), this, SLOT(updateVisu()));
 
@@ -285,15 +287,20 @@ void InvReachWindow::updateVisu()
 		if (sceneSep->findChild(objectVisuSep)>=0)
 			sceneSep->removeChild(objectVisuSep);
 	}
-	if (UI.checkBoxReachabilityVisu->isChecked())
+    if (UI.checkBoxReachabilityVisu->isChecked())
 	{
-		if (reachabilityVisuSep->getNumChildren()==0)
+        if (reachabilityVisuSep->getNumChildren()==0 || true)
 		{
 			Eigen::Matrix4f gp = getTargetPose();
+            cout << gp << endl;
+            cout << "Visualizing IRD" << endl;
 			InverseReachabilityCoinVisualization::buildReachVisu(reachabilityVisuSep,UI.checkBoxReachabilityVisu->isChecked(),invReach, gp);
 		}
-		if (sceneSep->findChild(reachabilityVisuSep)<0)
-			sceneSep->addChild(reachabilityVisuSep);
+        if (sceneSep->findChild(reachabilityVisuSep)<0)
+        {
+            cout << "Adding IRD-node to scene graph" << endl;
+            sceneSep->addChild(reachabilityVisuSep);
+        }
 	} else
 	{
 		if (sceneSep->findChild(reachabilityVisuSep)>=0)
@@ -568,7 +575,7 @@ void InvReachWindow::loadRobot()
 	}
 
 	BoundingBox bb = robot->getBoundingBox();
-	float h = -bb.getMin()(2);
+    float h = -bb.getMin()(2);
 	Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
 	gp(2,3) = h;
 	robot->setGlobalPose(gp);
@@ -947,7 +954,7 @@ void InvReachWindow::createFullReachGrid()
     float tr = reachSpace->getDiscretizeParameterTranslation();
     float rot = reachSpace->getDiscretizeParameterRotation();
     cout << "Discretization trans:" << tr << ", rot:" << rot << endl;
-    reachGrid.reset(new OrientedWorkspaceGrid(-3000.0f,3000.0f,-3000.0f,2000.0f,tr,rot,false,getBaseHeight()));
+    reachGrid.reset(new OrientedWorkspaceGrid(-3000.0f,3000.0f,-3000.0f,2000.0f,tr,rot,false/*, getBaseHeight()*/)); // TODO (harry) why tr/rot from reach and not inv-reach ?
     Eigen::Matrix4f gp = getTargetPose();
     reachGrid->setGridPosition(gp(0,3),gp(1,3));
 

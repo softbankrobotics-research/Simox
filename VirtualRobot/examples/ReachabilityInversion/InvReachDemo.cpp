@@ -48,8 +48,13 @@ int main(int argc, char *argv[])
 #else
     // ARMAR-III
     std::string eef("Hand R");
-    std::string filenameReach("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3.bin");
-    std::string invReachFile("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3_inv.bin");
+//    std::string filenameReach("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3.bin");
+    std::string filenameReach("/home/harry/armar_hipYawRightArm_manipulability.bin");
+    //std::string filenameReach("/home/harry/armarx.projects/Armar3/data/Armar3/reachability/reachability_right_hand.bin");
+
+//    std::string invReachFile("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3_inv.bin");
+//    std::string invReachFile("/home/harry/Manipulability_Armar_TorsoRightArm_EulerXYZ_3_inv.bin");
+    std::string invReachFile("");
 
     std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
     std::string rnsNameCollisionDetection("PlatformTorsoHeadColModel");
@@ -64,7 +69,7 @@ int main(int argc, char *argv[])
 
     std::vector< std::string > envFiles;
     envFiles.push_back("objects/Table.xml");
-    envFiles.push_back("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Kitchen_OpenDoor.xml");
+    //envFiles.push_back("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Kitchen_OpenDoor.xml");
 
 	VirtualRobot::RuntimeEnvironment::considerKey("robot");
 	VirtualRobot::RuntimeEnvironment::considerKey("eef");

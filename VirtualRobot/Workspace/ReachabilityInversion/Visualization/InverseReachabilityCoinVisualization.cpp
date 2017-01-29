@@ -607,7 +607,8 @@ void InverseReachabilityCoinVisualization::buildReachVisu(SoSeparator* reachabil
 #ifdef TEST_AT_TCP
 		SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(invReach,VirtualRobot::ColorMap::eHot,Eigen::Vector3f::UnitY(),true,0,0,10000);
 #else
-		SoNode* visualisationNode = getCoinVisualizationCut(invReach,VirtualRobot::ColorMap::eHot,true);
+//		SoNode* visualisationNode = getCoinVisualizationCut(invReach,VirtualRobot::ColorMap::eHot,true);
+        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(invReach, VirtualRobot::ColorMap::eHot, true);
 #endif
 		if (visualisationNode)
 			reachabilityVisuSep->addChild(visualisationNode);

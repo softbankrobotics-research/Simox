@@ -239,6 +239,17 @@
 		<Node name="Wrist 1 R"/>
 		<Node name="Wrist 2 R"/>
 	</RobotNodeSet>
+
+	<RobotNodeSet name="HipYawRightArm" kinematicRoot="Platform" tcp="TCP R">
+		<Node name="Hip Yaw"/>
+		<Node name="Shoulder 1 R"/>
+		<Node name="Shoulder 2 R"/>
+		<Node name="Upperarm R"/>
+		<Node name="Elbow R"/>
+		<Node name="Underarm R"/>
+		<Node name="Wrist 1 R"/>
+		<Node name="Wrist 2 R"/>
+	</RobotNodeSet>
 	
 	
 	<RobotNodeSet name="TorsoBothArms" kinematicRoot="Platform">

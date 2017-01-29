@@ -495,7 +495,7 @@ bool OrientedWorkspaceGrid::getPlaneExtends(InverseReachabilityPtr invReach, con
 	float maxX2 = -FLT_MAX;
 	float minY2 = FLT_MAX;
 	float maxY2 = -FLT_MAX;
-	minX = -FLT_MAX;
+    minX = -FLT_MAX;
 	maxX = FLT_MAX;
 	minY = -FLT_MAX;
 	maxY = FLT_MAX;
@@ -527,13 +527,13 @@ bool OrientedWorkspaceGrid::getPlaneExtends(InverseReachabilityPtr invReach, con
 				maxY2 = resPoints[i](1);
 		}
 		// check if this bbox is smaller
-		if (minX2>minX)
+        if (minX2>minX)
 			minX = minX2;
-		if (minY2>minY)
+        if (minY2>minY) // same
 			minY = minY2;
-		if (maxX2<maxX)
+        if (maxX2<maxX) // same
 			maxX = maxX2;
-		if (maxY2<maxY)
+        if (maxY2<maxY) // same
 			maxY = maxY2;
 	}
 	return true;

@@ -170,7 +170,7 @@
         <rect>
          <x>20</x>
          <y>170</y>
-         <width>131</width>
+         <width>161</width>
          <height>21</height>
         </rect>
        </property>
@@ -194,12 +194,12 @@
         <string>IK performance (100)</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton2">
+      <widget class="QPushButton" name="btnBuildCompleteReachMap">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>10</x>
          <y>390</y>
-         <width>161</width>
+         <width>181</width>
          <height>21</height>
         </rect>
        </property>
@@ -331,7 +331,7 @@
      <x>0</x>
      <y>0</y>
      <width>868</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
