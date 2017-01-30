@@ -63,6 +63,8 @@ public slots:
     void sliderSolution(int pos);
 
     void buildVisu();
+    void optimizeSolutionPressed();
+
 
     void plan();
 
@@ -77,8 +79,16 @@ protected:
 
     planSet planSetA;
 
+    enum postProcessingMethod
+    {
+        eShortcuts,
+        eElasticBands
+    };
+
+
 
     void loadScene();
+    void optimizeSolution(postProcessingMethod postProcessing, int nrSteps);
 
     void setupUI();
     QString formatString(const char* s, float f);
@@ -95,6 +105,8 @@ protected:
 
     void updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b);
 
+    void showOptizerForces(Saba::ElasticBandProcessorPtr postProcessing, Saba::CSpacePathPtr s);
+
     Ui::MainWindowPlatformdemo UI;
     SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
@@ -102,6 +114,7 @@ protected:
     SoSeparator* sceneFileSep;
     SoSeparator* rrtSep;
     SoSeparator* distSep;
+    SoSeparator* forcesSep;
 
     VirtualRobot::RobotPtr robot;
 
@@ -110,7 +123,8 @@ protected:
     Eigen::VectorXf goalConfig;
 
     VirtualRobot::RobotNodeSetPtr rns;
-    VirtualRobot::SceneObjectSetPtr colModelRob;
+    //VirtualRobot::SceneObjectSetPtr colModelRob;
+    VirtualRobot::RobotNodeSetPtr colModelRob;
     VirtualRobot::SceneObjectSetPtr colModelEnv;
 
     std::vector< VirtualRobot::RobotConfigPtr > configs;
