@@ -9,16 +9,21 @@ IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
 	# the variable "demo_SRCS" contains all .cpp files of this project
 	FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/InvReachDemo.cpp 
-						${PROJECT_SOURCE_DIR}/InvReachWindow.cpp )
-	FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/InvReachWindow.h)
+                            ${PROJECT_SOURCE_DIR}/InvReachWindow.cpp
+                            ${PROJECT_SOURCE_DIR}/setupdialog.cpp)
+
+        FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/InvReachWindow.h
+                            ${PROJECT_SOURCE_DIR}/setupdialog.h)
   
   ################################## moc'ing ##############################
   set(GUI_MOC_HDRS
       ${PROJECT_SOURCE_DIR}/InvReachWindow.h
+      ${PROJECT_SOURCE_DIR}/setupdialog.h
   )
   
   set(GUI_UIS
       ${PROJECT_SOURCE_DIR}/InvReachDemo.ui
+      ${PROJECT_SOURCE_DIR}/setupdialog.ui
   )
 
 	# create the executable

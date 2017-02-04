@@ -168,7 +168,7 @@ InvReachWindow::~InvReachWindow()
 
 void InvReachWindow::setupUI()
 {
-	 UI.setupUi(this);
+     UI.setupUi(this);
 	 viewer = new SoQtExaminerViewer(UI.frameViewer,"",TRUE,SoQtExaminerViewer::BUILD_POPUP);
 
 	// setup

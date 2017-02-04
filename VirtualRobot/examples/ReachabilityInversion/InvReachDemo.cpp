@@ -15,6 +15,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include "setupdialog.h"
 #include "InvReachWindow.h"
 
 #define MANIPULABILITY
@@ -57,6 +58,12 @@ int main(int argc, char *argv[])
     std::string invReachFile("");
 
     std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
+    if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob))
+    {
+        VR_ERROR << "Could not find file '" << filenameRob << "'; Aborting." << endl;
+        return 1;
+    }
+
     std::string rnsNameCollisionDetection("PlatformTorsoHeadColModel");
     std::string rnFootL("Platform");
     std::string rnFoorR;
@@ -113,9 +120,20 @@ int main(int argc, char *argv[])
 	cout << "Using reachability file from " << filenameReach << endl;
 	cout << "Using inverse reachability file (will be created if missing): " << invReachFile << endl;
 
-    InvReachWindow rw(filenameRob,filenameReach,eef,invReachFile,rnsNameCollisionDetection, rnFootL, rnFoorR, envFiles);
+    SetupDialog setup;
+    setup.setRobotFile(filenameRob);
+    setup.setWsFile(filenameReach);
+    setup.setInvWsFile(invReachFile);
+    if (setup.exec() == QDialog::Accepted)
+    {
+        filenameRob = setup.getRobotFile();
+        filenameReach = setup.getWsFile();
+        invReachFile = setup.getInvWsFile();
 
-	rw.main();
+        // start the main application window
+        InvReachWindow rw(filenameRob,filenameReach,eef,invReachFile,rnsNameCollisionDetection, rnFootL, rnFoorR, envFiles);
+        rw.main();
+    }
 
 	return 0;
 
