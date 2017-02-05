@@ -21,6 +21,7 @@ public:
     std::string getRobotFile();
     std::string getWsFile();
     std::string getInvWsFile();
+    std::string getEEF();
 
 private:
     Ui::SetupDialog *ui;

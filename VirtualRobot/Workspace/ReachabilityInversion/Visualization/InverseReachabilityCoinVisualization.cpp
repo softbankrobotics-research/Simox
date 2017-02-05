@@ -607,7 +607,7 @@ void InverseReachabilityCoinVisualization::buildReachVisu(SoSeparator* reachabil
 #ifdef TEST_AT_TCP
 		SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(invReach,VirtualRobot::ColorMap::eHot,Eigen::Vector3f::UnitY(),true,0,0,10000);
 #else
-//		SoNode* visualisationNode = getCoinVisualizationCut(invReach,VirtualRobot::ColorMap::eHot,true);
+//        SoNode* visualisationNode = getCoinVisualizationCut(invReach,VirtualRobot::ColorMap::eHot,true);
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(invReach, VirtualRobot::ColorMap::eHot, true);
 #endif
 		if (visualisationNode)
@@ -694,8 +694,8 @@ SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWork
 		maxEntry = 1;
 
 
-	SoSeparator* arrow = CoinVisualizationFactory::CreateArrow(Eigen::Vector3f::UnitX(),arrowSize,3.0f,VisualizationFactory::Color::None());
-
+//    SoSeparator* arrow = CoinVisualizationFactory::CreateArrow(Eigen::Vector3f::UnitX(),arrowSize,3.0f,VisualizationFactory::Color::None());
+    SoSeparator* arrow = CoinVisualizationFactory::CreateArrow(Eigen::Vector3f::UnitY(),arrowSize,3.0f,VisualizationFactory::Color::None());
 
 	SoDrawStyle *ds = new SoDrawStyle;
 	ds->style = SoDrawStyle::LINES;

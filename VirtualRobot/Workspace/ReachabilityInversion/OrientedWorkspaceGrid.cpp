@@ -546,8 +546,8 @@ bool OrientedWorkspaceGrid::fillData( const std::vector< Eigen::Matrix4f > &traj
 		return false;
 	}
     lazyMode = false;
-	float tr = invReach->getDiscretizeParameterTranslation()*0.5f;
-	float rot = invReach->getDiscretizeParameterRotation()*0.5f;
+    float tr = invReach->getDiscretizeParameterTranslation()*0.5f;
+    float rot = invReach->getDiscretizeParameterRotation()*0.5f;
     clock_t startTime = clock();
 	clear();
     clock_t startTime2 = clock();
@@ -586,41 +586,43 @@ bool OrientedWorkspaceGrid::fillData( const std::vector< Eigen::Matrix4f > &traj
 
     clock_t startTime3 = clock();
 
-	for (float x=minX;x<=maxX;x+=tr)
-	{
-		posrpy[0] = x;
-		for (float y=minY;y<=maxY;y+=tr)
-		{
-			posrpy[1] = y;
-			for (float alpha=float(-M_PI);alpha<=float(M_PI);alpha+=rot)
-			{
-				posrpy[5] = alpha;
-				Eigen::Matrix4f m;
-				invReach->vector2Matrix(posrpy,m);
-				//MathTools::posrpy2eigen4f(posrpy,m);
+    for (float x=minX;x<=maxX;x+=tr)
+    {
+        posrpy[0] = x;
+        for (float y=minY;y<=maxY;y+=tr)
+        {
+            posrpy[1] = y;
+            for (float alpha=float(-M_PI);alpha<=float(M_PI);alpha+=rot) // TODO (harry) i think it should count from pi to 2pi
+            {
+               posrpy[5] = alpha;
+                Eigen::Matrix4f m;
+                invReach->vector2Matrix(posrpy,m);
+//                cout << "------------------------- m(0,3) = " << m(0,3) << " m(1,3) = " << m(1,3) << " m(2,3) = " << m(2,3) << endl;
+                //MathTools::posrpy2eigen4f(posrpy,m);
 
-				// get min entry
-				unsigned char e = 255;
-				for (size_t i=0;i<trajectory.size();i++)
-				{
-					invReach->setGlobalPose(trajectory[i]);
-					unsigned char e2 = invReach->getEntry(m);
-					if (e2<e)
-						e = e2;
-					if (e==0)
-						break;
-				}
-				if (e>0)
-				{
-					setEntry(x,y,alpha,e,grasp);
-					//reachGrid->setEntryCheckNeighbors(x,y,alpha,e,g);
-				}
+                // get min entry
+                unsigned char e = 255;
+                for (size_t i=0;i<trajectory.size();i++)
+                {
+                    invReach->setGlobalPose(trajectory[i]);
+                    unsigned char e2 = invReach->getEntry(m);
+                    if (e2<e)
+                        e = e2;
+                    if (e==0)
+                        break;
+                }
+                if (e>0)
+                {
+                    setEntry(x,y,alpha,e,grasp);
+                    cout << "[ORM] new cell entry: " << (int)e << endl;
+                    //reachGrid->setEntryCheckNeighbors(x,y,alpha,e,g);
+                }
+            }
 
+        }
+    }
 
-			}
-
-		}
-	}
+    //--------------------------------------------------------------------------------
 
     clock_t startTime4 = clock();
     int timeMS2 = (int)(startTime4-startTime3);

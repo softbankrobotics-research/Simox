@@ -50,6 +50,11 @@ std::string SetupDialog::getInvWsFile()
     return ui->edtInv->text().toStdString();
 }
 
+std::string SetupDialog::getEEF()
+{
+    return ui->cboxEEF->currentIndex() == 0 ? "Hand R" : "Hand L";
+}
+
 void SetupDialog::browseRobotFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select Robot File"), QString::fromStdString(getRobotFile()), tr("Robot Files (*.xml);;All Files (*)"));

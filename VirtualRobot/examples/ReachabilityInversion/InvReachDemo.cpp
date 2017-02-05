@@ -128,7 +128,8 @@ int main(int argc, char *argv[])
     {
         filenameRob = setup.getRobotFile();
         filenameReach = setup.getWsFile();
-        invReachFile = setup.getInvWsFile();
+        invReachFile = setup.getInvWsFile().empty() ? filenameReach + std::string(".inv.bin") : setup.getInvWsFile();
+        eef = setup.getEEF();
 
         // start the main application window
         InvReachWindow rw(filenameRob,filenameReach,eef,invReachFile,rnsNameCollisionDetection, rnFootL, rnFoorR, envFiles);
