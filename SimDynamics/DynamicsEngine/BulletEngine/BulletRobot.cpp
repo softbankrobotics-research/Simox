@@ -1216,7 +1216,7 @@ namespace SimDynamics
 
         Eigen::Vector3f deltaVel = link.dynNode2->getAngularVelocity() - link.dynNode1->getAngularVelocity();
         double speed = deltaVel.dot(rnRevJoint->getJointRotationAxis());
-        return speed*-1;//hinge->getMotorTargetVelosity();
+        return speed;//hinge->getMotorTargetVelosity();
 
         /*
          * // does the same:

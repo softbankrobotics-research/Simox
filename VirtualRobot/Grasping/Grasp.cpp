@@ -181,6 +181,11 @@ namespace VirtualRobot
         return quality;
     }
 
+    void Grasp::setQuality(float q)
+    {
+        quality = q;
+    }
+
     std::string Grasp::getCreationMethod()
     {
         return creation;

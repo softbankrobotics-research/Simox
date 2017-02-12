@@ -65,6 +65,9 @@ namespace VirtualRobot
         void clear();
         void flipVertexOrientations();
 
+        // Overwrite all colors
+        void setColor(VisualizationFactory::Color color);
+
         void print();
         Eigen::Vector3f getCOM();
         bool getSize(Eigen::Vector3f& storeMinSize, Eigen::Vector3f& storeMaxSize);

@@ -89,6 +89,7 @@ namespace Saba
     class GraspRrt;
     class PathProcessor;
     class ShortcutProcessor;
+    class ElasticBandProcessor;
     class ApproachDiscretization;
     class PlanningThread;
     class PathProcessingThread;
@@ -106,6 +107,7 @@ namespace Saba
     typedef boost::shared_ptr<GraspRrt> GraspRrtPtr;
     typedef boost::shared_ptr<PathProcessor> PathProcessorPtr;
     typedef boost::shared_ptr<ShortcutProcessor> ShortcutProcessorPtr;
+    typedef boost::shared_ptr<ElasticBandProcessor> ElasticBandProcessorPtr;
     typedef boost::shared_ptr<ConfigurationConstraint> ConfigurationConstraintPtr;
     typedef boost::shared_ptr<ApproachDiscretization> ApproachDiscretizationPtr;
     typedef boost::shared_ptr<PlanningThread> PlanningThreadPtr;
