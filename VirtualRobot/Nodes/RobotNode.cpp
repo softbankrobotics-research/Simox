@@ -159,9 +159,19 @@ namespace VirtualRobot
             q = jointLimitHi;
         }
 
+        if(jointValue != q)
+        {
+            this->_invalidateGlobalPose(true);
+        }
         jointValue = q;
+
     }
-    void RobotNode::setJointValueNoUpdate(float q)
+
+    void RobotNode::_calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const
+    {
+        newGlobalPose = getParentGlobalPose() * localTransformation;
+    }
+    void RobotNode::setJointValueNoUpdate(float q, bool invalidateChildren)
     {
         VR_ASSERT_MESSAGE(initialized, "Not initialized");
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
@@ -178,6 +188,10 @@ namespace VirtualRobot
             q = jointLimitHi;
         }
 
+        if(jointValue != q)
+        {
+            this->_invalidateGlobalPose(invalidateChildren);
+        }
         jointValue = q;
     }
 
@@ -211,7 +225,7 @@ namespace VirtualRobot
 
     void RobotNode::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
-        this->globalPose = parentPose * localTransformation; // getLocalTransformation();
+        _setInternalGlobalPose(parentPose * localTransformation); // getLocalTransformation();
     }
 
 
@@ -767,6 +781,7 @@ namespace VirtualRobot
 
     void RobotNode::updateVisualizationPose(const Eigen::Matrix4f& globalPose, float jointValue, bool updateChildren)
     {
+        this->_invalidateGlobalPose(updateChildren);
         updateVisualizationPose(globalPose, updateChildren);
         this->jointValue = jointValue;
     }
@@ -789,7 +804,7 @@ namespace VirtualRobot
             }
         }
 
-        this->globalPose = globalPose;
+        _setInternalGlobalPose(globalPose);
 
         // update collision and visualization model and children
         SceneObject::updatePose(updateChildren);
@@ -798,21 +813,44 @@ namespace VirtualRobot
     Eigen::Matrix4f RobotNode::getGlobalPose() const
     {
         ReadLockPtr lock = getRobot()->getReadLock();
-        return globalPose;
+        return getInternalGlobalPose();
+    }
+
+    Eigen::Matrix4f RobotNode::getParentGlobalPose() const
+    {
+        auto p = getParent();
+        if (p)
+        {
+            return p->getInternalGlobalPose();
+        }
+        else
+        {
+            // check for root
+            RobotPtr r = getRobot();
+
+            if (r && r->getRootNode() == shared_from_this())
+            {
+                return r->getGlobalPose();
+            }
+            else
+            {
+                return Eigen::Matrix4f::Identity();
+            }
+        }
     }
 
     Eigen::Matrix4f RobotNode::getPoseInRootFrame() const
     {
         RobotPtr r = getRobot();
         ReadLockPtr lock = r->getReadLock();
-        return r->getRootNode()->toLocalCoordinateSystem(globalPose);
+        return r->getRootNode()->toLocalCoordinateSystem(getInternalGlobalPose());
     }
 
     Eigen::Vector3f RobotNode::getPositionInRootFrame() const
     {
         RobotPtr r = getRobot();
         ReadLockPtr lock = r->getReadLock();
-        return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
+        return r->getRootNode()->toLocalCoordinateSystemVec(getInternalGlobalPose().block(0, 3, 3, 1));
     }
 
     RobotNode::RobotNodeType RobotNode::getType()

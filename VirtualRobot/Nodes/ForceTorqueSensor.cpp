@@ -43,7 +43,7 @@ namespace VirtualRobot
 
         // project onto joint axis
         //RobotNodePtr rn(robotNode);
-        Eigen::Vector3f zAxis = this->globalPose.block(0, 2, 3, 1);
+        Eigen::Vector3f zAxis = this->getInternalGlobalPose().block(0, 2, 3, 1);
         Eigen::Vector3f axisTorque = (torqueVector.dot(zAxis)) * zAxis;
 
         return axisTorque;

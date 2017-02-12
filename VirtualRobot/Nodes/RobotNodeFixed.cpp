@@ -73,7 +73,7 @@ namespace VirtualRobot
 
     void RobotNodeFixed::updateTransformationMatrices(const Eigen::Matrix4f& parentPose)
     {
-        this->globalPose = parentPose * localTransformation;//getLocalTransformation();
+        _setInternalGlobalPose(parentPose * localTransformation);//getLocalTransformation();
     }
 
     void RobotNodeFixed::print(bool printChildren, bool printDecoration) const

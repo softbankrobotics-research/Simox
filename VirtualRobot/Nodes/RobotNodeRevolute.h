@@ -138,7 +138,9 @@ namespace VirtualRobot
         */
         virtual std::string _toXML(const std::string& modelPath);
 
-        Eigen::Matrix4f tmpRotMat;
+        mutable Eigen::Matrix4f tmpRotMat;
+
+        void _calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const;
     };
 
     typedef boost::shared_ptr<RobotNodeRevolute> RobotNodeRevolutePtr;

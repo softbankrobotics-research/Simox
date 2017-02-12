@@ -22,7 +22,7 @@ namespace VirtualRobot
         this->name = name;
         this->visualizationModel = visualization;
         this->collisionModel = collisionModel;
-
+        this->validGlobalPose = false;
 
         this->physics = p;
         this->globalPose = Eigen::Matrix4f::Identity();
@@ -120,6 +120,7 @@ namespace VirtualRobot
 
     void SceneObject::updatePose(bool updateChildren)
     {
+        const Eigen::Matrix4f& globalPose = getInternalGlobalPose();
         if (visualizationModel && updateVisualization)
         {
             visualizationModel->setGlobalPose(globalPose);
@@ -139,7 +140,7 @@ namespace VirtualRobot
 
     void SceneObject::updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren)
     {
-        globalPose = parentPose;
+        _setInternalGlobalPose(parentPose);
         updatePose(updateChildren);
     }
 
@@ -503,7 +504,7 @@ namespace VirtualRobot
         if (visualizationModel)
         {
             visualizationModel->setUpdateVisualization(updateVisualization);
-            visualizationModel->setGlobalPose(globalPose);
+            visualizationModel->setGlobalPose(getInternalGlobalPose());
         }
     }
 
@@ -514,7 +515,7 @@ namespace VirtualRobot
         if (collisionModel)
         {
             collisionModel->setUpdateVisualization(updateVisualization);
-            collisionModel->setGlobalPose(globalPose);
+            collisionModel->setGlobalPose(getInternalGlobalPose());
         }
     }
 
@@ -614,7 +615,7 @@ namespace VirtualRobot
 
     Eigen::Matrix4f SceneObject::getGlobalPose() const
     {
-        return globalPose;
+        return getInternalGlobalPose();
     }
 
     Eigen::Vector3f SceneObject::getCoMLocal()
@@ -1169,6 +1170,42 @@ namespace VirtualRobot
         }
 
         return res;
+    }
+
+    void SceneObject::_invalidateGlobalPose(bool invalidateChildren)
+    {
+        if(invalidateChildren
+//                && validGlobalPose // if already false also children should be invalidated, though not safe if before this function was called with invalidateChildren==false
+                )
+        {
+            for(SceneObjectPtr& child : children)
+            {
+                child->_invalidateGlobalPose(true);
+            }
+        }
+        validGlobalPose = false;
+    }
+
+    void SceneObject::_setInternalGlobalPose(Eigen::Matrix4f newGlobalPose)
+    {
+        this->globalPose = newGlobalPose;
+        validGlobalPose = true;
+    }
+
+    void SceneObject::_calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const
+    {
+        // nothing to do here
+//        newGlobalPose = this->globalPose;
+    }
+
+    const Eigen::Matrix4f& SceneObject::getInternalGlobalPose() const
+    {
+        if(!validGlobalPose)
+        {
+            validGlobalPose = true;
+            _calculateGlobalPose(globalPose);
+        }
+        return globalPose;
     }
 
     std::string SceneObject::getFilenameReplacementVisuModel(const std::string standardExtension)

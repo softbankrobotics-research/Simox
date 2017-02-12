@@ -178,20 +178,18 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             VR_INFO << "Warning: NLOPT exception while optimizing: " << e.what() << std::endl;
         }
 
-        for(int i = 0; i < size; i++)
-        {
-            nodeSet->getNode(i)->setJointValue(x[i]);
-        }
+        nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()), false);
+
         double currentError;
         bool success = hardOptimizationFunction(x, currentError);
         // We determine success based on hard constraints only
         if(success)
         {
             // Success
+            nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()), false);
             robot->setUpdateVisualization(updateVisualization);
             robot->setUpdateCollisionModel(updateCollisionModel);
             robot->updatePose(true);
-            nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()));
             return true;
         }
         else if(currentMinError > currentError)
@@ -202,7 +200,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     }
     if(bestJointValues.size() > 0)
     {
-        nodeSet->setJointValues(std::vector<float>(bestJointValues.begin(), bestJointValues.end()));
+        nodeSet->setJointValues(std::vector<float>(bestJointValues.begin(), bestJointValues.end()), false);
     }
     // Failure
     robot->setUpdateVisualization(updateVisualization);
@@ -227,8 +225,7 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
 
     if(x != currentX)
     {
-        std::vector<float> q(x.begin(), x.end());
-        nodeSet->setJointValues(q);
+        nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()), false);
         currentX = x;
     }
 
@@ -271,7 +268,7 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
     if(x != currentX)
     {
         std::vector<float> q(x.begin(), x.end());
-        nodeSet->setJointValues(q);
+        nodeSet->setJointValues(q, false);
         currentX = x;
     }
 
@@ -293,7 +290,7 @@ bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<doubl
     if(x != currentX)
     {
         std::vector<float> q(x.begin(), x.end());
-        nodeSet->setJointValues(q);
+        nodeSet->setJointValues(q, false);
         currentX = x;
     }
     bool result = true;

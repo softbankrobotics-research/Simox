@@ -92,7 +92,7 @@ namespace VirtualRobot
         //Eigen::Affine3f tmpT(Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis));
         //MathTools::axisangle2eigen4f(jointRotationAxis, jointValue + jointValueOffset, tmpRotMat);
         tmpRotMat.block(0, 0, 3, 3) = Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis).matrix();
-        globalPose = parentPose * localTransformation /*getLocalTransformation()*/ * tmpRotMat;
+        _setInternalGlobalPose(parentPose * localTransformation /*getLocalTransformation()*/ * tmpRotMat);
     }
 
     void RobotNodeRevolute::print(bool printChildren, bool printDecoration) const
@@ -157,7 +157,7 @@ namespace VirtualRobot
         ReadLockPtr lock = getRobot()->getReadLock();
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = jointRotationAxis;
-        result4f = globalPose * result4f;
+        result4f = getInternalGlobalPose() * result4f;
 
         if (coordSystem)
         {
@@ -232,6 +232,12 @@ namespace VirtualRobot
 
         ss << "\t\t</Joint>" << endl;
         return ss.str();
+    }
+
+    void RobotNodeRevolute::_calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const
+    {
+        tmpRotMat.block(0, 0, 3, 3) = Eigen::AngleAxisf(jointValue + jointValueOffset, jointRotationAxis).matrix();
+        newGlobalPose = getParentGlobalPose() * localTransformation /*getLocalTransformation()*/ * tmpRotMat;
     }
 
     float RobotNodeRevolute::getLMTC(float angle)

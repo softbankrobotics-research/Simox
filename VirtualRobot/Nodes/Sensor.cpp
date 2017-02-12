@@ -164,9 +164,9 @@ namespace VirtualRobot
 
         if (p)
         {
-            this->globalPose = p->getGlobalPose() * rnTransformation;
+            _setInternalGlobalPose(p->getGlobalPose() * rnTransformation);
         } else
-            this->globalPose = rnTransformation;
+            _setInternalGlobalPose(rnTransformation);
 
         // update collision and visualization model and children
         SceneObject::updatePose(updateChildren);
@@ -176,7 +176,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!initialized, "Not initialized");
 
-        this->globalPose = globalPose * rnTransformation;
+        _setInternalGlobalPose(globalPose * rnTransformation);
 
         // update collision and visualization model and children
         SceneObject::updatePose(updateChildren);

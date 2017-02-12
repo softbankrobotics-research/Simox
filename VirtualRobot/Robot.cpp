@@ -332,7 +332,7 @@ namespace VirtualRobot
     */
     void LocalRobot::applyJointValuesNoLock()
     {
-        rootNode->updatePose(globalPose);
+        rootNode->updatePose(getInternalGlobalPose());
     }
 
 
@@ -625,7 +625,7 @@ namespace VirtualRobot
     void LocalRobot::setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues /*= true*/)
     {
         WriteLock(mutex, use_mutex);
-        this->globalPose = globalPose;
+        _setInternalGlobalPose(globalPose);
 
         if (applyJointValues)
         {
@@ -636,7 +636,7 @@ namespace VirtualRobot
     Eigen::Matrix4f LocalRobot::getGlobalPose()
     {
         ReadLock(mutex, use_mutex);
-        return globalPose;
+        return getInternalGlobalPose();
     }
 
 

@@ -148,7 +148,7 @@ namespace VirtualRobot
             This call locks the robot's mutex.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
-
+        virtual Eigen::Matrix4f getParentGlobalPose() const;
         /*!
             The pose of this node in the root coordinate system of the robot.
             \return The pose in root frame
@@ -325,7 +325,7 @@ namespace VirtualRobot
             \param updateTransformations When true, the transformation matrices of this joint and all child joints are updated (by calling applyJointValue()).
             \param clampToLimits Consider joint limits. When false an exception is thrown in case of invalid values.
         */
-        virtual void setJointValueNoUpdate(float q);
+        virtual void setJointValueNoUpdate(float q, bool invalidateChildren = true);
 
         protected:
         /*!
@@ -393,6 +393,8 @@ namespace VirtualRobot
         virtual std::string _toXML(const std::string& modelPath) = 0;
 
         void setJointValueNotInitialized(float q);
+    protected:
+        void _calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const;
     };
 
 } // namespace VirtualRobot

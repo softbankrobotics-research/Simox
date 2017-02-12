@@ -385,7 +385,7 @@ namespace VirtualRobot
         }
     }
 
-    void RobotNodeSet::setJointValues(const std::vector<float>& jointValues)
+    void RobotNodeSet::setJointValues(const std::vector<float>& jointValues, bool updateGlobalPosesDirectly)
     {
         THROW_VR_EXCEPTION_IF(jointValues.size() != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
@@ -395,21 +395,37 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
         {
-            robotNodes[i]->setJointValueNoUpdate(jointValues[i]);
+            robotNodes[i]->setJointValueNoUpdate(jointValues[i], false);
         }
-
-        if (kinematicRoot)
+        if(updateGlobalPosesDirectly)
         {
-            kinematicRoot->updatePose();
+            if (kinematicRoot)
+            {
+                kinematicRoot->updatePose();
+            }
+            else
+            {
+                rob->applyJointValues();
+            }
         }
         else
         {
-            rob->applyJointValues();
+            if(kinematicRoot)
+            {
+                kinematicRoot->_invalidateGlobalPose(true);
+            }
+            else
+            {   //no way to know which is the root of the nodeset -> update all
+                for (unsigned int i = 0; i < robotNodes.size(); i++)
+                {
+                    robotNodes[i]->_invalidateGlobalPose(true);
+                }
+            }
         }
     }
 
 
-    void RobotNodeSet::setJointValues(const Eigen::VectorXf& jointValues)
+    void RobotNodeSet::setJointValues(const Eigen::VectorXf& jointValues, bool updateGlobalPosesDirectly)
     {
         THROW_VR_EXCEPTION_IF(static_cast<std::size_t>(jointValues.rows()) != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
         RobotPtr rob = robot.lock();
@@ -418,20 +434,37 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
         {
-            robotNodes[i]->setJointValueNoUpdate(jointValues[i]);
+            robotNodes[i]->setJointValueNoUpdate(jointValues[i], false);
         }
-
-        if (kinematicRoot)
+        if(updateGlobalPosesDirectly)
         {
-            kinematicRoot->updatePose();
+            if (kinematicRoot)
+            {
+                kinematicRoot->updatePose();
+            }
+            else
+            {
+                rob->applyJointValues();
+            }
         }
         else
         {
-            rob->applyJointValues();
+            if(kinematicRoot)
+            {
+                kinematicRoot->_invalidateGlobalPose(true);
+            }
+            else
+            {   //no way to know which is the root of the nodeset -> update all
+                for (unsigned int i = 0; i < robotNodes.size(); i++)
+                {
+                    robotNodes[i]->_invalidateGlobalPose(true);
+                }
+            }
         }
+
     }
 
-    void RobotNodeSet::setJointValues(const RobotConfigPtr jointValues)
+    void RobotNodeSet::setJointValues(const RobotConfigPtr jointValues, bool updateGlobalPosesDirectly)
     {
         VR_ASSERT(jointValues);
         RobotPtr rob = robot.lock();
@@ -442,17 +475,34 @@ namespace VirtualRobot
         {
             if (jointValues->hasConfig(robotNodes[i]->getName()))
             {
-                robotNodes[i]->setJointValueNoUpdate(jointValues->getConfig(robotNodes[i]->getName()));
+                robotNodes[i]->setJointValueNoUpdate(jointValues->getConfig(robotNodes[i]->getName()), false);
             }
         }
 
-        if (kinematicRoot)
+        if(updateGlobalPosesDirectly)
         {
-            kinematicRoot->updatePose();
+            if (kinematicRoot)
+            {
+                kinematicRoot->updatePose();
+            }
+            else
+            {
+                rob->applyJointValues();
+            }
         }
         else
         {
-            rob->applyJointValues();
+            if(kinematicRoot)
+            {
+                kinematicRoot->_invalidateGlobalPose(true);
+            }
+            else
+            {   //no way to know which is the root of the nodeset -> update all
+                for (unsigned int i = 0; i < robotNodes.size(); i++)
+                {
+                    robotNodes[i]->_invalidateGlobalPose(true);
+                }
+            }
         }
 
     }

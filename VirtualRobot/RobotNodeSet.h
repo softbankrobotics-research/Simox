@@ -118,18 +118,18 @@ namespace VirtualRobot
             The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
             \param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
         */
-        virtual void setJointValues(const std::vector<float>& jointValues);
+        virtual void setJointValues(const std::vector<float>& jointValues, bool updateGlobalPosesDirectly = true);
         /*!
             Set joint values [rad].
             The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
             \param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
         */
-        virtual void setJointValues(const Eigen::VectorXf& jointValues);
+        virtual void setJointValues(const Eigen::VectorXf& jointValues, bool updateGlobalPosesDirectly = true);
 
         /*!
             Set joints that are within the given RobotConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
         */
-        virtual void setJointValues(const RobotConfigPtr jointValues);
+        virtual void setJointValues(const RobotConfigPtr jointValues, bool updateGlobalPosesDirectly = true);
 
         RobotNodePtr& operator[](int i);
 

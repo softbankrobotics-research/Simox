@@ -356,7 +356,16 @@ namespace VirtualRobot
         */
         virtual bool saveModelFiles(const std::string& modelPath, bool replaceFilenames);
 
+        /**
+         * @brief Only use if you know what you are doing.
+         * No Mutex.
+         * @return
+         */
+        const Eigen::Matrix4f &getInternalGlobalPose() const;
     protected:
+        void _invalidateGlobalPose(bool invalidateChildren);
+        void _setInternalGlobalPose(Eigen::Matrix4f newGlobalPose);
+        virtual void _calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const;
         virtual SceneObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         //! Parent detached this object
@@ -382,8 +391,7 @@ namespace VirtualRobot
         bool initialized;
         ///////////////////////// SETUP ////////////////////////////////////
 
-        //< The transformation that is used for visualization
-        Eigen::Matrix4f globalPose;
+
 
         std::vector<SceneObjectPtr> children;
         SceneObjectWeakPtr parent;
@@ -399,6 +407,10 @@ namespace VirtualRobot
         Physics physics;
 
         CollisionCheckerPtr collisionChecker;
+    private:
+        //< The transformation that is used for visualization
+        mutable Eigen::Matrix4f globalPose;
+        mutable bool validGlobalPose;
     };
 
 

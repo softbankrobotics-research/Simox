@@ -365,7 +365,9 @@ namespace VirtualRobot
         tmpUpdateJacobianPosition.setZero();
         tmpUpdateJacobianOrientation.setZero();
 
-
+        ReadLockPtr lock;
+        if(nodes.size() > 0)
+            lock = (*nodes.begin())->getRobot()->getReadLock();
         // Iterate over all degrees of freedom
         for (size_t i = 0; i < nDoF; i++)
         {
@@ -397,13 +399,13 @@ namespace VirtualRobot
 
                         if (coordSystem)
                         {
-                            toTCP = coordSystem->toLocalCoordinateSystem(tcp->getGlobalPose()).block(0, 3, 3, 1)
-                                    - coordSystem->toLocalCoordinateSystem(dof->getGlobalPose()).block(0, 3, 3, 1);
+                            toTCP = coordSystem->toLocalCoordinateSystem(tcp->getInternalGlobalPose()).block(0, 3, 3, 1)
+                                    - coordSystem->toLocalCoordinateSystem(dof->getInternalGlobalPose()).block(0, 3, 3, 1);
                         }
                         else
                         {
-                            toTCP = tcp->getGlobalPose().block(0, 3, 3, 1)
-                                    - dof->getGlobalPose().block(0, 3, 3, 1);
+                            toTCP = tcp->getInternalGlobalPose().block(0, 3, 3, 1)
+                                    - dof->getInternalGlobalPose().block(0, 3, 3, 1);
                         }
 
                         if (convertMMtoM)

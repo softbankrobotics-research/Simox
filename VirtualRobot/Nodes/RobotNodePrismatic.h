@@ -133,6 +133,10 @@ namespace VirtualRobot
         Eigen::Vector3f visuScaleFactor;
         Eigen::Vector3f unscaledLocalCoM;
 
+
+        // SceneObject interface
+    protected:
+        void _calculateGlobalPose(Eigen::Matrix4f& newGlobalPose) const;
     };
 
     typedef boost::shared_ptr<RobotNodePrismatic> RobotNodePrismaticPtr;
