@@ -1624,7 +1624,7 @@ namespace SimDynamics
         Eigen::VectorXf result(6);
         result.head(3) = ftA.head(3); // force in joint is same as force on CoM of A
         result.tail(3) = torqueJointGlobal;
-        return result;
+        return result / BulletObject::MassFactor;
     }
 
     void BulletRobot::setMaximumMotorImpulse(double maxImpulse)
