@@ -566,50 +566,30 @@ namespace SimDynamics
 //                    if (it->first->getName() == "Upperarm R")
 //                        cout << "################### " << target.node->getName() << " velActual:" << velActual << ", velTarget " << velocityTarget << " targetVelocity " << targetVelocity <<  " pos target: " << target.jointValueTarget <<  " posActual: " << posActual << endl;
                 }
-                // FIXME this bypasses the controller (and doesn't work..)
                 else if (actuation.modes.torque)
                 {
                     //cout << "################### torque:" << it->second.jointTorqueTarget << endl;
-                    targetVelocity = it->second.jointTorqueTarget;
-                    //cout << "jointTorqueTarget for joint " << it->second.node->getName() << " :" << it->second.jointTorqueTarget << endl;
-                    /*
-                    //=======
-                    //Here is some code that sets torques directly to the finger joints (bypassing the Bullet motors).
-                    //Unfortunately, this does not seem to work, so far.
-                    //1. With hinge->enableAngularMotor(true,...), the fingers do not move at all.
-                    //2. Wtih hinge->enableAngularMotor(false,...), the fingers are simply actuated by gravity...
-                    //=======
-                    //cout << " === == === === === > BulletRobot (hinge !): eTorque NEW!!! ====" << endl;
-                    cout << "Disabling Angular Motor... " << endl;
-                    hinge->enableAngularMotor(false,0,bulletMaxMotorImulse);
-                    cout << "=== === === jointCounter: " << jointCounter << " === === ===" << endl;
-                    //get the links that are connected by the hinge.
-                    btRigidBody rbA = hinge->getRigidBodyA();
-                    btRigidBody rbB = hinge->getRigidBodyB();
-                    //get joint axis from the hinge ...
-                    btMatrix3x3 rbAFrameBasis = hinge->getAFrame().getBasis();
-                    //z-Achse ist Gelenkachse? (das steht in btHingeConstraint.h; setAxis() bzw. struct btHingeConstraintDoubleData)
-                    btVector3 hingeAxis = rbAFrameBasis.getColumn(2);
-                    //calc 3dim torque by multiplication with joint axis!
-                    btVector3 resTorqueA = hingeAxis * it->second.jointTorqueTarget;
-                    //TODO (maybe): calc "realistic" torque to be applied (using dt)
-                    //apply torques to the bodies connected by the joint
-                    rbA.applyTorqueImpulse(resTorqueA);
-                    rbB.applyTorqueImpulse(-resTorqueA);
-                    //DEBUG OUT:
-                    //--> TODO!
-                    //cout << "==== ==== ==== DEBUG OUT: ==== ==== ==== " << endl;
-                    cout << "rbAFrameBasis:" << endl;
-                    btVector3 row0 = rbAFrameBasis.getRow(0);
-                    btVector3 row1 = rbAFrameBasis.getRow(1);
-                    btVector3 row2 = rbAFrameBasis.getRow(2);
-                    cout << row0.getX() << " " << row0.getY() << " " << row0.getZ() << endl;
-                    cout << row1.getX() << " " << row1.getY() << " " << row1.getZ() << endl;
-                    cout << row2.getX() << " " << row2.getY() << " " << row2.getZ() << endl;
-                    cout << "hingeAxis: " << hingeAxis.getX() << " " << hingeAxis.getY() << " " << hingeAxis.getZ() << endl;
-                    cout << "resTorqueA: " << resTorqueA.getX() << " " << resTorqueA.getY() << " " << resTorqueA.getZ() << endl;
-                    jointCounter++;
-                    */
+                    auto torque = it->second.jointTorqueTarget;
+                    btVector3 hingeAxisLocalA =
+                            hinge->getFrameOffsetA().getBasis().getColumn(2);
+                    btVector3 hingeAxisLocalB =
+                            hinge->getFrameOffsetB().getBasis().getColumn(2);
+                    btVector3 hingeAxisWorldA =
+                            hinge->getRigidBodyA().getWorldTransform().getBasis() *
+                            hingeAxisLocalA;
+                    btVector3 hingeAxisWorldB =
+                            hinge->getRigidBodyB().getWorldTransform().getBasis() *
+                            hingeAxisLocalB;
+
+
+                    int sign = torque > 0?1:-1;
+                    torque = std::min<double>(fabs(torque), it->first->getMaxTorque()) * sign;
+
+                    btVector3 hingeTorqueA = - torque * hingeAxisWorldA;
+                    btVector3 hingeTorqueB =   torque * hingeAxisWorldB;
+                    hinge->enableMotor(false);
+                    hinge->getRigidBodyA().applyTorque(hingeTorqueA);
+                    hinge->getRigidBodyB().applyTorque(hingeTorqueB);
                 }
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
@@ -636,7 +616,10 @@ namespace SimDynamics
                     link.dynNode1->getRigidBody()->activate();
                     link.dynNode2->getRigidBody()->activate();
                 }
-                hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
+                if (!actuation.modes.torque)
+                {
+                    hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
+                }
 
 #endif
             }
