@@ -82,6 +82,9 @@
 #include <iostream>
 #include <algorithm>
 
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+
 
 namespace VirtualRobot
 {
@@ -345,7 +348,7 @@ namespace VirtualRobot
     * \param visualizationNode VisualizationNodePtr instance in which the created CoinVisualizationNode is stored.
     * \param boundingBox Use bounding box instead of full model.
     */
-    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox)
+    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDoubledTextures)
     {
         // read the contents of the file
         SoNode* coinVisualization = SoDB::readAll(&soInput);
@@ -369,7 +372,10 @@ namespace VirtualRobot
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
-
+        if(freeDoubledTextures)
+        {
+            RemoveDoubledTextures(coinVisualization);
+        }
         coinVisualization->unref();
     }
 
@@ -1023,6 +1029,48 @@ namespace VirtualRobot
         res->addChild(s);
         res->unrefNoDelete();
         return res;
+    }
+
+    boost::mutex textureMutex;
+    SbDict namedict;
+    void CoinVisualizationFactory::RemoveDoubledTextures(SoNode *node)
+    {
+
+        SoSearchAction sa;
+        sa.setType(SoVRMLImageTexture::getClassTypeId());
+        sa.setInterest(SoSearchAction::ALL);
+        sa.setSearchingAll(TRUE);
+        sa.apply(node);
+        SoPathList & pl = sa.getPaths();
+
+        boost::mutex::scoped_lock lock(textureMutex);
+        for (int i = 0; i < pl.getLength(); i++) {
+          SoFullPath * p = (SoFullPath*) pl[i];
+          if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
+            SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
+            for (int i = 0; i < tex->url.getNum(); ++i)
+            {
+              SbName name = tex->url[i].getString();
+              unsigned long key = (unsigned long) ((void*) name.getString());
+              void * tmp;
+              if (!namedict.find(key, tmp)) {
+                (void) namedict.enter(key, tex);
+              }
+              else if (tmp != (void*) tex) {
+                SoNode * parent = p->getNodeFromTail(1);
+                if (parent->isOfType(SoVRMLAppearance::getClassTypeId())) {
+                  ((SoVRMLAppearance*)parent)->texture = (SoNode*) tmp;
+                    ((SoNode*) tmp)->ref(); // ref texture again because it used again?!
+
+                }
+                else {
+                  // not a valid VRML2 file. Print a warning or something.
+                    std::cout << "not a valid VRML2 file" << std::endl;
+                }
+              }
+            }
+          }
+        }
     }
 
     VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)

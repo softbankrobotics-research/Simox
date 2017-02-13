@@ -135,7 +135,7 @@ namespace VirtualRobot
         static SoSeparator* CreatePointsVisualization(const std::vector<MathTools::ContactPoint>& points, bool showNormals = false);
         static SoSeparator* CreateArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray());
         static SoSeparator* CreateVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-
+        static void RemoveDoubledTextures(SoNode* node);
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
@@ -397,7 +397,7 @@ namespace VirtualRobot
         virtual void cleanup();
     protected:
         static SoNode* GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color);
-        static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false);
+        static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false, bool freeDoubledTextures = true);
 
         static inline char IVToolsHelper_ReplaceSpaceWithUnderscore(char input)
         {
