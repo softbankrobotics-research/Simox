@@ -65,6 +65,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/SbTime.h>
+#include <Inventor/sensors/SoDataSensor.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -88,6 +89,9 @@
 
 namespace VirtualRobot
 {
+
+    boost::mutex CoinVisualizationFactory::textureCacheMutex;
+    SbDict CoinVisualizationFactory::globalTextureCache  = SbDict();
 
     CoinVisualizationFactory::CoinVisualizationFactory()
     {
@@ -374,7 +378,7 @@ namespace VirtualRobot
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
         if(freeDoubledTextures)
         {
-            RemoveDoubledTextures(coinVisualization);
+            RemoveDuplicateTextures(coinVisualization);
         }
         coinVisualization->unref();
     }
@@ -1031,10 +1035,33 @@ namespace VirtualRobot
         return res;
     }
 
-    boost::mutex textureMutex;
-    SbDict namedict;
-    void CoinVisualizationFactory::RemoveDoubledTextures(SoNode *node)
+
+
+
+
+
+    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node)
     {
+        // internal class to keep track of texture removal
+        struct DeleteCallBack : SoDataSensor
+        {
+            DeleteCallBack(const std::string& nodeName, unsigned long key) : nodeName(nodeName), key(key){}
+
+            // SoDataSensor interface
+        public:
+            void dyingReference()
+            {
+                boost::mutex::scoped_lock lock(CoinVisualizationFactory::textureCacheMutex);
+                CoinVisualizationFactory::globalTextureCache.remove(key);
+                delete this;
+            }
+
+        private:
+            ~DeleteCallBack(){}
+            std::string nodeName;
+            unsigned long key;
+        };
+
 
         SoSearchAction sa;
         sa.setType(SoVRMLImageTexture::getClassTypeId());
@@ -1043,7 +1070,7 @@ namespace VirtualRobot
         sa.apply(node);
         SoPathList & pl = sa.getPaths();
 
-        boost::mutex::scoped_lock lock(textureMutex);
+        boost::mutex::scoped_lock lock(textureCacheMutex);
         for (int i = 0; i < pl.getLength(); i++) {
           SoFullPath * p = (SoFullPath*) pl[i];
           if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
@@ -1053,15 +1080,14 @@ namespace VirtualRobot
               SbName name = tex->url[i].getString();
               unsigned long key = (unsigned long) ((void*) name.getString());
               void * tmp;
-              if (!namedict.find(key, tmp)) {
-                (void) namedict.enter(key, tex);
+              if (!globalTextureCache.find(key, tmp)) {
+                (void) globalTextureCache.enter(key, tex);
+                tex->addAuditor(new DeleteCallBack(name.getString(), key), SoNotRec::SENSOR);
               }
               else if (tmp != (void*) tex) {
                 SoNode * parent = p->getNodeFromTail(1);
                 if (parent->isOfType(SoVRMLAppearance::getClassTypeId())) {
                   ((SoVRMLAppearance*)parent)->texture = (SoNode*) tmp;
-                    ((SoNode*) tmp)->ref(); // ref texture again because it used again?!
-
                 }
                 else {
                   // not a valid VRML2 file. Print a warning or something.
