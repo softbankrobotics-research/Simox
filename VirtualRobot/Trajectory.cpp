@@ -343,6 +343,11 @@ namespace VirtualRobot
         return path;
     }
 
+    Eigen::VectorXf &Trajectory::getPointRef(unsigned int pos)
+    {
+        return path.at(pos);
+    }
+
     std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::RobotNodePtr r)
     {
         VR_ASSERT(rns);

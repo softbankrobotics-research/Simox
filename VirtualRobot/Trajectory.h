@@ -136,6 +136,8 @@ namespace VirtualRobot
         //! For quick access to data.
         const std::vector <Eigen::VectorXf >& getData() const;
 
+        Eigen::VectorXf& getPointRef(unsigned int pos);
+
         VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
 
         /*!

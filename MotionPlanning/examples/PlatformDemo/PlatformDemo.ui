@@ -39,9 +39,9 @@
       <widget class="QGroupBox" name="groupBox_2">
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>120</x>
          <y>400</y>
-         <width>231</width>
+         <width>221</width>
          <height>121</height>
         </rect>
        </property>
@@ -258,7 +258,7 @@
          <x>10</x>
          <y>10</y>
          <width>331</width>
-         <height>341</height>
+         <height>381</height>
         </rect>
        </property>
        <property name="title">
@@ -280,7 +280,7 @@
        <widget class="QDoubleSpinBox" name="doubleSpinBoxColChecking">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>190</x>
           <y>190</y>
           <width>81</width>
           <height>31</height>
@@ -305,7 +305,7 @@
        <widget class="QDoubleSpinBox" name="doubleSpinBoxCSpaceSampling">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>190</x>
           <y>230</y>
           <width>81</width>
           <height>31</height>
@@ -318,13 +318,13 @@
          <double>0.010000000000000</double>
         </property>
         <property name="maximum">
-         <double>100.000000000000000</double>
+         <double>1000.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>1.000000000000000</double>
         </property>
         <property name="value">
-         <double>40.000000000000000</double>
+         <double>200.000000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
@@ -395,7 +395,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>310</y>
+          <y>340</y>
           <width>141</width>
           <height>21</height>
          </rect>
@@ -407,8 +407,8 @@
        <widget class="QSpinBox" name="spinBox_smoothing">
         <property name="geometry">
          <rect>
-          <x>180</x>
-          <y>300</y>
+          <x>190</x>
+          <y>340</y>
           <width>81</width>
           <height>27</height>
          </rect>
@@ -417,7 +417,30 @@
          <number>10000</number>
         </property>
         <property name="value">
-         <number>200</number>
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>310</y>
+          <width>101</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Algorithm</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBoxSmoothing">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>300</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
         </property>
        </widget>
       </widget>
@@ -426,8 +449,8 @@
         <rect>
          <x>10</x>
          <y>400</y>
-         <width>81</width>
-         <height>91</height>
+         <width>91</width>
+         <height>121</height>
         </rect>
        </property>
        <property name="title">
@@ -444,6 +467,19 @@
         </property>
         <property name="text">
          <string>Plan</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonOpti">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>80</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>re-smooth</string>
         </property>
        </widget>
       </widget>

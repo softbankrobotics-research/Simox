@@ -14,6 +14,7 @@ namespace VirtualRobot
     {
         VR_ASSERT(rns);
         VR_ASSERT(rnsBodies);
+        convertMMtoM = false;
         name = "CoMIK";
         checkImprovement = false;
         this->rnsBodies = rnsBodies;
@@ -77,6 +78,12 @@ namespace VirtualRobot
                     //                        - dof->getGlobalPose().block(0, 3, 3, 1);
                     Eigen::Vector3f toTCP = node->getCoMGlobal()
                                             - dof->getGlobalPose().block(0, 3, 3, 1);
+
+                    if (convertMMtoM)
+                    {
+                        toTCP /= 1000.0f;
+                    }
+
                     position.block(0, i, 3, 1) = axis.cross(toTCP);
                 }
                 else if (dof->isTranslationalJoint())
@@ -107,6 +114,12 @@ namespace VirtualRobot
 
         return position;
     }
+
+    void CoMIK::convertModelScalingtoM(bool enable)
+    {
+        convertMMtoM = enable;
+    }
+
 
     Eigen::MatrixXf CoMIK::getJacobianMatrix(SceneObjectPtr /*tcp*/)
     {
