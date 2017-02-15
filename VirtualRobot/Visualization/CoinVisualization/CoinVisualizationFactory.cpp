@@ -90,7 +90,7 @@
 namespace VirtualRobot
 {
 
-    boost::mutex CoinVisualizationFactory::textureCacheMutex;
+    boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
     SbDict CoinVisualizationFactory::globalTextureCache  = SbDict();
 
     CoinVisualizationFactory::CoinVisualizationFactory()
@@ -352,7 +352,7 @@ namespace VirtualRobot
     * \param visualizationNode VisualizationNodePtr instance in which the created CoinVisualizationNode is stored.
     * \param boundingBox Use bounding box instead of full model.
     */
-    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDoubledTextures)
+    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDuplicateTextures)
     {
         // read the contents of the file
         SoNode* coinVisualization = SoDB::readAll(&soInput);
@@ -376,7 +376,7 @@ namespace VirtualRobot
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
-        if(freeDoubledTextures)
+        if(freeDuplicateTextures)
         {
             RemoveDuplicateTextures(coinVisualization);
         }
@@ -1043,21 +1043,21 @@ namespace VirtualRobot
     void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node)
     {
         // internal class to keep track of texture removal
-        struct DeleteCallBack : SoDataSensor
+        struct DeleteTextureCallBack : SoDataSensor
         {
-            DeleteCallBack(const std::string& nodeName, unsigned long key) : nodeName(nodeName), key(key){}
+            DeleteTextureCallBack(const std::string& nodeName, unsigned long key) : nodeName(nodeName), key(key){}
 
             // SoDataSensor interface
         public:
             void dyingReference()
             {
-                boost::mutex::scoped_lock lock(CoinVisualizationFactory::textureCacheMutex);
+                boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
                 CoinVisualizationFactory::globalTextureCache.remove(key);
                 delete this;
             }
 
         private:
-            ~DeleteCallBack(){}
+            ~DeleteTextureCallBack(){}
             std::string nodeName;
             unsigned long key;
         };
@@ -1070,7 +1070,7 @@ namespace VirtualRobot
         sa.apply(node);
         SoPathList & pl = sa.getPaths();
 
-        boost::mutex::scoped_lock lock(textureCacheMutex);
+        boost::mutex::scoped_lock lock(globalTextureCacheMutex);
         for (int i = 0; i < pl.getLength(); i++) {
           SoFullPath * p = (SoFullPath*) pl[i];
           if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
@@ -1082,7 +1082,7 @@ namespace VirtualRobot
               void * tmp;
               if (!globalTextureCache.find(key, tmp)) {
                 (void) globalTextureCache.enter(key, tex);
-                tex->addAuditor(new DeleteCallBack(name.getString(), key), SoNotRec::SENSOR);
+                tex->addAuditor(new DeleteTextureCallBack(name.getString(), key), SoNotRec::SENSOR);
               }
               else if (tmp != (void*) tex) {
                 SoNode * parent = p->getNodeFromTail(1);

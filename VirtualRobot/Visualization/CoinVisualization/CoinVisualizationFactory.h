@@ -397,7 +397,7 @@ namespace VirtualRobot
         virtual void cleanup();
     protected:
         static SoNode* GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color);
-        static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false, bool freeDoubledTextures = true);
+        static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false, bool freeDuplicateTextures = true);
 
         static inline char IVToolsHelper_ReplaceSpaceWithUnderscore(char input)
         {
@@ -417,7 +417,7 @@ namespace VirtualRobot
         static boost::shared_ptr<VisualizationFactory> createInstance(void*);
     private:
         static SubClassRegistry registry;
-        static boost::mutex textureCacheMutex;
+        static boost::mutex globalTextureCacheMutex;
         static SbDict globalTextureCache;
     };
 
