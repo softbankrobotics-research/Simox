@@ -394,7 +394,7 @@ namespace VirtualRobot
             auto it = meshCache.find(soInput.getCurFileName());
             if(it != meshCache.end())
             {
-                std::cout << "CACHE HIT for " << oInput.getCurFileName() << std::endl;
+                std::cout << "CACHE HIT for " << soInput.getCurFileName() << std::endl;
                 coinVisualization = it->second;
                 coinVisualization->ref();
             }
