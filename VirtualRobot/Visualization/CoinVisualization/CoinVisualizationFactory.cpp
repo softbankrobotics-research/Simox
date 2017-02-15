@@ -93,6 +93,12 @@ namespace VirtualRobot
     boost::mutex CoinVisualizationFactory::textureCacheMutex;
     SbDict CoinVisualizationFactory::globalTextureCache  = SbDict();
 
+    boost::mutex CoinVisualizationFactory::meshCacheMutex;
+    std::map<std::string, SoNode*> CoinVisualizationFactory::meshCache;
+
+
+
+
     CoinVisualizationFactory::CoinVisualizationFactory()
     {
     }
@@ -342,7 +348,6 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-
     /**
     * This method reads the data from the given \p soInput and creates a new CoinVisualizationNode
     * with the read Coin model if no error occurred during reading the model.
@@ -354,32 +359,69 @@ namespace VirtualRobot
     */
     void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDoubledTextures)
     {
-        // read the contents of the file
-        SoNode* coinVisualization = SoDB::readAll(&soInput);
-
-        // check if the visualization was read
-        if (NULL == coinVisualization)
+        // internal class to keep track of texture removal
+        struct DeleteCallBack : SoDataSensor
         {
-            std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
-            return;
-        }
+            DeleteCallBack(const std::string& nodeName) : nodeName(nodeName){
+            }
 
-        coinVisualization->ref();
+            // SoDataSensor interface
+        public:
+            void dyingReference()
+            {
+//                std::cout << nodeName << " is dying " << this->getTriggerNode() << std::endl;
+                boost::mutex::scoped_lock lock(CoinVisualizationFactory::meshCacheMutex);
+                CoinVisualizationFactory::meshCache.erase(nodeName);
+
+            }
+        private:
+            std::string nodeName;
+        };
+        static std::map<std::string, DeleteCallBack*> deleteCallBacks;
+
+
+        SoNode* coinVisualization;
 
         if (boundingBox)
         {
             SoSeparator* bboxVisu = CreateBoundingBox(coinVisualization, false);
             bboxVisu->ref();
-            coinVisualization->unref();
             coinVisualization = bboxVisu;
+        }
+        else
+        {
+            auto it = meshCache.find(soInput.getCurFileName());
+            if(it != meshCache.end() && false)
+            {
+                std::cout << "CACHE HIT" << std::endl;
+                coinVisualization = it->second;
+            }
+            else
+            {
+                std::cout << "loading: " << soInput.getCurFileName() << std::endl;
+                // read the contents of the file
+                coinVisualization = SoDB::readAll(&soInput);
+                // check if the visualization was read
+                if (NULL == coinVisualization)
+                {
+                    std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
+                    return;
+                }
+                meshCache[soInput.getCurFileName()] = coinVisualization;
+                coinVisualization->ref();
+                if(freeDoubledTextures)
+                {
+                    RemoveDuplicateTextures(coinVisualization);
+                }
+                auto it = deleteCallBacks.emplace(soInput.getCurFileName(),new DeleteCallBack(std::string(soInput.getCurFileName())));
+                coinVisualization->addAuditor(it.first->second, SoNotRec::SENSOR);
+
+            }
         }
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
-        if(freeDoubledTextures)
-        {
-            RemoveDuplicateTextures(coinVisualization);
-        }
+
         coinVisualization->unref();
     }
 

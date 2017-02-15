@@ -419,6 +419,8 @@ namespace VirtualRobot
         static SubClassRegistry registry;
         static boost::mutex textureCacheMutex;
         static SbDict globalTextureCache;
+        static boost::mutex meshCacheMutex;
+        static std::map<std::string, SoNode*> meshCache;
     };
 
     typedef boost::shared_ptr<CoinVisualizationFactory> CoinVisualizationFactoryPtr;
