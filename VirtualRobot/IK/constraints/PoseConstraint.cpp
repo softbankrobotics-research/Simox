@@ -192,8 +192,6 @@ Eigen::VectorXf PoseConstraint::positionOptimizationGradient()
 
 double PoseConstraint::orientationOptimizationFunction()
 {
-    Eigen::Matrix3f diff = target.block<3,3>(0,0) * eef->getGlobalPose().block<3,3>(0,0).inverse();
-    Eigen::AngleAxisf aa(diff);
 
     float value = 0;
     switch(cartesianSelection)
@@ -206,7 +204,12 @@ double PoseConstraint::orientationOptimizationFunction()
 
         case IKSolver::CartesianSelection::Orientation:
         case IKSolver::CartesianSelection::All:
+        {
+            Eigen::Matrix3f diff = target.block<3,3>(0,0) * eef->getGlobalPose().block<3,3>(0,0).inverse();
+            Eigen::AngleAxisf aa(diff);
+
             value = aa.angle() * aa.angle();
+        }
             break;
     }
 
@@ -217,13 +220,6 @@ Eigen::VectorXf PoseConstraint::orientationOptimizationGradient()
 {
     int size = nodeSet->getSize();
 
-    Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
-    Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
-
-    Eigen::Vector3f rpy;
-    Eigen::AngleAxisf aa;
-    aa = diff.block<3,3>(0,0);
-    rpy = aa.angle() * aa.axis();
 
     switch(cartesianSelection)
     {
@@ -235,7 +231,17 @@ Eigen::VectorXf PoseConstraint::orientationOptimizationGradient()
 
         case IKSolver::CartesianSelection::Orientation:
         case IKSolver::CartesianSelection::All:
+        {
+
+            Eigen::MatrixXf J = ik->getJacobianMatrix(eef);
+            Eigen::Matrix4f diff = eef->getGlobalPose() * target.inverse();
+
+            Eigen::Vector3f rpy;
+            Eigen::AngleAxisf aa;
+            aa = diff.block<3,3>(0,0);
+            rpy = aa.angle() * aa.axis();
             return 2 * rpy.transpose() * J.block(3, 0, 3, size);
+        }
     }
     return Eigen::VectorXf::Zero(size);
 }
