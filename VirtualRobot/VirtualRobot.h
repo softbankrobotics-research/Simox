@@ -193,7 +193,7 @@ namespace VirtualRobot
     class VisualizationNode;
     class VisualizationFactory;
     class Scene;
-    class RobotConfig;
+    class ModelConfig;
     class Grasp;
     class GraspSet;
     class ManipulationObject;
@@ -228,6 +228,7 @@ namespace VirtualRobot
     typedef ModelNodeSet RobotNodeSet; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelNodeAttachment RobotNodeAttachment; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelNodeAttachmentFactory RobotNodeAttachmentFactory; //!< A typedef to make a differ between a robot and a simple object
+    typedef ModelConfig RobotConfig; //!< A typedef to make a differ between a robot and a simple object
 
     typedef boost::shared_ptr<CoMIK> CoMIKPtr;
     typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
@@ -254,7 +255,7 @@ namespace VirtualRobot
     typedef boost::shared_ptr<WorkspaceRepresentation> WorkspaceRepresentationPtr;
     typedef boost::shared_ptr<Reachability> ReachabilityPtr;
     typedef boost::shared_ptr<Scene> ScenePtr;
-    typedef boost::shared_ptr<RobotConfig> RobotConfigPtr;
+    typedef boost::shared_ptr<ModelConfig> ModelConfigPtr;
     typedef boost::shared_ptr<Grasp> GraspPtr;
     typedef boost::shared_ptr<GraspSet> GraspSetPtr;
     typedef boost::shared_ptr<ManipulationObject> ManipulationObjectPtr;
@@ -289,6 +290,7 @@ namespace VirtualRobot
     typedef boost::shared_ptr<RobotNodeSet> RobotNodeSetPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef boost::shared_ptr<RobotNodeAttachment> RobotNodeAttachmentPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef boost::shared_ptr<RobotNodeAttachmentFactory> RobotNodeAttachmentFactoryPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef boost::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
 
     /*
      * Predefine for MathTools.h
