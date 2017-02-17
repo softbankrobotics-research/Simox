@@ -13,7 +13,7 @@
 namespace VirtualRobot
 {
     Model::Model(const std::string& name, const std::string& type) : name(name), type(type), scaling(1.0f),
-                                                                     threadsafe(true), mutex()
+                                                                     threadsafe(true), mutex(),
                                                                      rootNode(),
                                                                      collisionChecker(),
                                                                      modelNodeMap(), modelNodeSetMap(),
@@ -25,7 +25,7 @@ namespace VirtualRobot
     {
     }
 
-    void Model::registerModelNode(ModelNodePtr node)
+    void Model::registerModelNode(const ModelNodePtr& node)
     {
         WriteLockPtr w = getWriteLock();
         if (node)
@@ -54,12 +54,12 @@ namespace VirtualRobot
         }
     }
 
-    void Model::deregisterModelNode(ModelNodePtr node)
+    void Model::deregisterModelNode(const ModelNodePtr& node)
     {
         WriteLockPtr w = getWriteLock();
         if (node)
         {
-            std::map< std::string, ModelNodePtr >::iterator i = modelNodeMap.find(node->getName());
+            auto i = modelNodeMap.find(node->getName());
 
             if (i != modelNodeMap.end())
             {
@@ -68,7 +68,7 @@ namespace VirtualRobot
         }
     }
 
-    bool Model::hasModelNode(ModelNodePtr node) const
+    bool Model::hasModelNode(const ModelNodePtr& node) const
     {
         return node && getModelNode(node->getName()) == node;
     }
@@ -82,27 +82,21 @@ namespace VirtualRobot
     ModelNodePtr Model::getModelNode(const std::string& modelNodeName) const
     {
         ReadLockPtr r = getReadLock();
-        if (hasModelNode(modelNodeName))
+        auto search = modelNodeMap.find(modelNodeName);
+        if (search == modelNodeMap.end())
         {
             VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
             return RobotNodePtr();
         }
 
-        return modelNodeMap.at(modelNodeName);
+        return search->second;
     }
 
     std::vector<ModelNodePtr> Model::getModelNodes(ModelNode::ModelNodeType type) const
     {
         ReadLockPtr r = getReadLock();
         std::vector<ModelNodePtr> result;
-        result.reserve(modelNodeMap.size());
-        for(auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
-        {
-            if (ModelNode::checkNodeOfType(it->second, type))
-            {
-                result.push_back(it->second);
-            }
-        }
+        getModelNodes(result, false, type);
         return result;
     }
 
@@ -125,7 +119,7 @@ namespace VirtualRobot
         }
     }
 
-    void Model::registerModelNodeSet(ModelNodeSetPtr nodeSet)
+    void Model::registerModelNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
         if (nodeSet)
@@ -140,13 +134,13 @@ namespace VirtualRobot
         }
     }
 
-    void Model::deregisterModelNodeSet(ModelNodeSetPtr nodeSet)
+    void Model::deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
         if (nodeSet)
         {
             std::string nodeSetName = nodeSet->getName();
-            std::map< std::string, RobotNodeSetPtr >::iterator i = modelNodeSetMap.find(nodeSetName);
+            auto i = modelNodeSetMap.find(nodeSetName);
 
             if (i != modelNodeSetMap.end())
             {
@@ -155,7 +149,7 @@ namespace VirtualRobot
         }
     }
 
-    bool Model::hasModelNodeSet(ModelNodeSetPtr nodeSet) const
+    bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
     {
         return nodeSet && getModelNodeSet(nodeSet->getName()) == nodeSet;
     }
@@ -169,24 +163,21 @@ namespace VirtualRobot
     ModelNodeSetPtr Model::getModelNodeSet(const std::string& nodeSetName) const
     {
         ReadLockPtr r = getReadLock();
-        if (hasModelNode(nodeSetName))
+        auto search = modelNodeSetMap.find(nodeSetName);
+        if (search == modelNodeSetName.end())
         {
             VR_WARNING << "No robot node set with name <" << nodeSetName << "> registered." << endl;
             return RobotNodeSetPtr();
         }
 
-        return modelNodeSetMap.at(nodeSetName);
+        return search->second;
     }
 
     std::vector<ModelNodeSetPtr> Model::getModelNodeSets() const
     {
         ReadLockPtr r = getReadLock();
         std::vector<ModelNodeSetPtr> result;
-        result.reserve(modelNodeSetMap.size());
-        for(auto it = modelNodeSetMap.begin(); it != modelNodeSetMap.end(); ++it)
-        {
-            result.push_back(it->second);
-        }
+        getModelNodeSets(result, false);
         return result;
     }
 
@@ -198,7 +189,7 @@ namespace VirtualRobot
             storeNodeSet.clear();
         }
 
-        storeNodeSet.reserve(modelNodeSetMap.size());
+        storeNodeSet.reserve(storeNodeSet.size() + modelNodeSetMap.size());
 
         for(auto it = modelNodeSetMap.begin(); it != modelNodeSetMap.end(); ++it)
         {
@@ -206,9 +197,13 @@ namespace VirtualRobot
         }
     }
 
-    void Model::setRootNode(ModelNodePtr node)
+    void Model::setRootNode(const ModelNodePtr& node)
     {
-        if (node && hasModelNode(node))
+        if (!node)
+        {
+            return;
+        }
+        if (hasModelNode(node))
         {
             WriteLockPtr w = getWriteLock();
             rootNode = node;
@@ -216,7 +211,7 @@ namespace VirtualRobot
         }
         else
         {
-            THROW_VR_EXCEPTION_IF(!hasModelNode(node), "Root node must be registered at the model.");
+            THROW_VR_EXCEPTION("Root node must be registered at the model.");
         }
     }
 
@@ -330,12 +325,12 @@ namespace VirtualRobot
         // TODO: add Attachment
     }
 
-    void Model::highlight(VisualizationPtr visualization, bool enable)
+    void Model::highlight(const VisualizationPtr& visualization, bool enable)
     {
         // TODO: add Attachment
     }
 
-    void Model::showPhysicsInformation(bool enableCoM, bool enableInertial, VisualizationNodePtr comModel)
+    void Model::showPhysicsInformation(bool enableCoM, bool enableInertial, const VisualizationNodePtr& comModel)
     {
         // TODO: add Attachment
     }
@@ -401,7 +396,7 @@ namespace VirtualRobot
         return r;
     }
 
-    bool Model::setConfig(RobotConfigPtr c)
+    bool Model::setConfig(const RobotConfigPtr& c)
     {
         if (!c)
         {
@@ -412,7 +407,7 @@ namespace VirtualRobot
         return true;
     }
 
-    void Model::setJointValue(ModelNodePtr node, float jointValue)
+    void Model::setJointValue(const ModelNodePtr& node, float jointValue)
     {
         if (node)
         {
@@ -427,7 +422,6 @@ namespace VirtualRobot
 
     void Model::setJointValue(const std::string& nodeName, float jointValue)
     {
-        ReadLockPtr r = getReadLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(nodeName), "Model does not have a node with name <" + nodeName + ">.");
         setJointValue(getModelNode(nodeName), jointValue);
     }
@@ -468,7 +462,7 @@ namespace VirtualRobot
         applyJointValues();
     }
 
-    void Model::setJointValues(RobotConfigPtr config)
+    void Model::setJointValues(const RobotConfigPtr& config)
     {
         if (config)
         {
@@ -476,7 +470,7 @@ namespace VirtualRobot
         }
     }
 
-    void Model::setJointValues(TrajectoryPtr trajectory, float t)
+    void Model::setJointValues(const TrajectoryPtr& trajectory, float t)
     {
         if (trajectory)
         {
@@ -527,8 +521,9 @@ namespace VirtualRobot
         return bbox;
     }
 
-    std::vector<CollisionModelPtr> Model::getCollisionModels()
+    std::vector<CollisionModelPtr> Model::getCollisionModels() const
     {
+        ReadLockPtr r = getReadLock();
         std::vector<CollisionModelPtr> result;
         result.reserve(modelNodeMap.size());
 
@@ -552,6 +547,7 @@ namespace VirtualRobot
 
     float Model::getMass() const
     {
+        ReadLockPtr r = getReadLock();
         int mass = 0;
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
@@ -566,9 +562,9 @@ namespace VirtualRobot
         return mass;
     }
 
-    ModelPtr Model::extractSubPart(ModelNodePtr startNode,
+    ModelPtr Model::extractSubPart(const ModelNodePtr& startNode,
                                    const std::string& newModelType, const std::string& newModelName,
-                                   bool cloneRNS, CollisionCheckerPtr collisionChecker, float scaling)
+                                   bool cloneRNS, const CollisionCheckerPtr& collisionChecker, float scaling)
     {
         ReadLockPtr r = getReadLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
@@ -626,7 +622,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void Model::attachNodeTo(ModelNodePtr newNode, ModelNodePtr existingNode)
+    void Model::attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode)
     {
         WriteLockPtr w = getWriteLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(existingNode), "Model does not have node <" + existingNode->getName() + ">.");
@@ -637,14 +633,14 @@ namespace VirtualRobot
         existingNode->attachChild(newNode);
     }
 
-    void Model::attachNodeTo(ModelNodePtr newNode, std::string& existingNodeName)
+    void Model::attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName)
     {
         WriteLockPtr w = getWriteLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(existingNodeName), "Model does not have node <" + existingNodeName + ">.");
         attachNodeTo(newNode, getModelNode(existingNodeName));
     }
 
-    void Model::detachNode(ModelNodePtr node)
+    void Model::detachNode(const ModelNodePtr& node)
     {
         WriteLockPtr w = getWriteLock();
         if (hasModelNode(node))
@@ -663,7 +659,7 @@ namespace VirtualRobot
         }
     }
 
-    void Model::detachNode(std::string& nodeName)
+    void Model::detachNode(const std::string& nodeName)
     {
         ReadLockPtr r = getReadLock();
         if (hasModelNode(nodeName))
@@ -678,7 +674,7 @@ namespace VirtualRobot
         this->filename = filename;
     }
 
-    std::string Model::getFilename()
+    std::string Model::getFilename() const
     {
         ReadLockPtr r = getReadLock();
         return filename;

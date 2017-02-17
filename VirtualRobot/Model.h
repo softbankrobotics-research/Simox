@@ -65,14 +65,14 @@ namespace VirtualRobot
          *
          * @param node The new node.
          */
-        virtual void registerModelNode(ModelNodePtr node);
+        virtual void registerModelNode(const ModelNodePtr& node);
 
         /*!
          * Deregister the given ModelNode.
          *
          * @param node The node to deregister.
          */
-        virtual void deregisterModelNode(ModelNodePtr node);
+        virtual void deregisterModelNode(const ModelNodePtr& node);
 
         /*!
          * Check, if the ModelNode is registered to this model.
@@ -80,7 +80,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(ModelNodePtr node) const;
+        virtual bool hasModelNode(const ModelNodePtr& node) const;
 
         /*!
          * Check, if the node is registered to this model.
@@ -121,14 +121,14 @@ namespace VirtualRobot
          *
          * @param nodeSet The new node set.
          */
-        virtual void registerModelNodeSet(ModelNodeSetPtr nodeSet);
+        virtual void registerModelNodeSet(const ModelNodeSetPtr& nodeSet);
 
         /*!
          * Deregister the given ModelNodeSet.
          *
          * @param nodeSet The node set to deregister.
          */
-        virtual void deregisterModelNodeSet(ModelNodeSetPtr nodeSet);
+        virtual void deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet);
 
         /*!
          * Check, if the ModelNodeSet is registered to this model.
@@ -136,7 +136,7 @@ namespace VirtualRobot
          * @param nodeSet The node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(ModelNodeSetPtr nodeSet) const;
+        virtual bool hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const;
 
         /*!
          * Check, if the node set is registered to this model.
@@ -174,7 +174,7 @@ namespace VirtualRobot
          *
          * @param node The new root node.
          */
-        virtual void setRootNode(ModelNodePtr node);
+        virtual void setRootNode(const ModelNodePtr& node);
 
         /*!
          * Get the current root node.
@@ -290,7 +290,7 @@ namespace VirtualRobot
          * @param visualization The visualization for which the highlighting should be performed.
          * @param enable On or off
          */
-        virtual void highlight(VisualizationPtr visualization, bool enable);
+        virtual void highlight(const VisualizationPtr& visualization, bool enable);
 
         /*!
          * Display some physics debugging information.
@@ -302,7 +302,7 @@ namespace VirtualRobot
          *                 If not set, a standard marker is used.
          */
         void showPhysicsInformation(bool enableCoM, bool enableInertial,
-                                    VisualizationNodePtr comModel = VisualizationNodePtr());
+                                    const VisualizationNodePtr& comModel = VisualizationNodePtr());
 
         /*!
          * Setup the full model visualization.
@@ -338,7 +338,7 @@ namespace VirtualRobot
          *
          * @param c The new configuration.
          */
-        virtual bool setConfig(RobotConfigPtr c);
+        virtual bool setConfig(const RobotConfigPtr& c);
 
         /*!
          * Set a joint value [rad].
@@ -348,7 +348,7 @@ namespace VirtualRobot
          * @param node The model node.
          * @param jointValue The new joint value.
          */
-        virtual void setJointValue(ModelNodePtr node, float jointValue);
+        virtual void setJointValue(const ModelNodePtr& node, float jointValue);
 
         /*!
          * Set a joint value [rad].
@@ -382,7 +382,7 @@ namespace VirtualRobot
          *
          * @param config The ModelConfig defines the ModelNodes and joint values.
          */
-        virtual void setJointValues(RobotConfigPtr config);
+        virtual void setJointValues(const RobotConfigPtr& config);
 
         /*!
          * Apply configuration of trajectory at time t
@@ -390,7 +390,7 @@ namespace VirtualRobot
          * @param trajectory The trajectory
          * @param t The time (0<=t<=1)
          */
-        virtual void setJointValues(TrajectoryPtr trajectory, float t);
+        virtual void setJointValues(const TrajectoryPtr& trajectory, float t);
 
         /*!
          * Get number of faces (i.e. triangles) of this object.
@@ -412,7 +412,7 @@ namespace VirtualRobot
          *
          * @return A vector containing all collision models.
          */
-        virtual std::vector<CollisionModelPtr> getCollisionModels();
+        virtual std::vector<CollisionModelPtr> getCollisionModels() const;
 
         /*!
          * Get the collision checker of this model.
@@ -439,9 +439,9 @@ namespace VirtualRobot
          * @param collisionChecker The new model can be registered to a different collision checker. If not set, the collision checker of the original model is used.
          * @param scaling Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual ModelPtr extractSubPart(ModelNodePtr startNode, const std::string& newModelType,
+        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode, const std::string& newModelType,
                                         const std::string& newModelName, bool cloneRNS = true,
-                                        CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
+                                        const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
                                         float scaling = 1.0f);
 
         /*!
@@ -451,7 +451,7 @@ namespace VirtualRobot
          * @param newNode The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachNodeTo(ModelNodePtr newNode, ModelNodePtr existingNode);
+        void attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode);
 
         /*!
          * Attach a new ModelNode to this model.
@@ -460,7 +460,7 @@ namespace VirtualRobot
          * @param newNode The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
          */
-        void attachNodeTo(ModelNodePtr newNode, std::string& existingNodeName);
+        void attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName);
 
         /*!
          * Removes the node from this model.
@@ -468,7 +468,7 @@ namespace VirtualRobot
          *
          * @param node The node to remove.
          */
-        void detachNode(ModelNodePtr node);
+        void detachNode(const ModelNodePtr& node);
 
         /*!
          * Removes the node from this model.
@@ -476,7 +476,7 @@ namespace VirtualRobot
          *
          * @param nodeName The name of the node to remove.
          */
-        void detachNode(std::string& nodeName);
+        void detachNode(const std::string& nodeName);
 
         /*!
          * Just storing the filename.
@@ -490,7 +490,7 @@ namespace VirtualRobot
          *
          * @return The filename.
          */
-        virtual std::string getFilename();
+        virtual std::string getFilename() const;
 
         /*!
          * Creates an XML string that defines the complete model.
