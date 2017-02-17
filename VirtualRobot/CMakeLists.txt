@@ -212,6 +212,7 @@ ModelConfig.h
 ModelNodeSet.h
 Trajectory.h
 KinematicChain.h
+RobotFactory.h
 ModelFactory.h
 Scene.h
 Obstacle.h

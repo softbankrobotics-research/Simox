@@ -38,6 +38,10 @@ namespace VirtualRobot
         /*!
         Creates an empty model.
         */
+        static inline RobotPtr createRobot(const std::string& name, const std::string& type = "")
+        {
+            return createModel(name, type);
+        }
         static ModelPtr createModel(const std::string& name, const std::string& type = "");
 
         /*!
@@ -46,6 +50,13 @@ namespace VirtualRobot
             \param childrenMap Parent-child relations are built according to this data.
             \param rootNode The root.
         */
+        static inline bool initializeRobot(const RobotPtr& robot,
+                                           std::vector<RobotNodePtr >& robotNodes,
+                                           const std::map< RobotNodePtr, std::vector<std::string> >& childrenMap,
+                                           const RobotNodePtr& rootNode)
+        {
+            return initializeModel(robot, robotNodes, childrenMap, rootNode);
+        }
         static bool initializeModel(const ModelPtr& model,
                                     std::vector<ModelNodePtr >& modelNodes,
                                     const std::map< ModelNodePtr, std::vector<std::string> >& childrenMap,
