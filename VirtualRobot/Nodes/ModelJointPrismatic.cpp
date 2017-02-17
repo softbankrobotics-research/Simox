@@ -2,7 +2,7 @@
 
 namespace VirtualRobot
 {
-    ModelJointPrismatic::ModelJointPrismatic(ModelWeakPtr model,
+    ModelJointPrismatic::ModelJointPrismatic(const ModelWeakPtr& model,
                                              const std::string& name,
                                              Eigen::Matrix4f& staticTransformation,
                                              float jointLimitLo,
@@ -23,7 +23,7 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::JointPrismatic;
     }
 
-    Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(Eigen::Matrix4f coordSystem) const
+    Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(const Eigen::Matrix4f& coordSystem) const
     {
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = getJointTranslationDirectionJointCoordSystem();

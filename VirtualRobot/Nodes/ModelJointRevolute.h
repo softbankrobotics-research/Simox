@@ -41,7 +41,7 @@ namespace VirtualRobot
          * @param jointValueOffset The offset for the value of this joint.
          * @param axis The axis of this joint.
          */
-        ModelJointRevolute(ModelWeakPtr model,
+        ModelJointRevolute(const ModelWeakPtr& model,
                            const std::string& name,
                            Eigen::Matrix4f& staticTransformation,
                            float jointLimitLo,
@@ -62,7 +62,7 @@ namespace VirtualRobot
          * @param coordSystem The coordinate system to get the axis in.
          * @return The axis in the given coordinate system.
         */
-        Eigen::Vector3f getJointRotationAxis(Eigen::Matrix4f coordSystem) const;
+        Eigen::Vector3f getJointRotationAxis(const Eigen::Matrix4f& coordSystem) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.

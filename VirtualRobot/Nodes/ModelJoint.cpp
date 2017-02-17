@@ -3,7 +3,7 @@
 
 namespace VirtualRobot
 {
-    ModelJoint::ModelJoint(ModelWeakPtr model,
+    ModelJoint::ModelJoint(const ModelWeakPtr& model,
                            const std::string& name,
                            Eigen::Matrix4f& staticTransformation,
                            float jointLimitLo,
@@ -133,19 +133,19 @@ namespace VirtualRobot
         maxTorque = maxTo;
     }
 
-    float ModelJoint::getMaxVelocity()
+    float ModelJoint::getMaxVelocity() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return maxVelocity;
     }
 
-    float ModelJoint::getMaxAcceleration()
+    float ModelJoint::getMaxAcceleration() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return maxAcceleration;
     }
 
-    float ModelJoint::getMaxTorque()
+    float ModelJoint::getMaxTorque() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return maxTorque;

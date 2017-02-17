@@ -2,7 +2,7 @@
 
 namespace VirtualRobot
 {
-    ModelJointFixed::ModelJointFixed(ModelWeakPtr model, const std::string& name, Eigen::Matrix4f& localTransformation)
+    ModelJointFixed::ModelJointFixed(const ModelWeakPtr& model, const std::string& name, Eigen::Matrix4f& localTransformation)
             : ModelJoint(model, name, localTransformation, 0, 0, 0.0f)
     {
     }
