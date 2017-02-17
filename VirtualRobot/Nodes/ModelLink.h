@@ -85,13 +85,13 @@ namespace VirtualRobot
          * @param p The physics object of this link.
          * @param colChecker The collision checker for this link.
          */
-        ModelLink(ModelWeakPtr model,
+        ModelLink(const ModelWeakPtr& model,
                   const std::string& name,
                   Eigen::Matrix4f& localTransformation,
-                  VisualizationNodePtr visualization = VisualizationNodePtr(),
-                  CollisionModelPtr collisionModel = CollisionModelPtr(),
+                  const VisualizationNodePtr& visualization = VisualizationNodePtr(),
+                  const CollisionModelPtr& collisionModel = CollisionModelPtr(),
                   const Physics& p = Physics(),
-                  CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+                  const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
     public:
         /*!
@@ -99,7 +99,7 @@ namespace VirtualRobot
          */
         virtual ~ModelLink();
 
-        virtual void initialize(ModelNodePtr parent, const std::vector<ModelNodePtr>& children) override;
+        virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
         virtual ModelNodeType getType() const override;
 
@@ -108,7 +108,7 @@ namespace VirtualRobot
          *
          * @return The collision model.
          */
-        CollisionModelPtr getCollisionModel();
+        CollisionModelPtr getCollisionModel() const;
 
         /*!
          * Set a new collision model.
@@ -116,14 +116,14 @@ namespace VirtualRobot
          * @param colModel The new collision model.
          * @param keepUpdateVisualization If true, update visualisation of colModel is set to the status of the previous model.
          */
-        void setCollisionModel(CollisionModelPtr colModel, bool keepUpdateVisualization = true);
+        void setCollisionModel(const CollisionModelPtr& colModel, bool keepUpdateVisualization = true);
 
         /*!
          * Get the collision checker of this node.
          *
          * @return The collision checker.
          */
-        CollisionCheckerPtr getCollisionChecker();
+        CollisionCheckerPtr getCollisionChecker() const;
 
         /*!
          * Set a new visualisation.
@@ -131,7 +131,7 @@ namespace VirtualRobot
          * @param visualization The new visualisation.
          * @param keepUpdateVisualization If true, update visualisation of visualization is set to the status of the previous model.
          */
-        void setVisualization(VisualizationNodePtr visualization, bool keepUpdateVisualization = true);
+        void setVisualization(const VisualizationNodePtr& visualization, bool keepUpdateVisualization = true);
 
         /*!
          * Get visualization object.
@@ -155,7 +155,7 @@ namespace VirtualRobot
          *
          * @return A physics object containing all physics information.
          */
-        Physics getPhysics();
+        Physics getPhysics() const;
 
         /*!
          * Get the simulation type of this node.
@@ -182,21 +182,21 @@ namespace VirtualRobot
          *
          * @return A vector of all names.
          */
-        std::vector<std::string> getIgnoredCollisionModels();
+        std::vector<std::string> getIgnoredCollisionModels() const;
 
         /*!
          * Return Center of Mass in local coordinate frame. This method does not consider children.
          *
          * @return The CoM.
          */
-        virtual Eigen::Vector3f getCoMLocal();
+        virtual Eigen::Vector3f getCoMLocal() const;
 
         /*!
          * Return Center of Mass in global coordinates. This method does not consider children.
          *
          * @return The CoM.
          */
-        virtual Eigen::Vector3f getCoMGlobal();
+        virtual Eigen::Vector3f getCoMGlobal() const;
 
         /*!
          * Get the mass in Kg.
@@ -217,7 +217,7 @@ namespace VirtualRobot
          *
          * @return The inertia matrix in kg*m^2.
          */
-        Eigen::Matrix3f getInertiaMatrix();
+        Eigen::Matrix3f getInertiaMatrix() const;
 
         /*!
          * Set the inertia matrix.

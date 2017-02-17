@@ -68,13 +68,13 @@ namespace VirtualRobot
 
 namespace VirtualRobot
 {
-    ModelLink::ModelLink(ModelWeakPtr model,
+    ModelLink::ModelLink(const ModelWeakPtr& model,
                          const std::string& name,
                          Eigen::Matrix4f& localTransformation,
-                         VisualizationNodePtr visualization,
-                         CollisionModelPtr collisionModel,
+                         const VisualizationNodePtr& visualization,
+                         const CollisionModelPtr& collisionModel,
                          const ModelLink::Physics& p,
-                         CollisionCheckerPtr colChecker) : ModelNode(model, name, localTransformation),
+                         const CollisionCheckerPtr& colChecker) : ModelNode(model, name, localTransformation),
                                                            visualizationModel(visualization),
                                                            collisionModel(collisionModel),
                                                            physics(p),
@@ -88,7 +88,7 @@ namespace VirtualRobot
     {
     }
 
-    void ModelLink::initialize(ModelNodePtr parent, const std::vector<ModelNodePtr>& children)
+    void ModelLink::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
     {
         ModelNode::initialize(parent, children);
 
@@ -103,13 +103,13 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::Link;
     }
 
-    CollisionModelPtr ModelLink::getCollisionModel()
+    CollisionModelPtr ModelLink::getCollisionModel() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return collisionModel;
     }
 
-    void ModelLink::setCollisionModel(CollisionModelPtr colModel, bool keepUpdateVisualization)
+    void ModelLink::setCollisionModel(const CollisionModelPtr& colModel, bool keepUpdateVisualization)
     {
         WriteLockPtr w = getModel()->getWriteLock();
         if (keepUpdateVisualization && collisionModel)
@@ -127,13 +127,13 @@ namespace VirtualRobot
         //TODO: update physics?
     }
 
-    CollisionCheckerPtr ModelLink::getCollisionChecker()
+    CollisionCheckerPtr ModelLink::getCollisionChecker() const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        return VirtualRobot::CollisionCheckerPtr();
+        return collisionChecker;
     }
 
-    void ModelLink::setVisualization(VisualizationNodePtr visualization, bool keepUpdateVisualization)
+    void ModelLink::setVisualization(const VisualizationNodePtr& visualization, bool keepUpdateVisualization)
     {
         WriteLockPtr w = getModel()->getWriteLock();
         if (keepUpdateVisualization && visualizationModel)
@@ -205,7 +205,7 @@ namespace VirtualRobot
         }
     }
 
-    ModelLink::Physics ModelLink::getPhysics()
+    ModelLink::Physics ModelLink::getPhysics() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return physics;
@@ -223,19 +223,19 @@ namespace VirtualRobot
         physics.simType = s;
     }
 
-    std::vector<std::string> ModelLink::getIgnoredCollisionModels()
+    std::vector<std::string> ModelLink::getIgnoredCollisionModels() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return physics.ignoreCollisions;
     }
 
-    Eigen::Vector3f ModelLink::getCoMLocal()
+    Eigen::Vector3f ModelLink::getCoMLocal() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return physics.localCoM;
     }
 
-    Eigen::Vector3f ModelLink::getCoMGlobal()
+    Eigen::Vector3f ModelLink::getCoMGlobal() const
     {
         return toGlobalCoordinateSystemVec(getCoMLocal());
     }
@@ -252,7 +252,7 @@ namespace VirtualRobot
         physics.massKg = m;
     }
 
-    Eigen::Matrix3f ModelLink::getInertiaMatrix()
+    Eigen::Matrix3f ModelLink::getInertiaMatrix() const
     {
         ReadLockPtr r = getModel()->getReadLock();
         return physics.inertiaMatrix;
