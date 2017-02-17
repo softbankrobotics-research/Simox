@@ -2,7 +2,7 @@
 #include "Nodes/ModelLink.h"
 #include "Nodes/ModelJoint.h"
 #include "VirtualRobotException.h"
-#include "RobotConfig.h"
+#include "ModelConfig.h"
 #include "KinematicChain.h"
 
 namespace VirtualRobot
@@ -310,10 +310,14 @@ namespace VirtualRobot
         }
     }
 
-    // TODO Adapt RobotConfig to v3 before implementing this method.
-    void ModelNodeSet::getJointValues(const RobotConfigPtr& config) const
+    void ModelNodeSet::getJointValues(const ModelConfigPtr& config) const
     {
-        ;
+        THROW_VR_EXCEPTION_IF(!config, "NULL data");
+
+        for (size_t i = 0; i < modelNodes.size(); i++)
+        {
+            config->setConfig(modelNodes[i]->getName(), modelNodes[i]->getJointValue());
+        }
     }
 
     void ModelNodeSet::respectJointLimits(std::vector<float>& jointValues) const
@@ -422,10 +426,9 @@ namespace VirtualRobot
         }
     }
 
-    // TODO Adapt RobotConfig to v3 before implementing this method.
-    void ModelNodeSet::setJointValues(const RobotConfigPtr& config)
+    void ModelNodeSet::setJointValues(const ModelConfigPtr& config)
     {
-        ;
+        config->setJointValues(getModel());
     }
 
     bool ModelNodeSet::isKinematicChain()

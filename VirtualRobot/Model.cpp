@@ -5,7 +5,7 @@
 #include "Nodes/ModelJoint.h"
 #include "Visualization/VisualizationNode.h"
 #include "CollisionDetection/CollisionModel.h"
-#include "RobotConfig.h"
+#include "ModelConfig.h"
 #include "Trajectory.h"
 
 #include <algorithm>
@@ -371,17 +371,17 @@ namespace VirtualRobot
         }
     }
 
-    RobotConfigPtr Model::getConfig()
+    ModelConfigPtr Model::getConfig()
     {
         ReadLockPtr r = getReadLock();
-        RobotConfigPtr r(new RobotConfig(shared_from_this(), getName()));
+        ModelConfigPtr r(new ModelConfig(shared_from_this(), getName()));
 
-        std::vector<RobotNodePtr> robotNodes = this->getModelNodes();
-        std::vector<RobotNodePtr>::const_iterator iterator = robotNodes.begin();
+        std::vector<ModelNodePtr> modelNodes = this->getModelNodes();
+        std::vector<ModelNodePtr>::const_iterator iterator = modelNodes.begin();
 
-        while (robotNodes.end() != iterator)
+        while (modelNodes.end() != iterator)
         {
-            RobotNodePtr rn = *iterator;
+            ModelNodePtr rn = *iterator;
 
             if (ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointPrismatic)
                 ||ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointRevolute))
@@ -396,7 +396,7 @@ namespace VirtualRobot
         return r;
     }
 
-    bool Model::setConfig(const RobotConfigPtr& c)
+    bool Model::setConfig(const ModelConfigPtr& c)
     {
         if (!c)
         {
@@ -462,7 +462,7 @@ namespace VirtualRobot
         applyJointValues();
     }
 
-    void Model::setJointValues(const RobotConfigPtr& config)
+    void Model::setJointValues(const ModelConfigPtr& config)
     {
         if (config)
         {

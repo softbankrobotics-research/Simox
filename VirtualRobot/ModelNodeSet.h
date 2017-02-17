@@ -233,7 +233,7 @@ namespace VirtualRobot
          *
          * @param config The config to save the joint values in.
          */
-        void getJointValues(const RobotConfigPtr& config) const;
+        void getJointValues(const ModelConfigPtr& config) const;
 
         /*!
          * Checks if the given joint values are within joint limits.
@@ -288,11 +288,11 @@ namespace VirtualRobot
         virtual void setJointValues(const Eigen::VectorXf& jointValues);
 
         /*!
-         * Set joints that are within the given RobotConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
+         * Set joints that are within the given ModelConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
          *
          * @param config The config to get the joint values from.
          */
-        virtual void setJointValues(const RobotConfigPtr& config);
+        virtual void setJointValues(const ModelConfigPtr& config);
 
         /*!
          * Checks if this set of robot nodes form a valid kinematic chain.

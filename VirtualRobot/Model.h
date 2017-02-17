@@ -331,14 +331,14 @@ namespace VirtualRobot
          *
          * @return The configuration of the model.
          */
-        virtual RobotConfigPtr getConfig();
+        virtual ModelConfigPtr getConfig();
 
         /*!
          * Sets the configuration according to the ModelNodes, defined in c. All other nodes are not affected.
          *
          * @param c The new configuration.
          */
-        virtual bool setConfig(const RobotConfigPtr& c);
+        virtual bool setConfig(const ModelConfigPtr& c);
 
         /*!
          * Set a joint value [rad].
@@ -382,7 +382,7 @@ namespace VirtualRobot
          *
          * @param config The ModelConfig defines the ModelNodes and joint values.
          */
-        virtual void setJointValues(const RobotConfigPtr& config);
+        virtual void setJointValues(const ModelConfigPtr& config);
 
         /*!
          * Apply configuration of trajectory at time t

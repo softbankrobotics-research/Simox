@@ -108,7 +108,7 @@ Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
 MathTools.cpp
 Model.cpp
-RobotConfig.cpp
+ModelConfig.cpp
 ModelNodeSet.cpp
 Trajectory.cpp
 KinematicChain.cpp
@@ -208,7 +208,7 @@ ConditionedLock.h
 VirtualRobot.h
 MathTools.h
 Model.h
-RobotConfig.h
+ModelConfig.h
 ModelNodeSet.h
 Trajectory.h
 KinematicChain.h
