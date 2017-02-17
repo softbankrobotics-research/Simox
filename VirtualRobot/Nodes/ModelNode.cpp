@@ -4,7 +4,7 @@
 
 namespace VirtualRobot
 {
-    ModelNode::ModelNode(ModelWeakPtr model, const std::string& name, Eigen::Matrix4f& staticTransformation)
+    ModelNode::ModelNode(const ModelWeakPtr& model, const std::string& name, Eigen::Matrix4f& staticTransformation)
         : initialized(false),
           model(model),
           name(name),
@@ -22,7 +22,7 @@ namespace VirtualRobot
     {
     }
 
-    void ModelNode::initialize(ModelNodePtr parent, const std::vector<ModelNodePtr>& children)
+    void ModelNode::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
     {
         THROW_VR_EXCEPTION_IF(isInitialized(), "ModelNode " + getName() + "is already initialized.");
         ModelPtr modelShared = getModel();
@@ -36,7 +36,7 @@ namespace VirtualRobot
             // parent of this is set in attachChild
         }
 
-        for (ModelNodePtr child : children)
+        for (const ModelNodePtr & child : children)
         {
             attachChild(child);
         }
@@ -66,11 +66,11 @@ namespace VirtualRobot
         return initialized;
     }
 
-    ModelNodePtr ModelNode::getChildByName(std::string& name) const
+    ModelNodePtr ModelNode::getChildByName(const std::string& name) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
-        for (ModelNodePtr child : getChildNodes())
+        for (const ModelNodePtr & child : getChildNodes())
         {
             if (child->getName() == name)
             {
@@ -118,7 +118,7 @@ namespace VirtualRobot
 
         std::vector<ModelNodePtr> childLinks;
 
-        for (ModelNodePtr child : children)
+        for (const ModelNodePtr & child : children)
         {
             if (!checkNodeOfType(child, type))
             {
@@ -148,13 +148,13 @@ namespace VirtualRobot
             storeNodes.push_back(shared_from_this());
         }
 
-        for (ModelNodePtr child : getChildNodes())
+        for (const ModelNodePtr & child : getChildNodes())
         {
             child->collectAllNodes(storeNodes, type, false);
         }
     }
 
-    std::vector<ModelNodePtr> ModelNode::getAllParents(ModelNodeSetPtr set, ModelNodeType type)
+    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, ModelNodeType type)
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getParentNode
@@ -173,7 +173,7 @@ namespace VirtualRobot
         return result;
     }
 
-    bool ModelNode::attachChild(ModelNodePtr newNode)
+    bool ModelNode::attachChild(const ModelNodePtr& newNode)
     {
         VR_ASSERT(newNode);
 
@@ -205,7 +205,7 @@ namespace VirtualRobot
             return false;
         }
 
-        ModelPtr modelShared = getModel();
+        WriteLockPtr w = getModel()->getWriteLock();
 
         children.push_back(newNode);
         newNode->parent = shared_from_this();
@@ -213,7 +213,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelNode::hasChild(ModelNodePtr node) const
+    bool ModelNode::hasChild(const ModelNodePtr& node) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
@@ -221,11 +221,11 @@ namespace VirtualRobot
         return std::find(children.begin(), children.end(), node) != children.end();
     }
 
-    bool ModelNode::hasChild(std::string nodeName) const
+    bool ModelNode::hasChild(const std::string& nodeName) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
-        for (ModelNodePtr child : getChildNodes())
+        for (const ModelNodePtr & child : getChildNodes())
         {
             if (child->getName() == nodeName)
             {
@@ -236,11 +236,11 @@ namespace VirtualRobot
         return false;
     }
 
-    bool ModelNode::detachChild(ModelNodePtr node)
+    bool ModelNode::detachChild(const ModelNodePtr& node)
     {
-        WriteLockPtr w = getModel()->getWriteLock();
         if (hasChild(node))
         {
+            WriteLockPtr w = getModel()->getWriteLock();
             children.erase(std::find(children.begin(), children.end(), node));
             node->parent.reset();
             return true;
@@ -249,12 +249,15 @@ namespace VirtualRobot
         return false;
     }
 
-    bool ModelNode::detachChild(std::string& nodeName)
+    bool ModelNode::detachChild(const std::string& nodeName)
     {
         ModelNodePtr node = getChildByName(nodeName);
         if (node)
         {
-            return detachChild(node);
+            WriteLockPtr w = getModel()->getWriteLock();
+            children.erase(std::find(children.begin(), children.end(), node));
+            node->parent.reset();
+            return true;
         }
         return false;
     }
@@ -323,7 +326,7 @@ namespace VirtualRobot
         {
             for (auto it = attachments.begin(); it != attachments.end(); it++)
             {
-                for (ModelNodeAttachmentPtr attachment : it->second)
+                for (const ModelNodeAttachmentPtr & attachment : it->second)
                 {
                     attachment->update();
                 }
@@ -332,7 +335,7 @@ namespace VirtualRobot
 
         if (updateChildren)
         {
-            for (ModelNodePtr child : getChildNodes())
+            for (const ModelNodePtr & child : getChildNodes())
             {
                 child->updatePose(true, updateAttachments);
             }
@@ -343,7 +346,7 @@ namespace VirtualRobot
     {
     }
 
-    bool ModelNode::attach(ModelNodeAttachmentPtr attachment)
+    bool ModelNode::attach(const ModelNodeAttachmentPtr& attachment)
     {
         WriteLockPtr w = getModel()->getWriteLock();
         if (!attachment || isAttached(attachment) || !attachment->isAttachable(shared_from_this()))
@@ -365,7 +368,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelNode::isAttached(ModelNodeAttachmentPtr attachment)
+    bool ModelNode::isAttached(const ModelNodeAttachmentPtr& attachment)
     {
         ReadLockPtr r = getModel()->getReadLock();
         if (!attachment)
@@ -377,7 +380,7 @@ namespace VirtualRobot
         return std::find(allWithType.begin(), allWithType.end(), attachment) != allWithType.end();
     }
 
-    bool ModelNode::detach(ModelNodeAttachmentPtr attachment)
+    bool ModelNode::detach(const ModelNodeAttachmentPtr& attachment)
     {
         WriteLockPtr w = getModel()->getWriteLock();
         if (isAttached(attachment))
@@ -399,7 +402,7 @@ namespace VirtualRobot
         return false;
     }
 
-    std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachments(std::string type)
+    std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachments(const std::string& type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         if (type == "")
@@ -414,7 +417,15 @@ namespace VirtualRobot
         }
         else
         {
-            return attachments[type];
+            auto search = attachments.find(type);
+            if (search != attachments.end())
+            {
+                return search->second;
+            }
+            else
+            {
+                return std::vector<ModelNodeAttachmentPtr>();
+            }
         }
     }
 
@@ -469,17 +480,17 @@ namespace VirtualRobot
         return result;
     }
 
-    Eigen::Matrix4f ModelNode::getTransformationTo(const ModelNodePtr otherObject)
+    Eigen::Matrix4f ModelNode::getTransformationTo(const ModelNodePtr& otherObject)
     {
         return getGlobalPose().inverse() * otherObject->getGlobalPose();
     }
 
-    Eigen::Matrix4f ModelNode::getTransformationFrom(const ModelNodePtr otherObject)
+    Eigen::Matrix4f ModelNode::getTransformationFrom(const ModelNodePtr& otherObject)
     {
         return otherObject->getGlobalPose().inverse() * getGlobalPose();
     }
 
-    static bool ModelNode::checkNodeOfType(ModelNodePtr node, ModelNode::ModelNodeType type)
+    static bool ModelNode::checkNodeOfType(const ModelNodePtr& node, ModelNode::ModelNodeType type)
     {
         return (node->getType() & type) == type;
     }

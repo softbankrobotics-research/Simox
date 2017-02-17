@@ -76,7 +76,7 @@ namespace VirtualRobot
          * @param name The name of this ModelNode. This name must be unique for the Model.
          * @param staticTransformation The transformation from the parent of this node to this node.
          */
-        ModelNode(ModelWeakPtr model,
+        ModelNode(const ModelWeakPtr& model,
                   const std::string& name,
                   Eigen::Matrix4f& staticTransformation);
 
@@ -94,7 +94,7 @@ namespace VirtualRobot
          * @param parent The parent of this node.
          * @param children The children of this node.
          */
-        virtual void initialize(ModelNodePtr parent = ModelNodePtr(), const std::vector<ModelNodePtr>& children = std::vector<ModelNodePtr>());
+        virtual void initialize(const ModelNodePtr& parent = ModelNodePtr(), const std::vector<ModelNodePtr>& children = std::vector<ModelNodePtr>());
 
         /*!
          * Get the @ref ModelNodeType of this Node.
@@ -130,7 +130,7 @@ namespace VirtualRobot
          * @param name The name of the child.
          * @return The child or a empty pointer, if this node does not have a child with the given name.
          */
-        ModelNodePtr getChildByName(std::string& name) const;
+        ModelNodePtr getChildByName(const std::string& name) const;
 
         /*!
          * Get the parent Node.
@@ -191,7 +191,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The ModelNodes.
         */
-        virtual std::vector<ModelNodePtr> getAllParents(ModelNodeSetPtr set = ModelNodeSetPtr(),
+        virtual std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
                                                         ModelNodeType type = ModelNodeType::Node);
 
         /*!
@@ -200,7 +200,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if node is a child from this node; false otherwise.
          */
-        bool hasChild(ModelNodePtr node) const;
+        bool hasChild(const ModelNodePtr& node) const;
 
         /*!
          * Check if this node has a child with the given name.
@@ -208,7 +208,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if this node has a child with the given name; false otherwise.
          */
-        bool hasChild(std::string nodeName) const;
+        bool hasChild(const std::string& nodeName) const;
 
         /*!
          * Attach a new Child to this node.
@@ -216,7 +216,7 @@ namespace VirtualRobot
          * @param newNode The new node.
          * @return True, if the node could be attached; false otherwise.
          */
-        bool attachChild(ModelNodePtr newNode);
+        bool attachChild(const ModelNodePtr& newNode);
 
         /*!
          * Detach a node from this node.
@@ -224,7 +224,7 @@ namespace VirtualRobot
          * @param node The node to detach.
          * @return True, if the node was a child and could be detached; false otherwise.
          */
-        bool detachChild(ModelNodePtr node);
+        bool detachChild(const ModelNodePtr& node);
 
         /*!
          * Detach a node from this node.
@@ -232,7 +232,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to detach.
          * @return True, if the node was a child and could be detached; false otherwise.
          */
-        bool detachChild(std::string& nodeName);
+        bool detachChild(const std::string& nodeName);
 
         /*!
          * The preJoint/preVisualization transformation. This transformation is applied before the joint and the visualization.
@@ -298,7 +298,7 @@ namespace VirtualRobot
          *
          * @return True, is the attachment is attachable; false otherwise.
          */
-        bool attach(ModelNodeAttachmentPtr attachment);
+        bool attach(const ModelNodeAttachmentPtr& attachment);
 
         /*!
          * Check if a attachment is attached.
@@ -307,7 +307,7 @@ namespace VirtualRobot
          *
          * @return True, if the attachment is attached; false otherwise.
          */
-        bool isAttached(ModelNodeAttachmentPtr attachment);
+        bool isAttached(const ModelNodeAttachmentPtr& attachment);
 
         /*!
          * Detach a attachment.
@@ -316,7 +316,7 @@ namespace VirtualRobot
          *
          * @return True, if the attachment was attached; false otherwise.
          */
-        bool detach(ModelNodeAttachmentPtr attachment);
+        bool detach(const ModelNodeAttachmentPtr& attachment);
 
         /*!
          * Get all attachments with the given type.
@@ -325,7 +325,7 @@ namespace VirtualRobot
          * @param type The type of the attachments to get.
          * @return The attachments.
          */
-        std::vector<ModelNodeAttachmentPtr> getAttachments(std::string type = "");
+        std::vector<ModelNodeAttachmentPtr> getAttachments(const std::string& type = "") const;
 
         /*!
          * Get all attachments with visualisation.
@@ -406,7 +406,7 @@ namespace VirtualRobot
          * @param otherObject The object to transform to.
          * @return The transform matrix.
          */
-        Eigen::Matrix4f getTransformationTo(const ModelNodePtr otherObject);
+        Eigen::Matrix4f getTransformationTo(const ModelNodePtr& otherObject);
 
         /*!
          * Returns the transformation matrix from otherObject to this object.
@@ -414,7 +414,7 @@ namespace VirtualRobot
          * @param otherObject The object to transform from.
          * @return The transform matrix.
          */
-        Eigen::Matrix4f getTransformationFrom(const ModelNodePtr otherObject);
+        Eigen::Matrix4f getTransformationFrom(const ModelNodePtr& otherObject);
 
         /*!
          * Check if node has the given type.
@@ -423,7 +423,7 @@ namespace VirtualRobot
          * @param type The type to check.
          * @return True, if the node has tthe given type; false otherwise.
          */
-        inline static bool checkNodeOfType(ModelNodePtr node, ModelNodeType type);
+        inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type);
 
     protected:
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
