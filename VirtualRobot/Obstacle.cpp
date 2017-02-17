@@ -2,7 +2,7 @@
 #include "Obstacle.h"
 #include "CollisionDetection/CollisionModel.h"
 #include "CollisionDetection/CollisionChecker.h"
-#include "Nodes/RobotNode.h"
+#include "Nodes/ModelLink.h"
 #include "Visualization/VisualizationFactory.h"
 #include <vector>
 
@@ -14,8 +14,8 @@ namespace VirtualRobot
     int Obstacle::idCounter = 20000;
 
 
-    Obstacle::Obstacle(const std::string& name, VisualizationNodePtr visualization, CollisionModelPtr collisionModel, const SceneObject::Physics& p, CollisionCheckerPtr colChecker)
-        : SceneObject(name, visualization, collisionModel, p, colChecker)
+    Obstacle::Obstacle(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const SceneObject::Physics& p, const CollisionCheckerPtr& colChecker)
+        : Model(name, "Obstacle")
     {
         if (name == "")
         {
@@ -24,7 +24,7 @@ namespace VirtualRobot
 
             std::stringstream ss;
             ss << "VirtualRobot Obstacle <" << id << ">";
-            this->name = ss.str();
+            setName(ss.str());
         }
         else
         {
@@ -38,18 +38,30 @@ namespace VirtualRobot
                 id = idCounter++;
             }
         }
+
+        ModelLinkPtr node(new ModelLink(shared_from_this(),
+                                        name,
+                                        Eigen::Matrix4f::Identity(),
+                                        visualization,
+                                        collisionModel,
+                                        p,
+                                        colChecker ? colChecker : CollisionChecker::getGlobalCollisionChecker()));
+
+        registerModelNode(node);
+        setRootNode(node);
+        setGlobalPose(Eigen::Matrix4f::Identity());
     }
 
     Obstacle::~Obstacle()
     {
     }
 
-    int Obstacle::getID()
+    int Obstacle::getID() const
     {
         return id;
     }
 
-    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, VisualizationFactory::Color color, std::string visualizationType , CollisionCheckerPtr colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, VisualizationFactory::Color color, const std::string& visualizationType , const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -102,7 +114,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, VisualizationFactory::Color color, std::string visualizationType , CollisionCheckerPtr colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -154,7 +166,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, VisualizationFactory::Color color, std::string visualizationType, CollisionCheckerPtr colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -206,7 +218,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createFromMesh(TriMeshModelPtr mesh, std::string visualizationType , CollisionCheckerPtr colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createFromMesh(const TriMeshModelPtr& mesh, const std::string& visualizationType , const CollisionCheckerPtr& colChecker)
     {
         THROW_VR_EXCEPTION_IF(!mesh, "Null data");
 
@@ -261,7 +273,7 @@ namespace VirtualRobot
             cout << "**** Obstacle ****" << endl;
         }
 
-        SceneObject::print(false);
+        Model::print();
         cout << " * id: " << id << endl;
 
         if (printDecoration)
@@ -274,16 +286,19 @@ namespace VirtualRobot
     {
         VisualizationNodePtr clonedVisualizationNode;
 
+        VR_ASSERT(ModelNode::checkNodeOfType(getRootNode(), ModelNode::ModelNodeType::Link));
+        ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(getRootNode());
+
         if (visualizationModel)
         {
-            clonedVisualizationNode = visualizationModel->clone();
+            clonedVisualizationNode = link->getVisualization()->clone();
         }
 
         CollisionModelPtr clonedCollisionModel;
 
         if (collisionModel)
         {
-            clonedCollisionModel = collisionModel->clone(colChecker);
+            clonedCollisionModel = link->getCollisionModel()->clone(colChecker);
         }
 
         Obstacle* result = new Obstacle(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);
@@ -312,24 +327,12 @@ namespace VirtualRobot
 
         ss << pre << "<Obstacle name='" << name << "'>\n";
 
-        ss << getSceneObjectXMLString(basePath, tabs);
+        ss << Model::toXML(basePath, tabs);
 
         ss << pre << "</Obstacle>\n";
 
         return ss.str();
     }
-
-
-    std::string Obstacle::getFilename()
-    {
-        return filename;
-    }
-
-    void Obstacle::setFilename(const std::string& filename)
-    {
-        this->filename = filename;
-    }
-
 } //  namespace
 
 
