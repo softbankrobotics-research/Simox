@@ -43,7 +43,7 @@ namespace VirtualRobot
          * @param jointLimitHi The upper limit of this joint.
          * @param jointValueOffset The offset for the value of this joint.
          */
-        ModelJoint(ModelWeakPtr model,
+        ModelJoint(const ModelWeakPtr& model,
                    const std::string& name,
                    Eigen::Matrix4f& staticTransformation,
                    float jointLimitLo,
@@ -157,7 +157,7 @@ namespace VirtualRobot
          *
          * @return The maximum velocity in rad/s or m/s, or -1.0f if no value is set.
          */
-        float getMaxVelocity();
+        float getMaxVelocity() const;
 
         /*!
          * Maximum acceleration in rad/s^2 or m/s^2.
@@ -165,7 +165,7 @@ namespace VirtualRobot
          *
          * @return The maximum acceleration in rad/s^2 or m/s^2, or -1.0f if no value is set.
          */
-        float getMaxAcceleration();
+        float getMaxAcceleration() const;
 
         /*!
          * Maximum torque in Nm.
@@ -173,7 +173,7 @@ namespace VirtualRobot
          *
          * @return The maximum torque in Nm, or -1.0f if no value is set.
          */
-        float getMaxTorque();
+        float getMaxTorque() const;
 
         /*!
          * Automatically propagate the joint value to another joint.

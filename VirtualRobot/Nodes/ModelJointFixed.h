@@ -37,7 +37,7 @@ namespace VirtualRobot
          * @param name The name of this ModelNode. This name must be unique for the Model.
          * @param localTransformation The transformation from the parent of this node to this node.
          */
-        ModelJointFixed(ModelWeakPtr model,
+        ModelJointFixed(const ModelWeakPtr& model,
                         const std::string& name,
                         Eigen::Matrix4f& localTransformation);
 

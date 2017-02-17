@@ -2,7 +2,7 @@
 
 namespace VirtualRobot
 {
-    ModelJointRevolute::ModelJointRevolute(ModelWeakPtr model,
+    ModelJointRevolute::ModelJointRevolute(const ModelWeakPtr& model,
                                            const std::string& name,
                                            Eigen::Matrix4f& staticTransformation,
                                            float jointLimitLo,
@@ -23,7 +23,7 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::JointRevolute;
     }
 
-    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(Eigen::Matrix4f coordSystem) const
+    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(const Eigen::Matrix4f& coordSystem) const
     {
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = getJointRotationAxisInJointCoordSystem();
