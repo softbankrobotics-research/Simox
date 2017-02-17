@@ -112,7 +112,7 @@ ModelConfig.cpp
 ModelNodeSet.cpp
 Trajectory.cpp
 KinematicChain.cpp
-RobotFactory.cpp
+ModelFactory.cpp
 Scene.cpp
 Obstacle.cpp
 Primitive.cpp
@@ -212,7 +212,7 @@ ModelConfig.h
 ModelNodeSet.h
 Trajectory.h
 KinematicChain.h
-RobotFactory.h
+ModelFactory.h
 Scene.h
 Obstacle.h
 Primitive.h
