@@ -43,7 +43,7 @@ namespace VirtualRobot
          *              If not given, the last entry of modelNodes will be set as the tcp.
          */
         ModelNodeSet(const std::string& name,
-                     ModelWeakPtr model,
+                     const ModelWeakPtr& model,
                      const std::vector<ModelNodePtr>& modelNodes,
                      const ModelNodePtr kinematicRoot = ModelNodePtr(),
                      const ModelNodePtr tcp = ModelNodePtr());
@@ -70,7 +70,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(ModelPtr model,
+        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<std::string>& modelNodeNames,
                                                   const std::string& kinematicRootName = "",
@@ -91,7 +91,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(ModelPtr model,
+        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
@@ -144,7 +144,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is contained; false otherwise.
          */
-        bool hasModelNode(ModelNodePtr node) const;
+        bool hasModelNode(const ModelNodePtr& node) const;
 
         /*!
          * Check, if this set contains the given node.
@@ -174,7 +174,7 @@ namespace VirtualRobot
          *
          * @param modelNode The new kinematic root.
          */
-        void setKinematicRoot(RobotNodePtr modelNode);
+        void setKinematicRoot(const RobotNodePtr & modelNode);
 
         /*!
          * Returns the TCP.
@@ -233,7 +233,7 @@ namespace VirtualRobot
          *
          * @param config The config to save the joint values in.
          */
-        void getJointValues(RobotConfigPtr config) const;
+        void getJointValues(const RobotConfigPtr& config) const;
 
         /*!
          * Checks if the given joint values are within joint limits.
@@ -260,7 +260,7 @@ namespace VirtualRobot
          * @param verbose Print information if joint limits are violated.
          * @return True when all given joint values are within joint limits.
          */
-        bool checkJointLimits(std::vector<float>& jointValues, bool verbose = false) const;
+        bool checkJointLimits(const std::vector<float>& jointValues, bool verbose = false) const;
 
         /*!
          * Checks if the jointValues are within the current joint limits.
@@ -269,7 +269,7 @@ namespace VirtualRobot
          * @param verbose Print information if joint limits are violated.
          * @return True when all given joint values are within joint limits.
          */
-        bool checkJointLimits(Eigen::VectorXf& jointValues, bool verbose = false) const;
+        bool checkJointLimits(const Eigen::VectorXf& jointValues, bool verbose = false) const;
 
         /*!
          * Set joint values [rad].
@@ -292,7 +292,7 @@ namespace VirtualRobot
          *
          * @param config The config to get the joint values from.
          */
-        virtual void setJointValues(const RobotConfigPtr config);
+        virtual void setJointValues(const RobotConfigPtr& config);
 
         /*!
          * Checks if this set of robot nodes form a valid kinematic chain.
@@ -340,7 +340,7 @@ namespace VirtualRobot
          * @param  nodes The nodes to check.
          * @return True, if the nodes are sufficient; false otherwise.
          */
-        bool nodesSufficient(std::vector<ModelNodePtr> nodes) const;
+        bool nodesSufficient(const std::vector<ModelNodePtr>& nodes) const;
 
         /*!
          * Create a XML string to represent this ModelNodeSet.
