@@ -28,10 +28,15 @@ namespace VirtualRobot
         createPQPModel();
     }
 
+    CollisionModelPQP::CollisionModelPQP(const CollisionModelPQP &orig) :
+        CollisionModelImplementation(orig.modelData, NULL, orig.id)
+    {
+        pqpModel = orig.pqpModel;
+    }
+
 
     CollisionModelPQP::~CollisionModelPQP()
     {
-        destroyData();
     }
 
 
@@ -44,6 +49,7 @@ namespace VirtualRobot
     {
         if (!modelData)
         {
+            VR_WARNING << "no model data in PQP!" << endl;
             return;
         }
 
@@ -52,7 +58,7 @@ namespace VirtualRobot
         PQP::PQP_REAL c[3];
 
         pqpModel.reset(new PQP::PQP_Model());
-        pqpModel->BeginModel();
+        pqpModel->BeginModel(modelData->faces.size());
 
         for (unsigned int i = 0; i < modelData->faces.size(); i++)
         {
@@ -134,6 +140,18 @@ namespace VirtualRobot
         }
 
         cout << endl;
+    }
+
+    boost::shared_ptr<CollisionModelImplementation> CollisionModelPQP::clone(bool deepCopy) const
+    {
+        boost::shared_ptr<CollisionModelPQP> p(new CollisionModelPQP(*this));
+        if(deepCopy)
+        {
+            p->createPQPModel();
+        }
+
+        VR_ASSERT(this->pqpModel);
+        return p;
     }
 
 

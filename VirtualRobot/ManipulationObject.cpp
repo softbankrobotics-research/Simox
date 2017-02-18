@@ -177,20 +177,25 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    ManipulationObject* ManipulationObject::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
+    ManipulationObjectPtr ManipulationObject::clone(const std::string &name, CollisionCheckerPtr colChecker, bool deepVisuCopy) const
+    {
+        return ManipulationObjectPtr(_clone(name, colChecker, deepVisuCopy));
+    }
+
+    ManipulationObject* ManipulationObject::_clone(const std::string& name, CollisionCheckerPtr colChecker, bool deepVisuCopy) const
     {
         VisualizationNodePtr clonedVisualizationNode;
 
         if (visualizationModel)
         {
-            clonedVisualizationNode = visualizationModel->clone();
+            clonedVisualizationNode = visualizationModel->clone(deepVisuCopy);
         }
 
         CollisionModelPtr clonedCollisionModel;
 
         if (collisionModel)
         {
-            clonedCollisionModel = collisionModel->clone(colChecker);
+            clonedCollisionModel = collisionModel->clone(colChecker, 1.0, deepVisuCopy);
         }
 
         ManipulationObject* result = new ManipulationObject(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);

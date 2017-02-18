@@ -96,10 +96,7 @@ namespace VirtualRobot
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
         */
-        ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const
-        {
-            return ManipulationObjectPtr(_clone(name, colChecker));
-        }
+        ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), bool deepVisuCopy = true) const;
 
         /*!
         Create a standard obstacle from a mesh.
@@ -111,7 +108,7 @@ namespace VirtualRobot
 
     protected:
 
-        virtual ManipulationObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+        virtual ManipulationObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), bool deepVisuCopy = true) const;
 
 
         //std::string filename;
