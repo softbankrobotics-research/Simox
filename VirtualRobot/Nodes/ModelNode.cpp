@@ -1,4 +1,5 @@
 #include "ModelNode.h"
+#include "../Model.h"
 #include "../VirtualRobotException.h"
 #include "../ConditionedLock.h"
 
@@ -488,10 +489,5 @@ namespace VirtualRobot
     Eigen::Matrix4f ModelNode::getTransformationFrom(const ModelNodePtr& otherObject)
     {
         return otherObject->getGlobalPose().inverse() * getGlobalPose();
-    }
-
-    static bool ModelNode::checkNodeOfType(const ModelNodePtr& node, ModelNode::ModelNodeType type)
-    {
-        return (node->getType() & type) == type;
     }
 }

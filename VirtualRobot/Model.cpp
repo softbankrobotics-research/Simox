@@ -1,6 +1,5 @@
 #include "Model.h"
 #include "VirtualRobotException.h"
-#include "Nodes/ModelNode.h"
 #include "Nodes/ModelLink.h"
 #include "Nodes/ModelJoint.h"
 #include "Visualization/VisualizationNode.h"
