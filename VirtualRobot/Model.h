@@ -26,6 +26,7 @@
 #include "VirtualRobot.h"
 #include "BoundingBox.h"
 #include "ConditionedLock.h"
+#include "Nodes/ModelNode.h"
 
 #include <Eigen/Core>
 #include <map>

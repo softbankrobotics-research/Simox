@@ -24,7 +24,6 @@
 #define _VirtualRobot_ModelNode_h_
 
 #include "../VirtualRobot.h"
-#include "../Model.h"
 #include "../ModelNodeSet.h"
 #include "Attachments/ModelNodeAttachment.h"
 
@@ -423,7 +422,10 @@ namespace VirtualRobot
          * @param type The type to check.
          * @return True, if the node has tthe given type; false otherwise.
          */
-        inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type);
+        inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type)
+        {
+            return (node->getType() & type) == type;
+        }
 
     protected:
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
