@@ -26,6 +26,9 @@
 #include "../VirtualRobot.h"
 #include "../MathTools.h"
 
+#include "../Nodes/ModelLink.h"
+#include "../Model.h"
+
 #include <string>
 #include <vector>
 
@@ -34,6 +37,9 @@
 #else
 #include "Dummy/CollisionCheckerDummy.h"
 #endif
+
+#include <boost/preprocessor.hpp>
+
 
 namespace VirtualRobot
 {
@@ -56,44 +62,93 @@ namespace VirtualRobot
         CollisionChecker();
         virtual ~CollisionChecker();
 
+        // the types to check with each other for collision
+#define T_MODEL const ModelPtr&
+#define T_MODEL_VEC const std::vector<ModelPtr>&
+#define T_MODELNODE const ModelNodePtr&
+#define T_MODELNODE_VEC const std::vector<ModelNodePtr>&
+#define T_MODELNODESET const ModelNodeSetPtr&
+#define TYPES (T_MODEL, (T_MODEL_VEC, (T_MODELNODE, (T_MODELNODE_VEC, (T_MODELNODESET, BOOST_PP_NIL)))))
+
         /*!
             Returns distance of the collision models.
             Returns -1.0 if no distance calculation lib was specified (-> Dummy Col Checker)
         */
-        virtual float calculateDistance(SceneObjectSetPtr model1, SceneObjectSetPtr model2);
-        virtual float calculateDistance(CollisionModelPtr model1, SceneObjectSetPtr model2);
-        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2);
-        virtual float calculateDistance(SceneObjectSetPtr model1, SceneObjectSetPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual float calculateDistance(CollisionModelPtr model1, SceneObjectSetPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+#define CREATE_CALCULATE_DISTANCE(param1, param2)\
+        inline float calculateDistance(param1 m1, param2 m2)\
+        {\
+            return calculateDistance(getCollisionModel(m1), getCollisionModel(m2), tmpV1, tmpV2, NULL, NULL);\
+        }\
+        inline float calculateDistance(param1 m1, param2 m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL)\
+        {\
+            return calculateDistance(getCollisionModel(m1), getCollisionModel(m2), P1, P2, trID1, trID2);\
+        }
+#define CREATE_CALCULATE_DISTANCE_TUPEL(r, paramTupel) CREATE_CALCULATE_DISTANCE(BOOST_PP_TUPLE_ELEM(2, 0, paramTupel), BOOST_PP_TUPLE_ELEM(2, 1, paramTupel))
+
+        BOOST_PP_LIST_FOR_EACH_PRODUCT(CREATE_CALCULATE_DISTANCE_TUPEL, 2, (TYPES, TYPES))
+
+#undef CREATE_CALCULATE_DISTANCE_TUPEL
+#undef CREATE_CALCULATE_DISTANCE
+
+
+        inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const std::vector<CollisionModelPtr>& m2)
+        {
+            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+        }
+        inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const CollisionModelPtr& m2)
+        {
+            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+        }
+        inline float calculateDistance(const CollisionModelPtr& m1, const std::vector<CollisionModelPtr>& m2)
+        {
+            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+        }
+        inline float calculateDistance(const CollisionModelPtr& m1, const CollisionModelPtr& m2)
+        {
+            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+        }
+
+        virtual float calculateDistance(const std::vector<CollisionModelPtr>& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+        virtual float calculateDistance(const CollisionModelPtr& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+        inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL)
+        {
+            return calculateDistance(m2, m1, P1, P2, trID1, trID2);
+        }
+        virtual float calculateDistance(const CollisionModelPtr& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+
 
         /*!
             Test if the two models are colliding.
             Returns true on collision.
         */
-        virtual bool checkCollision(SceneObjectSetPtr model1, SceneObjectSetPtr model2);
+#define CREATE_CHECK_COLLSION(param1, param2)\
+        inline bool checkCollision(param1 m1, param2 m2)\
+        {\
+            return checkCollision(getCollisionModel(m1), getCollisionModel(m2));\
+        }
+#define CREATE_CHECK_COLLSION_TUPEL(r, paramTupel) CREATE_CHECK_COLLSION(BOOST_PP_TUPLE_ELEM(2, 0, paramTupel), BOOST_PP_TUPLE_ELEM(2, 1, paramTupel))
+
+        BOOST_PP_LIST_FOR_EACH_PRODUCT(CREATE_CHECK_COLLSION_TUPEL, 2, (TYPES, TYPES))
+
+#undef CREATE_CHECK_COLLSION_TUPEL
+#undef CREATE_CHECK_COLLSION
 
         /*!
             Test if the two models are colliding.
             Returns true on collision.
         */
-        virtual bool checkCollision(std::vector<CollisionModelPtr>& model1, CollisionModelPtr model2);
-        /*!
-            Test if the two models are colliding.
-            Returns true on collision.
-        */
-        virtual bool checkCollision(CollisionModelPtr model1, SceneObjectSetPtr model2);
-        /*!
-            Test if the two models are colliding.
-            Returns true on collision.
-        */
-        virtual bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2); //, Eigen::Vector3f *storeContact = NULL);
-        //virtual bool getAllCollisonTriangles (SceneObjectSetPtr model1, SceneObjectSetPtr model2, std::vector<int> &storePairs);
+        virtual bool checkCollision(const std::vector<CollisionModelPtr>& model1, const std::vector<CollisionModelPtr>& model2);
+        virtual bool checkCollision(const std::vector<CollisionModelPtr>& model1, const CollisionModelPtr& model2);
+        inline bool checkCollision(const CollisionModelPtr& model1, const std::vector<CollisionModelPtr>& model2)
+        {
+            return checkCollision(model2, model2);
+        }
+        virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2); //, Eigen::Vector3f *storeContact = NULL);
 
         /*!
             Store all vertices of colModel whose distance to p is smaller than maxDist.
         */
-        virtual void getContacts(const MathTools::Plane& p, CollisionModelPtr colModel, std::vector< MathTools::ContactPoint >& storeContatcs, float maxDist = 1.0f);
+        virtual void getContacts(const MathTools::Plane& p, const CollisionModelPtr& colModel, std::vector< MathTools::ContactPoint >& storeContatcs, float maxDist = 1.0f);
 
         /*!
             If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
@@ -125,26 +180,6 @@ namespace VirtualRobot
 
         //! This is the global collision checker singleton
         static CollisionCheckerPtr getGlobalCollisionChecker();
-
-        /*!
-            Convenient methods
-        */
-        virtual float calculateDistance(SceneObjectPtr model1, SceneObjectSetPtr model2);
-        virtual float calculateDistance(SceneObjectPtr model1, SceneObjectPtr model2);
-        virtual float calculateDistance(SceneObjectPtr model1, SceneObjectSetPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual float calculateDistance(SceneObjectPtr model1, SceneObjectPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-
-        /*!
-            Test if the two models are colliding.
-            Returns true on collision.
-        */
-        virtual bool checkCollision(SceneObjectPtr model1, SceneObjectSetPtr model2);
-        /*!
-            Test if the two models are colliding.
-            Returns true on collision.
-        */
-        virtual bool checkCollision(SceneObjectPtr model1, SceneObjectPtr model2);
-
 
 
         /*!
@@ -187,7 +222,42 @@ namespace VirtualRobot
 #endif
 
     protected:
-        SceneObjectSetPtr getRobotModels(RobotPtr r);
+        inline std::vector<CollisionModelPtr> getCollisionModel(const ModelPtr& m)
+        {
+            return m->getCollisionModels();
+        }
+        inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<ModelPtr>& m)
+        {
+            std::vector<CollisionModelPtr> mVec;
+            for (auto mTmp : m)
+            {
+                std::vector<CollisionModelPtr> tmp = mTmp->getCollisionModels();
+                mVec.insert(mVec.end(), tmp.begin(), tmp.end());
+            }
+            return mVec;
+        }
+        inline CollisionModelPtr getCollisionModel(const ModelNodePtr& m)
+        {
+            if (!ModelNode::checkNodeOfType(m, ModelNode::ModelNodeType::Link))
+                return CollisionModelPtr();
+            return boost::static_pointer_cast<ModelLink>(m)->getCollisionModel();
+        }
+        inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<ModelNodePtr>& m)
+        {
+            std::vector<CollisionModelPtr> mVec;
+            for (auto mTmp : m)
+            {
+                if (!ModelNode::checkNodeOfType(mTmp, ModelNode::ModelNodeType::Link))
+                    continue;
+                mVec.push_back(boost::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
+            }
+            return mVec;
+        }
+        inline std::vector<CollisionModelPtr> getCollisionModel(const ModelNodeSetPtr& m)
+        {
+            return m->getCollisionModels();
+        }
+
     private:
         // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++
         friend class Cleanup;
