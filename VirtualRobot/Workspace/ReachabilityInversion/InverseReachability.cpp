@@ -212,7 +212,7 @@ void InverseReachability::buildData(float factorTranslation, float factorOrienta
     int nPos2 = 1;
 	for (v[0]=0;v[0]<(unsigned int)ws->getNumVoxels(0);v[0]+=nPos)
 	{
-		cout << "Starting x=" << v[0] << endl;
+//		cout << "Starting x=" << v[0] << endl;
 		for (v[1]=0;v[1]<(unsigned int)ws->getNumVoxels(1);v[1]+=nPos)
 			for (v[2]=0;v[2]<(unsigned int)ws->getNumVoxels(2);v[2]+=nPos)
 			{
@@ -421,7 +421,7 @@ void InverseReachability::buildData(float factorTranslation, float factorOrienta
                 */
 				}
 			}
-	print();
+//	print();
 	}
 	print();
 

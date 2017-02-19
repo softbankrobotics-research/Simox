@@ -649,7 +649,7 @@ void InverseReachabilityCoinVisualization::buildReachMapVisu(SoSeparator* reacha
 //reachSpace->getDiscretizeParameterTranslation()*0.55f
 SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWorkspaceGridPtr reachGrid, InverseReachabilityPtr invReach, VirtualRobot::ColorMap cm, bool transformToGlobalPose, SoSeparator* reachableFootVisuSep, SoSeparator *footLRVisuSep )
 {
-	bool addFottsteps = true;
+    bool addFottsteps = false;
 	SoSeparator *res = new SoSeparator;
 	if (!reachGrid)
 		return res;

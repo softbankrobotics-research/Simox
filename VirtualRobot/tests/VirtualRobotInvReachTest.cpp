@@ -187,10 +187,12 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
     {
         joint1->setJointValue(jv);
         gp = tcp->getGlobalPose();
-        reach->matrix2Vector(gp,t);
-        cout << "pose:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
+//        reach->matrix2Vector(gp,t); // TODO harry
+        VirtualRobot::MathTools::eigen4f2rpy(gp, t); // TODO harry
+        cout << "pose:" << endl << gp << endl;
+//        cout << "pose:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
         reach->getVoxelFromPose(gp,v);
-        cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+//        cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
         unsigned char entry = reach->getEntry(gp);
         BOOST_REQUIRE(entry>0);
         if (!isInList(gp, poses))
@@ -223,18 +225,18 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
                                 cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
 
                                 Eigen::Matrix4f gp = (invReach->getPoseFromVoxel(v));
-                                cout << "gp (inv):" << endl << gp << endl;
+                                cout << "pose(inv):" << endl << gp << endl;
                                 invReach->matrix2Vector(gp,t);
-                                cout << "pose(inv):" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
+//                                cout << "gp(inv):" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
                                 if (!isInList(gp, posesInv))
                                     posesInv.push_back(gp);
 
                                 Eigen::Matrix4f p = gp.inverse();
                                 if (!isInList(p, posesInvInv))
                                     posesInvInv.push_back(p);
-                                cout << "gp(inv).inv:" << endl << p << endl;
+                                cout << "pose(inv).inv:" << endl << p << endl;
                                 invReach->matrix2Vector(p,t);
-                                cout << "pose(inv).inv:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
+//                                cout << "gp(inv).inv:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
                                 if (hasEntry(reach, p, discrTr, discrRot))
                                     countHit++;
                                 else
