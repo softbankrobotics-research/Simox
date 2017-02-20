@@ -331,16 +331,19 @@ namespace VirtualRobot
             }
             else
             {
-                newModel->addChild(visualization);
+                newModel->addChild(visualization);                
             }
         }
 
-        VisualizationNodePtr p(new CoinVisualizationNode(newModel));
+        CoinVisualizationNodePtr p(new CoinVisualizationNode(newModel));
 
         if (newModel)
         {
             newModel->unrefNoDelete();
         }
+        if(!deepCopy)
+            p->triMeshModel = this->triMeshModel;
+        //else -> lazy generation
 
         p->setUpdateVisualization(updateVisualization);
         p->setGlobalPose(getGlobalPose());
