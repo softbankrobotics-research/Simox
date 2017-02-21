@@ -51,6 +51,7 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
 showSceneWindow::~showSceneWindow()
 {
     sceneSep->unref();
+    delete viewer;
 }
 
 
