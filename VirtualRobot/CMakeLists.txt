@@ -246,6 +246,7 @@ VirtualRobotTest.h
 ManipulationObject.h
 BoundingBox.h
 RuntimeEnvironment.h
+nanoflann.hpp
 Compression/CompressionRLE.h
 Compression/CompressionBZip2.h
 SphereApproximator.h

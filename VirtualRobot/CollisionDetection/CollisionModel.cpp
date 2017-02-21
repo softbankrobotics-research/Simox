@@ -130,8 +130,8 @@ namespace VirtualRobot
 
         if (visu)
         {
+            visu->shrinkFatten(15);
             model = visu->getTriMeshModel();
-
             if (model)
             {
                 bbox = model->boundingBox;
