@@ -255,8 +255,6 @@ namespace VirtualRobot
 
     void TriMeshModel::mergeVertices(float mergeThreshold)
     {
-        int vertexChangeCount = 0;
-
         int size = vertices.size();
         int faceCount = faces.size();
         std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
@@ -285,43 +283,25 @@ namespace VirtualRobot
             > my_kd_tree_t;
 
         my_kd_tree_t   index(3 /*dim*/, cloud, KDTreeSingleIndexAdaptorParams(10 /* max leaf */) );
-//        std::cout << "Building index for "  << size << std::endl;
         index.buildIndex();
-//        std::cout << "Built index for "  << size << std::endl;
 
 
 
         const num_t search_radius = static_cast<num_t>(mergeThreshold);
         std::vector<std::pair<size_t,num_t> >   ret_matches;
-        int num_results = 10;
-        std::vector<size_t>   ret_index(num_results);
-        std::vector<num_t> out_dist_sqr(num_results);
-
 
         nanoflann::SearchParams params;
         num_t query_pt[3];
         params.sorted = false;
-        int perc = 0;
         for (int i = 0; i < size; ++i)
         {
             auto& p1 = vertices.at(i);
             query_pt[0] = p1[0];
             query_pt[1] = p1[1];
             query_pt[2] = p1[2];
-//            if(i*100/size > perc)
-//            {
-//                VR_INFO << perc << std::endl;
-//                perc++;
-//            }
             const size_t nMatches = index.radiusSearch(&query_pt[0],search_radius, ret_matches, params);
-//            const size_t nMatches = index.knnSearch(&query_pt[0],num_results, &ret_index[0], &out_dist_sqr[0]);
-//            VR_INFO << "matches: " << nMatches << std::endl;
             for (int k = 0; k < nMatches; ++k)
             {
-//                if(out_dist_sqr[k] > mergeThreshold*mergeThreshold)
-//                    continue;
-                vertexChangeCount++;
-                //                int foundIndex = ret_index.at(k);
                 int foundIndex = ret_matches.at(k).first;
 
                 for(MathTools::TriangleFace* facePtr : vertex2FaceMap[foundIndex])
@@ -345,18 +325,7 @@ namespace VirtualRobot
                     if(found)
                         vertex2FaceMap[i].insert(facePtr);
                 }
-//                for (int j = 0; j < faceCount; ++j)
-//                {
-//                    MathTools::TriangleFace& face = faces.at(j);
-//                    if(face.id1 == foundIndex)
-//                        face.id1 = i;
-//                    if(face.id2 == foundIndex)
-//                        face.id2 = i;
-//                    if(face.id3 == foundIndex)
-//                        face.id3 = i;
-//                }
             }
-
         }
 
 #else
@@ -393,22 +362,10 @@ namespace VirtualRobot
                         if(found)
                             vertex2FaceMap[i].insert(facePtr);
                     }
-                    vertexChangeCount++;
-//                    for (int j = 0; j < faceCount; ++j)
-//                    {
-//                        MathTools::TriangleFace& face = faces.at(j);
-//                        if(face.id1 == k)
-//                            face.id1 = i;
-//                        if(face.id2 == k)
-//                            face.id2 = i;
-//                        if(face.id3 == k)
-//                            face.id3 = i;
-//                    }
                 }
             }
         }
 #endif
-        std::cout << "Change count: " << vertexChangeCount << " total iterations: " << (size*size) << std::endl;
     }
 
     void TriMeshModel::fattenShrink(float offset)
