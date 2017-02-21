@@ -164,7 +164,12 @@ namespace VirtualRobot
         virtual void scale(Eigen::Vector3f& scaleFactor);
 
         float getMargin() const;
-        void setMargin(float value);
+
+        /**
+         * @brief in/deflates the model. If value is <0 the model is deflated.
+         * @param margin Each vertex of the model is moved about this margin along its normal.
+         */
+        void inflateModel(float margin);
 
     protected:
 

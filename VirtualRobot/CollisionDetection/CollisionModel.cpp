@@ -88,13 +88,13 @@ namespace VirtualRobot
         return margin;
     }
 
-    void CollisionModel::setMargin(float value)
+    void CollisionModel::inflateModel(float value)
     {
         if(margin != value && visualization)
         {
 
             visualization->shrinkFatten(value);
-            model = visu->getTriMeshModel();
+            model = visualization->getTriMeshModel();
             if (model)
             {
                 bbox = model->boundingBox;
@@ -155,7 +155,7 @@ namespace VirtualRobot
         model.reset();
         bbox.clear();
 
-        setMargin(margin); // updates the model
+        inflateModel(margin); // updates the model
     }
 
     int CollisionModel::getId()
