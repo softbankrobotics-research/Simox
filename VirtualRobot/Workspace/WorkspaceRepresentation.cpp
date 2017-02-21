@@ -1310,7 +1310,6 @@ namespace VirtualRobot
         Eigen::Matrix4f m;
         vector2Matrix(x, m);
 
-        //MathTools::posrpy2eigen4f(x,m);
         if (transformToGlobalPose)
         {
             toGlobal(m);

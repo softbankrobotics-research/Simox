@@ -596,9 +596,9 @@ bool OrientedWorkspaceGrid::fillData( const std::vector< Eigen::Matrix4f > &traj
             {
                posrpy[5] = alpha;
                 Eigen::Matrix4f m;
-                invReach->vector2Matrix(posrpy,m);
+                //invReach->vector2Matrix(posrpy,m);
 //                cout << "------------------------- m(0,3) = " << m(0,3) << " m(1,3) = " << m(1,3) << " m(2,3) = " << m(2,3) << endl;
-                //MathTools::posrpy2eigen4f(posrpy,m);
+                MathTools::posrpy2eigen4f(posrpy,m);
 
                 // get min entry
                 unsigned char e = 255;
@@ -707,7 +707,8 @@ bool OrientedWorkspaceGrid::updateEntry( float x, float y, float alpha )
 	if (lazyModeTrajectory.size()==1)
 	{
 		// one pose, invReach is already at correct pose
-		lazyModeInvReach->vector2Matrix(posrpy,m); // roll and pitch are zero -> RPY == eulerXYZ
+        //lazyModeInvReach->vector2Matrix(posrpy,m); // roll and pitch are zero -> RPY == eulerXYZ
+        MathTools::posrpy2eigen4f(posrpy, m);
 		unsigned char e = lazyModeInvReach->getEntry(m);
 		setEntry(x,y,alpha,e,lazyModeGrasp);
 	} else
@@ -717,7 +718,9 @@ bool OrientedWorkspaceGrid::updateEntry( float x, float y, float alpha )
 		for (size_t i=0;i<lazyModeTrajectory.size();i++)
 		{
 			lazyModeInvReach->setGlobalPose(lazyModeTrajectory[i]);
-			lazyModeInvReach->vector2Matrix(posrpy,m);
+            //lazyModeInvReach->vector2Matrix(posrpy,m);
+            MathTools::posrpy2eigen4f(posrpy, m);
+
 			unsigned char e2 = lazyModeInvReach->getEntry(m);
 			if (e2<e)
 				e = e2;

@@ -83,6 +83,7 @@ protected:
 
 	VirtualRobot::WorkspaceRepresentationPtr ws;
 
+    //! local pose
     void addInverseData(Eigen::Matrix4f &m, unsigned char e);
 };
 

@@ -649,8 +649,11 @@ void InverseReachabilityCoinVisualization::buildReachMapVisu(SoSeparator* reacha
 //reachSpace->getDiscretizeParameterTranslation()*0.55f
 SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWorkspaceGridPtr reachGrid, InverseReachabilityPtr invReach, VirtualRobot::ColorMap cm, bool transformToGlobalPose, SoSeparator* reachableFootVisuSep, SoSeparator *footLRVisuSep )
 {
-    bool addFottsteps = false;
+    bool addFootsteps = false;
 	SoSeparator *res = new SoSeparator;
+    SoUnits *u = new SoUnits;
+    u->units = SoUnits::MILLIMETERS;
+    res->addChild(u);
 	if (!reachGrid)
 		return res;
 	reachableFootVisuSep->removeAllChildren();
@@ -660,7 +663,7 @@ SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWork
 	if (transformToGlobalPose && reachGrid)// &&reachSpace && reachSpace->getBaseNode())
 	{
 		basePose(2,3) = reachGrid->getHeight();//reachSpace->getBaseNode()->getGlobalPose();
-		SoMatrixTransform* matTrBase = CoinVisualizationFactory::getMatrixTransformScaleMM2M(basePose);
+        SoMatrixTransform* matTrBase = CoinVisualizationFactory::getMatrixTransform(basePose);
 		res->addChild(matTrBase);
 	}
 
@@ -760,7 +763,7 @@ SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWork
                 
 				MathTools::posrpy2eigen4f(resPos,gp2);
 
-				SoMatrixTransform* matTr = CoinVisualizationFactory::getMatrixTransformScaleMM2M(gp2);
+                SoMatrixTransform* matTr = CoinVisualizationFactory::getMatrixTransform(gp2);
 
 				float intensity = (float)v;
 				intensity /= maxEntry;
@@ -789,7 +792,7 @@ SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWork
 					
 					//sep1->addChild(cube);
 
-					/*SoSeparator *pSepLines = new SoSeparator;
+                    SoSeparator *pSepLines = new SoSeparator;
 					sep1->addChild(pSepLines);
 
 					pSepLines->addChild(ds);
@@ -797,11 +800,11 @@ SoNode* InverseReachabilityCoinVisualization::getCoinVisualization( OrientedWork
 					pSepLines->addChild(lightModel);
 					pSepLines->addChild(bc);
 
-					pSepLines->addChild(cube);*/
+                    pSepLines->addChild(cube);
 					
 
 					res->addChild(sep1);
-					if (addFottsteps)
+                    if (addFootsteps)
 					{
 						Eigen::Matrix4f p = basePose*gp2;
 						addFootstepVisu(reachableFootVisuSep,footLRVisuSep,p);
