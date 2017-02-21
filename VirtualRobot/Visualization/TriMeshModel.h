@@ -57,14 +57,15 @@ namespace VirtualRobot
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
         static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
         void addFace(const MathTools::TriangleFace& face);
-        void addVertex(const Eigen::Vector3f& vertex);
-        void addNormal(const Eigen::Vector3f& normal);
-        void addColor(const VisualizationFactory::Color& color);
-        void addColor(const Eigen::Vector4f& color);
-        void addMaterial(const VisualizationFactory::PhongMaterial& material);
+        int addVertex(const Eigen::Vector3f& vertex);
+        int addNormal(const Eigen::Vector3f& normal);
+        int addColor(const VisualizationFactory::Color& color);
+        int addColor(const Eigen::Vector4f& color);
+        int addMaterial(const VisualizationFactory::PhongMaterial& material);
         void clear();
         void flipVertexOrientations();
-
+        void mergeVertices(float mergeThreshold = 0.0001);
+        void fattenShrink(float offset);
         // Overwrite all colors
         void setColor(VisualizationFactory::Color color);
 
@@ -75,15 +76,15 @@ namespace VirtualRobot
         unsigned int checkAndCorrectNormals(bool inverted);
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
-        TriMeshModelPtr clone();
-        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor);
+        TriMeshModelPtr clone() const;
+        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor) const;
 
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> vertices;
         std::vector<VisualizationFactory::Color> colors;
         std::vector<MathTools::TriangleFace> faces;
         std::vector<VisualizationFactory::PhongMaterial> materials;
-        BoundingBox boundingBox;
+        BoundingBox boundingBox;        
     };
 } // namespace VirtualRobot
 

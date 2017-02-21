@@ -37,7 +37,7 @@ namespace VirtualRobot
      * CoinVisualizationNode::visualization.
      * If \p visualizationNode is a valid object call SoNode::ref() on it.
      */
-    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode) :
+    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode, float margin) :
         visualization(visualizationNode)
     {
         visualizationAtGlobalPose = new SoSeparator();
@@ -129,7 +129,7 @@ namespace VirtualRobot
 
     /**
      * This method returns CoinVisualizationNode::triMeshModel.
-     * If the model doesn't exist construct it by calling
+     * If the model doesn't exisText file busyt construct it by calling
      * CoinVisualizationNode::createTriMeshModel().
      */
     TriMeshModelPtr CoinVisualizationNode::getTriMeshModel()
@@ -142,7 +142,7 @@ namespace VirtualRobot
         return triMeshModel;
     }
 
-
+    typedef std::map<const SoPrimitiveVertex*,int> CoinVertexIndexMap;
     /**
      * This method constructs an instance of TriMeshModel and stores it in
      * CoinVisualizationNode::triMeshModel.
@@ -164,9 +164,14 @@ namespace VirtualRobot
             triMeshModel.reset(new TriMeshModel());
         }
 
+//        coinVertexIndexMap.clear();
+        CoinVertexIndexMap coinVertexIndexMap;
         SoCallbackAction ca;
-        ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualizationNode::InventorTriangleCB, triMeshModel.get());
+        std::pair<CoinVertexIndexMap*,TriMeshModel*> dataPair = std::make_pair(&coinVertexIndexMap, triMeshModel.get());
+        ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualizationNode::InventorTriangleCB, &dataPair);
         ca.apply(visualization);
+        std::cout << "size: " << coinVertexIndexMap.size() << std::endl;
+
     }
 
 
@@ -180,8 +185,9 @@ namespace VirtualRobot
             const SoPrimitiveVertex* v2,
             const SoPrimitiveVertex* v3)
     {
-        TriMeshModel* triangleMeshModel = static_cast<TriMeshModel*>(data);
-
+        std::pair<CoinVertexIndexMap*,TriMeshModel*>* datapair = static_cast<std::pair<CoinVertexIndexMap*,TriMeshModel*>*>(data);
+        TriMeshModel* triangleMeshModel = datapair->second;
+        CoinVertexIndexMap& indexMap = *(datapair->first);
         if (!triangleMeshModel)
         {
             VR_INFO << ": Internal error, NULL data" << endl;
@@ -213,8 +219,31 @@ namespace VirtualRobot
         b << triangle[1][0], triangle[1][1], triangle[1][2];
         c << triangle[2][0], triangle[2][1], triangle[2][2];
         n << normal[0][0], normal[0][1], normal[0][2];
-        // add new triangle to the model
+
+//        MathTools::TriangleFace face;
+
+//        auto getId = [&](const SoPrimitiveVertex* vertex, Eigen::Vector3f& point, SbVec3f& normal, unsigned int* normalId, unsigned int* colorId)
+//        {
+//            auto itId1 = indexMap.find(vertex);
+//            if(itId1 == indexMap.end())
+//            {
+//                int id1 = triangleMeshModel->addVertex(point);
+//                itId1 = indexMap.emplace(vertex, id1).first;
+//            }
+//            Eigen::Vector3f normalEigen(normal[0], normal[1], normal[2]);
+//            *normalId = triangleMeshModel->addNormal(normalEigen);
+//            *colorId = triangleMeshModel->addColor(VisualizationFactory::Color::Gray());
+//            return itId1->second;
+//        };
+//        face.id1 = getId(v1,a, normal[0], &face.idNormal1, &face.idColor1);
+//        face.id2 = getId(v2,b, normal[1], &face.idNormal2, &face.idColor2);
+//        face.id3 = getId(v3,c, normal[2], &face.idNormal3, &face.idColor3);
+////        Eigen::Vector3f normalEigen(normal[0], normal[1], normal[2]);
+//        face.normal = n;
+//        triangleMeshModel->addFace(face);
+        // add new triangle to the model        
         triangleMeshModel->addTriangleWithFace(a, b, c, n);
+
     }
 
 
@@ -496,6 +525,23 @@ namespace VirtualRobot
         n->unref();
 
         return true;
+    }
+
+    void CoinVisualizationNode::shrinkFatten(float offset)
+    {
+        if(offset != 0.0f)
+        {
+            triMeshModel.reset();
+            getTriMeshModel()->mergeVertices();
+            getTriMeshModel()->fattenShrink(offset);
+
+            scaledVisualization->removeChild(scaledVisualization->findChild(visualization));
+            visualization->unref();
+            visualization = CoinVisualizationFactory::getCoinVisualization(getTriMeshModel());
+            visualization->ref();
+            scaledVisualization->addChild(visualization);
+        }
+
     }
 
     void CoinVisualizationNode::scale(Eigen::Vector3f& scaleFactor)
