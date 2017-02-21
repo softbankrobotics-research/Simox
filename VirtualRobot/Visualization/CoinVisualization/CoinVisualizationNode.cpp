@@ -164,11 +164,8 @@ namespace VirtualRobot
             triMeshModel.reset(new TriMeshModel());
         }
 
-//        coinVertexIndexMap.clear();
-        CoinVertexIndexMap coinVertexIndexMap;
         SoCallbackAction ca;
-        std::pair<CoinVertexIndexMap*,TriMeshModel*> dataPair = std::make_pair(&coinVertexIndexMap, triMeshModel.get());
-        ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualizationNode::InventorTriangleCB, &dataPair);
+        ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualizationNode::InventorTriangleCB, triMeshModel.get());
         ca.apply(visualization);
     }
 
@@ -183,9 +180,7 @@ namespace VirtualRobot
             const SoPrimitiveVertex* v2,
             const SoPrimitiveVertex* v3)
     {
-        std::pair<CoinVertexIndexMap*,TriMeshModel*>* datapair = static_cast<std::pair<CoinVertexIndexMap*,TriMeshModel*>*>(data);
-        TriMeshModel* triangleMeshModel = datapair->second;
-        CoinVertexIndexMap& indexMap = *(datapair->first);
+        TriMeshModel* triangleMeshModel  = static_cast<TriMeshModel*>(data);
         if (!triangleMeshModel)
         {
             VR_INFO << ": Internal error, NULL data" << endl;
@@ -218,27 +213,6 @@ namespace VirtualRobot
         c << triangle[2][0], triangle[2][1], triangle[2][2];
         n << normal[0][0], normal[0][1], normal[0][2];
 
-//        MathTools::TriangleFace face;
-
-//        auto getId = [&](const SoPrimitiveVertex* vertex, Eigen::Vector3f& point, SbVec3f& normal, unsigned int* normalId, unsigned int* colorId)
-//        {
-//            auto itId1 = indexMap.find(vertex);
-//            if(itId1 == indexMap.end())
-//            {
-//                int id1 = triangleMeshModel->addVertex(point);
-//                itId1 = indexMap.emplace(vertex, id1).first;
-//            }
-//            Eigen::Vector3f normalEigen(normal[0], normal[1], normal[2]);
-//            *normalId = triangleMeshModel->addNormal(normalEigen);
-//            *colorId = triangleMeshModel->addColor(VisualizationFactory::Color::Gray());
-//            return itId1->second;
-//        };
-//        face.id1 = getId(v1,a, normal[0], &face.idNormal1, &face.idColor1);
-//        face.id2 = getId(v2,b, normal[1], &face.idNormal2, &face.idColor2);
-//        face.id3 = getId(v3,c, normal[2], &face.idNormal3, &face.idColor3);
-////        Eigen::Vector3f normalEigen(normal[0], normal[1], normal[2]);
-//        face.normal = n;
-//        triangleMeshModel->addFace(face);
         // add new triangle to the model        
         triangleMeshModel->addTriangleWithFace(a, b, c, n);
 
