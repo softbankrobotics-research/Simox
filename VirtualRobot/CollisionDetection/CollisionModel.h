@@ -65,7 +65,7 @@ namespace VirtualRobot
             \param colChecker If not specified, the global singleton instance is used. Only useful, when parallel collision checks should be performed.
             \param id A user id.
         */
-        CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666);
+        CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666, float margin = 0.0f);
         CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
         /*!Standard Destructor
         */
@@ -163,6 +163,9 @@ namespace VirtualRobot
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
 
+        float getMargin() const;
+        void setMargin(float value);
+
     protected:
 
         //! delete all data
@@ -171,7 +174,7 @@ namespace VirtualRobot
         VisualizationNodePtr modelVisualization;    // this is the visualization of the trimeshmodel
         bool updateVisualization;
         TriMeshModelPtr model;
-
+        float margin = 0.0f;                        // inflates the model with this margin (in mm)
         BoundingBox bbox;
 
         //! the name

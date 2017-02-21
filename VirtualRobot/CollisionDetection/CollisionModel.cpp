@@ -11,13 +11,13 @@
 namespace VirtualRobot
 {
 
-    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id)
+    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, float margin)
     {
         globalPose = Eigen::Matrix4f::Identity();
         this->id = id;
 
         this->name = name;
-
+        this->margin = margin;
         this->colChecker = colChecker;
 
         if (!this->colChecker)
@@ -83,6 +83,33 @@ namespace VirtualRobot
     {
     }
 
+    float CollisionModel::getMargin() const
+    {
+        return margin;
+    }
+
+    void CollisionModel::setMargin(float value)
+    {
+        if(margin != value && visualization)
+        {
+
+            visualization->shrinkFatten(value);
+            model = visu->getTriMeshModel();
+            if (model)
+            {
+                bbox = model->boundingBox;
+            }
+
+
+#if defined(VR_COLLISION_DETECTION_PQP)
+            collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
+#else
+            collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
+#endif
+        }
+        margin = value;
+    }
+
 
     std::string CollisionModel::getName()
     {
@@ -128,21 +155,7 @@ namespace VirtualRobot
         model.reset();
         bbox.clear();
 
-        if (visu)
-        {
-            visu->shrinkFatten(15);
-            model = visu->getTriMeshModel();
-            if (model)
-            {
-                bbox = model->boundingBox;
-            }
-        }
-
-#if defined(VR_COLLISION_DETECTION_PQP)
-        collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
-#else
-        collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
-#endif
+        setMargin(margin); // updates the model
     }
 
     int CollisionModel::getId()

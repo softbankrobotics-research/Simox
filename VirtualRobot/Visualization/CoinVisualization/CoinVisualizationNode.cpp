@@ -170,8 +170,6 @@ namespace VirtualRobot
         std::pair<CoinVertexIndexMap*,TriMeshModel*> dataPair = std::make_pair(&coinVertexIndexMap, triMeshModel.get());
         ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualizationNode::InventorTriangleCB, &dataPair);
         ca.apply(visualization);
-        std::cout << "size: " << coinVertexIndexMap.size() << std::endl;
-
     }
 
 

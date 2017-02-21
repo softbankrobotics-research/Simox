@@ -259,7 +259,14 @@ namespace VirtualRobot
 
         int size = vertices.size();
         int faceCount = faces.size();
-
+        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
+        for (int j = 0; j < faceCount; ++j)
+        {
+            MathTools::TriangleFace& face = faces.at(j);
+            vertex2FaceMap[face.id1].insert(&faces.at(j));
+            vertex2FaceMap[face.id2].insert(&faces.at(j));
+            vertex2FaceMap[face.id3].insert(&faces.at(j));
+        }
 #if 1
         PointCloud<float> cloud;
         cloud.pts.reserve(size);
@@ -278,42 +285,76 @@ namespace VirtualRobot
             > my_kd_tree_t;
 
         my_kd_tree_t   index(3 /*dim*/, cloud, KDTreeSingleIndexAdaptorParams(10 /* max leaf */) );
+//        std::cout << "Building index for "  << size << std::endl;
         index.buildIndex();
-//        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
-//        for (int j = 0; j < faceCount; ++j)
-//        {
-//            MathTools::TriangleFace& face = faces.at(j);
-//            vertex2FaceMap[face.id1].insert(&faces.at(j));
-//            vertex2FaceMap[face.id2].insert(&faces.at(j));
-//            vertex2FaceMap[face.id3].insert(&faces.at(j));
-//        }
+//        std::cout << "Built index for "  << size << std::endl;
+
+
 
         const num_t search_radius = static_cast<num_t>(mergeThreshold);
         std::vector<std::pair<size_t,num_t> >   ret_matches;
+        int num_results = 10;
+        std::vector<size_t>   ret_index(num_results);
+        std::vector<num_t> out_dist_sqr(num_results);
+
 
         nanoflann::SearchParams params;
         num_t query_pt[3];
-        //params.sorted = false;
+        params.sorted = false;
+        int perc = 0;
         for (int i = 0; i < size; ++i)
         {
             auto& p1 = vertices.at(i);
             query_pt[0] = p1[0];
             query_pt[1] = p1[1];
             query_pt[2] = p1[2];
+//            if(i*100/size > perc)
+//            {
+//                VR_INFO << perc << std::endl;
+//                perc++;
+//            }
             const size_t nMatches = index.radiusSearch(&query_pt[0],search_radius, ret_matches, params);
+//            const size_t nMatches = index.knnSearch(&query_pt[0],num_results, &ret_index[0], &out_dist_sqr[0]);
+//            VR_INFO << "matches: " << nMatches << std::endl;
             for (int k = 0; k < nMatches; ++k)
             {
+//                if(out_dist_sqr[k] > mergeThreshold*mergeThreshold)
+//                    continue;
                 vertexChangeCount++;
-                for (int j = 0; j < faceCount; ++j)
+                //                int foundIndex = ret_index.at(k);
+                int foundIndex = ret_matches.at(k).first;
+
+                for(MathTools::TriangleFace* facePtr : vertex2FaceMap[foundIndex])
                 {
-                    MathTools::TriangleFace& face = faces.at(j);
-                    if(face.id1 == k)
-                        face.id1 = i;
-                    if(face.id2 == k)
-                        face.id2 = i;
-                    if(face.id3 == k)
-                        face.id3 = i;
+                    bool found = false;
+                    if(facePtr->id1 == foundIndex)
+                    {
+                        facePtr->id1 = i;
+                        found = true;
+                    }
+                    if(facePtr->id2 == foundIndex)
+                    {
+                        facePtr->id2 = i;
+                        found = true;
+                    }
+                    if(facePtr->id3 == foundIndex)
+                    {
+                        facePtr->id3 = i;
+                        found = true;
+                    }
+                    if(found)
+                        vertex2FaceMap[i].insert(facePtr);
                 }
+//                for (int j = 0; j < faceCount; ++j)
+//                {
+//                    MathTools::TriangleFace& face = faces.at(j);
+//                    if(face.id1 == foundIndex)
+//                        face.id1 = i;
+//                    if(face.id2 == foundIndex)
+//                        face.id2 = i;
+//                    if(face.id3 == foundIndex)
+//                        face.id3 = i;
+//                }
             }
 
         }
@@ -330,27 +371,39 @@ namespace VirtualRobot
                 auto &p2 = vertices.at(k);
                 if((p1-p2).norm() < mergeThreshold)
                 {
-                    deleted.at(k) = true;
-//                    for(MathTools::TriangleFace* facePtr : vertex2FaceMap[k])
-//                    {
-//                        if(facePtr->id1 == k)
-//                            facePtr->id1 = i;
-//                        if(facePtr->id2 == k)
-//                            facePtr->id2 = i;
-//                        if(facePtr->id3 == k)
-//                            facePtr->id3 = i;
-//                    }
-                    vertexChangeCount++;
-                    for (int j = 0; j < faceCount; ++j)
+//                    deleted.at(k) = true;
+                    for(MathTools::TriangleFace* facePtr : vertex2FaceMap[k])
                     {
-                        MathTools::TriangleFace& face = faces.at(j);
-                        if(face.id1 == k)
-                            face.id1 = i;
-                        if(face.id2 == k)
-                            face.id2 = i;
-                        if(face.id3 == k)
-                            face.id3 = i;
+                        bool found = false;
+                        if(facePtr->id1 == k)
+                        {
+                            facePtr->id1 = i;
+                            found = true;
+                        }
+                        if(facePtr->id2 == k)
+                        {
+                            facePtr->id2 = i;
+                            found = true;
+                        }
+                        if(facePtr->id3 == k)
+                        {
+                            facePtr->id3 = i;
+                            found = true;
+                        }
+                        if(found)
+                            vertex2FaceMap[i].insert(facePtr);
                     }
+                    vertexChangeCount++;
+//                    for (int j = 0; j < faceCount; ++j)
+//                    {
+//                        MathTools::TriangleFace& face = faces.at(j);
+//                        if(face.id1 == k)
+//                            face.id1 = i;
+//                        if(face.id2 == k)
+//                            face.id2 = i;
+//                        if(face.id3 == k)
+//                            face.id3 = i;
+//                    }
                 }
             }
         }
