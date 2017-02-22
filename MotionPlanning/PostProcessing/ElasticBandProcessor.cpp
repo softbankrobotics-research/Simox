@@ -175,7 +175,7 @@ using namespace VirtualRobot;
          Eigen::VectorXf fc;
 
 
-        for (int i=1;i<optimizedPath->getNrOfPoints()-1;i++)
+        for (unsigned int i=1;i<optimizedPath->getNrOfPoints()-1;i++)
         {
 
             Eigen::VectorXf& before = optimizedPath->getPointRef(i-1);
@@ -227,7 +227,7 @@ using namespace VirtualRobot;
 
         float ssd = 2 * cspace->getSamplingSize()*cspace->getSamplingSize();
 
-        for (int i=1;i<optimizedPath->getNrOfPoints()-2;i++)
+        for (unsigned int i=1;i<optimizedPath->getNrOfPoints()-2;i++)
         {
             Eigen::VectorXf& before = optimizedPath->getPointRef(i-1);
             Eigen::VectorXf& act = optimizedPath->getPointRef(i);
