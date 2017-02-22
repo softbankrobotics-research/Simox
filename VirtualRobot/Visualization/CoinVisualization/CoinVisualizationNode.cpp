@@ -129,7 +129,7 @@ namespace VirtualRobot
 
     /**
      * This method returns CoinVisualizationNode::triMeshModel.
-     * If the model doesn't exisText file busyt construct it by calling
+     * If the model doesn't exist construct it by calling
      * CoinVisualizationNode::createTriMeshModel().
      */
     TriMeshModelPtr CoinVisualizationNode::getTriMeshModel()
