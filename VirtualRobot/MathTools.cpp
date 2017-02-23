@@ -1873,27 +1873,16 @@ namespace VirtualRobot
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
     {
         Eigen::Vector3f resF;
-
-        Eigen::Matrix4f m4 = quat2eigen4f(q);
-        Eigen::Matrix3f m3 = m4.block(0,0,3,3);
-
-        // ZYZ Euler
-        Eigen::Vector3f ea = m3.eulerAngles(2, 1, 2);
-
-        resF(2) = -ea(2);
-        resF(1) = ea(1);
-        resF(0) = ea(0)-resF(2);
-
-        // from -PI,2PI to -PI,PI
-        if (resF(0)>M_PI)
-            resF(0) -= 2*M_PI;
+        float a_x4_x3 = atan2(q.z, q.y);
+        float a_x1_x2 = atan2(q.w, q.x);
+        resF(0) = a_x1_x2 - a_x4_x3;
+        resF(1) = a_x4_x3 + a_x1_x2;
+        resF(2) = asin(sqrt(q.w*q.w + q.x*q.x));
 
         if (resF(0)<0)
-            resF(0) = 2*M_PI + resF(0); // -PI,PI -> 0,2PI
+            resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI
         if (resF(1)<0)
-            resF(1) = 2*M_PI + resF(1); // -PI,PI -> 0,2PI
-        if (resF(2)<0)
-            resF(2) = 2*M_PI + resF(2); // -PI,PI -> 0,2PI
+            resF(1) = float(2.0f * M_PI) + resF(1); // -2PI,2PI -> 0,2PI
 
         return resF;
     }
@@ -1901,32 +1890,10 @@ namespace VirtualRobot
     MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::hopf2quat(const Eigen::Vector3f &hopf)
     {
         MathTools::Quaternion q;
-        /*q.w = cos(hopf(0)*0.5f) * cos(hopf(2)*0.5f);
-        q.x = cos(hopf(0)*0.5f) * sin(hopf(2)*0.5f);
-        q.y = sin(hopf(0)*0.5f) * cos(hopf(1) + hopf(2)*0.5f);
-        q.z = sin(hopf(0)*0.5f) * sin(hopf(1) + hopf(2)*0.5f);*/
-
-        Eigen::Vector3f h2 = hopf;
-        if (h2(0)>M_PI)
-            h2(0) = h2(0) - 2*M_PI ; // 0,2PI -> -PI,PI
-        if (h2(1)>M_PI)
-            h2(1) = h2(1) - 2*M_PI ; // 0,2PI -> -PI,PI
-        if (h2(0)>M_PI)
-            h2(2) = h2(2) - 2*M_PI ; // 0,2PI -> -PI,PI
-
-        // formular form
-        // Open-source code for manifold-based 3D rotation recovery of X-ray scattering patterns
-        // by Aliakbar Jafarpour
-        Eigen::Matrix3f m;
-        m = Eigen::AngleAxisf(h2(0)+h2(2), Eigen::Vector3f::UnitZ())
-        * Eigen::AngleAxisf(h2(1), Eigen::Vector3f::UnitY())
-        * Eigen::AngleAxisf(-h2(2), Eigen::Vector3f::UnitZ());
-        Eigen::Quaternion<float> qE(m);
-        q.x = qE.x();
-        q.y = qE.y();
-        q.z = qE.z();
-        q.w = qE.w();
-
+        q.x = cos((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
+        q.w = sin((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
+        q.y = cos((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
+        q.z = sin((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
         return q;
     }
 
