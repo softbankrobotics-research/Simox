@@ -31,14 +31,17 @@ namespace SimDynamics
     void DynamicsObject::setPose(const Eigen::Matrix4f& pose)
     {
         MutexLockPtr lock = getScopedLock();
-
-        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eStatic)
+        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eDynamic)
         {
-            VR_ERROR << "Could not move static object, aborting..." << endl;
+            // moving dynamic objects is not allowed
             return;
         }
-
-        //sceneObject->setGlobalPose(pose);
+        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eStatic)
+        {
+            VR_ERROR << "Could not move static object, use kinematic instead, aborting..." << endl;
+            return;
+        }
+        sceneObject->setGlobalPose(pose);
     }
 
     void DynamicsObject::setPosition(const Eigen::Vector3f& posMM)
