@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GraspRrt Demo</string>
+   <string>Platform Demo</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -39,10 +39,10 @@
       <widget class="QGroupBox" name="groupBox_2">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>430</y>
-         <width>231</width>
-         <height>91</height>
+         <x>120</x>
+         <y>400</y>
+         <width>221</width>
+         <height>121</height>
         </rect>
        </property>
        <property name="title">
@@ -53,25 +53,12 @@
          <rect>
           <x>20</x>
           <y>20</y>
-          <width>121</width>
+          <width>161</width>
           <height>21</height>
          </rect>
         </property>
         <property name="text">
          <string>Collision model</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="checkBoxShowRRT">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>20</y>
-          <width>51</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>RRT</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxShowSolution">
@@ -95,12 +82,41 @@
          <rect>
           <x>20</x>
           <y>60</y>
-          <width>151</width>
+          <width>211</width>
           <height>20</height>
          </rect>
         </property>
         <property name="text">
          <string>Postprocessed Solution</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxShowRRT">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>80</y>
+          <width>51</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>RRT</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxShowDistance">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>100</y>
+          <width>101</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Distance</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -113,7 +129,7 @@
          <x>10</x>
          <y>540</y>
          <width>331</width>
-         <height>111</height>
+         <height>161</height>
         </rect>
        </property>
        <property name="title">
@@ -136,7 +152,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
+          <y>80</y>
           <width>301</width>
           <height>20</height>
          </rect>
@@ -183,9 +199,9 @@
        <widget class="QRadioButton" name="radioButtonSolutionOpti">
         <property name="geometry">
          <rect>
-          <x>100</x>
+          <x>130</x>
           <y>20</y>
-          <width>131</width>
+          <width>201</width>
           <height>20</height>
          </rect>
         </property>
@@ -196,6 +212,45 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>231</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Distance Robot&lt;-&gt;Environment</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelDist">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>110</y>
+          <width>91</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelPos">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>251</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Pos:</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QGroupBox" name="groupBoxStart">
        <property name="geometry">
@@ -203,7 +258,7 @@
          <x>10</x>
          <y>10</y>
          <width>331</width>
-         <height>401</height>
+         <height>381</height>
         </rect>
        </property>
        <property name="title">
@@ -213,8 +268,8 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>20</y>
-          <width>81</width>
+          <y>30</y>
+          <width>111</width>
           <height>28</height>
          </rect>
         </property>
@@ -225,10 +280,10 @@
        <widget class="QDoubleSpinBox" name="doubleSpinBoxColChecking">
         <property name="geometry">
          <rect>
-          <x>180</x>
-          <y>340</y>
-          <width>62</width>
-          <height>22</height>
+          <x>190</x>
+          <y>190</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="decimals">
@@ -250,35 +305,35 @@
        <widget class="QDoubleSpinBox" name="doubleSpinBoxCSpaceSampling">
         <property name="geometry">
          <rect>
-          <x>180</x>
-          <y>370</y>
-          <width>62</width>
-          <height>22</height>
+          <x>190</x>
+          <y>230</y>
+          <width>81</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="decimals">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="minimum">
          <double>0.010000000000000</double>
         </property>
         <property name="maximum">
-         <double>100.000000000000000</double>
+         <double>1000.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>1.000000000000000</double>
         </property>
         <property name="value">
-         <double>40.000000000000000</double>
+         <double>200.000000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>350</y>
-          <width>131</width>
-          <height>16</height>
+          <y>200</y>
+          <width>151</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
@@ -289,9 +344,9 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>370</y>
-          <width>91</width>
-          <height>16</height>
+          <y>240</y>
+          <width>141</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
@@ -302,13 +357,90 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>330</y>
+          <y>170</y>
           <width>91</width>
-          <height>16</height>
+          <height>21</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
         <property name="text">
          <string>Sampling</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>280</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Smoothing</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>340</y>
+          <width>141</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Steps</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBox_smoothing">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>340</y>
+          <width>81</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>310</y>
+          <width>101</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Algorithm</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBoxSmoothing">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>300</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
         </property>
        </widget>
       </widget>
@@ -316,9 +448,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>430</y>
-         <width>81</width>
-         <height>91</height>
+         <y>400</y>
+         <width>91</width>
+         <height>121</height>
         </rect>
        </property>
        <property name="title">
@@ -337,6 +469,19 @@
          <string>Plan</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="pushButtonOpti">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>80</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>re-smooth</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -348,7 +493,7 @@
      <x>0</x>
      <y>0</y>
      <width>1055</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

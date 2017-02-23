@@ -35,19 +35,52 @@ namespace VirtualRobot
         setVisualization(visu);
     }
 
+    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string &name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel)
+    {
+        globalPose = Eigen::Matrix4f::Identity();
+        this->id = id;
+
+        this->name = name;
+
+        this->colChecker = colChecker;
+
+        if (!this->colChecker)
+        {
+            this->colChecker = CollisionChecker::getGlobalCollisionChecker();
+        }
+
+        if (!this->colChecker)
+        {
+            VR_WARNING << "no col checker..." << endl;
+        }
+
+        updateVisualization = true;
+        if(!collisionModel)
+            VR_WARNING << "internal collision model is NULL for " << name << endl;
+        collisionModelImplementation = boost::dynamic_pointer_cast<InternalCollisionModel>(collisionModel->clone(false));
+        VR_ASSERT(collisionModelImplementation->getPQPModel());
+        visualization = visu;
+        if (visu)
+        {
+            this->model = visu->getTriMeshModel();
+
+            if (this->model)
+            {
+                bbox = this->model->boundingBox;
+            }
+        }
+
+    }
+
 
     CollisionModel::~CollisionModel()
     {
-        destroyData();
+//        destroyData();
     }
 
 
     void CollisionModel::destroyData()
     {
-        if (collisionModelImplementation)
-        {
-            collisionModelImplementation->destroyData();
-        }
     }
 
 
@@ -67,19 +100,23 @@ namespace VirtualRobot
         }
     }
 
-    VirtualRobot::CollisionModelPtr CollisionModel::clone(CollisionCheckerPtr colChecker, float scaling)
+    VirtualRobot::CollisionModelPtr CollisionModel::clone(CollisionCheckerPtr colChecker, float scaling, bool deepVisuMesh)
     {
         VisualizationNodePtr visuNew;
 
         if (visualization)
         {
-            visuNew = visualization->clone(true, scaling);
+            visuNew = visualization->clone(deepVisuMesh, scaling);
         }
 
         std::string nameNew = name;
         int idNew = id;
 
-        CollisionModelPtr p(new CollisionModel(visuNew, nameNew, colChecker, idNew));
+        CollisionModelPtr p;
+        if(deepVisuMesh || !this->collisionModelImplementation)
+            p.reset(new CollisionModel(visuNew, nameNew, colChecker, idNew));
+        else
+            p.reset(new CollisionModel(visuNew, nameNew, colChecker, idNew, this->collisionModelImplementation));
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());
         return p;

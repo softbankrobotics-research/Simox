@@ -40,7 +40,12 @@
 
 namespace VirtualRobot
 {
-
+#if defined(VR_COLLISION_DETECTION_PQP)
+    typedef CollisionModelPQP InternalCollisionModel;
+#else
+    typedef CollisionModelDummy InternalCollisionModel;
+#endif
+    typedef boost::shared_ptr< InternalCollisionModel > InternalCollisionModelPtr;
     class CollisionChecker;
 
     /*!
@@ -61,7 +66,7 @@ namespace VirtualRobot
             \param id A user id.
         */
         CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666);
-
+        CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
         /*!Standard Destructor
         */
         virtual ~CollisionModel();
@@ -105,7 +110,7 @@ namespace VirtualRobot
 #endif
 
 
-        CollisionModelPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+        CollisionModelPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f, bool deepVisuCopy = true);
 
         void setVisualization(const VisualizationNodePtr visu);
 

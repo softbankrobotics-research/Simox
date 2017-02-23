@@ -19,30 +19,28 @@
 	
 	<RobotNode name="X_Platform">
 		<Transform>
-			<DH a="0" d="0" theta="90" alpha="-90" unitsangle="degree" unitslength="mm"/>
-            <!--Limits unit="mm" lo="-10000" hi="10000"/-->
+                        <DH a="0" d="0" theta="90" alpha="-90" unitsangle="degree" unitslength="mm"/>
 		</Transform>
 		<Visualization enable="true">
 			<CoordinateAxis type="Inventor" enable="false" scaling="8"/>
 		</Visualization>
                 <Joint type="prismatic">
                         <TranslationDirection x="0" y="0" z="-1"/>
-                        <Limits unit="mm" lo="-5000" hi="5000"/>
+                        <Limits unit="mm" lo="0" hi="5000"/>
                 </Joint>
 		<Child name="Y_Platform"/>
 	</RobotNode>
 	
 	<RobotNode name="Y_Platform">
 		<Transform>
-			<DH a="0" d="0" theta="-90" alpha="90" unitsangle="degree" unitslength="mm"/>
-            <!--Limits unit="mm" lo="-10000" hi="10000"/-->
+                        <DH a="0" d="0" theta="-90" alpha="90" unitsangle="degree" unitslength="mm"/>
 		</Transform>
 		<Visualization enable="true">
 			<CoordinateAxis type="Inventor" enable="false" scaling="8"/>
 		</Visualization>
                 <Joint type="prismatic">
                         <TranslationDirection x="1" y="0" z="0"/>
-                        <Limits unit="mm" lo="-5000" hi="5000"/>
+                        <Limits unit="mm" lo="0" hi="10000"/>
                 </Joint>
                 <Child name="Yaw_Platform"/>
 	</RobotNode>

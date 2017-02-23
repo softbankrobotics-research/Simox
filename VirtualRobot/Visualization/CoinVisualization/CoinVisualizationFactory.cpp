@@ -65,6 +65,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/SbTime.h>
+#include <Inventor/sensors/SoDataSensor.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -82,9 +83,15 @@
 #include <iostream>
 #include <algorithm>
 
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+
 
 namespace VirtualRobot
 {
+
+    boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
+    SbDict CoinVisualizationFactory::globalTextureCache  = SbDict();
 
     CoinVisualizationFactory::CoinVisualizationFactory()
     {
@@ -345,7 +352,7 @@ namespace VirtualRobot
     * \param visualizationNode VisualizationNodePtr instance in which the created CoinVisualizationNode is stored.
     * \param boundingBox Use bounding box instead of full model.
     */
-    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox)
+    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDuplicateTextures)
     {
         // read the contents of the file
         SoNode* coinVisualization = SoDB::readAll(&soInput);
@@ -369,7 +376,10 @@ namespace VirtualRobot
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
-
+        if(freeDuplicateTextures)
+        {
+            RemoveDuplicateTextures(coinVisualization);
+        }
         coinVisualization->unref();
     }
 
@@ -547,7 +557,7 @@ namespace VirtualRobot
         circleCompletion = std::min<float>(1.0f, circleCompletion);
         circleCompletion = std::max<float>(-1.0f, circleCompletion);
         float offset = 0;
-        for (int i = 0; i < numberOfCircleParts; ++i)
+        for (size_t i = 0; i < numberOfCircleParts; ++i)
         {
 
             SbVec3f point;
@@ -1023,6 +1033,70 @@ namespace VirtualRobot
         res->addChild(s);
         res->unrefNoDelete();
         return res;
+    }
+
+
+
+
+
+
+    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node)
+    {
+        // internal class to keep track of texture removal
+        struct DeleteTextureCallBack : SoDataSensor
+        {
+            DeleteTextureCallBack(const std::string& nodeName, unsigned long key) : nodeName(nodeName), key(key){}
+
+            // SoDataSensor interface
+        public:
+            void dyingReference()
+            {
+                boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
+                CoinVisualizationFactory::globalTextureCache.remove(key);
+                delete this;
+            }
+
+        private:
+            ~DeleteTextureCallBack(){}
+            std::string nodeName;
+            unsigned long key;
+        };
+
+
+        SoSearchAction sa;
+        sa.setType(SoVRMLImageTexture::getClassTypeId());
+        sa.setInterest(SoSearchAction::ALL);
+        sa.setSearchingAll(TRUE);
+        sa.apply(node);
+        SoPathList & pl = sa.getPaths();
+
+        boost::mutex::scoped_lock lock(globalTextureCacheMutex);
+        for (int i = 0; i < pl.getLength(); i++) {
+          SoFullPath * p = (SoFullPath*) pl[i];
+          if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
+            SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
+            for (int i = 0; i < tex->url.getNum(); ++i)
+            {
+              SbName name = tex->url[i].getString();
+              unsigned long key = (unsigned long) ((void*) name.getString());
+              void * tmp;
+              if (!globalTextureCache.find(key, tmp)) {
+                (void) globalTextureCache.enter(key, tex);
+                tex->addAuditor(new DeleteTextureCallBack(name.getString(), key), SoNotRec::SENSOR);
+              }
+              else if (tmp != (void*) tex) {
+                SoNode * parent = p->getNodeFromTail(1);
+                if (parent->isOfType(SoVRMLAppearance::getClassTypeId())) {
+                  ((SoVRMLAppearance*)parent)->texture = (SoNode*) tmp;
+                }
+                else {
+                  // not a valid VRML2 file. Print a warning or something.
+                    std::cout << "not a valid VRML2 file" << std::endl;
+                }
+              }
+            }
+          }
+        }
     }
 
     VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)

@@ -54,6 +54,12 @@ namespace VirtualRobot
         Eigen::VectorXf computeStep(float stepSize);
         bool computeSteps(float stepSize, float minumChange, int maxNStep);
 
+        /*!
+         * \brief convertModelScalingtoM If set to true, the Jacobian is computed in meters (instead MM)
+         * \param enable
+         */
+        void convertModelScalingtoM(bool enable);
+
         bool isValid(const Eigen::VectorXf& v) const;
 
         virtual bool checkTolerances();
@@ -71,6 +77,8 @@ namespace VirtualRobot
         float tolerance;
         bool checkImprovement;
         Eigen::VectorXf target;
+
+        bool convertMMtoM;
 
         int numDimensions;
     };

@@ -106,6 +106,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     {
         numIterations = 0;
 
+        //std::cout << "################################# New attempt: " << attempt << std::endl;
+
         int size = nodeSet->getSize();
         std::vector<double> x(size);
 
@@ -256,6 +258,8 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
             gradient[i] = grad(i);
         }
     }
+
+    //std::cout << "optval: " << value << std::endl;
 
     return value;
 }
