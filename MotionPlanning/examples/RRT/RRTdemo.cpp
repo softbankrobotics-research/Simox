@@ -208,7 +208,7 @@ void startRRTVisualization()
     show(sep);
 }
 
-int main(int argc, char** argv)
+int main(int /*argc*/, char** /*argv*/)
 {
     SoDB::init();
     win = SoQt::init("RRT Demo", "RRT Demo");

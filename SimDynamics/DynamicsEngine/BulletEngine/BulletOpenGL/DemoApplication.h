@@ -119,7 +119,7 @@ public:
 
     virtual void initPhysics() = 0;
 
-    virtual void setDrawClusters(bool drawClusters)
+    virtual void setDrawClusters(bool /*drawClusters*/)
     {
 
     }
@@ -229,11 +229,11 @@ public:
 
     virtual void keyboardCallback(unsigned char key, int x, int y);
 
-    virtual void keyboardUpCallback(unsigned char key, int x, int y) {}
+    virtual void keyboardUpCallback(unsigned char /*key*/, int /*x*/, int /*y*/) {}
 
-    virtual void specialKeyboard(int key, int x, int y) {}
+    virtual void specialKeyboard(int /*key*/, int /*x*/, int /*y*/) {}
 
-    virtual void specialKeyboardUp(int key, int x, int y) {}
+    virtual void specialKeyboardUp(int /*key*/, int /*x*/, int /*y*/) {}
 
     virtual void reshape(int w, int h);
 

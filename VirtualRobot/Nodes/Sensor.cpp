@@ -49,7 +49,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void Sensor::setGlobalPose(const Eigen::Matrix4f& pose)
+    void Sensor::setGlobalPose(const Eigen::Matrix4f& /*pose*/)
     {
         THROW_VR_EXCEPTION("Use setJointValues of parent RobotNode to control the position of a Sensor");
     }

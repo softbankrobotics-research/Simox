@@ -31,7 +31,7 @@ namespace VirtualRobot
         attachedVisualizations.clear();
     }
 
-    VirtualRobot::VisualizationNodePtr VisualizationNode::clone(bool deepCopy, float scaling)
+    VirtualRobot::VisualizationNodePtr VisualizationNode::clone(bool /*deepCopy*/, float /*scaling*/)
     {
         VisualizationNodePtr p(new VisualizationNode());
         p->setUpdateVisualization(updateVisualization);
@@ -233,14 +233,14 @@ namespace VirtualRobot
         return bbox;
     }
 
-    bool VisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
+    bool VisualizationNode::saveModel(const std::string& /*modelPath*/, const std::string& /*filename*/)
     {
         // derived classes have to overwrite this method, otherwise a NYI will show up
         VR_ERROR << "NYI..." << endl;
         return false;
     }
 
-    void VisualizationNode::scale(Eigen::Vector3f& scaleFactor)
+    void VisualizationNode::scale(Eigen::Vector3f& /*scaleFactor*/)
     {
         VR_WARNING << "not implemented..." << endl;
     }

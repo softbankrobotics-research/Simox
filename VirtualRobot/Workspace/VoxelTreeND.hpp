@@ -276,7 +276,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(storedN != int64_t(N), "Wrong N information in file...");
 
                 // get maxLevels
-                int maxLevels = int(FileIO::read<int64_t>(file));
+                /*int maxLevels = int(*/FileIO::read<int64_t>(file)/*)*/;
 
                 // get extends
                 float minExtend[N];

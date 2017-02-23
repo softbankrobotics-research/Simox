@@ -10,7 +10,7 @@ namespace VirtualRobot
 
 
     Grasp::Grasp(const std::string& name, const std::string& robotType, const std::string& eef, const Eigen::Matrix4f& poseInTCPCoordSystem, const std::string& creation, float quality, const std::string& eefPreshape)
-        : name(name), robotType(robotType), eef(eef), poseTcp(poseInTCPCoordSystem), creation(creation), quality(quality), preshape(eefPreshape)
+        : poseTcp(poseInTCPCoordSystem), robotType(robotType), eef(eef), name(name), creation(creation), quality(quality), preshape(eefPreshape)
     {
     }
 

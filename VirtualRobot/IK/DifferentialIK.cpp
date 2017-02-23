@@ -18,7 +18,7 @@ namespace VirtualRobot
 {
 
     DifferentialIK::DifferentialIK(RobotNodeSetPtr _rns, RobotNodePtr _coordSystem, JacobiProvider::InverseJacobiMethod invJacMethod, float invParam) :
-        JacobiProvider(_rns, invJacMethod), coordSystem(_coordSystem), invParam(invParam), nRows(0)
+        JacobiProvider(_rns, invJacMethod), invParam(invParam), coordSystem(_coordSystem), nRows(0)
     {
         name = "DifferentialIK";
 
@@ -118,7 +118,7 @@ namespace VirtualRobot
         }
 
 #endif
-        VR_ASSERT(jacobian.rows() == nRows && jacobian.cols() == nodes.size());
+        VR_ASSERT(static_cast<std::size_t>(jacobian.rows()) == nRows && static_cast<std::size_t>(jacobian.cols()) == nodes.size());
 
         size_t index = 0;
 
@@ -178,7 +178,7 @@ namespace VirtualRobot
         }
 
 #endif
-        VR_ASSERT(error.rows() == nRows);
+        VR_ASSERT(static_cast<std::size_t>(error.rows()) == nRows);
 
         //VectorXf error(nRows);
 
@@ -321,7 +321,7 @@ namespace VirtualRobot
         }
 
 #endif
-        VR_ASSERT(jac.rows() == size && jac.cols() == nDoF);
+        VR_ASSERT(static_cast<std::size_t>(jac.rows()) == size && static_cast<std::size_t>(jac.cols()) == nDoF);
 
         // Create matrices for the position and the orientation part of the jacobian.
 
@@ -507,7 +507,7 @@ namespace VirtualRobot
             //Eigen::MatrixXf W_1 = W.inverse();
             result = result * W;
         }*/
-    };
+    }
 
 
     Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix()

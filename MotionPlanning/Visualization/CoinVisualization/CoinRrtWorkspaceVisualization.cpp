@@ -376,9 +376,9 @@ namespace Saba
         SoSphere* sphereNodeSolution = new SoSphere();
         sphereNodeSolution->radius.setValue(nodeSolutionSize);
 
-        Eigen::VectorXf actConfig;
+        //Eigen::VectorXf actConfig;
         float x, y, z;
-        float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f;
+        //float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f;
 
         SoSeparator* sep = new SoSeparator();
 

@@ -27,7 +27,7 @@ using namespace std;
 using namespace VirtualRobot;
 using namespace SimDynamics;
 
-SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags flags)
+SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags /*flags*/)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -120,7 +120,7 @@ SimDynamicsWindow::~SimDynamicsWindow()
     sceneSep->unref();
 }
 
-void SimDynamicsWindow::timerCB(void* data, SoSensor* sensor)
+void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     SimDynamicsWindow* window = static_cast<SimDynamicsWindow*>(data);
     VR_ASSERT(window);
@@ -514,12 +514,12 @@ void SimDynamicsWindow::updateJointInfo()
 
         forceSep->addChild(forceA);
 
-        Eigen::Vector3f jointGlobal = linkInfo.nodeJoint->getGlobalPose().block(0, 3, 3, 1);
-        Eigen::Vector3f comBGlobal = linkInfo.nodeB->getCoMGlobal();
+        //Eigen::Vector3f jointGlobal = linkInfo.nodeJoint->getGlobalPose().block(0, 3, 3, 1);
+        //Eigen::Vector3f comBGlobal = linkInfo.nodeB->getCoMGlobal();
 
         // force that is applied on objectA by objectB
-        Eigen::Vector3f FBGlobal =  ftA.head(3);
-        Eigen::Vector3f TBGlobal =  ftB.tail(3) ;
+        //Eigen::Vector3f FBGlobal =  ftA.head(3);
+        //Eigen::Vector3f TBGlobal =  ftB.tail(3) ;
 
         Eigen::VectorXf torqueJointGlobal  = bulletRobot->getJointForceTorqueGlobal(linkInfo);//= TBGlobal  - (comBGlobal-jointGlobal).cross(FBGlobal) * 0.001;
         //        cout << "torqueJointGlobal: " << torqueJointGlobal << endl;

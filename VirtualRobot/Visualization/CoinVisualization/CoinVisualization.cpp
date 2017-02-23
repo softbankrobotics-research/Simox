@@ -27,6 +27,7 @@ namespace VirtualRobot
         Visualization(visualizationNode)
     {
         selection = NULL;
+        visuRoot = NULL;
         color = NULL;
     }
 
@@ -34,6 +35,7 @@ namespace VirtualRobot
         Visualization(visualizationNodes)
     {
         selection = NULL;
+        visuRoot = NULL;
         color = NULL;
     }
 
@@ -42,6 +44,10 @@ namespace VirtualRobot
         if (selection)
         {
             selection->unref();
+        }
+        if (visuRoot)
+        {
+            visuRoot->unref();
         }
         /*if (color)
         {
@@ -59,6 +65,15 @@ namespace VirtualRobot
         selection = new SoSelection;
         selection->ref();
         selection->policy = SoSelection::TOGGLE;
+
+        visuRoot = new SoSeparator;
+        visuRoot->ref();
+
+        if(isSelectable)
+        {
+            selection->addChild(visuRoot);
+        }
+
         SoSeparator* visualization = new SoSeparator();
         //SoMatrixTransform *mtr = new SoMatrixTransform;
         /*SbMatrix m(reinterpret_cast<SbMat*>(globalPose.data()));
@@ -71,7 +86,7 @@ namespace VirtualRobot
         color = new SoMaterial();
         visualization->addChild(color);
 
-        selection->addChild(visualization);
+        visuRoot->addChild(visualization);
 
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
         {
@@ -157,10 +172,11 @@ namespace VirtualRobot
      * processed node is of type CoinVisualizationNode.
      * Afterwards the SoSeparator is returned.
      */
-    SoNode* CoinVisualization::getCoinVisualization()
+    SoNode* CoinVisualization::getCoinVisualization(bool selectable)
     {
+        isSelectable = selectable;
         buildVisualization();
-        return selection;
+        return selectable? selection : visuRoot;
     }
 
     /**

@@ -21,6 +21,9 @@
 *
 */
 
+#include <stdexcept>
+#include <sstream>
+
 #include "OrientationConstraint.h"
 
 #include <VirtualRobot/Robot.h>
@@ -44,7 +47,7 @@ OrientationConstraint::OrientationConstraint(const VirtualRobot::RobotPtr &robot
     addOptimizationFunction(0, soft);
 }
 
-double OrientationConstraint::optimizationFunction(unsigned int id)
+double OrientationConstraint::optimizationFunction(unsigned int /*id*/)
 {
     Eigen::Matrix3f diff = target * eef->getGlobalPose().block<3,3>(0,0).inverse();
     Eigen::AngleAxisf aa(diff);
@@ -67,7 +70,7 @@ double OrientationConstraint::optimizationFunction(unsigned int id)
     return value;
 }
 
-Eigen::VectorXf OrientationConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf OrientationConstraint::optimizationGradient(unsigned int /*id*/)
 {
     int size = nodeSet->getSize();
 
@@ -116,5 +119,7 @@ bool OrientationConstraint::checkTolerances()
         }
             break;
     }
-
+    std::stringstream ss;
+    ss << "OrientationConstraint::checkTolerances(): unknown value for cartesianSelection = " << cartesianSelection;
+    throw std::logic_error{ss.str()};
 }

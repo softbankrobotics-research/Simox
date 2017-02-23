@@ -8,3 +8,4 @@ ADD_SUBDIRECTORY(GraspRRT)
 
 ADD_SUBDIRECTORY(MultiThreadedPlanning)
 
+ADD_SUBDIRECTORY(PlatformDemo)

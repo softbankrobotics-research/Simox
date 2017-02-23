@@ -204,7 +204,7 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a robot
         */
-        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType);
+        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable=true);
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */

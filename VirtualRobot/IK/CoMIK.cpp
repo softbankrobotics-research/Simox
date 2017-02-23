@@ -103,7 +103,7 @@ namespace VirtualRobot
         return position;
     }
 
-    Eigen::MatrixXf CoMIK::getJacobianMatrix(SceneObjectPtr tcp)
+    Eigen::MatrixXf CoMIK::getJacobianMatrix(SceneObjectPtr /*tcp*/)
     {
         // ignoring tcp
         return getJacobianMatrix();
@@ -138,7 +138,7 @@ namespace VirtualRobot
         return Jsum;
     }
 
-    Eigen::VectorXf CoMIK::getError(float stepSize)
+    Eigen::VectorXf CoMIK::getError(float /*stepSize*/)
     {
         return (target - rnsBodies->getCoM().head(target.rows()));
     }

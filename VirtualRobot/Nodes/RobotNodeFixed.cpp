@@ -128,10 +128,10 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(nodeType == Joint, "RobotNodeFixed not compatible with JointNode");
     }
 
-    std::string RobotNodeFixed::_toXML(const std::string& modelPath)
+    std::string RobotNodeFixed::_toXML(const std::string& /*modelPath*/)
     {
         return std::string();
-    };
+    }
 
 
 } // namespace

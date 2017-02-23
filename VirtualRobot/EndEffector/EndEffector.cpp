@@ -224,7 +224,7 @@ namespace VirtualRobot
         return r->getType();
     }
 
-    VirtualRobot::RobotPtr EndEffector::createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr collisionChecker/*=CollisionCheckerPtr()*/)
+    VirtualRobot::RobotPtr EndEffector::createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr /*collisionChecker=CollisionCheckerPtr()*/)
     {
         RobotPtr r = getRobot();
         THROW_VR_EXCEPTION_IF(!r, "No robot defined in EEF");

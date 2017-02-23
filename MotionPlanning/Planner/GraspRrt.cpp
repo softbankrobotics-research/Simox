@@ -275,7 +275,7 @@ namespace Saba
         cspace->getRobot()->setUpdateVisualization(false);
 
         clock_t startClock = clock();
-        time_t startTime = time(NULL);
+        //time_t startTime = time(NULL);
 
         bool bStopLoop = false;
 
@@ -304,7 +304,7 @@ namespace Saba
         }
         while (!bStopLoop);
 
-        time_t endTime = time(NULL);
+        //time_t endTime = time(NULL);
         clock_t endClock = clock();
 
         //long diffClock = (long)(((float)(endClock - startClock) / (float)CLOCKS_PER_SEC) * 1000.0);
@@ -416,7 +416,7 @@ namespace Saba
     }
 
 
-    bool GraspRrt::setGoal(const Eigen::VectorXf& c)
+    bool GraspRrt::setGoal(const Eigen::VectorXf& /*c*/)
     {
         THROW_VR_EXCEPTION("Not allowed here, goal configurations are sampled during planning..");
         return false;
@@ -436,7 +436,7 @@ namespace Saba
         gcpOject->setGlobalPose(eef->getGCP()->getGlobalPose());
 
         // get target position (position on grasp object with shortest distance to hand)
-        double dist = targetObject->getCollisionChecker()->calculateDistance(targetObject->getCollisionModel(), gcpOject->getCollisionModel(), P1, P2, &nId1, &nId2);
+        /*double dist =*/ targetObject->getCollisionChecker()->calculateDistance(targetObject->getCollisionModel(), gcpOject->getCollisionModel(), P1, P2, &nId1, &nId2);
 
         // now target position in global coord system is stored in P1
 
@@ -1124,7 +1124,7 @@ namespace Saba
         int nActId = endId;
         CSpaceNodePtr currentNode;
 
-        while (nActId >= 0 && nActId != startId)
+        while (nActId >= 0 && static_cast<unsigned int>(nActId) != startId)
         {
             currentNode = tree->getNode(nActId);
             processNode(currentNode);

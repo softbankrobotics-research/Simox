@@ -17,7 +17,7 @@ void Constraint::initialize()
     optimizationFunctionFactor = 1;
 }
 
-bool Constraint::getRobotPoseForConstraint(Eigen::Matrix4f& pose)
+bool Constraint::getRobotPoseForConstraint(Eigen::Matrix4f& /*pose*/)
 {
     // No change in global pose required
     return false;
@@ -62,12 +62,12 @@ float Constraint::getOptimizationFunctionFactor()
     return optimizationFunctionFactor;
 }
 
-double Constraint::optimizationFunction(unsigned int id)
+double Constraint::optimizationFunction(unsigned int /*id*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support NLopt-based solvers.");
 }
 
-Eigen::VectorXf Constraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf Constraint::optimizationGradient(unsigned int /*id*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support NLopt-based solvers.");
 }
@@ -77,12 +77,12 @@ Eigen::MatrixXf Constraint::getJacobianMatrix()
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
-Eigen::MatrixXf Constraint::getJacobianMatrix(SceneObjectPtr tcp)
+Eigen::MatrixXf Constraint::getJacobianMatrix(SceneObjectPtr /*tcp*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
-Eigen::VectorXf Constraint::getError(float stepSize)
+Eigen::VectorXf Constraint::getError(float /*stepSize*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }

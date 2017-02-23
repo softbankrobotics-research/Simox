@@ -521,7 +521,7 @@ void showCamWindow::renderCam()
         if(UI.checkBoxDepthCam1->isChecked())
         {
             //transform
-            for(std::size_t index = 0; index < UI.cam1->size().width()*UI.cam1->size().height(); ++index)
+            for(std::size_t index = 0; index < static_cast<std::size_t>(UI.cam1->size().width()*UI.cam1->size().height()); ++index)
             {
                 const float distance = cam1DepthBuffer.at(index);
                 const unsigned char value = (distance>=maxZCut)?255:distance/maxZCut*255.f;
@@ -548,7 +548,7 @@ void showCamWindow::renderCam()
         if(UI.checkBoxDepthCam2->isChecked())
         {
             //transform
-            for(std::size_t index = 0; index < UI.cam2->size().width()*UI.cam2->size().height(); ++index)
+            for(std::size_t index = 0; index < static_cast<std::size_t>(UI.cam2->size().width()*UI.cam2->size().height()); ++index)
             {
                 const unsigned char value = cam2DepthBuffer[index]*255* UI.doubleSpinBoxNonLinFactor->value();
                 cam2Buffer[3*index] = value;

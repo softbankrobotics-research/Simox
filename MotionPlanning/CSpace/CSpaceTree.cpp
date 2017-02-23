@@ -90,7 +90,7 @@ namespace Saba
         return true;
     }
 
-    float CSpaceTree::getPathDist(unsigned int idStart, unsigned int idEnd, bool useMetricWeights)
+    float CSpaceTree::getPathDist(unsigned int idStart, unsigned int idEnd, bool /*useMetricWeights*/)
     {
         float result = 0.0f;
 
@@ -110,7 +110,7 @@ namespace Saba
             actNode = getNode(actID);
             actNode2 = getNode(actID2);
 
-            if (actID2 < 0 || actNode->parentID < 0 || !actNode || !actNode2)
+            if (/*actID2 < 0 ||*/ actNode->parentID < 0 || !actNode || !actNode2)
             {
                 std::cout << "CSpaceTree::getPathDist: error, no path from start to end ?!" << std::endl;
                 return result;
@@ -261,11 +261,11 @@ namespace Saba
             return;
         }
 
-        if (n->ID < 0)
-        {
-            SABA_ERROR << ": wrong ID" << std::endl;
-            return;
-        }
+        //if (n->ID < 0)
+        //{
+        //    SABA_ERROR << ": wrong ID" << std::endl;
+        //    return;
+        //}
 
         if (nodes.size() == 0)
         {
@@ -416,7 +416,7 @@ namespace Saba
                 tmpSol.push_back(actID);
 
                 //fillPath->addPoint(actNode->configuration);
-                if (actID == startNode->ID)
+                if (static_cast<std::size_t>(actID) == startNode->ID)
                 {
                     found = true;
                 }

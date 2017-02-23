@@ -27,7 +27,7 @@ namespace VirtualRobot
     namespace
     {
         boost::mutex mutex;
-    };
+    }
 
     CollisionCheckerPtr CollisionChecker::globalCollisionChecker;
 

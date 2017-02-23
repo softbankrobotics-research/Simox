@@ -346,7 +346,7 @@ namespace VirtualRobot
         V = svd.matrixV();
         sv = svd.singularValues();
 
-        float maxEV = sv(0);
+        //float maxEV = sv(0);
 
         // scale Cartesian SingularValues to scaled influence
         singVectors = U;

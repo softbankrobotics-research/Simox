@@ -31,13 +31,13 @@ namespace VirtualRobot
     }
 
 
-    SensorPtr ContactSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling)
+    SensorPtr ContactSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float /*scaling*/)
     {
         SensorPtr result(new ContactSensor(newRobotNode, name));
         return result;
     }
 
-    std::string ContactSensor::toXML(const std::string& modelPath, int tabs)
+    std::string ContactSensor::toXML(const std::string& /*modelPath*/, int tabs)
     {
         std::stringstream ss;
         std::string t = "\t";

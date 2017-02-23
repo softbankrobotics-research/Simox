@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 
     if (robot)
     {
-        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        //Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         //gp(2,3) = 35.0f;
         //gp(2,3) = 800.0f;
         //robot->setGlobalPose(gp);

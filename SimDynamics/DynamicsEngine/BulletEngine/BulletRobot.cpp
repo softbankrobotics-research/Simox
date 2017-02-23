@@ -58,7 +58,7 @@ namespace SimDynamics
     {
     }
 
-    void BulletRobot::buildBulletModels(bool enableJointMotors)
+    void BulletRobot::buildBulletModels(bool /*enableJointMotors*/)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -203,7 +203,7 @@ namespace SimDynamics
         return result;
     }
 
-    boost::shared_ptr<btTypedConstraint> BulletRobot::createHingeJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& coordSystemNode1, Eigen::Matrix4f& coordSystemNode2,  Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f& axisGlobal, Eigen::Vector3f& axisLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT)
+    boost::shared_ptr<btTypedConstraint> BulletRobot::createHingeJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& coordSystemNode1, Eigen::Matrix4f& coordSystemNode2,  Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f& /*axisGlobal*/, Eigen::Vector3f& axisLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT)
     {
         // HINGE joint
         /*Eigen::Matrix4f tmpGp1 = coordSystemNode1;
@@ -346,7 +346,7 @@ namespace SimDynamics
             axisLocalJoint.block(0, 0, 3, 1) =  rnRevJoint->getJointRotationAxisInJointCoordSystem();
             Eigen::Matrix4f tmpGpJoint = coordSystemJoint;
             tmpGpJoint.block(0, 3, 3, 1).setZero(); // coordSystemJoint
-            Eigen::Vector4f axisGlobal = tmpGpJoint * axisLocalJoint;
+            //Eigen::Vector4f axisGlobal = tmpGpJoint * axisLocalJoint;
 
             double limMin, limMax;
             limMin = joint->getJointLimitLo();
@@ -494,7 +494,7 @@ namespace SimDynamics
 
                 btScalar posTarget = btScalar(it->second.jointValueTarget + link.jointValueOffset);
                 btScalar posActual = btScalar(getJointAngle(it->first));
-                btScalar velActual = btScalar(getJointSpeed(it->first));
+                //btScalar velActual = btScalar(getJointSpeed(it->first));
                 btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
 
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
@@ -1210,7 +1210,7 @@ namespace SimDynamics
 
         boost::shared_ptr<RobotNodeRevolute> rnRevJoint = boost::dynamic_pointer_cast<RobotNodeRevolute>(link.nodeJoint);
 
-        Eigen::Vector3f deltaVel = link.dynNode1->getAngularVelocity() - link.dynNode2->getAngularVelocity();
+        Eigen::Vector3f deltaVel = link.dynNode2->getAngularVelocity() - link.dynNode1->getAngularVelocity();
         double speed = deltaVel.dot(rnRevJoint->getJointRotationAxis());
         return speed;//hinge->getMotorTargetVelosity();
 

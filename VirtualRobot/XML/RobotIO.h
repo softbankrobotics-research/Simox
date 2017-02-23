@@ -42,7 +42,7 @@ namespace rapidxml
 {
     template<class Ch>
     class xml_node;
-};
+}
 
 namespace VirtualRobot
 {

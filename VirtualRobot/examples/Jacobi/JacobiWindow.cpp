@@ -114,7 +114,7 @@ void JacobiWindow::setupUI()
     timer->schedule();
 }
 
-void JacobiWindow::updateCB(void* data, SoSensor* sensor)
+void JacobiWindow::updateCB(void* data, SoSensor* /*sensor*/)
 {
     if (!data)
     {

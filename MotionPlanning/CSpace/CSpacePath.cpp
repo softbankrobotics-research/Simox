@@ -253,14 +253,14 @@ namespace Saba
             SABA_ERROR << " no Path.." << std::endl;
         }
 
-        if (nr < 0 || nr > getNrOfPoints() - 1)
+        if (/*nr < 0 ||*/ nr > getNrOfPoints() - 1)
         {
             SABA_ERROR << " path entry " << nr << " doesnt exist" << std::endl;
 
-            if (nr < 0)
-            {
-                nr = 0;
-            }
+            //if (nr < 0)
+            //{
+            //    nr = 0;
+            //}
 
             if (nr > getNrOfPoints() - 1)
             {

@@ -20,7 +20,7 @@ namespace Saba
 {
 
     GraspIkRrt::GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::AdvancedIKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal)
-        : BiRrt(cspace, Rrt::eConnect, Rrt::eConnect), object(object), ikSolver(ikSolver), graspSet(graspSet), sampleGoalProbab(probabSampleGoal)
+        : BiRrt(cspace, Rrt::eConnect, Rrt::eConnect), sampleGoalProbab(probabSampleGoal), object(object), ikSolver(ikSolver), graspSet(graspSet)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         THROW_VR_EXCEPTION_IF(!ikSolver, "NULL ikSolver");
@@ -287,7 +287,7 @@ namespace Saba
     }
 
 
-    bool GraspIkRrt::setGoal(const Eigen::VectorXf& c)
+    bool GraspIkRrt::setGoal(const Eigen::VectorXf& /*c*/)
     {
         THROW_VR_EXCEPTION("Not allowed here, goal configurations are sampled during planning..");
         return false;

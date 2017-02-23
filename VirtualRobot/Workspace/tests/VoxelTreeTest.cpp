@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDEntriesTest)
     float discr[N];
     float extend = 2.0f;
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         minB[i] = -100.0f;
         maxB[i] = 100.0f;
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDEntriesTest)
     VirtualRobot::VoxelTreeND<unsigned char, N> v(minB, maxB, discr, true);
     float pos[N];
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         pos[i] = 0;
     }
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDEntriesTest)
     BOOST_REQUIRE(e != NULL);
     BOOST_REQUIRE(*(e->getEntry()) == 10);
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         BOOST_CHECK_GE(e->getExtend(i), 0.5f * extend);
         BOOST_CHECK_LE(e->getExtend(i), 2.0f * extend);
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDSaveLoad)
     float discr[N];
     float extend = 5.0f;
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         minB[i] = -100.0f;
         maxB[i] = 100.0f;
@@ -145,11 +145,11 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDSaveLoad)
     VirtualRobot::VoxelTreeND<unsigned char, N> v(minB, maxB, discr, true);
     float pos[N];
 
-    int TEST_LOOPS = 1000;
+    unsigned int TEST_LOOPS = 1000;
 
-    for (int i = 0; i < TEST_LOOPS; i++)
+    for (unsigned int i = 0; i < TEST_LOOPS; i++)
     {
-        for (int j = 0; j < N; j++)
+        for (unsigned int j = 0; j < N; j++)
         {
             pos[j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
         }
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDSaveLoad)
         v.setEntry(pos, rand() % 255);
     }
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         pos[i] = 17.0f;
     }
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDIterator)
     float discr[N];
     float extend = 10.0f;
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         minB[i] = -100.0f;
         maxB[i] = 100.0f;
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDIterator)
 
     for (int i = 0; i < TEST_LOOPS; i++)
     {
-        for (int j = 0; j < N; j++)
+        for (unsigned int j = 0; j < N; j++)
         {
             pos[i][j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
         }
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDMem)
     float discr[N];
     float extend = 10.0f;
 
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < N; i++)
     {
         minB[i] = -100.0f;
         maxB[i] = 100.0f;
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDMem)
 
     float pos[N];
 
-    for (int j = 0; j < N; j++)
+    for (unsigned int j = 0; j < N; j++)
     {
         pos[j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
     }

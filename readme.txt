@@ -48,3 +48,6 @@ vahrenkamp at kit dot edu
 
 https://gitlab.com/Simox/simox
 https://groups.google.com/d/forum/simox
+
+Documentation:
+https://gitlab.com/Simox/simox/wikis/home

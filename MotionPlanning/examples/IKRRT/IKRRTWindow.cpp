@@ -92,7 +92,7 @@ IKRRTWindow::~IKRRTWindow()
 }
 
 
-void IKRRTWindow::timerCB(void* data, SoSensor* sensor)
+void IKRRTWindow::timerCB(void* data, SoSensor* /*sensor*/)
 {
     IKRRTWindow* ikWindow = static_cast<IKRRTWindow*>(data);
     float x[6];

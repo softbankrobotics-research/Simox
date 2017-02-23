@@ -14,7 +14,7 @@ namespace VirtualRobot
                              RobotNodePtr leftTCP /*= RobotNodePtr()*/,
                              RobotNodePtr rightTCP /*= RobotNodePtr()*/,
                              RobotNodeSetPtr rnsLeft2RightFoot)
-        : leftLeg(leftLeg), rightLeg(rightLeg), transformationLeftToRightFoot(transformationLeftToRightFoot), baseNode(baseNode), left2Right(rnsLeft2RightFoot)
+        : leftLeg(leftLeg), rightLeg(rightLeg), left2Right(rnsLeft2RightFoot), transformationLeftToRightFoot(transformationLeftToRightFoot), baseNode(baseNode)
     {
         VR_ASSERT(this->leftLeg);
         VR_ASSERT(this->rightLeg);

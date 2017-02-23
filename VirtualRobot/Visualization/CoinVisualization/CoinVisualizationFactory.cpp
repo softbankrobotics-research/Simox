@@ -279,7 +279,7 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool /*boundingBox*/, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
 
@@ -945,7 +945,7 @@ namespace VirtualRobot
     }
 
 
-    SoSeparator* CoinVisualizationFactory::CreateGrid(float width, float depth, float widthMosaic, float depthMosaic, bool InvertNormal, const char* pFileName, float Transparency)
+    SoSeparator* CoinVisualizationFactory::CreateGrid(float width, float depth, float widthMosaic, float depthMosaic, bool /*InvertNormal*/, const char* pFileName, float Transparency)
     {
         SoSeparator* pGrid = new SoSeparator;
         pGrid->ref();
@@ -1092,7 +1092,7 @@ namespace VirtualRobot
         return CoinVisualizationFactory::CreatePolygonVisualization(cvHull3d, colorInner, colorLine, lineSize);
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable)
     {
         if (!robot)
         {
@@ -1105,7 +1105,7 @@ namespace VirtualRobot
         {
             SoSeparator* result = new SoSeparator();
             result->ref();
-            result->addChild(visualizationRobot->getCoinVisualization());
+            result->addChild(visualizationRobot->getCoinVisualization(selectable));
             result->unrefNoDelete();
             return result;
         }
@@ -2002,7 +2002,7 @@ namespace VirtualRobot
 
     //#define TEST_SHOW_VOXEL
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, int a, int b, int c, /*const Eigen::Vector3f &positionGlobal,*/ int nrBestEntries, SoSeparator* arrow, const VirtualRobot::ColorMap& cm, bool transformToGlobalPose, unsigned char minValue)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, int a, int b, int c, /*const Eigen::Vector3f &positionGlobal,*/ int nrBestEntries, SoSeparator* arrow, const VirtualRobot::ColorMap& cm, bool transformToGlobalPose, unsigned char /*minValue*/)
     {
 
         if (!reachSpace || reachSpace->numVoxels[0] <= 0 || reachSpace->numVoxels[1] <= 0 || reachSpace->numVoxels[2] <= 0)
@@ -2705,7 +2705,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceGridPtr reachGrid, VirtualRobot::ColorMap cm, bool transformToGlobalPose /*= true*/)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceGridPtr reachGrid, VirtualRobot::ColorMap cm, bool /*transformToGlobalPose*/ /*= true*/)
     {
         SoSeparator* res = new SoSeparator;
 
@@ -3106,7 +3106,7 @@ namespace VirtualRobot
         t->translation.setValue(-extendCellX * nX / 2, -extendCellY * nY / 2, 0);
         res->addChild(t);
 
-        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        //Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         float sizeX = extendCellX;
         float sizeY = extendCellY;
 
@@ -3469,9 +3469,11 @@ namespace VirtualRobot
 
         const float focalLength = static_cast<float>(height) / (2 * std::tan(vertFov / 2));
 
-        for(unsigned int y=0;y<height;++y)
+        assert(0<=height);
+        for(unsigned int y=0;y<static_cast<std::size_t>(height);++y)
         {
-            for(unsigned int x=0;x<width;++x)
+            assert(0<=width);
+            for(unsigned int x=0;x<static_cast<std::size_t>(width);++x)
             {
                 const unsigned int pixelIndex = x+width*y;
                 const float bufferVal = zBuffer.at(pixelIndex);

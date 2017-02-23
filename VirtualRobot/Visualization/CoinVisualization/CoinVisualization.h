@@ -60,7 +60,7 @@ namespace VirtualRobot
 
         virtual VisualizationPtr clone();
 
-        SoNode* getCoinVisualization();
+        SoNode* getCoinVisualization(bool selectable=true);
 
         void exportToVRML2(std::string filename, bool useRotation=true);
 
@@ -71,7 +71,10 @@ namespace VirtualRobot
 
     protected:
         bool buildVisualization();
+
+        bool isSelectable;
         SoSelection* selection;
+        SoSeparator* visuRoot;
 
         SoMaterial *color;
     };

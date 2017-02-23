@@ -411,14 +411,14 @@ namespace VirtualRobot
         /*!
             Derived classes may implement some custom data access.
         */
-        virtual bool customLoad(std::ifstream& file)
+        virtual bool customLoad(std::ifstream&)
         {
             return true;
         }
         /*!
             Derived classes may implement some custom data access.
         */
-        virtual bool customSave(std::ofstream& file)
+        virtual bool customSave(std::ofstream&)
         {
             return true;
         }

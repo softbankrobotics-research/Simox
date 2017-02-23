@@ -52,7 +52,7 @@ namespace SimDynamics
         }
 
         //! Derived classes must return the correct engine implementation.
-        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr())
+        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr /*config*/ = DynamicsEngineConfigPtr())
         {
             return DynamicsEnginePtr();
         }

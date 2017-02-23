@@ -65,7 +65,7 @@ MTPlanningWindow::~MTPlanningWindow()
 }
 
 
-void MTPlanningWindow::timerCBPlanning(void* data, SoSensor* sensor)
+void MTPlanningWindow::timerCBPlanning(void* data, SoSensor* /*sensor*/)
 {
     MTPlanningWindow* mtWindow = static_cast<MTPlanningWindow*>(data);
     mtWindow->scene->checkPlanningThreads();
@@ -90,7 +90,7 @@ void MTPlanningWindow::timerCBPlanning(void* data, SoSensor* sensor)
 }
 
 
-void MTPlanningWindow::timerCBOptimize(void* data, SoSensor* sensor)
+void MTPlanningWindow::timerCBOptimize(void* data, SoSensor* /*sensor*/)
 {
     MTPlanningWindow* mtWindow = static_cast<MTPlanningWindow*>(data);
     mtWindow->scene->checkOptimizeThreads();
@@ -145,7 +145,7 @@ void MTPlanningWindow::setupLayoutMTPlanning()
     connect(UI.pushButtonPostStop, SIGNAL(clicked()), this, SLOT(stopOptimize()));
 }
 
-void MTPlanningWindow::selectColCheckerComboBoxChanged(int value)
+void MTPlanningWindow::selectColCheckerComboBoxChanged(int /*value*/)
 {
     reset();
 }

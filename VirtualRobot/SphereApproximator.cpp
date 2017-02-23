@@ -574,7 +574,7 @@ namespace VirtualRobot
         int nVertices = (int)a.vertices.size();
         int nFaces = (int)a.faces.size();
         VR_ASSERT(nVertices > 0);
-        int nVertexCount = 0;
+        //int nVertexCount = 0;
 
         TriMeshModelPtr tr(new TriMeshModel());
 

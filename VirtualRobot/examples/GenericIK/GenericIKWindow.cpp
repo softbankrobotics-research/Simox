@@ -90,7 +90,7 @@ void GenericIKWindow::setupUI()
     timer->schedule();
 }
 
-void GenericIKWindow::updateCB(void* data, SoSensor* sensor)
+void GenericIKWindow::updateCB(void* data, SoSensor* /*sensor*/)
 {
     if (!data)
     {

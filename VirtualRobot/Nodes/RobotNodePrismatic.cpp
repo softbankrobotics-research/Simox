@@ -259,7 +259,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(nodeType == Body || nodeType == Transform, "RobotNodePrismatic must be a JointNode or a GenericNode");
     }
 
-    std::string RobotNodePrismatic::_toXML(const std::string& modelPath)
+    std::string RobotNodePrismatic::_toXML(const std::string& /*modelPath*/)
     {
         std::stringstream ss;
         ss << "\t\t<Joint type='prismatic'>" << endl;
