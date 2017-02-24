@@ -1881,11 +1881,21 @@ namespace VirtualRobot
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
     {
         Eigen::Vector3f resF;
-        float a_x4_x3 = atan2(q.z, q.y);
-        float a_x1_x2 = atan2(q.w, q.x);
+        float a_x4_x3 = atan2(q.z, q.w);
+        float a_x1_x2 = atan2(q.y, q.x);
         resF(0) = a_x1_x2 - a_x4_x3;
         resF(1) = a_x4_x3 + a_x1_x2;
-        resF(2) = asin(sqrt(q.w*q.w + q.x*q.x));
+
+        double p = sqrt(double(q.y)*double(q.y) + double(q.x)*double(q.x));
+
+        if (fabs(p-1) < 1e-6)
+            resF(2) = float(M_PI*0.5);
+        else if (fabs(p+1) < 1e-6)
+            resF(2) = float(-M_PI*0.5);
+        else
+            resF(2) = asin(p);
+
+        VR_ASSERT (!isnan(resF(2)));
 
         if (resF(0)<0)
             resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI
@@ -1921,8 +1931,8 @@ namespace VirtualRobot
     {
         MathTools::Quaternion q;
         q.x = cos((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
-        q.w = sin((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
-        q.y = cos((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
+        q.y = sin((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
+        q.w = cos((hopf(1) - hopf(0))*0.5f) * cos(hopf(2)); // q.w needs to get zero if hopf coords are zero
         q.z = sin((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
         return q;
 

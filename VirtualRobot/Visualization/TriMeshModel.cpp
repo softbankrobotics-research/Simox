@@ -135,19 +135,29 @@ namespace VirtualRobot
         faces.push_back(face);
     }
 
+    void TriMeshModel::addFace(unsigned int id0, unsigned int id1, unsigned int id2)
+    {
+        MathTools::TriangleFace f;
+        f.id1 = id0;
+        f.id2 = id1;
+        f.id3 = id2;
+        addFace(f);
+    }
+
 
     /**
     * This method adds a vertex to the internal data structure TriMeshModel::vertices.
     */
-    void TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
+    unsigned int TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
     {
         if (std::isnan(vertex[0]) || std::isnan(vertex[1]) || std::isnan(vertex[2]))
         {
             VR_ERROR << "NAN vertex added!!!" << endl;
-            return;
+            return 0;
         }
         vertices.push_back(vertex);
         boundingBox.addPoint(vertex);
+        return vertices.size();
     }
 
     /**
@@ -408,23 +418,47 @@ namespace VirtualRobot
         return flippedFacesCount;
     }
 
+
     void TriMeshModel::print()
     {
         cout << "TriMeshModel\nNr of Faces:" << faces.size() << "\nNr of vertices:" << vertices.size() << endl;
-        cout << "Normals:" << endl;
+        boundingBox.print();
+    }
 
 
+    void TriMeshModel::printNormals()
+    {
+        cout << "TriMeshModel Normals:" << endl;
         std::streamsize pr = cout.precision(2);
-
         for (size_t i = 0; i < faces.size(); i++)
         {
             cout << "<" << faces[i].normal(0) << "," << faces[i].normal(1) << "," << faces[i].normal(2) << ">,";
         }
-
-        cout << endl;
-        boundingBox.print();
         cout.precision(pr);
     }
+
+    void TriMeshModel::printVertices()
+    {
+        cout << "TriMeshModel Vertices:" << endl;
+        std::streamsize pr = cout.precision(2);
+        for (size_t i = 0; i < vertices.size(); i++)
+        {
+            cout << vertices[i].transpose() << endl;
+        }
+        cout.precision(pr);
+    }
+
+    void TriMeshModel::printFaces()
+    {
+        cout << "TriMeshModel Faces (vertex indices):" << endl;
+        std::streamsize pr = cout.precision(2);
+        for (size_t i = 0; i < faces.size(); i++)
+        {
+            cout << faces[i].id1 << "," << faces[i].id2 << "," << faces[i].id3 << endl;
+        }
+        cout.precision(pr);
+    }
+
 
     void TriMeshModel::scale(Eigen::Vector3f& scaleFactor)
     {
