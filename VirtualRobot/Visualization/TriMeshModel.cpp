@@ -157,7 +157,7 @@ namespace VirtualRobot
         }
         vertices.push_back(vertex);
         boundingBox.addPoint(vertex);
-        return vertices.size();
+        return vertices.size()-1;
     }
 
     /**
