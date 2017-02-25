@@ -57,7 +57,13 @@ namespace VirtualRobot
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
         static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
         void addFace(const MathTools::TriangleFace& face);
-        void addVertex(const Eigen::Vector3f& vertex);
+        void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
+        /*!
+         * \brief addVertex Adds a vertex to this object
+         * \param vertex
+         * \return The vertex id (== position in vertex array)
+         */
+        unsigned int addVertex(const Eigen::Vector3f& vertex);
         void addNormal(const Eigen::Vector3f& normal);
         void addColor(const VisualizationFactory::Color& color);
         void addColor(const Eigen::Vector4f& color);
@@ -69,6 +75,9 @@ namespace VirtualRobot
         void setColor(VisualizationFactory::Color color);
 
         void print();
+        void printNormals();
+        void printVertices();
+        void printFaces();
         Eigen::Vector3f getCOM();
         bool getSize(Eigen::Vector3f& storeMinSize, Eigen::Vector3f& storeMaxSize);
         bool checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
