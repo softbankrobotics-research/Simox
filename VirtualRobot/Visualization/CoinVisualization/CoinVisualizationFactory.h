@@ -339,6 +339,34 @@ namespace VirtualRobot
             );
 
         /*!
+         * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
+         * This version is much faster if always the same SoOffscreenRenderer is passed in.
+         * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
+         * \param scene The scene that should be rendered.
+         * \param width The used image width. (>0)
+         * \param height The used image height. (>0)
+         * \param renderRgbImage Whether to output the rgb image.
+         * \param rgbImage The rgb image's output parameter.
+         * \param renderDepthImgae Whether to output the depth image.
+         * \param depthImage The depth image's output parameter.
+         * \param renderPointcloud Whether to output the point cloud.
+         * \param pointCloud The pointcloud's output parameter.
+         * \param zNear The near plane's distance.
+         * \param zFar The far plane's distance
+         * \param vertFov The fov in rad. (vertical)
+         * \param nanValue All values above this value will be mapped on this value (usually nan or 0)
+         * \return true on success
+         */
+        static bool renderOffscreenRgbDepthPointcloud
+            (SoOffscreenRenderer* renderer,
+                RobotNodePtr camNode, SoNode* scene,
+                short width, short height,
+                bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+                bool renderDepthImage, std::vector<float>& depthImage,
+                bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = 0.0);
+
+        /*!
          * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
          * \param camNode The node of the robot that defines the position of the camera. Any node of the robot can host a camera.
          * \param scene The scene that should be rendered.
