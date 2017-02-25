@@ -354,7 +354,7 @@ namespace VirtualRobot
          * \param zNear The near plane's distance.
          * \param zFar The far plane's distance
          * \param vertFov The fov in rad. (vertical)
-         * \param nanValue All values above this value will be mapped on this value (usually nan or 0)
+         * \param nanValue All values above the zFar value will be mapped on this value (usually nan or 0)
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
