@@ -64,7 +64,20 @@ namespace VirtualRobot
         int addMaterial(const VisualizationFactory::PhongMaterial& material);
         void clear();
         void flipVertexOrientations();
+        /**
+         * @brief Merges vertices that are close together (mergeThreshold).
+         * Usually, vertices that are close together should be one vertex. Otherwise the mesh
+         * could consist of many individual triangles.
+         * All vertex ids stored in faces are updated. This function is quite efficient due to a kd-tree and an inverted face-vertex mapping.
+         * @param mergeThreshold If squared Euclidan distance of two points is belong this threshold, two vertices are merged.
+         */
         void mergeVertices(float mergeThreshold = 0.0001);
+
+        /**
+         * @brief fatten or shrink this trimesh. Done by moving a vertex along a normal calculated from the normals
+         * of all the faces the vertex is used in.
+         * @param offset All vertexes are moved about this offset in mm.
+         */
         void fattenShrink(float offset);
         // Overwrite all colors
         void setColor(VisualizationFactory::Color color);
