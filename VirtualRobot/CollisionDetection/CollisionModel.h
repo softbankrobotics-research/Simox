@@ -66,7 +66,6 @@ namespace VirtualRobot
             \param id A user id.
         */
         CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666, float margin = 0.0f);
-        CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
         /*!Standard Destructor
         */
         virtual ~CollisionModel();
@@ -172,14 +171,17 @@ namespace VirtualRobot
         void inflateModel(float margin);
 
     protected:
+        // internal constructor needed for flat copy of internal collision model
+        CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
 
         //! delete all data
         void destroyData();
-        VisualizationNodePtr visualization;         // this is the original visualization
+        VisualizationNodePtr visualization;         // this is the modified visualization
+        VisualizationNodePtr origVisualization;         // this is the original visualization
         VisualizationNodePtr modelVisualization;    // this is the visualization of the trimeshmodel
         bool updateVisualization;
         TriMeshModelPtr model;
-        float margin = 0.0f;                        // inflates the model with this margin (in mm)
+        float margin;                        // inflates the model with this margin (in mm)
         BoundingBox bbox;
 
         //! the name
