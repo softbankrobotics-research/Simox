@@ -6,7 +6,7 @@
 
 #include "TriMeshModel.h"
 #include "../VirtualRobot.h"
-#include "../nanoflann.hpp"
+#include "../DataStructures/nanoflann.hpp"
 #include<Eigen/Geometry>
 
 #include <algorithm>
