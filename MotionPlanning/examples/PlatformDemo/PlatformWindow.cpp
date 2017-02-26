@@ -580,7 +580,7 @@ void PlatformWindow::sliderSolution(int pos)
 
     std::stringstream d2;
     d2 << setprecision(2) << fixed << "Pos: ";
-    for (int i=0;i<rns->getSize();i++)
+    for (unsigned int i=0;i<rns->getSize();i++)
         d2 << rns->getNode(i)->getJointValue() << ", ";
     QString t2(d2.str().c_str());
     UI.labelPos->setText(t2);

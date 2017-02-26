@@ -62,6 +62,7 @@ namespace VirtualRobot
         int addColor(const VisualizationFactory::Color& color);
         int addColor(const Eigen::Vector4f& color);
         int addMaterial(const VisualizationFactory::PhongMaterial& material);
+        void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
         void clear();
         void flipVertexOrientations();
         /**
@@ -83,6 +84,9 @@ namespace VirtualRobot
         void setColor(VisualizationFactory::Color color);
 
         void print();
+        void printNormals();
+        void printVertices();
+        void printFaces();
         Eigen::Vector3f getCOM();
         bool getSize(Eigen::Vector3f& storeMinSize, Eigen::Vector3f& storeMaxSize);
         bool checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;

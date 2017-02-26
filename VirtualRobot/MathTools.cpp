@@ -1283,6 +1283,14 @@ namespace VirtualRobot
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getAngle(const Quaternion& q)
     {
+        Eigen::Quaternionf qe(q.w, q.x, q.y, q.z);
+        Eigen::AngleAxisf aa(qe);
+        float angle = aa.angle();
+        // sometimes angle is >PI?!
+        if (angle > float(M_PI))
+            angle = float(2.0f*M_PI) - angle;
+        return angle;
+        /*
         float n = sqrtf(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
 
         if (n < 1e-10)
@@ -1292,7 +1300,7 @@ namespace VirtualRobot
 
         n = 1.0f / n;
 
-        return (float)(2.0f * acosf(q.w * n));
+        return (float)(2.0f * acosf(q.w * n));*/
     }
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getAngle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2)
@@ -1873,8 +1881,29 @@ namespace VirtualRobot
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
     {
         Eigen::Vector3f resF;
+        float a_x4_x3 = atan2(q.z, q.w);
+        float a_x1_x2 = atan2(q.y, q.x);
+        resF(0) = a_x1_x2 - a_x4_x3;
+        resF(1) = a_x4_x3 + a_x1_x2;
 
-        Eigen::Matrix4f m4 = quat2eigen4f(q);
+        double p = sqrt(double(q.y)*double(q.y) + double(q.x)*double(q.x));
+
+        if (fabs(p-1) < 1e-6)
+            resF(2) = float(M_PI*0.5);
+        else if (fabs(p+1) < 1e-6)
+            resF(2) = float(-M_PI*0.5);
+        else
+            resF(2) = asin(p);
+
+        VR_ASSERT (!isnan(resF(2)));
+
+        if (resF(0)<0)
+            resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI
+        if (resF(1)<0)
+            resF(1) = float(2.0f * M_PI) + resF(1); // -2PI,2PI -> 0,2PI
+
+        return resF;
+       /* Eigen::Matrix4f m4 = quat2eigen4f(q);
         Eigen::Matrix3f m3 = m4.block(0,0,3,3);
 
         // ZYZ Euler
@@ -1895,17 +1924,24 @@ namespace VirtualRobot
         if (resF(2)<0)
             resF(2) = 2*M_PI + resF(2); // -PI,PI -> 0,2PI
 
-        return resF;
+        return resF;*/
     }
 
     MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::hopf2quat(const Eigen::Vector3f &hopf)
     {
         MathTools::Quaternion q;
+        q.x = cos((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
+        q.y = sin((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
+        q.w = cos((hopf(1) - hopf(0))*0.5f) * cos(hopf(2)); // q.w needs to get zero if hopf coords are zero
+        q.z = sin((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
+        return q;
+
+
         /*q.w = cos(hopf(0)*0.5f) * cos(hopf(2)*0.5f);
         q.x = cos(hopf(0)*0.5f) * sin(hopf(2)*0.5f);
         q.y = sin(hopf(0)*0.5f) * cos(hopf(1) + hopf(2)*0.5f);
         q.z = sin(hopf(0)*0.5f) * sin(hopf(1) + hopf(2)*0.5f);*/
-
+        /*
         Eigen::Vector3f h2 = hopf;
         if (h2(0)>M_PI)
             h2(0) = h2(0) - 2*M_PI ; // 0,2PI -> -PI,PI
@@ -1927,7 +1963,7 @@ namespace VirtualRobot
         q.z = qE.z();
         q.w = qE.w();
 
-        return q;
+        return q;*/
     }
 
 

@@ -70,7 +70,7 @@ Eigen::VectorXf BalanceConstraintOptimizationFunction::evaluateOptimizationGradi
         float v = (R * (com - d))[0];
 
         f_i[i] = sigmoid(v);
-        f_prime_i[i] = (R * Jcom).row(0) * sigmoid_prime(v);
+        f_prime_i[i] = (R * Jcom).row(0) * float(sigmoid_prime(v));
     }
 
     Eigen::VectorXf result(Jcom.cols());
@@ -89,7 +89,7 @@ Eigen::VectorXf BalanceConstraintOptimizationFunction::evaluateOptimizationGradi
             prod *= f_i[k];
         }
 
-        result += f_prime_i[i] * prod;
+        result += f_prime_i[i] * float(prod);
     }
 
     return -result;
@@ -124,7 +124,7 @@ void BalanceConstraintOptimizationFunction::update()
 
 double BalanceConstraintOptimizationFunction::sigmoid(double x)
 {
-    float beta = 0.1;
+    float beta = 0.1f;
     return 1.0 / (1.0 + exp(-beta * x));
 }
 
