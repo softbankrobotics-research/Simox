@@ -246,6 +246,8 @@ VirtualRobotTest.h
 ManipulationObject.h
 BoundingBox.h
 RuntimeEnvironment.h
+DataStructures/nanoflann.hpp
+DataStructures/KdTreePointCloud.h
 Compression/CompressionRLE.h
 Compression/CompressionBZip2.h
 SphereApproximator.h
