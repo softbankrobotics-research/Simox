@@ -3674,7 +3674,7 @@ namespace VirtualRobot
             bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov//render param,
+            float zNear, float zFar, float vertFov,//render param
             float nanValue
         )
     {
