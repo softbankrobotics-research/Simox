@@ -3674,7 +3674,8 @@ namespace VirtualRobot
             bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov//render param
+            float zNear, float zFar, float vertFov//render param,
+            float nanValue
         )
     {
         SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
@@ -3688,7 +3689,8 @@ namespace VirtualRobot
                                           rgbImage,
                                           renderDepthImage, depthImage,
                                           renderPointcloud, pointCloud,
-                                          zNear, zFar, vertFov);
+                                          zNear, zFar, vertFov,
+                                          nanValue);
     }
 
     bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, RobotNodePtr camNode,
@@ -3867,16 +3869,32 @@ namespace VirtualRobot
 
                 if(renderDepthImage)
                 {
-                    zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    if(-zEye < zFar)
+                    {
+                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    }
+                    else
+                    {
+                        zBuffer.at(pixelIndex) = nanValue;
+                    }
                 }
 
                 if(renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
                     auto& point = pointCloud.at(pixelIndex);
-                    point[0]=-xEye;
-                    point[1]= yEye;
-                    point[2]=(-zEye >= zFar)? nanValue : -zEye;
+                    if(-zEye < zFar)
+                    {
+                        point[0] = -xEye;
+                        point[1] =  yEye;
+                        point[2] = -zEye;
+                    }
+                    else
+                    {
+                        point[0] = nanValue;
+                        point[1] = nanValue;
+                        point[2] = nanValue;
+                    }
                 }
             }
         }

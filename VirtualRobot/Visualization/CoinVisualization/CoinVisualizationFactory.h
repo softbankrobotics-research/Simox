@@ -325,6 +325,7 @@ namespace VirtualRobot
          * \param zNear The near plane's distance.
          * \param zFar The far plane's distance
          * \param vertFov The fov in rad. (vertical)
+         * \param nanValue All values above the zFar value will be mapped on this value (usually nan or 0)
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
@@ -334,7 +335,7 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImgae, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan("")
 
             );
 
@@ -364,7 +365,7 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImage, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = 0.0);
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan(""));
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
@@ -381,6 +382,7 @@ namespace VirtualRobot
          * \param zNear The near plane's distance.
          * \param zFar The far plane's distance
          * \param vertFov The fov in rad. (vertical)
+         * \param nanValue All values above the zFar value will be mapped on this value (usually nan or 0)
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
@@ -390,10 +392,10 @@ namespace VirtualRobot
                 std::vector<unsigned char>& rgbImage,
                 std::vector<float>& depthImage,
                 std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan("")
             )
         {
-            return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov);
+            return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov, nanValue);
         }
 
         /*!
