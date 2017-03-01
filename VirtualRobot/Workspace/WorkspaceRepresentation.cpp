@@ -17,6 +17,7 @@
 #include <cmath>
 #include <float.h>
 #include <limits.h>
+#include <thread>
 
 namespace VirtualRobot
 {
@@ -2131,5 +2132,140 @@ namespace VirtualRobot
         robot->setUpdateVisualization(visuSate);
         nodeSet->setJointValues(c);
     }
+
+    void WorkspaceRepresentation::addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions)
+    {
+        if (numThreads > loops)
+        {
+            VR_ERROR << "Number of threads can not be bigger then number of tcp poses to add.";
+            return;
+        }
+
+        std::thread threads[numThreads];
+        unsigned int numPosesPerThread = loops / numThreads; // todo
+        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
+
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i] = std::thread([=] ()
+            {
+                // each thread gets a cloned robot
+                CollisionCheckerPtr cc(new CollisionChecker());
+                RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
+                clonedRobot->setUpdateVisualization(false);
+                RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
+                RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
+
+                SceneObjectSetPtr staticCollisionModel = this->staticCollisionModel;
+                if (staticCollisionModel && clonedRobot->hasRobotNodeSet(staticCollisionModel->getName()))
+                {
+                    staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
+                }
+
+                SceneObjectSetPtr dynamicCollisionModel = this->staticCollisionModel;
+                if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
+                {
+                    dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
+                }
+
+                // now sample some configs and add them to the workspace data
+                for (int j = 0; j < numPosesPerThread; j++)
+                {
+                    float rndValue;
+                    float minJ, maxJ;
+                    Eigen::VectorXf v(clonedNodeSet->getSize());
+                    float maxLoops = 1000;
+
+                    bool successfullyRandomized = false;
+
+                    for (int k = 0; k < maxLoops; k++)
+                    {
+                        for (int l = 0; l < clonedNodeSet->getSize(); l++)
+                        {
+                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            minJ = (*nodeSet)[l]->getJointLimitLo();
+                            maxJ = (*nodeSet)[l]->getJointLimitHi();
+                            v[l] = minJ + ((maxJ - minJ) * rndValue);
+                        }
+
+                        clonedRobot->setJointValues(clonedNodeSet, v);
+
+                        // check for collisions
+                        if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        if (!clonedRobot->getCollisionChecker()->checkCollision(staticCollisionModel, dynamicCollisionModel))
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        this->collisionConfigs++;
+                    }
+
+                    if (successfullyRandomized)
+                    {
+                        Eigen::Matrix4f p = clonedTcpNode->getGlobalPose();
+                        addPose(p);
+                    }
+                    else
+                    {
+                        VR_WARNING << "Could not find collision-free configuration...";
+                    }
+                }
+            });
+        }
+
+        // wait for all threads to finish
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i].join();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 } // namespace VirtualRobot

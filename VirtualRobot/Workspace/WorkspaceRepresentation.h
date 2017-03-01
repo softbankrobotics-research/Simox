@@ -367,11 +367,20 @@ namespace VirtualRobot
 
 
         /*!
-            Append a number of random TCP poses to workspace Data
+            Append a number of random TCP poses to workspace Data.
+            For bigger sampling rates (loops > 50.000) you should consider this method's multithreaded pendant.
             \param loops Number of poses that should be appended
             \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
         */
         void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
+        /*!
+            Appends a number of random TCP poses to workspace Data. This method uses several threads behind the scenes to
+            speed up the process.
+            \param loops Number of poses that should be appended
+            \param numThreads number of worker threads used behind the scenes to append random TCP poses to workspace data.
+            \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
+        */
+        void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true);
 
         void setVoxelEntry(unsigned int v[6], unsigned char e);
         void setEntry(const Eigen::Matrix4f& poseGlobal, unsigned char e);
