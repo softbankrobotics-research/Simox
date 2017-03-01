@@ -42,6 +42,7 @@
 
 #include <string>
 #include <fstream>
+#include <cmath>
 
 namespace VirtualRobot
 {
@@ -335,7 +336,7 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImgae, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan("")
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
 
             );
 
@@ -365,7 +366,7 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImage, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan(""));
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN);
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
@@ -392,7 +393,7 @@ namespace VirtualRobot
                 std::vector<unsigned char>& rgbImage,
                 std::vector<float>& depthImage,
                 std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = std::nan("")
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
             )
         {
             return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov, nanValue);
