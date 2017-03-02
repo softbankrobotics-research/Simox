@@ -39,7 +39,7 @@ bool isInList(Eigen::Matrix4f& p, std::vector<Eigen::Matrix4f> &list, float prec
     return false;
 }
 
-bool hasEntry(VirtualRobot::ReachabilityPtr reach, Eigen::Matrix4f &p, float discrTr, float discrRot, unsigned int neigbors = 1)
+bool hasEntry(VirtualRobot::ReachabilityPtr reach, Eigen::Matrix4f &p, float discrTr, float discrRot, int neigbors = 1)
 {
     Eigen::Matrix4f t = p;
     Eigen::Matrix4f t2;
@@ -65,7 +65,8 @@ bool hasEntry(VirtualRobot::ReachabilityPtr reach, Eigen::Matrix4f &p, float dis
                             x2[4] = x[4] + discrRot * e;
                             x2[5] = x[5] + discrRot * f;
 
-                            reach->vector2Matrix(x,t);
+                            reach->vector2Matrix(x2,t);
+                            //cout << "checking voxel:" << x2[0] << "," << x2[1] << "," << x2[2] << "," << x2[3] << "," << x2[4] << "," << x2[5] << endl;
                             if (reach->getEntry(t)>0)
                                 return true;
                         }
@@ -160,7 +161,7 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
 
     // CREATE REACHABILITY DATA
     static float discrTr = 10.0f;
-    static float discrRot = 0.5f;
+    static float discrRot = 0.1f;
     float minBounds[6] = {0,0,0,0,0,0};
     float maxBounds[6] = {100.0f,100.0f,100.0f,2*M_PI,2*M_PI,2*M_PI};
     //VirtualRobot::ManipulabilityPtr reach(new VirtualRobot::Manipulability(rob));
@@ -174,7 +175,7 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
     reach->addCurrentTCPPose();
 
     // this must be enough to fill the reach space
-    //reach->addRandomTCPPoses(5000);
+    reach->addRandomTCPPoses(5000);
     BOOST_REQUIRE(reach);
 
     std::vector<Eigen::Matrix4f> poses;
@@ -183,18 +184,29 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
 
     float t[6];
     unsigned int v[6];
-    //for (float jv = 0.01f; jv<M_PI/2; jv += 0.01f)
+    for (float jv = 0.01f; jv<M_PI/2; jv += 0.01f)
     {
         joint1->setJointValue(jv);
         gp = tcp->getGlobalPose();
+        Eigen::Matrix4f gpI = gp.inverse();
 //        reach->matrix2Vector(gp,t); // TODO harry
-        VirtualRobot::MathTools::eigen4f2rpy(gp, t); // TODO harry
-        cout << "pose:" << endl << gp << endl;
+        //VirtualRobot::MathTools::eigen4f2rpy(gp, t); // TODO harry
+        //cout << "pose:" << endl << gp << endl;
+        //cout << "inv-pose:" << endl << gpI << endl;
 //        cout << "pose:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
         reach->getVoxelFromPose(gp,v);
-//        cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+        //cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+        Eigen::Matrix4f poseFromVoxel = reach->getPoseFromVoxel(v);
+        //cout << "pose from voxel:" << endl << poseFromVoxel << endl;
+        float dtr = 0;
+        float dang = 0;
+        VirtualRobot::MathTools::getPoseDiff(gp, poseFromVoxel, dtr, dang);
+        //cout << "pose diff:" << dtr << ", " << dang << endl;
+
         unsigned char entry = reach->getEntry(gp);
-        BOOST_REQUIRE(entry>0);
+        if (entry==0)
+            cout << "e=0\n";
+        //BOOST_REQUIRE(entry>0);
         if (!isInList(gp, poses))
             poses.push_back(gp);
     }
@@ -222,10 +234,10 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
 
                             if (invData->get(v) > 0)
                             {
-                                cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+                                //cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
 
                                 Eigen::Matrix4f gp = (invReach->getPoseFromVoxel(v));
-                                cout << "pose(inv):" << endl << gp << endl;
+                                //cout << "pose(inv):" << endl << gp << endl;
                                 invReach->matrix2Vector(gp,t);
 //                                cout << "gp(inv):" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
                                 if (!isInList(gp, posesInv))
@@ -234,7 +246,7 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
                                 Eigen::Matrix4f p = gp.inverse();
                                 if (!isInList(p, posesInvInv))
                                     posesInvInv.push_back(p);
-                                cout << "pose(inv).inv:" << endl << p << endl;
+                                //cout << "pose(inv).inv:" << endl << p << endl;
                                 invReach->matrix2Vector(p,t);
 //                                cout << "gp(inv).inv:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
                                 if (hasEntry(reach, p, discrTr, discrRot))
@@ -244,7 +256,7 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
                             }
                         }
 
-    std::cout << "countHit:" << countHit << ", countMiss:" << countMiss << std::endl;
+    /*std::cout << "countHit:" << countHit << ", countMiss:" << countMiss << std::endl;
 
     for (auto p:poses)
     {
@@ -262,7 +274,7 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
         for (int u=0;u<6;u++)
             std::cout << XII[u] << ",";
          std::cout << std::endl;
-    }
+    }*/
  }
 
 BOOST_AUTO_TEST_SUITE_END()
