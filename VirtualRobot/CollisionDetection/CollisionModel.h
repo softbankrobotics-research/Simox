@@ -65,8 +65,7 @@ namespace VirtualRobot
             \param colChecker If not specified, the global singleton instance is used. Only useful, when parallel collision checks should be performed.
             \param id A user id.
         */
-        CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666);
-        CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
+        CollisionModel(const VisualizationNodePtr visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666, float margin = 0.0f);
         /*!Standard Destructor
         */
         virtual ~CollisionModel();
@@ -163,15 +162,26 @@ namespace VirtualRobot
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
 
+        float getMargin() const;
+
+        /**
+         * @brief in/deflates the model. If value is <0 the model is deflated.
+         * @param margin Each vertex of the model is moved about this margin along its normal.
+         */
+        void inflateModel(float margin);
+
     protected:
+        // internal constructor needed for flat copy of internal collision model
+        CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
 
         //! delete all data
         void destroyData();
-        VisualizationNodePtr visualization;         // this is the original visualization
+        VisualizationNodePtr visualization;         // this is the modified visualization
+        VisualizationNodePtr origVisualization;         // this is the original visualization
         VisualizationNodePtr modelVisualization;    // this is the visualization of the trimeshmodel
         bool updateVisualization;
         TriMeshModelPtr model;
-
+        float margin;                        // inflates the model with this margin (in mm)
         BoundingBox bbox;
 
         //! the name

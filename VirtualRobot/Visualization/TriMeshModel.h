@@ -57,20 +57,29 @@ namespace VirtualRobot
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
         static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
         void addFace(const MathTools::TriangleFace& face);
+        int addVertex(const Eigen::Vector3f& vertex);
+        int addNormal(const Eigen::Vector3f& normal);
+        int addColor(const VisualizationFactory::Color& color);
+        int addColor(const Eigen::Vector4f& color);
+        int addMaterial(const VisualizationFactory::PhongMaterial& material);
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
-        /*!
-         * \brief addVertex Adds a vertex to this object
-         * \param vertex
-         * \return The vertex id (== position in vertex array)
-         */
-        unsigned int addVertex(const Eigen::Vector3f& vertex);
-        void addNormal(const Eigen::Vector3f& normal);
-        void addColor(const VisualizationFactory::Color& color);
-        void addColor(const Eigen::Vector4f& color);
-        void addMaterial(const VisualizationFactory::PhongMaterial& material);
         void clear();
         void flipVertexOrientations();
+        /**
+         * @brief Merges vertices that are close together (mergeThreshold).
+         * Usually, vertices that are close together should be one vertex. Otherwise the mesh
+         * could consist of many individual triangles.
+         * All vertex ids stored in faces are updated. This function is quite efficient due to a kd-tree and an inverted face-vertex mapping.
+         * @param mergeThreshold If squared Euclidan distance of two points is belong this threshold, two vertices are merged.
+         */
+        void mergeVertices(float mergeThreshold = 0.0001);
 
+        /**
+         * @brief fatten or shrink this trimesh. Done by moving a vertex along a normal calculated from the normals
+         * of all the faces the vertex is used in.
+         * @param offset All vertexes are moved about this offset in mm.
+         */
+        void fattenShrink(float offset);
         // Overwrite all colors
         void setColor(VisualizationFactory::Color color);
 
@@ -84,15 +93,15 @@ namespace VirtualRobot
         unsigned int checkAndCorrectNormals(bool inverted);
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
-        TriMeshModelPtr clone();
-        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor);
+        TriMeshModelPtr clone() const;
+        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor) const;
 
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> vertices;
         std::vector<VisualizationFactory::Color> colors;
         std::vector<MathTools::TriangleFace> faces;
         std::vector<VisualizationFactory::PhongMaterial> materials;
-        BoundingBox boundingBox;
+        BoundingBox boundingBox;        
     };
 } // namespace VirtualRobot
 

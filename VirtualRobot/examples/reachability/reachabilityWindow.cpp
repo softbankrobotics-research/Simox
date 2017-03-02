@@ -456,7 +456,8 @@ void reachabilityWindow::extendReach()
     }
 
     int steps = UI.spinBoxExtend->value();
-    reachSpace->addRandomTCPPoses(steps);
+    reachSpace->addRandomTCPPoses(steps, QThread::idealThreadCount() < 1 ? 1 : QThread::idealThreadCount(), true);
+
     reachSpace->print();
     UI.checkBoxReachabilityVisu->setChecked(false);
     UI.sliderCutReach->setEnabled(false);

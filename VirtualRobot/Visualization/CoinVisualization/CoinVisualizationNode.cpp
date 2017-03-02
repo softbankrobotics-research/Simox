@@ -37,7 +37,7 @@ namespace VirtualRobot
      * CoinVisualizationNode::visualization.
      * If \p visualizationNode is a valid object call SoNode::ref() on it.
      */
-    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode) :
+    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode, float margin) :
         visualization(visualizationNode)
     {
         visualizationAtGlobalPose = new SoSeparator();
@@ -142,7 +142,7 @@ namespace VirtualRobot
         return triMeshModel;
     }
 
-
+    typedef std::map<const SoPrimitiveVertex*,int> CoinVertexIndexMap;
     /**
      * This method constructs an instance of TriMeshModel and stores it in
      * CoinVisualizationNode::triMeshModel.
@@ -180,8 +180,7 @@ namespace VirtualRobot
             const SoPrimitiveVertex* v2,
             const SoPrimitiveVertex* v3)
     {
-        TriMeshModel* triangleMeshModel = static_cast<TriMeshModel*>(data);
-
+        TriMeshModel* triangleMeshModel  = static_cast<TriMeshModel*>(data);
         if (!triangleMeshModel)
         {
             VR_INFO << ": Internal error, NULL data" << endl;
@@ -213,8 +212,10 @@ namespace VirtualRobot
         b << triangle[1][0], triangle[1][1], triangle[1][2];
         c << triangle[2][0], triangle[2][1], triangle[2][2];
         n << normal[0][0], normal[0][1], normal[0][2];
-        // add new triangle to the model
+
+        // add new triangle to the model        
         triangleMeshModel->addTriangleWithFace(a, b, c, n);
+
     }
 
 
@@ -496,6 +497,23 @@ namespace VirtualRobot
         n->unref();
 
         return true;
+    }
+
+    void CoinVisualizationNode::shrinkFatten(float offset)
+    {
+        if(offset != 0.0f)
+        {
+            triMeshModel.reset();
+            getTriMeshModel()->mergeVertices();
+            getTriMeshModel()->fattenShrink(offset);
+
+            scaledVisualization->removeChild(scaledVisualization->findChild(visualization));
+            visualization->unref();
+            visualization = CoinVisualizationFactory::getCoinVisualization(getTriMeshModel());
+            visualization->ref();
+            scaledVisualization->addChild(visualization);
+        }
+
     }
 
     void CoinVisualizationNode::scale(Eigen::Vector3f& scaleFactor)

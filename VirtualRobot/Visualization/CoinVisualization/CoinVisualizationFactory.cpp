@@ -3674,9 +3674,35 @@ namespace VirtualRobot
             bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov//render param
+            float zNear, float zFar, float vertFov,//render param
+            float nanValue
         )
     {
+        SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
+        offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
+        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
+        return renderOffscreenRgbDepthPointcloud(&offscreenRenderer,
+                                          camNode,
+                                          scene,
+                                          width, height,
+                                          renderRgbImage,
+                                          rgbImage,
+                                          renderDepthImage, depthImage,
+                                          renderPointcloud, pointCloud,
+                                          zNear, zFar, vertFov,
+                                          nanValue);
+    }
+
+    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, RobotNodePtr camNode,
+                                                                     SoNode *scene, short width, short height, bool renderRgbImage, std::vector<unsigned char> &rgbImage,
+                                                                     bool renderDepthImage, std::vector<float> &depthImage, bool renderPointcloud,
+                                                                     std::vector<Eigen::Vector3f> &pointCloud, float zNear, float zFar, float vertFov, float nanValue)
+    {
+        if(!offscreenRenderer)
+        {
+            VR_ERROR << "No renderer..." << endl;
+            return false;
+        }
         //check input
         if (!camNode)
         {
@@ -3696,11 +3722,6 @@ namespace VirtualRobot
         //setup
         const bool calculateDepth = renderDepthImage || renderPointcloud;
         const unsigned int numPixel=width*height;
-
-        SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
-        offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
-        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-
         //required to get the zBuffer
         DepthRenderData userdata;
         std::vector<float> zBuffer;
@@ -3717,9 +3738,9 @@ namespace VirtualRobot
             userdata.w = width;
             userdata.buffer = zBuffer.data();
 
-            offscreenRenderer.getGLRenderAction()->setPassCallback(getZBuffer, static_cast<void*>(&userdata));
+            offscreenRenderer->getGLRenderAction()->setPassCallback(getZBuffer, static_cast<void*>(&userdata));
             ///TODO find way to only render rgb once
-            offscreenRenderer.getGLRenderAction()->setNumPasses(2);
+            offscreenRenderer->getGLRenderAction()->setNumPasses(2);
         }
 
         //render
@@ -3748,8 +3769,9 @@ namespace VirtualRobot
         root->addChild(scene);
 
         static bool renderErrorPrinted = false;
-        const bool renderOk=offscreenRenderer.render(root);
-        root->unref();
+        const bool renderOk=offscreenRenderer->render(root);
+
+
         if (!renderOk)
         {
             if (!renderErrorPrinted)
@@ -3759,10 +3781,12 @@ namespace VirtualRobot
             }
             return false;
         }
+
+        root->unref();
         //rgb
         if(renderRgbImage)
         {
-            const unsigned char* glBuffer = offscreenRenderer.getBuffer();
+            const unsigned char* glBuffer = offscreenRenderer->getBuffer();
             const unsigned int numValues = numPixel*3;
             rgbImage.resize(numValues);
             std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
@@ -3845,18 +3869,36 @@ namespace VirtualRobot
 
                 if(renderDepthImage)
                 {
-                    zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    if(-zEye < zFar)
+                    {
+                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    }
+                    else
+                    {
+                        zBuffer.at(pixelIndex) = nanValue;
+                    }
                 }
 
                 if(renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
-                    pointCloud.at(pixelIndex)[0]=-xEye;
-                    pointCloud.at(pixelIndex)[1]= yEye;
-                    pointCloud.at(pixelIndex)[2]=-zEye;
+                    auto& point = pointCloud.at(pixelIndex);
+                    if(-zEye < zFar)
+                    {
+                        point[0] = -xEye;
+                        point[1] =  yEye;
+                        point[2] = -zEye;
+                    }
+                    else
+                    {
+                        point[0] = nanValue;
+                        point[1] = nanValue;
+                        point[2] = nanValue;
+                    }
                 }
             }
         }
+
         if(renderDepthImage)
         {
             depthImage = std::move(zBuffer);
