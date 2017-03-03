@@ -129,6 +129,27 @@ BOOST_AUTO_TEST_CASE(testMathToolsRPY)
     BOOST_CHECK_EQUAL(r, x[3]);
     BOOST_CHECK_EQUAL(p, x[4]);
     BOOST_CHECK_EQUAL(y, x[5]);
+
+    r = 0;
+    p = 0;
+    y = (float)M_PI * 0.25f;
+    BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::rpy2eigen4f(r, p, y, m));
+    BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::eigen4f2rpy(m, x));
+
+   BOOST_CHECK_EQUAL(0, x[0]);
+    BOOST_CHECK_EQUAL(0, x[1]);
+    BOOST_CHECK_EQUAL(0, x[2]);
+    BOOST_CHECK_EQUAL(r, x[3]);
+    BOOST_CHECK_EQUAL(p, x[4]);
+    BOOST_CHECK_EQUAL(y, x[5]);
+
+    Eigen::Vector3f ax;
+    float ang;
+    VirtualRobot::MathTools::eigen4f2axisangle(m,ax,ang);
+    BOOST_CHECK_CLOSE(ax(0), 0 , 1);
+    BOOST_CHECK_CLOSE(ax(1), 0 , 1);
+    BOOST_CHECK_CLOSE(ax(2), 1.0f , 1);
+    BOOST_CHECK_CLOSE(ang, y , 1);
 }
 
 BOOST_AUTO_TEST_CASE(testMathToolsPlane)

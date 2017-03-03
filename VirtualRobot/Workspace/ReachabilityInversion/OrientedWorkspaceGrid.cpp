@@ -238,7 +238,30 @@ void OrientedWorkspaceGrid::setCellEntry( int cellX, int cellY, int cellAlpha, i
 	{
 		if (find(graspLink[dataPos].begin(),graspLink[dataPos].end(),grasp) == graspLink[dataPos].end())
 			graspLink[dataPos].push_back(grasp);
-	}
+    }
+}
+
+Eigen::Matrix4f OrientedWorkspaceGrid::getCellPose(int cellX, int cellY, int cellAlpha)
+{
+    if (cellX<0 || cellY<0 || cellX>=gridSizeX || cellY>=gridSizeY || cellAlpha>=gridSizeAlpha || cellAlpha<0)
+    {
+        //cout << __PRETTY_FUNCTION__ << " internal error: " << nPosX << "," << nPosY << endl;
+        return Eigen::Matrix4f::Identity();
+    }
+
+    Eigen::Matrix4f res;
+    res = Eigen::Matrix4f::Identity();
+    float x = minX + float(cellX) * gridExtendX;
+    float y = minY + float(cellY) * gridExtendY;
+    float alpha = float(cellAlpha) * gridExtendAlpha;
+
+    MathTools::rpy2eigen4f(0,0,alpha,res);
+
+    res(0,3) = x;
+    res(1,3) = y;
+    res(2,3) = height;
+
+    return res;
 }
 
 void OrientedWorkspaceGrid::setEntryCheckNeighbors( float x, float y, float alpha, int value, GraspPtr grasp )

@@ -50,7 +50,8 @@ int main(int argc, char *argv[])
     // ARMAR-III
     std::string eef("Hand R");
 //    std::string filenameReach("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3.bin");
-    std::string filenameReach("/home/harry/armar_hipYawRightArm_manipulability.bin");
+    std::string filenameReach("reachability/armar_hipYawRightArm_manipulability-4.bin");
+    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameReach);
     //std::string filenameReach("/home/harry/armarx.projects/Armar3/data/Armar3/reachability/reachability_right_hand.bin");
 
 //    std::string invReachFile("/common/homes/staff/vahrenka/coding/Simox_Projects/OrientedReachabilityMap/data/Manipulability_Armar_TorsoRightArm_EulerXYZ_3_inv.bin");

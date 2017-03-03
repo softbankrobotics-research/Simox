@@ -86,12 +86,20 @@ public:
 	bool getMaxCellEntry(int cellX, int cellY, float &storeRot, int &nStoreEntry, std::vector<VirtualRobot::GraspPtr> &storeGrasps );
 	bool getCellEntries( int cellX, int cellY, std::vector<float> &storeRotations, std::vector<int> &storeEntries, std::vector< std::vector<VirtualRobot::GraspPtr> > &storeGrasps );
 
-	/*!
+    /*!l
 		sets the entry to value, if the current value is lower 
 	*/
 	void setEntry (float x, float y, float alpha, int value, VirtualRobot::GraspPtr grasp);
-	void setCellEntry( int cellX, int cellY, int cellAlpha, int value, VirtualRobot::GraspPtr pGrasp );
+    void setCellEntry(int cellX, int cellY, int cellAlpha, int value, VirtualRobot::GraspPtr pGrasp);
 
+    /*!
+     * \brief getCellPose Returns the global pose of cell
+     * \param cellX
+     * \param cellY
+     * \param cellAlpha
+     * \return
+     */
+    Eigen::Matrix4f getCellPose(int cellX, int cellY, int cellAlpha);
 	
 	int getMaxEntry();
 	long getCellsFilled();
@@ -153,7 +161,7 @@ protected:
 	*/
 	void setEntries(std::vector<VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> &wsData, Eigen::Matrix4f &graspGlobal, VirtualRobot::GraspPtr grasp);
 
-	inline int getDataPos(int x, int y, int alpha) {return (x*gridSizeY*gridSizeAlpha + y*gridSizeAlpha + alpha);};
+    inline int getDataPos(int x, int y, int alpha) {return (x*gridSizeY*gridSizeAlpha + y*gridSizeAlpha + alpha);}
 	bool getGridPos(float x, float y, float alpha, int &nPosX, int &nPosY, int &nPosAlpha);
 
     //! Lazy mode update

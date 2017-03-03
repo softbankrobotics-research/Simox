@@ -13,6 +13,7 @@
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
 #include <VirtualRobot/Workspace/Reachability.h>
 #include <VirtualRobot/Workspace/Manipulability.h>
+#include <VirtualRobot/Workspace/ReachabilityInversion/OrientedWorkspaceGrid.h>
 #include <VirtualRobot/Workspace/ReachabilityInversion/InverseReachability.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -73,6 +74,96 @@ bool hasEntry(VirtualRobot::ReachabilityPtr reach, Eigen::Matrix4f &p, float dis
             }
 
     return false;
+}
+
+void testInvSpace(VirtualRobot::ReachabilityPtr reach, VirtualRobot::InverseReachabilityPtr invReach, Eigen::Matrix4f gpInvReach, float discrTr, float discrRot)
+{
+    invReach->setGlobalPose(gpInvReach);
+
+    VirtualRobot::WorkspaceDataPtr invData = invReach->getData();
+
+
+    unsigned int numVoxels[6];
+    for (int i=0;i<6; i++)
+        numVoxels[i] = invData->getSize(i);
+
+    unsigned int v[6];
+    int countHit = 0;
+    int countMiss = 0 ;
+    for (v[0] = 0; v[0] < (unsigned int)numVoxels[0]; v[0]++)
+        for (v[1] = 0; v[1] < (unsigned int)numVoxels[1]; v[1]++)
+            for (v[2] = 0; v[2] < (unsigned int)numVoxels[2]; v[2]++)
+                for (v[3] = 0; v[3] < (unsigned int)numVoxels[3]; v[3]++)
+                    for (v[4] = 0; v[4] < (unsigned int)numVoxels[4]; v[4]++)
+                        for (v[5] = 0; v[5] < (unsigned int)numVoxels[5]; v[5]++)
+                        {
+
+                            if (invData->get(v) > 0)
+                            {
+                                //cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+
+                                Eigen::Matrix4f gp = (invReach->getPoseFromVoxel(v));
+                                //cout << "pose(inv):" << endl << gp << endl;
+                                //invReach->matrix2Vector(gp,t);
+//                                cout << "gp(inv):" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
+                                //if (!isInList(gp, posesInv))
+                                //    posesInv.push_back(gp);
+
+                                Eigen::Matrix4f p = gpInvReach.inverse() * gp;
+                                Eigen::Matrix4f p2 = p.inverse();
+
+                                //Eigen::Matrix4f p = gp.inverse();
+
+
+                                //if (!isInList(p, posesInvInv))
+                                //    posesInvInv.push_back(p);
+                                //cout << "pose(inv).inv:" << endl << p << endl;
+                                //invReach->matrix2Vector(p,t);
+//                                cout << "gp(inv).inv:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
+                                if (hasEntry(reach, p2, discrTr, discrRot))
+                                    countHit++;
+                                else
+                                    countMiss++;
+                            }
+                        }
+    cout << "GP inv:\n" << gpInvReach << endl << "hit:" << countHit << ", miss:" << countMiss << endl;
+    BOOST_REQUIRE(countMiss==0);
+}
+
+void testReachGrid(VirtualRobot::ReachabilityPtr reach, VirtualRobot::InverseReachabilityPtr invReach, Eigen::Matrix4f gpInvReach, float discrTr, float discrRot)
+{
+    VirtualRobot::OrientedWorkspaceGridPtr reachGrid(new VirtualRobot::OrientedWorkspaceGrid(-200.0f,200.0f,-200.0f,200.0f,discrTr,discrRot,false));
+    BOOST_REQUIRE(reachGrid);
+    reachGrid->setGridPosition(gpInvReach(0,3),gpInvReach(1,3));
+
+    invReach->setGlobalPose(gpInvReach);
+    VirtualRobot::GraspPtr g;
+    reachGrid->fillData(gpInvReach,invReach,g);
+
+    int cx,cy,ca;
+    reachGrid->getCells(cx,cy,ca);
+    for (int x=0;x<cx;x++)
+    {
+        for (int y=0;y<cy;y++)
+        {
+            for (int a=0;a<ca;a++)
+            {
+                int e = reachGrid->getCellEntry(x,y,a);
+
+                if (e>0)
+                {
+                    Eigen::Matrix4f p = reachGrid->getCellPose(x,y,a);
+                    reach->getRobot()->setGlobalPose(p);
+                    unsigned char e2 = reach->getEntry(gpInvReach);
+                    cout << "e:" << e << ", e2:" << int(e2) << endl;
+
+                }
+            }
+
+        }
+
+    }
+
 }
 
 BOOST_AUTO_TEST_CASE(testInvReachCreate)
@@ -215,47 +306,38 @@ BOOST_AUTO_TEST_CASE(testInvReachCreate)
     VirtualRobot::InverseReachabilityPtr invReach(new VirtualRobot::InverseReachability(reach));
     BOOST_REQUIRE(invReach);
 
-    VirtualRobot::WorkspaceDataPtr invData = invReach->getData();
+    Eigen::Matrix4f invSpaceGP = Eigen::Matrix4f::Identity();
+
+#if 0
+    testInvSpace(reach, invReach, invSpaceGP, discrTr, discrRot);
+
+    Eigen::Vector3f p;
+    Eigen::Vector3f r;
+
+    p << 0,0,0;
+    r << 0,0,M_PI*0.5f;
+    VirtualRobot::MathTools::posrpy2eigen4f(p,r,invSpaceGP);
+    testInvSpace(reach, invReach, invSpaceGP, discrTr, discrRot);
 
 
-    unsigned int numVoxels[6];
-    for (int i=0;i<6; i++)
-        numVoxels[i] = invData->getSize(i);
+    p << 100,500,0;
+    r << 0,0,0;
+    VirtualRobot::MathTools::posrpy2eigen4f(p,r,invSpaceGP);
+    testInvSpace(reach, invReach, invSpaceGP, discrTr, discrRot);
 
-    int countHit = 0;
-    int countMiss = 0 ;
-    for (v[0] = 0; v[0] < (unsigned int)numVoxels[0]; v[0]++)
-        for (v[1] = 0; v[1] < (unsigned int)numVoxels[1]; v[1]++)
-            for (v[2] = 0; v[2] < (unsigned int)numVoxels[2]; v[2]++)
-                for (v[3] = 0; v[3] < (unsigned int)numVoxels[3]; v[3]++)
-                    for (v[4] = 0; v[4] < (unsigned int)numVoxels[4]; v[4]++)
-                        for (v[5] = 0; v[5] < (unsigned int)numVoxels[5]; v[5]++)
-                        {
+    p << 0,0,0;
+    r << 0.2,0.3,0.8;
+    VirtualRobot::MathTools::posrpy2eigen4f(p,r,invSpaceGP);
+    testInvSpace(reach, invReach, invSpaceGP, discrTr, discrRot);
 
-                            if (invData->get(v) > 0)
-                            {
-                                //cout << "voxel:" << v[0] << "," << v[1] << "," << v[2] << "," << v[3] << "," << v[4] << "," << v[5] << endl;
+    p << 50,100,0;
+    r << 0.1,-0.3,0.2;
+    VirtualRobot::MathTools::posrpy2eigen4f(p,r,invSpaceGP);
+    testInvSpace(reach, invReach, invSpaceGP, discrTr, discrRot);
+#endif
 
-                                Eigen::Matrix4f gp = (invReach->getPoseFromVoxel(v));
-                                //cout << "pose(inv):" << endl << gp << endl;
-                                invReach->matrix2Vector(gp,t);
-//                                cout << "gp(inv):" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
-                                if (!isInList(gp, posesInv))
-                                    posesInv.push_back(gp);
-
-                                Eigen::Matrix4f p = gp.inverse();
-                                if (!isInList(p, posesInvInv))
-                                    posesInvInv.push_back(p);
-                                //cout << "pose(inv).inv:" << endl << p << endl;
-                                invReach->matrix2Vector(p,t);
-//                                cout << "gp(inv).inv:" << t[0] << "," << t[1] << "," << t[2] << "," << t[3] << "," << t[4] << "," << t[5] << endl;
-                                if (hasEntry(reach, p, discrTr, discrRot))
-                                    countHit++;
-                                else
-                                    countMiss++;
-                            }
-                        }
-
+    invSpaceGP = poses.at(0);
+    testReachGrid(reach, invReach, invSpaceGP, discrTr, discrRot);
     /*std::cout << "countHit:" << countHit << ", countMiss:" << countMiss << std::endl;
 
     for (auto p:poses)
