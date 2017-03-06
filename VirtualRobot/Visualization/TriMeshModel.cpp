@@ -345,8 +345,6 @@ namespace VirtualRobot
     void TriMeshModel::fattenShrink(float offset)
     {
         int i;
-
-
         int size = this->faces.size();
         std::vector<bool> visited(vertices.size(), false);
         std::vector<std::pair<Eigen::Vector3f,int>> offsets(vertices.size(), std::make_pair(Eigen::Vector3f::Zero(), 0));
@@ -372,28 +370,40 @@ namespace VirtualRobot
             if(std::isnan(normal3[0]) || std::isnan(normal3[1]) || std::isnan(normal3[2]))
                 std::cout << "NAN in normal3 " << i << " : " << face.normal << std::endl;
 
-//            if(!visited.at(face.id1))
             if(normal1.norm() > 0)
             {
-                offsets.at(face.id1).first += normal1.normalized();
-                offsets.at(face.id1).second ++;
+                // weight with angle of the triangle: bigger angle -> higher area -> higher influence
+                Eigen::Vector3f p1p2 = -p1 + p2;
+                Eigen::Vector3f p1p3 = -p1 + p3;
+                float angle = MathTools::getAngle(p1p2, p1p3);
+                offsets.at(face.id1).first += normal1.normalized() * angle;
             }
-//            if(!visited.at(face.id2))
             if(normal2.norm() > 0)
             {
-                offsets.at(face.id2).first += normal2.normalized();
-//                offsets.at(face.id2).second ++;
+                Eigen::Vector3f p2p1 = -p2 + p1;
+                Eigen::Vector3f p2p3 = -p2 + p3;
+                float angle = MathTools::getAngle(p2p1, p2p3);
+
+                offsets.at(face.id2).first += normal2.normalized() * angle;
             }
-//            if(!visited.at(face.id3))
             if(normal3.norm() > 0)
             {
-                offsets.at(face.id3).first += normal3.normalized();
-//                offsets.at(face.id3).second ++;
+                Eigen::Vector3f p3p2 = -p3 + p2;
+                Eigen::Vector3f p3p1 = -p3 + p1;
+                float angle = MathTools::getAngle(p3p2, p3p1);
+
+                offsets.at(face.id3).first += normal3.normalized() * angle;
             }
             visited.at(face.id1) = true;
             visited.at(face.id2) = true;
             visited.at(face.id3) = true;
         }
+
+//        auto limitTo = [](double value, double absThreshold)
+//        {
+//            int sign = (value >= 0) ? 1 : -1;
+//            return sign * std::min<double>(fabs(value), absThreshold);
+//        };
 
         for (i = 0; i < vertices.size(); ++i)
         {
@@ -403,6 +413,9 @@ namespace VirtualRobot
             {
                 if(std::isnan(pair.first[0]) || std::isnan(pair.first[1]) || std::isnan(pair.first[2]))
                     std::cout << "NAN in " << i << " : " << pair.first  << std::endl;
+//                pair.first[0] = limitTo(pair.first[0], 1);
+//                pair.first[1] = limitTo(pair.first[1], 1);
+//                pair.first[2] = limitTo(pair.first[2], 1);
                 p += pair.first.normalized() * offset;
             }
         }
