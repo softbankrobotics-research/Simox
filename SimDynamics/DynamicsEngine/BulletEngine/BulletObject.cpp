@@ -331,6 +331,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(vel, false);
+        rigidBody->activate();
         rigidBody->setLinearVelocity(btVel);
     }
 
@@ -344,6 +345,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(vel, false);
+        rigidBody->activate();
         rigidBody->setAngularVelocity(btVel);
     }
 

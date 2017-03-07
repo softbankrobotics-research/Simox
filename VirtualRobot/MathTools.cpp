@@ -1306,7 +1306,7 @@ namespace VirtualRobot
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getAngle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2)
     {
         float res = v1.dot(v2);
-
+        res /= (v1.norm() * v2.norm());
         if (res < -1.0f)
         {
             res = -1.0f;
