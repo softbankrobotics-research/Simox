@@ -61,7 +61,7 @@ namespace SimDynamics
         btScalar bulletSolverGlobalContactForceMixing; // allow to violate constraints (eg joint limits). A value>0 may increase stablity. (standard:0)
         btScalar bulletSolverGlobalErrorReductionParameter; // How hard should the solver try to correct misaligned joints/constraints/links. (standard 0.2
         btScalar bulletSolverSuccessiveOverRelaxation;
-        btScalar bulletSolverContactSurfaceLayer;
+        //btScalar bulletSolverContactSurfaceLayer;
         btScalar bulletSolverSplitImpulsePenetrationThreshold;
     };
 

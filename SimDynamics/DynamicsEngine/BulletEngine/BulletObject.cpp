@@ -287,7 +287,7 @@ namespace SimDynamics
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
         // notify motionState -> not needed, automatically done
-        //motionState->setGlobalPose(pose);
+        motionState->setGlobalPose(pose);
     }
 
     void BulletObject::setPose(const Eigen::Matrix4f& pose)
