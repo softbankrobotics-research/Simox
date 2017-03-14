@@ -286,7 +286,7 @@ namespace SimDynamics
         Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPose() * poseLocal;
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
-        // notify motionState -> not needed, automatically done
+        // notify motionState
         motionState->setGlobalPose(pose);
     }
 

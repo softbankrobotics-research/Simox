@@ -1556,11 +1556,18 @@ namespace VirtualRobot
         return true;
     }
 
-    bool BaseIO::processConfigurationNodeList(rapidxml::xml_node<char>* configXMLNode, std::vector< std::vector< RobotConfig::Configuration > >& configDefinitions, std::vector< std::string >& configNames)
+    bool BaseIO::processConfigurationNodeList(rapidxml::xml_node<char>* configXMLNode, std::vector< std::vector< RobotConfig::Configuration > >& configDefinitions, std::vector< std::string >& configNames, std::vector< std::string >& tcpNames)
     {
         THROW_VR_EXCEPTION_IF(!configXMLNode, "NULL data in processConfigurationNode");
         std::string name = processNameAttribute(configXMLNode, true);
         THROW_VR_EXCEPTION_IF(name.empty(), "Expecting a name in configuration tag");
+
+        std::string tcpStr("tcp");
+        std::string tcp = processStringAttribute(tcpStr, configXMLNode, true);
+
+        //std::cout << "tcp: " << tcp << std::endl;
+
+
         std::vector< RobotConfig::Configuration > configs;
 
 
@@ -1571,6 +1578,7 @@ namespace VirtualRobot
 
         configDefinitions.push_back(configs);
         configNames.push_back(name);
+        tcpNames.push_back(tcp);
         return true;
     }
 

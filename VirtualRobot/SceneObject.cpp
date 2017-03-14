@@ -981,6 +981,8 @@ namespace VirtualRobot
 
     void SceneObject::setSimulationType(SceneObject::Physics::SimulationType s)
     {
+        if (physics.massKg<=0 && s==SceneObject::Physics::eDynamic)
+            VR_WARNING << "Setting simulation type to dynamic, but mass==0, object might be handled as static object by physics engine." << endl;
         physics.simType = s;
     }
 
