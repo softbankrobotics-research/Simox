@@ -117,14 +117,6 @@ namespace SimDynamics
 
         btDynamicsWorld* getBulletWorld();
 
-        /*!
-            Wake up all objects.
-            Bullet sends objects to sleeping state when no interaction is detected.
-            But this might be unwanted, e.g. robots should be active all the time.
-        */
-        void activateAllObjects();
-
-
         virtual std::vector<DynamicsEngine::DynamicsContactInfo> getContacts();
 
         void print();

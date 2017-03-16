@@ -88,6 +88,12 @@ namespace SimDynamics
 
         virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
 
+        /*!
+         * \brief activate If object is sleeping, we can activate it here.
+         */
+        virtual void activate();
+
+
         typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.

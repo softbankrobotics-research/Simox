@@ -428,5 +428,17 @@ namespace SimDynamics
         DynamicsObject::setSimType(s);
     }
 
+    void BulletObject::activate()
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        if (!rigidBody)
+        {
+            return;
+        }
+
+        rigidBody->activate();
+    }
+
 
 } // namespace VirtualRobot

@@ -583,20 +583,6 @@ namespace SimDynamics
         cout << "------------------ Bullet Engine ------------------" << endl;
     }
 
-    void BulletEngine::activateAllObjects()
-    {
-        MutexLockPtr lock = getScopedLock();
-
-        for (size_t i = 0; i < objects.size(); i++)
-        {
-            BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(objects[i]);
-
-            if (bo)
-            {
-                bo->getRigidBody()->activate();
-            }
-        }
-    }
 
 
     std::vector<DynamicsEngine::DynamicsContactInfo> BulletEngine::getContacts()
