@@ -2141,7 +2141,7 @@ namespace VirtualRobot
             return;
         }
 
-        std::thread threads[numThreads];
+        std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
         static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
