@@ -104,7 +104,7 @@ namespace VirtualRobot
 
     protected:
 
-        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         std::string filename;
 

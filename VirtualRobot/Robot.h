@@ -70,7 +70,7 @@ namespace VirtualRobot
             The root node is the first RobotNode of this robot.
         */
         virtual void setRootNode(RobotNodePtr node) = 0;
-        virtual RobotNodePtr getRootNode() = 0;
+        virtual RobotNodePtr getRootNode() const = 0;
 
         virtual void applyJointValues();
 
@@ -126,7 +126,7 @@ namespace VirtualRobot
         /*!
         Print status information.
         */
-        virtual void print();
+        virtual void print(bool printChildren = false, bool printDecoration = true) const;
 
         /*!
             Enables/Disables the visualization updates of collision model and visualization model.
@@ -134,10 +134,7 @@ namespace VirtualRobot
         void setUpdateVisualization(bool enable);
         void setUpdateCollisionModel(bool enable);
 
-        boost::shared_ptr<Robot> shared_from_this()
-        {
-            return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this());
-        }
+        boost::shared_ptr<Robot> shared_from_this() const;
         //boost::shared_ptr<Robot> shared_from_this() const { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
 
         /*!
@@ -167,9 +164,9 @@ namespace VirtualRobot
         virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet) = 0;
         virtual bool hasRobotNodeSet(RobotNodeSetPtr nodeSet);
         virtual bool hasRobotNodeSet(const std::string& name) = 0;
-        virtual RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName) = 0;
-        virtual std::vector<RobotNodeSetPtr> getRobotNodeSets();
-        virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet) = 0;
+        virtual RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName) const = 0;
+        virtual std::vector<RobotNodeSetPtr> getRobotNodeSets() const;
+        virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet) const = 0;
 
         /**
          *
@@ -203,7 +200,8 @@ namespace VirtualRobot
         /*!
             Set the global position of this robot
         */
-        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues = true) = 0;
+        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues) = 0;
+        void setGlobalPose(const Eigen::Matrix4f& globalPose);
 
         /*!
             Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
@@ -398,7 +396,7 @@ namespace VirtualRobot
 
         bool updateVisualization;
 
-        boost::recursive_mutex mutex;
+        mutable boost::recursive_mutex mutex;
         bool use_mutex;
 
     };
@@ -444,7 +442,7 @@ namespace VirtualRobot
         virtual ~LocalRobot();
 
         virtual void setRootNode(RobotNodePtr node);
-        virtual RobotNodePtr getRootNode();
+        virtual RobotNodePtr getRootNode() const;
 
         virtual void registerRobotNode(RobotNodePtr node);
         virtual void deregisterRobotNode(RobotNodePtr node);
@@ -456,8 +454,8 @@ namespace VirtualRobot
         virtual void registerRobotNodeSet(RobotNodeSetPtr nodeSet);
         virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet);
         virtual bool hasRobotNodeSet(const std::string& name);
-        virtual RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName);
-        virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet);
+        virtual RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName) const;
+        virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet) const;
 
         virtual void registerEndEffector(EndEffectorPtr endEffector);
         virtual bool hasEndEffector(const std::string& endEffectorName);
@@ -466,7 +464,7 @@ namespace VirtualRobot
 
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues = true);
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose);
-        virtual Eigen::Matrix4f getGlobalPose();
+        virtual Eigen::Matrix4f getGlobalPose() const;
 
     protected:
         //Eigen::Matrix4f globalPose; //!< The pose of this robot in the world

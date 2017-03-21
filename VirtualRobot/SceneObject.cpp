@@ -215,14 +215,14 @@ namespace VirtualRobot
         return true;
     }
 
-    void SceneObject::showCoordinateSystem(bool enable, float scaling, std::string* text)
+    void SceneObject::showCoordinateSystem(bool enable, float scaling, std::string* text, const std::string &visualizationType)
     {
         if (!enable && !visualizationModel)
         {
             return;    // nothing to do
         }
 
-        if (!ensureVisualization())
+        if (!ensureVisualization(visualizationType))
         {
             return;
         }

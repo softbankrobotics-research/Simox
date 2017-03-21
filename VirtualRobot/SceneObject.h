@@ -166,7 +166,7 @@ namespace VirtualRobot
             \p scaling Size of coordinate system
             \p text Text to display at coordinate system. If not given, the name of this robot node will be displayed.
         */
-        virtual void showCoordinateSystem(bool enable, float scaling = 1.0f, std::string* text = NULL);
+        virtual void showCoordinateSystem(bool enable, float scaling = 1.0f, std::string* text = NULL, const std::string& visualizationType = "");
 
         /*!
             Display some physics debugging information.
