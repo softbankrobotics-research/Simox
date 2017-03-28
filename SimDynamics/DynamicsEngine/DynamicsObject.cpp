@@ -97,6 +97,11 @@ namespace SimDynamics
         sceneObject->setSimulationType(s);
     }
 
+    void DynamicsObject::activate()
+    {
+
+    }
+
     DynamicsObject::MutexLockPtr DynamicsObject::getScopedLock()
     {
         boost::shared_ptr< boost::recursive_mutex::scoped_lock > scoped_lock;

@@ -76,6 +76,7 @@ namespace VirtualRobot
         std::vector< RobotConfigPtr > configs;
         std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
         std::vector< std::string > configNames;
+        std::vector< std::string > tcpNames;
         Eigen::Matrix4f globalPose = Eigen::Matrix4f::Identity();
         std::string fileName;
         rapidxml::xml_node<>* node = sceneXMLNode->first_node();
@@ -93,7 +94,7 @@ namespace VirtualRobot
             }
             else if (nodeName == "configuration")
             {
-                bool cOK = processConfigurationNodeList(node, configDefinitions, configNames);
+                bool cOK = processConfigurationNodeList(node, configDefinitions, configNames, tcpNames);
                 THROW_VR_EXCEPTION_IF(!cOK, "Invalid configuration defined in scene's robot tag '" << robotName << "'." << endl);
             }
             else if (nodeName == "globalpose")

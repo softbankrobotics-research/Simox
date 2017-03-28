@@ -5,6 +5,7 @@
 #include <VirtualRobot/Nodes/RobotNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/RobotConfig.h>
 #include <iostream>
 using namespace std;
 
@@ -52,7 +53,12 @@ namespace GraspStudio
 
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
-        eefRobot->setGlobalPoseForRobotNode(eef_cloned->getGCP(), pose);
+        VirtualRobot::RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        eefRobot->setGlobalPoseForRobotNode(tcp, pose);
         return true;
     }
 
@@ -73,7 +79,12 @@ namespace GraspStudio
 
     Eigen::Matrix4f ApproachMovementGenerator::getEEFPose()
     {
-        return eef_cloned->getGCP()->getGlobalPose();
+        VirtualRobot::RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        return tcp->getGlobalPose();
     }
 
     bool ApproachMovementGenerator::setEEFToRandomApproachPose()

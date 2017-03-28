@@ -98,6 +98,13 @@ namespace SimDynamics
             Note, that all RobotNdoes are internally handled as DynamicObjects.
         */
         std::vector<DynamicsObjectPtr> getObjects();
+        /*!
+
+         * \brief getObject Returns object (first) object with given name.
+         * \param objectName
+         * \return
+         */
+        virtual DynamicsObjectPtr getObject(const std::string& objectName);
 
         /*!
             Set floor. A standard floor object is created and added to the dynamics world.
@@ -167,6 +174,13 @@ namespace SimDynamics
         */
         virtual DynamicsRobotPtr getRobot(VirtualRobot::RobotPtr r);
         virtual DynamicsRobotPtr getRobot(const std::string& robName);
+
+        /*!
+            Wake up all objects.
+            The physics engine might send objects to sleeping state when no interaction is detected.
+            Since this might be unwanted this method allows to activate all objects.
+        */
+        virtual void activateAllObjects();
 
         typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
 

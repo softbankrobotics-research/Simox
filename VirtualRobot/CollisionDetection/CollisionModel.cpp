@@ -80,7 +80,7 @@ namespace VirtualRobot
 
     void CollisionModel::inflateModel(float value)
     {
-        if(margin != value || origVisualization && !model)
+        if((margin != value) || (origVisualization && !model))
         {
             visualization = origVisualization->clone(true);
             visualization->shrinkFatten(value);

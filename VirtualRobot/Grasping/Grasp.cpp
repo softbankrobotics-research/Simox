@@ -129,7 +129,8 @@ namespace VirtualRobot
 
         if (eefConfiguration.size() > 0)
         {
-            ss << RobotConfig::createXMLString(eefConfiguration, name, tabs + 1);
+            std::string tcpName;
+            ss << RobotConfig::createXMLString(eefConfiguration, name, tcpName, tabs + 1);
         }
 
         ss << t << "</Grasp>\n";

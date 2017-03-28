@@ -270,20 +270,20 @@ namespace VirtualRobot
         }
     }
 
-    Obstacle* Obstacle::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
+    Obstacle* Obstacle::_clone(const std::string& name, CollisionCheckerPtr colChecker, float scaling) const
     {
         VisualizationNodePtr clonedVisualizationNode;
 
         if (visualizationModel)
         {
-            clonedVisualizationNode = visualizationModel->clone();
+            clonedVisualizationNode = visualizationModel->clone(true, scaling);
         }
 
         CollisionModelPtr clonedCollisionModel;
 
         if (collisionModel)
         {
-            clonedCollisionModel = collisionModel->clone(colChecker);
+            clonedCollisionModel = collisionModel->clone(colChecker, scaling);
         }
 
         Obstacle* result = new Obstacle(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);

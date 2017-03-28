@@ -32,10 +32,10 @@ using namespace VirtualRobot;
         stopOptimization = false;
         colChecker = node->getRobot()->getCollisionChecker();
 
-        factorCSpaceNeighborForce = 0.3f;
+        factorCSpaceNeighborForce = 0.5f;
         factorCSpaceObstacleForce = 10000.0f;
-        maxCSpaceNeighborForce = 10.0f;
-        maxCSpaceObstacleForce = 10.0f;
+        maxCSpaceNeighborForce = 20.0f;
+        maxCSpaceObstacleForce = 50.0f;
 
         // ignore obstacles far away
         minObstacleDistance = 300.0f;
@@ -221,10 +221,6 @@ using namespace VirtualRobot;
 
     bool ElasticBandProcessor::checkRemoveNodes()
     {
-        /*Eigen::VectorXf& before = optimizedPath->getPointRef(0);
-        Eigen::VectorXf& act = optimizedPath->getPointRef(0);
-        Eigen::VectorXf& next = optimizedPath->getPointRef(1);*/
-
         float ssd = 2 * cspace->getSamplingSize()*cspace->getSamplingSize();
 
         for (unsigned int i=1;i<optimizedPath->getNrOfPoints()-2;i++)
@@ -292,7 +288,7 @@ using namespace VirtualRobot;
            VR_WARNING << "Could not get obstacle force" << endl;
         }
 
-        // wee need to apply factors and max -> transform to cspace and back to wspace
+        // we need to apply factors and max -> transform to cspace and back to wspace
         getCSpaceForce(externalForce, fcExt, factorCSpaceObstacleForce, maxCSpaceObstacleForce);
         getWSpaceForce(fcExt, externalForce);
 

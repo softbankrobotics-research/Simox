@@ -286,8 +286,8 @@ namespace SimDynamics
         Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPose() * poseLocal;
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
-        // notify motionState -> not needed, automatically done
-        //motionState->setGlobalPose(pose);
+        // notify motionState
+        motionState->setGlobalPose(pose);
     }
 
     void BulletObject::setPose(const Eigen::Matrix4f& pose)
@@ -426,6 +426,18 @@ namespace SimDynamics
         rigidBody->setCollisionFlags(btColFlag);
 
         DynamicsObject::setSimType(s);
+    }
+
+    void BulletObject::activate()
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        if (!rigidBody)
+        {
+            return;
+        }
+
+        rigidBody->activate();
     }
 
 

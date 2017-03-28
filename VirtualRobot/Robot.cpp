@@ -360,7 +360,7 @@ namespace VirtualRobot
         return type;
     }
 
-    void Robot::print()
+    void Robot::print(bool printChildren, bool printDecoration) const
     {
         cout << "******** Robot ********" << endl;
         cout << "* Name: " << name << endl;
@@ -409,7 +409,7 @@ namespace VirtualRobot
     /**
      * This method returns a reference to Robot::rootNode;
      */
-    RobotNodePtr LocalRobot::getRootNode()
+    RobotNodePtr LocalRobot::getRootNode() const
     {
         return this->rootNode;
     }
@@ -491,22 +491,31 @@ namespace VirtualRobot
         }
     }
 
-    RobotNodeSetPtr LocalRobot::getRobotNodeSet(const std::string& nodeSetName)
+    boost::shared_ptr<Robot> Robot::shared_from_this() const
     {
-        if (robotNodeSetMap.find(nodeSetName) == robotNodeSetMap.end())
+        auto sceneObject = SceneObject::shared_from_this();
+        boost::shared_ptr<const Robot> robotPtr = boost::static_pointer_cast<const Robot>(sceneObject);
+        boost::shared_ptr<Robot> result = boost::const_pointer_cast<Robot>(robotPtr);
+        return result;
+    }
+
+    RobotNodeSetPtr LocalRobot::getRobotNodeSet(const std::string& nodeSetName) const
+    {
+        auto it = robotNodeSetMap.find(nodeSetName);
+        if (it == robotNodeSetMap.end())
         {
             VR_WARNING << "No robot node set with name <" << nodeSetName << "> defined." << endl;
             return RobotNodeSetPtr();
         }
 
-        return robotNodeSetMap[nodeSetName];
+        return it->second;
     }
 
     /**
      * This method stores all endeffectors belonging to the robot in \p storeEEF.
      * If there are no registered endeffectors \p storeEEF will be empty.
      */
-    void LocalRobot::getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSets)
+    void LocalRobot::getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSets) const
     {
         storeNodeSets.clear();
         storeNodeSets.reserve(robotNodeSetMap.size());
@@ -519,7 +528,7 @@ namespace VirtualRobot
         }
     }
 
-    std::vector<RobotNodeSetPtr> Robot::getRobotNodeSets()
+    std::vector<RobotNodeSetPtr> Robot::getRobotNodeSets() const
     {
         std::vector<RobotNodeSetPtr> res;
         getRobotNodeSets(res);
@@ -605,6 +614,11 @@ namespace VirtualRobot
         return res;
     }
 
+    void Robot::setGlobalPose(const Eigen::Matrix4f &globalPose)
+    {
+        setGlobalPose(globalPose, true);
+    }
+
     VirtualRobot::CollisionCheckerPtr Robot::getCollisionChecker()
     {
         std::vector<RobotNodePtr> robotNodes = this->getRobotNodes();
@@ -633,7 +647,7 @@ namespace VirtualRobot
         }
     }
 
-    Eigen::Matrix4f LocalRobot::getGlobalPose()
+    Eigen::Matrix4f LocalRobot::getGlobalPose() const
     {
         ReadLock(mutex, use_mutex);
         return globalPose;

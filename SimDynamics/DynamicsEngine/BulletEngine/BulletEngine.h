@@ -61,7 +61,7 @@ namespace SimDynamics
         btScalar bulletSolverGlobalContactForceMixing; // allow to violate constraints (eg joint limits). A value>0 may increase stablity. (standard:0)
         btScalar bulletSolverGlobalErrorReductionParameter; // How hard should the solver try to correct misaligned joints/constraints/links. (standard 0.2
         btScalar bulletSolverSuccessiveOverRelaxation;
-        btScalar bulletSolverContactSurfaceLayer;
+        //btScalar bulletSolverContactSurfaceLayer;
         btScalar bulletSolverSplitImpulsePenetrationThreshold;
     };
 
@@ -116,14 +116,6 @@ namespace SimDynamics
         virtual void stepSimulation(double dt, int maxSubSteps, double fixedTimeStep);
 
         btDynamicsWorld* getBulletWorld();
-
-        /*!
-            Wake up all objects.
-            Bullet sends objects to sleeping state when no interaction is detected.
-            But this might be unwanted, e.g. robots should be active all the time.
-        */
-        void activateAllObjects();
-
 
         virtual std::vector<DynamicsEngine::DynamicsContactInfo> getContacts();
 

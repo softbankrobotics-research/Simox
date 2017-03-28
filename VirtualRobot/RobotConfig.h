@@ -87,6 +87,11 @@ namespace VirtualRobot
         bool setConfig(RobotNodePtr node, float value);
         bool setConfig(const std::string& node, float value);
 
+        bool setTCP(const std::string &tcpName);
+        bool setTCP(RobotNodePtr tcp);
+        bool hasTCP() const;
+        RobotNodePtr getTCP();
+
         /*!
             Apply the stored configurations to the corresponding robot.
             RobotNodes that are not stored in this RobotConfig are not affected.
@@ -124,13 +129,14 @@ namespace VirtualRobot
         */
         std::string toXML(int tabs = 0);
 
-        static std::string createXMLString(const std::map< std::string, float >& config, const std::string& name, int tabs = 0);
+        static std::string createXMLString(const std::map< std::string, float >& config, const std::string& name, const std::string& tcpName = std::string(), int tabs = 0);
 
     protected:
         std::string name;
 
         std::map< RobotNodePtr, float > configs;
         RobotWeakPtr robot;
+        RobotNodePtr tcpNode;
     };
 
 
