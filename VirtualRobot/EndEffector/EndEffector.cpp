@@ -644,7 +644,7 @@ namespace VirtualRobot
             int id1, id2;
             Eigen::Vector3f p1,p2;
             float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(),obstacle->getCollisionModel(),p1,p2,&id1,&id2);
-            VR_INFO << n->getName() << " - DIST: " << dist << endl;
+            //VR_INFO << n->getName() << " - DIST: " << dist << endl;
             if (dist<=maxDistance)
             {
                 EndEffector::ContactInfo ci;
