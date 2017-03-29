@@ -117,6 +117,7 @@ void showRobotWindow::setupUI()
     connect(UI.ExportXML, SIGNAL(clicked()), this, SLOT(exportXML()));
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openHand()));
     connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
+    connect(UI.comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape(int)));
 
     connect(UI.checkBoxPhysicsCoM, SIGNAL(clicked()), this, SLOT(displayPhysics()));
     connect(UI.checkBoxPhysicsInertia, SIGNAL(clicked()), this, SLOT(displayPhysics()));
@@ -323,6 +324,83 @@ void showRobotWindow::exportVRML()
 #if 0
     resetSceneryAll();
 
+    std::string t1("LegL_Hip1_joint");
+    std::string t2("LegR_Hip1_joint");
+
+    Eigen::Matrix4f m1 = robot->getRobotNode(t1)->getGlobalPose();
+    Eigen::Matrix4f m2 = robot->getRobotNode(t2)->getGlobalPose();
+    cout << "global pose " << t1 <<":" << endl << m1 << endl;
+    cout << "global pose " << t2 <<":" << endl << m2 << endl;
+
+    Eigen::Matrix4f parentM1 = robot->getRobotNode(t1)->getParent()->getGlobalPose();
+    Eigen::Matrix4f parentM2 = robot->getRobotNode(t2)->getParent()->getGlobalPose();
+    cout << "global pose parent " << t1 <<":" << endl << parentM1 << endl;
+    cout << "global pose parent " << t2 <<":" << endl << parentM2 << endl;
+
+    Eigen::Matrix4f localM1 = robot->getRobotNode(t1)->getLocalTransformation();
+    Eigen::Matrix4f localM2 = robot->getRobotNode(t2)->getLocalTransformation();
+    cout << "local trafo " << t1 <<":" << endl << localM1 << endl;
+    cout << "local trafo " << t2 <<":" << endl << localM2 << endl;
+
+
+
+    Eigen::Matrix4f tmpRotMat1 = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f tmpRotMat2 = Eigen::Matrix4f::Identity();
+    Eigen::Vector3f rot1;
+    rot1 << 0,0,1;
+    Eigen::Vector3f rot2;
+    rot2 << 0,0,1;
+    tmpRotMat1.block(0, 0, 3, 3) = Eigen::AngleAxisf(0.0f, rot1).matrix();
+    tmpRotMat2.block(0, 0, 3, 3) = Eigen::AngleAxisf(0.0f, rot2).matrix();
+
+    m1 = parentM1 * localM1 /*getLocalTransformation()*/ * tmpRotMat1;
+    m2 = parentM2 * localM2 /*getLocalTransformation()*/ * tmpRotMat2;
+    cout << "rot mat " << t1 <<":" << endl << tmpRotMat1 << endl;
+    cout << "rot mat " << t2 <<":" << endl << tmpRotMat2 << endl;
+
+    cout << "gp custom " << t1 <<":" << endl << m1 << endl;
+    cout << "gp custom " << t2 <<":" << endl << m2 << endl;
+
+
+
+
+
+    /*std::string root1("Root_joint");
+    std::string root2("RootRotated");
+    Eigen::Matrix4f gpr1 = robot->getRobotNode(root1)->getGlobalPose();
+    Eigen::Matrix4f gpr2 = robot->getRobotNode(root2)->getGlobalPose();
+*/
+
+
+    std::string knee1("LegL_Knee_joint");
+    std::string knee2("LegR_Knee_joint");
+    Eigen::Matrix4f gpr1 = robot->getRobotNode(knee1)->getGlobalPose();
+    Eigen::Matrix4f gpr2 = robot->getRobotNode(knee2)->getGlobalPose();
+
+    cout << "gp  " << knee1 <<":" << endl << gpr1 << endl;
+    cout << "gp  " << knee2 <<":" << endl << gpr2 << endl;
+    cout << "gp knee1->knee2 :" << endl << robot->getRobotNode(knee1)->toLocalCoordinateSystem(robot->getRobotNode(knee2)->getGlobalPose()) << endl;
+
+
+
+
+
+
+    std::string n1("LegR_Ank2_joint");
+    std::string n2("LegL_Ank2_joint");
+    RobotNodePtr start1 = robot->getRobotNode(n1);
+    RobotNodePtr tcp1 = robot->getRobotNode(n2);
+
+    m1 = start1->toLocalCoordinateSystem(tcp1->getGlobalPose());
+    cout << "trafo (" << n1 << " -> " << n2 << "):" << endl << m1 << endl;
+
+
+    return;
+#endif
+
+#if 0
+    resetSceneryAll();
+
     RobotNodePtr start1 = robot->getRobotNode("Shoulder 2 L");
     RobotNodePtr tcp1 = robot->getRobotNode("Wrist 1 L");
 
@@ -498,6 +576,7 @@ void showRobotWindow::selectRNS(int nr)
 
         currentRobotNodeSet = robotNodeSets[nr];
         currentRobotNodes = currentRobotNodeSet->getAllRobotNodes();
+        std::cout << "COM:" << currentRobotNodeSet->getCoM();
         /*cout << "HIGHLIGHTING rns " << currentRobotNodeSet->getName() << endl;
         if (visualization)
         {
@@ -970,12 +1049,41 @@ void showRobotWindow::selectEEF(int nr)
 {
     cout << "Selecting EEF nr " << nr << endl;
 
+     UI.comboBoxEndEffectorPS->clear();
+     currentEEF.reset();
+
     if (nr < 0 || nr >= (int)eefs.size())
+    {        
+        return;
+    }
+    currentEEF = eefs[nr];
+
+    std::vector<std::string> ps = currentEEF->getPreshapes();
+    UI.comboBoxEndEffectorPS->addItem(QString("none"));
+    for (unsigned int i = 0; i < ps.size(); i++)
+    {
+        UI.comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
+    }
+}
+
+void showRobotWindow::selectPreshape(int nr)
+{
+    cout << "Selecting EEF preshape nr " << nr << endl;
+
+    if (!currentEEF || nr==0)
+        return;
+
+    nr--; // first entry is "none"
+
+    std::vector<std::string> ps = currentEEF->getPreshapes();
+    if (nr < 0 || nr >= (int)ps.size())
     {
         return;
     }
 
-    currentEEF = eefs[nr];
+    VirtualRobot::RobotConfigPtr c = currentEEF->getPreshape(ps.at(nr));
+
+    robot->setConfig(c);
 }
 
 void showRobotWindow::updateEEFBox()

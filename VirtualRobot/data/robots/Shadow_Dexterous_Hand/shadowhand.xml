@@ -18,6 +18,22 @@
 			<rollpitchyaw roll="0.750" pitch="0.000" yaw="0.000" unitsAngle="radian"/>
 		</Transform>
 	</RobotNode>
+	
+		<RobotNode name="TCP R Precision">
+		<Transform>
+                        <Translation X="20" Y="-50" Z="120" units='mm'/>
+                        <rollpitchyaw roll="0" pitch="0" yaw="-90" units="degree"/>
+                        <rollpitchyaw roll="0" pitch="45" yaw="0" units="degree"/>
+		</Transform>
+	</RobotNode>
+	<RobotNode name="TCP R Power">
+		<Transform>
+                    <Translation X="0" Y="-30" Z="80" units='mm'/>
+                    <rollpitchyaw roll="0" pitch="0" yaw="-90" units="degree"/>
+                    <rollpitchyaw roll="0" pitch="45" yaw="0" units="degree"/>
+                </Transform>
+	</RobotNode>
+	
 	<RobotNode name="forearm">
 		<Transform>
 			<Translation x="0.000" y="0.000" z="0.000" unitsLength="m"/>
@@ -65,6 +81,9 @@
 			<Limits unit="radian" lo="-0.785" hi="0.611"/>
 		</Joint>
 		<Child name="palm"/>
+
+                <Child name="TCP R Precision"/>
+                <Child name="TCP R Power"/>
 	</RobotNode>
 	<RobotNode name="palm">
 		<Transform>
@@ -648,11 +667,64 @@
 	</RobotNode>
 	<Endeffector name="SHADOWHAND" base="shadowhand_hand_base" tcp="shadowhand_hand_tcp" gcp="shadowhand_hand_gcp">
 		<!--This node is for Simox (e.g., GraspPlanner in Simox)!-->
-		<Preshape name="Grasp Preshape">
-			<!--This is just a template. Please set values manually!-->
+		
+		<Preshape name="Power Preshape" tcp="TCP R Power">
 			<Node name="FFJ1" unit="radian" value="0.0"/>
 			<Node name="FFJ2" unit="radian" value="0.0"/>
 			<Node name="FFJ3" unit="radian" value="0.0"/>
+			<Node name="LFJ1" unit="radian" value="0.0"/>
+			<Node name="LFJ2" unit="radian" value="0.0"/>
+			<Node name="LFJ3" unit="radian" value="0.0"/>
+			<Node name="LFJ4" unit="radian" value="0.0"/>
+			<Node name="LFJ5" unit="radian" value="0.0"/>
+			<Node name="MFJ1" unit="radian" value="0.0"/>
+			<Node name="MFJ2" unit="radian" value="0.0"/>
+			<Node name="MFJ3" unit="radian" value="0.0"/>
+			<Node name="MFJ4" unit="radian" value="0.0"/>
+			<Node name="RFJ1" unit="radian" value="0.0"/>
+			<Node name="RFJ2" unit="radian" value="0.0"/>
+			<Node name="RFJ3" unit="radian" value="0.0"/>
+			<Node name="RFJ4" unit="radian" value="0.0"/>
+			<Node name="THJ1" unit="radian" value="0.0"/>
+			<Node name="THJ2" unit="radian" value="0.0"/>
+			<Node name="THJ3" unit="radian" value="0.0"/>
+			<Node name="THJ4" unit="radian" value="1.3"/>
+                        <Node name="THJ5" unit="radian" value="0"/>
+			<Node name="WRJ1" unit="radian" value="0.0"/>
+			<Node name="WRJ2" unit="radian" value="0.0"/>
+	    </Preshape>
+	    
+         <Preshape name="Precision Preshape" tcp="TCP R Precision">
+                        <Node name="FFJ1" unit="radian" value="0"/>
+                        <Node name="FFJ2" unit="radian" value="0"/>
+                        <Node name="FFJ3" unit="radian" value="0"/>
+                        <Node name="LFJ1" unit="radian" value="1.57"/>
+                        <Node name="LFJ2" unit="radian" value="1.57"/>
+                        <Node name="LFJ3" unit="radian" value="1.57"/>
+			<Node name="LFJ4" unit="radian" value="0.0"/>
+			<Node name="LFJ5" unit="radian" value="0.0"/>
+			<Node name="MFJ1" unit="radian" value="0.0"/>
+			<Node name="MFJ2" unit="radian" value="0.0"/>
+			<Node name="MFJ3" unit="radian" value="0.0"/>
+			<Node name="MFJ4" unit="radian" value="0.0"/>
+                        <Node name="RFJ1" unit="radian" value="1.57"/>
+                        <Node name="RFJ2" unit="radian" value="1.57"/>
+                        <Node name="RFJ3" unit="radian" value="1.57"/>
+			<Node name="RFJ4" unit="radian" value="0.0"/>
+			<Node name="THJ1" unit="radian" value="0.0"/>
+			<Node name="THJ2" unit="radian" value="0.0"/>
+			<Node name="THJ3" unit="radian" value="0.0"/>
+                        <Node name="THJ4" unit="radian" value="1.0"/>
+                        <Node name="THJ5" unit="radian" value="0.7"/>
+			<Node name="WRJ1" unit="radian" value="0.0"/>
+			<Node name="WRJ2" unit="radian" value="0.0"/>
+	    </Preshape>
+		
+		<Preshape name="Grasp Preshape">
+			<!--This is just a template. Please set values manually!-->
+			<Node name="FFJ1" unit="radian" value="0.0"/>
+                        <Node name="FFJ2" unit="radian" value="0.0"/>
+                        <Node name="FFJ3" unit="radian" value="0.0"/>
 			<Node name="LFJ1" unit="radian" value="0.0"/>
 			<Node name="LFJ2" unit="radian" value="0.0"/>
 			<Node name="LFJ3" unit="radian" value="0.0"/>

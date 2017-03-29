@@ -112,7 +112,9 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 
     while (true)
     {
-        reachSpace->addRandomTCPPoses(steps);
+        //reachSpace->addRandomTCPPoses(steps);
+        reachSpace->addRandomTCPPoses(steps, QThread::idealThreadCount() < 1 ? 1 : QThread::idealThreadCount(), true);
+
         reachSpace->print();
         std::stringstream ss;
         ss << buffer << "_" << nr << ".bin";

@@ -94,7 +94,7 @@ namespace GraspStudio
         VirtualRobot::TriMeshModelPtr objectModel;
         VirtualRobot::EndEffectorPtr eef;
 
-        Eigen::Vector3f aporachDirGlobal;
+        Eigen::Vector3f approachDirGlobal;
 
         //! This robot is moved around
         VirtualRobot::RobotPtr eefRobot;

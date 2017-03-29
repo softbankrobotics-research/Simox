@@ -68,7 +68,7 @@ namespace GraspStudio
             return pose;
         }
 
-        this->aporachDirGlobal = approachDir;
+        this->approachDirGlobal = approachDir;
 
         // set new pose
         setEEFToApproachPose(position,approachDir);
