@@ -41,7 +41,14 @@ namespace SimDynamics
             VR_ERROR << "Could not move static object, use kinematic instead, aborting..." << endl;
             return;
         }
-        sceneObject->setGlobalPose(pose);
+        try
+        {
+            sceneObject->setGlobalPose(pose);
+        }
+        catch(...) // robot node does not allow to set the pose
+        {
+
+        }
     }
 
     void DynamicsObject::setPosition(const Eigen::Vector3f& posMM)

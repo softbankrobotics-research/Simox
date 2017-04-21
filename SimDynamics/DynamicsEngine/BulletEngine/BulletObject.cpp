@@ -286,8 +286,11 @@ namespace SimDynamics
         Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPose() * poseLocal;
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
-        // notify motionState
-        motionState->setGlobalPose(pose);
+        // notify motionState of non-robot nodes
+        if(!boost::dynamic_pointer_cast<VirtualRobot::RobotNode>(sceneObject))
+        {
+            motionState->setGlobalPose(pose);
+        }
     }
 
     void BulletObject::setPose(const Eigen::Matrix4f& pose)
