@@ -123,13 +123,23 @@ BOOST_AUTO_TEST_CASE(testMathToolsRPY)
     BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::rpy2eigen4f(r, p, y, m));
     float x[6];
     BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::eigen4f2rpy(m, x));
-
     BOOST_CHECK_EQUAL(0, x[0]);
     BOOST_CHECK_EQUAL(0, x[1]);
     BOOST_CHECK_EQUAL(0, x[2]);
     BOOST_CHECK_EQUAL(r, x[3]);
     BOOST_CHECK_EQUAL(p, x[4]);
     BOOST_CHECK_EQUAL(y, x[5]);
+
+    Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
+    BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::eigen4f2rpy(id, x));
+
+    BOOST_CHECK_CLOSE(0, x[0], 1e-6);
+    BOOST_CHECK_CLOSE(0, x[1], 1e-6);
+    BOOST_CHECK_CLOSE(0, x[2], 1e-6);
+    BOOST_CHECK_CLOSE(0, x[3], 1e-6);
+    BOOST_CHECK_CLOSE(0, x[4], 1e-6);
+    BOOST_CHECK_CLOSE(0, x[5], 1e-6);
+
 }
 
 BOOST_AUTO_TEST_CASE(testMathToolsPlane)

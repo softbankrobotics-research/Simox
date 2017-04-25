@@ -26,6 +26,8 @@
 
 #include <VirtualRobot/VirtualRobotCommon.h>
 
+#include "GraspQualityMeasure.h"
+
 #include <string>
 #include <vector>
 
@@ -43,7 +45,7 @@ class GraspEvaluationPoseUncertainty : public boost::enable_shared_from_this<Gra
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	struct PoseUncertaintyConfig
+    struct PoseUncertaintyConfig
     {
         PoseUncertaintyConfig()
         {
@@ -70,6 +72,34 @@ public:
 		float stepSize[6];
 	};
 
+    struct PoseEvalResult
+    {
+        bool forceClosure;
+        float quality;
+        bool initialCollision; // ignored due to initial collision
+    };
+
+    struct PoseEvalResults
+    {
+        int numPosesTested;
+        int numValidPoses;
+        int numColPoses;        // poses with initial collision
+        float forceClosureRate; // without collision poses
+        float avgQuality;       // without collision poses
+
+        void print()
+        {
+            VR_INFO << "Robustness analysis" << endl;
+            VR_INFO << "Num Poses Tested:" << numPosesTested << endl;
+            VR_INFO << "Num Poses Valid:" << numValidPoses << endl;
+            float colPercent = 0.0f;
+            if (numPosesTested>0)
+                colPercent = float(numColPoses) / float(numPosesTested) * 100.0f;
+            VR_INFO << "Num Poses initially in collision:" << numColPoses << " == " << colPercent << "%" << endl;
+            VR_INFO << "Avg Quality (valid poses):" << avgQuality << endl;
+            VR_INFO << "FC rate (valid poses):" << forceClosureRate * 100.0f << "%" << endl;
+        }
+    };
 
 	/*!
 		@brief Initialize the pose quality calculation
@@ -93,6 +123,11 @@ public:
         \param numPoses Number of poses to generate
     */
     std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses);
+
+    std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const  VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses);
+
+    PoseEvalResult evaluatePose(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const Eigen::Matrix4f &objectPose, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
+    PoseEvalResults evaluatePoses(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const std::vector<Eigen::Matrix4f> &objectPoses, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
 
 protected:
 
