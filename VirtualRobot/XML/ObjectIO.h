@@ -101,6 +101,7 @@ namespace VirtualRobot
         static GraspSetPtr processGraspSet(rapidxml::xml_node<char>* graspSetXMLNode, const std::string& objName);
         static GraspPtr processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& objName);
 
+        static bool writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName);
     protected:
 
         // instantiation not allowed

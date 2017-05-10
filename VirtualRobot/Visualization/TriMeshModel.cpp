@@ -227,7 +227,7 @@ namespace VirtualRobot
 
 
 
-    void TriMeshModel::mergeVertices(float mergeThreshold)
+    void TriMeshModel::mergeVertices(float mergeThreshold, bool removeVertices)
     {
         int size = vertices.size();
         int faceCount = faces.size();
@@ -340,6 +340,50 @@ namespace VirtualRobot
             }
         }
 #endif
+
+        if (removeVertices)
+            removeUnusedVertices();
+    }
+
+    size_t TriMeshModel::removeUnusedVertices()
+    {
+        int size = vertices.size();
+        int faceCount = faces.size();
+        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
+        for (int j = 0; j < faceCount; ++j)
+        {
+            MathTools::TriangleFace& face = faces.at(j);
+            vertex2FaceMap[face.id1].insert(&faces.at(j));
+            vertex2FaceMap[face.id2].insert(&faces.at(j));
+            vertex2FaceMap[face.id3].insert(&faces.at(j));
+        }
+
+        std::vector<Eigen::Vector3f> newVertices;
+        std::map<size_t, size_t> oldNewIndexMap;
+
+        for (size_t i=0; i<vertex2FaceMap.size(); i++ )
+        {
+            std::set<MathTools::TriangleFace*> &fs = vertex2FaceMap.at(i);
+            if (fs.size()>0)
+            {
+                Eigen::Vector3f &v = vertices.at(i);
+                newVertices.push_back(v);
+                oldNewIndexMap[i] = newVertices.size()-1;
+            }
+        }
+
+        // update faceID
+        for (int j = 0; j < faceCount; ++j)
+        {
+            MathTools::TriangleFace& face = faces.at(j);
+            face.id1 = oldNewIndexMap[face.id1];
+            face.id2 = oldNewIndexMap[face.id2];
+            face.id3 = oldNewIndexMap[face.id3];
+        }
+        size_t removed = vertices.size() - newVertices.size();
+
+        vertices = newVertices;
+        return removed;
     }
 
     void TriMeshModel::fattenShrink(float offset)

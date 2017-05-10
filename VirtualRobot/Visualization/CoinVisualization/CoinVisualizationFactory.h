@@ -136,6 +136,8 @@ namespace VirtualRobot
         static SoSeparator* CreatePointsVisualization(const std::vector<MathTools::ContactPoint>& points, bool showNormals = false);
         static SoSeparator* CreateArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray());
         static SoSeparator* CreateVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
+        static SoSeparator* CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Gray());
+
         static void RemoveDuplicateTextures(SoNode* node);
         /*!
             Creates an coordinate axis aligned ellipse
