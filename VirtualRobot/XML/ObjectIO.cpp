@@ -146,7 +146,7 @@ namespace VirtualRobot
         return grasp;
     }
 
-    bool ObjectIO::writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName)
+    bool ObjectIO::writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName, float scaling)
     {
         if (!t || t->faces.size()==0) {
             VR_ERROR << "Wrong input" << endl;
@@ -183,9 +183,9 @@ namespace VirtualRobot
             //Vector norm = n / std::sqrt( n * n);
             of << "    facet normal " << n(0) << " " << n(1) << " " << n(2) << endl;
             of << "      outer loop " << endl;
-            of << "        vertex " << p1(0) << " " << p1(1) << " " << p1(2) <<  endl;
-            of << "        vertex " << p2(0) << " " << p2(1) << " " << p2(2) << endl;
-            of << "        vertex " << p3(0) << " " << p3(1) << " " << p3(2) << endl;
+            of << "        vertex " << p1(0)*scaling << " " << p1(1)*scaling << " " << p1(2)*scaling <<  endl;
+            of << "        vertex " << p2(0)*scaling << " " << p2(1)*scaling << " " << p2(2)*scaling << endl;
+            of << "        vertex " << p3(0)*scaling << " " << p3(1)*scaling << " " << p3(2)*scaling << endl;
             of << "      endloop " << endl;
             of << "    endfacet " << endl;
         }

@@ -101,7 +101,15 @@ namespace VirtualRobot
         static GraspSetPtr processGraspSet(rapidxml::xml_node<char>* graspSetXMLNode, const std::string& objName);
         static GraspPtr processGrasp(rapidxml::xml_node<char>* graspXMLNode, const std::string& robotType, const std::string& eef, const std::string& objName);
 
-        static bool writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName);
+        /*!
+         * \brief writeSTL Write ascii stl file.
+         * \param t
+         * \param filename
+         * \param objectName
+         * \param scaling Usually we scale from the internal mm format to m.
+         * \return true on success
+         */
+        static bool writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName, float scaling = 0.001f);
     protected:
 
         // instantiation not allowed
