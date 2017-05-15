@@ -23,7 +23,8 @@
 #ifndef __GENERAL_GRASP_PLANNER_H__
 #define __GENERAL_GRASP_PLANNER_H__
 
-#include "../GraspStudio.h"
+#include <GraspPlanning/GraspStudio.h>
+#include <GraspPlanning/GraspPlanner/GraspPlannerEvaluation.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/SceneObject.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
@@ -31,7 +32,6 @@
 
 namespace GraspStudio
 {
-
     /*!
     *
     * \brief An interface for grasp planners.
@@ -66,10 +66,18 @@ namespace GraspStudio
         */
         std::vector<VirtualRobot::GraspPtr> getPlannedGrasps();
 
+        /*!
+         * \brief getEvaluation
+         * \return The current evaluation of the grasp planner.
+         */
+        GraspPlannerEvaluation getEvaluation();
+
     protected:
         bool verbose;
         VirtualRobot::GraspSetPtr graspSet;
         std::vector<VirtualRobot::GraspPtr> plannedGrasps;
+
+        GraspPlannerEvaluation eval;
     };
 }
 

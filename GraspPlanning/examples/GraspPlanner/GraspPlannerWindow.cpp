@@ -368,7 +368,10 @@ void GraspPlannerWindow::plan()
     bool forceClosure = UI.checkBoxFoceClosure->isChecked();
     float quality = (float)UI.doubleSpinBoxQuality->value();
     int nrGrasps = UI.spinBoxGraspNumber->value();
-    planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
+    if (planner)
+        planner->setParameters(quality, forceClosure);
+    else
+        planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
 
     int nr = planner->plan(nrGrasps, timeout);
     VR_INFO << " Grasp planned:" << nr << endl;
@@ -403,6 +406,8 @@ void GraspPlannerWindow::plan()
         openEEF();
         closeEEF();
     }
+
+    planner->getEvaluation().print();
 }
 
 

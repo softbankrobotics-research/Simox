@@ -9,6 +9,7 @@
 #include "../GraspQuality/GraspQualityMeasure.h"
 #include "../ApproachMovementGenerator.h"
 
+#include <chrono>
 using namespace std;
 
 namespace GraspStudio
@@ -27,6 +28,8 @@ namespace GraspStudio
         THROW_VR_EXCEPTION_IF(!eef, "NULL eef in approach...");
         THROW_VR_EXCEPTION_IF(!graspSet, "NULL graspSet...");
         verbose = true;
+        eval.fcCheck = forceClosure;
+        eval.minQuality = minQuality;
     }
 
     GenericGraspPlanner::~GenericGraspPlanner()
@@ -76,7 +79,7 @@ namespace GraspStudio
 
     VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(VirtualRobot::SceneObjectSetPtr obstacles)
     {
-
+        auto start_time = chrono::high_resolution_clock::now();
         std::string sGraspPlanner("Simox - GraspStudio - ");
         sGraspPlanner += graspQuality->getName();
         std::string sGraspNameBase = "Grasp ";
@@ -88,15 +91,11 @@ namespace GraspStudio
         VR_ASSERT(tcp);
 
 
+        // GENERATE APPROACH POSE
         bool bRes = approach->setEEFToRandomApproachPose();
-
-        if (!bRes)
+        if (bRes && obstacles)
         {
-            return VirtualRobot::GraspPtr();
-        }
-
-        if (obstacles)
-        {
+            // CHECK VALID APPROCH POSE
             VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
             VR_ASSERT(eef->getRobot());
             VR_ASSERT(obstacles);
@@ -104,26 +103,48 @@ namespace GraspStudio
             if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
             {
                 //                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
-                return VirtualRobot::GraspPtr();
+                //return VirtualRobot::GraspPtr();
+                bRes = false;
             }
         }
 
-
-        contacts = eef->closeActors(object);
-
-        eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
-
-        if (obstacles)
+        // CHECK CONTACTS
+        if (bRes)
         {
-            VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
-            VR_ASSERT(eef->getRobot());
-            VR_ASSERT(obstacles);
+            contacts = eef->closeActors(object);
 
-            if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+            eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
+
+            if (obstacles)
             {
-                //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
-                return VirtualRobot::GraspPtr();
+                VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+                VR_ASSERT(eef->getRobot());
+                VR_ASSERT(obstacles);
+
+                if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+                {
+                    //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
+                    //return VirtualRobot::GraspPtr();
+                    bRes = false;
+                }
             }
+        }
+
+        // eval data
+        eval.graspTypePower.push_back(true);
+        eval.nrGraspsGenerated++;
+
+        if (!bRes)
+        {
+            // result not valid due to collision
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidCollision++;
+            eval.timeGraspMS.push_back(ms);
+
+            return VirtualRobot::GraspPtr();
         }
 
         if (contacts.size() < 2)
@@ -132,20 +153,40 @@ namespace GraspStudio
             {
                 GRASPSTUDIO_INFO << ": ignoring grasp hypothesis, low number of contacts" << endl;
             }
-
+            // result not valid due to low number of contacts
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidContacts++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
         graspQuality->setContactPoints(contacts);
         float score = graspQuality->getGraspQuality();
 
-        if (score < minQuality)
+        if (forceClosure && !graspQuality->isGraspForceClosure())
         {
+            // not force closure
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidFC++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
-        if (forceClosure && !graspQuality->isGraspForceClosure())
+        if (score < minQuality)
         {
+            // min quality not reached
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(score);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidFC++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
@@ -154,6 +195,15 @@ namespace GraspStudio
         {
             GRASPSTUDIO_INFO << ": Found grasp with " << contacts.size() << " contacts, score: " << score << endl;
         }
+
+        auto end_time = chrono::high_resolution_clock::now();
+        float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+        eval.graspScore.push_back(score);
+        eval.graspValid.push_back(true);
+        eval.nrGraspsValid++;
+        // only power grasps
+        eval.nrGraspsValidPower++;
+        eval.timeGraspMS.push_back(ms);
 
         std::stringstream ss;
         ss << sGraspNameBase << (graspSet->getSize() + 1);
@@ -167,9 +217,16 @@ namespace GraspStudio
         g->setConfiguration(configValues);
         return g;
     }
+
     VirtualRobot::EndEffector::ContactInfoVector GenericGraspPlanner::getContacts() const
     {
         return contacts;
+    }
+
+    void GenericGraspPlanner::setParameters(float minQuality, bool forceClosure)
+    {
+        this->minQuality = minQuality;
+        this->forceClosure = forceClosure;
     }
 
 

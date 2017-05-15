@@ -8,6 +8,9 @@ endif()
 
 MESSAGE (STATUS "***** CONFIGURING Simox project GraspStudio *****")
 
+INCLUDE (Cxx11Test)
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
+
 MACRO(ADD_GRASPSTUDIO_TEST TEST_NAME)
         if (NOT Boost_USE_STATIC_LIBS)
             ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
@@ -66,6 +69,7 @@ ApproachMovementSurfaceNormal.h
 MeshConverter.h
 GraspPlanner/GraspPlanner.h
 GraspPlanner/GenericGraspPlanner.h
+GraspPlanner/GraspPlannerEvaluation.h
 GraspQuality/GraspEvaluationPoseUncertainty.h
 GraspQuality/GraspQualityMeasure.h
 GraspQuality/GraspQualityMeasureWrenchSpace.h

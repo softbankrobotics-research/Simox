@@ -65,6 +65,8 @@ namespace GraspStudio
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
 
+        void setParameters(float minQuality, bool forceClosure);
+
     protected:
 
         bool timeout();
