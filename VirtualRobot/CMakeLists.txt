@@ -114,6 +114,8 @@ Workspace/WorkspaceGrid.cpp
 #Workspace/ReachabilityInversion/ReachabilityProcessor.cpp
 #Workspace/ReachabilityInversion/RobotPlacementIK.cpp
 #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.cpp
+TimeOptimalTrajectory/Path.cpp
+TimeOptimalTrajectory/TimeOptimalTrajectory.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
@@ -223,6 +225,8 @@ Workspace/WorkspaceGrid.h
 #Workspace/ReachabilityInversion/ReachabilityProcessor.h
 #Workspace/ReachabilityInversion/RobotPlacementIK.h
 #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.h
+TimeOptimalTrajectory/Path.h
+TimeOptimalTrajectory/TimeOptimalTrajectory.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
