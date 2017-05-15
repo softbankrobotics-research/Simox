@@ -5,6 +5,8 @@
     <RobotNode name="Hand R Base">
 		<Child name="TCP R"/>
 		<Child name="GCP R"/>
+		<Child name="TCP R Precision"/>
+		<Child name="TCP R Power"/>
 		<Child name="Hand Palm 1 R"/>
 	</RobotNode>
 	
@@ -17,6 +19,19 @@
 	<RobotNode name="GCP R">
 		<Transform>
 			<Translation X="-40" Y="20" Z="90" units='mm'/>
+			<rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+		</Transform>
+	</RobotNode>
+	
+	<RobotNode name="TCP R Precision">
+		<Transform>
+			<Translation X="-84" Y="0" Z="144" units='mm'/>
+			<rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+		</Transform>
+	</RobotNode>
+	<RobotNode name="TCP R Power">
+		<Transform>
+			<Translation X="-50" Y="16" Z="115" units='mm'/>
 			<rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
 		</Transform>
 	</RobotNode>
@@ -375,7 +390,7 @@
 	</RobotNodeSet>
 
 	<Endeffector name="Hand R" base="Hand R Base" tcp="TCP R" gcp="GCP R">
-	    <Preshape name="Grasp Preshape">
+            <Preshape name="Power Preshape" tcp="TCP R Power">
 	        <Node name="Thumb R J0" unit="radian" value="0"/>
 	        <Node name="Thumb R J1" unit="radian" value="0"/>
 	        <Node name="Index R J0" unit="radian" value="0"/>
@@ -386,6 +401,19 @@
 	        <Node name="Ring R J1" unit="radian" value="0"/>
 	        <Node name="Pinky R J0" unit="radian" value="0"/>
 	        <Node name="Pinky R J1" unit="radian" value="0"/>
+	    </Preshape>
+	    
+        <Preshape name="Precision Preshape" tcp="TCP R Precision">
+	        <Node name="Thumb R J0" unit="radian" value="0"/>
+	        <Node name="Thumb R J1" unit="radian" value="0"/>
+	        <Node name="Index R J0" unit="radian" value="0"/>
+	        <Node name="Index R J1" unit="radian" value="0"/>
+	        <Node name="Middle R J0" unit="radian" value="0"/>
+	        <Node name="Middle R J1" unit="radian" value="0"/>
+	        <Node name="Ring R J0" unit="radian" value="1"/>
+	        <Node name="Ring R J1" unit="radian" value="2"/>
+	        <Node name="Pinky R J0" unit="radian" value="1"/>
+	        <Node name="Pinky R J1" unit="radian" value="2"/>
 	    </Preshape>
 	    
 	    
