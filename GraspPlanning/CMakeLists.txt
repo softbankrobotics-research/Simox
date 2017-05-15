@@ -51,6 +51,7 @@ ApproachMovementSurfaceNormal.cpp
 MeshConverter.cpp
 GraspPlanner/GraspPlanner.cpp
 GraspPlanner/GenericGraspPlanner.cpp
+GraspQuality/GraspEvaluationPoseUncertainty.cpp
 GraspQuality/GraspQualityMeasure.cpp
 GraspQuality/GraspQualityMeasureWrenchSpace.cpp
 Visualization/ConvexHullVisualization.cpp
@@ -65,6 +66,7 @@ ApproachMovementSurfaceNormal.h
 MeshConverter.h
 GraspPlanner/GraspPlanner.h
 GraspPlanner/GenericGraspPlanner.h
+GraspQuality/GraspEvaluationPoseUncertainty.h
 GraspQuality/GraspQualityMeasure.h
 GraspQuality/GraspQualityMeasureWrenchSpace.h
 Visualization/ConvexHullVisualization.h

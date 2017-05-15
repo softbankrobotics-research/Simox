@@ -8,6 +8,11 @@
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
 #include "../ManipulationObject.h"
+#include "../Visualization/TriMeshModel.h"
+
+#include <iostream>
+
+using namespace std;
 
 namespace VirtualRobot
 {
@@ -139,6 +144,55 @@ namespace VirtualRobot
         }
 
         return grasp;
+    }
+
+    bool ObjectIO::writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName, float scaling)
+    {
+        if (!t || t->faces.size()==0) {
+            VR_ERROR << "Wrong input" << endl;
+            return false;
+        }
+
+        ofstream of;
+        of.open( filename.c_str());
+        if (!of) {
+            VR_ERROR << "Could not open " << filename << " for writing" << endl;
+            return false;
+        }
+
+        of << "solid " << objectName << endl;
+
+        // write triangles
+        for (size_t i=0; i<t->faces.size(); i++)
+        {
+            MathTools::TriangleFace& face = t->faces.at(i);
+            auto& p1 = t->vertices.at(face.id1);
+            auto& p2 = t->vertices.at(face.id2);
+            auto& p3 = t->vertices.at(face.id3);
+            auto normal1 = face.idNormal1 < t->normals.size() ? t->normals.at(face.idNormal1) : face.normal;
+            auto normal2 = face.idNormal2 < t->normals.size() ? t->normals.at(face.idNormal2) : face.normal;
+            auto normal3 = face.idNormal3 < t->normals.size() ? t->normals.at(face.idNormal3) : face.normal;
+            Eigen::Vector3f n = normal1 + normal2 + normal3;
+            n.normalize();
+
+            //Point p = h->vertex()->point();
+            //Point q = h->next()->vertex()->point();
+            //Point r = h->next()->next()->vertex()->point();
+            // compute normal
+            //Vector n = CGAL::cross_product( q-p, r-p);
+            //Vector norm = n / std::sqrt( n * n);
+            of << "    facet normal " << n(0) << " " << n(1) << " " << n(2) << endl;
+            of << "      outer loop " << endl;
+            of << "        vertex " << p1(0)*scaling << " " << p1(1)*scaling << " " << p1(2)*scaling <<  endl;
+            of << "        vertex " << p2(0)*scaling << " " << p2(1)*scaling << " " << p2(2)*scaling << endl;
+            of << "        vertex " << p3(0)*scaling << " " << p3(1)*scaling << " " << p3(2)*scaling << endl;
+            of << "      endloop " << endl;
+            of << "    endfacet " << endl;
+        }
+
+        of << "endsolid " << objectName << endl;
+        of.close();
+        return true;
     }
 
 

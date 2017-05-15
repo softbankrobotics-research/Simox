@@ -641,7 +641,7 @@ namespace VirtualRobot
                     visualizationNode = processVisualizationTag(node, robotNodeName, basePath, useAsColModel);
                     visuProcessed = true;
 
-                    if (useAsColModel)
+                    if (useAsColModel && visualizationNode)
                     {
                         THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in RobotNode '" << robotNodeName << "'." << endl);
                         std::string colModelName = robotNodeName;

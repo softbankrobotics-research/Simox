@@ -67,10 +67,17 @@ public slots:
     void buildVisu();
 
     void selectEEF(int nr);
+    void selectGrasp(int nr);
     void objectToTCP();
+    void objectToGrasp();
+
     void graspQuality();
     void showGWS();
     void showOWS();
+
+    void selectObject();
+
+    void evalRobustness();
 
 protected:
 
@@ -84,6 +91,8 @@ protected:
     static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void setEEFComboBox();
+    void setGraspComboBox();
+
     Ui::MainWindowGraspQuality UI;
     SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
@@ -97,10 +106,14 @@ protected:
     SoSeparator* ows2Sep;
 
     VirtualRobot::RobotPtr robot;
-    VirtualRobot::ObstaclePtr object;
+    VirtualRobot::ManipulationObjectPtr object;
 
     VirtualRobot::EndEffectorPtr eef;
     std::vector< VirtualRobot::EndEffectorPtr > eefs;
+    VirtualRobot::GraspPtr grasp;
+    VirtualRobot::GraspSetPtr grasps;
+
+    std::vector<Eigen::Matrix4f> evalPoses;
 
     VirtualRobot::EndEffector::ContactInfoVector contacts;
 

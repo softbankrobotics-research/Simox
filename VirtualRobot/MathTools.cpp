@@ -233,7 +233,12 @@ namespace VirtualRobot
         storeRPY(2) = x[5];
     }
 
-
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2rpy(const Eigen::Matrix4f& m)
+    {
+        Eigen::Vector3f storeRPY;
+        eigen4f2rpy(m, storeRPY);
+        return storeRPY;
+    }
 
     void MathTools::rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m)
     {
@@ -265,7 +270,13 @@ namespace VirtualRobot
         m(3, 1) = 0;
         m(3, 2) = 0;
         m(3, 3) = 1.0f;
+    }
 
+    Eigen::Matrix4f MathTools::rpy2eigen4f(float r, float p, float y)
+    {
+        Eigen::Matrix4f m;
+        rpy2eigen4f(r,p,y,m);
+        return m;
     }
 
 
@@ -290,10 +301,21 @@ namespace VirtualRobot
         posrpy2eigen4f(x, m);
     }
 
+    Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy)
+    {
+        Eigen::Matrix4f m;
+        posrpy2eigen4f(pos, rpy,m );
+        return m;
+    }
 
     Eigen::Vector3f MathTools::getTranslation(const Eigen::Matrix4f& m)
     {
         return m.block(0, 3, 3, 1);
+    }
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getTranslation(const Eigen::Matrix4f& m, Eigen::Vector3f& v)
+    {
+        v = getTranslation(m);
     }
 
     float MathTools::getDistancePointPlane(const Eigen::Vector3f& point, const Plane& plane)
@@ -646,6 +668,11 @@ namespace VirtualRobot
         return quat2eigen4f(q.x, q.y, q.z, q.w);
     }
 
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2eigen4f(const Quaternion q, Eigen::Matrix4f& m)
+    {
+        m = quat2eigen4f(q);
+    }
+
 
     Eigen::Matrix4f MathTools::quat2eigen4f(float x, float y, float z, float w)
     {
@@ -677,6 +704,11 @@ namespace VirtualRobot
         //m(1,3) = 0.0f;
         //m(2,3) = 0.0f;
         //m(3,3) = w*w + x*x + y*y + z*z;*/
+    }
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2eigen4f(float x, float y, float z, float w, Eigen::Matrix4f& m)
+    {
+        m = quat2eigen4f(x,y,z,w);
     }
 
     std::string MathTools::getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag)
@@ -1384,6 +1416,11 @@ namespace VirtualRobot
         res.z = q.z();
         res.w = q.w();
         return res;
+    }
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2quat(const Eigen::Matrix4f& m, Quaternion& q)
+    {
+        q = eigen4f2quat(m);
     }
 
     MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::axisangle2quat(const Eigen::Vector3f& axis, float angle)

@@ -81,7 +81,7 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
     Eigen::VectorXf target(6);
     for (int i = 0; i < 6; i++)
     {
-        target(i) = (d_w[i] <= bounds(i, 0))? bounds(i, 0) : bounds(i, 1);
+        target(i) = (d_w[i] >= bounds(i, 0) && d_w[i] <= bounds(i, 1)) ? d_w[i] : ((d_w[i] <= bounds(i, 0)) ? bounds(i, 0) : bounds(i, 1));
     }
 
     Eigen::Matrix4f T_dx;

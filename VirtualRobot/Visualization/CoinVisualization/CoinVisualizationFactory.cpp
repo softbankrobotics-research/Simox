@@ -66,6 +66,7 @@
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/SbTime.h>
 #include <Inventor/sensors/SoDataSensor.h>
+#include <Inventor/nodes/SoPointSet.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -1036,7 +1037,44 @@ namespace VirtualRobot
     }
 
 
+    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color)
+    {
 
+        SoSeparator* pclSep = new SoSeparator;
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        pclSep->addChild(u);
+
+        SoMaterial* pclMat = new SoMaterial;
+        pclMat->diffuseColor.setValue(color.r, color.g, color.b);
+        pclMat->diffuseColor.setValue(color.r, color.g, color.b);
+        pclSep->addChild(pclMat);
+
+        SoMaterialBinding* pclMatBind = new SoMaterialBinding;
+        pclMatBind->value = SoMaterialBinding::OVERALL;
+        pclSep->addChild(pclMatBind);
+
+        SoCoordinate3* pclCoords = new SoCoordinate3;
+        std::vector<SbVec3f> coords;
+        coords.reserve(positions.size());
+        std::transform(
+            positions.begin(), positions.end(), std::back_inserter(coords),
+            [](const Eigen::Vector3f & elem)
+        {
+            return SbVec3f {elem[0], elem[1], elem[2]};
+        }
+        );
+        pclCoords->point.setValues(0, coords.size(), coords.data());
+        pclSep->addChild(pclCoords);
+
+        SoDrawStyle* pclStye = new SoDrawStyle;
+        pclStye->pointSize = radius;
+        pclSep->addChild(pclStye);
+
+        pclSep->addChild(new SoPointSet);
+
+        return pclSep;
+    }
 
 
 
