@@ -145,7 +145,7 @@ namespace GraspStudio
             unsigned int id1, id2, id3;
             check = hasVertex(triMesh2->vertices, v1);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id1 = (int)check;
             }
@@ -158,7 +158,7 @@ namespace GraspStudio
 
             check = hasVertex(triMesh2->vertices, v2);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id2 = (int)check;
             }
@@ -171,7 +171,7 @@ namespace GraspStudio
 
             check = hasVertex(triMesh2->vertices, v3);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id3 = (int)check;
             }
