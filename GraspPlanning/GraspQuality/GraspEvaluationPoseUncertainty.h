@@ -124,10 +124,12 @@ public:
     */
     std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses);
 
-    std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const  VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses);
+    std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses);
 
     PoseEvalResult evaluatePose(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const Eigen::Matrix4f &objectPose, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
     PoseEvalResults evaluatePoses(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const std::vector<Eigen::Matrix4f> &objectPoses, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
+
+    PoseEvalResults evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, GraspQualityMeasurePtr qm, int numPoses);
 
 protected:
 

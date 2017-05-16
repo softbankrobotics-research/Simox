@@ -218,6 +218,16 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
         return res;
     }
 
+    if (!eef->getRobot())
+    {
+        VR_WARNING << "missing eef->robot" << endl;
+        return res;
+    }
+
+    Eigen::Matrix4f eefRobotPoseInit = eef->getRobot()->getGlobalPose();
+    Eigen::Matrix4f objectPoseInit = o->getGlobalPose();
+    VirtualRobot::RobotConfigPtr initialConf = eef->getConfiguration();
+
     std::vector<PoseEvalResult> results;
     for (size_t i=0;i<objectPoses.size();i++)
     {
@@ -249,7 +259,73 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
         res.avgQuality /= float(res.numValidPoses);
     }
 
+    // restore setup
+    eef->getRobot()->setGlobalPose(eefRobotPoseInit);
+    o->setGlobalPose(objectPoseInit);
+    eef->getRobot()->setConfig(initialConf);
+
     return res;
+}
+
+GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, GraspQualityMeasurePtr qm, int numPoses)
+{
+    PoseEvalResults res;
+    res.avgQuality = 0.0f;
+    res.forceClosureRate = 0.0f;
+    res.numPosesTested = 0;
+    res.numValidPoses = 0;
+    res.numColPoses = 0;
+
+    if (!g || !eef || !o || !qm)
+    {
+        VR_WARNING << "missing parameters"<< endl;
+        return res;
+    }
+    if (!eef->getRobot())
+    {
+        VR_WARNING << "missing eef->robot" << endl;
+        return res;
+    }
+
+    Eigen::Matrix4f eefRobotPoseInit = eef->getRobot()->getGlobalPose();
+    Eigen::Matrix4f objectPoseInit = o->getGlobalPose();
+    VirtualRobot::RobotConfigPtr initialConf = eef->getConfiguration();
+
+    std::string graspPreshapeName = g->getPreshapeName();
+    VirtualRobot::RobotConfigPtr graspPS;
+    if (eef->hasPreshape(graspPreshapeName))
+        graspPS = eef->getPreshape(graspPreshapeName);
+
+    Eigen::Matrix4f mGrasp = g->getTcpPoseGlobal(o->getGlobalPose());
+
+    // apply grasp
+    eef->getRobot()->setGlobalPoseForRobotNode(eef->getTcp(), mGrasp);
+
+    if (graspPS)
+    {
+        eef->getRobot()->setJointValues(graspPS);
+    } else
+        eef->openActors();
+
+
+    auto contacts = eef->closeActors(o);
+    if(contacts.size() == 0)
+    {
+        VR_INFO << "No contacts for grasp " << g->getName() << " found" << std::endl;
+        return res;
+    }
+    auto poses = generatePoses(o->getGlobalPose(), contacts, numPoses);
+    if(poses.empty())
+    {
+        VR_INFO << "No poses for grasp found" << std::endl;
+        return res;
+    }
+    res = evaluatePoses(eef, o, poses, qm, graspPS);
+
+    // restore setup
+    eef->getRobot()->setGlobalPose(eefRobotPoseInit);
+    o->setGlobalPose(objectPoseInit);
+    eef->getRobot()->setConfig(initialConf);
 }
 
 }
