@@ -96,6 +96,8 @@ struct GraspPlannerEvaluation
         {
             std::cout << "Avg score (valid):" << scoreAcc / nrValid << std::endl;
         }
+        if (nrGraspsGenerated>0)
+            std::cout << "Percentage of valid grasps:" << (float)nrGraspsValid / (float)nrGraspsGenerated * 100.0f << "%" << std::endl;
     }
 
     static std::string GetCSVHeader()
