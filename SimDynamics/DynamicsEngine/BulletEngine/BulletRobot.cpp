@@ -1071,7 +1071,7 @@ namespace SimDynamics
         }
         else
         {
-            VR_ERROR << "Only Revolute joints implemented so far..." << endl;
+            VR_ERROR << "Only Revolute joints implemented so far (node: " << node->getName() <<")..." << endl;
         }
     }
 
