@@ -370,6 +370,21 @@ namespace VirtualRobot
         */
         virtual std::vector<SensorPtr> getSensors();
 
+        template<class SensorType>
+        std::vector<boost::shared_ptr<SensorType>> getSensors()
+        {
+            std::vector<boost::shared_ptr<SensorType>> result;
+            std::vector<SensorPtr> sensors = getSensors();
+            result.reserve(sensors.size());
+            for(SensorPtr& sensor:sensors)
+            {
+                if(dynamic_cast<SensorType*>(sensor.get()))
+                {
+                   result.emplace_back(boost::static_pointer_cast<SensorType>(sensor));
+                }
+            }
+            return result;
+        }
         /*!
             Creates an XML string that defines the complete robot. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
             @see RobotIO::saveXML.
