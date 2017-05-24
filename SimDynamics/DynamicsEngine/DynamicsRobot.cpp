@@ -211,6 +211,12 @@ namespace SimDynamics
 //            target.jointValueTarget = oldTargetIt->second.jointValueTarget;
 //        }
 //        else
+        if(std::abs(jointVelocity) < 1e-10)
+        {
+            //do not move
+            target.jointValueTarget = oldTargetIt->second.jointValueTarget;
+        }
+        else
         {
             target.jointValueTarget = node->getJointValue();
         }
