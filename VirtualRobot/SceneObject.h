@@ -269,8 +269,10 @@ namespace VirtualRobot
             Inertia matrix in kg*m^2.
         */
         Eigen::Matrix3f getInertiaMatrix();
-
         void setInertiaMatrix(const Eigen::Matrix3f& im);
+
+        float getFriction();
+        void setFriction(float friction);
 
         SceneObject::Physics getPhysics();
 

@@ -974,6 +974,16 @@ namespace VirtualRobot
         physics.massKg = m;
     }
 
+    float SceneObject::getFriction()
+    {
+        return physics.friction;
+    }
+
+    void SceneObject::setFriction(float friction)
+    {
+        physics.friction = friction;
+    }
+
     SceneObject::Physics::SimulationType SceneObject::getSimulationType() const
     {
         return physics.simType;

@@ -94,17 +94,29 @@ namespace VirtualRobot
         VR_ASSERT(eef);
         RobotPtr robot = eef->getRobot();
         VR_ASSERT(robot);
-        bool res = true;
+        //bool res = true;
         std::vector<EndEffectorActorPtr> eefActors;
         eef->getActors(eefActors);
         std::vector<RobotNodePtr> eefStatic;
         eef->getStatics(eefStatic);
         EndEffector::ContactInfoVector newContacts;
 
+        enum ActorStatus
+        {
+            eFinished,
+            eCollision,
+            eMoving
+        };
+        std::map<RobotNodePtr, ActorStatus> actorStatus;
+
+
+
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
             float oldV =  n->robotNode->getJointValue();
             float v = oldV + angle * n->directionAndSpeed;
+
+            actorStatus[n->robotNode] = eMoving;
 
             if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
             {
@@ -151,14 +163,19 @@ namespace VirtualRobot
 
                 if (!collision)
                 {
-                    res = false;
+                    //res = false;
                 }
                 else
                 {
                     // reset last position
                     //n->robotNode->setJointValue(oldV);
                     robot->setJointValue(n->robotNode, oldV);
+
+                    actorStatus[n->robotNode] = eCollision;
                 }
+            } else
+            {
+                actorStatus[n->robotNode] = eFinished;
             }
         }
 
@@ -197,6 +214,15 @@ namespace VirtualRobot
 
                 storeContacts.push_back(newContacts[i]);
             }
+        }
+
+        // check what we should return
+        bool res = true;
+        for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
+        {
+            // if at least one actor is not in collision and not at its joint limits, we are still in the process of closing the fingers
+            if (actorStatus[n->robotNode] == eMoving)
+                res = false;
         }
 
         return res;
