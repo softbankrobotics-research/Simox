@@ -359,7 +359,7 @@ namespace VirtualRobot
 
         physics.print();
 
-        cout << "* Limits: Lo:" << jointLimitLo << ", Hi:" << jointLimitHi << endl;
+        cout << "* Limits: Lo:" << (limitless == false ? std::to_string(jointLimitLo) : "no limit") << ", Hi:" << (limitless == false ? std::to_string(jointLimitHi) : "no limit") << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
@@ -549,6 +549,16 @@ namespace VirtualRobot
     bool RobotNode::isRotationalJoint() const
     {
         return false;
+    }
+
+    void RobotNode::setLimitless(bool limitless)
+    {
+        this->limitless = limitless;
+    }
+
+    bool RobotNode::isLimitless()
+    {
+        return limitless;
     }
 
 

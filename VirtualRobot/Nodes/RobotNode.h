@@ -191,6 +191,11 @@ namespace VirtualRobot
         virtual bool isTranslationalJoint() const;
         virtual bool isRotationalJoint() const;
 
+        /**
+         * @param limitless wheter this node has joint limits or not.
+         */
+        virtual void setLimitless(bool limitless);
+        bool isLimitless();
 
         /*!
             Visualize the structure of this RobotNode.
@@ -358,6 +363,7 @@ namespace VirtualRobot
 
         float jointValueOffset;
         float jointLimitLo, jointLimitHi;
+        bool limitless; // whether this joint has limits or not (ignored if nodeType != Joint).
         DHParameter optionalDHParameter;            // When the joint is defined via DH parameters they are stored here
         float maxVelocity;          //! given in m/s
         float maxAcceleration;      //! given in m/s^2
