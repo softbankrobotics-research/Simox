@@ -197,6 +197,13 @@ namespace VirtualRobot
         virtual void setLimitless(bool limitless);
         bool isLimitless();
 
+        /**
+         * @param target the target joint value in [rad]
+         * @return the signed distance between current and target joint values in [rad].
+         *         If the given target value violates joint limits or this robotnode is not a joint, 0.0f is returned instead.
+         */
+        virtual float getDelta(float target);
+
         /*!
             Visualize the structure of this RobotNode.
             \p enable Show or hide the structure visualization

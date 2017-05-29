@@ -359,7 +359,7 @@ namespace VirtualRobot
 
         physics.print();
 
-        cout << "* Limits: Lo:" << (limitless == false ? std::to_string(jointLimitLo) : "no limit") << ", Hi:" << (limitless == false ? std::to_string(jointLimitHi) : "no limit") << endl;
+        cout << "* Limits: Lo:" << (!limitless ? std::to_string(jointLimitLo) : "no limit") << ", Hi:" << (!limitless ? std::to_string(jointLimitHi) : "no limit") << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
@@ -559,6 +559,35 @@ namespace VirtualRobot
     bool RobotNode::isLimitless()
     {
         return limitless;
+    }
+
+    float RobotNode::getDelta(float target)
+    {
+        float delta = 0.0f;
+
+        if (nodeType != Joint)
+        {
+            return delta;
+        }
+
+        // we check if the given target value violates our joint limits
+        if (!limitless)
+        {
+            if (target < jointLimitLo || target > jointLimitHi)
+            {
+                return delta;
+            }
+        }
+
+        delta = target - jointValue;
+
+        // eventually take the other way around if it is faster and this joint is limitless.
+        if (limitless && (delta > M_PI))
+        {
+            delta = (2 * M_PI) - delta;
+        }
+
+        return delta;
     }
 
 
