@@ -396,15 +396,13 @@ namespace SimDynamics
     void DynamicsRobot::setGlobalPose(const Eigen::Matrix4f& gp)
     {
         MutexLockPtr lock = getScopedLock();
-        Eigen::Matrix4f currentPose = robot->getGlobalPose();
-        Eigen::Matrix4f delta = gp * currentPose.inverse();
 
-        robot->setGlobalPose(gp);
         std::map<VirtualRobot::RobotNodePtr, DynamicsObjectPtr>::iterator it = dynamicRobotNodes.begin();
 
+        robot->setGlobalPose(gp);
         while (it != dynamicRobotNodes.end())
         {
-            Eigen::Matrix4f newPose = it->second->getSceneObject()->getGlobalPose() * delta;
+            Eigen::Matrix4f newPose = it->second->getSceneObject()->getGlobalPose();
             it->second->setPose(newPose);
             it++;
         }
