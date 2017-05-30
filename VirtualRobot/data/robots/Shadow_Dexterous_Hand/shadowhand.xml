@@ -23,7 +23,7 @@
 		<Transform>
                         <Translation X="20" Y="-80" Z="80" units='mm'/>
                         <rollpitchyaw roll="0" pitch="0" yaw="-90" units="degree"/>
-                        <rollpitchyaw roll="0" pitch="45" yaw="0" units="degree"/>
+                        <rollpitchyaw roll="0" pitch="65" yaw="0" units="degree"/>
 		</Transform>
 	</RobotNode>
 	<RobotNode name="TCP R Power">
