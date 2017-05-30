@@ -420,6 +420,10 @@ void SimDynamicsWindow::updateJointInfo()
     {
         rn = robotNodes[n];
     }
+    else
+    {
+        return;
+    }
 
     SimDynamics::DynamicsObjectPtr dynRN = dynamicsRobot->getDynamicsRobotNode(rn);
     SimDynamics::BulletObjectPtr bulletRN = boost::dynamic_pointer_cast<SimDynamics::BulletObject>(dynRN);
