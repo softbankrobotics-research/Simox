@@ -28,9 +28,9 @@
 	</RobotNode>
 	<RobotNode name="TCP R Power">
 		<Transform>
-                    <Translation X="0" Y="-30" Z="80" units='mm'/>
+                    <Translation X="0" Y="-50" Z="80" units='mm'/>
                     <rollpitchyaw roll="0" pitch="0" yaw="-90" units="degree"/>
-                    <rollpitchyaw roll="0" pitch="45" yaw="0" units="degree"/>
+                    <rollpitchyaw roll="0" pitch="65" yaw="0" units="degree"/>
                 </Transform>
 	</RobotNode>
 	
