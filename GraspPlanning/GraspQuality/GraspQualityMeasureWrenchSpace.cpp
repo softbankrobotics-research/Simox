@@ -131,7 +131,8 @@ namespace GraspStudio
 
         if (contactPointsM.empty())
         {
-            printf("Contact points not set.\n");
+            if (verbose && printAll)
+                printf("Contact points not set.\n");
             return;
         }
 
