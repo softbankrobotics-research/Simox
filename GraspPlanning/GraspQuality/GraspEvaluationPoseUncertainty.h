@@ -70,6 +70,8 @@ public:
 		bool enableDimension[6];
 		float dimExtends[6];
 		float stepSize[6];
+        float useNormalDistribution = true;
+        bool verbose = false;
 	};
 
     struct PoseEvalResult
@@ -81,11 +83,12 @@ public:
 
     struct PoseEvalResults
     {
-        int numPosesTested;
-        int numValidPoses;
-        int numColPoses;        // poses with initial collision
-        float forceClosureRate; // without collision poses
-        float avgQuality;       // without collision poses
+        int numPosesTested = 0.0;
+        int numValidPoses = 0.0;
+        int numColPoses = 0.0;        // poses with initial collision
+        int numForceClosurePoses = 0.0;        // poses that have force closure
+        float forceClosureRate = 0.0; // without collision poses
+        float avgQuality = 0.0;       // without collision poses
 
         void print()
         {

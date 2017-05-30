@@ -125,12 +125,14 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     }
 
     Eigen::Matrix4f m;
-
+    std::default_random_engine generator;
+    std::normal_distribution<double> normalDistribution(0.0,0.5);
+    std::uniform_real_distribution<double> uniformDistribution(0.0,0.5);
     for (int j=0;j<numPoses; j++)
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = float(rand()) / float(RAND_MAX);
+            float r = config.useNormalDistribution ? normalDistribution(generator) : uniformDistribution(generator);
             tmpPose[i] = start[i] + r*dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
@@ -140,7 +142,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     return result;
 }
 
-std::vector<Eigen::Matrix4f> GraspStudio::GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses)
+std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses)
 {
     Eigen::Vector3f centerPose;
     centerPose.setZero();
@@ -151,11 +153,13 @@ std::vector<Eigen::Matrix4f> GraspStudio::GraspEvaluationPoseUncertainty::genera
     }
     for (size_t i = 0; i < contacts.size(); i++)
     {
-            cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
+            if (config.verbose)
+                cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
             centerPose += contacts[i].contactPointObstacleGlobal;
     }
     centerPose /= contacts.size();
-    cout << "using contact center pose:\n" << centerPose << endl;
+    if (config.verbose)
+        cout << "using contact center pose:\n" << centerPose << endl;
 
     Eigen::Matrix4f centerPoseM = Eigen::Matrix4f::Identity();
     centerPoseM.block(0, 3, 3, 1) = centerPose;
@@ -249,7 +253,10 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
             res.numValidPoses++;
             res.avgQuality += results.at(i).quality;
             if (results.at(i).forceClosure)
+            {
                 res.forceClosureRate += 1.0f;
+                res.numForceClosurePoses++;
+            }
         }
     }
 
@@ -326,6 +333,8 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     eef->getRobot()->setGlobalPose(eefRobotPoseInit);
     o->setGlobalPose(objectPoseInit);
     eef->getRobot()->setConfig(initialConf);
+
+    return res;
 }
 
 }
