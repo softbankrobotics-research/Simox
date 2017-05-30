@@ -1152,7 +1152,7 @@ namespace SimDynamics
         }
         else
         {
-            VR_WARNING << "NYI" << endl;
+            VR_WARNING << "Only translational and rotational joints implemented." << endl;
             return 0.0;
         }
     }
@@ -1178,14 +1178,14 @@ namespace SimDynamics
 
         LinkInfo link = getLink(rn);
 
-        if (rn->isRotationalJoint())
+        if (rn->isRotationalJoint() || rn->isTranslationalJoint())
         {
             enableForceTorqueFeedback(link, true);
             result = getJointForceTorqueGlobal(link).tail(3);
         }
-        else if (rn->isTranslationalJoint())
+        else
         {
-            VR_WARNING << "NYI" << endl;
+            VR_WARNING << "Only translational and rotational joints implemented." << endl;
         }
 
         return result;
@@ -1204,7 +1204,7 @@ namespace SimDynamics
 
         LinkInfo link = getLink(rn);
 
-        if (rn->isRotationalJoint())
+        if (rn->isRotationalJoint() || rn->isTranslationalJoint())
         {
             enableForceTorqueFeedback(link, true);
             Eigen::Vector3f torqueVector = getJointForceTorqueGlobal(link).tail(3);
@@ -1213,9 +1213,9 @@ namespace SimDynamics
             double troque = (torqueVector.adjoint() * link.nodeJoint->getGlobalPose().block(0, 2, 3, 1))(0, 0);
             return troque;
         }
-        else if (rn->isTranslationalJoint())
+        else
         {
-            VR_WARNING << "NYI" << endl;
+            VR_WARNING << "Only translational and rotational joints implemented." << endl;
         }
         return 0.0;
     }
@@ -1235,14 +1235,14 @@ namespace SimDynamics
 
         LinkInfo link = getLink(rn);
 
-        if (rn->isRotationalJoint())
+        if (rn->isRotationalJoint() || rn->isTranslationalJoint())
         {
             enableForceTorqueFeedback(link, true);
             result = getJointForceTorqueGlobal(link).head(3);
         }
-        else if (rn->isTranslationalJoint())
+        else
         {
-            VR_WARNING << "NYI" << endl;
+            VR_WARNING << "Only translational and rotational joints implemented." << endl;
         }
 
         return result;
