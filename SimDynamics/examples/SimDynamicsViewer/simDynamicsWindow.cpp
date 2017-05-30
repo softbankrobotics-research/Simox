@@ -305,16 +305,11 @@ void SimDynamicsWindow::updateJoints()
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
-        if (nodes[i]->isRotationalJoint())
+        if (nodes[i]->isRotationalJoint() || nodes[i]->isTranslationalJoint())
         {
-            RobotNodeRevolutePtr rn = boost::dynamic_pointer_cast<RobotNodeRevolute>(nodes[i]);
-
-            if (rn)
-            {
-                robotNodes.push_back(rn);
-                QString qstr(rn->getName().c_str());
-                UI.comboBoxRobotNode->addItem(qstr);
-            }
+            robotNodes.push_back(nodes[i]);
+            QString qstr(nodes[i]->getName().c_str());
+            UI.comboBoxRobotNode->addItem(qstr);
         }
     }
 
@@ -374,7 +369,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
 void SimDynamicsWindow::selectRobotNode(int n)
 {
     UI.comboBoxRobotNode->setCurrentIndex(n);
-    RobotNodeRevolutePtr rn;
+    RobotNodePtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -419,7 +414,7 @@ void SimDynamicsWindow::updateJointInfo()
     QString qVisu("VISU (simox): 0/0/0");
     QString qCom("COM (bullet): 0/0/0");
     QString tmp;
-    RobotNodeRevolutePtr rn;
+    RobotNodePtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -737,7 +732,7 @@ void SimDynamicsWindow::jointValueChanged(int n)
     #endif
     */
     int j = UI.comboBoxRobotNode->currentIndex();
-    RobotNodeRevolutePtr rn;
+    RobotNodePtr rn;
 
     if (j >= 0 && j < (int)robotNodes.size())
     {
