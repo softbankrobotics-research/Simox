@@ -313,6 +313,8 @@ namespace VirtualRobot
     void GraspEditorWindow::selectRobot()
     {
         QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
+        if(fi.isEmpty())
+            return;
         robotFile = std::string(fi.toLatin1());
         loadRobot();
     }
@@ -328,7 +330,28 @@ namespace VirtualRobot
         }
         else
         {
-            QString fi = QFileDialog::getOpenFileName(this, tr("Open ManipulationObject File"), QString(), tr("XML Files (*.xml)"));
+            QString fi;
+            QFileDialog dialog(this);
+            dialog.setFileMode(QFileDialog::ExistingFile);
+            dialog.setAcceptMode(QFileDialog::AcceptOpen);
+            QStringList nameFilters;
+            nameFilters << "Manipulation Object XML Files (*.xml *.moxml)"
+//                        << "XML Files (*.xml)"
+                        << "All Files (*.*)";
+            dialog.setNameFilters(nameFilters);
+
+            if (dialog.exec())
+            {
+                if (dialog.selectedFiles().size() == 0)
+                    return;
+
+                fi = dialog.selectedFiles()[0];
+            }
+            else
+            {
+                VR_INFO << "load dialog canceled" << std::endl;
+                return;
+            }
             s = std::string(fi.toLatin1());
         }
 
@@ -349,7 +372,29 @@ namespace VirtualRobot
         // No need to select a file where the object is saved, it is the same as the input file
         if (!embeddedGraspEditor)
         {
-            QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
+            QString fi;
+            QFileDialog dialog(this);
+            dialog.setFileMode(QFileDialog::AnyFile);
+            dialog.setAcceptMode(QFileDialog::AcceptSave);
+            dialog.setDefaultSuffix("moxml");
+            QStringList nameFilters;
+            nameFilters << "Manipulation Object XML Files (*.moxml)"
+                        << "XML Files (*.xml)"
+                        << "All Files (*.*)";
+            dialog.setNameFilters(nameFilters);
+
+            if (dialog.exec())
+            {
+                if (dialog.selectedFiles().size() == 0)
+                    return;
+
+                fi = dialog.selectedFiles()[0];
+            }
+            else
+            {
+                VR_INFO << "load dialog canceled" << std::endl;
+                return;
+            }
             objectFile = std::string(fi.toLatin1());
         }
 
