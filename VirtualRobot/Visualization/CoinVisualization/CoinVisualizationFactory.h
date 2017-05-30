@@ -138,7 +138,7 @@ namespace VirtualRobot
         static SoSeparator* CreateVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         static SoSeparator* CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Gray());
 
-        static void RemoveDuplicateTextures(SoNode* node);
+        static void RemoveDuplicateTextures(SoNode* node, const std::string &currentPath);
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
@@ -448,10 +448,11 @@ namespace VirtualRobot
     public:
         static std::string getName();
         static boost::shared_ptr<VisualizationFactory> createInstance(void*);
+        typedef std::map<std::pair<size_t, std::string>, void*> TextureCacheMap;
     private:
         static SubClassRegistry registry;
         static boost::mutex globalTextureCacheMutex;
-        static SbDict globalTextureCache;
+        static TextureCacheMap globalTextureCache;
     };
 
     typedef boost::shared_ptr<CoinVisualizationFactory> CoinVisualizationFactoryPtr;

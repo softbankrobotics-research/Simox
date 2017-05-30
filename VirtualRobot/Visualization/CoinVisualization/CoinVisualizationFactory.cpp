@@ -92,7 +92,7 @@ namespace VirtualRobot
 {
 
     boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
-    SbDict CoinVisualizationFactory::globalTextureCache  = SbDict();
+    CoinVisualizationFactory::TextureCacheMap CoinVisualizationFactory::globalTextureCache;
 
     CoinVisualizationFactory::CoinVisualizationFactory()
     {
@@ -364,7 +364,6 @@ namespace VirtualRobot
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return;
         }
-
         coinVisualization->ref();
 
         if (boundingBox)
@@ -379,7 +378,10 @@ namespace VirtualRobot
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
         if(freeDuplicateTextures)
         {
-            RemoveDuplicateTextures(coinVisualization);
+            boost::filesystem::path p(soInput.getCurFileName());
+            boost::filesystem::path dir = p.parent_path();
+
+            RemoveDuplicateTextures(coinVisualization, dir.string());
         }
         coinVisualization->unref();
     }
@@ -1076,28 +1078,34 @@ namespace VirtualRobot
         return pclSep;
     }
 
+    std::ifstream::pos_type getFilesize(const char* filename)
+    {
+        std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+        return in.tellg();
+    }
 
-
-    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node)
+    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node, const std::string& currentPath)
     {
         // internal class to keep track of texture removal
         struct DeleteTextureCallBack : SoDataSensor
         {
-            DeleteTextureCallBack(const std::string& nodeName, unsigned long key) : nodeName(nodeName), key(key){}
+            DeleteTextureCallBack(const std::string& nodeName, const std::string& path, size_t filesize) :
+                nodeName(nodeName), path(path), filesize(filesize) {}
 
             // SoDataSensor interface
         public:
             void dyingReference()
             {
                 boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
-                CoinVisualizationFactory::globalTextureCache.remove(key);
+                CoinVisualizationFactory::globalTextureCache.erase(std::make_pair(filesize, path));
                 delete this;
             }
 
         private:
             ~DeleteTextureCallBack(){}
             std::string nodeName;
-            unsigned long key;
+            std::string path;
+            size_t filesize;
         };
 
 
@@ -1110,30 +1118,41 @@ namespace VirtualRobot
 
         boost::mutex::scoped_lock lock(globalTextureCacheMutex);
         for (int i = 0; i < pl.getLength(); i++) {
-          SoFullPath * p = (SoFullPath*) pl[i];
-          if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
-            SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
-            for (int i = 0; i < tex->url.getNum(); ++i)
-            {
-              SbName name = tex->url[i].getString();
-              unsigned long key = (unsigned long) ((void*) name.getString());
-              void * tmp;
-              if (!globalTextureCache.find(key, tmp)) {
-                (void) globalTextureCache.enter(key, tex);
-                tex->addAuditor(new DeleteTextureCallBack(name.getString(), key), SoNotRec::SENSOR);
-              }
-              else if (tmp != (void*) tex) {
-                SoNode * parent = p->getNodeFromTail(1);
-                if (parent->isOfType(SoVRMLAppearance::getClassTypeId())) {
-                  ((SoVRMLAppearance*)parent)->texture = (SoNode*) tmp;
+            SoFullPath * p = (SoFullPath*) pl[i];
+            if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
+                SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
+                for (int i = 0; i < tex->url.getNum(); ++i)
+                {
+                    SbName name = tex->url[i].getString();
+                    std::string texturePath = currentPath + "/" + std::string(tex->url[i].getString());
+                    bool exists = boost::filesystem::exists(texturePath);
+                    size_t filesize = getFilesize(texturePath.c_str());
+//                    VR_WARNING << "Texture path: " << texturePath << " file size: " << filesize  << " exists: " << exists << std::endl;
+
+                    //              unsigned long key = (unsigned long) ((void*) name.getString());
+                    auto it = globalTextureCache.find(std::make_pair(filesize,texturePath));
+                    if (it == globalTextureCache.end())
+                    {
+                        globalTextureCache[std::make_pair(filesize,texturePath)] =  (void*)tex;
+                        tex->addAuditor(new DeleteTextureCallBack(name.getString(), texturePath, filesize), SoNotRec::SENSOR);
+//                        VR_INFO << "Found NOT in cache" << std::endl;
+                    }
+                    else if (it->second != (void*) tex)
+                    {
+//                        VR_INFO << "Found in cache" << std::endl;
+                        SoNode * parent = p->getNodeFromTail(1);
+                        if (parent->isOfType(SoVRMLAppearance::getClassTypeId()))
+                        {
+                            ((SoVRMLAppearance*)parent)->texture = (SoNode*) it->second;
+                        }
+                        else
+                        {
+                            // not a valid VRML2 file. Print a warning or something.
+                            std::cout << "not a valid VRML2 file" << std::endl;
+                        }
+                    }
                 }
-                else {
-                  // not a valid VRML2 file. Print a warning or something.
-                    std::cout << "not a valid VRML2 file" << std::endl;
-                }
-              }
             }
-          }
         }
     }
 
