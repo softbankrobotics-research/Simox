@@ -269,9 +269,8 @@ namespace VirtualRobot
     VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
-        // try to read from file
-        visualizationNode->setFilename(filename, boundingBox);
 
+        // try to read from file
         TriMeshModelPtr t(new TriMeshModel());
         STLReaderPtr r(new STLReader());
         r->setScaling(1000.0f); // mm
@@ -285,6 +284,7 @@ namespace VirtualRobot
 
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
         visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
+        visualizationNode->setFilename(filename, boundingBox);
 
         return visualizationNode;
     }
