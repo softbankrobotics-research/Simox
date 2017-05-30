@@ -1110,7 +1110,7 @@ namespace SimDynamics
         {
             boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
 
-            return slider->getTargetLinMotorVelocity() * 1000 / BulletObject::ScaleFactor; // m -> mm
+            return slider->getTargetLinMotorVelocity(); // / BulletObject::ScaleFactor;
         }
     }
 
@@ -1147,8 +1147,9 @@ namespace SimDynamics
 
             boost::shared_ptr<RobotNodePrismatic> rnPrisJoint = boost::dynamic_pointer_cast<RobotNodePrismatic>(link.nodeJoint);
 
-            Eigen::Vector3f deltaVel = (link.dynNode2->getLinearVelocity() - link.dynNode1->getLinearVelocity()) * 1000 / BulletObject::ScaleFactor;
-            return deltaVel.norm();
+            Eigen::Vector3f jointDirection = rnPrisJoint->getGlobalPose().block<3, 3>(0, 0) * rnPrisJoint->getJointTranslationDirectionJointCoordSystem();
+            Eigen::Vector3f deltaVel = (link.dynNode2->getLinearVelocity() - link.dynNode1->getLinearVelocity()) / 1000;
+            return jointDirection.dot(deltaVel) / jointDirection.norm();
         }
         else
         {
