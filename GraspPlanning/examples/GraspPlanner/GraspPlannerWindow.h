@@ -28,6 +28,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
 
 
 #include <vector>
@@ -65,7 +66,9 @@ public slots:
     void plan();
     void save();
 
+    void planObjectBatch();
 protected:
+    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults &results);
 
     void loadRobot();
     void loadObject();
