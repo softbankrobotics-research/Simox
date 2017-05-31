@@ -77,6 +77,45 @@ namespace GraspStudio
         return nGraspsCreated;
     }
 
+    bool GenericGraspPlanner::moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops)
+    {
+        VR_ASSERT(eef);
+        VR_ASSERT(approach);
+
+        VirtualRobot::SceneObjectSetPtr sos = eef->createSceneObjectSet();
+
+        if (!sos)
+        {
+            return false;
+        }
+
+        int loop = 0;
+        Eigen::Vector3f delta = approachDir * step;
+        bool finishedContactsOK = false;
+        bool finishedCollision = false;
+
+        while (loop < maxLoops && !finishedCollision && !finishedContactsOK)
+        {
+            approach->openHand();
+            approach->updateEEFPose(delta);
+
+            if (eef->getCollisionChecker()->checkCollision(object->getCollisionModel(), sos))
+            {
+                finishedCollision = true;
+                break;
+            }
+            auto contacts = eef->closeActors(object);
+            if (contacts.size()>=2)
+            {
+                approach->openHand();
+                finishedContactsOK = true;
+                break;
+            }
+            loop++;
+        }
+        return finishedContactsOK;
+    }
+
     VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(VirtualRobot::SceneObjectSetPtr obstacles)
     {
         auto start_time = chrono::high_resolution_clock::now();
@@ -95,13 +134,13 @@ namespace GraspStudio
         bool bRes = approach->setEEFToRandomApproachPose();
         if (bRes && obstacles)
         {
-            // CHECK VALID APPROCH POSE
+            // CHECK VALID APPROACH POSE
             VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
             VR_ASSERT(eef->getRobot());
             VR_ASSERT(obstacles);
 
             if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
-            {
+            {                
                 //                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
                 //return VirtualRobot::GraspPtr();
                 bRes = false;
@@ -114,6 +153,17 @@ namespace GraspStudio
             contacts = eef->closeActors(object);
 
             eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
+
+            // low number of contacts: check if it helps to move away (small object)
+            if (contacts.size()<2)
+            {
+                VR_INFO << "Low number of contacts, retreating hand (small object)" << endl;
+                if (moveEEFAway(approach->getApproachDirGlobal(),2.0f,30))
+                {
+                    contacts = eef->closeActors(object);
+                    eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
+                }
+            }
 
             if (obstacles)
             {

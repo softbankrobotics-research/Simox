@@ -86,9 +86,12 @@ namespace GraspStudio
         Eigen::Vector3f getApproachDirGlobal();
 
         std::string getName();
+
+        // opens hand by setting the preshape (if defined) or just opening the actors in case no preshape has been defined
+        virtual void openHand();
+
     protected:
 
-        virtual void openHand();
 
         VirtualRobot::SceneObjectPtr object;
         VirtualRobot::TriMeshModelPtr objectModel;

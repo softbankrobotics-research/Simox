@@ -69,6 +69,8 @@ namespace GraspStudio
 
     protected:
 
+        bool moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops);
+
         bool timeout();
 
         VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
