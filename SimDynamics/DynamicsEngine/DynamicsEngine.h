@@ -108,8 +108,9 @@ namespace SimDynamics
 
         /*!
             Set floor. A standard floor object is created and added to the dynamics world.
+            \param friction If <=0.0, the standard friction parameter for novel objects is used.
         */
-        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up);
+        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction = 0.0f);
 
         /*!
             By default all collisions are enabled.

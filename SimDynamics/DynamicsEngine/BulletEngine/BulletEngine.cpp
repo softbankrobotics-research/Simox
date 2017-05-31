@@ -275,9 +275,12 @@ namespace SimDynamics
         return dynamicsWorld;
     }
 
-    void BulletEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up)
+    void BulletEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction)
     {
         MutexLockPtr lock = getScopedLock();
+
+        if (friction <= 0)
+            friction = bulletConfig->bulletObjectFriction;
         DynamicsEngine::createFloorPlane(pos, up);
         float size = float(floorExtendMM);//50000.0f; // mm
         float sizeSmall = float(floorDepthMM);// 500.0f;
@@ -309,9 +312,9 @@ namespace SimDynamics
         groundObject->getVisualization();
         groundObject->setSimulationType(VirtualRobot::SceneObject::Physics::eStatic);
 
+        groundObject->setFriction(friction);
+
         BulletObjectPtr groundObjectBt(new BulletObject(groundObject));
-
-
         floor = groundObjectBt;
 
         addObject(groundObjectBt);
