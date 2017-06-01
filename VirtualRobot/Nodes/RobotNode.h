@@ -101,7 +101,7 @@ namespace VirtualRobot
         /*!
             Set a joint value [rad].
             The internal matrices and visualizations are updated accordingly.
-            If you intend to update multiple joints, use \ref setJointValues for faster access.
+            If you intend to update multiple joints, use \ref setJointValueNoUpdate(float) for faster access.
         */
         void setJointValue(float q);
 
@@ -333,9 +333,7 @@ namespace VirtualRobot
             After setting all jointvalues the transformations are calculated by calling \ref applyJointValues()
             This method is used when multiple joints should be updated at once.
             Access by RobotNodeSets, Robots or RobotConfigs must be protected by a \ref WriteLock.
-            \param q The joint value.
-            \param updateTransformations When true, the transformation matrices of this joint and all child joints are updated (by calling applyJointValue()).
-            \param clampToLimits Consider joint limits. When false an exception is thrown in case of invalid values.
+            \param q The joint value [rad] eventually clamped to limits.
         */
         virtual void setJointValueNoUpdate(float q);
 

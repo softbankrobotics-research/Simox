@@ -47,6 +47,7 @@ namespace VirtualRobot
         optionalDHParameter.isSet = false;
         //globalPosePostJoint = Eigen::Matrix4f::Identity();
         jointValue = 0.0f;
+        limitless = false;
     }
 
 
@@ -143,8 +144,6 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
 
-        //std::cout << "######## Setting Joint to: " << q << " degrees" << std::endl;
-
         if (q < jointLimitLo)
         {
             q = jointLimitLo;
@@ -161,8 +160,6 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE(initialized, "Not initialized");
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
-
-        //std::cout << "######## Setting Joint to: " << q << " degrees" << std::endl;
 
         if (q < jointLimitLo)
         {
@@ -355,7 +352,8 @@ namespace VirtualRobot
 
         physics.print();
 
-        cout << "* Limits: Lo:" << (!limitless ? std::to_string(jointLimitLo) : "no limit") << ", Hi:" << (!limitless ? std::to_string(jointLimitHi) : "no limit") << endl;
+        cout << "* Limits: Lo: " << jointLimitLo << ", Hi: " << jointLimitHi << endl;
+        cout << "* Limitless: " << limitless << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
