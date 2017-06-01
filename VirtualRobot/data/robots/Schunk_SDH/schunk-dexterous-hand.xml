@@ -308,6 +308,7 @@
 		<Child name='left_sdh_finger_11_joint'/>
 		<Child name='left_sdh_thumb_1_joint'/>
 		<Child name='TCP_L_precision'/>
+		<Child name='TCP_L_power'/>
 	</RobotNode>
 
 
@@ -441,6 +442,17 @@
 		</Transform>
 	</RobotNode>
 
+	<RobotNode name='TCP_L_power'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='190' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+	</RobotNode>
+
     <Endeffector name="TCP L" base="left_hand_base" tcp="TCP L">
 	    <Preshape name="Open Preshape">
 			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
@@ -464,7 +476,7 @@
 			<Node name="left_sdh_thumb_2_joint" unit="radian" value="0"/>
 			<Node name="left_sdh_thumb_3_joint" unit="radian" value="1"/>
         </Preshape>
-	    <Preshape name="Power Preshape" tcp="TCP_L_precision">
+	    <Preshape name="Power Preshape" tcp="TCP_L_power">
 			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
 			<Node name="left_sdh_finger_12_joint" unit="radian" value="-1"/>
 			<Node name="left_sdh_finger_13_joint" unit="radian" value="1"/>
