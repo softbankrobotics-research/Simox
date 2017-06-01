@@ -90,7 +90,7 @@ namespace VirtualRobot
      *
      * The values are stored in \p jointLimitLo and \p jointLimitHi
      */
-    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi)
+    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless)
     {
         THROW_VR_EXCEPTION_IF(!limitsXMLNode, "NULL data for limitsXMLNode in processLimitsNode()");
 
@@ -141,13 +141,30 @@ namespace VirtualRobot
         {
             jointLimitLo = unit.toRadian(jointLimitLo);
             jointLimitHi = unit.toRadian(jointLimitHi);
+            unit = Units("rad");
         }
 
         if (unit.isLength())
         {
             jointLimitLo = unit.toMillimeter(jointLimitLo);
             jointLimitHi = unit.toMillimeter(jointLimitHi);
+            unit = Units("mm");
         }
+
+        // limitless attribute
+        rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
+        if (llAttr != NULL)
+        {
+            limitless = isTrue(llAttr->value());
+            if (limitless && unit.isAngle() && (unit.toDegree(jointLimitHi) - unit.toDegree(jointLimitLo) != 360))
+            {
+                VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
+                           << "Setting 'lo' to -pi and 'hi' to pi [rad]..." << endl;
+                jointLimitLo = -M_PI;
+                jointLimitHi = M_PI;
+            }
+        }
+
     }
 
     bool RobotIO::processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath)
@@ -202,6 +219,7 @@ namespace VirtualRobot
     {
         float jointLimitLow = (float) - M_PI;
         float jointLimitHigh = (float)M_PI;
+        bool limitless = false;
 
         Eigen::Matrix4f preJointTransform = transformationMatrix;//Eigen::Matrix4f::Identity();
         Eigen::Vector3f axis = Eigen::Vector3f::Zero();
@@ -282,7 +300,7 @@ namespace VirtualRobot
             {
                 THROW_VR_EXCEPTION_IF(limitsNode, "Multiple limits definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 limitsNode = node;
-                processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh);
+                processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh, limitless);
             }
             else if (nodeName == "prejointtransform")
             {
