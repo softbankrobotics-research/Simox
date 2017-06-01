@@ -13,10 +13,6 @@
 
 #include <algorithm>
 
-
-
-
-
 #include <Eigen/Core>
 
 using namespace boost;
@@ -581,10 +577,10 @@ namespace VirtualRobot
 
         delta = target - jointValue;
 
-        // eventually take the other way around if it is faster and this joint is limitless.
-        if (limitless && (delta > M_PI))
+        // eventually take the other way around if it is shorter and if this joint is limitless.
+        if (limitless && (std::abs(delta) > M_PI))
         {
-            delta = (2 * M_PI) - delta;
+            delta = (-1) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta));
         }
 
         return delta;
