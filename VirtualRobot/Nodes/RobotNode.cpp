@@ -353,7 +353,7 @@ namespace VirtualRobot
         physics.print();
 
         cout << "* Limits: Lo: " << jointLimitLo << ", Hi: " << jointLimitHi << endl;
-        cout << "* Limitless: " << limitless << endl;
+        cout << "* Limitless: " << (limitless ? "true" : "false") << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
@@ -501,7 +501,7 @@ namespace VirtualRobot
         result->setMaxVelocity(maxVelocity);
         result->setMaxAcceleration(maxAcceleration);
         result->setMaxTorque(maxTorque);
-
+        result->setLimitless(limitless);
 
         std::map< std::string, float>::iterator it = propagatedJointValues.begin();
 

@@ -153,12 +153,9 @@ namespace VirtualRobot
 
         // limitless attribute
         rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
-        cout << "process joint" << endl;
         if (llAttr != NULL)
         {
-            cout << "************************************ limitless attribute found! ***************************************************" << endl;
             limitless = isTrue(llAttr->value());
-            cout << "limitless: " << limitless << endl;
             if (limitless && unit.isAngle() && (unit.toDegree(jointLimitHi) - unit.toDegree(jointLimitLo) != 360))
             {
                 VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
