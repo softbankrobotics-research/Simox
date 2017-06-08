@@ -30,6 +30,7 @@ namespace GraspStudio
         verbose = true;
         eval.fcCheck = forceClosure;
         eval.minQuality = minQuality;
+        retreatOnLowContacts = true;
     }
 
     GenericGraspPlanner::~GenericGraspPlanner()
@@ -155,10 +156,10 @@ namespace GraspStudio
             eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
 
             // low number of contacts: check if it helps to move away (small object)
-            if (contacts.size()<2)
+            if (retreatOnLowContacts && contacts.size()<2)
             {
                 VR_INFO << "Low number of contacts, retreating hand (small object)" << endl;
-                if (moveEEFAway(approach->getApproachDirGlobal(),2.0f,30))
+                if (moveEEFAway(approach->getApproachDirGlobal(),5.0f,10))
                 {
                     contacts = eef->closeActors(object);
                     eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
@@ -277,6 +278,11 @@ namespace GraspStudio
     {
         this->minQuality = minQuality;
         this->forceClosure = forceClosure;
+    }
+
+    void GenericGraspPlanner::setRetreatOnLowContacts(bool enable)
+    {
+        retreatOnLowContacts = enable;
     }
 
 

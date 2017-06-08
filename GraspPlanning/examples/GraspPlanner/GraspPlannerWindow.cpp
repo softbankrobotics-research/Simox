@@ -577,6 +577,7 @@ void GraspPlannerWindow::planObjectBatch()
             objectFile = path.toStdString();
             loadObject();
             {
+                planner->setRetreatOnLowContacts(false);
                 plan();
 //                save(boost::filesystem::path(path.toStdString()).replace_extension(".moxml").string());
                 float avgRate = 0;
@@ -602,7 +603,12 @@ void GraspPlannerWindow::planObjectBatch()
 //                    if(graspSum > 10)
 //                        break;
                 }
-                fs << object->getName() << "," << planner->getEvaluation().toCSVString() << "," << (avgRate/planner->getPlannedGrasps().size()) << "," << (avgForceClosureRate/planner->getPlannedGrasps().size());
+                if (planner->getPlannedGrasps().size()>0)
+                {
+                    avgRate /= planner->getPlannedGrasps().size();
+                    avgForceClosureRate /= planner->getPlannedGrasps().size();
+                }
+                fs << object->getName() << "," << planner->getEvaluation().toCSVString() << "," << avgRate << "," << avgForceClosureRate;
                 int i = 0;
                 for(auto bin : histogramFC)
                 {

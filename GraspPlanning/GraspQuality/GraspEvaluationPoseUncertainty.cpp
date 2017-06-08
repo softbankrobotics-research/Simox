@@ -105,21 +105,20 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     initPoseRPY[5] = rpy(2);
 
     float start[6];
-    float end[6];
     float dist[6];
     float tmpPose[6];
     for (int i = 0; i < 6; i++)
     {
+        start[i] = initPoseRPY[i];
         if (config.enableDimension[i])
         {
-            start[i] = initPoseRPY[i] - config.dimExtends[i];
-            end[i] = initPoseRPY[i] + config.dimExtends[i];
-            dist[i] = end[i] - start[i];
+            if (i<3)
+                dist[i] = config.posDeltaMM;
+            else
+                dist[i] = config.oriDeltaDeg/180.0f*float(M_PI);
         }
         else
         {
-            start[i] = initPoseRPY[i];
-            end[i] = initPoseRPY[i];
             dist[i] = 0.0f;
         }
     }

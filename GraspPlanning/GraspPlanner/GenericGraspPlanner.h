@@ -67,6 +67,11 @@ namespace GraspStudio
 
         void setParameters(float minQuality, bool forceClosure);
 
+        //! if enabled (default), the planner retreates the hand if the number of contacts is <2.
+        //! During retreat, the contacts are checked if a better situation can be achieved.
+        //! This procedure helps in case the object is small.
+        void setRetreatOnLowContacts(bool enable);
+
     protected:
 
         bool moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops);
@@ -85,6 +90,8 @@ namespace GraspStudio
         GraspStudio::ApproachMovementGeneratorPtr approach;
         float minQuality;
         bool forceClosure;
+
+        bool retreatOnLowContacts;
     };
 }
 

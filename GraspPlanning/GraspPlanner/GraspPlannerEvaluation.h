@@ -122,6 +122,7 @@ struct GraspPlannerEvaluation
     std::string toCSVString() const
     {
         float timeAcc = 0;
+        float avgTime = 0;
         float scoreAcc = 0;
         int nrGrasps = (int)timeGraspMS.size();
         int nrValid = 0;
@@ -146,11 +147,12 @@ struct GraspPlannerEvaluation
         {
             percPower = (float)nrPower / (float)nrGrasps;
             percPrec = (float)nrPrecision / (float)nrGrasps;
+            avgTime = timeAcc / (float)nrGrasps;
         }
         float avgScore = 0;
         if (nrValid>0)
         {
-            avgScore = scoreAcc / nrValid ;
+            avgScore = scoreAcc / nrValid;
         }
 
 
@@ -164,7 +166,7 @@ struct GraspPlannerEvaluation
            << nrGraspsInvalidCollision << ","
            << nrGraspsInvalidFC << ","
            << nrGraspsInvalidContacts << ","
-           << (float)timeAcc / (float)nrGrasps << ","
+           << avgTime << ","
            << percPower << ","
            << percPrec << ","
            << avgScore;

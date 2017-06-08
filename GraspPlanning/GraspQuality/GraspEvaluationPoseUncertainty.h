@@ -52,8 +52,11 @@ public:
             init();
         }
 
-        void init(float maxPosDelta = 10.0f, float maxOriDelta = 5.0f)
+        void init(float maxPosDelta = 10.0f, float maxOriDelta = 5.0f, bool normalDistribution = true)
 		{
+            useNormalDistribution = normalDistribution;
+            posDeltaMM = maxPosDelta;
+            oriDeltaDeg = maxOriDelta;
 			for (int i = 0; i < 6; i++)
 			{
 				enableDimension[i] = true;
@@ -70,8 +73,11 @@ public:
 		bool enableDimension[6];
 		float dimExtends[6];
 		float stepSize[6];
-        float useNormalDistribution = true;
+        float useNormalDistribution; // normal or uniform distribution
         bool verbose = false;
+
+        float posDeltaMM;
+        float oriDeltaDeg;
 	};
 
     struct PoseEvalResult
@@ -120,7 +126,7 @@ public:
 	std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP);
 	
     /*!
-        Computes a set of poses by randomly sampling within the exetnds of the configuration.
+        Computes a set of poses by randomly sampling within the extends of the configuration.
         \param objectGP The pose of the object.
         \param graspCenterGP This could be the pose of the object or the center of the contact points (as proposed in the paper)
         \param numPoses Number of poses to generate
