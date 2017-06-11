@@ -269,6 +269,17 @@ namespace VirtualRobot
             Inertia matrix in kg*m^2.
         */
         Eigen::Matrix3f getInertiaMatrix();
+        /**
+         * @brief If the Inertia Matrix is given at the CoM, this function returns the Inertia Matrix at the parallel shifted coordinate system.
+         * The shift is done using the parallel axis theorem (https://en.wikipedia.org/wiki/Parallel_axis_theorem)
+         * @param shift How the system should be shifted.
+         * @return The Inertia Matrix at the shifted system
+         */
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift);
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation);
+
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Matrix4f& transform);
+
         void setInertiaMatrix(const Eigen::Matrix3f& im);
 
         float getFriction();

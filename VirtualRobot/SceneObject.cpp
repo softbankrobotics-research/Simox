@@ -930,6 +930,24 @@ namespace VirtualRobot
         return physics.inertiaMatrix;
     }
 
+    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f &shift)
+    {
+        Eigen::Matrix3f skew;
+        skew << 0        , -shift(2), +shift(1),
+                +shift(2), 0        , -shift(0),
+                -shift(1), +shift(0),0;
+        return getInertiaMatrix() + getMass() * skew.transpose()*skew;
+    }
+
+    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation)
+    {
+        return rotation*getInertiaMatrix(shift)*rotation.transpose();
+    }
+    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Matrix4f& transform)
+    {
+        return getInertiaMatrix(transform.block<3,1>(0,3), transform.block<3,3>(0,0));
+    }
+
     std::string SceneObject::getSceneObjectXMLString(const std::string& basePath, int tabs)
     {
         std::stringstream ss;
