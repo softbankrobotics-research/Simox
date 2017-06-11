@@ -535,6 +535,17 @@ namespace VirtualRobot
         return res;
     }
 
+    std::vector<std::string> VirtualRobot::Robot::Robot::getRobotNodeSetNames() const
+    {
+        std::vector<std::string> res;
+        const auto sets = getRobotNodeSets();
+        res.reserve(sets.size());
+        for(const auto& set:sets)
+        {
+            res.emplace_back(set->getName());
+        }
+        return res;
+    }
 
     void Robot::highlight(VisualizationPtr visualization, bool enable)
     {
