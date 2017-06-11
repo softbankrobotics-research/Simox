@@ -834,16 +834,15 @@ namespace Saba
     {
         SABA_ASSERT(dim < dimension)
 
-        if (!(robotJoints[dim]->isTranslationalJoint()))
-        {
-            // rotational joint
-            if (abs((double)(robotJoints[dim]->getJointLimitHi() - robotJoints[dim]->getJointLimitLo())) > (1.9999999999999 * M_PI))
-            {
-                return true;
-            }
-        }
-
-        return false;
+//        if (!(robotJoints[dim]->isTranslationalJoint()))
+//        {
+//            // rotational joint
+//            if (abs((double)(robotJoints[dim]->getJointLimitHi() - robotJoints[dim]->getJointLimitLo())) > (1.9999999999999 * M_PI))
+//            {
+//                return true;
+//            }
+//        }
+        return robotJoints[dim]->isLimitless();
     }
 
     unsigned int CSpace::getDimension() const

@@ -144,14 +144,21 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
 
-        if (q < jointLimitLo)
+        if (!limitless)
         {
-            q = jointLimitLo;
-        }
+            if (q < jointLimitLo)
+            {
+                q = jointLimitLo;
+            }
 
-        if (q > jointLimitHi)
+            if (q > jointLimitHi)
+            {
+                q = jointLimitHi;
+            }
+        }
+        else
         {
-            q = jointLimitHi;
+            q = (((int) (q / M_PI)) % 2 == 0 ? jointLimitLo + M_PI : jointLimitLo) + std::fmod(q, jointLimitHi);
         }
 
         jointValue = q;
@@ -161,14 +168,21 @@ namespace VirtualRobot
         VR_ASSERT_MESSAGE(initialized, "Not initialized");
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
 
-        if (q < jointLimitLo)
+        if (!limitless)
         {
-            q = jointLimitLo;
-        }
+            if (q < jointLimitLo)
+            {
+                q = jointLimitLo;
+            }
 
-        if (q > jointLimitHi)
+            if (q > jointLimitHi)
+            {
+                q = jointLimitHi;
+            }
+        }
+        else
         {
-            q = jointLimitHi;
+            q = (((int) (q / M_PI)) % 2 == 0 ? jointLimitLo + M_PI : jointLimitLo) + std::fmod(q, jointLimitHi);
         }
 
         jointValue = q;
