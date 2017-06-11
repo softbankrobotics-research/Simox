@@ -73,7 +73,7 @@ namespace VirtualRobot
 
         if (robotNodeNames.empty())
         {
-            VR_WARNING << " No robot nodes in set..." << endl;
+            VR_WARNING << " No robot nodes in set '"<<name<<"'..." << endl;
         }
         else
         {
@@ -133,7 +133,7 @@ namespace VirtualRobot
 
         if (robotNodes.empty() || !robotNodes[0])
         {
-            VR_WARNING << " No robot nodes in set..." << endl;
+            VR_WARNING << " No robot nodes in set '"<<name<<"'..." << endl;
         }
         else
         {
