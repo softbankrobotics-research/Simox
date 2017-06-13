@@ -828,6 +828,11 @@ namespace VirtualRobot
         return result;
     }
 
+    RobotPtr Robot::clone()
+    {
+        return clone(getName());
+    }
+
     void Robot::createVisualizationFromCollisionModels()
     {
         std::vector<RobotNodePtr> robotNodes = this->getRobotNodes();

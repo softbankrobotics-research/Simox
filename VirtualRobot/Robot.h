@@ -245,6 +245,7 @@ namespace VirtualRobot
 
         */
         virtual RobotPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+        virtual RobotPtr clone();
 
         /*!
             Just storing the filename.
