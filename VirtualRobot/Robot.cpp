@@ -732,7 +732,8 @@ namespace VirtualRobot
 
     VirtualRobot::RobotPtr Robot::extractSubPart(RobotNodePtr startJoint, const std::string& newRobotType, const std::string& newRobotName, bool cloneRNS, bool cloneEEFs, CollisionCheckerPtr collisionChecker, float scaling)
     {
-        THROW_VR_EXCEPTION_IF(!hasRobotNode(startJoint), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(!startJoint, " StartJoint is nullptr");
+        THROW_VR_EXCEPTION_IF(!hasRobotNode(startJoint), " StartJoint '" + startJoint->getName() + "' is not part of this robot '" + getName() + "'");
         THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
         CollisionCheckerPtr colChecker = collisionChecker;
