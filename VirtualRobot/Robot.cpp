@@ -535,7 +535,7 @@ namespace VirtualRobot
         return res;
     }
 
-    std::vector<std::string> VirtualRobot::Robot::Robot::getRobotNodeSetNames() const
+    std::vector<std::string> Robot::getRobotNodeSetNames() const
     {
         std::vector<std::string> res;
         const auto sets = getRobotNodeSets();
