@@ -78,7 +78,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < p.size(); i++)
         {
             addPoint(p[i]);
-        }q
+        }
     }
 
     void BoundingBox::addPoints(const BoundingBox& bbox)
