@@ -537,18 +537,6 @@ namespace SimDynamics
 
             const ActuationMode& actuation = it->second.actuation;
 
-            btScalar posTarget = btScalar(it->second.jointValueTarget + link.jointValueOffset);
-            btScalar posActual = btScalar(getJointAngle(it->first));
-            btScalar velActual = btScalar(getJointSpeed(it->first));
-            btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
-            controller.setName(it->first->getName());
-
-            if (it->second.node->isTranslationalJoint())
-            {
-                posTarget *= 0.001;
-                posActual *= 0.001;
-            }
-
             // CHECK FOR DISABLED MOTORS
             if (actuation.mode == 0)
             {
@@ -627,26 +615,38 @@ namespace SimDynamics
             {
                 // POSITION, VELOCITY OR POSITION&VELOCITY MODE
 
-                double targetVelocity = 0;
-                if (actuation.modes.position && actuation.modes.velocity)
-                {
-//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", velTarget:" << velocityTarget << endl;
-                    targetVelocity = controller.update(posTarget - posActual, velocityTarget, actuation, btScalar(dt));
-                }
-                else if (actuation.modes.position)
-                {
-//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", posTarget " << posTarget << endl;
-                    targetVelocity = controller.update(posTarget - posActual, 0.0, actuation, btScalar(dt));
-                }
-                else if (actuation.modes.velocity)
+                btScalar velActual = btScalar(getJointSpeed(it->first));
+                btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
+
+                if (actuation.modes.velocity && !actuation.modes.position)
                 {
                     // bullet is buggy here and cannot reach velocity targets for some joints, use a position-velocity mode as workaround
                     it->second.jointValueTarget += velocityTarget * dt;
+                }
+
+                btScalar posTarget = btScalar(it->second.jointValueTarget + link.jointValueOffset);
+                btScalar posActual = btScalar(getJointAngle(it->first));
+                controller.setName(it->first->getName());
+
+                if (it->second.node->isTranslationalJoint())
+                {
+                    posTarget *= 0.001;
+                    posActual *= 0.001;
+                    velActual *= 0.001;
+                    velocityTarget *= 0.001;
+                }
+
+                double targetVelocity;
+                if (!actuation.modes.position)
+                {
+                    // we always use position or position-velocity mode
                     ActuationMode tempAct = actuation;
                     tempAct.modes.position = 1;
-                    targetVelocity = controller.update(it->second.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
-//                    if (it->first->getName() == "Upperarm R")
-//                        cout << "################### " << target.node->getName() << " velActual:" << velActual << ", velTarget " << velocityTarget << " targetVelocity " << targetVelocity <<  " pos target: " << target.jointValueTarget <<  " posActual: " << posActual << endl;
+                    targetVelocity = controller.update(posTarget - posActual, velocityTarget, tempAct, btScalar(dt));
+                }
+                else
+                {
+                    targetVelocity = controller.update(posTarget - posActual, velocityTarget, actuation, btScalar(dt));
                 }
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
@@ -669,7 +669,7 @@ namespace SimDynamics
                 else if (it->second.node->isTranslationalJoint() && !ignoreTranslationalJoints)
                 {
                     boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
-                    slider->setMaxLinMotorForce(maxImpulse);
+                    slider->setMaxLinMotorForce(maxImpulse * 1000); // Magic number!!!
                     slider->setTargetLinMotorVelocity(btScalar(targetVelocity));
                     slider->setPoweredLinMotor(true);
                 }
@@ -1110,7 +1110,7 @@ namespace SimDynamics
         {
             boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
 
-            return slider->getTargetLinMotorVelocity(); // / BulletObject::ScaleFactor;
+            return slider->getTargetLinMotorVelocity() * 1000; // / BulletObject::ScaleFactor; m -> mm
         }
     }
 
@@ -1148,7 +1148,7 @@ namespace SimDynamics
             boost::shared_ptr<RobotNodePrismatic> rnPrisJoint = boost::dynamic_pointer_cast<RobotNodePrismatic>(link.nodeJoint);
 
             Eigen::Vector3f jointDirection = rnPrisJoint->getGlobalPose().block<3, 3>(0, 0) * rnPrisJoint->getJointTranslationDirectionJointCoordSystem();
-            Eigen::Vector3f deltaVel = (link.dynNode2->getLinearVelocity() - link.dynNode1->getLinearVelocity()) / 1000;
+            Eigen::Vector3f deltaVel = (link.dynNode2->getLinearVelocity() - link.dynNode1->getLinearVelocity());
             return jointDirection.dot(deltaVel) / jointDirection.norm();
         }
         else
