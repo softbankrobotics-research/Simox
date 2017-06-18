@@ -127,6 +127,7 @@ void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
 
     // now its safe to update physical information and set the models to the according poses
     window->updateJointInfo();
+    window->updateRobotInfo();
 
     window->updateContactVisu();
     window->updateComVisu();
@@ -156,6 +157,7 @@ void SimDynamicsWindow::setupUI()
     connect(UI.spinBoxAntiAliasing, SIGNAL(valueChanged(int)), this, SLOT(updateAntiAliasing(int)));
 
     connect(UI.pushButtonAddObject, SIGNAL(clicked()), this, SLOT(addObject()));
+    connect(UI.pushButton_reloadRobot, SIGNAL(clicked()), this, SLOT(reloadRobot()));
 
     /*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
@@ -358,6 +360,11 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
         gp(2, 3) = -bbox.getMin()(2) + 4.0f;
         robot->setGlobalPose(gp);
         dynamicsRobot = dynamicsWorld->CreateDynamicsRobot(robot);
+        if(! UI.checkBox_selfCol->isChecked())
+        {
+            //we don't want to call this function with true (we would enable all collisions)
+            dynamicsRobot->enableSelfCollisions(false);
+        }
         dynamicsWorld->addRobot(dynamicsRobot);
     }
     catch (VirtualRobotException& e)
@@ -368,6 +375,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
     }
 
     updateJoints();
+    this->robotFilename = robotFilename;
     return true;
 }
 
@@ -415,7 +423,8 @@ void SimDynamicsWindow::updateJointInfo()
     QString qTarget("Joint target: 0");
     QString qVel("Joint velocity: 0");
     QString qVelTarget("Joint velocity target: 0");
-    QString qGP("GlobalPose (simox): 0/0/0");
+    QString qGP("GlobalPosition (simox): 0/0/0");
+    QString qGPRPY("GlobalRPY (simox): 0/0/0");
     QString qVisu("VISU (simox): 0/0/0");
     QString qCom("COM (bullet): 0/0/0");
     QString tmp;
@@ -654,23 +663,26 @@ void SimDynamicsWindow::updateJointInfo()
 
         Eigen::Matrix4f gp = rn->getGlobalPose();
 
-        qGP = QString("GlobalPose (simox):");
         tmp = QString::number(gp(0, 3), 'f', 2);
-        qGP += tmp;
         info += ",gp:";
         info += tmp.toStdString();
 
-        qGP += QString("/");
         tmp = QString::number(gp(1, 3), 'f', 2);
-        qGP += tmp;
         info += "/";
         info += tmp.toStdString();
 
-        qGP += QString("/");
         tmp = QString::number(gp(2, 3), 'f', 2);
-        qGP += tmp;
         info += "/";
         info += tmp.toStdString();
+
+        Eigen::Vector3f pos = rn->getGlobalPose().block<3,1>(0,3);
+        qGP = QString("GlobalPosition (simox): ") + QString::number(pos(0), 'f', 2) + " / " + QString::number(pos(1), 'f', 2) + " / " + QString::number(pos(2), 'f', 2);
+
+        auto rpy = VirtualRobot::MathTools::eigen4f2rpy(gp);
+        qGPRPY = "GlobalRPY (simox): " +
+                QString::number(rpy(0), 'f', 2) + " / "+
+                QString::number(rpy(1), 'f', 2) + " / "+
+                QString::number(rpy(2), 'f', 2);
 
         gp = rn->getGlobalPose();
         qVisu = QString("VISU (simox):");
@@ -705,6 +717,7 @@ void SimDynamicsWindow::updateJointInfo()
     UI.label_RNVelocity->setText(qVel);
     UI.label_RNVelocityTarget->setText(qVelTarget);
     UI.label_RNPosGP->setText(qGP);
+    UI.label_RNRPYGP->setText(qGPRPY);
     UI.label_RNPosVisu->setText(qVisu);
     UI.label_RNPosCom->setText(qCom);
 
@@ -717,6 +730,28 @@ void SimDynamicsWindow::updateJointInfo()
     }
 
 #endif
+}
+
+void SimDynamicsWindow::updateRobotInfo()
+{
+    Eigen::Vector3f com = robot->getCoMGlobal();
+    Eigen::Vector3f pos = robot->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getGlobalPose());
+
+    UI.label_RobotPos->setText(QString::number(pos(0), 'f', 2) + " / " + QString::number(pos(1), 'f', 2) + " / " + QString::number(pos(2), 'f', 2));
+    UI.label_RobotRPY->setText(QString::number(rpy(0), 'f', 2) + " / " + QString::number(rpy(1), 'f', 2) + " / " + QString::number(rpy(2), 'f', 2));
+    UI.label_RobotCom->setText(QString::number(com(0), 'f', 2) + " / " + QString::number(com(1), 'f', 2) + " / " + QString::number(com(2), 'f', 2));
+
+
+    Eigen::Vector3f rpos = robot->getRootNode()->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getGlobalPose());
+    UI.label_RootNodePos->setText(QString::number(rpos(0), 'f', 2) + " / " + QString::number(rpos(1), 'f', 2) + " / " + QString::number(rpos(2), 'f', 2));
+    UI.label_RootNodeRPY->setText(QString::number(rrpy(0), 'f', 2) + " / " + QString::number(rrpy(1), 'f', 2) + " / " + QString::number(rrpy(2), 'f', 2));
+
+    Eigen::Vector3f rltpos = robot->getRootNode()->getLocalTransformation().block<3,1>(0,3);
+    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getLocalTransformation());
+    UI.label_RootLocalTransfPos->setText(QString::number(rltpos(0), 'f', 2) + " / " + QString::number(rltpos(1), 'f', 2) + " / " + QString::number(rltpos(2), 'f', 2));
+    UI.label_RootLocalTransfRPY->setText(QString::number(rltrpy(0), 'f', 2) + " / " + QString::number(rltrpy(1), 'f', 2) + " / " + QString::number(rltrpy(2), 'f', 2));
 }
 
 void SimDynamicsWindow::jointValueChanged(int n)
@@ -960,4 +995,20 @@ void SimDynamicsWindow::addObject()
         buildVisualization();
     }
 
+}
+
+void SimDynamicsWindow::reloadRobot()
+{
+    if (RuntimeEnvironment::getDataFileAbsolute(robotFilename))
+    {
+        if (dynamicsRobot)
+        {
+            viewer->removeVisualization(dynamicsRobot);
+            dynamicsWorld->removeRobot(dynamicsRobot);
+        }
+
+        dynamicsRobot.reset();
+        loadRobot(robotFilename);
+        buildVisualization();
+    }
 }

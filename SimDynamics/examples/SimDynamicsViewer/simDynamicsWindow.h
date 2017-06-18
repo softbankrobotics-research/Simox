@@ -61,6 +61,7 @@ public slots:
     void updateAntiAliasing(int n);
     void comVisu();
     void updateJointInfo();
+    void updateRobotInfo();
 
     void startStopEngine();
     void stepEngine();
@@ -68,6 +69,9 @@ public slots:
     void checkBoxFixedTimeStep();
 
     void addObject();
+
+    void reloadRobot();
+
 protected:
     bool loadRobot(std::string robotFilename);
     void setupUI();
@@ -105,6 +109,7 @@ protected:
     std::map< VirtualRobot::RobotNodePtr, SoSeparator* > comVisuMap;
 
     bool useColModel;
+    std::string robotFilename;
 };
 
 #endif // __SimDynamics_WINDOW_H_
