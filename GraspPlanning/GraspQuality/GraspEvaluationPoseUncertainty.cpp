@@ -210,6 +210,8 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     PoseEvalResults res;
     res.avgQuality = 0.0f;
     res.forceClosureRate = 0.0f;
+    res.avgQualityCol = 0.0f;
+    res.forceClosureRateCol = 0.0f;
     res.numPosesTested = 0;
     res.numValidPoses = 0;
     res.numColPoses = 0;
@@ -251,9 +253,11 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
         {
             res.numValidPoses++;
             res.avgQuality += results.at(i).quality;
+            res.avgQualityCol += results.at(i).quality;
             if (results.at(i).forceClosure)
             {
                 res.forceClosureRate += 1.0f;
+                res.forceClosureRateCol += 1.0f;
                 res.numForceClosurePoses++;
             }
         }
@@ -263,6 +267,11 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     {
         res.forceClosureRate /= float(res.numValidPoses);
         res.avgQuality /= float(res.numValidPoses);
+    }
+    if (res.numPosesTested>0)
+    {
+        res.forceClosureRateCol /= float(res.numPosesTested);
+        res.avgQualityCol /= float(res.numPosesTested);
     }
 
     // restore setup

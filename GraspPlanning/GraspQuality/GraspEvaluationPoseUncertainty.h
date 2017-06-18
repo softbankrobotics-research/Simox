@@ -95,6 +95,8 @@ public:
         int numForceClosurePoses = 0.0;        // poses that have force closure
         float forceClosureRate = 0.0; // without collision poses
         float avgQuality = 0.0;       // without collision poses
+        float forceClosureRateCol = 0.0; // with collision poses
+        float avgQualityCol = 0.0;       // with collision poses
 
         void print()
         {
@@ -105,8 +107,10 @@ public:
             if (numPosesTested>0)
                 colPercent = float(numColPoses) / float(numPosesTested) * 100.0f;
             VR_INFO << "Num Poses initially in collision:" << numColPoses << " == " << colPercent << "%" << endl;
-            VR_INFO << "Avg Quality (valid poses):" << avgQuality << endl;
-            VR_INFO << "FC rate (valid poses):" << forceClosureRate * 100.0f << "%" << endl;
+            VR_INFO << "Avg Quality (only col freeposes):" << avgQuality << endl;
+            VR_INFO << "FC rate (only col free poses):" << forceClosureRate * 100.0f << "%" << endl;
+            VR_INFO << "Avg Quality (all poses):" << avgQualityCol << endl;
+            VR_INFO << "FC rate (all poses):" << forceClosureRateCol * 100.0f << "%" << endl;
         }
     };
 
