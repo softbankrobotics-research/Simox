@@ -104,7 +104,7 @@ protected:
 
     SoTimerSensor* timerSensor;
 
-    std::vector<VirtualRobot::RobotNodeRevolutePtr> robotNodes;
+    std::vector<VirtualRobot::RobotNodePtr> robotNodes;
 
     std::map< VirtualRobot::RobotNodePtr, SoSeparator* > comVisuMap;
 
