@@ -1,0 +1,4 @@
+Git can only track files and not directory.
+
+Therefore this file is added to all empty directories
+which need to be available after a Git clone.
