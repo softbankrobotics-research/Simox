@@ -289,7 +289,7 @@ namespace Saba
         /*!
             Interpolates between two values in dimension dim.
             Checks weather the corresponding joint moves translational or a rotational and performs the interpolation accordingly.
-            When joint boundaries of a rotational joint are >= 2PI (and checkForBorderlessDimensions was not disabled), the correct direction for interpolating is determined automatically.
+            When a rotational joint is limitless (and checkForBorderlessDimensions was not disabled), the correct direction for interpolating is determined automatically.
         */
         float interpolate(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2, int dim, float step);
         Eigen::VectorXf interpolate(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2, float step);
@@ -323,7 +323,8 @@ namespace Saba
         //! interpolates linear between a and b using step as step size
         float interpolateLinear(float a, float b, float step);
 
-        //! interpolates rotational between a and b using step as step size
+        //! interpolates rotational between a and b using step as step size ('a' and 'b' are expected to be in [0,2pi]).
+        //! The interpolation takes the direction of the shorter path between 'a' and 'b'.
         float interpolateRotational(float a, float b, float step);
 
         unsigned int dimension;                                     //!< dimension of this c-space

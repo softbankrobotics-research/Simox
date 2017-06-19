@@ -263,7 +263,8 @@ namespace Saba
         {
             float factor = extendStepSize / totalLength;
             // go a specific length in the direction of randomly found configuration
-            tmpConfig = nn->configuration + ((c - nn->configuration) * factor);
+            tmpConfig = cspace->interpolate(nn->configuration, c, factor);
+            //tmpConfig = nn->configuration + ((c - nn->configuration) * factor);
             //for (unsigned int i = 0; i < m_nDimension; i++)
             //  m_pExtendRrtNewValue[i] = m_nnNode->configuration[i] + ((extGoal[i] - m_nnNode->configuration[i]) * factor);
         }

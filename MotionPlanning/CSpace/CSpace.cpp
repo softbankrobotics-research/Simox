@@ -629,11 +629,13 @@ namespace Saba
         else
         {
             // borderless mode
-
+            // we map 'start' and 'end' to [0,2pi] (temporarily)
             float start = q1[dim] - robotJoints[dim]->getJointLimitLo();
             float end = q2[dim] - robotJoints[dim]->getJointLimitLo();
             float res = interpolateRotational(start, end , step);
+            // using fmod is okay here, because 'start' and 'end' where mapped to [0,2pi] and therefore 'res' is also in [0,2pi]
             res = (float)fmod((double)res, 2.0 * M_PI);
+            // map back to original interval
             res = res + robotJoints[dim]->getJointLimitLo();
             return res;
         }
