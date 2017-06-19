@@ -373,9 +373,9 @@ namespace VirtualRobot
         virtual std::vector<SensorPtr> getSensors();
 
         template<class SensorType>
-        std::vector<boost::shared_ptr<SensorType>> getSensors()
+        std::vector<boost::shared_ptr<SensorType> > getSensors()
         {
-            std::vector<boost::shared_ptr<SensorType>> result;
+            std::vector<boost::shared_ptr<SensorType> > result;
             std::vector<SensorPtr> sensors = getSensors();
             result.reserve(sensors.size());
             for(SensorPtr& sensor:sensors)
