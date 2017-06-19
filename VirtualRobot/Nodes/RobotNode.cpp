@@ -780,7 +780,7 @@ namespace VirtualRobot
         {
             if (rob && rob->getRootNode() == static_pointer_cast<RobotNode>(shared_from_this()))
             {
-                Eigen::Matrix4f gpPre = getLocalTransformation().inverse() * globalPose;
+                Eigen::Matrix4f gpPre = globalPose * getLocalTransformation().inverse();
                 rob->setGlobalPose(gpPre, false);
             }
             else
