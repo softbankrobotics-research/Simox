@@ -81,7 +81,7 @@ namespace VirtualRobot
         //! The axis oriented maximum value
         Eigen::Vector3f getMax() const;
 
-        //! set min/max to zero.
+        //! set min/max to NAN.
         void clear();
 
         /*!
