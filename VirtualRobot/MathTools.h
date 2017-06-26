@@ -115,7 +115,10 @@ namespace VirtualRobot
 
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const float x[6], Eigen::Matrix4f& m);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy, Eigen::Matrix4f& m);
+        void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw, Eigen::Matrix4f& m);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy);
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw);
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posquat2eigen4f(float x, float y, float z, float qx, float qy, float qz, float qw);
 
         /*!
             Convert homogeneous matrix to translation and rpy rotation.

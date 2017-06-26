@@ -300,12 +300,20 @@ namespace VirtualRobot
 
         posrpy2eigen4f(x, m);
     }
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw, Eigen::Matrix4f& m)
+    {
+        posrpy2eigen4f(Eigen::Vector3f{x, y, z}, Eigen::Vector3f{roll, pitch, yaw}, m);
+    }
 
     Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy)
     {
         Eigen::Matrix4f m;
         posrpy2eigen4f(pos, rpy,m );
         return m;
+    }
+    Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw)
+    {
+        return posrpy2eigen4f(Eigen::Vector3f{x, y, z}, Eigen::Vector3f{roll, pitch, yaw});
     }
 
     Eigen::Vector3f MathTools::getTranslation(const Eigen::Matrix4f& m)
@@ -2001,6 +2009,15 @@ namespace VirtualRobot
         q.w = qE.w();
 
         return q;*/
+    }
+
+    Eigen::Matrix4f VirtualRobot::MathTools::posquat2eigen4f(float x, float y, float z, float qx, float qy, float qz, float qw)
+    {
+        Eigen::Matrix4f r = quat2eigen4f(qx,qy,qz,qw);
+        r(0,3)=x;
+        r(1,3)=y;
+        r(2,3)=z;
+        return r;
     }
 
 
