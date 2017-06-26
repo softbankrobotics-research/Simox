@@ -13,10 +13,6 @@
 
 #include <algorithm>
 
-
-
-
-
 #include <Eigen/Core>
 
 using namespace boost;
@@ -51,6 +47,7 @@ namespace VirtualRobot
         optionalDHParameter.isSet = false;
         //globalPosePostJoint = Eigen::Matrix4f::Identity();
         jointValue = 0.0f;
+        limitless = false;
     }
 
 
@@ -147,16 +144,22 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
 
-        //std::cout << "######## Setting Joint to: " << q << " degrees" << std::endl;
-
-        if (q < jointLimitLo)
+        if (limitless)
         {
-            q = jointLimitLo;
+            while (q > jointLimitHi) q -= 2.0f * M_PI;
+            while (q < jointLimitLo) q += 2.0f * M_PI;
         }
-
-        if (q > jointLimitHi)
+        else
         {
-            q = jointLimitHi;
+            if (q < jointLimitLo)
+            {
+                q = jointLimitLo;
+            }
+
+            if (q > jointLimitHi)
+            {
+                q = jointLimitHi;
+            }
         }
 
         jointValue = q;
@@ -166,16 +169,24 @@ namespace VirtualRobot
         VR_ASSERT_MESSAGE(initialized, "Not initialized");
         VR_ASSERT_MESSAGE((!boost::math::isnan(q) && !boost::math::isinf(q)) , "Not a valid number...");
 
-        //std::cout << "######## Setting Joint to: " << q << " degrees" << std::endl;
-
-        if (q < jointLimitLo)
+        if (limitless)
         {
-            q = jointLimitLo;
+            // limitless joint: map q to allowed interval
+            while (q > jointLimitHi) q -= 2.0f * M_PI;
+            while (q < jointLimitLo) q += 2.0f * M_PI;
         }
-
-        if (q > jointLimitHi)
+        else
         {
-            q = jointLimitHi;
+            // non-limitless joint: clamp to borders
+            if (q < jointLimitLo)
+            {
+                q = jointLimitLo;
+            }
+
+            if (q > jointLimitHi)
+            {
+                q = jointLimitHi;
+            }
         }
 
         jointValue = q;
@@ -359,7 +370,8 @@ namespace VirtualRobot
 
         physics.print();
 
-        cout << "* Limits: Lo:" << jointLimitLo << ", Hi:" << jointLimitHi << endl;
+        cout << "* Limits: Lo: " << jointLimitLo << ", Hi: " << jointLimitHi << endl;
+        cout << "* Limitless: " << (limitless ? "true" : "false") << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
@@ -507,7 +519,7 @@ namespace VirtualRobot
         result->setMaxVelocity(maxVelocity);
         result->setMaxAcceleration(maxAcceleration);
         result->setMaxTorque(maxTorque);
-
+        result->setLimitless(limitless);
 
         std::map< std::string, float>::iterator it = propagatedJointValues.begin();
 
@@ -549,6 +561,45 @@ namespace VirtualRobot
     bool RobotNode::isRotationalJoint() const
     {
         return false;
+    }
+
+    void RobotNode::setLimitless(bool limitless)
+    {
+        this->limitless = limitless;
+    }
+
+    bool RobotNode::isLimitless()
+    {
+        return limitless;
+    }
+
+    float RobotNode::getDelta(float target)
+    {
+        float delta = 0.0f;
+
+        if (nodeType != Joint)
+        {
+            return delta;
+        }
+
+        // we check if the given target value violates our joint limits
+        if (!limitless)
+        {
+            if (target < jointLimitLo || target > jointLimitHi)
+            {
+                return delta;
+            }
+        }
+
+        delta = target - jointValue;
+
+        // eventually take the other way around if it is shorter and if this joint is limitless.
+        if (limitless && (std::abs(delta) > M_PI))
+        {
+            delta = (-1) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta));
+        }
+
+        return delta;
     }
 
 

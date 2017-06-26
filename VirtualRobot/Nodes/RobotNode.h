@@ -101,7 +101,7 @@ namespace VirtualRobot
         /*!
             Set a joint value [rad].
             The internal matrices and visualizations are updated accordingly.
-            If you intend to update multiple joints, use \ref setJointValues for faster access.
+            If you intend to update multiple joints, use \ref setJointValueNoUpdate(float) for faster access.
         */
         void setJointValue(float q);
 
@@ -191,6 +191,18 @@ namespace VirtualRobot
         virtual bool isTranslationalJoint() const;
         virtual bool isRotationalJoint() const;
 
+        /**
+         * @param limitless wheter this node has joint limits or not.
+         */
+        virtual void setLimitless(bool limitless);
+        bool isLimitless();
+
+        /**
+         * @param target the target joint value in [rad]
+         * @return the signed distance between current and target joint values in [rad].
+         *         If the given target value violates joint limits or this robotnode is not a joint, 0.0f is returned instead.
+         */
+        virtual float getDelta(float target);
 
         /*!
             Visualize the structure of this RobotNode.
@@ -321,9 +333,7 @@ namespace VirtualRobot
             After setting all jointvalues the transformations are calculated by calling \ref applyJointValues()
             This method is used when multiple joints should be updated at once.
             Access by RobotNodeSets, Robots or RobotConfigs must be protected by a \ref WriteLock.
-            \param q The joint value.
-            \param updateTransformations When true, the transformation matrices of this joint and all child joints are updated (by calling applyJointValue()).
-            \param clampToLimits Consider joint limits. When false an exception is thrown in case of invalid values.
+            \param q The joint value [rad] eventually clamped to limits.
         */
         virtual void setJointValueNoUpdate(float q);
 
@@ -358,6 +368,7 @@ namespace VirtualRobot
 
         float jointValueOffset;
         float jointLimitLo, jointLimitHi;
+        bool limitless; // whether this joint has limits or not (ignored if nodeType != Joint).
         DHParameter optionalDHParameter;            // When the joint is defined via DH parameters they are stored here
         float maxVelocity;          //! given in m/s
         float maxAcceleration;      //! given in m/s^2
