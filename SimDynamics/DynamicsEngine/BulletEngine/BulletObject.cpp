@@ -281,9 +281,10 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         /* convert to local coord system, apply comoffset and convert back*/
-        Eigen::Matrix4f poseCom = pose;
-        poseCom.block(0, 3, 3, 1) += com;
-        this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseCom));
+        Eigen::Matrix4f poseLocal = Eigen::Matrix4f::Identity();
+        poseLocal.block(0, 3, 3, 1) += com;
+        Eigen::Matrix4f poseGlobal = pose * poseLocal;
+        this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
         // notify motionState of non-robot nodes
         if(!boost::dynamic_pointer_cast<VirtualRobot::RobotNode>(sceneObject))
@@ -295,7 +296,7 @@ namespace SimDynamics
     void BulletObject::setPose(const Eigen::Matrix4f& pose)
     {
         MutexLockPtr lock = getScopedLock();
-        //DynamicsObject::setPose(pose);
+        DynamicsObject::setPose(pose);
         setPoseIntern(pose);
     }
 
