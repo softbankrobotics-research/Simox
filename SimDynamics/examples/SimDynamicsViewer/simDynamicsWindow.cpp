@@ -104,9 +104,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     // register callback
     float TIMER_MS = 30.0f;
     SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    timerSensor = new SoTimerSensor(timerCB, this);
+    timerSensor = new SoTimerSensor(timerCB, static_cast<void *>(this));
     timerSensor->setInterval(SbTime(TIMER_MS / 1000.0f));
     sensor_mgr->insertTimerSensor(timerSensor);
+
+    viewer->addStepCallback(stepCB, static_cast<void *>(this));
 }
 
 
@@ -132,6 +134,15 @@ void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
     window->updateContactVisu();
     window->updateComVisu();
 
+    window->UI.label_simuStepCount->setText(QString::number(window->simuStepCount));
+}
+
+void SimDynamicsWindow::stepCB(void *data, btScalar timeStep)
+{
+    SimDynamicsWindow* window = static_cast<SimDynamicsWindow*>(data);
+    VR_ASSERT(window);
+
+    window->simuStepCount++;
 }
 
 
@@ -158,6 +169,9 @@ void SimDynamicsWindow::setupUI()
 
     connect(UI.pushButtonAddObject, SIGNAL(clicked()), this, SLOT(addObject()));
     connect(UI.pushButton_reloadRobot, SIGNAL(clicked()), this, SLOT(reloadRobot()));
+
+    connect(UI.button_reset, SIGNAL(clicked()), this, SLOT(resetPose()));
+    connect(UI.button_set, SIGNAL(clicked()), this, SLOT(setPose()));
 
     /*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
@@ -1010,4 +1024,26 @@ void SimDynamicsWindow::reloadRobot()
         loadRobot(robotFilename);
         buildVisualization();
     }
+}
+
+void SimDynamicsWindow::resetPose()
+{
+    Eigen::Vector3f rpos = robot->getRootNode()->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getGlobalPose());
+
+    UI.spinBox_Pos_X->setValue(rpos[0]);
+    UI.spinBox_Pos_Y->setValue(rpos[1]);
+    UI.spinBox_Pos_Z->setValue(rpos[2]);
+
+    UI.spinBox_Rot_R->setValue(rrpy[0]);
+    UI.spinBox_Rot_P->setValue(rrpy[1]);
+    UI.spinBox_Rot_Y->setValue(rrpy[2]);
+}
+
+void SimDynamicsWindow::setPose()
+{
+    Eigen::Matrix4f pose = VirtualRobot::MathTools::rpy2eigen4f(UI.spinBox_Rot_R->value(), UI.spinBox_Rot_P->value(), UI.spinBox_Rot_Y->value());
+    pose.block<3, 1>(0, 3) = Eigen::Vector3f(UI.spinBox_Pos_X->value(), UI.spinBox_Pos_Y->value(), UI.spinBox_Pos_Z->value());
+
+    dynamicsRobot->setGlobalPose(pose);
 }
