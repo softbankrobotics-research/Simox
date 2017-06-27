@@ -826,6 +826,8 @@ namespace VirtualRobot
     {
         VirtualRobot::RobotPtr result = extractSubPart(this->getRootNode(), this->getType(), name, true, true, collisionChecker, scaling);
         result->setGlobalPose(getGlobalPose());
+        result->filename = filename;
+        result->type = type;
         return result;
     }
 
