@@ -36,11 +36,8 @@ namespace VirtualRobot
 
     BoundingBox::BoundingBox(const std::vector< Eigen::Vector3f >& p)
     {
-        if (p.size() == 0)
-        {
-            clear();
-        }
-        else
+        clear();
+        if (p.size() != 0)
         {
             addPoints(p);
         }
