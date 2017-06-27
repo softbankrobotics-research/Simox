@@ -460,8 +460,17 @@ namespace VirtualRobot
         return res;
     }
 
-
-
+    std::vector<std::string> Robot::getRobotNodeNames() const
+    {
+        std::vector<std::string> res;
+        const auto nodes = getRobotNodes();
+        res.reserve(nodes.size());
+        for(const auto& node:nodes)
+        {
+            res.emplace_back(node->getName());
+        }
+        return res;
+    }
 
     void Robot::setUpdateVisualization(bool enable)
     {

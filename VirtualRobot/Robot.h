@@ -155,6 +155,7 @@ namespace VirtualRobot
         virtual bool hasRobotNode(const std::string& robotNodeName) = 0;
         virtual RobotNodePtr getRobotNode(const std::string& robotNodeName) const = 0;
         virtual std::vector< RobotNodePtr > getRobotNodes() const;
+        virtual std::vector<std::string> getRobotNodeNames() const;
         virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) const  = 0;
 
         /*!
