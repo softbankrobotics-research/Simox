@@ -93,7 +93,7 @@ namespace VirtualRobot
         use_mutex = flag;
     }
 
-    RobotNodePtr LocalRobot::getRobotNode(const std::string& robotNodeName)
+    RobotNodePtr LocalRobot::getRobotNode(const std::string& robotNodeName) const
     {
         if (robotNodeMap.find(robotNodeName) == robotNodeMap.end())
         {
@@ -101,7 +101,7 @@ namespace VirtualRobot
             return RobotNodePtr();
         }
 
-        return robotNodeMap[robotNodeName];
+        return robotNodeMap.at(robotNodeName);
     }
 
     void LocalRobot::registerRobotNode(RobotNodePtr node)
@@ -436,7 +436,7 @@ namespace VirtualRobot
      * This method stores all nodes belonging to the robot in \p storeNodes.
      * If there are no registered nodes \p storeNodes will be empty.
      */
-    void LocalRobot::getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector /*=true*/)
+    void LocalRobot::getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector /*=true*/) const
     {
         if (clearVector)
         {
@@ -453,7 +453,7 @@ namespace VirtualRobot
         }
     }
 
-    std::vector< RobotNodePtr > Robot::getRobotNodes()
+    std::vector< RobotNodePtr > Robot::getRobotNodes() const
     {
         std::vector< RobotNodePtr > res;
         getRobotNodes(res);

@@ -153,9 +153,9 @@ namespace VirtualRobot
         virtual void deregisterRobotNode(RobotNodePtr node) = 0;
         virtual bool hasRobotNode(RobotNodePtr node) = 0;
         virtual bool hasRobotNode(const std::string& robotNodeName) = 0;
-        virtual RobotNodePtr getRobotNode(const std::string& robotNodeName) = 0;
-        virtual std::vector< RobotNodePtr > getRobotNodes();
-        virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) = 0;
+        virtual RobotNodePtr getRobotNode(const std::string& robotNodeName) const = 0;
+        virtual std::vector< RobotNodePtr > getRobotNodes() const;
+        virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) const  = 0;
 
         /*!
             This method is automatically called in RobotNodeSet's initialization routine.
@@ -465,8 +465,8 @@ namespace VirtualRobot
         virtual void deregisterRobotNode(RobotNodePtr node);
         virtual bool hasRobotNode(const std::string& robotNodeName);
         virtual bool hasRobotNode(RobotNodePtr node);
-        virtual RobotNodePtr getRobotNode(const std::string& robotNodeName);
-        virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true);
+        virtual RobotNodePtr getRobotNode(const std::string& robotNodeName) const;
+        virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) const;
 
         virtual void registerRobotNodeSet(RobotNodeSetPtr nodeSet);
         virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet);
