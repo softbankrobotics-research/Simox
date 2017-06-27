@@ -36,11 +36,8 @@ namespace VirtualRobot
 
     BoundingBox::BoundingBox(const std::vector< Eigen::Vector3f >& p)
     {
-        if (p.size() == 0)
-        {
-            clear();
-        }
-        else
+        clear();
+        if (p.size() != 0)
         {
             addPoints(p);
         }
@@ -49,6 +46,12 @@ namespace VirtualRobot
     std::vector <Eigen::Vector3f> BoundingBox::getPoints() const
     {
         std::vector < Eigen::Vector3f > points;
+
+        if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
+                std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
+        {
+            return points;
+        }
 
         points.push_back(Eigen::Vector3f(min(0), min(1), min(2)));
         points.push_back(Eigen::Vector3f(min(0), min(1), max(2)));

@@ -28,6 +28,7 @@
 
 
 #include <vector>
+#include <atomic>
 
 #include "ui_simDynamicsViewer.h"
 
@@ -72,6 +73,9 @@ public slots:
 
     void reloadRobot();
 
+    void resetPose();
+    void setPose();
+
 protected:
     bool loadRobot(std::string robotFilename);
     void setupUI();
@@ -101,6 +105,7 @@ protected:
 
     // beside the viewer cb we need also a callback to update joint info
     static void timerCB(void* data, SoSensor* sensor);
+    static void stepCB(void* data, btScalar timeStep);
 
     SoTimerSensor* timerSensor;
 
@@ -110,6 +115,8 @@ protected:
 
     bool useColModel;
     std::string robotFilename;
+
+    std::atomic_uint_fast64_t simuStepCount{0};
 };
 
 #endif // __SimDynamics_WINDOW_H_

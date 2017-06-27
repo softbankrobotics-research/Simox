@@ -142,7 +142,10 @@ namespace SimDynamics
                     joint = bodyB;
                 }
 
-                createLink(bodyA, joint, /*joint2,*/ bodyB);
+                if (bodyA != bodyB)
+                {
+                    createLink(bodyA, joint, /*joint2,*/ bodyB);
+                }
             }
 
         }
