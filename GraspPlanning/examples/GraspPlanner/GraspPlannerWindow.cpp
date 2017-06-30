@@ -14,15 +14,18 @@
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
+#include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
+
 #include <QFileDialog>
+#include <QProgressDialog>
+
 #include <Eigen/Geometry>
 
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-
+#include <sstream>
 
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
@@ -32,9 +35,7 @@
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoScale.h>
 
-#include <sstream>
 
-#include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
 using namespace std;
 using namespace VirtualRobot;
 using namespace GraspStudio;
