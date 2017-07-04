@@ -510,36 +510,6 @@
         <string>Visualization</string>
        </property>
       </widget>
-      <zorder>pushButtonReset</zorder>
-      <zorder>pushButtonClose</zorder>
-      <zorder>pushButtonOpen</zorder>
-      <zorder>comboBoxEEF</zorder>
-      <zorder>label</zorder>
-      <zorder>pushButtonQuality</zorder>
-      <zorder>pushButtonLoad</zorder>
-      <zorder>groupBox_4</zorder>
-      <zorder>frameViewer</zorder>
-      <zorder>frameViewer</zorder>
-      <zorder>frameViewer</zorder>
-      <zorder>label_12</zorder>
-      <zorder>comboBoxGrasp</zorder>
-      <zorder>checkBoxCones</zorder>
-      <zorder>checkBoxColModel</zorder>
-      <zorder>pushButtonToTCP</zorder>
-      <zorder>label_8</zorder>
-      <zorder>label_7</zorder>
-      <zorder>label_9</zorder>
-      <zorder>label_4</zorder>
-      <zorder>horizontalSliderX</zorder>
-      <zorder>label_5</zorder>
-      <zorder>horizontalSliderPi</zorder>
-      <zorder>label_3</zorder>
-      <zorder>horizontalSliderY</zorder>
-      <zorder>label_6</zorder>
-      <zorder>horizontalSliderZ</zorder>
-      <zorder>horizontalSliderRo</zorder>
-      <zorder>horizontalSliderYa</zorder>
-      <zorder>label_13</zorder>
      </widget>
     </item>
     <item row="0" column="0">

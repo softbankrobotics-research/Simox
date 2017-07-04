@@ -329,7 +329,7 @@ void GraspPlannerWindow::loadObject()
     qualityMeasure.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(object));
     //qualityMeasure->setVerbose(true);
     qualityMeasure->calculateObjectProperties();
-    approach.reset(new GraspStudio::ApproachMovementSurfaceNormal(object, eef));
+    approach.reset(new GraspStudio::ApproachMovementSurfaceNormal(object, eef, preshape));
     eefCloned = approach->getEEFRobotClone();
 
     if (robot && eef)
@@ -474,7 +474,13 @@ void GraspPlannerWindow::openEEF()
 
     if (eefCloned && eefCloned->getEndEffector(eefName))
     {
-        eefCloned->getEndEffector(eefName)->openActors();
+        if (!preshape.empty())
+        {
+            eefCloned->getEndEffector(eefName)->setPreshape(preshape);
+        } else
+        {
+            eefCloned->getEndEffector(eefName)->openActors();
+        }
     }
 
     buildVisu();
