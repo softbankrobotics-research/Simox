@@ -42,6 +42,8 @@ namespace VirtualRobot
         Eigen::VectorXf optimizationGradient(unsigned int id);
         bool checkTolerances();
 
+        Eigen::Vector3f getTarget();
+
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;

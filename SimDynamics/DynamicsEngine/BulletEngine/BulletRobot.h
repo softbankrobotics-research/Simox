@@ -26,7 +26,7 @@
 #include "../DynamicsRobot.h"
 #include "BulletObject.h"
 
-#include <btBulletDynamicsCommon.h>
+#include "btBulletDynamicsCommon.h"
 
 namespace SimDynamics
 {
@@ -60,7 +60,6 @@ namespace SimDynamics
         };
 
         typedef boost::shared_ptr<LinkInfo> LinkInfoPtr;
-
 
         /**
          * @brief The force torque output needs to be activated before use

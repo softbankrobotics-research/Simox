@@ -206,6 +206,13 @@ namespace VirtualRobot
         std::for_each(faces.begin(), faces.end(), std::mem_fun_ref(&MathTools::TriangleFace::flipOrientation));
     }
 
+    void TriMeshModel::setColor(VisualizationFactory::Color color)
+    {
+        colors.clear();
+        for (size_t i=0; i<vertices.size(); i++)
+            colors.push_back(color);
+    }
+
 
     /**
      * This method calculates the center of mass by accumulating all vertices and

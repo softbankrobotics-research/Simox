@@ -60,6 +60,7 @@ namespace VirtualRobot
             // data members
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
             float massKg;               //!< The mass of this object
+            float friction;             //!< Friction of this object. Use -1.0 to use simulator's default value.
             CoMLocation comLocation;    //!< Where is the CoM located
             Eigen::Matrix3f inertiaMatrix; //! in kg*m^2
             SimulationType simType;
@@ -225,6 +226,22 @@ namespace VirtualRobot
          * @param im The inertia matrix in kg*m^2.
          */
         void setInertiaMatrix(const Eigen::Matrix3f& im);
+        
+         /**
+         * @brief If the Inertia Matrix is given at the CoM, this function returns the Inertia Matrix at the parallel shifted coordinate system.
+         * The shift is done using the parallel axis theorem (https://en.wikipedia.org/wiki/Parallel_axis_theorem)
+         * @param shift How the system should be shifted.
+         * @return The Inertia Matrix at the shifted system
+         */
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift);
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation);
+
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Matrix4f& transform);
+
+        float getFriction();
+        void setFriction(float friction);
+
+
 
     protected:
         bool initializePhysics();

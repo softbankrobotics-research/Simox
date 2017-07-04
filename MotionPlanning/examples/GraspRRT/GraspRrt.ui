@@ -23,7 +23,6 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <zorder>groupBox</zorder>
      </widget>
     </item>
     <item row="0" column="1">
@@ -43,7 +42,7 @@
          <x>100</x>
          <y>430</y>
          <width>231</width>
-         <height>91</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="title">
@@ -54,7 +53,7 @@
          <rect>
           <x>20</x>
           <y>20</y>
-          <width>101</width>
+          <width>141</width>
           <height>21</height>
          </rect>
         </property>
@@ -65,9 +64,9 @@
        <widget class="QCheckBox" name="checkBoxShowRRT">
         <property name="geometry">
          <rect>
-          <x>130</x>
-          <y>40</y>
-          <width>51</width>
+          <x>20</x>
+          <y>60</y>
+          <width>71</width>
           <height>20</height>
          </rect>
         </property>
@@ -80,7 +79,7 @@
          <rect>
           <x>20</x>
           <y>40</y>
-          <width>71</width>
+          <width>101</width>
           <height>20</height>
          </rect>
         </property>
@@ -92,7 +91,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>60</y>
+          <y>80</y>
           <width>151</width>
           <height>20</height>
          </rect>
@@ -104,8 +103,8 @@
        <widget class="QCheckBox" name="checkBoxGrasps">
         <property name="geometry">
          <rect>
-          <x>130</x>
-          <y>20</y>
+          <x>140</x>
+          <y>60</y>
           <width>71</width>
           <height>20</height>
          </rect>
@@ -121,7 +120,7 @@
          <x>10</x>
          <y>540</y>
          <width>331</width>
-         <height>111</height>
+         <height>141</height>
         </rect>
        </property>
        <property name="title">
@@ -145,7 +144,7 @@
          <rect>
           <x>10</x>
           <y>70</y>
-          <width>211</width>
+          <width>301</width>
           <height>20</height>
          </rect>
         </property>
@@ -167,9 +166,6 @@
         </property>
         <property name="smallDecimalPoint">
          <bool>true</bool>
-        </property>
-        <property name="numDigits">
-         <number>5</number>
         </property>
         <property name="digitCount">
          <number>5</number>
@@ -194,9 +190,9 @@
        <widget class="QRadioButton" name="radioButtonSolutionOpti">
         <property name="geometry">
          <rect>
-          <x>100</x>
+          <x>130</x>
           <y>20</y>
-          <width>131</width>
+          <width>191</width>
           <height>20</height>
          </rect>
         </property>
@@ -210,8 +206,8 @@
        <widget class="QPushButton" name="pushButtonClose">
         <property name="geometry">
          <rect>
-          <x>240</x>
-          <y>20</y>
+          <x>140</x>
+          <y>90</y>
           <width>81</width>
           <height>31</height>
          </rect>
@@ -223,8 +219,8 @@
        <widget class="QPushButton" name="pushButtonOpen">
         <property name="geometry">
          <rect>
-          <x>240</x>
-          <y>60</y>
+          <x>40</x>
+          <y>90</y>
           <width>81</width>
           <height>31</height>
          </rect>
@@ -251,7 +247,7 @@
          <rect>
           <x>10</x>
           <y>20</y>
-          <width>81</width>
+          <width>101</width>
           <height>28</height>
          </rect>
         </property>
@@ -262,9 +258,9 @@
        <widget class="QComboBox" name="comboBoxGoal">
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>130</x>
           <y>90</y>
-          <width>211</width>
+          <width>191</width>
           <height>22</height>
          </rect>
         </property>
@@ -298,9 +294,9 @@
        <widget class="QComboBox" name="comboBoxStart">
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>130</x>
           <y>60</y>
-          <width>211</width>
+          <width>191</width>
           <height>22</height>
          </rect>
         </property>
@@ -310,7 +306,7 @@
          <rect>
           <x>120</x>
           <y>340</y>
-          <width>62</width>
+          <width>71</width>
           <height>22</height>
          </rect>
         </property>
@@ -335,7 +331,7 @@
          <rect>
           <x>120</x>
           <y>370</y>
-          <width>62</width>
+          <width>71</width>
           <height>22</height>
          </rect>
         </property>
@@ -399,7 +395,7 @@
          <rect>
           <x>10</x>
           <y>120</y>
-          <width>91</width>
+          <width>111</width>
           <height>16</height>
          </rect>
         </property>
@@ -410,9 +406,9 @@
        <widget class="QComboBox" name="comboBoxRNS">
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>130</x>
           <y>120</y>
-          <width>211</width>
+          <width>191</width>
           <height>22</height>
          </rect>
         </property>
@@ -432,9 +428,9 @@
         <widget class="QComboBox" name="comboBoxColModelRobotStatic">
          <property name="geometry">
           <rect>
-           <x>130</x>
+           <x>150</x>
            <y>50</y>
-           <width>171</width>
+           <width>161</width>
            <height>22</height>
           </rect>
          </property>
@@ -444,7 +440,7 @@
           <rect>
            <x>10</x>
            <y>50</y>
-           <width>111</width>
+           <width>141</width>
            <height>16</height>
           </rect>
          </property>
@@ -457,7 +453,7 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>101</width>
+           <width>131</width>
            <height>16</height>
           </rect>
          </property>
@@ -468,9 +464,9 @@
         <widget class="QComboBox" name="comboBoxColModelRobot">
          <property name="geometry">
           <rect>
-           <x>130</x>
+           <x>150</x>
            <y>20</y>
-           <width>171</width>
+           <width>161</width>
            <height>22</height>
           </rect>
          </property>
@@ -491,9 +487,9 @@
         <widget class="QComboBox" name="comboBoxColModelEnv">
          <property name="geometry">
           <rect>
-           <x>130</x>
+           <x>150</x>
            <y>80</y>
-           <width>171</width>
+           <width>161</width>
            <height>22</height>
           </rect>
          </property>
@@ -515,9 +511,9 @@
        <widget class="QComboBox" name="comboBoxEEF">
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>130</x>
           <y>150</y>
-          <width>211</width>
+          <width>191</width>
           <height>22</height>
          </rect>
         </property>
@@ -525,10 +521,10 @@
        <widget class="QLabel" name="label_13">
         <property name="geometry">
          <rect>
-          <x>150</x>
+          <x>120</x>
           <y>310</y>
-          <width>91</width>
-          <height>16</height>
+          <width>121</width>
+          <height>20</height>
          </rect>
         </property>
         <property name="text">
@@ -610,7 +606,7 @@
      <x>0</x>
      <y>0</y>
      <width>1055</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

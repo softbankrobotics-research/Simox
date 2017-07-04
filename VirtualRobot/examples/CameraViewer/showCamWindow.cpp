@@ -351,7 +351,7 @@ void showCamWindow::selectJoint(int nr)
     }
     else
     {
-        UI.horizontalSliderPos->setValue(500);
+        //UI.horizontalSliderPos->setValue(500);
         UI.horizontalSliderPos->setEnabled(false);
     }
 

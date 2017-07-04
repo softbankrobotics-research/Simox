@@ -136,6 +136,16 @@ namespace SimDynamics
             } // end of scope -> lock gets deleted and mutex is released automatically
         */
         MutexLockPtr getScopedLock();
+
+        void setPIDParameters(float p, float i, float d);
+
+        /**
+         * @brief Will enable or disable all collisions between the bodies of this robot.
+         * @param enable
+         * @note If true, this will overwrite all ignored collisions, that were individually set.
+         */
+        virtual void enableSelfCollisions(bool enable);
+
     protected:
 
         virtual void createDynamicsNode(VirtualRobot::RobotNodePtr node);
@@ -170,6 +180,9 @@ namespace SimDynamics
 
         std::vector<VirtualRobot::RobotNodePtr> robotNodes;
         std::map<VirtualRobot::RobotNodePtr, DynamicsObjectPtr> dynamicRobotNodes;
+        float PID_p = 10.f;
+        float PID_i = 0.f;
+        float PID_d = 0.f;
 
         boost::shared_ptr <boost::recursive_mutex> engineMutexPtr;
     };

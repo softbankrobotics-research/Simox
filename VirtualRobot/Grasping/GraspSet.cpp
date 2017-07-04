@@ -202,6 +202,14 @@ namespace VirtualRobot
         return false;
     }
 
+    bool GraspSet::removeGrasp(unsigned int i)
+    {
+        GraspPtr g = getGrasp(i);
+        if (!g)
+            return false;
+        return removeGrasp(g);
+    }
+
     void GraspSet::removeAllGrasps()
     {
         grasps.clear();

@@ -98,15 +98,16 @@ void showRobotWindow::setupUI()
 
     // setup
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
 
-    viewer->setAntialiasing(true, 4);
 
     viewer->setGLRenderAction(new SoLineHighlightRenderAction);
     viewer->setTransparencyType(SoGLRenderAction::BLEND);
     viewer->setFeedbackVisibility(true);
     viewer->setSceneGraph(sceneSep);
     viewer->viewAll();
+
+    viewer->setAccumulationBuffer(true);
+    viewer->setAntialiasing(true, 4);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));

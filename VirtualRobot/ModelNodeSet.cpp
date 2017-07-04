@@ -645,4 +645,25 @@ namespace VirtualRobot
         }
         return modelLinks;
     }
+    
+    std::vector<std::string> ModelNodeSet::getNodeNames() const
+    {
+        std::vector<std::string> res;
+        for (auto n: robotNodes)
+            res.push_back(n->getName());
+        return res;
+    }
+    
+    std::map<std::string, float> ModelNodeSet::getJointValueMap() const
+    {
+        std::map<std::string, float> res;
+        for (auto n: robotNodes)
+        {
+            res[n->getName()] = n->getJointValue();
+        }
+        return res;
+    }
+
+
+
 }

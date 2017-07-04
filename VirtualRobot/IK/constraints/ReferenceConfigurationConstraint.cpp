@@ -33,7 +33,7 @@ ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPt
     // Use zero reference by default
     setReferenceConfiguration(Eigen::VectorXf::Zero(nodeSet->getSize()));
 
-    // Joint limit avoidance is considered a soft constraint
+    // Reference configuration is considered a soft constraint
     addOptimizationFunction(0, true);
 
     initialized = true;

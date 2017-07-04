@@ -29,6 +29,7 @@
 #include <string>
 #include <fstream>
 
+#ifndef WIN32
 struct OutputConfiguration
 {
     OutputConfiguration()
@@ -51,6 +52,7 @@ struct OutputConfiguration
     std::ofstream logFile;
 };
 
-BOOST_GLOBAL_FIXTURE(OutputConfiguration)
+BOOST_GLOBAL_FIXTURE(OutputConfiguration);
+#endif
 
 #endif /* _VirtualRobot_Test_h_ */

@@ -27,7 +27,7 @@ using namespace std;
 using namespace VirtualRobot;
 using namespace SimDynamics;
 
-SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename, Qt::WFlags /*flags*/)
+SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
@@ -585,7 +585,7 @@ void SimDynamicsWindow::updateJointInfo()
         tmp = QString::number(rn->getJointValue(), 'f', 3);
         qJV += tmp;
         info += "jv rn:";
-        std::string a1 = (const char*)tmp.toAscii();
+        std::string a1 = tmp.toStdString();
         info += a1;
 
         qJV += QString(" / ");
@@ -601,7 +601,7 @@ void SimDynamicsWindow::updateJointInfo()
 
         qJV += tmp;
         info += ",\tjv bul:";
-        a1 = (const char*)tmp.toAscii();
+        a1 = tmp.toStdString();
         info += a1;
 
         qTarget = QString("Joint target: ");
@@ -617,7 +617,7 @@ void SimDynamicsWindow::updateJointInfo()
 
         qTarget += tmp;
         info += std::string(",targ:");
-        a1 = (const char*)tmp.toAscii();
+        a1 = tmp.toStdString();
         info += a1;
 
         qVel = QString("Joint velocity: ");
@@ -633,7 +633,7 @@ void SimDynamicsWindow::updateJointInfo()
 
         qVel += tmp;
         info += ",vel:";
-        a1 = (const char*)tmp.toAscii();
+        a1 = tmp.toStdString();
         info += a1;
 
         qVelTarget = QString("Joint velocity target: ");
@@ -649,7 +649,7 @@ void SimDynamicsWindow::updateJointInfo()
 
         qVelTarget += tmp;
         info += ",velTarget:";
-        a1 = (const char*)tmp.toAscii();
+        a1 = tmp.toStdString();
         info += a1;
 
         Eigen::Matrix4f gp = rn->getGlobalPose();
@@ -658,19 +658,19 @@ void SimDynamicsWindow::updateJointInfo()
         tmp = QString::number(gp(0, 3), 'f', 2);
         qGP += tmp;
         info += ",gp:";
-        info += (const char*)tmp.toAscii();
+        info += tmp.toStdString();
 
         qGP += QString("/");
         tmp = QString::number(gp(1, 3), 'f', 2);
         qGP += tmp;
         info += "/";
-        info += (const char*)tmp.toAscii();
+        info += tmp.toStdString();
 
         qGP += QString("/");
         tmp = QString::number(gp(2, 3), 'f', 2);
         qGP += tmp;
         info += "/";
-        info += (const char*)tmp.toAscii();
+        info += tmp.toStdString();
 
         gp = rn->getGlobalPose();
         qVisu = QString("VISU (simox):");
@@ -849,7 +849,7 @@ void SimDynamicsWindow::loadButton()
     QString fileName = QFileDialog::getOpenFileName(this,
                        tr("Select Robot File"), "",
                        tr("Simox Robot File (*.xml)"));
-    std::string f = (const char*)fileName.toAscii();
+    std::string f = fileName.toStdString();
 
     if (RuntimeEnvironment::getDataFileAbsolute(f))
     {

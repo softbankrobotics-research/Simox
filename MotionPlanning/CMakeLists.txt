@@ -48,6 +48,7 @@ Planner/PlanningThread.cpp
 Visualization/RrtWorkspaceVisualization.cpp
 PostProcessing/PathProcessor.cpp
 PostProcessing/ShortcutProcessor.cpp
+PostProcessing/ElasticBandProcessor.cpp
 PostProcessing/PathProcessingThread.cpp
 ApproachDiscretization.cpp
 )
@@ -70,6 +71,7 @@ Planner/PlanningThread.h
 Visualization/RrtWorkspaceVisualization.h
 PostProcessing/PathProcessor.h
 PostProcessing/ShortcutProcessor.h
+PostProcessing/ElasticBandProcessor.h
 PostProcessing/PathProcessingThread.h
 ApproachDiscretization.h
 )

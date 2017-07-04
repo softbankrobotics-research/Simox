@@ -32,8 +32,12 @@ ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const Robo
     ConstrainedIK(robot, nodeSet, 30),
     nodeSet(nodeSet),
     timeout(timeout),
-    globalTolerance(globalTolerance)
+    globalTolerance(globalTolerance),
+    functionValueTolerance(1e-6),
+    optimizationValueTolerance(1e-4)
 {
+    setRandomSamplingDisplacementFactor(1);
+
     clearSeeds();
     addSeed(eSeedInitial);
     addSeed(eSeedZero);
@@ -64,8 +68,8 @@ bool ConstrainedOptimizationIK::initialize()
     }
 
     optimizer->set_maxtime(timeout);
-    optimizer->set_ftol_abs(1e-6);
-    optimizer->set_xtol_abs(1e-4);
+    optimizer->set_ftol_abs(functionValueTolerance);
+    optimizer->set_xtol_abs(optimizationValueTolerance);
 
     optimizer->set_min_objective(optimizationFunctionWrapper, this);
 
@@ -102,16 +106,18 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     {
         numIterations = 0;
 
+        //std::cout << "################################# New attempt: " << attempt << std::endl;
+
         int size = nodeSet->getSize();
         std::vector<double> x(size);
 
         if(attempt >= seeds.size())
         {
-            // Try random configurations
+            // Try random configurations sampled around initial config
             for(int i = 0; i < size; i++)
             {
-                float t = (rand()%1000) / 1000.0;
-                x[i] = nodeSet->getNode(i)->getJointLimitLo() + t * (nodeSet->getNode(i)->getJointLimitHi() - nodeSet->getNode(i)->getJointLimitLo());
+                float t = (rand()%1001) / 1000.0;
+                x[i] = initialConfig(i) + randomSamplingDisplacementFactor * (nodeSet->getNode(i)->getJointLimitLo() + t * (nodeSet->getNode(i)->getJointLimitHi() - nodeSet->getNode(i)->getJointLimitLo()) - initialConfig(i));
             }
         }
         else
@@ -210,6 +216,11 @@ bool ConstrainedOptimizationIK::solveStep()
     THROW_VR_EXCEPTION("Stepwise solving not possible with optimization IK");
 }
 
+void ConstrainedOptimizationIK::setRandomSamplingDisplacementFactor(float displacementFactor)
+{
+    randomSamplingDisplacementFactor = displacementFactor;
+}
+
 double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient)
 {
     numIterations++;
@@ -233,27 +244,22 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
 
             if(size > 0)
             {
-                Eigen::VectorXf g = function.constraint->optimizationGradient(function.id);
-
-                // Crop gradients to a maximum size
-                float n = g.norm();
-                if(n > 1)
-                {
-                    g /= n;
-                }
-
-                grad += g;
+                grad += function.constraint->optimizationGradient(function.id);
             }
         }
     }
 
     if(size > 0)
     {
+        grad.normalize();
+
         for(unsigned int i = 0; i < gradient.size(); i++)
         {
             gradient[i] = grad(i);
         }
     }
+
+    //std::cout << "optval: " << value << std::endl;
 
     return value;
 }

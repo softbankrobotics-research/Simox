@@ -332,6 +332,10 @@ namespace VirtualRobot
          * @return The mass.
          */
         float getMass();
+        
+        std::vector< std::string > getNodeNames() const;
+		std::map< std::string, float > getJointValueMap() const;
+
 
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.

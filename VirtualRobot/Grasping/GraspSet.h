@@ -61,6 +61,7 @@ namespace VirtualRobot
 
         bool hasGrasp(const std::string& name);
         bool removeGrasp(GraspPtr grasp);
+        bool removeGrasp(unsigned int i);
         void removeAllGrasps();
         bool isCompatibleGrasp(GraspPtr grasp);
         void clear();

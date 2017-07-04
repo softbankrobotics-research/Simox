@@ -48,6 +48,11 @@ namespace VirtualRobot
         bool solve(bool stepwise = false);
         bool solveStep();
 
+        /**
+         * This factor limits the interval around the initial robot configuration where random samplings are placed.
+         * A value of 1 (the default) means that samplings can in the whole joint limit interval.
+         */
+        void setRandomSamplingDisplacementFactor(float displacementFactor);
 
     protected:
         static double optimizationFunctionWrapper(const std::vector<double> &x, std::vector<double> &gradient, void *data);
@@ -68,6 +73,11 @@ namespace VirtualRobot
         std::vector<double> currentX;
 
         unsigned int numIterations;
+
+        float randomSamplingDisplacementFactor;
+
+        float functionValueTolerance;
+        float optimizationValueTolerance;
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;

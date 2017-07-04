@@ -261,7 +261,8 @@ namespace SimDynamics
     bool DynamicsEngine::checkCollisionEnabled(DynamicsObject* o1, DynamicsObject* o2)
     {
         MutexLockPtr lock = getScopedLock();
-
+        if(o1 == nullptr || o2 == nullptr)
+            return true;
         if (!checkCollisionEnabled(o1))
         {
             return false;

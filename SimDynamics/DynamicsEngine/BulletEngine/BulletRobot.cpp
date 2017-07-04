@@ -29,7 +29,7 @@ namespace SimDynamics
     BulletRobot::BulletRobot(VirtualRobot::RobotPtr rob, bool enableJointMotors)
         : DynamicsRobot(rob)
         // should be enough for up to 10ms/step
-        , bulletMaxMotorImulse(5)
+        , bulletMaxMotorImulse(30 * BulletObject::ScaleFactor)
     {
         ignoreTranslationalJoints = true;
 
@@ -58,6 +58,8 @@ namespace SimDynamics
     {
     }
 
+
+
     void BulletRobot::buildBulletModels(bool /*enableJointMotors*/)
     {
         MutexLockPtr lock = getScopedLock();
@@ -68,6 +70,7 @@ namespace SimDynamics
         }
 
         robotNodes = robot->getRobotNodes();
+
 
         for (size_t i = 0; i < robotNodes.size(); i++)
         {
@@ -146,6 +149,7 @@ namespace SimDynamics
             }
 
         }
+
     }
 
     void BulletRobot::addIgnoredCollisionModels(RobotNodePtr rn)
@@ -241,17 +245,18 @@ namespace SimDynamics
         tr2.getOrigin() = pivot2;
 
         boost::shared_ptr<btHingeConstraint> hinge(new btHingeConstraint(*btBody1, *btBody2, tr1, tr2, true));
-
+//        hinge->setDbgDrawSize(0.15);
 
         // todo: check effects of parameters...
-        hinge->setParam(BT_CONSTRAINT_STOP_ERP, 0.9f);
-        /*
-        hinge->setParam(BT_CONSTRAINT_CFM,0.9f);
-        hinge->setParam(BT_CONSTRAINT_STOP_CFM,0.01f);*/
-        //hinge->setLimit(limMin,limMax);//,btScalar(1.0f));
-        //hinge->setParam(BT_CONSTRAINT_CFM,1.0f);
-        hinge->setLimit(btScalar(limMinBT), btScalar(limMaxBT));
+//        hinge->setParam(BT_CONSTRAINT_STOP_ERP, 2.0f);
+//        hinge->setParam(BT_CONSTRAINT_ERP, 2.f);
 
+
+//        hinge->setParam(BT_CONSTRAINT_CFM,0);
+//        hinge->setParam(BT_CONSTRAINT_STOP_CFM,0.f);
+        //hinge->setLimit(limMin,limMax);//,btScalar(1.0f));
+//        hinge->setParam(BT_CONSTRAINT_CFM,0.0f);
+        hinge->setLimit(btScalar(limMinBT), btScalar(limMaxBT));
         return hinge;
     }
 
@@ -291,7 +296,6 @@ namespace SimDynamics
         // ensure dynamics nodes are created
         createDynamicsNode(bodyA);
         createDynamicsNode(bodyB);
-
         if (hasLink(bodyA, bodyB))
         {
             THROW_VR_EXCEPTION("Joints are already connected:" << bodyA->getName() << "," << bodyB->getName());
@@ -305,7 +309,13 @@ namespace SimDynamics
         boost::shared_ptr<btRigidBody> btBody2 = drn2->getRigidBody();
         VR_ASSERT(btBody1);
         VR_ASSERT(btBody2);
+        DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(),drn2.get());
 
+        if (joint->getJointValue()!=0.0f)
+        {
+            VR_WARNING << joint->getName() << ": joint values != 0 may produce a wrong setup, setting joint value to zero" << endl;
+            joint->setJointValue(0);
+        }
 
         Eigen::Matrix4f coordSystemNode1 = bodyA->getGlobalPose(); // todo: what if joint is not at 0 ?!
         Eigen::Matrix4f coordSystemNode2 = bodyB->getGlobalPose();
@@ -389,6 +399,7 @@ namespace SimDynamics
                 limMinBT = btScalar(limMin) + diff;//diff - limMax;//
                 limMaxBT = btScalar(limMax) + diff;//diff - limMin;//
                 jointbt = createHingeJoint(btBody1, btBody2, coordSystemNode1, coordSystemNode2, anchor_inNode1, anchor_inNode2, axisGlobal, axisLocal, coordSystemJoint, limMinBT, limMaxBT);
+
 
                 //btScalar startAngle = joint->getJointValue();
                 //btScalar startAngleBT = hinge->getHingeAngle();
@@ -476,7 +487,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         //cout << "=== === BulletRobot: actuateJoints() 1 === " << this << endl;
 
-        std::map<VirtualRobot::RobotNodePtr, robotNodeActuationTarget>::iterator it = actuationTargets.begin();
+        auto  it = actuationTargets.begin();
 
         //int jointCounter = 0;
         //cout << "**** Control Values: ";
@@ -494,9 +505,9 @@ namespace SimDynamics
 
                 btScalar posTarget = btScalar(it->second.jointValueTarget + link.jointValueOffset);
                 btScalar posActual = btScalar(getJointAngle(it->first));
-                //btScalar velActual = btScalar(getJointSpeed(it->first));
+                btScalar velActual = btScalar(getJointSpeed(it->first));
                 btScalar velocityTarget = btScalar(it->second.jointVelocityTarget);
-
+                controller.setName(it->first->getName());
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
                 boost::shared_ptr<btGeneric6DofConstraint> dof = boost::dynamic_pointer_cast<btGeneric6DofConstraint>(link.joint);
                 VR_ASSERT(dof);
@@ -535,21 +546,25 @@ namespace SimDynamics
                 }
 
                 double targetVelocity;
-
                 if (actuation.modes.position && actuation.modes.velocity)
                 {
-                    //cout << "################### posActual:" << posActual << ", posTarget" << posTarget << ", velTarget:" << velocityTarget << endl;
+//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", velTarget:" << velocityTarget << endl;
                     targetVelocity = controller.update(posTarget - posActual, velocityTarget, actuation, btScalar(dt));
                 }
                 else if (actuation.modes.position)
                 {
-                    // cout << "################### posActual:" << posActual << ", posTarget" << posTarget << endl;
+//                    cout << "################### " << it->second.node->getName() <<  " error: " << (posTarget - posActual) << ", posTarget " << posTarget << endl;
                     targetVelocity = controller.update(posTarget - posActual, 0.0, actuation, btScalar(dt));
                 }
                 else if (actuation.modes.velocity)
                 {
-                    //cout << "################### velActual:" << velActual << ", velTarget" << velocityTarget << endl;
-                    targetVelocity = controller.update(0.0, velocityTarget, actuation, btScalar(dt));
+                    // bullet is buggy here and cannot reach velocity targets for some joints, use a position-velocity mode as workaround
+                    it->second.jointValueTarget += velocityTarget * dt;
+                    ActuationMode tempAct = actuation;
+                    tempAct.modes.position = 1;
+                    targetVelocity = controller.update(it->second.jointValueTarget - posActual, velocityTarget, tempAct, btScalar(dt));
+//                    if (it->first->getName() == "Upperarm R")
+//                        cout << "################### " << target.node->getName() << " velActual:" << velActual << ", velTarget " << velocityTarget << " targetVelocity " << targetVelocity <<  " pos target: " << target.jointValueTarget <<  " posActual: " << posActual << endl;
                 }
                 // FIXME this bypasses the controller (and doesn't work..)
                 else if (actuation.modes.torque)
@@ -598,22 +613,29 @@ namespace SimDynamics
                 }
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
-
+//                controller.setCurrentVelocity(velActual);
                 if (it->second.node->getMaxTorque() > 0)
                 {
-                    maxImpulse = it->second.node->getMaxTorque() * btScalar(dt);
+                    maxImpulse = it->second.node->getMaxTorque() * btScalar(dt) * BulletObject::ScaleFactor  * BulletObject::ScaleFactor * BulletObject::ScaleFactor;
                     //cout << "node:" << it->second.node->getName() << ", max impulse: " << maxImpulse << ", dt:" << dt << ", maxImp:" << it->second.node->getMaxTorque() << endl;
                 }
+#ifdef PRINT_TEST_DEBUG_MESSAGES
 
-#if PRINT_TEST_DEBUG_MESSAGES
-
-                if (it->first->getName() == "Elbow R")
+                if (it->first->getName() == "LegL_Ank1_joint")
+//                if(posTarget - posActual > 0.05)
                 {
-                    cout << "################### " << it->first->getName() << ": posActual:" << posActual << ", posTarget:" << posTarget << ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse" << maxImpulse << endl;
+                    double p,i,d;
+                    controller.getPosPID(p,i,d);
+                    std::cout << it->first->getName() << ": " << (actuation.modes.velocity?true:false) << " " << (actuation.modes.position?true:false) << " p: " << p;
+                    cout << "################### " << it->first->getName() <<" error: " << (posTarget - posActual)<< ", actvel:"  << velActual << ", target vel:" << targetVelocity << ", maxImpulse: " << maxImpulse << " applied impulse " << hinge->internalGetAppliedImpulse() << endl;
                 }
 
 #endif
-
+                if(fabs(targetVelocity) > 0.00001)
+                {
+                    link.dynNode1->getRigidBody()->activate();
+                    link.dynNode2->getRigidBody()->activate();
+                }
                 hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
 
 #endif
@@ -1013,7 +1035,6 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(node);
-
         if (node->isRotationalJoint())
         {
             if (!hasLink(node))
@@ -1391,7 +1412,7 @@ namespace SimDynamics
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0;
+            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
 
             linMomentum += node->getMass() * vel;
         }
@@ -1408,9 +1429,9 @@ namespace SimDynamics
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0;
-            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
-            Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
+            Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f com = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0  * BulletObject::ScaleFactor;
             double mass = node->getMass();
 
             boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
@@ -1426,16 +1447,16 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         Eigen::Vector3f angMomentum = Eigen::Vector3f::Zero();
-        Eigen::Vector3f com = getComGlobal(set) / 1000.0;
+        Eigen::Vector3f com = getComGlobal(set) / 1000.0  * BulletObject::ScaleFactor;
         Eigen::Vector3f comVel = getComVelocityGlobal(set) / 1000;
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
             VirtualRobot::RobotNodePtr node = (*set)[i];
             BulletObjectPtr bo = boost::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
-            Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0;
-            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0;
-            Eigen::Vector3f bodyCoM = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0;
+            Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
+            Eigen::Vector3f bodyCoM = bo->getComGlobal().block(0, 3, 3, 1) / 1000.0  * BulletObject::ScaleFactor;
             double mass = node->getMass();
 
             boost::shared_ptr<btRigidBody> body = bo->getRigidBody();
@@ -1595,7 +1616,7 @@ namespace SimDynamics
         Eigen::Vector3f torqueBGlobal =  ftB.tail(3);
 
         // the lever from Object B CoM to Joint
-        Eigen::Vector3f leverOnJoint = (comBGlobal - jointGlobal) * 0.001f;
+        Eigen::Vector3f leverOnJoint = (comBGlobal - jointGlobal) * 0.001f * BulletObject::ScaleFactor;
         // Calculate the torque in Joint by taking the torque that presses on the CoM of BodyB and the Torque of BodyB on the joint
         // forceOnBGlobal is inverted in next line because it is the force of A on B to hold it in position
         // torqueBGlobal is inverted in next line because it is the torque on B from A to compensate torque of other objects (which is the torque we would like) to hold it in place and therefore needs to be inverted as well

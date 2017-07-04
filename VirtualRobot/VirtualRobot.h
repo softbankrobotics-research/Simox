@@ -178,6 +178,8 @@ namespace VirtualRobot
     class TSRConstraint;
     class BalanceConstraint;
     class PoseConstraint;
+    class PositionConstraint;
+    class OrientationConstraint;
     class SupportPolygon;
     class DHParameter;
     class KinematicChain;
@@ -235,6 +237,8 @@ namespace VirtualRobot
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
     typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
     typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
+    typedef boost::shared_ptr<PositionConstraint> PositionConstraintPtr;
+    typedef boost::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
     typedef boost::shared_ptr<SupportPolygon> SupportPolygonPtr;
     typedef boost::shared_ptr<KinematicChain> KinematicChainPtr;
     typedef boost::shared_ptr<EndEffector> EndEffectorPtr;

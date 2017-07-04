@@ -143,6 +143,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -169,6 +170,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -196,10 +198,23 @@ namespace SimDynamics
         //    createDynamicsNode(node);
 
         //DynamicsObjectPtr dnyRN = getDynamicsRobotNode(node);
-
+        auto oldTargetIt = actuationTargets.find(node);
         robotNodeActuationTarget target;
         target.actuation.modes.velocity = 1;
+        target.actuation.modes.position = 0;
         target.node = node;
+        bool modeChanged = oldTargetIt == actuationTargets.end() ||
+                                          oldTargetIt->second.actuation.modes.velocity != 1 ||
+                                          oldTargetIt->second.actuation.modes.position != 0;
+//        if(!modeChanged)
+//        {
+//            target.jointValueTarget = oldTargetIt->second.jointValueTarget;
+//        }
+//        else
+        {
+            target.jointValueTarget = node->getJointValue();
+        }
+
         target.jointVelocityTarget = jointVelocity;
 
         actuationTargets[node] = target;
@@ -207,10 +222,15 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
+
         }
         else
         {
-            actuationControllers[node].reset();
+            if(modeChanged)
+            {
+                actuationControllers[node].reset();
+            }
         }
     }
 
@@ -245,6 +265,7 @@ namespace SimDynamics
         if (actuationControllers.find(node) == actuationControllers.end())
         {
             actuationControllers[node] = VelocityMotorController(node->getMaxVelocity(), node->getMaxAcceleration());
+            actuationControllers[node].reset(PID_p, PID_i, PID_d);
         }
         else
         {
@@ -415,6 +436,34 @@ namespace SimDynamics
         return scoped_lock;
     }
 
+    void DynamicsRobot::setPIDParameters(float p, float i, float d)
+    {
+        PID_p = p;
+        PID_i = i;
+        PID_d = d;
+        for(auto& pair : actuationControllers)
+        {
+            pair.second.reset(p,i,d);
+        }
+    }
+
+    void DynamicsRobot::enableSelfCollisions(bool enable)
+    {
+        // deactivate all self collisions
+        for (size_t i = 0; i < robotNodes.size(); i++)
+        {
+            auto drn1 = getDynamicsRobotNode(robotNodes.at(i));
+            for (size_t j = 0; j < robotNodes.size(); j++)
+            {
+                auto drn2 = getDynamicsRobotNode(robotNodes.at(j));
+                if(enable)
+                    DynamicsWorld::GetWorld()->getEngine()->enableCollision(drn1.get(), drn2.get());
+                else
+                    DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(), drn2.get());
+            }
+        }
+    }
+
     /*
     void DynamicsRobot::setPose( const Eigen::Matrix4f &pose )
     {
@@ -429,4 +478,4 @@ namespace SimDynamics
     }*/
 
 
-} // namespace SimDynamics
+    } // namespace SimDynamics

@@ -741,6 +741,19 @@
     </property>
    </widget>
   </widget>
+  <widget class="QCheckBox" name="checkBoxSelfDistance">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>500</y>
+     <width>381</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>only ext manip: consider self distance</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

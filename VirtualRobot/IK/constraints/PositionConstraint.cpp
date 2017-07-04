@@ -124,3 +124,8 @@ bool PositionConstraint::checkTolerances()
     ss << "PositionConstraint::checkTolerances(): unknown value for cartesianSelection = " << cartesianSelection;
     throw std::logic_error{ss.str()};
 }
+
+Eigen::Vector3f PositionConstraint::getTarget()
+{
+    return target;
+}

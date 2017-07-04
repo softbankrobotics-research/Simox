@@ -445,6 +445,12 @@ namespace VirtualRobot
 
                     // exchange physics
                     physicsMap[parent] = child->physics;
+                    // change local com to new coord system
+                    Eigen::Vector4f l;
+                    SceneObject::Physics p = physicsMap[parent];
+                    Eigen::Vector3f loc = p.localCoM;
+                    l << loc(0), loc(1), loc(2), 1.0f;
+                    physicsMap[parent].localCoM = (tr * l).head(3);
 
                     if (physicsMap.find(child) == physicsMap.end())
                     {

@@ -44,6 +44,7 @@ namespace VirtualRobot
             Eigen::Vector2f pt2d = MathTools::projectPointToPlane2D(points[u].p, floor);
             currentContactPoints2D.push_back(pt2d);
         }
+        currentContactPoints2D = MathTools::sortPoints(currentContactPoints2D);
 
         if (currentContactPoints2D.size() < 3)
         {
