@@ -44,7 +44,7 @@ namespace VirtualRobot
             EndEffectorPtr eef;             // the eef
             EndEffectorActorPtr actor;      // an eef may have multiple actors
             RobotNodePtr robotNode;         // an actor may have multiple robotNodes
-            SceneObjectPtr obstacle;
+            ModelPtr obstacle;
             float distance;
             Eigen::Vector3f contactPointFingerLocal;        // given in coord system of the object
             Eigen::Vector3f contactPointObstacleLocal;      // given in coord system of the object
@@ -107,21 +107,21 @@ namespace VirtualRobot
             Closes each actor until a joint limit is hit or a collision occurred.
             This method is intended for gripper or hand-like end-effectors.
         */
-        ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
-        ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02);
+        ContactInfoVector closeActors(LinkSetPtr obstacles = LinkSetPtr(), float stepSize = 0.02);
+        ContactInfoVector closeActors(ModelPtr obstacle, float stepSize = 0.02);
 
         /*!
             Opens each actor until a joint limit is hit or a collision occurred.
             This method is intended for hand-like end-effectors.
             Note that the same effect can be realized by calling closeActors with a negative step size
         */
-        void openActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
+        void openActors(LinkSetPtr obstacles = LinkSetPtr(), float stepSize = 0.02);
 
         /*!
-            Build a SceneObjectSet that covers all RobotNodes of this EndEffector.
+            Build a LinkSet that covers all RobotNodes of this EndEffector.
             \note The set can be used for collision detection, e.g. to check if the eef is in collision with an obstacle.
         */
-        SceneObjectSetPtr createSceneObjectSet(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        LinkSetPtr createLinkSet(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
         /*!
             Construct a robot that consists only of this eef.
@@ -180,16 +180,16 @@ namespace VirtualRobot
         */
         virtual std::string toXML(int ident = 1);
 
-        int addStaticPartContacts(SceneObjectPtr obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
+        int addStaticPartContacts(ModelPtr obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
 
     private:
         std::string name;
         std::vector<EndEffectorActorPtr> actors;
-        std::vector<RobotNodePtr> statics;
+        std::vector<ModelLinkPtr> statics;
         std::map< std::string, RobotConfigPtr > preshapes;
-        RobotNodePtr baseNode;
-        RobotNodePtr tcpNode;
-        RobotNodePtr gcpNode;
+        ModelNodePtr baseNode;
+        ModelNodePtr tcpNode;
+        ModelNodePtr gcpNode;
     };
 
 } // namespace VirtualRobot

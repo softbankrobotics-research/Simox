@@ -6,12 +6,12 @@
 
 #include "EndEffector.h"
 #include "../VirtualRobotException.h"
-#include "../Robot.h"
-#include "../Obstacle.h"
+#include "../Model/Model.h"
+#include "../Model/Obstacle.h"
 #include "EndEffectorActor.h"
-#include "../SceneObjectSet.h"
-#include "../SceneObject.h"
-#include "../RobotConfig.h"
+#include "../Model/ModelNodeSet.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/ModelConfig.h"
 #include "../CollisionDetection/CollisionChecker.h"
 
 
@@ -113,7 +113,7 @@ namespace VirtualRobot
         statics = this->statics;
     }
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectSetPtr obstacles, float stepSize)
+    EndEffector::ContactInfoVector EndEffector::closeActors(LinkSetPtr obstacles, float stepSize)
     {
         std::vector<bool> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
@@ -158,38 +158,36 @@ namespace VirtualRobot
     }
 
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectPtr obstacle, float stepSize /*= 0.02*/)
+    EndEffector::ContactInfoVector EndEffector::closeActors(ModelPtr obstacle, float stepSize /*= 0.02*/)
     {
         if (!obstacle)
         {
-            return closeActors(SceneObjectSetPtr(), stepSize);
+            return closeActors(LinkSetPtr(), stepSize);
         }
+        LinkSetPtr l = obstacle->getLinkSet();
 
-        SceneObjectSetPtr colModels(new SceneObjectSet("", obstacle->getCollisionChecker()));
-        colModels->addSceneObject(obstacle);
-        return closeActors(colModels, stepSize);
+        return closeActors(l, stepSize);
     }
 
 
-    void EndEffector::openActors(SceneObjectSetPtr obstacles, float stepSize)
+    void EndEffector::openActors(LinkSetPtr obstacles, float stepSize)
     {
         closeActors(obstacles, -stepSize);
     }
 
-    VirtualRobot::SceneObjectSetPtr EndEffector::createSceneObjectSet(CollisionCheckerPtr colChecker)
+    VirtualRobot::LinkSetPtr EndEffector::createLinkSet(CollisionCheckerPtr colChecker)
     {
-        SceneObjectSetPtr cms(new SceneObjectSet(name, colChecker));
-        cms->addSceneObjects(statics);
+        LinkSetPtr cms(new LinkSetPtr(name, colChecker));
+        cms->addLinks(statics->getLinks());
 
         for (std::vector<EndEffectorActorPtr>::iterator i = actors.begin(); i != actors.end(); i++)
         {
-            cms->addSceneObjects((*i)->getRobotNodes());
+            cms->addLink((*i)->getLinks());
         }
 
         return cms;
 
     }
-
 
     std::string EndEffector::getBaseNodeName()
     {
@@ -628,7 +626,7 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    int EndEffector::addStaticPartContacts(SceneObjectPtr obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
+    int EndEffector::addStaticPartContacts(ModelPtr obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
     {
         if (!obstacle)
             return 0;

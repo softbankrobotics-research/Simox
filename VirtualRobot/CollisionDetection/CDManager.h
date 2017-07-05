@@ -29,7 +29,7 @@
 
 #include "../VirtualRobot.h"
 #include "CollisionModel.h"
-#include "../SceneObjectSet.h"
+#include "../Model/ModelNodeSet.h"
 #include "CollisionChecker.h"
 
 #include <vector>
@@ -65,25 +65,25 @@ namespace VirtualRobot
             All added SceneObjectSets sets are checked against each other.
             Internally for all SceneObjectSets that have been added earlier, the method addCollisionModelPair() is called.
         */
-        void addCollisionModel(SceneObjectSetPtr m);
+        void addCollisionModel(LinkSetPtr m);
 
         /*!
             Here, a specific pair of SceneObjectSets can be added.
             m1 and m2 will only be checked against each other
             and will not be checked against the other SceneObjectSets, that may be part of this CDManager.
         */
-        void addCollisionModelPair(SceneObjectSetPtr m1, SceneObjectSetPtr m2);
-        void addCollisionModelPair(SceneObjectPtr m1, SceneObjectSetPtr m2);
-        void addCollisionModelPair(SceneObjectPtr m1, SceneObjectPtr m2);
+        void addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2);
+        void addCollisionModelPair(ModelLinkPtr m1, LinkSetPtr m2);
+        void addCollisionModelPair(ModelLinkPtr m1, ModelLinkPtr m2);
 
         /*!
             Here single collision models can be added. Internally they are wrapped by a SceneObjectSet.
         */
-        void addCollisionModel(SceneObjectPtr m);
+        void addCollisionModel(ModelLinkPtr m);
 
 
-        bool hasSceneObjectSet(SceneObjectSetPtr m);
-        bool hasSceneObject(SceneObjectPtr m);
+        bool hasSceneObjectSet(LinkSetPtr m);
+        bool hasSceneObject(ModelLinkPtr m);
 
         //! Returns true if one of the specified collision checks report a collision.
         bool isInCollision();
@@ -93,7 +93,7 @@ namespace VirtualRobot
             It is allowed to use an already added SceneObjectSets.
             Returns true if there is a collision.
         */
-        bool isInCollision(SceneObjectSetPtr m);
+        bool isInCollision(LinkSetPtr m);
 
         //! Returns minimum distance of all sets that have been added for consideration.
         float getDistance();
@@ -102,7 +102,7 @@ namespace VirtualRobot
             Calculates the shortest distance of m to all added SceneObjectSets.
             m may be an already added SceneObjectSets.
         */
-        float getDistance(SceneObjectSetPtr m);
+        float getDistance(LinkSetPtr m);
 
         //! Stores min dist position and collision IDs
         float getDistance(Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2);
@@ -112,11 +112,11 @@ namespace VirtualRobot
             Stores nearest positions and corresponding IDs, where P1 and trID1 is used to store the data of m and
             P2 and trID2 is used to store the data of this CDManager.
         */
-        float getDistance(SceneObjectSetPtr m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2);
+        float getDistance(LinkSetPtr m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2);
 
 
         //! All SceneObjectSets that have been added.
-        std::vector<SceneObjectSetPtr> getSceneObjectSets();
+        std::vector<LinkSetPtr> getSceneObjectSets();
 
         CollisionCheckerPtr getCollisionChecker();
 
@@ -124,15 +124,15 @@ namespace VirtualRobot
         /*!
             Performs also a check for sets with only one object added in order to cover potentionally added single SceneObjects.
         */
-        bool _hasSceneObjectSet(SceneObjectSetPtr m);
+        bool _hasSceneObjectSet(LinkSetPtr m);
 
-        bool isInCollision(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets);
-        float getDistance(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2);
-        float getDistance(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets);
-        std::vector< SceneObjectSetPtr > colModels;
+        bool isInCollision(LinkSetPtr m, std::vector<LinkSetPtr>& sets);
+        float getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2);
+        float getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets);
+        std::vector< LinkSetPtr > colModels;
         CollisionCheckerPtr colChecker;
 
-        std::map<SceneObjectSetPtr, std::vector<SceneObjectSetPtr> > colModelPairs;
+        std::map<LinkSetPtr, std::vector<LinkSetPtr> > colModelPairs;
 
     };
 

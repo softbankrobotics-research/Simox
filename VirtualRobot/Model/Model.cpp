@@ -99,6 +99,20 @@ namespace VirtualRobot
         return result;
     }
 
+    std::vector<ModelNodePtr> Model::getModelNodes(std::vector<std::string> &nodeNames) const
+    {
+        std::vector<ModelNodePtr> modelNodes;
+        modelNodes.reserve(nodeNames.size());
+        for (size_t i = 0; i < nodeNames.size(); i++)
+        {
+            ModelNodePtr node = getModelNode(modelNodeNames[i]);
+            THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + modelNodeNames[i] + " found.");
+            modelNodes.push_back(node);
+        }
+
+        return modelNodes;
+    }
+
     void Model::getModelNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector, ModelNode::ModelNodeType type) const
     {
         ReadLockPtr r = getReadLock();

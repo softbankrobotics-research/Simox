@@ -215,6 +215,8 @@ namespace VirtualRobot
     class ModelJointPrismatic;
     class ModelJointRevolute;
     class ModelNodeSet;
+    class LinkSet;
+    class JointSet;
     class ModelNodeAttachment;
     class ModelNodeAttachmentFactory;
     typedef Model Robot; //!< A typedef to make a differ between a robot and a simple object
@@ -275,6 +277,8 @@ namespace VirtualRobot
     typedef boost::shared_ptr<ModelJointPrismatic> ModelJointPrismaticPtr;
     typedef boost::shared_ptr<ModelJointRevolute> ModelJointRevolutePtr;
     typedef boost::shared_ptr<ModelNodeSet> ModelNodeSetPtr;
+    typedef boost::shared_ptr<LinkSet> LinkSetPtr;
+    typedef boost::shared_ptr<JointSet> JointSetPtr;
     typedef boost::shared_ptr<ModelNodeAttachment> ModelNodeAttachmentPtr;
     typedef boost::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
     typedef boost::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object

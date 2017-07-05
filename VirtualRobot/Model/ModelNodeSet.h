@@ -159,7 +159,7 @@ namespace VirtualRobot
          *
          * @return The nodes contained in this set.
          */
-        const std::vector<ModelNodePtr> getAllModelNodes() const;
+        const std::vector<ModelNodePtr> getModelNodes() const;
 
         /*!
          * Returns the topmost node of the robot's kinematic tree to be used for updating all members of this set.
@@ -195,147 +195,7 @@ namespace VirtualRobot
          */
         virtual unsigned int getSize() const;
 
-        /*!
-         * Get the collision models of all contained nodes.
-         *
-         * @return The collision models.
-         */
-        std::vector<CollisionModelPtr> getCollisionModels();
-
-        /*!
-         * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
-         *
-         * @return The joint values.
-         */
-        std::vector<float> getJointValues() const;
-
-        /*!
-         * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
-         *
-         * @param fillVector The vector to put the values in.
-         * @param clearVector If true, all items in the vector are deleted.
-         */
-        void getJointValues(std::vector<float>& fillVector, bool clearVector = false) const;
-
-        /*!
-         * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
-         *
-         * @param fillVector The vector to put the values in.
-         */
-        void getJointValues(Eigen::VectorXf& fillVector) const;
-
-        /*!
-         * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
-         *
-         * @param config The config to save the joint values in.
-         */
-        void getJointValues(const ModelConfigPtr& config) const;
-
-        /*!
-         * Checks if the given joint values are within joint limits.
-         * If not the joint values are adjusted.
-         * TODO: The ordering of the values.
-         *
-         * @param jointValues The values to check and adjust.
-         */
-        void respectJointLimits(std::vector<float>& jointValues) const;
-
-        /*!
-         * Checks if the given joint values are within joint limits.
-         * If not the joint values are adjusted.
-         * TODO: The ordering of the values.
-         *
-         * @param jointValues The values to check and adjust.
-         */
-        void respectJointLimits(Eigen::VectorXf& jointValues) const;
-
-        /*!
-         * Checks if the jointValues are within the current joint limits.
-         *
-         * @param jointValues A vector of correct size.
-         * @param verbose Print information if joint limits are violated.
-         * @return True when all given joint values are within joint limits.
-         */
-        bool checkJointLimits(const std::vector<float>& jointValues, bool verbose = false) const;
-
-        /*!
-         * Checks if the jointValues are within the current joint limits.
-         *
-         * @param jointValues A vector of correct size.
-         * @param verbose Print information if joint limits are violated.
-         * @return True when all given joint values are within joint limits.
-         */
-        bool checkJointLimits(const Eigen::VectorXf& jointValues, bool verbose = false) const;
-
-        /*!
-         * Set joint values [rad].
-         * The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
-         *
-         * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
-         */
-        virtual void setJointValues(const std::vector<float>& jointValues);
-
-        /*!
-         * Set joint values [rad].
-         * The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
-         *
-         * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
-        */
-        virtual void setJointValues(const Eigen::VectorXf& jointValues);
-
-        /*!
-         * Set joints that are within the given ModelConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
-         *
-         * @param config The config to get the joint values from.
-         */
-        virtual void setJointValues(const ModelConfigPtr& config);
-
-        /*!
-         * Checks if this set of robot nodes form a valid kinematic chain.
-         *
-         * @return True, if the nodes form a valid kinematic chain, i.e. node i+1 in the nodeset must be a child (transitively) of node i.
-         */
-        bool isKinematicChain();
-
-        // TODO: Documentation
-        KinematicChainPtr toKinematicChain();
-
-        /*!
-         * Get number of faces (i.e. triangles) of this object.
-         *
-         * @param collisionModel Indicates weather the faces of the collision model or the full model should be returned.
-         */
-        virtual int getNumFaces(bool collisionModel = false);
-
-        /*!
-         * Compute an upper bound of the extension of the kinematic chain formed by this RobotNodeSet.
-         * This is done by summing the distances between all succeeding RobotNodes of this set.
-         *
-         * @return The maximum extension length.
-         */
-        float getMaximumExtension();
-
-        /*!
-         * Return center of mass of this node set.
-         *
-         * @return The CoM in global coordinate system.
-         */
-        Eigen::Vector3f getCoM();
-
-        /*!
-         * Return accumulated mass of this node set.
-         *
-         * @return The mass.
-         */
-        float getMass();
-        
         std::vector< std::string > getNodeNames() const;
-		std::map< std::string, float > getJointValueMap() const;
-
 
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
@@ -352,7 +212,11 @@ namespace VirtualRobot
          * @param tabs The number of tabs to start each line with.
          * @return The generated XML string.
          */
-        virtual std::string toXML(int tabs);
+        virtual std::string toXML(int tabs) const;
+
+    protected:
+        ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
+        ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
 
     private:
         std::string name;
@@ -360,10 +224,6 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> modelNodes;
         ModelNodePtr kinematicRoot;
         ModelNodePtr tcp;
-
-        // helper to conveniently get a set of subtypes
-        std::vector<ModelJointPtr> getModelJoints() const;
-        std::vector<ModelLinkPtr> getModelLinks() const;
     };
 }
 

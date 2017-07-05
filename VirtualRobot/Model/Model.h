@@ -107,6 +107,14 @@ namespace VirtualRobot
         virtual std::vector< ModelNodePtr > getModelNodes(ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
         /*!
+         * Get all nodes by names.
+         *
+         * @param type If set, only nodes of this type are returned.
+         * @return The registered nodes.
+         */
+        virtual std::vector< ModelNodePtr > getModelNodes(std::vector< std::string > & nodeNames) const;
+
+          /*!
          * Get all nodes, registered to this model.
          *
          * @param storeNodes The vector to store the nodes.

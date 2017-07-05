@@ -211,7 +211,7 @@ namespace VirtualRobot
         return false;
     }
 
-    const std::vector<ModelNodePtr> ModelNodeSet::getAllModelNodes() const
+    const std::vector<ModelNodePtr> ModelNodeSet::getModelNodes() const
     {
         return modelNodes;
     }
@@ -594,6 +594,54 @@ namespace VirtualRobot
         }
 
         return true;
+    }
+
+    ModelNodePtr ModelNodeSet::checkKinematicRoot(const std::string &kinematicRootName, ModelPtr model)
+    {
+        ModelNodePtr res;
+        THROW_VR_EXCEPTION_IF (!model, "NULL model");
+        if (!kinematicRootName.empty())
+        {
+            ModelNodePtr node = model->getModelNode(kinematicRootName);
+            THROW_VR_EXCEPTION_IF(!node, "No root node with name " + kinematicRootName + " found.");
+            res = node;
+        }
+        else
+        {
+            if (!modelNodes.empty())
+            {
+                res = modelNodes[0];
+            }
+            else
+            {
+                THROW_VR_EXCEPTION("Can't determine a valid kinematic root node.");
+            }
+        }
+        return res;
+    }
+
+    ModelNodePtr ModelNodeSet::checkTcp(const std::string &tcpName, ModelPtr model)
+    {
+        // tcp
+        ModelNodePtr tcp;
+        if (!tcpName.empty())
+        {
+            ModelNodePtr node = model->getModelNode(tcpName);
+            THROW_VR_EXCEPTION_IF(!node, "No tcp node with name " + tcpName + " found.");
+            tcp = node;
+        }
+        else
+        {
+            if (!modelNodes.empty())
+            {
+                tcp = modelNodes[modelNodes.size() - 1];
+            }
+            else
+            {
+                THROW_VR_EXCEPTION("Can't determine a valid tcp node.");
+            }
+        }
+        return tcp;
     }
 
     std::string ModelNodeSet::toXML(int tabs)

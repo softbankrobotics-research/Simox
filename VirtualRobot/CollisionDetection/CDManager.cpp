@@ -4,7 +4,7 @@
 #include <iostream>
 #include <set>
 #include <float.h>
-#include "../Robot.h"
+#include "../Model/Model.h"
 
 
 using namespace std;
@@ -30,7 +30,7 @@ namespace VirtualRobot
     {
     }
 
-    void CDManager::addCollisionModel(SceneObjectSetPtr m)
+    void CDManager::addCollisionModel(LinkSetPtr m)
     {
         if (m)
         {
@@ -54,17 +54,18 @@ namespace VirtualRobot
         }
     }
 
-    void CDManager::addCollisionModel(SceneObjectPtr m)
+    void CDManager::addCollisionModel(ModelLinkPtr m)
     {
         if (m)
         {
-            VirtualRobot::SceneObjectSetPtr cms(new VirtualRobot::SceneObjectSet("", colChecker));
-            cms->addSceneObject(m);
+            std::vector<ModelNodePtr> models;
+            models.push_back(m);
+            VirtualRobot::LinkSetPtr cms = VirtualRobot::LinkSet::createLinkSet(m->getModel(), std::string(""), models);
             addCollisionModel(cms);
         }
     }
 
-    bool CDManager::isInCollision(SceneObjectSetPtr m)
+    bool CDManager::isInCollision(LinkSetPtr m)
     {
         if (!m || !colChecker)
         {
@@ -89,7 +90,7 @@ namespace VirtualRobot
     }
 
 
-    float CDManager::getDistance(SceneObjectSetPtr m)
+    float CDManager::getDistance(LinkSetPtr m)
     {
         float minDist = FLT_MAX;
         float tmp;
@@ -119,7 +120,7 @@ namespace VirtualRobot
 
 
 
-    float CDManager::getDistance(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets)
+    float CDManager::getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets)
     {
         float minDist = FLT_MAX;
 
@@ -147,7 +148,7 @@ namespace VirtualRobot
             return -1.0f;
         }
 
-        std::map< SceneObjectSetPtr, std::vector<SceneObjectSetPtr> >::iterator i = colModelPairs.begin();
+        std::map< LinkSetPtr, std::vector<LinkSetPtr> >::iterator i = colModelPairs.begin();
 
         while (i != colModelPairs.end())
         {
@@ -164,7 +165,7 @@ namespace VirtualRobot
         return minDist;
     }
 
-    float CDManager::getDistance(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
+    float CDManager::getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
     {
         float minDist = FLT_MAX;
         Eigen::Vector3f _P1;
@@ -208,7 +209,7 @@ namespace VirtualRobot
         }
 
 
-        std::map< SceneObjectSetPtr, std::vector<SceneObjectSetPtr> >::iterator i = colModelPairs.begin();
+        std::map< LinkSetPtr, std::vector<LinkSetPtr> >::iterator i = colModelPairs.begin();
 
         while (i != colModelPairs.end())
         {
@@ -233,7 +234,7 @@ namespace VirtualRobot
         return minDist;
     }
 
-    float CDManager::getDistance(SceneObjectSetPtr m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
+    float CDManager::getDistance(LinkSetPtr m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
     {
         float minDist = FLT_MAX;
         float tmp;
@@ -270,7 +271,7 @@ namespace VirtualRobot
 
 
 
-    bool CDManager::isInCollision(SceneObjectSetPtr m, std::vector<SceneObjectSetPtr>& sets)
+    bool CDManager::isInCollision(LinkSetPtr m, std::vector<LinkSetPtr>& sets)
     {
         for (size_t i = 0; i < sets.size(); i++)
         {
@@ -290,7 +291,7 @@ namespace VirtualRobot
             return false;
         }
 
-        std::map<SceneObjectSetPtr, std::vector<SceneObjectSetPtr>  >::iterator i = colModelPairs.begin();
+        std::map<LinkSetPtr, std::vector<LinkSetPtr>  >::iterator i = colModelPairs.begin();
 
         while (i != colModelPairs.end())
         {
@@ -306,7 +307,7 @@ namespace VirtualRobot
     }
 
 
-    std::vector<SceneObjectSetPtr> CDManager::getSceneObjectSets()
+    std::vector<LinkSetPtr> CDManager::getSceneObjectSets()
     {
         return colModels;
     }
@@ -316,7 +317,7 @@ namespace VirtualRobot
         return colChecker;
     }
 
-    bool CDManager::hasSceneObjectSet(SceneObjectSetPtr m)
+    bool CDManager::hasSceneObjectSet(LinkSetPtr m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
@@ -329,7 +330,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CDManager::_hasSceneObjectSet(SceneObjectSetPtr m)
+    bool CDManager::_hasSceneObjectSet(LinkSetPtr m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
@@ -338,7 +339,7 @@ namespace VirtualRobot
                 return true;
             }
 
-            if (m->getSize() == 1 && colModels[i]->getSize() == 1 &&  colModels[i]->getSceneObject(0) == m->getSceneObject(0))
+            if (m->getSize() == 1 && colModels[i]->getSize() == 1 &&  colModels[i]->getNode(0) == m->getNode(0))
             {
                 return true;
             }
@@ -347,11 +348,11 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CDManager::hasSceneObject(SceneObjectPtr m)
+    bool CDManager::hasSceneObject(ModelLinkPtr m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
-            if (colModels[i]->getSize() == 1 &&  colModels[i]->getSceneObject(0) == m)
+            if (colModels[i]->getSize() == 1 &&  colModels[i]->getNode(0) == m)
             {
                 return true;
             }
@@ -360,7 +361,7 @@ namespace VirtualRobot
         return false;
     }
 
-    void CDManager::addCollisionModelPair(SceneObjectSetPtr m1, SceneObjectSetPtr m2)
+    void CDManager::addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2)
     {
         if (!m1 || !m2)
         {
@@ -380,31 +381,32 @@ namespace VirtualRobot
         colModelPairs[m1].push_back(m2);
     }
 
-    void CDManager::addCollisionModelPair(SceneObjectPtr m1, SceneObjectSetPtr m2)
+    void CDManager::addCollisionModelPair(ModelLinkPtr m1, LinkSetPtr m2)
     {
         if (!m1 || !m2)
         {
             return;
         }
 
-        VirtualRobot::SceneObjectSetPtr cms(new VirtualRobot::SceneObjectSet("", colChecker));
-        cms->addSceneObject(m1);
+        std::vector<ModelNodePtr> models;
+        models.push_back(m1);
+        VirtualRobot::LinkSetPtr cms = VirtualRobot::LinkSet::createLinkSet(m1->getModel(), "", models);
         addCollisionModelPair(cms, m2);
     }
 
-    void CDManager::addCollisionModelPair(SceneObjectPtr m1, SceneObjectPtr m2)
+    void CDManager::addCollisionModelPair(ModelLinkPtr m1, ModelLinkPtr m2)
     {
         if (!m1 || !m2)
         {
             return;
         }
 
-        VirtualRobot::SceneObjectSetPtr cms(new VirtualRobot::SceneObjectSet("", colChecker));
-        cms->addSceneObject(m1);
-        VirtualRobot::SceneObjectSetPtr cms2(new VirtualRobot::SceneObjectSet("", colChecker));
-        cms2->addSceneObject(m2);
+        std::vector<ModelNodePtr> models1;
+        models1.push_back(m1);
+        VirtualRobot::LinkSetPtr cms = VirtualRobot::LinkSet::createLinkSet(m1->getModel(), "", models1);
+        std::vector<ModelNodePtr> models2;
+        models2.push_back(m2);
+        VirtualRobot::LinkSetPtr cms2 = VirtualRobot::LinkSet::createLinkSet(m2->getModel(), "", models2);
         addCollisionModelPair(cms, cms2);
-
     }
-
 }
