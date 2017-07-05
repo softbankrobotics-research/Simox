@@ -199,4 +199,10 @@ namespace VirtualRobot
 
             return ss.str();
     }
+
+    void BoundingBox::enlarge(const Eigen::Vector3f &v)
+    {
+        min -= v;
+        max += v;
+    }
 }

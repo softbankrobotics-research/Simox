@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelNodeSet_h_
 #define _VirtualRobot_ModelNodeSet_h_
 
-#include "VirtualRobot.h"
+#include "../VirtualRobot.h"
 
 namespace VirtualRobot
 {

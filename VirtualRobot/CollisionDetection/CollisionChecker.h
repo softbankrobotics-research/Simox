@@ -26,8 +26,8 @@
 #include "../VirtualRobot.h"
 #include "../MathTools.h"
 
-#include "../Nodes/ModelLink.h"
-#include "../Model.h"
+#include "../Model/Nodes/ModelLink.h"
+#include "../Model/Model.h"
 
 #include <string>
 #include <vector>

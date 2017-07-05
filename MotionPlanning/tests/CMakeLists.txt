@@ -1,7 +1,7 @@
 
 if (VirtualRobot_VISUALIZATION)
-	ADD_SABA_TEST( SabaCSpaceTest )
-	ADD_SABA_TEST( SabaShortcutProcessorTest )
+	ADD_MP_TEST( SabaCSpaceTest )
+	ADD_MP_TEST( SabaShortcutProcessorTest )
 endif()
 
 

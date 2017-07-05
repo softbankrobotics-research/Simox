@@ -1,1 +1,0 @@
-ADD_VR_TEST(DynamicsRBDLTest)

@@ -34,7 +34,7 @@ function(VirtualRobotApplication name srcs incs)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs})
-    TARGET_LINK_LIBRARIES(${name} VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${name} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
 endfunction()
 
 
