@@ -143,7 +143,6 @@ Model/Nodes/ModelJointPrismatic.h
 Model/Nodes/ModelJointRevolute.h
 Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
-Transformation/DHParameter.h
 Visualization/VisualizationFactory.h
 Visualization/Visualization.h
 Visualization/VisualizationNode.h

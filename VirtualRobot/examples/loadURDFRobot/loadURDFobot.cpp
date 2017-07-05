@@ -2,7 +2,6 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Nodes/RobotNode.h>
 #include <VirtualRobot/Nodes/RobotNodeRevoluteFactory.h>
-#include <VirtualRobot/Transformation/DHParameter.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/URDF/SimoxURDFFactory.h>
