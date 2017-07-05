@@ -20,29 +20,30 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeSet_h_
-#define _VirtualRobot_ModelNodeSet_h_
+#ifndef _VirtualRobot_JointSet_h_
+#define _VirtualRobot_JointSet_h_
 
 #include "../VirtualRobot.h"
+#include "ModelNodeSet.h"
 
 namespace VirtualRobot
 {
-    class ModelNodeSet
+    class JointSet : public ModelNodeSet
     {
     protected:
         /*!
          * Initialize this set with a vector of ModelNodes.
          *
-         * @param name The name of this ModelNodeSet.
+         * @param name The name of this JointSet.
          * @param model The associated model.
-         * @param modelNodes The model nodes to add to this ModelNodeSet.
+         * @param modelNodes The model nodes to add to this JointSet.
          * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
          *                         kinematicRoot does not have to be a node of this set.
          *                         If not given, the first entry of modelNodes will be set as the kinematic root.
          * @param tcp   The tcp.
          *              If not given, the last entry of modelNodes will be set as the tcp.
          */
-        ModelNodeSet(const std::string& name,
+        JointSet(const std::string& name,
                      const ModelWeakPtr& model,
                      const std::vector<ModelNodePtr>& modelNodes,
                      const ModelNodePtr kinematicRoot = ModelNodePtr(),
@@ -52,13 +53,13 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeSet();
+        virtual ~JointSet();
 
         /*!
-         * Create a new ModelNodeSet.
+         * Create a new JointSet.
          *
          * @param model The associated model.
-         * @param name The name of the new ModelNodeSet.
+         * @param name The name of the new JointSet.
          * @param modelNodeNames The names of the model nodes to add.
          * @param kinematicRootName The name of the kinematic root.
          *                          This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
@@ -67,20 +68,20 @@ namespace VirtualRobot
          * @param tcpName The name of the tcp.
          *                The tcp does not have to be a node of this set.
          *                If no name provided, the last node of the given model nodes will be set as the tcp node.
-         * @param registerToModel If true, the new ModelNodeSet is registered to the model.
-         * @return The newly created ModelNodeSet.
+         * @param registerToModel If true, the new JointSet is registered to the model.
+         * @return The newly created JointSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static JointSetPtr createJointSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<std::string>& modelNodeNames,
                                                   const std::string& kinematicRootName = "",
                                                   const std::string& tcpName = "",
                                                   bool registerToModel = false);
         /*!
-         * Create a new ModelNodeSet.
+         * Create a new JointSet.
          *
          * @param model The associated model.
-         * @param name The name of the new ModelNodeSet.
+         * @param name The name of the new JointSet.
          * @param modelNodes The nodes to add to this set.
          * @param kinematicRoot This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
          *                      The kinematic root does not have to be a node of this set.
@@ -88,63 +89,16 @@ namespace VirtualRobot
          * @param tcp The tcp.
          *            The tcp does not have to be a node of this set.
          *            If no tcp provided, the last node of the given model nodes will be set as the tcp node.
-         * @param registerToModel If true, the new ModelNodeSet is registered to the model.
-         * @return The newly created ModelNodeSet.
+         * @param registerToModel If true, the new JointSet is registered to the model.
+         * @return The newly created JointSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static JointSetPtr createJointSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
                                                   const ModelNodePtr tcp = ModelNodePtr(),
                                                   bool registerToModel = false);
-        /*!
-         * Get the name of this ModelNodeSet.
-         *
-         * @return The name.
-         */
-        std::string getName() const;
 
-        /*!
-         * Get the associated model.
-         *
-         * @return The model.
-         */
-        ModelPtr getModel() const;
-
-        ModelNodePtr& operator[](int i)
-        {
-            return getNode(i);
-        }
-
-        /*!
-         * Get the node at position i.
-         *
-         * @param i The position of the node to get.
-         * @return The node.
-         */
-        ModelNodePtr& getNode(int i);
-
-        /*!
-         * Iterator starting at the first object of this set.
-         *
-         * @return The iterator.
-         */
-        std::vector<ModelNodePtr>::iterator begin();
-
-        /*!
-         * Iterator starting at the last object of this set.
-         *
-         * @return The iterator.
-         */
-        std::vector<ModelNodePtr>::iterator end();
-
-        /*!
-         * Check, if this set contains the given node.
-         *
-         * @param node The node to check for.
-         * @return True, if the node is contained; false otherwise.
-         */
-        bool hasModelNode(const ModelNodePtr& node) const;
 
         /*!
          * Check, if this set contains the given node.
@@ -159,48 +113,12 @@ namespace VirtualRobot
          *
          * @return The nodes contained in this set.
          */
-        const std::vector<ModelNodePtr> getModelNodes() const;
-
-        /*!
-         * Returns the topmost node of the robot's kinematic tree to be used for updating all members of this set.
-         * This node is usually defined in the RobotNodeSet's XML definition.
-         *
-         * @return The kinematic root.
-         */
-        ModelNodePtr getKinematicRoot() const;
-
-        /*!
-         * Set a new kinematic root.
-         *
-         * @param modelNode The new kinematic root.
-         */
-        void setKinematicRoot(const RobotNodePtr & modelNode);
-
-        /*!
-         * Returns the TCP.
-         *
-         * @return The new tcp.
-         */
-        ModelNodePtr getTCP() const;
+        const std::vector<ModelJointPtr> getJoints() const;
 
         /*!
          * Print out some information.
          */
         void print() const;
-
-        /*!
-         * Get the size of this set.
-         *
-         * @return The number of associated model nodes.
-         */
-        virtual unsigned int getSize() const;
-
-        /*!
-         * Get the collision models of all contained nodes.
-         *
-         * @return The collision models.
-         */
-        std::vector<CollisionModelPtr> getCollisionModels();
 
         /*!
          * Get the joint values of all contained joints.
@@ -293,76 +211,21 @@ namespace VirtualRobot
          * @param config The config to get the joint values from.
          */
         virtual void setJointValues(const ModelConfigPtr& config);
-
-        /*!
-         * Checks if this set of robot nodes form a valid kinematic chain.
-         *
-         * @return True, if the nodes form a valid kinematic chain, i.e. node i+1 in the nodeset must be a child (transitively) of node i.
-         */
-        bool isKinematicChain();
-
-        // TODO: Documentation
-        KinematicChainPtr toKinematicChain();
-
-        /*!
-         * Get number of faces (i.e. triangles) of this object.
-         *
-         * @param collisionModel Indicates weather the faces of the collision model or the full model should be returned.
-         */
-        virtual int getNumFaces(bool collisionModel = false);
-
-        /*!
-         * Compute an upper bound of the extension of the kinematic chain formed by this RobotNodeSet.
-         * This is done by summing the distances between all succeeding RobotNodes of this set.
-         *
-         * @return The maximum extension length.
-         */
-        float getMaximumExtension();
-
-        /*!
-         * Return center of mass of this node set.
-         *
-         * @return The CoM in global coordinate system.
-         */
-        Eigen::Vector3f getCoM();
-
-        /*!
-         * Return accumulated mass of this node set.
-         *
-         * @return The mass.
-         */
-        float getMass();
-
+        
         std::vector< std::string > getNodeNames() const;
+        std::map< std::string, float > getJointValueMap() const;
 
         /*!
-         * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
-         * A set of nodes is sufficient, if it contains atleast all nodes of this ModelNodeSet.
-         *
-         * @param  nodes The nodes to check.
-         * @return True, if the nodes are sufficient; false otherwise.
-         */
-        bool nodesSufficient(const std::vector<ModelNodePtr>& nodes) const;
-
-        /*!
-         * Create a XML string to represent this ModelNodeSet.
+         * Create a XML string to represent this JointSet.
          *
          * @param tabs The number of tabs to start each line with.
          * @return The generated XML string.
          */
-        virtual std::string toXML(int tabs) const;
-
-    protected:
-        ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
-        ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
+        virtual std::string toXML(int tabs);
 
     private:
-        std::string name;
-        ModelWeakPtr weakModel;
-        std::vector<ModelNodePtr> modelNodes;
-        ModelNodePtr kinematicRoot;
-        ModelNodePtr tcp;
+        std::vector<ModelJointPtr> joints;
     };
 }
 
-#endif // _VirtualRobot_ModelNodeSet_h_
+#endif // _VirtualRobot_JointSet_h_

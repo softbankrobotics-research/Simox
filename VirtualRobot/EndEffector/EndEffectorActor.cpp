@@ -89,7 +89,7 @@ namespace VirtualRobot
         return res;
     }
 
-    bool EndEffectorActor::moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, SceneObjectSetPtr obstacles /*= SceneObjectSetPtr()*/, float angle /*= 0.02*/)
+    bool EndEffectorActor::moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, LinkSetPtr obstacles /*= SceneObjectSetPtr()*/, float angle /*= 0.02*/)
     {
         VR_ASSERT(eef);
         RobotPtr robot = eef->getRobot();
@@ -203,7 +203,7 @@ namespace VirtualRobot
     }
 
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, SceneObjectSetPtr obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(EndEffectorPtr eef, LinkSetPtr obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
     {
         std::vector<SceneObjectPtr> colModels = obstacles->getSceneObjects();
         //Eigen::Vector3f contact;
@@ -243,7 +243,7 @@ namespace VirtualRobot
         return col;
     }
 
-    bool EndEffectorActor::isColliding(SceneObjectSetPtr obstacles,  CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(LinkSetPtr obstacles,  CollisionMode checkColMode)
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
@@ -256,7 +256,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(SceneObjectPtr obstacle, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(ModelPtr obstacle, CollisionMode checkColMode)
     {
         if (!obstacle || !obstacle->getCollisionModel())
         {
@@ -365,7 +365,7 @@ namespace VirtualRobot
 
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, SceneObjectPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
+    bool EndEffectorActor::isColliding(EndEffectorPtr eef, ModelPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
     {
         if (!obstacle || !obstacle->getCollisionModel())
         {

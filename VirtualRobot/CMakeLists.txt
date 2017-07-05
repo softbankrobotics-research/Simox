@@ -106,6 +106,8 @@ Grasping/BasicGraspQualityMeasure.cpp
 Model/Model.cpp
 Model/ModelConfig.cpp
 Model/ModelNodeSet.cpp
+Model/LinkSet.cpp
+Model/JointSet.cpp
 Model/KinematicChain.cpp
 Model/ModelFactory.cpp
 Model/Obstacle.cpp
@@ -206,6 +208,8 @@ MathTools.h
 Model/Model.h
 Model/ModelConfig.h
 Model/ModelNodeSet.h
+Model/LinkSet.h
+Model/JointSet.h
 Trajectory.h
 Model/KinematicChain.h
 RobotFactory.h
@@ -338,7 +342,6 @@ INCLUDE (CollisionDetection/CMakeLists.txt)
 if(BUILD_TESTING)
     # include unit tests
     ADD_SUBDIRECTORY(tests/)
-    ADD_SUBDIRECTORY(Transformation/tests/)
 endif()
 
 if(Simox_BUILD_EXAMPLES)

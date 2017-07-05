@@ -28,6 +28,7 @@
 
 #include "../Model/Nodes/ModelLink.h"
 #include "../Model/Model.h"
+#include "../Model/LinkSet.h"
 
 #include <string>
 #include <vector>
@@ -67,7 +68,7 @@ namespace VirtualRobot
 #define T_MODEL_VEC const std::vector<ModelPtr>&
 #define T_MODELNODE const ModelNodePtr&
 #define T_MODELNODE_VEC const std::vector<ModelNodePtr>&
-#define T_MODELNODESET const ModelNodeSetPtr&
+#define T_MODELNODESET const LinkSetPtr&
 #define TYPES (T_MODEL, (T_MODEL_VEC, (T_MODELNODE, (T_MODELNODE_VEC, (T_MODELNODESET, BOOST_PP_NIL)))))
 
         /*!
@@ -253,7 +254,7 @@ namespace VirtualRobot
             }
             return mVec;
         }
-        inline std::vector<CollisionModelPtr> getCollisionModel(const ModelNodeSetPtr& m)
+        inline std::vector<CollisionModelPtr> getCollisionModel(const LinkSetPtr& m)
         {
             return m->getCollisionModels();
         }
