@@ -530,12 +530,6 @@ namespace VirtualRobot
 
         if (robotNodeFactory)
         {
-            /*if (dh.isSet)
-            {
-                robotNode = robotNodeFactory->createRobotNodeDH(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, dh, physics, rntype);
-            } else
-            {*/
-            // create nodes that are not defined via DH parameters
             robotNode = robotNodeFactory->createRobotNode(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, preJointTransform, axis, translationDir, physics, rntype);
             //}
         }

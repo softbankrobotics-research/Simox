@@ -10,7 +10,6 @@
 #include "../EndEffector/EndEffectorActor.h"
 #include "../Nodes/RobotNodeFactory.h"
 #include "../Nodes/RobotNodeFixedFactory.h"
-#include "../Transformation/DHParameter.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "rapidxml.hpp"
 
@@ -328,7 +327,7 @@ namespace VirtualRobot
 
                 transform *= localT;
             }
-            else if (nodeName == "dh")
+            /*else if (nodeName == "dh")
             {
                 // DH
                 //rapidxml::xml_node<> *dhXMLNode = trXMLNode->first_node("dh",0,false);
@@ -337,7 +336,7 @@ namespace VirtualRobot
                 processDHNode(node, dh);
                 Eigen::Matrix4f localT = dh.transformation();
                 transform *= localT;
-            }
+            }*/
             else
             {
                 VR_ERROR << "Ignoring unknown tag " << nodeName << endl;

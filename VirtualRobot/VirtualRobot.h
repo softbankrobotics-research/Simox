@@ -181,7 +181,6 @@ namespace VirtualRobot
     class PositionConstraint;
     class OrientationConstraint;
     class SupportPolygon;
-    class DHParameter;
     class KinematicChain;
     class EndEffector;
     class EndEffectorActor;
