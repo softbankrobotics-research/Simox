@@ -1,4 +1,4 @@
-PROJECT ( VirtualRobot )
+PROJECT ( simox-virtualrobot )
 
 MESSAGE (STATUS "\n***** CONFIGURING Simox project VirtualRobot *****")
 
@@ -15,9 +15,6 @@ endif()
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
-if (Simox_USE_RBDL)
-    FIND_PACKAGE (RBDL)
-endif()
 
 if (Simox_USE_NLOPT)
     FIND_PACKAGE (NLOPT)
@@ -50,12 +47,12 @@ CollisionDetection/CollisionModel.cpp
 CollisionDetection/CDManager.cpp
 EndEffector/EndEffector.cpp
 EndEffector/EndEffectorActor.cpp
-Nodes/ModelNode.cpp
-Nodes/ModelLink.cpp
-Nodes/ModelJoint.cpp
-Nodes/ModelJointFixed.cpp
-Nodes/ModelJointPrismatic.cpp
-Nodes/ModelJointRevolute.cpp
+Model/Nodes/ModelNode.cpp
+Model/Nodes/ModelLink.cpp
+Model/Nodes/ModelJoint.cpp
+Model/Nodes/ModelJointFixed.cpp
+Model/Nodes/ModelJointPrismatic.cpp
+Model/Nodes/ModelJointRevolute.cpp
 Visualization/Visualization.cpp
 Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
@@ -106,18 +103,18 @@ Workspace/WorkspaceGrid.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
+Model/Model.cpp
+Model/ModelConfig.cpp
+Model/ModelNodeSet.cpp
+Model/KinematicChain.cpp
+Model/ModelFactory.cpp
+Model/Obstacle.cpp
+Model/Primitive.cpp
+Model/ManipulationObject.cpp
 MathTools.cpp
-Model.cpp
-ModelConfig.cpp
-ModelNodeSet.cpp
 Trajectory.cpp
-KinematicChain.cpp
-ModelFactory.cpp
 Scene.cpp
-Obstacle.cpp
-Primitive.cpp
 VirtualRobotException.cpp
-ManipulationObject.cpp
 BoundingBox.cpp
 RuntimeEnvironment.cpp
 Compression/CompressionRLE.cpp
@@ -138,14 +135,14 @@ CollisionDetection/CollisionModelImplementation.h
 CollisionDetection/CollisionCheckerImplementation.h
 EndEffector/EndEffector.h
 EndEffector/EndEffectorActor.h
-Nodes/ModelNode.h
-Nodes/ModelLink.h
-Nodes/ModelJoint.h
-Nodes/ModelJointFixed.h
-Nodes/ModelJointPrismatic.h
-Nodes/ModelJointRevolute.h
-Nodes/Attachments/ModelNodeAttachment.h
-Nodes/Attachments/ModelNodeAttachmentFactory.h
+Model/Nodes/ModelNode.h
+Model/Nodes/ModelLink.h
+Model/Nodes/ModelJoint.h
+Model/Nodes/ModelJointFixed.h
+Model/Nodes/ModelJointPrismatic.h
+Model/Nodes/ModelJointRevolute.h
+Model/Nodes/Attachments/ModelNodeAttachment.h
+Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
 Transformation/DHParameter.h
 Visualization/VisualizationFactory.h
 Visualization/Visualization.h
@@ -207,20 +204,20 @@ AbstractFactoryMethod.h
 ConditionedLock.h
 VirtualRobot.h
 MathTools.h
-Model.h
-ModelConfig.h
-ModelNodeSet.h
+Model/Model.h
+Model/ModelConfig.h
+Model/ModelNodeSet.h
 Trajectory.h
-KinematicChain.h
+Model/KinematicChain.h
 RobotFactory.h
-ModelFactory.h
+Model/ModelFactory.h
 Scene.h
-Obstacle.h
-Primitive.h
+Model/Obstacle.h
+Model/Primitive.h
 VirtualRobotException.h
 VirtualRobotImportExport.h
 VirtualRobotTest.h
-ManipulationObject.h
+Model/ManipulationObject.h
 BoundingBox.h
 RuntimeEnvironment.h
 Compression/CompressionRLE.h
@@ -230,22 +227,6 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 )
-
-if (Simox_USE_RBDL AND RBDL_FOUND)
-    SET(SOURCES
-        ${SOURCES}
-        Dynamics/dynamics.cpp
-    )
-
-    SET(INCLUDES
-        ${INCLUDES}
-        Dynamics/dynamics.h
-    )
-
-    if(BUILD_TESTING)
-        ADD_SUBDIRECTORY(Dynamics/tests)
-    endif()
-endif ()
 
 if(BUILD_TESTING)
     ADD_SUBDIRECTORY(Visualization/tests)
@@ -270,12 +251,6 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Visualization/CoinVisualization/CoinVisualizationFactory.cpp
     Visualization/CoinVisualization/CoinVisualizationNode.cpp
     Visualization/CoinVisualization/CoinVisualization.cpp
-    Import/COLLADA-light/ColladaSimox.cpp
-    Import/COLLADA-light/collada.cpp
-    Import/COLLADA-light/inventor.cpp
-    Import/COLLADA-light/pugixml/pugixml.cpp
-    Import/SimoxCOLLADAFactory.cpp
-#    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.cpp
     )
 
     SET(INCLUDES
@@ -283,13 +258,6 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     Visualization/CoinVisualization/CoinVisualizationFactory.h
     Visualization/CoinVisualization/CoinVisualizationNode.h
     Visualization/CoinVisualization/CoinVisualization.h
-    Import/COLLADA-light/ColladaSimox.h
-    Import/COLLADA-light/collada.h
-    Import/COLLADA-light/pugixml/pugixml.hpp
-    Import/SimoxCOLLADAFactory.cpp
-    Import/COLLADA-light/inventor.h
-    Import/SimoxCOLLADAFactory.h
-#    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.h
     )
 
     if(BUILD_TESTING)
@@ -319,7 +287,7 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
     )
     if (Simox_USE_QT4)
         qt4_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
-        else()
+    else()
         qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
     endif()
 
@@ -327,25 +295,6 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
         ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
     endif()
 endif ()
-
-#if (Simox_USE_COLLADA)
-#
-#    SET(SOURCES
-#    ${SOURCES}
-#    Import/SimoxCOLLADAFactory.cpp
-#    COLLADA/ColladaIO.cpp
-#    COLLADA/ColladaParser.cpp
-#    )
-#
-#    SET(INCLUDES
-#    ${INCLUDES}
-#    Import/SimoxCOLLADAFactory.h
-#    COLLADA/ColladaIO.h
-#    COLLADA/ColladaIterators.h
-#    COLLADA/ColladaParser.h
-#    )
-#endif ()
-
 
 #check for URDF
 if (Simox_USE_URDF)
@@ -428,8 +377,8 @@ endif()
 # Finished adding UI files
 #-----------------------------------------------------------------------------------
 
-ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
-TARGET_LINK_LIBRARIES(VirtualRobot ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
+ADD_LIBRARY (${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})

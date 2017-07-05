@@ -1,4 +1,4 @@
-PROJECT ( Saba )
+PROJECT ( simox-motionplanning )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
@@ -6,7 +6,7 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
 
-MESSAGE (STATUS "***** CONFIGURING Simox project Saba *****")
+MESSAGE (STATUS "***** CONFIGURING project simox-motionplanning *****")
 
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
@@ -14,7 +14,7 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
 
 ########################### TESTING #####################################
-MACRO(ADD_SABA_TEST TEST_NAME)
+MACRO(ADD_MP_TEST TEST_NAME)
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
@@ -28,7 +28,7 @@ MACRO(ADD_SABA_TEST TEST_NAME)
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "Saba Tests")
     ADD_TEST(NAME Saba_${TEST_NAME}
     	        COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
-ENDMACRO(ADD_SABA_TEST)
+ENDMACRO(ADD_MP_TEST)
 
 #################################### FILES ##################################
 SET(SOURCES
@@ -93,9 +93,8 @@ endif (Simox_USE_COIN_VISUALIZATION)
 INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 
-ADD_LIBRARY (Saba SHARED ${SOURCES} ${INCLUDES})
-#MESSAGE(STATUS "VirtualRobot_ROBOT_LINK_LIBRARIES:" ${VirtualRobot_EXTERNAL_LIBRARIES})
-TARGET_LINK_LIBRARIES (Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+ADD_LIBRARY (${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})
+TARGET_LINK_LIBRARIES (${PROJECT_NAME} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
@@ -137,4 +136,4 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}
         PATTERN "data" EXCLUDE
         PATTERN "examples" EXCLUDE
 	)
-MESSAGE (STATUS "***** Finished CONFIGURING Simox project Saba *****\n")
+MESSAGE (STATUS "***** Finished CONFIGURING project simox-motionplanning  *****\n")

@@ -23,14 +23,13 @@
 #ifndef _VirtualRobot_Model_h_
 #define _VirtualRobot_Model_h_
 
-#include "VirtualRobot.h"
-#include "BoundingBox.h"
-#include "ConditionedLock.h"
+#include "../VirtualRobot.h"
+#include "../BoundingBox.h"
+#include "../ConditionedLock.h"
 #include "Nodes/ModelNode.h"
 
 #include <Eigen/Core>
 #include <map>
-#include <VirtualRobot/Nodes/ModelNode.h>
 #include <boost/enable_shared_from_this.hpp>
 
 namespace VirtualRobot

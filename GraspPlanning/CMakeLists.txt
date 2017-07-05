@@ -1,4 +1,4 @@
-PROJECT ( GraspStudio )
+PROJECT ( simox-graspplanning )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
@@ -6,9 +6,9 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
 
-MESSAGE (STATUS "***** CONFIGURING Simox project GraspStudio *****")
+MESSAGE (STATUS "***** CONFIGURING project simox-graspplanning *****")
 
-MACRO(ADD_GRASPSTUDIO_TEST TEST_NAME)
+MACRO(ADD_GRASPPLANNING_TEST TEST_NAME)
         if (NOT Boost_USE_STATIC_LIBS)
             ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
         endif (NOT Boost_USE_STATIC_LIBS)
@@ -18,7 +18,7 @@ MACRO(ADD_GRASPSTUDIO_TEST TEST_NAME)
     	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "GraspStudio Tests")
         ADD_TEST(NAME Saba_${TEST_NAME}
                  COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
-ENDMACRO(ADD_GRASPSTUDIO_TEST)
+ENDMACRO(ADD_GRASPPLANNING_TEST)
 
 
 ########### QHULL #################
@@ -88,9 +88,9 @@ INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 
 
-ADD_LIBRARY (GraspStudio SHARED ${SOURCES} ${INCLUDES})
+ADD_LIBRARY (${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})
 
-TARGET_LINK_LIBRARIES (GraspStudio Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES})
+TARGET_LINK_LIBRARIES (${PROJECT_NAME} simox-motionplanning simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES})
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
@@ -134,5 +134,5 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}
 	)
 	
 
-MESSAGE (STATUS "***** Finished CONFIGURING Simox project GraspStudio *****\n")
+MESSAGE (STATUS "***** Finished CONFIGURING project simox-graspplanning *****\n")
 

@@ -150,18 +150,6 @@ IF (NOT Simox_CONFIGURED)
     ############################# SETUP MODULES #############################
     MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
 
-    ### RBDL
-    OPTION (Simox_USE_RBDL "Use RBDL" OFF)
-    if (Simox_USE_RBDL)
-        FIND_PACKAGE (RBDL)
-        if (RBDL_FOUND)
-            MESSAGE(STATUS "RBDL found at: ${RBDL_INCLUDE_DIR}")
-            SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${RBDL_INCLUDE_DIR})
-            SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${RBDL_LIBRARIES})
-        else ()
-            MESSAGE(STATUS "RBDL not found!")
-        endif ()
-    endif()
     
     #urdf
     OPTION (Simox_USE_URDF "Use URDF" OFF)
@@ -240,7 +228,6 @@ IF (NOT Simox_CONFIGURED)
     
     OPTION(Simox_USE_COIN_VISUALIZATION "Use Coin3D for visualization" ON)
     OPTION(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "Use OpenSceneGraph for visualization" OFF)
-    #OPTION(Simox_USE_COLLADA "Enable the loading of robots from collada files" OFF)
     
     if (Simox_USE_COIN_VISUALIZATION)
         MESSAGE(STATUS "Searching Coin3D, Qt and SoQt...")
@@ -365,28 +352,6 @@ IF (NOT Simox_CONFIGURED)
         MESSAGE(STATUS "Visualization disabled")
     endif()
     
-    if (Simox_USE_COLLADA)
-        MESSAGE(STATUS "Searching for Collada...")
-        FIND_PACKAGE(COLLADA_DOM REQUIRED 2.4)
-
-        IF(COLLADA_DOM_FOUND)
-            MESSAGE (STATUS "Found Collada")
-            MESSAGE (STATUS "* Collada COLLADA_DOM_ROOT_DIR : ${COLLADA_DOM_ROOT_DIR}")
-            MESSAGE (STATUS "* Collada Include DIRS: ${COLLADA_DOM_INCLUDE_DIRS}")
-            MESSAGE (STATUS "* Collada Libs: ${COLLADA_DOM_LIBRARIES}")
-            MESSAGE (STATUS "* Collada COLLADA_DOM_LIBRARY_DIRS: ${COLLADA_DOM_LIBRARY_DIRS}")
-
-            FIND_LIBRARY(COLLADA_LIBRARY ${COLLADA_DOM_LIBRARIES} ${COLLADA_DOM_LIBRARY_DIRS})
-            MESSAGE (STATUS "Collada Full Collada lib: ${COLLADA_LIBRARY}")
-
-            #include_directories(${COLLADA_DOM_INCLUDE_DIRS})
-
-            SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${COLLADA_DOM_INCLUDE_DIRS})
-            SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${COLLADA_LIBRARY})
-
-            SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DDOM_DYNAMIC ")
-        ENDIF()
-    endif()
     
     SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Simox_VISUALIZATION_INCLUDE_PATHS})
     SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Simox_VISUALIZATION_LIBS})

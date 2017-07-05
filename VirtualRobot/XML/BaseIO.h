@@ -26,9 +26,9 @@
 #include "../VirtualRobot.h"
 #include "../Units.h"
 #include "../MathTools.h"
-#include "../Robot.h"
-#include "../RobotConfig.h"
-#include "../Nodes/RobotNode.h"
+#include "../Model/Model.h"
+#include "../Model/ModelConfig.h"
+#include "../Model/Nodes/ModelNode.h"
 #include "../EndEffector/EndEffectorActor.h"
 
 #include <string>

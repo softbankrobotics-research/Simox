@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelNode_h_
 #define _VirtualRobot_ModelNode_h_
 
-#include "../VirtualRobot.h"
+#include "../../VirtualRobot.h"
 #include "../ModelNodeSet.h"
 #include "Attachments/ModelNodeAttachment.h"
 

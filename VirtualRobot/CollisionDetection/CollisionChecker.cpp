@@ -1,9 +1,9 @@
 
 #include "CollisionChecker.h"
 #include "CollisionModel.h"
-#include "../ModelNodeSet.h"
-#include "../Nodes/ModelNode.h"
-#include "../Model.h"
+#include "../Model/ModelNodeSet.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 
 #include <cfloat>
@@ -247,199 +247,6 @@ namespace VirtualRobot
         collisionCheckerImplementation->setAutomaticSizeCheck(automaticSizeCheck);
     }
 
-    /*
-    bool CollisionChecker::checkCollision( SbXfBox3f& box1, SbXfBox3f& box2 )
-    {
-        ////return box1.intersect(box2);
-
-        //box1.setBounds(-100, -100, -100, 100, 100, 100);
-        //box2.setBounds(-100, -100, -100, 100, 100, 100);
-
-        //SbMatrix tr;
-        //tr.setTranslate(SbVec3f(0,0,0));
-        //box1.setTransform(tr);
-
-        //tr.setTranslate(SbVec3f(0, 0, 250));
-        //box2.setTransform(tr);
-
-        // OBB Intersection test from Neoengine
-
-        const float fParallellCutoff = 0.99999f;
-        bool bParallellAxes = false;
-
-        SbRotation kRotA;
-        SbRotation kRotB;
-        SbVec3f kTransA;
-        SbVec3f kTransB;
-        SbMatrix kRotMatA;
-        SbMatrix kRotMatB;
-        SbVec3f tmpV;
-        SbRotation tmpR;
-
-        box1.getTransform().getTransform(kTransA, kRotA, tmpV, tmpR);
-        box2.getTransform().getTransform(kTransB, kRotB, tmpV, tmpR);
-        kRotMatA.setRotate(kRotA);
-        kRotMatB.setRotate(kRotB);
-
-        SbVec3f akAxesA[3] = { SbVec3f(kRotMatA[0]), SbVec3f(kRotMatA[1]), SbVec3f(kRotMatA[2]) };
-        SbVec3f akAxesB[3] = { SbVec3f(kRotMatB[0]), SbVec3f(kRotMatB[1]), SbVec3f(kRotMatB[2]) };
-
-        float afDimA[3];
-        float afDimB[3];
-
-        float dx, dy, dz;
-        box1.getSize(dx, dy, dz);
-        afDimA[0] = dx/2;
-        afDimA[1] = dy/2;
-        afDimA[2] = dz/2;
-
-        box2.getSize(dx, dy, dz);
-        afDimB[0] = dx/2;
-        afDimB[1] = dy/2;
-        afDimB[2] = dz/2;
-
-        //Difference of box positions
-        SbVec3f kDiff = kTransB - kTransA;
-
-        ////////Early out test
-        //float radiusA2 = 0, radiusB2 = 0;
-
-        //SbBox3f aabb1(box1);
-        //SbBox3f aabb2(box2);
-        //radiusA2 = (aabb1.getMax()-aabb1.getCenter()).length();
-        //radiusB2 = (aabb2.getMax()-aabb2.getCenter()).length();
-        //if( ( radiusA2 + radiusB2 ) < kDiff.length() )
-        //  return false;
-
-        float afAxisDot[3][3];    // afAxisDot[i][j]    = akAxesA[i]Ptr  akAxesB[j];
-        float afAbsAxisDot[3][3]; // afAbsAxisDot[i][j] = |afAxisDot[i][j]|
-
-        float afAxesADotDiff[3];  // afAxesADotDiff[i]  = akAxesA[i]Ptr  kDiff
-
-        //Test all 15 possible separating axes
-
-        //Axis Ax
-        //First calculate AxPtr  Bi axis dot products (length of each B axis along Ax)
-        afAxisDot[0][0] = akAxesA[0].dot(akAxesB[0]);
-        afAxisDot[0][1] = akAxesA[0].dot(akAxesB[1]);
-        afAxisDot[0][2] = akAxesA[0].dot(akAxesB[2]);
-
-        //Get absolute value of dot products
-        afAbsAxisDot[0][0] = fabsf( afAxisDot[0][0] ); if( afAbsAxisDot[0][0] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[0][1] = fabsf( afAxisDot[0][1] ); if( afAbsAxisDot[0][1] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[0][2] = fabsf( afAxisDot[0][2] ); if( afAbsAxisDot[0][2] > fParallellCutoff ) bParallellAxes = true;
-
-        //calculate AxPtr  D dot product (length of center difference along Ax axis)
-        afAxesADotDiff[0]  = akAxesA[0].dot(kDiff);
-
-        //  int     iDeepAxis = 0;
-        //  SbVec3f kNormal;
-
-        //  float fOverlapMax  = -numeric_limits< float >::max();
-        float fOverlap;
-
-        //Check if distance between centers along axis is greater than sum of boxes dimensions along axis
-        if( ( fOverlap = fabsf( afAxesADotDiff[0] ) - ( ( afDimA[0] ) + ( afDimB[0]Ptr  afAbsAxisDot[0][0] + afDimB[1]Ptr  afAbsAxisDot[0][1] + afDimB[2]Ptr  afAbsAxisDot[0][2] ) ) ) > 0.0f )
-            return false;
-
-        //Axis Ay
-        afAxisDot[1][0] = akAxesA[1].dot(akAxesB[0]);
-        afAxisDot[1][1] = akAxesA[1].dot(akAxesB[1]);
-        afAxisDot[1][2] = akAxesA[1].dot(akAxesB[2]);
-
-        afAbsAxisDot[1][0] = fabsf( afAxisDot[1][0] ); if( afAbsAxisDot[1][0] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[1][1] = fabsf( afAxisDot[1][1] ); if( afAbsAxisDot[1][1] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[1][2] = fabsf( afAxisDot[1][2] ); if( afAbsAxisDot[1][2] > fParallellCutoff ) bParallellAxes = true;
-
-        afAxesADotDiff[1]  = akAxesA[1].dot(kDiff);
-
-        if( ( fOverlap = fabsf( afAxesADotDiff[1] ) - ( ( afDimA[1] ) + ( afDimB[0]Ptr  afAbsAxisDot[1][0] + afDimB[1]Ptr  afAbsAxisDot[1][1] + afDimB[2]Ptr  afAbsAxisDot[1][2] ) ) ) > 0.0f )
-            return false;
-
-        //Axis Az
-        afAxisDot[2][0] = akAxesA[2].dot(akAxesB[0]);
-        afAxisDot[2][1] = akAxesA[2].dot(akAxesB[1]);
-        afAxisDot[2][2] = akAxesA[2].dot(akAxesB[2]);
-
-        afAbsAxisDot[2][0] = fabsf( afAxisDot[2][0] ); if( afAbsAxisDot[2][0] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[2][1] = fabsf( afAxisDot[2][1] ); if( afAbsAxisDot[2][1] > fParallellCutoff ) bParallellAxes = true;
-        afAbsAxisDot[2][2] = fabsf( afAxisDot[2][2] ); if( afAbsAxisDot[2][2] > fParallellCutoff ) bParallellAxes = true;
-
-        afAxesADotDiff[2]  = akAxesA[2].dot(kDiff);
-
-        if( ( fOverlap = fabsf( afAxesADotDiff[2] ) - ( ( afDimA[2] ) + ( afDimB[0]Ptr  afAbsAxisDot[2][0] + afDimB[1]Ptr  afAbsAxisDot[2][1] + afDimB[2]Ptr  afAbsAxisDot[2][2] ) ) ) > 0.0f )
-            return false;
-
-        float fProj;
-        //  float fScale;
-
-        //Axis Bx
-        //We already have all axis*axis dot products, only calculate center difference along Bx axis and compare
-        if( ( fOverlap = fabsf( ( fProj = akAxesB[0].dot(kDiff) ) ) - ( ( afDimA[0]Ptr  afAbsAxisDot[0][0] + afDimA[1]Ptr  afAbsAxisDot[1][0] + afDimA[2]Ptr  afAbsAxisDot[2][0] ) + ( afDimB[0] ) ) ) > 0.0f )
-            return false;
-
-        //Axis By
-        if( ( fOverlap = fabsf( ( fProj = akAxesB[1].dot(kDiff) ) ) - ( ( afDimA[0]Ptr  afAbsAxisDot[0][1] + afDimA[1]Ptr  afAbsAxisDot[1][1] + afDimA[2]Ptr  afAbsAxisDot[2][1] ) + ( afDimB[1] ) ) ) > 0.0f )
-            return false;
-
-        //Axis Bz
-        if( ( fOverlap = fabsf( ( fProj = akAxesB[2].dot(kDiff) ) ) - ( ( afDimA[0]Ptr  afAbsAxisDot[0][2] + afDimA[1]Ptr  afAbsAxisDot[1][2] + afDimA[2]Ptr  afAbsAxisDot[2][2] ) + ( afDimB[2] ) ) ) > 0.0f )
-            return false;
-
-        //if not contact set, do extra tests to avoid reporting false collisions in parallell axis threshold zone
-        if( !bParallellAxes  )
-        {
-
-            //Axis Ax X Bx
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[1][0]Ptr  afAxesADotDiff[2] - afAxisDot[2][0]Ptr  afAxesADotDiff[1] ) ) -
-                ( ( afDimA[1]Ptr  afAbsAxisDot[2][0] + afDimA[2]Ptr  afAbsAxisDot[1][0] ) + ( afDimB[1]Ptr  afAbsAxisDot[0][2] + afDimB[2]Ptr  afAbsAxisDot[0][1] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Ax X By
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[1][1]Ptr  afAxesADotDiff[2] - afAxisDot[2][1]Ptr  afAxesADotDiff[1] ) ) -
-                ( ( afDimA[1]Ptr  afAbsAxisDot[2][1] + afDimA[2]Ptr  afAbsAxisDot[1][1] ) + ( afDimB[0]Ptr  afAbsAxisDot[0][2] + afDimB[2]Ptr  afAbsAxisDot[0][0] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Ax X Bz
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[1][2]Ptr  afAxesADotDiff[2] - afAxisDot[2][2]Ptr  afAxesADotDiff[1] ) ) -
-                ( ( afDimA[1]Ptr  afAbsAxisDot[2][2] + afDimA[2]Ptr  afAbsAxisDot[1][2] ) + ( afDimB[0]Ptr  afAbsAxisDot[0][1] + afDimB[1]Ptr  afAbsAxisDot[0][0] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Ay X Bx
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[2][0]Ptr  afAxesADotDiff[0] - afAxisDot[0][0]Ptr  afAxesADotDiff[2] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[2][0] + afDimA[2]Ptr  afAbsAxisDot[0][0] ) + ( afDimB[1]Ptr  afAbsAxisDot[1][2] + afDimB[2]Ptr  afAbsAxisDot[1][1] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Ay X By
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[2][1]Ptr  afAxesADotDiff[0] - afAxisDot[0][1]Ptr  afAxesADotDiff[2] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[2][1] + afDimA[2]Ptr  afAbsAxisDot[0][1] ) + ( afDimB[0]Ptr  afAbsAxisDot[1][2] + afDimB[2]Ptr  afAbsAxisDot[1][0] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Ay X Bz
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[2][2]Ptr  afAxesADotDiff[0] - afAxisDot[0][2]Ptr  afAxesADotDiff[2] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[2][2] + afDimA[2]Ptr  afAbsAxisDot[0][2] ) + ( afDimB[0]Ptr  afAbsAxisDot[1][1] + afDimB[1]Ptr  afAbsAxisDot[1][0] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Az X Bx
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[0][0]Ptr  afAxesADotDiff[1] - afAxisDot[1][0]Ptr  afAxesADotDiff[0] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[1][0] + afDimA[1]Ptr  afAbsAxisDot[0][0] ) + ( afDimB[1]Ptr  afAbsAxisDot[2][2] + afDimB[2]Ptr  afAbsAxisDot[2][1] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Az X By
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[0][1]Ptr  afAxesADotDiff[1] - afAxisDot[1][1]Ptr  afAxesADotDiff[0] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[1][1] + afDimA[1]Ptr  afAbsAxisDot[0][1] ) + ( afDimB[0]Ptr  afAbsAxisDot[2][2] + afDimB[2]Ptr  afAbsAxisDot[2][0] ) ) ) > 0.0f )
-                return false;
-
-            //Axis Az X Bz
-            if( ( fOverlap = fabsf( ( fProj = afAxisDot[0][2]Ptr  afAxesADotDiff[1] - afAxisDot[1][2]Ptr  afAxesADotDiff[0] ) ) -
-                ( ( afDimA[0]Ptr  afAbsAxisDot[1][2] + afDimA[1]Ptr  afAbsAxisDot[0][2] ) + ( afDimB[0]Ptr  afAbsAxisDot[2][1] + afDimB[1]Ptr  afAbsAxisDot[2][0] ) ) ) > 0.0f )
-                return false;
-        } // if( bParallellAxes )
-
-        return true;
-    }
-    */
-
     bool CollisionChecker::IsSupported_CollisionDetection()
     {
         return COL_CHECKER_IMPL::IsSupported_CollisionDetection();
@@ -472,9 +279,7 @@ namespace VirtualRobot
         // first check if plane hits bounding box
         BoundingBox bbox = colModel->getBoundingBox(false);
         // enlarge bbox by maxDist
-        bbox.min -= Eigen::Vector3f(maxDist, maxDist, maxDist);
-        bbox.max += Eigen::Vector3f(maxDist, maxDist, maxDist);
-
+        bbox.enlarge(Eigen::Vector3f(maxDist, maxDist, maxDist));
         std::vector <Eigen::Vector3f> ptsBB = bbox.getPoints();
 
         for (size_t i = 0; i < ptsBB.size(); i++)

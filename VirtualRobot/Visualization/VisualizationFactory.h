@@ -27,7 +27,7 @@
 #include "../AbstractFactoryMethod.h"
 #include "../MathTools.h"
 #include "../BoundingBox.h"
-#include "../Primitive.h"
+#include "../Model/Primitive.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>

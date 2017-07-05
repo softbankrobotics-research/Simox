@@ -25,7 +25,7 @@
 
 #include "VirtualRobot.h"
 #include "MathTools.h"
-#include "CollisionDetection/CollisionChecker.h"
+//#include "CollisionDetection/CollisionChecker.h"
 
 #include <Eigen/Core>
 #include <vector>
@@ -41,7 +41,7 @@ namespace VirtualRobot
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-        friend class CollisionChecker;
+        //friend class CollisionChecker;
 
         BoundingBox();
         BoundingBox(const std::vector< Eigen::Vector3f >& p);
@@ -93,6 +93,7 @@ namespace VirtualRobot
 
         std::string toXML(int tabs = 2, bool skipMatrixTag = false);
 
+        void enlarge (const Eigen::Vector3f &v);
     protected:
         Eigen::Vector3f min;
         Eigen::Vector3f max;
