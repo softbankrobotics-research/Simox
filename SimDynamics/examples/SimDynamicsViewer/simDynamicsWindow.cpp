@@ -307,7 +307,7 @@ void SimDynamicsWindow::updateJoints()
     {
         if (nodes[i]->isRotationalJoint())
         {
-            RobotNodeRevolutePtr rn = boost::dynamic_pointer_cast<RobotNodeRevolute>(nodes[i]);
+            RobotNodeRevolutePtr rn = std::dynamic_pointer_cast<RobotNodeRevolute>(nodes[i]);
 
             if (rn)
             {
@@ -427,7 +427,7 @@ void SimDynamicsWindow::updateJointInfo()
     }
 
     SimDynamics::DynamicsObjectPtr dynRN = dynamicsRobot->getDynamicsRobotNode(rn);
-    SimDynamics::BulletObjectPtr bulletRN = boost::dynamic_pointer_cast<SimDynamics::BulletObject>(dynRN);
+    SimDynamics::BulletObjectPtr bulletRN = std::dynamic_pointer_cast<SimDynamics::BulletObject>(dynRN);
 
     if (bulletRN)
     {
@@ -438,7 +438,7 @@ void SimDynamicsWindow::updateJointInfo()
 
     }
 
-    BulletRobotPtr bulletRobot = boost::dynamic_pointer_cast<SimDynamics::BulletRobot>(dynamicsRobot);
+    BulletRobotPtr bulletRobot = std::dynamic_pointer_cast<SimDynamics::BulletRobot>(dynamicsRobot);
 
     if (rn && bulletRobot && bulletRobot->hasLink(rn))
     {
@@ -727,7 +727,7 @@ void SimDynamicsWindow::jointValueChanged(int n)
         float pos1= float(n+100)/201.0f;
         RobotNodePtr rn1 = robot->getRobotNode("Platform");
         DynamicsObjectPtr drn1 = dynamicsRobot->getDynamicsRobotNode(rn1);
-        BulletObjectPtr brn1 = boost::dynamic_pointer_cast<BulletObject>(drn1);
+        BulletObjectPtr brn1 = std::dynamic_pointer_cast<BulletObject>(drn1);
         if (brn1)
         {
             Eigen::Vector3f vel;

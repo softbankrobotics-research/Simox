@@ -5,7 +5,7 @@
 */
 #include "BasicGraspQualityMeasure.h"
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 
@@ -16,7 +16,7 @@ namespace VirtualRobot
 {
 
 
-    BasicGraspQualityMeasure::BasicGraspQualityMeasure(VirtualRobot::SceneObjectPtr object)
+    BasicGraspQualityMeasure::BasicGraspQualityMeasure(ModelLinkPtr object)
         : object(object)
     {
         THROW_VR_EXCEPTION_IF(!object, "Need an object");
@@ -175,7 +175,7 @@ namespace VirtualRobot
         return centerOfModel;
     }
 
-    VirtualRobot::SceneObjectPtr BasicGraspQualityMeasure::getObject()
+    VirtualRobot::ModelLinkPtr BasicGraspQualityMeasure::getObject()
     {
         return object;
     }

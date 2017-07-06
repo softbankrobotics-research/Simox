@@ -23,13 +23,17 @@
 #ifndef _VirtualRobot_BaseIO_h_
 #define _VirtualRobot_BaseIO_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Tools/Units.h"
 #include "../Tools/MathTools.h"
 #include "../Model/Model.h"
 #include "../Model/ModelConfig.h"
 #include "../Model/Nodes/ModelNode.h"
 #include "../EndEffector/EndEffectorActor.h"
+
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/Nodes/ModelLink.h"
+#include "../Model/Primitive.h"
 
 #include <string>
 #include <vector>
@@ -87,6 +91,8 @@ namespace VirtualRobot
         static std::string getLowerCase(const char* c);
         static void getLowerCase(std::string& aString);
         static std::string processStringAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
+
+
 
         static VisualizationNodePtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
         static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);

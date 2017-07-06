@@ -23,15 +23,13 @@
 #ifndef _VirtualRobot_TSRConstraint_h_
 #define _VirtualRobot_TSRConstraint_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint, public boost::enable_shared_from_this<TSRConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint, public std::enable_shared_from_this<TSRConstraint>
     {
     public:
         TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,
@@ -76,7 +74,7 @@ namespace VirtualRobot
         float posRotTradeoff;
     };
 
-    typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
+    typedef std::shared_ptr<TSRConstraint> TSRConstraintPtr;
 }
 
 #endif

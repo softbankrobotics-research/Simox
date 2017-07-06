@@ -455,12 +455,12 @@ void showCamWindow::updateCameras()
 
     if (robot->hasRobotNode(cam1Name))
     {
-        cam1 = robot->getRobotNode(cam1Name);
+        cam1 = robot->getModelNode(cam1Name);
     }
 
     if (robot->hasRobotNode(cam2Name))
     {
-        cam2 = robot->getRobotNode(cam2Name);
+        cam2 = robot->getModelNode(cam2Name);
     }
 
     if (cam1)
@@ -615,8 +615,8 @@ void showCamWindow::updatRobotInfo()
     }
 
     // get nodes
-    robot->getRobotNodes(allRobotNodes);
-    robot->getRobotNodeSets(robotNodeSets);
+    robot->getModelNodes(allRobotNodes);
+    robotNodeSets = robot->getModelNodeSets();
 
     updateRNSBox();
     selectRNS(0);

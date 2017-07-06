@@ -323,8 +323,8 @@ void showRobotWindow::exportVRML()
 #if 0
     resetSceneryAll();
 
-    RobotNodePtr start1 = robot->getRobotNode("Shoulder 2 L");
-    RobotNodePtr tcp1 = robot->getRobotNode("Wrist 1 L");
+    RobotNodePtr start1 = robot->getModelNode("Shoulder 2 L");
+    RobotNodePtr tcp1 = robot->getModelNode("Wrist 1 L");
 
     Eigen::Matrix4f m1 = start1->toLocalCoordinateSystem(tcp1->getGlobalPose());
     cout << "OLD trafo (FW):" << endl << m1 << endl;
@@ -381,8 +381,8 @@ void showRobotWindow::exportVRML()
 
     updatRobotInfo();
 
-    RobotNodePtr start2 = robot->getRobotNode("Shoulder 2 L");
-    RobotNodePtr tcp2 = robot->getRobotNode("Wrist 1 L");
+    RobotNodePtr start2 = robot->getModelNode("Shoulder 2 L");
+    RobotNodePtr tcp2 = robot->getModelNode("Wrist 1 L");
 
     Eigen::Matrix4f m2 = start2->toLocalCoordinateSystem(tcp2->getGlobalPose());
     cout << "NEW trafo (INV):" << endl << m2 << endl;
@@ -586,8 +586,8 @@ void showRobotWindow::jointValueChanged(int pos)
     UI.lcdNumberJointValue->display((double)fPos);
 
 #if 0
-    RobotNodePtr rnl = robot->getRobotNode("LeftLeg_TCP");
-    RobotNodePtr rnr = robot->getRobotNode("RightLeg_TCP");
+    RobotNodePtr rnl = robot->getModelNode("LeftLeg_TCP");
+    RobotNodePtr rnr = robot->getModelNode("RightLeg_TCP");
 
     if (rnl && rnr)
     {
@@ -783,7 +783,7 @@ void showRobotWindow::loadRobot()
 
 #if 0
     if (robot->hasRobotNodeSet("LeftArm"))
-        robot = RobotFactory::cloneSubSet(robot, robot->getRobotNodeSet("LeftArm"), "LeftArmRobot");
+        robot = RobotFactory::cloneSubSet(robot, robot->getModelNodeSet("LeftArm"), "LeftArmRobot");
 #endif
 
 #if 0
@@ -795,7 +795,7 @@ void showRobotWindow::loadRobot()
         robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
     }
     VR_INFO << "=========== PERFORMANCE orig ============" << endl;
-    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));
+    testPerformance(robot, robot->getModelNodeSet("Joints_Revolute"));
     if (robot->hasRobotNode("LWy_joint") && robot->hasRobotNode("RWy_joint"))
     {
         std::vector<std::string> l;
@@ -804,7 +804,7 @@ void showRobotWindow::loadRobot()
         robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
     }
     VR_INFO << "=========== PERFORMANCE clone ============" << endl;
-    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));// ("BPy_joint"));
+    testPerformance(robot, robot->getModelNodeSet("Joints_Revolute"));// ("BPy_joint"));
 #endif
 
     updatRobotInfo();
@@ -826,8 +826,8 @@ void showRobotWindow::updatRobotInfo()
     UI.checkBoxStructure->setChecked(false);
 
     // get nodes
-    robot->getRobotNodes(allRobotNodes);
-    robot->getRobotNodeSets(robotNodeSets);
+    robot->getModelNodes(allRobotNodes);
+    robotNodeSets = robot->getModelNodeSets();
     robot->getEndEffectors(eefs);
     updateEEFBox();
     updateRNSBox();
@@ -863,7 +863,7 @@ void showRobotWindow::updatRobotInfo()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = r2->getVisualization<CoinVisualization>(colModel);
+    std::shared_ptr<VirtualRobot::CoinVisualization> visualization = r2->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -922,7 +922,7 @@ void showRobotWindow::openHand()
     if (robot)
     {
         float randMult = (float)(1.0 / (double)(RAND_MAX));
-        std::vector<RobotNodePtr> rn = robot->getRobotNodes();
+        std::vector<RobotNodePtr> rn = robot->getModelNodes();
         std::vector<RobotNodePtr> rnJoints;
 
         for (size_t j = 0; j < rn.size(); j++)

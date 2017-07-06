@@ -258,7 +258,7 @@ void JacobiWindow::resetSceneryAll()
     }
 
     std::vector<RobotNodePtr> rn;
-    robot->getRobotNodes(rn);
+    robot->getModelNodes(rn);
     std::vector<float> jv(rn.size(), 0.0f);
     robot->setJointValues(rn, jv);
 
@@ -278,7 +278,7 @@ void JacobiWindow::collisionModel()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
 
-    boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
+    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -326,8 +326,7 @@ void JacobiWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns;
-    robot->getRobotNodeSets(rns);
+    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
@@ -396,12 +395,12 @@ void JacobiWindow::selectKC(int nr)
 
     if (kc->getTCP()->getName() == std::string("TCP L"))
     {
-        tcp2 = robot->getRobotNode(std::string("TCP R"));
+        tcp2 = robot->getModelNode(std::string("TCP R"));
     }
 
     if (kc->getTCP()->getName() == std::string("TCP R"))
     {
-        tcp2 = robot->getRobotNode(std::string("TCP L"));
+        tcp2 = robot->getModelNode(std::string("TCP L"));
     }
 
     box2TCP();
@@ -488,23 +487,23 @@ void JacobiWindow::jacobiTestBi()
     //n.push_back(tcp2);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
     std::vector<RobotNodePtr> nBi;
-    nBi.push_back(robot->getRobotNode(std::string("Shoulder 1 L")));
-    nBi.push_back(robot->getRobotNode(std::string("Shoulder 1 R")));
-    nBi.push_back(robot->getRobotNode(std::string("Shoulder 2 L")));
-    nBi.push_back(robot->getRobotNode(std::string("Shoulder 2 R")));
-    nBi.push_back(robot->getRobotNode(std::string("Underarm L")));
-    nBi.push_back(robot->getRobotNode(std::string("Underarm R")));
-    nBi.push_back(robot->getRobotNode(std::string("Elbow L")));
-    nBi.push_back(robot->getRobotNode(std::string("Elbow R")));
-    nBi.push_back(robot->getRobotNode(std::string("Upperarm L")));
-    nBi.push_back(robot->getRobotNode(std::string("Upperarm R")));
-    nBi.push_back(robot->getRobotNode(std::string("Wrist 1 L")));
-    nBi.push_back(robot->getRobotNode(std::string("Wrist 1 R")));
-    nBi.push_back(robot->getRobotNode(std::string("Wrist 2 L")));
-    nBi.push_back(robot->getRobotNode(std::string("Wrist 2 R")));
-    nBi.push_back(robot->getRobotNode(std::string("Hip Roll")));
-    nBi.push_back(robot->getRobotNode(std::string("Hip Pitch")));
-    nBi.push_back(robot->getRobotNode(std::string("Hip Yaw")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 L")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 R")));
+    nBi.push_back(robot->getModelNode(std::string("Underarm L")));
+    nBi.push_back(robot->getModelNode(std::string("Underarm R")));
+    nBi.push_back(robot->getModelNode(std::string("Elbow L")));
+    nBi.push_back(robot->getModelNode(std::string("Elbow R")));
+    nBi.push_back(robot->getModelNode(std::string("Upperarm L")));
+    nBi.push_back(robot->getModelNode(std::string("Upperarm R")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 1 L")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 1 R")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 2 L")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 2 R")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Roll")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Pitch")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Yaw")));
     RobotNodeSetPtr kcBi = RobotNodeSet::createRobotNodeSet(robot, std::string("jacobiTestBi"), nBi);
 
     DifferentialIKPtr j(new DifferentialIK(kcBi, RobotNodePtr()/*,rns*/));

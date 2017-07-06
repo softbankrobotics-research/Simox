@@ -1,7 +1,7 @@
 
 #include "Grasp.h"
 #include "../RobotConfig.h"
-#include "..//Robot.h"
+#include "..//Model/Model.h"
 #include "../VirtualRobotException.h"
 #include <iomanip>
 

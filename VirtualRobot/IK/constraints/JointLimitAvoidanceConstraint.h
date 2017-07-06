@@ -26,17 +26,15 @@
 
 #include "VirtualRobot/IK/constraints/ReferenceConfigurationConstraint.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceConstraint : public ReferenceConfigurationConstraint, public boost::enable_shared_from_this<JointLimitAvoidanceConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceConstraint : public ReferenceConfigurationConstraint, public std::enable_shared_from_this<JointLimitAvoidanceConstraint>
     {
     public:
         JointLimitAvoidanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
     };
 
-    typedef boost::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;
+    typedef std::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;
 }
 
 #endif

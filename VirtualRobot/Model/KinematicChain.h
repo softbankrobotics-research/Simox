@@ -1,8 +1,8 @@
 #ifndef _VirtualRobot_KinematicChain_h_
 #define _VirtualRobot_KinematicChain_h_
 
-#include "VirtualRobot.h"
-#include "Nodes/RobotNode.h"
+#include "Model/Model.h"
+#include "Model/Nodes/ModelNode.h"
 #include "RobotNodeSet.h"
 
 #include <string>

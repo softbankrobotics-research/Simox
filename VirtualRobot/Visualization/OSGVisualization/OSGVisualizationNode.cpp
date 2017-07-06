@@ -226,7 +226,7 @@ namespace VirtualRobot
     {
         VisualizationNode::attachVisualization(name, v);
 
-        boost::shared_ptr<OSGVisualizationNode> osgNode = boost::dynamic_pointer_cast<OSGVisualizationNode>(v);
+        boost::shared_ptr<OSGVisualizationNode> osgNode = std::dynamic_pointer_cast<OSGVisualizationNode>(v);
 
         if (osgNode && osgNode->getOSGVisualization())
         {

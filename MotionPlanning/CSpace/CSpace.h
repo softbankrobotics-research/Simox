@@ -24,8 +24,8 @@
 #define _saba_cspace_h_
 
 #include "../Saba.h"
-#include "VirtualRobot/Robot.h"
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include <iostream>
 #include <vector>
@@ -56,7 +56,7 @@ namespace Saba
      @see CSpaceSampled
 
      */
-    class SABA_IMPORT_EXPORT CSpace : public boost::enable_shared_from_this<CSpace>
+    class SABA_IMPORT_EXPORT CSpace : public std::enable_shared_from_this<CSpace>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

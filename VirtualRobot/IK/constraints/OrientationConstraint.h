@@ -24,15 +24,13 @@
 #ifndef _VirtualRobot_OrientationConstraint_h_
 #define _VirtualRobot_OrientationConstraint_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT OrientationConstraint : public Constraint, public boost::enable_shared_from_this<OrientationConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT OrientationConstraint : public Constraint, public std::enable_shared_from_this<OrientationConstraint>
     {
     public:
         OrientationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Matrix3f& target,
@@ -54,7 +52,7 @@ namespace VirtualRobot
 
     };
 
-    typedef boost::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
+    typedef std::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
 }
 
 #endif

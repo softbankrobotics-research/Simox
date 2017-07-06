@@ -177,7 +177,7 @@ void ConstrainedIK::getUnitableNodes(const RobotNodePtr &robotNode, const RobotN
             std::vector<SceneObjectPtr> children = robotNode->getChildren();
             for (auto &child : children)
             {
-                RobotNodePtr childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
+                RobotNodePtr childRobotNode = std::dynamic_pointer_cast<RobotNode>(child);
                 if (childRobotNode)
                 {
                     getUnitableNodes(childRobotNode, nodeSet, unitable);

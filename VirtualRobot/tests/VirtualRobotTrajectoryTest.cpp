@@ -6,12 +6,12 @@
 
 #define BOOST_TEST_MODULE VirtualRobot_VirtualTrajectoryTest
 
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/Trajectory.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <string>
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(testTrajectorySet)
     BOOST_REQUIRE(rob);
 
     VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getRobotNodeSet("rns1"));
+    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryClone)
     BOOST_REQUIRE(rob);
 
     VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getRobotNodeSet("rns1"));
+    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsRemove)
     BOOST_REQUIRE(rob);
 
     VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getRobotNodeSet("rns1"));
+    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsInsert)
     BOOST_REQUIRE(rob);
 
     VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getRobotNodeSet("rns1"));
+    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
     BOOST_REQUIRE(rns);
 
 

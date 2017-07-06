@@ -1,6 +1,6 @@
 #include "JointLimitAvoidanceJacobi.h"
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RobotNodeSet.h>
 
 using namespace VirtualRobot;

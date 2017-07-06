@@ -1,9 +1,9 @@
 
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/SceneObjectSet.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
@@ -95,7 +95,7 @@ void startRRTVisualization()
 
     // setup collision detection
     std::string colModelName("CollisionModel");
-    SceneObjectSetPtr cms = robot->getRobotNodeSet(colModelName);
+    SceneObjectSetPtr cms = robot->getModelNodeSet(colModelName);
     CDManagerPtr cdm(new CDManager());
     cdm->addCollisionModel(cms);
     cdm->addCollisionModel(o);
@@ -106,7 +106,7 @@ void startRRTVisualization()
     bool ok;
     CSpaceSampledPtr cspace;
     std::string planningJoints("AllJoints");
-    RobotNodeSetPtr planningNodes = robot->getRobotNodeSet(planningJoints);
+    RobotNodeSetPtr planningNodes = robot->getModelNodeSet(planningJoints);
 #ifdef USE_BIRRT
     BiRrtPtr rrt;
 #else
@@ -174,7 +174,7 @@ void startRRTVisualization()
     SoSeparator* sep = new SoSeparator();
     SceneObject::VisualizationType colModel = SceneObject::Full;
 
-    boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
+    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -188,12 +188,12 @@ void startRRTVisualization()
     VisualizationNodePtr visuObstacle = o->getVisualization();
     std::vector<VisualizationNodePtr> visus;
     visus.push_back(visuObstacle);
-    boost::shared_ptr<CoinVisualization> visualizationO(new CoinVisualization(visus));
+    std::shared_ptr<CoinVisualization> visualizationO(new CoinVisualization(visus));
     SoNode* obstacleSoNode = visualizationO->getCoinVisualization();
     sep->addChild(obstacleSoNode);
 
     // show rrt visu
-    boost::shared_ptr<CoinRrtWorkspaceVisualization> w(new CoinRrtWorkspaceVisualization(robot, cspace, "EndPoint"));
+    std::shared_ptr<CoinRrtWorkspaceVisualization> w(new CoinRrtWorkspaceVisualization(robot, cspace, "EndPoint"));
     w->addTree(tree);
 #ifdef USE_BIRRT
     CSpaceTreePtr tree2 = rrt->getTree2();

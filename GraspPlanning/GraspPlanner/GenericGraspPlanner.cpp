@@ -1,8 +1,8 @@
 #include "GenericGraspPlanner.h"
 #include <VirtualRobot/Grasping/Grasp.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RobotConfig.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <iostream>
 #include <sstream>
 #include "../GraspQuality/GraspQualityMeasureWrenchSpace.h"
@@ -163,7 +163,7 @@ namespace GraspStudio
         VirtualRobot::GraspPtr g(new VirtualRobot::Grasp(sGraspName, robot->getType(), eef->getName(), pLocal, sGraspPlanner, score));
         // set joint config
         VirtualRobot::RobotConfigPtr config = eef->getConfiguration();
-        std::map< std::string, float > configValues = config->getRobotNodeJointValueMap();
+        std::map< std::string, float > configValues = config->getModelNodeJointValueMap();
         g->setConfiguration(configValues);
         return g;
     }

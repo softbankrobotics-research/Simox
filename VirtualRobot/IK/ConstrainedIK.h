@@ -23,16 +23,15 @@
 #ifndef _VirtualRobot_ConstrainedIK_h_
 #define _VirtualRobot_ConstrainedIK_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
-#include "VirtualRobot/Robot.h"
+#include "VirtualRobot/Model/Model.h"
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public boost::enable_shared_from_this<ConstrainedIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public std::enable_shared_from_this<ConstrainedIK>
     {
     public:
         enum SeedType
@@ -92,7 +91,7 @@ namespace VirtualRobot
         float raiseEpsilon;
     };
 
-    typedef boost::shared_ptr<ConstrainedIK> ConstrainedIKPtr;
+    typedef std::shared_ptr<ConstrainedIK> ConstrainedIKPtr;
 }
 
 #endif

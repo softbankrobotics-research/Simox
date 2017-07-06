@@ -1,5 +1,5 @@
 #include "LinkedCoordinate.h"
-#include "Robot.h"
+#include "Model/Model.h"
 
 
 using namespace VirtualRobot;
@@ -53,7 +53,7 @@ void LinkedCoordinate::set(const std::string& frame, const Eigen::Matrix4f& pose
         THROW_VR_EXCEPTION(format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % frame % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    this->set(this->robot->getRobotNode(frame), pose);
+    this->set(this->robot->getModelNode(frame), pose);
 }
 
 
@@ -104,7 +104,7 @@ void LinkedCoordinate::changeFrame(const std::string& destination)
         THROW_VR_EXCEPTION(format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    this->changeFrame(this->robot->getRobotNode(destination));
+    this->changeFrame(this->robot->getModelNode(destination));
 }
 
 Eigen::Matrix4f LinkedCoordinate::getInFrame(const RobotNodePtr& destination) const
@@ -130,7 +130,7 @@ Eigen::Matrix4f LinkedCoordinate::getInFrame(const std::string& destination) con
         THROW_VR_EXCEPTION(format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    return LinkedCoordinate::getCoordinateTransformation(this->frame, this->robot->getRobotNode(destination), this->robot) * this->pose;
+    return LinkedCoordinate::getCoordinateTransformation(this->frame, this->robot->getModelNode(destination), this->robot) * this->pose;
 }
 
 

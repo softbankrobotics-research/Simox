@@ -1,7 +1,7 @@
 
 #include "RrtWorkspaceVisualization.h"
 #include "MotionPlanning/CSpace/CSpace.h"
-#include "VirtualRobot/Nodes/RobotNode.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
 
 namespace Saba
 {
@@ -12,7 +12,7 @@ namespace Saba
         this->cspace = cspace;
         SABA_ASSERT(robot);
         SABA_ASSERT(cspace);
-        robotNodeSet = cspace->getRobotNodeSet();
+        robotNodeSet = cspace->getModelNodeSet();
         SABA_ASSERT(robotNodeSet);
         setTCPName(TCPName);
         init();
@@ -112,7 +112,7 @@ namespace Saba
     void RrtWorkspaceVisualization::setTCPName(const std::string TCPName)
     {
         this->TCPName = TCPName;
-        TCPNode = robot->getRobotNode(TCPName);
+        TCPNode = robot->getModelNode(TCPName);
 
         if (!TCPNode)
         {

@@ -23,7 +23,7 @@
 #ifndef __PoseQualityManipulability_H_
 #define __PoseQualityManipulability_H_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #include "PoseQualityMeasurement.h"
 

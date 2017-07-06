@@ -1,8 +1,8 @@
 #include <Eigen/Geometry>
 #include "GenericIKSolver.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
-#include "../Nodes/RobotNode.h"
+#include "../Model/Nodes/ModelNode.h"
 #include "../VirtualRobotException.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"

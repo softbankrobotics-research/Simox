@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VirtualRobotException_h_
 #define _VirtualRobot_VirtualRobotException_h_
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include <string>
 #include <iostream>
 #include <sstream>

@@ -5,7 +5,7 @@
 #include "MotionPlanning/Saba.h"
 
 #include "MTPlanningScenery.h"
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 
 #include <qobject.h>
 #include <qmainwindow.h>

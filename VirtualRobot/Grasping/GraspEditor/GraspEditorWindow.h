@@ -2,10 +2,10 @@
 #ifndef __GraspEditor_WINDOW_H_
 #define __GraspEditor_WINDOW_H_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
@@ -127,8 +127,8 @@ namespace VirtualRobot
         SoTimerSensor* timer;
 
 
-        boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-        boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
+        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
     };
 
 }

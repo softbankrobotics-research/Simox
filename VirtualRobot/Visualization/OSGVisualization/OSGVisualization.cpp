@@ -45,7 +45,7 @@ namespace VirtualRobot
 
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
         {
-            boost::shared_ptr<OSGVisualizationNode> osgNode = boost::dynamic_pointer_cast<OSGVisualizationNode>(visualizationNode);
+            boost::shared_ptr<OSGVisualizationNode> osgNode = std::dynamic_pointer_cast<OSGVisualizationNode>(visualizationNode);
 
             if (osgNode && osgNode->getOSGVisualization())
             {
@@ -92,7 +92,7 @@ namespace VirtualRobot
             return false;
         }
 
-        boost::shared_ptr<OSGVisualizationNode> osgNode = boost::dynamic_pointer_cast<OSGVisualizationNode>(visualizationNode);
+        boost::shared_ptr<OSGVisualizationNode> osgNode = std::dynamic_pointer_cast<OSGVisualizationNode>(visualizationNode);
 
         if (osgNode)
         {

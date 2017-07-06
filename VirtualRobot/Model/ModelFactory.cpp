@@ -142,7 +142,7 @@ namespace VirtualRobot
             ModelTreeEdge currentEdge = edges.front();
             edges.pop_front();
 
-            ModelNodePtr parent = boost::dynamic_pointer_cast<ModelNode>(currentEdge.second->getParent());
+            ModelNodePtr parent = std::dynamic_pointer_cast<ModelNode>(currentEdge.second->getParent());
 
             std::vector<SceneObjectPtr> children = currentEdge.second->getChildren();
             ModelFactory::modelNodeDef rnDef;
@@ -166,7 +166,7 @@ namespace VirtualRobot
             {
                 if (children[i] != currentEdge.first)
                 {
-                    ModelNodePtr childNode = boost::dynamic_pointer_cast<ModelNode>(children[i]);
+                    ModelNodePtr childNode = std::dynamic_pointer_cast<ModelNode>(children[i]);
 
                     // not a model node
                     if (!childNode)
@@ -243,7 +243,7 @@ namespace VirtualRobot
         {
             currentNodeName = rn->getName();
             nodes.push_back(currentNodeName);
-            rn = boost::dynamic_pointer_cast<ModelNode>(rn->getParent());
+            rn = std::dynamic_pointer_cast<ModelNode>(rn->getParent());
         }
 
         if (!rn)
@@ -463,7 +463,7 @@ namespace VirtualRobot
 
                     for (auto cc : childChildren)
                     {
-                        SensorPtr cs = boost::dynamic_pointer_cast<Sensor>(cc);
+                        SensorPtr cs = std::dynamic_pointer_cast<Sensor>(cc);
 
                         if (cs)
                         {
@@ -495,7 +495,7 @@ namespace VirtualRobot
 
                     for (auto cc : childChildren)
                     {
-                        SensorPtr cs = boost::dynamic_pointer_cast<Sensor>(cc);
+                        SensorPtr cs = std::dynamic_pointer_cast<Sensor>(cc);
 
                         if (cs)
                         {
@@ -526,13 +526,13 @@ namespace VirtualRobot
             VR_ASSERT(inv_it != directionInversion.end());
             if (inv_it->second)
             {
-                ModelNodeRevolutePtr rotJoint = boost::dynamic_pointer_cast<ModelNodeRevolute>(it->first);
+                ModelNodeRevolutePtr rotJoint = std::dynamic_pointer_cast<ModelNodeRevolute>(it->first);
                 if (rotJoint)
                 {
                     rotJoint->jointRotationAxis *= -1.0f;
                 }
 
-                ModelNodePrismaticPtr prismaticJoint = boost::dynamic_pointer_cast<ModelNodePrismatic>(it->first);
+                ModelNodePrismaticPtr prismaticJoint = std::dynamic_pointer_cast<ModelNodePrismatic>(it->first);
                 if (prismaticJoint)
                 {
                     prismaticJoint->jointTranslationDirection *= -1.0f;
@@ -609,7 +609,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < children.size(); i++)
         {
             SceneObjectPtr c = children[i];
-            ModelNodePtr cRN = boost::dynamic_pointer_cast<ModelNode>(c);
+            ModelNodePtr cRN = std::dynamic_pointer_cast<ModelNode>(c);
 
             if (cRN && cRN != nodeExclude)
             {
@@ -628,8 +628,8 @@ namespace VirtualRobot
         for (size_t i = 0; i < children.size(); i++)
         {
             SceneObjectPtr c = children[i];
-            SensorPtr cS = boost::dynamic_pointer_cast<Sensor>(c);
-            ModelNodePtr cRN = boost::dynamic_pointer_cast<ModelNode>(c);
+            SensorPtr cS = std::dynamic_pointer_cast<Sensor>(c);
+            ModelNodePtr cRN = std::dynamic_pointer_cast<ModelNode>(c);
 
             if (cS)
             {
@@ -852,7 +852,7 @@ namespace VirtualRobot
             std::vector<SceneObjectPtr> c = rn->getChildren();
             for (size_t j = 0; j < c.size(); j++)
             {
-                SensorPtr s = boost::dynamic_pointer_cast<Sensor>(c[j]);
+                SensorPtr s = std::dynamic_pointer_cast<Sensor>(c[j]);
                 if (s)
                     childSensorNodes.push_back(s);
             }
@@ -955,7 +955,7 @@ namespace VirtualRobot
         {
             if (std::find(uniteWithAllChildren.begin(), uniteWithAllChildren.end(), c[i]->getName()) != uniteWithAllChildren.end())
             {
-                ModelNodePtr currentRN = boost::dynamic_pointer_cast<ModelNode>(c[i]);
+                ModelNodePtr currentRN = std::dynamic_pointer_cast<ModelNode>(c[i]);
                 THROW_VR_EXCEPTION_IF(!currentRN, "Only RN allowed in list");
                 ModelNodePtr currentRNClone = currentRN->clone(model, false, currentNodeClone);
 
@@ -973,7 +973,7 @@ namespace VirtualRobot
             }
             else
             {
-                ModelNodePtr currentRN = boost::dynamic_pointer_cast<ModelNode>(c[i]);
+                ModelNodePtr currentRN = std::dynamic_pointer_cast<ModelNode>(c[i]);
                 if (currentRN)
                 {
                     ModelNodePtr currentRNClone = currentRN->clone(model, false, currentNodeClone);
@@ -981,7 +981,7 @@ namespace VirtualRobot
                 }
                 else
                 {
-                    SensorPtr s = boost::dynamic_pointer_cast<Sensor>(c[i]);
+                    SensorPtr s = std::dynamic_pointer_cast<Sensor>(c[i]);
                     if (s)
                     {
                         s->clone(currentNodeClone);

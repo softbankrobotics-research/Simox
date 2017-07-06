@@ -2,10 +2,10 @@
 #ifndef __stabilityScene_WINDOW_H_
 #define __stabilityScene_WINDOW_H_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
@@ -90,7 +90,7 @@ protected:
     bool useColModel;
 
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 };
 
 #endif // __stabilityScene_WINDOW_H_

@@ -165,7 +165,7 @@ void ReachabilityMapWindow::resetSceneryAll()
     }
 
     std::vector< RobotNodePtr > nodes;
-    robot->getRobotNodes(nodes);
+    robot->getModelNodes(nodes);
     std::vector<float> jv(nodes.size(), 0.0f);
     robot->setJointValues(nodes, jv);
 }
@@ -262,7 +262,7 @@ void ReachabilityMapWindow::buildRobotVisu()
         return;
     }
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>();
+    std::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>();
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -285,7 +285,7 @@ void ReachabilityMapWindow::buildObjectVisu()
         return;
     }
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = graspObject->getVisualization<CoinVisualization>();
+    std::shared_ptr<VirtualRobot::CoinVisualization> visualization = graspObject->getVisualization<CoinVisualization>();
     SoNode* visualisationNode = NULL;
 
     if (visualization)

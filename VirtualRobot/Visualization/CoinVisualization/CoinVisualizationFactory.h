@@ -24,10 +24,9 @@
 #define _VirtualRobot_CoinVisualizationFactory_h_
 
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 #include "../VisualizationFactory.h"
 #include "../../Tools/BoundingBox.h"
-#include "../../SceneObject.h"
 #include "../../EndEffector/EndEffector.h"
 #include "../ColorMap.h"
 #include "../../Workspace/WorkspaceRepresentation.h"
@@ -414,12 +413,12 @@ namespace VirtualRobot
         // AbstractFactoryMethod
     public:
         static std::string getName();
-        static boost::shared_ptr<VisualizationFactory> createInstance(void*);
+        static std::shared_ptr<VisualizationFactory> createInstance(void*);
     private:
         static SubClassRegistry registry;
     };
 
-    typedef boost::shared_ptr<CoinVisualizationFactory> CoinVisualizationFactoryPtr;
+    typedef std::shared_ptr<CoinVisualizationFactory> CoinVisualizationFactoryPtr;
 
 
 } // namespace VirtualRobot

@@ -152,7 +152,7 @@ void reachabilityWindow::resetSceneryAll()
     }
 
     std::vector< RobotNodePtr > nodes;
-    robot->getRobotNodes(nodes);
+    robot->getModelNodes(nodes);
     std::vector<float> jv(nodes.size(), 0.0f);
     robot->setJointValues(nodes, jv);
 }
@@ -417,9 +417,8 @@ void reachabilityWindow::loadRobot()
     }
 
     // get nodes
-    robot->getRobotNodes(allRobotNodes);
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS;
-    robot->getRobotNodeSets(allRNS);
+    robot->getModelNodes(allRobotNodes);
+    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
     robotNodeSets.clear();
 
     for (size_t i = 0; i < allRNS.size(); i++)
@@ -494,8 +493,7 @@ void reachabilityWindow::createReach()
     UICreate.doubleSpinBoxMaxZ->setValue(maxB[2]);
 
 
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS;
-    robot->getRobotNodeSets(allRNS);
+    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
 
     for (size_t i = 0; i < allRNS.size(); i++)
     {
@@ -531,8 +529,8 @@ void reachabilityWindow::createReach()
         {
             std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
             std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
-            staticModel = robot->getRobotNodeSet(staticM);
-            dynamicModel = robot->getRobotNodeSet(dynM);
+            staticModel = robot->getModelNodeSet(staticM);
+            dynamicModel = robot->getModelNodeSet(dynM);
         }
 
         float discrTr = UICreate.doubleSpinBoxDiscrTrans->value();
@@ -543,7 +541,7 @@ void reachabilityWindow::createReach()
         if (measure != "Reachability")
         {
             reachSpace.reset(new Manipulability(robot));
-            ManipulabilityPtr manipSpace = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+            ManipulabilityPtr manipSpace = std::dynamic_pointer_cast<Manipulability>(reachSpace);
             manipSpace->setMaxManipulability(UICreate.doubleSpinBoxMaxManip->value());
         }
 
@@ -551,15 +549,15 @@ void reachabilityWindow::createReach()
 
         if (measure == "Ext. Manipulability")
         {
-            ManipulabilityPtr man = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+            ManipulabilityPtr man = std::dynamic_pointer_cast<Manipulability>(reachSpace);
             PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
             man->setManipulabilityMeasure(manMeasure);
             if (UICreate.checkBoxColDetecion->isChecked() && UICreate.checkBoxSelfDistance->isChecked())
             {
                 std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
                 std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
-                RobotNodeSetPtr m1 = robot->getRobotNodeSet(staticM);
-                RobotNodeSetPtr m2 = robot->getRobotNodeSet(dynM);
+                RobotNodeSetPtr m1 = robot->getModelNodeSet(staticM);
+                RobotNodeSetPtr m2 = robot->getModelNodeSet(dynM);
                 man->initSelfDistanceCheck(m1, m2);
 
             }

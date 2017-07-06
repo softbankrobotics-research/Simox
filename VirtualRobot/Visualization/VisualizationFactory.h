@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_VisualizationFactory_h_
 #define _VirtualRobot_VisualizationFactory_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Tools/AbstractFactoryMethod.h"
 #include "../Tools/MathTools.h"
 #include "../Tools/BoundingBox.h"
@@ -246,7 +246,7 @@ namespace VirtualRobot
         }
 
     };
-    typedef boost::shared_ptr<VisualizationFactory::Color> ColorPtr;
+    typedef std::shared_ptr<VisualizationFactory::Color> ColorPtr;
 
 } // namespace VirtualRobot
 

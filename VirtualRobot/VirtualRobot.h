@@ -125,12 +125,12 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #endif
 
 #ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include <boost/assert.hpp>
-#include <boost/weak_ptr.hpp>
+//#include <boost/weak_ptr.hpp>
 #include <boost/thread.hpp>
-#include <boost/pointer_cast.hpp>
-#include <boost/enable_shared_from_this.hpp>
+//#include <boost/pointer_cast.hpp>
+//#include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/bind.hpp>
@@ -154,6 +154,7 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <memory>
 
 //#ifdef _DEBUG
 //#ifdef WIN32
@@ -219,6 +220,7 @@ namespace VirtualRobot
     class JointSet;
     class ModelNodeAttachment;
     class ModelNodeAttachmentFactory;
+
     typedef Model Robot; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelNode RobotNode; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelLink RobotLink; //!< A typedef to make a differ between a robot and a simple object
@@ -231,69 +233,69 @@ namespace VirtualRobot
     typedef ModelNodeAttachmentFactory RobotNodeAttachmentFactory; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelConfig RobotConfig; //!< A typedef to make a differ between a robot and a simple object
 
-    typedef boost::shared_ptr<CoMIK> CoMIKPtr;
-    typedef boost::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
-    typedef boost::shared_ptr<DifferentialIK> DifferentialIKPtr;
-    typedef boost::shared_ptr<Constraint> ConstraintPtr;
-    typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
-    typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
-    typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
-    typedef boost::shared_ptr<PositionConstraint> PositionConstraintPtr;
-    typedef boost::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
-    typedef boost::shared_ptr<SupportPolygon> SupportPolygonPtr;
-    typedef boost::shared_ptr<KinematicChain> KinematicChainPtr;
-    typedef boost::shared_ptr<EndEffector> EndEffectorPtr;
-    typedef boost::shared_ptr<EndEffectorActor> EndEffectorActorPtr;
-    typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
-    typedef boost::shared_ptr<CollisionChecker> CollisionCheckerPtr;
-    typedef boost::shared_ptr<TriMeshModel> TriMeshModelPtr;
-    typedef boost::shared_ptr<Obstacle> ObstaclePtr;
-    typedef boost::shared_ptr<Visualization> VisualizationPtr;
-    typedef boost::shared_ptr<VisualizationNode> VisualizationNodePtr;
-    typedef boost::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
-    typedef boost::shared_ptr<WorkspaceData> WorkspaceDataPtr;
-    typedef boost::shared_ptr<WorkspaceDataArray> WorkspaceDataArrayPtr;
-    typedef boost::shared_ptr<WorkspaceRepresentation> WorkspaceRepresentationPtr;
-    typedef boost::shared_ptr<Reachability> ReachabilityPtr;
-    typedef boost::shared_ptr<Scene> ScenePtr;
-    typedef boost::shared_ptr<ModelConfig> ModelConfigPtr;
-    typedef boost::shared_ptr<Grasp> GraspPtr;
-    typedef boost::shared_ptr<GraspSet> GraspSetPtr;
-    typedef boost::shared_ptr<ManipulationObject> ManipulationObjectPtr;
-    typedef boost::shared_ptr<CDManager> CDManagerPtr;
-    typedef boost::shared_ptr<PoseQualityMeasurement> PoseQualityMeasurementPtr;
-    typedef boost::shared_ptr<PoseQualityManipulability> PoseQualityManipulabilityPtr;
-    typedef boost::shared_ptr<Trajectory> TrajectoryPtr;
-    typedef boost::shared_ptr<SphereApproximator> SphereApproximatorPtr;
-    typedef boost::shared_ptr<BasicGraspQualityMeasure> BasicGraspQualityMeasurePtr;
-    typedef boost::shared_ptr<WorkspaceGrid> WorkspaceGridPtr;
-    typedef boost::shared_ptr<Model> ModelPtr;
-    typedef boost::weak_ptr<Model> ModelWeakPtr;
-    typedef boost::shared_ptr<ModelNode> ModelNodePtr;
-    typedef boost::weak_ptr<ModelNode> ModelNodeWeakPtr;
-    typedef boost::shared_ptr<ModelLink> ModelLinkPtr;
-    typedef boost::shared_ptr<ModelJoint> ModelJointPtr;
-    typedef boost::shared_ptr<ModelJointFixed> ModelJointFixedPtr;
-    typedef boost::shared_ptr<ModelJointPrismatic> ModelJointPrismaticPtr;
-    typedef boost::shared_ptr<ModelJointRevolute> ModelJointRevolutePtr;
-    typedef boost::shared_ptr<ModelNodeSet> ModelNodeSetPtr;
-    typedef boost::shared_ptr<LinkSet> LinkSetPtr;
-    typedef boost::shared_ptr<JointSet> JointSetPtr;
-    typedef boost::shared_ptr<ModelNodeAttachment> ModelNodeAttachmentPtr;
-    typedef boost::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
-    typedef boost::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::weak_ptr<Robot> RobotWeakPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotNode> RobotNodePtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::weak_ptr<RobotNode> RobotNodeWeakPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotLink> RobotLinkPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotJoint> RobotJointPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotJointFixed> RobotJointFixedPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotJointPrismatic> RobotJointPrismaticPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotJointRevolute> RobotJointRevolutePtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotNodeSet> RobotNodeSetPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotNodeAttachment> RobotNodeAttachmentPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotNodeAttachmentFactory> RobotNodeAttachmentFactoryPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef boost::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<CoMIK> CoMIKPtr;
+    typedef std::shared_ptr<HierarchicalIK> HierarchicalIKPtr;
+    typedef std::shared_ptr<DifferentialIK> DifferentialIKPtr;
+    typedef std::shared_ptr<Constraint> ConstraintPtr;
+    typedef std::shared_ptr<TSRConstraint> TSRConstraintPtr;
+    typedef std::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
+    typedef std::shared_ptr<PoseConstraint> PoseConstraintPtr;
+    typedef std::shared_ptr<PositionConstraint> PositionConstraintPtr;
+    typedef std::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
+    typedef std::shared_ptr<SupportPolygon> SupportPolygonPtr;
+    typedef std::shared_ptr<KinematicChain> KinematicChainPtr;
+    typedef std::shared_ptr<EndEffector> EndEffectorPtr;
+    typedef std::shared_ptr<EndEffectorActor> EndEffectorActorPtr;
+    typedef std::shared_ptr<CollisionModel> CollisionModelPtr;
+    typedef std::shared_ptr<CollisionChecker> CollisionCheckerPtr;
+    typedef std::shared_ptr<TriMeshModel> TriMeshModelPtr;
+    typedef std::shared_ptr<Obstacle> ObstaclePtr;
+    typedef std::shared_ptr<Visualization> VisualizationPtr;
+    typedef std::shared_ptr<VisualizationNode> VisualizationNodePtr;
+    typedef std::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
+    typedef std::shared_ptr<WorkspaceData> WorkspaceDataPtr;
+    typedef std::shared_ptr<WorkspaceDataArray> WorkspaceDataArrayPtr;
+    typedef std::shared_ptr<WorkspaceRepresentation> WorkspaceRepresentationPtr;
+    typedef std::shared_ptr<Reachability> ReachabilityPtr;
+    typedef std::shared_ptr<Scene> ScenePtr;
+    typedef std::shared_ptr<ModelConfig> ModelConfigPtr;
+    typedef std::shared_ptr<Grasp> GraspPtr;
+    typedef std::shared_ptr<GraspSet> GraspSetPtr;
+    typedef std::shared_ptr<ManipulationObject> ManipulationObjectPtr;
+    typedef std::shared_ptr<CDManager> CDManagerPtr;
+    typedef std::shared_ptr<PoseQualityMeasurement> PoseQualityMeasurementPtr;
+    typedef std::shared_ptr<PoseQualityManipulability> PoseQualityManipulabilityPtr;
+    typedef std::shared_ptr<Trajectory> TrajectoryPtr;
+    typedef std::shared_ptr<SphereApproximator> SphereApproximatorPtr;
+    typedef std::shared_ptr<BasicGraspQualityMeasure> BasicGraspQualityMeasurePtr;
+    typedef std::shared_ptr<WorkspaceGrid> WorkspaceGridPtr;
+    typedef std::shared_ptr<Model> ModelPtr;
+    typedef std::weak_ptr<Model> ModelWeakPtr;
+    typedef std::shared_ptr<ModelNode> ModelNodePtr;
+    typedef std::weak_ptr<ModelNode> ModelNodeWeakPtr;
+    typedef std::shared_ptr<ModelLink> ModelLinkPtr;
+    typedef std::shared_ptr<ModelJoint> ModelJointPtr;
+    typedef std::shared_ptr<ModelJointFixed> ModelJointFixedPtr;
+    typedef std::shared_ptr<ModelJointPrismatic> ModelJointPrismaticPtr;
+    typedef std::shared_ptr<ModelJointRevolute> ModelJointRevolutePtr;
+    typedef std::shared_ptr<ModelNodeSet> ModelNodeSetPtr;
+    typedef std::shared_ptr<LinkSet> LinkSetPtr;
+    typedef std::shared_ptr<JointSet> JointSetPtr;
+    typedef std::shared_ptr<ModelNodeAttachment> ModelNodeAttachmentPtr;
+    typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
+    typedef std::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::weak_ptr<Robot> RobotWeakPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotNode> RobotNodePtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::weak_ptr<RobotNode> RobotNodeWeakPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotLink> RobotLinkPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotJoint> RobotJointPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotJointFixed> RobotJointFixedPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotJointPrismatic> RobotJointPrismaticPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotJointRevolute> RobotJointRevolutePtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotNodeSet> RobotNodeSetPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotNodeAttachment> RobotNodeAttachmentPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotNodeAttachmentFactory> RobotNodeAttachmentFactoryPtr; //!< A typedef to make a differ between a robot and a simple object
+    typedef std::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
 
     /*
      * Predefine for Tools/MathTools.h
@@ -316,9 +318,9 @@ namespace VirtualRobot
 
         typedef BaseLine<Eigen::Vector3f> Line;
         typedef BaseLine<Eigen::Vector2f> Line2D;
-        typedef boost::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
-        typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
-        typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
+        typedef std::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
+        typedef std::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
+        typedef std::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
 
    }
 

@@ -39,7 +39,7 @@ namespace VirtualRobot
 {
     typedef boost::shared_ptr<nlopt::opt> OptimizerPtr;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedOptimizationIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK, public std::enable_shared_from_this<ConstrainedOptimizationIK>
     {
     public:
         ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 0.5, float globalTolerance = std::numeric_limits<float>::quiet_NaN());

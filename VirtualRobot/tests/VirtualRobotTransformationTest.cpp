@@ -8,7 +8,7 @@
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <string>
 
 #include <Eigen/Core>
@@ -68,8 +68,8 @@ BOOST_AUTO_TEST_CASE(testRobotNodePrismaticTransformation)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    VirtualRobot::RobotNodePtr r1 = rob->getRobotNode(node1);
-    VirtualRobot::RobotNodePtr r2 = rob->getRobotNode(node2);
+    VirtualRobot::ModelNodePtr r1 = rob->getModelNode(node1);
+    VirtualRobot::ModelNodePtr r2 = rob->getModelNode(node2);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
     Eigen::Matrix4f m1 = r1->getGlobalPose();

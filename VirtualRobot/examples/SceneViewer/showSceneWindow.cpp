@@ -359,8 +359,8 @@ void showSceneWindow::loadScene()
     }*/
 
     // get nodes
-    /*m_pRobot->getRobotNodes(allRobotNodes);
-    m_pRobot->getRobotNodeSets(robotNodeSets);
+    /*m_pRobot->getModelNodes(allRobotNodes);
+    m_pRobot->getModelNodeSets(robotNodeSets);
     m_pRobot->getEndEffectors(eefs);
     updateEEFBox();
     updateRNSBox();
@@ -505,7 +505,7 @@ void showSceneWindow::selectObject(int nr)
     if (scene->hasManipulationObject(ob))
     {
         VirtualRobot::ManipulationObjectPtr mo = scene->getManipulationObject(ob);
-        currentObject = boost::dynamic_pointer_cast<SceneObject>(mo);
+        currentObject = std::dynamic_pointer_cast<SceneObject>(mo);
     }
 
     updateGrasps();
@@ -589,7 +589,7 @@ void showSceneWindow::updateGrasps()
     UI.comboBoxGrasp->clear();
     QString t("-");
     UI.comboBoxGrasp->addItem(t);
-    VirtualRobot::ManipulationObjectPtr mo = boost::dynamic_pointer_cast<ManipulationObject>(currentObject);
+    VirtualRobot::ManipulationObjectPtr mo = std::dynamic_pointer_cast<ManipulationObject>(currentObject);
 
     if (mo && currentEEF)
     {

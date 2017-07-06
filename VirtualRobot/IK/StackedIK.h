@@ -23,16 +23,16 @@
 #ifndef _VirtualRobot_StackedIK_h_
 #define _VirtualRobot_StackedIK_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
 #include "VirtualRobot/RobotNodeSet.h"
-#include "VirtualRobot/Nodes/RobotNode.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
 
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT StackedIK : public boost::enable_shared_from_this<StackedIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT StackedIK : public std::enable_shared_from_this<StackedIK>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -51,7 +51,7 @@ namespace VirtualRobot
         bool verbose;
     };
 
-    typedef boost::shared_ptr<StackedIK> StackedIKPtr;
+    typedef std::shared_ptr<StackedIK> StackedIKPtr;
 
 } // namespace VirtualRobot
 

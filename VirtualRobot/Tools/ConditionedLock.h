@@ -1,7 +1,7 @@
 #ifndef __CONDITIONED_LOCK__
 #define __CONDITIONED_LOCK__
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread/lock_concepts.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -33,7 +33,7 @@ typedef ConditionedLock<boost::unique_lock<boost::recursive_mutex> > ReadLock;
 typedef ConditionedLock<boost::unique_lock<boost::recursive_mutex> > WriteLock;
 //typedef ConditionedLock<boost::shared_lock<boost::shared_mutex> > ReadLock;
 //typedef ConditionedLock<boost::unique_lock<boost::shared_mutex> > WriteLock;
-typedef boost::shared_ptr< ReadLock > ReadLockPtr;
-typedef boost::shared_ptr< WriteLock > WriteLockPtr;
+typedef std::shared_ptr< ReadLock > ReadLockPtr;
+typedef std::shared_ptr< WriteLock > WriteLockPtr;
 
 #endif

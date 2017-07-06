@@ -29,30 +29,21 @@ namespace VirtualRobot
         boost::mutex mutex;
     }
 
-    CollisionCheckerPtr CollisionChecker::globalCollisionChecker;
-
-    CollisionChecker::Cleanup::~Cleanup()
-    {
-        boost::lock_guard<boost::mutex> lock(mutex);
-        CollisionChecker::globalCollisionChecker.reset();
-    }
-
+    VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerPtr CollisionChecker::__globalCollisionChecker;
 
     CollisionCheckerPtr CollisionChecker::getGlobalCollisionChecker()
     {
-        static Cleanup _Cleanup;
-
         if (true)
         {
             boost::lock_guard<boost::mutex> lock(mutex);
 
-            if (!globalCollisionChecker)
+            if (!__globalCollisionChecker)
             {
-                globalCollisionChecker.reset(new CollisionChecker());
+                __globalCollisionChecker.reset(new CollisionChecker());
             }
         }
 
-        return globalCollisionChecker;
+        return __globalCollisionChecker;
     }
 
     //----------------------------------------------------------------------

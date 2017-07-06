@@ -35,7 +35,7 @@ namespace VirtualRobot
 
             if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(node);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                 if (collisionChecker)
                 {
                     THROW_VR_EXCEPTION_IF(link->getCollisionChecker() != collisionChecker,
@@ -310,7 +310,7 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(*iterator);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
             res += link->getCoMGlobal() * link->getMass() / m;
         }
 
@@ -361,7 +361,7 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(*iterator);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
             link->getVisualization()->setupVisualization(showVisualization, showAttachedVisualizations);
         }
     }
@@ -373,7 +373,7 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(*iterator);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
             link->getVisualization()->setUpdateVisualization(enable);
         }
     }
@@ -385,7 +385,7 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(*iterator);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
             link->getCollisionModel()->setUpdateVisualization(enable);
         }
     }
@@ -405,7 +405,7 @@ namespace VirtualRobot
             if (ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointPrismatic)
                 ||ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointRevolute))
             {
-                ModelJointPtr joint = boost::static_pointer_cast<ModelJoint>(rn);
+                ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(rn);
                 r->setConfig(joint, joint->getJointValue());
             }
 
@@ -434,7 +434,7 @@ namespace VirtualRobot
                                   "Can not set joint value of node <" + node->getName() + ">.");
             THROW_VR_EXCEPTION_IF(!hasModelNode(node), "Node <" + node->getName() + "> is not part of the model.");
 
-            ModelJointPtr joint = boost::static_pointer_cast<ModelJoint>(node);
+            ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(node);
             joint->setJointValue(jointValue);
         }
     }
@@ -457,7 +457,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint),
                                   "Can not set joint value of node <" + node->getName() + ">.");
 
-            ModelJointPtr joint = boost::static_pointer_cast<ModelJoint>(node);
+            ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(node);
             joint->setJointValueNoUpdate(it->second);
         }
 
@@ -474,7 +474,7 @@ namespace VirtualRobot
                                   "Can not set joint value of node <" + it->first->getName() + ">.");
             THROW_VR_EXCEPTION_IF(!hasModelNode(it->first), "Node <" + it->first->getName() + "> is not part of the model.");
 
-            ModelJointPtr joint = boost::static_pointer_cast<ModelJoint>(it->first);
+            ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(it->first);
             joint->setJointValueNoUpdate(it->second);
         }
 
@@ -495,7 +495,7 @@ namespace VirtualRobot
         {
             Eigen::VectorXf c;
             trajectory->interpolate(t, c);
-            trajectory->getRobotNodeSet()->setJointValues(c);
+            trajectory->getModelNodeSet()->setJointValues(c);
         }
     }
 
@@ -508,7 +508,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(it->second);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 res += link->getNumFaces(collisionModel);
             }
         }
@@ -525,7 +525,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(it->second);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 if (collisionModel && link->getCollisionModel())
                 {
                     bbox.addPoints(link->getCollisionModel()->getBoundingBox());
@@ -550,7 +550,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(it->second);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 result.push_back(link->getCollisionModel());
             }
         }
@@ -573,7 +573,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(it->second);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 mass += link->getMass();
             }
         }
@@ -632,8 +632,8 @@ namespace VirtualRobot
 
             if (roN)
             {
-                boost::static_pointer_cast<ModelJoint>(roN)->setJointValueNoUpdate(
-                        boost::static_pointer_cast<ModelJoint>(allNodes[i])->getJointValue());
+                std::static_pointer_cast<ModelJoint>(roN)->setJointValueNoUpdate(
+                        std::static_pointer_cast<ModelJoint>(allNodes[i])->getJointValue());
             }
         }
 

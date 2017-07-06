@@ -7,13 +7,14 @@
 
 #include "EndEffectorActor.h"
 #include "../VirtualRobotException.h"
-#include "../Nodes/RobotNode.h"
-#include "../Robot.h"
-#include "../RobotConfig.h"
-#include "../SceneObjectSet.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/Nodes/ModelJoint.h"
+#include "../Model/Model.h"
+#include "../Model/ModelConfig.h"
+#include "../Model/Coordinate.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "EndEffector.h"
-#include "../SceneObjectSet.h"
+#include "../Model/ModelNodeSet.h"
 
 
 namespace VirtualRobot
@@ -51,7 +52,7 @@ namespace VirtualRobot
             ActorDefinition a;
             a.colMode = actors[i].colMode;
             a.directionAndSpeed = actors[i].directionAndSpeed;
-            a.robotNode = newRobot->getRobotNode(actors[i].robotNode->getName());
+            a.robotNode = newRobot->getModelNode(actors[i].robotNode->getName());
             newDef.push_back(a);
         }
 
@@ -70,18 +71,22 @@ namespace VirtualRobot
             return true;
         }
 
-        RobotPtr robot = actors[0].robotNode->getRobot();
+        RobotPtr robot = actors[0].robotNode->getModel();
         VR_ASSERT(robot);
         bool res = true;
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            float v = n->robotNode->getJointValue() + angle * n->directionAndSpeed;
+            ModelJointPtr j = std::dynamic_pointer_cast<ModelJoint>(n->robotNode);
 
-            if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
+            if (!j)
+                continue;
+
+            float v = j->getJointValue() + angle * n->directionAndSpeed;
+
+            if (v <= j->getJointLimitHigh() && v >= j->getJointLimitLow())
             {
-                robot->setJointValue(n->robotNode, v);
-                //n->robotNode->setJointValue(v);
+                robot->setJointValue(j, v);
                 res = false;
             }
         }
@@ -97,18 +102,22 @@ namespace VirtualRobot
         bool res = true;
         std::vector<EndEffectorActorPtr> eefActors;
         eef->getActors(eefActors);
-        std::vector<RobotNodePtr> eefStatic;
+        std::vector<ModelLinkPtr> eefStatic;
         eef->getStatics(eefStatic);
         EndEffector::ContactInfoVector newContacts;
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            float oldV =  n->robotNode->getJointValue();
+            ModelJointPtr j = std::dynamic_pointer_cast<ModelJoint>(n->robotNode);
+
+            if (!j)
+                continue;
+            float oldV =  j->getJointValue();
             float v = oldV + angle * n->directionAndSpeed;
 
-            if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
+            if (v <= j->getJointLimitHigh() && v >= j->getJointLimitLow())
             {
-                robot->setJointValue(n->robotNode, v);
+                robot->setJointValue(j, v);
                 //n->robotNode->setJointValue(v);
 
                 // check collision
@@ -136,13 +145,13 @@ namespace VirtualRobot
                 // static (don't store contacts)
                 if (!collision)
                 {
-                    for (std::vector<RobotNodePtr>::iterator node = eefStatic.begin(); node != eefStatic.end(); node++)
+                    for (std::vector<ModelLinkPtr>::iterator node = eefStatic.begin(); node != eefStatic.end(); node++)
                     {
-                        SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(*node);
+                        //SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(*node);
 
                         //(don't store contacts)
                         //if( isColliding(eef,so,newContacts,eStatic) )
-                        if (isColliding(so, eStatic))
+                        if (isColliding(*node, eStatic))
                         {
                             collision = true;
                         }
@@ -157,7 +166,7 @@ namespace VirtualRobot
                 {
                     // reset last position
                     //n->robotNode->setJointValue(oldV);
-                    robot->setJointValue(n->robotNode, oldV);
+                    robot->setJointValue(j, oldV);
                 }
             }
         }
@@ -256,7 +265,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(ModelPtr obstacle, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(ModelLinkPtr obstacle, CollisionMode checkColMode)
     {
         if (!obstacle || !obstacle->getCollisionModel())
         {
@@ -278,7 +287,7 @@ namespace VirtualRobot
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(n->robotNode);
+            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(n->robotNode);
 
             if ((n->colMode & eActors) && obstacle->isColliding(so))
             {
@@ -308,7 +317,7 @@ namespace VirtualRobot
 
         for (std::vector<RobotNodePtr>::iterator node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
         {
-            SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(*node);
+            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(*node);
 
             if (isColliding(so, EndEffectorActor::eStatic))
             {
@@ -338,7 +347,7 @@ namespace VirtualRobot
 
         for (std::vector<RobotNodePtr>::iterator node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
         {
-            SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(*node);
+            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(*node);
 
             if (isColliding(eef, so, storeContacts, EndEffectorActor::eStatic))
             {
@@ -353,7 +362,7 @@ namespace VirtualRobot
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(n->robotNode);
+            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(n->robotNode);
 
             if ((n->colMode & eActors) && obstacle->isColliding(eef, so, storeContacts))
             {

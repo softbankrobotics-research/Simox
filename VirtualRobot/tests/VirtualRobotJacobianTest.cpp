@@ -7,11 +7,11 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotJacobianTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/DifferentialIK.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <string>
 
 #include <Eigen/Core>
@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
     const std::string node3 = "Joint3";
-    VirtualRobot::RobotNodePtr r1 = rob->getRobotNode(node1);
-    VirtualRobot::RobotNodePtr r2 = rob->getRobotNode(node2);
-    VirtualRobot::RobotNodePtr r3 = rob->getRobotNode(node3);
+    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node1);
+    VirtualRobot::RobotNodePtr r2 = rob->getModelNode(node2);
+    VirtualRobot::RobotNodePtr r3 = rob->getModelNode(node3);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
     BOOST_REQUIRE(r3);

@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_EndEffectorActor_h_
 #define _VirtualRobot_EndEffectorActor_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "EndEffector.h"
 
 #include <string>
@@ -31,7 +31,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffectorActor : public boost::enable_shared_from_this<EndEffectorActor>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffectorActor : public std::enable_shared_from_this<EndEffectorActor>
     {
     public:
         enum CollisionMode
@@ -45,7 +45,7 @@ namespace VirtualRobot
         struct ActorDefinition
         {
             CollisionMode colMode;
-            RobotNodePtr robotNode;
+            ModelNodePtr robotNode;
             float directionAndSpeed;
         };
 
@@ -87,7 +87,7 @@ namespace VirtualRobot
             Checks if the actor collides with the given obstacle.
             \p checkColMode If set, the collisionMode of the actor's robotNodes is checked against it (e.g. to avoid collision checks with the static part of the eef)
         */
-        bool isColliding(ModelPtr obstacle, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(ModelLinkPtr obstacle, CollisionMode checkColMode = EndEffectorActor::eAll);
         bool isColliding(EndEffectorPtr eef, ModelPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
 
         /*!
@@ -102,17 +102,17 @@ namespace VirtualRobot
         bool isColliding(EndEffectorPtr obstacle);
         bool isColliding(EndEffectorPtr eef, EndEffectorPtr obstacle, EndEffector::ContactInfoVector& storeContacts);
 
-        std::vector< RobotNodePtr > getRobotNodes();
+        std::vector< ModelNodePtr > getModelNodes();
 
         void print();
 
         /*!
             Check, if node is part of this actor.
         */
-        bool hasNode(RobotNodePtr node);
+        bool hasNode(ModelNodePtr node);
 
         //! Returns true, if nodes (only name strings are checked) are sufficient for building this eef
-        bool nodesSufficient(std::vector<RobotNodePtr> nodes) const;
+        bool nodesSufficient(std::vector<ModelNodePtr> nodes) const;
 
         /*!
             returns an approximation about the length of this eef.

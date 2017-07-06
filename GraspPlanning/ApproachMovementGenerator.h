@@ -24,8 +24,8 @@
 #define __APPROACH_MOVEMENT_GENERATOR_H__
 
 #include "GraspStudio.h"
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Model.h>
 #include <vector>
 #include <string>
 #include <Eigen/Core>

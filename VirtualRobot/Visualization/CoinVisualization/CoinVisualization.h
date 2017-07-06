@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CoinVisualization_h_
 #define _VirtualRobot_CoinVisualization_h_
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 #include "../Visualization.h"
 
 #include <Inventor/nodes/SoSelection.h>
@@ -79,7 +79,7 @@ namespace VirtualRobot
         SoMaterial *color;
     };
 
-    typedef boost::shared_ptr<CoinVisualization> CoinVisualizationPtr;
+    typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;
 
 } // namespace VirtualRobot
 

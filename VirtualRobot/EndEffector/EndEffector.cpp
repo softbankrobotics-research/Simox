@@ -57,9 +57,9 @@ namespace VirtualRobot
             return EndEffectorPtr();
         }
 
-        RobotNodePtr newBase = newRobot->getRobotNode(baseNode->getName());
-        RobotNodePtr newTCP = newRobot->getRobotNode(tcpNode->getName());
-        RobotNodePtr newGCP = newRobot->getRobotNode(gcpNode->getName());
+        RobotNodePtr newBase = newRobot->getModelNode(baseNode->getName());
+        RobotNodePtr newTCP = newRobot->getModelNode(tcpNode->getName());
+        RobotNodePtr newGCP = newRobot->getModelNode(gcpNode->getName());
         THROW_VR_EXCEPTION_IF(!newBase, " New robot does not own a base node with name " << baseNode->getName());
         THROW_VR_EXCEPTION_IF(!newTCP, " New robot does not own a tcp node with name " << tcpNode->getName());
         THROW_VR_EXCEPTION_IF(!newGCP, " New robot does not own a gcp node with name " << gcpNode->getName());
@@ -69,7 +69,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < statics.size(); i++)
         {
-            newStatics[i] = newRobot->getRobotNode(statics[i]->getName());
+            newStatics[i] = newRobot->getModelNode(statics[i]->getName());
         }
 
         for (size_t i = 0; i < actors.size(); i++)
@@ -108,7 +108,7 @@ namespace VirtualRobot
     {
         actors = this->actors;
     }
-    void EndEffector::getStatics(std::vector<RobotNodePtr>& statics)
+    void EndEffector::getStatics(std::vector<ModelLinkPtr>& statics)
     {
         statics = this->statics;
     }
@@ -226,7 +226,7 @@ namespace VirtualRobot
     {
         RobotPtr r = getRobot();
         THROW_VR_EXCEPTION_IF(!r, "No robot defined in EEF");
-        RobotNodePtr baseNode = r->getRobotNode(getBaseNodeName());
+        RobotNodePtr baseNode = r->getModelNode(getBaseNodeName());
         THROW_VR_EXCEPTION_IF(!baseNode, "no base node with name " << getBaseNodeName());
 
         // don't clone robotNodeSets and EEFs here
@@ -412,7 +412,7 @@ namespace VirtualRobot
 
         while (iA != actors.end())
         {
-            std::vector< RobotNodePtr > rn = (*iA)->getRobotNodes();
+            std::vector< RobotNodePtr > rn = (*iA)->getModelNodes();
 
             for (size_t i = 0; i < rn.size(); i++)
             {
@@ -588,7 +588,7 @@ namespace VirtualRobot
         while (itPre != preshapes.end())
         {
             ss << tt << "<Preshape name='" << itPre->first << "'>" << endl;
-            std::map < std::string, float > jv = itPre->second->getRobotNodeJointValueMap();
+            std::map < std::string, float > jv = itPre->second->getModelNodeJointValueMap();
 
             std::map< std::string, float >::const_iterator i = jv.begin();
 

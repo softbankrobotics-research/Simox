@@ -7,7 +7,7 @@
 #define __VirtualRobot_STLREADER_H__
 
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 
 #include <stdio.h>
 #include <string>
@@ -82,7 +82,7 @@ namespace VirtualRobot
         float eps_;
     };
 
-    typedef boost::shared_ptr<STLReader> STLReaderPtr;
+    typedef std::shared_ptr<STLReader> STLReaderPtr;
 }
 
 #endif

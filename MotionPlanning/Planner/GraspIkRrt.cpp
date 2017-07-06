@@ -4,7 +4,7 @@
 #include "../CSpace/CSpaceNode.h"
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <time.h>
@@ -42,7 +42,7 @@ namespace Saba
 
         goalValid = true;
         name = "IK-RRT Planner";
-        rns = ikSolver->getRobotNodeSet();
+        rns = ikSolver->getModelNodeSet();
         THROW_VR_EXCEPTION_IF(!rns, "NULL robotNodeSet in ikSolver?!");
         graspSetWorking = graspSet->clone();
     }

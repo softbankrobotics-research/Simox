@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Visualization_h_
 #define _VirtualRobot_Visualization_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "VisualizationFactory.h"
 
 #include <vector>

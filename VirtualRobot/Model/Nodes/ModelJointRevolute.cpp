@@ -3,12 +3,12 @@
 namespace VirtualRobot
 {
     ModelJointRevolute::ModelJointRevolute(const ModelWeakPtr& model,
-                                           const std::string& name,
-                                           Eigen::Matrix4f& staticTransformation,
-                                           float jointLimitLo,
-                                           float jointLimitHi,
-                                           float jointValueOffset,
-                                           Eigen::Vector3f& axis)
+        const std::string& name,
+        Eigen::Matrix4f& staticTransformation,
+        float jointLimitLo,
+        float jointLimitHi,
+        Eigen::Vector3f& axis,
+        float jointValueOffset)
             : ModelJoint(model, name, staticTransformation, jointLimitLo, jointLimitHi, jointValueOffset),
               axis(axis)
     {
@@ -23,7 +23,7 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::JointRevolute;
     }
 
-    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(const Eigen::Matrix4f& coordSystem) const
+    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(CoordinatePtr coordSystem) const
     {
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = getJointRotationAxisInJointCoordSystem();

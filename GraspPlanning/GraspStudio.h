@@ -43,7 +43,7 @@ implementation of the 6d wrench space algorithm for grasp quality measurement.
 
 #endif
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/VirtualRobotException.h"
 
 #include <iostream>
@@ -82,14 +82,14 @@ namespace GraspStudio
     class GraspPlanner;
     class GenericGraspPlanner;
 
-    typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
-    typedef boost::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
-    typedef boost::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
-    typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
-    typedef boost::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;
-    typedef boost::shared_ptr<ApproachMovementSurfaceNormal> ApproachMovementSurfaceNormalPtr;
-    typedef boost::shared_ptr<GraspPlanner> GraspPlannerPtr;
-    typedef boost::shared_ptr<GenericGraspPlanner> GenericGraspPlannerPtr;
+    typedef std::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
+    typedef std::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
+    typedef std::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
+    typedef std::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
+    typedef std::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;
+    typedef std::shared_ptr<ApproachMovementSurfaceNormal> ApproachMovementSurfaceNormalPtr;
+    typedef std::shared_ptr<GraspPlanner> GraspPlannerPtr;
+    typedef std::shared_ptr<GenericGraspPlanner> GenericGraspPlannerPtr;
 
 #define GRASPSTUDIO_INFO VR_INFO
 #define GRASPSTUDIO_WARNING VR_WARNING

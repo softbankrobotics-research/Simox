@@ -1,21 +1,19 @@
 
 #include "BaseIO.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../RobotFactory.h"
-#include "../RobotNodeSet.h"
+#include "../Model/ModelNodeSet.h"
 #include "../Trajectory.h"
-#include "../RuntimeEnvironment.h"
+#include "../Tools/RuntimeEnvironment.h"
 #include "../VirtualRobotException.h"
 #include "../EndEffector/EndEffector.h"
 #include "../EndEffector/EndEffectorActor.h"
-#include "../Nodes/RobotNodeFactory.h"
-#include "../Nodes/RobotNodeFixedFactory.h"
 #include "../Visualization/VisualizationFactory.h"
+#include "../CollisionDetection/CollisionModel.h"
 #include "rapidxml.hpp"
 
 namespace VirtualRobot
 {
-
 
     boost::mutex BaseIO::mutex;
 
@@ -347,59 +345,6 @@ namespace VirtualRobot
 
     }
 
-
-    void BaseIO::processDHNode(rapidxml::xml_node<char>* dhXMLNode, DHParameter& dh)
-    {
-        rapidxml::xml_attribute<>* attr;
-        std::vector< Units > unitsAttr = getUnitsAttributes(dhXMLNode);
-        Units uAngle("rad");
-        Units uLength("mm");
-
-        for (size_t i = 0; i < unitsAttr.size(); i++)
-        {
-            if (unitsAttr[i].isAngle())
-            {
-                uAngle = unitsAttr[i];
-            }
-
-            if (unitsAttr[i].isLength())
-            {
-                uLength = unitsAttr[i];
-            }
-        }
-
-        dh.isSet = true;
-        bool isRadian = uAngle.isRadian();
-
-        attr = dhXMLNode->first_attribute("a", 0, false);
-
-        if (attr)
-        {
-            dh.setAInMM(uLength.toMillimeter(convertToFloat(attr->value())));
-        }
-
-        attr = dhXMLNode->first_attribute("d", 0, false);
-
-        if (attr)
-        {
-            dh.setDInMM(uLength.toMillimeter(convertToFloat(attr->value())));
-        }
-
-        attr = dhXMLNode->first_attribute("alpha", 0, false);
-
-        if (attr)
-        {
-            dh.setAlphaRadian(convertToFloat(attr->value()), isRadian);
-        }
-
-        attr = dhXMLNode->first_attribute("theta", 0, false);
-
-        if (attr)
-        {
-            dh.setThetaRadian(convertToFloat(attr->value()), isRadian);
-        }
-    }
-
     bool BaseIO::hasUnitsAttribute(rapidxml::xml_node<char>* node)
     {
         rapidxml::xml_attribute<>* attr = node->first_attribute("unit", 0, false);
@@ -611,7 +556,7 @@ namespace VirtualRobot
             {
                 std::string nodeNameAttr = processNameAttribute(node);
                 THROW_VR_EXCEPTION_IF(nodeNameAttr.empty(), "Missing name attribute for <Node> belonging to Robot node set " << parentName);
-                RobotNodePtr robotNode = robot->getRobotNode(nodeNameAttr);
+                RobotNodePtr robotNode = robot->getModelNode(nodeNameAttr);
                 THROW_VR_EXCEPTION_IF(!robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot");
                 nodeList.push_back(robotNode);
             }
@@ -998,17 +943,17 @@ namespace VirtualRobot
                     {
                         THROW_VR_EXCEPTION_IF(visuCoordType.compare(visuFileType) != 0, "Different 'type' attributes not supported for <CoordinateAxis> tag and <File> tag of node " << tagName << "." << endl);
                     }
-
+                    /*
                     if (visualizationNode && visualizationFactory)
                     {
                         VisualizationNodePtr coordVisu = visualizationFactory->createCoordSystem(coordAxisFactor, &coordAxisText);
-                        visualizationNode->attachVisualization("CoordinateSystem", coordVisu);
+                        //visualizationNode->attachVisualization("CoordinateSystem", coordVisu);
                         //visualizationNode->showCoordinateSystem(true,coordAxisFactor,&coordAxisText);
                     }
                     else
                     {
                         VR_WARNING << "VisualizationFactory of type '" << visuFileType << "' not present. Ignoring Visualization data in Robot Node <" << tagName << ">" << endl;
-                    }
+                    }*/
 
                 }
             }
@@ -1625,21 +1570,21 @@ namespace VirtualRobot
         std::vector<RobotNodePtr> nodeList;
         processNodeList(setXMLNode, robo, nodeList);
 
-        RobotNodePtr kinRoot;
+        ModelNodePtr kinRoot;
 
         if (!rootNodeName.empty())
         {
-            kinRoot = robo->getRobotNode(rootNodeName);
+            kinRoot = robo->getModelNode(rootNodeName);
         }
 
-        RobotNodePtr tcp;
+        CoordinatePtr tcp;
 
         if (!tcpName.empty())
         {
-            tcp = robo->getRobotNode(tcpName);
+            tcp = robo->getCoordinate(tcpName);
         }
 
-        RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+        ModelNodeSetPtr rns = ModelNodeSet::createModelNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
 
         return rns;
     }
@@ -1703,9 +1648,9 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!robotName.empty(), "Trajectory contains multiple definitions of attribute Robot. First value is: " << robotName);
                 robotName = attr->value();
             }
-            else if (name == "robotnodeset" || name == "modelnodeset")
+            else if (name == "robotnodeset" || name == "modelnodeset" || name == "jointset")
             {
-                THROW_VR_EXCEPTION_IF(!nodeSetName.empty(), "Trajectory contains multiple definitions of attribute RobotNodeSet. First value is: " << nodeSetName);
+                THROW_VR_EXCEPTION_IF(!nodeSetName.empty(), "Trajectory contains multiple definitions of attribute JointSet. First value is: " << nodeSetName);
                 nodeSetName = attr->value();
             }
             else if (name == "dim" || name == "dimension")
@@ -1718,12 +1663,12 @@ namespace VirtualRobot
         }
 
         THROW_VR_EXCEPTION_IF(robotName.empty(), "Invalid or missing Robot attribute");
-        THROW_VR_EXCEPTION_IF(nodeSetName.empty(), "Invalid or missing RobotNodeSet attribute");
+        THROW_VR_EXCEPTION_IF(nodeSetName.empty(), "Invalid or missing JointSet attribute");
 
         if (trajName.empty())
         {
             trajName = "Trajectory";
-            VR_WARNING << "Trajectory definition expects attribute 'RobotNodeSet'. Setting to " << trajName << endl;
+            VR_WARNING << "Trajectory definition expects attribute 'name'. Setting to " << trajName << endl;
         }
 
         RobotPtr r;
@@ -1738,8 +1683,8 @@ namespace VirtualRobot
         }
 
         THROW_VR_EXCEPTION_IF(!r, "Could not find robot with name " << robotName);
-        RobotNodeSetPtr rns = r->getRobotNodeSet(nodeSetName);
-        THROW_VR_EXCEPTION_IF(!rns, "Could not find RNS with name " << nodeSetName << " in robot " << robotName);
+        JointSetPtr rns = r->getJointSet(nodeSetName);
+        THROW_VR_EXCEPTION_IF(!rns, "Could not find JointSet with name " << nodeSetName << " in robot " << robotName);
 
         assert(dim>=0);
         if (static_cast<unsigned int>(dim) != rns->getSize())

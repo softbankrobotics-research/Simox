@@ -23,8 +23,9 @@
 #ifndef _VirtualRobot_ModelNode_h_
 #define _VirtualRobot_ModelNode_h_
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 #include "../ModelNodeSet.h"
+#include "../Coordinate.h"
 #include "Attachments/ModelNodeAttachment.h"
 
 #include <vector>
@@ -34,11 +35,9 @@
 
 #include <Eigen/Core>
 
-#include <boost/enable_shared_from_this.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode : public boost::enable_shared_from_this<ModelNode>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode : public std::enable_shared_from_this<ModelNode>, public Coordinate
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -439,7 +438,6 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> children;
 
         Eigen::Matrix4f staticTransformation;
-        Eigen::Matrix4f globalPose;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
         std::vector<ModelNodeAttachmentPtr> attachmentsWithVisualisation;

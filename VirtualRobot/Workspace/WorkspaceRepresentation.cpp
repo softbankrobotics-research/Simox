@@ -1,11 +1,11 @@
 #include "WorkspaceRepresentation.h"
 #include "../VirtualRobotException.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../RobotNodeSet.h"
 #include "../Compression/CompressionRLE.h"
 #include "../Compression/CompressionBZip2.h"
 #include "../SceneObjectSet.h"
-#include "../Nodes/RobotNode.h"
+#include "../Model/Nodes/ModelNode.h"
 #include "../Visualization/Visualization.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../CollisionDetection/CollisionChecker.h"
@@ -238,7 +238,7 @@ namespace VirtualRobot
 
             // Check Node Set
             FileIO::readString(tmpString, file);
-            nodeSet = robot->getRobotNodeSet(tmpString);
+            nodeSet = robot->getModelNodeSet(tmpString);
             THROW_VR_EXCEPTION_IF(!nodeSet, "Node Set does not exist.");
 
             if (version[0] > 1 || (version[0] == 1 && version[1] > 0))
@@ -266,7 +266,7 @@ namespace VirtualRobot
 
             // Check TCP
             FileIO::readString(tmpString, file);
-            tcpNode = robot->getRobotNode(tmpString);
+            tcpNode = robot->getModelNode(tmpString);
             THROW_VR_EXCEPTION_IF(!tcpNode, "Unknown TCP");
 
             // Check Base Joint
@@ -279,7 +279,7 @@ namespace VirtualRobot
                 }
                 else
                 {
-                    baseNode = robot->getRobotNode(tmpString);
+                    baseNode = robot->getModelNode(tmpString);
                     THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Joint");
                 }
             }
@@ -290,7 +290,7 @@ namespace VirtualRobot
 
             if (tmpString != "" && tmpString != "not set")
             {
-                staticCollisionModel = robot->getRobotNodeSet(tmpString);
+                staticCollisionModel = robot->getModelNodeSet(tmpString);
             }
 
             // Dynamic collision model
@@ -298,7 +298,7 @@ namespace VirtualRobot
 
             if (tmpString != "" && tmpString != "not set")
             {
-                dynamicCollisionModel = robot->getRobotNodeSet(tmpString);
+                dynamicCollisionModel = robot->getModelNodeSet(tmpString);
             }
 
             buildUpLoops = (int)(FileIO::read<ioIntTypeRead>(file));

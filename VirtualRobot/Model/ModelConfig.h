@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelConfig_h_
 #define _VirtualRobot_ModelConfig_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #include "Model.h"
 

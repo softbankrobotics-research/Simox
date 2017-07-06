@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_Trajectory_h_
 #define _VirtualRobot_Trajectory_h_
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include "Tools/MathTools.h"
-#include "RobotNodeSet.h"
+#include "Model/JointSet.h"
 
 #include <Eigen/Core>
 #include <vector>
@@ -34,17 +34,17 @@ namespace VirtualRobot
 {
 
     /*!
-        A representation of a trajectory in joint space, associated with a RobotNodeSet.
+        A representation of a trajectory in joint space, associated with a JointSet.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Trajectory : public boost::enable_shared_from_this<Trajectory>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Trajectory : public std::enable_shared_from_this<Trajectory>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /*!
-            Construct a trajectory for the given set of RobotNodes
+            Construct a trajectory for the given set of Joints
         */
-        Trajectory(RobotNodeSetPtr rns, const std::string& name = "");
+        Trajectory(JointSetPtr rns, const std::string& name = "");
 
         virtual ~Trajectory();
 
@@ -138,14 +138,14 @@ namespace VirtualRobot
 
         Eigen::VectorXf& getPointRef(unsigned int pos);
 
-        VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
+        VirtualRobot::JointSetPtr getJointSet();
 
         /*!
             Creates the corresponding trajectory in workspace.
-            \param r The RobotNode that should be considered (if not set, the TCP of the RobotNodeSet is used)
+            \param mn The ModelNode that should be considered (if not set, the TCP of the JointSet is used)
             \return For each point of this joint space trajectory, the pose of r in workspace is computed and added to the resulting vector.
         */
-        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::RobotNodePtr r = VirtualRobot::RobotNodePtr());
+        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::ModelNodePtr m = VirtualRobot::ModelNodePtr());
 
 
         /*!
@@ -165,9 +165,9 @@ namespace VirtualRobot
 
     protected:
         std::vector < Eigen::VectorXf > path; //!< vector with configurations which represent the path
-        RobotNodeSetPtr rns;
+        JointSetPtr rns;
         std::string name;
-        unsigned int dimension;     //!< dimension of rns
+        unsigned int dimension;     //!< dimension of the joint set
     };
 
 

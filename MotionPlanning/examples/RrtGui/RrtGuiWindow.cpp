@@ -319,7 +319,7 @@ void RrtGuiWindow::loadScene()
     qtext = "<none>";
     UI.comboBoxColModelEnv->addItem(qtext);
 
-    std::vector<RobotNodeSetPtr> rnss = robot->getRobotNodeSets();
+    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
     UI.comboBoxColModelRobot->clear();
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
@@ -375,7 +375,7 @@ void RrtGuiWindow::selectRNS(const std::string& rns)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -397,7 +397,7 @@ void RrtGuiWindow::selectColModelRobA(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -418,7 +418,7 @@ void RrtGuiWindow::selectColModelRobB(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -506,7 +506,7 @@ void RrtGuiWindow::selectRNS(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
@@ -524,14 +524,14 @@ void RrtGuiWindow::selectColModelRobA(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelRobA = robot->getRobotNodeSet(rnss[nr]->getName());
+    this->colModelRobA = robot->getModelNodeSet(rnss[nr]->getName());
 }
 void RrtGuiWindow::selectColModelRobB(int nr)
 {
@@ -542,14 +542,14 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelRobB = robot->getRobotNodeSet(rnss[nr]->getName());
+    this->colModelRobB = robot->getModelNodeSet(rnss[nr]->getName());
 }
 void RrtGuiWindow::selectColModelEnv(int nr)
 {
@@ -578,7 +578,7 @@ void RrtGuiWindow::buildRRTVisu()
         return;
     }
 
-    boost::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {

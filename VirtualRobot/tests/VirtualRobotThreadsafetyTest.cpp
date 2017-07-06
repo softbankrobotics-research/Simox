@@ -7,11 +7,11 @@
 #define BOOST_TEST_MODULE VirtualRobot_CoordinatesTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/LinkedCoordinate.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Tools/LinkedCoordinate.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <string>
 
 
@@ -80,8 +80,8 @@ BOOST_AUTO_TEST_CASE(testIntelligentCoordinate)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    r1 = rob->getRobotNode(node1);
-    r2 = rob->getRobotNode(node2);
+    r1 = rob->getModelNode(node1);
+    r2 = rob->getModelNode(node2);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
 

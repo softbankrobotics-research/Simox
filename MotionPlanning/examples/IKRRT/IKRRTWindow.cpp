@@ -396,7 +396,7 @@ void IKRRTWindow::loadScene()
 
         graspSet = object->getGraspSet(eef);
 
-        rns = robot->getRobotNodeSet(rnsName);
+        rns = robot->getModelNodeSet(rnsName);
 
         if (!rns)
         {
@@ -529,7 +529,7 @@ void IKRRTWindow::buildRRTVisu()
         return;
     }
 
-    boost::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
+    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
 
     if (tree)
     {
@@ -605,7 +605,7 @@ void IKRRTWindow::reachVisu()
         }
 
         /*
-            boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();
+            std::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();
             SoNode* visualisationNode = NULL;
             if (visualization)
                 visualisationNode = visualization->getCoinVisualization();
@@ -659,12 +659,12 @@ void IKRRTWindow::planIKRRT()
 
     if (UI.checkBoxColCheckIK->checkState() == Qt::Checked)
     {
-        SceneObjectSetPtr colModelSet = robot->getRobotNodeSet(colModelName);
+        SceneObjectSetPtr colModelSet = robot->getModelNodeSet(colModelName);
         SceneObjectSetPtr colModelSet2;
 
         if (!colModelNameRob.empty())
         {
-            colModelSet2 = robot->getRobotNodeSet(colModelNameRob);
+            colModelSet2 = robot->getModelNodeSet(colModelNameRob);
         }
 
         if (colModelSet)
@@ -757,7 +757,7 @@ void IKRRTWindow::searchIK()
     // setup collision detection
     if (UI.checkBoxColCheckIK->checkState() == Qt::Checked)
     {
-        SceneObjectSetPtr colModelSet = robot->getRobotNodeSet(colModelName);
+        SceneObjectSetPtr colModelSet = robot->getModelNodeSet(colModelName);
 
         if (colModelSet)
         {

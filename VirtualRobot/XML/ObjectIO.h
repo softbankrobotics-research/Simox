@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ObjectIO_h_
 #define _VirtualRobot_ObjectIO_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "BaseIO.h"
 #include "../Scene.h"
 

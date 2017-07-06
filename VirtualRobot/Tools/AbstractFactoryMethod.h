@@ -31,19 +31,19 @@ public:
     * The function pointer type of subclass initialisation functions.
     * This matches the createInstance method.
     */
-    typedef boost::shared_ptr<Base> (*initialisationFunction)(constructorArg);
+    typedef std::shared_ptr<Base> (*initialisationFunction)(constructorArg);
 
     /**
     * Function which can be used to retrieve an object specified by string name.
     */
-    static boost::shared_ptr<Base> fromName(const std::string& name, constructorArg params)
+    static std::shared_ptr<Base> fromName(const std::string& name, constructorArg params)
     {
         if (subTypes()->find(name) == subTypes()->end())
         {
-            return boost::shared_ptr<Base>();
+            return std::shared_ptr<Base>();
         }
 
-        boost::shared_ptr<Base> instance = (*subTypes())[name](params);
+        std::shared_ptr<Base> instance = (*subTypes())[name](params);
         instance->setDescription(name);
         return instance;
     }
@@ -51,14 +51,14 @@ public:
     /**
     * Function which can be used to retrieve the first registered object.
     */
-    static boost::shared_ptr<Base> first(constructorArg params)
+    static std::shared_ptr<Base> first(constructorArg params)
     {
         if (subTypes()->size() == 0)
         {
-            return boost::shared_ptr<Base>();
+            return std::shared_ptr<Base>();
         }
 
-        boost::shared_ptr<Base> instance = (*subTypes()).begin()->second(params);
+        std::shared_ptr<Base> instance = (*subTypes()).begin()->second(params);
         instance->setDescription((*subTypes()).begin()->first);
         return instance;
     }
@@ -77,9 +77,9 @@ public:
     * It calls the constructor and returns a shared_ptr to the resulting
     * object.
     */
-    static boost::shared_ptr<Base> createInstance(constructorArg)
+    static std::shared_ptr<Base> createInstance(constructorArg)
     {
-        return boost::shared_ptr<Base>();
+        return std::shared_ptr<Base>();
     }
 
     /**
@@ -141,9 +141,9 @@ private:
     * before use. This can only be guaranteed through a static local variable
     * in a function.
     */
-    static boost::shared_ptr<std::map<std::string, initialisationFunction> > subTypes()
+    static std::shared_ptr<std::map<std::string, initialisationFunction> > subTypes()
     {
-        static boost::shared_ptr<std::map<std::string, initialisationFunction> > subTypes(new std::map<std::string, initialisationFunction>);
+        static std::shared_ptr<std::map<std::string, initialisationFunction> > subTypes(new std::map<std::string, initialisationFunction>);
 
         return subTypes;
     }

@@ -34,7 +34,7 @@ namespace SimDynamics
 
         SIMDYNAMICS_ASSERT(world);
 
-        bulletEngine = boost::dynamic_pointer_cast<BulletEngine>(world->getEngine());
+        bulletEngine = std::dynamic_pointer_cast<BulletEngine>(world->getEngine());
 
         SIMDYNAMICS_ASSERT(bulletEngine);
 
@@ -338,7 +338,7 @@ namespace SimDynamics
         SoSeparator* n = new SoSeparator();
         BOOST_FOREACH(VisualizationNodePtr visualizationNode, collectedVisualizationNodes)
         {
-            boost::shared_ptr<CoinVisualizationNode> coinVisualizationNode = boost::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
+            boost::shared_ptr<CoinVisualizationNode> coinVisualizationNode = std::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
 
             if (coinVisualizationNode && coinVisualizationNode->getCoinVisualization())
             {

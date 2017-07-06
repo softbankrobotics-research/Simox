@@ -1,4 +1,4 @@
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 #include <string>

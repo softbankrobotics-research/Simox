@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_TriMeshModel_h_
 #define _VirtualRobot_TriMeshModel_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../Tools/MathTools.h"
 #include "../Tools/BoundingBox.h"

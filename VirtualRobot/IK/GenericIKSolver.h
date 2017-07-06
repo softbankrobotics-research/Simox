@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_GenericIKSolver_h_
 #define _VirtualRobot_GenericIKSolver_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "AdvancedIKSolver.h"
 #include "DifferentialIK.h"
 #include "../ManipulationObject.h"
@@ -91,7 +91,7 @@ namespace VirtualRobot
         float initialTranslationalJointValue;
     };
 
-    typedef boost::shared_ptr<GenericIKSolver> GenericIKSolverPtr;
+    typedef std::shared_ptr<GenericIKSolver> GenericIKSolverPtr;
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_GenericIKSolver_h_

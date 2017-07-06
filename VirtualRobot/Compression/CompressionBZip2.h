@@ -28,7 +28,7 @@
 #ifndef _VirtualRobot_Compression_BZIP2_h_
 #define _VirtualRobot_Compression_BZIP2_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #define BZ_RAND_DECLS                          \
     Int32 rNToGo;                               \
@@ -501,7 +501,7 @@ namespace VirtualRobot
 
     };
 
-    typedef boost::shared_ptr<CompressionBZip2> CompressionBZip2Ptr;
+    typedef std::shared_ptr<CompressionBZip2> CompressionBZip2Ptr;
 
 } // namespace
 

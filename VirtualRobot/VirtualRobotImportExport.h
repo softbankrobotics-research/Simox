@@ -27,7 +27,7 @@ namespace VirtualRobot
 {
 #ifdef WIN32
 #  pragma warning ( disable : 4251 )
-#  if defined(VirtualRobot_EXPORTS)
+#  if defined(simox_virtualrobot_EXPORTS)
 #    define VIRTUAL_ROBOT_IMPORT_EXPORT __declspec(dllexport)
 #  else
 #    define VIRTUAL_ROBOT_IMPORT_EXPORT __declspec(dllimport)

@@ -3,7 +3,7 @@
 #include "../CSpace/CSpaceNode.h"
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
-#include "VirtualRobot/Robot.h"
+#include "VirtualRobot/Model/Model.h"
 #include <time.h>
 
 
@@ -14,7 +14,7 @@ namespace Saba
 {
 
     Rrt::Rrt(CSpaceSampledPtr cspace, RrtMethod mode, float probabilityExtendToGoal)
-        : MotionPlanner(boost::dynamic_pointer_cast<CSpace>(cspace))
+        : MotionPlanner(std::dynamic_pointer_cast<CSpace>(cspace))
     {
         rrtMode = mode;
         tree.reset(new CSpaceTree(cspace));
@@ -346,7 +346,7 @@ namespace Saba
 
         float DCDsize = 0.0f;
         float Pathsize = 0.0f;
-        CSpaceSampledPtr cs = boost::dynamic_pointer_cast<CSpaceSampled>(cspace);
+        CSpaceSampledPtr cs = std::dynamic_pointer_cast<CSpaceSampled>(cspace);
 
         if (cs)
         {

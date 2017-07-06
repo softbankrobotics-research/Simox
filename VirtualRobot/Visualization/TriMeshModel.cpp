@@ -5,7 +5,7 @@
 */
 
 #include "TriMeshModel.h"
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #include<Eigen/Geometry>
 

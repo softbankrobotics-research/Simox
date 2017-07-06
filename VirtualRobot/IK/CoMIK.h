@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_CogIK_h_
 #define _VirtualRobot_CogIK_h_
 
-#include "../VirtualRobot.h"
-#include "../Nodes/RobotNode.h"
-#include "../RobotNodeSet.h"
+#include "../Model/Model.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/JointSet.h"
 #include "JacobiProvider.h"
 #include "DifferentialIK.h"
 
@@ -35,19 +35,19 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT CoMIK :
         public JacobiProvider,
-        public boost::enable_shared_from_this<CoMIK>
+        public std::enable_shared_from_this<CoMIK>
     {
     public:
         /*!
             Initialize with a rns that contains joints and one that contains the bodies.
         */
-        CoMIK(RobotNodeSetPtr rnsJoints, RobotNodeSetPtr rnsBodies, RobotNodePtr coordSystem = RobotNodePtr(), int dimensions = 2);
+        CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, CoordinatePtr coordSystem = CoordinatePtr(), int dimensions = 2);
 
         void setGoal(const Eigen::VectorXf& goal, float tolerance = 5.0f);
 
-        Eigen::MatrixXf getJacobianOfCoM(RobotNodePtr node);
+        Eigen::MatrixXf getJacobianOfCoM(ModelLinkPtr node);
         virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp); // ignored for CoM IK but needed for interface
+        virtual Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp); // ignored for CoM IK but needed for interface
 
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
 
@@ -68,11 +68,11 @@ namespace VirtualRobot
 
         virtual void print();
     private:
-        RobotNodePtr coordSystem;
-        RobotNodeSetPtr rnsBodies;
+        CoordinatePtr coordSystem;
+        LinkSetPtr rnsBodies;
 
-        std::vector< RobotNodePtr > bodyNodes;
-        std::map< VirtualRobot::RobotNodePtr, std::vector<VirtualRobot::RobotNodePtr> > bodyNodeParents;
+        std::vector< ModelLinkPtr > bodyNodes;
+        std::map< VirtualRobot::ModelNodePtr, std::vector<VirtualRobot::ModelNodePtr> > bodyNodeParents;
 
         float tolerance;
         bool checkImprovement;
@@ -83,9 +83,7 @@ namespace VirtualRobot
         int numDimensions;
     };
 
-
-    typedef boost::shared_ptr<CoMIK> CoMIKPtr;
-
+    typedef std::shared_ptr<CoMIK> CoMIKPtr;
 }
 
 

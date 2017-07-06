@@ -23,10 +23,10 @@
 #ifndef _VirtualRobot_RobotImporterFactory_h_
 #define _VirtualRobot_RobotImporterFactory_h_
 
-#include "../VirtualRobot.h"
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
+#include "../Model/Model.h"
 #include "../Tools/AbstractFactoryMethod.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../XML/RobotIO.h"
 
 #include <Eigen/Core>
@@ -46,7 +46,7 @@ namespace VirtualRobot
          Other importers (e.g. collada) have to be selected during project setup.
     */
     class RobotImporterFactory;
-    typedef boost::shared_ptr<RobotImporterFactory> RobotImporterFactoryPtr;
+    typedef std::shared_ptr<RobotImporterFactory> RobotImporterFactoryPtr;
     class VIRTUAL_ROBOT_IMPORT_EXPORT RobotImporterFactory  : public AbstractFactoryMethod<RobotImporterFactory, void*>
     {
     public:

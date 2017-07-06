@@ -26,7 +26,7 @@
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include "MotionPlanner.h"
 
 

@@ -1,5 +1,5 @@
 #include "FeetPosture.h"
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 
 using namespace std;
 

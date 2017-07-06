@@ -23,8 +23,8 @@
 #ifndef _VirtualRobot_SimoxXMLFactory_h_
 #define _VirtualRobot_SimoxXMLFactory_h_
 
-#include "../VirtualRobot.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
+#include "../Model/Model.h"
 #include "RobotImporterFactory.h"
 
 
@@ -45,7 +45,7 @@ namespace VirtualRobot
         // AbstractFactoryMethod
     public:
         static std::string getName();
-        static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
+        static std::shared_ptr<RobotImporterFactory> createInstance(void*);
     private:
         static SubClassRegistry registry;
 

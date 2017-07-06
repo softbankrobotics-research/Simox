@@ -14,7 +14,7 @@ namespace VirtualRobot
     {
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr j = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr j = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             THROW_VR_EXCEPTION_IF(!j, "Only links allowed in joint sets.");
             links.push_back(j);
         }
@@ -68,7 +68,7 @@ namespace VirtualRobot
             {
                 if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
                 {
-                    ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+                    ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
                     if (!collisionChecker)
                     {
                         collisionChecker = link->getCollisionChecker();
@@ -126,7 +126,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             collisionModels.push_back(link->getCollisionModel());
         }
 
@@ -167,7 +167,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             result += link->getNumFaces(collisionModel);
         }
 
@@ -188,7 +188,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             res += link->getCoMGlobal() * link->getMass() / m;
         }
 
@@ -201,7 +201,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             result += link->getMass();
         }
 
@@ -237,7 +237,7 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> res;
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
             res.push_back(link);
         }
         return res;

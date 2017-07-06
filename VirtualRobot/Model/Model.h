@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Model_h_
 #define _VirtualRobot_Model_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Tools/BoundingBox.h"
 #include "../Tools/ConditionedLock.h"
 #include "Coordinate.h"
@@ -31,7 +31,6 @@
 
 #include <Eigen/Core>
 #include <map>
-#include <boost/enable_shared_from_this.hpp>
 
 namespace VirtualRobot
 {
@@ -40,7 +39,7 @@ namespace VirtualRobot
      *
      * \see RobotIO, ModelNode, ModelNodeSet
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public boost::enable_shared_from_this<Model>, Coordinate
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, Coordinate
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -100,6 +99,31 @@ namespace VirtualRobot
         virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
 
         /*!
+        * Check, if the Coordinate is registered to this model (either a ModelNode or an attached entity).
+        *
+        * @param coord The coordinate to check for.
+        * @return True, if the coordinate is registered; false otherwise.
+        */
+        virtual bool hasCoordinate(const CoordinatePtr& coord) const;
+
+        /*!
+        * Check, if the coordinate is registered to this model.
+        *
+        * @param coordinateName The name of the coordinate to check for.
+        * @return True, if the coord is registered; false otherwise.
+        */
+        virtual bool hasCoordinate(const std::string& coordinateName) const;
+
+        /*!
+        * Get a pointer to the Coordinate, identified by the given name.
+        *
+        * @param coordinateName The name of the Coordinate.
+        * @return A pointer to the Coordinate.
+        */
+        virtual CoordinatePtr getCoordinate(const std::string& coordinateName) const;
+
+
+        /*!
          * Get all nodes, registered to this model.
          *
          * @param type If set, only nodes of this type are returned.
@@ -131,6 +155,8 @@ namespace VirtualRobot
          * @param nodeSet The new node set.
          */
         virtual void registerModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void registerJointSet(const JointSetPtr& nodeSet);
+        virtual void registerLinkSet(const LinkSetPtr& nodeSet);
 
         /*!
          * Deregister the given ModelNodeSet.
@@ -138,6 +164,8 @@ namespace VirtualRobot
          * @param nodeSet The node set to deregister.
          */
         virtual void deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void deregisterJointSet(const JointSetPtr& nodeSet);
+        virtual void deregisterLinkSet(const LinkSetPtr& nodeSet);
 
         /*!
          * Check, if the ModelNodeSet is registered to this model.
@@ -146,6 +174,8 @@ namespace VirtualRobot
          * @return True, if the node set is registered; false otherwise.
          */
         virtual bool hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const;
+        virtual bool hasJointSet(const JointSetPtr& nodeSet) const;
+        virtual bool hasLinkSet(const LinkSetPtr& nodeSet) const;
 
         /*!
          * Check, if the node set is registered to this model.
@@ -154,6 +184,8 @@ namespace VirtualRobot
          * @return True, if the node set is registered; false otherwise.
          */
         virtual bool hasModelNodeSet(const std::string& name) const;
+        virtual bool hasJointSet(const std::string& name) const;
+        virtual bool hasLinkSet(const std::string& name) const;
 
         /*!
          * Get a pointer to the ModelNodeSet, identified by the given name.
@@ -162,6 +194,8 @@ namespace VirtualRobot
          * @return A pointer to the ModelNodeSet.
          */
         virtual ModelNodeSetPtr getModelNodeSet(const std::string& nodeSetName) const;
+        virtual JointSetPtr getJointSet(const std::string& nodeSetName) const;
+        virtual LinkSetPtr getLinkSet(const std::string& nodeSetName) const;
 
         /*!
          * Get all node sets, registered to this model.
@@ -169,14 +203,6 @@ namespace VirtualRobot
          * @return The registered node sets.
          */
         virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
-
-        /*!
-         * Get all node sets, registered to this model.
-         *
-         * @param storeNodeSet The vector to store the node sets.
-         * @param clearVector If true, the vector is cleared bevor storing nodes.
-         */
-        virtual void getModelNodeSets(std::vector<ModelNodeSetPtr>& storeNodeSet, bool clearVector = true) const;
 
         /*!
          * The root node is the first ModelNode of this model.

@@ -23,8 +23,8 @@
 #ifndef _VirtualRobot_ModelFactory_h_
 #define _VirtualRobot_ModelFactory_h_
 
-#include "VirtualRobot.h"
-#include "Tools/MathTools.h"
+#include "Model.h"
+#include "../Tools/MathTools.h"
 
 #include <string>
 #include <vector>
@@ -127,7 +127,7 @@ namespace VirtualRobot
          * \param transformation The RN to object transformation
          * \return true on succes
          */
-        static bool attach(const ModelPtr& model, SceneObjectPtr o, const ModelNodePtr& mn, const Eigen::Matrix4f& transformation);
+        static bool attach(const ModelPtr& model, ModelNodePtr o, const ModelNodePtr& mn, const Eigen::Matrix4f& transformation);
 
         static bool detach(const ModelPtr& model, const ModelNodePtr& rn);
 
@@ -135,10 +135,10 @@ namespace VirtualRobot
     protected:
 
         // some internal stuff
-        static ModelNodePtr createUnitedModelNode(const ModelPtr& model, const std::vector< ModelNodePtr >& nodes, const ModelNodePtr& parent, const ModelNodePtr& parentClone, const Eigen::Matrix4f& trafo, const std::vector<SensorPtr> &sensors);
+        //static ModelNodePtr createUnitedModelNode(const ModelPtr& model, const std::vector< ModelNodePtr >& nodes, const ModelNodePtr& parent, const ModelNodePtr& parentClone, const Eigen::Matrix4f& trafo, const std::vector<SensorPtr> &sensors);
         static ModelNodePtr accumulateTransformations(const ModelPtr& model, const ModelNodePtr& nodeA, const ModelNodePtr& nodeAClone, const ModelNodePtr& nodeB, Eigen::Matrix4f& storeTrafo);
         static void getChildNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<ModelNodePtr>& appendNodes);
-        static void getChildSensorNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<SensorPtr>& appendNodes);
+        //static void getChildSensorNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<SensorPtr>& appendNodes);
 
         static void cloneRecursiveUnite(const ModelPtr& model, const ModelNodePtr& currentNode, const ModelNodePtr& currentNodeClone, const std::vector<std::string>& uniteWithAllChildren);
 

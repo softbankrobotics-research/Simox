@@ -1,8 +1,9 @@
 #include "ConstrainedHierarchicalIK.h"
+#include "../VirtualRobotException.h"
 
 using namespace VirtualRobot;
 
-ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize, int maxIterations, float stall_epsilon, float raise_epsilon) :
+ConstrainedHierarchicalIK::ConstrainedHierarchicalIK(ModelPtr& robot, const JointSetPtr& nodeSet, float stepSize, int maxIterations, float stall_epsilon, float raise_epsilon) :
     ConstrainedIK(robot, nodeSet, maxIterations, stall_epsilon, raise_epsilon),
     nodeSet(nodeSet),
     stepSize(stepSize)

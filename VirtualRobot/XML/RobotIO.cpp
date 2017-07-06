@@ -530,7 +530,7 @@ namespace VirtualRobot
 
         if (robotNodeFactory)
         {
-            robotNode = robotNodeFactory->createRobotNode(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, preJointTransform, axis, translationDir, physics, rntype);
+            robotNode = robotNodeFactory->createRobotNode(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, preJointTransform, axis, translationDir, physics);
             //}
         }
         else
@@ -558,7 +558,7 @@ namespace VirtualRobot
 
         if (scaleVisu)
         {
-            boost::shared_ptr<RobotNodePrismatic> rnPM = boost::dynamic_pointer_cast<RobotNodePrismatic>(robotNode);
+            std::shared_ptr<RobotNodePrismatic> rnPM = std::dynamic_pointer_cast<RobotNodePrismatic>(robotNode);
 
             if (rnPM)
             {
@@ -584,8 +584,7 @@ namespace VirtualRobot
                                            int& robotNodeCounter,
                                            std::vector< std::string >& childrenNames,
                                            std::vector< ChildFromRobotDef >& childrenFromRobot,
-                                           RobotDescription loadMode,
-                                           RobotNode::RobotNodeType rntype)
+                                           RobotDescription loadMode)
     {
         childrenFromRobot.clear();
         THROW_VR_EXCEPTION_IF(!robotNodeXMLNode, "NULL data in processRobotNode");
@@ -709,7 +708,7 @@ namespace VirtualRobot
 
 
         //create joint from xml data
-        robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, rntype, transformMatrix);
+        robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, transformMatrix);
 
         // process sensors
         for (size_t i = 0; i < sensorTags.size(); i++)
@@ -835,8 +834,7 @@ namespace VirtualRobot
                     (*eef)->clone(robo);
                 }
 
-                std::vector<RobotNodeSetPtr> nodeSets;
-                r->getRobotNodeSets(nodeSets);
+                std::vector<RobotNodeSetPtr> nodeSets = r->getModelNodeSets();
 
                 for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
                 {
@@ -866,7 +864,7 @@ namespace VirtualRobot
         }
 
         std::vector<RobotNodePtr> nodes;
-        robo->getRobotNodes(nodes);
+        robo->getModelNodes(nodes);
         RobotNodePtr root = robo->getRootNode();
 
         for (size_t i = 0; i < nodes.size(); i++)
@@ -979,7 +977,7 @@ namespace VirtualRobot
                 std::vector< ChildFromRobotDef > childrenFromRobot;
                 std::vector< std::string > childrenNames;
                 // check for type
-                RobotNode::RobotNodeType rntype = RobotNode::Generic;
+               /* RobotNode::RobotNodeType rntype = RobotNode::Generic;
 
                 if (nodeName == "jointnode")
                 {
@@ -994,9 +992,9 @@ namespace VirtualRobot
                 if (nodeName == "transformationnode")
                 {
                     rntype = RobotNode::Transform;
-                }
+                }*/
 
-                RobotNodePtr n = processRobotNode(XMLNode, robo, basePath, robotNodeCounter, childrenNames, childrenFromRobot, loadMode, rntype);
+                RobotNodePtr n = processRobotNode(XMLNode, robo, basePath, robotNodeCounter, childrenNames, childrenFromRobot, loadMode);
 
                 if (!n)
                 {
@@ -1092,7 +1090,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!baseNodeName.empty(), "Endeffector tag has more than one <base> tag. Value of the first one is: " + baseNodeName);
                 baseNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(baseNodeName.empty(), "Endeffector tag does not specify a <base> tag.");
-                baseNode = robo->getRobotNode(baseNodeName);
+                baseNode = robo->getModelNode(baseNodeName);
                 THROW_VR_EXCEPTION_IF(!baseNode, "base associated with <Endeffector> not available in the robot model.");
             }
             else if ("tcp" == attributeName)
@@ -1100,7 +1098,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!tcpNodeName.empty(), "Endeffector tag has more than one <tcp> tag. Value of the first one is: " + tcpNodeName);
                 tcpNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(tcpNodeName.empty(), "Endeffector tag does not specify a <tcp> tag.");
-                tcpNode = robo->getRobotNode(tcpNodeName);
+                tcpNode = robo->getModelNode(tcpNodeName);
                 THROW_VR_EXCEPTION_IF(!tcpNode, "tcp associated with <Endeffector> not available in the robot model.");
             }
             else if ("gcp" == attributeName)
@@ -1108,7 +1106,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!gcpNodeName.empty(), "Endeffector tag has more than one <gcp> tag. Value of the first one is: " + gcpNodeName);
                 gcpNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(gcpNodeName.empty(), "Endeffector tag does not specify a <gcp> tag.");
-                gcpNode = robo->getRobotNode(gcpNodeName);
+                gcpNode = robo->getModelNode(gcpNodeName);
                 THROW_VR_EXCEPTION_IF(!gcpNode, "gcp associated with <Endeffector> not available in the robot model.");
             }
             else
@@ -1237,7 +1235,7 @@ namespace VirtualRobot
                 EndEffectorActor::ActorDefinition actor;
                 std::string nodeNameAttr = processNameAttribute(node, true);
                 THROW_VR_EXCEPTION_IF(nodeNameAttr.empty(), "Missing name attribute for <Node> belonging to Robot node set " << parentName);
-                actor.robotNode = robot->getRobotNode(nodeNameAttr);
+                actor.robotNode = robot->getModelNode(nodeNameAttr);
                 THROW_VR_EXCEPTION_IF(!actor.robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot");
                 actor.directionAndSpeed = processFloatAttribute(speedname, node, true);
 
@@ -1463,7 +1461,7 @@ namespace VirtualRobot
 
         if (storeModelFiles)
         {
-            std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
+            std::vector<RobotNodePtr> nodes = robot->getModelNodes();
 
             for (size_t i = 0; i < nodes.size(); i++)
             {

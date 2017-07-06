@@ -71,7 +71,7 @@ namespace SimDynamics
         This class encapsulates all calls to the bullet physics engine.
         Usually there is no need to instantiate this object by your own, it is automatically created when calling DynamicsWorld::Init().
     */
-    class SIMDYNAMICS_IMPORT_EXPORT BulletEngine : public DynamicsEngine, public btActionInterface, public boost::enable_shared_from_this<BulletEngine>
+    class SIMDYNAMICS_IMPORT_EXPORT BulletEngine : public DynamicsEngine, public btActionInterface, public std::enable_shared_from_this<BulletEngine>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

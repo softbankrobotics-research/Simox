@@ -12,7 +12,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Tools/MathTools.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/Workspace/Reachability.h>
 #include <string>
 
@@ -172,11 +172,11 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
     BOOST_REQUIRE(rns);
     BOOST_REQUIRE(rob->hasRobotNodeSet("rns"));
 
-    VirtualRobot::RobotNodePtr joint1 = rob->getRobotNode("joint1");
+    VirtualRobot::RobotNodePtr joint1 = rob->getModelNode("joint1");
     BOOST_REQUIRE(joint1);
-    VirtualRobot::RobotNodePtr tcp = rob->getRobotNode("tcp");
+    VirtualRobot::RobotNodePtr tcp = rob->getModelNode("tcp");
     BOOST_REQUIRE(tcp);
-    VirtualRobot::RobotNodePtr rootNode = rob->getRobotNode("root");
+    VirtualRobot::RobotNodePtr rootNode = rob->getModelNode("root");
     BOOST_REQUIRE(rootNode);
 
     // CHECK ROBOT WORKSPACE

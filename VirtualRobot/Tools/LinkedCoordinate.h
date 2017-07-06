@@ -24,11 +24,11 @@
 #ifndef _LinkedCoordinate_h_
 #define _LinkedCoordinate_h_
 
-#include "VirtualRobotImportExport.h"
-#include "Nodes/RobotNode.h"
+#include "../VirtualRobotImportExport.h"
+#include "../Model/Nodes/ModelNode.h"
 #include <string>
 #include <vector>
-#include "VirtualRobotException.h"
+#include "../VirtualRobotException.h"
 
 
 namespace VirtualRobot
@@ -47,7 +47,7 @@ namespace VirtualRobot
      * successing joints should be easy to confirm if there is a getTransformFromParent().
      * @todo Check if the order of const and throw is okay.
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT LinkedCoordinate //: public boost::enable_shared_from_this<LinkedCoordinate>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT LinkedCoordinate //: public std::enable_shared_from_this<LinkedCoordinate>
     {
     public:
 

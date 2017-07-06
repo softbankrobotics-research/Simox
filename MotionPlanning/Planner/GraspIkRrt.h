@@ -26,7 +26,7 @@
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/AdvancedIKSolver.h>
 #include "BiRrt.h"
 

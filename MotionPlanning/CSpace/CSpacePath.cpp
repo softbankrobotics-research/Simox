@@ -8,7 +8,7 @@ using namespace std;
 namespace Saba
 {
 
-    CSpacePath::CSpacePath(CSpacePtr cspace, const std::string& name): Trajectory(cspace ? cspace->getRobotNodeSet() : VirtualRobot::RobotNodeSetPtr(), name)
+    CSpacePath::CSpacePath(CSpacePtr cspace, const std::string& name): Trajectory(cspace ? cspace->getModelNodeSet() : VirtualRobot::RobotNodeSetPtr(), name)
     {
         this->cspace = cspace;
 

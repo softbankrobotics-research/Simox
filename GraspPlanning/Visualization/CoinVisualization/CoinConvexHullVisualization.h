@@ -64,7 +64,7 @@ namespace GraspStudio
 
     };
 
-    typedef boost::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
+    typedef std::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
 
 
 } // namespace Saba

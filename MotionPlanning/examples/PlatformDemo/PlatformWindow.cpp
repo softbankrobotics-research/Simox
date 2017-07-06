@@ -234,10 +234,10 @@ void PlatformWindow::loadScene()
     std::vector<SceneObjectSetPtr> soss = scene->getSceneObjectSets();
 
     // Setup robot node sets and col models
-    std::vector<RobotNodeSetPtr> rnss = robot->getRobotNodeSets();
+    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
 
-    rns = robot->getRobotNodeSet(planSetA.rns);
-    colModelRob = robot->getRobotNodeSet(planSetA.colModelRob);
+    rns = robot->getModelNodeSet(planSetA.rns);
+    colModelRob = robot->getModelNodeSet(planSetA.colModelRob);
     colModelEnv = scene->getSceneObjectSet(planSetA.colModelEnv);
 
     bool startOK = false;
@@ -303,7 +303,7 @@ void PlatformWindow::selectColModelRob(const std::string &name)
         return;
     }
 
-    this->colModelRob = robot->getRobotNodeSet(name);
+    this->colModelRob = robot->getModelNodeSet(name);
 }
 
 
@@ -346,7 +346,7 @@ void PlatformWindow::buildRRTVisu()
         return;
     }
 
-    boost::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {

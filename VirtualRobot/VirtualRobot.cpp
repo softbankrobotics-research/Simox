@@ -1,5 +1,5 @@
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include "Visualization/VisualizationFactory.h"
 
 namespace VirtualRobot
@@ -21,7 +21,7 @@ namespace VirtualRobot
     void init(int &argc, char* argv[], const std::string &appName)
     {
         globalAppName = appName;
-        boost::shared_ptr<VisualizationFactory> v = VisualizationFactory::first(NULL);
+        std::shared_ptr<VisualizationFactory> v = VisualizationFactory::first(NULL);
         if (v)
         {
             v->init(argc, argv, globalAppName);

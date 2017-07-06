@@ -26,11 +26,9 @@
 
 #include "VirtualRobot/IK/Constraint.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public boost::enable_shared_from_this<ReferenceConfigurationConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public std::enable_shared_from_this<ReferenceConfigurationConstraint>
     {
     public:
         ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
@@ -48,7 +46,7 @@ namespace VirtualRobot
         Eigen::VectorXf reference;
     };
 
-    typedef boost::shared_ptr<ReferenceConfigurationConstraint> ReferenceConfigurationConstraintPtr;
+    typedef std::shared_ptr<ReferenceConfigurationConstraint> ReferenceConfigurationConstraintPtr;
 }
 
 #endif

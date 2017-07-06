@@ -9,7 +9,7 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/XML/ObjectIO.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Nodes/Sensor.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
@@ -32,13 +32,13 @@ BOOST_AUTO_TEST_CASE(testRobotLoadXML)
     BOOST_REQUIRE_NO_THROW(r = RobotIO::loadRobot(filename));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getRobotNodes();
+    std::vector<RobotNodePtr> rn = r->getModelNodes();
     BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_GT(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getRobotNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
     BOOST_REQUIRE_GT(rns.size(), 0);
 }
 

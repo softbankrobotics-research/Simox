@@ -8,7 +8,7 @@
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
         "</Robot>";
     VirtualRobot::RobotPtr rob = VirtualRobot::RobotIO::createRobotFromString(robotString);
     BOOST_REQUIRE(rob);
-    VirtualRobot::RobotNodeSetPtr rns = rob->getRobotNodeSet("rns1");
+    VirtualRobot::RobotNodeSetPtr rns = rob->getModelNodeSet("rns1");
     BOOST_REQUIRE(rns);
     VirtualRobot::CDManagerPtr cdm(new VirtualRobot::CDManager());
     Saba::CSpaceSampledPtr cspace(new Saba::CSpaceSampled(rob, cdm, rns));

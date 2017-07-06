@@ -24,19 +24,18 @@
 #ifndef _VirtualRobot_CoMConstraint_h_
 #define _VirtualRobot_CoMConstraint_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
 #include "VirtualRobot/IK/CoMIK.h"
 
-#include <boost/shared_ptr.hpp>
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoMConstraint : public Constraint, public boost::enable_shared_from_this<CoMConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoMConstraint : public Constraint, public std::enable_shared_from_this<CoMConstraint>
     {
     public:
-        CoMConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const Eigen::Vector3f& target, float tolerance);
-        CoMConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const Eigen::Vector2f& target, float tolerance);
+        CoMConstraint(const RobotPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const Eigen::Vector3f& target, float tolerance);
+        CoMConstraint(const RobotPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const Eigen::Vector2f& target, float tolerance);
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);
@@ -46,9 +45,9 @@ namespace VirtualRobot
         void updateTarget(const Eigen::Vector2f& target);
 
     protected:
-        RobotPtr robot;
-        RobotNodeSetPtr nodeSetJoints;
-        RobotNodeSetPtr nodeSetBodies;
+        ModelPtr robot;
+        JointSetPtr nodeSetJoints;
+        LinkSetPtr nodeSetBodies;
         Eigen::VectorXf target;
 
         CoMIKPtr ik;
@@ -56,7 +55,7 @@ namespace VirtualRobot
         float tolerance;
     };
 
-    typedef boost::shared_ptr<CoMConstraint> CoMConstraintPtr;
+    typedef std::shared_ptr<CoMConstraint> CoMConstraintPtr;
 }
 
 #endif

@@ -1,10 +1,10 @@
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>

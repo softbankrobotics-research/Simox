@@ -10,7 +10,7 @@ namespace SimDynamics
         SIMDYNAMICS_ASSERT(world);
         m_sundirection = btVector3(1, 1, -2) * BulletObject::ScaleFactor * 1000 ;
 
-        bulletEngine = boost::dynamic_pointer_cast<BulletEngine>(world->getEngine());
+        bulletEngine = std::dynamic_pointer_cast<BulletEngine>(world->getEngine());
 
         SIMDYNAMICS_ASSERT(bulletEngine);
 

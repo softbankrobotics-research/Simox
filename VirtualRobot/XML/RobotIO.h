@@ -23,11 +23,11 @@
 #ifndef _VirtualRobot_RobotIO_h_
 #define _VirtualRobot_RobotIO_h_
 
-#include "../VirtualRobot.h"
-#include "../Units.h"
+#include "../Model/Model.h"
+#include "../Tools/Units.h"
 #include "../Tools/MathTools.h"
-#include "../Robot.h"
-#include "../Nodes/RobotNode.h"
+#include "../Model/Model.h"
+#include "../Model/Nodes/ModelNode.h"
 #include "BaseIO.h"
 
 #include <string>
@@ -114,8 +114,7 @@ namespace VirtualRobot
                                              int& robotNodeCounter,
                                              std::vector< std::string >& childrenNames,
                                              std::vector< ChildFromRobotDef >& childrenFromRobot,
-                                             RobotDescription loadMode = eFull,
-                                             RobotNode::RobotNodeType rntype = RobotNode::Generic);
+                                             RobotDescription loadMode = eFull);
         static EndEffectorPtr processEndeffectorNode(rapidxml::xml_node<char>* endeffectorXMLNode, RobotPtr robo);
         static EndEffectorActorPtr processEndeffectorActorNode(rapidxml::xml_node<char>* endeffectorActorXMLNode, RobotPtr robo);
         static void processEndeffectorStaticNode(rapidxml::xml_node<char>* endeffectorStaticXMLNode, RobotPtr robo, std::vector<RobotNodePtr>& staticNodesList);
@@ -125,7 +124,7 @@ namespace VirtualRobot
         static void processChildNode(rapidxml::xml_node<char>* childXMLNode, std::vector<std::string>& childrenNames);
         static RobotNodePtr processJointNode(rapidxml::xml_node<char>* jointXMLNode, const std::string& robotNodeName,
                                              RobotPtr robot, VisualizationNodePtr visualizationNode, CollisionModelPtr collisionModel,
-                                             ModelLink::Physics& physics, RobotNode::RobotNodeType rntype, Eigen::Matrix4f& transformationMatrix);
+                                             ModelLink::Physics& physics, Eigen::Matrix4f& transformationMatrix);
         static void processChildFromRobotNode(rapidxml::xml_node<char>* childXMLNode, const std::string& nodeName, std::vector< ChildFromRobotDef >& childrenFromRobot);
         static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi);
         static bool processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath);

@@ -24,15 +24,13 @@
 #ifndef _VirtualRobot_PositionConstraint_h_
 #define _VirtualRobot_PositionConstraint_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint, public boost::enable_shared_from_this<PositionConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint, public std::enable_shared_from_this<PositionConstraint>
     {
     public:
         PositionConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Vector3f& target,
@@ -55,7 +53,7 @@ namespace VirtualRobot
         float tolerance;
     };
 
-    typedef boost::shared_ptr<PositionConstraint> PositionConstraintPtr;
+    typedef std::shared_ptr<PositionConstraint> PositionConstraintPtr;
 }
 
 #endif

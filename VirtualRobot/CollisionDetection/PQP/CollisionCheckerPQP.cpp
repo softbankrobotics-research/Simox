@@ -4,7 +4,6 @@
 #include "CollisionModelPQP.h"
 #include "../CollisionChecker.h"
 #include "../CollisionModel.h"
-#include "../../SceneObjectSet.h"
 #include "PQP.h"
 #include "../../VirtualRobotException.h"
 
@@ -32,8 +31,8 @@ namespace VirtualRobot
 
     float CollisionCheckerPQP::calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
-        boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
-        boost::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
+        std::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
+        std::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
         VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
 
         float res = getMinDistance(m1, m2, model1->getCollisionModelImplementation()->getGlobalPose(), model2->getCollisionModelImplementation()->getGlobalPose(), P1, P2, trID1, trID2);
@@ -48,8 +47,8 @@ namespace VirtualRobot
 
     bool CollisionCheckerPQP::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) //, Eigen::Vector3f *storeContact)
     {
-        boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
-        boost::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
+        std::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
+        std::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
         VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
 
         PQP::PQP_CollideResult result;
@@ -86,96 +85,10 @@ namespace VirtualRobot
 
         return ((bool)(result.Colliding() != 0));
     }
-    //
-    // bool CollisionCheckerPQP::GetAllCollisonTriangles (SceneObjectSetPtr model1, SceneObjectSetPtr model2, std::vector<int> &storePairs)
-    // {
-    //  if (model1==NULL || model2==NULL)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - NULL data...\n");
-    //      return false;
-    //  }
-    //  if (model1->GetCollisionChecker() != model2->GetCollisionChecker() || model1->GetCollisionChecker()->getCollisionCheckerImplementation()!=this)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - Could not go on, collision models are linked to different Collision Checker instances...\n");
-    //      return false;
-    //  }
-    //  std::vector<CollisionModel*> vColModels1 = model1->getCollisionModelSetImplementation()->GetCollisionModels();
-    //  std::vector<CollisionModel*> vColModels2 = model2->getCollisionModelSetImplementation()->GetCollisionModels();
-    //  if (vColModels1.size()==0 || vColModels2.size()==0)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - NULL internal data...\n");
-    //      return false;
-    //  }
-    //  std::vector<CollisionModel*>::iterator it1 = vColModels1.begin();
-    //  bool bRes = false;
-    //  while (it1!=vColModels1.end())
-    //  {
-    //      std::vector<CollisionModel*>::iterator it2 = vColModels2.begin();
-    //      while (it2!=vColModels2.end())
-    //      {
-    //          if (!bRes)
-    //              bRes = GetAllCollisonTriangles(*it1,*it2,storePairs);
-    //          it2++;
-    //      }
-    //      it1++;
-    //  }
-    //  return bRes;
-    // }
-    //
-    // bool CollisionCheckerPQP::GetAllCollisonTriangles (CollisionModelPtr model1, CollisionModelPtr model2, std::vector<int> &storePairs)
-    // {
-    //  if (model1==NULL || model2==NULL)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - NULL data...\n");
-    //      return false;
-    //  }
-    //  if (model1->GetCollisionChecker() != model2->GetCollisionChecker() || model1->GetCollisionChecker()->getCollisionCheckerImplementation()!=this)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - Could not go on, collision models are linked to different Collision Checker instances...\n");
-    //      return false;
-    //  }
-    //
-    //  PQP::PQP_ModelPtr m1 = model1->getCollisionModelImplementation()->GetModel();
-    //  PQP::PQP_ModelPtr m2 = model2->getCollisionModelImplementation()->GetModel();
-    //  if (m1==NULL || m2==NULL)
-    //  {
-    //      printf ("CollisionCheckerPQP:GetAllCollisonTriangles - NULL internal data...\n");
-    //      return false;
-    //  }
-    //
-    //  // todo: this can be optimized
-    //  PQP_CollideResult result;
-    //  PQP::PQP_REAL R1[3][3];
-    //  PQP::PQP_REAL T1[3];
-    //  PQP::PQP_REAL R2[3][3];
-    //  PQP::PQP_REAL T2[3];
-    //  __convSb2Ar(model1->getCollisionModelImplementation()->getGlobalPose(),R1,T1);
-    //  __convSb2Ar(model2->getCollisionModelImplementation()->getGlobalPose(),R2,T2);
-    //  PQP_Collide(&result,
-    //      R1, T1, m1,
-    //      R2, T2, m2,
-    //      PQP_ALL_CONTACTS);
-
-    //
-    //  //if there is a collision, then add the pair
-    //  // to the collision report database.
-    //  if (!result.Colliding())
-    //      return false;
-    //  for (int u=0; u<result.NumPairs(); u++)
-    //  {
-    //      storePairs.push_back(result.Id1(u));
-    //      storePairs.push_back(result.Id2(u));
-    //      //printf ("PQP: COLLIDING pair %d: id1:%d, id2: %d\n",u,result.Id1(u),result.Id2(u));
-    //  }
-    //  return true;
-    // }
-    //
-
-
 
 
     // returns min distance between the objects
-    float CollisionCheckerPQP::getMinDistance(boost::shared_ptr<PQP::PQP_Model> m1, boost::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2)
+    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2)
     {
         PQP::PQP_DistanceResult result;
         CollisionCheckerPQP::GetPQPDistance(m1, m2, mat1, mat2, result);
@@ -185,7 +98,7 @@ namespace VirtualRobot
 
 
     // returns min distance between the objects
-    float CollisionCheckerPQP::getMinDistance(boost::shared_ptr<PQP::PQP_Model> m1, boost::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2)
+    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2)
     {
         VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
 
@@ -217,7 +130,7 @@ namespace VirtualRobot
     }
 
 
-    void CollisionCheckerPQP::GetPQPDistance(const boost::shared_ptr<PQP::PQP_Model>& model1, const boost::shared_ptr<PQP::PQP_Model>& model2, const Eigen::Matrix4f& matrix1, const Eigen::Matrix4f& matrix2, PQP::PQP_DistanceResult& pqpResult)
+    void CollisionCheckerPQP::GetPQPDistance(const std::shared_ptr<PQP::PQP_Model>& model1, const std::shared_ptr<PQP::PQP_Model>& model2, const Eigen::Matrix4f& matrix1, const Eigen::Matrix4f& matrix2, PQP::PQP_DistanceResult& pqpResult)
     {
         VR_ASSERT_MESSAGE(pqpChecker, "NULL data in ColChecker!");
 
