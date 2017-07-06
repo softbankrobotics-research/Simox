@@ -1,6 +1,6 @@
 #include "GraspRrt.h"
 
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/EndEffector/EndEffectorActor.h>

@@ -24,9 +24,9 @@
 #define _VirtualRobot_VisualizationFactory_h_
 
 #include "../VirtualRobot.h"
-#include "../AbstractFactoryMethod.h"
-#include "../MathTools.h"
-#include "../BoundingBox.h"
+#include "../Tools/AbstractFactoryMethod.h"
+#include "../Tools/MathTools.h"
+#include "../Tools/BoundingBox.h"
 #include "../Model/Primitive.h"
 
 #include <Eigen/Core>

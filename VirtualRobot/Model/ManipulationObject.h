@@ -38,7 +38,7 @@ namespace VirtualRobot
     {
     public:
 
-        ManipulationObject(const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(), CollisionModelPtr collisionModel = CollisionModelPtr(), const SceneObject::Physics& p = SceneObject::Physics(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        ManipulationObject(const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(), CollisionModelPtr collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
         /*!
         */

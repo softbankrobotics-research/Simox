@@ -24,7 +24,7 @@
 #define _VirtualRobot_ModelNodeAttachmentFactory_h_
 
 #include "../../VirtualRobot.h"
-#include "../../AbstractFactoryMethod.h"
+#include "../../Tools/AbstractFactoryMethod.h"
 #include "ModelNodeAttachment.h"
 
 namespace VirtualRobot

@@ -7,7 +7,7 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotMathToolsTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <string>
 

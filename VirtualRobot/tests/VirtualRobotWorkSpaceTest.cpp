@@ -7,11 +7,11 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotWorkSpaceTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Workspace/Reachability.h>
 #include <string>

@@ -26,7 +26,7 @@
 
 #include "../../VirtualRobot.h"
 #include "../VisualizationFactory.h"
-#include "../../BoundingBox.h"
+#include "../../Tools/BoundingBox.h"
 #include "../../SceneObject.h"
 #include "../../EndEffector/EndEffector.h"
 #include "../ColorMap.h"

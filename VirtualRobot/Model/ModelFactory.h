@@ -24,7 +24,7 @@
 #define _VirtualRobot_ModelFactory_h_
 
 #include "VirtualRobot.h"
-#include "MathTools.h"
+#include "Tools/MathTools.h"
 
 #include <string>
 #include <vector>

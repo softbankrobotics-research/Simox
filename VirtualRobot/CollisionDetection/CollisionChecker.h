@@ -24,7 +24,7 @@
 #define _VirtualRobot_CollisionChecker_h_
 
 #include "../VirtualRobot.h"
-#include "../MathTools.h"
+#include "../Tools/MathTools.h"
 
 #include "../Model/Nodes/ModelLink.h"
 #include "../Model/Model.h"

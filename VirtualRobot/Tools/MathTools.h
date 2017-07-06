@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_MathTools_h_
 #define _VirtualRobot_MathTools_h_
 
-#include "VirtualRobot.h"
+#include "../VirtualRobot.h"
 
 #include <algorithm>
 #include <string>
@@ -111,6 +111,8 @@ namespace VirtualRobot
             The translation is set to zero.
         */
         void VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m);
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y);
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(const Eigen::Vector3f &rpy);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const float x[6], Eigen::Matrix4f& m);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy, Eigen::Matrix4f& m);
 
@@ -121,6 +123,8 @@ namespace VirtualRobot
         */
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m, float x[6]);
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m, Eigen::Vector3f& storeRPY);
+        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m);
+        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen3f2rpy(const Eigen::Matrix3f& m);
 
         /*!
             Convert quaternion values to a 3x3 rotation matrix and store it to the rotational component of the result.
@@ -130,6 +134,7 @@ namespace VirtualRobot
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT quat2eigen4f(float x, float y, float z, float w);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT quat2eigen4f(const Quaternion q);
 
+        Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT eigen3f2quat(const Eigen::Matrix3f& m);
         Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2quat(const Eigen::Matrix4f& m);
 
         Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT getTranslation(const Eigen::Matrix4f& m);

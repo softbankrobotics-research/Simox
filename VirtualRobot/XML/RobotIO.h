@@ -25,7 +25,7 @@
 
 #include "../VirtualRobot.h"
 #include "../Units.h"
-#include "../MathTools.h"
+#include "../Tools/MathTools.h"
 #include "../Robot.h"
 #include "../Nodes/RobotNode.h"
 #include "BaseIO.h"
@@ -125,7 +125,7 @@ namespace VirtualRobot
         static void processChildNode(rapidxml::xml_node<char>* childXMLNode, std::vector<std::string>& childrenNames);
         static RobotNodePtr processJointNode(rapidxml::xml_node<char>* jointXMLNode, const std::string& robotNodeName,
                                              RobotPtr robot, VisualizationNodePtr visualizationNode, CollisionModelPtr collisionModel,
-                                             SceneObject::Physics& physics, RobotNode::RobotNodeType rntype, Eigen::Matrix4f& transformationMatrix);
+                                             ModelLink::Physics& physics, RobotNode::RobotNodeType rntype, Eigen::Matrix4f& transformationMatrix);
         static void processChildFromRobotNode(rapidxml::xml_node<char>* childXMLNode, const std::string& nodeName, std::vector< ChildFromRobotDef >& childrenFromRobot);
         static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi);
         static bool processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath);

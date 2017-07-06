@@ -24,8 +24,9 @@
 #define _VirtualRobot_Model_h_
 
 #include "../VirtualRobot.h"
-#include "../BoundingBox.h"
-#include "../ConditionedLock.h"
+#include "../Tools/BoundingBox.h"
+#include "../Tools/ConditionedLock.h"
+#include "Coordinate.h"
 #include "Nodes/ModelNode.h"
 
 #include <Eigen/Core>
@@ -39,7 +40,7 @@ namespace VirtualRobot
      *
      * \see RobotIO, ModelNode, ModelNodeSet
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public boost::enable_shared_from_this<Model>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public boost::enable_shared_from_this<Model>, Coordinate
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -231,6 +232,8 @@ namespace VirtualRobot
          * @return The global pose.
          */
         virtual Eigen::Matrix4f getGlobalPose() const;
+        virtual Eigen::Vector3f getGlobalPosition() const;
+
 
         /*!
          * Set the global pose of this model so that the ModelNode node is at position globalPoseNode.
@@ -606,8 +609,6 @@ namespace VirtualRobot
         boost::recursive_mutex mutex;
 
         ModelNodePtr rootNode;
-
-        Eigen::Matrix4f globalPose;
 
         CollisionCheckerPtr collisionChecker;
 

@@ -296,7 +296,7 @@ namespace VirtualRobot
     typedef boost::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
 
     /*
-     * Predefine for MathTools.h
+     * Predefine for Tools/MathTools.h
      */
     namespace MathTools
     {

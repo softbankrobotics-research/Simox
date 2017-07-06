@@ -24,7 +24,7 @@
 #define _CONVEX_HULL_GENERATOR_H_
 
 #include "GraspStudio.h"
-#include "VirtualRobot/MathTools.h"
+#include "VirtualRobot/Tools/MathTools.h"
 #include <vector>
 
 

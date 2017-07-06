@@ -24,7 +24,7 @@
 #define __CONTACT_CONE_GENARTOR_H__
 
 #include "GraspStudio.h"
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <vector>
 #include <Eigen/Core>
 

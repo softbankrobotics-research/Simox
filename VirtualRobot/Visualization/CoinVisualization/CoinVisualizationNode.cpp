@@ -6,7 +6,7 @@
 
 #include "CoinVisualizationNode.h"
 #include "CoinVisualizationFactory.h"
-#include "../../MathTools.h"
+#include "../../Tools/MathTools.h"
 #include "../TriMeshModel.h"
 #include "../../VirtualRobotException.h"
 #include "../../XML/BaseIO.h"

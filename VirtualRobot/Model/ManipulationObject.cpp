@@ -8,7 +8,7 @@
 namespace VirtualRobot
 {
 
-    ManipulationObject::ManipulationObject(const std::string& name, VisualizationNodePtr visualization, CollisionModelPtr collisionModel, const SceneObject::Physics& p, CollisionCheckerPtr colChecker)
+    ManipulationObject::ManipulationObject(const std::string& name, VisualizationNodePtr visualization, CollisionModelPtr collisionModel, const ModelLink::Physics& p, CollisionCheckerPtr colChecker)
         : Obstacle(name, visualization, collisionModel, p, colChecker)
     {
     }
@@ -252,7 +252,7 @@ namespace VirtualRobot
         std::string name = ss.str();
 
         CollisionModelPtr colModel(new CollisionModel(visu->clone(), name, colChecker, id));
-        result.reset(new ManipulationObject(name, visu, colModel, SceneObject::Physics(), colChecker));
+        result.reset(new ManipulationObject(name, visu, colModel, ModelLink::Physics(), colChecker));
 
         result->initialize();
 

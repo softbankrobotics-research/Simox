@@ -24,7 +24,7 @@
 #define _VirtualRobot_Trajectory_h_
 
 #include "VirtualRobot.h"
-#include "MathTools.h"
+#include "Tools/MathTools.h"
 #include "RobotNodeSet.h"
 
 #include <Eigen/Core>

@@ -77,18 +77,18 @@ BOOST_AUTO_TEST_CASE(testLoadStoreManipulationObjectPhysics)
 
     ManipulationObjectPtr manipulatioObject = ObjectIO::loadManipulationObject(filename);
 
-    SceneObject::Physics physicsObject = manipulatioObject->getPhysics();
+    ModelLink::Physics physicsObject = manipulatioObject->getPhysics();
 
-    BOOST_CHECK_EQUAL(physicsObject.simType, SceneObject::Physics::eStatic);
+    BOOST_CHECK_EQUAL(physicsObject.simType, ModelLink::Physics::eStatic);
     BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
-    BOOST_CHECK_EQUAL(physicsObject.comLocation, SceneObject::Physics::eVisuBBoxCenter);
+    BOOST_CHECK_EQUAL(physicsObject.comLocation, ModelLink::Physics::eVisuBBoxCenter);
 
     ManipulationObjectPtr savedObject = ObjectIO::createManipulationObjectFromString(manipulatioObject->toXML());
     physicsObject = savedObject->getPhysics();
 
-    BOOST_CHECK_EQUAL(physicsObject.simType, SceneObject::Physics::eStatic);
+    BOOST_CHECK_EQUAL(physicsObject.simType, ModelLink::Physics::eStatic);
     BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
-    BOOST_CHECK_EQUAL(physicsObject.comLocation, SceneObject::Physics::eVisuBBoxCenter);
+    BOOST_CHECK_EQUAL(physicsObject.comLocation, ModelLink::Physics::eVisuBBoxCenter);
 }
 
 
