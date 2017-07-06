@@ -1,7 +1,7 @@
 #include "ApproachMovementSurfaceNormal.h"
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/SceneObjectSet.h>

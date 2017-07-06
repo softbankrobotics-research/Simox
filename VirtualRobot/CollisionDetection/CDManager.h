@@ -27,7 +27,7 @@
 #ifndef _VirtualRobot_CDManager_h_
 #define _VirtualRobot_CDManager_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "CollisionModel.h"
 #include "../Model/ModelNodeSet.h"
 #include "CollisionChecker.h"

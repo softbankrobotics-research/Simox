@@ -23,7 +23,7 @@
 #ifndef __BASIC_GRASP_QUALTIY_MEASURE_H__
 #define __BASIC_GRASP_QUALTIY_MEASURE_H__
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../EndEffector/EndEffector.h"
 #include "../Tools/MathTools.h"
 #include <vector>
@@ -42,7 +42,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        BasicGraspQualityMeasure(VirtualRobot::SceneObjectPtr object);
+        BasicGraspQualityMeasure(ModelLinkPtr object);
 
         // destructor
         virtual ~BasicGraspQualityMeasure();
@@ -73,7 +73,7 @@ namespace VirtualRobot
         //! Returns description of this object
         virtual std::string getName();
 
-        VirtualRobot::SceneObjectPtr getObject();
+        ModelLinkPtr getObject();
 
         virtual bool isValid();
 
@@ -87,7 +87,7 @@ namespace VirtualRobot
 
         int maxContacts;
 
-        VirtualRobot::SceneObjectPtr object;
+        ModelLinkPtr object;
 
         // object properties
         std::vector<VirtualRobot::MathTools::ContactPoint> contactPoints;  // in MM

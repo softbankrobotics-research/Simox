@@ -4,7 +4,7 @@
 #include "../CSpace/CSpaceNode.h"
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
-#include "VirtualRobot/Robot.h"
+#include "VirtualRobot/Model/Model.h"
 #include <time.h>
 
 

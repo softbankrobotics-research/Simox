@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_EndEffector_h_
 #define _VirtualRobot_EndEffector_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #include <string>
 #include <vector>
@@ -34,7 +34,7 @@ namespace VirtualRobot
 {
     class EndEffectorActor;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffector : public boost::enable_shared_from_this<EndEffector>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT EndEffector : public std::enable_shared_from_this<EndEffector>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -43,7 +43,7 @@ namespace VirtualRobot
         {
             EndEffectorPtr eef;             // the eef
             EndEffectorActorPtr actor;      // an eef may have multiple actors
-            RobotNodePtr robotNode;         // an actor may have multiple robotNodes
+            ModelLinkPtr robotNode;         // an actor may have multiple robotNodes
             ModelPtr obstacle;
             float distance;
             Eigen::Vector3f contactPointFingerLocal;        // given in coord system of the object
@@ -101,7 +101,7 @@ namespace VirtualRobot
         std::string getRobotType();
 
         void getActors(std::vector<EndEffectorActorPtr>& actors);
-        void getStatics(std::vector<RobotNodePtr>& statics);
+        void getStatics(std::vector<ModelLinkPtr>& statics);
 
         /*!
             Closes each actor until a joint limit is hit or a collision occurred.

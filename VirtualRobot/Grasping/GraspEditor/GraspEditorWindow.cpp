@@ -281,7 +281,7 @@ namespace VirtualRobot
         {
 
             SoNode* visualisationNode = NULL;
-            boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
+            std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
             if (visualizationObject)
                 visualisationNode = visualizationObject->getCoinVisualization();
 

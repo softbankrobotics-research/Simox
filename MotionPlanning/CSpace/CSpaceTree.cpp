@@ -4,7 +4,7 @@
 #include "CSpaceNode.h"
 #include "CSpacePath.h"
 #include "CSpace.h"
-#include "VirtualRobot/Robot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/RobotNodeSet.h"
 #include "float.h"
 #include <cmath>
@@ -353,7 +353,7 @@ namespace Saba
         file << "# THEN ACTUAL DATA IN FOLLOWING FORMAT: ID CONFIG PARENTID" << std::endl;
 
         // save kinematic chain name used
-        file << cspace->getRobotNodeSet()->getName() << std::endl;
+        file << cspace->getModelNodeSet()->getName() << std::endl;
 
         // save rrt dimension used for planning
         file << dimension << std::endl;

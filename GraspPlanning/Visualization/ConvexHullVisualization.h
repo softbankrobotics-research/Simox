@@ -24,7 +24,7 @@
 #define _GraspStudio_ConvexHullVisualization_h_
 
 #include "../GraspStudio.h"
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>

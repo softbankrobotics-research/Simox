@@ -24,6 +24,7 @@
 #define _VirtualRobot_MathTools_h_
 
 #include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 #include <algorithm>
 #include <string>
@@ -58,7 +59,7 @@ namespace VirtualRobot
         /*!
             Return rotation that converts vector from to vector to.
         */
-        Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT getRotation(const Eigen::Vector3f& from, const Eigen::Vector3f& to);
+        MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT getRotation(const Eigen::Vector3f& from, const Eigen::Vector3f& to);
 
         //! get the corresponding angle of rotation that is defined by the quaternion (radian)
         float VIRTUAL_ROBOT_IMPORT_EXPORT getAngle(const Quaternion& q);
@@ -617,7 +618,7 @@ namespace VirtualRobot
             std::vector<Eigen::Vector2f> vertices;
             std::vector<Segment2D> segments;
         };
-        typedef boost::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
+        typedef std::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
 
         struct ConvexHull3D
         {
@@ -628,7 +629,7 @@ namespace VirtualRobot
             Eigen::Vector3f center;
             float maxDistFacetCenter; // maximum distance of faces to center
         };
-        typedef boost::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
+        typedef std::shared_ptr<ConvexHull3D> ConvexHull3DPtr;
 
         struct ConvexHull6D
         {
@@ -637,7 +638,7 @@ namespace VirtualRobot
             float volume;
             ContactPoint center;
         };
-        typedef boost::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
+        typedef std::shared_ptr<ConvexHull6D> ConvexHull6DPtr;
 
 
         // Copyright 2001, softSurfer (www.softsurfer.com)

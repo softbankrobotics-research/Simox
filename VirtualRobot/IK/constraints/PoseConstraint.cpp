@@ -23,7 +23,7 @@
 
 #include "PoseConstraint.h"
 
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 
 #include <iostream>
 

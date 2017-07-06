@@ -23,13 +23,13 @@
 #ifndef _VirtualRobot_GazeIK_h_
 #define _VirtualRobot_GazeIK_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 #include "VirtualRobot/IK/JointLimitAvoidanceJacobi.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
 #include "VirtualRobot/RobotNodeSet.h"
 #include "VirtualRobot/Nodes/RobotNodePrismatic.h"
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 
 
 namespace VirtualRobot
@@ -41,7 +41,7 @@ namespace VirtualRobot
         of the end point is at the requested gaze position.
         By default joint limit avoidance is considered as secondary task in order to generate more naturally looking configurations.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK : public boost::enable_shared_from_this<GazeIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK : public std::enable_shared_from_this<GazeIK>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -110,7 +110,7 @@ namespace VirtualRobot
         bool verbose;
     };
 
-    typedef boost::shared_ptr<GazeIK> GazeIKPtr;
+    typedef std::shared_ptr<GazeIK> GazeIKPtr;
 
 } // namespace VirtualRobot
 

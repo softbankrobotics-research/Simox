@@ -174,7 +174,7 @@ void GenericIKWindow::resetSceneryAll()
     }
 
     std::vector<RobotNodePtr> rn;
-    robot->getRobotNodes(rn);
+    robot->getModelNodes(rn);
     std::vector<float> jv(rn.size(), 0.0f);
     robot->setJointValues(rn, jv);
 
@@ -194,7 +194,7 @@ void GenericIKWindow::collisionModel()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
 
-    boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
+    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -243,7 +243,7 @@ void GenericIKWindow::updateKCBox()
     }
 
     std::vector<RobotNodeSetPtr> rns;
-    robot->getRobotNodeSets(rns);
+    robot->getModelNodeSets(rns);
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
@@ -304,7 +304,7 @@ void GenericIKWindow::selectKC(int nr)
 
     if (kc->getNode(kc->getSize() - 1)->isTranslationalJoint())
     {
-        ikGazeSolver.reset(new GazeIK(kc, boost::dynamic_pointer_cast<RobotNodePrismatic>(kc->getNode(kc->getSize() - 1))));
+        ikGazeSolver.reset(new GazeIK(kc, std::dynamic_pointer_cast<RobotNodePrismatic>(kc->getNode(kc->getSize() - 1))));
     }
     else
     {

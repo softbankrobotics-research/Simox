@@ -23,11 +23,11 @@
 
 #include "CoMConstraint.h"
 
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 
 using namespace VirtualRobot;
 
-CoMConstraint::CoMConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const Eigen::Vector3f &target, float tolerance) :
+CoMConstraint::CoMConstraint(const RobotPtr &robot, const JointSetPtr &joints, const LinkSetPtr &bodies, const Eigen::Vector3f &target, float tolerance) :
     Constraint(joints),
     robot(robot),
     nodeSetJoints(joints),
@@ -42,7 +42,7 @@ CoMConstraint::CoMConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joint
     addOptimizationFunction(0, false);
 }
 
-CoMConstraint::CoMConstraint(const RobotPtr &robot, const RobotNodeSetPtr &joints, const RobotNodeSetPtr &bodies, const Eigen::Vector2f &target, float tolerance) :
+CoMConstraint::CoMConstraint(const RobotPtr &robot, const JointSetPtr &joints, const LinkSetPtr &bodies, const Eigen::Vector2f &target, float tolerance) :
     Constraint(joints),
     robot(robot),
     nodeSetJoints(joints),

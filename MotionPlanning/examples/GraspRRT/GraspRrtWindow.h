@@ -1,10 +1,10 @@
 #ifndef __GraspRrt_WINDOW_H__
 #define __GraspRrt_WINDOW_H__
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
@@ -148,7 +148,7 @@ protected:
     Saba::CSpaceTreePtr tree;
     GraspStudio::GraspQualityMeasureWrenchSpacePtr graspQuality;
 
-    boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 
     Saba::GraspRrtPtr test_graspRrt;
     Saba::CSpaceSampledPtr test_cspace;

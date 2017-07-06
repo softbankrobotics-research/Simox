@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelNodeSet_h_
 #define _VirtualRobot_ModelNodeSet_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
 namespace VirtualRobot
 {
@@ -95,7 +95,7 @@ namespace VirtualRobot
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                                                  const ModelNodePtr tcp = ModelNodePtr(),
+                                                  const CoordinatePtr tcp = CoordinatePtr(),
                                                   bool registerToModel = false);
         /*!
          * Get the name of this ModelNodeSet.

@@ -24,7 +24,6 @@
 #define _VirtualRobot_BoundingBox_h_
 
 #include "../VirtualRobot.h"
-#include "MathTools.h"
 
 #include <Eigen/Core>
 #include <vector>

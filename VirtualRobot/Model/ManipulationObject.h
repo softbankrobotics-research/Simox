@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ManipulationObject_h_
 #define _VirtualRobot_ManipulationObject_h_
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include "Obstacle.h"
 #include "EndEffector/EndEffector.h"
 

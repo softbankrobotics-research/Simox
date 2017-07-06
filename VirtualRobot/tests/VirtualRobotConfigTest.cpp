@@ -6,7 +6,7 @@
 
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotConfigTest
 
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/RobotConfig.h>
 #include <VirtualRobot/XML/RobotIO.h>

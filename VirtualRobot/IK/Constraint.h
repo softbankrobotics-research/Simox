@@ -23,10 +23,8 @@
 #ifndef _VirtualRobot_Constraint_h_
 #define _VirtualRobot_Constraint_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
-
-#include <boost/shared_ptr.hpp>
 
 class SoSeparator;
 
@@ -43,7 +41,7 @@ namespace VirtualRobot
             bool soft;
     };
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public boost::enable_shared_from_this<Constraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public std::enable_shared_from_this<Constraint>
     {
     public:
         Constraint(const RobotNodeSetPtr& nodeSet);
@@ -76,7 +74,7 @@ namespace VirtualRobot
 
         // Interface for Jacobian-based solvers (default implementations)
         virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
         virtual bool checkTolerances();
 
@@ -96,7 +94,7 @@ namespace VirtualRobot
         float optimizationFunctionFactor;
     };
 
-    typedef boost::shared_ptr<Constraint> ConstraintPtr;
+    typedef std::shared_ptr<Constraint> ConstraintPtr;
 }
 
 #endif

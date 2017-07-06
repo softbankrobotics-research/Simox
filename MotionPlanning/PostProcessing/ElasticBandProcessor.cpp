@@ -21,11 +21,11 @@ using namespace VirtualRobot;
         VR_ASSERT(node->getCollisionModel());
         VR_ASSERT(path);
         VR_ASSERT(path->getCSpace());
-        VR_ASSERT(path->getCSpace()->getRobotNodeSet());
+        VR_ASSERT(path->getCSpace()->getModelNodeSet());
         VR_ASSERT(obstacles);
         VR_ASSERT(cspace);
 
-        rns = path->getCSpace()->getRobotNodeSet();
+        rns = path->getCSpace()->getModelNodeSet();
         VR_ASSERT(rns && rns->getSize()>0);
         VR_INFO << "using rns " << rns->getName() << endl;
 

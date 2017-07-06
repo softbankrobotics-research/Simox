@@ -23,7 +23,8 @@
 #ifndef _VirtualRobot_CollisionChecker_h_
 #define _VirtualRobot_CollisionChecker_h_
 
-#include "../VirtualRobot.h"
+#include "../VirtualRobotImportExport.h"
+#include "../Model/Model.h"
 #include "../Tools/MathTools.h"
 
 #include "../Model/Nodes/ModelLink.h"
@@ -56,7 +57,7 @@ namespace VirtualRobot
 
 
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionChecker : public boost::enable_shared_from_this<CollisionChecker>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionChecker : public std::enable_shared_from_this<CollisionChecker>
     {
     public:
 
@@ -167,7 +168,7 @@ namespace VirtualRobot
 
         /*!
         Activates / Deactivates the automatic size check on col model creation.
-        The size check can be useful when the UNITS definitions in inventor files result in different scalings of the 3D models.
+        The size check can be useful when the UNITS definitions in 3d files result in different scalings of the 3D models.
         (Standard: true)
         */
         void setAutomaticSizeCheck(bool checkSizeOnColModelCreation);
@@ -178,10 +179,6 @@ namespace VirtualRobot
             collisionCheckerImplementation->enableDebugOutput(e);
         }
         bool debugOutput;
-
-        //! This is the global collision checker singleton
-        static CollisionCheckerPtr getGlobalCollisionChecker();
-
 
         /*!
             Does the underlying collision detection library support discrete collision detection.
@@ -211,16 +208,18 @@ namespace VirtualRobot
         static bool IsSupported_Multithreading_MultipleColCheckers();
 
 #if defined(VR_COLLISION_DETECTION_PQP)
-        boost::shared_ptr<CollisionCheckerPQP> getCollisionCheckerImplementation()
+        std::shared_ptr<CollisionCheckerPQP> getCollisionCheckerImplementation()
         {
             return collisionCheckerImplementation;
         }
 #else
-        boost::shared_ptr<CollisionCheckerDummy> getCollisionCheckerImplementation()
+        std::shared_ptr<CollisionCheckerDummy> getCollisionCheckerImplementation()
         {
             return collisionCheckerImplementation;
         }
 #endif
+        //! This is the global collision checker singleton
+        static CollisionCheckerPtr getGlobalCollisionChecker();
 
     protected:
         inline std::vector<CollisionModelPtr> getCollisionModel(const ModelPtr& m)
@@ -241,7 +240,7 @@ namespace VirtualRobot
         {
             if (!ModelNode::checkNodeOfType(m, ModelNode::ModelNodeType::Link))
                 return CollisionModelPtr();
-            return boost::static_pointer_cast<ModelLink>(m)->getCollisionModel();
+            return std::static_pointer_cast<ModelLink>(m)->getCollisionModel();
         }
         inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<ModelNodePtr>& m)
         {
@@ -250,7 +249,7 @@ namespace VirtualRobot
             {
                 if (!ModelNode::checkNodeOfType(mTmp, ModelNode::ModelNodeType::Link))
                     continue;
-                mVec.push_back(boost::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
+                mVec.push_back(std::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
             }
             return mVec;
         }
@@ -260,30 +259,22 @@ namespace VirtualRobot
         }
 
     private:
-        // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++
-        friend class Cleanup;
-        class Cleanup
-        {
-        public:
-            ~Cleanup();
-        };
 
         bool initialized;
-
-        static CollisionCheckerPtr globalCollisionChecker;
-
         bool automaticSizeCheck;
+
+        static CollisionCheckerPtr __globalCollisionChecker;
 
         Eigen::Vector3f tmpV1;
         Eigen::Vector3f tmpV2;
 
-
 #if defined(VR_COLLISION_DETECTION_PQP)
-        boost::shared_ptr<CollisionCheckerPQP> collisionCheckerImplementation;
+        std::shared_ptr<CollisionCheckerPQP> collisionCheckerImplementation;
 #else
-        boost::shared_ptr<CollisionCheckerDummy> collisionCheckerImplementation;
+        std::shared_ptr<CollisionCheckerDummy> collisionCheckerImplementation;
 #endif
     };
+
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_CollisionChecker_h_

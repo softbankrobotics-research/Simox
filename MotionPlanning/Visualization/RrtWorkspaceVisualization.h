@@ -24,8 +24,8 @@
 #define _Saba_RrtWorkspaceVisualization_h_
 
 #include "../Saba.h"
-#include "VirtualRobot/VirtualRobot.h"
-#include "VirtualRobot/Robot.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Model.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

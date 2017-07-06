@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_JointLimitAvoidanceJacobi_h_
 #define _VirtualRobot_JointLimitAvoidanceJacobi_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
 #include "VirtualRobot/RobotNodeSet.h"
 
@@ -34,7 +34,7 @@ namespace VirtualRobot
     /*!
             This class creates a dummy Jacobian matrix (identity) that can be used to specify a joint space task (e.g. a joint limit avoidance task)
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider, public boost::enable_shared_from_this<JointLimitAvoidanceJacobi>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider, public std::enable_shared_from_this<JointLimitAvoidanceJacobi>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -60,7 +60,7 @@ namespace VirtualRobot
         std::vector<RobotNodePtr> nodes;
     };
 
-    typedef boost::shared_ptr<JointLimitAvoidanceJacobi> JointLimitAvoidanceJacobiPtr;
+    typedef std::shared_ptr<JointLimitAvoidanceJacobi> JointLimitAvoidanceJacobiPtr;
 
 } // namespace VirtualRobot
 

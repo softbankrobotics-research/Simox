@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_WorkspaceData_h_
 #define _VirtualRobot_WorkspaceData_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "WorkspaceRepresentation.h"
 
 
@@ -44,7 +44,7 @@ namespace VirtualRobot
         Internally unsigned char data types are used (0...255)
     */
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public boost::enable_shared_from_this<WorkspaceData>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public std::enable_shared_from_this<WorkspaceData>
     {
     public:
         virtual ~WorkspaceData() {}

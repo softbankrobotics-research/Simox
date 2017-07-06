@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelNodeAttachment_h_
 #define _VirtualRobot_ModelNodeAttachment_h_
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 
 #include <cstdint>
 #include <string>

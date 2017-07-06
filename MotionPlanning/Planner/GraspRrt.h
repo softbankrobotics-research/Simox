@@ -28,10 +28,10 @@
 #include "../CSpace/CSpacePath.h"
 #include "../CSpace/CSpaceNode.h"
 #include "../ApproachDiscretization.h"
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/IKSolver.h>
 #include <VirtualRobot/IK/DifferentialIK.h>
 #include <VirtualRobot/Obstacle.h>

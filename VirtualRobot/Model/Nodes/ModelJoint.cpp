@@ -180,7 +180,7 @@ namespace VirtualRobot
             else
             {
                 // TODO: check, if update is needed
-                boost::static_pointer_cast<ModelJoint>(node)->setJointValue(jointValue * it->second);
+                std::static_pointer_cast<ModelJoint>(node)->setJointValue(jointValue * it->second);
             }
         }
         ModelNode::updatePoseInternally(updateChildren, updateAttachments);

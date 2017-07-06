@@ -1,6 +1,6 @@
 #include <Eigen/Geometry>
 #include "AdvancedIKSolver.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 #include "../Nodes/RobotNodePrismatic.h"
 #include "../Nodes/RobotNodeRevolute.h"
@@ -48,7 +48,7 @@ namespace VirtualRobot
 
     void AdvancedIKSolver::collisionDetection(ObstaclePtr avoidCollisionsWith)
     {
-        SceneObjectPtr so = boost::dynamic_pointer_cast<SceneObject>(avoidCollisionsWith);
+        SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(avoidCollisionsWith);
         collisionDetection(so);
     }
 

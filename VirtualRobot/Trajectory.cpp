@@ -1,5 +1,5 @@
 #include "Trajectory.h"
-#include "Robot.h"
+#include "Model/Model.h"
 #include "VirtualRobotException.h"
 #include <iostream>
 #include <sstream>
@@ -7,7 +7,7 @@
 namespace VirtualRobot
 {
 
-    Trajectory::Trajectory(RobotNodeSetPtr rns, const std::string& name)
+    Trajectory::Trajectory(JointSetPtr rns, const std::string& name)
         : rns(rns), name(name)
     {
         THROW_VR_EXCEPTION_IF(!rns, "Need a rns defined...");
@@ -348,7 +348,7 @@ namespace VirtualRobot
         return path.at(pos);
     }
 
-    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::RobotNodePtr r)
+    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::ModelNodePtr r)
     {
         VR_ASSERT(rns);
 
@@ -359,7 +359,7 @@ namespace VirtualRobot
 
         VR_ASSERT(r);
 
-        RobotPtr robot = rns->getRobot();
+        ModelPtr robot = rns->getModel();
         VR_ASSERT(robot);
 
         Eigen::VectorXf jv;
@@ -389,12 +389,12 @@ namespace VirtualRobot
             tab += "\t";
         }
 
-        RobotPtr robot = rns->getRobot();
+        ModelPtr robot = rns->getModel();
 
         THROW_VR_EXCEPTION_IF((!robot || !rns), "Need a valid robot and rns");
 
 
-        ss << tab << "<Trajectory Robot='" << robot->getType() << "' RobotNodeSet='" << rns->getName() << "' name='" << name << "' dim='" << dimension << "'>\n";
+        ss << tab << "<Trajectory Model='" << robot->getType() << "' JointSet='" << rns->getName() << "' name='" << name << "' dim='" << dimension << "'>\n";
 
         for (unsigned int i = 0; i < path.size(); i++)
         {
@@ -424,7 +424,7 @@ namespace VirtualRobot
         return name;
     }
 
-    VirtualRobot::RobotNodeSetPtr Trajectory::getRobotNodeSet()
+    VirtualRobot::RobotNodeSetPtr Trajectory::getJointSet()
     {
         return rns;
     }
@@ -451,19 +451,9 @@ namespace VirtualRobot
         return visualizationFactory->createTrajectory(shared_from_this());
     }
 
-    std::string Trajectory::getRobotName() const
+    std::string Trajectory::getModelName() const
     {
-        return rns->getRobot()->getName();
+        return rns->getModel()->getName();
     }
-    /*
-    void Trajectory::apply( float t )
-    {
-        if (!rns)
-            return;
-        RobotPtr robot = rns->getRobot();
-        Eigen::VectorXf c;
-        interpolate(t,c);
-        robot->setJointValues(rns,c);
-    }
-    */
+
 }

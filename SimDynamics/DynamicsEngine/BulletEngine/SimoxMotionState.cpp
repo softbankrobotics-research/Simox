@@ -27,7 +27,7 @@ namespace SimDynamics
         _graphicsTransfrom.setIdentity();
         _comOffset.setIdentity();
         Eigen::Vector3f com = sceneObject->getCoMLocal();
-        RobotNodePtr rn = boost::dynamic_pointer_cast<RobotNode>(sceneObject);
+        RobotNodePtr rn = std::dynamic_pointer_cast<RobotNode>(sceneObject);
 
         if (rn)
         {
@@ -130,7 +130,7 @@ namespace SimDynamics
             RobotNodePtr rn = robotNodeActuator->getRobotNode();
             DynamicsWorldPtr w = DynamicsWorld::GetWorld();
             DynamicsRobotPtr dr = w->getEngine()->getRobot(rn->getRobot());
-            BulletRobotPtr bdr = boost::dynamic_pointer_cast<BulletRobot>(dr);
+            BulletRobotPtr bdr = std::dynamic_pointer_cast<BulletRobot>(dr);
 
             if (bdr)
             {

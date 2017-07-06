@@ -1,13 +1,15 @@
 #include "HierarchicalIK.h"
+
+#include "../VirtualRobot.h"
+#include "../VirtualRobotException.h"
+#include "../Tools/MathTools.h"
+
 using namespace VirtualRobot;
 using namespace std;
 
-
 namespace VirtualRobot
 {
-
-
-    HierarchicalIK::HierarchicalIK(VirtualRobot::RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod method)
+    HierarchicalIK::HierarchicalIK(JointSetPtr rns, JacobiProvider::InverseJacobiMethod method)
         : rns(rns), method(method)
     {
         VR_ASSERT(this->rns);
@@ -28,14 +30,14 @@ namespace VirtualRobot
     {
         const double invDamped_lamba = 10.0;
 
-        VR_ASSERT(jacDefs.size() > 0 && jacDefs[0] && jacDefs[0]->getRobotNodeSet());
+        VR_ASSERT(jacDefs.size() > 0 && jacDefs[0] && jacDefs[0]->getJointSet());
 
         if (verbose)
         {
             VR_INFO << "Compute Step" << endl;
         }
 
-        int ndof = jacDefs[0]->getRobotNodeSet()->getSize();
+        int ndof = jacDefs[0]->getJointSet()->getSize();
         Eigen::VectorXf result(ndof);
         result.setZero();
         std::vector<Eigen::MatrixXd> jacobies;

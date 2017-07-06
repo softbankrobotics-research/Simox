@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelNodeAttachmentFactory_h_
 #define _VirtualRobot_ModelNodeAttachmentFactory_h_
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 #include "../../Tools/AbstractFactoryMethod.h"
 #include "ModelNodeAttachment.h"
 

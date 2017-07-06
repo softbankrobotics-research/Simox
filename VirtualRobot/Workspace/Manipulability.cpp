@@ -1,6 +1,6 @@
 #include "Manipulability.h"
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/ManipulationObject.h>
@@ -238,8 +238,8 @@ namespace VirtualRobot
 
             if (considerSelfDist)
             {
-                selfDistStatic = robot->getRobotNodeSet(selfDist1);
-                selfDistDynamic = robot->getRobotNodeSet(selfDist2);
+                selfDistStatic = robot->getModelNodeSet(selfDist1);
+                selfDistDynamic = robot->getModelNodeSet(selfDist2);
 
                 if (!selfDistStatic)
                 {

@@ -45,7 +45,7 @@ mobile manipulators or service and humanoid robots.
 
 #endif
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/VirtualRobotException.h"
 
 
@@ -94,24 +94,24 @@ namespace Saba
     class PlanningThread;
     class PathProcessingThread;
 
-    typedef boost::shared_ptr<CSpace> CSpacePtr;
-    typedef boost::shared_ptr<CSpaceSampled> CSpaceSampledPtr;
-    typedef boost::shared_ptr<CSpacePath> CSpacePathPtr;
-    typedef boost::shared_ptr<Sampler> SamplerPtr;
-    typedef boost::shared_ptr<CSpaceTree> CSpaceTreePtr;
-    typedef boost::shared_ptr<CSpaceNode> CSpaceNodePtr;
-    typedef boost::shared_ptr<MotionPlanner> MotionPlannerPtr;
-    typedef boost::shared_ptr<Rrt> RrtPtr;
-    typedef boost::shared_ptr<BiRrt> BiRrtPtr;
-    typedef boost::shared_ptr<GraspIkRrt> GraspIkRrtPtr;
-    typedef boost::shared_ptr<GraspRrt> GraspRrtPtr;
-    typedef boost::shared_ptr<PathProcessor> PathProcessorPtr;
-    typedef boost::shared_ptr<ShortcutProcessor> ShortcutProcessorPtr;
-    typedef boost::shared_ptr<ElasticBandProcessor> ElasticBandProcessorPtr;
-    typedef boost::shared_ptr<ConfigurationConstraint> ConfigurationConstraintPtr;
-    typedef boost::shared_ptr<ApproachDiscretization> ApproachDiscretizationPtr;
-    typedef boost::shared_ptr<PlanningThread> PlanningThreadPtr;
-    typedef boost::shared_ptr<PathProcessingThread> PathProcessingThreadPtr;
+    typedef std::shared_ptr<CSpace> CSpacePtr;
+    typedef std::shared_ptr<CSpaceSampled> CSpaceSampledPtr;
+    typedef std::shared_ptr<CSpacePath> CSpacePathPtr;
+    typedef std::shared_ptr<Sampler> SamplerPtr;
+    typedef std::shared_ptr<CSpaceTree> CSpaceTreePtr;
+    typedef std::shared_ptr<CSpaceNode> CSpaceNodePtr;
+    typedef std::shared_ptr<MotionPlanner> MotionPlannerPtr;
+    typedef std::shared_ptr<Rrt> RrtPtr;
+    typedef std::shared_ptr<BiRrt> BiRrtPtr;
+    typedef std::shared_ptr<GraspIkRrt> GraspIkRrtPtr;
+    typedef std::shared_ptr<GraspRrt> GraspRrtPtr;
+    typedef std::shared_ptr<PathProcessor> PathProcessorPtr;
+    typedef std::shared_ptr<ShortcutProcessor> ShortcutProcessorPtr;
+    typedef std::shared_ptr<ElasticBandProcessor> ElasticBandProcessorPtr;
+    typedef std::shared_ptr<ConfigurationConstraint> ConfigurationConstraintPtr;
+    typedef std::shared_ptr<ApproachDiscretization> ApproachDiscretizationPtr;
+    typedef std::shared_ptr<PlanningThread> PlanningThreadPtr;
+    typedef std::shared_ptr<PathProcessingThread> PathProcessingThreadPtr;
 
 #define SABA_INFO VR_INFO
 #define SABA_WARNING VR_WARNING

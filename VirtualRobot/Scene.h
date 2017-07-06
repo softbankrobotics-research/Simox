@@ -23,11 +23,11 @@
 #ifndef _VirtualRobot_Scene_h_
 #define _VirtualRobot_Scene_h_
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include "SceneObject.h"
-#include "Robot.h"
+#include "Model/Model.h"
 #include "RobotConfig.h"
-#include "Nodes/RobotNode.h"
+#include "Model/Nodes/ModelNode.h"
 #include "Obstacle.h"
 #include "Trajectory.h"
 #include "ManipulationObject.h"
@@ -179,12 +179,12 @@ namespace VirtualRobot
         /*!
             Retrieve a visualization in the given format.
             Example usage:
-             boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = scene->getVisualization<CoinVisualization>();
+             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = scene->getVisualization<CoinVisualization>();
              SoNode* visualisationNode = NULL;
              if (visualization)
                  visualisationNode = visualization->getCoinVisualization();
         */
-        template <typename T> boost::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        template <typename T> std::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
 
 
@@ -214,7 +214,7 @@ namespace VirtualRobot
      * A compile time error is thrown if a different class type is used as template argument.
      */
     template <typename T>
-    boost::shared_ptr<T> Scene::getVisualization(SceneObject::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    std::shared_ptr<T> Scene::getVisualization(SceneObject::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
     {
         const bool IS_SUBCLASS_OF_VISUALIZATION = ::boost::is_base_of<Visualization, T>::value;
         BOOST_MPL_ASSERT_MSG(IS_SUBCLASS_OF_VISUALIZATION, TEMPLATE_PARAMETER_FOR_VirtualRobot_getVisualization_MUST_BT_A_SUBCLASS_OF_VirtualRobot__Visualization, (T));
@@ -228,7 +228,7 @@ namespace VirtualRobot
 
             for (size_t i = 0; i < collectedRobots.size(); i++)
             {
-                collectedRobots[i]->getRobotNodes(collectedRobotNodes, false);
+                collectedRobots[i]->getModelNodes(collectedRobotNodes, false);
             }
 
             for (size_t i = 0; i < collectedRobotNodes.size(); i++)
@@ -282,7 +282,7 @@ namespace VirtualRobot
             }
         }
 
-        boost::shared_ptr<T> visualization(new T(collectedVisualizationNodes));
+        std::shared_ptr<T> visualization(new T(collectedVisualizationNodes));
         return visualization;
     }
 

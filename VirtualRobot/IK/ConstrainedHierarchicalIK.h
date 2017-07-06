@@ -23,24 +23,22 @@
 #ifndef _VirtualRobot_ConstrainedHierarchicalIK_h_
 #define _VirtualRobot_ConstrainedHierarchicalIK_h_
 
-#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedHierarchicalIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK, public std::enable_shared_from_this<ConstrainedHierarchicalIK>
     {
     public:
-        ConstrainedHierarchicalIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
+        ConstrainedHierarchicalIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
         bool initialize();
         bool solveStep();
 
     protected:
-        RobotNodeSetPtr nodeSet;
+        JointSetPtr nodeSet;
         HierarchicalIKPtr ik;
 
         std::vector<JacobiProviderPtr> jacobians;
@@ -49,7 +47,7 @@ namespace VirtualRobot
         Eigen::VectorXf lastDelta;
     };
 
-    typedef boost::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;
+    typedef std::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;
 }
 
 #endif

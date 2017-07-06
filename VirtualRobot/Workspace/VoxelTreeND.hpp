@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_VoxelTreeND_h_
 #define _VirtualRobot_VoxelTreeND_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
-#include "../MathTools.h"
+#include "../Tools/MathTools.h"
 #include "../XML/FileIO.h"
 #include "../Compression/CompressionBZip2.h"
 #include "VoxelTreeNDElement.hpp"

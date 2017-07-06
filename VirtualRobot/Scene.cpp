@@ -587,7 +587,7 @@ namespace VirtualRobot
             return RobotNodeSetPtr();
         }
 
-        return r->getRobotNodeSet(rns);
+        return r->getModelNodeSet(rns);
     }
 
     void Scene::registerSceneObjectSet(SceneObjectSetPtr sos)

@@ -217,14 +217,14 @@ namespace VirtualRobot
         {
             case urdf::Geometry::BOX:
             {
-                boost::shared_ptr<Box> b = boost::dynamic_pointer_cast<Box>(g);
+                boost::shared_ptr<Box> b = std::dynamic_pointer_cast<Box>(g);
                 res = factory->createBox(b->dim.x * scale, b->dim.y * scale, b->dim.z * scale);
             }
             break;
 
             case urdf::Geometry::SPHERE:
             {
-                boost::shared_ptr<Sphere> s = boost::dynamic_pointer_cast<Sphere>(g);
+                boost::shared_ptr<Sphere> s = std::dynamic_pointer_cast<Sphere>(g);
                 res = factory->createSphere(s->radius * scale);
             }
             break;
@@ -232,7 +232,7 @@ namespace VirtualRobot
 
             case urdf::Geometry::CYLINDER:
             {
-                boost::shared_ptr<Cylinder> c = boost::dynamic_pointer_cast<Cylinder>(g);
+                boost::shared_ptr<Cylinder> c = std::dynamic_pointer_cast<Cylinder>(g);
                 res = factory->createCylinder(c->radius * scale, c->length * scale);
                 
             }
@@ -240,7 +240,7 @@ namespace VirtualRobot
 
             case urdf::Geometry::MESH:
             {
-                boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
+                boost::shared_ptr<Mesh> m = std::dynamic_pointer_cast<Mesh>(g);
                 std::string filename = getFilename(m->filename, basePath);
                 res = factory->getVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
             }

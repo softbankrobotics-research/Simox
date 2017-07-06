@@ -10,7 +10,7 @@
 #include "../../VirtualRobotException.h"
 #include "../../RuntimeEnvironment.h"
 #include "CoinVisualization.h"
-#include "../../Robot.h"
+#include "../../Model/Model.h"
 #include "../../Grasping/Grasp.h"
 #include "../../Trajectory.h"
 #include "../../Grasping/GraspSet.h"
@@ -169,7 +169,7 @@ namespace VirtualRobot
 
         if (primitive->type == Primitive::Box::TYPE)
         {
-            Primitive::Box* box = boost::dynamic_pointer_cast<Primitive::Box>(primitive).get();
+            Primitive::Box* box = std::dynamic_pointer_cast<Primitive::Box>(primitive).get();
             SoCube* soBox = new SoCube;
             soBox->width = box->width / 1000.f;
             soBox->height = box->height / 1000.f;
@@ -178,14 +178,14 @@ namespace VirtualRobot
         }
         else if (primitive->type == Primitive::Sphere::TYPE)
         {
-            Primitive::Sphere* sphere = boost::dynamic_pointer_cast<Primitive::Sphere>(primitive).get();
+            Primitive::Sphere* sphere = std::dynamic_pointer_cast<Primitive::Sphere>(primitive).get();
             SoSphere* soSphere = new SoSphere;
             soSphere->radius = sphere->radius / 1000.f;
             coinVisualization->addChild(soSphere);
         }
         else if (primitive->type == Primitive::Cylinder::TYPE)
         {
-            Primitive::Cylinder* cylinder = boost::dynamic_pointer_cast<Primitive::Cylinder>(primitive).get();
+            Primitive::Cylinder* cylinder = std::dynamic_pointer_cast<Primitive::Cylinder>(primitive).get();
             SoCylinder* soCylinder = new SoCylinder;
             soCylinder->radius = cylinder->radius / 1000.f;
             soCylinder->height = cylinder->height / 1000.f;
@@ -375,13 +375,13 @@ namespace VirtualRobot
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
     {
-        boost::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));
+        std::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));
         return v;
     }
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(VisualizationNodePtr visu)
     {
-        boost::shared_ptr<CoinVisualization> v(new CoinVisualization(visu));
+        std::shared_ptr<CoinVisualization> v(new CoinVisualization(visu));
         return v;
     }
 
@@ -453,14 +453,14 @@ namespace VirtualRobot
     * \return new instance of CoinVisualizationFactory and call SoDB::init()
     * if it has not already been called.
     */
-    boost::shared_ptr<VisualizationFactory> CoinVisualizationFactory::createInstance(void*)
+    std::shared_ptr<VisualizationFactory> CoinVisualizationFactory::createInstance(void*)
     {
         if (!SoDB::isInitialized())
         {
             SoDB::init();
         }
 
-        boost::shared_ptr<CoinVisualizationFactory> coinFactory(new CoinVisualizationFactory());
+        std::shared_ptr<CoinVisualizationFactory> coinFactory(new CoinVisualizationFactory());
         return coinFactory;
     }
 
@@ -1257,7 +1257,7 @@ namespace VirtualRobot
             return new SoSeparator;
         }
 
-        boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot = robot->getVisualization<CoinVisualization>(visuType);
+        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot = robot->getVisualization<CoinVisualization>(visuType);
 
         if (visualizationRobot)
         {
@@ -1278,7 +1278,7 @@ namespace VirtualRobot
             return new SoSeparator;
         }
 
-        boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(visuType);
+        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(visuType);
 
         if (visualizationObject)
         {
@@ -1295,7 +1295,7 @@ namespace VirtualRobot
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(VisualizationNodePtr visu)
     {
-        boost::shared_ptr< CoinVisualizationNode > coinVisu(boost::dynamic_pointer_cast< CoinVisualizationNode >(visu));
+        std::shared_ptr< CoinVisualizationNode > coinVisu(std::dynamic_pointer_cast< CoinVisualizationNode >(visu));
 
         if (!coinVisu)
         {
@@ -2163,7 +2163,7 @@ namespace VirtualRobot
         if(torusCompletion * sign < 0)
             torusCompletion = 0;
         auto torusNode = createTorus(radius, tubeRadius, torusCompletion, colorR, colorG, colorB, transparency);
-        SoNode* torus = boost::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
+        SoNode* torus = std::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
 
         SoSeparator* s = new SoSeparator();
         s->ref();
@@ -2852,7 +2852,7 @@ namespace VirtualRobot
         }
 
         res->ref();
-        RobotNodeSetPtr rns = t->getRobotNodeSet();
+        RobotNodeSetPtr rns = t->getModelNodeSet();
         Eigen::VectorXf c;
         rns->getJointValues(c);
         std::vector<Eigen::Matrix4f> ws = t->createWorkspaceTrajectory();

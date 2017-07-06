@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Grasp_h_
 #define _VirtualRobot_Grasp_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 
 #include <string>

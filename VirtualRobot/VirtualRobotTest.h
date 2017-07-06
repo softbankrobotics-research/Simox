@@ -25,7 +25,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "VirtualRobot.h"
+#include "Model/Model.h"
 #include <string>
 #include <fstream>
 

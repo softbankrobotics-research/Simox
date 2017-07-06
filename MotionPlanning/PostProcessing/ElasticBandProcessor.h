@@ -25,7 +25,7 @@
 
 #include "../Saba.h"
 #include "PathProcessor.h"
-#include "VirtualRobot/Nodes/RobotNode.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 

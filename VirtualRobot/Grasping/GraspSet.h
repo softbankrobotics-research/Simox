@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_GraspSet_h_
 #define _VirtualRobot_GraspSet_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "VirtualRobot/CollisionDetection/CollisionModel.h"
 #include "Grasp.h"
 

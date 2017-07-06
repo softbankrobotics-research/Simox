@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Obstacle_h_
 #define _VirtualRobot_Obstacle_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "Model.h"
 #include "Nodes/ModelLink.h"

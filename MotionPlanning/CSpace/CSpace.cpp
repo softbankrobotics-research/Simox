@@ -1,7 +1,7 @@
 #include "CSpace.h"
 #include "CSpaceNode.h"
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include "Sampler.h"
 #include "CSpaceTree.h"
 #include "CSpacePath.h"

@@ -1,15 +1,18 @@
 #include "CoMIK.h"
 #include "DifferentialIK.h"
-#include "../Nodes/RobotNodeRevolute.h"
-#include "../Nodes/RobotNodePrismatic.h"
+#include "../Model/Nodes/ModelJointRevolute.h"
+#include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../VirtualRobotException.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
+#include "../Model/Nodes/ModelLink.h"
+#include "../Model/LinkSet.h"
+#include "../Tools/MathTools.h"
 
 #include <float.h>
 
 namespace VirtualRobot
 {
-    CoMIK::CoMIK(RobotNodeSetPtr rnsJoints, RobotNodeSetPtr rnsBodies, RobotNodePtr coordSystem, int dimensions)
+    CoMIK::CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, CoordinatePtr coordSystem, int dimensions)
         : JacobiProvider(rnsJoints), coordSystem(coordSystem)
     {
         VR_ASSERT(rns);
@@ -20,14 +23,14 @@ namespace VirtualRobot
         this->rnsBodies = rnsBodies;
         numDimensions = dimensions;
 
-        bodyNodes = rnsBodies->getAllRobotNodes();
+        bodyNodes = rnsBodies->getLinks();
 
         for (size_t i = 0; i < bodyNodes.size(); i++)
         {
             // get all joints that influence the body
             std::vector<RobotNodePtr> parentsN = bodyNodes[i]->getAllParents(rns);
             // maybe this node is joint and body
-            if (rnsJoints->hasRobotNode(bodyNodes[i]))
+            if (rnsJoints->hasModelNode(bodyNodes[i]->getName()))
                 parentsN.push_back(bodyNodes[i]);
             bodyNodeParents[bodyNodes[i]] = parentsN;
         }
@@ -45,15 +48,15 @@ namespace VirtualRobot
         initialized = true;
     }
 
-    Eigen::MatrixXf CoMIK::getJacobianOfCoM(RobotNodePtr node)
+    Eigen::MatrixXf CoMIK::getJacobianOfCoM(ModelLinkPtr node)
     {
         // Get number of degrees of freedom
-        size_t nDoF = rns->getAllRobotNodes().size();
+        size_t nDoF = rns->getJoints().size();
 
         // Create matrices for the position and the orientation part of the jacobian.
         Eigen::MatrixXf position = Eigen::MatrixXf::Zero(3, nDoF);
 
-        const std::vector<RobotNodePtr> parentsN = bodyNodeParents[node];
+        const std::vector<ModelNodePtr> parentsN = bodyNodeParents[node];
 
         // Iterate over all degrees of freedom
         for (size_t i = 0; i < nDoF; i++)
@@ -64,11 +67,11 @@ namespace VirtualRobot
             if (find(parentsN.begin(), parentsN.end(), dof) != parentsN.end())
             {
                 // Calculus for rotational joints is different as for prismatic joints.
-                if (dof->isRotationalJoint())
+                if (dof->getType() == ModelNode::JointRevolute)
                 {
                     // get axis
-                    boost::shared_ptr<RobotNodeRevolute> revolute
-                        = boost::dynamic_pointer_cast<RobotNodeRevolute>(dof);
+                    std::shared_ptr<ModelJointRevolute> revolute
+                        = std::dynamic_pointer_cast<ModelJointRevolute>(dof);
                     THROW_VR_EXCEPTION_IF(!revolute, "Internal error: expecting revolute joint");
                     // todo: find a better way of handling different joint types
                     Eigen::Vector3f axis = revolute->getJointRotationAxis(coordSystem);
@@ -86,11 +89,11 @@ namespace VirtualRobot
 
                     position.block(0, i, 3, 1) = axis.cross(toTCP);
                 }
-                else if (dof->isTranslationalJoint())
+                else if (dof->getType() == ModelNode::JointPrismatic)
                 {
                     // -> prismatic joint
-                    boost::shared_ptr<RobotNodePrismatic> prismatic
-                        = boost::dynamic_pointer_cast<RobotNodePrismatic>(dof);
+                    std::shared_ptr<ModelJointPrismatic> prismatic
+                        = std::dynamic_pointer_cast<ModelJointPrismatic>(dof);
                     THROW_VR_EXCEPTION_IF(!prismatic, "Internal error: expecting prismatic joint");
                     // todo: find a better way of handling different joint types
                     Eigen::Vector3f axis = prismatic->getJointTranslationDirection(coordSystem);
@@ -121,7 +124,7 @@ namespace VirtualRobot
     }
 
 
-    Eigen::MatrixXf CoMIK::getJacobianMatrix(SceneObjectPtr /*tcp*/)
+    Eigen::MatrixXf CoMIK::getJacobianMatrix(CoordinatePtr /*tcp*/)
     {
         // ignoring tcp
         return getJacobianMatrix();
@@ -131,7 +134,7 @@ namespace VirtualRobot
     {
         Eigen::MatrixXf Jsum(0, 0);
 
-        for (std::vector<RobotNodePtr>::const_iterator n = bodyNodes.begin(); n != bodyNodes.end(); n++)
+        for (std::vector<ModelLinkPtr>::const_iterator n = bodyNodes.begin(); n != bodyNodes.end(); n++)
         {
             // Retrieve (positional) Jacobian for this node's CoM
             // Depeding on the set target, the Jacobian is already projected to the XY-plane
@@ -185,8 +188,8 @@ namespace VirtualRobot
 
     bool CoMIK::computeSteps(float stepSize, float minumChange, int maxNStep)
     {
-        std::vector<RobotNodePtr> rn = rns->getAllRobotNodes();
-        RobotPtr robot = rns->getRobot();
+        std::vector<ModelJointPtr> rn = rns->getJoints();
+        ModelPtr robot = rns->getModel();
         std::vector<float> jv(rns->getSize(), 0.0f);
         int step = 0;
         checkTolerances();
@@ -208,8 +211,7 @@ namespace VirtualRobot
                 jv[i] = (rn[i]->getJointValue() + dTheta[i]);
             }
 
-            //rn[i]->setJointValue(rn[i]->getJointValue() + dTheta[i]);
-            robot->setJointValues(rns, jv);
+            rns->setJointValues(jv);
 
             // check tolerances
             if (checkTolerances())

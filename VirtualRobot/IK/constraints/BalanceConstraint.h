@@ -24,15 +24,14 @@
 #ifndef _VirtualRobot_BalanceConstraint_h_
 #define _VirtualRobot_BalanceConstraint_h_
 
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/Constraint.h>
 #include <VirtualRobot/IK/CoMIK.h>
 #include <VirtualRobot/IK/SupportPolygon.h>
 
-#include <boost/shared_ptr.hpp>
 
-class SoSeparator;
-class SoNode;
+//class SoSeparator;
+//class SoNode;
 
 namespace VirtualRobot
 {
@@ -58,9 +57,9 @@ namespace VirtualRobot
         std::vector<Eigen::Matrix2f> matrices;
         std::vector<Eigen::Vector2f> displacements;
     };
-    typedef boost::shared_ptr<BalanceConstraintOptimizationFunction> BalanceConstraintOptimizationFunctionPtr;
+    typedef std::shared_ptr<BalanceConstraintOptimizationFunction> BalanceConstraintOptimizationFunctionPtr;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public boost::enable_shared_from_this<BalanceConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public std::enable_shared_from_this<BalanceConstraint>
     {
     public:
         BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
@@ -87,7 +86,7 @@ namespace VirtualRobot
                         float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
 
         void updateSupportPolygon();
-        void visualizeSupportPolygon(SoSeparator* sep);
+        //void visualizeSupportPolygon(SoSeparator* sep);
 
         float getDifferentiableStabilityIndex();
         Eigen::VectorXf getDifferentiableStabilityIndexGradient();
@@ -111,7 +110,7 @@ namespace VirtualRobot
         BalanceConstraintOptimizationFunctionPtr differnentiableStability;
     };
 
-    typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
+    typedef std::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
 }
 
 #endif

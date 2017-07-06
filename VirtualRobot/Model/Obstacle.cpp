@@ -287,7 +287,7 @@ namespace VirtualRobot
         VisualizationNodePtr clonedVisualizationNode;
 
         VR_ASSERT(ModelNode::checkNodeOfType(getRootNode(), ModelNode::ModelNodeType::Link));
-        ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(getRootNode());
+        ModelLinkPtr link = std::static_pointer_cast<ModelLink>(getRootNode());
 
         if (visualizationModel)
         {

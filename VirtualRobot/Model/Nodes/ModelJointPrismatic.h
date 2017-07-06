@@ -42,12 +42,12 @@ namespace VirtualRobot
          * @param translationDirection The move direction of this joint.
          */
         ModelJointPrismatic(const ModelWeakPtr& model,
-                            const std::string& name,
-                            Eigen::Matrix4f& staticTransformation,
-                            float jointLimitLo,
-                            float jointLimitHi,
-                            float jointValueOffset = 0.0f,
-                            Eigen::Vector3f& translationDirection);
+            const std::string& name,
+            Eigen::Matrix4f& staticTransformation,
+            float jointLimitLo,
+            float jointLimitHi,
+            Eigen::Vector3f& translationDirection,
+            float jointValueOffset = 0.0f);
 
         /*!
          * Destructor.
@@ -62,6 +62,7 @@ namespace VirtualRobot
          * @param coordSystem The coordinate system to get the direction in.
          */
         Eigen::Vector3f getJointTranslationDirection(const Eigen::Matrix4f& coordSystem = Eigen::Matrix4f::Identity()) const;
+        Eigen::Vector3f getJointTranslationDirection(CoordinatePtr coordSystem = CoordinatePtr()) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.

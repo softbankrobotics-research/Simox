@@ -118,7 +118,7 @@ namespace VirtualRobot
             {
                 if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
                 {
-                    ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+                    ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
                     if (!collisionChecker)
                     {
                         collisionChecker = link->getCollisionChecker();
@@ -268,7 +268,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(modelNodes[i]);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
                 collisionModels.push_back(link->getCollisionModel());
             }
         }
@@ -673,7 +673,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
             {
-                ModelJointPtr modelJoint = boost::static_pointer_cast<ModelJoint>(node);
+                ModelJointPtr modelJoint = std::static_pointer_cast<ModelJoint>(node);
                 modelJoints.push_back(modelJoint);
             }
         }
@@ -687,7 +687,7 @@ namespace VirtualRobot
         {
             if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
             {
-                ModelLinkPtr link = boost::static_pointer_cast<ModelLink>(node);
+                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                 modelLinks.push_back(link);
             }
         }

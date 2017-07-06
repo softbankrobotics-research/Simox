@@ -379,7 +379,7 @@ void GraspRrtWindow::loadScene()
     }*/
 
     // Setup robot node sets and col models
-    std::vector<RobotNodeSetPtr> rnss = robot->getRobotNodeSets();
+    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
     UI.comboBoxColModelRobot->clear();
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
@@ -436,7 +436,7 @@ void GraspRrtWindow::selectRNS(const std::string& rns)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -496,7 +496,7 @@ void GraspRrtWindow::selectColModelRobA(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -517,7 +517,7 @@ void GraspRrtWindow::selectColModelRobB(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -604,7 +604,7 @@ void GraspRrtWindow::selectRNS(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
@@ -639,14 +639,14 @@ void GraspRrtWindow::selectColModelRobA(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelRobA = robot->getRobotNodeSet(rnss[nr]->getName());
+    this->colModelRobA = robot->getModelNodeSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::selectColModelRobB(int nr)
@@ -658,14 +658,14 @@ void GraspRrtWindow::selectColModelRobB(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getRobotNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelRobB = robot->getRobotNodeSet(rnss[nr]->getName());
+    this->colModelRobB = robot->getModelNodeSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::selectColModelEnv(int nr)
@@ -696,7 +696,7 @@ void GraspRrtWindow::buildRRTVisu()
         return;
     }
 
-    boost::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
+    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {

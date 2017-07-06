@@ -11,7 +11,7 @@ namespace VirtualRobot
     {
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelJointPtr j = boost::static_pointer_cast<ModelJoint>(modelNodes[i]);
+            ModelJointPtr j = std::static_pointer_cast<ModelJoint>(modelNodes[i]);
             THROW_VR_EXCEPTION_IF(!j, "Only joints allowed in joint sets.");
             joints.push_back(j);
         }

@@ -1,7 +1,7 @@
 #include "GraspRrt.h"
 
 #include <VirtualRobot/Tools/MathTools.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/EndEffector/EndEffectorActor.h>
 #include <VirtualRobot/Grasping/Grasp.h>
@@ -30,8 +30,8 @@ namespace Saba
         plannerInitialized = false;
         minGraspContacts = 3;
         name = "GraspRrt";
-        THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getRobotNodeSet() || !cspace->getRobot() || !measure, "NULL data");
-        rns = cspace->getRobotNodeSet();
+        THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getModelNodeSet() || !cspace->getRobot() || !measure, "NULL data");
+        rns = cspace->getModelNodeSet();
         robot = cspace->getRobot();
         targetObject = object;
         this->eef = eef;

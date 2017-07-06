@@ -8,7 +8,7 @@
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Nodes/Sensor.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotRobotMacro)
     BOOST_REQUIRE(rob);
 
     const std::string node = "Joint1";
-    VirtualRobot::RobotNodePtr r1 = rob->getRobotNode(node);
+    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node);
     BOOST_REQUIRE(r1);
 }
 
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
-    VirtualRobot::RobotNodePtr rn = rob->getRobotNode("Joint1");
+    VirtualRobot::RobotNodePtr rn = rob->getModelNode("Joint1");
     BOOST_REQUIRE(rn);
     float mass = rn->getMass();
     BOOST_CHECK_EQUAL(mass, 100.0f);
@@ -300,9 +300,9 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotDependendNodes)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    VirtualRobot::RobotNodePtr r1 = rob->getRobotNode(node1);
+    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node1);
     BOOST_REQUIRE(r1);
-    VirtualRobot::RobotNodePtr r2 = rob->getRobotNode(node2);
+    VirtualRobot::RobotNodePtr r2 = rob->getModelNode(node2);
     BOOST_REQUIRE(r2);
     float j1, j2;
     r1->setJointValue(0.2f);
@@ -373,9 +373,9 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    VirtualRobot::RobotNodePtr rn1 = rob->getRobotNode(node1);
+    VirtualRobot::RobotNodePtr rn1 = rob->getModelNode(node1);
     BOOST_REQUIRE(rn1);
-    VirtualRobot::RobotNodePtr rn2 = rob->getRobotNode(node2);
+    VirtualRobot::RobotNodePtr rn2 = rob->getModelNode(node2);
     BOOST_REQUIRE(rn2);
 
     // check physics
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
 
     // check sensor
     BOOST_REQUIRE(rn2->hasSensor("sensor2"));
-    VirtualRobot::PositionSensorPtr ps = boost::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rn2->getSensor("sensor2"));
+    VirtualRobot::PositionSensorPtr ps = std::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rn2->getSensor("sensor2"));
     BOOST_REQUIRE(ps);
     Eigen::Matrix4f p = ps->getGlobalPose();
     Eigen::Matrix4f p2 = Eigen::Matrix4f::Identity();
@@ -417,9 +417,9 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
     BOOST_REQUIRE_NO_THROW(rob2 = VirtualRobot::RobotIO::createRobotFromString(robXML));
     BOOST_REQUIRE(rob2);
 
-    rn1 = rob2->getRobotNode(node1);
+    rn1 = rob2->getModelNode(node1);
     BOOST_REQUIRE(rn1);
-    rn2 = rob2->getRobotNode(node2);
+    rn2 = rob2->getModelNode(node2);
     BOOST_REQUIRE(rn2);
 
     // check physics
@@ -443,7 +443,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
 
     // check sensor
     BOOST_REQUIRE(rn2->hasSensor("sensor2"));
-    ps = boost::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rn2->getSensor("sensor2"));
+    ps = std::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rn2->getSensor("sensor2"));
     BOOST_REQUIRE(ps);
     p = ps->getGlobalPose();
     p2 = Eigen::Matrix4f::Identity();

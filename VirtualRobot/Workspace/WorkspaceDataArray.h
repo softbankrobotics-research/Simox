@@ -24,7 +24,7 @@
 #define _VirtualRobot_WorkspaceDataArray_h_
 
 #include "WorkspaceData.h"
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Compression/CompressionBZip2.h"
 
 
@@ -43,7 +43,7 @@ namespace VirtualRobot
         Stores a 6-dimensional array for the vertex data of a workspace representation.
         Internally unsigned char data types are used (0...255)
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceDataArray : public WorkspaceData, public boost::enable_shared_from_this<WorkspaceDataArray>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceDataArray : public WorkspaceData, public std::enable_shared_from_this<WorkspaceDataArray>
     {
     public:
         /*!

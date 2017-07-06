@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_JointSet_h_
 #define _VirtualRobot_JointSet_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "ModelNodeSet.h"
 
 namespace VirtualRobot

@@ -23,10 +23,10 @@
 #ifndef _VirtualRobot_AdvancedIKSolver_h_
 #define _VirtualRobot_AdvancedIKSolver_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 
-#include "../Nodes/RobotNode.h"
-#include "../RobotNodeSet.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/JointSet.h"
 #include "IKSolver.h"
 
 #include <string>
@@ -43,22 +43,22 @@ namespace VirtualRobot
     * Can consider reachability information.
     * Can handle ManipulationObjects and associated grasping information.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver, public boost::enable_shared_from_this<AdvancedIKSolver>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver, public std::enable_shared_from_this<AdvancedIKSolver>
     {
     public:
 
         /*!
             @brief Initialize a IK solver without collision detection.
-            \param rns The robotNodes (i.e., joints) for which the Jacobians should be calculated.
+            \param rns The joints for which the Jacobians should be calculated.
         */
-        AdvancedIKSolver(RobotNodeSetPtr rns);
+        AdvancedIKSolver(JointSetPtr rns);
 
 
         /*!
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
         */
-        virtual void collisionDetection(SceneObjectPtr avoidCollisionsWith);
+        virtual void collisionDetection(ModelLinkPtr avoidCollisionsWith);
         /*!
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
@@ -68,7 +68,7 @@ namespace VirtualRobot
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
         */
-        virtual void collisionDetection(SceneObjectSetPtr avoidCollisionsWith);
+        virtual void collisionDetection(LinkSetPtr avoidCollisionsWith);
         /*!
             Setup collision detection
             \param avoidCollision The IK solver will consider collision checks, defined in this CDManager instance.
@@ -91,7 +91,7 @@ namespace VirtualRobot
         virtual void setReachabilityCheck(ReachabilityPtr reachabilitySpace);
 
         /*!
-            This method solves the IK up to the specified max error. On success, the joints of the the corresponding RobotNodeSet are set to the IK solution.
+            This method solves the IK up to the specified max error. On success, the joints of the the corresponding JointSet are set to the IK solution.
             \param globalPose The target pose given in global coordinate system.
             \param selection Select the parts of the global pose that should be used for IK solving. (e.g. you can just consider the position and ignore the target orientation)
             \param maxLoops An optional parameter, if multiple tries should be made
@@ -115,7 +115,7 @@ namespace VirtualRobot
         virtual bool solve(const Eigen::Vector3f& globalPosition);
 
         /*!
-            This method solves the IK up to the specified max error. On success, the joints of the the corresponding RobotNodeSet are set to the IK solution.
+            This method solves the IK up to the specified max error. On success, the joints of the the corresponding JointSet are set to the IK solution.
             \param object The object.
             \param selection Select the parts of the global pose that should be used for IK solving. (e.g. you can just consider the position and ignore the target orientation)
             \param maxLoops How many tries.
@@ -138,8 +138,8 @@ namespace VirtualRobot
         virtual bool checkReachable(const Eigen::Matrix4f& globalPose);
 
 
-        RobotNodeSetPtr getRobotNodeSet();
-        RobotNodePtr getTcp();
+        JointSetPtr getJointSet();
+        CoordinatePtr getTcp();
 
         void setVerbose(bool enable);
 
@@ -152,8 +152,8 @@ namespace VirtualRobot
             return solve(globalPose, selection, maxLoops);
         }
 
-        RobotNodeSetPtr rns;
-        RobotNodePtr tcp;
+        JointSetPtr rns;
+        CoordinatePtr tcp;
 
         CDManagerPtr cdm;
 
@@ -165,7 +165,7 @@ namespace VirtualRobot
         bool verbose;
     };
 
-    typedef boost::shared_ptr<AdvancedIKSolver> AdvancedIKSolverPtr;
+    typedef std::shared_ptr<AdvancedIKSolver> AdvancedIKSolverPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_IKSolver_h_
+#endif

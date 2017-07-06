@@ -7,11 +7,11 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotGazeIKTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/GazeIK.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Nodes/RobotNodePrismatic.h>
 #include <string>
 
@@ -139,9 +139,9 @@ BOOST_AUTO_TEST_CASE(testGazeIK)
 
     const std::string rnsName = "IKVirtualGaze";
     const std::string nodeTransName = "VirtualCentralGaze";
-    VirtualRobot::RobotNodeSetPtr rns = rob->getRobotNodeSet(rnsName);
-    VirtualRobot::RobotNodePtr node = rob->getRobotNode(nodeTransName);
-    VirtualRobot::RobotNodePrismaticPtr nodeTrans = boost::dynamic_pointer_cast<VirtualRobot::RobotNodePrismatic>(node);
+    VirtualRobot::RobotNodeSetPtr rns = rob->getModelNodeSet(rnsName);
+    VirtualRobot::RobotNodePtr node = rob->getModelNode(nodeTransName);
+    VirtualRobot::RobotNodePrismaticPtr nodeTrans = std::dynamic_pointer_cast<VirtualRobot::RobotNodePrismatic>(node);
 
     BOOST_REQUIRE(rns);
     BOOST_REQUIRE(nodeTrans);

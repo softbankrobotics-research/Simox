@@ -2,7 +2,7 @@
 #include "GraspSet.h"
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <vector>
 #include <VirtualRobot/VirtualRobotException.h>

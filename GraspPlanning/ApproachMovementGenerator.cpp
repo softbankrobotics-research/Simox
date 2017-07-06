@@ -1,8 +1,8 @@
 #include "ApproachMovementGenerator.h"
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/SceneObject.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <iostream>

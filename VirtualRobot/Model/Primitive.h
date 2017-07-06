@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Primitive_h_
 #define _VirtualRobot_Primitive_h_
 
-#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <Eigen/Geometry>
 
 
@@ -83,7 +83,7 @@ namespace VirtualRobot
             std::string toXMLString(int tabs = 0);
         };
 
-        typedef boost::shared_ptr<Primitive> PrimitivePtr;
+        typedef std::shared_ptr<Primitive> PrimitivePtr;
 
     } //namespace Primitive
 } //namespace VirtualRobot

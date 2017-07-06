@@ -34,7 +34,7 @@ namespace VirtualRobot
         public:
             EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-            Coordinate();
+            Coordinate(const std::string &name = std::string());
             ~Coordinate();
 
             /*!
@@ -47,8 +47,11 @@ namespace VirtualRobot
              */
             virtual Eigen::Vector3f getGlobalPosition() const;
 
+            virtual std::string getName();
+
         protected:
             Eigen::Matrix4f globalPose;
+            std::string name;
         };
 
         typedef boost::shared_ptr<Coordinate> CoordinatePtr;

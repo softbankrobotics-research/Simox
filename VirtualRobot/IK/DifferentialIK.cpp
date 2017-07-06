@@ -1,6 +1,6 @@
 #include <Eigen/Geometry>
 #include "DifferentialIK.h"
-#include "../Robot.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 #include "../Nodes/RobotNodePrismatic.h"
 #include "../Nodes/RobotNodeRevolute.h"
@@ -63,7 +63,7 @@ namespace VirtualRobot
         this->tolerancePosition[tcp] = tolerancePosition;
         this->toleranceRotation[tcp] = toleranceRotation;
 
-        RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+        RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
 
         if (!tcpRN)
         {
@@ -73,7 +73,7 @@ namespace VirtualRobot
                 return;
             }
 
-            tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp->getParent());
+            tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp->getParent());
 
             if (!tcpRN)
             {
@@ -333,7 +333,7 @@ namespace VirtualRobot
 
         //  THROW_VR_EXCEPTION_IF(!tcp,boost::format("No tcp defined in node set \"%1%\" of robot %2% (DifferentialIK::%3% )") % this->rns->getName() % this->rns->getRobot()->getName() % BOOST_CURRENT_FUNCTION);
 
-        RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+        RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
 
         if (!tcpRN)
         {
@@ -344,7 +344,7 @@ namespace VirtualRobot
                 return;
             }
 
-            tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp->getParent());
+            tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp->getParent());
 
             if (!tcpRN)
             {
@@ -385,8 +385,8 @@ namespace VirtualRobot
                 if (dof->isRotationalJoint())
                 {
                     // get axis
-                    boost::shared_ptr<RobotNodeRevolute> revolute
-                        = boost::dynamic_pointer_cast<RobotNodeRevolute>(dof);
+                    std::shared_ptr<RobotNodeRevolute> revolute
+                        = std::dynamic_pointer_cast<RobotNodeRevolute>(dof);
                     THROW_VR_EXCEPTION_IF(!revolute, "Internal error: expecting revolute joint");
                     // todo: find a better way of handling different joint types
                     axis = revolute->getJointRotationAxis(coordSystem);
@@ -425,8 +425,8 @@ namespace VirtualRobot
                 else if (dof->isTranslationalJoint())
                 {
                     // -> prismatic joint
-                    boost::shared_ptr<RobotNodePrismatic> prismatic
-                        = boost::dynamic_pointer_cast<RobotNodePrismatic>(dof);
+                    std::shared_ptr<RobotNodePrismatic> prismatic
+                        = std::dynamic_pointer_cast<RobotNodePrismatic>(dof);
                     THROW_VR_EXCEPTION_IF(!prismatic, "Internal error: expecting prismatic joint");
                     // todo: find a better way of handling different joint types
                     axis = prismatic->getJointTranslationDirection(coordSystem);
@@ -614,7 +614,7 @@ namespace VirtualRobot
         for (size_t t = 0; t < tcp_set.size(); t++)
         {
             SceneObjectPtr tcp = tcp_set[t];
-            RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
+            RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
 
             if (!tcpRN)
             {

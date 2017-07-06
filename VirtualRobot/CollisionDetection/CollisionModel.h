@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CollisionModel_h_
 #define _VirtualRobot_CollisionModel_h_
 
-#include "../VirtualRobot.h"
+#include "../Model/Model.h"
 #include "../Tools/MathTools.h"
 #include "../Tools/BoundingBox.h"
 
@@ -93,12 +93,12 @@ namespace VirtualRobot
         }
 
 #if defined(VR_COLLISION_DETECTION_PQP)
-        boost::shared_ptr< CollisionModelPQP > getCollisionModelImplementation()
+        std::shared_ptr< CollisionModelPQP > getCollisionModelImplementation()
         {
             return collisionModelImplementation;
         }
 #else
-        boost::shared_ptr< CollisionModelDummy > getCollisionModelImplementation()
+        std::shared_ptr< CollisionModelDummy > getCollisionModelImplementation()
         {
             return collisionModelImplementation;
         }
@@ -180,9 +180,9 @@ namespace VirtualRobot
 
 
 #if defined(VR_COLLISION_DETECTION_PQP)
-        boost::shared_ptr< CollisionModelPQP > collisionModelImplementation;
+        std::shared_ptr< CollisionModelPQP > collisionModelImplementation;
 #else
-        boost::shared_ptr< CollisionModelDummy > collisionModelImplementation;
+        std::shared_ptr< CollisionModelDummy > collisionModelImplementation;
 #endif
     };
 

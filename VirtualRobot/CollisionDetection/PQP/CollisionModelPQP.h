@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_CollisionModelPQP_h_
 #define _VirtualRobot_CollisionModelPQP_h_
 
-#include "../../VirtualRobot.h"
+#include "../../Model/Model.h"
 
 #include "../CollisionModelImplementation.h"
 
@@ -58,7 +58,7 @@ namespace VirtualRobot
         */
         virtual ~CollisionModelPQP();
 
-        boost::shared_ptr<PQP::PQP_Model> getPQPModel()
+        std::shared_ptr<PQP::PQP_Model> getPQPModel()
         {
             return pqpModel;
         }
@@ -71,9 +71,9 @@ namespace VirtualRobot
         virtual void destroyData();
         void createPQPModel();
 
-        boost::shared_ptr<PQP::PQP_Model> pqpModel;
+        std::shared_ptr<PQP::PQP_Model> pqpModel;
 
-        boost::shared_ptr<CollisionCheckerPQP> colCheckerPQP;
+        std::shared_ptr<CollisionCheckerPQP> colCheckerPQP;
     };
 
 } // namespace

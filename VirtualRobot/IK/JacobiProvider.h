@@ -23,18 +23,16 @@
 #ifndef _VirtualRobot_JacobiProvider_h_
 #define _VirtualRobot_JacobiProvider_h_
 
-#include "../VirtualRobot.h"
-#include "../Nodes/RobotNode.h"
-#include "../RobotNodeSet.h"
+#include "../Model/Model.h"
+#include "../Model/Nodes/ModelNode.h"
+#include "../Model/JointSet.h"
 
 #include <string>
 #include <vector>
 
 namespace VirtualRobot
 {
-
-
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public boost::enable_shared_from_this<JacobiProvider>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public std::enable_shared_from_this<JacobiProvider>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -52,14 +50,14 @@ namespace VirtualRobot
         /*!
 
         */
-        JacobiProvider(RobotNodeSetPtr rns, InverseJacobiMethod invJacMethod = eSVD);
+        JacobiProvider(JointSetPtr rns, InverseJacobiMethod invJacMethod = eSVD);
 
         virtual ~JacobiProvider();
 
         virtual Eigen::MatrixXf getJacobianMatrix() = 0;
         virtual Eigen::MatrixXd getJacobianMatrixD();
-        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) = 0;
-        virtual Eigen::MatrixXd getJacobianMatrixD(SceneObjectPtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp) = 0;
+        virtual Eigen::MatrixXd getJacobianMatrixD(CoordinatePtr tcp);
 
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
         virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m) const;
@@ -69,11 +67,10 @@ namespace VirtualRobot
         virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD();
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(SceneObjectPtr tcp);
-        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(SceneObjectPtr tcp);
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(CoordinatePtr tcp);
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(CoordinatePtr tcp);
 
-        VirtualRobot::RobotNodeSetPtr getRobotNodeSet();
-
+        JointSetPtr getJointSet();
 
         /*!
             The error vector. the value depends on the implementation.
@@ -96,14 +93,14 @@ namespace VirtualRobot
     protected:
 
         std::string name;
-        RobotNodeSetPtr rns;
+        JointSetPtr rns;
         InverseJacobiMethod inverseMethod;
         bool initialized;
         Eigen::VectorXf jointWeights; // only used in eTranspose mode
 
     };
 
-    typedef boost::shared_ptr<JacobiProvider> JacobiProviderPtr;
+    typedef std::shared_ptr<JacobiProvider> JacobiProviderPtr;
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_JacobiProvider_h_

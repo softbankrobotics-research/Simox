@@ -5,9 +5,9 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Tools/MathTools.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include "VirtualRobot/RobotNodeSet.h"
 #include "VirtualRobot/RuntimeEnvironment.h"
 #include "VirtualRobot/Obstacle.h"
@@ -212,7 +212,7 @@ void MTPlanningScenery::buildScene()
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
         environment->addSceneObject(o);
-        boost::shared_ptr<CoinVisualization> visualization = o->getVisualization<CoinVisualization>();
+        std::shared_ptr<CoinVisualization> visualization = o->getVisualization<CoinVisualization>();
         SoNode* visualisationNode = NULL;
 
         if (visualization)
@@ -290,11 +290,11 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     }
 
     RobotPtr pRobot = robots[robots.size() - 1];
-    RobotNodeSetPtr kinChain = pRobot->getRobotNodeSet(kinChainName);
+    RobotNodeSetPtr kinChain = pRobot->getModelNodeSet(kinChainName);
 
     CDManagerPtr pCcm(new VirtualRobot::CDManager(pRobot->getCollisionChecker()));
     cout << "Set CSpace for " << robots.size() << ".th robot." << endl;
-    pCcm->addCollisionModel(pRobot->getRobotNodeSet(colModel));
+    pCcm->addCollisionModel(pRobot->getModelNodeSet(colModel));
     ObstaclePtr pEnv = environmentUnited;
 
     //SceneObjectSetPtr pEnv = environment;
@@ -378,7 +378,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     mat2->ambientColor.setValue(0, 0, 1.0);
     mat2->diffuseColor.setValue(0, 0, 1.0);
 
-    RobotNodePtr rn = pRobot->getRobotNode(TCPName);
+    RobotNodePtr rn = pRobot->getModelNode(TCPName);
 
     if (!rn)
     {
@@ -606,7 +606,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
             return;
         }
 
-        RobotNodeSetPtr kinChain = pRobot->getRobotNodeSet(kinChainName);
+        RobotNodeSetPtr kinChain = pRobot->getModelNodeSet(kinChainName);
 
         if (!kinChain)
         {
@@ -637,7 +637,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
     if ((int)robots.size() == 1)
     {
-        boost::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
+        std::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
@@ -762,7 +762,7 @@ void MTPlanningScenery::setRobotModelShape(bool collisionModel)
     //sceneSep->removeChild(robotSep);
     if (robots.size() > 0)
     {
-        boost::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
+        std::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 

@@ -148,7 +148,7 @@ void stabilityWindow::resetSceneryAll()
     }
 
     std::vector< RobotNodePtr > nodes;
-    robot->getRobotNodes(nodes);
+    robot->getModelNodes(nodes);
     std::vector<float> jv(nodes.size(), 0.0f);
     robot->setJointValues(nodes, jv);
 }
@@ -367,8 +367,7 @@ void stabilityWindow::updateRNSBox()
     UI.comboBoxRNS->clear();
     UI.comboBoxRNS->addItem(QString("<All>"));
 
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS;
-    robot->getRobotNodeSets(allRNS);
+    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
     robotNodeSets.clear();
 
     for (size_t i = 0; i < allRNS.size(); i++)
@@ -470,7 +469,7 @@ void stabilityWindow::jointValueChanged(int pos)
 
     updateCoM();
 
-    /*RobotNodePtr p = robot->getRobotNode("Foot2 L");
+    /*RobotNodePtr p = robot->getModelNode("Foot2 L");
     if (p)
     {
         BoundingBox bbox = p->getCollisionModel()->getBoundingBox(true);
@@ -552,7 +551,7 @@ void stabilityWindow::loadRobot()
     }
 
     // get nodes
-    robot->getRobotNodes(allRobotNodes);
+    robot->getModelNodes(allRobotNodes);
     updateRNSBox();
     selectRNS(0);
 
