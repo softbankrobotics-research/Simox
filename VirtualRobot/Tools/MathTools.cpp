@@ -1,5 +1,5 @@
 
-#include "MathTools.h"
+#include "Tools/MathTools.h"
 #include "VirtualRobotException.h"
 #include <float.h>
 #include <string.h>
@@ -196,6 +196,29 @@ namespace VirtualRobot
     void MathTools::eigen4f2rpy(const Eigen::Matrix4f& m, float x[6])
     {
         //Eigen::Matrix4f A = mat.transpose();
+        Eigen::Vector3f rpy = eigen3f2rpy(m.block(0,0,3,3));
+
+        x[0] = m(0, 3);
+        x[1] = m(1, 3);
+        x[2] = m(2, 3);
+        x[3] = rpy(0);
+        x[4] = rpy(1);
+        x[5] = rpy(2);
+    }
+
+    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2rpy(const Eigen::Matrix4f& m, Eigen::Vector3f& storeRPY)
+    {
+        storeRPY = eigen3f2rpy(m.block(0,0,3,3));
+    }
+
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2rpy(const Eigen::Matrix4f& m)
+    {
+        return eigen3f2rpy(m.block(0,0,3,3));
+    }
+
+
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen3f2rpy(const Eigen::Matrix3f& m)
+    {
         float alpha, beta, gamma;
         beta = atan2(-m(2, 0),  sqrtf(m(0, 0) * m(0, 0) + m(1, 0) * m(1, 0)));
 
@@ -215,24 +238,11 @@ namespace VirtualRobot
             alpha = atan2(m(1, 0) * cb, m(0, 0) * cb);
             gamma = atan2(m(2, 1) * cb, m(2, 2) * cb);
         }
-
-        x[0] = m(0, 3);
-        x[1] = m(1, 3);
-        x[2] = m(2, 3);
-        x[3] = gamma;
-        x[4] = beta;
-        x[5] = alpha;
+        Eigen::Vector3f res;
+        res(0) = gamma;
+        res(1) = beta;
+        res(2) = alpha;
     }
-
-    void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2rpy(const Eigen::Matrix4f& m, Eigen::Vector3f& storeRPY)
-    {
-        float x[6];
-        eigen4f2rpy(m, x);
-        storeRPY(0) = x[3];
-        storeRPY(1) = x[4];
-        storeRPY(2) = x[5];
-    }
-
 
 
     void MathTools::rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m)
@@ -265,7 +275,20 @@ namespace VirtualRobot
         m(3, 1) = 0;
         m(3, 2) = 0;
         m(3, 3) = 1.0f;
+    }
 
+    Eigen::Matrix4f MathTools::rpy2eigen4f(float r, float p, float y)
+    {
+        Eigen::Matrix4f res;
+        rpy2eigen4f(r,p,y,res);
+        return res;
+    }
+
+    Eigen::Matrix4f MathTools::rpy2eigen4f(const Eigen::Vector3f &rpy)
+    {
+        Eigen::Matrix4f res;
+        rpy2eigen4f(rpy(0),rpy(1),rpy(2),res);
+        return res;
     }
 
 
@@ -1370,6 +1393,17 @@ namespace VirtualRobot
     {
         Eigen::Matrix3f m3 = m.block(0, 0, 3, 3);
         Eigen::Quaternionf q(m3);
+        Quaternion res;
+        res.x = q.x();
+        res.y = q.y();
+        res.z = q.z();
+        res.w = q.w();
+        return res;
+    }
+
+    MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen3f2quat(const Eigen::Matrix3f& m)
+    {
+        Eigen::Quaternionf q(m);
         Quaternion res;
         res.x = q.x();
         res.y = q.y();

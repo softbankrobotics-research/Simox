@@ -24,8 +24,8 @@
 #define _VirtualRobot_BaseIO_h_
 
 #include "../VirtualRobot.h"
-#include "../Units.h"
-#include "../MathTools.h"
+#include "../Tools/Units.h"
+#include "../Tools/MathTools.h"
 #include "../Model/Model.h"
 #include "../Model/ModelConfig.h"
 #include "../Model/Nodes/ModelNode.h"

@@ -1,7 +1,7 @@
 #include "ModelNode.h"
 #include "../Model.h"
 #include "../VirtualRobotException.h"
-#include "../ConditionedLock.h"
+#include "../Tools/ConditionedLock.h"
 
 namespace VirtualRobot
 {

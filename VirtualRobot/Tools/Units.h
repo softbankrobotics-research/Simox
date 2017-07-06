@@ -7,7 +7,7 @@
 * @copyright  2011 Manfred Kroehnert
 */
 
-#include "VirtualRobotImportExport.h"
+#include "../VirtualRobotImportExport.h"
 #include <string>
 #include <algorithm>
 

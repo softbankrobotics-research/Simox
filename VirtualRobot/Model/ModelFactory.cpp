@@ -291,7 +291,7 @@ namespace VirtualRobot
             return false;
         }
 
-        SceneObject::Physics p = o->physics;
+        ModelLink::Physics p = o->physics;
         VisualizationNodePtr v;
 
         if (o->getVisualization())
@@ -357,7 +357,7 @@ namespace VirtualRobot
         NodeTransformationMapT localTransformations;
         std::map<ModelNodePtr, VisualizationNodePtr> visuMap;
         std::map<ModelNodePtr, CollisionModelPtr> colMap;
-        std::map<ModelNodePtr, SceneObject::Physics> physicsMap;
+        std::map<ModelNodePtr, ModelLink::Physics> physicsMap;
         std::map<ModelNodePtr, std::vector<SensorPtr> > sensorMap;
         std::map<ModelNodePtr, bool> directionInversion;
 
@@ -447,7 +447,7 @@ namespace VirtualRobot
                     physicsMap[parent] = child->physics;
                     // change local com to new coord system
                     Eigen::Vector4f l;
-                    SceneObject::Physics p = physicsMap[parent];
+                    ModelLink::Physics p = physicsMap[parent];
                     Eigen::Vector3f loc = p.localCoM;
                     l << loc(0), loc(1), loc(2), 1.0f;
                     physicsMap[parent].localCoM = (tr * l).head(3);
@@ -455,7 +455,7 @@ namespace VirtualRobot
                     if (physicsMap.find(child) == physicsMap.end())
                     {
                         // no entry for child, set it to empty, may be overwritten later on
-                        physicsMap[child] = SceneObject::Physics();
+                        physicsMap[child] = ModelLink::Physics();
                     }
 
                     // exchange sensors
@@ -648,7 +648,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!model, "NULL data");
         THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
         auto rnf = ModelNodeFixedFactory::createInstance(NULL);
-        SceneObject::Physics p;
+        ModelLink::Physics p;
         VisualizationNodePtr v;
         CollisionModelPtr c;
 
@@ -688,7 +688,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!model, "NULL data");
 
         auto rnf = ModelNodeFixedFactory::createInstance(NULL);
-        SceneObject::Physics p;
+        ModelLink::Physics p;
         VisualizationNodePtr v;
         CollisionModelPtr c;
         std::string name = "root";

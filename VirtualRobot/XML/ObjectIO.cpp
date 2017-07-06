@@ -190,7 +190,7 @@ namespace VirtualRobot
         VisualizationNodePtr visualizationNode;
         CollisionModelPtr collisionModel;
         bool useAsColModel = false;
-        SceneObject::Physics physics;
+        ModelLink::Physics physics;
         bool physicsDefined = false;
         std::vector<GraspSetPtr> graspSets;
         Eigen::Matrix4f globalPose = Eigen::Matrix4f::Identity();
@@ -309,7 +309,7 @@ namespace VirtualRobot
         VisualizationNodePtr visualizationNode;
         CollisionModelPtr collisionModel;
         bool useAsColModel = false;
-        SceneObject::Physics physics;
+        ModelLink::Physics physics;
         bool physicsDefined = false;
         Eigen::Matrix4f globalPose = Eigen::Matrix4f::Identity();
 

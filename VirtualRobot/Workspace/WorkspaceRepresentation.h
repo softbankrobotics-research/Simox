@@ -26,7 +26,7 @@
 #include "../VirtualRobot.h"
 #include "WorkspaceData.h"
 #include "WorkspaceDataArray.h"
-#include "../MathTools.h"
+#include "../Tools/MathTools.h"
 #include "../XML/FileIO.h"
 
 #include <vector>

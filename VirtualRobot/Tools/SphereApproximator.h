@@ -25,7 +25,7 @@
 #define _VR_GRAPH_GENERATOR_H_
 
 #include "VirtualRobot.h"
-#include "MathTools.h"
+#include "Tools/MathTools.h"
 #include <vector>
 #include <map>
 #include <float.h>

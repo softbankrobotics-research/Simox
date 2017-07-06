@@ -23,9 +23,8 @@
 #ifndef _VirtualRobot_BoundingBox_h_
 #define _VirtualRobot_BoundingBox_h_
 
-#include "VirtualRobot.h"
+#include "../VirtualRobot.h"
 #include "MathTools.h"
-//#include "CollisionDetection/CollisionChecker.h"
 
 #include <Eigen/Core>
 #include <vector>
@@ -41,7 +40,6 @@ namespace VirtualRobot
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-        //friend class CollisionChecker;
 
         BoundingBox();
         BoundingBox(const std::vector< Eigen::Vector3f >& p);

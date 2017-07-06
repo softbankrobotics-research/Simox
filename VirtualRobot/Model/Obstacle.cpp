@@ -14,7 +14,7 @@ namespace VirtualRobot
     int Obstacle::idCounter = 20000;
 
 
-    Obstacle::Obstacle(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const SceneObject::Physics& p, const CollisionCheckerPtr& colChecker)
+    Obstacle::Obstacle(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
         : Model(name, "Obstacle")
     {
         if (name == "")
@@ -107,7 +107,7 @@ namespace VirtualRobot
         std::string name = ss.str();
 
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, SceneObject::Physics(), colChecker));
+        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
         result->initialize();
 
         return result;
@@ -158,7 +158,7 @@ namespace VirtualRobot
         std::string name = ss.str();
 
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, SceneObject::Physics(), colChecker));
+        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
         result->initialize();
 
@@ -210,7 +210,7 @@ namespace VirtualRobot
         std::string name = ss.str();
 
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, SceneObject::Physics(), colChecker));
+        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
         result->initialize();
 
@@ -259,7 +259,7 @@ namespace VirtualRobot
         std::string name = ss.str();
 
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, SceneObject::Physics(), colChecker));
+        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
         result->initialize();
 

@@ -25,7 +25,7 @@
 
 #include "../VirtualRobot.h"
 #include "../EndEffector/EndEffector.h"
-#include "../MathTools.h"
+#include "../Tools/MathTools.h"
 #include <vector>
 #include <Eigen/Core>
 

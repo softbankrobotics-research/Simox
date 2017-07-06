@@ -25,7 +25,7 @@
 
 #include "../GraspStudio.h"
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

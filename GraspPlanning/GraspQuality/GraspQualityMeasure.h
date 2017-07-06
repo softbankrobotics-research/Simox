@@ -27,7 +27,7 @@
 #include "../ConvexHullGenerator.h"
 #include "../ContactConeGenerator.h"
 #include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Grasping/BasicGraspQualityMeasure.h>
 #include <vector>
 #include <Eigen/Core>

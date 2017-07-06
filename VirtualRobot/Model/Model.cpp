@@ -266,6 +266,12 @@ namespace VirtualRobot
         return globalPose;
     }
 
+    Eigen::Matrix4f Model::getGlobalPosition() const
+    {
+        ReadLockPtr r = getReadLock();
+        return globalPose;
+    }
+
     void Model::setGlobalPoseForModelNode(const ModelNodePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "No node given.");

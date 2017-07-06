@@ -25,8 +25,8 @@
 
 #include "../VirtualRobot.h"
 #include "../Visualization/VisualizationFactory.h"
-#include "../MathTools.h"
-#include "../BoundingBox.h"
+#include "../Tools/MathTools.h"
+#include "../Tools/BoundingBox.h"
 #include <Eigen/Core>
 #include <vector>
 #include <utility>

@@ -23,7 +23,7 @@
 
 #include "TSRConstraint.h"
 
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 
 using namespace VirtualRobot;
 

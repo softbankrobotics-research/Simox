@@ -1250,7 +1250,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void BaseIO::processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, SceneObject::Physics& physics)
+    void BaseIO::processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics)
     {
         THROW_VR_EXCEPTION_IF(!physicsXMLNode, "NULL data for physicsXMLNode in processPhysicsNode()");
         rapidxml::xml_attribute<>* attr;
@@ -1297,11 +1297,11 @@ namespace VirtualRobot
 
                 if (loc == "visualizationbboxcenter")
                 {
-                    physics.comLocation = SceneObject::Physics::eVisuBBoxCenter;
+                    physics.comLocation = ModelLink::Physics::eVisuBBoxCenter;
                 }
                 else if (loc == "joint" || loc == "custom")
                 {
-                    physics.comLocation = SceneObject::Physics::eCustom;
+                    physics.comLocation = ModelLink::Physics::eCustom;
                 }
                 else
                 {
@@ -1310,10 +1310,10 @@ namespace VirtualRobot
             }
             else
             {
-                physics.comLocation = SceneObject::Physics::eCustom;
+                physics.comLocation = ModelLink::Physics::eCustom;
             }
 
-            if (physics.comLocation == SceneObject::Physics::eCustom)
+            if (physics.comLocation == ModelLink::Physics::eCustom)
             {
                 physics.localCoM(0) = getOptionalFloatByAttributeName(comXMLNode, "x", 0.0f);
                 physics.localCoM(1) = getOptionalFloatByAttributeName(comXMLNode, "y", 0.0f);
@@ -1402,15 +1402,15 @@ namespace VirtualRobot
 
             if (s == "dynamic" || s == "dynamics")
             {
-                physics.simType = VirtualRobot::SceneObject::Physics::eDynamic;
+                physics.simType = VirtualRobot::ModelLink::Physics::eDynamic;
             }
             else if (s == "static")
             {
-                physics.simType = VirtualRobot::SceneObject::Physics::eStatic;
+                physics.simType = VirtualRobot::ModelLink::Physics::eStatic;
             }
             else if (s == "kinematic")
             {
-                physics.simType = VirtualRobot::SceneObject::Physics::eKinematic;
+                physics.simType = VirtualRobot::ModelLink::Physics::eKinematic;
             }
 
             // otherwise eUnknown remains

@@ -25,7 +25,7 @@
 
 #include "../VirtualRobot.h"
 #include "../VirtualRobot.h"
-#include "../AbstractFactoryMethod.h"
+#include "../Tools/AbstractFactoryMethod.h"
 #include "../Robot.h"
 #include "../XML/RobotIO.h"
 

@@ -195,7 +195,7 @@ namespace VirtualRobot
                                            RobotPtr robot,
                                            VisualizationNodePtr visualizationNode,
                                            CollisionModelPtr collisionModel,
-                                           SceneObject::Physics& physics,
+                                           ModelLink::Physics& physics,
                                            RobotNode::RobotNodeType rntype,
                                            Eigen::Matrix4f& transformationMatrix
                                           )
@@ -614,7 +614,7 @@ namespace VirtualRobot
         VisualizationNodePtr visualizationNode;
         CollisionModelPtr collisionModel;
         RobotNodePtr robotNode;
-        SceneObject::Physics physics;
+        ModelLink::Physics physics;
         bool physicsDefined = false;
         Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 

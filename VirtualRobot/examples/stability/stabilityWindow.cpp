@@ -6,7 +6,7 @@
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
-#include "VirtualRobot/BoundingBox.h"
+#include "VirtualRobot/Tools/BoundingBox.h"
 #include "VirtualRobot/IK/CoMIK.h"
 
 #ifdef USE_NLOPT

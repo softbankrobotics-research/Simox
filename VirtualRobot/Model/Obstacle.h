@@ -26,6 +26,8 @@
 #include "../VirtualRobot.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "Model.h"
+#include "Nodes/ModelLink.h"
+#include "../Visualization/VisualizationFactory.h"
 
 #include <string>
 #include <vector>
@@ -43,7 +45,7 @@ namespace VirtualRobot
 
         /*!
         */
-        Obstacle(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const SceneObject::Physics& p = SceneObject::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        Obstacle(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
         */

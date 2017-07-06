@@ -24,8 +24,8 @@
 #define _VirtualRobot_CollisionModel_h_
 
 #include "../VirtualRobot.h"
-#include "../MathTools.h"
-#include "../BoundingBox.h"
+#include "../Tools/MathTools.h"
+#include "../Tools/BoundingBox.h"
 
 #include <string>
 #include <vector>

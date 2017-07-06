@@ -1,4 +1,4 @@
-#include "BoundingBox.h"
+#include "Tools/BoundingBox.h"
 
 namespace VirtualRobot
 {
