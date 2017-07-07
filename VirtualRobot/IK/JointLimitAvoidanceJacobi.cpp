@@ -37,8 +37,8 @@ namespace VirtualRobot
         {
             if (nodes[i]->isRotationalJoint())
             {
-                float l = nodes[i]->getJointLimitHi() - nodes[i]->getJointLimitLo();
-                float target = nodes[i]->getJointLimitLo() + l * 0.5f;
+                float l = nodes[i]->getJointLimitHigh() - nodes[i]->getJointLimitLow();
+                float target = nodes[i]->getJointLimitLow() + l * 0.5f;
                 error(i) = (target - nodes[i]->getJointValue()) * stepSize;
             }
             else

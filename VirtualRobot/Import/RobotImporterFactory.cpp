@@ -22,9 +22,7 @@
 */
 #include "RobotImporterFactory.h"
 #include <Eigen/Core>
-
-
-
+#include "../VirtualRobotException.h"
 
 using namespace std;
 

@@ -89,8 +89,8 @@ namespace Saba
 
         for (unsigned int i = 0; i < dimension; i++)
         {
-            boundaryMin[i] = robotJoints[i]->getJointLimitLo();
-            boundaryMax[i] = robotJoints[i]->getJointLimitHi();
+            boundaryMin[i] = robotJoints[i]->getJointLimitLow();
+            boundaryMax[i] = robotJoints[i]->getJointLimitHigh();
             boundaryDist[i] = fabs(boundaryMax[i] - boundaryMin[i]);
 
             if (boundaryDist[i] == 0)
@@ -630,11 +630,11 @@ namespace Saba
         {
             // borderless mode
 
-            float start = q1[dim] - robotJoints[dim]->getJointLimitLo();
-            float end = q2[dim] - robotJoints[dim]->getJointLimitLo();
+            float start = q1[dim] - robotJoints[dim]->getJointLimitLow();
+            float end = q2[dim] - robotJoints[dim]->getJointLimitLow();
             float res = interpolateRotational(start, end , step);
             res = (float)fmod((double)res, 2.0 * M_PI);
-            res = res + robotJoints[dim]->getJointLimitLo();
+            res = res + robotJoints[dim]->getJointLimitLow();
             return res;
         }
 
@@ -837,7 +837,7 @@ namespace Saba
         if (!(robotJoints[dim]->isTranslationalJoint()))
         {
             // rotational joint
-            if (abs((double)(robotJoints[dim]->getJointLimitHi() - robotJoints[dim]->getJointLimitLo())) > (1.9999999999999 * M_PI))
+            if (abs((double)(robotJoints[dim]->getJointLimitHigh() - robotJoints[dim]->getJointLimitLow())) > (1.9999999999999 * M_PI))
             {
                 return true;
             }

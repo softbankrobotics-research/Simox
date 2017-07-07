@@ -1,9 +1,9 @@
 
 #include "Obstacle.h"
-#include "CollisionDetection/CollisionModel.h"
-#include "CollisionDetection/CollisionChecker.h"
+#include "../CollisionDetection/CollisionModel.h"
+#include "../CollisionDetection/CollisionChecker.h"
 #include "Nodes/ModelLink.h"
-#include "Visualization/VisualizationFactory.h"
+#include "../Visualization/VisualizationFactory.h"
 #include <vector>
 
 
@@ -17,7 +17,7 @@ namespace VirtualRobot
     Obstacle::Obstacle(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
         : Model(name, "Obstacle")
     {
-        if (name == "")
+        if (name.empty())
         {
             // my id
             id = idCounter++;

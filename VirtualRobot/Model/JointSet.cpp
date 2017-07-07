@@ -94,6 +94,12 @@ namespace VirtualRobot
         std::cout << "----------------------------------------------" << endl;
     }
 
+	ModelJointPtr &LinkSet::getNode(int i)
+	{
+		THROW_VR_EXCEPTION_IF((i >= (int)joints.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (joints.size() - 1));
+		return joints.at(i);
+	}
+
     std::vector<float> JointSet::getJointValues() const
     {
         std::vector<float> fillVector;

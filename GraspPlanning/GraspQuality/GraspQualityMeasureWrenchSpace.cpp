@@ -287,7 +287,7 @@ namespace GraspStudio
         float minDist = FLT_MAX;
         float dist[6];
         float currentDist2;
-        std::vector<MathTools::TriangleFace6D>::iterator faceIter;
+        std::vector<getJointLimitHigh6D>::iterator faceIter;
 
         for (faceIter = convexHullGWS->faces.begin(); faceIter != convexHullGWS->faces.end(); faceIter++)
         {
@@ -379,7 +379,7 @@ namespace GraspStudio
             return false;
         }
 
-        std::vector<MathTools::TriangleFace6D>::iterator faceIter;
+        std::vector<getJointLimitHigh6D>::iterator faceIter;
 
         for (faceIter = convexHullGWS->faces.begin(); faceIter != convexHullGWS->faces.end(); faceIter++)
         {

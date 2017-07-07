@@ -22,10 +22,12 @@
 */
 
 #include "ReferenceConfigurationConstraint.h"
+#include "../../VirtualRobotException.h"
+#include "../../Model/Nodes/ModelJoint.h"
 
 using namespace VirtualRobot;
 
-ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet) :
+ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet)
@@ -39,7 +41,7 @@ ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPt
     initialized = true;
 }
 
-ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet, const Eigen::VectorXf &reference) :
+ReferenceConfigurationConstraint::ReferenceConfigurationConstraint(const ModelPtr &robot, const JointSetPtr &nodeSet, const Eigen::VectorXf &reference) :
     Constraint(nodeSet),
     robot(robot),
     nodeSet(nodeSet),
@@ -78,7 +80,7 @@ double ReferenceConfigurationConstraint::optimizationFunction(unsigned int /*id*
     float v;
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        RobotNodePtr node = nodeSet->getNode(i);
+        ModelJointPtr node = nodeSet->getNode(i);
         v = (node->getJointValue() - reference(i));
         value += v * v;
     }

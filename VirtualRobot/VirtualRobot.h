@@ -219,7 +219,8 @@ namespace VirtualRobot
     class LinkSet;
     class JointSet;
     class ModelNodeAttachment;
-    class ModelNodeAttachmentFactory;
+	class ModelNodeAttachmentFactory;
+	class Coordinate;
 
     typedef Model Robot; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelNode RobotNode; //!< A typedef to make a differ between a robot and a simple object
@@ -283,7 +284,9 @@ namespace VirtualRobot
     typedef std::shared_ptr<JointSet> JointSetPtr;
     typedef std::shared_ptr<ModelNodeAttachment> ModelNodeAttachmentPtr;
     typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
-    typedef std::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object
+	typedef std::shared_ptr<Coordinate> CoordinatePtr;
+	
+	typedef std::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::weak_ptr<Robot> RobotWeakPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::shared_ptr<RobotNode> RobotNodePtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::weak_ptr<RobotNode> RobotNodeWeakPtr; //!< A typedef to make a differ between a robot and a simple object
@@ -295,7 +298,7 @@ namespace VirtualRobot
     typedef std::shared_ptr<RobotNodeSet> RobotNodeSetPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::shared_ptr<RobotNodeAttachment> RobotNodeAttachmentPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::shared_ptr<RobotNodeAttachmentFactory> RobotNodeAttachmentFactoryPtr; //!< A typedef to make a differ between a robot and a simple object
-    typedef std::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
+	typedef std::shared_ptr<RobotConfig> RobotConfigPtr; //!< A typedef to make a differ between a robot and a simple object
 
     /*
      * Predefine for Tools/MathTools.h

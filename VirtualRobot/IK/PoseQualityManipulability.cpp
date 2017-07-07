@@ -1,4 +1,5 @@
 #include "PoseQualityManipulability.h"
+#include "../Model/Nodes/ModelJoint.h"
 
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
@@ -10,7 +11,7 @@ namespace VirtualRobot
 {
 
 
-    PoseQualityManipulability::PoseQualityManipulability(VirtualRobot::RobotNodeSetPtr rns, ManipulabilityIndexType i)
+    PoseQualityManipulability::PoseQualityManipulability(VirtualRobot::JointSetPtr rns, ManipulabilityIndexType i)
         : PoseQualityMeasurement(rns), manipulabilityType(i), penJointLimits(false), convertMMtoM(true)
     {
         name = getTypeName();
@@ -212,11 +213,11 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
-            RobotNodePtr r = rns->getNode(i);
+            ModelJointPtr r = rns->getNode(i);
             VR_ASSERT(r);
-            float d = r->getJointLimitHi() - r->getJointLimitLo();
+            float d = r->getJointLimitHigh() - r->getJointLimitLow();
             d = d * d;
-            float a = (r->getJointValue() - r->getJointLimitLo()) * (r->getJointLimitHi() - r->getJointValue());
+            float a = (r->getJointValue() - r->getJointLimitLow()) * (r->getJointLimitHigh() - r->getJointValue());
 
             if (d != 0)
             {

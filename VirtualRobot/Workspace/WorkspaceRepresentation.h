@@ -80,7 +80,7 @@ namespace VirtualRobot
         };
 
 
-        WorkspaceRepresentation(RobotPtr robot);
+        WorkspaceRepresentation(ModelPtr robot);
 
         /*!
             Reset all data.
@@ -114,10 +114,10 @@ namespace VirtualRobot
         RobotNodePtr getBaseNode();
 
         //! The corresponding TCP
-        RobotNodePtr getTCP();
+        CoordinatePtr getTCP();
 
         //! The kinematic chain that is covered by this workspace data
-        RobotNodeSetPtr getNodeSet();
+        JointSetPtr getJointSet();
 
         /*!
             Initialize and reset all data.
@@ -132,14 +132,14 @@ namespace VirtualRobot
             \param tcpNode If given, the pose of this node is used for workspace calculations. If not given, the TCP node of the nodeSet is used.
             \param adjustOnOverflow If set, the 8bit data is divided by 2 when one voxel entry exceeds 255. Otherwise the entries remain at 255.
         */
-        virtual void initialize(RobotNodeSetPtr nodeSet,
+        virtual void initialize(JointSetPtr nodeSet,
             float discretizeStepTranslation,
             float discretizeStepRotation,
             float minBounds[6],
             float maxBounds[6],
             LinkSetPtr staticCollisionModel = LinkSetPtr(),
             LinkSetPtr dynamicCollisionModel = LinkSetPtr(),
-            CoordinatePtr baseNode = CoordinatePtr(),
+            ModelNodePtr baseNode = ModelNodePtr(),
             CoordinatePtr tcpNode = CoordinatePtr(),
             bool adjustOnOverflow = true);
 
@@ -168,10 +168,10 @@ namespace VirtualRobot
 
         /*!
             Generate a random configuration for the robot node set. This configuration is within the joint limits of the current robot node set.
-            \param nodeSet The nodes. If not given, the standard nodeSet is used.
+            \param nodeSet The joints. If not given, the standard nodeSet is used.
             \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
         */
-        virtual bool setRobotNodesToRandomConfig(VirtualRobot::RobotNodeSetPtr nodeSet = VirtualRobot::RobotNodeSetPtr(), bool checkForSelfCollisions = true);
+        virtual bool setRobotNodesToRandomConfig(JointSetPtr nodeSet = VirtualRobot::JointSetPtr(), bool checkForSelfCollisions = true);
 
         /*!
             Cut all data >1 to 1. This reduces the file size when saving compressed data.
@@ -271,12 +271,12 @@ namespace VirtualRobot
             \param tcpNode
             \return True on success.
         */
-        virtual bool checkForParameters(RobotNodeSetPtr nodeSet,
-                                        float steps,
-                                        float storeMinBounds[6],
-                                        float storeMaxBounds[6],
-                                        RobotNodePtr baseNode = RobotNodePtr(),
-                                        RobotNodePtr tcpNode = RobotNodePtr());
+        virtual bool checkForParameters(JointSetPtr nodeSet,
+										float steps,
+										float storeMinBounds[6],
+										float storeMaxBounds[6],
+										ModelNodePtr baseNode = ModelNodePtr(),
+										CoordinatePtr tcpNode = CoordinatePtr());
 
         /*!
             2D data that represents a cut through the workspace representation.
@@ -319,7 +319,7 @@ namespace VirtualRobot
             Build all transformations from referenceNode to cutXY data.h Only entries>0 are considered.
             If referenceNode is set, the transformations are given in the corresponding coordinate system.
         */
-        std::vector<WorkspaceCut2DTransformationPtr> createCutTransformations(WorkspaceCut2DPtr cutXY, RobotNodePtr referenceNode = RobotNodePtr());
+        std::vector<WorkspaceCut2DTransformationPtr> createCutTransformations(WorkspaceCut2DPtr cutXY, CoordinatePtr referenceNode = CoordinatePtr());
 
         /*!
             Computes the axis aligned bounding box of this object in global coordinate system.
@@ -350,7 +350,7 @@ namespace VirtualRobot
         {
             return dynamicCollisionModel;
         }
-        RobotNodePtr getTcp()
+        CoordinatePtr getTcp()
         {
             return tcpNode;
         }
@@ -434,10 +434,10 @@ namespace VirtualRobot
         virtual Eigen::Matrix4f getToLocalTransformation() const;
         virtual Eigen::Matrix4f getToGlobalTransformation() const;
 
-        RobotPtr robot;
-        RobotNodePtr baseNode;
-        RobotNodePtr tcpNode;
-        RobotNodeSetPtr nodeSet;
+        ModelPtr robot;
+        ModelNodePtr baseNode;
+        CoordinatePtr tcpNode;
+        JointSetPtr nodeSet;
 
         LinkSetPtr staticCollisionModel;
         LinkSetPtr dynamicCollisionModel;

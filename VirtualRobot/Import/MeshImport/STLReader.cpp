@@ -317,7 +317,7 @@ namespace VirtualRobot
                     (vhandles[0] != vhandles[2]) &&
                     (vhandles[1] != vhandles[2]))
                 {
-                    MathTools::TriangleFace f;
+                    TriMeshModel::TriangleFace f;
                     f.set(vhandles[0], vhandles[1], vhandles[2]);
 
                     if (facet_normal)
@@ -486,7 +486,7 @@ namespace VirtualRobot
                 (vhandles[0] != vhandles[2]) &&
                 (vhandles[1] != vhandles[2]))
             {
-                MathTools::TriangleFace f;
+                TriMeshModel::TriangleFace f;
                 f.set(vhandles[0], vhandles[1], vhandles[2]);
                 //if (facet_normal) {
                 unsigned int noId = t->normals.size();

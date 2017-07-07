@@ -33,7 +33,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint, public std::enable_shared_from_this<PositionConstraint>
     {
     public:
-        PositionConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Vector3f& target,
+        PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Vector3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 3.0f);
 
         double optimizationFunction(unsigned int id);
@@ -44,8 +44,8 @@ namespace VirtualRobot
 
     protected:
         RobotPtr robot;
-        RobotNodeSetPtr nodeSet;
-        SceneObjectPtr eef;
+		JointSetPtr nodeSet;
+		CoordinatePtr eef;
         Eigen::Vector3f target;
 
         DifferentialIKPtr ik;

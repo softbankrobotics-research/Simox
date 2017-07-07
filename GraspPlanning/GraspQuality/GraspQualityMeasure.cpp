@@ -55,8 +55,8 @@ namespace GraspStudio
         }
 
         int nLoopCount = 0;
-        std::vector<MathTools::TriangleFace> vFaceCopy = model->faces;
-        std::vector<MathTools::TriangleFace>::iterator iFaceIter;
+        std::vector<TriMeshModel::TriangleFace> vFaceCopy = model->faces;
+        std::vector<TriMeshModel::TriangleFace>::iterator iFaceIter;
 
         while (nLoopCount < nFaces && vFaceCopy.size() > 0)
         {

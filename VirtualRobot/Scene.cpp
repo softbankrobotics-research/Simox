@@ -1,15 +1,13 @@
 
 #include "Scene.h"
 #include "VirtualRobotException.h"
-#include "ManipulationObject.h"
-#include "SceneObjectSet.h"
+#include "Model/ManipulationObject.h"
+#include "Model/LinkSet.h"
 #include "Trajectory.h"
 #include "XML/BaseIO.h"
 
 namespace VirtualRobot
 {
-
-
 
     Scene::Scene(const std::string& name)
         : name(name)
@@ -576,8 +574,8 @@ namespace VirtualRobot
 
         return robotConfigs[robot];
     }
-
-    VirtualRobot::RobotNodeSetPtr Scene::getRobotNodeSet(const std::string& robot, const std::string rns)
+	
+    VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& robot, const std::string rns)
     {
         RobotPtr r = getRobot(robot);
 
@@ -590,11 +588,11 @@ namespace VirtualRobot
         return r->getModelNodeSet(rns);
     }
 
-    void Scene::registerSceneObjectSet(SceneObjectSetPtr sos)
+    void Scene::registerModelNodeSet(ModelNodeSetPtr sos)
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL config data");
 
-        if (hasSceneObjectSet(sos))
+        if (hasModelNodeSet(sos))
         {
             return;
         }
@@ -602,16 +600,16 @@ namespace VirtualRobot
         sceneObjectSets.push_back(sos);
     }
 
-    void Scene::deRegisterSceneObjectSet(SceneObjectSetPtr sos)
+    void Scene::deRegisterModelNodeSet(ModelNodeSetPtr sos)
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL data");
 
-        if (!hasSceneObjectSet(sos))
+        if (!hasModelNodeSet(sos))
         {
             return;
         }
 
-        for (std::vector< SceneObjectSetPtr >::iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
             if ((*i) == sos)
             {
@@ -621,14 +619,14 @@ namespace VirtualRobot
         }
     }
 
-    void Scene::deRegisterSceneObjectSet(const std::string& name)
+    void Scene::deRegisterModelNodeSet(const std::string& name)
     {
-        if (!hasSceneObjectSet(name))
+        if (!hasModelNodeSet(name))
         {
             return;
         }
 
-        for (std::vector< SceneObjectSetPtr >::iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
             if ((*i)->getName() == name)
             {
@@ -638,11 +636,11 @@ namespace VirtualRobot
         }
     }
 
-    bool Scene::hasSceneObjectSet(SceneObjectSetPtr sos) const
+    bool Scene::hasModelNodeSet(ModelNodeSetPtr sos) const
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL data");
 
-        for (std::vector< SceneObjectSetPtr >::const_iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
             if (*i == sos)
             {
@@ -653,9 +651,9 @@ namespace VirtualRobot
         return false;
     }
 
-    bool Scene::hasSceneObjectSet(const std::string& name) const
+    bool Scene::hasModelNodeSet(const std::string& name) const
     {
-        for (std::vector< SceneObjectSetPtr >::const_iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
             if ((*i)->getName() == name)
             {
@@ -666,9 +664,9 @@ namespace VirtualRobot
         return false;
     }
 
-    VirtualRobot::SceneObjectSetPtr Scene::getSceneObjectSet(const std::string& name)
+    VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& name)
     {
-        for (std::vector< SceneObjectSetPtr >::const_iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
             if ((*i)->getName() == name)
             {
@@ -676,10 +674,10 @@ namespace VirtualRobot
             }
         }
 
-        return SceneObjectSetPtr();
+        return ModelNodeSetPtr();
     }
 
-    std::vector< SceneObjectSetPtr > Scene::getSceneObjectSets()
+    std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
     {
         return sceneObjectSets;
     }

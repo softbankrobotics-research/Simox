@@ -24,21 +24,20 @@
 #define _VirtualRobot_Scene_h_
 
 #include "Model/Model.h"
-#include "SceneObject.h"
+#include "Model/Nodes/ModelLink.h"
 #include "Model/Model.h"
-#include "RobotConfig.h"
+#include "Model/ModelConfig.h"
 #include "Model/Nodes/ModelNode.h"
-#include "Obstacle.h"
+#include "Model/Obstacle.h"
 #include "Trajectory.h"
-#include "ManipulationObject.h"
-#include "RobotConfig.h"
+#include "Model/ManipulationObject.h"
+
 #include <string>
 #include <vector>
 #include <Eigen/Core>
 
 namespace VirtualRobot
 {
-
     class VIRTUAL_ROBOT_IMPORT_EXPORT Scene
     {
     public:
@@ -69,7 +68,6 @@ namespace VirtualRobot
         RobotPtr getRobot(const std::string& name);
 
         std::vector< RobotPtr > getRobots();
-
 
         /*!
             Registers the RobotConfig to this scene. If a config  with the same name is already registered nothing happens.
@@ -127,7 +125,6 @@ namespace VirtualRobot
 
         std::vector< ObstaclePtr > getObstacles();
 
-
         /*!
             Registers the Trajectory to this scene. If an Trajectory with the same name is already registered nothing happens.
         */
@@ -147,32 +144,25 @@ namespace VirtualRobot
         std::vector< TrajectoryPtr > getTrajectories();
         std::vector< TrajectoryPtr > getTrajectories(const std::string& robotName);
 
-
-
-
         /*!
             Registers the set to this scene. If a set with the same name is already registered nothing happens.
         */
-        void registerSceneObjectSet(SceneObjectSetPtr sos);
+        void registerModelNodeSet(ModelNodeSetPtr sos);
 
         /*!
             Removes the set to from this scene. If the set is not registered nothing happens.
         */
-        void deRegisterSceneObjectSet(SceneObjectSetPtr sos);
-        void deRegisterSceneObjectSet(const std::string& name);
+        void deRegisterModelNodeSet(ModelNodeSetPtr sos);
+        void deRegisterModelNodeSet(const std::string& name);
 
-        bool hasSceneObjectSet(SceneObjectSetPtr sos) const;
-        bool hasSceneObjectSet(const std::string& name) const;
+        bool hasModelNodeSet(ModelNodeSetPtr sos) const;
+        bool hasModelNodeSet(const std::string& name) const;
 
-        SceneObjectSetPtr getSceneObjectSet(const std::string& name);
+		ModelNodeSetPtr getModelNodeSet(const std::string& name);
 
-        std::vector< SceneObjectSetPtr > getSceneObjectSets();
+        std::vector< ModelNodeSetPtr > getModelNodeSets();
 
-
-
-
-
-        RobotNodeSetPtr getRobotNodeSet(const std::string& robot, const std::string rns);
+		ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
 
         std::string getName() const;
 
@@ -184,9 +174,7 @@ namespace VirtualRobot
              if (visualization)
                  visualisationNode = visualization->getCoinVisualization();
         */
-        template <typename T> std::shared_ptr<T> getVisualization(SceneObject::VisualizationType visuType = SceneObject::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
-
-
+        template <typename T> std::shared_ptr<T> getVisualization(ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
         /*!
             Creates an XML string that describes this scene.
@@ -202,7 +190,7 @@ namespace VirtualRobot
         std::map< RobotPtr, std::vector< RobotConfigPtr > > robotConfigs;
         std::vector< ObstaclePtr > obstacles;
         std::vector< ManipulationObjectPtr > manipulationObjects;
-        std::vector< SceneObjectSetPtr > sceneObjectSets;
+        std::vector< ModelNodeSetPtr > sceneObjectSets;
         std::vector< TrajectoryPtr > trajectories;
 
     };
@@ -214,7 +202,7 @@ namespace VirtualRobot
      * A compile time error is thrown if a different class type is used as template argument.
      */
     template <typename T>
-    std::shared_ptr<T> Scene::getVisualization(SceneObject::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    std::shared_ptr<T> Scene::getVisualization(ModelLink::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
     {
         const bool IS_SUBCLASS_OF_VISUALIZATION = ::boost::is_base_of<Visualization, T>::value;
         BOOST_MPL_ASSERT_MSG(IS_SUBCLASS_OF_VISUALIZATION, TEMPLATE_PARAMETER_FOR_VirtualRobot_getVisualization_MUST_BT_A_SUBCLASS_OF_VirtualRobot__Visualization, (T));
@@ -269,11 +257,11 @@ namespace VirtualRobot
 
         if (addSceneObjectSets)
         {
-            std::vector<VirtualRobot::SceneObjectSetPtr> collectedSceneObjectSets = getSceneObjectSets();
+            std::vector<VirtualRobot::SceneObjectSetPtr> collectedSceneObjectSets = getModelNodeSets();
 
             for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
             {
-                std::vector< SceneObjectPtr > sos = collectedSceneObjectSets[i]->getSceneObjects();
+                std::vector< ModelNodePtr > sos = collectedSceneObjectSets[i]->getModelNodes();
 
                 for (size_t j = 0; j < sos.size(); j++)
                 {

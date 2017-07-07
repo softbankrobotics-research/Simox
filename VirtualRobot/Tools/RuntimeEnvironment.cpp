@@ -5,8 +5,8 @@
 #endif
 
 #include "RuntimeEnvironment.h"
-#include "VirtualRobotException.h"
-#include "Visualization/VisualizationFactory.h"
+#include "../VirtualRobotException.h"
+#include "../Visualization/VisualizationFactory.h"
 
 
 namespace VirtualRobot

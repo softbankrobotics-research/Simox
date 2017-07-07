@@ -120,6 +120,19 @@ namespace VirtualRobot
          */
         void print() const;
 
+		ModelJointPtr& operator[](int i)
+		{
+			return getNode(i);
+		}
+
+		/*!
+		* Get the node at position i.
+		*
+		* @param i The position of the node to get.
+		* @return The node.
+		*/
+		ModelJointPtr& getNode(int i);
+
         /*!
          * Get the joint values of all contained joints.
          * TODO: The ordering of the values.

@@ -5,7 +5,9 @@
 
 namespace VirtualRobot
 {
-    ModelNode::ModelNode(const ModelWeakPtr& model, const std::string& name, Eigen::Matrix4f& staticTransformation)
+    ModelNode::ModelNode(const ModelWeakPtr& model, 
+						const std::string& name, 
+						const Eigen::Matrix4f& staticTransformation)
         : initialized(false),
           model(model),
           name(name),
@@ -451,43 +453,4 @@ namespace VirtualRobot
         return ModelNodePtr(); // TODO
     }
 
-    Eigen::Matrix4f ModelNode::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
-    {
-        return getGlobalPose().inverse() * poseGlobal;
-    }
-
-    Eigen::Vector3f ModelNode::toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const
-    {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionGlobal;
-        t = toLocalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
-    }
-
-    Eigen::Matrix4f ModelNode::toGlobalCoordinateSystem(const Eigen::Matrix4f& poseLocal) const
-    {
-        return getGlobalPose() * poseLocal;
-    }
-
-    Eigen::Vector3f ModelNode::toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const
-    {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionLocal;
-        t = toGlobalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
-    }
-
-    Eigen::Matrix4f ModelNode::getTransformationTo(const ModelNodePtr& otherObject)
-    {
-        return getGlobalPose().inverse() * otherObject->getGlobalPose();
-    }
-
-    Eigen::Matrix4f ModelNode::getTransformationFrom(const ModelNodePtr& otherObject)
-    {
-        return otherObject->getGlobalPose().inverse() * getGlobalPose();
-    }
 }

@@ -70,7 +70,7 @@ namespace VirtualRobot
 {
     ModelLink::ModelLink(const ModelWeakPtr& model,
                          const std::string& name,
-                         Eigen::Matrix4f& localTransformation,
+                         const Eigen::Matrix4f& localTransformation,
                          const VisualizationNodePtr& visualization,
                          const CollisionModelPtr& collisionModel,
                          const ModelLink::Physics& p,

@@ -1,8 +1,8 @@
 #include "Reachability.h"
 #include "../VirtualRobotException.h"
 #include "../Model/Model.h"
-#include "../RobotNodeSet.h"
-#include "../ManipulationObject.h"
+#include "../Model/ModelNodeSet.h"
+#include "../Model/ManipulationObject.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
 #include <fstream>
@@ -19,32 +19,6 @@ namespace VirtualRobot
     {
         type = "Reachability";
     }
-
-    /*
-        void Reachability::addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions)
-        {
-            THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Reachability data not initialized");
-
-            std::vector<float> c;
-            nodeSet->getJointValues(c);
-            bool visuSate = robot->getUpdateVisualizationStatus();
-            robot->setUpdateVisualization(false);
-
-            for (unsigned int i = 0; i < loops; i++)
-            {
-                if (setRobotNodesToRandomConfig(nodeSet, checkForSelfCollisions))
-                {
-                    addCurrentTCPPose();
-                }
-                else
-                {
-                    VR_WARNING << "Could not find collision-free configuration...";
-                }
-            }
-
-            robot->setUpdateVisualization(visuSate);
-            robot->setJointValues(nodeSet, c);
-        }*/
 
     bool Reachability::isReachable(const Eigen::Matrix4f& globalPose)
     {

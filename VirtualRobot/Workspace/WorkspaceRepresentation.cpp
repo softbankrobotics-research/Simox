@@ -1,16 +1,20 @@
 #include "WorkspaceRepresentation.h"
 #include "../VirtualRobotException.h"
 #include "../Model/Model.h"
-#include "../RobotNodeSet.h"
+#include "../Model/ModelNodeSet.h"
+#include "../Model/LinkSet.h"
+#include "../Model/JointSet.h"
 #include "../Compression/CompressionRLE.h"
 #include "../Compression/CompressionBZip2.h"
-#include "../SceneObjectSet.h"
+#include "../Model/Coordinate.h"
 #include "../Model/Nodes/ModelNode.h"
+#include "../Model/Nodes/ModelJoint.h"
+#include "../Model/Nodes/ModelLink.h"
 #include "../Visualization/Visualization.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../Visualization/ColorMap.h"
-#include "../ManipulationObject.h"
+#include "../Model/ManipulationObject.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
 #include <fstream>
@@ -21,9 +25,9 @@
 namespace VirtualRobot
 {
 
-    WorkspaceRepresentation::WorkspaceRepresentation(RobotPtr robot)
+    WorkspaceRepresentation::WorkspaceRepresentation(ModelPtr robot)
     {
-        THROW_VR_EXCEPTION_IF(!robot, "Need a robot ptr here");
+        THROW_VR_EXCEPTION_IF(!robot, "Need a model ptr here");
         this->robot = robot;
         type = "WorkspaceRepresentation";
         versionMajor = 2;
@@ -238,8 +242,8 @@ namespace VirtualRobot
 
             // Check Node Set
             FileIO::readString(tmpString, file);
-            nodeSet = robot->getModelNodeSet(tmpString);
-            THROW_VR_EXCEPTION_IF(!nodeSet, "Node Set does not exist.");
+            nodeSet = robot->getJointSet(tmpString);
+            THROW_VR_EXCEPTION_IF(!nodeSet, "Joint Set does not exist.");
 
             if (version[0] > 1 || (version[0] == 1 && version[1] > 0))
             {
@@ -248,39 +252,39 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(nrNodes >= 0 && nodeSet->getSize() != static_cast<std::size_t>(nrNodes), "Node Sets don't match (size differs).");
 
                 // Check joint limits
-                std::vector<RobotNodePtr> nodes = nodeSet->getAllRobotNodes();
+                std::vector<ModelJointPtr> nodes = nodeSet->getJoints();
 
-                for (std::vector<RobotNodePtr>::iterator n = nodes.begin(); n != nodes.end(); n++)
+                for (std::vector<ModelJointPtr>::iterator n = nodes.begin(); n != nodes.end(); n++)
                 {
                     float limits[2];
                     FileIO::readArray<float>(limits, 2, file);
 
                     //limits[0] = (int)(FileIO::read<ioIntTypeRead>(file));
                     //limits[1] = (int)(FileIO::read<ioIntTypeRead>(file));
-                    if (fabs((*n)->getJointLimitLo() - limits[0]) > 0.01 || fabs((*n)->getJointLimitHi() - limits[1]) > 0.01)
+                    if (fabs((*n)->getJointLimitLow() - limits[0]) > 0.01 || fabs((*n)->getJointLimitHigh() - limits[1]) > 0.01)
                     {
-                        VR_WARNING << "Joint limit mismatch for " << (*n)->getName() << ", min: " << (*n)->getJointLimitLo() << " / " << limits[0] << ", max: " << (*n)->getJointLimitHi() << " / " << limits[1] << std::endl;
+                        VR_WARNING << "Joint limit mismatch for " << (*n)->getName() << ", min: " << (*n)->getJointLimitLow() << " / " << limits[0] << ", max: " << (*n)->getJointLimitHigh() << " / " << limits[1] << std::endl;
                     }
                 }
             }
 
             // Check TCP
             FileIO::readString(tmpString, file);
-            tcpNode = robot->getModelNode(tmpString);
+            tcpNode = robot->getCoordinate(tmpString);
             THROW_VR_EXCEPTION_IF(!tcpNode, "Unknown TCP");
 
             // Check Base Joint
             if (version[0] > 1 || (version[0] == 1 &&  version[1] > 0))
             {
                 FileIO::readString(tmpString, file);
-                if (tmpString.empty() || !robot->hasRobotNode(tmpString))
+                if (tmpString.empty() || !robot->hasModelNode(tmpString))
                 {
-                    VR_WARNING << "Base ndoe not gifven/known:" << tmpString << endl;
+                    VR_WARNING << "Base node not given/known:" << tmpString << endl;
                 }
                 else
                 {
                     baseNode = robot->getModelNode(tmpString);
-                    THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Joint");
+                    THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Node");
                 }
             }
 
@@ -290,7 +294,7 @@ namespace VirtualRobot
 
             if (tmpString != "" && tmpString != "not set")
             {
-                staticCollisionModel = robot->getModelNodeSet(tmpString);
+                staticCollisionModel = robot->getLinkSet(tmpString);
             }
 
             // Dynamic collision model
@@ -298,7 +302,7 @@ namespace VirtualRobot
 
             if (tmpString != "" && tmpString != "not set")
             {
-                dynamicCollisionModel = robot->getModelNodeSet(tmpString);
+                dynamicCollisionModel = robot->getLinkSet(tmpString);
             }
 
             buildUpLoops = (int)(FileIO::read<ioIntTypeRead>(file));
@@ -525,13 +529,13 @@ namespace VirtualRobot
             FileIO::writeString(file, nodeSet->getName());
 
             // Joint limits
-            const std::vector<RobotNodePtr> nodes = nodeSet->getAllRobotNodes();
+            const std::vector<ModelJointPtr> nodes = nodeSet->getJoints();
             FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(nodes.size()));
 
-            for (std::vector<RobotNodePtr>::const_iterator n = nodes.begin(); n != nodes.end(); n++)
+            for (auto n = nodes.begin(); n != nodes.end(); n++)
             {
-                FileIO::write<float>(file, (*n)->getJointLimitLo());
-                FileIO::write<float>(file, (*n)->getJointLimitHi());
+                FileIO::write<float>(file, (*n)->getJointLimitLow());
+                FileIO::write<float>(file, (*n)->getJointLimitHigh());
             }
 
             // TCP name
@@ -569,7 +573,7 @@ namespace VirtualRobot
             // Collisions
             FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(collisionConfigs));
 
-            // DiscretizeStep*
+            // DiscretizeStep
             FileIO::write<float>(file, discretizeStepTranslation);
             FileIO::write<float>(file, discretizeStepRotation);
 
@@ -691,17 +695,17 @@ namespace VirtualRobot
         return spaceSize[dim] / numVoxels[dim];
     }
 
-    RobotNodePtr WorkspaceRepresentation::getBaseNode()
+    ModelNodePtr WorkspaceRepresentation::getBaseNode()
     {
         return baseNode;
     }
 
-    RobotNodePtr WorkspaceRepresentation::getTCP()
+    CoordinatePtr WorkspaceRepresentation::getTCP()
     {
         return tcpNode;
     }
 
-    RobotNodeSetPtr WorkspaceRepresentation::getNodeSet()
+    JointSetPtr WorkspaceRepresentation::getJointSet()
     {
         return nodeSet;
     }
@@ -866,7 +870,7 @@ namespace VirtualRobot
     }
 
 
-    bool WorkspaceRepresentation::setRobotNodesToRandomConfig(VirtualRobot::RobotNodeSetPtr nodeSet, bool checkForSelfCollisions /*= true*/)
+    bool WorkspaceRepresentation::setRobotNodesToRandomConfig(JointSetPtr nodeSet, bool checkForSelfCollisions /*= true*/)
     {
         static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
@@ -892,12 +896,12 @@ namespace VirtualRobot
             for (unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
                 rndValue = (float)rand() * randMult; // value from 0 to 1
-                minJ = (*nodeSet)[i]->getJointLimitLo();
-                maxJ = (*nodeSet)[i]->getJointLimitHi();
+                minJ = (*nodeSet)[i]->getJointLimitLow();
+                maxJ = (*nodeSet)[i]->getJointLimitHigh();
                 v[i] = minJ + ((maxJ - minJ) * rndValue);
             }
 
-            robot->setJointValues(nodeSet, v);
+			nodeSet->setJointValues(v);
 
             // check for collisions
             if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)
@@ -1106,12 +1110,14 @@ namespace VirtualRobot
         }
     }
 
-    void WorkspaceRepresentation::initialize(RobotNodeSetPtr nodeSet, float discretizeStepTranslation, float discretizeStepRotation,
+    void WorkspaceRepresentation::initialize(JointSetPtr nodeSet, 
+			float discretizeStepTranslation, 
+			float discretizeStepRotation,
             float minBounds[6], float maxBounds[6],
-            SceneObjectSetPtr staticCollisionModel,
-            SceneObjectSetPtr dynamicCollisionModel,
-            RobotNodePtr baseNode /*= RobotNodePtr()*/,
-            RobotNodePtr tcpNode /*= RobotNodePtr()*/,
+            LinkSetPtr staticCollisionModel,
+			LinkSetPtr dynamicCollisionModel,
+            ModelNodePtr baseNode /*= RobotNodePtr()*/,
+            CoordinatePtr tcpNode /*= RobotNodePtr()*/,
             bool adjustOnOverflow /* = true */)
     {
         reset();
@@ -1123,7 +1129,7 @@ namespace VirtualRobot
         }
 
         THROW_VR_EXCEPTION_IF(!nodeSet, "NULL data, need a nodeSet");
-        THROW_VR_EXCEPTION_IF(!nodeSet->isKinematicChain(), "nodeSet must be a valid kinematic chain!");
+        //THROW_VR_EXCEPTION_IF(!nodeSet->isKinematicChain(), "nodeSet must be a valid kinematic chain!");
         this->nodeSet = nodeSet;
         this->tcpNode = nodeSet->getTCP();
 
@@ -1132,15 +1138,15 @@ namespace VirtualRobot
             this->tcpNode = tcpNode;
         }
 
-        THROW_VR_EXCEPTION_IF(!robot->hasRobotNode(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
+        THROW_VR_EXCEPTION_IF(!robot->hasCoordinate(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
         this->baseNode = baseNode;
 
-        if (baseNode && !robot->hasRobotNode(baseNode))
+        if (baseNode && !robot->hasModelNode(baseNode))
         {
             THROW_VR_EXCEPTION("Robot does not know basenode:" << baseNode->getName());
         }
 
-        THROW_VR_EXCEPTION_IF(nodeSet->hasRobotNode(baseNode), " baseNode is part of RobotNodeSet! This is not a good idea, since the globalPose of the baseNode will change during buildup of WorkspaceRepresentation data...");
+        THROW_VR_EXCEPTION_IF(nodeSet->hasModelNode(baseNode->getName()), " baseNode is part of RobotNodeSet! This is not a good idea, since the globalPose of the baseNode will change during buildup of WorkspaceRepresentation data...");
         this->staticCollisionModel = staticCollisionModel;
         this->dynamicCollisionModel = dynamicCollisionModel;
 
@@ -1500,9 +1506,9 @@ namespace VirtualRobot
 
     }
 
-    bool WorkspaceRepresentation::checkForParameters(RobotNodeSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], RobotNodePtr baseNode, RobotNodePtr tcpNode)
+    bool WorkspaceRepresentation::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], ModelNodePtr baseNode, CoordinatePtr tcpNode)
     {
-        if (!robot || !nodeSet || !nodeSet->isKinematicChain())
+		if (!robot || !nodeSet)// || !nodeSet->isKinematicChain())
         {
             VR_WARNING << "invalid data" << endl;
             return false;
@@ -1513,13 +1519,13 @@ namespace VirtualRobot
             tcpNode = nodeSet->getTCP();
         }
 
-        if (!robot->hasRobotNode(tcpNode))
+        if (!robot->hasCoordinate(tcpNode))
         {
             VR_ERROR << "robot does not know tcp:" << tcpNode->getName() << endl;
             return false;
         }
 
-        if (baseNode && !robot->hasRobotNode(baseNode))
+        if (baseNode && !robot->hasModelNode(baseNode))
         {
             VR_ERROR << "robot does not know baseNode:" << baseNode->getName() << endl;
             return false;
@@ -1533,7 +1539,7 @@ namespace VirtualRobot
 
         Eigen::VectorXf c;
         nodeSet->getJointValues(c);
-        bool visuSate = robot->getUpdateVisualizationStatus();
+        bool visuSate = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         // toLocal uses this->baseNode!
@@ -1564,7 +1570,7 @@ namespace VirtualRobot
             }
         }
 
-        robot->setJointValues(nodeSet, c);
+		nodeSet->setJointValues(c);
 
         robot->setUpdateVisualization(visuSate);
 
@@ -1749,7 +1755,7 @@ namespace VirtualRobot
         return true;
     }
 
-    std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> WorkspaceRepresentation::createCutTransformations(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, RobotNodePtr referenceNode)
+    std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> WorkspaceRepresentation::createCutTransformations(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, CoordinatePtr referenceNode)
     {
         THROW_VR_EXCEPTION_IF(!cutXY, "NULL data");
 
@@ -2113,7 +2119,7 @@ namespace VirtualRobot
 
         std::vector<float> c;
         nodeSet->getJointValues(c);
-        bool visuSate = robot->getUpdateVisualizationStatus();
+        bool visuSate = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         for (unsigned int i = 0; i < loops; i++)

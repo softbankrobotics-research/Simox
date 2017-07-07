@@ -1,4 +1,6 @@
 #include "SupportPolygon.h"
+#include "../Model/Nodes/ModelLink.h"
+#include "../CollisionDetection/CollisionChecker.h"
 
 using namespace std;
 
@@ -6,7 +8,7 @@ namespace VirtualRobot
 {
 
 
-    SupportPolygon::SupportPolygon(SceneObjectSetPtr contactModels)
+    SupportPolygon::SupportPolygon(LinkSetPtr contactModels)
         : contactModels(contactModels)
     {
         floor =  MathTools::getFloorPlane();
@@ -15,9 +17,9 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < contactModels->getSize(); i++)
         {
-            if (contactModels->getSceneObject((int)i)->getCollisionModel())
+            if (contactModels->getLink((int)i)->getCollisionModel())
             {
-                colModels.push_back(contactModels->getSceneObject((int)i)->getCollisionModel());
+                colModels.push_back(contactModels->getLink((int)i)->getCollisionModel());
             }
         }
 
@@ -83,7 +85,7 @@ namespace VirtualRobot
     }
 
 
-    float SupportPolygon::getStabilityIndex(VirtualRobot::RobotNodeSetPtr rns, bool update)
+    float SupportPolygon::getStabilityIndex(VirtualRobot::LinkSetPtr rns, bool update)
     {
         if (!rns)
         {
@@ -174,7 +176,7 @@ namespace VirtualRobot
         return res;
     }
 
-    VirtualRobot::SceneObjectSetPtr SupportPolygon::getContactModels()
+    VirtualRobot::LinkSetPtr SupportPolygon::getContactModels()
     {
         return contactModels;
     }

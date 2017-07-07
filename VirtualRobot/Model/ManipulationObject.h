@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_ManipulationObject_h_
 #define _VirtualRobot_ManipulationObject_h_
 
-#include "Model/Model.h"
+#include "Model.h"
 #include "Obstacle.h"
-#include "EndEffector/EndEffector.h"
+#include "../EndEffector/EndEffector.h"
 
 #include <string>
 #include <vector>
