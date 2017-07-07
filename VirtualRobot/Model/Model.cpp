@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "VirtualRobotException.h"
 #include "Nodes/ModelLink.h"
+#include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
 #include "Visualization/VisualizationNode.h"
 #include "CollisionDetection/CollisionModel.h"
@@ -185,6 +186,49 @@ namespace VirtualRobot
 
         return search->second;
     }
+
+    LinkSetPtr Model::getLinkSet(const std::string& nodeSetName) const
+    {
+        ReadLockPtr r = getReadLock();
+        ModelNodeSetPtr res = getModelNodeSet(nodeSetName);
+        LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
+        if (!ls)
+        {
+            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+        }
+        return ls;
+    }
+
+    JointSetPtr Model::getJointSet(const std::string& nodeSetName) const
+    {
+        ReadLockPtr r = getReadLock();
+        ModelNodeSetPtr res = getModelNodeSet(nodeSetName);
+        JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
+        if (!ls)
+        {
+            VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+        }
+        return ls;
+    }
+
+    LinkSetPtr Model::getLinks() const
+    {
+        ReadLockPtr r = getReadLock();
+
+        LinkSetPtr ls = LinkSet::createLinkSet(shared_from_this(),std::string("__"+name+"-all-links"),)
+
+        return ls;
+    }
+
+    JointSetPtr Model::getJoints() const
+    {
+        ReadLockPtr r = getReadLock();
+
+        JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
+
+        return ls;
+    }
+
 
     std::vector<ModelNodeSetPtr> Model::getModelNodeSets() const
     {
