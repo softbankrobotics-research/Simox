@@ -399,7 +399,7 @@ namespace GraspStudio
             /* 'qh facet_list' contains the convex hull */
             ContactPoint v[6];
             int nIds[6];
-            MathTools::TriangleFace6D f;
+            getJointLimitHigh6D f;
 
             int nFacets = 0;
             qh_getarea(qh facet_list);

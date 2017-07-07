@@ -1,7 +1,7 @@
 
 #include "WorkspaceGrid.h"
 #include "../VirtualRobotException.h"
-#include "../ManipulationObject.h"
+#include "../Model/ManipulationObject.h"
 #include <iostream>
 #include <algorithm>
 using namespace std;

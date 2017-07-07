@@ -33,7 +33,7 @@ JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &rob
     for(unsigned int i = 0; i < nodeSet->getSize(); i++)
     {
         RobotNodePtr node = nodeSet->getNode(i);
-        reference(i) = node->getJointLimitLo() + (node->getJointLimitHi() - node->getJointLimitLo()) / 2;
+        reference(i) = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) / 2;
     }
 
     setReferenceConfiguration(reference);

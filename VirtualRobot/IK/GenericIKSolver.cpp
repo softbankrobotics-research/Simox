@@ -89,7 +89,7 @@ namespace VirtualRobot
         {
             RobotNodePtr ro =  rns->getNode(i);
             float r = (float)rand() * rn;
-            float v = ro->getJointLimitLo() + (ro->getJointLimitHi() - ro->getJointLimitLo()) * r;
+            float v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
             jv.push_back(v);
         }
 

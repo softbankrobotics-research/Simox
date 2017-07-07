@@ -373,66 +373,6 @@ namespace VirtualRobot
             float force;
         };
 
-        struct TriangleFace
-        {
-            TriangleFace()
-                : id1(UINT_MAX), id2(UINT_MAX), id3(UINT_MAX),
-                  idColor1(UINT_MAX), idColor2(UINT_MAX), idColor3(UINT_MAX),
-                  idNormal1(UINT_MAX), idNormal2(UINT_MAX), idNormal3(UINT_MAX),
-                  idMaterial(UINT_MAX) {}
-
-            /**
-             * Flips the orientation of the contained vertex and the normal.
-             */
-            void flipOrientation()
-            {
-                std::swap(id3, id1);
-                normal *= -1.0f;
-            }
-            void set(unsigned int id1, unsigned int id2, unsigned int id3)
-            {
-                this->id1 = id1;
-                this->id2 = id2;
-                this->id3 = id3;
-            }
-            void setColor(unsigned int idColor1, unsigned int idColor2, unsigned int idColor3)
-            {
-                this->idColor1 = idColor1;
-                this->idColor2 = idColor2;
-                this->idColor3 = idColor3;
-            }
-            void setNormal(unsigned int idNormal1, unsigned int idNormal2, unsigned int idNormal3)
-            {
-                this->idNormal1 = idNormal1;
-                this->idNormal2 = idNormal2;
-                this->idNormal3 = idNormal3;
-            }
-            void setMaterial(unsigned int idMaterial)
-            {
-                this->idMaterial = idMaterial;
-            }
-
-            // id == position in vertex array
-            unsigned int id1;
-            unsigned int id2;
-            unsigned int id3;
-
-            // idColor == position in color array
-            unsigned int idColor1;
-            unsigned int idColor2;
-            unsigned int idColor3;
-
-            //idNormal == position in normal array
-            unsigned int idNormal1;
-            unsigned int idNormal2;
-            unsigned int idNormal3;
-
-            // idMaterial == position in material array
-            unsigned int idMaterial;
-
-            // per face normal (used when no idNormals are given)
-            Eigen::Vector3f normal;
-        };
         struct TriangleFace6D
         {
             int id[6];// position in vertice vector (x,y,z,nx,ny,nz)

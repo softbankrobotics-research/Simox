@@ -10,7 +10,7 @@ namespace VirtualRobot
 {
 
 
-    PoseQualityMeasurement::PoseQualityMeasurement(VirtualRobot::RobotNodeSetPtr rns)
+    PoseQualityMeasurement::PoseQualityMeasurement(VirtualRobot::ModelNodeSetPtr rns)
         : rns(rns)
     {
         THROW_VR_EXCEPTION_IF((!rns || !rns->getTCP()), "NULL data");

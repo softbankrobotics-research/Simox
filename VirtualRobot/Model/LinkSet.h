@@ -106,6 +106,21 @@ namespace VirtualRobot
          */
         const std::vector<ModelLinkPtr> getLinks() const;
 
+		ModelLinkPtr& operator[](int i)
+		{
+			return getNode(i);
+		}
+
+		/*!
+		* Get the node at position i.
+		*
+		* @param i The position of the node to get.
+		* @return The node.
+		*/
+		ModelLinkPtr& getNode(int i);
+		ModelLinkPtr& getLink(int i);
+
+
         /*!
          * Print out some information.
          */

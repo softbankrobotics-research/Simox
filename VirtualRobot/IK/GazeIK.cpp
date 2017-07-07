@@ -226,7 +226,7 @@ namespace VirtualRobot
             if (ro->isRotationalJoint())
             {
                 float r = (float)rand() * rn;
-                v = ro->getJointLimitLo() + (ro->getJointLimitHi() - ro->getJointLimitLo()) * r;
+                v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
             }
 
             jv.push_back(v);

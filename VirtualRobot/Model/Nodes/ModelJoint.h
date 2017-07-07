@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_ModelJoint_h_
 #define _VirtualRobot_ModelJoint_h_
 
-#include "../Tools/ConditionedLock.h"
+#include "../../Tools/ConditionedLock.h"
 #include "ModelNode.h"
 
 namespace VirtualRobot

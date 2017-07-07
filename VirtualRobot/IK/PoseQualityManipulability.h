@@ -49,7 +49,7 @@ namespace VirtualRobot
             eMinMaxRatio    // ratio of max and min singular value (aka (inverted) Condition number)
         };
 
-        PoseQualityManipulability(VirtualRobot::RobotNodeSetPtr rns, ManipulabilityIndexType i = eMinMaxRatio);
+        PoseQualityManipulability(VirtualRobot::JointSetPtr rns, ManipulabilityIndexType i = eMinMaxRatio);
         ~PoseQualityManipulability();
 
         /*!

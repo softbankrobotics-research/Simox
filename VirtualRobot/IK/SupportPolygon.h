@@ -24,11 +24,10 @@
 #define _VirtualRobot_SupportPolygon_h_
 
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/LinkSet.h>
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
 #include <VirtualRobot/Workspace/Manipulability.h>
 #include <VirtualRobot/IK/PoseQualityMeasurement.h>
-
-
 
 namespace VirtualRobot
 {
@@ -43,7 +42,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        SupportPolygon(SceneObjectSetPtr contactModels);
+        SupportPolygon(LinkSetPtr contactModels);
 
         //! Recalculate contacts and compute polygon
         MathTools::ConvexHull2DPtr updateSupportPolygon(float maxFloorDist = 5.0f);
@@ -57,15 +56,15 @@ namespace VirtualRobot
             1 means that the current 2D CoM lies at the center of the support polygon
             0 means it is outside.
         */
-        float getStabilityIndex(RobotNodeSetPtr rns, bool update = true);
+        float getStabilityIndex(LinkSetPtr rns, bool update = true);
 
-        SceneObjectSetPtr getContactModels();
+		LinkSetPtr getContactModels();
 
     protected:
 
         float getSquaredDistLine(Eigen::Vector2f& p, Eigen::Vector2f& pt1, Eigen::Vector2f& pt2);
 
-        SceneObjectSetPtr contactModels;
+		LinkSetPtr contactModels;
 
         std::vector< CollisionModelPtr > colModels;
         std::vector< Eigen::Vector2f > currentContactPoints2D;

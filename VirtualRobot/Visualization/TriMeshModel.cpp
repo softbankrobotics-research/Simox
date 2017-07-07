@@ -63,7 +63,7 @@ namespace VirtualRobot
         }
 
         // create face
-        MathTools::TriangleFace face;
+        TriangleFace face;
         face.id1 = this->vertices.size() - 3;
         face.id2 = this->vertices.size() - 2;
         face.id3 = this->vertices.size() - 1;
@@ -130,7 +130,7 @@ namespace VirtualRobot
     /**
      * This method adds a face to the internal data structure TriMeshModel::faces.
      */
-    void TriMeshModel::addFace(const MathTools::TriangleFace& face)
+    void TriMeshModel::addFace(const TriangleFace& face)
     {
         faces.push_back(face);
     }
@@ -203,7 +203,7 @@ namespace VirtualRobot
      */
     void TriMeshModel::flipVertexOrientations()
     {
-        std::for_each(faces.begin(), faces.end(), std::mem_fun_ref(&MathTools::TriangleFace::flipOrientation));
+        std::for_each(faces.begin(), faces.end(), std::mem_fun_ref(&TriangleFace::flipOrientation));
     }
 
     void TriMeshModel::setColor(VisualizationFactory::Color color)
@@ -280,7 +280,7 @@ namespace VirtualRobot
      *
      * \return true if both faces share the same edge and false if not
      */
-    bool TriMeshModel::checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const
+    bool TriMeshModel::checkFacesHaveSameEdge(const TriangleFace& face1, const TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const
     {
         commonVertexIds.clear();
         Eigen::Vector2i vertexIds;
@@ -356,7 +356,7 @@ namespace VirtualRobot
      */
     unsigned int TriMeshModel::checkAndCorrectNormals(bool inverted)
     {
-        MathTools::TriangleFace* f1, *f2;
+        TriangleFace* f1, *f2;
         int a1, a2, b1, b2;
         int flippedFacesCount = 0;
 

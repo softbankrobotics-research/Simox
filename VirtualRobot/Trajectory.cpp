@@ -1,6 +1,7 @@
 #include "Trajectory.h"
 #include "Model/Model.h"
 #include "VirtualRobotException.h"
+#include "Visualization/VisualizationFactory.h"
 #include <iostream>
 #include <sstream>
 
@@ -370,12 +371,12 @@ namespace VirtualRobot
         for (size_t i = 0; i < path.size(); i++)
         {
             // get tcp coords:
-            robot->setJointValues(rns, path[i]);
+			rns->setJointValues(path[i]);
             Eigen::Matrix4f m;
             result.push_back(r->getGlobalPose());
         }
 
-        robot->setJointValues(rns, jv);
+		rns->setJointValues(jv);
         return result;
     }
 
@@ -424,7 +425,7 @@ namespace VirtualRobot
         return name;
     }
 
-    VirtualRobot::RobotNodeSetPtr Trajectory::getJointSet()
+    VirtualRobot::JointSetPtr Trajectory::getJointSet()
     {
         return rns;
     }
@@ -451,7 +452,7 @@ namespace VirtualRobot
         return visualizationFactory->createTrajectory(shared_from_this());
     }
 
-    std::string Trajectory::getModelName() const
+    std::string Trajectory::getRobotName() const
     {
         return rns->getModel()->getName();
     }

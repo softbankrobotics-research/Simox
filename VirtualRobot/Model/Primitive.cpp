@@ -1,5 +1,5 @@
 #include "Primitive.h"
-#include "Tools/MathTools.h"
+#include "../Tools/MathTools.h"
 
 
 namespace VirtualRobot

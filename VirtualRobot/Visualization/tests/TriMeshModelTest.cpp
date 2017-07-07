@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(Visualization)
 
 BOOST_AUTO_TEST_CASE(testTriangleFaceFlipOrientation)
 {
-    VirtualRobot::MathTools::TriangleFace face;
+    VirtualRobot::TriMeshModel::TriangleFace face;
     face.id1 = 1;
     face.id2 = 2;
     face.id3 = 3;
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(testAddVertex)
 
 BOOST_AUTO_TEST_CASE(testAddFace)
 {
-    VirtualRobot::MathTools::TriangleFace face;
+    VirtualRobot::TriMeshModel::TriangleFace face;
     VirtualRobot::TriMeshModel model;
     const unsigned int numberOfFaces = model.faces.size();
     const unsigned int numberOfVertices = model.vertices.size();
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(testCreateNormal)
 
 BOOST_AUTO_TEST_CASE(testFlipVertexOrientation)
 {
-    VirtualRobot::MathTools::TriangleFace face;
+    VirtualRobot::TriMeshModel::TriangleFace face;
     face.id1 = 1;
     face.id2 = 2;
     face.id3 = 3;
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(testFlipVertexOrientation)
 
     model.flipVertexOrientations();
 
-    std::vector<VirtualRobot::MathTools::TriangleFace>::iterator iter = model.faces.begin();
+    std::vector<VirtualRobot::TriMeshModel::TriangleFace>::iterator iter = model.faces.begin();
 
     while (iter != model.faces.end())
     {

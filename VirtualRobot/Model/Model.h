@@ -58,6 +58,8 @@ namespace VirtualRobot
          */
         virtual ~Model();
 
+		virtual void setName(const std::string &name);
+
         /*!
          * This method is automatically called in ModelNode's constructor!
          *
@@ -367,6 +369,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateVisualization(bool enable);
+		bool getUpdateVisualization() const;
 
         /*!
          * Enables/Disables the visualization updates of the collision model.
@@ -374,6 +377,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateCollisionModel(bool enable);
+		bool getUpdateCollisionModel() const;
 
         /*!
          * Get the complete setup of all model nodes.
@@ -606,38 +610,7 @@ namespace VirtualRobot
         virtual ModelPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                                float scaling = 1.0f);
 
-        /*!
-         * Transforms the pose, given in global coordinate system, to the local coordinate system of this node.
-         *
-         * @param poseGlobal The pose, given in global coordinate system, that should be transformed to the local coordinate system of this node.
-         * @return The transformed pose.
-         */
-        Eigen::Matrix4f toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const;
-
-        /*!
-         * Transforms a position, given in global coordinate system, to the local coordinate system of this node.
-         *
-         * @param positionGlobal The position, given in global coordinate system, that should be transformed to the local coordinate system of this node.
-         * @return The transformed position.
-         */
-        Eigen::Vector3f toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const;
-
-        /*!
-         * Transforms the pose, given in local coordinate system, to the global coordinate system.
-         *
-         * @param poseLocal The pose, given in local coordinate system of this node, that should be transformed to the global coordinate system.
-         * @return The transformed pose.
-         */
-        Eigen::Matrix4f toGlobalCoordinateSystem(const Eigen::Matrix4f& poseLocal) const;
-
-        /*!
-         * Transforms the position, given in local coordinate system, to the global coordinate system.
-         *
-         * @param positionLocal The position, given in local coordinate system of this node, that should be transformed to the global coordinate system.
-         * @return The transformed position.
-         */
-        Eigen::Vector3f toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const;
-
+     
     private:
         std::string name;
         std::string type;

@@ -1,12 +1,12 @@
 #include "Model.h"
-#include "VirtualRobotException.h"
+#include "../VirtualRobotException.h"
 #include "Nodes/ModelLink.h"
 #include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
-#include "Visualization/VisualizationNode.h"
-#include "CollisionDetection/CollisionModel.h"
+#include "../Visualization/VisualizationNode.h"
+#include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
-#include "Trajectory.h"
+#include "../Trajectory.h"
 
 #include <algorithm>
 
@@ -106,8 +106,8 @@ namespace VirtualRobot
         modelNodes.reserve(nodeNames.size());
         for (size_t i = 0; i < nodeNames.size(); i++)
         {
-            ModelNodePtr node = getModelNode(modelNodeNames[i]);
-            THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + modelNodeNames[i] + " found.");
+            ModelNodePtr node = getModelNode(nodeNames[i]);
+            THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + nodeNames[i] + " found.");
             modelNodes.push_back(node);
         }
 
@@ -178,7 +178,7 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         auto search = modelNodeSetMap.find(nodeSetName);
-        if (search == modelNodeSetName.end())
+        if (search == modelNodeSetMap.end())
         {
             VR_WARNING << "No robot node set with name <" << nodeSetName << "> registered." << endl;
             return RobotNodeSetPtr();
@@ -214,8 +214,16 @@ namespace VirtualRobot
     LinkSetPtr Model::getLinks() const
     {
         ReadLockPtr r = getReadLock();
-
-        LinkSetPtr ls = LinkSet::createLinkSet(shared_from_this(),std::string("__"+name+"-all-links"),)
+		std::vector< ModelNodePtr > nodes;
+		for (auto n : modelNodeMap)
+		{
+			ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n.second);
+			if (l)
+				nodes.push_back(n.second);
+		}
+		std::string name = std::string("__" + name + "-all-links");
+		ModelPtr m = shared_from_this();
+		LinkSetPtr ls = LinkSet::createLinkSet(m, name, nodes);
 
         return ls;
     }
@@ -417,8 +425,9 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
-            link->getVisualization()->setUpdateVisualization(enable);
+            ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
+			if (link)
+				link->getVisualization()->setUpdateVisualization(enable);
         }
     }
 
@@ -429,12 +438,38 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
-            link->getCollisionModel()->setUpdateVisualization(enable);
+            ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
+			if (link)
+				link->getCollisionModel()->setUpdateVisualization(enable);
         }
     }
+	
+	bool Model::getUpdateVisualization() const
+	{
+		WriteLockPtr w = getWriteLock();
+		std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
 
-    ModelConfigPtr Model::getConfig()
+		for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++iterator)
+		{
+			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
+			if (link)
+				return link->getVisualization()->getUpdateVisualization();
+		}
+		return true;
+	}
+
+	bool Model::getUpdateCollisionModel() const
+	{
+		for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++iterator)
+		{
+			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
+			if (link)
+				return link->getCollisionModel()->getUpdateVisualization();
+		}
+		return true;
+	}
+
+	ModelConfigPtr Model::getConfig()
     {
         ReadLockPtr r = getReadLock();
         ModelConfigPtr r(new ModelConfig(shared_from_this(), getName()));
@@ -812,4 +847,9 @@ namespace VirtualRobot
         Eigen::Vector3f result = t.block(0, 3, 3, 1);
         return result;
     }
+
+	void Model::setName(const std::string &name)
+	{
+		this->name = name;
+	}
 }

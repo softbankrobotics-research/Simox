@@ -27,7 +27,7 @@
 #include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 #include "../Model/Nodes/ModelNode.h"
-#include "../RobotNodeSet.h"
+#include "../Model/ModelNodeSet.h"
 #include "../IK/DifferentialIK.h"
 
 #include <string.h>
@@ -46,7 +46,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        PoseQualityMeasurement(VirtualRobot::RobotNodeSetPtr rns);
+        PoseQualityMeasurement(VirtualRobot::ModelNodeSetPtr rns);
         ~PoseQualityMeasurement();
 
         /*!
@@ -87,7 +87,7 @@ namespace VirtualRobot
 
     protected:
         std::string name;
-        VirtualRobot::RobotNodeSetPtr rns;
+        VirtualRobot::JointSetPtr rns;
 
         bool considerObstacle;
         Eigen::Vector3f obstacleDir;

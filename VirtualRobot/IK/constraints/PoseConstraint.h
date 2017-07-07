@@ -32,15 +32,15 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT PoseConstraint : public Constraint, public std::enable_shared_from_this<PoseConstraint>
     {
-    public:
-        PoseConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const SceneObjectPtr& eef, const Eigen::Matrix4f& target,
+	public:
+        PoseConstraint(const RobotPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Matrix4f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All,
                        float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
-        void setVisualization(const SceneObjectSetPtr& visualizationNodeSet);
+        void setVisualization(const LinkSetPtr& visualizationNodeSet);
 
         Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
@@ -63,7 +63,7 @@ namespace VirtualRobot
     protected:
         RobotPtr robot;
         RobotNodeSetPtr nodeSet;
-        SceneObjectPtr eef;
+        CoordinatePtr eef;
         Eigen::Matrix4f target;
 
         DifferentialIKPtr ik;
@@ -72,7 +72,7 @@ namespace VirtualRobot
         float tolerancePosition;
         float toleranceRotation;
 
-        SceneObjectSetPtr visualizationNodeSet;
+        LinkSetPtr visualizationNodeSet;
 
         float lastError;
         float lastLastError;

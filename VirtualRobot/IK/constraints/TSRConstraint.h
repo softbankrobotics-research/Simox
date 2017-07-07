@@ -32,12 +32,12 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint, public std::enable_shared_from_this<TSRConstraint>
     {
     public:
-        TSRConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet, const RobotNodePtr& eef,
+        TSRConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef,
                       const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
                       float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
         Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
@@ -59,8 +59,8 @@ namespace VirtualRobot
         Eigen::Vector3f getOrientationError();
 
         RobotPtr robot;
-        RobotNodeSetPtr nodeSet;
-        RobotNodePtr eef;
+        JointSetPtr nodeSet;
+		CoordinatePtr eef;
 
         Eigen::Matrix4f transformation;
         Eigen::Matrix4f eefOffset;

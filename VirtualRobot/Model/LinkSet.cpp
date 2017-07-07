@@ -45,6 +45,17 @@ namespace VirtualRobot
         return mns;
     }
 
+	ModelLinkPtr &LinkSet::getNode(int i)
+	{
+		return getLink(i);
+	}
+
+	ModelLinkPtr &LinkSet::getLink(int i)
+	{
+		THROW_VR_EXCEPTION_IF((i >= (int)links.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (links.size() - 1));
+		return links.at(i);
+	}
+
     LinkSetPtr LinkSet::createLinkSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const ModelNodePtr tcp, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");

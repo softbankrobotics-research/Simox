@@ -32,8 +32,6 @@
 
 namespace VirtualRobot
 {
-    class Robot;
-
     class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxXMLFactory  : public RobotImporterFactory
     {
     public:

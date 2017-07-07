@@ -95,7 +95,7 @@ namespace Saba
 
         for (int i = 0; i < (int)faceIndx.faceIds.size(); i++)
         {
-            VirtualRobot::MathTools::TriangleFace f = sphere.faces[faceIndx.faceIds[i]];
+            VirtualRobot::getJointLimitHigh f = sphere.faces[faceIndx.faceIds[i]];
 
             //if  (sphereGenerator->check_intersect_tri(sphere.vertices[f.n1],sphere.m_Vertices[f.m_n2],sphere.m_Vertices[f.m_n3],zeroPt,Pose1,storeIntPoint))
             if (sphereGenerator->check_intersect_tri(sphere.vertices[f.id1], sphere.vertices[f.id2], sphere.vertices[f.id3], zeroPt, dir, storeIntPoint))

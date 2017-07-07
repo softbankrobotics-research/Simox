@@ -3,7 +3,7 @@
 #include "SimoxXMLFactory.h"
 #include "../XML/RobotIO.h"
 #include "../XML/rapidxml.hpp"
-
+#include "../VirtualRobotException.h"
 
 namespace VirtualRobot
 {
