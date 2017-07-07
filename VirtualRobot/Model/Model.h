@@ -198,6 +198,18 @@ namespace VirtualRobot
         virtual LinkSetPtr getLinkSet(const std::string& nodeSetName) const;
 
         /*!
+         * \brief getJoints Returns all joints of this model
+         * \return
+         */
+        virtual JointSetPtr getJoints() const;
+
+        /*!
+         * \brief getLinks Returns all links of this model
+         * \return
+         */
+        virtual LinkSetPtr getLinks() const;
+
+        /*!
          * Get all node sets, registered to this model.
          *
          * @return The registered node sets.

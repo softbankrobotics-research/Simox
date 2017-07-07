@@ -57,7 +57,13 @@ namespace VirtualRobot
         //! We need an Eigen::aligned_allocator here, otherwise access to a std::vector could crash
         typedef std::vector< ContactInfo, Eigen::aligned_allocator<ContactInfo> > ContactInfoVector;
 
-        EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr = RobotNodePtr(), std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
+        EndEffector(const std::string& nameString,
+                    const std::vector<EndEffectorActorPtr>& actorsVector,
+                    const std::vector<RobotNodePtr>& staticPartVector,
+                    RobotNodePtr baseNodePtr,
+                    CoordinatePtr tcpNodePtr,
+                    CoordinatePtr gcpNodePtr = RobotNodePtr(),
+                    std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
 
         virtual ~EndEffector();
         /*!
@@ -188,8 +194,8 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> statics;
         std::map< std::string, RobotConfigPtr > preshapes;
         ModelNodePtr baseNode;
-        ModelNodePtr tcpNode;
-        ModelNodePtr gcpNode;
+        CoordinatePtr tcpNode;
+        CoordinatePtr gcpNode;
     };
 
 } // namespace VirtualRobot
