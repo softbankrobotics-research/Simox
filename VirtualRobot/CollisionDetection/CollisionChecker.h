@@ -143,7 +143,7 @@ namespace VirtualRobot
         virtual bool checkCollision(const std::vector<CollisionModelPtr>& model1, const CollisionModelPtr& model2);
         inline bool checkCollision(const CollisionModelPtr& model1, const std::vector<CollisionModelPtr>& model2)
         {
-            return checkCollision(model2, model2);
+            return checkCollision(model2, model1);
         }
         virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2); //, Eigen::Vector3f *storeContact = NULL);
 

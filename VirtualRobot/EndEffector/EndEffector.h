@@ -44,7 +44,7 @@ namespace VirtualRobot
             EndEffectorPtr eef;             // the eef
             EndEffectorActorPtr actor;      // an eef may have multiple actors
             ModelLinkPtr robotNode;         // an actor may have multiple robotNodes
-            ModelPtr obstacle;
+            ModelLinkPtr obstacle;
             float distance;
             Eigen::Vector3f contactPointFingerLocal;        // given in coord system of the object
             Eigen::Vector3f contactPointObstacleLocal;      // given in coord system of the object
