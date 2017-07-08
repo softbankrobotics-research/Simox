@@ -88,7 +88,7 @@ namespace VirtualRobot
             \p checkColMode If set, the collisionMode of the actor's robotNodes is checked against it (e.g. to avoid collision checks with the static part of the eef)
         */
         bool isColliding(ModelLinkPtr obstacle, CollisionMode checkColMode = EndEffectorActor::eAll);
-        bool isColliding(EndEffectorPtr eef, ModelPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(EndEffectorPtr eef, ModelLinkPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
 
         /*!
             Checks if the actor collides with a given second actor

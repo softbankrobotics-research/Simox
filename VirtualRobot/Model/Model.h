@@ -39,7 +39,7 @@ namespace VirtualRobot
      *
      * \see RobotIO, ModelNode, ModelNodeSet
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, Coordinate
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Coordinate
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

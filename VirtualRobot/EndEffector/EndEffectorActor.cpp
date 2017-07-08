@@ -13,6 +13,7 @@
 #include "../Model/ModelConfig.h"
 #include "../Model/Coordinate.h"
 #include "../CollisionDetection/CollisionChecker.h"
+#include "../CollisionDetection/CollisionModel.h"
 #include "EndEffector.h"
 #include "../Model/ModelNodeSet.h"
 
@@ -214,19 +215,19 @@ namespace VirtualRobot
 
     bool EndEffectorActor::isColliding(EndEffectorPtr eef, LinkSetPtr obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
     {
-        std::vector<SceneObjectPtr> colModels = obstacles->getSceneObjects();
+        //std::vector<CollisionModelPtr> colModels = obstacles->getCollisionModels();
         //Eigen::Vector3f contact;
         bool col = false;
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            for (std::vector<SceneObjectPtr>::iterator o = colModels.begin(); o != colModels.end(); o++)
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
+            for (auto o : obstacles ->getLinks())//= colModels.begin(); o != colModels.end(); o++)
             {
-
                 if ((n->colMode & checkColMode) &&
-                    ((*o)->getCollisionModel()) &&
-                    n->robotNode->getCollisionModel() &&
-                    colChecker->checkCollision(n->robotNode->getCollisionModel(), (*o)->getCollisionModel()))
+                    colChecker->checkCollision(l->getCollisionModel(), o->getCollisionModel()))
                 {
 
                     col = true;
@@ -234,13 +235,13 @@ namespace VirtualRobot
                     EndEffector::ContactInfo ci;
                     ci.eef = eef;
                     ci.actor = shared_from_this();
-                    ci.robotNode = n->robotNode;
-                    ci.obstacle = *o;
+                    ci.robotNode = l;
+                    ci.obstacle = o;
 
                     // todo: maybe not needed here: we are in collision, distance makes no sense...
                     // later the distance is calculated anyway (with slightly opened actors)
                     int id1, id2;
-                    ci.distance = colChecker->calculateDistance(ci.robotNode->getCollisionModel(), ci.obstacle->getCollisionModel(), ci.contactPointFingerGlobal, ci.contactPointObstacleGlobal, &id1, &id2);
+                    ci.distance = colChecker->calculateDistance(l->getCollisionModel(), o->getCollisionModel(), ci.contactPointFingerGlobal, ci.contactPointObstacleGlobal, &id1, &id2);
                     ci.contactPointFingerLocal = ci.obstacle->toLocalCoordinateSystemVec(ci.contactPointFingerGlobal);
                     ci.contactPointObstacleLocal = ci.obstacle->toLocalCoordinateSystemVec(ci.contactPointObstacleGlobal);
 
@@ -256,7 +257,10 @@ namespace VirtualRobot
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            if ((n->colMode & checkColMode) && n->robotNode->getCollisionModel() && colChecker->checkCollision(n->robotNode->getCollisionModel(), obstacles))
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
+            if ((n->colMode & checkColMode) && l->getCollisionModel() && colChecker->checkCollision(l->getCollisionModel(), obstacles->getCollisionModels()))
             {
                 return true;
             }
@@ -274,7 +278,10 @@ namespace VirtualRobot
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            if ((n->colMode & checkColMode) && n->robotNode->getCollisionModel() && colChecker->checkCollision(n->robotNode->getCollisionModel(), obstacle->getCollisionModel()))
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
+            if ((n->colMode & checkColMode) && l->getCollisionModel() && colChecker->checkCollision(l->getCollisionModel(), obstacle->getCollisionModel()))
             {
                 return true;
             }
@@ -287,9 +294,11 @@ namespace VirtualRobot
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(n->robotNode);
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
 
-            if ((n->colMode & eActors) && obstacle->isColliding(so))
+            if ((n->colMode & eActors) && obstacle->isColliding(l))
             {
                 return true;
             }
@@ -303,7 +312,7 @@ namespace VirtualRobot
         std::vector<EndEffectorActorPtr> obstacleActors;
         obstacle->getActors(obstacleActors);
 
-        std::vector<RobotNodePtr> obstacleStatics;
+        std::vector<ModelLinkPtr> obstacleStatics;
         obstacle->getStatics(obstacleStatics);
 
         for (std::vector<EndEffectorActorPtr>::iterator actor = obstacleActors.begin(); actor != obstacleActors.end(); actor++)
@@ -315,11 +324,9 @@ namespace VirtualRobot
             }
         }
 
-        for (std::vector<RobotNodePtr>::iterator node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
+        for (auto node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
         {
-            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(*node);
-
-            if (isColliding(so, EndEffectorActor::eStatic))
+            if (isColliding(*node, EndEffectorActor::eStatic))
             {
                 return true;
             }
@@ -333,7 +340,7 @@ namespace VirtualRobot
         std::vector<EndEffectorActorPtr> obstacleActors;
         obstacle->getActors(obstacleActors);
 
-        std::vector<RobotNodePtr> obstacleStatics;
+        std::vector<ModelLinkPtr> obstacleStatics;
         obstacle->getStatics(obstacleStatics);
 
         for (std::vector<EndEffectorActorPtr>::iterator actor = obstacleActors.begin(); actor != obstacleActors.end(); actor++)
@@ -345,11 +352,9 @@ namespace VirtualRobot
             }
         }
 
-        for (std::vector<RobotNodePtr>::iterator node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
+        for (auto node = obstacleStatics.begin(); node != obstacleStatics.end(); node++)
         {
-            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(*node);
-
-            if (isColliding(eef, so, storeContacts, EndEffectorActor::eStatic))
+            if (isColliding(eef, *node, storeContacts, EndEffectorActor::eStatic))
             {
                 return true;
             }
@@ -362,9 +367,11 @@ namespace VirtualRobot
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(n->robotNode);
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
 
-            if ((n->colMode & eActors) && obstacle->isColliding(eef, so, storeContacts))
+            if ((n->colMode & eActors) && obstacle->isColliding(eef, l, storeContacts))
             {
                 return true;
             }
@@ -374,9 +381,9 @@ namespace VirtualRobot
 
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, ModelPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
+    bool EndEffectorActor::isColliding(EndEffectorPtr eef, ModelLinkPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
     {
-        if (!obstacle || !obstacle->getCollisionModel())
+        if (!obstacle)
         {
             return false;
         }
@@ -386,17 +393,18 @@ namespace VirtualRobot
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (!l || !l->getCollisionModel())
+                continue;
             if ((n->colMode & checkColMode) &&
-                n->robotNode->getCollisionModel() &&
-                colChecker->checkCollision(n->robotNode->getCollisionModel(), obstacle->getCollisionModel()))
+                colChecker->checkCollision(l->getCollisionModel(), obstacle->getCollisionModel()))
             {
                 col = true;
                 // create contact info
                 EndEffector::ContactInfo ci;
                 ci.eef = eef;
                 ci.actor = shared_from_this();
-                ci.robotNode = n->robotNode;
+                ci.robotNode = l;
                 ci.obstacle = obstacle;
 
                 // todo: not needed here, later we calculate the distance with opened actors...
@@ -417,9 +425,9 @@ namespace VirtualRobot
 
 
 
-    std::vector< RobotNodePtr > EndEffectorActor::getRobotNodes()
+    std::vector< ModelNodePtr > EndEffectorActor::getModelNodes()
     {
-        std::vector< RobotNodePtr > res;
+        std::vector< ModelNodePtr > res;
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
@@ -497,9 +505,10 @@ namespace VirtualRobot
 
         for (size_t j = 0; j < actors.size(); j++)
         {
-            if (actors[j].robotNode->getCollisionModel())
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(actors[j].robotNode);
+            if (l && l->getCollisionModel())
             {
-                BoundingBox bb = actors[j].robotNode->getCollisionModel()->getBoundingBox();
+                BoundingBox bb = l->getCollisionModel()->getBoundingBox();
                 bb_all.addPoint(bb.getMin());
                 bb_all.addPoint(bb.getMax());
             }
@@ -520,13 +529,17 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < actors.size(); i++)
         {
+            ModelJointPtr l = std::dynamic_pointer_cast<ModelJoint>(actors[i].robotNode);
+            if (!l)
+                continue;
+
             RobotConfig::Configuration e;
-            e.name = actors[i].robotNode->getName();
-            e.value = actors[i].robotNode->getJointValue();
+            e.name = l->getName();
+            e.value = l->getJointValue();
             c.push_back(e);
         }
 
-        RobotConfigPtr res(new RobotConfig(actors[0].robotNode->getRobot(), name, c));
+        RobotConfigPtr res(new RobotConfig(actors[0].robotNode->getModel(), name, c));
         return res;
     }
 
