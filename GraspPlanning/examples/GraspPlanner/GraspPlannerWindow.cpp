@@ -178,7 +178,8 @@ void GraspPlannerWindow::buildVisu()
 
     if (eefCloned)
     {
-        visualizationRobot = eefCloned->getVisualization<CoinVisualization>(colModel);
+        visualizationRobot = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, volModel);
+        //eefCloned->getVisualization<CoinVisualization>(colModel);
         SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
 
         if (visualisationNode)

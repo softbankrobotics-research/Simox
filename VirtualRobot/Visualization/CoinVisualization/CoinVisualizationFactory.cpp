@@ -1250,7 +1250,7 @@ namespace VirtualRobot
         return CoinVisualizationFactory::CreatePolygonVisualization(cvHull3d, colorInner, colorLine, lineSize);
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, ModelLink::VisualizationType visuType, bool selectable)
     {
         if (!robot)
         {
@@ -1271,7 +1271,7 @@ namespace VirtualRobot
         return new SoSeparator;
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(SceneObjectPtr object, SceneObject::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(SceneObjectPtr object, ModelLink::VisualizationType visuType)
     {
         if (!object)
         {
@@ -1878,7 +1878,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, SceneObject::VisualizationType visu)
+    SoSeparator* CoinVisualizationFactory::CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, ModelLink::VisualizationType visu)
     {
         THROW_VR_EXCEPTION_IF(!grasp, "NULL data");
         SoSeparator* eefV = CreateEndEffectorVisualization(eef, visu);
@@ -1894,7 +1894,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, SceneObject::VisualizationType visu)
+    SoSeparator* CoinVisualizationFactory::CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, ModelLink::VisualizationType visu)
     {
         THROW_VR_EXCEPTION_IF(!graspSet, "NULL data");
         SoSeparator* visual = new SoSeparator;
@@ -1918,7 +1918,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreateEndEffectorVisualization(EndEffectorPtr eef, SceneObject::VisualizationType visu)
+    SoSeparator* CoinVisualizationFactory::CreateEndEffectorVisualization(EndEffectorPtr eef, ModelLink::VisualizationType visu)
     {
         //THROW_VR_EXCEPTION_IF (!eef,"NULL data");
         SoSeparator* res = new SoSeparator;

@@ -1,15 +1,18 @@
 #include "ModelNodeSet.h"
 #include "Nodes/ModelLink.h"
 #include "Nodes/ModelJoint.h"
-#include "VirtualRobotException.h"
+#include "../VirtualRobotException.h"
 #include "ModelConfig.h"
 #include "KinematicChain.h"
 
 namespace VirtualRobot
 {
 
-    ModelNodeSet::ModelNodeSet(const std::string &name, const ModelWeakPtr& model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const ModelNodePtr tcp) :
+    ModelNodeSet::ModelNodeSet(const std::string &name, 
+        const ModelWeakPtr& model, 
+        const std::vector<ModelNodePtr> &modelNodes,
+        const ModelNodePtr kinematicRoot, 
+        const CoordinatePtr tcp) :
             name(name),
             weakModel(model),
             modelNodes(modelNodes),
@@ -97,7 +100,12 @@ namespace VirtualRobot
         return mns;
     }
 
-    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const ModelNodePtr tcp, bool registerToModel)
+    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr& model, 
+        const std::string &name, 
+        const std::vector<ModelNodePtr> &modelNodes, 
+        const ModelNodePtr kinematicRoot, 
+        const CoordinatePtr tcp, 
+        bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -114,7 +122,7 @@ namespace VirtualRobot
 
             // assert, that all model links have the same collision checker
             VirtualRobot::CollisionCheckerPtr collisionChecker;
-            for (int i = 0; i < modelNodes.size(); i++)
+            for (unsigned int i = 0; i < modelNodes.size(); i++)
             {
                 if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
                 {
@@ -144,7 +152,7 @@ namespace VirtualRobot
         }
 
         // tcp
-        ModelNodePtr tcpNode = tcp;
+        CoordinatePtr tcpNode = tcp;
         if (!tcpNode)
         {
             if (!modelNodes.empty())
@@ -184,12 +192,12 @@ namespace VirtualRobot
         return modelNodes.at(i);
     }
 
-    std::vector::iterator ModelNodeSet::begin()
+    std::vector<ModelNodePtr>::iterator ModelNodeSet::begin()
     {
         return modelNodes.begin();
     }
 
-    std::vector::iterator ModelNodeSet::end()
+    std::vector<ModelNodePtr>::iterator ModelNodeSet::end()
     {
         return modelNodes.end();
     }
@@ -226,7 +234,7 @@ namespace VirtualRobot
         this->kinematicRoot = modelNode;
     }
 
-    ModelNodePtr ModelNodeSet::getTCP() const
+    CoordinatePtr ModelNodeSet::getTCP() const
     {
         return tcp;
     }
@@ -259,178 +267,7 @@ namespace VirtualRobot
     {
         return modelNodes.size();
     }
-
-    std::vector<CollisionModelPtr> ModelNodeSet::getCollisionModels()
-    {
-        std::vector<CollisionModelPtr> collisionModels;
-
-        for (size_t i = 0; i < modelNodes.size(); i++)
-        {
-            if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
-            {
-                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
-                collisionModels.push_back(link->getCollisionModel());
-            }
-        }
-
-        return collisionModels;
-    }
-
-    std::vector<float> ModelNodeSet::getJointValues() const
-    {
-        std::vector<float> fillVector;
-        getJointValues(fillVector);
-
-        return fillVector;
-    }
-
-    void ModelNodeSet::getJointValues(std::vector<float> &fillVector, bool clearVector) const
-    {
-        if (clearVector)
-        {
-            fillVector.clear();
-        }
-
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-
-        for (const ModelJointPtr & joint : modelJoints)
-        {
-            fillVector.push_back(joint->getJointValue());
-        }
-    }
-
-    void ModelNodeSet::getJointValues(Eigen::VectorXf &fillVector) const
-    {
-        std::vector<float> jointValues = getJointValues();
-        fillVector.resize(jointValues.size());
-
-        for (size_t i = 0; i < jointValues.size(); i++)
-        {
-            fillVector[i] = jointValues[i];
-        }
-    }
-
-    void ModelNodeSet::getJointValues(const ModelConfigPtr& config) const
-    {
-        THROW_VR_EXCEPTION_IF(!config, "NULL data");
-
-        for (size_t i = 0; i < modelNodes.size(); i++)
-        {
-            config->setConfig(modelNodes[i]->getName(), modelNodes[i]->getJointValue());
-        }
-    }
-
-    void ModelNodeSet::respectJointLimits(std::vector<float>& jointValues) const
-    {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            modelJoints[i]->respectJointLimits(jointValues[i]);
-        }
-    }
-
-    void ModelNodeSet::respectJointLimits(Eigen::VectorXf& jointValues) const
-    {
-        THROW_VR_EXCEPTION_IF(jointValues.size() != getModelJoints().size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            modelJoints[i]->respectJointLimits(jointValues[i]);
-        }
-    }
-
-    bool ModelNodeSet::checkJointLimits(const std::vector<float>& jointValues, bool verbose) const
-    {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            if (!modelJoints[i]->checkJointLimits(jointValues[i], verbose))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool ModelNodeSet::checkJointLimits(const Eigen::VectorXf& jointValues, bool verbose) const
-    {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            if (!modelJoints[i]->checkJointLimits(jointValues[i], verbose))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void ModelNodeSet::setJointValues(const std::vector<float>& jointValues)
-    {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        ModelPtr model = weakModel.lock();
-        VR_ASSERT(model);
-        WriteLockPtr lock = model->getWriteLock();
-
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            modelJoints[i]->setJointValueNoUpdate(jointValues[i]);
-        }
-
-        if (kinematicRoot)
-        {
-            kinematicRoot->updatePose();
-        }
-        else
-        {
-            model->applyJointValues();
-        }
-    }
-
-    void ModelNodeSet::setJointValues(const Eigen::VectorXf& jointValues)
-    {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
-        THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
-
-        ModelPtr model = weakModel.lock();
-        VR_ASSERT(model);
-        WriteLockPtr lock = model->getWriteLock();
-
-        for (size_t i = 0; i < modelJoints.size(); i++)
-        {
-            modelJoints[i]->setJointValueNoUpdate(jointValues[i]);
-        }
-
-        if (kinematicRoot)
-        {
-            kinematicRoot->updatePose();
-        }
-        else
-        {
-            model->applyJointValues();
-        }
-    }
-
-    void ModelNodeSet::setJointValues(const ModelConfigPtr& config)
-    {
-        config->setJointValues(getModel());
-    }
-
+    /*
     bool ModelNodeSet::isKinematicChain()
     {
         for (size_t i = modelNodes.size()-1; i > 0; --i)
@@ -453,82 +290,7 @@ namespace VirtualRobot
     KinematicChainPtr ModelNodeSet::toKinematicChain()
     {
         return KinematicChainPtr();
-    }
-
-    int ModelNodeSet::getNumFaces(bool collisionModel)
-    {
-        int result = 0;
-
-        for (const ModelLinkPtr & link : getModelLinks())
-        {
-            result += link->getNumFaces(collisionModel);
-        }
-
-        return result;
-    }
-
-    float ModelNodeSet::getMaximumExtension()
-    {
-        float result = 0;
-        Eigen::Matrix4f t;
-        Eigen::Vector3f v;
-
-        if (kinematicRoot && modelNodes.size() > 0)
-        {
-            t = kinematicRoot->getTransformationTo(modelNodes[0]);
-            v = MathTools::getTranslation(t);
-            result += v.norm();
-        }
-
-        for (size_t i = 0; i < modelNodes.size() - 1; i++)
-        {
-            t = modelNodes[i]->getTransformationTo(modelNodes[i + 1]);
-            v = MathTools::getTranslation(t);
-            result += v.norm();
-        }
-
-        if (tcp && modelNodes.size() > 0)
-        {
-            t = tcp->getTransformationTo(modelNodes[modelNodes.size() - 1]);
-            v = MathTools::getTranslation(t);
-            result += v.norm();
-        }
-
-        return result;
-    }
-
-    Eigen::Vector3f ModelNodeSet::getCoM()
-    {
-        Eigen::Vector3f res;
-        res.setZero();
-
-        float m = getMass();
-
-        if (m <= 0)
-        {
-            return res;
-        }
-
-        std::vector<ModelLinkPtr> modelLinks = getModelLinks();
-        for (size_t i = 0; i < modelLinks.size(); i++)
-        {
-            res += modelLinks[i]->getCoMGlobal() * modelLinks[i]->getMass() / m;
-        }
-
-        return res;
-    }
-
-    float ModelNodeSet::getMass()
-    {
-        float result = 0;
-
-        for (const ModelLinkPtr & link : getModelLinks())
-        {
-            result += link->getMass();
-        }
-
-        return result;
-    }
+    }*/
 
     bool ModelNodeSet::nodesSufficient(const std::vector<ModelNodePtr>& nodes) const
     {
@@ -644,7 +406,7 @@ namespace VirtualRobot
         return tcp;
     }
 
-    std::string ModelNodeSet::toXML(int tabs)
+    std::string ModelNodeSet::toXML(int tabs) const
     {
         std::stringstream ss;
         std::string t = "\t";
@@ -692,5 +454,13 @@ namespace VirtualRobot
             }
         }
         return modelLinks;
+    }
+    
+    std::vector<std::string> ModelNodeSet::getNodeNames() const
+    {
+        std::vector<std::string> res;
+        for (auto n: modelNodes)
+            res.push_back(n->getName());
+        return res;
     }
 }

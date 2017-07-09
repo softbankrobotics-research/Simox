@@ -1,8 +1,9 @@
 #include "Constraint.h"
+#include "../VirtualRobotException.h"
 
 using namespace VirtualRobot;
 
-Constraint::Constraint(const RobotNodeSetPtr& nodeSet) :
+Constraint::Constraint(const JointSetPtr& nodeSet) :
     JacobiProvider(nodeSet, JacobiProvider::eSVDDamped),
     lastError(-1),
     lastLastError(-1),
@@ -77,7 +78,7 @@ Eigen::MatrixXf Constraint::getJacobianMatrix()
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
-Eigen::MatrixXf Constraint::getJacobianMatrix(SceneObjectPtr /*tcp*/)
+Eigen::MatrixXf Constraint::getJacobianMatrix(CoordinatePtr /*tcp*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }

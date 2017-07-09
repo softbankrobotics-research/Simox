@@ -27,7 +27,7 @@ using namespace VirtualRobot;
 
 namespace VirtualRobot
 {
-    StackedIK::StackedIK(VirtualRobot::RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod method) :
+    StackedIK::StackedIK(VirtualRobot::JointSetPtr rns, JacobiProvider::InverseJacobiMethod method) :
         rns(rns),
         method(method)
     {

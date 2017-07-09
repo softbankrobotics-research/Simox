@@ -180,15 +180,15 @@ namespace VirtualRobot
             \param pose The grasp set is visualized relatively to this pose (e.g. use the object position here)
             \param visu The visualization type of the EEFs.
         */
-        static SoSeparator* CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), SceneObject::VisualizationType visu = SceneObject::Full);
+        static SoSeparator* CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), ModelLink::VisualizationType visu = ModelLink::VisualizationType::Full);
         static SoSeparator* CreateGraspVisualization(GraspPtr grasp, SoSeparator* eefVisu, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity());
-        static SoSeparator* CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), SceneObject::VisualizationType visu = SceneObject::Full);
+        static SoSeparator* CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose = Eigen::Matrix4f::Identity(), ModelLink::VisualizationType visu = ModelLink::VisualizationType::Full);
 
         /*!
             Create a visualization of the end effector.
             The visualization is moved, so that the origin is identical with the coordinate system of the TCP.
         */
-        static SoSeparator* CreateEndEffectorVisualization(EndEffectorPtr eef, SceneObject::VisualizationType = SceneObject::Full);
+        static SoSeparator* CreateEndEffectorVisualization(EndEffectorPtr eef, ModelLink::VisualizationType = ModelLink::VisualizationType::Full);
 
         /*!
             Creates a material node.
@@ -206,11 +206,11 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a robot
         */
-        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable=true);
+        //static SoNode* getCoinVisualization(RobotPtr robot, ModelLink::VisualizationType visuType, bool selectable=true);
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */
-        static SoNode* getCoinVisualization(SceneObjectPtr object, SceneObject::VisualizationType visuType);
+        static SoNode* getCoinVisualization(ModelPtr object, ModelLink::VisualizationType visuType);
 
         /*!
             Convenient method to retrieve a coin visualization for a set of contacts.
@@ -394,6 +394,12 @@ namespace VirtualRobot
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
         virtual void cleanup();
+
+        static std::shared_ptr<CoinVisualizationFactory> getGlobalCoinVisualizationFactory()
+        {
+            return std::dynamic_pointer_cast<CoinVisualizationFactory>(VisualizationFactory::first(NULL));
+        }
+
     protected:
         static SoNode* GetNodeFromPrimitive(Primitive::PrimitivePtr primitive, bool boundingBox, Color color);
         static void GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool bbox = false);
@@ -414,6 +420,7 @@ namespace VirtualRobot
     public:
         static std::string getName();
         static std::shared_ptr<VisualizationFactory> createInstance(void*);
+
     private:
         static SubClassRegistry registry;
     };

@@ -57,12 +57,12 @@ namespace VirtualRobot
         //! We need an Eigen::aligned_allocator here, otherwise access to a std::vector could crash
         typedef std::vector< ContactInfo, Eigen::aligned_allocator<ContactInfo> > ContactInfoVector;
 
-        EndEffector(const std::string& nameString,
+        EndEffector(const std::string& name,
                     const std::vector<EndEffectorActorPtr>& actorsVector,
-                    const std::vector<RobotNodePtr>& staticPartVector,
+                    const std::vector<ModelLinkPtr>& staticPartVector,
                     RobotNodePtr baseNodePtr,
                     CoordinatePtr tcpNodePtr,
-                    CoordinatePtr gcpNodePtr = RobotNodePtr(),
+                    CoordinatePtr gcpNodePtr = CoordinatePtr(),
                     std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
 
         virtual ~EndEffector();
@@ -78,33 +78,33 @@ namespace VirtualRobot
         /*!
             Return name of Base RobotNode.
         */
-        std::string getBaseNodeName();
+        std::string getBaseNodeName() const;
 
 
         /*!
             Return name of TCP RobotNode.
         */
-        std::string getTcpName();
+        std::string getTcpName() const;
 
-        RobotNodePtr getTcp();
-        RobotNodePtr getBase();
+        CoordinatePtr getTcp() const;
+        RobotNodePtr getBase() const;
 
         /*!
             Returns the grasp center point. If it was not defined, the TCP is returned.
         */
-        RobotNodePtr getGCP();
+        CoordinatePtr getGCP() const;
 
         /*!
             Return associated robot
         */
-        RobotPtr getRobot();
+        RobotPtr getRobot() const;
 
         CollisionCheckerPtr getCollisionChecker();
 
         /*!
             Return the type of the associated robot
         */
-        std::string getRobotType();
+        std::string getRobotType() const;
 
         void getActors(std::vector<EndEffectorActorPtr>& actors);
         void getStatics(std::vector<ModelLinkPtr>& statics);
@@ -125,9 +125,11 @@ namespace VirtualRobot
 
         /*!
             Build a LinkSet that covers all RobotNodes of this EndEffector.
+            \param kinematicRoot If not ste, the baseNode of this eef is used
+            \param tcp If not ste, the tcp node of this eef is used
             \note The set can be used for collision detection, e.g. to check if the eef is in collision with an obstacle.
         */
-        LinkSetPtr createLinkSet(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        LinkSetPtr createLinkSet(const ModelNodePtr &kinematicRoot = ModelNodePtr(), const CoordinatePtr &tcp = CoordinatePtr()) const;
 
         /*!
             Construct a robot that consists only of this eef.
@@ -170,8 +172,12 @@ namespace VirtualRobot
         */
         RobotConfigPtr getConfiguration();
 
-        //! Return all associated robot nodes
-        std::vector< RobotNodePtr > getAllNodes();
+        //! Return all associated model nodes
+        std::vector< ModelNodePtr > getModelNodes() const;
+        //! Return all associated links
+        std::vector< ModelLinkPtr > getLinks() const;
+        //! Return all associated joints
+        std::vector< ModelJointPtr > getJoints() const;
 
         //! Returns true, if nodes (only name strings are checked)  are sufficient for building this eef
         bool nodesSufficient(std::vector<RobotNodePtr> nodes) const;

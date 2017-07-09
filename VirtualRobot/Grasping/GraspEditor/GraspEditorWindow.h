@@ -9,8 +9,8 @@
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/ManipulationObject.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 #include <string.h>
 #include <QtGui>
 #if QT_VERSION >= 0x050000

@@ -25,7 +25,7 @@
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
-#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/Model/JointSet.h"
 
 
 namespace VirtualRobot
@@ -39,10 +39,10 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        JointLimitAvoidanceJacobi(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
+        JointLimitAvoidanceJacobi(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
 
         virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::SceneObjectPtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::CoordinatePtr tcp);
 
         /*!
             Computes the complete error vector that is given by the distance to the center of the joint limits.
@@ -57,12 +57,12 @@ namespace VirtualRobot
         bool checkTolerances();
 
     protected:
-        std::vector<RobotNodePtr> nodes;
+        std::vector<ModelJointPtr> nodes;
     };
 
     typedef std::shared_ptr<JointLimitAvoidanceJacobi> JointLimitAvoidanceJacobiPtr;
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_JointLimitAvoidanceJacobi_h_
+#endif
 

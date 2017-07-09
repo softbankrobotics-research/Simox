@@ -47,7 +47,7 @@ namespace VirtualRobot
         };
 
     public:
-        ConstrainedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8, bool reduceRobot = false);
+        ConstrainedIK(RobotPtr& robot, const JointSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);// , bool reduceRobot = false);
 
         void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
         void removeConstraint(const ConstraintPtr& constraint);
@@ -68,8 +68,8 @@ namespace VirtualRobot
         int getCurrentIteration();
 
     protected:
-        void getUnitableNodes(const RobotNodePtr &robotNode, const RobotNodeSetPtr &nodeSet, std::vector<std::string> &unitable);
-        RobotPtr buildReducedRobot(const RobotPtr &original);
+        //void getUnitableNodes(const RobotNodePtr &robotNode, const RobotNodeSetPtr &nodeSet, std::vector<std::string> &unitable);
+        //RobotPtr buildReducedRobot(const RobotPtr &original);
 
     protected:
         std::vector<ConstraintPtr> constraints;
@@ -78,7 +78,7 @@ namespace VirtualRobot
 
         RobotPtr originalRobot;
         RobotPtr robot;
-        RobotNodeSetPtr nodeSet;
+        JointSetPtr nodeSet;
         Eigen::VectorXf initialConfig;
 
         std::vector<std::pair<SeedType, Eigen::VectorXf> > seeds;

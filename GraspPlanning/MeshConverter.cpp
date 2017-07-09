@@ -46,7 +46,7 @@ namespace GraspStudio
             return res;
         }
 
-        VisualizationFactoryPtr cv = VisualizationFactory::first(NULL);
+        VisualizationFactoryPtr cv = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (!cv)
         {
@@ -199,7 +199,7 @@ namespace GraspStudio
             checkAndSplitVertex(triMesh2, i, maxDist);
         }
 
-        VisualizationFactoryPtr cv = VisualizationFactory::first(NULL);
+        VisualizationFactoryPtr cv = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (!cv)
         {

@@ -108,6 +108,10 @@ namespace VirtualRobot
         //static void processDHNode(rapidxml::xml_node<char>* dhXMLNode, DHParameter& dh);
 
         static std::string toXML(const Eigen::Matrix4f& m, std::string ident = "\t");
+        static std::string getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag = false);
+        static std::string getTransformXMLString(const Eigen::Matrix4f& m, const std::string& tabs, bool skipMatrixTag = false);
+        static std::string getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag = false);
+        static std::string getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag = false);
 
         static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
     protected:

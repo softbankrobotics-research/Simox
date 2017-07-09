@@ -1,9 +1,10 @@
 #ifndef _VirtualRobot_KinematicChain_h_
 #define _VirtualRobot_KinematicChain_h_
 
-#include "Model/Model.h"
-#include "Model/Nodes/ModelNode.h"
-#include "RobotNodeSet.h"
+#include "../VirtualRobot.h"
+#include "Model.h"
+#include "Nodes/ModelNode.h"
+#include "ModelNodeSet.h"
 
 #include <string>
 #include <vector>
@@ -11,15 +12,13 @@
 
 namespace VirtualRobot
 {
-    class Robot;
-
     /*!
         A KinematicChain is a RobotNodeSet that fulfills some constraints on the covered RobotNodes.
         The nodes form a kinematic chain, which means that two successive nodes are uniquely connected in the kinematic tree of the robot.
         E.g. node i and node i+1 are parent and child or node i+1 is child of a child of node i, etc.
         \see RobotNodeSet
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT KinematicChain : public RobotNodeSet
+    class VIRTUAL_ROBOT_IMPORT_EXPORT KinematicChain : public ModelNodeSet
     {
     public:
         friend class RobotFactory;
