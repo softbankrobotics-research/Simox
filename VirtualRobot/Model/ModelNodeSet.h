@@ -27,7 +27,7 @@
 
 namespace VirtualRobot
 {
-    class ModelNodeSet
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNodeSet
     {
     protected:
         /*!
@@ -46,7 +46,7 @@ namespace VirtualRobot
                      const ModelWeakPtr& model,
                      const std::vector<ModelNodePtr>& modelNodes,
                      const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const ModelNodePtr tcp = ModelNodePtr());
+                     const CoordinatePtr tcp = CoordinatePtr());
 
     public:
         /*!
@@ -181,7 +181,7 @@ namespace VirtualRobot
          *
          * @return The new tcp.
          */
-        ModelNodePtr getTCP() const;
+        CoordinatePtr getTCP() const;
 
         /*!
          * Print out some information.
@@ -214,6 +214,10 @@ namespace VirtualRobot
          */
         virtual std::string toXML(int tabs) const;
 
+        std::vector<ModelJointPtr> getModelJoints() const;
+
+        std::vector<ModelLinkPtr> getModelLinks() const;
+
     protected:
         ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
         ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
@@ -223,7 +227,7 @@ namespace VirtualRobot
         ModelWeakPtr weakModel;
         std::vector<ModelNodePtr> modelNodes;
         ModelNodePtr kinematicRoot;
-        ModelNodePtr tcp;
+        CoordinatePtr tcp;
     };
 }
 

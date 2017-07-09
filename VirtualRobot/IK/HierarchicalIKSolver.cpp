@@ -1,7 +1,7 @@
 #include "HierarchicalIKSolver.h"
 //#define DEBUG
 
-HierarchicalIKSolver::HierarchicalIKSolver(RobotNodeSetPtr allRobotNodes) : HierarchicalIK(allRobotNodes)
+HierarchicalIKSolver::HierarchicalIKSolver(JointSetPtr allRobotNodes) : HierarchicalIK(allRobotNodes)
 {
     //rns = allRobotNodes;
 }
@@ -24,13 +24,13 @@ bool HierarchicalIKSolver::computeSteps(float stepSize, float minChange, int max
     {
         Eigen::VectorXf delta = computeStep(jacobies, stepSize);
 
-        if (!MathTools::isValid(delta))
+        /*if (!MathTools::isValid(delta))
         {
 #ifdef DEBUG
             VR_INFO << "Singular Jacobian" << endl;
 #endif
             return false;
-        }
+        }*/
 
         Eigen::VectorXf jv(delta.rows());
         rns->getJointValues(jv);

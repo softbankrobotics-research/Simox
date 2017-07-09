@@ -11,6 +11,8 @@
 #include "EndEffectorActor.h"
 #include "../Model/ModelNodeSet.h"
 #include "../Model/Nodes/ModelNode.h"
+#include "../Model/Nodes/ModelJoint.h"
+#include "../Model/Nodes/ModelLink.h"
 #include "../Model/ModelConfig.h"
 #include "../CollisionDetection/CollisionChecker.h"
 
@@ -19,14 +21,14 @@
 namespace VirtualRobot
 {
 
-    EndEffector::EndEffector(const std::string& nameString,
+    EndEffector::EndEffector(const std::string& name,
                              const std::vector<EndEffectorActorPtr>& actorsVector,
-                             const std::vector<RobotNodePtr>& staticPartVector,
+                             const std::vector<ModelLinkPtr>& staticPartVector,
                              RobotNodePtr baseNodePtr,
                              CoordinatePtr tcpNodePtr,
                              CoordinatePtr gcpNodePtr,
                              std::vector< RobotConfigPtr > preshapes) :
-        name(nameString),
+        name(name),
         actors(actorsVector),
         statics(staticPartVector),
         baseNode(baseNodePtr),
@@ -69,13 +71,13 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!newBase, " New robot does not own a base node with name " << baseNode->getName());
         THROW_VR_EXCEPTION_IF(!newTCP, " New robot does not own a tcp node with name " << tcpNode->getName());
         THROW_VR_EXCEPTION_IF(!newGCP, " New robot does not own a gcp node with name " << gcpNode->getName());
-        std::vector<RobotNodePtr> newStatics(statics.size());
+        std::vector<ModelLinkPtr> newStatics(statics.size());
         std::vector<EndEffectorActorPtr> newActors(actors.size());
         std::vector<RobotConfigPtr> newPreshapes;
 
         for (size_t i = 0; i < statics.size(); i++)
         {
-            newStatics[i] = newRobot->getModelNode(statics[i]->getName());
+            newStatics[i] = newRobot->getLink(statics[i]->getName());
         }
 
         for (size_t i = 0; i < actors.size(); i++)
@@ -181,42 +183,55 @@ namespace VirtualRobot
         closeActors(obstacles, -stepSize);
     }
 
-    VirtualRobot::LinkSetPtr EndEffector::createLinkSet(CollisionCheckerPtr colChecker)
+    VirtualRobot::LinkSetPtr EndEffector::createLinkSet(const ModelNodePtr &kinematicRoot, const CoordinatePtr &tcp) const
     {
-        LinkSetPtr cms(new LinkSetPtr(name, colChecker));
-        cms->addLinks(statics->getLinks());
-
-        for (std::vector<EndEffectorActorPtr>::iterator i = actors.begin(); i != actors.end(); i++)
+        std::vector<ModelNodePtr> links;
+        links.insert(links.end(), statics.begin(), statics.end());
+        for (auto i = actors.begin(); i != actors.end(); i++)
         {
-            cms->addLink((*i)->getLinks());
+            std::vector<ModelLinkPtr> l = (*i)->getLinks();
+            if (l.size()>0)
+                links.insert(links.end(), l.begin(), l.end());
         }
+        ModelNodePtr kinRoot = kinematicRoot;
+        if (!kinRoot)
+            kinRoot = baseNode;
+        CoordinatePtr tcpCoord = tcp;
+        if (!tcpCoord)
+            tcpCoord = tcpNode;
+
+
+        LinkSetPtr cms = LinkSet::createLinkSet(this->getRobot(), name, links, kinRoot, tcpCoord, false);
 
         return cms;
-
     }
 
-    std::string EndEffector::getBaseNodeName()
+    std::string EndEffector::getBaseNodeName() const
     {
+        if (!baseNode)
+            return std::string("");
         return baseNode->getName();
     }
 
 
-    std::string EndEffector::getTcpName()
+    std::string EndEffector::getTcpName() const
     {
+        if (!tcpNode)
+            return std::string("");
         return tcpNode->getName();
     }
 
-    VirtualRobot::RobotPtr EndEffector::getRobot()
+    VirtualRobot::RobotPtr EndEffector::getRobot() const
     {
         if (!baseNode)
         {
             return RobotPtr();
         }
 
-        return baseNode->getRobot();
+        return baseNode->getModel();
     }
 
-    std::string EndEffector::getRobotType()
+    std::string EndEffector::getRobotType() const
     {
         RobotPtr r = getRobot();
 
@@ -280,29 +295,29 @@ namespace VirtualRobot
         cout << endl;
     }
 
-    VirtualRobot::RobotNodePtr EndEffector::getTcp()
+    VirtualRobot::CoordinatePtr EndEffector::getTcp() const
     {
         return tcpNode;
     }
 
-    VirtualRobot::RobotNodePtr EndEffector::getGCP()
+    VirtualRobot::CoordinatePtr EndEffector::getGCP() const
     {
         return gcpNode;
     }
 
-    VirtualRobot::RobotNodePtr EndEffector::getBase()
+    VirtualRobot::RobotNodePtr EndEffector::getBase() const
     {
         return baseNode;
     }
 
     VirtualRobot::CollisionCheckerPtr EndEffector::getCollisionChecker()
     {
-        if (!baseNode)
+        if (!getRobot())
         {
             return CollisionChecker::getGlobalCollisionChecker();
         }
 
-        return baseNode->getCollisionChecker();
+        return getRobot()->getCollisionChecker();
     }
 
     void EndEffector::registerPreshape(RobotConfigPtr preshape)
@@ -371,7 +386,7 @@ namespace VirtualRobot
             iA++;
         }
 
-        std::vector<RobotNodePtr>::iterator iS = statics.begin();
+        auto iS = statics.begin();
 
         while (iS != statics.end())
         {
@@ -389,32 +404,25 @@ namespace VirtualRobot
     VirtualRobot::RobotConfigPtr EndEffector::getConfiguration()
     {
         VirtualRobot::RobotConfigPtr result(new VirtualRobot::RobotConfig(getRobot(), getName()));
-        std::vector< RobotNodePtr > rn = getAllNodes();
+        std::vector< ModelJointPtr > rn = getJoints();
 
         for (size_t i = 0; i < rn.size(); i++)
         {
-            if (rn[i]->isRotationalJoint() || rn[i]->isTranslationalJoint())
-            {
-                result->setConfig(rn[i]->getName(), rn[i]->getJointValue());
-            }
+            result->setConfig(rn[i]->getName(), rn[i]->getJointValue());
         }
 
         return result;
     }
 
-    std::vector< RobotNodePtr > EndEffector::getAllNodes()
+    std::vector< ModelNodePtr > EndEffector::getModelNodes() const
     {
         // avoid double entries
-        std::map< RobotNodePtr, RobotNodePtr > mapR;
+        std::map< ModelNodePtr, ModelNodePtr > mapR;
 
         if (baseNode)
-        {
             mapR[baseNode] = baseNode;
-            mapR[tcpNode] = tcpNode;
-            mapR[gcpNode] = gcpNode;
-        }
 
-        std::vector<EndEffectorActorPtr>::iterator iA = actors.begin();
+        auto iA = actors.begin();
 
         while (iA != actors.end())
         {
@@ -428,7 +436,7 @@ namespace VirtualRobot
             iA++;
         }
 
-        std::vector<RobotNodePtr>::iterator iS = statics.begin();
+        auto iS = statics.begin();
 
         while (iS != statics.end())
         {
@@ -446,6 +454,33 @@ namespace VirtualRobot
         }
 
         return result;
+    }
+
+
+    std::vector< ModelLinkPtr > EndEffector::getLinks() const
+    {
+        std::vector< ModelNodePtr > allNodes = getModelNodes();
+        std::vector< ModelLinkPtr > res;
+        for (auto n : allNodes)
+        {
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n);
+            if (l)
+                res.push_back(l);
+        }
+        return res;
+    }
+
+    std::vector< ModelJointPtr > EndEffector::getJoints() const
+    {
+        std::vector< ModelNodePtr > allNodes = getModelNodes();
+        std::vector< ModelJointPtr > res;
+        for (auto n : allNodes)
+        {
+            ModelJointPtr l = std::dynamic_pointer_cast<ModelJoint>(n);
+            if (l)
+                res.push_back(l);
+        }
+        return res;
     }
 
     bool EndEffector::nodesSufficient(std::vector<RobotNodePtr> nodes) const
@@ -637,26 +672,35 @@ namespace VirtualRobot
         if (!obstacle)
             return 0;
 
+        // todo: models with more than one link are not supported yet
+        std::vector<ModelLinkPtr> links = obstacle->getLinks();
+        if (links.size() == 0)
+            return 0;
+        if (links.size() > 1)
+        {
+            VR_WARNING << "Obstacles with more than one body are not supported yet, only the first model will be considered";
+        }
+        ModelLinkPtr o = links.at(0);
+
         int contactCount = 0;
 
         for (size_t i = 0; i < statics.size(); i++)
         {
-            RobotNodePtr n = statics[i];
+            ModelLinkPtr n = statics[i];
 
             if (!n->getCollisionModel())
                 continue;
+
             int id1, id2;
             Eigen::Vector3f p1,p2;
-            float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(),obstacle->getCollisionModel(),p1,p2,&id1,&id2);
+            float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(), o->getCollisionModel(), p1, p2, &id1, &id2);
             VR_INFO << n->getName() << " - DIST: " << dist << endl;
             if (dist<=maxDistance)
             {
                 EndEffector::ContactInfo ci;
                 ci.eef = shared_from_this();
-                //ci.actor = ;
                 ci.robotNode = n;
-                ci.obstacle = obstacle;
-
+                ci.obstacle = o;
                 ci.distance = dist;
                 ci.contactPointFingerGlobal = p1;
                 ci.contactPointObstacleGlobal = p2;

@@ -2,13 +2,12 @@
 #include "GraspEditorWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
-#include "VirtualRobot/SphereApproximator.h"
+#include "VirtualRobot/Tools/SphereApproximator.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
 
 #include <QFileDialog>
@@ -231,27 +230,32 @@ namespace VirtualRobot
 
     void GraspEditorWindow::buildVisu()
     {
-        if (visualizationRobot)
+        /*if (visualizationRobot)
         {
             visualizationRobot->highlight(false);
-        }
+        }*/
 
         eefVisu->removeAllChildren();
 
         showCoordSystem();
-        SceneObject::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        ModelLink::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
         if (!UI->checkBoxTCP->isChecked())
         {
             if (robotEEF)
             {
-                visualizationRobot = robotEEF->getVisualization<CoinVisualization>(colModel);
-                SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
-
-                if (visualisationNode)
+                CoinVisualizationFactoryPtr f = CoinVisualizationFactory::getGlobalCoinVisualizationFactory();
+                if (f)
                 {
-                    eefVisu->addChild(visualisationNode);
-                    //visualizationRobot->highlight(true);
+                    SoNode* visualisationNode = f->getCoinVisualization(robotEEF, colModel);
+                    //robotEEF->getVisualization<CoinVisualization>(colModel);
+                    //SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
+
+                    if (visualisationNode)
+                    {
+                        eefVisu->addChild(visualisationNode);
+                        //visualizationRobot->highlight(true);
+                    }
                 }
             }
         }
@@ -259,7 +263,7 @@ namespace VirtualRobot
         {
             if (robotEEF && robotEEF_EEF)
             {
-                RobotNodePtr tcp = robotEEF_EEF->getTcp();
+                CoordinatePtr tcp = robotEEF_EEF->getTcp();
 
                 if (tcp)
                 {
@@ -279,11 +283,10 @@ namespace VirtualRobot
 
         if (object)
         {
-
             SoNode* visualisationNode = NULL;
-            std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
-            if (visualizationObject)
-                visualisationNode = visualizationObject->getCoinVisualization();
+            CoinVisualizationFactoryPtr f = CoinVisualizationFactory::getGlobalCoinVisualizationFactory();
+            if (f)
+                visualisationNode = f->getCoinVisualization(object, colModel);
 
             if (visualisationNode)
             {
@@ -408,7 +411,7 @@ namespace VirtualRobot
             return;
         }
 
-        robot->getEndEffectors(eefs);
+        eefs = robot->getEndEffectors();
         updateEEFBox();
 
         if (eefs.size() == 0)
@@ -645,7 +648,7 @@ namespace VirtualRobot
             //cout << "getGlobalPose TCP:" << endl <<  robotEEF_EEF->getTcp()->getGlobalPose() << endl;
             Eigen::Matrix4f m;
             MathTools::posrpy2eigen4f(x, m);
-            RobotNodePtr tcp = robotEEF_EEF->getTcp();
+            CoordinatePtr tcp = robotEEF_EEF->getTcp();
             m = tcp->getGlobalPose() * m;
             //cout << "pose:" << endl << m << endl;
             setCurrentGrasp(m);
@@ -689,8 +692,8 @@ namespace VirtualRobot
     {
         if (robotEEF && robotEEF_EEF && currentGrasp && object)
         {
-            RobotNodePtr tcp = robotEEF_EEF->getTcp();
-            robotEEF->setGlobalPoseForRobotNode(tcp, p);
+            CoordinatePtr tcp = robotEEF_EEF->getTcp();
+            robotEEF->setGlobalPoseForModelNode(tcp, p);
             Eigen::Matrix4f objP = object->getGlobalPose();
             Eigen::Matrix4f pLocal = tcp->toLocalCoordinateSystem(objP);
             currentGrasp->setTransformation(pLocal);
@@ -703,19 +706,19 @@ namespace VirtualRobot
     {
         if (robotEEF && robotEEF_EEF)
         {
-            RobotNodePtr tcp = robotEEF_EEF->getTcp();
+            CoordinatePtr tcp = robotEEF_EEF->getTcp();
 
             if (!tcp)
             {
                 return;
             }
 
-            tcp->showCoordinateSystem(UI->checkBoxTCP->isChecked());
+            //tcp->showCoordinateSystem(UI->checkBoxTCP->isChecked());
         }
 
         if (object)
         {
-            object->showCoordinateSystem(UI->checkBoxTCP->isChecked());
+            //object->showCoordinateSystem(UI->checkBoxTCP->isChecked());
         }
     }
 

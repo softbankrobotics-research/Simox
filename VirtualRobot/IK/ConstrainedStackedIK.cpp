@@ -1,8 +1,9 @@
 #include "ConstrainedStackedIK.h"
+#include "../VirtualRobotException.h"
 
 using namespace VirtualRobot;
 
-ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize, int maxIterations, JacobiProvider::InverseJacobiMethod method) :
+ConstrainedStackedIK::ConstrainedStackedIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize, int maxIterations, JacobiProvider::InverseJacobiMethod method) :
     ConstrainedIK(robot, nodeSet, maxIterations),
     nodeSet(nodeSet),
     method(method),

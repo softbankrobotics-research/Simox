@@ -9,7 +9,7 @@ class HierarchicalIKSolver : public HierarchicalIK, public std::enable_shared_fr
 {
 
 public:
-    HierarchicalIKSolver(RobotNodeSetPtr allRobotNodes);
+    HierarchicalIKSolver(JointSetPtr allRobotNodes);
     bool solveIK(float stepSize = 0.2, float minChange = 0.0, int maxSteps = 50);
     bool computeSteps(float stepSize, float minChange, int maxSteps);
     void addIK(JacobiProviderPtr jacProvider);

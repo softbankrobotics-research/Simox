@@ -422,18 +422,40 @@ namespace VirtualRobot
     }
 
 
-
-
-
-    std::vector< ModelNodePtr > EndEffectorActor::getModelNodes()
+    std::vector< ModelNodePtr > EndEffectorActor::getModelNodes() const
     {
         std::vector< ModelNodePtr > res;
 
-        for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
+        for (auto n = actors.begin(); n != actors.end(); n++)
         {
             res.push_back(n->robotNode);
         }
 
+        return res;
+    }
+
+    std::vector< ModelLinkPtr > EndEffectorActor::getLinks() const
+    {
+        std::vector< ModelLinkPtr > res;
+
+        for (auto n = actors.begin(); n != actors.end(); n++)
+        {
+            ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
+            if (l)
+                res.push_back(l);
+        }
+        return res;
+    }
+
+    std::vector< ModelJointPtr > EndEffectorActor::getJoints() const
+    {
+        std::vector< ModelJointPtr > res;
+        for (auto n = actors.begin(); n != actors.end(); n++)
+        {
+            ModelJointPtr l = std::dynamic_pointer_cast<ModelJoint>(n->robotNode);
+            if (l)
+                res.push_back(l);
+        }
         return res;
     }
 

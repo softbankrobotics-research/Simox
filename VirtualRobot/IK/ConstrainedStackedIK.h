@@ -33,7 +33,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedStackedIK : public ConstrainedIK, public std::enable_shared_from_this<ConstrainedStackedIK>
     {
     public:
-        ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
+        ConstrainedStackedIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
                              JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
         bool initialize();
@@ -41,7 +41,7 @@ namespace VirtualRobot
         virtual bool solveStep();
 
     protected:
-        RobotNodeSetPtr nodeSet;
+        JointSetPtr nodeSet;
         StackedIKPtr ik;
 
         std::vector<JacobiProviderPtr> jacobians;

@@ -27,8 +27,8 @@
 #include "VirtualRobot/IK/DifferentialIK.h"
 #include "VirtualRobot/IK/JointLimitAvoidanceJacobi.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
-#include "VirtualRobot/RobotNodeSet.h"
-#include "VirtualRobot/Nodes/RobotNodePrismatic.h"
+#include "VirtualRobot/Model/JointSet.h"
+#include "VirtualRobot/Model/Nodes/ModelJointPrismatic.h"
 #include "VirtualRobot/Model/Model.h"
 
 
@@ -52,7 +52,7 @@ namespace VirtualRobot
                        The TCP of the RNS is tried to position at the goal pose.
             \param virtualTranslationJoint A prismatic joint (usually without any models and physics properties) that represents the gaze
         */
-        GazeIK(RobotNodeSetPtr rns, RobotNodePrismaticPtr virtualTranslationJoint);
+        GazeIK(JointSetPtr rns, ModelJointPrismaticPtr virtualTranslationJoint);
 
         /*!
             The standard setup can be changed with this method.
@@ -94,9 +94,9 @@ namespace VirtualRobot
 
         bool checkTolerances(const Eigen::Vector3f& goal);
 
-        std::vector<RobotNodePtr> nodes;
-        RobotNodeSetPtr rns;
-        RobotNodePrismaticPtr virtualTranslationJoint;
+        std::vector<ModelJointPtr> nodes;
+        JointSetPtr rns;
+        ModelJointPrismaticPtr virtualTranslationJoint;
 
         HierarchicalIKPtr ikSolver;
         DifferentialIKPtr ikGaze;

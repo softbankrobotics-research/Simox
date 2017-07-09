@@ -93,12 +93,17 @@ namespace VirtualRobot
         virtual bool hasModelNode(const std::string& modelNodeName) const;
 
         /*!
-         * Get a pointer to the ModelNode, identified by the given name.
+         * Get a pointer to the ModelNode, identified by the given name. This node could be a link or joint.
          *
          * @param modelNodeName The name of the ModelNode.
          * @return A pointer to the ModelNode.
+         *
+         *@see getLink
+         *@see gteJoint
          */
         virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
+        virtual ModelLinkPtr getLink(const std::string& modelNodeName) const;
+        virtual ModelJointPtr getJoint(const std::string& modelNodeName) const;
 
         /*!
         * Check, if the Coordinate is registered to this model (either a ModelNode or an attached entity).
@@ -203,13 +208,24 @@ namespace VirtualRobot
          * \brief getJoints Returns all joints of this model
          * \return
          */
-        virtual JointSetPtr getJoints() const;
+        virtual std::vector<ModelJointPtr> getJoints() const;
+        /*!
+        * \brief getJoints Returns all joints of this model encapsulated in a JointSet
+        * \return
+        */
+        virtual JointSetPtr getJointSet() const;
 
         /*!
          * \brief getLinks Returns all links of this model
          * \return
          */
-        virtual LinkSetPtr getLinks() const;
+        virtual std::vector<ModelLinkPtr> getLinks() const;
+
+        /*!
+        * \brief getLinks Returns all links of this model encapsulated in a LinkSet
+        * \return
+        */
+        virtual LinkSetPtr getLinkSet() const;
 
         /*!
          * Get all node sets, registered to this model.
@@ -276,12 +292,12 @@ namespace VirtualRobot
 
 
         /*!
-         * Set the global pose of this model so that the ModelNode node is at position globalPoseNode.
+         * Set the global pose of this model so that the ModelNode/Coordinate node is at position globalPoseNode.
          *
-         * @param node The node to set the position relative to.
+         * @param node The coordinate/node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
-        virtual void setGlobalPoseForModelNode(const ModelNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForModelNode(const CoordinatePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.
@@ -328,12 +344,13 @@ namespace VirtualRobot
 
         /*!
          * Shows the coordinate systems of the model nodes.
-         * This adds or removes a Attachment.
+         * This adds or removes an Attachment.
          *
          * @param enable If true, the coordinate system is shown; if false it is removed.
          */
         void showCoordinateSystems(bool enable);
 
+        // TODO: move to Visualization factory
         /*!
          * Convenient method for highlighting the visualization of this model.
          * It is automatically checked whether the collision model or the full model is part of the visualization.
@@ -341,8 +358,9 @@ namespace VirtualRobot
          * @param visualization The visualization for which the highlighting should be performed.
          * @param enable On or off
          */
-        virtual void highlight(const VisualizationPtr& visualization, bool enable);
+        //virtual void highlight(const VisualizationPtr& visualization, bool enable);
 
+        // TODO: move to Visualization factory
         /*!
          * Display some physics debugging information.
          *
@@ -352,8 +370,8 @@ namespace VirtualRobot
          * @param comModel If set, this visualization is used to display the CoM location.
          *                 If not set, a standard marker is used.
          */
-        void showPhysicsInformation(bool enableCoM, bool enableInertial,
-                                    const VisualizationNodePtr& comModel = VisualizationNodePtr());
+        //void showPhysicsInformation(bool enableCoM, bool enableInertial,
+        //                            const VisualizationNodePtr& comModel = VisualizationNodePtr());
 
         /*!
          * Setup the full model visualization.
@@ -610,8 +628,15 @@ namespace VirtualRobot
         virtual ModelPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                                float scaling = 1.0f);
 
-     
-    private:
+        bool hasEndEffector(const EndEffectorPtr &eef) const;
+        void registerEndEffector(const EndEffectorPtr &eef);
+        void deregisterEndEffector(const EndEffectorPtr &eef);
+
+        EndEffectorPtr getEndEffector(const std::string &name) const;
+        std::vector<EndEffectorPtr> getEndEffectors() const;
+
+
+    protected:
         std::string name;
         std::string type;
         float scaling;
@@ -625,6 +650,7 @@ namespace VirtualRobot
 
         std::map<std::string, ModelNodePtr> modelNodeMap;
         std::map<std::string, ModelNodeSetPtr> modelNodeSetMap;
+        std::map<std::string, EndEffectorPtr> eefMap;
 
         std::string filename;
     };

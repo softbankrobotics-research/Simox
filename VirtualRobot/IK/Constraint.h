@@ -44,7 +44,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public std::enable_shared_from_this<Constraint>
     {
     public:
-        Constraint(const RobotNodeSetPtr& nodeSet);
+        Constraint(const JointSetPtr& nodeSet);
 
         void initialize();
 

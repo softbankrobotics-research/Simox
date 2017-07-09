@@ -192,7 +192,7 @@ void GenericIKWindow::collisionModel()
 
     robotSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
     std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
@@ -242,8 +242,7 @@ void GenericIKWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns;
-    robot->getModelNodeSets(rns);
+    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)

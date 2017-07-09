@@ -1,7 +1,7 @@
 #include <Eigen/Geometry>
 #include "JacobiProvider.h"
-
-
+#include "../VirtualRobotException.h"
+#include "../Tools/MathTools.h"
 
 #include <algorithm>
 
@@ -12,7 +12,7 @@ using namespace Eigen;
 namespace VirtualRobot
 {
 
-    JacobiProvider::JacobiProvider(RobotNodeSetPtr rns, InverseJacobiMethod invJacMethod) :
+    JacobiProvider::JacobiProvider(JointSetPtr rns, InverseJacobiMethod invJacMethod) :
         name("JacobiProvvider"), rns(rns), inverseMethod(invJacMethod)
     {
         initialized = false;
@@ -27,12 +27,12 @@ namespace VirtualRobot
         return getJacobianMatrix().cast<double>();
     }
 
-    MatrixXd JacobiProvider::getJacobianMatrixD(SceneObjectPtr tcp)
+    MatrixXd JacobiProvider::getJacobianMatrixD(CoordinatePtr tcp)
     {
         return getJacobianMatrix(tcp).cast<double>();
     }
 
-    Eigen::MatrixXf JacobiProvider::getPseudoInverseJacobianMatrix(SceneObjectPtr tcp)
+    Eigen::MatrixXf JacobiProvider::getPseudoInverseJacobianMatrix(CoordinatePtr tcp)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
@@ -51,7 +51,7 @@ namespace VirtualRobot
         return res;
     }
 
-    Eigen::MatrixXd JacobiProvider::getPseudoInverseJacobianMatrixD(SceneObjectPtr tcp)
+    Eigen::MatrixXd JacobiProvider::getPseudoInverseJacobianMatrixD(CoordinatePtr tcp)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
@@ -273,7 +273,7 @@ namespace VirtualRobot
 
 
 
-    VirtualRobot::RobotNodeSetPtr JacobiProvider::getRobotNodeSet()
+    VirtualRobot::JointSetPtr JacobiProvider::getJointSet()
     {
         return rns;
     }

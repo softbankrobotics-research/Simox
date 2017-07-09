@@ -672,10 +672,6 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT print(const Eigen::VectorXf& v, bool endline = true);
         void VIRTUAL_ROBOT_IMPORT_EXPORT printMat(const Eigen::MatrixXf& m, bool endline = true);
         void VIRTUAL_ROBOT_IMPORT_EXPORT print(const std::vector<float>& v, bool endline = true);
-        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag = false);
-        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix4f& m, const std::string& tabs, bool skipMatrixTag = false);
-        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag = false);
-        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag = false);
         void VIRTUAL_ROBOT_IMPORT_EXPORT convertMM2M(const std::vector<ContactPoint> points, std::vector<ContactPoint>& storeResult);
 
 

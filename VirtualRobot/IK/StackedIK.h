@@ -25,7 +25,7 @@
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
-#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/Model/JointSet.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
 
@@ -37,7 +37,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        StackedIK(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
+        StackedIK(JointSetPtr rns, JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
         virtual ~StackedIK();
 

@@ -1,7 +1,7 @@
 #include "JointLimitAvoidanceJacobi.h"
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 
 using namespace VirtualRobot;
 using namespace std;
@@ -11,10 +11,10 @@ namespace VirtualRobot
 {
 
 
-    JointLimitAvoidanceJacobi::JointLimitAvoidanceJacobi(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod)
+    JointLimitAvoidanceJacobi::JointLimitAvoidanceJacobi(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod)
         : JacobiProvider(rns, invJacMethod)
     {
-        nodes = rns->getAllRobotNodes();
+        nodes = rns->getJoints();
         initialized = true; // no need of spiecial initialization
         VR_ASSERT(nodes.size() > 0);
     }
@@ -35,7 +35,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < nDoF; i++)
         {
-            if (nodes[i]->isRotationalJoint())
+            if (nodes[i]->getType() == ModelNode::ModelNodeType::JointRevolute)
             {
                 float l = nodes[i]->getJointLimitHigh() - nodes[i]->getJointLimitLow();
                 float target = nodes[i]->getJointLimitLow() + l * 0.5f;
@@ -55,7 +55,7 @@ namespace VirtualRobot
         return false;
     }
 
-    Eigen::MatrixXf JointLimitAvoidanceJacobi::getJacobianMatrix(SceneObjectPtr /*tcp*/)
+    Eigen::MatrixXf JointLimitAvoidanceJacobi::getJacobianMatrix(CoordinatePtr /*tcp*/)
     {
         return getJacobianMatrix();
     }

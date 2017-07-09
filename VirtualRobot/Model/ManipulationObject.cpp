@@ -220,7 +220,7 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
         }
         else
         {

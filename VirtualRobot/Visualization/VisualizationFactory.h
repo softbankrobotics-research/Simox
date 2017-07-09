@@ -245,6 +245,16 @@ namespace VirtualRobot
             ;
         }
 
+        /*! 
+        * Use this method to get the VisualizationFactory singleton according to your compile setup.
+        * @see CoinVisualizationFactory
+        * Usually there is only one VeisualizationFactory type registered, so we can safely return the first entry.
+        */
+        static VisualizationFactoryPtr getGlobalVisualizationFactory()
+        {
+            return VisualizationFactory::first(NULL);
+        }
+
     };
     typedef std::shared_ptr<VisualizationFactory::Color> ColorPtr;
 

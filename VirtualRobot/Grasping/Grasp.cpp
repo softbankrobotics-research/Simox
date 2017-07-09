@@ -1,7 +1,8 @@
 
 #include "Grasp.h"
-#include "../RobotConfig.h"
+#include "../Model/ModelConfig.h"
 #include "..//Model/Model.h"
+#include "../XML/BaseIO.h"
 #include "../VirtualRobotException.h"
 #include <iomanip>
 
@@ -67,7 +68,7 @@ namespace VirtualRobot
             return Eigen::Matrix4f::Identity();
         }
 
-        RobotNodePtr tcpNode = eefPtr->getTcp();
+        CoordinatePtr tcpNode = eefPtr->getTcp();
 
         if (!tcpNode)
         {
@@ -124,7 +125,7 @@ namespace VirtualRobot
         }
 
         ss << tt << "<Transform>\n";
-        ss << MathTools::getTransformXMLString(poseTcp, ttt);
+        ss << BaseIO::getTransformXMLString(poseTcp, ttt);
         ss << tt << "</Transform>\n";
 
         if (eefConfiguration.size() > 0)
