@@ -349,7 +349,7 @@ namespace VirtualRobot
         return path.at(pos);
     }
 
-    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::ModelNodePtr r)
+    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::CoordinatePtr r)
     {
         VR_ASSERT(rns);
 

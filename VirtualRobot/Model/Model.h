@@ -23,12 +23,11 @@
 #ifndef _VirtualRobot_Model_h_
 #define _VirtualRobot_Model_h_
 
-#include "../Model/Model.h"
-#include "../Tools/BoundingBox.h"
-#include "../Tools/ConditionedLock.h"
-#include "Coordinate.h"
+#include "../VirtualRobot.h"
 #include "Nodes/ModelNode.h"
-
+#include "../Tools/BoundingBox.h"
+#include "Coordinate.h"
+#include "../Tools/ConditionedLock.h"
 #include <Eigen/Core>
 #include <map>
 
@@ -142,7 +141,7 @@ namespace VirtualRobot
          * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes(std::vector< std::string > & nodeNames) const;
+        virtual std::vector< ModelNodePtr > getModelNodes(const std::vector< std::string > & nodeNames) const;
 
           /*!
          * Get all nodes, registered to this model.

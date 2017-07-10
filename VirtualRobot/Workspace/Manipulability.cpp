@@ -1,9 +1,9 @@
 #include "Manipulability.h"
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/JointSet.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/ManipulationObject.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
@@ -238,8 +238,8 @@ namespace VirtualRobot
 
             if (considerSelfDist)
             {
-                selfDistStatic = robot->getModelNodeSet(selfDist1);
-                selfDistDynamic = robot->getModelNodeSet(selfDist2);
+                selfDistStatic = robot->getLinkSet(selfDist1);
+                selfDistDynamic = robot->getLinkSet(selfDist2);
 
                 if (!selfDistStatic)
                 {
@@ -417,7 +417,7 @@ namespace VirtualRobot
     }
 
 
-    bool Manipulability::checkForParameters(RobotNodeSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float& storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, RobotNodePtr tcpNode /*= RobotNodePtr()*/)
+    bool Manipulability::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float& storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, CoordinatePtr tcpNode /*= RobotNodePtr()*/)
     {
         if (!WorkspaceRepresentation::checkForParameters(nodeSet, steps, storeMinBounds, storeMaxBounds, baseNode, tcpNode))
         {
@@ -433,7 +433,7 @@ namespace VirtualRobot
 
         Eigen::VectorXf c;
         nodeSet->getJointValues(c);
-        bool visuSate = robot->getUpdateVisualizationStatus();
+        bool visuSate = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         storeMaxManipulability = 0.0f;
@@ -515,7 +515,7 @@ namespace VirtualRobot
     }
 
 
-    void Manipulability::initSelfDistanceCheck(RobotNodeSetPtr staticModel, RobotNodeSetPtr dynamicModel)
+    void Manipulability::initSelfDistanceCheck(LinkSetPtr staticModel, LinkSetPtr dynamicModel)
     {
         considerSelfDist = (staticModel && dynamicModel);
         selfDistStatic = staticModel;
@@ -634,7 +634,7 @@ namespace VirtualRobot
     }
 
 
-    void Manipulability::getSelfDistConfig(bool& storeConsiderSelfDist, RobotNodeSetPtr& storeStatic, RobotNodeSetPtr& storeDynamic)
+    void Manipulability::getSelfDistConfig(bool& storeConsiderSelfDist, LinkSetPtr& storeStatic, LinkSetPtr& storeDynamic)
     {
         storeConsiderSelfDist = considerSelfDist;
         storeStatic = selfDistStatic;

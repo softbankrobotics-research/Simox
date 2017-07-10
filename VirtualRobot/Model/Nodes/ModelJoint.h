@@ -186,7 +186,7 @@ namespace VirtualRobot
 
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
 
-    private:
+    protected:
         float jointValue;           //!< The joint value
         float jointValueOffset;
         float jointLimitLo;

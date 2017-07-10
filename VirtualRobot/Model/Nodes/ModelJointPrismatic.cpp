@@ -1,4 +1,5 @@
 #include "ModelJointPrismatic.h"
+#include "../Model.h"
 
 namespace VirtualRobot
 {
@@ -28,7 +29,7 @@ namespace VirtualRobot
         if (coordSystem)
             return getJointTranslationDirection(coordSystem->getGlobalPose());
         else
-            return getJointTranslationDirection();
+            return getJointTranslationDirection(Eigen::Matrix4f::Identity());
     }
 
     Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(const Eigen::Matrix4f& coordSystem) const
@@ -51,9 +52,7 @@ namespace VirtualRobot
     Eigen::Matrix4f ModelJointPrismatic::getNodeTransformation() const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        Eigen::Affine3f tmpT(Eigen::Translation3f(this->getJointValue()
-                                                  + (getJointValueOffset())
-                                                    * getJointTranslationDirectionJointCoordSystem()));
+        Eigen::Affine3f tmpT(Eigen::Translation3f((this->getJointValue() + getJointValueOffset()) * getJointTranslationDirectionJointCoordSystem()));
         return getStaticTransformation() * tmpT.matrix();
     }
 }

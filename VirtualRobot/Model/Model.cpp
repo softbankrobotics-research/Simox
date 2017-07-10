@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "../VirtualRobotException.h"
+#include "Nodes/ModelNode.h"
 #include "Nodes/ModelLink.h"
 #include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
@@ -137,7 +138,7 @@ namespace VirtualRobot
         return result;
     }
 
-    std::vector<ModelNodePtr> Model::getModelNodes(std::vector<std::string> &nodeNames) const
+    std::vector<ModelNodePtr> Model::getModelNodes(const std::vector<std::string> &nodeNames) const
     {
         std::vector<ModelNodePtr> modelNodes;
         modelNodes.reserve(nodeNames.size());

@@ -25,6 +25,7 @@
 #ifndef _VirtualRobot_Compression_h_
 #define _VirtualRobot_Compression_h_
 
+#include "../VirtualRobot.h"
 #include "../Model/Model.h"
 
 

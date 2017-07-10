@@ -362,10 +362,9 @@ namespace VirtualRobot
 		virtual ModelNodeSetPtr clone(ModelPtr newModel);
 
     protected:
-        ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
-        ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
+        static ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
+        static ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
 
-    private:
         std::string name;
         ModelWeakPtr weakModel;
         std::vector<ModelNodePtr> modelNodes;

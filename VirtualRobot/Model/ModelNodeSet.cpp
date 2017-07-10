@@ -368,17 +368,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!node, "No root node with name " + kinematicRootName + " found.");
             res = node;
         }
-        else
-        {
-            if (!modelNodes.empty())
-            {
-                res = modelNodes[0];
-            }
-            else
-            {
-                THROW_VR_EXCEPTION("Can't determine a valid kinematic root node.");
-            }
-        }
+        
         return res;
     }
 
@@ -392,17 +382,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!node, "No tcp node with name " + tcpName + " found.");
             tcp = node;
         }
-        else
-        {
-            if (!modelNodes.empty())
-            {
-                tcp = modelNodes[modelNodes.size() - 1];
-            }
-            else
-            {
-                THROW_VR_EXCEPTION("Can't determine a valid tcp node.");
-            }
-        }
+        
         return tcp;
     }
 

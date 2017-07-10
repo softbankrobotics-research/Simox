@@ -111,7 +111,7 @@ namespace VirtualRobot
             \param staticModel The static (not moving) part of the robot (e.g. torso and head)
             \param staticModel The dynamic (moving) part of the robot. Recommending to use the end effector instead of the complete arm, since the upperarm usually has a low distance to the rest of the body.
         */
-        void initSelfDistanceCheck(RobotNodeSetPtr staticModel, RobotNodeSetPtr dynamicModel);
+        void initSelfDistanceCheck(LinkSetPtr staticModel, LinkSetPtr dynamicModel);
 
         /*!
             Do a test run in order to get an idea of the covered workspace extends and the maximum manipulability.
@@ -127,13 +127,13 @@ namespace VirtualRobot
 
             \see WorkspaceRepresentation::initialize()
         */
-        virtual bool checkForParameters(RobotNodeSetPtr nodeSet,
+        virtual bool checkForParameters(JointSetPtr nodeSet,
                                         float steps,
                                         float storeMinBounds[6],
                                         float storeMaxBounds[6],
                                         float& storeMaxManipulability,
                                         RobotNodePtr baseNode = RobotNodePtr(),
-                                        RobotNodePtr tcpNode = RobotNodePtr());
+                                        CoordinatePtr tcpNode = CoordinatePtr());
 
 
         /*!
@@ -150,7 +150,7 @@ namespace VirtualRobot
         /*!
             Access self distance configuration.
         */
-        void getSelfDistConfig(bool& storeConsiderSelfDist, RobotNodeSetPtr& storeStatic, RobotNodeSetPtr& storeDynamic);
+        void getSelfDistConfig(bool& storeConsiderSelfDist, LinkSetPtr& storeStatic, LinkSetPtr& storeDynamic);
 
         /*!
             Creates a deep copy of this data structure. A ManipulabilityPtr is returned.
@@ -166,8 +166,6 @@ namespace VirtualRobot
 
         bool customStringRead(std::ifstream& file, std::string& res);
 
-
-
         float getCurrentManipulability();
         void addPose(const Eigen::Matrix4f& p);
         PoseQualityMeasurementPtr measure;
@@ -179,8 +177,8 @@ namespace VirtualRobot
 
         bool considerSelfDist;
 
-        RobotNodeSetPtr selfDistStatic;
-        RobotNodeSetPtr selfDistDynamic;
+        LinkSetPtr selfDistStatic;
+        LinkSetPtr selfDistDynamic;
 
     };
 
