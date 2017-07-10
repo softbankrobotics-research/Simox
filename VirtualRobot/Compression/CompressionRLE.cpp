@@ -66,6 +66,8 @@
 *************************************************************************/
 
 #include "CompressionRLE.h"
+#include <thread>
+#include <mutex>
 
 namespace VirtualRobot
 {
@@ -168,7 +170,7 @@ namespace VirtualRobot
                                      unsigned int insize)
     {
         // lock our mutex as long we are in the scope of this method
-		std::mutex::scoped_lock lock(mutex);
+		std::lock_guard<std::mutex> lock(mutex);
 
         unsigned char byte1, byte2, marker;
         unsigned int  inpos, outpos, count, i, histogram[ 256 ];
@@ -290,7 +292,7 @@ namespace VirtualRobot
                                         unsigned int insize)
     {
         // lock our mutex as long we are in the scope of this method
-		std::mutex::scoped_lock lock(mutex);
+        std::lock_guard<std::mutex> lock(mutex);
 
         unsigned char marker, symbol;
         unsigned int  i, inpos, outpos, count;

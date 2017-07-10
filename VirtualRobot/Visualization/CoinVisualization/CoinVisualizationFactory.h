@@ -286,7 +286,7 @@ namespace VirtualRobot
 		/**
 		* This method collects all visualization nodes and creates a new Visualization
 		*/
-		static CoinVisualizationPtr getVisualization(ScenePtr scene, ModelLink::VisualizationType visuType, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true)
+        static CoinVisualizationPtr getVisualization(ScenePtr scene, ModelLink::VisualizationType visuType, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
         /*!
             Create an offscreen renderer object with the given width and height.

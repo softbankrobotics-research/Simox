@@ -22,6 +22,7 @@
 */
 
 #include "JointLimitAvoidanceConstraint.h"
+#include "../../Model/Nodes/ModelJoint.h"
 
 using namespace VirtualRobot;
 

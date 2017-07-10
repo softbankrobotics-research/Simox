@@ -4,8 +4,9 @@
 #include "../CollisionDetection/CollisionChecker.h"
 #include "Nodes/ModelLink.h"
 #include "../Visualization/VisualizationFactory.h"
-#include <vector>
+#include "../VirtualRobotException.h"
 
+#include <vector>
 
 namespace VirtualRobot
 {
@@ -108,7 +109,6 @@ namespace VirtualRobot
 
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
         result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
-        result->initialize();
 
         return result;
     }
@@ -160,8 +160,6 @@ namespace VirtualRobot
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
         result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
-        result->initialize();
-
         return result;
     }
 
@@ -212,8 +210,6 @@ namespace VirtualRobot
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
         result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
-        result->initialize();
-
         return result;
     }
 
@@ -227,7 +223,7 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = getGlobalVisualizationFactory();
+            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
         }
         else
         {
@@ -261,8 +257,6 @@ namespace VirtualRobot
         CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
         result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
 
-        result->initialize();
-
         return result;
     }
 
@@ -281,7 +275,7 @@ namespace VirtualRobot
             cout << endl;
         }
     }
-
+    /*
     Obstacle* Obstacle::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
     {
         VisualizationNodePtr clonedVisualizationNode;
@@ -312,7 +306,7 @@ namespace VirtualRobot
         result->setGlobalPose(getGlobalPose());
 
         return result;
-    }
+    }*/
 
     std::string Obstacle::toXML(const std::string& basePath, int tabs)
     {
@@ -327,7 +321,8 @@ namespace VirtualRobot
 
         ss << pre << "<Obstacle name='" << name << "'>\n";
 
-        ss << Model::toXML(basePath, tabs);
+        // todo
+        //ss << Model::getXMLContent(basePath, tabs);
 
         ss << pre << "</Obstacle>\n";
 

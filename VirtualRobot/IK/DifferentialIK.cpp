@@ -4,6 +4,7 @@
 #include "../VirtualRobotException.h"
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
+#include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include "../VirtualRobotException.h"
 #include "../CollisionDetection/CollisionChecker.h"
 

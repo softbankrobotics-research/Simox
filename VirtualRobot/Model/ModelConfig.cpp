@@ -1,7 +1,7 @@
 
 #include "ModelConfig.h"
-#include "VirtualRobotException.h"
-
+#include "../VirtualRobotException.h"
+#include "../Model/Nodes/ModelJoint.h"
 
 namespace VirtualRobot
 {
@@ -25,13 +25,13 @@ namespace VirtualRobot
         }
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelNodePtr, float >& configs)
+    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelJointPtr, float >& configs)
         : name(name),
           model(model)
     {
         THROW_VR_EXCEPTION_IF(!model.lock(), "NULL model in ModelConfig");
 
-        for (std::map< ModelNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::map< ModelJointPtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             setConfig(i->first, i->second);
         }
@@ -50,7 +50,7 @@ namespace VirtualRobot
         }
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelNodePtr >& modelNodes, const std::vector< float >& values)
+    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values)
         : name(name),
           model(model)
     {
@@ -68,7 +68,7 @@ namespace VirtualRobot
     {
         cout << "  Model Config <" << name << ">" << endl;
 
-        for (std::map< ModelNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::map< ModelJointPtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             cout << "  * " << i->first->getName() << ":\t" << i->second << endl;
         }
@@ -89,11 +89,11 @@ namespace VirtualRobot
             return false;
         }
 
-        ModelNodePtr rn = r->getModelNode(node);
+        ModelJointPtr rn = r->getJoint(node);
 
         if (!rn)
         {
-            VR_WARNING << "Did not find model node with name " << node << endl;
+            VR_WARNING << "Did not find joint with name " << node << endl;
             return false;
         }
 
@@ -101,7 +101,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelConfig::setConfig(ModelNodePtr node, float value)
+    bool ModelConfig::setConfig(ModelJointPtr node, float value)
     {
         THROW_VR_EXCEPTION_IF(!node, "Null data");
 
@@ -113,7 +113,7 @@ namespace VirtualRobot
             return false;
         }
 
-        THROW_VR_EXCEPTION_IF(!r->hasModelNode(node), "ModelNode with name " << r->getName() << " does not belong to model " << r->getName());
+        THROW_VR_EXCEPTION_IF(!r->hasJoint(node->getName()), "ModelNode with name " << r->getName() << " does not belong to model " << r->getName());
 
         configs[node] = value;
         return true;
@@ -129,21 +129,22 @@ namespace VirtualRobot
         return name;
     }
 
-    ModelConfigPtr ModelConfig::clone(ModelPtr newModel)
+    ModelConfigPtr ModelConfig::clone(const ModelPtr &newModel)
     {
-        if (!newModel)
+        ModelPtr model = newModel;
+        if (!model)
         {
-            newModel = model.lock();
+            model = this->model.lock();
         }
 
-        VR_ASSERT(newModel);
+        VR_ASSERT(model);
 
-        std::map< ModelNodePtr, float > newConfigs;
-        std::map< ModelNodePtr, float >::iterator i = configs.begin();
+        std::map< ModelJointPtr, float > newConfigs;
+        std::map< ModelJointPtr, float >::iterator i = configs.begin();
 
         while (i != configs.end())
         {
-            ModelNodePtr rn = newModel->getModelNode(i->first->getName());
+            ModelJointPtr rn = model->getJoint(i->first->getName());
 
             if (!rn)
             {
@@ -157,7 +158,7 @@ namespace VirtualRobot
             i++;
         }
 
-        ModelConfigPtr result(new ModelConfig(newModel, name, newConfigs));
+        ModelConfigPtr result(new ModelConfig(model, name, newConfigs));
         return result;
     }
 
@@ -174,7 +175,7 @@ namespace VirtualRobot
 
         WriteLockPtr lock = r->getWriteLock();
 
-        for (std::map< ModelNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::map< ModelJointPtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             i->first->setJointValueNoUpdate(i->second);
         }
@@ -185,7 +186,7 @@ namespace VirtualRobot
 
     bool ModelConfig::hasConfig(const std::string& name) const
     {
-        for (std::map< ModelNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::map< ModelJointPtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             if (i->first->getName() == name)
             {
@@ -211,9 +212,9 @@ namespace VirtualRobot
             return 0.0f;
         }
 
-        ModelNodePtr rn = r->getModelNode(name);
+        ModelJointPtr rn = r->getJoint(name);
         THROW_VR_EXCEPTION_IF(!rn, "Did not find model node with name " << name);
-        std::map< ModelNodePtr, float >::const_iterator i = configs.find(rn);
+        std::map< ModelJointPtr, float >::const_iterator i = configs.find(rn);
 
         if (i == configs.end())
         {
@@ -224,10 +225,10 @@ namespace VirtualRobot
         return i->second;
     }
 
-    std::vector< ModelNodePtr > ModelConfig::getNodes() const
+    std::vector< ModelJointPtr > ModelConfig::getNodes() const
     {
-        std::vector< ModelNodePtr > result;
-        std::map< ModelNodePtr, float >::const_iterator i = configs.begin();
+        std::vector< ModelJointPtr > result;
+        std::map< ModelJointPtr, float >::const_iterator i = configs.begin();
 
         while (i != configs.end())
         {
@@ -238,10 +239,10 @@ namespace VirtualRobot
         return result;
     }
 
-    std::map < std::string, float > ModelConfig::getModelNodeJointValueMap()
+    std::map < std::string, float > ModelConfig::getJointNameValueMap()
     {
         std::map < std::string, float > result;
-        std::map< ModelNodePtr, float >::const_iterator i = configs.begin();
+        std::map< ModelJointPtr, float >::const_iterator i = configs.begin();
 
         while (i != configs.end())
         {
@@ -261,7 +262,7 @@ namespace VirtualRobot
 
         WriteLockPtr lock = r->getWriteLock();
 
-        std::map < std::string, float > jv = getModelNodeJointValueMap();
+        std::map < std::string, float > jv = getJointNameValueMap();
         std::map< std::string, float >::const_iterator i = jv.begin();
 
         // first check if all nodes are present
@@ -280,7 +281,7 @@ namespace VirtualRobot
 
         while (i != jv.end())
         {
-            ModelNodePtr rn = r->getModelNode(i->first);
+            ModelJointPtr rn = r->getJoint(i->first);
 
             if (!rn)
             {
@@ -297,7 +298,7 @@ namespace VirtualRobot
 
     std::string ModelConfig::toXML(int tabs)
     {
-        std::map < std::string, float > jv = getModelNodeJointValueMap();
+        std::map < std::string, float > jv = getJointNameValueMap();
         return createXMLString(jv, name, tabs);
     }
 

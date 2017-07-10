@@ -98,7 +98,8 @@ namespace VirtualRobot
         */
         ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const
         {
-            return ManipulationObjectPtr(_clone(name, colChecker));
+            // todo
+            return ManipulationObjectPtr();
         }
 
         /*!
@@ -111,7 +112,7 @@ namespace VirtualRobot
 
     protected:
 
-        virtual ManipulationObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+        //virtual ManipulationObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
 
 
         //std::string filename;

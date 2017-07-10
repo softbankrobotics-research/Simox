@@ -1,6 +1,8 @@
 #include "Primitive.h"
 #include "../Tools/MathTools.h"
+#include "../XML/BaseIO.h"
 
+#include <boost/format.hpp>
 
 namespace VirtualRobot
 {
@@ -18,7 +20,7 @@ namespace VirtualRobot
             }
 
             result << pre << "\t<Transform>\n";
-            result << MathTools::getTransformXMLString(transform, tabs + 2);
+            result << BaseIO::getTransformXMLString(transform, tabs + 2);
             result << pre << "\t</Transform>\n";
             return result.str();
         }

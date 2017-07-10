@@ -58,7 +58,8 @@ namespace VirtualRobot
         */
         ObstaclePtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr())  const
         {
-            return ObstaclePtr(_clone(name, colChecker));
+            // todo
+            return ObstaclePtr();// _clone(name, colChecker));
         }
 
         int getID() const;
@@ -103,7 +104,7 @@ namespace VirtualRobot
 
     protected:
 
-        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+        //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
 
         // a counter for internal ids
         static int idCounter;
