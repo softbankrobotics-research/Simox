@@ -15,7 +15,7 @@
 namespace VirtualRobot
 {
 
-    boost::mutex BaseIO::mutex;
+    std::mutex BaseIO::mutex;
 
     BaseIO::BaseIO()
     {

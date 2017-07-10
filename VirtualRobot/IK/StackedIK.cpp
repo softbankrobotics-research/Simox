@@ -22,6 +22,8 @@
 */
 
 #include "StackedIK.h"
+#include "../VirtualRobotException.h"
+#include "../Tools/MathTools.h"
 
 using namespace VirtualRobot;
 

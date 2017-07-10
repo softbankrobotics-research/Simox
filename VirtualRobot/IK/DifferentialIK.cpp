@@ -2,8 +2,8 @@
 #include "DifferentialIK.h"
 #include "../Model/Model.h"
 #include "../VirtualRobotException.h"
-#include "../Nodes/RobotNodePrismatic.h"
-#include "../Nodes/RobotNodeRevolute.h"
+#include "../Model/Nodes/ModelJointPrismatic.h"
+#include "../Model/Nodes/ModelJointRevolute.h"
 #include "../VirtualRobotException.h"
 #include "../CollisionDetection/CollisionChecker.h"
 
@@ -17,7 +17,7 @@ using namespace Eigen;
 namespace VirtualRobot
 {
 
-    DifferentialIK::DifferentialIK(RobotNodeSetPtr _rns, RobotNodePtr _coordSystem, JacobiProvider::InverseJacobiMethod invJacMethod, float invParam) :
+    DifferentialIK::DifferentialIK(JointSetPtr _rns, CoordinatePtr _coordSystem, JacobiProvider::InverseJacobiMethod invJacMethod, float invParam) :
         JacobiProvider(_rns, invJacMethod), invParam(invParam), coordSystem(_coordSystem), nRows(0)
     {
         name = "DifferentialIK";
@@ -28,11 +28,11 @@ namespace VirtualRobot
         }
 
         checkImprovement = false;
-        nodes =  rns->getAllRobotNodes();
+        nodes =  rns->getJoints();
 
         for (size_t i = 0; i < nodes.size(); i++)
         {
-            std::vector<RobotNodePtr> p = nodes[i]->getAllParents(rns);
+            std::vector<ModelNodePtr> p = nodes[i]->getAllParents(rns);
             p.push_back(nodes[i]);// if the tcp is not fixed, it must be considered for calculating the Jacobian
             parents[nodes[i]] = p;
         }
@@ -45,7 +45,7 @@ namespace VirtualRobot
     }
 
 
-    void DifferentialIK::setGoal(const Eigen::Matrix4f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
+    void DifferentialIK::setGoal(const Eigen::Matrix4f& goal, CoordinatePtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
     {
         if (!tcp)
         {
@@ -63,31 +63,10 @@ namespace VirtualRobot
         this->tolerancePosition[tcp] = tolerancePosition;
         this->toleranceRotation[tcp] = toleranceRotation;
 
-        RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
-
-        if (!tcpRN)
-        {
-            if (!tcp->getParent())
-            {
-                VR_ERROR << "tcp not linked to a parent!!!" << endl;
-                return;
-            }
-
-            tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp->getParent());
-
-            if (!tcpRN)
-            {
-                VR_ERROR << "tcp not linked to robotNode!!!" << endl;
-                return;
-            }
-        }
-
-        // check if we already computed the parents for tcp
-        if (parents.find(tcpRN) == parents.end())
-        {
-            parents[tcpRN] = tcpRN->getAllParents(rns);
-            parents[tcpRN].push_back(tcpRN);
-        }
+		if (!updateParents(tcp))
+		{
+			return;
+		}
 
         // tcp not in list yet?
         /*if (find(tcp_set.begin(), tcp_set.end(), tcp) == tcp_set.end())
@@ -99,6 +78,47 @@ namespace VirtualRobot
             initialize();
         }
     }
+
+
+	ModelNodePtr DifferentialIK::getTcpNode(CoordinatePtr tcp)
+	{
+		ModelNodePtr tcpRN = std::dynamic_pointer_cast<ModelNode>(tcp);
+
+		if (!tcpRN)
+		{
+			ModelNodeAttachmentPtr mna = std::dynamic_pointer_cast<ModelNodeAttachment>(tcp);
+
+			if (!mna || !mna->getNode())
+			{
+				VR_ERROR << "tcp not linked to a model node parent!!!" << endl;
+				return ModelNodePtr();
+			}
+
+			tcpRN = mna->getNode();
+
+			if (!tcpRN)
+			{
+				VR_ERROR << "tcp not linked to robotNode!!!" << endl;
+				return ModelNodePtr();
+			}
+		}
+		return tcpRN;
+	}
+
+	bool DifferentialIK::updateParents(CoordinatePtr tcp)
+	{
+		ModelNodePtr tcpRN = getTcpNode(tcp);
+		if (!tcpRN)
+			return false;
+
+		// check if we already computed the parents for tcp
+		if (parents.find(tcpRN) == parents.end())
+		{
+			parents[tcpRN] = tcpRN->getAllParents(rns);
+			parents[tcpRN].push_back(tcpRN);
+		}
+		return true;
+	}
 
     MatrixXf DifferentialIK::getJacobianMatrix()
     {
@@ -124,7 +144,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
-            SceneObjectPtr tcp = tcp_set[i];
+            CoordinatePtr tcp = tcp_set[i];
 
             if (this->targets.find(tcp) != this->targets.end())
             {
@@ -187,7 +207,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
-            SceneObjectPtr tcp = tcp_set[i];
+            CoordinatePtr tcp = tcp_set[i];
 
             if (this->targets.find(tcp) != this->targets.end())
             {
@@ -237,17 +257,17 @@ namespace VirtualRobot
         }
     }
 
-    MatrixXf DifferentialIK::getJacobianMatrix(SceneObjectPtr tcp)
+    MatrixXf DifferentialIK::getJacobianMatrix(CoordinatePtr tcp)
     {
         return getJacobianMatrix(tcp, IKSolver::All);
     }
 
     MatrixXf DifferentialIK::getJacobianMatrix(IKSolver::CartesianSelection mode)
     {
-        return getJacobianMatrix(SceneObjectPtr(), mode);
+        return getJacobianMatrix(CoordinatePtr(), mode);
     }
 
-    MatrixXf DifferentialIK::getJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
+    MatrixXf DifferentialIK::getJacobianMatrix(CoordinatePtr tcp, IKSolver::CartesianSelection mode)
     {
         if (!initialized)
         {
@@ -282,7 +302,7 @@ namespace VirtualRobot
         return jac;
     }
 
-    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jac, SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jac, CoordinatePtr tcp, IKSolver::CartesianSelection mode)
     {
 
         if (!initialized)
@@ -330,41 +350,19 @@ namespace VirtualRobot
             tcp = this->getDefaultTCP();
         }
 
-
-        //  THROW_VR_EXCEPTION_IF(!tcp,boost::format("No tcp defined in node set \"%1%\" of robot %2% (DifferentialIK::%3% )") % this->rns->getName() % this->rns->getRobot()->getName() % BOOST_CURRENT_FUNCTION);
-
-        RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
-
-        if (!tcpRN)
+		if (!updateParents(tcp))
         {
-            if (!tcp->getParent())
-            {
-                VR_ERROR << "tcp not linked to a parent!!!" << endl;
-                jac.setZero();
-                return;
-            }
-
-            tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp->getParent());
-
-            if (!tcpRN)
-            {
-                VR_ERROR << "tcp not linked to robotNode!!!" << endl;
-                jac.setZero();
-                return;
-            }
+            VR_ERROR << "tcp not linked to robotNode!!!" << endl;
+            jac.setZero();
+            return;
         }
 
-        if (parents.find(tcpRN) == parents.end())
-        {
-            parents[tcpRN] = tcpRN->getAllParents(rns);
-            parents[tcpRN].push_back(tcpRN);
-        }
-
-        Eigen::Vector3f axis;
+		Eigen::Vector3f axis;
         Eigen::Vector3f toTCP;
         tmpUpdateJacobianPosition.setZero();
         tmpUpdateJacobianOrientation.setZero();
 
+		ModelNodePtr tcpRN = getTcpNode(tcp);
 
         // Iterate over all degrees of freedom
         for (size_t i = 0; i < nDoF; i++)
@@ -382,11 +380,10 @@ namespace VirtualRobot
             {
 
                 // Calculus for rotational joints is different as for prismatic joints.
-                if (dof->isRotationalJoint())
+                if (dof->getType() == ModelNode::ModelNodeType::JointRevolute)
                 {
                     // get axis
-                    std::shared_ptr<RobotNodeRevolute> revolute
-                        = std::dynamic_pointer_cast<RobotNodeRevolute>(dof);
+                    ModelJointRevolutePtr revolute = std::dynamic_pointer_cast<ModelJointRevolute>(dof);
                     THROW_VR_EXCEPTION_IF(!revolute, "Internal error: expecting revolute joint");
                     // todo: find a better way of handling different joint types
                     axis = revolute->getJointRotationAxis(coordSystem);
@@ -422,11 +419,10 @@ namespace VirtualRobot
                         tmpUpdateJacobianOrientation.block(0, i, 3, 1) = axis;
                     }
                 }
-                else if (dof->isTranslationalJoint())
+                else if (dof->getType() == ModelNode::ModelNodeType::JointPrismatic)
                 {
                     // -> prismatic joint
-                    std::shared_ptr<RobotNodePrismatic> prismatic
-                        = std::dynamic_pointer_cast<RobotNodePrismatic>(dof);
+                    ModelJointPrismaticPtr prismatic = std::dynamic_pointer_cast<ModelJointPrismatic>(dof);
                     THROW_VR_EXCEPTION_IF(!prismatic, "Internal error: expecting prismatic joint");
                     // todo: find a better way of handling different joint types
                     axis = prismatic->getJointTranslationDirection(coordSystem);
@@ -512,15 +508,15 @@ namespace VirtualRobot
 
     Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix()
     {
-        return getPseudoInverseJacobianMatrix(SceneObjectPtr());
+        return getPseudoInverseJacobianMatrix(CoordinatePtr());
     }
 
     Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode)
     {
-        return getPseudoInverseJacobianMatrix(SceneObjectPtr(), mode);
+        return getPseudoInverseJacobianMatrix(CoordinatePtr(), mode);
     }
 
-    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode)
+    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(CoordinatePtr tcp, IKSolver::CartesianSelection mode)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
@@ -553,7 +549,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
-            SceneObjectPtr tcp = tcp_set[i];
+			CoordinatePtr tcp = tcp_set[i];
             int partSize = 0;
 
             if (this->modes[tcp] & IKSolver::X)
@@ -613,7 +609,7 @@ namespace VirtualRobot
 
         for (size_t t = 0; t < tcp_set.size(); t++)
         {
-            SceneObjectPtr tcp = tcp_set[t];
+			CoordinatePtr tcp = tcp_set[t];
             RobotNodePtr tcpRN = std::dynamic_pointer_cast<RobotNode>(tcp);
 
             if (!tcpRN)
@@ -662,7 +658,7 @@ namespace VirtualRobot
         }
     }
 
-    void DifferentialIK::setGoal(const Eigen::Vector3f& goal, SceneObjectPtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
+    void DifferentialIK::setGoal(const Eigen::Vector3f& goal, CoordinatePtr tcp, IKSolver::CartesianSelection mode, float tolerancePosition, float toleranceRotation, bool performInitialization)
     {
         Matrix4f trafo;
         trafo.setIdentity();
@@ -670,12 +666,12 @@ namespace VirtualRobot
         this->setGoal(trafo, tcp, mode, tolerancePosition, toleranceRotation, performInitialization);
     }
 
-    RobotNodePtr DifferentialIK::getDefaultTCP()
+    CoordinatePtr DifferentialIK::getDefaultTCP()
     {
         return rns->getTCP();
     }
 
-    Eigen::VectorXf DifferentialIK::getDeltaToGoal(SceneObjectPtr tcp)
+    Eigen::VectorXf DifferentialIK::getDeltaToGoal(CoordinatePtr tcp)
     {
         Eigen::VectorXf result(6);
         updateDeltaToGoal(result, tcp);
@@ -689,7 +685,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf& delta, SceneObjectPtr tcp)
+    void DifferentialIK::updateDeltaToGoal(Eigen::VectorXf& delta, CoordinatePtr tcp)
     {
         if (!tcp)
         {
@@ -769,7 +765,7 @@ namespace VirtualRobot
         return tmpComputeStepTheta;
     }
 
-    float DifferentialIK::getErrorPosition(SceneObjectPtr tcp)
+    float DifferentialIK::getErrorPosition(CoordinatePtr tcp)
     {
         if (modes[tcp] == IKSolver::Orientation)
         {
@@ -802,7 +798,7 @@ namespace VirtualRobot
         return sqrtf(result);
     }
 
-    float DifferentialIK::getErrorRotation(SceneObjectPtr tcp)
+    float DifferentialIK::getErrorRotation(CoordinatePtr tcp)
     {
         if (!(modes[tcp] & IKSolver::Orientation))
         {
@@ -830,7 +826,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
-            SceneObjectPtr tcp = tcp_set[i];
+			CoordinatePtr tcp = tcp_set[i];
             res += getErrorPosition(tcp);
         }
 
@@ -844,7 +840,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < tcp_set.size(); i++)
         {
-            SceneObjectPtr tcp = tcp_set[i];
+			CoordinatePtr tcp = tcp_set[i];
             float currentErrorPos = getErrorPosition(tcp);
             float maxErrorPos = tolerancePosition[tcp];
             float currentErrorRot = getErrorRotation(tcp);
@@ -875,7 +871,7 @@ namespace VirtualRobot
         VR_ASSERT(rns);
         VR_ASSERT(nodes.size() == rns->getSize());
 
-        RobotPtr robot = rns->getRobot();
+        RobotPtr robot = rns->getModel();
         VR_ASSERT(robot);
 
         std::vector<float> jv(nodes.size(), 0.0f);
@@ -892,14 +888,14 @@ namespace VirtualRobot
             {
                 jv[i] = (nodes[i]->getJointValue() + dTheta[i]);
 
-                if (boost::math::isnan(jv[i]) || boost::math::isinf(jv[i]))
+                if (std::isnan(jv[i]) || std::isinf(jv[i]))
                 {
                     VR_WARNING << "Aborting, invalid joint value (nan)" << endl;
                     return false;
                 }
             }
 
-            robot->setJointValues(rns, jv);
+			rns->setJointValues(jv);
 
             // check tolerances
             if (checkTolerances())
@@ -921,7 +917,7 @@ namespace VirtualRobot
                     VR_INFO << "Could not improve result any more (dTheta.norm()=" << d << "), loop:" << step << endl;
                 }
 
-                robot->setJointValues(rns, jvBest);
+                rns->setJointValues(jvBest);
                 return false;
             }
 
@@ -934,7 +930,7 @@ namespace VirtualRobot
                     VR_INFO << "Could not improve result any more (current position error=" << posDist << ", last loop's error:" << lastDist << "), loop:" << step << endl;
                 }
 
-                robot->setJointValues(rns, jvBest);
+                rns->setJointValues(jvBest);
                 return false;
             }
 
@@ -950,7 +946,7 @@ namespace VirtualRobot
             VR_INFO << "rot error:" << getErrorRotation() << endl;
         }
 
-        robot->setJointValues(rns, jvBest);
+		rns->setJointValues(jvBest);
         return false;
     }
 

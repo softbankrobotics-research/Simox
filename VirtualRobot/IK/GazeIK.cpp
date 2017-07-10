@@ -272,7 +272,7 @@ namespace VirtualRobot
                 jv[i] = (nodes[i]->getJointValue() + dTheta[i]);
 
                 // sanity check
-                if (boost::math::isnan(jv[i]) || boost::math::isinf(jv[i]))
+                if (std::isnan(jv[i]) || std::isinf(jv[i]))
                 {
                     rns->setJointValues(jvBest);
                     VR_WARNING << "Aborting, invalid joint value (nan)" << endl;
@@ -333,7 +333,7 @@ namespace VirtualRobot
                 jv[i] = (nodes[i]->getJointValue() + dTheta[i]);
 
                 // sanity check
-                if (boost::math::isnan(jv[i]) || boost::math::isinf(jv[i]))
+                if (std::isnan(jv[i]) || std::isinf(jv[i]))
                 {
                     VR_WARNING << "Aborting, invalid joint value (nan)" << endl;
                     return false;

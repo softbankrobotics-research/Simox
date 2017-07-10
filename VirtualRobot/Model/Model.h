@@ -58,11 +58,9 @@ namespace VirtualRobot
          */
         virtual ~Model();
 
-		virtual void setName(const std::string &name);
+		//virtual void setName(const std::string &name);
 
         /*!
-         * This method is automatically called in ModelNode's constructor!
-         *
          * Register a new node to this model
          *
          * @param node The new node.
@@ -213,7 +211,7 @@ namespace VirtualRobot
         * \brief getJoints Returns all joints of this model encapsulated in a JointSet
         * \return
         */
-        virtual JointSetPtr getJointSet() const;
+        virtual JointSetPtr getJointSet();
 
         /*!
          * \brief getLinks Returns all links of this model
@@ -225,7 +223,7 @@ namespace VirtualRobot
         * \brief getLinks Returns all links of this model encapsulated in a LinkSet
         * \return
         */
-        virtual LinkSetPtr getLinkSet() const;
+        virtual LinkSetPtr getLinkSet();
 
         /*!
          * Get all node sets, registered to this model.
@@ -628,8 +626,9 @@ namespace VirtualRobot
         virtual ModelPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                                float scaling = 1.0f);
 
-        bool hasEndEffector(const EndEffectorPtr &eef) const;
-        void registerEndEffector(const EndEffectorPtr &eef);
+		bool hasEndEffector(const EndEffectorPtr &eef) const;
+		bool hasEndEffector(const std::string &name) const;
+		void registerEndEffector(const EndEffectorPtr &eef);
         void deregisterEndEffector(const EndEffectorPtr &eef);
 
         EndEffectorPtr getEndEffector(const std::string &name) const;
@@ -642,7 +641,7 @@ namespace VirtualRobot
         float scaling;
 
         bool threadsafe;
-        boost::recursive_mutex mutex;
+		mutable std::recursive_mutex mutex;
 
         ModelNodePtr rootNode;
 

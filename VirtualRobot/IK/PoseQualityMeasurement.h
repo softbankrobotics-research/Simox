@@ -46,7 +46,7 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        PoseQualityMeasurement(VirtualRobot::ModelNodeSetPtr rns);
+        PoseQualityMeasurement(VirtualRobot::JointSetPtr rns);
         ~PoseQualityMeasurement();
 
         /*!

@@ -26,7 +26,7 @@ namespace VirtualRobot
 
     namespace
     {
-        boost::mutex mutex;
+		std::mutex mutex;
     }
 
     VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerPtr CollisionChecker::__globalCollisionChecker;
@@ -35,7 +35,7 @@ namespace VirtualRobot
     {
         if (true)
         {
-            boost::lock_guard<boost::mutex> lock(mutex);
+            std::lock_guard<std::mutex> lock(mutex);
 
             if (!__globalCollisionChecker)
             {

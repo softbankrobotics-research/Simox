@@ -2,20 +2,16 @@
 #include "AdvancedIKSolver.h"
 #include "../Model/Model.h"
 #include "../VirtualRobotException.h"
-#include "../Nodes/RobotNodePrismatic.h"
-#include "../Nodes/RobotNodeRevolute.h"
 #include "../VirtualRobotException.h"
-#include "../Obstacle.h"
-#include "../ManipulationObject.h"
+#include "../Model/Obstacle.h"
+#include "../Model/ManipulationObject.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
 #include "../Workspace/Reachability.h"
 #include "../EndEffector/EndEffector.h"
-#include "../RobotConfig.h"
+#include "../Model/ModelConfig.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CDManager.h"
-
-
 
 #include <algorithm>
 
@@ -24,47 +20,61 @@ using namespace Eigen;
 namespace VirtualRobot
 {
 
-    AdvancedIKSolver::AdvancedIKSolver(RobotNodeSetPtr rns) :
-        IKSolver(), rns(rns)
+    AdvancedIKSolver::AdvancedIKSolver(JointSetPtr rns, LinkSetPtr collisionModels) :
+        IKSolver(rns), colSet(collisionModels)
     {
-        verbose = false;
         THROW_VR_EXCEPTION_IF(!rns, "Null data");
-        tcp = rns->getTCP();
         THROW_VR_EXCEPTION_IF(!tcp, "no tcp");
         setMaximumError();
     }
 
-    void AdvancedIKSolver::collisionDetection(SceneObjectPtr avoidCollisionsWith)
+	void AdvancedIKSolver::collisionDetectionModelLinks(LinkSetPtr collisionModels)
+	{
+		colSet = collisionModels;
+	}
+
+    void AdvancedIKSolver::collisionDetection(ModelPtr avoidCollisionsWith)
     {
         cdm.reset();
 
-        if (avoidCollisionsWith)
+        if (avoidCollisionsWith && colSet)
         {
             cdm.reset(new CDManager(avoidCollisionsWith->getCollisionChecker()));
-            cdm->addCollisionModel(avoidCollisionsWith);
-            cdm->addCollisionModel(rns);
+            cdm->addCollisionModel(avoidCollisionsWith->getLinkSet());
+            cdm->addCollisionModel(colSet);
         }
     }
 
     void AdvancedIKSolver::collisionDetection(ObstaclePtr avoidCollisionsWith)
     {
-        SceneObjectPtr so = std::dynamic_pointer_cast<SceneObject>(avoidCollisionsWith);
+		ModelPtr so = std::dynamic_pointer_cast<Model>(avoidCollisionsWith);
         collisionDetection(so);
     }
 
 
-    void AdvancedIKSolver::collisionDetection(SceneObjectSetPtr avoidCollisionsWith)
+	void AdvancedIKSolver::collisionDetection(ModelLinkPtr avoidCollisionsWith)
+	{
+		cdm.reset();
+
+		if (avoidCollisionsWith && colSet)
+		{
+			cdm.reset(new CDManager(avoidCollisionsWith->getCollisionChecker()));
+			cdm->addCollisionModel(avoidCollisionsWith);
+			cdm->addCollisionModel(colSet);
+		}
+	}
+
+    void AdvancedIKSolver::collisionDetection(LinkSetPtr avoidCollisionsWith)
     {
         cdm.reset();
 
-        if (avoidCollisionsWith)
+        if (avoidCollisionsWith && colSet)
         {
             cdm.reset(new CDManager(avoidCollisionsWith->getCollisionChecker()));
             cdm->addCollisionModel(avoidCollisionsWith);
-            cdm->addCollisionModel(rns);
+            cdm->addCollisionModel(colSet);
         }
     }
-
 
     void AdvancedIKSolver::collisionDetection(CDManagerPtr avoidCollisions)
     {
@@ -82,8 +92,7 @@ namespace VirtualRobot
             rns->getJointValues(result);
         }
 
-        RobotPtr rob = rns->getRobot();
-        rob->setJointValues(rns, v);
+		rns->setJointValues(v);
         return result;
     }
 
@@ -95,16 +104,13 @@ namespace VirtualRobot
         return solve(t, Position);
     }
 
-
-
     GraspPtr AdvancedIKSolver::solve(ManipulationObjectPtr object, CartesianSelection selection /*= All*/, int maxLoops)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         // first get a compatible EEF
-        RobotPtr robot = rns->getRobot();
+        RobotPtr robot = rns->getModel();
         THROW_VR_EXCEPTION_IF(!robot, "NULL robot");
-        std::vector< EndEffectorPtr > eefs;
-        robot->getEndEffectors(eefs);
+        std::vector< EndEffectorPtr > eefs = robot->getEndEffectors();
         EndEffectorPtr eef;
 
         for (size_t i = 0; i < eefs.size(); i++)
@@ -136,7 +142,7 @@ namespace VirtualRobot
             return GraspPtr();
         }
 
-        bool updateStatus = robot->getUpdateVisualizationStatus();
+        bool updateStatus = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         // check all grasps if there is an IK solution
@@ -162,9 +168,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         THROW_VR_EXCEPTION_IF(!grasp, "NULL grasp");
-        RobotPtr robot = rns->getRobot();
+        RobotPtr robot = rns->getModel();
         THROW_VR_EXCEPTION_IF(!robot, "NULL robot");
-        bool updateStatus = robot->getUpdateVisualizationStatus();
+        bool updateStatus = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         std::vector<float> v;
@@ -178,7 +184,7 @@ namespace VirtualRobot
             return true;
         }
 
-        robot->setJointValues(rns, v);
+        rns->setJointValues(v);
         robot->setUpdateVisualization(updateStatus);
         return false;
     }
@@ -213,8 +219,7 @@ namespace VirtualRobot
             }
 
         // did not succeed, reset joint values and remove grasp from temporary set
-        RobotPtr rob = rns->getRobot();
-        rob->setJointValues(rns, v);
+        rns->setJointValues(v);
 
         if (removeGraspFromSet)
         {
@@ -241,9 +246,9 @@ namespace VirtualRobot
                 VR_ERROR << "Reachability representation has different tcp RobotNode (" << reachabilitySpace->getTCP()->getName() << ") than IK solver (" << tcp->getName() << ") ?! " << endl << "Reachability results may not be valid!" << endl;
             }
 
-            if (reachabilitySpace->getNodeSet() != rns)
+            if (reachabilitySpace->getJointSet() != rns)
             {
-                VR_ERROR << "Reachability representation is defined for a different RobotNodeSet (" << reachabilitySpace->getNodeSet()->getName() << ") than IK solver uses (" << rns->getName() << ") ?! " << endl << "Reachability results may not be valid!" << endl;
+                VR_ERROR << "Reachability representation is defined for a different RobotNodeSet (" << reachabilitySpace->getJointSet()->getName() << ") than IK solver uses (" << rns->getName() << ") ?! " << endl << "Reachability results may not be valid!" << endl;
             }
         }
     }
@@ -257,21 +262,5 @@ namespace VirtualRobot
 
         return reachabilitySpace->isReachable(globalPose);
     }
-
-    VirtualRobot::RobotNodePtr AdvancedIKSolver::getTcp()
-    {
-        return tcp;
-    }
-
-    VirtualRobot::RobotNodeSetPtr AdvancedIKSolver::getRobotNodeSet()
-    {
-        return rns;
-    }
-
-    void AdvancedIKSolver::setVerbose(bool enable)
-    {
-        verbose = enable;
-    }
-
 
 } // namespace VirtualRobot

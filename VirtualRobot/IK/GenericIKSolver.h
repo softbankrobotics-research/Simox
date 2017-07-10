@@ -26,7 +26,8 @@
 #include "../Model/Model.h"
 #include "AdvancedIKSolver.h"
 #include "DifferentialIK.h"
-#include "../ManipulationObject.h"
+#include "../Model/ManipulationObject.h"
+#include "../Model/JointSet.h"
 
 namespace VirtualRobot
 {
@@ -41,7 +42,7 @@ namespace VirtualRobot
             \param rns The robotNodes (i.e., joints) for which the Jacobians should be calculated.
             \param invJacMethod The method that should be used to compute the inverse of the Jacobian.
         */
-        GenericIKSolver(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
+        GenericIKSolver(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
 
         /*!
             This method solves the IK up to the specified max error. On success, the joints of the the corresponding RobotNodeSet are set to the IK solution.
@@ -68,8 +69,7 @@ namespace VirtualRobot
 
         DifferentialIKPtr getDifferentialIK();
 
-        void setupTranslationalJoint(RobotNodePtr rn, float initialValue);
-
+        //void setupTranslationalJoint(ModelJointPrismaticPtr rn, float initialValue);
 
     protected:
 
@@ -78,7 +78,7 @@ namespace VirtualRobot
 
         virtual bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1);
 
-        RobotNodePtr coordSystem;
+        CoordinatePtr coordSystem;
         JacobiProvider::InverseJacobiMethod invJacMethod;
         bool trySolve();
         void setJointsRandom();
@@ -87,8 +87,8 @@ namespace VirtualRobot
         float jacobianStepSize;
         int jacobianMaxLoops;
 
-        RobotNodePtr translationalJoint;
-        float initialTranslationalJointValue;
+        //ModelJointPrismaticPtr translationalJoint;
+        //float initialTranslationalJointValue;
     };
 
     typedef std::shared_ptr<GenericIKSolver> GenericIKSolverPtr;

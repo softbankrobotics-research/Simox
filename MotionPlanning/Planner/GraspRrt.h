@@ -258,7 +258,7 @@ namespace Saba
 
         int colChecksOverall;
         bool foundSolution;
-        boost::mutex graspInfoMutex;
+        std::mutex graspInfoMutex;
 
         bool verbose;
 

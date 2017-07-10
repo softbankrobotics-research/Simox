@@ -70,7 +70,7 @@
 namespace VirtualRobot
 {
 
-    boost::mutex CompressionRLE::mutex;
+	std::mutex CompressionRLE::mutex;
 
     /*************************************************************************
     *                           INTERNAL FUNCTIONS                           *
@@ -168,7 +168,7 @@ namespace VirtualRobot
                                      unsigned int insize)
     {
         // lock our mutex as long we are in the scope of this method
-        boost::mutex::scoped_lock lock(mutex);
+		std::mutex::scoped_lock lock(mutex);
 
         unsigned char byte1, byte2, marker;
         unsigned int  inpos, outpos, count, i, histogram[ 256 ];
@@ -290,7 +290,7 @@ namespace VirtualRobot
                                         unsigned int insize)
     {
         // lock our mutex as long we are in the scope of this method
-        boost::mutex::scoped_lock lock(mutex);
+		std::mutex::scoped_lock lock(mutex);
 
         unsigned char marker, symbol;
         unsigned int  i, inpos, outpos, count;

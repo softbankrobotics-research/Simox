@@ -61,8 +61,8 @@ namespace VirtualRobot
         virtual ~CDManager();
 
         /*!
-            Sets of SceneObjects can be added.
-            All added SceneObjectSets sets are checked against each other.
+            Sets of Links can be added.
+            All added LinkSet sets are checked against each other.
             Internally for all SceneObjectSets that have been added earlier, the method addCollisionModelPair() is called.
         */
         void addCollisionModel(LinkSetPtr m);

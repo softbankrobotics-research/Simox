@@ -26,7 +26,7 @@ namespace Saba
 
     void PlanningThread::start()
     {
-        boost::lock_guard<boost::mutex> lock(mutex);
+		std::lock_guard<std::mutex> lock(mutex);
 
         if (threadStarted)
         {
@@ -38,7 +38,7 @@ namespace Saba
         threadStarted = true;
         plannerFinished = false;
 
-        planningThread = boost::thread(&PlanningThread::workingMethod, this);
+        planningThread = std::thread(&PlanningThread::workingMethod, this);
     }
 
     void PlanningThread::interrupt(bool waitUntilStopped)
@@ -72,7 +72,7 @@ namespace Saba
 
     bool PlanningThread::isRunning()
     {
-        boost::lock_guard<boost::mutex> lock(mutex);
+        std::lock_guard<std::mutex> lock(mutex);
         return threadStarted;
     }
 

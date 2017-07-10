@@ -24,6 +24,9 @@
 #include <Eigen/Core>
 #include "../VirtualRobotException.h"
 
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/algorithm/string.hpp>
+
 using namespace std;
 
 namespace VirtualRobot
@@ -32,7 +35,7 @@ namespace VirtualRobot
     string RobotImporterFactory::getAllFileFilters()
     {
         vector<string> filter;
-        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        for(string subclass: RobotImporterFactory::getSubclassList())
         {
             filter.push_back(RobotImporterFactory::fromName(subclass, NULL)->getFileFilter());
         }
@@ -42,7 +45,7 @@ namespace VirtualRobot
     string RobotImporterFactory::getAllExtensions()
     {
         vector<string> filter;
-        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        for(string subclass : RobotImporterFactory::getSubclassList())
         {
             string extension = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
             filter.push_back("*." + extension);
@@ -52,7 +55,7 @@ namespace VirtualRobot
 
     RobotImporterFactoryPtr RobotImporterFactory::fromFileExtension(string type, void* params)
     {
-        BOOST_FOREACH(string subclass, RobotImporterFactory::getSubclassList())
+        for(string subclass: RobotImporterFactory::getSubclassList())
         {
             string subclassType = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
 

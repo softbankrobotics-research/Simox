@@ -120,7 +120,7 @@ namespace VirtualRobot
         virtual ~BaseIO();
 
 
-        static boost::mutex mutex;
+        static std::mutex mutex;
     };
 
 }

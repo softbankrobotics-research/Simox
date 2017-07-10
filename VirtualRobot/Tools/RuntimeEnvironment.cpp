@@ -388,19 +388,19 @@ namespace VirtualRobot
         float b = (float)atof(strs[1].c_str());
         float c = (float)atof(strs[2].c_str());
 
-        if (boost::math::isinf(a) || boost::math::isinf(-a) || boost::math::isnan(a))
+        if (std::isinf(a) || std::isinf(-a) || std::isnan(a))
         {
             VR_WARNING << "Could not convert " << strs[0] << " to a number" << endl;
             return false;
         }
 
-        if (boost::math::isinf(b) || boost::math::isinf(-b) || boost::math::isnan(b))
+        if (std::isinf(b) || std::isinf(-b) || std::isnan(b))
         {
             VR_WARNING << "Could not convert " << strs[1] << " to a number" << endl;
             return false;
         }
 
-        if (boost::math::isinf(c) || boost::math::isinf(-c) || boost::math::isnan(c))
+        if (std::isinf(c) || std::isinf(-c) || std::isnan(c))
         {
             VR_WARNING << "Could not convert " << strs[2] << " to a number" << endl;
             return false;

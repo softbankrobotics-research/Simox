@@ -283,6 +283,11 @@ namespace VirtualRobot
         */
         static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY(), float maxEntry = 0.0f);
 
+		/**
+		* This method collects all visualization nodes and creates a new Visualization
+		*/
+		static CoinVisualizationPtr getVisualization(ScenePtr scene, ModelLink::VisualizationType visuType, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true)
+
         /*!
             Create an offscreen renderer object with the given width and height.
 

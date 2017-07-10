@@ -21,7 +21,7 @@ using namespace std;
 namespace Saba
 {
 
-    SABA_IMPORT_EXPORT boost::mutex CSpace::colCheckMutex;
+    SABA_IMPORT_EXPORT std::mutex CSpace::colCheckMutex;
     SABA_IMPORT_EXPORT int CSpace::cloneCounter = 0;
 
     //#define DO_THE_TESTS

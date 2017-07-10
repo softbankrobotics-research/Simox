@@ -30,9 +30,6 @@
 #include <VirtualRobot/IK/SupportPolygon.h>
 
 
-//class SoSeparator;
-//class SoNode;
-
 namespace VirtualRobot
 {
     class BalanceConstraintOptimizationFunction
@@ -62,17 +59,17 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public std::enable_shared_from_this<BalanceConstraint>
     {
     public:
-        BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+        BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
                           float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
-        BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
+        BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
                           float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
 
         Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
-        bool getRobotPoseForConstraint(RobotPtr& robot, Eigen::Matrix4f& pose);
+        bool getRobotPoseForConstraint(ModelPtr& robot, Eigen::Matrix4f& pose);
         Eigen::Vector3f getCoM();
         SupportPolygonPtr getSupportPolygon();
 
@@ -82,11 +79,10 @@ namespace VirtualRobot
         Eigen::VectorXf optimizationGradient(unsigned int id);
 
     protected:
-        void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+        void initialize(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
                         float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight);
 
         void updateSupportPolygon();
-        //void visualizeSupportPolygon(SoSeparator* sep);
 
         float getDifferentiableStabilityIndex();
         Eigen::VectorXf getDifferentiableStabilityIndexGradient();
@@ -97,8 +93,8 @@ namespace VirtualRobot
         float height;
         bool considerCoMHeight;
 
-        RobotNodeSetPtr joints;
-        RobotNodeSetPtr bodies;
+		JointSetPtr joints;
+		LinkSetPtr bodies;
 
         float minimumStability;
         float maxSupportDistance;

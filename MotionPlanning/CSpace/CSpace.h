@@ -354,7 +354,7 @@ namespace Saba
         std::vector< bool > borderLessDimension;         // store borderless state
 
         bool multiThreaded;                             // indicates that more than one CSpace is used by some threads
-        static boost::mutex colCheckMutex;              // only needed when multithreading support is enabled
+        static std::mutex colCheckMutex;              // only needed when multithreading support is enabled
         //  -> setting the configurations and checking against collisions is protected by this mutex
         std::vector<ConfigurationConstraintPtr>  constraints;
 

@@ -23,7 +23,7 @@ extern "C"
 
 namespace GraspStudio
 {
-    boost::mutex ConvexHullGenerator::qhull_mutex;
+    std::mutex ConvexHullGenerator::qhull_mutex;
 
     bool ConvexHullGenerator::ConvertPoints(std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex)
     {

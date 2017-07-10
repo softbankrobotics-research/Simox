@@ -3,11 +3,12 @@
 #include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 #include "../Model/Nodes/ModelNode.h"
+#include "../Model/Nodes/ModelJoint.h"
 #include "../VirtualRobotException.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
-#include "../Obstacle.h"
-#include "../RobotConfig.h"
+#include "../Model/Obstacle.h"
+#include "../Model/ModelConfig.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CDManager.h"
 
@@ -18,8 +19,8 @@ using namespace Eigen;
 namespace VirtualRobot
 {
 
-    GenericIKSolver::GenericIKSolver(RobotNodeSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod) :
-        AdvancedIKSolver(rns)
+    GenericIKSolver::GenericIKSolver(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod) :
+		AdvancedIKSolver(rns)
     {
         this->invJacMethod = invJacMethod;
         _init();
@@ -30,7 +31,7 @@ namespace VirtualRobot
         jacobian->setGoal(globalPose, tcp, selection, maxErrorPositionMM, maxErrorOrientationRad);
         jacobian->checkImprovements(true);
 
-        RobotConfigPtr bestConfig(new RobotConfig(rns->getRobot(), "bestConfig"));
+        RobotConfigPtr bestConfig(new RobotConfig(rns->getModel(), "bestConfig"));
         rns->getJointValues(bestConfig);
         float bestError = jacobian->getMeanErrorPosition();
 
@@ -87,25 +88,24 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
-            RobotNodePtr ro =  rns->getNode(i);
+            ModelJointPtr ro =  rns->getNode(i);
             float r = (float)rand() * rn;
             float v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
             jv.push_back(v);
         }
 
-        RobotPtr rob = rns->getRobot();
-        rob->setJointValues(rns, jv);
+        rns->setJointValues(jv);
 
-        if (translationalJoint)
+        /*if (translationalJoint)
         {
             translationalJoint->setJointValue(initialTranslationalJointValue);
-        }
+        }*/
     }
-    void GenericIKSolver::setupTranslationalJoint(RobotNodePtr rn, float initialValue)
+    /*void GenericIKSolver::setupTranslationalJoint(RobotNodePtr rn, float initialValue)
     {
         translationalJoint = rn;
         initialTranslationalJointValue = initialValue;
-    }
+    }*/
 
     DifferentialIKPtr GenericIKSolver::getDifferentialIK()
     {
@@ -114,7 +114,6 @@ namespace VirtualRobot
 
     bool GenericIKSolver::trySolve()
     {
-
         if (jacobian->solveIK(jacobianStepSize, 0.0, jacobianMaxLoops))
         {
             if (cdm)
@@ -138,7 +137,6 @@ namespace VirtualRobot
         jacobian.reset(new DifferentialIK(rns, coordSystem, invJacMethod));
         jacobianStepSize = 0.3f;
         jacobianMaxLoops = 50;
-
     }
 
     void GenericIKSolver::setupJacobian(float stepSize, int maxLoops)

@@ -1,5 +1,8 @@
 #include "FeetPosture.h"
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/JointSet.h>
+#include <VirtualRobot/Model/LinkSet.h>
+#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 
 using namespace std;
 
@@ -7,20 +10,20 @@ namespace VirtualRobot
 {
 
 
-    FeetPosture::FeetPosture(RobotNodeSetPtr leftLeg,
-                             RobotNodeSetPtr rightLeg,
-                             Eigen::Matrix4f& transformationLeftToRightFoot,
-                             RobotNodePtr baseNode,
-                             RobotNodePtr leftTCP /*= RobotNodePtr()*/,
-                             RobotNodePtr rightTCP /*= RobotNodePtr()*/,
-                             RobotNodeSetPtr rnsLeft2RightFoot)
-        : leftLeg(leftLeg), rightLeg(rightLeg), left2Right(rnsLeft2RightFoot), transformationLeftToRightFoot(transformationLeftToRightFoot), baseNode(baseNode)
+    FeetPosture::FeetPosture(JointSetPtr leftLeg,
+							 JointSetPtr rightLeg,
+							 LinkSetPtr leftLegCol,
+							 LinkSetPtr rightLegCol,
+							 Eigen::Matrix4f& transformationLeftToRightFoot,
+                             ModelNodePtr baseNode,
+                             CoordinatePtr leftTCP,
+							 CoordinatePtr rightTCP,
+							 JointSetPtr rnsLeft2RightFoot)
+        : leftLeg(leftLeg), rightLeg(rightLeg), leftLegCol(leftLegCol), rightLegCol(rightLegCol), left2Right(rnsLeft2RightFoot), transformationLeftToRightFoot(transformationLeftToRightFoot), baseNode(baseNode)
     {
         VR_ASSERT(this->leftLeg);
         VR_ASSERT(this->rightLeg);
-        VR_ASSERT(this->leftLeg->getRobot() == this->rightLeg->getRobot());
-        leftLegCol = leftLeg;
-        rightLegCol = rightLeg;
+        VR_ASSERT(this->leftLeg->getModel() == this->rightLeg->getModel());
         this->leftTCP = leftTCP;
 
         if (!leftTCP)
@@ -45,27 +48,27 @@ namespace VirtualRobot
 
     }
 
-    RobotNodeSetPtr FeetPosture::getLeftLeg()
+	JointSetPtr FeetPosture::getLeftLeg()
     {
         return leftLeg;
     }
 
-    RobotNodeSetPtr FeetPosture::getRightLeg()
+	JointSetPtr FeetPosture::getRightLeg()
     {
         return rightLeg;
     }
 
-    RobotNodePtr FeetPosture::getLeftTCP()
+	CoordinatePtr FeetPosture::getLeftTCP()
     {
         return leftTCP;
     }
 
-    RobotNodePtr FeetPosture::getRightTCP()
+	CoordinatePtr FeetPosture::getRightTCP()
     {
         return rightTCP;
     }
 
-    RobotNodePtr FeetPosture::getBaseNode()
+    ModelNodePtr FeetPosture::getBaseNode()
     {
         return baseNode;
     }
@@ -75,9 +78,9 @@ namespace VirtualRobot
         return transformationLeftToRightFoot;
     }
 
-    RobotPtr FeetPosture::getRobot()
+    ModelPtr FeetPosture::getRobot()
     {
-        return leftLeg->getRobot();
+        return leftLeg->getModel();
     }
 
     void FeetPosture::print()
@@ -101,7 +104,7 @@ namespace VirtualRobot
         }
     }
 
-    void FeetPosture::setCollisionCheck(RobotNodeSetPtr leftColModel, RobotNodeSetPtr rightColModel)
+    void FeetPosture::setCollisionCheck(LinkSetPtr leftColModel, LinkSetPtr rightColModel)
     {
         VR_ASSERT(leftLegCol && rightLegCol);
         leftLegCol = leftColModel;
@@ -115,22 +118,22 @@ namespace VirtualRobot
         return !leftLegCol->getCollisionChecker()->checkCollision(leftLegCol, rightLegCol);
     }
 
-    RobotNodeSetPtr FeetPosture::getLeftLegCol()
+    LinkSetPtr FeetPosture::getLeftLegCol()
     {
         return leftLegCol;
     }
 
-    RobotNodeSetPtr FeetPosture::getRightLegCol()
+	LinkSetPtr FeetPosture::getRightLegCol()
     {
         return rightLegCol;
     }
 
-    RobotNodeSetPtr FeetPosture::getRNSLeft2RightFoot()
+    JointSetPtr FeetPosture::getRNSLeft2RightFoot()
     {
         return left2Right;
     }
 
-    void FeetPosture::setRNSLeft2RightFoot(RobotNodeSetPtr rns)
+    void FeetPosture::setRNSLeft2RightFoot(JointSetPtr rns)
     {
         left2Right = rns;
     }
