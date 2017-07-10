@@ -28,6 +28,10 @@ std::string Coordinate::getName()
     return name;
 }
 
+void Coordinate::setName(const std::string & name)
+{
+    this->name = name;
+}
 
 Eigen::Matrix4f Coordinate::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
 {

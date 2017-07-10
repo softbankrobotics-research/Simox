@@ -88,6 +88,8 @@ namespace VirtualRobot
          * @return True, if the node is registered; false otherwise.
          */
         virtual bool hasModelNode(const std::string& modelNodeName) const;
+        virtual bool hasJoint(const std::string& jointName) const;
+        virtual bool hasLink(const std::string& linkName) const;
 
         /*!
          * Get a pointer to the ModelNode, identified by the given name. This node could be a link or joint.

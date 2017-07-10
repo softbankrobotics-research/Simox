@@ -323,7 +323,7 @@ namespace VirtualRobot
     void EndEffector::registerPreshape(RobotConfigPtr preshape)
     {
         THROW_VR_EXCEPTION_IF(!preshape, "NULL data...");
-        std::vector< RobotNodePtr > nodes = preshape->getNodes();
+        //std::vector< ModelJointPtr > nodes = preshape->getNodes();
         // don't be too strict!
         /*for (size_t i=0;i<nodes.size();i++)
         {
@@ -629,7 +629,7 @@ namespace VirtualRobot
         while (itPre != preshapes.end())
         {
             ss << tt << "<Preshape name='" << itPre->first << "'>" << endl;
-            std::map < std::string, float > jv = itPre->second->getModelNodeJointValueMap();
+            std::map < std::string, float > jv = itPre->second->getJointNameValueMap();
 
             std::map< std::string, float >::const_iterator i = jv.begin();
 

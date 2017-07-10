@@ -369,11 +369,20 @@ namespace VirtualRobot
          *
          * @param node The node to check.
          * @param type The type to check.
-         * @return True, if the node has tthe given type; false otherwise.
+         * @return True, if the node has the given type; false otherwise.
          */
         inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type)
         {
             return (node->getType() & type) == type;
+        }
+
+        virtual bool isJoint()
+        {
+            return (getType() & ModelNodeType::Joint)!=0;
+        }
+        virtual bool isLink()
+        {
+            return (getType() & ModelNodeType::Link)!=0;
         }
 
     protected:

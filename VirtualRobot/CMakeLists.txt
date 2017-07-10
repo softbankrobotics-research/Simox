@@ -102,7 +102,6 @@ Model/ModelConfig.cpp
 Model/ModelNodeSet.cpp
 Model/LinkSet.cpp
 Model/JointSet.cpp
-Model/KinematicChain.cpp
 Model/ModelFactory.cpp
 Model/Obstacle.cpp
 Model/Primitive.cpp
@@ -200,7 +199,6 @@ Model/ModelConfig.h
 Model/ModelNodeSet.h
 Model/LinkSet.h
 Model/JointSet.h
-Model/KinematicChain.h
 Model/ModelFactory.h
 Model/Obstacle.h
 Model/Primitive.h

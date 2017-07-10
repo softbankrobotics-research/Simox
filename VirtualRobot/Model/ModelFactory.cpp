@@ -6,9 +6,9 @@
 #include "Nodes/ModelJointRevolute.h"
 #include "Nodes/ModelJointPrismatic.h"
 #include "Nodes/ModelJointFixed.h"
-#include "EndEffector/EndEffector.h"
-#include "Visualization//VisualizationFactory.h"
-#include "VirtualRobotException.h"
+#include "../EndEffector/EndEffector.h"
+#include "../Visualization//VisualizationFactory.h"
+#include "../VirtualRobotException.h"
 
 
 #include <algorithm>
@@ -65,7 +65,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!foundRoot, "Invalid model node (root is not available)");
 
         // process children
-        std::map< ModelNodePtr, std::vector< std::string > >::iterator iterC = childrenMap.begin();
+        auto iterC = childrenMap.begin();
 
         while (iterC != childrenMap.end())
         {
@@ -115,7 +115,7 @@ namespace VirtualRobot
         std::string rootName;
         std::vector<modelNodeDef> parentChildMapping;
     };
-
+    /*
     ModelPtr ModelFactory::cloneInversed(const ModelPtr& model, const std::string& newRootName, bool cloneRNS, bool cloneEEF)
     {
         VR_ASSERT(model);
@@ -210,9 +210,9 @@ namespace VirtualRobot
         }
 
         return r;
-    }
+    }*/
 
-
+    /*
     ModelPtr ModelFactory::cloneChangeStructure(const ModelPtr& model, const std::string& startNode, const std::string& endNode)
     {
         VR_ASSERT(model);
@@ -274,8 +274,9 @@ namespace VirtualRobot
 
 
         return ModelFactory::cloneChangeStructure(model, newStructure);
-    }
+    }*/
 
+/*
     bool ModelFactory::attach(const ModelPtr& model, SceneObjectPtr o, const ModelNodePtr& rn, const Eigen::Matrix4f& transformation)
     {
         if (!model || !o || !rn)
@@ -583,7 +584,7 @@ namespace VirtualRobot
         newModel->getRootNode()->initialize();
 
         return newModel;
-    }
+    }*/
 
 
     ModelPtr ModelFactory::clone(const ModelPtr& model, const std::string& name, const CollisionCheckerPtr& collisionChecker, float scaling)
@@ -603,13 +604,13 @@ namespace VirtualRobot
     void ModelFactory::getChildNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<ModelNodePtr>& appendNodes)
     {
         THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
-        std::vector < SceneObjectPtr > children = nodeA->getChildren();
+        std::vector < ModelNodePtr > children = nodeA->getChildNodes();
         std::vector<ModelNodePtr> childNodes;
 
         for (size_t i = 0; i < children.size(); i++)
         {
-            SceneObjectPtr c = children[i];
-            ModelNodePtr cRN = std::dynamic_pointer_cast<ModelNode>(c);
+            ModelNodePtr cRN = children[i];
+            //ModelNodePtr cRN = std::dynamic_pointer_cast<ModelNode>(c);
 
             if (cRN && cRN != nodeExclude)
             {
@@ -618,7 +619,7 @@ namespace VirtualRobot
             }
         }
     }
-
+    /*
     void ModelFactory::getChildSensorNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<SensorPtr>& appendNodes)
     {
         THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
@@ -641,8 +642,8 @@ namespace VirtualRobot
                 getChildSensorNodes(cRN, nodeExclude, appendNodes);
             }
         }
-    }
-
+    }*/
+    /*
     ModelNodePtr ModelFactory::accumulateTransformations(const ModelPtr& model, const ModelNodePtr& nodeA, const ModelNodePtr& nodeAClone, const ModelNodePtr& nodeB, Eigen::Matrix4f& storeTrafo)
     {
         THROW_VR_EXCEPTION_IF(!model, "NULL data");
@@ -992,6 +993,6 @@ namespace VirtualRobot
  
         }
 
-    }
+    }*/
 
 } // namespace VirtualRobot

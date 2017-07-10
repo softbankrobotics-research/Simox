@@ -72,7 +72,6 @@
 #include <VirtualRobot/RobotConfig.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Trajectory.h>
-#include <VirtualRobot/KinematicChain.h>
 #include <VirtualRobot/RobotFactory.h>
 #include <VirtualRobot/SceneObject.h>
 #include <VirtualRobot/SceneObjectSet.h>

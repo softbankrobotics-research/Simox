@@ -53,10 +53,10 @@ namespace VirtualRobot
             \param name A name, which identifies this object.
         */
         ModelConfig(ModelWeakPtr model, const std::string& name);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelNodePtr, float >& configs);
+        ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelJointPtr, float >& configs);
         ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< Configuration >& configs);
         ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< std::string >& modelNodes, const std::vector< float >& values);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelNodePtr >& modelNodes, const std::vector< float >& values);
+        ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values);
 
         /*!
             Creates a copy of this object with the given model
@@ -82,7 +82,7 @@ namespace VirtualRobot
             \return True on success. False if model is not present any more (may happen due to the use of weak pointers).
         */
         bool setConfig(const Configuration& c);
-        bool setConfig(ModelNodePtr node, float value);
+        bool setConfig(ModelJointPtr node, float value);
         bool setConfig(const std::string& node, float value);
 
         /*!
@@ -110,12 +110,12 @@ namespace VirtualRobot
         /*!
             Return vector of all nodes that are covered by this ModelConfig.
         */
-        std::vector< ModelNodePtr > getNodes() const;
+        std::vector< ModelJointPtr > getNodes() const;
 
         /*!
             Returns map of ModelNodeNames with corresponding joint values.
         */
-        std::map < std::string, float > getModelNodeJointValueMap();
+        std::map < std::string, float > getJointNameValueMap();
 
         /*!
             Create an XML string that defines this object.
@@ -127,7 +127,7 @@ namespace VirtualRobot
     protected:
         std::string name;
 
-        std::map< ModelNodePtr, float > configs;
+        std::map< ModelJointPtr, float > configs;
         ModelWeakPtr model;
     };
 

@@ -3,7 +3,6 @@
 #include "Nodes/ModelJoint.h"
 #include "../VirtualRobotException.h"
 #include "ModelConfig.h"
-#include "KinematicChain.h"
 #include "../CollisionDetection/CollisionChecker.h"
 
 namespace VirtualRobot

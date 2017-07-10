@@ -156,15 +156,15 @@ namespace VirtualRobot
             {
                 ss << pre << t << "<GlobalPose>\n";
                 ss << pre << t  << t  << "<Transform>\n";
-                ss << BasIO::getTransformXMLString(gp, tabs + 3);
+                ss << BaseIO::getTransformXMLString(gp, tabs + 3);
                 ss << pre << t  << t  << "</Transform>\n";
                 ss << pre << t << "</GlobalPose>\n";
             }
         }
         else
         {
-
-            ss << getSceneObjectXMLString(basePath, tabs + 1);
+            // todo
+            //ss << getSceneObjectXMLString(basePath, tabs + 1);
 
             for (size_t i = 0; i < graspSets.size(); i++)
             {
@@ -176,11 +176,12 @@ namespace VirtualRobot
 
         return ss.str();
     }
-
+   /*
     ManipulationObject* ManipulationObject::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
     {
         VisualizationNodePtr clonedVisualizationNode;
 
+        
         if (visualizationModel)
         {
             clonedVisualizationNode = visualizationModel->clone();
@@ -209,7 +210,7 @@ namespace VirtualRobot
         }
 
         return result;
-    }
+    }*/
 
     VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, std::string visualizationType, CollisionCheckerPtr colChecker)
     {
@@ -253,8 +254,6 @@ namespace VirtualRobot
 
         CollisionModelPtr colModel(new CollisionModel(visu->clone(), name, colChecker, id));
         result.reset(new ManipulationObject(name, visu, colModel, ModelLink::Physics(), colChecker));
-
-        result->initialize();
 
         return result;
     }

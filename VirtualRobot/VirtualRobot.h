@@ -151,6 +151,7 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #include <sstream>
 #include <cmath>
 #include <memory>
+#include <mutex>
 
 //#ifdef _DEBUG
 //#ifdef WIN32
@@ -178,7 +179,6 @@ namespace VirtualRobot
     class PositionConstraint;
     class OrientationConstraint;
     class SupportPolygon;
-    class KinematicChain;
     class EndEffector;
     class EndEffectorActor;
     class CollisionChecker;
@@ -240,7 +240,6 @@ namespace VirtualRobot
     typedef std::shared_ptr<PositionConstraint> PositionConstraintPtr;
     typedef std::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
     typedef std::shared_ptr<SupportPolygon> SupportPolygonPtr;
-    typedef std::shared_ptr<KinematicChain> KinematicChainPtr;
     typedef std::shared_ptr<EndEffector> EndEffectorPtr;
     typedef std::shared_ptr<EndEffectorActor> EndEffectorActorPtr;
     typedef std::shared_ptr<CollisionModel> CollisionModelPtr;

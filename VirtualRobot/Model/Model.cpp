@@ -14,11 +14,12 @@
 
 namespace VirtualRobot
 {
-    Model::Model(const std::string& name, const std::string& type) : name(name), type(type), scaling(1.0f),
+    Model::Model(const std::string& name, const std::string& type) : Coordinate(name), type(type), scaling(1.0f),
                                                                      threadsafe(true), mutex(),
                                                                      rootNode(),
                                                                      collisionChecker(),
-                                                                     modelNodeMap(), modelNodeSetMap(),
+                                                                     modelNodeMap(), 
+                                                                     modelNodeSetMap(),
                                                                      filename("")
     {
     }
@@ -79,6 +80,20 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         return (modelNodeMap.find(modelNodeName) != modelNodeMap.end());
+    }
+
+    bool Model::hasJoint(const std::string& jointName) const
+    {
+        ReadLockPtr r = getReadLock();
+        auto i = modelNodeMap.find(jointName);
+        return (i != modelNodeMap.end() && (i->second->isJoint()));
+    }
+
+    bool Model::hasLink(const std::string& linkName) const
+    {
+        ReadLockPtr r = getReadLock();
+        auto i = modelNodeMap.find(linkName);
+        return (i != modelNodeMap.end() && (i->second->isLink()));
     }
 
     ModelNodePtr Model::getModelNode(const std::string& modelNodeName) const
@@ -839,6 +854,7 @@ namespace VirtualRobot
     std::string Model::toXML(const std::string& basePath, const std::string& modelPath,
                              bool storeEEF, bool storeRNS, bool storeAttachments)
     {
+
         return std::string(); // TODO: implement toXML
     }
 
