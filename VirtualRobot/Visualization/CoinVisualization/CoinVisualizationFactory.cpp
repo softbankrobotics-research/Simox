@@ -4181,6 +4181,77 @@ namespace VirtualRobot
         return m;
     }
 
+	CoinVisualizationPtr getVisualization(ScenePtr scene, ModelLink::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+	{
+		VR_ASSERT(scene);
+
+		std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+
+		if (addRobots)
+		{
+			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
+			// collect all robotnodes
+			std::vector<VirtualRobot::ModelNodePtr> collectedRobotNodes;
+
+			for (size_t i = 0; i < collectedRobots.size(); i++)
+			{
+				collectedRobots[i]->getModelNodes(collectedRobotNodes, false);
+			}
+
+			for (size_t i = 0; i < collectedRobotNodes.size(); i++)
+			{
+				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedRobotNodes[i], visuType));
+			}
+		}
+
+		if (addObstacles)
+		{
+			std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
+
+			for (size_t i = 0; i < collectedObstacles.size(); i++)
+			{
+				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedObstacles[i], visuType));
+			}
+		}
+
+		if (addManipulationObjects)
+		{
+			std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
+
+			for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
+			{
+				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedManipulationObjects[i], visuType));
+			}
+		}
+
+		if (addTrajectories)
+		{
+			std::vector<VirtualRobot::TrajectoryPtr> collectedTrajectories = scene->getTrajectories();
+
+			for (size_t i = 0; i < collectedTrajectories.size(); i++)
+			{
+				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedTrajectories[i], viuType));
+			}
+		}
+
+		if (addSceneObjectSets)
+		{
+			std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getLinks();
+
+			for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
+			{
+				std::vector< ModelNodePtr > sos = collectedSceneObjectSets[i]->getModelNodes();
+
+				for (size_t j = 0; j < sos.size(); j++)
+				{
+					collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(sos[j], visuType));
+				}
+			}
+		}
+
+		CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
+		return visualization;
+	}
 
 
 } // namespace VirtualRobot

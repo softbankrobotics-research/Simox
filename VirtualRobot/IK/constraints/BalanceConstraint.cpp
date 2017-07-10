@@ -124,7 +124,7 @@ void BalanceConstraintOptimizationFunction::update()
 
 double BalanceConstraintOptimizationFunction::sigmoid(double x)
 {
-    float beta = 0.1;
+    double beta = 0.1;
     return 1.0 / (1.0 + exp(-beta * x));
 }
 
@@ -134,21 +134,21 @@ double BalanceConstraintOptimizationFunction::sigmoid_prime(double x)
 }
 
 
-BalanceConstraint::BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+BalanceConstraint::BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
                                      float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
     initialize(robot, joints, bodies, contactNodes, tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
-BalanceConstraint::BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
+BalanceConstraint::BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
                                      float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight) :
     Constraint(joints)
 {
     initialize(robot, joints, bodies, supportPolygon->getContactModels(), tolerance, minimumStability, maxSupportDistance, supportPolygonUpdates, considerCoMHeight);
 }
 
-void BalanceConstraint::initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,
+void BalanceConstraint::initialize(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
                                    float tolerance, float minimumStability, float maxSupportDistance, bool supportPolygonUpdates, bool considerCoMHeight)
 {
     this->joints = joints;
@@ -218,7 +218,7 @@ float BalanceConstraint::getDifferentiableStabilityIndex()
     }
 
     MathTools::ConvexHull2DPtr ch = supportPolygon->getSupportPolygon2D();
-    Eigen::Vector2f com2D = rns->getCoM().head(2);
+    Eigen::Vector2f com2D = bodies->getCoM().head(2);
 
     if (!ch || ch->vertices.size() < 2 || !MathTools::isInside(com2D, ch))
     {
@@ -246,7 +246,7 @@ double BalanceConstraint::optimizationFunction(unsigned int /*id*/)
         differnentiableStability->updateSupportPolygon();
     }
 
-    Eigen::Vector2f com = rns->getCoM().head(2);
+    Eigen::Vector2f com = bodies->getCoM().head(2);
     if(considerCoMHeight)
     {
         VR_WARNING << "COM Height not yet supported by NLopt balance constraint" << std::endl;
@@ -262,7 +262,7 @@ Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int /*id*/)
         differnentiableStability->updateSupportPolygon();
     }
 
-    Eigen::Vector2f com = rns->getCoM().head(2);
+    Eigen::Vector2f com = bodies->getCoM().head(2);
     if(considerCoMHeight)
     {
         VR_WARNING << "COM Height not yet supported by NLopt balance constraint" << std::endl;
@@ -276,7 +276,7 @@ Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
     return comIK->getJacobianMatrix();
 }
 
-Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(SceneObjectPtr tcp)
+Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(CoordinatePtr tcp)
 {
     return comIK->getJacobianMatrix(tcp);
 }

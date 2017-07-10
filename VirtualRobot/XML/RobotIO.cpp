@@ -900,7 +900,7 @@ namespace VirtualRobot
 
         // check name counter
         {
-            boost::lock_guard<boost::mutex> lock(mutex);
+            std::lock_guard<std::mutex> lock(mutex);
 
             if (robot_name_counter.find(robotType) != robot_name_counter.end())
             {
@@ -919,7 +919,7 @@ namespace VirtualRobot
         {
             std::stringstream ss;
             {
-                boost::lock_guard<boost::mutex> lock(mutex);
+                std::lock_guard<std::mutex> lock(mutex);
 
                 if (robot_name_counter[robotType] == 1)
                 {

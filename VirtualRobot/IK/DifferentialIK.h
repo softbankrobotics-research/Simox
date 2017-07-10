@@ -231,7 +231,7 @@ namespace VirtualRobot
 
 
         //! Returns the default tcp of the robot.
-        virtual RobotNodePtr getDefaultTCP();
+        virtual CoordinatePtr getDefaultTCP();
 
 
         //! Returns the translation error for a given tcp (i.e., the distance to the target).
@@ -291,9 +291,13 @@ namespace VirtualRobot
     protected:
         virtual void setNRows();
 
+
+		ModelNodePtr getTcpNode(CoordinatePtr tcp);
+		bool updateParents(CoordinatePtr tcp);
+
         float invParam;
         std::vector<CoordinatePtr> tcp_set;
-        RobotNodePtr coordSystem;
+        CoordinatePtr coordSystem;
 
         bool checkImprovement; //!< Indicates if the jacobian steps must improve the result, otherwise the loop is canceld.
 
@@ -309,8 +313,8 @@ namespace VirtualRobot
 
         bool convertMMtoM; // if set, the distances for Jacobian computations are scaled with 1/1000, otherwise the scaling of the model is used (which usually is mm)
 
-        std::vector <RobotNodePtr> nodes;
-        std::map< RobotNodePtr, std::vector<RobotNodePtr> > parents;
+        std::vector <ModelJointPtr> nodes;
+        std::map<ModelNodePtr, std::vector<ModelNodePtr> > parents;
 
         Eigen::VectorXf currentError;
         Eigen::MatrixXf currentJacobian;
@@ -328,8 +332,6 @@ namespace VirtualRobot
         Eigen::MatrixXf tmpUpdateJacobianOrientation;
 
         Eigen::VectorXf tmpComputeStepTheta;
-
-
 
         float positionMaxStep;
         bool verbose;

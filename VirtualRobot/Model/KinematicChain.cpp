@@ -1,6 +1,6 @@
 
 #include "KinematicChain.h"
-#include "Model/Model.h"
+#include "Model.h"
 #include "VirtualRobotException.h"
 
 

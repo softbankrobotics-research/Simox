@@ -55,7 +55,17 @@ namespace VirtualRobot
             All = 15
         };
 
-        IKSolver();
+        IKSolver(JointSetPtr rns);
+
+		JointSetPtr getJointSet();
+		CoordinatePtr getTcp();
+
+		void setVerbose(bool enable);
+
+	protected:
+		JointSetPtr rns;
+		CoordinatePtr tcp;
+		bool verbose;
     };
 
     typedef std::shared_ptr<IKSolver> IKSolverPtr;

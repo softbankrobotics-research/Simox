@@ -236,6 +236,11 @@ namespace VirtualRobot
          */
         virtual std::string toXML(int tabs);
 
+		/*!
+		* Clone this JointSet and register it to the new robot
+		*/
+		virtual ModelNodeSetPtr clone(ModelPtr newModel);
+
     private:
         std::vector<ModelJointPtr> joints;
     };

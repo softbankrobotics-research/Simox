@@ -667,7 +667,7 @@ namespace VirtualRobot
 
     bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::isValid(const Eigen::MatrixXf& v)
     {
-        return !(boost::math::isinf(v.maxCoeff()) || boost::math::isinf(-v.minCoeff()) || boost::math::isnan(v.sum()));
+        return !(std::isinf(v.maxCoeff()) || std::isinf(-v.minCoeff()) || std::isnan(v.sum()));
     }
 
 

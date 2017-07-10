@@ -1,6 +1,6 @@
 #include "JointSet.h"
 #include "Nodes/ModelJoint.h"
-#include "VirtualRobotException.h"
+#include "../VirtualRobotException.h"
 
 namespace VirtualRobot
 {

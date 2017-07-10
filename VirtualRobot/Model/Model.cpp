@@ -7,6 +7,7 @@
 #include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
 #include "../Trajectory.h"
+#include "../EndEffector/EndEffector.h"
 
 #include <algorithm>
 
@@ -260,7 +261,7 @@ namespace VirtualRobot
         return nodes;
     }
 
-    LinkSetPtr Model::getLinkSet() const
+    LinkSetPtr Model::getLinkSet()
     {
         ReadLockPtr r = getReadLock();
         std::vector< ModelNodePtr > nodes;
@@ -271,7 +272,7 @@ namespace VirtualRobot
                 nodes.push_back(n.second);
         }
         std::string name = std::string("__" + name + "-all-links");
-        ModelPtr m = shared_from_this();
+        std::shared_ptr<Model> m = shared_from_this();
         LinkSetPtr ls = LinkSet::createLinkSet(m, name, nodes);
 
         return ls;
@@ -290,7 +291,7 @@ namespace VirtualRobot
         return nodes;
     }
 
-    JointSetPtr Model::getJointSet() const
+    JointSetPtr Model::getJointSet()
     {
         ReadLockPtr r = getReadLock();
         std::vector< ModelNodePtr > nodes;
@@ -703,7 +704,7 @@ namespace VirtualRobot
     float Model::getMass() const
     {
         ReadLockPtr r = getReadLock();
-        int mass = 0;
+        float mass = 0;
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
@@ -732,7 +733,6 @@ namespace VirtualRobot
             colChecker = this->getCollisionChecker();
         }
 
-        //stefan Warning!!!!! which robot-type to create
         ModelPtr result(new Model(newModelName, newModelType));
 
         ModelNodePtr rootNew = startNode->clone(result, true, ModelNodePtr(), colChecker, scaling);
@@ -874,7 +874,7 @@ namespace VirtualRobot
     {
         return VirtualRobot::ModelPtr(); // TODO: implement clone
     }
-
+	/*
     Eigen::Matrix4f Model::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
     {
         return getGlobalPose().inverse() * poseGlobal;
@@ -908,25 +908,30 @@ namespace VirtualRobot
 	void Model::setName(const std::string &name)
 	{
 		this->name = name;
+	}*/
+
+	bool Model::hasEndEffector(const EndEffectorPtr &eef) const
+	{
+		ReadLockPtr w = getReadLock();
+		if (!eef)
+			return false;
+		return hasEndEffector(eef->getName());
+		return false;
 	}
 
-    bool Model::hasEndEffector(const EndEffectorPtr &eef) const
-    {
-        ReadLockPtr w = getReadLock();
-        if (eef)
-        {
-            auto i = eefMap.find(eef->getName());
-            return (i != eefMap.end());
-        }
-        return false;
-    }
+	bool Model::hasEndEffector(const std::string &name) const
+	{
+		ReadLockPtr w = getReadLock();
+		auto i = eefMap.find(name);
+		return (i != eefMap.end());
+	}
 
 
-    void Model::registerEndEffector(const EndEffectorPtr &eef)
+	void Model::registerEndEffector(const EndEffectorPtr &eef)
     {
         VR_ASSERT(eef);
         WriteLockPtr w = getWriteLock();
-        if (hasEndeffector(eef->getName())
+        if (hasEndEffector(eef->getName()))
         {
             THROW_VR_EXCEPTION("EEF with name " + eef->getName() + " already registered to robot " + name);
         }
@@ -947,7 +952,7 @@ namespace VirtualRobot
         }
     }
 
-    EndEffectorPtr VirtualRobot::Model::getEndEffector(const std::string & name) const
+    EndEffectorPtr Model::getEndEffector(const std::string & name) const
     {
         ReadLockPtr r = getReadLock();
         auto i = eefMap.find(name);
@@ -957,14 +962,14 @@ namespace VirtualRobot
         return i->second;
     }
 
-    std::vector<EndEffectorPtr> VirtualRobot::Model::getEndEffectors() const
+    std::vector<EndEffectorPtr> Model::getEndEffectors() const
     {
         ReadLockPtr r = getReadLock();
         std::vector<EndEffectorPtr> res;
 
         for (auto it : eefMap)
         {
-            res.push_back(it->second);
+            res.push_back(it.second);
         }
         return res;
     }

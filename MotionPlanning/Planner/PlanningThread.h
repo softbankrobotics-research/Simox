@@ -87,8 +87,8 @@ namespace Saba
         bool threadStarted;
         bool plannerFinished;
         MotionPlannerPtr planner;
-        boost::thread planningThread;
-        boost::mutex mutex;
+        std::thread planningThread;
+        std::mutex mutex;
 
     };
 

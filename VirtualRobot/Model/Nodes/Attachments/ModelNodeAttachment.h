@@ -24,13 +24,14 @@
 #define _VirtualRobot_ModelNodeAttachment_h_
 
 #include "../../Model/Model.h"
+#include "../../Model/Coordinate.h"
 
 #include <cstdint>
 #include <string>
 
 namespace VirtualRobot
 {
-    class ModelNodeAttachment
+    class ModelNodeAttachment : public Coordinate
     {
         friend class ModelNode;
 

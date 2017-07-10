@@ -1,7 +1,7 @@
 #include "LinkSet.h"
 #include "Nodes/ModelLink.h"
 #include "Nodes/ModelJoint.h"
-#include "VirtualRobotException.h"
+#include "../VirtualRobotException.h"
 #include "ModelConfig.h"
 #include "KinematicChain.h"
 

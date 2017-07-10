@@ -50,32 +50,40 @@ namespace VirtualRobot
         /*!
             @brief Initialize a IK solver without collision detection.
             \param rns The joints for which the Jacobians should be calculated.
+			\param collisionModels Optionoal: use this models for collisiond etection
         */
-        AdvancedIKSolver(JointSetPtr rns);
+        AdvancedIKSolver(JointSetPtr rns, LinkSetPtr collisionModels = LinkSetPtr());
 
+		/*! Steup the model links that should be used for collision detection
+		*/
+		virtual void collisionDetectionModelLinks(LinkSetPtr collisionModels);
 
         /*!
             Setup collision detection
-            \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
+            \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
-        virtual void collisionDetection(ModelLinkPtr avoidCollisionsWith);
+        virtual void collisionDetection(ModelPtr avoidCollisionsWith);
         /*!
             Setup collision detection
-            \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
+            \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
         virtual void collisionDetection(ObstaclePtr avoidCollisionsWith);
         /*!
             Setup collision detection
-            \param avoidCollisionsWith The IK solver will consider collision checks between rns and avoidCollisionsWith
+            \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
         virtual void collisionDetection(LinkSetPtr avoidCollisionsWith);
+		/*!
+		Setup collision detection
+		\param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
+		*/
+		virtual void collisionDetection(ModelLinkPtr avoidCollisionsWith);
+
         /*!
             Setup collision detection
             \param avoidCollision The IK solver will consider collision checks, defined in this CDManager instance.
         */
         virtual void collisionDetection(CDManagerPtr avoidCollision);
-
-
 
         /*!
             Here, the default values of the maximum allowed error in translation and orientation can be changed.
@@ -98,8 +106,6 @@ namespace VirtualRobot
             \return true on success
         */
         virtual bool solve(const Eigen::Matrix4f& globalPose, CartesianSelection selection = All, int maxLoops = 1) = 0;
-
-
 
         /*!
             This method solves the IK up to the specified max error. The joints of the robot node set are not updated.
@@ -137,12 +143,6 @@ namespace VirtualRobot
         */
         virtual bool checkReachable(const Eigen::Matrix4f& globalPose);
 
-
-        JointSetPtr getJointSet();
-        CoordinatePtr getTcp();
-
-        void setVerbose(bool enable);
-
     protected:
 
 
@@ -152,17 +152,13 @@ namespace VirtualRobot
             return solve(globalPose, selection, maxLoops);
         }
 
-        JointSetPtr rns;
-        CoordinatePtr tcp;
-
+		LinkSetPtr colSet;
         CDManagerPtr cdm;
 
         float maxErrorPositionMM;
         float maxErrorOrientationRad;
 
         ReachabilityPtr reachabilitySpace;
-
-        bool verbose;
     };
 
     typedef std::shared_ptr<AdvancedIKSolver> AdvancedIKSolverPtr;

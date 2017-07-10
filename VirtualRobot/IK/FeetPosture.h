@@ -26,7 +26,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 
 namespace VirtualRobot
 {
@@ -43,49 +43,51 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        FeetPosture(RobotNodeSetPtr leftLeg,
-                    RobotNodeSetPtr rightLeg,
-                    Eigen::Matrix4f& transformationLeftToRightFoot,
-                    RobotNodePtr baseNode,
-                    RobotNodePtr leftTCP = RobotNodePtr(),
-                    RobotNodePtr rightTCP = RobotNodePtr(),
-                    RobotNodeSetPtr rnsLeft2RightFoot = RobotNodeSetPtr()
+        FeetPosture(JointSetPtr leftLeg,
+                    JointSetPtr rightLeg,
+					LinkSetPtr leftLegCol,
+					LinkSetPtr rightLegCol,
+					Eigen::Matrix4f& transformationLeftToRightFoot,
+                    ModelNodePtr baseNode,
+                    CoordinatePtr leftTCP = CoordinatePtr(),
+					CoordinatePtr rightTCP = CoordinatePtr(),
+                    JointSetPtr rnsLeft2RightFoot = JointSetPtr()
                    );
 
         virtual ~FeetPosture();
 
-        RobotNodeSetPtr getLeftLeg();
-        RobotNodeSetPtr getRightLeg();
-        RobotNodeSetPtr getLeftLegCol();
-        RobotNodeSetPtr getRightLegCol();
-        RobotNodePtr getLeftTCP();
-        RobotNodePtr getRightTCP();
-        RobotNodePtr getBaseNode();
-        RobotPtr getRobot();
+		JointSetPtr getLeftLeg();
+		JointSetPtr getRightLeg();
+        LinkSetPtr getLeftLegCol();
+		LinkSetPtr getRightLegCol();
+		CoordinatePtr getLeftTCP();
+		CoordinatePtr getRightTCP();
+		ModelNodePtr getBaseNode();
+        ModelPtr getRobot();
         Eigen::Matrix4f getTransformationLeftToRightFoot();
 
         //! Initially the rns of left and right leg are used as collision models. Here you can set other sets for collision detection.
-        void setCollisionCheck(RobotNodeSetPtr leftColModel, RobotNodeSetPtr rightColModel);
+        void setCollisionCheck(LinkSetPtr leftColModel, LinkSetPtr rightColModel);
 
         //! The collision models are queried if there is a collision for the current config.
         bool icCurrentLegConfigCollisionFree();
 
         //! Optional: kinematic chain from left foot to waist to right foot (not supported by all kinematic structures)
-        RobotNodeSetPtr getRNSLeft2RightFoot();
-        void setRNSLeft2RightFoot(RobotNodeSetPtr rns);
+        JointSetPtr getRNSLeft2RightFoot();
+        void setRNSLeft2RightFoot(JointSetPtr rns);
 
         void print();
     protected:
 
-        RobotNodeSetPtr leftLeg;
-        RobotNodeSetPtr rightLeg;
-        RobotNodeSetPtr leftLegCol;
-        RobotNodeSetPtr rightLegCol;
-        RobotNodeSetPtr left2Right;
+		JointSetPtr leftLeg;
+		JointSetPtr rightLeg;
+		LinkSetPtr leftLegCol;
+		LinkSetPtr rightLegCol;
+		JointSetPtr left2Right;
         Eigen::Matrix4f transformationLeftToRightFoot;
-        RobotNodePtr leftTCP;
-        RobotNodePtr rightTCP;
-        RobotNodePtr baseNode;
+		CoordinatePtr leftTCP;
+		CoordinatePtr rightTCP;
+        ModelNodePtr baseNode;
 
     };
 
