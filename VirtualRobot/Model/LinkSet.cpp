@@ -4,12 +4,13 @@
 #include "../VirtualRobotException.h"
 #include "ModelConfig.h"
 #include "KinematicChain.h"
+#include "../CollisionDetection/CollisionChecker.h"
 
 namespace VirtualRobot
 {
 
     LinkSet::LinkSet(const std::string &name, const ModelWeakPtr& model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const ModelNodePtr tcp) :
+                               const ModelNodePtr kinematicRoot, const CoordinatePtr tcp) :
             ModelNodeSet(name, model, modelNodes, kinematicRoot, tcp)
     {
         for (size_t i = 0; i < modelNodes.size(); i++)
@@ -20,7 +21,13 @@ namespace VirtualRobot
         }
     }
 
-    LinkSetPtr LinkSet::createLinkSet(const std::string &name, const ModelPtr& model, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
+    LinkSetPtr LinkSet::createLinkSet(
+		const ModelPtr& model, 
+		const std::string &name,
+		const std::vector<std::string> &modelNodeNames, 
+		const std::string &kinematicRootName, 
+		const std::string &tcpName, 
+		bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -33,13 +40,13 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> modelNodes = model->getModelNodes(modelNodeNames);
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            THROW_VR_EXCEPTION_IF(!modelNodes.at(i)->ModelNodeType() != ModelNode::Link, "ModelNode "+ modelNodeNames[i] + " not of type Link.");
+            THROW_VR_EXCEPTION_IF(modelNodes.at(i)->getType() != ModelNode::Link, "ModelNode "+ modelNodeNames[i] + " not of type Link.");
         }
 
         // kinematic root
         // We do not check whether the given kinematic root is actually a root node.
-        ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);
-        ModelNodePtr tcp = checkTCP(tcpName, model);
+		ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);
+        ModelNodePtr tcp = checkTcp(tcpName, model);
 
         LinkSetPtr mns = createLinkSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
         return mns;
@@ -56,7 +63,7 @@ namespace VirtualRobot
 		return links.at(i);
 	}
 
-    LinkSetPtr LinkSet::createLinkSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const ModelNodePtr tcp, bool registerToModel)
+    LinkSetPtr LinkSet::createLinkSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const CoordinatePtr tcp, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -75,7 +82,7 @@ namespace VirtualRobot
             VirtualRobot::CollisionCheckerPtr collisionChecker;
             if (model)
                 collisionChecker = model->getCollisionChecker();
-            for (int i = 0; i < modelNodes.size(); i++)
+            for (unsigned int i = 0; i < modelNodes.size(); i++)
             {
                 if (ModelNode::checkNodeOfType(modelNodes[i], ModelNode::ModelNodeType::Link))
                 {
@@ -89,12 +96,8 @@ namespace VirtualRobot
             }
         }
 
-        // kinematic root
-        // we do not check whether the given kinematic root is actually a root node
-        ModelNodePtr kinematicRootNode = checkKinematicRoot(kinematicRootName, model);
-        ModelNodePtr tcpNode = checkTCP(tcpName, model);
 
-        LinkSetPtr mns(new LinkSet(name, model, modelNodes, kinematicRootNode, tcpNode));
+        LinkSetPtr mns(new LinkSet(name, model, modelNodes, kinematicRoot, tcp));
 
         if (registerToModel)
         {
@@ -150,26 +153,6 @@ namespace VirtualRobot
             return getModel()->getCollisionChecker();
         else
             return CollisionChecker::getGlobalCollisionChecker();
-    }
-
-
-
-    bool LinkSet::isKinematicChain()
-    {
-        for (size_t i = modelNodes.size()-1; i > 0; --i)
-        {
-            ModelNodePtr tmpParent = modelNodes[i]->getParentNode(modelNodes[i-1]->getType());
-            while (modelNodes[i-1] != tmpParent)
-            {
-                tmpParent = tmpParent->getParentNode(modelNodes[i-1]->getType());
-                if (!tmpParent)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     int LinkSet::getNumFaces(bool collisionModel)
@@ -231,7 +214,7 @@ namespace VirtualRobot
             pre += "\t";
         }
 
-        ss << pre << "<LinkSet name='" << name; << "' kinematicRoot='" << kinematicRoot << "' tcp='" << tcp << "' >\n";
+        ss << pre << "<LinkSet name='" << name << "' kinematicRoot='" << kinematicRoot << "' tcp='" << tcp << "' >\n";
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {

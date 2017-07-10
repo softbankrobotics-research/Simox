@@ -1,9 +1,9 @@
 
 #include "ManipulationObject.h"
-#include "VirtualRobotException.h"
-#include "Visualization/VisualizationNode.h"
-#include "Grasping/GraspSet.h"
-#include "XML/BaseIO.h"
+#include "../VirtualRobotException.h"
+#include "../Visualization/VisualizationNode.h"
+#include "../Grasping/GraspSet.h"
+#include "../XML/BaseIO.h"
 
 namespace VirtualRobot
 {
@@ -156,7 +156,7 @@ namespace VirtualRobot
             {
                 ss << pre << t << "<GlobalPose>\n";
                 ss << pre << t  << t  << "<Transform>\n";
-                ss << MathTools::getTransformXMLString(gp, tabs + 3);
+                ss << BasIO::getTransformXMLString(gp, tabs + 3);
                 ss << pre << t  << t  << "</Transform>\n";
                 ss << pre << t << "</GlobalPose>\n";
             }

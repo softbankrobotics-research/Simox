@@ -1,20 +1,22 @@
 #include "ModelNode.h"
 #include "../Model.h"
-#include "../VirtualRobotException.h"
-#include "../Tools/ConditionedLock.h"
+#include "../../VirtualRobotException.h"
+#include "../../Tools/ConditionedLock.h"
+#include "../ModelNodeSet.h"
+#include "../Coordinate.h"
+#include "Attachments/ModelNodeAttachment.h"
 
 namespace VirtualRobot
 {
     ModelNode::ModelNode(const ModelWeakPtr& model, 
 						const std::string& name, 
 						const Eigen::Matrix4f& staticTransformation)
-        : initialized(false),
+        : Coordinate(name),
+		initialized(false),
           model(model),
-          name(name),
           parent(ModelNodeWeakPtr()),
           children(),
           staticTransformation(staticTransformation),
-          globalPose(Eigen::Matrix4f::Identity()),
           attachments(),
           attachmentsWithVisualisation()
 
@@ -178,7 +180,8 @@ namespace VirtualRobot
 
     bool ModelNode::attachChild(const ModelNodePtr& newNode)
     {
-        VR_ASSERT(newNode);
+		WriteLockPtr w = getModel()->getWriteLock();
+		VR_ASSERT(newNode);
 
         if (this == newNode.get())
         {
@@ -186,7 +189,6 @@ namespace VirtualRobot
             return false;
         }
 
-        WriteLockPtr w = getModel()->getWriteLock();
         if (hasChild(newNode))
         {
             VR_WARNING << " Trying to attach already attached object: " << getName() << "->"
@@ -207,8 +209,6 @@ namespace VirtualRobot
                      << getName() << ", but a child with same name is already present!" << std::endl;
             return false;
         }
-
-        WriteLockPtr w = getModel()->getWriteLock();
 
         children.push_back(newNode);
         newNode->parent = shared_from_this();

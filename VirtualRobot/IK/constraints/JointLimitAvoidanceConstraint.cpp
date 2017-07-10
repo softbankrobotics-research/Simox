@@ -25,14 +25,14 @@
 
 using namespace VirtualRobot;
 
-JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &robot, const RobotNodeSetPtr &nodeSet) :
+JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &robot, const JointSetPtr &nodeSet) :
     ReferenceConfigurationConstraint(robot, nodeSet)
 {
     Eigen::VectorXf reference(nodeSet->getSize());
 
     for(unsigned int i = 0; i < nodeSet->getSize(); i++)
     {
-        RobotNodePtr node = nodeSet->getNode(i);
+        ModelJointPtr node = nodeSet->getNode(i);
         reference(i) = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) / 2;
     }
 

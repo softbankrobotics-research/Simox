@@ -1,12 +1,13 @@
 #include "JointSet.h"
 #include "Nodes/ModelJoint.h"
 #include "../VirtualRobotException.h"
+#include "ModelConfig.h"
 
 namespace VirtualRobot
 {
 
     JointSet::JointSet(const std::string &name, const ModelWeakPtr& model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const ModelNodePtr tcp) :
+                               const ModelNodePtr kinematicRoot, const CoordinatePtr tcp) :
         ModelNodeSet(name, model, modelNodes, kinematicRoot, tcp)
     {
         for (size_t i = 0; i < modelNodes.size(); i++)
@@ -19,28 +20,24 @@ namespace VirtualRobot
 
     JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
-        THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
-
-        if (modelNodeNames.empty())
-        {
-            VR_WARNING << "Empty set of ModelNode names provided." << endl;
-        }
+		THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
+		THROW_VR_EXCEPTION_IF(modelNodeNames.empty(), "Empty set of ModelNode names provided.");
 
         // model nodes
         std::vector<ModelNodePtr> modelNodes = model->getModelNodes(modelNodeNames);
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            THROW_VR_EXCEPTION_IF(!modelNodes.at(i)->ModelNodeType() != ModelNode::Joint, "ModelNode "+ modelNodeNames[i] + " not of type Link.");
+            THROW_VR_EXCEPTION_IF(modelNodes.at(i)->getType() != ModelNode::Joint, "ModelNode "+ modelNodeNames[i] + " not of type Link.");
         }
 
         ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);
-        ModelNodePtr tcp = checkTCP(tcpName, model);
+        ModelNodePtr tcp = checkTcp(tcpName, model);
 
-        LinkSetPtr mns = createJointSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
+        JointSetPtr mns = createJointSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
         return mns;
     }
 
-    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const ModelNodePtr tcp, bool registerToModel)
+    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const CoordinatePtr tcp, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -56,10 +53,7 @@ namespace VirtualRobot
             }
         }
 
-        ModelNodePtr kinematicRootNode = checkKinematicRoot(kinematicRootName, model);
-        ModelNodePtr tcpNode = checkTCP(tcpName, model);
-
-        JointSetPtr mns(new JointSet(name, model, modelNodes, kinematicRootNode, tcpNode));
+        JointSetPtr mns(new JointSet(name, model, modelNodes, kinematicRoot, tcp));
 
         if (registerToModel)
         {
@@ -94,7 +88,7 @@ namespace VirtualRobot
         std::cout << "----------------------------------------------" << endl;
     }
 
-	ModelJointPtr &LinkSet::getNode(int i)
+	ModelJointPtr &JointSet::getNode(int i)
 	{
 		THROW_VR_EXCEPTION_IF((i >= (int)joints.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (joints.size() - 1));
 		return joints.at(i);
@@ -138,9 +132,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!config, "NULL data");
 
-        for (size_t i = 0; i < modelNodes.size(); i++)
+        for (size_t i = 0; i < joints.size(); i++)
         {
-            config->setConfig(modelNodes[i]->getName(), modelNodes[i]->getJointValue());
+            config->setConfig(joints[i]->getName(), joints[i]->getJointValue());
         }
     }
 
@@ -266,7 +260,7 @@ namespace VirtualRobot
             pre += "\t";
         }
 
-        ss << pre << "<JointSet name='" << name; << "' kinematicRoot='" << kinematicRoot << "' tcp='" << tcp << "' >\n";
+        ss << pre << "<JointSet name='" << name << "' kinematicRoot='" << kinematicRoot << "' tcp='" << tcp << "' >\n";
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
@@ -296,7 +290,7 @@ namespace VirtualRobot
     }
 
 
-    const std::vector<ModelJointPtr> JointsSet::getJoints() const
+    const std::vector<ModelJointPtr> JointSet::getJoints() const
     {
         return joints;
     }

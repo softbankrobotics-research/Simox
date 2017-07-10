@@ -717,7 +717,7 @@ namespace VirtualRobot
             {
                 ss << "\t\t<GlobalPose>\n";
                 ss << "\t\t\t<Transform>\n";
-                ss << MathTools::getTransformXMLString(gp, 4);
+                ss << BaseIO::getTransformXMLString(gp, 4);
                 ss << "\t\t\t</Transform>\n";
                 ss << "\t\t</GlobalPose>\n";
             }

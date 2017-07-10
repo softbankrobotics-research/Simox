@@ -1,5 +1,5 @@
 #include "LinkedCoordinate.h"
-#include "Model/Model.h"
+#include "../Model/Model.h"
 #include "../VirtualRobotException.h"
 
 using namespace VirtualRobot;

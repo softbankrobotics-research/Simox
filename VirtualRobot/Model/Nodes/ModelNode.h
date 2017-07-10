@@ -23,10 +23,8 @@
 #ifndef _VirtualRobot_ModelNode_h_
 #define _VirtualRobot_ModelNode_h_
 
-#include "../../Model/Model.h"
-#include "../ModelNodeSet.h"
+#include "../../VirtualRobot.h"
 #include "../Coordinate.h"
-#include "Attachments/ModelNodeAttachment.h"
 
 #include <vector>
 #include <map>
@@ -384,7 +382,6 @@ namespace VirtualRobot
     private:
         bool initialized;
         ModelWeakPtr model;
-        std::string name;
 
         ModelNodeWeakPtr parent;
         std::vector<ModelNodePtr> children;

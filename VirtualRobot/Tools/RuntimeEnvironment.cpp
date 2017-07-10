@@ -8,6 +8,7 @@
 #include "../VirtualRobotException.h"
 #include "../Visualization/VisualizationFactory.h"
 
+#include <boost/algorithm/string.hpp>
 
 namespace VirtualRobot
 {

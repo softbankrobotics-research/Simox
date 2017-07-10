@@ -31,7 +31,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceConstraint : public ReferenceConfigurationConstraint, public std::enable_shared_from_this<JointLimitAvoidanceConstraint>
     {
     public:
-        JointLimitAvoidanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& nodeSet);
+        JointLimitAvoidanceConstraint(const RobotPtr& robot, const JointSetPtr& nodeSet);
     };
 
     typedef std::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;

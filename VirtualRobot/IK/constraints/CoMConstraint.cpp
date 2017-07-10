@@ -24,6 +24,7 @@
 #include "CoMConstraint.h"
 
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/LinkSet.h>
 
 using namespace VirtualRobot;
 
