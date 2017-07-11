@@ -505,13 +505,16 @@ namespace VirtualRobot
          * @param newModelType The name of the newly created model type
          * @param newModelName The name of the newly created model
          * @param cloneRNS Clone all model node sets that belong to the original model and for which the remaining model nodes of the subPart are sufficient.
-         * @param cloneEEFs Clone all end effectors that belong to the original model and for which the remaining model nodes of the subPart are sufficient.
+         * @param cloneEEF Clone all end effectors that belong to the original model and for which the remaining model nodes of the subPart are sufficient.
          * @param collisionChecker The new model can be registered to a different collision checker. If not set, the collision checker of the original model is used.
          * @param scaling Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode, const std::string& newModelType,
-                                        const std::string& newModelName, bool cloneRNS = true,
-                                        const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
+        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode, 
+										const std::string& newModelType,
+                                        const std::string& newModelName, 
+										bool cloneRNS = true,
+										bool cloneEEF = true,
+										const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
                                         float scaling = 1.0f);
 
         /*!

@@ -7,7 +7,7 @@
 #include "RobotIO.h"
 #include "ObjectIO.h"
 #include "../Trajectory.h"
-#include "../SceneObjectSet.h"
+#include "../Model/Coordinate.h"
 
 namespace VirtualRobot
 {
@@ -149,7 +149,7 @@ namespace VirtualRobot
     }
 
 
-
+	/*
     bool SceneIO::processSceneObjectSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processSceneObjectSet");
@@ -196,7 +196,7 @@ namespace VirtualRobot
 
         scene->registerSceneObjectSet(sos);
         return true;
-    }
+    }*/
 
 
     bool SceneIO::processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath)
@@ -315,6 +315,8 @@ namespace VirtualRobot
         }
 
         // process all sceneSetNodes
+		// todo
+		/*
         for (size_t i = 0; i < sceneSetNodes.size(); i++)
         {
             bool r = processSceneObjectSet(sceneSetNodes[i], scene);
@@ -324,7 +326,7 @@ namespace VirtualRobot
                 std::string failedNodeName = processNameAttribute(XMLNode);
                 THROW_VR_EXCEPTION("Failed to create SceneObjectSet " << failedNodeName << " in scene " << scene->getName() << endl);
             }
-        }
+        }*/
 
 
         // process all trajectories

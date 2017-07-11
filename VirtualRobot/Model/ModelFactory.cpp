@@ -93,7 +93,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            if (!modelNodes[i]->getParent() && modelNodes[i] != rootNode)
+            if (!modelNodes[i]->getParentNode() && modelNodes[i] != rootNode)
             {
                 VR_ERROR << "ModelNode " << modelNodes[i]->getName() << " is not connected to kinematic structure..." << endl;
             }
@@ -591,12 +591,13 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!model, "NULL data");
 
-        if (!collisionChecker)
+		CollisionCheckerPtr colChecker = collisionChecker;
+        if (!colChecker)
         {
-            collisionChecker = model->getCollisionChecker();
+			colChecker = model->getCollisionChecker();
         }
 
-        VirtualRobot::ModelPtr result = model->extractSubPart(model->getRootNode(), model->getType(), name, true, true, collisionChecker, scaling);
+        VirtualRobot::ModelPtr result = model->extractSubPart(model->getRootNode(), model->getType(), name, true, true, colChecker, scaling);
         result->setGlobalPose(model->getGlobalPose());
         return result;
     }

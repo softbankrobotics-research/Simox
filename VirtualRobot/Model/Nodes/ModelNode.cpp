@@ -19,14 +19,13 @@ namespace VirtualRobot
           staticTransformation(staticTransformation),
           attachments(),
           attachmentsWithVisualisation()
-
     {
     }
 
     ModelNode::~ModelNode()
     {
     }
-
+	/*
     void ModelNode::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
     {
         THROW_VR_EXCEPTION_IF(isInitialized(), "ModelNode " + getName() + "is already initialized.");
@@ -50,7 +49,7 @@ namespace VirtualRobot
 
         // i think no lock is needed for "initialized"
         initialized = true;
-    }
+    }*/
 
     ModelPtr ModelNode::getModel() const
     {
@@ -213,6 +212,10 @@ namespace VirtualRobot
         children.push_back(newNode);
         newNode->parent = shared_from_this();
 
+		updatePose(true);
+
+		initialized = true;
+
         return true;
     }
 
@@ -345,7 +348,7 @@ namespace VirtualRobot
         }
     }
 
-    void updatePoseInternally(bool updateChildren, bool updateAttachments)
+    void ModelNode::updatePoseInternally(bool updateChildren, bool updateAttachments)
     {
     }
 

@@ -100,13 +100,6 @@ namespace VirtualRobot
                                                   bool registerToModel = false);
 
 
-        /*!
-         * Check, if this set contains the given node.
-         *
-         * @param nodeName The name of the node to check for.
-         * @return True, if the node is contained; false otherwise.
-         */
-        bool hasModelNode(const std::string &nodeName) const;
 
         /*!
          * Get all nodes of this set.

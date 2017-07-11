@@ -74,7 +74,6 @@ namespace VirtualRobot
             CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualiz
         };
 
-    protected:
         /*!
          * Constructor with settings.
          *
@@ -94,13 +93,12 @@ namespace VirtualRobot
                   const Physics& p = Physics(),
                   const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
-    public:
         /*!
          * Destructor.
          */
         virtual ~ModelLink();
 
-        virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
+        //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
         virtual ModelNodeType getType() const override;
 
@@ -240,8 +238,6 @@ namespace VirtualRobot
 
         float getFriction();
         void setFriction(float friction);
-
-
 
     protected:
         bool initializePhysics();

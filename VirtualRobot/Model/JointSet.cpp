@@ -18,6 +18,10 @@ namespace VirtualRobot
         }
     }
 
+	JointSet::~JointSet()
+	{
+	}
+
     JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
 		THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
@@ -36,6 +40,12 @@ namespace VirtualRobot
         JointSetPtr mns = createJointSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
         return mns;
     }
+	
+	ModelNodeSetPtr JointSet::clone(ModelPtr newModel)
+	{
+		// todo
+		return JointSetPtr();
+	}
 
     JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const CoordinatePtr tcp, bool registerToModel)
     {

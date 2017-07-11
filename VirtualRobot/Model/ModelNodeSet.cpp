@@ -35,6 +35,17 @@ namespace VirtualRobot
         }
     }
 
+	ModelNodeSet::~ModelNodeSet()
+	{
+
+	}
+
+	ModelNodeSetPtr ModelNodeSet::clone(ModelPtr newModel)
+	{
+		// todo
+		return ModelNodeSetPtr();
+	}
+
     ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr& model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");

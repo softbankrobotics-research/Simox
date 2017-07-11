@@ -194,12 +194,19 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!hasModelNodeSet(nodeSet->getName()),
                                   "There are (at least) two model nodes with name <" + nodeSet->getName()
                                   + "> defined, the second one is skipped!");
-
-
-
             modelNodeSetMap[nodeSet->getName()] = nodeSet;
         }
     }
+
+	void VirtualRobot::Model::registerJointSet(const JointSetPtr & nodeSet)
+	{
+		registerModelNodeSet(nodeSet);
+	}
+
+	void VirtualRobot::Model::registerLinkSet(const LinkSetPtr & nodeSet)
+	{
+		registerModelNodeSet(nodeSet);
+	}
 
     void Model::deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet)
     {
@@ -216,16 +223,52 @@ namespace VirtualRobot
         }
     }
 
-    bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
-    {
-        return nodeSet && getModelNodeSet(nodeSet->getName()) == nodeSet;
-    }
+	void VirtualRobot::Model::deregisterJointSet(const JointSetPtr & nodeSet)
+	{
+		deregisterModelNodeSet(nodeSet);
+	}
 
-    bool Model::hasModelNodeSet(const std::string& name) const
-    {
-        ReadLockPtr r = getReadLock();
-        return modelNodeSetMap.find(name) != modelNodeSetMap.end();
-    }
+	void VirtualRobot::Model::deregisterLinkSet(const LinkSetPtr & nodeSet)
+	{
+		deregisterModelNodeSet(nodeSet);
+	}
+
+
+	bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
+	{
+		return nodeSet && getModelNodeSet(nodeSet->getName()) == nodeSet;
+	}
+
+	bool Model::hasModelNodeSet(const std::string& name) const
+	{
+		ReadLockPtr r = getReadLock();
+		return modelNodeSetMap.find(name) != modelNodeSetMap.end();
+	}
+
+
+	bool Model::hasJointSet(const JointSetPtr& nodeSet) const
+	{
+		return nodeSet && getJointSet(nodeSet->getName()) == nodeSet;
+	}
+
+	bool Model::hasJointSet(const std::string & name) const
+	{
+		ReadLockPtr r = getReadLock();
+		auto mns = modelNodeSetMap.find(name);
+		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<JointSet>(mns->second));
+	}
+
+	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
+	{
+		return nodeSet && getLinkSet(nodeSet->getName()) == nodeSet;
+	}
+
+	bool Model::hasLinkSet(const std::string & name) const
+	{
+		ReadLockPtr r = getReadLock();
+		auto mns = modelNodeSetMap.find(name);
+		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<LinkSet>(mns->second));
+	}
 
     ModelNodeSetPtr Model::getModelNodeSet(const std::string& nodeSetName) const
     {
@@ -233,7 +276,7 @@ namespace VirtualRobot
         auto search = modelNodeSetMap.find(nodeSetName);
         if (search == modelNodeSetMap.end())
         {
-            VR_WARNING << "No robot node set with name <" << nodeSetName << "> registered." << endl;
+            //VR_WARNING << "No robot node set with name <" << nodeSetName << "> registered." << endl;
             return RobotNodeSetPtr();
         }
 
@@ -247,7 +290,7 @@ namespace VirtualRobot
         LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
         if (!ls)
         {
-            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+           // VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
         }
         return ls;
     }
@@ -259,7 +302,7 @@ namespace VirtualRobot
         JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
         if (!ls)
         {
-            VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+            //VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
         }
         return ls;
     }
@@ -735,8 +778,12 @@ namespace VirtualRobot
     }
 
     ModelPtr Model::extractSubPart(const ModelNodePtr& startNode,
-                                   const std::string& newModelType, const std::string& newModelName,
-                                   bool cloneRNS, const CollisionCheckerPtr& collisionChecker, float scaling)
+									const std::string& newModelType, 
+									const std::string& newModelName,
+									bool cloneRNS,
+									bool cloneEEF,
+									const CollisionCheckerPtr& collisionChecker,
+									float scaling)
     {
         ReadLockPtr r = getReadLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
@@ -774,6 +821,24 @@ namespace VirtualRobot
                 }
             }
         }
+
+		// check for EEF that are covered by subpart
+		if (cloneEEF)
+		{
+			for (auto it = eefMap.begin(); it != eefMap.end(); ++it)
+			{
+				if (it->second->nodesSufficient(rn))
+				{
+					EndEffectorPtr eef = it->second->clone(result);
+
+					if (eef && !result->hasEndEffector(eef))
+					{
+						result->registerEndEffector(eef);
+					}
+				}
+			}
+		}
+
 
         std::vector<ModelNodePtr> allNodes;
         startNode->collectAllNodes(allNodes, ModelNode::ModelNodeType::Joint);
@@ -991,4 +1056,17 @@ namespace VirtualRobot
         return res;
     }
 
+	// todod
+	bool Model::hasCoordinate(const CoordinatePtr & coord) const
+	{
+		return false;
+	}
+	bool VirtualRobot::Model::hasCoordinate(const std::string & coordinateName) const
+	{
+		return false;
+	}
+	CoordinatePtr VirtualRobot::Model::getCoordinate(const std::string & coordinateName) const
+	{
+		return CoordinatePtr();
+	}
 }

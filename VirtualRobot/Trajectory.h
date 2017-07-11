@@ -145,7 +145,7 @@ namespace VirtualRobot
             \param mn The ModelNode that should be considered (if not set, the TCP of the JointSet is used)
             \return For each point of this joint space trajectory, the pose of r in workspace is computed and added to the resulting vector.
         */
-        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::ModelNodePtr m = VirtualRobot::ModelNodePtr());
+        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::CoordinatePtr m = VirtualRobot::CoordinatePtr());
 
 
         /*!

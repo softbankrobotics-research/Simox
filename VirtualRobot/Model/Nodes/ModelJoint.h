@@ -30,11 +30,10 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ModelJoint : public ModelNode
     {
-    protected:
+	public:
         /*!
          * Constructor with settings.
          *
-         * Only used by subclasses.
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
@@ -50,13 +49,12 @@ namespace VirtualRobot
                    float jointLimitHi,
                    float jointValueOffset = 0.0f);
 
-    public:
         /*!
          * Destructor.
          */
         virtual ~ModelJoint();
 
-        virtual ModelNodeType getType() const override;
+        //virtual ModelNodeType getType() const override;
 
         /*!
          * Set a joint value [rad/mm].

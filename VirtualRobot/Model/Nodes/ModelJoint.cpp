@@ -22,11 +22,11 @@ namespace VirtualRobot
     ModelJoint::~ModelJoint()
     {
     }
-
+	/*
     ModelNode::ModelNodeType ModelJoint::getType() const
     {
         return ModelNode::ModelNodeType::Joint;
-    }
+    }*/
 
     void ModelJoint::setJointValue(float q)
     {
