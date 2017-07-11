@@ -20,6 +20,10 @@ namespace VirtualRobot
         }
     }
 
+	LinkSet::~LinkSet()
+	{
+	}
+
     LinkSetPtr LinkSet::createLinkSet(
 		const ModelPtr& model, 
 		const std::string &name,
@@ -236,4 +240,9 @@ namespace VirtualRobot
         return res;
     }
 
+	// todo
+	ModelNodeSetPtr VirtualRobot::LinkSet::clone(ModelPtr newModel)
+	{
+		return ModelNodeSetPtr();
+	}
 }

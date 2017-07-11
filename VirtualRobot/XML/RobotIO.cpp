@@ -1,19 +1,19 @@
 
 #include "RobotIO.h"
 #include "../RobotFactory.h"
-#include "../RobotNodeSet.h"
+#include "../Model/ModelNodeSet.h"
 #include "../VirtualRobotException.h"
 #include "../EndEffector/EndEffector.h"
 #include "../EndEffector/EndEffectorActor.h"
-#include "../Nodes/RobotNodeFactory.h"
-#include "../Nodes/SensorFactory.h"
-#include "../Nodes/RobotNodeFixedFactory.h"
-#include "../Nodes/RobotNodePrismatic.h"
-#include "../Transformation/DHParameter.h"
+//#include "../Model/Nodes/SensorFactory.h"
+#include "../Model/Nodes/ModelJointPrismatic.h"
+#include "../Model/Nodes/ModelJointRevolute.h"
 #include "../Visualization/VisualizationFactory.h"
+#include "../Visualization/VisualizationNode.h"
 #include "../Visualization/TriMeshModel.h"
-#include "../RobotConfig.h"
-#include "../RuntimeEnvironment.h"
+#include "../Model/ModelConfig.h"
+#include "../Tools/RuntimeEnvironment.h"
+#include "../CollisionDetection/CollisionModel.h"
 #include "rapidxml.hpp"
 
 
@@ -149,7 +149,7 @@ namespace VirtualRobot
             jointLimitHi = unit.toMillimeter(jointLimitHi);
         }
     }
-
+	/*
     bool RobotIO::processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath)
     {
         if (!rn || !sensorXMLNode)
@@ -189,15 +189,16 @@ namespace VirtualRobot
         }
 
         return rn->registerSensor(s);
-    }
-
-    RobotNodePtr RobotIO::processJointNode(rapidxml::xml_node<char>* jointXMLNode, const std::string& robotNodeName,
-                                           RobotPtr robot,
-                                           VisualizationNodePtr visualizationNode,
-                                           CollisionModelPtr collisionModel,
-                                           ModelLink::Physics& physics,
-                                           RobotNode::RobotNodeType rntype,
-                                           Eigen::Matrix4f& transformationMatrix
+    }*/
+	/*
+    ModelNodePtr RobotIO::processJointNode(rapidxml::xml_node<char>* jointXMLNode, 
+											const std::string& robotNodeName,
+											ModelPtr robot,
+											VisualizationNodePtr visualizationNode,
+											CollisionModelPtr collisionModel,
+											ModelLink::Physics& physics,
+											ModelNode::ModelNodeType rntype,
+											Eigen::Matrix4f& transformationMatrix
                                           )
     {
         float jointLimitLow = (float) - M_PI;
@@ -481,7 +482,7 @@ namespace VirtualRobot
             dh.isSet = false;
             processTransformNode(prejointTransformNode, robotNodeName, preJointTransform);
             processTransformNode(postjointTransformNode, robotNodeName, postJointTransform);
-            */
+            * /
         if (jointType == "revolute")
         {
             if (scaleVisu)
@@ -523,7 +524,7 @@ namespace VirtualRobot
 
             }
         }
-
+		
         //}
 
         RobotNodeFactoryPtr robotNodeFactory = RobotNodeFactory::fromName(jointType, NULL);
@@ -576,7 +577,7 @@ namespace VirtualRobot
         return robotNode;
     }
 
-
+	*/
 
     RobotNodePtr RobotIO::processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
                                            RobotPtr robo,
@@ -708,13 +709,14 @@ namespace VirtualRobot
 
 
         //create joint from xml data
-        robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, transformMatrix);
+		// todo
+        //robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, transformMatrix);
 
         // process sensors
-        for (size_t i = 0; i < sensorTags.size(); i++)
+        /*for (size_t i = 0; i < sensorTags.size(); i++)
         {
             processSensor(robotNode, sensorTags[i], loadMode, basePath);
-        }
+        }*/
 
         return robotNode;
     }
@@ -826,8 +828,7 @@ namespace VirtualRobot
                 RobotNodePtr rootNew = root->clone(robo, true, node);
                 THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed. Could not add child-from-robot from file " << childrenFromRobot[i].filename);
 
-                std::vector<EndEffectorPtr> eefs;
-                r->getEndEffectors(eefs);
+                std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
 
                 for (std::vector<EndEffectorPtr>::iterator eef = eefs.begin(); eef != eefs.end(); eef++)
                 {
@@ -869,7 +870,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < nodes.size(); i++)
         {
-            if (nodes[i] != root && !(nodes[i]->getParent()))
+            if (nodes[i] != root && !(nodes[i]->getParentNode()))
             {
                 THROW_VR_EXCEPTION("Node without parent: " << nodes[i]->getName());
             }
@@ -943,7 +944,7 @@ namespace VirtualRobot
         robotRoot = attr->value();
 
         // build robot
-        RobotPtr robo(new LocalRobot(robotName, robotType));
+        RobotPtr robo(new Model(robotName, robotType));
         return robo;
     }
 
@@ -1011,7 +1012,8 @@ namespace VirtualRobot
 
                     childrenMap[n] = childrenNames;
                     robotNodes.push_back(n);
-                    robo->registerRobotNode(n);
+					// todo
+                    //robo->registerRobotNode(n);
 
                     if (n->getName() == robotRoot)
                     {
@@ -1117,7 +1119,7 @@ namespace VirtualRobot
             attr = attr->next_attribute();
         }
 
-        std::vector<RobotNodePtr> staticParts;
+        std::vector<ModelLinkPtr> staticParts;
         std::vector<EndEffectorActorPtr> actors;
         std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
         std::vector< std::string > configNames;
@@ -1202,9 +1204,16 @@ namespace VirtualRobot
      * This method processes the children of the static tag which
      * itself is a child of the endeffector tag.
      */
-    void RobotIO::processEndeffectorStaticNode(rapidxml::xml_node<char>* endeffectorStaticXMLNode, RobotPtr robo, std::vector<RobotNodePtr>& staticNodesList)
+	void RobotIO::processEndeffectorStaticNode(rapidxml::xml_node<char>* endeffectorStaticXMLNode, RobotPtr robo, std::vector<ModelLinkPtr>& staticNodesList)
     {
-        processNodeList(endeffectorStaticXMLNode, robo, staticNodesList, false);
+		std::vector<ModelNodePtr> tmpList;
+        processNodeList(endeffectorStaticXMLNode, robo, tmpList, false);
+		for (auto l : tmpList)
+		{
+			ModelLinkPtr m = std::dynamic_pointer_cast<ModelLink>(l);
+			if (m)
+				staticNodesList.push_back(m);
+		}
     }
 
 
@@ -1373,7 +1382,8 @@ namespace VirtualRobot
         if (loadMode == RobotIO::eCollisionModel)
         {
             // use collision visualization to build main visualization
-            robot->createVisualizationFromCollisionModels();
+			// todo
+            //robot->createVisualizationFromCollisionModels();
         }
 
         return robot;
@@ -1463,9 +1473,10 @@ namespace VirtualRobot
         {
             std::vector<RobotNodePtr> nodes = robot->getModelNodes();
 
+			// todo
             for (size_t i = 0; i < nodes.size(); i++)
             {
-                nodes[i]->saveModelFiles(modelDirComplete.string(), true);
+                //nodes[i]->saveModelFiles(modelDirComplete.string(), true);
             }
         }
 

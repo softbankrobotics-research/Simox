@@ -1,8 +1,8 @@
 #include "ModelLink.h"
-#include "../CollisionDetection/CollisionModel.h"
-#include "../Visualization/VisualizationNode.h"
-#include "../Visualization/TriMeshModel.h"
-#include "../VirtualRobotException.h"
+#include "../../CollisionDetection/CollisionModel.h"
+#include "../../Visualization/VisualizationNode.h"
+#include "../../Visualization/TriMeshModel.h"
+#include "../../VirtualRobotException.h"
 
 
 namespace VirtualRobot
@@ -82,12 +82,13 @@ namespace VirtualRobot
     {
         visualizationModel->setGlobalPose(getGlobalPose());
         collisionModel->setGlobalPose(getGlobalPose());
+		initializePhysics();
     }
 
     ModelLink::~ModelLink()
     {
     }
-
+	/*
     void ModelLink::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
     {
         ModelNode::initialize(parent, children);
@@ -96,7 +97,7 @@ namespace VirtualRobot
         {
             VR_ERROR << "Could not initialize physics." << std::endl;
         }
-    }
+    }*/
 
     ModelNode::ModelNodeType ModelLink::getType() const
     {

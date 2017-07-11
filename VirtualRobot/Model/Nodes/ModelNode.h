@@ -62,11 +62,9 @@ namespace VirtualRobot
             JointRevolute   = 0x0402
         };
 
-    protected:
         /*!
          * Constructor with settings.
          *
-         * Only used by subclasses.
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
@@ -90,7 +88,7 @@ namespace VirtualRobot
          * @param parent The parent of this node.
          * @param children The children of this node.
          */
-        virtual void initialize(const ModelNodePtr& parent = ModelNodePtr(), const std::vector<ModelNodePtr>& children = std::vector<ModelNodePtr>());
+        //virtual void initialize(const ModelNodePtr& parent = ModelNodePtr(), const std::vector<ModelNodePtr>& children = std::vector<ModelNodePtr>());
 
         /*!
          * Get the @ref ModelNodeType of this Node.

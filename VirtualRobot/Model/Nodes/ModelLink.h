@@ -73,7 +73,6 @@ namespace VirtualRobot
             CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualiz
         };
 
-    protected:
         /*!
          * Constructor with settings.
          *
@@ -93,13 +92,12 @@ namespace VirtualRobot
                   const Physics& p = Physics(),
                   const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
-    public:
         /*!
          * Destructor.
          */
         virtual ~ModelLink();
 
-        virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
+        //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
         virtual ModelNodeType getType() const override;
 
@@ -225,6 +223,20 @@ namespace VirtualRobot
          * @param im The inertia matrix in kg*m^2.
          */
         void setInertiaMatrix(const Eigen::Matrix3f& im);
+        
+         /**
+         * @brief If the Inertia Matrix is given at the CoM, this function returns the Inertia Matrix at the parallel shifted coordinate system.
+         * The shift is done using the parallel axis theorem (https://en.wikipedia.org/wiki/Parallel_axis_theorem)
+         * @param shift How the system should be shifted.
+         * @return The Inertia Matrix at the shifted system
+         */
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift);
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation);
+
+        Eigen::Matrix3f getInertiaMatrix(const Eigen::Matrix4f& transform);
+
+        float getFriction();
+        void setFriction(float friction);
 
     protected:
         bool initializePhysics();
