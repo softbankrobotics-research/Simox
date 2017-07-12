@@ -10,7 +10,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/LinkedCoordinate.h>
+#include <VirtualRobot/Tools/LinkedCoordinate.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <string>
 

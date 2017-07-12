@@ -8,7 +8,7 @@
 
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/RobotConfig.h>
+#include <VirtualRobot/Model/ModelConfig.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <string>
@@ -52,8 +52,8 @@ BOOST_AUTO_TEST_CASE(testRobotConfigSetInvalidConfig)
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
-    VirtualRobot::RobotConfigPtr c;
-    BOOST_REQUIRE_NO_THROW(c.reset(new VirtualRobot::RobotConfig(rob, "test")));
+    VirtualRobot::ModelConfigPtr c;
+    BOOST_REQUIRE_NO_THROW(c.reset(new VirtualRobot::ModelConfig(rob, "test")));
     BOOST_REQUIRE(c);
 
     const std::string node2 = "JointNotPresent";

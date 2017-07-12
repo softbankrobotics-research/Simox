@@ -13,6 +13,8 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Model/ModelNodeSet.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Model/JointSet.h>
 #include <VirtualRobot/Workspace/Reachability.h>
 #include <string>
 
@@ -168,11 +170,11 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
 
     std::vector<std::string> rnsNames;
     rnsNames.push_back("joint1");
-    VirtualRobot::RobotNodeSetPtr rns = VirtualRobot::RobotNodeSet::createRobotNodeSet(rob, "rns", rnsNames, "", "tcp", true);
+    VirtualRobot::JointSetPtr rns = VirtualRobot::JointSet::createJointSet(rob, "rns", rnsNames, "", "tcp", true);
     BOOST_REQUIRE(rns);
-    BOOST_REQUIRE(rob->hasRobotNodeSet("rns"));
+    BOOST_REQUIRE(rob->hasModelNodeSet("rns"));
 
-    VirtualRobot::RobotNodePtr joint1 = rob->getModelNode("joint1");
+    VirtualRobot::ModelJointPtr joint1 = rob->getJoint("joint1");
     BOOST_REQUIRE(joint1);
     VirtualRobot::RobotNodePtr tcp = rob->getModelNode("tcp");
     BOOST_REQUIRE(tcp);
@@ -192,14 +194,14 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
     // CREATE REACHABILITY DATA
     static float discrTr = 10.0f;
     static float discrRot = 0.5f;
-    static float discrTr3 = discrTr*sqrt(3);
-    static float discrRot3 = discrRot*sqrt(3);
+    static float discrTr3 = float(discrTr*sqrt(3));
+    static float discrRot3 = float(discrRot*sqrt(3));
     float minBounds[6] = {0,0,0,0,0,0};
     float maxBounds[6] = {100.0f,100.0f,100.0f,2*M_PI,2*M_PI,2*M_PI};
     VirtualRobot::ReachabilityPtr reach(new VirtualRobot::Reachability(rob));
     BOOST_REQUIRE(reach);
     reach->setOrientationType(VirtualRobot::WorkspaceRepresentation::Hopf);
-    reach->initialize(rns, discrTr, discrRot, minBounds, maxBounds, VirtualRobot::SceneObjectSetPtr(), VirtualRobot::SceneObjectSetPtr(), rootNode, tcp);
+    reach->initialize(rns, discrTr, discrRot, minBounds, maxBounds, VirtualRobot::LinkSetPtr(), VirtualRobot::LinkSetPtr(), rootNode, tcp);
 /*
     float jv = M_PI/4;
     joint1->setJointValue(jv);

@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(Trajectory)
 
 BOOST_AUTO_TEST_CASE(testTrajectoryInvalidCreation)
 {
-    BOOST_REQUIRE_THROW(VirtualRobot::TrajectoryPtr c(new VirtualRobot::Trajectory(VirtualRobot::RobotNodeSetPtr(), "")), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::TrajectoryPtr c(new VirtualRobot::Trajectory(VirtualRobot::JointSetPtr(), "")), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testTrajectorySet)
@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE(testTrajectorySet)
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
-    VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
+    VirtualRobot::JointSetPtr rns;
+    BOOST_REQUIRE_NO_THROW(rns = rob->getJointSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -75,8 +75,8 @@ BOOST_AUTO_TEST_CASE(testTrajectoryClone)
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
-    VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
+    VirtualRobot::JointSetPtr rns;
+    BOOST_REQUIRE_NO_THROW(rns = rob->getJointSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -140,8 +140,8 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsRemove)
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
-    VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
+    VirtualRobot::JointSetPtr rns;
+    BOOST_REQUIRE_NO_THROW(rns = rob->getJointSet("rns1"));
     BOOST_REQUIRE(rns);
 
 
@@ -223,8 +223,8 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsInsert)
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
-    VirtualRobot::RobotNodeSetPtr rns;
-    BOOST_REQUIRE_NO_THROW(rns = rob->getModelNodeSet("rns1"));
+    VirtualRobot::JointSetPtr rns;
+    BOOST_REQUIRE_NO_THROW(rns = rob->getJointSet("rns1"));
     BOOST_REQUIRE(rns);
 
 

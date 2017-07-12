@@ -5,16 +5,17 @@
 */
 
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotSensorTest
-/*
 #include <VirtualRobot/VirtualRobotTest.h>
+
+/*
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Nodes/Sensor.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <string>
-
+*/
 BOOST_AUTO_TEST_SUITE(Sensor)
-
+/*
 BOOST_AUTO_TEST_CASE(testPositionSensor)
 {
     const std::string robotString =
