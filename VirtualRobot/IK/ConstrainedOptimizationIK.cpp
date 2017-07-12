@@ -23,18 +23,19 @@
 */
 
 #include "ConstrainedOptimizationIK.h"
+#include "../VirtualRobotException.h"
+#include "../Model/Nodes/ModelJoint.h"
 
 #include <nlopt.hpp>
 
 using namespace VirtualRobot;
 
-ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout, float globalTolerance) :
+ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const JointSetPtr& nodeSet, float timeout, float globalTolerance) :
     ConstrainedIK(robot, nodeSet, 30),
-    nodeSet(nodeSet),
     timeout(timeout),
     globalTolerance(globalTolerance),
-    functionValueTolerance(1e-6),
-    optimizationValueTolerance(1e-4)
+    functionValueTolerance(1e-6f),
+    optimizationValueTolerance(1e-4f)
 {
     setRandomSamplingDisplacementFactor(1);
 
@@ -55,8 +56,8 @@ bool ConstrainedOptimizationIK::initialize()
 
     for(int i = 0; i < size; i++)
     {
-        low[i] = nodeSet->getNode(i)->getJointLimitLo();
-        high[i] = nodeSet->getNode(i)->getJointLimitHi();
+        low[i] = nodeSet->getNode(i)->getJointLimitLow();
+        high[i] = nodeSet->getNode(i)->getJointLimitHigh();
     }
 
     optimizer->set_lower_bounds(low);
@@ -93,8 +94,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     THROW_VR_EXCEPTION_IF(stepwise, "Stepwise solving not possible with optimization IK");
     THROW_VR_EXCEPTION_IF(!optimizer, "IK not initialized, did you forget to call initialize()?");
 
-    bool updateVisualization = robot->getUpdateVisualizationStatus();
-    bool updateCollisionModel = robot->getUpdateCollisionModelStatus();
+    bool updateVisualization = robot->getUpdateVisualization();
+    bool updateCollisionModel = robot->getUpdateCollisionModel();
 
     robot->setUpdateVisualization(false);
     robot->setUpdateCollisionModel(false);
@@ -116,8 +117,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             // Try random configurations sampled around initial config
             for(int i = 0; i < size; i++)
             {
-                float t = (rand()%1001) / 1000.0;
-                x[i] = initialConfig(i) + randomSamplingDisplacementFactor * (nodeSet->getNode(i)->getJointLimitLo() + t * (nodeSet->getNode(i)->getJointLimitHi() - nodeSet->getNode(i)->getJointLimitLo()) - initialConfig(i));
+                float t = (rand()%1001) / 1000.0f;
+                x[i] = initialConfig(i) + randomSamplingDisplacementFactor * (nodeSet->getNode(i)->getJointLimitLow() + t * (nodeSet->getNode(i)->getJointLimitHigh() - nodeSet->getNode(i)->getJointLimitLow()) - initialConfig(i));
             }
         }
         else
@@ -128,7 +129,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try zero configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), 0.0f));
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), 0.0f));
                     }
                     break;
 
@@ -136,7 +137,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try initial configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), initialConfig(i)));
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), initialConfig(i)));
                     }
                     break;
 
@@ -145,7 +146,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     Eigen::VectorXf s = seeds[attempt].second;
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLo(), std::min(nodeSet->getNode(i)->getJointLimitHi(), s(i)));
+                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), s(i)));
                     }
                     break;
             }
@@ -153,9 +154,9 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             // Check initial configuration against joint limits
             for(unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
-                if(x[i] < nodeSet->getNode(i)->getJointLimitLo() || x[i] > nodeSet->getNode(i)->getJointLimitHi())
+                if(x[i] < nodeSet->getNode(i)->getJointLimitLow() || x[i] > nodeSet->getNode(i)->getJointLimitHigh())
                 {
-                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits: joints['" << nodeSet->getNode(i)->getName() << "'] = " << x[i] << ", Limits = [" << nodeSet->getNode(i)->getJointLimitLo() << ", " << nodeSet->getNode(i)->getJointLimitHi() << "]");
+                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits: joints['" << nodeSet->getNode(i)->getName() << "'] = " << x[i] << ", Limits = [" << nodeSet->getNode(i)->getJointLimitLow() << ", " << nodeSet->getNode(i)->getJointLimitHigh() << "]");
                 }
             }
         }
@@ -190,8 +191,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             // Success
             robot->setUpdateVisualization(updateVisualization);
             robot->setUpdateCollisionModel(updateCollisionModel);
-            robot->updatePose(true);
             nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()));
+			robot->applyJointValues();
             return true;
         }
         else if(currentMinError > currentError)
@@ -207,7 +208,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     // Failure
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
-    robot->updatePose(true);
+    robot->applyJointValues();
     return false;
 }
 
