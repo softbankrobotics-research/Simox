@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _CONVEX_HULL_GENERATOR_H_
-#define _CONVEX_HULL_GENERATOR_H_
+#ifndef _GRASP_PLANNING_CONVEX_HULL_GENERATOR_H_
+#define _GRASP_PLANNING_CONVEX_HULL_GENERATOR_H_
 
-#include "GraspStudio.h"
+#include "GraspPlanning.h"
 #include "VirtualRobot/Tools/MathTools.h"
 #include <vector>
 
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
     * This class can be used as an interface for qhull.
@@ -36,7 +36,7 @@ namespace GraspStudio
     * This class is thread safe, which means that multiple threads
     * are allowed to use the static methods of ConvexHullGenerator.
     */
-    class GRASPSTUDIO_IMPORT_EXPORT ConvexHullGenerator
+    class GRASPPLANNING_IMPORT_EXPORT ConvexHullGenerator
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

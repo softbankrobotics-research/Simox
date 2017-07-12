@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_Rrt_h
-#define _Saba_Rrt_h
+#ifndef _MotionPlanning_Rrt_h
+#define _MotionPlanning_Rrt_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 #include "MotionPlanner.h"
 
-namespace Saba
+namespace MotionPlanning
 {
     /*!
      *
@@ -44,7 +44,7 @@ namespace Saba
      * @see CSpaceTree
      *
      */
-    class SABA_IMPORT_EXPORT Rrt : public MotionPlanner
+    class MOTIONPLANNING_IMPORT_EXPORT Rrt : public MotionPlanner
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -121,5 +121,5 @@ namespace Saba
 
 } // namespace
 
-#endif // _Saba_RRT_h
+#endif // _MotionPlanning_RRT_h
 

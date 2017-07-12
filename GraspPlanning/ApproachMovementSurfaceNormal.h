@@ -14,21 +14,20 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__
-#define __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__
+#ifndef _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H_
+#define _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H_
 
-#include "GraspStudio.h"
+#include "GraspPlanning.h"
 #include "ApproachMovementGenerator.h"
-#include <VirtualRobot/SceneObject.h>
 #include <vector>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
     *
@@ -41,19 +40,19 @@ namespace GraspStudio
     * Internally the EEF is cloned.
     *
     */
-    class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementSurfaceNormal : public ApproachMovementGenerator
+    class GRASPPLANNING_IMPORT_EXPORT ApproachMovementSurfaceNormal : public ApproachMovementGenerator
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         /*!
             To generate approach movements an object and an end effector has to be specified.
-            \param object The object.
+            \param object The object must contain exactly one link with a collision model.
             \param eef The end effector.
             \param graspPreshape An optional preshape that can be used in order to "open" the eef.
             \param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
         */
-        ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
+        ApproachMovementSurfaceNormal(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
         //! destructor
         virtual ~ApproachMovementSurfaceNormal();
 

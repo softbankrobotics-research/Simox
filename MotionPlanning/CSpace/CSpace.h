@@ -14,23 +14,23 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_cspace_h_
-#define _saba_cspace_h_
+#ifndef _MotionPlanning_cspace_h_
+#define _MotionPlanning_cspace_h_
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include <iostream>
 #include <vector>
 
-namespace Saba
+namespace MotionPlanning
 {
 
 
@@ -56,7 +56,7 @@ namespace Saba
      @see CSpaceSampled
 
      */
-    class SABA_IMPORT_EXPORT CSpace : public std::enable_shared_from_this<CSpace>
+    class MOTIONPLANNING_IMPORT_EXPORT CSpace : public std::enable_shared_from_this<CSpace>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -68,7 +68,7 @@ namespace Saba
             The boundaries of this c-space are set according to definitions in robotNodes.
             On startup, memory is allocate din order to allow fats processing on runtime.
         */
-        CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::RobotNodeSetPtr robotNodes, unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
+        CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
 
         //! destructor
         virtual ~CSpace();
@@ -125,7 +125,7 @@ namespace Saba
         VirtualRobot::RobotPtr getRobot() const;
 
         //! get the sets of robotnodes representing of cspace
-        VirtualRobot::RobotNodeSetPtr getRobotNodeSet() const;
+        VirtualRobot::JointSetPtr getJointSet() const;
 
         VirtualRobot::CDManagerPtr getCDManager() const;
 
@@ -302,7 +302,7 @@ namespace Saba
             Add a configuration constraint to be checked within this cspace.
             Standard: No constraints, meaning that a check for constraints will report a valid status
         */
-        virtual void addConstraintCheck(Saba::ConfigurationConstraintPtr constraint);
+        virtual void addConstraintCheck(MotionPlanning::ConfigurationConstraintPtr constraint);
 
     protected:
 
@@ -335,7 +335,7 @@ namespace Saba
         bool stopPathCheck;
 
         VirtualRobot::RobotPtr robo;                                //!< the robot for collision checking
-        VirtualRobot::RobotNodeSetPtr robotNodes;                   //!< the robot nodes defining the c-space
+        VirtualRobot::JointSetPtr robotNodes;                   //!< the robot nodes defining the c-space
 
         VirtualRobot::CDManagerPtr cdm;                             //!< handling of collision detections
 
@@ -344,7 +344,7 @@ namespace Saba
         std::vector< CSpaceNodePtr > nodes;                         //! vector with pointers to really used nodes
         std::vector< CSpaceNodePtr > freeNodes;                     //! vector with pointers to free (not used) nodes
 
-        std::vector<VirtualRobot::RobotNodePtr> robotJoints;        //!< joints of the robot that we are manipulating
+        std::vector<VirtualRobot::ModelJointPtr> robotJoints;        //!< joints of the robot that we are manipulating
 
         unsigned int randomSeed;
 
@@ -363,4 +363,4 @@ namespace Saba
 
 } // namespace
 
-#endif // _saba_cspace_h
+#endif // _MotionPlanning_cspace_h

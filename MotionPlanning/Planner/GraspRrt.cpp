@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace Saba
+namespace MotionPlanning
 {
 
 
@@ -21,7 +21,7 @@ namespace Saba
                        VirtualRobot::EndEffectorPtr eef,
                        VirtualRobot::ObstaclePtr object,
                        VirtualRobot::BasicGraspQualityMeasurePtr measure,
-                       VirtualRobot::SceneObjectSetPtr graspCollisionObjects,
+                       std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
                        float probabGraspHypothesis,
                        float graspQualityMinScore
                       )
@@ -30,25 +30,18 @@ namespace Saba
         plannerInitialized = false;
         minGraspContacts = 3;
         name = "GraspRrt";
-        THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getModelNodeSet() || !cspace->getRobot() || !measure, "NULL data");
-        rns = cspace->getModelNodeSet();
+        THROW_VR_EXCEPTION_IF(!cspace || !object || !eef || !cspace->getJointSet() || !cspace->getRobot() || !measure, "NULL data");
+        rns = cspace->getJointSet();
         robot = cspace->getRobot();
         targetObject = object;
         this->eef = eef;
         this->graspQualityMeasure = measure;
 
-        if (graspCollisionObjects)
-        {
-            this->graspCollisionObjects = graspCollisionObjects->clone();
-        }
-        else
-        {
-            this->graspCollisionObjects.reset(new VirtualRobot::SceneObjectSet("GraspRrtSceneObject", object->getCollisionChecker()));
-        }
+        this->graspCollisionObjects = graspCollisionObjects;
 
-        if (!this->graspCollisionObjects->hasSceneObject(targetObject))
+        if (std::find(this->graspCollisionObjects.begin(), this->graspCollisionObjects.end(), targetObject) == this->graspCollisionObjects.end())
         {
-            this->graspCollisionObjects->addSceneObject(targetObject);
+            this->graspCollisionObjects.push_back(targetObject);
         }
 
 
@@ -243,7 +236,7 @@ namespace Saba
         // NEAREST NEIGHBOR OF RANDOM CONFIGURATION
         CSpaceNodePtr nn = tree->getNearestNeighbor(c);
 
-        SABA_ASSERT(nn);
+        MOTIONPLANNING_ASSERT(nn);
 
         // CHECK PATH FOR COLLISIONS AND VALID NODES
         if (!cspace->isPathValid(nn->configuration, c))
@@ -329,7 +322,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_INFO << "Found path in rrt with " << cycles << " cycles." << std::endl;
+                MOTIONPLANNING_INFO << "Found path in rrt with " << cycles << " cycles." << std::endl;
             }
 
             return createSolution();
@@ -340,7 +333,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_ERROR << " maxCycles exceeded..." << std::endl;
+                MOTIONPLANNING_ERROR << " maxCycles exceeded..." << std::endl;
             }
         }
 
@@ -348,7 +341,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_ERROR << " search was stopped..." << std::endl;
+                MOTIONPLANNING_ERROR << " search was stopped..." << std::endl;
             }
         }
 
@@ -392,7 +385,7 @@ namespace Saba
 
         if (!Rrt::setStart(startVec) || !startNode)
         {
-            SABA_ERROR << " error initializing start node..." << endl;
+            MOTIONPLANNING_ERROR << " error initializing start node..." << endl;
             return false;
         }
 
@@ -432,11 +425,11 @@ namespace Saba
 
 
         // set gcp object
-        robot->setJointValues(rns, c);
+		rns->setJointValues(c);
         gcpOject->setGlobalPose(eef->getGCP()->getGlobalPose());
 
         // get target position (position on grasp object with shortest distance to hand)
-        /*double dist =*/ targetObject->getCollisionChecker()->calculateDistance(targetObject->getCollisionModel(), gcpOject->getCollisionModel(), P1, P2, &nId1, &nId2);
+        /*double dist =*/ targetObject->getCollisionChecker()->calculateDistance(targetObject, gcpOject, P1, P2, &nId1, &nId2);
 
         // now target position in global coord system is stored in P1
 
@@ -815,7 +808,7 @@ namespace Saba
         }
         MathHelpers::deltaQuat(&(pExtendNode->cartPosTCP1[3]),&(pCartGoalPose[3]),&(pDeltaPosQuat_Global[3]));
         */
-        robot->setJointValues(rns, extendNode->configuration);
+		rns->setJointValues(extendNode->configuration);
         Eigen::Matrix4f currentPose = mapConfigTcp[extendNode];
         return createWorkSpaceSamplingStep(currentPose, goalPose, storeCSpaceConf);
     }
@@ -903,18 +896,18 @@ namespace Saba
 
     float GraspRrt::calculateGraspScore(const Eigen::VectorXf& c, int nId, bool bStoreGraspInfoOnSuccess)
     {
-        SABA_ASSERT(graspQualityMeasure);
+        MOTIONPLANNING_ASSERT(graspQualityMeasure);
         clock_t timeStart = clock();
         performanceMeasure.numberOfGraspScorings++;
 
-        robot->setJointValues(rns, c);
+		rns->setJointValues(c);
         VirtualRobot::EndEffector::ContactInfoVector contactsAll = eef->closeActors(graspCollisionObjects);
         VirtualRobot::EndEffector::ContactInfoVector contacts;
 
         // we only need the targetObject contacts
         for (size_t i = 0; i < contactsAll.size(); i++)
         {
-            if (contactsAll[i].obstacle == targetObject)
+            if (targetObject->hasLink(contactsAll[i].obstacle))
             {
                 contacts.push_back(contactsAll[i]);
             }
@@ -948,7 +941,7 @@ namespace Saba
         // get distance to target
         Eigen::Vector3f P1, P2;
         int nId1, nId2;
-        float fDistTarget = targetObject->getCollisionChecker()->calculateDistance(targetObject->getCollisionModel(), gcpOject->getCollisionModel(), P1, P2, &nId1, &nId2);
+        float fDistTarget = targetObject->getCollisionChecker()->calculateDistance(targetObject, gcpOject, P1, P2, &nId1, &nId2);
 
 
         graspQualityMeasure->setContactPoints(contacts);
@@ -1016,7 +1009,7 @@ namespace Saba
         SbVec3f objectBBSize;
         objectBB.getSize(objectBBSize[0],objectBBSize[1],objectBBSize[2]);
         double objectLength = max(max(objectBBSize[0],objectBBSize[1]),objectBBSize[2]);
-        GraspStudio::Vec3D objectCoM;
+        GraspPlanning::Vec3D objectCoM;
         objectCoM.x = VecCOM[0];
         objectCoM.y = VecCOM[1];
         objectCoM.z = VecCOM[2];
@@ -1143,7 +1136,7 @@ namespace Saba
         }
 
         // get tcp pose
-        robot->setJointValues(rns, n->configuration);
+		rns->setJointValues(n->configuration);
 
         // using gcp!
         Eigen::Matrix4f p = eef->getGCP()->getGlobalPose();

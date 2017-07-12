@@ -14,30 +14,30 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __APPROACH_MOVEMENT_GENERATOR_H__
-#define __APPROACH_MOVEMENT_GENERATOR_H__
+#ifndef _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_H_
+#define _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_H_
 
-#include "GraspStudio.h"
+#include "GraspPlanning.h"
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/Model.h>
 #include <vector>
 #include <string>
 #include <Eigen/Core>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     /*!
     *
     * An interface for generating approach movements of an end-effector toward an object resulting in grasp hypothesis.
     */
-    class GRASPSTUDIO_IMPORT_EXPORT ApproachMovementGenerator
+    class GRASPPLANNING_IMPORT_EXPORT ApproachMovementGenerator
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -45,11 +45,11 @@ namespace GraspStudio
         /*!
             To generate approach movements an object and an end effector has to be specified.
             Internally a clone of the EEF is used.
-            \param object The object.
+            \param object The object must contain exactly one link with a collision model.
             \param eef The eef.
             \param graspPreshape An optional preshape that can be used in order to "open" the eef.
         */
-        ApproachMovementGenerator(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "");
+        ApproachMovementGenerator(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "");
 
         //! destructor
         virtual ~ApproachMovementGenerator();
@@ -75,7 +75,7 @@ namespace GraspStudio
 
         std::string getGCPJoint();
 
-        VirtualRobot::SceneObjectPtr getObject();
+        VirtualRobot::ModelPtr getObject();
 
         /*!
             This is the cloned eef!
@@ -90,7 +90,7 @@ namespace GraspStudio
 
         virtual void openHand();
 
-        VirtualRobot::SceneObjectPtr object;
+        VirtualRobot::ModelPtr object;
         VirtualRobot::TriMeshModelPtr objectModel;
         VirtualRobot::EndEffectorPtr eef;
 

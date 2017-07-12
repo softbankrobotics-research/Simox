@@ -14,16 +14,16 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_CSpacePath_h
-#define _saba_CSpacePath_h
+#ifndef _MotionPlanning_CSpacePath_h
+#define _MotionPlanning_CSpacePath_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include <vector>
 #include <string>
 
@@ -33,7 +33,7 @@
 
 #include <VirtualRobot/Trajectory.h>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -41,7 +41,7 @@ namespace Saba
      * \brief A path in c-space.
      *
      */
-    class SABA_IMPORT_EXPORT CSpacePath : public VirtualRobot::Trajectory
+    class MOTIONPLANNING_IMPORT_EXPORT CSpacePath : public VirtualRobot::Trajectory
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -106,7 +106,7 @@ namespace Saba
         CSpacePtr cspace;
     };
 
-} // namespace Saba
+} // namespace MotionPlanning
 
 
-#endif // _saba_CSpacePath_h
+#endif // _MotionPlanning_CSpacePath_h

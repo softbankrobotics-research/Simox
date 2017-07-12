@@ -75,13 +75,13 @@ namespace VirtualRobot
             \param angle How far should the eef actor move [rad]
             Returns true if all joints do either hit their limit or are in collision, e.g. the actor cannot be moved any further.
         */
-        bool moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, LinkSetPtr obstacles = LinkSetPtr(), float angle = 0.02);
+        bool moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float angle = 0.02);
 
         /*!
             Checks if the actor collides with one of the given obstacles
         */
         bool isColliding(LinkSetPtr obstacles, CollisionMode checkColMode = EndEffectorActor::eAll);
-        bool isColliding(EndEffectorPtr eef, LinkSetPtr obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(EndEffectorPtr eef, std::vector<ModelLinkPtr>, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
 
         /*!
             Checks if the actor collides with the given obstacle.

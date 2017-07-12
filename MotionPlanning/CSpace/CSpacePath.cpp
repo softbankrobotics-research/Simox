@@ -5,16 +5,16 @@
 #include <fstream>
 using namespace std;
 
-namespace Saba
+namespace MotionPlanning
 {
 
-    CSpacePath::CSpacePath(CSpacePtr cspace, const std::string& name): Trajectory(cspace ? cspace->getModelNodeSet() : VirtualRobot::RobotNodeSetPtr(), name)
+    CSpacePath::CSpacePath(CSpacePtr cspace, const std::string& name): Trajectory(cspace ? cspace->getJointSet() : VirtualRobot::JointSetPtr(), name)
     {
         this->cspace = cspace;
 
         if (!cspace)
         {
-            THROW_SABA_EXCEPTION("No cpsace...");
+            THROW_MOTIONPLANNING_EXCEPTION("No cpsace...");
         }
 
         dimension = cspace->getDimension();
@@ -46,12 +46,12 @@ namespace Saba
     {
         if (pos>=getNrOfPoints())
         {
-            SABA_ERROR << "CSpacePath::movePosition: wrong pos" << std::endl;
+            MOTIONPLANNING_ERROR << "CSpacePath::movePosition: wrong pos" << std::endl;
             return false;
         }
         if (moveVector==NULL)
         {
-            SABA_ERROR << "CSpacePath::movePosition: NULL moveVec" << std::endl;
+            MOTIONPLANNING_ERROR << "CSpacePath::movePosition: NULL moveVec" << std::endl;
             return false;
         }
 
@@ -122,7 +122,7 @@ namespace Saba
     {
         if (endIndex < startIndex || endIndex >= path.size())
         {
-            SABA_ERROR << "CSpacePath::getLength: wrong index..." << std::endl;
+            MOTIONPLANNING_ERROR << "CSpacePath::getLength: wrong index..." << std::endl;
             return 0.0f;
         }
 
@@ -250,12 +250,12 @@ namespace Saba
     {
         if (getNrOfPoints() == 0)
         {
-            SABA_ERROR << " no Path.." << std::endl;
+            MOTIONPLANNING_ERROR << " no Path.." << std::endl;
         }
 
         if (/*nr < 0 ||*/ nr > getNrOfPoints() - 1)
         {
-            SABA_ERROR << " path entry " << nr << " doesnt exist" << std::endl;
+            MOTIONPLANNING_ERROR << " path entry " << nr << " doesnt exist" << std::endl;
 
             //if (nr < 0)
             //{
@@ -311,7 +311,7 @@ namespace Saba
 
         if (getNrOfPoints() == 0)
         {
-            SABA_WARNING << "CSpacePath::interpolatePath: no Path.." << std::endl;
+            MOTIONPLANNING_WARNING << "CSpacePath::interpolatePath: no Path.." << std::endl;
         }
 
         if (t == 0.0f)
@@ -424,7 +424,7 @@ namespace Saba
         std::cout << "</CSpacePath>" << std::endl;
     }*/
 
-    Saba::CSpacePtr CSpacePath::getCSpace()
+    MotionPlanning::CSpacePtr CSpacePath::getCSpace()
     {
         return cspace;
     }
@@ -450,4 +450,4 @@ namespace Saba
         return result;
     }
 
-} // namespace Saba
+} // namespace MotionPlanning

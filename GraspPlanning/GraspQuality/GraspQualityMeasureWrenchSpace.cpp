@@ -25,11 +25,11 @@
 using namespace std;
 using namespace VirtualRobot;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
 
-    GraspQualityMeasureWrenchSpace::GraspQualityMeasureWrenchSpace(VirtualRobot::SceneObjectPtr object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
+    GraspQualityMeasureWrenchSpace::GraspQualityMeasureWrenchSpace(VirtualRobot::ModelPtr object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
         : GraspQualityMeasure(object, unitForce, frictionConeCoeff, frictionConeSamples)
     {
         OWSCalculated = false;
@@ -287,9 +287,8 @@ namespace GraspStudio
         float minDist = FLT_MAX;
         float dist[6];
         float currentDist2;
-        std::vector<getJointLimitHigh6D>::iterator faceIter;
-
-        for (faceIter = convexHullGWS->faces.begin(); faceIter != convexHullGWS->faces.end(); faceIter++)
+        
+        for (auto faceIter : convexHullGWS->faces)
         {
             VirtualRobot::MathTools::ContactPoint faceCenter;
             faceCenter.p.setZero();
@@ -297,8 +296,8 @@ namespace GraspStudio
 
             for (int j = 0; j < 6; j++)
             {
-                faceCenter.p += (convexHullGWS->vertices)[faceIter->id[j]].p;
-                faceCenter.n += (convexHullGWS->vertices)[faceIter->id[j]].n;
+                faceCenter.p += (convexHullGWS->vertices)[faceIter.id[j]].p;
+                faceCenter.n += (convexHullGWS->vertices)[faceIter.id[j]].n;
             }
 
             faceCenter.p /= 6.0f;
@@ -379,12 +378,10 @@ namespace GraspStudio
             return false;
         }
 
-        std::vector<getJointLimitHigh6D>::iterator faceIter;
-
-        for (faceIter = convexHullGWS->faces.begin(); faceIter != convexHullGWS->faces.end(); faceIter++)
+        for (auto faceIter : convexHullGWS->faces)
         {
             // ignore rounding errors
-            if (faceIter->distPlaneZero > 1e-4)
+            if (faceIter.distPlaneZero > 1e-4)
             {
                 return false;
             }

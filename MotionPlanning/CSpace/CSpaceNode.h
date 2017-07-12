@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CSpaceNode_h
-#define _Saba_CSpaceNode_h
+#ifndef _MotionPlanning_CSpaceNode_h
+#define _MotionPlanning_CSpaceNode_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include <vector>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -40,7 +40,7 @@ namespace Saba
      * @see CSpaceTree
      *
      */
-    class SABA_IMPORT_EXPORT CSpaceNode
+    class MOTIONPLANNING_IMPORT_EXPORT CSpaceNode
     {
     public:
 
@@ -62,4 +62,4 @@ namespace Saba
 
 } // nameaspace
 
-#endif // _Saba_CSpaceNode_h
+#endif // _MotionPlanning_CSpaceNode_h

@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_cspacetree_h
-#define _saba_cspacetree_h
+#ifndef _MotionPlanning_cspacetree_h
+#define _MotionPlanning_cspacetree_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include <iostream>
 #include <vector>
 #include <map>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -38,7 +38,7 @@ namespace Saba
      * A connected tree in c-space which represents a RRT.
      *
      */
-    class SABA_IMPORT_EXPORT CSpaceTree
+    class MOTIONPLANNING_IMPORT_EXPORT CSpaceTree
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -186,6 +186,6 @@ namespace Saba
         std::mutex mutex;
     };
 
-} // namespace Saba
+} // namespace MotionPlanning
 
-#endif // _saba_cspacetree_h
+#endif // _MotionPlanning_cspacetree_h

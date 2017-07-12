@@ -6,14 +6,14 @@
 #include <time.h>
 #include <math.h>
 
-namespace Saba
+namespace MotionPlanning
 {
 using namespace VirtualRobot;
 
     ElasticBandProcessor::ElasticBandProcessor(CSpacePathPtr path,
                                                CSpaceSampledPtr cspace,
-                                               VirtualRobot::RobotNodePtr node,               // the distance for this node is considered
-                                               VirtualRobot::SceneObjectSetPtr obstacles,     // these obstacles are considered for path smoothing
+                                               VirtualRobot::ModelLinkPtr node,               // the distance for this node is considered
+                                               VirtualRobot::LinkSetPtr obstacles,     // these obstacles are considered for path smoothing
                                                bool verbose
                                                ) : PathProcessor(path, verbose), cspace(cspace), node(node), obstacles(obstacles)
     {
@@ -21,16 +21,16 @@ using namespace VirtualRobot;
         VR_ASSERT(node->getCollisionModel());
         VR_ASSERT(path);
         VR_ASSERT(path->getCSpace());
-        VR_ASSERT(path->getCSpace()->getModelNodeSet());
+        VR_ASSERT(path->getCSpace()->getJointSet());
         VR_ASSERT(obstacles);
         VR_ASSERT(cspace);
 
-        rns = path->getCSpace()->getModelNodeSet();
+        rns = path->getCSpace()->getJointSet();
         VR_ASSERT(rns && rns->getSize()>0);
         VR_INFO << "using rns " << rns->getName() << endl;
 
         stopOptimization = false;
-        colChecker = node->getRobot()->getCollisionChecker();
+        colChecker = node->getModel()->getCollisionChecker();
 
         factorCSpaceNeighborForce = 0.3f;
         factorCSpaceObstacleForce = 10000.0f;
@@ -83,7 +83,7 @@ using namespace VirtualRobot;
         }
 
 
-        float d = (float)colChecker->calculateDistance(node->getCollisionModel(), obstacles, _P1, _P2, &_trID1, &_trID2);
+        float d = (float)colChecker->calculateDistance(node, obstacles, _P1, _P2, &_trID1, &_trID2);
 
 
         if (d>minObstacleDistance)
@@ -175,7 +175,7 @@ using namespace VirtualRobot;
          Eigen::VectorXf fc;
 
 
-        for (int i=1;i<optimizedPath->getNrOfPoints()-1;i++)
+        for (unsigned int i=1;i<optimizedPath->getNrOfPoints()-1;i++)
         {
 
             Eigen::VectorXf& before = optimizedPath->getPointRef(i-1);
@@ -227,7 +227,7 @@ using namespace VirtualRobot;
 
         float ssd = 2 * cspace->getSamplingSize()*cspace->getSamplingSize();
 
-        for (int i=1;i<optimizedPath->getNrOfPoints()-2;i++)
+        for (unsigned int i=1;i<optimizedPath->getNrOfPoints()-2;i++)
         {
             Eigen::VectorXf& before = optimizedPath->getPointRef(i-1);
             Eigen::VectorXf& act = optimizedPath->getPointRef(i);
@@ -309,7 +309,7 @@ using namespace VirtualRobot;
     {
         initSolution();
 
-        rns->getRobot()->setUpdateVisualization(false);
+        rns->getModel()->setUpdateVisualization(false);
 
         for (int i=0;i<optimizeSteps;i++)
         {
@@ -330,7 +330,7 @@ using namespace VirtualRobot;
             }
         }
 
-        rns->getRobot()->setUpdateVisualization(true);
+        rns->getModel()->setUpdateVisualization(true);
 
 
         return optimizedPath;

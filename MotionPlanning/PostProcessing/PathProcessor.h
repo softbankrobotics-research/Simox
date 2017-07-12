@@ -14,25 +14,25 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_PathProcessor_h__
-#define __Saba_PathProcessor_h__
+#ifndef __MotionPlanning_PathProcessor_h__
+#define __MotionPlanning_PathProcessor_h__
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 
-namespace Saba
+namespace MotionPlanning
 {
     /*!
      *
      * \brief An abstract interface for path processing classes.
      *
      */
-    class SABA_IMPORT_EXPORT PathProcessor
+    class MOTIONPLANNING_IMPORT_EXPORT PathProcessor
     {
     public:
 
@@ -71,4 +71,4 @@ namespace Saba
 
 } // namespace
 
-#endif // __Saba_CPathProcessor_h__
+#endif // __MotionPlanning_CPathProcessor_h__

@@ -3,7 +3,7 @@
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 
-namespace Saba
+namespace MotionPlanning
 {
     PathProcessor::PathProcessor(CSpacePathPtr path, bool verbose)
         : path(path), verbose(verbose)

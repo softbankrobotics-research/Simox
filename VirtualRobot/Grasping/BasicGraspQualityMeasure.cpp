@@ -16,22 +16,25 @@ namespace VirtualRobot
 {
 
 
-    BasicGraspQualityMeasure::BasicGraspQualityMeasure(ModelLinkPtr object)
+    BasicGraspQualityMeasure::BasicGraspQualityMeasure(ModelPtr object)
         : object(object)
     {
-        THROW_VR_EXCEPTION_IF(!object, "Need an object");
-        THROW_VR_EXCEPTION_IF(!object->getCollisionModel(), "Need an object with collision model");
-        THROW_VR_EXCEPTION_IF(!object->getCollisionModel()->getTriMeshModel(), "Need an object with trimeshmodel");
+		THROW_VR_EXCEPTION_IF(!object, "Need an object");
+		THROW_VR_EXCEPTION_IF(!object->getLinks().size()!=1, "Need an object with exactly one modellink");
+		THROW_VR_EXCEPTION_IF(!object->getLinks().at(0)->getCollisionModel(), "Need an object with collision model");
+        THROW_VR_EXCEPTION_IF(!object->getLinks().at(0)->getCollisionModel()->getTriMeshModel(), "Need an object with trimeshmodel");
 
         //Member variable representing Grasp Quality ranging from 1 to 0
         graspQuality = 0.0;
         verbose = false;
         objectLength = 0.0f;
 
-        centerOfModel = object->getCollisionModel()->getTriMeshModel()->getCOM();
+		objectLink = object->getLinks().at(0);
+
+        centerOfModel = objectLink->getCollisionModel()->getTriMeshModel()->getCOM();
 
         Eigen::Vector3f minS, maxS;
-        object->getCollisionModel()->getTriMeshModel()->getSize(minS, maxS);
+		objectLink->getCollisionModel()->getTriMeshModel()->getSize(minS, maxS);
         maxS = maxS - minS;
         objectLength = maxS(0);
 
@@ -175,10 +178,15 @@ namespace VirtualRobot
         return centerOfModel;
     }
 
-    VirtualRobot::ModelLinkPtr BasicGraspQualityMeasure::getObject()
-    {
-        return object;
-    }
+	VirtualRobot::ModelPtr BasicGraspQualityMeasure::getObject()
+	{
+		return object;
+	}
+
+	VirtualRobot::ModelLinkPtr BasicGraspQualityMeasure::getObjectLink()
+	{
+		return objectLink;
+	}
 
     bool BasicGraspQualityMeasure::isValid()
     {

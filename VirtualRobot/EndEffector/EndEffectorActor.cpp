@@ -95,7 +95,7 @@ namespace VirtualRobot
         return res;
     }
 
-    bool EndEffectorActor::moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, LinkSetPtr obstacles /*= SceneObjectSetPtr()*/, float angle /*= 0.02*/)
+    bool EndEffectorActor::moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, std::vector<ModelLinkPtr> obstacles, float angle)
     {
         VR_ASSERT(eef);
         RobotPtr robot = eef->getRobot();
@@ -125,7 +125,7 @@ namespace VirtualRobot
                 bool collision = false;
 
                 // obstacles (store contacts)
-                if ((/*n->colMode!=eNone &&*/ obstacles && isColliding(eef, obstacles, newContacts)))
+                if ((/*n->colMode!=eNone &&*/ obstacles.size()>0 && isColliding(eef, obstacles, newContacts)))
                 {
                     collision = true;
                 }
@@ -213,7 +213,7 @@ namespace VirtualRobot
     }
 
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, LinkSetPtr obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(EndEffectorPtr eef, std::vector<ModelLinkPtr> obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
     {
         //std::vector<CollisionModelPtr> colModels = obstacles->getCollisionModels();
         //Eigen::Vector3f contact;
@@ -224,7 +224,7 @@ namespace VirtualRobot
             ModelLinkPtr l = std::dynamic_pointer_cast<ModelLink>(n->robotNode);
             if (!l || !l->getCollisionModel())
                 continue;
-            for (auto o : obstacles ->getLinks())//= colModels.begin(); o != colModels.end(); o++)
+            for (auto o : obstacles)//= colModels.begin(); o != colModels.end(); o++)
             {
                 if ((n->colMode & checkColMode) &&
                     colChecker->checkCollision(l->getCollisionModel(), o->getCollisionModel()))

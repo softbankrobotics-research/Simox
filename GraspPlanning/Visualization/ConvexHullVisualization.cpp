@@ -2,7 +2,7 @@
 #include "ConvexHullVisualization.h"
 
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     ConvexHullVisualization::ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords)
@@ -23,4 +23,4 @@ namespace GraspStudio
     {
     }
 
-} // namespace GraspStudio
+} // namespace GraspPlanning

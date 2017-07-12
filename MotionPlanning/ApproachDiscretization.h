@@ -14,26 +14,26 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2012 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
 
-#ifndef _SABA_APPROACH_DISCRETIZATION_H_
-#define _SABA_APPROACH_DISCRETIZATION_H_
+#ifndef _MotionPlanning_APPROACH_DISCRETIZATION_H_
+#define _MotionPlanning_APPROACH_DISCRETIZATION_H_
 
-#include "Saba.h"
+#include "MotionPlanning.h"
 
 #include <vector>
 #include <map>
 #include <float.h>
-#include <VirtualRobot/SphereApproximator.h>
+#include <VirtualRobot/Tools/SphereApproximator.h>
 
 #include "CSpace/CSpaceNode.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -46,7 +46,7 @@ namespace Saba
     *
     */
 
-    class SABA_IMPORT_EXPORT ApproachDiscretization
+    class MOTIONPLANNING_IMPORT_EXPORT ApproachDiscretization
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -113,4 +113,4 @@ namespace Saba
 
 }
 
-#endif /* _SABA_APPROACH_DISCRETIZATION_H_ */
+#endif /* _MotionPlanning_APPROACH_DISCRETIZATION_H_ */

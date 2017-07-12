@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2013 H2T,KIT
 *             GNU Lesser General Public License
@@ -28,7 +28,7 @@ using namespace std;
 using namespace Eigen;
 using namespace VirtualRobot;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string& name, VirtualRobot::MathTools::ConvexHull3DPtr hull)
     {
@@ -116,14 +116,16 @@ namespace GraspStudio
 
     VirtualRobot::ObstaclePtr MeshConverter::RefineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist)
     {
-        VirtualRobot::ObstaclePtr res;
+		VR_ASSERT(object);
+		VirtualRobot::ObstaclePtr res;
 
-        if (!object || !object->getCollisionModel())
+
+        if (!object || object->getLinks().size()!=1 || !object->getLinks().at(0)->getCollisionModel())
         {
             return res;
         }
 
-        TriMeshModelPtr tm = object->getCollisionModel()->getTriMeshModel();
+        TriMeshModelPtr tm = object->getLinks().at(0)->getCollisionModel()->getTriMeshModel();
 
         if (!tm)
         {
@@ -183,7 +185,7 @@ namespace GraspStudio
             }
 
             // create face
-            getJointLimitHigh face;
+            TriangleFace face;
             face.id1 = id1;
             face.id2 = id2;
             face.id3 = id3;
@@ -207,9 +209,11 @@ namespace GraspStudio
         }
 
         Eigen::Matrix4f gp = object->getGlobalPose();
-        VisualizationNodePtr visu = cv->createTriMeshModelVisualization(triMesh2, false, gp);
+		Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+		VisualizationNodePtr visu = cv->createTriMeshModelVisualization(triMesh2, false, pose);// , gp);
         CollisionModelPtr cm(new CollisionModel(visu));
-        res.reset(new Obstacle(object->getName(), visu, cm));
+        res.reset(new Obstacle(object->getName(), visu, cm, object->getLinks().at(0)->getPhysics()));
+		res->setGlobalPose(gp);
         return res;
     }
 
@@ -241,7 +245,7 @@ namespace GraspStudio
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-                getJointLimitHigh face;
+                TriangleFace face;
                 face.id1 = id4;
                 face.id2 = tm->faces[faceIdx].id2;
                 face.id3 = tm->faces[faceIdx].id3;
@@ -258,7 +262,7 @@ namespace GraspStudio
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-                getJointLimitHigh face;
+				TriangleFace face;
                 face.id1 = tm->faces[faceIdx].id1;
                 face.id2 = id4;
                 face.id3 = tm->faces[faceIdx].id3;
@@ -275,7 +279,7 @@ namespace GraspStudio
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-                getJointLimitHigh face;
+				TriangleFace face;
                 face.id1 = tm->faces[faceIdx].id1;
                 face.id2 = tm->faces[faceIdx].id2;
                 face.id3 = id4;

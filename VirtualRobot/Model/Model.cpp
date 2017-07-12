@@ -96,6 +96,24 @@ namespace VirtualRobot
         return (i != modelNodeMap.end() && (i->second->isLink()));
     }
 
+	bool Model::hasLink(const ModelLinkPtr& link) const
+	{
+		ReadLockPtr r = getReadLock();
+		if (!link)
+			return false;
+		auto i = modelNodeMap.find(link->getName());
+		return (i != modelNodeMap.end() && (i->second->isLink()) && i->second == link);
+	}
+
+	bool Model::hasJoint(const ModelJointPtr& joint) const
+	{
+		ReadLockPtr r = getReadLock();
+		if (!joint)
+			return false;
+		auto i = modelNodeMap.find(joint->getName());
+		return (i != modelNodeMap.end() && (i->second->isJoint()) && i->second == joint);
+	}
+
     ModelNodePtr Model::getModelNode(const std::string& modelNodeName) const
     {
         ReadLockPtr r = getReadLock();

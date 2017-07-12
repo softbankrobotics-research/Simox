@@ -26,7 +26,7 @@ MACRO(ADD_MP_TEST TEST_NAME)
     TARGET_LINK_LIBRARIES(${TEST_NAME} simox-virtualrobot simox-motionplanning ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "simox-motionplanning Tests")
-    ADD_TEST(NAME Saba_${TEST_NAME}
+    ADD_TEST(NAME MotionPlanning_${TEST_NAME}
     	        COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
 ENDMACRO(ADD_MP_TEST)
 
@@ -54,7 +54,7 @@ ApproachDiscretization.cpp
 )
 
 SET(INCLUDES
-Saba.h
+MotionPlanning.h
 CSpace/CSpace.h
 CSpace/CSpaceSampled.h
 CSpace/CSpaceNode.h

@@ -14,26 +14,26 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __CONTACT_CONE_GENARTOR_H__
-#define __CONTACT_CONE_GENARTOR_H__
+#ifndef _GRASP_PLANNING_CONTACT_CONE_GENARTOR_H_
+#define _GRASP_PLANNING_CONTACT_CONE_GENARTOR_H_
 
-#include "GraspStudio.h"
+#include "GraspPlanning.h"
 #include <VirtualRobot/Tools/MathTools.h>
 #include <vector>
 #include <Eigen/Core>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
         \brief Creates approximated representations of contact cones.
     */
-    class GRASPSTUDIO_IMPORT_EXPORT ContactConeGenerator
+    class GRASPPLANNING_IMPORT_EXPORT ContactConeGenerator
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

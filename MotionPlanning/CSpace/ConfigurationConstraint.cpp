@@ -1,7 +1,7 @@
 #include "ConfigurationConstraint.h"
 #include "CSpace.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     ConfigurationConstraint::ConfigurationConstraint(unsigned int dimension)

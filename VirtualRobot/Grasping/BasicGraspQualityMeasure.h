@@ -35,14 +35,17 @@ namespace VirtualRobot
         \brief An interface class for grasp quality algorithms.
         A basic quality score, relying on the number of contacts, is served by this implementation
 
-        @see GraspStudio::GraspQualityMeasureWrenchSpace
+        @see GraspPlanning::GraspQualityMeasureWrenchSpace
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT BasicGraspQualityMeasure
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        BasicGraspQualityMeasure(ModelLinkPtr object);
+		/*!
+		* Initialize with an objetc.For now, only objects with exactly one link are supported.
+		*/
+        BasicGraspQualityMeasure(ModelPtr object);
 
         // destructor
         virtual ~BasicGraspQualityMeasure();
@@ -73,7 +76,8 @@ namespace VirtualRobot
         //! Returns description of this object
         virtual std::string getName();
 
-        ModelLinkPtr getObject();
+		ModelPtr getObject();
+		ModelLinkPtr getObjectLink();
 
         virtual bool isValid();
 
@@ -87,7 +91,8 @@ namespace VirtualRobot
 
         int maxContacts;
 
-        ModelLinkPtr object;
+		ModelPtr object;
+		ModelLinkPtr objectLink;
 
         // object properties
         std::vector<VirtualRobot::MathTools::ContactPoint> contactPoints;  // in MM

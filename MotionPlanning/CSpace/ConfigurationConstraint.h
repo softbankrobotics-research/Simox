@@ -14,20 +14,20 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2012 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_ConfigConstraint_h
-#define _Saba_ConfigConstraint_h
+#ifndef _MotionPlanning_ConfigConstraint_h
+#define _MotionPlanning_ConfigConstraint_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "../CSpace/CSpace.h"
 #include <vector>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -35,7 +35,7 @@ namespace Saba
     * \brief An interface class for defining custom constraints
     *
     */
-    class SABA_IMPORT_EXPORT ConfigurationConstraint
+    class MOTIONPLANNING_IMPORT_EXPORT ConfigurationConstraint
     {
     public:
         ConfigurationConstraint(unsigned int dimension);
@@ -57,4 +57,4 @@ namespace Saba
 
 }
 
-#endif // _Saba_ConfigConstraint_h
+#endif // _MotionPlanning_ConfigConstraint_h

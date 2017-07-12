@@ -1,7 +1,7 @@
 
 #include "MotionPlanner.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     MotionPlanner::MotionPlanner(CSpacePtr cspace)
@@ -10,14 +10,14 @@ namespace Saba
 
         if (!cspace)
         {
-            THROW_SABA_EXCEPTION("NULL data in MotionPlanner constructor");
+            THROW_MOTIONPLANNING_EXCEPTION("NULL data in MotionPlanner constructor");
         }
 
         dimension = cspace->getDimension();
 
         if (dimension == 0)
         {
-            THROW_SABA_EXCEPTION("Need at least one dimensional cspace");
+            THROW_MOTIONPLANNING_EXCEPTION("Need at least one dimensional cspace");
         }
 
 
@@ -102,7 +102,7 @@ namespace Saba
         if (cspace && !cspace->isCollisionFree(startConfig))
         {
             //if (startNode->obstacleDistance<=0)
-            SABA_WARNING << " start pos is not collision free..." << std::endl;
+            MOTIONPLANNING_WARNING << " start pos is not collision free..." << std::endl;
             std::cout << "config:" << std::endl;
             cspace->printConfig(startConfig);
             std::cout << std::endl;
@@ -111,7 +111,7 @@ namespace Saba
 
         if (cspace && !cspace->isInBoundary(startConfig))
         {
-            SABA_WARNING << " start node does violate CSpace boundaries! " << std::endl;
+            MOTIONPLANNING_WARNING << " start node does violate CSpace boundaries! " << std::endl;
             std::cout << "config:" << std::endl;
             cspace->printConfig(startConfig);
             std::cout << std::endl;
@@ -131,7 +131,7 @@ namespace Saba
         //tree->calculateObstacleDistance(goalNode);
         if (cspace && !cspace->isCollisionFree(goalConfig))
         {
-            SABA_WARNING << " goal pos is not collision free..." << std::endl;
+            MOTIONPLANNING_WARNING << " goal pos is not collision free..." << std::endl;
             std::cout << "config:" << std::endl;
             cspace->printConfig(goalConfig);
             std::cout << std::endl;
@@ -140,7 +140,7 @@ namespace Saba
 
         if (cspace && !cspace->isInBoundary(goalConfig))
         {
-            SABA_WARNING << " goal pos does violate CSpace boundaries!" << std::endl;
+            MOTIONPLANNING_WARNING << " goal pos does violate CSpace boundaries!" << std::endl;
             std::cout << "config:" << std::endl;
             cspace->printConfig(goalConfig);
             std::cout << std::endl;

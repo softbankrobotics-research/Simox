@@ -14,22 +14,22 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GraspStudio_ConvexHullVisualization_h_
-#define _GraspStudio_ConvexHullVisualization_h_
+#ifndef _GRASP_PLANNING_ConvexHullVisualization_h_
+#define _GRASP_PLANNING_ConvexHullVisualization_h_
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
      *
@@ -37,7 +37,7 @@ namespace GraspStudio
      * @see CoinConvexHullVisualization
      *
      */
-    class GRASPSTUDIO_IMPORT_EXPORT ConvexHullVisualization
+    class GRASPPLANNING_IMPORT_EXPORT ConvexHullVisualization
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -60,6 +60,6 @@ namespace GraspStudio
 
     };
 
-} // namespace GraspStudio
+} // namespace GraspPlanning
 
 #endif // _GraspStudio_ConvexHullVisualization_h_

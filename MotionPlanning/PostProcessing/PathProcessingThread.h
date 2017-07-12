@@ -14,29 +14,29 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_PathProcessingThread_h__
-#define __Saba_PathProcessingThread_h__
+#ifndef __MotionPlanning_PathProcessingThread_h__
+#define __MotionPlanning_PathProcessingThread_h__
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 
 #include "PathProcessor.h"
 #include "../CSpace/CSpacePath.h"
 
 
-namespace Saba
+namespace MotionPlanning
 {
     /*!
      *
      * \brief This class can be used to start a path processing algorithm in a thread.
      *
      */
-    class SABA_IMPORT_EXPORT PathProcessingThread
+    class MOTIONPLANNING_IMPORT_EXPORT PathProcessingThread
     {
 
     public:

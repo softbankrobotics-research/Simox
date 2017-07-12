@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace Saba
+namespace MotionPlanning
 {
 
     //! constructor
@@ -115,11 +115,11 @@ namespace Saba
         mutex.unlock();
     }
 
-    Saba::CSpacePathPtr PathProcessingThread::getProcessedPath()
+    MotionPlanning::CSpacePathPtr PathProcessingThread::getProcessedPath()
     {
         if (isRunning())
         {
-            return Saba::CSpacePathPtr();    // no results yet
+            return MotionPlanning::CSpacePathPtr();    // no results yet
         }
 
         return resultPath;

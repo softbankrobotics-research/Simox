@@ -3,28 +3,28 @@
 #include "MotionPlanning/CSpace/CSpace.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     RrtWorkspaceVisualization::RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName)
     {
         this->robot = robot;
         this->cspace = cspace;
-        SABA_ASSERT(robot);
-        SABA_ASSERT(cspace);
-        robotNodeSet = cspace->getModelNodeSet();
-        SABA_ASSERT(robotNodeSet);
+        MOTIONPLANNING_ASSERT(robot);
+        MOTIONPLANNING_ASSERT(cspace);
+        robotNodeSet = cspace->getJointSet();
+        MOTIONPLANNING_ASSERT(robotNodeSet);
         setTCPName(TCPName);
         init();
     }
 
 
-    RrtWorkspaceVisualization::RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName)
+    RrtWorkspaceVisualization::RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::JointSetPtr robotNodeSet, const std::string& TCPName)
     {
         this->robot = robot;
         cspace = CSpacePtr();
-        SABA_ASSERT(robot);
-        SABA_ASSERT(robotNodeSet);
+        MOTIONPLANNING_ASSERT(robot);
+        MOTIONPLANNING_ASSERT(robotNodeSet);
         this->robotNodeSet = robotNodeSet;
         setTCPName(TCPName);
         init();
@@ -131,4 +131,4 @@ namespace Saba
         return false;
     }*/
 
-} // namespace Saba
+} // namespace MotionPlanning
