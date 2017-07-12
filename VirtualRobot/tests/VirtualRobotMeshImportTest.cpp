@@ -9,7 +9,7 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/Import/MeshImport/STLReader.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 #include <string>
 #include <sstream>

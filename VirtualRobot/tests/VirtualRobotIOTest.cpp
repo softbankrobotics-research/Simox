@@ -11,10 +11,10 @@
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/Sensor.h>
-#include <VirtualRobot/Nodes/PositionSensor.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
-#include <VirtualRobot/ManipulationObject.h>
+//#include <VirtualRobot/Nodes/Sensor.h>
+//#include <VirtualRobot/Nodes/PositionSensor.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 #include <string>
 
 
@@ -72,19 +72,19 @@ BOOST_AUTO_TEST_CASE(testRobotSaveXML)
 BOOST_AUTO_TEST_CASE(testLoadStoreManipulationObjectPhysics)
 {
     std::string filename("objects/physics-test.xml");
-    bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
+    bool fileOK = VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
     BOOST_REQUIRE(fileOK);
 
     ManipulationObjectPtr manipulatioObject = ObjectIO::loadManipulationObject(filename);
 
-    ModelLink::Physics physicsObject = manipulatioObject->getPhysics();
+    ModelLink::Physics physicsObject = manipulatioObject->getLinks().at(0)->getPhysics();
 
     BOOST_CHECK_EQUAL(physicsObject.simType, ModelLink::Physics::eStatic);
     BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
     BOOST_CHECK_EQUAL(physicsObject.comLocation, ModelLink::Physics::eVisuBBoxCenter);
 
     ManipulationObjectPtr savedObject = ObjectIO::createManipulationObjectFromString(manipulatioObject->toXML());
-    physicsObject = savedObject->getPhysics();
+    physicsObject = savedObject->getLinks().at(0)->getPhysics();
 
     BOOST_CHECK_EQUAL(physicsObject.simType, ModelLink::Physics::eStatic);
     BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);

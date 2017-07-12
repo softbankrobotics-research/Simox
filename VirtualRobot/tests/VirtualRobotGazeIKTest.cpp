@@ -12,7 +12,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/Nodes/RobotNodePrismatic.h>
+#include <VirtualRobot/Model/Nodes/ModelJointPrismatic.h>
 #include <string>
 
 #include <Eigen/Core>
@@ -139,9 +139,9 @@ BOOST_AUTO_TEST_CASE(testGazeIK)
 
     const std::string rnsName = "IKVirtualGaze";
     const std::string nodeTransName = "VirtualCentralGaze";
-    VirtualRobot::RobotNodeSetPtr rns = rob->getModelNodeSet(rnsName);
+    VirtualRobot::JointSetPtr rns = rob->getJointSet(rnsName);
     VirtualRobot::RobotNodePtr node = rob->getModelNode(nodeTransName);
-    VirtualRobot::RobotNodePrismaticPtr nodeTrans = std::dynamic_pointer_cast<VirtualRobot::RobotNodePrismatic>(node);
+    VirtualRobot::ModelJointPrismaticPtr nodeTrans = std::dynamic_pointer_cast<VirtualRobot::ModelJointPrismatic>(node);
 
     BOOST_REQUIRE(rns);
     BOOST_REQUIRE(nodeTrans);
