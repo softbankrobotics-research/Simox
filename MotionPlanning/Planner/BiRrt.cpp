@@ -8,13 +8,13 @@
 #include <time.h>
 
 
-//#define LOCAL_DEBUG(a) {SABA_INFO << a;};
+//#define LOCAL_DEBUG(a) {MOTIONPLANNING_INFO << a;};
 #define LOCAL_DEBUG(a)
 
 using namespace std;
 using namespace VirtualRobot;
 
-namespace Saba
+namespace MotionPlanning
 {
 
     BiRrt::BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA, RrtMethod modeB)
@@ -35,7 +35,7 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Starting BiRrt planner" << std::endl;
+            MOTIONPLANNING_INFO << "Starting BiRrt planner" << std::endl;
 
             switch (rrtMode)
             {
@@ -76,7 +76,7 @@ namespace Saba
 
         if (!isInitialized())
         {
-            SABA_ERROR << " planner: not initialized..." << std::endl;
+            MOTIONPLANNING_ERROR << " planner: not initialized..." << std::endl;
             return false;
         }
 
@@ -97,7 +97,7 @@ namespace Saba
 
         if (robot)
         {
-            bVisStatus = robot->getUpdateVisualizationStatus();
+            bVisStatus = robot->getUpdateVisualization();
             robot->setUpdateVisualization(false);
         }
 
@@ -205,7 +205,7 @@ namespace Saba
 
                     if (!goalNode)
                     {
-                        SABA_ERROR << " no node for ID: " << lastIDB << endl;
+                        MOTIONPLANNING_ERROR << " no node for ID: " << lastIDB << endl;
                         stopSearch = true;
                     }
                     else
@@ -229,11 +229,11 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
+            MOTIONPLANNING_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
 
-            SABA_INFO << "Created " << tree->getNrOfNodes() << " + " << tree2->getNrOfNodes() << " = " << tree->getNrOfNodes() + tree2->getNrOfNodes() << " nodes." << std::endl;
-            SABA_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
-            SABA_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "Created " << tree->getNrOfNodes() << " + " << tree2->getNrOfNodes() << " = " << tree->getNrOfNodes() + tree2->getNrOfNodes() << " nodes." << std::endl;
+            MOTIONPLANNING_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
 
             int nColChecks = (cspace->performaceVars_collisionCheck - colChecksStart);
 
@@ -253,7 +253,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
+                MOTIONPLANNING_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
             }
 
             createSolution(bQuiet);
@@ -264,12 +264,12 @@ namespace Saba
         // something went wrong...
         if (cycles >= maxCycles)
         {
-            SABA_WARNING << " maxCycles exceeded..." << std::endl;
+            MOTIONPLANNING_WARNING << " maxCycles exceeded..." << std::endl;
         }
 
         if (stopSearch)
         {
-            SABA_WARNING << " search was stopped..." << std::endl;
+            MOTIONPLANNING_WARNING << " search was stopped..." << std::endl;
         }
 
         return false;
@@ -294,12 +294,12 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "node1:" << lastAddedID << ", node2: " << lastAddedID2 << std::endl;
+            MOTIONPLANNING_INFO << "node1:" << lastAddedID << ", node2: " << lastAddedID2 << std::endl;
         }
 
         if (!actNode || !actNode2)
         {
-            SABA_ERROR << "No nodes for Solution ?!" << std::endl;
+            MOTIONPLANNING_ERROR << "No nodes for Solution ?!" << std::endl;
             return false;
         }
 
@@ -335,7 +335,7 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Count1: " << count1 << " - count2: " << count2 << std::endl;
+            MOTIONPLANNING_INFO << "Count1: " << count1 << " - count2: " << count2 << std::endl;
         }
 
         //reverse the solution vector from bridgeover node to start node (correct order)
@@ -356,7 +356,7 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Created solution with " << solution->getNrOfPoints() << " nodes." << std::endl;
+            MOTIONPLANNING_INFO << "Created solution with " << solution->getNrOfPoints() << " nodes." << std::endl;
         }
 
         //solution->checkDistance(tree->getColCheckSamplingSize());

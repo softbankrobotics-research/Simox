@@ -14,26 +14,26 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_ShortcutProcessor_h__
-#define __Saba_ShortcutProcessor_h__
+#ifndef __MotionPlanning_ShortcutProcessor_h__
+#define __MotionPlanning_ShortcutProcessor_h__
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "PathProcessor.h"
 
-namespace Saba
+namespace MotionPlanning
 {
     /*!
      *
      * \brief The ShortcutProcessor searches shortcuts in C-Space to produce smooth trajectories.
      *
      */
-    class SABA_IMPORT_EXPORT ShortcutProcessor : public PathProcessor
+    class MOTIONPLANNING_IMPORT_EXPORT ShortcutProcessor : public PathProcessor
     {
     public:
 
@@ -59,7 +59,6 @@ namespace Saba
             Slow method, shortenSolutionRandom() gets similar results but is much faster.
         */
         void doPathPruning();
-
 
         /*!
             This method randomly choses a start and endpoint. The linear path between can be checked for validity in order to check for a shortcut.
@@ -90,4 +89,4 @@ namespace Saba
 
 }// namespace
 
-#endif // __Saba_ShortcutProcessor_h__
+#endif // __MotionPlanning_ShortcutProcessor_h__

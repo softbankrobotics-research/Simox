@@ -14,36 +14,36 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2016 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_ElasticBandProcessor_h__
-#define __Saba_ElasticBandProcessor_h__
+#ifndef __MotionPlanning_ElasticBandProcessor_h__
+#define __MotionPlanning_ElasticBandProcessor_h__
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "PathProcessor.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 
-namespace Saba
+namespace MotionPlanning
 {
     /*!
      *
      * \brief The ElasticBandProcessor uses Cartesian distance vectors to move c-space points in order to produce smooth trajectories.
      *
      */
-    class SABA_IMPORT_EXPORT ElasticBandProcessor : public PathProcessor
+    class MOTIONPLANNING_IMPORT_EXPORT ElasticBandProcessor : public PathProcessor
     {
     public:
 
         ElasticBandProcessor(CSpacePathPtr path,                            // implicitly defines rns to operate on (path->cspace->rns)
                              CSpaceSampledPtr cspace,
-                             VirtualRobot::RobotNodePtr node,               // the distance for this node is considered
-                             VirtualRobot::SceneObjectSetPtr obstacles,     // these obstacles are considered for path smoothing
+                             VirtualRobot::ModelLinkPtr node,               // the distance for this node is considered
+                             VirtualRobot::LinkSetPtr obstacles,     // these obstacles are considered for path smoothing
                              bool verbose = false);
         virtual ~ElasticBandProcessor();
 
@@ -77,9 +77,9 @@ namespace Saba
         Eigen::VectorXf weights;
 
         CSpaceSampledPtr cspace;
-        VirtualRobot::RobotNodePtr node; // this is the node to move around (e.g. platform, tcp, ...)
-        VirtualRobot::SceneObjectSetPtr obstacles; // this cdm is used to calculate the distance between robot and environment
-        VirtualRobot::RobotNodeSetPtr rns;
+        VirtualRobot::ModelLinkPtr node; // this is the node to move around (e.g. platform, tcp, ...)
+        VirtualRobot::LinkSetPtr obstacles; // this cdm is used to calculate the distance between robot and environment
+        VirtualRobot::JointSetPtr rns;
         VirtualRobot::CollisionCheckerPtr colChecker;
         VirtualRobot::GenericIKSolverPtr ik;
 
@@ -93,4 +93,4 @@ namespace Saba
 
 }// namespace
 
-#endif // __Saba_ElasticBandProcessor_h__
+#endif // __MotionPlanning_ElasticBandProcessor_h__

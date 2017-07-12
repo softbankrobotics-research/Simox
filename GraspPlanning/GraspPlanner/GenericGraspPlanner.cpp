@@ -1,7 +1,8 @@
 #include "GenericGraspPlanner.h"
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotConfig.h>
+#include <VirtualRobot/Model/ModelConfig.h>
+#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <iostream>
 #include <sstream>
@@ -11,11 +12,11 @@
 
 using namespace std;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
 
-    GenericGraspPlanner::GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspStudio::GraspQualityMeasurePtr graspQuality, GraspStudio::ApproachMovementGeneratorPtr approach, float minQuality, bool forceClosure)
+    GenericGraspPlanner::GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspPlanning::GraspQualityMeasurePtr graspQuality, GraspPlanning::ApproachMovementGeneratorPtr approach, float minQuality, bool forceClosure)
         : GraspPlanner(graspSet), graspQuality(graspQuality), approach(approach), minQuality(minQuality), forceClosure(forceClosure)
     {
         THROW_VR_EXCEPTION_IF(!graspQuality, "NULL grasp quality...");
@@ -33,7 +34,7 @@ namespace GraspStudio
     {
     }
 
-    int GenericGraspPlanner::plan(int nrGrasps, int timeOutMS, VirtualRobot::SceneObjectSetPtr obstacles)
+    int GenericGraspPlanner::plan(int nrGrasps, int timeOutMS, std::vector<VirtualRobot::ModelPtr> obstacles)
     {
         startTime = clock();
         this->timeOutMS = timeOutMS;
@@ -74,15 +75,15 @@ namespace GraspStudio
         return nGraspsCreated;
     }
 
-    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(VirtualRobot::SceneObjectSetPtr obstacles)
+    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(::vector<VirtualRobot::ModelPtr> &obstacles)
     {
 
-        std::string sGraspPlanner("Simox - GraspStudio - ");
+        std::string sGraspPlanner("Simox - GraspPlanning - ");
         sGraspPlanner += graspQuality->getName();
         std::string sGraspNameBase = "Grasp ";
 
         VirtualRobot::RobotPtr robot = approach->getEEFOriginal()->getRobot();
-        VirtualRobot::RobotNodePtr tcp = eef->getTcp();
+        VirtualRobot::CoordinatePtr tcp = eef->getTcp();
 
         VR_ASSERT(robot);
         VR_ASSERT(tcp);
@@ -95,13 +96,12 @@ namespace GraspStudio
             return VirtualRobot::GraspPtr();
         }
 
-        if (obstacles)
+        if (obstacles.size()>0)
         {
             VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
             VR_ASSERT(eef->getRobot());
-            VR_ASSERT(obstacles);
 
-            if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+            if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
             {
                 //                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
                 return VirtualRobot::GraspPtr();
@@ -113,13 +113,12 @@ namespace GraspStudio
 
         eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
 
-        if (obstacles)
+        if (obstacles.size()>0)
         {
             VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
             VR_ASSERT(eef->getRobot());
-            VR_ASSERT(obstacles);
 
-            if (colChecker->checkCollision(eef->createSceneObjectSet(), obstacles))
+            if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
             {
                 //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
                 return VirtualRobot::GraspPtr();
@@ -163,7 +162,7 @@ namespace GraspStudio
         VirtualRobot::GraspPtr g(new VirtualRobot::Grasp(sGraspName, robot->getType(), eef->getName(), pLocal, sGraspPlanner, score));
         // set joint config
         VirtualRobot::RobotConfigPtr config = eef->getConfiguration();
-        std::map< std::string, float > configValues = config->getModelNodeJointValueMap();
+        std::map< std::string, float > configValues = config->getJointNameValueMap();
         g->setConfiguration(configValues);
         return g;
     }

@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GENERIC_GRASP_PLANNER_H__
-#define __GENERIC_GRASP_PLANNER_H__
+#ifndef _GRASP_PLANNING_GENERIC_GRASP_PLANNER_H_
+#define _GRASP_PLANNING_GENERIC_GRASP_PLANNER_H_
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include "GraspPlanner.h"
 #include "../ApproachMovementGenerator.h"
 #include "../GraspQuality/GraspQualityMeasure.h"
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
     *
@@ -37,7 +37,7 @@ namespace GraspStudio
     * GraspQualityMeasure to score them.
     *
     */
-    class GRASPSTUDIO_IMPORT_EXPORT GenericGraspPlanner : public GraspPlanner
+    class GRASPPLANNING_IMPORT_EXPORT GenericGraspPlanner : public GraspPlanner
     {
     public:
 
@@ -49,7 +49,7 @@ namespace GraspStudio
             \param minQuality The quality that must be achieved at minimum by the GraspQualityMesurement module
             \param forceClosure When true, only force closure grasps are generated.
         */
-        GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspStudio::GraspQualityMeasurePtr graspQuality, GraspStudio::ApproachMovementGeneratorPtr approach, float minQuality = 0.0f, bool forceClosure = true);
+        GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspPlanning::GraspQualityMeasurePtr graspQuality, GraspPlanning::ApproachMovementGeneratorPtr approach, float minQuality = 0.0f, bool forceClosure = true);
 
         // destructor
         virtual ~GenericGraspPlanner();
@@ -60,7 +60,7 @@ namespace GraspStudio
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of generated grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
+        virtual int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>());
 
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
@@ -69,16 +69,16 @@ namespace GraspStudio
 
         bool timeout();
 
-        VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
+        VirtualRobot::GraspPtr planGrasp(std::vector<VirtualRobot::ModelPtr> &obstacles);
 
-        VirtualRobot::SceneObjectPtr object;
+        VirtualRobot::ModelPtr object;
         VirtualRobot::EndEffectorPtr eef;
 
         clock_t startTime;
         int timeOutMS;
         VirtualRobot::EndEffector::ContactInfoVector contacts;
-        GraspStudio::GraspQualityMeasurePtr graspQuality;
-        GraspStudio::ApproachMovementGeneratorPtr approach;
+        GraspPlanning::GraspQualityMeasurePtr graspQuality;
+        GraspPlanning::ApproachMovementGeneratorPtr approach;
         float minQuality;
         bool forceClosure;
     };

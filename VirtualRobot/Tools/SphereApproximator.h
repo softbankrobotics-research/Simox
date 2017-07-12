@@ -68,7 +68,7 @@ namespace VirtualRobot
         struct SphereApproximation
         {
             std::vector< Eigen::Vector3f >  vertices;
-            std::vector< TriMeshModel::TriangleFace >  faces;
+            std::vector< TriangleFace >  faces;
             std::map<int, FaceIndex> mapVerticeIndxToFaceIndx;
         };
 
@@ -89,7 +89,7 @@ namespace VirtualRobot
         struct GraphData
         {
             std::vector<Eigen::Vector3f> vertices;
-            std::vector<TriMeshModel::TriangleFace> faces;
+            std::vector<TriangleFace> faces;
         };
         bool check_same_clock_dir(const Eigen::Vector3f& pt1, const Eigen::Vector3f& pt2, const Eigen::Vector3f& pt3, const Eigen::Vector3f& norm);
 

@@ -4,7 +4,6 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Tools/MathTools.h>
-#include <VirtualRobot/SceneObjectSet.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 
@@ -14,10 +13,10 @@
 
 using namespace std;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
-    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape, float maxRandDist)
+    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape, float maxRandDist)
         : ApproachMovementGenerator(object, eef, graspPreshape)
     {
         name = "ApproachMovementSurfaceNormal";
@@ -83,7 +82,7 @@ namespace GraspStudio
             Eigen::Vector3f delta = approachDir * d;
             updateEEFPose(delta);
 
-            if (!eef_cloned->getCollisionChecker()->checkCollision(object, eef->createSceneObjectSet()))
+            if (!eef_cloned->getCollisionChecker()->checkCollision(object, eef->createLinkSet()))
             {
                 poseB = getEEFPose();
             } // else remain at original pose
@@ -99,7 +98,7 @@ namespace GraspStudio
 
     bool ApproachMovementSurfaceNormal::setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir)
     {
-        VirtualRobot::RobotNodePtr graspNode = eef_cloned->getGCP();
+        VirtualRobot::CoordinatePtr graspNode = eef_cloned->getGCP();
 
         // current pose
         //Eigen::Matrix4f pose = graspNode->getGlobalPose();
@@ -181,7 +180,7 @@ namespace GraspStudio
 
     void ApproachMovementSurfaceNormal::moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops)
     {
-        VirtualRobot::SceneObjectSetPtr sos = eef_cloned->createSceneObjectSet();
+        VirtualRobot::LinkSetPtr sos = eef_cloned->createLinkSet();
 
         if (!sos)
         {
@@ -191,7 +190,7 @@ namespace GraspStudio
         int loop = 0;
         Eigen::Vector3f delta = approachDir * step;
 
-        while (loop < maxLoops && eef_cloned->getCollisionChecker()->checkCollision(object->getCollisionModel(), sos))
+        while (loop < maxLoops && eef_cloned->getCollisionChecker()->checkCollision(object->getLinks().at(0), sos))
         {
             updateEEFPose(delta);
             loop++;

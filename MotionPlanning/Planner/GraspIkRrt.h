@@ -14,23 +14,23 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_GraspIkRrt_h
-#define _Saba_GraspIkRrt_h
+#ifndef _MotionPlanning_GraspIkRrt_h
+#define _MotionPlanning_GraspIkRrt_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/AdvancedIKSolver.h>
 #include "BiRrt.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -38,7 +38,7 @@ namespace Saba
      * The GraspIkRrt planner combines the search for a feasible grasp and an IK solution with the search for a collision-free motion.
      *
      */
-    class SABA_IMPORT_EXPORT GraspIkRrt : public BiRrt
+    class MOTIONPLANNING_IMPORT_EXPORT GraspIkRrt : public BiRrt
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -81,19 +81,19 @@ namespace Saba
         VirtualRobot::ManipulationObjectPtr object;
         VirtualRobot::AdvancedIKSolverPtr ikSolver;
         VirtualRobot::GraspSetPtr graspSet;
-        VirtualRobot::RobotNodeSetPtr rns;
+        VirtualRobot::JointSetPtr rns;
 
         VirtualRobot::GraspSetPtr graspSetWorking;
 
         bool found; //!< Indicates if a solution was found
 
-        std::map < VirtualRobot::GraspPtr, Saba::CSpaceNodePtr > graspNodeMapping;
+        std::map < VirtualRobot::GraspPtr, MotionPlanning::CSpaceNodePtr > graspNodeMapping;
         std::vector< Eigen::VectorXf > ikSolutions;
 
     };
 
 } // namespace
 
-#endif // _Saba_RRT_h
+#endif // _MotionPlanning_RRT_h
 
 

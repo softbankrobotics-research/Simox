@@ -1,7 +1,7 @@
 
 #include "CSpaceNode.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     CSpaceNode::CSpaceNode()

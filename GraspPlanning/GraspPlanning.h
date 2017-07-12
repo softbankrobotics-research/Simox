@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
@@ -24,8 +24,8 @@
 #define _GraspStudio_h_
 
 
-/*! \defgroup GraspStudio The Grasp Planning Library
-GraspStudio offers algorithms for grasp scoring and planning covering 3D force space calculations and a full
+/*! \defgroup GraspPlanning The Grasp Planning Library
+GraspPlanning offers algorithms for grasp scoring and planning covering 3D force space calculations and a full
 implementation of the 6d wrench space algorithm for grasp quality measurement.
 */
 
@@ -56,19 +56,19 @@ implementation of the 6d wrench space algorithm for grasp quality measurement.
 #  include <winsock2.h>
 #  include <windows.h>
 #  pragma warning ( disable : 4251 )
-#  if defined(GraspStudio_EXPORTS)
-#    define GRASPSTUDIO_IMPORT_EXPORT __declspec(dllexport)
+#  if defined(simox_graspplanning_EXPORTS)
+#    define GRASPPLANNING_IMPORT_EXPORT __declspec(dllexport)
 #  else
-#    define GRASPSTUDIO_IMPORT_EXPORT __declspec(dllimport)
+#    define GRASPPLANNING_IMPORT_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define GRASPSTUDIO_IMPORT_EXPORT
+#  define GRASPPLANNING_IMPORT_EXPORT
 #endif
 
 
-namespace GraspStudio
+namespace GraspPlanning
 {
-    // only valid within the GraspStudio namespace
+    // only valid within the GraspPlanning namespace
     using std::cout;
     using std::endl;
 

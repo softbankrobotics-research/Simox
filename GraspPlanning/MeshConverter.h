@@ -14,24 +14,24 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2013 H2T,KIT
 *             GNU Lesser General Public License
 *
 */
-#ifndef MESHCONVERTER_H
-#define MESHCONVERTER_H
+#ifndef _GRASP_PLANNING_MESHCONVERTER_H
+#define _GRASP_PLANNING_MESHCONVERTER_H
 
-#include "GraspStudio.h"
+#include "GraspPlanning.h"
 #include <vector>
-#include <VirtualRobot/ManipulationObject.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
-    class GRASPSTUDIO_IMPORT_EXPORT MeshConverter
+    class GRASPPLANNING_IMPORT_EXPORT MeshConverter
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

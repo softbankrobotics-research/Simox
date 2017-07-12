@@ -38,11 +38,11 @@
 
   The aim of the lightweight platform independent C++ toolbox \b Simox is to provide a set of
   algorithms for 3D simulation of robot systems, sampling based motion planning and grasp
-  planning. Simox consists of three libraries (VirtualRobot, Saba and GraspStudio) and numerous
+  planning. Simox consists of three libraries (VirtualRobot, MotionPlanning and GraspPlanning) and numerous
   examples showing how these libraries can be used to build complex tools in the
   context of mobile manipulation.
 
-  Further information and documentation can be found at the wiki pages: http://sourceforge.net/p/simox/wiki/
+  Further information and documentation can be found at the wiki pages: https://gitlab.com/Simox/simox/wikis/home
 
   \section VirtualRobot VirtualRobot
 
@@ -55,20 +55,20 @@
   for robotic manipulators or contact determination for grasping are included.
   \image html VR.png
 
-  \section Saba Motion Planning
+  \section MotionPlanning Motion Planning
 
-  With \b Saba, a library for planning collision-free motions is offered, which directly incorporates
+  With \b MotionPlanning, a library for planning collision-free motions is offered, which directly incorporates
   with the data provided by VirtualRobot. The algorithms cover state-of-the-art implementations
   of sampling-based motion planning approaches (e.g. Rapidly-exploring Random Trees)
-  and interfaces that allow to conveniently implement own planners. Since Saba was designed
+  and interfaces that allow to conveniently implement own planners. Since MotionPlanning was designed
   for planning in high-dimensional configuration spaces, complex planning problems for robots
   with a high number of degrees of freedom (DoF) can be solved efficiently.
 
-  \image html Saba.png
+  \image html MotionPlanning.png
 
-  \section GraspStudio Grasp Planning
+  \section GraspPlanning Grasp Planning
 
-  \b GraspStudio offers possibilities to compute the grasp quality for generic end-effector definitions,
+  \b GraspPlanning offers possibilities to compute the grasp quality for generic end-effector definitions,
   e.g. a humanoid hand. The implemented 6D wrench-space computations can be used
   to easily (and quickly) determine the quality of an applied grasp to an object. Furthermore,
   the implemented planners are able to generate grasp maps for given objects automatically.
@@ -87,7 +87,7 @@
   functionality. As a reference implementation Simox offers Coin3D/SoQt-based visualization
   support.
 
-  Please have a look at the wiki pages: http://sourceforge.net/p/simox/wiki/
+  Please have a look at the wiki pages: https://gitlab.com/Simox/simox/wikis/home
  *
  */
 
@@ -311,7 +311,6 @@ namespace VirtualRobot
         struct Segment;
         struct OOBB;
         struct ContactPoint;
-        struct TriangleFace;
         struct TriangleFace6D;
 
         typedef BaseLine<Eigen::Vector3f> Line;
@@ -340,8 +339,7 @@ namespace VirtualRobot
 #define VR_ASSERT( a )  BOOST_ASSERT( a )
 	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << ")" );
 
-	// we have to switch to boost 1.48 to allow messages (BOOST_ASSERT_MSG) ....
-#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT(a)
+#define VR_ASSERT_MESSAGE(a,b) BOOST_ASSERT_MSG(a,b)
 	//THROW_VR_EXCEPTION_IF(!(a), "ASSERT failed (" << #a << "): " << b );
 
 #endif

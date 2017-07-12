@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
@@ -24,8 +24,8 @@
 #define _Saba_h_
 
 
-/*! \defgroup Saba The Sampling-Based Motion Planning Library
-The Sampling-based Motion Planning Library Saba offers state-of-the-art algorithms for planning collision-free motions
+/*! \defgroup MotionPlanning The Sampling-Based Motion Planning Library
+The Sampling-based Motion Planning Library MotionPlanning offers state-of-the-art algorithms for planning collision-free motions
 in high-dimensional configuration spaces. Standard approaches, as the Rapidly-exploring Random Trees (RRT), are efficiently implemented.
 Furthermore motion planning algorithms for grasping and for bimanual tasks are provided, which can be used to solve plannign problems for
 mobile manipulators or service and humanoid robots.
@@ -59,19 +59,19 @@ mobile manipulators or service and humanoid robots.
 #  include <winsock2.h>
 #  include <windows.h>
 #  pragma warning ( disable : 4251 )
-#  if defined(Saba_EXPORTS)
-#    define SABA_IMPORT_EXPORT __declspec(dllexport)
+#  if defined(simox_motionplanning_EXPORTS)
+#    define MOTIONPLANNING_IMPORT_EXPORT __declspec(dllexport)
 #  else
-#    define SABA_IMPORT_EXPORT __declspec(dllimport)
+#    define MOTIONPLANNING_IMPORT_EXPORT __declspec(dllimport)
 #  endif
 #else
 #  define SABA_IMPORT_EXPORT
 #endif
 
 
-namespace Saba
+namespace MotionPlanning
 {
-    // only valid within the Saba namespace
+    // only valid within the MotionPlanning namespace
     using std::cout;
     using std::endl;
 
@@ -113,18 +113,20 @@ namespace Saba
     typedef std::shared_ptr<PlanningThread> PlanningThreadPtr;
     typedef std::shared_ptr<PathProcessingThread> PathProcessingThreadPtr;
 
-#define SABA_INFO VR_INFO
-#define SABA_WARNING VR_WARNING
-#define SABA_ERROR VR_ERROR
+#define MOTIONPLANNING_INFO VR_INFO
+#define MOTIONPLANNING_WARNING VR_WARNING
+#define MOTIONPLANNING_ERROR VR_ERROR
 
-#define THROW_SABA_EXCEPTION(a) THROW_VR_EXCEPTION(a)
+#define THROW_MOTIONPLANNING_EXCEPTION(a) THROW_VR_EXCEPTION(a)
 
 #ifdef NDEBUG
-#define SABA_ASSERT(a)
-#define SABA_ASSERT_MESSAGE(a,b)
+#define MOTIONPLANNING_ASSERT(a)
+#define MOTIONPLANNING_ASSERT_MESSAGE(a,b)
 #else
-#define SABA_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << ")" )};
-#define SABA_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
+#define MOTIONPLANNING_ASSERT(a) BOOST_ASSERT(a);
+	//if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << ")" )};
+#define MOTIONPLANNING_ASSERT_MESSAGE(a,b) BOOST_ASSERT_MSG(a,b);
+	//if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
 #endif
 
 }

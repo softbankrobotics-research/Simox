@@ -14,21 +14,21 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GRASP_QUALTIY_MEASURE_WRENCH_H__
-#define __GRASP_QUALTIY_MEASURE_WRENCH_H__
+#ifndef _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_WRENCH_H_
+#define _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_WRENCH_H_
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include "GraspQualityMeasure.h"
 
 #include <Eigen/Core>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     /*!
@@ -40,12 +40,14 @@ namespace GraspStudio
         In this implementation, additionally an object specific wrench space (WS) is calculated, which
         approximatevly represents a "perfect" grasp. This object is used to normalize the quality score.
     */
-    class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasureWrenchSpace : public GraspQualityMeasure
+    class GRASPPLANNING_IMPORT_EXPORT GraspQualityMeasureWrenchSpace : public GraspQualityMeasure
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-        GraspQualityMeasureWrenchSpace(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+		/*!
+		The object must contain exactly one link with a collision model.
+		*/
+        GraspQualityMeasureWrenchSpace(VirtualRobot::ModelPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
         // destructor
         ~GraspQualityMeasureWrenchSpace();
 

@@ -12,18 +12,19 @@
 
 #include "GraspQualityMeasure.h"
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 
 using namespace std;
 using namespace VirtualRobot;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
 
-    GraspQualityMeasure::GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
+    GraspQualityMeasure::GraspQualityMeasure(VirtualRobot::ModelPtr object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
         : VirtualRobot::BasicGraspQualityMeasure(object), unitForce(unitForce), frictionCoeff(frictionConeCoeff), frictionConeSamples(frictionConeSamples)
     {
         coneGenerator.reset(new ContactConeGenerator(frictionConeSamples, frictionCoeff, unitForce));
@@ -38,7 +39,7 @@ namespace GraspStudio
         sampledObjectPoints.clear();
         sampledObjectPointsM.clear();
 
-        TriMeshModelPtr model = object->getCollisionModel()->getTriMeshModel();
+        TriMeshModelPtr model = objectLink->getCollisionModel()->getTriMeshModel();
         //Eigen::Vector3f _com = model->getCOM();
         MathTools::ContactPoint objectPoint;
 
@@ -55,8 +56,8 @@ namespace GraspStudio
         }
 
         int nLoopCount = 0;
-        std::vector<TriMeshModel::TriangleFace> vFaceCopy = model->faces;
-        std::vector<TriMeshModel::TriangleFace>::iterator iFaceIter;
+        std::vector<TriangleFace> vFaceCopy = model->faces;
+        std::vector<TriangleFace>::iterator iFaceIter;
 
         while (nLoopCount < nFaces && vFaceCopy.size() > 0)
         {
@@ -122,7 +123,7 @@ namespace GraspStudio
         return isGraspForceClosure();
     }
 
-    GraspStudio::ContactConeGeneratorPtr GraspQualityMeasure::getConeGenerator()
+    GraspPlanning::ContactConeGeneratorPtr GraspQualityMeasure::getConeGenerator()
     {
         return coneGenerator;
     }

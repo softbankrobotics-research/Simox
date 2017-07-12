@@ -1,6 +1,6 @@
 #include "GraspPlanner.h"
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     GraspPlanner::GraspPlanner(VirtualRobot::GraspSetPtr graspSet)
         : graspSet(graspSet)

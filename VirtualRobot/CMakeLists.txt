@@ -143,6 +143,7 @@ Visualization/Visualization.h
 Visualization/VisualizationNode.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
+Visualization/TriangleFace.h
 XML/BaseIO.h
 XML/RobotIO.h
 XML/SceneIO.h

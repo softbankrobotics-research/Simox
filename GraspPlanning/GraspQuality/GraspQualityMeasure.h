@@ -14,16 +14,16 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GRASP_QUALTIY_MEASURE_H__
-#define __GRASP_QUALTIY_MEASURE_H__
+#ifndef _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_H_
+#define _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_H_
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include "../ConvexHullGenerator.h"
 #include "../ContactConeGenerator.h"
 #include <VirtualRobot/EndEffector/EndEffector.h>
@@ -32,7 +32,7 @@
 #include <vector>
 #include <Eigen/Core>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
         \brief An interface class for grasp quality algorithms that offer a force closure test.
@@ -40,12 +40,12 @@ namespace GraspStudio
         @see GraspQualityMeasureWrenchSpace
         @see VirtualRobot::BasicGraspQualityMeasure
     */
-    class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasure : public VirtualRobot::BasicGraspQualityMeasure
+    class GRASPPLANNING_IMPORT_EXPORT GraspQualityMeasure : public VirtualRobot::BasicGraspQualityMeasure
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+        GraspQualityMeasure(VirtualRobot::ModelPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
 
         // destructor
         virtual ~GraspQualityMeasure();

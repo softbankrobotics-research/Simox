@@ -5,18 +5,18 @@
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <time.h>
 
 
-//#define LOCAL_DEBUG(a) {SABA_INFO << a;};
+//#define LOCAL_DEBUG(a) {MOTIONPLANNING_INFO << a;};
 #define LOCAL_DEBUG(a)
 
 using namespace std;
 using namespace VirtualRobot;
 
-namespace Saba
+namespace MotionPlanning
 {
 
     GraspIkRrt::GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::AdvancedIKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal)
@@ -30,19 +30,19 @@ namespace Saba
 
         if (sampleGoalProbab < 0)
         {
-            SABA_WARNING << "Low value for sample goal probability, setting probability to 0" << endl;
+            MOTIONPLANNING_WARNING << "Low value for sample goal probability, setting probability to 0" << endl;
             sampleGoalProbab = 0.0f;
         }
 
         if (sampleGoalProbab >= 1.0f)
         {
-            SABA_WARNING << "High value for sample goal probability, setting probability to 0.99" << endl;
+            MOTIONPLANNING_WARNING << "High value for sample goal probability, setting probability to 0.99" << endl;
             sampleGoalProbab = 0.99f;
         }
 
         goalValid = true;
         name = "IK-RRT Planner";
-        rns = ikSolver->getModelNodeSet();
+        rns = ikSolver->getJointSet();
         THROW_VR_EXCEPTION_IF(!rns, "NULL robotNodeSet in ikSolver?!");
         graspSetWorking = graspSet->clone();
     }
@@ -62,8 +62,8 @@ namespace Saba
 
         if (grasp)
         {
-            Eigen::VectorXf config;
-            rns->getJointValues(config);
+			Eigen::VectorXf config;
+			rns->getJointValues(config);
 
             if (graspNodeMapping.find(grasp) != graspNodeMapping.end())
             {
@@ -73,8 +73,8 @@ namespace Saba
             {
                 // remove from working set
                 graspSetWorking->removeGrasp(grasp);
-                SABA_INFO << endl << "Found new IK Solution: " << grasp->getName() << endl;
-                SABA_INFO << config << endl;
+                MOTIONPLANNING_INFO << endl << "Found new IK Solution: " << grasp->getName() << endl;
+                MOTIONPLANNING_INFO << config << endl;
 
                 if (checkGoalConfig(config))
                 {
@@ -82,7 +82,7 @@ namespace Saba
                 }
                 else
                 {
-                    SABA_INFO << "IK solution in collision " << endl;
+                    MOTIONPLANNING_INFO << "IK solution in collision " << endl;
                 }
 
             }
@@ -171,7 +171,7 @@ namespace Saba
 
                     if (!goalNode)
                     {
-                        SABA_ERROR << " no node for ID: " << lastAddedID2 << endl;
+                        MOTIONPLANNING_ERROR << " no node for ID: " << lastAddedID2 << endl;
                         stopSearch = true;
                     }
                     else
@@ -191,12 +191,12 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Starting GraspIkRrt planner" << std::endl;
+            MOTIONPLANNING_INFO << "Starting GraspIkRrt planner" << std::endl;
         }
 
         if (!isInitialized())
         {
-            SABA_ERROR << " planner: not initialized..." << std::endl;
+            MOTIONPLANNING_ERROR << " planner: not initialized..." << std::endl;
             return false;
         }
 
@@ -214,7 +214,7 @@ namespace Saba
 
         RobotPtr robot = cspace->getRobot();
         bool bVisStatus = true;
-        bVisStatus = robot->getUpdateVisualizationStatus();
+        bVisStatus = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
 
@@ -238,12 +238,12 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
+            MOTIONPLANNING_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
 
-            SABA_INFO << "Created " << tree->getNrOfNodes() << " + " << tree2->getNrOfNodes() << " = " << tree->getNrOfNodes() + tree2->getNrOfNodes() << " nodes." << std::endl;
-            SABA_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
-            SABA_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
-            SABA_INFO << "IK solutions: " << ikSolutions.size() << std::endl;
+            MOTIONPLANNING_INFO << "Created " << tree->getNrOfNodes() << " + " << tree2->getNrOfNodes() << " = " << tree->getNrOfNodes() + tree2->getNrOfNodes() << " nodes." << std::endl;
+            MOTIONPLANNING_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "IK solutions: " << ikSolutions.size() << std::endl;
 
             int nColChecks = (cspace->performaceVars_collisionCheck - colChecksStart);
 
@@ -263,7 +263,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
+                MOTIONPLANNING_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
             }
 
             createSolution(bQuiet);
@@ -274,12 +274,12 @@ namespace Saba
         // something went wrong...
         if (cycles >= maxCycles)
         {
-            SABA_WARNING << " maxCycles exceeded..." << std::endl;
+            MOTIONPLANNING_WARNING << " maxCycles exceeded..." << std::endl;
         }
 
         if (stopSearch)
         {
-            SABA_WARNING << " search was stopped..." << std::endl;
+            MOTIONPLANNING_WARNING << " search was stopped..." << std::endl;
         }
 
         return false;

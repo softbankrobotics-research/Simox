@@ -22,7 +22,7 @@
 using namespace std;
 using namespace VirtualRobot;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     ContactConeGenerator::ContactConeGenerator(int coneSamples, float frictionCoeff, float unitForce)

@@ -12,20 +12,20 @@
 
 using namespace std;
 
-//#define LOCAL_DEBUG(a) {SABA_INFO << a;};
+//#define LOCAL_DEBUG(a) {MOTIONPLANNING_INFO << a;};
 #define LOCAL_DEBUG(a)
 
-namespace Saba
+namespace MotionPlanning
 {
 
-    CSpaceSampled::CSpaceSampled(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::RobotNodeSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
+    CSpaceSampled::CSpaceSampled(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
         : CSpace(robot, collisionManager, robotNodes, maxConfigs, randomSeed),
           recursionMaxDepth(1000)
     {
         recursiveTmpValuesIndex = 0;
         samplingSizePaths = 0.1f;
         samplingSizeDCD = 0.1f;
-        SABA_ASSERT(dimension != 0);
+		MOTIONPLANNING_ASSERT(dimension != 0);
 
         checkPathConfig.setZero(dimension);
         tmpConfig.setZero(dimension);
@@ -44,11 +44,11 @@ namespace Saba
     CSpacePtr CSpaceSampled::clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed)
     {
         cloneCounter++;
-        SABA_ASSERT(newColChecker && newRobot && newCDM && newRobot->getRootNode());
+        MOTIONPLANNING_ASSERT(newColChecker && newRobot && newCDM && newRobot->getRootNode());
 
-        if (newRobot->getRootNode()->getCollisionChecker() != newColChecker)
+        if (newRobot->getCollisionChecker() != newColChecker)
         {
-            SABA_ERROR << ": Collision Checker instances do not match..." << endl;
+            MOTIONPLANNING_ERROR << ": Collision Checker instances do not match..." << endl;
             return CSpaceSampledPtr();
         }
 
@@ -83,8 +83,8 @@ namespace Saba
 
     CSpacePathPtr CSpaceSampled::createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal)
     {
-        SABA_ASSERT(start.rows() == dimension);
-        SABA_ASSERT(goal.rows() == dimension);
+        MOTIONPLANNING_ASSERT(start.rows() == dimension);
+        MOTIONPLANNING_ASSERT(goal.rows() == dimension);
         CSpacePathPtr p(new CSpacePath(shared_from_this()));
         p->addPoint(start);
 
@@ -149,10 +149,10 @@ namespace Saba
         return p;
     }
 
-    Saba::CSpacePathPtr CSpaceSampled::createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength)
+    MotionPlanning::CSpacePathPtr CSpaceSampled::createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength)
     {
-        SABA_ASSERT(start.rows() == dimension);
-        SABA_ASSERT(goal.rows() == dimension);
+        MOTIONPLANNING_ASSERT(start.rows() == dimension);
+        MOTIONPLANNING_ASSERT(goal.rows() == dimension);
         CSpacePathPtr p(new CSpacePath(shared_from_this()));
         p->addPoint(start);
         LOCAL_DEBUG("Start:" << endl << start << endl);
@@ -226,7 +226,7 @@ namespace Saba
                 }
 
                 float distT = calcDist(tmpConfig, goal);
-                SABA_ASSERT(distT < dist);
+                MOTIONPLANNING_ASSERT(distT < dist);
                 dist = distT;
             }
 
@@ -258,7 +258,7 @@ namespace Saba
 
             if (recursiveTmpValuesIndex >= recursionMaxDepth)
             {
-                SABA_WARNING << "Recursion depth too high: " << recursiveTmpValuesIndex << std::endl;
+                MOTIONPLANNING_WARNING << "Recursion depth too high: " << recursiveTmpValuesIndex << std::endl;
                 recursiveTmpValuesIndex--;
                 return false;
             }
@@ -274,4 +274,4 @@ namespace Saba
         }
     }
 
-} // Saba
+} // MotionPlanning

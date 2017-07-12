@@ -10,7 +10,7 @@
 using namespace std;
 using namespace VirtualRobot;
 
-namespace Saba
+namespace MotionPlanning
 {
 
     Rrt::Rrt(CSpaceSampledPtr cspace, RrtMethod mode, float probabilityExtendToGoal)
@@ -21,13 +21,13 @@ namespace Saba
 
         if (probabilityExtendToGoal <= 0)
         {
-            SABA_ERROR << " probabilityExtendToGoal is wrong: " << probabilityExtendToGoal << endl;
+            MOTIONPLANNING_ERROR << " probabilityExtendToGoal is wrong: " << probabilityExtendToGoal << endl;
             probabilityExtendToGoal = 0.1f;
         }
 
         if (probabilityExtendToGoal >= 1.0f)
         {
-            SABA_ERROR << " probabilityExtendToGoal is wrong: " << probabilityExtendToGoal << endl;
+            MOTIONPLANNING_ERROR << " probabilityExtendToGoal is wrong: " << probabilityExtendToGoal << endl;
             probabilityExtendToGoal = 0.9f;
         }
 
@@ -47,7 +47,7 @@ namespace Saba
     {
         if (!bQuiet)
         {
-            SABA_INFO << "Starting Rrt planner" << std::endl;
+            MOTIONPLANNING_INFO << "Starting Rrt planner" << std::endl;
 
             switch (rrtMode)
             {
@@ -73,7 +73,7 @@ namespace Saba
 
         if (!isInitialized())
         {
-            SABA_ERROR << " planner: not initialized..." << std::endl;
+            MOTIONPLANNING_ERROR << " planner: not initialized..." << std::endl;
             return false;
         }
 
@@ -93,7 +93,7 @@ namespace Saba
 
         if (robot)
         {
-            bVisStatus = robot->getUpdateVisualizationStatus();
+            bVisStatus = robot->getUpdateVisualization();
             robot->setUpdateVisualization(false);
         }
 
@@ -133,17 +133,17 @@ namespace Saba
 
                     if (!goalNode)
                     {
-                        SABA_ERROR << " no node for ID: " << lastAddedID << endl;
+                        MOTIONPLANNING_ERROR << " no node for ID: " << lastAddedID << endl;
                         stopSearch = true;
                     }
                     else
                     {
                         if (!goalConfig.isApprox(goalNode->configuration))
                         {
-                            SABA_WARNING << "GoalConfig: (" << goalConfig << ") != goalNode (" << goalNode->configuration << ")" << endl;
+                            MOTIONPLANNING_WARNING << "GoalConfig: (" << goalConfig << ") != goalNode (" << goalNode->configuration << ")" << endl;
                         }
 
-                        //SABA_ASSERT(goalConfig.isApprox(goalNode->configuration));
+                        //MOTIONPLANNING_ASSERT(goalConfig.isApprox(goalNode->configuration));
                         found = true;
                     }
                 }
@@ -193,11 +193,11 @@ namespace Saba
 
         if (!bQuiet)
         {
-            SABA_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
+            MOTIONPLANNING_INFO << "Needed " << diffClock << " ms of processor time." << std::endl;
 
-            SABA_INFO << "Created " << tree->getNrOfNodes() << " nodes." << std::endl;
-            SABA_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
-            SABA_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "Created " << tree->getNrOfNodes() << " nodes." << std::endl;
+            MOTIONPLANNING_INFO << "Collision Checks: " << (cspace->performaceVars_collisionCheck - colChecksStart) << std::endl;
+            MOTIONPLANNING_INFO << "Distance Calculations: " << (cspace->performaceVars_distanceCheck - distChecksStart) << std::endl;
 
             int nColChecks = (cspace->performaceVars_collisionCheck - colChecksStart);
 
@@ -217,7 +217,7 @@ namespace Saba
         {
             if (!bQuiet)
             {
-                SABA_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
+                MOTIONPLANNING_INFO << "Found RRT solution with " << cycles << " cycles." << std::endl;
             }
 
             createSolution(bQuiet);
@@ -228,12 +228,12 @@ namespace Saba
         // something went wrong...
         if (cycles >= maxCycles)
         {
-            SABA_WARNING << " maxCycles exceeded..." << std::endl;
+            MOTIONPLANNING_WARNING << " maxCycles exceeded..." << std::endl;
         }
 
         if (stopSearch)
         {
-            SABA_WARNING << " search was stopped..." << std::endl;
+            MOTIONPLANNING_WARNING << " search was stopped..." << std::endl;
         }
 
         return false;
@@ -244,7 +244,7 @@ namespace Saba
         // NEAREST NEIGHBOR OF RANDOM CONFIGURATION
         CSpaceNodePtr nn = tree->getNearestNeighbor(c);
 
-        SABA_ASSERT(nn);
+        MOTIONPLANNING_ASSERT(nn);
 
         CSpacePtr cspace = tree->getCSpace();
 
@@ -296,7 +296,7 @@ namespace Saba
         // NEAREST NEIGHBOR OF RANDOM CONFIGURATION
         CSpaceNodePtr nn = tree->getNearestNeighbor(c);
 
-        SABA_ASSERT(nn);
+        MOTIONPLANNING_ASSERT(nn);
 
         // CHECK PATH FOR COLLISIONS AND VALID NODES
         if (cspace->isPathValid(nn->configuration, c))
@@ -395,7 +395,7 @@ namespace Saba
 
         if (tree->getNrOfNodes() > 0)
         {
-            SABA_WARNING << "Removing all nodes from tree..." << endl;
+            MOTIONPLANNING_WARNING << "Removing all nodes from tree..." << endl;
             tree->reset();
         }
 
@@ -424,7 +424,7 @@ namespace Saba
 
         if (!goalNode || goalNode->parentID < 0)
         {
-            SABA_WARNING << " no path to goal..." << std::endl;
+            MOTIONPLANNING_WARNING << " no path to goal..." << std::endl;
             return false;
         }
 
@@ -449,7 +449,7 @@ namespace Saba
             {
                 if (actNode->ID != startNode->ID)
                 {
-                    SABA_WARNING << " oops something went wrong..." << std::endl;
+                    MOTIONPLANNING_WARNING << " oops something went wrong..." << std::endl;
                     failure = true;
                 }
             }
@@ -481,7 +481,7 @@ namespace Saba
 
             if (!bQuiet)
             {
-                SABA_INFO << "Created solution with " << solution->getNrOfPoints() << " nodes." << std::endl;
+                MOTIONPLANNING_INFO << "Created solution with " << solution->getNrOfPoints() << " nodes." << std::endl;
             }
 
             return true;
@@ -521,7 +521,7 @@ namespace Saba
         }
     }
 
-    Saba::CSpaceTreePtr Rrt::getTree()
+    MotionPlanning::CSpaceTreePtr Rrt::getTree()
     {
         return tree;
     }

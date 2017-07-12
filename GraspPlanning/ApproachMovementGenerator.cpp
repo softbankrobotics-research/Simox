@@ -1,26 +1,27 @@
 #include "ApproachMovementGenerator.h"
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Tools/MathTools.h>
+#include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <iostream>
 using namespace std;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
-    ApproachMovementGenerator::ApproachMovementGenerator(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape)
+    ApproachMovementGenerator::ApproachMovementGenerator(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape)
         : object(object), eef(eef), graspPreshape(graspPreshape)
     {
         name = "ApproachMovementGenerator";
         THROW_VR_EXCEPTION_IF(!object, "NULL object?!");
-        THROW_VR_EXCEPTION_IF(!object->getCollisionModel(), "No collision model for object " << object->getName());
+        THROW_VR_EXCEPTION_IF(object->getLinks().size()!=1 || !object->getLinks().at(0)->getCollisionModel(), "Number of collision models != 1 or no collision model for object " << object->getName());
         THROW_VR_EXCEPTION_IF(!eef, "NULL eef?!");
         THROW_VR_EXCEPTION_IF(!eef->getGCP(), "Need a GraspCenterPoint Node defined in EEF " << eef->getName());
 
-        objectModel = object->getCollisionModel()->getTriMeshModel();
+        objectModel = object->getLinks().at(0)->getCollisionModel()->getTriMeshModel();
         THROW_VR_EXCEPTION_IF(!objectModel, "NULL trimeshmodel of object " << object->getName());
         THROW_VR_EXCEPTION_IF(objectModel->faces.size() == 0, "no faces in trimeshmodel of object " << object->getName());
 
@@ -52,7 +53,7 @@ namespace GraspStudio
 
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
-        eefRobot->setGlobalPoseForRobotNode(eef_cloned->getGCP(), pose);
+        eefRobot->setGlobalPoseForModelNode(eef_cloned->getGCP(), pose);
         return true;
     }
 
@@ -87,7 +88,7 @@ namespace GraspStudio
         return eef_cloned->getGCP()->getName();
     }
 
-    VirtualRobot::SceneObjectPtr ApproachMovementGenerator::getObject()
+    VirtualRobot::ModelPtr ApproachMovementGenerator::getObject()
     {
         return object;
     }

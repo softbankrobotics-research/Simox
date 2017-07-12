@@ -1,7 +1,7 @@
 #include "Sampler.h"
 #include "CSpace.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     Sampler::Sampler(unsigned int dimension)

@@ -14,22 +14,22 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_RrtWorkspaceVisualization_h_
-#define _Saba_RrtWorkspaceVisualization_h_
+#ifndef _MotionPlanning_RrtWorkspaceVisualization_h_
+#define _MotionPlanning_RrtWorkspaceVisualization_h_
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Model/Model.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -38,7 +38,7 @@ namespace Saba
      * @see CoinRrtWorkspaceVisualization
      *
      */
-    class SABA_IMPORT_EXPORT RrtWorkspaceVisualization
+    class MOTIONPLANNING_IMPORT_EXPORT RrtWorkspaceVisualization
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -49,7 +49,7 @@ namespace Saba
             The visualizations are build by determining the TCP's position in workspace according to the configurations of a path or tree .
         */
         RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName);
-        RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName);
+        RrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::JointSetPtr robotNodeSet, const std::string& TCPName);
 
         enum ColorSet
         {
@@ -105,7 +105,7 @@ namespace Saba
 
         VirtualRobot::RobotPtr robot;
         CSpacePtr cspace;
-        VirtualRobot::RobotNodeSetPtr robotNodeSet;
+        VirtualRobot::JointSetPtr robotNodeSet;
         VirtualRobot::RobotNodePtr TCPNode;
 
         std::string TCPName;
@@ -123,6 +123,6 @@ namespace Saba
 
     };
 
-} // namespace Saba
+} // namespace MotionPlanning
 
-#endif // _Saba_RrtWorkspaceVisualization_h_
+#endif // _MotionPlanning_RrtWorkspaceVisualization_h_

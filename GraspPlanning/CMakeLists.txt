@@ -13,9 +13,9 @@ MACRO(ADD_GRASPPLANNING_TEST TEST_NAME)
             ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
         endif (NOT Boost_USE_STATIC_LIBS)
     	ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-    	TARGET_LINK_LIBRARIES(${TEST_NAME} VirtualRobot Saba GraspStudio ${Simox_EXTERNAL_LIBRARIES})
+    	TARGET_LINK_LIBRARIES(${TEST_NAME} simox-virtualrobot simox-motionplanning simox-graspplanning ${Simox_EXTERNAL_LIBRARIES})
     	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
-    	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "GraspStudio Tests")
+    	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "GraspPlanningTests")
         ADD_TEST(NAME Saba_${TEST_NAME}
                  COMMAND ${Simox_TEST_DIR}/${TEST_NAME} --output_format=XML --log_level=all --report_level=no)
 ENDMACRO(ADD_GRASPPLANNING_TEST)
@@ -57,7 +57,7 @@ Visualization/ConvexHullVisualization.cpp
 )
 
 SET(INCLUDES
-GraspStudio.h
+GraspPlanning.h
 ConvexHullGenerator.h
 ContactConeGenerator.h
 ApproachMovementGenerator.h

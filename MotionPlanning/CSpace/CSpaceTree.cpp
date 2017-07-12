@@ -5,7 +5,7 @@
 #include "CSpacePath.h"
 #include "CSpace.h"
 #include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/Model/JointSet.h"
 #include "float.h"
 #include <cmath>
 #include <fstream>
@@ -16,14 +16,14 @@ using namespace std;
 
 //#define DO_THE_TESTS
 
-namespace Saba
+namespace MotionPlanning
 {
 
     CSpaceTree::CSpaceTree(CSpacePtr cspace)
     {
         if (!cspace)
         {
-            THROW_SABA_EXCEPTION("NULL data, aborting...");
+            THROW_MOTIONPLANNING_EXCEPTION("NULL data, aborting...");
         }
 
         this->cspace = cspace;
@@ -68,7 +68,7 @@ namespace Saba
     {
         if (idNodeMapping.find(id) == idNodeMapping.end())
         {
-            SABA_WARNING << " wrong ID: " << id << std::endl;
+            MOTIONPLANNING_WARNING << " wrong ID: " << id << std::endl;
             return CSpaceNodePtr();
         }
 
@@ -96,7 +96,7 @@ namespace Saba
 
         if (!getNode(idStart) || !getNode(idStart))
         {
-            SABA_ERROR << "CSpaceTree::getPathDist: start or goal id not correct..." << endl;
+            MOTIONPLANNING_ERROR << "CSpaceTree::getPathDist: start or goal id not correct..." << endl;
             return -1.0f;
         }
 
@@ -131,7 +131,7 @@ namespace Saba
     // creates a copy of configuration
     CSpaceNodePtr CSpaceTree::appendNode(const Eigen::VectorXf& config, int parentID, bool calcDistance)
     {
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         // create a new node with config, store it in nodeList and set parentID
         CSpaceNodePtr newNode = cspace->createNewNode();
@@ -155,7 +155,7 @@ namespace Saba
 
             if (!n)
             {
-                SABA_ERROR << "CSpaceTree::appendNode: No parent node with id : " << parentID << std::endl;
+                MOTIONPLANNING_ERROR << "CSpaceTree::appendNode: No parent node with id : " << parentID << std::endl;
             }
             else
             {
@@ -190,8 +190,8 @@ namespace Saba
     // returns true if full path was added
     bool CSpaceTree::appendPathUntilCollision(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
     {
-        SABA_ASSERT(hasNode(startNode))
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(hasNode(startNode))
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         float dist;
         CSpacePathPtr res = cspace->createPathUntilInvalid(startNode->configuration, config, dist);
@@ -214,8 +214,8 @@ namespace Saba
 
     bool CSpaceTree::appendPath(CSpaceNodePtr startNode, CSpacePathPtr path, int* storeLastAddedID)
     {
-        SABA_ASSERT(hasNode(startNode))
-        SABA_ASSERT(path)
+        MOTIONPLANNING_ASSERT(hasNode(startNode))
+        MOTIONPLANNING_ASSERT(path)
         CSpaceNodePtr n = startNode;
         const std::vector<Eigen::VectorXf > data = path->getData();
         std::vector<Eigen::VectorXf >::const_iterator it;
@@ -238,8 +238,8 @@ namespace Saba
     // creates a copy of configuration
     bool CSpaceTree::appendPath(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
     {
-        SABA_ASSERT(hasNode(startNode))
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(hasNode(startNode))
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         CSpacePathPtr res = cspace->createPath(startNode->configuration, config);
 
@@ -257,19 +257,19 @@ namespace Saba
     {
         if (!n)
         {
-            SABA_ERROR << ": NULL node" << std::endl;
+            MOTIONPLANNING_ERROR << ": NULL node" << std::endl;
             return;
         }
 
         //if (n->ID < 0)
         //{
-        //    SABA_ERROR << ": wrong ID" << std::endl;
+        //    MOTIONPLANNING_ERROR << ": wrong ID" << std::endl;
         //    return;
         //}
 
         if (nodes.size() == 0)
         {
-            SABA_ERROR << ": no nodes in tree" << std::endl;
+            MOTIONPLANNING_ERROR << ": no nodes in tree" << std::endl;
             return;
         }
 
@@ -305,7 +305,7 @@ namespace Saba
 
         if (nodes.size() == 0 || !cspace)
         {
-            SABA_WARNING << "no nodes in tree..." << endl;
+            MOTIONPLANNING_WARNING << "no nodes in tree..." << endl;
             return 0;
         }
 
@@ -353,7 +353,7 @@ namespace Saba
         file << "# THEN ACTUAL DATA IN FOLLOWING FORMAT: ID CONFIG PARENTID" << std::endl;
 
         // save kinematic chain name used
-        file << cspace->getModelNodeSet()->getName() << std::endl;
+        file << cspace->getJointSet()->getName() << std::endl;
 
         // save rrt dimension used for planning
         file << dimension << std::endl;
@@ -490,9 +490,9 @@ namespace Saba
         return dimension;
     }
 
-    Saba::CSpacePtr CSpaceTree::getCSpace()
+    MotionPlanning::CSpacePtr CSpaceTree::getCSpace()
     {
         return cspace;
     }
 
-} // namespace Saba
+} // namespace MotionPlanning

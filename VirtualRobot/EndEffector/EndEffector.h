@@ -113,15 +113,16 @@ namespace VirtualRobot
             Closes each actor until a joint limit is hit or a collision occurred.
             This method is intended for gripper or hand-like end-effectors.
         */
-        ContactInfoVector closeActors(LinkSetPtr obstacles = LinkSetPtr(), float stepSize = 0.02);
+        ContactInfoVector closeActors(std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
         ContactInfoVector closeActors(ModelPtr obstacle, float stepSize = 0.02);
+        ContactInfoVector closeActors(std::vector<ModelPtr> obstacles, float stepSize = 0.02);
 
         /*!
             Opens each actor until a joint limit is hit or a collision occurred.
             This method is intended for hand-like end-effectors.
             Note that the same effect can be realized by calling closeActors with a negative step size
         */
-        void openActors(LinkSetPtr obstacles = LinkSetPtr(), float stepSize = 0.02);
+        void openActors(std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
 
         /*!
             Build a LinkSet that covers all RobotNodes of this EndEffector.

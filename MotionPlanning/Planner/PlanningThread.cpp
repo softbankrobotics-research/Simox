@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace Saba
+namespace MotionPlanning
 {
 
     //! constructor

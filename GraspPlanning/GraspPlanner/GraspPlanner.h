@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
@@ -23,13 +23,13 @@
 #ifndef __GENERAL_GRASP_PLANNER_H__
 #define __GENERAL_GRASP_PLANNER_H__
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <vector>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     /*!
@@ -37,7 +37,7 @@ namespace GraspStudio
     * \brief An interface for grasp planners.
     *
     */
-    class GRASPSTUDIO_IMPORT_EXPORT GraspPlanner
+    class GRASPPLANNING_IMPORT_EXPORT GraspPlanner
     {
     public:
 
@@ -59,7 +59,7 @@ namespace GraspStudio
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of planned grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr()) = 0;
+        virtual int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>()) = 0;
 
         /*!
             Returns all grasps that have been generated. These grasps are also stored in the graspSet that was specified on construction.

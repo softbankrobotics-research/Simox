@@ -121,7 +121,7 @@ namespace VirtualRobot
         statics = this->statics;
     }
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(LinkSetPtr obstacles, float stepSize)
+    EndEffector::ContactInfoVector EndEffector::closeActors(std::vector<ModelLinkPtr> obstacles, float stepSize)
     {
         std::vector<bool> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
@@ -166,19 +166,31 @@ namespace VirtualRobot
     }
 
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(ModelPtr obstacle, float stepSize /*= 0.02*/)
-    {
-        if (!obstacle)
-        {
-            return closeActors(LinkSetPtr(), stepSize);
-        }
-        LinkSetPtr l = obstacle->getLinkSet();
+	EndEffector::ContactInfoVector EndEffector::closeActors(ModelPtr obstacle, float stepSize /*= 0.02*/)
+	{
+		std::vector<ModelPtr> o;
+		o.push_back(obstacle);
+		return closeActors(o);
+	}
 
-        return closeActors(l, stepSize);
-    }
+	EndEffector::ContactInfoVector EndEffector::closeActors(std::vector<ModelPtr> obstacles, float stepSize /*= 0.02*/)
+	{
+		std::vector<ModelLinkPtr> links;
+
+		for (auto o : obstacles)
+		{
+			auto l = o->getLinkSet();
+			if (l)
+			{
+				auto li = l->getLinks();
+				links.insert(links.end(), li.begin(), li.end());
+			}
+		}
+		return closeActors(links, stepSize);
+	}
 
 
-    void EndEffector::openActors(LinkSetPtr obstacles, float stepSize)
+    void EndEffector::openActors(std::vector<ModelLinkPtr> obstacles, float stepSize)
     {
         closeActors(obstacles, -stepSize);
     }

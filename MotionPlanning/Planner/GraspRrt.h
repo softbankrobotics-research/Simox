@@ -14,30 +14,30 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2012 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_GraspRrt_h
-#define _Saba_GraspRrt_h
+#ifndef _MotionPlanning_GraspRrt_h
+#define _MotionPlanning_GraspRrt_h
 
-#include "../Saba.h"
+#include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 #include "../CSpace/CSpaceNode.h"
 #include "../ApproachDiscretization.h"
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/IKSolver.h>
 #include <VirtualRobot/IK/DifferentialIK.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 #include "Rrt.h"
 
-namespace Saba
+namespace MotionPlanning
 {
 
     /*!
@@ -51,7 +51,7 @@ namespace Saba
     * Related publication: "Integrated Grasp and Motion Planning", N. Vahrenkamp, M. Do, T. Asfour, R. Dillmann, ICRA 2010
     *
     */
-    class SABA_IMPORT_EXPORT GraspRrt : public Rrt
+    class MOTIONPLANNING_IMPORT_EXPORT GraspRrt : public Rrt
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -67,13 +67,13 @@ namespace Saba
             \param probabGraspHypothesis The probability that a grasping hypothesis is generated during a loop.
             \param graspQualityMinScore The minimum score that must be achieved for a valid grasp.
 
-            @see GraspStudio::GraspQualityMeasureWrenchSpace
+            @see GraspPlanning::GraspQualityMeasureWrenchSpace
         */
         GraspRrt(CSpaceSampledPtr cspace,
                  VirtualRobot::EndEffectorPtr eef,
                  VirtualRobot::ObstaclePtr object,
                  VirtualRobot::BasicGraspQualityMeasurePtr measure,
-                 VirtualRobot::SceneObjectSetPtr graspCollisionObjects = VirtualRobot::SceneObjectSetPtr(),
+				 std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
                  float probabGraspHypothesis = 0.1f,
                  float graspQualityMinScore = 0.01f);
 
@@ -192,11 +192,11 @@ namespace Saba
         bool processNode(CSpaceNodePtr n);
 
         VirtualRobot::ObstaclePtr targetObject;
-        VirtualRobot::RobotNodeSetPtr rns;
+        VirtualRobot::JointSetPtr rns;
         VirtualRobot::EndEffectorPtr eef;
         VirtualRobot::RobotPtr robot;
 
-        std::map < VirtualRobot::GraspPtr, Saba::CSpaceNodePtr > graspNodeMapping;
+        std::map < VirtualRobot::GraspPtr, MotionPlanning::CSpaceNodePtr > graspNodeMapping;
         std::vector< Eigen::VectorXf > ikSolutions;
 
 
@@ -235,7 +235,7 @@ namespace Saba
         float calculateGraspScore(const Eigen::VectorXf& c, int nId = -1, bool bStoreGraspInfoOnSuccess = false);
 
 
-        VirtualRobot::SceneObjectSetPtr graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
+		std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
 
         virtual Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID);
 

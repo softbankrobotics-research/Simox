@@ -18,18 +18,18 @@
 
 using namespace std;
 
-namespace Saba
+namespace MotionPlanning
 {
 
-    SABA_IMPORT_EXPORT std::mutex CSpace::colCheckMutex;
-    SABA_IMPORT_EXPORT int CSpace::cloneCounter = 0;
+    MOTIONPLANNING_IMPORT_EXPORT std::mutex CSpace::colCheckMutex;
+    MOTIONPLANNING_IMPORT_EXPORT int CSpace::cloneCounter = 0;
 
     //#define DO_THE_TESTS
-    CSpace::CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::RobotNodeSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
+    CSpace::CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
     {
         if (maxConfigs <= 0)
         {
-            THROW_SABA_EXCEPTION("CSpaceTree: Initialization fails: INVALID MAX_CONFIGS");
+            THROW_MOTIONPLANNING_EXCEPTION("CSpaceTree: Initialization fails: INVALID MAX_CONFIGS");
         }
 
         performaceVars_collisionCheck = 0;
@@ -60,7 +60,7 @@ namespace Saba
 
         if (!robo)
         {
-            THROW_SABA_EXCEPTION("CSpace: Initialization fails: NO ROBOT");
+            THROW_MOTIONPLANNING_EXCEPTION("CSpace: Initialization fails: NO ROBOT");
         }
 
         srand(randomSeed);
@@ -68,19 +68,19 @@ namespace Saba
 
         dimension = 0;
 
-        if (!robotNodes || robotNodes->getAllRobotNodes().size() == 0)
+        if (!robotNodes || robotNodes->getJoints().size() == 0)
         {
-            THROW_SABA_EXCEPTION("CSpace: Initialization fails: NO ROBOT JOINTS");
+            THROW_MOTIONPLANNING_EXCEPTION("CSpace: Initialization fails: NO ROBOT JOINTS");
         }
 
         this->robotNodes = robotNodes;
-        robotJoints = robotNodes->getAllRobotNodes();
+        robotJoints = robotNodes->getJoints();
 
         dimension = robotJoints.size();
 
         if (dimension < 1)
         {
-            THROW_SABA_EXCEPTION("CSpace: Initialization fails: INVALID DIMENSION")
+            THROW_MOTIONPLANNING_EXCEPTION("CSpace: Initialization fails: INVALID DIMENSION")
         }
 
         boundaryMin.setZero(dimension);
@@ -95,7 +95,7 @@ namespace Saba
 
             if (boundaryDist[i] == 0)
             {
-                SABA_WARNING << "Limits for joint " << robotJoints[i]->getName() << " not set correctly. Degenerated dimension (" << i << ") in C-Space." << endl;
+                MOTIONPLANNING_WARNING << "Limits for joint " << robotJoints[i]->getName() << " not set correctly. Degenerated dimension (" << i << ") in C-Space." << endl;
             }
         }
 
@@ -108,7 +108,7 @@ namespace Saba
 
         checkForBorderlessDimensions(checkForBorderlessDims);
 
-        SABA_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
+        MOTIONPLANNING_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
 
         // allocate configs
         maxNodes = maxConfigs;
@@ -156,13 +156,13 @@ namespace Saba
     {
         if (id >= nodes.size())
         {
-            SABA_ERROR << "ID " << id << " not known....";
+            MOTIONPLANNING_ERROR << "ID " << id << " not known....";
             return CSpaceNodePtr();
         }
 
         if (!nodes[id]->allocated)
         {
-            SABA_WARNING << "ID " << id << " not allocated....";
+            MOTIONPLANNING_WARNING << "ID " << id << " not allocated....";
         }
 
         return nodes[id];
@@ -180,7 +180,7 @@ namespace Saba
 
         if (bVerbose)
         {
-            SABA_INFO << "Checking " << s << " segments:" << endl;
+            MOTIONPLANNING_INFO << "Checking " << s << " segments:" << endl;
         }
 
         for (unsigned int i = s - 1; i > 0; i--)
@@ -240,7 +240,7 @@ namespace Saba
 
     void CSpace::setBoundaries(const Eigen::VectorXf& min, const Eigen::VectorXf& max)
     {
-        SABA_ASSERT(min.rows() == dimension)
+		MOTIONPLANNING_ASSERT(min.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -251,7 +251,7 @@ namespace Saba
 
     void CSpace::setBoundary(unsigned int dim, float min, float max)
     {
-        SABA_ASSERT(dim < dimension)
+		MOTIONPLANNING_ASSERT(dim < dimension);
 
         if (min > max)
         {
@@ -268,7 +268,7 @@ namespace Saba
 
     void CSpace::setMetricWeights(const Eigen::VectorXf& weights)
     {
-        SABA_ASSERT(weights.rows() == dimension)
+		MOTIONPLANNING_ASSERT(weights.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -302,8 +302,8 @@ namespace Saba
 
     float CSpace::calcDist2(const Eigen::VectorXf& c1, const Eigen::VectorXf& c2, bool forceDisablingMetricWeights)
     {
-        SABA_ASSERT(c1.rows() == dimension)
-        SABA_ASSERT(c2.rows() == dimension)
+		MOTIONPLANNING_ASSERT(c1.rows() == dimension);
+		MOTIONPLANNING_ASSERT(c2.rows() == dimension);
 
         float res = 0.0f;
         float dist;
@@ -338,9 +338,9 @@ namespace Saba
 
     void CSpace::generateNewConfig(const Eigen::VectorXf& randomConfig, const Eigen::VectorXf& nearestConfig, Eigen::VectorXf& storeNewConfig, float stepSize, float preCalculatedDist /*=-1.0*/)
     {
-        SABA_ASSERT(randomConfig.rows() == dimension)
-        SABA_ASSERT(nearestConfig.rows() == dimension)
-        SABA_ASSERT(storeNewConfig.rows() == dimension)
+		MOTIONPLANNING_ASSERT(randomConfig.rows() == dimension);
+		MOTIONPLANNING_ASSERT(nearestConfig.rows() == dimension);
+		MOTIONPLANNING_ASSERT(storeNewConfig.rows() == dimension);
 
         if (preCalculatedDist < 0)
         {
@@ -365,9 +365,9 @@ namespace Saba
 
     void CSpace::getDirectionVector(const Eigen::VectorXf& c1, const Eigen::VectorXf& c2, Eigen::VectorXf& storeDir, float length)
     {
-        SABA_ASSERT(c1.rows() == dimension)
-        SABA_ASSERT(c2.rows() == dimension)
-        SABA_ASSERT(storeDir.rows() == dimension)
+		MOTIONPLANNING_ASSERT(c1.rows() == dimension);
+		MOTIONPLANNING_ASSERT(c2.rows() == dimension);
+		MOTIONPLANNING_ASSERT(storeDir.rows() == dimension);
         float l = calcDist(c1, c2);
 
         if (l == 0.0)
@@ -393,7 +393,7 @@ namespace Saba
 
     float CSpace::calculateObstacleDistance(const Eigen::VectorXf& config)
     {
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         performaceVars_distanceCheck++;
 
@@ -403,7 +403,7 @@ namespace Saba
         }
 
         // set configuration (joint values)
-        robo->setJointValues(robotNodes, config);
+		robotNodes->setJointValues(config);
         float d = cdm->getDistance();
 
         if (multiThreaded)
@@ -416,10 +416,10 @@ namespace Saba
 
     float CSpace::getDirectedMaxMovement(const Eigen::VectorXf& config, const Eigen::VectorXf& nextConfig)
     {
-        SABA_ASSERT(config.rows() == dimension)
-        SABA_ASSERT(nextConfig.rows() == dimension)
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(nextConfig.rows() == dimension)
 
-        SABA_WARNING << "NYI..." << endl;
+        MOTIONPLANNING_WARNING << "NYI..." << endl;
         // todo : oobb updates in VirtualRobot
         return 0.0f;
 
@@ -446,7 +446,7 @@ namespace Saba
 
     bool CSpace::isCollisionFree(const Eigen::VectorXf& config)
     {
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         if (multiThreaded)
         {
@@ -454,7 +454,7 @@ namespace Saba
         }
 
         // set configuration (joint values)
-        robo->setJointValues(robotNodes, config);
+		robotNodes->setJointValues(config);
         bool res = cdm->isInCollision();
 
         if (multiThreaded)
@@ -480,7 +480,7 @@ namespace Saba
 
     bool CSpace::isInBoundary(const Eigen::VectorXf& config)
     {
-        SABA_ASSERT(config.rows() == dimension)
+		MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         // check boundaries
         for (unsigned int i = 0; i < dimension; i++)
@@ -496,7 +496,7 @@ namespace Saba
 
     bool CSpace::isConfigValid(const Eigen::VectorXf& config, bool checkBorders, bool checkCollisions, bool checkConstraints)
     {
-        SABA_ASSERT(config.rows() == dimension)
+		MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         // check boundaries
         if (checkBorders && !isInBoundary(config))
@@ -524,7 +524,7 @@ namespace Saba
     {
         if (d >= dimension)
         {
-            SABA_ERROR << "Error: getBoundaryMin: could not get boundary dist.." << std::endl;
+            MOTIONPLANNING_ERROR << "Error: getBoundaryMin: could not get boundary dist.." << std::endl;
             return 0.0f;
         }
 
@@ -536,7 +536,7 @@ namespace Saba
     {
         if (d >= dimension)
         {
-            SABA_ERROR << "Error: getBoundaryMax: could not get boundary dist.." << std::endl;
+            MOTIONPLANNING_ERROR << "Error: getBoundaryMax: could not get boundary dist.." << std::endl;
             return 0.0f;
         }
 
@@ -548,7 +548,7 @@ namespace Saba
     {
         if (d >= dimension)
         {
-            SABA_ERROR << "Error: getBoundaryDist: could not get boundary dist.." << std::endl;
+            MOTIONPLANNING_ERROR << "Error: getBoundaryDist: could not get boundary dist.." << std::endl;
             return 0.0f;
         }
 
@@ -559,7 +559,7 @@ namespace Saba
 
     void CSpace::respectBoundaries(Eigen::VectorXf& config)
     {
-        SABA_ASSERT(config.rows() == dimension)
+		MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -581,7 +581,7 @@ namespace Saba
     {
         if (freeNodes.size() == 0)
         {
-            SABA_ERROR << " Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")" << std::endl;
+            MOTIONPLANNING_ERROR << " Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")" << std::endl;
             return CSpaceNodePtr();
         }
 
@@ -597,8 +597,8 @@ namespace Saba
 
     Eigen::VectorXf CSpace::interpolate(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2, float step)
     {
-        SABA_ASSERT(q1.rows() == dimension)
-        SABA_ASSERT(q2.rows() == dimension)
+        MOTIONPLANNING_ASSERT(q1.rows() == dimension)
+        MOTIONPLANNING_ASSERT(q2.rows() == dimension)
         Eigen::VectorXf res(dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
@@ -611,12 +611,12 @@ namespace Saba
 
     float CSpace::interpolate(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2, int dim, float step)
     {
-        SABA_ASSERT(q1.rows() == dimension)
-        SABA_ASSERT(q2.rows() == dimension)
-        SABA_ASSERT_MESSAGE((dim >= 0 && dim < (int)robotJoints.size()),  "Dim " << dim << " out of bounds..." << endl)
+		MOTIONPLANNING_ASSERT(q1.rows() == dimension);
+		MOTIONPLANNING_ASSERT(q2.rows() == dimension);
+        MOTIONPLANNING_ASSERT(dim >= 0 && dim < (int)robotJoints.size())
 
         // translational joint
-        if (robotJoints[dim]->isTranslationalJoint())
+        if (robotJoints[dim]->getType() == VirtualRobot::ModelNode::ModelNodeType::JointPrismatic)
         {
             return interpolateLinear(q1[dim], q2[dim], step);
         }
@@ -684,7 +684,7 @@ namespace Saba
 
     float CSpace::getRandomConfig_UniformSampling(unsigned int dim)
     {
-        SABA_ASSERT(dim <= dimension)
+        MOTIONPLANNING_ASSERT(dim <= dimension)
 
         float res = (float)rand() * randMult; // value from 0 to 1
         res = boundaryMin[dim] + (boundaryDist[dim] * res);
@@ -693,7 +693,7 @@ namespace Saba
 
     void CSpace::getRandomConfig(Eigen::VectorXf& config, bool checkValid)
     {
-        SABA_ASSERT(config.rows() == dimension)
+        MOTIONPLANNING_ASSERT(config.rows() == dimension)
 
         do
         {
@@ -720,7 +720,7 @@ namespace Saba
     {
         if (config.rows() != dimension)
         {
-            SABA_ERROR << "Wrong dimensions..." << endl;
+            MOTIONPLANNING_ERROR << "Wrong dimensions..." << endl;
         }
 
         streamsize pr = cout.precision(2);
@@ -778,18 +778,18 @@ namespace Saba
         }
     }
 
-    VirtualRobot::RobotNodeSetPtr CSpace::getRobotNodeSet() const
+    VirtualRobot::JointSetPtr CSpace::getJointSet() const
     {
         return robotNodes;
     }
 
     void CSpace::removeNode(CSpaceNodePtr node)
     {
-        SABA_ASSERT(node)
+        MOTIONPLANNING_ASSERT(node)
 
         if (node->ID >= nodes.size())
         {
-            SABA_ERROR << " Could not remove node... (corrupt ID:" << node->ID << ")" << std::endl;
+            MOTIONPLANNING_ERROR << " Could not remove node... (corrupt ID:" << node->ID << ")" << std::endl;
             return;
         }
 
@@ -799,18 +799,18 @@ namespace Saba
 
     CSpacePathPtr CSpace::createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal)
     {
-        SABA_ASSERT(start.rows() == dimension)
-        SABA_ASSERT(goal.rows() == dimension)
+        MOTIONPLANNING_ASSERT(start.rows() == dimension)
+        MOTIONPLANNING_ASSERT(goal.rows() == dimension)
         CSpacePathPtr p(new CSpacePath(shared_from_this()));
         p->addPoint(start);
         p->addPoint(goal);
         return p;
     }
 
-    Saba::CSpacePathPtr CSpace::createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength)
+    MotionPlanning::CSpacePathPtr CSpace::createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength)
     {
-        SABA_ASSERT(start.rows() == dimension);
-        SABA_ASSERT(goal.rows() == dimension);
+        MOTIONPLANNING_ASSERT(start.rows() == dimension);
+        MOTIONPLANNING_ASSERT(goal.rows() == dimension);
         CSpacePathPtr p(new CSpacePath(shared_from_this()));
         storeAddedLength = 0.5f;
         p->addPoint(start);
@@ -832,9 +832,9 @@ namespace Saba
 
     bool CSpace::isBorderlessDimension(unsigned int dim) const
     {
-        SABA_ASSERT(dim < dimension)
+        MOTIONPLANNING_ASSERT(dim < dimension)
 
-        if (!(robotJoints[dim]->isTranslationalJoint()))
+        if (robotJoints[dim]->getType() != VirtualRobot::ModelNode::ModelNodeType::JointPrismatic)
         {
             // rotational joint
             if (abs((double)(robotJoints[dim]->getJointLimitHigh() - robotJoints[dim]->getJointLimitLow())) > (1.9999999999999 * M_PI))

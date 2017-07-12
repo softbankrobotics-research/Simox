@@ -79,7 +79,9 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const ModelNodePtr& node) const;
+		virtual bool hasModelNode(const ModelNodePtr& node) const;
+		virtual bool hasLink(const ModelLinkPtr& link) const;
+		virtual bool hasJoint(const ModelJointPtr& joint) const;
 
         /*!
          * Check, if the node is registered to this model.

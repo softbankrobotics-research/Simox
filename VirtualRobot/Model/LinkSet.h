@@ -28,7 +28,7 @@
 
 namespace VirtualRobot
 {
-    class LinkSet : public ModelNodeSet
+    class VIRTUAL_ROBOT_IMPORT_EXPORT LinkSet : public ModelNodeSet
     {
     protected:
         /*!

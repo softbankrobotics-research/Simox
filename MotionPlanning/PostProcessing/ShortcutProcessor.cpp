@@ -6,7 +6,7 @@
 #include <time.h>
 #include <math.h>
 
-namespace Saba
+namespace MotionPlanning
 {
 
     ShortcutProcessor::ShortcutProcessor(CSpacePathPtr path, CSpaceSampledPtr cspace, bool verbose) : PathProcessor(path, verbose), cspace(cspace)
@@ -24,14 +24,14 @@ namespace Saba
     {
         if (!path || !cspace)
         {
-            SABA_ERROR << "NULL data" << endl;
+            MOTIONPLANNING_ERROR << "NULL data" << endl;
             return 0;
         }
 
         if (verbose)
         {
-            SABA_INFO << "Path length: " << optimizedPath->getLength() << std::endl;
-            SABA_INFO << "Path nr of nodes: " << optimizedPath->getNrOfPoints() << std::endl;
+            MOTIONPLANNING_INFO << "Path length: " << optimizedPath->getLength() << std::endl;
+            MOTIONPLANNING_INFO << "Path nr of nodes: " << optimizedPath->getNrOfPoints() << std::endl;
         }
 
         int startNodeIndex, endNodeIndex;
@@ -43,7 +43,7 @@ namespace Saba
 
         if (verbose)
         {
-            SABA_INFO << "-- start: " << startNodeIndex << ", end: " << endNodeIndex << std::endl;
+            MOTIONPLANNING_INFO << "-- start: " << startNodeIndex << ", end: " << endNodeIndex << std::endl;
         }
 
         if (!validShortcut(startNodeIndex, endNodeIndex))
@@ -158,8 +158,8 @@ namespace Saba
 
         if (verbose)
         {
-            SABA_INFO << ": solution size before shortenSolutionRandom:" << beforeCount << std::endl;
-            SABA_INFO << ": solution length before shortenSolutionRandom:" << beforeLength << std::endl;
+            MOTIONPLANNING_INFO << ": solution size before shortenSolutionRandom:" << beforeCount << std::endl;
+            MOTIONPLANNING_INFO << ": solution length before shortenSolutionRandom:" << beforeLength << std::endl;
         }
 
         clock_t startT = clock();
@@ -178,7 +178,7 @@ namespace Saba
 
         if (stopOptimization)
         {
-            SABA_INFO << "optimization was stopped" << std::endl;
+            MOTIONPLANNING_INFO << "optimization was stopped" << std::endl;
         }
 
         int afterCount = (int)optimizedPath->getNrOfPoints();
@@ -188,10 +188,10 @@ namespace Saba
 
         if (verbose)
         {
-            SABA_INFO << ": shorten loops: " << loopsOverall << std::endl;
-            SABA_INFO << ": shorten time: " << timems << " ms " << std::endl;
-            SABA_INFO << ": solution size after ShortenSolutionRandom (nr of positions) : " << afterCount << std::endl;
-            SABA_INFO << ": solution length after ShortenSolutionRandom : " << afterLength << std::endl;
+            MOTIONPLANNING_INFO << ": shorten loops: " << loopsOverall << std::endl;
+            MOTIONPLANNING_INFO << ": shorten time: " << timems << " ms " << std::endl;
+            MOTIONPLANNING_INFO << ": solution size after ShortenSolutionRandom (nr of positions) : " << afterCount << std::endl;
+            MOTIONPLANNING_INFO << ": solution length after ShortenSolutionRandom : " << afterLength << std::endl;
         }
 
         return optimizedPath;
