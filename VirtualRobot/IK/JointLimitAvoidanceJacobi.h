@@ -34,7 +34,7 @@ namespace VirtualRobot
     /*!
             This class creates a dummy Jacobian matrix (identity) that can be used to specify a joint space task (e.g. a joint limit avoidance task)
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider, public std::enable_shared_from_this<JointLimitAvoidanceJacobi>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JointLimitAvoidanceJacobi : public VirtualRobot::JacobiProvider
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -30,7 +30,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT OrientationConstraint : public Constraint, public std::enable_shared_from_this<OrientationConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT OrientationConstraint : public Constraint
     {
     public:
         OrientationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Matrix3f& target,

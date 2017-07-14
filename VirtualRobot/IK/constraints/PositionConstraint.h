@@ -30,7 +30,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint, public std::enable_shared_from_this<PositionConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint
     {
     public:
         PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Vector3f& target,

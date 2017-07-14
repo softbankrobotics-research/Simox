@@ -41,7 +41,7 @@ namespace VirtualRobot
             bool soft;
     };
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider, public std::enable_shared_from_this<Constraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Constraint : public JacobiProvider
     {
     public:
         Constraint(const JointSetPtr& nodeSet);

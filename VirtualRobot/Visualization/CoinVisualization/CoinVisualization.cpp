@@ -88,7 +88,7 @@ namespace VirtualRobot
 
         visuRoot->addChild(visualization);
 
-        BOOST_FOREACH(VisualizationNodePtr visualizationNode, visualizationNodes)
+        for(auto visualizationNode : visualizationNodes)
         {
             std::shared_ptr<CoinVisualizationNode> coinVisualizationNode = std::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
 

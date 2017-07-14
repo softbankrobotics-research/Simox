@@ -109,14 +109,14 @@ namespace VirtualRobot
          *
          * @return The name.
          */
-        inline std::string getName() const;
+        std::string getName() const;
 
         /*!
          * Check if this node is initialized.
          *
          * @return True, if this node is initialized; false otherwise.
          */
-        inline bool isInitialized() const;
+        bool isInitialized() const;
 
         /*!
          * Get the child with the given name.

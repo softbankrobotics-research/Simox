@@ -29,7 +29,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint, public std::enable_shared_from_this<TSRConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TSRConstraint : public Constraint
     {
     public:
         TSRConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef,

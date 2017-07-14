@@ -40,6 +40,9 @@ namespace VirtualRobot
             }
         }
 
+        /*
+         * todo
+         *
         ModelLinkPtr node(new ModelLink(shared_from_this(),
                                         name,
                                         Eigen::Matrix4f::Identity(),
@@ -50,6 +53,7 @@ namespace VirtualRobot
 
         registerModelNode(node);
         setRootNode(node);
+        */
         setGlobalPose(Eigen::Matrix4f::Identity());
     }
 

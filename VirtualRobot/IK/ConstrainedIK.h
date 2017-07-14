@@ -31,7 +31,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK : public std::enable_shared_from_this<ConstrainedIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedIK
     {
     public:
         enum SeedType

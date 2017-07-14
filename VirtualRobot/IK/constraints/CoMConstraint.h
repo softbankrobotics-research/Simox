@@ -31,7 +31,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoMConstraint : public Constraint, public std::enable_shared_from_this<CoMConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoMConstraint : public Constraint
     {
     public:
         CoMConstraint(const RobotPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const Eigen::Vector3f& target, float tolerance);

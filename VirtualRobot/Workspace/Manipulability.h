@@ -48,7 +48,7 @@ namespace VirtualRobot
             \see PoseQualityManipulability
             \see PoseQualityExtendedManipulability
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Manipulability : public WorkspaceRepresentation, public std::enable_shared_from_this<Manipulability>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Manipulability : public WorkspaceRepresentation
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -30,7 +30,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedStackedIK : public ConstrainedIK, public std::enable_shared_from_this<ConstrainedStackedIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedStackedIK : public ConstrainedIK
     {
     public:
         ConstrainedStackedIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,

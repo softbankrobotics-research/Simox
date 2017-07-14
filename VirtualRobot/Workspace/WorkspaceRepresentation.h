@@ -51,7 +51,7 @@ namespace VirtualRobot
             When the torso moves, the data representation also changes it's position according to the position of the shoulder.
     */
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceRepresentation : public std::enable_shared_from_this<WorkspaceRepresentation>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceRepresentation
     {
     public:
         friend class CoinVisualizationFactory;

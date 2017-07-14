@@ -41,7 +41,7 @@ namespace VirtualRobot
         of the end point is at the requested gaze position.
         By default joint limit avoidance is considered as secondary task in order to generate more naturally looking configurations.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK : public std::enable_shared_from_this<GazeIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GazeIK
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

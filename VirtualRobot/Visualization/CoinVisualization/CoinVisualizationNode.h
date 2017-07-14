@@ -25,8 +25,6 @@
 
 #include "../../Model/Model.h"
 #include "../VisualizationNode.h"
-#include "CoinVisualizationFactory.h"
-
 
 
 class SoNode;
@@ -83,10 +81,7 @@ namespace VirtualRobot
             */
         virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
 
-        virtual std::string getType()
-        {
-            return CoinVisualizationFactory::getName();
-        }
+        virtual std::string getType();
 
         /*!
             Saves model file to model path. By default VRML models are generated.

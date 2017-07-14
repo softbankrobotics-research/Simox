@@ -37,7 +37,7 @@ namespace VirtualRobot
     /*!
         Abstract IK solver interface.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT IKSolver : public std::enable_shared_from_this<IKSolver>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT IKSolver
     {
     public:
 

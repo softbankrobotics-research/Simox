@@ -56,7 +56,7 @@ namespace VirtualRobot
     };
     typedef std::shared_ptr<BalanceConstraintOptimizationFunction> BalanceConstraintOptimizationFunctionPtr;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint, public std::enable_shared_from_this<BalanceConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT BalanceConstraint : public Constraint
     {
     public:
         BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
