@@ -36,7 +36,7 @@ GNU Lesser General Public License, version 2.1 or any later version.
 
 Copyright
 ---------
- 2010-2016 Nikolaus Vahrenkamp
+ 2010-2017 Nikolaus Vahrenkamp
  
 Reference
 ---------

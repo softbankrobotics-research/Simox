@@ -57,8 +57,6 @@ namespace VirtualRobot
          */
         virtual ~Model();
 
-		//virtual void setName(const std::string &name);
-
         /*!
          * Register a new node to this model
          *
@@ -248,13 +246,6 @@ namespace VirtualRobot
          * @return The current root node.
          */
         virtual ModelNodePtr getRootNode() const;
-
-        /*!
-         * Get the name of this model.
-         *
-         * @return The name.
-         */
-        virtual std::string getName() const;
 
         /*!
          * Get the type of this model.
@@ -642,7 +633,6 @@ namespace VirtualRobot
 
 
     protected:
-        std::string name;
         std::string type;
         float scaling;
 

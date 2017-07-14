@@ -420,11 +420,6 @@ namespace VirtualRobot
         return rootNode;
     }
 
-    std::string Model::getName() const
-    {
-        return name;
-    }
-
     std::string Model::getType() const
     {
         return type;
