@@ -8,13 +8,13 @@
 #include "../VisualizationNode.h"
 #include "CoinVisualizationNode.h"
 #include "../../VirtualRobotException.h"
-#include "../../RuntimeEnvironment.h"
+#include "../../Tools/RuntimeEnvironment.h"
 #include "CoinVisualization.h"
 #include "../../Model/Model.h"
 #include "../../Grasping/Grasp.h"
 #include "../../Trajectory.h"
+#include "../../Scene.h"
 #include "../../Grasping/GraspSet.h"
-#include "../../SceneObject.h"
 #include "../../IK/constraints/TSRConstraint.h"
 #include "../../IK/constraints/BalanceConstraint.h"
 #include "../../IK/constraints/PoseConstraint.h"
@@ -22,6 +22,7 @@
 #include "../../IK/constraints/OrientationConstraint.h"
 #include "../../IK/SupportPolygon.h"
 #include "../TriMeshModel.h"
+#include "../TriangleFace.h"
 #include "../../Workspace/Reachability.h"
 #include "../../Workspace/WorkspaceGrid.h"
 #include "../../XML/BaseIO.h"
@@ -880,7 +881,7 @@ namespace VirtualRobot
 
                     short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
                     short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
-                    MathTools::TriangleFace face;
+                    TriangleFace face;
                     face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
                                                                          triMesh->vertices[rt],
                                                                          triMesh->vertices[lb]);
@@ -899,7 +900,7 @@ namespace VirtualRobot
 
 
 
-                    MathTools::TriangleFace face2;
+                    TriangleFace face2;
                     face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
                                                                           triMesh->vertices[rb],
                                                                           triMesh->vertices[lb]);
@@ -1249,8 +1250,8 @@ namespace VirtualRobot
 
         return CoinVisualizationFactory::CreatePolygonVisualization(cvHull3d, colorInner, colorLine, lineSize);
     }
-
-    SoNode* CoinVisualizationFactory::getCoinVisualization(RobotPtr robot, ModelLink::VisualizationType visuType, bool selectable)
+/*
+    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelPtr robot, ModelLink::VisualizationType visuType, bool selectable)
     {
         if (!robot)
         {
@@ -1269,28 +1270,33 @@ namespace VirtualRobot
         }
 
         return new SoSeparator;
-    }
+    }*/
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(SceneObjectPtr object, ModelLink::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelPtr object, ModelLink::VisualizationType visuType)
     {
+        SoSeparator* result = new SoSeparator();
+        result->ref();
         if (!object)
         {
+            result->unrefNoDelete();
             return new SoSeparator;
         }
-
-        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(visuType);
-
-        if (visualizationObject)
+        std::vector<ModelLinkPtr> links = object->getLinks();
+        for (auto l: links)
         {
-            SoSeparator* result = new SoSeparator();
-            result->ref();
-            result->addChild(visualizationObject->getCoinVisualization());
-            result->unrefNoDelete();
-            return result;
+            if (!l->getVisualization())
+            {
+                VisualizationNodePtr v = l->getVisualization(visuType);
+                if (!v)
+                    continue;
+                SoNode* cv = getCoinVisualization(v);
+                if (!cv)
+                    continue;
+                result->addChild(cv);
+            }
         }
-
-        return new SoSeparator;
-
+        result->unrefNoDelete();
+        return result;
     }
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(VisualizationNodePtr visu)
@@ -1926,7 +1932,7 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::METERS;
         res->addChild(u);
-        RobotNodePtr tcp;
+        CoordinatePtr tcp;
         bool ok = true;
 
         if (!eef)
@@ -1953,8 +1959,8 @@ namespace VirtualRobot
         else
         {
             RobotPtr r = eef->createEefRobot(eef->getName(), eef->getName());
-            RobotNodePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
-            r->setGlobalPoseForRobotNode(tcpN, Eigen::Matrix4f::Identity());
+            CoordinatePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
+            r->setGlobalPoseForModelNode(tcpN, Eigen::Matrix4f::Identity());
             res->addChild(CoinVisualizationFactory::getCoinVisualization(r, visu));
         }
 
@@ -2852,7 +2858,7 @@ namespace VirtualRobot
         }
 
         res->ref();
-        RobotNodeSetPtr rns = t->getModelNodeSet();
+        JointSetPtr rns = t->getJointSet();
         Eigen::VectorXf c;
         rns->getJointValues(c);
         std::vector<Eigen::Matrix4f> ws = t->createWorkspaceTrajectory();
@@ -2868,8 +2874,6 @@ namespace VirtualRobot
         SoDrawStyle* lineSolutionStyle = new SoDrawStyle();
         lineSolutionStyle->lineWidth.setValue(lineSize);
 
-        Eigen::VectorXf actConfig;
-        Eigen::VectorXf parentConfig;
         float x, y, z;
         float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f;
 
@@ -2935,7 +2939,7 @@ namespace VirtualRobot
             z2 = z;
         } // for
 
-        rns->getRobot()->setJointValues(rns, c);
+        rns->setJointValues(c);
 
         res->unrefNoDelete();
         return res;
@@ -4191,36 +4195,56 @@ namespace VirtualRobot
 		{
 			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
 			// collect all robotnodes
-			std::vector<VirtualRobot::ModelNodePtr> collectedRobotNodes;
+            std::vector<VirtualRobot::ModelLinkPtr> collectedRobotNodes;
 
 			for (size_t i = 0; i < collectedRobots.size(); i++)
 			{
-				collectedRobots[i]->getModelNodes(collectedRobotNodes, false);
+                auto links = collectedRobots[i]->getLinks();
+                collectedRobotNodes.insert(collectedRobotNodes.begin(), collectedRobotNodes.end(), links.begin());
 			}
 
 			for (size_t i = 0; i < collectedRobotNodes.size(); i++)
 			{
-				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedRobotNodes[i], visuType));
+                VisualizationNodePtr v = collectedRobotNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
 			}
 		}
 
 		if (addObstacles)
 		{
 			std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
+            std::vector<VirtualRobot::ModelLinkPtr> collectedObstacleNodes;
 
 			for (size_t i = 0; i < collectedObstacles.size(); i++)
 			{
-				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedObstacles[i], visuType));
+                auto links = collectedObstacles[i]->getLinks();
+                collectedObstacleNodes.insert(collectedObstacleNodes.begin(), collectedObstacleNodes.end(), links.begin());
+            }
+            for (size_t i = 0; i < collectedObstacleNodes.size(); i++)
+            {
+
+                VisualizationNodePtr v = collectedObstacleNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
 			}
 		}
 
 		if (addManipulationObjects)
 		{
 			std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
+            std::vector<VirtualRobot::ModelLinkPtr> collectedManipNodes;
 
 			for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
 			{
-				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedManipulationObjects[i], visuType));
+                auto links = collectedManipulationObjects[i]->getLinks();
+                collectedManipNodes.insert(collectedManipNodes.begin(), collectedManipNodes.end(), links.begin());
+            }
+            for (size_t i = 0; i < collectedManipNodes.size(); i++)
+            {
+                VisualizationNodePtr v = collectedManipNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
 			}
 		}
 
@@ -4230,13 +4254,18 @@ namespace VirtualRobot
 
 			for (size_t i = 0; i < collectedTrajectories.size(); i++)
 			{
-				collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(collectedTrajectories[i], viuType));
+                VisualizationNodePtr v = collectedTrajectories[i]->getVisualization();
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
 			}
 		}
 
 		if (addSceneObjectSets)
 		{
-			std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getLinks();
+            cout << "nyi" << endl;
+            //todo
+            /*
+            std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getModelNodeSets();
 
 			for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
 			{
@@ -4244,9 +4273,12 @@ namespace VirtualRobot
 
 				for (size_t j = 0; j < sos.size(); j++)
 				{
-					collectedVisualizationNodes.push_back(CoinVisualizationFactory::getVisualization(sos[j], visuType));
+                    VisualizationNodePtr v = sos[j]->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
 				}
-			}
+
+            }*/
 		}
 
 		CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));

@@ -32,7 +32,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider : public std::enable_shared_from_this<JacobiProvider>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT JacobiProvider
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

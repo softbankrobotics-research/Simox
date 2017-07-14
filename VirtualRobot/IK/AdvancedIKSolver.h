@@ -43,7 +43,7 @@ namespace VirtualRobot
     * Can consider reachability information.
     * Can handle ManipulationObjects and associated grasping information.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver, public std::enable_shared_from_this<AdvancedIKSolver>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT AdvancedIKSolver : public IKSolver
     {
     public:
 

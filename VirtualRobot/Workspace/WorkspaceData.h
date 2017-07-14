@@ -44,7 +44,7 @@ namespace VirtualRobot
         Internally unsigned char data types are used (0...255)
     */
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData : public std::enable_shared_from_this<WorkspaceData>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT WorkspaceData
     {
     public:
         virtual ~WorkspaceData() {}

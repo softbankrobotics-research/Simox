@@ -65,7 +65,7 @@ mobile manipulators or service and humanoid robots.
 #    define MOTIONPLANNING_IMPORT_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define SABA_IMPORT_EXPORT
+#  define MOTIONPLANNING_IMPORT_EXPORT
 #endif
 
 

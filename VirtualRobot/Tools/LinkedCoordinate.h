@@ -47,7 +47,7 @@ namespace VirtualRobot
      * successing joints should be easy to confirm if there is a getTransformFromParent().
      * @todo Check if the order of const and throw is okay.
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT LinkedCoordinate //: public std::enable_shared_from_this<LinkedCoordinate>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT LinkedCoordinate
     {
     public:
 

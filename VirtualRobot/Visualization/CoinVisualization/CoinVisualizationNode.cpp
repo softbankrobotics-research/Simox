@@ -361,6 +361,11 @@ namespace VirtualRobot
         return p;
     }
 
+    std::string CoinVisualizationNode::getType()
+    {
+        return CoinVisualizationFactory::getName();
+    }
+
     void CoinVisualizationNode::setupVisualization(bool showVisualization, bool showAttachedVisualizations)
     {
         VisualizationNode::setupVisualization(showVisualization, showAttachedVisualizations);

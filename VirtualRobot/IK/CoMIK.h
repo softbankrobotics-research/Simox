@@ -34,8 +34,7 @@
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT CoMIK :
-        public JacobiProvider,
-        public std::enable_shared_from_this<CoMIK>
+        public JacobiProvider
     {
     public:
         /*!

@@ -24,7 +24,6 @@
 #include <Eigen/Core>
 #include "../VirtualRobotException.h"
 
-#include <boost/algorithm/algorithm.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;

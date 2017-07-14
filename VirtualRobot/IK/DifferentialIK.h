@@ -105,7 +105,7 @@ namespace VirtualRobot
         @endcode
     */
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT DifferentialIK : public JacobiProvider, public std::enable_shared_from_this<DifferentialIK>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT DifferentialIK : public JacobiProvider
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

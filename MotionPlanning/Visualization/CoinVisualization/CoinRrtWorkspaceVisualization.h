@@ -21,7 +21,7 @@
 #define _Saba_CoinRrtWorkspaceVisualization_h_
 
 
-#include "../../Saba.h"
+#include "../../MotionPlanning.h"
 #include "../RrtWorkspaceVisualization.h"
 
 

@@ -28,7 +28,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public std::enable_shared_from_this<ReferenceConfigurationConstraint>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint
     {
     public:
         ReferenceConfigurationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet);

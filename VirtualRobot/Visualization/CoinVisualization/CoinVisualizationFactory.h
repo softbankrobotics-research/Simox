@@ -25,7 +25,10 @@
 
 
 #include "../../Model/Model.h"
+#include "../../Model/Nodes/ModelLink.h"
 #include "../VisualizationFactory.h"
+#include "CoinVisualizationNode.h"
+#include "CoinVisualization.h"
 #include "../../Tools/BoundingBox.h"
 #include "../../EndEffector/EndEffector.h"
 #include "../ColorMap.h"
