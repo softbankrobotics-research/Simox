@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<Robot>
+	<Description>
+	This is the standard ARMAR-4 model
+	</Description>
+	
+	<URDF>urdf/Armar4.urdf</URDF>
+
+	<Sensors>sensors/Armar4-sensors-ft.xml</Sensors>
+	
+	<EndEffectors>endeffectors/Armar4-eef-hands.xml</EndEffectors>
+	<EndEffectors>endeffectors/Armar4-eef-feet.xml</EndEffectors>
+	
+	<NodeSets>nodesets/Armar4-jointsets.xml</NodeSets>
+	<NodeSets>nodesets/Armar4-linksets.xml</NodeSets>
+
+</Robot>

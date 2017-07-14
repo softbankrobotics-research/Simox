@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<EndEffector name="HandL_TCP" base="HandL_Base" tcp="HandL_TCP" gcp="HandL_GCP">
+
+		<Preshape name="Open Preshape">
+		    <Node name="HandL_Finger_Thumb1_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Thumb2_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Index1_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Index2_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Middle1_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Middle2_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Ring1_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Ring2_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Pinky1_joint" unit="radian" value="0"/>
+		    <Node name="HandL_Finger_Pinky2_joint" unit="radian" value="0"/>
+		</Preshape>
+
+    <Preshape name="Close Preshape">
+        <Node name="HandL_Finger_Thumb1_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Thumb2_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Index1_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Index2_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Middle1_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Middle2_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Ring1_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Ring2_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Pinky1_joint" unit="radian" value="1"/>
+        <Node name="HandL_Finger_Pinky2_joint" unit="radian" value="1"/>
+    </Preshape>
+
+    <Actor name="Thumb Left">
+        <Node name="HandL_Finger_Thumb1_joint" considerCollisions="Actors"/>
+        <Node name="HandL_Finger_Thumb2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Index Left">
+        <Node name="HandL_Finger_Index1_joint" considerCollisions="Actors"/>
+        <Node name="HandL_Finger_Index2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Middle Left">
+        <Node name="HandL_Finger_Middle1_joint" considerCollisions="Actors"/>
+        <Node name="HandL_Finger_Middle2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Ring Left">
+        <Node name="HandL_Finger_Ring1_joint" considerCollisions="Actors"/>
+        <Node name="HandL_Finger_Ring2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Pinky Left">
+        <Node name="HandL_Finger_Pinky1_joint" considerCollisions="Actors"/>
+        <Node name="HandL_Finger_Pinky2_joint" considerCollisions="All"/>
+    </Actor>
+
+</Endeffector>
+
+    
+
+<Endeffector name="HandR_TCP" base="HandR_Base" tcp="HandR_TCP" gcp="HandR_GCP">
+
+    <Preshape name="Open Preshape">
+        <Node name="HandR_Finger_Thumb1_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Thumb2_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Index1_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Index2_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Middle1_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Middle2_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Ring1_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Ring2_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Pinky1_joint" unit="radian" value="0"/>
+        <Node name="HandR_Finger_Pinky2_joint" unit="radian" value="0"/>
+    </Preshape>
+
+    <Preshape name="Close Preshape">
+        <Node name="HandR_Finger_Thumb1_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Thumb2_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Index1_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Index2_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Middle1_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Middle2_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Ring1_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Ring2_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Pinky1_joint" unit="radian" value="1"/>
+        <Node name="HandR_Finger_Pinky2_joint" unit="radian" value="1"/>
+    </Preshape>
+
+    <Actor name="Thumb Right">
+        <Node name="HandR_Finger_Thumb1_joint" considerCollisions="Actors"/>
+        <Node name="HandR_Finger_Thumb2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Index Right">
+        <Node name="HandR_Finger_Index1_joint" considerCollisions="Actors"/>
+        <Node name="HandR_Finger_Index2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Middle Right">
+        <Node name="HandR_Finger_Middle1_joint" considerCollisions="Actors"/>
+        <Node name="HandR_Finger_Middle2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Ring Right">
+        <Node name="HandR_Finger_Ring1_joint" considerCollisions="Actors"/>
+        <Node name="HandR_Finger_Ring2_joint" considerCollisions="All"/>
+    </Actor>
+
+    <Actor name="Pinky Right">
+        <Node name="HandR_Finger_Pinky1_joint" considerCollisions="Actors"/>
+        <Node name="HandR_Finger_Pinky2_joint" considerCollisions="All"/>
+    </Actor>
+
+</Endeffector>
+
+    
+
+    <Endeffector name="LegL_TCP" base="LegL_Ank2_joint" tcp="LegL_TCP">
+
+        <Actor name="Toes Right">
+
+            <Node name="LegR_Toe_joint" considerCollisions="All"/>
+
+            <Node name="LegR_Toe2_joint" considerCollisions="All"/>
+
+        </Actor>
+
+        <Actor name="Heel Right">
+
+            <Node name="LegR_Heel_joint" considerCollisions="All"/>
+
+        </Actor>
+
+    </Endeffector>
+
+    
+
+    <Endeffector name="LegR_TCP" base="LegR_Ank2_joint" tcp="LegR_TCP">
+
+        <Actor name="Toes Left">
+
+            <Node name="LegL_Toe_joint" considerCollisions="All"/>
+
+            <Node name="LegL_Toe2_joint" considerCollisions="All"/>
+
+        </Actor>
+
+        <Actor name="Heel Left">
+
+            <Node name="LegL_Heel_joint" considerCollisions="All"/>
+
+        </Actor>
+
+    </Endeffector>
+
+</EndEffector>
