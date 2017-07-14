@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<Sensor type="forcetorque" attached="LegL_Ank2_joint" name="LeftLeg_AnkleSensorX">
+    <Transform>
+        <rollpitchyaw yaw="0" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
+
+<Sensor type="forcetorque" attached="LegL_Ank2_joint" name="LeftLeg_AnkleSensorY">
+    <Transform>
+        <rollpitchyaw yaw="90" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
+
+<Sensor type="forcetorque" attached="LegR_Ank2_joint" name="RightLeg_AnkleSensorX">
+    <Transform>
+        <rollpitchyaw yaw="0" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
+<Sensor type="forcetorque" attached="LegR_Ank2_joint" name="RightLeg_AnkleSensorY">
+    <Transform>
+        <rollpitchyaw yaw="90" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
