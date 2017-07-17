@@ -59,7 +59,7 @@ namespace GraspPlanning
 
         if (!getPositionOnObject(position, approachDir))
         {
-            GRASPSTUDIO_ERROR << "no position on object?!" << endl;
+            GRASPPLANNING_ERROR << "no position on object?!" << endl;
             return pose;
         }
 

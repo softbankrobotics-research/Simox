@@ -677,9 +677,63 @@ namespace VirtualRobot
         return ModelNodeSetPtr();
     }
 
+    VirtualRobot::LinkSetPtr Scene::getLinkSet(const std::string& name)
+    {
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                LinkSetPtr l = std::dynamic_pointer_cast<LinkSet>(*i);
+                if (l)
+                    return l;
+            }
+        }
+
+        return LinkSetPtr();
+    }
+
+    VirtualRobot::JointSetPtr Scene::getJointSet(const std::string& name)
+    {
+        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                JointSetPtr l = std::dynamic_pointer_cast<JointSet>(*i);
+                if (l)
+                    return l;
+            }
+        }
+
+        return JointSetPtr();
+    }
+
     std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
     {
         return sceneObjectSets;
+    }
+
+    std::vector< LinkSetPtr > Scene::getLinkSets()
+    {
+        std::vector< LinkSetPtr > result;
+        for (auto s : sceneObjectSets)
+        {
+            LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(s);
+            if (ls)
+                result.push_back(ls);
+        }
+        return result;
+    }
+
+    std::vector< JointSetPtr > Scene::getJointSets()
+    {
+        std::vector< JointSetPtr > result;
+        for (auto s : sceneObjectSets)
+        {
+            JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(s);
+            if (ls)
+                result.push_back(ls);
+        }
+        return result;
     }
 
     std::string Scene::getXMLString(const std::string& basePath)

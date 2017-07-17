@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Primitive_h_
 #define _VirtualRobot_Primitive_h_
 
-#include <VirtualRobot/Model/Model.h>
+#include "VirtualRobot/Model/Model.h"
 #include <Eigen/Geometry>
 
 

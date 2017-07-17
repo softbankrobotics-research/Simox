@@ -191,11 +191,11 @@ void GraspRrtWindow::buildVisu()
 {
     sceneFileSep->removeAllChildren();
 
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (scene)
     {
-        visualization = scene->getVisualization<CoinVisualization>(colModel);
+        visualization = CoinVisualizationFactory::getVisualization(scene, colModel);
         SoNode* visualisationNode = NULL;
 
         if (visualization)
@@ -341,7 +341,7 @@ void GraspRrtWindow::loadScene()
     //selectTargetObject(0);
 
     // steup scene objects (col models env)
-    std::vector<SceneObjectSetPtr> soss = scene->getSceneObjectSets();
+    std::vector<ModelNodeSetPtr> soss = scene->getModelNodeSets();
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
@@ -538,7 +538,7 @@ void GraspRrtWindow::selectColModelEnv(const std::string& colModel)
         return;
     }
 
-    std::vector< SceneObjectSetPtr > rnss = scene->getSceneObjectSets();
+    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -587,7 +587,7 @@ void GraspRrtWindow::selectTargetObject(int nr)
     //if (rns)
     //  rns->getJointValues(goalConfig);
     targetObject = obstacles[nr];
-    graspQuality.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(targetObject));
+    graspQuality.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(targetObject));
     int points = 400;
 #ifndef NDEBUG
     points = 100;
@@ -604,7 +604,7 @@ void GraspRrtWindow::selectRNS(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< JointSetPtr > rnss = robot->getJointSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
@@ -639,14 +639,14 @@ void GraspRrtWindow::selectColModelRobA(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< LinkSetPtr > rnss = robot->getLinkSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelRobA = robot->getModelNodeSet(rnss[nr]->getName());
+    this->colModelRobA = robot->getLinkSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::selectColModelRobB(int nr)
@@ -677,14 +677,14 @@ void GraspRrtWindow::selectColModelEnv(int nr)
         return;
     }
 
-    std::vector< SceneObjectSetPtr > rnss = scene->getSceneObjectSets();
+    std::vector< LinkSetPtr > rnss = scene->getLinkSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelEnv = scene->getSceneObjectSet(rnss[nr]->getName());
+    this->colModelEnv = scene->getLinkSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::buildRRTVisu()
@@ -755,11 +755,14 @@ void GraspRrtWindow::testInit()
     test_cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
+    // todo: models vs linksets
+    /*
     test_graspRrt.reset(new MotionPlanning::GraspRrt(test_cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
 
     test_graspRrt->setStart(startConfig);
-    eef->getGCP()->showCoordinateSystem(true);
-    test_graspRrt->init();
+    // todo
+    //eef->getGCP()->showCoordinateSystem(true);
+    test_graspRrt->init();*/
 }
 
 void GraspRrtWindow::testGraspPose()
@@ -784,14 +787,14 @@ void GraspRrtWindow::testGraspPose()
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(10, 10, 10);
     o->setGlobalPose(globalGrasp);
-    o->showCoordinateSystem(true);
+    //o->showCoordinateSystem(true);
     graspsSep->removeAllChildren();
-    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::SceneObject::Full));
+    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::ModelLink::Full));
 
     // move towards object
     Eigen::Matrix4f p = eef->getGCP()->getGlobalPose();
     test_graspRrt->createWorkSpaceSamplingStep(p, globalGrasp, c);
-    robot->setJointValues(rns, c);
+    rns->setJointValues(c);
 
     // test
     /*Eigen::Matrix4f p1;
@@ -845,7 +848,11 @@ void GraspRrtWindow::plan()
     cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
-    MotionPlanning::GraspRrtPtr graspRrt(new MotionPlanning::GraspRrt(cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
+    // todo
+    std::vector<ModelPtr> models;
+    ModelPtr m(new Model("env"));
+    m->addLink(colModelEnv);
+    MotionPlanning::GraspRrtPtr graspRrt(new MotionPlanning::GraspRrt(cspace, eef, targetObject, graspQuality, models , 0.1f, minGraspScore));
 
     graspRrt->setStart(startConfig);
 
@@ -905,7 +912,7 @@ void GraspRrtWindow::sliderSolution(int pos)
     float p = (float)pos / 1000.0f;
     Eigen::VectorXf iPos;
     s->interpolate(p, iPos);
-    robot->setJointValues(rns, iPos);
+    rns->setJointValues(iPos);
     redraw();
 }
 

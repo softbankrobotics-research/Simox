@@ -13,7 +13,7 @@
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/Obstacle.h>
 
-#include "GraspPlanning/GraspStudio.h"
+#include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 
 #include <string.h>
@@ -96,7 +96,7 @@ protected:
     SoSeparator* ows1Sep;
     SoSeparator* ows2Sep;
 
-    VirtualRobot::RobotPtr robot;
+    VirtualRobot::ModelPtr robot;
     VirtualRobot::ObstaclePtr object;
 
     VirtualRobot::EndEffectorPtr eef;
@@ -109,7 +109,7 @@ protected:
     std::string objectFile;
     std::string eefName;
 
-    GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
+    GraspPlanning::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
 
     std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;

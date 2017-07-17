@@ -25,7 +25,7 @@
 #include <Inventor/nodes/SoUnits.h>
 
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     CoinConvexHullVisualization::CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords) :
@@ -235,7 +235,7 @@ namespace GraspStudio
 
         if (!projectedHull)
         {
-            GRASPSTUDIO_ERROR << " Could not create hull of projected points, aborting..." << endl;
+            GRASPPLANNING_ERROR << " Could not create hull of projected points, aborting..." << endl;
             return result;
         }
 
@@ -243,7 +243,7 @@ namespace GraspStudio
 
         if (!hullV)
         {
-            GRASPSTUDIO_ERROR << " Could not create visualization of projected points, aborting..." << endl;
+            GRASPPLANNING_ERROR << " Could not create visualization of projected points, aborting..." << endl;
             return result;
         }
 

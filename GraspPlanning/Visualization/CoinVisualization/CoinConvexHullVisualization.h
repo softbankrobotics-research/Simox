@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2011 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
@@ -24,7 +24,7 @@
 #define _MotionPlanning_CoinConvexHullVisualization_h_
 
 
-#include "../../GraspStudio.h"
+#include "../../GraspPlanning.h"
 #include "../ConvexHullVisualization.h"
 
 class SoNode;
@@ -32,7 +32,7 @@ class SoSeparator;
 class SoCallbackAction;
 class SoPrimitiveVertex;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
     /*!
     *
@@ -40,7 +40,7 @@ namespace GraspStudio
     *
     * A Coin3D related visualization of a convex hull
     */
-    class GRASPSTUDIO_IMPORT_EXPORT CoinConvexHullVisualization : virtual public ConvexHullVisualization
+    class GRASPPLANNING_IMPORT_EXPORT CoinConvexHullVisualization : virtual public ConvexHullVisualization
     {
     public:
         /*!

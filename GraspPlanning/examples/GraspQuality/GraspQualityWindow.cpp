@@ -167,11 +167,11 @@ void GraspQualityWindow::buildVisu()
 
     robotSep->removeAllChildren();
     //bool colModel = (UI.checkBoxColModel->isChecked());
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (robot)
     {
-        visualizationRobot = robot->getVisualization<CoinVisualization>(colModel);
+        visualizationRobot = CoinVisualizationFactory::getVisualization(robot, colModel);
         SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
 
         if (visualisationNode)
@@ -237,7 +237,7 @@ void GraspQualityWindow::loadObject()
         object = Obstacle::createBox(50.0f, 50.0f, 10.0f);
     }
 
-    qualityMeasure.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(object));
+    qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     qualityMeasure->calculateObjectProperties();
 }
 
@@ -316,7 +316,7 @@ void GraspQualityWindow::setEEFComboBox()
         return;
     }
 
-    robot->getEndEffectors(eefs);
+    eefs = robot->getEndEffectors();
 
     for (size_t i = 0; i < eefs.size(); i++)
     {
@@ -422,7 +422,7 @@ void GraspQualityWindow::showGWS()
 #if 0
     // test
 
-    GraspStudio::ContactConeGeneratorPtr cgMM(new GraspStudio::ContactConeGenerator(8, 0.25f, 100.0f));
+    GraspPlanning::ContactConeGeneratorPtr cgMM(new GraspPlanning::ContactConeGenerator(8, 0.25f, 100.0f));
     std::vector<MathTools::ContactPoint> resultsMM;
     VirtualRobot::EndEffector::ContactInfoVector::const_iterator objPointsIter;
 
@@ -501,8 +501,8 @@ void GraspQualityWindow::showGWS()
     pointM3.n(2) = 1.0f;
     pointMM3.n = pointM3.n;
     pointMM3.p = pointM3.p * 1000.0f;
-    GraspStudio::ContactConeGeneratorPtr cg(new GraspStudio::ContactConeGenerator(8, 0.25f, 1.0f));
-    GraspStudio::ContactConeGeneratorPtr cgMM(new GraspStudio::ContactConeGenerator(8, 0.25f, 100.0f));
+    GraspPlanning::ContactConeGeneratorPtr cg(new GraspPlanning::ContactConeGenerator(8, 0.25f, 1.0f));
+    GraspPlanning::ContactConeGeneratorPtr cgMM(new GraspPlanning::ContactConeGenerator(8, 0.25f, 100.0f));
     cg->computeConePoints(pointM, resultsM);
     cg->computeConePoints(pointM2, resultsM);
     cg->computeConePoints(pointM3, resultsM);
@@ -534,11 +534,11 @@ void GraspQualityWindow::showGWS()
 
     // wrench
     Eigen::Vector3f com = 0.333f * (pointM.p + pointM2.p + pointM3.p);
-    std::vector<VirtualRobot::MathTools::ContactPoint> wrenchP = GraspStudio::GraspQualityMeasureWrenchSpace::createWrenchPoints(resultsM, com, lengthMM);
+    std::vector<VirtualRobot::MathTools::ContactPoint> wrenchP = GraspPlanning::GraspQualityMeasureWrenchSpace::createWrenchPoints(resultsM, com, lengthMM);
     MathTools::print(wrenchP);
     // convex hull
-    VirtualRobot::MathTools::ConvexHull6DPtr ch1 = GraspStudio::ConvexHullGenerator::CreateConvexHull(wrenchP);
-    float minO = GraspStudio::GraspQualityMeasureWrenchSpace::minOffset(ch1);
+    VirtualRobot::MathTools::ConvexHull6DPtr ch1 = GraspPlanning::ConvexHullGenerator::CreateConvexHull(wrenchP);
+    float minO = GraspPlanning::GraspQualityMeasureWrenchSpace::minOffset(ch1);
     cout << "minOffset:" << minO << endl;
     std::vector<MathTools::TriangleFace6D>::iterator faceIter;
     cout << "Distances to Origin:" << endl;
@@ -556,7 +556,7 @@ void GraspQualityWindow::showGWS()
 
     cout << endl;
     // ch visu
-    GraspStudio::CoinConvexHullVisualizationPtr visu(new GraspStudio::CoinConvexHullVisualization(ch1, false));
+    GraspPlanning::CoinConvexHullVisualizationPtr visu(new GraspPlanning::CoinConvexHullVisualization(ch1, false));
     SoSeparator* chV = visu->getCoinVisualization();
     SoSeparator* scaledCH = new SoSeparator;
     SoScale* sc1 = new SoScale;
@@ -585,7 +585,7 @@ void GraspQualityWindow::showGWS()
 
     if (UI.checkBoxGWS1->isChecked())
     {
-        GraspStudio::CoinConvexHullVisualizationPtr v(new GraspStudio::CoinConvexHullVisualization(ch, true));
+        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(ch, true));
         SoSeparator* s = v->getCoinVisualization();
 
         if (s)
@@ -597,7 +597,7 @@ void GraspQualityWindow::showGWS()
 
     if (UI.checkBoxGWS2->isChecked())
     {
-        GraspStudio::CoinConvexHullVisualizationPtr v(new GraspStudio::CoinConvexHullVisualization(chOWS, false));
+        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, false));
         SoSeparator* s = v->getCoinVisualization();
 
         if (s)
@@ -610,7 +610,7 @@ void GraspQualityWindow::showGWS()
 
     if (UI.checkBoxOWS1->isChecked())
     {
-        GraspStudio::CoinConvexHullVisualizationPtr v(new GraspStudio::CoinConvexHullVisualization(chOWS, true));
+        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, true));
         SoSeparator* s = v->getCoinVisualization();
 
         if (s)
@@ -622,7 +622,7 @@ void GraspQualityWindow::showGWS()
 
     if (UI.checkBoxOWS2->isChecked())
     {
-        GraspStudio::CoinConvexHullVisualizationPtr v(new GraspStudio::CoinConvexHullVisualization(chOWS, false));
+        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, false));
         SoSeparator* s = v->getCoinVisualization();
 
         if (s)

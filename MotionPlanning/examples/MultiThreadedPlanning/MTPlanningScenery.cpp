@@ -1,20 +1,20 @@
 #include "MTPlanningScenery.h"
 
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
-#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/Tools/MathTools.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include "VirtualRobot/RobotNodeSet.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
+#include "VirtualRobot/Tools/MathTools.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/EndEffector/EndEffector.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/Model/ModelNodeSet.h"
 #include "VirtualRobot/RuntimeEnvironment.h"
-#include "VirtualRobot/Obstacle.h"
-#include <MotionPlanning/Planner/Rrt.h>
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
-#include <MotionPlanning/PostProcessing/ShortcutProcessor.h>
-#include <VirtualRobot/CollisionDetection/CDManager.h>
+#include "VirtualRobot/Model/Obstacle.h"
+#include "MotionPlanning/Planner/Rrt.h"
+#include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"
+#include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
+#include "VirtualRobot/CollisionDetection/CDManager.h"
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
@@ -190,7 +190,7 @@ void MTPlanningScenery::buildScene()
 
     float fCubeSize = 50.0f;
     float fPlayfieldSize = 1000.0f - fCubeSize;
-    environment.reset(new VirtualRobot::SceneObjectSet("Environment"));
+    environment.clear();
 
     obstSep = new SoSeparator();
 
@@ -211,8 +211,8 @@ void MTPlanningScenery::buildScene()
         m.setIdentity();
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
-        environment->addSceneObject(o);
-        std::shared_ptr<CoinVisualization> visualization = o->getVisualization<CoinVisualization>();
+        environment.push_back(o);
+        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(o, ModelLink::Full);
         SoNode* visualisationNode = NULL;
 
         if (visualization)
@@ -223,7 +223,8 @@ void MTPlanningScenery::buildScene()
         obstSep->addChild(visualisationNode);
     }
 
-    environmentUnited = environment->createStaticObstacle("MultiThreadedObstacle");
+    // TODO....
+    //environmentUnited = environment->createStaticObstacle("MultiThreadedObstacle");
 }
 
 void MTPlanningScenery::getRandomPos(float& x, float& y, float& z)
@@ -290,11 +291,11 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     }
 
     RobotPtr pRobot = robots[robots.size() - 1];
-    RobotNodeSetPtr kinChain = pRobot->getModelNodeSet(kinChainName);
+    JointSetPtr kinChain = pRobot->getJointSet(kinChainName);
 
     CDManagerPtr pCcm(new VirtualRobot::CDManager(pRobot->getCollisionChecker()));
     cout << "Set CSpace for " << robots.size() << ".th robot." << endl;
-    pCcm->addCollisionModel(pRobot->getModelNodeSet(colModel));
+    pCcm->addCollisionModel(pRobot->getLinkSet(colModel));
     ObstaclePtr pEnv = environmentUnited;
 
     //SceneObjectSetPtr pEnv = environment;
@@ -330,7 +331,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
         start[1] = y;
         start[2] = z;
         cout << "START: " << x << "," << y << "," << z << endl;
-        pRobot->setJointValues(kinChain, start);
+        kinChain->setJointValues(start);
     }
     while (pCcm->isInCollision());
 
@@ -343,7 +344,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
         goal[1] = y;
         goal[2] = z;
         cout << "GOAL: " << x << "," << y << "," << z << endl;
-        pRobot->setJointValues(kinChain, goal);
+        kinChain->setJointValues(goal);
     }
     while (pCcm->isInCollision());
 
@@ -385,10 +386,10 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
         return;
     }
 
-    pRobot->setJointValues(kinChain, start);
+    kinChain->setJointValues(start);
     Eigen::Matrix4f gp = rn->getGlobalPose();
     SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransform(gp);//no transformation -> our scene is already in MM units
-    pRobot->setJointValues(kinChain, goal);
+    kinChain->setJointValues(goal);
     gp = rn->getGlobalPose();
     SoMatrixTransform* mt2 = CoinVisualizationFactory::getMatrixTransform(gp); //no transformation -> our scene is already in MM units
 
@@ -637,7 +638,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
     if ((int)robots.size() == 1)
     {
-        std::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
+        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
@@ -762,7 +763,7 @@ void MTPlanningScenery::setRobotModelShape(bool collisionModel)
     //sceneSep->removeChild(robotSep);
     if (robots.size() > 0)
     {
-        std::shared_ptr<CoinVisualization> visualization = robots[0]->getVisualization<CoinVisualization>(robotModelVisuColModel ? SceneObject::Full : SceneObject::Collision);
+        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 

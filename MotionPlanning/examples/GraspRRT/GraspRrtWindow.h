@@ -11,7 +11,7 @@
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/ManipulationObject.h>
 
-#include <GraspPlanning/GraspStudio.h>
+#include <GraspPlanning/GraspPlanning.h>
 #include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
 
 #include "MotionPlanning/MotionPlanning.h"
@@ -128,11 +128,11 @@ protected:
     Eigen::VectorXf startConfig;
     Eigen::VectorXf goalConfig;
 
-    VirtualRobot::RobotNodeSetPtr rns;
+    VirtualRobot::JointSetPtr rns;
     VirtualRobot::EndEffectorPtr eef;
-    VirtualRobot::SceneObjectSetPtr colModelRobA;
-    VirtualRobot::SceneObjectSetPtr colModelRobB;
-    VirtualRobot::SceneObjectSetPtr colModelEnv;
+    VirtualRobot::LinkSetPtr colModelRobA;
+    VirtualRobot::LinkSetPtr colModelRobB;
+    VirtualRobot::LinkSetPtr colModelEnv;
 
     std::vector< VirtualRobot::RobotConfigPtr > configs;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;
@@ -146,7 +146,7 @@ protected:
     MotionPlanning::CSpacePathPtr solution;
     MotionPlanning::CSpacePathPtr solutionOptimized;
     MotionPlanning::CSpaceTreePtr tree;
-    GraspStudio::GraspQualityMeasureWrenchSpacePtr graspQuality;
+    GraspPlanning::GraspQualityMeasureWrenchSpacePtr graspQuality;
 
     std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 

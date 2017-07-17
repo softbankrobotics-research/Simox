@@ -6,15 +6,16 @@
 
 #define BOOST_TEST_MODULE MotionPlanning_MotionPlanningCSpaceTest
 
-#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/CollisionDetection/CollisionModel.h>
-#include <VirtualRobot/Obstacle.h>
-#include <CSpace/CSpaceSampled.h>
-#include <VirtualRobot/CollisionDetection/CDManager.h>
+#include "VirtualRobot/VirtualRobotTest.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/ModelNodeSet.h"
+#include "VirtualRobot/Model/JointSet.h"
+#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
+#include "VirtualRobot/CollisionDetection/CollisionModel.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/CollisionDetection/CDManager.h"
+#include "../CSpace/CSpaceSampled.h"
 #include <string>
 
 #include <Eigen/Core>
@@ -39,7 +40,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     BOOST_REQUIRE(rob);
     std::vector< std::string > nodes;
     nodes.push_back(std::string("Joint1"));
-    VirtualRobot::RobotNodeSetPtr rns = VirtualRobot::RobotNodeSet::createRobotNodeSet(rob, "nodeSet", nodes);
+    VirtualRobot::JointSetPtr rns = VirtualRobot::JointSet::createJointSet(rob, "nodeSet", nodes);
     VirtualRobot::CDManagerPtr cdm(new VirtualRobot::CDManager());
     MotionPlanning::CSpaceSampledPtr cspace(new MotionPlanning::CSpaceSampled(rob, cdm, rns));
     BOOST_REQUIRE(cspace);

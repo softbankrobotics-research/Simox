@@ -114,7 +114,7 @@ protected:
     Eigen::VectorXf startConfig;
 
     VirtualRobot::GraspSetPtr graspSet;
-    VirtualRobot::RobotNodeSetPtr rns;
+    VirtualRobot::JointSetPtr rns;
 
     std::string sceneFile;
     std::string reachFile;

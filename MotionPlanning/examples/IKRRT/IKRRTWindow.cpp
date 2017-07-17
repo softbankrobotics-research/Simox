@@ -235,7 +235,7 @@ void IKRRTWindow::resetSceneryAll()
 {
     if (rns && robot)
     {
-        robot->setJointValues(rns, startConfig);
+        rns->setJointValues(startConfig);
     }
 }
 
@@ -280,11 +280,11 @@ void IKRRTWindow::buildVisu()
 
     robotSep->removeAllChildren();
     //bool colModel = (UI.checkBoxColModel->isChecked());
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (robot)
     {
-        visualizationRobot = robot->getVisualization<CoinVisualization>(colModel);
+        visualizationRobot = CoinVisualizationFactory::getVisualization(robot,colModel);
         SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
 
         if (visualisationNode)
@@ -298,7 +298,7 @@ void IKRRTWindow::buildVisu()
 
     if (object)
     {
-        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
         if (visualisationNode)
@@ -396,7 +396,7 @@ void IKRRTWindow::loadScene()
 
         graspSet = object->getGraspSet(eef);
 
-        rns = robot->getModelNodeSet(rnsName);
+        rns = robot->getJointSet(rnsName);
 
         if (!rns)
         {
@@ -499,19 +499,19 @@ void IKRRTWindow::showCoordSystem()
 {
     if (eef)
     {
-        RobotNodePtr tcp = eef->getTcp();
+        CoordinatePtr tcp = eef->getTcp();
 
         if (!tcp)
         {
             return;
         }
 
-        tcp->showCoordinateSystem(UI.checkBoxTCP->isChecked());
+        //tcp->showCoordinateSystem(UI.checkBoxTCP->isChecked());
     }
 
     if (object)
     {
-        object->showCoordinateSystem(UI.checkBoxTCP->isChecked());
+        //object->showCoordinateSystem(UI.checkBoxTCP->isChecked());
     }
 }
 
@@ -659,18 +659,18 @@ void IKRRTWindow::planIKRRT()
 
     if (UI.checkBoxColCheckIK->checkState() == Qt::Checked)
     {
-        SceneObjectSetPtr colModelSet = robot->getModelNodeSet(colModelName);
-        SceneObjectSetPtr colModelSet2;
+        LinkSetPtr colModelSet = robot->getLinkSet(colModelName);
+        LinkSetPtr colModelSet2;
 
         if (!colModelNameRob.empty())
         {
-            colModelSet2 = robot->getModelNodeSet(colModelNameRob);
+            colModelSet2 = robot->getLinkSet(colModelNameRob);
         }
 
         if (colModelSet)
         {
             cdm.reset(new CDManager());
-            cdm->addCollisionModel(object);
+            cdm->addCollisionModel(object->getLinkSet());
             cdm->addCollisionModel(colModelSet);
 
             if (colModelSet2)
@@ -757,7 +757,7 @@ void IKRRTWindow::searchIK()
     // setup collision detection
     if (UI.checkBoxColCheckIK->checkState() == Qt::Checked)
     {
-        SceneObjectSetPtr colModelSet = robot->getModelNodeSet(colModelName);
+        LinkSetPtr colModelSet = robot->getLinkSet(colModelName);
 
         if (colModelSet)
         {
@@ -801,7 +801,7 @@ void IKRRTWindow::sliderSolution(int pos)
     float p = (float)pos / 1000.0f;
     Eigen::VectorXf iPos;
     s->interpolate(p, iPos);
-    robot->setJointValues(rns, iPos);
+    rns->setJointValues(iPos);
 
     redraw();
     //saveScreenshot();

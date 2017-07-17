@@ -20,8 +20,8 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GraspStudio_h_
-#define _GraspStudio_h_
+#ifndef _GraspPlanning_h_
+#define _GraspPlanning_h_
 
 
 /*! \defgroup GraspPlanning The Grasp Planning Library
@@ -91,21 +91,21 @@ namespace GraspPlanning
     typedef std::shared_ptr<GraspPlanner> GraspPlannerPtr;
     typedef std::shared_ptr<GenericGraspPlanner> GenericGraspPlannerPtr;
 
-#define GRASPSTUDIO_INFO VR_INFO
-#define GRASPSTUDIO_WARNING VR_WARNING
-#define GRASPSTUDIO_ERROR VR_ERROR
+#define GRASPPLANNING_INFO VR_INFO
+#define GRASPPLANNING_WARNING VR_WARNING
+#define GRASPPLANNING_ERROR VR_ERROR
 
-#define THROW_GRASPSTUDIO_EXCEPTION(a) THROW_VR_EXCEPTION(a)
+#define THROW_GRASPPLANNING_EXCEPTION(a) THROW_VR_EXCEPTION(a)
 
 #ifdef NDEBUG
-#define GRASPSTUDIO_ASSERT(a)
-#define GRASPSTUDIO_ASSERT_MESSAGE(a,b)
+#define GRASPPLANNING_ASSERT(a)
+#define GRASPPLANNING_ASSERT_MESSAGE(a,b)
 
 #else
-#define GRASPSTUDIO_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << ")" )};
-#define GRASPSTUDIO_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_GRASPSTUDIO_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
+#define GRASPPLANNING_ASSERT(a) if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_GRASPPLANNING_EXCEPTION( "ASSERT failed (" << #a << ")" )};
+#define GRASPPLANNING_ASSERT_MESSAGE(a,b) if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_GRASPPLANNING_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
 #endif
 
 }
 
-#endif // _GraspStudio_h_
+#endif

@@ -62,4 +62,4 @@ namespace GraspPlanning
 
 } // namespace GraspPlanning
 
-#endif // _GraspStudio_ConvexHullVisualization_h_
+#endif // _GraspPlanning_ConvexHullVisualization_h_

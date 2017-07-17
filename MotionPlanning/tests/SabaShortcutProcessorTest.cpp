@@ -6,17 +6,17 @@
 
 #define BOOST_TEST_MODULE MotionPlanning_MotionPlanningShortcutProcessorTest
 
-#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/CollisionDetection/CollisionModel.h>
-#include <VirtualRobot/Obstacle.h>
-#include <CSpace/CSpaceSampled.h>
-#include <CSpace/CSpacePath.h>
-#include <PostProcessing/ShortcutProcessor.h>
-#include <VirtualRobot/CollisionDetection/CDManager.h>
+#include "VirtualRobot/VirtualRobotTest.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/ModelNodeSet.h"
+#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
+#include "VirtualRobot/CollisionDetection/CollisionModel.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "../CSpace/CSpaceSampled.h"
+#include "../CSpace/CSpacePath.h"
+#include "../PostProcessing/ShortcutProcessor.h"
+#include "VirtualRobot/CollisionDetection/CDManager.h"
 #include <string>
 
 #include <Eigen/Core>
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
         "</Robot>";
     VirtualRobot::RobotPtr rob = VirtualRobot::RobotIO::createRobotFromString(robotString);
     BOOST_REQUIRE(rob);
-    VirtualRobot::RobotNodeSetPtr rns = rob->getModelNodeSet("rns1");
+    VirtualRobot::JointSetPtr rns = rob->getJointSet("rns1");
     BOOST_REQUIRE(rns);
     VirtualRobot::CDManagerPtr cdm(new VirtualRobot::CDManager());
     MotionPlanning::CSpaceSampledPtr cspace(new MotionPlanning::CSpaceSampled(rob, cdm, rns));

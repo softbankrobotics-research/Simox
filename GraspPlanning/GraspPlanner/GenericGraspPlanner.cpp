@@ -44,9 +44,9 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": Searching " << nrGrasps << " grasps for EEF:" << approach->getEEF()->getName() << " and object:" << graspQuality->getObject()->getName() << ".\n";
-            GRASPSTUDIO_INFO << ": Approach movements are generated with " << approach->getName() << endl;
-            GRASPSTUDIO_INFO << ": Grasps are evaluated with " << graspQuality->getName() << endl;
+            GRASPPLANNING_INFO << ": Searching " << nrGrasps << " grasps for EEF:" << approach->getEEF()->getName() << " and object:" << graspQuality->getObject()->getName() << ".\n";
+            GRASPPLANNING_INFO << ": Approach movements are generated with " << approach->getName() << endl;
+            GRASPPLANNING_INFO << ": Grasps are evaluated with " << graspQuality->getName() << endl;
         }
 
         while (!timeout() && nGraspsCreated < nrGrasps)
@@ -69,7 +69,7 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": created " << nGraspsCreated << " valid grasps in " << nLoop << " loops" << endl;
+            GRASPPLANNING_INFO << ": created " << nGraspsCreated << " valid grasps in " << nLoop << " loops" << endl;
         }
 
         return nGraspsCreated;
@@ -103,7 +103,7 @@ namespace GraspPlanning
 
             if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
             {
-                //                GRASPSTUDIO_INFO << ": Collision detected before closing fingers" << endl;
+                //                GRASPPLANNING_INFO << ": Collision detected before closing fingers" << endl;
                 return VirtualRobot::GraspPtr();
             }
         }
@@ -120,7 +120,7 @@ namespace GraspPlanning
 
             if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
             {
-                //              GRASPSTUDIO_INFO << ": Collision detected after closing fingers" << endl;
+                //              GRASPPLANNING_INFO << ": Collision detected after closing fingers" << endl;
                 return VirtualRobot::GraspPtr();
             }
         }
@@ -129,7 +129,7 @@ namespace GraspPlanning
         {
             if (verbose)
             {
-                GRASPSTUDIO_INFO << ": ignoring grasp hypothesis, low number of contacts" << endl;
+                GRASPPLANNING_INFO << ": ignoring grasp hypothesis, low number of contacts" << endl;
             }
 
             return VirtualRobot::GraspPtr();
@@ -151,7 +151,7 @@ namespace GraspPlanning
         // found valid grasp
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": Found grasp with " << contacts.size() << " contacts, score: " << score << endl;
+            GRASPPLANNING_INFO << ": Found grasp with " << contacts.size() << " contacts, score: " << score << endl;
         }
 
         std::stringstream ss;
