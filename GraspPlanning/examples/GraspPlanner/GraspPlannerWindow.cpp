@@ -5,7 +5,7 @@
 #include "GraspPlanning/MeshConverter.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
@@ -14,15 +14,9 @@
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
+
 #include <QFileDialog>
 #include <Eigen/Geometry>
-
-#include <time.h>
-#include <vector>
-#include <iostream>
-#include <cmath>
-
-
 
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
@@ -32,7 +26,12 @@
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoScale.h>
 
+#include <time.h>
+#include <vector>
+#include <iostream>
+#include <cmath>
 #include <sstream>
+
 using namespace std;
 using namespace VirtualRobot;
 using namespace GraspPlanning;
@@ -488,15 +487,16 @@ void GraspPlannerWindow::showGrasps()
 
 void GraspPlannerWindow::save()
 {
-    if (!object)
+    if (!object || object->getLinks().size()==0)
     {
         return;
     }
 
-    cout << "nyi..." << endl;
-    return;
-    // todo
-    //ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), object->getVisualization()->clone(), object->getCollisionModel()->clone()));
+
+    VisualizationNodePtr v = object->getLinks().at(0)->getVisualization()->clone();
+    CollisionModelPtr c = object->getLinks().at(0)->getCollisionModel()->clone();
+    ModelLink::Physics p = object->getLinks().at(0)->getPhysics();
+    ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), v, c, p));
     objectM->addGraspSet(grasps);
     QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
     objectFile = std::string(fi.toLatin1());

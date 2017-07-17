@@ -2,16 +2,16 @@
 #ifndef __GraspPlanner_WINDOW_H_
 #define __GraspPlanner_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/SceneIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/ManipulationObject.h>
-#include <VirtualRobot/Obstacle.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/SceneIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
+#include "VirtualRobot/Model/Obstacle.h"
 
 #include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
@@ -104,8 +104,8 @@ protected:
     GraspPlanning::ApproachMovementSurfaceNormalPtr approach;
     GraspPlanning::GenericGraspPlannerPtr planner;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+    VirtualRobot::CoinVisualizationPtr visualizationRobot;
+    VirtualRobot::CoinVisualizationPtr visualizationObject;
 };
 
 #endif // __GraspPlanner_WINDOW_H_

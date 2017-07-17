@@ -548,7 +548,7 @@ namespace VirtualRobot
         circleCompletion = std::min<float>(1.0f, circleCompletion);
         circleCompletion = std::max<float>(-1.0f, circleCompletion);
         float offset = 0;
-        for (int i = 0; i < numberOfCircleParts; ++i)
+        for (size_t i = 0; i < numberOfCircleParts; ++i)
         {
 
             SbVec3f point;
