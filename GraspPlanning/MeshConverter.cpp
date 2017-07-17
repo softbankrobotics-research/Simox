@@ -56,7 +56,7 @@ namespace GraspPlanning
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         VisualizationNodePtr visu = cv->createTriMeshModelVisualization(tm, false, gp, false);
         CollisionModelPtr cm(new CollisionModel(visu));
-        res.reset(new ManipulationObject(name, visu, cm));
+        res = ManipulationObject::create(name, visu, cm);
 
         return res;
     }
@@ -212,7 +212,7 @@ namespace GraspPlanning
 		Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
 		VisualizationNodePtr visu = cv->createTriMeshModelVisualization(triMesh2, false, pose);// , gp);
         CollisionModelPtr cm(new CollisionModel(visu));
-        res.reset(new Obstacle(object->getName(), visu, cm, object->getLinks().at(0)->getPhysics()));
+        res = Obstacle::create(object->getName(), visu, cm, object->getLinks().at(0)->getPhysics());
 		res->setGlobalPose(gp);
         return res;
     }

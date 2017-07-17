@@ -3,13 +3,14 @@
 #include "../VirtualRobotException.h"
 #include "../Visualization/VisualizationNode.h"
 #include "../Grasping/GraspSet.h"
+#include "../CollisionDetection/CollisionChecker.h"
 #include "../XML/BaseIO.h"
 
 namespace VirtualRobot
 {
 
-    ManipulationObject::ManipulationObject(const std::string& name, VisualizationNodePtr visualization, CollisionModelPtr collisionModel, const ModelLink::Physics& p, CollisionCheckerPtr colChecker)
-        : Obstacle(name, visualization, collisionModel, p, colChecker)
+    ManipulationObject::ManipulationObject(const std::string& name, CollisionCheckerPtr colChecker)
+        : Obstacle(name, colChecker)
     {
     }
 
@@ -37,6 +38,25 @@ namespace VirtualRobot
             cout << endl;
         }
     }
+
+    VirtualRobot::ManipulationObjectPtr ManipulationObject::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
+    {
+        ManipulationObjectPtr m(new ManipulationObject(name, colChecker));
+        ModelLinkPtr node(new ModelLink(m,
+            name,
+            Eigen::Matrix4f::Identity(),
+            visualization,
+            collisionModel,
+            p,
+            colChecker ? colChecker : CollisionChecker::getGlobalCollisionChecker()));
+
+        m->registerModelNode(node);
+        m->setRootNode(node);
+        m->setGlobalPose(Eigen::Matrix4f::Identity());
+
+        return m;
+    }
+
 
     void ManipulationObject::addGraspSet(GraspSetPtr graspSet)
     {
@@ -212,7 +232,7 @@ namespace VirtualRobot
         return result;
     }*/
 
-    VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, std::string visualizationType, CollisionCheckerPtr colChecker)
+    VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, const std::string &name, const std::string &visualizationType, CollisionCheckerPtr colChecker)
     {
         THROW_VR_EXCEPTION_IF(!mesh, "Null data");
 
@@ -244,16 +264,14 @@ namespace VirtualRobot
             return result;
         }
 
-        int id = idCounter;
-        idCounter++;
+        //int id = idCounter;
+        //idCounter++;
+        std::string n;
+        if (name.empty())
+            n = "Mesh";
 
-        std::stringstream ss;
-        ss << "Mesh_" << id;
-
-        std::string name = ss.str();
-
-        CollisionModelPtr colModel(new CollisionModel(visu->clone(), name, colChecker, id));
-        result.reset(new ManipulationObject(name, visu, colModel, ModelLink::Physics(), colChecker));
+        CollisionModelPtr colModel(new CollisionModel(visu->clone(), name, colChecker));
+        result = ManipulationObject::create(name, visu, colModel, ModelLink::Physics(), colChecker);
 
         return result;
     }

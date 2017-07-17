@@ -9,10 +9,10 @@
 namespace VirtualRobot
 {
     ModelNode::ModelNode(const ModelWeakPtr& model, 
-						const std::string& name, 
-						const Eigen::Matrix4f& staticTransformation)
+        const std::string& name,
+        const Eigen::Matrix4f& staticTransformation)
         : Coordinate(name),
-		initialized(false),
+          initialized(false),
           model(model),
           parent(ModelNodeWeakPtr()),
           children(),

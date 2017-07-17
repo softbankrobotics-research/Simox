@@ -12,13 +12,13 @@ namespace VirtualRobot
 {
 
     // obstacle models start with 20000
-    int Obstacle::idCounter = 20000;
+    //int Obstacle::idCounter = 20000;
 
 
-    Obstacle::Obstacle(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
+    Obstacle::Obstacle(const std::string& name, const CollisionCheckerPtr& colChecker)
         : Model(name, "Obstacle")
     {
-        if (name.empty())
+        /*if (name.empty())
         {
             // my id
             id = idCounter++;
@@ -38,31 +38,38 @@ namespace VirtualRobot
                 // my id
                 id = idCounter++;
             }
-        }
-
-        ModelLinkPtr node(new ModelLink(shared_from_this(),
-                                        name,
-                                        Eigen::Matrix4f::Identity(),
-                                        visualization,
-                                        collisionModel,
-                                        p,
-                                        colChecker ? colChecker : CollisionChecker::getGlobalCollisionChecker()));
-
-        registerModelNode(node);
-        setRootNode(node);
-        setGlobalPose(Eigen::Matrix4f::Identity());
+        }*/
     }
 
     Obstacle::~Obstacle()
     {
     }
 
-    int Obstacle::getID() const
+    /*int Obstacle::getID() const
     {
         return id;
+    }*/
+
+
+    VirtualRobot::ObstaclePtr Obstacle::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
+    {
+        ObstaclePtr m(new Obstacle(name, colChecker));
+        ModelLinkPtr node(new ModelLink(m,
+            name,
+            Eigen::Matrix4f::Identity(),
+            visualization,
+            collisionModel,
+            p,
+            colChecker ? colChecker : CollisionChecker::getGlobalCollisionChecker()));
+
+        m->registerModelNode(node);
+        m->setRootNode(node);
+        m->setGlobalPose(Eigen::Matrix4f::Identity());
+
+        return m;
     }
 
-    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, VisualizationFactory::Color color, const std::string& visualizationType , const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -99,16 +106,16 @@ namespace VirtualRobot
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
-        int id = idCounter;
-        idCounter++;
+        //int id = idCounter;
+        //idCounter++;
 
         std::stringstream ss;
-        ss << "Box_" << id;
+        ss << "Box";
 
         std::string name = ss.str();
 
-        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker));
+        result = Obstacle::create(name, visu, colModel, ModelLink::Physics(), colChecker);
 
         return result;
     }
@@ -149,16 +156,16 @@ namespace VirtualRobot
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
-        int id = idCounter;
-        idCounter++;
+        //int id = idCounter;
+        //idCounter++;
 
         std::stringstream ss;
-        ss << "Sphere_" << id;
+        ss << "Sphere";
 
         std::string name = ss.str();
 
-        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker));
+        result = Obstacle::create(name, visu, colModel, ModelLink::Physics(), colChecker);
 
         return result;
     }
@@ -199,16 +206,16 @@ namespace VirtualRobot
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
-        int id = idCounter;
-        idCounter++;
+        //int id = idCounter;
+        //idCounter++;
 
         std::stringstream ss;
-        ss << "Cylinder_" << id;
+        ss << "Cylinder";
 
         std::string name = ss.str();
 
-        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker));
+        result = Obstacle::create(name, visu, colModel, ModelLink::Physics(), colChecker);
 
         return result;
     }
@@ -246,16 +253,16 @@ namespace VirtualRobot
             return result;
         }
 
-        int id = idCounter;
-        idCounter++;
+        //int id = idCounter;
+        //idCounter++;
 
         std::stringstream ss;
-        ss << "Mesh_" << id;
+        ss << "Mesh";
 
         std::string name = ss.str();
 
-        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker, id));
-        result.reset(new Obstacle(name, visu, colModel, ModelLink::Physics(), colChecker));
+        CollisionModelPtr colModel(new CollisionModel(visu, name, colChecker));
+        result = Obstacle::create(name, visu, colModel, ModelLink::Physics(), colChecker);
 
         return result;
     }
@@ -268,7 +275,7 @@ namespace VirtualRobot
         }
 
         Model::print();
-        cout << " * id: " << id << endl;
+        //cout << " * id: " << id << endl;
 
         if (printDecoration)
         {

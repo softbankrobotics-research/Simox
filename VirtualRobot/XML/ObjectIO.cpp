@@ -287,7 +287,7 @@ namespace VirtualRobot
 
 
         // build object
-        ManipulationObjectPtr object(new ManipulationObject(objName, visualizationNode, collisionModel, physics));
+        ManipulationObjectPtr object = ManipulationObject::create(objName, visualizationNode, collisionModel, physics);
 
         for (size_t i = 0; i < graspSets.size(); i++)
         {
@@ -395,7 +395,8 @@ namespace VirtualRobot
         }
 
         // build object
-        ObstaclePtr object(new Obstacle(objName, visualizationNode, collisionModel, physics));
+        ObstaclePtr object = Obstacle::create(objName, visualizationNode, collisionModel, physics);
+
         object->setGlobalPose(globalPose);
         return object;
     }
