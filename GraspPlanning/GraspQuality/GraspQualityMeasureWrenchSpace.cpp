@@ -109,7 +109,7 @@ namespace GraspPlanning
 
         if (verbose && printAll)
         {
-            GRASPSTUDIO_INFO << " CENTER of OWS: " << endl;
+            GRASPPLANNING_INFO << " CENTER of OWS: " << endl;
             MathTools::print(convexHullCenterOWS);
         }
 
@@ -118,8 +118,8 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": MinDistance to Center of OWS: " << minOffsetOWS << endl;
-            GRASPSTUDIO_INFO << ": Volume of OWS: " << volumeOWS << endl;
+            GRASPPLANNING_INFO << ": MinDistance to Center of OWS: " << minOffsetOWS << endl;
+            GRASPPLANNING_INFO << ": Volume of OWS: " << volumeOWS << endl;
         }
 
         OWSCalculated = true;
@@ -161,7 +161,7 @@ namespace GraspPlanning
 
         if (verbose && printAll)
         {
-            GRASPSTUDIO_INFO << " CENTER of GWS: " << endl;
+            GRASPPLANNING_INFO << " CENTER of GWS: " << endl;
             MathTools::print(convexHullCenterGWS);
         }
 
@@ -256,7 +256,7 @@ namespace GraspPlanning
     {
         if (!hull)
         {
-            GRASPSTUDIO_ERROR << "NULL data?!" << endl;
+            GRASPPLANNING_ERROR << "NULL data?!" << endl;
             return VirtualRobot::MathTools::ContactPoint();
         }
 
@@ -504,7 +504,7 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << endl;
+            GRASPPLANNING_INFO << endl;
             cout << ": GWS volume    : " << convexHullGWS->volume << endl;
             cout << ": GWS min Offset: " << fResOffsetGWS << endl;
             cout << ": OWS min Offset: " << fResOffsetOWS << endl;
@@ -519,7 +519,7 @@ namespace GraspPlanning
         SoSeparator *pSep = new SoSeparator();
         if (!m_GWSCalculated)
         {
-            GRASPSTUDIO_INFO << ": Warning no GWS calculate..." << endl;
+            GRASPPLANNING_INFO << ": Warning no GWS calculate..." << endl;
             return pSep;
         }
         SoSeparator *pSep2 = new SoSeparator();
@@ -543,7 +543,7 @@ namespace GraspPlanning
         SoSeparator *pSep = new SoSeparator();
         if (!m_OWSCalculated)
         {
-            GRASPSTUDIO_INFO << ": Warning no OWS calculate..." << endl;
+            GRASPPLANNING_INFO << ": Warning no OWS calculate..." << endl;
             return pSep;
         }
         //VirtualRobot::MathTools::ConvexHull6d gws = m_pGraspQualityMeasureWrench->getConvexHullOWS();

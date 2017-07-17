@@ -30,6 +30,14 @@ namespace VirtualRobot
     {
     }
 
+
+    void CDManager::addCollisionModel(ModelPtr m)
+    {
+        VR_ASSERT(m);
+        addCollisionModel(m->getLinkSet());
+    }
+
+
     void CDManager::addCollisionModel(LinkSetPtr m)
     {
         if (m)

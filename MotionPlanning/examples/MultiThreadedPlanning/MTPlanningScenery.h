@@ -101,7 +101,7 @@ protected:
     std::vector< Eigen::VectorXf > goalPositions;
 
 
-    SceneObjectSetPtr environment;
+    std::vector<ModelPtr> environment;
     ObstaclePtr environmentUnited;
 
 

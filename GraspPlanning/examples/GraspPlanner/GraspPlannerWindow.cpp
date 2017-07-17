@@ -35,7 +35,7 @@
 #include <sstream>
 using namespace std;
 using namespace VirtualRobot;
-using namespace GraspStudio;
+using namespace GraspPlanning;
 
 float TIMER_MS = 30.0f;
 
@@ -174,11 +174,11 @@ void GraspPlannerWindow::buildVisu()
 {
 
     robotSep->removeAllChildren();
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (eefCloned)
     {
-        visualizationRobot = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, volModel);
+        visualizationRobot = CoinVisualizationFactory::getVisualization(eefCloned, colModel);
         //eefCloned->getVisualization<CoinVisualization>(colModel);
         SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
 
@@ -207,7 +207,7 @@ void GraspPlannerWindow::buildVisu()
     {
 
 #if 1
-        SceneObject::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
 
         if (visualisationNode)
@@ -230,7 +230,7 @@ void GraspPlannerWindow::buildVisu()
         }
         else
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, SceneObject::Full);
+            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, ModelLink::Full);
 
             if (visualisationNode)
             {
@@ -317,16 +317,16 @@ void GraspPlannerWindow::loadObject()
 #if 0
     TriMeshModelPtr tm = object->getVisualization()->getTriMeshModel();
     MathTools::ConvexHull3DPtr cv = ConvexHullGenerator::CreateConvexHull(tm->vertices);
-    object = GraspStudio::MeshConverter::CreateManipulationObject(object->getName(), cv);
+    object = GraspPlanning::MeshConverter::CreateManipulationObject(object->getName(), cv);
 #endif
 
     //Eigen::Vector3f minS,maxS;
     //object->getCollisionModel()->getTriMeshModel()->getSize(minS,maxS);
     //cout << "minS: \n" << minS << "\nMaxS:\n" << maxS << endl;
-    qualityMeasure.reset(new GraspStudio::GraspQualityMeasureWrenchSpace(object));
+    qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     //qualityMeasure->setVerbose(true);
     qualityMeasure->calculateObjectProperties();
-    approach.reset(new GraspStudio::ApproachMovementSurfaceNormal(object, eef));
+    approach.reset(new GraspPlanning::ApproachMovementSurfaceNormal(object, eef));
     eefCloned = approach->getEEFRobotClone();
 
     if (robot && eef)
@@ -336,7 +336,7 @@ void GraspPlannerWindow::loadObject()
         grasps.reset(new GraspSet(name, robot->getType(), eefName));
     }
 
-    planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach));
+    planner.reset(new GraspPlanning::GenericGraspPlanner(grasps, qualityMeasure, approach));
     planner->setVerbose(true);
 }
 
@@ -369,7 +369,7 @@ void GraspPlannerWindow::plan()
     bool forceClosure = UI.checkBoxFoceClosure->isChecked();
     float quality = (float)UI.doubleSpinBoxQuality->value();
     int nrGrasps = UI.spinBoxGraspNumber->value();
-    planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
+    planner.reset(new GraspPlanning::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
 
     int nr = planner->plan(nrGrasps, timeout);
     VR_INFO << " Grasp planned:" << nr << endl;
@@ -396,7 +396,7 @@ void GraspPlannerWindow::plan()
     if (grasps->getSize() > 0 && eefCloned && eefCloned->getEndEffector(eefName))
     {
         Eigen::Matrix4f mGrasp = grasps->getGrasp(grasps->getSize() - 1)->getTcpPoseGlobal(object->getGlobalPose());
-        eefCloned->setGlobalPoseForRobotNode(eefCloned->getEndEffector(eefName)->getTcp(), mGrasp);
+        eefCloned->setGlobalPoseForModelNode(eefCloned->getEndEffector(eefName)->getTcp(), mGrasp);
     }
 
     if (nrGrasps > 0)
@@ -442,7 +442,6 @@ void GraspPlannerWindow::closeEEF()
         float qual = qualityMeasure->getGraspQuality();
         bool isFC = qualityMeasure->isGraspForceClosure();
         std::stringstream ss;
-        ss << std::setprecision(3);
         ss << "Grasp Nr " << grasps->getSize() << "\nQuality: " << qual << "\nForce closure: ";
 
         if (isFC)
@@ -494,7 +493,10 @@ void GraspPlannerWindow::save()
         return;
     }
 
-    ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), object->getVisualization()->clone(), object->getCollisionModel()->clone()));
+    cout << "nyi..." << endl;
+    return;
+    // todo
+    //ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), object->getVisualization()->clone(), object->getCollisionModel()->clone()));
     objectM->addGraspSet(grasps);
     QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
     objectFile = std::string(fi.toLatin1());

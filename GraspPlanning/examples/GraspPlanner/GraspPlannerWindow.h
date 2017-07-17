@@ -13,7 +13,7 @@
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/Obstacle.h>
 
-#include "GraspPlanning/GraspStudio.h"
+#include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 #include "GraspPlanning/GraspPlanner/GenericGraspPlanner.h"
 #include "GraspPlanning/ApproachMovementSurfaceNormal.h"
@@ -100,9 +100,9 @@ protected:
 
     SoSeparator* eefVisu;
 
-    GraspStudio::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
-    GraspStudio::ApproachMovementSurfaceNormalPtr approach;
-    GraspStudio::GenericGraspPlannerPtr planner;
+    GraspPlanning::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
+    GraspPlanning::ApproachMovementSurfaceNormalPtr approach;
+    GraspPlanning::GenericGraspPlannerPtr planner;
 
     std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;

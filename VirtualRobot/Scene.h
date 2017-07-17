@@ -158,9 +158,13 @@ namespace VirtualRobot
         bool hasModelNodeSet(ModelNodeSetPtr sos) const;
         bool hasModelNodeSet(const std::string& name) const;
 
-		ModelNodeSetPtr getModelNodeSet(const std::string& name);
+        ModelNodeSetPtr getModelNodeSet(const std::string& name);
+        LinkSetPtr getLinkSet(const std::string& name);
+        JointSetPtr getJointSet(const std::string& name);
 
         std::vector< ModelNodeSetPtr > getModelNodeSets();
+        std::vector< LinkSetPtr > getLinkSets();
+        std::vector< JointSetPtr > getJointSets();
 
 		ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
 

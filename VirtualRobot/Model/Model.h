@@ -232,6 +232,8 @@ namespace VirtualRobot
          * @return The registered node sets.
          */
         virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
+        virtual std::vector<LinkSetPtr> getLinkSets() const;
+        virtual std::vector<JointSetPtr> getJointSets() const;
 
         /*!
          * The root node is the first ModelNode of this model.

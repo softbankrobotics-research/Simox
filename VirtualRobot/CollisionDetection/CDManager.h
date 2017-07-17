@@ -66,6 +66,7 @@ namespace VirtualRobot
             Internally for all SceneObjectSets that have been added earlier, the method addCollisionModelPair() is called.
         */
         void addCollisionModel(LinkSetPtr m);
+        void addCollisionModel(ModelPtr m);
 
         /*!
             Here, a specific pair of SceneObjectSets can be added.

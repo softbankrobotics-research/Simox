@@ -17,12 +17,8 @@
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include "MotionPlanning/PostProcessing/ElasticBandProcessor.h"
 #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+
 #include <QFileDialog>
-#include <Eigen/Geometry>
-#include <time.h>
-#include <vector>
-#include <iostream>
-#include <cmath>
 
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
@@ -32,7 +28,16 @@
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoUnits.h>
 
+#include <Eigen/Geometry>
+
+#include <time.h>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <cmath>
 #include <sstream>
+
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -141,11 +146,11 @@ void PlatformWindow::buildVisu()
 {
     sceneFileSep->removeAllChildren();
 
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (scene)
     {
-        visualization = scene->getVisualization<CoinVisualization>(colModel);
+        visualization = CoinVisualizationFactory::getVisualization(scene, colModel);
         SoNode* visualisationNode = NULL;
 
         if (visualization)
@@ -231,14 +236,14 @@ void PlatformWindow::loadScene()
     }
 
     // steup scene objects (col models env)
-    std::vector<SceneObjectSetPtr> soss = scene->getSceneObjectSets();
+    std::vector<LinkSetPtr> soss = scene->getLinkSets();
 
     // Setup robot node sets and col models
-    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
+    std::vector<JointSetPtr> rnss = robot->getJointSets();
 
-    rns = robot->getModelNodeSet(planSetA.rns);
-    colModelRob = robot->getModelNodeSet(planSetA.colModelRob);
-    colModelEnv = scene->getSceneObjectSet(planSetA.colModelEnv);
+    rns = robot->getJointSet(planSetA.rns);
+    colModelRob = robot->getLinkSet(planSetA.colModelRob);
+    colModelEnv = scene->getLinkSet(planSetA.colModelEnv);
 
     bool startOK = false;
     bool goalOK = false;
@@ -303,7 +308,7 @@ void PlatformWindow::selectColModelRob(const std::string &name)
         return;
     }
 
-    this->colModelRob = robot->getModelNodeSet(name);
+    this->colModelRob = robot->getLinkSet(name);
 }
 
 
@@ -317,7 +322,7 @@ void PlatformWindow::selectColModelEnv(const std::string &name)
         return;
     }
 
-    this->colModelEnv = scene->getSceneObjectSet(name);
+    this->colModelEnv = scene->getLinkSet(name);
 }
 
 void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b)
@@ -467,7 +472,7 @@ void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int n
         }
         case eElasticBands:
         {
-            RobotNodePtr n = colModelRob->getNode(0);
+            ModelLinkPtr n = colModelRob->getNode(0);
             VR_INFO << "using elsatic band processor with node " << n->getName() << endl;
             MotionPlanning::ElasticBandProcessorPtr postProcessing(new MotionPlanning::ElasticBandProcessor(solutionOptimized, cspace, n, colModelEnv, false));
             // specific to armar3:
@@ -576,10 +581,10 @@ void PlatformWindow::sliderSolution(int pos)
     float p = (float)pos / 1000.0f;
     Eigen::VectorXf iPos;
     s->interpolate(p, iPos);
-    robot->setJointValues(rns, iPos);
+    rns->setJointValues(iPos);
 
     std::stringstream d2;
-    d2 << setprecision(2) << fixed << "Pos: ";
+    d2 << fixed << "Pos: ";
     for (int i=0;i<rns->getSize();i++)
         d2 << rns->getNode(i)->getJointValue() << ", ";
     QString t2(d2.str().c_str());
@@ -594,7 +599,7 @@ void PlatformWindow::sliderSolution(int pos)
         int trID2;
         float dist = cdmPlayback->getDistance(P1, P2, trID1, trID2);
         std::stringstream d;
-        d << setprecision(2) << fixed << dist;
+        d << fixed << dist;
         QString t(d.str().c_str());
         UI.labelDist->setText(t);
 

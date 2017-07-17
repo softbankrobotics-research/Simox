@@ -396,6 +396,32 @@ namespace VirtualRobot
         return result;
     }
 
+    std::vector<LinkSetPtr> Model::getLinkSets() const
+    {
+        ReadLockPtr r = getReadLock();
+        std::vector<LinkSetPtr> result;
+        for (auto it : modelNodeSetMap)
+        {
+            LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(it.second);
+            if (ls)
+                result.push_back(ls);
+        }
+        return result;
+    }
+
+    std::vector<JointSetPtr> Model::getJointSets() const
+    {
+        ReadLockPtr r = getReadLock();
+        std::vector<JointSetPtr> result;
+        for (auto it : modelNodeSetMap)
+        {
+            JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(it.second);
+            if (ls)
+                result.push_back(ls);
+        }
+        return result;
+    }
+
     void Model::setRootNode(const ModelNodePtr& node)
     {
         if (!node)

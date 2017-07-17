@@ -45,7 +45,7 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": object COM: << " << centerOfModel[0] << "," << centerOfModel[1] << "," << centerOfModel[2] << endl;
+            GRASPPLANNING_INFO << ": object COM: << " << centerOfModel[0] << "," << centerOfModel[1] << "," << centerOfModel[2] << endl;
         }
 
         int nFaces = (int)model->faces.size();
@@ -83,7 +83,7 @@ namespace GraspPlanning
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << ": Nr of sample object points:" << sampledObjectPoints.size() << endl;
+            GRASPPLANNING_INFO << ": Nr of sample object points:" << sampledObjectPoints.size() << endl;
         }
 
         return (sampledObjectPoints.size() > 0);
