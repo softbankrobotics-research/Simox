@@ -4185,7 +4185,7 @@ namespace VirtualRobot
         return m;
     }
 
-	CoinVisualizationPtr getVisualization(ScenePtr scene, ModelLink::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
 	{
 		VR_ASSERT(scene);
 
@@ -4285,5 +4285,23 @@ namespace VirtualRobot
 		return visualization;
 	}
 
+    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
+    {
+        VR_ASSERT(robot);
+
+        std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+
+        auto links = robot->getLinks();
+
+        for (auto l : links)
+        {
+            VisualizationNodePtr v = l->getVisualization(visuType);
+            if (v)
+                collectedVisualizationNodes.push_back(v);
+        }
+
+        CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
+        return visualization;
+    }
 
 } // namespace VirtualRobot

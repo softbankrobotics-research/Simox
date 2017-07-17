@@ -1,19 +1,20 @@
 
 #include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Obstacle.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
-#include "VirtualRobot/SceneObjectSet.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Tools/RuntimeEnvironment.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
-#include "MotionPlanning/Saba.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Planner/BiRrt.h"
 #include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"
-#include "Inventor/Qt/viewers/SoQtExaminerViewer.h"
-#include "Inventor/nodes/SoSeparator.h"
-#include "Inventor/Qt/SoQt.h"
+
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/Qt/SoQt.h>
 
 #include "string"
 #include <iostream>
@@ -21,7 +22,7 @@
 using std::cout;
 using std::endl;
 using namespace VirtualRobot;
-using namespace Saba;
+using namespace MotionPlanning;
 
 #define USE_BIRRT
 
@@ -95,10 +96,10 @@ void startRRTVisualization()
 
     // setup collision detection
     std::string colModelName("CollisionModel");
-    SceneObjectSetPtr cms = robot->getModelNodeSet(colModelName);
+    LinkSetPtr cms = robot->getLinkSet(colModelName);
     CDManagerPtr cdm(new CDManager());
     cdm->addCollisionModel(cms);
-    cdm->addCollisionModel(o);
+    cdm->addCollisionModel(o->getLinkSet());
 
     float planningTime = 0;
     int failed = 0;
@@ -106,7 +107,7 @@ void startRRTVisualization()
     bool ok;
     CSpaceSampledPtr cspace;
     std::string planningJoints("AllJoints");
-    RobotNodeSetPtr planningNodes = robot->getModelNodeSet(planningJoints);
+    JointSetPtr planningNodes = robot->getJointSet(planningJoints);
 #ifdef USE_BIRRT
     BiRrtPtr rrt;
 #else
@@ -168,29 +169,28 @@ void startRRTVisualization()
 
 
 
-    robot->setJointValues(planningNodes, start);
+    planningNodes->setJointValues(start);
 
     // display robot
     SoSeparator* sep = new SoSeparator();
-    SceneObject::VisualizationType colModel = SceneObject::Full;
+    ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
 
-    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
+    CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robot, colModel);
     SoNode* visualisationNode = NULL;
-
     if (visualization)
     {
         visualisationNode = visualization->getCoinVisualization();
     }
-
     sep->addChild(visualisationNode);
 
     // display obstacle
-    VisualizationNodePtr visuObstacle = o->getVisualization();
-    std::vector<VisualizationNodePtr> visus;
-    visus.push_back(visuObstacle);
-    std::shared_ptr<CoinVisualization> visualizationO(new CoinVisualization(visus));
-    SoNode* obstacleSoNode = visualizationO->getCoinVisualization();
-    sep->addChild(obstacleSoNode);
+    CoinVisualizationPtr visuObstacle = CoinVisualizationFactory::getVisualization(o, colModel);
+    SoNode* visualisationNodeO = NULL;
+    if (visuObstacle)
+    {
+        visualisationNodeO = visuObstacle->getCoinVisualization();
+    }
+    sep->addChild(visualisationNodeO);
 
     // show rrt visu
     std::shared_ptr<CoinRrtWorkspaceVisualization> w(new CoinRrtWorkspaceVisualization(robot, cspace, "EndPoint"));

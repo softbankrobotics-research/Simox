@@ -20,8 +20,8 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_h_
-#define _Saba_h_
+#ifndef _MotionPlanning_h_
+#define _MotionPlanning_h_
 
 
 /*! \defgroup MotionPlanning The Sampling-Based Motion Planning Library
@@ -124,11 +124,11 @@ namespace MotionPlanning
 #define MOTIONPLANNING_ASSERT_MESSAGE(a,b)
 #else
 #define MOTIONPLANNING_ASSERT(a) BOOST_ASSERT(a);
-	//if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << ")" )};
+    //if (!(a)) {cout << "ASSERT failed (" << #a <<")"<<endl; THROW_MotionPlanning_EXCEPTION( "ASSERT failed (" << #a << ")" )};
 #define MOTIONPLANNING_ASSERT_MESSAGE(a,b) BOOST_ASSERT_MSG(a,b);
-	//if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_SABA_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
+    //if (!(a)) {cout << "ASSERT failed (" << #a <<"): "<<b<<endl; THROW_MotionPlanning_EXCEPTION( "ASSERT failed (" << #a << "): " << b )};
 #endif
 
 }
 
-#endif // _Saba_h_
+#endif

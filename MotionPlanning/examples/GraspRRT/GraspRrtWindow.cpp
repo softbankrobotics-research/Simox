@@ -696,15 +696,15 @@ void GraspRrtWindow::buildRRTVisu()
         return;
     }
 
-    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
+    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
         if (tree)
         {
             w->setCustomColor(0.5f, 0.5f, 0.5f);
-            w->colorizeTreeNodes(2, Saba::RrtWorkspaceVisualization::eRed);
-            w->addTree(tree, Saba::RrtWorkspaceVisualization::eCustom);
+            w->colorizeTreeNodes(2, MotionPlanning::RrtWorkspaceVisualization::eRed);
+            w->addTree(tree, MotionPlanning::RrtWorkspaceVisualization::eCustom);
         }
     }
 
@@ -715,10 +715,10 @@ void GraspRrtWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, Saba::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
     }
 
-    w->addConfiguration(startConfig, Saba::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
+    w->addConfiguration(startConfig, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
     SoSeparator* sol = w->getCoinVisualization();
     rrtSep->addChild(sol);
 }
@@ -746,7 +746,7 @@ void GraspRrtWindow::testInit()
             cdm->addCollisionModel(colModelEnv);
         }
 
-        test_cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 500000));
+        test_cspace.reset(new MotionPlanning::CSpaceSampled(robot, cdm, rns, 500000));
     }
 
     float sampl = (float)UI.doubleSpinBoxCSpaceSampling->value();
@@ -755,7 +755,7 @@ void GraspRrtWindow::testInit()
     test_cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
-    test_graspRrt.reset(new Saba::GraspRrt(test_cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
+    test_graspRrt.reset(new MotionPlanning::GraspRrt(test_cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
 
     test_graspRrt->setStart(startConfig);
     eef->getGCP()->showCoordinateSystem(true);
@@ -838,14 +838,14 @@ void GraspRrtWindow::plan()
     }
 
     cdm->addCollisionModel(targetObject);
-    cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 500000));
+    cspace.reset(new MotionPlanning::CSpaceSampled(robot, cdm, rns, 500000));
     float sampl = (float)UI.doubleSpinBoxCSpaceSampling->value();
     float samplDCD = (float)UI.doubleSpinBoxColChecking->value();
     cspace->setSamplingSize(sampl);
     cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
-    Saba::GraspRrtPtr graspRrt(new Saba::GraspRrt(cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
+    MotionPlanning::GraspRrtPtr graspRrt(new MotionPlanning::GraspRrt(cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
 
     graspRrt->setStart(startConfig);
 
@@ -856,10 +856,10 @@ void GraspRrtWindow::plan()
     {
         VR_INFO << " Planning succeeded " << endl;
         solution = graspRrt->getSolution();
-        Saba::ShortcutProcessorPtr postProcessing(new Saba::ShortcutProcessor(solution, cspace, false));
+        MotionPlanning::ShortcutProcessorPtr postProcessing(new MotionPlanning::ShortcutProcessor(solution, cspace, false));
         solutionOptimized = postProcessing->optimize(100);
         tree = graspRrt->getTree();
-        std::vector<Saba::GraspRrt::GraspInfo, Eigen::aligned_allocator<Saba::GraspRrt::GraspInfo> > vStoreGraspInfo;
+        std::vector<MotionPlanning::GraspRrt::GraspInfo, Eigen::aligned_allocator<MotionPlanning::GraspRrt::GraspInfo> > vStoreGraspInfo;
         graspRrt->getGraspInfoResult(vStoreGraspInfo);
         grasps.clear();
 
@@ -895,7 +895,7 @@ void GraspRrtWindow::sliderSolution(int pos)
         return;
     }
 
-    Saba::CSpacePathPtr s = solution;
+    MotionPlanning::CSpacePathPtr s = solution;
 
     if (UI.radioButtonSolutionOpti->isChecked() && solutionOptimized)
     {

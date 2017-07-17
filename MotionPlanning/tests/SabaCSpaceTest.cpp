@@ -1,10 +1,10 @@
 /**
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2010 Nikolaus Vahrenkamp
 */
 
-#define BOOST_TEST_MODULE Saba_SabaCSpaceTest
+#define BOOST_TEST_MODULE MotionPlanning_MotionPlanningCSpaceTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     nodes.push_back(std::string("Joint1"));
     VirtualRobot::RobotNodeSetPtr rns = VirtualRobot::RobotNodeSet::createRobotNodeSet(rob, "nodeSet", nodes);
     VirtualRobot::CDManagerPtr cdm(new VirtualRobot::CDManager());
-    Saba::CSpaceSampledPtr cspace(new Saba::CSpaceSampled(rob, cdm, rns));
+    MotionPlanning::CSpaceSampledPtr cspace(new MotionPlanning::CSpaceSampled(rob, cdm, rns));
     BOOST_REQUIRE(cspace);
 
     Eigen::VectorXf p1(1);

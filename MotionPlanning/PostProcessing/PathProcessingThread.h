@@ -24,10 +24,10 @@
 #define __MotionPlanning_PathProcessingThread_h__
 
 #include "../MotionPlanning.h"
-
 #include "PathProcessor.h"
 #include "../CSpace/CSpacePath.h"
 
+#include <thread>
 
 namespace MotionPlanning
 {

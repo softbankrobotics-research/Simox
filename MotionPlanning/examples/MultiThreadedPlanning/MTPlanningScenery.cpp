@@ -36,7 +36,7 @@
 #include <sstream>
 using namespace std;
 using namespace VirtualRobot;
-using namespace Saba;
+using namespace MotionPlanning;
 
 
 MTPlanningScenery::MTPlanningScenery()

@@ -14,7 +14,7 @@
 #include <GraspPlanning/GraspStudio.h>
 #include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
 
-#include "MotionPlanning/Saba.h"
+#include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
 
 #include <string.h>
@@ -124,7 +124,7 @@ protected:
     //VirtualRobot::RobotPtr robotStart;
     //VirtualRobot::RobotPtr robotGoal;
 
-    Saba::CSpaceSampledPtr cspace;
+    MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;
     Eigen::VectorXf goalConfig;
 
@@ -143,15 +143,15 @@ protected:
     std::string sceneFile;
     VirtualRobot::ScenePtr scene;
 
-    Saba::CSpacePathPtr solution;
-    Saba::CSpacePathPtr solutionOptimized;
-    Saba::CSpaceTreePtr tree;
+    MotionPlanning::CSpacePathPtr solution;
+    MotionPlanning::CSpacePathPtr solutionOptimized;
+    MotionPlanning::CSpaceTreePtr tree;
     GraspStudio::GraspQualityMeasureWrenchSpacePtr graspQuality;
 
     std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 
-    Saba::GraspRrtPtr test_graspRrt;
-    Saba::CSpaceSampledPtr test_cspace;
+    MotionPlanning::GraspRrtPtr test_graspRrt;
+    MotionPlanning::CSpaceSampledPtr test_cspace;
 };
 
 #endif // __GraspRrt_WINDOW_H__

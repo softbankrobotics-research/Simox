@@ -1,10 +1,10 @@
 /**
-* @package    Saba
+* @package    MotionPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2012 Nikolaus Vahrenkamp
 */
 
-#define BOOST_TEST_MODULE Saba_SabaShortcutProcessorTest
+#define BOOST_TEST_MODULE MotionPlanning_MotionPlanningShortcutProcessorTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
     VirtualRobot::RobotNodeSetPtr rns = rob->getModelNodeSet("rns1");
     BOOST_REQUIRE(rns);
     VirtualRobot::CDManagerPtr cdm(new VirtualRobot::CDManager());
-    Saba::CSpaceSampledPtr cspace(new Saba::CSpaceSampled(rob, cdm, rns));
+    MotionPlanning::CSpaceSampledPtr cspace(new MotionPlanning::CSpaceSampled(rob, cdm, rns));
     BOOST_REQUIRE(cspace);
 
     Eigen::VectorXf p1(2);
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
     p3 << 1, 1;
     p4 << 1, 0;
 
-    Saba::CSpacePathPtr path(new Saba::CSpacePath(cspace, "test_path"));
+    MotionPlanning::CSpacePathPtr path(new MotionPlanning::CSpacePath(cspace, "test_path"));
     BOOST_REQUIRE(path);
 
     path->addPoint(p1);
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
     path->addPoint(p3);
     path->addPoint(p4);
 
-    Saba::ShortcutProcessorPtr sc(new Saba::ShortcutProcessor(path, cspace));
+    MotionPlanning::ShortcutProcessorPtr sc(new MotionPlanning::ShortcutProcessor(path, cspace));
     BOOST_REQUIRE(sc);
     int loops = 100;
     int startI, endI;
@@ -100,27 +100,27 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
     BOOST_CHECK_EQUAL(res, true);
 
     float l = path->getLength();
-    Saba::CSpacePathPtr c1 = path->clone();
-    Saba::CSpacePathPtr c2 = path->clone();
-    Saba::CSpacePathPtr c3 = path->clone();
-    Saba::ShortcutProcessorPtr sc1(new Saba::ShortcutProcessor(c1, cspace));
-    Saba::ShortcutProcessorPtr sc2(new Saba::ShortcutProcessor(c2, cspace));
-    Saba::ShortcutProcessorPtr sc3(new Saba::ShortcutProcessor(c3, cspace));
+    MotionPlanning::CSpacePathPtr c1 = path->clone();
+    MotionPlanning::CSpacePathPtr c2 = path->clone();
+    MotionPlanning::CSpacePathPtr c3 = path->clone();
+    MotionPlanning::ShortcutProcessorPtr sc1(new MotionPlanning::ShortcutProcessor(c1, cspace));
+    MotionPlanning::ShortcutProcessorPtr sc2(new MotionPlanning::ShortcutProcessor(c2, cspace));
+    MotionPlanning::ShortcutProcessorPtr sc3(new MotionPlanning::ShortcutProcessor(c3, cspace));
 
     sc1->doShortcut(0, 2);
-    Saba::CSpacePathPtr o1 = sc1->getOptimizedPath();
+    MotionPlanning::CSpacePathPtr o1 = sc1->getOptimizedPath();
     BOOST_REQUIRE(o1);
     float l1 = o1->getLength();
     BOOST_CHECK_LE(l1, l);
 
     sc2->doShortcut(0, 3);
-    Saba::CSpacePathPtr o2 = sc2->getOptimizedPath();
+    MotionPlanning::CSpacePathPtr o2 = sc2->getOptimizedPath();
     BOOST_REQUIRE(o2);
     float l2 = o2->getLength();
     BOOST_CHECK_LE(l2, l);
 
     sc3->doShortcut(1, 3);
-    Saba::CSpacePathPtr o3 = sc3->getOptimizedPath();
+    MotionPlanning::CSpacePathPtr o3 = sc3->getOptimizedPath();
     BOOST_REQUIRE(o3);
     float l3 = o3->getLength();
     BOOST_CHECK_LE(l3, l);
