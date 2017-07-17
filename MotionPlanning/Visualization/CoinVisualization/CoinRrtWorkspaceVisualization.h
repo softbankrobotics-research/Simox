@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 /*!
- * \ingroup Saba
+ * \ingroup MotionPlanning
  *
  *
  * \author  Nikolaus Vahrenkamp
@@ -17,8 +17,8 @@
 //----------------------------------------------------------------------
 
 
-#ifndef _Saba_CoinRrtWorkspaceVisualization_h_
-#define _Saba_CoinRrtWorkspaceVisualization_h_
+#ifndef _MotionPlanning_CoinRrtWorkspaceVisualization_h_
+#define _MotionPlanning_CoinRrtWorkspaceVisualization_h_
 
 
 #include "../../MotionPlanning.h"
@@ -31,10 +31,10 @@ class SoSeparator;
 class SoCallbackAction;
 class SoPrimitiveVertex;
 
-namespace Saba
+namespace MotionPlanning
 {
 
-    class SABA_IMPORT_EXPORT CoinRrtWorkspaceVisualization : virtual public RrtWorkspaceVisualization
+    class MOTIONPLANNING_IMPORT_EXPORT CoinRrtWorkspaceVisualization : virtual public RrtWorkspaceVisualization
     {
     public:
         /*!
@@ -43,7 +43,7 @@ namespace Saba
             The visualizations are build by determining the TCP's position in workspace according to the configurations of a path or tree .
         */
         CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName);
-        CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName);
+        CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::JointSetPtr robotNodeSet, const std::string& TCPName);
 
         ~CoinRrtWorkspaceVisualization();
 
@@ -88,6 +88,6 @@ namespace Saba
     typedef std::shared_ptr<CoinRrtWorkspaceVisualization> CoinRrtWorkspaceVisualizationPtr;
 
 
-} // namespace Saba
+}
 
-#endif // _Saba_CoinRrtWorkspaceVisualization_h_
+#endif

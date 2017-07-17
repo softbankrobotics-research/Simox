@@ -6,14 +6,15 @@
 
 #define BOOST_TEST_MODULE VirtualRobot_CoordinatesTest
 
-#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Tools/LinkedCoordinate.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <string>
+#include "VirtualRobot/VirtualRobotTest.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Tools/LinkedCoordinate.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
 
+#include <string>
+#include <thread>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>

@@ -20,8 +20,8 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CoinConvexHullVisualization_h_
-#define _Saba_CoinConvexHullVisualization_h_
+#ifndef _MotionPlanning_CoinConvexHullVisualization_h_
+#define _MotionPlanning_CoinConvexHullVisualization_h_
 
 
 #include "../../GraspStudio.h"
@@ -67,6 +67,6 @@ namespace GraspStudio
     typedef std::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
 
 
-} // namespace Saba
+}
 
-#endif // _Saba_CoinConvexHullVisualization_h_
+#endif

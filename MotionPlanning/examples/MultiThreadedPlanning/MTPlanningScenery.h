@@ -18,7 +18,7 @@
 #define SHORTEN_LOOP 600
 
 using namespace VirtualRobot;
-using namespace Saba;
+using namespace MotionPlanning;
 
 class MTPlanningScenery
 {

@@ -12,7 +12,7 @@
 #include <VirtualRobot/Obstacle.h>
 #include <VirtualRobot/ManipulationObject.h>
 
-#include "MotionPlanning/Saba.h"
+#include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
 
 #include <string.h>
@@ -110,7 +110,7 @@ protected:
     VirtualRobot::ReachabilityPtr reachSpace;
 
     VirtualRobot::EndEffectorPtr eef;
-    Saba::CSpaceSampledPtr cspace;
+    MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;
 
     VirtualRobot::GraspSetPtr graspSet;
@@ -123,10 +123,10 @@ protected:
     std::string colModelName;
     std::string colModelNameRob;
 
-    Saba::CSpacePathPtr solution;
-    Saba::CSpacePathPtr solutionOptimized;
-    Saba::CSpaceTreePtr tree;
-    Saba::CSpaceTreePtr tree2;
+    MotionPlanning::CSpacePathPtr solution;
+    MotionPlanning::CSpacePathPtr solutionOptimized;
+    MotionPlanning::CSpaceTreePtr tree;
+    MotionPlanning::CSpaceTreePtr tree2;
 
     bool playbackMode;
     int playCounter;

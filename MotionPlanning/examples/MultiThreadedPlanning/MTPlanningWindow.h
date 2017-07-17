@@ -2,7 +2,7 @@
 #ifndef __MTPlanning_WINDOW_H_
 #define __MTPlanning_WINDOW_H_
 
-#include "MotionPlanning/Saba.h"
+#include "MotionPlanning/MotionPlanning.h"
 
 #include "MTPlanningScenery.h"
 #include <VirtualRobot/Model/Model.h>

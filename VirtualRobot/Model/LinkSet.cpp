@@ -15,7 +15,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
             ModelLinkPtr j = std::static_pointer_cast<ModelLink>(modelNodes[i]);
-            THROW_VR_EXCEPTION_IF(!j, "Only links allowed in joint sets.");
+            THROW_VR_EXCEPTION_IF(!j, "Only links allowed in link sets.");
             links.push_back(j);
         }
     }

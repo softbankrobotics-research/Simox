@@ -26,8 +26,10 @@
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
-#include <VirtualRobot/Model/Model.h>
+#include "VirtualRobot/Model/Model.h"
 #include "MotionPlanner.h"
+
+#include <thread>
 
 
 namespace MotionPlanning

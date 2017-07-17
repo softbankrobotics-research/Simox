@@ -529,7 +529,7 @@ void IKRRTWindow::buildRRTVisu()
         return;
     }
 
-    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
+    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
 
     if (tree)
     {
@@ -544,10 +544,10 @@ void IKRRTWindow::buildRRTVisu()
     //w->addCSpacePath(solution);
     if (solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, Saba::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
     }
 
-    //w->addConfiguration(startConfig,Saba::CoinRrtWorkspaceVisualization::eGreen,3.0f);
+    //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
     SoSeparator* sol = w->getCoinVisualization();
     rrtSep->addChild(sol);
 }
@@ -689,10 +689,10 @@ void IKRRTWindow::planIKRRT()
     ikSolver->setMaximumError(10.0f, 0.08f);
     ikSolver->setupJacobian(0.9f, 20);
 
-    cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns));
+    cspace.reset(new MotionPlanning::CSpaceSampled(robot, cdm, rns));
 
     GraspSetPtr graspSet = object->getGraspSet(robot->getType(), eefName);
-    Saba::GraspIkRrtPtr ikRrt(new Saba::GraspIkRrt(cspace, object, ikSolver, graspSet));
+    MotionPlanning::GraspIkRrtPtr ikRrt(new MotionPlanning::GraspIkRrt(cspace, object, ikSolver, graspSet));
 
 
     ikRrt->setStart(startConfig);
@@ -702,7 +702,7 @@ void IKRRTWindow::planIKRRT()
     {
         VR_INFO << " Planning succeeded " << endl;
         solution = ikRrt->getSolution();
-        Saba::ShortcutProcessorPtr postProcessing(new Saba::ShortcutProcessor(solution, cspace, false));
+        MotionPlanning::ShortcutProcessorPtr postProcessing(new MotionPlanning::ShortcutProcessor(solution, cspace, false));
         solutionOptimized = postProcessing->optimize(100);
         tree = ikRrt->getTree();
         tree2 = ikRrt->getTree2();
@@ -791,7 +791,7 @@ void IKRRTWindow::sliderSolution(int pos)
         return;
     }
 
-    Saba::CSpacePathPtr s = solution;
+    MotionPlanning::CSpacePathPtr s = solution;
 
     if (solutionOptimized)
     {

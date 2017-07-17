@@ -6,12 +6,12 @@
 
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotCollisionTest
 
-#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/CollisionDetection/CollisionModel.h>
-#include <VirtualRobot/Obstacle.h>
+#include "VirtualRobot/VirtualRobotTest.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
+#include "VirtualRobot/CollisionDetection/CollisionModel.h"
+#include "VirtualRobot/Model/Obstacle.h"
 #include <string>
 
 #include <Eigen/Core>
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(testCollisionModel)
     BOOST_REQUIRE(obstacle1);
     BOOST_REQUIRE(obstacle2);
 
-    bool col1 = colChecker->checkCollision(obstacle1->getCollisionModel(), obstacle2->getCollisionModel());
+    bool col1 = colChecker->checkCollision(obstacle1, obstacle2);
     BOOST_CHECK_EQUAL(col1, false);
 
     m2(0, 3) = 50.0f;
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(testCollisionModel)
     obstacle1->setGlobalPose(m1);
     obstacle2->setGlobalPose(m2);
 
-    bool col2 = colChecker->checkCollision(obstacle1->getCollisionModel(), obstacle2->getCollisionModel());
+    bool col2 = colChecker->checkCollision(obstacle1, obstacle2);
     BOOST_CHECK_EQUAL(col2, true);
 
 }

@@ -183,11 +183,11 @@ void RrtGuiWindow::buildVisu()
 {
     sceneFileSep->removeAllChildren();
 
-    SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
     if (scene)
     {
-        visualization = scene->getVisualization<CoinVisualization>(colModel);
+        visualization = CoinVisualizationFactory::getVisualization(scene,colModel);
         SoNode* visualisationNode = NULL;
 
         if (visualization)
@@ -306,7 +306,7 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxGoal->setCurrentIndex(1);
     selectGoal(1);
 
-    std::vector<SceneObjectSetPtr> soss = scene->getSceneObjectSets();
+    std::vector<ModelNodeSetPtr> soss = scene->getModelNodeSets();
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
@@ -439,7 +439,7 @@ void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
         return;
     }
 
-    std::vector< SceneObjectSetPtr > rnss = scene->getSceneObjectSets();
+    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -513,8 +513,14 @@ void RrtGuiWindow::selectRNS(int nr)
         return;
     }
 
-    this->rns = rnss[nr];
+    ModelNodeSetPtr mns = rnss[nr];
+    JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(mns);
+    if (ls)
+        this->rns = ls;
+    else
+        VR_WARNING << mns->getName() << " is not a jointset" << endl;
 }
+
 void RrtGuiWindow::selectColModelRobA(int nr)
 {
     colModelRobA.reset();
@@ -531,8 +537,14 @@ void RrtGuiWindow::selectColModelRobA(int nr)
         return;
     }
 
-    this->colModelRobA = robot->getModelNodeSet(rnss[nr]->getName());
+    ModelNodeSetPtr mns = robot->getModelNodeSet(rnss[nr]->getName());
+    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
+    if (ls)
+        this->colModelRobA = ls;
+    else
+        VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
+
 void RrtGuiWindow::selectColModelRobB(int nr)
 {
     colModelRobB.reset();
@@ -549,8 +561,14 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         return;
     }
 
-    this->colModelRobB = robot->getModelNodeSet(rnss[nr]->getName());
+    ModelNodeSetPtr mns = robot->getModelNodeSet(rnss[nr]->getName());
+    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
+    if (ls)
+        this->colModelRobB = ls;
+    else
+        VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
+
 void RrtGuiWindow::selectColModelEnv(int nr)
 {
     colModelEnv.reset();
@@ -560,14 +578,19 @@ void RrtGuiWindow::selectColModelEnv(int nr)
         return;
     }
 
-    std::vector< SceneObjectSetPtr > rnss = scene->getSceneObjectSets();
+    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelEnv = scene->getSceneObjectSet(rnss[nr]->getName());
+    ModelNodeSetPtr mns = scene->getModelNodeSet(rnss[nr]->getName());
+    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
+    if (ls)
+        this->colModelEnv = ls;
+    else
+        VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
 void RrtGuiWindow::buildRRTVisu()
 {
@@ -578,7 +601,7 @@ void RrtGuiWindow::buildRRTVisu()
         return;
     }
 
-    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -600,11 +623,11 @@ void RrtGuiWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, Saba::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
     }
 
-    //w->addConfiguration(startConfig,Saba::CoinRrtWorkspaceVisualization::eGreen,3.0f);
-    //w->addConfiguration(goalConfig,Saba::CoinRrtWorkspaceVisualization::eRed,3.0f);
+    //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
+    //w->addConfiguration(goalConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eRed,3.0f);
     SoSeparator* sol = w->getCoinVisualization();
     rrtSep->addChild(sol);
 }
@@ -634,30 +657,30 @@ void RrtGuiWindow::plan()
         cdm->addCollisionModel(colModelEnv);
     }
 
-    cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 1000000));
+    cspace.reset(new MotionPlanning::CSpaceSampled(robot, cdm, rns, 1000000));
     float sampl = (float)UI.doubleSpinBoxCSpaceSampling->value();
     float samplDCD = (float)UI.doubleSpinBoxColChecking->value();
     cspace->setSamplingSize(sampl);
     cspace->setSamplingSizeDCD(samplDCD);
-    Saba::Rrt::RrtMethod mode;
-    Saba::Rrt::RrtMethod mode2;
+    MotionPlanning::Rrt::RrtMethod mode;
+    MotionPlanning::Rrt::RrtMethod mode2;
     //bool planOk = false;
-    Saba::RrtPtr mp;
-    Saba::BiRrtPtr mpBi;
+    MotionPlanning::RrtPtr mp;
+    MotionPlanning::BiRrtPtr mpBi;
     bool biRRT = false;
 
     if (UI.comboBoxRRT->currentIndex() == 0 || UI.comboBoxRRT->currentIndex() == 1)
     {
         if (UI.comboBoxRRT->currentIndex() == 0)
         {
-            mode = Saba::Rrt::eExtend;
+            mode = MotionPlanning::Rrt::eExtend;
         }
         else
         {
-            mode = Saba::Rrt::eConnect;
+            mode = MotionPlanning::Rrt::eConnect;
         }
 
-        Saba::RrtPtr rrt(new Saba::Rrt(cspace, mode));
+        MotionPlanning::RrtPtr rrt(new MotionPlanning::Rrt(cspace, mode));
         mp = rrt;
     }
     else
@@ -666,26 +689,26 @@ void RrtGuiWindow::plan()
 
         if (UI.comboBoxRRT->currentIndex() == 2)
         {
-            mode = Saba::Rrt::eExtend;
-            mode2 = Saba::Rrt::eExtend;
+            mode = MotionPlanning::Rrt::eExtend;
+            mode2 = MotionPlanning::Rrt::eExtend;
         }
         else if (UI.comboBoxRRT->currentIndex() == 3)
         {
-            mode = Saba::Rrt::eExtend;
-            mode2 = Saba::Rrt::eConnect;
+            mode = MotionPlanning::Rrt::eExtend;
+            mode2 = MotionPlanning::Rrt::eConnect;
         }
         else if (UI.comboBoxRRT->currentIndex() == 4)
         {
-            mode = Saba::Rrt::eConnect;
-            mode2 = Saba::Rrt::eExtend;
+            mode = MotionPlanning::Rrt::eConnect;
+            mode2 = MotionPlanning::Rrt::eExtend;
         }
         else
         {
-            mode = Saba::Rrt::eConnect;
-            mode2 = Saba::Rrt::eConnect;
+            mode = MotionPlanning::Rrt::eConnect;
+            mode2 = MotionPlanning::Rrt::eConnect;
         }
 
-        Saba::BiRrtPtr rrt(new Saba::BiRrt(cspace, mode, mode2));
+        MotionPlanning::BiRrtPtr rrt(new MotionPlanning::BiRrt(cspace, mode, mode2));
         mp = rrt;
         mpBi = rrt;
     }
@@ -699,7 +722,7 @@ void RrtGuiWindow::plan()
     {
         VR_INFO << " Planning succeeded " << endl;
         solution = mp->getSolution();
-        Saba::ShortcutProcessorPtr postProcessing(new Saba::ShortcutProcessor(solution, cspace, false));
+        MotionPlanning::ShortcutProcessorPtr postProcessing(new MotionPlanning::ShortcutProcessor(solution, cspace, false));
         solutionOptimized = postProcessing->optimize(100);
         tree = mp->getTree();
 
@@ -738,7 +761,7 @@ void RrtGuiWindow::sliderSolution(int pos)
         return;
     }
 
-    Saba::CSpacePathPtr s = solution;
+    MotionPlanning::CSpacePathPtr s = solution;
 
     if (UI.radioButtonSolutionOpti->isChecked() && solutionOptimized)
     {
@@ -748,7 +771,7 @@ void RrtGuiWindow::sliderSolution(int pos)
     float p = (float)pos / 1000.0f;
     Eigen::VectorXf iPos;
     s->interpolate(p, iPos);
-    robot->setJointValues(rns, iPos);
+    rns->setJointValues(iPos);
     redraw();
 }
 

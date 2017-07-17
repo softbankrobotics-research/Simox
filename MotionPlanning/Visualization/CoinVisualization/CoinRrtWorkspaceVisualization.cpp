@@ -24,7 +24,7 @@
 #include <Inventor/nodes/SoUnits.h>
 
 
-namespace Saba
+namespace MotionPlanning
 {
 
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName) :
@@ -34,7 +34,7 @@ namespace Saba
         coinInit();
     }
 
-    CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName) :
+    CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::JointSetPtr robotNodeSet, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, robotNodeSet, TCPName)
     {
         visualization = NULL;
@@ -133,7 +133,7 @@ namespace Saba
             }
 
             // get tcp coords:
-            robot->setJointValues(robotNodeSet, actConfig);
+            robotNodeSet->setJointValues(actConfig);
             Eigen::Matrix4f m;
             m = TCPNode->getGlobalPose();
             x = m(0, 3);
@@ -255,7 +255,7 @@ namespace Saba
         std::vector<CSpaceNodePtr> nodes = tree->getNodes();
 
         // pre-compute tcp positions
-        bool updateVisMode = robot->getUpdateVisualizationStatus();
+        bool updateVisMode = robot->getUpdateVisualization();
         robot->setUpdateVisualization(false);
 
         std::map<CSpaceNodePtr, Eigen::Vector3f> tcpCoords;
@@ -267,7 +267,7 @@ namespace Saba
             actualNode = nodes[i];
 
             // get tcp coords:
-            robot->setJointValues(robotNodeSet, actualNode->configuration);
+            robotNodeSet->setJointValues(actualNode->configuration);
             Eigen::Matrix4f m;
             m = TCPNode->getGlobalPose();
             p(0) = m(0, 3);
@@ -395,7 +395,7 @@ namespace Saba
         SoTranslation* t = new SoTranslation();
 
         // get tcp coords:
-        robot->setJointValues(robotNodeSet, c);
+        robotNodeSet->setJointValues(c);
         Eigen::Matrix4f m;
         m = TCPNode->getGlobalPose();
         x = m(0, 3);
@@ -414,4 +414,4 @@ namespace Saba
     }
 
 
-} // namespace Saba
+}

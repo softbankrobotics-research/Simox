@@ -27,6 +27,11 @@
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/ConstrainedHierarchicalIK.h"
 #include "VirtualRobot/IK/ConstrainedStackedIK.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/Model/Nodes/ModelJoint.h"
+#include "VirtualRobot/Model/Nodes/ModelLink.h"
+#include "VirtualRobot/Model/LinkSet.h"
+
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -144,10 +149,13 @@ void ConstrainedIKWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<RobotNodePtr> rn;
-    robot->getRobotNodes(rn);
-    std::vector<float> jv(rn.size(), 0.0f);
-    robot->setJointValues(rn, jv);
+    std::vector<ModelNodePtr> rn = robot->getModelNodes();
+    std::map< std::string, float> v;
+    for (auto r : rn )
+    {
+        v[r->getName()] = 0.0f;
+    }
+    robot->setJointValues(v);
 
     exViewer->render();
 }
@@ -163,7 +171,7 @@ void ConstrainedIKWindow::collisionModel()
 
     robotSep->removeAllChildren();
 
-    boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(SceneObject::Full);
+    CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robot, ModelLink::VisualizationType::Full);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -211,13 +219,13 @@ void ConstrainedIKWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns;
-    robot->getRobotNodeSets(rns);
+    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
     {
-        if (rns[i]->isKinematicChain())
+        JointSetPtr js = std::dynamic_pointer_cast<JointSet>(rns.at(i));
+        if (js /*&& js->isKinematicChain()*/)
         {
             UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
             kinChains.push_back(rns[i]);
@@ -269,7 +277,7 @@ void ConstrainedIKWindow::selectKC(int nr)
 
     if (tcp)
     {
-        tcp->showCoordinateSystem(false);
+        //tcp->showCoordinateSystem(false);
     }
 
     kc = kinChains[nr];
@@ -281,7 +289,7 @@ void ConstrainedIKWindow::selectKC(int nr)
     {
         QString n(tcp->getName().c_str());
         nameQ += n;
-        tcp->showCoordinateSystem(true);
+        //tcp->showCoordinateSystem(true);
     }
 
     unsigned int d = kc->getSize();
@@ -312,23 +320,24 @@ void ConstrainedIKWindow::solve()
 
 
     ConstrainedIKPtr ik;
+    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
 
     switch(UI.ikSolver->currentIndex())
     {
         case 0:
             VR_INFO << "Using Constrainbed Hierarchical IK" << std::endl;
-            ik.reset(new ConstrainedHierarchicalIK(robot, kc));
+            ik.reset(new ConstrainedHierarchicalIK(robot, js));
             break;
 
         case 1:
             VR_INFO << "Using Constrained Stacked IK" << std::endl;
-            ik.reset(new ConstrainedStackedIK(robot, kc));
+            ik.reset(new ConstrainedStackedIK(robot, js));
             break;
 
 #ifdef USE_NLOPT
         case 2:
             VR_INFO << "Using Constrained Optimization IK" << std::endl;
-            ik.reset(new ConstrainedOptimizationIK(robot, kc));
+            ik.reset(new ConstrainedOptimizationIK(robot, js));
             break;
 #endif
 
@@ -367,7 +376,7 @@ void ConstrainedIKWindow::solve()
     qd += " ms";
     UI.labelTime->setText(qd);
 
-    std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
+    std::vector<ModelJointPtr> nodes = js->getJoints();
 
     std::cout << "Joint values: " << endl;
     for (auto &node : nodes)
@@ -405,7 +414,9 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     transformation(1,3) = UI.tsrLowY->value() + fabs(UI.tsrLowY->value() - UI.tsrHighY->value()) / 2;
     transformation(2,3) = UI.tsrLowZ->value() + fabs(UI.tsrLowZ->value() - UI.tsrHighZ->value()) / 2;
 
-    tsrConstraint.reset(new TSRConstraint(robot, kc, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
+
+    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
+    tsrConstraint.reset(new TSRConstraint(robot, js, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
 
     tsrSep->removeAllChildren();
     VisualizationFactory::Color color(1, 0, 0, 0.5);
@@ -416,14 +427,16 @@ void ConstrainedIKWindow::randomTSR(bool quiet)
 {
     // Store joint angles
     RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
-    kc->getJointValues(originalConfig);
+
+    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
+    js->getJointValues(originalConfig);
 
     // Apply random joint angles
     for(unsigned int i = 0; i < kc->getSize(); i++)
     {
-        RobotNodePtr node = kc->getNode(i);
+        ModelJointPtr node = js->getNode(i);
 
-        float v = node->getJointLimitLo() + (node->getJointLimitHi() - node->getJointLimitLo()) * (rand()%1000 / 1000.0);
+        float v = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) * (rand()%1000 / 1000.0);
         node->setJointValue(v);
     }
 
@@ -481,7 +494,7 @@ void ConstrainedIKWindow::randomTSR(bool quiet)
     updateTSR(0);
 
     // Restore original joint angles
-    kc->setJointValues(originalConfig);
+    js->setJointValues(originalConfig);
 }
 
 void ConstrainedIKWindow::enableTSR()
@@ -505,9 +518,10 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     Eigen::Matrix4f pose;
     MathTools::posrpy2eigen4f(pos, rpy, pose);
 
-    positionConstraint.reset(new PositionConstraint(robot, kc, tcp, pose.block<3,1>(0,3)));
+    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
+    positionConstraint.reset(new PositionConstraint(robot, js, tcp, pose.block<3,1>(0,3)));
 
-    orientationConstraint.reset(new OrientationConstraint(robot, kc, tcp, pose.block<3,3>(0,0)));
+    orientationConstraint.reset(new OrientationConstraint(robot, js, tcp, pose.block<3,3>(0,0)));
     orientationConstraint->setOptimizationFunctionFactor(1000);
 
     poseSep->removeAllChildren();
@@ -519,14 +533,16 @@ void ConstrainedIKWindow::randomPose(bool quiet)
 {
     // Store joint angles
     RobotConfigPtr originalConfig(new RobotConfig(robot, "original config"));
-    kc->getJointValues(originalConfig);
+
+    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
+    js->getJointValues(originalConfig);
 
     // Apply random joint angles
     for(unsigned int i = 0; i < kc->getSize(); i++)
     {
-        RobotNodePtr node = kc->getNode(i);
+        ModelJointPtr node = js->getNode(i);
 
-        float v = node->getJointLimitLo() + (node->getJointLimitHi() - node->getJointLimitLo()) * (rand()%1000 / 1000.0);
+        float v = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) * (rand()%1000 / 1000.0);
         node->setJointValue(v);
     }
 
@@ -551,7 +567,7 @@ void ConstrainedIKWindow::randomPose(bool quiet)
     updatePose(0);
 
     // Restore original joint angles
-    kc->setJointValues(originalConfig);
+    js->setJointValues(originalConfig);
 }
 
 void ConstrainedIKWindow::enablePose()
@@ -570,12 +586,16 @@ void ConstrainedIKWindow::enableBalance()
 {
     if(UI.balanceGroup->isChecked())
     {
-        RobotNodePtr contactNode = robot->getRobotNode(UI.lineEditContactNode->text().toStdString());
+        ModelLinkPtr contactNode = robot->getLink(UI.lineEditContactNode->text().toStdString());
+        if (!contactNode)
+            return;
 
-        SceneObjectSetPtr contactNodes(new SceneObjectSet);
-        contactNodes->addSceneObject(contactNode);
+        std::vector< std::string > names;
+        names.push_back(contactNode->getName());
+        LinkSetPtr contactNodes = LinkSet::createLinkSet(robot, "contacts", names);
 
-        balanceConstraint.reset(new BalanceConstraint(robot, kc, kc, contactNodes));
+        // todo: need to distinguish between joints and bodies!!!
+        //balanceConstraint.reset(new BalanceConstraint(robot, kc, kc, contactNodes));
     }
 }
 
@@ -596,24 +616,30 @@ void ConstrainedIKWindow::performanceEvaluation()
         VR_INFO << "Evaluation run " << (i+1) << std::endl;
 
         // Reset joint angles to zero
-        std::vector<RobotNodePtr> rn;
-        robot->getRobotNodes(rn);
-        std::vector<float> jv(rn.size(), 0.0f);
-        robot->setJointValues(rn, jv);
+        std::vector<RobotNodePtr> rn = robot->getModelNodes();
+        std::map< std::string, float > v;
+        for (auto r : rn)
+        {
+            v[r->getName()] = 0.0f;
+        }
+        robot->setJointValues(v);
+
+
+        JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
 
         switch(ikSolver)
         {
             case 0:
-                ik.reset(new ConstrainedHierarchicalIK(robot, kc));
+                ik.reset(new ConstrainedHierarchicalIK(robot, js));
                 break;
 
             case 1:
-                ik.reset(new ConstrainedStackedIK(robot, kc));
+                ik.reset(new ConstrainedStackedIK(robot, js));
                 break;
 
 #ifdef USE_NLOPT
             case 2:
-                ik.reset(new ConstrainedOptimizationIK(robot, kc));
+                ik.reset(new ConstrainedOptimizationIK(robot, js));
                 break;
 #endif
 
@@ -657,7 +683,7 @@ void ConstrainedIKWindow::performanceEvaluation()
 
         for(unsigned int i = 0; i < kc->getSize(); i++)
         {
-            totalJointAngles += fabs(kc->getNode(i)->getJointValue());
+            totalJointAngles += fabs(js->getNode(i)->getJointValue());
         }
     }
 

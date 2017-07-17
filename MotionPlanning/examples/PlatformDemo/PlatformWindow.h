@@ -14,7 +14,7 @@
 #include <GraspPlanning/GraspStudio.h>
 #include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
 
-#include "MotionPlanning/Saba.h"
+#include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
 
 #include <string.h>
@@ -105,7 +105,7 @@ protected:
 
     void updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b);
 
-    void showOptizerForces(Saba::ElasticBandProcessorPtr postProcessing, Saba::CSpacePathPtr s);
+    void showOptizerForces(MotionPlanning::ElasticBandProcessorPtr postProcessing, MotionPlanning::CSpacePathPtr s);
 
     Ui::MainWindowPlatformdemo UI;
     SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
@@ -118,7 +118,7 @@ protected:
 
     VirtualRobot::RobotPtr robot;
 
-    Saba::CSpaceSampledPtr cspace;
+    MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;
     Eigen::VectorXf goalConfig;
 
@@ -137,14 +137,14 @@ protected:
     VirtualRobot::CDManagerPtr cdmPlayback;
 
 
-    Saba::CSpacePathPtr solution;
-    Saba::CSpacePathPtr solutionOptimized;
-    Saba::CSpaceTreePtr tree;
-    Saba::CSpaceTreePtr tree2;
+    MotionPlanning::CSpacePathPtr solution;
+    MotionPlanning::CSpacePathPtr solutionOptimized;
+    MotionPlanning::CSpaceTreePtr tree;
+    MotionPlanning::CSpaceTreePtr tree2;
 
     std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 
-    Saba::BiRrtPtr rrt;
+    MotionPlanning::BiRrtPtr rrt;
 };
 
 #endif // __Platform_WINDOW_H__

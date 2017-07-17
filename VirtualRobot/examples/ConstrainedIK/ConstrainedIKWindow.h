@@ -24,23 +24,23 @@
 #ifndef __Constrained_WINDOW_H_
 #define __Constrained_WINDOW_H_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/IK/GazeIK.h>
-#include <VirtualRobot/IK/ConstrainedIK.h>
+#include "VirtualRobot/VirtualRobot.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/IK/GazeIK.h"
+#include "VirtualRobot/IK/ConstrainedIK.h"
 
-#include <VirtualRobot/IK/constraints/PoseConstraint.h>
-#include <VirtualRobot/IK/constraints/TSRConstraint.h>
-#include <VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h>
-#include <VirtualRobot/IK/constraints/BalanceConstraint.h>
-#include <VirtualRobot/IK/constraints/PositionConstraint.h>
-#include <VirtualRobot/IK/constraints/OrientationConstraint.h>
+#include "VirtualRobot/IK/constraints/PoseConstraint.h"
+#include "VirtualRobot/IK/constraints/TSRConstraint.h"
+#include "VirtualRobot/IK/constraints/JointLimitAvoidanceConstraint.h"
+#include "VirtualRobot/IK/constraints/BalanceConstraint.h"
+#include "VirtualRobot/IK/constraints/PositionConstraint.h"
+#include "VirtualRobot/IK/constraints/OrientationConstraint.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -113,7 +113,7 @@ protected:
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
-    VirtualRobot::RobotNodePtr tcp;
+    VirtualRobot::CoordinatePtr tcp;
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 

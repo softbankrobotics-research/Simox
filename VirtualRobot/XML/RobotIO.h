@@ -23,6 +23,7 @@
 #ifndef _VirtualRobot_RobotIO_h_
 #define _VirtualRobot_RobotIO_h_
 
+#include "../VirtualRobot.h"
 #include "../Model/Model.h"
 #include "../Tools/Units.h"
 #include "../Tools/MathTools.h"

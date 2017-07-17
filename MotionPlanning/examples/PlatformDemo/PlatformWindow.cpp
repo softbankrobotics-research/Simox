@@ -346,21 +346,21 @@ void PlatformWindow::buildRRTVisu()
         return;
     }
 
-    std::shared_ptr<Saba::CoinRrtWorkspaceVisualization> w(new Saba::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
         if (tree)
         {
             w->setCustomColor(0.5f, 0.5f, 0.5f);
-            w->colorizeTreeNodes(2, Saba::RrtWorkspaceVisualization::eRed);
-            w->addTree(tree, Saba::RrtWorkspaceVisualization::eCustom);
+            w->colorizeTreeNodes(2, MotionPlanning::RrtWorkspaceVisualization::eRed);
+            w->addTree(tree, MotionPlanning::RrtWorkspaceVisualization::eCustom);
         }
         if (tree2)
         {
             w->setCustomColor(0.5f, 0.5f, 0.5f);
-            w->colorizeTreeNodes(2, Saba::RrtWorkspaceVisualization::eRed);
-            w->addTree(tree2, Saba::RrtWorkspaceVisualization::eCustom);
+            w->colorizeTreeNodes(2, MotionPlanning::RrtWorkspaceVisualization::eRed);
+            w->addTree(tree2, MotionPlanning::RrtWorkspaceVisualization::eCustom);
         }
     }
 
@@ -371,10 +371,10 @@ void PlatformWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, Saba::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
     }
 
-    w->addConfiguration(startConfig, Saba::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
+    w->addConfiguration(startConfig, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
     SoSeparator* sol = w->getCoinVisualization();
     rrtSep->addChild(sol);
 }
@@ -395,7 +395,7 @@ void PlatformWindow::optimizeSolutionPressed()
 }
 
 
-void PlatformWindow::showOptizerForces(Saba::ElasticBandProcessorPtr postProcessing, Saba::CSpacePathPtr s)
+void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr postProcessing, MotionPlanning::CSpacePathPtr s)
 {
 	if (!postProcessing)
 		return;
@@ -461,7 +461,7 @@ void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int n
     {
         case eShortcuts:
         {
-            Saba::ShortcutProcessorPtr postProcessing(new Saba::ShortcutProcessor(solutionOptimized, cspace, false));
+            MotionPlanning::ShortcutProcessorPtr postProcessing(new MotionPlanning::ShortcutProcessor(solutionOptimized, cspace, false));
             solutionOptimized = postProcessing->optimize(nrSteps);
             break;
         }
@@ -469,7 +469,7 @@ void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int n
         {
             RobotNodePtr n = colModelRob->getNode(0);
             VR_INFO << "using elsatic band processor with node " << n->getName() << endl;
-            Saba::ElasticBandProcessorPtr postProcessing(new Saba::ElasticBandProcessor(solutionOptimized, cspace, n, colModelEnv, false));
+            MotionPlanning::ElasticBandProcessorPtr postProcessing(new MotionPlanning::ElasticBandProcessor(solutionOptimized, cspace, n, colModelEnv, false));
             // specific to armar3:
             Eigen::VectorXf w(3);
             w << 1,1,0;
@@ -508,7 +508,7 @@ void PlatformWindow::plan()
         cdmPlayback->addCollisionModel(colModelEnv);
     }
 
-    cspace.reset(new Saba::CSpaceSampled(robot, cdm, rns, 500000));
+    cspace.reset(new MotionPlanning::CSpaceSampled(robot, cdm, rns, 500000));
     float sampl = (float)UI.doubleSpinBoxCSpaceSampling->value();
     float samplDCD = (float)UI.doubleSpinBoxColChecking->value();
     cspace->setSamplingSize(sampl);
@@ -517,7 +517,7 @@ void PlatformWindow::plan()
     w << 1,1,0.001f;
     cspace->setMetricWeights(w);
 
-    Saba::BiRrtPtr rrt(new Saba::BiRrt(cspace));
+    MotionPlanning::BiRrtPtr rrt(new MotionPlanning::BiRrt(cspace));
 
     rrt->setStart(startConfig);
     rrt->setGoal(goalConfig);
@@ -566,7 +566,7 @@ void PlatformWindow::sliderSolution(int pos)
         return;
     }
 
-    Saba::CSpacePathPtr s = solution;
+    MotionPlanning::CSpacePathPtr s = solution;
 
     if (UI.radioButtonSolutionOpti->isChecked() && solutionOptimized)
     {
