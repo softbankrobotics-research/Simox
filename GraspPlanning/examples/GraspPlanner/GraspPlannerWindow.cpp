@@ -496,7 +496,7 @@ void GraspPlannerWindow::save()
     VisualizationNodePtr v = object->getLinks().at(0)->getVisualization()->clone();
     CollisionModelPtr c = object->getLinks().at(0)->getCollisionModel()->clone();
     ModelLink::Physics p = object->getLinks().at(0)->getPhysics();
-    ManipulationObjectPtr objectM(new ManipulationObject(object->getName(), v, c, p));
+    ManipulationObjectPtr objectM = ManipulationObject::create(object->getName(), v, c, p);
     objectM->addGraspSet(grasps);
     QString fi = QFileDialog::getSaveFileName(this, tr("Save ManipulationObject"), QString(), tr("XML Files (*.xml)"));
     objectFile = std::string(fi.toLatin1());

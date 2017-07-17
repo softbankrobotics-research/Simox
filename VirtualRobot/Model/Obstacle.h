@@ -43,9 +43,9 @@ namespace VirtualRobot
     {
     public:
 
-        /*!
+        /*! 
         */
-        Obstacle(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        Obstacle(const std::string& name, const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
         */
@@ -62,7 +62,7 @@ namespace VirtualRobot
             return ObstaclePtr();// _clone(name, colChecker));
         }
 
-        int getID() const;
+        static ObstaclePtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
             Create a standard obstacle.
@@ -107,9 +107,9 @@ namespace VirtualRobot
         //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
 
         // a counter for internal ids
-        static int idCounter;
+        //static int idCounter;
         // my id
-        int id;
+        //int id;
     };
 
 } // namespace

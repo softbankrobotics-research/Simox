@@ -38,7 +38,7 @@ namespace VirtualRobot
     {
     public:
 
-        ManipulationObject(const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(), CollisionModelPtr collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        ManipulationObject(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
         /*!
         */
@@ -102,13 +102,15 @@ namespace VirtualRobot
             return ManipulationObjectPtr();
         }
 
+        static ManipulationObjectPtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+
         /*!
         Create a standard obstacle from a mesh.
         \param mesh The mesh.
         \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
         \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ManipulationObjectPtr createFromMesh(TriMeshModelPtr mesh, std::string visualizationType = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        static ManipulationObjectPtr createFromMesh(TriMeshModelPtr mesh, const std::string &name = std::string(), const std::string &visualizationType = std::string(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
 
     protected:
 
