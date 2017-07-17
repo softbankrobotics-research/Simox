@@ -9,7 +9,7 @@
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/Model/ModelNodeSet.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
+#include "VirtualRobot/Tools/RuntimeEnvironment.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"

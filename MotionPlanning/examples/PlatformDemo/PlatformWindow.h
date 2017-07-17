@@ -1,18 +1,18 @@
 #ifndef __Platform_WINDOW_H__
 #define __Platform_WINDOW_H__
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/SceneIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/ManipulationObject.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/SceneIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 
-#include <GraspPlanning/GraspPlanning.h>
-#include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
+#include "GraspPlanning/GraspPlanning.h"
+#include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 
 #include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
@@ -142,7 +142,7 @@ protected:
     MotionPlanning::CSpaceTreePtr tree;
     MotionPlanning::CSpaceTreePtr tree2;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    VirtualRobot::CoinVisualizationPtr visualization;
 
     MotionPlanning::BiRrtPtr rrt;
 };

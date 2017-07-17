@@ -2,11 +2,11 @@
 #include "GraspRrtWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
-#include "VirtualRobot/Obstacle.h"
+#include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/RobotIO.h"
@@ -23,7 +23,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
+#include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/sensors/SoTimerSensor.h>
@@ -665,7 +665,7 @@ void GraspRrtWindow::selectColModelRobB(int nr)
         return;
     }
 
-    this->colModelRobB = robot->getModelNodeSet(rnss[nr]->getName());
+    this->colModelRobB = robot->getLinkSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::selectColModelEnv(int nr)
@@ -849,9 +849,10 @@ void GraspRrtWindow::plan()
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
     // todo
+    std::cout << "TODO" << endl;
     std::vector<ModelPtr> models;
-    ModelPtr m(new Model("env"));
-    m->addLink(colModelEnv);
+    //ModelPtr m(new Model("env"));
+    //m->registerModelNode(colModelEnv);
     MotionPlanning::GraspRrtPtr graspRrt(new MotionPlanning::GraspRrt(cspace, eef, targetObject, graspQuality, models , 0.1f, minGraspScore));
 
     graspRrt->setStart(startConfig);

@@ -2,7 +2,7 @@
 #include "IKRRTWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/Grasping/GraspSet.h"

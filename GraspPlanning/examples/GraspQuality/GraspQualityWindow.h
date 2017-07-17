@@ -2,16 +2,14 @@
 #ifndef __GraspQuality_WINDOW_H_
 #define __GraspQuality_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/SceneIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/ManipulationObject.h>
-#include <VirtualRobot/Obstacle.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/SceneIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 
 #include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"

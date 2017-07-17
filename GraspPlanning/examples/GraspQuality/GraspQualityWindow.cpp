@@ -3,7 +3,7 @@
 #include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
+#include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
@@ -11,17 +11,11 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
-#include <vector>
-#include <iostream>
-#include <cmath>
-
-
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
+#include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/sensors/SoTimerSensor.h>
@@ -29,7 +23,12 @@
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoScale.h>
 
+#include <time.h>
+#include <vector>
+#include <iostream>
+#include <cmath>
 #include <sstream>
+
 using namespace std;
 using namespace VirtualRobot;
 
