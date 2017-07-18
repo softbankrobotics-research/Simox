@@ -89,6 +89,8 @@ namespace VirtualRobot
         }
 
         // register root (performs an initialization of all model nodes)
+		if (!model->hasModelNode(rootNode->getName()))
+			model->registerModelNode(rootNode);
         model->setRootNode(rootNode);
 
         for (size_t i = 0; i < modelNodes.size(); i++)

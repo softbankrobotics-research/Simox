@@ -5,7 +5,7 @@
 #include "../VirtualRobotException.h"
 #include "../EndEffector/EndEffector.h"
 #include "../EndEffector/EndEffectorActor.h"
-//#include "../Model/Nodes/SensorFactory.h"
+#include "../Model/Nodes/ModelJointFixed.h"
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
 #include "../Visualization/VisualizationFactory.h"
@@ -190,15 +190,25 @@ namespace VirtualRobot
 
         return rn->registerSensor(s);
     }*/
-	/*
-    ModelNodePtr RobotIO::processJointNode(rapidxml::xml_node<char>* jointXMLNode, 
+	
+
+	ModelLinkPtr RobotIO::processLinkNode(const std::string& robotNodeName,
+		RobotPtr robot,
+		VisualizationNodePtr visualizationNode,
+		CollisionModelPtr collisionModel,
+		ModelLink::Physics& physics, 
+		const Eigen::Matrix4f& transformationMatrix
+		)
+	{
+		Eigen::Matrix4f preJointTransform = transformationMatrix;//Eigen::Matrix4f::Identity();
+		ModelLinkPtr robotNode(new ModelLink(robot, robotNodeName, transformationMatrix, visualizationNode, collisionModel, physics));
+		return robotNode;
+	}
+
+    ModelJointPtr RobotIO::processJointNode(rapidxml::xml_node<char>* jointXMLNode, 
 											const std::string& robotNodeName,
 											ModelPtr robot,
-											VisualizationNodePtr visualizationNode,
-											CollisionModelPtr collisionModel,
-											ModelLink::Physics& physics,
-											ModelNode::ModelNodeType rntype,
-											Eigen::Matrix4f& transformationMatrix
+											const Eigen::Matrix4f& transformationMatrix
                                           )
     {
         float jointLimitLow = (float) - M_PI;
@@ -216,18 +226,12 @@ namespace VirtualRobot
         float initialvalue = 0.0f;
         std::string jointType;
 
-        RobotNodePtr robotNode;
+		ModelJointPtr robotNode;
 
         if (!jointXMLNode)
         {
             // no <Joint> tag -> fixed joint
-            RobotNodeFactoryPtr fixedNodeFactory = RobotNodeFactory::fromName(RobotNodeFixedFactory::getName(), NULL);
-
-            if (fixedNodeFactory)
-            {
-                robotNode = fixedNodeFactory->createRobotNode(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, preJointTransform, axis, translationDir, physics, rntype);
-            }
-
+            robotNode.reset(new ModelJointFixed(robot, robotNodeName, preJointTransform));
             return robotNode;
         }
 
@@ -240,7 +244,8 @@ namespace VirtualRobot
         else
         {
             VR_WARNING << "No 'type' attribute for <Joint> tag. Assuming fixed joint for RobotNode " << robotNodeName << "!" << endl;
-            jointType = RobotNodeFixedFactory::getName();
+			robotNode.reset(new ModelJointFixed(robot, robotNodeName, preJointTransform));
+			return robotNode;
         }
 
         attr = jointXMLNode->first_attribute("offset", 0, false);
@@ -265,33 +270,18 @@ namespace VirtualRobot
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
         float maxTorque = -1.0f; // Nm
-        float scaleVisu = false;
-        Eigen::Vector3f scaleVisuFactor = Eigen::Vector3f::Zero();
 
         while (node)
         {
             std::string nodeName = getLowerCase(node->name());
 
-            if (nodeName == "dh")
-            {
-                THROW_VR_EXCEPTION("DH specification in Joint tag is DEPRECATED! Use <RobotNode><Transform><DH>...</DH></Transform><Joint>...</Joint></RobotNode> structure")
-
-                //THROW_VR_EXCEPTION_IF(dhXMLNode, "Multiple DH definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
-                //dhXMLNode = node;
-            }
-            else if (nodeName == "limits")
+            if (nodeName == "limits")
             {
                 THROW_VR_EXCEPTION_IF(limitsNode, "Multiple limits definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 limitsNode = node;
                 processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh);
             }
-            else if (nodeName == "prejointtransform")
-            {
-                THROW_VR_EXCEPTION("PreJointTransform is DEPRECATED! Use <RobotNode><Transform>...</Transform><Joint>...</Joint></RobotNode> structure")
-                //THROW_VR_EXCEPTION_IF(prejointTransformNode, "Multiple preJoint definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
-                //prejointTransformNode = node;
-            }
-            else if (nodeName == "axis")
+            if (nodeName == "axis")
             {
                 THROW_VR_EXCEPTION_IF(tmpXMLNodeAxis, "Multiple axis definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 tmpXMLNodeAxis = node;
@@ -301,13 +291,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(tmpXMLNodeTranslation, "Multiple translation definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 tmpXMLNodeTranslation = node;
             }
-            else if (nodeName == "postjointtransform")
-            {
-                THROW_VR_EXCEPTION("postjointtransform is DEPRECATED and not longer allowed! Use <RobotNode><Transform>...</Transform><Joint>...</Joint></RobotNode> structure")
-                //THROW_VR_EXCEPTION_IF(postjointTransformNode, "Multiple postjointtransform definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
-                //postjointTransformNode = node;
-            }
-            else if (nodeName == "maxvelocity")
+            if (nodeName == "maxvelocity")
             {
                 maxVelocity = getFloatByAttributeName(node, "value");
 
@@ -455,13 +439,6 @@ namespace VirtualRobot
 
                 propagateJVFactor.push_back(f);
             }
-            else if (nodeName == "scalevisualization")
-            {
-                scaleVisu = true;
-                scaleVisuFactor[0] = getFloatByAttributeName(node, "x");
-                scaleVisuFactor[1] = getFloatByAttributeName(node, "y");
-                scaleVisuFactor[2] = getFloatByAttributeName(node, "z");
-            }
             else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in <Joint> tag of RobotNode <" << robotNodeName << ">." << endl);
@@ -470,26 +447,9 @@ namespace VirtualRobot
             node = node->next_sibling();
         }
 
-        /*
-        if (dhXMLNode)
-        {
-            // check for wrongly defined nodes
-            THROW_VR_EXCEPTION_IF((prejointTransformNode || tmpXMLNodeAxis || tmpXMLNodeTranslation || postjointTransformNode), "DH specification can not be used together with Axis, TranslationDirection, PreJointTransform or PostJointTransform definitions in <Joint> tag of node " << robotNodeName << endl);
-            processDHNode(dhXMLNode,dh);
-
-        } else
-        {
-            dh.isSet = false;
-            processTransformNode(prejointTransformNode, robotNodeName, preJointTransform);
-            processTransformNode(postjointTransformNode, robotNodeName, postJointTransform);
-            * /
         if (jointType == "revolute")
         {
-            if (scaleVisu)
-            {
-                VR_WARNING << "Ignoring ScaleVisualization in Revolute joint." << endl;
-                scaleVisu = false;
-            }
+			THROW_VR_EXCEPTION_IF(tmpXMLNodeTranslation, "Translation tags not allowed in revolute joints");
 
             if (tmpXMLNodeAxis)
             {
@@ -504,10 +464,12 @@ namespace VirtualRobot
                 axis << 0, 0, 1.0f;
                 //THROW_VR_EXCEPTION("joint '" << robotNodeName << "' wrongly defined, expecting 'axis' tag." << endl);
             }
+			robotNode.reset(new ModelJointRevolute(robot, robotNodeName, preJointTransform, jointLimitLow, jointLimitHigh, axis, jointOffset));
         }
         else if (jointType == "prismatic")
         {
-            if (tmpXMLNodeTranslation)
+			THROW_VR_EXCEPTION_IF(tmpXMLNodeAxis, "Axis tags not allowed in primsatic joints");
+			if (tmpXMLNodeTranslation)
             {
                 translationDir[0] = getFloatByAttributeName(tmpXMLNodeTranslation, "x");
                 translationDir[1] = getFloatByAttributeName(tmpXMLNodeTranslation, "y");
@@ -517,55 +479,18 @@ namespace VirtualRobot
             {
                 THROW_VR_EXCEPTION("Prismatic joint '" << robotNodeName << "' wrongly defined, expecting 'TranslationDirection' tag." << endl);
             }
-
-            if (scaleVisu)
-            {
-                THROW_VR_EXCEPTION_IF(scaleVisuFactor.norm() == 0.0f, "Zero scale factor");
-
-            }
-        }
-		
-        //}
-
-        RobotNodeFactoryPtr robotNodeFactory = RobotNodeFactory::fromName(jointType, NULL);
-
-        if (robotNodeFactory)
-        {
-            robotNode = robotNodeFactory->createRobotNode(robot, robotNodeName, visualizationNode, collisionModel, jointLimitLow, jointLimitHigh, jointOffset, preJointTransform, axis, translationDir, physics);
-            //}
-        }
-        else
-        {
-            THROW_VR_EXCEPTION("RobotNode of type " << jointType << " nyi..." << endl);
-        }
+			robotNode.reset(new ModelJointPrismatic(robot, robotNodeName, preJointTransform, jointLimitLow, jointLimitHigh, translationDir, jointOffset));
+		}
+		else
+		{
+			THROW_VR_EXCEPTION("Joint type not known:" << jointType << endl);
+		}
 
         robotNode->setMaxVelocity(maxVelocity);
         robotNode->setMaxAcceleration(maxAcceleration);
         robotNode->setMaxTorque(maxTorque);
 
-        robotNode->jointValue = initialvalue;
-
-        if (robotNode->isRotationalJoint() || robotNode->isTranslationalJoint())
-        {
-            if (robotNode->jointValue < robotNode->jointLimitLo)
-            {
-                robotNode->jointValue = robotNode->jointLimitLo;
-            }
-            else if (robotNode->jointValue > robotNode->jointLimitHi)
-            {
-                robotNode->jointValue = robotNode->jointLimitHi;
-            }
-        }
-
-        if (scaleVisu)
-        {
-            std::shared_ptr<RobotNodePrismatic> rnPM = std::dynamic_pointer_cast<RobotNodePrismatic>(robotNode);
-
-            if (rnPM)
-            {
-                rnPM->setVisuScaleFactor(scaleVisuFactor);
-            }
-        }
+        robotNode->setJointValueNoUpdate(initialvalue);
 
         VR_ASSERT(propagateJVName.size() == propagateJVFactor.size());
 
@@ -573,11 +498,8 @@ namespace VirtualRobot
         {
             robotNode->propagateJointValue(propagateJVName[i], propagateJVFactor[i]);
         }
-
         return robotNode;
     }
-
-	*/
 
     RobotNodePtr RobotIO::processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
                                            RobotPtr robo,
@@ -707,10 +629,15 @@ namespace VirtualRobot
             node = node->next_sibling();
         }
 
+		THROW_VR_EXCEPTION_IF(jointNodeXML && (visualizationNode || collisionModel), "Visualization and/or collision models are not allowed to be defined in joint node:" + robotNodeName);
+		THROW_VR_EXCEPTION_IF(jointNodeXML && (physicsDefined), "Physics properties are not allowed to be defined in joint node:" + robotNodeName);
+		//create joint from xml data
 
-        //create joint from xml data
-		// todo
-        //robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, transformMatrix);
+		if (jointNodeXML)
+			robotNode = processJointNode(jointNodeXML, robotNodeName, robo, transformMatrix);
+		else
+			robotNode = processLinkNode(robotNodeName, robo, visualizationNode, collisionModel, physics, transformMatrix);
+
 
         // process sensors
         /*for (size_t i = 0; i < sensorTags.size(); i++)

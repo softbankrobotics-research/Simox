@@ -88,7 +88,7 @@ namespace VirtualRobot
     ModelNodePtr ModelNode::getParentNode(ModelNodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
+        //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         ModelNodePtr parentLink = parent.lock();
 
@@ -113,7 +113,7 @@ namespace VirtualRobot
     std::vector<ModelNodePtr> ModelNode::getChildNodes(ModelNodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
+        //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         if (type == ModelNode::ModelNodeType::Node)
         {
