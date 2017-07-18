@@ -80,8 +80,10 @@ namespace VirtualRobot
                                                            physics(p),
                                                            collisionChecker(colChecker)
     {
-        visualizationModel->setGlobalPose(getGlobalPose());
-        collisionModel->setGlobalPose(getGlobalPose());
+        if (visualizationModel)
+			visualizationModel->setGlobalPose(getGlobalPose());
+        if (collisionModel)
+			collisionModel->setGlobalPose(getGlobalPose());
 		initializePhysics();
     }
 
