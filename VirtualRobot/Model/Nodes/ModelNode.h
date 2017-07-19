@@ -116,7 +116,7 @@ namespace VirtualRobot
          *
          * @return True, if this node is initialized; false otherwise.
          */
-        bool isInitialized() const;
+        //bool isInitialized() const;
 
         /*!
          * Get the child with the given name.

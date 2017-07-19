@@ -12,7 +12,7 @@ namespace VirtualRobot
         const std::string& name,
         const Eigen::Matrix4f& staticTransformation)
         : Coordinate(name),
-          initialized(false),
+         // initialized(false),
           model(model),
           parent(ModelNodeWeakPtr()),
           children(),
@@ -63,12 +63,12 @@ namespace VirtualRobot
         // never updated -> no lock needed
         return name;
     }
-
+	/*
     bool ModelNode::isInitialized() const
     {
         // only updated in "initialize" -> no lock needed
         return initialized;
-    }
+    }*/
 
     ModelNodePtr ModelNode::getChildByName(const std::string& name) const
     {
@@ -209,12 +209,20 @@ namespace VirtualRobot
             return false;
         }
 
+		if (getModel() != newNode->getModel())
+		{
+			VR_ERROR << " Trying to attach model with different parent:" << newNode->getName() << std::endl;
+			return false;
+		}
+		ModelPtr m = getModel();
+		if (!m->hasModelNode(newNode))
+			m->registerModelNode(newNode);
         children.push_back(newNode);
         newNode->parent = shared_from_this();
 
 		updatePose(true);
 
-		initialized = true;
+		//initialized = true;
 
         return true;
     }
@@ -222,7 +230,7 @@ namespace VirtualRobot
     bool ModelNode::hasChild(const ModelNodePtr& node) const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
+        //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
         return std::find(children.begin(), children.end(), node) != children.end();
     }
@@ -247,6 +255,10 @@ namespace VirtualRobot
         if (hasChild(node))
         {
             WriteLockPtr w = getModel()->getWriteLock();
+			ModelPtr m = getModel();
+			if (m->hasModelNode(node))
+				m->deregisterModelNode(node);
+
             children.erase(std::find(children.begin(), children.end(), node));
             node->parent.reset();
             return true;

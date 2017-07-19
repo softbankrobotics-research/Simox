@@ -281,7 +281,7 @@ namespace VirtualRobot
                 limitsNode = node;
                 processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh);
             }
-            if (nodeName == "axis")
+            else if (nodeName == "axis")
             {
                 THROW_VR_EXCEPTION_IF(tmpXMLNodeAxis, "Multiple axis definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 tmpXMLNodeAxis = node;
@@ -291,7 +291,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(tmpXMLNodeTranslation, "Multiple translation definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 tmpXMLNodeTranslation = node;
             }
-            if (nodeName == "maxvelocity")
+            else if (nodeName == "maxvelocity")
             {
                 maxVelocity = getFloatByAttributeName(node, "value");
 

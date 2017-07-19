@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(testMathToolsHopf)
     {
         Eigen::Vector3f ax = Eigen::Vector3f::Random();
         ax.normalize();
-        float ang = rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI;
+        float ang = float(rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI);
         float xa = rand() % 1000 / 1000.0f * 100.0f;
         float ya = rand() % 1000 / 1000.0f * 100.0f;
         float za = rand() % 1000 / 1000.0f * 100.0f;
