@@ -37,7 +37,7 @@ namespace VirtualRobot
     bool ModelFactory::initializeModel(const ModelPtr& model,
                                        std::vector<ModelNodePtr >& modelNodes,
                                        const std::map< ModelNodePtr, std::vector<std::string> >& childrenMap,
-                                       const ModelNodePtr& rootNode
+                                       ModelNodePtr& rootNode
                                       )
     {
         VR_ASSERT(model);
@@ -64,34 +64,52 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(!foundRoot, "Invalid model node (root is not available)");
 
-        // process children
-        auto iterC = childrenMap.begin();
 
-        while (iterC != childrenMap.end())
-        {
-            std::vector< std::string > childNames = iterC->second;
-            ModelNodePtr node = iterC->first;
-
-            for (size_t i = 0; i < childNames.size(); i++)
-            {
-                std::string childName = childNames[i];
-
-                ModelNodePtr c = model->getModelNode(childName);
-                if (!model->hasModelNode(c))
-                {
-					model->registerModelNode(c);
-                    //THROW_VR_EXCEPTION("Model " << model->getName() << ": corrupted ModelNode <" << node->getName() << " child :" << childName << " does not exist...");
-                }
-				node->attachChild(c);
-            }
-
-            iterC++;
-        }
-
-        // register root (performs an initialization of all model nodes)
-		if (!model->hasModelNode(rootNode->getName()))
-			model->registerModelNode(rootNode);
+        // register root
+        if (!model->hasModelNode(rootNode->getName()))
+            model->registerModelNode(rootNode);
         model->setRootNode(rootNode);
+
+        // go through tree and attach nodes according to parent-child mapping
+        std::vector<ModelNodePtr> openNodes;
+        ModelNodePtr& currentNode = rootNode;
+        while (currentNode)
+        {
+            if (childrenMap.find(currentNode) != childrenMap.end())
+            {
+                // children in map, attach them to parent
+                const std::vector<std::string> &currentChildren = childrenMap.at(currentNode);
+                for (auto childName : currentChildren)
+                {
+                    ModelNodePtr c;
+                    for (auto m : modelNodes)
+                        if (m->getName() == childName)
+                        {
+                            c = m;
+                            break;
+                        }
+                    THROW_VR_EXCEPTION_IF(!c, "Corrupt children map, could not find node with name " + childName);
+                    if (!model->hasModelNode(c))
+                    {
+                        model->registerModelNode(c);
+                    }
+                    currentNode->attachChild(c);
+                    openNodes.push_back(c);
+                }
+            }
+            if (openNodes.size() > 0)
+            {
+                currentNode = openNodes.at(openNodes.size() - 1);
+                openNodes.pop_back();
+            }
+            else
+            {
+                currentNode.reset();
+                break;
+            }
+        }
+        THROW_VR_EXCEPTION_IF(openNodes.size() != 0, "Internal error");
+        THROW_VR_EXCEPTION_IF(model->getModelNodes().size() != modelNodes.size(), "Could not attach all model nodes to model");
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {

@@ -120,7 +120,7 @@ namespace VirtualRobot
         auto search = modelNodeMap.find(modelNodeName);
         if (search == modelNodeMap.end())
         {
-            VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
+            //VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
             return RobotNodePtr();
         }
 
