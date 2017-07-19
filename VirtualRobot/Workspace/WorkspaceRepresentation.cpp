@@ -2135,6 +2135,8 @@ namespace VirtualRobot
 
     void WorkspaceRepresentation::addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions)
     {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Workspace data not initialized");
+
         if (numThreads > loops)
         {
             VR_ERROR << "Number of threads can not be bigger then number of tcp poses to add.";
@@ -2162,7 +2164,7 @@ namespace VirtualRobot
                     staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
                 }
 
-                SceneObjectSetPtr dynamicCollisionModel = this->staticCollisionModel;
+                SceneObjectSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
                 if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
                 {
                     dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
