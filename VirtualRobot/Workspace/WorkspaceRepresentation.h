@@ -374,8 +374,8 @@ namespace VirtualRobot
         */
         void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
         /*!
-            Appends a number of random TCP poses to workspace Data. This method uses several threads behind the scenes to
-            speed up the process.
+            Appends a number of random TCP poses to workspace Data (multithreaded).
+            This method is blocking, i.e. it returns as soon as all threads are done.
             \param loops Number of poses that should be appended
             \param numThreads number of worker threads used behind the scenes to append random TCP poses to workspace data.
             \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.

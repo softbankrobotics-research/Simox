@@ -448,7 +448,8 @@ namespace VirtualRobot
             p(2) = 1.0f;
             float q = measure->getPoseQuality(p);
 #else
-            float q = measure->getPoseQuality();
+//            float q = measure->getPoseQuality();
+            float q = getCurrentManipulability();
 #endif
 
             if (q > storeMaxManipulability)
