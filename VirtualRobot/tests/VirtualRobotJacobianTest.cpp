@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     VirtualRobot::RobotNodeSetPtr node_set;
 
     VirtualRobot::DifferentialIK ik(kc);
-    Eigen::VectorXf jV(3);
-    jV << 0.78f, 0.78f, 0;
+    Eigen::VectorXf jV(2);
+    jV << 0.78f, 0.78f;
     kc->setJointValues(jV);
 
     // Calculate the Jacobi matrix at the given position
@@ -87,18 +87,18 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     // Calculate the Differences quotient
     Eigen::Matrix4f a = r3->getGlobalPose();
     Eigen::MatrixXf DiffQuot(3, 2);
-    jV << 0.78f + STEP_SIZE, 0.78f, 0 ;
+    jV << 0.78f + STEP_SIZE, 0.78f ;
     kc->setJointValues(jV);
     DiffQuot.block<3, 1>(0, 0) = (r3->getGlobalPose().block<3, 1>(0, 3) - a.block<3, 1>(0, 3)) / STEP_SIZE;
-    jV << 0.78f, 0.78f + STEP_SIZE, 0;
+    jV << 0.78f, 0.78f + STEP_SIZE;
     kc->setJointValues(jV);
     DiffQuot.block<3, 1>(0, 1) = (r3->getGlobalPose().block<3, 1>(0, 3) - a.block<3, 1>(0, 3)) / STEP_SIZE;
 
     // Compare both and check if they are similar enough.
-
-    //std::cout << "Jacobian:\n " << jacobian.block<3,2>(0,0) << std::endl;
-    //std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
-    //std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
+    // todo...
+    std::cout << "Jacobian:\n " << jacobian.block<3,2>(0,0) << std::endl;
+    std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
+    std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
     BOOST_CHECK(((jacobian.block<3, 2>(0, 0) -  DiffQuot).array().abs() < MAX_ERROR).all());
 
 }
