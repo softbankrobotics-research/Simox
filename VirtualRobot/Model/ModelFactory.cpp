@@ -76,13 +76,13 @@ namespace VirtualRobot
             {
                 std::string childName = childNames[i];
 
-                if (!model->hasModelNode(childName))
-                {
-                    THROW_VR_EXCEPTION("Model " << model->getName() << ": corrupted ModelNode <" << node->getName() << " child :" << childName << " does not exist...");
-                }
-
                 ModelNodePtr c = model->getModelNode(childName);
-                node->attachChild(c);
+                if (!model->hasModelNode(c))
+                {
+					model->registerModelNode(c);
+                    //THROW_VR_EXCEPTION("Model " << model->getName() << ": corrupted ModelNode <" << node->getName() << " child :" << childName << " does not exist...");
+                }
+				node->attachChild(c);
             }
 
             iterC++;

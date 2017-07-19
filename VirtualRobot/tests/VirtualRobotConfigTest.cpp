@@ -7,6 +7,7 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotConfigTest
 
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/Model/ModelConfig.h>
 #include <VirtualRobot/XML/RobotIO.h>
@@ -25,18 +26,39 @@ BOOST_AUTO_TEST_CASE(testRobotConfigSetConfig)
     const std::string robotString =
         "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
+		"        <Joint type='revolute'>                                                                              "
+		"            <axis x='0' y='0' z='1'/>                                                                        "
+		"            <Limits unit='degree' lo='-45' hi='45'/>                                                         "
+		"        </Joint>                                                                                             "
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
 
+	const std::string node1 = "Joint1";
+
+	VirtualRobot::ModelJointPtr j;
+	BOOST_REQUIRE_NO_THROW(j = rob->getJoint(node1));
+	BOOST_REQUIRE(j);
+
+	float jv = -100.0f;
+	BOOST_REQUIRE_NO_THROW(jv = j->getJointValue());
+	BOOST_REQUIRE(jv==0.0f);
+
+	BOOST_REQUIRE_NO_THROW(j->setJointValue(0.1f));
+	BOOST_REQUIRE_NO_THROW(jv = j->getJointValue());
+	BOOST_REQUIRE(fabs(jv-0.1f) < 0.00001f);
+
     VirtualRobot::RobotConfigPtr c;
     BOOST_REQUIRE_NO_THROW(c.reset(new VirtualRobot::RobotConfig(rob, "test")));
     BOOST_REQUIRE(c);
 
-    const std::string node1 = "Joint1";
-    BOOST_REQUIRE_NO_THROW(c->setConfig(node1, 0.0f));
+	BOOST_REQUIRE_NO_THROW(c->setConfig(node1, 0.2f));
+	BOOST_REQUIRE_NO_THROW(rob->setConfig(c));
+
+	BOOST_REQUIRE_NO_THROW(jv = j->getJointValue());
+	BOOST_REQUIRE(fabs(jv - 0.2f) < 0.00001f);
 }
 
 
