@@ -368,6 +368,12 @@ namespace VirtualRobot
          */
         virtual SensorPtr getSensor(const std::string& name);
 
+        template<class SensorType>
+        boost::shared_ptr<SensorType> getSensor(const std::string& name)
+        {
+            return boost::dynamic_pointer_cast<SensorType>(getSensor(name));
+        }
+
         /*!
             Returns all sensors that are defined within this robot.
         */
