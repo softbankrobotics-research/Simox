@@ -240,6 +240,14 @@ namespace VirtualRobot
         return storeRPY;
     }
 
+    Eigen::Matrix<float, 6, 1> VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2posrpy(const Eigen::Matrix4f& m)
+    {
+        Eigen::Matrix<float, 6, 1> result;
+        result.block<3,1>(0,0) = m.block<3,1>(0,3);
+        result.block<3,1>(3,0) = eigen4f2rpy(m);
+        return result;
+    }
+
     void MathTools::rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m)
     {
         float salpha, calpha, sbeta, cbeta, sgamma, cgamma;
