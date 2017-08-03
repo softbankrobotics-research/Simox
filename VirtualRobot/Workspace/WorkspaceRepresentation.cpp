@@ -920,6 +920,11 @@ namespace VirtualRobot
     }
 
 
+    void WorkspaceRepresentation::addPose(const Eigen::Matrix4f& globalPose, PoseQualityMeasurementPtr qualMeasure)
+    {
+         addPose(globalPose);
+    }
+
 
     void WorkspaceRepresentation::addPose(const Eigen::Matrix4f& globalPose)
     {
@@ -944,6 +949,8 @@ namespace VirtualRobot
                 achievedMaxValues[i] = x[i];
             }
         }
+
+
 
         data->increaseDatum(x, this);
 
@@ -1589,7 +1596,7 @@ namespace VirtualRobot
 
     }
 
-    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(const Eigen::Matrix4f& referencePose, float cellSize) const
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(const Eigen::Matrix4f& referencePose, float cellSize, bool sumAngles) const
     {
         WorkspaceCut2DPtr result(new WorkspaceCut2D());
         result->referenceGlobalPose = referencePose;
@@ -1611,6 +1618,9 @@ namespace VirtualRobot
 
 
         Eigen::Matrix4f tmpPose = referencePose;
+        Eigen::Matrix4f localPose;
+        float x[6];
+        unsigned int v[6];
 
         result->entries.resize(numVoxelsX, numVoxelsY);
 
@@ -1622,15 +1632,62 @@ namespace VirtualRobot
             for (int b = 0; b < numVoxelsY; b++)
             {
                 tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
-                result->entries(a, b) = getEntry(tmpPose);
+                if (sumAngles)
+                {
+                    localPose = tmpPose;
+                    toLocal(localPose);
+                    matrix2Vector(localPose,x);
+
+                    if (!getVoxelFromPose(x, v))
+                    {
+                        //result->entries(a, b) = 0;
+                        continue;
+                    }
+                    result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
+                } else
+                {
+                    result->entries(a, b) = getEntry(tmpPose);
+                }
             }
         }
 
         return result;
     }
 
+  /*
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(Eigen::Matrix4f gp, float cellSize) const
+    {
+        result->referenceGlobalPose = refPose;
 
-    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize) const
+        Eigen::Matrix4f tmpPose = refPose;
+        float x[6];
+        unsigned int v[6];
+
+        for (int a = 0; a < numVoxelsX; a++)
+        {
+            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
+
+            for (int b = 0; b < numVoxelsY; b++)
+            {
+                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
+                localPose = tmpPose;
+                toLocal(localPose);
+                matrix2Vector(localPose,x);
+
+                if (!getVoxelFromPose(x, v))
+                {
+                    //result->entries(a, b) = 0;
+                    continue;
+                }
+                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
+            }
+        }
+
+        return result;
+
+    }*/
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize, bool sumAngles) const
     {
         THROW_VR_EXCEPTION_IF(cellSize <= 0.0f, "Invalid parameter");
         THROW_VR_EXCEPTION_IF(heightPercent < 0.0f || heightPercent>1.0f, "Invalid parameter");
@@ -1658,34 +1715,7 @@ namespace VirtualRobot
 
         Eigen::Matrix4f refPose = getToGlobalTransformation();
         refPose(2,3) = poseZGlobal;
-        result->referenceGlobalPose = refPose;
-
-        Eigen::Matrix4f tmpPose = refPose;
-        Eigen::Matrix4f localPose;
-        float x[6];
-        unsigned int v[6];
-
-        for (int a = 0; a < numVoxelsX; a++)
-        {
-            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
-
-            for (int b = 0; b < numVoxelsY; b++)
-            {
-                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
-                localPose = tmpPose;
-                toLocal(localPose);
-                matrix2Vector(localPose,x);
-
-                if (!getVoxelFromPose(x, v))
-                {
-                    //result->entries(a, b) = 0;
-                    continue;
-                }
-                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
-            }
-        }
-
-        return result;
+        return createCut(refPose, cellSize, sumAngles);
     }
 
     bool WorkspaceRepresentation::getWorkspaceExtends(Eigen::Vector3f& storeMinBBox, Eigen::Vector3f& storeMaxBBox) const
@@ -2227,47 +2257,5 @@ namespace VirtualRobot
             threads[i].join();
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 } // namespace VirtualRobot

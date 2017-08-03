@@ -192,7 +192,7 @@ void reachabilityWindow::reachVisu()
             heightPercent = pos;
 
 
-            WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation());
+            WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation(), true);
             VR_INFO << "Slider pos: " << pos  << ", maxEntry:" << reachSpace->getMaxSummedAngleReachablity() << ", cut maxCoeff:" << cutData->entries.maxCoeff() << endl;
             SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), reachSpace->getMaxSummedAngleReachablity());
             visualisationNode->addChild(reachvisu2);
@@ -302,6 +302,9 @@ void reachabilityWindow::selectRNS(int nr)
     QString qTCP("TCP: ");
     qTCP += tcp.c_str();
     UI.labelTCP->setText(qTCP);
+
+    updateQualityInfo();
+
     //updateJointBox();
     //selectJoint(0);
     //displayTriangles();
@@ -332,6 +335,7 @@ void reachabilityWindow::jointValueChanged(int pos)
     robot->setJointValue(allRobotNodes[nr], fPos);
     UI.lcdNumberJointValue->display((double)fPos);
 
+    updateQualityInfo();
 }
 
 
@@ -367,6 +371,7 @@ void reachabilityWindow::selectJoint(int nr)
         UI.horizontalSliderPos->setValue(500);
         UI.horizontalSliderPos->setEnabled(false);
     }
+    updateQualityInfo();
 }
 
 /*
@@ -438,6 +443,8 @@ void reachabilityWindow::loadRobot()
     updateRNSBox();
     updateJointBox();
 
+    updateQualityInfo();
+
     // build visualization
     buildVisu();
     m_pExViewer->viewAll();
@@ -456,6 +463,15 @@ void reachabilityWindow::extendReach()
     }
 
     int steps = UI.spinBoxExtend->value();
+
+#if 0
+    ManipulabilityPtr manipSpace = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+    if (manipSpace && manipSpace->getManipulabilityMeasure())
+    {
+        manipSpace->getManipulabilityMeasure()->setVerbose(true);
+    }
+#endif
+    //reachSpace->addRandomTCPPoses(steps, 1, true);
     reachSpace->addRandomTCPPoses(steps, QThread::idealThreadCount() < 1 ? 1 : QThread::idealThreadCount(), true);
 
     reachSpace->print();
@@ -714,4 +730,29 @@ void reachabilityWindow::loadReach()
 
     reachFile = std::string(fi.toLatin1());
     loadReachFile(reachFile);
+}
+
+
+void reachabilityWindow::updateQualityInfo()
+{
+    if (!currentRobotNodeSet)
+        return;
+
+    std::stringstream ss;
+    std::stringstream ss2;
+    std::stringstream ss3;
+    std::stringstream ss4;
+    PoseQualityManipulabilityPtr manMeasure(new PoseQualityManipulability(currentRobotNodeSet));
+    PoseQualityExtendedManipulabilityPtr extManMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
+    float manip = manMeasure->getPoseQuality();
+    float extManip = extManMeasure->getPoseQuality();
+    ss << "Manipulability: " << manip;
+    std::string manipString = ss.str();
+    UI.labelManip->setText(manipString.c_str());
+
+    ss2 << "Ext. Manipulability: " << extManip;
+    manipString = ss2.str();
+    UI.labelExtManip->setText(manipString.c_str());
+
+
 }

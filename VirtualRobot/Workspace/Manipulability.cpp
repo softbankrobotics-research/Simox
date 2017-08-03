@@ -12,7 +12,7 @@
 #include <float.h>
 #include <limits.h>
 #include <algorithm>
-
+#include <thread>
 
 // if enabled, not the global manipulability is considered, but the manipulability in terms of moving upwards
 //#define MANIPULABILITY_USE_UPRIGHT_DIRECTION
@@ -31,7 +31,7 @@ namespace VirtualRobot
     }
 
 
-    void Manipulability::addPose(const Eigen::Matrix4f& pose)
+    void Manipulability::addPose(const Eigen::Matrix4f& pose, PoseQualityMeasurementPtr qualMeasure)
     {
         Eigen::Matrix4f p = pose;
         toLocal(p);
@@ -60,7 +60,7 @@ namespace VirtualRobot
 
         if (getVoxelFromPose(x, v))
         {
-            float m = getCurrentManipulability();
+            float m = getCurrentManipulability(qualMeasure);
             float mSc = m / maxManip;
 
             if (mSc > 1)
@@ -80,6 +80,10 @@ namespace VirtualRobot
 
             unsigned char e = (unsigned char)(mSc * (float)UCHAR_MAX + 0.5f);
 
+            //cout<<"m = "<<m<<endl;
+            //cout<<"mSc = "<<mSc<<endl;
+            //cout<<"e = "<<int(e)<<endl;
+
             // add at least 1, since the pose is reachable
             if (e == 0)
             {
@@ -95,9 +99,14 @@ namespace VirtualRobot
         buildUpLoops++;
     }
 
-    float Manipulability::getCurrentManipulability()
+    void Manipulability::addPose(const Eigen::Matrix4f& pose)
     {
-        if (!measure)
+        addPose(pose, measure);
+    }
+
+    float Manipulability::getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure)
+    {
+        if (!qualMeasure)
         {
             return 0.0f;
         }
@@ -120,7 +129,7 @@ namespace VirtualRobot
             Eigen::Matrix4f p2_tcp = tcpNode->toLocalCoordinateSystem(obstDistPos2);
             Eigen::Vector3f minDistVector = p1_tcp.block(0, 3, 3, 1) - p2_tcp.block(0, 3, 3, 1);
 
-            measure->setObstacleDistanceVector(minDistVector);
+            qualMeasure->setObstacleDistanceVector(minDistVector);
 
         }
 
@@ -129,9 +138,9 @@ namespace VirtualRobot
         Eigen::VectorXf p(6);
         p.setZero();
         p(2) = 1.0f;
-        return measure->getPoseQuality(p);
+        return qualMeasure->getPoseQuality(p);
 #endif
-        return measure->getPoseQuality();
+        return qualMeasure->getPoseQuality();
     }
 
     bool Manipulability::customStringRead(std::ifstream& file, std::string& res)
@@ -335,6 +344,11 @@ namespace VirtualRobot
         }
     }
 
+    PoseQualityMeasurementPtr Manipulability::getManipulabilityMeasure()
+    {
+        return measure;
+    }
+
 
     std::string Manipulability::getMeasureName() const
     {
@@ -449,7 +463,7 @@ namespace VirtualRobot
             float q = measure->getPoseQuality(p);
 #else
 //            float q = measure->getPoseQuality();
-            float q = getCurrentManipulability();
+            float q = getCurrentManipulability(measure);
 #endif
 
             if (q > storeMaxManipulability)
@@ -684,6 +698,105 @@ namespace VirtualRobot
     float Manipulability::getMaxManipulability()
     {
         return maxManip;
+    }
+
+
+    void Manipulability::addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions)
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode || !measure, "Workspace data not initialized");
+
+        if (numThreads > loops)
+        {
+            VR_ERROR << "Number of threads can not be bigger then number of tcp poses to add.";
+            return;
+        }
+
+        std::vector<std::thread> threads(numThreads);
+        unsigned int numPosesPerThread = loops / numThreads; // todo
+        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
+
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i] = std::thread([=] ()
+            {
+                // each thread gets a cloned robot
+                CollisionCheckerPtr cc(new CollisionChecker());
+                RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
+                clonedRobot->setUpdateVisualization(false);
+                RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
+                RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
+
+                SceneObjectSetPtr staticCollisionModel = this->staticCollisionModel;
+                if (staticCollisionModel && clonedRobot->hasRobotNodeSet(staticCollisionModel->getName()))
+                {
+                    staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
+                }
+
+                SceneObjectSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
+                if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
+                {
+                    dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
+                }
+
+                // and a cloned pose quality
+                PoseQualityMeasurementPtr clonedMeasure  = this->measure->clone(clonedRobot);
+
+                // now sample some configs and add them to the workspace data
+                for (int j = 0; j < numPosesPerThread; j++)
+                {
+                    float rndValue;
+                    float minJ, maxJ;
+                    Eigen::VectorXf v(clonedNodeSet->getSize());
+                    float maxLoops = 1000;
+
+                    bool successfullyRandomized = false;
+
+                    for (int k = 0; k < maxLoops; k++)
+                    {
+                        for (int l = 0; l < clonedNodeSet->getSize(); l++)
+                        {
+                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            minJ = (*nodeSet)[l]->getJointLimitLo();
+                            maxJ = (*nodeSet)[l]->getJointLimitHi();
+                            v[l] = minJ + ((maxJ - minJ) * rndValue);
+                        }
+
+                        clonedRobot->setJointValues(clonedNodeSet, v);
+
+                        // check for collisions
+                        if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        if (!clonedRobot->getCollisionChecker()->checkCollision(staticCollisionModel, dynamicCollisionModel))
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        this->collisionConfigs++;
+                    }
+
+                    if (successfullyRandomized)
+                    {
+                        Eigen::Matrix4f p = clonedTcpNode->getGlobalPose();
+                        addPose(p, clonedMeasure);
+                    }
+                    else
+                    {
+                        VR_WARNING << "Could not find collision-free configuration...";
+                    }
+                }
+            });
+        }
+
+        // wait for all threads to finish
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i].join();
+        }
     }
 
 } // namespace VirtualRobot

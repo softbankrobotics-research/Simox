@@ -823,4 +823,15 @@ namespace VirtualRobot
         return result * result_c;
     }
 
+    PoseQualityMeasurementPtr PoseQualityExtendedManipulability::clone(RobotPtr newRobot)
+    {
+        VR_ASSERT(newRobot);
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName()));
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName())->getSize() == rns->getSize());
+
+        PoseQualityExtendedManipulabilityPtr m(new PoseQualityExtendedManipulability(newRobot->getRobotNodeSet(rns->getName()), this->manipulabilityType));
+        m->penalizeJointLimits(this->penJointLimits, this->penJointLimits_k);
+        m->considerObstacles(this->considerObstacle, this->obstacle_alpha, this->obstacle_beta);
+        return m;
+    }
 }
