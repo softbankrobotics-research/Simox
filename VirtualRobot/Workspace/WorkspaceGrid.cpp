@@ -437,7 +437,7 @@ namespace VirtualRobot
 
         Eigen::Matrix4f graspGlobal = g->getTcpPoseGlobal(o->getGlobalPose());
 
-        WorkspaceRepresentation::WorkspaceCut2DPtr cutXY = ws->createCut(graspGlobal, discretizeSize, true);
+        WorkspaceRepresentation::WorkspaceCut2DPtr cutXY = ws->createCut(graspGlobal, discretizeSize, false);
 
         std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> transformations = ws->createCutTransformations(cutXY, baseRobotNode);
         setEntries(transformations, graspGlobal, g);
