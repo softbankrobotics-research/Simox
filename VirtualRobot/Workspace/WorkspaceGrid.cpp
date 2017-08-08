@@ -2,6 +2,8 @@
 #include "WorkspaceGrid.h"
 #include "../VirtualRobotException.h"
 #include "../ManipulationObject.h"
+#include "../Nodes/RobotNode.h"
+#include "../Robot.h"
 #include <iostream>
 #include <algorithm>
 using namespace std;
@@ -218,14 +220,15 @@ namespace VirtualRobot
         {
             data[getDataPos(cellX, cellY)] = value;
 
-            if (find(graspLink[getDataPos(cellX, cellY)].begin(), graspLink[getDataPos(cellX, cellY)].end(), grasp) == graspLink[getDataPos(cellX, cellY)].end())
+
+            if (grasp && find(graspLink[getDataPos(cellX, cellY)].begin(), graspLink[getDataPos(cellX, cellY)].end(), grasp) == graspLink[getDataPos(cellX, cellY)].end())
             {
                 graspLink[getDataPos(cellX, cellY)].push_back(grasp);
             }
         }
         else if (value >= MIN_VALUES_STORE_GRASPS)
         {
-            if (find(graspLink[getDataPos(cellX, cellY)].begin(), graspLink[getDataPos(cellX, cellY)].end(), grasp) == graspLink[getDataPos(cellX, cellY)].end())
+            if (grasp && find(graspLink[getDataPos(cellX, cellY)].begin(), graspLink[getDataPos(cellX, cellY)].end(), grasp) == graspLink[getDataPos(cellX, cellY)].end())
             {
                 graspLink[getDataPos(cellX, cellY)].push_back(grasp);
             }
@@ -437,10 +440,33 @@ namespace VirtualRobot
 
         Eigen::Matrix4f graspGlobal = g->getTcpPoseGlobal(o->getGlobalPose());
 
+        return fillGridData(ws, graspGlobal, g, baseRobotNode);
+    }
+
+    bool WorkspaceGrid::fillGridData(WorkspaceRepresentationPtr ws, Eigen::Matrix4f &graspGlobal, GraspPtr g, RobotNodePtr baseRobotNode)
+    {
+        if (!ws)
+        {
+            return false;
+        }
+
+        // ensure robot is at identity
+        Eigen::Matrix4f gpOrig = Eigen::Matrix4f::Identity();
+        if (baseRobotNode)
+        {
+            gpOrig = baseRobotNode->getRobot()->getGlobalPose();
+            baseRobotNode->getRobot()->setGlobalPose(Eigen::Matrix4f::Identity());
+        }
+
         WorkspaceRepresentation::WorkspaceCut2DPtr cutXY = ws->createCut(graspGlobal, discretizeSize, false);
 
         std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> transformations = ws->createCutTransformations(cutXY, baseRobotNode);
         setEntries(transformations, graspGlobal, g);
+        if (baseRobotNode)
+        {
+            baseRobotNode->getRobot()->setGlobalPose(gpOrig);
+        }
+
         return true;
     }
 

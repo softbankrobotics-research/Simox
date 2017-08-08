@@ -1640,10 +1640,9 @@ namespace VirtualRobot
 
                     if (!getVoxelFromPose(x, v))
                     {
-                        //result->entries(a, b) = 0;
-                        continue;
-                    }
-                    result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
+                        result->entries(a, b) = 0;
+                    } else
+                        result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
                 } else
                 {
                     result->entries(a, b) = getEntry(tmpPose);

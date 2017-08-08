@@ -6,6 +6,7 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Workspace/Reachability.h>
+#include <VirtualRobot/Workspace/Manipulability.h>
 #include <VirtualRobot/Workspace/WorkspaceGrid.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -40,6 +41,8 @@ ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::strin
     robotVisuSep->ref();
     reachabilityVisuSep = new SoSeparator;
     reachabilityVisuSep->ref();
+    reachabilityMapVisuSep = new SoSeparator;
+    reachabilityMapVisuSep->ref();
     allGraspsVisuSep = new SoSeparator;
     allGraspsVisuSep->ref();
     graspVisuSep = new SoSeparator;
@@ -50,6 +53,7 @@ ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::strin
     sceneSep->addChild(objectVisuSep);
     sceneSep->addChild(graspVisuSep);
     sceneSep->addChild(reachabilityVisuSep);
+    sceneSep->addChild(reachabilityMapVisuSep);
 
     setupUI();
 
@@ -87,6 +91,7 @@ ReachabilityMapWindow::~ReachabilityMapWindow()
 {
     robotVisuSep->unref();
     reachabilityVisuSep->unref();
+    reachabilityMapVisuSep->unref();
     allGraspsVisuSep->unref();
     graspVisuSep->unref();
     objectVisuSep->unref();
@@ -103,9 +108,8 @@ void ReachabilityMapWindow::setupUI()
     viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
     viewer->setAccumulationBuffer(true);
 
-#ifdef WIN32
-    viewer->setAntialiasing(true, 8);
-#endif
+    viewer->setAntialiasing(true, 4);
+
     viewer->setGLRenderAction(new SoLineHighlightRenderAction);
     viewer->setTransparencyType(SoGLRenderAction::BLEND);
     viewer->setFeedbackVisibility(true);
@@ -118,6 +122,7 @@ void ReachabilityMapWindow::setupUI()
     connect(UI.checkBoxGrasps, SIGNAL(clicked()), this, SLOT(updateVisu()));
     connect(UI.checkBoxObject, SIGNAL(clicked()), this, SLOT(updateVisu()));
     connect(UI.checkBoxReachabilityVisu, SIGNAL(clicked()), this, SLOT(updateVisu()));
+    connect(UI.checkBoxReachabilityMapVisu, SIGNAL(clicked()), this, SLOT(updateVisu()));
 
     connect(UI.radioButtonAllGrasps, SIGNAL(clicked()), this, SLOT(selectGrasp()));
     connect(UI.radioButtonOneGrasp, SIGNAL(clicked()), this, SLOT(selectGrasp()));
@@ -251,6 +256,76 @@ void ReachabilityMapWindow::updateVisu()
             sceneSep->removeChild(reachabilityVisuSep);
         }
     }
+
+    if (UI.checkBoxReachabilityMapVisu->isChecked())
+    {
+        if (reachabilityMapVisuSep->getNumChildren() == 0)
+        {
+            buildReachGridVisu();
+        }
+
+        if (sceneSep->findChild(reachabilityMapVisuSep) < 0)
+        {
+            sceneSep->addChild(reachabilityMapVisuSep);
+        }
+    }
+    else
+    {
+        if (sceneSep->findChild(reachabilityMapVisuSep) >= 0)
+        {
+            sceneSep->removeChild(reachabilityMapVisuSep);
+        }
+    }
+}
+
+
+void ReachabilityMapWindow::buildReachVisu()
+{
+    if (!robot || !reachSpace || !graspObject || !eef)
+    {
+        return;
+    }
+
+
+    reachabilityVisuSep->removeAllChildren();
+
+    GraspSetPtr gs = graspObject->getGraspSet(eef);
+
+    if (!gs || gs->getSize() == 0)
+    {
+        return;
+    }
+
+    Eigen::Matrix4f pose = graspObject->getGlobalPose();
+
+    if (UI.radioButtonOneGrasp->isChecked())
+    {
+        QString qs(UI.comboBoxGrasp->currentText());
+        std::string s(qs.toLatin1());
+        GraspPtr g = gs->getGrasp(s);
+
+        if (g)
+        {
+            pose = g->getTcpPoseGlobal(graspObject->getGlobalPose());
+        }
+    }
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pose,reachSpace->getDiscretizeParameterTranslation(), false);
+    int maxCoeff = cutData->entries.maxCoeff();
+    VR_INFO << "Max coeff:" << maxCoeff << endl;
+
+    SoNode *visualisationNode = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), maxCoeff);
+
+    if (visualisationNode)
+    {
+        if (reachSpace->getBaseNode())
+        {
+            Eigen::Matrix4f gp = reachSpace->getBaseNode()->getGlobalPose();
+            reachabilityVisuSep->addChild(CoinVisualizationFactory::getMatrixTransform(gp));
+        }
+        reachabilityVisuSep->addChild(visualisationNode);
+    }
+
 }
 
 void ReachabilityMapWindow::buildRobotVisu()
@@ -359,20 +434,20 @@ void ReachabilityMapWindow::buildGraspVisu()
     }
 }
 
-void ReachabilityMapWindow::buildReachVisu()
+void ReachabilityMapWindow::buildReachGridVisu()
 {
     if (!robot || !reachGrid)
     {
         return;
     }
 
-    reachabilityVisuSep->removeAllChildren();
+    reachabilityMapVisuSep->removeAllChildren();
 
     SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(reachGrid, VirtualRobot::ColorMap::eHot, true);
 
     if (visualisationNode)
     {
-        reachabilityVisuSep->addChild(visualisationNode);
+        reachabilityMapVisuSep->addChild(visualisationNode);
     }
 }
 
@@ -426,6 +501,8 @@ void ReachabilityMapWindow::selectGrasp()
     }
 
     graspVisuSep->removeAllChildren();
+    reachabilityMapVisuSep->removeAllChildren();
+    reachabilityVisuSep->removeAllChildren();
 
     if (UI.radioButtonAllGrasps->isChecked())
     {
@@ -528,6 +605,11 @@ void ReachabilityMapWindow::loadRobot()
         return;
     }
 
+    //Eigen::Matrix4f gp = MathTools::rpy2eigen4f(0,0,M_PI/2.0);
+    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+    //gp(0,3) = 3000;
+    robot->setGlobalPose(gp);
+
     updateEEFBox();
 
     // build visualization
@@ -543,8 +625,39 @@ void ReachabilityMapWindow::loadReachFile(std::string filename)
     }
 
     reachFile = filename;
-    reachSpace.reset(new Reachability(robot));
-    reachSpace->load(reachFile);
+    bool success = false;
+
+    // 1st try to load as manipulability file
+    try
+    {
+        reachSpace.reset(new Manipulability(robot));
+        reachSpace->load(reachFile);
+        success = true;
+
+        VR_INFO << "Map '" << reachFile << "' loaded as Manipulability map";
+    }
+    catch (...)
+    {
+    }
+
+    // 2nd try to load as reachability file
+    if (!success)
+    {
+        try
+        {
+            reachSpace.reset(new Reachability(robot));
+            reachSpace->load(reachFile);
+            success = true;
+
+            VR_INFO << "Map '" << reachFile << "' loaded as Reachability map";
+        }
+        catch (...)
+        {
+            VR_ERROR << "Coulkd not load reachability file..." << endl;
+        }
+    }
+
+
     reachSpace->print();
     /*if (reachSpace->getNodeSet())
     {
@@ -628,7 +741,7 @@ void ReachabilityMapWindow::loadObjectFile(std::string filename)
 
 bool ReachabilityMapWindow::buildReachMapAll()
 {
-    reachabilityVisuSep->removeAllChildren();
+    reachabilityMapVisuSep->removeAllChildren();
 
     if (!grasps)
     {
@@ -654,7 +767,7 @@ bool ReachabilityMapWindow::buildReachMapAll()
 
 bool ReachabilityMapWindow::buildReachMap(VirtualRobot::GraspPtr g)
 {
-    reachabilityVisuSep->removeAllChildren();
+    reachabilityMapVisuSep->removeAllChildren();
     Eigen::Vector3f minBB, maxBB;
     reachSpace->getWorkspaceExtends(minBB, maxBB);
     reachGrid.reset(new WorkspaceGrid(minBB(0), maxBB(0), minBB(1), maxBB(1), reachSpace->getDiscretizeParameterTranslation()));
