@@ -24,7 +24,7 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::JointPrismatic;
     }
 
-    Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(CoordinatePtr coordSystem) const
+    Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(FramePtr coordSystem) const
     {
         if (coordSystem)
             return getJointTranslationDirection(coordSystem->getGlobalPose());

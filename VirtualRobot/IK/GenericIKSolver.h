@@ -78,7 +78,7 @@ namespace VirtualRobot
 
         virtual bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1);
 
-        CoordinatePtr coordSystem;
+        FramePtr coordSystem;
         JacobiProvider::InverseJacobiMethod invJacMethod;
         bool trySolve();
         void setJointsRandom();

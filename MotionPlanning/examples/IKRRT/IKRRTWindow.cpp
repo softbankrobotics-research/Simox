@@ -499,7 +499,7 @@ void IKRRTWindow::showCoordSystem()
 {
     if (eef)
     {
-        CoordinatePtr tcp = eef->getTcp();
+        FramePtr tcp = eef->getTcp();
 
         if (!tcp)
         {

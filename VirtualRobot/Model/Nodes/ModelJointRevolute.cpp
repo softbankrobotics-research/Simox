@@ -23,7 +23,7 @@ namespace VirtualRobot
         return ModelNode::ModelNodeType::JointRevolute;
     }
 
-    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(CoordinatePtr coordSystem) const
+    Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(FramePtr coordSystem) const
     {
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = getJointRotationAxisInJointCoordSystem();

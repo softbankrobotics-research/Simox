@@ -65,7 +65,7 @@ namespace VirtualRobot
                           float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
 
         Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
+        Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 

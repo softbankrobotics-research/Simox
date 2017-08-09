@@ -26,7 +26,7 @@
 #include "../VirtualRobot.h"
 #include "Nodes/ModelNode.h"
 #include "../Tools/BoundingBox.h"
-#include "Coordinate.h"
+#include "Frame.h"
 #include "../Tools/ConditionedLock.h"
 #include <Eigen/Core>
 #include <map>
@@ -38,7 +38,7 @@ namespace VirtualRobot
      *
      * \see RobotIO, ModelNode, ModelNodeSet
      */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Coordinate
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -105,12 +105,12 @@ namespace VirtualRobot
         virtual ModelJointPtr getJoint(const std::string& modelNodeName) const;
 
         /*!
-        * Check, if the Coordinate is registered to this model (either a ModelNode or an attached entity).
+        * Check, if the Frame is registered to this model (either a ModelNode or an attached entity).
         *
         * @param coord The coordinate to check for.
         * @return True, if the coordinate is registered; false otherwise.
         */
-        virtual bool hasCoordinate(const CoordinatePtr& coord) const;
+        virtual bool hasCoordinate(const FramePtr& coord) const;
 
         /*!
         * Check, if the coordinate is registered to this model.
@@ -121,12 +121,12 @@ namespace VirtualRobot
         virtual bool hasCoordinate(const std::string& coordinateName) const;
 
         /*!
-        * Get a pointer to the Coordinate, identified by the given name.
+        * Get a pointer to the Frame, identified by the given name.
         *
-        * @param coordinateName The name of the Coordinate.
-        * @return A pointer to the Coordinate.
+        * @param coordinateName The name of the Frame.
+        * @return A pointer to the Frame.
         */
-        virtual CoordinatePtr getCoordinate(const std::string& coordinateName) const;
+        virtual FramePtr getCoordinate(const std::string& coordinateName) const;
 
 
         /*!
@@ -286,12 +286,12 @@ namespace VirtualRobot
 
 
         /*!
-         * Set the global pose of this model so that the ModelNode/Coordinate node is at position globalPoseNode.
+         * Set the global pose of this model so that the ModelNode/Frame node is at position globalPoseNode.
          *
          * @param node The coordinate/node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
-        virtual void setGlobalPoseForModelNode(const CoordinatePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.

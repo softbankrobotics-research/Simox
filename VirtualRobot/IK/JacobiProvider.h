@@ -56,8 +56,8 @@ namespace VirtualRobot
 
         virtual Eigen::MatrixXf getJacobianMatrix() = 0;
         virtual Eigen::MatrixXd getJacobianMatrixD();
-        virtual Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp) = 0;
-        virtual Eigen::MatrixXd getJacobianMatrixD(CoordinatePtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp) = 0;
+        virtual Eigen::MatrixXd getJacobianMatrixD(FramePtr tcp);
 
         virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
         virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m) const;
@@ -67,8 +67,8 @@ namespace VirtualRobot
         virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD();
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(CoordinatePtr tcp);
-        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(CoordinatePtr tcp);
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(FramePtr tcp);
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(FramePtr tcp);
 
         JointSetPtr getJointSet();
 

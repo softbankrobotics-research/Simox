@@ -263,7 +263,7 @@ namespace VirtualRobot
         {
             if (robotEEF && robotEEF_EEF)
             {
-                CoordinatePtr tcp = robotEEF_EEF->getTcp();
+                FramePtr tcp = robotEEF_EEF->getTcp();
 
                 if (tcp)
                 {
@@ -648,7 +648,7 @@ namespace VirtualRobot
             //cout << "getGlobalPose TCP:" << endl <<  robotEEF_EEF->getTcp()->getGlobalPose() << endl;
             Eigen::Matrix4f m;
             MathTools::posrpy2eigen4f(x, m);
-            CoordinatePtr tcp = robotEEF_EEF->getTcp();
+            FramePtr tcp = robotEEF_EEF->getTcp();
             m = tcp->getGlobalPose() * m;
             //cout << "pose:" << endl << m << endl;
             setCurrentGrasp(m);
@@ -692,7 +692,7 @@ namespace VirtualRobot
     {
         if (robotEEF && robotEEF_EEF && currentGrasp && object)
         {
-            CoordinatePtr tcp = robotEEF_EEF->getTcp();
+            FramePtr tcp = robotEEF_EEF->getTcp();
             robotEEF->setGlobalPoseForModelNode(tcp, p);
             Eigen::Matrix4f objP = object->getGlobalPose();
             Eigen::Matrix4f pLocal = tcp->toLocalCoordinateSystem(objP);
@@ -706,7 +706,7 @@ namespace VirtualRobot
     {
         if (robotEEF && robotEEF_EEF)
         {
-            CoordinatePtr tcp = robotEEF_EEF->getTcp();
+            FramePtr tcp = robotEEF_EEF->getTcp();
 
             if (!tcp)
             {

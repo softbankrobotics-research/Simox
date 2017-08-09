@@ -30,7 +30,7 @@ using namespace VirtualRobot;
 #define POSITION_COMPONENT      0
 #define ORIENTATION_COMPONENT   1
 
-TSRConstraint::TSRConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef,
+TSRConstraint::TSRConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef,
                              const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
                              float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
@@ -61,7 +61,7 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
     return ik->getJacobianMatrix();
 }
 
-Eigen::MatrixXf TSRConstraint::getJacobianMatrix(CoordinatePtr tcp)
+Eigen::MatrixXf TSRConstraint::getJacobianMatrix(FramePtr tcp)
 {
     if (tcp->getName() != eef->getName())
     {

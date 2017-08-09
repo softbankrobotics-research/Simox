@@ -98,7 +98,7 @@ namespace GraspPlanning
 
     bool ApproachMovementSurfaceNormal::setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir)
     {
-        VirtualRobot::CoordinatePtr graspNode = eef_cloned->getGCP();
+        VirtualRobot::FramePtr graspNode = eef_cloned->getGCP();
 
         // current pose
         //Eigen::Matrix4f pose = graspNode->getGlobalPose();

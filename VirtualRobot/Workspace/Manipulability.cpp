@@ -417,7 +417,7 @@ namespace VirtualRobot
     }
 
 
-    bool Manipulability::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float& storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, CoordinatePtr tcpNode /*= RobotNodePtr()*/)
+    bool Manipulability::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], float& storeMaxManipulability, RobotNodePtr baseNode /*= RobotNodePtr()*/, FramePtr tcpNode /*= RobotNodePtr()*/)
     {
         if (!WorkspaceRepresentation::checkForParameters(nodeSet, steps, storeMinBounds, storeMaxBounds, baseNode, tcpNode))
         {

@@ -114,7 +114,7 @@ namespace VirtualRobot
         RobotNodePtr getBaseNode();
 
         //! The corresponding TCP
-        CoordinatePtr getTCP();
+        FramePtr getTCP();
 
         //! The kinematic chain that is covered by this workspace data
         JointSetPtr getJointSet();
@@ -140,7 +140,7 @@ namespace VirtualRobot
             LinkSetPtr staticCollisionModel = LinkSetPtr(),
             LinkSetPtr dynamicCollisionModel = LinkSetPtr(),
             ModelNodePtr baseNode = ModelNodePtr(),
-            CoordinatePtr tcpNode = CoordinatePtr(),
+            FramePtr tcpNode = FramePtr(),
             bool adjustOnOverflow = true);
 
         /*!
@@ -276,7 +276,7 @@ namespace VirtualRobot
 										float storeMinBounds[6],
 										float storeMaxBounds[6],
 										ModelNodePtr baseNode = ModelNodePtr(),
-										CoordinatePtr tcpNode = CoordinatePtr());
+										FramePtr tcpNode = FramePtr());
 
         /*!
             2D data that represents a cut through the workspace representation.
@@ -319,7 +319,7 @@ namespace VirtualRobot
             Build all transformations from referenceNode to cutXY data.h Only entries>0 are considered.
             If referenceNode is set, the transformations are given in the corresponding coordinate system.
         */
-        std::vector<WorkspaceCut2DTransformationPtr> createCutTransformations(WorkspaceCut2DPtr cutXY, CoordinatePtr referenceNode = CoordinatePtr());
+        std::vector<WorkspaceCut2DTransformationPtr> createCutTransformations(WorkspaceCut2DPtr cutXY, FramePtr referenceNode = FramePtr());
 
         /*!
             Computes the axis aligned bounding box of this object in global coordinate system.
@@ -350,7 +350,7 @@ namespace VirtualRobot
         {
             return dynamicCollisionModel;
         }
-        CoordinatePtr getTcp()
+        FramePtr getTcp()
         {
             return tcpNode;
         }
@@ -436,7 +436,7 @@ namespace VirtualRobot
 
         ModelPtr robot;
         ModelNodePtr baseNode;
-        CoordinatePtr tcpNode;
+        FramePtr tcpNode;
         JointSetPtr nodeSet;
 
         LinkSetPtr staticCollisionModel;

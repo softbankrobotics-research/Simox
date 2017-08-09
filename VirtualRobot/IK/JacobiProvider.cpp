@@ -27,12 +27,12 @@ namespace VirtualRobot
         return getJacobianMatrix().cast<double>();
     }
 
-    MatrixXd JacobiProvider::getJacobianMatrixD(CoordinatePtr tcp)
+    MatrixXd JacobiProvider::getJacobianMatrixD(FramePtr tcp)
     {
         return getJacobianMatrix(tcp).cast<double>();
     }
 
-    Eigen::MatrixXf JacobiProvider::getPseudoInverseJacobianMatrix(CoordinatePtr tcp)
+    Eigen::MatrixXf JacobiProvider::getPseudoInverseJacobianMatrix(FramePtr tcp)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
@@ -51,7 +51,7 @@ namespace VirtualRobot
         return res;
     }
 
-    Eigen::MatrixXd JacobiProvider::getPseudoInverseJacobianMatrixD(CoordinatePtr tcp)
+    Eigen::MatrixXd JacobiProvider::getPseudoInverseJacobianMatrixD(FramePtr tcp)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();

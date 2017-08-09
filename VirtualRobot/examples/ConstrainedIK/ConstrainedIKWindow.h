@@ -113,7 +113,7 @@ protected:
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
-    VirtualRobot::CoordinatePtr tcp;
+    VirtualRobot::FramePtr tcp;
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 

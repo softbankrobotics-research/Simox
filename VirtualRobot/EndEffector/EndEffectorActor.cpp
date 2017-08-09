@@ -11,7 +11,7 @@
 #include "../Model/Nodes/ModelJoint.h"
 #include "../Model/Model.h"
 #include "../Model/ModelConfig.h"
-#include "../Model/Coordinate.h"
+#include "../Model/Frame.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "EndEffector.h"

@@ -133,7 +133,7 @@ namespace VirtualRobot
                                         float storeMaxBounds[6],
                                         float& storeMaxManipulability,
                                         RobotNodePtr baseNode = RobotNodePtr(),
-                                        CoordinatePtr tcpNode = CoordinatePtr());
+                                        FramePtr tcpNode = FramePtr());
 
 
         /*!

@@ -3,7 +3,7 @@
 #include "../../VirtualRobotException.h"
 #include "../../Tools/ConditionedLock.h"
 #include "../ModelNodeSet.h"
-#include "../Coordinate.h"
+#include "../Frame.h"
 #include "Attachments/ModelNodeAttachment.h"
 
 namespace VirtualRobot
@@ -11,7 +11,7 @@ namespace VirtualRobot
     ModelNode::ModelNode(const ModelWeakPtr& model, 
         const std::string& name,
         const Eigen::Matrix4f& staticTransformation)
-        : Coordinate(name),
+        : Frame(name),
          // initialized(false),
           model(model),
           parent(ModelNodeWeakPtr()),

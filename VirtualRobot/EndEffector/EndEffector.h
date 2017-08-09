@@ -61,8 +61,8 @@ namespace VirtualRobot
                     const std::vector<EndEffectorActorPtr>& actorsVector,
                     const std::vector<ModelLinkPtr>& staticPartVector,
                     RobotNodePtr baseNodePtr,
-                    CoordinatePtr tcpNodePtr,
-                    CoordinatePtr gcpNodePtr = CoordinatePtr(),
+                    FramePtr tcpNodePtr,
+                    FramePtr gcpNodePtr = FramePtr(),
                     std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
 
         virtual ~EndEffector();
@@ -86,13 +86,13 @@ namespace VirtualRobot
         */
         std::string getTcpName() const;
 
-        CoordinatePtr getTcp() const;
+        FramePtr getTcp() const;
         RobotNodePtr getBase() const;
 
         /*!
             Returns the grasp center point. If it was not defined, the TCP is returned.
         */
-        CoordinatePtr getGCP() const;
+        FramePtr getGCP() const;
 
         /*!
             Return associated robot
@@ -130,7 +130,7 @@ namespace VirtualRobot
             \param tcp If not ste, the tcp node of this eef is used
             \note The set can be used for collision detection, e.g. to check if the eef is in collision with an obstacle.
         */
-        LinkSetPtr createLinkSet(const ModelNodePtr &kinematicRoot = ModelNodePtr(), const CoordinatePtr &tcp = CoordinatePtr()) const;
+        LinkSetPtr createLinkSet(const ModelNodePtr &kinematicRoot = ModelNodePtr(), const FramePtr &tcp = FramePtr()) const;
 
         /*!
             Construct a robot that consists only of this eef.
@@ -201,8 +201,8 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> statics;
         std::map< std::string, RobotConfigPtr > preshapes;
         ModelNodePtr baseNode;
-        CoordinatePtr tcpNode;
-        CoordinatePtr gcpNode;
+        FramePtr tcpNode;
+        FramePtr gcpNode;
     };
 
 } // namespace VirtualRobot

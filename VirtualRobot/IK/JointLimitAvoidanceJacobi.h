@@ -42,7 +42,7 @@ namespace VirtualRobot
         JointLimitAvoidanceJacobi(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
 
         virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::CoordinatePtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(VirtualRobot::FramePtr tcp);
 
         /*!
             Computes the complete error vector that is given by the distance to the center of the joint limits.

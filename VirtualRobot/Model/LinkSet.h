@@ -47,7 +47,7 @@ namespace VirtualRobot
                      const ModelWeakPtr& model,
                      const std::vector<ModelNodePtr>& modelNodes,
                      const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const CoordinatePtr tcp = CoordinatePtr());
+                     const FramePtr tcp = FramePtr());
 
     public:
         /*!
@@ -96,7 +96,7 @@ namespace VirtualRobot
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                                                  const CoordinatePtr tcp = CoordinatePtr(),
+                                                  const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
 
         /*!

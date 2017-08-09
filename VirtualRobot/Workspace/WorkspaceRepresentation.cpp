@@ -6,7 +6,7 @@
 #include "../Model/JointSet.h"
 #include "../Compression/CompressionRLE.h"
 #include "../Compression/CompressionBZip2.h"
-#include "../Model/Coordinate.h"
+#include "../Model/Frame.h"
 #include "../Model/Nodes/ModelNode.h"
 #include "../Model/Nodes/ModelJoint.h"
 #include "../Model/Nodes/ModelLink.h"
@@ -700,7 +700,7 @@ namespace VirtualRobot
         return baseNode;
     }
 
-    CoordinatePtr WorkspaceRepresentation::getTCP()
+    FramePtr WorkspaceRepresentation::getTCP()
     {
         return tcpNode;
     }
@@ -1117,7 +1117,7 @@ namespace VirtualRobot
             LinkSetPtr staticCollisionModel,
 			LinkSetPtr dynamicCollisionModel,
             ModelNodePtr baseNode /*= RobotNodePtr()*/,
-            CoordinatePtr tcpNode /*= RobotNodePtr()*/,
+            FramePtr tcpNode /*= RobotNodePtr()*/,
             bool adjustOnOverflow /* = true */)
     {
         reset();
@@ -1506,7 +1506,7 @@ namespace VirtualRobot
 
     }
 
-    bool WorkspaceRepresentation::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], ModelNodePtr baseNode, CoordinatePtr tcpNode)
+    bool WorkspaceRepresentation::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], ModelNodePtr baseNode, FramePtr tcpNode)
     {
 		if (!robot || !nodeSet)// || !nodeSet->isKinematicChain())
         {
@@ -1755,7 +1755,7 @@ namespace VirtualRobot
         return true;
     }
 
-    std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> WorkspaceRepresentation::createCutTransformations(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, CoordinatePtr referenceNode)
+    std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr> WorkspaceRepresentation::createCutTransformations(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, FramePtr referenceNode)
     {
         THROW_VR_EXCEPTION_IF(!cutXY, "NULL data");
 

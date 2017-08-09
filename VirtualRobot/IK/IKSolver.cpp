@@ -11,7 +11,7 @@ namespace VirtualRobot
     }
 
 
-	VirtualRobot::CoordinatePtr IKSolver::getTcp()
+	VirtualRobot::FramePtr IKSolver::getTcp()
 	{
 		return tcp;
 	}

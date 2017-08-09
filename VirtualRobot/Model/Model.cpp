@@ -14,7 +14,7 @@
 
 namespace VirtualRobot
 {
-    Model::Model(const std::string& name, const std::string& type) : Coordinate(name), type(type), scaling(1.0f),
+    Model::Model(const std::string& name, const std::string& type) : Frame(name), type(type), scaling(1.0f),
                                                                      threadsafe(true), mutex(),
                                                                      rootNode(),
                                                                      collisionChecker(),
@@ -479,10 +479,10 @@ namespace VirtualRobot
         return globalPose.block<3, 1>(0, 3);
     }
 
-    void Model::setGlobalPoseForModelNode(const CoordinatePtr& node, const Eigen::Matrix4f& globalPoseNode)
+    void Model::setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "No node given.");
-        THROW_VR_EXCEPTION_IF(!hasCoordinate(node), "Coordinate <" + node->getName() +
+        THROW_VR_EXCEPTION_IF(!hasCoordinate(node), "Frame <" + node->getName() +
                                                    "> is not part of model <" + getName() + ">");
 
         // get transformation from current to wanted tcp pose
@@ -1096,7 +1096,7 @@ namespace VirtualRobot
     }
 
 	// todod
-	bool Model::hasCoordinate(const CoordinatePtr & coord) const
+	bool Model::hasCoordinate(const FramePtr & coord) const
 	{
 		return false;
 	}
@@ -1104,8 +1104,8 @@ namespace VirtualRobot
 	{
 		return false;
 	}
-	CoordinatePtr VirtualRobot::Model::getCoordinate(const std::string & coordinateName) const
+	FramePtr VirtualRobot::Model::getCoordinate(const std::string & coordinateName) const
 	{
-		return CoordinatePtr();
+		return FramePtr();
 	}
 }

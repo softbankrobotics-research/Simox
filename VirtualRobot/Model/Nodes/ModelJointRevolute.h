@@ -63,7 +63,7 @@ namespace VirtualRobot
          * @param coordSystem The coordinate system to get the axis in.
          * @return The axis in the given coordinate system.
         */
-        Eigen::Vector3f getJointRotationAxis(CoordinatePtr coordSystem) const;
+        Eigen::Vector3f getJointRotationAxis(FramePtr coordSystem) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.
