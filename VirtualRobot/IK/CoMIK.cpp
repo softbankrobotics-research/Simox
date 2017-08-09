@@ -12,7 +12,7 @@
 
 namespace VirtualRobot
 {
-    CoMIK::CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, CoordinatePtr coordSystem, int dimensions)
+    CoMIK::CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, FramePtr coordSystem, int dimensions)
         : JacobiProvider(rnsJoints), coordSystem(coordSystem)
     {
         VR_ASSERT(rns);
@@ -124,7 +124,7 @@ namespace VirtualRobot
     }
 
 
-    Eigen::MatrixXf CoMIK::getJacobianMatrix(CoordinatePtr /*tcp*/)
+    Eigen::MatrixXf CoMIK::getJacobianMatrix(FramePtr /*tcp*/)
     {
         // ignoring tcp
         return getJacobianMatrix();

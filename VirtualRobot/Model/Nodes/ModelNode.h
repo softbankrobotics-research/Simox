@@ -24,7 +24,7 @@
 #define _VirtualRobot_ModelNode_h_
 
 #include "../../VirtualRobot.h"
-#include "../Coordinate.h"
+#include "../Frame.h"
 
 #include <vector>
 #include <map>
@@ -35,7 +35,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode : public std::enable_shared_from_this<ModelNode>, public Coordinate
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNode : public std::enable_shared_from_this<ModelNode>, public Frame
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

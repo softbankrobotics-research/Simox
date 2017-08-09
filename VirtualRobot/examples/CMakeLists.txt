@@ -5,7 +5,7 @@ if (NLOPT_FOUND)
     ADD_SUBDIRECTORY(ConstrainedIK)
 endif ()
 
-#ADD_SUBDIRECTORY(loadRobot)
+#ADD_SUBDIRECTORY(LoadRobot)
 
 #ADD_SUBDIRECTORY(CameraViewer)
 #ADD_SUBDIRECTORY(RobotViewer)
@@ -13,10 +13,10 @@ endif ()
 #ADD_SUBDIRECTORY(SceneViewer)
 #ADD_SUBDIRECTORY(Jacobi)
 #ADD_SUBDIRECTORY(GenericIK)
-#ADD_SUBDIRECTORY(reachability)
-#ADD_SUBDIRECTORY(stability)
+#ADD_SUBDIRECTORY(Reachability)
+#ADD_SUBDIRECTORY(Stability)
 #ADD_SUBDIRECTORY(GraspEditor)
 
 #ADD_SUBDIRECTORY(ReachabilityMap)
-#ADD_SUBDIRECTORY(loadURDFRobot)
+ADD_SUBDIRECTORY(LoadURDFRobot)
 

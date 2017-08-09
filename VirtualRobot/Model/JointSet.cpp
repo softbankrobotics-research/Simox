@@ -7,7 +7,7 @@ namespace VirtualRobot
 {
 
     JointSet::JointSet(const std::string &name, const ModelWeakPtr& model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const CoordinatePtr tcp) :
+                               const ModelNodePtr kinematicRoot, const FramePtr tcp) :
         ModelNodeSet(name, model, modelNodes, kinematicRoot, tcp)
     {
         for (size_t i = 0; i < modelNodes.size(); i++)
@@ -47,7 +47,7 @@ namespace VirtualRobot
 		return JointSetPtr();
 	}
 
-    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const CoordinatePtr tcp, bool registerToModel)
+    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 

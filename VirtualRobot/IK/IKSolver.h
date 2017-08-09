@@ -58,13 +58,13 @@ namespace VirtualRobot
         IKSolver(JointSetPtr rns);
 
 		JointSetPtr getJointSet();
-		CoordinatePtr getTcp();
+		FramePtr getTcp();
 
 		void setVerbose(bool enable);
 
 	protected:
 		JointSetPtr rns;
-		CoordinatePtr tcp;
+		FramePtr tcp;
 		bool verbose;
     };
 

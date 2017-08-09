@@ -62,7 +62,7 @@ namespace VirtualRobot
          * @param coordSystem The coordinate system to get the direction in.
          */
         Eigen::Vector3f getJointTranslationDirection(const Eigen::Matrix4f& coordSystem = Eigen::Matrix4f::Identity()) const;
-        Eigen::Vector3f getJointTranslationDirection(CoordinatePtr coordSystem = CoordinatePtr()) const;
+        Eigen::Vector3f getJointTranslationDirection(FramePtr coordSystem = FramePtr()) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.

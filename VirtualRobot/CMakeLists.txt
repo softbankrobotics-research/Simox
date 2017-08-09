@@ -106,7 +106,7 @@ Model/ModelFactory.cpp
 Model/Obstacle.cpp
 Model/Primitive.cpp
 Model/ManipulationObject.cpp
-Model/Coordinate.cpp
+Model/Frame.cpp
 Model/Nodes/ModelNode.cpp
 Model/Nodes/ModelLink.cpp
 Model/Nodes/ModelJoint.cpp
@@ -204,6 +204,7 @@ Model/ModelFactory.h
 Model/Obstacle.h
 Model/Primitive.h
 Model/ManipulationObject.h
+Model/Frame.h
 Model/Nodes/ModelNode.h
 Model/Nodes/ModelLink.h
 Model/Nodes/ModelJoint.h

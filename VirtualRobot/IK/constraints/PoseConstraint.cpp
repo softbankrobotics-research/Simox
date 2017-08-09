@@ -32,7 +32,7 @@ using namespace VirtualRobot;
 #define POSITION_COMPONENT      0
 #define ORIENTATION_COMPONENT   1
 
-PoseConstraint::PoseConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
+PoseConstraint::PoseConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Matrix4f& target, IKSolver::CartesianSelection cartesianSelection,
                                float tolerancePosition, float toleranceRotation) :
     Constraint(nodeSet),
     robot(robot),
@@ -63,7 +63,7 @@ Eigen::MatrixXf PoseConstraint::getJacobianMatrix()
     return ik->getJacobianMatrix(eef, cartesianSelection);
 }
 
-Eigen::MatrixXf PoseConstraint::getJacobianMatrix(CoordinatePtr tcp)
+Eigen::MatrixXf PoseConstraint::getJacobianMatrix(FramePtr tcp)
 {
     if (tcp->getName() != eef->getName())
     {

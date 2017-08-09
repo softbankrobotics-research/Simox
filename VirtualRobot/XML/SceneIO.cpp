@@ -7,7 +7,7 @@
 #include "RobotIO.h"
 #include "ObjectIO.h"
 #include "../Trajectory.h"
-#include "../Model/Coordinate.h"
+#include "../Model/Frame.h"
 
 namespace VirtualRobot
 {

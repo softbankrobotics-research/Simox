@@ -49,8 +49,8 @@ namespace VirtualRobot
 					LinkSetPtr rightLegCol,
 					Eigen::Matrix4f& transformationLeftToRightFoot,
                     ModelNodePtr baseNode,
-                    CoordinatePtr leftTCP = CoordinatePtr(),
-					CoordinatePtr rightTCP = CoordinatePtr(),
+                    FramePtr leftTCP = FramePtr(),
+					FramePtr rightTCP = FramePtr(),
                     JointSetPtr rnsLeft2RightFoot = JointSetPtr()
                    );
 
@@ -60,8 +60,8 @@ namespace VirtualRobot
 		JointSetPtr getRightLeg();
         LinkSetPtr getLeftLegCol();
 		LinkSetPtr getRightLegCol();
-		CoordinatePtr getLeftTCP();
-		CoordinatePtr getRightTCP();
+		FramePtr getLeftTCP();
+		FramePtr getRightTCP();
 		ModelNodePtr getBaseNode();
         ModelPtr getRobot();
         Eigen::Matrix4f getTransformationLeftToRightFoot();
@@ -85,8 +85,8 @@ namespace VirtualRobot
 		LinkSetPtr rightLegCol;
 		JointSetPtr left2Right;
         Eigen::Matrix4f transformationLeftToRightFoot;
-		CoordinatePtr leftTCP;
-		CoordinatePtr rightTCP;
+		FramePtr leftTCP;
+		FramePtr rightTCP;
         ModelNodePtr baseNode;
 
     };

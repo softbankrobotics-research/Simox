@@ -2,16 +2,15 @@
 #ifndef __ShowRobot_WINDOW_H_
 #define __ShowRobot_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include "../../Model/Model.h"
+#include "../../VirtualRobotException.h"
+#include "../../Model/Nodes/ModelNode.h"
+#include "../../XML/RobotIO.h"
+#include "../../Visualization/VisualizationFactory.h"
+#include "../../Model/Obstacle.h"
+#include "../../Model/ModelNodeSet.h"
+#include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "../../Visualization/CoinVisualization/CoinVisualization.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>

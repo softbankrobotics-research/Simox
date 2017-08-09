@@ -27,7 +27,7 @@
 
 using namespace VirtualRobot;
 
-PositionConstraint::PositionConstraint(const VirtualRobot::ModelPtr &robot, const VirtualRobot::JointSetPtr &nodeSet, const VirtualRobot::CoordinatePtr &eef,
+PositionConstraint::PositionConstraint(const VirtualRobot::ModelPtr &robot, const VirtualRobot::JointSetPtr &nodeSet, const VirtualRobot::FramePtr &eef,
                                                      const Eigen::Vector3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance) :
     Constraint(nodeSet),
     robot(robot),

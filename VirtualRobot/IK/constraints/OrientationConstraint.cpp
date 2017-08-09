@@ -30,7 +30,7 @@
 
 using namespace VirtualRobot;
 
-OrientationConstraint::OrientationConstraint(const VirtualRobot::ModelPtr &robot, const VirtualRobot::JointSetPtr &nodeSet, const VirtualRobot::CoordinatePtr &eef,
+OrientationConstraint::OrientationConstraint(const VirtualRobot::ModelPtr &robot, const VirtualRobot::JointSetPtr &nodeSet, const VirtualRobot::FramePtr &eef,
                                              const Eigen::Matrix3f &target, VirtualRobot::IKSolver::CartesianSelection cartesianSelection, float tolerance, bool soft) :
     Constraint(nodeSet),
     robot(robot),

@@ -25,8 +25,8 @@ namespace VirtualRobot
                              const std::vector<EndEffectorActorPtr>& actorsVector,
                              const std::vector<ModelLinkPtr>& staticPartVector,
                              RobotNodePtr baseNodePtr,
-                             CoordinatePtr tcpNodePtr,
-                             CoordinatePtr gcpNodePtr,
+                             FramePtr tcpNodePtr,
+                             FramePtr gcpNodePtr,
                              std::vector< RobotConfigPtr > preshapes) :
         name(name),
         actors(actorsVector),
@@ -195,7 +195,7 @@ namespace VirtualRobot
         closeActors(obstacles, -stepSize);
     }
 
-    VirtualRobot::LinkSetPtr EndEffector::createLinkSet(const ModelNodePtr &kinematicRoot, const CoordinatePtr &tcp) const
+    VirtualRobot::LinkSetPtr EndEffector::createLinkSet(const ModelNodePtr &kinematicRoot, const FramePtr &tcp) const
     {
         std::vector<ModelNodePtr> links;
         links.insert(links.end(), statics.begin(), statics.end());
@@ -208,7 +208,7 @@ namespace VirtualRobot
         ModelNodePtr kinRoot = kinematicRoot;
         if (!kinRoot)
             kinRoot = baseNode;
-        CoordinatePtr tcpCoord = tcp;
+        FramePtr tcpCoord = tcp;
         if (!tcpCoord)
             tcpCoord = tcpNode;
 
@@ -307,12 +307,12 @@ namespace VirtualRobot
         cout << endl;
     }
 
-    VirtualRobot::CoordinatePtr EndEffector::getTcp() const
+    VirtualRobot::FramePtr EndEffector::getTcp() const
     {
         return tcpNode;
     }
 
-    VirtualRobot::CoordinatePtr EndEffector::getGCP() const
+    VirtualRobot::FramePtr EndEffector::getGCP() const
     {
         return gcpNode;
     }

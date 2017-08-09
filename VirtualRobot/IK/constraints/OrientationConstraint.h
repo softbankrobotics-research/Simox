@@ -33,7 +33,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT OrientationConstraint : public Constraint
     {
     public:
-        OrientationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Matrix3f& target,
+        OrientationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Matrix3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 1.0f * M_PI / 180.0f, bool soft=false);
 
         double optimizationFunction(unsigned int id);
@@ -43,7 +43,7 @@ namespace VirtualRobot
     protected:
         ModelPtr robot;
 		JointSetPtr nodeSet;
-		CoordinatePtr eef;
+		FramePtr eef;
         Eigen::Matrix3f target;
 
         DifferentialIKPtr ik;

@@ -46,7 +46,7 @@ namespace VirtualRobot
                      const ModelWeakPtr& model,
                      const std::vector<ModelNodePtr>& modelNodes,
                      const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const CoordinatePtr tcp = CoordinatePtr());
+                     const FramePtr tcp = FramePtr());
 
     public:
         /*!
@@ -95,7 +95,7 @@ namespace VirtualRobot
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                                                  const CoordinatePtr tcp = CoordinatePtr(),
+                                                  const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
         /*!
          * Get the name of this ModelNodeSet.
@@ -181,7 +181,7 @@ namespace VirtualRobot
          *
          * @return The new tcp.
          */
-        CoordinatePtr getTCP() const;
+        FramePtr getTCP() const;
 
         /*!
          * Print out some information.
@@ -231,7 +231,7 @@ namespace VirtualRobot
         ModelWeakPtr weakModel;
         std::vector<ModelNodePtr> modelNodes;
         ModelNodePtr kinematicRoot;
-        CoordinatePtr tcp;
+        FramePtr tcp;
     };
 }
 

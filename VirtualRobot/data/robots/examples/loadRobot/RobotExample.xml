@@ -41,9 +41,9 @@
 		</Visualization>
 		<Child name="TCP"/>
 		<!-- Imports the kinematic structure form otherRobot.xml and adds otherRobot's rootnode as a child to this node -->
-		<ChildFromRobot>
+		<!--ChildFromRobot>
 			<File importEEF="true">OtherRobot.xml</File>
-		</ChildFromRobot>
+		</ChildFromRobot-->
 	</RobotNode>
 
 	<RobotNode name="TCP">

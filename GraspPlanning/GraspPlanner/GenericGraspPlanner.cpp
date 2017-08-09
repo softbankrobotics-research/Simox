@@ -83,7 +83,7 @@ namespace GraspPlanning
         std::string sGraspNameBase = "Grasp ";
 
         VirtualRobot::RobotPtr robot = approach->getEEFOriginal()->getRobot();
-        VirtualRobot::CoordinatePtr tcp = eef->getTcp();
+        VirtualRobot::FramePtr tcp = eef->getTcp();
 
         VR_ASSERT(robot);
         VR_ASSERT(tcp);

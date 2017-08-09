@@ -1,9 +1,8 @@
 
 #include "showRobotWindow.h"
-#include "VirtualRobot/EndEffector/EndEffector.h"
-#include "VirtualRobot/Workspace/Reachability.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
-#include <VirtualRobot/Import/RobotImporterFactory.h>
+#include "../../EndEffector/EndEffector.h"
+#include "../../Tools/RuntimeEnvironment.h"
+#include "../../Import/RobotImporterFactory.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <QFileDialog>
@@ -14,7 +13,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
+#include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoUnits.h>
@@ -320,76 +319,6 @@ void showRobotWindow::exportVRML()
         return;
     }
 
-#if 0
-    resetSceneryAll();
-
-    RobotNodePtr start1 = robot->getModelNode("Shoulder 2 L");
-    RobotNodePtr tcp1 = robot->getModelNode("Wrist 1 L");
-
-    Eigen::Matrix4f m1 = start1->toLocalCoordinateSystem(tcp1->getGlobalPose());
-    cout << "OLD trafo (FW):" << endl << m1 << endl;
-
-    /*
-    RobotFactory::robotStructureDef newStructure;
-    newStructure.rootName = "TCP L";
-
-    RobotFactory::robotNodeDef rn1;
-    rn1.name = "TCP L";
-    rn1.children.push_back("Wrist 2 L");
-    rn1.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn1);
-
-    RobotFactory::robotNodeDef rn2;
-    rn2.name = "Wrist 2 L";
-    rn2.children.push_back("Wrist 1 L");
-    rn2.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn2);
-
-    RobotFactory::robotNodeDef rn3;
-    rn3.name = "Wrist 1 L";
-    rn3.children.push_back("Underarm L");
-    rn3.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn3);
-
-    RobotFactory::robotNodeDef rn4;
-    rn4.name = "Underarm L";
-    rn4.children.push_back("Elbow L");
-    rn4.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn4);
-
-    RobotFactory::robotNodeDef rn5;
-    rn5.name = "Elbow L";
-    rn5.children.push_back("Upperarm L");
-    rn5.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn5);
-
-    RobotFactory::robotNodeDef rn6;
-    rn6.name = "Upperarm L";
-    rn6.children.push_back("Shoulder 2 L");
-    rn6.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn6);
-
-    RobotFactory::robotNodeDef rn7;
-    rn7.name = "Shoulder 2 L";
-    rn7.children.push_back("Shoulder 1 L");
-    rn7.invertTransformation = true;
-    newStructure.parentChildMapping.push_back(rn7);
-
-    robot = RobotFactory::cloneChangeStructure(robot, newStructure);
-    */
-    robot = RobotFactory::cloneChangeStructure(robot, "Shoulder 1 L", "TCP L");
-
-    updatRobotInfo();
-
-    RobotNodePtr start2 = robot->getModelNode("Shoulder 2 L");
-    RobotNodePtr tcp2 = robot->getModelNode("Wrist 1 L");
-
-    Eigen::Matrix4f m2 = start2->toLocalCoordinateSystem(tcp2->getGlobalPose());
-    cout << "NEW trafo (INV):" << endl << m2 << endl;
-
-    return;
-
-#endif
     // VRML
     QString fi = QFileDialog::getSaveFileName(this, tr("VRML 2.0 File"), QString(), tr("VRML Files (*.wrl)"));
     std::string s = std::string(fi.toLatin1());

@@ -33,7 +33,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint
     {
     public:
-        PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const CoordinatePtr& eef, const Eigen::Vector3f& target,
+        PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Vector3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 3.0f);
 
         double optimizationFunction(unsigned int id);
@@ -45,7 +45,7 @@ namespace VirtualRobot
     protected:
         RobotPtr robot;
 		JointSetPtr nodeSet;
-		CoordinatePtr eef;
+		FramePtr eef;
         Eigen::Vector3f target;
 
         DifferentialIKPtr ik;

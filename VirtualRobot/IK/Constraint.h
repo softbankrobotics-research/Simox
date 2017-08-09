@@ -74,7 +74,7 @@ namespace VirtualRobot
 
         // Interface for Jacobian-based solvers (default implementations)
         virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(CoordinatePtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
         virtual bool checkTolerances();
 

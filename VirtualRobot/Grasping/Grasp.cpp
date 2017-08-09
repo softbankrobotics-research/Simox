@@ -68,7 +68,7 @@ namespace VirtualRobot
             return Eigen::Matrix4f::Identity();
         }
 
-        CoordinatePtr tcpNode = eefPtr->getTcp();
+        FramePtr tcpNode = eefPtr->getTcp();
 
         if (!tcpNode)
         {

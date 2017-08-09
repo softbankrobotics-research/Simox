@@ -11,7 +11,7 @@ namespace VirtualRobot
         const ModelWeakPtr& model, 
         const std::vector<ModelNodePtr> &modelNodes,
         const ModelNodePtr kinematicRoot, 
-        const CoordinatePtr tcp) :
+        const FramePtr tcp) :
             name(name),
             weakModel(model),
             modelNodes(modelNodes),
@@ -114,7 +114,7 @@ namespace VirtualRobot
         const std::string &name, 
         const std::vector<ModelNodePtr> &modelNodes, 
         const ModelNodePtr kinematicRoot, 
-        const CoordinatePtr tcp, 
+        const FramePtr tcp, 
         bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
@@ -162,7 +162,7 @@ namespace VirtualRobot
         }
 
         // tcp
-        CoordinatePtr tcpNode = tcp;
+        FramePtr tcpNode = tcp;
         if (!tcpNode)
         {
             if (!modelNodes.empty())
@@ -244,7 +244,7 @@ namespace VirtualRobot
         this->kinematicRoot = modelNode;
     }
 
-    CoordinatePtr ModelNodeSet::getTCP() const
+    FramePtr ModelNodeSet::getTCP() const
     {
         return tcp;
     }

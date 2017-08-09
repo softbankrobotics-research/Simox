@@ -1932,7 +1932,7 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::METERS;
         res->addChild(u);
-        CoordinatePtr tcp;
+        FramePtr tcp;
         bool ok = true;
 
         if (!eef)
@@ -1959,7 +1959,7 @@ namespace VirtualRobot
         else
         {
             RobotPtr r = eef->createEefRobot(eef->getName(), eef->getName());
-            CoordinatePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
+            FramePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
             r->setGlobalPoseForModelNode(tcpN, Eigen::Matrix4f::Identity());
             res->addChild(CoinVisualizationFactory::getCoinVisualization(r, visu));
         }

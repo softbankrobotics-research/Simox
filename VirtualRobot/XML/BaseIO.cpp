@@ -1577,7 +1577,7 @@ namespace VirtualRobot
             kinRoot = robo->getModelNode(rootNodeName);
         }
 
-        CoordinatePtr tcp;
+        FramePtr tcp;
 
         if (!tcpName.empty())
         {
