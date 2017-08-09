@@ -1,9 +1,8 @@
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/Nodes/RobotNodeRevoluteFactory.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelJoint.h"
+#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 
 #include <string>
@@ -16,7 +15,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    std::shared_ptr<Robot> robot = RobotFactory::createRobot("Robbi");
+    /*std::shared_ptr<Robot> robot = RobotFactory::createRobot("Robbi");
     std::vector< std::shared_ptr<RobotNode> > robotNodes;
     //VirtualRobot::RobotNodeRevoluteFactory revoluteNodeFactory;
     //DHParameter dhParameter(0, 0, 0, 0, true);
@@ -27,7 +26,7 @@ int main(int argc, char* argv[])
 
     cout << "resInit:" << resInit << endl;
     cout << "First robot:" << endl;
-    robot->print();
+    robot->print();*/
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
