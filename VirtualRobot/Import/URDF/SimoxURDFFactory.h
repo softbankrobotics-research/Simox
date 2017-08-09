@@ -24,16 +24,14 @@
 #ifndef _VirtualRobot_SimoxURDFFactory_h_
 #define _VirtualRobot_SimoxURDFFactory_h_
 
-#include <VirtualRobot/VirtualRobotImportExport.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Import/RobotImporterFactory.h>
+#include "../../VirtualRobotImportExport.h"
+#include "../../Model/Model.h"
+#include "../RobotImporterFactory.h"
 
 #include <urdf_model/model.h>
 
 namespace VirtualRobot
 {
-    class Robot;
-
     class VIRTUAL_ROBOT_IMPORT_EXPORT SimoxURDFFactory  : public RobotImporterFactory
     {
     public:
@@ -59,12 +57,12 @@ namespace VirtualRobot
             \param urdfModel The model
             \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
         */
-        RobotPtr createRobot(boost::shared_ptr<urdf::ModelInterface> urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
+        RobotPtr createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
 
         // AbstractFactoryMethod
     public:
         static std::string getName();
-        static boost::shared_ptr<RobotImporterFactory> createInstance(void*);
+        static std::shared_ptr<RobotImporterFactory> createInstance(void*);
     private:
         static SubClassRegistry registry;
 

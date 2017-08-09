@@ -23,7 +23,7 @@
 #ifndef _VirtualRobot_Coordinate_h_
 #define _VirtualRobot_Coordinate_h_
 
-#include <VirtualRobot/VirtualRobot.h>
+#include "../../VirtualRobot/VirtualRobot.h"
 #include <Eigen/Geometry>
 
 

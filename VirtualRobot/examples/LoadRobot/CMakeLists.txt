@@ -1,10 +1,10 @@
-PROJECT ( loadRobot )
+PROJECT ( LoadRobot )
 
-ADD_EXECUTABLE(${PROJECT_NAME} loadRobot.cpp)
+ADD_EXECUTABLE(${PROJECT_NAME} LoadRobot.cpp)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER "Examples")
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} VirtualRobot)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-virtualrobot)
   
   
 #######################################################################################
