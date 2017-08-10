@@ -138,6 +138,8 @@ namespace VirtualRobot
 
         virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
 
+        void getSelfDistParameters(float &storeAlpha, float &storeBeta);
+
     protected:
 
         bool getDetailedAnalysis(DifferentialIKPtr jacobian, RobotNodeSetPtr rns, extManipData& storeData, int considerFirstSV = 0);

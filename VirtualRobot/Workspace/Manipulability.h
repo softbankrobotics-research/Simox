@@ -83,6 +83,12 @@ namespace VirtualRobot
         PoseQualityMeasurementPtr getManipulabilityMeasure();
 
         /*!
+         * \brief measureCurrentPose Uses internal quality measure to determine the quality value of the current tcp pose
+         * \return
+         */
+        float measureCurrentPose();
+
+        /*!
             Returns the name of the manipulability measure.
         */
         std::string getMeasureName() const;
@@ -192,6 +198,9 @@ namespace VirtualRobot
 
         RobotNodeSetPtr selfDistStatic;
         RobotNodeSetPtr selfDistDynamic;
+
+        float selfDistAlpha;
+        float selfDistBeta;
 
     };
 

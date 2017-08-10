@@ -834,4 +834,10 @@ namespace VirtualRobot
         m->considerObstacles(this->considerObstacle, this->obstacle_alpha, this->obstacle_beta);
         return m;
     }
+
+    void PoseQualityExtendedManipulability::getSelfDistParameters(float &storeAlpha, float &storeBeta)
+    {
+        storeAlpha = obstacle_alpha;
+        storeBeta = obstacle_beta;
+    }
 }

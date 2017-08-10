@@ -28,7 +28,7 @@ namespace VirtualRobot
         this->robot = robot;
         type = "WorkspaceRepresentation";
         versionMajor = 2;
-        versionMinor = 8;
+        versionMinor = 9;
         orientationType = Hopf;//EulerXYZExtrinsic;
         reset();
     }
@@ -201,7 +201,6 @@ namespace VirtualRobot
             int version[2];
             version[0] = (int)(FileIO::read<ioIntTypeRead>(file));
             version[1] = (int)(FileIO::read<ioIntTypeRead>(file));
-            //FileIO::readArray<int>(version, 2, file);
 
             // first check if the current version is used
             if (version[0] != versionMajor || version[1] != versionMinor)
@@ -210,7 +209,7 @@ namespace VirtualRobot
                 // now check if an older version is used
                 THROW_VR_EXCEPTION_IF(
                     (version[0] > 2) ||
-                    (version[0] == 2 && !(version[1]>=0 && version[1] <= 8)) ||
+                    (version[0] == 2 && !(version[1]>=0 && version[1] <= 9)) ||
                     (version[0] == 1 && !(version[1] == 0 || version[1] == 2 || version[1] == 3)
                     ),  "Wrong file format version");
             }
@@ -231,8 +230,8 @@ namespace VirtualRobot
                 orientationType = RPY;
             }
 
-            //versionMajor = version[0];
-            //versionMinor = version[1];
+            versionMajor = version[0];
+            versionMinor = version[1];
             // Check Robot name
             FileIO::readString(tmpString, file);
             THROW_VR_EXCEPTION_IF(tmpString != robot->getType(), "Wrong Robot");

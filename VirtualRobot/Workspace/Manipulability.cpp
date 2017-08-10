@@ -28,6 +28,8 @@ namespace VirtualRobot
         measureName = "<not set>";
         considerJL = false;
         considerSelfDist = false;
+        selfDistAlpha = 40.0f;
+        selfDistBeta = 1.0f;
     }
 
 
@@ -220,7 +222,7 @@ namespace VirtualRobot
         selfDistStatic.reset();
         selfDistDynamic.reset();
 
-        if (versionMajor >= 2 && versionMinor >= 3)
+        if (versionMajor>2 || (versionMajor == 2 && versionMinor >= 3))
         {
             // read self collision data
             cjl = (int)(FileIO::read<ioIntTypeRead>(file));;
@@ -264,6 +266,25 @@ namespace VirtualRobot
                     selfDistStatic.reset();
                 }
             }
+
+        }
+
+        // since 2.9: alpha and beta for self dist
+        if (versionMajor>2 || (versionMajor == 2 && versionMinor >= 9))
+        {
+            selfDistAlpha = FileIO::read<float>(file);
+            selfDistBeta = FileIO::read<float>(file);
+        }
+
+        // init self dist
+        if (considerSelfDist)
+        {
+            PoseQualityExtendedManipulabilityPtr pqm = boost::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
+            if (pqm)
+            {
+                VR_INFO << "Setting up self dist, alpha:" << selfDistAlpha << ", beta:" << selfDistBeta << endl;
+                pqm->considerObstacles(true, selfDistAlpha, selfDistBeta);
+            }
         }
 
         return true;
@@ -283,11 +304,7 @@ namespace VirtualRobot
 
         FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
 
-        //file.write((char *)&cjl, sizeof(int));
-
         FileIO::write<float>(file, maxManip);
-
-        //file.write((char *)&maxManip, sizeof(float));
 
         // write self collision data
         cjl = 0;
@@ -298,7 +315,6 @@ namespace VirtualRobot
         }
 
         FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(cjl));
-        //file.write((char *)&cjl, sizeof(int));
 
         std::string selfDistRNS1 = "<not set>";
 
@@ -315,14 +331,19 @@ namespace VirtualRobot
         }
 
         FileIO::writeString(file, selfDistRNS1);
-        //len = selfDistRNS1.length();
-        //file.write((char *)&len, sizeof(int));
-        //file.write(selfDistRNS1.c_str(), len);
 
         FileIO::writeString(file, selfDistRNS2);
-        //len = selfDistRNS2.length();
-        //file.write((char *)&len, sizeof(int));
-        //file.write(selfDistRNS2.c_str(), len);
+
+        // since 2.9: alpha and beta for self dist
+        float selfDistA = 0.0f;
+        float selfDistB = 0.0f;
+        PoseQualityExtendedManipulabilityPtr pqm = boost::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
+        if (pqm)
+        {
+            pqm->getSelfDistParameters(selfDistA, selfDistB);
+        }
+        FileIO::write<float>(file, selfDistA);
+        FileIO::write<float>(file, selfDistB);
 
         return true;
     }
@@ -347,6 +368,11 @@ namespace VirtualRobot
     PoseQualityMeasurementPtr Manipulability::getManipulabilityMeasure()
     {
         return measure;
+    }
+
+    float Manipulability::measureCurrentPose()
+    {
+        return getCurrentManipulability(measure);
     }
 
 
