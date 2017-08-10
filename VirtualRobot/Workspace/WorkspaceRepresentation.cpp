@@ -798,19 +798,29 @@ namespace VirtualRobot
 
     bool WorkspaceRepresentation::getVoxelFromPose(float x[6], unsigned int v[6]) const
     {
+        float pos;
         int a;
 
         for (int i = 0; i < 6; i++)
         {
-            a = (int)(((x[i] - minBounds[i]) / spaceSize[i]) * (float)numVoxels[i]);
+            pos = ((x[i] - minBounds[i]) / spaceSize[i]) * (float)numVoxels[i];
+            a = (int)(pos);
 
             if (a < 0)
             {
-                return false;    //pos[i] = 0; // if pose is outside of voxel space, ignore it
+                // check for rounding errors
+                if (a==-1 && (fabs(float(a) - pos)<0.5f))
+                    a = 0;
+                else
+                    return false;    //pos[i] = 0; // if pose is outside of voxel space, ignore it
             }
             else if (a >= numVoxels[i])
             {
-                return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
+                // check for rounding errors
+                if (a==numVoxels[i] && (fabs(float(a) - pos)<0.5f))
+                    a = numVoxels[i];
+                else
+                    return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
             }
 
             v[i] = a;

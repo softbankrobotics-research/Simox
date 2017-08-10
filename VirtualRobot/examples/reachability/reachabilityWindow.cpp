@@ -205,7 +205,7 @@ void reachabilityWindow::reachVisu()
         Eigen::Vector3f minBB, maxBB;
         reachSpace->getWorkspaceExtends(minBB, maxBB);
         float zDist = maxBB(2) - minBB(2);
-        float maxZ =  minBB(2) + heightPercent*zDist;
+        float maxZ =  minBB(2) + heightPercent*zDist - reachSpace->getDiscretizeParameterTranslation();
         SoNode *reachvisu =  CoinVisualizationFactory::getCoinVisualization(reachSpace, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), true, maxZ);
         visualisationNode->addChild(reachvisu);
 
@@ -578,7 +578,7 @@ void reachabilityWindow::createReach()
                 RobotNodeSetPtr m1 = robot->getRobotNodeSet(staticM);
                 RobotNodeSetPtr m2 = robot->getRobotNodeSet(dynM);
                 man->initSelfDistanceCheck(m1, m2);
-
+                manMeasure->considerObstacles(true, UICreate.doubleSpinBoxSelfDistA->value(), UICreate.doubleSpinBoxSelfDistB->value());
             }
         }
 
@@ -738,6 +738,8 @@ void reachabilityWindow::updateQualityInfo()
     if (!currentRobotNodeSet)
         return;
 
+
+
     std::stringstream ss;
     std::stringstream ss2;
     std::stringstream ss3;
@@ -754,5 +756,28 @@ void reachabilityWindow::updateQualityInfo()
     manipString = ss2.str();
     UI.labelExtManip->setText(manipString.c_str());
 
+    float reachManip = 1.0f;
+    float poseManip = 1.0f;
+    if (reachSpace)
+    {
+        ManipulabilityPtr p = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+        if (p)
+        {
+            reachManip = p->getManipulabilityAtPose(p->getTCP()->getGlobalPose());
+            poseManip = p->measureCurrentPose();
+        } else
+        {
+            if (reachSpace->getEntry(p->getTCP()->getGlobalPose())>0)
+                reachManip = 1.0f;
+            else
+                reachManip = 0.0f;
+        }
+    }
+    ss3 << "Quality in Reach Data: " << reachManip;
+    manipString = ss3.str();
+    UI.labelWSData->setText(manipString.c_str());
 
+    ss4 << "Quality at pose: " << poseManip;
+    manipString = ss4.str();
+    UI.labelPose->setText(manipString.c_str());
 }
