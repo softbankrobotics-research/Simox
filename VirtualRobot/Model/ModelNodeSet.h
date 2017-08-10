@@ -194,12 +194,12 @@ namespace VirtualRobot
          * @return The number of associated model nodes.
          */
         virtual unsigned int getSize() const;
-
+/*
         /*!
          * Get the collision models of all contained nodes.
          *
          * @return The collision models.
-         */
+         * /
         std::vector<CollisionModelPtr> getCollisionModels();
 
         /*!
@@ -207,7 +207,7 @@ namespace VirtualRobot
          * TODO: The ordering of the values.
          *
          * @return The joint values.
-         */
+         * /
         std::vector<float> getJointValues() const;
 
         /*!
@@ -216,7 +216,7 @@ namespace VirtualRobot
          *
          * @param fillVector The vector to put the values in.
          * @param clearVector If true, all items in the vector are deleted.
-         */
+         * /
         void getJointValues(std::vector<float>& fillVector, bool clearVector = false) const;
 
         /*!
@@ -224,7 +224,7 @@ namespace VirtualRobot
          * TODO: The ordering of the values.
          *
          * @param fillVector The vector to put the values in.
-         */
+         * /
         void getJointValues(Eigen::VectorXf& fillVector) const;
 
         /*!
@@ -232,7 +232,7 @@ namespace VirtualRobot
          * TODO: The ordering of the values.
          *
          * @param config The config to save the joint values in.
-         */
+         * /
         void getJointValues(const ModelConfigPtr& config) const;
 
         /*!
@@ -241,7 +241,7 @@ namespace VirtualRobot
          * TODO: The ordering of the values.
          *
          * @param jointValues The values to check and adjust.
-         */
+         * /
         void respectJointLimits(std::vector<float>& jointValues) const;
 
         /*!
@@ -250,7 +250,7 @@ namespace VirtualRobot
          * TODO: The ordering of the values.
          *
          * @param jointValues The values to check and adjust.
-         */
+         * /
         void respectJointLimits(Eigen::VectorXf& jointValues) const;
 
         /*!
@@ -259,7 +259,7 @@ namespace VirtualRobot
          * @param jointValues A vector of correct size.
          * @param verbose Print information if joint limits are violated.
          * @return True when all given joint values are within joint limits.
-         */
+         * /
         bool checkJointLimits(const std::vector<float>& jointValues, bool verbose = false) const;
 
         /*!
@@ -268,7 +268,7 @@ namespace VirtualRobot
          * @param jointValues A vector of correct size.
          * @param verbose Print information if joint limits are violated.
          * @return True when all given joint values are within joint limits.
-         */
+         * /
         bool checkJointLimits(const Eigen::VectorXf& jointValues, bool verbose = false) const;
 
         /*!
@@ -276,7 +276,7 @@ namespace VirtualRobot
          * The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
          *
          * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
-         */
+         * /
         virtual void setJointValues(const std::vector<float>& jointValues);
 
         /*!
@@ -284,14 +284,14 @@ namespace VirtualRobot
          * The subpart of the robot, defined by the start joint (kinematicRoot) of rns, is updated to apply the new joint values.
          *
          * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
-        */
+        * /
         virtual void setJointValues(const Eigen::VectorXf& jointValues);
 
         /*!
          * Set joints that are within the given ModelConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
          *
          * @param config The config to get the joint values from.
-         */
+         * /
         virtual void setJointValues(const ModelConfigPtr& config);
 
         /*!
@@ -299,16 +299,16 @@ namespace VirtualRobot
          *
          * @return True, if the nodes form a valid kinematic chain, i.e. node i+1 in the nodeset must be a child (transitively) of node i.
          */
-        bool isKinematicChain();
+        //bool isKinematicChain();
 
         // TODO: Documentation
-        KinematicChainPtr toKinematicChain();
+        //KinematicChainPtr toKinematicChain();
 
         /*!
          * Get number of faces (i.e. triangles) of this object.
          *
          * @param collisionModel Indicates weather the faces of the collision model or the full model should be returned.
-         */
+         * /
         virtual int getNumFaces(bool collisionModel = false);
 
         /*!
@@ -316,23 +316,23 @@ namespace VirtualRobot
          * This is done by summing the distances between all succeeding RobotNodes of this set.
          *
          * @return The maximum extension length.
-         */
+         * /
         float getMaximumExtension();
 
         /*!
          * Return center of mass of this node set.
          *
          * @return The CoM in global coordinate system.
-         */
+         * /
         Eigen::Vector3f getCoM();
 
         /*!
          * Return accumulated mass of this node set.
          *
          * @return The mass.
-         */
+         * /
         float getMass();
-
+*/
         std::vector< std::string > getNodeNames() const;
 
         /*!
