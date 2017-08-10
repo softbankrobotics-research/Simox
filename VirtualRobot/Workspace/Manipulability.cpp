@@ -33,7 +33,13 @@ namespace VirtualRobot
     }
 
 
+
     void Manipulability::addPose(const Eigen::Matrix4f& pose, PoseQualityMeasurementPtr qualMeasure)
+    {
+        addPose(pose, qualMeasure, selfDistStatic, selfDistDynamic);
+    }
+
+    void Manipulability::addPose(const Eigen::Matrix4f& pose, PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt, RobotNodeSetPtr selfDistDyn)
     {
         Eigen::Matrix4f p = pose;
         toLocal(p);
@@ -62,7 +68,7 @@ namespace VirtualRobot
 
         if (getVoxelFromPose(x, v))
         {
-            float m = getCurrentManipulability(qualMeasure);
+            float m = getCurrentManipulability(qualMeasure, selfDistSt, selfDistDyn);
             float mSc = m / maxManip;
 
             if (mSc > 1)
@@ -106,12 +112,17 @@ namespace VirtualRobot
         addPose(pose, measure);
     }
 
-    float Manipulability::getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure)
+    float Manipulability::getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt, RobotNodeSetPtr selfDistDyn)
     {
         if (!qualMeasure)
         {
             return 0.0f;
         }
+
+        if (!selfDistSt)
+            selfDistSt = selfDistStatic;
+        if (!selfDistDyn)
+            selfDistDyn = selfDistDynamic;
 
         if (considerSelfDist && selfDistStatic && selfDistDynamic)
         {
@@ -764,6 +775,19 @@ namespace VirtualRobot
                     dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
                 }
 
+                RobotNodeSetPtr selfDistStatic = this->selfDistStatic;
+                if (selfDistStatic && clonedRobot->hasRobotNodeSet(selfDistStatic->getName()))
+                {
+                    selfDistStatic = clonedRobot->getRobotNodeSet(selfDistStatic->getName());
+                }
+
+                RobotNodeSetPtr selfDistDynamic = this->selfDistDynamic;
+                if (selfDistDynamic && clonedRobot->hasRobotNodeSet(selfDistDynamic->getName()))
+                {
+                    selfDistDynamic = clonedRobot->getRobotNodeSet(selfDistDynamic->getName());
+                }
+
+
                 // and a cloned pose quality
                 PoseQualityMeasurementPtr clonedMeasure  = this->measure->clone(clonedRobot);
 
@@ -808,7 +832,7 @@ namespace VirtualRobot
                     if (successfullyRandomized)
                     {
                         Eigen::Matrix4f p = clonedTcpNode->getGlobalPose();
-                        addPose(p, clonedMeasure);
+                        addPose(p, clonedMeasure, selfDistStatic, selfDistDynamic);
                     }
                     else
                     {
