@@ -239,6 +239,12 @@ namespace VirtualRobot
         eigen4f2rpy(m, storeRPY);
         return storeRPY;
     }
+    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen3f2rpy(const Eigen::Matrix3f& m)
+    {
+        Eigen::Matrix4f m2 = Eigen::Matrix4f::Identity();
+        m2.block<3,3>(0,0) = m;
+        return eigen4f2rpy(m2);
+    }
 
     Eigen::Matrix<float, 6, 1> VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2posrpy(const Eigen::Matrix4f& m)
     {

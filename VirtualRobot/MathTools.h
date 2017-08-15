@@ -128,6 +128,7 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m, float x[6]);
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m, Eigen::Vector3f& storeRPY);
         Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m);
+        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen3f2rpy(const Eigen::Matrix3f& m);
         Eigen::Matrix<float, 6, 1> VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2posrpy(const Eigen::Matrix4f& m);
 
         /*!
