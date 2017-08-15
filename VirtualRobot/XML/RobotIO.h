@@ -69,24 +69,14 @@ namespace VirtualRobot
         static RobotPtr loadRobotModel(const std::string& xmlFile, RobotDescription loadMode = eFull);
         static RobotPtr createRobotModelFromString(const std::string& xmlFile, const std::string& basePath = "", RobotDescription loadMode = eFull);
 
-
-
-        static bool createEndEffectorsFromString(const RobotPtr &robot, const std::string &xmlString);
-        static bool loadEndEffectors(const RobotPtr &robot, const std::string& filename);
-
-
-
-        static EndEffectorPtr processEndeffectorNode(rapidxml::xml_node<char>* endeffectorXMLNode, RobotPtr robo);
+        static ModelPtr processModelDescription(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotIO::RobotDescription loadMode);
 
     protected:
         // instantiation not allowed
         RobotIO();
         virtual ~RobotIO();
 
-        static EndEffectorActorPtr processEndeffectorActorNode(rapidxml::xml_node<char>* endeffectorActorXMLNode, RobotPtr robo);
-        static void processEndeffectorStaticNode(rapidxml::xml_node<char>* endeffectorStaticXMLNode, RobotPtr robo, std::vector<ModelLinkPtr>& staticNodesList);
-        static EndEffectorActor::CollisionMode processEEFColAttributes(rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
-        static void processActorNodeList(rapidxml::xml_node<char>* parentNode, RobotPtr robot, std::vector<EndEffectorActor::ActorDefinition>& actorList, bool clearList = true);
+        static ModelPtr processModel(rapidxml::xml_node<char>* robotModelNode);
     };
 
 }

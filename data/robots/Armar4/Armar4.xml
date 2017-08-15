@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<RobotModel>
-	<Description>
-	This is the standard ARMAR-4 model
-	</Description>
+<ModelDescription>
 	
 	<URDF>urdf/Armar4.urdf</URDF>
 
@@ -15,4 +12,4 @@
 	<!--NodeSets>nodesets/Armar4-jointsets.xml</NodeSets>
 	<NodeSets>nodesets/Armar4-linksets.xml</NodeSets-->
 
-</RobotModel>
+</ModelDescription>

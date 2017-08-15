@@ -56,6 +56,7 @@ XML/RobotIO.cpp
 XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
+XML/EndEffectorIO.cpp
 IK/IKSolver.cpp
 IK/AdvancedIKSolver.cpp
 IK/DifferentialIK.cpp
@@ -150,6 +151,7 @@ XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
 IK/IKSolver.h
+XML/EndEffectorIO.h
 IK/AdvancedIKSolver.h
 IK/DifferentialIK.h
 IK/GenericIKSolver.h

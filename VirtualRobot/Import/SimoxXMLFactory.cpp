@@ -2,6 +2,7 @@
 
 #include "SimoxXMLFactory.h"
 #include "../XML/RobotIO.h"
+#include "../XML/EndEffectorIO.h"
 #include "../XML/rapidxml.hpp"
 #include "../VirtualRobotException.h"
 #include "../Model/ModelNodeSet.h"
@@ -949,7 +950,7 @@ namespace VirtualRobot
         //std::vector<RobotNodeSetPtr> robotNodeSets
         for (unsigned int i = 0; i < endeffectorNodes.size(); ++i)
         {
-            EndEffectorPtr eef = RobotIO::processEndeffectorNode(endeffectorNodes[i], robo);
+            EndEffectorPtr eef = EndEffectorIO::processEndeffectorNode(endeffectorNodes[i], robo);
             robo->registerEndEffector(eef);
         }
 
