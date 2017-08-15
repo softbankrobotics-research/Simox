@@ -16,6 +16,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/SoQt.h>
 
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
+
 #include "string"
 #include <iostream>
 
@@ -76,7 +78,7 @@ void startRRTVisualization()
     std::string filename("robots/examples/RrtDemo/Joint3.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
     cout << "Loading 3DOF robot from " << filename << endl;
-    RobotPtr robot = RobotIO::loadRobot(filename);
+    RobotPtr robot = SimoxXMLFactory::loadRobotSimoxXML(filename);
 
     if (!robot)
     {

@@ -13,6 +13,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Model/Nodes/ModelJointPrismatic.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <string>
 
 #include <Eigen/Core>
@@ -134,7 +135,7 @@ BOOST_AUTO_TEST_CASE(testGazeIK)
         "</Robot>                                                                                                     ";
 
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string rnsName = "IKVirtualGaze";

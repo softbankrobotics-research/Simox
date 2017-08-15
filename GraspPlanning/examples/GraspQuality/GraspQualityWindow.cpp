@@ -11,6 +11,7 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -244,7 +245,7 @@ void GraspQualityWindow::loadRobot()
 {
     eefs.clear();
     robot.reset();
-    robot = RobotIO::loadRobot(robotFile);
+    robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
 
     if (!robot)
     {

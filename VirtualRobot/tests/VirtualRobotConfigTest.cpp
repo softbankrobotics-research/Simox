@@ -6,12 +6,13 @@
 
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotConfigTest
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Nodes/ModelJoint.h>
-#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/Model/ModelConfig.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/VirtualRobotException.h>
+#include "../Model/Model.h"
+#include "../Model/Nodes/ModelJoint.h"
+#include "../VirtualRobotTest.h"
+#include "../Model/ModelConfig.h"
+#include "../XML/RobotIO.h"
+#include "../Import/SimoxXMLFactory.h"
+#include "../VirtualRobotException.h"
 #include <string>
 
 BOOST_AUTO_TEST_SUITE(Scene)
@@ -33,7 +34,7 @@ BOOST_AUTO_TEST_CASE(testRobotConfigSetConfig)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
 	const std::string node1 = "Joint1";
@@ -71,7 +72,7 @@ BOOST_AUTO_TEST_CASE(testRobotConfigSetInvalidConfig)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     VirtualRobot::ModelConfigPtr c;

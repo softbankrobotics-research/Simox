@@ -119,7 +119,6 @@ namespace VirtualRobot
         BaseIO();
         virtual ~BaseIO();
 
-
         static std::mutex mutex;
     };
 

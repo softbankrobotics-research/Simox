@@ -14,6 +14,7 @@
 #include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -342,7 +343,7 @@ void GraspPlannerWindow::loadObject()
 void GraspPlannerWindow::loadRobot()
 {
     robot.reset();
-    robot = RobotIO::loadRobot(robotFile);
+    robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
 
     if (!robot)
     {

@@ -11,6 +11,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 //#include <VirtualRobot/Mdoel/Nodes/Sensor.h>
 //#include <VirtualRobot/Nodes/PositionSensor.h>
 #include <string>
@@ -20,38 +21,38 @@ BOOST_AUTO_TEST_SUITE(RobotFactory)
 BOOST_AUTO_TEST_CASE(testRobotFactoryEmptyXML)
 {
     const std::string robotString = "";
-    BOOST_REQUIRE_THROW((VirtualRobot::RobotIO::createRobotFromString(robotString)), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW((VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString)), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryUnclosedRobotTag)
 {
     const std::string robotString = "<Robot>";
     VirtualRobot::RobotPtr robot;
-    BOOST_REQUIRE_THROW(robot = VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(robot = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryOnlyClosedRobotTag)
 {
     const std::string robotString = "</Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryEmptyRobotTag)
 {
     const std::string robotString = "<Robot></Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryEmptyTypeString)
 {
     const std::string robotString = "<Robot Type=''></Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryNotExistentType)
 {
     const std::string robotString = "<Robot Type='XYZ'></Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotRobotMacro)
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotRobotMacro)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string node = "Joint1";
@@ -75,13 +76,13 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotRobotMacro)
 BOOST_AUTO_TEST_CASE(testRobotFactoryEmptyRootNodeString)
 {
     const std::string robotString = "<Robot RootNode=''></Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotFactoryNotExistentRootNode)
 {
     const std::string robotString = "<Robot RootNode='JointX'></Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotValidEndeffector)
@@ -119,7 +120,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotValidEndeffector)
         " </Endeffector>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 }
 
@@ -160,7 +161,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotInvariantTagPosition)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 }
 
@@ -182,7 +183,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorWrongChildTag)
         "  </Static>"
         " </Endeffector>"
         "</Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), std::exception);//VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), std::exception);//VirtualRobot::VirtualRobotException);
 }
 
 
@@ -193,7 +194,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorWithoutNameTag)
         " <Endeffector base='Joint1' tcp='Joint1'>"
         " </Endeffector>"
         "</Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 
@@ -204,7 +205,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorMissingBasenodeTag)
         " <Endeffector name ='e1'>"
         " </Endeffector>"
         "</Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 
@@ -215,7 +216,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorMissingBasenode)
         " <Endeffector name ='e1' base='Joint1' tcp='Joint1'>"
         " </Endeffector>"
         "</Robot>";
-    BOOST_REQUIRE_THROW(VirtualRobot::RobotIO::createRobotFromString(robotString), VirtualRobot::VirtualRobotException);
+    BOOST_REQUIRE_THROW(VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString), VirtualRobot::VirtualRobotException);
 }
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
@@ -244,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
     VirtualRobot::ModelJointPtr rn = rob->getJoint("Joint1");
     BOOST_REQUIRE(rn);
@@ -296,7 +297,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotDependendNodes)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string node1 = "Joint1";
@@ -369,7 +370,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string node1 = "Joint1";
@@ -415,7 +416,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
     BOOST_REQUIRE(!robXML.empty());
 
     VirtualRobot::RobotPtr rob2;
-    BOOST_REQUIRE_NO_THROW(rob2 = VirtualRobot::RobotIO::createRobotFromString(robXML));
+    BOOST_REQUIRE_NO_THROW(rob2 = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robXML));
     BOOST_REQUIRE(rob2);
 
 	/*

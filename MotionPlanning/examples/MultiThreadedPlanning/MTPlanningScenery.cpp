@@ -15,6 +15,7 @@
 #include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
@@ -599,7 +600,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
     if ((int)robots.size() == 0)
     {
         // xml parsing
-        pRobot = RobotIO::loadRobot(robotFilename);
+        pRobot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename);
 
         if (!pRobot)
         {

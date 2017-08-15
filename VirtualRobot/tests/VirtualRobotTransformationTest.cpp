@@ -9,6 +9,8 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
+
 #include <string>
 
 #include <Eigen/Core>
@@ -63,7 +65,7 @@ BOOST_AUTO_TEST_CASE(testRobotNodePrismaticTransformation)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string node1 = "Joint1";

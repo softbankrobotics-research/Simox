@@ -15,7 +15,9 @@
 #include "VirtualRobot/CollisionDetection/CollisionModel.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 #include "../CSpace/CSpaceSampled.h"
+
 #include <string>
 
 #include <Eigen/Core>
@@ -36,7 +38,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
         "   </Joint>"
         " </RobotNode>"
         "</Robot>";
-    VirtualRobot::RobotPtr rob = VirtualRobot::RobotIO::createRobotFromString(robotString);
+    VirtualRobot::RobotPtr rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString);
     BOOST_REQUIRE(rob);
     std::vector< std::string > nodes;
     nodes.push_back(std::string("Joint1"));

@@ -14,6 +14,7 @@
 #include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <string>
 
 BOOST_AUTO_TEST_SUITE(Trajectory)
@@ -34,7 +35,7 @@ BOOST_AUTO_TEST_CASE(testTrajectorySet)
         " </RobotNodeSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     VirtualRobot::JointSetPtr rns;
@@ -72,7 +73,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryClone)
         " </RobotNodeSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     VirtualRobot::JointSetPtr rns;
@@ -137,7 +138,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsRemove)
         " </RobotNodeSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     VirtualRobot::JointSetPtr rns;
@@ -220,7 +221,7 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsInsert)
         " </RobotNodeSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     VirtualRobot::JointSetPtr rns;

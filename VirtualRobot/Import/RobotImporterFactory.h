@@ -61,6 +61,14 @@ namespace VirtualRobot
 
         virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull) = 0;
 
+        /*!
+         * \brief loadEndEffector Load and attach end effector definition from XML file
+         * \param robot The robot to attach end effector
+         * \param filename The eef file.
+         * \return  true on success
+         */
+        virtual bool loadEndEffector(const RobotPtr &robot, const std::string &filename);
+
         virtual std::string getFileExtension() = 0;
         virtual std::string getFileFilter() = 0;
 

@@ -87,9 +87,10 @@ protected:
 
     VirtualRobot::RobotPtr robot;
     std::string m_sRobotFilename;
-    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+    std::vector < VirtualRobot::ModelJointPtr > allJoints;
+    std::vector < VirtualRobot::ModelJointPtr > currentJoints;
+    std::vector < VirtualRobot::ModelLinkPtr > currentLinks;
+    std::vector < VirtualRobot::ModelNodeSetPtr > robotNodeSets;
     std::vector < VirtualRobot::EndEffectorPtr > eefs;
     VirtualRobot::EndEffectorPtr currentEEF;
     VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;

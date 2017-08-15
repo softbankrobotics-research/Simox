@@ -12,6 +12,7 @@
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Tools/LinkedCoordinate.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <string>
 #include <thread>
@@ -76,7 +77,7 @@ BOOST_AUTO_TEST_CASE(testIntelligentCoordinate)
         " </RobotNode>"
 
         "</Robot>";
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     const std::string node1 = "Joint1";

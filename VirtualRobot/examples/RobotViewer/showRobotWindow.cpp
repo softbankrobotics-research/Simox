@@ -27,29 +27,14 @@ float TIMER_MS = 30.0f;
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
-    VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
-
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     m_sRobotFilename = sRobotFilename;
     sceneSep = new SoSeparator;
     sceneSep->ref();
-    /*SoUnits *u = new SoUnits;
-    u->units = SoUnits::MILLIMETERS;
-    sceneSep->addChild(u);*/
     robotSep = new SoSeparator;
     extraSep = new SoSeparator;
     sceneSep->addChild(extraSep);
-
-    /*SoShapeHints * shapeHints = new SoShapeHints;
-    shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
-    shapeHints->shapeType = SoShapeHints::UNKNOWN_SHAPE_TYPE;
-    sceneSep->addChild(shapeHints);*/
-    /*SoLightModel * lightModel = new SoLightModel;
-    lightModel->model = SoLightModel::BASE_COLOR;
-    sceneSep->addChild(lightModel);*/
 
     sceneSep->addChild(robotSep);
 
@@ -67,32 +52,9 @@ showRobotWindow::~showRobotWindow()
     sceneSep->unref();
 }
 
-/*
-void CShowRobotWindow::saveScreenshot()
-{
-    static int counter = 0;
-    SbString framefile;
-
-    framefile.sprintf("MPL_Render_Frame%06d.png", counter);
-    counter++;
-
-    viewer->getSceneManager()->render();
-    viewer->getSceneManager()->scheduleRedraw();
-    QGLWidget* w = (QGLWidget*)viewer->getGLWidget();
-
-    QImage i = w->grabFrameBuffer();
-    bool bRes = i.save(framefile.getString(), "PNG");
-    if (bRes)
-        cout << "wrote image " << counter << endl;
-    else
-        cout << "failed writing image " << counter << endl;
-
-}*/
-
 void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
-    //centralWidget()->setLayout(UI.gridLayoutViewer);
     viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
     // setup
@@ -172,7 +134,7 @@ void showRobotWindow::resetSceneryAll()
     }
 
     std::vector<float> jv(allRobotNodes.size(), 0.0f);
-    robot->setJointValues(allRobotNodes, jv);
+    allRobotNodes->setJointValues(jv);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 }
@@ -380,7 +342,7 @@ int showRobotWindow::main()
 
 void showRobotWindow::quit()
 {
-    std::cout << "CShowRobotWindow: Closing" << std::endl;
+    std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
     SoQt::exitMainLoop();
 }

@@ -31,7 +31,7 @@
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include "VirtualRobot/Model/Nodes/ModelLink.h"
 #include "VirtualRobot/Model/LinkSet.h"
-
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -702,7 +702,7 @@ void ConstrainedIKWindow::loadRobot()
 
     try
     {
-        robot = RobotIO::loadRobot(robotFilename);
+        robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename);
     }
     catch (VirtualRobotException& e)
     {

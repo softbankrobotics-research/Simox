@@ -31,7 +31,17 @@ using namespace std;
 namespace VirtualRobot
 {
 
-    string RobotImporterFactory::getAllFileFilters()
+bool RobotImporterFactory::loadEndEffector(const RobotPtr &robot, const string &filename)
+{
+    if (!robot)
+        return false;
+
+
+
+    return true;
+}
+
+string RobotImporterFactory::getAllFileFilters()
     {
         vector<string> filter;
         for(string subclass: RobotImporterFactory::getSubclassList())

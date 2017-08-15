@@ -6,6 +6,7 @@
 #include "VirtualRobot/Grasping/GraspSet.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Tools/SphereApproximator.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
@@ -396,7 +397,7 @@ namespace VirtualRobot
 
         try
         {
-            robot = RobotIO::loadRobot(robotFile);
+            robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
         }
         catch (VirtualRobotException& e)
         {

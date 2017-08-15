@@ -8,6 +8,7 @@
 #include "ObjectIO.h"
 #include "../Trajectory.h"
 #include "../Model/Frame.h"
+#include "../Import/SimoxXMLFactory.h"
 
 namespace VirtualRobot
 {
@@ -114,7 +115,7 @@ namespace VirtualRobot
 
         // create & register robot
         THROW_VR_EXCEPTION_IF(fileName.empty(), "Missing file definition in scene's robot tag '" << robotName << "'." << endl);
-        RobotPtr robot = RobotIO::loadRobot(fileName);
+        RobotPtr robot = SimoxXMLFactory::loadRobotSimoxXML(fileName);
         THROW_VR_EXCEPTION_IF(!robot, "Invalid robot file in scene's robot tag '" << robotName << "'." << endl);
         robot->setGlobalPose(globalPose);
         scene->registerRobot(robot);

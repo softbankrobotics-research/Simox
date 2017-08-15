@@ -17,6 +17,8 @@
 #include "../CSpace/CSpacePath.h"
 #include "../PostProcessing/ShortcutProcessor.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
+
 #include <string>
 
 #include <Eigen/Core>
@@ -48,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
         "  <Node name='Joint2'/>"
         " </RobotNodeSet>"
         "</Robot>";
-    VirtualRobot::RobotPtr rob = VirtualRobot::RobotIO::createRobotFromString(robotString);
+    VirtualRobot::RobotPtr rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString);
     BOOST_REQUIRE(rob);
     VirtualRobot::JointSetPtr rns = rob->getJointSet("rns1");
     BOOST_REQUIRE(rns);

@@ -4,6 +4,7 @@
 #include "../../XML/RobotIO.h"
 #include "../../Tools/RuntimeEnvironment.h"
 #include "../../Import/URDF/SimoxURDFFactory.h"
+#include "../../Import/SimoxXMLFactory.h"
 
 #include <string>
 #include <iostream>
@@ -34,5 +35,5 @@ int main(int argc, char* argv[])
     std::string outPath = boost::filesystem::initial_path().generic_string();
     cout << "Saving converted file to " << outPath << "/urdf_output.xml..." << endl;
 
-    RobotIO::saveXML(r, "urdf_output.xml", outPath);
+    SimoxXMLFactory::saveXML(r, "urdf_output.xml", outPath);
 }

@@ -16,6 +16,7 @@
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/Model/JointSet.h>
 #include <VirtualRobot/Workspace/Reachability.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <string>
 
 BOOST_AUTO_TEST_SUITE(WorkSpace)
@@ -30,7 +31,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceEuler)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
     VirtualRobot::WorkspaceRepresentationPtr ws;
     BOOST_REQUIRE_NO_THROW(ws.reset(new VirtualRobot::WorkspaceRepresentation(rob)));
@@ -165,7 +166,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
             " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
     std::vector<std::string> rnsNames;

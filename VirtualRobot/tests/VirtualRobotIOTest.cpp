@@ -11,6 +11,7 @@
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 //#include <VirtualRobot/Nodes/Sensor.h>
 //#include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
@@ -29,7 +30,7 @@ BOOST_AUTO_TEST_CASE(testRobotLoadXML)
     BOOST_REQUIRE(fileOK);
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::loadRobot(filename));
+    BOOST_REQUIRE_NO_THROW(r = SimoxXMLFactory::loadRobotSimoxXML(filename));
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
@@ -49,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testRobotSaveXML)
     BOOST_REQUIRE(fileOK);
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::loadRobot(filename));
+    BOOST_REQUIRE_NO_THROW(r = SimoxXMLFactory::loadRobotSimoxXML(filename));
     BOOST_REQUIRE(r);
 
     boost::system::error_code ec;
@@ -60,12 +61,12 @@ BOOST_AUTO_TEST_CASE(testRobotSaveXML)
     boost::filesystem::path filenameTmp = boost::filesystem::operator/(tempDir, robName);
 
     bool saveOK;
-    BOOST_REQUIRE_NO_THROW(saveOK = RobotIO::saveXML(r, robName.string(), tempDir.string()));
+    BOOST_REQUIRE_NO_THROW(saveOK = SimoxXMLFactory::saveXML(r, robName.string(), tempDir.string()));
     BOOST_REQUIRE(saveOK);
 
     //reload robot
     RobotPtr r2;
-    BOOST_REQUIRE_NO_THROW(r2 = RobotIO::loadRobot(filenameTmp.string()));
+    BOOST_REQUIRE_NO_THROW(r2 = SimoxXMLFactory::loadRobotSimoxXML(filenameTmp.string()));
     BOOST_REQUIRE(r2);
 }
 
