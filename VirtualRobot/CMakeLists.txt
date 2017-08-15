@@ -143,6 +143,7 @@ Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 VirtualRobot.cpp
+Tools/Gravity.cpp
 )
 
 SET(INCLUDES
@@ -258,6 +259,7 @@ SphereApproximator.h
 Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
+Tools/Gravity.h
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)

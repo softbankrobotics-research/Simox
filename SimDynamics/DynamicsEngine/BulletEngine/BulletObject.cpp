@@ -68,11 +68,12 @@ namespace SimDynamics
                     localComTransform.block(0, 3, 3, 1) = -o->getCoMLocal();
                     //cout << "localComTransform:\n" << localComTransform << endl;
 
+                    currentTransform = localComTransform;
 
                     for (it = primitives.begin(); it != primitives.end(); it++)
                     {
-                        //currentTransform *= (*it)->transform;
-                        currentTransform = localComTransform * (*it)->transform;
+                        currentTransform *= (*it)->transform;
+                        //currentTransform = localComTransform * (*it)->transform;
                         //cout << "primitive: (*it)->transform:\n" << (*it)->transform << endl;
                         //cout << "primitive: currentTransform:\n" << currentTransform << endl;
 

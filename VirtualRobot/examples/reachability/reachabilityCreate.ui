@@ -57,7 +57,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>410</y>
+     <y>380</y>
      <width>660</width>
      <height>100</height>
     </rect>
@@ -447,13 +447,13 @@
      <double>-3.140000000000000</double>
     </property>
     <property name="maximum">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
     <property name="singleStep">
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="doubleSpinBoxMinRo">
@@ -504,13 +504,13 @@
      <double>-3.140000000000000</double>
     </property>
     <property name="maximum">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
     <property name="singleStep">
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="doubleSpinBoxMinPi">
@@ -561,13 +561,13 @@
      <double>-3.140000000000000</double>
     </property>
     <property name="maximum">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
     <property name="singleStep">
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>6.280000000000000</double>
+     <double>6.290000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="doubleSpinBoxMinYa">
@@ -741,18 +741,95 @@
     </property>
    </widget>
   </widget>
-  <widget class="QCheckBox" name="checkBoxSelfDistance">
+  <widget class="QGroupBox" name="groupBox_5">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>500</y>
-     <width>381</width>
-     <height>17</height>
+     <x>10</x>
+     <y>480</y>
+     <width>321</width>
+     <height>71</height>
     </rect>
    </property>
-   <property name="text">
-    <string>only ext manip: consider self distance</string>
+   <property name="title">
+    <string>Extended Manipulability Parameters</string>
    </property>
+   <widget class="QCheckBox" name="checkBoxSelfDistance">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>221</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>consider self distance</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBoxSelfDistA">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>40</y>
+      <width>71</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <double>0.010000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>40.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>alpha:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>40</y>
+      <width>71</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>beta:</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBoxSelfDistB">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>40</y>
+      <width>71</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <double>0.010000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>1.000000000000000</double>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
