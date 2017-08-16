@@ -177,7 +177,7 @@ namespace VirtualRobot
         return result;
     }
 
-    bool ModelNode::attachChild(const ModelNodePtr& newNode)
+    bool ModelNode::attachChild(const ModelNodePtr& newNode, bool updatePoses)
     {
 		WriteLockPtr w = getModel()->getWriteLock();
 		VR_ASSERT(newNode);
@@ -220,7 +220,8 @@ namespace VirtualRobot
         children.push_back(newNode);
         newNode->parent = shared_from_this();
 
-		updatePose(true);
+        if (updatePoses)
+            updatePose(true);
 
 		//initialized = true;
 

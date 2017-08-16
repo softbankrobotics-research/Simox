@@ -422,7 +422,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void Model::setRootNode(const ModelNodePtr& node)
+    void Model::setRootNode(const ModelNodePtr& node, bool updatePose)
     {
         if (!node)
         {
@@ -432,7 +432,8 @@ namespace VirtualRobot
         {
             WriteLockPtr w = getWriteLock();
             rootNode = node;
-            rootNode->updatePose(true, true);
+            if (updatePose)
+                rootNode->updatePose(true, true);
         }
         else
         {

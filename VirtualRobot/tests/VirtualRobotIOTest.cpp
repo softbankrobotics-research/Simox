@@ -23,6 +23,7 @@ using namespace VirtualRobot;
 
 BOOST_AUTO_TEST_SUITE(VirtualRobotIO)
 
+/*
 BOOST_AUTO_TEST_CASE(testRobotLoadXML)
 {
     std::string filename = "robots/ArmarIII/ArmarIII.xml";
@@ -91,7 +92,7 @@ BOOST_AUTO_TEST_CASE(testLoadStoreManipulationObjectPhysics)
     BOOST_CHECK_CLOSE(physicsObject.massKg, 0.0, 0.0001);
     BOOST_CHECK_EQUAL(physicsObject.comLocation, ModelLink::Physics::eVisuBBoxCenter);
 }
-
+*/
 
 
 BOOST_AUTO_TEST_SUITE_END()

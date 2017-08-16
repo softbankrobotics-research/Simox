@@ -239,8 +239,9 @@ namespace VirtualRobot
          * The root node is the first ModelNode of this model.
          *
          * @param node The new root node.
+         * @param updatePose Recalculate all internal poses of the kinematic structure. This should be true unless you do the recalculation later.
          */
-        virtual void setRootNode(const ModelNodePtr& node);
+        virtual void setRootNode(const ModelNodePtr& node, bool updatePose = true);
 
         /*!
          * Get the current root node.

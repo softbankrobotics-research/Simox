@@ -264,9 +264,9 @@ namespace VirtualRobot
 
                 float r, p, y;
                 r = p = y = 0.0f;
-                r = getFloatByAttributeName(node, "roll");
-                p = getFloatByAttributeName(node, "pitch");
-                y = getFloatByAttributeName(node, "yaw");
+                r = getOptionalFloatByAttributeName(node, "roll", 0);
+                p = getOptionalFloatByAttributeName(node, "pitch", 0);
+                y = getOptionalFloatByAttributeName(node, "yaw", 0);
 
                 if (!hasUnitsAttribute(node))
                 {
@@ -307,9 +307,9 @@ namespace VirtualRobot
                 //rapidxml::xml_node<> *translationXMLNode = trXMLNode->first_node("translation",0,false);
                 //THROW_VR_EXCEPTION_IF((translationXMLNode && translation), "Multiple translations defined in <Transformation> tag: " << tagName << "! Ignoring translation node." << endl);
                 Eigen::Matrix4f localT = Eigen::Matrix4f::Identity();
-                localT(0, 3) = getFloatByAttributeName(node, "x");
-                localT(1, 3) = getFloatByAttributeName(node, "y");
-                localT(2, 3) = getFloatByAttributeName(node, "z");
+                localT(0, 3) = getOptionalFloatByAttributeName(node, "x", 0);
+                localT(1, 3) = getOptionalFloatByAttributeName(node, "y", 0);
+                localT(2, 3) = getOptionalFloatByAttributeName(node, "z", 0);
 
                 if (hasUnitsAttribute(node))
                 {

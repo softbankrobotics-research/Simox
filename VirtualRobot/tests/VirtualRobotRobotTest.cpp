@@ -12,8 +12,6 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>
-//#include <VirtualRobot/Mdoel/Nodes/Sensor.h>
-//#include <VirtualRobot/Nodes/PositionSensor.h>
 #include <string>
 
 BOOST_AUTO_TEST_SUITE(RobotFactory)
@@ -221,7 +219,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorMissingBasenode)
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
 {
-    const std::string robotString =
+    const std::string wrongRobotString =
         "<Robot Type='DemoRobotType' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
         "  <Physics>"
@@ -234,7 +232,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
         "   </InertiaMatrix>"
         "  </Physics>"
         "  <Transform>"
-        "    <DH a='1' d='0' theta='0' alpha='0' units='degree' unitsLength='m'/>"
+        "    <Translation x='1' y='0' z='0' unitsLength='m'/>"
         "  </Transform>"
         "  <Joint type='revolute'>"
         "    <axis x='0' y='0' z='1'/>"
@@ -245,39 +243,73 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotPhysicsTag)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
+    // physics in joints is not allowed!
+    BOOST_REQUIRE_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(wrongRobotString), VirtualRobot::VirtualRobotException);
+
+    const std::string robotString2 =
+        "<Robot Type='DemoRobotType' RootNode='Body1'>"
+        " <RobotNode name='Body1'>"
+        "  <Physics>"
+        "   <Mass value='100' units='kg'/>"
+        "   <CoM location='joint' x='10' y='20' z='30' units='mm'/>"
+        "   <InertiaMatrix unitsWeight='ton' unitsLength='mm'>"
+        "     <row1 c1='1' c2='2' c3='3'/>"
+        "     <row2 c1='4' c2='5' c3='6'/>"
+        "     <row3 c1='7' c2='8' c3='9'/>"
+        "   </InertiaMatrix>"
+        "  </Physics>"
+        "  <Transform>"
+        "    <Translation x='1' y='0' z='0' unitsLength='m'/>"
+        "  </Transform>"
+        "  <Child name='Joint2'/>"
+        " </RobotNode>"
+        " <RobotNode name='Joint2'>"
+        "  <Joint type='revolute'>"
+        "    <axis x='0' y='0' z='1'/>"
+        "    <MaxVelocity value='36' unitsLength='mm' unitsTime='h'/>"
+        "    <MaxAcceleration value='36' unitsTime='min'/>"
+        "    <MaxTorque value='0.2' units='meter'/>"
+        "  </Joint>"
+        " </RobotNode>"
+        "</Robot>";
+
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString2));
     BOOST_REQUIRE(rob);
-    VirtualRobot::ModelJointPtr rn = rob->getJoint("Joint1");
-    BOOST_REQUIRE(rn);
-    /*float mass = rn->getMass();
+    VirtualRobot::ModelJointPtr joint = rob->getJoint("Joint2");
+    BOOST_REQUIRE(joint);
+    VirtualRobot::ModelLinkPtr link = rob->getLink("Body1");
+    BOOST_REQUIRE(link);
+    float mass = link->getMass();
     BOOST_CHECK_EQUAL(mass, 100.0f);
-    float vel = rn->getMaxVelocity();
+    float vel = joint->getMaxVelocity();
     BOOST_CHECK_CLOSE(vel, 1e-5f, 0.01f);
-    float acc = rn->getMaxAcceleration();
+    float acc = joint->getMaxAcceleration();
     BOOST_CHECK_CLOSE(acc, 0.01f, 0.01f);
-    float to = rn->getMaxTorque();
+    float to = joint->getMaxTorque();
     BOOST_CHECK_CLOSE(to, 0.2f, 0.01f);
-    Eigen::Vector3f com = rn->getCoMLocal();
+    Eigen::Vector3f com = link->getCoMLocal();
     bool comOK = com.isApprox(Eigen::Vector3f(10.0f, 20.0f, 30.0f));
     BOOST_REQUIRE(comOK);
 
-    Eigen::Matrix3f inertia = rn->getInertiaMatrix();
+    Eigen::Matrix3f inertia = link->getInertiaMatrix();
     Eigen::Matrix3f expectedMat;
     expectedMat << 0.001f, 0.002f, 0.003f, 0.004f, 0.005f, 0.006f, 0.007f, 0.008f, 0.009f;
     bool inertiaMatrixOK = inertia.isApprox(expectedMat);
-    BOOST_REQUIRE(inertiaMatrixOK);*/
-    Eigen::Matrix4f m = rn->getNodeTransformation();
+    BOOST_REQUIRE(inertiaMatrixOK);
+    Eigen::Matrix4f m = link->getNodeTransformation();
     BOOST_CHECK_EQUAL(m(0, 3), 1000.0f);
 }
 
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotDependendNodes)
 {
+    //        "    <DH a='1' d='0' theta='0' alpha='-90' units='degree' unitsLength='m'/>"
     const std::string robotString =
         "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
         "  <Transform>"
-        "    <DH a='1' d='0' theta='0' alpha='-90' units='degree' unitsLength='m'/>"
+        "    <Translation x='1' y='0' z='0' unitsLength='m'/>"
+        "    <rollpitchyaw yaw='-90' units='degree'/>"
         "  </Transform>"
         "  <Joint type='revolute'>"
         "    <axis x='0' y='0' z='1'/>"
@@ -287,9 +319,6 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotDependendNodes)
         "  <Child name='Joint2'/>"
         " </RobotNode>"
         " <RobotNode name='Joint2'>"
-        "  <Transform>"
-        "    <DH a='0' d='0' theta='0' alpha='0' units='degree'/>"
-        "  </Transform>"
         "   <Joint type='revolute'>"
         "    <axis x='0' y='0' z='1'/>"
         "    <Limits unit='degree' lo='0' hi='90'/>"
@@ -333,8 +362,8 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotDependendNodes)
 BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
 {
     const std::string robotString =
-        "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
-        " <RobotNode name='Joint1'>"
+        "<Robot Type='MyDemoRobotType' RootNode='Body1'>"
+        " <RobotNode name='Body1'>"
         "  <Physics>"
         "   <Mass value='100' units='kg'/>"
         "   <CoM location='joint' x='10' y='20' z='30' units='mm'/>"
@@ -344,17 +373,20 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
         "     <row3 c1='7' c2='8' c3='9'/>"
         "   </InertiaMatrix>"
         "  </Physics>"
+        "  <Child name='Joint2'/>"
+        " </RobotNode>"
+        " <RobotNode name='Joint2'>"
         "  <Joint type='revolute'>"
         "    <axis x='0' y='0' z='1'/>"
         "    <Limits unit='degree' lo='0' hi='180'/>"
-        "    <PropagateJointValue factor='0.5' name='Joint2'/>"
+        "    <PropagateJointValue factor='0.5' name='Joint3'/>"
         "    <MaxVelocity value='36' unitsLength='mm' unitsTime='h'/>"
         "    <MaxAcceleration value='36' unitsTime='min'/>"
         "    <MaxTorque value='0.2' units='meter'/>"
         "  </Joint>"
-        "  <Child name='Joint2'/>"
+        "  <Child name='Joint3'/>"
         " </RobotNode>"
-        " <RobotNode name='Joint2'>"
+        " <RobotNode name='Joint3'>"
         "  <Transform>"
         "    <Translation x='100' y='50' z='0'/>"
         "  </Transform>"
@@ -362,38 +394,44 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
         "    <axis x='0' y='0' z='1'/>"
         "    <Limits unit='degree' lo='0' hi='90'/>"
         "   </Joint>"
-        "  <Sensor type='position' name='sensor2'>"
-        "    <Transform>"
-        "       <Translation x='100' y='50' z='0'/>"
-        "    </Transfrom>"
-        "  </Sensor>"
         " </RobotNode>"
         "</Robot>";
+
+    // todo: test sensors
+//    "  <Sensor type='position' name='sensor2'>"
+//    "    <Transform>"
+//    "       <Translation x='100' y='50' z='0'/>"
+//   "    </Transfrom>"
+//    "  </Sensor>"
+
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
 
-    const std::string node1 = "Joint1";
+    const std::string node1 = "Body1";
     const std::string node2 = "Joint2";
-    VirtualRobot::ModelLinkPtr rn1 = rob->getLink(node1);
-    BOOST_REQUIRE(rn1);
-    VirtualRobot::ModelLinkPtr rn2 = rob->getLink(node2);
-    BOOST_REQUIRE(rn2);
+    const std::string node3 = "Joint3";
+    VirtualRobot::ModelLinkPtr body1 = rob->getLink(node1);
+    BOOST_REQUIRE(body1);
+    VirtualRobot::ModelJointPtr joint1 = rob->getJoint(node2);
+    VirtualRobot::ModelJointPtr joint2 = rob->getJoint(node3);
+    BOOST_REQUIRE(joint1);
+    BOOST_REQUIRE(joint2);
 
     // check physics
-    float mass = rn1->getMass();
+    float mass = body1->getMass();
     BOOST_CHECK_EQUAL(mass, 100.0f);
-    /*float vel = rn1->getMaxVelocity();
+    float vel = joint1->getMaxVelocity();
     BOOST_CHECK_CLOSE(vel, 1e-5f, 0.01f);
-    float acc = rn1->getMaxAcceleration();
+    float acc = joint1->getMaxAcceleration();
     BOOST_CHECK_CLOSE(acc, 0.01f, 0.01f);
-    float to = rn1->getMaxTorque();
+    float to = joint1->getMaxTorque();
     BOOST_CHECK_CLOSE(to, 0.2f, 0.01f);
-    Eigen::Vector3f com = rn1->getCoMLocal();
+    Eigen::Vector3f com = body1->getCoMLocal();
     bool comOK = com.isApprox(Eigen::Vector3f(10.0f, 20.0f, 30.0f));
-    BOOST_REQUIRE(comOK);*/
+    BOOST_REQUIRE(comOK);
 
-    Eigen::Matrix3f inertia = rn1->getInertiaMatrix();
+    Eigen::Matrix3f inertia = body1->getInertiaMatrix();
     Eigen::Matrix3f expectedMat;
     expectedMat << 0.001f, 0.002f, 0.003f, 0.004f, 0.005f, 0.006f, 0.007f, 0.008f, 0.009f;
     bool inertiaMatrixOK = inertia.isApprox(expectedMat);
@@ -410,7 +448,9 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
     BOOST_REQUIRE(p.isApprox(p2));*/
 
 
+    // todo
     // create xml robot
+    /*
     std::string robXML;
     BOOST_REQUIRE_NO_THROW(robXML = rob->toXML());
     BOOST_REQUIRE(!robXML.empty());
@@ -419,7 +459,6 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
     BOOST_REQUIRE_NO_THROW(rob2 = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robXML));
     BOOST_REQUIRE(rob2);
 
-	/*
 	VirtualRobot::ModelLinkPtr rn1 = rob2->getLink(node1);
     BOOST_REQUIRE(rn1);
 	VirtualRobot::ModelLinkPtr rn2 = rob2->getLink(node2);

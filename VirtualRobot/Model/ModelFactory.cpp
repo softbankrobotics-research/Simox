@@ -68,7 +68,7 @@ namespace VirtualRobot
         // register root
         if (!model->hasModelNode(rootNode->getName()))
             model->registerModelNode(rootNode);
-        model->setRootNode(rootNode);
+        model->setRootNode(rootNode, false);
 
         // go through tree and attach nodes according to parent-child mapping
         std::vector<ModelNodePtr> openNodes;
@@ -93,7 +93,7 @@ namespace VirtualRobot
                     {
                         model->registerModelNode(c);
                     }
-                    currentNode->attachChild(c);
+                    currentNode->attachChild(c, false);
                     openNodes.push_back(c);
                 }
             }
@@ -118,6 +118,8 @@ namespace VirtualRobot
                 VR_ERROR << "ModelNode " << modelNodes[i]->getName() << " is not connected to kinematic structure..." << endl;
             }
         }
+
+        model->getRootNode()->updatePose();
 
         return result;
     }

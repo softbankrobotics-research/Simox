@@ -208,9 +208,10 @@ namespace VirtualRobot
          * Attach a new Child to this node.
          *
          * @param newNode The new node.
+         * @param updatePoses Indicates if the internal poses should be recalculated (should be true, unless recalculation takes place later)
          * @return True, if the node could be attached; false otherwise.
          */
-        bool attachChild(const ModelNodePtr& newNode);
+        bool attachChild(const ModelNodePtr& newNode, bool updatePoses = true);
 
         /*!
          * Detach a node from this node.
