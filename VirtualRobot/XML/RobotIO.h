@@ -77,6 +77,14 @@ namespace VirtualRobot
         virtual ~RobotIO();
 
         static ModelPtr processModel(rapidxml::xml_node<char>* robotModelNode);
+
+        /*!
+         * \brief searchFile searches for relative file (to basePath) and on failure tries to find a global file by checking the data dirs
+         * \param filename Overwrites with valid filename on success
+         * \param basePath
+         * \return true on success
+         */
+        static bool searchFile(std::string& filename, const std::string& basePath);
     };
 
 }

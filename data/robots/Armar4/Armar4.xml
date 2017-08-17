@@ -6,10 +6,10 @@
 
 	<!--Sensors>sensors/Armar4-sensors-ft.xml</Sensors-->
 	
-	<EndEffectors>endeffectors/Armar4-eef-hands.xml</EndEffectors>
-	<EndEffectors>endeffectors/Armar4-eef-feet.xml</EndEffectors>
+        <EndEffector>endeffectors/Armar4-eef-hands.xml</EndEffector>
+        <EndEffector>endeffectors/Armar4-eef-feet.xml</EndEffector>
 	
-	<!--NodeSets>nodesets/Armar4-jointsets.xml</NodeSets>
-	<NodeSets>nodesets/Armar4-linksets.xml</NodeSets-->
+        <!--NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>
+        <NodeSet>nodesets/Armar4-linksets.xml</NodeSet-->
 
 </ModelDescription>

@@ -42,7 +42,7 @@ namespace VirtualRobot
             Load an urdf model and convert it to a simox robot.
             The 3D model files are assumed to be accessible through the VirtualRobot::RuntimeEnvironment paths; be sure to add any 3d model paths there.
             \param filename The urdf model file
-            \param loadMode Currently only full loading is supported (ignored)
+            \param loadMode Load only structure, with collision model, or full visualization
         */
         virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
 
@@ -55,9 +55,10 @@ namespace VirtualRobot
         /*!
             Convert an urdf model.
             \param urdfModel The model
+            \param loadMode Currently only full loading is supported
             \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
         */
-        RobotPtr createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
+        RobotPtr createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
 
         // AbstractFactoryMethod
     public:
@@ -74,7 +75,7 @@ namespace VirtualRobot
 
 
     protected:
-        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, bool useColModelsIfNoVisuModel = true);
+        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
         RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
         VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose, const std::string& basePath);

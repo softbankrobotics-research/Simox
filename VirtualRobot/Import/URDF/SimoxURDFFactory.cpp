@@ -49,7 +49,7 @@ namespace VirtualRobot
         }
         else
         {
-            result = createRobot(*urdf_model, basePath, useColModelsIfNoVisuModel);
+            result = createRobot(*urdf_model, basePath, loadMode, useColModelsIfNoVisuModel);
         }
 
         return result;
@@ -91,7 +91,7 @@ namespace VirtualRobot
         return URDFFactory;
     }
 
-    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, bool useColModelsIfNoVisuModel)
+    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
     {
         std::string robotType = urdfModel.getName();
         std::string robotName = robotType;
@@ -108,7 +108,7 @@ namespace VirtualRobot
         while (itBodies != bodies.end())
         {
             boost::shared_ptr<Link> body = itBodies->second;
-            RobotNodePtr nodeVisual = createBodyNode(robo, body, basePath, useColModelsIfNoVisuModel);
+            RobotNodePtr nodeVisual = createBodyNode(robo, body, basePath, loadMode, useColModelsIfNoVisuModel);
             allNodes.push_back(nodeVisual);
             allNodesMap[body->name] = nodeVisual;
             std::vector<std::string> childrenlist;
@@ -317,7 +317,7 @@ namespace VirtualRobot
         return res;
     }
 
-    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, bool useColModelsIfNoVisuModel)
+    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
     {
         const float scale = 1000.0f; // mm
         RobotNodePtr result;
@@ -333,7 +333,7 @@ namespace VirtualRobot
         VirtualRobot::VisualizationNodePtr rnVisu;
         VirtualRobot::CollisionModelPtr rnCol;
 
-        if (urdfBody->visual && urdfBody->visual)
+        if (loadMode == RobotIO::RobotDescription::eFull && urdfBody->visual && urdfBody->visual)
         {
             if (urdfBody->visual_array.size() > 1)
             {
@@ -343,7 +343,7 @@ namespace VirtualRobot
                 rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
         }
 
-        if (urdfBody->collision && urdfBody->collision)
+        if ((loadMode == RobotIO::RobotDescription::eFull  || loadMode == RobotIO::RobotDescription::eCollisionModel) && urdfBody->collision && urdfBody->collision)
         {
             VisualizationNodePtr v;
             if (urdfBody->collision_array.size() > 1)

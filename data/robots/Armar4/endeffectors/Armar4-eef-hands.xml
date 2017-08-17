@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<EndEffector name="HandL_TCP" base="HandL_Base" tcp="HandL_TCP" gcp="HandL_GCP">
+<EndEffector name="HandL_TCP" base="HandL_TCP_link" tcp="HandL_TCP_link" gcp="HandL_GCP_link">
 	<Preshape name="Open Preshape">
 		<Node name="HandL_Finger_Thumb1_joint" unit="radian" value="0"/>
 		<Node name="HandL_Finger_Thumb2_joint" unit="radian" value="0"/>
@@ -50,7 +50,7 @@
 
     
 
-<Endeffector name="HandR_TCP" base="HandR_Base" tcp="HandR_TCP" gcp="HandR_GCP">
+<Endeffector name="HandR_TCP" base="HandR_TCP_link" tcp="HandR_TCP_link" gcp="HandR_TCP_link">
     <Preshape name="Open Preshape">
         <Node name="HandR_Finger_Thumb1_joint" unit="radian" value="0"/>
         <Node name="HandR_Finger_Thumb2_joint" unit="radian" value="0"/>

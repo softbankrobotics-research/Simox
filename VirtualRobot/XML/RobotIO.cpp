@@ -36,6 +36,21 @@ namespace VirtualRobot
     {
     }
 
+    bool RobotIO::searchFile(std::string &filename, const std::string &basePath)
+    {
+        // check for relative path
+        std::string filenameLocal = basePath + FileIO::getPathSeparator() + filename;
+        if (RuntimeEnvironment::getDataFileAbsolute(filenameLocal))
+            filename = filenameLocal;
+        else
+        {
+            // check for global path
+            if (!RuntimeEnvironment::getDataFileAbsolute(filename))
+                return false;
+        }
+        return true;
+    }
+
 
 
 	/*
@@ -187,16 +202,8 @@ namespace VirtualRobot
         if (XMLNode)
         {
             std::string filename = XMLNode->value();
-            // check for relative path
-            std::string filenameLocal = basePath + FileIO::getPathSeparator() + filename;
-            if (RuntimeEnvironment::getDataFileAbsolute(filenameLocal))
-                filename = filenameLocal;
-            else
-            {
-                // check for global path
-                if (!RuntimeEnvironment::getDataFileAbsolute(filename))
-                    THROW_VR_EXCEPTION("Could not find file " << filename);
-            }
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
 
             RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxURDF", NULL);
             if (!rf)
@@ -215,10 +222,9 @@ namespace VirtualRobot
         {
             THROW_VR_EXCEPTION_IF(robot, "Do not mix URDF and SimoxXML tags...");
             std::string filename = XMLNode->value();
-            if (!RuntimeEnvironment::getDataFileAbsolute(filename))
-            {
-                THROW_VR_EXCEPTION("Could not find file " << filename);
-            }
+
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
 
             RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxXML", NULL);
             THROW_VR_EXCEPTION_IF(!rf, "Could not instanciate SimoxXML loader...");
@@ -235,6 +241,10 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!robot, "Could not process end effectors due to missing model defintion...");
 
             std::string filename = XMLNode->value();
+
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
+
             bool eefOK = EndEffectorIO::loadEndEffectors(robot, filename);
             THROW_VR_EXCEPTION_IF(!eefOK, "Could not parse end effector defintion...");
 
