@@ -64,7 +64,8 @@ IF (NOT Simox_CONFIGURED)
 
     SET(Simox_LIB_DIR ${Simox_BUILD_DIRECTORY}/${LIB_DIR})
     SET(Simox_BIN_DIR ${Simox_BUILD_DIRECTORY}/${BIN_DIR})
-    SET(Simox_DATA_DIR ${CurrentSimoxPath}/VirtualRobot/data)
+    #SET(Simox_DATA_DIR ${CurrentSimoxPath}/VirtualRobot/data)
+    SET(Simox_DATA_DIR ${CurrentSimoxPath}/data)
 
     MESSAGE (STATUS "** SIMOX LIB DIR: ${Simox_LIB_DIR}")
     MESSAGE (STATUS "** SIMOX BIN DIR: ${Simox_BIN_DIR}")

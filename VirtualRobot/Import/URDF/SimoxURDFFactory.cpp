@@ -139,7 +139,13 @@ namespace VirtualRobot
             itJoints++;
         }
 
-        RobotNodePtr rootNode = allNodesMap[urdfModel.getRoot()->name];
+        std::string rname;
+        if (urdfModel.getRoot())
+            rname = urdfModel.getRoot()->name;
+
+        RobotNodePtr rootNode = allNodesMap[rname];
+        if (!rootNode)
+            VR_WARNING << "Could not determine root node with name " << rname;
 
         VirtualRobot::RobotFactory::initializeRobot(robo, allNodes, childrenMap, rootNode);
         return robo;

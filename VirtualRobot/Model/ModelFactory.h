@@ -51,16 +51,16 @@ namespace VirtualRobot
             \param rootNode The root.
         */
         static inline bool initializeRobot(const RobotPtr& robot,
-                                           std::vector<RobotNodePtr >& robotNodes,
+                                           const std::vector<RobotNodePtr >& robotNodes,
                                            const std::map< RobotNodePtr, std::vector<std::string> >& childrenMap,
-                                           RobotNodePtr& rootNode)
+                                           const RobotNodePtr& rootNode)
         {
             return initializeModel(robot, robotNodes, childrenMap, rootNode);
         }
         static bool initializeModel(const ModelPtr& model,
-                                    std::vector<ModelNodePtr >& modelNodes,
+                                    const std::vector<ModelNodePtr >& modelNodes,
                                     const std::map< ModelNodePtr, std::vector<std::string> >& childrenMap,
-                                    ModelNodePtr& rootNode);
+                                    const ModelNodePtr& rootNode);
 
 
         struct modelNodeDef

@@ -114,6 +114,9 @@ namespace VirtualRobot
             file.write(value.c_str(), len);
         }
 
+        std::string getPathSeparator();
+
+
         /*!
             Read points form ascii file.
             Each row defines one point triple.

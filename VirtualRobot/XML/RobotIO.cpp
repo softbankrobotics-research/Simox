@@ -14,6 +14,7 @@
 #include "../CollisionDetection/CollisionModel.h"
 #include "../Import/RobotImporterFactory.h"
 #include "../Import/SimoxXMLFactory.h"
+#include "FileIO.h"
 #include "EndEffectorIO.h"
 #include "rapidxml.hpp"
 
@@ -135,8 +136,6 @@ namespace VirtualRobot
             rapidxml::xml_node<char>* robotXMLNode = doc.first_node("modeldescription", 0, false);
 
             robot = processModelDescription(robotXMLNode, basePath, loadMode);
-
-            // todo...
         }
         catch (rapidxml::parse_error& e)
         {
@@ -188,12 +187,18 @@ namespace VirtualRobot
         if (XMLNode)
         {
             std::string filename = XMLNode->value();
-            if (!RuntimeEnvironment::getDataFileAbsolute(filename))
+            // check for relative path
+            std::string filenameLocal = basePath + FileIO::getPathSeparator() + filename;
+            if (RuntimeEnvironment::getDataFileAbsolute(filenameLocal))
+                filename = filenameLocal;
+            else
             {
-                THROW_VR_EXCEPTION("Could not find file " << filename);
+                // check for global path
+                if (!RuntimeEnvironment::getDataFileAbsolute(filename))
+                    THROW_VR_EXCEPTION("Could not find file " << filename);
             }
 
-            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("urdf", NULL);
+            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxURDF", NULL);
             if (!rf)
             {
                 THROW_VR_EXCEPTION("Could not instanciate URDF loader, most likely Simox was not compiled with URDF support...");
@@ -208,7 +213,7 @@ namespace VirtualRobot
         XMLNode = robotXMLNode->first_node("simoxxml", 0, false);
         if (XMLNode)
         {
-            THROW_VR_EXCEPTION_IF(robot, "Do not mox URDF and SimoxXML tags...");
+            THROW_VR_EXCEPTION_IF(robot, "Do not mix URDF and SimoxXML tags...");
             std::string filename = XMLNode->value();
             if (!RuntimeEnvironment::getDataFileAbsolute(filename))
             {

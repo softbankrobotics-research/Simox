@@ -23,6 +23,45 @@ using namespace VirtualRobot;
 
 BOOST_AUTO_TEST_SUITE(VirtualRobotIO)
 
+
+BOOST_AUTO_TEST_CASE(testRobotModelFromString)
+{
+    const std::string robotDef1 =
+            "<?xml version='1.0' encoding='UTF-8'?>"
+            "<ModelDescription>"
+            "</ModelDescription>";
+
+    const std::string robotDef2 =
+            "<?xml version='1.0' encoding='UTF-8'?>"
+            "<ModelDescription>"
+            "    <URDF>urdf/Armar4.urdf</URDF>"
+            "</ModelDescription>";
+
+    std::string basePath = "robots/Armar4";
+
+    RobotPtr r;
+    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef1,basePath));
+    BOOST_REQUIRE(!r);
+
+    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef2,basePath));
+    BOOST_REQUIRE(r);
+
+    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    BOOST_REQUIRE_GT(rn.size(), 0);
+
+    std::vector<ModelJointPtr> joints = r->getJoints();
+    BOOST_REQUIRE_GT(joints.size(), 0);
+
+    std::vector<ModelLinkPtr> links = r->getLinks();
+    BOOST_REQUIRE_GT(links.size(), 0);
+
+    std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
+    BOOST_REQUIRE_EQUAL(eefs.size(), 0);
+
+    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    BOOST_REQUIRE_EQUAL(rns.size(), 0);
+}
+
 /*
 BOOST_AUTO_TEST_CASE(testRobotLoadXML)
 {

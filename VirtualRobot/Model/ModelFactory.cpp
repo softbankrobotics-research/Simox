@@ -35,16 +35,16 @@ namespace VirtualRobot
     }
 
     bool ModelFactory::initializeModel(const ModelPtr& model,
-                                       std::vector<ModelNodePtr >& modelNodes,
+                                       const std::vector<ModelNodePtr >& modelNodes,
                                        const std::map< ModelNodePtr, std::vector<std::string> >& childrenMap,
-                                       ModelNodePtr& rootNode
+                                       const ModelNodePtr& rootNode
                                       )
     {
         VR_ASSERT(model);
         bool result = true;
 
         // check for root
-        std::vector<ModelNodePtr >::iterator iter = modelNodes.begin();
+        auto iter = modelNodes.begin();
         bool foundRoot = false;
 
         while (iter != modelNodes.end())
@@ -72,7 +72,7 @@ namespace VirtualRobot
 
         // go through tree and attach nodes according to parent-child mapping
         std::vector<ModelNodePtr> openNodes;
-        ModelNodePtr& currentNode = rootNode;
+        ModelNodePtr currentNode = rootNode;
         while (currentNode)
         {
             if (childrenMap.find(currentNode) != childrenMap.end())
