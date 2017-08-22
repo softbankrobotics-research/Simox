@@ -9,7 +9,7 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/DifferentialIK.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>

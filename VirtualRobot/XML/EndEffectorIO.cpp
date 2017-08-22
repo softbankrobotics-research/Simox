@@ -306,9 +306,6 @@ namespace VirtualRobot
         return result;
     }
 
-
-
-
     bool EndEffectorIO::createEndEffectorsFromString(const RobotPtr &robot, const std::string &xmlString)
     {
         if (!robot)

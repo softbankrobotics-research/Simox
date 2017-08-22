@@ -4,7 +4,7 @@
 #include "rapidxml.hpp"
 
 
-#include "RobotIO.h"
+#include "ModelIO.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
 #include "../Model/ManipulationObject.h"
@@ -240,7 +240,7 @@ namespace VirtualRobot
             if (nodeName == "visualization")
             {
                 THROW_VR_EXCEPTION_IF(visuProcessed, "Two visualization tags defined in ManipulationObject '" << objName << "'." << endl);
-                visualizationNode = processVisualizationTag(node, objName, basePath, useAsColModel);
+                visualizationNode = ModelIO::processVisualizationTag(node, objName, basePath, useAsColModel);
                 visuProcessed = true;
 
                 if (useAsColModel)
@@ -256,13 +256,13 @@ namespace VirtualRobot
             else if (nodeName == "collisionmodel")
             {
                 THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in ManipulationObject '" << objName << "'." << endl);
-                collisionModel = processCollisionTag(node, objName, basePath);
+                collisionModel = ModelIO::processCollisionTag(node, objName, basePath);
                 colProcessed = true;
             }
             else if (nodeName == "physics")
             {
                 THROW_VR_EXCEPTION_IF(physicsDefined, "Two physics tags defined in ManipulationObject '" << objName << "'." << endl);
-                processPhysicsTag(node, objName, physics);
+                ModelIO::processPhysicsTag(node, objName, physics);
                 physicsDefined = true;
             }
             else if (nodeName == "graspset")
@@ -357,7 +357,7 @@ namespace VirtualRobot
             if (nodeName == "visualization")
             {
                 THROW_VR_EXCEPTION_IF(visuProcessed, "Two visualization tags defined in Obstacle '" << objName << "'." << endl);
-                visualizationNode = processVisualizationTag(node, objName, basePath, useAsColModel);
+                visualizationNode = ModelIO::processVisualizationTag(node, objName, basePath, useAsColModel);
                 visuProcessed = true;
 
                 if (useAsColModel)
@@ -373,13 +373,13 @@ namespace VirtualRobot
             else if (nodeName == "collisionmodel")
             {
                 THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in Obstacle '" << objName << "'." << endl);
-                collisionModel = processCollisionTag(node, objName, basePath);
+                collisionModel = ModelIO::processCollisionTag(node, objName, basePath);
                 colProcessed = true;
             }
             else if (nodeName == "physics")
             {
                 THROW_VR_EXCEPTION_IF(physicsDefined, "Two physics tags defined in Obstacle '" << objName << "'." << endl);
-                processPhysicsTag(node, objName, physics);
+                ModelIO::processPhysicsTag(node, objName, physics);
                 physicsDefined = true;
             }
             else if (nodeName == "globalpose")

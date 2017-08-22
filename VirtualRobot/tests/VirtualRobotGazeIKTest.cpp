@@ -10,7 +10,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/GazeIK.h>
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Model/Nodes/ModelJointPrismatic.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>

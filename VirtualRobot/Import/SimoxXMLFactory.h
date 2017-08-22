@@ -38,9 +38,9 @@ namespace VirtualRobot
         SimoxXMLFactory();
         virtual ~SimoxXMLFactory();
 
-        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull);
 
-        static RobotPtr loadRobotSimoxXML(const std::string& xmlFile, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        static RobotPtr loadRobotSimoxXML(const std::string& xmlFile, ModelIO::RobotDescription loadMode = ModelIO::eFull);
 
         /*!
                 Creates Robot from string (Simox XML format).
@@ -48,7 +48,7 @@ namespace VirtualRobot
                 @param basePath If any \<childFromRobot\> tags are given, the path for searching the robot files can be specified.
                 @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
             */
-        static RobotPtr createRobotFromSimoxXMLString(const std::string& xmlString, const std::string& basePath = "", RobotIO::RobotDescription loadMode = RobotIO::RobotDescription::eFull);
+        static RobotPtr createRobotFromSimoxXMLString(const std::string& xmlString, const std::string& basePath = "", ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
 
 
         /*!
@@ -84,7 +84,7 @@ namespace VirtualRobot
             bool importEEF;
         };
 
-        static RobotPtr processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotIO::RobotDescription loadMode = RobotIO::RobotDescription::eFull);
+        static RobotPtr processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
         static RobotPtr processRobotAttributes(rapidxml::xml_node<char>* robotXMLNode, std::string& robotRoot);
         static void processRobotChildNodes(rapidxml::xml_node<char>* robotXMLNode,
                                            RobotPtr robo,
@@ -94,14 +94,14 @@ namespace VirtualRobot
                                            std::vector<ChildFromRobotDef> > & childrenFromRobotFilesMap,
                                            std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                            std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
-                                           RobotIO::RobotDescription loadMode = RobotIO::RobotDescription::eFull);
+                                           ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
         static RobotNodePtr processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
                                              RobotPtr robo,
                                              const std::string& basePath,
                                              int& robotNodeCounter,
                                              std::vector< std::string >& childrenNames,
                                              std::vector< ChildFromRobotDef >& childrenFromRobot,
-                                             RobotIO::RobotDescription loadMode = RobotIO::RobotDescription::eFull);
+                                             ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
 
         //static RobotNodeSetPtr processRobotNodeSet(rapidxml::xml_node<char> *setXMLNode, RobotPtr robo, const std::string &rootName, int &robotNodeSetCounter);
         static void processChildNode(rapidxml::xml_node<char>* childXMLNode, std::vector<std::string>& childrenNames);

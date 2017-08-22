@@ -1,6 +1,6 @@
 #include "MTPlanningScenery.h"
 
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"

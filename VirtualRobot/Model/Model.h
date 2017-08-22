@@ -36,7 +36,7 @@ namespace VirtualRobot
     /*!
      * This is the main object defining the kinematic structure of a model.
      *
-     * \see RobotIO, ModelNode, ModelNodeSet
+     * \see ModelIO, ModelNode, ModelNodeSet
      */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
@@ -564,7 +564,7 @@ namespace VirtualRobot
         /*!
          * Creates an XML string that defines the complete model.
          * Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
-         * \see RobotIO::saveXML.
+         * \see ModelIO::saveXML.
          *
          * @param basePath TODO: Documentation
          * @param modelPath TODO: Documentation

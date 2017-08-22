@@ -9,7 +9,7 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Model/ModelNodeSet.h>

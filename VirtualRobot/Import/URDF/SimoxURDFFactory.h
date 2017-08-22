@@ -44,7 +44,7 @@ namespace VirtualRobot
             \param filename The urdf model file
             \param loadMode Load only structure, with collision model, or full visualization
         */
-        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull);
 
         /*!
             \param useColModelsIfNoVisuModel If set (standard), a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
@@ -58,7 +58,7 @@ namespace VirtualRobot
             \param loadMode Currently only full loading is supported
             \param useColModelsIfNoVisuModel If set, a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
         */
-        RobotPtr createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
+        RobotPtr createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
 
         // AbstractFactoryMethod
     public:
@@ -75,7 +75,7 @@ namespace VirtualRobot
 
 
     protected:
-        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
+        RobotNodePtr createBodyNode(RobotPtr robot, boost::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
         RobotNodePtr createJointNode(RobotPtr robot, boost::shared_ptr<urdf::Joint> urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
         VirtualRobot::VisualizationNodePtr convertVisu(boost::shared_ptr<urdf::Geometry> g, urdf::Pose& pose, const std::string& basePath);

@@ -7,7 +7,7 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotRobotTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>

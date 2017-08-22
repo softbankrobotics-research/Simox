@@ -27,7 +27,7 @@
 #include "../Model/Model.h"
 #include "../Tools/AbstractFactoryMethod.h"
 #include "../Model/Model.h"
-#include "../XML/RobotIO.h"
+#include "../XML/ModelIO.h"
 
 #include <Eigen/Core>
 
@@ -59,7 +59,7 @@ namespace VirtualRobot
             ;
         }
 
-        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull) = 0;
+        virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull) = 0;
 
         /*!
          * \brief loadEndEffector Load and attach end effector definition from XML file

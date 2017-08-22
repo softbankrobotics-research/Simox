@@ -7,7 +7,7 @@
 #define BOOST_TEST_MODULE MotionPlanning_MotionPlanningShortcutProcessorTest
 
 #include "VirtualRobot/VirtualRobotTest.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Model/ModelNodeSet.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"

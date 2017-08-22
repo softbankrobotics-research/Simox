@@ -33,7 +33,7 @@ namespace VirtualRobot
     {
     }
 
-    RobotPtr SimoxURDFFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode)
+    RobotPtr SimoxURDFFactory::loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode)
     {
 
         RobotPtr result;
@@ -91,7 +91,7 @@ namespace VirtualRobot
         return URDFFactory;
     }
 
-    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
+    VirtualRobot::RobotPtr SimoxURDFFactory::createRobot(const urdf::ModelInterface &urdfModel, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
     {
         std::string robotType = urdfModel.getName();
         std::string robotName = robotType;
@@ -317,7 +317,7 @@ namespace VirtualRobot
         return res;
     }
 
-    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, RobotIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
+    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, boost::shared_ptr<Link> urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
     {
         const float scale = 1000.0f; // mm
         RobotNodePtr result;
@@ -333,7 +333,7 @@ namespace VirtualRobot
         VirtualRobot::VisualizationNodePtr rnVisu;
         VirtualRobot::CollisionModelPtr rnCol;
 
-        if (loadMode == RobotIO::RobotDescription::eFull && urdfBody->visual && urdfBody->visual)
+        if (loadMode == ModelIO::RobotDescription::eFull && urdfBody->visual && urdfBody->visual)
         {
             if (urdfBody->visual_array.size() > 1)
             {
@@ -343,7 +343,7 @@ namespace VirtualRobot
                 rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
         }
 
-        if ((loadMode == RobotIO::RobotDescription::eFull  || loadMode == RobotIO::RobotDescription::eCollisionModel) && urdfBody->collision && urdfBody->collision)
+        if ((loadMode == ModelIO::RobotDescription::eFull  || loadMode == ModelIO::RobotDescription::eCollisionModel) && urdfBody->collision && urdfBody->collision)
         {
             VisualizationNodePtr v;
             if (urdfBody->collision_array.size() > 1)

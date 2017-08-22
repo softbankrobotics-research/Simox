@@ -6,7 +6,7 @@
 		<Node name='LegL_Hip3_joint'/>
 		<Node name='LegL_Knee_joint'/>
 		<Node name='LegL_Ank1_joint'/>
-		<Node name='LegL_Ank2_body'/>
+                <Node name='LegL_Ank2_body_joint'/>
 		<!--Node name='LegL_Toe_joint'/-->
 		<Node name='LegL_Toe2_joint'/>
 		<Node name='LegL_Heel_joint'/>
@@ -15,7 +15,7 @@
 		<Node name='LegR_Hip3_joint'/>
 		<Node name='LegR_Knee_joint'/>
 		<!--Node name='LegR_Ank1_joint'/-->
-		<Node name='LegR_Ank2_body'/>
+                <Node name='LegR_Ank2_body_joint'/>
 		<!--Node name='LegR_Toe_joint'/-->
 		<Node name='LegR_Toe2_joint'/>
 		<Node name='LegR_Heel_joint'/>
@@ -38,8 +38,8 @@
 		<Node name='HandR_Finger_Middle2_joint'/>
 		<Node name='HandR_Finger_Ring1_joint'/>
 		<Node name='HandR_Finger_Ring2_joint'/>
-		<Node name='HandR_Finger_Small1_joint'/>
-		<Node name='HandR_Finger_Small2_joint'/-->
+                <Node name='HandR_Finger_Pinky1_joint'/>
+                <Node name='HandR_Finger_Pinky2_joint'/-->
 		<Node name='ArmL_Sho1_joint'/>
 		<Node name='ArmL_Sho2_joint'/>
 		<Node name='ArmL_Sho3_joint'/>

@@ -39,8 +39,8 @@
 	<Node name='HandR_Finger_Middle2_joint'/>
 	<Node name='HandR_Finger_Ring1_joint'/>
 	<Node name='HandR_Finger_Ring2_joint'/>
-	<Node name='HandR_Finger_Small1_joint'/>
-	<Node name='HandR_Finger_Small2_joint'/>
+        <Node name='HandR_Finger_Pinky1_joint'/>
+        <Node name='HandR_Finger_Pinky2_joint'/>
 	<Node name='ArmL_Sho1_joint'/>
 	<Node name='ArmL_Sho2_joint'/>
 	<Node name='ArmL_Sho3_joint'/>
@@ -131,14 +131,14 @@
 </JointSet>
 
 <JointSet name='TorsoRightLeg' tcp='LegR_Ank2_joint' kinematicRoot='Root_joint'>
-		<Node name='Torso_Yaw_joint'/>
-		<Node name='Torso_Pitch_joint'/>
-		<Node name='LegR_Hip1_joint'/>
-		<Node name='LegR_Hip2_joint'/>
-		<Node name='LegR_Hip3_joint'/>
-		<Node name='LegR_Knee_joint'/>
-		<Node name='LegR_Ank1_joint'/>
-		<Node name='LegR_Ank2_joint'/>
+    <Node name='Torso_Yaw_joint'/>
+    <Node name='Torso_Pitch_joint'/>
+    <Node name='LegR_Hip1_joint'/>
+    <Node name='LegR_Hip2_joint'/>
+    <Node name='LegR_Hip3_joint'/>
+    <Node name='LegR_Knee_joint'/>
+    <Node name='LegR_Ank1_joint'/>
+    <Node name='LegR_Ank2_joint'/>
 </JointSet>
 
 <JointSet name='RightLeg' tcp='LegR_Ank2_joint' kinematicRoot='Root_joint'>

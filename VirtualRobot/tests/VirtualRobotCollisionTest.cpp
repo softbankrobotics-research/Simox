@@ -7,7 +7,7 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotCollisionTest
 
 #include "VirtualRobot/VirtualRobotTest.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/CollisionDetection/CollisionModel.h"

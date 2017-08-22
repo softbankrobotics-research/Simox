@@ -1,7 +1,7 @@
 #include "../../Model/Model.h"
 #include "../../VirtualRobotException.h"
 #include "../../Model/Nodes/ModelNode.h"
-#include "../../XML/RobotIO.h"
+#include "../../XML/ModelIO.h"
 #include "../../Tools/RuntimeEnvironment.h"
 #include "../../Import/URDF/SimoxURDFFactory.h"
 #include "../../Import/SimoxXMLFactory.h"

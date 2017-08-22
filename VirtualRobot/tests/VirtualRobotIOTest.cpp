@@ -4,10 +4,10 @@
 * @copyright  2013 Nikolaus Vahrenkamp
 */
 
-#define BOOST_TEST_MODULE VirtualRobot_VirtualRobotIOTest
+#define BOOST_TEST_MODULE VirtualRobot_VirtualModelIOTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -21,7 +21,7 @@
 
 using namespace VirtualRobot;
 
-BOOST_AUTO_TEST_SUITE(VirtualRobotIO)
+BOOST_AUTO_TEST_SUITE(VirtualModelIO)
 
 
 BOOST_AUTO_TEST_CASE(testRobotModelFromString)
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromString)
     std::string basePath;
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef1, basePath));
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef1, basePath));
     BOOST_REQUIRE(!r);
 }
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Structure)
     std::string basePath = "robots/Armar4";
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef2, basePath, RobotIO::RobotDescription::eStructure));
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eStructure));
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Full)
     std::string basePath = "robots/Armar4";
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef2, basePath, RobotIO::RobotDescription::eFull));
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eFull));
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Collision)
     std::string basePath = "robots/Armar4";
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef2, basePath, RobotIO::RobotDescription::eCollisionModel));
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eCollisionModel));
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandEEF)
     std::string basePath = "robots/Armar4";
 
     RobotPtr r;
-    BOOST_REQUIRE_NO_THROW(r = RobotIO::createRobotModelFromString(robotDef2,basePath, RobotIO::RobotDescription::eStructure));
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2,basePath, ModelIO::RobotDescription::eStructure));
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
@@ -160,6 +160,47 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandEEF)
     std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
     BOOST_REQUIRE_EQUAL(rns.size(), 0);
 }
+
+
+BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandJS)
+{
+    const std::string robotDef2 =
+            "<?xml version='1.0' encoding='UTF-8'?>"
+            "<ModelDescription>"
+            "    <URDF>urdf/Armar4.urdf</URDF>"
+            "   <NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>"
+            "   <NodeSet>nodesets/Armar4-linksets.xml</NodeSet>"
+            "</ModelDescription>";
+
+    std::string basePath = "robots/Armar4";
+
+    RobotPtr r;
+    BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2,basePath, ModelIO::RobotDescription::eStructure));
+    BOOST_REQUIRE(r);
+
+    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    BOOST_REQUIRE_GT(rn.size(), 0);
+
+    std::vector<ModelJointPtr> joints = r->getJoints();
+    BOOST_REQUIRE_GT(joints.size(), 0);
+
+    std::vector<ModelLinkPtr> links = r->getLinks();
+    BOOST_REQUIRE_GT(links.size(), 0);
+
+    std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
+    BOOST_REQUIRE_EQUAL(eefs.size(), 0);
+
+    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    BOOST_REQUIRE_GT(rns.size(), 0);
+
+    std::vector<JointSetPtr> js = r->getJointSets();
+    BOOST_REQUIRE_GT(js.size(), 0);
+
+    std::vector<LinkSetPtr> ls = r->getLinkSets();
+    BOOST_REQUIRE_GT(ls.size(), 0);
+
+}
+
 
 /*
 BOOST_AUTO_TEST_CASE(testRobotLoadXML)

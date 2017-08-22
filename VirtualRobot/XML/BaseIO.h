@@ -53,7 +53,7 @@ namespace VirtualRobot
 {
     /*!
         Several basic XML IO methods.
-        \see RobotIO, SceneIO, ObjectIO
+        \see ModelIO, SceneIO, ObjectIO
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT BaseIO
     {
@@ -91,11 +91,6 @@ namespace VirtualRobot
         static void getLowerCase(std::string& aString);
         static std::string processStringAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
 
-        static VisualizationNodePtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
-        static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
-        static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
-        static void processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics);
-        static RobotNodeSetPtr processRobotNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
         static TrajectoryPtr processTrajectory(rapidxml::xml_node<char>* trajectoryXMLNode, std::vector<RobotPtr>& robots);
         static Eigen::Matrix3f process3x3Matrix(rapidxml::xml_node<char>* matrixXMLNode);
         static bool processFloatValueTags(rapidxml::xml_node<char>* XMLNode, int dim, Eigen::VectorXf& stroreResult);
@@ -110,7 +105,6 @@ namespace VirtualRobot
         static std::string getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag = false);
         static std::string getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag = false);
 
-        static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
     protected:
         // instantiation not allowed
         BaseIO();

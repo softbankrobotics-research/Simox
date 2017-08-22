@@ -1,7 +1,7 @@
 
 
 #include "SimoxXMLFactory.h"
-#include "../XML/RobotIO.h"
+#include "../XML/ModelIO.h"
 #include "../XML/EndEffectorIO.h"
 #include "../XML/rapidxml.hpp"
 #include "../VirtualRobotException.h"
@@ -33,7 +33,7 @@ namespace VirtualRobot
     }
 
 
-    RobotPtr SimoxXMLFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode)
+    RobotPtr SimoxXMLFactory::loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode)
     {
         RobotPtr robot;
 
@@ -91,7 +91,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::RobotPtr SimoxXMLFactory::createRobotFromSimoxXMLString(const std::string& xmlString, const std::string& basePath, RobotIO::RobotDescription loadMode)
+    VirtualRobot::RobotPtr SimoxXMLFactory::createRobotFromSimoxXMLString(const std::string& xmlString, const std::string& basePath, ModelIO::RobotDescription loadMode)
     {
         // copy string content to char array
         char* y = new char[xmlString.size() + 1];
@@ -142,7 +142,7 @@ namespace VirtualRobot
 
         delete[] y;
 
-        if (loadMode == RobotIO::eCollisionModel)
+        if (loadMode == ModelIO::eCollisionModel)
         {
             // use collision visualization to build main visualization
             // todo
@@ -153,7 +153,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::RobotPtr SimoxXMLFactory::loadRobotSimoxXML(const std::string& xmlFile, RobotIO::RobotDescription loadMode)
+    VirtualRobot::RobotPtr SimoxXMLFactory::loadRobotSimoxXML(const std::string& xmlFile, ModelIO::RobotDescription loadMode)
     {
         std::string fullFile = xmlFile;
 
@@ -678,7 +678,7 @@ namespace VirtualRobot
                                            int& robotNodeCounter,
                                            std::vector< std::string >& childrenNames,
                                            std::vector< ChildFromRobotDef >& childrenFromRobot,
-                                           RobotIO::RobotDescription loadMode)
+                                           ModelIO::RobotDescription loadMode)
     {
         childrenFromRobot.clear();
         THROW_VR_EXCEPTION_IF(!robotNodeXMLNode, "NULL data in processRobotNode");
@@ -722,10 +722,10 @@ namespace VirtualRobot
 
             if (nodeName == "visualization")
             {
-                if (loadMode == RobotIO::eFull)
+                if (loadMode == ModelIO::eFull)
                 {
                     THROW_VR_EXCEPTION_IF(visuProcessed, "Two visualization tags defined in RobotNode '" << robotNodeName << "'." << endl);
-                    visualizationNode = BaseIO::processVisualizationTag(node, robotNodeName, basePath, useAsColModel);
+                    visualizationNode = ModelIO::processVisualizationTag(node, robotNodeName, basePath, useAsColModel);
                     visuProcessed = true;
 
                     if (useAsColModel)
@@ -740,7 +740,7 @@ namespace VirtualRobot
                         colProcessed = true;
                     }
                 }
-                else if (loadMode == RobotIO::eCollisionModel)
+                else if (loadMode == ModelIO::eCollisionModel)
                 {
                     VisualizationNodePtr visualizationNodeCM = checkUseAsColModel(node, robotNodeName, basePath);
 
@@ -758,10 +758,10 @@ namespace VirtualRobot
             }
             else if (nodeName == "collisionmodel")
             {
-                if (loadMode == RobotIO::eFull || loadMode == RobotIO::eCollisionModel)
+                if (loadMode == ModelIO::eFull || loadMode == ModelIO::eCollisionModel)
                 {
                     THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in RobotNode '" << robotNodeName << "'." << endl);
-                    collisionModel = BaseIO::processCollisionTag(node, robotNodeName, basePath);
+                    collisionModel = ModelIO::processCollisionTag(node, robotNodeName, basePath);
                     colProcessed = true;
                 } // else silently ignore tag
             }
@@ -781,7 +781,7 @@ namespace VirtualRobot
             else if (nodeName == "physics")
             {
                 THROW_VR_EXCEPTION_IF(physicsDefined, "Two physics tags defined in RobotNode '" << robotNodeName << "'." << endl);
-                BaseIO::processPhysicsTag(node, robotNodeName, physics);
+                ModelIO::processPhysicsTag(node, robotNodeName, physics);
                 physicsDefined = true;
             }
             else if (nodeName == "transform")
@@ -877,7 +877,7 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    RobotPtr SimoxXMLFactory::processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotIO::RobotDescription loadMode)
+    RobotPtr SimoxXMLFactory::processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode)
     {
         THROW_VR_EXCEPTION_IF(!robotXMLNode, "No <Robot> tag in XML definition");
 
@@ -958,7 +958,7 @@ namespace VirtualRobot
 
         for (int i = 0; i < (int)robotNodeSetNodes.size(); ++i)
         {
-            RobotNodeSetPtr rns = RobotIO::processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
+            RobotNodeSetPtr rns = ModelIO::processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
         }
 
         std::vector<RobotNodePtr> nodes;
@@ -1054,7 +1054,7 @@ namespace VirtualRobot
                                          std::vector<ChildFromRobotDef> > & childrenFromRobotFilesMap,
                                          std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                          std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
-                                         RobotIO::RobotDescription loadMode)
+                                         ModelIO::RobotDescription loadMode)
     {
         std::vector<RobotNodePtr> robotNodes;
         std::map< RobotNodePtr, std::vector< std::string > > childrenMap;

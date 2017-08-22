@@ -10,7 +10,7 @@
 #include "../Model/Nodes/ModelJoint.h"
 #include "../VirtualRobotTest.h"
 #include "../Model/ModelConfig.h"
-#include "../XML/RobotIO.h"
+#include "../XML/ModelIO.h"
 #include "../Import/SimoxXMLFactory.h"
 #include "../VirtualRobotException.h"
 #include <string>

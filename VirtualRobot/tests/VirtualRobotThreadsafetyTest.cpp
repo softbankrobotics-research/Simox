@@ -8,7 +8,7 @@
 
 #include "VirtualRobot/VirtualRobotTest.h"
 #include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Tools/LinkedCoordinate.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"

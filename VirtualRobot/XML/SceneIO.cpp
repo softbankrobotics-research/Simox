@@ -4,7 +4,7 @@
 #include "rapidxml.hpp"
 
 
-#include "RobotIO.h"
+#include "ModelIO.h"
 #include "ObjectIO.h"
 #include "../Trajectory.h"
 #include "../Model/Frame.h"
@@ -101,7 +101,7 @@ namespace VirtualRobot
             {
                 processTransformNode(node, robotName, globalPose);
             }
-            else if (nodeName == "robotnodeset")
+            else if (nodeName == "robotnodeset" || nodeName == "jointset" || nodeName == "linkset" || nodeName == "modelnodeset")
             {
                 rnsNodes.push_back(node);
             }
@@ -126,7 +126,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < rnsNodes.size(); i++)
         {
             // registers rns to robot
-            RobotNodeSetPtr r = processRobotNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
+            RobotNodeSetPtr r = ModelIO::processRobotNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
             THROW_VR_EXCEPTION_IF(!r, "Invalid RobotNodeSet definition " << endl);
         }
 

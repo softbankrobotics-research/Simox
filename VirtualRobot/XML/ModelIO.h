@@ -20,8 +20,8 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotIO_h_
-#define _VirtualRobot_RobotIO_h_
+#ifndef _VirtualRobot_ModelIO_h_
+#define _VirtualRobot_ModelIO_h_
 
 #include "../VirtualRobot.h"
 #include "../Model/Model.h"
@@ -48,7 +48,7 @@ namespace rapidxml
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT RobotIO : public BaseIO
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelIO : public BaseIO
     {
     public:
 
@@ -69,14 +69,22 @@ namespace VirtualRobot
         static RobotPtr loadRobotModel(const std::string& xmlFile, RobotDescription loadMode = eFull);
         static RobotPtr createRobotModelFromString(const std::string& xmlFile, const std::string& basePath = "", RobotDescription loadMode = eFull);
 
-        static ModelPtr processModelDescription(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotIO::RobotDescription loadMode);
+        static ModelPtr processModelDescription(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode);
+
+        static VisualizationNodePtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
+        static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
+        static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
+        static void processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics);
+        static RobotNodeSetPtr processRobotNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
+        static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
+
+        static bool loadNodeSets(const RobotPtr &robot, const std::string &filename);
+        static bool createNodeSetFromString(const RobotPtr &robot, const std::string &xmlString);
 
     protected:
         // instantiation not allowed
-        RobotIO();
-        virtual ~RobotIO();
-
-        //static ModelPtr processModel(rapidxml::xml_node<char>* robotModelNode);
+        ModelIO();
+        virtual ~ModelIO();
 
         /*!
          * \brief searchFile searches for relative file (to basePath) and on failure tries to find a global file by checking the data dirs
@@ -89,4 +97,4 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_RobotIO_h_
+#endif // _VirtualRobot_ModelIO_h_

@@ -12,7 +12,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Model/ModelNodeSet.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <string>

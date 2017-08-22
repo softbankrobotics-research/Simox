@@ -343,7 +343,7 @@ namespace VirtualRobot
         /*!
          * Creates an XML string that defines the ModelNode. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
          *
-         * \see RobotIO::saveXML.
+         * \see ModelIO::saveXML.
          *
          * @param basePath TODO: Documentation
          * @param modelPathRelative TODO: Documentation

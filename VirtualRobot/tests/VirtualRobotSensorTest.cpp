@@ -8,7 +8,7 @@
 #include <VirtualRobot/VirtualRobotTest.h>
 
 /*
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Nodes/Sensor.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(testPositionSensor)
         " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::ModelIO::createRobotFromString(robotString));
     BOOST_REQUIRE(rob);
     VirtualRobot::RobotNodePtr rn = rob->getModelNode("Joint1");
     BOOST_REQUIRE(rn);

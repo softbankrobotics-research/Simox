@@ -29,7 +29,7 @@
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/IK/GazeIK.h"

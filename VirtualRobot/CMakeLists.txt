@@ -52,7 +52,7 @@ Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
 XML/BaseIO.cpp
-XML/RobotIO.cpp
+XML/ModelIO.cpp
 XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
@@ -146,7 +146,7 @@ Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
 XML/BaseIO.h
-XML/RobotIO.h
+XML/ModelIO.h
 XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
