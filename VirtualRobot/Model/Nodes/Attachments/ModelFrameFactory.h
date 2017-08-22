@@ -15,41 +15,51 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Adrian Knobloch
-* @copyright  2016 Adrian Knobloch
+* @author     Nikolaus Vahrenkamp
+* @copyright  2017 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeAttachmentFactory_h_
-#define _VirtualRobot_ModelNodeAttachmentFactory_h_
+#ifndef _VirtualRobot_ModelFrameFactory_h_
+#define _VirtualRobot_ModelFrameFactory_h_
 
-#include "../../Model/Model.h"
-#include "../../Tools/AbstractFactoryMethod.h"
-#include "ModelNodeAttachment.h"
+#include "ModelNodeAttachmentFactory.h"
+#include "ModelFrame.h"
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNodeAttachmentFactory : public AbstractFactoryMethod<ModelNodeAttachmentFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelFrameFactory : public ModelNodeAttachmentFactory
     {
     protected:
         /*!
          * Constructor.
          */
-        ModelNodeAttachmentFactory() {};
+        ModelFrameFactory();
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachmentFactory() {};
+        virtual ~ModelFrameFactory();
+
 
         /*!
          * Create a new attachment.
          *
          * @return The new attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), VisualizationNodePtr visu = VisualizationNodePtr()) = 0;
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), VisualizationNodePtr visu = VisualizationNodePtr());
+
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
+
+    private:
+        static SubClassRegistry registry;
     };
+    typedef std::shared_ptr<ModelFrameFactory> ModelFrameFactoryPtr;
 }
 
-#endif // _VirtualRobot_ModelNodeAttachmentFactory_h_
+
+#endif

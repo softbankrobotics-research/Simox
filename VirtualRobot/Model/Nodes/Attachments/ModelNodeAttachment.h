@@ -25,6 +25,7 @@
 
 #include "../../Model/Model.h"
 #include "../../Model/Frame.h"
+#include "../../Visualization/VisualizationNode.h"
 
 #include <cstdint>
 #include <string>
@@ -39,7 +40,10 @@ namespace VirtualRobot
         /*!
          * Constructor.
          */
-        ModelNodeAttachment() {};
+        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), VisualizationNodePtr visualization = VisualizationNodePtr())
+            : Frame(name), localTransformation(localTransformation), visu(visualization)
+        {
+        };
 
     public:
         /*!
@@ -61,7 +65,21 @@ namespace VirtualRobot
          * Update the values of the Attachment.
          * This method is called by the node to inform the attachment about a change.
          */
-        virtual void update() = 0;
+        /*virtual void update()
+        {
+            ModelNodePtr nodeShared = node.lock();
+
+            if (nodeShared)
+            {
+                updatePose(nodeShared->getGlobalPose());
+            }
+        }*/
+        virtual void update(const Eigen::Matrix4f &parentPose)
+        {
+            this->globalPose = parentPose * localTransformation;
+            if (visu)
+                visu->setGlobalPose(globalPose);
+        }
 
         /*!
          * Get the visualisation of this attachment.
@@ -71,7 +89,7 @@ namespace VirtualRobot
          */
         virtual VisualizationNodePtr getVisualisation()
         {
-            return VisualizationNodePtr();
+            return visu;
         }
 
         /*!
@@ -87,7 +105,7 @@ namespace VirtualRobot
          *
          * @return The node.
          */
-        ModelNodePtr getNode() const
+        ModelNodePtr getParent() const
         {
             ModelNodePtr nodeShared = node.lock();
 
@@ -99,8 +117,9 @@ namespace VirtualRobot
             return ModelNodePtr();
         }
 
-    private:
-        void setNode(ModelNodePtr node)
+    protected:
+
+        void setParent(ModelNodePtr node)
         {
             if (node)
             {
@@ -113,6 +132,8 @@ namespace VirtualRobot
         }
 
         ModelNodeWeakPtr node;
+        Eigen::Matrix4f localTransformation;
+        VisualizationNodePtr visu;
     };
 }
 

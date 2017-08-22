@@ -9,6 +9,8 @@
 #include "../Model/ModelNodeSet.h"
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
+#include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
+#include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../Visualization/VisualizationNode.h"
 #include "../Visualization/TriMeshModel.h"
@@ -237,6 +239,27 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF (XMLNode, "Two SimoxXML tags not allowed in a model description");
         }
 
+        // load frames
+        XMLNode = robotXMLNode->first_node("frame", 0, false);
+        while (XMLNode)
+        {
+            THROW_VR_EXCEPTION_IF(!robot, "Could not process frame due to missing model defintion...");
+
+            std::string filename = XMLNode->value();
+
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
+
+            bool frameOK = ModelIO::loadFrames(robot, filename);
+            THROW_VR_EXCEPTION_IF(!frameOK, "Could not parse frame defintion...");
+
+            XMLNode = XMLNode->next_sibling("frame", 0, false);
+        }
+
+        // load sensors
+        // todo....
+
+
         // load EndEffectors
         XMLNode = robotXMLNode->first_node("endeffector", 0, false);
         while (XMLNode)
@@ -271,8 +294,6 @@ namespace VirtualRobot
             XMLNode = XMLNode->next_sibling("nodeset", 0, false);
         }
 
-        // load frames/sensors
-        // todo....
 
         return robot;
     }
@@ -1111,7 +1132,7 @@ namespace VirtualRobot
                 BaseIO::processTransformNode(frameXMLNode, frameName, transformMatrix);
             } else if (nodeName == "parent")
             {
-                THROW_VR_EXCEPTION_IF(parentNode, "Exctaly one parent allowed...");
+                THROW_VR_EXCEPTION_IF(parentNode, "Only one parent allowed...");
                 std::string nameStr("node");
                 std::string parentNodeName = BaseIO::processStringAttribute(nameStr, node, false);
                 THROW_VR_EXCEPTION_IF(parentNodeName.empty(), "Parent name must not be empty");
@@ -1126,7 +1147,12 @@ namespace VirtualRobot
         }
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
-        // todo: create frame attachment
+        THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("ModelFrame", NULL);
+        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate model frame factory...");
+
+        mff->createAttachment(frameName, transformMatrix, VisualizationNodePtr());
+
 
         return FramePtr();
     }

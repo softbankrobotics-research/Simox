@@ -89,13 +89,13 @@ namespace VirtualRobot
 		{
 			ModelNodeAttachmentPtr mna = std::dynamic_pointer_cast<ModelNodeAttachment>(tcp);
 
-			if (!mna || !mna->getNode())
+			if (!mna || !mna->getParent())
 			{
 				VR_ERROR << "tcp not linked to a model node parent!!!" << endl;
 				return ModelNodePtr();
 			}
 
-			tcpRN = mna->getNode();
+			tcpRN = mna->getParent();
 
 			if (!tcpRN)
 			{

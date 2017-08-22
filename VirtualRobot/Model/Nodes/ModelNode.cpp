@@ -316,7 +316,7 @@ namespace VirtualRobot
             {
                 for (const ModelNodeAttachmentPtr & attachment : it->second)
                 {
-                    attachment->update();
+                    attachment->update(globalPose);
                 }
             }
         }
@@ -343,8 +343,8 @@ namespace VirtualRobot
         }
 
         // first setup the attachment
-        attachment->setNode(shared_from_this());
-        attachment->update();
+        attachment->setParent(shared_from_this());
+        attachment->update(globalPose);
 
         attachments[attachment->getType()].push_back(attachment);
 
@@ -393,7 +393,7 @@ namespace VirtualRobot
         WriteLockPtr w = getModel()->getWriteLock();
         if (isAttached(attachment))
         {
-            attachment->setNode(ModelNodePtr());
+            attachment->setParent(ModelNodePtr());
 
             std::vector<ModelNodeAttachmentPtr> allWithType = attachments[attachment->getType()];
             allWithType.erase(std::find(allWithType.begin(), allWithType.end(), attachment));
