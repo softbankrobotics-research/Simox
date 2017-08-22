@@ -189,9 +189,7 @@ namespace VirtualRobot
         {
             std::string nodeName = getLowerCase(node->name());
 
-
             // Homogeneous Matrix 4x4
-            //rapidxml::xml_node<> *matrixXMLNode = trXMLNode->first_node("matrix4x4",0,false);
             if (nodeName == "matrix4x4")
             {
                 Eigen::Matrix4f localT = Eigen::Matrix4f::Identity();
@@ -249,9 +247,7 @@ namespace VirtualRobot
             else if (nodeName == "matrix3x3")
             {
                 // Rotation Matrix 3x3
-                //matrixXMLNode = trXMLNode->first_node("matrix3x3",0,false);
-                //THROW_VR_EXCEPTION_IF((rotation && matrixXMLNode), "Multiple rotations defined in <Transformation> tag: " << tagName << ". Ignoring matrix3x3 node." << endl);
-
+ 
                 Eigen::Matrix4f localT = Eigen::Matrix4f::Identity();
                 Eigen::Matrix3f m = process3x3Matrix(node);
 
@@ -261,8 +257,6 @@ namespace VirtualRobot
             else if (nodeName == "rollpitchyaw" || nodeName == "rpy")
             {
                 // ROLL PITCH YAW
-                //rapidxml::xml_node<> *rpyXMLNode = trXMLNode->first_node("rollpitchyaw",0,false);
-                //THROW_VR_EXCEPTION_IF((rpyXMLNode && rotation), "Multiple rotations defined in <Transformation> tag: " << tagName << "! Ignoring rpy node." << endl);
 
                 float r, p, y;
                 r = p = y = 0.0f;
@@ -291,8 +285,6 @@ namespace VirtualRobot
             else if (nodeName == "quaternion" || nodeName == "quat")
             {
                 // Quaternions
-                //rapidxml::xml_node<> *quatXMLNode = trXMLNode->first_node("quaternion",0,false);
-                //THROW_VR_EXCEPTION_IF((quatXMLNode && rotation), "Multiple rotations defined in <Transformation> tag: " << tagName << "! Ignoring quaternion node." << endl);
 
                 float x, y, z, w;
                 x = y = z = w = 0.0f;
@@ -306,8 +298,6 @@ namespace VirtualRobot
             else if (nodeName == "translation" || nodeName == "trans")
             {
                 // Translation
-                //rapidxml::xml_node<> *translationXMLNode = trXMLNode->first_node("translation",0,false);
-                //THROW_VR_EXCEPTION_IF((translationXMLNode && translation), "Multiple translations defined in <Transformation> tag: " << tagName << "! Ignoring translation node." << endl);
                 Eigen::Matrix4f localT = Eigen::Matrix4f::Identity();
                 localT(0, 3) = getOptionalFloatByAttributeName(node, "x", 0);
                 localT(1, 3) = getOptionalFloatByAttributeName(node, "y", 0);
@@ -327,16 +317,13 @@ namespace VirtualRobot
 
                 transform *= localT;
             }
-            /*else if (nodeName == "dh")
+            else if (nodeName == "dh")
             {
                 // DH
-                //rapidxml::xml_node<> *dhXMLNode = trXMLNode->first_node("dh",0,false);
-                //THROW_VR_EXCEPTION_IF((dhXMLNode && (rotation||translation)), "Multiple rotations/translations defined in <Transformation> tag: " << tagName << "! Ignoring DH node." << endl);
-                DHParameter dh;
-                processDHNode(node, dh);
-                Eigen::Matrix4f localT = dh.transformation();
+ 				Eigen::Matrix4f localT;
+                processDHNode(node, localT);
                 transform *= localT;
-            }*/
+            }
             else
             {
                 VR_ERROR << "Ignoring unknown tag " << nodeName << endl;
@@ -346,6 +333,77 @@ namespace VirtualRobot
         }
 
     }
+
+
+	void BaseIO::processDHNode(rapidxml::xml_node<char>* dhXMLNode, Eigen::Matrix4f& dh)
+	{
+		rapidxml::xml_attribute<>* attr;
+		std::vector< Units > unitsAttr = getUnitsAttributes(dhXMLNode);
+		Units uAngle("rad");
+		Units uLength("mm");
+
+		Eigen::Matrix4f _thetaRotation = Eigen::Matrix4f::Identity();
+		Eigen::Matrix4f _dTranslation = Eigen::Matrix4f::Identity();
+		Eigen::Matrix4f _aTranslation = Eigen::Matrix4f::Identity();
+		Eigen::Matrix4f _alphaRotation = Eigen::Matrix4f::Identity();
+
+		for (size_t i = 0; i < unitsAttr.size(); i++)
+		{
+			if (unitsAttr[i].isAngle())
+			{
+				uAngle = unitsAttr[i];
+			}
+
+			if (unitsAttr[i].isLength())
+			{
+				uLength = unitsAttr[i];
+			}
+		}
+
+		bool isRadian = uAngle.isRadian();
+
+		attr = dhXMLNode->first_attribute("a", 0, false);
+		if (attr)
+		{
+			_aTranslation(0, 3) = uLength.toMillimeter(convertToFloat(attr->value()));
+		}
+
+		attr = dhXMLNode->first_attribute("d", 0, false);
+		if (attr)
+		{
+			_dTranslation(2, 3) = uLength.toMillimeter(convertToFloat(attr->value()));
+		}
+
+		attr = dhXMLNode->first_attribute("alpha", 0, false);
+		if (attr)
+		{
+			float _alpha = convertToFloat(attr->value());
+			if (!isRadian)
+			{
+				_alpha *= ((float)M_PI / 180.0f);
+			}
+			_alphaRotation(1, 1) = cos(_alpha);
+			_alphaRotation(1, 2) = -sin(_alpha);
+			_alphaRotation(2, 1) = sin(_alpha);
+			_alphaRotation(2, 2) = cos(_alpha);
+		}
+
+		attr = dhXMLNode->first_attribute("theta", 0, false);
+		if (attr)
+		{
+			float _theta = convertToFloat(attr->value());
+			if (!isRadian)
+			{
+				_theta *= ((float)M_PI / 180.0f);
+			}
+			_thetaRotation(0, 0) = cos(_theta);
+			_thetaRotation(0, 1) = -sin(_theta);
+			_thetaRotation(1, 0) = sin(_theta);
+			_thetaRotation(1, 1) = cos(_theta);
+		}
+
+		dh = _thetaRotation * _dTranslation * _aTranslation * _alphaRotation;
+	}
 
     bool BaseIO::hasUnitsAttribute(rapidxml::xml_node<char>* node)
     {

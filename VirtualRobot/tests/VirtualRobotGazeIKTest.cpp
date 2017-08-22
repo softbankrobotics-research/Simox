@@ -123,14 +123,14 @@ BOOST_AUTO_TEST_CASE(testGazeIK)
         "        </Joint>                                                                                             "
         "	</RobotNode>                                                                                              "
         "                                                                                                             "
-        "    <RobotNodeSet name='IKVirtualGaze' kinematicRoot='Neck_1_Pitch' tcp='VirtualCentralGaze'>                "
+        "    <JointSet name='IKVirtualGaze' kinematicRoot='Neck_1_Pitch' tcp='VirtualCentralGaze'>                "
         "        <Node name='Neck_1_Pitch'/>                                                                          "
         "        <Node name='Neck_2_Roll'/>                                                                           "
         "        <Node name='Neck_3_Yaw'/>                                                                            "
         "        <Node name='Head_Tilt'/>                                                                             "
         "        <Node name='Cameras'/>                                                                               "
         "        <Node name='VirtualCentralGaze'/>                                                                    "
-        "    </RobotNodeSet>                                                                                          "
+        "    </JointSet>                                                                                          "
         "                                                                                                             "
         "</Robot>                                                                                                     ";
 

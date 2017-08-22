@@ -75,7 +75,6 @@ namespace VirtualRobot
         static float convertToFloat(const char* s);
         static int convertToInt(const char* s);
         static void processNodeList(rapidxml::xml_node<char>* parentNode, RobotPtr robot, std::vector<RobotNodePtr>& nodeList, bool clearList = true);
-        static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi);
         static std::string processFileNode(rapidxml::xml_node<char>* fileNode, const std::string& basePath);
         static void processTransformNode(rapidxml::xml_node<char>* transformXMLNode, const std::string& nodeName, Eigen::Matrix4f& transform);
         static Units getUnitsAttribute(rapidxml::xml_node<char>* node, Units::UnitsType u);
@@ -92,8 +91,6 @@ namespace VirtualRobot
         static void getLowerCase(std::string& aString);
         static std::string processStringAttribute(const std::string& attributeName, rapidxml::xml_node<char>* node, bool allowOtherAttributes = false);
 
-
-
         static VisualizationNodePtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
         static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
         static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
@@ -105,7 +102,7 @@ namespace VirtualRobot
         static bool hasUnitsAttribute(rapidxml::xml_node<char>* node);
         static std::vector< Units > getUnitsAttributes(rapidxml::xml_node<char>* node);
         static void getAllAttributes(rapidxml::xml_node<char>* node, const std::string& attrString, std::vector<std::string>& storeValues);
-        //static void processDHNode(rapidxml::xml_node<char>* dhXMLNode, DHParameter& dh);
+		static void processDHNode(rapidxml::xml_node<char>* dhXMLNode, Eigen::Matrix4f& dh);
 
         static std::string toXML(const Eigen::Matrix4f& m, std::string ident = "\t");
         static std::string getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag = false);
