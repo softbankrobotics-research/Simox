@@ -3,6 +3,8 @@
 #include "../Model/Model.h"
 #include "../RobotFactory.h"
 #include "../Model/ModelNodeSet.h"
+#include "../Model/LinkSet.h"
+#include "../Model/JointSet.h"
 #include "../Trajectory.h"
 #include "../Tools/RuntimeEnvironment.h"
 #include "../VirtualRobotException.h"
@@ -1527,6 +1529,8 @@ namespace VirtualRobot
         std::string rootNodeName;
         std::string tcpName;
 
+		std::string nodeSetType = BaseIO::getLowerCase(setXMLNode->name());
+
         // get name and root
         rapidxml::xml_attribute<>* attr = setXMLNode->first_attribute();
 
@@ -1581,10 +1585,17 @@ namespace VirtualRobot
 
         if (!tcpName.empty())
         {
-            tcp = robo->getCoordinate(tcpName);
+            tcp = robo->getFrame(tcpName);
         }
 
-        ModelNodeSetPtr rns = ModelNodeSet::createModelNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+
+		ModelNodeSetPtr rns;
+		if (nodeSetType == "jointset")
+			rns = JointSet::createJointSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+		else if (nodeSetType == "linkset")
+			rns = LinkSet::createLinkSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+		else
+			rns = ModelNodeSet::createModelNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
 
         return rns;
     }

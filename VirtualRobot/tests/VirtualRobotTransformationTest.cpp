@@ -16,7 +16,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-BOOST_AUTO_TEST_SUITE(RobotNode)
+BOOST_AUTO_TEST_SUITE(TransformationTest)
 
 #define FLOAT_CLOSE_TO_DIFF 1e-7f
 

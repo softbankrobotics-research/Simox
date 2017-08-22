@@ -181,7 +181,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
         for(int i = 0; i < size; i++)
         {
-            nodeSet->getNode(i)->setJointValue(x[i]);
+            nodeSet->getNode(i)->setJointValue(float(x[i]));
         }
         double currentError;
         bool success = hardOptimizationFunction(x, currentError);

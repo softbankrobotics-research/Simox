@@ -25,31 +25,6 @@ namespace VirtualRobot
     ModelNode::~ModelNode()
     {
     }
-	/*
-    void ModelNode::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
-    {
-        THROW_VR_EXCEPTION_IF(isInitialized(), "ModelNode " + getName() + "is already initialized.");
-        ModelPtr modelShared = getModel();
-        THROW_VR_EXCEPTION_IF(!modelShared->hasModelNode(shared_from_this()),
-                              "ModelNode \"" + getName() + "\" is not registered to model \""
-                              + modelShared->getName() + "\".");
-
-        if (parent)
-        {
-            parent->attachChild(shared_from_this());
-            // parent of this is set in attachChild
-        }
-
-        for (const ModelNodePtr & child : children)
-        {
-            attachChild(child);
-        }
-
-        updatePose(true);
-
-        // i think no lock is needed for "initialized"
-        initialized = true;
-    }*/
 
     ModelPtr ModelNode::getModel() const
     {
@@ -63,12 +38,6 @@ namespace VirtualRobot
         // never updated -> no lock needed
         return name;
     }
-	/*
-    bool ModelNode::isInitialized() const
-    {
-        // only updated in "initialize" -> no lock needed
-        return initialized;
-    }*/
 
     ModelNodePtr ModelNode::getChildByName(const std::string& name) const
     {
@@ -368,7 +337,7 @@ namespace VirtualRobot
     bool ModelNode::attach(const ModelNodeAttachmentPtr& attachment)
     {
         WriteLockPtr w = getModel()->getWriteLock();
-        if (!attachment || isAttached(attachment) || !attachment->isAttachable(shared_from_this()))
+        if (!attachment || isAttached(attachment) || !attachment->isAttachable(shared_from_this()) || hasAttachment(attachment->getName()))
         {
             return false;
         }
@@ -398,6 +367,26 @@ namespace VirtualRobot
         std::vector<ModelNodeAttachmentPtr> allWithType = attachments[attachment->getType()];
         return std::find(allWithType.begin(), allWithType.end(), attachment) != allWithType.end();
     }
+
+
+	bool ModelNode::hasAttachment(const std::string& attachmentName) const
+	{
+		return getAttachment(attachmentName).get() != 0;
+	}
+
+	ModelNodeAttachmentPtr ModelNode::getAttachment(const std::string& attachmentName) const
+	{
+		ReadLockPtr r = getModel()->getReadLock();
+		for (auto a : attachments)
+		{
+			for (auto a2 : a.second)
+			{
+				if (a2->getName() == attachmentName)
+					return a2;
+			}
+		}
+		return ModelNodeAttachmentPtr();
+	}
 
     bool ModelNode::detach(const ModelNodeAttachmentPtr& attachment)
     {
@@ -468,5 +457,4 @@ namespace VirtualRobot
     {
         return ModelNodePtr(); // TODO
     }
-
 }

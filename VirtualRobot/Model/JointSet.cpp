@@ -31,7 +31,7 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> modelNodes = model->getModelNodes(modelNodeNames);
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            THROW_VR_EXCEPTION_IF(modelNodes.at(i)->getType() != ModelNode::Joint, "ModelNode "+ modelNodeNames[i] + " not of type Link.");
+            THROW_VR_EXCEPTION_IF(!(modelNodes.at(i)->getType() & ModelNode::Joint), "ModelNode "+ modelNodeNames[i] + " not of type Joint.");
         }
 
         ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);

@@ -959,7 +959,6 @@ namespace VirtualRobot
         for (int i = 0; i < (int)robotNodeSetNodes.size(); ++i)
         {
             RobotNodeSetPtr rns = RobotIO::processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
-            //nodeSets.push_back(rns);
         }
 
         std::vector<RobotNodePtr> nodes;
@@ -1071,27 +1070,10 @@ namespace VirtualRobot
             std::string nodeName_ = XMLNode->name();
             std::string nodeName = BaseIO::getLowerCase(XMLNode->name());
 
-            if (nodeName == "robotnode" || nodeName == "jointnode" || nodeName == "transformationnode" || nodeName == "bodynode" || nodeName == "modelnode")
+            if (nodeName == "robotnode" || nodeName == "jointnode" || nodeName == "transformationnode" || nodeName == "bodynode" || nodeName == "linknode" || nodeName == "modelnode")
             {
                 std::vector< ChildFromRobotDef > childrenFromRobot;
                 std::vector< std::string > childrenNames;
-                // check for type
-               /* RobotNode::RobotNodeType rntype = RobotNode::Generic;
-
-                if (nodeName == "jointnode")
-                {
-                    rntype = RobotNode::Joint;
-                }
-
-                if (nodeName == "bodynode")
-                {
-                    rntype = RobotNode::Body;
-                }
-
-                if (nodeName == "transformationnode")
-                {
-                    rntype = RobotNode::Transform;
-                }*/
 
                 RobotNodePtr n = processRobotNode(XMLNode, robo, basePath, robotNodeCounter, childrenNames, childrenFromRobot, loadMode);
 
@@ -1110,8 +1092,6 @@ namespace VirtualRobot
 
                     childrenMap[n] = childrenNames;
                     robotNodes.push_back(n);
-                    // todo
-                    //robo->registerRobotNode(n);
 
                     if (n->getName() == robotRoot)
                     {
@@ -1126,7 +1106,7 @@ namespace VirtualRobot
 
                 robotNodeCounter++;
             }
-            else if (nodeName == "robotnodeset" || nodeName == "modelnodeset")
+            else if (nodeName == "robotnodeset" || nodeName == "modelnodeset" || nodeName == "jointset" || nodeName == "linkset")
             {
                 robotNodeSetNodes.push_back(XMLNode);
             }

@@ -27,8 +27,8 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
 {
     const std::string robotString =
         "<Robot Type='MyDemoRobotType' StandardName='ExampleRobo' RootNode='Joint1'>"
-        " <RobotNode name='Joint1'>"
 
+        " <RobotNode name='Joint1'>"
         "  <Joint type='revolute'>"
         "   <Limits unit='degree' lo='-45' hi='45'/>"
         "	<Axis x='1' y='0' z='0'/>"
@@ -96,10 +96,9 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     DiffQuot.block<3, 1>(0, 1) = (r3->getGlobalPose().block<3, 1>(0, 3) - a.block<3, 1>(0, 3)) / STEP_SIZE;
 
     // Compare both and check if they are similar enough.
-    // todo...
-    std::cout << "Jacobian:\n " << jacobian.block<3,2>(0,0) << std::endl;
-    std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
-    std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
+    //std::cout << "Jacobian:\n " << jacobian.block<3,2>(0,0) << std::endl;
+    //std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
+    //std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
     BOOST_CHECK(((jacobian.block<3, 2>(0, 0) -  DiffQuot).array().abs() < MAX_ERROR).all());
 
 }

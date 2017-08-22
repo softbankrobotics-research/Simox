@@ -329,6 +329,9 @@ namespace VirtualRobot
          */
         std::vector<ModelNodeAttachmentPtr> getAttachmentsWithVisualisation() const;
 
+		bool hasAttachment(const std::string& attachmentName) const;
+		ModelNodeAttachmentPtr getAttachment(const std::string& attachmentName) const;
+
         /*!
          * Print status information.
          *

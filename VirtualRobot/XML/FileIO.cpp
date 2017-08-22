@@ -49,6 +49,6 @@ std::vector< Eigen::Vector3f > VirtualRobot::FileIO::readPts(const std::string& 
 std::string VirtualRobot::FileIO::getPathSeparator()
 {
     char t = boost::filesystem::path::preferred_separator;
-    std::string r = &t;
+    std::string r(1, t);
     return r;
 }

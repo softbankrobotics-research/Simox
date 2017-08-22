@@ -270,7 +270,7 @@ namespace VirtualRobot
 
             // Check TCP
             FileIO::readString(tmpString, file);
-            tcpNode = robot->getCoordinate(tmpString);
+            tcpNode = robot->getFrame(tmpString);
             THROW_VR_EXCEPTION_IF(!tcpNode, "Unknown TCP");
 
             // Check Base Joint
@@ -1138,7 +1138,7 @@ namespace VirtualRobot
             this->tcpNode = tcpNode;
         }
 
-        THROW_VR_EXCEPTION_IF(!robot->hasCoordinate(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
+        THROW_VR_EXCEPTION_IF(!robot->hasFrame(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
         this->baseNode = baseNode;
 
         if (baseNode && !robot->hasModelNode(baseNode))
@@ -1519,7 +1519,7 @@ namespace VirtualRobot
             tcpNode = nodeSet->getTCP();
         }
 
-        if (!robot->hasCoordinate(tcpNode))
+        if (!robot->hasFrame(tcpNode))
         {
             VR_ERROR << "robot does not know tcp:" << tcpNode->getName() << endl;
             return false;

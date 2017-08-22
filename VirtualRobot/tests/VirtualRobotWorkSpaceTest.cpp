@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
     static float discrTr3 = float(discrTr*sqrt(3));
     static float discrRot3 = float(discrRot*sqrt(3));
     float minBounds[6] = {0,0,0,0,0,0};
-    float maxBounds[6] = {100.0f,100.0f,100.0f,2*M_PI,2*M_PI,2*M_PI};
+    float maxBounds[6] = {100.0f,100.0f,100.0f,float(2*M_PI),float(2*M_PI),float(2*M_PI)};
     VirtualRobot::ReachabilityPtr reach(new VirtualRobot::Reachability(rob));
     BOOST_REQUIRE(reach);
     reach->setOrientationType(VirtualRobot::WorkspaceRepresentation::Hopf);
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
     {
         Eigen::Vector3f ax = Eigen::Vector3f::Random();
         ax.normalize();
-        float ang = rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI;
+        float ang = float(rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI);
         float xa = rand() % 1000 / 1000.0f * 100.0f;
         float ya = rand() % 1000 / 1000.0f * 100.0f;
         float za = rand() % 1000 / 1000.0f * 100.0f;

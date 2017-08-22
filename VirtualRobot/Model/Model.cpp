@@ -9,6 +9,7 @@
 #include "ModelConfig.h"
 #include "../Trajectory.h"
 #include "../EndEffector/EndEffector.h"
+#include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
 #include <algorithm>
 
@@ -209,7 +210,7 @@ namespace VirtualRobot
         WriteLockPtr w = getWriteLock();
         if (nodeSet)
         {
-            THROW_VR_EXCEPTION_IF(!hasModelNodeSet(nodeSet->getName()),
+            THROW_VR_EXCEPTION_IF(hasModelNodeSet(nodeSet->getName()),
                                   "There are (at least) two model nodes with name <" + nodeSet->getName()
                                   + "> defined, the second one is skipped!");
             modelNodeSetMap[nodeSet->getName()] = nodeSet;
@@ -483,7 +484,7 @@ namespace VirtualRobot
     void Model::setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "No node given.");
-        THROW_VR_EXCEPTION_IF(!hasCoordinate(node), "Frame <" + node->getName() +
+        THROW_VR_EXCEPTION_IF(!hasFrame(node), "Frame <" + node->getName() +
                                                    "> is not part of model <" + getName() + ">");
 
         // get transformation from current to wanted tcp pose
@@ -996,41 +997,7 @@ namespace VirtualRobot
     {
         return VirtualRobot::ModelPtr(); // TODO: implement clone
     }
-	/*
-    Eigen::Matrix4f Model::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
-    {
-        return getGlobalPose().inverse() * poseGlobal;
-    }
-
-    Eigen::Vector3f Model::toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const
-    {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionGlobal;
-        t = toLocalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
-    }
-
-    Eigen::Matrix4f Model::toGlobalCoordinateSystem(const Eigen::Matrix4f& poseLocal) const
-    {
-        return getGlobalPose() * poseLocal;
-    }
-
-    Eigen::Vector3f Model::toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const
-    {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionLocal;
-        t = toGlobalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
-    }
-
-	void Model::setName(const std::string &name)
-	{
-		this->name = name;
-	}*/
+ 
 
 	bool Model::hasEndEffector(const EndEffectorPtr &eef) const
 	{
@@ -1096,17 +1063,38 @@ namespace VirtualRobot
         return res;
     }
 
-	// todod
-	bool Model::hasCoordinate(const FramePtr & coord) const
+	bool Model::hasFrame(const FramePtr & frame) const
 	{
-		return false;
+		if (!frame)
+			return false;
+		FramePtr f = getFrame(frame->getName());
+		return f == frame;
 	}
-	bool VirtualRobot::Model::hasCoordinate(const std::string & coordinateName) const
+
+	bool Model::hasFrame(const std::string & frameName) const
 	{
-		return false;
+		FramePtr f = getFrame(frameName);
+		return f.get()!=0;
 	}
-	FramePtr VirtualRobot::Model::getCoordinate(const std::string & coordinateName) const
+
+	FramePtr Model::getFrame(const std::string & frameName) const
 	{
+		ReadLockPtr r = getReadLock();
+
+		// check model nodes and attachments
+		for (auto n : modelNodeMap)
+		{
+			if (n.second->getName() == frameName)
+				return n.second;
+
+			ModelNodeAttachmentPtr a = n.second->getAttachment(frameName);
+			if (a)
+			{
+				FramePtr f = std::dynamic_pointer_cast<Frame>(a);
+				return f;
+			}
+
+		}
 		return FramePtr();
 	}
 }

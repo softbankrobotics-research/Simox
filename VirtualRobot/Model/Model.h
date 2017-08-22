@@ -105,28 +105,28 @@ namespace VirtualRobot
         virtual ModelJointPtr getJoint(const std::string& modelNodeName) const;
 
         /*!
-        * Check, if the Frame is registered to this model (either a ModelNode or an attached entity).
+        * Check, if the frame is registered to this model (either a ModelNode or an attached entity).
         *
-        * @param coord The coordinate to check for.
-        * @return True, if the coordinate is registered; false otherwise.
+        * @param coord The frame to check for.
+        * @return True, if the frame is registered; false otherwise.
         */
-        virtual bool hasCoordinate(const FramePtr& coord) const;
+        virtual bool hasFrame(const FramePtr& coord) const;
 
         /*!
-        * Check, if the coordinate is registered to this model.
+        * Check, if the frame is registered to this model.
         *
-        * @param coordinateName The name of the coordinate to check for.
-        * @return True, if the coord is registered; false otherwise.
+        * @param frameName The name of the frame to check for.
+        * @return True, if the frame is registered; false otherwise.
         */
-        virtual bool hasCoordinate(const std::string& coordinateName) const;
+        virtual bool hasFrame(const std::string& frameName) const;
 
         /*!
         * Get a pointer to the Frame, identified by the given name.
         *
-        * @param coordinateName The name of the Frame.
+        * @param frameName The name of the Frame.
         * @return A pointer to the Frame.
         */
-        virtual FramePtr getCoordinate(const std::string& coordinateName) const;
+        virtual FramePtr getFrame(const std::string& frameName) const;
 
 
         /*!
@@ -289,7 +289,7 @@ namespace VirtualRobot
         /*!
          * Set the global pose of this model so that the ModelNode/Frame node is at position globalPoseNode.
          *
-         * @param node The coordinate/node to set the position relative to.
+         * @param node The frame/node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
         virtual void setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);

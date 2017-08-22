@@ -74,7 +74,7 @@ namespace VirtualRobot
         virtual Eigen::Matrix4f getNodeTransformation() const override;
 
     private:
-        Eigen::Vector3f& translationDirection;
+        Eigen::Vector3f translationDirection;
     };
 }
 

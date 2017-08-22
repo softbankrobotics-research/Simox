@@ -75,7 +75,7 @@ namespace VirtualRobot
         virtual Eigen::Matrix4f getNodeTransformation() const override;
 
     private:
-        Eigen::Vector3f& axis;
+        Eigen::Vector3f axis;
     };
 }
 

@@ -29,10 +29,13 @@ BOOST_AUTO_TEST_CASE(testTrajectorySet)
     const std::string robotString =
         "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
+		"  <Joint type='revolute'>"
+		"	<Axis x='1' y='0' z='0'/>"
+		"  </Joint>"
         " </RobotNode>"
-        " <RobotNodeSet name='rns1'>"
+        " <JointSet name='rns1'>"
         "  <Node name='Joint1'/>"
-        " </RobotNodeSet>"
+        " </JointSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
@@ -65,13 +68,17 @@ BOOST_AUTO_TEST_CASE(testTrajectorySet)
 BOOST_AUTO_TEST_CASE(testTrajectoryClone)
 {
     const std::string robotString =
-        "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
-        " <RobotNode name='Joint1'>"
-        " </RobotNode>"
-        " <RobotNodeSet name='rns1'>"
-        "  <Node name='Joint1'/>"
-        " </RobotNodeSet>"
-        "</Robot>";
+		"<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
+		" <RobotNode name='Joint1'>"
+		"  <Joint type='revolute'>"
+		"	<Axis x='1' y='0' z='0'/>"
+		"  </Joint>"
+		" </RobotNode>"
+		" <JointSet name='rns1'>"
+		"  <Node name='Joint1'/>"
+		" </JointSet>"
+		"</Robot>";
+
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
@@ -130,13 +137,17 @@ BOOST_AUTO_TEST_CASE(testTrajectoryClone)
 BOOST_AUTO_TEST_CASE(testTrajectoryOperationsRemove)
 {
     const std::string robotString =
-        "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
-        " <RobotNode name='Joint1'>"
-        " </RobotNode>"
-        " <RobotNodeSet name='rns1'>"
-        "  <Node name='Joint1'/>"
-        " </RobotNodeSet>"
-        "</Robot>";
+		"<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
+		" <RobotNode name='Joint1'>"
+		"  <Joint type='revolute'>"
+		"	<Axis x='1' y='0' z='0'/>"
+		"  </Joint>"
+		" </RobotNode>"
+		" <JointSet name='rns1'>"
+		"  <Node name='Joint1'/>"
+		" </JointSet>"
+		"</Robot>";
+
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);
@@ -213,13 +224,17 @@ BOOST_AUTO_TEST_CASE(testTrajectoryOperationsRemove)
 BOOST_AUTO_TEST_CASE(testTrajectoryOperationsInsert)
 {
     const std::string robotString =
-        "<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
-        " <RobotNode name='Joint1'>"
-        " </RobotNode>"
-        " <RobotNodeSet name='rns1'>"
-        "  <Node name='Joint1'/>"
-        " </RobotNodeSet>"
-        "</Robot>";
+		"<Robot Type='MyDemoRobotType' RootNode='Joint1'>"
+		" <RobotNode name='Joint1'>"
+		"  <Joint type='revolute'>"
+		"	<Axis x='1' y='0' z='0'/>"
+		"  </Joint>"
+		" </RobotNode>"
+		" <JointSet name='rns1'>"
+		"  <Node name='Joint1'/>"
+		" </JointSet>"
+		"</Robot>";
+
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
     BOOST_REQUIRE(rob);

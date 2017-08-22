@@ -76,7 +76,7 @@ namespace VirtualRobot
         RobotIO();
         virtual ~RobotIO();
 
-        static ModelPtr processModel(rapidxml::xml_node<char>* robotModelNode);
+        //static ModelPtr processModel(rapidxml::xml_node<char>* robotModelNode);
 
         /*!
          * \brief searchFile searches for relative file (to basePath) and on failure tries to find a global file by checking the data dirs
