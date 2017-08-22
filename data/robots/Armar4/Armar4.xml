@@ -8,8 +8,10 @@
 	
         <EndEffector>endeffectors/Armar4-eef-hands.xml</EndEffector>
         <EndEffector>endeffectors/Armar4-eef-feet.xml</EndEffector>
-	
-        <!--NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>
-        <NodeSet>nodesets/Armar4-linksets.xml</NodeSet-->
+
+        <Frame>frames/Armar4-frames.xml</Frame>
+
+        <NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>
+        <NodeSet>nodesets/Armar4-linksets.xml</NodeSet>
 
 </ModelDescription>

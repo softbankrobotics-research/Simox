@@ -126,7 +126,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < rnsNodes.size(); i++)
         {
             // registers rns to robot
-            RobotNodeSetPtr r = ModelIO::processRobotNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
+            RobotNodeSetPtr r = ModelIO::processModelNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
             THROW_VR_EXCEPTION_IF(!r, "Invalid RobotNodeSet definition " << endl);
         }
 

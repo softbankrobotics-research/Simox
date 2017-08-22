@@ -958,7 +958,7 @@ namespace VirtualRobot
 
         for (int i = 0; i < (int)robotNodeSetNodes.size(); ++i)
         {
-            RobotNodeSetPtr rns = ModelIO::processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
+            RobotNodeSetPtr rns = ModelIO::processModelNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
         }
 
         std::vector<RobotNodePtr> nodes;

@@ -75,11 +75,42 @@ namespace VirtualRobot
         static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
         static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
         static void processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics);
-        static RobotNodeSetPtr processRobotNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
+        static RobotNodeSetPtr processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
         static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
 
+        /*!
+         * \brief loadNodeSets Loads one or multiple ModelNodeSets / JointSets / LinkSets from the given file and registers them to the robot
+         * \param robot
+         * \param filename
+         * \return
+         */
         static bool loadNodeSets(const RobotPtr &robot, const std::string &filename);
-        static bool createNodeSetFromString(const RobotPtr &robot, const std::string &xmlString);
+        /*!
+         * \brief createNodeSetFromString Extracts one or multiple ModelNodeSets / JointSets / LinkSets from the given string and registers them to the robot
+         * \param robot
+         * \param xmlString
+         * \return true on success
+         */
+        static bool createNodeSetsFromString(const RobotPtr &robot, const std::string &xmlString);
+
+        /*!
+         * \brief loadFrames Load one or multiple frames from file and registers them to the corresponding model nodes
+         * \param robot
+         * \param filename
+         * \return
+         */
+        static bool loadFrames(const RobotPtr &robot, const std::string &filename);
+
+        /*!
+         * \brief createFramesString Parse given string to extract frames. Frames are registered to the robot/model.
+         * \param robot
+         * \param xmlString
+         * \return
+         */
+        static bool createFramesFromString(const RobotPtr &robot, const std::string &xmlString);
+
+
+        static FramePtr processFrame(rapidxml::xml_node<char>* frameXMLNode, RobotPtr robo);
 
     protected:
         // instantiation not allowed

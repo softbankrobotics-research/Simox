@@ -265,8 +265,8 @@ namespace VirtualRobot
             bool fileOK = searchFile(filename, basePath);
             THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
 
-            bool eefOK = ModelIO::loadNodeSets(robot, filename);
-            THROW_VR_EXCEPTION_IF(!eefOK, "Could not parse node set defintion...");
+            bool nsOK = ModelIO::loadNodeSets(robot, filename);
+            THROW_VR_EXCEPTION_IF(!nsOK, "Could not parse node set defintion...");
 
             XMLNode = XMLNode->next_sibling("nodeset", 0, false);
         }
@@ -277,7 +277,7 @@ namespace VirtualRobot
         return robot;
     }
 
-    RobotNodeSetPtr ModelIO::processRobotNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter)
+    RobotNodeSetPtr ModelIO::processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter)
     {
         THROW_VR_EXCEPTION_IF(!setXMLNode, "NULL data for setXMLNode");
 
@@ -911,7 +911,7 @@ namespace VirtualRobot
 
     }
 
-    bool ModelIO::createNodeSetFromString(const RobotPtr &robot, const std::string &xmlString)
+    bool ModelIO::createNodeSetsFromString(const RobotPtr &robot, const std::string &xmlString)
     {
         if (!robot)
             return false;
@@ -933,8 +933,9 @@ namespace VirtualRobot
                 if (nodeName == "robotnodeset" || nodeName == "jointset" || nodeName == "linkset" || nodeName == "modelnodeset")
                 {
                     // registers rns to robot
-                    ModelNodeSetPtr r = ModelIO::processRobotNodeSet(node, robot, robot->getRootNode()->getName(), rnsNr);
+                    ModelNodeSetPtr r = ModelIO::processModelNodeSet(node, robot, robot->getRootNode()->getName(), rnsNr);
                     THROW_VR_EXCEPTION_IF(!r, "Invalid ModelNodeSet definition " << endl);
+                    rnsNr++;
                 }
                 node = node->next_sibling();
             }
@@ -963,7 +964,7 @@ namespace VirtualRobot
         catch (...)
         {
             delete[] y;
-            THROW_VR_EXCEPTION("Error while parsing eef xml definition" << endl);
+            THROW_VR_EXCEPTION("Error while parsing node set xml definition" << endl);
             return false;
         }
 
@@ -995,8 +996,139 @@ namespace VirtualRobot
         std::string nsXML(buffer.str());
         in.close();
 
-        return createNodeSetFromString(robot, nsXML);
+        return createNodeSetsFromString(robot, nsXML);
     }
 
+    bool ModelIO::createFramesFromString(const RobotPtr &robot, const std::string &xmlString)
+    {
+        if (!robot)
+            return false;
+
+        // copy string content to char array
+        char* y = new char[xmlString.size() + 1];
+        strncpy(y, xmlString.c_str(), xmlString.size() + 1);
+        int rnsNr = 0;
+
+        try
+        {
+            rapidxml::xml_document<char> doc;    // character type defaults to char
+            doc.parse<0>(y);    // 0 means default parse flags
+
+            rapidxml::xml_node<char>* node = doc.first_node();
+            while (node)
+            {
+                std::string nodeName = getLowerCase(node->name());
+                if (nodeName == "frame")
+                {
+                    // registers rns to robot
+                    FramePtr r = ModelIO::processFrame(node, robot);
+                    THROW_VR_EXCEPTION_IF(!r, "Invalid Frame definition " << endl);
+                }
+                node = node->next_sibling();
+            }
+        }
+        catch (rapidxml::parse_error& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Could not parse frame in xml definition" << endl
+                               << "Error message:" << e.what() << endl
+                               << "Position: " << endl << e.where<char>() << endl);
+            return false;
+        }
+        catch (VirtualRobot::VirtualRobotException&)
+        {
+            delete[] y;
+            // rethrow the current exception
+            throw;
+        }
+        catch (std::exception& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing frame xml definition" << endl
+                               << "Error code:" << e.what() << endl);
+            return false;
+        }
+        catch (...)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing frame xml definition" << endl);
+            return false;
+        }
+
+        delete[] y;
+        return true;
+    }
+
+    bool ModelIO::loadFrames(const RobotPtr &robot, const std::string &filename)
+    {
+        std::string fullFile = filename;
+
+        if (!RuntimeEnvironment::getDataFileAbsolute(fullFile))
+        {
+            VR_ERROR << "Could not open XML file:" << filename << endl;
+            return false;
+        }
+
+        // load file
+        std::ifstream in(fullFile.c_str());
+
+        if (!in.is_open())
+        {
+            VR_ERROR << "Could not open XML file:" << fullFile << endl;
+            return false;
+        }
+
+        std::stringstream buffer;
+        buffer << in.rdbuf();
+        std::string nsXML(buffer.str());
+        in.close();
+
+        return createFramesFromString(robot, nsXML);
+    }
+
+
+
+    FramePtr ModelIO::processFrame(rapidxml::xml_node<char>* frameXMLNode, RobotPtr robo)
+    {
+        THROW_VR_EXCEPTION_IF(!frameXMLNode, "NULL data in processRobotNode");
+
+        // get name
+        std::string frameName = BaseIO::processNameAttribute(frameXMLNode);
+
+        THROW_VR_EXCEPTION_IF (frameName.empty(), "Frame node must conatin a name attribute");
+
+        ModelNodePtr parentNode;
+        Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
+
+        rapidxml::xml_node<>* node = frameXMLNode->first_node();
+
+        while (node)
+        {
+            std::string nodeName = BaseIO::getLowerCase(node->name());
+
+            if (nodeName == "transform")
+            {
+                BaseIO::processTransformNode(frameXMLNode, frameName, transformMatrix);
+            } else if (nodeName == "parent")
+            {
+                THROW_VR_EXCEPTION_IF(parentNode, "Exctaly one parent allowed...");
+                std::string nameStr("node");
+                std::string parentNodeName = BaseIO::processStringAttribute(nameStr, node, false);
+                THROW_VR_EXCEPTION_IF(parentNodeName.empty(), "Parent name must not be empty");
+                THROW_VR_EXCEPTION_IF(!robo->hasModelNode(parentNodeName), "Robot does not node model node with name " + parentNodeName + " in frame " + frameName);
+                parentNode = robo->getModelNode(parentNodeName);
+            } else
+            {
+                THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in Frame <" << frameName << ">." << endl);
+            }
+
+            node = node->next_sibling();
+        }
+        THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
+
+        // todo: create frame attachment
+
+        return FramePtr();
+    }
 
 } // namespace VirtualRobot

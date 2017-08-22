@@ -168,8 +168,8 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandJS)
             "<?xml version='1.0' encoding='UTF-8'?>"
             "<ModelDescription>"
             "    <URDF>urdf/Armar4.urdf</URDF>"
-            "   <NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>"
-            "   <NodeSet>nodesets/Armar4-linksets.xml</NodeSet>"
+            "    <NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>"
+            "    <NodeSet>nodesets/Armar4-linksets.xml</NodeSet>"
             "</ModelDescription>";
 
     std::string basePath = "robots/Armar4";
