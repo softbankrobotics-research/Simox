@@ -818,7 +818,7 @@ namespace VirtualRobot
             {
                 // check for rounding errors
                 if (a==numVoxels[i] && (fabs(float(a) - pos)<0.5f))
-                    a = numVoxels[i];
+                    a = numVoxels[i]-1;
                 else
                     return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
             }
