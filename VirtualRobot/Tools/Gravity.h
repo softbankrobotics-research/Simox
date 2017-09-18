@@ -40,6 +40,8 @@ namespace VirtualRobot
          */
         std::map<std::string, float> computeGravityTorque();
 
+        void computeGravityTorque(std::vector<float> &storeValues);
+
     protected:
         VirtualRobot::RobotPtr robot;
 
@@ -48,6 +50,11 @@ namespace VirtualRobot
 
         // this rns is used to update the current pose of the robot
         VirtualRobot::RobotNodeSetPtr rnsBodies;
+
+        std::vector<VirtualRobot::RobotNodePtr> nodes;
+        std::vector<VirtualRobot::RobotNodePtr> nodesBodies;
+
+        Eigen::MatrixXi children;
     };
 
     typedef boost::shared_ptr<Gravity> GravityPtr;
