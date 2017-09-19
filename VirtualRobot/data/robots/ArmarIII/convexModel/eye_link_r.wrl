@@ -1,18 +1,24 @@
-#Inventor V2.1 ascii   
+#VRML V2.0 utf8
 
 
-Separator {
+Group {
+  children 
+    Transform {
+      translation 0 0 0
+      rotation 0 0.99999994 0  1.5700002
+      scale 1 1 1
+      scaleOrientation 0 0 1  0
+      center 0 0 0
+      children 
+        Transform {
+          translation 0 0 0
+          rotation 0.99999994 0 0  1.5700002
+          scale 1 1 1
+          scaleOrientation 0 0 1  0
+          center 0 0 0
 
-  Transform {
-    rotation 0 0.99999994 0  1.5700002
+        }
 
-  }
-  Transform {
-    rotation 0.99999994 0 0  1.5700002
+    }
 
-  }
-  File {
-    name "armar/eyes/eyes_pitch_link_right.iv"
-
-  }
 }
