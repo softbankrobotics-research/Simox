@@ -98,6 +98,9 @@ namespace VirtualRobot
         virtual bool consideringJointLimits();
 
         static std::string getTypeName();
+
+        virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
+
     protected:
 
         float getJointLimitPenalizationFactor();

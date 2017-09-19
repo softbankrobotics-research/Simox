@@ -40,7 +40,7 @@ namespace VirtualRobot
 
     /*!
             This class represents a voxelized approximation of the workspace that is covered by a kinematic chain of a robot.
-            The voxel grid covers the 6d Cartesian space: xyz translations (mm) and Tait�Bryan angles (eulerXYZ, fixed frame, extrinsic) orientations.
+            The voxel grid covers the 6d Cartesian space: xyz translations (mm) and Tait-Bryan angles (eulerXYZ, fixed frame, extrinsic) orientations.
             Older versions (<=2.5) used RPY (intrinsic) for storing orientations, but it turned out that this representation is not suitable for discretization.
             Each voxels holds a counter (uchar) that holds information, e.g. about reachability.
             The discretized data can be written to and loaded from binary files.
@@ -160,6 +160,13 @@ namespace VirtualRobot
             This means that the entry of the corresponding WorkspaceData voxel is increased by 1.
         */
         virtual void addPose(const Eigen::Matrix4f& globalPose);
+
+        /*!
+         * \brief addPose Adds pose and rate it with the given quality measure. Ignored in this implementation, but used in derived classes (@see Manipulability)
+         * \param p
+         * \param qualMeasure
+         */
+        virtual void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure);
 
         /*!
             Clears all data
@@ -305,7 +312,7 @@ namespace VirtualRobot
             Create a horizontal cut through this workspace data. Therefore, the z component and the orientation of the reference pose (in global coordinate system) is used.
             Then the x and y components are iterated and the corresponding entires are used to fill the 2d grid.
         */
-        WorkspaceCut2DPtr createCut(const Eigen::Matrix4f& referencePose, float cellSize) const;
+        WorkspaceCut2DPtr createCut(const Eigen::Matrix4f& referencePose, float cellSize, bool sumAngles) const;
 
         /*!
         * \brief createCut Create a cut at a specific height (assuming z is upwards).
@@ -313,7 +320,7 @@ namespace VirtualRobot
         * \param cellSize The discretization step size of the result
         * \return
         */
-        WorkspaceCut2DPtr createCut(float heightPercent, float cellSize) const;
+        WorkspaceCut2DPtr createCut(float heightPercent, float cellSize, bool sumAngles) const;
 
         /*!
             Build all transformations from referenceNode to cutXY data.h Only entries>0 are considered.
@@ -374,13 +381,13 @@ namespace VirtualRobot
         */
         void addRandomTCPPoses(unsigned int loops, bool checkForSelfCollisions = true);
         /*!
-            Appends a number of random TCP poses to workspace Data. This method uses several threads behind the scenes to
-            speed up the process.
+            Appends a number of random TCP poses to workspace Data (multithreaded).
+            This method is blocking, i.e. it returns as soon as all threads are done.
             \param loops Number of poses that should be appended
             \param numThreads number of worker threads used behind the scenes to append random TCP poses to workspace data.
             \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
         */
-        void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true);
+        virtual void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true);
 
         void setVoxelEntry(unsigned int v[6], unsigned char e);
         void setEntry(const Eigen::Matrix4f& poseGlobal, unsigned char e);

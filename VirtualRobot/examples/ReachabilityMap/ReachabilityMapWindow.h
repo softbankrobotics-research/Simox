@@ -59,6 +59,7 @@ protected:
     void buildRobotVisu();
     void buildObjectVisu();
     void buildReachVisu();
+    void buildReachGridVisu();
     void buildGraspVisu();
 
     bool buildReachMapAll();
@@ -77,6 +78,7 @@ protected:
     SoSeparator* sceneSep;
     SoSeparator* robotVisuSep;
     SoSeparator* reachabilityVisuSep;
+    SoSeparator* reachabilityMapVisuSep;
     SoSeparator* allGraspsVisuSep;
     SoSeparator* graspVisuSep;
     SoSeparator* objectVisuSep;
@@ -94,7 +96,7 @@ protected:
     std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
     std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
 
-    VirtualRobot::ReachabilityPtr reachSpace;
+    VirtualRobot::WorkspaceRepresentationPtr reachSpace;
     VirtualRobot::WorkspaceGridPtr reachGrid;
     VirtualRobot::RobotNodePtr currentRobotNode;
 

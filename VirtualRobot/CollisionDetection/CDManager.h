@@ -75,6 +75,12 @@ namespace VirtualRobot
         void addCollisionModelPair(SceneObjectSetPtr m1, SceneObjectSetPtr m2);
         void addCollisionModelPair(SceneObjectPtr m1, SceneObjectSetPtr m2);
         void addCollisionModelPair(SceneObjectPtr m1, SceneObjectPtr m2);
+        template<class SetT>
+        typename std::enable_if<std::is_base_of<SceneObjectSet, SetT>::value>::type
+        addCollisionModelPair(const boost::shared_ptr<SetT>& m1, const boost::shared_ptr<SetT>& m2)
+        {
+            addCollisionModelPair(boost::dynamic_pointer_cast<SceneObjectSet>(m1), boost::dynamic_pointer_cast<SceneObjectSet>(m2));
+        }
 
         /*!
             Here single collision models can be added. Internally they are wrapped by a SceneObjectSet.

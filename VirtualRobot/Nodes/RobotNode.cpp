@@ -577,10 +577,10 @@ namespace VirtualRobot
     {
         float delta = 0.0f;
 
-        if (nodeType != Joint)
+        /*if (nodeType != Joint)
         {
             return delta;
-        }
+        }*/
 
         // we check if the given target value violates our joint limits
         if (!limitless)
