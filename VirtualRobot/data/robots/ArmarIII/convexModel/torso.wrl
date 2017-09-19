@@ -1,0 +1,19 @@
+#Inventor V2.1 ascii   
+
+
+Separator {
+
+  Units {
+    units MILLIMETERS
+
+  }
+  RotationXYZ {
+    angle 1.5700001
+    axis Z
+
+  }
+  File {
+    name "armar/torso/torso_conv.wrl"
+
+  }
+}

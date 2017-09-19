@@ -1,0 +1,27 @@
+#Inventor V2.1 ascii   
+
+
+Separator {
+
+  Units {
+    units MILLIMETERS
+
+  }
+  Transform {
+    translation 0 0 0
+    rotation 0.99999994 0 0  1.5700002
+
+  }
+  Transform {
+    translation 0 0 0
+    rotation -0 -0 -0.99999994  1.5700002
+
+  }
+  Separator {
+
+    File {
+      name "armar/hands/proximal_index_middle_thumb_conv.wrl"
+
+    }
+  }
+}

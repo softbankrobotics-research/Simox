@@ -1,0 +1,18 @@
+#Inventor V2.1 ascii   
+
+
+Separator {
+
+  Transform {
+    rotation 0 0.99999994 0  1.5700002
+
+  }
+  Transform {
+    rotation 0 0 0.99999994  1.5700002
+
+  }
+  File {
+    name "armar/eyes/eye.iv"
+
+  }
+}

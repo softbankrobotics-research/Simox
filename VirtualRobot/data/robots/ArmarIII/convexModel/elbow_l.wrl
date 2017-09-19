@@ -1,0 +1,31 @@
+#Inventor V2.1 ascii   
+
+
+Separator {
+
+  Units {
+    units MILLIMETERS
+
+  }
+  Transform {
+    rotation -0.99999994 -0 -0  1.5700002
+
+  }
+  Transform {
+    rotation -0 -0 -0.99999994  1.5700002
+
+  }
+  Transform {
+    rotation 0 1 0  3.1400001
+
+  }
+  Transform {
+    translation 7.5 0 0
+    rotation 0 0 1  0
+
+  }
+  File {
+    name "armar/left_arm/elbow_link_l_conv.wrl"
+
+  }
+}

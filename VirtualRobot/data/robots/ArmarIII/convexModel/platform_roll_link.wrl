@@ -1,0 +1,31 @@
+#Inventor V2.1 ascii   
+
+
+Separator {
+
+  Units {
+    units MILLIMETERS
+
+  }
+  RotationXYZ {
+    angle 1.5700001
+    axis Z
+
+  }
+  Transform {
+    translation 0 0 127
+
+  }
+  Transform {
+    rotation 0 1 0  3.1415
+
+  }
+  Transform {
+    rotation -0 -0 -0.99999994  1.5700002
+
+  }
+  File {
+    name "armar/platform/hd_platform_roll_link_conv.wrl"
+
+  }
+}
