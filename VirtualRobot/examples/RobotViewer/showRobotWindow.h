@@ -5,7 +5,7 @@
 #include "../../Model/Model.h"
 #include "../../VirtualRobotException.h"
 #include "../../Model/Nodes/ModelNode.h"
-#include "../../XML/RobotIO.h"
+#include "../../XML/ModelIO.h"
 #include "../../Visualization/VisualizationFactory.h"
 #include "../../Model/Obstacle.h"
 #include "../../Model/ModelNodeSet.h"
@@ -86,15 +86,17 @@ protected:
     SoSeparator* extraSep;
 
     VirtualRobot::RobotPtr robot;
-    std::string m_sRobotFilename;
-    std::vector < VirtualRobot::ModelJointPtr > allJoints;
-    std::vector < VirtualRobot::ModelJointPtr > currentJoints;
-    std::vector < VirtualRobot::ModelLinkPtr > currentLinks;
+    std::string robotFilename;
+
+
+    std::vector < VirtualRobot::ModelNodePtr > allNodes;
+    std::vector < VirtualRobot::ModelNodePtr > currentNodes;
+
     std::vector < VirtualRobot::ModelNodeSetPtr > robotNodeSets;
     std::vector < VirtualRobot::EndEffectorPtr > eefs;
     VirtualRobot::EndEffectorPtr currentEEF;
-    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-    VirtualRobot::RobotNodePtr currentRobotNode;
+    VirtualRobot::ModelNodeSetPtr currentRobotNodeSet;
+    VirtualRobot::ModelNodePtr currentRobotNode;
 
 
     bool useColModel;

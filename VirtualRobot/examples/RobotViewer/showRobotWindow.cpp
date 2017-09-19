@@ -3,6 +3,9 @@
 #include "../../EndEffector/EndEffector.h"
 #include "../../Tools/RuntimeEnvironment.h"
 #include "../../Import/RobotImporterFactory.h"
+#include "../../Model/Nodes/ModelJoint.h"
+#include "../../Model/LinkSet.h"
+#include "../../Model/JointSet.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <QFileDialog>
@@ -29,7 +32,7 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
 {
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
-    m_sRobotFilename = sRobotFilename;
+    robotFilename = sRobotFilename;
     sceneSep = new SoSeparator;
     sceneSep->ref();
     robotSep = new SoSeparator;
@@ -133,8 +136,12 @@ void showRobotWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<float> jv(allRobotNodes.size(), 0.0f);
-    allRobotNodes->setJointValues(jv);
+    for (auto& j:allNodes)
+    {
+        ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(j);
+        if (joint)
+            joint->setJointValue(0.0f);
+    }
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 }
@@ -157,16 +164,18 @@ void showRobotWindow::displayTriangles()
         trisRNSCol = trisAllCol;
     }
 
-    if (currentRobotNodeSet)
+    LinkSetPtr ls = dynamic_pointer_cast<LinkSet>(currentRobotNodeSet);
+    if (ls)
     {
-        trisRNSFull = currentRobotNodeSet->getNumFaces(false);
-        trisRNSCol = currentRobotNodeSet->getNumFaces(true);
+        trisRNSFull = ls->getNumFaces(false);
+        trisRNSCol = ls->getNumFaces(true);
     }
 
-    if (currentRobotNode)
+    ModelLinkPtr ml = dynamic_pointer_cast<ModelLink>(currentRobotNode);
+    if (ml)
     {
-        trisJointFull = currentRobotNode->getNumFaces(false);
-        trisJointCol = currentRobotNode->getNumFaces(true);
+        trisJointFull = ml->getNumFaces(false);
+        trisJointCol = ml->getNumFaces(true);
     }
 
     if (UI.checkBoxColModel->checkState() == Qt::Checked)
@@ -213,6 +222,9 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
+
+    // todo
+/*
     visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
@@ -224,7 +236,7 @@ void showRobotWindow::rebuildVisualization()
     if (visualisationNode)
     {
         robotSep->addChild(visualisationNode);
-    }
+    }*/
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -244,6 +256,9 @@ void showRobotWindow::showSensors()
 
     bool showSensors = UI.checkBoxRobotSensors->isChecked();
 
+    //todo
+    /*
+
     std::vector<SensorPtr> sensors = robot->getSensors();
 
     for (size_t i = 0; i < sensors.size(); i++)
@@ -251,6 +266,7 @@ void showRobotWindow::showSensors()
         sensors[i]->setupVisualization(showSensors, showSensors);
         sensors[i]->showCoordinateSystem(showSensors);
     }
+    */
 
     // rebuild visualization
     rebuildVisualization();
@@ -267,7 +283,11 @@ void showRobotWindow::displayPhysics()
 
     physicsCoMEnabled = UI.checkBoxPhysicsCoM->checkState() == Qt::Checked;
     physicsInertiaEnabled = UI.checkBoxPhysicsInertia->checkState() == Qt::Checked;
+
+    //todo
+    /*
     robot->showPhysicsInformation(physicsCoMEnabled, physicsInertiaEnabled);
+    */
 
     // rebuild visualization
     rebuildVisualization();
@@ -281,7 +301,9 @@ void showRobotWindow::exportVRML()
         return;
     }
 
+    // todo: remove?
     // VRML
+    /*
     QString fi = QFileDialog::getSaveFileName(this, tr("VRML 2.0 File"), QString(), tr("VRML Files (*.wrl)"));
     std::string s = std::string(fi.toLatin1());
 
@@ -293,6 +315,7 @@ void showRobotWindow::exportVRML()
         visualization = robot->getVisualization<CoinVisualization>(colModel);
         visualization->exportToVRML2(s);
     }
+    */
 }
 
 
@@ -303,7 +326,9 @@ void showRobotWindow::exportXML()
         return;
     }
 
+    // todo
     // XML
+    /*
     QString fi = QFileDialog::getSaveFileName(this, tr("xml File"), QString(), tr("xml Files (*.xml)"));
     std::string s = std::string(fi.toLatin1());
 
@@ -313,9 +338,8 @@ void showRobotWindow::exportXML()
         boost::filesystem::path p1(s);
         std::string fn = p1.filename().generic_string();
         std::string fnPath = p1.parent_path().generic_string();
-        RobotIO::saveXML(robot, fn, fnPath);
-    }
-
+        ModelIO::saveXML(robot, fn, fnPath);
+    }*/
 }
 
 void showRobotWindow::showRobot()
@@ -351,9 +375,9 @@ void showRobotWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (unsigned int i = 0; i < currentNodes.size(); i++)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentNodes[i]->getName().c_str()));
     }
 }
 
@@ -376,7 +400,7 @@ void showRobotWindow::selectRNS(int nr)
     if (nr <= 0)
     {
         // all joints
-        currentRobotNodes = allRobotNodes;
+        currentNodes = allNodes;
     }
     else
     {
@@ -388,15 +412,7 @@ void showRobotWindow::selectRNS(int nr)
         }
 
         currentRobotNodeSet = robotNodeSets[nr];
-        currentRobotNodes = currentRobotNodeSet->getAllRobotNodes();
-        /*cout << "HIGHLIGHTING rns " << currentRobotNodeSet->getName() << endl;
-        if (visualization)
-        {
-
-            robot->highlight(visualization,false);
-            currentRobotNodeSet->highlight(visualization,true);
-        }*/
-
+        currentNodes = currentRobotNodeSet->getModelNodes();
     }
 
     updateJointBox();
@@ -406,32 +422,46 @@ void showRobotWindow::selectRNS(int nr)
 
 void showRobotWindow::selectJoint(int nr)
 {
+    //todo
+    /*
     if (currentRobotNode)
     {
         currentRobotNode->showBoundingBox(false);
     }
+    */
 
     currentRobotNode.reset();
     cout << "Selecting Joint nr " << nr << endl;
 
-    if (nr < 0 || nr >= (int)currentRobotNodes.size())
+    if (nr < 0 || nr >= (int)currentNodes.size())
     {
         return;
     }
 
-    currentRobotNode = currentRobotNodes[nr];
+    currentRobotNode = currentNodes[nr];
+    //todo
+    /*
     currentRobotNode->showBoundingBox(true, true);
+    */
     currentRobotNode->print();
-    float mi = currentRobotNode->getJointLimitLo();
-    float ma = currentRobotNode->getJointLimitHi();
+    ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(currentRobotNode);
+    float mi = 0.0f;
+    float ma = 0.0f;
+    float j = 0.0f;
+    if (joint)
+    {
+        mi = joint->getJointLimitLow();
+        ma = joint->getJointLimitHigh();
+        j = joint->getJointValue();
+    }
     QString qMin = QString::number(mi);
     QString qMax = QString::number(ma);
     UI.labelMinPos->setText(qMin);
     UI.labelMaxPos->setText(qMax);
-    float j = currentRobotNode->getJointValue();
+
     UI.lcdNumberJointValue->display((double)j);
 
-    if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint()))
+    if (fabs(ma - mi) > 0 && joint)
     {
         UI.horizontalSliderPos->setEnabled(true);
         int pos = (int)((j - mi) / (ma - mi) * 1000.0f);
@@ -442,7 +472,8 @@ void showRobotWindow::selectJoint(int nr)
         UI.horizontalSliderPos->setValue(500);
         UI.horizontalSliderPos->setEnabled(false);
     }
-
+    //todo
+    /*
     if (currentRobotNodes[nr]->showCoordinateSystemState())
     {
         UI.checkBoxShowCoordSystem->setCheckState(Qt::Checked);
@@ -456,64 +487,32 @@ void showRobotWindow::selectJoint(int nr)
 
     if (visualization)
     {
-        robot->highlight(visualization, false);
-        currentRobotNode->highlight(visualization, true);
+        // todo
+        //robot->highlight(visualization, false);
+        //currentRobotNode->highlight(visualization, true);
     }
-
+    */
     displayTriangles();
 }
 
 void showRobotWindow::jointValueChanged(int pos)
 {
-    int nr = UI.comboBoxJoint->currentIndex();
-
-    if (nr < 0 || nr >= (int)currentRobotNodes.size())
-    {
+    ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(currentRobotNode);
+    if (!joint)
         return;
-    }
 
-    float fPos = currentRobotNodes[nr]->getJointLimitLo() + (float)pos / 1000.0f * (currentRobotNodes[nr]->getJointLimitHi() - currentRobotNodes[nr]->getJointLimitLo());
-    robot->setJointValue(currentRobotNodes[nr], fPos);
+    float fPos = joint->getJointLimitLow() + (float)pos / 1000.0f * (joint->getJointLimitHigh() - joint->getJointLimitLow());
+    joint->setJointValue(fPos);
     UI.lcdNumberJointValue->display((double)fPos);
-
-#if 0
-    RobotNodePtr rnl = robot->getModelNode("LeftLeg_TCP");
-    RobotNodePtr rnr = robot->getModelNode("RightLeg_TCP");
-
-    if (rnl && rnr)
-    {
-        cout << "LEFT:" << endl;
-        MathTools::printMat(rnl->getGlobalPose());
-        cout << "RIGHT:" << endl;
-        MathTools::printMat(rnr->getGlobalPose());
-    }
-
-#endif
 }
 
 void showRobotWindow::showCoordSystem()
 {
+    // todo
+    /*
     float size = 0.75f;
-    int nr = UI.comboBoxJoint->currentIndex();
-
-    if (nr < 0 || nr >= (int)currentRobotNodes.size())
-    {
-        return;
-    }
-
-    // first check if robot node has a visualization
-    /*VisualizationNodePtr visu = robotNodes[nr]->getVisualization();
-    if (!visu)
-    {
-        // create dummy visu
-        SoSeparator *s = new SoSeparator();
-        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
-        robotNodes[nr]->setVisualization(visualizationNode);
-        //visualizationNode->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
-
-    }*/
-
-    currentRobotNodes[nr]->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
+    currentRobotNode->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
+    */
     // rebuild visualization
     rebuildVisualization();
 }
@@ -526,120 +525,30 @@ void showRobotWindow::selectRobot()
     string supported = "Supported Formats, " + supportedExtensions + " (" + supportedExtensions + ")";
     string filter = supported + ";;" + RobotImporterFactory::getAllFileFilters();
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr(filter.c_str()));
-    std::string s = m_sRobotFilename = std::string(fi.toLatin1());
+    std::string s = robotFilename = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
-        m_sRobotFilename = s;
+        robotFilename = s;
         loadRobot();
     }
 }
 
-void showRobotWindow::testPerformance(RobotPtr robot, RobotNodeSetPtr rns)
-{
-    int loops = 10000;
-    Eigen::VectorXf limitMin(rns->getSize());
-    Eigen::VectorXf limitMax(rns->getSize());
-    for (size_t i = 0; i < rns->getSize(); i++)
-    {
-        limitMin[i] = rns->getNode(i)->getJointLimitLo();
-        limitMax[i] = rns->getNode(i)->getJointLimitHi();
-    }
-    Eigen::VectorXf v(rns->getSize());
-    //float minV = rn->getJointLimitLo();
-    //float maxV = rn->getJointLimitHi();
 
-    clock_t start = clock();
-    robot->setupVisualization(true, false);
-    robot->setUpdateVisualization(true);
-    robot->setUpdateCollisionModel(true);
-    robot->setThreadsafe(true);
-    for (int i = 0; i < loops; i++)
-    {
-        for (size_t k = 0; k < rns->getSize(); k++)
-        {
-            float p = float(rand() % 1000) / 1000.0f;
-            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
-        }
-        rns->setJointValues(v);
-    }
-    clock_t end = clock();
-    float timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
-    VR_INFO << "Time (visu on, thread on): " << timeMS / (float)loops << endl;
-
-    start = clock();
-    robot->setupVisualization(false, false);
-    robot->setUpdateVisualization(false);
-    robot->setUpdateCollisionModel(false);
-    robot->setThreadsafe(true);
-    for (int i = 0; i < loops; i++)
-    {
-        /*float v = float(rand() % 1000) / 1000.0f;
-        v = minV + v * (maxV - minV);
-        rn->setJointValue(v);*/
-        for (size_t k = 0; k < rns->getSize(); k++)
-        {
-            float p = float(rand() % 1000) / 1000.0f;
-            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
-        }
-        rns->setJointValues(v);
-    }
-    end = clock();
-    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
-    VR_INFO << "Time (visu off, thread on): " << timeMS / (float)loops << endl;
-
-    start = clock();
-    robot->setupVisualization(true, false);
-    robot->setUpdateVisualization(true);
-    robot->setUpdateCollisionModel(true);
-    robot->setThreadsafe(false);
-    for (int i = 0; i < loops; i++)
-    {
-        for (size_t k = 0; k < rns->getSize(); k++)
-        {
-            float p = float(rand() % 1000) / 1000.0f;
-            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
-        }
-        rns->setJointValues(v);
-    }
-    end = clock();
-    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
-    VR_INFO << "Time (visu on, thread off): " << timeMS / (float)loops << endl;
-
-
-    start = clock();
-    robot->setupVisualization(false, false);
-    robot->setUpdateVisualization(false);
-    robot->setUpdateCollisionModel(false);
-    robot->setThreadsafe(false);
-    for (int i = 0; i < loops; i++)
-    {
-        for (size_t k = 0; k < rns->getSize(); k++)
-        {
-            float p = float(rand() % 1000) / 1000.0f;
-            v[k] = limitMin[k] + p * (limitMax[k] - limitMin[k]);
-        }
-        rns->setJointValues(v);
-    }
-    end = clock();
-    timeMS = (float)(end - start) / (float)CLOCKS_PER_SEC * 1000.0f;
-    VR_INFO << "Time (visu off, thread off): " << timeMS / (float)loops << endl;
-
-}
 
 void showRobotWindow::loadRobot()
 {
     robotSep->removeAllChildren();
-    cout << "Loading Robot from " << m_sRobotFilename << endl;
+    cout << "Loading Robot from " << robotFilename << endl;
     currentEEF.reset();
     currentRobotNode.reset();
-    currentRobotNodes.clear();
+    currentNodes.clear();
     currentRobotNodeSet.reset();
     robot.reset();
 
     try
     {
-        QFileInfo fileInfo(m_sRobotFilename.c_str());
+        QFileInfo fileInfo(robotFilename.c_str());
         std::string suffix(fileInfo.suffix().toLatin1());
         RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
 
@@ -649,7 +558,7 @@ void showRobotWindow::loadRobot()
             return;
         }
 
-        robot = importer->loadFromFile(m_sRobotFilename, RobotIO::eFull);
+        robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
 
 
     }
@@ -666,37 +575,6 @@ void showRobotWindow::loadRobot()
         return;
     }
 
-    // just a simple test that inverts the kinematic structure of the robot
-#if 0 
-    if (robot->hasRobotNode("Index L J1"))
-        robot = RobotFactory::cloneInversed(robot, "Index L J1");
-#endif
-
-#if 0
-    if (robot->hasRobotNodeSet("LeftArm"))
-        robot = RobotFactory::cloneSubSet(robot, robot->getModelNodeSet("LeftArm"), "LeftArmRobot");
-#endif
-
-#if 0
-    if (robot->hasRobotNode("Wrist 2 L") && robot->hasRobotNode("Wrist 2 R"))
-    {
-        std::vector<std::string> l;
-        l.push_back("Wrist 2 L");
-        l.push_back("Wrist 2 R");
-        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
-    }
-    VR_INFO << "=========== PERFORMANCE orig ============" << endl;
-    testPerformance(robot, robot->getModelNodeSet("Joints_Revolute"));
-    if (robot->hasRobotNode("LWy_joint") && robot->hasRobotNode("RWy_joint"))
-    {
-        std::vector<std::string> l;
-        l.push_back("LWy_joint");
-        l.push_back("RWy_joint");
-        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
-    }
-    VR_INFO << "=========== PERFORMANCE clone ============" << endl;
-    testPerformance(robot, robot->getModelNodeSet("Joints_Revolute"));// ("BPy_joint"));
-#endif
 
     updatRobotInfo();
 }
@@ -717,14 +595,14 @@ void showRobotWindow::updatRobotInfo()
     UI.checkBoxStructure->setChecked(false);
 
     // get nodes
-    robot->getModelNodes(allRobotNodes);
+    allNodes = robot->getModelNodes();
     robotNodeSets = robot->getModelNodeSets();
-    robot->getEndEffectors(eefs);
+    eefs = robot->getEndEffectors();
     updateEEFBox();
     updateRNSBox();
     selectRNS(0);
 
-    if (allRobotNodes.size() == 0)
+    if (allNodes.size() == 0)
     {
         selectJoint(-1);
     }
@@ -743,27 +621,6 @@ void showRobotWindow::updatRobotInfo()
     }
 
     displayTriangles();
-
-#if 0
-    RobotPtr r2 = robot->clone(robot->getName(), robot->getCollisionChecker(), 2.0f);
-    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-    gp(0, 3) += 1000.0f;
-
-    r2->setGlobalPose(gp);
-    extraSep->removeAllChildren();
-    useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization = r2->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
-
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
-
-    extraSep->addChild(visualisationNode);
-#endif
 
     // build visualization
     rebuildVisualization();
@@ -808,49 +665,6 @@ void showRobotWindow::closeHand()
 
 void showRobotWindow::openHand()
 {
-#if 0
-
-    if (robot)
-    {
-        float randMult = (float)(1.0 / (double)(RAND_MAX));
-        std::vector<RobotNodePtr> rn = robot->getModelNodes();
-        std::vector<RobotNodePtr> rnJoints;
-
-        for (size_t j = 0; j < rn.size(); j++)
-        {
-            if (rn[j]->isRotationalJoint())
-            {
-                rnJoints.push_back(rn[j]);
-            }
-        }
-
-        int loops = 10000;
-        clock_t startT = clock();
-
-        for (int i = 0; i < loops; i++)
-        {
-            std::vector<float> jv;
-
-            for (size_t j = 0; j < rnJoints.size(); j++)
-            {
-                float t = (float)rand() * randMult; // value from 0 to 1
-                t = rnJoints[j]->getJointLimitLo() + (rnJoints[j]->getJointLimitHi() - rnJoints[j]->getJointLimitLo()) * t;
-                jv.push_back(t);
-            }
-
-            robot->setJointValues(rnJoints, jv);
-        }
-
-        clock_t endT = clock();
-
-        float diffClock = (float)(((float)(endT - startT) / (float)CLOCKS_PER_SEC) * 1000.0f);
-        cout << "RobotNodes:" << rn.size() << endl;
-        cout << "Joints:" << rnJoints.size() << endl;
-        cout << "loops:" << loops << ". time (ms):" << diffClock << ". Per loop:" << diffClock / (float)loops << endl;
-    }
-
-#endif
-
     if (currentEEF)
     {
         currentEEF->openActors();

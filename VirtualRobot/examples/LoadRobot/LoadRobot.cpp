@@ -1,7 +1,7 @@
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 
@@ -15,24 +15,11 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    /*std::shared_ptr<Robot> robot = RobotFactory::createRobot("Robbi");
-    std::vector< std::shared_ptr<RobotNode> > robotNodes;
-    //VirtualRobot::RobotNodeRevoluteFactory revoluteNodeFactory;
-    //DHParameter dhParameter(0, 0, 0, 0, true);
-    //std::shared_ptr<RobotNode> node1 = revoluteNodeFactory.createRobotNodeDH(robot, "RootNode", VisualizationNodePtr(), CollisionModelPtr(), (float) - M_PI, (float)M_PI, 0.0f, dhParameter);
-    //robotNodes.push_back(node1);
-    std::map<RobotNodePtr, std::vector<std::string> > childrenMap;
-    bool resInit = RobotFactory::initializeRobot(robot, robotNodes, childrenMap, node1);
-
-    cout << "resInit:" << resInit << endl;
-    cout << "First robot:" << endl;
-    robot->print();*/
-
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string filename("robots/examples/loadRobot/RobotExample.xml");
+    std::string filename("robots/Armar3/Armar3.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
 
     if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
@@ -45,12 +32,12 @@ int main(int argc, char* argv[])
         }
     }
 
-    cout << "Using robot at " << filename << endl;
+    VR_INFO << "Robot file: " << filename << endl;
     RobotPtr rob;
 
     try
     {
-        rob = RobotIO::loadRobot(filename, RobotIO::eStructure);
+        rob = ModelIO::loadRobotModel(filename, ModelIO::eStructure);
     }
     catch (VirtualRobotException& e)
     {
@@ -58,14 +45,12 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    cout << "Second robot (XML):" << endl;
-
     if (rob)
     {
         rob->print();
     }
     else
     {
-        cout << " ERROR while creating robot" << endl;
+        VR_INFO << " ERROR while creating robot" << endl;
     }
 }

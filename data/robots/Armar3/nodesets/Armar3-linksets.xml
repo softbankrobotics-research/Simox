@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<LinkSet name="LeftArmBodies" kinematicRoot="Left Arm Base" tcp="TCP L">
+	<Node name="Shoulder 1 L"/>
+	<Node name="Shoulder 2 L"/>
+	<Node name="Upperarm L"/>
+	<Node name="Elbow L"/>
+	<Node name="Underarm L"/>
+	<Node name="Wrist 1 L"/>
+	<Node name="Wrist 2 L"/>
+</LinkSet>

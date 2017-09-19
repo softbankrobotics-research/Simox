@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    std::string filename("robots/Armar3/Armar3.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
 
     if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))

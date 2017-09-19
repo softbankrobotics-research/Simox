@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<ModelDescription>
+	
+	<URDF>urdf/Armar3.urdf</URDF>
+
+	<!--Sensors>sensors/Armar3-sensors-ft.xml</Sensors-->
+
+	<!--EndEffector>endeffectors/Armar3-eef-hands.xml</EndEffector-->
+
+	<!--Frame>frames/Armar3-frames.xml</Frame-->
+
+	<!--NodeSet>nodesets/Armar3-jointsets.xml</NodeSet>
+	<NodeSet>nodesets/Armar3-linksets.xml</NodeSet-->
+
+</ModelDescription>

@@ -79,7 +79,7 @@
          <rect>
           <x>30</x>
           <y>99</y>
-          <width>131</width>
+          <width>161</width>
           <height>20</height>
          </rect>
         </property>
@@ -92,7 +92,7 @@
          <rect>
           <x>30</x>
           <y>129</y>
-          <width>131</width>
+          <width>161</width>
           <height>20</height>
          </rect>
         </property>
@@ -189,7 +189,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Joints</string>
+        <string>Joints/Links</string>
        </property>
        <property name="flat">
         <bool>false</bool>
@@ -297,7 +297,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>RobotNode's Coord System</string>
+         <string>Node Coord System</string>
         </property>
        </widget>
        <widget class="QComboBox" name="comboBoxRobotNodeSet">
@@ -320,7 +320,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Select RobotNodeSet</string>
+         <string>Select Joint/Link Set</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_4">
@@ -333,7 +333,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Select RobotNode</string>
+         <string>Select Node</string>
         </property>
        </widget>
       </widget>

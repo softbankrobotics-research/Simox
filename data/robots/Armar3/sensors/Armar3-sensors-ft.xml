@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<Sensor type="forcetorque" attached="Wrist 2 L" name="Wrist 2 L">
+    <Transform>
+        <rollpitchyaw yaw="0" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
+
+<Sensor type="forcetorque" attached="Wrist 2 R" name="Wrist 2 R">
+    <Transform>
+        <rollpitchyaw yaw="0" pitch="0" roll="0" units="degree"/>
+    </Transform>
+</Sensor>
+

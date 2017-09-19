@@ -1,12 +1,10 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
-
-
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -35,26 +33,9 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    cout << " --- START --- " << endl;
-    // --robot "robots/iCub/iCub.xml"
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
-    //std::string filename("robots/ArmarIII/ArmarIII-RightArm.xml");
-    //std::string filename("C:/Projects/IIT_Projects/iCubRobot/robot/iCub.xml");
-    //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightArm.xml");
-    //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightHand.xml");
-    //std::string filename(DEMO_BASE_DIR "/robot/iCub_LeftHand.xml");
+    std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
-    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-    {
-        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-
-        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-        {
-            filename = robFile;
-        }
-    }
-
-    cout << "Using robot at " << filename << endl;
+    VR_INFO << "Robot file: " << filename << endl;
 
     showRobotWindow rw(filename);
 
