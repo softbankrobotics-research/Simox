@@ -165,11 +165,13 @@ namespace VirtualRobot
                                << "Position: " << endl << e.where<char>() << endl);
             return RobotPtr();
         }
-        catch (VirtualRobot::VirtualRobotException&)
+        catch (VirtualRobot::VirtualRobotException& e)
         {
             delete[] y;
-            // rethrow the current exception
-            throw;
+            THROW_VR_EXCEPTION("Error while parsing xml definition" << endl
+                               << "Error code:" << e.what() << endl);
+
+            return RobotPtr();
         }
         catch (std::exception& e)
         {
