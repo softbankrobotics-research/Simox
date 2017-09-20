@@ -6,11 +6,12 @@
 #include "../../Model/Nodes/ModelJoint.h"
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <time.h>
 #include <vector>
 #include <iostream>
@@ -222,21 +223,20 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-
-    // todo
-/*
+    SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot, colModel);
+    /*
     visualization = robot->getVisualization<CoinVisualization>(colModel);
     SoNode* visualisationNode = NULL;
 
     if (visualization)
     {
         visualisationNode = visualization->getCoinVisualization();
-    }
+    }*/
 
     if (visualisationNode)
     {
         robotSep->addChild(visualisationNode);
-    }*/
+    }
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -550,7 +550,7 @@ void showRobotWindow::loadRobot()
     {
         QFileInfo fileInfo(robotFilename.c_str());
         std::string suffix(fileInfo.suffix().toLatin1());
-        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+        /*RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
 
         if (!importer)
         {
@@ -558,9 +558,9 @@ void showRobotWindow::loadRobot()
             return;
         }
 
-        robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
+        robot = importer->loadFromFile(robotFilename, ModelIO::eFull);*/
 
-
+        robot = ModelIO::loadRobotModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {

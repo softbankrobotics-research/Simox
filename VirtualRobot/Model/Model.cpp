@@ -570,8 +570,13 @@ namespace VirtualRobot
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
-            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(*iterator);
-            link->getVisualization()->setupVisualization(showVisualization, showAttachedVisualizations);
+            ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
+            if (link && link->getVisualization())
+                link->getVisualization()->setupVisualization(showVisualization, showAttachedVisualizations);
+            else if (link)
+            {
+                // todo setup visualization
+            }
         }
     }
 
@@ -583,7 +588,7 @@ namespace VirtualRobot
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
             ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
-			if (link)
+            if (link && link->getVisualization())
 				link->getVisualization()->setUpdateVisualization(enable);
         }
     }

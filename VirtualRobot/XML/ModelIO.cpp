@@ -215,6 +215,7 @@ namespace VirtualRobot
             {
                 THROW_VR_EXCEPTION("Could not instanciate URDF loader, most likely Simox was not compiled with URDF support...");
             }
+
             robot = rf->loadFromFile(filename, loadMode);
 
             XMLNode = XMLNode->next_sibling("urdf", 0, false);

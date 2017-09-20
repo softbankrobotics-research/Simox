@@ -1284,17 +1284,15 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> links = object->getLinks();
         for (auto l: links)
         {
-            if (!l->getVisualization())
-            {
-                VisualizationNodePtr v = l->getVisualization(visuType);
-                if (!v)
-                    continue;
-                SoNode* cv = getCoinVisualization(v);
-                if (!cv)
-                    continue;
-                result->addChild(cv);
-            }
+            VisualizationNodePtr v = l->getVisualization(visuType);
+            if (!v)
+                continue;
+            SoNode* cv = getCoinVisualization(v);
+            if (!cv)
+                continue;
+            result->addChild(cv);
         }
+
         result->unrefNoDelete();
         return result;
     }

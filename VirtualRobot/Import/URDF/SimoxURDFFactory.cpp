@@ -250,6 +250,7 @@ namespace VirtualRobot
                 boost::shared_ptr<Mesh> m = boost::dynamic_pointer_cast<Mesh>(g);
                 std::string filename = getFilename(m->filename, basePath);
                 res = factory->getVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
+                res->setFilename(filename, false);
             }
             break;
 
@@ -333,7 +334,7 @@ namespace VirtualRobot
         VirtualRobot::VisualizationNodePtr rnVisu;
         VirtualRobot::CollisionModelPtr rnCol;
 
-        if (loadMode == ModelIO::RobotDescription::eFull && urdfBody->visual && urdfBody->visual)
+        if (loadMode == ModelIO::RobotDescription::eFull && (urdfBody->visual || urdfBody->visual_array.size()>1))
         {
             if (urdfBody->visual_array.size() > 1)
             {
@@ -343,7 +344,7 @@ namespace VirtualRobot
                 rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
         }
 
-        if ((loadMode == ModelIO::RobotDescription::eFull  || loadMode == ModelIO::RobotDescription::eCollisionModel) && urdfBody->collision && urdfBody->collision)
+        if ((loadMode == ModelIO::RobotDescription::eFull  || loadMode == ModelIO::RobotDescription::eCollisionModel) && (urdfBody->collision || urdfBody->collision_array.size()>1) )
         {
             VisualizationNodePtr v;
             if (urdfBody->collision_array.size() > 1)
