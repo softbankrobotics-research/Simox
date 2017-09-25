@@ -34,9 +34,9 @@ namespace SimDynamics
     /**
      * \return new instance of BulletEngineFactory
      */
-    boost::shared_ptr<DynamicsEngineFactory> BulletEngineFactory::createInstance(void*)
+    std::shared_ptr<DynamicsEngineFactory> BulletEngineFactory::createInstance(void*)
     {
-        boost::shared_ptr<BulletEngineFactory> bulletFactory(new BulletEngineFactory());
+        std::shared_ptr<BulletEngineFactory> bulletFactory(new BulletEngineFactory());
         return bulletFactory;
     }
 
@@ -48,7 +48,7 @@ namespace SimDynamics
         return bulletEngine;
     }
 
-    DynamicsObjectPtr BulletEngineFactory::createObject(VirtualRobot::SceneObjectPtr o)
+    DynamicsObjectPtr BulletEngineFactory::createObject(VirtualRobot::ModelLinkPtr o)
     {
         return BulletObjectPtr(new BulletObject(o));
     }

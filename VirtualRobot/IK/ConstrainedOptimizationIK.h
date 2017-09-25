@@ -37,7 +37,7 @@ namespace nlopt
 
 namespace VirtualRobot
 {
-    typedef boost::shared_ptr<nlopt::opt> OptimizerPtr;
+    typedef std::shared_ptr<nlopt::opt> OptimizerPtr;
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedOptimizationIK : public ConstrainedIK
     {
@@ -79,7 +79,7 @@ namespace VirtualRobot
         float optimizationValueTolerance;
     };
 
-    typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
+    typedef std::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
 }
 
 #endif

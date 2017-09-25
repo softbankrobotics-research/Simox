@@ -248,7 +248,8 @@ namespace VirtualRobot
          *
          * @return The current root node.
          */
-        virtual ModelNodePtr getRootNode() const;
+		virtual ModelNodePtr getRootNode() const;
+		virtual ModelLinkPtr getFirstLink() const;
 
         /*!
          * Get the type of this model.

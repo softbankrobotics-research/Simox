@@ -2,7 +2,7 @@
 #define __BULLET_LOGGER_H__
 
 #include <Eigen/Dense>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 
 #include "BulletEngine.h"
 #include "BulletRobot.h"
@@ -19,8 +19,8 @@ namespace SimDynamics
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         BulletRobotLogger(BulletEnginePtr engine,
                           const BulletRobotPtr robot,
-                          const VirtualRobot::RobotNodeSetPtr& jointNodes,
-                          const VirtualRobot::RobotNodeSetPtr& bodyNodes)
+                          const VirtualRobot::JointSetPtr& jointNodes,
+                          const VirtualRobot::LinkSetPtr& bodyNodes)
             : robot(robot)
             , running(false)
             , jointNodes(jointNodes)
@@ -59,8 +59,8 @@ namespace SimDynamics
     private:
         const BulletRobotPtr robot;
         bool running;
-        VirtualRobot::RobotNodeSetPtr jointNodes;
-        VirtualRobot::RobotNodeSetPtr bodyNodes;
+        VirtualRobot::JointSetPtr jointNodes;
+        VirtualRobot::LinkSetPtr bodyNodes;
         std::vector<Eigen::VectorXf, Eigen::aligned_allocator<Eigen::VectorXf> > targetAngleLog;
         std::vector<Eigen::VectorXf, Eigen::aligned_allocator<Eigen::VectorXf> > targetVelocityLog;
         std::vector<Eigen::VectorXf, Eigen::aligned_allocator<Eigen::VectorXf> > actualAngleLog;
@@ -85,7 +85,7 @@ namespace SimDynamics
         void log(btScalar dt);
     };
 
-    typedef boost::shared_ptr<BulletRobotLogger> BulletRobotLoggerPtr;
+    typedef std::shared_ptr<BulletRobotLogger> BulletRobotLoggerPtr;
 
 }
 

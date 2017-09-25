@@ -1,7 +1,10 @@
 
 #include <Eigen/Dense>
 #include <fstream>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/JointSet.h>
+#include <VirtualRobot/Model/LinkSet.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 
 #include "BulletRobotLogger.h"
 
@@ -109,7 +112,7 @@ void BulletRobotLogger::log(btScalar dt)
 
     for (unsigned int i = 0; i < jointNodes->getSize(); i++)
     {
-        const VirtualRobot::RobotNodePtr& node = (*jointNodes)[i];
+        const VirtualRobot::ModelJointPtr& node = (*jointNodes)[i];
         actualAngle(i)    = float(robot->getJointAngle(node));
         // bullet changes the sign???
         actualVelocity(i) = float(-robot->getJointSpeed(node));

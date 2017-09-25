@@ -48,18 +48,18 @@ namespace SimDynamics
 
         struct LinkInfo
         {
-            VirtualRobot::RobotNodePtr nodeA; // parent
-            VirtualRobot::RobotNodePtr nodeB; // child
-            VirtualRobot::RobotNodePtr nodeJoint; // joint
+            VirtualRobot::RobotLinkPtr nodeA; // parent
+            VirtualRobot::RobotLinkPtr nodeB; // child
+            VirtualRobot::ModelJointPtr nodeJoint; // joint
             //VirtualRobot::RobotNodePtr nodeJoint2; // joint2 (only used for hinge2/universal joints)
             BulletObjectPtr dynNode1; // parent
             BulletObjectPtr dynNode2; // child
             std::vector< std::pair<DynamicsObjectPtr, DynamicsObjectPtr> > disabledCollisionPairs;
-            boost::shared_ptr<btTypedConstraint> joint;
+            std::shared_ptr<btTypedConstraint> joint;
             double jointValueOffset; // offset simox -> bullet joint values
         };
 
-        typedef boost::shared_ptr<LinkInfo> LinkInfoPtr;
+        typedef std::shared_ptr<LinkInfo> LinkInfoPtr;
 
         /**
          * @brief The force torque output needs to be activated before use
@@ -100,8 +100,8 @@ namespace SimDynamics
 
         std::vector<LinkInfo> getLinks();
 
-        virtual void actuateNode(VirtualRobot::RobotNodePtr node, double jointValue);
-        virtual void actuateNodeVel(VirtualRobot::RobotNodePtr node, double jointVelocity);
+        virtual void actuateNode(VirtualRobot::ModelJointPtr node, double jointValue);
+        virtual void actuateNodeVel(VirtualRobot::ModelJointPtr node, double jointVelocity);
 
         /*!
             Usually this method is called by the framework in every tick to perform joint actuation.
@@ -110,10 +110,10 @@ namespace SimDynamics
         virtual void actuateJoints(double dt);
         virtual void updateSensors(double dt);
 
-        virtual double getJointAngle(VirtualRobot::RobotNodePtr rn);
-        virtual double getJointSpeed(VirtualRobot::RobotNodePtr rn);
-        virtual double getJointTargetSpeed(VirtualRobot::RobotNodePtr rn);
-        virtual double getNodeTarget(VirtualRobot::RobotNodePtr node);
+        virtual double getJointAngle(VirtualRobot::ModelJointPtr rn);
+        virtual double getJointSpeed(VirtualRobot::ModelJointPtr rn);
+        virtual double getJointTargetSpeed(VirtualRobot::ModelJointPtr rn);
+        virtual double getNodeTarget(VirtualRobot::ModelJointPtr node);
 
         /*!
          * \brief getJointTorques retrieves the torques in the given joint.
@@ -123,7 +123,7 @@ namespace SimDynamics
          * Values are in N*m. Position of the values is in the middle of the joint
          * in the global coordinate system.
          */
-        Eigen::Vector3f getJointTorques(VirtualRobot::RobotNodePtr rn);
+        Eigen::Vector3f getJointTorques(VirtualRobot::ModelJointPtr rn);
 
         /*!
          * \brief getJointTorque retrieves the torque along the axis in the given joint.
@@ -132,7 +132,7 @@ namespace SimDynamics
          * rotational joint zero is returned.
          * Values are in N*m.
          */
-        double getJointTorque(VirtualRobot::RobotNodePtr rn);
+        double getJointTorque(VirtualRobot::ModelJointPtr rn);
 
         /*!
          * \brief getJointForce retrieves the forces in the given joint.
@@ -142,29 +142,29 @@ namespace SimDynamics
          * Values are in N. Position of the values is in the middle of the joint
          * in the global coordinate system.
          */
-        Eigen::Vector3f getJointForces(VirtualRobot::RobotNodePtr rn);
+        Eigen::Vector3f getJointForces(VirtualRobot::ModelJointPtr rn);
 
         /*!
             Returns the CoM pose, which is reported by bullet
         */
-        virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::RobotNodePtr& rn);
-        virtual Eigen::Vector3f getComGlobal(const VirtualRobot::RobotNodeSetPtr& set);
-        virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::ModelLinkPtr& rn);
+        virtual Eigen::Vector3f getComGlobal(const VirtualRobot::LinkSetPtr& set);
+        virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::LinkSetPtr& set);
 
         /*!
          * Returns the linear momentum in Ns for the bodies in the nodeset.
          */
-        virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::LinkSetPtr& set);
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset
          */
-        virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::LinkSetPtr& set);
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset relative to the CoM
          */
-        virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set);
+        virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::LinkSetPtr& set);
 
         // experimental...
         virtual void ensureKinematicConstraints();
@@ -172,7 +172,7 @@ namespace SimDynamics
         /*!
             Returns link where the given node is the joint node.
         */
-        LinkInfo getLink(VirtualRobot::RobotNodePtr node);
+        LinkInfo getLink(VirtualRobot::ModelJointPtr node);
 
         //! Get link that connects both objects
         LinkInfo getLink(BulletObjectPtr object1, BulletObjectPtr object2);
@@ -214,15 +214,15 @@ namespace SimDynamics
         // fixed                (joint=fixed        !joint2)
         // hinge                (joint=revolute     !joint2)
         // universal (hinge2)   (joint=revolute     joint2=revolute) // experimental
-        void createLink(VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, /*VirtualRobot::RobotNodePtr joint2,*/ VirtualRobot::RobotNodePtr bodyB, bool enableJointMotors = true);
+        void createLink(VirtualRobot::ModelLinkPtr bodyA, VirtualRobot::ModelJointPtr joint, /*VirtualRobot::RobotNodePtr joint2,*/ VirtualRobot::ModelLinkPtr bodyB, bool enableJointMotors = true);
 
-        void createLink(VirtualRobot::RobotNodePtr node1, VirtualRobot::RobotNodePtr node2, bool enableJointMotors);
+        //void createLink(VirtualRobot::RobotNodePtr node1, VirtualRobot::RobotNodePtr node2, bool enableJointMotors);
 
         // ensure that all robot nodes, which are not actuated directly, are at the correct pose
         void setPoseNonActuatedRobotNodes();
 
         // process all ignoreCollision tags of physics section of RobotNode. Adds according collision disabled information to physics engine.
-        void addIgnoredCollisionModels(VirtualRobot::RobotNodePtr rn);
+        void addIgnoredCollisionModels(VirtualRobot::ModelLinkPtr rn);
 
         // removes all links in list where dynNode1 and dynNode2 are as given in l
         bool removeLink(const LinkInfo& l);
@@ -230,14 +230,14 @@ namespace SimDynamics
         std::vector<LinkInfo> links;
 
         btScalar bulletMaxMotorImulse;
-        boost::shared_ptr<btTypedConstraint> createFixedJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2);
-        boost::shared_ptr<btTypedConstraint> createHingeJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& coordSystemNode1, Eigen::Matrix4f& coordSystemNode2,  Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f& axisGlobal, Eigen::Vector3f& axisLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT);
+        std::shared_ptr<btTypedConstraint> createFixedJoint(std::shared_ptr<btRigidBody> btBody1, std::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2);
+        std::shared_ptr<btTypedConstraint> createHingeJoint(std::shared_ptr<btRigidBody> btBody1, std::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& coordSystemNode1, Eigen::Matrix4f& coordSystemNode2,  Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f& axisGlobal, Eigen::Vector3f& axisLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT);
 
 
         bool ignoreTranslationalJoints;
     };
 
-    typedef boost::shared_ptr<BulletRobot> BulletRobotPtr;
+    typedef std::shared_ptr<BulletRobot> BulletRobotPtr;
 
 } // namespace SimDynamics
 

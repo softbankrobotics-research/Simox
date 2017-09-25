@@ -1,8 +1,9 @@
 
 #include "SimoxMotionState.h"
 #include "BulletEngine.h"
+#include "BulletRobot.h"
 #include "../../DynamicsWorld.h"
-
+#include "../../../VirtualRobot/Model/Nodes/ModelJoint.h"
 
 
 
@@ -12,9 +13,10 @@ namespace SimDynamics
 {
 
 
-    SimoxMotionState::SimoxMotionState(VirtualRobot::SceneObjectPtr sceneObject)
+    SimoxMotionState::SimoxMotionState(VirtualRobot::ModelLinkPtr sceneObject)
         : btDefaultMotionState()
     {
+		VR_ASSERT(sceneObject);
         this->sceneObject = sceneObject;
         initalGlobalPose.setIdentity();
 
@@ -27,20 +29,16 @@ namespace SimDynamics
         _graphicsTransfrom.setIdentity();
         _comOffset.setIdentity();
         Eigen::Vector3f com = sceneObject->getCoMLocal();
-        RobotNodePtr rn = std::dynamic_pointer_cast<RobotNode>(sceneObject);
 
-        if (rn)
+        if (sceneObject)
         {
-            // we are operating on a RobotNode, so we need a RobtoNodeActuator to move it later on
-            robotNodeActuator.reset(new RobotNodeActuator(rn));
-
             // localcom is given in coord sytsem of robotnode (== endpoint of internal transformation)
             // we need com in visualization coord system (== without postjointtransform)
 
             Eigen::Matrix4f t;
             t.setIdentity();
-            t.block(0, 3, 3, 1) = rn->getCoMGlobal();
-            t = rn->getGlobalPose().inverse() * t;
+            t.block(0, 3, 3, 1) = sceneObject->getCoMGlobal();
+            t = sceneObject->getGlobalPose().inverse() * t;
             com = t.block(0, 3, 3, 1);
         }
 
@@ -124,59 +122,33 @@ namespace SimDynamics
         Eigen::Matrix4f resPose = worldPose * comLocal;
 
 
-        if (robotNodeActuator)
-        {
-            // get joint angle
-            RobotNodePtr rn = robotNodeActuator->getRobotNode();
-            DynamicsWorldPtr w = DynamicsWorld::GetWorld();
-            DynamicsRobotPtr dr = w->getEngine()->getRobot(rn->getRobot());
-            BulletRobotPtr bdr = std::dynamic_pointer_cast<BulletRobot>(dr);
+        // get joint angle
+		ModelLinkPtr rn = sceneObject;
+        DynamicsWorldPtr w = DynamicsWorld::GetWorld();
+        DynamicsRobotPtr dr = w->getEngine()->getRobot(rn->getModel());
+        BulletRobotPtr bdr = std::dynamic_pointer_cast<BulletRobot>(dr);
 
-            if (bdr)
+        if (bdr)
+        {
+            // check if robotnode is connected with a joint
+            std::vector<BulletRobot::LinkInfo> links = bdr->getLinks(rn);
+
+            // update all involved joint values
+            for (size_t i = 0; i < links.size(); i++)
             {
-                // check if robotnode is connected with a joint
-                std::vector<BulletRobot::LinkInfo> links = bdr->getLinks(rn);
-
-                // update all involved joint values
-                for (size_t i = 0; i < links.size(); i++)
+                if (links[i].nodeJoint)
                 {
-                    if (links[i].nodeJoint)
-                    {
-                        float ja = float(bdr->getJointAngle(links[i].nodeJoint));
-#ifdef _DEBUG
-
-                        if (boost::math::isnan(ja))
-                        {
-                            VR_ERROR << "NAN !!!" << endl;
-                        }
-
-#endif
-                        // we can update the joint value via an RobotNodeActuator
-                        RobotNodeActuatorPtr rna(new RobotNodeActuator(links[i].nodeJoint));
-                        rna->updateJointAngle(ja);
-                    }
+                    float ja = float(bdr->getJointAngle(links[i].nodeJoint));
+                    // we can update the joint value via an RobotNodeActuator
+                    //RobotNodeActuatorPtr rna(new RobotNodeActuator(links[i].nodeJoint));
+					//rna->updateJointAngle(ja);
+					links[i].nodeJoint->setJointValueNoUpdate(ja);
                 }
+            }
 
-                // we assume that all models are handled by Bullet, so we do not need to update children
-                robotNodeActuator->updateVisualizationPose(resPose, false);
-#if 0
-
-                if (rn->getName() == "Shoulder 1 L")
-                {
-                    cout << "Shoulder 1 L:" << ja << ", speed:" << bdr->getJointSpeed(rn) << endl;
-                }
-
-#endif
-            } /*else
-
-        {
-            VR_WARNING << "Could not determine dynamic robot?!" << endl;
-        }*/
-        }
-        else
-        {
-            sceneObject->setGlobalPose(resPose);
-        }
+            // we assume that all models are handled by Bullet, so we do not need to update children
+            //robotNodeActuator->updateVisualizationPose(resPose, false);
+        } 
     }
 
     void SimoxMotionState::setGlobalPose(const Eigen::Matrix4f& pose)

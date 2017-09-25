@@ -28,8 +28,9 @@
 
 #include <btBulletCollisionCommon.h>
 
-#include <VirtualRobot/Nodes/RobotNodeActuator.h>
-#include <VirtualRobot/SceneObject.h>
+//#include <VirtualRobot/Nodes/RobotNodeActuator.h>
+#include <VirtualRobot/Model/Frame.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 
 #include <vector>
 
@@ -63,7 +64,7 @@ namespace SimDynamics
 
             \param sceneObject The obvject.
         */
-        SimoxMotionState(VirtualRobot::SceneObjectPtr sceneObject);
+        SimoxMotionState(VirtualRobot::ModelLinkPtr sceneObject);
         /*!
             Destructor.
         */
@@ -117,8 +118,8 @@ namespace SimDynamics
         Eigen::Matrix4f initalGlobalPose;
         Eigen::Vector3f com;
 
-        VirtualRobot::SceneObjectPtr sceneObject;
-        VirtualRobot::RobotNodeActuatorPtr robotNodeActuator; // in case sceneObject is of type RobotNode, we  can actuate it with this actuator.
+        VirtualRobot::ModelLinkPtr sceneObject;
+        //VirtualRobot::RobotNodeActuatorPtr robotNodeActuator; // in case sceneObject is of type RobotNode, we  can actuate it with this actuator.
 
         // This is the bullet transformation.
         btTransform _transform;

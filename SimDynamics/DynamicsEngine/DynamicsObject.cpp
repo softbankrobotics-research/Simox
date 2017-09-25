@@ -1,15 +1,15 @@
 #include "DynamicsObject.h"
 
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Frame.h>
 
 namespace SimDynamics
 {
 
-    DynamicsObject::DynamicsObject(VirtualRobot::SceneObjectPtr o)
+    DynamicsObject::DynamicsObject(VirtualRobot::ModelLinkPtr o)
     {
         THROW_VR_EXCEPTION_IF(!o, "NULL object");
         sceneObject = o;
-        //engineMutexPtr.reset(new boost::recursive_mutex()); // may be overwritten by another mutex!
+        //engineMutexPtr.reset(new std::recursive_mutex()); // may be overwritten by another mutex!
     }
 
     DynamicsObject::~DynamicsObject()
@@ -23,7 +23,7 @@ namespace SimDynamics
         return sceneObject->getName();
     }
 
-    VirtualRobot::SceneObject::Physics::SimulationType DynamicsObject::getSimType() const
+    VirtualRobot::ModelLink::Physics::SimulationType DynamicsObject::getSimType() const
     {
         return sceneObject->getSimulationType();
     }
@@ -32,7 +32,7 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eStatic)
+        if (sceneObject->getSimulationType() == VirtualRobot::ModelLink::Physics::eStatic)
         {
             VR_ERROR << "Could not move static object, aborting..." << endl;
             return;
@@ -49,7 +49,7 @@ namespace SimDynamics
         setPose(pose);
     }
 
-    VirtualRobot::SceneObjectPtr DynamicsObject::getSceneObject()
+    VirtualRobot::ModelLinkPtr DynamicsObject::getSceneObject()
     {
         return sceneObject;
     }
@@ -84,24 +84,24 @@ namespace SimDynamics
 
     }
 
-    void DynamicsObject::setMutex(boost::shared_ptr<boost::recursive_mutex> engineMutexPtr)
+    void DynamicsObject::setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr)
     {
         this->engineMutexPtr = engineMutexPtr;
     }
 
-    void DynamicsObject::setSimType(VirtualRobot::SceneObject::Physics::SimulationType s)
+    void DynamicsObject::setSimType(VirtualRobot::ModelLink::Physics::SimulationType s)
     {
         sceneObject->setSimulationType(s);
     }
 
     DynamicsObject::MutexLockPtr DynamicsObject::getScopedLock()
     {
-        boost::shared_ptr< boost::recursive_mutex::scoped_lock > scoped_lock;
+		std::shared_ptr< std::unique_lock<std::recursive_mutex> > scoped_lock;
 
-        if (engineMutexPtr)
-        {
-            scoped_lock.reset(new boost::recursive_mutex::scoped_lock(*engineMutexPtr));
-        }
+		if (engineMutexPtr)
+		{
+			scoped_lock.reset(new std::unique_lock<std::recursive_mutex>(*engineMutexPtr));
+		}
 
         return scoped_lock;
     }

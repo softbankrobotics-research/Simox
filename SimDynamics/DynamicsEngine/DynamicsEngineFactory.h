@@ -26,9 +26,9 @@
 #include "../SimDynamics.h"
 #include "DynamicsEngine.h"
 #include "DynamicsRobot.h"
-#include <VirtualRobot/AbstractFactoryMethod.h>
+#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Frame.h>
 
 namespace SimDynamics
 {
@@ -57,7 +57,7 @@ namespace SimDynamics
             return DynamicsEnginePtr();
         }
 
-        virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o)
+        virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o)
         {
             return DynamicsObjectPtr(new DynamicsObject(o));
         }
@@ -68,7 +68,7 @@ namespace SimDynamics
 
     };
 
-    typedef boost::shared_ptr<DynamicsEngineFactory> DynamicsEngineFactoryPtr;
+    typedef std::shared_ptr<DynamicsEngineFactory> DynamicsEngineFactoryPtr;
 
 } // namespace SimDynamics
 

@@ -3,11 +3,12 @@
 #include "../../DynamicsWorld.h"
 
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/SceneObject.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Frame.h>
+#include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <VirtualRobot/Primitive.h>
+#include <VirtualRobot/Visualization/VisualizationNode.h>
+#include <VirtualRobot/Model/Primitive.h>
 
 
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
@@ -29,7 +30,7 @@ namespace SimDynamics
     float BulletObject::ScaleFactor = 2.0f;
     float BulletObject::MassFactor = 0.1f;
 
-    BulletObject::BulletObject(VirtualRobot::SceneObjectPtr o)
+    BulletObject::BulletObject(VirtualRobot::ModelLinkPtr o)
         : DynamicsObject(o)
     {
         btScalar interatiaFactor = btScalar(1.0);
@@ -111,7 +112,7 @@ namespace SimDynamics
         btScalar mass = o->getMass();
         btVector3 localInertia;
 
-        if (mass <= 0 && (o->getSimulationType() == VirtualRobot::SceneObject::Physics::eDynamic || o->getSimulationType() == VirtualRobot::SceneObject::Physics::eUnknown))
+        if (mass <= 0 && (o->getSimulationType() == VirtualRobot::ModelLink::Physics::eDynamic || o->getSimulationType() == VirtualRobot::ModelLink::Physics::eUnknown))
         {
             //THROW_VR_EXCEPTION ("mass == 0 -> SimulationType must not be eDynamic! ");
             mass = btScalar(1.0f); // give object a dummy mass
@@ -132,7 +133,7 @@ namespace SimDynamics
         localInertia.setValue(0.0f, 0.0f, 0.0f);
 #else
 
-        if (o->getSimulationType() != VirtualRobot::SceneObject::Physics::eDynamic && o->getSimulationType() != VirtualRobot::SceneObject::Physics::eUnknown)
+        if (o->getSimulationType() != VirtualRobot::ModelLink::Physics::eDynamic && o->getSimulationType() != VirtualRobot::ModelLink::Physics::eUnknown)
         {
             mass = 0;
             localInertia.setValue(0.0f, 0.0f, 0.0f);
@@ -244,10 +245,10 @@ namespace SimDynamics
         com = comConv.block(0,3,3,1);*/
 
         // build convex hull
-        boost::shared_ptr<btConvexShape> btConvexShape(new btConvexTriangleMeshShape(btTrimesh));
+        std::shared_ptr<btConvexShape> btConvexShape(new btConvexTriangleMeshShape(btTrimesh));
         btConvexShape->setMargin(btMargin);
 
-        boost::shared_ptr<btShapeHull> btHull(new btShapeHull(btConvexShape.get()));
+        std::shared_ptr<btShapeHull> btHull(new btShapeHull(btConvexShape.get()));
         btHull->buildHull(btMargin);
         btConvexHullShape* btConvex = new btConvexHullShape();
         btConvex->setLocalScaling(btVector3(1, 1, 1));
@@ -264,7 +265,7 @@ namespace SimDynamics
         return btConvex;
     }
 
-    boost::shared_ptr<btRigidBody> BulletObject::getRigidBody()
+    std::shared_ptr<btRigidBody> BulletObject::getRigidBody()
     {
         return rigidBody;
     }
@@ -381,7 +382,7 @@ namespace SimDynamics
         rigidBody->applyTorque(btVel);
     }
 
-    void BulletObject::setSimType(VirtualRobot::SceneObject::Physics::SimulationType s)
+    void BulletObject::setSimType(VirtualRobot::ModelLink::Physics::SimulationType s)
     {
         btVector3 localInertia;
         localInertia.setZero();
@@ -392,18 +393,18 @@ namespace SimDynamics
         float mass = 0.0f;
         switch (s)
         {
-            case VirtualRobot::SceneObject::Physics::eStatic:
+            case VirtualRobot::ModelLink::Physics::eStatic:
                 btColFlag = btCollisionObject::CF_STATIC_OBJECT;
                 mass = 0;
                 break;
 
-            case VirtualRobot::SceneObject::Physics::eKinematic:
+            case VirtualRobot::ModelLink::Physics::eKinematic:
                 btColFlag = btCollisionObject::CF_KINEMATIC_OBJECT;
                 mass = 0;
                 break;
 
-            case VirtualRobot::SceneObject::Physics::eDynamic:
-            case VirtualRobot::SceneObject::Physics::eUnknown:
+            case VirtualRobot::ModelLink::Physics::eDynamic:
+            case VirtualRobot::ModelLink::Physics::eUnknown:
                 if (colModel)
                 {
                     collisionShape->calculateLocalInertia(sceneObject->getMass(), localInertia);

@@ -27,6 +27,8 @@
 #include "SimoxMotionState.h"
 
 #include "btBulletDynamicsCommon.h"
+#include <VirtualRobot/Model/Primitive.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 
 namespace SimDynamics
 {
@@ -38,14 +40,14 @@ namespace SimDynamics
         /*!
             Constructor
         */
-        BulletObject(VirtualRobot::SceneObjectPtr o);
+        BulletObject(VirtualRobot::ModelLinkPtr o);
 
         /*!
         */
         virtual ~BulletObject();
 
 
-        boost::shared_ptr<btRigidBody> getRigidBody();
+		std::shared_ptr<btRigidBody> getRigidBody();
 
 
         /*!
@@ -84,7 +86,7 @@ namespace SimDynamics
          */
         virtual void applyTorque(const Eigen::Vector3f& torque);
 
-        virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
+        virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s);
 
         //! All object's sizes are scaled by this factor for bullet. (Small objects (<5cm) do not work well with bullet).
         static float ScaleFactor;
@@ -98,8 +100,8 @@ namespace SimDynamics
 
         btConvexHullShape* createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh);
 
-        boost::shared_ptr<btRigidBody> rigidBody;
-        boost::shared_ptr<btCollisionShape> collisionShape; // bullet collision shape
+		std::shared_ptr<btRigidBody> rigidBody;
+		std::shared_ptr<btCollisionShape> collisionShape; // bullet collision shape
 
         Eigen::Vector3f com; // com offset of trimesh
 
@@ -108,7 +110,7 @@ namespace SimDynamics
 
     };
 
-    typedef boost::shared_ptr<BulletObject> BulletObjectPtr;
+    typedef std::shared_ptr<BulletObject> BulletObjectPtr;
 
 } // namespace SimDynamics
 

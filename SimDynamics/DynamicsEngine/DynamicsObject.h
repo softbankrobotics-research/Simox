@@ -24,7 +24,8 @@
 #define _SimDynamics_DynamicsObject_h_
 
 #include "../SimDynamics.h"
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Frame.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 
 
 namespace SimDynamics
@@ -43,7 +44,7 @@ namespace SimDynamics
         /*!
             Constructor
         */
-        DynamicsObject(VirtualRobot::SceneObjectPtr o);//, SimulationType type = eDynamic);
+        DynamicsObject(VirtualRobot::ModelLinkPtr o);//, SimulationType type = eDynamic);
 
         /*!
         */
@@ -51,7 +52,7 @@ namespace SimDynamics
 
         std::string getName() const;
 
-        VirtualRobot::SceneObject::Physics::SimulationType getSimType() const;
+        VirtualRobot::ModelLink::Physics::SimulationType getSimType() const;
 
         /*!
             Set world position [MM].
@@ -63,7 +64,7 @@ namespace SimDynamics
         */
         virtual void setPose(const Eigen::Matrix4f& pose);
 
-        VirtualRobot::SceneObjectPtr getSceneObject();
+        VirtualRobot::ModelLinkPtr getSceneObject();
 
         virtual Eigen::Vector3f getLinearVelocity();
         virtual Eigen::Vector3f getAngularVelocity();
@@ -84,11 +85,11 @@ namespace SimDynamics
         virtual void applyTorque(const Eigen::Vector3f& torque);
 
         //! If set, all actions are protected with this mutex
-        virtual void setMutex(boost::shared_ptr <boost::recursive_mutex> engineMutexPtr);
+        virtual void setMutex(std::shared_ptr <std::recursive_mutex> engineMutexPtr);
 
-        virtual void setSimType(VirtualRobot::SceneObject::Physics::SimulationType s);
+        virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s);
 
-        typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
+        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.
             If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
@@ -107,13 +108,13 @@ namespace SimDynamics
         MutexLockPtr getScopedLock();
     protected:
 
-        VirtualRobot::SceneObjectPtr sceneObject;
+        VirtualRobot::ModelLinkPtr sceneObject;
 
-        boost::shared_ptr <boost::recursive_mutex> engineMutexPtr;
+        std::shared_ptr <std::recursive_mutex> engineMutexPtr;
 
     };
 
-    typedef boost::shared_ptr<DynamicsObject> DynamicsObjectPtr;
+    typedef std::shared_ptr<DynamicsObject> DynamicsObjectPtr;
 
 } // namespace SimDynamics
 

@@ -57,7 +57,7 @@ This library can be used to simulate physical interactions and dynamic systems.
 #  include <winsock2.h>
 #  include <windows.h>
 #  pragma warning ( disable : 4251 )
-#  if defined(SimDynamics_EXPORTS)
+#  if defined(simox_simdynamics_EXPORTS)
 #    define SIMDYNAMICS_IMPORT_EXPORT __declspec(dllexport)
 #  else
 #    define SIMDYNAMICS_IMPORT_EXPORT __declspec(dllimport)
@@ -75,7 +75,7 @@ namespace SimDynamics
 
     class DynamicsWorld;
 
-    typedef boost::shared_ptr<DynamicsWorld> DynamicsWorldPtr;
+    typedef std::shared_ptr<DynamicsWorld> DynamicsWorldPtr;
 
 
 #define SIMDYNAMICS_INFO VR_INFO

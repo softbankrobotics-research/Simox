@@ -3,10 +3,10 @@
 #include <SimDynamics/DynamicsWorld.h>
 #include <SimDynamics/DynamicsEngine/BulletEngine/BulletEngineFactory.h>
 
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/XML/ObjectIO.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 using namespace std;
 using namespace VirtualRobot;
@@ -151,15 +151,15 @@ DemoApplication*    createDemo()
 
 
 
-    SimDynamics::DynamicsWorldPtr world = SimDynamics::DynamicsWorld::Init();
-    SIMDYNAMICS_ASSERT(world);
+	SimDynamics::DynamicsWorldPtr world = SimDynamics::DynamicsWorld::Init();
+	SIMDYNAMICS_ASSERT(world);
 
     world->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(100.0f, 100.0f, 100.0f);
-    o->setMass(1.0f); // 1kg
+    o->getLink(0)->setMass(1.0f); // 1kg
 
-    SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o);
+    SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o->getLink(0));
     dynObj->setPosition(Eigen::Vector3f(3000, 3000, 1000.0f));
     world->addObject(dynObj);
 
@@ -172,7 +172,7 @@ DemoApplication*    createDemo()
 #endif
 
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile);
-    VirtualRobot::RobotPtr robot = VirtualRobot::RobotIO::loadRobot(robFile);
+    VirtualRobot::RobotPtr robot = VirtualRobot::ModelIO::loadRobotModel(robFile);
 
     if (robot)
     {

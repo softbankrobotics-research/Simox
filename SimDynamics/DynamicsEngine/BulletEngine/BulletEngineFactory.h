@@ -44,13 +44,13 @@ namespace SimDynamics
 
         virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
 
-        virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o);
+        virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o);
         virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot);
 
         // AbstractFactoryMethod
     public:
         static std::string getName();
-        static boost::shared_ptr<DynamicsEngineFactory> createInstance(void*);
+        static std::shared_ptr<DynamicsEngineFactory> createInstance(void*);
     private:
         static SubClassRegistry registry;
     };

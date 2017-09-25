@@ -28,8 +28,7 @@
 
 #include <btBulletCollisionCommon.h>
 
-#include <VirtualRobot/Nodes/RobotNodeActuator.h>
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Frame.h>
 
 #include <vector>
 

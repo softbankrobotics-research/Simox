@@ -82,7 +82,7 @@ namespace SimDynamics
     };
 
 
-    typedef boost::shared_ptr<BulletOpenGLViewer> BulletOpenGLViewerPtr;
+    typedef std::shared_ptr<BulletOpenGLViewer> BulletOpenGLViewerPtr;
 
 } // namespace
 

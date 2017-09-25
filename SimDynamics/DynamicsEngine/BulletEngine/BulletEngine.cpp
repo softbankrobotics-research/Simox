@@ -2,8 +2,10 @@
 #include "BulletObject.h"
 #include "SimoxCollisionDispatcher.h"
 #include "../../DynamicsWorld.h"
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
+#include <VirtualRobot/Tools/MathTools.h>
 
 //#define DEBUG_FIXED_OBJECTS
 
@@ -30,7 +32,7 @@ namespace SimDynamics
     }
 
 
-    BulletEngine::BulletEngine(boost::shared_ptr <boost::recursive_mutex> engineMutex)
+    BulletEngine::BulletEngine(std::shared_ptr <std::recursive_mutex> engineMutex)
         : DynamicsEngine(engineMutex)
     {
         collision_config = NULL;
@@ -207,16 +209,16 @@ namespace SimDynamics
 
         switch (o->getSimType())
         {
-            case VirtualRobot::SceneObject::Physics::eStatic:
+            case VirtualRobot::ModelLink::Physics::eStatic:
                 btColFlag = btCollisionObject::CF_STATIC_OBJECT;
                 break;
 
-            case VirtualRobot::SceneObject::Physics::eKinematic:
+            case VirtualRobot::ModelLink::Physics::eKinematic:
                 btColFlag = btCollisionObject::CF_KINEMATIC_OBJECT;
                 break;
 
-            case VirtualRobot::SceneObject::Physics::eDynamic:
-            case VirtualRobot::SceneObject::Physics::eUnknown:
+            case VirtualRobot::ModelLink::Physics::eDynamic:
+            case VirtualRobot::ModelLink::Physics::eUnknown:
                 btColFlag = 0;
                 break;
 
@@ -306,10 +308,10 @@ namespace SimDynamics
         gp(2, 3) = -sizeSmall * 0.5f;
         groundObject->setGlobalPose(gp);
 
-        groundObject->getVisualization();
-        groundObject->setSimulationType(VirtualRobot::SceneObject::Physics::eStatic);
+        groundObject->getLink(0)->getVisualization();
+        groundObject->getLink(0)->setSimulationType(VirtualRobot::ModelLink::Physics::eStatic);
 
-        BulletObjectPtr groundObjectBt(new BulletObject(groundObject));
+        BulletObjectPtr groundObjectBt(new BulletObject(groundObject->getLink(0)));
 
 
         floor = groundObjectBt;
@@ -532,7 +534,7 @@ namespace SimDynamics
             Eigen::Matrix4f m = objects[i]->getSceneObject()->getGlobalPose();
             cout << "   pos (simox)  " << m(0, 3) << "," << m(1, 3) << "," << m(2, 3) << endl;
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(objects[i]);
-            boost::shared_ptr<btRigidBody> rb = bo->getRigidBody();
+            std::shared_ptr<btRigidBody> rb = bo->getRigidBody();
             btVector3 v = rb->getWorldTransform().getOrigin();
             cout << "   pos (bullet) " << v[0] << "," << v[1]  << "," << v[2]  << endl;
             btVector3 va = rb->getAngularVelocity();
@@ -554,7 +556,7 @@ namespace SimDynamics
                 cout << "++++ - ColModelB " << j << ":" << links[j].nodeB->getName();
 
                 cout << "     enabled:" << links[j].joint->isEnabled() << endl;
-                boost::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(links[j].joint);
+                std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(links[j].joint);
 
                 if (hinge)
                 {
@@ -564,7 +566,7 @@ namespace SimDynamics
                     cout << "     hinge motor target vel :" << hinge->getMotorTargetVelosity() << endl;
                 }
 
-                boost::shared_ptr<btGeneric6DofConstraint> dof = std::dynamic_pointer_cast<btGeneric6DofConstraint>(links[j].joint);
+                std::shared_ptr<btGeneric6DofConstraint> dof = std::dynamic_pointer_cast<btGeneric6DofConstraint>(links[j].joint);
 
                 if (dof)
                 {

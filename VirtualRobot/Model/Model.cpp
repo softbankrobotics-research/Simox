@@ -442,13 +442,26 @@ namespace VirtualRobot
         }
     }
 
-    ModelNodePtr Model::getRootNode() const
-    {
-        ReadLockPtr r = getReadLock();
-        return rootNode;
-    }
+	ModelNodePtr Model::getRootNode() const
+	{
+		ReadLockPtr r = getReadLock();
+		return rootNode;
+	}
 
-    std::string Model::getType() const
+	ModelLinkPtr Model::getFirstLink() const
+	{
+		ReadLockPtr r = getReadLock();
+		if (!rootNode)
+			return ModelLinkPtr();
+		if (rootNode->isLink())
+			return std::dynamic_pointer_cast<ModelLink>(rootNode);
+		auto n = rootNode->getChildNodes(ModelNode::Link);
+		if (n.size()==0)
+			return ModelLinkPtr();
+		return std::dynamic_pointer_cast<ModelLink>(n.at(0));
+	}
+
+	std::string Model::getType() const
     {
         return type;
     }

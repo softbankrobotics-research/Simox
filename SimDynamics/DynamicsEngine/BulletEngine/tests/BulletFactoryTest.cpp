@@ -7,11 +7,11 @@
 #define BOOST_TEST_MODULE SimDynamics_BulletFactoryTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <SimDynamics/DynamicsWorld.h>
 #include <SimDynamics/DynamicsEngine/BulletEngine/BulletEngineFactory.h>
 
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 
 #include <string>
 
@@ -34,10 +34,10 @@ BOOST_AUTO_TEST_CASE(testSimDynamicsBulletFactoryCreateObject)
     VirtualRobot::ObstaclePtr o;
     BOOST_REQUIRE_NO_THROW(o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f));
     BOOST_REQUIRE(o);
-    o->setMass(1.0f); // 1kg
+    o->getLink(0)->setMass(1.0f); // 1kg
 
     SimDynamics::DynamicsObjectPtr dynObj;
-    BOOST_REQUIRE_NO_THROW(dynObj = world->CreateDynamicsObject(o));
+    BOOST_REQUIRE_NO_THROW(dynObj = world->CreateDynamicsObject(o->getLink(0)));
     BOOST_REQUIRE(dynObj);
 
     bool ok;

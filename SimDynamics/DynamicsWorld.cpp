@@ -9,7 +9,7 @@ namespace SimDynamics
 
     namespace
     {
-        boost::mutex mutex;
+        std::mutex mutex;
     }
 
     DynamicsWorldPtr DynamicsWorld::world;
@@ -22,7 +22,7 @@ namespace SimDynamics
 
     DynamicsWorld::Cleanup::~Cleanup()
     {
-        boost::lock_guard<boost::mutex> lock(mutex);
+        std::lock_guard<std::mutex> lock(mutex);
         DynamicsWorld::world.reset();
     }
 
@@ -49,7 +49,7 @@ namespace SimDynamics
 
         if (true)
         {
-            boost::lock_guard<boost::mutex> lock(mutex);
+            std::lock_guard<std::mutex> lock(mutex);
 
             if (!world)
             {
@@ -94,7 +94,7 @@ namespace SimDynamics
         return engine->removeObject(o);
     }
 
-    DynamicsObjectPtr DynamicsWorld::CreateDynamicsObject(VirtualRobot::SceneObjectPtr o)
+    DynamicsObjectPtr DynamicsWorld::CreateDynamicsObject(VirtualRobot::ModelLinkPtr o)
     {
         SIMDYNAMICS_ASSERT(o);
 

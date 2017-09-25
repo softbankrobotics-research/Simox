@@ -23,7 +23,7 @@
 #ifndef _SimDynamics_BulletEngine_h_
 #define _SimDynamics_BulletEngine_h_
 
-#include <VirtualRobot/SceneObject.h>
+#include <VirtualRobot/Model/Frame.h>
 #include "../DynamicsEngine.h"
 #include "BulletRobot.h"
 
@@ -65,7 +65,7 @@ namespace SimDynamics
         btScalar bulletSolverSplitImpulsePenetrationThreshold;
     };
 
-    typedef boost::shared_ptr<BulletEngineConfig> BulletEngineConfigPtr;
+    typedef std::shared_ptr<BulletEngineConfig> BulletEngineConfigPtr;
 
     /*!
         This class encapsulates all calls to the bullet physics engine.
@@ -82,7 +82,7 @@ namespace SimDynamics
             Constructor
             \param engineMutex Optionally, all engine access methods can be protected by an external mutex. If not set, an internal mutex is creeated.
         */
-        BulletEngine(boost::shared_ptr <boost::recursive_mutex> engineMutex = boost::shared_ptr<boost::recursive_mutex>());
+        BulletEngine(std::shared_ptr <std::recursive_mutex> engineMutex = std::shared_ptr<std::recursive_mutex>());
 
         /*!
         */
@@ -209,7 +209,7 @@ namespace SimDynamics
         void debugDraw(btIDebugDraw *debugDrawer);
     };
 
-    typedef boost::shared_ptr<BulletEngine> BulletEnginePtr;
+    typedef std::shared_ptr<BulletEngine> BulletEnginePtr;
 
 } // namespace SimDynamics
 
