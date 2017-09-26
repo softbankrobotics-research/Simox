@@ -414,7 +414,7 @@ namespace SimDynamics
         return res;
     }
 
-    bool BulletEngine::addRobot(DynamicsRobotPtr r)
+    bool BulletEngine::addModel(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
         BulletRobotPtr btRobot = std::dynamic_pointer_cast<BulletRobot>(r);
@@ -438,7 +438,7 @@ namespace SimDynamics
             addLink(links[i]);
         }
 
-        return DynamicsEngine::addRobot(r);
+        return DynamicsEngine::addModel(r);
     }
 
     void BulletEngine::addExternalCallback(BulletStepCallback function, void* data)
@@ -478,7 +478,7 @@ namespace SimDynamics
         }
     }
 
-    bool BulletEngine::removeRobot(DynamicsRobotPtr r)
+    bool BulletEngine::removeRobot(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
         BulletRobotPtr btRobot = std::dynamic_pointer_cast<BulletRobot>(r);
@@ -665,7 +665,7 @@ namespace SimDynamics
     }
 
 
-    bool BulletEngine::attachObjectToRobot(DynamicsRobotPtr r, const std::string& nodeName, DynamicsObjectPtr object)
+    bool BulletEngine::attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -694,7 +694,7 @@ namespace SimDynamics
         return addLink(*link);
     }
 
-    bool BulletEngine::detachObjectFromRobot(DynamicsRobotPtr r, DynamicsObjectPtr object)
+    bool BulletEngine::detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object)
     {
         MutexLockPtr lock = getScopedLock();
 

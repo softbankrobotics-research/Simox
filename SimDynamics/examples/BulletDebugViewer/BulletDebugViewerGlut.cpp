@@ -33,10 +33,10 @@ int main(int argc, char* argv[])
     Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
     gp.block(0, 3, 3, 1) = Eigen::Vector3f(2800, 10400, 5000.0f);
     o->setGlobalPose(gp);
-    o->getFirstLink()->setMass(1.0f); // 1kg
+    o->setMass(1.0f); // 1kg
 
-    SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o->getFirstLink());
-    world->addObject(dynObj);
+    SimDynamics::DynamicsModelPtr dynObj = world->CreateDynamicsModel(o);
+    world->addModel(dynObj);
     o->print();
 
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile);
@@ -44,11 +44,11 @@ int main(int argc, char* argv[])
 
     if (robot)
     {
-        DynamicsRobotPtr dynRob = world->CreateDynamicsModel(robot);
+        DynamicsModelPtr dynRob = world->CreateDynamicsModel(robot);
         ActuationMode mode;
         mode.modes.position = 1;
         dynRob->enableActuation(mode);
-        world->addRobot(dynRob);
+        world->addModel(dynRob);
     }
 
     BulletOpenGLViewer viewer(world);

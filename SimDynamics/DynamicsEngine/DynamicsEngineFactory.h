@@ -61,9 +61,9 @@ namespace SimDynamics
         {
             return DynamicsObjectPtr(new DynamicsObject(o));
         }
-        virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot)
+        virtual DynamicsModelPtr createRobot(VirtualRobot::RobotPtr robot)
         {
-            return DynamicsRobotPtr(new DynamicsRobot(robot));
+            return DynamicsModelPtr(new DynamicsRobot(robot));
         }
 
     };

@@ -34,18 +34,18 @@ BOOST_AUTO_TEST_CASE(testSimDynamicsBulletFactoryCreateObject)
     VirtualRobot::ObstaclePtr o;
     BOOST_REQUIRE_NO_THROW(o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f));
     BOOST_REQUIRE(o);
-    o->getFirstLink()->setMass(1.0f); // 1kg
+    o->setMass(1.0f); // 1kg
 
-    SimDynamics::DynamicsObjectPtr dynObj;
-    BOOST_REQUIRE_NO_THROW(dynObj = world->CreateDynamicsObject(o->getFirstLink()));
+    SimDynamics::DynamicsModelPtr dynObj;
+    BOOST_REQUIRE_NO_THROW(dynObj = world->CreateDynamicsModel(o));
     BOOST_REQUIRE(dynObj);
 
     bool ok;
 
-    BOOST_REQUIRE_NO_THROW(ok = world->addObject(dynObj));
+    BOOST_REQUIRE_NO_THROW(ok = world->addModel(dynObj));
     BOOST_REQUIRE(ok);
 
-    BOOST_REQUIRE_NO_THROW(ok = world->removeObject(dynObj));
+    BOOST_REQUIRE_NO_THROW(ok = world->removeRobot(dynObj));
     BOOST_REQUIRE(ok);
 
     // clean up to avoid memory leaks

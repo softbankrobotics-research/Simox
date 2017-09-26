@@ -109,17 +109,17 @@ namespace SimDynamics
         engine->createFloorPlane(pos, up);
     }
 
-    bool DynamicsWorld::addRobot(DynamicsRobotPtr r)
+    bool DynamicsWorld::addModel(DynamicsModelPtr r)
     {
-        return engine->addRobot(r);
+        return engine->addModel(r);
     }
 
-    bool DynamicsWorld::removeRobot(DynamicsRobotPtr r)
+    bool DynamicsWorld::removeRobot(DynamicsModelPtr r)
     {
         return engine->removeRobot(r);
     }
 
-    SimDynamics::DynamicsRobotPtr DynamicsWorld::CreateDynamicsModel(const VirtualRobot::ModelPtr &rob)
+    SimDynamics::DynamicsModelPtr DynamicsWorld::CreateDynamicsModel(const VirtualRobot::ModelPtr &rob)
     {
         SIMDYNAMICS_ASSERT(rob);
 
@@ -129,7 +129,7 @@ namespace SimDynamics
         return factory->createRobot(rob);
     }
 
-    std::vector<DynamicsRobotPtr> DynamicsWorld::getRobots()
+    std::vector<DynamicsModelPtr> DynamicsWorld::getRobots()
     {
         return engine->getRobots();
     }

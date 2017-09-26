@@ -290,7 +290,7 @@ namespace VirtualRobot
 		/**
 		* This method collects all visualization nodes and creates a new Visualization
 		*/
-        static CoinVisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        static CoinVisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
         static CoinVisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType);
 
         /*!

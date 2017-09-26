@@ -82,7 +82,7 @@ namespace SimDynamics
         floorUp = up;
     }
 
-    bool DynamicsEngine::addRobot(DynamicsRobotPtr r)
+    bool DynamicsEngine::addModel(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -104,10 +104,10 @@ namespace SimDynamics
         return true;
     }
 
-    bool DynamicsEngine::removeRobot(DynamicsRobotPtr r)
+    bool DynamicsEngine::removeRobot(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
-        std::vector<DynamicsRobotPtr>::iterator it = find(robots.begin(), robots.end(), r);
+        std::vector<DynamicsModelPtr>::iterator it = find(robots.begin(), robots.end(), r);
 
         if (it == robots.end())
         {
@@ -120,7 +120,7 @@ namespace SimDynamics
 
     bool DynamicsEngine::attachObjectToRobot(const std::string& robotName, const std::string& nodeName, DynamicsObjectPtr object)
     {
-        DynamicsRobotPtr r = getRobot(robotName);
+        DynamicsModelPtr r = getRobot(robotName);
 
         if (!r)
         {
@@ -131,7 +131,7 @@ namespace SimDynamics
         return attachObjectToRobot(r, nodeName, object);
     }
 
-    bool DynamicsEngine::attachObjectToRobot(DynamicsRobotPtr r, const std::string& nodeName, DynamicsObjectPtr object)
+    bool DynamicsEngine::attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -150,7 +150,7 @@ namespace SimDynamics
 
     bool DynamicsEngine::detachObjectFromRobot(const std::string& robotName, DynamicsObjectPtr object)
     {
-        DynamicsRobotPtr r = getRobot(robotName);
+        DynamicsModelPtr r = getRobot(robotName);
 
         if (!r)
         {
@@ -162,7 +162,7 @@ namespace SimDynamics
 
     }
 
-    bool DynamicsEngine::detachObjectFromRobot(DynamicsRobotPtr r, DynamicsObjectPtr object)
+    bool DynamicsEngine::detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -316,7 +316,7 @@ namespace SimDynamics
         enableCollision(o);
     }
 
-    std::vector<DynamicsRobotPtr> DynamicsEngine::getRobots()
+    std::vector<DynamicsModelPtr> DynamicsEngine::getRobots()
     {
         MutexLockPtr lock = getScopedLock();
         return robots;
@@ -335,7 +335,7 @@ namespace SimDynamics
         return result;
     }
 
-    SimDynamics::DynamicsRobotPtr DynamicsEngine::getRobot(VirtualRobot::RobotPtr r)
+    SimDynamics::DynamicsModelPtr DynamicsEngine::getRobot(VirtualRobot::RobotPtr r)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -347,10 +347,10 @@ namespace SimDynamics
             }
         }
 
-        return DynamicsRobotPtr();
+        return DynamicsModelPtr();
     }
 
-    DynamicsRobotPtr DynamicsEngine::getRobot(const std::string& robName)
+    DynamicsModelPtr DynamicsEngine::getRobot(const std::string& robName)
     {
         MutexLockPtr lock = getScopedLock();
 
@@ -362,7 +362,7 @@ namespace SimDynamics
             }
         }
 
-        return DynamicsRobotPtr();
+        return DynamicsModelPtr();
     }
 
     DynamicsEngine::MutexLockPtr DynamicsEngine::getScopedLock()

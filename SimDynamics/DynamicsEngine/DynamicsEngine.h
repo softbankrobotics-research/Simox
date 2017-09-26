@@ -81,17 +81,17 @@ namespace SimDynamics
         virtual bool addObject(DynamicsObjectPtr o);
         virtual bool removeObject(DynamicsObjectPtr o);
 
-        virtual bool addRobot(DynamicsRobotPtr r);
-        virtual bool removeRobot(DynamicsRobotPtr r);
+        virtual bool addModel(DynamicsModelPtr r);
+        virtual bool removeRobot(DynamicsModelPtr r);
 
         virtual bool attachObjectToRobot(const std::string& robotName, const std::string& nodeName, DynamicsObjectPtr object);
-        virtual bool attachObjectToRobot(DynamicsRobotPtr r, const std::string& nodeName, DynamicsObjectPtr object);
+        virtual bool attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object);
 
         virtual bool detachObjectFromRobot(const std::string& robotName, DynamicsObjectPtr object);
-        virtual bool detachObjectFromRobot(DynamicsRobotPtr r, DynamicsObjectPtr object);
+        virtual bool detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object);
 
 
-        std::vector<DynamicsRobotPtr> getRobots();
+        std::vector<DynamicsModelPtr> getRobots();
 
         /*!
             Returns all objects that are currently registered.
@@ -165,8 +165,8 @@ namespace SimDynamics
             Returns the dynamics version of r.
             An empty pointer is returned if no dynamic robot created from r has been added so far.
         */
-        virtual DynamicsRobotPtr getRobot(VirtualRobot::RobotPtr r);
-        virtual DynamicsRobotPtr getRobot(const std::string& robName);
+        virtual DynamicsModelPtr getRobot(VirtualRobot::RobotPtr r);
+        virtual DynamicsModelPtr getRobot(const std::string& robName);
 
         typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
 
@@ -191,7 +191,7 @@ namespace SimDynamics
         DynamicsEngineConfigPtr dynamicsConfig;
 
         std::vector<DynamicsObjectPtr> objects;
-        std::vector<DynamicsRobotPtr> robots;
+        std::vector<DynamicsModelPtr> robots;
 
         std::map < DynamicsObject*, std::vector<DynamicsObject*> > collisionDisabled;
         std::vector<DynamicsObject*> collisionToAllDisabled;

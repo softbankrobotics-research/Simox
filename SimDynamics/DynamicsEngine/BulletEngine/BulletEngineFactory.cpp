@@ -53,7 +53,7 @@ namespace SimDynamics
         return BulletObjectPtr(new BulletObject(o));
     }
 
-    SimDynamics::DynamicsRobotPtr BulletEngineFactory::createRobot(VirtualRobot::RobotPtr robot)
+    SimDynamics::DynamicsModelPtr BulletEngineFactory::createRobot(VirtualRobot::RobotPtr robot)
     {
         return BulletRobotPtr(new BulletRobot(robot));
     }

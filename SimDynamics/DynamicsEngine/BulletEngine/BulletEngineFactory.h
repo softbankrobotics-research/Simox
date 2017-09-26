@@ -45,7 +45,7 @@ namespace SimDynamics
         virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
 
         virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o);
-        virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot);
+        virtual DynamicsModelPtr createRobot(VirtualRobot::RobotPtr robot);
 
         // AbstractFactoryMethod
     public:

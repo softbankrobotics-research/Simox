@@ -335,6 +335,16 @@ namespace VirtualRobot
 
         return ss.str();
     }
+
+
+    void Obstacle::setMass(int mass)
+    {
+        WriteLockPtr l = getWriteLock();
+        auto links = getLinks();
+        THROW_VR_EXCEPTION_IF(links.size()!=1, "Expecting model with exactly one link...");
+        links.at(0)->setMass(mass);
+    }
+
 } //  namespace
 
 

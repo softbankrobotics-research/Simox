@@ -223,7 +223,9 @@ namespace VirtualRobot
 
     bool CollisionChecker::checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2)
     {
-        VR_ASSERT(model1 && model2);
+        if (!model1 || !model2)
+            return false;
+        //VR_ASSERT(model1 && model2);
         VR_ASSERT_MESSAGE(model1->getCollisionChecker() == model2->getCollisionChecker(), "Collision models are linked to different Collision Checker instances");
         VR_ASSERT_MESSAGE(model1->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
         VR_ASSERT(isInitialized());

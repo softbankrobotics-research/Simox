@@ -65,7 +65,7 @@ namespace SimDynamics
         /*!
             Build a dynamic version of your VirtualRobot::Model.
         */
-        static DynamicsRobotPtr CreateDynamicsModel(const VirtualRobot::ModelPtr &rob);
+        static DynamicsModelPtr CreateDynamicsModel(const VirtualRobot::ModelPtr &rob);
 
         /*!
             Add an object to the world.
@@ -80,14 +80,14 @@ namespace SimDynamics
         /*!
             Add a robot to the world.
         */
-        bool addRobot(DynamicsRobotPtr r);
+        bool addModel(DynamicsModelPtr r);
 
         /*!
             Remove a robot from the world.
         */
-        bool removeRobot(DynamicsRobotPtr r);
+        bool removeRobot(DynamicsModelPtr r);
 
-        std::vector<DynamicsRobotPtr> getRobots();
+        std::vector<DynamicsModelPtr> getRobots();
 
         /*!
             Create and setup floor.

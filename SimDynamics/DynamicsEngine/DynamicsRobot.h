@@ -188,7 +188,7 @@ namespace SimDynamics
         std::shared_ptr <std::recursive_mutex> engineMutexPtr;
     };
 
-    typedef std::shared_ptr<DynamicsRobot> DynamicsRobotPtr;
+    typedef std::shared_ptr<DynamicsRobot> DynamicsModelPtr;
 
 } // namespace SimDynamics
 

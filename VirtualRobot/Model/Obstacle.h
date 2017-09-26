@@ -102,6 +102,8 @@ namespace VirtualRobot
 
         virtual std::string toXML(const std::string& basePath, int tabs = 0);
 
+        virtual void setMass(int mass);
+
     protected:
 
         //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;

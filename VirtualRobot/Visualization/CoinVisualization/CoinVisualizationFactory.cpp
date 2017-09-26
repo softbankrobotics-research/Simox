@@ -4214,13 +4214,13 @@ namespace VirtualRobot
         return m;
     }
 
-    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
 	{
 		VR_ASSERT(scene);
 
 		std::vector<VisualizationNodePtr> collectedVisualizationNodes;
 
-		if (addRobots)
+        if (addModels)
 		{
 			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
 			// collect all robotnodes

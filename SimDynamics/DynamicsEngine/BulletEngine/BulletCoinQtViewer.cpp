@@ -317,7 +317,7 @@ namespace SimDynamics
         bulletEngine->addExternalCallback(callback, data);
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(DynamicsModelPtr r, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r);
@@ -374,7 +374,7 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::removeVisualization(DynamicsRobotPtr r)
+    void BulletCoinQtViewer::removeVisualization(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r);

@@ -91,8 +91,8 @@ namespace SimDynamics
         virtual bool addObject(DynamicsObjectPtr o);
         virtual bool removeObject(DynamicsObjectPtr o);
 
-        virtual bool addRobot(DynamicsRobotPtr r);
-        virtual bool removeRobot(DynamicsRobotPtr r);
+        virtual bool addModel(DynamicsModelPtr r);
+        virtual bool removeRobot(DynamicsModelPtr r);
 
         /*!
             Initialize the engine with this configuration.
@@ -140,8 +140,8 @@ namespace SimDynamics
         */
         double getSimTime();
 
-        virtual bool attachObjectToRobot(DynamicsRobotPtr r, const std::string& nodeName, DynamicsObjectPtr object);
-        virtual bool detachObjectFromRobot(DynamicsRobotPtr r, DynamicsObjectPtr object);
+        virtual bool attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object);
+        virtual bool detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object);
 
 
         /*!

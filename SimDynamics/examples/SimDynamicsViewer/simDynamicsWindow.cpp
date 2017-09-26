@@ -67,13 +67,13 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     dynamicsWorld->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f, VirtualRobot::VisualizationFactory::Color::Blue());
-    o->getFirstLink()->setMass(1.0f); // 1kg
+    o->setMass(1.0f); // 1kg
 
     dynamicsObject = dynamicsWorld->CreateDynamicsModel(o);
     Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
     gp.block(0,3,3,1) = Eigen::Vector3f(1000, 2000, 1000.0f);
     dynamicsObject->setGlobalPose(gp);
-    dynamicsWorld->addRobot(dynamicsObject);
+    dynamicsWorld->addModel(dynamicsObject);
 
     addObject();
 
@@ -342,7 +342,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
         gp(2, 3) = -bbox.getMin()(2) + 4.0f;
         robot->setGlobalPose(gp);
         dynamicsRobot = dynamicsWorld->CreateDynamicsModel(robot);
-        dynamicsWorld->addRobot(dynamicsRobot);
+        dynamicsWorld->addModel(dynamicsRobot);
     }
     catch (VirtualRobotException& e)
     {
@@ -917,7 +917,7 @@ void SimDynamicsWindow::addObject()
 
     if (vitalis)
     {
-        vitalis->getFirstLink()->setMass(0.5f);
+        vitalis->setMass(0.5f);
         float x, y, z;
         int counter = 0;
 
@@ -939,10 +939,12 @@ void SimDynamicsWindow::addObject()
         }
         while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
 
-        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis->getFirstLink());
-        dynamicsObjectVitalis->setPosition(Eigen::Vector3f(x, y, z));
+        SimDynamics::DynamicsModelPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsModel(vitalis);
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        gp.block(0, 3, 3, 1) = Eigen::Vector3f(x,y,z);
+        dynamicsObjectVitalis->setGlobalPose(gp);
         dynamicsObjects.push_back(dynamicsObjectVitalis);
-        dynamicsWorld->addObject(dynamicsObjectVitalis);
+        dynamicsWorld->addModel(dynamicsObjectVitalis);
         buildVisualization();
     }
 

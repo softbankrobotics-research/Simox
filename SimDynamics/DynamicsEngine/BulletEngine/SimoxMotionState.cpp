@@ -125,7 +125,7 @@ namespace SimDynamics
         // get joint angle
 		ModelLinkPtr rn = sceneObject;
         DynamicsWorldPtr w = DynamicsWorld::GetWorld();
-        DynamicsRobotPtr dr = w->getEngine()->getRobot(rn->getModel());
+        DynamicsModelPtr dr = w->getEngine()->getRobot(rn->getModel());
         BulletRobotPtr bdr = std::dynamic_pointer_cast<BulletRobot>(dr);
 
         if (bdr)

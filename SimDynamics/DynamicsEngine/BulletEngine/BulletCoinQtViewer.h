@@ -98,7 +98,7 @@ namespace SimDynamics
         void addVisualization(DynamicsObjectPtr o,
                               VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
-        void addVisualization(DynamicsRobotPtr r,
+        void addVisualization(DynamicsModelPtr r,
                               VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
 
@@ -108,7 +108,7 @@ namespace SimDynamics
         void removeVisualization(VirtualRobot::ModelPtr o);
         void removeVisualization(VirtualRobot::ModelLinkPtr o);
         void removeVisualization(DynamicsObjectPtr o);
-        void removeVisualization(DynamicsRobotPtr r);
+        void removeVisualization(DynamicsModelPtr r);
 
         //! Returns true, if physics engine is running. False, if paused.
         bool engineRunning();
@@ -237,7 +237,7 @@ namespace SimDynamics
         std::map<VirtualRobot::RobotPtr, SoNode*> addedSpriteRobotVisualizations;
         std::map<VirtualRobot::ModelLinkPtr, SoNode*> addedSpriteVisualizations;
         std::map<DynamicsObjectPtr, SoNode*> addedVisualizations;
-        std::map<DynamicsRobotPtr, SoNode*> addedRobotVisualizations;
+        std::map<DynamicsModelPtr, SoNode*> addedRobotVisualizations;
 
         SoSeparator* sceneGraphRoot;
         SoSeparator* floor;

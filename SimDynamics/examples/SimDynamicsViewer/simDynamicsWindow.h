@@ -79,10 +79,10 @@ protected:
     void updateComVisu();
 
     SimDynamics::DynamicsWorldPtr dynamicsWorld;
-    SimDynamics::DynamicsRobotPtr dynamicsRobot;
-    SimDynamics::DynamicsRobotPtr dynamicsObject;
+    SimDynamics::DynamicsModelPtr dynamicsRobot;
+    SimDynamics::DynamicsModelPtr dynamicsObject;
     SimDynamics::DynamicsObjectPtr dynamicsObject2;
-    std::vector<SimDynamics::DynamicsObjectPtr> dynamicsObjects;
+    std::vector<SimDynamics::DynamicsModelPtr> dynamicsObjects;
 
     Ui::MainWindowBulletViewer UI;
 
