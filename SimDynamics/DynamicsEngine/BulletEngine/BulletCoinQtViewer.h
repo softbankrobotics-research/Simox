@@ -89,24 +89,24 @@ namespace SimDynamics
         /*!
             Visualize dynamics object.
         */
-        void addVisualization(VirtualRobot::RobotPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+        void addVisualization(VirtualRobot::ModelPtr o,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
-        void addVisualization(VirtualRobot::SceneObjectPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+        void addVisualization(VirtualRobot::ModelLinkPtr o,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
         void addVisualization(DynamicsObjectPtr o,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
         void addVisualization(DynamicsRobotPtr r,
-                              VirtualRobot::SceneObject::VisualizationType visuType = VirtualRobot::SceneObject::Full,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
                               SoSeparator* container = NULL);
 
         /*!
             Remove visualization of dynamics object.
         */
-        void removeVisualization(VirtualRobot::RobotPtr o);
-        void removeVisualization(VirtualRobot::SceneObjectPtr o);
+        void removeVisualization(VirtualRobot::ModelPtr o);
+        void removeVisualization(VirtualRobot::ModelLinkPtr o);
         void removeVisualization(DynamicsObjectPtr o);
         void removeVisualization(DynamicsRobotPtr r);
 
@@ -171,9 +171,10 @@ namespace SimDynamics
         void addStepCallback(BulletStepCallback callback, void* data);
 
         //! If set, all actions are protected with this mutex
-        virtual void setMutex(boost::shared_ptr<boost::recursive_mutex> engineMutexPtr);
+        virtual void setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr);
 
-        typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
+        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
+
         /*!
         This lock can be used to protect data access. It locks the mutex until deletion.
         If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
@@ -234,7 +235,7 @@ namespace SimDynamics
         btClock m_clock;
 
         std::map<VirtualRobot::RobotPtr, SoNode*> addedSpriteRobotVisualizations;
-        std::map<VirtualRobot::SceneObjectPtr, SoNode*> addedSpriteVisualizations;
+        std::map<VirtualRobot::ModelLinkPtr, SoNode*> addedSpriteVisualizations;
         std::map<DynamicsObjectPtr, SoNode*> addedVisualizations;
         std::map<DynamicsRobotPtr, SoNode*> addedRobotVisualizations;
 
@@ -252,11 +253,11 @@ namespace SimDynamics
         bool enablePhysicsUpdates;
         int updateTimerIntervalMS;
 
-        boost::shared_ptr <boost::recursive_mutex> engineMutexPtr;
+        std::shared_ptr <std::recursive_mutex> engineMutexPtr;
     };
 
 
-    typedef boost::shared_ptr<BulletCoinQtViewer> BulletCoinQtViewerPtr;
+    typedef std::shared_ptr<BulletCoinQtViewer> BulletCoinQtViewerPtr;
 
 } // namespace
 

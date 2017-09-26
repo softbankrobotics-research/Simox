@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::getDataFileAbsolute(urdfFile);
 
     // load model from file and convert it to the simox robot format
-    RobotPtr r1 = ModelIO::loadRobotModel(filename);
+    RobotPtr r1 = ModelIO::loadModel(filename);
     VR_ASSERT(r1);
 
     VR_INFO << "Loaded simox model (with urdf description): " << r1->getName() << endl;

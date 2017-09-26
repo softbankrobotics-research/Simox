@@ -28,7 +28,7 @@ namespace SimDynamics
         updateTimerIntervalMS = 5;
 
         // no mutex for standard viewer
-        //engineMutexPtr.reset(new boost::recursive_mutex());
+        //engineMutexPtr.reset(new std::recursive_mutex());
 
         //const double TIMER_MS = 5.0f;
 
@@ -237,14 +237,13 @@ namespace SimDynamics
         //viewer->viewAll();
     }
 
-    void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         //VR_ASSERT(so);
         removeVisualization(robot);
 
-        boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(visuType);
-        SoNode* n = visualization->getCoinVisualization();
+        SoNode* n = CoinVisualizationFactory::getCoinVisualization(robot,visuType);
 
         if (n)
         {
@@ -263,7 +262,7 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::addVisualization(SceneObjectPtr so, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(so);
@@ -287,11 +286,11 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
-        SceneObjectPtr so = o->getSceneObject();
+        ModelLinkPtr so = o->getSceneObject();
         VR_ASSERT(so);
         removeVisualization(o);
         SoNode* n = CoinVisualizationFactory::getCoinVisualization(so, visuType);
@@ -318,7 +317,7 @@ namespace SimDynamics
         bulletEngine->addExternalCallback(callback, data);
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::SceneObject::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addVisualization(DynamicsRobotPtr r, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r);
@@ -326,25 +325,7 @@ namespace SimDynamics
         VR_ASSERT(ro);
         removeVisualization(r);
 
-        std::vector<RobotNodePtr> collectedRobotNodes;
-        ro->getRobotNodes(collectedRobotNodes);
-        std::vector<VisualizationNodePtr> collectedVisualizationNodes(collectedRobotNodes.size());
-
-        for (size_t i = 0; i < collectedRobotNodes.size(); i++)
-        {
-            collectedVisualizationNodes[i] = collectedRobotNodes[i]->getVisualization(visuType);
-        }
-
-        SoSeparator* n = new SoSeparator();
-        BOOST_FOREACH(VisualizationNodePtr visualizationNode, collectedVisualizationNodes)
-        {
-            boost::shared_ptr<CoinVisualizationNode> coinVisualizationNode = std::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
-
-            if (coinVisualizationNode && coinVisualizationNode->getCoinVisualization())
-            {
-                n->addChild(coinVisualizationNode->getCoinVisualization());
-            }
-        }
+        SoNode* n = CoinVisualizationFactory::getCoinVisualization(ro, visuType);
         SoNode* rootNode = n;
 
         if (container)
@@ -369,7 +350,7 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::removeVisualization(SceneObjectPtr o)
+    void BulletCoinQtViewer::removeVisualization(ModelLinkPtr o)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
@@ -482,18 +463,18 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::setMutex(boost::shared_ptr<boost::recursive_mutex> engineMutexPtr)
+    void BulletCoinQtViewer::setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr)
     {
         this->engineMutexPtr = engineMutexPtr;
     }
 
     BulletCoinQtViewer::MutexLockPtr BulletCoinQtViewer::getScopedLock()
     {
-        boost::shared_ptr< boost::recursive_mutex::scoped_lock > scoped_lock;
+        std::shared_ptr< std::unique_lock<std::recursive_mutex> > scoped_lock;
 
         if (engineMutexPtr)
         {
-            scoped_lock.reset(new boost::recursive_mutex::scoped_lock(*engineMutexPtr));
+            scoped_lock.reset(new std::unique_lock<std::recursive_mutex>(*engineMutexPtr));
         }
 
         return scoped_lock;

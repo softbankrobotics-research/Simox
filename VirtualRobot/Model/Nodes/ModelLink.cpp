@@ -179,6 +179,7 @@ namespace VirtualRobot
                 return VisualizationNodePtr();
             }
         }
+        // todo : attachments
     }
 
     int ModelLink::getNumFaces(bool collisionModel)

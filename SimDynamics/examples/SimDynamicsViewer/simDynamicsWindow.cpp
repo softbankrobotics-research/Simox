@@ -2,8 +2,10 @@
 #include "simDynamicsWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
-#include <VirtualRobot/Nodes/RobotNodeRevolute.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
+#include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
+#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 #include <SimDynamics/DynamicsEngine/BulletEngine/BulletEngine.h>
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <QFileDialog>
@@ -65,33 +67,13 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     dynamicsWorld->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f, VirtualRobot::VisualizationFactory::Color::Blue());
-    o->setMass(1.0f); // 1kg
+    o->getLink(0)->setMass(1.0f); // 1kg
 
-    dynamicsObject = dynamicsWorld->CreateDynamicsObject(o);
+    dynamicsObject = dynamicsWorld->CreateDynamicsObject(o->getLink(0));
     dynamicsObject->setPosition(Eigen::Vector3f(1000, 2000, 1000.0f));
     dynamicsWorld->addObject(dynamicsObject);
 
     addObject();
-
-#if 0
-    std::string f = "/home/niko/coding/armarx/SimulationX/data/environment/KIT_Robot_Kitchen.xml";
-    ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(f);
-    mo->setSimulationType(VirtualRobot::SceneObject::Physics::eStatic);
-    dynamicsObject2 = dynamicsWorld->CreateDynamicsObject(mo);
-    //dynObj->setPosition(Eigen::Vector3f(3000,3000,1000.0f));
-    dynamicsWorld->addObject(dynamicsObject2);
-#endif
-
-#if 0
-    std::string f = "/home/SMBAD/vahrenka/.armarx/mongo/.cache/files/lowersink.xml";
-    ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(f);
-    mo->setSimulationType(SceneObject::Physics::eDynamic);
-    SimDynamics::DynamicsObjectPtr dynObj2 = dynamicsWorld->CreateDynamicsObject(mo);
-    //dynObj2->setSimType(VirtualRobot::SceneObject::Physics::eDynamic);
-    dynObj2->setPosition(Eigen::Vector3f(0, 0, -200.0f));
-    dynamicsWorld->addObject(dynObj2);
-    dynamicsObjects.push_back(dynObj2);
-#endif
 
     setupUI();
     loadRobot(robotFilename);
@@ -216,7 +198,7 @@ void SimDynamicsWindow::buildVisualization()
     }
 
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
+    ModelLink::VisualizationType colModel = useColModel ? ModelLink::Collision : ModelLink::Full;
     viewer->addVisualization(dynamicsRobot, colModel);
     viewer->addVisualization(dynamicsObject, colModel);
 
@@ -245,7 +227,7 @@ void SimDynamicsWindow::comVisu()
 
     if (visuCom)
     {
-        std::vector<RobotNodePtr> n = robot->getRobotNodes();
+        std::vector<ModelLinkPtr> n = robot->getLinks();
 
         for (size_t i = 0; i < n.size(); i++)
         {
@@ -301,13 +283,13 @@ void SimDynamicsWindow::updateJoints()
 
     robotNodes.clear();
     UI.comboBoxRobotNode->clear();
-    std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
+    std::vector<RobotNodePtr> nodes = robot->getModelNodes();
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
-        if (nodes[i]->isRotationalJoint())
+        if (nodes[i]->getType() & ModelNode::JointRevolute)
         {
-            RobotNodeRevolutePtr rn = std::dynamic_pointer_cast<RobotNodeRevolute>(nodes[i]);
+            ModelJointRevolutePtr rn = std::dynamic_pointer_cast<ModelJointRevolute>(nodes[i]);
 
             if (rn)
             {
@@ -334,7 +316,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
 
     try
     {
-        robot = RobotIO::loadRobot(robotFilename, RobotIO::eFull);
+        robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {
@@ -374,7 +356,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
 void SimDynamicsWindow::selectRobotNode(int n)
 {
     UI.comboBoxRobotNode->setCurrentIndex(n);
-    RobotNodeRevolutePtr rn;
+    ModelJointRevolutePtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -385,8 +367,8 @@ void SimDynamicsWindow::selectRobotNode(int n)
     {
         int pos = 0;
 
-        float l = rn->getJointLimitHi() - rn->getJointLimitLo();
-        float start = rn->getJointValue() - rn->getJointLimitLo();
+        float l = rn->getJointLimitHigh() - rn->getJointLimitLow();
+        float start = rn->getJointValue() - rn->getJointLimitLow();
 
         if (fabs(l) > 1e-6)
         {
@@ -419,24 +401,24 @@ void SimDynamicsWindow::updateJointInfo()
     QString qVisu("VISU (simox): 0/0/0");
     QString qCom("COM (bullet): 0/0/0");
     QString tmp;
-    RobotNodeRevolutePtr rn;
+    ModelJointRevolutePtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
         rn = robotNodes[n];
     }
 
-    SimDynamics::DynamicsObjectPtr dynRN = dynamicsRobot->getDynamicsRobotNode(rn);
-    SimDynamics::BulletObjectPtr bulletRN = std::dynamic_pointer_cast<SimDynamics::BulletObject>(dynRN);
+    //SimDynamics::DynamicsObjectPtr dynRN = dynamicsRobot->getDynamicsRobotNode(rn);
+    //SimDynamics::BulletObjectPtr bulletRN = std::dynamic_pointer_cast<SimDynamics::BulletObject>(dynRN);
 
-    if (bulletRN)
-    {
+    //if (bulletRN)
+    //{
         //      cout << "FORCE: " << bulletRN->getRigidBody()->getTotalForce()[0] << ", " << bulletRN->getRigidBody()->getTotalForce()[1] << ", " << bulletRN->getRigidBody()->getTotalForce()[2] << endl;
         //      cout << "TORQUE: " << bulletRN->getRigidBody()->getTotalTorque()[0] << ", " << bulletRN->getRigidBody()->getTotalTorque()[1] << ", " << bulletRN->getRigidBody()->getTotalTorque()[2] << endl;
         //      cout << "getLinearVelocity: " << bulletRN->getRigidBody()->getLinearVelocity()[0] << ", " << bulletRN->getRigidBody()->getLinearVelocity()[1] << ", " << bulletRN->getRigidBody()->getLinearVelocity()[2] << endl;
         //      cout << "getAngularVelocity: " << bulletRN->getRigidBody()->getAngularVelocity()[0] << ", " << bulletRN->getRigidBody()->getAngularVelocity()[1] << ", " << bulletRN->getRigidBody()->getAngularVelocity()[2] << endl;
 
-    }
+    //}
 
     BulletRobotPtr bulletRobot = std::dynamic_pointer_cast<SimDynamics::BulletRobot>(dynamicsRobot);
 
@@ -444,8 +426,9 @@ void SimDynamicsWindow::updateJointInfo()
     {
         BulletRobot::LinkInfo linkInfo = bulletRobot->getLink(rn);
 
-        linkInfo.nodeA->showCoordinateSystem(true);
-        linkInfo.nodeB->showCoordinateSystem(true);
+        // todo
+        //linkInfo.nodeA->showCoordinateSystem(true);
+        //linkInfo.nodeB->showCoordinateSystem(true);
 
         bulletRobot->enableForceTorqueFeedback(linkInfo);
         Eigen::VectorXf ftA = bulletRobot->getForceTorqueFeedbackA(linkInfo);
@@ -577,8 +560,8 @@ void SimDynamicsWindow::updateJointInfo()
 
     if (rn)
     {
-        qMin = QString::number(rn->getJointLimitLo(), 'f', 4);
-        qMax = QString::number(rn->getJointLimitHi(), 'f', 4);
+        qMin = QString::number(rn->getJointLimitLow(), 'f', 4);
+        qMax = QString::number(rn->getJointLimitHigh(), 'f', 4);
         qName = QString("Name: ");
         qName += QString(rn->getName().c_str());
         qJV = QString("Joint value: ");
@@ -680,9 +663,10 @@ void SimDynamicsWindow::updateJointInfo()
         qVisu += QString("/");
         qVisu += QString::number(gp(2, 3), 'f', 2);
 
-        if (dynamicsRobot->hasDynamicsRobotNode(rn))
+        ModelLinkPtr rnL = std::dynamic_pointer_cast<ModelLink>(rn);
+        if (rnL && dynamicsRobot->hasDynamicsRobotNode(rnL))
         {
-            gp = dynamicsRobot->getComGlobal(rn);
+            gp = dynamicsRobot->getComGlobal(rnL);
         }
         else
         {
@@ -737,11 +721,11 @@ void SimDynamicsWindow::jointValueChanged(int n)
     #endif
     */
     int j = UI.comboBoxRobotNode->currentIndex();
-    RobotNodeRevolutePtr rn;
+    ModelJointRevolutePtr rn;
 
     if (j >= 0 && j < (int)robotNodes.size())
     {
-        rn = robotNodes[j];
+        rn = std::dynamic_pointer_cast<ModelJointRevolute>(robotNodes[j]);
     }
 
     if (!rn || !dynamicsRobot)
@@ -751,8 +735,8 @@ void SimDynamicsWindow::jointValueChanged(int n)
 
     float pos = 0;
 
-    float l = rn->getJointLimitHi() - rn->getJointLimitLo();
-    pos = float(n + 100) / 201.0f * l +  rn->getJointLimitLo();
+    float l = rn->getJointLimitHigh() - rn->getJointLimitLow();
+    pos = float(n + 100) / 201.0f * l +  rn->getJointLimitLow();
     dynamicsRobot->actuateNode(rn, pos);
 }
 
@@ -825,8 +809,8 @@ void SimDynamicsWindow::updateComVisu()
         return;
     }
 
-    std::vector<RobotNodePtr> n = robot->getRobotNodes();
-    std::map< VirtualRobot::RobotNodePtr, SoSeparator* >::iterator i = comVisuMap.begin();
+    std::vector<ModelLinkPtr> n = robot->getLinks();
+    std::map< VirtualRobot::ModelLinkPtr, SoSeparator* >::iterator i = comVisuMap.begin();
 
     while (i != comVisuMap.end())
     {
@@ -931,7 +915,7 @@ void SimDynamicsWindow::addObject()
 
     if (vitalis)
     {
-        vitalis->setMass(0.5f);
+        vitalis->getLink(0)->setMass(0.5f);
         float x, y, z;
         int counter = 0;
 
@@ -953,7 +937,7 @@ void SimDynamicsWindow::addObject()
         }
         while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
 
-        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis);
+        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis->getLink(0));
         dynamicsObjectVitalis->setPosition(Eigen::Vector3f(x, y, z));
         dynamicsObjects.push_back(dynamicsObjectVitalis);
         dynamicsWorld->addObject(dynamicsObjectVitalis);

@@ -3,15 +3,15 @@
 #define __SimDynamics_WINDOW_H_
 
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
-#include <VirtualRobot/Nodes/RobotNodeRevolute.h>
+#include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
 
 #include "SimDynamics/DynamicsEngine/BulletEngine/BulletCoinQtViewer.h"
 
@@ -100,9 +100,9 @@ protected:
 
     SoTimerSensor* timerSensor;
 
-    std::vector<VirtualRobot::RobotNodeRevolutePtr> robotNodes;
+    std::vector<VirtualRobot::ModelJointRevolutePtr> robotNodes;
 
-    std::map< VirtualRobot::RobotNodePtr, SoSeparator* > comVisuMap;
+    std::map< VirtualRobot::ModelLinkPtr, SoSeparator* > comVisuMap;
 
     bool useColModel;
 };

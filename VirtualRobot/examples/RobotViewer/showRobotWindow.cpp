@@ -560,7 +560,7 @@ void showRobotWindow::loadRobot()
 
         robot = importer->loadFromFile(robotFilename, ModelIO::eFull);*/
 
-        robot = ModelIO::loadRobotModel(robotFilename, ModelIO::eFull);
+        robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {

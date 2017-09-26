@@ -101,7 +101,7 @@ namespace VirtualRobot
     }*/
 
 
-    ModelPtr ModelIO::loadRobotModel(const std::string &xmlFile, ModelIO::RobotDescription loadMode)
+    ModelPtr ModelIO::loadModel(const std::string &xmlFile, ModelIO::RobotDescription loadMode)
     {
         std::string fullFile = xmlFile;
 

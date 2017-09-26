@@ -1293,9 +1293,40 @@ namespace VirtualRobot
             result->addChild(cv);
         }
 
+        // todo : attachments of Modeljoints?!
+
+
         result->unrefNoDelete();
         return result;
     }
+
+    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelLinkPtr object, ModelLink::VisualizationType visuType)
+    {
+        SoSeparator* result = new SoSeparator();
+        result->ref();
+        if (!object)
+        {
+            result->unrefNoDelete();
+            return new SoSeparator;
+        }
+        VisualizationNodePtr v = object->getVisualization(visuType);
+        if (!v)
+        {
+            result->unrefNoDelete();
+            return new SoSeparator;
+        }
+        SoNode* cv = getCoinVisualization(v);
+        if (!cv)
+        {
+            result->unrefNoDelete();
+            return new SoSeparator;
+        }
+        result->addChild(cv);
+
+        result->unrefNoDelete();
+        return result;
+    }
+
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(VisualizationNodePtr visu)
     {

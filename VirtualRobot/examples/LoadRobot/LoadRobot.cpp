@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        rob = ModelIO::loadRobotModel(filename, ModelIO::eStructure);
+        rob = ModelIO::loadModel(filename, ModelIO::eStructure);
     }
     catch (VirtualRobotException& e)
     {

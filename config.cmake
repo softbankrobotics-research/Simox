@@ -30,8 +30,7 @@ IF (NOT Simox_CONFIGURED)
     set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
         "Installation directory for CMake files")
 
-    # Almost all examples require soqt. It will be set to ON if soqt is found.
-    set(Simox_BUILD_EXAMPLES OFF CACHE BOOL "Build example applications")
+    set(Simox_BUILD_EXAMPLES ON CACHE BOOL "Build example applications")
  
     # Make relative paths absolute (needed later on) 
     # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
@@ -153,7 +152,7 @@ IF (NOT Simox_CONFIGURED)
 
     
     #urdf
-    OPTION (Simox_USE_URDF "Use URDF" OFF)
+    OPTION (Simox_USE_URDF "Use URDF" ON)
 
     #### NLOPT
     OPTION (Simox_USE_NLOPT "Use NLOPT" ON)
