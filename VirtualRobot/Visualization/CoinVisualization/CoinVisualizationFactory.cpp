@@ -261,9 +261,7 @@ namespace VirtualRobot
 
     VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
-        VisualizationNodePtr visualizationNode(new VisualizationNode);
         // try to read from file
-        visualizationNode->setFilename(filename, boundingBox);
 
         TriMeshModelPtr t(new TriMeshModel());
         STLReaderPtr r(new STLReader());
@@ -273,9 +271,11 @@ namespace VirtualRobot
         if (!readOK)
         {
             VR_ERROR << "Could not read stl file " << filename << endl;
-            return visualizationNode;
+            return VisualizationNodePtr();
         }
 
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
+        visualizationNode->setFilename(filename, boundingBox);
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
         visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
 

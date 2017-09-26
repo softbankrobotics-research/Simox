@@ -29,6 +29,10 @@ namespace VirtualRobot
     ModelPtr ModelNode::getModel() const
     {
         ModelPtr modelShared = model.lock();
+        if (!modelShared)
+        {
+            VR_INFO << "No model" << endl;
+        }
         THROW_VR_EXCEPTION_IF(!modelShared, "ModelNode \"" + getName() + "\" does not have a model.");
         return modelShared;
     }

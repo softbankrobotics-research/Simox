@@ -80,7 +80,7 @@ protected:
 
     SimDynamics::DynamicsWorldPtr dynamicsWorld;
     SimDynamics::DynamicsRobotPtr dynamicsRobot;
-    SimDynamics::DynamicsObjectPtr dynamicsObject;
+    SimDynamics::DynamicsRobotPtr dynamicsObject;
     SimDynamics::DynamicsObjectPtr dynamicsObject2;
     std::vector<SimDynamics::DynamicsObjectPtr> dynamicsObjects;
 

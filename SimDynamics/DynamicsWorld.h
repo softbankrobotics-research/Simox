@@ -63,9 +63,9 @@ namespace SimDynamics
         static DynamicsObjectPtr CreateDynamicsObject(VirtualRobot::ModelLinkPtr o);
 
         /*!
-            Build a dynamic version of your VirtualRobot::Robot.
+            Build a dynamic version of your VirtualRobot::Model.
         */
-        static DynamicsRobotPtr CreateDynamicsRobot(VirtualRobot::RobotPtr rob);
+        static DynamicsRobotPtr CreateDynamicsModel(const VirtualRobot::ModelPtr &rob);
 
         /*!
             Add an object to the world.

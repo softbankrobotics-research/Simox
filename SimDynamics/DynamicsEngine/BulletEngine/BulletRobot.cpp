@@ -11,6 +11,7 @@
 #include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
 #include <VirtualRobot/Model/LinkSet.h>
 #include <VirtualRobot/Model/JointSet.h>
+#include <VirtualRobot/Visualization/TriMeshModel.h>
 //#include <VirtualRobot/Nodes/ForceTorqueSensor.h>
 //#include <VirtualRobot/Nodes/ContactSensor.h>
 
@@ -55,6 +56,8 @@ namespace SimDynamics
             }
         }
 		*/
+
+        this->enableSelfCollisions(false);
     }
 
     BulletRobot::~BulletRobot()
@@ -145,7 +148,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(rn);
 
-        if (!rn->getCollisionModel())
+        if (!rn->getCollisionModel() || !rn->getCollisionModel()->getTriMeshModel() || !rn->getCollisionModel()->getTriMeshModel()->faces.size()==0)
         {
             return;    // nothing to do: no col model -> no bullet model -> no collisions
         }
@@ -301,7 +304,7 @@ namespace SimDynamics
         VR_ASSERT(btBody2);
         DynamicsWorld::GetWorld()->getEngine()->disableCollision(drn1.get(),drn2.get());
 
-        if (joint->getJointValue()!=0.0f)
+        if (joint && joint->getJointValue()!=0.0f)
         {
             VR_WARNING << joint->getName() << ": joint values != 0 may produce a wrong setup, setting joint value to zero" << endl;
             joint->setJointValue(0);
@@ -388,7 +391,7 @@ namespace SimDynamics
         links.push_back(i);
 #ifndef DEBUG_FIXED_OBJECTS
 
-        if (enableJointMotors && (joint->getType() & ModelNode::JointRevolute))
+        if (enableJointMotors && joint && (joint->getType() & ModelNode::JointRevolute))
         {
             // start standard actuator
             actuateNode(joint, joint->getJointValue());

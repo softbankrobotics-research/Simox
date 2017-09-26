@@ -69,9 +69,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f, VirtualRobot::VisualizationFactory::Color::Blue());
     o->getFirstLink()->setMass(1.0f); // 1kg
 
-    dynamicsObject = dynamicsWorld->CreateDynamicsObject(o->getFirstLink());
-    dynamicsObject->setPosition(Eigen::Vector3f(1000, 2000, 1000.0f));
-    dynamicsWorld->addObject(dynamicsObject);
+    dynamicsObject = dynamicsWorld->CreateDynamicsModel(o);
+    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+    gp.block(0,3,3,1) = Eigen::Vector3f(1000, 2000, 1000.0f);
+    dynamicsObject->setGlobalPose(gp);
+    dynamicsWorld->addRobot(dynamicsObject);
 
     addObject();
 
@@ -339,7 +341,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
         //gp(2,3) = 5.0f;
         gp(2, 3) = -bbox.getMin()(2) + 4.0f;
         robot->setGlobalPose(gp);
-        dynamicsRobot = dynamicsWorld->CreateDynamicsRobot(robot);
+        dynamicsRobot = dynamicsWorld->CreateDynamicsModel(robot);
         dynamicsWorld->addRobot(dynamicsRobot);
     }
     catch (VirtualRobotException& e)

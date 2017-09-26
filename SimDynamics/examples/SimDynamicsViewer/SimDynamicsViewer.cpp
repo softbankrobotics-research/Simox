@@ -33,25 +33,10 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    cout << " --- START --- " << endl;
-    // --robot "robots/iCub/iCub.xml"
-    //std::string filename("robots/iCub/iCub.xml");
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
-    //std::string filename("robots/examples/SimpleRobot/Joint6.xml");
-    //std::string filename("robots/ArmarIII/ArmarIII-RightArmTest6.xml");
+    VR_INFO << " --- START --- " << endl;
 
-
-    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-    {
-        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-
-        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-        {
-            filename = robFile;
-        }
-    }
-
-    cout << "Using robot at " << filename << endl;
+    std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
+    VR_INFO << "Using robot file " << filename << endl;
 
     SimDynamicsWindow rw(filename);
 

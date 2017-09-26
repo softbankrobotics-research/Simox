@@ -119,7 +119,7 @@ namespace SimDynamics
         return engine->removeRobot(r);
     }
 
-    SimDynamics::DynamicsRobotPtr DynamicsWorld::CreateDynamicsRobot(VirtualRobot::RobotPtr rob)
+    SimDynamics::DynamicsRobotPtr DynamicsWorld::CreateDynamicsModel(const VirtualRobot::ModelPtr &rob)
     {
         SIMDYNAMICS_ASSERT(rob);
 

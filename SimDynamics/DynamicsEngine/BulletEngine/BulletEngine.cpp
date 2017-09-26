@@ -551,7 +551,7 @@ namespace SimDynamics
 
             for (size_t j = 0; j < links.size(); j++)
             {
-                cout << "++++ Link " << j << ":" << links[j].nodeJoint->getName();
+                cout << "++++ Link " << j << ":" << links[j].nodeJoint?"<no-joint>":links[j].nodeJoint->getName();
                 cout << "++++ - ColModelA " << j << ":" << links[j].nodeA->getName();
                 cout << "++++ - ColModelB " << j << ":" << links[j].nodeB->getName();
 
