@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(testShortcutProcessor)
         "	  <Axis x='0' y='1' z='0'/>"
         "   </Joint>"
         " </RobotNode>"
-        " <RobotNodeSet name='rns1'>"
+        " <JointSet name='rns1'>"
         "  <Node name='Joint1'/>"
         "  <Node name='Joint2'/>"
-        " </RobotNodeSet>"
+        " </JointSet>"
         "</Robot>";
     VirtualRobot::RobotPtr rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString);
     BOOST_REQUIRE(rob);

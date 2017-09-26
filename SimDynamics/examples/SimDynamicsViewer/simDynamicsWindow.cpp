@@ -67,9 +67,9 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     dynamicsWorld->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(1000.0f, 1000.0f, 1000.0f, VirtualRobot::VisualizationFactory::Color::Blue());
-    o->getLink(0)->setMass(1.0f); // 1kg
+    o->getFirstLink()->setMass(1.0f); // 1kg
 
-    dynamicsObject = dynamicsWorld->CreateDynamicsObject(o->getLink(0));
+    dynamicsObject = dynamicsWorld->CreateDynamicsObject(o->getFirstLink());
     dynamicsObject->setPosition(Eigen::Vector3f(1000, 2000, 1000.0f));
     dynamicsWorld->addObject(dynamicsObject);
 
@@ -915,7 +915,7 @@ void SimDynamicsWindow::addObject()
 
     if (vitalis)
     {
-        vitalis->getLink(0)->setMass(0.5f);
+        vitalis->getFirstLink()->setMass(0.5f);
         float x, y, z;
         int counter = 0;
 
@@ -937,7 +937,7 @@ void SimDynamicsWindow::addObject()
         }
         while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
 
-        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis->getLink(0));
+        SimDynamics::DynamicsObjectPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsObject(vitalis->getFirstLink());
         dynamicsObjectVitalis->setPosition(Eigen::Vector3f(x, y, z));
         dynamicsObjects.push_back(dynamicsObjectVitalis);
         dynamicsWorld->addObject(dynamicsObjectVitalis);

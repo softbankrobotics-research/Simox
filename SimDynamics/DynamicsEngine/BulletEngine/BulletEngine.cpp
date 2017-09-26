@@ -308,10 +308,10 @@ namespace SimDynamics
         gp(2, 3) = -sizeSmall * 0.5f;
         groundObject->setGlobalPose(gp);
 
-        groundObject->getLink(0)->getVisualization();
-        groundObject->getLink(0)->setSimulationType(VirtualRobot::ModelLink::Physics::eStatic);
+        groundObject->getFirstLink()->getVisualization();
+        groundObject->getFirstLink()->setSimulationType(VirtualRobot::ModelLink::Physics::eStatic);
 
-        BulletObjectPtr groundObjectBt(new BulletObject(groundObject->getLink(0)));
+        BulletObjectPtr groundObjectBt(new BulletObject(groundObject->getFirstLink()));
 
 
         floor = groundObjectBt;

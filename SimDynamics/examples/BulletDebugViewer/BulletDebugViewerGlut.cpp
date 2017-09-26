@@ -160,13 +160,13 @@ int main(int argc, char* argv[])
     world->createFloorPlane();
 
     VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(100.0f, 100.0f, 100.0f);
-    o->getLink(0)->setSimulationType(ModelLink::Physics::eDynamic);
+    o->getFirstLink()->setSimulationType(ModelLink::Physics::eDynamic);
     Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
     gp.block(0, 3, 3, 1) = Eigen::Vector3f(2800, 10400, 5000.0f);
     o->setGlobalPose(gp);
-    o->getLink(0)->setMass(1.0f); // 1kg
+    o->getFirstLink()->setMass(1.0f); // 1kg
 
-    SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o->getLink(0));
+    SimDynamics::DynamicsObjectPtr dynObj = world->CreateDynamicsObject(o->getFirstLink());
     world->addObject(dynObj);
     o->print();
 
