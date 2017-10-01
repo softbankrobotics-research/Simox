@@ -11,6 +11,7 @@
 #include "../../Model/ModelNodeSet.h"
 #include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "../../Visualization/CoinVisualization/CoinVisualization.h"
+#include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -97,8 +98,9 @@ protected:
     VirtualRobot::EndEffectorPtr currentEEF;
     VirtualRobot::ModelNodeSetPtr currentRobotNodeSet;
     VirtualRobot::ModelNodePtr currentRobotNode;
+    std::vector<VirtualRobot::ModelNodeAttachmentPtr> modelFrames;
 
-
+    std::string modelFrameNameSuffix;
     bool useColModel;
     bool structureEnabled;
     bool physicsCoMEnabled;

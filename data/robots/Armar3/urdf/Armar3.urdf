@@ -1245,7 +1245,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/upperarm_r.stl" scale="1 1 1"/>
+				<mesh filename="fullmodel/upperarm_r.iv" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>

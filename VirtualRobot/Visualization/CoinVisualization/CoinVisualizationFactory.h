@@ -213,7 +213,7 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */
-        static SoNode* getCoinVisualization(ModelPtr object, ModelLink::VisualizationType visuType);
+        static SoNode* getCoinVisualization(ModelPtr model, ModelLink::VisualizationType visuType);
         static SoNode* getCoinVisualization(ModelLinkPtr object, ModelLink::VisualizationType visuType);
 
         /*!

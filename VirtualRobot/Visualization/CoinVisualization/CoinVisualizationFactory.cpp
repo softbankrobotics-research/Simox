@@ -11,6 +11,7 @@
 #include "../../Tools/RuntimeEnvironment.h"
 #include "CoinVisualization.h"
 #include "../../Model/Model.h"
+#include "../../Model/Nodes/ModelJoint.h"
 #include "../../Grasping/Grasp.h"
 #include "../../Trajectory.h"
 #include "../../Scene.h"
@@ -27,6 +28,7 @@
 #include "../../Workspace/WorkspaceGrid.h"
 #include "../../XML/BaseIO.h"
 #include "../../Import/MeshImport/STLReader.h"
+#include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include <Inventor/SoDB.h>
 #include <Inventor/nodes/SoFile.h>
 #include <Inventor/nodes/SoNode.h>
@@ -1272,16 +1274,16 @@ namespace VirtualRobot
         return new SoSeparator;
     }*/
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelPtr object, ModelLink::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelPtr model, ModelLink::VisualizationType visuType)
     {
         SoSeparator* result = new SoSeparator();
         result->ref();
-        if (!object)
+        if (!model)
         {
             result->unrefNoDelete();
             return new SoSeparator;
         }
-        std::vector<ModelLinkPtr> links = object->getLinks();
+        std::vector<ModelLinkPtr> links = model->getLinks();
         for (auto l: links)
         {
             VisualizationNodePtr v = l->getVisualization(visuType);
@@ -1293,8 +1295,38 @@ namespace VirtualRobot
             result->addChild(cv);
         }
 
-        // todo : attachments of Modeljoints?!
+        // link attachements
+        for (const auto & link : links)
+        {
+            auto attachements = link->getAttachmentsWithVisualisation();
+            for (const auto & attachement : attachements)
+            {
+                VisualizationNodePtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
+                SoNode* cv = getCoinVisualization(v);
+                if (!cv)
+                    continue;
+                result->addChild(cv);
+            }
+        }
 
+        // joint attachements
+        std::vector<ModelJointPtr> joints = model->getJoints();
+        for (const auto & joint : joints)
+        {
+            auto attachements = joint->getAttachmentsWithVisualisation();
+            for (const auto & attachement : attachements)
+            {
+                VisualizationNodePtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
+                SoNode* cv = getCoinVisualization(v);
+                if (!cv)
+                    continue;
+                result->addChild(cv);
+            }
+        }
 
         result->unrefNoDelete();
         return result;

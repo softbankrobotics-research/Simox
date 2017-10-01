@@ -7,6 +7,8 @@
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
 #include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
+#include "../../Model/Nodes/Attachments/ModelFrameFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -31,6 +33,7 @@ float TIMER_MS = 30.0f;
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
+    modelFrameNameSuffix = "_frame";
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
@@ -575,6 +578,16 @@ void showRobotWindow::loadRobot()
         return;
     }
 
+    // init coordinate system attachements
+    modelFrames.clear();
+    VirtualRobot::ModelNodeAttachmentFactoryPtr factory = VirtualRobot::ModelNodeAttachmentFactory::fromName(VirtualRobot::ModelFrameFactory::getName(), NULL);
+    for (const auto & joint : robot->getJoints())
+    {
+        std::string attachementName = joint->getName() + modelFrameNameSuffix;
+        VirtualRobot::CoinVisualizationNodePtr visu(new VirtualRobot::CoinVisualizationNode(VirtualRobot::CoinVisualizationFactory::CreateCoordSystemVisualization(1, &attachementName)));
+        VirtualRobot::ModelNodeAttachmentPtr attachement = factory->createAttachment(attachementName, Eigen::Matrix4f::Identity(), visu);
+        modelFrames.push_back(attachement);
+    }
 
     updatRobotInfo();
 }
@@ -651,7 +664,20 @@ void showRobotWindow::robotCoordSystems()
 
     bool robotAllCoordsEnabled = UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked;
     robot->showCoordinateSystems(robotAllCoordsEnabled);
-    // rebuild visualization
+
+    // we manually add/remove the frame attachement to/from each joint
+    for (std::size_t i = 0; i < robot->getJoints().size(); i++)
+    {
+        if (robotAllCoordsEnabled)
+        {
+            robot->getJoints().at(i)->attach(modelFrames.at(i));
+        }
+        else
+        {
+            robot->getJoints().at(i)->detach(modelFrames.at(i));
+        }
+    }
+
     rebuildVisualization();
 }
 
