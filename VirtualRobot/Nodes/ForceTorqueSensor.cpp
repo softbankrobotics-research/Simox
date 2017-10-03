@@ -62,9 +62,13 @@ namespace VirtualRobot
     }
 
 
-    SensorPtr ForceTorqueSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float /*scaling*/)
+    SensorPtr ForceTorqueSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float scaling)
     {
-        SensorPtr result(new ForceTorqueSensor(newRobotNode, name));
+        THROW_VR_EXCEPTION_IF(scaling < 0, "Scaling must be >0");
+        Eigen::Matrix4f rnt = rnTransformation;
+        rnt.block(0, 3, 3, 1) *= scaling;
+        ForceTorqueSensorPtr result(new ForceTorqueSensor(newRobotNode, name, rnt));
+        result->updateSensors(forceTorqueValues);
         return result;
     }
 

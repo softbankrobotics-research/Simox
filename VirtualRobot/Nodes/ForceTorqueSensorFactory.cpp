@@ -26,9 +26,9 @@ namespace VirtualRobot
      * \return instance of VirtualRobot::ForceTorqueSensor.
      */
     SensorPtr ForceTorqueSensorFactory::createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr /*visualization*/,
-            const Eigen::Matrix4f& /*rnTrafo*/) const
+            const Eigen::Matrix4f& rnTrafo) const
     {
-        SensorPtr Sensor(new ForceTorqueSensor(node, name));
+        SensorPtr Sensor(new ForceTorqueSensor(node, name, rnTrafo));
 
         return Sensor;
     }
