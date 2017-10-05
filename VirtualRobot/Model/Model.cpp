@@ -10,6 +10,8 @@
 #include "../Trajectory.h"
 #include "../EndEffector/EndEffector.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
+#include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
+#include "../Model/Nodes/Attachments/ModelFrameFactory.h"
 
 #include <algorithm>
 
@@ -561,9 +563,28 @@ namespace VirtualRobot
         // TODO: add Attachment
     }
 
-    void Model::showCoordinateSystems(bool enable)
+    void Model::attachFrames(VisualizationFactoryPtr visualizationFactory)
     {
-        // TODO: add Attachment
+        VirtualRobot::ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(VirtualRobot::ModelFrameFactory::getName(), NULL);
+        for (const auto & joint : getJoints())
+        {
+            std::string attachmentName = joint->getName();
+            VirtualRobot::VisualizationNodePtr visu;
+            if (visualizationFactory)
+            {
+                visu = visualizationFactory->createCoordSystem(1, &attachmentName);
+            }
+            VirtualRobot::ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visu);
+            joint->attach(attachement);
+        }
+    }
+
+    void Model::detachFrames()
+    {
+        for (const auto & joint : getJoints())
+        {
+            joint->detach(joint->getName());
+        }
     }
 
     /*void Model::highlight(const VisualizationPtr& visualization, bool enable)

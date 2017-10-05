@@ -105,13 +105,6 @@ namespace VirtualRobot
         ModelPtr getModel() const;
 
         /*!
-         * Get the name of this node.
-         *
-         * @return The name.
-         */
-        std::string getName() const;
-
-        /*!
          * Check if this node is initialized.
          *
          * @return True, if this node is initialized; false otherwise.
@@ -296,7 +289,7 @@ namespace VirtualRobot
         bool attach(const ModelNodeAttachmentPtr& attachment);
 
         /*!
-         * Check if a attachment is attached.
+         * Check if an attachment is attached.
          *
          * @param attachment The attachment to check for.
          *
@@ -305,13 +298,21 @@ namespace VirtualRobot
         bool isAttached(const ModelNodeAttachmentPtr& attachment);
 
         /*!
-         * Detach a attachment.
+         * Detach an attachment.
          *
          * @param attachment The attachment to remove.
          *
-         * @return True, if the attachment was attached; false otherwise.
+         * @return True, if the attachment was attached before; false otherwise.
          */
         bool detach(const ModelNodeAttachmentPtr& attachment);
+
+        /*!
+         * Detach an attachment.
+         *
+         * \param attachmentName The name of the attachment to remove.
+         * \return True, if the attachment was attached before; false otherwise.
+         */
+        bool detach(const std::string& attachmentName);
 
         /*!
          * Get all attachments with the given type.
@@ -329,8 +330,8 @@ namespace VirtualRobot
          */
         std::vector<ModelNodeAttachmentPtr> getAttachmentsWithVisualisation() const;
 
-		bool hasAttachment(const std::string& attachmentName) const;
-		ModelNodeAttachmentPtr getAttachment(const std::string& attachmentName) const;
+        bool hasAttachment(const std::string& attachmentName) const;
+        ModelNodeAttachmentPtr getAttachment(const std::string& attachmentName) const;
 
         /*!
          * Print status information.

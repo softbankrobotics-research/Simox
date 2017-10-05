@@ -37,12 +37,6 @@ namespace VirtualRobot
         return modelShared;
     }
 
-    std::string ModelNode::getName() const
-    {
-        // never updated -> no lock needed
-        return name;
-    }
-
     ModelNodePtr ModelNode::getChildByName(const std::string& name) const
     {
         ReadLockPtr r = getModel()->getReadLock();
@@ -373,9 +367,9 @@ namespace VirtualRobot
     }
 
 
-	bool ModelNode::hasAttachment(const std::string& attachmentName) const
+    bool ModelNode::hasAttachment(const std::string& attachmentName) const
 	{
-		return getAttachment(attachmentName).get() != 0;
+        return getAttachment(attachmentName).get() != 0;
 	}
 
 	ModelNodeAttachmentPtr ModelNode::getAttachment(const std::string& attachmentName) const
@@ -398,10 +392,7 @@ namespace VirtualRobot
         if (isAttached(attachment))
         {
             attachment->setParent(ModelNodePtr());
-
-            std::vector<ModelNodeAttachmentPtr> allWithType = attachments[attachment->getType()];
-            allWithType.erase(std::find(allWithType.begin(), allWithType.end(), attachment));
-
+            attachments[attachment->getType()].erase(std::find(attachments[attachment->getType()].begin(), attachments[attachment->getType()].end(), attachment));
             if (attachment->getVisualisation())
             {
                 attachmentsWithVisualisation.erase(std::find(attachmentsWithVisualisation.begin(),
@@ -412,6 +403,11 @@ namespace VirtualRobot
         }
 
         return false;
+    }
+
+    bool ModelNode::detach(const std::string &attachmentName)
+    {
+        return detach(getAttachment(attachmentName));
     }
 
     std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachments(const std::string& type) const

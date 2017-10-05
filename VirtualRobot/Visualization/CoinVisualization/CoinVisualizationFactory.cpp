@@ -1295,28 +1295,10 @@ namespace VirtualRobot
             result->addChild(cv);
         }
 
-        // link attachements
-        for (const auto & link : links)
+        // attachments
+        for (const auto & node : model->getModelNodes())
         {
-            auto attachements = link->getAttachmentsWithVisualisation();
-            for (const auto & attachement : attachements)
-            {
-                VisualizationNodePtr v = attachement->getVisualisation();
-                if (!v)
-                    continue;
-                SoNode* cv = getCoinVisualization(v);
-                if (!cv)
-                    continue;
-                result->addChild(cv);
-            }
-        }
-
-        // joint attachements
-        std::vector<ModelJointPtr> joints = model->getJoints();
-        for (const auto & joint : joints)
-        {
-            auto attachements = joint->getAttachmentsWithVisualisation();
-            for (const auto & attachement : attachements)
+            for (const auto & attachement : node->getAttachmentsWithVisualisation())
             {
                 VisualizationNodePtr v = attachement->getVisualisation();
                 if (!v)

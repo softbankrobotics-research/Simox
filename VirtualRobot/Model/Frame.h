@@ -47,7 +47,7 @@ namespace VirtualRobot
              */
             virtual Eigen::Vector3f getGlobalPosition() const;
 
-            virtual std::string getName();
+            virtual std::string getName() const;
             virtual void setName(const std::string &name);
 
 			/*!

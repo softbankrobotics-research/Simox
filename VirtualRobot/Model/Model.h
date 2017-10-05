@@ -339,12 +339,17 @@ namespace VirtualRobot
         void showStructure(bool enable);
 
         /*!
-         * Shows the coordinate systems of the model nodes.
-         * This adds or removes an Attachment.
-         *
-         * @param enable If true, the coordinate system is shown; if false it is removed.
+         * A convenience function that creates and attaches a ModelFrame to each joint.
+         * Each attached ModelFrame inherits the name of its corresponding joint.
+         * @param visualizationFactory The VisualizationFactory to use. If not given, then no visualizations will be created.
          */
-        void showCoordinateSystems(bool enable);
+        void attachFrames(VirtualRobot::VisualizationFactoryPtr visualizationFactory = VirtualRobot::VisualizationFactoryPtr());
+
+        /*!
+         * A convenience function to detach ModelFrames from all joints with equal names.
+         * This function basically reverts calls to attachFrames()
+         */
+        void detachFrames();
 
         // TODO: move to Visualization factory
         /*!

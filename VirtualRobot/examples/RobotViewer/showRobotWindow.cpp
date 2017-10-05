@@ -662,21 +662,10 @@ void showRobotWindow::robotCoordSystems()
         return;
     }
 
-    bool robotAllCoordsEnabled = UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked;
-    robot->showCoordinateSystems(robotAllCoordsEnabled);
-
-    // we manually add/remove the frame attachement to/from each joint
-    for (std::size_t i = 0; i < robot->getJoints().size(); i++)
-    {
-        if (robotAllCoordsEnabled)
-        {
-            robot->getJoints().at(i)->attach(modelFrames.at(i));
-        }
-        else
-        {
-            robot->getJoints().at(i)->detach(modelFrames.at(i));
-        }
-    }
+    if (UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked)
+        robot->attachFrames(VirtualRobot::VisualizationFactory::fromName(VirtualRobot::CoinVisualizationFactory::getName(), NULL));
+    else
+        robot->detachFrames();
 
     rebuildVisualization();
 }

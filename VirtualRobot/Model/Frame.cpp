@@ -23,7 +23,7 @@ Eigen::Vector3f Frame::getGlobalPosition() const
     return globalPose.block<3, 1>(0, 3);
 }
 
-std::string Frame::getName()
+std::string Frame::getName() const
 {
     return name;
 }

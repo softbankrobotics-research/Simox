@@ -43,13 +43,13 @@ namespace VirtualRobot
         ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), VisualizationNodePtr visualization = VisualizationNodePtr())
             : Frame(name), localTransformation(localTransformation), visu(visualization)
         {
-        };
+        }
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachment() {};
+        virtual ~ModelNodeAttachment() {}
 
         /*!
          * Checks if this attachment is attachable to the given node.
