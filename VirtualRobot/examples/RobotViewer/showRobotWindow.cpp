@@ -19,12 +19,6 @@
 #include <iostream>
 #include <cmath>
 
-/*
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoUnits.h>
-*/
 #include <sstream>
 
 using namespace std;
@@ -39,13 +33,6 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
-    /*sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-    extraSep = new SoSeparator;
-    sceneSep->addChild(extraSep);
-
-    sceneSep->addChild(robotSep);*/
 
     setupUI();
 

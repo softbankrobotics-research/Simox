@@ -9,7 +9,7 @@
 #include <urdf_parser/urdf_parser.h>
 
 #include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
-#include "../../RobotFactory.h"
+#include "../../Model/ModelFactory.h"
 #include "../../Model/Nodes/ModelJoint.h"
 #include "../../Model/Nodes/ModelJointFixed.h"
 #include "../../Model/Nodes/ModelLink.h"
@@ -147,7 +147,7 @@ namespace VirtualRobot
         if (!rootNode)
             VR_WARNING << "Could not determine root node with name " << rname;
 
-        VirtualRobot::RobotFactory::initializeRobot(robo, allNodes, childrenMap, rootNode);
+        VirtualRobot::ModelFactory::initializeRobot(robo, allNodes, childrenMap, rootNode);
         return robo;
     }
 

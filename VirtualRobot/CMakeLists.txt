@@ -232,7 +232,6 @@ Compression/CompressionBZip2.h
 Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
-RobotFactory.h
 VirtualRobotException.h
 VirtualRobotImportExport.h
 VirtualRobotTest.h
