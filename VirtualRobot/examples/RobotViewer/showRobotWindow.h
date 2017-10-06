@@ -12,18 +12,19 @@
 #include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "../../Visualization/CoinVisualization/CoinVisualization.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
+#include "../../../Gui/Coin/CoinViewer.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-
+/*
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
+*/
+#include <Inventor/Qt/SoQt.h>
 
 #include <vector>
 
@@ -48,7 +49,6 @@ public slots:
 
     void resetSceneryAll();
     void rebuildVisualization();
-    void showRobot();
     void loadRobot();
     void selectJoint(int nr);
     void selectRNS(int nr);
@@ -66,11 +66,6 @@ public slots:
     void exportVRML();
     void exportXML();
 
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
 protected:
     void setupUI();
     QString formatString(const char* s, float f);
@@ -80,11 +75,17 @@ protected:
     void displayTriangles();
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+
+
+    SimoxGui::CoinViewer* viewer;
+
+    /*
+    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. * /
 
     SoSeparator* sceneSep;
     SoSeparator* robotSep;
     SoSeparator* extraSep;
+    */
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
@@ -106,9 +107,9 @@ protected:
     bool physicsCoMEnabled;
     bool physicsInertiaEnabled;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    //std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };
 
-#endif // __ShowRobot_WINDOW_H_
+#endif

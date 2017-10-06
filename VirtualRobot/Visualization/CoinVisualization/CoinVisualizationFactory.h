@@ -97,6 +97,12 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createTrajectory(TrajectoryPtr t, Color colorNode = Color::Blue(), Color colorLine = Color::Gray(), float nodeSize = 15.0f, float lineSize = 4.0f);
         virtual VisualizationNodePtr createText(const std::string& text, bool billboard = false, float scaling = 1.0f, Color c = Color::Black(), float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f);
         virtual VisualizationNodePtr createTorus(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30);
+
+        virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+
+        virtual VisualizationPtr getVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
+
+
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
@@ -213,8 +219,8 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */
-        static SoNode* getCoinVisualization(ModelPtr model, ModelLink::VisualizationType visuType);
-        static SoNode* getCoinVisualization(ModelLinkPtr object, ModelLink::VisualizationType visuType);
+        static SoNode* getCoinVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
+        static SoNode* getCoinVisualization(const ModelLinkPtr &object, ModelLink::VisualizationType visuType);
 
         /*!
             Convenient method to retrieve a coin visualization for a set of contacts.
@@ -290,8 +296,8 @@ namespace VirtualRobot
 		/**
 		* This method collects all visualization nodes and creates a new Visualization
 		*/
-        static CoinVisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
-        static CoinVisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType);
+        static SoNode* getCoinVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        //static CoinVisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType);
 
         /*!
             Create an offscreen renderer object with the given width and height.

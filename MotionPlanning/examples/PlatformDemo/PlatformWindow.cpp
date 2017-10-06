@@ -150,12 +150,14 @@ void PlatformWindow::buildVisu()
 
     if (scene)
     {
-        visualization = CoinVisualizationFactory::getVisualization(scene, colModel);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
+        CoinVisualizationPtr cvn = std::dynamic_pointer_cast<CoinVisualization>(v);
+
         SoNode* visualisationNode = NULL;
 
-        if (visualization)
+        if (cvn)
         {
-            visualisationNode = visualization->getCoinVisualization();
+            visualisationNode = cvn->getCoinVisualization();
         }
 
         if (visualisationNode)

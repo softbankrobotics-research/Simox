@@ -177,21 +177,11 @@ void startRRTVisualization()
     SoSeparator* sep = new SoSeparator();
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
 
-    CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robot, colModel);
-    SoNode* visualisationNode = NULL;
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
+    SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot, colModel);
     sep->addChild(visualisationNode);
 
     // display obstacle
-    CoinVisualizationPtr visuObstacle = CoinVisualizationFactory::getVisualization(o, colModel);
-    SoNode* visualisationNodeO = NULL;
-    if (visuObstacle)
-    {
-        visualisationNodeO = visuObstacle->getCoinVisualization();
-    }
+    SoNode* visualisationNodeO = CoinVisualizationFactory::getCoinVisualization(o, colModel);
     sep->addChild(visualisationNodeO);
 
     // show rrt visu

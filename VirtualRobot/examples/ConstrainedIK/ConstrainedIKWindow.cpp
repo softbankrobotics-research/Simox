@@ -171,13 +171,7 @@ void ConstrainedIKWindow::collisionModel()
 
     robotSep->removeAllChildren();
 
-    CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robot, ModelLink::VisualizationType::Full);
-    SoNode* visualisationNode = NULL;
-
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
+    SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot,  ModelLink::VisualizationType::Full);
 
     if (visualisationNode)
     {
