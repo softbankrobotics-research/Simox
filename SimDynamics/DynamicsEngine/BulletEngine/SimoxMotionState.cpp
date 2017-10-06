@@ -125,7 +125,8 @@ namespace SimDynamics
         // get joint angle
 		ModelLinkPtr rn = sceneObject;
         DynamicsWorldPtr w = DynamicsWorld::GetWorld();
-        DynamicsModelPtr dr = w->getEngine()->getRobot(rn->getModel());
+        ModelPtr model = rn->getModel();
+        DynamicsModelPtr dr = w->getEngine()->getRobot(model);
         BulletRobotPtr bdr = std::dynamic_pointer_cast<BulletRobot>(dr);
 
         if (bdr)
@@ -144,6 +145,13 @@ namespace SimDynamics
 					//rna->updateJointAngle(ja);
 					links[i].nodeJoint->setJointValueNoUpdate(ja);
                 }
+            }
+
+            // check root node
+            if (sceneObject == model->getRootNode())
+            {
+                // do not update visualization here, this will be done in the engine action callback
+                model->setGlobalPose(resPose, false);
             }
 
             // we assume that all models are handled by Bullet, so we do not need to update children

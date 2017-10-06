@@ -88,6 +88,11 @@ namespace SimDynamics
         virtual void actuateJoints(double dt);
         virtual void updateSensors(double) {}
 
+        /*!
+         * \brief updateVisualization Update the poses of the visualization models.
+         */
+        virtual void updateVisualization();
+
         // experimental...
         virtual void ensureKinematicConstraints();
 
@@ -147,6 +152,9 @@ namespace SimDynamics
         virtual void enableSelfCollisions(bool enable);
 
     protected:
+
+
+        virtual void setPoseNonActuatedRobotNodes(){}
 
         virtual void createDynamicsNode(VirtualRobot::ModelLinkPtr node);
 

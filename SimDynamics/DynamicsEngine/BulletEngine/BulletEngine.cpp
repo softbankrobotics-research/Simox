@@ -461,6 +461,7 @@ namespace SimDynamics
         MutexLockPtr lock = e->getScopedLock();
 
         e->updateRobots(timeStep);
+        e->updateObjects(timeStep);
 
         for (unsigned int i = 0; i < e->callbacks.size(); i++)
         {
@@ -469,12 +470,22 @@ namespace SimDynamics
     }
 
 
+    void BulletEngine::updateObjects(btScalar timeStep)
+    {
+        for (size_t i = 0; i < objects.size(); i++)
+        {
+            objects[i]->updateVisualization();
+        }
+    }
+
     void BulletEngine::updateRobots(btScalar timeStep)
     {
         for (size_t i = 0; i < robots.size(); i++)
         {
             robots[i]->actuateJoints(static_cast<double>(timeStep));
             robots[i]->updateSensors(static_cast<double>(timeStep));
+
+            robots[i]->updateVisualization();
         }
     }
 
@@ -748,6 +759,7 @@ void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, b
     MutexLockPtr lock = getScopedLock();
 
     updateRobots(deltaTimeStep);
+    updateObjects(deltaTimeStep);
 
     for (unsigned int i = 0; i < callbacks.size(); i++)
     {

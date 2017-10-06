@@ -89,6 +89,11 @@ namespace SimDynamics
 
         virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s);
 
+        /*!
+         * \brief updateVisualization Update the poses of the visualization models.
+         */
+        virtual void updateVisualization();
+
         typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.
