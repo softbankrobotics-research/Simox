@@ -58,7 +58,10 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
-    TARGET_LINK_LIBRARIES(${name} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
+    if (Simox_USE_COIN_VISUALIZATION)
+        SET (SIMOX_VISU_GUI_LIB simox-gui-coin3d)
+    endif()
+    TARGET_LINK_LIBRARIES(${name} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES} ${SIMOX_VISU_GUI_LIB})
 endfunction()
 
 
