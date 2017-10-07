@@ -11,7 +11,7 @@ namespace VirtualRobot
         friend class ModelStructureFactory;
 
     protected:
-        ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), VisualizationNodePtr visualization = VisualizationNodePtr());
+        ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
     public:
         ~ModelStructure();

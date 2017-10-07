@@ -563,18 +563,14 @@ namespace VirtualRobot
         // TODO: add Attachment
     }
 
-    void Model::attachFrames(VisualizationFactoryPtr visualizationFactory)
+    void Model::attachFrames(std::string visualizationType)
     {
         VirtualRobot::ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(VirtualRobot::ModelFrameFactory::getName(), NULL);
         for (const auto & joint : getJoints())
         {
             std::string attachmentName = joint->getName();
             VirtualRobot::VisualizationNodePtr visu;
-            if (visualizationFactory)
-            {
-                visu = visualizationFactory->createCoordSystem(1, &attachmentName);
-            }
-            VirtualRobot::ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visu);
+            VirtualRobot::ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
             joint->attach(attachement);
         }
     }

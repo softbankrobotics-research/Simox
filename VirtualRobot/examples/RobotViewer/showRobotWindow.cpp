@@ -33,7 +33,6 @@ float TIMER_MS = 30.0f;
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
-    modelFrameNameSuffix = "_frame";
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
@@ -578,17 +577,6 @@ void showRobotWindow::loadRobot()
         return;
     }
 
-    // init coordinate system attachements
-    modelFrames.clear();
-    VirtualRobot::ModelNodeAttachmentFactoryPtr factory = VirtualRobot::ModelNodeAttachmentFactory::fromName(VirtualRobot::ModelFrameFactory::getName(), NULL);
-    for (const auto & joint : robot->getJoints())
-    {
-        std::string attachementName = joint->getName() + modelFrameNameSuffix;
-        VirtualRobot::CoinVisualizationNodePtr visu(new VirtualRobot::CoinVisualizationNode(VirtualRobot::CoinVisualizationFactory::CreateCoordSystemVisualization(1, &attachementName)));
-        VirtualRobot::ModelNodeAttachmentPtr attachement = factory->createAttachment(attachementName, Eigen::Matrix4f::Identity(), visu);
-        modelFrames.push_back(attachement);
-    }
-
     updatRobotInfo();
 }
 
@@ -663,7 +651,7 @@ void showRobotWindow::robotCoordSystems()
     }
 
     if (UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked)
-        robot->attachFrames(VirtualRobot::VisualizationFactory::fromName(VirtualRobot::CoinVisualizationFactory::getName(), NULL));
+        robot->attachFrames(VirtualRobot::CoinVisualizationFactory::getName());
     else
         robot->detachFrames();
 

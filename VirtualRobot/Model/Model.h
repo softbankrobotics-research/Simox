@@ -341,9 +341,10 @@ namespace VirtualRobot
         /*!
          * A convenience function that creates and attaches a ModelFrame to each joint.
          * Each attached ModelFrame inherits the name of its corresponding joint.
-         * @param visualizationFactory The VisualizationFactory to use. If not given, then no visualizations will be created.
+         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         *                          If not given, then no visualizations will be created.
          */
-        void attachFrames(VirtualRobot::VisualizationFactoryPtr visualizationFactory = VirtualRobot::VisualizationFactoryPtr());
+        void attachFrames(std::string visualizationType = "");
 
         /*!
          * A convenience function to detach ModelFrames from all joints with equal names.

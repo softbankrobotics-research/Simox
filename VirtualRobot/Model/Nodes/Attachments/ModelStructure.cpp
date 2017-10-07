@@ -2,8 +2,8 @@
 
 namespace VirtualRobot
 {
-    VirtualRobot::ModelStructure::ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation, VirtualRobot::VisualizationNodePtr visualization)
-        : ModelNodeAttachment(name, localTransformation, visualization)
+    VirtualRobot::ModelStructure::ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
+        : ModelNodeAttachment(name, localTransformation, visualizationType)
     {
 
     }

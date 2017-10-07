@@ -1154,7 +1154,7 @@ namespace VirtualRobot
         ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("ModelFrame", NULL);
         THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate model frame factory...");
 
-        mff->createAttachment(frameName, transformMatrix, VisualizationNodePtr());
+        mff->createAttachment(frameName, transformMatrix);
 
 
         return FramePtr();

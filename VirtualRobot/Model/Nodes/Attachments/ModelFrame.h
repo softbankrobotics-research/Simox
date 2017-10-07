@@ -36,7 +36,7 @@ namespace VirtualRobot
         /*!
          * Constructor.
          */
-        ModelFrame(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), VisualizationNodePtr visualization = VisualizationNodePtr());
+        ModelFrame(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
     public:
         /*!
@@ -61,6 +61,9 @@ namespace VirtualRobot
          * @return "ModelFrame".
          */
         virtual std::string getType();
+
+    private:
+        void initVisualization(std::string visualizationType);
     };
     
     typedef std::shared_ptr<ModelFrame> ModelFramePtr;

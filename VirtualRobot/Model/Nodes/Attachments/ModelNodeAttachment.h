@@ -40,8 +40,8 @@ namespace VirtualRobot
         /*!
          * Constructor.
          */
-        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), VisualizationNodePtr visualization = VisualizationNodePtr())
-            : Frame(name), localTransformation(localTransformation), visu(visualization)
+        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "")
+            : Frame(name), localTransformation(localTransformation), visualizationType(visualizationType)
         {
         }
 
@@ -92,6 +92,11 @@ namespace VirtualRobot
             return visu;
         }
 
+        virtual void setVisualization(VisualizationNodePtr visu)
+        {
+            this->visu = visu;
+        }
+
         /*!
          * Get the type of this attachment.
          * This is used to seperate different attached attachments.
@@ -133,6 +138,7 @@ namespace VirtualRobot
 
         ModelNodeWeakPtr node;
         Eigen::Matrix4f localTransformation;
+        std::string visualizationType;
         VisualizationNodePtr visu;
     };
 }

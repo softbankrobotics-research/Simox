@@ -48,7 +48,7 @@ namespace VirtualRobot
          *
          * @return The new attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), VisualizationNodePtr visu = VisualizationNodePtr());
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
         // AbstractFactoryMethod
     public:

@@ -98,9 +98,7 @@ protected:
     VirtualRobot::EndEffectorPtr currentEEF;
     VirtualRobot::ModelNodeSetPtr currentRobotNodeSet;
     VirtualRobot::ModelNodePtr currentRobotNode;
-    std::vector<VirtualRobot::ModelNodeAttachmentPtr> modelFrames;
 
-    std::string modelFrameNameSuffix;
     bool useColModel;
     bool structureEnabled;
     bool physicsCoMEnabled;
