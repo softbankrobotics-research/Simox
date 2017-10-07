@@ -601,7 +601,9 @@ namespace SimDynamics
         }
 
         //cout << endl;
-        setPoseNonActuatedRobotNodes();
+
+        // now done in updateVisualization
+        //setPoseNonActuatedRobotNodes();
     }
 
     void BulletRobot::updateSensors(double dt)

@@ -28,6 +28,7 @@
 #include "../Tools/BoundingBox.h"
 #include "../Model/Primitive.h"
 #include "../Tools/MathTools.h"
+#include "../Model/Nodes/ModelLink.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -121,6 +122,17 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+
+        virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true)
+        {
+            return VisualizationPtr();
+        }
+
+        virtual VisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
+        {
+            return VisualizationPtr();
+        }
+
         /*!
             A box, dimensions are given in mm.
         */

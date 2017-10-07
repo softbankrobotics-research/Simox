@@ -157,6 +157,7 @@ namespace SimDynamics
     protected:
         // callback called each tick by bullet callback
         void updateRobots(btScalar timeStep);
+        void updateObjects(btScalar timeStep);
 
         class CustomCollisionCallback : public btOverlapFilterCallback
         {

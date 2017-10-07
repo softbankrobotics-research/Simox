@@ -213,7 +213,7 @@ RobotPtr ConstrainedIK::buildReducedRobot(const RobotPtr &original)
         VR_INFO << "    " << node << std::endl;
     }
 
-    return RobotFactory::cloneUniteSubsets(original, "ConstrainedIK_Reduced_Robot", unitable);
+    return ModelFactory::cloneUniteSubsets(original, "ConstrainedIK_Reduced_Robot", unitable);
 }
 */
 

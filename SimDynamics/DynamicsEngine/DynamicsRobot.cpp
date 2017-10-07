@@ -312,6 +312,13 @@ namespace SimDynamics
 
     }
 
+    void DynamicsRobot::updateVisualization()
+    {
+        if (robot)
+            robot->applyJointValues();
+        setPoseNonActuatedRobotNodes();
+    }
+
     bool DynamicsRobot::isNodeActuated(VirtualRobot::ModelJointPtr node)
     {
         MutexLockPtr lock = getScopedLock();

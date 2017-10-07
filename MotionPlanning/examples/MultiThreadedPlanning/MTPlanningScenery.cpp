@@ -213,14 +213,7 @@ void MTPlanningScenery::buildScene()
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
         environment.push_back(o);
-        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(o, ModelLink::Full);
-        SoNode* visualisationNode = NULL;
-
-        if (visualization)
-        {
-            visualisationNode = visualization->getCoinVisualization();
-        }
-
+        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(o, ModelLink::Full);;
         obstSep->addChild(visualisationNode);
     }
 
@@ -639,13 +632,13 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
     if ((int)robots.size() == 1)
     {
-        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
+        SoNode* visualization = CoinVisualizationFactory::getCoinVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
         if (visualization)
         {
-            robotSep->addChild(visualization->getCoinVisualization());
+            robotSep->addChild(visualization);
         }
 
         //sceneSep->addChild(robotSep);
@@ -764,13 +757,13 @@ void MTPlanningScenery::setRobotModelShape(bool collisionModel)
     //sceneSep->removeChild(robotSep);
     if (robots.size() > 0)
     {
-        CoinVisualizationPtr visualization = CoinVisualizationFactory::getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
+        SoNode* visualization = CoinVisualizationFactory::getCoinVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
         //SoNode* visualisationNode = NULL;
         robotSep = new SoSeparator();
 
         if (visualization)
         {
-            robotSep->addChild(visualization->getCoinVisualization());
+            robotSep->addChild(visualization);
         }
 
         //sceneSep->addChild(robotSep);

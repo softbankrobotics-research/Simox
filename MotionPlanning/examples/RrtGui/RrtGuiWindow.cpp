@@ -187,17 +187,12 @@ void RrtGuiWindow::buildVisu()
 
     if (scene)
     {
-        visualization = CoinVisualizationFactory::getVisualization(scene,colModel);
-        SoNode* visualisationNode = NULL;
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene,colModel);
+        CoinVisualizationPtr cvn = std::dynamic_pointer_cast<CoinVisualization>(v);
 
-        if (visualization)
+        if (cvn)
         {
-            visualisationNode = visualization->getCoinVisualization();
-        }
-
-        if (visualisationNode)
-        {
-            sceneFileSep->addChild(visualisationNode);
+            sceneFileSep->addChild(cvn->getCoinVisualization());
         }
     }
 

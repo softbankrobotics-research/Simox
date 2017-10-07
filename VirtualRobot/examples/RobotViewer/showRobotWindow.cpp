@@ -19,10 +19,6 @@
 #include <iostream>
 #include <cmath>
 
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoUnits.h>
 #include <sstream>
 
 using namespace std;
@@ -36,13 +32,6 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-    extraSep = new SoSeparator;
-    sceneSep->addChild(extraSep);
-
-    sceneSep->addChild(robotSep);
 
     setupUI();
 
@@ -55,25 +44,13 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
 showRobotWindow::~showRobotWindow()
 {
     robot.reset();
-    sceneSep->unref();
 }
 
 void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
-
-    viewer->setAccumulationBuffer(true);
+    viewer = new SimoxGui::CoinViewer(UI.frameViewer);
     viewer->setAntialiasing(true, 4);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
@@ -219,26 +196,14 @@ void showRobotWindow::rebuildVisualization()
         return;
     }
 
-    robotSep->removeAllChildren();
-    //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
+    viewer->clearLayer("robotLayer");
+
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot, colModel);
-    /*
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
-
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }*/
-
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
+    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+    viewer->addVisualization("robotLayer", "robot", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -344,10 +309,6 @@ void showRobotWindow::exportXML()
     }*/
 }
 
-void showRobotWindow::showRobot()
-{
-    //m_pGraspScenery->showRobot(m_pShowRobot->state() == QCheckBox::On);
-}
 
 void showRobotWindow::closeEvent(QCloseEvent* event)
 {
@@ -540,7 +501,8 @@ void showRobotWindow::selectRobot()
 
 void showRobotWindow::loadRobot()
 {
-    robotSep->removeAllChildren();
+    viewer->clearLayer("robotLayer");
+
     cout << "Loading Robot from " << robotFilename << endl;
     currentEEF.reset();
     currentRobotNode.reset();

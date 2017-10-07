@@ -94,6 +94,13 @@ namespace SimDynamics
         sceneObject->setSimulationType(s);
     }
 
+    void DynamicsObject::updateVisualization()
+    {
+        if (sceneObject)
+            sceneObject->updatePose(true, true);
+    }
+
+
     DynamicsObject::MutexLockPtr DynamicsObject::getScopedLock()
     {
 		std::shared_ptr< std::unique_lock<std::recursive_mutex> > scoped_lock;

@@ -83,7 +83,7 @@ namespace VirtualRobot
         /*!
          * Initialize ModelNode. Here pointers to parent and children are created from names.
          * Be sure all children are created and registered to the Model before calling initialize.
-         * Usually RobotFactory manages the initialization.
+         * Usually ModelFactory manages the initialization.
          *
          * @param parent The parent of this node.
          * @param children The children of this node.

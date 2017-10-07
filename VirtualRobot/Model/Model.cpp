@@ -555,7 +555,8 @@ namespace VirtualRobot
 
     void Model::applyJointValues()
     {
-        rootNode->updatePose(true, true);
+        if (rootNode)
+            rootNode->updatePose(true, true);
     }
 
     void Model::showStructure(bool enable)

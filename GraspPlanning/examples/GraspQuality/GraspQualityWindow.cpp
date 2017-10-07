@@ -171,8 +171,7 @@ void GraspQualityWindow::buildVisu()
 
     if (robot)
     {
-        visualizationRobot = CoinVisualizationFactory::getVisualization(robot, colModel);
-        SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
+        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot, colModel);
 
         if (visualisationNode)
         {

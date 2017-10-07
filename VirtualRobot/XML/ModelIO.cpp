@@ -1,6 +1,6 @@
 
 #include "ModelIO.h"
-#include "../RobotFactory.h"
+#include "../Model/ModelFactory.h"
 #include "../Model/ModelNodeSet.h"
 #include "../VirtualRobotException.h"
 #include "../Model/Nodes/ModelJointFixed.h"
@@ -134,6 +134,7 @@ namespace VirtualRobot
         if (!res)
         {
             VR_ERROR << "Error while parsing file " << fullFile << endl;
+            return res;
         }
 
         res->applyJointValues();

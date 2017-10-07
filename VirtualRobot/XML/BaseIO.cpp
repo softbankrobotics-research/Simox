@@ -1,7 +1,7 @@
 
 #include "BaseIO.h"
 #include "../Model/Model.h"
-#include "../RobotFactory.h"
+#include "../Model/ModelFactory.h"
 #include "../Model/ModelNodeSet.h"
 #include "../Model/LinkSet.h"
 #include "../Model/JointSet.h"

@@ -1274,47 +1274,17 @@ namespace VirtualRobot
         return new SoSeparator;
     }*/
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelPtr model, ModelLink::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {
-        SoSeparator* result = new SoSeparator();
-        result->ref();
-        if (!model)
-        {
-            result->unrefNoDelete();
-            return new SoSeparator;
-        }
-        std::vector<ModelLinkPtr> links = model->getLinks();
-        for (auto l: links)
-        {
-            VisualizationNodePtr v = l->getVisualization(visuType);
-            if (!v)
-                continue;
-            SoNode* cv = getCoinVisualization(v);
-            if (!cv)
-                continue;
-            result->addChild(cv);
-        }
 
-        // attachments
-        for (const auto & node : model->getModelNodes())
-        {
-            for (const auto & attachement : node->getAttachmentsWithVisualisation())
-            {
-                VisualizationNodePtr v = attachement->getVisualisation();
-                if (!v)
-                    continue;
-                SoNode* cv = getCoinVisualization(v);
-                if (!cv)
-                    continue;
-                result->addChild(cv);
-            }
-        }
-
-        result->unrefNoDelete();
-        return result;
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(model, visuType);
+        CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(v);
+        if (cv)
+            return cv->getCoinVisualization();
+        return NULL;
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(ModelLinkPtr object, ModelLink::VisualizationType visuType)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(const ModelLinkPtr &object, ModelLink::VisualizationType visuType)
     {
         SoSeparator* result = new SoSeparator();
         result->ref();
@@ -4228,7 +4198,7 @@ namespace VirtualRobot
         return m;
     }
 
-    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
 	{
 		VR_ASSERT(scene);
 
@@ -4328,19 +4298,34 @@ namespace VirtualRobot
 		return visualization;
 	}
 
-    CoinVisualizationPtr CoinVisualizationFactory::getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {
-        VR_ASSERT(robot);
+        VR_ASSERT(model);
 
+        if (!model)
+        {
+            return VisualizationPtr();
+        }
         std::vector<VisualizationNodePtr> collectedVisualizationNodes;
-
-        auto links = robot->getLinks();
-
-        for (auto l : links)
+        std::vector<ModelLinkPtr> links = model->getLinks();
+        for (auto l: links)
         {
             VisualizationNodePtr v = l->getVisualization(visuType);
-            if (v)
+            if (!v)
+                continue;
+            collectedVisualizationNodes.push_back(v);
+        }
+
+        // attachments
+        for (const auto & node : model->getModelNodes())
+        {
+            for (const auto & attachement : node->getAttachmentsWithVisualisation())
+            {
+                VisualizationNodePtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
                 collectedVisualizationNodes.push_back(v);
+            }
         }
 
         CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
