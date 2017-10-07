@@ -116,6 +116,8 @@ Model/Nodes/ModelJointPrismatic.cpp
 Model/Nodes/ModelJointRevolute.cpp
 Model/Nodes/Attachments/ModelFrame.cpp
 Model/Nodes/Attachments/ModelFrameFactory.cpp
+Model/Nodes/Attachments/ModelStructure.cpp
+Model/Nodes/Attachments/ModelStructureFactory.cpp
 Tools/MathTools.cpp
 Tools/Orientation.cpp
 Tools/BoundingBox.cpp
@@ -219,6 +221,8 @@ Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
 Model/Nodes/Attachments/ModelFrame.h
 Model/Nodes/Attachments/ModelFrameFactory.h
+Model/Nodes/Attachments/ModelStructure.h
+Model/Nodes/Attachments/ModelStructureFactory.h
 Tools/AbstractFactoryMethod.h
 Tools/ConditionedLock.h
 Tools/MathTools.h
