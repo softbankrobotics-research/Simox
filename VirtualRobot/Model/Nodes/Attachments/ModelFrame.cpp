@@ -35,7 +35,7 @@ namespace VirtualRobot
         VisualizationFactoryPtr factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, NULL);
         if (!factory)
         {
-            VR_ERROR << "Could not create VisualizationFactory with name " << visualizationType << endl;
+            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
             return;
         }
 

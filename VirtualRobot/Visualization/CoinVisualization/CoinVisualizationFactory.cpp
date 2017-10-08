@@ -601,7 +601,7 @@ namespace VirtualRobot
         Eigen::Matrix4f toM;
         toM.setIdentity();
         toM.block(0, 3, 3, 1) = to;
-        return createLine(from, to, width, colorR, colorG, colorB);
+        return createLine(fromM, toM, width, colorR, colorG, colorB);
     }
 
     VisualizationNodePtr CoinVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)

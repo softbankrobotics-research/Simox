@@ -331,23 +331,29 @@ namespace VirtualRobot
         virtual void applyJointValues();
 
         /*!
-         * Shows the structure of the model.
-         * This adds or removes a Attachment.
-         *
-         * @param enable If true, the structure is shown; if false it is removed.
+         * A convenience function that creates and attaches a ModelStructure to each joint.
+         * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
+         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         *                          If not given, then no visualizations will be created.
          */
-        void showStructure(bool enable);
+        void attachStructure(std::string visualizationType = "");
+
+        /*!
+         * A convenience function to detach ModelStructures.
+         * This function basically reverts calls to attachStructure()
+         */
+        void detachStructure();
 
         /*!
          * A convenience function that creates and attaches a ModelFrame to each joint.
-         * Each attached ModelFrame inherits the name of its corresponding joint.
+         * Each attached ModelFrame inherits the name of its corresponding joint appended by "_frame".
          * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          *                          If not given, then no visualizations will be created.
          */
         void attachFrames(std::string visualizationType = "");
 
         /*!
-         * A convenience function to detach ModelFrames from all joints with equal names.
+         * A convenience function to detach ModelFrames.
          * This function basically reverts calls to attachFrames()
          */
         void detachFrames();

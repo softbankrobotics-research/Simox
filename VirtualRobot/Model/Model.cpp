@@ -12,6 +12,7 @@
 #include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 #include "../Model/Nodes/Attachments/ModelFrameFactory.h"
+#include "../Model/Nodes/Attachments/ModelStructureFactory.h"
 
 #include <algorithm>
 
@@ -559,19 +560,32 @@ namespace VirtualRobot
             rootNode->updatePose(true, true);
     }
 
-    void Model::showStructure(bool enable)
+    void Model::attachStructure(std::string visualizationType)
     {
-        // TODO: add Attachment
+        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), NULL);
+        for (const auto & node : getModelNodes())
+        {
+            std::string attachmentName = node->getName() + "_structure";
+            ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
+            node->attach(attachement);
+        }
+    }
+
+    void Model::detachStructure()
+    {
+        for (const auto & node : getModelNodes())
+        {
+            node->detach(node->getName() + "_structure");
+        }
     }
 
     void Model::attachFrames(std::string visualizationType)
     {
-        VirtualRobot::ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(VirtualRobot::ModelFrameFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelFrameFactory::getName(), NULL);
         for (const auto & joint : getJoints())
         {
-            std::string attachmentName = joint->getName();
-            VirtualRobot::VisualizationNodePtr visu;
-            VirtualRobot::ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
+            std::string attachmentName = joint->getName() + "_frame";
+            ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
             joint->attach(attachement);
         }
     }
@@ -580,7 +594,7 @@ namespace VirtualRobot
     {
         for (const auto & joint : getJoints())
         {
-            joint->detach(joint->getName());
+            joint->detach(joint->getName() + "_frame");
         }
     }
 

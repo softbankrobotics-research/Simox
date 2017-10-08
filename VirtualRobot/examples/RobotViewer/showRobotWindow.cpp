@@ -599,9 +599,11 @@ void showRobotWindow::robotStructure()
         return;
     }
 
-    structureEnabled = UI.checkBoxStructure->checkState() == Qt::Checked;
-    robot->showStructure(structureEnabled);
-    // rebuild visualization
+    if (UI.checkBoxStructure->checkState() == Qt::Checked)
+        robot->attachStructure(VirtualRobot::CoinVisualizationFactory::getName());
+    else
+        robot->detachStructure();
+
     rebuildVisualization();
 }
 

@@ -44,9 +44,11 @@ namespace VirtualRobot
         virtual ~ModelNodeAttachmentFactory() {};
 
         /*!
-         * Create a new attachment.
-         *
-         * @return The new attachment.
+         * Creates an attachment.
+         * \param name  The name of the attachment.
+         * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
+         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         * \return  A fully initialized attachment.
          */
         virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "") = 0;
     };

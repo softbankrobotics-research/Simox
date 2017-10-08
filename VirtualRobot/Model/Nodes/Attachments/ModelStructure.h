@@ -1,5 +1,27 @@
-#ifndef MODELSTRUCTUREATTACHMENT_H
-#define MODELSTRUCTUREATTACHMENT_H
+/**
+* This file is part of Simox.
+*
+* Simox is free software; you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Simox is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package    VirtualRobot
+* @author     Harry
+* @copyright  2017 Nikolaus Vahrenkamp
+*             GNU Lesser General Public License
+*
+*/
+#ifndef MODELSTRUCTURE_H
+#define MODELSTRUCTURE_H
 
 #include "ModelNodeAttachment.h"
 
@@ -11,10 +33,16 @@ namespace VirtualRobot
         friend class ModelStructureFactory;
 
     protected:
+        /*!
+         * Constructor.
+         * \param name  The name of the attachment.
+         * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
+         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         */
         ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
     public:
-        ~ModelStructure();
+        virtual ~ModelStructure();
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -33,6 +61,15 @@ namespace VirtualRobot
          * @return "ModelStructure".
          */
         virtual std::string getType();
+
+    private:
+        void initVisualization();
+        VisualizationNodePtr createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory);
+        VisualizationNodePtr createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory);
+
+        // ModelNodeAttachment interface
+    protected:
+        virtual void setParent(ModelNodePtr node);
     };
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;
