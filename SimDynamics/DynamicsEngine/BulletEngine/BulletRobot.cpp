@@ -762,11 +762,14 @@ namespace SimDynamics
             if (ftSensor)
             {
                 VirtualRobot::RobotNodePtr node = ftSensor->getRobotNode();
-                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode")
+                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode");
 
-                const LinkInfo& link = getLink(node);
-                Eigen::VectorXf forceTorques = getJointForceTorqueGlobal(link);
-                ftSensor->updateSensors(forceTorques);
+                if (hasLink(node))
+                {
+                    const LinkInfo& link = getLink(node);
+                    Eigen::VectorXf forceTorques = getJointForceTorqueGlobal(link);
+                    ftSensor->updateSensors(forceTorques);
+                }
             }
             else
             {
