@@ -33,7 +33,7 @@ namespace VirtualRobot
 
     SensorPtr ContactSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float /*scaling*/)
     {
-        SensorPtr result(new ContactSensor(newRobotNode, name));
+        SensorPtr result(new ContactSensor(newRobotNode, name/*, rnTransformation*/));
         return result;
     }
 

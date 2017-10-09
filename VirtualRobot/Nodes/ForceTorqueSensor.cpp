@@ -64,7 +64,7 @@ namespace VirtualRobot
 
     SensorPtr ForceTorqueSensor::_clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr /*visualizationModel*/, float /*scaling*/)
     {
-        SensorPtr result(new ForceTorqueSensor(newRobotNode, name));
+        SensorPtr result(new ForceTorqueSensor(newRobotNode, name, rnTransformation));
         return result;
     }
 
