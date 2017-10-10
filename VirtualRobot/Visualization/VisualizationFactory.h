@@ -249,7 +249,7 @@ namespace VirtualRobot
         }
 
         /*!
-            Here, a manual cleanup can be called, no Coin3D access possible after this.
+            Here, a manual cleanup can be called, visualization engine access may not be possible after calling this method.
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
         virtual void cleanup()
@@ -260,7 +260,7 @@ namespace VirtualRobot
         /*! 
         * Use this method to get the VisualizationFactory singleton according to your compile setup.
         * @see CoinVisualizationFactory
-        * Usually there is only one VeisualizationFactory type registered, so we can safely return the first entry.
+        * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
         */
         static VisualizationFactoryPtr getGlobalVisualizationFactory()
         {

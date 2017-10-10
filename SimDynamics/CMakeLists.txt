@@ -6,7 +6,7 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
 
-MESSAGE (STATUS "***** CONFIGURING Simox project SimDynamics *****")
+MESSAGE (STATUS "***** CONFIGURING project simox-simdynamics *****")
 
 
 GET_FILENAME_COMPONENT (CurrentSimDynamicsPath ${CMAKE_CURRENT_LIST_FILE} PATH)
@@ -275,7 +275,7 @@ if (SimDynamics_DYNAMICSENGINE)
   	)
   
 else()
-    MESSAGE ("Not building SimDynamics, physics engine not found...")
+    MESSAGE ("Not building simox-simdynamics, physics engine not found...")
 endif()
 
-MESSAGE (STATUS "***** Finished CONFIGURING Simox project SimDynamics *****")
+MESSAGE (STATUS "***** Finished CONFIGURING project simox-simdynamics *****")

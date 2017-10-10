@@ -2,6 +2,7 @@ set(INCLUDES
     CoinViewer.h
     ../ViewerInterface.h
     ../ViewerFactory.h
+    ../ViewerSelection.h
     CoinViewerFactory.h
 )
 

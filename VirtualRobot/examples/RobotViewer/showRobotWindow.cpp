@@ -21,6 +21,12 @@
 
 #include <sstream>
 
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -50,8 +56,12 @@ void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
 
-    viewer = new SimoxGui::CoinViewer(UI.frameViewer);
-    viewer->setAntialiasing(true, 4);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
+
+    //viewer = new SimoxGui::CoinViewer(UI.frameViewer);
+    //viewer->setAntialiasing(true, 4);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -321,8 +331,9 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 
 int showRobotWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
+    //SoQt::show(this);
+    //SoQt::mainLoop();
     return 0;
 }
 
@@ -331,7 +342,8 @@ void showRobotWindow::quit()
 {
     std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
+    //SoQt::exitMainLoop();
 }
 
 void showRobotWindow::updateJointBox()

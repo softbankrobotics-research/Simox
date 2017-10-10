@@ -16,40 +16,21 @@
 *
 * @package    Gui
 * @author     Nikolaus Vahrenkamp
-* @copyright  2016 Nikolaus Vahrenkamp
+* @copyright  2017 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_ViewerFactory_h_
-#define _Gui_ViewerFactory_h_
+#ifndef _Gui_ViewerSelection_h_
+#define _Gui_ViewerSelection_h_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
-#include <string>
-
-#include "ViewerInterface.h"
-
-
-namespace SimoxGui
-{
-
-    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
-    {
-    public:
-
-        ViewerFactory()
-        {
-            ;
-        }
-        virtual ~ViewerFactory()
-        {
-            ;
-        }
-
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) = 0;
-    };
-    typedef std::shared_ptr<ViewerFactory> ViewerFactoryPtr;
-
-} // namespace SimoxGui
+// does not work as expected
+//#ifdef Simox_USE_COIN_VISUALIZATION
+//#include "Coin/CoinViewerFactory.h"
+//namespace SimoxGui
+//{
+//    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib may not be loaded since it is not referenced by the application)
+//    SimoxGui::CoinViewerFactory __viewerfactory;
+//}
+//#endif
 
 #endif

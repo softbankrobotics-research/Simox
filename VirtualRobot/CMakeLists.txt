@@ -1,6 +1,6 @@
 PROJECT ( simox-virtualrobot )
 
-MESSAGE (STATUS "\n***** CONFIGURING Simox project VirtualRobot *****")
+MESSAGE (STATUS "\n***** CONFIGURING project simox-virtualrobot *****")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 CMAKE_POLICY(VERSION 2.6)
@@ -244,12 +244,6 @@ Scene.h
 VirtualRobot.h
 )
 
-if(BUILD_TESTING)
-    ADD_SUBDIRECTORY(Visualization/tests)
-    ADD_SUBDIRECTORY(Workspace/tests)
-    ADD_SUBDIRECTORY(Compression/tests)
-endif()
-
 if (Simox_USE_NLOPT AND NLOPT_FOUND)
     SET(SOURCES ${SOURCES}
         IK/ConstrainedOptimizationIK.cpp
@@ -278,37 +272,6 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
     if(BUILD_TESTING)
         ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
-    endif()
-
-elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
-
-    SET(SOURCES
-    ${SOURCES}
-    Visualization/OSGVisualization/OSGVisualizationFactory.cpp
-    Visualization/OSGVisualization/OSGVisualizationNode.cpp
-    Visualization/OSGVisualization/OSGVisualization.cpp
-    Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.cpp
-    )
-
-    SET(INCLUDES
-    ${INCLUDES}
-    Visualization/OSGVisualization/OSGVisualizationFactory.h
-    Visualization/OSGVisualization/OSGVisualizationNode.h
-    Visualization/OSGVisualization/OSGVisualization.h
-    Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
-    )
-
-    set(GUI_MOC_HDRS
-        Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
-    )
-    if (Simox_USE_QT4)
-        qt4_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
-    else()
-        qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
-    endif()
-
-    if(BUILD_TESTING)
-        ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
     endif()
 endif ()
 
@@ -355,6 +318,9 @@ INCLUDE (CollisionDetection/CMakeLists.txt)
 if(BUILD_TESTING)
     # include unit tests
     ADD_SUBDIRECTORY(tests/)
+    ADD_SUBDIRECTORY(Visualization/tests)
+    ADD_SUBDIRECTORY(Workspace/tests)
+    ADD_SUBDIRECTORY(Compression/tests)
 endif()
 
 if(Simox_BUILD_EXAMPLES)
@@ -451,4 +417,4 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
         PATTERN ".git" EXCLUDE
         )
    
-MESSAGE (STATUS "***** Finished CONFIGURING Simox project VirtualRobot *****\n")
+MESSAGE (STATUS "***** Finished CONFIGURING project simox-virtualrobot *****\n")

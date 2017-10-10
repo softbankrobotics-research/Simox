@@ -46,6 +46,7 @@ CoinViewer::CoinViewer(QWidget *parent) :
     setSceneGraph(sceneSep);
 
     viewAll();
+    setAntialiasing(true, 4);
 }
 
 CoinViewer::~CoinViewer()

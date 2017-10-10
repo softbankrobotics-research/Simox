@@ -12,14 +12,17 @@
 #include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "../../Visualization/CoinVisualization/CoinVisualization.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
-#include "../../../Gui/Coin/CoinViewer.h"
+
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
+#include "../../../Gui/ViewerSelection.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/Qt/SoQt.h>
+//#include <Inventor/Qt/SoQt.h>
 
 #include <vector>
 
@@ -72,19 +75,15 @@ protected:
     Ui::MainWindowShowRobot UI;
 
 
-    SimoxGui::CoinViewer* viewer;
+    //SimoxGui::CoinViewer* viewer;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     /*
     SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. * /
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* extraSep;
     */
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
-
 
     std::vector < VirtualRobot::ModelNodePtr > allNodes;
     std::vector < VirtualRobot::ModelNodePtr > currentNodes;
@@ -99,8 +98,6 @@ protected:
     bool structureEnabled;
     bool physicsCoMEnabled;
     bool physicsInertiaEnabled;
-
-    //std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };
