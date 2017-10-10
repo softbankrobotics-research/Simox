@@ -7,7 +7,7 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+//#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Tools/SphereApproximator.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
 
@@ -18,17 +18,22 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
+/*
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/nodes/SoEventCallback.h>*/
 
 #include <sstream>
 
 #include <VirtualRobot/ui_GraspEditor.h>
 
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 using namespace std;
 using namespace VirtualRobot;
@@ -50,7 +55,7 @@ namespace VirtualRobot
         objectFile = objFile;
         this->robotFile = robotFile;
 
-        sceneSep = new SoSeparator;
+        /*sceneSep = new SoSeparator;
         sceneSep->ref();
         robotSep = new SoSeparator;
         objectSep = new SoSeparator;
@@ -61,69 +66,44 @@ namespace VirtualRobot
 
         sceneSep->addChild(eefVisu);
         sceneSep->addChild(objectSep);
-        sceneSep->addChild(graspSetVisu);
+        sceneSep->addChild(graspSetVisu);*/
 
-#if 0
-        // 2d map test
-        Eigen::MatrixXf d(10, 10);
-
-        for (int x = 0; x < 10; x++)
-            for (int y = 0; y < 10; y++)
-            {
-                d(x, y) = (float)(x + y) / 20.0f;
-            }
-
-        SoSeparator* sep1 = CoinVisualizationFactory::Create2DMap(d, 10.0f, 10.0f, VirtualRobot::ColorMap::ColorMap(VirtualRobot::ColorMap::eHot), true);
-        SoSeparator* sep2 = CoinVisualizationFactory::Create2DHeightMap(d, 10.0f, 10.0f, 50.0f);
-        sceneSep->addChild(sep1);
-        sceneSep->addChild(sep2);
-#endif
-
-#if 0
-        SphereApproximatorPtr sa(new SphereApproximator());
-        SphereApproximator::SphereApproximation app;
-        sa->generateGraph(app, SphereApproximator::eIcosahedron, 3, 200.0f);
-        cout << "nr faces:" << app.faces.size() << ", vert:" << app.vertices.size() << endl;
-
-        TriMeshModelPtr tri = sa->generateTriMesh(app);
-        cout << "2 nr faces:" << tri->faces.size() << ", vert:" << tri->vertices.size() << endl;
-        SoNode* m = CoinVisualizationFactory::getCoinVisualization(tri, true);
-        sceneSep->addChild(m);
-
-#endif
         setupUI();
 
         loadObject();
         loadRobot();
 
-        m_pExViewer->viewAll();
+        viewer->viewAll();
 
-        SoSensorManager* sensor_mgr = SoDB::getSensorManager();
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
+        timer->start(TIMER_MS);
+
+        /*SoSensorManager* sensor_mgr = SoDB::getSensorManager();
         timer = new SoTimerSensor(timerCB, this);
         timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-        sensor_mgr->insertTimerSensor(timer);
+        sensor_mgr->insertTimerSensor(timer);*/
     }
 
 
     GraspEditorWindow::~GraspEditorWindow()
     {
-        timer->unschedule();
-        delete m_pExViewer;
+        timer->stop();
+        delete timer;
+        viewer.reset();
         delete UI;
-        sceneSep->unref();
     }
 
 
-    void GraspEditorWindow::timerCB(void* data, SoSensor* /*sensor*/)
+    void GraspEditorWindow::timerCB()
     {
-        GraspEditorWindow* ikWindow = static_cast<GraspEditorWindow*>(data);
         float x[6];
-        x[0] = (float)ikWindow->UI->horizontalSliderX->value();
-        x[1] = (float)ikWindow->UI->horizontalSliderY->value();
-        x[2] = (float)ikWindow->UI->horizontalSliderZ->value();
-        x[3] = (float)ikWindow->UI->horizontalSliderRo->value();
-        x[4] = (float)ikWindow->UI->horizontalSliderPi->value();
-        x[5] = (float)ikWindow->UI->horizontalSliderYa->value();
+        x[0] = (float)UI->horizontalSliderX->value();
+        x[1] = (float)UI->horizontalSliderY->value();
+        x[2] = (float)UI->horizontalSliderZ->value();
+        x[3] = (float)UI->horizontalSliderRo->value();
+        x[4] = (float)UI->horizontalSliderPi->value();
+        x[5] = (float)UI->horizontalSliderYa->value();
         x[0] /= 10.0f;
         x[1] /= 10.0f;
         x[2] /= 10.0f;
@@ -133,7 +113,7 @@ namespace VirtualRobot
 
         if (x[0] != 0 || x[1] != 0 || x[2] != 0 || x[3] != 0 || x[4] != 0 || x[5] != 0)
         {
-            ikWindow->updateEEF(x);
+            updateEEF(x);
         }
     }
 
@@ -141,19 +121,10 @@ namespace VirtualRobot
     void GraspEditorWindow::setupUI()
     {
         UI->setupUi(this);
-        m_pExViewer = new SoQtExaminerViewer(UI->frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-        // setup
-        m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-        m_pExViewer->setAccumulationBuffer(true);
-
-        m_pExViewer->setAntialiasing(true, 4);
-
-        m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
-        m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
-        m_pExViewer->setFeedbackVisibility(true);
-        m_pExViewer->setSceneGraph(sceneSep);
-        m_pExViewer->viewAll();
+        SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+        THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+        viewer = viewerFactory->createViewer(UI->frameViewer);
 
         connect(UI->pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
         connect(UI->pushButtonLoadObject, SIGNAL(clicked()), this, SLOT(selectObject()));
@@ -184,42 +155,10 @@ namespace VirtualRobot
         }
     }
 
-    QString GraspEditorWindow::formatString(const char* s, float f)
-    {
-        QString str1(s);
-
-        if (f >= 0)
-        {
-            str1 += " ";
-        }
-
-        if (fabs(f) < 1000)
-        {
-            str1 += " ";
-        }
-
-        if (fabs(f) < 100)
-        {
-            str1 += " ";
-        }
-
-        if (fabs(f) < 10)
-        {
-            str1 += " ";
-        }
-
-        QString str1n;
-        str1n.setNum(f, 'f', 3);
-        str1 = str1 + str1n;
-        return str1;
-    }
-
-
     void GraspEditorWindow::resetSceneryAll()
     {
 
     }
-
 
     void GraspEditorWindow::closeEvent(QCloseEvent* event)
     {
@@ -231,33 +170,20 @@ namespace VirtualRobot
 
     void GraspEditorWindow::buildVisu()
     {
-        /*if (visualizationRobot)
-        {
-            visualizationRobot->highlight(false);
-        }*/
-
-        eefVisu->removeAllChildren();
+        viewer->clearLayer("eefLayer");
 
         showCoordSystem();
         ModelLink::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
+        VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+        if (!f)
+            return;
 
         if (!UI->checkBoxTCP->isChecked())
         {
             if (robotEEF)
             {
-                CoinVisualizationFactoryPtr f = CoinVisualizationFactory::getGlobalCoinVisualizationFactory();
-                if (f)
-                {
-                    SoNode* visualisationNode = f->getCoinVisualization(robotEEF, colModel);
-                    //robotEEF->getVisualization<CoinVisualization>(colModel);
-                    //SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
-
-                    if (visualisationNode)
-                    {
-                        eefVisu->addChild(visualisationNode);
-                        //visualizationRobot->highlight(true);
-                    }
-                }
+                VisualizationPtr visu = f->getVisualization(robotEEF, colModel);
+                viewer->addVisualization("eefLayer", "eef", visu);
             }
         }
         else
@@ -265,35 +191,20 @@ namespace VirtualRobot
             if (robotEEF && robotEEF_EEF)
             {
                 FramePtr tcp = robotEEF_EEF->getTcp();
-
                 if (tcp)
                 {
-                    SoSeparator* res = new SoSeparator;
-                    eefVisu->addChild(res);
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransformScaleMM2M(tcpGP);
-                    res->addChild(m);
-                    SoSeparator* co = CoinVisualizationFactory::CreateCoordSystemVisualization();
-                    res->addChild(co);
-
+                    VisualizationNodePtr visu = f->createCoordSystem(1.0f, NULL, tcpGP);
+                    viewer->addVisualization("eefLayer", "eef-coord", visu);
                 }
             }
         }
-
-        objectSep->removeAllChildren();
+        viewer->clearLayer("objectLayer");
 
         if (object)
         {
-            SoNode* visualisationNode = NULL;
-            CoinVisualizationFactoryPtr f = CoinVisualizationFactory::getGlobalCoinVisualizationFactory();
-            if (f)
-                visualisationNode = f->getCoinVisualization(object, colModel);
-
-            if (visualisationNode)
-            {
-                objectSep->addChild(visualisationNode);
-                //visualizationObject->setTransparency(0.5);
-            }
+            VisualizationPtr visu = f->getVisualization(object, colModel);
+            viewer->addVisualization("objectLayer", "object", visu);
         }
 
         buildGraspSetVisu();
@@ -301,8 +212,7 @@ namespace VirtualRobot
 
     int GraspEditorWindow::main()
     {
-        SoQt::show(this);
-        SoQt::mainLoop();
+        viewer->start(this);
         return 0;
     }
 
@@ -311,7 +221,8 @@ namespace VirtualRobot
     {
         std::cout << "GraspEditorWindow: Closing" << std::endl;
         this->close();
-        SoQt::exitMainLoop();
+        timer->stop();
+        viewer->stop();
     }
 
     void GraspEditorWindow::selectRobot()
@@ -392,7 +303,6 @@ namespace VirtualRobot
     }
     void GraspEditorWindow::loadRobot()
     {
-        robotSep->removeAllChildren();
         cout << "Loading Robot from " << robotFile << endl;
 
         try
@@ -425,7 +335,6 @@ namespace VirtualRobot
         }
 
         buildVisu();
-        m_pExViewer->viewAll();
     }
 
     void GraspEditorWindow::selectEEF(int n)
@@ -434,7 +343,6 @@ namespace VirtualRobot
         currentGraspSet.reset();
         currentGrasp.reset();
 
-        eefVisu->removeAllChildren();
         robotEEF.reset();
 
         if (n < 0 || n >= (int)eefs.size() || !robot)
@@ -506,12 +414,10 @@ namespace VirtualRobot
         }
 
         buildVisu();
-        m_pExViewer->scheduleRedraw();
     }
 
     void GraspEditorWindow::loadObject()
     {
-        objectSep->removeAllChildren();
         cout << "Loading Object from " << objectFile << endl;
 
         try
@@ -581,8 +487,6 @@ namespace VirtualRobot
         {
             robotEEF_EEF->closeActors(object);
         }
-
-        m_pExViewer->scheduleRedraw();
     }
 
     void GraspEditorWindow::openEEF()
@@ -591,8 +495,6 @@ namespace VirtualRobot
         {
             robotEEF_EEF->openActors();
         }
-
-        m_pExViewer->scheduleRedraw();
     }
 
     void GraspEditorWindow::renameGrasp()
@@ -654,8 +556,6 @@ namespace VirtualRobot
             //cout << "pose:" << endl << m << endl;
             setCurrentGrasp(m);
         }
-
-        m_pExViewer->scheduleRedraw();
     }
 
     void GraspEditorWindow::sliderReleased_ObjectX()
@@ -699,8 +599,6 @@ namespace VirtualRobot
             Eigen::Matrix4f pLocal = tcp->toLocalCoordinateSystem(objP);
             currentGrasp->setTransformation(pLocal);
         }
-
-        m_pExViewer->scheduleRedraw();
     }
 
     void GraspEditorWindow::showCoordSystem()
@@ -725,19 +623,20 @@ namespace VirtualRobot
 
 
     void GraspEditorWindow::buildGraspSetVisu()
-    {
-        graspSetVisu->removeAllChildren();
+    {        
+        viewer->clearLayer("graspsetLayer");
 
         if (UI->checkBoxGraspSet->isChecked() && robotEEF && robotEEF_EEF && currentGraspSet && object)
         {
+            VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+            if (!f)
+                return;
+
             GraspSetPtr gs = currentGraspSet->clone();
             gs->removeGrasp(currentGrasp);
-            SoSeparator* visu = CoinVisualizationFactory::CreateGraspSetVisualization(gs, robotEEF_EEF, object->getGlobalPose());
 
-            if (visu)
-            {
-                graspSetVisu->addChild(visu);
-            }
+            VisualizationPtr visu = f->getVisualization(gs, robotEEF_EEF, object->getGlobalPose(), ModelLink::VisualizationType::Full);
+            viewer->addVisualization("graspsetLayer", "graspset", visu);
         }
     }
 

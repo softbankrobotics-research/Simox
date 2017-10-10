@@ -328,35 +328,6 @@ if(Simox_BUILD_EXAMPLES)
     ADD_SUBDIRECTORY(examples/)
 endif()
 
-# -----------------------------------------------------------------------------------
-# Adding the UI files to the library
-if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
-    MESSAGE (STATUS " ** Adding GraspEditor gui")
-    set(UI
-        Grasping/GraspEditor/GraspEditor.ui
-    )
-    
-  if (Simox_USE_QT4)
-        QT4_WRAP_UI(UI_HEADERS ${UI})
-        QT4_WRAP_CPP(MOC_SRC
-            Grasping/GraspEditor/GraspEditorWindow.h
-        )
-    else()
-        QT5_WRAP_UI(UI_HEADERS ${UI})
-        QT5_WRAP_CPP(MOC_SRC
-            Grasping/GraspEditor/GraspEditorWindow.h
-        )
-  endif()
-
-    
-    set(INCLUDES ${INCLUDES} ${UI_HEADERS})
-
-    SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
-    SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
-endif()
-
-# Finished adding UI files
-#-----------------------------------------------------------------------------------
 
 ADD_LIBRARY (${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})

@@ -133,6 +133,11 @@ namespace VirtualRobot
             return VisualizationPtr();
         }
 
+        virtual VisualizationPtr getVisualization(const GraspSetPtr &/*graspSet*/, const EndEffectorPtr &/*eef*/, const Eigen::Matrix4f& /*pose*/, ModelLink::VisualizationType /*visuType*/)
+        {
+            return VisualizationPtr();
+        }
+
         /*!
             A box, dimensions are given in mm.
         */
@@ -171,7 +176,7 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = NULL, float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
+        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = NULL, const Eigen::Matrix4f &/*pose*/ = Eigen::Matrix4f::Identity(), float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
         {
             return VisualizationNodePtr();
         }

@@ -37,11 +37,6 @@
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
 #endif
 
-/*#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoUnits.h>
-#include <Inventor/nodes/SoSphere.h>
-*/
 #include <time.h>
 #include <vector>
 #include <iostream>
@@ -67,12 +62,6 @@ ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
     setupUI();
 
     loadRobot();
-
-    /*tsrSep = new SoSeparator;
-    sceneSep->addChild(tsrSep);
-
-    poseSep = new SoSeparator;
-    sceneSep->addChild(poseSep);*/
 }
 
 
@@ -85,20 +74,9 @@ ConstrainedIKWindow::~ConstrainedIKWindow()
 void ConstrainedIKWindow::setupUI()
 {
     UI.setupUi(this);
-    //exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
     SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
-
-    // setup
-    //exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    //exViewer->setAccumulationBuffer(true);
-    //exViewer->setAntialiasing(true, 4);
-
-    /*exViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    exViewer->setFeedbackVisibility(true);
-    exViewer->setSceneGraph(sceneSep);
-    exViewer->viewAll();*/
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -159,8 +137,6 @@ void ConstrainedIKWindow::resetSceneryAll()
         v[r->getName()] = 0.0f;
     }
     robot->setJointValues(v);
-
-    //exViewer->render();
 }
 
 
@@ -173,12 +149,9 @@ void ConstrainedIKWindow::collisionModel()
     }
 
     viewer->clearLayer("robotLayer");
-
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
-
     VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
     viewer->addVisualization("robotLayer", "robot", visu);
-
     viewer->viewAll();
 }
 
@@ -417,10 +390,6 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     viewer->clearLayer("tsrLayer");
     VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
     viewer->addVisualization("tsrLayer", "tsr", visu);
-
-
-    //tsrSep->removeAllChildren();
-    //tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
 }
 
 void ConstrainedIKWindow::randomTSR(bool quiet)
@@ -529,9 +498,6 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     viewer->clearLayer("poseLayer");
     VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
     viewer->addVisualization("poseLayer", "pose", visu);
-
-    //poseSep->removeAllChildren();
-    //poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(positionConstraint, color));
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)
@@ -702,7 +668,6 @@ void ConstrainedIKWindow::performanceEvaluation()
 void ConstrainedIKWindow::loadRobot()
 {
     std::cout << "ConstrainedIKWindow: Loading robot" << std::endl;
-    //robotSep->removeAllChildren();
     cout << "Loading Robot from " << robotFilename << endl;
 
     try
@@ -737,7 +702,5 @@ void ConstrainedIKWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    //exViewer->viewAll();
-    //exViewer->render();
 }
 

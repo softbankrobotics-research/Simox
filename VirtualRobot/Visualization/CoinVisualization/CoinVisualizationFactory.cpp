@@ -657,13 +657,18 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::createCoordSystem(float scaling, std::string* text, float axisLength, float axisSize, int nrOfBlocks)
+    VisualizationNodePtr CoinVisualizationFactory::createCoordSystem(float scaling, std::string* text, const Eigen::Matrix4f &pose, float axisLength, float axisSize, int nrOfBlocks)
     {
+        SoSeparator* s1 = new SoSeparator;
+        s1->ref();
         SoSeparator* s = CoinVisualizationFactory::CreateCoordSystemVisualization(scaling, text, axisLength, axisSize, nrOfBlocks);
-        s->ref();
 
-        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
-        s->unref();
+        SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransformScaleMM2M(pose);
+        s1->addChild(m);
+        s1->addChild(s);
+
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s1));
+        s1->unrefNoDelete();
         return visualizationNode;
     }
 
@@ -2172,10 +2177,10 @@ namespace VirtualRobot
         return mt;
     }
 
-    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransformScaleMM2M(Eigen::Matrix4f& m)
+    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransformScaleMM2M(const Eigen::Matrix4f& m)
     {
         SoMatrixTransform* mt = new SoMatrixTransform;
-        SbMatrix m_(reinterpret_cast<SbMat*>(m.data()));
+        SbMatrix m_(reinterpret_cast<const SbMat*>(m.data()));
         // mm -> m
         m_[3][0] *= 0.001f;
         m_[3][1] *= 0.001f;
@@ -4352,5 +4357,14 @@ namespace VirtualRobot
         CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
         return visualization;
     }
+
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType)
+    {
+        SoSeparator* s = CreateGraspSetVisualization(graspSet, eef, pose, visuType);
+        CoinVisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
+        CoinVisualizationPtr visualization(new CoinVisualization(visualizationNode));
+        return visualization;
+    }
+
 
 } // namespace VirtualRobot

@@ -86,7 +86,7 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createCircle(float radius, float circleCompletion, float width, float colorR = 1.0f, float colorG = 0.5f, float colorB = 0.5f, size_t numberOfCircleParts = 30);
-        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
+        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, const Eigen::Matrix4f &pose = Eigen::Matrix4f::Identity(), float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
         virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false);
         virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
         virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
@@ -102,6 +102,7 @@ namespace VirtualRobot
         virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
         virtual VisualizationPtr getVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
+        virtual VisualizationPtr getVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType);
 
 
         /*!
@@ -278,7 +279,7 @@ namespace VirtualRobot
             Converts the pose from MM to M (scales by 0.001)
             \param m The pose with translation given in millimeter.
         */
-        static SoMatrixTransform* getMatrixTransformScaleMM2M(Eigen::Matrix4f& m);
+        static SoMatrixTransform* getMatrixTransformScaleMM2M(const Eigen::Matrix4f& m);
         static SoNode* createCoinLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width, float colorR, float colorG, float colorB);
         static SoNode *createCoinPartCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts);
 

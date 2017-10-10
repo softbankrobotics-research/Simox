@@ -1,7 +1,7 @@
 <ManipulationObject name='Vitalis'>
 	<Visualization>
                 <Primitives>
-			<Box width="136" height="190" depth="40"/>
+                    <Box width="136" height="190" depth="40"/>
                 </Primitives>
                 <!--File type='inventor'>iv/vitalis.iv</File-->
 	</Visualization>

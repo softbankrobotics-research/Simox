@@ -8,7 +8,7 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+//#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/ManipulationObject.h>
 #include <string.h>
@@ -17,13 +17,17 @@
 #include <QtWidgets/QtWidgets>
 #endif
 #include <QtCore/QtCore>
+#include <QTimer>
 
+#include "../../../Gui/ViewerFactory.h"
+
+/*
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
+*/
 
 #include <vector>
 
@@ -55,7 +59,6 @@ namespace VirtualRobot
         /*!< Overriding the close event, so we know when the window was closed by the user. */
         void closeEvent(QCloseEvent* event);
 
-        void resetSceneryAll();
         void loadObject();
         void loadRobot();
 
@@ -64,6 +67,8 @@ namespace VirtualRobot
         void saveObject();
         void selectEEF(int n);
         void selectGrasp(int n);
+
+        void resetSceneryAll();
 
         void closeEEF();
         void openEEF();
@@ -82,10 +87,11 @@ namespace VirtualRobot
 
         void showCoordSystem();
 
+        void timerCB();
+
     protected:
 
         void setupUI();
-        QString formatString(const char* s, float f);
 
         void updateEEFBox();
         void updateGraspBox();
@@ -94,7 +100,7 @@ namespace VirtualRobot
 
         void updateEEF(float x[6]);
 
-        static void timerCB(void* data, SoSensor* sensor);
+        //static void timerCB(void* data, SoSensor* sensor);
         void setCurrentGrasp(Eigen::Matrix4f& p);
 
         Ui::MainWindowGraspEditor* UI;
@@ -102,14 +108,16 @@ namespace VirtualRobot
         // Indicates whether this program is started embedded
         bool embeddedGraspEditor;
 
-        SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+        SimoxGui::ViewerInterfacePtr viewer;
 
-        SoSeparator* sceneSep;
+        //SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+
+        /*SoSeparator* sceneSep;
         SoSeparator* robotSep;
         SoSeparator* objectSep;
         SoSeparator* graspsSep;
         SoSeparator* eefVisu;
-        SoSeparator* graspSetVisu;
+        SoSeparator* graspSetVisu;*/
 
         VirtualRobot::RobotPtr robot;
         VirtualRobot::RobotPtr robotEEF;
@@ -124,11 +132,12 @@ namespace VirtualRobot
         std::string robotFile;
         std::string objectFile;
 
-        SoTimerSensor* timer;
+        //SoTimerSensor* timer;
+        QTimer* timer;
 
 
-        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-        std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+        //std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
+        //std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
     };
 
 }
