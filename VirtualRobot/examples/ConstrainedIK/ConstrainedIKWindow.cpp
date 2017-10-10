@@ -37,15 +37,22 @@
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
 #endif
 
-#include <Inventor/nodes/SoCube.h>
+/*#include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSphere.h>
-
+*/
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <sstream>
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 
 using namespace std;
 using namespace VirtualRobot;
@@ -56,46 +63,42 @@ ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     robotFilename = sRobotFilename;
-    sceneSep = new SoSeparator();
-    sceneSep->ref();
-    robotSep = new SoSeparator();
-    sceneSep->addChild(robotSep);
+
     setupUI();
 
     loadRobot();
 
-    boxSep = new SoSeparator;
-    sceneSep->addChild(boxSep);
-
-    tsrSep = new SoSeparator;
+    /*tsrSep = new SoSeparator;
     sceneSep->addChild(tsrSep);
 
     poseSep = new SoSeparator;
-    sceneSep->addChild(poseSep);
-
-    exViewer->viewAll();
+    sceneSep->addChild(poseSep);*/
 }
 
 
 ConstrainedIKWindow::~ConstrainedIKWindow()
 {
-    sceneSep->unref();
+    //sceneSep->unref();
+    viewer.reset();
 }
 
 void ConstrainedIKWindow::setupUI()
 {
     UI.setupUi(this);
-    exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    //exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     // setup
-    exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    exViewer->setAccumulationBuffer(true);
-    exViewer->setAntialiasing(true, 4);
+    //exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
+    //exViewer->setAccumulationBuffer(true);
+    //exViewer->setAntialiasing(true, 4);
 
-    exViewer->setTransparencyType(SoGLRenderAction::BLEND);
+    /*exViewer->setTransparencyType(SoGLRenderAction::BLEND);
     exViewer->setFeedbackVisibility(true);
     exViewer->setSceneGraph(sceneSep);
-    exViewer->viewAll();
+    exViewer->viewAll();*/
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -157,7 +160,7 @@ void ConstrainedIKWindow::resetSceneryAll()
     }
     robot->setJointValues(v);
 
-    exViewer->render();
+    //exViewer->render();
 }
 
 
@@ -169,16 +172,14 @@ void ConstrainedIKWindow::collisionModel()
         return;
     }
 
-    robotSep->removeAllChildren();
+    viewer->clearLayer("robotLayer");
 
-    SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot,  ModelLink::VisualizationType::Full);
+    ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
 
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
+    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+    viewer->addVisualization("robotLayer", "robot", visu);
 
-    exViewer->render();
+    viewer->viewAll();
 }
 
 
@@ -191,8 +192,7 @@ void ConstrainedIKWindow::closeEvent(QCloseEvent* event)
 
 int ConstrainedIKWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -201,7 +201,7 @@ void ConstrainedIKWindow::quit()
 {
     std::cout << "ConstrainedIKWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void ConstrainedIKWindow::updateKCBox()
@@ -387,7 +387,7 @@ void ConstrainedIKWindow::solve()
         computeTSRError();
     }
 
-    exViewer->render();
+    //exViewer->render();
 }
 
 void ConstrainedIKWindow::updateTSR(double /*value*/)
@@ -412,9 +412,15 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
     tsrConstraint.reset(new TSRConstraint(robot, js, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
 
-    tsrSep->removeAllChildren();
     VisualizationFactory::Color color(1, 0, 0, 0.5);
-    tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
+
+    viewer->clearLayer("tsrLayer");
+    VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
+    viewer->addVisualization("tsrLayer", "tsr", visu);
+
+
+    //tsrSep->removeAllChildren();
+    //tsrSep->addChild(CoinVisualizationFactory::getCoinVisualization(tsrConstraint, color));
 }
 
 void ConstrainedIKWindow::randomTSR(bool quiet)
@@ -499,7 +505,7 @@ void ConstrainedIKWindow::enableTSR()
     }
     else
     {
-        tsrSep->removeAllChildren();
+        viewer->clearLayer("tsrLayer");
     }
 }
 
@@ -518,9 +524,14 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     orientationConstraint.reset(new OrientationConstraint(robot, js, tcp, pose.block<3,3>(0,0)));
     orientationConstraint->setOptimizationFunctionFactor(1000);
 
-    poseSep->removeAllChildren();
     VisualizationFactory::Color color(1, 0, 0, 0.5);
-    poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(positionConstraint, color));
+
+    viewer->clearLayer("poseLayer");
+    VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
+    viewer->addVisualization("poseLayer", "pose", visu);
+
+    //poseSep->removeAllChildren();
+    //poseSep->addChild(CoinVisualizationFactory::getCoinVisualization(positionConstraint, color));
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)
@@ -572,7 +583,7 @@ void ConstrainedIKWindow::enablePose()
     }
     else
     {
-        poseSep->removeAllChildren();
+        viewer->clearLayer("poseLayer");
     }
 }
 
@@ -691,12 +702,14 @@ void ConstrainedIKWindow::performanceEvaluation()
 void ConstrainedIKWindow::loadRobot()
 {
     std::cout << "ConstrainedIKWindow: Loading robot" << std::endl;
-    robotSep->removeAllChildren();
+    //robotSep->removeAllChildren();
     cout << "Loading Robot from " << robotFilename << endl;
 
     try
     {
-        robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename);
+        //robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename);
+        robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
+
     }
     catch (VirtualRobotException& e)
     {
@@ -724,7 +737,7 @@ void ConstrainedIKWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    exViewer->viewAll();
-    exViewer->render();
+    //exViewer->viewAll();
+    //exViewer->render();
 }
 

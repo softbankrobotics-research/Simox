@@ -838,6 +838,27 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
+    VisualizationNodePtr CoinVisualizationFactory::createConstraintVisualization(const ConstraintPtr &constraint, const VisualizationFactory::Color &color)
+    {
+        VisualizationNodePtr result;
+        SoNode* n;
+        TSRConstraintPtr tsr = std::dynamic_pointer_cast<TSRConstraint>(constraint);
+        if (tsr)
+            n = getCoinVisualization(tsr, color);
+        BalanceConstraintPtr b = std::dynamic_pointer_cast<BalanceConstraint>(constraint);
+        if (b)
+            n = getCoinVisualization(b, color);
+        PoseConstraintPtr p = std::dynamic_pointer_cast<PoseConstraint>(constraint);
+        if (p)
+            n = getCoinVisualization(p, color);
+        PositionConstraintPtr position = std::dynamic_pointer_cast<PositionConstraint>(constraint);
+        if (position)
+            n = getCoinVisualization(position, color);
+        if (n)
+            result.reset(new CoinVisualizationNode(n));
+        return result;
+    }
+
     VisualizationNodePtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
     {
         SoSeparator* sep = new SoSeparator();

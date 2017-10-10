@@ -31,7 +31,7 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+//#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/IK/GazeIK.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
 
@@ -47,12 +47,15 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
+#include "../../../Gui/ViewerFactory.h"
+
+/*
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
+*/
 
 #include <vector>
 
@@ -103,13 +106,14 @@ protected:
     void computeTSRError();
 
     Ui::MainWindowConstrainedIKDemo UI;
-    SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer;
+    //SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* sceneSep;
+    /*SoSeparator* sceneSep;
     SoSeparator* robotSep;
     SoSeparator* boxSep;
     SoSeparator* tsrSep;
-    SoSeparator* poseSep;
+    SoSeparator* poseSep;*/
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;

@@ -332,8 +332,6 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 int showRobotWindow::main()
 {
     viewer->start(this);
-    //SoQt::show(this);
-    //SoQt::mainLoop();
     return 0;
 }
 
@@ -343,7 +341,6 @@ void showRobotWindow::quit()
     std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
     viewer->stop();
-    //SoQt::exitMainLoop();
 }
 
 void showRobotWindow::updateJointBox()

@@ -213,6 +213,10 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+        virtual VisualizationNodePtr createConstraintVisualization(const ConstraintPtr &/*constraint*/, const Color& /*color*/)
+        {
+            return VisualizationNodePtr();
+        }
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6

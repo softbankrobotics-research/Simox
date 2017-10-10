@@ -646,7 +646,7 @@ namespace VirtualRobot
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
             ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
-			if (link)
+            if (link && link->getCollisionModel())
 				link->getCollisionModel()->setUpdateVisualization(enable);
         }
     }
@@ -659,7 +659,7 @@ namespace VirtualRobot
 		for (auto mn : modelNodes)
 		{
 			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
-			if (link)
+            if (link && link->getVisualization())
 				return link->getVisualization()->getUpdateVisualizationStatus();
 		}
 		return true;
@@ -671,7 +671,7 @@ namespace VirtualRobot
         for (auto mn : modelNodes)
 		{
 			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
-			if (link)
+            if (link && link->getCollisionModel() )
 				return link->getCollisionModel()->getUpdateVisualizationStatus();
 		}
 		return true;

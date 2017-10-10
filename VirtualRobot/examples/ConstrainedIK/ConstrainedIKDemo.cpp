@@ -48,25 +48,13 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Constrained IK Demo");
     std::cout << " --- START --- " << std::endl;
 
-
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string filename("robots/Armar3/Armar3.xml");
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
+    std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
-    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-    {
-        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-
-        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-        {
-            filename = robFile;
-        }
-    }
-
-    std::cout << "Using robot at " << filename << std::endl;
+    std::cout << "Using robot file " << filename << std::endl;
 
     ConstrainedIKWindow rw(filename);
 
