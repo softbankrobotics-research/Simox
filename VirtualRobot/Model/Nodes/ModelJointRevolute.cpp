@@ -4,10 +4,10 @@ namespace VirtualRobot
 {
     ModelJointRevolute::ModelJointRevolute(const ModelWeakPtr& model,
         const std::string& name,
-        Eigen::Matrix4f& staticTransformation,
+        const Eigen::Matrix4f& staticTransformation,
         float jointLimitLo,
         float jointLimitHi,
-        Eigen::Vector3f& axis,
+        const Eigen::Vector3f& axis,
         float jointValueOffset)
             : ModelJoint(model, name, staticTransformation, jointLimitLo, jointLimitHi, jointValueOffset),
               axis(axis)
@@ -49,5 +49,12 @@ namespace VirtualRobot
         tmpRotMat.block(0, 0, 3, 3) = Eigen::AngleAxisf(jointValue + jointValueOffset,
                                                         getJointRotationAxisInJointCoordSystem()).matrix();
         return getStaticTransformation() * tmpRotMat;
+    }
+
+    ModelNodePtr ModelJointRevolute::_clone(ModelPtr newModel, float scaling)
+    {
+        Eigen::Matrix4f st = getStaticTransformation();
+        ModelJointRevolutePtr result(new ModelJointRevolute(newModel, name, st, jointLimitLo, jointLimitHi, axis, jointValueOffset));
+        return result;
     }
 }

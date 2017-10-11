@@ -923,7 +923,7 @@ namespace VirtualRobot
                 RobotNodePtr root = r->getRootNode();
                 THROW_VR_EXCEPTION_IF(!root, "Could not add child-from-robot. No root node in file" << childrenFromRobot[i].filename);
 
-                RobotNodePtr rootNew = root->clone(robo, true, node);
+                RobotNodePtr rootNew = root->clone(robo, true, true, node);
                 THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed. Could not add child-from-robot from file " << childrenFromRobot[i].filename);
 
                 std::vector<EndEffectorPtr> eefs = r->getEndEffectors();

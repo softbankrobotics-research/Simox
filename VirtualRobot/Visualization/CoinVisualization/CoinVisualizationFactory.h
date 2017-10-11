@@ -101,7 +101,7 @@ namespace VirtualRobot
 
         virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
-        virtual VisualizationPtr getVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
+        virtual VisualizationPtr createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
         virtual VisualizationPtr getVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType);
 
 

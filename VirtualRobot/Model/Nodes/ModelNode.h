@@ -360,12 +360,11 @@ namespace VirtualRobot
          * @param newModel The newly created ModelNode belongs to newModel.
          * @param cloneChildren If true, all children are cloned (and their children, etc).
          * @param initializeWithParent If given, the ModelNode is initialized with this parent.
-         * @param colChecker Must only be set if the cloned ModelNode should be registered to a different collision checker instance.
          * @param scaling Scale Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          *
          * @return The new ModelNode.
          */
-        virtual ModelNodePtr clone(ModelPtr newModel, bool cloneChildren = true, RobotNodePtr initializeWithParent = RobotNodePtr(), CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f);
+        virtual ModelNodePtr clone(ModelPtr newModel, bool cloneChildren = true, bool cloneAttachments = true, RobotNodePtr initializeWithParent = RobotNodePtr(), float scaling = 1.0f);
 
         /*!
          * Check if node has the given type.
@@ -391,8 +390,9 @@ namespace VirtualRobot
     protected:
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
 
+        virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) = 0;
+
     private:
-        bool initialized;
         ModelWeakPtr model;
 
         ModelNodeWeakPtr parent;

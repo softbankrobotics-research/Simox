@@ -5,10 +5,10 @@ namespace VirtualRobot
 {
     ModelJointPrismatic::ModelJointPrismatic(const ModelWeakPtr& model,
         const std::string& name,
-        Eigen::Matrix4f& staticTransformation,
+        const Eigen::Matrix4f& staticTransformation,
         float jointLimitLo,
         float jointLimitHi,
-        Eigen::Vector3f& translationDirection,
+        const Eigen::Vector3f& translationDirection,
         float jointValueOffset)
             : ModelJoint(model, name, staticTransformation, jointLimitLo, jointLimitHi, jointValueOffset),
               translationDirection(translationDirection)
@@ -54,5 +54,12 @@ namespace VirtualRobot
         ReadLockPtr r = getModel()->getReadLock();
         Eigen::Affine3f tmpT(Eigen::Translation3f((this->getJointValue() + getJointValueOffset()) * getJointTranslationDirectionJointCoordSystem()));
         return getStaticTransformation() * tmpT.matrix();
+    }
+
+    ModelNodePtr ModelJointPrismatic::_clone(ModelPtr newModel, float scaling)
+    {
+        Eigen::Matrix4f st = getStaticTransformation();
+        ModelJointPrismaticPtr result(new ModelJointPrismatic(newModel, name, st, jointLimitLo, jointLimitHi, translationDirection, jointValueOffset));
+        return result;
     }
 }

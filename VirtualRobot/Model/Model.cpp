@@ -889,7 +889,7 @@ namespace VirtualRobot
 
         ModelPtr result(new Model(newModelName, newModelType));
 
-        ModelNodePtr rootNew = startNode->clone(result, true, ModelNodePtr(), colChecker, scaling);
+        ModelNodePtr rootNew = startNode->clone(result, true, true, ModelNodePtr(), scaling);
         THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
         result->setRootNode(rootNew);
         result->setScaling(scaling);
@@ -1111,6 +1111,20 @@ namespace VirtualRobot
             res.push_back(it.second);
         }
         return res;
+    }
+
+    VisualizationPtr Model::getVisualization(ModelLink::VisualizationType visuType)
+    {
+        if (!visualization || this->visuType != visuType)
+        {
+            VisualizationFactoryPtr v = VisualizationFactory::getGlobalVisualizationFactory();
+            if (!v)
+                return visualization;
+            visualization = v->createVisualization(shared_from_this(), visuType);
+            this->visuType = visuType;
+        }
+
+        return visualization;
     }
 
 	bool Model::hasFrame(const FramePtr & frame) const

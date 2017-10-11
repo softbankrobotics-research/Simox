@@ -39,7 +39,7 @@ namespace VirtualRobot
          */
         ModelJointFixed(const ModelWeakPtr& model,
                         const std::string& name,
-                        Eigen::Matrix4f& localTransformation);
+                        const Eigen::Matrix4f& localTransformation);
 
         /*!
          * Destructor.
@@ -90,6 +90,10 @@ namespace VirtualRobot
          * @param maxTo This does nothing.
          */
         virtual void setMaxTorque(float maxTo) override;
+
+    protected:
+        virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
+
     };
 }
 

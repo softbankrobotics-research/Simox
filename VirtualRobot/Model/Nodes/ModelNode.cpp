@@ -453,8 +453,115 @@ namespace VirtualRobot
         return std::string(); // TODO
     }
 
-    ModelNodePtr ModelNode::clone(ModelPtr newModel, bool cloneChildren, RobotNodePtr initializeWithParent, CollisionCheckerPtr colChecker, float scaling)
+    ModelNodePtr ModelNode::clone(ModelPtr newModel, bool cloneChildren, bool cloneAttachments, RobotNodePtr initializeWithParent, float scaling)
     {
-        return ModelNodePtr(); // TODO
+        ReadLockPtr lock = getModel()->getReadLock();
+
+        if (!newModel)
+        {
+            VR_ERROR << "Attempting to clone RobotNode for invalid robot";
+            return ModelNodePtr();
+        }
+
+        //std::vector< std::string > clonedChildrenNames;
+
+        //VisualizationNodePtr clonedVisualizationNode;
+
+        /*if (Visualization)
+        {
+            clonedVisualizationNode = visualizationModel->clone(true, scaling);
+        }
+
+        CollisionModelPtr clonedCollisionModel;
+
+        if (collisionModel)
+        {
+            clonedCollisionModel = collisionModel->clone(colChecker, scaling);
+        }*/
+
+        ModelNodePtr result = _clone(newModel, scaling);
+
+        if (cloneAttachments)
+        {
+            for (auto &a : attachments)
+            {
+                for (auto &aa : a.second)
+                {
+                    ModelNodeAttachmentPtr ca = aa->clone();
+                    if (ca)
+                    {
+                        result->attach(ca);
+                    }
+                }
+            }
+
+        }
+
+        if (!result)
+        {
+            VR_ERROR << "Cloning failed.." << endl;
+            return result;
+        }
+
+        if (cloneChildren)
+        {
+            std::vector< ModelNodePtr > children = this->getChildNodes();
+
+            for (auto n : children)
+            {
+                if (n)
+                {
+                    ModelNodePtr c = n->clone(newModel, true, true, ModelNodePtr(), scaling);
+
+                    if (c)
+                    {
+                        result->attachChild(c, false);
+                    }
+                }
+                /*else
+                {
+                    SensorPtr s =  dynamic_pointer_cast<Sensor>(children[i]);
+
+                    if (s)
+                    {
+                        // performs registering and initialization
+                        SensorPtr c = s->clone(result, scaling);
+                    }
+                    else
+                    {
+                        SceneObjectPtr so = children[i]->clone(children[i]->getName(), colChecker, scaling);
+
+                        if (so)
+                        {
+                            result->attachChild(so);
+                        }
+                    }
+                }*/
+            }
+        }
+
+        /*result->setMaxVelocity(maxVelocity);
+        result->setMaxAcceleration(maxAcceleration);
+        result->setMaxTorque(maxTorque);
+        result->setLimitless(limitless);
+
+        std::map< std::string, float>::iterator it = propagatedJointValues.begin();
+
+        while (it != propagatedJointValues.end())
+        {
+            result->propagateJointValue(it->first, it->second);
+            it++;
+        }*/
+
+        if (initializeWithParent)
+        {
+            initializeWithParent->attachChild(result, false);
+        }
+
+        newModel->registerModelNode(result);
+
+        newModel->applyJointValues();
+
+        return result;
     }
 }

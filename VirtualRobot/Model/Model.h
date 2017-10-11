@@ -25,6 +25,7 @@
 
 #include "../VirtualRobot.h"
 #include "Nodes/ModelNode.h"
+#include "Nodes/ModelLink.h"
 #include "../Tools/BoundingBox.h"
 #include "Frame.h"
 #include "../Tools/ConditionedLock.h"
@@ -334,7 +335,7 @@ namespace VirtualRobot
          * A convenience function that creates and attaches a ModelStructure to each joint.
          * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
          * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, then no visualizations will be created.
+         *                          If not given, the default visualization factory is used.
          */
         void attachStructure(std::string visualizationType = "");
 
@@ -348,7 +349,7 @@ namespace VirtualRobot
          * A convenience function that creates and attaches a ModelFrame to each joint.
          * Each attached ModelFrame inherits the name of its corresponding joint appended by "_frame".
          * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, then no visualizations will be created.
+         *                          If not given, the default visualization factory is used.
          */
         void attachFrames(std::string visualizationType = "");
 
@@ -648,6 +649,8 @@ namespace VirtualRobot
         std::vector<EndEffectorPtr> getEndEffectors() const;
 
 
+        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType);
+
     protected:
         std::string type;
         float scaling;
@@ -664,6 +667,9 @@ namespace VirtualRobot
         std::map<std::string, EndEffectorPtr> eefMap;
 
         std::string filename;
+
+        VisualizationPtr visualization;
+        ModelLink::VisualizationType visuType;
     };
 }
 

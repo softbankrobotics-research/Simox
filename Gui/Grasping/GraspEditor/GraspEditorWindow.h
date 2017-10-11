@@ -3,12 +3,10 @@
 #define __GraspEditor_WINDOW_H_
 
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-//#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/ManipulationObject.h>
 #include <string.h>
@@ -20,14 +18,6 @@
 #include <QTimer>
 
 #include "../../../Gui/ViewerFactory.h"
-
-/*
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-*/
 
 #include <vector>
 
@@ -110,15 +100,6 @@ namespace VirtualRobot
 
         SimoxGui::ViewerInterfacePtr viewer;
 
-        //SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-        /*SoSeparator* sceneSep;
-        SoSeparator* robotSep;
-        SoSeparator* objectSep;
-        SoSeparator* graspsSep;
-        SoSeparator* eefVisu;
-        SoSeparator* graspSetVisu;*/
-
         VirtualRobot::RobotPtr robot;
         VirtualRobot::RobotPtr robotEEF;
         VirtualRobot::ManipulationObjectPtr object;
@@ -132,12 +113,7 @@ namespace VirtualRobot
         std::string robotFile;
         std::string objectFile;
 
-        //SoTimerSensor* timer;
         QTimer* timer;
-
-
-        //std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-        //std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
     };
 
 }

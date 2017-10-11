@@ -64,6 +64,19 @@ namespace VirtualRobot
         res.localCoM *= scaling;
         return res;
     }
+
+    ModelLink::Physics ModelLink::Physics::clone(float scaling) const
+    {
+        return scale(scaling);
+    }
+
+    ModelLink::Physics &ModelLink::Physics::operator=(ModelLink::Physics other)
+    {
+        inertiaMatrix = other.inertiaMatrix;
+        localCoM = other.localCoM;
+        ignoreCollisions = other.ignoreCollisions;
+        return *this;
+    }
 }
 
 namespace VirtualRobot
@@ -90,16 +103,7 @@ namespace VirtualRobot
     ModelLink::~ModelLink()
     {
     }
-	/*
-    void ModelLink::initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children)
-    {
-        ModelNode::initialize(parent, children);
 
-        if (!initializePhysics())
-        {
-            VR_ERROR << "Could not initialize physics." << std::endl;
-        }
-    }*/
 
     ModelNode::ModelNodeType ModelLink::getType() const
     {
@@ -288,6 +292,19 @@ namespace VirtualRobot
     void ModelLink::setFriction(float friction)
     {
         physics.friction = friction;
+    }
+
+    ModelNodePtr ModelLink::_clone(ModelPtr newModel, float scaling)
+    {
+        VisualizationNodePtr clonedVisu;
+        if (visualizationModel)
+            clonedVisu = visualizationModel->clone(true, scaling);
+        CollisionModelPtr clonedCol;
+        if (collisionModel)
+            clonedCol = collisionModel->clone(newModel->getCollisionChecker(), scaling);
+        Physics clonedPhysics = physics.clone(scaling);
+        ModelLinkPtr result(new ModelLink(newModel, name, this->getStaticTransformation(), clonedVisu, clonedCol, clonedPhysics, newModel->getCollisionChecker()));
+        return result;
     }
 
     void ModelLink::setInertiaMatrix(const Eigen::Matrix3f& im)

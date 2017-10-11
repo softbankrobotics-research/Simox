@@ -125,6 +125,8 @@ namespace VirtualRobot
             return ModelNodePtr();
         }
 
+        virtual ModelNodeAttachmentPtr clone() = 0;
+
     protected:
 
         virtual void setParent(ModelNodePtr node)

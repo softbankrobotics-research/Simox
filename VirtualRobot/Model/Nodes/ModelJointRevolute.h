@@ -43,10 +43,10 @@ namespace VirtualRobot
          */
         ModelJointRevolute(const ModelWeakPtr& model,
             const std::string& name,
-            Eigen::Matrix4f& staticTransformation,
+            const Eigen::Matrix4f& staticTransformation,
             float jointLimitLo,
             float jointLimitHi,
-            Eigen::Vector3f& axis,
+            const Eigen::Vector3f& axis,
             float jointValueOffset = 0.0f
             );
 
@@ -73,6 +73,9 @@ namespace VirtualRobot
         Eigen::Vector3f getJointRotationAxisInJointCoordSystem() const;
 
         virtual Eigen::Matrix4f getNodeTransformation() const override;
+
+    protected:
+        virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
 
     private:
         Eigen::Vector3f axis;

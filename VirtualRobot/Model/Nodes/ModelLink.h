@@ -32,6 +32,9 @@ namespace VirtualRobot
     public:
         struct VIRTUAL_ROBOT_IMPORT_EXPORT Physics
         {
+            public:
+                EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
             enum CoMLocation
             {
                 eCustom,            //!< Not related to 3d model, the position is set by hand
@@ -56,6 +59,10 @@ namespace VirtualRobot
             virtual std::string toXML(int tabs);
 
             Physics scale(float scaling) const;
+
+            Physics clone(float scaling) const;
+
+            Physics &operator=(Physics other);
 
             // data members
             Eigen::Vector3f localCoM;   //!< Defined in the local coordinate system of this object [mm]
@@ -240,6 +247,8 @@ namespace VirtualRobot
         void setFriction(float friction);
 
     protected:
+        virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
+
         bool initializePhysics();
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
 

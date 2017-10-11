@@ -130,10 +130,17 @@ namespace VirtualRobot
 
         virtual VisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
         {
+            if (robot)
+                return robot->getVisualization(visuType);
             return VisualizationPtr();
         }
 
         virtual VisualizationPtr getVisualization(const GraspSetPtr &/*graspSet*/, const EndEffectorPtr &/*eef*/, const Eigen::Matrix4f& /*pose*/, ModelLink::VisualizationType /*visuType*/)
+        {
+            return VisualizationPtr();
+        }
+
+        virtual VisualizationPtr createVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
         {
             return VisualizationPtr();
         }

@@ -2,7 +2,7 @@
 
 namespace VirtualRobot
 {
-    ModelJointFixed::ModelJointFixed(const ModelWeakPtr& model, const std::string& name, Eigen::Matrix4f& localTransformation)
+    ModelJointFixed::ModelJointFixed(const ModelWeakPtr& model, const std::string& name, const Eigen::Matrix4f& localTransformation)
             : ModelJoint(model, name, localTransformation, 0, 0, 0.0f)
     {
     }
@@ -44,5 +44,11 @@ namespace VirtualRobot
     void ModelJointFixed::setMaxTorque(float)
     {
         // do nothing
+    }
+
+    ModelNodePtr ModelJointFixed::_clone(ModelPtr newModel, float scaling)
+    {
+        ModelJointFixedPtr result(new ModelJointFixed(newModel, name, getStaticTransformation()));
+        return result;
     }
 }

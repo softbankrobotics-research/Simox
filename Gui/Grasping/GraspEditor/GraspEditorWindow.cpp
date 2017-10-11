@@ -7,7 +7,6 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
-//#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Tools/SphereApproximator.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
 
@@ -18,16 +17,10 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-/*
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>*/
 
 #include <sstream>
 
-#include <VirtualRobot/ui_GraspEditor.h>
+#include "Gui/ui_GraspEditor.h"
 
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
@@ -55,19 +48,6 @@ namespace VirtualRobot
         objectFile = objFile;
         this->robotFile = robotFile;
 
-        /*sceneSep = new SoSeparator;
-        sceneSep->ref();
-        robotSep = new SoSeparator;
-        objectSep = new SoSeparator;
-        eefVisu = new SoSeparator;
-        graspSetVisu = new SoSeparator;
-
-        //sceneSep->addChild(robotSep);
-
-        sceneSep->addChild(eefVisu);
-        sceneSep->addChild(objectSep);
-        sceneSep->addChild(graspSetVisu);*/
-
         setupUI();
 
         loadObject();
@@ -78,11 +58,6 @@ namespace VirtualRobot
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
         timer->start(TIMER_MS);
-
-        /*SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-        timer = new SoTimerSensor(timerCB, this);
-        timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-        sensor_mgr->insertTimerSensor(timer);*/
     }
 
 
@@ -307,7 +282,7 @@ namespace VirtualRobot
 
         try
         {
-            robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
+            robot = ModelIO::loadModel(robotFile);
         }
         catch (VirtualRobotException& e)
         {
@@ -358,9 +333,6 @@ namespace VirtualRobot
         //robotEEF->print();
         robotEEF_EEF = robotEEF->getEndEffector(currentEEF->getName());
         robotEEF_EEF->print();
-
-        //bool colModel = UI.checkBoxColModel->isChecked();
-        //eefVisu->addChild(CoinVisualizationFactory::getCoinVisualization(robotEEF,colModel));
 
         // select grasp set
         if (object)
@@ -499,6 +471,8 @@ namespace VirtualRobot
 
     void GraspEditorWindow::renameGrasp()
     {
+        if (!currentGrasp)
+            return;
         bool ok;
         QString text = QInputDialog::getText(this, tr("Rename Grasp"),
                                              tr("New name:"), QLineEdit::Normal,

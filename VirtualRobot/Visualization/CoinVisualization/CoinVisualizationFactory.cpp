@@ -373,7 +373,7 @@ namespace VirtualRobot
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
 
-        coinVisualization->unref();
+        coinVisualization->unrefNoDelete();
     }
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
@@ -1302,8 +1302,10 @@ namespace VirtualRobot
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {
+        if (!model)
+            return NULL;
 
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(model, visuType);
+        VisualizationPtr v = model->getVisualization(visuType);
         CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(v);
         if (cv)
             return cv->getCoinVisualization();
@@ -2000,7 +2002,9 @@ namespace VirtualRobot
             RobotPtr r = eef->createEefRobot(eef->getName(), eef->getName());
             FramePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
             r->setGlobalPoseForModelNode(tcpN, Eigen::Matrix4f::Identity());
-            res->addChild(CoinVisualizationFactory::getCoinVisualization(r, visu));
+            SoNode* cv = CoinVisualizationFactory::getCoinVisualization(r, visu);
+            if (cv)
+                res->addChild(cv);
         }
 
         res->unrefNoDelete();
@@ -4324,7 +4328,7 @@ namespace VirtualRobot
 		return visualization;
 	}
 
-    VisualizationPtr CoinVisualizationFactory::getVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
+    VisualizationPtr CoinVisualizationFactory::createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {
         VR_ASSERT(model);
 
