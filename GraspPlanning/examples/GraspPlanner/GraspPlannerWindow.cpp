@@ -184,7 +184,7 @@ void GraspPlannerWindow::buildVisu()
         if (visualisationNode)
         {
             robotSep->addChild(visualisationNode);
-            visualizationRobot->highlight(UI.checkBoxHighlight->isChecked());
+            //visualizationRobot->highlight(UI.checkBoxHighlight->isChecked());
         }
     }
 
@@ -342,7 +342,7 @@ void GraspPlannerWindow::loadObject()
 void GraspPlannerWindow::loadRobot()
 {
     robot.reset();
-    robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
+    robot = ModelIO::loadModel(robotFile);
 
     if (!robot)
     {

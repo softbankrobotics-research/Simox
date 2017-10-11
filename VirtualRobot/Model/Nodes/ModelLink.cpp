@@ -1,4 +1,5 @@
 #include "ModelLink.h"
+#include "../../CollisionDetection/CollisionChecker.h"
 #include "../../CollisionDetection/CollisionModel.h"
 #include "../../Visualization/VisualizationNode.h"
 #include "../../Visualization/TriMeshModel.h"
@@ -97,7 +98,14 @@ namespace VirtualRobot
 			visualizationModel->setGlobalPose(getGlobalPose());
         if (collisionModel)
 			collisionModel->setGlobalPose(getGlobalPose());
-		initializePhysics();
+        if (!collisionChecker)
+        {
+            if (collisionModel)
+                collisionChecker = collisionModel->getCollisionChecker();
+            if (!collisionChecker)
+                collisionChecker = CollisionChecker::getGlobalCollisionChecker();
+        }
+        initializePhysics();
     }
 
     ModelLink::~ModelLink()

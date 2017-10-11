@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     }
 
 
-    cout << "Using robot from " << robot << endl;
-    cout << "Using object from " << object << endl;
+    cout << "Using robot file " << robot << endl;
+    cout << "Using object file " << object << endl;
 
     GraspQualityWindow rw(robot, object);
 

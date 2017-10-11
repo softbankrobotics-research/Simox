@@ -24,14 +24,7 @@ int main(int argc, char* argv[])
     cout << "GraspPlanner --robot robots/Schunk_SAH/SAH_RightHand.xml --endeffector \"Right Hand\" --preshape \"Grasp Preshape\"" << endl;
 
     // --robot robots/iCub/iCub.xml --endeffector "Left Hand" --preshape "Grasp Preshape"
-    std::string robot("robots/ArmarIII/ArmarIII.xml");
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robot);
-    std::string eef("Hand R");
-    //std::string object("objects/wok.xml");
-    //std::string object("objects/riceBox.xml");
-    std::string object("objects/WaterBottleSmall.xml");
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(object);
-    std::string preshape("");
+
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::considerKey("object");
@@ -40,19 +33,15 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
+    std::string objFile = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("object", "objects/iv/WaterBottleSmall.xml");
+    cout << "Object file: " << objFile << endl;
 
-    if (!robFile.empty() && VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-    {
-        robot = robFile;
-    }
+    std::string robFile = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
+    cout << "Robot file: " << robFile << endl;
 
-    std::string objFile = VirtualRobot::RuntimeEnvironment::getValue("object");
 
-    if (!objFile.empty() && VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(objFile))
-    {
-        object = objFile;
-    }
+    std::string eef("Hand R");
+    std::string preshape("");
 
     std::string eefname = VirtualRobot::RuntimeEnvironment::getValue("endeffector");
 
@@ -68,12 +57,10 @@ int main(int argc, char* argv[])
         preshape = ps;
     }
 
-
-    cout << "Using robot from " << robot << endl;
     cout << "End effector:" << eef << ", preshape:" << preshape << endl;
-    cout << "Using object from " << object << endl;
 
-    GraspPlannerWindow rw(robot, eef, preshape, object);
+
+    GraspPlannerWindow rw(robFile, eef, preshape, objFile);
 
     rw.main();
 

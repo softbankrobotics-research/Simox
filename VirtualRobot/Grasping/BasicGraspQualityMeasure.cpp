@@ -20,7 +20,8 @@ namespace VirtualRobot
         : object(object)
     {
 		THROW_VR_EXCEPTION_IF(!object, "Need an object");
-		THROW_VR_EXCEPTION_IF(!object->getLinks().size()!=1, "Need an object with exactly one modellink");
+        std::vector<ModelLinkPtr> links = object->getLinks();
+        THROW_VR_EXCEPTION_IF(links.size()!=1, "Need an object with exactly one modellink");
 		THROW_VR_EXCEPTION_IF(!object->getLinks().at(0)->getCollisionModel(), "Need an object with collision model");
         THROW_VR_EXCEPTION_IF(!object->getLinks().at(0)->getCollisionModel()->getTriMeshModel(), "Need an object with trimeshmodel");
 
@@ -29,7 +30,7 @@ namespace VirtualRobot
         verbose = false;
         objectLength = 0.0f;
 
-		objectLink = object->getLinks().at(0);
+        objectLink = links.at(0);
 
         centerOfModel = objectLink->getCollisionModel()->getTriMeshModel()->getCOM();
 
