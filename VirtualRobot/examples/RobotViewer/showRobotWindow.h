@@ -22,8 +22,6 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-//#include <Inventor/Qt/SoQt.h>
-
 #include <vector>
 
 #include "ui_RobotViewer.h"
@@ -74,13 +72,7 @@ protected:
     void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
 
-
-    //SimoxGui::CoinViewer* viewer;
     SimoxGui::ViewerInterfacePtr viewer;
-
-    /*
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. * /
-    */
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;

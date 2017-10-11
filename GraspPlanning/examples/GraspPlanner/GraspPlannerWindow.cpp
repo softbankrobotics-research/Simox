@@ -12,26 +12,33 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
+#include "VirtualRobot/Visualization/VisualizationNode.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
+/*#include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoScale.h>
+*/
 
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <cmath>
 #include <sstream>
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 using namespace std;
 using namespace VirtualRobot;
@@ -51,7 +58,8 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
     this->objectFile = objFile;
     this->eefName = eefName;
     this->preshape = preshape;
-    eefVisu = NULL;
+
+/*    eefVisu = NULL;
 
     sceneSep = new SoSeparator;
     sceneSep->ref();
@@ -69,7 +77,7 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
     sceneSep->addChild(objectSep);
     sceneSep->addChild(frictionConeSep);
     //sceneSep->addChild(graspsSep);
-
+*/
     setupUI();
 
 
@@ -78,75 +86,29 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
 
     buildVisu();
 
-
-
     viewer->viewAll();
-
-    /*SoSensorManager *sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor *timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS/1000.0f));
-    sensor_mgr->insertTimerSensor(timer);*/
 }
 
 
 GraspPlannerWindow::~GraspPlannerWindow()
 {
-    sceneSep->unref();
-    graspsSep->unref();
-
-    if (eefVisu)
-    {
-        eefVisu->unref();
-    }
+    viewer.reset();
 }
 
-
-/*void GraspPlannerWindow::timerCB(void * data, SoSensor * sensor)
-{
-    GraspPlannerWindow *ikWindow = static_cast<GraspPlannerWindow*>(data);
-    float x[6];
-    x[0] = (float)ikWindow->UI.horizontalSliderX->value();
-    x[1] = (float)ikWindow->UI.horizontalSliderY->value();
-    x[2] = (float)ikWindow->UI.horizontalSliderZ->value();
-    x[3]= (float)ikWindow->UI.horizontalSliderRo->value();
-    x[4] = (float)ikWindow->UI.horizontalSliderPi->value();
-    x[5] = (float)ikWindow->UI.horizontalSliderYa->value();
-    x[0] /= 10.0f;
-    x[1] /= 10.0f;
-    x[2] /= 10.0f;
-    x[3] /= 300.0f;
-    x[4] /= 300.0f;
-    x[5] /= 300.0f;
-
-    if (x[0]!=0 || x[1]!=0 || x[2]!=0 || x[3]!=0 || x[4]!=0 || x[5]!=0)
-        ikWindow->updateObject(x);
-}*/
 
 void GraspPlannerWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-#ifdef WIN32
-    viewer->setAntialiasing(true, 8);
-#endif
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonPlan, SIGNAL(clicked()), this, SLOT(plan()));
     connect(UI.pushButtonSave, SIGNAL(clicked()), this, SLOT(save()));
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
-
-
-
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
     connect(UI.checkBoxCones, SIGNAL(clicked()), this, SLOT(frictionConeVisu()));
     connect(UI.checkBoxGrasps, SIGNAL(clicked()), this, SLOT(showGrasps()));
@@ -156,10 +118,9 @@ void GraspPlannerWindow::setupUI()
 void GraspPlannerWindow::resetSceneryAll()
 {
     grasps->removeAllGrasps();
-    graspsSep->removeAllChildren();
 
-    //if (rns)
-    //  rns->setJointValues(startConfig);
+    viewer->clearLayer("graspsLayer");
+    //graspsSep->removeAllChildren();
 }
 
 
@@ -172,82 +133,35 @@ void GraspPlannerWindow::closeEvent(QCloseEvent* event)
 
 void GraspPlannerWindow::buildVisu()
 {
+    viewer->clearLayer("robotLayer");
 
-    robotSep->removeAllChildren();
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
+    // eef
     if (eefCloned)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(eefCloned, colModel);
-        //eefCloned->getVisualization<CoinVisualization>(colModel);
-
-        if (visualisationNode)
-        {
-            robotSep->addChild(visualisationNode);
-            //visualizationRobot->highlight(UI.checkBoxHighlight->isChecked());
-        }
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, colModel);
+        viewer->addVisualization("robotLayer", "robot", visu);
     }
 
-    /*
-    if (robot)
-    {
-        visualizationRobot = robot->getVisualization<CoinVisualization>(colModel);
-        SoNode* visualisationNode = visualizationRobot->getCoinVisualization();
-        if (visualisationNode)
-        {
-            robotSep->addChild(visualisationNode);
-            //visualizationRobot->highlight(true);
-        }
-    }
-    */
-    objectSep->removeAllChildren();
-
+    // object
+    viewer->clearLayer("objectLayer");
     if (object)
     {
-
-#if 1
-        ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
-
-        if (visualisationNode)
-        {
-            objectSep->addChild(visualisationNode);
-        }
-
-#else
-
-        if (UI.checkBoxColModel->isChecked())
-        {
-            VirtualRobot::MathTools::ConvexHull3DPtr ch = ConvexHullGenerator::CreateConvexHull(object->getCollisionModel()->getTriMeshModel());
-            CoinConvexHullVisualizationPtr chv(new CoinConvexHullVisualization(ch));
-            SoSeparator* s = chv->getCoinVisualization();
-
-            if (s)
-            {
-                objectSep->addChild(s);
-            }
-        }
-        else
-        {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, ModelLink::Full);
-
-            if (visualisationNode)
-            {
-                objectSep->addChild(visualisationNode);
-            }
-        }
-
-#endif
-        /*SoNode *s = CoinVisualizationFactory::getCoinVisualization(object->getCollisionModel()->getTriMeshModel(),true);
-        if (s)
-            objectSep->addChild(s);   */
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
+        viewer->addVisualization("objectLayer", "object", visu);
     }
 
-    frictionConeSep->removeAllChildren();
+    // friction cones
+    viewer->clearLayer("frictionLayer");
     bool fc = (UI.checkBoxCones->isChecked());
-
     if (fc && contacts.size() > 0 && qualityMeasure)
     {
+        //VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
+        //viewer->addVisualization("frictionLayer", "cones", visu);
+
+
+        /*
         ContactConeGeneratorPtr cg = qualityMeasure->getConeGenerator();
         float radius = cg->getConeRadius();
         float height = cg->getConeHeight();
@@ -271,8 +185,18 @@ void GraspPlannerWindow::buildVisu()
             s->addChild(CoinVisualizationFactory::CreateArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f));
             frictionConeSep->addChild(s);
         }
+        */
     }
 
+    // graspset
+    viewer->clearLayer("graspsetLayer");
+    if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
+    {
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
+        viewer->addVisualization("graspsetLayer", "grasps", visu);
+    }
+
+    /*
     if (UI.checkBoxGrasps->isChecked() && sceneSep->findChild(graspsSep) < 0)
     {
         sceneSep->addChild(graspsSep);
@@ -282,14 +206,14 @@ void GraspPlannerWindow::buildVisu()
     {
         sceneSep->removeChild(graspsSep);
     }
+    */
 
-    viewer->scheduleRedraw();
+    //viewer->scheduleRedraw();
 }
 
 int GraspPlannerWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -298,7 +222,7 @@ void GraspPlannerWindow::quit()
 {
     std::cout << "GraspPlannerWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void GraspPlannerWindow::loadObject()
@@ -356,9 +280,6 @@ void GraspPlannerWindow::loadRobot()
     {
         eef->setPreshape(preshape);
     }
-
-    eefVisu = CoinVisualizationFactory::CreateEndEffectorVisualization(eef);
-    eefVisu->ref();
 }
 
 void GraspPlannerWindow::plan()
@@ -380,16 +301,6 @@ void GraspPlannerWindow::plan()
     }
 
     grasps->setPreshape(preshape);
-
-    for (int i = start; i < (int)grasps->getSize() - 1; i++)
-    {
-        Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
-        SoSeparator* sep1 = new SoSeparator();
-        SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(m);
-        sep1->addChild(mt);
-        sep1->addChild(eefVisu);
-        graspsSep->addChild(sep1);
-    }
 
     // set to last valid grasp
     if (grasps->getSize() > 0 && eefCloned && eefCloned->getEndEffector(eefName))
@@ -491,7 +402,6 @@ void GraspPlannerWindow::save()
     {
         return;
     }
-
 
     VisualizationNodePtr v = object->getLinks().at(0)->getVisualization()->clone();
     CollisionModelPtr c = object->getLinks().at(0)->getCollisionModel()->clone();

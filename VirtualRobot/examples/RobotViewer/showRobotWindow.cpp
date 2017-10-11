@@ -60,9 +60,6 @@ void showRobotWindow::setupUI()
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
-    //viewer = new SimoxGui::CoinViewer(UI.frameViewer);
-    //viewer->setAntialiasing(true, 4);
-
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
 

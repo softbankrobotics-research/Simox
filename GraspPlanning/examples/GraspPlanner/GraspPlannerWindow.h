@@ -19,16 +19,12 @@
 #include "GraspPlanning/ApproachMovementSurfaceNormal.h"
 
 #include <string.h>
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include "../../../Gui/ViewerInterface.h"
 
 #include <vector>
 
@@ -52,16 +48,12 @@ public slots:
     void closeEvent(QCloseEvent* event);
 
     void resetSceneryAll();
-
-
     void closeEEF();
     void openEEF();
     void colModel();
     void frictionConeVisu();
     void showGrasps();
-
     void buildVisu();
-
     void plan();
     void save();
 
@@ -69,36 +61,32 @@ protected:
 
     void loadRobot();
     void loadObject();
-
     void setupUI();
 
-    static void timerCB(void* data, SoSensor* sensor);
     Ui::GraspPlanner UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
+    SimoxGui::ViewerInterfacePtr viewer;
+
+    /*SoQtExaminerViewer* viewer;
     SoSeparator* sceneSep;
     SoSeparator* robotSep;
     SoSeparator* objectSep;
     SoSeparator* frictionConeSep;
-    SoSeparator* graspsSep;
+    SoSeparator* graspsSep;*/
 
     VirtualRobot::RobotPtr robot;
     VirtualRobot::RobotPtr eefCloned;
     VirtualRobot::ObstaclePtr object;
     VirtualRobot::EndEffectorPtr eef;
-
     VirtualRobot::GraspSetPtr grasps;
-
-
     VirtualRobot::EndEffector::ContactInfoVector contacts;
-
 
     std::string robotFile;
     std::string objectFile;
     std::string eefName;
     std::string preshape;
 
-    SoSeparator* eefVisu;
+    //SoSeparator* eefVisu;
 
     GraspPlanning::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
     GraspPlanning::ApproachMovementSurfaceNormalPtr approach;
@@ -108,4 +96,4 @@ protected:
     VirtualRobot::CoinVisualizationPtr visualizationObject;
 };
 
-#endif // __GraspPlanner_WINDOW_H_
+#endif
