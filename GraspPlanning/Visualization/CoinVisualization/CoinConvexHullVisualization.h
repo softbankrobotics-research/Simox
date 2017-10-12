@@ -53,6 +53,9 @@ namespace GraspPlanning
 
         SoSeparator* getCoinVisualization();
 
+        virtual VirtualRobot::VisualizationPtr getVisualization();
+
+
     protected:
 
         void buildVisu();
@@ -65,8 +68,6 @@ namespace GraspPlanning
     };
 
     typedef std::shared_ptr<CoinConvexHullVisualization> CoinConvexHullVisualizationPtr;
-
-
 }
 
 #endif

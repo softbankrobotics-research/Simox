@@ -29,6 +29,7 @@
 #include "../Model/Primitive.h"
 #include "../Tools/MathTools.h"
 #include "../Model/Nodes/ModelLink.h"
+#include "../EndEffector/EndEffector.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -243,6 +244,12 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+
+        virtual VisualizationNodePtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true)
+        {
+            return VisualizationNodePtr();
+        }
+
         /*!
             Move local visualization by homogeneous matrix m. (MM)
         */

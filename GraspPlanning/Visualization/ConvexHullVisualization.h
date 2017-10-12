@@ -24,8 +24,9 @@
 #define _GRASP_PLANNING_ConvexHullVisualization_h_
 
 #include "../GraspPlanning.h"
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Tools/MathTools.h>
+#include "../../VirtualRobot/Model/Model.h"
+#include "../../VirtualRobot/Tools/MathTools.h"
+#include "../../VirtualRobot/Visualization/Visualization.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -48,6 +49,8 @@ namespace GraspPlanning
         ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
         ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
+        virtual VirtualRobot::VisualizationPtr getVisualization() = 0;
+
         /*!
         */
         virtual ~ConvexHullVisualization();
@@ -57,9 +60,11 @@ namespace GraspPlanning
         VirtualRobot::MathTools::ConvexHull3DPtr convHull3D;
         VirtualRobot::MathTools::ConvexHull6DPtr convHull6D;
         bool useFirst3Coords;
-
     };
+
+    typedef std::shared_ptr<ConvexHullVisualization> ConvexHullVisualizationPtr;
 
 } // namespace GraspPlanning
 
-#endif // _GraspPlanning_ConvexHullVisualization_h_
+
+#endif

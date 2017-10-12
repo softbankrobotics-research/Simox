@@ -1,6 +1,5 @@
 
 #include "GraspPlannerWindow.h"
-#include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
 #include "GraspPlanning/ContactConeGenerator.h"
 #include "GraspPlanning/MeshConverter.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
@@ -18,15 +17,6 @@
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
-
-/*#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoScale.h>
-*/
 
 #include <time.h>
 #include <vector>
@@ -59,27 +49,7 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
     this->eefName = eefName;
     this->preshape = preshape;
 
-/*    eefVisu = NULL;
-
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-    objectSep = new SoSeparator;
-    frictionConeSep = new SoSeparator;
-    graspsSep = new SoSeparator;
-    graspsSep->ref();
-
-#if 0
-    SoSeparator* s = CoinVisualizationFactory::CreateCoordSystemVisualization();
-    sceneSep->addChild(s);
-#endif
-    sceneSep->addChild(robotSep);
-    sceneSep->addChild(objectSep);
-    sceneSep->addChild(frictionConeSep);
-    //sceneSep->addChild(graspsSep);
-*/
     setupUI();
-
 
     loadRobot();
     loadObject();
@@ -119,8 +89,7 @@ void GraspPlannerWindow::resetSceneryAll()
 {
     grasps->removeAllGrasps();
 
-    viewer->clearLayer("graspsLayer");
-    //graspsSep->removeAllChildren();
+    viewer->clearLayer("graspsetLayer");
 }
 
 
@@ -157,25 +126,29 @@ void GraspPlannerWindow::buildVisu()
     bool fc = (UI.checkBoxCones->isChecked());
     if (fc && contacts.size() > 0 && qualityMeasure)
     {
-        //VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
-        //viewer->addVisualization("frictionLayer", "cones", visu);
 
-
-        /*
         ContactConeGeneratorPtr cg = qualityMeasure->getConeGenerator();
         float radius = cg->getConeRadius();
         float height = cg->getConeHeight();
         float scaling = 30.0f;
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(contacts, height * scaling, radius * scaling, true);
 
-        if (visualisationNode)
-        {
-            frictionConeSep->addChild(visualisationNode);
-        }
+        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        viewer->addVisualization("frictionLayer", "cones", visu);
 
         // add approach dir visu
         for (size_t i = 0; i < contacts.size(); i++)
         {
+            std::stringstream name;
+            name << "arrow-" << i;
+            VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
+
+            Eigen::Matrix4f ma;
+            ma.setIdentity();
+            ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
+            VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visu, ma);
+            viewer->addVisualization("frictionLayer", name.str(), visu);
+
+/*
             SoSeparator* s = new SoSeparator;
             Eigen::Matrix4f ma;
             ma.setIdentity();
@@ -184,8 +157,8 @@ void GraspPlannerWindow::buildVisu()
             s->addChild(m);
             s->addChild(CoinVisualizationFactory::CreateArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f));
             frictionConeSep->addChild(s);
+            */
         }
-        */
     }
 
     // graspset
@@ -236,12 +209,6 @@ void GraspPlannerWindow::loadObject()
     {
         object = Obstacle::createBox(50.0f, 50.0f, 10.0f);
     }
-
-#if 0
-    TriMeshModelPtr tm = object->getVisualization()->getTriMeshModel();
-    MathTools::ConvexHull3DPtr cv = ConvexHullGenerator::CreateConvexHull(tm->vertices);
-    object = GraspPlanning::MeshConverter::CreateManipulationObject(object->getName(), cv);
-#endif
 
     //Eigen::Vector3f minS,maxS;
     //object->getCollisionModel()->getTriMeshModel()->getSize(minS,maxS);

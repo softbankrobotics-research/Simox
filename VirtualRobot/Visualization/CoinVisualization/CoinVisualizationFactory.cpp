@@ -960,6 +960,13 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
+    VisualizationNodePtr CoinVisualizationFactory::createContactVisualization(EndEffector::ContactInfoVector &contacts, float frictionConeHeight, float frictionConeRadius, bool scaleAccordingToApproachDir)
+    {
+        SoNode* visualisationNode = getCoinVisualization(contacts, frictionConeHeight, frictionConeRadius, scaleAccordingToApproachDir);
+        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualisationNode));
+        return n;
+    }
+
 
     VisualizationNodePtr CoinVisualizationFactory::createEllipse(float x, float y, float z, bool showAxes, float axesHeight, float axesWidth)
     {
