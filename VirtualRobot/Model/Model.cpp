@@ -37,9 +37,14 @@ namespace VirtualRobot
         WriteLockPtr w = getWriteLock();
         if (node)
         {
-            THROW_VR_EXCEPTION_IF(hasModelNode(node->getName()),
-                                  "There are (at least) two model nodes with name <" + node->getName()
-                                  + "> defined, the second one is skipped!");
+            if (hasModelNode(node->getName()))
+            {
+                if (node == getModelNode(node->getName()))
+                    return;
+                THROW_VR_EXCEPTION_IF(hasModelNode(node->getName()),
+                                      "There are (at least) two model nodes with name <" + node->getName()
+                                      + "> defined!");
+            }
 
             if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
             {

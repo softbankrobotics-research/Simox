@@ -6,6 +6,7 @@
 #include "../../Model/Nodes/ModelJoint.h"
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
+#include "../../Import/SimoxXMLFactory.h"
 #include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 #include "../../Model/Nodes/Attachments/ModelFrameFactory.h"
@@ -518,8 +519,8 @@ void showRobotWindow::loadRobot()
 
     try
     {
-        QFileInfo fileInfo(robotFilename.c_str());
-        std::string suffix(fileInfo.suffix().toLatin1());
+        //QFileInfo fileInfo(robotFilename.c_str());
+        //std::string suffix(fileInfo.suffix().toLatin1());
         /*RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
 
         if (!importer)
@@ -534,10 +535,30 @@ void showRobotWindow::loadRobot()
     }
     catch (VirtualRobotException& e)
     {
-        cout << " ERROR while creating robot" << endl;
-        cout << e.what();
-        return;
     }
+
+    if (!robot)
+    {
+        try
+        {
+            QFileInfo fileInfo(robotFilename.c_str());
+            std::string suffix(fileInfo.suffix().toLatin1());
+            RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+
+            if (!importer)
+            {
+                cout << " ERROR while grabbing importer" << endl;
+                return;
+            }
+
+            robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
+            //robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename, ModelIO::eFull);
+        }
+        catch (VirtualRobotException& e)
+        {
+        }
+    }
+
 
     if (!robot)
     {
