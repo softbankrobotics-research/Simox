@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
     std::string robFile = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
     cout << "Robot file: " << robFile << endl;
 
-
     std::string eef("Hand R");
     std::string preshape("");
 

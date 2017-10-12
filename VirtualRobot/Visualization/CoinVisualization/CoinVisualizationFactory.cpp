@@ -4121,6 +4121,19 @@ namespace VirtualRobot
         }
     }
 
+    void CoinVisualizationFactory::applyDisplacement(VisualizationPtr o, Eigen::Matrix4f& m)
+    {
+        if (!o)
+        {
+            return;
+        }
+
+        for (auto & v: o->getVisualizationNodes())
+        {
+            applyDisplacement(v, m);
+        }
+    }
+
 
     SoGroup* CoinVisualizationFactory::convertSoFileChildren(SoGroup* orig)
     {

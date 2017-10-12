@@ -1,6 +1,8 @@
 
 #include "GraspQualityWindow.h"
+#ifdef Simox_USE_COIN_VISUALIZATION
 #include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
+#endif
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
@@ -10,25 +12,21 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
-#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
-
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoScale.h>
 
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <cmath>
 #include <sstream>
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 using namespace std;
 using namespace VirtualRobot;
@@ -42,57 +40,38 @@ GraspQualityWindow::GraspQualityWindow(std::string& robFile, std::string& objFil
 
     this->robotFile = robFile;
     this->objectFile = objFile;
-
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-    objectSep = new SoSeparator;
-    frictionConeSep = new SoSeparator;
-    gws1Sep = new SoSeparator;
-    gws2Sep = new SoSeparator;
-    ows1Sep = new SoSeparator;
-    ows2Sep = new SoSeparator;
-
-    sceneSep->addChild(robotSep);
-    sceneSep->addChild(objectSep);
-    sceneSep->addChild(frictionConeSep);
-    sceneSep->addChild(gws1Sep);
-    sceneSep->addChild(gws2Sep);
-    sceneSep->addChild(ows1Sep);
-    sceneSep->addChild(ows2Sep);
-
     setupUI();
 
 
     loadObject();
     loadRobot();
 
+    viewer->viewAll();
 
-    m_pExViewer->viewAll();
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
+    timer->start(TIMER_MS);
 
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer);
 }
 
 
 GraspQualityWindow::~GraspQualityWindow()
 {
-    sceneSep->unref();
+    timer->stop();
+    delete timer;
+    viewer.reset();
 }
 
 
-void GraspQualityWindow::timerCB(void* data, SoSensor* /*sensor*/)
+void GraspQualityWindow::timerCB()
 {
-    GraspQualityWindow* ikWindow = static_cast<GraspQualityWindow*>(data);
     float x[6];
-    x[0] = (float)ikWindow->UI.horizontalSliderX->value();
-    x[1] = (float)ikWindow->UI.horizontalSliderY->value();
-    x[2] = (float)ikWindow->UI.horizontalSliderZ->value();
-    x[3] = (float)ikWindow->UI.horizontalSliderRo->value();
-    x[4] = (float)ikWindow->UI.horizontalSliderPi->value();
-    x[5] = (float)ikWindow->UI.horizontalSliderYa->value();
+    x[0] = (float)UI.horizontalSliderX->value();
+    x[1] = (float)UI.horizontalSliderY->value();
+    x[2] = (float)UI.horizontalSliderZ->value();
+    x[3] = (float)UI.horizontalSliderRo->value();
+    x[4] = (float)UI.horizontalSliderPi->value();
+    x[5] = (float)UI.horizontalSliderYa->value();
     x[0] /= 10.0f;
     x[1] /= 10.0f;
     x[2] /= 10.0f;
@@ -102,7 +81,7 @@ void GraspQualityWindow::timerCB(void* data, SoSensor* /*sensor*/)
 
     if (x[0] != 0 || x[1] != 0 || x[2] != 0 || x[3] != 0 || x[4] != 0 || x[5] != 0)
     {
-        ikWindow->updateObject(x);
+        updateObject(x);
     }
 }
 
@@ -110,19 +89,10 @@ void GraspQualityWindow::timerCB(void* data, SoSensor* /*sensor*/)
 void GraspQualityWindow::setupUI()
 {
     UI.setupUi(this);
-    m_pExViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    m_pExViewer->setAccumulationBuffer(true);
-
-    m_pExViewer->setAntialiasing(true, 4);
-
-    m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    m_pExViewer->setFeedbackVisibility(true);
-    m_pExViewer->setSceneGraph(sceneSep);
-    m_pExViewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
@@ -134,8 +104,8 @@ void GraspQualityWindow::setupUI()
     connect(UI.checkBoxCones, SIGNAL(clicked()), this, SLOT(frictionConeVisu()));
     connect(UI.checkBoxGWS1, SIGNAL(clicked()), this, SLOT(showGWS()));
     connect(UI.checkBoxGWS2, SIGNAL(clicked()), this, SLOT(showGWS()));
-    connect(UI.checkBoxOWS1, SIGNAL(clicked()), this, SLOT(showOWS()));
-    connect(UI.checkBoxOWS2, SIGNAL(clicked()), this, SLOT(showOWS()));
+    //connect(UI.checkBoxOWS1, SIGNAL(clicked()), this, SLOT(showOWS()));
+    //connect(UI.checkBoxOWS2, SIGNAL(clicked()), this, SLOT(showOWS()));
 
     connect(UI.horizontalSliderX, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectX()));
     connect(UI.horizontalSliderY, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectY()));
@@ -150,8 +120,6 @@ void GraspQualityWindow::setupUI()
 
 void GraspQualityWindow::resetSceneryAll()
 {
-    //if (rns)
-    //  rns->setJointValues(startConfig);
 }
 
 
@@ -164,55 +132,45 @@ void GraspQualityWindow::closeEvent(QCloseEvent* event)
 
 void GraspQualityWindow::buildVisu()
 {
+    viewer->clearLayer("robotLayer");
 
-    robotSep->removeAllChildren();
-    //bool colModel = (UI.checkBoxColModel->isChecked());
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
+    // robot
     if (robot)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot, colModel);
-
-        if (visualisationNode)
-        {
-            robotSep->addChild(visualisationNode);
-            //visualizationRobot->highlight(true);
-        }
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+        viewer->addVisualization("robotLayer", "robot", visu);
     }
 
-    objectSep->removeAllChildren();
-
+    // object
+    viewer->clearLayer("objectLayer");
     if (object)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel);
-
-        if (visualisationNode)
-        {
-            objectSep->addChild(visualisationNode);
-        }
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
+        viewer->addVisualization("objectLayer", "object", visu);
     }
 
-    frictionConeSep->removeAllChildren();
+    // friction cones
+    viewer->clearLayer("frictionLayer");
     bool fc = (UI.checkBoxCones->isChecked());
-
-    if (fc && contacts.size() > 0)
+    if (fc && contacts.size() > 0 && qualityMeasure)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(contacts);
 
-        if (visualisationNode)
-        {
-            frictionConeSep->addChild(visualisationNode);
-        }
+        GraspPlanning::ContactConeGeneratorPtr cg = qualityMeasure->getConeGenerator();
+        float radius = cg->getConeRadius();
+        float height = cg->getConeHeight();
+        float scaling = 30.0f;
 
+        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        viewer->addVisualization("frictionLayer", "cones", visu);
     }
-
-    m_pExViewer->scheduleRedraw();
 }
 
 int GraspQualityWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
+
     return 0;
 }
 
@@ -221,7 +179,8 @@ void GraspQualityWindow::quit()
 {
     std::cout << "GraspQualityWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
+    timer->stop();
 }
 
 void GraspQualityWindow::loadObject()
@@ -244,7 +203,7 @@ void GraspQualityWindow::loadRobot()
 {
     eefs.clear();
     robot.reset();
-    robot = SimoxXMLFactory::loadRobotSimoxXML(robotFile);
+    robot = ModelIO::loadModel(robotFile);
 
     if (!robot)
     {
@@ -365,8 +324,6 @@ void GraspQualityWindow::updateObject(float x[6])
         cout << m << endl;
 
     }
-
-    m_pExViewer->scheduleRedraw();
 }
 
 void GraspQualityWindow::sliderReleased_ObjectX()
@@ -411,162 +368,10 @@ void GraspQualityWindow::colModel()
 
 void GraspQualityWindow::showGWS()
 {
-    gws1Sep->removeAllChildren();
-    gws2Sep->removeAllChildren();
-    ows1Sep->removeAllChildren();
-    ows2Sep->removeAllChildren();
+    viewer->clearLayer("gws");
+    viewer->clearLayer("ows");
+
     Eigen::Matrix4f m = object->getGlobalPose();
-    SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(m);
-
-#if 0
-    // test
-
-    GraspPlanning::ContactConeGeneratorPtr cgMM(new GraspPlanning::ContactConeGenerator(8, 0.25f, 100.0f));
-    std::vector<MathTools::ContactPoint> resultsMM;
-    VirtualRobot::EndEffector::ContactInfoVector::const_iterator objPointsIter;
-
-    for (objPointsIter = contacts.begin(); objPointsIter != contacts.end(); objPointsIter++)
-    {
-        MathTools::ContactPoint point;
-
-        point.p = objPointsIter->contactPointObstacleLocal;
-        //point.p -= centerOfModel;
-
-        point.n = objPointsIter->contactPointFingerLocal - objPointsIter->contactPointObstacleLocal;
-        point.n.normalize();
-
-        cgMM->computeConePoints(point, resultsMM);
-
-        SoSeparator* pV2 = CoinVisualizationFactory::CreatePointVisualization(point, true);
-        gws1Sep->addChild(pV2);
-
-    }
-
-    SoSeparator* pV = CoinVisualizationFactory::CreatePointsVisualization(resultsMM, true);
-    SoSeparator* scaledPoints = new SoSeparator;
-    SoScale* sc0 = new SoScale;
-    float sf0 = 1.0f;
-    sc0->scaleFactor.setValue(sf0, sf0, sf0);
-    scaledPoints->addChild(sc0);
-    scaledPoints->addChild(pV);
-    gws1Sep->addChild(scaledPoints);
-
-
-#endif
-
-#if 0
-    // test
-    robotSep->removeAllChildren();
-    // plane
-    Eigen::Vector3f posZero(0, 0, 0);
-    Eigen::Vector3f posZeroN(0, 0, 1.0f);
-    SoSeparator* pV3 = CoinVisualizationFactory::CreatePlaneVisualization(posZero, posZeroN, 1000.0f, 0.5f);
-    gws1Sep->addChild(pV3);
-
-
-    std::vector<MathTools::ContactPoint> resultsM;
-    std::vector<MathTools::ContactPoint> resultsMM;
-    MathTools::ContactPoint pointM;
-    MathTools::ContactPoint pointMM;
-    float pos = 0.0f;
-    float length = 0.2f; //m
-    float lengthMM = length * 1000.0f; //m
-    pointM.p(0) = pos;
-    pointM.p(1) = pos;
-    pointM.p(2) = pos;
-    pointM.n(0) = 1.0f;
-    pointM.n(1) = 1.0f;
-    pointM.n(2) = 1.0f;
-    pointM.n.normalize();
-    pointMM.n = pointM.n;
-    pointMM.p = pointM.p * 1000.0f;
-    MathTools::ContactPoint pointM2;
-    MathTools::ContactPoint pointMM2;
-    pointM2.p(0) = pos;
-    pointM2.p(1) = pos - length;
-    pointM2.p(2) = pos;
-    pointM2.n(0) = 0.0f;
-    pointM2.n(1) = -1.0f;
-    pointM2.n(2) = 0.0f;
-    pointMM2.n = pointM2.n;
-    pointMM2.p = pointM2.p * 1000.0f;
-    MathTools::ContactPoint pointM3;
-    MathTools::ContactPoint pointMM3;
-    pointM3.p(0) = pos;
-    pointM3.p(1) = pos;
-    pointM3.p(2) = pos + length;
-    pointM3.n(0) = 0.0f;
-    pointM3.n(1) = 0.0f;
-    pointM3.n(2) = 1.0f;
-    pointMM3.n = pointM3.n;
-    pointMM3.p = pointM3.p * 1000.0f;
-    GraspPlanning::ContactConeGeneratorPtr cg(new GraspPlanning::ContactConeGenerator(8, 0.25f, 1.0f));
-    GraspPlanning::ContactConeGeneratorPtr cgMM(new GraspPlanning::ContactConeGenerator(8, 0.25f, 100.0f));
-    cg->computeConePoints(pointM, resultsM);
-    cg->computeConePoints(pointM2, resultsM);
-    cg->computeConePoints(pointM3, resultsM);
-    cgMM->computeConePoints(pointMM, resultsMM);
-    cgMM->computeConePoints(pointMM2, resultsMM);
-    cgMM->computeConePoints(pointMM3, resultsMM);
-
-    SoSeparator* pV = CoinVisualizationFactory::CreatePointsVisualization(resultsMM, true);
-    SoSeparator* scaledPoints = new SoSeparator;
-    SoScale* sc0 = new SoScale;
-    float sf0 = 1.0f;
-    sc0->scaleFactor.setValue(sf0, sf0, sf0);
-    scaledPoints->addChild(sc0);
-    scaledPoints->addChild(pV);
-    gws1Sep->addChild(scaledPoints);
-    SoSeparator* pV2 = CoinVisualizationFactory::CreatePointVisualization(pointMM, true);
-    SoSeparator* pV2b = CoinVisualizationFactory::CreatePointVisualization(pointMM2, true);
-    SoSeparator* pV2c = CoinVisualizationFactory::CreatePointVisualization(pointMM3, true);
-    gws1Sep->addChild(pV2);
-    gws1Sep->addChild(pV2b);
-    gws1Sep->addChild(pV2c);
-
-    // plane
-    Eigen::Vector3f posZero(0, 0, 0);
-    Eigen::Vector3f posZeroN(0, 0, 1.0f);
-    SoSeparator* pV3 = CoinVisualizationFactory::CreatePlaneVisualization(posZero, posZeroN, 1000.0f, 0.5f);
-    gws1Sep->addChild(pV3);
-
-
-    // wrench
-    Eigen::Vector3f com = 0.333f * (pointM.p + pointM2.p + pointM3.p);
-    std::vector<VirtualRobot::MathTools::ContactPoint> wrenchP = GraspPlanning::GraspQualityMeasureWrenchSpace::createWrenchPoints(resultsM, com, lengthMM);
-    MathTools::print(wrenchP);
-    // convex hull
-    VirtualRobot::MathTools::ConvexHull6DPtr ch1 = GraspPlanning::ConvexHullGenerator::CreateConvexHull(wrenchP);
-    float minO = GraspPlanning::GraspQualityMeasureWrenchSpace::minOffset(ch1);
-    cout << "minOffset:" << minO << endl;
-    std::vector<MathTools::TriangleFace6D>::iterator faceIter;
-    cout << "Distances to Origin:" << endl;
-
-    for (faceIter = ch1->faces.begin(); faceIter != ch1->faces.end(); faceIter++)
-    {
-        cout << faceIter->distPlaneZero << ", ";
-
-        if (faceIter->distPlaneZero > 1e-4)
-        {
-            cout << "<-- not force closure " << endl;
-        }
-
-    }
-
-    cout << endl;
-    // ch visu
-    GraspPlanning::CoinConvexHullVisualizationPtr visu(new GraspPlanning::CoinConvexHullVisualization(ch1, false));
-    SoSeparator* chV = visu->getCoinVisualization();
-    SoSeparator* scaledCH = new SoSeparator;
-    SoScale* sc1 = new SoScale;
-    float sf1 = 1.0f / 4.0f;
-    sc1->scaleFactor.setValue(sf1, sf1, sf1);
-    scaledCH->addChild(sc1);
-    scaledCH->addChild(chV);
-    gws1Sep->addChild(scaledCH);
-
-    return;
-#endif
 
 
     if (!qualityMeasure)
@@ -575,60 +380,31 @@ void GraspQualityWindow::showGWS()
     }
 
     VirtualRobot::MathTools::ConvexHull6DPtr ch = qualityMeasure->getConvexHullGWS();
-    VirtualRobot::MathTools::ConvexHull6DPtr chOWS = qualityMeasure->getConvexHullOWS();
 
     if (!ch)
     {
         return;
     }
 
-    if (UI.checkBoxGWS1->isChecked())
-    {
-        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(ch, true));
-        SoSeparator* s = v->getCoinVisualization();
+    GraspPlanning::ConvexHullVisualizationPtr chv;
+    GraspPlanning::ConvexHullVisualizationPtr chv2;
+#ifdef Simox_USE_COIN_VISUALIZATION
+    chv.reset(new GraspPlanning::CoinConvexHullVisualization(ch, true));
+    chv2.reset(new GraspPlanning::CoinConvexHullVisualization(ch, false));
+#endif
 
-        if (s)
-        {
-            gws1Sep->addChild(mt);
-            gws1Sep->addChild(s);
-        }
+    if (UI.checkBoxGWS1->isChecked() && chv)
+    {
+        VisualizationPtr v = chv->getVisualization();
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v, m);
+        viewer->addVisualization("gws","gws1",v);
     }
 
-    if (UI.checkBoxGWS2->isChecked())
+    if (UI.checkBoxGWS2->isChecked() && chv2)
     {
-        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, false));
-        SoSeparator* s = v->getCoinVisualization();
-
-        if (s)
-        {
-            gws2Sep->addChild(mt);
-            gws2Sep->addChild(s);
-        }
-
-    }
-
-    if (UI.checkBoxOWS1->isChecked())
-    {
-        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, true));
-        SoSeparator* s = v->getCoinVisualization();
-
-        if (s)
-        {
-            ows1Sep->addChild(mt);
-            ows1Sep->addChild(s);
-        }
-    }
-
-    if (UI.checkBoxOWS2->isChecked())
-    {
-        GraspPlanning::CoinConvexHullVisualizationPtr v(new GraspPlanning::CoinConvexHullVisualization(chOWS, false));
-        SoSeparator* s = v->getCoinVisualization();
-
-        if (s)
-        {
-            ows2Sep->addChild(mt);
-            ows2Sep->addChild(s);
-        }
+        VisualizationPtr v2 = chv2->getVisualization();
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2, m);
+        viewer->addVisualization("gws","gws2",v2);
     }
 }
 

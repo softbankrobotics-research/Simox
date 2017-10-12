@@ -7,7 +7,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/SceneIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
 
@@ -18,12 +17,9 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
+#include <QTimer>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
+#include "../../../Gui/ViewerInterface.h"
 
 
 #include <vector>
@@ -69,6 +65,7 @@ public slots:
     void graspQuality();
     void showGWS();
     void showOWS();
+    void timerCB();
 
 protected:
 
@@ -79,20 +76,11 @@ protected:
 
     void updateObject(float x[6]);
 
-    static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void setEEFComboBox();
     Ui::MainWindowGraspQuality UI;
-    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* objectSep;
-    SoSeparator* frictionConeSep;
-    SoSeparator* gws1Sep;
-    SoSeparator* gws2Sep;
-    SoSeparator* ows1Sep;
-    SoSeparator* ows2Sep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::ModelPtr robot;
     VirtualRobot::ObstaclePtr object;
@@ -109,8 +97,7 @@ protected:
 
     GraspPlanning::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+    QTimer* timer;
 };
 
-#endif // __GraspQuality_WINDOW_H_
+#endif

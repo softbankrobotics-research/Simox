@@ -19,36 +19,18 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Grasp Quality Demo");
     cout << " --- START --- " << endl;
 
-    std::string robot("robots/ArmarIII/ArmarIII.xml");
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robot);
-
-    std::string object("objects/riceBox.xml");
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(object);
-
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::considerKey("object");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
+    std::string objFile = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("object", "objects/iv/riceBox.xml");
+    cout << "Object file: " << objFile << endl;
 
-    if (!robFile.empty() && VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-    {
-        robot = robFile;
-    }
+    std::string robFile = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
+    cout << "Robot file: " << robFile << endl;
 
-    std::string objFile = VirtualRobot::RuntimeEnvironment::getValue("object");
-
-    if (!objFile.empty() && VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(objFile))
-    {
-        object = objFile;
-    }
-
-
-    cout << "Using robot file " << robot << endl;
-    cout << "Using object file " << object << endl;
-
-    GraspQualityWindow rw(robot, object);
+    GraspQualityWindow rw(robFile, objFile);
 
     rw.main();
 

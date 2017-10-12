@@ -147,17 +147,6 @@ void GraspPlannerWindow::buildVisu()
             ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
             VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visu, ma);
             viewer->addVisualization("frictionLayer", name.str(), visu);
-
-/*
-            SoSeparator* s = new SoSeparator;
-            Eigen::Matrix4f ma;
-            ma.setIdentity();
-            ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
-            SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransformScaleMM2M(ma);
-            s->addChild(m);
-            s->addChild(CoinVisualizationFactory::CreateArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f));
-            frictionConeSep->addChild(s);
-            */
         }
     }
 
@@ -168,20 +157,6 @@ void GraspPlannerWindow::buildVisu()
         VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
         viewer->addVisualization("graspsetLayer", "grasps", visu);
     }
-
-    /*
-    if (UI.checkBoxGrasps->isChecked() && sceneSep->findChild(graspsSep) < 0)
-    {
-        sceneSep->addChild(graspsSep);
-    }
-
-    if (!UI.checkBoxGrasps->isChecked() && sceneSep->findChild(graspsSep) >= 0)
-    {
-        sceneSep->removeChild(graspsSep);
-    }
-    */
-
-    //viewer->scheduleRedraw();
 }
 
 int GraspPlannerWindow::main()
@@ -210,9 +185,6 @@ void GraspPlannerWindow::loadObject()
         object = Obstacle::createBox(50.0f, 50.0f, 10.0f);
     }
 
-    //Eigen::Vector3f minS,maxS;
-    //object->getCollisionModel()->getTriMeshModel()->getSize(minS,maxS);
-    //cout << "minS: \n" << minS << "\nMaxS:\n" << maxS << endl;
     qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     //qualityMeasure->setVerbose(true);
     qualityMeasure->calculateObjectProperties();

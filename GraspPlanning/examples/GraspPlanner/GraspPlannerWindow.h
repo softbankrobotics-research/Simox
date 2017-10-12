@@ -67,13 +67,6 @@ protected:
 
     SimoxGui::ViewerInterfacePtr viewer;
 
-    /*SoQtExaminerViewer* viewer;
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* objectSep;
-    SoSeparator* frictionConeSep;
-    SoSeparator* graspsSep;*/
-
     VirtualRobot::RobotPtr robot;
     VirtualRobot::RobotPtr eefCloned;
     VirtualRobot::ObstaclePtr object;
@@ -85,8 +78,6 @@ protected:
     std::string objectFile;
     std::string eefName;
     std::string preshape;
-
-    //SoSeparator* eefVisu;
 
     GraspPlanning::GraspQualityMeasureWrenchSpacePtr qualityMeasure;
     GraspPlanning::ApproachMovementSurfaceNormalPtr approach;
