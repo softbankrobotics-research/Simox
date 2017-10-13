@@ -4258,57 +4258,81 @@ namespace VirtualRobot
 		{
 			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
 			// collect all robotnodes
-            std::vector<VirtualRobot::ModelLinkPtr> collectedRobotNodes;
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedRobotNodes;
 
 			for (size_t i = 0; i < collectedRobots.size(); i++)
 			{
-                auto links = collectedRobots[i]->getLinks();
-                collectedRobotNodes.insert(collectedRobotNodes.begin(), collectedRobotNodes.end(), links.begin());
+                std::vector<ModelLinkPtr> links = collectedRobots[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+                    //collectedRobotNodes.push_back(l);
+
+                }
+                //collectedRobotNodes.insert(collectedRobotNodes.begin(), collectedRobotNodes.end(), links.begin());
 			}
 
-			for (size_t i = 0; i < collectedRobotNodes.size(); i++)
+            /*for (size_t i = 0; i < collectedRobotNodes.size(); i++)
 			{
                 VisualizationNodePtr v = collectedRobotNodes[i]->getVisualization(visuType);
                 if (v)
                     collectedVisualizationNodes.push_back(v);
-			}
+            }*/
 		}
 
 		if (addObstacles)
 		{
 			std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
-            std::vector<VirtualRobot::ModelLinkPtr> collectedObstacleNodes;
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedObstacleNodes;
 
 			for (size_t i = 0; i < collectedObstacles.size(); i++)
 			{
-                auto links = collectedObstacles[i]->getLinks();
-                collectedObstacleNodes.insert(collectedObstacleNodes.begin(), collectedObstacleNodes.end(), links.begin());
+                //auto links = collectedObstacles[i]->getLinks();
+                std::vector<ModelLinkPtr> links = collectedObstacles[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+
+                }
+                //collectedObstacleNodes.insert(collectedObstacleNodes.begin(), collectedObstacleNodes.end(), links.begin());
             }
-            for (size_t i = 0; i < collectedObstacleNodes.size(); i++)
+            /*for (size_t i = 0; i < collectedObstacleNodes.size(); i++)
             {
 
                 VisualizationNodePtr v = collectedObstacleNodes[i]->getVisualization(visuType);
                 if (v)
                     collectedVisualizationNodes.push_back(v);
-			}
+            }*/
 		}
 
 		if (addManipulationObjects)
 		{
 			std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
-            std::vector<VirtualRobot::ModelLinkPtr> collectedManipNodes;
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedManipNodes;
 
 			for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
 			{
-                auto links = collectedManipulationObjects[i]->getLinks();
-                collectedManipNodes.insert(collectedManipNodes.begin(), collectedManipNodes.end(), links.begin());
+                //auto links = collectedManipulationObjects[i]->getLinks();
+                std::vector<ModelLinkPtr> links = collectedManipulationObjects[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+
+                }
+                //collectedManipNodes.insert(collectedManipNodes.begin(), collectedManipNodes.end(), links.begin());
             }
-            for (size_t i = 0; i < collectedManipNodes.size(); i++)
+            /*for (size_t i = 0; i < collectedManipNodes.size(); i++)
             {
                 VisualizationNodePtr v = collectedManipNodes[i]->getVisualization(visuType);
                 if (v)
                     collectedVisualizationNodes.push_back(v);
-			}
+            }*/
 		}
 
 		if (addTrajectories)

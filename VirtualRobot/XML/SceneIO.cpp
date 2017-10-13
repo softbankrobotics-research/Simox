@@ -115,7 +115,16 @@ namespace VirtualRobot
 
         // create & register robot
         THROW_VR_EXCEPTION_IF(fileName.empty(), "Missing file definition in scene's robot tag '" << robotName << "'." << endl);
-        RobotPtr robot = SimoxXMLFactory::loadRobotSimoxXML(fileName);
+        RobotPtr robot;
+        try {
+            robot = ModelIO::loadModel(fileName);
+        } catch (...) {}
+        if (!robot)
+        {
+            try {
+                robot = SimoxXMLFactory::loadRobotSimoxXML(fileName);
+            } catch (...) {}
+        }
         THROW_VR_EXCEPTION_IF(!robot, "Invalid robot file in scene's robot tag '" << robotName << "'." << endl);
         robot->setGlobalPose(globalPose);
         scene->registerRobot(robot);
@@ -150,10 +159,9 @@ namespace VirtualRobot
     }
 
 
-	/*
-    bool SceneIO::processSceneObjectSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
+    bool SceneIO::processLinkSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
     {
-        THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processSceneObjectSet");
+        THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processLinkSet");
 
         // get name
         std::string sosName = processNameAttribute(sceneXMLNode, true);
@@ -164,10 +172,9 @@ namespace VirtualRobot
             return false;
         }
 
-        SceneObjectSetPtr sos(new SceneObjectSet(sosName));
-
         rapidxml::xml_node<>* node = sceneXMLNode->first_node();
 
+        std::vector<ModelPtr> objects;
         while (node)
         {
             std::string nodeName = getLowerCase(node->name());
@@ -180,24 +187,24 @@ namespace VirtualRobot
 
                 if (scene->hasObstacle(oname))
                 {
-                    sos->addSceneObject(scene->getObstacle(oname));
+                    objects.push_back(scene->getObstacle(oname));
                 }
                 else
                 {
-                    sos->addSceneObject(scene->getManipulationObject(oname));
+                    objects.push_back(scene->getManipulationObject(oname));
                 }
             }
             else
             {
-                THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in scene's SceneObjectSet definition <" << sosName << ">." << endl);
+                THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in scene's processLinkSet definition <" << sosName << ">." << endl);
             }
 
             node = node->next_sibling();
         }
 
-        scene->registerSceneObjectSet(sos);
+        scene->registerModelSet(sosName, objects);
         return true;
-    }*/
+    }
 
 
     bool SceneIO::processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath)
@@ -256,7 +263,8 @@ namespace VirtualRobot
         scene = processSceneAttributes(sceneXMLNode);
 
         // process xml nodes
-        std::vector<rapidxml::xml_node<char>* > sceneSetNodes;
+        std::vector<rapidxml::xml_node<char>* > jointSetNodes;
+        std::vector<rapidxml::xml_node<char>* > linkSetNodes;
         std::vector<rapidxml::xml_node<char>* > trajectoryNodes;
 
 
@@ -302,10 +310,9 @@ namespace VirtualRobot
             {
                 trajectoryNodes.push_back(XMLNode);
             }
-            else if (nodeName == "sceneobjectset")
+            else if (nodeName == "linkset")
             {
-                sceneSetNodes.push_back(XMLNode);
-
+                linkSetNodes.push_back(XMLNode);
             }
             else
             {
@@ -315,20 +322,16 @@ namespace VirtualRobot
             XMLNode = XMLNode->next_sibling(NULL, 0, false);
         }
 
-        // process all sceneSetNodes
-		// todo
-		/*
-        for (size_t i = 0; i < sceneSetNodes.size(); i++)
+        // process all linkSetNodes
+        for (size_t i = 0; i < linkSetNodes.size(); i++)
         {
-            bool r = processSceneObjectSet(sceneSetNodes[i], scene);
-
+            bool r = processLinkSet(linkSetNodes[i], scene);
             if (!r)
             {
                 std::string failedNodeName = processNameAttribute(XMLNode);
-                THROW_VR_EXCEPTION("Failed to create SceneObjectSet " << failedNodeName << " in scene " << scene->getName() << endl);
+                THROW_VR_EXCEPTION("Failed to create LinkSet " << failedNodeName << " in scene " << scene->getName() << endl);
             }
-        }*/
-
+        }
 
         // process all trajectories
         for (size_t i = 0; i < trajectoryNodes.size(); i++)

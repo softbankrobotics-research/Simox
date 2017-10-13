@@ -158,12 +158,12 @@
 	</RobotNode>
 
 	
-	<RobotNodeSet name="UpperbodyHeadColModel">
+        <LinkSet name="UpperbodyHeadColModel">
 		<Node name="CenterArms"/>
 		<Node name="Neck3-link"/>
-	</RobotNodeSet>
+        </LinkSet>
 	
-	<RobotNodeSet name="BodyHeadLegsColModel">
+        <LinkSet name="BodyHeadLegsColModel">
 		<Node name="CenterArms"/>
 		<Node name="LowerBody"/>
 		<Node name="Neck3-link"/>
@@ -171,15 +171,15 @@
 		<Node name="Left Leg Knee-link"/>
 		<Node name="Right Leg Waist3-link"/>
 		<Node name="Right Leg Knee-link"/>
-	</RobotNodeSet>
+        </LinkSet>
 
-	<RobotNodeSet name="Hip" kinematicRoot="iCubRoot">
+        <JointSet name="Hip" kinematicRoot="iCubRoot">
 		<Node name="Torso1"/>
 		<Node name="Torso2"/>
 		<Node name="Torso3"/>
-	</RobotNodeSet>
+        </JointSet>
 
-	<RobotNodeSet name="Hip Left Arm" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
+        <JointSet name="Hip Left Arm" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
 		<Node name="Torso1"/>
 		<Node name="Torso2"/>
 		<Node name="Torso3"/>
@@ -190,7 +190,7 @@
 		<Node name="Left Arm Elbow2"/>
 		<Node name="Left Arm Wrist1"/>
 		<Node name="Left Arm Wrist2"/>
-	</RobotNodeSet>
+        </JointSet>
 	
 		
 	<RobotNodeSet name="Hip Left Arm Masses" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
@@ -202,7 +202,7 @@
 		<Node name="Left Arm Elbow2-link"/>
 	</RobotNodeSet>
 		
-	<RobotNodeSet name="Hip Right Arm" kinematicRoot="iCubRoot" tcp="Right Arm TCP">
+        <JointSet name="Hip Right Arm" kinematicRoot="iCubRoot" tcp="Right Arm TCP">
 		<Node name="Torso1"/>
 		<Node name="Torso2"/>
 		<Node name="Torso3"/>
@@ -213,7 +213,7 @@
 		<Node name="Right Arm Elbow2"/>
 		<Node name="Right Arm Wrist1"/>
 		<Node name="Right Arm Wrist2"/>
-	</RobotNodeSet>
+        </JointSet>
 
 	<RobotNodeSet name="Hip Right Arm Masses" kinematicRoot="iCubRoot" tcp="Right Arm TCP">
 		<Node name="Torso1"/>

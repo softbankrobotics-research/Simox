@@ -81,6 +81,7 @@ namespace VirtualRobot
             Here single collision models can be added. Internally they are wrapped by a SceneObjectSet.
         */
         void addCollisionModel(ModelLinkPtr m);
+        void addCollisionModel(const std::vector<ModelLinkPtr>& m);
 
 
         bool hasSceneObjectSet(LinkSetPtr m);

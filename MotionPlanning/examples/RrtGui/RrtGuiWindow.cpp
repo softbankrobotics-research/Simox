@@ -434,16 +434,18 @@ void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
         return;
     }
 
-    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
+    std::map< std::string, std::vector<ModelPtr> > rnss = scene->getModelSets();
+    int i = 0;
 
-    for (size_t i = 0; i < rnss.size(); i++)
+    for (auto & r : rnss)
     {
-        if (rnss[i]->getName() == colModel)
+        if (r.first == colModel)
         {
-            selectColModelEnv(i);
+            selectColModelEnv(r.second);
             UI.comboBoxColModelEnv->setCurrentIndex(i);
             return;
         }
+        i++;
     }
 
     VR_ERROR << "No scene object set with name <" << colModel << "> found..." << endl;
@@ -564,28 +566,21 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
 
-void RrtGuiWindow::selectColModelEnv(int nr)
+void RrtGuiWindow::selectColModelEnv(std::vector<ModelPtr> &mns)
 {
-    colModelEnv.reset();
+    colModelEnv.clear();
 
-    if (!scene)
+    if (mns.size()!=1)
     {
+        VR_ERROR << "Model sets with size != currently not supported... Envirnment will be ignored for collision checking..." << endl;
         return;
     }
-
-    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
-
-    if (nr < 0 || nr >= (int)rnss.size())
-    {
-        return;
-    }
-
-    ModelNodeSetPtr mns = scene->getModelNodeSet(rnss[nr]->getName());
-    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
-    if (ls)
-        this->colModelEnv = ls;
+    ModelPtr o = mns.at(0);
+    std::vector<ModelLinkPtr> links = o->getLinks();
+    if (links.size()>0)
+        this->colModelEnv = links;
     else
-        VR_WARNING << mns->getName() << " is not a linkset" << endl;
+        VR_WARNING << mns.at(0)->getName() << " does not provide links" << endl;
 }
 void RrtGuiWindow::buildRRTVisu()
 {
@@ -647,7 +642,7 @@ void RrtGuiWindow::plan()
         cdm->addCollisionModel(colModelRobB);
     }
 
-    if (colModelEnv)
+    if (colModelEnv.size()>0)
     {
         cdm->addCollisionModel(colModelEnv);
     }

@@ -98,6 +98,12 @@ namespace VirtualRobot
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
                                                   const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
+        static LinkSetPtr createLinkSet(const ModelPtr& model,
+                                                  const std::string& name,
+                                                  const std::vector<ModelLinkPtr>& modelNodes,
+                                                  const ModelNodePtr kinematicRoot = ModelNodePtr(),
+                                                  const FramePtr tcp = FramePtr(),
+                                                  bool registerToModel = false);
 
         /*!
          * Get all nodes of this set.

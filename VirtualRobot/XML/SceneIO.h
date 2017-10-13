@@ -74,7 +74,7 @@ namespace VirtualRobot
         static bool processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
         static bool processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
         static bool processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
-        //static bool processSceneObjectSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
+        static bool processLinkSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
     };
 
 }

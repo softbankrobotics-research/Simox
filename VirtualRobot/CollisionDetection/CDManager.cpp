@@ -73,6 +73,15 @@ namespace VirtualRobot
         }
     }
 
+    void CDManager::addCollisionModel(const std::vector<ModelLinkPtr>& m)
+    {
+        if (m.size()>0)
+        {
+            VirtualRobot::LinkSetPtr cms = VirtualRobot::LinkSet::createLinkSet(m.at(0)->getModel(), std::string(""), m);
+            addCollisionModel(cms);
+        }
+    }
+
     bool CDManager::isInCollision(LinkSetPtr m)
     {
         if (!m || !colChecker)

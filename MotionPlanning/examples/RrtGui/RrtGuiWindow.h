@@ -58,7 +58,7 @@ public slots:
 
     void selectColModelRobA(int nr);
     void selectColModelRobB(int nr);
-    void selectColModelEnv(int nr);
+    void selectColModelEnv(std::vector<VirtualRobot::ModelPtr> &mns);
 
     void colModel();
     void solutionSelected();
@@ -104,7 +104,7 @@ protected:
     VirtualRobot::JointSetPtr rns;
     VirtualRobot::LinkSetPtr colModelRobA;
     VirtualRobot::LinkSetPtr colModelRobB;
-    VirtualRobot::LinkSetPtr colModelEnv;
+    std::vector<VirtualRobot::ModelLinkPtr>  colModelEnv;
 
     std::vector< VirtualRobot::RobotConfigPtr > configs;
 

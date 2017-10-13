@@ -66,6 +66,17 @@ namespace VirtualRobot
 		return links.at(i);
 	}
 
+    LinkSetPtr LinkSet::createLinkSet(const ModelPtr& model, const std::string &name, const std::vector<ModelLinkPtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    {
+        std::vector<ModelNodePtr> links;
+        for (unsigned int i = 0; i < modelNodes.size(); i++)
+        {
+            ModelNodePtr link = std::static_pointer_cast<ModelNode>(modelNodes[i]);
+            links.push_back(link);
+        }
+        return createLinkSet(model, name, links, kinematicRoot, tcp, registerToModel);
+    }
+
     LinkSetPtr LinkSet::createLinkSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");

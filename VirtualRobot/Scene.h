@@ -144,6 +144,10 @@ namespace VirtualRobot
         std::vector< TrajectoryPtr > getTrajectories();
         std::vector< TrajectoryPtr > getTrajectories(const std::string& robotName);
 
+        void registerModelSet(const std::string &name, std::vector<ModelPtr> models);
+        void deRegisterModelSet(const std::string &name);
+        bool hasModelSet(const std::string &name);
+
         /*!
             Registers the set to this scene. If a set with the same name is already registered nothing happens.
         */
@@ -162,6 +166,8 @@ namespace VirtualRobot
         LinkSetPtr getLinkSet(const std::string& name);
         JointSetPtr getJointSet(const std::string& name);
 
+        std::map< std::string, std::vector<ModelPtr> > getModelSets();
+        std::vector<ModelPtr> getModelSet(const std::string & name);
         std::vector< ModelNodeSetPtr > getModelNodeSets();
         std::vector< LinkSetPtr > getLinkSets();
         std::vector< JointSetPtr > getJointSets();
@@ -196,6 +202,7 @@ namespace VirtualRobot
         std::vector< ManipulationObjectPtr > manipulationObjects;
         std::vector< ModelNodeSetPtr > sceneObjectSets;
         std::vector< TrajectoryPtr > trajectories;
+        std::map< std::string, std::vector<ModelPtr> > modelSets;
 
     };
 

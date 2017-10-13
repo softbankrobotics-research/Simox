@@ -555,6 +555,26 @@ namespace VirtualRobot
         return res;
     }
 
+    void Scene::registerModelSet(const std::string &name, std::vector<ModelPtr> models)
+    {
+        modelSets[name] = models;
+    }
+
+    void Scene::deRegisterModelSet(const std::string &name)
+    {
+        modelSets.erase(name);
+    }
+
+    bool Scene::hasModelSet(const std::string &name)
+    {
+        for (auto &m : modelSets)
+        {
+            if (m.first == name)
+                return true;
+        }
+        return false;
+    }
+
     std::vector< ManipulationObjectPtr > Scene::getManipulationObjects()
     {
         return manipulationObjects;
@@ -705,6 +725,21 @@ namespace VirtualRobot
         }
 
         return JointSetPtr();
+    }
+
+    std::map<std::string, std::vector<ModelPtr> > Scene::getModelSets()
+    {
+        return modelSets;
+    }
+
+    std::vector<ModelPtr> Scene::getModelSet(const std::string &name)
+    {
+        if (!hasModelSet(name))
+        {
+            VR_WARNING << "No model set with name " << name << " registered" << endl;
+            return std::vector<ModelPtr>();
+        }
+        return modelSets[name];
     }
 
     std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
