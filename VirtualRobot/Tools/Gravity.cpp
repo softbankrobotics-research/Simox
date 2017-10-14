@@ -41,7 +41,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
         b=0;
         for (auto& body : nodesBodies)
         {
-            if (node->hasChild(body, true))
+            if (node->hasChild(body, true) || node == body)
             {
                 children(a,b) = 1;
             } else
