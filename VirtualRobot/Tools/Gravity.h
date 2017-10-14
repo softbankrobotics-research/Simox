@@ -41,8 +41,26 @@ namespace VirtualRobot
         std::map<std::string, float> computeGravityTorque();
 
         void computeGravityTorque(std::vector<float> &storeValues);
-
+        void computeGravityTorqueOptimized(std::vector<float> &storeValues);
     protected:
+        struct GravityData;
+        typedef boost::shared_ptr<GravityData> GravityDataPtr;
+        struct GravityData : boost::enable_shared_from_this<GravityData>
+        {
+            GravityData();
+            static GravityDataPtr create(SceneObjectPtr node, const std::vector<VirtualRobot::RobotNodePtr> &joints, const std::vector<VirtualRobot::RobotNodePtr> &bodies, std::vector<GravityDataPtr> &dataVec);
+            void init(SceneObjectPtr node, const std::vector<VirtualRobot::RobotNodePtr> &joints, const std::vector<VirtualRobot::RobotNodePtr> &bodies, std::vector<GravityDataPtr> &dataVec);
+            std::map<std::string, GravityDataPtr> children;
+            SceneObjectPtr node;
+            float massSum = 0.0f;
+            float torque = 0.0f;
+            bool computeTorque = false;
+            bool computeCoM = false;
+            void computeCoMAndTorque(Eigen::Vector3f& comPositionGlobal);
+        };
+        std::vector<GravityDataPtr> gravityDataHelperVec;
+        GravityDataPtr gravityDataHelperRoot;
+
         VirtualRobot::RobotPtr robot;
 
         // this rns is used to update the current pose of the robot
@@ -58,6 +76,9 @@ namespace VirtualRobot
     };
 
     typedef boost::shared_ptr<Gravity> GravityPtr;
+
+
 }
 
 #endif
+
