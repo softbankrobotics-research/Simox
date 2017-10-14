@@ -42,11 +42,17 @@ namespace SimDynamics
             if (ftSensor)
             {
                 VirtualRobot::RobotNodePtr node = ftSensor->getRobotNode();
-                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode")
+                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode");
 
-                const LinkInfo& link = getLink(node);
-                enableForceTorqueFeedback(link);
-                std::cout << "Found force torque sensor: " << node->getName() << std::endl;
+                if (!hasLink(node))
+                {
+                    VR_WARNING << "Ignoring FT sensor " << ftSensor->getName() << ". Must be linked to a joint" << endl;
+                } else
+                {
+                    const LinkInfo& link = getLink(node);
+                    enableForceTorqueFeedback(link);
+                    std::cout << "Found force torque sensor: " << node->getName() << std::endl;
+                }
             }
         }
     }
@@ -640,17 +646,22 @@ namespace SimDynamics
                 }
 
                 double targetVelocity;
+                float deltaPos = it->second.node->getDelta(posTarget);
                 if (!actuation.modes.position)
                 {
                     // we always use position or position-velocity mode
                     ActuationMode tempAct = actuation;
                     tempAct.modes.position = 1;
-                    targetVelocity = controller.update(posTarget - posActual, velocityTarget, tempAct, btScalar(dt));
+                    targetVelocity = controller.update(/*posTarget - posActual*/ deltaPos, velocityTarget, tempAct, btScalar(dt));
                 }
                 else
                 {
-                    targetVelocity = controller.update(posTarget - posActual, velocityTarget, actuation, btScalar(dt));
+                    targetVelocity = controller.update(/*posTarget - posActual*/ deltaPos, velocityTarget, actuation, btScalar(dt));
                 }
+                /*if (it->second.node->getName() == "ArmL6_Elb2")
+                {
+                    cout << "ELBOW - pos act:" << posActual << ",\t posTarget: " << posTarget << ",\t delta: " << deltaPos << ",\t , vel target:" << velocityTarget << ",\t pid vel:" << targetVelocity << endl;
+                }*/
 
                 btScalar maxImpulse = bulletMaxMotorImulse;
 //                controller.setCurrentVelocity(velActual);
@@ -751,11 +762,14 @@ namespace SimDynamics
             if (ftSensor)
             {
                 VirtualRobot::RobotNodePtr node = ftSensor->getRobotNode();
-                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode")
+                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode");
 
-                const LinkInfo& link = getLink(node);
-                Eigen::VectorXf forceTorques = getJointForceTorqueGlobal(link);
-                ftSensor->updateSensors(forceTorques);
+                if (hasLink(node))
+                {
+                    const LinkInfo& link = getLink(node);
+                    Eigen::VectorXf forceTorques = getJointForceTorqueGlobal(link);
+                    ftSensor->updateSensors(forceTorques);
+                }
             }
             else
             {

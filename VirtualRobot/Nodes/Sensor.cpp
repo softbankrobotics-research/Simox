@@ -154,6 +154,7 @@ namespace VirtualRobot
     void Sensor::setRobotNodeToSensorTransformation(const Eigen::Matrix4f& t)
     {
         this->rnTransformation = t;
+        updatePose();
     }
 
     void Sensor::updatePose(bool updateChildren)
