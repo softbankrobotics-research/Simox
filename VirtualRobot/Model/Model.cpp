@@ -1118,15 +1118,15 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationPtr Model::getVisualization(ModelLink::VisualizationType visuType)
+    VisualizationPtr Model::getVisualization(ModelLink::VisualizationType linkVisuType, std::string visualizationType)
     {
-        if (!visualization || this->visuType != visuType)
+        if (!visualization || this->visuType != linkVisuType)
         {
-            VisualizationFactoryPtr v = VisualizationFactory::getGlobalVisualizationFactory();
+            VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, NULL);
             if (!v)
                 return visualization;
-            visualization = v->createVisualization(shared_from_this(), visuType);
-            this->visuType = visuType;
+            visualization = v->createVisualization(shared_from_this(), linkVisuType);
+            this->visuType = linkVisuType;
         }
 
         return visualization;

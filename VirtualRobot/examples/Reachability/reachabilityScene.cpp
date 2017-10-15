@@ -1,7 +1,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
@@ -46,7 +46,7 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 
     try
     {
-        robot = RobotIO::loadRobot(robotFile);
+        robot = ModelIO::loadModel(robotFile);
     }
     catch (VirtualRobotException& e)
     {
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
     filenameReach = "/home/SMBAD/yamanobe/home/armarx/simox/build_release/ReachabilityData_ENDLESS_2015_04_17__18_03_22__2024.bin";
 #else
     std::cout << "Using ARMAR3" << std::endl;
-    std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
+    std::string filenameRob("robots/Armar3/Armar3.xml");
     Eigen::Vector3f axisTCP(0, 0, 1.0f);
     //filenameReach = "reachability/ArmarIII_PlatformHipRightArm.bin";
     filenameReach = "reachability/ArmarIII_TorsoRightArm.bin";

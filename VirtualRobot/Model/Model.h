@@ -648,8 +648,13 @@ namespace VirtualRobot
         EndEffectorPtr getEndEffector(const std::string &name) const;
         std::vector<EndEffectorPtr> getEndEffectors() const;
 
-
-        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType);
+        /**
+         * @param linkVisuType The type of link visualization (e.g. collision).
+         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
+         * @return A visualization of this model's links.
+         */
+        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType, std::string visualizationType = "");
 
     protected:
         std::string type;

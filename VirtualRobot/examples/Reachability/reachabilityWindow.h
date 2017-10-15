@@ -3,13 +3,14 @@
 #define __reachabilityScene_WINDOW_H_
 
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include <VirtualRobot/Visualization/Visualization.h>
 #include <VirtualRobot/Obstacle.h>
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -116,7 +117,7 @@ protected:
     bool useColModel;
     //bool structureEnabled;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    VirtualRobot::VisualizationPtr visualization;
 };
 
 #endif // __reachabilityScene_WINDOW_H_

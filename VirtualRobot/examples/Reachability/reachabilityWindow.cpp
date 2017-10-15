@@ -4,9 +4,9 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Workspace/Manipulability.h"
 #include "VirtualRobot/IK/PoseQualityExtendedManipulability.h"
-#include "VirtualRobot/XML/RobotIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -151,10 +151,12 @@ void reachabilityWindow::resetSceneryAll()
         return;
     }
 
-    std::vector< RobotNodePtr > nodes;
-    robot->getModelNodes(nodes);
-    std::vector<float> jv(nodes.size(), 0.0f);
-    robot->setJointValues(nodes, jv);
+    std::map<RobotNodePtr,float> configMap;
+    for (RobotNodePtr node : robot->getModelNodes())
+    {
+        configMap[node] = 0.0f;
+    }
+    robot->setJointValues(configMap);
 }
 
 
@@ -238,12 +240,13 @@ void reachabilityWindow::buildVisu()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
+    visualization = robot->getVisualization(colModel, CoinVisualizationFactory::getName());
     SoNode* visualisationNode = NULL;
 
     if (visualization)
     {
-        visualisationNode = visualization->getCoinVisualization();
+        // since we used the CoinVisualizationFactory we can safely cast here.
+        visualisationNode = std::static_pointer_cast<CoinVisualization>(visualization)->getCoinVisualization();
     }
 
     if (visualisationNode)
@@ -292,7 +295,7 @@ void reachabilityWindow::selectRNS(int nr)
     }
 
     currentRobotNodeSet = robotNodeSets[nr];
-    currentRobotNodes = currentRobotNodeSet->getAllRobotNodes();
+    currentRobotNodes = currentRobotNodeSet->getModelNodes();
 
     if (currentRobotNodeSet->getTCP())
     {
@@ -328,7 +331,15 @@ void reachabilityWindow::jointValueChanged(int pos)
         return;
     }
 
-    float fPos = allRobotNodes[nr]->getJointLimitLo() + (float)pos / 1000.0f * (allRobotNodes[nr]->getJointLimitHi() - allRobotNodes[nr]->getJointLimitLo());
+    float lowerLimit = 0;
+    float upperLimit = 0;
+    if (allRobotNodes[nr]->isJoint())
+    {
+        lowerLimit = std::static_pointer_cast<ModelJoint>(allRobotNodes[nr])->getJointLimitLow();
+        upperLimit = std::static_pointer_cast<ModelJoint>(allRobotNodes[nr])->getJointLimitHigh();
+    }
+
+    float fPos = lowerLimit + (float)pos / 1000.0f * (upperLimit - lowerLimit);
     robot->setJointValue(allRobotNodes[nr], fPos);
     UI.lcdNumberJointValue->display((double)fPos);
 
@@ -347,16 +358,24 @@ void reachabilityWindow::selectJoint(int nr)
 
     currentRobotNode = allRobotNodes[nr];
     currentRobotNode->print();
-    float mi = currentRobotNode->getJointLimitLo();
-    float ma = currentRobotNode->getJointLimitHi();
+    float mi = 0;
+    float ma = 0;
+    float j = 0;
+
+    if (currentRobotNode->isJoint())
+    {
+        mi = std::static_pointer_cast<ModelJoint>(currentRobotNode)->getJointLimitLow();
+        ma = std::static_pointer_cast<ModelJoint>(currentRobotNode)->getJointLimitHigh();
+        j = std::static_pointer_cast<ModelJoint>(currentRobotNode)->getJointValue();
+    }
+
     QString qMin = QString::number(mi);
     QString qMax = QString::number(ma);
     UI.labelMinPos->setText(qMin);
     UI.labelMaxPos->setText(qMax);
-    float j = currentRobotNode->getJointValue();
     UI.lcdNumberJointValue->display((double)j);
 
-    if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint()))
+    if (fabs(ma - mi) > 0 && (currentRobotNode->isJoint()))
     {
         UI.horizontalSliderPos->setEnabled(true);
         int pos = (int)((j - mi) / (ma - mi) * 1000.0f);
@@ -401,7 +420,7 @@ void reachabilityWindow::loadRobot()
 
     try
     {
-        robot = RobotIO::loadRobot(robotFile);
+        robot = ModelIO::loadModel(robotFile);
     }
     catch (VirtualRobotException& e)
     {
@@ -423,7 +442,8 @@ void reachabilityWindow::loadRobot()
 
     for (size_t i = 0; i < allRNS.size(); i++)
     {
-        if (allRNS[i]->isKinematicChain())
+        // ModelNodeSet::isKinematicChain() is not supported at the time of writing.
+        if (/*allRNS[i]->isKinematicChain()*/ true)
         {
             VR_INFO << " RNS <" << allRNS[i]->getName() << "> is a valid kinematic chain" << endl;
             robotNodeSets.push_back(allRNS[i]);
@@ -475,14 +495,17 @@ void reachabilityWindow::createReach()
     QDialog diag;
     UICreate.setupUi(&diag);
     RobotNodePtr baseNode = currentRobotNodeSet->getKinematicRoot();
-    RobotNodePtr tcpNode = currentRobotNodeSet->getTCP();
+    FramePtr tcpNode = currentRobotNodeSet->getTCP();
     UICreate.labelRNS->setText(QString("RobotNodeSet: ") + QString(currentRobotNodeSet->getName().c_str()));
     UICreate.labelBaseNode->setText(QString("Base: ") + QString(baseNode->getName().c_str()));
     UICreate.labelTCP->setText(QString("TCP: ") + QString(tcpNode->getName().c_str()));
     ReachabilityPtr reachSpaceTest(new Reachability(robot));
     float minB[6];// = {-1000.0f,-1000.0f,-1000.0f,(float)-M_PI,(float)-M_PI,(float)-M_PI};
     float maxB[6];// ={1000.0f,1000.0f,1000.0f,(float)M_PI,(float)M_PI,(float)M_PI};
-    reachSpaceTest->checkForParameters(currentRobotNodeSet, 1000, minB, maxB, baseNode, tcpNode);
+
+    JointSetPtr currentJointSet = JointSet::createJointSet(currentRobotNodeSet->getModel(), currentRobotNodeSet->getName(),
+                             currentRobotNodeSet->getModelNodes(), currentRobotNodeSet->getKinematicRoot(), currentRobotNodeSet->getTCP());
+    reachSpaceTest->checkForParameters(currentJointSet, 1000, minB, maxB, baseNode, tcpNode);
 
     //float ex = currentRobotNodeSet->getMaximumExtension();
     UICreate.doubleSpinBoxMinX->setValue(minB[0]);
@@ -522,15 +545,15 @@ void reachabilityWindow::createReach()
         maxB[4] = UICreate.doubleSpinBoxMaxPi->value();
         maxB[5] = UICreate.doubleSpinBoxMaxYa->value();
 
-        SceneObjectSetPtr staticModel;
-        SceneObjectSetPtr dynamicModel;
+        LinkSetPtr staticModel;
+        LinkSetPtr dynamicModel;
 
         if (UICreate.checkBoxColDetecion->isChecked())
         {
             std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
             std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
-            staticModel = robot->getModelNodeSet(staticM);
-            dynamicModel = robot->getModelNodeSet(dynM);
+            staticModel = robot->getLinkSet(staticM);
+            dynamicModel = robot->getLinkSet(dynM);
         }
 
         float discrTr = UICreate.doubleSpinBoxDiscrTrans->value();
@@ -545,19 +568,19 @@ void reachabilityWindow::createReach()
             manipSpace->setMaxManipulability(UICreate.doubleSpinBoxMaxManip->value());
         }
 
-        reachSpace->initialize(currentRobotNodeSet, discrTr, discrRo, minB, maxB, staticModel, dynamicModel, baseNode, tcpNode); //200.0f,0.4f,minB,maxB,staticModel,dynamicModel,baseNode);
+        reachSpace->initialize(currentJointSet, discrTr, discrRo, minB, maxB, staticModel, dynamicModel, baseNode, tcpNode); //200.0f,0.4f,minB,maxB,staticModel,dynamicModel,baseNode);
 
         if (measure == "Ext. Manipulability")
         {
             ManipulabilityPtr man = std::dynamic_pointer_cast<Manipulability>(reachSpace);
-            PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentRobotNodeSet));
+            PoseQualityExtendedManipulabilityPtr manMeasure(new PoseQualityExtendedManipulability(currentJointSet));
             man->setManipulabilityMeasure(manMeasure);
             if (UICreate.checkBoxColDetecion->isChecked() && UICreate.checkBoxSelfDistance->isChecked())
             {
                 std::string staticM = std::string(UICreate.comboBoxColModelStatic->currentText().toLatin1());
                 std::string dynM = std::string(UICreate.comboBoxColModelDynamic->currentText().toLatin1());
-                RobotNodeSetPtr m1 = robot->getModelNodeSet(staticM);
-                RobotNodeSetPtr m2 = robot->getModelNodeSet(dynM);
+                LinkSetPtr m1 = robot->getLinkSet(staticM);
+                LinkSetPtr m2 = robot->getLinkSet(dynM);
                 man->initSelfDistanceCheck(m1, m2);
 
             }
@@ -677,15 +700,15 @@ void reachabilityWindow::loadReachFile(std::string filename)
 
     reachSpace->print();
 
-    if (reachSpace->getNodeSet())
+    if (reachSpace->getJointSet())
     {
-        cout << "Using RNS: " << reachSpace->getNodeSet()->getName() << endl;
+        cout << "Using RNS: " << reachSpace->getJointSet()->getName() << endl;
 
         for (size_t i = 0; i < robotNodeSets.size(); i++)
         {
             cout << "checking " << robotNodeSets[i]->getName() << endl;
 
-            if (robotNodeSets[i] == reachSpace->getNodeSet())
+            if (robotNodeSets[i] == reachSpace->getJointSet())
             {
                 cout << "Found RNS.." << endl;
                 UI.comboBoxRNS->setCurrentIndex(i);
