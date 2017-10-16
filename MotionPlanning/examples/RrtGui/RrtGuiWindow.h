@@ -20,12 +20,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 #include <vector>
 
@@ -43,6 +39,7 @@ public:
     int main();
 
     void redraw();
+
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
@@ -69,6 +66,8 @@ public slots:
 
     void plan();
 
+    void timerCB();
+
 protected:
 
     void loadScene();
@@ -80,18 +79,14 @@ protected:
     void selectGoal(const std::string& conf);
     void selectRNS(const std::string& rns);
 
-    static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void selectColModelRobA(const std::string& colModel);
     void selectColModelRobB(const std::string& colModel);
     void selectColModelEnv(const std::string& colModel);
-    Ui::MainWindowRRTDemo UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* allSep;
-    SoSeparator* sceneFileSep;
-    SoSeparator* startGoalSep;
-    SoSeparator* rrtSep;
+    Ui::MainWindowRRTDemo UI;
+
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
     VirtualRobot::RobotPtr robotStart;
@@ -116,7 +111,7 @@ protected:
     MotionPlanning::CSpaceTreePtr tree;
     MotionPlanning::CSpaceTreePtr tree2;
 
-    VirtualRobot::CoinVisualizationPtr visualization;
+    //QTimer* timer;
 };
 
-#endif // __RrtGui_WINDOW_H_
+#endif

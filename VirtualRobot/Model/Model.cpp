@@ -357,9 +357,9 @@ namespace VirtualRobot
             if (l)
                 nodes.push_back(n.second);
         }
-        std::string name = std::string("__" + name + "-all-links");
+        std::string nameLS = std::string("__") + name + std::string("-all-links");
         std::shared_ptr<Model> m = shared_from_this();
-        LinkSetPtr ls = LinkSet::createLinkSet(m, name, nodes);
+        LinkSetPtr ls = LinkSet::createLinkSet(m, nameLS, nodes);
 
         return ls;
     }

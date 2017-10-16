@@ -21,15 +21,14 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-
 #include <sstream>
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -42,16 +41,6 @@ RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sCon
     VR_INFO << " start " << endl;
 
     this->sceneFile = sceneFile;
-
-    allSep = new SoSeparator;
-    allSep->ref();
-    sceneFileSep = new SoSeparator;
-    startGoalSep = new SoSeparator;
-    rrtSep = new SoSeparator;
-
-    allSep->addChild(sceneFileSep);
-    allSep->addChild(startGoalSep);
-    allSep->addChild(rrtSep);
 
     setupUI();
 
@@ -95,42 +84,31 @@ RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sCon
 
     viewer->viewAll();
 
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer);
+    /*
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
+    timer->start(TIMER_MS);
+    */
 }
 
 
 RrtGuiWindow::~RrtGuiWindow()
 {
-    allSep->unref();
+    viewer.reset();
 }
 
 
-void RrtGuiWindow::timerCB(void* data, SoSensor* /*sensor*/)
+void RrtGuiWindow::timerCB()
 {
-    RrtGuiWindow* ikWindow = static_cast<RrtGuiWindow*>(data);
-    ikWindow->redraw();
 }
-
 
 void RrtGuiWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(allSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     QString q1("Rrt Extend");
     QString q2("Rrt Connect");
@@ -165,11 +143,7 @@ void RrtGuiWindow::setupUI()
     connect(UI.comboBoxColModelRobot, SIGNAL(activated(int)), this, SLOT(selectColModelRobA(int)));
     connect(UI.comboBoxColModelRobotStatic, SIGNAL(activated(int)), this, SLOT(selectColModelRobB(int)));
     connect(UI.comboBoxColModelEnv, SIGNAL(activated(int)), this, SLOT(selectColModelEnv(int)));
-
-
 }
-
-
 
 
 void RrtGuiWindow::closeEvent(QCloseEvent* event)
@@ -181,43 +155,34 @@ void RrtGuiWindow::closeEvent(QCloseEvent* event)
 
 void RrtGuiWindow::buildVisu()
 {
-    sceneFileSep->removeAllChildren();
+    viewer->clearLayer("scene");
 
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
+    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    if (!f)
+        return;
+
     if (scene)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene,colModel);
-        CoinVisualizationPtr cvn = std::dynamic_pointer_cast<CoinVisualization>(v);
-
-        if (cvn)
-        {
-            sceneFileSep->addChild(cvn->getCoinVisualization());
-        }
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
+        viewer->addVisualization("scene", "scenefile", v);
     }
 
-    startGoalSep->removeAllChildren();
+    viewer->clearLayer("start-goal");
 
     if (UI.checkBoxStartGoal->isChecked())
-    {
+    {        
         if (robotStart)
         {
-            SoNode* st = CoinVisualizationFactory::getCoinVisualization(robotStart, colModel);
-
-            if (st)
-            {
-                startGoalSep->addChild(st);
-            }
+            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotStart, colModel);
+            viewer->addVisualization("start-goal", "start", v);
         }
 
         if (robotGoal)
         {
-            SoNode* go = CoinVisualizationFactory::getCoinVisualization(robotGoal, colModel);
-
-            if (go)
-            {
-                startGoalSep->addChild(go);
-            }
+            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotGoal, colModel);
+            viewer->addVisualization("start-goal", "goal", v);
         }
     }
 
@@ -228,8 +193,7 @@ void RrtGuiWindow::buildVisu()
 
 int RrtGuiWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -238,7 +202,7 @@ void RrtGuiWindow::quit()
 {
     std::cout << "RrtGuiWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void RrtGuiWindow::loadSceneWindow()
@@ -266,7 +230,6 @@ void RrtGuiWindow::loadScene()
         return;
     }
 
-    //SceneIO::saveScene(scene,"testSaveScene.xml");
     std::vector< RobotPtr > robots = scene->getRobots();
 
     if (robots.size() != 1)
@@ -345,9 +308,9 @@ void RrtGuiWindow::selectStart(const std::string& conf)
             return;
         }
     }
-
     VR_ERROR << "No configuration with name <" << conf << "> found..." << endl;
 }
+
 void RrtGuiWindow::selectGoal(const std::string& conf)
 {
     for (size_t i = 0; i < configs.size(); i++)
@@ -359,7 +322,6 @@ void RrtGuiWindow::selectGoal(const std::string& conf)
             return;
         }
     }
-
     VR_ERROR << "No configuration with name <" << conf << "> found..." << endl;
 }
 
@@ -403,9 +365,9 @@ void RrtGuiWindow::selectColModelRobA(const std::string& colModel)
             return;
         }
     }
-
     VR_ERROR << "No col model set with name <" << colModel << "> found..." << endl;
 }
+
 void RrtGuiWindow::selectColModelRobB(const std::string& colModel)
 {
     if (!robot)
@@ -424,9 +386,9 @@ void RrtGuiWindow::selectColModelRobB(const std::string& colModel)
             return;
         }
     }
-
     VR_ERROR << "No col model set with name <" << colModel << "> found..." << endl;
 }
+
 void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
 {
     if (!scene)
@@ -447,7 +409,6 @@ void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
         }
         i++;
     }
-
     VR_ERROR << "No scene object set with name <" << colModel << "> found..." << endl;
 }
 
@@ -494,6 +455,7 @@ void RrtGuiWindow::selectGoal(int nr)
         rns->getJointValues(goalConfig);
     }
 }
+
 void RrtGuiWindow::selectRNS(int nr)
 {
     this->rns.reset();
@@ -582,16 +544,23 @@ void RrtGuiWindow::selectColModelEnv(std::vector<ModelPtr> &mns)
     else
         VR_WARNING << mns.at(0)->getName() << " does not provide links" << endl;
 }
+
 void RrtGuiWindow::buildRRTVisu()
 {
-    rrtSep->removeAllChildren();
+    viewer->clearLayer("rrt");
 
     if (!cspace || !robot)
     {
         return;
     }
 
-    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+#else
+    VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+#endif
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -616,10 +585,11 @@ void RrtGuiWindow::buildRRTVisu()
         w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
     }
 
-    //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
-    //w->addConfiguration(goalConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eRed,3.0f);
-    SoSeparator* sol = w->getCoinVisualization();
-    rrtSep->addChild(sol);
+    VisualizationPtr wv = w->getVisualization();
+    if (wv)
+    {
+        viewer->addVisualization("rrt","workspace", wv);
+    }
 }
 
 void RrtGuiWindow::plan()
@@ -740,10 +710,12 @@ void RrtGuiWindow::colModel()
 {
     buildVisu();
 }
+
 void RrtGuiWindow::solutionSelected()
 {
     sliderSolution(UI.horizontalSliderPos->sliderPosition());
 }
+
 void RrtGuiWindow::sliderSolution(int pos)
 {
     if (!solution)
@@ -767,11 +739,8 @@ void RrtGuiWindow::sliderSolution(int pos)
 
 void RrtGuiWindow::redraw()
 {
-    viewer->scheduleRedraw();
     UI.frameViewer->update();
-    viewer->scheduleRedraw();
     this->update();
-    viewer->scheduleRedraw();
 }
 
 

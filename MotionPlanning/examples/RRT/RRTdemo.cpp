@@ -75,7 +75,7 @@ void startRRTVisualization()
 {
 
     // create robot
-    std::string filename("robots/examples/RrtDemo/Joint3.xml");
+    std::string filename("robots/SimoxXML/examples/RrtDemo/Joint3.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
     cout << "Loading 3DOF robot from " << filename << endl;
     RobotPtr robot = SimoxXMLFactory::loadRobotSimoxXML(filename);

@@ -78,6 +78,8 @@ namespace MotionPlanning
 
         SoSeparator* getCoinVisualization();
 
+        virtual VirtualRobot::VisualizationPtr getVisualization();
+
     protected:
 
         void coinInit();
@@ -86,8 +88,6 @@ namespace MotionPlanning
     };
 
     typedef std::shared_ptr<CoinRrtWorkspaceVisualization> CoinRrtWorkspaceVisualizationPtr;
-
-
 }
 
 #endif

@@ -57,6 +57,11 @@ CoinViewer::~CoinViewer()
 void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
 {
     VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
+    if (!coinVisu)
+    {
+        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << endl;
+        return;
+    }
 
     addLayer(layer);
 

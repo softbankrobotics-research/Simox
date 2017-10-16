@@ -100,6 +100,12 @@ namespace MotionPlanning
             Set tree nodes with status flag equal to given parameter to the specified color.
         */
         virtual void colorizeTreeNodes(int status, ColorSet colorSet);
+
+        virtual VirtualRobot::VisualizationPtr getVisualization()
+        {
+            return VirtualRobot::VisualizationPtr();
+        }
+
     protected:
         void init(); // is called by constructor
 
@@ -120,8 +126,9 @@ namespace MotionPlanning
 
         std::map<ColorSet, RenderColors> colors;
         std::map<int, ColorSet> treeNodeStatusColor;
-
     };
+
+    typedef std::shared_ptr<RrtWorkspaceVisualization> RrtWorkspaceVisualizationPtr;
 
 } // namespace MotionPlanning
 

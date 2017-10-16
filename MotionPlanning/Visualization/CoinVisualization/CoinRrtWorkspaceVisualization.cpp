@@ -3,6 +3,10 @@
 #include "MotionPlanning/CSpace/CSpacePath.h"
 #include "MotionPlanning/CSpace/CSpaceTree.h"
 #include "MotionPlanning/CSpace/CSpaceNode.h"
+#include "VirtualRobot/Visualization/Visualization.h"
+#include "VirtualRobot/Visualization/VisualizationNode.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/SbLinear.h>
@@ -23,6 +27,7 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoUnits.h>
 
+using namespace VirtualRobot;
 
 namespace MotionPlanning
 {
@@ -72,6 +77,13 @@ namespace MotionPlanning
     SoSeparator* CoinRrtWorkspaceVisualization::getCoinVisualization()
     {
         return visualization;
+    }
+
+    VisualizationPtr CoinRrtWorkspaceVisualization::getVisualization()
+    {
+        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualization));
+        CoinVisualizationPtr r(new CoinVisualization(n));
+        return r;
     }
 
     bool CoinRrtWorkspaceVisualization::addCSpacePath(CSpacePathPtr path, CoinRrtWorkspaceVisualization::ColorSet colorSet)

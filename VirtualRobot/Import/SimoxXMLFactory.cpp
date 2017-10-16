@@ -652,6 +652,12 @@ namespace VirtualRobot
             }
             robotNode.reset(new ModelJointPrismatic(robot, robotNodeName, preJointTransform, jointLimitLow, jointLimitHigh, translationDir, jointOffset));
         }
+        else if (jointType == "fixed")
+        {
+            THROW_VR_EXCEPTION_IF(tmpXMLNodeAxis, "Axis tags not allowed in fixed joints");
+            THROW_VR_EXCEPTION_IF(tmpXMLNodeTranslation, "Translation tags not allowed in fixed joints");
+            robotNode.reset(new ModelJointFixed(robot, robotNodeName, preJointTransform));
+        }
         else
         {
             THROW_VR_EXCEPTION("Joint type not known:" << jointType << endl);
