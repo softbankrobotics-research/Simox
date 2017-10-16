@@ -2,14 +2,13 @@
 #ifndef __ShowScene_WINDOW_H_
 #define __ShowScene_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/SceneIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
+#include "../../../VirtualRobot/Model/Model.h"
+#include "../../../VirtualRobot/VirtualRobotException.h"
+#include "../../../VirtualRobot/Model/Nodes/ModelNode.h"
+#include "../../../VirtualRobot/XML/SceneIO.h"
+#include "../../../VirtualRobot/Visualization/VisualizationFactory.h"
+#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "../../../VirtualRobot/Model/Obstacle.h"
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -83,7 +82,7 @@ protected:
     SoSeparator* coordVisu;
     VirtualRobot::GraspPtr currentGrasp;
     VirtualRobot::GraspSetPtr currentGraspSet;
-    VirtualRobot::SceneObjectPtr currentObject;
+    VirtualRobot::ModelPtr currentObject;
     VirtualRobot::RobotPtr currentRobot;
     VirtualRobot::TrajectoryPtr currentTrajectory;
     VirtualRobot::EndEffectorPtr currentEEF;
@@ -92,7 +91,7 @@ protected:
     std::string sceneFile;
 
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    VirtualRobot::VisualizationPtr visualization;
 };
 
 #endif // __ShowScene_WINDOW_H_

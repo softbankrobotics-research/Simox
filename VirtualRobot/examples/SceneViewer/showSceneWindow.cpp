@@ -1,11 +1,11 @@
 
 #include "showSceneWindow.h"
-#include "VirtualRobot/EndEffector/EndEffector.h"
-#include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/ManipulationObject.h"
-#include "VirtualRobot/XML/ObjectIO.h"
-#include "VirtualRobot/Grasping/GraspSet.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "../../../VirtualRobot/EndEffector/EndEffector.h"
+#include "../../../VirtualRobot/Workspace/Reachability.h"
+#include "../../../VirtualRobot/Model/ManipulationObject.h"
+#include "../../../VirtualRobot/XML/ObjectIO.h"
+#include "../../../VirtualRobot/Grasping/GraspSet.h"
+#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -170,12 +170,13 @@ void showSceneWindow::buildVisu()
         visuType = ModelLink::VisualizationType::Collision;
     }
 
-    visualization = scene->getVisualization<CoinVisualization>(visuType);
+    visualization = scene->getVisualization(visuType);
+    CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(visualization);
     SoNode* visualisationNode = NULL;
 
-    if (visualization)
+    if (cv)
     {
-        visualisationNode = visualization->getCoinVisualization();
+        visualisationNode = cv->getCoinVisualization();
     }
 
     if (visualisationNode)
@@ -192,8 +193,6 @@ void showSceneWindow::buildVisu()
     }
 
     updateGraspVisu();
-
-
 }
 
 void showSceneWindow::updateGraspVisu()
@@ -505,7 +504,7 @@ void showSceneWindow::selectObject(int nr)
     if (scene->hasManipulationObject(ob))
     {
         VirtualRobot::ManipulationObjectPtr mo = scene->getManipulationObject(ob);
-        currentObject = std::dynamic_pointer_cast<SceneObject>(mo);
+        currentObject = std::dynamic_pointer_cast<Model>(mo);
     }
 
     updateGrasps();
@@ -614,7 +613,7 @@ void showSceneWindow::closeHand()
         return;
     }
 
-    VirtualRobot::SceneObjectPtr so;
+    VirtualRobot::ModelPtr so;
 
     if (UI.comboBoxObject->currentIndex() >= 0)
     {

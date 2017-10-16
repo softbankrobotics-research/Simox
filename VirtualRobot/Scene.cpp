@@ -525,6 +525,14 @@ namespace VirtualRobot
         return name;
     }
 
+    VisualizationPtr Scene::getVisualization(ModelLink::VisualizationType linkVisuType , bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, std::string visualizationType)
+    {
+        VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, NULL);
+        if (!v)
+            return VisualizationPtr();
+        return v->getVisualization(shared_from_this(), linkVisuType , addModels, addObstacles, addManipulationObjects, addTrajectories, addSceneObjectSets);
+    }
+
     std::vector< RobotPtr > Scene::getRobots()
     {
         return robots;

@@ -38,7 +38,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Scene
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Scene  : public std::enable_shared_from_this<Scene>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -184,7 +184,14 @@ namespace VirtualRobot
              if (visualization)
                  visualisationNode = visualization->getCoinVisualization();
         */
-        template <typename T> std::shared_ptr<T> getVisualization(ModelLink::VisualizationType visuType = ModelLink::Full, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        //template <typename T> std::shared_ptr<T> getVisualization(ModelLink::VisualizationType visuType = ModelLink::Full, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        /**
+         * @param linkVisuType The type of link visualization (e.g. collision).
+         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
+         * @return A visualization of this model's links.
+         */
+        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType = ModelLink::Full, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, std::string visualizationType = "");
 
         /*!
             Creates an XML string that describes this scene.
