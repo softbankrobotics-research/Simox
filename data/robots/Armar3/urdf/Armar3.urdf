@@ -2076,19 +2076,19 @@
 		<child link="Wrist 2 R_link"/>
 		<limit effort="-1" velocity="0.5" lower="-0.541052" upper="0.645772"/>
 	</joint>
-	<joint name="X_Platform_joint" type="fixed">
+	<joint name="X_Platform_joint" type="prismatic">
 		<origin xyz="0 0 0" rpy="-1.57079637 -0 1.57079637"/>
-		<axis xyz="0 0 0"/>
+		<axis xyz="0 0 -1"/>
 		<parent link="Dummy_Platform_link"/>
 		<child link="X_Platform_link"/>
-		<limit effort="-1" velocity="-1" lower="0" upper="0"/>
+		<limit effort="-1" velocity="-1" lower="-0" upper="5000"/>
 	</joint>
-	<joint name="Y_Platform_joint" type="fixed">
+	<joint name="Y_Platform_joint" type="prismatic">
 		<origin xyz="0 0 0" rpy="1.57079637 -0 -1.57079637"/>
-		<axis xyz="0 0 0"/>
+		<axis xyz="1 0 0"/>
 		<parent link="X_Platform_link"/>
 		<child link="Y_Platform_link"/>
-		<limit effort="-1" velocity="-1" lower="0" upper="0"/>
+		<limit effort="-1" velocity="-1" lower="0" upper="10000"/>
 	</joint>
 	<joint name="Yaw_Platform_joint" type="revolute">
 		<origin xyz="0 0 0" rpy="0 -0 -1.57079637"/>

@@ -3,114 +3,114 @@
 <Scene name="iCubScene">
 
 	<Robot name="iCub" initConfig="init">
-            <File>robots/SimoxXML/iCub/iCub.xml</File>
-            <Configuration name="init">
-                <Node name="Left Arm Shoulder2" unit="radian" value="0.6"/>
-                <Node name="Left Arm Elbow1" unit="radian" value="1.8"/>
-                <Node name="Left Arm Elbow2" unit="radian" value="-0.5"/>
-                <Node name="Left Hand Thumb Joint1" unit="radian" value="0.8"/>
-                <Node name="Left Hand Thumb Joint2" unit="radian" value="-0.2"/>
-                <Node name="Right Arm Shoulder2" unit="radian" value="0.6"/>
-                <Node name="Right Arm Elbow1" unit="radian" value="1.8"/>
-                <Node name="Right Arm Elbow2" unit="radian" value="-0.5"/>
-                <Node name="Right Hand Thumb Joint1" unit="radian" value="0.8"/>
-                <Node name="Right Hand Thumb Joint2" unit="radian" value="-0.2"/>
-            </Configuration>
+        <File>robots/SimoxXML/iCub/iCub.xml</File>
+        <Configuration name="init">
+            <Node name="Left Arm Shoulder2" unit="radian" value="0.6"/>
+            <Node name="Left Arm Elbow1" unit="radian" value="1.8"/>
+            <Node name="Left Arm Elbow2" unit="radian" value="-0.5"/>
+            <Node name="Left Hand Thumb Joint1" unit="radian" value="0.8"/>
+            <Node name="Left Hand Thumb Joint2" unit="radian" value="-0.2"/>
+            <Node name="Right Arm Shoulder2" unit="radian" value="0.6"/>
+            <Node name="Right Arm Elbow1" unit="radian" value="1.8"/>
+            <Node name="Right Arm Elbow2" unit="radian" value="-0.5"/>
+            <Node name="Right Hand Thumb Joint1" unit="radian" value="0.8"/>
+            <Node name="Right Hand Thumb Joint2" unit="radian" value="-0.2"/>
+        </Configuration>
 
-            <Configuration name="start">
-                <Node name="Torso1" unit="radian" value="0.0"/>
-                <Node name="Torso2" unit="radian" value="0.0"/>
-                <Node name="Torso3" unit="radian" value="-0.75"/>
-                <Node name="Left Arm Shoulder1" unit="radian" value="-1.6"/>
-                <Node name="Left Arm Shoulder2" unit="radian" value="1.8"/>
-                <Node name="Left Arm Shoulder3" unit="radian" value="0"/>
-                <Node name="Left Arm Elbow1" unit="radian" value="0"/>
-                <Node name="Left Arm Elbow2" unit="radian" value="0"/>
-                <Node name="Left Arm Wrist1" unit="radian" value="0"/>
-                <Node name="Left Arm Wrist2" unit="radian" value="0"/>
-            </Configuration>
+        <Configuration name="start">
+            <Node name="Torso1" unit="radian" value="0.0"/>
+            <Node name="Torso2" unit="radian" value="0.0"/>
+            <Node name="Torso3" unit="radian" value="-0.75"/>
+            <Node name="Left Arm Shoulder1" unit="radian" value="-1.6"/>
+            <Node name="Left Arm Shoulder2" unit="radian" value="1.8"/>
+            <Node name="Left Arm Shoulder3" unit="radian" value="0"/>
+            <Node name="Left Arm Elbow1" unit="radian" value="0"/>
+            <Node name="Left Arm Elbow2" unit="radian" value="0"/>
+            <Node name="Left Arm Wrist1" unit="radian" value="0"/>
+            <Node name="Left Arm Wrist2" unit="radian" value="0"/>
+        </Configuration>
 
-            <Configuration name="goal">
-                <Node name="Torso1" unit="radian" value="0.6"/>
-                <Node name="Torso2" unit="radian" value="-0.4"/>
-                <Node name="Torso3" unit="radian" value="0.45"/>
-                <Node name="Left Arm Shoulder1" unit="radian" value="-0.7"/>
-                <Node name="Left Arm Shoulder2" unit="radian" value="0.15"/>
-                <Node name="Left Arm Shoulder3" unit="radian" value="0"/>
-                <Node name="Left Arm Elbow1" unit="radian" value="1"/>
-                <Node name="Left Arm Elbow2" unit="radian" value="0"/>
-                <Node name="Left Arm Wrist1" unit="radian" value="0"/>
-                <Node name="Left Arm Wrist2" unit="radian" value="0"/>
-            </Configuration>
+        <Configuration name="goal">
+            <Node name="Torso1" unit="radian" value="0.6"/>
+            <Node name="Torso2" unit="radian" value="-0.4"/>
+            <Node name="Torso3" unit="radian" value="0.45"/>
+            <Node name="Left Arm Shoulder1" unit="radian" value="-0.7"/>
+            <Node name="Left Arm Shoulder2" unit="radian" value="0.15"/>
+            <Node name="Left Arm Shoulder3" unit="radian" value="0"/>
+            <Node name="Left Arm Elbow1" unit="radian" value="1"/>
+            <Node name="Left Arm Elbow2" unit="radian" value="0"/>
+            <Node name="Left Arm Wrist1" unit="radian" value="0"/>
+            <Node name="Left Arm Wrist2" unit="radian" value="0"/>
+        </Configuration>
 
-            <!-- These joints are considered for motion planning-->
-            <JointSet name="Planning" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
-                <Node name="Torso1"/>
-                <Node name="Torso2"/>
-                <Node name="Torso3"/>
-                <Node name="Left Arm Shoulder1"/>
-                <Node name="Left Arm Shoulder2"/>
-                <Node name="Left Arm Shoulder3"/>
-                <Node name="Left Arm Elbow1"/>
-                <Node name="Left Arm Elbow2"/>
-                <Node name="Left Arm Wrist1"/>
-                <Node name="Left Arm Wrist2"/>
-            </JointSet>
+        <!-- These joints are considered for motion planning-->
+        <JointSet name="Planning" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
+            <Node name="Torso1"/>
+            <Node name="Torso2"/>
+            <Node name="Torso3"/>
+            <Node name="Left Arm Shoulder1"/>
+            <Node name="Left Arm Shoulder2"/>
+            <Node name="Left Arm Shoulder3"/>
+            <Node name="Left Arm Elbow1"/>
+            <Node name="Left Arm Elbow2"/>
+            <Node name="Left Arm Wrist1"/>
+            <Node name="Left Arm Wrist2"/>
+        </JointSet>
 
-            <!-- The first collision model (arm and hand) -->
-            <LinkSet name="ColModel Robot Moving">
-                <Node name="Left Arm Shoulder3-link"/>
-                <Node name="Left Arm Elbow2-link"/>
-                <Node name="Left Hand Palm"/>
-                <Node name="Left Hand Thumb Joint1-link"/>
-                <Node name="Left Hand Thumb Joint2-link"/>
-                <Node name="Left Hand Thumb Joint3-link"/>
-                <Node name="Left Hand Thumb Joint4-link"/>
+        <!-- The first collision model (arm and hand) -->
+        <LinkSet name="ColModel Robot Moving">
+            <Node name="Left Arm Shoulder3-link"/>
+            <Node name="Left Arm Elbow2-link"/>
+            <Node name="Left Hand Palm"/>
+            <Node name="Left Hand Thumb Joint1-link"/>
+            <Node name="Left Hand Thumb Joint2-link"/>
+            <Node name="Left Hand Thumb Joint3-link"/>
+            <Node name="Left Hand Thumb Joint4-link"/>
 
-                <Node name="Left Hand Index Joint1-link"/>
-                <Node name="Left Hand Index Joint2-link"/>
-                <Node name="Left Hand Index Joint3-link"/>
-                <Node name="Left Hand Index Joint4-link"/>
+            <Node name="Left Hand Index Joint1-link"/>
+            <Node name="Left Hand Index Joint2-link"/>
+            <Node name="Left Hand Index Joint3-link"/>
+            <Node name="Left Hand Index Joint4-link"/>
 
-                <Node name="Left Hand Middle Joint1-link"/>
-                <Node name="Left Hand Middle Joint2-link"/>
-                <Node name="Left Hand Middle Joint3-link"/>
-                <Node name="Left Hand Middle Joint4-link"/>
+            <Node name="Left Hand Middle Joint1-link"/>
+            <Node name="Left Hand Middle Joint2-link"/>
+            <Node name="Left Hand Middle Joint3-link"/>
+            <Node name="Left Hand Middle Joint4-link"/>
 
-                <Node name="Left Hand Ring Joint1-link"/>
-                <Node name="Left Hand Ring Joint2-link"/>
-                <Node name="Left Hand Ring Joint3-link"/>
-                <Node name="Left Hand Ring Joint4-link"/>
+            <Node name="Left Hand Ring Joint1-link"/>
+            <Node name="Left Hand Ring Joint2-link"/>
+            <Node name="Left Hand Ring Joint3-link"/>
+            <Node name="Left Hand Ring Joint4-link"/>
 
-                <Node name="Left Hand Pinky Joint1-link"/>
-                <Node name="Left Hand Pinky Joint2-link"/>
-                <Node name="Left Hand Pinky Joint3-link"/>
-                <Node name="Left Hand Pinky Joint4-link"/>
-            </LinkSet>
+            <Node name="Left Hand Pinky Joint1-link"/>
+            <Node name="Left Hand Pinky Joint2-link"/>
+            <Node name="Left Hand Pinky Joint3-link"/>
+            <Node name="Left Hand Pinky Joint4-link"/>
+        </LinkSet>
 
-            <!-- The second collision model (torso, head and legs)-->
-            <LinkSet name="ColModel Robot Body">
-                <!--Node name="UpperBodyModel"/--><!-- reports self collisions with shoulder3-->
-                <Node name="LowerBody"/>
-                <Node name="Neck3-link"/>
-                <Node name="Left Leg Waist3-link"/>
-                <Node name="Left Leg Knee-link"/>
-                <Node name="Right Leg Waist3-link"/>
-                <Node name="Right Leg Knee-link"/>
-            </LinkSet>
+        <!-- The second collision model (torso, head and legs)-->
+        <LinkSet name="ColModel Robot Body">
+            <!--Node name="UpperBodyModel"/--><!-- reports self collisions with shoulder3-->
+            <Node name="LowerBody"/>
+            <Node name="Neck3-link"/>
+            <Node name="Left Leg Waist3-link"/>
+            <Node name="Left Leg Knee-link"/>
+            <Node name="Right Leg Waist3-link"/>
+            <Node name="Right Leg Knee-link"/>
+        </LinkSet>
 	</Robot>
 	
 	<ManipulationObject name="RiceBox">
 	    <File type="Inventor">objects/iv/riceBox_iCub_gr0.25.xml</File>
 		<GlobalPose>
-                    <Transform>
-                        <Translation x="-200" y="-200" z="650"/>
-                        <rollpitchyaw units="degree" roll="90" pitch="0" yaw="90"/>
-                    </Transform>
+            <Transform>
+                <Translation x="-200" y="-200" z="650"/>
+                <rollpitchyaw units="degree" roll="90" pitch="0" yaw="90"/>
+            </Transform>
 		</GlobalPose>
  	</ManipulationObject>
  	
-        <LinkSet name="ColModel Obstacles">
- 	    <SceneObject name="RiceBox"/>
-        </LinkSet>
+    <LinkSet name="ColModel Obstacles">
+        <SceneObject name="RiceBox"/>
+    </LinkSet>
 </Scene>

@@ -132,19 +132,6 @@ void showSceneWindow::updateGraspVisu()
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
         VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visuCoord, gp);
         viewer->addVisualization("grasps", "current-grasp", visuCoord);
-
-        //SoSeparator* visu = CoinVisualizationFactory::CreateGraspVisualization(currentGrasp, currentEEF,currentObject->getGlobalPose());
-        /*Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
-        SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(gp);
-        graspVisu->addChild(mt);
-
-        std::string t = currentGrasp->getName();
-        SoSeparator* visu = CoinVisualizationFactory::CreateCoordSystemVisualization(1.0f, &t);
-
-        if (visu)
-        {
-            graspVisu->addChild(visu);
-        }*/
     }
 }
 

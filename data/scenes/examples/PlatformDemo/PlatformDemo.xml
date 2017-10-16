@@ -3,34 +3,34 @@
 <Scene name="PlanningScene">
 
         <Robot name="Armar-III" initConfig="start">
-            <File>/robots/ArmarIII/ArmarIII_withPlatformJoints.xml</File>
+            <File>/robots/Armar3/Armar3.xml</File>
 
             <Configuration name="start">
                 <!--Node name="X_Platform" unit="mm" value="4500"/>
                 <Node name="Y_Platform" unit="mm" value="6000"/-->
-                <Node name="X_Platform" unit="mm" value="10"/>
-                <Node name="Y_Platform" unit="mm" value="2000"/>
-                <Node name="Yaw_Platform" unit="radian" value="-1.57"/>
+                <Node name="X_Platform_joint" unit="mm" value="10"/>
+                <Node name="Y_Platform_joint" unit="mm" value="2000"/>
+                <Node name="Yaw_Platform_joint" unit="radian" value="-1.57"/>
             </Configuration>
 
             <Configuration name="goal">
-                <Node name="X_Platform" unit="mm" value="4500"/>
-                <Node name="Y_Platform" unit="mm" value="9000"/>
-                <Node name="Yaw_Platform" unit="radian" value="1.57"/>
+                <Node name="X_Platform_joint" unit="mm" value="4500"/>
+                <Node name="Y_Platform_joint" unit="mm" value="9000"/>
+                <Node name="Yaw_Platform_joint" unit="radian" value="1.57"/>
             </Configuration>
 		
             <!-- These joints are considered for motion planning-->
             <RobotNodeSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
-                <Node name="X_Platform"/>
-                <Node name="Y_Platform"/>
-                <Node name="Yaw_Platform"/>
+                <Node name="X_Platform_joint"/>
+                <Node name="Y_Platform_joint"/>
+                <Node name="Yaw_Platform_joint"/>
             </RobotNodeSet>
     	
             <!-- The second collision model (torso, head and platform)-->
             <RobotNodeSet name="ColModel Robot Body">
-                <Node name="Platform"/>
-                <Node name="Hip Yaw"/>
-                <Node name="Head_Tilt"/>
+                <Node name="Platform_link"/>
+                <Node name="Hip Yaw_link"/>
+                <Node name="Head_Tilt_link"/>
             </RobotNodeSet>
 
             <!--GlobalPose>
@@ -207,7 +207,7 @@
             </Physics>
         </Obstacle>
 
-        <SceneObjectSet name="ColModel Obstacles">
+        <LinkSet name="ColModel Obstacles">
             <SceneObject name="ControlTable"/>
             <SceneObject name="DishWasher"/>
             <SceneObject name="Fridge"/>
@@ -220,5 +220,5 @@
             <SceneObject name="UpperSink"/>
             <SceneObject name="WallSink"/>
             <SceneObject name="Windows"/>
-        </SceneObjectSet>
+        </LinkSet>
 </Scene>

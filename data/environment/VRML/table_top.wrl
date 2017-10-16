@@ -1,0 +1,67 @@
+#VRML V2.0 utf8
+
+# This file was authored with Blender (http://www.blender.org/)
+# Blender version 249
+# Blender file NewKitchen_cut4convex.blend
+# Exported using VRML97 exporter v1.55 (2006/01/17)
+
+
+DEF OB_TableWithRolls Transform {
+	translation 4.413912 7.128923 0.484615
+	rotation 1.000000 0.000000 0.000000 0.000000
+	scale 1.000000 1.000000 1.000000
+	children [
+		DEF ME_TableWithRolls Group {
+			children [
+				Shape {
+					appearance Appearance {
+						material DEF MA_Countertop Material {
+							diffuseColor 0.8 0.8 0.8
+							ambientIntensity 0.1666667
+							specularColor 0.4012008 0.4012008 0.4012008
+							emissiveColor  0.0 0.0 0.0
+							shininess 0.0976563
+							transparency 0.0
+						}
+					}
+					geometry IndexedFaceSet {
+						solid TRUE
+						coord DEF coord_TableWithRolls Coordinate {
+							point [
+-0.500000178814 0.564999997616 0.387494981289
+ 0.499999910593 0.565000116825 0.387494981289
+ 0.499999910593 0.625000059605 0.447494983673
+ -0.500000238419 0.624999940395 0.447494983673
+ -0.5 -0.625 0.447495043278
+ -0.500000059605 -0.564999997616 0.387495040894
+ 0.500000119209 -0.624999880791 0.447495043278
+ 0.500000059605 -0.564999878407 0.387495040894
+ 							]
+						}
+						
+						coordIndex [
+3 4 6 2 -1, 
+7 1 2 6 -1, 
+0 5 4 3 -1, 
+5 0 1 7 -1, 
+						]
+						texCoord TextureCoordinate {
+							point [
+-2.1718996 -0.2003671, -2.1647348 -2.1718996, -0.296515 -2.1670609, -0.3036798 -0.1955284, 
+1.1797223 1.4959264, 1.1861992 -0.2863389, 1.2986366 -0.3806821, 1.291472 1.5908505, 
+-0.6891854 1.681661, -0.695662 -0.1006046, -0.5839126 -0.1955284, -0.5767483 1.7760041, 
+-0.2900383 -0.3847951, -0.296515 -2.1670604, 1.5717047 -2.1718996, 1.5781815 -0.3896341, 
+							]
+						}
+						texCoordIndex [
+0 1 2 3 -1
+4 5 6 7 -1
+8 9 10 11 -1
+12 13 14 15 -1
+						]
+					}
+				}
+			]
+		}
+	]
+}
