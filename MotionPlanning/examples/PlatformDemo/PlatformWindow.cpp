@@ -462,6 +462,8 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
 
 void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int nrSteps)
 {
+    if (!solutionOptimized)
+        return;
     VR_INFO << " Smoothing solution with " << nrSteps << " steps " << endl;
     forcesSep->removeAllChildren();
     if (nrSteps<=0)

@@ -73,8 +73,11 @@ namespace VirtualRobot
             Here, a specific pair of SceneObjectSets can be added.
             m1 and m2 will only be checked against each other
             and will not be checked against the other SceneObjectSets, that may be part of this CDManager.
+            @param m1 The first link set
+            @param m2 The second link set
+            @param addToModelsList If true, the link sets will be considered by all other objects that are added later on.
         */
-        void addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2);
+        void addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2, bool addToModelsList = true);
         void addCollisionModelPair(ModelLinkPtr m1, LinkSetPtr m2);
         void addCollisionModelPair(ModelLinkPtr m1, ModelLinkPtr m2);
 

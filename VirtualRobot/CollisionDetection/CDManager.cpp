@@ -73,8 +73,30 @@ namespace VirtualRobot
 
             for (auto &model : m->getModels())
             {
-                addCollisionModel(model);
+                // don't do this, avoid selfchecks
+                //addCollisionModel(model);
+
+                LinkSetPtr ls = model->getLinkSet();
+
+                for (size_t i = 0; i < colModels.size(); i++)
+                {
+                    if (ls != colModels[i])
+                    {
+                        addCollisionModelPair(colModels[i], ls, false);
+                    }
+                }
             }
+
+            // now add linksets to col models (no self checks)
+            for (auto &model : m->getModels())
+            {
+                LinkSetPtr ls = model->getLinkSet();
+                if (!_hasSceneObjectSet(ls))
+                {
+                    colModels.push_back(ls);
+                }
+            }
+
         }
     }
 
@@ -394,19 +416,19 @@ namespace VirtualRobot
         return false;
     }
 
-    void CDManager::addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2)
+    void CDManager::addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2, bool addToModelsList)
     {
         if (!m1 || !m2)
         {
             return;
         }
 
-        if (!_hasSceneObjectSet(m1))
+        if (addToModelsList && !_hasSceneObjectSet(m1))
         {
             colModels.push_back(m1);
         }
 
-        if (!_hasSceneObjectSet(m2))
+        if (addToModelsList && !_hasSceneObjectSet(m2))
         {
             colModels.push_back(m2);
         }

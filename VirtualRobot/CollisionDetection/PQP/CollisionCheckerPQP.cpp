@@ -29,7 +29,7 @@ namespace VirtualRobot
     }
 
 
-    float CollisionCheckerPQP::calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
+    float CollisionCheckerPQP::calculateDistance(const CollisionModelPtr &model1, const CollisionModelPtr &model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         std::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
         std::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
@@ -45,7 +45,7 @@ namespace VirtualRobot
     rot[2][0] = sb(2,0); rot[2][1] = sb(2,1); rot[2][2] = sb(2,2); tr[2] = sb(2,3);
 
 
-    bool CollisionCheckerPQP::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) //, Eigen::Vector3f *storeContact)
+    bool CollisionCheckerPQP::checkCollision(const CollisionModelPtr &model1, const CollisionModelPtr &model2) //, Eigen::Vector3f *storeContact)
     {
         std::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
         std::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
@@ -88,7 +88,7 @@ namespace VirtualRobot
 
 
     // returns min distance between the objects
-    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2)
+    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> &m1, std::shared_ptr<PQP::PQP_Model> &m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2)
     {
         PQP::PQP_DistanceResult result;
         CollisionCheckerPQP::GetPQPDistance(m1, m2, mat1, mat2, result);
@@ -98,7 +98,7 @@ namespace VirtualRobot
 
 
     // returns min distance between the objects
-    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2)
+    float CollisionCheckerPQP::getMinDistance(std::shared_ptr<PQP::PQP_Model> &m1, std::shared_ptr<PQP::PQP_Model> &m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2)
     {
         VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
 

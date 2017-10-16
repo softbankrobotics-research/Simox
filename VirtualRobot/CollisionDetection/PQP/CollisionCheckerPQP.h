@@ -50,8 +50,8 @@ namespace VirtualRobot
         CollisionCheckerPQP();
         virtual ~CollisionCheckerPQP();
 
-        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2); //, Eigen::Vector3f *storeContact = NULL);
+        virtual float calculateDistance(const CollisionModelPtr &model1, const CollisionModelPtr &model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+        virtual bool checkCollision(const CollisionModelPtr &model1, const CollisionModelPtr &model2); //, Eigen::Vector3f *storeContact = NULL);
 
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
@@ -61,8 +61,8 @@ namespace VirtualRobot
         //bool CheckContinuousCollision (CollisionModel *model1, Eigen::Matrix4f &mGoalPose1, CollisionModel *model2, Eigen::Matrix4f &mGoalPose2, float &fStoreTOC);
 
 
-        float getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2);
-        float getMinDistance(std::shared_ptr<PQP::PQP_Model> m1, std::shared_ptr<PQP::PQP_Model> m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2);
+        float getMinDistance(std::shared_ptr<PQP::PQP_Model> &m1, std::shared_ptr<PQP::PQP_Model> &m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2);
+        float getMinDistance(std::shared_ptr<PQP::PQP_Model> &m1, std::shared_ptr<PQP::PQP_Model> &m2, const Eigen::Matrix4f& mat1, const Eigen::Matrix4f& mat2, Eigen::Vector3f& storeP1, Eigen::Vector3f& storeP2, int* storeID1, int* storeID2);
 
         void GetPQPDistance(const std::shared_ptr<PQP::PQP_Model>& model1, const std::shared_ptr<PQP::PQP_Model>& model2, const Eigen::Matrix4f& matrix1, const Eigen::Matrix4f& matrix2, PQP::PQP_DistanceResult& pqpResult);
 
