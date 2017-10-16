@@ -9,18 +9,15 @@
 #include "../../../VirtualRobot/Visualization/VisualizationFactory.h"
 #include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "../../../VirtualRobot/Model/Obstacle.h"
-#include <string.h>
+
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
-
+#include <string.h>
 #include <vector>
 
 #include "ui_SceneViewer.h"
@@ -59,27 +56,17 @@ public slots:
     void colModel();
     void showRoot();
 
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
 protected:
 
     void updateGui();
     void updateGrasps();
     void updateGraspVisu();
     void setupUI();
-    QString formatString(const char* s, float f);
     void buildVisu();
 
     Ui::MainWindowShowScene UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer;
 
-    SoSeparator* sceneSep;
-    SoSeparator* sceneVisuSep;
-    SoSeparator* graspVisu;
-    SoSeparator* coordVisu;
     VirtualRobot::GraspPtr currentGrasp;
     VirtualRobot::GraspSetPtr currentGraspSet;
     VirtualRobot::ModelPtr currentObject;
@@ -90,8 +77,7 @@ protected:
     VirtualRobot::ScenePtr scene;
     std::string sceneFile;
 
-
     VirtualRobot::VisualizationPtr visualization;
 };
 
-#endif // __ShowScene_WINDOW_H_
+#endif

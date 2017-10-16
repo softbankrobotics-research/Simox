@@ -86,37 +86,6 @@ void showRobotWindow::setupUI()
 
 }
 
-QString showRobotWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
-}
-
-
 void showRobotWindow::resetSceneryAll()
 {
     if (!robot)
@@ -133,8 +102,6 @@ void showRobotWindow::resetSceneryAll()
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 }
-
-
 
 void showRobotWindow::displayTriangles()
 {
@@ -323,8 +290,6 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
     quit();
     QMainWindow::closeEvent(event);
 }
-
-
 
 
 int showRobotWindow::main()

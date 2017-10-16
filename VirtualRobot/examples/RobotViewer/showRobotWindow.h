@@ -64,7 +64,6 @@ public slots:
 
 protected:
     void setupUI();
-    QString formatString(const char* s, float f);
     void updateJointBox();
     void updateRNSBox();
     void updateEEFBox();

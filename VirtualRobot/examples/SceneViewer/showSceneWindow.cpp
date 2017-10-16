@@ -14,16 +14,16 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-
 #include <sstream>
+
 using namespace std;
 using namespace VirtualRobot;
 
-float TIMER_MS = 30.0f;
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 showSceneWindow::showSceneWindow(std::string& sSceneFile)
     : QMainWindow(NULL)
@@ -31,14 +31,6 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
     VR_INFO << " start " << endl;
 
     sceneFile = sSceneFile;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    sceneVisuSep = new SoSeparator;
-    sceneSep->addChild(sceneVisuSep);
-    graspVisu = new SoSeparator;
-    sceneSep->addChild(graspVisu);
-    coordVisu = new SoSeparator;
-    sceneSep->addChild(coordVisu);
 
     setupUI();
 
@@ -50,26 +42,16 @@ showSceneWindow::showSceneWindow(std::string& sSceneFile)
 
 showSceneWindow::~showSceneWindow()
 {
-    sceneSep->unref();
 }
 
 
 void showSceneWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
-    viewer->setAntialiasing(true, 4);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectScene()));
@@ -86,57 +68,13 @@ void showSceneWindow::setupUI()
     connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
     connect(UI.checkBoxRoot, SIGNAL(clicked()), this, SLOT(showRoot()));
-
-    /*
-    connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
-    connect(UI.checkBoxStructure, SIGNAL(clicked()), this, SLOT(robotStructure()));
-    UI.checkBoxFullModel->setChecked(true);
-    connect(UI.checkBoxFullModel, SIGNAL(clicked()), this, SLOT(robotFullModel()));
-    connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked()), this, SLOT(robotCoordSystems()));
-    connect(UI.comboBoxRobotNodeSet, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
-    connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
-    connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));*/
-
 }
-
-QString showSceneWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
-}
-
 
 void showSceneWindow::resetSceneryAll()
 {
     updateGui();
     buildVisu();
 }
-
-
 
 void showSceneWindow::closeEvent(QCloseEvent* event)
 {
@@ -162,34 +100,21 @@ void showSceneWindow::buildVisu()
         return;
     }
 
-    sceneVisuSep->removeAllChildren();
+    viewer->clearLayer("scene");
     ModelLink::VisualizationType visuType = ModelLink::VisualizationType::Full;
-
     if (UI.checkBoxColModel->isChecked())
     {
         visuType = ModelLink::VisualizationType::Collision;
     }
 
-    visualization = scene->getVisualization(visuType);
-    CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(visualization);
-    SoNode* visualisationNode = NULL;
-
-    if (cv)
-    {
-        visualisationNode = cv->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        sceneVisuSep->addChild(visualisationNode);
-    }
-
-    coordVisu->removeAllChildren();
+    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, visuType);
+    viewer->addVisualization("scene", "scene", visu);
 
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
-        coordVisu->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(2.0f, &rootText));
+        VisualizationNodePtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &rootText);
+        viewer->addVisualization("scene", "coord", visuCoord);
     }
 
     updateGraspVisu();
@@ -198,12 +123,18 @@ void showSceneWindow::buildVisu()
 void showSceneWindow::updateGraspVisu()
 {
     // build grasp visu
-    graspVisu->removeAllChildren();
+    viewer->clearLayer("grasps");
 
     if (UI.comboBoxGrasp->currentIndex() > 0 && currentObject && currentEEF && currentGrasp)
     {
-        //SoSeparator* visu = CoinVisualizationFactory::CreateGraspVisualization(currentGrasp, currentEEF,currentObject->getGlobalPose());
+        std::string t = currentGrasp->getName();
+        VisualizationNodePtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &t);
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visuCoord, gp);
+        viewer->addVisualization("grasps", "current-grasp", visuCoord);
+
+        //SoSeparator* visu = CoinVisualizationFactory::CreateGraspVisualization(currentGrasp, currentEEF,currentObject->getGlobalPose());
+        /*Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
         SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(gp);
         graspVisu->addChild(mt);
 
@@ -213,14 +144,13 @@ void showSceneWindow::updateGraspVisu()
         if (visu)
         {
             graspVisu->addChild(visu);
-        }
+        }*/
     }
 }
 
 int showSceneWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -228,8 +158,8 @@ int showSceneWindow::main()
 void showSceneWindow::quit()
 {
     std::cout << "showSceneWindow: Closing" << std::endl;
+    viewer->stop();
     this->close();
-    SoQt::exitMainLoop();
 }
 
 
@@ -258,7 +188,7 @@ void showSceneWindow::selectScene()
 
 void showSceneWindow::loadScene()
 {
-    sceneVisuSep->removeAllChildren();
+    viewer->clearLayer("scene");
     currentEEF.reset();
     currentGrasp.reset();
     currentGraspSet.reset();
@@ -285,7 +215,6 @@ void showSceneWindow::loadScene()
         {
 
             ManipulationObjectPtr mo = ObjectIO::loadManipulationObject(sceneFile);
-            //mo = mo->clone(mo->getName());
 
             if (mo)
             {
@@ -329,53 +258,6 @@ void showSceneWindow::loadScene()
         return;
     }
 
-
-    /*std::vector<VirtualRobot::ManipulationObjectPtr> mo;
-    mo = scene->getManipulationObjects();
-    cout << "Printing " << mo.size() << " objects" << endl;
-    for (size_t i=0;i<mo.size();i++)
-    {
-        mo[i]->print();
-        mo[i]->showCoordinateSystem(true);
-        Eigen::Vector3f c = mo[i]->getCoMGlobal();
-        cout << "com global: \n" << c << endl;
-        c = mo[i]->getCoMLocal();
-        cout << "com local: \n" << c << endl;
-        //mo[i]->showBoundingBox(true);
-    }*/
-    /*std::vector<VirtualRobot::ObstaclePtr> o;
-    o = scene->getObstacles();
-    cout << "Printing " << o.size() << " obstacles" << endl;
-    for (size_t i=0;i<o.size();i++)
-    {
-        o[i]->print();
-        o[i]->showCoordinateSystem(true);
-        Eigen::Vector3f c = o[i]->getCoMGlobal();
-        cout << "com global: \n" << c << endl;
-        c = o[i]->getCoMLocal();
-        cout << "com local: \n" << c << endl;
-        //mo[i]->showBoundingBox(true);
-    }*/
-
-    // get nodes
-    /*m_pRobot->getModelNodes(allRobotNodes);
-    m_pRobot->getModelNodeSets(robotNodeSets);
-    m_pRobot->getEndEffectors(eefs);
-    updateEEFBox();
-    updateRNSBox();
-    selectRNS(0);
-    if (allRobotNodes.size()==0)
-        selectJoint(-1);
-    else
-        selectJoint(0);
-
-
-
-    displayTriangles();
-
-    // build visualization
-    collisionModel();
-    robotStructure();*/
     updateGui();
     buildVisu();
     viewer->viewAll();
