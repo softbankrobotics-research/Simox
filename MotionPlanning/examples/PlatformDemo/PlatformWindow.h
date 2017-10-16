@@ -65,7 +65,6 @@ public slots:
     void buildVisu();
     void optimizeSolutionPressed();
 
-
     void plan();
 
 protected:
@@ -125,7 +124,7 @@ protected:
     VirtualRobot::JointSetPtr rns;
     //VirtualRobot::SceneObjectSetPtr colModelRob;
     VirtualRobot::LinkSetPtr colModelRob;
-    VirtualRobot::LinkSetPtr colModelEnv;
+    VirtualRobot::ModelSetPtr colModelEnv;
 
     std::vector< VirtualRobot::RobotConfigPtr > configs;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;

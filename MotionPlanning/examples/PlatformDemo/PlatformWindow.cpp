@@ -238,14 +238,16 @@ void PlatformWindow::loadScene()
     }
 
     // steup scene objects (col models env)
-    std::vector<LinkSetPtr> soss = scene->getLinkSets();
+    //std::vector<LinkSetPtr> soss = scene->getLinkSets();
 
     // Setup robot node sets and col models
-    std::vector<JointSetPtr> rnss = robot->getJointSets();
+    //std::vector<JointSetPtr> rnss = robot->getJointSets();
 
     rns = robot->getJointSet(planSetA.rns);
+    THROW_VR_EXCEPTION_IF(!rns, "No joint set with name " << planSetA.rns);
+
     colModelRob = robot->getLinkSet(planSetA.colModelRob);
-    colModelEnv = scene->getLinkSet(planSetA.colModelEnv);
+    colModelEnv = scene->getModelSet(planSetA.colModelEnv);
 
     bool startOK = false;
     bool goalOK = false;
@@ -324,7 +326,7 @@ void PlatformWindow::selectColModelEnv(const std::string &name)
         return;
     }
 
-    this->colModelEnv = scene->getLinkSet(name);
+    this->colModelEnv = scene->getModelSet(name);
 }
 
 void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b)

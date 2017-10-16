@@ -264,7 +264,7 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxGoal->setCurrentIndex(1);
     selectGoal(1);
 
-    std::vector<ModelNodeSetPtr> soss = scene->getModelNodeSets();
+    std::vector<ModelSetPtr> soss = scene->getModelSets();
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
@@ -396,14 +396,14 @@ void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
         return;
     }
 
-    std::map< std::string, std::vector<ModelPtr> > rnss = scene->getModelSets();
+    std::vector<ModelSetPtr> rnss = scene->getModelSets();
     int i = 0;
 
     for (auto & r : rnss)
     {
-        if (r.first == colModel)
+        if (r->getName() == colModel)
         {
-            selectColModelEnv(r.second);
+            selectColModelEnv(r);
             UI.comboBoxColModelEnv->setCurrentIndex(i);
             return;
         }
@@ -528,21 +528,21 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
 
-void RrtGuiWindow::selectColModelEnv(std::vector<ModelPtr> &mns)
+void RrtGuiWindow::selectColModelEnv(ModelSetPtr &mns)
 {
     colModelEnv.clear();
 
-    if (mns.size()!=1)
+    if (mns->getSize()!=1)
     {
         VR_ERROR << "Model sets with size != currently not supported... Envirnment will be ignored for collision checking..." << endl;
         return;
     }
-    ModelPtr o = mns.at(0);
+    ModelPtr o = mns->getModel(0);
     std::vector<ModelLinkPtr> links = o->getLinks();
     if (links.size()>0)
         this->colModelEnv = links;
     else
-        VR_WARNING << mns.at(0)->getName() << " does not provide links" << endl;
+        VR_WARNING << mns->getModel(0)->getName() << " does not provide links" << endl;
 }
 
 void RrtGuiWindow::buildRRTVisu()

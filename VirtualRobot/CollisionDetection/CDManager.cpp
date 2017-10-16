@@ -62,6 +62,22 @@ namespace VirtualRobot
         }
     }
 
+    void CDManager::addCollisionModel(ModelSetPtr m)
+    {
+        if (m)
+        {
+            if (m->getCollisionChecker() != colChecker)
+            {
+                VR_WARNING << "CollisionModel is linked to different instance of collision checker..." << endl;
+            }
+
+            for (auto &model : m->getModels())
+            {
+                addCollisionModel(model);
+            }
+        }
+    }
+
     void CDManager::addCollisionModel(ModelLinkPtr m)
     {
         if (m)

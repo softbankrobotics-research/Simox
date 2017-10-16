@@ -343,7 +343,7 @@ void GraspRrtWindow::loadScene()
     //selectTargetObject(0);
 
     // steup scene objects (col models env)
-    std::vector<ModelNodeSetPtr> soss = scene->getModelNodeSets();
+    std::vector<ModelSetPtr> soss = scene->getModelSets();
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
@@ -540,7 +540,7 @@ void GraspRrtWindow::selectColModelEnv(const std::string& colModel)
         return;
     }
 
-    std::vector< ModelNodeSetPtr > rnss = scene->getModelNodeSets();
+    std::vector<ModelSetPtr> rnss = scene->getModelSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -679,14 +679,14 @@ void GraspRrtWindow::selectColModelEnv(int nr)
         return;
     }
 
-    std::vector< LinkSetPtr > rnss = scene->getLinkSets();
+    std::vector< ModelSetPtr > rnss = scene->getModelSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    this->colModelEnv = scene->getLinkSet(rnss[nr]->getName());
+    this->colModelEnv = scene->getModelSet(rnss[nr]->getName());
 }
 
 void GraspRrtWindow::buildRRTVisu()

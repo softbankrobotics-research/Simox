@@ -55,7 +55,7 @@ public slots:
 
     void selectColModelRobA(int nr);
     void selectColModelRobB(int nr);
-    void selectColModelEnv(std::vector<VirtualRobot::ModelPtr> &mns);
+    void selectColModelEnv(VirtualRobot::ModelSetPtr &mns);
 
     void colModel();
     void solutionSelected();

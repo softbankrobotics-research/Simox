@@ -211,6 +211,7 @@ namespace VirtualRobot
     class ModelJointFixed;
     class ModelJointPrismatic;
     class ModelJointRevolute;
+    class ModelSet;
     class ModelNodeSet;
     class LinkSet;
     class JointSet;
@@ -274,6 +275,7 @@ namespace VirtualRobot
     typedef std::shared_ptr<ModelJointFixed> ModelJointFixedPtr;
     typedef std::shared_ptr<ModelJointPrismatic> ModelJointPrismaticPtr;
     typedef std::shared_ptr<ModelJointRevolute> ModelJointRevolutePtr;
+    typedef std::shared_ptr<ModelSet> ModelSetPtr;
     typedef std::shared_ptr<ModelNodeSet> ModelNodeSetPtr;
     typedef std::shared_ptr<LinkSet> LinkSetPtr;
     typedef std::shared_ptr<JointSet> JointSetPtr;

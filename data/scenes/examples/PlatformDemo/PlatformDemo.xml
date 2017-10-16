@@ -20,18 +20,18 @@
             </Configuration>
 		
             <!-- These joints are considered for motion planning-->
-            <RobotNodeSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
+            <JointSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
                 <Node name="X_Platform_joint"/>
                 <Node name="Y_Platform_joint"/>
                 <Node name="Yaw_Platform_joint"/>
-            </RobotNodeSet>
+            </JointSet>
     	
             <!-- The second collision model (torso, head and platform)-->
-            <RobotNodeSet name="ColModel Robot Body">
+            <LinkSet name="ColModel Robot Body">
                 <Node name="Platform_link"/>
                 <Node name="Hip Yaw_link"/>
                 <Node name="Head_Tilt_link"/>
-            </RobotNodeSet>
+            </LinkSet>
 
             <!--GlobalPose>
                 <Transform>
@@ -207,18 +207,18 @@
             </Physics>
         </Obstacle>
 
-        <LinkSet name="ColModel Obstacles">
-            <SceneObject name="ControlTable"/>
-            <SceneObject name="DishWasher"/>
-            <SceneObject name="Fridge"/>
-            <SceneObject name="LowerSideboard"/>
-            <SceneObject name="Oven"/>
-            <SceneObject name="TableA"/>
-            <SceneObject name="TableB"/>
-            <SceneObject name="TableC"/>
-            <SceneObject name="UpperSideboard"/>
-            <SceneObject name="UpperSink"/>
-            <SceneObject name="WallSink"/>
-            <SceneObject name="Windows"/>
-        </LinkSet>
+        <ModelSet name="ColModel Obstacles">
+            <Model name="ControlTable"/>
+            <Model name="DishWasher"/>
+            <Model name="Fridge"/>
+            <Model name="LowerSideboard"/>
+            <Model name="Oven"/>
+            <Model name="TableA"/>
+            <Model name="TableB"/>
+            <Model name="TableC"/>
+            <Model name="UpperSideboard"/>
+            <Model name="UpperSink"/>
+            <Model name="WallSink"/>
+            <Model name="Windows"/>
+        </Model>
 </Scene>

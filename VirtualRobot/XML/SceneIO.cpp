@@ -159,7 +159,7 @@ namespace VirtualRobot
     }
 
 
-    bool SceneIO::processLinkSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
+    bool SceneIO::processModelSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processLinkSet");
 
@@ -179,7 +179,7 @@ namespace VirtualRobot
         {
             std::string nodeName = getLowerCase(node->name());
 
-            if (nodeName == "sceneobject")
+            if (nodeName == "model")
             {
                 std::string oname = processNameAttribute(node);
 
@@ -202,7 +202,8 @@ namespace VirtualRobot
             node = node->next_sibling();
         }
 
-        scene->registerModelSet(sosName, objects);
+        ModelSetPtr ms(new ModelSet(sosName, objects));
+        scene->registerModelSet(ms);
         return true;
     }
 
@@ -264,7 +265,7 @@ namespace VirtualRobot
 
         // process xml nodes
         std::vector<rapidxml::xml_node<char>* > jointSetNodes;
-        std::vector<rapidxml::xml_node<char>* > linkSetNodes;
+        std::vector<rapidxml::xml_node<char>* > modelSetNodes;
         std::vector<rapidxml::xml_node<char>* > trajectoryNodes;
 
 
@@ -310,9 +311,9 @@ namespace VirtualRobot
             {
                 trajectoryNodes.push_back(XMLNode);
             }
-            else if (nodeName == "linkset")
+            else if (nodeName == "modelset")
             {
-                linkSetNodes.push_back(XMLNode);
+                modelSetNodes.push_back(XMLNode);
             }
             else
             {
@@ -322,14 +323,14 @@ namespace VirtualRobot
             XMLNode = XMLNode->next_sibling(NULL, 0, false);
         }
 
-        // process all linkSetNodes
-        for (size_t i = 0; i < linkSetNodes.size(); i++)
+        // process all modelSetNodes
+        for (size_t i = 0; i < modelSetNodes.size(); i++)
         {
-            bool r = processLinkSet(linkSetNodes[i], scene);
+            bool r = processModelSet(modelSetNodes[i], scene);
             if (!r)
             {
                 std::string failedNodeName = processNameAttribute(XMLNode);
-                THROW_VR_EXCEPTION("Failed to create LinkSet " << failedNodeName << " in scene " << scene->getName() << endl);
+                THROW_VR_EXCEPTION("Failed to create ModelSet " << failedNodeName << " in scene " << scene->getName() << endl);
             }
         }
 

@@ -67,6 +67,7 @@ namespace VirtualRobot
         */
         void addCollisionModel(LinkSetPtr m);
         void addCollisionModel(ModelPtr m);
+        void addCollisionModel(ModelSetPtr m);
 
         /*!
             Here, a specific pair of SceneObjectSets can be added.

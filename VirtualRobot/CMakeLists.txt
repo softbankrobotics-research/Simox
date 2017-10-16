@@ -99,6 +99,7 @@ Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
 Model/Model.cpp
+Model/ModelSet.cpp
 Model/ModelConfig.cpp
 Model/ModelNodeSet.cpp
 Model/LinkSet.cpp
@@ -202,6 +203,7 @@ Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
 Model/Model.h
+Model/ModelSet.h
 Model/ModelConfig.h
 Model/ModelNodeSet.h
 Model/LinkSet.h

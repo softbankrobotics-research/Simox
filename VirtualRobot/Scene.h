@@ -31,6 +31,7 @@
 #include "Model/Obstacle.h"
 #include "Trajectory.h"
 #include "Model/ManipulationObject.h"
+#include "Model/ModelSet.h"
 
 #include <string>
 #include <vector>
@@ -144,47 +145,38 @@ namespace VirtualRobot
         std::vector< TrajectoryPtr > getTrajectories();
         std::vector< TrajectoryPtr > getTrajectories(const std::string& robotName);
 
-        void registerModelSet(const std::string &name, std::vector<ModelPtr> models);
+        void registerModelSet(const ModelSetPtr modelSet);
         void deRegisterModelSet(const std::string &name);
         bool hasModelSet(const std::string &name);
 
         /*!
             Registers the set to this scene. If a set with the same name is already registered nothing happens.
         */
-        void registerModelNodeSet(ModelNodeSetPtr sos);
+        //void registerModelNodeSet(ModelNodeSetPtr sos);
 
         /*!
             Removes the set to from this scene. If the set is not registered nothing happens.
         */
-        void deRegisterModelNodeSet(ModelNodeSetPtr sos);
-        void deRegisterModelNodeSet(const std::string& name);
+        //void deRegisterModelNodeSet(ModelNodeSetPtr sos);
+        //void deRegisterModelNodeSet(const std::string& name);
 
-        bool hasModelNodeSet(ModelNodeSetPtr sos) const;
-        bool hasModelNodeSet(const std::string& name) const;
+        //bool hasModelNodeSet(ModelNodeSetPtr sos) const;
+        //bool hasModelNodeSet(const std::string& name) const;
 
-        ModelNodeSetPtr getModelNodeSet(const std::string& name);
-        LinkSetPtr getLinkSet(const std::string& name);
-        JointSetPtr getJointSet(const std::string& name);
+        //ModelNodeSetPtr getModelNodeSet(const std::string& name);
+        //LinkSetPtr getLinkSet(const std::string& name);
+        //JointSetPtr getJointSet(const std::string& name);
 
-        std::map< std::string, std::vector<ModelPtr> > getModelSets();
-        std::vector<ModelPtr> getModelSet(const std::string & name);
-        std::vector< ModelNodeSetPtr > getModelNodeSets();
-        std::vector< LinkSetPtr > getLinkSets();
-        std::vector< JointSetPtr > getJointSets();
+        std::vector<ModelSetPtr> getModelSets();
+        ModelSetPtr getModelSet(const std::string & name);
+        //std::vector< ModelNodeSetPtr > getModelNodeSets();
+        //std::vector< LinkSetPtr > getLinkSets();
+        //std::vector< JointSetPtr > getJointSets();
 
-		ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
+        ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
 
         std::string getName() const;
 
-        /*!
-            Retrieve a visualization in the given format.
-            Example usage:
-             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = scene->getVisualization<CoinVisualization>();
-             SoNode* visualisationNode = NULL;
-             if (visualization)
-                 visualisationNode = visualization->getCoinVisualization();
-        */
-        //template <typename T> std::shared_ptr<T> getVisualization(ModelLink::VisualizationType visuType = ModelLink::Full, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
         /**
          * @param linkVisuType The type of link visualization (e.g. collision).
          * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
@@ -207,9 +199,9 @@ namespace VirtualRobot
         std::map< RobotPtr, std::vector< RobotConfigPtr > > robotConfigs;
         std::vector< ObstaclePtr > obstacles;
         std::vector< ManipulationObjectPtr > manipulationObjects;
-        std::vector< ModelNodeSetPtr > sceneObjectSets;
+        //std::vector< ModelNodeSetPtr > sceneObjectSets;
         std::vector< TrajectoryPtr > trajectories;
-        std::map< std::string, std::vector<ModelPtr> > modelSets;
+        std::vector<ModelSetPtr> modelSets;
 
     };
 

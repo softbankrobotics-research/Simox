@@ -20,7 +20,7 @@ namespace VirtualRobot
         robotConfigs.clear();
         obstacles.clear();
         manipulationObjects.clear();
-        sceneObjectSets.clear();
+        //sceneObjectSets.clear();
         trajectories.clear();
     }
 
@@ -563,21 +563,34 @@ namespace VirtualRobot
         return res;
     }
 
-    void Scene::registerModelSet(const std::string &name, std::vector<ModelPtr> models)
+    void Scene::registerModelSet(const ModelSetPtr modelSet)
     {
-        modelSets[name] = models;
+        modelSets.push_back(modelSet);
     }
 
     void Scene::deRegisterModelSet(const std::string &name)
     {
-        modelSets.erase(name);
+        if (!hasModelSet(name))
+        {
+            return;
+        }
+
+        for (auto i = modelSets.begin(); i != modelSets.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                modelSets.erase(i);
+                break;
+            }
+        }
+
     }
 
     bool Scene::hasModelSet(const std::string &name)
     {
         for (auto &m : modelSets)
         {
-            if (m.first == name)
+            if (m->getName() == name)
                 return true;
         }
         return false;
@@ -616,7 +629,7 @@ namespace VirtualRobot
         return r->getModelNodeSet(rns);
     }
 
-    void Scene::registerModelNodeSet(ModelNodeSetPtr sos)
+    /*void Scene::registerModelNodeSet(ModelNodeSetPtr sos)
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL config data");
 
@@ -625,10 +638,10 @@ namespace VirtualRobot
             return;
         }
 
-        sceneObjectSets.push_back(sos);
-    }
+        //sceneObjectSets.push_back(sos);
+    }*/
 
-    void Scene::deRegisterModelNodeSet(ModelNodeSetPtr sos)
+    /*void Scene::deRegisterModelNodeSet(ModelNodeSetPtr sos)
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL data");
 
@@ -645,9 +658,9 @@ namespace VirtualRobot
                 break;
             }
         }
-    }
+    }*/
 
-    void Scene::deRegisterModelNodeSet(const std::string& name)
+    /*void Scene::deRegisterModelNodeSet(const std::string& name)
     {
         if (!hasModelNodeSet(name))
         {
@@ -662,9 +675,9 @@ namespace VirtualRobot
                 break;
             }
         }
-    }
+    }*/
 
-    bool Scene::hasModelNodeSet(ModelNodeSetPtr sos) const
+    /*bool Scene::hasModelNodeSet(ModelNodeSetPtr sos) const
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL data");
 
@@ -677,9 +690,9 @@ namespace VirtualRobot
         }
 
         return false;
-    }
+    }*/
 
-    bool Scene::hasModelNodeSet(const std::string& name) const
+    /*bool Scene::hasModelNodeSet(const std::string& name) const
     {
         for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
@@ -690,9 +703,9 @@ namespace VirtualRobot
         }
 
         return false;
-    }
+    }*/
 
-    VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& name)
+    /*VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& name)
     {
         for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
@@ -703,9 +716,9 @@ namespace VirtualRobot
         }
 
         return ModelNodeSetPtr();
-    }
+    }*/
 
-    VirtualRobot::LinkSetPtr Scene::getLinkSet(const std::string& name)
+    /*VirtualRobot::LinkSetPtr Scene::getLinkSet(const std::string& name)
     {
         for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
         {
@@ -733,29 +746,34 @@ namespace VirtualRobot
         }
 
         return JointSetPtr();
-    }
+    }*/
 
-    std::map<std::string, std::vector<ModelPtr> > Scene::getModelSets()
+    std::vector<ModelSetPtr> Scene::getModelSets()
     {
         return modelSets;
     }
 
-    std::vector<ModelPtr> Scene::getModelSet(const std::string &name)
+    ModelSetPtr Scene::getModelSet(const std::string &name)
     {
         if (!hasModelSet(name))
         {
             VR_WARNING << "No model set with name " << name << " registered" << endl;
-            return std::vector<ModelPtr>();
+            return ModelSetPtr();
         }
-        return modelSets[name];
+        for (auto &n: modelSets)
+        {
+            if (n->getName() == name)
+                return n;
+        }
+        return ModelSetPtr();
     }
 
-    std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
+    /*std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
     {
         return sceneObjectSets;
-    }
+    }*/
 
-    std::vector< LinkSetPtr > Scene::getLinkSets()
+    /*std::vector< LinkSetPtr > Scene::getLinkSets()
     {
         std::vector< LinkSetPtr > result;
         for (auto s : sceneObjectSets)
@@ -765,9 +783,9 @@ namespace VirtualRobot
                 result.push_back(ls);
         }
         return result;
-    }
+    }*/
 
-    std::vector< JointSetPtr > Scene::getJointSets()
+    /*std::vector< JointSetPtr > Scene::getJointSets()
     {
         std::vector< JointSetPtr > result;
         for (auto s : sceneObjectSets)
@@ -777,7 +795,7 @@ namespace VirtualRobot
                 result.push_back(ls);
         }
         return result;
-    }
+    }*/
 
     std::string Scene::getXMLString(const std::string& basePath)
     {
@@ -849,11 +867,11 @@ namespace VirtualRobot
         }
 
         // process sceneObjectSets
-        for (size_t i = 0; i < sceneObjectSets.size(); i++)
+        /*for (size_t i = 0; i < sceneObjectSets.size(); i++)
         {
             ss << sceneObjectSets[i]->toXML(1);
             ss << "\n";
-        }
+        }*/
 
         // process trajectories
         for (size_t i = 0; i < trajectories.size(); i++)

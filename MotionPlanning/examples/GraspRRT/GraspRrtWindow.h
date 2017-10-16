@@ -132,7 +132,7 @@ protected:
     VirtualRobot::EndEffectorPtr eef;
     VirtualRobot::LinkSetPtr colModelRobA;
     VirtualRobot::LinkSetPtr colModelRobB;
-    VirtualRobot::LinkSetPtr colModelEnv;
+    VirtualRobot::ModelSetPtr colModelEnv;
 
     std::vector< VirtualRobot::RobotConfigPtr > configs;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;

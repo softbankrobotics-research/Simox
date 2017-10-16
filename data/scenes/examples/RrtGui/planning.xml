@@ -110,7 +110,7 @@
 		</GlobalPose>
  	</ManipulationObject>
  	
-    <LinkSet name="ColModel Obstacles">
-        <SceneObject name="RiceBox"/>
-    </LinkSet>
+    <ModelSet name="ColModel Obstacles">
+        <Model name="RiceBox"/>
+    </ModelSet>
 </Scene>

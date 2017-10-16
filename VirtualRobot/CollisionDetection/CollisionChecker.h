@@ -25,6 +25,7 @@
 
 #include "../VirtualRobotImportExport.h"
 #include "../Model/Model.h"
+#include "../Model/ModelSet.h"
 #include "../Tools/MathTools.h"
 
 #include "../Model/Nodes/ModelLink.h"
@@ -70,7 +71,8 @@ namespace VirtualRobot
 #define T_MODELNODE const ModelNodePtr&
 #define T_MODELNODE_VEC const std::vector<ModelNodePtr>&
 #define T_MODELNODESET const LinkSetPtr&
-#define TYPES (T_MODEL, (T_MODEL_VEC, (T_MODELNODE, (T_MODELNODE_VEC, (T_MODELNODESET, BOOST_PP_NIL)))))
+#define T_MODELSET const ModelSetPtr&
+#define TYPES (T_MODEL, (T_MODEL_VEC, (T_MODELNODE, (T_MODELNODE_VEC, (T_MODELNODESET, (T_MODELSET, BOOST_PP_NIL))))))
 
         /*!
             Returns distance of the collision models.
@@ -226,6 +228,11 @@ namespace VirtualRobot
         {
             return m->getCollisionModels();
         }
+        inline std::vector<CollisionModelPtr> getCollisionModel(const ModelSetPtr& m)
+        {
+            return getCollisionModel(m->getModels());
+        }
+
         inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<ModelPtr>& m)
         {
             std::vector<CollisionModelPtr> mVec;

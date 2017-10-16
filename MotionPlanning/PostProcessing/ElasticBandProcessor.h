@@ -43,7 +43,7 @@ namespace MotionPlanning
         ElasticBandProcessor(CSpacePathPtr path,                            // implicitly defines rns to operate on (path->cspace->rns)
                              CSpaceSampledPtr cspace,
                              VirtualRobot::ModelLinkPtr node,               // the distance for this node is considered
-                             VirtualRobot::LinkSetPtr obstacles,     // these obstacles are considered for path smoothing
+                             VirtualRobot::ModelSetPtr obstacles,     // these obstacles are considered for path smoothing
                              bool verbose = false);
         virtual ~ElasticBandProcessor();
 
@@ -78,7 +78,7 @@ namespace MotionPlanning
 
         CSpaceSampledPtr cspace;
         VirtualRobot::ModelLinkPtr node; // this is the node to move around (e.g. platform, tcp, ...)
-        VirtualRobot::LinkSetPtr obstacles; // this cdm is used to calculate the distance between robot and environment
+        VirtualRobot::ModelSetPtr obstacles; // this cdm is used to calculate the distance between robot and environment
         VirtualRobot::JointSetPtr rns;
         VirtualRobot::CollisionCheckerPtr colChecker;
         VirtualRobot::GenericIKSolverPtr ik;

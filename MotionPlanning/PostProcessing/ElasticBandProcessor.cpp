@@ -13,7 +13,7 @@ using namespace VirtualRobot;
     ElasticBandProcessor::ElasticBandProcessor(CSpacePathPtr path,
                                                CSpaceSampledPtr cspace,
                                                VirtualRobot::ModelLinkPtr node,               // the distance for this node is considered
-                                               VirtualRobot::LinkSetPtr obstacles,     // these obstacles are considered for path smoothing
+                                               VirtualRobot::ModelSetPtr obstacles,     // these obstacles are considered for path smoothing
                                                bool verbose
                                                ) : PathProcessor(path, verbose), cspace(cspace), node(node), obstacles(obstacles)
     {
