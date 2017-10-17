@@ -22,14 +22,10 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
-
 #include <vector>
+
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 #include "ui_PlatformDemo.h"
 
@@ -47,6 +43,7 @@ public:
     int main();
 
     void redraw();
+
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
@@ -97,7 +94,7 @@ protected:
     void setStart(Eigen::VectorXf &goalConf);
     void setGoal(Eigen::VectorXf &goalConf);
 
-    static void timerCB(void* data, SoSensor* sensor);
+    //static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void selectColModelRob(const std::string& colModel);
     void selectColModelEnv(const std::string& colModel);
@@ -107,43 +104,24 @@ protected:
     void showOptizerForces(MotionPlanning::ElasticBandProcessorPtr postProcessing, MotionPlanning::CSpacePathPtr s);
 
     Ui::MainWindowPlatformdemo UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* allSep;
-    SoSeparator* sceneFileSep;
-    SoSeparator* rrtSep;
-    SoSeparator* distSep;
-    SoSeparator* forcesSep;
-
+    SimoxGui::ViewerInterfacePtr viewer;
     VirtualRobot::RobotPtr robot;
-
     MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;
     Eigen::VectorXf goalConfig;
-
     VirtualRobot::JointSetPtr rns;
-    //VirtualRobot::SceneObjectSetPtr colModelRob;
     VirtualRobot::LinkSetPtr colModelRob;
     VirtualRobot::ModelSetPtr colModelEnv;
-
     std::vector< VirtualRobot::RobotConfigPtr > configs;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;
-
-
     std::string sceneFile;
     VirtualRobot::ScenePtr scene;
-
     VirtualRobot::CDManagerPtr cdmPlayback;
-
-
     MotionPlanning::CSpacePathPtr solution;
     MotionPlanning::CSpacePathPtr solutionOptimized;
     MotionPlanning::CSpaceTreePtr tree;
     MotionPlanning::CSpaceTreePtr tree2;
-
-    VirtualRobot::CoinVisualizationPtr visualization;
-
     MotionPlanning::BiRrtPtr rrt;
 };
 
-#endif // __Platform_WINDOW_H__
+#endif

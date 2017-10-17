@@ -32,7 +32,7 @@
 using namespace std;
 using namespace VirtualRobot;
 
-float TIMER_MS = 200.0f;
+//float TIMER_MS = 200.0f;
 
 RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
                            const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv)
@@ -582,7 +582,7 @@ void RrtGuiWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::RrtWorkspaceVisualization::eGreen);
     }
 
     VisualizationPtr wv = w->getVisualization();

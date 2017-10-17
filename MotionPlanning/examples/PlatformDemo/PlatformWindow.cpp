@@ -20,14 +20,6 @@
 
 #include <QFileDialog>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoUnits.h>
-
 #include <Eigen/Geometry>
 
 #include <time.h>
@@ -37,11 +29,14 @@
 #include <cmath>
 #include <sstream>
 
-
 using namespace std;
 using namespace VirtualRobot;
 
-float TIMER_MS = 200.0f;
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 PlatformWindow::PlatformWindow(const std::string& sceneFile,
                                const std::string& rns,
@@ -53,18 +48,6 @@ PlatformWindow::PlatformWindow(const std::string& sceneFile,
 
     this->sceneFile = sceneFile;
 
-    allSep = new SoSeparator;
-    allSep->ref();
-    sceneFileSep = new SoSeparator;
-    rrtSep = new SoSeparator;
-    distSep = new SoSeparator;
-    forcesSep = new SoSeparator;
-
-    allSep->addChild(sceneFileSep);
-    allSep->addChild(rrtSep);
-    allSep->addChild(distSep);
-    allSep->addChild(forcesSep);
-
     planSetA.rns = rns;
     planSetA.colModelRob = colModelRob;
     planSetA.colModelEnv = colModelEnv;
@@ -74,43 +57,20 @@ PlatformWindow::PlatformWindow(const std::string& sceneFile,
     loadScene();
 
     viewer->viewAll();
-
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer);
 }
 
 
 PlatformWindow::~PlatformWindow()
 {
-    allSep->unref();
 }
-
-
-void PlatformWindow::timerCB(void* data, SoSensor* /*sensor*/)
-{
-    PlatformWindow* ikWindow = static_cast<PlatformWindow*>(data);
-    ikWindow->redraw();
-}
-
 
 void PlatformWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(allSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     UI.radioButtonSolution->setChecked(true);
 
@@ -132,41 +92,28 @@ void PlatformWindow::setupUI()
     connect(UI.radioButtonSolutionOpti, SIGNAL(clicked()), this, SLOT(solutionSelected()));
 }
 
-
-
-
 void PlatformWindow::closeEvent(QCloseEvent* event)
 {
     quit();
     QMainWindow::closeEvent(event);
 }
 
-
 void PlatformWindow::buildVisu()
 {
-    sceneFileSep->removeAllChildren();
+
+    viewer->clearLayer("scene");
 
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
+
+    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    if (!f)
+        return;
 
     if (scene)
     {
         VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        CoinVisualizationPtr cvn = std::dynamic_pointer_cast<CoinVisualization>(v);
-
-        SoNode* visualisationNode = NULL;
-
-        if (cvn)
-        {
-            visualisationNode = cvn->getCoinVisualization();
-        }
-
-        if (visualisationNode)
-        {
-            sceneFileSep->addChild(visualisationNode);
-        }
+        viewer->addVisualization("scene", "scenefile", v);
     }
-
-    distSep->removeAllChildren();
 
     buildRRTVisu();
 
@@ -175,8 +122,7 @@ void PlatformWindow::buildVisu()
 
 int PlatformWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -185,7 +131,7 @@ void PlatformWindow::quit()
 {
     std::cout << "PlatformWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void PlatformWindow::loadSceneWindow()
@@ -331,7 +277,8 @@ void PlatformWindow::selectColModelEnv(const std::string &name)
 
 void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vector3f &b)
 {
-    distSep->removeAllChildren();
+    viewer->clearLayer("dist");
+
     if (UI.checkBoxShowDistance->isChecked())
     {
         Eigen::Matrix4f from;
@@ -341,21 +288,29 @@ void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vecto
         from.block(0,3,3,1) = a;
         to.block(0,3,3,1) = b;
 
-        SoNode * c = CoinVisualizationFactory::createCoinLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
-        distSep->addChild(c);
+        VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
+        viewer->addVisualization("dist", "rob-obstacle", v);
     }
 }
 
 void PlatformWindow::buildRRTVisu()
 {
-    rrtSep->removeAllChildren();
+    viewer->clearLayer("rrt");
 
-    if (!cspace || !robot || !rns)
+    if (!cspace || !robot)
     {
         return;
     }
 
-    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
+#else
+    VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+#endif
+
+    //std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -380,12 +335,16 @@ void PlatformWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::RrtWorkspaceVisualization::eGreen);
     }
 
-    w->addConfiguration(startConfig, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
-    SoSeparator* sol = w->getCoinVisualization();
-    rrtSep->addChild(sol);
+    w->addConfiguration(startConfig, MotionPlanning::RrtWorkspaceVisualization::eGreen, 3.0f);
+
+    VisualizationPtr wv = w->getVisualization();
+    if (wv)
+    {
+        viewer->addVisualization("rrt","workspace", wv);
+    }
 }
 
 void PlatformWindow::optimizeSolutionPressed()
@@ -409,13 +368,8 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
 	if (!postProcessing)
 		return;
 		
-	forcesSep->removeAllChildren();
+    viewer->clearLayer("forces");
 
-    SoUnits* u = new SoUnits();
-    u->units = SoUnits::MILLIMETERS;
-    forcesSep->addChild(u);
-
-		
     for (unsigned int i=0; i<s->getNrOfPoints(); i++)
 	{
 		Eigen::Vector3f internalForce;
@@ -427,6 +381,37 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         Eigen::Matrix4f m;
         m.setIdentity();
         m.block(0,3,3,1) = p;
+
+        float l1 = internalForce.norm() * 5.0f;
+        float l2 = externalForce.norm() * 100.0f;
+        if (l1<30.0f)
+            l1 = 30.0f;
+        if (l1>60.0f)
+            l1 = 60.0f;
+        if (l2<30.0f)
+            l2 = 30.0f;
+        if (l2>60.0f)
+            l2 = 60.0f;
+        internalForce.normalize();
+        externalForce.normalize();
+        resultingForce.normalize();
+        VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationNodePtr v1 = f->createArrow(internalForce, l1, 2.0f, VisualizationFactory::Color::Blue());
+        VisualizationNodePtr v2 = f->createArrow(internalForce, l1, 2.0f, VisualizationFactory::Color::Blue());
+        VisualizationNodePtr v3 = f->createArrow(externalForce, l2, 2.0f, VisualizationFactory::Color::Green());
+        VisualizationNodePtr v4 = f->createArrow(resultingForce, l1+l2, 2.0f, VisualizationFactory::Color::Red());
+
+        f->applyDisplacement(v1, m);
+        f->applyDisplacement(v2, m);
+        f->applyDisplacement(v3, m);
+        f->applyDisplacement(v4, m);
+
+        viewer->addVisualization("forces", "f1", v1);
+        viewer->addVisualization("forces", "f2", v2);
+        viewer->addVisualization("forces", "f3", v3);
+        viewer->addVisualization("forces", "f4", v4);
+
+        /*
 
         SoSeparator *sa = new SoSeparator;
         SoSeparator *sb = new SoSeparator;
@@ -456,7 +441,7 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         sc->addChild(v3);
         forcesSep->addChild(sa);
         forcesSep->addChild(sb);
-        forcesSep->addChild(sc);
+        forcesSep->addChild(sc);*/
     }
 }
 
@@ -465,7 +450,8 @@ void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int n
     if (!solutionOptimized)
         return;
     VR_INFO << " Smoothing solution with " << nrSteps << " steps " << endl;
-    forcesSep->removeAllChildren();
+    viewer->clearLayer("forces");
+
     if (nrSteps<=0)
         return;
     switch (postProcessing)
@@ -616,11 +602,8 @@ void PlatformWindow::sliderSolution(int pos)
 
 void PlatformWindow::redraw()
 {
-    viewer->scheduleRedraw();
     UI.frameViewer->update();
-    viewer->scheduleRedraw();
     this->update();
-    viewer->scheduleRedraw();
 }
 
 
