@@ -1,25 +1,25 @@
 
 #include "MTPlanningWindow.h"
 
-
 #include <string.h>
 #include <iostream>
+
 using namespace std;
 using namespace VirtualRobot;
 
-
-void startMTPlanning()
+void startMTPlanning(const std::string &robotFile)
 {
-    MTPlanningWindow* agfw = new MTPlanningWindow();
+    MTPlanningWindow* agfw = new MTPlanningWindow(robotFile);
     agfw->main();
     delete agfw;
 }
 
 int main(int argc, char** argv)
 {
-    SoDB::init();
-    SoQt::init(argc, argv, "MT");
+    VirtualRobot::init(argc, argv, "Multi-Threaded-Planning-Demo");
     cout << " --- START --- " << endl;
+
+    std::string robotFile = "robots/SimoxXML/examples/MultiThreadedPlanning/CartMover.xml";
 
     if (!CollisionChecker::IsSupported_Multithreading_MultipleColCheckers())
     {
@@ -27,13 +27,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-#ifdef WIN32
-    cout << "Visual Studio users: Be sure to start this example with <ctrl>+F5 (RELEASE mode) for full performance (otherwise only 1 thread will be used)" << endl;
-#endif
-
     try
     {
-        startMTPlanning();
+        startMTPlanning(robotFile);
     }
     catch (std::exception e)
     {

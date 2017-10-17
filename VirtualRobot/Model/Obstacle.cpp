@@ -15,45 +15,18 @@ namespace VirtualRobot
     //int Obstacle::idCounter = 20000;
 
 
-    Obstacle::Obstacle(const std::string& name, const CollisionCheckerPtr& colChecker)
+    Obstacle::Obstacle(const std::string& name)
         : Model(name, "Obstacle")
     {
-        /*if (name.empty())
-        {
-            // my id
-            id = idCounter++;
-
-            std::stringstream ss;
-            ss << "VirtualRobot Obstacle <" << id << ">";
-            setName(ss.str());
-        }
-        else
-        {
-            if (collisionModel)
-            {
-                id = collisionModel->getId();
-            }
-            else
-            {
-                // my id
-                id = idCounter++;
-            }
-        }*/
     }
 
     Obstacle::~Obstacle()
     {
     }
 
-    /*int Obstacle::getID() const
-    {
-        return id;
-    }*/
-
-
     VirtualRobot::ObstaclePtr Obstacle::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
     {
-        ObstaclePtr m(new Obstacle(name, colChecker));
+        ObstaclePtr m(new Obstacle(name));
         ModelLinkPtr node(new ModelLink(m,
             name,
             Eigen::Matrix4f::Identity(),
@@ -282,38 +255,19 @@ namespace VirtualRobot
             cout << endl;
         }
     }
-    /*
-    Obstacle* Obstacle::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
+
+    ObstaclePtr Obstacle::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
     {
-        VisualizationNodePtr clonedVisualizationNode;
+        ReadLockPtr r = getReadLock();
+        ModelNodePtr startNode = getRootNode();
+        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
-        VR_ASSERT(ModelNode::checkNodeOfType(getRootNode(), ModelNode::ModelNodeType::Link));
-        ModelLinkPtr link = std::static_pointer_cast<ModelLink>(getRootNode());
-
-        if (visualizationModel)
-        {
-            clonedVisualizationNode = link->getVisualization()->clone();
-        }
-
-        CollisionModelPtr clonedCollisionModel;
-
-        if (collisionModel)
-        {
-            clonedCollisionModel = link->getCollisionModel()->clone(colChecker);
-        }
-
-        Obstacle* result = new Obstacle(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);
-
-        if (!result)
-        {
-            VR_ERROR << "Cloning failed.." << endl;
-            return result;
-        }
-
-        result->setGlobalPose(getGlobalPose());
-
+        ObstaclePtr result(new Obstacle(name));
+        _clone(result, startNode, colChecker, true, true, scaling);
+        result->filename = filename;
         return result;
-    }*/
+    }
 
     std::string Obstacle::toXML(const std::string& basePath, int tabs)
     {

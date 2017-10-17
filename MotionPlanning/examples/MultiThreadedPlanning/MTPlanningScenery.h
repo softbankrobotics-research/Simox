@@ -12,10 +12,11 @@
 #include <MotionPlanning/CSpace/CSpaceNode.h>
 #include <MotionPlanning/Planner/MotionPlanner.h>
 #include <MotionPlanning/Planner/BiRrt.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
-#define ROBOT_DIM 3
-#define SHORTEN_LOOP 600
+#include "VirtualRobot/Model/ModelSet.h"
+
+
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 using namespace VirtualRobot;
 using namespace MotionPlanning;
@@ -23,7 +24,7 @@ using namespace MotionPlanning;
 class MTPlanningScenery
 {
 public:
-    MTPlanningScenery();
+    MTPlanningScenery(const std::string &robotFile);
     ~MTPlanningScenery();
 
     void loadRobotMTPlanning(bool bMultiCollisionCheckers);
@@ -63,12 +64,6 @@ public:
     }
 
     int getThreads();
-    ///////////////////////////////////////////////////////////////////
-    //Sequential planing
-    //void loadRobotSTPlanning();
-    //void plan(int index);
-    //void optimizeSolution(int solutionIndex);
-    //void showSolution(CRrtSolution *solToShow, int solutionIndex);
 
 protected:
 
@@ -95,34 +90,16 @@ protected:
     std::vector<CSpacePathPtr> optiSolutions;
     std::vector<SoSeparator*> visualisations;
     std::vector<RobotPtr> robots;
-    //std::vector<RobotNodeSetPtr> colModelRobots;
 
     std::vector< Eigen::VectorXf > startPositions;
     std::vector< Eigen::VectorXf > goalPositions;
 
-
-    std::vector<ModelPtr> environment;
+    ModelSetPtr environment;
     ObstaclePtr environmentUnited;
-
-
 
     bool robotModelVisuColModel;
 
-
     std::string TCPName;
-
-    ///////////////////////////////////////////////////////////////////
-    //Sequential planing
-    /*CRobot *m_pRobot;
-    CRobotCollisionModelCollection *m_pColModelRobot;
-
-    CSpaceSampled *m_pCSpace1;
-    CSpaceSampled *m_pCSpace2;
-    std::vector<CRrtBiPlanner*> m_vBiPlannersForSeq;
-    std::vector<CRrtSolution*> solutionsForSeq;
-    std::vector<CRrtSolution*> optiSolutionsForSeq;
-    std::vector<SoSeparator*> m_vVisualizationsForSeq;
-    */
 };
 
-#endif // _MTPlanning_SCENERY_H_
+#endif

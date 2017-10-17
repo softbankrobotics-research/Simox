@@ -42,8 +42,30 @@ namespace VirtualRobot
 
 	ModelNodeSetPtr ModelNodeSet::clone(ModelPtr newModel)
 	{
-		// todo
-		return ModelNodeSetPtr();
+        std::vector<ModelNodePtr> newModelNodes;
+        for (auto &n: modelNodes)
+        {
+            THROW_VR_EXCEPTION_IF(!newModel->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            ModelNodePtr no = newModel->getModelNode(n->getName());
+            VR_ASSERT(no);
+            newModelNodes.push_back(no);
+        }
+        ModelNodePtr newKinRoot;
+        if (kinematicRoot)
+        {
+            newKinRoot = newModel->getModelNode(kinematicRoot->getName());
+            VR_ASSERT(newKinRoot);
+        }
+        ModelNodePtr newTcp;
+        if (tcp)
+        {
+            newTcp = newModel->getModelNode(tcp->getName());
+            VR_ASSERT(newTcp);
+        }
+
+        ModelNodeSetPtr result = ModelNodeSet::createModelNodeSet(newModel, name, newModelNodes, newKinRoot, newTcp, true);
+
+        return result;
 	}
 
     ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr& model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)

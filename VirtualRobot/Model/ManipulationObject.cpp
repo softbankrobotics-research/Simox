@@ -9,8 +9,8 @@
 namespace VirtualRobot
 {
 
-    ManipulationObject::ManipulationObject(const std::string& name, CollisionCheckerPtr colChecker)
-        : Obstacle(name, colChecker)
+    ManipulationObject::ManipulationObject(const std::string& name)
+        : Obstacle(name)
     {
     }
 
@@ -41,7 +41,7 @@ namespace VirtualRobot
 
     VirtualRobot::ManipulationObjectPtr ManipulationObject::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
     {
-        ManipulationObjectPtr m(new ManipulationObject(name, colChecker));
+        ManipulationObjectPtr m(new ManipulationObject(name));
         ModelLinkPtr node(new ModelLink(m,
             name,
             Eigen::Matrix4f::Identity(),
@@ -196,41 +196,23 @@ namespace VirtualRobot
 
         return ss.str();
     }
-   /*
-    ManipulationObject* ManipulationObject::_clone(const std::string& name, CollisionCheckerPtr colChecker) const
+
+    ManipulationObjectPtr ManipulationObject::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
     {
-        VisualizationNodePtr clonedVisualizationNode;
+        ReadLockPtr r = getReadLock();
+        ModelNodePtr startNode = getRootNode();
+        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
-        
-        if (visualizationModel)
-        {
-            clonedVisualizationNode = visualizationModel->clone();
-        }
-
-        CollisionModelPtr clonedCollisionModel;
-
-        if (collisionModel)
-        {
-            clonedCollisionModel = collisionModel->clone(colChecker);
-        }
-
-        ManipulationObject* result = new ManipulationObject(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);
-
-        if (!result)
-        {
-            VR_ERROR << "Cloning failed.." << endl;
-            return result;
-        }
-
-        result->setGlobalPose(getGlobalPose());
-
+        ManipulationObjectPtr result(new ManipulationObject(name));
+        _clone(result, startNode, colChecker, true, true, scaling);
+        result->filename = filename;
         for (size_t i = 0; i < graspSets.size(); i++)
         {
             result->addGraspSet(graspSets[i]->clone());
         }
-
         return result;
-    }*/
+    }
 
     VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, const std::string &name, const std::string &visualizationType, CollisionCheckerPtr colChecker)
     {

@@ -3,6 +3,10 @@
 #include "Nodes/ModelJoint.h"
 #include "../VirtualRobotException.h"
 #include "../CollisionDetection/CollisionChecker.h"
+#include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationFactory.h"
+#include "../Model/Obstacle.h"
+#include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
 
 namespace VirtualRobot
@@ -27,11 +31,21 @@ namespace VirtualRobot
 
 	}
 
-    ModelSetPtr ModelSet::clone()
+    ModelSetPtr ModelSet::clone(const std::string &name)
 	{
-		// todo
-        return ModelSetPtr();
-	}
+        ModelSetPtr result(new ModelSet(name, models));
+        return result;
+    }
+
+    ObstaclePtr ModelSet::createStaticObstacle(const std::string &name) const
+    {
+        auto visus = getVisualizations();
+        auto colModels = getCollisionModels();
+        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createUnitedVisualization(visus);
+        CollisionModelPtr colModel = CollisionModel::CreateUnitedCollisionModel(colModels);
+        ObstaclePtr result = Obstacle::create(name, visu, colModel);
+        return result;
+    }
 
 
     std::string ModelSet::getName() const
@@ -158,6 +172,32 @@ namespace VirtualRobot
         std::vector<std::string> res;
         for (auto n: models)
             res.push_back(n->getName());
+        return res;
+    }
+
+    std::vector<CollisionModelPtr> ModelSet::getCollisionModels() const
+    {
+        std::vector<CollisionModelPtr> res;
+        for (auto &m : models)
+        {
+            std::vector<CollisionModelPtr> cm = m->getCollisionModels();
+            if (cm.size()>0)
+                res.insert(res.end(), cm.begin(), cm.end());
+        }
+        return res;
+    }
+
+    std::vector<VisualizationNodePtr> ModelSet::getVisualizations() const
+    {
+        std::vector<VisualizationNodePtr> res;
+        for (const ModelPtr &m : models)
+        {
+            if (!m->getVisualization(ModelLink::Full))
+                continue;
+            std::vector<VisualizationNodePtr> cm = m->getVisualization(ModelLink::Full)->getVisualizationNodes();
+            if (cm.size()>0)
+                res.insert(res.end(), cm.begin(), cm.end());
+        }
         return res;
     }
 }

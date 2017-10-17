@@ -41,11 +41,43 @@ namespace VirtualRobot
         return mns;
     }
 	
-	ModelNodeSetPtr JointSet::clone(ModelPtr newModel)
+    JointSetPtr JointSet::clone(ModelPtr newModel)
 	{
-		// todo
-		return JointSetPtr();
+        std::vector<ModelJointPtr> newModelNodes;
+        for (auto &n: joints)
+        {
+            THROW_VR_EXCEPTION_IF(!newModel->hasJoint(n->getName()), "Cannot clone, new model does not contain joint " << n->getName());
+            ModelJointPtr no = newModel->getJoint(n->getName());
+            VR_ASSERT(no);
+            newModelNodes.push_back(no);
+        }
+        ModelNodePtr newKinRoot;
+        if (kinematicRoot)
+        {
+            newKinRoot = newModel->getModelNode(kinematicRoot->getName());
+            VR_ASSERT(newKinRoot);
+        }
+        ModelNodePtr newTcp;
+        if (tcp)
+        {
+            newTcp = newModel->getModelNode(tcp->getName());
+            VR_ASSERT(newTcp);
+        }
+
+        JointSetPtr result = JointSet::createJointSet(newModel, name, newModelNodes, newKinRoot, newTcp, true);
+        return result;
 	}
+
+    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelJointPtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    {
+        std::vector<ModelNodePtr> js;
+        for (unsigned int i = 0; i < modelNodes.size(); i++)
+        {
+            ModelNodePtr j = std::static_pointer_cast<ModelNode>(modelNodes[i]);
+            js.push_back(j);
+        }
+        return createJointSet(model, name, js, kinematicRoot, tcp, registerToModel);
+    }
 
     JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
     {

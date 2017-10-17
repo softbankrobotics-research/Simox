@@ -138,6 +138,7 @@ namespace VirtualRobot
         std::vector< LinkSetPtr > colModels;
         CollisionCheckerPtr colChecker;
 
+        std::vector< ModelPtr > models;
         std::map<LinkSetPtr, std::vector<LinkSetPtr> > colModelPairs;
 
     };

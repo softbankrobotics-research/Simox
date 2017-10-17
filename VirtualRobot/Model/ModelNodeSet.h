@@ -221,7 +221,7 @@ namespace VirtualRobot
 		/*!
 		* Clone this modelset and register it to the new robot
 		*/
-		virtual ModelNodeSetPtr clone(ModelPtr newModel);
+        ModelNodeSetPtr clone(ModelPtr newModel);
 
     protected:
         static ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);

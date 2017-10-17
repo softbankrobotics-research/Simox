@@ -116,6 +116,8 @@ namespace VirtualRobot
 
         std::vector< std::string > getModelNames() const;
 
+        std::vector<CollisionModelPtr> getCollisionModels() const;
+        std::vector<VisualizationNodePtr> getVisualizations() const;
 
         /*!
          * Create a XML string to represent this ModelNodeSet.
@@ -132,9 +134,11 @@ namespace VirtualRobot
         CollisionCheckerPtr getCollisionChecker() const;
 
 		/*!
-		* Clone this modelset and register it to the new robot
+        * Clone this modelset. Does not create a deep copy, just clones the pointers to all involved models.
 		*/
-        virtual ModelSetPtr clone();
+        virtual ModelSetPtr clone(const std::string &name);
+
+        virtual ObstaclePtr createStaticObstacle(const std::string &name) const;
 
     protected:
         std::string name;

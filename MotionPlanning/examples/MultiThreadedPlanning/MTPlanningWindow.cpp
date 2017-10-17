@@ -1,7 +1,6 @@
 
 #include "MTPlanningWindow.h"
 
-
 #include <vector>
 #include <iostream>
 #include <qlayout.h>
@@ -30,20 +29,18 @@ float TIMER_MS = 30.0f;
 bool runtimeDisplayed = false;
 bool optiTimeDisplayed = false;
 
-MTPlanningWindow::MTPlanningWindow()
+MTPlanningWindow::MTPlanningWindow(const std::string &robotFile)
     : QMainWindow(NULL)
 {
-    //resize(1100, 768);
 
     graspObjectSep = NULL;
     robotSep = NULL;
 
     scene = NULL;
 
-    scene = new MTPlanningScenery();
+    scene = new MTPlanningScenery(robotFile);
     sceneSep = scene->getScene();
     setupLayoutMTPlanning();
-
 
     SoSensorManager* sensor_mgr = SoDB::getSensorManager();
 
@@ -238,41 +235,3 @@ void MTPlanningWindow::stopOptimize()
     std::cout << "MTPlanningWindow: stopOptimize " << std::endl;
     scene->stopOptimizing();
 }
-
-/////////////////////////////////////////////////////////////////
-// Sequential Planing
-/*void MTPlanningWindow::plan()
-{
-    clock_t start, end;
-    start = clock();
-    unsigned int i = 0;
-    for(; i < NUMBER_OF_PLANNING; i++)
-    {
-        scene->plan(i);
-    }
-    end = clock();
-    double runtime = (double)(end - start) / CLOCKS_PER_SEC;
-    QString sText;
-    sText = "Plan Time: " + QString::number(runtime) + "s";
-    sQRuntimeLabel->setText(sText);
-    cout << "The total plantime is " << runtime << " ." << endl;
-    cout << "The number of the plannings is " << i << " ." << endl;
-}
-
-void MTPlanningWindow::optimizeSolution()
-{
-    clock_t start, end;
-    start = clock();
-    unsigned int i = 0;
-    for(; i < NUMBER_OF_PLANNING; i++)
-    {
-        scene->optimizeSolution(i);
-    }
-    end = clock();
-    double runtime = (double)(end - start) / CLOCKS_PER_SEC;
-    QString sText;
-    sText = "optimizing Time: " + QString::number(runtime) + "s";
-    sQOptimizeTimeLabel->setText(sText);
-    cout << "The total optimization time is " << runtime << " ." << endl;
-    cout << "The number of the optimizations is " << i << " ." << endl;
-}*/

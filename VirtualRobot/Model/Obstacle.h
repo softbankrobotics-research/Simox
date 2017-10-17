@@ -23,6 +23,7 @@
 #ifndef _VirtualRobot_Obstacle_h_
 #define _VirtualRobot_Obstacle_h_
 
+#include "../VirtualRobot.h"
 #include "../Model/Model.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "Model.h"
@@ -45,7 +46,7 @@ namespace VirtualRobot
 
         /*! 
         */
-        Obstacle(const std::string& name, const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        Obstacle(const std::string& name);
 
         /*!
         */
@@ -56,11 +57,9 @@ namespace VirtualRobot
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
         */
-        ObstaclePtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr())  const
-        {
-            // todo
-            return ObstaclePtr();// _clone(name, colChecker));
-        }
+        ObstaclePtr clone(const std::string& name,
+                          CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
+                          float scaling = 1.0f) const;
 
         static ObstaclePtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 

@@ -23,7 +23,6 @@
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/SoOffscreenRenderer.h>
 
-
 #include "ui_MTPlanning.h"
 
 #define NUMBER_OF_PLANNING 30
@@ -33,7 +32,7 @@ class MTPlanningWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MTPlanningWindow();
+    MTPlanningWindow(const std::string &robotFile);
     ~MTPlanningWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
@@ -56,18 +55,7 @@ public slots:
     void reset();
     void selectColCheckerComboBoxChanged(int value);
 
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Sequential Planing
-    //void plan();
-    //void optimizeSolution();
-
 protected:
-    //void setupMenus(); /*!< Setup the menus. */
     void setupLayoutMTPlanning(); /*!< Create the contents of the window. */
 
     static void timerCBPlanning(void* data, SoSensor* sensor);
@@ -86,13 +74,6 @@ protected:
     clock_t endTime;
     clock_t optiStartTime;
     clock_t optiEndTime;
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Sequential Planing
-    /*QPushButton *loadRobotButton;
-    QPushButton *setConfigButton;
-    QPushButton *planButton;
-    QPushButton *optiShowButton;*/
 };
 
-#endif // __MTPlanning_WINDOW_H_
+#endif

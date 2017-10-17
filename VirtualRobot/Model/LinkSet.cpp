@@ -251,9 +251,30 @@ namespace VirtualRobot
         return res;
     }
 
-	// todo
-	ModelNodeSetPtr VirtualRobot::LinkSet::clone(ModelPtr newModel)
+    LinkSetPtr VirtualRobot::LinkSet::clone(ModelPtr newModel)
 	{
-		return ModelNodeSetPtr();
+        std::vector<ModelLinkPtr> newModelNodes;
+        for (auto &n: links)
+        {
+            THROW_VR_EXCEPTION_IF(!newModel->hasLink(n->getName()), "Cannot clone, new model does not contain link " << n->getName());
+            ModelLinkPtr no = newModel->getLink(n->getName());
+            VR_ASSERT(no);
+            newModelNodes.push_back(no);
+        }
+        ModelNodePtr newKinRoot;
+        if (kinematicRoot)
+        {
+            newKinRoot = newModel->getModelNode(kinematicRoot->getName());
+            VR_ASSERT(newKinRoot);
+        }
+        ModelNodePtr newTcp;
+        if (tcp)
+        {
+            newTcp = newModel->getModelNode(tcp->getName());
+            VR_ASSERT(newTcp);
+        }
+
+        LinkSetPtr result = LinkSet::createLinkSet(newModel, name, newModelNodes, newKinRoot, newTcp, true);
+        return result;
 	}
 }

@@ -35,6 +35,8 @@ namespace VirtualRobot
     {
         VR_ASSERT(m);
         addCollisionModel(m->getLinkSet());
+        // store model ptr to avoid destruction of model if no otehr reference is kept in the system
+        models.push_back(m);
     }
 
 

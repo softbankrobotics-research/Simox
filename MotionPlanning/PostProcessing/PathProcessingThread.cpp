@@ -51,6 +51,10 @@ namespace MotionPlanning
         if (!isRunning())
         {
             // thread not started, nothing to do
+            try {
+                processingThread.detach();
+            } catch (...){}
+
             return;
         }
 
@@ -63,10 +67,13 @@ namespace MotionPlanning
         // todo: catch boost::thread_interrupted in MotionPlanners and be sure to call boost::threa::interrupt points during planning...
         //thread.interrupt();
 
-        if (waitUntilStopped)
-        {
-            processingThread.join();
-        }
+        try {
+            if (waitUntilStopped)
+            {
+                processingThread.join();
+            } else
+                processingThread.detach();
+        } catch (...){}
     }
 
 

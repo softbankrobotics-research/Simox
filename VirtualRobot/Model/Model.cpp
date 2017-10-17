@@ -879,78 +879,14 @@ namespace VirtualRobot
 									bool cloneRNS,
 									bool cloneEEF,
 									const CollisionCheckerPtr& collisionChecker,
-									float scaling)
+                                    float scaling) const
     {
         ReadLockPtr r = getReadLock();
         THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
         THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
-        CollisionCheckerPtr colChecker = collisionChecker;
-
-        if (!colChecker)
-        {
-            colChecker = this->getCollisionChecker();
-        }
-
         ModelPtr result(new Model(newModelName, newModelType));
-
-        ModelNodePtr rootNew = startNode->clone(result, true, true, ModelNodePtr(), scaling);
-        THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
-        result->setRootNode(rootNew);
-        result->setScaling(scaling);
-
-        std::vector<ModelNodePtr> rn = result->getModelNodes();
-
-        // check for RNS that are covered by subpart
-        if (cloneRNS)
-        {
-            for (auto it = modelNodeSetMap.begin(); it != modelNodeSetMap.end(); ++it)
-            {
-                if (it->second->nodesSufficient(rn))
-                {
-                    ModelNodeSetPtr rns = it->second->clone(result);
-
-                    if (rns && !result->hasModelNodeSet(rns))
-                    {
-                        result->registerModelNodeSet(rns);
-                    }
-                }
-            }
-        }
-
-		// check for EEF that are covered by subpart
-		if (cloneEEF)
-		{
-			for (auto it = eefMap.begin(); it != eefMap.end(); ++it)
-			{
-				if (it->second->nodesSufficient(rn))
-				{
-					EndEffectorPtr eef = it->second->clone(result);
-
-					if (eef && !result->hasEndEffector(eef))
-					{
-						result->registerEndEffector(eef);
-					}
-				}
-			}
-		}
-
-
-        std::vector<ModelNodePtr> allNodes;
-        startNode->collectAllNodes(allNodes, ModelNode::ModelNodeType::Joint);
-
-        for (size_t i = 0; i < allNodes.size(); i++)
-        {
-            ModelNodePtr roN = result->getModelNode(allNodes[i]->getName());
-
-            if (roN)
-            {
-                std::static_pointer_cast<ModelJoint>(roN)->setJointValueNoUpdate(
-                        std::static_pointer_cast<ModelJoint>(allNodes[i])->getJointValue());
-            }
-        }
-
-        result->applyJointValues();
+        _clone(result, startNode, collisionChecker, cloneRNS, cloneEEF, scaling);
         return result;
     }
 
@@ -1048,9 +984,12 @@ namespace VirtualRobot
         }
     }
 
-    ModelPtr Model::clone(const std::string& name, CollisionCheckerPtr collisionChecker, float scaling)
+    ModelPtr Model::clone(const std::string& name, CollisionCheckerPtr collisionChecker, float scaling) const
     {
-        return VirtualRobot::ModelPtr(); // TODO: implement clone
+        VirtualRobot::ModelPtr result = extractSubPart(this->getRootNode(), this->getType(), name, true, true, collisionChecker, scaling);
+        result->filename = filename;
+        result->type = type;
+        return result;
     }
  
 
@@ -1130,6 +1069,102 @@ namespace VirtualRobot
         }
 
         return visualization;
+    }
+
+    void Model::_clone(ModelPtr newModel, const ModelNodePtr &startNode, const CollisionCheckerPtr &collisionChecker, bool cloneRNS, bool cloneEEF, float scaling) const
+    {
+        ReadLockPtr r = getReadLock();
+        VR_ASSERT(newModel);
+        VR_ASSERT(startNode);
+        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
+
+        CollisionCheckerPtr colChecker = collisionChecker;
+
+        if (!colChecker)
+        {
+            colChecker = this->getCollisionChecker();
+        }
+
+        ModelNodePtr rootNew = startNode->clone(newModel, true, true, ModelNodePtr(), scaling);
+        THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
+        newModel->setRootNode(rootNew);
+        newModel->setScaling(scaling);
+
+        std::vector<ModelNodePtr> rn = newModel->getModelNodes();
+
+        // check for RNS that are covered by subpart
+        if (cloneRNS)
+        {
+            for (auto it = modelNodeSetMap.begin(); it != modelNodeSetMap.end(); ++it)
+            {
+                if (it->second->nodesSufficient(rn))
+                {
+                    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(it->second);
+                    if (js)
+                    {
+                        JointSetPtr rns = js->clone(newModel);
+
+                        if (rns && !newModel->hasJointSet(rns))
+                        {
+                            newModel->registerJointSet(rns);
+                        }
+                        continue;
+                    }
+                    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(it->second);
+                    if (ls)
+                    {
+                        LinkSetPtr rns = ls->clone(newModel);
+                        if (rns && !newModel->hasLinkSet(rns))
+                        {
+                            newModel->registerLinkSet(rns);
+                        }
+                        continue;
+                    }
+
+                    ModelNodeSetPtr rns = it->second->clone(newModel);
+                    if (rns && !newModel->hasModelNodeSet(rns))
+                    {
+                        newModel->registerModelNodeSet(rns);
+                    }
+                }
+            }
+        }
+
+        // check for EEF that are covered by subpart
+        if (cloneEEF)
+        {
+            for (auto it = eefMap.begin(); it != eefMap.end(); ++it)
+            {
+                if (it->second->nodesSufficient(rn))
+                {
+                    EndEffectorPtr eef = it->second->clone(newModel);
+
+                    if (eef && !newModel->hasEndEffector(eef))
+                    {
+                        newModel->registerEndEffector(eef);
+                    }
+                }
+            }
+        }
+
+
+        std::vector<ModelNodePtr> allNodes;
+        startNode->collectAllNodes(allNodes, ModelNode::ModelNodeType::Joint);
+
+        for (size_t i = 0; i < allNodes.size(); i++)
+        {
+            ModelNodePtr roN = newModel->getModelNode(allNodes[i]->getName());
+
+            if (roN)
+            {
+                std::static_pointer_cast<ModelJoint>(roN)->setJointValueNoUpdate(
+                        std::static_pointer_cast<ModelJoint>(allNodes[i])->getJointValue());
+            }
+        }
+
+        newModel->applyJointValues();
+        newModel->setGlobalPose(getGlobalPose());
     }
 
 	bool Model::hasFrame(const FramePtr & frame) const

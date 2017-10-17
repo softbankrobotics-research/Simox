@@ -38,7 +38,7 @@ namespace VirtualRobot
     {
     public:
 
-        ManipulationObject(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        ManipulationObject(const std::string& name);
 
         /*!
         */
@@ -96,11 +96,7 @@ namespace VirtualRobot
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
         */
-        ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const
-        {
-            // todo
-            return ManipulationObjectPtr();
-        }
+        ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         static ManipulationObjectPtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
@@ -114,14 +110,9 @@ namespace VirtualRobot
 
     protected:
 
-        //virtual ManipulationObject* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
-
-
-        //std::string filename;
-
         std::vector< GraspSetPtr > graspSets;
     };
 
 } // namespace
 
-#endif // _VirtualRobot_ManipulationObject_h_
+#endif

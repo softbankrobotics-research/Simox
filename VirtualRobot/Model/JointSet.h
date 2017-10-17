@@ -94,7 +94,13 @@ namespace VirtualRobot
          */
         static JointSetPtr createJointSet(const ModelPtr& model,
                                                   const std::string& name,
-                                                  const std::vector<ModelNodePtr>& modelNodes,
+                                                  const std::vector<ModelNodePtr> &modelNodes,
+                                                  const ModelNodePtr kinematicRoot = ModelNodePtr(),
+                                                  const FramePtr tcp = FramePtr(),
+                                                  bool registerToModel = false);
+        static JointSetPtr createJointSet(const ModelPtr& model,
+                                                  const std::string& name,
+                                                  const std::vector<ModelJointPtr> &modelNodes,
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
                                                   const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
@@ -232,7 +238,7 @@ namespace VirtualRobot
 		/*!
 		* Clone this JointSet and register it to the new robot
 		*/
-		virtual ModelNodeSetPtr clone(ModelPtr newModel);
+        JointSetPtr clone(ModelPtr newModel);
 
     private:
         std::vector<ModelJointPtr> joints;

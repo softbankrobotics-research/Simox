@@ -173,7 +173,7 @@ namespace VirtualRobot
 		/*!
 		* Clone this JointSet and register it to the new robot
 		*/
-		virtual ModelNodeSetPtr clone(ModelPtr newModel);
+        LinkSetPtr clone(ModelPtr newModel);
 
 
     protected:

@@ -525,7 +525,7 @@ namespace VirtualRobot
 										bool cloneRNS = true,
 										bool cloneEEF = true,
 										const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
-                                        float scaling = 1.0f);
+                                        float scaling = 1.0f) const;
 
         /*!
          * Attach a new ModelNode to this model.
@@ -637,8 +637,9 @@ namespace VirtualRobot
          * @param collisionChecker If set, the returned model is registered with this col checker, otherwise the CollisionChecker of the original model is used.
          * @param scaling Scale Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual ModelPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
-                               float scaling = 1.0f);
+        ModelPtr clone(const std::string& name,
+                               CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
+                               float scaling = 1.0f) const;
 
 		bool hasEndEffector(const EndEffectorPtr &eef) const;
 		bool hasEndEffector(const std::string &name) const;
@@ -657,6 +658,13 @@ namespace VirtualRobot
         VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType, std::string visualizationType = "");
 
     protected:
+
+        virtual void _clone(ModelPtr newModel,
+                    const ModelNodePtr& startNode,
+                    const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
+                    bool cloneRNS = true,
+                    bool cloneEEF = true,
+                    float scaling = 1.0f) const;
         std::string type;
         float scaling;
 

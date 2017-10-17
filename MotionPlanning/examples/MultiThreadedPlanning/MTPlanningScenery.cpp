@@ -35,12 +35,16 @@
 #include <Inventor/nodes/SoScale.h>
 
 #include <sstream>
+
 using namespace std;
 using namespace VirtualRobot;
 using namespace MotionPlanning;
 
 
-MTPlanningScenery::MTPlanningScenery()
+//#define ROBOT_DIM 3
+#define SHORTEN_LOOP 600
+
+MTPlanningScenery::MTPlanningScenery(const std::string &robotFile)
 {
 
     robotModelVisuColModel = true;
@@ -58,7 +62,7 @@ MTPlanningScenery::MTPlanningScenery()
 
     obstSep = NULL;
 
-    robotFilename = "robots/examples/MultiThreadedPlanning/CartMover.xml";
+    robotFilename = robotFile;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFilename);
 
     plannersStarted = false;
@@ -111,6 +115,7 @@ void MTPlanningScenery::reset()
 
     for (int i = 0; i < (int)planningThreads.size(); i++)
     {
+        planningThreads[i]->stop();
         planningThreads[i].reset();
     }
 
@@ -142,43 +147,6 @@ void MTPlanningScenery::reset()
     }
 
     startEndVisu = NULL;
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    // Sequential Planing
-    /*if(robot != NULL)
-    {
-        delete robot;
-        robot = NULL;
-    }
-
-    if(CSpace1 != NULL)
-    {
-        delete CSpace1;
-        CSpace1 = NULL;
-    }
-
-    if(CSpace2 != NULL)
-    {
-        delete CSpace2;
-        CSpace2 = NULL;
-    }
-
-    for(int i=0; i<(int)m_vBiPlannersForSeq.size(); i++)
-    {
-        delete m_vBiPlannersForSeq[i];
-    }
-    m_vBiPlannersForSeq.clear();
-
-    for (int i=0; i<(int)visualizationsForSeq.size(); i++)
-    {
-        if (visualizationsForSeq[i]!=NULL)
-            sceneSep->removeChild(visualizationsForSeq[i]);
-    }
-    visualizationsForSeq.clear();
-
-    solutionsForSeq.clear();
-    optiSolutionsForSeq.clear();*/
 }
 
 void MTPlanningScenery::buildScene()
@@ -191,7 +159,7 @@ void MTPlanningScenery::buildScene()
 
     float fCubeSize = 50.0f;
     float fPlayfieldSize = 1000.0f - fCubeSize;
-    environment.clear();
+    std::vector<ModelPtr> environmentModels;
 
     obstSep = new SoSeparator();
 
@@ -212,13 +180,15 @@ void MTPlanningScenery::buildScene()
         m.setIdentity();
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
-        environment.push_back(o);
+        environmentModels.push_back(o);
         SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(o, ModelLink::Full);;
         obstSep->addChild(visualisationNode);
     }
 
     // TODO....
     //environmentUnited = environment->createStaticObstacle("MultiThreadedObstacle");
+    environment.reset(new ModelSet("ObstacleModels", environmentModels));
+    environmentUnited = environment->createStaticObstacle("Obstacles");
 }
 
 void MTPlanningScenery::getRandomPos(float& x, float& y, float& z)
