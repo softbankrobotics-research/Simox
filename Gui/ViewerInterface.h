@@ -26,6 +26,7 @@
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <QtGui/QtGui>
+#include <QImage>
 
 #include <string>
 
@@ -56,6 +57,7 @@ class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 
         virtual void start(QWidget *mainWindow) = 0;
         virtual void stop() = 0;
+        virtual QImage getScreenshot() = 0;
 
         virtual void resetView() = 0;
 

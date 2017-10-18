@@ -28,6 +28,7 @@
 
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <QGLWidget>
 
 using namespace SimoxGui;
 
@@ -86,6 +87,16 @@ void CoinViewer::clearLayer(const std::string &layer)
 {
     addLayer(layer);
     layers[layer]->removeAllChildren();
+}
+
+QImage CoinViewer::getScreenshot()
+{
+    getSceneManager()->render();
+    getSceneManager()->scheduleRedraw();
+    QGLWidget* w = (QGLWidget*)getGLWidget();
+
+    QImage i = w->grabFrameBuffer();
+    return i;
 }
 
 void CoinViewer::start(QWidget *mainWindow)
