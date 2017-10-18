@@ -39,6 +39,7 @@ endif()
 if (Simox_USE_COIN_VISUALIZATION)
     list(APPEND INCLUDES
         Coin/CoinViewer.h
+        SimoxGuiImportExport.h
         ViewerInterface.h
         ViewerFactory.h
         ViewerSelection.h
@@ -57,4 +58,19 @@ if (Simox_USE_COIN_VISUALIZATION)
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
     ADD_LIBRARY(simox-gui-coin3d SHARED ${SOURCES} ${INCLUDES})
+    TARGET_LINK_LIBRARIES(simox-gui-coin3d simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
+
+    MESSAGE (STATUS "simox-gui bin dir: ${Simox_BIN_DIR}")
+    MESSAGE (STATUS "simox-gui lib dir: ${Simox_LIB_DIR}")
+    # .DLL path
+    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
+    # .so path
+    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+    # .lib path (this is needed for setting the DLL-import library path on windows)
+    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+
+
 endif()
+
+MESSAGE (STATUS "***** Finished CONFIGURING project simox-gui *****\n")
+

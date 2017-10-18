@@ -9,7 +9,7 @@
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/Visualization.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>

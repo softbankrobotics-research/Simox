@@ -32,7 +32,7 @@ namespace Ui
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT GraspEditorWindow : public QMainWindow
+    class SIMOX_GUI_IMPORT_EXPORT GraspEditorWindow : public QMainWindow
     {
         Q_OBJECT
     public:

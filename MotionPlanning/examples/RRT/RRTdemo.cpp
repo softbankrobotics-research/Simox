@@ -18,6 +18,8 @@
 #include "string"
 #include <iostream>
 
+#include <QWidget>
+
 using std::cout;
 using std::endl;
 using namespace VirtualRobot;

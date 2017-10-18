@@ -125,25 +125,9 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #endif
 
 #ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
-
-//#include <boost/assert.hpp>
-//#include <boost/thread.hpp>
-//#include <boost/thread/shared_mutex.hpp>
-//#include <boost/type_traits/is_base_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
-//#include <boost/mem_fn.hpp>
-//#include <boost/foreach.hpp>
-//#include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
-//#include <boost/math/special_functions/fpclassify.hpp>
-//#include <boost/version.hpp>
-//#include <boost/format.hpp>
-//#include <boost/mpl/assert.hpp>
-//#include <boost/thread/recursive_mutex.hpp>
-//#include <boost/unordered_set.hpp>
-//#include <boost/unordered_map.hpp>
-//#include <boost/current_function.hpp>
 #endif
 
 
@@ -164,7 +148,6 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 
 namespace VirtualRobot
 {
-
     // only valid within the VirtualRobot namespace
     using std::cout;
     using std::endl;
