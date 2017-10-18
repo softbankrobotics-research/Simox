@@ -61,7 +61,7 @@ class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 
         virtual void viewAll() = 0;
 };
-typedef boost::shared_ptr<ViewerInterface> ViewerInterfacePtr;
+typedef std::shared_ptr<ViewerInterface> ViewerInterfacePtr;
 
 }
 
