@@ -6,11 +6,6 @@
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
-
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
-
 #include <string>
 #include <iostream>
 
@@ -40,7 +35,7 @@ int main(int argc, char* argv[])
     std::string colModelRob("PlatformTorsoHeadColModel");
 #else
     // ICUB
-    std::string filenameScene("scenes/IKRRT_scene_iCub.xml");
+    std::string filenameScene("scenes/examples/IKRRT/IKRRT_scene_iCub.xml");
     std::string filenameReach("reachability/iCub_HipLeftArm.bin");
     std::string kinChain("Hip Left Arm");
     std::string eef("Left Hand");

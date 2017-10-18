@@ -34,7 +34,6 @@ using namespace MotionPlanning;
 MTPlanningScenery::MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer)
     : viewer(viewer)
 {
-
     robotModelVisuColModel = true;
 
     addBBCube();
@@ -110,16 +109,6 @@ void MTPlanningScenery::reset()
     optiSolutions.clear();
 
     viewer->clearLayer("visualizations");
-/*    for (int i = 0; i < (int)visualisations.size(); i++)
-    {
-        if (visualisations[i] != NULL)
-        {
-            sceneSep->removeChild(visualisations[i]);
-        }
-    }
-
-    visualisations.clear();*/
-
     viewer->clearLayer("startgoal");
 }
 

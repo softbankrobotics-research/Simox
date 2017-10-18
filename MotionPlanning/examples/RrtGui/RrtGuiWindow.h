@@ -73,7 +73,6 @@ protected:
     void loadScene();
 
     void setupUI();
-    QString formatString(const char* s, float f);
     void buildRRTVisu();
     void selectStart(const std::string& conf);
     void selectGoal(const std::string& conf);

@@ -19,12 +19,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 #include <vector>
 
@@ -74,13 +70,14 @@ public slots:
 
     void playAndSave();
 
+    void timerCB();
+
 protected:
 
     void loadScene();
     void loadReach();
 
     void setupUI();
-    QString formatString(const char* s, float f);
 
     void buildGraspSetVisu();
 
@@ -88,20 +85,10 @@ protected:
 
     void updateObject(float x[6]);
 
-    static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void saveScreenshot();
     Ui::MainWindowIKRRT UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* objectSep;
-    SoSeparator* graspsSep;
-    SoSeparator* reachableGraspsSep;
-    SoSeparator* reachabilitySep;
-    SoSeparator* obstaclesSep;
-    SoSeparator* rrtSep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;
@@ -130,8 +117,10 @@ protected:
     bool playbackMode;
     int playCounter;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+    QTimer* timer;
+
+    //VirtualRobot::VisualizationPtr visualizationRobot;
+    //VirtualRobot::VisualizationPtr visualizationObject;
 };
 
-#endif // __IKRRT_WINDOW_H_
+#endif

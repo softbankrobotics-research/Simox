@@ -4,16 +4,16 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Grasping/Grasp.h"
+#include "VirtualRobot/Visualization/ColorMap.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "MotionPlanning/Planner/GraspIkRrt.h"
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
@@ -23,15 +23,16 @@
 #include <cmath>
 #include <QImage>
 #include <QGLWidget>
-
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-
 #include <sstream>
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+
+// need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -49,27 +50,7 @@ IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::st
     this->colModelName = colModel;
     this->colModelNameRob = colModelRob;
 
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotSep = new SoSeparator;
-    objectSep = new SoSeparator;
-    graspsSep = new SoSeparator;
-    reachableGraspsSep = new SoSeparator;
-    reachabilitySep = new SoSeparator;
-    obstaclesSep = new SoSeparator;
-    rrtSep = new SoSeparator;
-
     playbackMode = false;
-
-    //sceneSep->addChild(robotSep);
-
-    sceneSep->addChild(robotSep);
-    sceneSep->addChild(objectSep);
-    sceneSep->addChild(graspsSep);
-    sceneSep->addChild(reachableGraspsSep);
-    sceneSep->addChild(reachabilitySep);
-    sceneSep->addChild(obstaclesSep);
-    sceneSep->addChild(rrtSep);
 
     setupUI();
 
@@ -79,29 +60,26 @@ IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::st
 
     viewer->viewAll();
 
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer);
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
+    timer->start(TIMER_MS);
 }
 
 
 IKRRTWindow::~IKRRTWindow()
 {
-    sceneSep->unref();
 }
 
 
-void IKRRTWindow::timerCB(void* data, SoSensor* /*sensor*/)
+void IKRRTWindow::timerCB()
 {
-    IKRRTWindow* ikWindow = static_cast<IKRRTWindow*>(data);
     float x[6];
-    x[0] = (float)ikWindow->UI.horizontalSliderX->value();
-    x[1] = (float)ikWindow->UI.horizontalSliderY->value();
-    x[2] = (float)ikWindow->UI.horizontalSliderZ->value();
-    x[3] = (float)ikWindow->UI.horizontalSliderRo->value();
-    x[4] = (float)ikWindow->UI.horizontalSliderPi->value();
-    x[5] = (float)ikWindow->UI.horizontalSliderYa->value();
+    x[0] = (float)UI.horizontalSliderX->value();
+    x[1] = (float)UI.horizontalSliderY->value();
+    x[2] = (float)UI.horizontalSliderZ->value();
+    x[3] = (float)UI.horizontalSliderRo->value();
+    x[4] = (float)UI.horizontalSliderPi->value();
+    x[5] = (float)UI.horizontalSliderYa->value();
     x[0] /= 10.0f;
     x[1] /= 10.0f;
     x[2] /= 10.0f;
@@ -111,36 +89,36 @@ void IKRRTWindow::timerCB(void* data, SoSensor* /*sensor*/)
 
     if (x[0] != 0 || x[1] != 0 || x[2] != 0 || x[3] != 0 || x[4] != 0 || x[5] != 0)
     {
-        ikWindow->updateObject(x);
-        ikWindow->redraw();
+        updateObject(x);
+        redraw();
     }
 
     int maxSlider = 200;
 
-    if (ikWindow->playbackMode && ikWindow->playCounter <= maxSlider)
+    if (playbackMode && playCounter <= maxSlider)
     {
-        if (ikWindow->playCounter == 0)
+        if (playCounter == 0)
         {
-            ikWindow->openEEF();
-            ikWindow->sliderSolution(0);
-            ikWindow->playCounter++;
+            openEEF();
+            sliderSolution(0);
+            playCounter++;
         }
-        else if (ikWindow->playCounter == maxSlider)
+        else if (playCounter == maxSlider)
         {
-            ikWindow->sliderSolution(1000);
-            ikWindow->closeEEF();
+            sliderSolution(1000);
+            closeEEF();
             cout << "Stopping playback" << endl;
-            ikWindow->playbackMode = false;
+            playbackMode = false;
         }
         else
         {
-            ikWindow->playCounter++;
-            float pos = (float)ikWindow->playCounter / (float)maxSlider;
-            ikWindow->sliderSolution((int)(pos * 1000.0f));
+            playCounter++;
+            float pos = (float)playCounter / (float)maxSlider;
+            sliderSolution((int)(pos * 1000.0f));
         }
 
-        ikWindow->redraw();
-        ikWindow->saveScreenshot();
+        redraw();
+        saveScreenshot();
     }
 }
 
@@ -148,17 +126,10 @@ void IKRRTWindow::timerCB(void* data, SoSensor* /*sensor*/)
 void IKRRTWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-    viewer->setAntialiasing(true, 4);
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    viewer->setFeedbackVisibility(false);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
@@ -182,7 +153,7 @@ void IKRRTWindow::setupUI()
     connect(UI.horizontalSliderYa, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectG()));
     connect(UI.horizontalSliderSolution, SIGNAL(valueChanged(int)), this, SLOT(sliderSolution(int)));
 
-    UI.checkBoxColCheckIK->setChecked(false);
+    UI.checkBoxColCheckIK->setChecked(true);
     UI.checkBoxReachabilitySpaceIK->setChecked(false);
 
 }
@@ -198,36 +169,6 @@ void IKRRTWindow::playAndSave()
         playCounter = 0;
         playbackMode = true;
     }
-}
-
-QString IKRRTWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
 }
 
 
@@ -256,11 +197,7 @@ void IKRRTWindow::saveScreenshot()
     framefile.sprintf("renderFrame_%06d.png", counter);
     counter++;
     redraw();
-    viewer->getSceneManager()->render();
-    viewer->getSceneManager()->scheduleRedraw();
-    QGLWidget* w = (QGLWidget*)viewer->getGLWidget();
-
-    QImage i = w->grabFrameBuffer();
+    QImage i = viewer->getScreenshot();
     bool bRes = i.save(framefile.getString(), "BMP");
 
     if (bRes)
@@ -276,48 +213,36 @@ void IKRRTWindow::saveScreenshot()
 
 void IKRRTWindow::buildVisu()
 {
+    viewer->clearLayer("scene");
     showCoordSystem();
 
-    robotSep->removeAllChildren();
-    //bool colModel = (UI.checkBoxColModel->isChecked());
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
+
+    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    if (!f)
+        return;
 
     if (robot)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(robot,colModel);
-
-        if (visualisationNode)
-        {
-            robotSep->addChild(visualisationNode);
-            //visualizationRobot->highlight(true);
-        }
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+        viewer->addVisualization("scene", "robot", v);
     }
-
-    objectSep->removeAllChildren();
 
     if (object)
     {
         ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(object, colModel2);
-
-        if (visualisationNode)
-        {
-            objectSep->addChild(visualisationNode);
-        }
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel2);
+        viewer->addVisualization("scene", "object", v);
     }
-
-    obstaclesSep->removeAllChildren();
 
     if (obstacles.size() > 0)
     {
         for (size_t i = 0; i < obstacles.size(); i++)
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(obstacles[i], colModel);
-
-            if (visualisationNode)
-            {
-                obstaclesSep->addChild(visualisationNode);
-            }
+            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(obstacles.at(i), colModel);
+            std::stringstream s;
+            s << "obstacle-" << i;
+            viewer->addVisualization("scene", s.str(), v);
         }
     }
 
@@ -330,8 +255,7 @@ void IKRRTWindow::buildVisu()
 
 int IKRRTWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -340,7 +264,7 @@ void IKRRTWindow::quit()
 {
     std::cout << "IKRRTWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void IKRRTWindow::loadScene()
@@ -505,18 +429,20 @@ void IKRRTWindow::showCoordSystem()
             return;
         }
 
+        // todo
         //tcp->showCoordinateSystem(UI.checkBoxTCP->isChecked());
     }
 
     if (object)
     {
+        // todo
         //object->showCoordinateSystem(UI.checkBoxTCP->isChecked());
     }
 }
 
 void IKRRTWindow::buildRRTVisu()
 {
-    rrtSep->removeAllChildren();
+    viewer->clearLayer("rrt");
 
     if (!UI.checkBoxSolution->isChecked())
     {
@@ -528,7 +454,12 @@ void IKRRTWindow::buildRRTVisu()
         return;
     }
 
-    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
+    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+    #ifdef Simox_USE_COIN_VISUALIZATION
+        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
+    #else
+        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+    #endif
 
     if (tree)
     {
@@ -547,26 +478,24 @@ void IKRRTWindow::buildRRTVisu()
     }
 
     //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
-    SoSeparator* sol = w->getCoinVisualization();
-    rrtSep->addChild(sol);
+    VisualizationPtr wv = w->getVisualization();
+    if (wv)
+    {
+        viewer->addVisualization("rrt","solution", wv);
+    }
 }
 
 void IKRRTWindow::buildGraspSetVisu()
 {
-    graspsSep->removeAllChildren();
+    viewer->clearLayer("grasps");
 
     if (UI.checkBoxGraspSet->isChecked() && eef && graspSet && object)
     {
-        SoSeparator* visu = CoinVisualizationFactory::CreateGraspSetVisualization(graspSet, eef, object->getGlobalPose());
-
-        if (visu)
-        {
-            graspsSep->addChild(visu);
-        }
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(graspSet, eef, object->getGlobalPose(), ModelLink::Full);
+        viewer->addVisualization("grasps", "all-grasps", v);
     }
 
     // show reachable graps
-    reachableGraspsSep->removeAllChildren();
 
     if (UI.checkBoxReachableGrasps->isChecked() && eef && graspSet && object && reachSpace)
     {
@@ -574,12 +503,8 @@ void IKRRTWindow::buildGraspSetVisu()
 
         if (rg->getSize() > 0)
         {
-            SoSeparator* visu = CoinVisualizationFactory::CreateGraspSetVisualization(rg, eef, object->getGlobalPose());
-
-            if (visu)
-            {
-                reachableGraspsSep->addChild(visu);
-            }
+            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(rg, eef, object->getGlobalPose(), ModelLink::Full);
+            viewer->addVisualization("grasps", "reachable-grasps", v);
         }
     }
 }
@@ -592,16 +517,13 @@ void IKRRTWindow::reachVisu()
         return;
     }
 
-    reachabilitySep->removeAllChildren();
+    viewer->clearLayer("reach");
 
     if (UI.checkBoxReachabilitySpace->checkState() == Qt::Checked)
     {
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(reachSpace, VirtualRobot::ColorMap::eRed, true);
-
-        if (visualisationNode)
-        {
-            reachabilitySep->addChild(visualisationNode);
-        }
+        ColorMapPtr cm(new ColorMap(ColorMap::eRed));
+        VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, cm, true);
+        viewer->addVisualization("reach", "reachability", v);
 
         /*
             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();
@@ -617,7 +539,6 @@ void IKRRTWindow::reachVisu()
 
 void IKRRTWindow::loadReach()
 {
-    reachabilitySep->removeAllChildren();
 
     if (!robot)
     {
@@ -645,7 +566,7 @@ void IKRRTWindow::loadReach()
 }
 void IKRRTWindow::planIKRRT()
 {
-
+    openEEF();
     GenericIKSolverPtr ikSolver(new GenericIKSolver(rns));
 
     if (UI.checkBoxReachabilitySpaceIK->checkState() == Qt::Checked)
@@ -659,11 +580,15 @@ void IKRRTWindow::planIKRRT()
     if (UI.checkBoxColCheckIK->checkState() == Qt::Checked)
     {
         LinkSetPtr colModelSet = robot->getLinkSet(colModelName);
+        if (!colModelSet)
+            VR_ERROR << "no col model with name " << colModelName << endl;
         LinkSetPtr colModelSet2;
 
         if (!colModelNameRob.empty())
         {
             colModelSet2 = robot->getLinkSet(colModelNameRob);
+            if (!colModelSet2)
+                VR_ERROR << "no col model with name " << colModelNameRob << endl;
         }
 
         if (colModelSet)
@@ -808,11 +733,8 @@ void IKRRTWindow::sliderSolution(int pos)
 
 void IKRRTWindow::redraw()
 {
-    viewer->scheduleRedraw();
     UI.frameViewer->update();
-    viewer->scheduleRedraw();
     this->update();
-    viewer->scheduleRedraw();
 }
 
 
