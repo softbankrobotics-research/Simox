@@ -22,12 +22,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 #include <vector>
 
@@ -92,18 +88,13 @@ protected:
 
     planSet planSetA, planSetB;
 
-
     void loadScene();
-
     void setupUI();
-    QString formatString(const char* s, float f);
     void buildRRTVisu();
     void selectStart(const std::string& conf);
     void selectTargetObject(const std::string& conf);
     void selectRNS(const std::string& rns);
     void selectEEF(const std::string& eefName);
-
-    static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void selectColModelRobA(const std::string& colModel);
     void selectColModelRobB(const std::string& colModel);
@@ -113,16 +104,9 @@ protected:
     void testInit();
 
     Ui::MainWindowGraspRRTDemo UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* allSep;
-    SoSeparator* sceneFileSep;
-    SoSeparator* graspsSep;
-    SoSeparator* rrtSep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
-    //VirtualRobot::RobotPtr robotStart;
-    //VirtualRobot::RobotPtr robotGoal;
 
     MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;
@@ -148,10 +132,8 @@ protected:
     MotionPlanning::CSpaceTreePtr tree;
     GraspPlanning::GraspQualityMeasureWrenchSpacePtr graspQuality;
 
-    VirtualRobot::CoinVisualizationPtr visualization;
-
     MotionPlanning::GraspRrtPtr test_graspRrt;
     MotionPlanning::CSpaceSampledPtr test_cspace;
 };
 
-#endif // __GraspRrt_WINDOW_H__
+#endif

@@ -10,27 +10,33 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Planner/GraspRrt.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+#include <MotionPlanning/Visualization/RrtWorkspaceVisualization.h>
+
 #include <QFileDialog>
+
 #include <Eigen/Geometry>
+
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <cmath>
-
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-
 #include <sstream>
+
+
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+
+// need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
+
+
 using namespace std;
 using namespace VirtualRobot;
 
@@ -45,16 +51,6 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
     VR_INFO << " start " << endl;
 
     this->sceneFile = sceneFile;
-
-    allSep = new SoSeparator;
-    allSep->ref();
-    sceneFileSep = new SoSeparator;
-    graspsSep = new SoSeparator;
-    rrtSep = new SoSeparator;
-
-    allSep->addChild(sceneFileSep);
-    allSep->addChild(graspsSep);
-    allSep->addChild(rrtSep);
 
     planSetA.rns = rns;
     planSetA.eef = eefName;
@@ -71,14 +67,10 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
 
     loadScene();
 
-
-
     selectPlanSet(0);
 
     selectStart(sConf);
     selectTargetObject(goalObject);
-
-
 
     if (sConf != "")
     {
@@ -95,8 +87,6 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
         UI.comboBoxRNS->setEnabled(false);
     }
 
-    //if (eefName!="")
-    //  UI.comboBoxEEF->setEnabled(false);
     if (colModelRob1 != "")
     {
         UI.comboBoxColModelRobot->setEnabled(false);
@@ -107,47 +97,23 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
         UI.comboBoxColModelRobotStatic->setEnabled(false);
     }
 
-    //if (colModelEnv!="")
-    //  UI.comboBoxColModelEnv->setEnabled(false);
-
     viewer->viewAll();
-
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    SoTimerSensor* timer = new SoTimerSensor(timerCB, this);
-    timer->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer);
 }
 
 
 GraspRrtWindow::~GraspRrtWindow()
 {
-    allSep->unref();
 }
 
-
-void GraspRrtWindow::timerCB(void* data, SoSensor* /*sensor*/)
-{
-    GraspRrtWindow* ikWindow = static_cast<GraspRrtWindow*>(data);
-    ikWindow->redraw();
-}
 
 
 void GraspRrtWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(allSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     UI.radioButtonSolution->setChecked(true);
 
@@ -171,13 +137,9 @@ void GraspRrtWindow::setupUI()
     connect(UI.comboBoxColModelEnv, SIGNAL(activated(int)), this, SLOT(selectColModelEnv(int)));
 
     connect(UI.pushButtonGraspPose, SIGNAL(clicked()), this, SLOT(testGraspPose()));
-
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
-
 }
-
-
 
 
 void GraspRrtWindow::closeEvent(QCloseEvent* event)
@@ -189,32 +151,29 @@ void GraspRrtWindow::closeEvent(QCloseEvent* event)
 
 void GraspRrtWindow::buildVisu()
 {
-    sceneFileSep->removeAllChildren();
-
+    viewer->clearLayer("scene");
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
+
+    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    if (!f)
+        return;
 
     if (scene)
     {
         VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        CoinVisualizationPtr cvn = std::dynamic_pointer_cast<CoinVisualization>(v);
-
-        SoNode* visualisationNode = NULL;
-
-        if (cvn)
-        {
-            visualisationNode = cvn->getCoinVisualization();
-        }
-
-        if (visualisationNode)
-        {
-            sceneFileSep->addChild(visualisationNode);
-        }
+        viewer->addVisualization("scene", "scene", v);
     }
 
-    graspsSep->removeAllChildren();
+    viewer->clearLayer("grasps");
 
-    if (UI.checkBoxGrasps->isChecked())
+    if (UI.checkBoxGrasps->isChecked() && eef && grasps.size()>0)
     {
+        GraspSetPtr gs(new GraspSet("tmp", robot->getName(), eef->getName(), grasps));
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, targetObject->getGlobalPose(), ModelLink::Full);
+        viewer->addVisualization("scene", "scene", v);
+    }
+
+/*
         SoSeparator* eefVisu = CoinVisualizationFactory::CreateEndEffectorVisualization(eef);
 
         for (size_t i = 0; i < grasps.size(); i++)
@@ -228,22 +187,7 @@ void GraspRrtWindow::buildVisu()
             graspsSep->addChild(sep1);
         }
     }
-
-    /*if (UI.checkBoxStartGoal->isChecked())
-    {
-        if (robotStart)
-        {
-            SoNode *st = CoinVisualizationFactory::getCoinVisualization(robotStart,colModel);
-            if (st)
-                startGoalSep->addChild(st);
-        }
-        if (robotGoal)
-        {
-            SoNode *go = CoinVisualizationFactory::getCoinVisualization(robotGoal,colModel);
-            if (go)
-                startGoalSep->addChild(go);
-        }
-    }*/
+*/
     buildRRTVisu();
 
     redraw();
@@ -251,8 +195,7 @@ void GraspRrtWindow::buildVisu()
 
 int GraspRrtWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -261,7 +204,7 @@ void GraspRrtWindow::quit()
 {
     std::cout << "GraspRrtWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void GraspRrtWindow::loadSceneWindow()
@@ -482,18 +425,6 @@ void GraspRrtWindow::selectEEF(const std::string& eefName)
         VR_ERROR << "No eef with name <" << eefName << "> found..." << endl;
         return;
     }
-
-    /*std::vector< EndEffectorPtr > eefs = robot->getEndEffectors();
-    for (size_t i=0;i<eefs.size();i++)
-    {
-        if (eefs[i]->getName()==eefName)
-        {
-            selectEEF(i);
-            UI.comboBoxEEF->setCurrentIndex(i);
-            return;
-        }
-    }
-    VR_ERROR << "No eef with name <" << eefName << "> found..." << endl;*/
 }
 
 void GraspRrtWindow::selectColModelRobA(const std::string& colModel)
@@ -517,6 +448,7 @@ void GraspRrtWindow::selectColModelRobA(const std::string& colModel)
 
     VR_ERROR << "No col model set with name <" << colModel << "> found..." << endl;
 }
+
 void GraspRrtWindow::selectColModelRobB(const std::string& colModel)
 {
     if (!robot)
@@ -538,6 +470,7 @@ void GraspRrtWindow::selectColModelRobB(const std::string& colModel)
 
     VR_ERROR << "No col model set with name <" << colModel << "> found..." << endl;
 }
+
 void GraspRrtWindow::selectColModelEnv(const std::string& colModel)
 {
     if (!scene)
@@ -696,14 +629,21 @@ void GraspRrtWindow::selectColModelEnv(int nr)
 
 void GraspRrtWindow::buildRRTVisu()
 {
-    rrtSep->removeAllChildren();
+    viewer->clearLayer("rrt");
 
     if (!cspace || !robot)
     {
         return;
     }
 
-    std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
+
+    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+    #ifdef Simox_USE_COIN_VISUALIZATION
+        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
+    #else
+        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+    #endif
+
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -722,12 +662,15 @@ void GraspRrtWindow::buildRRTVisu()
 
     if (UI.checkBoxShowSolutionOpti->isChecked() && solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::RrtWorkspaceVisualization::eGreen);
     }
 
-    w->addConfiguration(startConfig, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen, 3.0f);
-    SoSeparator* sol = w->getCoinVisualization();
-    rrtSep->addChild(sol);
+    w->addConfiguration(startConfig, MotionPlanning::RrtWorkspaceVisualization::eGreen, 3.0f);
+    VisualizationPtr wv = w->getVisualization();
+    if (wv)
+    {
+        viewer->addVisualization("rrt","solution", wv);
+    }
 }
 
 void GraspRrtWindow::testInit()
@@ -791,34 +734,16 @@ void GraspRrtWindow::testGraspPose()
     rns->getJointValues(c);
     test_graspRrt->calculateGlobalGraspPose(c, globalGrasp);
 
-    VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(10, 10, 10);
+    /*VirtualRobot::ObstaclePtr o = VirtualRobot::Obstacle::createBox(10, 10, 10);
     o->setGlobalPose(globalGrasp);
     //o->showCoordinateSystem(true);
     graspsSep->removeAllChildren();
-    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::ModelLink::Full));
+    graspsSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(o, VirtualRobot::ModelLink::Full));*/
 
     // move towards object
     Eigen::Matrix4f p = eef->getGCP()->getGlobalPose();
     test_graspRrt->createWorkSpaceSamplingStep(p, globalGrasp, c);
     rns->setJointValues(c);
-
-    // test
-    /*Eigen::Matrix4f p1;
-    p1.setIdentity();
-    Eigen::Matrix4f p2;
-    p2.setIdentity();
-    p1(0,3) = 50;
-    p2(0,3) = 200;
-    Eigen::Matrix4f deltaPose = p1.inverse() * p2;
-    cout << deltaPose << endl;
-
-    deltaPose = p2 * p1.inverse();
-    cout << deltaPose << endl;
-
-    p2 = deltaPose * p1;
-    cout << p2 << endl;
-    p2 = p1 * deltaPose;
-    cout << p2 << endl;*/
 }
 
 void GraspRrtWindow::plan()
@@ -894,10 +819,12 @@ void GraspRrtWindow::colModel()
 {
     buildVisu();
 }
+
 void GraspRrtWindow::solutionSelected()
 {
     sliderSolution(UI.horizontalSliderPos->sliderPosition());
 }
+
 void GraspRrtWindow::sliderSolution(int pos)
 {
     if (!solution)
@@ -921,11 +848,8 @@ void GraspRrtWindow::sliderSolution(int pos)
 
 void GraspRrtWindow::redraw()
 {
-    viewer->scheduleRedraw();
     UI.frameViewer->update();
-    viewer->scheduleRedraw();
     this->update();
-    viewer->scheduleRedraw();
 }
 
 
