@@ -967,6 +967,13 @@ namespace VirtualRobot
         return n;
     }
 
+    VisualizationNodePtr CoinVisualizationFactory::createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const ColorMapPtr cm, bool transformToGlobalPose, float maxZGlobal)
+    {
+        SoNode* visualisationNode = getCoinVisualization(reachSpace, *cm, transformToGlobalPose, maxZGlobal);
+        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualisationNode));
+        return n;
+    }
+
 
     VisualizationNodePtr CoinVisualizationFactory::createEllipse(float x, float y, float z, bool showAxes, float axesHeight, float axesWidth)
     {
@@ -4406,7 +4413,7 @@ namespace VirtualRobot
         return visualization;
     }
 
-    VisualizationPtr CoinVisualizationFactory::getVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType)
+    VisualizationPtr CoinVisualizationFactory::createGraspSetVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType)
     {
         SoSeparator* s = CreateGraspSetVisualization(graspSet, eef, pose, visuType);
         CoinVisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));

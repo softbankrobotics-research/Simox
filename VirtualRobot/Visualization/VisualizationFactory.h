@@ -136,7 +136,7 @@ namespace VirtualRobot
             return VisualizationPtr();
         }
 
-        virtual VisualizationPtr getVisualization(const GraspSetPtr &/*graspSet*/, const EndEffectorPtr &/*eef*/, const Eigen::Matrix4f& /*pose*/, ModelLink::VisualizationType /*visuType*/)
+        virtual VisualizationPtr createGraspSetVisualization(const GraspSetPtr &/*graspSet*/, const EndEffectorPtr &/*eef*/, const Eigen::Matrix4f& /*pose*/, ModelLink::VisualizationType /*visuType*/)
         {
             return VisualizationPtr();
         }
@@ -249,6 +249,13 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+
+        virtual VisualizationNodePtr createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10)
+        {
+            return VisualizationNodePtr();
+        }
+
+
 
         /*!
             Move local visualization by homogeneous matrix m. (MM)

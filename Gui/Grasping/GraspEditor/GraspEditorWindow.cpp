@@ -609,7 +609,7 @@ namespace VirtualRobot
             GraspSetPtr gs = currentGraspSet->clone();
             gs->removeGrasp(currentGrasp);
 
-            VisualizationPtr visu = f->getVisualization(gs, robotEEF_EEF, object->getGlobalPose(), ModelLink::VisualizationType::Full);
+            VisualizationPtr visu = f->createGraspSetVisualization(gs, robotEEF_EEF, object->getGlobalPose(), ModelLink::VisualizationType::Full);
             viewer->addVisualization("graspsetLayer", "graspset", visu);
         }
     }

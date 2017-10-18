@@ -154,7 +154,7 @@ void GraspPlannerWindow::buildVisu()
     viewer->clearLayer("graspsetLayer");
     if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
         viewer->addVisualization("graspsetLayer", "grasps", visu);
     }
 }

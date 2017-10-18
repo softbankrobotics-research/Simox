@@ -100,10 +100,13 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createTorus(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30);
         virtual VisualizationNodePtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true);
 
+        virtual VisualizationNodePtr createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) override;
+
+
         virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
 
         virtual VisualizationPtr createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
-        virtual VisualizationPtr getVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType);
+        virtual VisualizationPtr createGraspSetVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType);
 
 
         /*!

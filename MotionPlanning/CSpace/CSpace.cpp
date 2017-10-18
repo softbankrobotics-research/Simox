@@ -404,7 +404,7 @@ namespace MotionPlanning
 
         // set configuration (joint values)
 		robotNodes->setJointValues(config);
-        float d = cdm->getDistance();
+        float d = cdm?cdm->getDistance():1.0f;
 
         if (multiThreaded)
         {
@@ -455,7 +455,7 @@ namespace MotionPlanning
 
         // set configuration (joint values)
 		robotNodes->setJointValues(config);
-        bool res = cdm->isInCollision();
+        bool res = cdm?cdm->isInCollision():false;
 
         if (multiThreaded)
         {

@@ -6,6 +6,8 @@
 #include "../XML/rapidxml.hpp"
 #include "../VirtualRobotException.h"
 #include "../Model/ModelNodeSet.h"
+#include "../Model/JointSet.h"
+#include "../Model/LinkSet.h"
 #include "../Model/Nodes/ModelJointFixed.h"
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
@@ -943,7 +945,34 @@ namespace VirtualRobot
 
                 for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
                 {
-                    (*ns)->clone(robo);
+                    //(*ns)->clone(robo);
+
+                    JointSetPtr js = std::dynamic_pointer_cast<JointSet>(*ns);
+                    if (js)
+                    {
+                        JointSetPtr rns = js->clone(robo);
+                        if (rns && !robo->hasJointSet(rns))
+                        {
+                            robo->registerJointSet(rns);
+                        }
+                        continue;
+                    }
+                    LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(*ns);
+                    if (ls)
+                    {
+                        LinkSetPtr rns = ls->clone(robo);
+                        if (rns && !robo->hasLinkSet(rns))
+                        {
+                            robo->registerLinkSet(rns);
+                        }
+                        continue;
+                    }
+
+                    ModelNodeSetPtr rns = (*ns)->clone(robo);
+                    if (rns && !robo->hasModelNodeSet(rns))
+                    {
+                        robo->registerModelNodeSet(rns);
+                    }
                 }
 
                 // already performed in root->clone

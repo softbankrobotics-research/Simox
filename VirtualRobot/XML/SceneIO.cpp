@@ -275,7 +275,7 @@ namespace VirtualRobot
             std::string nodeName_ = XMLNode->name();
             std::string nodeName = getLowerCase(XMLNode->name());
 
-            if (nodeName == "robot")
+            if (nodeName == "robot" || nodeName == "model")
             {
                 bool r = processSceneRobot(XMLNode, scene, basePath);
 
