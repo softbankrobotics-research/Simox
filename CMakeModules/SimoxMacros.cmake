@@ -62,6 +62,30 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
 endfunction()
 
 
+function(VirtualRobotQtLibrary name srcs incs mocFiles uiFiles)
+    setupSimoxExternalLibraries()
+
+    if (Simox_USE_QT4)
+        MESSAGE (STATUS "Qt4 Moc'ing: ${mocFiles}")
+        MESSAGE (STATUS "Qt4 ui files: ${uiFiles}")
+        # need this option to work around a qt/boost bug
+        qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        qt4_wrap_ui(generatedUiFiles ${uiFiles})
+    else()
+        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+        # need this option to work around a qt/boost bug
+        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+        qt5_wrap_ui(generatedUiFiles ${uiFiles})
+    endif()
+
+    INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
+    ################################## LIBRARY ##############################
+    ADD_LIBRARY(${name} SHARED ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
+    TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+endfunction()
+
+
 function(SimoxApplication name srcs incs)
     VirtualRobotApplication("${name}" "${srcs}" "${incs}")
     # add Saba and GraspStudio
@@ -73,4 +97,11 @@ function(SimoxQtApplication name srcs incs mocFiles uiFiles)
     VirtualRobotQtApplication("${name}" "${srcs}" "${incs}" "${mocFiles}" "${uiFiles}")  
     # add Saba and GraspStudio
     TARGET_LINK_LIBRARIES(${name} GraspStudio Saba)
+endfunction()
+
+
+function(SimoxQtLibrary name srcs incs mocFiles uiFiles)
+    VirtualRobotQtLibrary("${name}" "${srcs}" "${incs}" "${mocFiles}" "${uiFiles}")
+    # add Saba and GraspStudio
+    TARGET_LINK_LIBRARIES(${name} PUBLIC GraspStudio Saba)
 endfunction()
