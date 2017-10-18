@@ -52,31 +52,31 @@
 	</Robot>
 
     <ManipulationObject name='LegoGate'>
-    <File>objects/iCub/LegoGate_Grasps_RightHand_200.xml</File>
-    <GlobalPose>
-      <Transform>
-        <Matrix4x4>
-          <row1 c1='-0.150358' c2='-0.988632' c3='0' c4='-343.08'/>
-          <row2 c1='0.988632' c2='-0.150358' c3='0' c4='-31.3975'/>
-          <row3 c1='0' c2='0' c3='1' c4='545.873'/>
-          <row4 c1='0' c2='0' c3='0' c4='1'/>
-        </Matrix4x4>
-      </Transform>
-    </GlobalPose>
+        <File>objects/iCub/LegoGate_Grasps_RightHand_200.xml</File>
+        <GlobalPose>
+          <Transform>
+            <Matrix4x4>
+              <row1 c1='-0.150358' c2='-0.988632' c3='0' c4='-343.08'/>
+              <row2 c1='0.988632' c2='-0.150358' c3='0' c4='-31.3975'/>
+              <row3 c1='0' c2='0' c3='1' c4='545.873'/>
+              <row4 c1='0' c2='0' c3='0' c4='1'/>
+            </Matrix4x4>
+          </Transform>
+        </GlobalPose>
     </ManipulationObject>
 
     <ManipulationObject name='Table'>
-    <File>objects/box1000x1000.xml</File>
-    <GlobalPose>
-      <Transform>
-        <Matrix4x4>
-          <row1 c1='-0.150358' c2='-0.988632' c3='0' c4='-337.813'/>
-          <row2 c1='0.988632' c2='-0.150358' c3='0' c4='-29.9237'/>
-          <row3 c1='0' c2='0' c3='1' c4='420.873'/>
-          <row4 c1='0' c2='0' c3='0' c4='1'/>
-        </Matrix4x4>
-      </Transform>
-    </GlobalPose>
+        <File>objects/box1000x1000.xml</File>
+        <GlobalPose>
+          <Transform>
+            <Matrix4x4>
+              <row1 c1='-0.150358' c2='-0.988632' c3='0' c4='-337.813'/>
+              <row2 c1='0.988632' c2='-0.150358' c3='0' c4='-29.9237'/>
+              <row3 c1='0' c2='0' c3='1' c4='420.873'/>
+              <row4 c1='0' c2='0' c3='0' c4='1'/>
+            </Matrix4x4>
+          </Transform>
+        </GlobalPose>
     </ManipulationObject>
 
     <Trajectory Robot='iCub' RobotNodeSet='Hip Right Arm' name='GraspingMotion' dim='10'>

@@ -135,13 +135,13 @@
 	</RobotNode>
 	
 	
-	<RobotNodeSet name="Right Leg" kinematicRoot="LowerBody R" tcp="Right Leg Foot TCP">
+	<JointSet name="Right Leg" kinematicRoot="LowerBody R" tcp="Right Leg Foot TCP">
 		<Node name="Right Leg Waist1"/>
 		<Node name="Right Leg Waist2"/>
 		<Node name="Right Leg Waist3"/>
 		<Node name="Right Leg Knee"/>
 		<Node name="Right Leg Foot1"/>
 		<Node name="Right Leg Foot2"/>
-	</RobotNodeSet>
+	</JointSet>
 	
 </Robot>

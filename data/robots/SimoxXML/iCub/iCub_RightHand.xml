@@ -683,7 +683,7 @@
 	</Endeffector>
 
     <!-- ROBOT NODE SETS -->
-	<RobotNodeSet name="Right Hand" kinematicRoot="Right Hand Start"  tcp="Right Arm TCP">
+	<JointSet name="Right Hand" kinematicRoot="Right Hand Start"  tcp="Right Arm TCP">
 		<Node name="Right Hand Thumb Joint1"/>
 		<Node name="Right Hand Thumb Joint2"/>
 		<Node name="Right Hand Thumb Joint3"/>
@@ -708,9 +708,9 @@
 		<Node name="Right Hand Pinky Joint2"/>
 		<Node name="Right Hand Pinky Joint3"/>
 		<Node name="Right Hand Pinky Joint4"/>
-	</RobotNodeSet>
+	</JointSet>
 
-	<RobotNodeSet name="Right Hand Col Model" kinematicRoot="Right Hand Start"  tcp="Right Arm TCP">
+	<LinkSet name="Right Hand Col Model" kinematicRoot="Right Hand Start"  tcp="Right Arm TCP">
 		<Node name="Right Hand Palm"/>
 		<Node name="Right Hand Thumb Joint1-link"/>
 		<Node name="Right Hand Thumb Joint2-link"/>
@@ -736,6 +736,6 @@
 		<Node name="Right Hand Pinky Joint2-link"/>
 		<Node name="Right Hand Pinky Joint3-link"/>
 		<Node name="Right Hand Pinky Joint4-link"/>
-	</RobotNodeSet>
+	</LinkSet>
 	
 </Robot>

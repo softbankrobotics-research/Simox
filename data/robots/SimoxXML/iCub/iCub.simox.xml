@@ -159,37 +159,37 @@
 
 	
         <LinkSet name="UpperbodyHeadColModel">
-		<Node name="CenterArms"/>
-		<Node name="Neck3-link"/>
+            <Node name="CenterArms"/>
+            <Node name="Neck3-link"/>
         </LinkSet>
 	
         <LinkSet name="BodyHeadLegsColModel">
-		<Node name="CenterArms"/>
-		<Node name="LowerBody"/>
-		<Node name="Neck3-link"/>
-		<Node name="Left Leg Waist3-link"/>
-		<Node name="Left Leg Knee-link"/>
-		<Node name="Right Leg Waist3-link"/>
-		<Node name="Right Leg Knee-link"/>
+            <Node name="CenterArms"/>
+            <Node name="LowerBody"/>
+            <Node name="Neck3-link"/>
+            <Node name="Left Leg Waist3-link"/>
+            <Node name="Left Leg Knee-link"/>
+            <Node name="Right Leg Waist3-link"/>
+            <Node name="Right Leg Knee-link"/>
         </LinkSet>
 
         <JointSet name="Hip" kinematicRoot="iCubRoot">
-		<Node name="Torso1"/>
-		<Node name="Torso2"/>
-		<Node name="Torso3"/>
+            <Node name="Torso1"/>
+            <Node name="Torso2"/>
+            <Node name="Torso3"/>
         </JointSet>
 
         <JointSet name="Hip Left Arm" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
-		<Node name="Torso1"/>
-		<Node name="Torso2"/>
-		<Node name="Torso3"/>
-		<Node name="Left Arm Shoulder1"/>
-		<Node name="Left Arm Shoulder2"/>
-		<Node name="Left Arm Shoulder3"/>
-		<Node name="Left Arm Elbow1"/>
-		<Node name="Left Arm Elbow2"/>
-		<Node name="Left Arm Wrist1"/>
-		<Node name="Left Arm Wrist2"/>
+            <Node name="Torso1"/>
+            <Node name="Torso2"/>
+            <Node name="Torso3"/>
+            <Node name="Left Arm Shoulder1"/>
+            <Node name="Left Arm Shoulder2"/>
+            <Node name="Left Arm Shoulder3"/>
+            <Node name="Left Arm Elbow1"/>
+            <Node name="Left Arm Elbow2"/>
+            <Node name="Left Arm Wrist1"/>
+            <Node name="Left Arm Wrist2"/>
         </JointSet>
 	
 		

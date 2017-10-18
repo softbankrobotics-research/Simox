@@ -689,7 +689,7 @@
 		</Actor>
 	</Endeffector>
 
-	<RobotNodeSet name="Left Hand" kinematicRoot="Left Hand Start" tcp="Left Arm TCP">
+	<JointSet name="Left Hand" kinematicRoot="Left Hand Start" tcp="Left Arm TCP">
 		<Node name="Left Hand Thumb Joint1"/>
 		<Node name="Left Hand Thumb Joint2"/>
 		<Node name="Left Hand Thumb Joint3"/>
@@ -714,6 +714,6 @@
 		<Node name="Left Hand Pinky Joint2"/>
 		<Node name="Left Hand Pinky Joint3"/>
 		<Node name="Left Hand Pinky Joint4"/>
-	</RobotNodeSet>
+	</JointSet>
 	
 </Robot>

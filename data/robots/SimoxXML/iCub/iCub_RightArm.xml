@@ -114,7 +114,7 @@
 		</ChildFromRobot>
 	</RobotNode>
 	
-	<RobotNodeSet name="Right Arm" kinematicRoot="Right Arm Base" tcp="Right Arm TCP">
+	<JointSet name="Right Arm" kinematicRoot="Right Arm Base" tcp="Right Arm TCP">
 		<Node name="Right Arm Shoulder1"/>
 		<Node name="Right Arm Shoulder2"/>
 		<Node name="Right Arm Shoulder3"/>
@@ -122,9 +122,9 @@
 		<Node name="Right Arm Elbow2"/>
 		<Node name="Right Arm Wrist1"/>
 		<Node name="Right Arm Wrist2"/>
-	</RobotNodeSet>
+	</JointSet>
 	
-	<RobotNodeSet name="Right HandArm ColModel">
+	<LinkSet name="Right HandArm ColModel">
 		<!--Node name="Right Arm Shoulder3-link"/-->
 		<Node name="Right Arm Elbow2-link"/>
 		<Node name="Right Hand Palm"/>
@@ -152,6 +152,6 @@
 		<Node name="Right Hand Pinky Joint2-link"/>
 		<Node name="Right Hand Pinky Joint3-link"/>
 		<Node name="Right Hand Pinky Joint4-link"/>
-	</RobotNodeSet>
+	</LinkSet>
 	
 	</Robot>

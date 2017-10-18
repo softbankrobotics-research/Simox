@@ -1,224 +1,223 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Scene name="PlanningScene">
+    <Model name="Armar-III" initConfig="start">
+        <File>/robots/Armar3/Armar3.xml</File>
 
-        <Robot name="Armar-III" initConfig="start">
-            <File>/robots/Armar3/Armar3.xml</File>
+        <Configuration name="start">
+            <!--Node name="X_Platform" unit="mm" value="4500"/>
+            <Node name="Y_Platform" unit="mm" value="6000"/-->
+            <Node name="X_Platform_joint" unit="mm" value="10"/>
+            <Node name="Y_Platform_joint" unit="mm" value="2000"/>
+            <Node name="Yaw_Platform_joint" unit="radian" value="-1.57"/>
+        </Configuration>
 
-            <Configuration name="start">
-                <!--Node name="X_Platform" unit="mm" value="4500"/>
-                <Node name="Y_Platform" unit="mm" value="6000"/-->
-                <Node name="X_Platform_joint" unit="mm" value="10"/>
-                <Node name="Y_Platform_joint" unit="mm" value="2000"/>
-                <Node name="Yaw_Platform_joint" unit="radian" value="-1.57"/>
-            </Configuration>
+        <Configuration name="goal">
+            <Node name="X_Platform_joint" unit="mm" value="4500"/>
+            <Node name="Y_Platform_joint" unit="mm" value="9000"/>
+            <Node name="Yaw_Platform_joint" unit="radian" value="1.57"/>
+        </Configuration>
+    
+        <!-- These joints are considered for motion planning-->
+        <JointSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
+            <Node name="X_Platform_joint"/>
+            <Node name="Y_Platform_joint"/>
+            <Node name="Yaw_Platform_joint"/>
+        </JointSet>
+    
+        <!-- The second collision model (torso, head and platform)-->
+        <LinkSet name="ColModel Robot Body">
+            <Node name="Platform_link"/>
+            <Node name="Hip Yaw_link"/>
+            <Node name="Head_Tilt_link"/>
+        </LinkSet>
 
-            <Configuration name="goal">
-                <Node name="X_Platform_joint" unit="mm" value="4500"/>
-                <Node name="Y_Platform_joint" unit="mm" value="9000"/>
-                <Node name="Yaw_Platform_joint" unit="radian" value="1.57"/>
-            </Configuration>
-		
-            <!-- These joints are considered for motion planning-->
-            <JointSet name="Planning" kinematicRoot="Armar3_Base" tcp="Platform">
-                <Node name="X_Platform_joint"/>
-                <Node name="Y_Platform_joint"/>
-                <Node name="Yaw_Platform_joint"/>
-            </JointSet>
-    	
-            <!-- The second collision model (torso, head and platform)-->
-            <LinkSet name="ColModel Robot Body">
-                <Node name="Platform_link"/>
-                <Node name="Hip Yaw_link"/>
-                <Node name="Head_Tilt_link"/>
-            </LinkSet>
-
-            <!--GlobalPose>
-                <Transform>
-                    <!--Translation x="-6115.0" y="3580.0" z="0"/>
-                    <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/-- >
-                    <Translation x="2000.0" y="8000.0" z="0"/>
-                    <rollpitchyaw units="degree" roll="0" pitch="0" yaw="-90"/>
-                </Transform>
-            </GlobalPose-->
-	</Robot>
-
-        <!--Obstacle name="Environment">
-	    <Visualization>
-                <File type='inventor'>environment/KIT_kitchen.wrl</File>
-
-	    </Visualization>
-    	<CollisionModel>
-            <!--File type='inventor'>environment/KIT_kitchen_sideboard.wrl</File-- >
-            <File type='inventor'>environment/KIT_kitchen.wrl</File>
-        </CollisionModel>
-        <GlobalPose>
+        <!--GlobalPose>
             <Transform>
-                <Translation x="0" y="0" z="-80"/>
-                <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/>
+                <!--Translation x="-6115.0" y="3580.0" z="0"/>
+                <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/-- >
+                <Translation x="2000.0" y="8000.0" z="0"/>
+                <rollpitchyaw units="degree" roll="0" pitch="0" yaw="-90"/>
             </Transform>
-        </GlobalPose>
-        </Obstacle-->
+        </GlobalPose-->
+    </Model>
+
+    <!--Obstacle name="Environment">
+    <Visualization>
+            <File type='inventor'>environment/KIT_kitchen.wrl</File>
+
+    </Visualization>
+    <CollisionModel>
+        <!--File type='inventor'>environment/KIT_kitchen_sideboard.wrl</File-- >
+        <File type='inventor'>environment/KIT_kitchen.wrl</File>
+    </CollisionModel>
+    <GlobalPose>
+        <Transform>
+            <Translation x="0" y="0" z="-80"/>
+            <rollpitchyaw units="degree" roll="0" pitch="0" yaw="0"/>
+        </Transform>
+    </GlobalPose>
+    </Obstacle-->
 
 
-        <Obstacle name="ControlTable">
-            <Visualization>
-                <File type="Inventor">environment/VRML/control_table.wrl</File>
+    <Obstacle name="ControlTable">
+        <Visualization>
+            <File type="Inventor">environment/VRML/control_table.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+
+    <Obstacle name="DishWasher">
+        <Visualization>
+            <File type="Inventor">environment/VRML/dish_washer.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+
+    <Obstacle name="Fridge">
+        <Visualization>
+            <File type="Inventor">environment/VRML/fridge.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+
+    <Obstacle name="LowerSideboard">
+        <Visualization>
+            <File type="Inventor">environment/VRML/lower_sideboard.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="LowerSink">
+        <Visualization>
+            <File type="Inventor">environment/VRML/lower_sink.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="Oven">
+        <Visualization>
+            <File type="Inventor">environment/VRML/oven.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="TableA">
+        <Visualization>
+            <File type="Inventor">environment/VRML/table_side_a.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="TableB">
+        <Visualization>
+            <File type="Inventor">environment/VRML/table_side_b.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="TableC">
+        <Visualization>
+            <File type="Inventor">environment/VRML/table_top.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="UpperSideboard">
+        <Visualization>
+            <File type="Inventor">environment/VRML/upper_sideboard.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
+
+    <Obstacle name="UpperSink">
+        <Visualization>
+                <File type="Inventor">environment/VRML/upper_sink.wrl</File>
                 <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
 
+    <Obstacle name="WallSink">
+        <Visualization>
+            <File type="Inventor">environment/VRML/wall_sink.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
 
-        <Obstacle name="DishWasher">
-            <Visualization>
-                <File type="Inventor">environment/VRML/dish_washer.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
+    <Obstacle name="Windows">
+        <Visualization>
+            <File type="Inventor">environment/VRML/windows.wrl</File>
+            <UseAsCollisionModel/>
+        </Visualization>
+        <Physics>
+            <Mass unit='kg' value='0'/>
+            <SimulationType value='static'/>
+        </Physics>
+    </Obstacle>
 
-
-        <Obstacle name="Fridge">
-            <Visualization>
-                <File type="Inventor">environment/VRML/fridge.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-
-        <Obstacle name="LowerSideboard">
-            <Visualization>
-                <File type="Inventor">environment/VRML/lower_sideboard.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="LowerSink">
-            <Visualization>
-                <File type="Inventor">environment/VRML/lower_sink.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="Oven">
-            <Visualization>
-                <File type="Inventor">environment/VRML/oven.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="TableA">
-            <Visualization>
-                <File type="Inventor">environment/VRML/table_side_a.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="TableB">
-            <Visualization>
-                <File type="Inventor">environment/VRML/table_side_b.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="TableC">
-            <Visualization>
-                <File type="Inventor">environment/VRML/table_top.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="UpperSideboard">
-            <Visualization>
-                <File type="Inventor">environment/VRML/upper_sideboard.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="UpperSink">
-            <Visualization>
-                    <File type="Inventor">environment/VRML/upper_sink.wrl</File>
-                    <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="WallSink">
-            <Visualization>
-                <File type="Inventor">environment/VRML/wall_sink.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <Obstacle name="Windows">
-            <Visualization>
-                <File type="Inventor">environment/VRML/windows.wrl</File>
-                <UseAsCollisionModel/>
-            </Visualization>
-            <Physics>
-                <Mass unit='kg' value='0'/>
-                <SimulationType value='static'/>
-            </Physics>
-        </Obstacle>
-
-        <ModelSet name="ColModel Obstacles">
-            <Model name="ControlTable"/>
-            <Model name="DishWasher"/>
-            <Model name="Fridge"/>
-            <Model name="LowerSideboard"/>
-            <Model name="Oven"/>
-            <Model name="TableA"/>
-            <Model name="TableB"/>
-            <Model name="TableC"/>
-            <Model name="UpperSideboard"/>
-            <Model name="UpperSink"/>
-            <Model name="WallSink"/>
-            <Model name="Windows"/>
-        </Model>
+    <ModelSet name="ColModel Obstacles">
+        <Model name="ControlTable"/>
+        <Model name="DishWasher"/>
+        <Model name="Fridge"/>
+        <Model name="LowerSideboard"/>
+        <Model name="Oven"/>
+        <Model name="TableA"/>
+        <Model name="TableB"/>
+        <Model name="TableC"/>
+        <Model name="UpperSideboard"/>
+        <Model name="UpperSink"/>
+        <Model name="WallSink"/>
+        <Model name="Windows"/>
+    </Model>
 </Scene>

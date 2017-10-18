@@ -132,7 +132,7 @@
 		<!--Child name="Left Arm TCP"/-->
 	</RobotNode>
 	
-	<RobotNodeSet name="Left Arm" kinematicRoot="Left Arm Base" tcp="Left Arm TCP">
+	<JointSet name="Left Arm" kinematicRoot="Left Arm Base" tcp="Left Arm TCP">
 		<Node name="Left Arm Shoulder1"/>
 		<Node name="Left Arm Shoulder2"/>
 		<Node name="Left Arm Shoulder3"/>
@@ -140,9 +140,9 @@
 		<Node name="Left Arm Elbow2"/>
 		<Node name="Left Arm Wrist1"/>
 		<Node name="Left Arm Wrist2"/>
-	</RobotNodeSet>
+	</JointSet>
 	
-	<RobotNodeSet name="Left HandArm ColModel" tcp="Left Arm TCP">
+	<LinkSet name="Left HandArm ColModel" tcp="Left Arm TCP">
 		<!--Node name="Left Arm Shoulder3-link"/--><!-- reports self collisions with upper body-->
 		<Node name="Left Arm Elbow2-link"/>
 		<Node name="Left Hand Palm"/>
@@ -170,6 +170,6 @@
 		<Node name="Left Hand Pinky Joint2-link"/>
 		<Node name="Left Hand Pinky Joint3-link"/>
 		<Node name="Left Hand Pinky Joint4-link"/>
-	</RobotNodeSet>
+	</LinkSet>
 	
 	</Robot>
