@@ -298,6 +298,23 @@ namespace VirtualRobot
             XMLNode = XMLNode->next_sibling("nodeset", 0, false);
         }
 
+        // load ModelConfigs / Configurations
+        XMLNode = robotXMLNode->first_node("configuration", 0, false);
+        while (XMLNode)
+        {
+            THROW_VR_EXCEPTION_IF(!robot, "Could not process configurations due to missing model defintion...");
+
+            std::string filename = XMLNode->value();
+
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
+
+            bool nsOK = ModelIO::loadConfigurations(robot, filename);
+            THROW_VR_EXCEPTION_IF(!nsOK, "Could not parse configuration defintion...");
+
+            XMLNode = XMLNode->next_sibling("configuration", 0, false);
+        }
+
 
         return robot;
     }
@@ -932,9 +949,117 @@ namespace VirtualRobot
         {
             physics.friction = -1.0f;
         }
-
-
     }
+
+    bool ModelIO::processConfiguration(rapidxml::xml_node<char>* configXMLNode, ModelPtr model)
+    {
+        THROW_VR_EXCEPTION_IF(!configXMLNode, "NULL data in processConfiguration");
+        THROW_VR_EXCEPTION_IF(!model, "NULL model in processConfiguration");
+
+        std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
+        std::vector< std::string > configNames;
+
+        bool cOK = processConfigurationNodeList(configXMLNode, configDefinitions, configNames);
+        THROW_VR_EXCEPTION_IF(!cOK, "Invalid configuration defined in model '" << model->getName() << "'." << endl);
+
+        // create & register configs
+        THROW_VR_EXCEPTION_IF(configDefinitions.size() != configNames.size(), "Invalid configuration definitions " << endl);
+
+        for (size_t i = 0; i < configDefinitions.size(); i++)
+        {
+            ModelConfigPtr rc(new ModelConfig(model, configNames[i], configDefinitions[i]));
+            model->registerConfiguration(rc);
+        }
+        return true;
+    }
+
+
+    bool ModelIO::createConfigurationsFromString(const RobotPtr &robot, const std::string &xmlString)
+    {
+        if (!robot)
+            return false;
+
+        // copy string content to char array
+        char* y = new char[xmlString.size() + 1];
+        strncpy(y, xmlString.c_str(), xmlString.size() + 1);
+
+        try
+        {
+            rapidxml::xml_document<char> doc;    // character type defaults to char
+            doc.parse<0>(y);    // 0 means default parse flags
+
+            rapidxml::xml_node<char>* node = doc.first_node();
+            while (node)
+            {
+                std::string nodeName = getLowerCase(node->name());
+                if (nodeName == "configuration")
+                {
+                    // registers config to robot
+                    bool ok = ModelIO::processConfiguration(node, robot);
+                    THROW_VR_EXCEPTION_IF(!ok, "Invalid Configuration definition " << endl);
+                }
+                node = node->next_sibling();
+            }
+        }
+        catch (rapidxml::parse_error& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Could not parse configuration in xml definition" << endl
+                               << "Error message:" << e.what() << endl
+                               << "Position: " << endl << e.where<char>() << endl);
+            return false;
+        }
+        catch (VirtualRobot::VirtualRobotException&)
+        {
+            delete[] y;
+            // rethrow the current exception
+            throw;
+        }
+        catch (std::exception& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing configuration xml definition" << endl
+                               << "Error code:" << e.what() << endl);
+            return false;
+        }
+        catch (...)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing configuration xml definition" << endl);
+            return false;
+        }
+
+        delete[] y;
+        return true;
+    }
+
+    bool ModelIO::loadConfigurations(const RobotPtr &robot, const std::string &filename)
+    {
+        std::string fullFile = filename;
+
+        if (!RuntimeEnvironment::getDataFileAbsolute(fullFile))
+        {
+            VR_ERROR << "Could not open XML file:" << filename << endl;
+            return false;
+        }
+
+        // load file
+        std::ifstream in(fullFile.c_str());
+
+        if (!in.is_open())
+        {
+            VR_ERROR << "Could not open XML file:" << fullFile << endl;
+            return false;
+        }
+
+        std::stringstream buffer;
+        buffer << in.rdbuf();
+        std::string nsXML(buffer.str());
+        in.close();
+
+        return createConfigurationsFromString(robot, nsXML);
+    }
+
 
     bool ModelIO::createNodeSetsFromString(const RobotPtr &robot, const std::string &xmlString)
     {
@@ -996,6 +1121,8 @@ namespace VirtualRobot
         delete[] y;
         return true;
     }
+
+
 
     bool ModelIO::loadNodeSets(const RobotPtr &robot, const std::string &filename)
     {

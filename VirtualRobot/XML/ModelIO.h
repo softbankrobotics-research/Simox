@@ -112,6 +112,9 @@ namespace VirtualRobot
 
         static FramePtr processFrame(rapidxml::xml_node<char>* frameXMLNode, RobotPtr robo);
 
+        static bool processConfiguration(rapidxml::xml_node<char> *configXMLNode, ModelPtr model);
+        static bool createConfigurationsFromString(const RobotPtr &robot, const std::string &xmlString);
+        static bool loadConfigurations(const RobotPtr &robot, const std::string &filename);
     protected:
         // instantiation not allowed
         ModelIO();

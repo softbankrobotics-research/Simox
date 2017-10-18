@@ -74,7 +74,6 @@ namespace VirtualRobot
         std::string initStr("initconfig");
         std::string initConfigName = processStringAttribute(initStr, sceneXMLNode, true);
 
-        std::vector< RobotConfigPtr > configs;
         std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
         std::vector< std::string > configNames;
         Eigen::Matrix4f globalPose = Eigen::Matrix4f::Identity();

@@ -13,4 +13,6 @@
 	<NodeSet>nodesets/Armar3-jointsets.xml</NodeSet>
 	<NodeSet>nodesets/Armar3-linksets.xml</NodeSet>
 
+	<Configuration>configurations/Armar3-configs.xml</Configuration>
+
 </ModelDescription>
