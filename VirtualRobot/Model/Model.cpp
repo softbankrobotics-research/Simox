@@ -1201,4 +1201,116 @@ namespace VirtualRobot
 		}
 		return FramePtr();
 	}
+
+    void Model::registerConfiguration(const ModelConfigPtr &config)
+    {
+        WriteLockPtr w = getWriteLock();
+        THROW_VR_EXCEPTION_IF(!config, "NULL config data");
+
+        if (hasConfiguration(config))
+        {
+            return;
+        }
+
+        configs.push_back(config);
+    }
+
+    void Model::registerConfiguration(const std::vector<ModelConfigPtr> &configs)
+    {
+        WriteLockPtr w = getWriteLock();
+        for (size_t i = 0; i < configs.size(); i++)
+        {
+            registerConfiguration(configs[i]);
+        }
+    }
+
+    void Model::deRegisterConfiguration(const ModelConfigPtr &config)
+    {
+        WriteLockPtr w = getWriteLock();
+        THROW_VR_EXCEPTION_IF(!config, "NULL data");
+
+        if (!hasConfiguration(config))
+        {
+            return;
+        }
+
+        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        {
+            if ((*i) == config)
+            {
+                configs.erase(i);
+                break;
+            }
+        }
+    }
+
+    void Model::deRegisterConfiguration(const std::string& name)
+    {
+        WriteLockPtr w = getWriteLock();
+        if (!hasConfiguration(name))
+        {
+            return;
+        }
+
+        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                configs.erase(i);
+                break;
+            }
+        }
+    }
+
+    bool Model::hasConfiguration(const ModelConfigPtr &config)
+    {
+        ReadLockPtr r = getReadLock();
+        THROW_VR_EXCEPTION_IF(!config, "NULL data");
+
+        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        {
+            if (*i == config)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool Model::hasConfiguration(const std::string& name)
+    {
+        ReadLockPtr r = getReadLock();
+        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    VirtualRobot::ModelConfigPtr Model::getConfiguration(const std::string& name)
+    {
+        ReadLockPtr r = getReadLock();
+        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        {
+            if ((*i)->getName() == name)
+            {
+                return *i;
+            }
+        }
+
+        VR_WARNING << "No Configuration with name " << name << " registered for model " << getName() << endl;
+        return ModelConfigPtr();
+    }
+
+    std::vector<ModelConfigPtr> Model::getConfigurations()
+    {
+        ReadLockPtr r = getReadLock();
+        return configs;
+    }
 }

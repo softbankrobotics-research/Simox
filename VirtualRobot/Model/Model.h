@@ -237,6 +237,25 @@ namespace VirtualRobot
         virtual std::vector<JointSetPtr> getJointSets() const;
 
         /*!
+            Registers the ModelConfig to this robot. If a config  with the same name is already registered nothing happens.
+        */
+        virtual void registerConfiguration(const ModelConfigPtr &config);
+        virtual void registerConfiguration(const std::vector<ModelConfigPtr> &configs);
+
+        /*!
+            Removes the configuration. If the ModelConfig is not registered nothing happens.
+        */
+        virtual void deRegisterConfiguration(const ModelConfigPtr &config);
+        virtual void deRegisterConfiguration(const std::string& name);
+
+        virtual bool hasConfiguration(const ModelConfigPtr &config);
+        virtual bool hasConfiguration(const std::string& name);
+
+        virtual ModelConfigPtr getConfiguration(const std::string& name);
+
+        virtual std::vector< ModelConfigPtr > getConfigurations();
+
+        /*!
          * The root node is the first ModelNode of this model.
          *
          * @param node The new root node.
@@ -678,6 +697,7 @@ namespace VirtualRobot
         std::map<std::string, ModelNodePtr> modelNodeMap;
         std::map<std::string, ModelNodeSetPtr> modelNodeSetMap;
         std::map<std::string, EndEffectorPtr> eefMap;
+        std::vector< RobotConfigPtr > configs;
 
         std::string filename;
 

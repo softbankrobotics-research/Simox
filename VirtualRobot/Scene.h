@@ -149,29 +149,9 @@ namespace VirtualRobot
         void deRegisterModelSet(const std::string &name);
         bool hasModelSet(const std::string &name);
 
-        /*!
-            Registers the set to this scene. If a set with the same name is already registered nothing happens.
-        */
-        //void registerModelNodeSet(ModelNodeSetPtr sos);
-
-        /*!
-            Removes the set to from this scene. If the set is not registered nothing happens.
-        */
-        //void deRegisterModelNodeSet(ModelNodeSetPtr sos);
-        //void deRegisterModelNodeSet(const std::string& name);
-
-        //bool hasModelNodeSet(ModelNodeSetPtr sos) const;
-        //bool hasModelNodeSet(const std::string& name) const;
-
-        //ModelNodeSetPtr getModelNodeSet(const std::string& name);
-        //LinkSetPtr getLinkSet(const std::string& name);
-        //JointSetPtr getJointSet(const std::string& name);
-
         std::vector<ModelSetPtr> getModelSets();
         ModelSetPtr getModelSet(const std::string & name);
-        //std::vector< ModelNodeSetPtr > getModelNodeSets();
-        //std::vector< LinkSetPtr > getLinkSets();
-        //std::vector< JointSetPtr > getJointSets();
+
 
         ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
 
@@ -196,13 +176,10 @@ namespace VirtualRobot
         std::string name;
 
         std::vector< RobotPtr > robots;
-        std::map< RobotPtr, std::vector< RobotConfigPtr > > robotConfigs;
         std::vector< ObstaclePtr > obstacles;
         std::vector< ManipulationObjectPtr > manipulationObjects;
-        //std::vector< ModelNodeSetPtr > sceneObjectSets;
         std::vector< TrajectoryPtr > trajectories;
         std::vector<ModelSetPtr> modelSets;
-
     };
 
 } // namespace

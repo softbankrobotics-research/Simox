@@ -17,10 +17,8 @@ namespace VirtualRobot
     Scene::~Scene()
     {
         robots.clear();
-        robotConfigs.clear();
         obstacles.clear();
         manipulationObjects.clear();
-        //sceneObjectSets.clear();
         trajectories.clear();
     }
 
@@ -394,20 +392,15 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL robot data");
         THROW_VR_EXCEPTION_IF(!config, "NULL config data");
 
-        if (hasRobotConfig(robot, config))
-        {
-            return;
-        }
-
-        robotConfigs[robot].push_back(config);
+        robot->registerConfiguration(config);
     }
 
     void Scene::registerRobotConfig(RobotPtr robot, std::vector<RobotConfigPtr> configs)
     {
-        for (size_t i = 0; i < configs.size(); i++)
-        {
-            registerRobotConfig(robot, configs[i]);
-        }
+        THROW_VR_EXCEPTION_IF(!robot, "NULL robot data");
+        THROW_VR_EXCEPTION_IF(configs.size()==0, "No config data");
+
+        robot->registerConfiguration(configs);
     }
 
     void Scene::deRegisterRobotConfig(RobotPtr robot, RobotConfigPtr config)
@@ -415,109 +408,44 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
         THROW_VR_EXCEPTION_IF(!config, "NULL data");
 
-        if (!hasRobotConfig(robot, config))
-        {
-            return;
-        }
-
-        std::vector< RobotConfigPtr > configs = robotConfigs[robot];
-
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
-        {
-            if ((*i) == config)
-            {
-                configs.erase(i);
-                robotConfigs[robot] = configs;
-                break;
-            }
-        }
+        robot->deRegisterConfiguration(config);
     }
 
     void Scene::deRegisterRobotConfig(RobotPtr robot, const std::string& name)
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
-
-        if (!hasRobotConfig(robot, name))
-        {
-            return;
-        }
-
-        std::vector< RobotConfigPtr > configs = robotConfigs[robot];
-
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                configs.erase(i);
-                robotConfigs[robot] = configs;
-                break;
-            }
-        }
+        robot->deRegisterConfiguration(name);
     }
 
     bool Scene::hasRobotConfig(RobotPtr robot, RobotConfigPtr config)
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
         THROW_VR_EXCEPTION_IF(!config, "NULL data");
-        std::vector< RobotConfigPtr > configs = robotConfigs[robot];
 
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
-        {
-            if (*i == config)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return robot->hasConfiguration(config);
     }
 
     bool Scene::hasRobotConfig(RobotPtr robot, const std::string& name)
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
-        std::vector< RobotConfigPtr > configs = robotConfigs[robot];
-
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                return true;
-            }
-        }
-
-        return false;
-
+        return robot->hasConfiguration(name);
     }
 
     VirtualRobot::RobotConfigPtr Scene::getRobotConfig(const std::string& robotName, const std::string& name)
     {
-        for (std::map< RobotPtr, std::vector< RobotConfigPtr > >::iterator i = robotConfigs.begin(); i != robotConfigs.end(); i++)
+        ModelPtr r = getRobot(robotName);
+        if (!r)
         {
-            if (i->first->getName() == robotName)
-            {
-                return getRobotConfig(i->first, name);
-            }
+            VR_ERROR << "No model with name " << robotName << endl;
+            return RobotConfigPtr();
         }
-
-        VR_WARNING << "No robot with name " << robotName << " registered in scene " << this->name << endl;
-        return RobotConfigPtr();
+        return r->getConfiguration(name);
     }
 
     VirtualRobot::RobotConfigPtr Scene::getRobotConfig(RobotPtr robot, const std::string& name)
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
-        std::vector< RobotConfigPtr > configs = robotConfigs[robot];
-
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                return *i;
-            }
-        }
-
-        VR_WARNING << "No robotConfig with name " << name << " registered for robot " << robot->getName() << " in scene " << this->name << endl;
-        return RobotConfigPtr();
+        return robot->getConfiguration(name);
     }
 
     std::string Scene::getName() const
@@ -608,12 +536,7 @@ namespace VirtualRobot
             return std::vector< RobotConfigPtr >();
         }
 
-        if (robotConfigs.find(robot) == robotConfigs.end())
-        {
-            return std::vector< RobotConfigPtr >();
-        }
-
-        return robotConfigs[robot];
+        return robot->getConfigurations();
     }
 	
     VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& robot, const std::string rns)
@@ -629,124 +552,7 @@ namespace VirtualRobot
         return r->getModelNodeSet(rns);
     }
 
-    /*void Scene::registerModelNodeSet(ModelNodeSetPtr sos)
-    {
-        THROW_VR_EXCEPTION_IF(!sos, "NULL config data");
 
-        if (hasModelNodeSet(sos))
-        {
-            return;
-        }
-
-        //sceneObjectSets.push_back(sos);
-    }*/
-
-    /*void Scene::deRegisterModelNodeSet(ModelNodeSetPtr sos)
-    {
-        THROW_VR_EXCEPTION_IF(!sos, "NULL data");
-
-        if (!hasModelNodeSet(sos))
-        {
-            return;
-        }
-
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i) == sos)
-            {
-                sceneObjectSets.erase(i);
-                break;
-            }
-        }
-    }*/
-
-    /*void Scene::deRegisterModelNodeSet(const std::string& name)
-    {
-        if (!hasModelNodeSet(name))
-        {
-            return;
-        }
-
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                sceneObjectSets.erase(i);
-                break;
-            }
-        }
-    }*/
-
-    /*bool Scene::hasModelNodeSet(ModelNodeSetPtr sos) const
-    {
-        THROW_VR_EXCEPTION_IF(!sos, "NULL data");
-
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if (*i == sos)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }*/
-
-    /*bool Scene::hasModelNodeSet(const std::string& name) const
-    {
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }*/
-
-    /*VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& name)
-    {
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                return (*i);
-            }
-        }
-
-        return ModelNodeSetPtr();
-    }*/
-
-    /*VirtualRobot::LinkSetPtr Scene::getLinkSet(const std::string& name)
-    {
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                LinkSetPtr l = std::dynamic_pointer_cast<LinkSet>(*i);
-                if (l)
-                    return l;
-            }
-        }
-
-        return LinkSetPtr();
-    }
-
-    VirtualRobot::JointSetPtr Scene::getJointSet(const std::string& name)
-    {
-        for (auto i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
-        {
-            if ((*i)->getName() == name)
-            {
-                JointSetPtr l = std::dynamic_pointer_cast<JointSet>(*i);
-                if (l)
-                    return l;
-            }
-        }
-
-        return JointSetPtr();
-    }*/
 
     std::vector<ModelSetPtr> Scene::getModelSets()
     {
@@ -768,34 +574,6 @@ namespace VirtualRobot
         return ModelSetPtr();
     }
 
-    /*std::vector< ModelNodeSetPtr > Scene::getModelNodeSets()
-    {
-        return sceneObjectSets;
-    }*/
-
-    /*std::vector< LinkSetPtr > Scene::getLinkSets()
-    {
-        std::vector< LinkSetPtr > result;
-        for (auto s : sceneObjectSets)
-        {
-            LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(s);
-            if (ls)
-                result.push_back(ls);
-        }
-        return result;
-    }*/
-
-    /*std::vector< JointSetPtr > Scene::getJointSets()
-    {
-        std::vector< JointSetPtr > result;
-        for (auto s : sceneObjectSets)
-        {
-            JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(s);
-            if (ls)
-                result.push_back(ls);
-        }
-        return result;
-    }*/
 
     std::string Scene::getXMLString(const std::string& basePath)
     {
@@ -840,13 +618,13 @@ namespace VirtualRobot
             // store current config
             ss << currentConfig->toXML(2);
 
-            // store all other configs for robot
-            std::vector<RobotConfigPtr> rc = getRobotConfigs(robots[i]);
+            // store all other configs for robot -> already included in robot
+            /*std::vector<RobotConfigPtr> rc = getRobotConfigs(robots[i]);
 
             for (size_t j = 0; j < rc.size(); j++)
             {
                 ss << rc[j]->toXML(2);
-            }
+            }*/
 
             ss << "\t</Robot>\n";
             ss << "\n";
@@ -866,12 +644,12 @@ namespace VirtualRobot
             ss << "\n";
         }
 
-        // process sceneObjectSets
-        /*for (size_t i = 0; i < sceneObjectSets.size(); i++)
+        // process model sets
+        for (size_t i = 0; i < modelSets.size(); i++)
         {
-            ss << sceneObjectSets[i]->toXML(1);
+            ss << modelSets[i]->toXML(1);
             ss << "\n";
-        }*/
+        }
 
         // process trajectories
         for (size_t i = 0; i < trajectories.size(); i++)
