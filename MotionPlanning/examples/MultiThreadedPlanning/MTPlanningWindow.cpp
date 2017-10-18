@@ -13,18 +13,11 @@
 #include <qimage.h>
 #include <qgl.h>
 
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-
 #include <sstream>
 
 using namespace std;
 
-//Globel variables
+//Global variables
 float TIMER_MS = 30.0f;
 bool runtimeDisplayed = false;
 bool optiTimeDisplayed = false;
@@ -32,24 +25,16 @@ bool optiTimeDisplayed = false;
 MTPlanningWindow::MTPlanningWindow(const std::string &robotFile)
     : QMainWindow(NULL)
 {
-
-    graspObjectSep = NULL;
-    robotSep = NULL;
-
     scene = NULL;
 
-    scene = new MTPlanningScenery(robotFile);
-    sceneSep = scene->getScene();
-    setupLayoutMTPlanning();
+    setupLayoutMTPlanning(robotFile);
 
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-
-    SoTimerSensor* timer1 = new SoTimerSensor(timerCBPlanning, this);
-    SoTimerSensor* timer2 = new SoTimerSensor(timerCBOptimize, this);
-    timer1->setInterval(SbTime(TIMER_MS / 1000.0f));
-    timer2->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timer1);
-    sensor_mgr->insertTimerSensor(timer2);
+    timer1 = new QTimer(this);
+    connect(timer1, SIGNAL(timeout()), this, SLOT(timerCBPlanning()));
+    timer1->start(TIMER_MS);
+    timer2 = new QTimer(this);
+    connect(timer2, SIGNAL(timeout()), this, SLOT(timerCBOptimize()));
+    timer2->start(TIMER_MS);
 }
 
 
@@ -62,71 +47,65 @@ MTPlanningWindow::~MTPlanningWindow()
 }
 
 
-void MTPlanningWindow::timerCBPlanning(void* data, SoSensor* /*sensor*/)
+void MTPlanningWindow::timerCBPlanning()
 {
-    MTPlanningWindow* mtWindow = static_cast<MTPlanningWindow*>(data);
-    mtWindow->scene->checkPlanningThreads();
+    scene->checkPlanningThreads();
     int nThreadsWorking = 0;
     int nThreadsIdle = 0;
-    mtWindow->scene->getThreadCount(nThreadsWorking, nThreadsIdle);
+    scene->getThreadCount(nThreadsWorking, nThreadsIdle);
     QString sText;
     sText = "Threads_Working: " + QString::number(nThreadsWorking);
-    mtWindow->UI.labelThreads->setText(sText);
+    UI.labelThreads->setText(sText);
     sText = "Threads_Idle: " + QString::number(nThreadsIdle);
-    mtWindow->UI.labelThreadsIdle->setText(sText);
+    UI.labelThreadsIdle->setText(sText);
 
-    if (!runtimeDisplayed && mtWindow->scene->getPlannersStarted() && nThreadsWorking == 0)
+    if (!runtimeDisplayed && scene->getPlannersStarted() && nThreadsWorking == 0)
     {
-        mtWindow->endTime = clock();
-        double runtime = (double)(mtWindow->endTime - mtWindow->startTime) / CLOCKS_PER_SEC;
+        endTime = clock();
+        double runtime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
         sText = "Runtime: " + QString::number(runtime) + "s";
-        mtWindow->UI.labelRuntime->setText(sText);
+        UI.labelRuntime->setText(sText);
         cout << "Runtime = " << runtime << endl;
         runtimeDisplayed = true;
     }
 }
 
 
-void MTPlanningWindow::timerCBOptimize(void* data, SoSensor* /*sensor*/)
+void MTPlanningWindow::timerCBOptimize()
 {
-    MTPlanningWindow* mtWindow = static_cast<MTPlanningWindow*>(data);
-    mtWindow->scene->checkOptimizeThreads();
+    scene->checkOptimizeThreads();
     int nWorking = 0;
     int nIdle = 0;
-    mtWindow->scene->getOptimizeThreadCount(nWorking, nIdle);
+    scene->getOptimizeThreadCount(nWorking, nIdle);
     QString sText;
     sText = "Opti_Threads_Working: " + QString::number(nWorking);
-    mtWindow->UI.labelOptiWork->setText(sText);
+    UI.labelOptiWork->setText(sText);
     sText = "Opti_Threads_Idle: " + QString::number(nIdle);
-    mtWindow->UI.labelOptiIdle->setText(sText);
+    UI.labelOptiIdle->setText(sText);
 
-    if (!optiTimeDisplayed && mtWindow->scene->getOptimizeStarted() && (nWorking == 0))
+    if (!optiTimeDisplayed && scene->getOptimizeStarted() && (nWorking == 0))
     {
-        mtWindow->optiEndTime = clock();
-        double runtime = (double)(mtWindow->optiEndTime - mtWindow->optiStartTime) / CLOCKS_PER_SEC;
+        optiEndTime = clock();
+        double runtime = (double)(optiEndTime - optiStartTime) / CLOCKS_PER_SEC;
         cout << "Runtime:" << runtime << endl;
         sText = "Optimizing Time: " + QString::number(runtime) + "s";
-        mtWindow->UI.labelOptiTime->setText(sText);
+        UI.labelOptiTime->setText(sText);
         cout << "Optimizing Time = " << runtime << endl;
         optiTimeDisplayed = true;
     }
 }
 
 
-void MTPlanningWindow::setupLayoutMTPlanning()
+void MTPlanningWindow::setupLayoutMTPlanning(const std::string &robotFile)
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
     // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-    viewer->setAntialiasing(true, 4);
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph((SoNode*)sceneSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
+
+    scene = new MTPlanningScenery(robotFile, viewer);
 
     connect(UI.pushButtonBuild, SIGNAL(clicked()), this, SLOT(buildScene()));
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(reset()));
@@ -156,8 +135,7 @@ void MTPlanningWindow::closeEvent(QCloseEvent* event)
 
 int MTPlanningWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -166,7 +144,9 @@ void MTPlanningWindow::quit()
 {
     std::cout << "MTPlanningWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    timer1->stop();
+    timer2->stop();
+    viewer->stop();
 }
 
 

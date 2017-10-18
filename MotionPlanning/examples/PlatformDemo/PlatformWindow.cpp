@@ -10,13 +10,11 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Planner/BiRrt.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include "MotionPlanning/PostProcessing/ElasticBandProcessor.h"
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
 
 #include <QFileDialog>
 
@@ -33,6 +31,7 @@ using namespace std;
 using namespace VirtualRobot;
 
 #ifdef Simox_USE_COIN_VISUALIZATION
+    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
@@ -309,8 +308,6 @@ void PlatformWindow::buildRRTVisu()
 #else
     VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
 #endif
-
-    //std::shared_ptr<MotionPlanning::CoinRrtWorkspaceVisualization> w(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {

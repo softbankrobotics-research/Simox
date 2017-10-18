@@ -7,7 +7,6 @@
 
 #include <MotionPlanning/Planner/PlanningThread.h>
 #include <MotionPlanning/PostProcessing/PathProcessingThread.h>
-
 #include <MotionPlanning/CSpace/CSpaceSampled.h>
 #include <MotionPlanning/CSpace/CSpaceNode.h>
 #include <MotionPlanning/Planner/MotionPlanner.h>
@@ -15,8 +14,8 @@
 
 #include "VirtualRobot/Model/ModelSet.h"
 
-
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 using namespace VirtualRobot;
 using namespace MotionPlanning;
@@ -24,7 +23,7 @@ using namespace MotionPlanning;
 class MTPlanningScenery
 {
 public:
-    MTPlanningScenery(const std::string &robotFile);
+    MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer);
     ~MTPlanningScenery();
 
     void loadRobotMTPlanning(bool bMultiCollisionCheckers);
@@ -33,10 +32,7 @@ public:
     void setRobotModelShape(bool collisionModel);
 
     void buildScene();
-    SoSeparator* getScene()
-    {
-        return sceneSep;
-    }
+
     void reset();
 
     // if bMultiCollisionCheckers is set, more than one collision checker is used
@@ -67,7 +63,7 @@ public:
 
 protected:
 
-    void addBBCube(SoSeparator* result);
+    void addBBCube();
 
     void getRandomPos(float& x, float& y, float& z);
 
@@ -75,10 +71,8 @@ protected:
     std::string colModel;
     std::string kinChainName;
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* obstSep;
-    SoSeparator* startEndVisu;
+    SimoxGui::ViewerInterfacePtr viewer;
+
     bool plannersStarted;
     bool optimizeStarted;
 
@@ -88,7 +82,7 @@ protected:
     std::vector<RrtPtr> planners;
     std::vector<CSpacePathPtr> solutions;
     std::vector<CSpacePathPtr> optiSolutions;
-    std::vector<SoSeparator*> visualisations;
+    //std::map<VisualizationPtr > visualisations;
     std::vector<RobotPtr> robots;
 
     std::vector< Eigen::VectorXf > startPositions;

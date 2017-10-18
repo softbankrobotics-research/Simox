@@ -1,8 +1,7 @@
 #include "MTPlanningScenery.h"
 
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/Visualization.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/Tools/MathTools.h"
 #include "VirtualRobot/Model/Model.h"
@@ -12,62 +11,43 @@
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "MotionPlanning/Planner/Rrt.h"
-#include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoUnits.h>
-#include <Inventor/nodes/SoSphere.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoLineSet.h>
-#include <Inventor/nodes/SoBaseColor.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/nodes/SoScale.h>
-
 #include <sstream>
 
 using namespace std;
 using namespace VirtualRobot;
 using namespace MotionPlanning;
 
-
-//#define ROBOT_DIM 3
 #define SHORTEN_LOOP 600
 
-MTPlanningScenery::MTPlanningScenery(const std::string &robotFile)
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f2;
+#endif
+
+
+MTPlanningScenery::MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer)
+    : viewer(viewer)
 {
 
     robotModelVisuColModel = true;
 
-    sceneSep = new SoSeparator();
-    sceneSep->ref();
-    SoUnits* u = new SoUnits();
-    u->units = SoUnits::MILLIMETERS;
-    sceneSep->addChild(u);
-    addBBCube(sceneSep);
+    addBBCube();
 
     colModel = "colModel";
     kinChainName = "All";
     TCPName = "Visu";
-
-    obstSep = NULL;
 
     robotFilename = robotFile;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFilename);
 
     plannersStarted = false;
     optimizeStarted = false;
-    startEndVisu = NULL;
 
     buildScene();
 }
@@ -76,8 +56,6 @@ MTPlanningScenery::~MTPlanningScenery()
 {
     startPositions.clear();
     goalPositions.clear();
-
-    sceneSep->unref();
 }
 
 void MTPlanningScenery::reset()
@@ -131,7 +109,8 @@ void MTPlanningScenery::reset()
     solutions.clear();
     optiSolutions.clear();
 
-    for (int i = 0; i < (int)visualisations.size(); i++)
+    viewer->clearLayer("visualizations");
+/*    for (int i = 0; i < (int)visualisations.size(); i++)
     {
         if (visualisations[i] != NULL)
         {
@@ -139,31 +118,18 @@ void MTPlanningScenery::reset()
         }
     }
 
-    visualisations.clear();
+    visualisations.clear();*/
 
-    if (startEndVisu != NULL)
-    {
-        sceneSep->removeChild(startEndVisu);
-    }
-
-    startEndVisu = NULL;
+    viewer->clearLayer("startgoal");
 }
 
 void MTPlanningScenery::buildScene()
 {
-    if (obstSep)
-    {
-        sceneSep->removeChild(obstSep);
-        obstSep = NULL;
-    }
+    viewer->clearLayer("obstacles");
 
     float fCubeSize = 50.0f;
     float fPlayfieldSize = 1000.0f - fCubeSize;
     std::vector<ModelPtr> environmentModels;
-
-    obstSep = new SoSeparator();
-
-    sceneSep->addChild(obstSep);
 
     int ob = 2000;
     cout << "Randomly placing " << ob << " obstacles..." << endl;
@@ -181,14 +147,16 @@ void MTPlanningScenery::buildScene()
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
         environmentModels.push_back(o);
-        SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(o, ModelLink::Full);;
-        obstSep->addChild(visualisationNode);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(o, ModelLink::Full);
+        std::stringstream on;
+        on << "Obstacle-" << i;
+        viewer->addVisualization("obstacles", on.str(), v);
     }
 
-    // TODO....
-    //environmentUnited = environment->createStaticObstacle("MultiThreadedObstacle");
     environment.reset(new ModelSet("ObstacleModels", environmentModels));
     environmentUnited = environment->createStaticObstacle("Obstacles");
+
+    viewer->viewAll();
 }
 
 void MTPlanningScenery::getRandomPos(float& x, float& y, float& z)
@@ -262,7 +230,6 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     pCcm->addCollisionModel(pRobot->getLinkSet(colModel));
     ObstaclePtr pEnv = environmentUnited;
 
-    //SceneObjectSetPtr pEnv = environment;
     if (bMultiCollisionCheckers)
     {
         //clone environment
@@ -326,14 +293,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     solutions.push_back(CSpacePathPtr());
     optiSolutions.push_back(CSpacePathPtr());
     optimizeThreads.push_back(PathProcessingThreadPtr());
-    visualisations.push_back(NULL);
-
-    if (startEndVisu == NULL)
-    {
-        startEndVisu = new SoSeparator();
-        sceneSep->addChild(startEndVisu);
-    }
-
+/*
     SoSphere* s = new SoSphere();
     s->radius = 30.0f;
     SoMaterial* mat = new SoMaterial();
@@ -341,9 +301,10 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     mat->diffuseColor.setValue(1.0, 0, 0);
     SoMaterial* mat2 = new SoMaterial();
     mat2->ambientColor.setValue(0, 0, 1.0);
-    mat2->diffuseColor.setValue(0, 0, 1.0);
+    mat2->diffuseColor.setValue(0, 0, 1.0);*/
 
-    RobotNodePtr rn = pRobot->getModelNode(TCPName);
+
+    FramePtr rn = pRobot->getFrame(TCPName);
 
     if (!rn)
     {
@@ -352,54 +313,32 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     kinChain->setJointValues(start);
     Eigen::Matrix4f gp = rn->getGlobalPose();
-    SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransform(gp);//no transformation -> our scene is already in MM units
+    VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 1.0f, 0, 0);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v, gp);
+    std::stringstream nameStart;
+    nameStart << "start-point-" << id;
+    viewer->addVisualization("startgoal", nameStart.str(), v);
+
     kinChain->setJointValues(goal);
-    gp = rn->getGlobalPose();
-    SoMatrixTransform* mt2 = CoinVisualizationFactory::getMatrixTransform(gp); //no transformation -> our scene is already in MM units
+    Eigen::Matrix4f gp2 = rn->getGlobalPose();
+    VisualizationNodePtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0, 0, 1.0f);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2, gp2);
+    std::stringstream nameGoal;
+    nameGoal << "goal-point-" << id;
+    viewer->addVisualization("startgoal", nameGoal.str(), v2);
+    //SoMatrixTransform* mt2 = CoinVisualizationFactory::getMatrixTransform(gp); //no transformation -> our scene is already in MM units
 
-    SoSeparator* sep1 = new SoSeparator();
-    sep1->addChild(mt);
-    sep1->addChild(mat);
-    sep1->addChild(s);
+    std::stringstream nameStartText;
+    nameStartText << "start-" << id;
+    VisualizationNodePtr v1t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameStartText.str(), true, 7.0f, VisualizationFactory::Color::Black(), 10.0f, 0, 0);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v1t, gp);
+    viewer->addVisualization("startgoal", nameStartText.str(), v1t);
 
-    SoSeparator* sep1a = new SoSeparator();
-    SoBaseColor* bc1 = new SoBaseColor();
-    bc1->rgb.setValue(0, 0, 0);
-    sep1a->addChild(bc1);
-    SoTranslation* tr1 = new SoTranslation();
-    tr1->translation.setValue(35, 0, 0);
-    sep1a->addChild(tr1);
-    SoScale* sc1 = new SoScale();
-    sc1->scaleFactor.setValue(10, 10, 10);
-    sep1a->addChild(sc1);
-    std::stringstream ss;
-    ss << "Start_" << id;
-    SoSeparator* bb1 = CoinVisualizationFactory::CreateBillboardText(ss.str());
-    sep1a->addChild(bb1);
-    sep1->addChild(sep1a);
-    SoSeparator* sep2 = new SoSeparator();
-    sep2->addChild(mt2);
-    sep2->addChild(mat2);
-    sep2->addChild(s);
-
-    SoSeparator* sep2a = new SoSeparator();
-    SoBaseColor* bc = new SoBaseColor();
-    bc->rgb.setValue(0, 0, 0);
-    sep2a->addChild(bc);
-    SoTranslation* tr = new SoTranslation();
-    tr->translation.setValue(30, 0, 0);
-    sep2a->addChild(tr);
-    SoScale* sc2 = new SoScale();
-    sc2->scaleFactor.setValue(10, 10, 10);
-    sep2a->addChild(sc2);
-    std::stringstream ss2;
-    ss2 << "Goal_" << id;
-    SoSeparator* bb2 = CoinVisualizationFactory::CreateBillboardText(ss2.str());
-    sep2a->addChild(bb2);
-    sep2->addChild(sep2a);
-
-    startEndVisu->addChild(sep1);
-    startEndVisu->addChild(sep2);
+    std::stringstream nameGoalText;
+    nameGoalText << "goal-" << id;
+    VisualizationNodePtr v2t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameGoalText.str(), true, 7.0f, VisualizationFactory::Color::Black(), 10.0f, 0, 0);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2t, gp2);
+    viewer->addVisualization("startgoal", nameGoalText.str(), v2t);
 }
 
 
@@ -477,10 +416,6 @@ void MTPlanningScenery::startPlanning()
     }
 
     cout << "... done" << endl;
-
-    // give thread some time to startup
-    //boost::this_thread::sleep(boost::posix_time::milliseconds(750));
-    // now we can check if there is a solution (todo: better startup?!)
 
     plannersStarted = true;
 }
@@ -602,19 +537,9 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
     if ((int)robots.size() == 1)
     {
-        SoNode* visualization = CoinVisualizationFactory::getCoinVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
-        //SoNode* visualisationNode = NULL;
-        robotSep = new SoSeparator();
-
-        if (visualization)
-        {
-            robotSep->addChild(visualization);
-        }
-
-        //sceneSep->addChild(robotSep);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
+        viewer->addVisualization("robot", "robot", v);
     }
-
-    //colModelRobots.push_back(pRobot->getCollisionModel(colModel));
 
     int trFull = pRobot->getNumFaces(false);
     int trCol = pRobot->getNumFaces(true);
@@ -626,15 +551,9 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
 
 // constructs a bounding box cube for the rrt and adds it as child to result
-void MTPlanningScenery::addBBCube(SoSeparator* result)
+void MTPlanningScenery::addBBCube()
 {
-    // parameters for cube
     float lineSize = 2.0;
-    SoMaterial* materialLine = new SoMaterial();
-    materialLine->ambientColor.setValue(0.0, 0.0, 0.0);
-    materialLine->diffuseColor.setValue(0.0, 0.0, 0.0);
-    SoDrawStyle* lineStyle = new SoDrawStyle();
-    lineStyle->lineWidth.setValue(lineSize);
     float x1 = -1000.0f;
     float y1 = -1000.0f;
     float z1 = -1000.0f;
@@ -642,102 +561,57 @@ void MTPlanningScenery::addBBCube(SoSeparator* result)
     float y2 = 1000.0f;
     float z2 = 1000.0f;
 
-    // construct 4 liensets:
-    SoSeparator* s2 = new SoSeparator();
-    s2->addChild(lineStyle);
-    s2->addChild(materialLine);
-    int32_t pointn = 5;
-    SbVec3f points[5];
-    points[0].setValue(x1, y1, z1);
-    points[1].setValue(x2, y1, z1);
-    points[2].setValue(x2, y2, z1);
-    points[3].setValue(x1, y2, z1);
-    points[4].setValue(x1, y1, z1);
-    SoCoordinate3* coordinate3 = new SoCoordinate3;
-    coordinate3->point.setValues(0, pointn, points);
-    s2->addChild(coordinate3);
-    SoLineSet* lineSet = new SoLineSet;
-    lineSet->numVertices.setValues(0, 1, &pointn);
-    s2->addChild(lineSet);
-    result->addChild(s2);
+    Eigen::Vector3f p1(x1,y1,z1);
+    Eigen::Vector3f p2(x2,y1,z1);
+    Eigen::Vector3f p3(x2,y2,z1);
+    Eigen::Vector3f p4(x1,y2,z1);
 
-    s2 = new SoSeparator();
-    s2->addChild(lineStyle);
-    s2->addChild(materialLine);
-    pointn = 5;
-    points[0].setValue(x1, y1, z2);
-    points[1].setValue(x2, y1, z2);
-    points[2].setValue(x2, y2, z2);
-    points[3].setValue(x1, y2, z2);
-    points[4].setValue(x1, y1, z2);
-    coordinate3 = new SoCoordinate3;
-    coordinate3->point.setValues(0, pointn, points);
-    s2->addChild(coordinate3);
-    lineSet = new SoLineSet;
-    lineSet->numVertices.setValues(0, 1, &pointn);
-    s2->addChild(lineSet);
-    result->addChild(s2);
+    Eigen::Vector3f p1b(x1,y1,z2);
+    Eigen::Vector3f p2b(x2,y1,z2);
+    Eigen::Vector3f p3b(x2,y2,z2);
+    Eigen::Vector3f p4b(x1,y2,z2);
 
-    s2 = new SoSeparator();
-    s2->addChild(lineStyle);
-    s2->addChild(materialLine);
-    pointn = 5;
-    points[0].setValue(x1, y1, z1);
-    points[1].setValue(x2, y1, z1);
-    points[2].setValue(x2, y1, z2);
-    points[3].setValue(x1, y1, z2);
-    points[4].setValue(x1, y1, z1);
-    coordinate3 = new SoCoordinate3;
-    coordinate3->point.setValues(0, pointn, points);
-    s2->addChild(coordinate3);
-    lineSet = new SoLineSet;
-    lineSet->numVertices.setValues(0, 1, &pointn);
-    s2->addChild(lineSet);
-    result->addChild(s2);
+    VisualizationNodePtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
+    VisualizationNodePtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p3, lineSize, 0, 0, 0);
+    VisualizationNodePtr v3 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p4, lineSize, 0, 0, 0);
+    VisualizationNodePtr v4 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p1, lineSize, 0, 0, 0);
+    viewer->addVisualization("bbox", "l1", v1);
+    viewer->addVisualization("bbox", "l2", v2);
+    viewer->addVisualization("bbox", "l3", v3);
+    viewer->addVisualization("bbox", "l4", v4);
 
-    s2 = new SoSeparator();
-    s2->addChild(lineStyle);
-    s2->addChild(materialLine);
-    pointn = 5;
-    points[0].setValue(x1, y2, z1);
-    points[1].setValue(x2, y2, z1);
-    points[2].setValue(x2, y2, z2);
-    points[3].setValue(x1, y2, z2);
-    points[4].setValue(x1, y2, z1);
-    coordinate3 = new SoCoordinate3;
-    coordinate3->point.setValues(0, pointn, points);
-    s2->addChild(coordinate3);
-    lineSet = new SoLineSet;
-    lineSet->numVertices.setValues(0, 1, &pointn);
-    s2->addChild(lineSet);
-    result->addChild(s2);
+    VisualizationNodePtr v1b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p2b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v2b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p3b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v3b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v4b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p1b, lineSize, 0, 0, 0);
+    viewer->addVisualization("bbox", "l1b", v1b);
+    viewer->addVisualization("bbox", "l2b", v2b);
+    viewer->addVisualization("bbox", "l3b", v3b);
+    viewer->addVisualization("bbox", "l4b", v4b);
+
+    VisualizationNodePtr v1c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
+    VisualizationNodePtr v2c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p2b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v3c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p1b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v4c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p1, lineSize, 0, 0, 0);
+    viewer->addVisualization("bbox", "l1c", v1c);
+    viewer->addVisualization("bbox", "l2c", v2c);
+    viewer->addVisualization("bbox", "l3c", v3c);
+    viewer->addVisualization("bbox", "l4c", v4c);
+
+    VisualizationNodePtr v1d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p3, lineSize, 0, 0, 0);
+    VisualizationNodePtr v2d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p3b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v3d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
+    VisualizationNodePtr v4d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p4, lineSize, 0, 0, 0);
+    viewer->addVisualization("bbox", "l1d", v1d);
+    viewer->addVisualization("bbox", "l2d", v2d);
+    viewer->addVisualization("bbox", "l3d", v3d);
+    viewer->addVisualization("bbox", "l4d", v4d);
 }
 
 
 void MTPlanningScenery::setRobotModelShape(bool collisionModel)
 {
     robotModelVisuColModel = collisionModel;
-
-    if (!sceneSep || !robotSep)
-    {
-        return;
-    }
-
-    // update robotsep
-    //sceneSep->removeChild(robotSep);
-    if (robots.size() > 0)
-    {
-        SoNode* visualization = CoinVisualizationFactory::getCoinVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
-        //SoNode* visualisationNode = NULL;
-        robotSep = new SoSeparator();
-
-        if (visualization)
-        {
-            robotSep->addChild(visualization);
-        }
-
-        //sceneSep->addChild(robotSep);
-    }
 }
 
 
@@ -759,12 +633,24 @@ void MTPlanningScenery::checkPlanningThreads()
                 if (sol)
                 {
                     solutions[i] = sol->clone();
-                    cout << "fetching solution " << i << endl;
-                    CoinRrtWorkspaceVisualizationPtr visu(new CoinRrtWorkspaceVisualization(robots[i], CSpaces[i], TCPName));
-                    visu->addCSpacePath(solutions[i]);
-                    visu->addTree(planners[i]->getTree());
-                    visualisations[i] = visu->getCoinVisualization();
-                    sceneSep->addChild(visualisations[i]);
+                    VR_INFO << "fetching solution " << i << endl;
+
+                    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+                    #ifdef Simox_USE_COIN_VISUALIZATION
+                        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robots[i], CSpaces[i], TCPName));
+                    #else
+                        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+                    #endif
+
+                    w->addCSpacePath(solutions[i]);
+                    w->addTree(planners[i]->getTree());
+                    VisualizationPtr wv = w->getVisualization();
+                    if (wv)
+                    {
+                        std::stringstream n;
+                        n << "solution-orig-" << i;
+                        viewer->addVisualization("solution",n.str(), wv);
+                    }
                 }
                 else
                 {
@@ -793,13 +679,23 @@ void MTPlanningScenery::checkOptimizeThreads()
             {
                 if (!optiSolutions[i])
                 {
-                    cout << "fetching solution " << i << endl;
-                    sceneSep->removeChild(visualisations[i]);
+                    VR_INFO << "fetching optimized solution " << i << endl;
+                    MotionPlanning::RrtWorkspaceVisualizationPtr w;
+                    #ifdef Simox_USE_COIN_VISUALIZATION
+                        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robots[i], CSpaces[i], TCPName));
+                    #else
+                        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
+                    #endif
+
                     optiSolutions[i] = pOptiSol->clone();
-                    CoinRrtWorkspaceVisualizationPtr visu(new CoinRrtWorkspaceVisualization(robots[i], CSpaces[i], TCPName));
-                    visu->addCSpacePath(optiSolutions[i]);
-                    visualisations[i] = visu->getCoinVisualization();
-                    sceneSep->addChild(visualisations[i]);
+                    w->addCSpacePath(optiSolutions[i], RrtWorkspaceVisualization::ColorSet::eGreen);
+                    VisualizationPtr wv = w->getVisualization();
+                    if (wv)
+                    {
+                        std::stringstream n;
+                        n << "solution-optimized-" << i;
+                        viewer->addVisualization("solution",n.str(), wv);
+                    }
                 }
             }
             else
@@ -857,174 +753,3 @@ int MTPlanningScenery::getThreads()
 {
     return (int)(planningThreads.size());
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// Sequential Planning Methods
-/*void MTPlanningScenery::loadRobotSTPlanning()
-{
-    if(robot != NULL)
-    {
-        sceneSep->removeChild(robotSep);
-        delete robot;
-        robot = NULL;
-    }
-
-    // xml parsing
-    CXMLRobotParser xmlParser;
-    //xmlParser.forceBoundingBox(true);
-    if (!xmlParser.parse(robotFilename.c_str()))
-    {
-        cout << "Error parsing file " << robotFilename << ". Aborting" << endl;
-        return;
-    }
-
-    // get robot
-    robot = xmlParser.GetRobot();
-    if (robot == NULL)
-    {
-      cout << "error while parsing xml file: no pRobot.." << std::endl;
-      return;
-    }
-    cout << "Successfully read " << robotFilename << std::endl;
-
-    robotSep = new SoSeparator();
-    robot->GetVisualisationGraph(robotSep, robotModelVisuColModel);
-    sceneSep->addChild(robotSep);
-
-    m_pColModelRobot = robot->GetCollisionModel(colModel);
-
-    int trFull = robot->GetNumberOfTriangles(false);
-    int trCol = robot->GetNumberOfTriangles(true);
-
-    cout << "Loaded robot with " << trFull << "/" << trCol << " number of triangles." << endl;
-    //reset();
-}
-
-
-void MTPlanningScenery::plan(int index)
-{
-    if(robot == NULL)
-    {
-        cout << "Load a robot first!..." << endl;
-        return;
-    }
-    if(environment == NULL)
-    {
-        cout << "Create the Environment first!..." << endl;
-        return;
-    }
-
-    CColCheckManagement *pCcm = new CColCheckManagement();
-    pCcm->AddCollisionModel(robot->GetCollisionModel(colModel));
-    pCcm->SetEnvironment(environment);
-    this->CSpace1 = new CSpaceSampled(robot, pCcm, kinChain);
-    CSpace1->SetColCheckSamplingSize(1.0f);
-    CSpace1->SetSamplingSize(20.0f);
-    this->CSpace2 = new CSpaceSampled(robot, pCcm, kinChain);
-    CSpace2->SetColCheckSamplingSize(1.0f);
-    CSpace2->SetSamplingSize(20.0f);
-
-    CRrtBiPlanner *pBiPlanner = new CRrtBiPlanner(CSpace1,CSpace2,CRrtBiPlanner::RRT_CONNECT_COMPLETE_PATH,CRrtBiPlanner::RRT_CONNECT_COMPLETE_PATH);
-    pBiPlanner->SetStart(startPositions[index]);
-    pBiPlanner->SetGoal(goalPositions[index]);
-    this->m_vBiPlannersForSeq.push_back(pBiPlanner);
-
-    if (startEndVisu == NULL)
-    {
-        startEndVisu = new SoSeparator();
-        sceneSep->addChild(startEndVisu);
-    }
-    SoSphere *s = new SoSphere();
-    s->radius = 30.0f;
-    SoMaterial *mat = new SoMaterial();
-    mat->ambientColor.setValue(1.0,0,0);
-    mat->diffuseColor.setValue(1.0,0,0);
-    SoMaterial *mat2 = new SoMaterial();
-    mat2->ambientColor.setValue(0,0,1.0);
-    mat2->diffuseColor.setValue(0,0,1.0);
-    SoMatrixTransform *mt = new SoMatrixTransform();
-    SbMatrix m;
-    robot->SetConfiguration(startPositions[index], &kinChain);
-    CRobotNode *rn = robot->GetNode(TCPName);
-    if (rn == NULL)
-        return;
-    m = *(rn->GetGlobalPose(false));
-    //m.setTranslate(SbVec3f(start[0],start[1],start[2]));
-    mt->matrix.setValue(m);
-    SoMatrixTransform *mt2 = new SoMatrixTransform();
-    SbMatrix m2;
-    robot->SetConfiguration(goalPositions[index], &kinChain);
-    m2 = *(rn->GetGlobalPose(false));
-    //m2.setTranslate(SbVec3f(goal[0],goal[1],goal[2]));
-    mt2->matrix.setValue(m2);
-    SoSeparator *sep1 = new SoSeparator();
-    sep1->addChild(mt);
-    sep1->addChild(mat);
-    sep1->addChild(s);
-    SoSeparator *sep2 = new SoSeparator();
-    sep2->addChild(mt2);
-    sep2->addChild(mat2);
-    sep2->addChild(s);
-    startEndVisu->addChild(sep1);
-    startEndVisu->addChild(sep2);
-
-    bool res = pBiPlanner->Plan();
-    if(res)
-    {
-        cout << "successfully!..." << endl;
-        solutionsForSeq.push_back(pBiPlanner->GetSolution());
-        visualizationsForSeq.push_back(NULL);
-        showSolution(solutionsForSeq[g_iSolutionIndex], g_iSolutionIndex);
-        optiSolutionsForSeq.push_back(NULL);
-    }
-    else
-    {
-        cout << "MTPlanningScenery::plan::Plan failed..." << endl;
-    }
-    g_iSolutionIndex++;
-}
-
-
-void MTPlanningScenery::optimizeSolution(int solutionIndex)
-{
-    if((CSpace1 == NULL) || (solutionsForSeq[solutionIndex] == NULL))
-    {
-        cout << "MTPlanningScenery::optimizeSolution::Plan a solution first!..." << endl;
-        return;
-    }
-
-    int iBeforeSize = solutionsForSeq[solutionIndex]->GetPathSize();
-    CShortcutOptimizer rrtOpt(solutionsForSeq[solutionIndex],CSpace1);
-    optiSolutionsForSeq[solutionIndex] = new CRrtSolution(rrtOpt.ShortenSolutionRandom(SHORTEN_LOOP));
-    if(optiSolutionsForSeq[solutionIndex] != NULL)
-    {
-        showSolution(optiSolutionsForSeq[solutionIndex], solutionIndex);
-        int iEndSize = optiSolutionsForSeq[solutionIndex]->GetPathSize();
-        cout << "MTPlanningScenery::optimizeSolution::New Size: " << iEndSize << " Nodes." << endl;
-        cout << "MTPlanningScenery::optimizeSolution::Kicked " << (iBeforeSize - iEndSize) << " Nodes." << endl;
-    }
-    else
-    {
-        cout << "MTPlanningScenery::optimizeSolution::Optimize failed..." << endl;
-    }
-}
-
-void MTPlanningScenery::showSolution(CRrtSolution *solToShow, int solutionIndex)
-{
-    if(solToShow == NULL)
-    {
-        cout << "MTPlanningScenery::showSolution::No solution!..." << endl;
-        return;
-    }
-
-    if(visualizationsForSeq[solutionIndex] != NULL)
-    {
-        sceneSep->removeChild(visualizationsForSeq[solutionIndex]);
-    }
-    CRrtWSpaceVisualization visu(robot, TCPName);
-    visu.AddTree(kinChain, m_vBiPlannersForSeq[solutionIndex]->GetPlanningTree(), solToShow);
-    visu.BuildVisualizations(false, true);
-    visualizationsForSeq[solutionIndex] = visu.GetTreeVisualisation();
-    sceneSep->addChild(this->visualizationsForSeq[solutionIndex]);
-}
-*/

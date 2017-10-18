@@ -16,12 +16,14 @@
 #include <qlabel.h>
 #include <qslider.h>
 #include <qcheckbox.h>
+
+#include <QTimer>
+
 #include <string.h>
 #include <time.h>
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/SoOffscreenRenderer.h>
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
 
 #include "ui_MTPlanning.h"
 
@@ -55,18 +57,17 @@ public slots:
     void reset();
     void selectColCheckerComboBoxChanged(int value);
 
-protected:
-    void setupLayoutMTPlanning(); /*!< Create the contents of the window. */
+    void timerCBPlanning();
+    void timerCBOptimize();
 
-    static void timerCBPlanning(void* data, SoSensor* sensor);
-    static void timerCBOptimize(void* data, SoSensor* sensor);
+protected:
+    void setupLayoutMTPlanning(const std::string &robotFile); /*!< Create the contents of the window. */
+
+    QTimer* timer1;
+    QTimer* timer2;
 
     Ui::MainWindowMTPlanning UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* graspObjectSep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     MTPlanningScenery* scene;
 
