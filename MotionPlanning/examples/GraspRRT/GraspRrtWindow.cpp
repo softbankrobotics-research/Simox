@@ -381,17 +381,22 @@ void GraspRrtWindow::loadScene()
     }*/
 
     // Setup robot node sets and col models
-    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
+    std::vector<JointSetPtr> jointsets = robot->getJointSets();
+    std::vector<LinkSetPtr> linksets = robot->getLinkSets();
     UI.comboBoxColModelRobot->clear();
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
 
-    for (size_t i = 0; i < rnss.size(); i++)
+    for (size_t i = 0; i < jointsets.size(); i++)
     {
-        qtext = rnss[i]->getName().c_str();
+        qtext = jointsets[i]->getName().c_str();
+        UI.comboBoxRNS->addItem(qtext);
+    }
+    for (size_t i = 0; i < linksets.size(); i++)
+    {
+        qtext = linksets[i]->getName().c_str();
         UI.comboBoxColModelRobot->addItem(qtext);
         UI.comboBoxColModelRobotStatic->addItem(qtext);
-        UI.comboBoxRNS->addItem(qtext);
     }
 
     qtext = "<none>";
@@ -438,7 +443,7 @@ void GraspRrtWindow::selectRNS(const std::string& rns)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< JointSetPtr > rnss = robot->getJointSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -450,7 +455,7 @@ void GraspRrtWindow::selectRNS(const std::string& rns)
         }
     }
 
-    VR_ERROR << "No rns with name <" << rns << "> found..." << endl;
+    VR_ERROR << "No joint set with name <" << rns << "> found..." << endl;
 }
 
 void GraspRrtWindow::selectEEF(const std::string& eefName)
@@ -498,7 +503,7 @@ void GraspRrtWindow::selectColModelRobA(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< LinkSetPtr > rnss = robot->getLinkSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -519,7 +524,7 @@ void GraspRrtWindow::selectColModelRobB(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< LinkSetPtr > rnss = robot->getLinkSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -660,7 +665,7 @@ void GraspRrtWindow::selectColModelRobB(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< LinkSetPtr > rnss = robot->getLinkSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
@@ -757,14 +762,13 @@ void GraspRrtWindow::testInit()
     test_cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
-    // todo: models vs linksets
-    /*
-    test_graspRrt.reset(new MotionPlanning::GraspRrt(test_cspace, eef, targetObject, graspQuality, colModelEnv, 0.1f, minGraspScore));
+    std::vector<ModelPtr> models = colModelEnv->getModels();
+    test_graspRrt.reset(new MotionPlanning::GraspRrt(test_cspace, eef, targetObject, graspQuality, models, 0.1f, minGraspScore));
 
     test_graspRrt->setStart(startConfig);
     // todo
     //eef->getGCP()->showCoordinateSystem(true);
-    test_graspRrt->init();*/
+    test_graspRrt->init();
 }
 
 void GraspRrtWindow::testGraspPose()
@@ -850,11 +854,7 @@ void GraspRrtWindow::plan()
     cspace->setSamplingSizeDCD(samplDCD);
     float minGraspScore = (float)UI.doubleSpinBoxMinGraspScore->value();
 
-    // todo
-    std::cout << "TODO" << endl;
-    std::vector<ModelPtr> models;
-    //ModelPtr m(new Model("env"));
-    //m->registerModelNode(colModelEnv);
+    std::vector<ModelPtr> models = colModelEnv->getModels();
     MotionPlanning::GraspRrtPtr graspRrt(new MotionPlanning::GraspRrt(cspace, eef, targetObject, graspQuality, models , 0.1f, minGraspScore));
 
     graspRrt->setStart(startConfig);
