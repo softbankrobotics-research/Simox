@@ -94,7 +94,6 @@ protected:
     void setStart(Eigen::VectorXf &goalConf);
     void setGoal(Eigen::VectorXf &goalConf);
 
-    //static void timerCB(void* data, SoSensor* sensor);
     void buildRrtVisu();
     void selectColModelRob(const std::string& colModel);
     void selectColModelEnv(const std::string& colModel);

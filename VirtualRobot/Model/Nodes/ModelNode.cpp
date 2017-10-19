@@ -564,4 +564,21 @@ namespace VirtualRobot
 
         return result;
     }
+
+
+    template<typename T>
+    std::vector<std::shared_ptr<T> > ModelNode::getAttachments() const
+    {
+        std::vector<std::shared_ptr<T> > result;
+        for (auto &a : attachments)
+        {
+            for (auto &b : a.second)
+            {
+                std::shared_ptr<T> n = std::dynamic_pointer_cast<T>(b);
+                if (n)
+                    result.push_back(n);
+            }
+        }
+        return result;
+    }
 }

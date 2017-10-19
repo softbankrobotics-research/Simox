@@ -58,10 +58,10 @@ namespace VirtualRobot
 
 
 
-	/*
-    bool ModelIO::processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath)
+
+    bool ModelIO::processSensor(ModelPtr robot, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode)
     {
-        if (!rn || !sensorXMLNode)
+        if (!robot || !sensorXMLNode)
         {
             VR_ERROR << "NULL DATA ?!" << endl;
             return false;
@@ -69,6 +69,8 @@ namespace VirtualRobot
 
         rapidxml::xml_attribute<>* attr;
         std::string sensorType;
+        std::string sensorName;
+        std::string sensorAttached;
 
         attr = sensorXMLNode->first_attribute("type", 0, false);
 
@@ -78,27 +80,81 @@ namespace VirtualRobot
         }
         else
         {
-            VR_WARNING << "No 'type' attribute for <Sensor> tag. Skipping Sensor definition of RobotNode " << rn->getName() << "!" << endl;
+            VR_WARNING << "No 'type' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
             return false;
         }
 
-        SensorPtr s;
+        attr = sensorXMLNode->first_attribute("name", 0, false);
 
-
-        SensorFactoryPtr sensorFactory = SensorFactory::fromName(sensorType, NULL);
-
-        if (sensorFactory)
+        if (attr)
         {
-            s = sensorFactory->createSensor(rn, sensorXMLNode, loadMode, basePath);
+            sensorName = attr->value();
         }
         else
         {
-            VR_WARNING << "No Factory found for sensor of type " << sensorType << ". Skipping Sensor definition of RobotNode " << rn->getName() << "!" << endl;
+            VR_WARNING << "No 'name' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
             return false;
         }
 
-        return rn->registerSensor(s);
-    }*/
+        attr = sensorXMLNode->first_attribute("attached", 0, false);
+
+        if (attr)
+        {
+            sensorAttached = attr->value();
+            if (!robot->hasModelNode(sensorAttached))
+            {
+                VR_WARNING << "Attached node " << sensorAttached << " not available in model " << robot->getName() << "!" << endl;
+                return false;
+            }
+        }
+        else
+        {
+            VR_WARNING << "No 'attached' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
+            return false;
+        }
+
+        Eigen::Matrix4f localTransform = Eigen::Matrix4f::Identity();
+
+        rapidxml::xml_node<>* xmlNode = sensorXMLNode->first_node("transform", 0, false);
+        if (xmlNode)
+        {
+            BaseIO::processTransformNode(xmlNode, "Sensor", localTransform);
+        }
+
+
+        ModelNodeAttachmentPtr s;
+
+
+        ModelNodeAttachmentFactoryPtr sensorFactory = ModelNodeAttachmentFactory::fromName(sensorType, NULL);
+
+        if (sensorFactory)
+        {
+            s = sensorFactory->createAttachment(sensorName, localTransform);
+            if (!s)
+            {
+                VR_ERROR << "Failed to create sensor " << sensorName << endl;
+                return false;
+            }
+            ModelNodePtr n = robot->getModelNode(sensorAttached);
+            if (!n)
+            {
+                VR_ERROR << "Could not get model node for sensor " << sensorName << endl;
+                return false;
+            }
+
+            // if needed, specialized sensor data can be accessed here...
+            // -> Need to cast sensor to specific type and set parameters
+
+            n->attach(s);
+        }
+        else
+        {
+            VR_WARNING << "No Factory found for sensor of type " << sensorType << ". Skipping Sensor definition of model " << robot->getName() << "!" << endl;
+            return false;
+        }
+
+        return true;
+    }
 
 
     ModelPtr ModelIO::loadModel(const std::string &xmlFile, ModelIO::RobotDescription loadMode)
@@ -108,7 +164,7 @@ namespace VirtualRobot
         if (!RuntimeEnvironment::getDataFileAbsolute(fullFile))
         {
             VR_ERROR << "Could not open XML file:" << xmlFile << endl;
-            return RobotPtr();
+            return ModelPtr();
         }
 
         // load file
@@ -117,7 +173,7 @@ namespace VirtualRobot
         if (!in.is_open())
         {
             VR_ERROR << "Could not open XML file:" << fullFile << endl;
-            return RobotPtr();
+            return ModelPtr();
         }
 
         std::stringstream buffer;
@@ -129,7 +185,7 @@ namespace VirtualRobot
 
         in.close();
 
-        VirtualRobot::RobotPtr res = createRobotModelFromString(robotXML, basePath, loadMode);
+        VirtualRobot::ModelPtr res = createRobotModelFromString(robotXML, basePath, loadMode);
 
         if (!res)
         {
@@ -148,7 +204,7 @@ namespace VirtualRobot
         char* y = new char[xmlString.size() + 1];
         strncpy(y, xmlString.c_str(), xmlString.size() + 1);
 
-        VirtualRobot::RobotPtr robot;
+        VirtualRobot::ModelPtr robot;
 
         try
         {
@@ -164,7 +220,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION("Could not parse data in xml definition" << endl
                                << "Error message:" << e.what() << endl
                                << "Position: " << endl << e.where<char>() << endl);
-            return RobotPtr();
+            return ModelPtr();
         }
         catch (VirtualRobot::VirtualRobotException& e)
         {
@@ -172,20 +228,20 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION("Error while parsing xml definition" << endl
                                << "Error code:" << e.what() << endl);
 
-            return RobotPtr();
+            return ModelPtr();
         }
         catch (std::exception& e)
         {
             delete[] y;
             THROW_VR_EXCEPTION("Error while parsing xml definition" << endl
                                << "Error code:" << e.what() << endl);
-            return RobotPtr();
+            return ModelPtr();
         }
         catch (...)
         {
             delete[] y;
             THROW_VR_EXCEPTION("Error while parsing xml definition" << endl);
-            return RobotPtr();
+            return ModelPtr();
         }
 
         delete[] y;
@@ -261,7 +317,21 @@ namespace VirtualRobot
         }
 
         // load sensors
-        // todo....
+        XMLNode = robotXMLNode->first_node("sensor", 0, false);
+        while (XMLNode)
+        {
+            THROW_VR_EXCEPTION_IF(!robot, "Could not process sensors due to missing model defintion...");
+
+            std::string filename = XMLNode->value();
+
+            bool fileOK = searchFile(filename, basePath);
+            THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
+
+            bool eefOK = ModelIO::loadSensors(robot, filename, loadMode);
+            THROW_VR_EXCEPTION_IF(!eefOK, "Could not parse sensor defintion...");
+
+            XMLNode = XMLNode->next_sibling("sensor", 0, false);
+        }
 
 
         // load EndEffectors
@@ -319,7 +389,7 @@ namespace VirtualRobot
         return robot;
     }
 
-    RobotNodeSetPtr ModelIO::processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter)
+    RobotNodeSetPtr ModelIO::processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, ModelPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter)
     {
         THROW_VR_EXCEPTION_IF(!setXMLNode, "NULL data for setXMLNode");
 
@@ -974,7 +1044,7 @@ namespace VirtualRobot
     }
 
 
-    bool ModelIO::createConfigurationsFromString(const RobotPtr &robot, const std::string &xmlString)
+    bool ModelIO::createConfigurationsFromString(const ModelPtr &robot, const std::string &xmlString)
     {
         if (!robot)
             return false;
@@ -1033,7 +1103,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelIO::loadConfigurations(const RobotPtr &robot, const std::string &filename)
+    bool ModelIO::loadConfigurations(const ModelPtr &robot, const std::string &filename)
     {
         std::string fullFile = filename;
 
@@ -1061,7 +1131,95 @@ namespace VirtualRobot
     }
 
 
-    bool ModelIO::createNodeSetsFromString(const RobotPtr &robot, const std::string &xmlString)
+    bool ModelIO::loadSensors(const ModelPtr &robot, const std::string &filename, RobotDescription loadMode)
+    {
+        std::string fullFile = filename;
+
+        if (!RuntimeEnvironment::getDataFileAbsolute(fullFile))
+        {
+            VR_ERROR << "Could not open XML file:" << filename << endl;
+            return false;
+        }
+
+        // load file
+        std::ifstream in(fullFile.c_str());
+
+        if (!in.is_open())
+        {
+            VR_ERROR << "Could not open XML file:" << fullFile << endl;
+            return false;
+        }
+
+        std::stringstream buffer;
+        buffer << in.rdbuf();
+        std::string nsXML(buffer.str());
+        in.close();
+
+        return createSensorsFromString(robot, nsXML, loadMode);
+    }
+
+    bool ModelIO::createSensorsFromString(const ModelPtr &robot, const std::string &xmlString, RobotDescription loadMode)
+    {
+        if (!robot)
+            return false;
+
+        // copy string content to char array
+        char* y = new char[xmlString.size() + 1];
+        strncpy(y, xmlString.c_str(), xmlString.size() + 1);
+        int rnsNr = 0;
+
+        try
+        {
+            rapidxml::xml_document<char> doc;    // character type defaults to char
+            doc.parse<0>(y);    // 0 means default parse flags
+
+            rapidxml::xml_node<char>* node = doc.first_node();
+            while (node)
+            {
+                std::string nodeName = getLowerCase(node->name());
+                if (nodeName == "sensor")
+                {
+                    // registers sensor to robot
+                    bool ok = ModelIO::processSensor(robot, node, loadMode);
+                    THROW_VR_EXCEPTION_IF(!ok, "Invalid Sensor definition " << endl);
+                    rnsNr++;
+                }
+                node = node->next_sibling();
+            }
+        }
+        catch (rapidxml::parse_error& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Could not parse sensor in xml definition" << endl
+                               << "Error message:" << e.what() << endl
+                               << "Position: " << endl << e.where<char>() << endl);
+            return false;
+        }
+        catch (VirtualRobot::VirtualRobotException&)
+        {
+            delete[] y;
+            // rethrow the current exception
+            throw;
+        }
+        catch (std::exception& e)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing xml definition" << endl
+                               << "Error code:" << e.what() << endl);
+            return false;
+        }
+        catch (...)
+        {
+            delete[] y;
+            THROW_VR_EXCEPTION("Error while parsing sensor xml definition" << endl);
+            return false;
+        }
+
+        delete[] y;
+        return true;
+    }
+
+    bool ModelIO::createNodeSetsFromString(const ModelPtr &robot, const std::string &xmlString)
     {
         if (!robot)
             return false;
@@ -1123,8 +1281,7 @@ namespace VirtualRobot
     }
 
 
-
-    bool ModelIO::loadNodeSets(const RobotPtr &robot, const std::string &filename)
+    bool ModelIO::loadNodeSets(const ModelPtr &robot, const std::string &filename)
     {
         std::string fullFile = filename;
 
@@ -1151,7 +1308,7 @@ namespace VirtualRobot
         return createNodeSetsFromString(robot, nsXML);
     }
 
-    bool ModelIO::createFramesFromString(const RobotPtr &robot, const std::string &xmlString)
+    bool ModelIO::createFramesFromString(const ModelPtr &robot, const std::string &xmlString)
     {
         if (!robot)
             return false;
@@ -1211,7 +1368,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelIO::loadFrames(const RobotPtr &robot, const std::string &filename)
+    bool ModelIO::loadFrames(const ModelPtr &robot, const std::string &filename)
     {
         std::string fullFile = filename;
 
@@ -1240,7 +1397,7 @@ namespace VirtualRobot
 
 
 
-    FramePtr ModelIO::processFrame(rapidxml::xml_node<char>* frameXMLNode, RobotPtr robo)
+    FramePtr ModelIO::processFrame(rapidxml::xml_node<char>* frameXMLNode, const ModelPtr &robo)
     {
         THROW_VR_EXCEPTION_IF(!frameXMLNode, "NULL data in processRobotNode");
 

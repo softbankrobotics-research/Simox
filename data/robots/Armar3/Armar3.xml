@@ -4,7 +4,7 @@
 	
 	<URDF>urdf/Armar3.urdf</URDF>
 
-	<!--Sensors>sensors/Armar3-sensors-ft.xml</Sensors-->
+	<Sensor>sensors/Armar3-sensors-ft.xml</Sensor>
 
 	<EndEffector>endeffectors/Armar3-eef-hands.xml</EndEffector>
 

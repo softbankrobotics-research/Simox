@@ -66,8 +66,8 @@ namespace VirtualRobot
                 @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
                 @return Returns an empty pointer, when file access failed.
         */
-        static RobotPtr loadModel(const std::string& xmlFile, RobotDescription loadMode = eFull);
-        static RobotPtr createRobotModelFromString(const std::string& xmlFile, const std::string& basePath = "", RobotDescription loadMode = eFull);
+        static ModelPtr loadModel(const std::string& xmlFile, RobotDescription loadMode = eFull);
+        static ModelPtr createRobotModelFromString(const std::string& xmlFile, const std::string& basePath = "", RobotDescription loadMode = eFull);
 
         static ModelPtr processModelDescription(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode);
 
@@ -75,7 +75,7 @@ namespace VirtualRobot
         static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
         static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
         static void processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics);
-        static RobotNodeSetPtr processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, RobotPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
+        static RobotNodeSetPtr processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, ModelPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
         static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
 
         /*!
@@ -84,14 +84,14 @@ namespace VirtualRobot
          * \param filename
          * \return
          */
-        static bool loadNodeSets(const RobotPtr &robot, const std::string &filename);
+        static bool loadNodeSets(const ModelPtr &robot, const std::string &filename);
         /*!
          * \brief createNodeSetFromString Extracts one or multiple ModelNodeSets / JointSets / LinkSets from the given string and registers them to the robot
          * \param robot
          * \param xmlString
          * \return true on success
          */
-        static bool createNodeSetsFromString(const RobotPtr &robot, const std::string &xmlString);
+        static bool createNodeSetsFromString(const ModelPtr &robot, const std::string &xmlString);
 
         /*!
          * \brief loadFrames Load one or multiple frames from file and registers them to the corresponding model nodes
@@ -99,7 +99,7 @@ namespace VirtualRobot
          * \param filename
          * \return
          */
-        static bool loadFrames(const RobotPtr &robot, const std::string &filename);
+        static bool loadFrames(const ModelPtr &robot, const std::string &filename);
 
         /*!
          * \brief createFramesString Parse given string to extract frames. Frames are registered to the robot/model.
@@ -107,14 +107,20 @@ namespace VirtualRobot
          * \param xmlString
          * \return
          */
-        static bool createFramesFromString(const RobotPtr &robot, const std::string &xmlString);
+        static bool createFramesFromString(const ModelPtr &robot, const std::string &xmlString);
 
 
-        static FramePtr processFrame(rapidxml::xml_node<char>* frameXMLNode, RobotPtr robo);
+        static FramePtr processFrame(rapidxml::xml_node<char>* frameXMLNode, const ModelPtr &robo);
 
         static bool processConfiguration(rapidxml::xml_node<char> *configXMLNode, ModelPtr model);
-        static bool createConfigurationsFromString(const RobotPtr &robot, const std::string &xmlString);
-        static bool loadConfigurations(const RobotPtr &robot, const std::string &filename);
+        static bool createConfigurationsFromString(const ModelPtr &robot, const std::string &xmlString);
+        static bool loadConfigurations(const ModelPtr &robot, const std::string &filename);
+
+
+        static bool processSensor(ModelPtr model, rapidxml::xml_node<char> *sensorXMLNode, RobotDescription loadMode);
+        static bool createSensorsFromString(const ModelPtr &robot, const std::string &xmlString, RobotDescription loadMode);
+        static bool loadSensors(const ModelPtr &robot, const std::string &filename, RobotDescription loadMode);
+
     protected:
         // instantiation not allowed
         ModelIO();

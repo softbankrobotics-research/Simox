@@ -248,12 +248,15 @@ namespace VirtualRobot
         virtual void deRegisterConfiguration(const ModelConfigPtr &config);
         virtual void deRegisterConfiguration(const std::string& name);
 
-        virtual bool hasConfiguration(const ModelConfigPtr &config);
-        virtual bool hasConfiguration(const std::string& name);
+        virtual bool hasConfiguration(const ModelConfigPtr &config) const;
+        virtual bool hasConfiguration(const std::string& name) const;
 
-        virtual ModelConfigPtr getConfiguration(const std::string& name);
+        virtual ModelConfigPtr getConfiguration(const std::string& name) const;
 
-        virtual std::vector< ModelConfigPtr > getConfigurations();
+        virtual std::vector< ModelConfigPtr > getConfigurations() const;
+
+        template<typename T>
+        std::vector< std::shared_ptr<T> > getAttachments() const;
 
         /*!
          * The root node is the first ModelNode of this model.
@@ -426,7 +429,7 @@ namespace VirtualRobot
 		bool getUpdateCollisionModel() const;
 
         /*!
-         * Get the complete setup of all model nodes.
+         * Get the complete setup of all model nodes (i.e. the current configuration of the model).
          *
          * @return The configuration of the model.
          */

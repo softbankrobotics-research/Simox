@@ -90,7 +90,6 @@ namespace VirtualRobot
 
         void updateEEF(float x[6]);
 
-        //static void timerCB(void* data, SoSensor* sensor);
         void setCurrentGrasp(Eigen::Matrix4f& p);
 
         Ui::MainWindowGraspEditor* UI;

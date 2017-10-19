@@ -119,6 +119,9 @@ Model/Nodes/Attachments/ModelFrame.cpp
 Model/Nodes/Attachments/ModelFrameFactory.cpp
 Model/Nodes/Attachments/ModelStructure.cpp
 Model/Nodes/Attachments/ModelStructureFactory.cpp
+Model/Nodes/Attachments/Sensor.cpp
+Model/Nodes/Attachments/ForceTorqueSensor.cpp
+Model/Nodes/Attachments/ForceTorqueSensorFactory.cpp
 Tools/MathTools.cpp
 Tools/Orientation.cpp
 Tools/BoundingBox.cpp
@@ -223,6 +226,9 @@ Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
 Model/Nodes/Attachments/ModelFrame.h
 Model/Nodes/Attachments/ModelFrameFactory.h
+Model/Nodes/Attachments/Sensor.h
+Model/Nodes/Attachments/ForceTorqueSensor.h
+Model/Nodes/Attachments/ForceTorqueSensorFactory.h
 Model/Nodes/Attachments/ModelStructure.h
 Model/Nodes/Attachments/ModelStructureFactory.h
 Tools/AbstractFactoryMethod.h

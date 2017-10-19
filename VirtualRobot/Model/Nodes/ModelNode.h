@@ -323,6 +323,9 @@ namespace VirtualRobot
          */
         std::vector<ModelNodeAttachmentPtr> getAttachments(const std::string& type = "") const;
 
+        template<typename T>
+        std::vector< std::shared_ptr<T> > getAttachments() const;
+
         /*!
          * Get all attachments with visualisation.
          *

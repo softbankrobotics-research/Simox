@@ -1262,12 +1262,12 @@ namespace VirtualRobot
         }
     }
 
-    bool Model::hasConfiguration(const ModelConfigPtr &config)
+    bool Model::hasConfiguration(const ModelConfigPtr &config) const
     {
         ReadLockPtr r = getReadLock();
         THROW_VR_EXCEPTION_IF(!config, "NULL data");
 
-        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::vector< ModelConfigPtr >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             if (*i == config)
             {
@@ -1278,10 +1278,10 @@ namespace VirtualRobot
         return false;
     }
 
-    bool Model::hasConfiguration(const std::string& name)
+    bool Model::hasConfiguration(const std::string& name) const
     {
         ReadLockPtr r = getReadLock();
-        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::vector< ModelConfigPtr >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             if ((*i)->getName() == name)
             {
@@ -1293,10 +1293,10 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ModelConfigPtr Model::getConfiguration(const std::string& name)
+    VirtualRobot::ModelConfigPtr Model::getConfiguration(const std::string& name) const
     {
         ReadLockPtr r = getReadLock();
-        for (std::vector< ModelConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (std::vector< ModelConfigPtr >::const_iterator i = configs.begin(); i != configs.end(); i++)
         {
             if ((*i)->getName() == name)
             {
@@ -1308,9 +1308,26 @@ namespace VirtualRobot
         return ModelConfigPtr();
     }
 
-    std::vector<ModelConfigPtr> Model::getConfigurations()
+    std::vector<ModelConfigPtr> Model::getConfigurations() const
     {
         ReadLockPtr r = getReadLock();
         return configs;
     }
+
+    template<typename T>
+    std::vector<std::shared_ptr<T> > Model::getAttachments() const
+    {
+        ReadLockPtr r = getReadLock();
+        std::vector<std::shared_ptr<T> > result;
+        for (auto &n : modelNodeMap)
+        {
+            auto &a = n.second->getAttachments<T>();
+            if (a.size()>0)
+            {
+                result.insert(result.end(), a.begin(), a.end());
+            }
+        }
+        return result;
+    }
+
 }
