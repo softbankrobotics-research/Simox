@@ -87,7 +87,7 @@ namespace VirtualRobot
             alignment(0) = rotationAxis(1);
             alignment(1) = rotationAxis(2);
             alignment(2) = rotationAxis(0);
-            Eigen::Affine3f transform(Eigen::AngleAxisf(M_PI / 2, alignment));
+            Eigen::Affine3f transform(Eigen::AngleAxisf(float(M_PI / 2.0f), alignment));
             rotation = transform * rotation;
             factory->applyDisplacement(v, rotation);
         }

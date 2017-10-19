@@ -1,4 +1,4 @@
-/*!
+/**
 * This file is part of Simox.
 *
 * Simox is free software; you can redistribute it and/or modify
@@ -16,43 +16,28 @@
 *
 * @package    Gui
 * @author     Nikolaus Vahrenkamp
-* @copyright  2016 Nikolaus Vahrenkamp
+* @copyright  2017 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_CoinViewerFactory_h_
-#define _Gui_CoinViewerFactory_h_
-
-
-#include "../ViewerFactory.h"
+#ifndef _SimoxGuiImportExportSymbols_h
+#define _SimoxGuiImportExportSymbols_h
 
 namespace SimoxGui
 {
-    /*!
-        A Coin based implementation of a ViewerFactory.
-    */
-    class SIMOX_GUI_IMPORT_EXPORT CoinViewerFactory  : public ViewerFactory
-    {
-    public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-        CoinViewerFactory();
-        virtual ~CoinViewerFactory();
-
-        ViewerInterfacePtr createViewer(QWidget *parent = NULL);
-
-    protected:
-
-        // AbstractFactoryMethod
-    public:
-        static std::string getName();
-        static ViewerFactoryPtr createInstance(void*);
-    private:
-        static SubClassRegistry registry;
-    };
-
-    typedef std::shared_ptr<CoinViewerFactory> CoinViewerFactoryPtr;
-
-} // namespace SimoxGui
+#ifdef WIN32
+//#  include <winsock2.h>
+//#  include <windows.h>
+#  pragma warning ( disable : 4251 )
+#  if defined(simox_gui_EXPORTS) || defined(simox_gui_coin3d_EXPORTS) || defined(simox_gui_qt3d_EXPORTS)
+#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllexport)
+#  else
+#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllimport)
+#  endif
+#else
+#  define SIMOX_GUI_IMPORT_EXPORT
+#endif
+}
 
 #endif
+

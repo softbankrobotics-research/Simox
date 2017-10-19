@@ -32,7 +32,7 @@
 namespace SimoxGui
 {
 
-class CoinViewer : public ViewerInterface, public SoQtExaminerViewer
+class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtExaminerViewer
 {
     public:
         CoinViewer(QWidget *parent);

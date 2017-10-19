@@ -24,24 +24,14 @@
 #ifndef _SimoxGui_ViewerInterface_h_
 #define _SimoxGui_ViewerInterface_h_
 
+#include "SimoxGuiImportExport.h"
+
 #include <VirtualRobot/VirtualRobot.h>
+
 #include <QtGui/QtGui>
 #include <QImage>
 
 #include <string>
-
-#ifdef WIN32
-#  include <winsock2.h>
-#  include <windows.h>
-#  pragma warning ( disable : 4251 )
-#  if defined(SimoxOgreGui_EXPORTS) || defined(SimoxCoinGui_EXPORTS)
-#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllexport)
-#  else
-#    define SIMOX_GUI_IMPORT_EXPORT __declspec(dllimport)
-#  endif
-#else
-#  define SIMOX_GUI_IMPORT_EXPORT
-#endif
 
 namespace SimoxGui
 {

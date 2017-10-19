@@ -5,7 +5,7 @@
 #include "VirtualRobot/Workspace/Manipulability.h"
 #include "VirtualRobot/IK/PoseQualityExtendedManipulability.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
 
 #include <QFileDialog>
