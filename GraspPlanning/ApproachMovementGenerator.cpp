@@ -4,13 +4,11 @@
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
-<<<<<<< HEAD
+
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
-=======
-#include <VirtualRobot/MathTools.h>
-#include <VirtualRobot/RobotConfig.h>
->>>>>>> origin/master
+#include <VirtualRobot/Model/ModelConfig.h>
+
 #include <iostream>
 using namespace std;
 
@@ -58,16 +56,13 @@ namespace GraspPlanning
 
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
-<<<<<<< HEAD
-        eefRobot->setGlobalPoseForModelNode(eef_cloned->getGCP(), pose);
-=======
-        VirtualRobot::RobotNodePtr tcp;
+        //eefRobot->setGlobalPoseForModelNode(eef_cloned->getGCP(), pose);
+        VirtualRobot::FramePtr tcp;
         if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
             tcp = eef_cloned->getGCP();
-        eefRobot->setGlobalPoseForRobotNode(tcp, pose);
->>>>>>> origin/master
+        eefRobot->setGlobalPoseForModelNode(tcp, pose);
         return true;
     }
 
@@ -88,7 +83,7 @@ namespace GraspPlanning
 
     Eigen::Matrix4f ApproachMovementGenerator::getEEFPose()
     {
-        VirtualRobot::RobotNodePtr tcp;
+        VirtualRobot::FramePtr tcp;
         if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else

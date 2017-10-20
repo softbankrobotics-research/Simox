@@ -55,6 +55,7 @@ namespace VirtualRobot
     {
         Eigen::Matrix4f st = getStaticTransformation();
         ModelJointRevolutePtr result(new ModelJointRevolute(newModel, name, st, jointLimitLo, jointLimitHi, axis, jointValueOffset));
+        result->setLimitless(limitless);
         return result;
     }
 }

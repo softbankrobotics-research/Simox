@@ -83,7 +83,7 @@ namespace VirtualRobot
         }
 
 
-        virtual boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const = 0;
+        virtual std::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const = 0;
     protected:
 
         //! delete all data

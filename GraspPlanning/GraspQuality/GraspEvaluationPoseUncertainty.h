@@ -24,7 +24,7 @@
 #ifndef _GraspStudio_GraspEvaluationPoseUncertainty_h_
 #define _GraspStudio_GraspEvaluationPoseUncertainty_h_
 
-#include <VirtualRobot/VirtualRobotCommon.h>
+#include "VirtualRobot/VirtualRobot.h"
 
 #include "GraspQualityMeasure.h"
 
@@ -33,14 +33,14 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
 /*!
 	This class implements the paper:
 	Jonathan Weisz and Peter K. Allen, "Pose Error Robust Grasping from Contact Wrench Space Metrics", 2012 IEEE International Conference on Robotics and Automation
 */
-class GraspEvaluationPoseUncertainty : public boost::enable_shared_from_this<GraspEvaluationPoseUncertainty>
+class GraspEvaluationPoseUncertainty : public std::enable_shared_from_this<GraspEvaluationPoseUncertainty>
 {
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -150,7 +150,7 @@ protected:
 	
 };
 
-typedef boost::shared_ptr<GraspEvaluationPoseUncertainty> GraspEvaluationPoseUncertaintyPtr;
+typedef std::shared_ptr<GraspEvaluationPoseUncertainty> GraspEvaluationPoseUncertaintyPtr;
 
 }
 

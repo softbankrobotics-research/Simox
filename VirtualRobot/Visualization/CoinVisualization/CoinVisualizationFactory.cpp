@@ -94,7 +94,7 @@
 namespace VirtualRobot
 {
 
-    boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
+    std::mutex CoinVisualizationFactory::globalTextureCacheMutex;
     CoinVisualizationFactory::TextureCacheMap CoinVisualizationFactory::globalTextureCache;
 
     CoinVisualizationFactory::CoinVisualizationFactory()
@@ -271,12 +271,6 @@ namespace VirtualRobot
 
     VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
-<<<<<<< HEAD
-        // try to read from file
-=======
-        VisualizationNodePtr visualizationNode(new VisualizationNode);
->>>>>>> origin/master
-
         // try to read from file
         TriMeshModelPtr t(new TriMeshModel());
         STLReaderPtr r(new STLReader());
@@ -390,13 +384,9 @@ namespace VirtualRobot
             boost::filesystem::path p(soInput.getCurFileName());
             boost::filesystem::path dir = p.parent_path();
 
-<<<<<<< HEAD
-        coinVisualization->unrefNoDelete();
-=======
             RemoveDuplicateTextures(coinVisualization, dir.string());
         }
         coinVisualization->unref();
->>>>>>> origin/master
     }
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
@@ -1149,7 +1139,9 @@ namespace VirtualRobot
         public:
             void dyingReference()
             {
-                boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
+                //std::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
+                std::unique_lock<std::mutex> scoped_lock(CoinVisualizationFactory::globalTextureCacheMutex);
+
                 CoinVisualizationFactory::globalTextureCache.erase(std::make_pair(filesize, path));
                 delete this;
             }
@@ -1169,7 +1161,9 @@ namespace VirtualRobot
         sa.apply(node);
         SoPathList & pl = sa.getPaths();
 
-        boost::mutex::scoped_lock lock(globalTextureCacheMutex);
+        //std::mutex::scoped_lock lock(globalTextureCacheMutex);
+        std::unique_lock<std::mutex> scoped_lock(globalTextureCacheMutex);
+
         for (int i = 0; i < pl.getLength(); i++) {
             SoFullPath * p = (SoFullPath*) pl[i];
             if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {

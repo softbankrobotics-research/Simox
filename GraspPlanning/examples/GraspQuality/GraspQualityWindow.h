@@ -92,7 +92,7 @@ protected:
     SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::ModelPtr robot;
-    VirtualRobot::ObstaclePtr object;
+    VirtualRobot::ManipulationObjectPtr object;
 
 
     VirtualRobot::EndEffectorPtr eef;

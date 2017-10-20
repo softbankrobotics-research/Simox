@@ -90,20 +90,18 @@ namespace SimDynamics
         virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s);
 
         /*!
-<<<<<<< HEAD
+
          * \brief updateVisualization Update the poses of the visualization models.
          */
         virtual void updateVisualization();
 
         typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
-=======
+
+        /*!
          * \brief activate If object is sleeping, we can activate it here.
          */
         virtual void activate();
 
-
-        typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
->>>>>>> origin/master
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.
             If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).

@@ -5,15 +5,13 @@
 */
 
 #include "TriMeshModel.h"
-<<<<<<< HEAD
 #include "../Model/Model.h"
 #include "../Tools/MathTools.h"
 
-=======
 #include "../VirtualRobot.h"
 #include "../DataStructures/nanoflann.hpp"
 #include "../DataStructures/KdTreePointCloud.h"
->>>>>>> origin/master
+
 #include<Eigen/Geometry>
 
 #include <algorithm>
@@ -146,7 +144,7 @@ namespace VirtualRobot
 
     void TriMeshModel::addFace(unsigned int id0, unsigned int id1, unsigned int id2)
     {
-        MathTools::TriangleFace f;
+        TriangleFace f;
         f.id1 = id0;
         f.id2 = id1;
         f.id3 = id2;
@@ -237,10 +235,10 @@ namespace VirtualRobot
     {
         int size = vertices.size();
         int faceCount = faces.size();
-        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
+        std::vector<std::set<TriangleFace*>> vertex2FaceMap(size);
         for (int j = 0; j < faceCount; ++j)
         {
-            MathTools::TriangleFace& face = faces.at(j);
+            TriangleFace& face = faces.at(j);
             vertex2FaceMap[face.id1].insert(&faces.at(j));
             vertex2FaceMap[face.id2].insert(&faces.at(j));
             vertex2FaceMap[face.id3].insert(&faces.at(j));
@@ -284,7 +282,7 @@ namespace VirtualRobot
             {
                 int foundIndex = ret_matches.at(k).first;
                 auto& faces = vertex2FaceMap[foundIndex];
-                for(MathTools::TriangleFace* facePtr : faces)
+                for(TriangleFace* facePtr : faces)
                 {
                     bool found = false;
                     if(facePtr->id1 == foundIndex)
@@ -321,7 +319,7 @@ namespace VirtualRobot
                 if((p1-p2).norm() < mergeThreshold)
                 {
 //                    deleted.at(k) = true;
-                    for(MathTools::TriangleFace* facePtr : vertex2FaceMap[k])
+                    for(TriangleFace* facePtr : vertex2FaceMap[k])
                     {
                         bool found = false;
                         if(facePtr->id1 == k)
@@ -355,10 +353,10 @@ namespace VirtualRobot
     {
         int size = vertices.size();
         int faceCount = faces.size();
-        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
+        std::vector<std::set<TriangleFace*>> vertex2FaceMap(size);
         for (int j = 0; j < faceCount; ++j)
         {
-            MathTools::TriangleFace& face = faces.at(j);
+            TriangleFace& face = faces.at(j);
             vertex2FaceMap[face.id1].insert(&faces.at(j));
             vertex2FaceMap[face.id2].insert(&faces.at(j));
             vertex2FaceMap[face.id3].insert(&faces.at(j));
@@ -369,7 +367,7 @@ namespace VirtualRobot
 
         for (size_t i=0; i<vertex2FaceMap.size(); i++ )
         {
-            std::set<MathTools::TriangleFace*> &fs = vertex2FaceMap.at(i);
+            std::set<TriangleFace*> &fs = vertex2FaceMap.at(i);
             if (fs.size()>0)
             {
                 Eigen::Vector3f &v = vertices.at(i);
@@ -381,7 +379,7 @@ namespace VirtualRobot
         // update faceID
         for (int j = 0; j < faceCount; ++j)
         {
-            MathTools::TriangleFace& face = faces.at(j);
+            TriangleFace& face = faces.at(j);
             face.id1 = oldNewIndexMap[face.id1];
             face.id2 = oldNewIndexMap[face.id2];
             face.id3 = oldNewIndexMap[face.id3];
@@ -404,7 +402,7 @@ namespace VirtualRobot
         }
         for (i = 0; i < size; ++i)
         {
-            MathTools::TriangleFace& face = faces.at(i);
+            TriangleFace& face = faces.at(i);
             auto& p1 = vertices.at(face.id1);
             auto& p2 = vertices.at(face.id2);
             auto& p3 = vertices.at(face.id3);

@@ -102,13 +102,13 @@ protected:
     std::string robotFile;
     std::string reachFile;
     Eigen::Vector3f axisTCP;
-    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+    VirtualRobot::JointSetPtr currentRobotNodeSet;
+    std::vector < VirtualRobot::ModelJointPtr > allRobotNodes;
+    std::vector < VirtualRobot::ModelJointPtr > currentRobotNodes;
+    std::vector < VirtualRobot::JointSetPtr > robotNodeSets;
 
     VirtualRobot::WorkspaceRepresentationPtr reachSpace;
-    VirtualRobot::RobotNodePtr currentRobotNode;
+    VirtualRobot::ModelJointPtr currentRobotNode;
     /*
 
     std::vector < VirtualRobot::EndEffectorPtr > eefs;

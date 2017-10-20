@@ -187,7 +187,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if node is a child from this node; false otherwise.
          */
-        bool hasChild(const ModelNodePtr& node) const;
+        bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
 
         /*!
          * Check if this node has a child with the given name.
@@ -195,7 +195,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if this node has a child with the given name; false otherwise.
          */
-        bool hasChild(const std::string& nodeName) const;
+        bool hasChild(const std::string& nodeName, bool recursive = false) const;
 
         /*!
          * Attach a new Child to this node.
@@ -384,6 +384,14 @@ namespace VirtualRobot
         virtual bool isJoint()
         {
             return (getType() & ModelNodeType::Joint)!=0;
+        }
+        virtual bool isTranslationalJoint()
+        {
+            return (getType() == ModelNodeType::JointPrismatic);
+        }
+        virtual bool isRotationalJoint()
+        {
+            return (getType() == ModelNodeType::JointRevolute);
         }
         virtual bool isLink()
         {

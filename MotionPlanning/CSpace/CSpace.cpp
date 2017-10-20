@@ -629,24 +629,18 @@ namespace MotionPlanning
         else
         {
             // borderless mode
-<<<<<<< HEAD
 
+            // we map 'start' and 'end' to [0,2pi] (temporarily)
             float start = q1[dim] - robotJoints[dim]->getJointLimitLow();
             float end = q2[dim] - robotJoints[dim]->getJointLimitLow();
-=======
-            // we map 'start' and 'end' to [0,2pi] (temporarily)
-            float start = q1[dim] - robotJoints[dim]->getJointLimitLo();
-            float end = q2[dim] - robotJoints[dim]->getJointLimitLo();
->>>>>>> origin/master
+
             float res = interpolateRotational(start, end , step);
             // using fmod is okay here, because 'start' and 'end' where mapped to [0,2pi] and therefore 'res' is also in [0,2pi]
             res = (float)fmod((double)res, 2.0 * M_PI);
-<<<<<<< HEAD
-            res = res + robotJoints[dim]->getJointLimitLow();
-=======
+
             // map back to original interval
-            res = res + robotJoints[dim]->getJointLimitLo();
->>>>>>> origin/master
+            res = res + robotJoints[dim]->getJointLimitLow();
+
             return res;
         }
 
@@ -846,18 +840,6 @@ namespace MotionPlanning
     {
         MOTIONPLANNING_ASSERT(dim < dimension)
 
-<<<<<<< HEAD
-        if (robotJoints[dim]->getType() != VirtualRobot::ModelNode::ModelNodeType::JointPrismatic)
-        {
-            // rotational joint
-            if (abs((double)(robotJoints[dim]->getJointLimitHigh() - robotJoints[dim]->getJointLimitLow())) > (1.9999999999999 * M_PI))
-            {
-                return true;
-            }
-        }
-
-        return false;
-=======
 //        if (!(robotJoints[dim]->isTranslationalJoint()))
 //        {
 //            // rotational joint
@@ -867,7 +849,6 @@ namespace MotionPlanning
 //            }
 //        }
         return robotJoints[dim]->isLimitless();
->>>>>>> origin/master
     }
 
     unsigned int CSpace::getDimension() const

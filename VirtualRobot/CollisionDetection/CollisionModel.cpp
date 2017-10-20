@@ -57,7 +57,7 @@ namespace VirtualRobot
         updateVisualization = true;
         if(!collisionModel)
             VR_WARNING << "internal collision model is NULL for " << name << endl;
-        collisionModelImplementation = boost::dynamic_pointer_cast<InternalCollisionModel>(collisionModel->clone(false));
+        collisionModelImplementation = std::dynamic_pointer_cast<InternalCollisionModel>(collisionModel->clone(false));
         VR_ASSERT(collisionModelImplementation->getPQPModel());
         setVisualization(visu);
     }

@@ -4,6 +4,7 @@
 #include <VirtualRobot/Model/ModelConfig.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/Model/Model.h>
 #include <iostream>
 #include <sstream>
 #include "../GraspQuality/GraspQualityMeasureWrenchSpace.h"
@@ -12,6 +13,7 @@
 
 #include <chrono>
 using namespace std;
+using namespace VirtualRobot;
 
 namespace GraspPlanning
 {
@@ -84,7 +86,9 @@ namespace GraspPlanning
         VR_ASSERT(eef);
         VR_ASSERT(approach);
 
-        VirtualRobot::SceneObjectSetPtr sos = eef->createSceneObjectSet();
+        VirtualRobot::LinkSetPtr sos = eef->createLinkSet();
+        std::vector<ModelPtr> os;
+        os.push_back(object);
 
         if (!sos)
         {
@@ -101,7 +105,7 @@ namespace GraspPlanning
             approach->openHand();
             approach->updateEEFPose(delta);
 
-            if (eef->getCollisionChecker()->checkCollision(object->getCollisionModel(), sos))
+            if (eef->getCollisionChecker()->checkCollision(os, sos))
             {
                 finishedCollision = true;
                 break;
@@ -118,7 +122,7 @@ namespace GraspPlanning
         return finishedContactsOK;
     }
 
-    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(::vector<VirtualRobot::ModelPtr> &obstacles)
+    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(std::vector<VirtualRobot::ModelPtr> &obstacles)
     {
         auto start_time = chrono::high_resolution_clock::now();
         std::string sGraspPlanner("Simox - GraspPlanning - ");

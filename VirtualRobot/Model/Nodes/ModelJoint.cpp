@@ -15,7 +15,8 @@ namespace VirtualRobot
                                                      jointLimitHi(jointLimitHi),
                                                      maxVelocity(-1.0f),
                                                      maxAcceleration(-1.0f),
-                                                     maxTorque(-1.0f)
+                                                     maxTorque(-1.0f),
+                                                     limitless(false)
     {
     }
 
@@ -37,10 +38,15 @@ namespace VirtualRobot
     void ModelJoint::setJointValueNoUpdate(float q)
     {
         VR_ASSERT_MESSAGE((!std::isnan(q) && !std::isinf(q)) , "Not a valid number...");
+        WriteLockPtr w = getModel()->getWriteLock();
 
+        if (limitless)
+        {
+            while (q > jointLimitHi) q -= 2.0f * M_PI;
+            while (q < jointLimitLo) q += 2.0f * M_PI;
+        }
         respectJointLimits(q);
 
-        WriteLockPtr w = getModel()->getWriteLock();
         jointValue = q;
     }
 
@@ -93,6 +99,41 @@ namespace VirtualRobot
         WriteLockPtr w = getModel()->getWriteLock();
         jointLimitHi = hi;
         jointLimitLo = lo;
+    }
+
+
+    void ModelJoint::setLimitless(bool limitless)
+    {
+        this->limitless = limitless;
+    }
+
+    bool ModelJoint::isLimitless()
+    {
+        return limitless;
+    }
+
+    float ModelJoint::getDelta(float target)
+    {
+        float delta = 0.0f;
+
+        // we check if the given target value violates our joint limits
+        if (!limitless)
+        {
+            if (target < jointLimitLo || target > jointLimitHi)
+            {
+                return delta;
+            }
+        }
+
+        delta = target - jointValue;
+
+        // eventually take the other way around if it is shorter and if this joint is limitless.
+        if (limitless && (std::abs(delta) > M_PI))
+        {
+            delta = (-1) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta));
+        }
+
+        return delta;
     }
 
     float ModelJoint::getJointValueOffset() const

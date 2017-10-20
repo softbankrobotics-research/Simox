@@ -12,12 +12,9 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
-<<<<<<< HEAD
 #include "VirtualRobot/Visualization/VisualizationNode.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
-=======
 #include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
->>>>>>> origin/master
 
 #include <QFileDialog>
 #include <QProgressDialog>
@@ -30,22 +27,12 @@
 #include <cmath>
 #include <sstream>
 
-<<<<<<< HEAD
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
 #endif
-=======
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoScale.h>
 
->>>>>>> origin/master
 
 using namespace std;
 using namespace VirtualRobot;
@@ -206,11 +193,9 @@ void GraspPlannerWindow::loadObject()
     qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     //qualityMeasure->setVerbose(true);
     qualityMeasure->calculateObjectProperties();
-<<<<<<< HEAD
-    approach.reset(new GraspPlanning::ApproachMovementSurfaceNormal(object, eef));
-=======
-    approach.reset(new GraspStudio::ApproachMovementSurfaceNormal(object, eef, preshape));
->>>>>>> origin/master
+
+    approach.reset(new GraspPlanning::ApproachMovementSurfaceNormal(object, eef, preshape));
+
     eefCloned = approach->getEEFRobotClone();
 
     if (robot && eef)
@@ -250,14 +235,11 @@ void GraspPlannerWindow::plan()
     bool forceClosure = UI.checkBoxFoceClosure->isChecked();
     float quality = (float)UI.doubleSpinBoxQuality->value();
     int nrGrasps = UI.spinBoxGraspNumber->value();
-<<<<<<< HEAD
-    planner.reset(new GraspPlanning::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
-=======
+
     if (planner)
         planner->setParameters(quality, forceClosure);
     else
-        planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
->>>>>>> origin/master
+        planner.reset(new GraspPlanning::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
 
     int nr = planner->plan(nrGrasps, timeout);
     VR_INFO << " Grasp planned:" << nr << endl;

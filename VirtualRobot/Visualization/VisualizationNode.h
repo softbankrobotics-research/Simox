@@ -105,7 +105,7 @@ namespace VirtualRobot
 
         /*!
             Enables/Disables the visualization updates.
-            Usually if a SceneObject or a RobotNode changes its state, the visualization is automatically updated.
+            Usually if a model node changes its state, the visualization is automatically updated.
             This behavior can be changed here.
         */
         void setUpdateVisualization(bool enable);

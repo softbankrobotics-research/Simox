@@ -103,6 +103,7 @@ namespace VirtualRobot
         std::vector<EndEffectorActorPtr> actors;
         std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
         std::vector< std::string > configNames;
+        std::vector< std::string > tcpNames;
         rapidxml::xml_node<>* node = endeffectorXMLNode->first_node();
 
         while (node)
@@ -126,7 +127,7 @@ namespace VirtualRobot
             }
             else if ("preshape" == nodeName)
             {
-                bool cOK = processConfigurationNodeList(node, configDefinitions, configNames);
+                bool cOK = processConfigurationNodeList(node, configDefinitions, configNames, tcpNames);
                 THROW_VR_EXCEPTION_IF(!cOK, "Invalid Preshape defined in robot's eef tag '" << nodeName << "'." << endl);
             }
             else
@@ -155,6 +156,10 @@ namespace VirtualRobot
         for (size_t i = 0; i < configDefinitions.size(); i++)
         {
             RobotConfigPtr rc(new RobotConfig(robo, configNames[i], configDefinitions[i]));
+            if (!tcpNames[i].empty())
+            {
+                rc->setTCP(tcpNames[i]);
+            }
             endEffector->registerPreshape(rc);
         }
 

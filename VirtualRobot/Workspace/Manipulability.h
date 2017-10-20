@@ -184,11 +184,8 @@ namespace VirtualRobot
 
         bool customStringRead(std::ifstream& file, std::string& res);
 
-<<<<<<< HEAD
-        float getCurrentManipulability();
-=======
         float getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt = RobotNodeSetPtr(), RobotNodeSetPtr selfDistDyn = RobotNodeSetPtr());
->>>>>>> origin/master
+
         void addPose(const Eigen::Matrix4f& p);
         void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure);
         void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt, RobotNodeSetPtr selfDistDyn);

@@ -6,7 +6,7 @@
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/RobotConfig.h>
+#include <VirtualRobot/Model/ModelConfig.h>
 
 #include <cstdio>
 #include <cstring>
@@ -203,7 +203,7 @@ namespace GraspPlanning
 
     Eigen::Matrix4f ApproachMovementSurfaceNormal::getEEFPose()
     {
-        RobotNodePtr tcp;
+        FramePtr tcp;
         if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
@@ -213,12 +213,12 @@ namespace GraspPlanning
 
     bool ApproachMovementSurfaceNormal::setEEFPose(const Eigen::Matrix4f& pose)
     {
-        RobotNodePtr tcp;
+        FramePtr tcp;
         if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
             tcp = eef_cloned->getGCP();
-        eefRobot->setGlobalPoseForRobotNode(tcp, pose);
+        eefRobot->setGlobalPoseForModelNode(tcp, pose);
         return true;
     }
 }

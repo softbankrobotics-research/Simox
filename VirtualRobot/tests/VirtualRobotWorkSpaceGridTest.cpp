@@ -7,11 +7,13 @@
 #define BOOST_TEST_MODULE VirtualRobot_VirtualRobotWorkSpaceGridTest
 
 #include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
+#include <VirtualRobot/Model/JointSet.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/Workspace/Reachability.h>
 #include <VirtualRobot/Workspace/WorkspaceGrid.h>
 #include <string>
@@ -40,20 +42,20 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
             " </RobotNode>"
         "</Robot>";
     VirtualRobot::RobotPtr rob;
-    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::RobotIO::createRobotFromString(robotString));
+    BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::ModelIO::createRobotModelFromString(robotString));
     BOOST_REQUIRE(rob);
 
     std::vector<std::string> rnsNames;
     rnsNames.push_back("joint1");
-    VirtualRobot::RobotNodeSetPtr rns = VirtualRobot::RobotNodeSet::createRobotNodeSet(rob, "rns", rnsNames, "", "tcp", true);
+    VirtualRobot::JointSetPtr rns = VirtualRobot::JointSet::createJointSet(rob, "rns", rnsNames, "", "tcp", true);
     BOOST_REQUIRE(rns);
-    BOOST_REQUIRE(rob->hasRobotNodeSet("rns"));
+    BOOST_REQUIRE(rob->hasJointSet("rns"));
 
-    VirtualRobot::RobotNodePtr joint1 = rob->getRobotNode("joint1");
+    VirtualRobot::ModelJointPtr joint1 = rob->getJoint("joint1");
     BOOST_REQUIRE(joint1);
-    VirtualRobot::RobotNodePtr tcp = rob->getRobotNode("tcp");
+    VirtualRobot::FramePtr tcp = rob->getFrame("tcp");
     BOOST_REQUIRE(tcp);
-    VirtualRobot::RobotNodePtr rootNode = rob->getRobotNode("root");
+    VirtualRobot::RobotNodePtr rootNode = rob->getModelNode("root");
     BOOST_REQUIRE(rootNode);
 
     // CHECK ROBOT WORKSPACE
@@ -76,7 +78,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     VirtualRobot::ReachabilityPtr reach(new VirtualRobot::Reachability(rob));
     BOOST_REQUIRE(reach);
     reach->setOrientationType(VirtualRobot::WorkspaceRepresentation::Hopf);
-    reach->initialize(rns, discrTr, discrRot, minBounds, maxBounds, VirtualRobot::SceneObjectSetPtr(), VirtualRobot::SceneObjectSetPtr(), rootNode, tcp);
+    reach->initialize(rns, discrTr, discrRot, minBounds, maxBounds, VirtualRobot::LinkSetPtr(), VirtualRobot::LinkSetPtr(), rootNode, tcp);
 
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
     Eigen::Matrix4f m2 = Eigen::Matrix4f::Identity();

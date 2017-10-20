@@ -109,11 +109,7 @@ protected:
 
     SoTimerSensor* timerSensor;
 
-<<<<<<< HEAD
-    std::vector<VirtualRobot::ModelJointRevolutePtr> robotNodes;
-=======
-    std::vector<VirtualRobot::RobotNodePtr> robotNodes;
->>>>>>> origin/master
+    std::vector<VirtualRobot::ModelJointPtr> robotNodes;
 
     std::map< VirtualRobot::ModelLinkPtr, SoSeparator* > comVisuMap;
 

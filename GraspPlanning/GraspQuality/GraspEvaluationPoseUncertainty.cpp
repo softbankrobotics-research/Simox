@@ -1,5 +1,8 @@
 #include <Eigen/Geometry>
 #include "GraspEvaluationPoseUncertainty.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
+#include "VirtualRobot/Grasping/Grasp.h"
 
 #include <algorithm>
 #include <float.h>
@@ -8,7 +11,7 @@
 using namespace Eigen;
 using namespace VirtualRobot;
 
-namespace GraspStudio {
+namespace GraspPlanning {
 
 GraspEvaluationPoseUncertainty::GraspEvaluationPoseUncertainty(const PoseUncertaintyConfig& config)
 {
@@ -173,7 +176,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
     result.quality = 0.0f;
     result.initialCollision = false;
 
-     SceneObjectSetPtr eefColModel = eef->createSceneObjectSet();
+     LinkSetPtr eefColModel = eef->createLinkSet();
 
     if (!eef || !qm)
     {
@@ -188,8 +191,10 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
         eef->openActors();
     o->setGlobalPose(objectPose);
 
+    std::vector<ModelPtr> m;
+    m.push_back(o);
     // check for initial collision
-    if (o->getCollisionChecker()->checkCollision(o->getCollisionModel(), eefColModel))
+    if (o->getCollisionChecker()->checkCollision(m, eefColModel))
     {
         result.initialCollision = true;
         return result;
@@ -314,7 +319,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     Eigen::Matrix4f mGrasp = g->getTcpPoseGlobal(o->getGlobalPose());
 
     // apply grasp
-    eef->getRobot()->setGlobalPoseForRobotNode(eef->getTcp(), mGrasp);
+    eef->getRobot()->setGlobalPoseForModelNode(eef->getTcp(), mGrasp);
 
     if (graspPS)
     {

@@ -295,7 +295,7 @@ void reachabilityWindow::selectRNS(int nr)
     }
 
     currentRobotNodeSet = robotNodeSets[nr];
-    currentRobotNodes = currentRobotNodeSet->getModelNodes();
+    currentRobotNodes = currentRobotNodeSet->getJoints();
 
     if (currentRobotNodeSet->getTCP())
     {
@@ -441,8 +441,8 @@ void reachabilityWindow::loadRobot()
     }
 
     // get nodes
-    robot->getModelNodes(allRobotNodes);
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
+    allRobotNodes = robot->getJoints();
+    std::vector < VirtualRobot::JointSetPtr > allRNS = robot->getJointSets();
     robotNodeSets.clear();
 
     for (size_t i = 0; i < allRNS.size(); i++)
@@ -484,7 +484,7 @@ void reachabilityWindow::extendReach()
     int steps = UI.spinBoxExtend->value();
 
 #if 0
-    ManipulabilityPtr manipSpace = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+    ManipulabilityPtr manipSpace = std::dynamic_pointer_cast<Manipulability>(reachSpace);
     if (manipSpace && manipSpace->getManipulabilityMeasure())
     {
         manipSpace->getManipulabilityMeasure()->setVerbose(true);
@@ -781,7 +781,7 @@ void reachabilityWindow::updateQualityInfo()
     float poseManip = 1.0f;
     if (reachSpace)
     {
-        ManipulabilityPtr p = boost::dynamic_pointer_cast<Manipulability>(reachSpace);
+        ManipulabilityPtr p = std::dynamic_pointer_cast<Manipulability>(reachSpace);
         if (p)
         {
             reachManip = p->getManipulabilityAtPose(p->getTCP()->getGlobalPose());

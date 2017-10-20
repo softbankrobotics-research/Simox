@@ -256,7 +256,6 @@ namespace VirtualRobot
         }
     }
 
-<<<<<<< HEAD:VirtualRobot/Model/Obstacle.cpp
     ObstaclePtr Obstacle::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
     {
         ReadLockPtr r = getReadLock();
@@ -267,34 +266,7 @@ namespace VirtualRobot
         ObstaclePtr result(new Obstacle(name));
         _clone(result, startNode, colChecker, true, true, scaling);
         result->filename = filename;
-=======
-    Obstacle* Obstacle::_clone(const std::string& name, CollisionCheckerPtr colChecker, float scaling) const
-    {
-        VisualizationNodePtr clonedVisualizationNode;
 
-        if (visualizationModel)
-        {
-            clonedVisualizationNode = visualizationModel->clone(true, scaling);
-        }
-
-        CollisionModelPtr clonedCollisionModel;
-
-        if (collisionModel)
-        {
-            clonedCollisionModel = collisionModel->clone(colChecker, scaling);
-        }
-
-        Obstacle* result = new Obstacle(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);
-
-        if (!result)
-        {
-            VR_ERROR << "Cloning failed.." << endl;
-            return result;
-        }
-
-        result->setGlobalPose(getGlobalPose());
-
->>>>>>> origin/master:VirtualRobot/Obstacle.cpp
         return result;
     }
 

@@ -71,10 +71,10 @@ namespace VirtualRobot
     PoseQualityMeasurementPtr PoseQualityMeasurement::clone(RobotPtr newRobot)
     {
         VR_ASSERT(newRobot);
-        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName()));
-        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName())->getSize() == rns->getSize());
+        VR_ASSERT(newRobot->getJointSet(rns->getName()));
+        VR_ASSERT(newRobot->getJointSet(rns->getName())->getSize() == rns->getSize());
 
-        PoseQualityMeasurementPtr m(new PoseQualityMeasurement(newRobot->getRobotNodeSet(rns->getName())));
+        PoseQualityMeasurementPtr m(new PoseQualityMeasurement(newRobot->getJointSet(rns->getName())));
         return m;
     }
 

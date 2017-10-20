@@ -244,10 +244,10 @@ namespace VirtualRobot
     PoseQualityMeasurementPtr PoseQualityManipulability::clone(RobotPtr newRobot)
     {
         VR_ASSERT(newRobot);
-        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName()));
-        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName())->getSize() == rns->getSize());
+        VR_ASSERT(newRobot->getJointSet(rns->getName()));
+        VR_ASSERT(newRobot->getJointSet(rns->getName())->getSize() == rns->getSize());
 
-        PoseQualityManipulabilityPtr m(new PoseQualityManipulability(newRobot->getRobotNodeSet(rns->getName()), this->manipulabilityType));
+        PoseQualityManipulabilityPtr m(new PoseQualityManipulability(newRobot->getJointSet(rns->getName()), this->manipulabilityType));
         m->penalizeJointLimits(this->penJointLimits, this->penJointLimits_k);
         return m;
     }

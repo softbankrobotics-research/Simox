@@ -1,13 +1,8 @@
 
 #include "WorkspaceGrid.h"
 #include "../VirtualRobotException.h"
-<<<<<<< HEAD
 #include "../Model/ManipulationObject.h"
-=======
-#include "../ManipulationObject.h"
-#include "../Nodes/RobotNode.h"
-#include "../Robot.h"
->>>>>>> origin/master
+
 #include <iostream>
 #include <algorithm>
 using namespace std;
@@ -458,8 +453,8 @@ namespace VirtualRobot
         Eigen::Matrix4f gpOrig = Eigen::Matrix4f::Identity();
         if (baseRobotNode)
         {
-            gpOrig = baseRobotNode->getRobot()->getGlobalPose();
-            baseRobotNode->getRobot()->setGlobalPose(Eigen::Matrix4f::Identity());
+            gpOrig = baseRobotNode->getModel()->getGlobalPose();
+            baseRobotNode->getModel()->setGlobalPose(Eigen::Matrix4f::Identity());
         }
 
         WorkspaceRepresentation::WorkspaceCut2DPtr cutXY = ws->createCut(graspGlobal, discretizeSize, false);
@@ -468,7 +463,7 @@ namespace VirtualRobot
         setEntries(transformations, graspGlobal, g);
         if (baseRobotNode)
         {
-            baseRobotNode->getRobot()->setGlobalPose(gpOrig);
+            baseRobotNode->getModel()->setGlobalPose(gpOrig);
         }
 
         return true;

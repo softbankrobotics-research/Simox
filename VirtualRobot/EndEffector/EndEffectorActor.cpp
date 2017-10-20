@@ -126,13 +126,10 @@ namespace VirtualRobot
             float oldV =  j->getJointValue();
             float v = oldV + angle * n->directionAndSpeed;
 
-<<<<<<< HEAD
-            if (v <= j->getJointLimitHigh() && v >= j->getJointLimitLow())
-=======
+
             actorStatus[n->robotNode] = eMoving;
 
-            if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
->>>>>>> origin/master
+            if (v <= j->getJointLimitHigh() && v >= j->getJointLimitLow())
             {
                 robot->setJointValue(j, v);
                 //n->robotNode->setJointValue(v);
@@ -183,13 +180,9 @@ namespace VirtualRobot
                 {
                     // reset last position
                     //n->robotNode->setJointValue(oldV);
-<<<<<<< HEAD
                     robot->setJointValue(j, oldV);
-=======
-                    robot->setJointValue(n->robotNode, oldV);
 
                     actorStatus[n->robotNode] = eCollision;
->>>>>>> origin/master
                 }
             } else
             {

@@ -60,7 +60,7 @@ public slots:
 
     void planObjectBatch();
 protected:
-    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults &results);
+    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspPlanning::GraspEvaluationPoseUncertainty::PoseEvalResults &results);
 
     void loadRobot();
     void loadObject();

@@ -7,16 +7,15 @@
 #include "ModelIO.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
-<<<<<<< HEAD
+
 #include "../Model/ManipulationObject.h"
-=======
-#include "../ManipulationObject.h"
+
 #include "../Visualization/TriMeshModel.h"
 
 #include <iostream>
 
 using namespace std;
->>>>>>> origin/master
+
 
 namespace VirtualRobot
 {
@@ -168,7 +167,7 @@ namespace VirtualRobot
         // write triangles
         for (size_t i=0; i<t->faces.size(); i++)
         {
-            MathTools::TriangleFace& face = t->faces.at(i);
+            TriangleFace& face = t->faces.at(i);
             auto& p1 = t->vertices.at(face.id1);
             auto& p2 = t->vertices.at(face.id2);
             auto& p3 = t->vertices.at(face.id3);

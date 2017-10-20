@@ -2199,19 +2199,19 @@ namespace VirtualRobot
                 CollisionCheckerPtr cc(new CollisionChecker());
                 RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
                 clonedRobot->setUpdateVisualization(false);
-                RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
-                RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
+                JointSetPtr clonedNodeSet = clonedRobot->getJointSet(this->nodeSet->getName());
+                FramePtr clonedTcpNode = clonedRobot->getFrame(this->tcpNode->getName());
 
-                SceneObjectSetPtr staticCollisionModel = this->staticCollisionModel;
-                if (staticCollisionModel && clonedRobot->hasRobotNodeSet(staticCollisionModel->getName()))
+                LinkSetPtr staticCollisionModel = this->staticCollisionModel;
+                if (staticCollisionModel && clonedRobot->hasLinkSet(staticCollisionModel->getName()))
                 {
-                    staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
+                    staticCollisionModel = clonedRobot->getLinkSet(staticCollisionModel->getName());
                 }
 
-                SceneObjectSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
-                if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
+                LinkSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
+                if (dynamicCollisionModel && clonedRobot->hasLinkSet(dynamicCollisionModel->getName()))
                 {
-                    dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
+                    dynamicCollisionModel = clonedRobot->getLinkSet(dynamicCollisionModel->getName());
                 }
 
                 // now sample some configs and add them to the workspace data
@@ -2229,12 +2229,12 @@ namespace VirtualRobot
                         for (int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = (float) std::rand() * randMult; // value from 0 to 1
-                            minJ = (*nodeSet)[l]->getJointLimitLo();
-                            maxJ = (*nodeSet)[l]->getJointLimitHi();
+                            minJ = (*nodeSet)[l]->getJointLimitLow();
+                            maxJ = (*nodeSet)[l]->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
                         }
 
-                        clonedRobot->setJointValues(clonedNodeSet, v);
+                        clonedNodeSet->setJointValues(v);
 
                         // check for collisions
                         if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)

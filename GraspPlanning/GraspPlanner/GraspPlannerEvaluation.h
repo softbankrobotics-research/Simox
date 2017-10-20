@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    GraspStudio
+* @package    GraspPlanning
 * @author     Nikolaus Vahrenkamp
 * @copyright  2017 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
@@ -23,13 +23,13 @@
 #ifndef __GENERAL_GRASP_PLANNER_EVALUATION_H__
 #define __GENERAL_GRASP_PLANNER_EVALUATION_H__
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include <vector>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
-struct GraspPlannerEvaluation
+struct GRASPPLANNING_IMPORT_EXPORT GraspPlannerEvaluation
 {
     GraspPlannerEvaluation()
     {

@@ -45,7 +45,7 @@ namespace VirtualRobot
 #else
     typedef CollisionModelDummy InternalCollisionModel;
 #endif
-    typedef boost::shared_ptr< InternalCollisionModel > InternalCollisionModelPtr;
+    typedef std::shared_ptr< InternalCollisionModel > InternalCollisionModelPtr;
     class CollisionChecker;
 
     /*!

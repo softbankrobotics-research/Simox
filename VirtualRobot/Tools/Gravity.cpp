@@ -1,13 +1,21 @@
 #include "Gravity.h"
 
 
-#include "../Nodes/RobotNodeRevolute.h"
-#include "../RobotNodeSet.h"
-#include "../Robot.h"
+#include "../Model/Nodes/ModelJoint.h"
+#include "../Model/Nodes/ModelJointPrismatic.h"
+#include "../Model/Nodes/ModelJointRevolute.h"
+#include "../Model/Nodes/ModelLink.h"
+#include "../Model/JointSet.h"
+#include "../Model/LinkSet.h"
+#include "../Model/Model.h"
+#include "../VirtualRobot.h"
+#include "../VirtualRobotException.h"
+#include "../Tools/MathTools.h"
+
 
 using namespace VirtualRobot;
 
-Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rnsJoints, VirtualRobot::RobotNodeSetPtr rnsBodies) :
+Gravity::Gravity(VirtualRobot::ModelPtr robot, VirtualRobot::JointSetPtr rnsJoints, VirtualRobot::LinkSetPtr rnsBodies) :
     robot(robot),
     rns(rnsJoints),
     rnsBodies(rnsBodies)
@@ -15,8 +23,8 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
     THROW_VR_EXCEPTION_IF(!robot || !rns || !rnsBodies || rns->getSize()==0, "NULL data");
 
 
-    nodes = rns->getAllRobotNodes();
-    nodesBodies = rnsBodies->getAllRobotNodes();
+    nodes = rns->getJoints();
+    nodesBodies = rnsBodies->getLinks();
 
     for (auto& node : nodes)
     {
@@ -45,7 +53,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
         b=0;
         for (auto& body : nodesBodies)
         {
-            if (node->hasChild(body, true) || node == body)
+            if (node->hasChild(body, true) /*|| node == body*/)
             {
                 children(a,b) = 1;
             } else
@@ -70,7 +78,7 @@ void Gravity::computeGravityTorque(std::vector<float> &storeValues)
     unsigned int b = 0;
     for (auto& node : nodes)
     {
-        VirtualRobot::RobotNodeRevolutePtr rnRevolute = boost::dynamic_pointer_cast<VirtualRobot::RobotNodeRevolute>(node);
+        VirtualRobot::ModelJointRevolutePtr rnRevolute = std::dynamic_pointer_cast<VirtualRobot::ModelJointRevolute>(node);
         Eigen::Vector3f axisGlobal = rnRevolute->getJointRotationAxis();
         Eigen::Vector3f jointPosGlobal = rnRevolute->getGlobalPose().block(0, 3, 3, 1);
         axisGlobal.normalize();
@@ -170,19 +178,21 @@ Gravity::GravityData::GravityData()
 
 }
 
-Gravity::GravityDataPtr Gravity::GravityData::create(SceneObjectPtr node, const std::vector<RobotNodePtr> &joints, const std::vector<RobotNodePtr> &bodies, std::vector<Gravity::GravityDataPtr> &dataVec)
+Gravity::GravityDataPtr Gravity::GravityData::create(ModelNodePtr node, const std::vector<ModelJointPtr> &joints, const std::vector<ModelLinkPtr> &bodies, std::vector<Gravity::GravityDataPtr> &dataVec)
 {
     GravityDataPtr p(new GravityData);
     p->init(node, joints, bodies, dataVec);
     return p;
 }
 
-void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNodePtr> &joints, const std::vector<RobotNodePtr> &bodies, std::vector<GravityDataPtr> &dataVec)
+void Gravity::GravityData::init(ModelNodePtr node, const std::vector<ModelJointPtr> &joints, const std::vector<ModelLinkPtr> &bodies, std::vector<GravityDataPtr> &dataVec)
 {
     this->node = node;
+    nodeJoint = std::dynamic_pointer_cast<ModelJoint>(node);
+    nodeLink = std::dynamic_pointer_cast<ModelLink>(node);
     dataVec.resize(joints.size());
 
-    RobotNodePtr thisNode = boost::dynamic_pointer_cast<RobotNode>(node);
+    RobotNodePtr thisNode = node;//std::dynamic_pointer_cast<RobotNode>(node);
     for (size_t i = 0; i < joints.size(); ++i) {
         if(thisNode == joints.at(i)){
             computeTorque = true;
@@ -198,14 +208,18 @@ void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNode
     }
 
     if(computeCoM)
-        massSum = node->getMass();
+    {
+        if (nodeLink)
+            massSum = nodeLink->getMass();
+    } else
+        computeCoM = false;
     //    for(auto& body : bodies)
-    for(auto child : node->getChildren())
+    for(auto child : node->getChildNodes())
     {
         GravityDataPtr data;
         data = GravityData::create(child, joints, bodies, dataVec);
         children[child->getName()] = data;
-        auto childNode = boost::dynamic_pointer_cast<RobotNode>(child);
+        //auto childNode = std::dynamic_pointer_cast<RobotNode>(child);
         //                    VR_INFO << "adding child mass sum: " << child->getName() << " : " << data->massSum << std::endl;
         massSum += data->massSum;
     }
@@ -220,9 +234,9 @@ void Gravity::GravityData::computeCoMAndTorque(Eigen::Vector3f &comPositionGloba
     comPositionGlobal = Eigen::Vector3f::Zero();
     Eigen::Vector3f comPositionGlobalChild;
     //    std::string name = node->getName();
-    float validationSum = computeCoM ?node->getMass() : 0;
-    if(computeCoM && massSum > 0 && node->getMass() > 0)
-        comPositionGlobal += node->getCoMGlobal() * node->getMass()/massSum;
+    float validationSum = computeCoM ?nodeLink->getMass() : 0;
+    if(computeCoM && massSum > 0 && nodeLink->getMass() > 0)
+        comPositionGlobal += nodeLink->getCoMGlobal() * nodeLink->getMass()/massSum;
     for(auto& child : children)
     {
         child.second->computeCoMAndTorque(comPositionGlobalChild);
@@ -238,9 +252,9 @@ void Gravity::GravityData::computeCoMAndTorque(Eigen::Vector3f &comPositionGloba
     //    BOOST_ASSERT_MSG(fabs(validationSum-massSum) < 0.001, std::string(name + ":" + std::to_string(validationSum) + " vs. " + std::to_string(massSum)).c_str());
     //    if(computeCoM && massSum > 0)
     //        VR_INFO << "CoM of " << name << ": " << node->getCoMGlobal() << " accumulated CoM: " << comPositionGlobal << "\nmass: " << node->getMass() << " massSum: " << massSum << std::endl;
-    if(computeTorque)
+    if(computeTorque && nodeJoint)
     {
-        VirtualRobot::RobotNodeRevolutePtr rnRevolute = boost::dynamic_pointer_cast<VirtualRobot::RobotNodeRevolute>(node);
+        VirtualRobot::ModelJointRevolutePtr rnRevolute = std::dynamic_pointer_cast<VirtualRobot::ModelJointRevolute>(nodeJoint);
         Eigen::Vector3f axisGlobal = rnRevolute->getJointRotationAxis();
         VirtualRobot::MathTools::BaseLine<Eigen::Vector3f> l(node->getGlobalPose().block<3,1>(0,3), axisGlobal);
         Eigen::Vector3f pointOnAxis = VirtualRobot::MathTools::nearestPointOnLine<Eigen::Vector3f>(l, comPositionGlobal);

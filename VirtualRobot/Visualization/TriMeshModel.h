@@ -60,22 +60,15 @@ namespace VirtualRobot
 								Eigen::Vector4f& vertexColor2, 
 								Eigen::Vector4f& vertexColor3);
         static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
-<<<<<<< HEAD
+
         void addFace(const TriangleFace& face);
-        void addVertex(const Eigen::Vector3f& vertex);
-        void addNormal(const Eigen::Vector3f& normal);
-        void addColor(const VisualizationFactory::Color& color);
-        void addColor(const Eigen::Vector4f& color);
-        void addMaterial(const VisualizationFactory::PhongMaterial& material);
-=======
-        void addFace(const MathTools::TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
         int addNormal(const Eigen::Vector3f& normal);
         int addColor(const VisualizationFactory::Color& color);
         int addColor(const Eigen::Vector4f& color);
         int addMaterial(const VisualizationFactory::PhongMaterial& material);
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
->>>>>>> origin/master
+
         void clear();
         void flipVertexOrientations();
         /**

@@ -31,24 +31,20 @@ namespace SimDynamics
     void DynamicsObject::setPose(const Eigen::Matrix4f& pose)
     {
         MutexLockPtr lock = getScopedLock();
-<<<<<<< HEAD
-
-        if (sceneObject->getSimulationType() == VirtualRobot::ModelLink::Physics::eStatic)
-=======
-        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eDynamic)
+        if (sceneObject->getSimulationType() == VirtualRobot::ModelLink::Physics::eDynamic)
         {
             // moving dynamic objects is not allowed
             return;
         }
-        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eStatic)
->>>>>>> origin/master
+        if (sceneObject->getSimulationType() == VirtualRobot::ModelLink::Physics::eStatic)
         {
             VR_ERROR << "Could not move static object, use kinematic instead, aborting..." << endl;
             return;
         }
         try
         {
-            sceneObject->setGlobalPose(pose);
+            VR_WARNING << " could not move links..." << endl;
+            //sceneObject->setGlobalPose(pose);
         }
         catch(...) // robot node does not allow to set the pose
         {
@@ -109,19 +105,16 @@ namespace SimDynamics
         sceneObject->setSimulationType(s);
     }
 
-<<<<<<< HEAD
     void DynamicsObject::updateVisualization()
     {
         if (sceneObject)
             sceneObject->updatePose(true, true);
     }
 
-=======
     void DynamicsObject::activate()
     {
 
     }
->>>>>>> origin/master
 
     DynamicsObject::MutexLockPtr DynamicsObject::getScopedLock()
     {

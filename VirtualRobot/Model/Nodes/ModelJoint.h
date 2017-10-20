@@ -184,6 +184,19 @@ namespace VirtualRobot
 
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
 
+        /**
+         * @param limitless wheter this node has joint limits or not.
+         */
+        virtual void setLimitless(bool limitless);
+        bool isLimitless();
+
+        /**
+         * @param target the target joint value in [rad]
+         * @return the signed distance between current and target joint values in [rad].
+         *         If the given target value violates joint limits or this robotnode is not a joint, 0.0f is returned instead.
+         */
+        virtual float getDelta(float target);
+
     protected:
         float jointValue;           //!< The joint value
         float jointValueOffset;
@@ -192,6 +205,8 @@ namespace VirtualRobot
         float maxVelocity;          //!< given in m/s
         float maxAcceleration;      //!< given in m/s^2
         float maxTorque;            //!< given in Nm
+
+        bool limitless;
 
         std::map< std::string, float > propagatedJointValues;
     };

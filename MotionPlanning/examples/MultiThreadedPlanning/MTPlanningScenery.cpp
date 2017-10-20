@@ -110,11 +110,14 @@ void MTPlanningScenery::reset()
 
     viewer->clearLayer("visualizations");
     viewer->clearLayer("startgoal");
+    viewer->clearLayer("solution");
 }
 
 void MTPlanningScenery::buildScene()
 {
     viewer->clearLayer("obstacles");
+    viewer->clearLayer("startgoal");
+    viewer->clearLayer("solution");
 
     float fCubeSize = 50.0f;
     float fPlayfieldSize = 1000.0f - fCubeSize;

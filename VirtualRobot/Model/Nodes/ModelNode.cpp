@@ -195,15 +195,26 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelNode::hasChild(const ModelNodePtr& node) const
+    bool ModelNode::hasChild(const ModelNodePtr& node, bool recursive) const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
-        return std::find(children.begin(), children.end(), node) != children.end();
+        // initialisation is checked in getChildNodes
+        for (const ModelNodePtr & child : getChildNodes())
+        {
+            if (child == node)
+            {
+                return true;
+            }
+            if (recursive && child->hasChild(node, true))
+            {
+               return true;
+            }
+        }
+        return false;
     }
 
-    bool ModelNode::hasChild(const std::string& nodeName) const
+    bool ModelNode::hasChild(const std::string& nodeName, bool recursive) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
@@ -212,6 +223,10 @@ namespace VirtualRobot
             if (child->getName() == nodeName)
             {
                 return true;
+            }
+            if (recursive && child->hasChild(nodeName, true))
+            {
+               return true;
             }
         }
 

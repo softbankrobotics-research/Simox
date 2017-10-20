@@ -292,7 +292,7 @@ namespace SimDynamics
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
         // notify motionState of non-robot nodes
-        if(!boost::dynamic_pointer_cast<VirtualRobot::RobotNode>(sceneObject))
+        if(!std::dynamic_pointer_cast<VirtualRobot::RobotNode>(sceneObject))
         {
             motionState->setGlobalPose(pose);
         }

@@ -14,6 +14,7 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
+#include "VirtualRobot/Visualization/VisualizationNode.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -193,9 +194,9 @@ void GraspQualityWindow::evalRobustness()
     int numSamples = UI.sbSamples->value();
     float varMM = UI.sbVariationMM->value();
     float varDeg = UI.sbVariationDeg->value();
-    GraspStudio::GraspEvaluationPoseUncertainty::PoseUncertaintyConfig c;
+    GraspPlanning::GraspEvaluationPoseUncertainty::PoseUncertaintyConfig c;
     c.init(varMM, varDeg);
-    GraspStudio::GraspEvaluationPoseUncertaintyPtr eval(new GraspStudio::GraspEvaluationPoseUncertainty(c));
+    GraspPlanning::GraspEvaluationPoseUncertaintyPtr eval(new GraspPlanning::GraspEvaluationPoseUncertainty(c));
 
     openEEF();
     closeEEF();
@@ -210,12 +211,12 @@ void GraspQualityWindow::evalRobustness()
     /*
     int r = rand() % evalPoses.size();
     Eigen::Matrix4f p = evalPoses.at(r);
-    GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResult re = eval->evaluatePose(eef, object, p, qualityMeasure);
+    GraspPlanning::GraspEvaluationPoseUncertainty::PoseEvalResult re = eval->evaluatePose(eef, object, p, qualityMeasure);
     cout << "FC: " << re.forceClosure << endl;
     cout << "init col: " << re.initialCollision << endl;
     cout << "QUAL: " << re.quality << endl;
     */
-    GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults re = eval->evaluatePoses(eef, object, evalPoses, qualityMeasure);
+    GraspPlanning::GraspEvaluationPoseUncertainty::PoseEvalResults re = eval->evaluatePoses(eef, object, evalPoses, qualityMeasure);
     if (eef && grasp)
         VR_INFO << "#### Robustness for eef " << eef->getName() << ", grasp " << grasp->getName() << endl;
     re.print();
@@ -246,7 +247,7 @@ void GraspQualityWindow::loadObject()
     {
         VR_INFO << "Building standard box" << endl;
         ObstaclePtr o = Obstacle::createBox(50.0f, 50.0f, 10.0f);
-        object = ManipulationObject::createFromMesh(o->getVisualization()->getTriMeshModel());
+        object = ManipulationObject::createFromMesh(o->getFirstLink()->getVisualization()->getTriMeshModel());
     }
 
     qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));

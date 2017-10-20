@@ -16,31 +16,6 @@ BOOST_AUTO_TEST_SUITE(MathTools)
 
     BOOST_AUTO_TEST_CASE(testMathToolsHopf)
     {
-<<<<<<< HEAD
-        Eigen::Vector3f ax = Eigen::Vector3f::Random();
-        ax.normalize();
-        float ang = float(rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI);
-        float xa = rand() % 1000 / 1000.0f * 100.0f;
-        float ya = rand() % 1000 / 1000.0f * 100.0f;
-        float za = rand() % 1000 / 1000.0f * 100.0f;
-        Eigen::Matrix3f m3 = Eigen::AngleAxisf(ang, ax).matrix();
-        m.block(0, 0, 3, 3) = m3;
-
-        VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(m);
-
-        Eigen::Vector3f h = VirtualRobot::MathTools::quat2hopf(q);
-
-        BOOST_CHECK_LE(h(0), 2.0f*(float)M_PI);
-        BOOST_CHECK_LE(h(1), 2.0f*(float)M_PI);
-        BOOST_CHECK_LE(h(2), 2.0f*(float)M_PI);
-
-        BOOST_CHECK_GE(h(0), 0.0f);
-        BOOST_CHECK_GE(h(1), 0.0f);
-        BOOST_CHECK_GE(h(2), 0.0f);
-
-        //BOOST_CHECK_LE(fabs(h(1)), (float)M_PI);
-        //BOOST_CHECK_LE(fabs(h(2)), (float)M_PI);
-=======
         Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
         const int NR_TESTS = 10000;
         for (int i=0;i<NR_TESTS;i++)
@@ -73,8 +48,6 @@ BOOST_AUTO_TEST_SUITE(MathTools)
             }
         }
     }
->>>>>>> origin/master
-
 
     BOOST_AUTO_TEST_CASE(testMathToolsHopfNeighborhood)
     {

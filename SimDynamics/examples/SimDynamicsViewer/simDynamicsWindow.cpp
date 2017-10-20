@@ -305,10 +305,9 @@ void SimDynamicsWindow::updateJoints()
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
-<<<<<<< HEAD
-        if (nodes[i]->getType() & ModelNode::JointRevolute)
+        if (nodes[i]->isRotationalJoint() || nodes[i]->isTranslationalJoint())
         {
-            ModelJointRevolutePtr rn = std::dynamic_pointer_cast<ModelJointRevolute>(nodes[i]);
+            ModelJointPtr rn = std::dynamic_pointer_cast<ModelJoint>(nodes[i]);
 
             if (rn)
             {
@@ -316,13 +315,6 @@ void SimDynamicsWindow::updateJoints()
                 QString qstr(rn->getName().c_str());
                 UI.comboBoxRobotNode->addItem(qstr);
             }
-=======
-        if (nodes[i]->isRotationalJoint() || nodes[i]->isTranslationalJoint())
-        {
-            robotNodes.push_back(nodes[i]);
-            QString qstr(nodes[i]->getName().c_str());
-            UI.comboBoxRobotNode->addItem(qstr);
->>>>>>> origin/master
         }
     }
 
@@ -365,18 +357,14 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
         //gp(2,3) = 5.0f;
         gp(2, 3) = -bbox.getMin()(2) + 4.0f;
         robot->setGlobalPose(gp);
-<<<<<<< HEAD
         dynamicsRobot = dynamicsWorld->CreateDynamicsModel(robot);
-        dynamicsWorld->addModel(dynamicsRobot);
-=======
-        dynamicsRobot = dynamicsWorld->CreateDynamicsRobot(robot);
         if(! UI.checkBox_selfCol->isChecked())
         {
             //we don't want to call this function with true (we would enable all collisions)
             dynamicsRobot->enableSelfCollisions(false);
         }
-        dynamicsWorld->addRobot(dynamicsRobot);
->>>>>>> origin/master
+        dynamicsWorld->addModel(dynamicsRobot);
+
     }
     catch (VirtualRobotException& e)
     {
@@ -393,11 +381,7 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
 void SimDynamicsWindow::selectRobotNode(int n)
 {
     UI.comboBoxRobotNode->setCurrentIndex(n);
-<<<<<<< HEAD
-    ModelJointRevolutePtr rn;
-=======
-    RobotNodePtr rn;
->>>>>>> origin/master
+    ModelJointPtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -443,11 +427,8 @@ void SimDynamicsWindow::updateJointInfo()
     QString qVisu("VISU (simox): 0/0/0");
     QString qCom("COM (bullet): 0/0/0");
     QString tmp;
-<<<<<<< HEAD
-    ModelJointRevolutePtr rn;
-=======
-    RobotNodePtr rn;
->>>>>>> origin/master
+
+    ModelJointPtr rn;
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -773,8 +754,8 @@ void SimDynamicsWindow::updateRobotInfo()
     UI.label_RootNodePos->setText(QString::number(rpos(0), 'f', 2) + " / " + QString::number(rpos(1), 'f', 2) + " / " + QString::number(rpos(2), 'f', 2));
     UI.label_RootNodeRPY->setText(QString::number(rrpy(0), 'f', 2) + " / " + QString::number(rrpy(1), 'f', 2) + " / " + QString::number(rrpy(2), 'f', 2));
 
-    Eigen::Vector3f rltpos = robot->getRootNode()->getLocalTransformation().block<3,1>(0,3);
-    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getLocalTransformation());
+    Eigen::Vector3f rltpos = robot->getRootNode()->getStaticTransformation().block<3,1>(0,3);
+    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getStaticTransformation());
     UI.label_RootLocalTransfPos->setText(QString::number(rltpos(0), 'f', 2) + " / " + QString::number(rltpos(1), 'f', 2) + " / " + QString::number(rltpos(2), 'f', 2));
     UI.label_RootLocalTransfRPY->setText(QString::number(rltrpy(0), 'f', 2) + " / " + QString::number(rltrpy(1), 'f', 2) + " / " + QString::number(rltrpy(2), 'f', 2));
 }
@@ -797,11 +778,8 @@ void SimDynamicsWindow::jointValueChanged(int n)
     #endif
     */
     int j = UI.comboBoxRobotNode->currentIndex();
-<<<<<<< HEAD
-    ModelJointRevolutePtr rn;
-=======
-    RobotNodePtr rn;
->>>>>>> origin/master
+
+    ModelJointPtr rn;
 
     if (j >= 0 && j < (int)robotNodes.size())
     {

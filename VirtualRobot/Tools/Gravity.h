@@ -31,7 +31,7 @@ namespace VirtualRobot
     class Gravity
     {
     public:
-        Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rnsJoints, VirtualRobot::RobotNodeSetPtr rnsBodies);
+        Gravity(ModelPtr robot, JointSetPtr rnsJoints, LinkSetPtr rnsBodies);
         virtual ~Gravity();
 
         /*!
@@ -44,14 +44,16 @@ namespace VirtualRobot
         void computeGravityTorqueOptimized(std::vector<float> &storeValues);
     protected:
         struct GravityData;
-        typedef boost::shared_ptr<GravityData> GravityDataPtr;
-        struct GravityData : boost::enable_shared_from_this<GravityData>
+        typedef std::shared_ptr<GravityData> GravityDataPtr;
+        struct GravityData : std::enable_shared_from_this<GravityData>
         {
             GravityData();
-            static GravityDataPtr create(SceneObjectPtr node, const std::vector<VirtualRobot::RobotNodePtr> &joints, const std::vector<VirtualRobot::RobotNodePtr> &bodies, std::vector<GravityDataPtr> &dataVec);
-            void init(SceneObjectPtr node, const std::vector<VirtualRobot::RobotNodePtr> &joints, const std::vector<VirtualRobot::RobotNodePtr> &bodies, std::vector<GravityDataPtr> &dataVec);
+            static GravityDataPtr create(ModelNodePtr node, const std::vector<VirtualRobot::ModelJointPtr> &joints, const std::vector<VirtualRobot::ModelLinkPtr> &bodies, std::vector<GravityDataPtr> &dataVec);
+            void init(ModelNodePtr node, const std::vector<VirtualRobot::ModelJointPtr> &joints, const std::vector<VirtualRobot::ModelLinkPtr> &bodies, std::vector<GravityDataPtr> &dataVec);
             std::map<std::string, GravityDataPtr> children;
-            SceneObjectPtr node;
+            ModelNodePtr node;
+            ModelLinkPtr nodeLink;
+            ModelJointPtr nodeJoint;
             float massSum = 0.0f;
             float torque = 0.0f;
             bool computeTorque = false;
@@ -61,21 +63,21 @@ namespace VirtualRobot
         std::vector<GravityDataPtr> gravityDataHelperVec;
         GravityDataPtr gravityDataHelperRoot;
 
-        VirtualRobot::RobotPtr robot;
+        VirtualRobot::ModelPtr robot;
 
         // this rns is used to update the current pose of the robot
-        VirtualRobot::RobotNodeSetPtr rns;
+        VirtualRobot::JointSetPtr rns;
 
         // this rns is used to update the current pose of the robot
-        VirtualRobot::RobotNodeSetPtr rnsBodies;
+        VirtualRobot::LinkSetPtr rnsBodies;
 
-        std::vector<VirtualRobot::RobotNodePtr> nodes;
-        std::vector<VirtualRobot::RobotNodePtr> nodesBodies;
+        std::vector<VirtualRobot::ModelJointPtr> nodes;
+        std::vector<VirtualRobot::ModelLinkPtr> nodesBodies;
 
         Eigen::MatrixXi children;
     };
 
-    typedef boost::shared_ptr<Gravity> GravityPtr;
+    typedef std::shared_ptr<Gravity> GravityPtr;
 
 
 }

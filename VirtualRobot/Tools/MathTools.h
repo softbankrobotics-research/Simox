@@ -114,11 +114,9 @@ namespace VirtualRobot
         */
         void VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y);
-<<<<<<< HEAD:VirtualRobot/Tools/MathTools.h
-        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(const Eigen::Vector3f &rpy);
-=======
 
->>>>>>> origin/master:VirtualRobot/MathTools.h
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(const Eigen::Vector3f &rpy);
+
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const float x[6], Eigen::Matrix4f& m);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy, Eigen::Matrix4f& m);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw, Eigen::Matrix4f& m);
@@ -135,10 +133,8 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m, Eigen::Vector3f& storeRPY);
         Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2rpy(const Eigen::Matrix4f& m);
         Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT eigen3f2rpy(const Eigen::Matrix3f& m);
-<<<<<<< HEAD:VirtualRobot/Tools/MathTools.h
-=======
+
         Eigen::Matrix<float, 6, 1> VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2posrpy(const Eigen::Matrix4f& m);
->>>>>>> origin/master:VirtualRobot/MathTools.h
 
         /*!
             Convert quaternion values to a 3x3 rotation matrix and store it to the rotational component of the result.
@@ -689,6 +685,10 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT print(const Eigen::VectorXf& v, bool endline = true);
         void VIRTUAL_ROBOT_IMPORT_EXPORT printMat(const Eigen::MatrixXf& m, bool endline = true);
         void VIRTUAL_ROBOT_IMPORT_EXPORT print(const std::vector<float>& v, bool endline = true);
+        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag = false);
+        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix4f& m, const std::string& tabs, bool skipMatrixTag = false);
+        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag = false);
+        std::string VIRTUAL_ROBOT_IMPORT_EXPORT getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag = false);
         void VIRTUAL_ROBOT_IMPORT_EXPORT convertMM2M(const std::vector<ContactPoint> points, std::vector<ContactPoint>& storeResult);
 
 

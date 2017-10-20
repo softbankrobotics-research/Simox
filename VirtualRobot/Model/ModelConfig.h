@@ -86,9 +86,9 @@ namespace VirtualRobot
         bool setConfig(const std::string& node, float value);
 
         bool setTCP(const std::string &tcpName);
-        bool setTCP(RobotNodePtr tcp);
+        bool setTCP(FramePtr tcp);
         bool hasTCP() const;
-        RobotNodePtr getTCP();
+        FramePtr getTCP();
 
         /*!
             Apply the stored configurations to the corresponding model.
@@ -132,14 +132,10 @@ namespace VirtualRobot
     protected:
         std::string name;
 
-<<<<<<< HEAD:VirtualRobot/Model/ModelConfig.h
         std::map< ModelJointPtr, float > configs;
         ModelWeakPtr model;
-=======
-        std::map< RobotNodePtr, float > configs;
-        RobotWeakPtr robot;
-        RobotNodePtr tcpNode;
->>>>>>> origin/master:VirtualRobot/RobotConfig.h
+
+        FramePtr tcpNode;
     };
 
 

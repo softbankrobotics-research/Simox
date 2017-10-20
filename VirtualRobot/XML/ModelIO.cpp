@@ -1028,8 +1028,9 @@ namespace VirtualRobot
 
         std::vector< std::vector< RobotConfig::Configuration > > configDefinitions;
         std::vector< std::string > configNames;
+        std::vector< std::string > tcpNames;
 
-        bool cOK = processConfigurationNodeList(configXMLNode, configDefinitions, configNames);
+        bool cOK = processConfigurationNodeList(configXMLNode, configDefinitions, configNames, tcpNames);
         THROW_VR_EXCEPTION_IF(!cOK, "Invalid configuration defined in model '" << model->getName() << "'." << endl);
 
         // create & register configs
@@ -1038,6 +1039,8 @@ namespace VirtualRobot
         for (size_t i = 0; i < configDefinitions.size(); i++)
         {
             ModelConfigPtr rc(new ModelConfig(model, configNames[i], configDefinitions[i]));
+            if (!tcpNames[i].empty())
+                rc->setTCP(tcpNames[i]);
             model->registerConfiguration(rc);
         }
         return true;

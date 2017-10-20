@@ -142,9 +142,9 @@ namespace VirtualRobot
         cout << endl;
     }
 
-    boost::shared_ptr<CollisionModelImplementation> CollisionModelPQP::clone(bool deepCopy) const
+    std::shared_ptr<CollisionModelImplementation> CollisionModelPQP::clone(bool deepCopy) const
     {
-        boost::shared_ptr<CollisionModelPQP> p(new CollisionModelPQP(*this));
+        std::shared_ptr<CollisionModelPQP> p(new CollisionModelPQP(*this));
         if(deepCopy)
         {
             p->createPQPModel();

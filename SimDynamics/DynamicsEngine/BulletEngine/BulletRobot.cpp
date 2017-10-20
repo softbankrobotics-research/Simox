@@ -257,7 +257,7 @@ namespace SimDynamics
         return hinge;
     }
 
-    boost::shared_ptr<btTypedConstraint> BulletRobot::createTranslationalJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f &coordSystemNode1, Eigen::Matrix4f &coordSystemNode2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f &directionLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT)
+    std::shared_ptr<btTypedConstraint> BulletRobot::createTranslationalJoint(std::shared_ptr<btRigidBody> btBody1, std::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f &coordSystemNode1, Eigen::Matrix4f &coordSystemNode2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2, Eigen::Vector3f &directionLocal, Eigen::Matrix4f& coordSystemJoint, double limMinBT, double limMaxBT)
     {
         // we need to align coord system joint, so that z-axis is rotation axis
 
@@ -274,7 +274,7 @@ namespace SimDynamics
         tr1.getOrigin() = pivot1;
         tr2.getOrigin() = pivot2;
 
-        boost::shared_ptr<btSliderConstraint> joint(new btSliderConstraint(*btBody1, *btBody2, tr1, tr2, true));
+        std::shared_ptr<btSliderConstraint> joint(new btSliderConstraint(*btBody1, *btBody2, tr1, tr2, true));
 
         // disable agular part
         joint->setLowerAngLimit(btScalar(0));
@@ -286,7 +286,7 @@ namespace SimDynamics
         return joint;
     }
 
-    boost::shared_ptr<btTypedConstraint> BulletRobot::createFixedJoint(boost::shared_ptr<btRigidBody> btBody1, boost::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2)
+    std::shared_ptr<btTypedConstraint> BulletRobot::createFixedJoint(std::shared_ptr<btRigidBody> btBody1, std::shared_ptr<btRigidBody> btBody2, Eigen::Matrix4f& anchor_inNode1, Eigen::Matrix4f& anchor_inNode2)
     {
         btTransform localA, localB;
         localA = BulletEngine::getPoseBullet(anchor_inNode1);
@@ -373,15 +373,15 @@ namespace SimDynamics
         double vr2bulletOffset = 0.0f;
 
 
-        if (joint->isTranslationalJoint() && !ignoreTranslationalJoints)
+        if (joint && joint->isTranslationalJoint() && !ignoreTranslationalJoints)
         {
-            boost::shared_ptr<RobotNodePrismatic> rnPrisJoint = boost::dynamic_pointer_cast<RobotNodePrismatic>(joint);
+            std::shared_ptr<ModelJointPrismatic> rnPrisJoint = std::dynamic_pointer_cast<ModelJointPrismatic>(joint);
 
 
             double limMin, limMax;
             btScalar diff = joint->getJointValueOffset();
-            limMin = (joint->getJointLimitLo() + diff) / 1000 * BulletObject::ScaleFactor; //mm -> m
-            limMax = (joint->getJointLimitHi() + diff) / 1000 * BulletObject::ScaleFactor; //mm -> m
+            limMin = (joint->getJointLimitLow() + diff) / 1000 * BulletObject::ScaleFactor; //mm -> m
+            limMax = (joint->getJointLimitHigh() + diff) / 1000 * BulletObject::ScaleFactor; //mm -> m
 
             Eigen::Vector3f directionLocal = rnPrisJoint->getJointTranslationDirectionJointCoordSystem();
 
@@ -389,7 +389,7 @@ namespace SimDynamics
 
             vr2bulletOffset = diff;
         }
-        else if (joint && joint->getType() == ModelNode::JointRevolute)
+        else if (joint && joint->isRotationalJoint())
         {
             // create joint
             std::shared_ptr<ModelJointRevolute> rnRevJoint = std::dynamic_pointer_cast<ModelJointRevolute>(joint);
@@ -440,7 +440,7 @@ namespace SimDynamics
         links.push_back(i);
 #ifndef DEBUG_FIXED_OBJECTS
 
-        if (enableJointMotors && joint && (joint->getType() & ModelNode::JointRevolute) || (joint->->getType() & ModelNode::JointPrismatic) && !ignoreTranslationalJoints))
+        if (enableJointMotors && joint && ((joint->getType() == ModelNode::JointRevolute) || ((joint->getType() == ModelNode::JointPrismatic) && !ignoreTranslationalJoints)))
         {
             // start standard actuator
             actuateNode(joint, joint->getJointValue());
@@ -516,13 +516,13 @@ namespace SimDynamics
             {
                 if (it->second.node->isRotationalJoint())
                 {
-                    boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+                    std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
                     hinge->enableMotor(false);
                     continue;
                 }
                 else if (it->second.node->isTranslationalJoint() && !ignoreTranslationalJoints)
                 {
-                    boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+                    std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
                     slider->setPoweredLinMotor(false);
                     continue;
                 }
@@ -535,7 +535,7 @@ namespace SimDynamics
 
                  if (it->second.node->isRotationalJoint())
                  {
-                     boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+                     std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
                      auto torque = it->second.jointTorqueTarget;
                      btVector3 hingeAxisLocalA =
                              hinge->getFrameOffsetA().getBasis().getColumn(2);
@@ -561,7 +561,7 @@ namespace SimDynamics
                  else
                  {
                      // not yet tested!
-                     boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+                     std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
                      auto torque = it->second.jointTorqueTarget;
                      btVector3 sliderAxisLocalA =
                              slider->getFrameOffsetA().getBasis().getColumn(2);
@@ -650,12 +650,12 @@ namespace SimDynamics
                 }
                 if (it->second.node->isRotationalJoint())
                 {
-                    boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+                    std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
                     hinge->enableAngularMotor(true, btScalar(targetVelocity), maxImpulse);
                 }
                 else if (it->second.node->isTranslationalJoint() && !ignoreTranslationalJoints)
                 {
-                    boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+                    std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
                     slider->setMaxLinMotorForce(maxImpulse * 1000); // Magic number!!!
                     slider->setTargetLinMotorVelocity(btScalar(targetVelocity));
                     slider->setPoweredLinMotor(true);
@@ -1007,16 +1007,6 @@ namespace SimDynamics
                 VR_ERROR << "No link for node " << node->getName() << endl;
                 return;
             }
-
-            LinkInfo link = getLink(node);
-#ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
-            std::shared_ptr<btGeneric6DofConstraint> dof = std::dynamic_pointer_cast<btGeneric6DofConstraint>(link.joint);
-            VR_ASSERT(dof);
-            btRotationalLimitMotor* m = dof->getRotationalLimitMotor(0);
-            VR_ASSERT(m);
-            m->m_enableMotor = true;
-            m->m_maxMotorForce = 5;//bulletMaxMotorImulse; //?!
-            m->m_maxLimitForce = 300;
             DynamicsRobot::actuateNode(node, jointValue);
         }
         else
@@ -1043,11 +1033,6 @@ namespace SimDynamics
                 VR_ERROR << "No link for node " << node->getName() << endl;
                 return;
             }
-
-            LinkInfo link = getLink(node);
-
-
-
             DynamicsRobot::actuateNodeVel(node, jointVelocity); // inverted joint direction in bullet
         }
         else
@@ -1071,14 +1056,14 @@ namespace SimDynamics
 
         if (rn->isRotationalJoint())
         {
-            boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+            std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
             VR_ASSERT(hinge);
 
             return (hinge->getHingeAngle() - link.jointValueOffset); // inverted joint direction in bullet
         }
         else if (rn->isTranslationalJoint())
         {
-            boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+            std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
             VR_ASSERT(slider);
 
             return (slider->getLinearPos() - link.jointValueOffset) * 1000 / BulletObject::ScaleFactor; // m -> mm
@@ -1104,13 +1089,13 @@ namespace SimDynamics
 
         if (rn->isRotationalJoint())
         {
-            boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+            std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
 
             return hinge->getMotorTargetVelosity();
         }
         else if (rn->isTranslationalJoint())
         {
-            boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+            std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
 
             return slider->getTargetLinMotorVelocity() * 1000; // / BulletObject::ScaleFactor; m -> mm
         }
@@ -1130,11 +1115,11 @@ namespace SimDynamics
         if (rn->isRotationalJoint())
         {
             LinkInfo link = getLink(rn);
-            boost::shared_ptr<btHingeConstraint> hinge = boost::dynamic_pointer_cast<btHingeConstraint>(link.joint);
+            std::shared_ptr<btHingeConstraint> hinge = std::dynamic_pointer_cast<btHingeConstraint>(link.joint);
 
             VR_ASSERT(hinge);
 
-            boost::shared_ptr<RobotNodeRevolute> rnRevJoint = boost::dynamic_pointer_cast<RobotNodeRevolute>(link.nodeJoint);
+            std::shared_ptr<ModelJointRevolute> rnRevJoint = std::dynamic_pointer_cast<ModelJointRevolute>(link.nodeJoint);
 
             Eigen::Vector3f deltaVel = link.dynNode2->getAngularVelocity() - link.dynNode1->getAngularVelocity();
             double speed = deltaVel.dot(rnRevJoint->getJointRotationAxis());
@@ -1143,11 +1128,11 @@ namespace SimDynamics
         else if (rn->isTranslationalJoint())
         {
             LinkInfo link = getLink(rn);
-            boost::shared_ptr<btSliderConstraint> slider = boost::dynamic_pointer_cast<btSliderConstraint>(link.joint);
+            std::shared_ptr<btSliderConstraint> slider = std::dynamic_pointer_cast<btSliderConstraint>(link.joint);
 
             VR_ASSERT(slider);
 
-            boost::shared_ptr<RobotNodePrismatic> rnPrisJoint = boost::dynamic_pointer_cast<RobotNodePrismatic>(link.nodeJoint);
+            std::shared_ptr<ModelJointPrismatic> rnPrisJoint = std::dynamic_pointer_cast<ModelJointPrismatic>(link.nodeJoint);
 
             Eigen::Vector3f jointDirection = rnPrisJoint->getGlobalPose().block<3, 3>(0, 0) * rnPrisJoint->getJointTranslationDirectionJointCoordSystem();
             Eigen::Vector3f deltaVel = (link.dynNode2->getLinearVelocity() - link.dynNode1->getLinearVelocity());

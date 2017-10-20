@@ -28,6 +28,7 @@
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
+#include <GraspPlanning/GraspPlanner/GraspPlannerEvaluation.h>
 #include <vector>
 
 namespace GraspPlanning

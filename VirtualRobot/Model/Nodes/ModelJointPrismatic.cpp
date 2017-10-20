@@ -60,6 +60,7 @@ namespace VirtualRobot
     {
         Eigen::Matrix4f st = getStaticTransformation();
         ModelJointPrismaticPtr result(new ModelJointPrismatic(newModel, name, st, jointLimitLo, jointLimitHi, translationDirection, jointValueOffset));
+        result->setLimitless(limitless);
         return result;
     }
 }

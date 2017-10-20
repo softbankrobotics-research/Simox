@@ -117,7 +117,7 @@ namespace VirtualRobot
             const Eigen::Matrix4f& transformationMatrix);
 
         static void processChildFromRobotNode(rapidxml::xml_node<char>* childXMLNode, const std::string& nodeName, std::vector< ChildFromRobotDef >& childrenFromRobot);
-        static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi);
+        static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless);
         //static bool processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath);
         static std::map<std::string, int> robot_name_counter;
         static VisualizationNodePtr checkUseAsColModel(rapidxml::xml_node<char>* visuXMLNode, const std::string& robotNodeName, const std::string& basePath);

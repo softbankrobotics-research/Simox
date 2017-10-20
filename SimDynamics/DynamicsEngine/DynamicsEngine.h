@@ -176,9 +176,7 @@ namespace SimDynamics
         virtual DynamicsModelPtr getRobot(VirtualRobot::RobotPtr r);
         virtual DynamicsModelPtr getRobot(const std::string& robName);
 
-<<<<<<< HEAD
-        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
-=======
+
         /*!
             Wake up all objects.
             The physics engine might send objects to sleeping state when no interaction is detected.
@@ -186,8 +184,8 @@ namespace SimDynamics
         */
         virtual void activateAllObjects();
 
-        typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
->>>>>>> origin/master
+        //typedef std::shared_ptr< std::recursive_mutex::scoped_lock > MutexLockPtr;
+        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
 
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.

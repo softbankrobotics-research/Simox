@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
         "<Robot Type='MyDemoRobotType' StandardName='ExampleRobo' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
         "   <Joint type='revolute'>"
-        "    <Limits unit='degree' lo='-180' hi='180'/>"
+        "    <Limits unit='degree' lo='-180' hi='180' limitless='true'/>"
         "	  <Axis x='1' y='0' z='0'/>"
         "   </Joint>"
         " </RobotNode>"

@@ -159,6 +159,8 @@ namespace VirtualRobot
         }
 
         ModelConfigPtr result(new ModelConfig(model, name, newConfigs));
+        if (tcpNode)
+            result->setTCP(tcpNode->getName());
         return result;
     }
 
@@ -296,13 +298,56 @@ namespace VirtualRobot
         return true;
     }
 
+    bool ModelConfig::setTCP(const std::string &tcpName)
+    {
+        RobotPtr r = model.lock();
+
+        if (!r)
+        {
+            VR_WARNING << "Robot is already deleted, skipping update..." << endl;
+            return false;
+        }
+
+        FramePtr rn = r->getFrame(tcpName);
+
+        if (!rn)
+        {
+            VR_WARNING << "Did not find frame with name " << tcpName << endl;
+            return false;
+        }
+
+        tcpNode = rn;
+        return true;
+    }
+
+    bool ModelConfig::setTCP(FramePtr tcp)
+    {
+        tcpNode = tcp;
+        return true;
+    }
+
+    bool ModelConfig::hasTCP() const
+    {
+        if (tcpNode)
+            return true;
+        return false;
+    }
+
+    FramePtr ModelConfig::getTCP()
+    {
+        return tcpNode;
+    }
+
     std::string ModelConfig::toXML(int tabs)
     {
         std::map < std::string, float > jv = getJointNameValueMap();
-        return createXMLString(jv, name, tabs);
+        std::string tcpName;
+        if (tcpNode)
+            tcpName = tcpNode->getName();
+        return createXMLString(jv, name, tcpName, tabs);
     }
 
-    std::string ModelConfig::createXMLString(const std::map< std::string, float >& config, const std::string& name, int tabs/*=0*/)
+    std::string ModelConfig::createXMLString(const std::map< std::string, float >& config, const std::string& name, const std::string& tcpName, int tabs/*=0*/)
     {
         std::stringstream ss;
         std::string t;
@@ -317,8 +362,12 @@ namespace VirtualRobot
         std::string ttt = tt;
         ttt += "\t";
 
-        ss << t << "<Configuration name='" << name << "'>\n";
+        ss << t << "<Configuration name='" << name << "'";
 
+        if (!tcpName.empty())
+            ss << " tcp='" << tcpName << "'";
+
+        ss << ">\n";
 
         std::map< std::string, float >::const_iterator i = config.begin();
 

@@ -2,6 +2,8 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/JointSet.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Model/Nodes/ModelLink.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Model/ManipulationObject.h>
 #include <VirtualRobot/Grasping/Grasp.h>
@@ -290,7 +292,7 @@ namespace VirtualRobot
         // init self dist
         if (considerSelfDist)
         {
-            PoseQualityExtendedManipulabilityPtr pqm = boost::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
+            PoseQualityExtendedManipulabilityPtr pqm = std::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
             if (pqm)
             {
                 VR_INFO << "Setting up self dist, alpha:" << selfDistAlpha << ", beta:" << selfDistBeta << endl;
@@ -348,7 +350,7 @@ namespace VirtualRobot
         // since 2.9: alpha and beta for self dist
         float selfDistA = 0.0f;
         float selfDistB = 0.0f;
-        PoseQualityExtendedManipulabilityPtr pqm = boost::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
+        PoseQualityExtendedManipulabilityPtr pqm = std::dynamic_pointer_cast<PoseQualityExtendedManipulability>(measure);
         if (pqm)
         {
             pqm->getSelfDistParameters(selfDistA, selfDistB);
@@ -760,31 +762,31 @@ namespace VirtualRobot
                 CollisionCheckerPtr cc(new CollisionChecker());
                 RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
                 clonedRobot->setUpdateVisualization(false);
-                RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
-                RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
+                JointSetPtr clonedNodeSet = clonedRobot->getJointSet(this->nodeSet->getName());
+                FramePtr clonedTcpNode = clonedRobot->getFrame(this->tcpNode->getName());
 
-                SceneObjectSetPtr staticCollisionModel = this->staticCollisionModel;
-                if (staticCollisionModel && clonedRobot->hasRobotNodeSet(staticCollisionModel->getName()))
+                LinkSetPtr staticCollisionModel = this->staticCollisionModel;
+                if (staticCollisionModel && clonedRobot->hasLinkSet(staticCollisionModel->getName()))
                 {
-                    staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
+                    staticCollisionModel = clonedRobot->getLinkSet(staticCollisionModel->getName());
                 }
 
-                SceneObjectSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
-                if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
+                LinkSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
+                if (dynamicCollisionModel && clonedRobot->hasLinkSet(dynamicCollisionModel->getName()))
                 {
-                    dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
+                    dynamicCollisionModel = clonedRobot->getLinkSet(dynamicCollisionModel->getName());
                 }
 
-                RobotNodeSetPtr selfDistStatic = this->selfDistStatic;
-                if (selfDistStatic && clonedRobot->hasRobotNodeSet(selfDistStatic->getName()))
+                LinkSetPtr selfDistStatic = this->selfDistStatic;
+                if (selfDistStatic && clonedRobot->hasLinkSet(selfDistStatic->getName()))
                 {
-                    selfDistStatic = clonedRobot->getRobotNodeSet(selfDistStatic->getName());
+                    selfDistStatic = clonedRobot->getLinkSet(selfDistStatic->getName());
                 }
 
-                RobotNodeSetPtr selfDistDynamic = this->selfDistDynamic;
-                if (selfDistDynamic && clonedRobot->hasRobotNodeSet(selfDistDynamic->getName()))
+                LinkSetPtr selfDistDynamic = this->selfDistDynamic;
+                if (selfDistDynamic && clonedRobot->hasLinkSet(selfDistDynamic->getName()))
                 {
-                    selfDistDynamic = clonedRobot->getRobotNodeSet(selfDistDynamic->getName());
+                    selfDistDynamic = clonedRobot->getLinkSet(selfDistDynamic->getName());
                 }
 
 
@@ -806,12 +808,12 @@ namespace VirtualRobot
                         for (int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = (float) std::rand() * randMult; // value from 0 to 1
-                            minJ = (*nodeSet)[l]->getJointLimitLo();
-                            maxJ = (*nodeSet)[l]->getJointLimitHi();
+                            minJ = (*nodeSet)[l]->getJointLimitLow();
+                            maxJ = (*nodeSet)[l]->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
                         }
 
-                        clonedRobot->setJointValues(clonedNodeSet, v);
+                        clonedNodeSet->setJointValues(v);
 
                         // check for collisions
                         if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)

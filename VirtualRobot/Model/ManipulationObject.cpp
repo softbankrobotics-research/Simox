@@ -197,7 +197,6 @@ namespace VirtualRobot
         return ss.str();
     }
 
-<<<<<<< HEAD:VirtualRobot/Model/ManipulationObject.cpp
     ManipulationObjectPtr ManipulationObject::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
     {
         ReadLockPtr r = getReadLock();
@@ -207,40 +206,7 @@ namespace VirtualRobot
 
         ManipulationObjectPtr result(new ManipulationObject(name));
         _clone(result, startNode, colChecker, true, true, scaling);
-        result->filename = filename;
-=======
-    ManipulationObjectPtr ManipulationObject::clone(const std::string &name, CollisionCheckerPtr colChecker, bool deepVisuCopy) const
-    {
-        return ManipulationObjectPtr(_clone(name, colChecker, deepVisuCopy));
-    }
 
-    ManipulationObject* ManipulationObject::_clone(const std::string& name, CollisionCheckerPtr colChecker, bool deepVisuCopy) const
-    {
-        VisualizationNodePtr clonedVisualizationNode;
-
-        if (visualizationModel)
-        {
-            clonedVisualizationNode = visualizationModel->clone(deepVisuCopy);
-        }
-
-        CollisionModelPtr clonedCollisionModel;
-
-        if (collisionModel)
-        {
-            clonedCollisionModel = collisionModel->clone(colChecker, 1.0, deepVisuCopy);
-        }
-
-        ManipulationObject* result = new ManipulationObject(name, clonedVisualizationNode, clonedCollisionModel, physics, colChecker);
-
-        if (!result)
-        {
-            VR_ERROR << "Cloning failed.." << endl;
-            return result;
-        }
-
-        result->setGlobalPose(getGlobalPose());
-
->>>>>>> origin/master:VirtualRobot/ManipulationObject.cpp
         for (size_t i = 0; i < graspSets.size(); i++)
         {
             result->addGraspSet(graspSets[i]->clone());

@@ -475,16 +475,13 @@ namespace VirtualRobot
         // AbstractFactoryMethod
     public:
         static std::string getName();
-<<<<<<< HEAD
         static std::shared_ptr<VisualizationFactory> createInstance(void*);
 
-=======
-        static boost::shared_ptr<VisualizationFactory> createInstance(void*);
         typedef std::map<std::pair<size_t, std::string>, void*> TextureCacheMap;
->>>>>>> origin/master
+
     private:
         static SubClassRegistry registry;
-        static boost::mutex globalTextureCacheMutex;
+        static std::mutex globalTextureCacheMutex;
         static TextureCacheMap globalTextureCache;
     };
 

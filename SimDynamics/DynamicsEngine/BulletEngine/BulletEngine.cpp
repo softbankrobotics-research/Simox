@@ -598,22 +598,6 @@ namespace SimDynamics
     }
 
 
-    void BulletEngine::activateAllObjects()
-    {
-        MutexLockPtr lock = getScopedLock();
-
-        for (size_t i = 0; i < objects.size(); i++)
-        {
-            BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(objects[i]);
-
-            if (bo)
-            {
-                bo->getRigidBody()->activate();
-            }
-        }
-    }
-
-
     std::vector<DynamicsEngine::DynamicsContactInfo> BulletEngine::getContacts()
     {
         MutexLockPtr lock = getScopedLock();
@@ -696,7 +680,7 @@ namespace SimDynamics
             return false;
         }
 
-        if (object->getSimType() != VirtualRobot::SceneObject::Physics::eDynamic)
+        if (object->getSimType() != VirtualRobot::ModelLink::Physics::eDynamic)
         {
             VR_WARNING << "Sim type of object " << object->getName() << "!=eDynamic. Is this intended?" << endl;
         }

@@ -302,7 +302,7 @@ namespace VirtualRobot
      *
      * The values are stored in \p jointLimitLo and \p jointLimitHi
      */
-    void SimoxXMLFactory::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi)
+    void SimoxXMLFactory::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless)
     {
         THROW_VR_EXCEPTION_IF(!limitsXMLNode, "NULL data for limitsXMLNode in processLimitsNode()");
 
@@ -360,6 +360,20 @@ namespace VirtualRobot
             jointLimitLo = unit.toMillimeter(jointLimitLo);
             jointLimitHi = unit.toMillimeter(jointLimitHi);
         }
+
+        // limitless attribute
+       rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
+       if (llAttr != NULL)
+       {
+           limitless = BaseIO::isTrue(llAttr->value());
+           if (limitless && unit.isAngle() && (unit.toDegree(jointLimitHi) - unit.toDegree(jointLimitLo) != 360))
+           {
+               VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
+                          << "Setting 'lo' to -pi and 'hi' to pi [rad]..." << endl;
+               jointLimitLo = -M_PI;
+               jointLimitHi = M_PI;
+           }
+       }
     }
 
 
@@ -397,6 +411,7 @@ namespace VirtualRobot
         rapidxml::xml_attribute<>* attr;
         float jointOffset = 0.0f;
         float initialvalue = 0.0f;
+        bool limitless = false;
         std::string jointType;
 
         ModelJointPtr robotNode;
@@ -452,7 +467,7 @@ namespace VirtualRobot
             {
                 THROW_VR_EXCEPTION_IF(limitsNode, "Multiple limits definitions in <Joint> tag of robot node <" << robotNodeName << ">." << endl);
                 limitsNode = node;
-                processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh);
+                processLimitsNode(limitsNode, jointLimitLow, jointLimitHigh, limitless);
             }
             else if (nodeName == "axis")
             {
@@ -668,6 +683,7 @@ namespace VirtualRobot
         robotNode->setMaxVelocity(maxVelocity);
         robotNode->setMaxAcceleration(maxAcceleration);
         robotNode->setMaxTorque(maxTorque);
+        robotNode->setLimitless(limitless);
 
         robotNode->setJointValueNoUpdate(initialvalue);
 

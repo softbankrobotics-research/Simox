@@ -99,7 +99,7 @@ namespace VirtualRobot
          * @return A pointer to the ModelNode.
          *
          *@see getLink
-         *@see gteJoint
+         *@see getJoint
          */
         virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
         virtual ModelLinkPtr getLink(const std::string& modelNodeName) const;
@@ -677,7 +677,7 @@ namespace VirtualRobot
          *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
          * @return A visualization of this model's links.
          */
-        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType, std::string visualizationType = "");
+        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType = VirtualRobot::ModelLink::Full, std::string visualizationType = "");
 
     protected:
 
