@@ -3,6 +3,8 @@
 #ifdef Simox_USE_COIN_VISUALIZATION
 #include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
 #endif
+
+#include "GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
@@ -43,8 +45,8 @@ GraspQualityWindow::GraspQualityWindow(std::string& robFile, std::string& objFil
     setupUI();
 
 
-    loadObject();
     loadRobot();
+    loadObject();
 
     viewer->viewAll();
 
@@ -99,11 +101,13 @@ void GraspQualityWindow::setupUI()
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
     connect(UI.pushButtonToTCP, SIGNAL(clicked()), this, SLOT(objectToTCP()));
     connect(UI.pushButtonQuality, SIGNAL(clicked()), this, SLOT(graspQuality()));
+    connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectObject()));
+    connect(UI.pushButtonRobustness, SIGNAL(clicked()), this, SLOT(evalRobustness()));
 
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(colModel()));
     connect(UI.checkBoxCones, SIGNAL(clicked()), this, SLOT(frictionConeVisu()));
-    connect(UI.checkBoxGWS1, SIGNAL(clicked()), this, SLOT(showGWS()));
-    connect(UI.checkBoxGWS2, SIGNAL(clicked()), this, SLOT(showGWS()));
+    //connect(UI.checkBoxGWS1, SIGNAL(clicked()), this, SLOT(showGWS()));
+    //connect(UI.checkBoxGWS2, SIGNAL(clicked()), this, SLOT(showGWS()));
     //connect(UI.checkBoxOWS1, SIGNAL(clicked()), this, SLOT(showOWS()));
     //connect(UI.checkBoxOWS2, SIGNAL(clicked()), this, SLOT(showOWS()));
 
@@ -115,6 +119,7 @@ void GraspQualityWindow::setupUI()
     connect(UI.horizontalSliderYa, SIGNAL(sliderReleased()), this, SLOT(sliderReleased_ObjectG()));
 
     connect(UI.comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
+    connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
 }
 
 
@@ -183,20 +188,73 @@ void GraspQualityWindow::quit()
     timer->stop();
 }
 
+void GraspQualityWindow::evalRobustness()
+{
+    int numSamples = UI.sbSamples->value();
+    float varMM = UI.sbVariationMM->value();
+    float varDeg = UI.sbVariationDeg->value();
+    GraspStudio::GraspEvaluationPoseUncertainty::PoseUncertaintyConfig c;
+    c.init(varMM, varDeg);
+    GraspStudio::GraspEvaluationPoseUncertaintyPtr eval(new GraspStudio::GraspEvaluationPoseUncertainty(c));
+
+    openEEF();
+    closeEEF();
+    if (contacts.size() == 0)
+        return;
+    evalPoses = eval->generatePoses(object->getGlobalPose(), contacts, numSamples );
+
+
+    if (evalPoses.size()==0)
+        return;
+
+    /*
+    int r = rand() % evalPoses.size();
+    Eigen::Matrix4f p = evalPoses.at(r);
+    GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResult re = eval->evaluatePose(eef, object, p, qualityMeasure);
+    cout << "FC: " << re.forceClosure << endl;
+    cout << "init col: " << re.initialCollision << endl;
+    cout << "QUAL: " << re.quality << endl;
+    */
+    GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults re = eval->evaluatePoses(eef, object, evalPoses, qualityMeasure);
+    if (eef && grasp)
+        VR_INFO << "#### Robustness for eef " << eef->getName() << ", grasp " << grasp->getName() << endl;
+    re.print();
+}
+
+void GraspQualityWindow::selectObject()
+{
+    QString fi = QFileDialog::getOpenFileName(this, tr("Open Object File"), QString(), tr("XML Files (*.xml)"));
+    objectFile = std::string(fi.toLatin1());
+    loadObject();
+}
+
 void GraspQualityWindow::loadObject()
 {
+    openEEF();
+
     if (!objectFile.empty())
     {
-        object = ObjectIO::loadManipulationObject(objectFile);
+        try {
+            object = ObjectIO::loadManipulationObject(objectFile);
+        } catch (...)
+        {
+            VR_ERROR << "Could not load file " << objectFile << endl;
+        }
     }
 
     if (!object)
     {
-        object = Obstacle::createBox(50.0f, 50.0f, 10.0f);
+        VR_INFO << "Building standard box" << endl;
+        ObstaclePtr o = Obstacle::createBox(50.0f, 50.0f, 10.0f);
+        object = ManipulationObject::createFromMesh(o->getVisualization()->getTriMeshModel());
     }
 
     qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     qualityMeasure->calculateObjectProperties();
+
+    selectEEF(0);
+
+    buildVisu();
 }
 
 void GraspQualityWindow::loadRobot()
@@ -214,7 +272,7 @@ void GraspQualityWindow::loadRobot()
 
     setEEFComboBox();
     selectEEF(0);
-    objectToTCP();
+    //objectToTCP();
 
     buildVisu();
 }
@@ -228,10 +286,24 @@ void GraspQualityWindow::objectToTCP()
     }
 }
 
+
+void GraspQualityWindow::objectToGrasp()
+{
+    if (object && grasp && eef->getTcp())
+    {
+        VR_INFO << "Setting object pose to grasp " << grasp->getName() << endl;
+        Eigen::Matrix4f pos =  eef->getTcp()->getGlobalPose();
+        pos = grasp->getObjectTargetPoseGlobal(pos);
+        object->setGlobalPose(pos);
+    }
+}
+
 void GraspQualityWindow::graspQuality()
 {
     if (qualityMeasure && object && contacts.size() > 0)
     {
+        qualityMeasure->setVerbose(true);
+
         qualityMeasure->setContactPoints(contacts);
         float volume = qualityMeasure->getVolumeGraspMeasure();
         float epsilon = qualityMeasure->getGraspQuality();
@@ -251,17 +323,66 @@ void GraspQualityWindow::graspQuality()
 
     }
 }
+
 void GraspQualityWindow::selectEEF(int nr)
 {
     eef.reset();
 
     if (nr < 0 || nr >= (int)eefs.size())
     {
+        setGraspComboBox();
+        selectGrasp(-1);
+        objectToTCP();
         return;
     }
 
     eef = eefs[nr];
+    setGraspComboBox();
+    selectGrasp(0);
 }
+
+void GraspQualityWindow::selectGrasp(int nr)
+{
+    grasp.reset();
+
+    if (!grasps || nr < 0 || nr >= (int)grasps->getSize())
+    {
+        objectToTCP();
+        return;
+    }
+
+    grasp = grasps->getGrasp(nr);
+    objectToGrasp();
+}
+
+void GraspQualityWindow::setGraspComboBox()
+{
+    UI.comboBoxGrasp->clear();
+    grasp.reset();
+    grasps.reset();
+
+    if (!eef || !object)
+    {
+        return;
+    }
+
+    grasps = object->getGraspSet(eef);
+
+    if (!grasps || grasps->getSize()==0)
+    {
+        VR_INFO << "No grasps found for eef " << eef->getName() << endl;
+        return;
+    }
+
+    VR_INFO << "Found " << grasps->getSize() << " grasps for eef " << eef->getName() << endl;
+
+    for (size_t i = 0; i < grasps->getSize(); i++)
+    {
+        QString nameGrasp(grasps->getGrasp(i)->getName().c_str());
+        UI.comboBoxGrasp->addItem(nameGrasp);
+    }
+}
+
 
 void GraspQualityWindow::setEEFComboBox()
 {
@@ -392,20 +513,6 @@ void GraspQualityWindow::showGWS()
     chv.reset(new GraspPlanning::CoinConvexHullVisualization(ch, true));
     chv2.reset(new GraspPlanning::CoinConvexHullVisualization(ch, false));
 #endif
-
-    if (UI.checkBoxGWS1->isChecked() && chv)
-    {
-        VisualizationPtr v = chv->getVisualization();
-        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v, m);
-        viewer->addVisualization("gws","gws1",v);
-    }
-
-    if (UI.checkBoxGWS2->isChecked() && chv2)
-    {
-        VisualizationPtr v2 = chv2->getVisualization();
-        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2, m);
-        viewer->addVisualization("gws","gws2",v2);
-    }
 }
 
 void GraspQualityWindow::showOWS()

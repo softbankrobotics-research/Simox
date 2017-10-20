@@ -68,4 +68,14 @@ namespace VirtualRobot
         considerObstacle = false;
     }
 
+    PoseQualityMeasurementPtr PoseQualityMeasurement::clone(RobotPtr newRobot)
+    {
+        VR_ASSERT(newRobot);
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName()));
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName())->getSize() == rns->getSize());
+
+        PoseQualityMeasurementPtr m(new PoseQualityMeasurement(newRobot->getRobotNodeSet(rns->getName())));
+        return m;
+    }
+
 }

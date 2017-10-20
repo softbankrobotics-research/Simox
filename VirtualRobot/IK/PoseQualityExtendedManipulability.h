@@ -136,6 +136,9 @@ namespace VirtualRobot
         //! Indicates if joint limits are considered.
         virtual bool consideringJointLimits();
 
+        virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
+
+        void getSelfDistParameters(float &storeAlpha, float &storeBeta);
 
     protected:
 

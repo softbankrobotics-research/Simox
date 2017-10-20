@@ -140,14 +140,13 @@ namespace GraspPlanning
 
         for (size_t i = 0; i < tm->faces.size(); i++)
         {
-            Eigen::Vector3f v1, v2, v3;
-            v1 = tm->vertices[tm->faces[i].id1];
-            v2 = tm->vertices[tm->faces[i].id2];
-            v3 = tm->vertices[tm->faces[i].id3];
+            Eigen::Vector3f &v1 = tm->vertices[tm->faces[i].id1];
+            Eigen::Vector3f &v2 = tm->vertices[tm->faces[i].id2];
+            Eigen::Vector3f &v3 = tm->vertices[tm->faces[i].id3];
             unsigned int id1, id2, id3;
             check = hasVertex(triMesh2->vertices, v1);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id1 = (int)check;
             }
@@ -160,7 +159,7 @@ namespace GraspPlanning
 
             check = hasVertex(triMesh2->vertices, v2);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id2 = (int)check;
             }
@@ -173,7 +172,7 @@ namespace GraspPlanning
 
             check = hasVertex(triMesh2->vertices, v3);
 
-            if (check > 0)
+            if (check >= 0)
             {
                 id3 = (int)check;
             }
@@ -223,10 +222,9 @@ namespace GraspPlanning
         VR_ASSERT(faceIdx >= 0 && faceIdx < (int)tm->faces.size());
 
         float d12, d13, d23;
-        Eigen::Vector3f v1, v2, v3;
-        v1 = tm->vertices[tm->faces[faceIdx].id1];
-        v2 = tm->vertices[tm->faces[faceIdx].id2];
-        v3 = tm->vertices[tm->faces[faceIdx].id3];
+        Eigen::Vector3f &v1 = tm->vertices[tm->faces[faceIdx].id1];
+        Eigen::Vector3f &v2 = tm->vertices[tm->faces[faceIdx].id2];
+        Eigen::Vector3f &v3 = tm->vertices[tm->faces[faceIdx].id3];
         Eigen::Vector3f v4;
         unsigned int id4;
         size_t checkFaceIdx;

@@ -105,7 +105,13 @@ namespace VirtualRobot
 
     protected:
 
+<<<<<<< HEAD:VirtualRobot/Model/Obstacle.h
         //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
+=======
+        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
+
+        std::string filename;
+>>>>>>> origin/master:VirtualRobot/Obstacle.h
 
         // a counter for internal ids
         //static int idCounter;

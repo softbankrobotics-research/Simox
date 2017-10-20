@@ -28,6 +28,7 @@
 
 
 #include <vector>
+#include <atomic>
 
 #include "ui_simDynamicsViewer.h"
 
@@ -61,6 +62,7 @@ public slots:
     void updateAntiAliasing(int n);
     void comVisu();
     void updateJointInfo();
+    void updateRobotInfo();
 
     void startStopEngine();
     void stepEngine();
@@ -68,6 +70,12 @@ public slots:
     void checkBoxFixedTimeStep();
 
     void addObject();
+
+    void reloadRobot();
+
+    void resetPose();
+    void setPose();
+
 protected:
     bool loadRobot(std::string robotFilename);
     void setupUI();
@@ -97,14 +105,22 @@ protected:
 
     // beside the viewer cb we need also a callback to update joint info
     static void timerCB(void* data, SoSensor* sensor);
+    static void stepCB(void* data, btScalar timeStep);
 
     SoTimerSensor* timerSensor;
 
+<<<<<<< HEAD
     std::vector<VirtualRobot::ModelJointRevolutePtr> robotNodes;
+=======
+    std::vector<VirtualRobot::RobotNodePtr> robotNodes;
+>>>>>>> origin/master
 
     std::map< VirtualRobot::ModelLinkPtr, SoSeparator* > comVisuMap;
 
     bool useColModel;
+    std::string robotFilename;
+
+    std::atomic_uint_fast64_t simuStepCount{0};
 };
 
 #endif // __SimDynamics_WINDOW_H_

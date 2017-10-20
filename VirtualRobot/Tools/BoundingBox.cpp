@@ -6,7 +6,7 @@ namespace VirtualRobot
 
     BoundingBox::BoundingBox()
     {
-        min = max = Eigen::Vector3f::Zero();
+        clear();
     }
 
     bool BoundingBox::planeGoesThrough(const MathTools::Plane& p)
@@ -37,14 +37,9 @@ namespace VirtualRobot
 
     BoundingBox::BoundingBox(const std::vector< Eigen::Vector3f >& p)
     {
-        if (p.size() == 0)
+        clear();
+        if (p.size() != 0)
         {
-            min = max = Eigen::Vector3f::Zero();
-        }
-        else
-        {
-            min = p[0];
-            max = p[0];
             addPoints(p);
         }
     }
@@ -52,6 +47,12 @@ namespace VirtualRobot
     std::vector <Eigen::Vector3f> BoundingBox::getPoints() const
     {
         std::vector < Eigen::Vector3f > points;
+
+        if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
+                std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
+        {
+            return points;
+        }
 
         points.push_back(Eigen::Vector3f(min(0), min(1), min(2)));
         points.push_back(Eigen::Vector3f(min(0), min(1), max(2)));
@@ -94,12 +95,12 @@ namespace VirtualRobot
     {
         for (int j = 0; j < 3; j++)
         {
-            if (p(j) < min(j))
+            if (std::isnan(min(j)) || p(j) < min(j))
             {
                 min(j) = p(j);
             }
 
-            if (p(j) > max(j))
+            if (std::isnan(max(j)) || p(j) > max(j))
             {
                 max(j) = p(j);
             }
@@ -119,12 +120,22 @@ namespace VirtualRobot
 
     void BoundingBox::clear()
     {
-        min.setZero();
-        max.setZero();
+        min(0) = NAN;
+        min(1) = NAN;
+        min(2) = NAN;
+        max(0) = NAN;
+        max(1) = NAN;
+        max(2) = NAN;
     }
 
     void BoundingBox::transform(Eigen::Matrix4f& pose)
     {
+        if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
+                std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
+        {
+            return;
+        }
+
         Eigen::Vector3f result[8];
         std::vector<Eigen::Vector3f> result3;
         result[0] << min(0), min(1), min(2);
@@ -168,6 +179,12 @@ namespace VirtualRobot
 
     void BoundingBox::scale(Eigen::Vector3f& scaleFactor)
     {
+        if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
+                std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
+        {
+            return;
+        }
+
         for (int i = 0; i < 3; i++)
         {
             min(i) *= scaleFactor(i);

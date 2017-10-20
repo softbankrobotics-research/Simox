@@ -69,11 +69,12 @@ namespace SimDynamics
                     localComTransform.block(0, 3, 3, 1) = -o->getCoMLocal();
                     //cout << "localComTransform:\n" << localComTransform << endl;
 
+                    currentTransform = localComTransform;
 
                     for (it = primitives.begin(); it != primitives.end(); it++)
                     {
-                        //currentTransform *= (*it)->transform;
-                        currentTransform = localComTransform * (*it)->transform;
+                        currentTransform *= (*it)->transform;
+                        //currentTransform = localComTransform * (*it)->transform;
                         //cout << "primitive: (*it)->transform:\n" << (*it)->transform << endl;
                         //cout << "primitive: currentTransform:\n" << currentTransform << endl;
 
@@ -229,11 +230,14 @@ namespace SimDynamics
             sc = 0.001f * ScaleFactor;
         }
 
-        for (size_t i = 0; i < trimesh->faces.size(); i++)
+        for (auto & face : trimesh->faces)
         {
-            btVector3 v1(btScalar((trimesh->vertices[trimesh->faces[i].id1][0] - com[0])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id1][1] - com[1])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id1][2] - com[2])*sc));
-            btVector3 v2(btScalar((trimesh->vertices[trimesh->faces[i].id2][0] - com[0])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id2][1] - com[1])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id2][2] - com[2])*sc));
-            btVector3 v3(btScalar((trimesh->vertices[trimesh->faces[i].id3][0] - com[0])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id3][1] - com[1])*sc), btScalar((trimesh->vertices[trimesh->faces[i].id3][2] - com[2])*sc));
+            auto & vertex1 = trimesh->vertices.at(face.id1);
+            auto & vertex2 = trimesh->vertices.at(face.id2);
+            auto & vertex3 = trimesh->vertices.at(face.id3);
+            btVector3 v1(btScalar((vertex1[0] - com[0])*sc), btScalar((vertex1[1] - com[1])*sc), btScalar((vertex1[2] - com[2])*sc));
+            btVector3 v2(btScalar((vertex2[0] - com[0])*sc), btScalar((vertex2[1] - com[1])*sc), btScalar((vertex2[2] - com[2])*sc));
+            btVector3 v3(btScalar((vertex3[0] - com[0])*sc), btScalar((vertex3[1] - com[1])*sc), btScalar((vertex3[2] - com[2])*sc));
             btTrimesh->addTriangle(v1, v2, v3);
         }
 
@@ -282,13 +286,16 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         /* convert to local coord system, apply comoffset and convert back*/
-        Eigen::Matrix4f poseLocal = sceneObject->getGlobalPose().inverse() * pose;
+        Eigen::Matrix4f poseLocal = Eigen::Matrix4f::Identity();
         poseLocal.block(0, 3, 3, 1) += com;
-        Eigen::Matrix4f poseGlobal = sceneObject->getGlobalPose() * poseLocal;
+        Eigen::Matrix4f poseGlobal = pose * poseLocal;
         this->rigidBody->setWorldTransform(BulletEngine::getPoseBullet(poseGlobal));
 
-        // notify motionState -> not needed, automatically done
-        //motionState->setGlobalPose(pose);
+        // notify motionState of non-robot nodes
+        if(!boost::dynamic_pointer_cast<VirtualRobot::RobotNode>(sceneObject))
+        {
+            motionState->setGlobalPose(pose);
+        }
     }
 
     void BulletObject::setPose(const Eigen::Matrix4f& pose)
@@ -332,6 +339,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(vel, false);
+        rigidBody->activate();
         rigidBody->setLinearVelocity(btVel);
     }
 
@@ -345,6 +353,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(vel, false);
+        rigidBody->activate();
         rigidBody->setAngularVelocity(btVel);
     }
 
@@ -425,6 +434,18 @@ namespace SimDynamics
         rigidBody->setCollisionFlags(btColFlag);
 
         DynamicsObject::setSimType(s);
+    }
+
+    void BulletObject::activate()
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        if (!rigidBody)
+        {
+            return;
+        }
+
+        rigidBody->activate();
     }
 
 

@@ -80,6 +80,14 @@ namespace VirtualRobot
         */
         void setManipulabilityMeasure(PoseQualityMeasurementPtr m);
 
+        PoseQualityMeasurementPtr getManipulabilityMeasure();
+
+        /*!
+         * \brief measureCurrentPose Uses internal quality measure to determine the quality value of the current tcp pose
+         * \return
+         */
+        float measureCurrentPose();
+
         /*!
             Returns the name of the manipulability measure.
         */
@@ -156,6 +164,16 @@ namespace VirtualRobot
             Creates a deep copy of this data structure. A ManipulabilityPtr is returned.
         */
         virtual WorkspaceRepresentationPtr clone();
+
+        /*!
+            Appends a number of random TCP poses to workspace Data (multithreaded).
+            This method is blocking, i.e. it returns as soon as all threads are done.
+            \param loops Number of poses that should be appended
+            \param numThreads number of worker threads used behind the scenes to append random TCP poses to workspace data.
+            \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
+        */
+        virtual void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true);
+
     protected:
 
         virtual bool customLoad(std::ifstream& file);
@@ -166,8 +184,14 @@ namespace VirtualRobot
 
         bool customStringRead(std::ifstream& file, std::string& res);
 
+<<<<<<< HEAD
         float getCurrentManipulability();
+=======
+        float getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt = RobotNodeSetPtr(), RobotNodeSetPtr selfDistDyn = RobotNodeSetPtr());
+>>>>>>> origin/master
         void addPose(const Eigen::Matrix4f& p);
+        void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure);
+        void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt, RobotNodeSetPtr selfDistDyn);
         PoseQualityMeasurementPtr measure;
 
         float maxManip;
@@ -179,6 +203,9 @@ namespace VirtualRobot
 
         LinkSetPtr selfDistStatic;
         LinkSetPtr selfDistDynamic;
+
+        float selfDistAlpha;
+        float selfDistBeta;
 
     };
 

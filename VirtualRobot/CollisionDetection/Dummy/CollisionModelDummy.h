@@ -44,14 +44,14 @@ namespace VirtualRobot
         Sets the position of the internal colModel data structure.
         No update of the pose of the IV model!
         */
-        void setGlobalPose(const Eigen::Matrix4f& m) {};//avoiding unneccessary copies
+        void setGlobalPose(const Eigen::Matrix4f& m) {}//avoiding unneccessary copies
 
         /*! Builds a (single) collision model, but assigns triangles of IVModels with the given IDs
          This can be useful to link a collision with a part of a scene
          Returns number of triangles used for building the collision model
          */
         //virtual int BuildColModel(std::map<SoNode*,int> &mIVIDMapping, std::vector<int> & vStoreIDs, SoSeparator *pAddIVModel);
-
+        virtual boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const{}
     protected:
 
         //! delete all data

@@ -67,6 +67,9 @@ namespace GraspPlanning
 
         void moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops = 1000);
 
+        Eigen::Matrix4f getEEFPose();
+        bool setEEFPose(const Eigen::Matrix4f& pose);
+
 
     protected:
         float randomDistanceMax;

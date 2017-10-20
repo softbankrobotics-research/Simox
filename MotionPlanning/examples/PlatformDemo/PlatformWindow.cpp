@@ -573,7 +573,11 @@ void PlatformWindow::sliderSolution(int pos)
     rns->setJointValues(iPos);
 
     std::stringstream d2;
+<<<<<<< HEAD
     d2 << fixed << "Pos: ";
+=======
+    d2 << setprecision(2) << fixed << "Pos: ";
+>>>>>>> origin/master
     for (unsigned int i=0;i<rns->getSize();i++)
         d2 << rns->getNode(i)->getJointValue() << ", ";
     QString t2(d2.str().c_str());

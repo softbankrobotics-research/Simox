@@ -68,6 +68,8 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/SbTime.h>
+#include <Inventor/sensors/SoDataSensor.h>
+#include <Inventor/nodes/SoPointSet.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -85,9 +87,15 @@
 #include <iostream>
 #include <algorithm>
 
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+
 
 namespace VirtualRobot
 {
+
+    boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
+    CoinVisualizationFactory::TextureCacheMap CoinVisualizationFactory::globalTextureCache;
 
     CoinVisualizationFactory::CoinVisualizationFactory()
     {
@@ -263,8 +271,13 @@ namespace VirtualRobot
 
     VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
+<<<<<<< HEAD
         // try to read from file
+=======
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
+>>>>>>> origin/master
 
+        // try to read from file
         TriMeshModelPtr t(new TriMeshModel());
         STLReaderPtr r(new STLReader());
         r->setScaling(1000.0f); // mm
@@ -280,6 +293,7 @@ namespace VirtualRobot
         visualizationNode->setFilename(filename, boundingBox);
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
         visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
+        visualizationNode->setFilename(filename, boundingBox);
 
         return visualizationNode;
     }
@@ -348,7 +362,7 @@ namespace VirtualRobot
     * \param visualizationNode VisualizationNodePtr instance in which the created CoinVisualizationNode is stored.
     * \param boundingBox Use bounding box instead of full model.
     */
-    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox)
+    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDuplicateTextures)
     {
         // read the contents of the file
         SoNode* coinVisualization = SoDB::readAll(&soInput);
@@ -359,7 +373,6 @@ namespace VirtualRobot
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return;
         }
-
         coinVisualization->ref();
 
         if (boundingBox)
@@ -372,8 +385,18 @@ namespace VirtualRobot
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
+        if(freeDuplicateTextures)
+        {
+            boost::filesystem::path p(soInput.getCurFileName());
+            boost::filesystem::path dir = p.parent_path();
 
+<<<<<<< HEAD
         coinVisualization->unrefNoDelete();
+=======
+            RemoveDuplicateTextures(coinVisualization, dir.string());
+        }
+        coinVisualization->unref();
+>>>>>>> origin/master
     }
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
@@ -1066,6 +1089,124 @@ namespace VirtualRobot
         res->addChild(s);
         res->unrefNoDelete();
         return res;
+    }
+
+
+    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color)
+    {
+
+        SoSeparator* pclSep = new SoSeparator;
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::MILLIMETERS;
+        pclSep->addChild(u);
+
+        SoMaterial* pclMat = new SoMaterial;
+        pclMat->diffuseColor.setValue(color.r, color.g, color.b);
+        pclMat->diffuseColor.setValue(color.r, color.g, color.b);
+        pclSep->addChild(pclMat);
+
+        SoMaterialBinding* pclMatBind = new SoMaterialBinding;
+        pclMatBind->value = SoMaterialBinding::OVERALL;
+        pclSep->addChild(pclMatBind);
+
+        SoCoordinate3* pclCoords = new SoCoordinate3;
+        std::vector<SbVec3f> coords;
+        coords.reserve(positions.size());
+        std::transform(
+            positions.begin(), positions.end(), std::back_inserter(coords),
+            [](const Eigen::Vector3f & elem)
+        {
+            return SbVec3f {elem[0], elem[1], elem[2]};
+        }
+        );
+        pclCoords->point.setValues(0, coords.size(), coords.data());
+        pclSep->addChild(pclCoords);
+
+        SoDrawStyle* pclStye = new SoDrawStyle;
+        pclStye->pointSize = radius;
+        pclSep->addChild(pclStye);
+
+        pclSep->addChild(new SoPointSet);
+
+        return pclSep;
+    }
+
+    std::ifstream::pos_type getFilesize(const char* filename)
+    {
+        std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+        return in.tellg();
+    }
+
+    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node, const std::string& currentPath)
+    {
+        // internal class to keep track of texture removal
+        struct DeleteTextureCallBack : SoDataSensor
+        {
+            DeleteTextureCallBack(const std::string& nodeName, const std::string& path, size_t filesize) :
+                nodeName(nodeName), path(path), filesize(filesize) {}
+
+            // SoDataSensor interface
+        public:
+            void dyingReference()
+            {
+                boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
+                CoinVisualizationFactory::globalTextureCache.erase(std::make_pair(filesize, path));
+                delete this;
+            }
+
+        private:
+            ~DeleteTextureCallBack(){}
+            std::string nodeName;
+            std::string path;
+            size_t filesize;
+        };
+
+
+        SoSearchAction sa;
+        sa.setType(SoVRMLImageTexture::getClassTypeId());
+        sa.setInterest(SoSearchAction::ALL);
+        sa.setSearchingAll(TRUE);
+        sa.apply(node);
+        SoPathList & pl = sa.getPaths();
+
+        boost::mutex::scoped_lock lock(globalTextureCacheMutex);
+        for (int i = 0; i < pl.getLength(); i++) {
+            SoFullPath * p = (SoFullPath*) pl[i];
+            if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
+                SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
+                for (int i = 0; i < tex->url.getNum(); ++i)
+                {
+                    SbName name = tex->url[i].getString();
+                    std::string texturePath = currentPath + "/" + std::string(tex->url[i].getString());
+                    bool exists = boost::filesystem::exists(texturePath);
+                    size_t filesize = getFilesize(texturePath.c_str());
+//                    VR_WARNING << "Texture path: " << texturePath << " file size: " << filesize  << " exists: " << exists << std::endl;
+
+                    //              unsigned long key = (unsigned long) ((void*) name.getString());
+                    auto it = globalTextureCache.find(std::make_pair(filesize,texturePath));
+                    if (it == globalTextureCache.end())
+                    {
+                        globalTextureCache[std::make_pair(filesize,texturePath)] =  (void*)tex;
+                        tex->addAuditor(new DeleteTextureCallBack(name.getString(), texturePath, filesize), SoNotRec::SENSOR);
+//                        VR_INFO << "Found NOT in cache" << std::endl;
+                    }
+                    else if (it->second != (void*) tex)
+                    {
+//                        VR_INFO << "Found in cache" << std::endl;
+                        SoNode * parent = p->getNodeFromTail(1);
+                        if (parent->isOfType(SoVRMLAppearance::getClassTypeId()))
+                        {
+                            ((SoVRMLAppearance*)parent)->texture = (SoNode*) it->second;
+                        }
+                        else
+                        {
+                            // not a valid VRML2 file. Print a warning or something.
+                            std::cout << "not a valid VRML2 file" << std::endl;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
@@ -3661,9 +3802,35 @@ namespace VirtualRobot
             bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov//render param
+            float zNear, float zFar, float vertFov,//render param
+            float nanValue
         )
     {
+        SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
+        offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
+        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
+        return renderOffscreenRgbDepthPointcloud(&offscreenRenderer,
+                                          camNode,
+                                          scene,
+                                          width, height,
+                                          renderRgbImage,
+                                          rgbImage,
+                                          renderDepthImage, depthImage,
+                                          renderPointcloud, pointCloud,
+                                          zNear, zFar, vertFov,
+                                          nanValue);
+    }
+
+    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, RobotNodePtr camNode,
+                                                                     SoNode *scene, short width, short height, bool renderRgbImage, std::vector<unsigned char> &rgbImage,
+                                                                     bool renderDepthImage, std::vector<float> &depthImage, bool renderPointcloud,
+                                                                     std::vector<Eigen::Vector3f> &pointCloud, float zNear, float zFar, float vertFov, float nanValue)
+    {
+        if(!offscreenRenderer)
+        {
+            VR_ERROR << "No renderer..." << endl;
+            return false;
+        }
         //check input
         if (!camNode)
         {
@@ -3683,11 +3850,6 @@ namespace VirtualRobot
         //setup
         const bool calculateDepth = renderDepthImage || renderPointcloud;
         const unsigned int numPixel=width*height;
-
-        SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
-        offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
-        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-
         //required to get the zBuffer
         DepthRenderData userdata;
         std::vector<float> zBuffer;
@@ -3704,9 +3866,9 @@ namespace VirtualRobot
             userdata.w = width;
             userdata.buffer = zBuffer.data();
 
-            offscreenRenderer.getGLRenderAction()->setPassCallback(getZBuffer, static_cast<void*>(&userdata));
+            offscreenRenderer->getGLRenderAction()->setPassCallback(getZBuffer, static_cast<void*>(&userdata));
             ///TODO find way to only render rgb once
-            offscreenRenderer.getGLRenderAction()->setNumPasses(2);
+            offscreenRenderer->getGLRenderAction()->setNumPasses(2);
         }
 
         //render
@@ -3735,8 +3897,9 @@ namespace VirtualRobot
         root->addChild(scene);
 
         static bool renderErrorPrinted = false;
-        const bool renderOk=offscreenRenderer.render(root);
-        root->unref();
+        const bool renderOk=offscreenRenderer->render(root);
+
+
         if (!renderOk)
         {
             if (!renderErrorPrinted)
@@ -3746,10 +3909,12 @@ namespace VirtualRobot
             }
             return false;
         }
+
+        root->unref();
         //rgb
         if(renderRgbImage)
         {
-            const unsigned char* glBuffer = offscreenRenderer.getBuffer();
+            const unsigned char* glBuffer = offscreenRenderer->getBuffer();
             const unsigned int numValues = numPixel*3;
             rgbImage.resize(numValues);
             std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
@@ -3832,18 +3997,36 @@ namespace VirtualRobot
 
                 if(renderDepthImage)
                 {
-                    zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    if(-zEye < zFar)
+                    {
+                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                    }
+                    else
+                    {
+                        zBuffer.at(pixelIndex) = nanValue;
+                    }
                 }
 
                 if(renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
-                    pointCloud.at(pixelIndex)[0]=-xEye;
-                    pointCloud.at(pixelIndex)[1]= yEye;
-                    pointCloud.at(pixelIndex)[2]=-zEye;
+                    auto& point = pointCloud.at(pixelIndex);
+                    if(-zEye < zFar)
+                    {
+                        point[0] = -xEye;
+                        point[1] =  yEye;
+                        point[2] = -zEye;
+                    }
+                    else
+                    {
+                        point[0] = nanValue;
+                        point[1] = nanValue;
+                        point[2] = nanValue;
+                    }
                 }
             }
         }
+
         if(renderDepthImage)
         {
             depthImage = std::move(zBuffer);

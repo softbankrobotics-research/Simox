@@ -17,6 +17,7 @@
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
 #include "GraspPlanning/GraspPlanner/GenericGraspPlanner.h"
 #include "GraspPlanning/ApproachMovementSurfaceNormal.h"
+#include "GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h"
 
 #include <string.h>
 
@@ -57,7 +58,9 @@ public slots:
     void plan();
     void save();
 
+    void planObjectBatch();
 protected:
+    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults &results);
 
     void loadRobot();
     void loadObject();

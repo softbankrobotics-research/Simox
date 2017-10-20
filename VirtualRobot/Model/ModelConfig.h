@@ -85,6 +85,11 @@ namespace VirtualRobot
         bool setConfig(ModelJointPtr node, float value);
         bool setConfig(const std::string& node, float value);
 
+        bool setTCP(const std::string &tcpName);
+        bool setTCP(RobotNodePtr tcp);
+        bool hasTCP() const;
+        RobotNodePtr getTCP();
+
         /*!
             Apply the stored configurations to the corresponding model.
             ModelNodes that are not stored in this ModelConfig are not affected.
@@ -122,13 +127,19 @@ namespace VirtualRobot
         */
         std::string toXML(int tabs = 0);
 
-        static std::string createXMLString(const std::map< std::string, float >& config, const std::string& name, int tabs = 0);
+        static std::string createXMLString(const std::map< std::string, float >& config, const std::string& name, const std::string& tcpName = std::string(), int tabs = 0);
 
     protected:
         std::string name;
 
+<<<<<<< HEAD:VirtualRobot/Model/ModelConfig.h
         std::map< ModelJointPtr, float > configs;
         ModelWeakPtr model;
+=======
+        std::map< RobotNodePtr, float > configs;
+        RobotWeakPtr robot;
+        RobotNodePtr tcpNode;
+>>>>>>> origin/master:VirtualRobot/RobotConfig.h
     };
 
 

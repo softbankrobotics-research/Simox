@@ -86,15 +86,17 @@ namespace GraspPlanning
         Eigen::Vector3f getApproachDirGlobal();
 
         std::string getName();
-    protected:
 
+        // opens hand by setting the preshape (if defined) or just opening the actors in case no preshape has been defined
         virtual void openHand();
 
+protected:
         VirtualRobot::ModelPtr object;
+
         VirtualRobot::TriMeshModelPtr objectModel;
         VirtualRobot::EndEffectorPtr eef;
 
-        Eigen::Vector3f aporachDirGlobal;
+        Eigen::Vector3f approachDirGlobal;
 
         //! This robot is moved around
         VirtualRobot::RobotPtr eefRobot;

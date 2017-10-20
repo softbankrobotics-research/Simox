@@ -95,6 +95,8 @@ Workspace/WorkspaceGrid.cpp
 #Workspace/ReachabilityInversion/ReachabilityProcessor.cpp
 #Workspace/ReachabilityInversion/RobotPlacementIK.cpp
 #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.cpp
+TimeOptimalTrajectory/Path.cpp
+TimeOptimalTrajectory/TimeOptimalTrajectory.cpp
 Grasping/Grasp.cpp
 Grasping/GraspSet.cpp
 Grasping/BasicGraspQualityMeasure.cpp
@@ -137,6 +139,7 @@ Trajectory.cpp
 Scene.cpp
 VirtualRobotException.cpp
 VirtualRobot.cpp
+Tools/Gravity.cpp
 )
 
 SET(INCLUDES
@@ -202,6 +205,8 @@ Workspace/WorkspaceGrid.h
 #Workspace/ReachabilityInversion/ReachabilityProcessor.h
 #Workspace/ReachabilityInversion/RobotPlacementIK.h
 #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.h
+TimeOptimalTrajectory/Path.h
+TimeOptimalTrajectory/TimeOptimalTrajectory.h
 Grasping/Grasp.h
 Grasping/GraspSet.h
 Grasping/BasicGraspQualityMeasure.h
@@ -239,6 +244,8 @@ Tools/BoundingBox.h
 Tools/RuntimeEnvironment.h
 Tools/SphereApproximator.h
 Tools/Orientation.h
+DataStructures/nanoflann.hpp
+DataStructures/KdTreePointCloud.h
 Compression/CompressionRLE.h
 Compression/CompressionBZip2.h
 Import/SimoxXMLFactory.h
@@ -250,6 +257,8 @@ VirtualRobotTest.h
 Trajectory.h
 Scene.h
 VirtualRobot.h
+Tools/Gravity.h
+
 )
 
 if (Simox_USE_NLOPT AND NLOPT_FOUND)

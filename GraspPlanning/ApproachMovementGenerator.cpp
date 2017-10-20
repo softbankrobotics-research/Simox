@@ -4,8 +4,13 @@
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
+<<<<<<< HEAD
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
+=======
+#include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/RobotConfig.h>
+>>>>>>> origin/master
 #include <iostream>
 using namespace std;
 
@@ -38,7 +43,7 @@ namespace GraspPlanning
             THROW_VR_EXCEPTION_IF(!eef_cloned->hasPreshape(graspPreshape), "Preshape with name " << graspPreshape << " not present in EEF");
             eef_cloned->setPreshape(graspPreshape);
         }
-        aporachDirGlobal << 1.0f, 0, 0;
+        approachDirGlobal << 1.0f, 0, 0;
     }
 
     ApproachMovementGenerator::~ApproachMovementGenerator()
@@ -53,7 +58,16 @@ namespace GraspPlanning
 
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
+<<<<<<< HEAD
         eefRobot->setGlobalPoseForModelNode(eef_cloned->getGCP(), pose);
+=======
+        VirtualRobot::RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        eefRobot->setGlobalPoseForRobotNode(tcp, pose);
+>>>>>>> origin/master
         return true;
     }
 
@@ -74,7 +88,12 @@ namespace GraspPlanning
 
     Eigen::Matrix4f ApproachMovementGenerator::getEEFPose()
     {
-        return eef_cloned->getGCP()->getGlobalPose();
+        VirtualRobot::RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        return tcp->getGlobalPose();
     }
 
     bool ApproachMovementGenerator::setEEFToRandomApproachPose()
@@ -105,7 +124,7 @@ namespace GraspPlanning
 
     Eigen::Vector3f ApproachMovementGenerator::getApproachDirGlobal()
     {
-        return aporachDirGlobal;
+        return approachDirGlobal;
     }
 
     std::string ApproachMovementGenerator::getName()

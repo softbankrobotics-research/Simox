@@ -61,11 +61,18 @@ public slots:
     void buildVisu();
 
     void selectEEF(int nr);
+    void selectGrasp(int nr);
     void objectToTCP();
+    void objectToGrasp();
+
     void graspQuality();
     void showGWS();
     void showOWS();
     void timerCB();
+
+    void selectObject();
+
+    void evalRobustness();
 
 protected:
 
@@ -78,6 +85,8 @@ protected:
 
     void buildRrtVisu();
     void setEEFComboBox();
+    void setGraspComboBox();
+
     Ui::MainWindowGraspQuality UI;
 
     SimoxGui::ViewerInterfacePtr viewer;
@@ -85,8 +94,13 @@ protected:
     VirtualRobot::ModelPtr robot;
     VirtualRobot::ObstaclePtr object;
 
+
     VirtualRobot::EndEffectorPtr eef;
     std::vector< VirtualRobot::EndEffectorPtr > eefs;
+    VirtualRobot::GraspPtr grasp;
+    VirtualRobot::GraspSetPtr grasps;
+
+    std::vector<Eigen::Matrix4f> evalPoses;
 
     VirtualRobot::EndEffector::ContactInfoVector contacts;
 

@@ -77,9 +77,21 @@ namespace VirtualRobot
             @param m2 The second link set
             @param addToModelsList If true, the link sets will be considered by all other objects that are added later on.
         */
+<<<<<<< HEAD
         void addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2, bool addToModelsList = true);
         void addCollisionModelPair(ModelLinkPtr m1, LinkSetPtr m2);
         void addCollisionModelPair(ModelLinkPtr m1, ModelLinkPtr m2);
+=======
+        void addCollisionModelPair(SceneObjectSetPtr m1, SceneObjectSetPtr m2);
+        void addCollisionModelPair(SceneObjectPtr m1, SceneObjectSetPtr m2);
+        void addCollisionModelPair(SceneObjectPtr m1, SceneObjectPtr m2);
+        template<class SetT>
+        typename std::enable_if<std::is_base_of<SceneObjectSet, SetT>::value>::type
+        addCollisionModelPair(const boost::shared_ptr<SetT>& m1, const boost::shared_ptr<SetT>& m2)
+        {
+            addCollisionModelPair(boost::dynamic_pointer_cast<SceneObjectSet>(m1), boost::dynamic_pointer_cast<SceneObjectSet>(m2));
+        }
+>>>>>>> origin/master
 
         /*!
             Here single collision models can be added. Internally they are wrapped by a SceneObjectSet.

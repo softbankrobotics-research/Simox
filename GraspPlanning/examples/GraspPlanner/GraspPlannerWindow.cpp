@@ -12,10 +12,16 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
+<<<<<<< HEAD
 #include "VirtualRobot/Visualization/VisualizationNode.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
+=======
+#include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
+>>>>>>> origin/master
 
 #include <QFileDialog>
+#include <QProgressDialog>
+
 #include <Eigen/Geometry>
 
 #include <time.h>
@@ -24,11 +30,22 @@
 #include <cmath>
 #include <sstream>
 
+<<<<<<< HEAD
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
 #endif
+=======
+#include "Inventor/actions/SoLineHighlightRenderAction.h"
+#include <Inventor/nodes/SoShapeHints.h>
+#include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/sensors/SoTimerSensor.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/nodes/SoMatrixTransform.h>
+#include <Inventor/nodes/SoScale.h>
+
+>>>>>>> origin/master
 
 using namespace std;
 using namespace VirtualRobot;
@@ -76,6 +93,7 @@ void GraspPlannerWindow::setupUI()
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonPlan, SIGNAL(clicked()), this, SLOT(plan()));
+    connect(UI.pushButtonPlanBatch, SIGNAL(clicked()), this, SLOT(planObjectBatch()));
     connect(UI.pushButtonSave, SIGNAL(clicked()), this, SLOT(save()));
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
@@ -188,7 +206,11 @@ void GraspPlannerWindow::loadObject()
     qualityMeasure.reset(new GraspPlanning::GraspQualityMeasureWrenchSpace(object));
     //qualityMeasure->setVerbose(true);
     qualityMeasure->calculateObjectProperties();
+<<<<<<< HEAD
     approach.reset(new GraspPlanning::ApproachMovementSurfaceNormal(object, eef));
+=======
+    approach.reset(new GraspStudio::ApproachMovementSurfaceNormal(object, eef, preshape));
+>>>>>>> origin/master
     eefCloned = approach->getEEFRobotClone();
 
     if (robot && eef)
@@ -228,7 +250,14 @@ void GraspPlannerWindow::plan()
     bool forceClosure = UI.checkBoxFoceClosure->isChecked();
     float quality = (float)UI.doubleSpinBoxQuality->value();
     int nrGrasps = UI.spinBoxGraspNumber->value();
+<<<<<<< HEAD
     planner.reset(new GraspPlanning::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
+=======
+    if (planner)
+        planner->setParameters(quality, forceClosure);
+    else
+        planner.reset(new GraspStudio::GenericGraspPlanner(grasps, qualityMeasure, approach, quality, forceClosure));
+>>>>>>> origin/master
 
     int nr = planner->plan(nrGrasps, timeout);
     VR_INFO << " Grasp planned:" << nr << endl;
@@ -253,6 +282,8 @@ void GraspPlannerWindow::plan()
         openEEF();
         closeEEF();
     }
+
+    planner->getEvaluation().print();
 }
 
 
@@ -314,7 +345,13 @@ void GraspPlannerWindow::openEEF()
 
     if (eefCloned && eefCloned->getEndEffector(eefName))
     {
-        eefCloned->getEndEffector(eefName)->openActors();
+        if (!preshape.empty())
+        {
+            eefCloned->getEndEffector(eefName)->setPreshape(preshape);
+        } else
+        {
+            eefCloned->getEndEffector(eefName)->openActors();
+        }
     }
 
     buildVisu();
@@ -368,3 +405,132 @@ void GraspPlannerWindow::save()
         return;
     }
 }
+void GraspPlannerWindow::planObjectBatch()
+{
+    QString fi = QFileDialog::getExistingDirectory(this, tr("Select Base Directory"), QString());
+    qApp->processEvents();
+    VR_INFO << "Searching for all .moxml files in " << fi.toStdString() << std::endl;
+    if (fi.isEmpty())
+    {
+        return;
+    }
+    QStringList paths;
+    for (boost::filesystem::recursive_directory_iterator end, dir(fi.toUtf8().data(), boost::filesystem::symlink_option::recurse);
+         dir != end ; ++dir)
+    {
+        std::string path(dir->path().c_str());
+
+        // search for all statechart group xml files
+        if (dir->path().extension() == ".moxml")
+        {
+            paths << dir->path().c_str();
+        }
+
+    }
+    paths.removeDuplicates();
+    VR_INFO << "Found:  " << paths.join(", ").toStdString() << std::endl;
+    boost::filesystem::path resultsCSVPath("genericgraspplanningresults-" + robot->getName() + ".csv");
+    resultsCSVPath = boost::filesystem::absolute(resultsCSVPath);
+    std::ofstream fs(resultsCSVPath.string().c_str(), std::ofstream::out);
+    fs << "object," << planner->getEvaluation().GetCSVHeader() << ",RobustnessAvgQualityNoCol,RobustnessAvgForceClosureRateNoCol,RobustnessAvgQualityCol,RobustnessAvgForceClosureRateCol";
+    QProgressDialog progress("Calculating grasps...", "Abort", 0, paths.size(), this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+    int i = 0;
+    progress.setValue(0);
+    qApp->processEvents();
+    size_t bins = 20;
+    for (size_t i = 0; i < bins; ++i)
+    {
+        fs  << "," << "HistogramBin" << i;
+    }
+    for (size_t i = 0; i < bins; ++i)
+    {
+        fs   << "," << "HistogramWithCollisionBin" << i;
+    }
+    fs << std::endl;
+
+    for(auto& path :  paths)
+    {
+        try
+        {
+            //resetSceneryAll();
+            objectFile = path.toStdString();
+            loadObject();
+            {
+                //planner->setRetreatOnLowContacts(false);
+                plan();
+//                save(boost::filesystem::path(path.toStdString()).replace_extension(".moxml").string());
+                float avgRate = 0;
+                float avgForceClosureRate = 0;
+                float avgRateCol = 0;
+                float avgForceClosureRateCol = 0;
+                size_t graspSum = 0;
+                std::vector<double> histogramFC(bins,0.0);
+                std::vector<double> histogramFCWithCollisions(bins,0.0);
+//                if(planner->getPlannedGrasps().empty())
+//                {
+//                    ARMARX_INFO << "No grasps found for"
+//                }
+                for(VirtualRobot::GraspPtr& g : planner->getPlannedGrasps())
+                {
+                    GraspEvaluationPoseUncertainty::PoseEvalResults result;
+                    if (!evaluateGrasp(g, eefCloned, eefCloned->getEndEffector(eefName), 100, result))
+                        continue;
+                    VR_INFO << "Grasp " << graspSum << "/" << planner->getPlannedGrasps().size() << std::endl;
+                    histogramFC.at(std::min<int>((int)(result.forceClosureRate * bins), bins-1))++;
+                    histogramFCWithCollisions.at(std::min<int>((int)((double)(result.numForceClosurePoses)/result.numPosesTested * bins), bins-1))++;
+                    avgRate += result.avgQuality;
+                    avgForceClosureRate += result.forceClosureRate;
+                    avgRateCol += result.avgQualityCol;
+                    avgForceClosureRateCol += result.forceClosureRateCol;
+                    graspSum++;
+//                    if(graspSum > 10)
+//                        break;
+                }
+                if (graspSum>0)
+                {
+                    avgRate /= planner->getPlannedGrasps().size();
+                    avgForceClosureRate /= planner->getPlannedGrasps().size();
+                    avgRateCol /= planner->getPlannedGrasps().size();
+                    avgForceClosureRateCol /= planner->getPlannedGrasps().size();
+                }
+                fs << object->getName() << "," << planner->getEvaluation().toCSVString() << "," << avgRate << "," << avgForceClosureRate << "," << avgRateCol << "," << avgForceClosureRateCol;
+                int i = 0;
+                for(auto bin : histogramFC)
+                {
+                    fs  <<  ", " << (double)(bin)/graspSum;
+                    cout << i << ": " << bin << ", " << graspSum << ", " <<  (double)(bin)/graspSum << std::endl;
+                    i++;
+                }
+                for(auto bin : histogramFCWithCollisions)
+                {
+                    fs  <<  ", " << (double)(bin)/graspSum;
+                }
+                fs << std::endl;
+            }
+        }
+        catch(std::exception & e)
+        {
+            VR_ERROR << "Failed to plan for " << path.toStdString() << "\nReason: \n" << e.what() << std::endl;
+        }
+        progress.setValue(++i);
+        qApp->processEvents();
+        if (progress.wasCanceled())
+            break;
+    }
+    VR_INFO << "Saving CSV results to " << resultsCSVPath.string() << std::endl;
+}
+
+bool GraspPlannerWindow::evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspEvaluationPoseUncertainty::PoseEvalResults &results)
+{
+    if (!g || !eefRobot || !eef)
+        return false;
+
+    GraspEvaluationPoseUncertaintyPtr eval(new GraspEvaluationPoseUncertainty(GraspEvaluationPoseUncertainty::PoseUncertaintyConfig()));
+
+    results = eval->evaluateGrasp(g, eef, object, qualityMeasure, nrEvalLoops);
+
+    return true;
+}
+

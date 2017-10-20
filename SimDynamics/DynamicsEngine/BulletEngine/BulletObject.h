@@ -88,6 +88,11 @@ namespace SimDynamics
 
         virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s);
 
+        /*!
+         * \brief activate If object is sleeping, we can activate it here.
+         */
+        virtual void activate();
+
         //! All object's sizes are scaled by this factor for bullet. (Small objects (<5cm) do not work well with bullet).
         static float ScaleFactor;
         //! All object's masses are scaled by this factor. (Heavy objects do not work well with motors.)

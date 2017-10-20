@@ -20,14 +20,14 @@ namespace SimDynamics
         bulletObjectDampingAngular = btScalar(0.85f);
         //            bulletObjectDampingAngular = btScalar(0.1f);
         bulletObjectDeactivation = btScalar(5.0);//1.0);
-        bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);//1.5);
+        bulletObjectSleepingThresholdLinear = btScalar(0.5f * BulletObject::ScaleFactor);
         bulletObjectSleepingThresholdAngular = btScalar(0.5f);//2.5);
 
         bulletSolverIterations = 250;
         bulletSolverGlobalContactForceMixing = 0.0;
-        bulletSolverGlobalErrorReductionParameter = btScalar(0.6);//0.1);
+        bulletSolverGlobalErrorReductionParameter = btScalar(0.6);
         bulletSolverSuccessiveOverRelaxation = btScalar(0.0);
-        bulletSolverContactSurfaceLayer = btScalar(0.001);
+        //bulletSolverContactSurfaceLayer = btScalar(0.001);
         bulletSolverSplitImpulsePenetrationThreshold = btScalar(-0.01);
     }
 
@@ -277,9 +277,12 @@ namespace SimDynamics
         return dynamicsWorld;
     }
 
-    void BulletEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up)
+    void BulletEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction)
     {
         MutexLockPtr lock = getScopedLock();
+
+        if (friction <= 0)
+            friction = bulletConfig->bulletObjectFriction;
         DynamicsEngine::createFloorPlane(pos, up);
         float size = float(floorExtendMM);//50000.0f; // mm
         float sizeSmall = float(floorDepthMM);// 500.0f;
@@ -312,8 +315,6 @@ namespace SimDynamics
         groundObject->getFirstLink()->setSimulationType(VirtualRobot::ModelLink::Physics::eStatic);
 
         BulletObjectPtr groundObjectBt(new BulletObject(groundObject->getFirstLink()));
-
-
         floor = groundObjectBt;
 
         addObject(groundObjectBt);
@@ -596,6 +597,7 @@ namespace SimDynamics
         cout << "------------------ Bullet Engine ------------------" << endl;
     }
 
+
     void BulletEngine::activateAllObjects()
     {
         MutexLockPtr lock = getScopedLock();
@@ -692,6 +694,11 @@ namespace SimDynamics
         {
             VR_ERROR << "no bullet robot" << endl;
             return false;
+        }
+
+        if (object->getSimType() != VirtualRobot::SceneObject::Physics::eDynamic)
+        {
+            VR_WARNING << "Sim type of object " << object->getName() << "!=eDynamic. Is this intended?" << endl;
         }
 
         BulletRobot::LinkInfoPtr link = br->attachObjectLink(nodeName, object);

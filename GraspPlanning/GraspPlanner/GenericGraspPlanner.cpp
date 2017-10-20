@@ -10,6 +10,7 @@
 #include "../GraspQuality/GraspQualityMeasure.h"
 #include "../ApproachMovementGenerator.h"
 
+#include <chrono>
 using namespace std;
 
 namespace GraspPlanning
@@ -28,6 +29,9 @@ namespace GraspPlanning
         THROW_VR_EXCEPTION_IF(!eef, "NULL eef in approach...");
         THROW_VR_EXCEPTION_IF(!graspSet, "NULL graspSet...");
         verbose = true;
+        eval.fcCheck = forceClosure;
+        eval.minQuality = minQuality;
+        retreatOnLowContacts = true;
     }
 
     GenericGraspPlanner::~GenericGraspPlanner()
@@ -75,9 +79,48 @@ namespace GraspPlanning
         return nGraspsCreated;
     }
 
+    bool GenericGraspPlanner::moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops)
+    {
+        VR_ASSERT(eef);
+        VR_ASSERT(approach);
+
+        VirtualRobot::SceneObjectSetPtr sos = eef->createSceneObjectSet();
+
+        if (!sos)
+        {
+            return false;
+        }
+
+        int loop = 0;
+        Eigen::Vector3f delta = approachDir * step;
+        bool finishedContactsOK = false;
+        bool finishedCollision = false;
+
+        while (loop < maxLoops && !finishedCollision && !finishedContactsOK)
+        {
+            approach->openHand();
+            approach->updateEEFPose(delta);
+
+            if (eef->getCollisionChecker()->checkCollision(object->getCollisionModel(), sos))
+            {
+                finishedCollision = true;
+                break;
+            }
+            auto contacts = eef->closeActors(object);
+            if (contacts.size()>=2)
+            {
+                approach->openHand();
+                finishedContactsOK = true;
+                break;
+            }
+            loop++;
+        }
+        return finishedContactsOK;
+    }
+
     VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(::vector<VirtualRobot::ModelPtr> &obstacles)
     {
-
+        auto start_time = chrono::high_resolution_clock::now();
         std::string sGraspPlanner("Simox - GraspPlanning - ");
         sGraspPlanner += graspQuality->getName();
         std::string sGraspNameBase = "Grasp ";
@@ -89,6 +132,7 @@ namespace GraspPlanning
         VR_ASSERT(tcp);
 
 
+        // GENERATE APPROACH POSE
         bool bRes = approach->setEEFToRandomApproachPose();
 
         if (!bRes)
@@ -97,7 +141,9 @@ namespace GraspPlanning
         }
 
         if (obstacles.size()>0)
+
         {
+            // CHECK VALID APPROACH POSE
             VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
             VR_ASSERT(eef->getRobot());
 
@@ -105,24 +151,56 @@ namespace GraspPlanning
             {
                 //                GRASPPLANNING_INFO << ": Collision detected before closing fingers" << endl;
                 return VirtualRobot::GraspPtr();
+
             }
         }
 
-
-        contacts = eef->closeActors(object);
-
-        eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
-
-        if (obstacles.size()>0)
+        // CHECK CONTACTS
+        if (bRes)
         {
-            VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
-            VR_ASSERT(eef->getRobot());
+            contacts = eef->closeActors(object);
 
-            if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
+            eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
+
+            // low number of contacts: check if it helps to move away (small object)
+            if (retreatOnLowContacts && contacts.size()<2)
             {
-                //              GRASPPLANNING_INFO << ": Collision detected after closing fingers" << endl;
-                return VirtualRobot::GraspPtr();
+                VR_INFO << "Low number of contacts, retreating hand (small object)" << endl;
+                if (moveEEFAway(approach->getApproachDirGlobal(),5.0f,10))
+                {
+                    contacts = eef->closeActors(object);
+                    eef->addStaticPartContacts(object, contacts, approach->getApproachDirGlobal());
+                }
             }
+
+            if (obstacles.size()>0)
+            {
+                VirtualRobot::CollisionCheckerPtr colChecker = eef->getCollisionChecker();
+                VR_ASSERT(eef->getRobot());
+
+                if (colChecker->checkCollision(eef->createLinkSet(), obstacles))
+                {
+                    //              GRASPPLANNING_INFO << ": Collision detected after closing fingers" << endl;
+                    return VirtualRobot::GraspPtr();
+                }
+            }
+        }
+
+        // eval data
+        eval.graspTypePower.push_back(true);
+        eval.nrGraspsGenerated++;
+
+        if (!bRes)
+        {
+            // result not valid due to collision
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidCollision++;
+            eval.timeGraspMS.push_back(ms);
+
+            return VirtualRobot::GraspPtr();
         }
 
         if (contacts.size() < 2)
@@ -131,20 +209,40 @@ namespace GraspPlanning
             {
                 GRASPPLANNING_INFO << ": ignoring grasp hypothesis, low number of contacts" << endl;
             }
-
+            // result not valid due to low number of contacts
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidContacts++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
         graspQuality->setContactPoints(contacts);
         float score = graspQuality->getGraspQuality();
 
-        if (score < minQuality)
+        if (forceClosure && !graspQuality->isGraspForceClosure())
         {
+            // not force closure
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(0.0f);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidFC++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
-        if (forceClosure && !graspQuality->isGraspForceClosure())
+        if (score < minQuality)
         {
+            // min quality not reached
+            auto end_time = chrono::high_resolution_clock::now();
+            float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+            eval.graspScore.push_back(score);
+            eval.graspValid.push_back(false);
+            eval.nrGraspsInvalidFC++;
+            eval.timeGraspMS.push_back(ms);
             return VirtualRobot::GraspPtr();
         }
 
@@ -153,6 +251,15 @@ namespace GraspPlanning
         {
             GRASPPLANNING_INFO << ": Found grasp with " << contacts.size() << " contacts, score: " << score << endl;
         }
+
+        auto end_time = chrono::high_resolution_clock::now();
+        float ms = float(chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count());
+        eval.graspScore.push_back(score);
+        eval.graspValid.push_back(true);
+        eval.nrGraspsValid++;
+        // only power grasps
+        eval.nrGraspsValidPower++;
+        eval.timeGraspMS.push_back(ms);
 
         std::stringstream ss;
         ss << sGraspNameBase << (graspSet->getSize() + 1);
@@ -166,9 +273,21 @@ namespace GraspPlanning
         g->setConfiguration(configValues);
         return g;
     }
+
     VirtualRobot::EndEffector::ContactInfoVector GenericGraspPlanner::getContacts() const
     {
         return contacts;
+    }
+
+    void GenericGraspPlanner::setParameters(float minQuality, bool forceClosure)
+    {
+        this->minQuality = minQuality;
+        this->forceClosure = forceClosure;
+    }
+
+    void GenericGraspPlanner::setRetreatOnLowContacts(bool enable)
+    {
+        retreatOnLowContacts = enable;
     }
 
 

@@ -86,6 +86,8 @@ protected:
     void updateRNSBox();
     void updateJointBox();
     void loadReachFile(std::string filename);
+
+    void updateQualityInfo();
     /*
     void updateEEFBox();
     void displayTriangles();*/

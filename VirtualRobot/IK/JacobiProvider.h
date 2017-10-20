@@ -96,7 +96,7 @@ namespace VirtualRobot
         JointSetPtr rns;
         InverseJacobiMethod inverseMethod;
         bool initialized;
-        Eigen::VectorXf jointWeights; // only used in eTranspose mode
+        Eigen::VectorXf jointWeights;
 
     };
 

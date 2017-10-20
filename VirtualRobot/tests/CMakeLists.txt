@@ -22,6 +22,7 @@ ADD_VR_TEST( VirtualRobotMathToolsTest )
 ADD_VR_TEST( VirtualRobotThreadsafetyTest )
 ADD_VR_TEST( VirtualRobotTrajectoryTest )
 ADD_VR_TEST( VirtualRobotWorkSpaceTest )
+ADD_VR_TEST( VirtualRobotWorkSpaceGridTest )
 ADD_VR_TEST( VirtualRobotSensorTest )
 
 if (Simox_USE_URDF)
@@ -29,3 +30,5 @@ if (Simox_USE_URDF)
 endif()
 ADD_VR_TEST( VirtualRobotGazeIKTest )
 ADD_VR_TEST( VirtualRobotMeshImportTest )
+
+ADD_VR_TEST( VirtualRobotTimeOptimalTrajectoryTest )

@@ -226,7 +226,8 @@ namespace VirtualRobot
         }
 
         float result = 1.0f - exp(-penJointLimits_k * p);
-        //cout << "Pen factor:" << result << endl;
+        if (verbose)
+            cout << "Pen factor:" << result << endl;
         return result;
     }
 
@@ -239,5 +240,17 @@ namespace VirtualRobot
     {
         return penJointLimits;
     }
+
+    PoseQualityMeasurementPtr PoseQualityManipulability::clone(RobotPtr newRobot)
+    {
+        VR_ASSERT(newRobot);
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName()));
+        VR_ASSERT(newRobot->getRobotNodeSet(rns->getName())->getSize() == rns->getSize());
+
+        PoseQualityManipulabilityPtr m(new PoseQualityManipulability(newRobot->getRobotNodeSet(rns->getName()), this->manipulabilityType));
+        m->penalizeJointLimits(this->penJointLimits, this->penJointLimits_k);
+        return m;
+    }
+
 
 }

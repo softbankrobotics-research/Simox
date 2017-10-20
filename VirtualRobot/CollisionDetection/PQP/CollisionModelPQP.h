@@ -53,7 +53,6 @@ namespace VirtualRobot
         Ptr If collision checks should be done in parallel, different CollisionCheckers can be specified.
         */
         CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id);
-
         /*!Standard Destructor
         */
         virtual ~CollisionModelPQP();
@@ -64,8 +63,9 @@ namespace VirtualRobot
         }
 
         virtual void print();
-
+        virtual boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const;
     protected:
+        CollisionModelPQP(const CollisionModelPQP& orig);
 
         //! delete all data
         virtual void destroyData();

@@ -47,6 +47,8 @@ namespace VirtualRobot
             return true;
         }
 
+        rns->getJointValues(bestConfig);
+
         // if here we failed
         for (int i = 1; i < maxLoops; i++)
         {

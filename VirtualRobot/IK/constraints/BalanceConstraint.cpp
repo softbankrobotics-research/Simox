@@ -124,7 +124,11 @@ void BalanceConstraintOptimizationFunction::update()
 
 double BalanceConstraintOptimizationFunction::sigmoid(double x)
 {
+<<<<<<< HEAD
     double beta = 0.1;
+=======
+    float beta = 0.1f;
+>>>>>>> origin/master
     return 1.0 / (1.0 + exp(-beta * x));
 }
 

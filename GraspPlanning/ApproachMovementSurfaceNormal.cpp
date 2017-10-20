@@ -6,12 +6,16 @@
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
+#include <VirtualRobot/RobotConfig.h>
 
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 
+class RobotConfig;
+
 using namespace std;
+using namespace VirtualRobot;
 
 namespace GraspPlanning
 {
@@ -63,7 +67,7 @@ namespace GraspPlanning
             return pose;
         }
 
-        this->aporachDirGlobal = approachDir;
+        this->approachDirGlobal = approachDir;
 
         // set new pose
         setEEFToApproachPose(position,approachDir);
@@ -195,5 +199,26 @@ namespace GraspPlanning
             updateEEFPose(delta);
             loop++;
         }
+    }
+
+    Eigen::Matrix4f ApproachMovementSurfaceNormal::getEEFPose()
+    {
+        RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        return tcp->getGlobalPose();
+    }
+
+    bool ApproachMovementSurfaceNormal::setEEFPose(const Eigen::Matrix4f& pose)
+    {
+        RobotNodePtr tcp;
+        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+            tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
+        else
+            tcp = eef_cloned->getGCP();
+        eefRobot->setGlobalPoseForRobotNode(tcp, pose);
+        return true;
     }
 }

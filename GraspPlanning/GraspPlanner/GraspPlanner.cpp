@@ -23,4 +23,8 @@ namespace GraspPlanning
         return plannedGrasps;
     }
 
+    GraspPlannerEvaluation GraspPlanner::getEvaluation()
+    {
+        return eval;
+    }
 }

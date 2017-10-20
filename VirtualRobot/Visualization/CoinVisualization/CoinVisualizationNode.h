@@ -42,7 +42,7 @@ namespace VirtualRobot
     {
         friend class CoinVisualizationFactory;
     public:
-        CoinVisualizationNode(SoNode* visualizationNode);
+        CoinVisualizationNode(SoNode* visualizationNode, float margin = 0.0f);
         ~CoinVisualizationNode();
         virtual TriMeshModelPtr getTriMeshModel();
 
@@ -89,7 +89,7 @@ namespace VirtualRobot
             \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl).
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename);
-
+        virtual void shrinkFatten(float offset);
         virtual void createTriMeshModel();
 
     protected:
@@ -110,7 +110,7 @@ namespace VirtualRobot
         SoMatrixTransform* globalPoseTransform;
         TriMeshModelPtr triMeshModel;
         SoScale* scaling;
-
+        float margin = 0.0f;
         static void InventorTriangleCB(void* data, SoCallbackAction* action,
                                        const SoPrimitiveVertex* v1,
                                        const SoPrimitiveVertex* v2,

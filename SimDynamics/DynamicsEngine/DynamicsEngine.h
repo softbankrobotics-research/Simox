@@ -98,11 +98,19 @@ namespace SimDynamics
             Note, that all RobotNdoes are internally handled as DynamicObjects.
         */
         std::vector<DynamicsObjectPtr> getObjects();
+        /*!
+
+         * \brief getObject Returns object (first) object with given name.
+         * \param objectName
+         * \return
+         */
+        virtual DynamicsObjectPtr getObject(const std::string& objectName);
 
         /*!
             Set floor. A standard floor object is created and added to the dynamics world.
+            \param friction If <=0.0, the standard friction parameter for novel objects is used.
         */
-        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up);
+        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction = 0.0f);
 
         /*!
             By default all collisions are enabled.
@@ -168,7 +176,18 @@ namespace SimDynamics
         virtual DynamicsModelPtr getRobot(VirtualRobot::RobotPtr r);
         virtual DynamicsModelPtr getRobot(const std::string& robName);
 
+<<<<<<< HEAD
         typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
+=======
+        /*!
+            Wake up all objects.
+            The physics engine might send objects to sleeping state when no interaction is detected.
+            Since this might be unwanted this method allows to activate all objects.
+        */
+        virtual void activateAllObjects();
+
+        typedef boost::shared_ptr< boost::recursive_mutex::scoped_lock > MutexLockPtr;
+>>>>>>> origin/master
 
         /*!
             This lock can be used to protect data access. It locks the mutex until deletion.

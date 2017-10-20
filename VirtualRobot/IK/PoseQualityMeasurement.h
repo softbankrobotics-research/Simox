@@ -85,6 +85,8 @@ namespace VirtualRobot
         virtual void setObstacleDistanceVector(const Eigen::Vector3f& directionSurfaceToObstance);
         virtual void disableObstacleDistance();
 
+        virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
+
     protected:
         std::string name;
         VirtualRobot::JointSetPtr rns;

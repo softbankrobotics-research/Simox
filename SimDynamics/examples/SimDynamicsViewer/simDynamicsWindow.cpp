@@ -88,9 +88,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     // register callback
     float TIMER_MS = 30.0f;
     SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    timerSensor = new SoTimerSensor(timerCB, this);
+    timerSensor = new SoTimerSensor(timerCB, static_cast<void *>(this));
     timerSensor->setInterval(SbTime(TIMER_MS / 1000.0f));
     sensor_mgr->insertTimerSensor(timerSensor);
+
+    viewer->addStepCallback(stepCB, static_cast<void *>(this));
 }
 
 
@@ -111,10 +113,20 @@ void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
 
     // now its safe to update physical information and set the models to the according poses
     window->updateJointInfo();
+    window->updateRobotInfo();
 
     window->updateContactVisu();
     window->updateComVisu();
 
+    window->UI.label_simuStepCount->setText(QString::number(window->simuStepCount));
+}
+
+void SimDynamicsWindow::stepCB(void *data, btScalar timeStep)
+{
+    SimDynamicsWindow* window = static_cast<SimDynamicsWindow*>(data);
+    VR_ASSERT(window);
+
+    window->simuStepCount++;
 }
 
 
@@ -140,6 +152,10 @@ void SimDynamicsWindow::setupUI()
     connect(UI.spinBoxAntiAliasing, SIGNAL(valueChanged(int)), this, SLOT(updateAntiAliasing(int)));
 
     connect(UI.pushButtonAddObject, SIGNAL(clicked()), this, SLOT(addObject()));
+    connect(UI.pushButton_reloadRobot, SIGNAL(clicked()), this, SLOT(reloadRobot()));
+
+    connect(UI.button_reset, SIGNAL(clicked()), this, SLOT(resetPose()));
+    connect(UI.button_set, SIGNAL(clicked()), this, SLOT(setPose()));
 
     /*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
@@ -289,6 +305,7 @@ void SimDynamicsWindow::updateJoints()
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
+<<<<<<< HEAD
         if (nodes[i]->getType() & ModelNode::JointRevolute)
         {
             ModelJointRevolutePtr rn = std::dynamic_pointer_cast<ModelJointRevolute>(nodes[i]);
@@ -299,6 +316,13 @@ void SimDynamicsWindow::updateJoints()
                 QString qstr(rn->getName().c_str());
                 UI.comboBoxRobotNode->addItem(qstr);
             }
+=======
+        if (nodes[i]->isRotationalJoint() || nodes[i]->isTranslationalJoint())
+        {
+            robotNodes.push_back(nodes[i]);
+            QString qstr(nodes[i]->getName().c_str());
+            UI.comboBoxRobotNode->addItem(qstr);
+>>>>>>> origin/master
         }
     }
 
@@ -341,8 +365,18 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
         //gp(2,3) = 5.0f;
         gp(2, 3) = -bbox.getMin()(2) + 4.0f;
         robot->setGlobalPose(gp);
+<<<<<<< HEAD
         dynamicsRobot = dynamicsWorld->CreateDynamicsModel(robot);
         dynamicsWorld->addModel(dynamicsRobot);
+=======
+        dynamicsRobot = dynamicsWorld->CreateDynamicsRobot(robot);
+        if(! UI.checkBox_selfCol->isChecked())
+        {
+            //we don't want to call this function with true (we would enable all collisions)
+            dynamicsRobot->enableSelfCollisions(false);
+        }
+        dynamicsWorld->addRobot(dynamicsRobot);
+>>>>>>> origin/master
     }
     catch (VirtualRobotException& e)
     {
@@ -352,13 +386,18 @@ bool SimDynamicsWindow::loadRobot(std::string robotFilename)
     }
 
     updateJoints();
+    this->robotFilename = robotFilename;
     return true;
 }
 
 void SimDynamicsWindow::selectRobotNode(int n)
 {
     UI.comboBoxRobotNode->setCurrentIndex(n);
+<<<<<<< HEAD
     ModelJointRevolutePtr rn;
+=======
+    RobotNodePtr rn;
+>>>>>>> origin/master
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
@@ -399,15 +438,24 @@ void SimDynamicsWindow::updateJointInfo()
     QString qTarget("Joint target: 0");
     QString qVel("Joint velocity: 0");
     QString qVelTarget("Joint velocity target: 0");
-    QString qGP("GlobalPose (simox): 0/0/0");
+    QString qGP("GlobalPosition (simox): 0/0/0");
+    QString qGPRPY("GlobalRPY (simox): 0/0/0");
     QString qVisu("VISU (simox): 0/0/0");
     QString qCom("COM (bullet): 0/0/0");
     QString tmp;
+<<<<<<< HEAD
     ModelJointRevolutePtr rn;
+=======
+    RobotNodePtr rn;
+>>>>>>> origin/master
 
     if (n >= 0 && n < (int)robotNodes.size())
     {
         rn = robotNodes[n];
+    }
+    else
+    {
+        return;
     }
 
     //SimDynamics::DynamicsObjectPtr dynRN = dynamicsRobot->getDynamicsRobotNode(rn);
@@ -639,23 +687,26 @@ void SimDynamicsWindow::updateJointInfo()
 
         Eigen::Matrix4f gp = rn->getGlobalPose();
 
-        qGP = QString("GlobalPose (simox):");
         tmp = QString::number(gp(0, 3), 'f', 2);
-        qGP += tmp;
         info += ",gp:";
         info += tmp.toStdString();
 
-        qGP += QString("/");
         tmp = QString::number(gp(1, 3), 'f', 2);
-        qGP += tmp;
         info += "/";
         info += tmp.toStdString();
 
-        qGP += QString("/");
         tmp = QString::number(gp(2, 3), 'f', 2);
-        qGP += tmp;
         info += "/";
         info += tmp.toStdString();
+
+        Eigen::Vector3f pos = rn->getGlobalPose().block<3,1>(0,3);
+        qGP = QString("GlobalPosition (simox): ") + QString::number(pos(0), 'f', 2) + " / " + QString::number(pos(1), 'f', 2) + " / " + QString::number(pos(2), 'f', 2);
+
+        auto rpy = VirtualRobot::MathTools::eigen4f2rpy(gp);
+        qGPRPY = "GlobalRPY (simox): " +
+                QString::number(rpy(0), 'f', 2) + " / "+
+                QString::number(rpy(1), 'f', 2) + " / "+
+                QString::number(rpy(2), 'f', 2);
 
         gp = rn->getGlobalPose();
         qVisu = QString("VISU (simox):");
@@ -691,6 +742,7 @@ void SimDynamicsWindow::updateJointInfo()
     UI.label_RNVelocity->setText(qVel);
     UI.label_RNVelocityTarget->setText(qVelTarget);
     UI.label_RNPosGP->setText(qGP);
+    UI.label_RNRPYGP->setText(qGPRPY);
     UI.label_RNPosVisu->setText(qVisu);
     UI.label_RNPosCom->setText(qCom);
 
@@ -703,6 +755,28 @@ void SimDynamicsWindow::updateJointInfo()
     }
 
 #endif
+}
+
+void SimDynamicsWindow::updateRobotInfo()
+{
+    Eigen::Vector3f com = robot->getCoMGlobal();
+    Eigen::Vector3f pos = robot->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getGlobalPose());
+
+    UI.label_RobotPos->setText(QString::number(pos(0), 'f', 2) + " / " + QString::number(pos(1), 'f', 2) + " / " + QString::number(pos(2), 'f', 2));
+    UI.label_RobotRPY->setText(QString::number(rpy(0), 'f', 2) + " / " + QString::number(rpy(1), 'f', 2) + " / " + QString::number(rpy(2), 'f', 2));
+    UI.label_RobotCom->setText(QString::number(com(0), 'f', 2) + " / " + QString::number(com(1), 'f', 2) + " / " + QString::number(com(2), 'f', 2));
+
+
+    Eigen::Vector3f rpos = robot->getRootNode()->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getGlobalPose());
+    UI.label_RootNodePos->setText(QString::number(rpos(0), 'f', 2) + " / " + QString::number(rpos(1), 'f', 2) + " / " + QString::number(rpos(2), 'f', 2));
+    UI.label_RootNodeRPY->setText(QString::number(rrpy(0), 'f', 2) + " / " + QString::number(rrpy(1), 'f', 2) + " / " + QString::number(rrpy(2), 'f', 2));
+
+    Eigen::Vector3f rltpos = robot->getRootNode()->getLocalTransformation().block<3,1>(0,3);
+    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getLocalTransformation());
+    UI.label_RootLocalTransfPos->setText(QString::number(rltpos(0), 'f', 2) + " / " + QString::number(rltpos(1), 'f', 2) + " / " + QString::number(rltpos(2), 'f', 2));
+    UI.label_RootLocalTransfRPY->setText(QString::number(rltrpy(0), 'f', 2) + " / " + QString::number(rltrpy(1), 'f', 2) + " / " + QString::number(rltrpy(2), 'f', 2));
 }
 
 void SimDynamicsWindow::jointValueChanged(int n)
@@ -723,7 +797,11 @@ void SimDynamicsWindow::jointValueChanged(int n)
     #endif
     */
     int j = UI.comboBoxRobotNode->currentIndex();
+<<<<<<< HEAD
     ModelJointRevolutePtr rn;
+=======
+    RobotNodePtr rn;
+>>>>>>> origin/master
 
     if (j >= 0 && j < (int)robotNodes.size())
     {
@@ -948,4 +1026,42 @@ void SimDynamicsWindow::addObject()
         buildVisualization();
     }
 
+}
+
+void SimDynamicsWindow::reloadRobot()
+{
+    if (RuntimeEnvironment::getDataFileAbsolute(robotFilename))
+    {
+        if (dynamicsRobot)
+        {
+            viewer->removeVisualization(dynamicsRobot);
+            dynamicsWorld->removeRobot(dynamicsRobot);
+        }
+
+        dynamicsRobot.reset();
+        loadRobot(robotFilename);
+        buildVisualization();
+    }
+}
+
+void SimDynamicsWindow::resetPose()
+{
+    Eigen::Vector3f rpos = robot->getRootNode()->getGlobalPose().block<3,1>(0,3);
+    Eigen::Vector3f rrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getGlobalPose());
+
+    UI.spinBox_Pos_X->setValue(rpos[0]);
+    UI.spinBox_Pos_Y->setValue(rpos[1]);
+    UI.spinBox_Pos_Z->setValue(rpos[2]);
+
+    UI.spinBox_Rot_R->setValue(rrpy[0]);
+    UI.spinBox_Rot_P->setValue(rrpy[1]);
+    UI.spinBox_Rot_Y->setValue(rrpy[2]);
+}
+
+void SimDynamicsWindow::setPose()
+{
+    Eigen::Matrix4f pose = VirtualRobot::MathTools::rpy2eigen4f(UI.spinBox_Rot_R->value(), UI.spinBox_Rot_P->value(), UI.spinBox_Rot_Y->value());
+    pose.block<3, 1>(0, 3) = Eigen::Vector3f(UI.spinBox_Pos_X->value(), UI.spinBox_Pos_Y->value(), UI.spinBox_Pos_Z->value());
+
+    dynamicsRobot->setGlobalPose(pose);
 }

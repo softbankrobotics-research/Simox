@@ -57,6 +57,7 @@ public slots:
     void closeHand();
     void openHand();
     void selectEEF(int nr);
+    void selectPreshape(int nr);
     void selectRobot();
     void displayPhysics();
     void exportVRML();

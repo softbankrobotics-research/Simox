@@ -75,7 +75,7 @@ namespace SimDynamics
         return true;
     }
 
-    void DynamicsEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up)
+    void DynamicsEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction)
     {
         MutexLockPtr lock = getScopedLock();
         floorPos = pos;
@@ -326,6 +326,31 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         return objects;
+    }
+
+    DynamicsObjectPtr DynamicsEngine::getObject(const std::string &objectName)
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        for (size_t i = 0; i < objects.size(); i++)
+        {
+            if (objects[i]->getName() == objectName)
+            {
+                return objects[i];
+            }
+        }
+
+        return DynamicsObjectPtr();
+    }
+
+    void DynamicsEngine::activateAllObjects()
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        for (size_t i = 0; i < objects.size(); i++)
+        {
+            objects[i]->activate();
+        }
     }
 
     std::vector<DynamicsEngine::DynamicsContactInfo> DynamicsEngine::getContacts()

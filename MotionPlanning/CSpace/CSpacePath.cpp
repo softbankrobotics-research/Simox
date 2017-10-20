@@ -382,12 +382,12 @@ namespace MotionPlanning
             {
                 float diff = (c2[j] - c1[j]);
 
-                if (diff > M_PI)
+                if (diff > M_PI) // TODO maybe better: while (diff > M_PI) diff -= M_PI * 2.0f;
                 {
                     diff -= (float)M_PI * 2.0f;
                 }
 
-                if (diff < -M_PI)
+                if (diff < -M_PI) // TODO same as above
                 {
                     diff += (float)M_PI * 2.0f;
                 }

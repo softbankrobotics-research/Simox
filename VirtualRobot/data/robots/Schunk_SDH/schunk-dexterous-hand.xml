@@ -1,0 +1,555 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<Robot Type='SchunkDexterousHand' RootNode='left_hand_base'>
+
+	<RobotNode name='left_hand_base'>
+		<Child name='left_sdh_connector_link'/>
+		<Child name='TCP L'/>
+	</RobotNode>
+
+	<RobotNode name='left_sdh_connector_link'>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_connector_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_connector_link_col.wrl</File>
+		</CollisionModel>
+		<Physics>
+			<Mass unit='kg' value='1'/>
+		</Physics>
+		<Child name='left_sdh_palm_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_11_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_11_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_11_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_finger_12_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_12_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='16.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_12_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_12_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_12_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_12_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_finger_13_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_13_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='86.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_13_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_13_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_13_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_13_link_col.stl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_21_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='-1' c2='-3.58979e-09' c3='0' c4='19.05' />
+				<row2 c1='3.58979e-09' c2='-1' c3='0' c4='-33' />
+				<row3 c1='0' c2='0' c3='1' c4='74.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='0' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_21_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_21_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_21_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_21_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_finger_22_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_22_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='16.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_22_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_22_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_22_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_22_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_finger_23_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_23_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='86.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_23_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_finger_23_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_finger_23_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_finger_23_link_col.stl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+
+    <RobotNode name='TCP L'>
+        <Transform>
+                <Translation x="0" y="0" z="180"/>
+        </Transform>
+    </RobotNode>
+
+
+
+	<RobotNode name='left_sdh_finger_11_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='-1' c2='-3.58979e-09' c3='0' c4='19.05' />
+				<row2 c1='3.58979e-09' c2='-1' c3='0' c4='33' />
+				<row3 c1='0' c2='0' c3='1' c4='74.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='1'/>
+			<limits lo='0' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_finger_11_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_palm_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='16.8' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<translationdirection x='0' y='0' z='0'/>
+			<limits lo='-3.14159' hi='3.14159' units='mm'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='-1'/>
+			<MaxTorque value='-1'/>
+		</Joint>
+		<Child name='left_sdh_palm_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_palm_link'>
+		<Physics>
+			<Mass unit='kg' value='1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_palm_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_palm_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='left_sdh_finger_21_joint'/>
+		<Child name='left_sdh_finger_11_joint'/>
+		<Child name='left_sdh_thumb_1_joint'/>
+		<Child name='TCP_L_precision'/>
+		<Child name='TCP_L_power'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_1_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='-38.11' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='74.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<translationdirection x='0' y='0' z='0'/>
+			<limits lo='-3.14159' hi='3.14159' units='mm'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='-1'/>
+			<MaxTorque value='-1'/>
+		</Joint>
+		<Child name='left_sdh_thumb_1_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_1_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_thumb_1_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_thumb_1_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_thumb_2_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_2_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='16.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_thumb_2_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_2_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_thumb_2_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_thumb_2_link_col.stl</File>
+		</CollisionModel>
+		<Child name='left_sdh_thumb_3_joint'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_3_joint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='86.5' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='1' z='0'/>
+			<limits lo='-1.5708' hi='1.5708' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='5'/>
+			<MaxTorque value='100'/>
+		</Joint>
+		<Child name='left_sdh_thumb_3_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='left_sdh_thumb_3_link'>
+		<Physics>
+			<Mass unit='kg' value='0.1'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.01' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.01' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.01'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/left_sdh_thumb_3_link_visu.stl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/left_sdh_thumb_3_link_col.stl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+	<RobotNode name='TCP_L_precision'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='220' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+	</RobotNode>
+
+	<RobotNode name='TCP_L_power'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='0' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='190' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+	</RobotNode>
+
+    <Endeffector name="TCP L" base="left_hand_base" tcp="TCP L">
+	    <Preshape name="Open Preshape">
+			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_12_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_finger_13_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_finger_21_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_22_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_finger_23_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_thumb_1_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_thumb_2_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_thumb_3_joint" unit="radian" value="1"/>
+	    </Preshape>
+        <Preshape name="Close Preshape">
+			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_12_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_13_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_finger_21_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_22_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_23_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_thumb_1_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_thumb_2_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_thumb_3_joint" unit="radian" value="1"/>
+        </Preshape>
+	    <Preshape name="Power Preshape" tcp="TCP_L_power">
+			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_12_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_finger_13_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_finger_21_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_22_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_finger_23_joint" unit="radian" value="1"/>
+			<Node name="left_sdh_thumb_1_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_thumb_2_joint" unit="radian" value="-1"/>
+			<Node name="left_sdh_thumb_3_joint" unit="radian" value="1"/>
+	    </Preshape>
+	    
+	    <Preshape name="Precision Preshape" tcp="TCP_L_precision">
+			<Node name="left_sdh_finger_11_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_12_joint" unit="radian" value="-0.5"/>
+			<Node name="left_sdh_finger_13_joint" unit="radian" value="0.5"/>
+			<Node name="left_sdh_finger_21_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_finger_22_joint" unit="radian" value="-0.5"/>
+			<Node name="left_sdh_finger_23_joint" unit="radian" value="0.5"/>
+			<Node name="left_sdh_thumb_1_joint" unit="radian" value="0"/>
+			<Node name="left_sdh_thumb_2_joint" unit="radian" value="-0.5"/>
+			<Node name="left_sdh_thumb_3_joint" unit="radian" value="0.5"/>
+	    </Preshape>
+
+		<Static>
+			<Node name="left_sdh_palm_link"/>
+		</Static>
+		<Actor name="Finger 1 Left">
+			<Node name="left_sdh_finger_12_joint" considerCollisions="Actors"/>
+			<Node name="left_sdh_finger_12_link" considerCollisions="Actors"/>
+			<Node name="left_sdh_finger_13_joint" considerCollisions="All"/>
+			<Node name="left_sdh_finger_13_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="Finger 2 Left">
+			<!--Node name="left_sdh_finger_21_joint" considerCollisions="Actors"/-->
+			<Node name="left_sdh_finger_21_link" considerCollisions="Actors"/>
+			<Node name="left_sdh_finger_22_joint" considerCollisions="All"/>
+			<Node name="left_sdh_finger_22_link" considerCollisions="All"/>
+			<Node name="left_sdh_finger_23_joint" considerCollisions="All"/>
+			<Node name="left_sdh_finger_23_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="Thumb Left">
+			<!--Node name="left_sdh_thumb_1_joint" considerCollisions="Actors"/-->
+			<Node name="left_sdh_thumb_1_link" considerCollisions="Actors"/>
+			<Node name="left_sdh_thumb_2_joint" considerCollisions="All"/>
+			<Node name="left_sdh_thumb_2_link" considerCollisions="All"/>
+			<Node name="left_sdh_thumb_3_joint" considerCollisions="All"/>
+			<Node name="left_sdh_thumb_3_link" considerCollisions="All"/>
+		</Actor>
+	</Endeffector>
+
+
+    <RobotNodeSet name="Robot">
+        <!--Node name="left_sdh_connector_joint"/-->
+        <Node name="left_sdh_finger_11_joint"/>
+        <Node name="left_sdh_finger_12_joint"/>
+        <Node name="left_sdh_finger_13_joint"/>
+        <Node name="left_sdh_finger_21_joint"/>
+        <Node name="left_sdh_finger_22_joint"/>
+        <Node name="left_sdh_finger_23_joint"/>
+        <Node name="left_sdh_palm_joint"/>
+        <Node name="left_sdh_thumb_1_joint"/>
+        <Node name="left_sdh_thumb_2_joint"/>
+        <Node name="left_sdh_thumb_3_joint"/>
+    </RobotNodeSet>
+
+    <RobotNodeSet name="LeftHand" tcp="TCP L">
+        <Node name="left_sdh_finger_11_joint"/>
+        <Node name="left_sdh_finger_12_joint"/>
+        <Node name="left_sdh_finger_13_joint"/>
+        <Node name="left_sdh_thumb_2_joint"/>
+        <Node name="left_sdh_thumb_3_joint"/>
+        <Node name="left_sdh_finger_22_joint"/>
+        <Node name="left_sdh_finger_23_joint"/>
+    </RobotNodeSet>
+
+</Robot>

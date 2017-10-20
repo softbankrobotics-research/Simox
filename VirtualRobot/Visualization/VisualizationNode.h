@@ -155,7 +155,7 @@ namespace VirtualRobot
         virtual bool saveModel(const std::string& modelPath, const std::string& filename);
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
-
+        virtual void shrinkFatten(float offset);
         //! update trimesh model
         virtual void createTriMeshModel();
 

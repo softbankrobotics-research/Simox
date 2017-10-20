@@ -11,8 +11,32 @@
 namespace VirtualRobot
 {
 
-    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id)
+    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, float margin)
     {
+        globalPose = Eigen::Matrix4f::Identity();
+        this->id = id;
+
+        this->name = name;
+        this->margin = margin;
+        this->colChecker = colChecker;
+
+        if (!this->colChecker)
+        {
+            this->colChecker = CollisionChecker::getGlobalCollisionChecker();
+        }
+
+        if (!this->colChecker)
+        {
+            VR_WARNING << "no col checker..." << endl;
+        }
+
+        updateVisualization = true;
+        setVisualization(visu);
+    }
+
+    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string &name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel)
+    {
+        margin = 0.0;
         globalPose = Eigen::Matrix4f::Identity();
         this->id = id;
 
@@ -31,23 +55,52 @@ namespace VirtualRobot
         }
 
         updateVisualization = true;
-
+        if(!collisionModel)
+            VR_WARNING << "internal collision model is NULL for " << name << endl;
+        collisionModelImplementation = boost::dynamic_pointer_cast<InternalCollisionModel>(collisionModel->clone(false));
+        VR_ASSERT(collisionModelImplementation->getPQPModel());
         setVisualization(visu);
     }
 
 
     CollisionModel::~CollisionModel()
     {
-        destroyData();
+//        destroyData();
     }
 
 
     void CollisionModel::destroyData()
     {
-        if (collisionModelImplementation)
+    }
+
+    float CollisionModel::getMargin() const
+    {
+        return margin;
+    }
+
+    void CollisionModel::inflateModel(float value)
+    {
+        if((margin != value) || (origVisualization && !model))
         {
-            collisionModelImplementation->destroyData();
+            visualization = origVisualization->clone(true);
+            visualization->shrinkFatten(value);
+            model = visualization->getTriMeshModel();
+            if (model)
+            {
+                bbox = model->boundingBox;
+            }
+
+
+#if defined(VR_COLLISION_DETECTION_PQP)
+            collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
+#else
+            collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
+#endif
         }
+        if(!origVisualization)
+            margin = 0.0;
+        else
+            margin = value;
     }
 
 
@@ -67,19 +120,22 @@ namespace VirtualRobot
         }
     }
 
-    VirtualRobot::CollisionModelPtr CollisionModel::clone(CollisionCheckerPtr colChecker, float scaling)
+    VirtualRobot::CollisionModelPtr CollisionModel::clone(CollisionCheckerPtr colChecker, float scaling, bool deepVisuMesh)
     {
-        VisualizationNodePtr visuNew;
+        VisualizationNodePtr visuOrigNew;
 
-        if (visualization)
-        {
-            visuNew = visualization->clone(true, scaling);
-        }
+        if(origVisualization)
+            visuOrigNew = origVisualization->clone(deepVisuMesh, scaling);
 
         std::string nameNew = name;
         int idNew = id;
 
-        CollisionModelPtr p(new CollisionModel(visuNew, nameNew, colChecker, idNew));
+        CollisionModelPtr p;
+        if(deepVisuMesh || !this->collisionModelImplementation)
+            p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, margin));
+        else
+            p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, this->collisionModelImplementation));
+        p->margin = margin;
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());
         return p;
@@ -88,24 +144,11 @@ namespace VirtualRobot
     void CollisionModel::setVisualization(const VisualizationNodePtr visu)
     {
         visualization = visu;
+        origVisualization = visu;
         model.reset();
         bbox.clear();
 
-        if (visu)
-        {
-            model = visu->getTriMeshModel();
-
-            if (model)
-            {
-                bbox = model->boundingBox;
-            }
-        }
-
-#if defined(VR_COLLISION_DETECTION_PQP)
-        collisionModelImplementation.reset(new CollisionModelPQP(model, colChecker, id));
-#else
-        collisionModelImplementation.reset(new CollisionModelDummy(colChecker));
-#endif
+        inflateModel(margin); // updates the model
     }
 
     int CollisionModel::getId()

@@ -21,6 +21,7 @@
 #include <cmath>
 #include <float.h>
 #include <limits.h>
+#include <thread>
 
 namespace VirtualRobot
 {
@@ -31,7 +32,7 @@ namespace VirtualRobot
         this->robot = robot;
         type = "WorkspaceRepresentation";
         versionMajor = 2;
-        versionMinor = 8;
+        versionMinor = 9;
         orientationType = Hopf;//EulerXYZExtrinsic;
         reset();
     }
@@ -204,7 +205,6 @@ namespace VirtualRobot
             int version[2];
             version[0] = (int)(FileIO::read<ioIntTypeRead>(file));
             version[1] = (int)(FileIO::read<ioIntTypeRead>(file));
-            //FileIO::readArray<int>(version, 2, file);
 
             // first check if the current version is used
             if (version[0] != versionMajor || version[1] != versionMinor)
@@ -213,7 +213,7 @@ namespace VirtualRobot
                 // now check if an older version is used
                 THROW_VR_EXCEPTION_IF(
                     (version[0] > 2) ||
-                    (version[0] == 2 && !(version[1]>=0 && version[1] <= 8)) ||
+                    (version[0] == 2 && !(version[1]>=0 && version[1] <= 9)) ||
                     (version[0] == 1 && !(version[1] == 0 || version[1] == 2 || version[1] == 3)
                     ),  "Wrong file format version");
             }
@@ -234,8 +234,8 @@ namespace VirtualRobot
                 orientationType = RPY;
             }
 
-            //versionMajor = version[0];
-            //versionMinor = version[1];
+            versionMajor = version[0];
+            versionMinor = version[1];
             // Check Robot name
             FileIO::readString(tmpString, file);
             THROW_VR_EXCEPTION_IF(tmpString != robot->getType(), "Wrong Robot");
@@ -802,19 +802,29 @@ namespace VirtualRobot
 
     bool WorkspaceRepresentation::getVoxelFromPose(float x[6], unsigned int v[6]) const
     {
+        float pos;
         int a;
 
         for (int i = 0; i < 6; i++)
         {
-            a = (int)(((x[i] - minBounds[i]) / spaceSize[i]) * (float)numVoxels[i]);
+            pos = ((x[i] - minBounds[i]) / spaceSize[i]) * (float)numVoxels[i];
+            a = (int)(pos);
 
             if (a < 0)
             {
-                return false;    //pos[i] = 0; // if pose is outside of voxel space, ignore it
+                // check for rounding errors
+                if (a==-1 && (fabs(float(a) - pos)<0.5f))
+                    a = 0;
+                else
+                    return false;    //pos[i] = 0; // if pose is outside of voxel space, ignore it
             }
             else if (a >= numVoxels[i])
             {
-                return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
+                // check for rounding errors
+                if (a==numVoxels[i] && (fabs(float(a) - pos)<0.5f))
+                    a = numVoxels[i]-1;
+                else
+                    return false;    //pos[i] = m_nVoxels[i]-1; // if pose is outside of voxel space, ignore it
             }
 
             v[i] = a;
@@ -923,6 +933,11 @@ namespace VirtualRobot
     }
 
 
+    void WorkspaceRepresentation::addPose(const Eigen::Matrix4f& globalPose, PoseQualityMeasurementPtr qualMeasure)
+    {
+         addPose(globalPose);
+    }
+
 
     void WorkspaceRepresentation::addPose(const Eigen::Matrix4f& globalPose)
     {
@@ -947,6 +962,8 @@ namespace VirtualRobot
                 achievedMaxValues[i] = x[i];
             }
         }
+
+
 
         data->increaseDatum(x, this);
 
@@ -1594,7 +1611,7 @@ namespace VirtualRobot
 
     }
 
-    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(const Eigen::Matrix4f& referencePose, float cellSize) const
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(const Eigen::Matrix4f& referencePose, float cellSize, bool sumAngles) const
     {
         WorkspaceCut2DPtr result(new WorkspaceCut2D());
         result->referenceGlobalPose = referencePose;
@@ -1616,6 +1633,9 @@ namespace VirtualRobot
 
 
         Eigen::Matrix4f tmpPose = referencePose;
+        Eigen::Matrix4f localPose;
+        float x[6];
+        unsigned int v[6];
 
         result->entries.resize(numVoxelsX, numVoxelsY);
 
@@ -1627,15 +1647,61 @@ namespace VirtualRobot
             for (int b = 0; b < numVoxelsY; b++)
             {
                 tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
-                result->entries(a, b) = getEntry(tmpPose);
+                if (sumAngles)
+                {
+                    localPose = tmpPose;
+                    toLocal(localPose);
+                    matrix2Vector(localPose,x);
+
+                    if (!getVoxelFromPose(x, v))
+                    {
+                        result->entries(a, b) = 0;
+                    } else
+                        result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
+                } else
+                {
+                    result->entries(a, b) = getEntry(tmpPose);
+                }
             }
         }
 
         return result;
     }
 
+  /*
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(Eigen::Matrix4f gp, float cellSize) const
+    {
+        result->referenceGlobalPose = refPose;
 
-    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize) const
+        Eigen::Matrix4f tmpPose = refPose;
+        float x[6];
+        unsigned int v[6];
+
+        for (int a = 0; a < numVoxelsX; a++)
+        {
+            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
+
+            for (int b = 0; b < numVoxelsY; b++)
+            {
+                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
+                localPose = tmpPose;
+                toLocal(localPose);
+                matrix2Vector(localPose,x);
+
+                if (!getVoxelFromPose(x, v))
+                {
+                    //result->entries(a, b) = 0;
+                    continue;
+                }
+                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
+            }
+        }
+
+        return result;
+
+    }*/
+
+    WorkspaceRepresentation::WorkspaceCut2DPtr WorkspaceRepresentation::createCut(float heightPercent, float cellSize, bool sumAngles) const
     {
         THROW_VR_EXCEPTION_IF(cellSize <= 0.0f, "Invalid parameter");
         THROW_VR_EXCEPTION_IF(heightPercent < 0.0f || heightPercent>1.0f, "Invalid parameter");
@@ -1663,34 +1729,7 @@ namespace VirtualRobot
 
         Eigen::Matrix4f refPose = getToGlobalTransformation();
         refPose(2,3) = poseZGlobal;
-        result->referenceGlobalPose = refPose;
-
-        Eigen::Matrix4f tmpPose = refPose;
-        Eigen::Matrix4f localPose;
-        float x[6];
-        unsigned int v[6];
-
-        for (int a = 0; a < numVoxelsX; a++)
-        {
-            tmpPose(0, 3) = result->minBounds[0] + (float)a * cellSize + 0.5f * cellSize;
-
-            for (int b = 0; b < numVoxelsY; b++)
-            {
-                tmpPose(1, 3) = result->minBounds[1] + (float)b * cellSize + 0.5f * cellSize;
-                localPose = tmpPose;
-                toLocal(localPose);
-                matrix2Vector(localPose,x);
-
-                if (!getVoxelFromPose(x, v))
-                {
-                    //result->entries(a, b) = 0;
-                    continue;
-                }
-                result->entries(a, b) = sumAngleReachabilities(v[0],v[1],v[2]);
-            }
-        }
-
-        return result;
+        return createCut(refPose, cellSize, sumAngles);
     }
 
     bool WorkspaceRepresentation::getWorkspaceExtends(Eigen::Vector3f& storeMinBBox, Eigen::Vector3f& storeMaxBBox) const
@@ -2136,6 +2175,101 @@ namespace VirtualRobot
 
         robot->setUpdateVisualization(visuSate);
         nodeSet->setJointValues(c);
+    }
+
+    void WorkspaceRepresentation::addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions)
+    {
+        THROW_VR_EXCEPTION_IF(!data || !nodeSet || !tcpNode, "Workspace data not initialized");
+
+        if (numThreads > loops)
+        {
+            VR_ERROR << "Number of threads can not be bigger then number of tcp poses to add.";
+            return;
+        }
+
+        std::vector<std::thread> threads(numThreads);
+        unsigned int numPosesPerThread = loops / numThreads; // todo
+        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
+
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i] = std::thread([=] ()
+            {
+                // each thread gets a cloned robot
+                CollisionCheckerPtr cc(new CollisionChecker());
+                RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
+                clonedRobot->setUpdateVisualization(false);
+                RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
+                RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
+
+                SceneObjectSetPtr staticCollisionModel = this->staticCollisionModel;
+                if (staticCollisionModel && clonedRobot->hasRobotNodeSet(staticCollisionModel->getName()))
+                {
+                    staticCollisionModel = clonedRobot->getRobotNodeSet(staticCollisionModel->getName());
+                }
+
+                SceneObjectSetPtr dynamicCollisionModel = this->dynamicCollisionModel;
+                if (dynamicCollisionModel && clonedRobot->hasRobotNodeSet(dynamicCollisionModel->getName()))
+                {
+                    dynamicCollisionModel = clonedRobot->getRobotNodeSet(dynamicCollisionModel->getName());
+                }
+
+                // now sample some configs and add them to the workspace data
+                for (int j = 0; j < numPosesPerThread; j++)
+                {
+                    float rndValue;
+                    float minJ, maxJ;
+                    Eigen::VectorXf v(clonedNodeSet->getSize());
+                    float maxLoops = 1000;
+
+                    bool successfullyRandomized = false;
+
+                    for (int k = 0; k < maxLoops; k++)
+                    {
+                        for (int l = 0; l < clonedNodeSet->getSize(); l++)
+                        {
+                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            minJ = (*nodeSet)[l]->getJointLimitLo();
+                            maxJ = (*nodeSet)[l]->getJointLimitHi();
+                            v[l] = minJ + ((maxJ - minJ) * rndValue);
+                        }
+
+                        clonedRobot->setJointValues(clonedNodeSet, v);
+
+                        // check for collisions
+                        if (!checkForSelfCollisions || !staticCollisionModel || !dynamicCollisionModel)
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        if (!clonedRobot->getCollisionChecker()->checkCollision(staticCollisionModel, dynamicCollisionModel))
+                        {
+                            successfullyRandomized = true;
+                            break;
+                        }
+
+                        this->collisionConfigs++;
+                    }
+
+                    if (successfullyRandomized)
+                    {
+                        Eigen::Matrix4f p = clonedTcpNode->getGlobalPose();
+                        addPose(p);
+                    }
+                    else
+                    {
+                        VR_WARNING << "Could not find collision-free configuration...";
+                    }
+                }
+            });
+        }
+
+        // wait for all threads to finish
+        for (int i = 0; i < numThreads; i++)
+        {
+            threads[i].join();
+        }
     }
 
 } // namespace VirtualRobot
