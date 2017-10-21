@@ -474,6 +474,7 @@ namespace VirtualRobot
 
         // AbstractFactoryMethod
     public:
+        virtual std::string getVisualizationType();
         static std::string getName();
         static std::shared_ptr<VisualizationFactory> createInstance(void*);
 

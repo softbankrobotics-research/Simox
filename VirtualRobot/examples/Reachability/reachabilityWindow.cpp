@@ -7,6 +7,7 @@
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <Gui/ViewerFactory.h>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -16,11 +17,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoSeparator.h>
-
 #include "ui_reachabilityCreate.h"
 
 #include <sstream>
@@ -29,22 +25,20 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
+// load static factories from SimoxGui-lib.
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../Gui/Coin/CoinViewerFactory.h"
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP)
-    : QMainWindow(NULL)
+    : QMainWindow(NULL), robotVisuLayerName("robot-layer"), wsVisuLayerName("ws-layer")
 {
     VR_INFO << " start " << endl;
 
     this->axisTCP = axisTCP;
     robotFile = sRobotFile;
     useColModel = false;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotVisuSep = new SoSeparator;
-    reachabilityVisuSep = new SoSeparator;
-
-    sceneSep->addChild(robotVisuSep);
-    sceneSep->addChild(reachabilityVisuSep);
 
     setupUI();
 
@@ -58,32 +52,26 @@ reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& rea
         }
     }
 
-    m_pExViewer->viewAll();
+    viewer->viewAll();
 }
 
 
 reachabilityWindow::~reachabilityWindow()
 {
-    sceneSep->unref();
 }
 
 
 void reachabilityWindow::setupUI()
 {
     UI.setupUi(this);
-    m_pExViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    // viewerfactories and visualizationfactories of the same type share the same name (e.g. "inventor" for coin).
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    VR_INFO << "***************** name: " << viewerFactory->getName() << "." << endl;
+    VR_INFO << " Description: " << viewerFactory->getDescription() << "." << endl;
 
-    // setup
-    m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    m_pExViewer->setAccumulationBuffer(true);
 
-    m_pExViewer->setAntialiasing(true, 4);
-
-    m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    m_pExViewer->setFeedbackVisibility(true);
-    m_pExViewer->setSceneGraph(sceneSep);
-    m_pExViewer->viewAll();
+    viewer = viewerFactory->createViewer(UI.frameViewer);
+    viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -107,10 +95,6 @@ void reachabilityWindow::setupUI()
     UI.sliderCutReach->setValue(50);
     UI.sliderCutReach->setEnabled(false);
     UI.checkBoxReachabilityCut->setEnabled(false);
-
-    m_pExViewer->setAccumulationBuffer(true);
-    m_pExViewer->setAntialiasing(true, 4);
-
 }
 
 QString reachabilityWindow::formatString(const char* s, float f)
@@ -178,8 +162,8 @@ void reachabilityWindow::reachVisu()
         return;
     }
 
-    reachabilityVisuSep->removeAllChildren();
-    SoSeparator* visualisationNode = new SoSeparator;
+    viewer->clearLayer(wsVisuLayerName);
+    VisualizationNodePtr wsVisuNode;
 
     if (UI.checkBoxReachabilityVisu->checkState() == Qt::Checked)
     {
@@ -188,16 +172,17 @@ void reachabilityWindow::reachVisu()
         float heightPercent = 1.0f;
         if (UI.checkBoxReachabilityCut->checkState() == Qt::Checked)
         {
-            UI.sliderCutReach->setEnabled(true);
-            int dist = UI.sliderCutReach->maximum() - UI.sliderCutReach->minimum();
-            float pos = (float)(UI.sliderCutReach->value() - UI.sliderCutReach->minimum()) / (float)dist;
-            heightPercent = pos;
+            // TODO workspace cut visualization currently not supported by the Visualizationfactory interface (only Coin)
 
+//            UI.sliderCutReach->setEnabled(true);
+//            int dist = UI.sliderCutReach->maximum() - UI.sliderCutReach->minimum();
+//            float pos = (float)(UI.sliderCutReach->value() - UI.sliderCutReach->minimum()) / (float)dist;
+//            heightPercent = pos;
 
-            WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation(), true);
-            VR_INFO << "Slider pos: " << pos  << ", maxEntry:" << reachSpace->getMaxSummedAngleReachablity() << ", cut maxCoeff:" << cutData->entries.maxCoeff() << endl;
-            SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), reachSpace->getMaxSummedAngleReachablity());
-            visualisationNode->addChild(reachvisu2);
+//            WorkspaceRepresentation::WorkspaceCut2DPtr cutData = reachSpace->createCut(pos,reachSpace->getDiscretizeParameterTranslation(), true);
+//            VR_INFO << "Slider pos: " << pos  << ", maxEntry:" << reachSpace->getMaxSummedAngleReachablity() << ", cut maxCoeff:" << cutData->entries.maxCoeff() << endl;
+//            SoNode *reachvisu2 = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), reachSpace->getMaxSummedAngleReachablity());
+//            visualisationNode->addChild(reachvisu2);
 
         } else
         {
@@ -208,17 +193,16 @@ void reachabilityWindow::reachVisu()
         reachSpace->getWorkspaceExtends(minBB, maxBB);
         float zDist = maxBB(2) - minBB(2);
         float maxZ =  minBB(2) + heightPercent*zDist - reachSpace->getDiscretizeParameterTranslation();
-        SoNode *reachvisu =  CoinVisualizationFactory::getCoinVisualization(reachSpace, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), true, maxZ);
-        visualisationNode->addChild(reachvisu);
+        wsVisuNode = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, ColorMapPtr(new ColorMap(VirtualRobot::ColorMap::eHot)), true, maxZ);
 
     } else
     {
         UI.sliderCutReach->setEnabled(false);
         UI.checkBoxReachabilityCut->setEnabled(false);
     }
-    if (visualisationNode)
+    if (wsVisuNode)
     {
-        reachabilityVisuSep->addChild(visualisationNode);
+        viewer->addVisualization(wsVisuLayerName, "ws-node", wsVisuNode);
     }
 }
 
@@ -236,29 +220,22 @@ void reachabilityWindow::buildVisu()
         return;
     }
 
-    robotVisuSep->removeAllChildren();
+    viewer->clearLayer(robotVisuLayerName);
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
-    ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
+    ModelLink::VisualizationType visuType = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    visualization = robot->getVisualization(colModel, CoinVisualizationFactory::getName());
-    SoNode* visualisationNode = NULL;
+    visualization = robot->getVisualization(visuType);
+
 
     if (visualization)
     {
-        // since we used the CoinVisualizationFactory we can safely cast here.
-        visualisationNode = std::static_pointer_cast<CoinVisualization>(visualization)->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        robotVisuSep->addChild(visualisationNode);
+        viewer->addVisualization(robotVisuLayerName, "robot-node", visualization);
     }
 }
 
 int reachabilityWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -267,7 +244,7 @@ void reachabilityWindow::quit()
 {
     std::cout << "reachabilityWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void reachabilityWindow::updateRNSBox()
@@ -420,7 +397,7 @@ void reachabilityWindow::selectRobot()
 
 void reachabilityWindow::loadRobot()
 {
-    robotVisuSep->removeAllChildren();
+    viewer->clearLayer(robotVisuLayerName);
     cout << "Loading Scene from " << robotFile << endl;
 
     try
@@ -466,7 +443,7 @@ void reachabilityWindow::loadRobot()
 
     // build visualization
     buildVisu();
-    m_pExViewer->viewAll();
+    viewer->viewAll();
 }
 void reachabilityWindow::extendReach()
 {
@@ -497,7 +474,7 @@ void reachabilityWindow::extendReach()
     UI.checkBoxReachabilityVisu->setChecked(false);
     UI.sliderCutReach->setEnabled(false);
     UI.checkBoxReachabilityCut->setEnabled(false);
-    reachabilityVisuSep->removeAllChildren();
+    viewer->clearLayer(wsVisuLayerName);
 }
 
 void reachabilityWindow::createReach()
@@ -801,4 +778,9 @@ void reachabilityWindow::updateQualityInfo()
     ss4 << "Quality at pose: " << poseManip;
     manipString = ss4.str();
     UI.labelPose->setText(manipString.c_str());
+}
+
+SimoxGui::ViewerInterfacePtr reachabilityWindow::getViewer() const
+{
+    return viewer;
 }

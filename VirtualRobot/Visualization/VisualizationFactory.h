@@ -298,6 +298,11 @@ namespace VirtualRobot
             return VisualizationFactory::first(NULL);
         }
 
+        /**
+         * A dynamicly bound version of getName().
+         * @return the visualization type that is supported by this factory.
+         */
+        virtual std::string getVisualizationType() = 0;
     };
     typedef std::shared_ptr<VisualizationFactory::Color> ColorPtr;
 

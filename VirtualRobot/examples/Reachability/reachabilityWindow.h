@@ -10,19 +10,13 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/Visualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
+#include <Gui/ViewerInterface.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 #include <VirtualRobot/Workspace/Reachability.h>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
 
 #include <vector>
 
@@ -70,12 +64,7 @@ public slots:
     void openHand();
     void selectEEF(int nr);*/
 
-
-
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return m_pExViewer;
-    };
+    SimoxGui::ViewerInterfacePtr getViewer() const;
 
 protected:
     void loadRobot();
@@ -92,11 +81,7 @@ protected:
     void updateEEFBox();
     void displayTriangles();*/
     Ui::MainWindowReachability UI;
-    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotVisuSep;
-    SoSeparator* reachabilityVisuSep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFile;
@@ -120,6 +105,8 @@ protected:
     //bool structureEnabled;
 
     VirtualRobot::VisualizationPtr visualization;
+    std::string robotVisuLayerName;
+    std::string wsVisuLayerName;
 };
 
 #endif // __reachabilityScene_WINDOW_H_

@@ -389,6 +389,11 @@ namespace VirtualRobot
         coinVisualization->unref();
     }
 
+    std::string CoinVisualizationFactory::getVisualizationType()
+    {
+        return getName();
+    }
+
     VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
     {
         std::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));

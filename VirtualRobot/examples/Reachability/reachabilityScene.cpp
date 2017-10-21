@@ -149,7 +149,8 @@ int main(int argc, char* argv[])
     std::string filenameRob("robots/Armar3/Armar3.xml");
     Eigen::Vector3f axisTCP(0, 0, 1.0f);
     //filenameReach = "reachability/ArmarIII_PlatformHipRightArm.bin";
-    filenameReach = "reachability/ArmarIII_TorsoRightArm.bin";
+//    filenameReach = "reachability/ArmarIII_TorsoRightArm.bin";
+    filenameReach = "";
 #endif
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob);
 
