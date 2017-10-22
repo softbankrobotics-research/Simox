@@ -1,7 +1,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Jacobi Demo");
 
     cout << " --- START --- " << endl;
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    std::string filename("robots/Armar3/Armar3.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
     JacobiWindow rw(filename);
 

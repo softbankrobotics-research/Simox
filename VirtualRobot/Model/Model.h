@@ -470,6 +470,7 @@ namespace VirtualRobot
          */
         virtual void setJointValues(const std::map< std::string, float >& jointValues);
 
+        // TODO change ModelNode to ModelJoint in param
         /*!
          * Set joint values [rad].
          * The complete model is updated to apply the new joint values.

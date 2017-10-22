@@ -2,14 +2,14 @@
 #ifndef __Jacobi_WINDOW_H_
 #define __Jacobi_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "Gui/ViewerInterface.h"
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -17,10 +17,6 @@
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
 
 #include <vector>
 
@@ -36,10 +32,10 @@ public:
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
 
-    SoQtExaminerViewer* getExaminerViewer()
+    SimoxGui::ViewerInterfacePtr getViewer()
     {
-        return exViewer;
-    };
+        return viewer;
+    }
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
@@ -73,18 +69,12 @@ protected:
 
 
     Ui::MainWindowJacobiDemo UI;
-    SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer;
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* boxSep;
-    SoSeparator* box2Sep;
-    SoSeparator* box3Sep;
-
-    VirtualRobot::RobotPtr robot;
+    VirtualRobot::ModelPtr robot;
     std::string robotFilename;
-    VirtualRobot::RobotNodePtr tcp;
-    VirtualRobot::RobotNodePtr tcp2;
+    VirtualRobot::FramePtr tcp;
+    VirtualRobot::FramePtr tcp2;
     VirtualRobot::RobotNodePtr elbow;
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
@@ -94,6 +84,7 @@ protected:
     VirtualRobot::ObstaclePtr box3;
 
     bool useColModel;
+    std::string boxVisuLayer;
 };
 
 #endif // __Jacobi_WINDOW_H_

@@ -27,7 +27,7 @@ float TIMER_MS = 30.0f;
 
 // load static factories from SimoxGui-lib.
 #ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../Gui/Coin/CoinViewerFactory.h"
+    #include <Gui/Coin/CoinViewerFactory.h>
     SimoxGui::CoinViewerFactory f;
 #endif
 
@@ -66,9 +66,6 @@ void reachabilityWindow::setupUI()
     UI.setupUi(this);
     // viewerfactories and visualizationfactories of the same type share the same name (e.g. "inventor" for coin).
     SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
-    VR_INFO << "***************** name: " << viewerFactory->getName() << "." << endl;
-    VR_INFO << " Description: " << viewerFactory->getDescription() << "." << endl;
-
 
     viewer = viewerFactory->createViewer(UI.frameViewer);
     viewer->viewAll();
@@ -498,7 +495,7 @@ void reachabilityWindow::createReach()
     float maxB[6];// ={1000.0f,1000.0f,1000.0f,(float)M_PI,(float)M_PI,(float)M_PI};
 
     JointSetPtr currentJointSet = JointSet::createJointSet(currentRobotNodeSet->getModel(), currentRobotNodeSet->getName(),
-                             currentRobotNodeSet->getModelNodes(), currentRobotNodeSet->getKinematicRoot(), currentRobotNodeSet->getTCP());
+                             currentRobotNodeSet->getModelJoints(), currentRobotNodeSet->getKinematicRoot(), currentRobotNodeSet->getTCP());
     reachSpaceTest->checkForParameters(currentJointSet, 1000, minB, maxB, baseNode, tcpNode);
 
     //float ex = currentRobotNodeSet->getMaximumExtension();

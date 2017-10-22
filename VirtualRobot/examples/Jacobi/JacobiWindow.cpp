@@ -1,8 +1,10 @@
 
 #include "JacobiWindow.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
+#include "Gui/ViewerFactory.h"
 
 #include <time.h>
 #include <vector>
@@ -14,8 +16,14 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
+// load static factories from SimoxGui-lib.
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include <Gui/Coin/CoinViewerFactory.h>
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(NULL), boxVisuLayer("box-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -23,56 +31,34 @@ JacobiWindow::JacobiWindow(std::string& sRobotFilename)
 
     useColModel = false;
     robotFilename = sRobotFilename;
-    sceneSep = new SoSeparator();
-    sceneSep->ref();
-    robotSep = new SoSeparator();
-    sceneSep->addChild(robotSep);
     setupUI();
 
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    boxSep = new SoSeparator();
-    boxSep->addChild(CoinVisualization(box->getVisualization()).getCoinVisualization());
-    sceneSep->addChild(boxSep);
+    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
 
     box2 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    box2Sep = new SoSeparator();
-    box2Sep->addChild(CoinVisualization(box2->getVisualization()).getCoinVisualization());
-    sceneSep->addChild(box2Sep);
+    viewer->addVisualization(boxVisuLayer, "box2", box2->getVisualization());
 
     box3 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    box3Sep = new SoSeparator();
-    box3Sep->addChild(CoinVisualization(box3->getVisualization()).getCoinVisualization());
-    sceneSep->addChild(box3Sep);
+    viewer->addVisualization(boxVisuLayer, "box3", box3->getVisualization());
 
     box2TCP();
 
-
-    exViewer->viewAll();
+    viewer->viewAll();
 }
 
 
 JacobiWindow::~JacobiWindow()
 {
-    sceneSep->unref();
 }
 
 void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
-    exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
-
-    // setup
-    exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    exViewer->setAccumulationBuffer(true);
-
-    exViewer->setAntialiasing(true, 4);
-
-    exViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    exViewer->setFeedbackVisibility(true);
-    exViewer->setSceneGraph(sceneSep);
-    exViewer->viewAll();
+    viewer = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL)->createViewer(UI.frameViewer);
+    viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -180,7 +166,6 @@ void JacobiWindow::updatBoxPos(float x, float y, float z, float a, float b, floa
     mR(1, 3) = m(1, 3) + y;
     mR(2, 3) = m(2, 3) + z;
     box->setGlobalPose(mR);
-    exViewer->render();
 }
 
 void JacobiWindow::updatBoxBiPos(float x, float y, float z, float a, float b, float g)
@@ -198,7 +183,6 @@ void JacobiWindow::updatBoxBiPos(float x, float y, float z, float a, float b, fl
     mR(1, 3) = m(1, 3) + y;
     mR(2, 3) = m(2, 3) + z;
     box3->setGlobalPose(mR);
-    exViewer->render();
 }
 
 void JacobiWindow::updatBox2Pos(float x, float y, float z, float a, float b, float g)
@@ -216,7 +200,6 @@ void JacobiWindow::updatBox2Pos(float x, float y, float z, float a, float b, flo
     mR(1, 3) = m(1, 3) + y;
     mR(2, 3) = m(2, 3) + z;
     box2->setGlobalPose(mR);
-    exViewer->render();
 }
 
 QString JacobiWindow::formatString(const char* s, float f)
@@ -257,12 +240,14 @@ void JacobiWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<RobotNodePtr> rn;
-    robot->getModelNodes(rn);
-    std::vector<float> jv(rn.size(), 0.0f);
-    robot->setJointValues(rn, jv);
+    std::map<ModelNodePtr,float> configMap;
+    for (ModelNodePtr node : robot->getModelNodes())
+    {
+        configMap[node] = 0.0f;
+    }
+    robot->setJointValues(configMap);
 
-    exViewer->render();
+    viewer->viewAll();
 }
 
 
@@ -274,24 +259,17 @@ void JacobiWindow::collisionModel()
         return;
     }
 
-    robotSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    VisualizationPtr visualization = robot->getVisualization(colModel);
 
     if (visualization)
     {
-        visualisationNode = visualization->getCoinVisualization();
+        viewer->addVisualization(boxVisuLayer, "colModel", visualization);
     }
 
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
-
-    exViewer->render();
+    viewer->viewAll();
 }
 
 
@@ -304,8 +282,7 @@ void JacobiWindow::closeEvent(QCloseEvent* event)
 
 int JacobiWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -314,7 +291,7 @@ void JacobiWindow::quit()
 {
     std::cout << "JacobiWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
 }
 
 void JacobiWindow::updateKCBox()
@@ -326,12 +303,13 @@ void JacobiWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
+    std::vector<JointSetPtr> rns = robot->getJointSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
     {
-        if (rns[i]->isKinematicChain())
+        // ModelNodeSet::isKinematicChain() is not supported at the time of writing.
+        if (/*rns[i]->isKinematicChain()*/ true)
         {
             UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
             kinChains.push_back(rns[i]);
@@ -365,27 +343,27 @@ void JacobiWindow::selectKC(int nr)
 
     UI.label_TCP->setText(nameQ);
     UI.label_NrJoints->setText(qd);
-    std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
+    std::vector<RobotNodePtr> nodes = kc->getModelNodes();
     elbow.reset();
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
-        if ((nodes[i])->getName() == std::string("Elbow L"))
+        if ((nodes[i])->getName() == std::string("Elbow L_joint"))
         {
             elbow = nodes[i];
         }
 
-        if ((nodes[i])->getName() == std::string("Elbow R"))
+        if ((nodes[i])->getName() == std::string("Elbow R_joint"))
         {
             elbow = nodes[i];
         }
 
-        if ((nodes[i])->getName() == std::string("TCP L"))
+        if ((nodes[i])->getName() == std::string("TCP L_joint"))
         {
             elbow = nodes[i];
         }
 
-        if ((nodes[i])->getName() == std::string("TCP R"))
+        if ((nodes[i])->getName() == std::string("TCP R_joint"))
         {
             elbow = nodes[i];
         }
@@ -393,14 +371,14 @@ void JacobiWindow::selectKC(int nr)
 
     tcp2.reset();
 
-    if (kc->getTCP()->getName() == std::string("TCP L"))
+    if (kc->getTCP()->getName() == std::string("TCP L_joint"))
     {
-        tcp2 = robot->getModelNode(std::string("TCP R"));
+        tcp2 = robot->getModelNode(std::string("TCP R_joint"));
     }
 
-    if (kc->getTCP()->getName() == std::string("TCP R"))
+    if (kc->getTCP()->getName() == std::string("TCP R_joint"))
     {
-        tcp2 = robot->getModelNode(std::string("TCP L"));
+        tcp2 = robot->getModelNode(std::string("TCP L_joint"));
     }
 
     box2TCP();
@@ -426,7 +404,6 @@ void JacobiWindow::sliderReleased()
     UI.horizontalSliderA_3->setSliderPosition(0);
     UI.horizontalSliderB_3->setSliderPosition(0);
     UI.horizontalSliderG_3->setSliderPosition(0);
-    exViewer->render();
 }
 
 
@@ -438,14 +415,15 @@ void JacobiWindow::jacobiTest()
     }
 
     cout << "---- TEST JACOBI ----" << endl;
-    DifferentialIKPtr j(new DifferentialIK(kc));
+    JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
+                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+    DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
 
     j->setGoal(targetPose, RobotNodePtr(), IKSolver::All);
     j->computeSteps(0.2f, 0, 50);
-    exViewer->render();
-
+    viewer->viewAll();
     cout << "---- END TEST JACOBI ----" << endl;
 }
 
@@ -461,7 +439,9 @@ void JacobiWindow::jacobiTest2()
     //n.push_back(tcp);
     //n.push_back(elbow);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
-    DifferentialIKPtr j(new DifferentialIK(kc, RobotNodePtr()/*,rns*/));
+    JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
+                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+    DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
     Eigen::Matrix4f targetPose2 = box2->getGlobalPose();
@@ -469,7 +449,7 @@ void JacobiWindow::jacobiTest2()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, elbow, IKSolver::Z);
     j->computeSteps(0.2f, 0, 40);
-    exViewer->render();
+    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -487,26 +467,26 @@ void JacobiWindow::jacobiTestBi()
     //n.push_back(tcp2);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
     std::vector<RobotNodePtr> nBi;
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 L")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 R")));
-    nBi.push_back(robot->getModelNode(std::string("Underarm L")));
-    nBi.push_back(robot->getModelNode(std::string("Underarm R")));
-    nBi.push_back(robot->getModelNode(std::string("Elbow L")));
-    nBi.push_back(robot->getModelNode(std::string("Elbow R")));
-    nBi.push_back(robot->getModelNode(std::string("Upperarm L")));
-    nBi.push_back(robot->getModelNode(std::string("Upperarm R")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 1 L")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 1 R")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 2 L")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 2 R")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Roll")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Pitch")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Yaw")));
-    RobotNodeSetPtr kcBi = RobotNodeSet::createRobotNodeSet(robot, std::string("jacobiTestBi"), nBi);
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Underarm L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Underarm R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Elbow L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Elbow R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Upperarm L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Upperarm R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 1 L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 1 R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 2 L_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Wrist 2 R_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Roll_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Pitch_joint")));
+    nBi.push_back(robot->getModelNode(std::string("Hip Yaw_joint")));
+    JointSetPtr kcBi = JointSet::createJointSet(robot, std::string("jacobiTestBi"), nBi);
 
-    DifferentialIKPtr j(new DifferentialIK(kcBi, RobotNodePtr()/*,rns*/));
+    DifferentialIKPtr j(new DifferentialIK(kcBi));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
     Eigen::Matrix4f targetPose2 = box3->getGlobalPose();
@@ -514,7 +494,7 @@ void JacobiWindow::jacobiTestBi()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, tcp2, IKSolver::Position);
     j->computeSteps(0.2f, 0, 50);
-    exViewer->render();
+    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -542,7 +522,6 @@ void JacobiWindow::box2TCP()
         box3->setGlobalPose(m);
     }
 
-    exViewer->render();
 }
 
 void JacobiWindow::sliderPressed()
@@ -553,12 +532,11 @@ void JacobiWindow::sliderPressed()
 void JacobiWindow::loadRobot()
 {
     std::cout << "JacobiWindow: Loading robot" << std::endl;
-    robotSep->removeAllChildren();
     cout << "Loading Robot from " << robotFilename << endl;
 
     try
     {
-        robot = RobotIO::loadRobot(robotFilename);
+        robot = ModelIO::loadModel(robotFilename);
     }
     catch (VirtualRobotException& e)
     {
@@ -586,7 +564,6 @@ void JacobiWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    exViewer->viewAll();
-    exViewer->render();
+    viewer->viewAll();
 }
 
