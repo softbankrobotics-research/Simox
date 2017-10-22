@@ -240,10 +240,10 @@ void JacobiWindow::resetSceneryAll()
         return;
     }
 
-    std::map<ModelNodePtr,float> configMap;
-    for (ModelNodePtr node : robot->getModelNodes())
+    std::map<ModelJointPtr,float> configMap;
+    for (ModelJointPtr joint : robot->getJoints())
     {
-        configMap[node] = 0.0f;
+        configMap[joint] = 0.0f;
     }
     robot->setJointValues(configMap);
 

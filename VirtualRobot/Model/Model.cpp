@@ -756,20 +756,15 @@ namespace VirtualRobot
         applyJointValues();
     }
 
-    void Model::setJointValues(const std::map<ModelNodePtr, float>& jointValues)
+    void Model::setJointValues(const std::map<ModelJointPtr, float> &jointValues)
     {
         WriteLockPtr w = getWriteLock();
 
         for (auto it = jointValues.begin(); it != jointValues.end(); ++it)
         {
-            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(it->first, ModelNode::ModelNodeType::Joint),
-                                  "Can not set joint value of node <" + it->first->getName() + ">.");
             THROW_VR_EXCEPTION_IF(!hasModelNode(it->first), "Node <" + it->first->getName() + "> is not part of the model.");
-
-            ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(it->first);
-            joint->setJointValueNoUpdate(it->second);
+            (it->first)->setJointValueNoUpdate(it->second);
         }
-
         applyJointValues();
     }
 

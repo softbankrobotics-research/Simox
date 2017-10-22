@@ -477,7 +477,7 @@ namespace VirtualRobot
          *
          * @param jointValues A map containing ModelNodes with according values.
          */
-        virtual void setJointValues(const std::map< ModelNodePtr, float >& jointValues);
+        virtual void setJointValues(const std::map< ModelJointPtr, float >& jointValues);
 
         /*!
          * Set joint values [rad].
