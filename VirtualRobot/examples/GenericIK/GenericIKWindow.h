@@ -2,18 +2,20 @@
 #ifndef __Generic_WINDOW_H_
 #define __Generic_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/IK/GenericIKSolver.h>
-#include <VirtualRobot/IK/GazeIK.h>
-#include <VirtualRobot/IK/ConstrainedIK.h>
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/ModelIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/IK/GenericIKSolver.h"
+#include "VirtualRobot/IK/GazeIK.h"
+#include "VirtualRobot/IK/ConstrainedIK.h"
+#include "Gui/ViewerInterface.h"
+
 #include <string.h>
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
@@ -70,14 +72,11 @@ protected:
 
     Ui::MainWindowGenericIKDemo UI;
     SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* boxSep;
+    SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
-    VirtualRobot::RobotNodePtr tcp;
+    VirtualRobot::FramePtr tcp;
     VirtualRobot::RobotNodeSetPtr kc;
     std::vector<VirtualRobot::RobotNodeSetPtr> kinChains;
 
@@ -87,6 +86,8 @@ protected:
     VirtualRobot::ObstaclePtr box;
 
     bool useColModel;
+    std::string boxVisuLayer;
+    std::string robotVisuLayer;
 };
 
 #endif // __Generic_WINDOW_H_

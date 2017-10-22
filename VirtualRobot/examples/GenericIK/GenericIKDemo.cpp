@@ -1,11 +1,10 @@
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
-
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/ModelIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/RuntimeEnvironment.h"
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -36,7 +35,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
+    std::string filename("robots/Armar3/Armar3.xml");
     //std::string filename("robots/iCub/iCub.xml");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
 

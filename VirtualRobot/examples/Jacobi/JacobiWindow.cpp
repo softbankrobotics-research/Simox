@@ -17,6 +17,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 // load static factories from SimoxGui-lib.
+// TODO this workaround is actually something one should avoid
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include <Gui/Coin/CoinViewerFactory.h>
     SimoxGui::CoinViewerFactory f;
@@ -94,6 +95,7 @@ void JacobiWindow::setupUI()
     connect(UI.horizontalSliderG_3, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
 
     // a method, that is called by a timer, is allowed to update the IV models without disturbing the render loop
+    // TODO this probably won't work with Qt3D
     SoTimerSensor* timer = new SoTimerSensor((SoSensorCB*)(&updateCB), this);
     SbTime interval(1.0 / 30);
     timer->setInterval(interval);

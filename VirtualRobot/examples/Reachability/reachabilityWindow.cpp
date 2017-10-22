@@ -26,6 +26,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 // load static factories from SimoxGui-lib.
+// TODO this workaround is actually something one should avoid
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include <Gui/Coin/CoinViewerFactory.h>
     SimoxGui::CoinViewerFactory f;

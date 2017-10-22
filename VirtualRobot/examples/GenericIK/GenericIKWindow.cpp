@@ -2,6 +2,7 @@
 #include "GenericIKWindow.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
+#include "Gui/ViewerFactory.h"
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -18,8 +19,15 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
+// load static factories from SimoxGui-lib.
+// TODO this workaround is actually something one should avoid
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include <Gui/Coin/CoinViewerFactory.h>
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(NULL), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -27,44 +35,30 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
 
     useColModel = false;
     robotFilename = sRobotFilename;
-    sceneSep = new SoSeparator();
-    sceneSep->ref();
-    robotSep = new SoSeparator();
-    sceneSep->addChild(robotSep);
     setupUI();
-
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    box->showCoordinateSystem(true);
-    boxSep = new SoSeparator();
-    boxSep->addChild(CoinVisualization(box->getVisualization()).getCoinVisualization());
-    sceneSep->addChild(boxSep);
+    box->attachFrames();
+    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
+
     box2TCP();
 
-    exViewer->viewAll();
+    viewer->viewAll();
 }
 
 
 GenericIKWindow::~GenericIKWindow()
 {
-    sceneSep->unref();
 }
 
 void GenericIKWindow::setupUI()
 {
     UI.setupUi(this);
     exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
-
-    // setup
-    exViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    exViewer->setAccumulationBuffer(true);
-    exViewer->setAntialiasing(true, 4);
-
-    exViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    exViewer->setFeedbackVisibility(true);
-    exViewer->setSceneGraph(sceneSep);
-    exViewer->viewAll();
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    viewer = factory->createViewer(UI.frameViewer);
+    viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -84,6 +78,7 @@ void GenericIKWindow::setupUI()
     connect(UI.horizontalSliderG, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
 
     // a method, that is called by a timer, is allowed to update the IV models without disturbing the render loop
+    // TODO this probably won't work with Qt3D
     SoTimerSensor* timer = new SoTimerSensor((SoSensorCB*)(&updateCB), this);
     SbTime interval(1.0 / 30);
     timer->setInterval(interval);
@@ -173,12 +168,12 @@ void GenericIKWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<RobotNodePtr> rn;
-    robot->getModelNodes(rn);
-    std::vector<float> jv(rn.size(), 0.0f);
-    robot->setJointValues(rn, jv);
-
-    exViewer->render();
+    std::map<ModelJointPtr,float> configMap;
+    for (ModelJointPtr joint : robot->getJoints())
+    {
+        configMap[joint] = 0.0f;
+    }
+    robot->setJointValues(configMap);
 }
 
 
@@ -190,24 +185,15 @@ void GenericIKWindow::collisionModel()
         return;
     }
 
-    robotSep->removeAllChildren();
+    viewer->clearLayer(robotVisuLayer);
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    std::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
-
+    VisualizationPtr visualization = robot->getVisualization(colModel);
     if (visualization)
     {
-        visualisationNode = visualization->getCoinVisualization();
+        viewer->addVisualization(robotVisuLayer, "robot", visualization);
     }
-
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
-
-    exViewer->render();
 }
 
 
@@ -242,12 +228,13 @@ void GenericIKWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
+    std::vector<JointSetPtr> rns = robot->getJointSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
     {
-        if (rns[i]->isKinematicChain())
+        // ModelNodeSet::isKinematicChain() is not supported at the time of writing.
+        if (/*rns[i]->isKinematicChain()*/ true)
         {
             UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
             kinChains.push_back(rns[i]);
@@ -264,10 +251,10 @@ void GenericIKWindow::selectKC(int nr)
         return;
     }
 
-    if (tcp)
-    {
+    /*if (tcp)
+    {   
         tcp->showCoordinateSystem(false);
-    }
+    }+/
 
     /*std::vector<RobotNodePtr> nodes0;
     if (kc)
@@ -285,7 +272,7 @@ void GenericIKWindow::selectKC(int nr)
     {
         QString n(tcp->getName().c_str());
         nameQ += n;
-        tcp->showCoordinateSystem(true);
+        //tcp->showCoordinateSystem(true);
     }
 
     unsigned int d = kc->getSize();
@@ -301,16 +288,17 @@ void GenericIKWindow::selectKC(int nr)
     }*/
     box2TCP();
 
+    JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
     if (kc->getNode(kc->getSize() - 1)->isTranslationalJoint())
     {
-        ikGazeSolver.reset(new GazeIK(kc, std::dynamic_pointer_cast<RobotNodePrismatic>(kc->getNode(kc->getSize() - 1))));
+        ikGazeSolver.reset(new GazeIK(jointSet, std::dynamic_pointer_cast<ModelJointPrismatic>(kc->getNode(kc->getSize() - 1))));
     }
     else
     {
         ikGazeSolver.reset();
     }
 
-    ikSolver.reset(new GenericIKSolver(kc, JacobiProvider::eSVDDamped));
+    ikSolver.reset(new GenericIKSolver(jointSet, JacobiProvider::eSVDDamped));
     //ikSolver->getDifferentialIK()->setVerbose(true);
     /*Eigen::VectorXf js(d);
     js.setConstant(1.0f);
@@ -378,7 +366,15 @@ void GenericIKWindow::solve()
     if (UI.comboBoxIKMethod->currentIndex() == 0)
     {
         cout << "Solving with Gaze IK" << endl;
-        ikGazeSolver->solve(targetPose.block(0, 3, 3, 1));
+        if (!ikGazeSolver)
+        {
+            VR_WARNING << "GazeIK not supported with currently selected JointSet ('" << kc->getName() << "')." << endl
+                       << "Select a JointSet with a translational joint at the end of the chain." << endl;
+        }
+        else
+        {
+            ikGazeSolver->solve(targetPose.block(0, 3, 3, 1));
+        }
     }
     else if(UI.comboBoxIKMethod->currentIndex() == 1)
     {
@@ -389,9 +385,10 @@ void GenericIKWindow::solve()
     {
 #ifdef USE_NLOPT
         cout << "Solving with Constrained IK" << endl;
-        ConstrainedOptimizationIK solver(robot, kc);
+        JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+        ConstrainedOptimizationIK solver(robot, jointSet);
 
-        PoseConstraintPtr pc(new PoseConstraint(robot, kc, tcp, targetPose, s));
+        PoseConstraintPtr pc(new PoseConstraint(robot, jointSet, tcp, targetPose, s));
         solver.addConstraint(pc);
 
         solver.initialize();
@@ -425,11 +422,11 @@ void GenericIKWindow::solve()
     UI.labelOri->setText(qd3);
 
     cout << "Joint values:" << endl;
-    std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
+    std::vector<ModelJointPtr> joints = kc->getModelJoints();
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (size_t i = 0; i < joints.size(); i++)
     {
-        cout << nodes[i]->getJointValue() << endl;
+        cout << joints[i]->getJointValue() << endl;
     }
 
     /*
@@ -452,7 +449,6 @@ void GenericIKWindow::box2TCP()
     Eigen::Matrix4f m = tcp->getGlobalPose();
 
     box->setGlobalPose(m);
-    exViewer->render();
 }
 
 void GenericIKWindow::sliderPressed()
@@ -462,12 +458,13 @@ void GenericIKWindow::sliderPressed()
 void GenericIKWindow::loadRobot()
 {
     std::cout << "GenericIKWindow: Loading robot" << std::endl;
-    robotSep->removeAllChildren();
+    viewer->clearLayer(robotVisuLayer);
+
     cout << "Loading Robot from " << robotFilename << endl;
 
     try
     {
-        robot = RobotIO::loadRobot(robotFilename);
+        robot = ModelIO::loadModel(robotFilename);
     }
     catch (VirtualRobotException& e)
     {
@@ -495,7 +492,6 @@ void GenericIKWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    exViewer->viewAll();
-    exViewer->render();
+    viewer->viewAll();
 }
 
