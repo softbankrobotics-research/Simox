@@ -122,6 +122,8 @@ Model/Nodes/Attachments/ModelNodeAttachmentFactory.cpp
 Model/Nodes/Attachments/ModelStructure.cpp
 Model/Nodes/Attachments/ModelStructureFactory.cpp
 Model/Nodes/Attachments/Sensor.cpp
+Model/Nodes/Attachments/PositionSensor.cpp
+Model/Nodes/Attachments/PositionSensorFactory.cpp
 Model/Nodes/Attachments/ForceTorqueSensor.cpp
 Model/Nodes/Attachments/ForceTorqueSensorFactory.cpp
 Tools/MathTools.cpp
@@ -230,6 +232,8 @@ Model/Nodes/ModelJointRevolute.h
 Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
 Model/Nodes/Attachments/Sensor.h
+Model/Nodes/Attachments/PositionSensor.h
+Model/Nodes/Attachments/PositionSensorFactory.h
 Model/Nodes/Attachments/ForceTorqueSensor.h
 Model/Nodes/Attachments/ForceTorqueSensorFactory.h
 Model/Nodes/Attachments/ModelStructure.h

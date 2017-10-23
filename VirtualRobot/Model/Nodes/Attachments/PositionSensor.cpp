@@ -1,37 +1,37 @@
 
-#include "ForceTorqueSensor.h"
+#include "PositionSensor.h"
 
 namespace VirtualRobot
 {
-    ForceTorqueSensor::ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
+    PositionSensor::PositionSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
         : Sensor(name, localTransformation, visualizationType)
     {
         initVisualization();
     }
 
 
-    ForceTorqueSensor::~ForceTorqueSensor()
+    PositionSensor::~PositionSensor()
     {
     }
 
 
-    bool ForceTorqueSensor::isAttachable(ModelNodePtr node)
+    bool PositionSensor::isAttachable(ModelNodePtr node)
     {
         return true;
     }
 
-    std::string ForceTorqueSensor::getType()
+    std::string PositionSensor::getType()
     {
-        return "forcetorque";
+        return "position";
     }
 
-    ModelNodeAttachmentPtr ForceTorqueSensor::clone()
+    ModelNodeAttachmentPtr PositionSensor::clone()
     {
-        ModelNodeAttachmentPtr result(new ForceTorqueSensor(name, localTransformation, visualizationType));
+        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation, visualizationType));
         return result;
     }
 
-    void ForceTorqueSensor::initVisualization()
+    void PositionSensor::initVisualization()
     {
         VisualizationFactoryPtr factory;
         if (visualizationType.empty())
