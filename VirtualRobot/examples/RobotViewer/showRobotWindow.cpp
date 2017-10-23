@@ -510,7 +510,7 @@ void showRobotWindow::loadRobot()
 
         robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
-    catch (VirtualRobotException& e)
+    catch (VirtualRobotException& /*e*/)
     {
     }
 
@@ -531,7 +531,7 @@ void showRobotWindow::loadRobot()
             robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
             //robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename, ModelIO::eFull);
         }
-        catch (VirtualRobotException& e)
+        catch (VirtualRobotException& /*e*/)
         {
         }
     }

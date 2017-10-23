@@ -53,13 +53,13 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Structure)
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
-    BOOST_REQUIRE_GT(rn.size(), 0);
+    BOOST_REQUIRE(rn.size() > 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
-    BOOST_REQUIRE_GT(joints.size(), 0);
+    BOOST_REQUIRE(joints.size() > 0);
 
     std::vector<ModelLinkPtr> links = r->getLinks();
-    BOOST_REQUIRE_GT(links.size(), 0);
+    BOOST_REQUIRE(links.size() > 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);
@@ -83,13 +83,13 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Full)
     BOOST_REQUIRE(r);
 
     std::vector<RobotNodePtr> rn = r->getModelNodes();
-    BOOST_REQUIRE_GT(rn.size(), 0);
+    BOOST_REQUIRE(rn.size() > 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
-    BOOST_REQUIRE_GT(joints.size(), 0);
+    BOOST_REQUIRE(joints.size() > 0);
 
     std::vector<ModelLinkPtr> links = r->getLinks();
-    BOOST_REQUIRE_GT(links.size(), 0);
+    BOOST_REQUIRE(links.size() > 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);

@@ -39,12 +39,14 @@
 #ifndef _VirtualRobot_TimeOptimalTrajectory_h_
 #define _VirtualRobot_TimeOptimalTrajectory_h_
 
-#include <Eigen/Core>
+#include "VirtualRobot/VirtualRobot.h"
 #include "Path.h"
+
+#include <Eigen/Core>
 
 namespace VirtualRobot
 {
-    class TimeOptimalTrajectory
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TimeOptimalTrajectory
     {
     public:
         // Generates a time-optimal trajectory

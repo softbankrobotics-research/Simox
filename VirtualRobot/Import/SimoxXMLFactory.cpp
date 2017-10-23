@@ -370,8 +370,8 @@ namespace VirtualRobot
            {
                VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
                           << "Setting 'lo' to -pi and 'hi' to pi [rad]..." << endl;
-               jointLimitLo = -M_PI;
-               jointLimitHi = M_PI;
+               jointLimitLo = float(-M_PI);
+               jointLimitHi = float(M_PI);
            }
        }
     }

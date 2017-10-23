@@ -1826,7 +1826,7 @@ namespace VirtualRobot
         else if (fabs(p+1) < 1e-6)
             resF(2) = float(-M_PI*0.5);
         else
-            resF(2) = asin(p);
+            resF(2) = float(asin(p));
 
         VR_ASSERT (!isnan(resF(2)));
 

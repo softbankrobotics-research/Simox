@@ -95,7 +95,7 @@ void Gravity::computeGravityTorque(std::vector<float> &storeValues)
                 Eigen::Vector3f pointOnAxis = VirtualRobot::MathTools::nearestPointOnLine<Eigen::Vector3f>(l, comGlobal);
                 Eigen::Vector3f r = comGlobal - pointOnAxis; // vector from axis to com (change sign?)
                 r *= 0.001f; // mm -> m
-                Eigen::Vector3f F(0, 0, -9.81);
+                Eigen::Vector3f F(0, 0, -9.81f);
                 F *= body->getMass();
                 gravityJoint += (r.cross(F)).dot(axisGlobal);
             }
@@ -260,7 +260,7 @@ void Gravity::GravityData::computeCoMAndTorque(Eigen::Vector3f &comPositionGloba
         Eigen::Vector3f pointOnAxis = VirtualRobot::MathTools::nearestPointOnLine<Eigen::Vector3f>(l, comPositionGlobal);
         Eigen::Vector3f r = comPositionGlobal - pointOnAxis; // vector from axis to com (change sign?)
         r *= 0.001f; // mm -> m
-        Eigen::Vector3f F(0, 0, -9.81 * massSum);
+        Eigen::Vector3f F(0, 0, -9.81f * massSum);
         torque = (r.cross(F)).dot(axisGlobal);
         // gravity compensation: invert the gravity torque
         torque *= -1.0f;

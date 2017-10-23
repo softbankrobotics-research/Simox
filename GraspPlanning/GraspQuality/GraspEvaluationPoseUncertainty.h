@@ -26,6 +26,7 @@
 
 #include "VirtualRobot/VirtualRobot.h"
 
+#include "../GraspPlanning.h"
 #include "GraspQualityMeasure.h"
 
 #include <string>
@@ -40,7 +41,7 @@ namespace GraspPlanning
 	This class implements the paper:
 	Jonathan Weisz and Peter K. Allen, "Pose Error Robust Grasping from Contact Wrench Space Metrics", 2012 IEEE International Conference on Robotics and Automation
 */
-class GraspEvaluationPoseUncertainty : public std::enable_shared_from_this<GraspEvaluationPoseUncertainty>
+class GRASPPLANNING_IMPORT_EXPORT GraspEvaluationPoseUncertainty : public std::enable_shared_from_this<GraspEvaluationPoseUncertainty>
 {
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -89,14 +90,14 @@ public:
 
     struct PoseEvalResults
     {
-        int numPosesTested = 0.0;
-        int numValidPoses = 0.0;
-        int numColPoses = 0.0;        // poses with initial collision
-        int numForceClosurePoses = 0.0;        // poses that have force closure
-        float forceClosureRate = 0.0; // without collision poses
-        float avgQuality = 0.0;       // without collision poses
-        float forceClosureRateCol = 0.0; // with collision poses
-        float avgQualityCol = 0.0;       // with collision poses
+        int numPosesTested = 0;
+        int numValidPoses = 0;
+        int numColPoses = 0;        // poses with initial collision
+        int numForceClosurePoses = 0;        // poses that have force closure
+        float forceClosureRate = 0.0f; // without collision poses
+        float avgQuality = 0.0f;       // without collision poses
+        float forceClosureRateCol = 0.0f; // with collision poses
+        float avgQualityCol = 0.0f;       // with collision poses
 
         void print()
         {

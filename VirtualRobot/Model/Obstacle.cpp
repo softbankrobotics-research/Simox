@@ -292,7 +292,7 @@ namespace VirtualRobot
     }
 
 
-    void Obstacle::setMass(int mass)
+    void Obstacle::setMass(float mass)
     {
         WriteLockPtr l = getWriteLock();
         auto links = getLinks();

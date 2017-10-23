@@ -190,7 +190,7 @@ void showSceneWindow::loadScene()
     {
         scene = SceneIO::loadScene(sceneFile);
     }
-    catch (VirtualRobotException& e)
+    catch (VirtualRobotException& /*e*/)
     {
         cout << "Could not find valid scene in file " << sceneFile << endl;
     }
@@ -211,7 +211,7 @@ void showSceneWindow::loadScene()
                 scene->registerManipulationObject(mo);
             }
         }
-        catch (VirtualRobotException& e)
+        catch (VirtualRobotException& /*e*/)
         {
             cout << "Could not find valid manipulation object in file " << sceneFile << endl;
         }
@@ -233,7 +233,7 @@ void showSceneWindow::loadScene()
                 scene->registerObstacle(mo);
             }
         }
-        catch (VirtualRobotException& e)
+        catch (VirtualRobotException& /*e*/)
         {
             cout << "Could not find valid obstacle in file " << sceneFile << endl;
         }

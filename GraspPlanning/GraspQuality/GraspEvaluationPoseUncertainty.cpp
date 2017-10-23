@@ -135,7 +135,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = config.useNormalDistribution ? normalDistribution(generator) : uniformDistribution(generator);
+            float r = config.useNormalDistribution ? float(normalDistribution(generator)) : float(uniformDistribution(generator));
             tmpPose[i] = start[i] + r*dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
@@ -160,7 +160,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
                 cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
             centerPose += contacts[i].contactPointObstacleGlobal;
     }
-    centerPose /= contacts.size();
+    centerPose /= float(contacts.size());
     if (config.verbose)
         cout << "using contact center pose:\n" << centerPose << endl;
 

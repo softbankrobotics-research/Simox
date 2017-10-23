@@ -101,7 +101,7 @@ namespace VirtualRobot
 
         virtual std::string toXML(const std::string& basePath, int tabs = 0);
 
-        virtual void setMass(int mass);
+        virtual void setMass(float mass);
 
     protected:
 

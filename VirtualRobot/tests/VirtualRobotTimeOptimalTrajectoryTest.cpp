@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(example)
     VirtualRobot::TimeOptimalTrajectory trajectory(VirtualRobot::Path(waypoints, maxDeviation), maxVelocity, maxAcceleration, 0.1);
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    int dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    auto dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 
     trajectory.outputPhasePlaneTrajectory();
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(exampleFromSimulationEasy)
     VirtualRobot::TimeOptimalTrajectory trajectory(VirtualRobot::Path(waypoints, maxDeviation), maxVelocity, maxAcceleration, 0.1);
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    int dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    auto dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 
     trajectory.outputPhasePlaneTrajectory();
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(exampleFromSimulationDifficult)
     VirtualRobot::TimeOptimalTrajectory trajectory(VirtualRobot::Path(waypoints, maxDeviation), maxVelocity, maxAcceleration, 0.1);
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    int dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    auto dtime = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 
     trajectory.outputPhasePlaneTrajectory();

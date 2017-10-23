@@ -72,10 +72,10 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     // CREATE REACHABILITY DATA
     static float discrTr = 20.0f;
     static float discrRot = 0.5f;
-    static float discrTr3 = discrTr*sqrt(3);
-    static float discrRot3 = discrRot*sqrt(3);
+    static float discrTr3 = discrTr*sqrtf(3);
+    static float discrRot3 = discrRot*sqrtf(3);
     float minBounds[6] = {-200.0f,-200.0f,-200.0f,0,0,0};
-    float maxBounds[6] = {200.0f,200.0f,200.0f,2*M_PI,2*M_PI,2*M_PI};
+    float maxBounds[6] = {200.0f,200.0f,200.0f,float(2*M_PI),float(2*M_PI),float(2*M_PI)};
     VirtualRobot::ReachabilityPtr reach(new VirtualRobot::Reachability(rob));
     BOOST_REQUIRE(reach);
     reach->setOrientationType(VirtualRobot::WorkspaceRepresentation::Hopf);
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
 
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
     Eigen::Matrix4f m2 = Eigen::Matrix4f::Identity();
-    float x[6];
+    //float x[6];
     unsigned int v[6];
     float diffRot,diffPos;
     bool poseOK;
@@ -113,11 +113,11 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     int nx = cutXY->entries.rows();
     int ny = cutXY->entries.cols();
 
-    int cellSizeX = (cutXY->maxBounds[0] - cutXY->minBounds[0]) / nx;
-    int cellSizeY = (cutXY->maxBounds[1] - cutXY->minBounds[1]) / ny;
+    int cellSizeX = int((cutXY->maxBounds[0] - cutXY->minBounds[0]) / nx);
+    int cellSizeY = int((cutXY->maxBounds[1] - cutXY->minBounds[1]) / ny);
 
-    int posA = (m(0,3) - cutXY->minBounds[0]) / cellSizeX;
-    int posB = (m(1,3) - cutXY->minBounds[1]) / cellSizeY;
+    int posA = int((m(0,3) - cutXY->minBounds[0]) / cellSizeX);
+    int posB = int((m(1,3) - cutXY->minBounds[1]) / cellSizeY);
 
     for (int a=0; a<nx; a++)
     {
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     //BOOST_REQUIRE_LE(diffRot, discrRot3); // only position is of interest here
 
     // rotate pose by 90 degree
-    m2 = VirtualRobot::MathTools::axisangle2eigen4f(Eigen::Vector3f(0,0,1), M_PI/2.0);
+    m2 = VirtualRobot::MathTools::axisangle2eigen4f(Eigen::Vector3f(0,0,1.0f), float(M_PI/2.0));
     m2(2,3) = m(2,3);
     Eigen::Matrix4f invTr = transformations.at(0)->transformation.inverse();
     tmpPos2 = m2 * invTr;
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     BOOST_REQUIRE(e>0);
 
     // check with rotated grasping position (90 degrees around z)
-    m2 = VirtualRobot::MathTools::axisangle2eigen4f(Eigen::Vector3f(0,0,1), M_PI/2.0);
+    m2 = VirtualRobot::MathTools::axisangle2eigen4f(Eigen::Vector3f(0,0,1), float(M_PI/2.0));
     m2(0,3) = m(0,3);
     m2(1,3) = m(1,3);
     m2(2,3) = m(2,3);

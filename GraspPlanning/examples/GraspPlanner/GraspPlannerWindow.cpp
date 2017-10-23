@@ -400,12 +400,14 @@ void GraspPlannerWindow::planObjectBatch()
     for (boost::filesystem::recursive_directory_iterator end, dir(fi.toUtf8().data(), boost::filesystem::symlink_option::recurse);
          dir != end ; ++dir)
     {
-        std::string path(dir->path().c_str());
+        std::string path = dir->path().string();
 
         // search for all statechart group xml files
         if (dir->path().extension() == ".moxml")
         {
-            paths << dir->path().c_str();
+            QString qs;
+            qs = (const char*)(dir->path().c_str());
+            paths << QString(qs);
         }
 
     }

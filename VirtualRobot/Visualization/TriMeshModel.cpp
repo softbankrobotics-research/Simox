@@ -278,7 +278,7 @@ namespace VirtualRobot
             query_pt[1] = p1[1];
             query_pt[2] = p1[2];
             const size_t nMatches = index.radiusSearch(&query_pt[0],search_radius, ret_matches, params);
-            for (int k = 0; k < nMatches; ++k)
+            for (size_t k = 0; k < nMatches; ++k)
             {
                 int foundIndex = ret_matches.at(k).first;
                 auto& faces = vertex2FaceMap[foundIndex];
@@ -392,8 +392,8 @@ namespace VirtualRobot
 
     void TriMeshModel::fattenShrink(float offset)
     {
-        int i;
-        int size = this->faces.size();
+        size_t i;
+        size_t size = this->faces.size();
         std::vector<bool> visited(vertices.size(), false);
         std::vector<std::pair<Eigen::Vector3f,int>> offsets(vertices.size(), std::make_pair(Eigen::Vector3f::Zero(), 0));
         for (i = 0; i < vertices.size(); ++i)

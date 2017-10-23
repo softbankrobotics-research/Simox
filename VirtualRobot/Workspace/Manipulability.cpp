@@ -754,7 +754,7 @@ namespace VirtualRobot
         unsigned int numPosesPerThread = loops / numThreads; // todo
         static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
-        for (int i = 0; i < numThreads; i++)
+        for (unsigned int i = 0; i < numThreads; i++)
         {
             threads[i] = std::thread([=] ()
             {
@@ -794,7 +794,7 @@ namespace VirtualRobot
                 PoseQualityMeasurementPtr clonedMeasure  = this->measure->clone(clonedRobot);
 
                 // now sample some configs and add them to the workspace data
-                for (int j = 0; j < numPosesPerThread; j++)
+                for (unsigned int j = 0; j < numPosesPerThread; j++)
                 {
                     float rndValue;
                     float minJ, maxJ;
@@ -805,7 +805,7 @@ namespace VirtualRobot
 
                     for (int k = 0; k < maxLoops; k++)
                     {
-                        for (int l = 0; l < clonedNodeSet->getSize(); l++)
+                        for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = (float) std::rand() * randMult; // value from 0 to 1
                             minJ = (*nodeSet)[l]->getJointLimitLow();
@@ -845,7 +845,7 @@ namespace VirtualRobot
         }
 
         // wait for all threads to finish
-        for (int i = 0; i < numThreads; i++)
+        for (unsigned int i = 0; i < numThreads; i++)
         {
             threads[i].join();
         }
