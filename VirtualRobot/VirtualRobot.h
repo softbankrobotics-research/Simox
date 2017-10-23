@@ -202,6 +202,7 @@ namespace VirtualRobot
 	class ModelNodeAttachmentFactory;
     class Frame;
     class ColorMap;
+    class Sensor;
 
     typedef Model Robot; //!< A typedef to make a differ between a robot and a simple object
     typedef ModelNode RobotNode; //!< A typedef to make a differ between a robot and a simple object
@@ -267,6 +268,7 @@ namespace VirtualRobot
     typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
     typedef std::shared_ptr<Frame> FramePtr;
     typedef std::shared_ptr<ColorMap> ColorMapPtr;
+    typedef std::shared_ptr<Sensor> SensorPtr;
 
 	typedef std::shared_ptr<Robot> RobotPtr; //!< A typedef to make a differ between a robot and a simple object
     typedef std::weak_ptr<Robot> RobotWeakPtr; //!< A typedef to make a differ between a robot and a simple object

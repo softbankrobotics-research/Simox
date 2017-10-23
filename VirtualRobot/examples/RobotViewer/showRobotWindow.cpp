@@ -9,7 +9,6 @@
 #include "../../Import/SimoxXMLFactory.h"
 #include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
-#include "../../Model/Nodes/Attachments/ModelFrameFactory.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>

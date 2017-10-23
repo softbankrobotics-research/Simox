@@ -117,8 +117,8 @@ Model/Nodes/ModelJoint.cpp
 Model/Nodes/ModelJointFixed.cpp
 Model/Nodes/ModelJointPrismatic.cpp
 Model/Nodes/ModelJointRevolute.cpp
-Model/Nodes/Attachments/ModelFrame.cpp
-Model/Nodes/Attachments/ModelFrameFactory.cpp
+Model/Nodes/Attachments/ModelNodeAttachment.cpp
+Model/Nodes/Attachments/ModelNodeAttachmentFactory.cpp
 Model/Nodes/Attachments/ModelStructure.cpp
 Model/Nodes/Attachments/ModelStructureFactory.cpp
 Model/Nodes/Attachments/Sensor.cpp
@@ -229,8 +229,6 @@ Model/Nodes/ModelJointPrismatic.h
 Model/Nodes/ModelJointRevolute.h
 Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
-Model/Nodes/Attachments/ModelFrame.h
-Model/Nodes/Attachments/ModelFrameFactory.h
 Model/Nodes/Attachments/Sensor.h
 Model/Nodes/Attachments/ForceTorqueSensor.h
 Model/Nodes/Attachments/ForceTorqueSensorFactory.h

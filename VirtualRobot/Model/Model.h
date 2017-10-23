@@ -256,7 +256,28 @@ namespace VirtualRobot
         virtual std::vector< ModelConfigPtr > getConfigurations() const;
 
         template<typename T>
-        std::vector< std::shared_ptr<T> > getAttachments() const;
+        std::vector< std::shared_ptr<T> > getAttachments() const
+        {
+            ReadLockPtr r = getReadLock();
+            std::vector<std::shared_ptr<T> > result;
+            for (const auto &n : modelNodeMap)
+            {
+                const auto &a = n.second->getAttachments<T>();
+                if (a.size()>0)
+                {
+                    result.insert(result.end(), a.begin(), a.end());
+                }
+            }
+            return result;
+        }
+
+        std::vector< SensorPtr > getSensors() const;
+        SensorPtr getSensor(const std::string &name) const;
+        bool hasSensor(const std::string &name) const;
+
+        std::vector< ModelNodeAttachmentPtr > getAttachments() const;
+        ModelNodeAttachmentPtr getAttachment(const std::string &name) const;
+        bool hasAttachment(const std::string &name) const;
 
         /*!
          * The root node is the first ModelNode of this model.
@@ -368,15 +389,15 @@ namespace VirtualRobot
         void detachStructure();
 
         /*!
-         * A convenience function that creates and attaches a ModelFrame to each joint.
-         * Each attached ModelFrame inherits the name of its corresponding joint appended by "_frame".
+         * A convenience function that creates and attaches a ModelNodeAttachment to each joint, representing a frame.
+         * Each attached ModelNodeAttachment inherits the name of its corresponding joint appended by "_frame".
          * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          *                          If not given, the default visualization factory is used.
          */
         void attachFrames(std::string visualizationType = "");
 
         /*!
-         * A convenience function to detach ModelFrames.
+         * A convenience function to detach ModelNodeAttachments / Frames.
          * This function basically reverts calls to attachFrames()
          */
         void detachFrames();

@@ -11,8 +11,8 @@
 #include "../EndEffector/EndEffector.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
-#include "../Model/Nodes/Attachments/ModelFrameFactory.h"
 #include "../Model/Nodes/Attachments/ModelStructureFactory.h"
+#include "../Model/Nodes/Attachments/Sensor.h"
 
 #include <algorithm>
 
@@ -586,7 +586,7 @@ namespace VirtualRobot
 
     void Model::attachFrames(std::string visualizationType)
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelFrameFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), NULL);
         for (const auto & joint : getJoints())
         {
             std::string attachmentName = joint->getName() + "_frame";
@@ -1309,20 +1309,59 @@ namespace VirtualRobot
         return configs;
     }
 
-    template<typename T>
-    std::vector<std::shared_ptr<T> > Model::getAttachments() const
+    std::vector<SensorPtr> Model::getSensors() const
     {
-        ReadLockPtr r = getReadLock();
-        std::vector<std::shared_ptr<T> > result;
-        for (auto &n : modelNodeMap)
+        return getAttachments<Sensor>();
+    }
+
+    bool Model::hasSensor(const std::string &name) const
+    {
+        std::vector<SensorPtr> sensors = getSensors();
+        for (auto &s : sensors)
         {
-            auto &a = n.second->getAttachments<T>();
-            if (a.size()>0)
-            {
-                result.insert(result.end(), a.begin(), a.end());
-            }
+            if (s && s->getName() == name)
+                return true;
         }
-        return result;
+        return false;
+    }
+
+    SensorPtr Model::getSensor(const std::string &name) const
+    {
+        std::vector<SensorPtr> sensors = getSensors();
+        for (auto &s : sensors)
+        {
+            if (s && s->getName() == name)
+                return s;
+        }
+        return SensorPtr();
+    }
+
+
+    std::vector<ModelNodeAttachmentPtr> Model::getAttachments() const
+    {
+        return getAttachments<ModelNodeAttachment>();
+    }
+
+    bool Model::hasAttachment(const std::string &name) const
+    {
+        std::vector<ModelNodeAttachmentPtr> att = getAttachments();
+        for (auto &a : att)
+        {
+            if (a && a->getName() == name)
+                return true;
+        }
+        return false;
+    }
+
+    ModelNodeAttachmentPtr Model::getAttachment(const std::string &name) const
+    {
+        std::vector<ModelNodeAttachmentPtr> att = getAttachments();
+        for (auto &a : att)
+        {
+            if (a && a->getName() == name)
+                return a;
+        }
+        return ModelNodeAttachmentPtr();
     }
 
 }

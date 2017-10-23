@@ -35,13 +35,13 @@ namespace VirtualRobot
         /*!
          * Constructor.
          */
-        ModelNodeAttachmentFactory() {};
+        ModelNodeAttachmentFactory();
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachmentFactory() {};
+        virtual ~ModelNodeAttachmentFactory();
 
         /*!
          * Creates an attachment.
@@ -50,8 +50,16 @@ namespace VirtualRobot
          * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "") = 0;
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
+        // AbstractFactoryMethod
+    public:
+        static std::string getName();
+        static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
+
+    private:
+        static SubClassRegistry registry;
     };
+    typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
 }
 
-#endif // _VirtualRobot_ModelNodeAttachmentFactory_h_
+#endif

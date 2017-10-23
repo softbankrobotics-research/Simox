@@ -252,7 +252,7 @@ namespace VirtualRobot
          *
          * @return The global pose.
          */
-        virtual Eigen::Matrix4f getGlobalPose() const;
+        virtual Eigen::Matrix4f getGlobalPose() const override;
 
         /*!
          * The pose of this node in the root coordinate system of the model.
@@ -324,7 +324,20 @@ namespace VirtualRobot
         std::vector<ModelNodeAttachmentPtr> getAttachments(const std::string& type = "") const;
 
         template<typename T>
-        std::vector< std::shared_ptr<T> > getAttachments() const;
+        std::vector< std::shared_ptr<T> > getAttachments() const
+        {
+            std::vector<std::shared_ptr<T> > result;
+            for (const auto &a : attachments)
+            {
+                for (const auto &b : a.second)
+                {
+                    std::shared_ptr<T> n = std::dynamic_pointer_cast<T>(b);
+                    if (n)
+                        result.push_back(n);
+                }
+            }
+            return result;
+        }
 
         /*!
          * Get all attachments with visualisation.

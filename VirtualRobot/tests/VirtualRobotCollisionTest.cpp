@@ -12,6 +12,9 @@
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/CollisionDetection/CollisionModel.h"
 #include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Model/Nodes/Attachments/ModelNodeAttachment.h"
+#include "VirtualRobot/Model/Nodes/Attachments/Sensor.h"
+
 #include <string>
 
 #include <Eigen/Core>

@@ -835,10 +835,10 @@ namespace VirtualRobot
 
 
         // process sensors
-        /*for (size_t i = 0; i < sensorTags.size(); i++)
+        for (size_t i = 0; i < sensorTags.size(); i++)
         {
-            processSensor(robotNode, sensorTags[i], loadMode, basePath);
-        }*/
+            ModelIO::processSensor(robo, sensorTags[i], loadMode, robotNode);
+        }
 
         return robotNode;
     }

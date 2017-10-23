@@ -30,7 +30,6 @@ namespace VirtualRobot
     class Sensor : public ModelNodeAttachment
     {
         friend class ModelNode;
-        friend class ModelFrameFactory;
 
     protected:
         /*!

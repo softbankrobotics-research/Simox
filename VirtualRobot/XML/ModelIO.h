@@ -117,7 +117,7 @@ namespace VirtualRobot
         static bool loadConfigurations(const ModelPtr &robot, const std::string &filename);
 
 
-        static bool processSensor(ModelPtr model, rapidxml::xml_node<char> *sensorXMLNode, RobotDescription loadMode);
+        static bool processSensor(ModelPtr model, rapidxml::xml_node<char> *sensorXMLNode, RobotDescription loadMode, const ModelNodePtr &modelNode = ModelNodePtr());
         static bool createSensorsFromString(const ModelPtr &robot, const std::string &xmlString, RobotDescription loadMode);
         static bool loadSensors(const ModelPtr &robot, const std::string &filename, RobotDescription loadMode);
 

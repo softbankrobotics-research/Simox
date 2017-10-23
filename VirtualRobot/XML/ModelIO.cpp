@@ -59,7 +59,7 @@ namespace VirtualRobot
 
 
 
-    bool ModelIO::processSensor(ModelPtr robot, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode)
+    bool ModelIO::processSensor(ModelPtr robot, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const ModelNodePtr &modelNode)
     {
         if (!robot || !sensorXMLNode)
         {
@@ -71,6 +71,7 @@ namespace VirtualRobot
         std::string sensorType;
         std::string sensorName;
         std::string sensorAttached;
+        ModelNodePtr attachedToModelNode = modelNode;
 
         attr = sensorXMLNode->first_attribute("type", 0, false);
 
@@ -98,19 +99,31 @@ namespace VirtualRobot
 
         attr = sensorXMLNode->first_attribute("attached", 0, false);
 
+
+
         if (attr)
         {
-            sensorAttached = attr->value();
-            if (!robot->hasModelNode(sensorAttached))
+            if (attachedToModelNode)
             {
-                VR_WARNING << "Attached node " << sensorAttached << " not available in model " << robot->getName() << "!" << endl;
-                return false;
+                VR_WARNING << "Attached node " << sensorAttached << ", ignoring attached attribute, since definition is inside a model node !" << endl;
+            } else
+            {
+                sensorAttached = attr->value();
+                if (!robot->hasModelNode(sensorAttached))
+                {
+                    VR_WARNING << "Attached node " << sensorAttached << " not available in model " << robot->getName() << "!" << endl;
+                    return false;
+                }
+                attachedToModelNode = robot->getModelNode(sensorAttached);
             }
         }
         else
         {
-            VR_WARNING << "No 'attached' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
-            return false;
+            if (!attachedToModelNode)
+            {
+                VR_WARNING << "No 'attached' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
+                return false;
+            }
         }
 
         Eigen::Matrix4f localTransform = Eigen::Matrix4f::Identity();
@@ -135,8 +148,7 @@ namespace VirtualRobot
                 VR_ERROR << "Failed to create sensor " << sensorName << endl;
                 return false;
             }
-            ModelNodePtr n = robot->getModelNode(sensorAttached);
-            if (!n)
+            if (!attachedToModelNode)
             {
                 VR_ERROR << "Could not get model node for sensor " << sensorName << endl;
                 return false;
@@ -145,7 +157,7 @@ namespace VirtualRobot
             // if needed, specialized sensor data can be accessed here...
             // -> Need to cast sensor to specific type and set parameters
 
-            n->attach(s);
+            attachedToModelNode->attach(s);
         }
         else
         {
@@ -1439,8 +1451,8 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
         THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
-        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("ModelFrame", NULL);
-        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate model frame factory...");
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("ModelNodeAttachment", NULL);
+        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate ModelNodeAttachment factory for creating frames...");
 
         mff->createAttachment(frameName, transformMatrix);
 
