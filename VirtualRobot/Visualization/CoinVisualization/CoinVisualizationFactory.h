@@ -333,7 +333,7 @@ namespace VirtualRobot
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, const FramePtr &camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
@@ -355,7 +355,7 @@ namespace VirtualRobot
          */
         static bool renderOffscreenRgbDepthPointcloud
             (
-                RobotNodePtr camNode, SoNode* scene,
+                const FramePtr &camNode, SoNode* scene,
                 short width, short height,
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImgae, std::vector<float>& depthImage,
@@ -385,7 +385,7 @@ namespace VirtualRobot
          */
         static bool renderOffscreenRgbDepthPointcloud
             (SoOffscreenRenderer* renderer,
-                RobotNodePtr camNode, SoNode* scene,
+                const FramePtr &camNode, SoNode* scene,
                 short width, short height,
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImage, std::vector<float>& depthImage,
@@ -412,7 +412,7 @@ namespace VirtualRobot
          */
         static bool renderOffscreenRgbDepthPointcloud
             (
-                RobotNodePtr camNode, SoNode* scene,
+                const FramePtr &camNode, SoNode* scene,
                 short width, short height,
                 std::vector<unsigned char>& rgbImage,
                 std::vector<float>& depthImage,

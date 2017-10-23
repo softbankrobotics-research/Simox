@@ -3661,7 +3661,7 @@ namespace VirtualRobot
         return offscreenRenderer;
     }
 
-    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov)
+    bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, const FramePtr &camNode, SoNode* scene, unsigned char** buffer, float zNear, float zFar, float fov)
     {
         if (!camNode)
         {
@@ -3795,13 +3795,12 @@ namespace VirtualRobot
     }
 
     bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud
-        (
-            RobotNodePtr camNode, SoNode* scene, //scene
-            short width, short height,//instead of renderer (the render action will be overwritten and can't be restored
+        (const FramePtr &camNode, SoNode* scene, //scene
+            short width, short height, //instead of renderer (the render action will be overwritten and can't be restored
             bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov,//render param
+            float zNear, float zFar, float vertFov, //render param
             float nanValue
         )
     {
@@ -3820,7 +3819,7 @@ namespace VirtualRobot
                                           nanValue);
     }
 
-    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, RobotNodePtr camNode,
+    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, const FramePtr &camNode,
                                                                      SoNode *scene, short width, short height, bool renderRgbImage, std::vector<unsigned char> &rgbImage,
                                                                      bool renderDepthImage, std::vector<float> &depthImage, bool renderPointcloud,
                                                                      std::vector<Eigen::Vector3f> &pointCloud, float zNear, float zFar, float vertFov, float nanValue)

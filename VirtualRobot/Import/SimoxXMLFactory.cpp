@@ -903,7 +903,7 @@ namespace VirtualRobot
 
     RobotPtr SimoxXMLFactory::processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode)
     {
-        THROW_VR_EXCEPTION_IF(!robotXMLNode, "No <Robot> tag in XML definition");
+        THROW_VR_EXCEPTION_IF(!robotXMLNode, "No <Robot>/<Model> tag in XML definition");
 
         // process Attributes
         std::string robotRoot;

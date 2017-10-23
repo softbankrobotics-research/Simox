@@ -3,13 +3,12 @@
 #define __ShowRobot_WINDOW_H_
 
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Obstacle.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/JointSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
@@ -24,7 +23,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
+#include <Inventor/SoOffscreenRenderer.h>
 
 #include <vector>
 
@@ -85,11 +84,11 @@ protected:
     SoSeparator* cam1VoxelSep;
 
     VirtualRobot::RobotPtr robot;
-    std::string m_sRobotFilename;
+    std::string robotFilename;
     std::string cam1Name;
     std::string cam2Name;
-    VirtualRobot::RobotNodePtr cam1;
-    VirtualRobot::RobotNodePtr cam2;
+    VirtualRobot::FramePtr cam1;
+    VirtualRobot::FramePtr cam2;
     SoOffscreenRenderer* cam2Renderer;
 
     std::vector<VirtualRobot::ObstaclePtr> visuObjects;
@@ -100,11 +99,11 @@ protected:
     std::vector<Eigen::Vector3f> cam1PointCloud;
     unsigned char* cam2Buffer;
     float* cam2DepthBuffer;
-    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
-    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-    VirtualRobot::RobotNodePtr currentRobotNode;
+    std::vector < VirtualRobot::ModelJointPtr > allRobotNodes;
+    std::vector < VirtualRobot::ModelJointPtr > currentRobotNodes;
+    std::vector < VirtualRobot::JointSetPtr > robotNodeSets;
+    VirtualRobot::JointSetPtr currentRobotNodeSet;
+    VirtualRobot::ModelJointPtr currentRobotNode;
 
     bool useColModel;
 
@@ -119,7 +118,6 @@ protected:
     DepthRenderData userdata2;
 
     static void getDepthImage(void *userdata);
-
 };
 
-#endif // __ShowCamera_WINDOW_H_
+#endif

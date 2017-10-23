@@ -7,7 +7,7 @@ endif ()
 
 ADD_SUBDIRECTORY(LoadRobot)
 
-#ADD_SUBDIRECTORY(CameraViewer)
+ADD_SUBDIRECTORY(CameraViewer)
 ADD_SUBDIRECTORY(RobotViewer)
 ADD_SUBDIRECTORY(SceneViewer)
 ADD_SUBDIRECTORY(Jacobi)

@@ -1,9 +1,10 @@
 
 #include "showCamWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
-#include "VirtualRobot/Workspace/Reachability.h"
+#include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -42,7 +43,7 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
-    m_sRobotFilename = sRobotFilename;
+    robotFilename = sRobotFilename;
     this->cam1Name = cam1Name;
     this->cam2Name = cam2Name;
     sceneSep = new SoSeparator;
@@ -192,8 +193,8 @@ void showCamWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<float> jv(allRobotNodes.size(), 0.0f);
-    robot->setJointValues(allRobotNodes, jv);
+    for (auto & n:allRobotNodes)
+        n->setJointValue(0.0f);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 }
@@ -211,7 +212,7 @@ void showCamWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
+    visualization = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel));
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -266,7 +267,8 @@ void showCamWindow::updateRobotY(int pos)
 {
     Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
     pose(1,3)=pos;
-    robot->setGlobalPose(pose);
+    if (robot)
+        robot->setGlobalPose(pose);
     renderCam();
 }
 
@@ -301,7 +303,7 @@ void showCamWindow::selectRNS(int nr)
         }
 
         currentRobotNodeSet = robotNodeSets[nr];
-        currentRobotNodes = currentRobotNodeSet->getAllRobotNodes();
+        currentRobotNodes = currentRobotNodeSet->getJoints();
         /*cout << "HIGHLIGHTING rns " << currentRobotNodeSet->getName() << endl;
         if (visualization)
         {
@@ -320,7 +322,7 @@ void showCamWindow::selectJoint(int nr)
 {
     if (currentRobotNode)
     {
-        currentRobotNode->showBoundingBox(false);
+        //currentRobotNode->showBoundingBox(false);
     }
 
     currentRobotNode.reset();
@@ -332,10 +334,10 @@ void showCamWindow::selectJoint(int nr)
     }
 
     currentRobotNode = currentRobotNodes[nr];
-    currentRobotNode->showBoundingBox(true, true);
+    //currentRobotNode->showBoundingBox(true, true);
     currentRobotNode->print();
-    float mi = currentRobotNode->getJointLimitLo();
-    float ma = currentRobotNode->getJointLimitHi();
+    float mi = currentRobotNode->getJointLimitLow();
+    float ma = currentRobotNode->getJointLimitHigh();
     QString qMin = QString::number(mi);
     QString qMax = QString::number(ma);
     UI.labelMinPos->setText(qMin);
@@ -359,8 +361,8 @@ void showCamWindow::selectJoint(int nr)
 
     if (visualization)
     {
-        robot->highlight(visualization, false);
-        currentRobotNode->highlight(visualization, true);
+        //robot->highlight(visualization, false);
+        //currentRobotNode->highlight(visualization, true);
     }
 
 }
@@ -374,7 +376,7 @@ void showCamWindow::jointValueChanged(int pos)
         return;
     }
 
-    float fPos = currentRobotNodes[nr]->getJointLimitLo() + (float)pos / 1000.0f * (currentRobotNodes[nr]->getJointLimitHi() - currentRobotNodes[nr]->getJointLimitLo());
+    float fPos = currentRobotNodes[nr]->getJointLimitLow() + (float)pos / 1000.0f * (currentRobotNodes[nr]->getJointLimitHigh() - currentRobotNodes[nr]->getJointLimitLow());
     robot->setJointValue(currentRobotNodes[nr], fPos);
     UI.lcdNumberJointValue->display((double)fPos);
 
@@ -387,11 +389,11 @@ void showCamWindow::selectRobot()
     string supported = "Supported Formats, " + supportedExtensions + " (" + supportedExtensions + ")";
     string filter = supported + ";;" + RobotImporterFactory::getAllFileFilters();
     QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr(filter.c_str()));
-    std::string s = m_sRobotFilename = std::string(fi.toLatin1());
+    std::string s = robotFilename = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
-        m_sRobotFilename = s;
+        robotFilename = s;
         loadRobot();
     }
 }
@@ -399,7 +401,7 @@ void showCamWindow::selectRobot()
 void showCamWindow::loadRobot()
 {
     robotSep->removeAllChildren();
-    cout << "Loading Robot from " << m_sRobotFilename << endl;
+    cout << "Loading Robot from " << robotFilename << endl;
     currentRobotNode.reset();
     currentRobotNodes.clear();
     currentRobotNodeSet.reset();
@@ -407,19 +409,7 @@ void showCamWindow::loadRobot()
 
     try
     {
-        QFileInfo fileInfo(m_sRobotFilename.c_str());
-        std::string suffix(fileInfo.suffix().toLatin1());
-        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
-
-        if (!importer)
-        {
-            cout << " ERROR while grabbing importer" << endl;
-            return;
-        }
-
-        robot = importer->loadFromFile(m_sRobotFilename, RobotIO::eFull);
-
-
+        ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {
@@ -453,14 +443,14 @@ void showCamWindow::updateCameras()
         return;
     }
 
-    if (robot->hasRobotNode(cam1Name))
+    if (robot->hasFrame(cam1Name))
     {
-        cam1 = robot->getModelNode(cam1Name);
+        cam1 = robot->getFrame(cam1Name);
     }
 
-    if (robot->hasRobotNode(cam2Name))
+    if (robot->hasFrame(cam2Name))
     {
-        cam2 = robot->getModelNode(cam2Name);
+        cam2 = robot->getFrame(cam2Name);
     }
 
     if (cam1)
@@ -615,8 +605,8 @@ void showCamWindow::updatRobotInfo()
     }
 
     // get nodes
-    robot->getModelNodes(allRobotNodes);
-    robotNodeSets = robot->getModelNodeSets();
+    allRobotNodes = robot->getJoints();
+    robotNodeSets = robot->getJointSets();
 
     updateRNSBox();
     selectRNS(0);

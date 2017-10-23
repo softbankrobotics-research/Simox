@@ -1,7 +1,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
@@ -40,19 +40,10 @@ int main(int argc, char* argv[])
 
     cout << " --- START --- " << endl;
 
-    std::string filename("robots/ArmarIII/ArmarIII.xml");
     std::string cam1Name("EyeLeftCamera");
     std::string cam2Name("EyeRightCamera");
 
-    if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
-    {
-        std::string robFile = VirtualRobot::RuntimeEnvironment::getValue("robot");
-
-        if (VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robFile))
-        {
-            filename = robFile;
-        }
-    }
+    std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
     if (VirtualRobot::RuntimeEnvironment::hasValue("cam1"))
     {
@@ -65,7 +56,7 @@ int main(int argc, char* argv[])
     }
 
 
-    cout << "Using robot:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
+    cout << "Robot file:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
 
     showCamWindow rw(filename, cam1Name, cam2Name);
 
