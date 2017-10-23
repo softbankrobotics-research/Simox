@@ -172,9 +172,12 @@ IF (NOT Simox_CONFIGURED)
     if (Eigen3_FOUND)
         SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIR})
     endif (Eigen3_FOUND)
+
+    FIND_PACKAGE(Threads)
+    SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     
     #### BOOST
-    FIND_PACKAGE(Boost 1.46.0 COMPONENTS filesystem system program_options thread REQUIRED)
+    FIND_PACKAGE(Boost 1.46.0 COMPONENTS filesystem system program_options REQUIRED)
     if (Boost_FOUND)
         MESSAGE (STATUS "Boost found at: ${Boost_INCLUDE_DIR}")
         SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})

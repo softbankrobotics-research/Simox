@@ -4,7 +4,7 @@
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
+#include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>

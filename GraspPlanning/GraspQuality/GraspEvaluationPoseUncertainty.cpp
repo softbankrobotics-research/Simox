@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <float.h>
 #include <cstdlib>
+#include <random>
 
 using namespace Eigen;
 using namespace VirtualRobot;
