@@ -40,8 +40,9 @@ int main(int argc, char* argv[])
 
     cout << " --- START --- " << endl;
 
-    std::string cam1Name("EyeLeftCamera");
-    std::string cam2Name("EyeRightCamera");
+    //std::string cam1Name("DepthCameraSim");
+    std::string cam1Name("EyeRightCameraSim");
+    std::string cam2Name("EyeLeftCameraSim");
 
     std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 

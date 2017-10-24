@@ -505,7 +505,7 @@ void showCamWindow::renderCam()
         CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(
             cam1,sceneSep,UI.cam1->width(),UI.cam1->height(),
             cam1RGBBuffer, cam1DepthBuffer,
-            cam1PointCloud,zNear,zFar
+            cam1PointCloud,zNear,zFar, M_PI/4,0
         );
 
         if(UI.checkBoxDepthCam1->isChecked())
