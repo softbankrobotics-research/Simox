@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<LinkSet name="LeftArmBodies" kinematicRoot="Left Arm Base_joint" tcp="TCP L_joint">
+<LinkSet name="LeftArmBodies" kinematicRoot="Left Arm Base" tcp="TCP L">
 	<Node name="Shoulder 1 L_link"/>
 	<Node name="Shoulder 2 L_link"/>
 	<Node name="Upperarm L_link"/>

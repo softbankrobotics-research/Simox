@@ -1,5 +1,33 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
+<Frame name="TCP L Precision">
+    <Parent node="Hand L Base"/>
+    <Transform>
+        <Translation X="-84" Y="0" Z="144" units='mm'/>
+        <rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+    </Transform>
+</Frame>
 
+<Frame name="TCP L Power">
+    <Parent node="Hand L Base"/>
+    <Transform>
+        <Translation X="-50" Y="-16" Z="115" units='mm'/>
+        <rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+    </Transform>
+</Frame>
 
+<Frame name="TCP R Precision">
+    <Parent node="Hand R Base"/>
+    <Transform>
+        <Translation X="-84" Y="0" Z="144" units='mm'/>
+        <rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+    </Transform>
+</Frame>
 
+<Frame name="TCP R Power">
+    <Parent node="Hand R Base"/>
+    <Transform>
+        <Translation X="-50" Y="16" Z="115" units='mm'/>
+        <rollpitchyaw roll="0" pitch="-45" yaw="0" units="degree"/>
+    </Transform>
+</Frame>

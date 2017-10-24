@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Configuration name="init">
-    <Node name="Shoulder 1 L_joint" unit="radian" value="0"/>
-    <Node name="Shoulder 2 L_joint" unit="radian" value="0"/>
-    <Node name="Upperarm L_joint" unit="radian" value="0"/>
-    <Node name="Elbow L_joint" unit="radian" value="0"/>
-    <Node name="Underarm L_joint" unit="radian" value="0"/>
-    <Node name="Wrist 1 L_joint" unit="radian" value="0"/>
-    <Node name="Wrist 2 L_joint" unit="radian" value="0"/>
-    <Node name="Shoulder 1 R_joint" unit="radian" value="0"/>
-    <Node name="Shoulder 2 R_joint" unit="radian" value="0"/>
-    <Node name="Upperarm R_joint" unit="radian" value="0"/>
-    <Node name="Elbow R_joint" unit="radian" value="0"/>
-    <Node name="Underarm R_joint" unit="radian" value="0"/>
-    <Node name="Wrist 1 R_joint" unit="radian" value="0"/>
-    <Node name="Wrist 2 R_joint" unit="radian" value="0"/>
+    <Node name="Shoulder 1 L" unit="radian" value="0"/>
+    <Node name="Shoulder 2 L" unit="radian" value="0"/>
+    <Node name="Upperarm L" unit="radian" value="0"/>
+    <Node name="Elbow L" unit="radian" value="0"/>
+    <Node name="Underarm L" unit="radian" value="0"/>
+    <Node name="Wrist 1 L" unit="radian" value="0"/>
+    <Node name="Wrist 2 L" unit="radian" value="0"/>
+    <Node name="Shoulder 1 R" unit="radian" value="0"/>
+    <Node name="Shoulder 2 R" unit="radian" value="0"/>
+    <Node name="Upperarm R" unit="radian" value="0"/>
+    <Node name="Elbow R" unit="radian" value="0"/>
+    <Node name="Underarm R" unit="radian" value="0"/>
+    <Node name="Wrist 1 R" unit="radian" value="0"/>
+    <Node name="Wrist 2 R" unit="radian" value="0"/>
 </Configuration>

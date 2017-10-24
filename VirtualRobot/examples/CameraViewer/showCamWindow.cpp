@@ -2,7 +2,7 @@
 #include "showCamWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
-#include <VirtualRobot/Tools/RuntimeEnvironment.h>
+#include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 
@@ -409,7 +409,7 @@ void showCamWindow::loadRobot()
 
     try
     {
-        ModelIO::loadModel(robotFilename, ModelIO::eFull);
+        robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {
@@ -489,7 +489,7 @@ void showCamWindow::renderCam()
 {
     const float zNear = 10;
     const float zFar = 100000;
-    const float fov = float(M_PI / 4.0);
+    const float fov = M_PI / 4;
     const float maxZCut = UI.doubleSpinBoxDepthLinClip->value();
 //    const float voxelSize= 10.f;
 //    float focal =  static_cast<float>(UI.cam1->size().height()) / (2 * std::tan(fov / 2));
