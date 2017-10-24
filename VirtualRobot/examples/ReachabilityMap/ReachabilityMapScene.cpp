@@ -1,10 +1,6 @@
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/XML/ModelIO.h"
+#include "VirtualRobot/RuntimeEnvironment.h"
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -36,7 +32,7 @@ int main(int argc, char* argv[])
     std::string fileObj("objects/iCub/LegoXWing_RightHand_300.xml");
     filenameReach = "reachability/iCub_HipLeftArm.bin";
 #else
-    std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
+    std::string filenameRob("robots/Armar3/Armar3.xml");
     std::string fileObj("objects/ArmarIII/WaterBottle_RightHand_1000.xml");
     filenameReach = "reachability/ArmarIII_PlatformHipRightArm.bin";
     eef = "Hand R";

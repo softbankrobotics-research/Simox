@@ -1,30 +1,38 @@
 
 #include "ReachabilityMapWindow.h"
-#include <VirtualRobot/EndEffector/EndEffector.h>
-#include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/XML/ObjectIO.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
-#include <VirtualRobot/Workspace/Reachability.h>
-#include <VirtualRobot/Workspace/Manipulability.h>
-#include <VirtualRobot/Workspace/WorkspaceGrid.h>
-#include <QFileDialog>
-#include <Eigen/Geometry>
+#include "VirtualRobot/EndEffector/EndEffector.h"
+#include "VirtualRobot/XML/ModelIO.h"
+#include "VirtualRobot/XML/ObjectIO.h"
+#include "VirtualRobot/RuntimeEnvironment.h"
+#include "VirtualRobot/Workspace/Reachability.h"
+#include "VirtualRobot/Workspace/Manipulability.h"
+#include "VirtualRobot/Workspace/WorkspaceGrid.h"
+
 #include <time.h>
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include <sstream>
+
+#include <QFileDialog>
+
+#include <Eigen/Geometry>
 
 #include "Inventor/actions/SoLineHighlightRenderAction.h"
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 
-
-#include <sstream>
 using namespace std;
 using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
+
+// load static factories from SimoxGui-lib.
+// TODO this workaround is actually something one should avoid
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include <Gui/Coin/CoinViewerFactory.h>
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 //#define ENDLESS
 
@@ -35,25 +43,13 @@ ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::strin
 
     robotFile = sRobotFile;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFile);
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotVisuSep = new SoSeparator;
-    robotVisuSep->ref();
-    reachabilityVisuSep = new SoSeparator;
-    reachabilityVisuSep->ref();
-    reachabilityMapVisuSep = new SoSeparator;
-    reachabilityMapVisuSep->ref();
-    allGraspsVisuSep = new SoSeparator;
-    allGraspsVisuSep->ref();
-    graspVisuSep = new SoSeparator;
-    graspVisuSep->ref();
-    objectVisuSep = new SoSeparator;
-    objectVisuSep->ref();
 
-    sceneSep->addChild(objectVisuSep);
-    sceneSep->addChild(graspVisuSep);
-    sceneSep->addChild(reachabilityVisuSep);
-    sceneSep->addChild(reachabilityMapVisuSep);
+    robotVisuLayer = "robot-layer";
+    reachVisuLayer = "reach-layer";
+    reachMapVisuLayer = "reachMap-layer";
+    allGraspsVisuLayer = "allGrasps-layer";
+    graspVisuLayer = "grasp-layer";
+    objectVisuLayer = "object-layer";
 
     setupUI();
 

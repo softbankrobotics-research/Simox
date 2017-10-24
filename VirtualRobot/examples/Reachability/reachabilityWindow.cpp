@@ -763,7 +763,7 @@ void reachabilityWindow::updateQualityInfo()
             poseManip = p->measureCurrentPose();
         } else
         {
-            if (reachSpace->getEntry(p->getTCP()->getGlobalPose())>0)
+            if (reachSpace->getEntry(reachSpace->getTCP()->getGlobalPose())>0)
                 reachManip = 1.0f;
             else
                 reachManip = 0.0f;
