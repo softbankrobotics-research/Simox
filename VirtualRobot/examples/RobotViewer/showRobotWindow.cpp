@@ -477,8 +477,11 @@ void showRobotWindow::exportVRML()
         if (!boost::algorithm::ends_with(s, ".wrl"))
             s += ".wrl";
         SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+        robot->setGlobalPoseForRobotNode(robot->getRobotNode(UI.comboBoxJoint->currentText().toStdString()), Eigen::Matrix4f::Identity());
+        VR_INFO << "Using selected node " << UI.comboBoxJoint->currentText().toStdString() << " as origin for exported model." << endl;
         visualization = robot->getVisualization<CoinVisualization>(colModel);
-        visualization->exportToVRML2(s);
+
+        visualization->exportToVRML2(s, false);
     }
 }
 
