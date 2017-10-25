@@ -404,50 +404,15 @@ namespace SimDynamics
             limMin = joint->getJointLimitLo();
             limMax = joint->getJointLimitHi();
 
-            /*if (joint2)
-            {
+            Eigen::Vector3f axisGlobal = rnRevJoint->getJointRotationAxis();
+            Eigen::Vector3f axisLocal = rnRevJoint->getJointRotationAxisInJointCoordSystem();
+            btScalar limMinBT, limMaxBT;
+            btScalar diff = joint->getJointValueOffset();//startAngleBT + startAngle);
+            limMinBT = btScalar(limMin) + diff;//diff - limMax;//
+            limMaxBT = btScalar(limMax) + diff;//diff - limMin;//
+            jointbt = createHingeJoint(btBody1, btBody2, coordSystemNode1, coordSystemNode2, anchor_inNode1, anchor_inNode2, axisGlobal, axisLocal, coordSystemJoint, limMinBT, limMaxBT);
 
-                VR_WARNING << "HINGE2 Joints are experimental (1:" << joint->getName() << ", 2:" << joint2->getName() << "): Assuming hing2/universal joint is defined as needed by bullet (see universal constraint header documentation)" << endl;
-                // UNIVERSAL/HINGE2 joint
-                boost::shared_ptr<RobotNodeRevolute> rnRevJoint2 = boost::dynamic_pointer_cast<RobotNodeRevolute>(joint2);
-                THROW_VR_EXCEPTION_IF(!rnRevJoint2, "Second joint must be a revolute joint...");
-                Eigen::Matrix4f coordSystemJoint2 = joint2->getGlobalPose();
-
-                Eigen::Vector4f axisLocalJoint2 = Eigen::Vector4f::Zero();
-                axisLocalJoint2.block(0, 0, 3, 1) =  rnRevJoint2->getJointRotationAxisInJointCoordSystem();
-                Eigen::Matrix4f tmpGpJoint2 = coordSystemJoint2;
-                tmpGpJoint2.block(0, 3, 3, 1).setZero();
-
-                Eigen::Vector4f axisGlobal2 = tmpGpJoint2 * axisLocalJoint2;
-
-
-                btVector3 axis1 = BulletEngine::getVecBullet(axisGlobal.head(3), false);
-                btVector3 axis2 = BulletEngine::getVecBullet(axisGlobal2.head(3), false);
-                btVector3 pivot = BulletEngine::getVecBullet(anchorPointGlobal.block(0, 3, 3, 1));
-                boost::shared_ptr<btUniversalConstraint> hinge2(new btUniversalConstraint(*btBody1, *btBody2, pivot, axis1, axis2));
-                double limMin2, limMax2;
-                limMin2 = joint2->getJointLimitLo();
-                limMax2 = joint2->getJointLimitHi();
-                hinge2->setLowerLimit(btScalar(limMin), btScalar(limMin2));
-                hinge2->setUpperLimit(btScalar(limMax), btScalar(limMax2));
-                jointbt = hinge2;
-            }
-            else*/
-            {
-                Eigen::Vector3f axisGlobal = rnRevJoint->getJointRotationAxis();
-                Eigen::Vector3f axisLocal = rnRevJoint->getJointRotationAxisInJointCoordSystem();
-                btScalar limMinBT, limMaxBT;
-                btScalar diff = joint->getJointValueOffset();//startAngleBT + startAngle);
-                limMinBT = btScalar(limMin) + diff;//diff - limMax;//
-                limMaxBT = btScalar(limMax) + diff;//diff - limMin;//
-                jointbt = createHingeJoint(btBody1, btBody2, coordSystemNode1, coordSystemNode2, anchor_inNode1, anchor_inNode2, axisGlobal, axisLocal, coordSystemJoint, limMinBT, limMaxBT);
-
-
-                //btScalar startAngle = joint->getJointValue();
-                //btScalar startAngleBT = hinge->getHingeAngle();
-
-                vr2bulletOffset = diff;
-            }
+            vr2bulletOffset = diff;
         }
         else
         {
@@ -462,9 +427,12 @@ namespace SimDynamics
         i.dynNode1 = drn1;
         i.dynNode2 = drn2;
         i.nodeJoint = joint;
-        //i.nodeJoint2 = joint2;
         i.joint = jointbt;
         i.jointValueOffset = vr2bulletOffset;
+
+        // activate joint feedback for translational joints (somehow, the jumping positions issue seems sometimes to be solved with this?!)
+        if (joint && joint->isTranslationalJoint() && !ignoreTranslationalJoints)
+            enableForceTorqueFeedback(i);
 
         // disable col model
         i.disabledCollisionPairs.push_back(
@@ -637,16 +605,16 @@ namespace SimDynamics
                 btScalar posActual = btScalar(getJointAngle(it->first));
                 controller.setName(it->first->getName());
 
+                double targetVelocity;
+                float deltaPos = it->second.node->getDelta(posTarget);
                 if (it->second.node->isTranslationalJoint())
                 {
                     posTarget *= 0.001;
                     posActual *= 0.001;
                     velActual *= 0.001;
                     velocityTarget *= 0.001;
+                    deltaPos *= 0.001f;
                 }
-
-                double targetVelocity;
-                float deltaPos = it->second.node->getDelta(posTarget);
                 if (!actuation.modes.position)
                 {
                     // we always use position or position-velocity mode
