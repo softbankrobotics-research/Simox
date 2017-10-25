@@ -2,12 +2,15 @@
 #include "stabilityWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/XML/RobotIO.h"
+#include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/Tools/BoundingBox.h"
 #include "VirtualRobot/IK/CoMIK.h"
+#include "VirtualRobot/Model/Nodes/ModelLink.h"
+#include "VirtualRobot/Model/Nodes/ModelJoint.h"
+#include "VirtualRobot/Import/SimoxXMLFactory.h"
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -36,12 +39,12 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-stabilityWindow::stabilityWindow(std::string& sRobotFile)
+stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
 
-    robotFile = sRobotFile;
+    this->robotFile = robotFile;
     useColModel = false;
     sceneSep = new SoSeparator;
     sceneSep->ref();
@@ -65,6 +68,9 @@ stabilityWindow::stabilityWindow(std::string& sRobotFile)
     setupUI();
 
     loadRobot();
+
+    selectJointSet(jointset);
+    selectLinkSet(linkset);
 
     m_pExViewer->viewAll();
 }
@@ -99,7 +105,8 @@ void stabilityWindow::setupUI()
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(collisionModel()));
     connect(UI.checkBoxCoM, SIGNAL(clicked()), this, SLOT(showCoM()));
     connect(UI.checkBoxSupportPolygon, SIGNAL(clicked()), this, SLOT(showSupportPolygon()));
-    connect(UI.comboBoxRNS, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
+    connect(UI.comboBoxJointSet, SIGNAL(activated(int)), this, SLOT(selectJointSet(int)));
+    connect(UI.comboBoxLinkSet, SIGNAL(activated(int)), this, SLOT(selectLinkSet(int)));
 
     connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
     connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));
@@ -146,11 +153,12 @@ void stabilityWindow::resetSceneryAll()
     {
         return;
     }
+    std::vector< ModelJointPtr > nodes;
+    nodes = robot->getJoints();
+    for (auto &n : nodes)
+        n->setJointValue(0.0f);
 
-    std::vector< RobotNodePtr > nodes;
-    robot->getModelNodes(nodes);
-    std::vector<float> jv(nodes.size(), 0.0f);
-    robot->setJointValues(nodes, jv);
+    updateCoM();
 }
 
 
@@ -201,7 +209,7 @@ void stabilityWindow::buildVisu()
     robotVisuSep->removeAllChildren();
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-    visualization = robot->getVisualization<CoinVisualization>(colModel);
+    visualization = std::dynamic_pointer_cast<CoinVisualization>(robot->getVisualization(colModel));
     SoNode* visualisationNode = NULL;
 
     if (visualization)
@@ -280,9 +288,9 @@ void stabilityWindow::updateCoM()
     Eigen::Matrix4f globalPoseCoM;
     globalPoseCoM.setIdentity();
 
-    if (currentRobotNodeSet)
+    if (currentLinkSet)
     {
-        globalPoseCoM.block(0, 3, 3, 1) = currentRobotNodeSet->getCoM();
+        globalPoseCoM.block(0, 3, 3, 1) = currentLinkSet->getCoM();
     }
     else if (robot)
     {
@@ -302,7 +310,7 @@ void stabilityWindow::updateCoM()
     }
 
     // Draw CoM projection
-    if (currentRobotNodeSet && comProjectionVisu && comProjectionVisu->getNumChildren() > 0)
+    if (currentLinkSet && comProjectionVisu && comProjectionVisu->getNumChildren() > 0)
     {
         globalPoseCoM(2, 3) = 0;
         m = dynamic_cast<SoMatrixTransform*>(comProjectionVisu->getChild(0));
@@ -362,69 +370,137 @@ void stabilityWindow::updateSupportVisu()
     }
 }
 
+void stabilityWindow::selectJointSet(const string &jointset)
+{
+    int p = 1;
+    for (auto &r : jointSets)
+    {
+        if (r->getName() == jointset)
+        {
+            UI.comboBoxJointSet->setCurrentIndex(p);
+            selectJointSet(p);
+            return;
+        }
+        p++;
+    }
+    VR_WARNING << "Could not find joint set with name " << jointset << endl;
+}
+
+void stabilityWindow::selectLinkSet(const string &linkset)
+{
+    int p = 1;
+    for (auto &r : linkSets)
+    {
+        if (r->getName() == linkset)
+        {
+            UI.comboBoxLinkSet->setCurrentIndex(p);
+            selectLinkSet(p);
+            return;
+        }
+        p++;
+    }
+    VR_WARNING << "Could not find link set with name " << linkset << endl;
+}
+
 void stabilityWindow::updateRNSBox()
 {
-    UI.comboBoxRNS->clear();
-    UI.comboBoxRNS->addItem(QString("<All>"));
+    UI.comboBoxJointSet->clear();
+    UI.comboBoxLinkSet->clear();
+    UI.comboBoxLinkSet->addItem(QString("<All>"));
+    UI.comboBoxJointSet->addItem(QString("<All>"));
 
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
-    robotNodeSets.clear();
+    std::vector < VirtualRobot::JointSetPtr > allJointSets = robot->getJointSets();
+    std::vector < VirtualRobot::LinkSetPtr > allLinkSets = robot->getLinkSets();
+    jointSets.clear();
+    linkSets.clear();
 
-    for (size_t i = 0; i < allRNS.size(); i++)
+    for (size_t i = 0; i < allJointSets.size(); i++)
     {
-        //if (allRNS[i]->isKinematicChain())
-        //{
-        //VR_INFO << " RNS <" << allRNS[i]->getName() << "> is a valid kinematic chain" << endl;
-        robotNodeSets.push_back(allRNS[i]);
-        UI.comboBoxRNS->addItem(QString(allRNS[i]->getName().c_str()));
-        /*} else
-        {
-            VR_INFO << " RNS <" << allRNS[i]->getName() << "> is not a valid kinematic chain" << endl;
-        }*/
+        jointSets.push_back(allJointSets[i]);
+        UI.comboBoxJointSet->addItem(QString(allJointSets[i]->getName().c_str()));
+    }
+    for (size_t i = 0; i < allLinkSets.size(); i++)
+    {
+        linkSets.push_back(allLinkSets[i]);
+        UI.comboBoxLinkSet->addItem(QString(allLinkSets[i]->getName().c_str()));
     }
 
 
-    for (unsigned int i = 0; i < allRobotNodes.size(); i++)
+    /*for (unsigned int i = 0; i < allRobotNodes.size(); i++)
     {
         allRobotNodes[i]->showBoundingBox(false);
-    }
+    }*/
 
 
     updateJointBox();
 }
 
-void stabilityWindow::selectRNS(int nr)
+void stabilityWindow::selectJointSet(int nr)
 {
-    currentRobotNodeSet.reset();
-    cout << "Selecting RNS nr " << nr << endl;
+    currentJointSet.reset();
+    cout << "Selecting joint set nr " << nr << endl;
 
     if (nr <= 0)
     {
         // all joints
-        currentRobotNodes = allRobotNodes;
+        currentJoints = allJoints;
     }
     else
     {
         nr--;
 
-        if (nr >= (int)robotNodeSets.size())
+        if (nr >= (int)jointSets.size())
         {
             return;
         }
 
-        currentRobotNodeSet = robotNodeSets[nr];
-        currentRobotNodes = currentRobotNodeSet->getAllRobotNodes();
-
+        currentJointSet = jointSets[nr];
+        currentJoints = currentJointSet->getJoints();
+/*
         // Set CoM target to current CoM position
         Eigen::Vector3f com = currentRobotNodeSet->getCoM();
         UI.sliderX->setValue(com(0));
-        UI.sliderY->setValue(com(1));
+        UI.sliderY->setValue(com(1));*/
     }
 
     updateJointBox();
     selectJoint(0);
     updateCoM();
 }
+
+void stabilityWindow::selectLinkSet(int nr)
+{
+    currentLinkSet.reset();
+    cout << "Selecting link set nr " << nr << endl;
+
+    if (nr <= 0)
+    {
+        // all joints
+        currentLinks = allLinks;
+    }
+    else
+    {
+        nr--;
+
+        if (nr >= (int)linkSets.size())
+        {
+            return;
+        }
+
+        currentLinkSet = linkSets[nr];
+        currentLinks = currentLinkSet->getLinks();
+
+        // Set CoM target to current CoM position
+        Eigen::Vector3f com = currentLinkSet->getCoM();
+        UI.sliderX->setValue(com(0));
+        UI.sliderY->setValue(com(1));
+    }
+
+    //updateLinkBox();
+    //selectLink(0);
+    updateCoM();
+}
+
 
 int stabilityWindow::main()
 {
@@ -446,9 +522,9 @@ void stabilityWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (unsigned int i = 0; i < currentJoints.size(); i++)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentJoints[i]->getName().c_str()));
     }
 
     selectJoint(0);
@@ -458,13 +534,13 @@ void stabilityWindow::jointValueChanged(int pos)
 {
     int nr = UI.comboBoxJoint->currentIndex();
 
-    if (nr < 0 || nr >= (int)currentRobotNodes.size())
+    if (nr < 0 || nr >= (int)currentJoints.size())
     {
         return;
     }
 
-    float fPos = currentRobotNodes[nr]->getJointLimitLo() + (float)pos / 1000.0f * (currentRobotNodes[nr]->getJointLimitHi() - currentRobotNodes[nr]->getJointLimitLo());
-    robot->setJointValue(currentRobotNodes[nr], fPos);
+    float fPos = currentJoints[nr]->getJointLimitLow() + (float)pos / 1000.0f * (currentJoints[nr]->getJointLimitHigh() - currentJoints[nr]->getJointLimitLow());
+    currentJoints[nr]->setJointValue(fPos);
     UI.lcdNumberJointValue->display((double)fPos);
 
     updateCoM();
@@ -476,39 +552,39 @@ void stabilityWindow::jointValueChanged(int pos)
         supportVisu->addChild(CoinVisualizationFactory::CreateBBoxVisualization(bbox));
     }*/
     // show bbox
-    if (currentRobotNodeSet)
+    /*if (currentRobotNodeSet)
     {
         for (unsigned int i = 0; i < currentRobotNodeSet->getSize(); i++)
         {
             currentRobotNodeSet->getNode(i)->showBoundingBox(true, true);
         }
-    }
+    }*/
 }
 
 
 
 void stabilityWindow::selectJoint(int nr)
 {
-    currentRobotNode.reset();
+    currentJoint.reset();
     cout << "Selecting Joint nr " << nr << endl;
 
-    if (nr < 0 || nr >= (int)currentRobotNodes.size())
+    if (nr < 0 || nr >= (int)currentJoints.size())
     {
         return;
     }
 
-    currentRobotNode = currentRobotNodes[nr];
-    currentRobotNode->print();
-    float mi = currentRobotNode->getJointLimitLo();
-    float ma = currentRobotNode->getJointLimitHi();
+    currentJoint = currentJoints[nr];
+    currentJoint->print();
+    float mi = currentJoint->getJointLimitLow();
+    float ma = currentJoint->getJointLimitHigh();
     QString qMin = QString::number(mi);
     QString qMax = QString::number(ma);
     UI.labelMinPos->setText(qMin);
     UI.labelMaxPos->setText(qMax);
-    float j = currentRobotNode->getJointValue();
+    float j = currentJoint->getJointValue();
     UI.lcdNumberJointValue->display((double)j);
 
-    if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint()))
+    if (fabs(ma - mi) > 0 && (currentJoint->isTranslationalJoint() || currentJoint->isRotationalJoint()))
     {
         UI.horizontalSliderPos->setEnabled(true);
         int pos = (int)((j - mi) / (ma - mi) * 1000.0f);
@@ -535,7 +611,7 @@ void stabilityWindow::loadRobot()
 
     try
     {
-        robot = RobotIO::loadRobot(robotFile);
+        robot = VirtualRobot::ModelIO::loadModel(robotFile);
     }
     catch (VirtualRobotException& e)
     {
@@ -551,11 +627,14 @@ void stabilityWindow::loadRobot()
     }
 
     // get nodes
-    robot->getModelNodes(allRobotNodes);
-    updateRNSBox();
-    selectRNS(0);
+    allJoints = robot->getJoints();
+    allLinks = robot->getLinks();
 
-    if (allRobotNodes.size() == 0)
+    updateRNSBox();
+    selectLinkSet(0);
+    selectJointSet(0);
+
+    if (allJoints.size() == 0)
     {
         selectJoint(-1);
     }
@@ -572,14 +651,14 @@ void stabilityWindow::loadRobot()
 
 void stabilityWindow::performCoMIK()
 {
-    if (!currentRobotNodeSet)
+    if (!currentJointSet || !currentLinkSet)
     {
         return;
     }
 
-#ifdef USE_NLOPT
-    ConstrainedOptimizationIKPtr ik(new ConstrainedOptimizationIK(robot, currentRobotNodeSet, 0.01));
-    CoMConstraintPtr comConstraint(new CoMConstraint(robot, currentRobotNodeSet, currentRobotNodeSet, m_CoMTarget, 5.0f));
+/*#ifdef USE_NLOPT
+    ConstrainedOptimizationIKPtr ik(new ConstrainedOptimizationIK(robot, currentJointSet, 0.01));
+    CoMConstraintPtr comConstraint(new CoMConstraint(robot, currentJointSet, currentLinkSet, m_CoMTarget, 5.0f));
     ik->addConstraint(comConstraint);
     ik->initialize();
 
@@ -588,22 +667,22 @@ void stabilityWindow::performCoMIK()
         std::cout << "IK solver did not succeed" << std::endl;
     }
 
-#else
-    CoMIK comIK(currentRobotNodeSet, currentRobotNodeSet);
+#else*/
+    CoMIK comIK(currentJointSet, currentLinkSet);
     comIK.setGoal(m_CoMTarget);
 
     if (!comIK.solveIK(0.3f, 0, 20))
     {
         std::cout << "IK solver did not succeed" << std::endl;
     }
-#endif
+//#endif
 
     updateCoM();
 }
 
 void stabilityWindow::comTargetMovedX(int value)
 {
-    if (!currentRobotNodeSet)
+    if (!currentJointSet)
     {
         return;
     }

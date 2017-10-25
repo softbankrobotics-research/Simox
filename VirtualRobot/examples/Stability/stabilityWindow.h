@@ -3,13 +3,13 @@
 #define __stabilityScene_WINDOW_H_
 
 #include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
+
 #include <string.h>
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -28,7 +28,7 @@ class stabilityWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    stabilityWindow(std::string& sRobotFile);
+    stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset);
     ~stabilityWindow();
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
@@ -44,7 +44,8 @@ public slots:
     void collisionModel();
     void selectJoint(int nr);
     void jointValueChanged(int pos);
-    void selectRNS(int nr);
+    void selectJointSet(int nr);
+    void selectLinkSet(int nr);
     void showCoM();
     void showSupportPolygon();
     void performCoMIK();
@@ -64,6 +65,9 @@ protected:
     void updateCoM();
     void updateSupportVisu();
 
+    void selectJointSet(const std::string &jointset);
+    void selectLinkSet(const std::string &linkset);
+
     Ui::MainWindowStability UI;
     SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
@@ -79,12 +83,16 @@ protected:
     VirtualRobot::RobotPtr robot;
     std::string robotFile;
 
-    VirtualRobot::RobotNodeSetPtr currentRobotNodeSet;
-    std::vector < VirtualRobot::RobotNodePtr > allRobotNodes;
-    std::vector < VirtualRobot::RobotNodePtr > currentRobotNodes;
-    std::vector < VirtualRobot::RobotNodeSetPtr > robotNodeSets;
+    VirtualRobot::LinkSetPtr currentLinkSet;
+    VirtualRobot::JointSetPtr currentJointSet;
+    std::vector < VirtualRobot::ModelJointPtr > allJoints;
+    std::vector < VirtualRobot::ModelJointPtr > currentJoints;
+    std::vector < VirtualRobot::ModelLinkPtr > allLinks;
+    std::vector < VirtualRobot::ModelLinkPtr > currentLinks;
+    std::vector < VirtualRobot::LinkSetPtr > linkSets;
+    std::vector < VirtualRobot::JointSetPtr > jointSets;
 
-    VirtualRobot::RobotNodePtr currentRobotNode;
+    VirtualRobot::ModelJointPtr currentJoint;
 
 
     bool useColModel;

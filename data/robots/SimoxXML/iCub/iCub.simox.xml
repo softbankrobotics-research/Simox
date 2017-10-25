@@ -193,14 +193,14 @@
         </JointSet>
 	
 		
-	<RobotNodeSet name="Hip Left Arm Masses" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
-		<Node name="Torso1"/>
+        <LinkSet name="Hip Left Arm Masses" kinematicRoot="iCubRoot" tcp="Left Arm TCP">
+                <!--Node name="Torso1"/>
 		<Node name="Torso2"/>
-		<Node name="Torso3"/>
+                <Node name="Torso3"/!-->
 		<Node name="CenterArms"/>
 		<Node name="Left Arm Shoulder3-link"/>
 		<Node name="Left Arm Elbow2-link"/>
-	</RobotNodeSet>
+        </LinkSet>
 		
         <JointSet name="Hip Right Arm" kinematicRoot="iCubRoot" tcp="Right Arm TCP">
 		<Node name="Torso1"/>

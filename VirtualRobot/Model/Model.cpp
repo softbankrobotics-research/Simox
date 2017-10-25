@@ -838,7 +838,8 @@ namespace VirtualRobot
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
-                result.push_back(link->getCollisionModel());
+                if (link && link->getCollisionModel())
+                    result.push_back(link->getCollisionModel());
             }
         }
 
