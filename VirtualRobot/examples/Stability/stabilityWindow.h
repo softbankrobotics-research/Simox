@@ -10,17 +10,14 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
 
-#include <string.h>
+#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/ViewerFactory.h"
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
 #include <vector>
+#include <string.h>
 
 #include "ui_stabilityScene.h"
 
@@ -31,7 +28,6 @@ public:
     stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset);
     ~stabilityWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
 
 public slots:
@@ -58,7 +54,6 @@ protected:
     void buildVisu();
 
     void setupUI();
-    QString formatString(const char* s, float f);
 
     void updateJointBox();
     void updateRNSBox();
@@ -69,18 +64,11 @@ protected:
     void selectLinkSet(const std::string &linkset);
 
     Ui::MainWindowStability UI;
-    SoQtExaminerViewer* m_pExViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer;
 
-    Eigen::Vector2f m_CoMTarget;
+    Eigen::Vector2f comTarget;
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotVisuSep;
-    SoSeparator* comVisu;
-    SoSeparator* comProjectionVisu;
-    SoSeparator* comTargetVisu;
-    SoSeparator* supportVisu;
-
-    VirtualRobot::RobotPtr robot;
+    VirtualRobot::ModelPtr robot;
     std::string robotFile;
 
     VirtualRobot::LinkSetPtr currentLinkSet;
@@ -94,11 +82,7 @@ protected:
 
     VirtualRobot::ModelJointPtr currentJoint;
 
-
     bool useColModel;
-
-
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 };
 
-#endif // __stabilityScene_WINDOW_H_
+#endif

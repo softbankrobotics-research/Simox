@@ -12,10 +12,10 @@
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
 
-#ifdef USE_NLOPT
-#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
-#include "VirtualRobot/IK/constraints/CoMConstraint.h"
-#endif
+//#ifdef USE_NLOPT
+//#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
+//#include "VirtualRobot/IK/constraints/CoMConstraint.h"
+//#endif
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -25,13 +25,11 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoMatrixTransform.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoSphere.h>
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::CoinViewerFactory f;
+#endif
 
 #include <sstream>
 using namespace std;
@@ -46,58 +44,36 @@ stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string
 
     this->robotFile = robotFile;
     useColModel = false;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    robotVisuSep = new SoSeparator;
-    sceneSep->addChild(robotVisuSep);
 
-    comVisu = new SoSeparator;
-    sceneSep->addChild(comVisu);
-    comProjectionVisu = new SoSeparator;
-    sceneSep->addChild(comProjectionVisu);
-    comTargetVisu = new SoSeparator;
-    sceneSep->addChild(comTargetVisu);
-    supportVisu = new SoSeparator;
-    sceneSep->addChild(supportVisu);
-
-    MathTools::Plane p =  MathTools::getFloorPlane();
-    sceneSep->addChild(CoinVisualizationFactory::CreatePlaneVisualization(p.p, p.n, 10000.0f, 0.0f));
-
-    m_CoMTarget = Eigen::Vector2f::Zero();
+    comTarget = Eigen::Vector2f::Zero();
 
     setupUI();
+
+    MathTools::Plane p =  MathTools::getFloorPlane();
+    VisualizationNodePtr pv = VisualizationFactory::getGlobalVisualizationFactory()->createPlane(p.p, p.n, 10000.0f, 0.0f);
+    viewer->addVisualization("floor", "floor", pv);
 
     loadRobot();
 
     selectJointSet(jointset);
     selectLinkSet(linkset);
 
-    m_pExViewer->viewAll();
+    viewer->viewAll();
 }
 
 
 stabilityWindow::~stabilityWindow()
 {
-    sceneSep->unref();
 }
 
 
 void stabilityWindow::setupUI()
 {
     UI.setupUi(this);
-    m_pExViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    m_pExViewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    m_pExViewer->setAccumulationBuffer(true);
-
-    m_pExViewer->setAntialiasing(true, 4);
-
-    m_pExViewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    m_pExViewer->setTransparencyType(SoGLRenderAction::BLEND);
-    m_pExViewer->setFeedbackVisibility(true);
-    m_pExViewer->setSceneGraph(sceneSep);
-    m_pExViewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -115,37 +91,6 @@ void stabilityWindow::setupUI()
     connect(UI.sliderX, SIGNAL(valueChanged(int)), this, SLOT(comTargetMovedX(int)));
     connect(UI.sliderY, SIGNAL(valueChanged(int)), this, SLOT(comTargetMovedY(int)));
 }
-
-QString stabilityWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
-}
-
 
 void stabilityWindow::resetSceneryAll()
 {
@@ -192,6 +137,7 @@ void stabilityWindow::showCoM()
 
     buildVisu();
 }
+
 void stabilityWindow::closeEvent(QCloseEvent* event)
 {
     quit();
@@ -206,85 +152,22 @@ void stabilityWindow::buildVisu()
         return;
     }
 
-    robotVisuSep->removeAllChildren();
+    viewer->clearLayer("robot");
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-    visualization = std::dynamic_pointer_cast<CoinVisualization>(robot->getVisualization(colModel));
-    SoNode* visualisationNode = NULL;
 
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
+    VisualizationPtr visu = robot->getVisualization(colModel);
+    viewer->addVisualization("robot", robot->getName(), visu);
 
-    if (visualisationNode)
-    {
-        robotVisuSep->addChild(visualisationNode);
-    }
-
-    comVisu->removeAllChildren();
-    comProjectionVisu->removeAllChildren();
-
-    if (UI.checkBoxCoM->isChecked())
-    {
-        SoMatrixTransform* m = new SoMatrixTransform();
-        comVisu->addChild(m);
-        SoMaterial* material = new SoMaterial;
-        material->diffuseColor.setValue(1.0f, 0.2f, 0.2f);
-        comVisu->addChild(material);
-        SoSphere* s = new SoSphere;
-        s->radius.setValue(0.0300f);
-        SoCube* c = new SoCube;
-        c->width.setValue(0.050f);
-        c->height.setValue(0.050f);
-        c->depth.setValue(0.050f);
-        comVisu->addChild(c);
-        comVisu->addChild(s);
-
-        m = new SoMatrixTransform();
-        comProjectionVisu->addChild(m);
-        material = new SoMaterial;
-        material->diffuseColor.setValue(0.2f, 0.2f, 1.0f);
-        comProjectionVisu->addChild(material);
-        s = new SoSphere;
-        s->radius.setValue(0.030f);
-        c = new SoCube;
-        c->width.setValue(0.050f);
-        c->height.setValue(0.050f);
-        c->depth.setValue(0.050f);
-        comProjectionVisu->addChild(c);
-        comProjectionVisu->addChild(s);
-
-        m = new SoMatrixTransform();
-        comTargetVisu->addChild(m);
-        material = new SoMaterial;
-        material->diffuseColor.setValue(0.2f, 0.2f, 0.2f);
-        comTargetVisu->addChild(material);
-        s = new SoSphere;
-        s->radius.setValue(0.0300f);
-        c = new SoCube;
-        c->width.setValue(0.050f);
-        c->height.setValue(0.050f);
-        c->depth.setValue(0.050f);
-        comTargetVisu->addChild(c);
-        comTargetVisu->addChild(s);
-        updateCoM();
-    }
-
+    updateCoM();
     updateSupportVisu();
-
-    m_pExViewer->scheduleRedraw();
 
 }
 
 void stabilityWindow::updateCoM()
 {
-    if (!comVisu || comVisu->getNumChildren() == 0)
-    {
-        return;
-    }
+    viewer->clearLayer("com");
 
-    // Draw CoM
     Eigen::Matrix4f globalPoseCoM;
     globalPoseCoM.setIdentity();
 
@@ -297,50 +180,46 @@ void stabilityWindow::updateCoM()
         globalPoseCoM.block(0, 3, 3, 1) = robot->getCoMGlobal();
     }
 
-    SoMatrixTransform* m = dynamic_cast<SoMatrixTransform*>(comVisu->getChild(0));
+    if (!UI.checkBoxCoM->isChecked())
+        return;
 
-    if (m)
-    {
-        SbMatrix ma(reinterpret_cast<SbMat*>(globalPoseCoM.data()));
-        // mm -> m
-        ma[3][0] *= 0.001f;
-        ma[3][1] *= 0.001f;
-        ma[3][2] *= 0.001f;
-        m->matrix.setValue(ma);
-    }
+    // Draw CoM
+    VisualizationNodePtr sphere = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 1.0f, 0.2f, 0.2f);
+    VisualizationNodePtr box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 1.0f, 0.2f, 0.2f);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere, globalPoseCoM);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box, globalPoseCoM);
+    viewer->addVisualization("com", "com-box", box);
+    viewer->addVisualization("com", "com-sphere", sphere);
 
     // Draw CoM projection
-    if (currentLinkSet && comProjectionVisu && comProjectionVisu->getNumChildren() > 0)
-    {
-        globalPoseCoM(2, 3) = 0;
-        m = dynamic_cast<SoMatrixTransform*>(comProjectionVisu->getChild(0));
+    globalPoseCoM(2, 3) = 0;
+    VisualizationNodePtr sphere2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0.2f, 0.2f, 1.0f);
+    VisualizationNodePtr box2 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 0.2f, 0.2f, 1.0f);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere2, globalPoseCoM);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box2, globalPoseCoM);
+    viewer->addVisualization("com", "projected-com-box", box2);
+    viewer->addVisualization("com", "projected-com-sphere", sphere2);
 
-        if (m)
-        {
-            SbMatrix ma(reinterpret_cast<SbMat*>(globalPoseCoM.data()));
-            // mm -> m
-            ma[3][0] *= 0.001f;
-            ma[3][1] *= 0.001f;
-            ma[3][2] *= 0.001f;
-            m->matrix.setValue(ma);
-        }
-    }
+    // target com
+    Eigen::Matrix4f targCom;
+    targCom.setIdentity();
+    targCom.block(0,3,2,1) = comTarget;
+    VisualizationNodePtr sphere3 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0.2f, 1.0f, 0.2f);
+    VisualizationNodePtr box3 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 0.2f, 1.0f, 0.2f);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere3, targCom);
+    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box3, targCom);
+    viewer->addVisualization("com", "target-com-box", box3);
+    viewer->addVisualization("com", "target-com-sphere", sphere3);
 }
 
 
 void stabilityWindow::updateSupportVisu()
 {
-    supportVisu->removeAllChildren();
+    viewer->clearLayer("support");
 
     if (UI.checkBoxSupportPolygon->isChecked())
     {
-        /*SoMaterial *material = new SoMaterial;
-        material->diffuseColor.setValue(1.0f,0.2f,0.2f);
-        supportVisu->addChild(material);*/
-
         MathTools::Plane p =  MathTools::getFloorPlane();
-
-        //supportVisu->addChild(CoinVisualizationFactory::CreatePlaneVisualization(p.p,p.n,100000.0f,0.5f));
 
         std::vector< CollisionModelPtr > colModels =  robot->getCollisionModels();
         CollisionCheckerPtr colChecker = CollisionChecker::getGlobalCollisionChecker();
@@ -365,8 +244,8 @@ void stabilityWindow::updateSupportVisu()
         }
 
         MathTools::ConvexHull2DPtr cv = MathTools::createConvexHull2D(points2D);
-        SoSeparator* visu = CoinVisualizationFactory::CreateConvexHull2DVisualization(cv, p, VisualizationFactory::Color::Blue(), VisualizationFactory::Color::Black(), 6.0f, Eigen::Vector3f(0, 0, 2.0f));
-        supportVisu->addChild(visu);
+        VisualizationNodePtr sv = VisualizationFactory::getGlobalVisualizationFactory()->createConvexHull2DVisualization(cv, p, VisualizationFactory::Color::Blue(), VisualizationFactory::Color::Black(), 6.0f, Eigen::Vector3f(0, 0, 2.0f));
+        viewer->addVisualization("support", "support-plane", sv);
     }
 }
 
@@ -456,11 +335,14 @@ void stabilityWindow::selectJointSet(int nr)
 
         currentJointSet = jointSets[nr];
         currentJoints = currentJointSet->getJoints();
-/*
+
         // Set CoM target to current CoM position
-        Eigen::Vector3f com = currentRobotNodeSet->getCoM();
-        UI.sliderX->setValue(com(0));
-        UI.sliderY->setValue(com(1));*/
+        if (currentLinkSet)
+        {
+            Eigen::Vector3f com = currentLinkSet->getCoM();
+            UI.sliderX->setValue(com(0));
+            UI.sliderY->setValue(com(1));
+        }
     }
 
     updateJointBox();
@@ -504,8 +386,7 @@ void stabilityWindow::selectLinkSet(int nr)
 
 int stabilityWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -513,8 +394,8 @@ int stabilityWindow::main()
 void stabilityWindow::quit()
 {
     std::cout << "stabilityWindow: Closing" << std::endl;
+    viewer->stop();
     this->close();
-    SoQt::exitMainLoop();
 }
 
 
@@ -606,7 +487,7 @@ void stabilityWindow::selectRobot()
 
 void stabilityWindow::loadRobot()
 {
-    robotVisuSep->removeAllChildren();
+    viewer->clearLayer("robot");
     cout << "Loading Scene from " << robotFile << endl;
 
     try
@@ -646,7 +527,7 @@ void stabilityWindow::loadRobot()
 
     // build visualization
     buildVisu();
-    m_pExViewer->viewAll();
+    viewer->viewAll();
 }
 
 void stabilityWindow::performCoMIK()
@@ -669,7 +550,7 @@ void stabilityWindow::performCoMIK()
 
 #else*/
     CoMIK comIK(currentJointSet, currentLinkSet);
-    comIK.setGoal(m_CoMTarget);
+    comIK.setGoal(comTarget);
 
     if (!comIK.solveIK(0.3f, 0, 20))
     {
@@ -682,57 +563,14 @@ void stabilityWindow::performCoMIK()
 
 void stabilityWindow::comTargetMovedX(int value)
 {
-    if (!currentJointSet)
-    {
-        return;
-    }
-
-    Eigen::Matrix4f T;
-    T.setIdentity();
-
-    m_CoMTarget(0) = value;
-    T.block(0, 3, 2, 1) = m_CoMTarget;
-
-    if (comTargetVisu && comTargetVisu->getNumChildren() > 0)
-    {
-        SoMatrixTransform* m = dynamic_cast<SoMatrixTransform*>(comTargetVisu->getChild(0));
-
-        if (m)
-        {
-            SbMatrix ma(reinterpret_cast<SbMat*>(T.data()));
-            // mm -> m
-            ma[3][0] *= 0.001f;
-            ma[3][1] *= 0.001f;
-            ma[3][2] *= 0.001f;
-            m->matrix.setValue(ma);
-        }
-    }
-
+    comTarget(0) = value;
+    updateCoM();
     performCoMIK();
 }
 
 void stabilityWindow::comTargetMovedY(int value)
 {
-    Eigen::Matrix4f T;
-    T.setIdentity();
-
-    m_CoMTarget(1) = value;
-    T.block(0, 3, 2, 1) = m_CoMTarget;
-
-    if (comTargetVisu && comTargetVisu->getNumChildren() > 0)
-    {
-        SoMatrixTransform* m = dynamic_cast<SoMatrixTransform*>(comTargetVisu->getChild(0));
-
-        if (m)
-        {
-            SbMatrix ma(reinterpret_cast<SbMat*>(T.data()));
-            // mm -> m
-            ma[3][0] *= 0.001f;
-            ma[3][1] *= 0.001f;
-            ma[3][2] *= 0.001f;
-            m->matrix.setValue(ma);
-        }
-    }
-
+    comTarget(1) = value;
+    updateCoM();
     performCoMIK();
 }

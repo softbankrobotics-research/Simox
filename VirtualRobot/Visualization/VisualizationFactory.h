@@ -206,6 +206,12 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+
+        virtual VisualizationNodePtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 5.0f, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero())
+        {
+            return VisualizationNodePtr();
+        }
+
         virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
         {
             return VisualizationNodePtr();
