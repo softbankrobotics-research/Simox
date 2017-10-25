@@ -431,6 +431,10 @@ namespace SimDynamics
         i.joint = jointbt;
         i.jointValueOffset = vr2bulletOffset;
 
+        // activate joint feedback for translational joints (avoids jumping positions?)
+        if (joint && joint->isTranslationalJoint() && !ignoreTranslationalJoints)
+            enableForceTorqueFeedback(i);
+
         // disable col model
         i.disabledCollisionPairs.push_back(
             std::pair<DynamicsObjectPtr, DynamicsObjectPtr>(
@@ -602,16 +606,16 @@ namespace SimDynamics
                 btScalar posActual = btScalar(getJointAngle(it->first));
                 controller.setName(it->first->getName());
 
+                double targetVelocity;
+                float deltaPos = it->second.node->getDelta(posTarget);
                 if (it->second.node->isTranslationalJoint())
                 {
                     posTarget *= 0.001;
                     posActual *= 0.001;
                     velActual *= 0.001;
                     velocityTarget *= 0.001;
+                    deltaPos *= 0.001;
                 }
-
-                double targetVelocity;
-                float deltaPos = it->second.node->getDelta(posTarget);
                 if (!actuation.modes.position)
                 {
                     // we always use position or position-velocity mode
@@ -659,6 +663,7 @@ namespace SimDynamics
                     slider->setMaxLinMotorForce(maxImpulse * 1000); // Magic number!!!
                     slider->setTargetLinMotorVelocity(btScalar(targetVelocity));
                     slider->setPoweredLinMotor(true);
+                    //cout << "targetVelocity:" << targetVelocity << "\t posTarget: " << posTarget << "\t posActual:" << posActual << "\t velActual: " << velActual << "\t deltaPos: " << deltaPos << endl;
                 }
             }
         }

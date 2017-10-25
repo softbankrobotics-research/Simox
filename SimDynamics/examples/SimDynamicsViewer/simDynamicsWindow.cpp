@@ -4,8 +4,10 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
+#include <VirtualRobot/Model/Nodes/ModelJointPrismatic.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
+#include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <SimDynamics/DynamicsEngine/BulletEngine/BulletEngine.h>
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <QFileDialog>
@@ -331,21 +333,29 @@ void SimDynamicsWindow::updateJoints()
 bool SimDynamicsWindow::loadRobot(std::string robotFilename)
 {
     cout << "Loading Robot from " << robotFilename << endl;
+    robot.reset();
 
     try
     {
         robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
-    catch (VirtualRobotException& e)
+    catch (VirtualRobotException& /*e*/)
     {
-        cout << " ERROR while creating robot" << endl;
-        cout << e.what();
-        return false;
+    }
+    if (!robot)
+    {
+        try
+        {
+            robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename);
+        }
+        catch (VirtualRobotException& /*e*/)
+        {
+        }
     }
 
     if (!robot)
     {
-        cout << " ERROR while creating robot" << endl;
+        VR_ERROR << "Could not load robot from file " << robotFilename << endl;
         return false;
     }
 
@@ -784,6 +794,8 @@ void SimDynamicsWindow::jointValueChanged(int n)
     if (j >= 0 && j < (int)robotNodes.size())
     {
         rn = std::dynamic_pointer_cast<ModelJointRevolute>(robotNodes[j]);
+        if (!rn)
+            rn = std::dynamic_pointer_cast<ModelJointPrismatic>(robotNodes[j]);
     }
 
     if (!rn || !dynamicsRobot)
