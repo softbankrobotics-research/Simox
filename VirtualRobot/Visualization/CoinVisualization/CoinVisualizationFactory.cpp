@@ -2298,6 +2298,13 @@ namespace VirtualRobot
         return node;
     }
 
+    VisualizationNodePtr CoinVisualizationFactory::createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane &p, VisualizationFactory::Color colorInner, VisualizationFactory::Color colorLine, float lineSize, const Eigen::Vector3f &offset)
+    {
+        SoSeparator *s = CoinVisualizationFactory::CreateConvexHull2DVisualization(ch, p, colorInner, colorLine, lineSize, offset);
+        VisualizationNodePtr v(new CoinVisualizationNode(s));
+        return v;
+    }
+
 
     VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX, float scaleY, float scaleZ)
     {

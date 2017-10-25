@@ -19,11 +19,9 @@ int main(int argc, char* argv[])
     VirtualRobot::init(argc, argv, "Simox Grasp Planner");
     cout << " --- START --- " << endl;
     cout << endl << "Hint: You can start this demo for different hands:" << endl;
-    cout << "GraspPlanner --robot robots/iCub/iCub.xml --endeffector \"Left Hand\" --preshape \"Grasp Preshape\"" << endl;
-    cout << "GraspPlanner --robot robots/Shadow_Dexterous_Hand/shadowhand.xml --endeffector \"SHADOWHAND\" --preshape \"Grasp Preshape\"" << endl;
-    cout << "GraspPlanner --robot robots/Schunk_SAH/SAH_RightHand.xml --endeffector \"Right Hand\" --preshape \"Grasp Preshape\"" << endl;
-
-    // --robot robots/iCub/iCub.xml --endeffector "Left Hand" --preshape "Grasp Preshape"
+    cout << "GraspPlanner --robot robots/SimoxXML/iCub/iCub.xml --endeffector \"Left Hand\" --preshape \"Grasp Preshape\"" << endl;
+    //cout << "GraspPlanner --robot robots/Shadow_Dexterous_Hand/shadowhand.xml --endeffector \"SHADOWHAND\" --preshape \"Grasp Preshape\"" << endl;
+    //cout << "GraspPlanner --robot robots/Schunk_SAH/SAH_RightHand.xml --endeffector \"Right Hand\" --preshape \"Grasp Preshape\"" << endl;
 
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");

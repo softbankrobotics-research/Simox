@@ -47,9 +47,9 @@ IF (NOT Simox_CONFIGURED)
         "${PROJECT_BINARY_DIR}")  # to find config headers
     
     ############################# VERSION #################################
-    set(Simox_MAJOR_VERSION 2)
-    set(Simox_MINOR_VERSION 3)
-    set(Simox_PATCH_VERSION 56)
+    set(Simox_MAJOR_VERSION 3)
+    set(Simox_MINOR_VERSION 0)
+    set(Simox_PATCH_VERSION 0)
     set(Simox_VERSION
     ${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION})
 

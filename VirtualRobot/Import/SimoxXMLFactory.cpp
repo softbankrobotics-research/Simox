@@ -366,7 +366,8 @@ namespace VirtualRobot
        if (llAttr != NULL)
        {
            limitless = BaseIO::isTrue(llAttr->value());
-           if (limitless && unit.isAngle() && (unit.toDegree(jointLimitHi) - unit.toDegree(jointLimitLo) != 360))
+           float dist = jointLimitHi/float(M_PI)*180.0f - jointLimitLo/float(M_PI)*180.0f;
+           if (limitless && unit.isAngle() && (fabs(dist-360.0f) > 1e-6))
            {
                VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
                           << "Setting 'lo' to -pi and 'hi' to pi [rad]..." << endl;
