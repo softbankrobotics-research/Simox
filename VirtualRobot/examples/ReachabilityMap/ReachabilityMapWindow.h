@@ -72,8 +72,8 @@ protected:
     void setupEnvironment();
 
     Ui::MainWindowReachability UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
-    SimoxGui::ViewerInterfacePtr viewerI; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SoQtExaminerViewer* examinerViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     std::string robotVisuLayer;
     std::string reachVisuLayer;
@@ -81,14 +81,6 @@ protected:
     std::string allGraspsVisuLayer;
     std::string graspVisuLayer;
     std::string objectVisuLayer;
-
-    SoSeparator* sceneSep;
-    SoSeparator* robotVisuSep;
-    SoSeparator* reachabilityVisuSep;
-    SoSeparator* reachabilityMapVisuSep;
-    SoSeparator* allGraspsVisuSep;
-    SoSeparator* graspVisuSep;
-    SoSeparator* objectVisuSep;
 
     VirtualRobot::RobotPtr robot;
     VirtualRobot::EndEffectorPtr eef;

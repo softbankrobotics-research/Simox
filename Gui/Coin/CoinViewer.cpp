@@ -28,6 +28,7 @@
 
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
+#include <Inventor/misc/SoChildList.h>
 #include <QGLWidget>
 
 using namespace SimoxGui;
@@ -60,11 +61,12 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
     VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
     if (!coinVisu)
     {
-        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << endl;
+        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << std::endl;
         return;
     }
 
     addLayer(layer);
+    removeVisualization(layer, id);
 
     visualizations[id] = coinVisu->getCoinVisualization();
     layers[layer]->addChild(visualizations[id]);
@@ -79,6 +81,8 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
 
 void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)
 {
+    if (visualizations[id] == nullptr) return;
+
     layers[layer]->removeChild(visualizations[id]);
     visualizations.erase(id);
 }
@@ -86,6 +90,11 @@ void CoinViewer::removeVisualization(const std::string &layer, const std::string
 void CoinViewer::clearLayer(const std::string &layer)
 {
     addLayer(layer);
+    // remove all visualizations in the given layer
+    for (const std::string & id : getVisualizationIDs(layer))
+    {
+        removeVisualization(layer, id);
+    }
     layers[layer]->removeAllChildren();
 }
 
@@ -130,5 +139,18 @@ void CoinViewer::addLayer(const std::string &layer)
 
     layers[layer] = new SoSeparator;
     sceneSep->addChild(layers[layer]);
+}
+
+std::vector<std::string> CoinViewer::getVisualizationIDs(const std::string &layer)
+{
+    std::vector<std::string> result;
+    for(const auto & visu : visualizations)
+    {
+        if (layers[layer]->getChildren()->find(visu.second) != -1)
+        {
+            result.push_back(visu.first);
+        }
+    }
+    return result;
 }
 

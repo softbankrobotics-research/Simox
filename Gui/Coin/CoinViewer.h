@@ -56,6 +56,7 @@ class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtEx
 
     protected:
         void addLayer(const std::string &layer);
+        std::vector<std::string> getVisualizationIDs(const std::string &layer);
 
     protected:
         SoSeparator *sceneSep;

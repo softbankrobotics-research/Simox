@@ -7,6 +7,7 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Workspace/Manipulability.h"
 #include "VirtualRobot/Workspace/WorkspaceGrid.h"
+#include "Gui/ViewerFactory.h"
 
 #include <time.h>
 #include <vector>
@@ -28,7 +29,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 // load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
+// TODO this workaround is actually something we should avoid
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include <Gui/Coin/CoinViewerFactory.h>
     SimoxGui::CoinViewerFactory f;
@@ -79,37 +80,22 @@ ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::strin
         selectEEF(eef);
     }
 
-    viewer->viewAll();
+    examinerViewer->viewAll();
 }
 
 
 ReachabilityMapWindow::~ReachabilityMapWindow()
 {
-    robotVisuSep->unref();
-    reachabilityVisuSep->unref();
-    reachabilityMapVisuSep->unref();
-    allGraspsVisuSep->unref();
-    graspVisuSep->unref();
-    objectVisuSep->unref();
-    sceneSep->unref();
 }
 
 
 void ReachabilityMapWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    examinerViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::fromName(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    viewer = factory->createViewer(this);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
     viewer->viewAll();
 
     connect(UI.pushButtonObjectRandom, SIGNAL(clicked()), this, SLOT(setObjectRandom()));
@@ -175,6 +161,7 @@ void ReachabilityMapWindow::updateVisu()
 {
     if (UI.checkBoxRobot->isChecked())
     {
+
         if (robotVisuSep->getNumChildren() == 0)
         {
             buildRobotVisu();
@@ -581,12 +568,12 @@ void ReachabilityMapWindow::selectEEF(std::string& eef)
 
 void ReachabilityMapWindow::loadRobot()
 {
-    robotVisuSep->removeAllChildren();
+    viewer->clearLayer(robotVisuLayer);
     cout << "Loading robot from " << robotFile << endl;
 
     try
     {
-        robot = RobotIO::loadRobot(robotFile);
+        robot = ModelIO::loadModel(robotFile);
     }
     catch (VirtualRobotException& e)
     {
