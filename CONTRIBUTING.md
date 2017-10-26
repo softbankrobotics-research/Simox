@@ -4,7 +4,7 @@
 
 ### Creating a Merge Request
 
-1. clone SimoX as indicated in [README.md](README.md)
+1. clone Simox as indicated in [README.md](README.md)
 2. create a branch in the specific SimoxX package with `git checkout -b <branchname>`
 3. develop your feature and commit the changes to the branch (create multiple smaller commits if possible)
 4. push the changes to a remote branch on GitLab with `git push -u origin <branchname>`
