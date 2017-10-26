@@ -80,7 +80,7 @@ namespace VirtualRobot
             @param xmlFile The file
             @return Returns true on success.
         */
-        static bool saveManipulationObject(ManipulationObjectPtr object, const std::string& xmlFile);
+        static bool saveManipulationObject(const ManipulationObjectPtr &object, const std::string& xmlFile);
 
         /*!
             Creates ManipulationObject from string.
@@ -115,8 +115,6 @@ namespace VirtualRobot
         // instantiation not allowed
         ObjectIO();
         virtual ~ObjectIO();
-
-        static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
     };
 
 }

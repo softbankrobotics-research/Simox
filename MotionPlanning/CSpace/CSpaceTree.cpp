@@ -19,7 +19,7 @@ using namespace std;
 namespace MotionPlanning
 {
 
-    CSpaceTree::CSpaceTree(CSpacePtr cspace)
+    CSpaceTree::CSpaceTree(const CSpacePtr &cspace)
     {
         if (!cspace)
         {
@@ -188,7 +188,7 @@ namespace MotionPlanning
 
 
     // returns true if full path was added
-    bool CSpaceTree::appendPathUntilCollision(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
+    bool CSpaceTree::appendPathUntilCollision(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
     {
         MOTIONPLANNING_ASSERT(hasNode(startNode))
         MOTIONPLANNING_ASSERT(config.rows() == dimension)
@@ -212,7 +212,7 @@ namespace MotionPlanning
         return (dist == 1.0f);
     }
 
-    bool CSpaceTree::appendPath(CSpaceNodePtr startNode, CSpacePathPtr path, int* storeLastAddedID)
+    bool CSpaceTree::appendPath(const CSpaceNodePtr &startNode, const CSpacePathPtr &path, int* storeLastAddedID)
     {
         MOTIONPLANNING_ASSERT(hasNode(startNode))
         MOTIONPLANNING_ASSERT(path)
@@ -236,7 +236,7 @@ namespace MotionPlanning
     // appends path from startNode to config, creates in-between nodes according to cspace if needed
     // no checks (for valid configs)
     // creates a copy of configuration
-    bool CSpaceTree::appendPath(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
+    bool CSpaceTree::appendPath(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID)
     {
         MOTIONPLANNING_ASSERT(hasNode(startNode))
         MOTIONPLANNING_ASSERT(config.rows() == dimension)
@@ -392,7 +392,7 @@ namespace MotionPlanning
     }
 
 
-    bool CSpaceTree::createPath(CSpaceNodePtr startNode, CSpaceNodePtr goalNode, CSpacePathPtr fillPath)
+    bool CSpaceTree::createPath(const CSpaceNodePtr &startNode, const CSpaceNodePtr &goalNode, CSpacePathPtr fillPath)
     {
         // creates a path from goal to startNode
 

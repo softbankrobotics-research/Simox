@@ -17,7 +17,7 @@ namespace VirtualRobot
     }
 
 
-    bool ForceTorqueSensor::isAttachable(ModelNodePtr node)
+    bool ForceTorqueSensor::isAttachable(const ModelNodePtr &node)
     {
         return true;
     }

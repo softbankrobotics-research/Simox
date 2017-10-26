@@ -15,7 +15,7 @@ namespace VirtualRobot
     }
 
 
-    bool Sensor::isAttachable(ModelNodePtr node)
+    bool Sensor::isAttachable(const ModelNodePtr &node)
     {
         return true;
     }

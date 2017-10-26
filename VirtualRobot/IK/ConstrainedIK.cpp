@@ -2,7 +2,7 @@
 
 using namespace VirtualRobot;
 
-ConstrainedIK::ConstrainedIK(RobotPtr& robot, const JointSetPtr& nodeSet, int maxIterations, float stall_epsilon, float raise_epsilon)://, bool reduceRobot) :
+ConstrainedIK::ConstrainedIK(ModelPtr &robot, const JointSetPtr& nodeSet, int maxIterations, float stall_epsilon, float raise_epsilon)://, bool reduceRobot) :
     originalRobot(robot),
     nodeSet(nodeSet),
     maxIterations(maxIterations),

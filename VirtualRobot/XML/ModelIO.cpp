@@ -677,7 +677,6 @@ namespace VirtualRobot
             {
                 std::string colModelName = tagName;
                 colModelName += "_ColModel";
-                // todo: ID?
                 collisionModel.reset(new CollisionModel(visualizationNode, colModelName, CollisionCheckerPtr()));
             }
         }

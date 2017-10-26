@@ -30,7 +30,7 @@ using namespace VirtualRobot;
 
 namespace GraspPlanning
 {
-    VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string& name, VirtualRobot::MathTools::ConvexHull3DPtr hull)
+    VirtualRobot::ManipulationObjectPtr MeshConverter::CreateManipulationObject(const std::string& name, const VirtualRobot::MathTools::ConvexHull3DPtr &hull)
     {
         VirtualRobot::ManipulationObjectPtr res;
 
@@ -62,7 +62,7 @@ namespace GraspPlanning
     }
 
 
-    VirtualRobot::TriMeshModelPtr MeshConverter::CreateTriMeshModel(VirtualRobot::MathTools::ConvexHull3DPtr hull)
+    VirtualRobot::TriMeshModelPtr MeshConverter::CreateTriMeshModel(const MathTools::ConvexHull3DPtr &hull)
     {
         VirtualRobot::TriMeshModelPtr res(new TriMeshModel());
 
@@ -101,7 +101,7 @@ namespace GraspPlanning
         return res;
     }
 
-    int MeshConverter::hasVertex(std::vector< Eigen::Vector3f>& vectList, Eigen::Vector3f& obj)
+    int MeshConverter::hasVertex(const std::vector< Eigen::Vector3f>& vectList, const Eigen::Vector3f& obj)
     {
         for (size_t j = 0; j < vectList.size(); j++)
         {
@@ -114,7 +114,7 @@ namespace GraspPlanning
         return -1;
     }
 
-    VirtualRobot::ObstaclePtr MeshConverter::RefineObjectSurface(VirtualRobot::ObstaclePtr object, float maxDist)
+    VirtualRobot::ObstaclePtr MeshConverter::RefineObjectSurface(const ObstaclePtr &object, float maxDist)
     {
 		VR_ASSERT(object);
 		VirtualRobot::ObstaclePtr res;
@@ -216,7 +216,7 @@ namespace GraspPlanning
         return res;
     }
 
-    void MeshConverter::checkAndSplitVertex(VirtualRobot::TriMeshModelPtr tm, int faceIdx, float maxDist)
+    void MeshConverter::checkAndSplitVertex(const TriMeshModelPtr &tm, int faceIdx, float maxDist)
     {
         VR_ASSERT(tm);
         VR_ASSERT(faceIdx >= 0 && faceIdx < (int)tm->faces.size());
@@ -297,7 +297,7 @@ namespace GraspPlanning
         }
     }
 
-    float MeshConverter::getMaxVertexDistance(VirtualRobot::TriMeshModelPtr tm)
+    float MeshConverter::getMaxVertexDistance(const TriMeshModelPtr &tm)
     {
         if (!tm)
         {

@@ -45,7 +45,7 @@ namespace VirtualRobot
 		/*!
 		* Initialize with an objetc.For now, only objects with exactly one link are supported.
 		*/
-        BasicGraspQualityMeasure(ModelPtr object);
+        BasicGraspQualityMeasure(const ModelPtr &object);
 
         // destructor
         virtual ~BasicGraspQualityMeasure();
@@ -82,7 +82,6 @@ namespace VirtualRobot
         virtual bool isValid();
 
     protected:
-
 
         //Object relevant parameters
         Eigen::Vector3f centerOfModel;

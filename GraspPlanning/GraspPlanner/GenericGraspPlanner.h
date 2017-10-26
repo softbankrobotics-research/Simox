@@ -49,7 +49,7 @@ namespace GraspPlanning
             \param minQuality The quality that must be achieved at minimum by the GraspQualityMesurement module
             \param forceClosure When true, only force closure grasps are generated.
         */
-        GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspPlanning::GraspQualityMeasurePtr graspQuality, GraspPlanning::ApproachMovementGeneratorPtr approach, float minQuality = 0.0f, bool forceClosure = true);
+        GenericGraspPlanner(const VirtualRobot::GraspSetPtr &graspSet, const GraspPlanning::GraspQualityMeasurePtr &graspQuality, const GraspPlanning::ApproachMovementGeneratorPtr &approach, float minQuality = 0.0f, bool forceClosure = true);
 
         // destructor
         virtual ~GenericGraspPlanner();
@@ -78,7 +78,7 @@ namespace GraspPlanning
 
         bool timeout();
 
-        VirtualRobot::GraspPtr planGrasp(std::vector<VirtualRobot::ModelPtr> &obstacles);
+        VirtualRobot::GraspPtr planGrasp(const std::vector<VirtualRobot::ModelPtr> &obstacles);
 
         VirtualRobot::ModelPtr object;
         VirtualRobot::EndEffectorPtr eef;

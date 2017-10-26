@@ -55,7 +55,7 @@ namespace VirtualRobot
             All = 15
         };
 
-        IKSolver(JointSetPtr rns);
+        IKSolver(const JointSetPtr &rns);
 
 		JointSetPtr getJointSet();
 		FramePtr getTcp();

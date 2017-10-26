@@ -77,6 +77,7 @@ void GenericIKWindow::setupUI()
     connect(UI.horizontalSliderB, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(UI.horizontalSliderG, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
 
+    UI.comboBoxIKMethod->setCurrentIndex(1);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCB()));

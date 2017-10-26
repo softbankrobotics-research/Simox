@@ -63,7 +63,7 @@ namespace VirtualRobot
                                     const ModelNodePtr& rootNode);
 
 
-        struct modelNodeDef
+        /*struct modelNodeDef
         {
             std::string name;
             std::vector<std::string> children;
@@ -75,7 +75,7 @@ namespace VirtualRobot
         {
             std::string rootName;
             std::vector<modelNodeDef> parentChildMapping;
-        };
+        };*/
 
         /*!
             Clones the model.
@@ -86,38 +86,6 @@ namespace VirtualRobot
         */
         static ModelPtr clone(const ModelPtr& model, const std::string& name, const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
 
-        /*!
-        Clones the model, but only leave the defined joints active. ALl other joints are accumulated and set to one model which is fixed (may result in faster updates)
-        \param model The model to clone
-        \param rns The model node set of active joints. The joints must be given as an ordered set, i.e. node i must be located before node i+1 in the kinematic structure of the model.
-        \param name The new name
-        */
-        //static ModelPtr cloneSubSet(const ModelPtr& model, const ModelNodeSetPtr& rns, const std::string& name);
-
-        /*!
-            Creates a model clone with reduced structure.
-            \param model The model to clone.
-            \param uniteWithAllChildren List of ModelNodeNames. Each listed model ndoe is united with all of its children to one fixed ModelNode.
-                                        This means that all related coordinate systems and joints will not be present in the clone. The visualizations are united.
-        */
-        //static ModelPtr cloneUniteSubsets(const ModelPtr& model, const std::string& name, const std::vector<std::string>& uniteWithAllChildren);
-
-        /*!
-            Creates a clone with changed structure, so that the given model node is the new root of the resulting kinematic tree.
-        */
-        //static ModelPtr cloneInversed(const ModelPtr& model, const std::string& newRootName, bool cloneRNS = true, bool cloneEEF = true);
-
-        /*!
-            Chenge the structure of the clone according to the given defintion.
-        */
-        //static ModelPtr cloneChangeStructure(const ModelPtr& model, modelStructureDef& newStructure);
-
-        /*! Clone kinematic chain and reverse direction.
-         *
-         * \param startNode Name of the start node of the original kinematic chain.
-         * \param endNode Name of the end node of the original kinematic chain. Will be the new root.
-         */
-        //static ModelPtr cloneChangeStructure(const ModelPtr& model, const std::string& startNode, const std::string& endNode);
 
         /*!
          * \brief attach Attach an object to a model. The object is cloned.
@@ -135,12 +103,7 @@ namespace VirtualRobot
     protected:
 
         // some internal stuff
-        //static ModelNodePtr createUnitedModelNode(const ModelPtr& model, const std::vector< ModelNodePtr >& nodes, const ModelNodePtr& parent, const ModelNodePtr& parentClone, const Eigen::Matrix4f& trafo, const std::vector<SensorPtr> &sensors);
-        //static ModelNodePtr accumulateTransformations(const ModelPtr& model, const ModelNodePtr& nodeA, const ModelNodePtr& nodeAClone, const ModelNodePtr& nodeB, Eigen::Matrix4f& storeTrafo);
         static void getChildNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<ModelNodePtr>& appendNodes);
-        //static void getChildSensorNodes(const ModelNodePtr& nodeA, const ModelNodePtr& nodeExclude, std::vector<SensorPtr>& appendNodes);
-
-        //static void cloneRecursiveUnite(const ModelPtr& model, const ModelNodePtr& currentNode, const ModelNodePtr& currentNodeClone, const std::vector<std::string>& uniteWithAllChildren);
 
         // instantiation not allowed
         ModelFactory();

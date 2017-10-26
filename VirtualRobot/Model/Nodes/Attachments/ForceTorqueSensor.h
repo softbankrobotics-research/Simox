@@ -55,7 +55,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(ModelNodePtr node);
+        virtual bool isAttachable(const ModelNodePtr &node) override;
 
         /*!
          * Get the type of this attachment.

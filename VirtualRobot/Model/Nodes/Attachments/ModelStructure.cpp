@@ -17,7 +17,7 @@ namespace VirtualRobot
 
     }
 
-    bool ModelStructure::isAttachable(ModelNodePtr node)
+    bool ModelStructure::isAttachable(const ModelNodePtr &node)
     {
         return true;
     }

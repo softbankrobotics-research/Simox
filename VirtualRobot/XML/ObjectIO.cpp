@@ -561,7 +561,7 @@ namespace VirtualRobot
         return obj;
     }
 
-    bool ObjectIO::saveManipulationObject(ManipulationObjectPtr object, const std::string& xmlFile)
+    bool ObjectIO::saveManipulationObject(const ManipulationObjectPtr &object, const std::string& xmlFile)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
 

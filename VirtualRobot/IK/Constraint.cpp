@@ -78,7 +78,7 @@ Eigen::MatrixXf Constraint::getJacobianMatrix()
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
-Eigen::MatrixXf Constraint::getJacobianMatrix(FramePtr /*tcp*/)
+Eigen::MatrixXf Constraint::getJacobianMatrix(const FramePtr &/*tcp*/)
 {
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }

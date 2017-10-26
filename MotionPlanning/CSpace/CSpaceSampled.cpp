@@ -18,7 +18,7 @@ using namespace std;
 namespace MotionPlanning
 {
 
-    CSpaceSampled::CSpaceSampled(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
+    CSpaceSampled::CSpaceSampled(const VirtualRobot::RobotPtr &robot, const VirtualRobot::CDManagerPtr &collisionManager, const VirtualRobot::JointSetPtr &robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
         : CSpace(robot, collisionManager, robotNodes, maxConfigs, randomSeed),
           recursionMaxDepth(1000)
     {
@@ -41,7 +41,7 @@ namespace MotionPlanning
     {
     }
 
-    CSpacePtr CSpaceSampled::clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed)
+    CSpacePtr CSpaceSampled::clone(const VirtualRobot::CollisionCheckerPtr &newColChecker, const VirtualRobot::RobotPtr &newRobot, const VirtualRobot::CDManagerPtr &newCDM, unsigned int newRandomSeed)
     {
         cloneCounter++;
         MOTIONPLANNING_ASSERT(newColChecker && newRobot && newCDM && newRobot->getRootNode());

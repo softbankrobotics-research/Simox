@@ -73,8 +73,8 @@ namespace VirtualRobot
         virtual Eigen::VectorXf optimizationGradient(unsigned int id);
 
         // Interface for Jacobian-based solvers (default implementations)
-        virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix() override;
+        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
         virtual bool checkTolerances();
 

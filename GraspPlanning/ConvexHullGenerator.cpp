@@ -25,7 +25,7 @@ namespace GraspPlanning
 {
     std::mutex ConvexHullGenerator::qhull_mutex;
 
-    bool ConvexHullGenerator::ConvertPoints(std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex)
+    bool ConvexHullGenerator::ConvertPoints(const std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex)
     {
         if (lockMutex)
         {
@@ -47,7 +47,7 @@ namespace GraspPlanning
         return true;
     }
 
-    bool ConvexHullGenerator::ConvertPoints(std::vector<ContactPoint>& points, double* storePointsQHull, bool lockMutex)
+    bool ConvexHullGenerator::ConvertPoints(const std::vector<ContactPoint>& points, double* storePointsQHull, bool lockMutex)
     {
         if (lockMutex)
         {
@@ -73,7 +73,7 @@ namespace GraspPlanning
     }
 
 
-    VirtualRobot::MathTools::ConvexHull3DPtr ConvexHullGenerator::CreateConvexHull(VirtualRobot::TriMeshModelPtr pointsInput, bool lockMutex /*= true*/)
+    VirtualRobot::MathTools::ConvexHull3DPtr ConvexHullGenerator::CreateConvexHull(const VirtualRobot::TriMeshModelPtr &pointsInput, bool lockMutex /*= true*/)
     {
         if (lockMutex)
         {
@@ -92,7 +92,7 @@ namespace GraspPlanning
 
 
 
-    VirtualRobot::MathTools::ConvexHull3DPtr ConvexHullGenerator::CreateConvexHull(std::vector<Eigen::Vector3f>& pointsInput, bool lockMutex /*= true*/)
+    VirtualRobot::MathTools::ConvexHull3DPtr ConvexHullGenerator::CreateConvexHull(const std::vector<Eigen::Vector3f>& pointsInput, bool lockMutex /*= true*/)
     {
         if (lockMutex)
         {
@@ -285,7 +285,7 @@ namespace GraspPlanning
         return result;
     }
 
-    VirtualRobot::MathTools::ConvexHull6DPtr ConvexHullGenerator::CreateConvexHull(std::vector<ContactPoint>& pointsInput, bool lockMutex)
+    VirtualRobot::MathTools::ConvexHull6DPtr ConvexHullGenerator::CreateConvexHull(const std::vector<ContactPoint>& pointsInput, bool lockMutex)
     {
         if (lockMutex)
         {
@@ -517,7 +517,7 @@ namespace GraspPlanning
         return result;
     }
 
-    void ConvexHullGenerator::PrintVertices(std::vector<ContactPoint>& pointsInput)
+    void ConvexHullGenerator::PrintVertices(const std::vector<ContactPoint>& pointsInput)
     {
         for (int i = 0; i < (int)pointsInput.size(); i++)
         {
@@ -525,7 +525,7 @@ namespace GraspPlanning
                  << pointsInput[i].n[0] << "," << pointsInput[i].n[1] << "," << pointsInput[i].n[2] << endl;
         }
     }
-    void ConvexHullGenerator::PrintStatistics(VirtualRobot::MathTools::ConvexHull6DPtr convHull)
+    void ConvexHullGenerator::PrintStatistics(const ConvexHull6DPtr &convHull)
     {
         if (!convHull)
         {

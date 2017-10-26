@@ -58,7 +58,7 @@ namespace VirtualRobot
     }
 
 
-    bool SceneIO::processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath)
+    bool SceneIO::processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processSceneRobot");
 
@@ -159,7 +159,7 @@ namespace VirtualRobot
     }
 
 
-    bool SceneIO::processModelSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
+    bool SceneIO::processModelSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processLinkSet");
 
@@ -208,7 +208,7 @@ namespace VirtualRobot
     }
 
 
-    bool SceneIO::processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath)
+    bool SceneIO::processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processSceneManipulationObject");
 
@@ -224,7 +224,7 @@ namespace VirtualRobot
     }
 
 
-    bool SceneIO::processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath)
+    bool SceneIO::processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode, "NULL data in processSceneObstacle");
 
@@ -239,7 +239,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool SceneIO::processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene)
+    bool SceneIO::processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene)
     {
         THROW_VR_EXCEPTION_IF(!sceneXMLNode || !scene, "NULL data in processSceneTrajectory");
 
