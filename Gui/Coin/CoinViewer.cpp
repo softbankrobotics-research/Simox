@@ -65,9 +65,14 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
     }
 
     addLayer(layer);
+    std::string li = getLayerID(layer, id);
 
-    visualizations[id] = coinVisu->getCoinVisualization();
-    layers[layer]->addChild(visualizations[id]);
+    SoNode *n = coinVisu->getCoinVisualization();
+    if (n)
+    {
+        visualizations[li] = n;
+        layers[layer]->addChild(n);
+    }
 }
 
 void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization)
@@ -79,14 +84,36 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
 
 void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)
 {
-    layers[layer]->removeChild(visualizations[id]);
-    visualizations.erase(id);
+    if (!hasLayer(layer))
+        return;
+    if (!hasLayerID(layer, id))
+        return;
+    std::string li = getLayerID(layer, id);
+    SoSeparator *s = layers[layer];
+    s->removeChild(visualizations[li]);
+    visualizations.erase(li);
 }
 
 void CoinViewer::clearLayer(const std::string &layer)
 {
     addLayer(layer);
     layers[layer]->removeAllChildren();
+}
+
+bool CoinViewer::hasLayer(const std::string &layer)
+{
+    if (layers.find(layer) != layers.end())
+        return true;
+    return false;
+}
+
+bool CoinViewer::hasLayerID(const std::string &layer, const std::string &id)
+{
+    std::string li = getLayerID(layer, id);
+
+    if (visualizations.find(li) != visualizations.end())
+        return true;
+    return false;
 }
 
 QImage CoinViewer::getScreenshot()
@@ -130,5 +157,11 @@ void CoinViewer::addLayer(const std::string &layer)
 
     layers[layer] = new SoSeparator;
     sceneSep->addChild(layers[layer]);
+}
+
+std::string CoinViewer::getLayerID(const std::string &layer, const std::string &id)
+{
+    std::string li = layer + "----" + id;
+    return li;
 }
 

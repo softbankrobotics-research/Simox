@@ -156,36 +156,6 @@ void showCamWindow::setupUI()
     connect(UI.checkBoxShowDepthVoxel, SIGNAL(clicked()), this, SLOT(renderCam()));
 }
 
-QString showCamWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
-}
-
 void showCamWindow::resetSceneryAll()
 {
     if (!robot)

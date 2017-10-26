@@ -388,22 +388,22 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION 
         PATTERN "examples" EXCLUDE
     )
 
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
-    COMPONENT ApplicationData
-        FILES_MATCHING 
-        PATTERN "*.xml"
-        PATTERN "*.XML"
-        PATTERN "*.iv"
-        PATTERN "*.vrml"
-        PATTERN "*.wrl"
-        PATTERN "*.stl"
-        PATTERN "*.urdf"
-        PATTERN "*.dae"
-        PATTERN "*.png"
-        PATTERN "*.jpg"
-        PATTERN "*.bin"
-        PATTERN ".svn" EXCLUDE
-        PATTERN ".git" EXCLUDE
-        )
+#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
+#    COMPONENT ApplicationData
+#        FILES_MATCHING
+#        PATTERN "*.xml"
+#        PATTERN "*.XML"
+#        PATTERN "*.iv"
+#        PATTERN "*.vrml"
+#        PATTERN "*.wrl"
+#        PATTERN "*.stl"
+#        PATTERN "*.urdf"
+#        PATTERN "*.dae"
+#        PATTERN "*.png"
+#        PATTERN "*.jpg"
+#        PATTERN "*.bin"
+#        PATTERN ".svn" EXCLUDE
+#        PATTERN ".git" EXCLUDE
+#        )
    
 MESSAGE (STATUS "***** Finished CONFIGURING project simox-virtualrobot *****\n")

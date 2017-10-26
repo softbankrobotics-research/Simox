@@ -1,10 +1,11 @@
 #include "BulletCoinQtViewer.h"
-
+/*
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include "Inventor/actions/SoBoxHighlightRenderAction.h"
 #include <Inventor/nodes/SoSelection.h>
+*/
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
@@ -13,13 +14,14 @@
 
 
 using namespace VirtualRobot;
+using namespace SimoxGui;
 
 namespace SimDynamics
 {
 
 
-    BulletCoinQtViewer::BulletCoinQtViewer(DynamicsWorldPtr world)
-        : warned_norealtime(false), simModeFixedTimeStep(false)
+    BulletCoinQtViewer::BulletCoinQtViewer(QWidget* parent, DynamicsWorldPtr world, int antiAliasingSteps)
+        : CoinViewer(parent), warned_norealtime(false), simModeFixedTimeStep(false)
     {
         bulletTimeStepMsec = 16; // 60FPS
         bulletMaxSubSteps = 1;
@@ -38,8 +40,9 @@ namespace SimDynamics
 
         SIMDYNAMICS_ASSERT(bulletEngine);
 
-        /*sceneGraph = new SoSeparator;*/
-        sceneGraphRoot = new SoSeparator();
+        initSceneGraph(parent, antiAliasingSteps);
+
+        /*sceneGraphRoot = new SoSeparator();
         sceneGraphRoot->ref();
         floor = new SoSeparator();
         sceneGraphRoot->addChild(floor);
@@ -48,7 +51,7 @@ namespace SimDynamics
 
         //SoSelection *selection = new SoSelection();
         //sceneGraph->addChild( selection );
-        viewer = NULL;
+        viewer = NULL;*/
 
         // register callback
         SoSensorManager* sensor_mgr = SoDB::getSensorManager();
@@ -56,18 +59,18 @@ namespace SimDynamics
         setUpdateInterval(updateTimerIntervalMS);
         sensor_mgr->insertTimerSensor(timerSensor);
 
+
+
         // selection cb
-        sceneGraph->addSelectionCallback(selectionCB, this);
-        sceneGraph->addDeselectionCallback(deselectionCB, this);
+        //sceneGraph->addSelectionCallback(selectionCB, this);
+        //sceneGraph->addDeselectionCallback(deselectionCB, this);
     }
 
     BulletCoinQtViewer::~BulletCoinQtViewer()
     {
         stopCB();
-        sceneGraphRoot->unref();
-        sceneGraphRoot = NULL;
     }
-
+/*
     void BulletCoinQtViewer::selectionCB(void* userdata, SoPath* path)
     {
         BulletCoinQtViewer* bulletViewer = static_cast<BulletCoinQtViewer*>(userdata);
@@ -90,7 +93,7 @@ namespace SimDynamics
 
         bulletViewer->scheduleRedraw();
     }
-
+*/
     void BulletCoinQtViewer::timerCB(void* data, SoSensor* sensor)
     {
         BulletCoinQtViewer* bulletViewer = static_cast<BulletCoinQtViewer*>(data);
@@ -106,67 +109,62 @@ namespace SimDynamics
 
     }
 
-    void BulletCoinQtViewer::initSceneGraph(QFrame* embedViewer, SoNode* scene, int antiAliasingSteps /* =0 */)
+/*
+    void BulletCoinQtViewer::initSceneGraph(QFrame* embedViewer, VirtualRobot::VisualizationPtr scene, int antiAliasingSteps)
     {
-        viewer = new SoQtExaminerViewer(embedViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+        CoinVisualizationPtr cs = std::dynamic_pointer_cast<CoinVisualization>(scene);
+        if (!cs)
+            return;
+        initSceneGraph(embedViewer, cs->getCoinVisualization(false), antiAliasingSteps);
+    }
+*/
 
-        // setup
-        viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-        viewer->setAccumulationBuffer(true);
-
-        //viewer->setAntialiasing(true, 4);
-
-        viewer->setGLRenderAction(new SoBoxHighlightRenderAction);
-        viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-        viewer->setFeedbackVisibility(true);
+    void BulletCoinQtViewer::initSceneGraph(QWidget* parent, int antiAliasingSteps)
+    {
+        setAntiAliasing(antiAliasingSteps);
 
         if (bulletEngine->getFloor())
         {
-            // standard box visu:
-            /*
-            SceneObjectPtr so = bulletEngine->getFloor()->getSceneObject();
-            SoNode * n = CoinVisualizationFactory::getCoinVisualization(so,SceneObject::Full);
-            */
-
             // better grid visu
             Eigen::Vector3f floorPos;
             Eigen::Vector3f floorUp;
             double floorExtendMM;
             double floorDepthMM;
             bulletEngine->getFloorInfo(floorPos, floorUp, floorExtendMM, floorDepthMM);
-            SoNode* n = (SoNode*)CoinVisualizationFactory::CreatePlaneVisualization(floorPos, floorUp, floorExtendMM, 0.0f);
+            MathTools::Plane p(floorPos, floorUp);
 
+            VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createPlane(p, floorExtendMM, 0.0f);
+            std::string f1("floor");
+            std::string f2("floor");
+            CoinViewer::addVisualization(f1, f2, v);
+            /*SoNode* n = (SoNode*)CoinVisualizationFactory::CreatePlaneVisualization(floorPos, floorUp, floorExtendMM, 0.0f);
             if (n)
             {
                 floor->addChild(n);
                 addedVisualizations[bulletEngine->getFloor()] = n;
             }
-
             //addVisualization(bulletEngine->getFloor());
+            */
         }
 
-        if (scene)
-        {
-            sceneGraph->addChild(scene);
-        }
 
-        viewer->setSceneGraph(sceneGraphRoot);
+        //viewer->setSceneGraph(sceneGraphRoot);
 
-        if (antiAliasingSteps > 0)
+        /*if (antiAliasingSteps > 0)
         {
             viewer->setAntialiasing(true, antiAliasingSteps);
         }
         else
         {
             viewer->setAntialiasing(false, 0);
-        }
+        }*/
 
-        viewer->viewAll();
+        viewAll();
     }
 
     void BulletCoinQtViewer::scheduleRedraw()
     {
-        sceneGraphRoot->touch();
+        //this->touch();
     }
 
     void BulletCoinQtViewer::stepPhysics()
@@ -230,20 +228,21 @@ namespace SimDynamics
         return dt;
     }
 
-    void BulletCoinQtViewer::viewAll()
+    /*void BulletCoinQtViewer::viewAll()
     {
 
-        viewer->getCamera()->viewAll(sceneGraph, viewer->getViewportRegion());
+        //getCamera()->viewAll(this, viewer->getViewportRegion());
         //viewer->viewAll();
-    }
+    }*/
 
-    void BulletCoinQtViewer::addVisualization(RobotPtr robot, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addSimDynamicsVisualization(RobotPtr robot, VirtualRobot::ModelLink::VisualizationType visuType)
     {
         MutexLockPtr lock = getScopedLock();
-        //VR_ASSERT(so);
-        removeVisualization(robot);
+        VR_ASSERT(robot);
+        removeSimDynamicsVisualization(robot);
+        CoinViewer::addVisualization("robots", robot->getName(), robot->getVisualization(visuType));
 
-        SoNode* n = CoinVisualizationFactory::getCoinVisualization(robot,visuType);
+        /*SoNode* n = CoinVisualizationFactory::getCoinVisualization(robot,visuType);
 
         if (n)
         {
@@ -259,13 +258,17 @@ namespace SimDynamics
             sceneGraph->addSelectionCallback(selectionCB, this);
             sceneGraph->addDeselectionCallback(deselectionCB, this);
             addedSpriteRobotVisualizations[robot] = rootNode;
-        }
+        }*/
     }
 
-    void BulletCoinQtViewer::addVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addSimDynamicsVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(so);
+        removeSimDynamicsVisualization(so);
+        CoinViewer::addVisualization("links", so->getName(), so->getVisualization(visuType));
+
+        /*VR_ASSERT(so);
         removeVisualization(so);
         SoNode* n = CoinVisualizationFactory::getCoinVisualization(so, visuType);
 
@@ -283,15 +286,16 @@ namespace SimDynamics
             sceneGraph->addSelectionCallback(selectionCB, this);
             sceneGraph->addDeselectionCallback(deselectionCB, this);
             addedSpriteVisualizations[so] = rootNode;
-        }
+        }*/
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
         ModelLinkPtr so = o->getSceneObject();
-        VR_ASSERT(so);
+        addSimDynamicsVisualization(so, visuType);
+        /*VR_ASSERT(so);
         removeVisualization(o);
         SoNode* n = CoinVisualizationFactory::getCoinVisualization(so, visuType);
 
@@ -309,20 +313,43 @@ namespace SimDynamics
             sceneGraph->addSelectionCallback(selectionCB, this);
             sceneGraph->addDeselectionCallback(deselectionCB, this);
             addedVisualizations[o] = rootNode;
-        }
+        }*/
     }
+
+/*
+    void BulletCoinQtViewer::addVisualization(const std::string &name, VisualizationNodePtr visu)
+    {
+        MutexLockPtr lock = getScopedLock();
+        removeVisualization(name);
+        CoinVisualizationNodePtr cn = std::dynamic_pointer_cast<CoinVisualizationNode>(visu);
+        if (!visu)
+            return;
+
+        SoNode* n = cn->getCoinVisualization();
+
+        if (n)
+        {
+            SoNode* rootNode = n;
+
+            sceneGraph->addChild(rootNode);
+            sceneGraph->addSelectionCallback(selectionCB, this);
+            sceneGraph->addDeselectionCallback(deselectionCB, this);
+            addedCustomVisualizations[name] = rootNode;
+        }
+    }*/
 
     void BulletCoinQtViewer::addStepCallback(BulletStepCallback callback, void* data)
     {
         bulletEngine->addExternalCallback(callback, data);
     }
 
-    void BulletCoinQtViewer::addVisualization(DynamicsModelPtr r, VirtualRobot::ModelLink::VisualizationType visuType, SoSeparator* container)
+    void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsModelPtr r, VirtualRobot::ModelLink::VisualizationType visuType)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r);
         RobotPtr ro = r->getRobot();
-        VR_ASSERT(ro);
+        addSimDynamicsVisualization(ro, visuType);
+        /*VR_ASSERT(ro);
         removeVisualization(r);
 
         SoNode* n = CoinVisualizationFactory::getCoinVisualization(ro, visuType);
@@ -335,61 +362,81 @@ namespace SimDynamics
         }
 
         sceneGraph->addChild(rootNode);
-        addedRobotVisualizations[r] = rootNode;
+        addedRobotVisualizations[r] = rootNode;*/
     }
 
-    void BulletCoinQtViewer::removeVisualization(RobotPtr o)
+    void BulletCoinQtViewer::removeSimDynamicsVisualization(RobotPtr o)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
+        CoinViewer::removeVisualization("robots", o->getName());
 
-        if (addedSpriteRobotVisualizations.find(o) != addedSpriteRobotVisualizations.end())
+        /*if (addedSpriteRobotVisualizations.find(o) != addedSpriteRobotVisualizations.end())
         {
             sceneGraph->removeChild(addedSpriteRobotVisualizations[o]);
             addedSpriteRobotVisualizations.erase(o);
-        }
+        }*/
     }
 
-    void BulletCoinQtViewer::removeVisualization(ModelLinkPtr o)
+    void BulletCoinQtViewer::removeSimDynamicsVisualization(ModelLinkPtr o)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
+        CoinViewer::removeVisualization("links", o->getName());
 
+/*
         if (addedSpriteVisualizations.find(o) != addedSpriteVisualizations.end())
         {
             sceneGraph->removeChild(addedSpriteVisualizations[o]);
             addedSpriteVisualizations.erase(o);
-        }
+        }*/
     }
 
-    void BulletCoinQtViewer::removeVisualization(DynamicsObjectPtr o)
+    void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsObjectPtr o)
     {
         MutexLockPtr lock = getScopedLock();
-        VR_ASSERT(o);
+        VR_ASSERT(o && o->getSceneObject());
+        CoinViewer::removeVisualization("links", o->getSceneObject()->getName());
 
-        if (addedVisualizations.find(o) != addedVisualizations.end())
+/*        if (addedVisualizations.find(o) != addedVisualizations.end())
         {
             sceneGraph->removeChild(addedVisualizations[o]);
             addedVisualizations.erase(o);
-        }
+        }*/
     }
 
-    void BulletCoinQtViewer::removeVisualization(DynamicsModelPtr r)
+    void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
-        VR_ASSERT(r);
+        VR_ASSERT(r && r->getRobot());
+        CoinViewer::removeVisualization("robots", r->getRobot()->getName());
 
-        if (addedRobotVisualizations.find(r) != addedRobotVisualizations.end())
+        /*if (addedRobotVisualizations.find(r) != addedRobotVisualizations.end())
         {
             sceneGraph->removeChild(addedRobotVisualizations[r]);
             addedRobotVisualizations.erase(r);
-        }
+        }*/
     }
+
+
+   /* void BulletCoinQtViewer::removeVisualization(const std::string &name)
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        if (addedCustomVisualizations.find(name) != addedCustomVisualizations.end())
+        {
+            sceneGraph->removeChild(addedCustomVisualizations[name]);
+            addedCustomVisualizations.erase(name);
+        }
+    }*/
 
     void BulletCoinQtViewer::stopCB()
     {
         MutexLockPtr lock = getScopedLock();
 
+        if (timer)
+            timer->stop();
+        /*
         if (timerSensor)
         {
             SoSensorManager* sensor_mgr = SoDB::getSensorManager();
@@ -402,7 +449,7 @@ namespace SimDynamics
         {
             sceneGraph->removeSelectionCallback(selectionCB, this);
             sceneGraph->removeDeselectionCallback(deselectionCB, this);
-        }
+        }*/
     }
 
     void BulletCoinQtViewer::setBulletSimTimeStepMsec(int msec)
@@ -483,7 +530,7 @@ namespace SimDynamics
     void BulletCoinQtViewer::setAntiAliasing(int steps)
     {
         MutexLockPtr lock = getScopedLock();
-        viewer->setAntialiasing(steps > 0, steps);
+        CoinViewer::setAntialiasing(true, steps);
     }
 
 }

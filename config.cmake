@@ -301,6 +301,12 @@ IF (NOT Simox_CONFIGURED)
         MESSAGE(STATUS "Visualization disabled")
     endif()
     
+    if (Simox_BUILD_Gui)
+        SET (Simox_GUI True)
+    else()
+        SET (Simox_GUI False)
+    endif()
+
     
     SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Simox_VISUALIZATION_INCLUDE_PATHS})
     SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Simox_VISUALIZATION_LIBS})

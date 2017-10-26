@@ -44,7 +44,7 @@ namespace SimDynamics
         CollisionModelPtr colModel = o->getCollisionModel();
         if (!colModel)
         {
-            VR_WARNING << "Building empty collision shape for object " << o->getName() << endl;
+            VR_INFO << "Building empty collision shape for object " << o->getName() << endl;
             collisionShape.reset(new btEmptyShape());
         }
         else

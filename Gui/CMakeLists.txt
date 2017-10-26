@@ -1,3 +1,4 @@
+PROJECT ( simox-gui-coin3d )
 
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
@@ -57,20 +58,46 @@ if (Simox_USE_COIN_VISUALIZATION)
     INCLUDE (Cxx11Test)
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
-    ADD_LIBRARY(simox-gui-coin3d SHARED ${SOURCES} ${INCLUDES})
-    TARGET_LINK_LIBRARIES(simox-gui-coin3d simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
+    ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES})
 
     MESSAGE (STATUS "simox-gui bin dir: ${Simox_BIN_DIR}")
     MESSAGE (STATUS "simox-gui lib dir: ${Simox_LIB_DIR}")
     # .DLL path
-    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
     # .so path
-    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
     # .lib path (this is needed for setting the DLL-import library path on windows)
-    SET_TARGET_PROPERTIES(simox-gui-coin3d PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
 
 
 endif()
+
+
+#######################################################################################
+############################ Setup for installation ###################################
+#######################################################################################
+
+install(TARGETS ${PROJECT_NAME}
+  # IMPORTANT: Add the library to the "export-set"
+  EXPORT SimoxTargets
+  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
+  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
+  COMPONENT dev)
+
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}
+        COMPONENT Headers
+        FILES_MATCHING PATTERN "*.h"
+        PATTERN ".svn" EXCLUDE
+        PATTERN ".git" EXCLUDE
+        PATTERN "CMakeModules" EXCLUDE
+        PATTERN "tests" EXCLUDE
+        PATTERN "build*" EXCLUDE
+        PATTERN "data" EXCLUDE
+        PATTERN "examples" EXCLUDE
+        )
+
 
 MESSAGE (STATUS "***** Finished CONFIGURING project simox-gui *****\n")
 

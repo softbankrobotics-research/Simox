@@ -38,24 +38,30 @@ class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtEx
         CoinViewer(QWidget *parent);
         ~CoinViewer();
 
-        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
-        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
-        void removeVisualization(const std::string &layer, const std::string &id);
+        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
+        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
+        virtual void removeVisualization(const std::string &layer, const std::string &id);
 
-        void clearLayer(const std::string &layer);
+        virtual void clearLayer(const std::string &layer);
+
+        virtual bool hasLayer(const std::string &layer);
+
+        bool hasLayerID(const std::string &layer, const std::string &id);
 
         virtual QImage getScreenshot();
 
 
-        void start(QWidget *mainWindow);
-        void stop();
+        virtual void start(QWidget *mainWindow);
+        virtual void stop();
 
-        void resetView();
+        virtual void resetView();
 
         virtual void viewAll();
 
     protected:
         void addLayer(const std::string &layer);
+
+        std::string getLayerID(const std::string &layer, const std::string &id);
 
     protected:
         SoSeparator *sceneSep;

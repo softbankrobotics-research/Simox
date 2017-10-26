@@ -19,13 +19,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include <QTimer>
 
 #include <vector>
 #include <atomic>
@@ -76,7 +70,11 @@ public slots:
     void resetPose();
     void setPose();
 
+    // beside the viewer cb we need also a callback to update joint info
+    void timerCB();
+
 protected:
+    static void stepCB(void* data, btScalar timeStep);
     bool loadRobot(std::string robotFilename);
     void setupUI();
     void updateJoints();
@@ -93,28 +91,21 @@ protected:
     std::vector<SimDynamics::DynamicsModelPtr> dynamicsObjects;
 
     Ui::MainWindowBulletViewer UI;
-
-    SoSeparator* sceneSep;
-    SoSeparator* comSep;
-    SoSeparator* contactsSep;
-    SoSeparator* forceSep;
-
+#ifdef Simox_USE_COIN_VISUALIZATION
     SimDynamics::BulletCoinQtViewerPtr viewer;
-
-    VirtualRobot::RobotPtr robot;
-
-    // beside the viewer cb we need also a callback to update joint info
-    static void timerCB(void* data, SoSensor* sensor);
-    static void stepCB(void* data, btScalar timeStep);
-
-    SoTimerSensor* timerSensor;
+#else
+    // todo qt3d viewer
+#endif
+    VirtualRobot::ModelPtr robot;
 
     std::vector<VirtualRobot::ModelJointPtr> robotNodes;
 
-    std::map< VirtualRobot::ModelLinkPtr, SoSeparator* > comVisuMap;
+    //std::map< VirtualRobot::ModelLinkPtr, VirtualRobot::VisualizationNodePtr > comVisuMap;
 
     bool useColModel;
     std::string robotFilename;
+
+    QTimer* timer;
 
     std::atomic_uint_fast64_t simuStepCount{0};
 };

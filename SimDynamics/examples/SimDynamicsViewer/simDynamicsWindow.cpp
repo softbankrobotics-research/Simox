@@ -18,15 +18,17 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoUnits.h>
-
 #include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
 
 #include <sstream>
+
+// load static factories from SimoxGui-lib.
+// TODO this workaround is actually something one should avoid
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include <Gui/Coin/CoinViewerFactory.h>
+    SimoxGui::CoinViewerFactory f;
+#endif
+
 using namespace std;
 using namespace VirtualRobot;
 using namespace SimDynamics;
@@ -35,27 +37,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
     VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     std::string robotFilename = sRobotFilename;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
 
-    comSep = new SoSeparator;
-    sceneSep->addChild(comSep);
-
-    contactsSep = new SoSeparator;
-    sceneSep->addChild(contactsSep);
-
-    forceSep = new SoSeparator;
-    sceneSep->addChild(forceSep);
-
-    // optional visualizations (not considered by dynamics)
-    SoSeparator* cc = CoinVisualizationFactory::CreateCoordSystemVisualization(10.0f);
-    sceneSep->addChild(cc);
     BulletEngineConfigPtr config(new BulletEngineConfig());
     config->bulletSolverIterations = 2000;
     config->bulletObjectRestitution = btScalar(0.1);
@@ -80,6 +66,11 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     addObject();
 
     setupUI();
+
+    // optional visualizations (not considered by dynamics)
+    VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(10.0f);
+    viewer->addVisualization("coordsystem", "coord", v);
+
     loadRobot(robotFilename);
 
     // build visualization
@@ -88,11 +79,10 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     viewer->viewAll();
 
     // register callback
-    float TIMER_MS = 30.0f;
-    SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-    timerSensor = new SoTimerSensor(timerCB, static_cast<void *>(this));
-    timerSensor->setInterval(SbTime(TIMER_MS / 1000.0f));
-    sensor_mgr->insertTimerSensor(timerSensor);
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerCB()));
+    timer->start(30.0f);
 
     viewer->addStepCallback(stepCB, static_cast<void *>(this));
 }
@@ -105,22 +95,17 @@ SimDynamicsWindow::~SimDynamicsWindow()
     SimDynamics::DynamicsWorld::Close();
     robot.reset();
     dynamicsRobot.reset();
-    sceneSep->unref();
+    timer->stop();
 }
 
-void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
+void SimDynamicsWindow::timerCB()
 {
-    SimDynamicsWindow* window = static_cast<SimDynamicsWindow*>(data);
-    VR_ASSERT(window);
-
     // now its safe to update physical information and set the models to the according poses
-    window->updateJointInfo();
-    window->updateRobotInfo();
-
-    window->updateContactVisu();
-    window->updateComVisu();
-
-    window->UI.label_simuStepCount->setText(QString::number(window->simuStepCount));
+    updateJointInfo();
+    updateRobotInfo();
+    updateContactVisu();
+    updateComVisu();
+    UI.label_simuStepCount->setText(QString::number(simuStepCount));
 }
 
 void SimDynamicsWindow::stepCB(void *data, btScalar timeStep)
@@ -136,8 +121,8 @@ void SimDynamicsWindow::setupUI()
 {
     UI.setupUi(this);
 
-    viewer.reset(new SimDynamics::BulletCoinQtViewer(dynamicsWorld));
-    viewer->initSceneGraph(UI.frameViewer, sceneSep);
+    viewer.reset(new SimDynamics::BulletCoinQtViewer(UI.frameViewer, dynamicsWorld));
+    //viewer->initSceneGraph(UI.frameViewer, NULL);//sceneSep);
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(buildVisualization()));
     connect(UI.checkBoxActuation, SIGNAL(clicked()), this, SLOT(actuation()));
     connect(UI.checkBoxCom, SIGNAL(clicked()), this, SLOT(comVisu()));
@@ -158,23 +143,6 @@ void SimDynamicsWindow::setupUI()
 
     connect(UI.button_reset, SIGNAL(clicked()), this, SLOT(resetPose()));
     connect(UI.button_set, SIGNAL(clicked()), this, SLOT(setPose()));
-
-    /*connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
-    connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
-    connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openHand()));
-    connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
-
-
-
-    connect(UI.checkBoxStructure, SIGNAL(clicked()), this, SLOT(robotStructure()));
-    UI.checkBoxFullModel->setChecked(true);
-    connect(UI.checkBoxFullModel, SIGNAL(clicked()), this, SLOT(robotFullModel()));
-    connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked()), this, SLOT(robotCoordSystems()));
-    connect(UI.checkBoxShowCoordSystem, SIGNAL(clicked()), this, SLOT(showCoordSystem()));
-    connect(UI.comboBoxRobotNodeSet, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
-    connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
-    connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));*/
-
 }
 
 
@@ -219,17 +187,17 @@ void SimDynamicsWindow::buildVisualization()
 
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::Collision : ModelLink::Full;
-    viewer->addVisualization(dynamicsRobot, colModel);
-    viewer->addVisualization(dynamicsObject, colModel);
+    viewer->addSimDynamicsVisualization(dynamicsRobot, colModel);
+    viewer->addSimDynamicsVisualization(dynamicsObject, colModel);
 
     for (size_t i = 0; i < dynamicsObjects.size(); i++)
     {
-        viewer->addVisualization(dynamicsObjects[i], colModel);
+        viewer->addSimDynamicsVisualization(dynamicsObjects[i], colModel);
     }
 
     if (dynamicsObject2)
     {
-        viewer->addVisualization(dynamicsObject2, colModel);
+        viewer->addSimDynamicsVisualization(dynamicsObject2, colModel);
     }
 }
 
@@ -240,25 +208,38 @@ void SimDynamicsWindow::comVisu()
     {
         return;
     }
-
-    comSep->removeAllChildren();
-    comVisuMap.clear();
+    viewer->clearLayer("coords");
     bool visuCom = UI.checkBoxCom->checkState() == Qt::Checked;
 
-    if (visuCom)
-    {
-        std::vector<ModelLinkPtr> n = robot->getLinks();
+    //comSep->removeAllChildren();
+    //comVisuMap.clear();
 
-        for (size_t i = 0; i < n.size(); i++)
-        {
-            SoSeparator* sep = new SoSeparator;
-            comSep->addChild(sep);
-            Eigen::Matrix4f cp = dynamicsRobot->getComGlobal(n[i]);
-            sep->addChild(CoinVisualizationFactory::getMatrixTransformScaleMM2M(cp));
-            sep->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(5.0f));
-            comVisuMap[n[i]] = sep;
-        }
+    if (!visuCom)
+    {
+        return;
     }
+
+    std::vector<ModelLinkPtr> n = robot->getLinks();
+
+    for (size_t i = 0; i < n.size(); i++)
+    {
+        if (!n[i] || !n[i]->getCollisionModel() || n[i]->getMass()<=0)
+            continue;
+        Eigen::Matrix4f cp = dynamicsRobot->getComGlobal(n[i]);
+        /*SoSeparator* sep = new SoSeparator;
+        comSep->addChild(sep);
+        sep->addChild(CoinVisualizationFactory::getMatrixTransformScaleMM2M(cp));
+        sep->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(5.0f));
+        comVisuMap[n[i]] = sep;*/
+
+        std::string name;
+        name = n[i]->getName() + "-COM";
+
+        VisualizationNodePtr vn = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(5.0f, &name, cp);
+        //comVisuMap[n[i]] = vn;
+        viewer->addVisualization("coords", name, vn);
+    }
+
 }
 
 void SimDynamicsWindow::closeEvent(QCloseEvent* event)
@@ -272,8 +253,7 @@ void SimDynamicsWindow::closeEvent(QCloseEvent* event)
 
 int SimDynamicsWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -283,15 +263,7 @@ void SimDynamicsWindow::quit()
     std::cout << "SimDynamicsWindow: Closing" << std::endl;
     stopCB();
     this->close();
-    SoQt::exitMainLoop();
 }
-
-/*void simDynamicsWindow::selectRobot()
-{
-    QString fi = QFileDialog::getOpenFileName(this, tr("Open Robot File"), QString(), tr("XML Files (*.xml)"));
-    m_sRobotFilename = std::string(fi.toAscii());
-    loadRobot();
-}*/
 
 void SimDynamicsWindow::updateJoints()
 {
@@ -502,19 +474,22 @@ void SimDynamicsWindow::updateJointInfo()
         //      cout << "ForceTorqueB:" << endl;
         //      MathTools::print(ftB);
 
-        forceSep->removeAllChildren();
+        viewer->clearLayer("force");
 
-        SoUnits* u = new SoUnits();
+        //forceSep->removeAllChildren();
+
+        /*SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
-        forceSep->addChild(u);
+        forceSep->addChild(u);*/
 
         Eigen::Vector3f n = ftA.head(3);
         //n = linkInfo.nodeA->toGlobalCoordinateSystemVec(n);
         float l = ftA.head(3).norm();
         float w = 5.0f;
-        SoSeparator* forceA = new SoSeparator;
-        SoSeparator* arrowForceA = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());
+        /*SoSeparator* forceA = new SoSeparator;
+        SoSeparator* arrowForceA = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());*/
 
+        VisualizationNodePtr vn = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(n, l, w, VisualizationFactory::Color::Red());
         /*
         cout << "FORCE_A: " << linkInfo.dynNode1->getRigidBody()->getTotalForce()[0] << "," << linkInfo.dynNode1->getRigidBody()->getTotalForce()[1] << "," << linkInfo.dynNode1->getRigidBody()->getTotalForce()[2] << endl;
         cout << "TORQUEA: " << linkInfo.dynNode1->getRigidBody()->getTotalTorque()[0] << "," << linkInfo.dynNode1->getRigidBody()->getTotalTorque()[1] << "," << linkInfo.dynNode1->getRigidBody()->getTotalTorque()[2] << endl;
@@ -532,11 +507,14 @@ void SimDynamicsWindow::updateJointInfo()
         // show as global coords
         Eigen::Matrix4f comGlobal = Eigen::Matrix4f::Identity();
         comGlobal.block(0, 3, 3, 1) = linkInfo.nodeA->getCoMGlobal();
-        SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransform(comGlobal);
+        /*SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransform(comGlobal);
         forceA->addChild(m);
         forceA->addChild(arrowForceA);
 
-        forceSep->addChild(forceA);
+        forceSep->addChild(forceA);*/
+
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(vn, comGlobal);
+        viewer->addVisualization("force", rn->getName(), vn);
 
         //Eigen::Vector3f jointGlobal = linkInfo.nodeJoint->getGlobalPose().block(0, 3, 3, 1);
         //Eigen::Vector3f comBGlobal = linkInfo.nodeB->getCoMGlobal();
@@ -563,16 +541,22 @@ void SimDynamicsWindow::updateJointInfo()
         //n = linkInfo.nodeB->toGlobalCoordinateSystemVec(n);
         l = ftB.head(3).norm();
         w = 5.0f;
-        SoSeparator* forceB = new SoSeparator;
-        SoSeparator* arrowForceB = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());
+        /*SoSeparator* forceB = new SoSeparator;
+        SoSeparator* arrowForceB = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());*/
+        VisualizationNodePtr vnB = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(n, l, w, VisualizationFactory::Color::Red());
+
 
         comGlobal = Eigen::Matrix4f::Identity();
         comGlobal.block(0, 3, 3, 1) = linkInfo.nodeB->getCoMGlobal();
-        m = CoinVisualizationFactory::getMatrixTransform(comGlobal);
+        /*m = CoinVisualizationFactory::getMatrixTransform(comGlobal);
         forceB->addChild(m);
         forceB->addChild(arrowForceB);
 
-        forceSep->addChild(forceB);
+        forceSep->addChild(forceB);*/
+
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(vnB, comGlobal);
+        std::string n2 = rn->getName() + "-B";
+        viewer->addVisualization("force", n2, vnB);
 
 
 
@@ -812,23 +796,20 @@ void SimDynamicsWindow::jointValueChanged(int n)
 
 void SimDynamicsWindow::stopCB()
 {
-    if (timerSensor)
-    {
-        SoSensorManager* sensor_mgr = SoDB::getSensorManager();
-        sensor_mgr->removeTimerSensor(timerSensor);
-        delete timerSensor;
-        timerSensor = NULL;
-    }
-
+    if (timer)
+        timer->stop();
+    if (viewer)
+        viewer->stop();
     viewer.reset();
 }
 
 void SimDynamicsWindow::updateContactVisu()
 {
-    contactsSep->removeAllChildren();
+    viewer->clearLayer("contacts");
+    /*contactsSep->removeAllChildren();
     SoUnits* u = new SoUnits;
     u->units = SoUnits::MILLIMETERS;
-    contactsSep->addChild(u);
+    contactsSep->addChild(u);*/
 
     if (!UI.checkBoxContacts->isChecked())
     {
@@ -840,7 +821,24 @@ void SimDynamicsWindow::updateContactVisu()
     for (size_t i = 0; i < c.size(); i++)
     {
         cout << "Contact: " << c[i].objectAName << " + " << c[i].objectBName << endl;
-        SoSeparator* normal = new SoSeparator;
+        Eigen::Matrix4f p1 = Eigen::Matrix4f::Identity();
+        p1(0,3) = c[i].posGlobalB(0);
+        p1(1,3) = c[i].posGlobalB(1);
+        p1(2,3) = c[i].posGlobalB(2);
+        VisualizationNodePtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(c[i].normalGlobalB, 50.0f);
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v1, p1);
+        viewer->addVisualization("contacts", c[i].objectAName, v1);
+
+        Eigen::Matrix4f p2 = Eigen::Matrix4f::Identity();
+        p1(0,3) = c[i].posGlobalA(0);
+        p1(1,3) = c[i].posGlobalA(1);
+        p1(2,3) = c[i].posGlobalA(2);
+        VisualizationNodePtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(-c[i].normalGlobalB, 50.0f);
+        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2, p2);
+        std::string n2 = c[i].objectAName + "-B";
+        viewer->addVisualization("contacts", n2, v2);
+
+        /*SoSeparator* normal = new SoSeparator;
         SoMatrixTransform* m = new SoMatrixTransform;
         SbMatrix ma;
         ma.makeIdentity();
@@ -868,7 +866,7 @@ void SimDynamicsWindow::updateContactVisu()
         }
 
         contactsSep->addChild(normal);
-        contactsSep->addChild(normal2);
+        contactsSep->addChild(normal2);*/
     }
 }
 
@@ -878,6 +876,8 @@ void SimDynamicsWindow::updateComVisu()
     {
         return;
     }
+    comVisu();
+    /*
 
     std::vector<ModelLinkPtr> n = robot->getLinks();
     std::map< VirtualRobot::ModelLinkPtr, SoSeparator* >::iterator i = comVisuMap.begin();
@@ -895,7 +895,7 @@ void SimDynamicsWindow::updateComVisu()
         }
 
         i++;
-    }
+    }*/
 }
 
 void SimDynamicsWindow::loadButton()
@@ -909,7 +909,7 @@ void SimDynamicsWindow::loadButton()
     {
         if (dynamicsRobot)
         {
-            viewer->removeVisualization(dynamicsRobot);
+            viewer->removeSimDynamicsVisualization(dynamicsRobot);
             dynamicsWorld->removeRobot(dynamicsRobot);
         }
 
@@ -975,6 +975,7 @@ void SimDynamicsWindow::updateAntiAliasing(int n)
 
 void SimDynamicsWindow::addObject()
 {
+    static int objectCounter = 0;
     ManipulationObjectPtr vitalis;
     std::string vitalisPath = "objects/VitalisWithPrimitives.xml";
 
@@ -1007,6 +1008,10 @@ void SimDynamicsWindow::addObject()
         }
         while (robot && CollisionChecker::getGlobalCollisionChecker()->checkCollision(robot, vitalis));
 
+        std::stringstream n;
+        n << vitalis->getName() << "-" << objectCounter;
+        std::string newName = n.str();
+        vitalis->setName(newName);
         SimDynamics::DynamicsModelPtr dynamicsObjectVitalis = dynamicsWorld->CreateDynamicsModel(vitalis);
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         gp.block(0, 3, 3, 1) = Eigen::Vector3f(x,y,z);
@@ -1014,6 +1019,7 @@ void SimDynamicsWindow::addObject()
         dynamicsObjects.push_back(dynamicsObjectVitalis);
         dynamicsWorld->addModel(dynamicsObjectVitalis);
         buildVisualization();
+        objectCounter++;
     }
 
 }
@@ -1024,7 +1030,7 @@ void SimDynamicsWindow::reloadRobot()
     {
         if (dynamicsRobot)
         {
-            viewer->removeVisualization(dynamicsRobot);
+            viewer->removeSimDynamicsVisualization(dynamicsRobot);
             dynamicsWorld->removeRobot(dynamicsRobot);
         }
 

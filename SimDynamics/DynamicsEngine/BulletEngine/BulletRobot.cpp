@@ -418,7 +418,7 @@ namespace SimDynamics
         }
         else
         {
-            VR_WARNING << "Creating fixed joint between " << bodyA->getName() << " and " << bodyB->getName() << ". This might result in some artefacts (e.g. no strict ridgid connection)" << endl;
+            VR_INFO << "Creating fixed joint between " << bodyA->getName() << " and " << bodyB->getName() << ". This might result in some artefacts (e.g. no strict ridgid connection)" << endl;
             // create fixed joint
             jointbt = createFixedJoint(btBody1, btBody2, anchor_inNode1, anchor_inNode2);
         }
