@@ -1222,7 +1222,15 @@ namespace VirtualRobot
         return node;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreatePlaneVisualization(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, bool grid, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/, std::string textureFile)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createPlaneGrid(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, const std::string &textureFile)
+    {
+        SoSeparator* res = CreatePlaneVisualization(position, normal, extend, transparency, true, 0.5f, 0.5f, 0.5f, textureFile);
+
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
+        return node;
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreatePlaneVisualization(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, bool grid, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/, const std::string &textureFile)
     {
         SoSeparator* res = new SoSeparator();
         res->ref();
@@ -1248,10 +1256,11 @@ namespace VirtualRobot
         if (grid)
         {
             SoSeparator* res2;
+            std::string tf = textureFile;
 
-            if (!textureFile.empty() && RuntimeEnvironment::getDataFileAbsolute(textureFile))
+            if (!tf.empty() && RuntimeEnvironment::getDataFileAbsolute(tf))
             {
-                res2 = CreateGrid(extend, extend, extend / 500.0f, extend / 500.0f, true, textureFile.c_str(), transparency);
+                res2 = CreateGrid(extend, extend, extend / 500.0f, extend / 500.0f, true, tf.c_str(), transparency);
             }
             else
             {
