@@ -30,8 +30,6 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
     : QMainWindow(NULL), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
 
     useColModel = false;
     robotFilename = sRobotFilename;
@@ -50,12 +48,14 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
 
 GenericIKWindow::~GenericIKWindow()
 {
+    timer->stop();
+    delete timer;
 }
 
 void GenericIKWindow::setupUI()
 {
     UI.setupUi(this);
-    exViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
+
     SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
     viewer = factory->createViewer(UI.frameViewer);
     viewer->viewAll();
@@ -77,38 +77,24 @@ void GenericIKWindow::setupUI()
     connect(UI.horizontalSliderB, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(UI.horizontalSliderG, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
 
-    // a method, that is called by a timer, is allowed to update the IV models without disturbing the render loop
-    // TODO this probably won't work with Qt3D
-    SoTimerSensor* timer = new SoTimerSensor((SoSensorCB*)(&updateCB), this);
-    SbTime interval(1.0 / 30);
-    timer->setInterval(interval);
-    timer->schedule();
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCB()));
+    timer->start(30.0f);
 }
 
-void GenericIKWindow::updateCB(void* data, SoSensor* /*sensor*/)
+void GenericIKWindow::updateCB()
 {
-    if (!data)
-    {
-        return;
-    }
-
-    GenericIKWindow* w = (GenericIKWindow*)(data);
-
-    if (!w)
-    {
-        return;
-    }
-
-    float x = w->UI.horizontalSliderX->value();
-    float y = w->UI.horizontalSliderY->value();
-    float z = w->UI.horizontalSliderZ->value();
-    float a = w->UI.horizontalSliderA->value();
-    float b = w->UI.horizontalSliderB->value();
-    float g = w->UI.horizontalSliderG->value();
+    float x = UI.horizontalSliderX->value();
+    float y = UI.horizontalSliderY->value();
+    float z = UI.horizontalSliderZ->value();
+    float a = UI.horizontalSliderA->value();
+    float b = UI.horizontalSliderB->value();
+    float g = UI.horizontalSliderG->value();
 
     if (x != 0 || y != 0 || z != 0 || a != 0 || b != 0 || g != 0)
     {
-        w->updatBoxPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
+        updatBoxPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
     }
 }
 
@@ -127,7 +113,6 @@ void GenericIKWindow::updatBoxPos(float x, float y, float z, float a, float b, f
     mR(1, 3) = m(1, 3) + y;
     mR(2, 3) = m(2, 3) + z;
     box->setGlobalPose(mR);
-    exViewer->render();
 }
 
 QString GenericIKWindow::formatString(const char* s, float f)
@@ -206,8 +191,7 @@ void GenericIKWindow::closeEvent(QCloseEvent* event)
 
 int GenericIKWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    viewer->start(this);
     return 0;
 }
 
@@ -216,7 +200,8 @@ void GenericIKWindow::quit()
 {
     std::cout << "GenericIKWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    viewer->stop();
+    timer->stop();
 }
 
 void GenericIKWindow::updateKCBox()
@@ -327,7 +312,6 @@ void GenericIKWindow::sliderReleased()
     UI.horizontalSliderA->setSliderPosition(0);
     UI.horizontalSliderB->setSliderPosition(0);
     UI.horizontalSliderG->setSliderPosition(0);
-    exViewer->render();
 }
 
 
@@ -434,7 +418,6 @@ void GenericIKWindow::solve()
     j->setGoal(targetPose,RobotNodePtr(),IKSolver::All);
     j->computeSteps(0.2f,0,50);
     */
-    exViewer->render();
 
     cout << "---- END Solve IK ----" << endl;
 }

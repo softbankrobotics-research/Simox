@@ -299,30 +299,6 @@ namespace VirtualRobot
     {
         return modelNodes.size();
     }
-    /*
-    bool ModelNodeSet::isKinematicChain()
-    {
-        for (size_t i = modelNodes.size()-1; i > 0; --i)
-        {
-            ModelNodePtr tmpParent = modelNodes[i]->getParentNode(modelNodes[i-1]->getType());
-            while (modelNodes[i-1] != tmpParent)
-            {
-                tmpParent = tmpParent->getParentNode(modelNodes[i-1]->getType());
-                if (!tmpParent)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    // TODO there are many plausible strategies to do that, for now just return an empty pointer
-    KinematicChainPtr ModelNodeSet::toKinematicChain()
-    {
-        return KinematicChainPtr();
-    }*/
 
     bool ModelNodeSet::nodesSufficient(const std::vector<ModelNodePtr>& nodes) const
     {

@@ -496,18 +496,6 @@ void showRobotWindow::loadRobot()
 
     try
     {
-        //QFileInfo fileInfo(robotFilename.c_str());
-        //std::string suffix(fileInfo.suffix().toLatin1());
-        /*RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
-
-        if (!importer)
-        {
-            cout << " ERROR while grabbing importer" << endl;
-            return;
-        }
-
-        robot = importer->loadFromFile(robotFilename, ModelIO::eFull);*/
-
         robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& /*e*/)
@@ -529,7 +517,6 @@ void showRobotWindow::loadRobot()
             }
 
             robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
-            //robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename, ModelIO::eFull);
         }
         catch (VirtualRobotException& /*e*/)
         {

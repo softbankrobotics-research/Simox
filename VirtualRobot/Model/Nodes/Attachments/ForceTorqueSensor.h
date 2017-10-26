@@ -68,6 +68,21 @@ namespace VirtualRobot
         virtual ModelNodeAttachmentPtr clone();
 
 
+        void updateSensors(const Eigen::VectorXf& newForceTorque);
+
+
+        const Eigen::VectorXf& getForceTorque();
+        Eigen::Vector3f getForce() const;
+        Eigen::Vector3f getTorque() const;
+
+        /**
+         * Projects torque on joint axis
+         */
+        Eigen::Vector3f getAxisTorque();
+
+    protected:
+        Eigen::VectorXf forceTorqueValues;
+
     private:
         void initVisualization();
     };

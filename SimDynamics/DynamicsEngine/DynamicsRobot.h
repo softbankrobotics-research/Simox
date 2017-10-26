@@ -184,7 +184,7 @@ namespace SimDynamics
 
         VirtualRobot::RobotPtr robot;
 
-        //std::vector<VirtualRobot::SensorPtr> sensors;
+        std::vector<VirtualRobot::SensorPtr> sensors;
 
 		std::vector<VirtualRobot::ModelJointPtr> jointNodes;
 		std::vector<VirtualRobot::ModelLinkPtr> linkNodes;

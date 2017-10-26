@@ -245,7 +245,6 @@ Tools/Orientation.h
 Tools/BoundingBox.h
 Tools/RuntimeEnvironment.h
 Tools/SphereApproximator.h
-Tools/Orientation.h
 DataStructures/nanoflann.hpp
 DataStructures/KdTreePointCloud.h
 Compression/CompressionRLE.h

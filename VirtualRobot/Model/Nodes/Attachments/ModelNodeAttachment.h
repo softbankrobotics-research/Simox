@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_ModelNodeAttachment_h_
 #define _VirtualRobot_ModelNodeAttachment_h_
 
-#include "../../Model/Model.h"
-#include "../../Model/Frame.h"
-#include "../../Visualization/VisualizationNode.h"
+#include "../../Model.h"
+#include "../../Frame.h"
+#include "../../../Visualization/VisualizationNode.h"
 
 #include <cstdint>
 #include <string>

@@ -4544,7 +4544,7 @@ namespace VirtualRobot
 
 		if (addSceneObjectSets)
 		{
-            cout << "nyi" << endl;
+            VR_INFO << "addSceneObjectSets: nyi" << endl;
             //todo
             /*
             std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getModelNodeSets();

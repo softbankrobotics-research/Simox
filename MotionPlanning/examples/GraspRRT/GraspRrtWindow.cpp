@@ -709,8 +709,6 @@ void GraspRrtWindow::testInit()
     test_graspRrt.reset(new MotionPlanning::GraspRrt(test_cspace, eef, targetObject, graspQuality, models, 0.1f, minGraspScore));
 
     test_graspRrt->setStart(startConfig);
-    // todo
-    //eef->getGCP()->showCoordinateSystem(true);
     test_graspRrt->init();
 }
 

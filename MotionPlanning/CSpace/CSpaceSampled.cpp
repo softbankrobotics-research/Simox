@@ -64,7 +64,6 @@ namespace MotionPlanning
         result->setSamplingSize(getSamplingSize());
         result->setSamplingSizeDCD(getSamplingSizeDCD());
 
-        // todo
         return (CSpacePtr)result;
     }
 

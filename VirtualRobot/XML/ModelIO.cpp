@@ -258,13 +258,6 @@ namespace VirtualRobot
 
         delete[] y;
 
-        if (loadMode == ModelIO::eCollisionModel)
-        {
-            // use collision visualization to build main visualization
-            // todo
-            //robot->createVisualizationFromCollisionModels();
-        }
-
         return robot;
     }
 
