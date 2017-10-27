@@ -152,6 +152,8 @@ namespace VirtualRobot
 
         virtual ModelNodeAttachmentPtr clone();
 
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3);
+
     protected:
 
         virtual void initVisualization();

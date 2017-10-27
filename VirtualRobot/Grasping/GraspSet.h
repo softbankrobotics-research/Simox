@@ -80,7 +80,7 @@ namespace VirtualRobot
 
         void print();
 
-        std::string getXMLString(int tabs = 1);
+        std::string toXML(int tabs = 1);
 
         GraspSetPtr clone();
 

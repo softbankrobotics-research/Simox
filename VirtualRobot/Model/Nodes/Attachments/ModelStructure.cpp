@@ -123,6 +123,12 @@ namespace VirtualRobot
         return result;
     }
 
+    std::string ModelStructure::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    {
+        // no xml sttring for this type of attachment
+        return std::string();
+    }
+
 }
 
 

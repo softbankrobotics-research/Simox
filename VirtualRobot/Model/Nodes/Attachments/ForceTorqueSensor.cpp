@@ -1,5 +1,6 @@
 
 #include "ForceTorqueSensor.h"
+#include "../../XML/BaseIO.h"
 
 namespace VirtualRobot
 {
@@ -85,6 +86,26 @@ namespace VirtualRobot
     void ForceTorqueSensor::updateSensors(const Eigen::VectorXf& newForceTorque)
     {
         forceTorqueValues = newForceTorque;
+    }
+
+    std::string ForceTorqueSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    {
+        std::string t;
+
+        for (int i = 0; i < tabs; i++)
+        {
+            t += "\t";
+        }
+        std::stringstream ss;
+        ss << t << "<Sensor type='forcetorque' name='" << name <<"'>\n";
+        std::string pre2 = t + "\t";
+        std::string pre3 = pre2 + "\t";
+        ss << pre2 << "<Transform>" << endl;
+        ss << BaseIO::toXML(localTransformation, pre3);
+        ss << pre2 << "</Transform>" << endl;
+        ss << t << "</Sensor>\n";
+
+        return ss.str();
     }
 
 }

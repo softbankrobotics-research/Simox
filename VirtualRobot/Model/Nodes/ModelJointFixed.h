@@ -91,6 +91,20 @@ namespace VirtualRobot
          */
         virtual void setMaxTorque(float maxTo) override;
 
+        /*!
+         * Creates an XML string that defines the ModelNode. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
+         *
+         * \see ModelIO::saveXML.
+         *
+         * @param basePath TODO: Documentation
+         * @param modelPathRelative TODO: Documentation
+         * @param storeAttachments If set to true, all attachments are stored in the XML.
+         *
+         * @return The generated XML string.
+         */
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) override;
+
+
     protected:
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
 

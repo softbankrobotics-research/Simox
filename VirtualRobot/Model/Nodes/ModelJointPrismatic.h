@@ -62,7 +62,7 @@ namespace VirtualRobot
          * @param coordSystem The coordinate system to get the direction in.
          */
         Eigen::Vector3f getJointTranslationDirection(const Eigen::Matrix4f& coordSystem = Eigen::Matrix4f::Identity()) const;
-        Eigen::Vector3f getJointTranslationDirection(FramePtr coordSystem = FramePtr()) const;
+        Eigen::Vector3f getJointTranslationDirection(FramePtr coordSystem) const;
 
         /*!
          * This is the original joint axis, without any transformations applied.
@@ -72,6 +72,19 @@ namespace VirtualRobot
         Eigen::Vector3f getJointTranslationDirectionJointCoordSystem() const;
 
         virtual Eigen::Matrix4f getNodeTransformation() const override;
+
+        /*!
+         * Creates an XML string that defines the ModelNode. Filenames of all visualization models are set to modelPath/RobotNodeName_visu and/or modelPath/RobotNodeName_colmodel.
+         *
+         * \see ModelIO::saveXML.
+         *
+         * @param basePath TODO: Documentation
+         * @param modelPathRelative TODO: Documentation
+         * @param storeAttachments If set to true, all attachments are stored in the XML.
+         *
+         * @return The generated XML string.
+         */
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) override;
 
     protected:
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;

@@ -80,6 +80,8 @@ namespace VirtualRobot
          */
         Eigen::Vector3f getAxisTorque();
 
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+
     protected:
         Eigen::VectorXf forceTorqueValues;
 

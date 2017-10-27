@@ -283,8 +283,10 @@ namespace VirtualRobot
 
         ss << pre << "<Obstacle name='" << name << "'>\n";
 
-        // todo
-        //ss << Model::getXMLContent(basePath, tabs);
+        if (getLinks().size()==1)
+        {
+            ss << getLinks().at(0)->toXML(basePath);
+        }
 
         ss << pre << "</Obstacle>\n";
 

@@ -125,7 +125,7 @@ namespace VirtualRobot
     }
 
 
-
+/*
     struct modelNodeDef
     {
         std::string name;
@@ -137,7 +137,7 @@ namespace VirtualRobot
         std::string rootName;
         std::vector<modelNodeDef> parentChildMapping;
     };
-
+*/
 /*
     bool ModelFactory::attach(const ModelPtr& model, SceneObjectPtr o, const ModelNodePtr& rn, const Eigen::Matrix4f& transformation)
     {

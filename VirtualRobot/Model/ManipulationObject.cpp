@@ -183,12 +183,15 @@ namespace VirtualRobot
         }
         else
         {
-            // todo
-            //ss << getSceneObjectXMLString(basePath, tabs + 1);
+            if (getLinks().size()==1)
+            {
+                ss << getLinks().at(0)->toXML(basePath);
+            }
+
 
             for (size_t i = 0; i < graspSets.size(); i++)
             {
-                ss << graspSets[i]->getXMLString(tabs + 1) << "\n";
+                ss << graspSets[i]->toXML(tabs + 1) << "\n";
             }
         }
 

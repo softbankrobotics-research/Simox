@@ -464,10 +464,10 @@ namespace VirtualRobot
         // TODO
     }
 
-    std::string ModelNode::toXML(const std::string& basePath, const std::string& modelPathRelative, bool storeAttachments)
+    /*std::string ModelNode::toXML(const std::string& basePath, const std::string& modelPathRelative, bool storeAttachments)
     {
         return std::string(); // TODO
-    }
+    }*/
 
     ModelNodePtr ModelNode::clone(ModelPtr newModel, bool cloneChildren, bool cloneAttachments, RobotNodePtr initializeWithParent, float scaling)
     {
