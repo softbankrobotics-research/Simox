@@ -293,15 +293,16 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     endif()
 endif ()
 
+FIND_PACKAGE(urdfdom REQUIRED)
 #check for URDF
 if (Simox_USE_URDF)
     include(SearchForTinyXML)
-    FIND_PACKAGE(urdfdom)
+    FIND_PACKAGE(urdfdom REQUIRED)
     #FIND_PACKAGE(PkgConfig)
     #PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
     #PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
 
-    if (tinyxml_library AND URDF_FOUND)
+    if (tinyxml_library AND urdfdom_FOUND)
         MESSAGE(STATUS " ** Including URDF importer")
 
         include_directories(${tinyxml_include_dirs})
@@ -310,9 +311,9 @@ if (Simox_USE_URDF)
         add_definitions(" -DTIXML_USE_STL ")
 
         INCLUDE_DIRECTORIES (
-            ${URDFDOM_INCLUDE_DIRS}
-            ${URDFDOM_PARSER_INCLUDE_DIRS}
-            ${URDFDOM_HEADERS_INCLUDE_DIRS}
+            ${urdfdom_INCLUDE_DIRS}
+            ${urdfdom_PARSER_INCLUDE_DIRS}
+            ${urdfdom_HEADERS_INCLUDE_DIRS}
         )
 
         SET(SOURCES
@@ -324,7 +325,7 @@ if (Simox_USE_URDF)
             Import/URDF/SimoxURDFFactory.h
             )
 
-        SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
+        SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${urdfdom_LIBRARIES})
     else()
         MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
     endif()
