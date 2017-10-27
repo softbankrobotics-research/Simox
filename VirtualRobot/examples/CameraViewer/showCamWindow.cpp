@@ -2,7 +2,7 @@
 #include "showCamWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 
