@@ -71,7 +71,7 @@ namespace VirtualRobot
 
         // ModelNodeAttachment interface
     protected:
-        virtual void setParent(ModelNodePtr node);
+        virtual void setParent(const ModelNodePtr &node);
     };
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;

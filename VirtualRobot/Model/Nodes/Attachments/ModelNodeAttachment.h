@@ -156,7 +156,7 @@ namespace VirtualRobot
 
         virtual void initVisualization();
 
-        virtual void setParent(ModelNodePtr node)
+        virtual void setParent(const ModelNodePtr &node)
         {
             if (node)
             {

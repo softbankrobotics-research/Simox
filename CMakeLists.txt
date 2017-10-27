@@ -63,9 +63,11 @@ add_subdirectory(doc)
 if (Simox_BUILD_Gui)
 
     add_subdirectory(Gui)
-    list(APPEND SIMOX_EXPORT_TARGET_LIST simox-gui-coin3d)
-
-    list (APPEND Simox_LIBRARIES simox-gui-coin3d)
+    
+    if (Simox_USE_COIN_VISUALIZATION)
+    	list(APPEND SIMOX_EXPORT_TARGET_LIST simox-gui-coin3d)
+    	list (APPEND Simox_LIBRARIES simox-gui-coin3d)
+    endif()
 
 endif()
 
