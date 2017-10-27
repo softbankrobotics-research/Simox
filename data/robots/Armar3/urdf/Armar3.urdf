@@ -1271,7 +1271,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist1_l.stl" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist1_l.iv" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -1290,7 +1290,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist1_r.stl" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist1_r.iv" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -1309,7 +1309,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist2_l.stl" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist2_l.iv" scale="1 1 1"/>
 			</geometry>
 		</visual>
 	</link>
@@ -1322,7 +1322,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist2_r.stl" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist2_r.iv" scale="1 1 1"/>
 			</geometry>
 		</visual>
 	</link>

@@ -227,8 +227,7 @@ namespace VirtualRobot
          * @param tabs The number of tabs to start each line with.
          * @return The generated XML string.
          */
-        virtual std::string toXML(int tabs);
-
+        virtual std::string toXML(int tabs) const override;
 		/*!
 		* Clone this JointSet and register it to the new robot
 		*/

@@ -229,12 +229,12 @@ namespace VirtualRobot
 
         if (storeModelFiles)
         {
-            std::vector<RobotNodePtr> nodes = robot->getModelNodes();
+            std::vector<ModelLinkPtr> nodes = robot->getLinks();
 
             // todo
             for (size_t i = 0; i < nodes.size(); i++)
             {
-                //nodes[i]->saveModelFiles(modelDirComplete.string(), true);
+                nodes[i]->saveModelFiles(modelDirComplete.string());
             }
         }
 
@@ -804,7 +804,7 @@ namespace VirtualRobot
             {
                 BaseIO::processTransformNode(robotNodeXMLNode, robotNodeName, transformMatrix);
             }
-            else if (nodeName == "sensor")
+            else if (nodeName == "sensor" || nodeName=="modelnodeattachment" || nodeName=="frame")
             {
                 sensorTags.push_back(node);
             }

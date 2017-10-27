@@ -60,7 +60,7 @@ namespace VirtualRobot
             ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
             ss << pre2 << "</Transform>" << endl;
         }
-        ss << pre2 << "<Joint type='fixed'\>\n";
+        ss << pre2 << "<Joint type='fixed'/>\n";
         if (storeAttachments)
         {
             for (auto &a:getAttachments())

@@ -23,7 +23,7 @@ namespace VirtualRobot
 
     std::string ModelNodeAttachment::getType()
     {
-        return "ModelNodeAttachment";
+        return "modelnodeattachment";
     }
 
     ModelNodeAttachmentPtr ModelNodeAttachment::clone()
@@ -41,15 +41,15 @@ namespace VirtualRobot
             t += "\t";
         }
         std::stringstream ss;
-        //ss << t << "<Frame name='" << name <<"'>\n";
-        ss << t << "<ModelNodeAttachment name='" << name <<"'>\n";
+        ss << t << "<Frame name='" << name <<"'>\n";
+        //ss << t << "<ModelNodeAttachment name='" << name <<"'>\n";
         std::string pre2 = t + "\t";
         std::string pre3 = pre2 + "\t";
         ss << pre2 << "<Transform>" << endl;
         ss << BaseIO::toXML(localTransformation, pre3);
         ss << pre2 << "</Transform>" << endl;
-        ss << t << "</ModelNodeAttachment>\n";
-        //ss << t << "</Frame>\n";
+        //ss << t << "</ModelNodeAttachment>\n";
+        ss << t << "</Frame>\n";
 
         return ss.str();
     }

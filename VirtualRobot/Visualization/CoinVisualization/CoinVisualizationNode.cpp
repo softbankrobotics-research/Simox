@@ -451,14 +451,6 @@ namespace VirtualRobot
         }
 
         boost::filesystem::path completeFile = boost::filesystem::operator/(completePath, fn);
-
-        SoOutput* so = new SoOutput();
-
-        if (!so->openFile(completeFile.string().c_str()))
-        {
-            VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
-        }
-
         boost::filesystem::path extension = completeFile.extension();
         std::string extStr = extension.string();
         BaseIO::getLowerCase(extStr);
@@ -469,8 +461,24 @@ namespace VirtualRobot
         }
         else
         {
+            // export only iv or vrml
+            if (extStr != ".wrl")
+            {
+                completeFile = boost::filesystem::operator/(completePath, fn.stem());
+                completeFile += ".wrl";
+            }
             vrml = true;
         }
+
+
+
+        SoOutput* so = new SoOutput();
+
+        if (!so->openFile(completeFile.string().c_str()))
+        {
+            VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
+        }
+
 
 
         SoGroup* n = new SoGroup;

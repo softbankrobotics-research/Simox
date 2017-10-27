@@ -260,6 +260,7 @@ namespace VirtualRobot
          */
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) override;
 
+        virtual bool saveModelFiles(const std::string& modelPath);
     protected:
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
 

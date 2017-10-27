@@ -270,9 +270,7 @@ void showRobotWindow::exportXML()
         return;
     }
 
-    // todo
     // XML
-    /*
     QString fi = QFileDialog::getSaveFileName(this, tr("xml File"), QString(), tr("xml Files (*.xml)"));
     std::string s = std::string(fi.toLatin1());
 
@@ -282,8 +280,8 @@ void showRobotWindow::exportXML()
         boost::filesystem::path p1(s);
         std::string fn = p1.filename().generic_string();
         std::string fnPath = p1.parent_path().generic_string();
-        ModelIO::saveXML(robot, fn, fnPath);
-    }*/
+        SimoxXMLFactory::saveXML(robot, fn, fnPath);
+    }
 }
 
 

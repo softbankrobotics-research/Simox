@@ -81,8 +81,14 @@ namespace VirtualRobot
         }
         else
         {
-            VR_WARNING << "No 'type' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
-            return false;
+            std::string name = sensorXMLNode->name();
+            if (name=="frame" || name=="Frame" || name=="ModelNodeAttachment" || name=="modelnodeattachment")
+                sensorType = "frame";
+            else
+            {
+                VR_WARNING << "No 'type' attribute for <Sensor> tag. Skipping Sensor definition for model " << robot->getName() << "!" << endl;
+                return false;
+            }
         }
 
         attr = sensorXMLNode->first_attribute("name", 0, false);
@@ -137,6 +143,8 @@ namespace VirtualRobot
 
         ModelNodeAttachmentPtr s;
 
+        if (sensorType=="frame" || sensorType=="Frame")
+            sensorType = "modelnodeattachment";
 
         ModelNodeAttachmentFactoryPtr sensorFactory = ModelNodeAttachmentFactory::fromName(sensorType, NULL);
 
@@ -1443,7 +1451,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
         THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
-        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("ModelNodeAttachment", NULL);
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("modelnodeattachment", NULL);
         THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate ModelNodeAttachment factory for creating frames...");
 
         ModelNodeAttachmentPtr mf = mff->createAttachment(frameName, transformMatrix);
