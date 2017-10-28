@@ -293,6 +293,32 @@ namespace VirtualRobot
         return m;
     }
 
+    Eigen::Matrix3f MathTools::rpy2eigen3f(float r, float p, float y)
+    {
+        Eigen::Matrix3f m;
+        float salpha, calpha, sbeta, cbeta, sgamma, cgamma;
+
+        sgamma = sinf(r);
+        cgamma = cosf(r);
+        sbeta = sinf(p);
+        cbeta = cosf(p);
+        salpha = sinf(y);
+        calpha = cosf(y);
+
+        m(0, 0) = (float)(calpha * cbeta);
+        m(0, 1) = (float)(calpha * sbeta * sgamma - salpha * cgamma);
+        m(0, 2) = (float)(calpha * sbeta * cgamma + salpha * sgamma);
+
+        m(1, 0) = (float)(salpha * cbeta);
+        m(1, 1) = (float)(salpha * sbeta * sgamma + calpha * cgamma);
+        m(1, 2) = (float)(salpha * sbeta * cgamma - calpha * sgamma);
+
+        m(2, 0) = (float) - sbeta;
+        m(2, 1) = (float)(cbeta * sgamma);
+        m(2, 2) = (float)(cbeta * cgamma);
+
+        return m;
+    }
 
     void MathTools::posrpy2eigen4f(const float x[6], Eigen::Matrix4f& m)
     {
