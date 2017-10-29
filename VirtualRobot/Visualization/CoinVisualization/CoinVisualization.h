@@ -20,67 +20,105 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinVisualization_h_
-#define _VirtualRobot_CoinVisualization_h_
+#ifndef _VirtualRobot_CoinVisualizationNode_h_
+#define _VirtualRobot_CoinVisualizationNode_h_
 
 #include "../../Model/Model.h"
 #include "../Visualization.h"
 
-#include <Inventor/nodes/SoSelection.h>
-#include <Inventor/nodes/SoMaterial.h>
 
 class SoNode;
+class SoSeparator;
+class SoScale;
+class SoCallbackAction;
+class SoPrimitiveVertex;
+class SoMatrixTransform;
 
 namespace VirtualRobot
 {
+    class TriMeshModel;
 
-    /*!
-        A Coin3D based implementation of a visualization.
-    */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : virtual public Visualization
     {
+        friend class CoinVisualizationFactory;
     public:
-        //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        CoinVisualization(SoNode* visualizationNode, float margin = 0.0f);
+        ~CoinVisualization();
+        virtual TriMeshModelPtr getTriMeshModel();
 
-        CoinVisualization(const VisualizationNodePtr visualizationNode);
-        CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
-        virtual ~CoinVisualization();
+        SoNode* getCoinVisualization();
+
+        virtual void setGlobalPose(const Eigen::Matrix4f& m);
+
+        virtual void print();
+
+        virtual void scale(Eigen::Vector3f& scaleFactor);
 
         /*!
-            To see the visualizations in an SoExaminerViewer enable an highlight render action
-            e.g. viewer->setGLRenderAction(new SoLineHighlightRenderAction);
+            Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
+            If there is already a visualization attached with the given name, it is quietly replaced.
         */
-        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
-        virtual bool highlight(unsigned int which, bool enable);
-        virtual bool highlight(bool enable);
-        virtual bool highlight(SoNode* visu, bool enable);
+        virtual void attachVisualization(const std::string& name, VisualizationPtr v);
 
-        virtual void colorize(VisualizationFactory::Color c);
-        virtual void setTransparency(float transparency);
+        /*!
+            Remove an attached visualization.
+        */
+        virtual void detachVisualization(const std::string& name);
 
-        virtual VisualizationPtr clone();
+        /*!
+            Setup the visualization of this object.
+            \param showVisualization If false, the visualization is disabled.
+            \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
+        */
+        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
 
-        SoNode* getCoinVisualization(bool selectable=true);
 
-        void exportToVRML2(std::string filename, bool useRotation=true);
+        /*!
+                Clone this visualization.
+                \param deepCopy When true, the underlying visualization is copied, otherwise a reference to the existing visualization is passed.
+                \param scaling Scale Can be set to create a scaled version of this visual data.
+                Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
+            */
+        virtual VisualizationPtr clone(bool deepCopy = true, float scaling = 1.0f);
 
-        static std::string getFactoryName()
-        {
-            return "inventor";
-        }
+        virtual std::string getType();
+
+        /*!
+            Saves model file to model path. By default VRML models are generated.
+            \param modelPath The directory.
+            \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl).
+        */
+        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
+        virtual void shrinkFatten(float offset);
+        virtual void createTriMeshModel();
 
     protected:
-        bool buildVisualization();
 
-        bool isSelectable;
-        SoSelection* selection;
-        SoSeparator* visuRoot;
 
-        SoMaterial *color;
+        /*!
+            Replace current visualization of this node.
+            Be careful: any former grabbed trimeshmodels do no longer represent the new datastructure!
+        */
+        void setVisualization(SoNode* newVisu);
+
+        SoNode* visualization;
+        SoSeparator* visualizationAtGlobalPose;
+        SoSeparator* attachedVisualizationsSeparator;
+        SoSeparator* scaledVisualization;
+        std::map< std::string, SoNode* > attachedCoinVisualizations;    //< These optional visualizations will not show up in the TriMeshModel
+
+        SoMatrixTransform* globalPoseTransform;
+        TriMeshModelPtr triMeshModel;
+        SoScale* scaling;
+        float margin = 0.0f;
+        static void InventorTriangleCB(void* data, SoCallbackAction* action,
+                                       const SoPrimitiveVertex* v1,
+                                       const SoPrimitiveVertex* v2,
+                                       const SoPrimitiveVertex* v3);
     };
 
-    typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;
+    typedef std::shared_ptr<CoinVisualization> CoinVisualizationNodePtr;
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CoinVisualization_h_
+#endif // _VirtualRobot_CoinVisualizationNode_h_

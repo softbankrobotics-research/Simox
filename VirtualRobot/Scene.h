@@ -39,7 +39,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Scene  : public std::enable_shared_from_this<Scene>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Scene
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -68,7 +68,7 @@ namespace VirtualRobot
 
         RobotPtr getRobot(const std::string& name);
 
-        std::vector< RobotPtr > getRobots();
+        std::vector< RobotPtr > getRobots() const;
 
         /*!
             Registers the RobotConfig to this scene. If a config  with the same name is already registered nothing happens.
@@ -106,7 +106,7 @@ namespace VirtualRobot
 
         ManipulationObjectPtr getManipulationObject(const std::string& name);
 
-        std::vector< ManipulationObjectPtr > getManipulationObjects();
+        std::vector< ManipulationObjectPtr > getManipulationObjects() const;
 
         /*!
             Registers the obstacle to this scene. If an obstacle with the same name is already registered nothing happens.
@@ -124,7 +124,7 @@ namespace VirtualRobot
 
         ObstaclePtr getObstacle(const std::string& name);
 
-        std::vector< ObstaclePtr > getObstacles();
+        std::vector< ObstaclePtr > getObstacles() const;
 
         /*!
             Registers the Trajectory to this scene. If an Trajectory with the same name is already registered nothing happens.
@@ -142,8 +142,8 @@ namespace VirtualRobot
 
         TrajectoryPtr getTrajectory(const std::string& name);
 
-        std::vector< TrajectoryPtr > getTrajectories();
-        std::vector< TrajectoryPtr > getTrajectories(const std::string& robotName);
+        std::vector< TrajectoryPtr > getTrajectories() const;
+        std::vector< TrajectoryPtr > getTrajectories(const std::string& robotName) const;
 
         void registerModelSet(const ModelSetPtr modelSet);
         void deRegisterModelSet(const std::string &name);
@@ -163,7 +163,7 @@ namespace VirtualRobot
          *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
          * @return A visualization of this model's links.
          */
-        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType = ModelLink::Full, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, std::string visualizationType = "");
+        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;
 
         /*!
             Creates an XML string that describes this scene.

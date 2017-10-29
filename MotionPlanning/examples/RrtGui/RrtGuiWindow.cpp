@@ -165,7 +165,7 @@ void RrtGuiWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
         viewer->addVisualization("scene", "scenefile", v);
     }
 
@@ -175,13 +175,13 @@ void RrtGuiWindow::buildVisu()
     {        
         if (robotStart)
         {
-            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotStart, colModel);
+            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotStart, colModel);
             viewer->addVisualization("start-goal", "start", v);
         }
 
         if (robotGoal)
         {
-            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotGoal, colModel);
+            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotGoal, colModel);
             viewer->addVisualization("start-goal", "goal", v);
         }
     }
@@ -585,7 +585,7 @@ void RrtGuiWindow::buildRRTVisu()
         w->addCSpacePath(solutionOptimized, MotionPlanning::RrtWorkspaceVisualization::eGreen);
     }
 
-    VisualizationPtr wv = w->getVisualization();
+    VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
         viewer->addVisualization("rrt","workspace", wv);

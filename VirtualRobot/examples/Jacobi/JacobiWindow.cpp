@@ -1,7 +1,7 @@
 
 #include "JacobiWindow.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 #include "Gui/ViewerFactory.h"
@@ -264,7 +264,7 @@ void JacobiWindow::collisionModel()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visualization = robot->getVisualization(colModel);
+    VisualizationSetPtr visualization = robot->getVisualization(colModel);
 
     if (visualization)
     {

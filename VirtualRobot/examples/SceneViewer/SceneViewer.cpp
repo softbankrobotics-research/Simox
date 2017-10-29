@@ -3,7 +3,7 @@
 #include "../../../VirtualRobot/Model/Nodes/ModelNode.h"
 #include "../../../VirtualRobot/XML/ModelIO.h"
 #include "../../../VirtualRobot/Visualization/VisualizationFactory.h"
-#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../../VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <string>

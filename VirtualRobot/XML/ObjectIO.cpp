@@ -243,7 +243,7 @@ namespace VirtualRobot
 
         bool visuProcessed = false;
         bool colProcessed = false;
-        VisualizationNodePtr visualizationNode;
+        VisualizationPtr visualizationNode;
         CollisionModelPtr collisionModel;
         bool useAsColModel = false;
         ModelLink::Physics physics;
@@ -362,7 +362,7 @@ namespace VirtualRobot
 
         bool visuProcessed = false;
         bool colProcessed = false;
-        VisualizationNodePtr visualizationNode;
+        VisualizationPtr visualizationNode;
         CollisionModelPtr collisionModel;
         bool useAsColModel = false;
         ModelLink::Physics physics;

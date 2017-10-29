@@ -4,6 +4,7 @@
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Visualization/VisualizationSet.h>
 #include <vector>
 #include <VirtualRobot/VirtualRobotException.h>
 
@@ -108,14 +109,14 @@ namespace VirtualRobot
         return true;
     }
 
-    unsigned int GraspSet::getSize()
+    unsigned int GraspSet::getSize() const
     {
-        return (unsigned int)grasps.size();
+        return static_cast<unsigned int>(grasps.size());
     }
 
-    VirtualRobot::GraspPtr GraspSet::getGrasp(unsigned int n)
+    VirtualRobot::GraspPtr GraspSet::getGrasp(unsigned int n) const
     {
-        if (n >= (unsigned int)grasps.size())
+        if (n >= getSize())
         {
             return GraspPtr();
         }
@@ -123,7 +124,7 @@ namespace VirtualRobot
         return grasps[n];
     }
 
-    VirtualRobot::GraspPtr GraspSet::getGrasp(const std::string& name)
+    VirtualRobot::GraspPtr GraspSet::getGrasp(const std::string& name) const
     {
         for (size_t i = 0; i < grasps.size(); i++)
         {
@@ -235,7 +236,22 @@ namespace VirtualRobot
         }
     }
 
+    VisualizationSetPtr GraspSet::getVisualization(ModelLink::VisualizationType visuType, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose) const
+    {
+        VR_ASSERT(eef);
+        std::vector<VisualizationPtr> visual;
+        visual.reserve(getSize());
 
+        for (unsigned int i = 0; i < getSize(); i++)
+        {
+            // grasp and transform
+            GraspPtr g = getGrasp(i);
+            auto graspVisu = g->getVisualization(visuType, eef, pose);
+            visual.push_back(graspVisu);
+        }
+
+        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visual);
+    }
 
 } //  namespace
 

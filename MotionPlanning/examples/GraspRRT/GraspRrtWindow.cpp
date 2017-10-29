@@ -160,7 +160,7 @@ void GraspRrtWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
         viewer->addVisualization("scene", "scene", v);
     }
 
@@ -169,7 +169,7 @@ void GraspRrtWindow::buildVisu()
     if (UI.checkBoxGrasps->isChecked() && eef && grasps.size()>0)
     {
         GraspSetPtr gs(new GraspSet("tmp", robot->getName(), eef->getName(), grasps));
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, targetObject->getGlobalPose(), ModelLink::Full);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, targetObject->getGlobalPose(), ModelLink::Full);
         viewer->addVisualization("scene", "scene", v);
     }
 
@@ -666,7 +666,7 @@ void GraspRrtWindow::buildRRTVisu()
     }
 
     w->addConfiguration(startConfig, MotionPlanning::RrtWorkspaceVisualization::eGreen, 3.0f);
-    VisualizationPtr wv = w->getVisualization();
+    VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
         viewer->addVisualization("rrt","solution", wv);

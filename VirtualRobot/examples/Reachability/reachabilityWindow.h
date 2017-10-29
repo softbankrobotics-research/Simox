@@ -8,7 +8,7 @@
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/Visualization.h>
+#include <VirtualRobot/Visualization/VisualizationSet.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <Gui/ViewerInterface.h>
 
@@ -104,7 +104,7 @@ protected:
     bool useColModel;
     //bool structureEnabled;
 
-    VirtualRobot::VisualizationPtr visualization;
+    VirtualRobot::VisualizationSetPtr visualization;
     std::string robotVisuLayerName;
     std::string wsVisuLayerName;
 };

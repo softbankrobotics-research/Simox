@@ -9,8 +9,8 @@
 #include "../../Visualization/VisualizationFactory.h"
 #include "../../Model/Obstacle.h"
 #include "../../Model/ModelNodeSet.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "../../Visualization/CoinVisualization/CoinVisualization.h"
+#include "../../Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
 #include "../../../Gui/ViewerInterface.h"

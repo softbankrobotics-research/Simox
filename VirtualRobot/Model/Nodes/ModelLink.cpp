@@ -1,7 +1,7 @@
 #include "ModelLink.h"
 #include "../../CollisionDetection/CollisionChecker.h"
 #include "../../CollisionDetection/CollisionModel.h"
-#include "../../Visualization/VisualizationNode.h"
+#include "../../Visualization/Visualization.h"
 #include "../../Visualization/TriMeshModel.h"
 #include "../../VirtualRobotException.h"
 
@@ -85,7 +85,7 @@ namespace VirtualRobot
     ModelLink::ModelLink(const ModelWeakPtr& model,
                          const std::string& name,
                          const Eigen::Matrix4f& localTransformation,
-                         const VisualizationNodePtr& visualization,
+                         const VisualizationPtr& visualization,
                          const CollisionModelPtr& collisionModel,
                          const ModelLink::Physics& p,
                          const CollisionCheckerPtr& colChecker) : ModelNode(model, name, localTransformation),
@@ -148,7 +148,7 @@ namespace VirtualRobot
         return collisionChecker;
     }
 
-    void ModelLink::setVisualization(const VisualizationNodePtr& visualization, bool keepUpdateVisualization)
+    void ModelLink::setVisualization(const VisualizationPtr& visualization, bool keepUpdateVisualization)
     {
         WriteLockPtr w = getModel()->getWriteLock();
         if (keepUpdateVisualization && visualizationModel)
@@ -166,7 +166,7 @@ namespace VirtualRobot
         //TODO: update physics?
     }
 
-    VisualizationNodePtr ModelLink::getVisualization(ModelLink::VisualizationType visuType)
+    VisualizationPtr ModelLink::getVisualization(ModelLink::VisualizationType visuType) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         if (visuType == ModelLink::VisualizationType::Full)
@@ -188,10 +188,9 @@ namespace VirtualRobot
             }
             else
             {
-                return VisualizationNodePtr();
+                return VisualizationPtr();
             }
         }
-        // todo : attachments
     }
 
     int ModelLink::getNumFaces(bool collisionModel)
@@ -304,9 +303,9 @@ namespace VirtualRobot
 
     ModelNodePtr ModelLink::_clone(ModelPtr newModel, float scaling)
     {
-        VisualizationNodePtr clonedVisu;
+        VisualizationPtr clonedVisu;
         if (visualizationModel)
-            clonedVisu = visualizationModel->clone(true, scaling);
+            clonedVisu = visualizationModel->clone(scaling);
         CollisionModelPtr clonedCol;
         if (collisionModel)
             clonedCol = collisionModel->clone(newModel->getCollisionChecker(), scaling);

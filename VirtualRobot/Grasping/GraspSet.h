@@ -70,13 +70,13 @@ namespace VirtualRobot
         /*!
             Return number of grasps stored in this set.
         */
-        unsigned int getSize();
+        unsigned int getSize() const;
 
         /*!
             Return grasp number n. If n is out of bounds an empty GraspPtr is returned.
         */
-        GraspPtr getGrasp(unsigned int n);
-        GraspPtr getGrasp(const std::string& name);
+        GraspPtr getGrasp(unsigned int n) const;
+        GraspPtr getGrasp(const std::string& name) const;
 
         void print();
 
@@ -88,6 +88,8 @@ namespace VirtualRobot
 
         //! Sets preshape string of all grasps
         void setPreshape(const std::string& preshape);
+
+        VisualizationSetPtr getVisualization(ModelLink::VisualizationType visuType, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose) const;
 
     protected:
         std::vector< GraspPtr > grasps;

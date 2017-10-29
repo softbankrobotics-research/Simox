@@ -3,10 +3,10 @@
 #include "MotionPlanning/CSpace/CSpacePath.h"
 #include "MotionPlanning/CSpace/CSpaceTree.h"
 #include "MotionPlanning/CSpace/CSpaceNode.h"
+#include "VirtualRobot/Visualization/VisualizationSet.h"
 #include "VirtualRobot/Visualization/Visualization.h"
-#include "VirtualRobot/Visualization/VisualizationNode.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/SbLinear.h>
@@ -79,10 +79,10 @@ namespace MotionPlanning
         return visualization;
     }
 
-    VisualizationPtr CoinRrtWorkspaceVisualization::getVisualization()
+    VisualizationSetPtr CoinRrtWorkspaceVisualization::getVisualization()
     {
-        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualization));
-        CoinVisualizationPtr r(new CoinVisualization(n));
+        CoinVisualizationNodePtr n(new CoinVisualization(visualization));
+        CoinVisualizationPtr r(new CoinVisualizationSet(n));
         return r;
     }
 

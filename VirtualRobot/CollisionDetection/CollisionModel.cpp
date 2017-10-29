@@ -2,7 +2,7 @@
 #include "CollisionModel.h"
 #include "CollisionChecker.h"
 #include "../Visualization/TriMeshModel.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../XML/BaseIO.h"
 #include <algorithm>
 
@@ -11,7 +11,7 @@
 namespace VirtualRobot
 {
 
-    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, float margin)
+    CollisionModel::CollisionModel(VisualizationPtr visu, const std::string& name, CollisionCheckerPtr colChecker, int id, float margin)
     {
         globalPose = Eigen::Matrix4f::Identity();
         this->id = id;
@@ -34,7 +34,7 @@ namespace VirtualRobot
         setVisualization(visu);
     }
 
-    CollisionModel::CollisionModel(VisualizationNodePtr visu, const std::string &name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel)
+    CollisionModel::CollisionModel(VisualizationPtr visu, const std::string &name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel)
     {
         margin = 0.0;
         globalPose = Eigen::Matrix4f::Identity();
@@ -122,10 +122,10 @@ namespace VirtualRobot
 
     VirtualRobot::CollisionModelPtr CollisionModel::clone(CollisionCheckerPtr colChecker, float scaling, bool deepVisuMesh)
     {
-        VisualizationNodePtr visuOrigNew;
+        VisualizationPtr visuOrigNew;
 
         if(origVisualization)
-            visuOrigNew = origVisualization->clone(deepVisuMesh, scaling);
+            visuOrigNew = origVisualization->clone(scaling);
 
         std::string nameNew = name;
         int idNew = id;
@@ -141,7 +141,7 @@ namespace VirtualRobot
         return p;
     }
 
-    void CollisionModel::setVisualization(const VisualizationNodePtr visu)
+    void CollisionModel::setVisualization(const VisualizationPtr visu)
     {
         visualization = visu;
         origVisualization = visu;
@@ -166,7 +166,7 @@ namespace VirtualRobot
         return updateVisualization;
     }
 
-    VisualizationNodePtr CollisionModel::getVisualization()
+    VisualizationPtr CollisionModel::getVisualization()
     {
         return visualization;
     }
@@ -234,7 +234,7 @@ namespace VirtualRobot
         return bbox;
     }
 
-    VirtualRobot::VisualizationNodePtr CollisionModel::getModelDataVisualization()
+    VirtualRobot::VisualizationPtr CollisionModel::getModelDataVisualization()
     {
         if (!modelVisualization && visualization)
         {
@@ -242,8 +242,7 @@ namespace VirtualRobot
 
             if (model)
             {
-                std::string type = visualization->getType();
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(type, NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
 
                 if (visualizationFactory)
                 {
@@ -275,16 +274,7 @@ namespace VirtualRobot
 
         ss << ">\n";
 
-        std::string fileType("unknown");
-
-        if (visualization)
-        {
-            fileType = visualization->getType();
-        }
-        else if (modelVisualization)
-        {
-            fileType = modelVisualization->getType();
-        }
+        std::string fileType = VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType();
 
         if (!filename.empty())
         {
@@ -296,12 +286,13 @@ namespace VirtualRobot
                << "</File>\n";
         }
 
-        if (visualization && visualization->primitives.size() != 0)
+        if (visualization && visualization->getPrimitives().size() != 0)
         {
+            auto primitives = visualization->getPrimitives();
             ss << pre << "\t<Primitives>\n";
             std::vector<Primitive::PrimitivePtr>::const_iterator it;
 
-            for (it = visualization->primitives.begin(); it != visualization->primitives.end(); it++)
+            for (it = primitives.begin(); it != primitives.end(); it++)
             {
                 ss << (*it)->toXMLString(tabs + 1);
             }
@@ -335,11 +326,11 @@ namespace VirtualRobot
     {
         VR_ASSERT(colModels.size() > 0);
         CollisionCheckerPtr colChecker = colModels[0]->getCollisionChecker();
-        std::vector<VisualizationNodePtr> visus;
+        std::vector<VisualizationPtr> visus;
 
         for (size_t i = 0; i < colModels.size(); i++)
         {
-            VisualizationNodePtr v = colModels[i]->getVisualization();
+            VisualizationPtr v = colModels[i]->getVisualization();
 
             if (v)
             {
@@ -354,7 +345,7 @@ namespace VirtualRobot
             return CollisionModelPtr();
         }
 
-        VisualizationNodePtr vc = VisualizationNode::CreateUnitedVisualization(visus);
+        VisualizationPtr vc = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visus);
         return CollisionModelPtr(new CollisionModel(vc, "", colChecker));
     }
 

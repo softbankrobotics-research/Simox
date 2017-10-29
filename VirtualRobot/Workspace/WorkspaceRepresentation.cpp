@@ -10,7 +10,7 @@
 #include "../Model/Nodes/ModelNode.h"
 #include "../Model/Nodes/ModelJoint.h"
 #include "../Model/Nodes/ModelLink.h"
-#include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationSet.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../Visualization/ColorMap.h"

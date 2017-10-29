@@ -12,7 +12,7 @@
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/TriMeshModel.h"
-#include "VirtualRobot/Visualization/VisualizationNode.h"
+#include "VirtualRobot/Visualization/Visualization.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
 #include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
 
@@ -114,7 +114,7 @@ void GraspPlannerWindow::buildVisu()
     // eef
     if (eefCloned)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, colModel);
+        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, colModel);
         viewer->addVisualization("robotLayer", "robot", visu);
     }
 
@@ -122,7 +122,7 @@ void GraspPlannerWindow::buildVisu()
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
+        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
         viewer->addVisualization("objectLayer", "object", visu);
     }
 
@@ -137,7 +137,7 @@ void GraspPlannerWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
         viewer->addVisualization("frictionLayer", "cones", visu);
 
         // add approach dir visu
@@ -145,7 +145,7 @@ void GraspPlannerWindow::buildVisu()
         {
             std::stringstream name;
             name << "arrow-" << i;
-            VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
+            VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
 
             Eigen::Matrix4f ma;
             ma.setIdentity();
@@ -159,7 +159,7 @@ void GraspPlannerWindow::buildVisu()
     viewer->clearLayer("graspsetLayer");
     if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
+        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
         viewer->addVisualization("graspsetLayer", "grasps", visu);
     }
 }
@@ -361,7 +361,7 @@ void GraspPlannerWindow::save()
         return;
     }
 
-    VisualizationNodePtr v = object->getLinks().at(0)->getVisualization()->clone();
+    VisualizationPtr v = object->getLinks().at(0)->getVisualization()->clone();
     CollisionModelPtr c = object->getLinks().at(0)->getCollisionModel()->clone();
     ModelLink::Physics p = object->getLinks().at(0)->getPhysics();
     ManipulationObjectPtr objectM = ManipulationObject::create(object->getName(), v, c, p);

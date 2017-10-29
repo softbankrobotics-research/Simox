@@ -14,7 +14,7 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/VisualizationNode.h"
+#include "VirtualRobot/Visualization/Visualization.h"
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -145,7 +145,7 @@ void GraspQualityWindow::buildVisu()
     // robot
     if (robot)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
         viewer->addVisualization("robotLayer", "robot", visu);
     }
 
@@ -153,7 +153,7 @@ void GraspQualityWindow::buildVisu()
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
+        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
         viewer->addVisualization("objectLayer", "object", visu);
     }
 
@@ -168,7 +168,7 @@ void GraspQualityWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
         viewer->addVisualization("frictionLayer", "cones", visu);
     }
 }

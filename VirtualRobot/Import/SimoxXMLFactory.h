@@ -111,7 +111,7 @@ namespace VirtualRobot
             const Eigen::Matrix4f& transformationMatrix);
         static ModelLinkPtr processLinkNode(const std::string& robotNodeName,
             RobotPtr robot,
-            VisualizationNodePtr visualizationNode,
+            VisualizationPtr visualizationNode,
             CollisionModelPtr collisionModel,
             ModelLink::Physics& physics,
             const Eigen::Matrix4f& transformationMatrix);
@@ -120,7 +120,7 @@ namespace VirtualRobot
         static void processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless);
         //static bool processSensor(RobotNodePtr rn, rapidxml::xml_node<char>* sensorXMLNode, RobotDescription loadMode, const std::string& basePath);
         static std::map<std::string, int> robot_name_counter;
-        static VisualizationNodePtr checkUseAsColModel(rapidxml::xml_node<char>* visuXMLNode, const std::string& robotNodeName, const std::string& basePath);
+        static VisualizationPtr checkUseAsColModel(rapidxml::xml_node<char>* visuXMLNode, const std::string& robotNodeName, const std::string& basePath);
         static std::mutex mutex;
     };
 

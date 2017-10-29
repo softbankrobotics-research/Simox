@@ -1,7 +1,7 @@
 
 #include "ManipulationObject.h"
 #include "../VirtualRobotException.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../Grasping/GraspSet.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../XML/BaseIO.h"
@@ -39,7 +39,7 @@ namespace VirtualRobot
         }
     }
 
-    VirtualRobot::ManipulationObjectPtr ManipulationObject::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ManipulationObjectPtr ManipulationObject::create(const std::string& name, const VisualizationPtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
     {
         ManipulationObjectPtr m(new ManipulationObject(name));
         ModelLinkPtr node(new ModelLink(m,
@@ -238,7 +238,7 @@ namespace VirtualRobot
 
 
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-        VisualizationNodePtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+        VisualizationPtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
 
         if (!visu)
         {

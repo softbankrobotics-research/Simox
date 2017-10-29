@@ -41,11 +41,13 @@ namespace VirtualRobot
         Eigen::VectorXf getError(float stepSize = 1.0f);
         bool checkTolerances();
 
-        const Eigen::Matrix4f& getTransformation();
-        const Eigen::Matrix<float, 6, 2>& getBounds();
+        const Eigen::Matrix4f& getTransformation() const;
+        const Eigen::Matrix<float, 6, 2>& getBounds() const;
 
         double optimizationFunction(unsigned int id);
         Eigen::VectorXf optimizationGradient(unsigned int id);
+
+        virtual VisualizationPtr getVisualization() const override;
 
     protected:
         double positionOptimizationFunction();

@@ -40,7 +40,7 @@ using namespace MotionPlanning;
 bool useColModel = false;
 QWidget* win;
 
-void show(std::vector<VisualizationPtr> &visus)
+void show(std::vector<VisualizationSetPtr> &visus)
 {
     if (win == NULL)
     {
@@ -174,11 +174,11 @@ void startRRTVisualization()
     // display robot
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visualisationRobot = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel);
+    VisualizationSetPtr visualisationRobot = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel);
 
 
     // display obstacle
-    VisualizationPtr visualisationObstacle = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(o, colModel);
+    VisualizationSetPtr visualisationObstacle = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(o, colModel);
 
     // show rrt visu
 
@@ -196,9 +196,9 @@ void startRRTVisualization()
     w->addConfiguration(start, RrtWorkspaceVisualization::eGreen, 3.0f);
     w->addConfiguration(goal, RrtWorkspaceVisualization::eGreen, 3.0f);
 
-    VisualizationPtr visuRrt = w->getVisualization();
+    VisualizationSetPtr visuRrt = w->getVisualization();
 
-    std::vector<VisualizationPtr> visus;
+    std::vector<VisualizationSetPtr> visus;
     visus.push_back(visualisationRobot);
     visus.push_back(visualisationObstacle);
     visus.push_back(visuRrt);

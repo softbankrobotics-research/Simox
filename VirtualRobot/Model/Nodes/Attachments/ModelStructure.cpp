@@ -3,6 +3,7 @@
 #include "../ModelJointRevolute.h"
 #include "../ModelJointPrismatic.h"
 #include "../ModelJointFixed.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
 {
@@ -35,14 +36,8 @@ namespace VirtualRobot
 
     void ModelStructure::initVisualization()
     {
-        VisualizationFactoryPtr factory;
-        if (visualizationType.empty())
-        {
-            factory = VirtualRobot::VisualizationFactory::first(NULL);
-        } else
-        {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, NULL);
-        }
+        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
+
         if (!factory)
         {
             VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
@@ -66,9 +61,9 @@ namespace VirtualRobot
 
     }
 
-    VisualizationNodePtr ModelStructure::createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory)
+    VisualizationPtr ModelStructure::createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory)
     {
-        VisualizationNodePtr v;
+        VisualizationPtr v;
         if (joint->getType() == ModelNode::ModelNodeType::JointRevolute)
         {
             ModelJointRevolutePtr revoluteJoint = std::static_pointer_cast<ModelJointRevolute>(joint);
@@ -79,7 +74,7 @@ namespace VirtualRobot
             // rotate the ellipse back to its initial orientation.
             Eigen::Matrix4f rotation = revoluteJoint->getGlobalPose().inverse();
             rotation.block<3,1>(0,3) = Eigen::Vector3f::Zero();
-            factory->applyDisplacement(v, rotation);
+            v->applyDisplacement(rotation);
             // here , the ellipse is now aligned parallel to the global y-axis.
             // Now rotate it such that it is aligned parallel to the joint's rotation axis.
             rotation.setIdentity();
@@ -89,7 +84,7 @@ namespace VirtualRobot
             alignment(2) = rotationAxis(0);
             Eigen::Affine3f transform(Eigen::AngleAxisf(float(M_PI / 2.0f), alignment));
             rotation = transform * rotation;
-            factory->applyDisplacement(v, rotation);
+            v->applyDisplacement(rotation);
         }
         else
         {
@@ -98,13 +93,13 @@ namespace VirtualRobot
         return v;
     }
 
-    VisualizationNodePtr ModelStructure::createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory)
+    VisualizationPtr ModelStructure::createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory)
     {
-        VisualizationNodePtr v;
+        VisualizationPtr v;
         ModelNodePtr parent = link->getParentNode(ModelNode::ModelNodeType::Joint);
         if (parent)
         {
-            std::vector<VisualizationNodePtr> lines;
+            std::vector<VisualizationPtr> lines;
             std::vector<ModelNodePtr> children = link->getChildNodes(ModelNode::ModelNodeType::Joint);
             for (const auto & child : children)
             {

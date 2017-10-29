@@ -47,8 +47,9 @@ CollisionDetection/CollisionModel.cpp
 CollisionDetection/CDManager.cpp
 EndEffector/EndEffector.cpp
 EndEffector/EndEffectorActor.cpp
+Visualization/VisualizationFactory.cpp
+Visualization/VisualizationSet.cpp
 Visualization/Visualization.cpp
-Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
 XML/BaseIO.cpp
@@ -153,8 +154,8 @@ CollisionDetection/CollisionCheckerImplementation.h
 EndEffector/EndEffector.h
 EndEffector/EndEffectorActor.h
 Visualization/VisualizationFactory.h
+Visualization/VisualizationSet.h
 Visualization/Visualization.h
-Visualization/VisualizationNode.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
@@ -278,15 +279,15 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
     SET(SOURCES
     ${SOURCES}
     Visualization/CoinVisualization/CoinVisualizationFactory.cpp
-    Visualization/CoinVisualization/CoinVisualizationNode.cpp
     Visualization/CoinVisualization/CoinVisualization.cpp
+    Visualization/CoinVisualization/CoinVisualizationSet.cpp
     )
 
     SET(INCLUDES
     ${INCLUDES}
     Visualization/CoinVisualization/CoinVisualizationFactory.h
-    Visualization/CoinVisualization/CoinVisualizationNode.h
     Visualization/CoinVisualization/CoinVisualization.h
+    Visualization/CoinVisualization/CoinVisualizationSet.h
     )
 
     if(BUILD_TESTING)

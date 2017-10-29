@@ -47,9 +47,9 @@ namespace VirtualRobot
         //! Recalculate contacts and compute polygon
         MathTools::ConvexHull2DPtr updateSupportPolygon(float maxFloorDist = 5.0f);
 
-        MathTools::ConvexHull2DPtr getSupportPolygon2D();
+        MathTools::ConvexHull2DPtr getSupportPolygon2D() const;
 
-        MathTools::Plane getFloorPlane();
+        MathTools::Plane getFloorPlane() const;
 
         /*!
             Computes quality index between 0 and 1 of the CoM projection of the robotNodeSet.
@@ -59,6 +59,8 @@ namespace VirtualRobot
         float getStabilityIndex(LinkSetPtr rns, bool update = true);
 
 		LinkSetPtr getContactModels();
+
+        VisualizationPtr getVisualization() const;
 
     protected:
 

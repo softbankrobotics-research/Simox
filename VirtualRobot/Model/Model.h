@@ -431,7 +431,7 @@ namespace VirtualRobot
          * @param showVisualization If false, the visualization is disabled.
          * @param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
          */
-        void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        void setupVisualization(bool showVisualization);
 
         /*!
          * Enables/Disables the visualization updates of the visualization model.
@@ -699,7 +699,7 @@ namespace VirtualRobot
          *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
          * @return A visualization of this model's links.
          */
-        VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType = VirtualRobot::ModelLink::Full, std::string visualizationType = "");
+        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full, bool addAttachments = true) const;
 
     protected:
 
@@ -725,9 +725,6 @@ namespace VirtualRobot
         std::vector< RobotConfigPtr > configs;
 
         std::string filename;
-
-        VisualizationPtr visualization;
-        ModelLink::VisualizationType visuType;
     };
 }
 

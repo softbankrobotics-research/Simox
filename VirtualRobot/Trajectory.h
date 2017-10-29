@@ -26,6 +26,7 @@
 #include "Model/Model.h"
 #include "Tools/MathTools.h"
 #include "Model/JointSet.h"
+#include "Visualization/VisualizationFactory.h"
 
 #include <Eigen/Core>
 #include <vector>
@@ -145,7 +146,7 @@ namespace VirtualRobot
             \param mn The ModelNode that should be considered (if not set, the TCP of the JointSet is used)
             \return For each point of this joint space trajectory, the pose of r in workspace is computed and added to the resulting vector.
         */
-        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::FramePtr m = VirtualRobot::FramePtr());
+        std::vector< Eigen::Matrix4f > createWorkspaceTrajectory(VirtualRobot::FramePtr m = VirtualRobot::FramePtr()) const;
 
 
         /*!
@@ -161,7 +162,7 @@ namespace VirtualRobot
             Get a visualization for this trajectory.
             \param visualizationFactoryName The string that identifies the factory. If not given, the first registered factory (which is usually the only one) is used.
         */
-        VisualizationNodePtr getVisualization(std::string visualizationFactoryName = "");
+        VisualizationSetPtr getVisualization(Visualization::Color colorNode = Visualization::Color::Blue(), Visualization::Color colorLine = Visualization::Color::Gray(), float nodeSize = 15.0f, float lineSize = 4.0f) const;
 
     protected:
         std::vector < Eigen::VectorXf > path; //!< vector with configurations which represent the path

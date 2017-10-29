@@ -70,9 +70,9 @@ namespace VirtualRobot
             Clones this eef and performs all necessary registrations.
             (Be careful: no need to call registerEEF with newly created eef, since this is already done)
         */
-        EndEffectorPtr clone(RobotPtr newRobot);
+        EndEffectorPtr clone(RobotPtr newRobot) const;
 
-        std::string getName();
+        std::string getName() const;
 
 
         /*!
@@ -137,7 +137,7 @@ namespace VirtualRobot
             All corresponding robot nodes with visualization and collision models are cloned.
             The resulting robot will have one end effector defined which is identical to this object.
         */
-        RobotPtr createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr());
+        RobotPtr createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr()) const;
 
         /*!
             Register a preshape to this EEF. An exception is thrown if preshape covers joints that are not part of this eef.
@@ -171,7 +171,7 @@ namespace VirtualRobot
         /*!
             Return current configuration as robot config.
         */
-        RobotConfigPtr getConfiguration();
+        RobotConfigPtr getConfiguration() const;
 
         //! Return all associated model nodes
         std::vector< ModelNodePtr > getModelNodes() const;
@@ -194,6 +194,8 @@ namespace VirtualRobot
         virtual std::string toXML(int ident = 1);
 
         int addStaticPartContacts(ModelPtr obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
+
+        VisualizationPtr getVisualization(ModelLink::VisualizationType visuType, const Eigen::Matrix4f &pose) const;
 
     private:
         std::string name;

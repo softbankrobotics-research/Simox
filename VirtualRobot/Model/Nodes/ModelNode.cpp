@@ -18,8 +18,7 @@ namespace VirtualRobot
           parent(ModelNodeWeakPtr()),
           children(),
           staticTransformation(staticTransformation),
-          attachments(),
-          attachmentsWithVisualisation()
+          attachments()
     {
     }
 
@@ -362,11 +361,6 @@ namespace VirtualRobot
 
         attachments[attachment->getType()].push_back(attachment);
 
-        if (attachment->getVisualisation())
-        {
-            attachmentsWithVisualisation.push_back(attachment);
-        }
-
         return true;
     }
 
@@ -409,11 +403,6 @@ namespace VirtualRobot
         {
             attachment->setParent(ModelNodePtr());
             attachments[attachment->getType()].erase(std::find(attachments[attachment->getType()].begin(), attachments[attachment->getType()].end(), attachment));
-            if (attachment->getVisualisation())
-            {
-                attachmentsWithVisualisation.erase(std::find(attachmentsWithVisualisation.begin(),
-                                                   attachmentsWithVisualisation.end(), attachment));
-            }
 
             return true;
         }
@@ -456,6 +445,17 @@ namespace VirtualRobot
     std::vector<ModelNodeAttachmentPtr> ModelNode::getAttachmentsWithVisualisation() const
     {
         ReadLockPtr r = getModel()->getReadLock();
+        std::vector<ModelNodeAttachmentPtr> attachmentsWithVisualisation;
+        for (auto it = attachments.begin(); it != attachments.end(); it++)
+        {
+            for (auto& attachment : it->second)
+            {
+                if (attachment->getVisualisation())
+                {
+                    attachmentsWithVisualisation.push_back(attachment);
+                }
+            }
+        }
         return attachmentsWithVisualisation;
     }
 

@@ -12,7 +12,7 @@
 #include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 #include "../Visualization/VisualizationFactory.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../Visualization/TriMeshModel.h"
 #include "../Model/ModelConfig.h"
 #include "../Tools/RuntimeEnvironment.h"
@@ -481,7 +481,7 @@ namespace VirtualRobot
     }
 
 
-    VisualizationNodePtr ModelIO::processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel)
+    VisualizationPtr ModelIO::processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel)
     {
         bool enableVisu = true;
         bool coordAxis = false;
@@ -492,8 +492,8 @@ namespace VirtualRobot
         std::string visuFileType = "";
         rapidxml::xml_attribute<>* attr;
         std::vector<Primitive::PrimitivePtr> primitives;
-        VisualizationNodePtr visualizationNode;
-        std::vector<VisualizationNodePtr> visualizationNodes;
+        VisualizationPtr visualizationNode;
+        std::vector<VisualizationPtr> visualizationNodes;
 
         if (!visuXMLNode)
         {
@@ -533,7 +533,7 @@ namespace VirtualRobot
             else if (primitives.size() != 0)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
-                visualizationNode = visualizationFactory->getVisualizationFromPrimitives(primitives);
+                visualizationNode = visualizationFactory->createVisualizationFromPrimitives(primitives);
             }
 
 
@@ -634,10 +634,10 @@ namespace VirtualRobot
     {
         rapidxml::xml_attribute<>* attr;
         std::string collisionFileType = "";
-        VisualizationNodePtr visualizationNode;
+        VisualizationPtr visualizationNode;
         CollisionModelPtr collisionModel;
         std::vector<Primitive::PrimitivePtr> primitives;
-        std::vector<VisualizationNodePtr> visuNodes;
+        std::vector<VisualizationPtr> visuNodes;
         bool enableCol = true;
 
         attr = colXMLNode->first_attribute("enable", 0, false);
@@ -677,7 +677,7 @@ namespace VirtualRobot
             else if (primitives.size() != 0)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
-                visualizationNode = visualizationFactory->getVisualizationFromPrimitives(primitives);
+                visualizationNode = visualizationFactory->createVisualizationFromPrimitives(primitives);
             }
 
             if (visualizationNode)
@@ -692,10 +692,10 @@ namespace VirtualRobot
         return collisionModel;
     }
 
-    std::vector<VisualizationNodePtr> ModelIO::processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType)
+    std::vector<VisualizationPtr> ModelIO::processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType)
     {
         rapidxml::xml_node<>* node = visualizationXMLNode;
-        std::vector<VisualizationNodePtr> result;
+        std::vector<VisualizationPtr> result;
         bool bbox = false;
 
         if (!node)
@@ -753,7 +753,7 @@ namespace VirtualRobot
                 {
                     if (tmpFileType == fileType)
                     {
-                        result.push_back(visualizationFactory->getVisualizationFromFile(visuFile, bbox));
+                        result.push_back(visualizationFactory->createVisualizationFromFile(visuFile, bbox));
                     }
                     else
                     {

@@ -4,7 +4,7 @@
 #include "Nodes/ModelLink.h"
 #include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
 #include "../Trajectory.h"
@@ -613,7 +613,7 @@ namespace VirtualRobot
         // TODO: add Attachment
     }*/
 
-    void Model::setupVisualization(bool showVisualization, bool showAttachedVisualizations)
+    void Model::setupVisualization(bool showVisualization)
     {
         WriteLockPtr w = getWriteLock();
         std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
@@ -622,7 +622,7 @@ namespace VirtualRobot
         {
             ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
             if (link && link->getVisualization())
-                link->getVisualization()->setupVisualization(showVisualization, showAttachedVisualizations);
+                link->getVisualization()->setVisible(showVisualization);
             else if (link)
             {
                 // todo setup visualization
@@ -1052,18 +1052,33 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationPtr Model::getVisualization(ModelLink::VisualizationType linkVisuType, std::string visualizationType)
+    VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType, bool addAttachments) const
     {
-        if (!visualization || this->visuType != linkVisuType)
+        std::vector<VisualizationPtr> collectedVisualizationNodes;
+        std::vector<ModelLinkPtr> links = getLinks();
+        for (auto l: links)
         {
-            VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, NULL);
+            VisualizationPtr v = l->getVisualization(visuType);
             if (!v)
-                return visualization;
-            visualization = v->createVisualization(shared_from_this(), linkVisuType);
-            this->visuType = linkVisuType;
+                continue;
+            collectedVisualizationNodes.push_back(v);
         }
 
-        return visualization;
+        if (addAttachments)
+        {
+            for (const auto & node : getModelNodes())
+            {
+                for (const auto & attachement : node->getAttachmentsWithVisualisation())
+                {
+                    VisualizationPtr v = attachement->getVisualisation();
+                    if (!v)
+                        continue;
+                    collectedVisualizationNodes.push_back(v);
+                }
+            }
+        }
+
+        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(collectedVisualizationNodes);
     }
 
     void Model::_clone(ModelPtr newModel, const ModelNodePtr &startNode, const CollisionCheckerPtr &collisionChecker, bool cloneRNS, bool cloneEEF, float scaling) const

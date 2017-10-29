@@ -168,8 +168,8 @@ namespace VirtualRobot
     class CollisionModel;
     class TriMeshModel;
     class Obstacle;
+    class VisualizationSet;
     class Visualization;
-    class VisualizationNode;
     class VisualizationFactory;
     class Scene;
     class ModelConfig;
@@ -232,8 +232,8 @@ namespace VirtualRobot
     typedef std::shared_ptr<CollisionChecker> CollisionCheckerPtr;
     typedef std::shared_ptr<TriMeshModel> TriMeshModelPtr;
     typedef std::shared_ptr<Obstacle> ObstaclePtr;
+    typedef std::shared_ptr<VisualizationSet> VisualizationSetPtr;
     typedef std::shared_ptr<Visualization> VisualizationPtr;
-    typedef std::shared_ptr<VisualizationNode> VisualizationNodePtr;
     typedef std::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
     typedef std::shared_ptr<WorkspaceData> WorkspaceDataPtr;
     typedef std::shared_ptr<WorkspaceDataArray> WorkspaceDataArrayPtr;

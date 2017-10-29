@@ -1,8 +1,8 @@
 
 #include "CoinConvexHullVisualization.h"
 #include "../../ConvexHullGenerator.h"
+#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
-#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
 
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/SbLinear.h>
@@ -92,11 +92,11 @@ namespace GraspPlanning
         return visualization;
     }
 
-    VirtualRobot::VisualizationPtr CoinConvexHullVisualization::getVisualization()
+    VirtualRobot::VisualizationSetPtr CoinConvexHullVisualization::getVisualization()
     {
         SoNode* n = getCoinVisualization();
-        VirtualRobot::CoinVisualizationNodePtr cvn(new VirtualRobot::CoinVisualizationNode(n));
-        VirtualRobot::CoinVisualizationPtr cv(new VirtualRobot::CoinVisualization(cvn));
+        VirtualRobot::CoinVisualizationNodePtr cvn(new VirtualRobot::CoinVisualization(n));
+        VirtualRobot::CoinVisualizationPtr cv(new VirtualRobot::CoinVisualizationSet(cvn));
         return cv;
     }
 

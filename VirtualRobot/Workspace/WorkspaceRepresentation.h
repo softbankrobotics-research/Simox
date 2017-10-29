@@ -422,6 +422,8 @@ namespace VirtualRobot
         bool getPoseFromVoxel(unsigned int x[], float v[]) const;
 
         virtual VolumeInfo computeVolumeInformation();
+
+        VisualizationPtr getVisualization(const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10);
     protected:
 
         /*!

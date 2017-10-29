@@ -66,8 +66,8 @@ namespace VirtualRobot
 
     private:
         void initVisualization();
-        VisualizationNodePtr createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory);
-        VisualizationNodePtr createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory);
+        VisualizationPtr createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory);
+        VisualizationPtr createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory);
 
         // ModelNodeAttachment interface
     protected:

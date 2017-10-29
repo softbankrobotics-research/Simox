@@ -110,7 +110,7 @@ void PlatformWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
         viewer->addVisualization("scene", "scenefile", v);
     }
 
@@ -287,7 +287,7 @@ void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vecto
         from.block(0,3,3,1) = a;
         to.block(0,3,3,1) = b;
 
-        VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
         viewer->addVisualization("dist", "rob-obstacle", v);
     }
 }
@@ -337,7 +337,7 @@ void PlatformWindow::buildRRTVisu()
 
     w->addConfiguration(startConfig, MotionPlanning::RrtWorkspaceVisualization::eGreen, 3.0f);
 
-    VisualizationPtr wv = w->getVisualization();
+    VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
         viewer->addVisualization("rrt","workspace", wv);
@@ -393,10 +393,10 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         externalForce.normalize();
         resultingForce.normalize();
         VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
-        VisualizationNodePtr v1 = f->createArrow(internalForce, l1, 2.0f, VisualizationFactory::Color::Blue());
-        VisualizationNodePtr v2 = f->createArrow(internalForce, l1, 2.0f, VisualizationFactory::Color::Blue());
-        VisualizationNodePtr v3 = f->createArrow(externalForce, l2, 2.0f, VisualizationFactory::Color::Green());
-        VisualizationNodePtr v4 = f->createArrow(resultingForce, l1+l2, 2.0f, VisualizationFactory::Color::Red());
+        VisualizationPtr v1 = f->createArrow(internalForce, l1, 2.0f, Visualization::Color::Blue());
+        VisualizationPtr v2 = f->createArrow(internalForce, l1, 2.0f, Visualization::Color::Blue());
+        VisualizationPtr v3 = f->createArrow(externalForce, l2, 2.0f, Visualization::Color::Green());
+        VisualizationPtr v4 = f->createArrow(resultingForce, l1+l2, 2.0f, Visualization::Color::Red());
 
         f->applyDisplacement(v1, m);
         f->applyDisplacement(v2, m);
@@ -430,9 +430,9 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         internalForce.normalize();
         externalForce.normalize();
         resultingForce.normalize();
-        SoNode* v1 = CoinVisualizationFactory::CreateArrow(internalForce, l1, 2.0f, VisualizationFactory::Color::Blue());
-        SoNode* v2 = CoinVisualizationFactory::CreateArrow(externalForce, l2, 2.0f, VisualizationFactory::Color::Green());
-        SoNode* v3 = CoinVisualizationFactory::CreateArrow(resultingForce, l1+l2, 2.0f, VisualizationFactory::Color::Red());
+        SoNode* v1 = CoinVisualizationFactory::CreateArrow(internalForce, l1, 2.0f, Visualization::Color::Blue());
+        SoNode* v2 = CoinVisualizationFactory::CreateArrow(externalForce, l2, 2.0f, Visualization::Color::Green());
+        SoNode* v3 = CoinVisualizationFactory::CreateArrow(resultingForce, l1+l2, 2.0f, Visualization::Color::Red());
         sa->addChild(v1);
         sb->addChild(v2);
         sc->addChild(v3);

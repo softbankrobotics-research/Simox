@@ -22,7 +22,7 @@
 */
 
 #include "ConstrainedIKWindow.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/ConstrainedHierarchicalIK.h"
@@ -150,7 +150,7 @@ void ConstrainedIKWindow::collisionModel()
 
     viewer->clearLayer("robotLayer");
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
     viewer->addVisualization("robotLayer", "robot", visu);
     viewer->viewAll();
 }
@@ -385,10 +385,10 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(kc);
     tsrConstraint.reset(new TSRConstraint(robot, js, tcp, transformation, Eigen::Matrix4f::Identity(), bounds));
 
-    VisualizationFactory::Color color(1, 0, 0, 0.5);
+    Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("tsrLayer");
-    VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
+    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
     viewer->addVisualization("tsrLayer", "tsr", visu);
 }
 
@@ -493,10 +493,10 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     orientationConstraint.reset(new OrientationConstraint(robot, js, tcp, pose.block<3,3>(0,0)));
     orientationConstraint->setOptimizationFunctionFactor(1000);
 
-    VisualizationFactory::Color color(1, 0, 0, 0.5);
+    Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("poseLayer");
-    VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
+    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
     viewer->addVisualization("poseLayer", "pose", visu);
 }
 

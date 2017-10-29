@@ -1,5 +1,7 @@
 #include "BoundingBox.h"
 #include "MathTools.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Visualization/Visualization.h>
 
 namespace VirtualRobot
 {
@@ -128,7 +130,7 @@ namespace VirtualRobot
         max(2) = NAN;
     }
 
-    void BoundingBox::transform(Eigen::Matrix4f& pose)
+    void BoundingBox::transform(const Eigen::Matrix4f& pose)
     {
         if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
                 std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
@@ -177,7 +179,7 @@ namespace VirtualRobot
         }
     }
 
-    void BoundingBox::scale(Eigen::Vector3f& scaleFactor)
+    void BoundingBox::scale(const Eigen::Vector3f &scaleFactor)
     {
         if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
                 std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))
@@ -222,5 +224,33 @@ namespace VirtualRobot
     {
         min -= v;
         max += v;
+    }
+
+    VisualizationPtr BoundingBox::getVisualization(bool wireFrame) const
+    {
+        Eigen::Vector3f mi = getMin();
+        Eigen::Vector3f ma = getMax();
+        float x1 = std::min(mi(0), ma(0));
+        float x2 = std::max(mi(0), ma(0));
+        float y1 = std::min(mi(1), ma(1));
+        float y2 = std::max(mi(1), ma(1));
+        float z1 = std::min(mi(2), ma(2));
+        float z2 = std::max(mi(2), ma(2));
+        float x = x1 + (x2 - x1) * 0.5f;
+        float y = y1 + (y2 - y1) * 0.5f;
+        float z = z1 + (z2 - z1) * 0.5f;
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        gp(0, 3) = x;
+        gp(1, 3) = y;
+        gp(2, 3) = z;
+
+        float width = x2 - x1;
+        float height = y2 - y1;
+        float depth = z2 - z1;
+
+        auto box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(x, y, z, width, height, depth);
+        box->setStyle(wireFrame ? Visualization::DrawStyle::wireframe : Visualization::DrawStyle::normal);
+        box->setGlobalPose(gp);
+        return box;
     }
 }

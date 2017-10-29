@@ -24,7 +24,7 @@ namespace VirtualRobot
     {
     }
 
-    VirtualRobot::ObstaclePtr Obstacle::create(const std::string& name, const VisualizationNodePtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::create(const std::string& name, const VisualizationPtr& visualization, const CollisionModelPtr& collisionModel, const ModelLink::Physics& p, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr m(new Obstacle(name));
         ModelLinkPtr node(new ModelLink(m,
@@ -42,7 +42,7 @@ namespace VirtualRobot
         return m;
     }
 
-    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -69,7 +69,7 @@ namespace VirtualRobot
 
         VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
         */
-        VisualizationNodePtr visu = visualizationFactory->createBox(width, height, depth, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createBox(width, height, depth, color.r, color.g, color.b);
 
         if (!visu)
         {
@@ -94,7 +94,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -114,7 +114,7 @@ namespace VirtualRobot
             return result;
         }
 
-        VisualizationNodePtr visu = visualizationFactory->createSphere(radius, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createSphere(radius, color.r, color.g, color.b);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
         Primitive::PrimitivePtr p(new Primitive::Sphere(radius));
@@ -144,7 +144,7 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, VisualizationFactory::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
         VisualizationFactoryPtr visualizationFactory;
@@ -164,7 +164,7 @@ namespace VirtualRobot
             return result;
         }
 
-        VisualizationNodePtr visu = visualizationFactory->createCylinder(radius, height, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createCylinder(radius, height, color.r, color.g, color.b);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
         Primitive::PrimitivePtr p(new Primitive::Cylinder(radius, height));
@@ -218,7 +218,7 @@ namespace VirtualRobot
 
 
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-        VisualizationNodePtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+        VisualizationPtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
 
         if (!visu)
         {

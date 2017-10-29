@@ -23,8 +23,8 @@
 
 #include "CoinViewer.h"
 
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
@@ -55,9 +55,9 @@ CoinViewer::~CoinViewer()
     sceneSep->unref();
 }
 
-void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
+void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationSetPtr &visualization)
 {
-    VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
+    VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualizationSet>(visualization);
     if (!coinVisu)
     {
         VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << endl;
@@ -70,10 +70,10 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
     layers[layer]->addChild(visualizations[id]);
 }
 
-void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization)
+void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
 {
-    VirtualRobot::CoinVisualizationNodePtr cvn = std::dynamic_pointer_cast<VirtualRobot::CoinVisualizationNode>(visualization);
-    VirtualRobot::CoinVisualizationPtr coinVisu(new VirtualRobot::CoinVisualization(cvn));
+    VirtualRobot::CoinVisualizationNodePtr cvn = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
+    VirtualRobot::CoinVisualizationPtr coinVisu(new VirtualRobot::CoinVisualizationSet(cvn));
     addVisualization(layer, id, coinVisu);
 }
 

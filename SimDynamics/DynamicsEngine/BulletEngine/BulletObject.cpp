@@ -7,7 +7,7 @@
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <VirtualRobot/Visualization/VisualizationNode.h>
+#include <VirtualRobot/Visualization/Visualization.h>
 #include <VirtualRobot/Model/Primitive.h>
 
 
@@ -53,7 +53,7 @@ namespace SimDynamics
 
             if (o->getName() != "Floor")
             {
-                std::vector<Primitive::PrimitivePtr> primitives = colModel->getVisualization()->primitives;
+                std::vector<Primitive::PrimitivePtr> primitives = colModel->getVisualization()->getPrimitives();
 
                 if (primitives.size() > 0)
                 {

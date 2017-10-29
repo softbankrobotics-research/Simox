@@ -101,9 +101,9 @@ namespace MotionPlanning
         */
         virtual void colorizeTreeNodes(int status, ColorSet colorSet);
 
-        virtual VirtualRobot::VisualizationPtr getVisualization()
+        virtual VirtualRobot::VisualizationSetPtr getVisualization()
         {
-            return VirtualRobot::VisualizationPtr();
+            return VirtualRobot::VisualizationSetPtr();
         }
 
     protected:

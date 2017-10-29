@@ -50,7 +50,7 @@ namespace VirtualRobot
         addTriangleWithFace(vertex1, vertex2, vertex3, normal);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, VisualizationFactory::Color color1, VisualizationFactory::Color color2, VisualizationFactory::Color color3)
+    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, Visualization::Color color1, Visualization::Color color2, Visualization::Color color3)
     {
         this->addVertex(vertex1);
         this->addVertex(vertex2);
@@ -91,9 +91,9 @@ namespace VirtualRobot
     void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
-        VisualizationFactory::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
-        VisualizationFactory::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
-        VisualizationFactory::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
+        Visualization::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
+        Visualization::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
+        Visualization::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
         addTriangleWithFace(vertex1, vertex2, vertex3, normal, color1, color2, color3);
     }
 
@@ -180,7 +180,7 @@ namespace VirtualRobot
     /**
      * This method adds a color to the internal data structure TriMeshModel::colors
      */
-    int TriMeshModel::addColor(const VisualizationFactory::Color& color)
+    int TriMeshModel::addColor(const Visualization::Color& color)
     {
         colors.push_back(color);
         return colors.size() - 1;
@@ -192,13 +192,13 @@ namespace VirtualRobot
      */
     int TriMeshModel::addColor(const Eigen::Vector4f& color)
     {
-        return addColor(VisualizationFactory::Color(color(0), color(1), color(2), color(3)));
+        return addColor(Visualization::Color(color(0), color(1), color(2), color(3)));
     }
 
     /**
      * This method converts and adds a color to the internal data structure TriMeshModel::materials
      */
-    int TriMeshModel::addMaterial(const VisualizationFactory::PhongMaterial& material)
+    int TriMeshModel::addMaterial(const Visualization::PhongMaterial& material)
     {
         materials.push_back(material);
         return materials.size() - 1;
@@ -470,7 +470,7 @@ namespace VirtualRobot
 
     }
 
-    void TriMeshModel::setColor(VisualizationFactory::Color color)
+    void TriMeshModel::setColor(Visualization::Color color)
     {
         colors.clear();
         for (size_t i=0; i<vertices.size(); i++)

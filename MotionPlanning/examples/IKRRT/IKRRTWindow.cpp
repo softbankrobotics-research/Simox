@@ -224,14 +224,14 @@ void IKRRTWindow::buildVisu()
 
     if (robot)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
         viewer->addVisualization("scene", "robot", v);
     }
 
     if (object)
     {
         ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel2);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel2);
         viewer->addVisualization("scene", "object", v);
     }
 
@@ -239,7 +239,7 @@ void IKRRTWindow::buildVisu()
     {
         for (size_t i = 0; i < obstacles.size(); i++)
         {
-            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(obstacles.at(i), colModel);
+            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(obstacles.at(i), colModel);
             std::stringstream s;
             s << "obstacle-" << i;
             viewer->addVisualization("scene", s.str(), v);
@@ -478,7 +478,7 @@ void IKRRTWindow::buildRRTVisu()
     }
 
     //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
-    VisualizationPtr wv = w->getVisualization();
+    VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
         viewer->addVisualization("rrt","solution", wv);
@@ -491,7 +491,7 @@ void IKRRTWindow::buildGraspSetVisu()
 
     if (UI.checkBoxGraspSet->isChecked() && eef && graspSet && object)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(graspSet, eef, object->getGlobalPose(), ModelLink::Full);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(graspSet, eef, object->getGlobalPose(), ModelLink::Full);
         viewer->addVisualization("grasps", "all-grasps", v);
     }
 
@@ -503,7 +503,7 @@ void IKRRTWindow::buildGraspSetVisu()
 
         if (rg->getSize() > 0)
         {
-            VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(rg, eef, object->getGlobalPose(), ModelLink::Full);
+            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(rg, eef, object->getGlobalPose(), ModelLink::Full);
             viewer->addVisualization("grasps", "reachable-grasps", v);
         }
     }
@@ -522,7 +522,7 @@ void IKRRTWindow::reachVisu()
     if (UI.checkBoxReachabilitySpace->checkState() == Qt::Checked)
     {
         ColorMapPtr cm(new ColorMap(ColorMap::eRed));
-        VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, cm, true);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, cm, true);
         viewer->addVisualization("reach", "reachability", v);
 
         /*

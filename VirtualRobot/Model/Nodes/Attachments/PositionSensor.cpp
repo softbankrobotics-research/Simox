@@ -1,5 +1,6 @@
 
 #include "PositionSensor.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
 {
@@ -33,14 +34,7 @@ namespace VirtualRobot
 
     void PositionSensor::initVisualization()
     {
-        VisualizationFactoryPtr factory;
-        if (visualizationType.empty())
-        {
-            factory = VirtualRobot::VisualizationFactory::first(NULL);
-        } else
-        {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, NULL);
-        }
+        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (!factory)
         {

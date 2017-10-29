@@ -303,7 +303,7 @@ namespace SimDynamics
             d = size;
         }
 
-        groundObject = VirtualRobot::Obstacle::createBox(w, h, d, VirtualRobot::VisualizationFactory::Color::Gray());
+        groundObject = VirtualRobot::Obstacle::createBox(w, h, d, VirtualRobot::Visualization::Color::Gray());
         std::string name("Floor");
         groundObject->setName(name);
         Eigen::Matrix4f gp;

@@ -24,6 +24,7 @@
 #include "PoseConstraint.h"
 
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 #include <iostream>
 
@@ -96,7 +97,7 @@ bool PoseConstraint::getRobotPoseForConstraint(Eigen::Matrix4f& pose)
     return false;
 }
 
-const Eigen::Matrix4f& PoseConstraint::getTarget()
+const Eigen::Matrix4f& PoseConstraint::getTarget() const
 {
     return target;
 }
@@ -135,6 +136,15 @@ Eigen::VectorXf PoseConstraint::optimizationGradient(unsigned int id)
         default:
             return Eigen::VectorXf();
     }
+}
+
+VisualizationPtr PoseConstraint::getVisualization() const
+{
+    auto v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(50);
+    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+    gp.block<3, 1>(0, 3) = getTarget().block<3, 1>(0, 3);
+    v->setGlobalPose(gp);
+    return v;
 }
 
 double PoseConstraint::positionOptimizationFunction()

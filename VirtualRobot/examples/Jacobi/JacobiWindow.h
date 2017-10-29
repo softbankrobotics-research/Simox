@@ -7,7 +7,7 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "Gui/ViewerInterface.h"
 
 #include <string.h>

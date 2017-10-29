@@ -1,7 +1,7 @@
 #include "MTPlanningScenery.h"
 
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/Visualization.h"
+#include "VirtualRobot/Visualization/VisualizationSet.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/Tools/MathTools.h"
 #include "VirtualRobot/Model/Model.h"
@@ -139,7 +139,7 @@ void MTPlanningScenery::buildScene()
         m.block(0, 3, 3, 1) = p;
         o->setGlobalPose(m);
         environmentModels.push_back(o);
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(o, ModelLink::Full);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(o, ModelLink::Full);
         std::stringstream on;
         on << "Obstacle-" << i;
         viewer->addVisualization("obstacles", on.str(), v);
@@ -305,7 +305,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     kinChain->setJointValues(start);
     Eigen::Matrix4f gp = rn->getGlobalPose();
-    VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 1.0f, 0, 0);
+    VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 1.0f, 0, 0);
     VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v, gp);
     std::stringstream nameStart;
     nameStart << "start-point-" << id;
@@ -313,7 +313,7 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     kinChain->setJointValues(goal);
     Eigen::Matrix4f gp2 = rn->getGlobalPose();
-    VisualizationNodePtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0, 0, 1.0f);
+    VisualizationPtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0, 0, 1.0f);
     VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2, gp2);
     std::stringstream nameGoal;
     nameGoal << "goal-point-" << id;
@@ -322,13 +322,13 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     std::stringstream nameStartText;
     nameStartText << "start-" << id;
-    VisualizationNodePtr v1t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameStartText.str(), true, 7.0f, VisualizationFactory::Color::Black(), 10.0f, 0, 0);
+    VisualizationPtr v1t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameStartText.str(), true, 7.0f, Visualization::Color::Black(), 10.0f, 0, 0);
     VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v1t, gp);
     viewer->addVisualization("startgoal", nameStartText.str(), v1t);
 
     std::stringstream nameGoalText;
     nameGoalText << "goal-" << id;
-    VisualizationNodePtr v2t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameGoalText.str(), true, 7.0f, VisualizationFactory::Color::Black(), 10.0f, 0, 0);
+    VisualizationPtr v2t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameGoalText.str(), true, 7.0f, Visualization::Color::Black(), 10.0f, 0, 0);
     VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v2t, gp2);
     viewer->addVisualization("startgoal", nameGoalText.str(), v2t);
 }
@@ -529,7 +529,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
 
     if ((int)robots.size() == 1)
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
+        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robots[0], robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
         viewer->addVisualization("robot", "robot", v);
     }
 
@@ -563,37 +563,37 @@ void MTPlanningScenery::addBBCube()
     Eigen::Vector3f p3b(x2,y2,z2);
     Eigen::Vector3f p4b(x1,y2,z2);
 
-    VisualizationNodePtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
-    VisualizationNodePtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p3, lineSize, 0, 0, 0);
-    VisualizationNodePtr v3 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p4, lineSize, 0, 0, 0);
-    VisualizationNodePtr v4 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p1, lineSize, 0, 0, 0);
+    VisualizationPtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
+    VisualizationPtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p3, lineSize, 0, 0, 0);
+    VisualizationPtr v3 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p4, lineSize, 0, 0, 0);
+    VisualizationPtr v4 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p1, lineSize, 0, 0, 0);
     viewer->addVisualization("bbox", "l1", v1);
     viewer->addVisualization("bbox", "l2", v2);
     viewer->addVisualization("bbox", "l3", v3);
     viewer->addVisualization("bbox", "l4", v4);
 
-    VisualizationNodePtr v1b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p2b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v2b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p3b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v3b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v4b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p1b, lineSize, 0, 0, 0);
+    VisualizationPtr v1b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p2b, lineSize, 0, 0, 0);
+    VisualizationPtr v2b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p3b, lineSize, 0, 0, 0);
+    VisualizationPtr v3b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
+    VisualizationPtr v4b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p1b, lineSize, 0, 0, 0);
     viewer->addVisualization("bbox", "l1b", v1b);
     viewer->addVisualization("bbox", "l2b", v2b);
     viewer->addVisualization("bbox", "l3b", v3b);
     viewer->addVisualization("bbox", "l4b", v4b);
 
-    VisualizationNodePtr v1c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
-    VisualizationNodePtr v2c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p2b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v3c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p1b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v4c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p1, lineSize, 0, 0, 0);
+    VisualizationPtr v1c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize, 0, 0, 0);
+    VisualizationPtr v2c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p2b, lineSize, 0, 0, 0);
+    VisualizationPtr v3c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p1b, lineSize, 0, 0, 0);
+    VisualizationPtr v4c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p1, lineSize, 0, 0, 0);
     viewer->addVisualization("bbox", "l1c", v1c);
     viewer->addVisualization("bbox", "l2c", v2c);
     viewer->addVisualization("bbox", "l3c", v3c);
     viewer->addVisualization("bbox", "l4c", v4c);
 
-    VisualizationNodePtr v1d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p3, lineSize, 0, 0, 0);
-    VisualizationNodePtr v2d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p3b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v3d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
-    VisualizationNodePtr v4d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p4, lineSize, 0, 0, 0);
+    VisualizationPtr v1d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p3, lineSize, 0, 0, 0);
+    VisualizationPtr v2d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p3b, lineSize, 0, 0, 0);
+    VisualizationPtr v3d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize, 0, 0, 0);
+    VisualizationPtr v4d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p4, lineSize, 0, 0, 0);
     viewer->addVisualization("bbox", "l1d", v1d);
     viewer->addVisualization("bbox", "l2d", v2d);
     viewer->addVisualization("bbox", "l3d", v3d);
@@ -636,7 +636,7 @@ void MTPlanningScenery::checkPlanningThreads()
 
                     w->addCSpacePath(solutions[i]);
                     w->addTree(planners[i]->getTree());
-                    VisualizationPtr wv = w->getVisualization();
+                    VisualizationSetPtr wv = w->getVisualization();
                     if (wv)
                     {
                         std::stringstream n;
@@ -681,7 +681,7 @@ void MTPlanningScenery::checkOptimizeThreads()
 
                     optiSolutions[i] = pOptiSol->clone();
                     w->addCSpacePath(optiSolutions[i], RrtWorkspaceVisualization::ColorSet::eGreen);
-                    VisualizationPtr wv = w->getVisualization();
+                    VisualizationSetPtr wv = w->getVisualization();
                     if (wv)
                     {
                         std::stringstream n;

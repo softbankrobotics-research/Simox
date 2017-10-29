@@ -425,7 +425,6 @@ namespace VirtualRobot
         Eigen::Matrix4f staticTransformation;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
-        std::vector<ModelNodeAttachmentPtr> attachmentsWithVisualisation;
     };
 }
 

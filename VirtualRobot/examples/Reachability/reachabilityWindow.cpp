@@ -161,7 +161,7 @@ void reachabilityWindow::reachVisu()
     }
 
     viewer->clearLayer(wsVisuLayerName);
-    VisualizationNodePtr wsVisuNode;
+    VisualizationPtr wsVisuNode;
 
     if (UI.checkBoxReachabilityVisu->checkState() == Qt::Checked)
     {

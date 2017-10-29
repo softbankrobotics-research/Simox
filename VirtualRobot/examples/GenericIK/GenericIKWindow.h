@@ -8,7 +8,7 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/IK/GazeIK.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"

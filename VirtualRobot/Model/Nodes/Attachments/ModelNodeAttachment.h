@@ -25,7 +25,7 @@
 
 #include "../../Model/Model.h"
 #include "../../Model/Frame.h"
-#include "../../Visualization/VisualizationNode.h"
+#include "../../Visualization/Visualization.h"
 
 #include <cstdint>
 #include <string>
@@ -98,12 +98,12 @@ namespace VirtualRobot
          *
          * @return The visualisation.
          */
-        virtual VisualizationNodePtr getVisualisation()
+        virtual VisualizationPtr getVisualisation()
         {
             return visu;
         }
 
-        virtual void setVisualization(VisualizationNodePtr visu)
+        virtual void setVisualization(VisualizationPtr visu)
         {
             this->visu = visu;
         }
@@ -171,7 +171,7 @@ namespace VirtualRobot
         ModelNodeWeakPtr node;
         Eigen::Matrix4f localTransformation;
         std::string visualizationType;
-        VisualizationNodePtr visu;
+        VisualizationPtr visu;
     };
 }
 

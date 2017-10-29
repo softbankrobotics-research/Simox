@@ -38,8 +38,8 @@ class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtEx
         CoinViewer(QWidget *parent);
         ~CoinViewer();
 
+        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationSetPtr &visualization);
         void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
-        void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
         void removeVisualization(const std::string &layer, const std::string &id);
 
         void clearLayer(const std::string &layer);

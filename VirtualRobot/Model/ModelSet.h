@@ -117,7 +117,7 @@ namespace VirtualRobot
         std::vector< std::string > getModelNames() const;
 
         std::vector<CollisionModelPtr> getCollisionModels() const;
-        std::vector<VisualizationNodePtr> getVisualizations() const;
+        std::vector<VisualizationPtr> getVisualizations() const;
 
         /*!
          * Create a XML string to represent this ModelNodeSet.

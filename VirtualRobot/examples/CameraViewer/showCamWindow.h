@@ -9,8 +9,8 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/JointSet.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -107,7 +107,7 @@ protected:
 
     bool useColModel;
 
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
+    std::shared_ptr<VirtualRobot::CoinVisualizationSet> visualization;
 
     struct DepthRenderData
     {

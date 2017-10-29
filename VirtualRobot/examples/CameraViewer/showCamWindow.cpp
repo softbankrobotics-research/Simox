@@ -212,7 +212,7 @@ void showCamWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    visualization = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel));
+    visualization = std::dynamic_pointer_cast<VirtualRobot::CoinVisualizationSet>(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel));
     SoNode* visualisationNode = NULL;
 
     if (visualization)

@@ -24,6 +24,7 @@
 #include "TSRConstraint.h"
 
 #include <VirtualRobot/Tools/MathTools.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 using namespace VirtualRobot;
 
@@ -110,12 +111,12 @@ bool TSRConstraint::checkTolerances()
     return (error.head(3).norm() < toleranceTranslation) && (error.tail(3).norm() < toleranceRotation);
 }
 
-const Eigen::Matrix4f& TSRConstraint::getTransformation()
+const Eigen::Matrix4f& TSRConstraint::getTransformation() const
 {
     return transformation;
 }
 
-const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds()
+const Eigen::Matrix<float, 6, 2>& TSRConstraint::getBounds() const
 {
     return bounds;
 }
@@ -148,6 +149,18 @@ Eigen::VectorXf TSRConstraint::optimizationGradient(unsigned int id)
         default:
             return Eigen::VectorXf();
     }
+}
+
+VisualizationPtr TSRConstraint::getVisualization() const
+{
+    auto bounds = getBounds();
+    float width = fabs(bounds(0, 0) - bounds(0, 1));
+    float height = fabs(bounds(1, 0) - bounds(1, 1));
+    float depth = fabs(bounds(2, 0) - bounds(2, 1));
+
+    auto v = VisualizationFactory::getGlobalVisualizationFactory()->createBox(width, height, depth);
+    v->setGlobalPose(getTransformation());
+    return v;
 }
 
 double TSRConstraint::positionOptimizationFunction()

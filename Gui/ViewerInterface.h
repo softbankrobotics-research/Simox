@@ -39,8 +39,8 @@ namespace SimoxGui
 class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 {
     public:
+        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationSetPtr &visualization) = 0;
         virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization) = 0;
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization) = 0;
         virtual void removeVisualization(const std::string &layer, const std::string &id) = 0;
 
         virtual void clearLayer(const std::string &layer) = 0;
