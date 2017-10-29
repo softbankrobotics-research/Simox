@@ -4,7 +4,8 @@
 #include "../../Visualization/VisualizationNode.h"
 #include "../../Visualization/TriMeshModel.h"
 #include "../../VirtualRobotException.h"
-
+#include "../../XML/BaseIO.h"
+#include "Attachments/ModelNodeAttachment.h"
 
 namespace VirtualRobot
 {
@@ -54,8 +55,44 @@ namespace VirtualRobot
 
     std::string ModelLink::Physics::toXML(int tabs)
     {
-        // TODO
-        return std::string();
+        std::string ta;
+        std::stringstream ss;
+
+        for (int i = 0; i < tabs; i++)
+        {
+            ta += "\t";
+        }
+
+        ss << ta << "<Physics>\n";
+
+        if (simType != eUnknown)
+        {
+            ss << ta << "\t<SimulationType value='" << getString(simType) << "'/>\n";
+        }
+
+        ss << ta << "\t<Mass unit='kg' value='" << massKg << "'/>\n";
+        ss << ta << "\t<CoM location=";
+
+        if (comLocation == eVisuBBoxCenter)
+        {
+            ss << "'VisualizationBBoxCenter'/>\n";
+        }
+        else
+        {
+            ss << "'Custom' x='" << localCoM(0) << "' y='" << localCoM(1) << "' z='" << localCoM(2) << "'/>\n";
+        }
+
+        ss << ta << "\t<InertiaMatrix>\n";
+        ss << MathTools::getTransformXMLString(inertiaMatrix, tabs + 2, true);
+        ss << ta << "\t</InertiaMatrix>\n";
+
+        for (size_t i = 0; i < ignoreCollisions.size(); i++)
+        {
+            ss << ta << "\t<IgnoreCollisions name='" << ignoreCollisions[i] << "'/>\n";
+        }
+
+        ss << ta << "</Physics>\n";
+        return ss.str();
     }
 
     ModelLink::Physics ModelLink::Physics::scale(float scaling) const
@@ -439,4 +476,126 @@ namespace VirtualRobot
 
         ModelNode::updatePoseInternally(updateChildren, updateAttachments);
     }
+
+    std::string ModelLink::toXML(const std::string &basePath, const std::string &modelPathRelative, bool storeAttachments)
+    {
+        std::stringstream ss;
+        std::string pre = "\t";
+        std::string pre2 = "\t\t";
+        ss << pre << "<ModelNode name='" << name << "'>\n";
+        if (!this->getStaticTransformation().isIdentity())
+        {
+            ss << pre2 << "<Transform>" << endl;
+            ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
+            ss << pre2 << "</Transform>" << endl;
+        }
+
+        if (physics.isSet())
+        {
+            ss << physics.toXML(2);
+        }
+
+        boost::filesystem::path pBase(basePath);
+
+        if (visualizationModel && visualizationModel->getTriMeshModel() && visualizationModel->getTriMeshModel()->faces.size() > 0)
+        {
+              std::string visuFile = visualizationModel->getFilename();//getFilenameReplacementVisuModel();
+
+              boost::filesystem::path pModel(modelPathRelative);
+              boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase, pModel);
+              boost::filesystem::path fn(visuFile);
+              boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete, fn.filename());
+
+              ss << visualizationModel->toXML(pBase.string(), modelFileComplete.string(), 2);
+        }
+
+        if (collisionModel && collisionModel->getTriMeshModel() && collisionModel->getTriMeshModel()->faces.size() > 0)
+        {
+              std::string colFile;
+              if (collisionModel->getVisualization())
+              {
+                  colFile = collisionModel->getVisualization()->getFilename();//getFilenameReplacementColModel();
+              }
+              boost::filesystem::path pModel(modelPathRelative);
+              boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase, pModel);
+              boost::filesystem::path fn(colFile);
+              boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete, fn.filename());
+              // stl fiels are saved as wrl, adapt filename (todo: generalize this procedure...)
+              boost::filesystem::path extension = modelFileComplete.extension();
+              if (extension != ".iv" && extension!=".wrl")
+              {
+                  modelFileComplete = boost::filesystem::operator/(modelDirComplete, fn.stem());
+                  modelFileComplete += ".wrl";
+              }
+              ss << collisionModel->toXML(pBase.string(), modelFileComplete.string(), 2);
+        }
+
+        if (storeAttachments)
+        {
+            for (auto &a:getAttachments())
+            {
+                ss << a->toXML(basePath, modelPathRelative);
+            }
+        }
+
+        std::vector<ModelNodePtr> children = this->getChildNodes();
+        for (size_t i = 0; i < children.size(); i++)
+        {
+                ss << pre2 << "<Child name='" << children[i]->getName() << "'/>" << endl;
+        }
+
+        ss << pre << "</ModelNode>\n";
+        return ss.str();
+    }
+
+    bool ModelLink::saveModelFiles(const std::string& modelPath)
+    {
+        bool res = true;
+
+        if (visualizationModel && visualizationModel->getTriMeshModel() && visualizationModel->getTriMeshModel()->faces.size() > 0)
+        {
+            std::string newFilename;
+
+            /*if (replaceFilenames)
+            {
+                newFilename = getFilenameReplacementVisuModel();
+                this->visualizationModel->setFilename(newFilename, false);
+            }
+            else
+            {*/
+                std::string fnV = visualizationModel->getFilename();
+                boost::filesystem::path fn(fnV);
+                boost::filesystem::path filnameNoPath = fn.filename();
+                newFilename = filnameNoPath.string();
+            //}
+
+            res = res & visualizationModel->saveModel(modelPath, newFilename);
+        }
+
+        if (collisionModel && collisionModel->getTriMeshModel() && collisionModel->getTriMeshModel()->faces.size() > 0)
+        {
+            // check if we need to replace the filename (also in case the trimesh model is stored!)
+            std::string newFilename;
+
+            /*if (replaceFilenames || !collisionModel->getVisualization())
+            {
+                newFilename = getFilenameReplacementColModel();
+                collisionModel->getVisualization()->setFilename(newFilename, false);
+            }
+            else
+            {*/
+            if (collisionModel->getVisualization())
+            {
+                std::string fnV = collisionModel->getVisualization()->getFilename();
+                boost::filesystem::path fn(fnV);
+                boost::filesystem::path filnameNoPath = fn.filename();
+                newFilename = filnameNoPath.string();
+            }
+
+            res = res & collisionModel->saveModel(modelPath, newFilename);
+        }
+
+        return res;
+    }
+
 }

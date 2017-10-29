@@ -12,7 +12,7 @@
 #include <VirtualRobot/Model/LinkSet.h>
 #include <VirtualRobot/Model/JointSet.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-//#include <VirtualRobot/Nodes/ForceTorqueSensor.h>
+#include <VirtualRobot/Model/Nodes/Attachments/ForceTorqueSensor.h>
 //#include <VirtualRobot/Nodes/ContactSensor.h>
 
 // either hinge or generic6DOF constraints can be used
@@ -38,8 +38,7 @@ namespace SimDynamics
         buildBulletModels(enableJointMotors);
 
         // activate force torque sensors
-        //todo
-        /*std::vector<SensorPtr>::iterator it = sensors.begin();
+        std::vector<SensorPtr>::iterator it = sensors.begin();
 
         for (; it != sensors.end(); it++)
         {
@@ -47,21 +46,23 @@ namespace SimDynamics
 
             if (ftSensor)
             {
-                VirtualRobot::RobotNodePtr node = ftSensor->getRobotNode();
-                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode")
+                VirtualRobot::ModelNodePtr node = ftSensor->getParent();
+                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to ModelNode")
+                VirtualRobot::ModelJointPtr nodeJ = std::dynamic_pointer_cast<ModelJoint>(node);
+                THROW_VR_EXCEPTION_IF(!nodeJ, "parent of sensor could not be casted to ModelJoint")
 
-                if (!hasLink(node))
+                if (!hasLink(nodeJ))
                 {
                     VR_WARNING << "Ignoring FT sensor " << ftSensor->getName() << ". Must be linked to a joint" << endl;
                 } else
                 {
-                    const LinkInfo& link = getLink(node);
+                    const LinkInfo& link = getLink(nodeJ);
                     enableForceTorqueFeedback(link);
                     std::cout << "Found force torque sensor: " << node->getName() << std::endl;
                 }
             }
         }
-        */
+
 
         this->enableSelfCollisions(false);
     }
@@ -417,7 +418,7 @@ namespace SimDynamics
         }
         else
         {
-            VR_WARNING << "Creating fixed joint between " << bodyA->getName() << " and " << bodyB->getName() << ". This might result in some artefacts (e.g. no strict ridgid connection)" << endl;
+            VR_INFO << "Creating fixed joint between " << bodyA->getName() << " and " << bodyB->getName() << ". This might result in some artefacts (e.g. no strict ridgid connection)" << endl;
             // create fixed joint
             jointbt = createFixedJoint(btBody1, btBody2, anchor_inNode1, anchor_inNode2);
         }
@@ -677,7 +678,7 @@ namespace SimDynamics
     void BulletRobot::updateSensors(double dt)
     {
         MutexLockPtr lock = getScopedLock();
-        //todo
+        //todo: contact sensors
         /*
         std::unordered_set<std::string> contactObjectNames;
 
@@ -735,6 +736,7 @@ namespace SimDynamics
             cf.bodyName = contactBody;
             frame.forces.push_back(cf);
         }
+        */
 
         // Update forces and torques
         for (std::vector<SensorPtr>::iterator it = sensors.begin(); it != sensors.end(); it++)
@@ -743,14 +745,17 @@ namespace SimDynamics
 
             if (ftSensor)
             {
-                VirtualRobot::RobotNodePtr node = ftSensor->getRobotNode();
+                VirtualRobot::ModelNodePtr node = ftSensor->getParent();
                 THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode")
+                VirtualRobot::ModelJointPtr nodeJ = std::dynamic_pointer_cast<ModelJoint>(node);
+                THROW_VR_EXCEPTION_IF(!nodeJ, "parent of sensor could not be casted to ModelJoint")
 
-                const LinkInfo& link = getLink(node);
+                const LinkInfo& link = getLink(nodeJ);
                 Eigen::VectorXf forceTorques = getJointForceTorqueGlobal(link);
                 ftSensor->updateSensors(forceTorques);
             }
-            else
+            // todo: contact sensor
+            /*else
             {
                 ContactSensorPtr contactSensor = std::dynamic_pointer_cast<ContactSensor>(*it);
 
@@ -761,9 +766,8 @@ namespace SimDynamics
                     const VirtualRobot::ContactSensor::ContactFrame& frame = frameMap[node->getName()];
                     contactSensor->updateSensors(frame, dt);
                 }
-            }
+            }*/
         }
-        */
     }
 
     BulletRobot::LinkInfo BulletRobot::getLink(VirtualRobot::ModelJointPtr node)

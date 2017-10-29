@@ -42,8 +42,8 @@ namespace VirtualRobot
 
         if (limitless)
         {
-            while (q > jointLimitHi) q -= 2.0f * M_PI;
-            while (q < jointLimitLo) q += 2.0f * M_PI;
+            while (q > jointLimitHi) q -= float(2.0f * M_PI);
+            while (q < jointLimitLo) q += float(2.0f * M_PI);
         }
         respectJointLimits(q);
 
@@ -130,7 +130,7 @@ namespace VirtualRobot
         // eventually take the other way around if it is shorter and if this joint is limitless.
         if (limitless && (std::abs(delta) > M_PI))
         {
-            delta = (-1) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta));
+            delta = float((-1.0f) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta)));
         }
 
         return delta;

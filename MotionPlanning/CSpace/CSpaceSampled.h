@@ -69,7 +69,10 @@ namespace MotionPlanning
             c-space is related to the number of joints in robotNodes.
             The boundaries of this c-space are set according to definitions in robotNodes.
         */
-        CSpaceSampled(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
+        CSpaceSampled(const VirtualRobot::RobotPtr &robot,
+                      const VirtualRobot::CDManagerPtr &collisionManager,
+                      const VirtualRobot::JointSetPtr &robotNodes,
+                      unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
 
         virtual ~CSpaceSampled();
 
@@ -90,7 +93,10 @@ namespace MotionPlanning
 
 
 
-        virtual CSpacePtr clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed = 0);
+        virtual CSpacePtr clone(const VirtualRobot::CollisionCheckerPtr &newColChecker,
+                                const VirtualRobot::RobotPtr &newRobot,
+                                const VirtualRobot::CDManagerPtr &newCDM,
+                                unsigned int newRandomSeed = 0) override;
 
         /*!
             Checks the middle configuration and when it is not invalid (in collision or constraints are violated) the path is split

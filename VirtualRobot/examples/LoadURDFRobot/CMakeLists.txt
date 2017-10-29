@@ -17,7 +17,7 @@ if (tinyxml_library AND URDF_FOUND)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER "Examples")
 
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-virtualrobot ${URDFDOM_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-virtualrobot ${urdfdom_LIBRARIES})
   
   
   #######################################################################################

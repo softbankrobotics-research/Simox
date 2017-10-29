@@ -51,7 +51,7 @@ namespace MotionPlanning
             \param cspace Is used to retrieve the dimension of the corresponding c-space and the corresponding joints
             \param name An optional string, identifying this path.
         */
-        CSpacePath(CSpacePtr cspace, const std::string& name = "");
+        CSpacePath(const CSpacePtr &cspace, const std::string& name = "");
 
         //! Destructor
         virtual ~CSpacePath();

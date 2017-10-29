@@ -14,9 +14,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
+#include <QTimer>
 
 #include <vector>
 
@@ -55,6 +53,7 @@ public slots:
     void jacobiTest();
     void jacobiTest2();
     void jacobiTestBi();
+    void updateCB();
 
 protected:
     void setupUI();
@@ -65,7 +64,6 @@ protected:
     void updatBox2Pos(float x, float y, float z, float a, float b, float g);
     void updatBoxBiPos(float x, float y, float z, float a, float b, float g);
 
-    static void updateCB(void* data, SoSensor* sensor);
 
 
     Ui::MainWindowJacobiDemo UI;
@@ -85,6 +83,7 @@ protected:
 
     bool useColModel;
     std::string boxVisuLayer;
+        QTimer* timer;
 };
 
 #endif // __Jacobi_WINDOW_H_

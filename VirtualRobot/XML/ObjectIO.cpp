@@ -305,7 +305,6 @@ namespace VirtualRobot
                     THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in ManipulationObject '" << objName << "'." << endl);
                     std::string colModelName = objName;
                     colModelName += "_VISU_ColModel";
-                    // todo: ID?
                     collisionModel.reset(new CollisionModel(visualizationNode, colModelName, CollisionCheckerPtr()));
                     colProcessed = true;
                 }
@@ -422,7 +421,6 @@ namespace VirtualRobot
                     THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in Obstacle '" << objName << "'." << endl);
                     std::string colModelName = objName;
                     colModelName += "_VISU_ColModel";
-                    // todo: ID?
                     collisionModel.reset(new CollisionModel(visualizationNode, colModelName, CollisionCheckerPtr()));
                     colProcessed = true;
                 }
@@ -563,7 +561,7 @@ namespace VirtualRobot
         return obj;
     }
 
-    bool ObjectIO::saveManipulationObject(ManipulationObjectPtr object, const std::string& xmlFile)
+    bool ObjectIO::saveManipulationObject(const ManipulationObjectPtr &object, const std::string& xmlFile)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
 

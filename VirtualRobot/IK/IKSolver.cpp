@@ -2,7 +2,7 @@
 
 namespace VirtualRobot
 {
-    IKSolver::IKSolver(JointSetPtr rns) :
+    IKSolver::IKSolver(const JointSetPtr &rns) :
 		rns(rns)
     {
 		if (rns)

@@ -20,7 +20,7 @@ using namespace VirtualRobot;
 namespace GraspPlanning
 {
 
-    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape, float maxRandDist)
+    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(const ModelPtr &object, const EndEffectorPtr &eef, const std::string& graspPreshape, float maxRandDist)
         : ApproachMovementGenerator(object, eef, graspPreshape)
     {
         name = "ApproachMovementSurfaceNormal";

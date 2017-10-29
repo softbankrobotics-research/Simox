@@ -21,7 +21,7 @@
 namespace VirtualRobot
 {
 
-    EndEffectorActor::EndEffectorActor(const std::string& name, const std::vector< ActorDefinition >& a, CollisionCheckerPtr colChecker) :
+    EndEffectorActor::EndEffectorActor(const std::string& name, const std::vector< ActorDefinition >& a, const CollisionCheckerPtr &colChecker) :
         name(name),
         actors(a)
     {
@@ -38,7 +38,7 @@ namespace VirtualRobot
         return actors;
     }
 
-    EndEffectorActorPtr EndEffectorActor::clone(RobotPtr newRobot)
+    EndEffectorActorPtr EndEffectorActor::clone(const RobotPtr &newRobot)
     {
         if (!newRobot)
         {
@@ -95,7 +95,7 @@ namespace VirtualRobot
         return res;
     }
 
-    bool EndEffectorActor::moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, std::vector<ModelLinkPtr> obstacles, float angle)
+    bool EndEffectorActor::moveActorCheckCollision(const EndEffectorPtr &eef, EndEffector::ContactInfoVector& storeContacts, const std::vector<ModelLinkPtr> &obstacles, float angle)
     {
         VR_ASSERT(eef);
         RobotPtr robot = eef->getRobot();
@@ -240,7 +240,7 @@ namespace VirtualRobot
     }
 
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, std::vector<ModelLinkPtr> obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(const EndEffectorPtr &eef, const std::vector<ModelLinkPtr> &obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode)
     {
         //std::vector<CollisionModelPtr> colModels = obstacles->getCollisionModels();
         //Eigen::Vector3f contact;
@@ -280,7 +280,7 @@ namespace VirtualRobot
         return col;
     }
 
-    bool EndEffectorActor::isColliding(LinkSetPtr obstacles,  CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(const LinkSetPtr &obstacles,  CollisionMode checkColMode)
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
@@ -296,7 +296,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(ModelLinkPtr obstacle, CollisionMode checkColMode)
+    bool EndEffectorActor::isColliding(const ModelLinkPtr &obstacle, CollisionMode checkColMode)
     {
         if (!obstacle || !obstacle->getCollisionModel())
         {
@@ -317,7 +317,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorActorPtr obstacle)
+    bool EndEffectorActor::isColliding(const EndEffectorActorPtr &obstacle)
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
@@ -334,7 +334,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr obstacle)
+    bool EndEffectorActor::isColliding(const EndEffectorPtr &obstacle)
     {
         std::vector<EndEffectorActorPtr> obstacleActors;
         obstacle->getActors(obstacleActors);
@@ -362,7 +362,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, EndEffectorPtr obstacle, EndEffector::ContactInfoVector& storeContacts)
+    bool EndEffectorActor::isColliding(const EndEffectorPtr &eef, const EndEffectorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts)
     {
         std::vector<EndEffectorActorPtr> obstacleActors;
         obstacle->getActors(obstacleActors);
@@ -390,7 +390,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, EndEffectorActorPtr obstacle, EndEffector::ContactInfoVector& storeContacts)
+    bool EndEffectorActor::isColliding(const EndEffectorPtr &eef, const EndEffectorActorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts)
     {
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
@@ -408,7 +408,7 @@ namespace VirtualRobot
 
     }
 
-    bool EndEffectorActor::isColliding(EndEffectorPtr eef, ModelLinkPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
+    bool EndEffectorActor::isColliding(const EndEffectorPtr &eef, const ModelLinkPtr &obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode /*= EndEffectorActor::eAll*/)
     {
         if (!obstacle)
         {
@@ -500,9 +500,9 @@ namespace VirtualRobot
         cout << " ****" << endl;
     }
 
-    bool EndEffectorActor::hasNode(RobotNodePtr node)
+    bool EndEffectorActor::hasNode(const RobotNodePtr &node)
     {
-        std::vector<ActorDefinition>::iterator iS = actors.begin();
+        std::vector<ActorDefinition>::const_iterator iS = actors.begin();
 
         while (iS != actors.end())
         {
@@ -517,7 +517,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool EndEffectorActor::nodesSufficient(std::vector<RobotNodePtr> nodes) const
+    bool EndEffectorActor::nodesSufficient(const std::vector<RobotNodePtr> &nodes) const
     {
         std::vector<ActorDefinition>::const_iterator i = actors.begin();
 

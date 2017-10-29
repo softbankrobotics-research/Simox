@@ -144,13 +144,6 @@ namespace VirtualRobot
 
         delete[] y;
 
-        if (loadMode == ModelIO::eCollisionModel)
-        {
-            // use collision visualization to build main visualization
-            // todo
-            //robot->createVisualizationFromCollisionModels();
-        }
-
         return robot;
     }
 
@@ -236,12 +229,12 @@ namespace VirtualRobot
 
         if (storeModelFiles)
         {
-            std::vector<RobotNodePtr> nodes = robot->getModelNodes();
+            std::vector<ModelLinkPtr> nodes = robot->getLinks();
 
             // todo
             for (size_t i = 0; i < nodes.size(); i++)
             {
-                //nodes[i]->saveModelFiles(modelDirComplete.string(), true);
+                nodes[i]->saveModelFiles(modelDirComplete.string());
             }
         }
 
@@ -760,7 +753,6 @@ namespace VirtualRobot
                         colModelName += "_VISU_ColModel";
                         // clone model
                         VisualizationNodePtr visualizationNodeClone = visualizationNode->clone();
-                        // todo: ID?
                         collisionModel.reset(new CollisionModel(visualizationNodeClone, colModelName, CollisionCheckerPtr()));
                         colProcessed = true;
                     }
@@ -775,7 +767,6 @@ namespace VirtualRobot
                         THROW_VR_EXCEPTION_IF(colProcessed, "Two collision tags defined in RobotNode '" << robotNodeName << "'." << endl);
                         std::string colModelName = robotNodeName;
                         colModelName += "_VISU_ColModel";
-                        // todo: ID?
                         collisionModel.reset(new CollisionModel(visualizationNodeCM, colModelName, CollisionCheckerPtr()));
                         colProcessed = true;
                     }
@@ -813,7 +804,7 @@ namespace VirtualRobot
             {
                 BaseIO::processTransformNode(robotNodeXMLNode, robotNodeName, transformMatrix);
             }
-            else if (nodeName == "sensor")
+            else if (nodeName == "sensor" || nodeName=="modelnodeattachment" || nodeName=="frame")
             {
                 sensorTags.push_back(node);
             }
@@ -827,7 +818,16 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(jointNodeXML && (visualizationNode || collisionModel), "Visualization and/or collision models are not allowed to be defined in joint node:" + robotNodeName);
         THROW_VR_EXCEPTION_IF(jointNodeXML && (physicsDefined), "Physics properties are not allowed to be defined in joint node:" + robotNodeName);
-        //create joint from xml data
+
+        if (loadMode == ModelIO::eCollisionModel)
+        {
+            if (collisionModel && collisionModel->getVisualization() && (!visualizationNode || visualizationNode->getNumFaces() == 0))
+            {
+                visualizationNode = collisionModel->getVisualization()->clone();
+            }
+        }
+
+        //create joint/link from xml data
 
         if (jointNodeXML)
             robotNode = processJointNode(jointNodeXML, robotNodeName, robo, transformMatrix);

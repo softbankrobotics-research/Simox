@@ -47,7 +47,7 @@ namespace VirtualRobot
         };
 
     public:
-        ConstrainedIK(RobotPtr& robot, const JointSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);// , bool reduceRobot = false);
+        ConstrainedIK(ModelPtr& robot, const JointSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);// , bool reduceRobot = false);
 
         void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
         void removeConstraint(const ConstraintPtr& constraint);

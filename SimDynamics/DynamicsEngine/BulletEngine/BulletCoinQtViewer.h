@@ -31,10 +31,11 @@
 #include <btBulletDynamicsCommon.h>
 #include <LinearMath/btQuickprof.h>
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoSelection.h>
+#include <Gui/ViewerInterface.h>
+#include <Gui/Coin/CoinViewer.h>
+
+//todo: use qtimer
+#include <Inventor/sensors/SoTimerSensor.h>
 
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -46,19 +47,11 @@
 namespace SimDynamics
 {
 
-    class SIMDYNAMICS_IMPORT_EXPORT BulletCoinQtViewer
+    class SIMDYNAMICS_IMPORT_EXPORT BulletCoinQtViewer : public SimoxGui::CoinViewer
     {
     public:
-        BulletCoinQtViewer(DynamicsWorldPtr world);
+        BulletCoinQtViewer(QWidget* parent, DynamicsWorldPtr world, int antiAliasingSteps = 0);
         virtual ~BulletCoinQtViewer();
-
-        /*!
-            Call this method to initialize the 3d viewer.
-            \param embedViewer The 3d viewer will be embedded in this QFrame.
-            \param scene The scene that should be displayed.
-            \param antiAliasingSteps If >0, anti aliasing is enabled. The parameter defines the number of rendering steps. This may slow down rendering on old gfx cards.
-        */
-        virtual void initSceneGraph(QFrame* embedViewer, SoNode* scene, int antiAliasingSteps = 0);
 
         /*!
             In this mode, the time between two updates is measures and the engine is stepped accordingly. (standard)
@@ -84,31 +77,28 @@ namespace SimDynamics
         */
         void setUpdateInterval(int updateTimerIntervalMS);
 
-        void viewAll();
-
         /*!
             Visualize dynamics object.
         */
-        void addVisualization(VirtualRobot::ModelPtr o,
-                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
-                              SoSeparator* container = NULL);
-        void addVisualization(VirtualRobot::ModelLinkPtr o,
-                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
-                              SoSeparator* container = NULL);
-        void addVisualization(DynamicsObjectPtr o,
-                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
-                              SoSeparator* container = NULL);
-        void addVisualization(DynamicsModelPtr r,
-                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full,
-                              SoSeparator* container = NULL);
-
+        void addSimDynamicsVisualization(VirtualRobot::ModelPtr o,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full
+                              );
+        void addSimDynamicsVisualization(VirtualRobot::ModelLinkPtr o,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full
+                              );
+        void addSimDynamicsVisualization(DynamicsObjectPtr o,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full
+                              );
+        void addSimDynamicsVisualization(DynamicsModelPtr r,
+                              VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full
+                              );
         /*!
             Remove visualization of dynamics object.
         */
-        void removeVisualization(VirtualRobot::ModelPtr o);
-        void removeVisualization(VirtualRobot::ModelLinkPtr o);
-        void removeVisualization(DynamicsObjectPtr o);
-        void removeVisualization(DynamicsModelPtr r);
+        void removeSimDynamicsVisualization(VirtualRobot::ModelPtr o);
+        void removeSimDynamicsVisualization(VirtualRobot::ModelLinkPtr o);
+        void removeSimDynamicsVisualization(DynamicsObjectPtr o);
+        void removeSimDynamicsVisualization(DynamicsModelPtr r);
 
         //! Returns true, if physics engine is running. False, if paused.
         bool engineRunning();
@@ -194,6 +184,8 @@ namespace SimDynamics
 
     protected:
 
+        void initSceneGraph(QWidget* parent, int antiAliasingSteps = 0);
+
         //checks if physics engine is enabled and performes a time step.
         virtual void updatePhysics();
 
@@ -228,20 +220,13 @@ namespace SimDynamics
         static void timerCB(void* data, SoSensor* sensor);
         static void selectionCB(void* userdata, SoPath* path);
         static void deselectionCB(void* userdata, SoPath* path);
-        SoQtExaminerViewer* viewer;
+
         SoTimerSensor* timerSensor;
 
         BulletEnginePtr bulletEngine;
         btClock m_clock;
 
-        std::map<VirtualRobot::RobotPtr, SoNode*> addedSpriteRobotVisualizations;
-        std::map<VirtualRobot::ModelLinkPtr, SoNode*> addedSpriteVisualizations;
-        std::map<DynamicsObjectPtr, SoNode*> addedVisualizations;
-        std::map<DynamicsModelPtr, SoNode*> addedRobotVisualizations;
-
-        SoSeparator* sceneGraphRoot;
-        SoSeparator* floor;
-        SoSelection* sceneGraph;
+        QTimer *timer;
 
         int bulletTimeStepMsec;
         int bulletMaxSubSteps;
@@ -256,9 +241,8 @@ namespace SimDynamics
         std::shared_ptr <std::recursive_mutex> engineMutexPtr;
     };
 
-
     typedef std::shared_ptr<BulletCoinQtViewer> BulletCoinQtViewerPtr;
 
 } // namespace
 
-#endif // _SimDynamics_BulletCoinQtViewer_h_
+#endif

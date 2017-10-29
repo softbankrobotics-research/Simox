@@ -55,7 +55,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(ModelNodePtr node);
+        virtual bool isAttachable(const ModelNodePtr &node) override;
 
         /*!
          * Get the type of this attachment.
@@ -67,6 +67,23 @@ namespace VirtualRobot
 
         virtual ModelNodeAttachmentPtr clone();
 
+
+        void updateSensors(const Eigen::VectorXf& newForceTorque);
+
+
+        const Eigen::VectorXf& getForceTorque();
+        Eigen::Vector3f getForce() const;
+        Eigen::Vector3f getTorque() const;
+
+        /**
+         * Projects torque on joint axis
+         */
+        Eigen::Vector3f getAxisTorque();
+
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+
+    protected:
+        Eigen::VectorXf forceTorqueValues;
 
     private:
         void initVisualization();

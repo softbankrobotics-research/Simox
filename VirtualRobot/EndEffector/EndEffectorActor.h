@@ -49,7 +49,7 @@ namespace VirtualRobot
             float directionAndSpeed;
         };
 
-        EndEffectorActor(const std::string& name, const std::vector< ActorDefinition >& a, CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        EndEffectorActor(const std::string& name, const std::vector< ActorDefinition >& a, const CollisionCheckerPtr &colChecker = CollisionCheckerPtr());
 
         std::vector<ActorDefinition> getDefinition();
 
@@ -57,7 +57,7 @@ namespace VirtualRobot
             Clones the EndEffectorActor with respect to the given robot. Note that unlike the clone-methods of
             RobotNodeSet and EndEffector, this method does not register anything with the robot.
         */
-        EndEffectorActorPtr clone(RobotPtr newRobot);
+        EndEffectorActorPtr clone(const RobotPtr &newRobot);
 
         std::string getName();
 
@@ -75,32 +75,32 @@ namespace VirtualRobot
             \param angle How far should the eef actor move [rad]
             Returns true if all joints do either hit their limit or are in collision, e.g. the actor cannot be moved any further.
         */
-        bool moveActorCheckCollision(EndEffectorPtr eef, EndEffector::ContactInfoVector& storeContacts, std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float angle = 0.02);
+        bool moveActorCheckCollision(const EndEffectorPtr &eef, EndEffector::ContactInfoVector& storeContacts, const std::vector<ModelLinkPtr> &obstacles = std::vector<ModelLinkPtr>(), float angle = 0.02);
 
         /*!
             Checks if the actor collides with one of the given obstacles
         */
-        bool isColliding(LinkSetPtr obstacles, CollisionMode checkColMode = EndEffectorActor::eAll);
-        bool isColliding(EndEffectorPtr eef, std::vector<ModelLinkPtr>, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(const LinkSetPtr &obstacles, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(const EndEffectorPtr &eef, const std::vector<ModelLinkPtr> &obstacles, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
 
         /*!
             Checks if the actor collides with the given obstacle.
             \p checkColMode If set, the collisionMode of the actor's robotNodes is checked against it (e.g. to avoid collision checks with the static part of the eef)
         */
-        bool isColliding(ModelLinkPtr obstacle, CollisionMode checkColMode = EndEffectorActor::eAll);
-        bool isColliding(EndEffectorPtr eef, ModelLinkPtr obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(const ModelLinkPtr &obstacle, CollisionMode checkColMode = EndEffectorActor::eAll);
+        bool isColliding(const EndEffectorPtr &eef, const ModelLinkPtr &obstacle, EndEffector::ContactInfoVector& storeContacts, CollisionMode checkColMode = EndEffectorActor::eAll);
 
         /*!
             Checks if the actor collides with a given second actor
         */
-        bool isColliding(EndEffectorActorPtr obstacle);
-        bool isColliding(EndEffectorPtr eef, EndEffectorActorPtr obstacle, EndEffector::ContactInfoVector& storeContacts);
+        bool isColliding(const EndEffectorActorPtr &obstacle);
+        bool isColliding(const EndEffectorPtr &eef, const EndEffectorActorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts);
 
         /*!
             Checks if the actor collides with a given end effector
         */
-        bool isColliding(EndEffectorPtr obstacle);
-        bool isColliding(EndEffectorPtr eef, EndEffectorPtr obstacle, EndEffector::ContactInfoVector& storeContacts);
+        bool isColliding(const EndEffectorPtr &obstacle);
+        bool isColliding(const EndEffectorPtr &eef, const EndEffectorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts);
 
         std::vector< ModelNodePtr > getModelNodes() const;
         std::vector< ModelLinkPtr > getLinks() const;
@@ -111,10 +111,10 @@ namespace VirtualRobot
         /*!
             Check, if node is part of this actor.
         */
-        bool hasNode(ModelNodePtr node);
+        bool hasNode(const ModelNodePtr &node);
 
         //! Returns true, if nodes (only name strings are checked) are sufficient for building this eef
-        bool nodesSufficient(std::vector<ModelNodePtr> nodes) const;
+        bool nodesSufficient(const std::vector<ModelNodePtr> &nodes) const;
 
         /*!
             returns an approximation about the length of this eef.

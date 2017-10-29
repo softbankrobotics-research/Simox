@@ -8,7 +8,7 @@ using namespace std;
 namespace MotionPlanning
 {
 
-    CSpacePath::CSpacePath(CSpacePtr cspace, const std::string& name): Trajectory(cspace ? cspace->getJointSet() : VirtualRobot::JointSetPtr(), name)
+    CSpacePath::CSpacePath(const CSpacePtr &cspace, const std::string& name): Trajectory(cspace ? cspace->getJointSet() : VirtualRobot::JointSetPtr(), name)
     {
         this->cspace = cspace;
 

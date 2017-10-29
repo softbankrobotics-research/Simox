@@ -32,10 +32,6 @@
 namespace VirtualRobot
 {
 
-    /*!
-        An axis oriented bounding box.
-        Todo: Some parts of this class are similar to MathTools::OOBB.
-    */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Orientation
     {
     public:

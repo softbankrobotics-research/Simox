@@ -14,7 +14,7 @@ using namespace std;
 namespace VirtualRobot
 {
 
-    CDManager::CDManager(CollisionCheckerPtr colChecker)
+    CDManager::CDManager(const CollisionCheckerPtr &colChecker)
     {
         if (colChecker == NULL)
         {
@@ -31,7 +31,7 @@ namespace VirtualRobot
     }
 
 
-    void CDManager::addCollisionModel(ModelPtr m)
+    void CDManager::addCollisionModel(const ModelPtr &m)
     {
         VR_ASSERT(m);
         addCollisionModel(m->getLinkSet());
@@ -40,7 +40,7 @@ namespace VirtualRobot
     }
 
 
-    void CDManager::addCollisionModel(LinkSetPtr m)
+    void CDManager::addCollisionModel(const LinkSetPtr &m)
     {
         if (m)
         {
@@ -64,7 +64,7 @@ namespace VirtualRobot
         }
     }
 
-    void CDManager::addCollisionModel(ModelSetPtr m)
+    void CDManager::addCollisionModel(const ModelSetPtr &m)
     {
         if (m)
         {
@@ -102,7 +102,7 @@ namespace VirtualRobot
         }
     }
 
-    void CDManager::addCollisionModel(ModelLinkPtr m)
+    void CDManager::addCollisionModel(const ModelLinkPtr &m)
     {
         if (m)
         {
@@ -122,7 +122,7 @@ namespace VirtualRobot
         }
     }
 
-    bool CDManager::isInCollision(LinkSetPtr m)
+    bool CDManager::isInCollision(const LinkSetPtr &m)
     {
         if (!m || !colChecker)
         {
@@ -147,7 +147,7 @@ namespace VirtualRobot
     }
 
 
-    float CDManager::getDistance(LinkSetPtr m)
+    float CDManager::getDistance(const LinkSetPtr &m)
     {
         float minDist = FLT_MAX;
         float tmp;
@@ -177,7 +177,7 @@ namespace VirtualRobot
 
 
 
-    float CDManager::getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets)
+    float CDManager::getDistance(const LinkSetPtr &m, const std::vector<LinkSetPtr>& sets)
     {
         float minDist = FLT_MAX;
 
@@ -222,7 +222,7 @@ namespace VirtualRobot
         return minDist;
     }
 
-    float CDManager::getDistance(LinkSetPtr m, std::vector<LinkSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
+    float CDManager::getDistance(const LinkSetPtr &m, const std::vector<LinkSetPtr>& sets, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
     {
         float minDist = FLT_MAX;
         Eigen::Vector3f _P1;
@@ -291,7 +291,7 @@ namespace VirtualRobot
         return minDist;
     }
 
-    float CDManager::getDistance(LinkSetPtr m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
+    float CDManager::getDistance(const LinkSetPtr &m, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int& trID1, int& trID2)
     {
         float minDist = FLT_MAX;
         float tmp;
@@ -328,7 +328,7 @@ namespace VirtualRobot
 
 
 
-    bool CDManager::isInCollision(LinkSetPtr m, std::vector<LinkSetPtr>& sets)
+    bool CDManager::isInCollision(const LinkSetPtr &m, const std::vector<LinkSetPtr>& sets)
     {
         for (size_t i = 0; i < sets.size(); i++)
         {
@@ -374,7 +374,7 @@ namespace VirtualRobot
         return colChecker;
     }
 
-    bool CDManager::hasSceneObjectSet(LinkSetPtr m)
+    bool CDManager::hasSceneObjectSet(const LinkSetPtr &m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
@@ -387,7 +387,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CDManager::_hasSceneObjectSet(LinkSetPtr m)
+    bool CDManager::_hasSceneObjectSet(const LinkSetPtr &m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
@@ -405,7 +405,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CDManager::hasSceneObject(ModelLinkPtr m)
+    bool CDManager::hasSceneObject(const ModelLinkPtr &m)
     {
         for (size_t i = 0; i < colModels.size(); i++)
         {
@@ -418,7 +418,7 @@ namespace VirtualRobot
         return false;
     }
 
-    void CDManager::addCollisionModelPair(LinkSetPtr m1, LinkSetPtr m2, bool addToModelsList)
+    void CDManager::addCollisionModelPair(const LinkSetPtr &m1, const LinkSetPtr &m2, bool addToModelsList)
     {
         if (!m1 || !m2)
         {
@@ -438,7 +438,7 @@ namespace VirtualRobot
         colModelPairs[m1].push_back(m2);
     }
 
-    void CDManager::addCollisionModelPair(ModelLinkPtr m1, LinkSetPtr m2)
+    void CDManager::addCollisionModelPair(const ModelLinkPtr &m1, const LinkSetPtr &m2)
     {
         if (!m1 || !m2)
         {
@@ -451,7 +451,7 @@ namespace VirtualRobot
         addCollisionModelPair(cms, m2);
     }
 
-    void CDManager::addCollisionModelPair(ModelLinkPtr m1, ModelLinkPtr m2)
+    void CDManager::addCollisionModelPair(const ModelLinkPtr &m1, const ModelLinkPtr &m2)
     {
         if (!m1 || !m2)
         {

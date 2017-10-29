@@ -2,7 +2,7 @@
 #include "showCamWindow.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 
@@ -154,36 +154,6 @@ void showCamWindow::setupUI()
     connect(UI.doubleSpinBoxNonLinFactor, SIGNAL(valueChanged(double)), this, SLOT(renderCam()));
     connect(UI.doubleSpinBoxDepthLinClip, SIGNAL(valueChanged(double)), this, SLOT(renderCam()));
     connect(UI.checkBoxShowDepthVoxel, SIGNAL(clicked()), this, SLOT(renderCam()));
-}
-
-QString showCamWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
 }
 
 void showCamWindow::resetSceneryAll()

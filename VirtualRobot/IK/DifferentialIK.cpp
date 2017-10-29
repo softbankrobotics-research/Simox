@@ -258,7 +258,7 @@ namespace VirtualRobot
         }
     }
 
-    MatrixXf DifferentialIK::getJacobianMatrix(FramePtr tcp)
+    MatrixXf DifferentialIK::getJacobianMatrix(const FramePtr &tcp)
     {
         return getJacobianMatrix(tcp, IKSolver::All);
     }
@@ -268,7 +268,7 @@ namespace VirtualRobot
         return getJacobianMatrix(FramePtr(), mode);
     }
 
-    MatrixXf DifferentialIK::getJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode)
+    MatrixXf DifferentialIK::getJacobianMatrix(const FramePtr &tcp, IKSolver::CartesianSelection mode)
     {
         if (!initialized)
         {

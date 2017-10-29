@@ -216,9 +216,17 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
+        virtual VisualizationNodePtr createPlaneGrid(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/, const std::string &textureFile = std::string())
+        {
+            return VisualizationNodePtr();
+        }
         virtual VisualizationNodePtr createPlane(const MathTools::Plane& plane, float extend, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
         {
             return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
+        }
+        virtual VisualizationNodePtr createPlaneGrid(const MathTools::Plane& plane, float extend, float transparency, const std::string &textureFile = std::string())
+        {
+            return createPlaneGrid(plane.p, plane.n, extend, transparency, textureFile);
         }
         virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& /*n*/, float /*length*/ = 50.0f, float /*width*/ = 2.0f, const Color& /*color*/ = Color::Gray())
         {

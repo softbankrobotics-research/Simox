@@ -46,25 +46,25 @@ namespace VirtualRobot
 
         virtual void print(bool printDecoration = true);
 
-        bool hasGraspSet(GraspSetPtr graspSet);
+        bool hasGraspSet(const GraspSetPtr &graspSet);
         bool hasGraspSet(const std::string& robotType, const std::string& eef);
 
         /*!
             Appends a grasp set. Note, that only one grasp set per EEF is allowed.
         */
-        void addGraspSet(GraspSetPtr graspSet);
+        void addGraspSet(const GraspSetPtr &graspSet);
 
         /*!
          * \brief includeGraspSet
          * \param graspSet
          */
-        void includeGraspSet(GraspSetPtr graspSet);
+        void includeGraspSet(const GraspSetPtr &graspSet);
 
         /*!
             Get grasp set for the given end effector. In case multiple grasp sets for the eef are present, the first one is returned.
             An empty GraspSetPtr is returned when no GraspSet for eef is found.
         */
-        GraspSetPtr getGraspSet(EndEffectorPtr eef);
+        GraspSetPtr getGraspSet(const EndEffectorPtr &eef);
 
         /*!
             Get grasp set for the given robotType and end effector. In case multiple grasp sets for the robot/eef combination are present, the first one is returned.
@@ -96,7 +96,7 @@ namespace VirtualRobot
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
         */
-        ManipulationObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
+        ManipulationObjectPtr clone(const std::string& name, const CollisionCheckerPtr &colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         static ManipulationObjectPtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
@@ -106,7 +106,7 @@ namespace VirtualRobot
         \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
         \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ManipulationObjectPtr createFromMesh(TriMeshModelPtr mesh, const std::string &name = std::string(), const std::string &visualizationType = std::string(), CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        static ManipulationObjectPtr createFromMesh(const TriMeshModelPtr &mesh, const std::string &name = std::string(), const std::string &visualizationType = std::string(), const CollisionCheckerPtr &colChecker = CollisionCheckerPtr());
 
     protected:
 

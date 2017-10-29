@@ -52,7 +52,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(ModelNodePtr node);
+        virtual bool isAttachable(const ModelNodePtr &node) override;
 
         /*!
          * Get the type of this attachment.
@@ -64,6 +64,8 @@ namespace VirtualRobot
 
         virtual ModelNodeAttachmentPtr clone();
 
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+
     private:
         void initVisualization();
         VisualizationNodePtr createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory);
@@ -71,7 +73,7 @@ namespace VirtualRobot
 
         // ModelNodeAttachment interface
     protected:
-        virtual void setParent(ModelNodePtr node);
+        virtual void setParent(const ModelNodePtr &node);
     };
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;

@@ -55,7 +55,7 @@ namespace VirtualRobot
         return false;
     }
 
-    Eigen::MatrixXf JointLimitAvoidanceJacobi::getJacobianMatrix(FramePtr /*tcp*/)
+    Eigen::MatrixXf JointLimitAvoidanceJacobi::getJacobianMatrix(const FramePtr & /*tcp*/)
     {
         return getJacobianMatrix();
     }

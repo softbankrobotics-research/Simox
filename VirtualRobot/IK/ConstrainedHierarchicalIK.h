@@ -32,7 +32,9 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedHierarchicalIK : public ConstrainedIK
     {
     public:
-        ConstrainedHierarchicalIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
+        ConstrainedHierarchicalIK(ModelPtr& robot,
+                                  const JointSetPtr& nodeSet,
+                                  float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
         bool initialize();
         bool solveStep();

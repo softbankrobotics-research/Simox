@@ -270,9 +270,7 @@ void showRobotWindow::exportXML()
         return;
     }
 
-    // todo
     // XML
-    /*
     QString fi = QFileDialog::getSaveFileName(this, tr("xml File"), QString(), tr("xml Files (*.xml)"));
     std::string s = std::string(fi.toLatin1());
 
@@ -282,8 +280,8 @@ void showRobotWindow::exportXML()
         boost::filesystem::path p1(s);
         std::string fn = p1.filename().generic_string();
         std::string fnPath = p1.parent_path().generic_string();
-        ModelIO::saveXML(robot, fn, fnPath);
-    }*/
+        SimoxXMLFactory::saveXML(robot, fn, fnPath);
+    }
 }
 
 
@@ -496,18 +494,6 @@ void showRobotWindow::loadRobot()
 
     try
     {
-        //QFileInfo fileInfo(robotFilename.c_str());
-        //std::string suffix(fileInfo.suffix().toLatin1());
-        /*RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
-
-        if (!importer)
-        {
-            cout << " ERROR while grabbing importer" << endl;
-            return;
-        }
-
-        robot = importer->loadFromFile(robotFilename, ModelIO::eFull);*/
-
         robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& /*e*/)
@@ -529,7 +515,6 @@ void showRobotWindow::loadRobot()
             }
 
             robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
-            //robot = SimoxXMLFactory::loadRobotSimoxXML(robotFilename, ModelIO::eFull);
         }
         catch (VirtualRobotException& /*e*/)
         {

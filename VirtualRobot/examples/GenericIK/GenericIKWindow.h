@@ -19,13 +19,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-
+#include <QTimer>
 
 #include <vector>
 
@@ -59,6 +53,7 @@ public slots:
     void box2TCP();
     void solve();
 
+    void updateCB();
 
 protected:
     void setupUI();
@@ -67,11 +62,7 @@ protected:
 
     void updatBoxPos(float x, float y, float z, float a, float b, float g);
 
-    static void updateCB(void* data, SoSensor* sensor);
-
-
     Ui::MainWindowGenericIKDemo UI;
-    SoQtExaminerViewer* exViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
     SimoxGui::ViewerInterfacePtr viewer;
 
     VirtualRobot::RobotPtr robot;
@@ -88,6 +79,8 @@ protected:
     bool useColModel;
     std::string boxVisuLayer;
     std::string robotVisuLayer;
+
+    QTimer* timer;
 };
 
-#endif // __Generic_WINDOW_H_
+#endif

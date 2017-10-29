@@ -28,7 +28,6 @@
 
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
-#include <Inventor/misc/SoChildList.h>
 #include <QGLWidget>
 
 using namespace SimoxGui;
@@ -61,15 +60,19 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
     VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
     if (!coinVisu)
     {
-        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << std::endl;
+        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << endl;
         return;
     }
 
     addLayer(layer);
-    removeVisualization(layer, id);
+    std::string li = getLayerID(layer, id);
 
-    visualizations[id] = coinVisu->getCoinVisualization();
-    layers[layer]->addChild(visualizations[id]);
+    SoNode *n = coinVisu->getCoinVisualization();
+    if (n)
+    {
+        visualizations[li] = n;
+        layers[layer]->addChild(n);
+    }
 }
 
 void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization)
@@ -81,21 +84,36 @@ void CoinViewer::addVisualization(const std::string &layer, const std::string &i
 
 void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)
 {
-    if (visualizations[id] == nullptr) return;
-
-    layers[layer]->removeChild(visualizations[id]);
-    visualizations.erase(id);
+    if (!hasLayer(layer))
+        return;
+    if (!hasLayerID(layer, id))
+        return;
+    std::string li = getLayerID(layer, id);
+    SoSeparator *s = layers[layer];
+    s->removeChild(visualizations[li]);
+    visualizations.erase(li);
 }
 
 void CoinViewer::clearLayer(const std::string &layer)
 {
     addLayer(layer);
-    // remove all visualizations in the given layer
-    for (const std::string & id : getVisualizationIDs(layer))
-    {
-        removeVisualization(layer, id);
-    }
     layers[layer]->removeAllChildren();
+}
+
+bool CoinViewer::hasLayer(const std::string &layer)
+{
+    if (layers.find(layer) != layers.end())
+        return true;
+    return false;
+}
+
+bool CoinViewer::hasLayerID(const std::string &layer, const std::string &id)
+{
+    std::string li = getLayerID(layer, id);
+
+    if (visualizations.find(li) != visualizations.end())
+        return true;
+    return false;
 }
 
 QImage CoinViewer::getScreenshot()
@@ -141,16 +159,9 @@ void CoinViewer::addLayer(const std::string &layer)
     sceneSep->addChild(layers[layer]);
 }
 
-std::vector<std::string> CoinViewer::getVisualizationIDs(const std::string &layer)
+std::string CoinViewer::getLayerID(const std::string &layer, const std::string &id)
 {
-    std::vector<std::string> result;
-    for(const auto & visu : visualizations)
-    {
-        if (layers[layer]->getChildren()->find(visu.second) != -1)
-        {
-            result.push_back(visu.first);
-        }
-    }
-    return result;
+    std::string li = layer + "----" + id;
+    return li;
 }
 

@@ -25,11 +25,11 @@ namespace VirtualRobot
 
 
     /**
-    * \return "ModelNodeAttachment"
+    * \return "modelnodeattachment"
     */
     std::string ModelNodeAttachmentFactory::getName()
     {
-        return "ModelNodeAttachment";
+        return "modelnodeattachment";
     }
 
 
