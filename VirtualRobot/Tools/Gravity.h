@@ -41,7 +41,6 @@ namespace VirtualRobot
         std::map<std::string, float> computeGravityTorque();
 
         void computeGravityTorque(std::vector<float> &storeValues);
-        void computeGravityTorqueOptimized(std::vector<float> &storeValues);
     protected:
         struct GravityData;
         typedef boost::shared_ptr<GravityData> GravityDataPtr;
@@ -71,8 +70,6 @@ namespace VirtualRobot
 
         std::vector<VirtualRobot::RobotNodePtr> nodes;
         std::vector<VirtualRobot::RobotNodePtr> nodesBodies;
-
-        Eigen::MatrixXi children;
     };
 
     typedef boost::shared_ptr<Gravity> GravityPtr;
