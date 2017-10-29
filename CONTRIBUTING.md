@@ -56,7 +56,7 @@ Then proceed with one of the following steps:
 ### Releasing a new Simox version
 
 1. check out or update the `master' branch
-2. icrease the version number X.Y.Z in the file config.cmake 
+2. increase the version number X.Y.Z in the file config.cmake 
 3. commit the changed config.cmake file
 4. add a tag with 'git tag -a "vX.Y.Z" -m"vX.Y.Z"'
 5. push with 'git push --tags'
