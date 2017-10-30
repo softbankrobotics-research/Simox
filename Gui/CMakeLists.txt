@@ -1,4 +1,4 @@
-PROJECT ( simox-gui-coin3d )
+PROJECT ( simox-gui )
 
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
@@ -8,7 +8,7 @@ MESSAGE (STATUS "\n***** CONFIGURING project simox-gui *****")
 
 # -----------------------------------------------------------------------------------
 # Adding the UI files to the library
-if (Simox_USE_COIN_VISUALIZATION)
+if (Simox_VISUALIZATION)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
     set(UI
         Grasping/GraspEditor/GraspEditor.ui
@@ -36,18 +36,23 @@ if (Simox_USE_COIN_VISUALIZATION)
   SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
 
   list(APPEND INCLUDES
-      Coin/CoinViewer.h
       SimoxGuiImportExport.h
       ViewerInterface.h
       ViewerFactory.h
       ViewerSelection.h
-      Coin/CoinViewerFactory.h
   )
 
-  list(APPEND SOURCES
-      Coin/CoinViewer.cpp
-      Coin/CoinViewerFactory.cpp
-  )
+  IF (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
+    list(APPEND INCLUDES
+        Coin/CoinViewer.h
+        Coin/CoinViewerFactory.h
+    )
+
+    list(APPEND SOURCES
+        Coin/CoinViewer.cpp
+        Coin/CoinViewerFactory.cpp
+    )
+  ENDIF()
 
   MESSAGE (STATUS " ** INCLUDES:${INCLUDES}")
   MESSAGE (STATUS " ** SOURCES:${SOURCES}")
@@ -94,7 +99,7 @@ if (Simox_USE_COIN_VISUALIZATION)
 	        )
 
 else()
-MESSAGE (STATUS "Not building Simox-Gui")
+  MESSAGE (STATUS "Not building Simox-Gui")
 endif()
 
 

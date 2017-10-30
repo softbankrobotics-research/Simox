@@ -2,7 +2,7 @@ PROJECT ( MultiThreadedPlanning )
 
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
-IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
+IF(Simox_GUI)
 	    
 	# the variable "demo_SRCS" contains all .cpp files of this project
 	FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/MTPlanning.cpp ${PROJECT_SOURCE_DIR}/MTPlanningWindow.cpp ${PROJECT_SOURCE_DIR}/MTPlanningScenery.cpp)

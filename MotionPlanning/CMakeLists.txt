@@ -78,7 +78,7 @@ ApproachDiscretization.h
 #../VirtualRobot/definesVR.h
 
 
-if (Simox_USE_COIN_VISUALIZATION)
+if (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
 	SET(SOURCES
 	${SOURCES}
 	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.cpp
@@ -88,7 +88,7 @@ if (Simox_USE_COIN_VISUALIZATION)
 	${INCLUDES}
 	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h
 	)
-endif (Simox_USE_COIN_VISUALIZATION)
+endif ()
 
 INCLUDE_DIRECTORIES(.. ${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})

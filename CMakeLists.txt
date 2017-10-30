@@ -19,6 +19,17 @@ set (Simox_BUILD_SimDynamics FALSE CACHE BOOL "Build Dynamic Simulation")
 INCLUDE (config.cmake)
 
 
+if (Simox_BUILD_Gui)
+    add_subdirectory(Gui)
+
+    if (Simox_GUI AND Simox_VISUALIZATION)
+        list(APPEND SIMOX_EXPORT_TARGET_LIST simox-gui)
+        list (APPEND Simox_LIBRARIES simox-gui)
+    else()
+        SET (Simox_GUI FALSE)
+    endif()
+endif()
+
 MESSAGE(STATUS "** Simox build directory: ${Simox_BUILD_DIRECTORY}")
 add_subdirectory(VirtualRobot)
 set (SIMOX_EXPORT_TARGET_LIST simox-virtualrobot)
@@ -59,17 +70,6 @@ endif()
   MESSAGE(STATUS "** Simox_EXTERNAL_CMAKE_INCLUDE:${Simox_EXTERNAL_CMAKE_INCLUDE}")
 
 add_subdirectory(doc)
-
-if (Simox_BUILD_Gui)
-
-    add_subdirectory(Gui)
-    
-    if (Simox_USE_COIN_VISUALIZATION)
-    	list(APPEND SIMOX_EXPORT_TARGET_LIST simox-gui-coin3d)
-    	list (APPEND Simox_LIBRARIES simox-gui-coin3d)
-    endif()
-
-endif()
 
 
 #######################################################################

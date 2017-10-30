@@ -78,7 +78,7 @@ Visualization/ConvexHullVisualization.h
 )
 
 
-if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
+if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
 	SET(SOURCES
 	${SOURCES}
 	Visualization/CoinVisualization/CoinConvexHullVisualization.cpp

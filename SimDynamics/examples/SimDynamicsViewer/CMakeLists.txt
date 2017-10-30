@@ -2,7 +2,7 @@ PROJECT ( SimDynamicsViewer )
 
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
-IF(Simox_USE_COIN_VISUALIZATION)
+IF(Simox_GUI)
    
     FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/SimDynamicsViewer.cpp ${PROJECT_SOURCE_DIR}/simDynamicsWindow.cpp)
     FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/simDynamicsWindow.h)

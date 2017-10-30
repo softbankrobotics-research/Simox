@@ -194,7 +194,7 @@ if (SimDynamics_DYNAMICSENGINE)
           MESSAGE (STATUS " ** Bullet's OpenGLSupport library not found: Skipping BulletOpenGLViewer")
       endif()
   
-  if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
+  if (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D" AND SOQT_FOUND)
       	SET(SOURCES
         	${SOURCES}
         	DynamicsEngine/BulletEngine/BulletCoinQtViewer.cpp
@@ -225,7 +225,7 @@ if (SimDynamics_DYNAMICSENGINE)
 	TARGET_LINK_LIBRARIES (simox-simdynamics BulletOpenGLSupport)
 	SET (SimDynamics_BULLET_OpenGL TRUE PARENT_SCOPE) # inform parent scope about BulletOpenGLSupport
   ENDIF(SimDynamics_BULLET_OpenGL)
-  TARGET_LINK_LIBRARIES (simox-simdynamics ${Simox_EXTERNAL_LIBRARIES} simox-virtualrobot simox-gui-coin3d ${SimDynamics_PHYSICS_LIBRARIES})
+  TARGET_LINK_LIBRARIES (simox-simdynamics ${Simox_EXTERNAL_LIBRARIES} simox-virtualrobot ${SimDynamics_PHYSICS_LIBRARIES})
 
   # .DLL path
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
