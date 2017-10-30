@@ -58,7 +58,7 @@ namespace VirtualRobot
     }
 
 
-    void ManipulationObject::addGraspSet(GraspSetPtr graspSet)
+    void ManipulationObject::addGraspSet(const GraspSetPtr &graspSet)
     {
         THROW_VR_EXCEPTION_IF(!graspSet, "NULL data");
         THROW_VR_EXCEPTION_IF(hasGraspSet(graspSet), "Grasp set already added");
@@ -67,7 +67,7 @@ namespace VirtualRobot
         this->graspSets.push_back(graspSet);
     }
 
-    void ManipulationObject::includeGraspSet(GraspSetPtr toBeIncludedGraspSet)  //maybe delete
+    void ManipulationObject::includeGraspSet(const GraspSetPtr &toBeIncludedGraspSet)  //maybe delete
     {
         THROW_VR_EXCEPTION_IF(!toBeIncludedGraspSet,"NULL data");
         std::string robotType=toBeIncludedGraspSet->getRobotType();
@@ -87,7 +87,7 @@ namespace VirtualRobot
         graspSets.at(index)->includeGraspSet(toBeIncludedGraspSet);
     }
 
-    bool ManipulationObject::hasGraspSet(GraspSetPtr graspSet)
+    bool ManipulationObject::hasGraspSet(const GraspSetPtr &graspSet)
     {
         VR_ASSERT_MESSAGE(graspSet, "NULL data");
 
@@ -111,7 +111,7 @@ namespace VirtualRobot
         return false;
     }
 
-    VirtualRobot::GraspSetPtr ManipulationObject::getGraspSet(EndEffectorPtr eef)
+    VirtualRobot::GraspSetPtr ManipulationObject::getGraspSet(const EndEffectorPtr &eef)
     {
         THROW_VR_EXCEPTION_IF(!eef, "NULL data");
 
@@ -183,12 +183,15 @@ namespace VirtualRobot
         }
         else
         {
-            // todo
-            //ss << getSceneObjectXMLString(basePath, tabs + 1);
+            if (getLinks().size()==1)
+            {
+                ss << getLinks().at(0)->toXML(basePath);
+            }
+
 
             for (size_t i = 0; i < graspSets.size(); i++)
             {
-                ss << graspSets[i]->getXMLString(tabs + 1) << "\n";
+                ss << graspSets[i]->toXML(tabs + 1) << "\n";
             }
         }
 
@@ -197,7 +200,7 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    ManipulationObjectPtr ManipulationObject::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
+    ManipulationObjectPtr ManipulationObject::clone(const std::string &name, const CollisionCheckerPtr &colChecker, float scaling) const
     {
         ReadLockPtr r = getReadLock();
         ModelNodePtr startNode = getRootNode();
@@ -214,7 +217,10 @@ namespace VirtualRobot
         return result;
     }
 
-    VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(TriMeshModelPtr mesh, const std::string &name, const std::string &visualizationType, CollisionCheckerPtr colChecker)
+    VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(const TriMeshModelPtr &mesh,
+                                                                           const std::string &name,
+                                                                           const std::string &visualizationType,
+                                                                           const CollisionCheckerPtr &colChecker)
     {
         THROW_VR_EXCEPTION_IF(!mesh, "Null data");
 

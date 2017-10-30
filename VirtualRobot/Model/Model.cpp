@@ -838,7 +838,8 @@ namespace VirtualRobot
             if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
-                result.push_back(link->getCollisionModel());
+                if (link && link->getCollisionModel())
+                    result.push_back(link->getCollisionModel());
             }
         }
 
@@ -946,8 +947,51 @@ namespace VirtualRobot
     std::string Model::toXML(const std::string& basePath, const std::string& modelPath,
                              bool storeEEF, bool storeRNS, bool storeAttachments)
     {
+        std::stringstream ss;
+        //ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
+        ss << "<Model Type='" << this->type << "' RootNode='" << this->getRootNode()->getName() << "'>" << endl << endl;
+        std::vector<ModelNodePtr> nodes = getModelNodes();
 
-        return std::string(); // TODO: implement toXML
+        for (size_t i = 0; i < nodes.size(); i++)
+        {
+            ss << nodes[i]->toXML(basePath, modelPath, storeAttachments) << endl;
+        }
+
+        ss << endl;
+
+        if (storeRNS)
+        {
+            std::vector<RobotNodeSetPtr> rns = this->getModelNodeSets();
+
+            for (size_t i = 0; i < rns.size(); i++)
+            {
+                ss << rns[i]->toXML(1) << endl;
+            }
+
+            if (rns.size() > 0)
+            {
+                ss << endl;
+            }
+        }
+
+        if (storeEEF)
+        {
+            std::vector<EndEffectorPtr> eefs = this->getEndEffectors();
+
+            for (size_t i = 0; i < eefs.size(); i++)
+            {
+                ss << eefs[i]->toXML(1) << endl;
+            }
+
+            if (eefs.size() > 0)
+            {
+                ss << endl;
+            }
+        }
+
+        ss << "</Model>" << endl;
+
+        return ss.str();
     }
 
     void Model::print()

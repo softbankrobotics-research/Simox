@@ -2,29 +2,28 @@
 #ifndef __reachabilityScene_WINDOW_H_
 #define __reachabilityScene_WINDOW_H_
 
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/Model/Model.h>
-#include <VirtualRobot/VirtualRobotException.h>
-#include <VirtualRobot/Model/Nodes/ModelNode.h>
-#include <VirtualRobot/XML/SceneIO.h>
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-#include <VirtualRobot/Obstacle.h>
+#include "VirtualRobot/VirtualRobotException.h"
+#include "VirtualRobot/Model/Model.h"
+#include "VirtualRobot/Model/Nodes/ModelNode.h"
+#include "VirtualRobot/XML/SceneIO.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
+#include "VirtualRobot/Model/Obstacle.h"
+#include "VirtualRobot/Grasping/Grasp.h"
+#include "VirtualRobot/Grasping/GraspSet.h"
+#include "Gui/ViewerInterface.h"
+
 #include <string.h>
+#include <vector>
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-#include <VirtualRobot/Grasping/Grasp.h>
-#include <VirtualRobot/Grasping/GraspSet.h>
 
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/nodes/SoSeparator.h>
-
-
-#include <vector>
 
 #include "ui_ReachabilityMap.h"
 
@@ -73,15 +72,15 @@ protected:
     void setupEnvironment();
 
     Ui::MainWindowReachability UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SoQtExaminerViewer* examinerViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotVisuSep;
-    SoSeparator* reachabilityVisuSep;
-    SoSeparator* reachabilityMapVisuSep;
-    SoSeparator* allGraspsVisuSep;
-    SoSeparator* graspVisuSep;
-    SoSeparator* objectVisuSep;
+    std::string robotVisuLayer;
+    std::string reachVisuLayer;
+    std::string reachMapVisuLayer;
+    std::string allGraspsVisuLayer;
+    std::string graspVisuLayer;
+    std::string objectVisuLayer;
 
     VirtualRobot::RobotPtr robot;
     VirtualRobot::EndEffectorPtr eef;

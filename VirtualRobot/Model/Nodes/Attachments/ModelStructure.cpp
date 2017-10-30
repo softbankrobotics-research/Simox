@@ -18,7 +18,7 @@ namespace VirtualRobot
 
     }
 
-    bool ModelStructure::isAttachable(ModelNodePtr node)
+    bool ModelStructure::isAttachable(const ModelNodePtr &node)
     {
         return true;
     }
@@ -28,7 +28,7 @@ namespace VirtualRobot
         return "ModelStructure";
     }
 
-    void VirtualRobot::ModelStructure::setParent(ModelNodePtr node)
+    void VirtualRobot::ModelStructure::setParent(const ModelNodePtr &node)
     {
         ModelNodeAttachment::setParent(node);
         initVisualization();
@@ -82,7 +82,7 @@ namespace VirtualRobot
             alignment(0) = rotationAxis(1);
             alignment(1) = rotationAxis(2);
             alignment(2) = rotationAxis(0);
-            Eigen::Affine3f transform(Eigen::AngleAxisf(float(M_PI / 2.0f), alignment));
+            Eigen::Affine3f transform(Eigen::AngleAxisf(float(M_PI / 2.0), alignment));
             rotation = transform * rotation;
             v->applyDisplacement(rotation);
         }
@@ -116,6 +116,12 @@ namespace VirtualRobot
     {
         ModelNodeAttachmentPtr result(new ModelStructure(name, localTransformation,visualizationType));
         return result;
+    }
+
+    std::string ModelStructure::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    {
+        // no xml sttring for this type of attachment
+        return std::string();
     }
 
 }

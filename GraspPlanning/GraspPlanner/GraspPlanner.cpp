@@ -2,7 +2,7 @@
 
 namespace GraspPlanning
 {
-    GraspPlanner::GraspPlanner(VirtualRobot::GraspSetPtr graspSet)
+    GraspPlanner::GraspPlanner(const VirtualRobot::GraspSetPtr &graspSet)
         : graspSet(graspSet)
     {
         verbose = false;

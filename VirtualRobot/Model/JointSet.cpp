@@ -291,7 +291,7 @@ namespace VirtualRobot
         config->setJointValues(getModel());
     }
 
-    std::string JointSet::toXML(int tabs)
+    std::string JointSet::toXML(int tabs) const
     {
         std::stringstream ss;
         std::string t = "\t";

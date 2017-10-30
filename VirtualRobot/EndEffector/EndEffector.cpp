@@ -24,10 +24,10 @@ namespace VirtualRobot
     EndEffector::EndEffector(const std::string& name,
                              const std::vector<EndEffectorActorPtr>& actorsVector,
                              const std::vector<ModelLinkPtr>& staticPartVector,
-                             RobotNodePtr baseNodePtr,
-                             FramePtr tcpNodePtr,
-                             FramePtr gcpNodePtr,
-                             std::vector< RobotConfigPtr > preshapes) :
+                             const RobotNodePtr &baseNodePtr,
+                             const FramePtr &tcpNodePtr,
+                             const FramePtr &gcpNodePtr,
+                             const std::vector<RobotConfigPtr> &preshapes) :
         name(name),
         actors(actorsVector),
         statics(staticPartVector),
@@ -57,7 +57,7 @@ namespace VirtualRobot
 
     }
 
-    EndEffectorPtr EndEffector::clone(RobotPtr newRobot) const
+    EndEffectorPtr EndEffector::clone(const RobotPtr &newRobot) const
     {
         if (!newRobot)
         {
@@ -121,7 +121,7 @@ namespace VirtualRobot
         statics = this->statics;
     }
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(std::vector<ModelLinkPtr> obstacles, float stepSize)
+    EndEffector::ContactInfoVector EndEffector::closeActors(const std::vector<ModelLinkPtr> &obstacles, float stepSize)
     {
         std::vector<bool> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
@@ -166,14 +166,14 @@ namespace VirtualRobot
     }
 
 
-	EndEffector::ContactInfoVector EndEffector::closeActors(ModelPtr obstacle, float stepSize /*= 0.02*/)
+    EndEffector::ContactInfoVector EndEffector::closeActors(const ModelPtr &obstacle, float stepSize /*= 0.02*/)
 	{
 		std::vector<ModelPtr> o;
 		o.push_back(obstacle);
 		return closeActors(o);
 	}
 
-	EndEffector::ContactInfoVector EndEffector::closeActors(std::vector<ModelPtr> obstacles, float stepSize /*= 0.02*/)
+    EndEffector::ContactInfoVector EndEffector::closeActors(const std::vector<ModelPtr> &obstacles, float stepSize /*= 0.02*/)
 	{
 		std::vector<ModelLinkPtr> links;
 
@@ -190,7 +190,7 @@ namespace VirtualRobot
 	}
 
 
-    void EndEffector::openActors(std::vector<ModelLinkPtr> obstacles, float stepSize)
+    void EndEffector::openActors(const std::vector<ModelLinkPtr> &obstacles, float stepSize)
     {
         closeActors(obstacles, -stepSize);
     }
@@ -332,7 +332,7 @@ namespace VirtualRobot
         return getRobot()->getCollisionChecker();
     }
 
-    void EndEffector::registerPreshape(RobotConfigPtr preshape)
+    void EndEffector::registerPreshape(const RobotConfigPtr &preshape)
     {
         THROW_VR_EXCEPTION_IF(!preshape, "NULL data...");
         //std::vector< ModelJointPtr > nodes = preshape->getNodes();
@@ -679,7 +679,7 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    int EndEffector::addStaticPartContacts(ModelPtr obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
+    int EndEffector::addStaticPartContacts(const ModelPtr &obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
     {
         if (!obstacle)
             return 0;

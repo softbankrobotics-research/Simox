@@ -153,7 +153,7 @@ namespace VirtualRobot
         return eef;
     }
 
-    std::string GraspSet::getXMLString(int tabs)
+    std::string GraspSet::toXML(int tabs)
     {
         std::stringstream ss;
         std::string t;

@@ -47,7 +47,7 @@ namespace GraspPlanning
 		/*!
 		The object must contain exactly one link with a collision model.
 		*/
-        GraspQualityMeasureWrenchSpace(VirtualRobot::ModelPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+        GraspQualityMeasureWrenchSpace(const VirtualRobot::ModelPtr &object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
         // destructor
         ~GraspQualityMeasureWrenchSpace();
 
@@ -138,7 +138,7 @@ namespace GraspPlanning
             return volumeOWS;
         }
 
-        static std::vector<VirtualRobot::MathTools::ContactPoint> createWrenchPoints(std::vector<VirtualRobot::MathTools::ContactPoint>& points, const Eigen::Vector3f& centerOfModel, float objectLengthMM);
+        static std::vector<VirtualRobot::MathTools::ContactPoint> createWrenchPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& points, const Eigen::Vector3f& centerOfModel, float objectLengthMM);
 
         //! Goes through all facets of convex hull and searches the minimum distance to it's center
         static float minOffset(VirtualRobot::MathTools::ConvexHull6DPtr ch);
@@ -146,14 +146,14 @@ namespace GraspPlanning
     protected:
 
         //Methods
-        VirtualRobot::MathTools::ConvexHull6DPtr calculateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint>& points);
-        VirtualRobot::MathTools::ContactPoint calculateHullCenter(VirtualRobot::MathTools::ConvexHull6DPtr hull);
+        VirtualRobot::MathTools::ConvexHull6DPtr calculateConvexHull(const std::vector<VirtualRobot::MathTools::ContactPoint>& points);
+        VirtualRobot::MathTools::ContactPoint calculateHullCenter(const VirtualRobot::MathTools::ConvexHull6DPtr &hull);
 
         float minDistanceToGWSHull(VirtualRobot::MathTools::ContactPoint& point);
 
 
         bool isOriginInGWSHull();
-        void printContacts(std::vector<VirtualRobot::MathTools::ContactPoint>& points);
+        void printContacts(const std::vector<VirtualRobot::MathTools::ContactPoint>& points);
         static Eigen::Vector3f crossProductPosNormalInv(const VirtualRobot::MathTools::ContactPoint& v1);
 
         //For safety

@@ -1,23 +1,31 @@
 #include "stabilityWindow.h"
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-
     VirtualRobot::init(argc, argv, "Stability Demo"); 
     cout << " --- START --- " << endl;
 
-    //std::string filenameRob("robots/ArmarIII/ArmarIII.xml");
-    std::string filenameRob("robots/iCub/iCub.xml");
+    std::string filenameRob("robots/SimoxXML/iCub/iCub.xml");
+    std::string linkset("Hip Left Arm Masses");
+    std::string jointset("Hip Left Arm");
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameRob);
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
+    VirtualRobot::RuntimeEnvironment::considerKey("linkset");
+    VirtualRobot::RuntimeEnvironment::considerKey("jointset");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
     cout << " --- START --- " << endl;
+
+    if (VirtualRobot::RuntimeEnvironment::hasValue("linkset"))
+        linkset = VirtualRobot::RuntimeEnvironment::getValue("linkset");
+
+    if (VirtualRobot::RuntimeEnvironment::hasValue("jointset"))
+        jointset = VirtualRobot::RuntimeEnvironment::getValue("jointset");
 
     if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
     {
@@ -29,9 +37,9 @@ int main(int argc, char* argv[])
         }
     }
 
-    cout << "Using robot at " << filenameRob << endl;
+    cout << "Using robot file " << filenameRob << ", link set:" << linkset << ", joint set: " << jointset << endl;
 
-    stabilityWindow rw(filenameRob);
+    stabilityWindow rw(filenameRob, linkset, jointset);
     rw.main();
 
     return 0;

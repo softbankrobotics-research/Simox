@@ -66,7 +66,7 @@ namespace VirtualRobot
             Note, that this pose is only valid for the current configuration of the robot.
             When the robot moves, the grasping pose will change, and you have to call this method again.
         */
-        Eigen::Matrix4f getTargetPoseGlobal(RobotPtr robot);
+        Eigen::Matrix4f getTargetPoseGlobal(const RobotPtr &robot);
 
         /*!
             Get the global pose that has to be achieved by the tcp in order to apply the grasp on the object at position objectPose.

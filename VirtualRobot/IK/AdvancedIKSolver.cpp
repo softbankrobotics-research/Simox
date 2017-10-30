@@ -20,7 +20,7 @@ using namespace Eigen;
 namespace VirtualRobot
 {
 
-    AdvancedIKSolver::AdvancedIKSolver(JointSetPtr rns, LinkSetPtr collisionModels) :
+    AdvancedIKSolver::AdvancedIKSolver(const JointSetPtr &rns, const LinkSetPtr &collisionModels) :
         IKSolver(rns), colSet(collisionModels)
     {
         THROW_VR_EXCEPTION_IF(!rns, "Null data");
@@ -28,12 +28,12 @@ namespace VirtualRobot
         setMaximumError();
     }
 
-	void AdvancedIKSolver::collisionDetectionModelLinks(LinkSetPtr collisionModels)
+    void AdvancedIKSolver::collisionDetectionModelLinks(const LinkSetPtr &collisionModels)
 	{
 		colSet = collisionModels;
 	}
 
-    void AdvancedIKSolver::collisionDetection(ModelPtr avoidCollisionsWith)
+    void AdvancedIKSolver::collisionDetection(const ModelPtr &avoidCollisionsWith)
     {
         cdm.reset();
 
@@ -45,14 +45,14 @@ namespace VirtualRobot
         }
     }
 
-    void AdvancedIKSolver::collisionDetection(ObstaclePtr avoidCollisionsWith)
+    void AdvancedIKSolver::collisionDetection(const ObstaclePtr &avoidCollisionsWith)
     {
 		ModelPtr so = std::dynamic_pointer_cast<Model>(avoidCollisionsWith);
         collisionDetection(so);
     }
 
 
-	void AdvancedIKSolver::collisionDetection(ModelLinkPtr avoidCollisionsWith)
+    void AdvancedIKSolver::collisionDetection(const ModelLinkPtr &avoidCollisionsWith)
 	{
 		cdm.reset();
 
@@ -64,7 +64,7 @@ namespace VirtualRobot
 		}
 	}
 
-    void AdvancedIKSolver::collisionDetection(LinkSetPtr avoidCollisionsWith)
+    void AdvancedIKSolver::collisionDetection(const LinkSetPtr &avoidCollisionsWith)
     {
         cdm.reset();
 
@@ -76,7 +76,7 @@ namespace VirtualRobot
         }
     }
 
-    void AdvancedIKSolver::collisionDetection(CDManagerPtr avoidCollisions)
+    void AdvancedIKSolver::collisionDetection(const CDManagerPtr &avoidCollisions)
     {
         cdm = avoidCollisions;
     }
@@ -104,7 +104,7 @@ namespace VirtualRobot
         return solve(t, Position);
     }
 
-    GraspPtr AdvancedIKSolver::solve(ManipulationObjectPtr object, CartesianSelection selection /*= All*/, int maxLoops)
+    GraspPtr AdvancedIKSolver::solve(const ManipulationObjectPtr &object, CartesianSelection selection /*= All*/, int maxLoops)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         // first get a compatible EEF
@@ -164,7 +164,7 @@ namespace VirtualRobot
         return GraspPtr();
     }
 
-    bool AdvancedIKSolver::solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection /*= All*/, int maxLoops)
+    bool AdvancedIKSolver::solve(const ManipulationObjectPtr &object, GraspPtr grasp, CartesianSelection selection /*= All*/, int maxLoops)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         THROW_VR_EXCEPTION_IF(!grasp, "NULL grasp");
@@ -190,7 +190,7 @@ namespace VirtualRobot
     }
 
 
-    GraspPtr AdvancedIKSolver::sampleSolution(ManipulationObjectPtr object, GraspSetPtr graspSet, CartesianSelection selection /*= All*/, bool removeGraspFromSet, int maxLoops)
+    GraspPtr AdvancedIKSolver::sampleSolution(const ManipulationObjectPtr &object, const GraspSetPtr &graspSet, CartesianSelection selection /*= All*/, bool removeGraspFromSet, int maxLoops)
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
         //THROW_VR_EXCEPTION_IF(!eef,"NULL eef");
@@ -235,7 +235,7 @@ namespace VirtualRobot
         this->maxErrorOrientationRad = maxErrorOrientationRad;
     }
 
-    void AdvancedIKSolver::setReachabilityCheck(ReachabilityPtr reachabilitySpace)
+    void AdvancedIKSolver::setReachabilityCheck(const ReachabilityPtr &reachabilitySpace)
     {
         this->reachabilitySpace = reachabilitySpace;
 

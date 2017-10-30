@@ -11,8 +11,8 @@ namespace SimDynamics
     {
         THROW_VR_EXCEPTION_IF(!rob, "NULL object");
         robot = rob;
-        //sensors = rob->getSensors();
-        //engineMutexPtr.reset(new std::recursive_mutex()); // may be overwritten by another mutex!
+        sensors = rob->getSensors();
+        engineMutexPtr.reset(new std::recursive_mutex()); // may be overwritten by another mutex!
     }
 
     DynamicsRobot::~DynamicsRobot()

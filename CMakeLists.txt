@@ -11,8 +11,9 @@ endif()
 MESSAGE(STATUS "******************** Configuring Simox ************************")
 set (Simox_BUILD_DIRECTORY ${CMAKE_BINARY_DIR} CACHE STRING "Simox build directory")
 #set (Simox_BUILD_VirtualRobot TRUE CACHE BOOL "Build Simox VirtualRobot")
-set (Simox_BUILD_MotionPlanning TRUE CACHE BOOL "Build Motion Planning library")
-set (Simox_BUILD_GraspPlanning TRUE CACHE BOOL "Build Grasp Planning library")
+set (Simox_BUILD_MotionPlanning TRUE CACHE BOOL "Build Simox Motion Planning library")
+set (Simox_BUILD_GraspPlanning TRUE CACHE BOOL "Build Simox Grasp Planning library")
+set (Simox_BUILD_Gui TRUE CACHE BOOL "Build Simox-Gui library")
 set (Simox_BUILD_SimDynamics FALSE CACHE BOOL "Build Dynamic Simulation")
 
 INCLUDE (config.cmake)
@@ -58,7 +59,18 @@ endif()
   MESSAGE(STATUS "** Simox_EXTERNAL_CMAKE_INCLUDE:${Simox_EXTERNAL_CMAKE_INCLUDE}")
 
 add_subdirectory(doc)
-add_subdirectory(Gui)
+
+if (Simox_BUILD_Gui)
+
+    add_subdirectory(Gui)
+    
+    if (Simox_USE_COIN_VISUALIZATION)
+    	list(APPEND SIMOX_EXPORT_TARGET_LIST simox-gui-coin3d)
+    	list (APPEND Simox_LIBRARIES simox-gui-coin3d)
+    endif()
+
+endif()
+
 
 #######################################################################
 # Setup for installation
@@ -114,6 +126,25 @@ install(FILES
     DESTINATION "${INSTALL_CMAKE_DIR}"
     COMPONENT ApplicationData
     )
+
+
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_INSTALL_PREFIX}
+    COMPONENT ApplicationData
+        FILES_MATCHING
+        PATTERN "*.xml"
+        PATTERN "*.XML"
+        PATTERN "*.iv"
+        PATTERN "*.vrml"
+        PATTERN "*.wrl"
+        PATTERN "*.stl"
+        PATTERN "*.urdf"
+        PATTERN "*.dae"
+        PATTERN "*.png"
+        PATTERN "*.jpg"
+        PATTERN "*.bin"
+        PATTERN ".svn" EXCLUDE
+        PATTERN ".git" EXCLUDE
+        )
 
 
 # Install the export set for use with the install-tree

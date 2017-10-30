@@ -8,7 +8,7 @@
 namespace VirtualRobot
 {
 
-    CollisionModelPQP::CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id)
+    CollisionModelPQP::CollisionModelPQP(const TriMeshModelPtr &modelData, CollisionCheckerPtr colChecker, int id)
         : CollisionModelImplementation(modelData, colChecker, id)
     {
         if (!colChecker)

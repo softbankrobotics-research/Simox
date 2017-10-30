@@ -29,10 +29,6 @@
 #include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
-
 #include <string>
 #include <iostream>
 

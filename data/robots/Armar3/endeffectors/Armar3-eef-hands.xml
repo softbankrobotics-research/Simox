@@ -1,30 +1,30 @@
     <?xml version='1.0' encoding='UTF-8'?>
 
-<Endeffector name="Hand L" base="Hand L Base_joint" tcp="TCP L_joint" gcp="GCP L_joint">
+<Endeffector name="Hand L" base="Hand L Base" tcp="TCP L" gcp="GCP L">
 	<Preshape name="Power Preshape" tcp="TCP L Power">
-		<Node name="Thumb L J0_joint" unit="radian" value="0"/>
-		<Node name="Thumb L J1_joint" unit="radian" value="0"/>
-		<Node name="Index L J0_joint" unit="radian" value="0"/>
-		<Node name="Index L J1_joint" unit="radian" value="0"/>
-		<Node name="Middle L J0_joint" unit="radian" value="0"/>
-		<Node name="Middle L J1_joint" unit="radian" value="0"/>
-		<Node name="Ring L J0_joint" unit="radian" value="0"/>
-		<Node name="Ring L J1_joint" unit="radian" value="0"/>
-		<Node name="Pinky L J0_joint" unit="radian" value="0"/>
-		<Node name="Pinky L J1_joint" unit="radian" value="0"/>
+		<Node name="Thumb L J0" unit="radian" value="0"/>
+		<Node name="Thumb L J1" unit="radian" value="0"/>
+		<Node name="Index L J0" unit="radian" value="0"/>
+		<Node name="Index L J1" unit="radian" value="0"/>
+		<Node name="Middle L J0" unit="radian" value="0"/>
+		<Node name="Middle L J1" unit="radian" value="0"/>
+		<Node name="Ring L J0" unit="radian" value="0"/>
+		<Node name="Ring L J1" unit="radian" value="0"/>
+		<Node name="Pinky L J0" unit="radian" value="0"/>
+		<Node name="Pinky L J1" unit="radian" value="0"/>
 	</Preshape>
 
 	<Preshape name="Precision Preshape" tcp="TCP L Precision">
-		<Node name="Thumb L J0_joint" unit="radian" value="0"/>
-		<Node name="Thumb L J1_joint" unit="radian" value="0"/>
-		<Node name="Index L J0_joint" unit="radian" value="0"/>
-		<Node name="Index L J1_joint" unit="radian" value="0"/>
-		<Node name="Middle L J0_joint" unit="radian" value="0"/>
-		<Node name="Middle L J1_joint" unit="radian" value="0"/>
-		<Node name="Ring L J0_joint" unit="radian" value="1"/>
-		<Node name="Ring L J1_joint" unit="radian" value="2"/>
-		<Node name="Pinky L J0_joint" unit="radian" value="1"/>
-		<Node name="Pinky L J1_joint" unit="radian" value="2"/>
+		<Node name="Thumb L J0" unit="radian" value="0"/>
+		<Node name="Thumb L J1" unit="radian" value="0"/>
+		<Node name="Index L J0" unit="radian" value="0"/>
+		<Node name="Index L J1" unit="radian" value="0"/>
+		<Node name="Middle L J0" unit="radian" value="0"/>
+		<Node name="Middle L J1" unit="radian" value="0"/>
+		<Node name="Ring L J0" unit="radian" value="1"/>
+		<Node name="Ring L J1" unit="radian" value="2"/>
+		<Node name="Pinky L J0" unit="radian" value="1"/>
+		<Node name="Pinky L J1" unit="radian" value="2"/>
 	</Preshape>
 
 	<Static>
@@ -32,63 +32,63 @@
 		<Node name="Hand Palm 2 L_link"/>
 	</Static>
 	<Actor name="Thumb Left">
-		<Node name="Thumb L J0_joint" considerCollisions="None"/>
-		<Node name="Thumb L J1_joint" considerCollisions="None"/>
+		<Node name="Thumb L J0" considerCollisions="None"/>
+		<Node name="Thumb L J1" considerCollisions="None"/>
 		<Node name="Thumb L J0_link" considerCollisions="Actors"/>
 		<Node name="Thumb L J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Index Left">
-		<Node name="Index L J0_joint" considerCollisions="None"/>
-		<Node name="Index L J1_joint" considerCollisions="None"/>
+		<Node name="Index L J0" considerCollisions="None"/>
+		<Node name="Index L J1" considerCollisions="None"/>
 		<Node name="Index L J0_link" considerCollisions="Actors"/>
 		<Node name="Index L J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Middle Left">
-		<Node name="Middle L J0_joint" considerCollisions="None"/>
-		<Node name="Middle L J1_joint" considerCollisions="None"/>
+		<Node name="Middle L J0" considerCollisions="None"/>
+		<Node name="Middle L J1" considerCollisions="None"/>
 		<Node name="Middle L J0_link" considerCollisions="Actors"/>
 		<Node name="Middle L J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Ring Left">
-		<Node name="Ring L J0_joint" considerCollisions="None"/>
-		<Node name="Ring L J1_joint" considerCollisions="None"/>
+		<Node name="Ring L J0" considerCollisions="None"/>
+		<Node name="Ring L J1" considerCollisions="None"/>
 		<Node name="Ring L J0_link" considerCollisions="Actors"/>
 		<Node name="Ring L J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Pinky Left">
-		<Node name="Pinky L J0_joint" considerCollisions="None"/>
-		<Node name="Pinky L J1_joint" considerCollisions="None"/>
+		<Node name="Pinky L J0" considerCollisions="None"/>
+		<Node name="Pinky L J1" considerCollisions="None"/>
 		<Node name="Pinky L J0_link" considerCollisions="Actors"/>
 		<Node name="Pinky L J1_link" considerCollisions="All"/>
 	</Actor>
 </Endeffector>
 
 
-<Endeffector name="Hand R" base="Hand R Base_joint" tcp="TCP R_joint" gcp="GCP R_joint">
+<Endeffector name="Hand R" base="Hand R Base" tcp="TCP R" gcp="GCP R">
 	<Preshape name="Power Preshape" tcp="TCP R Power">
-		<Node name="Thumb R J0_joint" unit="radian" value="0"/>
-		<Node name="Thumb R J1_joint" unit="radian" value="0"/>
-		<Node name="Index R J0_joint" unit="radian" value="0"/>
-		<Node name="Index R J1_joint" unit="radian" value="0"/>
-		<Node name="Middle R J0_joint" unit="radian" value="0"/>
-		<Node name="Middle R J1_joint" unit="radian" value="0"/>
-		<Node name="Ring R J0_joint" unit="radian" value="0"/>
-		<Node name="Ring R J1_joint" unit="radian" value="0"/>
-		<Node name="Pinky R J0_joint" unit="radian" value="0"/>
-		<Node name="Pinky R J1_joint" unit="radian" value="0"/>
+		<Node name="Thumb R J0" unit="radian" value="0"/>
+		<Node name="Thumb R J1" unit="radian" value="0"/>
+		<Node name="Index R J0" unit="radian" value="0"/>
+		<Node name="Index R J1" unit="radian" value="0"/>
+		<Node name="Middle R J0" unit="radian" value="0"/>
+		<Node name="Middle R J1" unit="radian" value="0"/>
+		<Node name="Ring R J0" unit="radian" value="0"/>
+		<Node name="Ring R J1" unit="radian" value="0"/>
+		<Node name="Pinky R J0" unit="radian" value="0"/>
+		<Node name="Pinky R J1" unit="radian" value="0"/>
 	</Preshape>
 	
 	<Preshape name="Precision Preshape" tcp="TCP R Precision">
-		<Node name="Thumb R J0_joint" unit="radian" value="0"/>
-		<Node name="Thumb R J1_joint" unit="radian" value="0"/>
-		<Node name="Index R J0_joint" unit="radian" value="0"/>
-		<Node name="Index R J1_joint" unit="radian" value="0"/>
-		<Node name="Middle R J0_joint" unit="radian" value="0"/>
-		<Node name="Middle R J1_joint" unit="radian" value="0"/>
-		<Node name="Ring R J0_joint" unit="radian" value="1"/>
-		<Node name="Ring R J1_joint" unit="radian" value="2"/>
-		<Node name="Pinky R J0_joint" unit="radian" value="1"/>
-		<Node name="Pinky R J1_joint" unit="radian" value="2"/>
+		<Node name="Thumb R J0" unit="radian" value="0"/>
+		<Node name="Thumb R J1" unit="radian" value="0"/>
+		<Node name="Index R J0" unit="radian" value="0"/>
+		<Node name="Index R J1" unit="radian" value="0"/>
+		<Node name="Middle R J0" unit="radian" value="0"/>
+		<Node name="Middle R J1" unit="radian" value="0"/>
+		<Node name="Ring R J0" unit="radian" value="1"/>
+		<Node name="Ring R J1" unit="radian" value="2"/>
+		<Node name="Pinky R J0" unit="radian" value="1"/>
+		<Node name="Pinky R J1" unit="radian" value="2"/>
 	</Preshape>
 
 	<Static>
@@ -96,32 +96,32 @@
 		<Node name="Hand Palm 2 R_link"/>
 	</Static>
 	<Actor name="Thumb Right">
-		<Node name="Thumb R J0_joint" considerCollisions="None"/>
-		<Node name="Thumb R J1_joint" considerCollisions="None"/>
+		<Node name="Thumb R J0" considerCollisions="None"/>
+		<Node name="Thumb R J1" considerCollisions="None"/>
 		<Node name="Thumb R J0_link" considerCollisions="Actors"/>
 		<Node name="Thumb R J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Index Right">
-		<Node name="Index R J0_joint" considerCollisions="None"/>
-		<Node name="Index R J1_joint" considerCollisions="None"/>
+		<Node name="Index R J0" considerCollisions="None"/>
+		<Node name="Index R J1" considerCollisions="None"/>
 		<Node name="Index R J0_link" considerCollisions="Actors"/>
 		<Node name="Index R J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Middle Right">
-		<Node name="Middle R J0_joint" considerCollisions="None"/>
-		<Node name="Middle R J1_joint" considerCollisions="None"/>
+		<Node name="Middle R J0" considerCollisions="None"/>
+		<Node name="Middle R J1" considerCollisions="None"/>
 		<Node name="Middle R J0_link" considerCollisions="Actors"/>
 		<Node name="Middle R J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Ring Right">
-		<Node name="Ring R J0_joint" considerCollisions="None"/>
-		<Node name="Ring R J1_joint" considerCollisions="None"/>
+		<Node name="Ring R J0" considerCollisions="None"/>
+		<Node name="Ring R J1" considerCollisions="None"/>
 		<Node name="Ring R J0_link" considerCollisions="Actors"/>
 		<Node name="Ring R J1_link" considerCollisions="All"/>
 	</Actor>
 	<Actor name="Pinky Right">
-		<Node name="Pinky R J0_joint" considerCollisions="None"/>
-		<Node name="Pinky R J1_joint" considerCollisions="None"/>
+		<Node name="Pinky R J0" considerCollisions="None"/>
+		<Node name="Pinky R J1" considerCollisions="None"/>
 		<Node name="Pinky R J0_link" considerCollisions="Actors"/>
 		<Node name="Pinky R J1_link" considerCollisions="All"/>
 	</Actor>

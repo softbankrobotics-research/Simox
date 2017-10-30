@@ -16,7 +16,7 @@ namespace VirtualRobot
 {
 
 
-    BasicGraspQualityMeasure::BasicGraspQualityMeasure(ModelPtr object)
+    BasicGraspQualityMeasure::BasicGraspQualityMeasure(const ModelPtr &object)
         : object(object)
     {
 		THROW_VR_EXCEPTION_IF(!object, "Need an object");

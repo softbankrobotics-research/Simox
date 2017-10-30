@@ -60,17 +60,17 @@ namespace VirtualRobot
         EndEffector(const std::string& name,
                     const std::vector<EndEffectorActorPtr>& actorsVector,
                     const std::vector<ModelLinkPtr>& staticPartVector,
-                    RobotNodePtr baseNodePtr,
-                    FramePtr tcpNodePtr,
-                    FramePtr gcpNodePtr = FramePtr(),
-                    std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
+                    const RobotNodePtr &baseNodePtr,
+                    const FramePtr &tcpNodePtr,
+                    const FramePtr &gcpNodePtr = FramePtr(),
+                    const std::vector< RobotConfigPtr > &preshapes = std::vector< RobotConfigPtr >());
 
         virtual ~EndEffector();
         /*!
             Clones this eef and performs all necessary registrations.
             (Be careful: no need to call registerEEF with newly created eef, since this is already done)
         */
-        EndEffectorPtr clone(RobotPtr newRobot) const;
+        EndEffectorPtr clone(const RobotPtr &newRobot) const;
 
         std::string getName() const;
 
@@ -113,16 +113,16 @@ namespace VirtualRobot
             Closes each actor until a joint limit is hit or a collision occurred.
             This method is intended for gripper or hand-like end-effectors.
         */
-        ContactInfoVector closeActors(std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
-        ContactInfoVector closeActors(ModelPtr obstacle, float stepSize = 0.02);
-        ContactInfoVector closeActors(std::vector<ModelPtr> obstacles, float stepSize = 0.02);
+        ContactInfoVector closeActors(const std::vector<ModelLinkPtr> &obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
+        ContactInfoVector closeActors(const ModelPtr &obstacle, float stepSize = 0.02);
+        ContactInfoVector closeActors(const std::vector<ModelPtr> &obstacles, float stepSize = 0.02);
 
         /*!
             Opens each actor until a joint limit is hit or a collision occurred.
             This method is intended for hand-like end-effectors.
             Note that the same effect can be realized by calling closeActors with a negative step size
         */
-        void openActors(std::vector<ModelLinkPtr> obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
+        void openActors(const std::vector<ModelLinkPtr> &obstacles = std::vector<ModelLinkPtr>(), float stepSize = 0.02);
 
         /*!
             Build a LinkSet that covers all RobotNodes of this EndEffector.
@@ -143,7 +143,7 @@ namespace VirtualRobot
             Register a preshape to this EEF. An exception is thrown if preshape covers joints that are not part of this eef.
             If there is already a preshape with name preshape->getName(), it is replaced.
         */
-        void registerPreshape(RobotConfigPtr preshape);
+        void registerPreshape(const RobotConfigPtr &preshape);
 
         RobotConfigPtr getPreshape(const std::string& name);
 
@@ -193,7 +193,7 @@ namespace VirtualRobot
         */
         virtual std::string toXML(int ident = 1);
 
-        int addStaticPartContacts(ModelPtr obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
+        int addStaticPartContacts(const ModelPtr &obstacle, ContactInfoVector& contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance = 3.0f);
 
         VisualizationPtr getVisualization(ModelLink::VisualizationType visuType, const Eigen::Matrix4f &pose) const;
 

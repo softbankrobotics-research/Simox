@@ -68,7 +68,9 @@ namespace MotionPlanning
             The boundaries of this c-space are set according to definitions in robotNodes.
             On startup, memory is allocate din order to allow fats processing on runtime.
         */
-        CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
+        CSpace(const VirtualRobot::RobotPtr &robot, const VirtualRobot::CDManagerPtr &collisionManager,
+               const VirtualRobot::JointSetPtr &robotNodes,
+               unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
 
         //! destructor
         virtual ~CSpace();
@@ -173,10 +175,10 @@ namespace MotionPlanning
         }
 
         //! checks complete solution path (with the pathCheck methods provided by the CSpace implementation)
-        virtual bool checkSolution(CSpacePathPtr path, bool verbose = false);
+        virtual bool checkSolution(const CSpacePathPtr &path, bool verbose = false);
 
         //! checks complete tree (with the pathCheck methods provided by the CSpace implementation)
-        virtual bool checkTree(CSpaceTreePtr tree);
+        virtual bool checkTree(const CSpaceTreePtr &tree);
 
         void resetPerformanceVars()
         {
@@ -228,7 +230,10 @@ namespace MotionPlanning
         Clone this CSpace structure
         The new Robot and the new CCM are used, the robot and the ccm have to be linked to the new ColChecker!
         */
-        virtual CSpacePtr clone(VirtualRobot::CollisionCheckerPtr newCollisionChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int nNewRandomSeed = 0) = 0;
+        virtual CSpacePtr clone(const VirtualRobot::CollisionCheckerPtr &newCollisionChecker,
+                                const VirtualRobot::RobotPtr &newRobot,
+                                const VirtualRobot::CDManagerPtr &newCDM,
+                                unsigned int nNewRandomSeed = 0) = 0;
 
 
         /*!
@@ -302,7 +307,7 @@ namespace MotionPlanning
             Add a configuration constraint to be checked within this cspace.
             Standard: No constraints, meaning that a check for constraints will report a valid status
         */
-        virtual void addConstraintCheck(MotionPlanning::ConfigurationConstraintPtr constraint);
+        virtual void addConstraintCheck(const MotionPlanning::ConfigurationConstraintPtr &constraint);
 
     protected:
 

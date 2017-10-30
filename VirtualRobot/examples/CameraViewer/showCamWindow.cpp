@@ -156,36 +156,6 @@ void showCamWindow::setupUI()
     connect(UI.checkBoxShowDepthVoxel, SIGNAL(clicked()), this, SLOT(renderCam()));
 }
 
-QString showCamWindow::formatString(const char* s, float f)
-{
-    QString str1(s);
-
-    if (f >= 0)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 1000)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 100)
-    {
-        str1 += " ";
-    }
-
-    if (fabs(f) < 10)
-    {
-        str1 += " ";
-    }
-
-    QString str1n;
-    str1n.setNum(f, 'f', 3);
-    str1 = str1 + str1n;
-    return str1;
-}
-
 void showCamWindow::resetSceneryAll()
 {
     if (!robot)
@@ -409,7 +379,7 @@ void showCamWindow::loadRobot()
 
     try
     {
-        ModelIO::loadModel(robotFilename, ModelIO::eFull);
+        robot = ModelIO::loadModel(robotFilename, ModelIO::eFull);
     }
     catch (VirtualRobotException& e)
     {
@@ -489,7 +459,7 @@ void showCamWindow::renderCam()
 {
     const float zNear = 10;
     const float zFar = 100000;
-    const float fov = float(M_PI / 4.0);
+    const float fov = M_PI / 4;
     const float maxZCut = UI.doubleSpinBoxDepthLinClip->value();
 //    const float voxelSize= 10.f;
 //    float focal =  static_cast<float>(UI.cam1->size().height()) / (2 * std::tan(fov / 2));
@@ -505,7 +475,7 @@ void showCamWindow::renderCam()
         CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(
             cam1,sceneSep,UI.cam1->width(),UI.cam1->height(),
             cam1RGBBuffer, cam1DepthBuffer,
-            cam1PointCloud,zNear,zFar
+            cam1PointCloud,zNear,zFar, M_PI/4,0
         );
 
         if(UI.checkBoxDepthCam1->isChecked())

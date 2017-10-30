@@ -29,7 +29,7 @@ namespace GraspPlanning
 {
 
 
-    GraspQualityMeasureWrenchSpace::GraspQualityMeasureWrenchSpace(VirtualRobot::ModelPtr object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
+    GraspQualityMeasureWrenchSpace::GraspQualityMeasureWrenchSpace(const ModelPtr &object, float unitForce, float frictionConeCoeff, int frictionConeSamples)
         : GraspQualityMeasure(object, unitForce, frictionConeCoeff, frictionConeSamples)
     {
         OWSCalculated = false;
@@ -169,7 +169,7 @@ namespace GraspPlanning
         GWSCalculated = true;
     }
 
-    VirtualRobot::MathTools::ConvexHull6DPtr GraspQualityMeasureWrenchSpace::calculateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint>& points)
+    VirtualRobot::MathTools::ConvexHull6DPtr GraspQualityMeasureWrenchSpace::calculateConvexHull(const std::vector<VirtualRobot::MathTools::ContactPoint>& points)
     {
         bool printAll = true;
 
@@ -191,10 +191,10 @@ namespace GraspPlanning
         return ConvexHullGenerator::CreateConvexHull(wrenchPoints);
     }
 
-    std::vector<VirtualRobot::MathTools::ContactPoint> GraspQualityMeasureWrenchSpace::createWrenchPoints(std::vector<VirtualRobot::MathTools::ContactPoint>& points, const Eigen::Vector3f& centerOfModel, float objectLengthMM)
+    std::vector<VirtualRobot::MathTools::ContactPoint> GraspQualityMeasureWrenchSpace::createWrenchPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& points, const Eigen::Vector3f& centerOfModel, float objectLengthMM)
     {
         std::vector<VirtualRobot::MathTools::ContactPoint> result;
-        std::vector<VirtualRobot::MathTools::ContactPoint>::iterator iter = points.begin();
+        std::vector<VirtualRobot::MathTools::ContactPoint>::const_iterator iter = points.begin();
         VirtualRobot::MathTools::ContactPoint p;
         Eigen::Vector3f normal;
 
@@ -241,9 +241,9 @@ namespace GraspPlanning
         return result;
     }
 
-    void GraspQualityMeasureWrenchSpace::printContacts(std::vector<VirtualRobot::MathTools::ContactPoint>& points)
+    void GraspQualityMeasureWrenchSpace::printContacts(const std::vector<VirtualRobot::MathTools::ContactPoint>& points)
     {
-        std::vector<VirtualRobot::MathTools::ContactPoint>::iterator iter = points.begin();
+        std::vector<VirtualRobot::MathTools::ContactPoint>::const_iterator iter = points.begin();
 
         while (iter != points.end())
         {
@@ -253,7 +253,7 @@ namespace GraspPlanning
         }
     }
 
-    VirtualRobot::MathTools::ContactPoint GraspQualityMeasureWrenchSpace::calculateHullCenter(VirtualRobot::MathTools::ConvexHull6DPtr hull)
+    VirtualRobot::MathTools::ContactPoint GraspQualityMeasureWrenchSpace::calculateHullCenter(const VirtualRobot::MathTools::ConvexHull6DPtr &hull)
     {
         if (!hull)
         {

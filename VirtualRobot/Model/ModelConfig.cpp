@@ -6,14 +6,14 @@
 namespace VirtualRobot
 {
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name)
+    ModelConfig::ModelConfig(const ModelWeakPtr &model, const std::string& name)
         : name(name),
           model(model)
     {
         THROW_VR_EXCEPTION_IF(!model.lock(), "NULL model in ModelConfig");
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< Configuration >& configs)
+    ModelConfig::ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< Configuration >& configs)
         : name(name),
           model(model)
     {
@@ -25,7 +25,7 @@ namespace VirtualRobot
         }
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelJointPtr, float >& configs)
+    ModelConfig::ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::map< ModelJointPtr, float >& configs)
         : name(name),
           model(model)
     {
@@ -37,7 +37,7 @@ namespace VirtualRobot
         }
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< std::string >& modelNodes, const std::vector< float >& values)
+    ModelConfig::ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< std::string >& modelNodes, const std::vector< float >& values)
         : name(name),
           model(model)
     {
@@ -50,7 +50,7 @@ namespace VirtualRobot
         }
     }
 
-    ModelConfig::ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values)
+    ModelConfig::ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values)
         : name(name),
           model(model)
     {
@@ -101,7 +101,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelConfig::setConfig(ModelJointPtr node, float value)
+    bool ModelConfig::setConfig(const ModelJointPtr &node, float value)
     {
         THROW_VR_EXCEPTION_IF(!node, "Null data");
 
@@ -320,7 +320,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool ModelConfig::setTCP(FramePtr tcp)
+    bool ModelConfig::setTCP(const FramePtr &tcp)
     {
         tcpNode = tcp;
         return true;

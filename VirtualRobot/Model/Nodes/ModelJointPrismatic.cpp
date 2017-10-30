@@ -1,5 +1,7 @@
 #include "ModelJointPrismatic.h"
 #include "../Model.h"
+#include "../../XML/BaseIO.h"
+#include "Attachments/ModelNodeAttachment.h"
 
 namespace VirtualRobot
 {
@@ -62,5 +64,52 @@ namespace VirtualRobot
         ModelJointPrismaticPtr result(new ModelJointPrismatic(newModel, name, st, jointLimitLo, jointLimitHi, translationDirection, jointValueOffset));
         result->setLimitless(limitless);
         return result;
+    }
+
+    std::string ModelJointPrismatic::toXML(const std::string &basePath, const std::string &modelPathRelative, bool storeAttachments)
+    {
+        std::stringstream ss;
+        std::string pre = "\t";
+        std::string pre2 = "\t\t";
+        std::string pre3 = "\t\t\t";
+        ss << pre << "<ModelNode name='" << name << "'>\n";
+        if (!this->getStaticTransformation().isIdentity())
+        {
+            ss << pre2 << "<Transform>" << endl;
+            ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
+            ss << pre2 << "</Transform>" << endl;
+        }
+        ss << pre2 << "<Joint type='prismatic'>\n";
+        ss << pre3 << "<translationdirection x='" << getJointTranslationDirection()[0] << "' y='" << getJointTranslationDirection()[1] << "' z='" << getJointTranslationDirection()[2] << "'/>" << endl;
+        ss << pre3 << "<limits lo='" << jointLimitLo << "' hi='" << jointLimitHi << "' units='mm'/>" << endl;
+        ss << pre3 << "<MaxAcceleration value='" << maxAcceleration << "'/>" << endl;
+        ss << pre3 << "<MaxVelocity value='" << maxVelocity << "'/>" << endl;
+        ss << pre3 << "<MaxTorque value='" << maxTorque << "'/>" << endl;
+
+        std::map< std::string, float >::iterator propIt = propagatedJointValues.begin();
+
+        while (propIt != propagatedJointValues.end())
+        {
+            ss << pre3 << "<PropagateJointValue name='" << propIt->first << "' factor='" << propIt->second << "'/>" << endl;
+            propIt++;
+        }
+
+        ss << pre2 << "</Joint>\n";
+        if (storeAttachments)
+        {
+            for (auto &a:getAttachments())
+            {
+                ss << a->toXML(basePath, modelPathRelative);
+            }
+        }
+
+        std::vector<ModelNodePtr> children = this->getChildNodes();
+        for (size_t i = 0; i < children.size(); i++)
+        {
+                ss << pre2 << "<Child name='" << children[i]->getName() << "'/>" << endl;
+        }
+
+        ss << pre << "</ModelNode>\n";
+        return ss.str();
     }
 }

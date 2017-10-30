@@ -170,7 +170,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     return generatePoses(objectGP, centerPoseM, numPoses);
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::evaluatePose(EndEffectorPtr eef, ObstaclePtr o, const Matrix4f &objectPose, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
+GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::evaluatePose(const EndEffectorPtr &eef, const ObstaclePtr &o, const Matrix4f &objectPose, const GraspQualityMeasurePtr &qm, const VirtualRobot::RobotConfigPtr &preshape)
 {
     PoseEvalResult result;
     result.forceClosure = false;
@@ -211,7 +211,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
     return result;
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluatePoses(EndEffectorPtr eef, ObstaclePtr o, const std::vector<Eigen::Matrix4f> &objectPoses, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
+GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluatePoses(const EndEffectorPtr &eef, const ObstaclePtr &o, const std::vector<Eigen::Matrix4f> &objectPoses, const GraspQualityMeasurePtr &qm, const VirtualRobot::RobotConfigPtr &preshape)
 {
     PoseEvalResults res;
     res.avgQuality = 0.0f;
@@ -288,7 +288,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     return res;
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, GraspQualityMeasurePtr qm, int numPoses)
+GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluateGrasp(const VirtualRobot::GraspPtr &g, const VirtualRobot::EndEffectorPtr &eef, const VirtualRobot::ObstaclePtr &o, const GraspQualityMeasurePtr &qm, int numPoses)
 {
     PoseEvalResults res;
     res.avgQuality = 0.0f;

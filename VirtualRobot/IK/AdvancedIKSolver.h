@@ -52,38 +52,38 @@ namespace VirtualRobot
             \param rns The joints for which the Jacobians should be calculated.
 			\param collisionModels Optionoal: use this models for collisiond etection
         */
-        AdvancedIKSolver(JointSetPtr rns, LinkSetPtr collisionModels = LinkSetPtr());
+        AdvancedIKSolver(const JointSetPtr &rns, const LinkSetPtr &collisionModels = LinkSetPtr());
 
 		/*! Steup the model links that should be used for collision detection
 		*/
-		virtual void collisionDetectionModelLinks(LinkSetPtr collisionModels);
+        virtual void collisionDetectionModelLinks(const LinkSetPtr &collisionModels);
 
         /*!
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
-        virtual void collisionDetection(ModelPtr avoidCollisionsWith);
+        virtual void collisionDetection(const ModelPtr &avoidCollisionsWith);
         /*!
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
-        virtual void collisionDetection(ObstaclePtr avoidCollisionsWith);
+        virtual void collisionDetection(const ObstaclePtr &avoidCollisionsWith);
         /*!
             Setup collision detection
             \param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
         */
-        virtual void collisionDetection(LinkSetPtr avoidCollisionsWith);
+        virtual void collisionDetection(const LinkSetPtr &avoidCollisionsWith);
 		/*!
 		Setup collision detection
 		\param avoidCollisionsWith The IK solver will consider collision checks between collisionModels and avoidCollisionsWith
 		*/
-		virtual void collisionDetection(ModelLinkPtr avoidCollisionsWith);
+        virtual void collisionDetection(const ModelLinkPtr &avoidCollisionsWith);
 
         /*!
             Setup collision detection
             \param avoidCollision The IK solver will consider collision checks, defined in this CDManager instance.
         */
-        virtual void collisionDetection(CDManagerPtr avoidCollision);
+        virtual void collisionDetection(const CDManagerPtr &avoidCollision);
 
         /*!
             Here, the default values of the maximum allowed error in translation and orientation can be changed.
@@ -96,7 +96,7 @@ namespace VirtualRobot
             When set, the reachability data is used to quickly decide if a given pose or grasp is reachable or not.
             This option can be enabled by setting the reachability space and it can be disabled by setting an empty ReachabilityPtr.
         */
-        virtual void setReachabilityCheck(ReachabilityPtr reachabilitySpace);
+        virtual void setReachabilityCheck(const ReachabilityPtr &reachabilitySpace);
 
         /*!
             This method solves the IK up to the specified max error. On success, the joints of the the corresponding JointSet are set to the IK solution.
@@ -127,15 +127,16 @@ namespace VirtualRobot
             \param maxLoops How many tries.
             \return On success: The grasp for which an IK-solution was found, otherwise an empty GraspPtr
         */
-        virtual GraspPtr solve(ManipulationObjectPtr object, CartesianSelection selection = All, int maxLoops = 1);
-        virtual bool solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection = All, int maxLoops = 1);
+        virtual GraspPtr solve(const ManipulationObjectPtr &object, CartesianSelection selection = All, int maxLoops = 1);
+        virtual bool solve(const ManipulationObjectPtr &object, GraspPtr grasp, CartesianSelection selection = All, int maxLoops = 1);
 
 
         /*!
             Try to find a solution for grasping the object with the given GraspSet.
             \return On success: The grasp for which an IK-solution was found, otherwise an empty GraspPtr
         */
-        virtual GraspPtr sampleSolution(ManipulationObjectPtr object, GraspSetPtr graspSet, CartesianSelection selection = All, bool removeGraspFromSet = false, int maxLoops = 1);
+        virtual GraspPtr sampleSolution(const ManipulationObjectPtr &object, const GraspSetPtr &graspSet,
+                                        CartesianSelection selection = All, bool removeGraspFromSet = false, int maxLoops = 1);
 
         /*!
             This method returns true, when no reachability data is specified for this IK solver.

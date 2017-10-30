@@ -45,6 +45,8 @@ class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 
         virtual void clearLayer(const std::string &layer) = 0;
 
+        virtual bool hasLayer(const std::string &layer) = 0;
+
         virtual void start(QWidget *mainWindow) = 0;
         virtual void stop() = 0;
         virtual QImage getScreenshot() = 0;

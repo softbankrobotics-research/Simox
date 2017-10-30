@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     fillOK = reachGrid->fillGridData(reach, m2, g, rootNode);
     BOOST_REQUIRE(fillOK);
 
-    // grid is moved to pos (40/-80) and position (0/0) is added (todo: evaluate what gows wrong with these checks...)
+    // grid is moved to pos (40/-80) and position (0/0) is added (todo: evaluate what goes wrong with these checks...)
     e = reachGrid->getEntry(0.0f,0.0f);
     //BOOST_REQUIRE(e>0);
 

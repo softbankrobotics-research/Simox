@@ -94,62 +94,47 @@ void JacobiWindow::setupUI()
     connect(UI.horizontalSliderB_3, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(UI.horizontalSliderG_3, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
 
-    // a method, that is called by a timer, is allowed to update the IV models without disturbing the render loop
-    // TODO this probably won't work with Qt3D
-    SoTimerSensor* timer = new SoTimerSensor((SoSensorCB*)(&updateCB), this);
-    SbTime interval(1.0 / 30);
-    timer->setInterval(interval);
-    timer->schedule();
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCB()));
+    timer->start(30.0f);
 }
 
-void JacobiWindow::updateCB(void* data, SoSensor* /*sensor*/)
+void JacobiWindow::updateCB()
 {
-    if (!data)
-    {
-        return;
-    }
-
-    JacobiWindow* w = (JacobiWindow*)(data);
-
-    if (!w)
-    {
-        return;
-    }
-
-    float x = w->UI.horizontalSliderX->value();
-    float y = w->UI.horizontalSliderY->value();
-    float z = w->UI.horizontalSliderZ->value();
-    float a = w->UI.horizontalSliderA->value();
-    float b = w->UI.horizontalSliderB->value();
-    float g = w->UI.horizontalSliderG->value();
+    float x = UI.horizontalSliderX->value();
+    float y = UI.horizontalSliderY->value();
+    float z = UI.horizontalSliderZ->value();
+    float a = UI.horizontalSliderA->value();
+    float b = UI.horizontalSliderB->value();
+    float g = UI.horizontalSliderG->value();
 
     if (x != 0 || y != 0 || z != 0 || a != 0 || b != 0 || g != 0)
     {
-        w->updatBoxPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
+        updatBoxPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
     }
 
-    x = w->UI.horizontalSliderX_2->value();
-    y = w->UI.horizontalSliderY_2->value();
-    z = w->UI.horizontalSliderZ_2->value();
-    a = w->UI.horizontalSliderA_2->value();
-    b = w->UI.horizontalSliderB_2->value();
-    g = w->UI.horizontalSliderG_2->value();
+    x = UI.horizontalSliderX_2->value();
+    y = UI.horizontalSliderY_2->value();
+    z = UI.horizontalSliderZ_2->value();
+    a = UI.horizontalSliderA_2->value();
+    b = UI.horizontalSliderB_2->value();
+    g = UI.horizontalSliderG_2->value();
 
     if (x != 0 || y != 0 || z != 0 || a != 0 || b != 0 || g != 0)
     {
-        w->updatBox2Pos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
+        updatBox2Pos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
     }
 
-    x = w->UI.horizontalSliderX_3->value();
-    y = w->UI.horizontalSliderY_3->value();
-    z = w->UI.horizontalSliderZ_3->value();
-    a = w->UI.horizontalSliderA_3->value();
-    b = w->UI.horizontalSliderB_3->value();
-    g = w->UI.horizontalSliderG_3->value();
+    x = UI.horizontalSliderX_3->value();
+    y = UI.horizontalSliderY_3->value();
+    z = UI.horizontalSliderZ_3->value();
+    a = UI.horizontalSliderA_3->value();
+    b = UI.horizontalSliderB_3->value();
+    g = UI.horizontalSliderG_3->value();
 
     if (x != 0 || y != 0 || z != 0 || a != 0 || b != 0 || g != 0)
     {
-        w->updatBoxBiPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
+        updatBoxBiPos(x / 100.0f, y / 100.0f, z / 100.0f, a / 2000.0f, b / 2000.0f, g / 2000.0f);
     }
 }
 
@@ -293,6 +278,7 @@ void JacobiWindow::quit()
 {
     std::cout << "JacobiWindow: Closing" << std::endl;
     this->close();
+    timer->stop();
     viewer->stop();
 }
 

@@ -46,7 +46,7 @@ namespace GraspPlanning
             Constructor
             \param graspSet Append planned grasps to this set.
         */
-        GraspPlanner(VirtualRobot::GraspSetPtr graspSet);
+        GraspPlanner(const VirtualRobot::GraspSetPtr &graspSet);
 
         //! destructor
         virtual ~GraspPlanner();

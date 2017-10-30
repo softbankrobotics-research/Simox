@@ -12,7 +12,7 @@
 
 namespace VirtualRobot
 {
-    CoMIK::CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, FramePtr coordSystem, int dimensions)
+    CoMIK::CoMIK(const JointSetPtr &rnsJoints, const LinkSetPtr &rnsBodies, const FramePtr &coordSystem, int dimensions)
         : JacobiProvider(rnsJoints), coordSystem(coordSystem)
     {
         VR_ASSERT(rns);
@@ -48,7 +48,7 @@ namespace VirtualRobot
         initialized = true;
     }
 
-    Eigen::MatrixXf CoMIK::getJacobianOfCoM(ModelLinkPtr node)
+    Eigen::MatrixXf CoMIK::getJacobianOfCoM(const ModelLinkPtr &node)
     {
         // Get number of degrees of freedom
         size_t nDoF = rns->getJoints().size();
@@ -124,7 +124,7 @@ namespace VirtualRobot
     }
 
 
-    Eigen::MatrixXf CoMIK::getJacobianMatrix(FramePtr /*tcp*/)
+    Eigen::MatrixXf CoMIK::getJacobianMatrix(const FramePtr &/*tcp*/)
     {
         // ignoring tcp
         return getJacobianMatrix();

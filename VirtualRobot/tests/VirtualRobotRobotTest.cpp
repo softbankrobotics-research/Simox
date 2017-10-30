@@ -11,6 +11,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Model/Nodes/Attachments/PositionSensor.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>
 #include <string>
 
@@ -384,6 +385,11 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
         "    <MaxAcceleration value='36' unitsTime='min'/>"
         "    <MaxTorque value='0.2' units='meter'/>"
         "  </Joint>"
+        "   <Sensor type='position' name='sensor'>"
+        "    <Transform>"
+        "       <Translation x='100' y='50' z='0'/>"
+        "    </Transfrom>"
+         "  </Sensor>"
         "  <Child name='Joint3'/>"
         " </RobotNode>"
         " <RobotNode name='Joint3'>"
@@ -394,15 +400,13 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
         "    <axis x='0' y='0' z='1'/>"
         "    <Limits unit='degree' lo='0' hi='90'/>"
         "   </Joint>"
+        "   <Sensor type='position' name='sensor2'>"
+        "    <Transform>"
+        "       <Translation x='100' y='50' z='0'/>"
+        "    </Transfrom>"
+         "  </Sensor>"
         " </RobotNode>"
         "</Robot>";
-
-    // todo: test sensors
-//    "  <Sensor type='position' name='sensor2'>"
-//    "    <Transform>"
-//    "       <Translation x='100' y='50' z='0'/>"
-//   "    </Transfrom>"
-//    "  </Sensor>"
 
     VirtualRobot::RobotPtr rob;
     BOOST_REQUIRE_NO_THROW(rob = VirtualRobot::SimoxXMLFactory::createRobotFromSimoxXMLString(robotString));
@@ -439,13 +443,13 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotToXML)
 
 
     // check sensor
-    /*BOOST_REQUIRE(rn2->hasSensor("sensor2"));
-    VirtualRobot::PositionSensorPtr ps = std::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rn2->getSensor("sensor2"));
+    BOOST_REQUIRE(rob->hasSensor("sensor2"));
+    VirtualRobot::PositionSensorPtr ps = std::dynamic_pointer_cast<VirtualRobot::PositionSensor>(rob->getSensor("sensor2"));
     BOOST_REQUIRE(ps);
     Eigen::Matrix4f p = ps->getGlobalPose();
     Eigen::Matrix4f p2 = Eigen::Matrix4f::Identity();
     p2.block(0, 3, 3, 1) << 200.0f, 100.0f, 0;
-    BOOST_REQUIRE(p.isApprox(p2));*/
+    BOOST_REQUIRE(p.isApprox(p2));
 
 
     // todo

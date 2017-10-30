@@ -47,9 +47,9 @@ IF (NOT Simox_CONFIGURED)
         "${PROJECT_BINARY_DIR}")  # to find config headers
     
     ############################# VERSION #################################
-    set(Simox_MAJOR_VERSION 2)
-    set(Simox_MINOR_VERSION 3)
-    set(Simox_PATCH_VERSION 56)
+    set(Simox_MAJOR_VERSION 3)
+    set(Simox_MINOR_VERSION 0)
+    set(Simox_PATCH_VERSION 0)
     set(Simox_VERSION
     ${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION})
 
@@ -301,6 +301,12 @@ IF (NOT Simox_CONFIGURED)
         MESSAGE(STATUS "Visualization disabled")
     endif()
     
+    if (Simox_BUILD_Gui)
+        SET (Simox_GUI True)
+    else()
+        SET (Simox_GUI False)
+    endif()
+
     
     SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Simox_VISUALIZATION_INCLUDE_PATHS})
     SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Simox_VISUALIZATION_LIBS})

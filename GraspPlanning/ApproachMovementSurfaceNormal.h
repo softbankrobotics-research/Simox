@@ -52,7 +52,7 @@ namespace GraspPlanning
             \param graspPreshape An optional preshape that can be used in order to "open" the eef.
             \param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
         */
-        ApproachMovementSurfaceNormal(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
+        ApproachMovementSurfaceNormal(const VirtualRobot::ModelPtr &object, const VirtualRobot::EndEffectorPtr &eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
         //! destructor
         virtual ~ApproachMovementSurfaceNormal();
 

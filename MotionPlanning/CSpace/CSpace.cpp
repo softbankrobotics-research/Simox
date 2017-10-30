@@ -25,7 +25,10 @@ namespace MotionPlanning
     MOTIONPLANNING_IMPORT_EXPORT int CSpace::cloneCounter = 0;
 
     //#define DO_THE_TESTS
-    CSpace::CSpace(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::JointSetPtr robotNodes, unsigned int maxConfigs, unsigned int randomSeed)
+    CSpace::CSpace(const VirtualRobot::RobotPtr &robot,
+                   const VirtualRobot::CDManagerPtr &collisionManager,
+                   const VirtualRobot::JointSetPtr &robotNodes,
+                   unsigned int maxConfigs, unsigned int randomSeed)
     {
         if (maxConfigs <= 0)
         {
@@ -168,7 +171,7 @@ namespace MotionPlanning
         return nodes[id];
     }
 
-    bool CSpace::checkSolution(CSpacePathPtr solution, bool bVerbose)
+    bool CSpace::checkSolution(const CSpacePathPtr &solution, bool bVerbose)
     {
         if (!solution)
         {
@@ -208,7 +211,7 @@ namespace MotionPlanning
         return true;
     }
 
-    bool CSpace::checkTree(CSpaceTreePtr tree)
+    bool CSpace::checkTree(const CSpaceTreePtr &tree)
     {
         if (!tree)
         {
@@ -861,7 +864,7 @@ namespace MotionPlanning
         return robo;
     }
 
-    void CSpace::addConstraintCheck(ConfigurationConstraintPtr constraint)
+    void CSpace::addConstraintCheck(const ConfigurationConstraintPtr &constraint)
     {
         constraints.push_back(constraint);
     }

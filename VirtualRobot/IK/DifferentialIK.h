@@ -176,14 +176,14 @@ namespace VirtualRobot
             All this is done within computeSteps(). For more information regarding the differential inverse kinematics,
             see <a href="http://graphics.ucsd.edu/courses/cse169_w05/CSE169_13.ppt">this lecture</a>.
         */
-        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode);
-        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
+        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp, IKSolver::CartesianSelection mode);
+        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
         virtual Eigen::MatrixXf getJacobianMatrix(IKSolver::CartesianSelection mode);
 
         /*!
             Computes the complete Jacobian that considers all defined TCPs and goal poses.
         */
-        virtual Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix() override;
 
         /*!
             Computes the complete error vector, considering all TCPs and goals.

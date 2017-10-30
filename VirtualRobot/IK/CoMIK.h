@@ -40,13 +40,13 @@ namespace VirtualRobot
         /*!
             Initialize with a rns that contains joints and one that contains the bodies.
         */
-        CoMIK(JointSetPtr rnsJoints, LinkSetPtr rnsBodies, FramePtr coordSystem = FramePtr(), int dimensions = 2);
+        CoMIK(const JointSetPtr &rnsJoints, const LinkSetPtr &rnsBodies, const FramePtr &coordSystem = FramePtr(), int dimensions = 2);
 
         void setGoal(const Eigen::VectorXf& goal, float tolerance = 5.0f);
 
-        Eigen::MatrixXf getJacobianOfCoM(ModelLinkPtr node);
-        virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(FramePtr tcp); // ignored for CoM IK but needed for interface
+        Eigen::MatrixXf getJacobianOfCoM(const ModelLinkPtr &node);
+        virtual Eigen::MatrixXf getJacobianMatrix() override;
+        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override; // ignored for CoM IK but needed for interface
 
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
 

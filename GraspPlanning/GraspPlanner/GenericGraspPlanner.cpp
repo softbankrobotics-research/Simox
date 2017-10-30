@@ -19,7 +19,8 @@ namespace GraspPlanning
 {
 
 
-    GenericGraspPlanner::GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspPlanning::GraspQualityMeasurePtr graspQuality, GraspPlanning::ApproachMovementGeneratorPtr approach, float minQuality, bool forceClosure)
+    GenericGraspPlanner::GenericGraspPlanner(const VirtualRobot::GraspSetPtr &graspSet, const GraspPlanning::GraspQualityMeasurePtr &graspQuality,
+                                             const GraspPlanning::ApproachMovementGeneratorPtr &approach, float minQuality, bool forceClosure)
         : GraspPlanner(graspSet), graspQuality(graspQuality), approach(approach), minQuality(minQuality), forceClosure(forceClosure)
     {
         THROW_VR_EXCEPTION_IF(!graspQuality, "NULL grasp quality...");
@@ -122,7 +123,7 @@ namespace GraspPlanning
         return finishedContactsOK;
     }
 
-    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(std::vector<VirtualRobot::ModelPtr> &obstacles)
+    VirtualRobot::GraspPtr GenericGraspPlanner::planGrasp(const std::vector<VirtualRobot::ModelPtr> &obstacles)
     {
         auto start_time = chrono::high_resolution_clock::now();
         std::string sGraspPlanner("Simox - GraspPlanning - ");

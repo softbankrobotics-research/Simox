@@ -70,11 +70,11 @@ namespace VirtualRobot
         virtual ~SceneIO();
         static ScenePtr processScene(rapidxml::xml_node<char>* sceneXMLNode, const std::string& basePath);
         static ScenePtr processSceneAttributes(rapidxml::xml_node<char>* sceneXMLNode);
-        static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
-        static bool processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
-        static bool processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
-        static bool processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
-        static bool processModelSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene);
+        static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath);
+        static bool processSceneObstacle(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath);
+        static bool processSceneTrajectory(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene);
+        static bool processSceneManipulationObject(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene, const std::string& basePath);
+        static bool processModelSet(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr &scene);
     };
 
 }

@@ -134,7 +134,6 @@ namespace VirtualRobot
 
         /*!
          * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
          *
          * @return The joint values.
          */
@@ -142,7 +141,6 @@ namespace VirtualRobot
 
         /*!
          * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
          *
          * @param fillVector The vector to put the values in.
          * @param clearVector If true, all items in the vector are deleted.
@@ -151,7 +149,6 @@ namespace VirtualRobot
 
         /*!
          * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
          *
          * @param fillVector The vector to put the values in.
          */
@@ -159,7 +156,6 @@ namespace VirtualRobot
 
         /*!
          * Get the joint values of all contained joints.
-         * TODO: The ordering of the values.
          *
          * @param config The config to save the joint values in.
          */
@@ -168,7 +164,6 @@ namespace VirtualRobot
         /*!
          * Checks if the given joint values are within joint limits.
          * If not the joint values are adjusted.
-         * TODO: The ordering of the values.
          *
          * @param jointValues The values to check and adjust.
          */
@@ -177,7 +172,6 @@ namespace VirtualRobot
         /*!
          * Checks if the given joint values are within joint limits.
          * If not the joint values are adjusted.
-         * TODO: The ordering of the values.
          *
          * @param jointValues The values to check and adjust.
          */
@@ -233,8 +227,7 @@ namespace VirtualRobot
          * @param tabs The number of tabs to start each line with.
          * @return The generated XML string.
          */
-        virtual std::string toXML(int tabs);
-
+        virtual std::string toXML(int tabs) const override;
 		/*!
 		* Clone this JointSet and register it to the new robot
 		*/

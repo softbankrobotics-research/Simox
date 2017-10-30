@@ -8,7 +8,7 @@
 
 	<EndEffector>endeffectors/Armar3-eef-hands.xml</EndEffector>
 
-	<!--Frame>frames/Armar3-frames.xml</Frame-->
+	<Frame>frames/Armar3-frames.xml</Frame>
 
 	<NodeSet>nodesets/Armar3-jointsets.xml</NodeSet>
 	<NodeSet>nodesets/Armar3-linksets.xml</NodeSet>

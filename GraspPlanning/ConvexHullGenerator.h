@@ -43,19 +43,19 @@ namespace GraspPlanning
         /*!
             Creates a convex hull of the points stored in pointsInput.
         */
-        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(std::vector<Eigen::Vector3f>& pointsInput, bool lockMutex = true);
-        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(VirtualRobot::TriMeshModelPtr pointsInput, bool lockMutex = true);
-        static VirtualRobot::MathTools::ConvexHull6DPtr CreateConvexHull(std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput, bool lockMutex = true);
+        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(const std::vector<Eigen::Vector3f>& pointsInput, bool lockMutex = true);
+        static VirtualRobot::MathTools::ConvexHull3DPtr CreateConvexHull(const VirtualRobot::TriMeshModelPtr &pointsInput, bool lockMutex = true);
+        static VirtualRobot::MathTools::ConvexHull6DPtr CreateConvexHull(const std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput, bool lockMutex = true);
 
-        static void PrintStatistics(VirtualRobot::MathTools::ConvexHull6DPtr convHull);
+        static void PrintStatistics(const VirtualRobot::MathTools::ConvexHull6DPtr &convHull);
 
         /*!
             Convert points to qhull format
         */
-        static bool ConvertPoints(std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex = true);
-        static bool ConvertPoints(std::vector<VirtualRobot::MathTools::ContactPoint>& points, double* storePointsQHull, bool lockMutex = true);
+        static bool ConvertPoints(const std::vector<Eigen::Vector3f>& points, double* storePointsQHull, bool lockMutex = true);
+        static bool ConvertPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& points, double* storePointsQHull, bool lockMutex = true);
 
-        static void PrintVertices(std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput);
+        static void PrintVertices(const std::vector<VirtualRobot::MathTools::ContactPoint>& pointsInput);
 
         static bool checkVerticeOrientation(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3, const Eigen::Vector3f& n);
 

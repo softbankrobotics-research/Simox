@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<Frame name="TCP-L-Test>
+<Frame name="TCP-L-Test">
     <Parent node="Wrist_2"/>
-    <Transformation>
+    <Transform>
         <Translation x="100" units="mm"/>
-    </Transformation>
+    </Transform>
 </Frame>
 
 

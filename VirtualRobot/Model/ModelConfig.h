@@ -52,11 +52,11 @@ namespace VirtualRobot
             \param model The associated model.
             \param name A name, which identifies this object.
         */
-        ModelConfig(ModelWeakPtr model, const std::string& name);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::map< ModelJointPtr, float >& configs);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< Configuration >& configs);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< std::string >& modelNodes, const std::vector< float >& values);
-        ModelConfig(ModelWeakPtr model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values);
+        ModelConfig(const ModelWeakPtr &model, const std::string& name);
+        ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::map< ModelJointPtr, float >& configs);
+        ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< Configuration >& configs);
+        ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< std::string >& modelNodes, const std::vector< float >& values);
+        ModelConfig(const ModelWeakPtr &model, const std::string& name, const std::vector< ModelJointPtr >& modelNodes, const std::vector< float >& values);
 
         /*!
             Creates a copy of this object with the given model
@@ -82,11 +82,11 @@ namespace VirtualRobot
             \return True on success. False if model is not present any more (may happen due to the use of weak pointers).
         */
         bool setConfig(const Configuration& c);
-        bool setConfig(ModelJointPtr node, float value);
+        bool setConfig(const ModelJointPtr &node, float value);
         bool setConfig(const std::string& node, float value);
 
         bool setTCP(const std::string &tcpName);
-        bool setTCP(FramePtr tcp);
+        bool setTCP(const FramePtr &tcp);
         bool hasTCP() const;
         FramePtr getTCP();
 

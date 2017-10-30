@@ -56,7 +56,7 @@ namespace VirtualRobot
         return eef;
     }
 
-    Eigen::Matrix4f Grasp::getTargetPoseGlobal(RobotPtr robot)
+    Eigen::Matrix4f Grasp::getTargetPoseGlobal(const RobotPtr &robot)
     {
         THROW_VR_EXCEPTION_IF(!robot, "Null data");
         THROW_VR_EXCEPTION_IF(robot->getType() != robotType, "Robot types are not compatible: " << robot->getType() << " != " << robotType);

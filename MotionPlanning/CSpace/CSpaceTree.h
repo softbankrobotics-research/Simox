@@ -44,7 +44,7 @@ namespace MotionPlanning
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         //! constructor
-        CSpaceTree(CSpacePtr cspace);
+        CSpaceTree(const CSpacePtr &cspace);
 
         //! destructor
         virtual ~CSpaceTree();
@@ -73,7 +73,7 @@ namespace MotionPlanning
             \param fillPath Stores all configs.
             \return true on success.
         */
-        virtual bool createPath(CSpaceNodePtr startNode, CSpaceNodePtr goalNode, CSpacePathPtr fillPath);
+        virtual bool createPath(const CSpaceNodePtr &startNode, const CSpaceNodePtr &goalNode, CSpacePathPtr fillPath);
 
         //! set the number of nodes to zero
         virtual void reset();
@@ -124,12 +124,12 @@ namespace MotionPlanning
           \param config
           \param storeLastAddedID if given, the id of the last added node is stored here
         */
-        virtual bool appendPath(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID = NULL);
+        virtual bool appendPath(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID = NULL);
 
         /*!
         Append the given path to this tree. No checks are performed.
         */
-        virtual bool appendPath(CSpaceNodePtr startNode, CSpacePathPtr path, int* storeLastAddedID = NULL);
+        virtual bool appendPath(const CSpaceNodePtr &startNode, const CSpacePathPtr &path, int* storeLastAddedID = NULL);
 
         /*!
             Append a path to the tree until a collision is detected
@@ -138,7 +138,7 @@ namespace MotionPlanning
           \param config
           \param storeLastAddedID if given, the id of the last added node is stored here
         */
-        virtual bool appendPathUntilCollision(CSpaceNodePtr startNode, const Eigen::VectorXf& config, int* storeLastAddedID);
+        virtual bool appendPathUntilCollision(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID);
 
         virtual std::vector<CSpaceNodePtr> getNodes();
 

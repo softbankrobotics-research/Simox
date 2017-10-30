@@ -1,5 +1,6 @@
 
 #include "PositionSensor.h"
+#include "../../XML/BaseIO.h"
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
@@ -16,7 +17,7 @@ namespace VirtualRobot
     }
 
 
-    bool PositionSensor::isAttachable(ModelNodePtr node)
+    bool PositionSensor::isAttachable(const ModelNodePtr &node)
     {
         return true;
     }
@@ -45,5 +46,27 @@ namespace VirtualRobot
         std::string name = getName();
         setVisualization(factory->createCoordSystem(1, &name));
     }
+
+
+    std::string PositionSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    {
+        std::string t;
+
+        for (int i = 0; i < tabs; i++)
+        {
+            t += "\t";
+        }
+        std::stringstream ss;
+        ss << t << "<Sensor type='position' name='" << name <<"'>\n";
+        std::string pre2 = t + "\t";
+        std::string pre3 = pre2 + "\t";
+        ss << pre2 << "<Transform>" << endl;
+        ss << BaseIO::toXML(localTransformation, pre3);
+        ss << pre2 << "</Transform>" << endl;
+        ss << t << "</Sensor>\n";
+
+        return ss.str();
+    }
+
 }
 

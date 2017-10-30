@@ -368,7 +368,7 @@ namespace VirtualRobot
          *
          * @return The generated XML string.
          */
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true);
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) = 0;
 
         /*!
          * Clone this ModelNode.

@@ -523,44 +523,6 @@ namespace MotionPlanning
 
     }
 
-    // not needed any more
-    /*CSpaceNode* GraspRrt::findNearestNeighborCart(float *pCartConf)
-    {
-        if (!pCartConf || !m_pCSpace)
-            return NULL;
-
-        float minDist = FLT_MAX;
-        float actDist;
-        CSpaceNode* bestNode = NULL;
-        std::vector<CSpaceNode*> *nodes = m_pRrtCart->getNodes();
-        if (nodes->size()==0)
-            return NULL;
-        CSpaceNode *testNode;
-        unsigned int loops = 400; // TODO: this is just a random number, better things should be possible?!
-        for (unsigned int i=0; i<loops; i++)
-        {
-            int nr = rand()%((int)nodes->size());
-            testNode = (*nodes)[nr];
-            if (testNode->status==0)
-            {
-                actDist = MathHelpers::calcCartesianPoseDiff(testNode->cartPosTCP1,pCartConf);
-                if (actDist < minDist)
-                {
-                    minDist = actDist;
-                    bestNode = testNode;
-                    return bestNode;
-                }
-            }
-        }
-        if (minDist==FLT_MAX)
-        {
-            minDist = MathHelpers::calcCartesianPoseDiff((*nodes)[0]->cartPosTCP1,pCartConf);
-            bestNode = (*nodes)[0];
-        }
-        //cout << " , minDist: " << minDist ;
-        return bestNode;
-    }*/
-
     GraspRrt::MoveArmResult GraspRrt::moveTowardsGoal(CSpaceNodePtr startNode, const Eigen::Matrix4f& targetPose, int nMaxLoops)
     {
         if (!startNode)
@@ -987,35 +949,6 @@ namespace MotionPlanning
         return fScore;
     }
 
-    /*
-    // todo: this should go to the demo
-    void GraspRrt::initGraspMeasurement()
-    {
-        if (!m_pManipulationObject || !m_pGraspQualityMeasure)
-            return;
-        SbVec3f VecCOM;
-        SoSeparator* pObjSep = m_pManipulationObject->GetIVModel();
-        m_pManipulationObject->getCenterOfMass(VecCOM);
-        cout << "Center of Mass " << VecCOM[0] << "," << VecCOM[1] << "," << VecCOM[2] << endl;
-        SoGetBoundingBoxAction *objectBBAction = new SoGetBoundingBoxAction(SbViewportRegion(0, 0));
-        SbBox3f objectBB;
-        if (pObjSep==NULL)
-        {
-            printf ("pObject: NULL Data..\n");
-            return;
-        }
-        pObjSep->getBoundingBox(objectBBAction);
-        objectBB = objectBBAction->getBoundingBox();
-        SbVec3f objectBBSize;
-        objectBB.getSize(objectBBSize[0],objectBBSize[1],objectBBSize[2]);
-        double objectLength = max(max(objectBBSize[0],objectBBSize[1]),objectBBSize[2]);
-        GraspPlanning::Vec3D objectCoM;
-        objectCoM.x = VecCOM[0];
-        objectCoM.y = VecCOM[1];
-        objectCoM.z = VecCOM[2];
-        m_pGraspQualityMeasure->SetObjectProperties(objectCoM, objectLength, (SoNode*)pObjSep);
-        m_pGraspQualityMeasure->CalculateObjectProperties();
-    }*/
 
     void GraspRrt::printGraspInfo(GraspInfo& GrInfo)
     {

@@ -5,11 +5,11 @@
 * @copyright  2010,2011 Nikolaus Vahrenkamp, Manfred Kroehnert
 */
 #include "CoinVisualizationFactory.h"
-#include "../Visualization.h"
-#include "CoinVisualization.h"
+#include "../VisualizationNode.h"
+#include "CoinVisualizationNode.h"
 #include "../../VirtualRobotException.h"
 #include "../../Tools/RuntimeEnvironment.h"
-#include "CoinVisualizationSet.h"
+#include "CoinVisualization.h"
 #include "../../Model/Model.h"
 #include "../../Model/Nodes/ModelJoint.h"
 #include "../../Grasping/Grasp.h"
@@ -136,9 +136,9 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationPtr CoinVisualizationFactory::createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox, Color color)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox, Color color)
     {
-        VisualizationPtr visualizationNode = VisualizationPtr(new Visualization());
+        VisualizationNodePtr visualizationNode = VisualizationNodePtr(new VisualizationNode());
         SoSeparator* coinVisualization = new SoSeparator();
         coinVisualization->ref();
 
@@ -164,7 +164,7 @@ namespace VirtualRobot
         }
 
         // create new CoinVisualizationNode if no error occurred
-        visualizationNode.reset(new CoinVisualization(coinVisualization));
+        visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
         visualizationNode->primitives = primitives;
 
         coinVisualization->unref();
@@ -220,13 +220,13 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationPtr CoinVisualizationFactory::createVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         // passing an empty string to SoInput and trying to open it aborts the program
         if (filename.empty())
         {
             std::cerr <<  "No filename given" << std::endl;
-            return VisualizationPtr();
+            return VisualizationNodePtr();
         }
 
         // check for STL file (.stl, .stla, .stlb)
@@ -249,9 +249,9 @@ namespace VirtualRobot
         return getVisualizationFromCoin3DFile(filename, boundingBox);
     }
 
-    VisualizationPtr CoinVisualizationFactory::getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox)
     {
-        VisualizationPtr visualizationNode(new Visualization);
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
         // try to open the given file
         SoInput fileInput;
 
@@ -269,7 +269,7 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromSTLFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
     {
         // try to read from file
         TriMeshModelPtr t(new TriMeshModel());
@@ -280,10 +280,10 @@ namespace VirtualRobot
         if (!readOK)
         {
             VR_ERROR << "Could not read stl file " << filename << endl;
-            return VisualizationPtr();
+            return VisualizationNodePtr();
         }
 
-        VisualizationPtr visualizationNode(new Visualization);
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
         visualizationNode->setFilename(filename, boundingBox);
         Eigen::Matrix4f id = Eigen::Matrix4f::Identity();
         visualizationNode = createTriMeshModelVisualization(t, id, scaleX, scaleY, scaleZ);
@@ -292,9 +292,9 @@ namespace VirtualRobot
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createVisualizationFromFile(const std::ifstream& ifs, bool /*boundingBox*/, float scaleX, float scaleY, float scaleZ)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::ifstream& ifs, bool /*boundingBox*/, float scaleX, float scaleY, float scaleZ)
     {
-        VisualizationPtr visualizationNode(new Visualization);
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
 
         if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
         {
@@ -330,9 +330,9 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon succes and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationPtr CoinVisualizationFactory::getVisualizationFromString(const std::string& modelString, bool boundingBox)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromString(const std::string& modelString, bool boundingBox)
     {
-        VisualizationPtr visualizationNode(new Visualization);
+        VisualizationNodePtr visualizationNode(new VisualizationNode);
 
         if (modelString.empty())
         {
@@ -356,7 +356,7 @@ namespace VirtualRobot
     * \param visualizationNode VisualizationNodePtr instance in which the created CoinVisualizationNode is stored.
     * \param boundingBox Use bounding box instead of full model.
     */
-    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationPtr& visualizationNode, bool boundingBox, bool freeDuplicateTextures)
+    void CoinVisualizationFactory::GetVisualizationFromSoInput(SoInput& soInput, VisualizationNodePtr& visualizationNode, bool boundingBox, bool freeDuplicateTextures)
     {
         // read the contents of the file
         SoNode* coinVisualization = SoDB::readAll(&soInput);
@@ -378,7 +378,7 @@ namespace VirtualRobot
         }
 
         // create new CoinVisualizationNode if no error occurred
-        visualizationNode.reset(new CoinVisualization(coinVisualization));
+        visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
         if(freeDuplicateTextures)
         {
             boost::filesystem::path p(soInput.getCurFileName());
@@ -394,15 +394,15 @@ namespace VirtualRobot
         return getName();
     }
 
-    VisualizationSetPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationPtr> &visus)
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
     {
-        std::shared_ptr<CoinVisualizationSet> v(new CoinVisualizationSet(visus));
+        std::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));
         return v;
     }
 
-    VisualizationSetPtr CoinVisualizationFactory::getVisualization(VisualizationPtr visu)
+    VisualizationPtr CoinVisualizationFactory::getVisualization(VisualizationNodePtr visu)
     {
-        std::shared_ptr<CoinVisualizationSet> v(new CoinVisualizationSet(visu));
+        std::shared_ptr<CoinVisualization> v(new CoinVisualization(visu));
         return v;
     }
 
@@ -485,7 +485,7 @@ namespace VirtualRobot
         return coinFactory;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createBox(float width, float height, float depth, float colorR, float colorG, float colorB)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createBox(float width, float height, float depth, float colorR, float colorG, float colorB)
     {
         SoSeparator* s = new SoSeparator();
         s->ref();
@@ -505,7 +505,7 @@ namespace VirtualRobot
         c->height = height;
         c->depth = depth;
 
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
         return visualizationNode;
     }
@@ -604,14 +604,14 @@ namespace VirtualRobot
         return s;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width, float colorR, float colorG, float colorB)
+    VisualizationNodePtr CoinVisualizationFactory::createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width, float colorR, float colorG, float colorB)
     {
         SoNode* s = createCoinLine(from, to, width, colorR, colorG, colorB);
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         return visualizationNode;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width /*= 1.0f*/, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width /*= 1.0f*/, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
     {
         Eigen::Matrix4f fromM;
         fromM.setIdentity();
@@ -622,7 +622,7 @@ namespace VirtualRobot
         return createLine(fromM, toM, width, colorR, colorG, colorB);
     }
 
-    VisualizationPtr CoinVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)
+    VisualizationNodePtr CoinVisualizationFactory::createSphere(float radius, float colorR, float colorG, float colorB)
     {
         SoSeparator* s = new SoSeparator();
         s->ref();
@@ -639,12 +639,12 @@ namespace VirtualRobot
         s->addChild(c);
         c->radius = radius;
 
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createCylinder(float radius, float height, float colorR, float colorG, float colorB)
+    VisualizationNodePtr CoinVisualizationFactory::createCylinder(float radius, float height, float colorR, float colorG, float colorB)
     {
         SoSeparator* s = new SoSeparator();
         s->ref();
@@ -662,20 +662,20 @@ namespace VirtualRobot
         c->radius = radius;
         c->height = height;
 
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts)
+    VisualizationNodePtr CoinVisualizationFactory::createCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts)
     {
         SoNode* s = createCoinPartCircle(radius, circleCompletion, width, colorR, colorB, colorG, numberOfCircleParts);
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         s->unref();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createCoordSystem(float scaling, std::string* text, const Eigen::Matrix4f &pose, float axisLength, float axisSize, int nrOfBlocks)
+    VisualizationNodePtr CoinVisualizationFactory::createCoordSystem(float scaling, std::string* text, const Eigen::Matrix4f &pose, float axisLength, float axisSize, int nrOfBlocks)
     {
         SoSeparator* s1 = new SoSeparator;
         s1->ref();
@@ -685,15 +685,15 @@ namespace VirtualRobot
         s1->addChild(m);
         s1->addChild(s);
 
-        VisualizationPtr visualizationNode(new CoinVisualization(s1));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s1));
         s1->unrefNoDelete();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createVisualization()
+    VisualizationNodePtr CoinVisualizationFactory::createVisualization()
     {
         SoSeparator* s = new SoSeparator();
-        VisualizationPtr visualizationNode(new CoinVisualization(s));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
         return visualizationNode;
     }
 
@@ -832,7 +832,7 @@ namespace VirtualRobot
         return result;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createText(const std::string& text, bool billboard, float scaling, Color c, float offsetX, float offsetY, float offsetZ)
+    VisualizationNodePtr CoinVisualizationFactory::createText(const std::string& text, bool billboard, float scaling, Color c, float offsetX, float offsetY, float offsetZ)
     {
         SoSeparator* res = new SoSeparator();
         res->ref();
@@ -856,14 +856,14 @@ namespace VirtualRobot
             res->addChild(CreateText(text, offsetX * 1000.0f, offsetY * 1000.0f, offsetZ * 1000.0f));
         }
 
-        VisualizationPtr visualizationNode(new CoinVisualization(res));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(res));
         res->unref();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createConstraintVisualization(const ConstraintPtr &constraint, const Visualization::Color &color)
+    VisualizationNodePtr CoinVisualizationFactory::createConstraintVisualization(const ConstraintPtr &constraint, const VisualizationFactory::Color &color)
     {
-        VisualizationPtr result;
+        VisualizationNodePtr result;
         SoNode* n;
         TSRConstraintPtr tsr = std::dynamic_pointer_cast<TSRConstraint>(constraint);
         if (tsr)
@@ -878,11 +878,11 @@ namespace VirtualRobot
         if (position)
             n = getCoinVisualization(position, color);
         if (n)
-            result.reset(new CoinVisualization(n));
+            result.reset(new CoinVisualizationNode(n));
         return result;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
+    VisualizationNodePtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
     {
         SoSeparator* sep = new SoSeparator();
         sep->ref();
@@ -890,7 +890,7 @@ namespace VirtualRobot
         {
             TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
 
-            triMesh->addColor(VirtualRobot::Visualization::Color(colorR, colorG, colorB, transparency));
+            triMesh->addColor(VirtualRobot::VisualizationFactory::Color(colorR, colorG, colorB, transparency));
 
             int numVerticesPerRow = sides + 1;
             int numVerticesPerColumn = rings + 1;
@@ -973,27 +973,27 @@ namespace VirtualRobot
             sep->addChild(c);
         }
 
-        VisualizationPtr visualizationNode(new CoinVisualization(sep));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(sep));
         sep->unref();
         return visualizationNode;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createContactVisualization(EndEffector::ContactInfoVector &contacts, float frictionConeHeight, float frictionConeRadius, bool scaleAccordingToApproachDir)
+    VisualizationNodePtr CoinVisualizationFactory::createContactVisualization(EndEffector::ContactInfoVector &contacts, float frictionConeHeight, float frictionConeRadius, bool scaleAccordingToApproachDir)
     {
         SoNode* visualisationNode = getCoinVisualization(contacts, frictionConeHeight, frictionConeRadius, scaleAccordingToApproachDir);
-        CoinVisualizationNodePtr n(new CoinVisualization(visualisationNode));
+        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualisationNode));
         return n;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const ColorMapPtr cm, bool transformToGlobalPose, float maxZGlobal)
+    VisualizationNodePtr CoinVisualizationFactory::createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const ColorMapPtr cm, bool transformToGlobalPose, float maxZGlobal)
     {
         SoNode* visualisationNode = getCoinVisualization(reachSpace, *cm, transformToGlobalPose, maxZGlobal);
-        CoinVisualizationNodePtr n(new CoinVisualization(visualisationNode));
+        CoinVisualizationNodePtr n(new CoinVisualizationNode(visualisationNode));
         return n;
     }
 
 
-    VisualizationPtr CoinVisualizationFactory::createEllipse(float x, float y, float z, bool showAxes, float axesHeight, float axesWidth)
+    VisualizationNodePtr CoinVisualizationFactory::createEllipse(float x, float y, float z, bool showAxes, float axesHeight, float axesWidth)
     {
         SoSeparator* res = new SoSeparator();
         res->ref();
@@ -1001,7 +1001,7 @@ namespace VirtualRobot
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
         res->addChild(CreateEllipse(x, y, z, NULL, showAxes, axesHeight, axesWidth));
-        VisualizationPtr visualizationNode(new CoinVisualization(res));
+        VisualizationNodePtr visualizationNode(new CoinVisualizationNode(res));
         res->unref();
         return visualizationNode;
     }
@@ -1087,7 +1087,7 @@ namespace VirtualRobot
     }
 
 
-    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, Visualization::Color color)
+    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color)
     {
 
         SoSeparator* pclSep = new SoSeparator;
@@ -1208,21 +1208,29 @@ namespace VirtualRobot
         }
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
     {
-        VisualizationPtr node(new CoinVisualization(CreateVertexVisualization(position, radius, transparency, colorR, colorG, colorB)));
+        VisualizationNodePtr node(new CoinVisualizationNode(CreateVertexVisualization(position, radius, transparency, colorR, colorG, colorB)));
         return node;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/)
     {
         SoSeparator* res = CreatePlaneVisualization(position, normal, extend, transparency, false, colorR, colorG, colorB);
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreatePlaneVisualization(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, bool grid, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/, std::string textureFile)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createPlaneGrid(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, const std::string &textureFile)
+    {
+        SoSeparator* res = CreatePlaneVisualization(position, normal, extend, transparency, true, 0.5f, 0.5f, 0.5f, textureFile);
+
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
+        return node;
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreatePlaneVisualization(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, bool grid, float colorR /*= 0.5f*/, float colorG /*= 0.5f*/, float colorB /*= 0.5f*/, const std::string &textureFile)
     {
         SoSeparator* res = new SoSeparator();
         res->ref();
@@ -1248,10 +1256,11 @@ namespace VirtualRobot
         if (grid)
         {
             SoSeparator* res2;
+            std::string tf = textureFile;
 
-            if (!textureFile.empty() && RuntimeEnvironment::getDataFileAbsolute(textureFile))
+            if (!tf.empty() && RuntimeEnvironment::getDataFileAbsolute(tf))
             {
-                res2 = CreateGrid(extend, extend, extend / 500.0f, extend / 500.0f, true, textureFile.c_str(), transparency);
+                res2 = CreateGrid(extend, extend, extend / 500.0f, extend / 500.0f, true, tf.c_str(), transparency);
             }
             else
             {
@@ -1335,9 +1344,9 @@ namespace VirtualRobot
         return pGrid;
     }
 
-    SoSeparator* CoinVisualizationFactory::CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, Visualization::Color colorInner, Visualization::Color colorLine, float lineSize)
+    SoSeparator* CoinVisualizationFactory::CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, VisualizationFactory::Color colorInner, VisualizationFactory::Color colorLine, float lineSize)
     {
-        Visualization::PhongMaterial mat;
+        VisualizationFactory::PhongMaterial mat;
         mat.diffuse = colorInner;
         mat.ambient = colorInner;
         mat.transparency = colorInner.transparency;
@@ -1345,7 +1354,7 @@ namespace VirtualRobot
         return CreatePolygonVisualization(points, mat, colorLine, lineSize);
     }
 
-    SoSeparator* CoinVisualizationFactory::CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, Visualization::PhongMaterial mat, Visualization::Color colorLine, float lineSize)
+    SoSeparator* CoinVisualizationFactory::CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, VisualizationFactory::PhongMaterial mat, VisualizationFactory::Color colorLine, float lineSize)
     {
         SoSeparator* visu = new SoSeparator;
 
@@ -1414,7 +1423,7 @@ namespace VirtualRobot
     }
 
 
-    SoSeparator* CoinVisualizationFactory::CreateConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, Visualization::Color colorInner /*= Visualization::Color::Blue()*/, Visualization::Color colorLine /*= Visualization::Color::Black()*/, float lineSize /*= 5.0f*/, const Eigen::Vector3f& offset /*=Eigen::Vector3f::Zero() */)
+    SoSeparator* CoinVisualizationFactory::CreateConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner /*= VisualizationFactory::Color::Blue()*/, VisualizationFactory::Color colorLine /*= VisualizationFactory::Color::Black()*/, float lineSize /*= 5.0f*/, const Eigen::Vector3f& offset /*=Eigen::Vector3f::Zero() */)
     {
         if (!ch)
         {
@@ -1459,8 +1468,8 @@ namespace VirtualRobot
         if (!model)
             return NULL;
 
-        VisualizationSetPtr v = model->getVisualization(visuType);
-        CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualizationSet>(v);
+        VisualizationPtr v = model->getVisualization(visuType);
+        CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(v);
         if (cv)
             return cv->getCoinVisualization();
         return NULL;
@@ -1475,7 +1484,7 @@ namespace VirtualRobot
             result->unrefNoDelete();
             return new SoSeparator;
         }
-        VisualizationPtr v = object->getVisualization(visuType);
+        VisualizationNodePtr v = object->getVisualization(visuType);
         if (!v)
         {
             result->unrefNoDelete();
@@ -1494,9 +1503,9 @@ namespace VirtualRobot
     }
 
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(VisualizationPtr visu)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(VisualizationNodePtr visu)
     {
-        std::shared_ptr< CoinVisualization > coinVisu(std::dynamic_pointer_cast< CoinVisualization >(visu));
+        std::shared_ptr< CoinVisualizationNode > coinVisu(std::dynamic_pointer_cast< CoinVisualizationNode >(visu));
 
         if (!coinVisu)
         {
@@ -1916,7 +1925,7 @@ namespace VirtualRobot
 
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(TriMeshModelPtr model, bool showNormals, Visualization::Color color, bool showLines)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(TriMeshModelPtr model, bool showNormals, VisualizationFactory::Color color, bool showLines)
     {
         SoSeparator* res = new SoSeparator;
         res->ref();
@@ -1928,11 +1937,11 @@ namespace VirtualRobot
         SoSeparator* arrow = CreateArrow(z, 30.0f, 1.5f);
         arrow->ref();
         float lineSize = 4.0f;
-        Visualization::Color lineColor = Visualization::Color::Black();
+        VisualizationFactory::Color lineColor = VisualizationFactory::Color::Black();
 
         if (!showLines)
         {
-            lineColor = Visualization::Color::None();
+            lineColor = VisualizationFactory::Color::None();
             lineSize = 0.0f;
         }
 
@@ -1949,7 +1958,7 @@ namespace VirtualRobot
             v.push_back(v3);
             //            SoSeparator* s = CreatePolygonVisualization(v,color,lineColor,lineSize);
 
-            Visualization::Color triColor = (model->colors.size() == 0) ? color : model->colors[model->faces[i].idColor1];
+            VisualizationFactory::Color triColor = (model->colors.size() == 0) ? color : model->colors[model->faces[i].idColor1];
 
             SoSeparator* s;
 
@@ -1959,7 +1968,7 @@ namespace VirtualRobot
             }
             else
             {
-                Visualization::PhongMaterial mat = model->materials[model->faces[i].idMaterial];
+                VisualizationFactory::PhongMaterial mat = model->materials[model->faces[i].idMaterial];
                 s = CreatePolygonVisualization(v, mat, lineColor, lineSize);
             }
 
@@ -2039,13 +2048,130 @@ namespace VirtualRobot
         return res;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createBoundingBox(const BoundingBox& bbox, bool wireFrame)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createBoundingBox(const BoundingBox& bbox, bool wireFrame)
     {
         SoSeparator* res = CreateBBoxVisualization(bbox, wireFrame);
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
 
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreateGraspVisualization(GraspPtr grasp, SoSeparator* eefVisu, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/)
+    {
+        if (!grasp || !eefVisu)
+        {
+            return new SoSeparator;
+        }
+
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::METERS;
+        res->addChild(u);
+
+        // grasp and transform
+        Eigen::Matrix4f mat = pose * grasp->getTransformation().inverse();
+
+        // grasp visu
+        SoSeparator* sepGrasp = new SoSeparator;
+        res->addChild(sepGrasp);
+
+        // transform
+        SoMatrixTransform* mT = getMatrixTransformScaleMM2M(mat);
+        sepGrasp->addChild(mT);
+
+        // eef Visu
+        sepGrasp->addChild(eefVisu);
+
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreateGraspVisualization(GraspPtr grasp, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, ModelLink::VisualizationType visu)
+    {
+        THROW_VR_EXCEPTION_IF(!grasp, "NULL data");
+        SoSeparator* eefV = CreateEndEffectorVisualization(eef, visu);
+
+        if (!eefV)
+        {
+            return new SoSeparator();
+        }
+
+        eefV->ref();
+        SoSeparator* res = CreateGraspVisualization(grasp, eefV, pose);
+        eefV->unrefNoDelete();
+        return res;
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreateGraspSetVisualization(GraspSetPtr graspSet, EndEffectorPtr eef, const Eigen::Matrix4f& pose /*= Eigen::Matrix4f::Identity()*/, ModelLink::VisualizationType visu)
+    {
+        THROW_VR_EXCEPTION_IF(!graspSet, "NULL data");
+        SoSeparator* visual = new SoSeparator;
+        visual->ref();
+        SoSeparator* eefV = CreateEndEffectorVisualization(eef, visu);
+        visual->addChild(eefV);
+
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+
+        for (unsigned int i = 0; i < graspSet->getSize(); i++)
+        {
+            // grasp and transform
+            GraspPtr g = graspSet->getGrasp(i);
+            SoSeparator* sepGrasp = CreateGraspVisualization(g, visual, pose);
+            res->addChild(sepGrasp);
+        }
+
+        visual->unrefNoDelete();
+        res->unrefNoDelete();
+        return res;
+    }
+
+    SoSeparator* CoinVisualizationFactory::CreateEndEffectorVisualization(EndEffectorPtr eef, ModelLink::VisualizationType visu)
+    {
+        //THROW_VR_EXCEPTION_IF (!eef,"NULL data");
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+        SoUnits* u = new SoUnits();
+        u->units = SoUnits::METERS;
+        res->addChild(u);
+        FramePtr tcp;
+        bool ok = true;
+
+        if (!eef)
+        {
+            ok = false;
+        }
+        else
+        {
+            tcp = eef->getTcp();
+
+            if (!tcp)
+            {
+                VR_ERROR << " No tcp in eef " << eef->getName() << endl;
+                ok = false;
+            }
+        }
+
+        if (!ok)
+        {
+            SoSphere* s = new SoSphere();
+            s->radius.setValue(0.005f);
+            res->addChild(s);
+        }
+        else
+        {
+            RobotPtr r = eef->createEefRobot(eef->getName(), eef->getName());
+            FramePtr tcpN = r->getEndEffector(eef->getName())->getTcp();
+            r->setGlobalPoseForModelNode(tcpN, Eigen::Matrix4f::Identity());
+            SoNode* cv = CoinVisualizationFactory::getCoinVisualization(r, visu);
+            if (cv)
+                res->addChild(cv);
+        }
+
+        res->unrefNoDelete();
+        return res;
     }
 
     SoSeparator* CoinVisualizationFactory::CreatePointVisualization(const MathTools::ContactPoint& point, bool showNormals /*= false*/)
@@ -2169,20 +2295,27 @@ namespace VirtualRobot
         return res;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines)
     {
         SoSeparator* res = new SoSeparator;
-        SoNode* res1 = CoinVisualizationFactory::getCoinVisualization(model, showNormals, Visualization::Color::Gray(), showLines);
+        SoNode* res1 = CoinVisualizationFactory::getCoinVisualization(model, showNormals, VisualizationFactory::Color::Gray(), showLines);
         SoMatrixTransform* mt = getMatrixTransformScaleMM2M(pose);
         res->addChild(mt);
         res->addChild(res1);
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
     }
 
+    VisualizationNodePtr CoinVisualizationFactory::createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane &p, VisualizationFactory::Color colorInner, VisualizationFactory::Color colorLine, float lineSize, const Eigen::Vector3f &offset)
+    {
+        SoSeparator *s = CoinVisualizationFactory::CreateConvexHull2DVisualization(ch, p, colorInner, colorLine, lineSize, offset);
+        VisualizationNodePtr v(new CoinVisualizationNode(s));
+        return v;
+    }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX, float scaleY, float scaleZ)
+
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX, float scaleY, float scaleZ)
     {
         SoSeparator* res = new SoSeparator;
 
@@ -2206,7 +2339,7 @@ namespace VirtualRobot
         res->addChild(res1);
 
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
     }
 
@@ -2230,15 +2363,15 @@ namespace VirtualRobot
         return mt;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createArrow(const Eigen::Vector3f& n, float length /*= 50.0f*/, float width /*= 2.0f*/, const Color& color /*= Color::Gray()*/)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createArrow(const Eigen::Vector3f& n, float length /*= 50.0f*/, float width /*= 2.0f*/, const Color& color /*= Color::Gray()*/)
     {
         SoSeparator* res = CreateArrow(n, length, width, color);
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
+    VisualizationNodePtr CoinVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
     {
         VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
         VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
@@ -2249,7 +2382,7 @@ namespace VirtualRobot
         if(torusCompletion * sign < 0)
             torusCompletion = 0;
         auto torusNode = createTorus(radius, tubeRadius, torusCompletion, colorR, colorG, colorB, transparency);
-        SoNode* torus = std::dynamic_pointer_cast<CoinVisualization>(torusNode)->getCoinVisualization();
+        SoNode* torus = std::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
 
         SoSeparator* s = new SoSeparator();
         s->ref();
@@ -2281,16 +2414,16 @@ namespace VirtualRobot
         subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*sign, 0, tubeRadius, Color(colorR, colorG, colorB)));
 
 
-        VisualizationPtr node(new CoinVisualization(s));
+        VisualizationNodePtr node(new CoinVisualizationNode(s));
         s->unref();
         return node;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createTrajectory(TrajectoryPtr t, Color colorNode, Color colorLine, float nodeSize, float lineSize)
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createTrajectory(TrajectoryPtr t, Color colorNode, Color colorLine, float nodeSize, float lineSize)
     {
         SoNode* res = getCoinVisualization(t, colorNode, colorLine, nodeSize, lineSize);
 
-        VisualizationPtr node(new CoinVisualization(res));
+        VisualizationNodePtr node(new CoinVisualizationNode(res));
         return node;
     }
 
@@ -2374,7 +2507,7 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::METERS;
         res->addChild(u);
-        VirtualRobot::Visualization::Color color = VirtualRobot::Visualization::Color::None();
+        VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         std::map< unsigned char, std::vector<Eigen::Vector3f> >::reverse_iterator  i = entryRot.rbegin();
         int nr = 0;
         float x[6];
@@ -2682,7 +2815,7 @@ namespace VirtualRobot
 
         //Eigen::Vector3f zAxis(0,0,1.0f);
         int value;
-        VirtualRobot::Visualization::Color color = VirtualRobot::Visualization::Color::None();
+        VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         SoSeparator* arrow = CreateArrow(axis, minS * 0.75f, minS / 20.0f, color);
 
         if (minValue <= 0)
@@ -2795,7 +2928,7 @@ namespace VirtualRobot
             minS = arrowSize;
         }
 
-        VirtualRobot::Visualization::Color color = VirtualRobot::Visualization::Color::None();
+        VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         SoSeparator* arrow = CreateArrow(axis, minS * 0.7f, minS / 25.0f, color);
 
         Eigen::Vector3f voxelPosition;
@@ -2861,7 +2994,7 @@ namespace VirtualRobot
         }
 
 
-        VirtualRobot::Visualization::Color color = VirtualRobot::Visualization::Color::None();
+        VirtualRobot::VisualizationFactory::Color color = VirtualRobot::VisualizationFactory::Color::None();
         float radius = minS * 0.5f * 0.75f;
         Eigen::Vector3f voxelPosition;
         int maxValue = reachSpace->getMaxSummedAngleReachablity();
@@ -3110,7 +3243,7 @@ namespace VirtualRobot
                         intensity = 1.0f;
                     }
 
-                    VirtualRobot::Visualization::Color color = cm.getColor(intensity);
+                    VirtualRobot::VisualizationFactory::Color color = cm.getColor(intensity);
 
                     SoMaterial* mat = new SoMaterial();
 
@@ -3247,7 +3380,7 @@ namespace VirtualRobot
                         intensity = 1.0f;
                     }
 
-                    VirtualRobot::Visualization::Color color = cm.getColor(intensity);
+                    VirtualRobot::VisualizationFactory::Color color = cm.getColor(intensity);
 
                     SoMaterial* mat = new SoMaterial();
 
@@ -3368,7 +3501,7 @@ namespace VirtualRobot
                         intensity = 1.0f;
                     }
 
-                    VirtualRobot::Visualization::Color color = cm.getColor(intensity);
+                    VirtualRobot::VisualizationFactory::Color color = cm.getColor(intensity);
 
                     SoMaterial* mat = new SoMaterial();
 
@@ -3506,7 +3639,7 @@ namespace VirtualRobot
                 if (drawZeroCells || intensity > 0.)
                 {
                     float lineWidth = drawLines ? 4.0f : 0.f;
-                    SoSeparator* pol = CreatePolygonVisualization(pts, cm.getColor(intensity), Visualization::Color::Black(), lineWidth);
+                    SoSeparator* pol = CreatePolygonVisualization(pts, cm.getColor(intensity), VisualizationFactory::Color::Black(), lineWidth);
                     grid->addChild(pol);
                 }
             }
@@ -3517,7 +3650,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoSeparator* CoinVisualization::Colorize(SoNode* model, Visualization::Color c)
+    SoSeparator* CoinVisualizationFactory::Colorize(SoNode* model, VisualizationFactory::Color c)
     {
         SoSeparator* result = new SoSeparator;
         SoBaseColor* bc = new SoBaseColor();
@@ -3915,11 +4048,11 @@ namespace VirtualRobot
         return true;
     }
 
-    VirtualRobot::VisualizationPtr CoinVisualizationFactory::createUnitedVisualization(const std::vector<VisualizationPtr>& visualizations) const
+    VirtualRobot::VisualizationNodePtr CoinVisualizationFactory::createUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations) const
     {
         if (visualizations.size() == 0)
         {
-            return VisualizationPtr();
+            return VisualizationNodePtr();
         }
 
         SoSeparator* s = new SoSeparator;
@@ -3939,7 +4072,7 @@ namespace VirtualRobot
                 continue;
             }
 
-            CoinVisualization* cvn = dynamic_cast<CoinVisualization*>(visualizations[i].get());
+            CoinVisualizationNode* cvn = dynamic_cast<CoinVisualizationNode*>(visualizations[i].get());
 
             if (cvn)
             {
@@ -3956,7 +4089,7 @@ namespace VirtualRobot
             }
         }
 
-        VisualizationPtr result(new CoinVisualization(s));
+        VisualizationNodePtr result(new CoinVisualizationNode(s));
         s->unrefNoDelete();
         return result;
     }
@@ -4153,7 +4286,7 @@ namespace VirtualRobot
         return result;
     }
 
-    void CoinVisualizationFactory::applyDisplacement(VisualizationPtr o, Eigen::Matrix4f& m)
+    void CoinVisualizationFactory::applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m)
     {
         if (!o)
         {
@@ -4167,7 +4300,7 @@ namespace VirtualRobot
             return;
         }
 
-        CoinVisualization* cvn = dynamic_cast<CoinVisualization*>(o.get());
+        CoinVisualizationNode* cvn = dynamic_cast<CoinVisualizationNode*>(o.get());
 
         if (cvn)
         {
@@ -4192,14 +4325,14 @@ namespace VirtualRobot
         }
     }
 
-    void CoinVisualizationFactory::applyDisplacement(VisualizationSetPtr o, Eigen::Matrix4f& m)
+    void CoinVisualizationFactory::applyDisplacement(VisualizationPtr o, Eigen::Matrix4f& m)
     {
         if (!o)
         {
             return;
         }
 
-        for (auto & v: o->getVisualizations())
+        for (auto & v: o->getVisualizationNodes())
         {
             applyDisplacement(v, m);
         }
@@ -4317,6 +4450,172 @@ namespace VirtualRobot
         m->ambientColor.setValue(color.r, color.g, color.b);
         m->diffuseColor.setValue(color.r, color.g, color.b);
         return m;
+    }
+
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
+	{
+		VR_ASSERT(scene);
+
+		std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+
+        if (addModels)
+		{
+			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
+			// collect all robotnodes
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedRobotNodes;
+
+			for (size_t i = 0; i < collectedRobots.size(); i++)
+			{
+                std::vector<ModelLinkPtr> links = collectedRobots[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+                    //collectedRobotNodes.push_back(l);
+
+                }
+                //collectedRobotNodes.insert(collectedRobotNodes.begin(), collectedRobotNodes.end(), links.begin());
+			}
+
+            /*for (size_t i = 0; i < collectedRobotNodes.size(); i++)
+			{
+                VisualizationNodePtr v = collectedRobotNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
+            }*/
+		}
+
+		if (addObstacles)
+		{
+			std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedObstacleNodes;
+
+			for (size_t i = 0; i < collectedObstacles.size(); i++)
+			{
+                //auto links = collectedObstacles[i]->getLinks();
+                std::vector<ModelLinkPtr> links = collectedObstacles[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+
+                }
+                //collectedObstacleNodes.insert(collectedObstacleNodes.begin(), collectedObstacleNodes.end(), links.begin());
+            }
+            /*for (size_t i = 0; i < collectedObstacleNodes.size(); i++)
+            {
+
+                VisualizationNodePtr v = collectedObstacleNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
+            }*/
+		}
+
+		if (addManipulationObjects)
+		{
+			std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
+            //std::vector<VirtualRobot::ModelLinkPtr> collectedManipNodes;
+
+			for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
+			{
+                //auto links = collectedManipulationObjects[i]->getLinks();
+                std::vector<ModelLinkPtr> links = collectedManipulationObjects[i]->getLinks();
+                for (auto l:links)
+                {
+                    VisualizationNodePtr v = l->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+
+                }
+                //collectedManipNodes.insert(collectedManipNodes.begin(), collectedManipNodes.end(), links.begin());
+            }
+            /*for (size_t i = 0; i < collectedManipNodes.size(); i++)
+            {
+                VisualizationNodePtr v = collectedManipNodes[i]->getVisualization(visuType);
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
+            }*/
+		}
+
+		if (addTrajectories)
+		{
+			std::vector<VirtualRobot::TrajectoryPtr> collectedTrajectories = scene->getTrajectories();
+
+			for (size_t i = 0; i < collectedTrajectories.size(); i++)
+			{
+                VisualizationNodePtr v = collectedTrajectories[i]->getVisualization();
+                if (v)
+                    collectedVisualizationNodes.push_back(v);
+			}
+		}
+
+		if (addSceneObjectSets)
+		{
+            VR_INFO << "addSceneObjectSets: nyi" << endl;
+            //todo
+            /*
+            std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getModelNodeSets();
+
+			for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
+			{
+				std::vector< ModelNodePtr > sos = collectedSceneObjectSets[i]->getModelNodes();
+
+				for (size_t j = 0; j < sos.size(); j++)
+				{
+                    VisualizationNodePtr v = sos[j]->getVisualization(visuType);
+                    if (v)
+                        collectedVisualizationNodes.push_back(v);
+				}
+
+            }*/
+		}
+
+		CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
+		return visualization;
+	}
+
+    VisualizationPtr CoinVisualizationFactory::createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
+    {
+        VR_ASSERT(model);
+
+        if (!model)
+        {
+            return VisualizationPtr();
+        }
+        std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+        std::vector<ModelLinkPtr> links = model->getLinks();
+        for (auto l: links)
+        {
+            VisualizationNodePtr v = l->getVisualization(visuType);
+            if (!v)
+                continue;
+            collectedVisualizationNodes.push_back(v);
+        }
+
+        // attachments
+        for (const auto & node : model->getModelNodes())
+        {
+            for (const auto & attachement : node->getAttachmentsWithVisualisation())
+            {
+                VisualizationNodePtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
+                collectedVisualizationNodes.push_back(v);
+            }
+        }
+
+        CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
+        return visualization;
+    }
+
+    VisualizationPtr CoinVisualizationFactory::createGraspSetVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType)
+    {
+        SoSeparator* s = CreateGraspSetVisualization(graspSet, eef, pose, visuType);
+        CoinVisualizationNodePtr visualizationNode(new CoinVisualizationNode(s));
+        CoinVisualizationPtr visualization(new CoinVisualization(visualizationNode));
+        return visualization;
     }
 
 

@@ -23,9 +23,9 @@
 #ifndef _VirtualRobot_ModelNodeAttachment_h_
 #define _VirtualRobot_ModelNodeAttachment_h_
 
-#include "../../Model/Model.h"
-#include "../../Model/Frame.h"
-#include "../../Visualization/Visualization.h"
+#include "../../Model.h"
+#include "../../Frame.h"
+#include "../../../Visualization/Visualization.h"
 
 #include <cstdint>
 #include <string>
@@ -60,7 +60,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(ModelNodePtr node);
+        virtual bool isAttachable(const ModelNodePtr &node);
 
         /*!
          * Update the values of the Attachment.
@@ -152,11 +152,13 @@ namespace VirtualRobot
 
         virtual ModelNodeAttachmentPtr clone();
 
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3);
+
     protected:
 
         virtual void initVisualization();
 
-        virtual void setParent(ModelNodePtr node)
+        virtual void setParent(const ModelNodePtr &node)
         {
             if (node)
             {
