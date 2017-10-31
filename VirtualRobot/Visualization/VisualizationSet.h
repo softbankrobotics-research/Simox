@@ -76,6 +76,11 @@ namespace VirtualRobot
         virtual Visualization::Color getColor() const override = 0;
         virtual Visualization::Color getColor(size_t id) const;
 
+        virtual void setMaterial(const PhongMaterial& material) override;
+        virtual void setMaterial(size_t id, const PhongMaterial& material);
+        virtual PhongMaterial getMaterial() const override = 0;
+        virtual PhongMaterial getMaterial(size_t id) const;
+
     protected:
         virtual void _setSelected(bool selected) override;
     public:
@@ -149,60 +154,44 @@ namespace VirtualRobot
 
         //virtual Eigen::Matrix4f getGlobalPose() const override;
         //virtual Eigen::Matrix4f getGlobalPose(size_t id) const override;
-        virtual void setGlobalPose(const Eigen::Matrix4f &m) override
-        {
-            VisualizationSet::setGlobalPose(m);
-        }
+        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         //virtual void setGlobalPose(size_t id, const Eigen::Matrix4f &m) override;
         virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
         //virtual void applyDisplacement(size_t id, const Eigen::Matrix4f &dp) override;
 
         virtual void setVisible(bool showVisualization) override;
         //virtual void setVisible(size_t id, bool showVisualization) override;
-        virtual bool isVisible() const override
-        {
-            return DummyVisualization::isVisible();
-        }
+        virtual bool isVisible() const override;
         //virtual bool isVisible(size_t id) const override;
 
         virtual void setUpdateVisualization(bool enable) override;
         //virtual void setUpdateVisualization(size_t id, bool enable) override;
-        virtual bool getUpdateVisualizationStatus() const override
-        {
-            return DummyVisualization::getUpdateVisualizationStatus();
-        }
+        virtual bool getUpdateVisualizationStatus() const override;
         //virtual bool getUpdateVisualizationStatus(size_t id) const override;
 
         virtual void setStyle(DrawStyle s) override;
         //virtual void setStyle(size_t id, DrawStyle s) override;
-        virtual DrawStyle getStyle() const override
-        {
-            return DummyVisualization::getStyle();
-        }
+        virtual DrawStyle getStyle() const override;
         //virtual DrawStyle getStyle(size_t id) const override;
 
         virtual void setColor(const Visualization::Color &c) override;
         //virtual void setColor(size_t id,const Visualization::Color &c) override;
-        virtual Visualization::Color getColor() const override
-        {
-            return DummyVisualization::getColor();
-        }
+        virtual Visualization::Color getColor() const override;
         //virtual Visualization::Color getColor(size_t id) const override;
+
+        virtual void setMaterial(const PhongMaterial& material) override;
+        //virtual void setMaterial(size_t id, const PhongMaterial& material) override;
+        virtual PhongMaterial getMaterial() const override;
+        //virtual PhongMaterial getMaterial(size_t id) const override;
 
     protected:
         virtual void _setSelected(bool selected) override;
     public:
-        virtual bool isSelected() const override
-        {
-            return DummyVisualization::isSelected();
-        }
+        virtual bool isSelected() const override;
 
         virtual void scale(const Eigen::Vector3f &scaleFactor) override;
         //virtual void scale(size_t id, Eigen::Vector3f &scaleFactor) override;
-        virtual Eigen::Vector3f getScaleFactor() const override
-        {
-            return DummyVisualization::getScaleFactor();
-        }
+        virtual Eigen::Vector3f getScaleFactor() const override;
 
         virtual void shrinkFatten(float offset) override;
         //virtual void shrinkFatten(size_t id, float offset) override;
@@ -211,35 +200,17 @@ namespace VirtualRobot
         virtual void _addManipulator(ManipulatorType t) override;
         virtual void _removeManipulator(ManipulatorType t) override;
     public:
-        virtual bool hasManipulator(ManipulatorType t) const override
-        {
-            return DummyVisualization::hasManipulator(t);
-        }
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override
-        {
-            return DummyVisualization::getAddedManipulatorTypes();
-        }
+        virtual bool hasManipulator(ManipulatorType t) const override;
+        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
     protected:
         virtual void _removeAllManipulators() override;
     public:
 
-        virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override
-        {
-            return DummyVisualization::getPrimitives();
-        }
+        virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        virtual void setFilename(const std::string &filename, bool boundingBox) override
-        {
-            DummyVisualization::setFilename(filename, boundingBox);
-        }
-        virtual std::string getFilename() const override
-        {
-            return DummyVisualization::getFilename();
-        }
-        virtual bool usedBoundingBoxVisu() const override
-        {
-            return DummyVisualization::usedBoundingBoxVisu();
-        }
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
 
         virtual BoundingBox getBoundingBox() const override;
         //virtual BoundingBox getBoundingBox(size_t id) const override;

@@ -106,6 +106,12 @@ namespace VirtualRobot
             float refractionIndex;
         };
 
+        enum DrawStyle
+        {
+            normal,
+            wireframe
+        };
+
     protected:
         /*!
         Constructor
@@ -142,12 +148,6 @@ namespace VirtualRobot
         virtual void setUpdateVisualization(bool enable) = 0;
         virtual bool getUpdateVisualizationStatus() const = 0;
 
-
-        enum DrawStyle
-        {
-            normal,
-            wireframe
-        };
         virtual void setStyle(DrawStyle s) = 0;
         virtual DrawStyle getStyle() const = 0;
 
@@ -161,6 +161,9 @@ namespace VirtualRobot
         {
             this->setColor(Color::Transparency(transparency));
         }
+
+        virtual void setMaterial(const PhongMaterial& material) = 0;
+        virtual PhongMaterial getMaterial() const = 0;
 
         inline void select()
         {
@@ -283,13 +286,15 @@ namespace VirtualRobot
          *
          * If a visualization is in a set, it is only selecable and manipulateable using the set.
          */
-        virtual bool isInVisualizationSet() const = 0;
+        virtual bool isInVisualizationSet() const;
     protected:
-        virtual void setIsInVisualizationSet(bool inSet) = 0;
+        virtual void setIsInVisualizationSet(bool inSet);
         virtual void _setSelected(bool selected) = 0;
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
         virtual void _removeAllManipulators() = 0;
+
+        bool inVisualizationSet;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization
@@ -331,6 +336,9 @@ namespace VirtualRobot
 
         virtual void setColor(const Color& c) override;
         virtual Color getColor() const override;
+
+        virtual void setMaterial(const PhongMaterial& material) override;
+        virtual PhongMaterial getMaterial() const override;
 
     protected:
         virtual void _setSelected(bool selected) override;
@@ -399,25 +407,20 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) override;
 
-        /**
-         * @brief setIsInVisualizationSet Internally used function to determinate if this visualization is in a set.
-         *
-         * If a visualization is in a set, it is only selecable and manipulateable using the set.
-         */
-        virtual bool isInVisualizationSet() const override;
+        //virtual bool isInVisualizationSet() const override;
     protected:
-        virtual void setIsInVisualizationSet(bool inSet);
+        //virtual void setIsInVisualizationSet(bool inSet);
 
         bool visible;
         bool updateVisualization;
         DrawStyle style;
         Color color;
+        PhongMaterial material;
         bool selected;
         std::set<ManipulatorType> addedManipulators;
         std::string filename; //!< if the visualization was build from a file, the filename is stored here
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
-        bool inVisualizationSet;
         Eigen::Vector3f scaleFactor;
         TriMeshModelPtr triMeshModel;
         std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;

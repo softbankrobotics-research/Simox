@@ -224,6 +224,24 @@ namespace VirtualRobot
         return this->getVisualizationAt(id)->getColor();
     }
 
+    void VisualizationSet::setMaterial(const Visualization::PhongMaterial &material)
+    {
+        for (auto& visu : visualizations)
+        {
+            visu->setMaterial(material);
+        }
+    }
+
+    void VisualizationSet::setMaterial(size_t id, const Visualization::PhongMaterial &material)
+    {
+        this->getVisualizationAt(id)->setMaterial(material);
+    }
+
+    Visualization::PhongMaterial VisualizationSet::getMaterial(size_t id) const
+    {
+        return this->getVisualizationAt(id)->getMaterial();
+    }
+
     void VisualizationSet::_setSelected(bool selected)
     {
         for (auto& visu : visualizations)
@@ -380,6 +398,11 @@ namespace VirtualRobot
         return VisualizationSet::clone(scaling);
     }
 
+    void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
+    {
+        VisualizationSet::setGlobalPose(m);
+    }
+
     void DummyVisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
     {
         DummyVisualization::applyDisplacement(dp);
@@ -392,10 +415,20 @@ namespace VirtualRobot
         VisualizationSet::setVisible(showVisualization);
     }
 
+    bool DummyVisualizationSet::isVisible() const
+    {
+        return DummyVisualization::isVisible();
+    }
+
     void DummyVisualizationSet::setUpdateVisualization(bool enable)
     {
         DummyVisualization::setUpdateVisualization(enable);
         VisualizationSet::setUpdateVisualization(enable);
+    }
+
+    bool DummyVisualizationSet::getUpdateVisualizationStatus() const
+    {
+        return DummyVisualization::getUpdateVisualizationStatus();
     }
 
     void DummyVisualizationSet::setStyle(Visualization::DrawStyle s)
@@ -404,10 +437,31 @@ namespace VirtualRobot
         VisualizationSet::setStyle(s);
     }
 
+    Visualization::DrawStyle DummyVisualizationSet::getStyle() const
+    {
+        return DummyVisualization::getStyle();
+    }
+
     void DummyVisualizationSet::setColor(const Visualization::Color &c)
     {
         DummyVisualization::setColor(c);
         VisualizationSet::setColor(c);
+    }
+
+    Visualization::Color DummyVisualizationSet::getColor() const
+    {
+        return DummyVisualization::getColor();
+    }
+
+    void DummyVisualizationSet::setMaterial(const Visualization::PhongMaterial &material)
+    {
+        DummyVisualization::setMaterial(material);
+        VisualizationSet::setMaterial(material);
+    }
+
+    Visualization::PhongMaterial DummyVisualizationSet::getMaterial() const
+    {
+        return DummyVisualization::getMaterial();
     }
 
     void DummyVisualizationSet::_setSelected(bool selected)
@@ -416,10 +470,20 @@ namespace VirtualRobot
         VisualizationSet::_setSelected(selected);
     }
 
+    bool DummyVisualizationSet::isSelected() const
+    {
+        return DummyVisualization::isSelected();
+    }
+
     void DummyVisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
     {
         DummyVisualization::scale(scaleFactor);
         VisualizationSet::scale(scaleFactor);
+    }
+
+    Eigen::Vector3f DummyVisualizationSet::getScaleFactor() const
+    {
+        return DummyVisualization::getScaleFactor();
     }
 
     void DummyVisualizationSet::shrinkFatten(float offset)
@@ -440,10 +504,40 @@ namespace VirtualRobot
         VisualizationSet::_removeManipulator(t);
     }
 
+    bool DummyVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
+    {
+        return DummyVisualization::hasManipulator(t);
+    }
+
+    std::vector<Visualization::ManipulatorType> DummyVisualizationSet::getAddedManipulatorTypes() const
+    {
+        return DummyVisualization::getAddedManipulatorTypes();
+    }
+
     void DummyVisualizationSet::_removeAllManipulators()
     {
         DummyVisualization::_removeAllManipulators();
         VisualizationSet::_removeAllManipulators();
+    }
+
+    std::vector<Primitive::PrimitivePtr> DummyVisualizationSet::getPrimitives() const
+    {
+        return DummyVisualization::getPrimitives();
+    }
+
+    void DummyVisualizationSet::setFilename(const std::string &filename, bool boundingBox)
+    {
+        DummyVisualization::setFilename(filename, boundingBox);
+    }
+
+    std::string DummyVisualizationSet::getFilename() const
+    {
+        return DummyVisualization::getFilename();
+    }
+
+    bool DummyVisualizationSet::usedBoundingBoxVisu() const
+    {
+        return DummyVisualization::usedBoundingBoxVisu();
     }
 
     BoundingBox DummyVisualizationSet::getBoundingBox() const

@@ -23,7 +23,7 @@ namespace VirtualRobot
         visible(true),
         updateVisualization(true),
         style(Visualization::DrawStyle::normal),
-        color(Visualization::Color::None()),
+        material(),
         selected(false),
         addedManipulators(),
         filename(""),
@@ -32,6 +32,7 @@ namespace VirtualRobot
         inVisualizationSet(false),
         scaleFactor(Eigen::Vector3f(1.f, 1.f, 1.f))
     {
+        setColor(Visualization::Color::None());
     }
 
     void Visualization::setGlobalPose(const Eigen::Matrix4f &m)
@@ -42,6 +43,16 @@ namespace VirtualRobot
     void Visualization::applyDisplacement(const Eigen::Matrix4f &dp)
     {
         this->setGlobalPose(this->getGlobalPose() * dp);
+    }
+
+    bool Visualization::isInVisualizationSet() const
+    {
+        return inVisualizationSet;
+    }
+
+    void Visualization::setIsInVisualizationSet(bool inSet)
+    {
+        inVisualizationSet = inSet;
     }
 
     void DummyVisualization::setGlobalPose(const Eigen::Matrix4f &m)
@@ -101,12 +112,24 @@ namespace VirtualRobot
 
     void DummyVisualization::setColor(const Visualization::Color &c)
     {
-        color = c;
+        material.diffuse = c;
+        material.ambient = c;
+        setMaterial(material);
     }
 
     Visualization::Color DummyVisualization::getColor() const
     {
-        return color;
+        return material.diffuse;
+    }
+
+    void DummyVisualization::setMaterial(const Visualization::PhongMaterial &material)
+    {
+        this->material = material;
+    }
+
+    Visualization::PhongMaterial DummyVisualization::getMaterial() const
+    {
+        return material;
     }
 
     void DummyVisualization::_setSelected(bool selected)
@@ -312,16 +335,6 @@ namespace VirtualRobot
         // derived classes have to overwrite this method, otherwise a NYI will show up
         VR_ERROR << "NYI..." << endl;
         return false;
-    }
-
-    bool DummyVisualization::isInVisualizationSet() const
-    {
-        return inVisualizationSet;
-    }
-
-    void DummyVisualization::setIsInVisualizationSet(bool inSet)
-    {
-        inVisualizationSet = inSet;
     }
 
 } // namespace VirtualRobot
