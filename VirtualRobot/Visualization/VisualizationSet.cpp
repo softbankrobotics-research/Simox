@@ -139,15 +139,6 @@ namespace VirtualRobot
         this->getVisualizationAt(id)->setGlobalPose(m);
     }
 
-    void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
-    {
-        Visualization::applyDisplacement(dp);
-        for (auto& visu : visualizations)
-        {
-            visu->applyDisplacement(dp);
-        }
-    }
-
     void VisualizationSet::applyDisplacement(size_t id, const Eigen::Matrix4f &dp)
     {
         this->getVisualizationAt(id)->applyDisplacement(dp);

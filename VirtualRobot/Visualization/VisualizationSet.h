@@ -53,7 +53,7 @@ namespace VirtualRobot
         virtual Eigen::Matrix4f getGlobalPose(size_t id) const;
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         virtual void setGlobalPose(size_t id, const Eigen::Matrix4f &m);
-        virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
+        //virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
         virtual void applyDisplacement(size_t id, const Eigen::Matrix4f &dp);
 
         virtual void setVisible(bool showVisualization) override;
