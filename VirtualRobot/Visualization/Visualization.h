@@ -25,6 +25,7 @@
 
 #include "../Model/Frame.h"
 #include "../Model/Primitive.h"
+#include "../VirtualRobot.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -34,10 +35,19 @@
 
 namespace VirtualRobot
 {
-    class TriMeshModel;
     class BoundingBox;
-    class VisualizationFactory;
-    class VisualizationSet;
+
+    template<typename T>
+    static inline std::shared_ptr<T> visualization_cast(const VisualizationPtr& visu)
+    {
+    #ifdef NDEBUG
+        auto vc = std::static_pointer_cast<T>(visu);
+    #else
+        auto vc = std::dynamic_pointer_cast<T>(visu);
+        VR_ASSERT(vc);
+    #endif
+        return vc;
+    }
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame
     {
