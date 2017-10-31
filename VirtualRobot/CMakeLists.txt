@@ -287,6 +287,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationFactory.h
     Visualization/CoinVisualization/CoinVisualization.h
     Visualization/CoinVisualization/CoinVisualizationSet.h
+    Visualization/CoinVisualization/CoinElement.h
     )
 
     if(BUILD_TESTING)
