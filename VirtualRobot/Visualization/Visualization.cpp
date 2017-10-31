@@ -23,7 +23,7 @@ namespace VirtualRobot
         visible(true),
         updateVisualization(true),
         style(Visualization::DrawStyle::normal),
-        material(),
+        material(new NoneMaterial),
         selected(false),
         addedManipulators(),
         filename(""),
@@ -112,22 +112,35 @@ namespace VirtualRobot
 
     void DummyVisualization::setColor(const Visualization::Color &c)
     {
-        material.diffuse = c;
-        material.ambient = c;
-        setMaterial(material);
+        if (!Color::isNone(c))
+        {
+            PhongMaterialPtr m = std::dynamic_pointer_cast<PhongMaterial>(material);
+            if (!m)
+            {
+                m.reset(new PhongMaterial);
+            }
+            m->diffuse = c;
+            m->ambient = c;
+            setMaterial(m);
+        }
     }
 
     Visualization::Color DummyVisualization::getColor() const
     {
-        return material.diffuse;
+        PhongMaterialPtr m = std::dynamic_pointer_cast<PhongMaterial>(material);
+        if (!m)
+        {
+            return Color::None();
+        }
+        return m->diffuse;
     }
 
-    void DummyVisualization::setMaterial(const Visualization::PhongMaterial &material)
+    void DummyVisualization::setMaterial(const Visualization::MaterialPtr &material)
     {
         this->material = material;
     }
 
-    Visualization::PhongMaterial DummyVisualization::getMaterial() const
+    Visualization::MaterialPtr DummyVisualization::getMaterial() const
     {
         return material;
     }
@@ -162,12 +175,12 @@ namespace VirtualRobot
         }
     }
 
-    void DummyVisualization::scale(const Eigen::Vector3f &scaleFactor)
+    void DummyVisualization::setScalingFactor(const Eigen::Vector3f &scaleFactor)
     {
         this->scaleFactor = scaleFactor;
     }
 
-    Eigen::Vector3f DummyVisualization::getScaleFactor() const
+    Eigen::Vector3f DummyVisualization::getScalingFactor() const
     {
         return scaleFactor;
     }
@@ -256,7 +269,7 @@ namespace VirtualRobot
         TriMeshModelPtr p = getTriMeshModel();
         VR_ASSERT(p);
 
-        return (int)p->faces.size();
+        return static_cast<int>(p->faces.size());
     }
 
     VisualizationPtr DummyVisualization::clone(float scaling) const
@@ -268,7 +281,7 @@ namespace VirtualRobot
         visu->setStyle(this->getStyle());
         visu->setColor(this->getColor());
         visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->scale(this->getScaleFactor() * scaling);
+        visu->scale(this->getScalingFactor() * scaling);
         visu->createTriMeshModel();
 
         return VisualizationPtr();

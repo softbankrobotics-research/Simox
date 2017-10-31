@@ -76,19 +76,20 @@ namespace VirtualRobot
         virtual Visualization::Color getColor() const override = 0;
         virtual Visualization::Color getColor(size_t id) const;
 
-        virtual void setMaterial(const PhongMaterial& material) override;
-        virtual void setMaterial(size_t id, const PhongMaterial& material);
-        virtual PhongMaterial getMaterial() const override = 0;
-        virtual PhongMaterial getMaterial(size_t id) const;
+        virtual void setMaterial(const Material& material) override;
+        virtual void setMaterial(size_t id, const Material& material);
+        virtual Material getMaterial() const override = 0;
+        virtual Material getMaterial(size_t id) const;
 
     protected:
         virtual void _setSelected(bool selected) override;
     public:
         virtual bool isSelected() const override = 0;
 
-        virtual void scale(const Eigen::Vector3f &scaleFactor) override;
-        virtual void scale(size_t id, Eigen::Vector3f &scaleFactor);
-        virtual Eigen::Vector3f getScaleFactor() const override = 0;
+        virtual void setScalingFactor(const Eigen::Vector3f &scaleFactor) override;
+        virtual void setScalingFactor(size_t id, Eigen::Vector3f &scaleFactor);
+        virtual Eigen::Vector3f getScalingFactor() const override = 0;
+        virtual Eigen::Vector3f getScalingFactor(size_t id) const;
 
         virtual void shrinkFatten(float offset) override;
         virtual void shrinkFatten(size_t id, float offset);
@@ -179,19 +180,19 @@ namespace VirtualRobot
         virtual Visualization::Color getColor() const override;
         //virtual Visualization::Color getColor(size_t id) const override;
 
-        virtual void setMaterial(const PhongMaterial& material) override;
-        //virtual void setMaterial(size_t id, const PhongMaterial& material) override;
-        virtual PhongMaterial getMaterial() const override;
-        //virtual PhongMaterial getMaterial(size_t id) const override;
+        virtual void setMaterial(const MaterialPtr& material) override;
+        //virtual void setMaterial(size_t id, const MaterialPtr& material) override;
+        virtual MaterialPtr getMaterial() const override;
+        //virtual MaterialPtr getMaterial(size_t id) const override;
 
     protected:
         virtual void _setSelected(bool selected) override;
     public:
         virtual bool isSelected() const override;
 
-        virtual void scale(const Eigen::Vector3f &scaleFactor) override;
-        //virtual void scale(size_t id, Eigen::Vector3f &scaleFactor) override;
-        virtual Eigen::Vector3f getScaleFactor() const override;
+        virtual void setScalingFactor(const Eigen::Vector3f &scaleFactor) override;
+        //virtual void setScalingFactor(size_t id, Eigen::Vector3f &scaleFactor) override;
+        virtual Eigen::Vector3f getScalingFactor() const override;
 
         virtual void shrinkFatten(float offset) override;
         //virtual void shrinkFatten(size_t id, float offset) override;

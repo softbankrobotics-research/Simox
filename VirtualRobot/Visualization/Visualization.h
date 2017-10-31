@@ -91,20 +91,23 @@ namespace VirtualRobot
             }
         };
 
-        struct PhongMaterial
+        struct Material
+        {
+        };
+        using MaterialPtr = std::shared_ptr<Material>;
+        struct NoneMaterial : public Material
+        {
+        };
+        struct PhongMaterial : public Material
         {
             PhongMaterial() {}
-            Color emission;
             Color ambient;
             Color diffuse;
             Color specular;
             float shininess;
-            Color reflective;
-            float reflectivity;
-            Color transparent;
             float transparency;
-            float refractionIndex;
         };
+        using PhongMaterialPtr = std::shared_ptr<PhongMaterial>;
 
         enum DrawStyle
         {
@@ -162,8 +165,8 @@ namespace VirtualRobot
             this->setColor(Color::Transparency(transparency));
         }
 
-        virtual void setMaterial(const PhongMaterial& material) = 0;
-        virtual PhongMaterial getMaterial() const = 0;
+        virtual void setMaterial(const MaterialPtr& material) = 0;
+        virtual MaterialPtr getMaterial() const = 0;
 
         inline void select()
         {
@@ -188,8 +191,12 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
         virtual void removeSelectionChangedCallback(size_t id) = 0;
 
-        virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
-        virtual Eigen::Vector3f getScaleFactor() const = 0;
+        inline void scale(const Eigen::Vector3f& scaleFactor)
+        {
+            this->setScalingFactor(this->getScalingFactor() * scaleFactor);
+        }
+        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) = 0;
+        virtual Eigen::Vector3f getScalingFactor() const = 0;
 
         virtual void shrinkFatten(float offset) = 0;
 
@@ -337,8 +344,8 @@ namespace VirtualRobot
         virtual void setColor(const Color& c) override;
         virtual Color getColor() const override;
 
-        virtual void setMaterial(const PhongMaterial& material) override;
-        virtual PhongMaterial getMaterial() const override;
+        virtual void setMaterial(const MaterialPtr& material) override;
+        virtual MaterialPtr getMaterial() const override;
 
     protected:
         virtual void _setSelected(bool selected) override;
@@ -347,8 +354,8 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
         virtual void removeSelectionChangedCallback(size_t id) override;
 
-        virtual void scale(const Eigen::Vector3f& scaleFactor) override;
-        virtual Eigen::Vector3f getScaleFactor() const override;
+        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) override;
+        virtual Eigen::Vector3f getScalingFactor() const override;
 
         virtual void shrinkFatten(float offset) override;
 
@@ -415,7 +422,7 @@ namespace VirtualRobot
         bool updateVisualization;
         DrawStyle style;
         Color color;
-        PhongMaterial material;
+        MaterialPtr material;
         bool selected;
         std::set<ManipulatorType> addedManipulators;
         std::string filename; //!< if the visualization was build from a file, the filename is stored here

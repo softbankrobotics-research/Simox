@@ -379,7 +379,7 @@ namespace VirtualRobot
 
         if (visualization)
         {
-            visualization->scale(scaleFactor);
+            visualization->setScalingFactor(scaleFactor);
         }
     }
 

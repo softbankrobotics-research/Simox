@@ -103,12 +103,13 @@ namespace VirtualRobot
         }
         auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
         visu->setVisible(this->isVisible());
-        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
         visu->setStyle(this->getStyle());
         visu->setColor(this->getColor());
         visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->scale(this->getScaleFactor() * scaling);
+        visu->setScalingFactor(this->getScalingFactor());
+        visu->scale(scaling);
         visu->createTriMeshModel();
+        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
         return visu;
     }
 
@@ -224,7 +225,7 @@ namespace VirtualRobot
         return this->getVisualizationAt(id)->getColor();
     }
 
-    void VisualizationSet::setMaterial(const Visualization::PhongMaterial &material)
+    void VisualizationSet::setMaterial(const Visualization::Material &material)
     {
         for (auto& visu : visualizations)
         {
@@ -232,12 +233,12 @@ namespace VirtualRobot
         }
     }
 
-    void VisualizationSet::setMaterial(size_t id, const Visualization::PhongMaterial &material)
+    void VisualizationSet::setMaterial(size_t id, const Visualization::Material &material)
     {
         this->getVisualizationAt(id)->setMaterial(material);
     }
 
-    Visualization::PhongMaterial VisualizationSet::getMaterial(size_t id) const
+    Visualization::Material VisualizationSet::getMaterial(size_t id) const
     {
         return this->getVisualizationAt(id)->getMaterial();
     }
@@ -250,17 +251,22 @@ namespace VirtualRobot
         }
     }
 
-    void VisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
+    void VisualizationSet::setScalingFactor(const Eigen::Vector3f &scaleFactor)
     {
         for (auto& visu : visualizations)
         {
-            visu->scale(scaleFactor);
+            visu->setScalingFactor(scaleFactor);
         }
     }
 
-    void VisualizationSet::scale(size_t id, Eigen::Vector3f &scaleFactor)
+    void VisualizationSet::setScalingFactor(size_t id, Eigen::Vector3f &scaleFactor)
     {
-        this->getVisualizationAt(id)->scale(scaleFactor);
+        this->getVisualizationAt(id)->setScalingFactor(scaleFactor);
+    }
+
+    Eigen::Vector3f VisualizationSet::getScalingFactor(size_t id) const
+    {
+        return this->getVisualizationAt(id)->getScalingFactor();
     }
 
     void VisualizationSet::shrinkFatten(float offset)
@@ -453,13 +459,13 @@ namespace VirtualRobot
         return DummyVisualization::getColor();
     }
 
-    void DummyVisualizationSet::setMaterial(const Visualization::PhongMaterial &material)
+    void DummyVisualizationSet::setMaterial(const Visualization::MaterialPtr &material)
     {
         DummyVisualization::setMaterial(material);
         VisualizationSet::setMaterial(material);
     }
 
-    Visualization::PhongMaterial DummyVisualizationSet::getMaterial() const
+    Visualization::MaterialPtr DummyVisualizationSet::getMaterial() const
     {
         return DummyVisualization::getMaterial();
     }
@@ -475,15 +481,15 @@ namespace VirtualRobot
         return DummyVisualization::isSelected();
     }
 
-    void DummyVisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
+    void DummyVisualizationSet::setScalingFactor(const Eigen::Vector3f &scaleFactor)
     {
-        DummyVisualization::scale(scaleFactor);
-        VisualizationSet::scale(scaleFactor);
+        DummyVisualization::setScalingFactor(scaleFactor);
+        VisualizationSet::setScalingFactor(scaleFactor);
     }
 
-    Eigen::Vector3f DummyVisualizationSet::getScaleFactor() const
+    Eigen::Vector3f DummyVisualizationSet::getScalingFactor() const
     {
-        return DummyVisualization::getScaleFactor();
+        return DummyVisualization::getScalingFactor();
     }
 
     void DummyVisualizationSet::shrinkFatten(float offset)
