@@ -2,6 +2,7 @@
 * @package    VirtualRobot
 * @author     Manfred Kroehnert
 * @author     Nikolaus Vahrenkamp
+* #author     Adrian Knobloch
 * @copyright  2010 Manfred Kroehnert
 */
 
@@ -29,7 +30,6 @@ namespace VirtualRobot
         filename(""),
         boundingBox(false),
         primitives(),
-        inVisualizationSet(false),
         scaleFactor(Eigen::Vector3f(1.f, 1.f, 1.f))
     {
         setColor(Visualization::Color::None());
@@ -66,7 +66,7 @@ namespace VirtualRobot
 
     size_t DummyVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
     {
-        static unsigned int id = 0;
+        static size_t id = 0;
         poseChangedCallbacks[id] = f;
         return id++;
     }
@@ -112,7 +112,7 @@ namespace VirtualRobot
 
     void DummyVisualization::setColor(const Visualization::Color &c)
     {
-        if (!Color::isNone(c))
+        if (!c.isNone())
         {
             PhongMaterialPtr m = std::dynamic_pointer_cast<PhongMaterial>(material);
             if (!m)
@@ -345,7 +345,6 @@ namespace VirtualRobot
 
     bool DummyVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        // derived classes have to overwrite this method, otherwise a NYI will show up
         VR_ERROR << "NYI..." << endl;
         return false;
     }

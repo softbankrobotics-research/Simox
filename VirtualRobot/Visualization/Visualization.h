@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Manfred Kroehnert, Nikolaus Vahrenkamp
-* @copyright  2010,2011 Manfred Kroehnert, Nikolaus Vahrenkamp
+* @author     Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
+* @copyright  2010,2011,2017 Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -57,10 +57,21 @@ namespace VirtualRobot
             {
                 return transparency >= 1.0f;
             }
-            bool isTransparencyOnly()
+            bool isTransparencyOnly() const
             {
                 return r > 1.f || g > 1.f || b > 1.f || r < 0.f || g < 0.f || b < 0.f;
             }
+            inline bool operator==(const Color& c) const
+            {
+                return (isNone() && c.isNone()) ||
+                       (isTransparencyOnly() && c.isTransparencyOnly() && transparency == c.transparency) ||
+                       (r == c.r && g == c.g && b == c.b);
+            }
+            inline bool operator!=(const Color& c) const
+            {
+                return !(*this == c);
+            }
+
             static Color Blue(float transparency = 0.0f)
             {
                 return Color(0.2f, 0.2f, 1.0f, transparency);
@@ -93,14 +104,16 @@ namespace VirtualRobot
 
         struct Material
         {
+            virtual ~Material() = default;
         };
         using MaterialPtr = std::shared_ptr<Material>;
         struct NoneMaterial : public Material
         {
+            virtual ~NoneMaterial() = default;
         };
         struct PhongMaterial : public Material
         {
-            PhongMaterial() {}
+            virtual ~PhongMaterial() = default;
             Color ambient;
             Color diffuse;
             Color specular;
@@ -111,6 +124,7 @@ namespace VirtualRobot
 
         enum DrawStyle
         {
+            undefined,
             normal,
             wireframe
         };
@@ -193,7 +207,8 @@ namespace VirtualRobot
 
         inline void scale(const Eigen::Vector3f& scaleFactor)
         {
-            this->setScalingFactor(this->getScalingFactor() * scaleFactor);
+            auto sf = this->getScalingFactor();
+            this->setScalingFactor(Eigen::Vector3f(sf.x() * scaleFactor.x(), sf.y() * scaleFactor.y(), sf.z() * scaleFactor.z()));
         }
         virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) = 0;
         virtual Eigen::Vector3f getScalingFactor() const = 0;
