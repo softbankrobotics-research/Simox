@@ -29,17 +29,17 @@ namespace VirtualRobot
     {
     }
 
-    VisualizationPtr VisualizationFactory::createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &, bool, Visualization::Color)
+    VisualizationPtr VisualizationFactory::createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &, bool)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createVisualizationFromFile(const std::string &, bool, float, float, float)
+    VisualizationPtr VisualizationFactory::createVisualizationFromFile(const std::string &, bool)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createVisualizationFromFile(const std::ifstream &, bool, float, float, float)
+    VisualizationPtr VisualizationFactory::createVisualizationFromFile(const std::ifstream &, bool)
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -49,17 +49,17 @@ namespace VirtualRobot
         return VisualizationSetPtr(new DummyVisualizationSet(visualizations));
     }
 
-    VisualizationPtr VisualizationFactory::createBox(float, float, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createBox(float, float, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createLine(const Eigen::Vector3f &, const Eigen::Vector3f &, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createLine(const Eigen::Vector3f &, const Eigen::Vector3f &, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f &, const Eigen::Matrix4f &, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f &, const Eigen::Matrix4f &, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -91,22 +91,22 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createCircle(float, float, float, float, float, float, size_t)
+    VisualizationPtr VisualizationFactory::createCircle(float, float, float, size_t)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createTorus(float, float, float, float, float, float, float, int, int)
+    VisualizationPtr VisualizationFactory::createTorus(float, float, float, int, int)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createCircleArrow(float, float, float, float, float, float, float, int, int)
+    VisualizationPtr VisualizationFactory::createCircleArrow(float, float, float, int, int)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createCylinder(float, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createCylinder(float, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -116,32 +116,27 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createVertexVisualization(const Eigen::Vector3f &, float, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createVertexVisualization(const Eigen::Vector3f &, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr, Eigen::Matrix4f &, float, float, float)
+    VisualizationPtr VisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr, Eigen::Matrix4f &, bool, bool)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createTriMeshModelVisualization(TriMeshModelPtr, bool, Eigen::Matrix4f &, bool)
+    VisualizationPtr VisualizationFactory::createPlane(const Eigen::Vector3f &, const Eigen::Vector3f &, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createPlane(const Eigen::Vector3f &, const Eigen::Vector3f &, float, float, float, float, float)
+    VisualizationPtr VisualizationFactory::createArrow(const Eigen::Vector3f &, float, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createArrow(const Eigen::Vector3f &, float, float, const Visualization::Color &)
-    {
-        return VisualizationPtr(new DummyVisualization);
-    }
-
-    VisualizationPtr VisualizationFactory::createText(const std::string &, bool, float, Visualization::Color, float, float, float)
+    VisualizationPtr VisualizationFactory::createText(const std::string &, bool, float, float, float)
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -163,11 +158,6 @@ namespace VirtualRobot
     }
 
     VisualizationPtr VisualizationFactory::createVisualization()
-    {
-        return VisualizationPtr(new DummyVisualization);
-    }
-
-    VisualizationPtr VisualizationFactory::createUnitedVisualization(const std::vector<VisualizationPtr> &) const
     {
         return VisualizationPtr(new DummyVisualization);
     }
