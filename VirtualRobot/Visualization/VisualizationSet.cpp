@@ -1,7 +1,7 @@
 /**
 * @package    VirtualRobot
-* @author     Manfred Kroehnert
-* @copyright  2010 Manfred Kroehnert
+* @author     Manfred Kroehnert, Adrian Knobloch
+* @copyright  2010, 2017 Manfred Kroehnert, Adrian Knobloch
 */
 
 
@@ -93,24 +93,14 @@ namespace VirtualRobot
         return visualizations.at(index);
     }
 
-    VisualizationPtr VisualizationSet::clone(float scaling) const
+    bool VisualizationSet::empty() const
     {
-        std::vector<VisualizationPtr> clonedVisus;
-        clonedVisus.reserve(visualizations.size());
-        for (auto& visu : visualizations)
-        {
-            clonedVisus.push_back(visu->clone(1.f));
-        }
-        auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
-        visu->setVisible(this->isVisible());
-        visu->setStyle(this->getStyle());
-        visu->setColor(this->getColor());
-        visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->setScalingFactor(this->getScalingFactor());
-        visu->scale(scaling);
-        visu->createTriMeshModel();
-        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
-        return visu;
+        return visualizations.empty();
+    }
+
+    size_t VisualizationSet::size() const
+    {
+        return visualizations.size();
     }
 
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
@@ -157,6 +147,18 @@ namespace VirtualRobot
         this->getVisualizationAt(id)->setVisible(showVisualization);
     }
 
+    bool VisualizationSet::isVisible() const
+    {
+        for (auto& visu : visualizations)
+        {
+            if (visu->isVisible())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     bool VisualizationSet::isVisible(size_t id) const
     {
         return this->getVisualizationAt(id)->isVisible();
@@ -173,6 +175,18 @@ namespace VirtualRobot
     void VisualizationSet::setUpdateVisualization(size_t id, bool enable)
     {
         this->getVisualizationAt(id)->setUpdateVisualization(enable);
+    }
+
+    bool VisualizationSet::getUpdateVisualizationStatus() const
+    {
+        for (auto& visu : visualizations)
+        {
+            if (visu->getUpdateVisualizationStatus())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool VisualizationSet::getUpdateVisualizationStatus(size_t id) const
@@ -193,6 +207,23 @@ namespace VirtualRobot
         this->getVisualizationAt(id)->setStyle(s);
     }
 
+    Visualization::DrawStyle VisualizationSet::getStyle() const
+    {
+        if (visualizations.empty())
+        {
+            return DrawStyle::undefined;
+        }
+        DrawStyle s = visualizations[0]->getStyle();
+        for (auto& visu : visualizations)
+        {
+            if (s != visu->getStyle())
+            {
+                return DrawStyle::undefined;
+            }
+        }
+        return s;
+    }
+
     Visualization::DrawStyle VisualizationSet::getStyle(size_t id) const
     {
         return this->getVisualizationAt(id)->getStyle();
@@ -211,12 +242,29 @@ namespace VirtualRobot
         this->getVisualizationAt(id)->setColor(c);
     }
 
+    Visualization::Color VisualizationSet::getColor() const
+    {
+        if (visualizations.empty())
+        {
+            return Visualization::Color::None();
+        }
+        Visualization::Color c = visualizations[0]->getColor();
+        for (auto& visu : visualizations)
+        {
+            if (c != visu->getColor())
+            {
+                return Visualization::Color::None();
+            }
+        }
+        return c;
+    }
+
     Visualization::Color VisualizationSet::getColor(size_t id) const
     {
         return this->getVisualizationAt(id)->getColor();
     }
 
-    void VisualizationSet::setMaterial(const Visualization::Material &material)
+    void VisualizationSet::setMaterial(const MaterialPtr &material)
     {
         for (auto& visu : visualizations)
         {
@@ -224,12 +272,29 @@ namespace VirtualRobot
         }
     }
 
-    void VisualizationSet::setMaterial(size_t id, const Visualization::Material &material)
+    void VisualizationSet::setMaterial(size_t id, const MaterialPtr &material)
     {
         this->getVisualizationAt(id)->setMaterial(material);
     }
 
-    Visualization::Material VisualizationSet::getMaterial(size_t id) const
+    Visualization::MaterialPtr VisualizationSet::getMaterial() const
+    {
+        if (visualizations.empty())
+        {
+            return MaterialPtr(new NoneMaterial);
+        }
+        MaterialPtr m = visualizations[0]->getMaterial();
+        for (auto& visu : visualizations)
+        {
+            if (m != visu->getMaterial())
+            {
+                return MaterialPtr(new NoneMaterial);
+            }
+        }
+        return m;
+    }
+
+    Visualization::MaterialPtr VisualizationSet::getMaterial(size_t id) const
     {
         return this->getVisualizationAt(id)->getMaterial();
     }
@@ -253,6 +318,23 @@ namespace VirtualRobot
     void VisualizationSet::setScalingFactor(size_t id, Eigen::Vector3f &scaleFactor)
     {
         this->getVisualizationAt(id)->setScalingFactor(scaleFactor);
+    }
+
+    Eigen::Vector3f VisualizationSet::getScalingFactor() const
+    {
+        if (visualizations.empty())
+        {
+            return Eigen::Vector3f::Constant(1.f);
+        }
+        Eigen::Vector3f s = visualizations[0]->getScalingFactor();
+        for (auto& visu : visualizations)
+        {
+            if (s != visu->getScalingFactor())
+            {
+                return Eigen::Vector3f::Constant(1.f);
+            }
+        }
+        return s;
     }
 
     Eigen::Vector3f VisualizationSet::getScalingFactor(size_t id) const
@@ -295,6 +377,11 @@ namespace VirtualRobot
         {
             visu->_removeAllManipulators();
         }
+    }
+
+    std::vector<Primitive::PrimitivePtr> VisualizationSet::getPrimitives() const
+    {
+        // TODO
     }
 
     BoundingBox VisualizationSet::getBoundingBox() const
@@ -345,19 +432,9 @@ namespace VirtualRobot
         return this->getVisualizationAt(id)->getNumFaces();
     }
 
-    void VisualizationSet::print() const
-    {
-        // TODO
-    }
-
     void VisualizationSet::print(size_t id) const
     {
         return this->getVisualizationAt(id)->print();
-    }
-
-    std::string VisualizationSet::toXML(const std::string &basePath, int tabs) const
-    {
-        // TODO
     }
 
     std::string VisualizationSet::toXML(size_t id, const std::string &basePath, int tabs) const
@@ -365,19 +442,9 @@ namespace VirtualRobot
         return this->getVisualizationAt(id)->toXML(basePath, tabs);
     }
 
-    std::string VisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
-    {
-        // TODO
-    }
-
     std::string VisualizationSet::toXML(size_t id, const std::string &basePath, const std::string &filename, int tabs) const
     {
         return this->getVisualizationAt(id)->toXML(basePath, filename, tabs);
-    }
-
-    bool VisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
-    {
-        // TODO
     }
 
     bool VisualizationSet::saveModel(size_t id, const std::string &modelPath, const std::string &filename)
@@ -386,195 +453,150 @@ namespace VirtualRobot
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationSet(visualizations)
+        : VisualizationSet(visualizations),
+          selected(false),
+          filename(""),
+          usedBoundingBox(false)
     {
     }
 
     VisualizationPtr DummyVisualizationSet::clone(float scaling) const
     {
-        return VisualizationSet::clone(scaling);
+        std::vector<VisualizationPtr> clonedVisus;
+        clonedVisus.reserve(visualizations.size());
+        for (auto& visu : visualizations)
+        {
+            clonedVisus.push_back(visu->clone(1.f));
+        }
+        auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
+        visu->setVisible(this->isVisible());
+        visu->setStyle(this->getStyle());
+        visu->setColor(this->getColor());
+        visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
+        visu->setScalingFactor(this->getScalingFactor());
+        visu->scale(Eigen::Vector3f::Constant(scaling));
+        visu->createTriMeshModel();
+        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
+        return visu;
     }
 
     void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
         VisualizationSet::setGlobalPose(m);
+        for (auto& f : poseChangedCallbacks)
+        {
+            f.second(m);
+        }
     }
 
-    void DummyVisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
+    size_t DummyVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
     {
-        DummyVisualization::applyDisplacement(dp);
-        VisualizationSet::applyDisplacement(dp);
+        static size_t id = 0;
+        poseChangedCallbacks[id] = f;
+        return id++;
     }
 
-    void DummyVisualizationSet::setVisible(bool showVisualization)
+    void DummyVisualizationSet::removePoseChangedCallback(size_t id)
     {
-        DummyVisualization::setVisible(showVisualization);
-        VisualizationSet::setVisible(showVisualization);
-    }
-
-    bool DummyVisualizationSet::isVisible() const
-    {
-        return DummyVisualization::isVisible();
-    }
-
-    void DummyVisualizationSet::setUpdateVisualization(bool enable)
-    {
-        DummyVisualization::setUpdateVisualization(enable);
-        VisualizationSet::setUpdateVisualization(enable);
-    }
-
-    bool DummyVisualizationSet::getUpdateVisualizationStatus() const
-    {
-        return DummyVisualization::getUpdateVisualizationStatus();
-    }
-
-    void DummyVisualizationSet::setStyle(Visualization::DrawStyle s)
-    {
-        DummyVisualization::setStyle(s);
-        VisualizationSet::setStyle(s);
-    }
-
-    Visualization::DrawStyle DummyVisualizationSet::getStyle() const
-    {
-        return DummyVisualization::getStyle();
-    }
-
-    void DummyVisualizationSet::setColor(const Visualization::Color &c)
-    {
-        DummyVisualization::setColor(c);
-        VisualizationSet::setColor(c);
-    }
-
-    Visualization::Color DummyVisualizationSet::getColor() const
-    {
-        return DummyVisualization::getColor();
-    }
-
-    void DummyVisualizationSet::setMaterial(const Visualization::MaterialPtr &material)
-    {
-        DummyVisualization::setMaterial(material);
-        VisualizationSet::setMaterial(material);
-    }
-
-    Visualization::MaterialPtr DummyVisualizationSet::getMaterial() const
-    {
-        return DummyVisualization::getMaterial();
+        auto it = poseChangedCallbacks.find(id);
+        if (it != poseChangedCallbacks.end())
+        {
+            poseChangedCallbacks.erase(it);
+        }
     }
 
     void DummyVisualizationSet::_setSelected(bool selected)
     {
-        DummyVisualization::_setSelected(selected);
         VisualizationSet::_setSelected(selected);
+        selected = selected;
     }
 
     bool DummyVisualizationSet::isSelected() const
     {
-        return DummyVisualization::isSelected();
+        return selected;
     }
 
-    void DummyVisualizationSet::setScalingFactor(const Eigen::Vector3f &scaleFactor)
+    size_t DummyVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        DummyVisualization::setScalingFactor(scaleFactor);
-        VisualizationSet::setScalingFactor(scaleFactor);
+        VR_ERROR << "NYI" << std::endl;
+        return 0;
     }
 
-    Eigen::Vector3f DummyVisualizationSet::getScalingFactor() const
+    void DummyVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        return DummyVisualization::getScalingFactor();
-    }
-
-    void DummyVisualizationSet::shrinkFatten(float offset)
-    {
-        DummyVisualization::shrinkFatten(offset);
-        VisualizationSet::shrinkFatten(offset);
+        VR_ERROR << "NYI" << std::endl;
     }
 
     void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
     {
-        DummyVisualization::_addManipulator(t);
         VisualizationSet::_addManipulator(t);
+        addedManipulators.insert(t);
     }
 
     void DummyVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
     {
-        DummyVisualization::_removeManipulator(t);
         VisualizationSet::_removeManipulator(t);
-    }
-
-    bool DummyVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        return DummyVisualization::hasManipulator(t);
-    }
-
-    std::vector<Visualization::ManipulatorType> DummyVisualizationSet::getAddedManipulatorTypes() const
-    {
-        return DummyVisualization::getAddedManipulatorTypes();
+        auto pos = addedManipulators.find(t);
+        if (pos != addedManipulators.end())
+        {
+            addedManipulators.erase(pos);
+        }
     }
 
     void DummyVisualizationSet::_removeAllManipulators()
     {
-        DummyVisualization::_removeAllManipulators();
         VisualizationSet::_removeAllManipulators();
+        addedManipulators.clear();
     }
 
-    std::vector<Primitive::PrimitivePtr> DummyVisualizationSet::getPrimitives() const
+    bool DummyVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
     {
-        return DummyVisualization::getPrimitives();
+        auto pos = addedManipulators.find(t);
+        return pos != addedManipulators.end();
+    }
+
+    std::vector<Visualization::ManipulatorType> DummyVisualizationSet::getAddedManipulatorTypes() const
+    {
+        return std::vector<ManipulatorType>(addedManipulators.begin(), addedManipulators.end());
     }
 
     void DummyVisualizationSet::setFilename(const std::string &filename, bool boundingBox)
     {
-        DummyVisualization::setFilename(filename, boundingBox);
+        this->filename = filename;
+        usedBoundingBox = boundingBox;
     }
 
     std::string DummyVisualizationSet::getFilename() const
     {
-        return DummyVisualization::getFilename();
+        return filename;
     }
 
     bool DummyVisualizationSet::usedBoundingBoxVisu() const
     {
-        return DummyVisualization::usedBoundingBoxVisu();
-    }
-
-    BoundingBox DummyVisualizationSet::getBoundingBox() const
-    {
-        return VisualizationSet::getBoundingBox();
-    }
-
-    TriMeshModelPtr DummyVisualizationSet::getTriMeshModel() const
-    {
-        return VisualizationSet::getTriMeshModel();
-    }
-
-    void DummyVisualizationSet::createTriMeshModel()
-    {
-        VisualizationSet::createTriMeshModel();
-    }
-
-    int DummyVisualizationSet::getNumFaces() const
-    {
-        return VisualizationSet::getNumFaces();
+        return usedBoundingBox;
     }
 
     void DummyVisualizationSet::print() const
     {
-        VisualizationSet::print();
+        // TODO
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
-        return VisualizationSet::toXML(basePath, tabs);
+        // TODO
+        return "";
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        return VisualizationSet::toXML(basePath, filename, tabs);
+        // TODO
+        return "";
     }
 
     bool DummyVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        return VisualizationSet::saveModel(modelPath, filename);
+        // TODO
+        return false;
     }
 
 } // namespace VirtualRobot
