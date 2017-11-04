@@ -88,8 +88,6 @@ namespace VirtualRobot
 
     protected:
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
-
-    private:
         Eigen::Vector3f translationDirection;
     };
 }
