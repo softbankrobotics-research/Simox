@@ -75,12 +75,15 @@ namespace VirtualRobot
 
 
     protected:
-        RobotNodePtr createBodyNode(RobotPtr robot, std::shared_ptr<urdf::Link> urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
-        RobotNodePtr createJointNode(RobotPtr robot, std::shared_ptr<urdf::Joint> urdfJoint);
+        template<typename L>
+        RobotNodePtr createBodyNode(RobotPtr robot, L urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel = true);
+        template<typename J>
+        RobotNodePtr createJointNode(RobotPtr robot, J urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
-        VirtualRobot::VisualizationNodePtr convertVisu(std::shared_ptr<urdf::Geometry> g, urdf::Pose& pose, const std::string& basePath);
-        VirtualRobot::VisualizationNodePtr convertVisuArray(std::vector<std::shared_ptr<urdf::Visual> > visu_array, const std::string& basePath);
-        VirtualRobot::VisualizationNodePtr convertVisuArray(std::vector<std::shared_ptr<urdf::Collision> > visu_array, const std::string& basePath);
+        template<typename Geom>
+        VirtualRobot::VisualizationNodePtr convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath);
+        template<typename Visu>
+        VirtualRobot::VisualizationNodePtr convertVisuArray(std::vector<Visu> visu_array, const std::string& basePath);
         std::string getFilename(const std::string& f, const std::string& basePath);
 
         bool useColModelsIfNoVisuModel;
