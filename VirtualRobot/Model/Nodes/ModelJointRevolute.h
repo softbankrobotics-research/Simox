@@ -88,6 +88,7 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) override;
 
     protected:
+        ModelJointRevolute() {}
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
         Eigen::Vector3f axis;
     };

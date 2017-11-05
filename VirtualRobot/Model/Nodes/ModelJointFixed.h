@@ -106,6 +106,7 @@ namespace VirtualRobot
 
 
     protected:
+        ModelJointFixed();
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
 
     };
