@@ -77,6 +77,11 @@ string RobotImporterFactory::getAllFileFilters()
         return RobotImporterFactoryPtr();
     }
 
+    RobotImporterFactoryPtr RobotImporterFactory::fromFilepath(const boost::filesystem::path& path, void *params)
+    {
+        return fromFileExtension(path.extension().string(), params);
+    }
+
 
 } // namespace VirtualRobot
 
