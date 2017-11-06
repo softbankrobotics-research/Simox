@@ -317,7 +317,7 @@ namespace VirtualRobot
         LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
         if (!ls)
         {
-           // VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
         }
         return ls;
     }
@@ -329,7 +329,7 @@ namespace VirtualRobot
         JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
         if (!ls)
         {
-            //VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+            VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
         }
         return ls;
     }

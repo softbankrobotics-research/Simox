@@ -38,7 +38,7 @@ namespace VirtualRobot
     {
 
         RobotPtr result;
-        std::shared_ptr<urdf::ModelInterface> urdf_model = urdf::parseURDFFile(filename.c_str());
+        auto urdf_model = urdf::parseURDFFile(filename.c_str());
 
         boost::filesystem::path filenameBaseComplete(filename);
         boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
@@ -102,13 +102,13 @@ namespace VirtualRobot
 
 
         VirtualRobot::RobotPtr robo(new VirtualRobot::Model(robotName, robotType));
-        std::map<std::string, std::shared_ptr<Link> > bodies = urdfModel.links_;
-        std::map<std::string, std::shared_ptr<Joint> > joints = urdfModel.joints_;
-        std::map<std::string, std::shared_ptr<Link> >::iterator itBodies = bodies.begin();
+        auto bodies = urdfModel.links_;
+        auto joints = urdfModel.joints_;
+        auto itBodies = bodies.begin();
 
         while (itBodies != bodies.end())
         {
-            std::shared_ptr<Link> body = itBodies->second;
+            auto body = itBodies->second;
             RobotNodePtr nodeVisual = createBodyNode(robo, body, basePath, loadMode, useColModelsIfNoVisuModel);
             allNodes.push_back(nodeVisual);
             allNodesMap[body->name] = nodeVisual;
@@ -126,11 +126,11 @@ namespace VirtualRobot
             itBodies++;
         }
 
-        std::map<std::string, std::shared_ptr<Joint> >::iterator itJoints = joints.begin();
+        auto itJoints = joints.begin();
 
         while (itJoints != joints.end())
         {
-            std::shared_ptr<Joint> joint = itJoints->second;
+            auto joint = itJoints->second;
             RobotNodePtr nodeJoint = createJointNode(robo, joint);
             allNodes.push_back(nodeJoint);
             allNodesMap[joint->name] = nodeJoint;
@@ -210,7 +210,8 @@ namespace VirtualRobot
         return result;
     }
 
-    VirtualRobot::VisualizationPtr SimoxURDFFactory::convertVisu(std::shared_ptr<Geometry> g, urdf::Pose& pose, const std::string& basePath)
+    template<typename Geom>
+    VirtualRobot::VisualizationPtr SimoxURDFFactory::convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath)
     {
         const float scale = 1000.0f; // mm
         VirtualRobot::VisualizationPtr res;
@@ -221,18 +222,19 @@ namespace VirtualRobot
             return res;
         }
 
+        // Since urdfdom switched from boost::shared_ptr to std::shared_ptr we use raw pointer here to be able to use both versions
         switch (g->type)
         {
             case urdf::Geometry::BOX:
             {
-                std::shared_ptr<Box> b = std::dynamic_pointer_cast<Box>(g);
+                auto b = static_cast<Box*>(g.get());
                 res = factory->createBox(b->dim.x * scale, b->dim.y * scale, b->dim.z * scale);
             }
             break;
 
             case urdf::Geometry::SPHERE:
             {
-                std::shared_ptr<Sphere> s = std::dynamic_pointer_cast<Sphere>(g);
+                auto s = static_cast<Sphere*>(g.get());
                 res = factory->createSphere(s->radius * scale);
             }
             break;
@@ -240,7 +242,7 @@ namespace VirtualRobot
 
             case urdf::Geometry::CYLINDER:
             {
-                std::shared_ptr<Cylinder> c = std::dynamic_pointer_cast<Cylinder>(g);
+                auto c = static_cast<Cylinder*>(g.get());
                 res = factory->createCylinder(c->radius * scale, c->length * scale);
                 
             }
@@ -248,7 +250,7 @@ namespace VirtualRobot
 
             case urdf::Geometry::MESH:
             {
-                std::shared_ptr<Mesh> m = std::dynamic_pointer_cast<Mesh>(g);
+                auto m = static_cast<Mesh*>(g.get());
                 std::string filename = getFilename(m->filename, basePath);
                 res = factory->createVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
                 if (res)
@@ -274,7 +276,8 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationPtr SimoxURDFFactory::convertVisuArray(std::vector<std::shared_ptr<urdf::Collision> > visu_array, const string &basePath)
+    template<typename Visu>
+    VisualizationPtr SimoxURDFFactory::convertVisuArray(std::vector<Visu> visu_array, const string &basePath)
     {
         VirtualRobot::VisualizationPtr res;
         VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
@@ -297,30 +300,8 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationPtr SimoxURDFFactory::convertVisuArray(std::vector<std::shared_ptr<urdf::Visual> > visu_array, const string &basePath)
-    {
-        VirtualRobot::VisualizationPtr res;
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
-
-        if (visu_array.size()==0)
-        {
-            return res;
-        }
-
-        std::vector< VisualizationPtr > visus;
-        for (size_t i=0; i<visu_array.size(); i++)
-        {
-            VirtualRobot::VisualizationPtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
-            if (v)
-            {
-                visus.push_back(v);
-            }
-        }
-        res = factory->createUnitedVisualization(visus);
-        return res;
-    }
-
-    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, std::shared_ptr<Link> urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
+    template<typename L>
+    RobotNodePtr SimoxURDFFactory::createBodyNode(RobotPtr robo, L urdfBody, const std::string& basePath, ModelIO::RobotDescription loadMode, bool useColModelsIfNoVisuModel)
     {
         const float scale = 1000.0f; // mm
         RobotNodePtr result;
@@ -398,7 +379,8 @@ namespace VirtualRobot
         return result;
     }
 
-    RobotNodePtr SimoxURDFFactory::createJointNode(RobotPtr robo, std::shared_ptr<Joint> urdfJoint)
+    template<typename J>
+    RobotNodePtr SimoxURDFFactory::createJointNode(RobotPtr robo, J urdfJoint)
     {
         const float scale = 1000.0f; // mm
         ModelJointPtr result;

@@ -36,7 +36,7 @@ namespace VirtualRobot
 {
 
     /*!
-        A RobotImporter can be used ti import robots from various data formats.
+        A RobotImporter can be used to import robots from various data formats.
          By default the Simox XML-based RobotImporter can be retrieved as follows:
          \code
          RobotImporterPtr imp = RobotImporterFactory::fromName("SimoxXML", NULL);
@@ -75,6 +75,7 @@ namespace VirtualRobot
         static std::string getAllFileFilters();
         static std::string getAllExtensions();
         static RobotImporterFactoryPtr fromFileExtension(std::string type, void* params);
+        static RobotImporterFactoryPtr fromFilepath(const boost::filesystem::path &path, void* params);
     };
 
 

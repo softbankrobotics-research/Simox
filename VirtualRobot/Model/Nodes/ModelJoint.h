@@ -198,6 +198,7 @@ namespace VirtualRobot
         virtual float getDelta(float target);
 
     protected:
+        ModelJoint();
         float jointValue;           //!< The joint value
         float jointValueOffset;
         float jointLimitLo;
