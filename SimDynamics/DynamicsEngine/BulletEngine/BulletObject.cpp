@@ -374,6 +374,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(force, false);
+        rigidBody->activate();
         rigidBody->applyCentralForce(btVel);
     }
 
@@ -387,6 +388,7 @@ namespace SimDynamics
         }
 
         btVector3 btVel = BulletEngine::getVecBullet(torque, false) * BulletObject::ScaleFactor;
+        rigidBody->activate();
         rigidBody->applyTorque(btVel);
     }
 
