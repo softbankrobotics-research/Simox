@@ -41,17 +41,27 @@ if (Simox_VISUALIZATION)
       ViewerFactory.h
   )
 
-  IF (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
-    list(APPEND INCLUDES
-        Coin/CoinViewer.h
-        Coin/CoinViewerFactory.h
-    )
+    IF (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
+        list(APPEND INCLUDES
+            Coin/CoinViewer.h
+            Coin/CoinViewerFactory.h
+        )
 
-    list(APPEND SOURCES
-        Coin/CoinViewer.cpp
-        Coin/CoinViewerFactory.cpp
-    )
-  ENDIF()
+        list(APPEND SOURCES
+            Coin/CoinViewer.cpp
+            Coin/CoinViewerFactory.cpp
+        )
+    ELSEIF (Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
+        list(APPEND INCLUDES
+            Qt3D/Qt3DViewer.h
+            Qt3D/Qt3DViewerFactory.h
+        )
+
+        list(APPEND SOURCES
+            Qt3D/Qt3DViewer.cpp
+            Qt3D/Qt3DViewerFactory.cpp
+        )
+    ENDIF()
 
   MESSAGE (STATUS " ** INCLUDES:${INCLUDES}")
   MESSAGE (STATUS " ** SOURCES:${SOURCES}")
