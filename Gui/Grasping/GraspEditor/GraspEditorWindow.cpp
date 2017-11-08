@@ -157,8 +157,8 @@ namespace VirtualRobot
         {
             if (robotEEF)
             {
-                VisualizationSetPtr visu = f->getVisualization(robotEEF, colModel);
-                viewer->addVisualization("eefLayer", "eef", visu);
+                VisualizationSetPtr visu = robotEEF->getVisualization(colModel);
+                viewer->addVisualization("eefLayer", visu);
             }
         }
         else
@@ -170,7 +170,7 @@ namespace VirtualRobot
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
                     VisualizationPtr visu = f->createCoordSystem(1.0f, NULL, tcpGP);
-                    viewer->addVisualization("eefLayer", "eef-coord", visu);
+                    viewer->addVisualization("eefLayer", visu);
                 }
             }
         }
@@ -178,8 +178,8 @@ namespace VirtualRobot
 
         if (object)
         {
-            VisualizationSetPtr visu = f->getVisualization(object, colModel);
-            viewer->addVisualization("objectLayer", "object", visu);
+            VisualizationSetPtr visu = object->getVisualization(colModel);
+            viewer->addVisualization("objectLayer", visu);
         }
 
         buildGraspSetVisu();
@@ -654,8 +654,8 @@ namespace VirtualRobot
             GraspSetPtr gs = currentGraspSet->clone();
             gs->removeGrasp(currentGrasp);
 
-            VisualizationSetPtr visu = f->createGraspSetVisualization(gs, robotEEF_EEF, object->getGlobalPose(), ModelLink::VisualizationType::Full);
-            viewer->addVisualization("graspsetLayer", "graspset", visu);
+            VisualizationSetPtr visu = gs->getVisualization(ModelLink::VisualizationType::Full, robotEEF_EEF, object->getGlobalPose());
+            viewer->addVisualization("graspsetLayer", visu);
         }
     }
 
