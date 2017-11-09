@@ -10,9 +10,11 @@
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/ManipulationObject.h>
 #include <string.h>
-#include <QtGui>
+#include <QtGlobal>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QtWidgets>
+#else
+#include <QtGui>
 #endif
 #include <QtCore/QtCore>
 #include <QTimer>
