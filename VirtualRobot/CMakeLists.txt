@@ -52,6 +52,7 @@ Visualization/VisualizationSet.cpp
 Visualization/Visualization.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
+Visualization/OffscreenRenderer.cpp
 XML/BaseIO.cpp
 XML/ModelIO.cpp
 XML/SceneIO.cpp
@@ -159,6 +160,7 @@ Visualization/Visualization.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
+Visualization/OffscreenRenderer.h
 XML/BaseIO.h
 XML/ModelIO.h
 XML/SceneIO.h

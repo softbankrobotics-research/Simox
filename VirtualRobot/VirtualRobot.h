@@ -171,6 +171,7 @@ namespace VirtualRobot
     class VisualizationSet;
     class Visualization;
     class VisualizationFactory;
+    class OffscreenRenderer;
     class Scene;
     class ModelConfig;
     class Grasp;
@@ -235,6 +236,7 @@ namespace VirtualRobot
     typedef std::shared_ptr<VisualizationSet> VisualizationSetPtr;
     typedef std::shared_ptr<Visualization> VisualizationPtr;
     typedef std::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
+    typedef std::shared_ptr<OffscreenRenderer> OffscreenRendererPtr;
     typedef std::shared_ptr<WorkspaceData> WorkspaceDataPtr;
     typedef std::shared_ptr<WorkspaceDataArray> WorkspaceDataArrayPtr;
     typedef std::shared_ptr<WorkspaceRepresentation> WorkspaceRepresentationPtr;
