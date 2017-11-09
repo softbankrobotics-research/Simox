@@ -5,6 +5,7 @@
 #include "Nodes/ModelLink.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../VirtualRobotException.h"
+#include "../Visualization/TriMeshModel.h"
 
 #include <vector>
 
@@ -69,7 +70,8 @@ namespace VirtualRobot
 
         VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
         */
-        VisualizationPtr visu = visualizationFactory->createBox(width, height, depth, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createBox(width, height, depth);
+        visu->setColor(color);
 
         if (!visu)
         {
@@ -114,7 +116,8 @@ namespace VirtualRobot
             return result;
         }
 
-        VisualizationPtr visu = visualizationFactory->createSphere(radius, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createSphere(radius);
+        visu->setColor(color);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
         Primitive::PrimitivePtr p(new Primitive::Sphere(radius));
@@ -164,7 +167,8 @@ namespace VirtualRobot
             return result;
         }
 
-        VisualizationPtr visu = visualizationFactory->createCylinder(radius, height, color.r, color.g, color.b);
+        VisualizationPtr visu = visualizationFactory->createCylinder(radius, height);
+        visu->setColor(color);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
         Primitive::PrimitivePtr p(new Primitive::Cylinder(radius, height));
@@ -217,8 +221,7 @@ namespace VirtualRobot
         }
 
 
-        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-        VisualizationPtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+        VisualizationPtr visu = mesh->getVisualization();
 
         if (!visu)
         {

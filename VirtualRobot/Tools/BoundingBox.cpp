@@ -248,7 +248,7 @@ namespace VirtualRobot
         float height = y2 - y1;
         float depth = z2 - z1;
 
-        auto box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(x, y, z, width, height, depth);
+        auto box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(width, height, depth);
         box->setStyle(wireFrame ? Visualization::DrawStyle::wireframe : Visualization::DrawStyle::normal);
         box->setGlobalPose(gp);
         return box;

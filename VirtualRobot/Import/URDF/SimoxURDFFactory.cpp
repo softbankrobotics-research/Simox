@@ -250,7 +250,8 @@ namespace VirtualRobot
             {
                 std::shared_ptr<Mesh> m = std::dynamic_pointer_cast<Mesh>(g);
                 std::string filename = getFilename(m->filename, basePath);
-                res = factory->createVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
+                res = factory->createVisualizationFromFile(filename, false);
+                res->setScalingFactor(Eigen::Vector3f(m->scale.x, m->scale.y, m->scale.z));
                 if (res)
                     res->setFilename(filename, false);
             }
@@ -293,7 +294,7 @@ namespace VirtualRobot
                 visus.push_back(v);
             }
         }
-        res = factory->createUnitedVisualization(visus);
+        res = factory->createVisualisationSet(visus);
         return res;
     }
 
@@ -316,7 +317,7 @@ namespace VirtualRobot
                 visus.push_back(v);
             }
         }
-        res = factory->createUnitedVisualization(visus);
+        res = factory->createVisualisationSet(visus);
         return res;
     }
 

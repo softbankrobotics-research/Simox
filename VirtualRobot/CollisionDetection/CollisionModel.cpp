@@ -246,7 +246,8 @@ namespace VirtualRobot
 
                 if (visualizationFactory)
                 {
-                    modelVisualization = visualizationFactory->createTriMeshModelVisualization(model, true, globalPose);
+                    modelVisualization = model->getVisualization(true);
+                    modelVisualization->setGlobalPose(globalPose);
                 }
             }
         }

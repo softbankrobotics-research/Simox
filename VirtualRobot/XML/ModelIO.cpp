@@ -528,7 +528,7 @@ namespace VirtualRobot
             else if (visualizationNodes.size() > 1)
             {
                 VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
-                visualizationNode = visualizationFactory->createUnitedVisualization(visualizationNodes);
+                visualizationNode = visualizationFactory->createVisualisationSet(visualizationNodes);
             }
 
             else if (primitives.size() != 0)
@@ -667,7 +667,7 @@ namespace VirtualRobot
 
                     if (visualizationFactory)
                     {
-                        visualizationNode = visualizationFactory->createUnitedVisualization(visuNodes);
+                        visualizationNode = visualizationFactory->createVisualisationSet(visuNodes);
                     }
                     else
                     {

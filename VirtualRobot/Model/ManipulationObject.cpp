@@ -2,6 +2,7 @@
 #include "ManipulationObject.h"
 #include "../VirtualRobotException.h"
 #include "../Visualization/Visualization.h"
+#include "../Visualization/TriMeshModel.h"
 #include "../Grasping/GraspSet.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../XML/BaseIO.h"
@@ -243,8 +244,7 @@ namespace VirtualRobot
         }
 
 
-        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
-        VisualizationPtr visu = visualizationFactory->createTriMeshModelVisualization(mesh, gp);
+        VisualizationPtr visu = mesh->getVisualization();
 
         if (!visu)
         {

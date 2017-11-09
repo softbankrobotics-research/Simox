@@ -258,7 +258,7 @@ namespace VirtualRobot
         /*!
             Returns the maximum that can be achieved by calling sumAngleReachabilities()
         */
-        virtual int getMaxSummedAngleReachablity();
+        virtual int getMaxSummedAngleReachablity() const;
 
         /*!
             Returns true if for the given 3d position is at least one entry >0
@@ -423,7 +423,7 @@ namespace VirtualRobot
 
         virtual VolumeInfo computeVolumeInformation();
 
-        VisualizationPtr getVisualization(const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10);
+        VisualizationPtr getVisualization(const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) const;
     protected:
 
         /*!
