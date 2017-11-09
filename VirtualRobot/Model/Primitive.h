@@ -41,6 +41,7 @@ namespace VirtualRobot
             Eigen::Matrix4f transform;
 
             virtual std::string toXMLString(int tabs) = 0;
+            virtual VisualizationPtr getVisualization() const = 0;
 
         protected:
             Primitive(int type) : type(type), transform(Eigen::Matrix4f::Identity()) {}
@@ -60,6 +61,7 @@ namespace VirtualRobot
             float height;
             float depth;
             std::string toXMLString(int tabs = 0);
+            virtual VisualizationPtr getVisualization() const;
         };
 
         class VIRTUAL_ROBOT_IMPORT_EXPORT Sphere : public Primitive
@@ -70,6 +72,7 @@ namespace VirtualRobot
             Sphere(float radius) : Primitive(TYPE), radius(radius) {}
             float radius;
             std::string toXMLString(int tabs = 0);
+            virtual VisualizationPtr getVisualization() const;
         };
 
         class VIRTUAL_ROBOT_IMPORT_EXPORT Cylinder : public Primitive
@@ -81,6 +84,7 @@ namespace VirtualRobot
             float radius;
             float height;
             std::string toXMLString(int tabs = 0);
+            virtual VisualizationPtr getVisualization() const;
         };
 
         typedef std::shared_ptr<Primitive> PrimitivePtr;
