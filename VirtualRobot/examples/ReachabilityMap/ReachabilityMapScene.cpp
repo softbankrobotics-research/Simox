@@ -25,16 +25,15 @@ int main(int argc, char* argv[])
 
     cout << " --- START --- " << endl;
 
-    std::string filenameReach;
     std::string eef;
 #ifdef ICUB
     std::string filenameRob("robots/iCub/iCub.xml");
     std::string fileObj("objects/iCub/LegoXWing_RightHand_300.xml");
-    filenameReach = "reachability/iCub_HipLeftArm.bin";
+    std::sting filenameReach ("reachability/iCub_HipLeftArm.bin");
 #else
     std::string filenameRob("robots/Armar3/Armar3.xml");
-    std::string fileObj("objects/Hammer.xml");
-    filenameReach = "workspace/armar3_leftArm_reachability.bin";
+    std::string fileObj("objects/iv/plate.xml");
+    std::string filenameReach("workspace/armar3_leftArm_reachability.bin");
     eef = "Hand L";
 #endif
 

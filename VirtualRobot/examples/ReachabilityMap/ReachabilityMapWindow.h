@@ -72,7 +72,6 @@ protected:
     void setupEnvironment();
 
     Ui::MainWindowReachability UI;
-    SoQtExaminerViewer* examinerViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
     SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     std::string robotVisuLayer;

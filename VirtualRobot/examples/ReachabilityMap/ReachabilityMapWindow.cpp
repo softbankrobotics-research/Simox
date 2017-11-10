@@ -81,7 +81,7 @@ ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::strin
         selectEEF(eef);
     }
 
-    examinerViewer->viewAll();
+    viewer->viewAll();
 }
 
 
@@ -93,9 +93,9 @@ ReachabilityMapWindow::~ReachabilityMapWindow()
 void ReachabilityMapWindow::setupUI()
 {
     UI.setupUi(this);
-    examinerViewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
     SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::fromName(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
-    viewer = factory->createViewer(this);
+    THROW_VR_EXCEPTION_IF(!factory,"Could not create ViewerFactory.");
+    viewer = factory->createViewer(UI.frameViewer);
 
     viewer->viewAll();
 
@@ -543,33 +543,34 @@ void ReachabilityMapWindow::loadReachFile(std::string filename)
     reachFile = filename;
     bool success = false;
 
-    // 1st try to load as manipulability file
+    // The following is one of the reasons why we should refactor the workspace api.
+    // 1st try to load as reachability file
     try
     {
-        reachSpace.reset(new Manipulability(robot));
+        reachSpace.reset(new Reachability(robot));
         reachSpace->load(reachFile);
         success = true;
 
-        VR_INFO << "Map '" << reachFile << "' loaded as Manipulability map";
+        VR_INFO << "Map '" << reachFile << "' loaded as Reachability map" << std::endl;
     }
     catch (...)
     {
+        VR_ERROR << "Coulkd not load reachability file..." << endl;
     }
 
-    // 2nd try to load as reachability file
+    // 2nd try to load as manipulability file
     if (!success)
     {
         try
         {
-            reachSpace.reset(new Reachability(robot));
+            reachSpace.reset(new Manipulability(robot));
             reachSpace->load(reachFile);
             success = true;
 
-            VR_INFO << "Map '" << reachFile << "' loaded as Reachability map";
+            VR_INFO << "Map '" << reachFile << "' loaded as Manipulability map" << std::endl;
         }
         catch (...)
         {
-            VR_ERROR << "Coulkd not load reachability file..." << endl;
         }
     }
 
