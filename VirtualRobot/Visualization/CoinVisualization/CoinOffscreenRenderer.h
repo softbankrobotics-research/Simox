@@ -34,6 +34,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT CoinOffscreenRenderer  : public OffscreenRenderer
     {
     public:
+        CoinOffscreenRenderer() = default;
         virtual ~CoinOffscreenRenderer() = default;
 
         virtual void init(int &/*argc*/, char* /*argv*/[], const std::string &/*appName*/) override;

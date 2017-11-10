@@ -26,6 +26,10 @@ VirtualRobot::OffscreenRenderer::SubClassRegistry VirtualRobot::CoinOffscreenRen
 
 namespace VirtualRobot
 {
+    void CoinOffscreenRenderer::init(int &, char *[], const std::string &)
+    {
+    }
+
     bool CoinOffscreenRenderer::renderOffscreen(const Eigen::Matrix4f &camPose, const std::vector<VirtualRobot::VisualizationPtr> &scene,
                                                 unsigned short width, unsigned short height,
                                                 bool renderRgbImage, std::vector<unsigned char> &rgbImage,
@@ -231,6 +235,10 @@ namespace VirtualRobot
             depthImage = std::move(zBuffer);
         }
         return true;
+    }
+
+    void CoinOffscreenRenderer::cleanup()
+    {
     }
 
     std::string CoinOffscreenRenderer::getVisualizationType() const
