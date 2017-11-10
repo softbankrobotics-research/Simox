@@ -15,153 +15,254 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    Gui
-* @author     Peter Kaiser
-* @copyright  2016 Peter Kaiser
+* @author     Peter Kaiser, Adrian Knobloch
+* @copyright  2016,2017 Peter Kaiser, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
 
 #include "CoinViewer.h"
 
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
-
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
 #include <QGLWidget>
 
-using namespace SimoxGui;
+#include <iostream>
 
-CoinViewer::CoinViewer(QWidget *parent) :
-    SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
-    parent(parent)
+namespace SimoxGui
 {
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-
-    setBackgroundColor(SbColor(1, 1, 1));
-    setAccumulationBuffer(true);
-    setAntialiasing(true, 4);
-    setGLRenderAction(new SoLineHighlightRenderAction);
-    setFeedbackVisibility(true);
-    setSceneGraph(sceneSep);
-
-    viewAll();
-    setAntialiasing(true, 4);
-}
-
-CoinViewer::~CoinViewer()
-{
-    sceneSep->unref();
-}
-
-void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationSetPtr &visualization)
-{
-    VirtualRobot::CoinVisualizationPtr coinVisu = std::dynamic_pointer_cast<VirtualRobot::CoinVisualizationSet>(visualization);
-    if (!coinVisu)
+    CoinViewer::CoinViewer(QWidget *parent)
+        : SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
+          parent(parent),
+          sceneSep(new SoSeparator)
     {
-        VR_ERROR << "Not able to display visualization which is not of type CoinVisualization" << endl;
-        return;
+        sceneSep->ref();
+
+        SoQtExaminerViewer::setAccumulationBuffer(true);
+        SoQtExaminerViewer::setGLRenderAction(new SoLineHighlightRenderAction);
+        SoQtExaminerViewer::setFeedbackVisibility(true);
+        SoQtExaminerViewer::setSceneGraph(sceneSep);
+
+        viewAll();
+        setAntialiasing(4);
+        setBackgroundColor(VirtualRobot::Visualization::Color::None());
     }
 
-    addLayer(layer);
-    std::string li = getLayerID(layer, id);
-
-    SoNode *n = coinVisu->getCoinVisualization();
-    if (n)
+    CoinViewer::~CoinViewer()
     {
-        visualizations[li] = n;
-        layers[layer]->addChild(n);
-    }
-}
-
-void CoinViewer::addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization)
-{
-    VirtualRobot::CoinVisualizationNodePtr cvn = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(visualization);
-    VirtualRobot::CoinVisualizationPtr coinVisu(new VirtualRobot::CoinVisualizationSet(cvn));
-    addVisualization(layer, id, coinVisu);
-}
-
-void CoinViewer::removeVisualization(const std::string &layer, const std::string &id)
-{
-    if (!hasLayer(layer))
-        return;
-    if (!hasLayerID(layer, id))
-        return;
-    std::string li = getLayerID(layer, id);
-    SoSeparator *s = layers[layer];
-    s->removeChild(visualizations[li]);
-    visualizations.erase(li);
-}
-
-void CoinViewer::clearLayer(const std::string &layer)
-{
-    addLayer(layer);
-    layers[layer]->removeAllChildren();
-}
-
-bool CoinViewer::hasLayer(const std::string &layer)
-{
-    if (layers.find(layer) != layers.end())
-        return true;
-    return false;
-}
-
-bool CoinViewer::hasLayerID(const std::string &layer, const std::string &id)
-{
-    std::string li = getLayerID(layer, id);
-
-    if (visualizations.find(li) != visualizations.end())
-        return true;
-    return false;
-}
-
-QImage CoinViewer::getScreenshot()
-{
-    getSceneManager()->render();
-    getSceneManager()->scheduleRedraw();
-    QGLWidget* w = (QGLWidget*)getGLWidget();
-
-    QImage i = w->grabFrameBuffer();
-    return i;
-}
-
-void CoinViewer::start(QWidget *mainWindow)
-{
-    SoQt::show(mainWindow);
-    SoQt::mainLoop();
-}
-
-void CoinViewer::stop()
-{
-    SoQt::exitMainLoop();
-}
-
-void CoinViewer::resetView()
-{
-    viewAll();
-}
-
-void CoinViewer::viewAll()
-{
-    SoQtExaminerViewer::viewAll();
-}
-
-void CoinViewer::addLayer(const std::string &layer)
-{
-    if(layers.find(layer) != layers.end())
-    {
-        // Layer already exists
-        return;
+        sceneSep->removeAllChildren();
+        sceneSep->unref();
     }
 
-    layers[layer] = new SoSeparator;
-    sceneSep->addChild(layers[layer]);
-}
+    void CoinViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
+    {
+        requestLayer(layer).addVisualization(visualization);
+    }
 
-std::string CoinViewer::getLayerID(const std::string &layer, const std::string &id)
-{
-    std::string li = layer + "----" + id;
-    return li;
-}
+    void CoinViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
+    {
+        requestLayer(layer).removeVisualization(visualization);
+    }
 
+    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllVisualizations() const
+    {
+        std::vector<VirtualRobot::VisualizationPtr> visus;
+        for (const auto& entry : layers)
+        {
+            auto& layerVisus = entry.second.visualizations;
+            visus.insert(visus.end(), layerVisus.begin(), layerVisus.end());
+        }
+        return visus;
+    }
+
+    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllVisualizations(const std::string &layer) const
+    {
+        auto it = layers.find(layer);
+        if (it != layers.end())
+        {
+            return std::vector<VirtualRobot::VisualizationPtr>();
+        }
+        else
+        {
+            auto& v = it->second.visualizations;
+            return std::vector<VirtualRobot::VisualizationPtr>(v.begin(), v.end());
+        }
+    }
+
+    bool CoinViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
+    {
+        for (const auto& entry : layers)
+        {
+            if (entry.second.hasVisualization(visualization))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CoinViewer::hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const
+    {
+        auto it = layers.find(layer);
+        if (it != layers.end())
+        {
+            return false;
+        }
+        else
+        {
+            return it->second.hasVisualization(visualization);
+        }
+    }
+
+    void CoinViewer::clearLayer(const std::string &layer)
+    {
+        requestLayer(layer).clear();
+    }
+
+    bool CoinViewer::hasLayer(const std::string &layer) const
+    {
+        return layers.find(layer) != layers.end();
+    }
+
+    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
+    {
+        std::cout << "NYI" << std::endl;
+    }
+
+    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer) const
+    {
+        std::cout << "NYI" << std::endl;
+    }
+
+    void CoinViewer::start(QWidget *mainWindow)
+    {
+        SoQt::show(mainWindow);
+        SoQt::mainLoop();
+    }
+
+    void CoinViewer::stop()
+    {
+        SoQt::exitMainLoop();
+    }
+
+    QImage CoinViewer::getScreenshot() const
+    {
+        getSceneManager()->render();
+        getSceneManager()->scheduleRedraw();
+        QGLWidget* w = (QGLWidget*)getGLWidget();
+
+        QImage i = w->grabFrameBuffer();
+        return i;
+    }
+
+    void CoinViewer::resetView()
+    {
+        viewAll();
+    }
+
+    void CoinViewer::viewAll()
+    {
+        SoQtExaminerViewer::viewAll();
+    }
+
+    void CoinViewer::setAntialiasing(unsigned short quality)
+    {
+        if (quality == 0)
+        {
+            SoQtExaminerViewer::setAntialiasing(false, quality);
+        }
+        else
+        {
+            SoQtExaminerViewer::setAntialiasing(true, quality);
+        }
+    }
+
+    unsigned short CoinViewer::getAntialiasing() const
+    {
+        SbBool enabled;
+        int quality;
+        SoQtExaminerViewer::getAntialiasing(enabled, quality);
+        return enabled ? static_cast<unsigned short>(quality) : 0;
+    }
+
+    void CoinViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
+    {
+        backgroundColor = color;
+        if (color.isNone() || color.isTransparencyOnly())
+        {
+            SoQtExaminerViewer::setBackgroundColor(SbColor(1, 1, 1));
+        }
+        else
+        {
+            SoQtExaminerViewer::setBackgroundColor(SbColor(color.r, color.g, color.b));
+        }
+    }
+
+    VirtualRobot::Visualization::Color CoinViewer::getBackgroundColor() const
+    {
+        return backgroundColor;
+    }
+
+    CoinViewer::Layer &CoinViewer::requestLayer(const std::string &name)
+    {
+        auto it = layers.find(name);
+        if (it != layers.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            Layer& l = layers[name];
+            sceneSep->addChild(l.layerMainNode);
+            return l;
+        }
+    }
+
+    CoinViewer::Layer::Layer() : layerMainNode(new SoSeparator)
+    {
+        layerMainNode->ref();
+    }
+
+
+    CoinViewer::Layer::~Layer()
+    {
+        layerMainNode->removeAllChildren();
+        layerMainNode->unref();
+    }
+
+
+    void CoinViewer::Layer::addVisualization(const VirtualRobot::VisualizationPtr &visu)
+    {
+        if (!hasVisualization(visu))
+        {
+            visualizations.insert(visu);
+            layerMainNode->addChild(VirtualRobot::visualization_cast<VirtualRobot::CoinElement>(visu)->getMainNode());
+        }
+    }
+
+
+    void CoinViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visu)
+    {
+        auto it = visualizations.find(visu);
+        if (it != visualizations.end())
+        {
+            visualizations.erase(it);
+            layerMainNode->removeChild(VirtualRobot::visualization_cast<VirtualRobot::CoinElement>(visu)->getMainNode());
+        }
+    }
+
+
+    bool CoinViewer::Layer::hasVisualization(const VirtualRobot::VisualizationPtr &visu) const
+    {
+        return visualizations.find(visu) != visualizations.end();
+    }
+
+
+    void CoinViewer::Layer::clear()
+    {
+        layerMainNode->removeAllChildren();
+        visualizations.clear();
+    }
+
+}
