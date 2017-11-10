@@ -38,8 +38,8 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        CoinVisualizationFactory();
-        virtual ~CoinVisualizationFactory();
+        CoinVisualizationFactory() = default;
+        virtual ~CoinVisualizationFactory() = default;
 
         /*!
             Initialises SoDB and SoQt.
