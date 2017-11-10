@@ -169,7 +169,8 @@ namespace VirtualRobot
                 if (tcp)
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    VisualizationPtr visu = f->createCoordSystem(1.0f, NULL, tcpGP);
+                    VisualizationPtr visu = f->createCoordSystem(NULL);
+                    visu->setGlobalPose(tcpGP);
                     viewer->addVisualization("eefLayer", visu);
                 }
             }
