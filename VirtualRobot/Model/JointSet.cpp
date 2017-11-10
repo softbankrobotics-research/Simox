@@ -41,30 +41,30 @@ namespace VirtualRobot
         return mns;
     }
 	
-    JointSetPtr JointSet::clone(ModelPtr newModel)
+    JointSetPtr JointSet::clone(ModelPtr model)
 	{
         std::vector<ModelJointPtr> newModelNodes;
         for (auto &n: joints)
         {
-            THROW_VR_EXCEPTION_IF(!newModel->hasJoint(n->getName()), "Cannot clone, new model does not contain joint " << n->getName());
-            ModelJointPtr no = newModel->getJoint(n->getName());
+            THROW_VR_EXCEPTION_IF(!model->hasJoint(n->getName()), "Cannot clone, new model does not contain joint " << n->getName());
+            ModelJointPtr no = model->getJoint(n->getName());
             VR_ASSERT(no);
             newModelNodes.push_back(no);
         }
         ModelNodePtr newKinRoot;
         if (kinematicRoot)
         {
-            newKinRoot = newModel->getModelNode(kinematicRoot->getName());
+            newKinRoot = model->getModelNode(kinematicRoot->getName());
             VR_ASSERT(newKinRoot);
         }
         ModelNodePtr newTcp;
         if (tcp)
         {
-            newTcp = newModel->getModelNode(tcp->getName());
+            newTcp = model->getModelNode(tcp->getName());
             VR_ASSERT(newTcp);
         }
 
-        JointSetPtr result = JointSet::createJointSet(newModel, name, newModelNodes, newKinRoot, newTcp, true);
+        JointSetPtr result = JointSet::createJointSet(model, name, newModelNodes, newKinRoot, newTcp, true);
         return result;
 	}
 

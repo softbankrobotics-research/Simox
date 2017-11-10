@@ -170,10 +170,14 @@ namespace VirtualRobot
          */
         virtual std::string toXML(int tabs) const override;
 
-		/*!
-		* Clone this JointSet and register it to the new robot
-		*/
-        LinkSetPtr clone(ModelPtr newModel);
+        /*!
+         * Clones this LinkSet and registers it to the given model.
+         * All links of this LinkSet must be already registered at the given model.
+         * Note: this method does not deep copy the links, thus the cloned LinkSet will point to the same links.
+         *
+         * @param model The model the cloned LinkSet will be registered to.
+        */
+        LinkSetPtr clone(ModelPtr model);
 
 
     protected:

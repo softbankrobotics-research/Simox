@@ -59,7 +59,8 @@ namespace VirtualRobot
         virtual ~Model();
 
         /*!
-         * Register a new node to this model
+         * Registers a new node to this model (if not already registered).
+         * Note: This does not register the node's children or parent.
          *
          * @param node The new node.
          */
@@ -158,6 +159,7 @@ namespace VirtualRobot
 
         /*!
          * Register a new ModelNodeSet to this model.
+         * Note: This does not register the nodes of the given nodeSet.
          *
          * @param nodeSet The new node set.
          */

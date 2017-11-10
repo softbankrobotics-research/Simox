@@ -228,10 +228,14 @@ namespace VirtualRobot
          * @return The generated XML string.
          */
         virtual std::string toXML(int tabs) const override;
-		/*!
-		* Clone this JointSet and register it to the new robot
-		*/
-        JointSetPtr clone(ModelPtr newModel);
+        /*!
+         * Clones this JointSet and registers it to the given model.
+         * All joints of this JointSet must be already registered at the given model.
+         * Note: this does not deep copy the joints, thus the cloned JointSet will point to the same joints.
+         *
+         * @param model The model the cloned JointSet will be registered to.
+        */
+        JointSetPtr clone(ModelPtr model);
 
     private:
         std::vector<ModelJointPtr> joints;

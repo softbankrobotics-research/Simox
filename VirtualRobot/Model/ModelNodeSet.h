@@ -219,9 +219,13 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> getModelLinks() const;
 
 		/*!
-		* Clone this modelset and register it to the new robot
+		 * Clones this ModelNodeSet and registers it to the given model.
+		 * All nodes of this ModelNodeSet must be already registered at the given model.
+		 * Note: this method does not deep copy the nodes, thus the cloned ModelNodeSet will point to the same nodes.
+		 *
+		 * @param model The model the cloned ModelNodeSet will be registered to.
 		*/
-        ModelNodeSetPtr clone(ModelPtr newModel);
+        ModelNodeSetPtr clone(ModelPtr model);
 
     protected:
         static ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);

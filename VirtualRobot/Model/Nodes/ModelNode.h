@@ -371,16 +371,17 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) = 0;
 
         /*!
-         * Clone this ModelNode.
+         * Clones this ModelNode and registers it to the given model.
          *
-         * @param newModel The newly created ModelNode belongs to newModel.
-         * @param cloneChildren If true, all children are cloned (and their children, etc).
-         * @param initializeWithParent If given, the ModelNode is initialized with this parent.
-         * @param scaling Scale Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
+         * @param newModel The model to which the cloned node will be registered to.
+         * @param cloneChildren If true, all children will be cloned recursively.
+         * @param cloneAttachments If true, attachments will be cloned also.
+         * @param parentNode If given, the cloned node will be attached as a child to this node.
+         * @param scaling Scale can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          *
          * @return The new ModelNode.
          */
-        virtual ModelNodePtr clone(ModelPtr newModel, bool cloneChildren = true, bool cloneAttachments = true, RobotNodePtr initializeWithParent = RobotNodePtr(), float scaling = 1.0f);
+        virtual ModelNodePtr clone(ModelPtr newModel, bool cloneChildren = true, bool cloneAttachments = true, ModelNodePtr parentNode = ModelNodePtr(), float scaling = 1.0f);
 
         /*!
          * Check if node has the given type.

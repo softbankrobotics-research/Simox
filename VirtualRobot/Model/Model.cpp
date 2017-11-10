@@ -1125,8 +1125,8 @@ namespace VirtualRobot
             colChecker = this->getCollisionChecker();
         }
 
-        ModelNodePtr rootNew = startNode->clone(newModel, true, true, ModelNodePtr(), scaling);
-        THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
+        ModelNodePtr rootNew = startNode->clone(newModel, true, true, ModelNodePtr(), scaling); // This also clones (and registers) all children to the new model.
+        THROW_VR_EXCEPTION_IF(!rootNew, "Cloning failed...");
         newModel->setRootNode(rootNew);
         newModel->setScaling(scaling);
 

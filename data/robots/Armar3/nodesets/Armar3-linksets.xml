@@ -10,8 +10,8 @@
 	<Node name="Wrist 2 L_link"/>
 </LinkSet>
 
-<LinkSet name="PlatformTorsoHeadLinks" kinematicRoot="Armar3_Base" tcp="TCP L">
-	<Node name="Platform"/>
-	<Node name="Hip Yaw"/>
-	<Node name="Head_Tilt"/>
+<LinkSet name="PlatformTorsoHeadLinks" kinematicRoot="root" tcp="Head_Tilt">
+	<Node name="Platform_link"/>
+	<Node name="Hip Yaw_link"/>
+	<Node name="Head_Tilt_link"/>
 </LinkSet>
