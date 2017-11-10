@@ -1,6 +1,6 @@
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/XML/ModelIO.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
