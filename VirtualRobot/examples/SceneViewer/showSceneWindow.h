@@ -7,7 +7,6 @@
 #include "../../../VirtualRobot/Model/Nodes/ModelNode.h"
 #include "../../../VirtualRobot/XML/SceneIO.h"
 #include "../../../VirtualRobot/Visualization/VisualizationFactory.h"
-#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../../VirtualRobot/Model/Obstacle.h"
 
 #include "../../../Gui/ViewerInterface.h"

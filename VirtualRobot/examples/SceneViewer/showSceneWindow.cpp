@@ -22,6 +22,10 @@ using namespace VirtualRobot;
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
+#elif Simox_USE_QT3D_VISUALIZATION
+    #include "../../../Gui/Qt3D/Qt3DViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise qt3d Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::Qt3DViewerFactory f;
 #endif
 
 showSceneWindow::showSceneWindow(std::string& sSceneFile)
@@ -106,14 +110,14 @@ void showSceneWindow::buildVisu()
         visuType = ModelLink::VisualizationType::Collision;
     }
 
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, visuType);
-    viewer->addVisualization("scene", "scene", visu);
+    VisualizationSetPtr visu = scene->getVisualization(visuType);
+    viewer->addVisualization("scene", visu);
 
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
         VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &rootText);
-        viewer->addVisualization("scene", "coord", visuCoord);
+        viewer->addVisualization("scene", visuCoord);
     }
 
     updateGraspVisu();
@@ -129,8 +133,8 @@ void showSceneWindow::updateGraspVisu()
         std::string t = currentGrasp->getName();
         VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &t);
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
-        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visuCoord, gp);
-        viewer->addVisualization("grasps", "current-grasp", visuCoord);
+        visuCoord->applyDisplacement(gp);
+        viewer->addVisualization("grasps", visuCoord);
     }
 }
 
