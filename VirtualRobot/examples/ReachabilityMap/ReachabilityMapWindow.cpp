@@ -1,14 +1,14 @@
 
 #include "ReachabilityMapWindow.h"
-#include "VirtualRobot/EndEffector/EndEffector.h"
-#include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/XML/ObjectIO.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
-#include "VirtualRobot/Workspace/Reachability.h"
-#include "VirtualRobot/Workspace/Manipulability.h"
-#include "VirtualRobot/Workspace/WorkspaceGrid.h"
-#include "Gui/ViewerFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include <VirtualRobot/EndEffector/EndEffector.h>
+#include <VirtualRobot/XML/ModelIO.h>
+#include <VirtualRobot/XML/ObjectIO.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
+#include <VirtualRobot/Workspace/Reachability.h>
+#include <VirtualRobot/Workspace/Manipulability.h>
+#include <VirtualRobot/Workspace/WorkspaceGrid.h>
+#include <Gui/ViewerFactory.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
 
 #include <time.h>
 #include <vector>
@@ -20,7 +20,7 @@
 
 #include <Eigen/Geometry>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
+#include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoLightModel.h>
 
