@@ -143,7 +143,7 @@ namespace VirtualRobot
         /*!
         Constructor
         */
-        Visualization() : Frame()
+        Visualization() : Frame(), inVisualizationSet(false)
         {
         }
 
