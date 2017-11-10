@@ -9,13 +9,10 @@
 #include "../../Visualization/VisualizationFactory.h"
 #include "../../Model/Obstacle.h"
 #include "../../Model/ModelNodeSet.h"
-#include "../../Visualization/CoinVisualization/CoinVisualization.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
 #include "../../../Gui/ViewerInterface.h"
 #include "../../../Gui/ViewerFactory.h"
-#include "../../../Gui/ViewerSelection.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>

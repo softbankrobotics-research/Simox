@@ -7,7 +7,6 @@
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
 #include "../../Import/SimoxXMLFactory.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 
 #include <QFileDialog>
@@ -25,6 +24,10 @@
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
+#elif Simox_USE_QT3D_VISUALIZATION
+    #include "../../../Gui/Qt3D/Qt3DViewerFactory.h"
+    // need this to ensure that static Factory methods are called across library boundaries (otherwise qt3d Gui lib is not loaded since it is not referenced by us)
+    SimoxGui::Qt3DViewerFactory f;
 #endif
 
 using namespace std;
@@ -160,7 +163,7 @@ void showRobotWindow::robotFullModel()
 
     bool showFullModel = UI.checkBoxFullModel->checkState() == Qt::Checked;
 
-    robot->setupVisualization(showFullModel, true);
+    robot->setupVisualization(showFullModel);
 
 }
 
@@ -177,8 +180,8 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-    viewer->addVisualization("robotLayer", "robot", visu);
+    VisualizationSetPtr visu = robot->getVisualization(colModel);
+    viewer->addVisualization("robotLayer", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -589,7 +592,7 @@ void showRobotWindow::robotStructure()
     }
 
     if (UI.checkBoxStructure->checkState() == Qt::Checked)
-        robot->attachStructure(VirtualRobot::CoinVisualizationFactory::getName());
+        robot->attachStructure(VirtualRobot::VisualizationFactory::getName());
     else
         robot->detachStructure();
 
@@ -604,7 +607,7 @@ void showRobotWindow::robotCoordSystems()
     }
 
     if (UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked)
-        robot->attachFrames(VirtualRobot::CoinVisualizationFactory::getName());
+        robot->attachFrames(VirtualRobot::VisualizationFactory::getName());
     else
         robot->detachFrames();
 
