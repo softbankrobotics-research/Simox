@@ -32,55 +32,26 @@
 namespace SimoxGui
 {
 
-    class SIMOX_GUI_IMPORT_EXPORT Qt3DViewer : public ViewerInterface, Qt3DExtras::Qt3DWindow
+    class SIMOX_GUI_IMPORT_EXPORT Qt3DViewer : public ViewerInterface, public Qt3DExtras::Qt3DWindow
     {
     public:
 
-        Qt3DViewer(QWidget *parent)
-        {
-            parent = QWidget::createWindowContainer(this);
-        }
+        Qt3DViewer(QWidget *parent);
         ~Qt3DViewer();
 
-        virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override
-        {
-        }
-        virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override
-        {
-        }
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override
-        {
-        }
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override
-        {
-        }
-        virtual void clearLayer(const std::string &layer) override
-        {
-        }
-        virtual bool hasLayer(const std::string &layer) const override
-        {
-        }
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override
-        {
-        }
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override
-        {
-        }
-        virtual void start(QWidget *mainWindow) override
-        {
-        }
-        virtual void stop() override
-        {
-        }
-        virtual QImage getScreenshot() override
-        {
-        }
-        virtual void resetView() override
-        {
-        }
-        virtual void viewAll() override
-        {
-        }
+        virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override;
+        virtual void clearLayer(const std::string &layer) override;
+        virtual bool hasLayer(const std::string &layer) const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
+        virtual void start(QWidget *mainWindow) override;
+        virtual void stop() override;
+        virtual QImage getScreenshot() override;
+        virtual void resetView() override;
+        virtual void viewAll() override;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
