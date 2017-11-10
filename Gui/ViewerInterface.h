@@ -27,6 +27,7 @@
 #include "SimoxGuiImportExport.h"
 
 #include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Visualization/Visualization.h>
 
 #include <QtGui/QtGui>
 #include <QImage>
@@ -43,6 +44,8 @@ public:
     virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) = 0;
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const = 0;
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const = 0;
+    virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const = 0;
+    virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const = 0;
 
     virtual void clearLayer(const std::string &layer) = 0;
     virtual bool hasLayer(const std::string &layer) const = 0;
@@ -52,11 +55,17 @@ public:
 
     virtual void start(QWidget *mainWindow) = 0;
     virtual void stop() = 0;
-    virtual QImage getScreenshot() = 0;
+
+    virtual QImage getScreenshot() const = 0;
 
     virtual void resetView() = 0;
-
     virtual void viewAll() = 0;
+
+    virtual void setAntialiasing(unsigned short quality) = 0;
+    virtual unsigned short getAntialiasing() const = 0;
+
+    virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) = 0;
+    virtual VirtualRobot::Visualization::Color getBackgroundColor() const = 0;
 };
 typedef std::shared_ptr<ViewerInterface> ViewerInterfacePtr;
 
