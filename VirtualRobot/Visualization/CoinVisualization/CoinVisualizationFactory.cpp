@@ -476,22 +476,25 @@ namespace VirtualRobot
                 auto colorId = vertexNum==0 ? face.idColor1 : (vertexNum==1 ? face.idColor2 : face.idColor3);
                 if (face.idMaterial < 0 || face.idMaterial >= model->materials.size())
                 {
-                    auto& color = model->colors.at(colorId);
-                    if (!color.isNone() && !color.isTransparencyOnly())
+                    if (!model->colors.empty())
                     {
-                        float r = color.r;
-                        float g = color.g;
-                        float b = color.b;
-                        float transparency = color.transparency;
-                        myMaterials->ambientColor.set1Value(coinId, r, g, b);
-                        myMaterials->diffuseColor.set1Value(coinId, r, g, b);
-                        myMaterials->transparency.set1Value(coinId, transparency);
+                        auto& color = model->colors.at(colorId);
+                        if (!color.isNone() && !color.isTransparencyOnly())
+                        {
+                            float r = color.r;
+                            float g = color.g;
+                            float b = color.b;
+                            float transparency = color.transparency;
+                            myMaterials->ambientColor.set1Value(coinId, r, g, b);
+                            myMaterials->diffuseColor.set1Value(coinId, r, g, b);
+                            myMaterials->transparency.set1Value(coinId, transparency);
+                        }
                     }
                     else
                     {
-                        myMaterials->ambientColor.set1Value(i, 0.f, 0.f, 0.f);
-                        myMaterials->diffuseColor.set1Value(i, 0.f, 0.f, 0.f);
-                        myMaterials->transparency.set1Value(i, 1.f);
+                        myMaterials->ambientColor.set1Value(i, 0.5f, 0.5f, 0.5f);
+                        myMaterials->diffuseColor.set1Value(i, 0.5f, 0.5f, 0.5f);
+                        myMaterials->transparency.set1Value(i, 0.5f);
                     }
                 }
                 else
