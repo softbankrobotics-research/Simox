@@ -7,7 +7,6 @@
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
 #include "../../Import/SimoxXMLFactory.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 
 #include <QFileDialog>
@@ -160,7 +159,7 @@ void showRobotWindow::robotFullModel()
 
     bool showFullModel = UI.checkBoxFullModel->checkState() == Qt::Checked;
 
-    robot->setupVisualization(showFullModel, true);
+    robot->setupVisualization(showFullModel);
 
 }
 
@@ -177,8 +176,8 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-    viewer->addVisualization("robotLayer", "robot", visu);
+    auto visu = robot->getVisualization(colModel);
+    viewer->addVisualization("robotLayer", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 
@@ -589,7 +588,7 @@ void showRobotWindow::robotStructure()
     }
 
     if (UI.checkBoxStructure->checkState() == Qt::Checked)
-        robot->attachStructure(VirtualRobot::CoinVisualizationFactory::getName());
+        robot->attachStructure(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
     else
         robot->detachStructure();
 
@@ -604,7 +603,7 @@ void showRobotWindow::robotCoordSystems()
     }
 
     if (UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked)
-        robot->attachFrames(VirtualRobot::CoinVisualizationFactory::getName());
+        robot->attachFrames(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
     else
         robot->detachFrames();
 
