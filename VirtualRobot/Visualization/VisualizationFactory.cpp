@@ -11,6 +11,7 @@
 #include "VisualizationSet.h"
 #include "TriMeshModel.h"
 
+#include <fstream>
 
 namespace VirtualRobot
 {
