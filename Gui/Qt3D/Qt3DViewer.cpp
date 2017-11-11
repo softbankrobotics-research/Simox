@@ -27,7 +27,7 @@
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow()
 {
-    //parent = QWidget::createWindowContainer(this);
+    parent = QWidget::createWindowContainer(this);
     std::cout << "Creating Qt3D viewer" << std::endl;
 }
 

@@ -14,7 +14,7 @@ function(setupSimoxExternalLibraries)
     if (Simox_USE_QT4)
         FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
         else()
-        FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
+        FIND_PACKAGE(Qt5 5.9.0 QUIET COMPONENTS OpenGL Core Gui Widgets 3DCore 3DExtras 3DRender 3DInput)
     endif()
   ENDIF()
   INCLUDE_DIRECTORIES(${Simox_INCLUDE_DIRS})
@@ -62,6 +62,17 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
         SET (SIMOX_VISU_GUI_LIB simox-gui)
     endif()
     TARGET_LINK_LIBRARIES(${name} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES} ${SIMOX_VISU_GUI_LIB})
+
+    #Not sure why this is necessary, but I get linker errors otherwise
+    target_link_libraries(${PROJECT_NAME}
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Widgets
+        Qt5::3DCore
+        Qt5::3DExtras
+        Qt5::3DRender
+        Qt5::3DInput
+    )
 endfunction()
 
 

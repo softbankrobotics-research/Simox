@@ -19,3 +19,5 @@ ADD_SUBDIRECTORY(GraspEditor)
 ADD_SUBDIRECTORY(ReachabilityMap)
 ADD_SUBDIRECTORY(LoadURDFRobot)
 
+#Visualization Testing
+ADD_SUBDIRECTORY(VisualizationTest)
