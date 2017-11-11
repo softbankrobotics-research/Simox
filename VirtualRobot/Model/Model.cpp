@@ -263,7 +263,7 @@ namespace VirtualRobot
 
 	bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
 	{
-		return nodeSet && getModelNodeSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasModelNodeSet(nodeSet->getName());
 	}
 
 	bool Model::hasModelNodeSet(const std::string& name) const
@@ -275,7 +275,7 @@ namespace VirtualRobot
 
 	bool Model::hasJointSet(const JointSetPtr& nodeSet) const
 	{
-		return nodeSet && getJointSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasJointSet(nodeSet->getName());
 	}
 
 	bool Model::hasJointSet(const std::string & name) const
@@ -287,7 +287,7 @@ namespace VirtualRobot
 
 	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
 	{
-		return nodeSet && getLinkSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasLinkSet(nodeSet->getName());
 	}
 
 	bool Model::hasLinkSet(const std::string & name) const
