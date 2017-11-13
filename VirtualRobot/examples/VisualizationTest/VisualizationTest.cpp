@@ -8,5 +8,7 @@ int main(int argc, char* argv[])
     VisualizationTestWindow testWindow;
     testWindow.show();
 
+    testWindow.main();
+
     return testWindowApplication.exec();
 }

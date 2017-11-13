@@ -15,7 +15,6 @@ VisualizationTestWindow::VisualizationTestWindow()
     : QMainWindow(NULL)
 {
     setupUI();
-
 }
 
 
