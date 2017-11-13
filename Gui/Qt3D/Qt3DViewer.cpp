@@ -23,17 +23,19 @@
 
 #include "Qt3DViewer.h"
 
-#include <iostream>
+#include <QApplication>
+#include <QVBoxLayout>
 
-SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow()
+SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
 {
-    parent = QWidget::createWindowContainer(this);
-    std::cout << "Creating Qt3D viewer" << std::endl;
+    QVBoxLayout *layout = new QVBoxLayout(parent);
+    QWidget *container = QWidget::createWindowContainer(this);
+    layout->addWidget(container);
+    parent->setLayout(layout);
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
-    std::cout << "Destroying Qt3D viewer" << std::endl;
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
@@ -70,7 +72,6 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected
 
 void SimoxGui::Qt3DViewer::start(QWidget *mainWindow)
 {
-    std::cout << "Start Qt3D viewer" << std::endl;
 }
 
 void SimoxGui::Qt3DViewer::stop()
@@ -87,5 +88,4 @@ void SimoxGui::Qt3DViewer::resetView()
 
 void SimoxGui::Qt3DViewer::viewAll()
 {
-    std::cout << "View all Qt3D viewer" << std::endl;
 }

@@ -52,6 +52,8 @@ namespace SimoxGui
         virtual QImage getScreenshot() override;
         virtual void resetView() override;
         virtual void viewAll() override;
+    private:
+        QWidget* parent;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
