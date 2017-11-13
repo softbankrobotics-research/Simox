@@ -443,7 +443,7 @@ namespace VirtualRobot
         return static_cast<int>(getTriMeshModel()->faces.size());
     }
 
-    VisualizationPtr CoinVisualization::clone(float scaling) const
+    VisualizationPtr CoinVisualization::clone() const
     {
         SoNode* deepCopiedNode = copyNode(visualizationNode);
         CoinVisualizationPtr p(new CoinVisualization(deepCopiedNode));
@@ -452,7 +452,6 @@ namespace VirtualRobot
         p->setStyle(this->getStyle());
         p->setMaterial(this->getMaterial());
         p->setScalingFactor(this->getScalingFactor());
-        p->scale(Eigen::Vector3f::Constant(scaling));
         p->createTriMeshModel();
         p->primitives = this->primitives;
         p->setUpdateVisualization(this->getUpdateVisualizationStatus());

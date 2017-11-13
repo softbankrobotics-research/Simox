@@ -71,9 +71,16 @@ namespace VirtualRobot
         this->removeVisualization(this->getVisualizationAt(id));
     }
 
-    VisualizationPtr CoinVisualizationSet::clone(float scaling) const
+    VisualizationPtr CoinVisualizationSet::clone() const
     {
-        return VisualizationPtr(new CoinVisualizationSet(getVisualizations()));
+        std::vector<VisualizationPtr> clonedVisus;
+        const auto& visus = getVisualizations();
+        clonedVisus.reserve(visus.size());
+        for (const auto& visu : visus)
+        {
+            clonedVisus.push_back(visu->clone());
+        }
+        return VisualizationPtr(new CoinVisualizationSet(clonedVisus));
     }
 
     void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)

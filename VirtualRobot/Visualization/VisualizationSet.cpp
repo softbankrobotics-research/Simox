@@ -460,13 +460,13 @@ namespace VirtualRobot
     {
     }
 
-    VisualizationPtr DummyVisualizationSet::clone(float scaling) const
+    VisualizationPtr DummyVisualizationSet::clone() const
     {
         std::vector<VisualizationPtr> clonedVisus;
         clonedVisus.reserve(visualizations.size());
         for (auto& visu : visualizations)
         {
-            clonedVisus.push_back(visu->clone(1.f));
+            clonedVisus.push_back(visu->clone());
         }
         auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
         visu->setVisible(this->isVisible());
@@ -474,7 +474,6 @@ namespace VirtualRobot
         visu->setColor(this->getColor());
         visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
         visu->setScalingFactor(this->getScalingFactor());
-        visu->scale(Eigen::Vector3f::Constant(scaling));
         visu->createTriMeshModel();
         visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
         return visu;

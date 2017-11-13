@@ -122,7 +122,7 @@ namespace VirtualRobot
 
         virtual int getNumFaces() const override;
 
-        virtual VisualizationPtr clone(float scaling) const override;
+        virtual VisualizationPtr clone() const override;
 
         virtual void print() const override;
 

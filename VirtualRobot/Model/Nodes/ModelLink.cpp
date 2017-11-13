@@ -342,7 +342,10 @@ namespace VirtualRobot
     {
         VisualizationPtr clonedVisu;
         if (visualizationModel)
-            clonedVisu = visualizationModel->clone(scaling);
+        {
+            clonedVisu = visualizationModel->clone();
+            clonedVisu->scale(Eigen::Vector3f::Constant(scaling));
+        }
         CollisionModelPtr clonedCol;
         if (collisionModel)
             clonedCol = collisionModel->clone(newModel->getCollisionChecker(), scaling);

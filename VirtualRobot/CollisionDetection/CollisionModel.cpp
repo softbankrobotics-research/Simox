@@ -82,7 +82,7 @@ namespace VirtualRobot
     {
         if((margin != value) || (origVisualization && !model))
         {
-            visualization = origVisualization->clone(true);
+            visualization = origVisualization->clone();
             visualization->shrinkFatten(value);
             model = visualization->getTriMeshModel();
             if (model)
@@ -125,7 +125,10 @@ namespace VirtualRobot
         VisualizationPtr visuOrigNew;
 
         if(origVisualization)
-            visuOrigNew = origVisualization->clone(scaling);
+        {
+            visuOrigNew = origVisualization->clone();
+            visuOrigNew->scale(Eigen::Vector3f::Constant(scaling));
+        }
 
         std::string nameNew = name;
         int idNew = id;

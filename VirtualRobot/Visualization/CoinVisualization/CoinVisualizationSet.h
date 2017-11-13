@@ -53,7 +53,7 @@ namespace VirtualRobot
         //virtual std::vector<VisualizationPtr> getVisualizations() const override;
         //virtual VisualizationPtr getVisualizationAt(size_t index) const override;
 
-        virtual VisualizationPtr clone(float scaling) const override;
+        virtual VisualizationPtr clone() const override;
 
         //virtual Eigen::Matrix4f getGlobalPose() const override;
         //virtual Eigen::Matrix4f getGlobalPose(size_t id) const override;

@@ -272,7 +272,7 @@ namespace VirtualRobot
         return static_cast<int>(p->faces.size());
     }
 
-    VisualizationPtr DummyVisualization::clone(float scaling) const
+    VisualizationPtr DummyVisualization::clone() const
     {
         VisualizationPtr visu(new DummyVisualization);
 
@@ -281,7 +281,7 @@ namespace VirtualRobot
         visu->setStyle(this->getStyle());
         visu->setColor(this->getColor());
         visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->scale(this->getScalingFactor() * scaling);
+        visu->setScalingFactor(this->getScalingFactor());
         visu->createTriMeshModel();
 
         return VisualizationPtr();

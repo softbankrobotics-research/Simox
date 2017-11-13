@@ -295,7 +295,7 @@ namespace VirtualRobot
             \param scaling Scale Can be set to create a scaled version of this visual data.
             Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
         */
-        virtual VisualizationPtr clone(float scaling = 1.0f) const = 0;
+        virtual VisualizationPtr clone() const = 0;
 
         //! print information about this visualization object.
         virtual void print() const = 0;
@@ -421,7 +421,7 @@ namespace VirtualRobot
             \param scaling Scale Can be set to create a scaled version of this visual data.
             Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
         */
-        virtual VisualizationPtr clone(float scaling = 1.0f) const override;
+        virtual VisualizationPtr clone() const override;
 
         //! print information about this visualization object.
         virtual void print() const override;

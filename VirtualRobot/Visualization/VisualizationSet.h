@@ -50,7 +50,7 @@ namespace VirtualRobot
         virtual bool empty() const;
         virtual size_t size() const;
 
-        virtual VisualizationPtr clone(float scaling) const override = 0;
+        virtual VisualizationPtr clone() const override = 0;
 
         virtual Eigen::Matrix4f getGlobalPose() const override;
         virtual Eigen::Matrix4f getGlobalPose(size_t id) const;
@@ -154,7 +154,7 @@ namespace VirtualRobot
         //virtual std::vector<VisualizationPtr> getVisualizations() const override;
         //virtual VisualizationPtr getVisualizationAt(size_t index) const override;
 
-        virtual VisualizationPtr clone(float scaling) const override;
+        virtual VisualizationPtr clone() const override;
 
         //virtual Eigen::Matrix4f getGlobalPose() const override;
         //virtual Eigen::Matrix4f getGlobalPose(size_t id) const override;
