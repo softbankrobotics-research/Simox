@@ -186,19 +186,12 @@ namespace VirtualRobot
         buildGraspSetVisu();
     }
 
-    int GraspEditorWindow::main()
-    {
-        viewer->start(this);
-        return 0;
-    }
-
 
     void GraspEditorWindow::quit()
     {
         std::cout << "GraspEditorWindow: Closing" << std::endl;
         this->close();
         timer->stop();
-        viewer->stop();
     }
 
     void GraspEditorWindow::selectRobot()

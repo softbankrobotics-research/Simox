@@ -30,9 +30,6 @@ public:
     showRobotWindow(std::string& sRobotFilename);
     ~showRobotWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
-
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();

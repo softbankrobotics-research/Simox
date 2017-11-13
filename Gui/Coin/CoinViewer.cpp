@@ -141,17 +141,6 @@ namespace SimoxGui
         std::cout << "NYI" << std::endl;
     }
 
-    void CoinViewer::start(QWidget *mainWindow)
-    {
-        SoQt::show(mainWindow);
-        SoQt::mainLoop();
-    }
-
-    void CoinViewer::stop()
-    {
-        SoQt::exitMainLoop();
-    }
-
     QImage CoinViewer::getScreenshot() const
     {
         getSceneManager()->render();

@@ -53,9 +53,6 @@ public:
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const = 0;
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const = 0;
 
-    virtual void start(QWidget *mainWindow) = 0;
-    virtual void stop() = 0;
-
     virtual QImage getScreenshot() const = 0;
 
     virtual void resetView() = 0;

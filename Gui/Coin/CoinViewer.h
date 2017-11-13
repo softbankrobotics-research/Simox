@@ -53,9 +53,6 @@ namespace SimoxGui
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
 
-        virtual void start(QWidget *mainWindow) override;
-        virtual void stop() override;
-
         virtual QImage getScreenshot() const override;
 
         virtual void resetView() override;

@@ -291,18 +291,10 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int showRobotWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void showRobotWindow::quit()
 {
     std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void showRobotWindow::updateJointBox()
