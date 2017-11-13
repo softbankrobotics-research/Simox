@@ -28,6 +28,7 @@
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoUnits.h>
 
 #include <unordered_set>
 
@@ -87,6 +88,7 @@ namespace SimoxGui
         QWidget *parent;
 
         SoSeparator *sceneSep;
+        SoUnits *unitNode;
         std::map<std::string, Layer> layers;
 
         VirtualRobot::Visualization::Color backgroundColor;

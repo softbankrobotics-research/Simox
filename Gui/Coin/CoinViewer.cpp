@@ -35,9 +35,14 @@ namespace SimoxGui
     CoinViewer::CoinViewer(QWidget *parent)
         : SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
           parent(parent),
-          sceneSep(new SoSeparator)
+          sceneSep(new SoSeparator),
+          unitNode(new SoUnits)
     {
         sceneSep->ref();
+        unitNode->ref();
+
+        unitNode->units = SoUnits::MILLIMETERS;
+        sceneSep->addChild(unitNode);
 
         SoQtExaminerViewer::setAccumulationBuffer(true);
         SoQtExaminerViewer::setGLRenderAction(new SoLineHighlightRenderAction);
@@ -53,6 +58,7 @@ namespace SimoxGui
     {
         sceneSep->removeAllChildren();
         sceneSep->unref();
+        unitNode->unref();
     }
 
     void CoinViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
