@@ -86,7 +86,7 @@ namespace VirtualRobot
 
     SoNode *CoinVisualization::getMainNode() const
     {
-        return transformNode;
+        return mainNode;
     }
 
     void CoinVisualization::setVisualization(SoNode *newVisu)
