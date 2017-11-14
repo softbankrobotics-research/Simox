@@ -172,7 +172,11 @@ namespace VirtualRobot
         if (limitless)
         {
             // limitless joint: map q to allowed interval
+            if(q > jointLimitHi)
+                q = fmod(q, 2.0f * M_PI);
             while (q > jointLimitHi) q -= 2.0f * M_PI;
+            if(q < jointLimitLo)
+                q = -fmod(fabs(q), 2.0f * M_PI);
             while (q < jointLimitLo) q += 2.0f * M_PI;
         }
         else
