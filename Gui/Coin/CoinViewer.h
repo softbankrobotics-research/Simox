@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    Gui
-* @author     Peter Kaiser
-* @copyright  2016 Peter Kaiser
+* @author     Peter Kaiser, Adrian Knobloch
+* @copyright  2016,2017 Peter Kaiser, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -28,50 +28,68 @@
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoUnits.h>
+
+#include <unordered_set>
 
 namespace SimoxGui
 {
-
-class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtExaminerViewer
-{
+    class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtExaminerViewer
+    {
     public:
         CoinViewer(QWidget *parent);
         ~CoinViewer();
 
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationSetPtr &visualization);
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
-        virtual void removeVisualization(const std::string &layer, const std::string &id);
+        virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override;
+        virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const override;
+        virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const override;
 
-        virtual void clearLayer(const std::string &layer);
+        virtual void clearLayer(const std::string &layer) override;
+        virtual bool hasLayer(const std::string &layer) const override;
 
-        virtual bool hasLayer(const std::string &layer);
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
 
-        bool hasLayerID(const std::string &layer, const std::string &id);
+        virtual QImage getScreenshot() const override;
 
-        virtual QImage getScreenshot();
+        virtual void resetView() override;
+        virtual void viewAll() override;
 
+        virtual void setAntialiasing(unsigned short quality) override;
+        virtual unsigned short getAntialiasing() const override;
 
-        virtual void start(QWidget *mainWindow);
-        virtual void stop();
-
-        virtual void resetView();
-
-        virtual void viewAll();
-
-    protected:
-        void addLayer(const std::string &layer);
-        std::vector<std::string> getVisualizationIDs(const std::string &layer);
-
-        std::string getLayerID(const std::string &layer, const std::string &id);
+        virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) override;
+        virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
     protected:
-        SoSeparator *sceneSep;
+        struct Layer
+        {
+            Layer();
+            ~Layer();
 
-        std::map<std::string, SoSeparator *> layers;
-        std::map<std::string, SoNode *> visualizations;
+            void addVisualization(const VirtualRobot::VisualizationPtr& visu);
+            void removeVisualization(const VirtualRobot::VisualizationPtr& visu);
+            bool hasVisualization(const VirtualRobot::VisualizationPtr& visu) const;
+
+            void clear();
+
+            std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
+            SoSeparator* layerMainNode;
+        };
+
+        Layer& requestLayer(const std::string& name);
 
         QWidget *parent;
-};
+
+        SoSeparator *sceneSep;
+        SoUnits *unitNode;
+        std::map<std::string, Layer> layers;
+
+        VirtualRobot::Visualization::Color backgroundColor;
+    };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }
 

@@ -34,17 +34,11 @@ namespace SimoxGui
     class SIMOX_GUI_IMPORT_EXPORT CoinViewerFactory  : public ViewerFactory
     {
     public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        CoinViewerFactory() = default;
+        virtual ~CoinViewerFactory() = default;
 
-        CoinViewerFactory();
-        virtual ~CoinViewerFactory();
+        ViewerInterfacePtr createViewer(QWidget *parent = NULL) const override;
 
-        ViewerInterfacePtr createViewer(QWidget *parent = NULL);
-
-    protected:
-
-        // AbstractFactoryMethod
-    public:
         static std::string getName();
         static ViewerFactoryPtr createInstance(void*);
     private:

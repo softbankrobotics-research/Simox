@@ -14,37 +14,28 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Gui
-* @author     Nikolaus Vahrenkamp, Adrian Knobloch
-* @copyright  2016 Nikolaus Vahrenkamp
+* @package    VirtualRobot
+* @author     Adrian Knobloch
+* @copyright  2017 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_ViewerFactory_h_
-#define _Gui_ViewerFactory_h_
+#ifndef _VirtualRobot_CoinElement_h_
+#define _VirtualRobot_CoinElement_h_
 
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
-#include <string>
+#include <memory>
 
-#include "ViewerInterface.h"
+class SoNode;
 
-
-namespace SimoxGui
+namespace VirtualRobot
 {
-
-    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinElement
     {
     public:
-        ViewerFactory()
-        {
-        }
-        virtual ~ViewerFactory() = default;
-
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) const = 0;
+        virtual SoNode* getMainNode() const = 0;
     };
-    typedef std::shared_ptr<ViewerFactory> ViewerFactoryPtr;
+    typedef std::shared_ptr<CoinElement> CoinElementPtr;
+} // namespace VirtualRobot
 
-} // namespace SimoxGui
-
-#endif
+#endif // _VirtualRobot_CoinVisualization_h_

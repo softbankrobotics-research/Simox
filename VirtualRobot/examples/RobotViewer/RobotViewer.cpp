@@ -14,8 +14,9 @@ int main(int argc, char* argv[])
     VR_INFO << "Robot file: " << filename << endl;
 
     showRobotWindow rw(filename);
+    rw.show();
+    rw.raise();
 
-    rw.main();
-
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

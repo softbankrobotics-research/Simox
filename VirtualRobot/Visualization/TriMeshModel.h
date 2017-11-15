@@ -106,14 +106,7 @@ namespace VirtualRobot
         bool checkFacesHaveSameEdge(const TriangleFace& face1, const TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
         unsigned int checkAndCorrectNormals(bool inverted);
 
-        inline VisualizationPtr getVisualization(Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f)
-        {
-            VisualizationFactory::getGlobalVisualizationFactory()->createTriMeshModelVisualization(shared_from_this(), pose, scaleX, scaleY, scaleZ);
-        }
-        inline VisualizationPtr getVisualization(bool showNormals, Eigen::Matrix4f& pose, bool showLines = true)
-        {
-            VisualizationFactory::getGlobalVisualizationFactory()->createTriMeshModelVisualization(shared_from_this(), showNormals, pose, showLines);
-        }
+        VisualizationPtr getVisualization(bool showNormals = false, bool showLines = true);
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
         TriMeshModelPtr clone() const;

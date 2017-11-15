@@ -52,6 +52,7 @@ Visualization/VisualizationSet.cpp
 Visualization/Visualization.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
+Visualization/OffscreenRenderer.cpp
 XML/BaseIO.cpp
 XML/ModelIO.cpp
 XML/SceneIO.cpp
@@ -159,6 +160,7 @@ Visualization/Visualization.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
+Visualization/OffscreenRenderer.h
 XML/BaseIO.h
 XML/ModelIO.h
 XML/SceneIO.h
@@ -280,6 +282,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationFactory.cpp
     Visualization/CoinVisualization/CoinVisualization.cpp
     Visualization/CoinVisualization/CoinVisualizationSet.cpp
+    Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
     )
 
     SET(INCLUDES
@@ -287,6 +290,8 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationFactory.h
     Visualization/CoinVisualization/CoinVisualization.h
     Visualization/CoinVisualization/CoinVisualizationSet.h
+    Visualization/CoinVisualization/CoinOffscreenRenderer.h
+    Visualization/CoinVisualization/CoinElement.h
     )
 
     if(BUILD_TESTING)

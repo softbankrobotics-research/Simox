@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Manfred Kroehnert, Nikolaus Vahrenkamp
-* @copyright  2010,2011 Manfred Kroehnert, Nikolaus Vahrenkamp
+* @author     Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
+* @copyright  2010,2011,2017 Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -25,6 +25,7 @@
 
 #include "../Model/Frame.h"
 #include "../Model/Primitive.h"
+#include "../VirtualRobot.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -34,10 +35,19 @@
 
 namespace VirtualRobot
 {
-    class TriMeshModel;
     class BoundingBox;
-    class VisualizationFactory;
-    class VisualizationSet;
+
+    template<typename T>
+    static inline std::shared_ptr<T> visualization_cast(const VisualizationPtr& visu)
+    {
+    #ifdef NDEBUG
+        auto vc = std::static_pointer_cast<T>(visu);
+    #else
+        auto vc = std::dynamic_pointer_cast<T>(visu);
+        VR_ASSERT(vc);
+    #endif
+        return vc;
+    }
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame
     {
@@ -57,10 +67,21 @@ namespace VirtualRobot
             {
                 return transparency >= 1.0f;
             }
-            bool isTransparencyOnly()
+            bool isTransparencyOnly() const
             {
                 return r > 1.f || g > 1.f || b > 1.f || r < 0.f || g < 0.f || b < 0.f;
             }
+            inline bool operator==(const Color& c) const
+            {
+                return (isNone() && c.isNone()) ||
+                       (isTransparencyOnly() && c.isTransparencyOnly() && transparency == c.transparency) ||
+                       (r == c.r && g == c.g && b == c.b);
+            }
+            inline bool operator!=(const Color& c) const
+            {
+                return !(*this == c);
+            }
+
             static Color Blue(float transparency = 0.0f)
             {
                 return Color(0.2f, 0.2f, 1.0f, transparency);
@@ -91,26 +112,38 @@ namespace VirtualRobot
             }
         };
 
-        struct PhongMaterial
+        struct Material
         {
-            PhongMaterial() {}
-            Color emission;
+            virtual ~Material() = default;
+        };
+        using MaterialPtr = std::shared_ptr<Material>;
+        struct NoneMaterial : public Material
+        {
+            virtual ~NoneMaterial() = default;
+        };
+        struct PhongMaterial : public Material
+        {
+            virtual ~PhongMaterial() = default;
             Color ambient;
             Color diffuse;
             Color specular;
             float shininess;
-            Color reflective;
-            float reflectivity;
-            Color transparent;
             float transparency;
-            float refractionIndex;
+        };
+        using PhongMaterialPtr = std::shared_ptr<PhongMaterial>;
+
+        enum DrawStyle
+        {
+            undefined,
+            normal,
+            wireframe
         };
 
     protected:
         /*!
         Constructor
         */
-        Visualization() : Frame()
+        Visualization() : Frame(), inVisualizationSet(false)
         {
         }
 
@@ -142,12 +175,6 @@ namespace VirtualRobot
         virtual void setUpdateVisualization(bool enable) = 0;
         virtual bool getUpdateVisualizationStatus() const = 0;
 
-
-        enum DrawStyle
-        {
-            normal,
-            wireframe
-        };
         virtual void setStyle(DrawStyle s) = 0;
         virtual DrawStyle getStyle() const = 0;
 
@@ -161,6 +188,9 @@ namespace VirtualRobot
         {
             this->setColor(Color::Transparency(transparency));
         }
+
+        virtual void setMaterial(const MaterialPtr& material) = 0;
+        virtual MaterialPtr getMaterial() const = 0;
 
         inline void select()
         {
@@ -185,8 +215,13 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
         virtual void removeSelectionChangedCallback(size_t id) = 0;
 
-        virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
-        virtual Eigen::Vector3f getScaleFactor() const = 0;
+        inline void scale(const Eigen::Vector3f& scaleFactor)
+        {
+            auto sf = this->getScalingFactor();
+            this->setScalingFactor(Eigen::Vector3f(sf.x() * scaleFactor.x(), sf.y() * scaleFactor.y(), sf.z() * scaleFactor.z()));
+        }
+        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) = 0;
+        virtual Eigen::Vector3f getScalingFactor() const = 0;
 
         virtual void shrinkFatten(float offset) = 0;
 
@@ -260,7 +295,7 @@ namespace VirtualRobot
             \param scaling Scale Can be set to create a scaled version of this visual data.
             Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
         */
-        virtual VisualizationPtr clone(float scaling = 1.0f) const = 0;
+        virtual VisualizationPtr clone() const = 0;
 
         //! print information about this visualization object.
         virtual void print() const = 0;
@@ -283,13 +318,15 @@ namespace VirtualRobot
          *
          * If a visualization is in a set, it is only selecable and manipulateable using the set.
          */
-        virtual bool isInVisualizationSet() const = 0;
+        virtual bool isInVisualizationSet() const;
     protected:
-        virtual void setIsInVisualizationSet(bool inSet) = 0;
+        virtual void setIsInVisualizationSet(bool inSet);
         virtual void _setSelected(bool selected) = 0;
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
         virtual void _removeAllManipulators() = 0;
+
+        bool inVisualizationSet;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization
@@ -332,6 +369,9 @@ namespace VirtualRobot
         virtual void setColor(const Color& c) override;
         virtual Color getColor() const override;
 
+        virtual void setMaterial(const MaterialPtr& material) override;
+        virtual MaterialPtr getMaterial() const override;
+
     protected:
         virtual void _setSelected(bool selected) override;
     public:
@@ -339,8 +379,8 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
         virtual void removeSelectionChangedCallback(size_t id) override;
 
-        virtual void scale(const Eigen::Vector3f& scaleFactor) override;
-        virtual Eigen::Vector3f getScaleFactor() const override;
+        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) override;
+        virtual Eigen::Vector3f getScalingFactor() const override;
 
         virtual void shrinkFatten(float offset) override;
 
@@ -381,7 +421,7 @@ namespace VirtualRobot
             \param scaling Scale Can be set to create a scaled version of this visual data.
             Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
         */
-        virtual VisualizationPtr clone(float scaling = 1.0f) const override;
+        virtual VisualizationPtr clone() const override;
 
         //! print information about this visualization object.
         virtual void print() const override;
@@ -399,25 +439,20 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) override;
 
-        /**
-         * @brief setIsInVisualizationSet Internally used function to determinate if this visualization is in a set.
-         *
-         * If a visualization is in a set, it is only selecable and manipulateable using the set.
-         */
-        virtual bool isInVisualizationSet() const override;
+        //virtual bool isInVisualizationSet() const override;
     protected:
-        virtual void setIsInVisualizationSet(bool inSet);
+        //virtual void setIsInVisualizationSet(bool inSet);
 
         bool visible;
         bool updateVisualization;
         DrawStyle style;
         Color color;
+        MaterialPtr material;
         bool selected;
         std::set<ManipulatorType> addedManipulators;
         std::string filename; //!< if the visualization was build from a file, the filename is stored here
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
-        bool inVisualizationSet;
         Eigen::Vector3f scaleFactor;
         TriMeshModelPtr triMeshModel;
         std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;

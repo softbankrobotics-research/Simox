@@ -169,7 +169,8 @@ namespace VirtualRobot
                 if (tcp)
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    VisualizationPtr visu = f->createCoordSystem(1.0f, NULL, tcpGP);
+                    VisualizationPtr visu = f->createCoordSystem(NULL);
+                    visu->setGlobalPose(tcpGP);
                     viewer->addVisualization("eefLayer", visu);
                 }
             }
@@ -185,19 +186,12 @@ namespace VirtualRobot
         buildGraspSetVisu();
     }
 
-    int GraspEditorWindow::main()
-    {
-        viewer->start(this);
-        return 0;
-    }
-
 
     void GraspEditorWindow::quit()
     {
         std::cout << "GraspEditorWindow: Closing" << std::endl;
         this->close();
         timer->stop();
-        viewer->stop();
     }
 
     void GraspEditorWindow::selectRobot()

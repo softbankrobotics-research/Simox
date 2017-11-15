@@ -43,7 +43,7 @@ namespace VirtualRobot
         }
 
         std::string name = getName();
-        setVisualization(factory->createCoordSystem(1, &name));
+        setVisualization(factory->createCoordSystem(&name));
     }
 }
 

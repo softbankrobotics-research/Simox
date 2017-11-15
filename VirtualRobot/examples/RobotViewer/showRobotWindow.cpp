@@ -180,7 +180,7 @@ void showRobotWindow::rebuildVisualization()
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationSetPtr visu = robot->getVisualization(colModel);
+    auto visu = robot->getVisualization(colModel);
     viewer->addVisualization("robotLayer", visu);
 
     selectJoint(UI.comboBoxJoint->currentIndex());
@@ -295,18 +295,10 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int showRobotWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void showRobotWindow::quit()
 {
     std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void showRobotWindow::updateJointBox()
@@ -592,7 +584,7 @@ void showRobotWindow::robotStructure()
     }
 
     if (UI.checkBoxStructure->checkState() == Qt::Checked)
-        robot->attachStructure(VirtualRobot::VisualizationFactory::getName());
+        robot->attachStructure(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
     else
         robot->detachStructure();
 
@@ -607,7 +599,7 @@ void showRobotWindow::robotCoordSystems()
     }
 
     if (UI.checkBoxRobotCoordSystems->checkState() == Qt::Checked)
-        robot->attachFrames(VirtualRobot::VisualizationFactory::getName());
+        robot->attachFrames(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
     else
         robot->detachFrames();
 

@@ -1,12 +1,11 @@
 /**
 * @package    VirtualRobot
-* @author     Manfred Kroehnert
-* @copyright  2010 Manfred Kroehnert
+* @author     Manfred Kroehnert, Adrian Knobloch
+* @copyright  2010, 2017 Manfred Kroehnert, Adrian Knobloch
 */
 
 
 #include "CoinVisualizationSet.h"
-#include "CoinVisualizationNode.h"
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
@@ -21,260 +20,178 @@
 #include <Inventor/nodes/SoRotation.h>
 
 namespace VirtualRobot
-{
-
-    CoinVisualizationSet::CoinVisualizationSet(const VisualizationNodePtr visualizationNode) :
-        VisualizationSet(visualizationNode)
+{   
+    CoinVisualizationSet::CoinVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
+        : VisualizationSet(visualizations),
+          setNode(new SoSeparator),
+          filename(""),
+          usedBoundingBox(false)
     {
-        selection = NULL;
-        visuRoot = NULL;
-        color = NULL;
-    }
-
-    CoinVisualizationSet::CoinVisualizationSet(const std::vector<VisualizationNodePtr>& visualizationNodes) :
-        VisualizationSet(visualizationNodes)
-    {
-        selection = NULL;
-        visuRoot = NULL;
-        color = NULL;
+        setNode->ref();
+        for (auto& visu : this->getVisualizations())
+        {
+            auto visuCoin = visualization_cast<CoinElement>(visu);
+            setNode->addChild(visuCoin->getMainNode());
+        }
     }
 
     CoinVisualizationSet::~CoinVisualizationSet()
     {
-        if (selection)
-        {
-            selection->unref();
-        }
-        if (visuRoot)
-        {
-            visuRoot->unref();
-        }
-        /*if (color)
-        {
-            color->unref();
-        }*/
+        setNode->removeAllChildren();
+        setNode->unref();
     }
 
-    bool CoinVisualizationSet::buildVisualization()
+    SoNode *CoinVisualizationSet::getMainNode() const
     {
-        if (selection)
-        {
-            return true;
-        }
-
-        selection = new SoSelection;
-        selection->ref();
-        selection->policy = SoSelection::TOGGLE;
-
-        visuRoot = new SoSeparator;
-        visuRoot->ref();
-
-        if(isSelectable)
-        {
-            selection->addChild(visuRoot);
-        }
-
-        SoSeparator* visualization = new SoSeparator();
-        //SoMatrixTransform *mtr = new SoMatrixTransform;
-        /*SbMatrix m(reinterpret_cast<SbMat*>(globalPose.data()));
-        mtr->matrix.setValue(m);
-        selection->addChild(mtr);*/
-        SoUnits* u = new SoUnits();
-        u->units = SoUnits::METERS;
-        visualization->addChild(u);
-
-        color = new SoMaterial();
-        visualization->addChild(color);
-
-        visuRoot->addChild(visualization);
-
-        for(auto visualizationNode : visualizations)
-        {
-            std::shared_ptr<CoinVisualizationNode> coinVisualizationNode = std::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
-
-            if (coinVisualizationNode && coinVisualizationNode->getCoinVisualization())
-            {
-                visualization->addChild(coinVisualizationNode->getCoinVisualization());
-            }
-        }
-        return true;
+        return setNode;
     }
 
-    bool CoinVisualizationSet::highlight(unsigned int which, bool enable)
+    void CoinVisualizationSet::addVisualization(const VisualizationPtr &visu)
     {
-        if (which >= visualizations.size())
+        if (!containsVisualization(visu))
         {
-            VR_WARNING << "Could not find visualizationNode..." << endl;
-            return false;
+            auto visuCoin = visualization_cast<CoinElement>(visu);
+            setNode->addChild(visuCoin->getMainNode());
+            VisualizationSet::addVisualization(visu);
         }
-
-        return highlight(visualizations[which], enable);
     }
 
-    bool CoinVisualizationSet::highlight(SoNode* visu, bool enable)
+    void CoinVisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
-        if (!visu)
+        if (containsVisualization(visu))
         {
-            return false;
+            VisualizationSet::removeVisualization(visu);
+            auto visuCoin = visualization_cast<CoinElement>(visu);
+            setNode->removeChild(visuCoin->getMainNode());
         }
-
-        if (enable)
-        {
-            selection->select(visu);
-        }
-        else
-        {
-            selection->deselect(visu);
-        }
-
-        selection->touch();
-        return true;
     }
 
-    bool CoinVisualizationSet::highlight(VisualizationNodePtr visualizationNode, bool enable)
+    void CoinVisualizationSet::removeVisualization(size_t id)
     {
-        if (!selection)
+        this->removeVisualization(this->getVisualizationAt(id));
+    }
+
+    VisualizationPtr CoinVisualizationSet::clone() const
+    {
+        std::vector<VisualizationPtr> clonedVisus;
+        const auto& visus = getVisualizations();
+        clonedVisus.reserve(visus.size());
+        for (const auto& visu : visus)
         {
-            return false;
+            clonedVisus.push_back(visu->clone());
         }
+        return VisualizationPtr(new CoinVisualizationSet(clonedVisus));
+    }
 
-        if (!isVisualizationNodeRegistered(visualizationNode))
+    void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
+    {
+        VisualizationSet::setGlobalPose(m);
+        for (auto& f : poseChangedCallbacks)
         {
-            VR_WARNING << "Could not find visualizationNode..." << endl;
-            return false;
+            f.second(m);
         }
+    }
 
-        std::shared_ptr<CoinVisualizationNode> coinVisualizationNode = std::dynamic_pointer_cast<CoinVisualizationNode>(visualizationNode);
+    size_t CoinVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
+    {
+        static unsigned int id = 0;
+        poseChangedCallbacks[id] = f;
+        return id++;
+    }
 
-
-        if (coinVisualizationNode)
+    void CoinVisualizationSet::removePoseChangedCallback(size_t id)
+    {
+        auto it = poseChangedCallbacks.find(id);
+        if (it != poseChangedCallbacks.end())
         {
-            return highlight(coinVisualizationNode->getCoinVisualization(), enable);
+            poseChangedCallbacks.erase(it);
         }
+    }
 
+    void CoinVisualizationSet::_setSelected(bool selected)
+    {
+        VR_ERROR << "NYI" << std::endl;
+    }
+
+    bool CoinVisualizationSet::isSelected() const
+    {
+        VR_ERROR << "NYI" << std::endl;
         return false;
     }
 
-    bool CoinVisualizationSet::highlight(bool enable)
+    size_t CoinVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        for (size_t i = 0; i < visualizations.size(); i++)
-        {
-            highlight(i, enable);
-        }
-
-        return true;
+        VR_ERROR << "NYI" << std::endl;
     }
 
-    /**
-     * This method iterates over the entries in member
-     * CoinVisualization::visualizationNodes and stores the return value of
-     * CoinVisualizationNode::getCoinVisualization() in an SoSeparator if the
-     * processed node is of type CoinVisualizationNode.
-     * Afterwards the SoSeparator is returned.
-     */
-    SoNode* CoinVisualizationSet::getCoinVisualization(bool selectable)
+    void CoinVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        isSelectable = selectable;
-        buildVisualization();
-        return selectable? selection : visuRoot;
+        VR_ERROR << "NYI" << std::endl;
     }
 
-    /**
-     * \return new instance of VirtualRobot::CoinVisualization with the same set of robot nodes.
-     */
-    VirtualRobot::VisualizationPtr CoinVisualizationSet::clone()
+    void CoinVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
     {
-        return VisualizationPtr(new CoinVisualizationSet(visualizations));
+        VR_ERROR << "NYI" << std::endl;
     }
 
-    void CoinVisualizationSet::colorize(Visualization::Color c)
+    void CoinVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
     {
-
-        buildVisualization();
-        if (!selection || !color)
-        {
-            return;
-        }
-
-        if (c.isNone())
-        {
-
-            color->setOverride(FALSE);
-        }
-        else
-        {
-            color->diffuseColor = SbColor(c.r, c.g, c.b);
-            color->ambientColor = SbColor(0, 0, 0);
-            color->transparency = std::max(0.0f, c.transparency);
-            color->diffuseColor.setIgnored(FALSE);
-            color->setOverride(TRUE);
-        }
+        VR_ERROR << "NYI" << std::endl;
     }
 
-    void CoinVisualizationSet::setTransparency(float transparency)
+    void CoinVisualizationSet::_removeAllManipulators()
     {
-        buildVisualization();
-        if (!selection || !color)
-        {
-            return;
-        }
-
-        if (transparency < 0)
-            transparency = 0;
-        if (transparency > 1.0f)
-            transparency = 1.0f;
-
-        if (transparency==1)
-        {
-            color->diffuseColor.setIgnored(FALSE);
-            color->setOverride(FALSE);
-        }
-        else
-        {
-            color->transparency = transparency;
-            color->diffuseColor.setIgnored(TRUE);
-            color->setOverride(TRUE);
-        }
+        VR_ERROR << "NYI" << std::endl;
     }
 
-	void CoinVisualizationSet::exportToVRML2(std::string filename, bool useRotation)
+    bool CoinVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
     {
-
-        SoSeparator* root = new SoSeparator;
-        root->ref();
-        SoRotation* rotationX = new SoRotation();
-        rotationX->ref();
-        SoRotation* rotationZ = new SoRotation();
-        rotationZ->ref();
-
-        if(useRotation)
-        {
-            rotationX->rotation.setValue(SbVec3f(-1, 0, 0), float(M_PI / 2));
-            rotationZ->rotation.setValue(SbVec3f(0, 0, 1), float(M_PI));
-            root->addChild(rotationX);
-            root->addChild(rotationZ);
-        }
-        root->addChild(this->getCoinVisualization());
-
-        printf("Converting...\n");
-        SoToVRML2Action tovrml2;
-        tovrml2.apply(root);
-        SoVRMLGroup* newroot = tovrml2.getVRML2SceneGraph();
-        newroot->ref();
-        root->unref();
-        rotationZ->unref();
-        rotationX->unref();
-
-        printf("Writing...\n");
-
-        SoOutput out;
-        out.openFile(filename.c_str());
-        out.setHeaderString("#VRML V2.0 utf8");
-        SoWriteAction wra(&out);
-        wra.apply(newroot);
-        out.closeFile();
-        newroot->unref();
+        VR_ERROR << "NYI" << std::endl;
+        return false;
     }
 
+    std::vector<Visualization::ManipulatorType> CoinVisualizationSet::getAddedManipulatorTypes() const
+    {
+        VR_ERROR << "NYI" << std::endl;
+        return std::vector<ManipulatorType>();
+    }
 
+    void CoinVisualizationSet::setFilename(const std::string &filename, bool boundingBox)
+    {
+        this->filename = filename;
+        this->usedBoundingBox = boundingBox;
+    }
+
+    std::string CoinVisualizationSet::getFilename() const
+    {
+        return filename;
+    }
+
+    bool CoinVisualizationSet::usedBoundingBoxVisu() const
+    {
+        return usedBoundingBox;
+    }
+
+    void CoinVisualizationSet::print() const
+    {
+        VR_ERROR << "NYI" << std::endl;
+    }
+
+    std::string CoinVisualizationSet::toXML(const std::string &basePath, int tabs) const
+    {
+        VR_ERROR << "NYI" << std::endl;
+        return "";
+    }
+
+    std::string CoinVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
+    {
+        VR_ERROR << "NYI" << std::endl;
+        return "";
+    }
+
+    bool CoinVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
+    {
+        VR_ERROR << "NYI" << std::endl;
+        return false;
+    }
 } // namespace VirtualRobot

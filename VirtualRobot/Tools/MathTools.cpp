@@ -1,6 +1,7 @@
 
 #include "MathTools.h"
 #include "../VirtualRobotException.h"
+#include "../Visualization/VisualizationFactory.h"
 #include <float.h>
 #include <string.h>
 #include <cmath>
@@ -1828,7 +1829,7 @@ namespace VirtualRobot
         else
             resF(2) = float(asin(p));
 
-        VR_ASSERT (!isnan(resF(2)));
+        VR_ASSERT (!std::isnan(resF(2)));
 
         if (resF(0)<0)
             resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI
@@ -1906,6 +1907,17 @@ namespace VirtualRobot
         r(1,3)=y;
         r(2,3)=z;
         return r;
+    }
+
+    VisualizationPtr MathTools::Plane::getVisualization(float extend, bool gird) const
+    {
+        VisualizationPtr visu = gird ? VisualizationFactory::getGlobalVisualizationFactory()->createGrid(extend) :
+                                       VisualizationFactory::getGlobalVisualizationFactory()->createBox(extend, 1.f, extend);
+        auto r = getRotation(Eigen::Vector3f::UnitZ(), n);
+        Eigen::Matrix4f gp = MathTools::quat2eigen4f(r);
+        gp.block<3, 1>(0, 3) = p;
+        visu->setGlobalPose(gp);
+        return visu;
     }
 
 

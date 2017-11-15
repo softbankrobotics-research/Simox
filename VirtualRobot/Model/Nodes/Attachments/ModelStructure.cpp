@@ -99,15 +99,14 @@ namespace VirtualRobot
         ModelNodePtr parent = link->getParentNode(ModelNode::ModelNodeType::Joint);
         if (parent)
         {
-            std::vector<VisualizationPtr> lines;
             std::vector<ModelNodePtr> children = link->getChildNodes(ModelNode::ModelNodeType::Joint);
+            std::vector<Eigen::Matrix4f> from, to;
             for (const auto & child : children)
             {
-                Eigen::Matrix4f localStartPose = link->toLocalCoordinateSystem(parent->getGlobalPose());
-                Eigen::Matrix4f localEndPose = link->toLocalCoordinateSystem(child->getGlobalPose());
-                lines.push_back(factory->createLine(localStartPose, localEndPose, 2.0f));
+                from.push_back(link->toLocalCoordinateSystem(parent->getGlobalPose()));
+                to.push_back(link->toLocalCoordinateSystem(child->getGlobalPose()));
             }
-            v = factory->createUnitedVisualization(lines);
+            v = factory->createLineSet(from, to, 2.f);
         }
         return v;
     }

@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Manfred Kroehnert, Nikolaus Vahrenkamp
-* @copyright  2010,2011 Manfred Kroehnert, Nikolaus Vahrenkamp
+* @author     Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
+* @copyright  2010,2011,2017 Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -36,6 +36,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <string>
+#include <memory>
 
 namespace VirtualRobot
 {
@@ -45,66 +46,54 @@ namespace VirtualRobot
         VisualizationFactory();
         virtual ~VisualizationFactory();
 
-        virtual void init(int &/*argc*/, char* /*argv*/[], const std::string &/*appName*/);
+        virtual void init(int &argc, char* argv[], const std::string &appName);
 
-        virtual VisualizationPtr createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& /*primitives*/, bool /*boundingBox*/ = false, Visualization::Color /*color*/ = Visualization::Color::Gray());
-        virtual VisualizationPtr createVisualizationFromFile(const std::string& /*filename*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f);
-        virtual VisualizationPtr createVisualizationFromFile(const std::ifstream& /*ifs*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f);
+        virtual VisualizationPtr createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false) const;
+        virtual VisualizationPtr createVisualizationFromFile(const std::string& filename, bool boundingBox = false) const;
+        virtual VisualizationPtr createVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false) const;
 
         virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations) const;
 
         /*!
             A box, dimensions are given in mm.
         */
-        virtual VisualizationPtr createBox(float /*width*/, float /*height*/, float /*depth*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationPtr createLine(const Eigen::Vector3f& /*from*/, const Eigen::Vector3f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationPtr createLine(const Eigen::Matrix4f& /*from*/, const Eigen::Matrix4f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width = 1.0f);
-        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f>& from, const std::vector<Eigen::Matrix4f>& to, float width = 1.0f);
-        virtual VisualizationPtr createSphere(float /*radius*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationPtr createCircle(float /*radius*/, float /*circleCompletion*/, float /*width*/, float /*colorR*/ = 1.0f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, size_t /*numberOfCircleParts*/ = 30);
+        virtual VisualizationPtr createBox(float width, float height, float depth) const;
+        virtual VisualizationPtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f) const;
+        virtual VisualizationPtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f>& from, const std::vector<Eigen::Matrix4f>& to, float width = 1.0f) const;
+        virtual VisualizationPtr createSphere(float radius) const;
+        virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts = 30) const;
 
-        virtual VisualizationPtr createTorus(float /*radius*/, float /*tubeRadius*/, float /*completion*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, float /*transparency*/ = 0.0f, int /*sides*/ = 8, int /*rings*/ = 30);
+        virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion = 1.0f, int sides = 8, int rings = 30) const;
 
-        virtual VisualizationPtr createCircleArrow(float /*radius*/, float /*tubeRadius*/, float /*completion*/ = 1, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, float /*transparency*/ = 0.0f, int /*sides*/ = 8, int /*rings*/ = 30);
+        virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion = 1, int sides = 8, int rings = 30) const;
 
-        virtual VisualizationPtr createCylinder(float /*radius*/, float /*height*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationPtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = NULL, const Eigen::Matrix4f &/*pose*/ = Eigen::Matrix4f::Identity(), float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10);
-        virtual VisualizationPtr createVertexVisualization(const Eigen::Vector3f& /*position*/, float /*radius*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        virtual VisualizationPtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, Eigen::Matrix4f& /*pose*/, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f);
-        virtual VisualizationPtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, bool /*showNormals*/, Eigen::Matrix4f& /*pose*/, bool /*showLines*/ = true);
-        virtual VisualizationPtr createPlane(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f);
-        inline VisualizationPtr createPlane(const MathTools::Plane& plane, float extend, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
-        {
-            return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
-        }
-        virtual VisualizationPtr createArrow(const Eigen::Vector3f& /*n*/, float /*length*/ = 50.0f, float /*width*/ = 2.0f, const Visualization::Color& /*color*/ = Visualization::Color::Gray());
-        virtual VisualizationPtr createText(const std::string& /*text*/, bool /*billboard*/ = false, float /*scaling*/ = 1.0f, Visualization::Color /*c*/ = Visualization::Color::Black(), float /*offsetX*/ = 20.0f, float /*offsetY*/ = 20.0f, float /*offsetZ*/ = 0.0f);
+        virtual VisualizationPtr createCylinder(float radius, float height) const;
+        virtual VisualizationPtr createCoordSystem(std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) const;
+        virtual VisualizationPtr createPoint(float radius) const;
+        virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f>& points, float radius) const;
+        virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;
+        virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr& model) const;
+        virtual VisualizationPtr createGrid(float extend, const std::string& textureFile = "") const;
+        virtual VisualizationPtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f) const;
+        virtual VisualizationPtr createText(const std::string& text, bool billboard = false, float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) const;
+        virtual VisualizationPtr createCone(float baseRadius, float height) const;
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
             \param y The extend in y direction must be >= 1e-6
             \param z The extend in z direction must be >= 1e-6
-            \param showAxes If true, the axes are visualized
-            \param axesHeight The height of the axes (measured from the body surface)
-            \param axesWidth The width of the axes.
             \return A VisualizationNode containing the visualization.
         */
-        virtual VisualizationPtr createEllipse(float /*x*/, float /*y*/, float /*z*/, bool /*showAxes*/ = true, float /*axesHeight*/ = 4.0f, float /*axesWidth*/ = 8.0f);
+        virtual VisualizationPtr createEllipse(float x, float y, float z) const;
 
-        virtual VisualizationPtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& /*contacts*/, float /*frictionConeHeight*/ = 30.0f,  float /*frictionConeRadius*/ = 15.0f, bool /*scaleAccordingToApproachDir*/ = true);
-
-        virtual VisualizationPtr createReachabilityVisualization(WorkspaceRepresentationPtr /*reachSpace*/, const VirtualRobot::ColorMapPtr /*cm*/, bool /*transformToGlobalPose*/ = true, float /*maxZGlobal*/ = 1e10);
+        virtual VisualizationPtr createContactVisualization(const VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) const;
 
         /*!
             Create an empty VisualizationNode.
         */
-        virtual VisualizationPtr createVisualization();
-
-        /*!
-            Create a united visualization.
-        */
-        virtual VisualizationPtr createUnitedVisualization(const std::vector<VisualizationPtr>& /*visualizations*/) const;
+        virtual VisualizationPtr createVisualization() const;
 
         /*!
             Here, a manual cleanup can be called, visualization engine access may not be possible after calling this method.
@@ -123,7 +112,7 @@ namespace VirtualRobot
          * A dynamicly bound version of getName().
          * @return the visualization type that is supported by this factory.
          */
-        virtual std::string getVisualizationType();
+        virtual std::string getVisualizationType() const;
     };
 
 } // namespace VirtualRobot

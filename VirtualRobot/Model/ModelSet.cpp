@@ -41,7 +41,7 @@ namespace VirtualRobot
     {
         auto visus = getVisualizations();
         auto colModels = getCollisionModels();
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createUnitedVisualization(visus);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visus);
         CollisionModelPtr colModel = CollisionModel::CreateUnitedCollisionModel(colModels);
         ObstaclePtr result = Obstacle::create(name, visu, colModel);
         return result;

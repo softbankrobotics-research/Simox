@@ -672,6 +672,58 @@ namespace VirtualRobot
         return flippedFacesCount;
     }
 
+    VisualizationPtr TriMeshModel::getVisualization(bool showNormals, bool showLines)
+    {
+        std::vector<VisualizationPtr> visus;
+        const auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        visus.push_back(factory->createTriMeshModel(shared_from_this()));
+
+        std::vector<VisualizationPtr> normals;
+        if (showNormals)
+        {
+            static VisualizationPtr arrow = factory->createArrow(Eigen::Vector3f::UnitZ(), 30.0f, 1.5f);
+
+            normals.reserve(faces.size());
+
+            for (const auto& face : faces)
+            {
+                auto v = (vertices.at(face.id1) +
+                          vertices.at(face.id2) +
+                          vertices.at(face.id3)) / 3.f;
+                auto& normal = face.normal;
+                auto q = MathTools::getRotation(Eigen::Vector3f::UnitZ(), normal);
+                Eigen::Matrix4f gp = MathTools::quat2eigen4f(q);
+                gp.block<3, 1>(0, 3) = v;
+                auto arrowLocal = arrow->clone();
+                arrowLocal->setGlobalPose(gp);
+                normals.push_back(arrowLocal);
+            }
+        }
+        visus.push_back(factory->createVisualisationSet(normals));
+
+        std::vector<Eigen::Vector3f> linesFrom, linesTo;
+        if (showLines)
+        {
+            linesFrom.reserve(faces.size() * 3);
+            linesTo.reserve(faces.size() * 3);
+            for (const auto& face : faces)
+            {
+                linesFrom.push_back(vertices.at(face.id1));
+                linesTo.push_back(vertices.at(face.id2));
+
+                linesFrom.push_back(vertices.at(face.id2));
+                linesTo.push_back(vertices.at(face.id3));
+
+                linesFrom.push_back(vertices.at(face.id3));
+                linesTo.push_back(vertices.at(face.id1));
+            }
+        }
+        visus.push_back(factory->createLineSet(linesFrom, linesTo, 4.f));
+        visus.back()->setColor(Visualization::Color::Black());
+
+        return factory->createVisualisationSet(visus);
+    }
+
 
     void TriMeshModel::print()
     {

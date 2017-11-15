@@ -1321,6 +1321,96 @@ namespace VirtualRobot
         return result;
     }
 
+    VisualizationPtr WorkspaceRepresentation::getVisualization(const ColorMapPtr cm, bool transformToGlobalPose, float maxZGlobal) const
+    {
+        auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        if (numVoxels[0] <= 0 || numVoxels[1] <= 0 || numVoxels[2] <= 0)
+        {
+            return factory->createVisualization();
+        }
+
+        Eigen::Vector3f size;
+        size(0) = spaceSize[0] / numVoxels[0];
+        size(1) = spaceSize[1] / numVoxels[1];
+        size(2) = spaceSize[2] / numVoxels[2];
+        float minS = size(0);
+
+        if (size(1) < minS)
+        {
+            minS = size(1);
+        }
+
+        if (size(2) < minS)
+        {
+            minS = size(2);
+        }
+
+
+        VirtualRobot::Visualization::Color color = VirtualRobot::Visualization::Color::None();
+        float radius = minS * 0.5f * 0.75f;
+        Eigen::Vector3f voxelPosition;
+        int maxValue = getMaxSummedAngleReachablity();
+
+        Eigen::Vector3f resPos;
+        int step = 1;
+
+        std::vector<VisualizationPtr> visus;
+
+        for (int a = 0; a < numVoxels[0]; a += step)
+        {
+            voxelPosition(0) = minBounds[0] + (a + 0.5f) * size(0);
+
+            for (int b = 0; b < numVoxels[1]; b += step)
+            {
+                voxelPosition(1) = minBounds[1] + (b + 0.5f) * size(1);
+
+                int cSize = numVoxels[2];
+
+                for (int c = 0; c < cSize; c += step)
+                {
+                    voxelPosition(2) = minBounds[2] + (c + 0.5f) * size(2);
+
+                    int value = sumAngleReachabilities(a, b, c);
+
+                    if (value > 0)
+                    {
+                        resPos = voxelPosition;
+
+                        if (transformToGlobalPose)
+                        {
+                            toGlobalVec(resPos);
+                        }
+
+                        if (resPos(2)>maxZGlobal)
+                            continue;
+
+                        float intensity = (float)value;
+
+                        if (maxValue > 0)
+                        {
+                            intensity /= maxValue;
+                        }
+
+                        if (intensity > 1.0f)
+                        {
+                            intensity = 1.0f;
+                        }
+
+                        color = cm->getColor(intensity);
+
+                        visus.push_back(factory->createPoint(radius));
+                        visus.back()->setColor(color);
+                        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+                        gp.block<3, 1>(0, 3) = resPos;
+                        visus.back()->setGlobalPose(gp);
+                    }
+                }
+            }
+        }
+
+        return factory->createVisualisationSet(visus);
+    }
+
     Eigen::Matrix4f WorkspaceRepresentation::getPoseFromVoxel(float v[6], bool transformToGlobalPose /*= true*/)
     {
         float x[6];
@@ -1473,7 +1563,7 @@ namespace VirtualRobot
         return data->get(a, b, c, d, e, f);
     }
 
-    int WorkspaceRepresentation::getMaxSummedAngleReachablity()
+    int WorkspaceRepresentation::getMaxSummedAngleReachablity() const
     {
         int maxValue = 0;
 

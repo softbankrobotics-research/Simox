@@ -202,6 +202,8 @@ namespace VirtualRobot
 
             Eigen::Vector3f p;  // point
             Eigen::Vector3f n;  // normal (unit length)
+
+            virtual VisualizationPtr getVisualization(float extend, bool gird = false) const;
         };
 
         //! Create a floor plane
