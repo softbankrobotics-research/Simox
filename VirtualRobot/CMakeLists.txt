@@ -297,6 +297,25 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     if(BUILD_TESTING)
         ADD_SUBDIRECTORY(Visualization/CoinVisualization/tests)
     endif()
+elseif (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
+
+    SET(SOURCES
+    ${SOURCES}
+    Visualization/Qt3DVisualization/Qt3DVisualizationFactory.cpp
+    Visualization/Qt3DVisualization/Qt3DVisualization.cpp
+    Visualization/Qt3DVisualization/Qt3DVisualizationSet.cpp
+    )
+
+    SET(INCLUDES
+    ${INCLUDES}
+    Visualization/Qt3DVisualization/Qt3DVisualizationFactory.h
+    Visualization/Qt3DVisualization/Qt3DVisualization.h
+    Visualization/Qt3DVisualization/Qt3DVisualizationSet.h
+    )
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Visualization/Qt3DVisualization/tests)
+    endif()
 endif ()
 
 FIND_PACKAGE(urdfdom REQUIRED)
