@@ -29,7 +29,49 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization
     {
+    public:
+        Qt3DVisualization();
+        ~Qt3DVisualization();
 
+        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
+        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
+        virtual void removePoseChangedCallback(size_t id) override;
+        virtual void setVisible(bool showVisualization) override;
+        virtual bool isVisible() const override;
+        virtual void setUpdateVisualization(bool enable) override;
+        virtual bool getUpdateVisualizationStatus() const override;
+        virtual void setStyle(DrawStyle s) override;
+        virtual DrawStyle getStyle() const override;
+        virtual void setColor(const Color &c) override;
+        virtual Color getColor() const override;
+        virtual void setMaterial(const MaterialPtr &material) override;
+        virtual MaterialPtr getMaterial() const override;
+        virtual void setSelected(bool selected) override;
+        virtual bool isSelected() const override;
+        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
+        virtual void removeSelectionChangedCallback(size_t id) override;
+        virtual void scale(const Eigen::Vector3f &scaleFactor) override;
+        virtual void shrinkFatten(float offset) override;
+        virtual bool hasManipulator(ManipulatorType t) const override;
+        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
+        virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
+        virtual BoundingBox getBoundingBox() const override;
+        virtual TriMeshModelPtr getTriMeshModel() const override;
+        virtual int getNumFaces() const override;
+        virtual VisualizationPtr clone() const override;
+        virtual void print() const override;
+        virtual std::string toXML(const std::string &basePath, int tabs) const override;
+        virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
+        virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
+
+    protected:
+        virtual void createTriMeshModel() override;
+        virtual void _addManipulator(ManipulatorType t) override;
+        virtual void _removeManipulator(ManipulatorType t) override;
+        virtual void _removeAllManipulators() override;
     };
 
     typedef std::shared_ptr<Qt3DVisualization> Qt3DVisualizationPtr;

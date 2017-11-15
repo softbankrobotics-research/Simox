@@ -29,7 +29,29 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualizationSet : public VisualizationSet
     {
+    public:
+        Qt3DVisualizationSet(const std::vector<VisualizationPtr>& visualizations);
+        ~Qt3DVisualizationSet();
 
+        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
+        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
+        virtual void removePoseChangedCallback(size_t id) override;
+        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
+        virtual void removeSelectionChangedCallback(size_t id) override;
+        virtual bool hasManipulator(ManipulatorType t) const override;
+        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
+        virtual VisualizationPtr clone() const override;
+        virtual std::string toXML(const std::string &basePath, int tabs) const override;
+        virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
+        virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
+
+    protected:
+        virtual void _addManipulator(ManipulatorType t) override;
+        virtual void _removeManipulator(ManipulatorType t) override;
+        virtual void _removeAllManipulators() override;
     };
 
     typedef std::shared_ptr<Qt3DVisualizationSet> Qt3DVisualizationPtr;
