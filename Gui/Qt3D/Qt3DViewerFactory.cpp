@@ -35,7 +35,7 @@ namespace SimoxGui
     {
     }
 
-    ViewerInterfacePtr Qt3DViewerFactory::createViewer(QWidget *parent)
+    ViewerInterfacePtr Qt3DViewerFactory::createViewer(QWidget *parent) const
     {
         Qt3DViewerPtr v(new Qt3DViewer(parent));
         return v;

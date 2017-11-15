@@ -39,7 +39,7 @@ namespace SimoxGui
         Qt3DViewerFactory();
         virtual ~Qt3DViewerFactory();
 
-        ViewerInterfacePtr createViewer(QWidget *parent = NULL);
+        virtual ViewerInterfacePtr createViewer(QWidget *parent) const override;
     public:
         static std::string getName();
         static ViewerFactoryPtr createInstance(void*);

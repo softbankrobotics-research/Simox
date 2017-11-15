@@ -54,6 +54,14 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllVisualiz
 {
 }
 
+bool SimoxGui::Qt3DViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
+{
+}
+
+bool SimoxGui::Qt3DViewer::hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const
+{
+}
+
 void SimoxGui::Qt3DViewer::clearLayer(const std::string &layer)
 {
 }
@@ -70,15 +78,7 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected
 {
 }
 
-void SimoxGui::Qt3DViewer::start(QWidget *mainWindow)
-{
-}
-
-void SimoxGui::Qt3DViewer::stop()
-{
-}
-
-QImage SimoxGui::Qt3DViewer::getScreenshot()
+QImage SimoxGui::Qt3DViewer::getScreenshot() const
 {
 }
 
@@ -87,5 +87,21 @@ void SimoxGui::Qt3DViewer::resetView()
 }
 
 void SimoxGui::Qt3DViewer::viewAll()
+{
+}
+
+void SimoxGui::Qt3DViewer::setAntialiasing(unsigned short quality)
+{
+}
+
+unsigned short SimoxGui::Qt3DViewer::getAntialiasing() const
+{
+}
+
+void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
+{
+}
+
+VirtualRobot::Visualization::Color SimoxGui::Qt3DViewer::getBackgroundColor() const
 {
 }

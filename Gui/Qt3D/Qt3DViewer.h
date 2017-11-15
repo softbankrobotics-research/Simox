@@ -43,15 +43,20 @@ namespace SimoxGui
         virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override;
+        virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const override;
+        virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const override;
         virtual void clearLayer(const std::string &layer) override;
         virtual bool hasLayer(const std::string &layer) const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
-        virtual void start(QWidget *mainWindow) override;
-        virtual void stop() override;
-        virtual QImage getScreenshot() override;
+        virtual QImage getScreenshot() const override;
         virtual void resetView() override;
         virtual void viewAll() override;
+        virtual void setAntialiasing(unsigned short quality) override;
+        virtual unsigned short getAntialiasing() const override;
+        virtual void setBackgroundColor(const VirtualRobot::Visualization::Color &color) override;
+        virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
+
     private:
         QWidget* parent;
     };
