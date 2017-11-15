@@ -105,7 +105,7 @@ namespace VirtualRobot
 
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
     {
-        Visualization::getGlobalPose();
+        return Visualization::getGlobalPose();
     }
 
     Eigen::Matrix4f VisualizationSet::getGlobalPose(size_t id) const
