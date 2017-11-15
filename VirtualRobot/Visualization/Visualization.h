@@ -200,28 +200,12 @@ namespace VirtualRobot
         {
             this->setSelected(false);
         }
-        void setSelected(bool selected)
-        {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Selection status of visualization could not be changed, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_setSelected(selected);
-            }
-        }
+        virtual void setSelected(bool selected) = 0;
         virtual bool isSelected() const = 0;
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
         virtual void removeSelectionChangedCallback(size_t id) = 0;
 
-        inline void scale(const Eigen::Vector3f& scaleFactor)
-        {
-            auto sf = this->getScalingFactor();
-            this->setScalingFactor(Eigen::Vector3f(sf.x() * scaleFactor.x(), sf.y() * scaleFactor.y(), sf.z() * scaleFactor.z()));
-        }
-        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) = 0;
-        virtual Eigen::Vector3f getScalingFactor() const = 0;
+        virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
 
         virtual void shrinkFatten(float offset) = 0;
 
@@ -283,8 +267,6 @@ namespace VirtualRobot
             Creates a triangulated model.
         */
         virtual TriMeshModelPtr getTriMeshModel() const = 0;
-        //! update trimesh model
-        virtual void createTriMeshModel() = 0;
 
         //! get number of faces (i.e. triangles) of this object
         virtual int getNumFaces() const = 0;
@@ -320,8 +302,9 @@ namespace VirtualRobot
          */
         virtual bool isInVisualizationSet() const;
     protected:
+        //! update trimesh model
+        virtual void createTriMeshModel() = 0;
         virtual void setIsInVisualizationSet(bool inSet);
-        virtual void _setSelected(bool selected) = 0;
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
         virtual void _removeAllManipulators() = 0;
@@ -344,7 +327,6 @@ namespace VirtualRobot
         virtual ~DummyVisualization() override = default;
 
         virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
-        //virtual void applyDisplacement(const Eigen::Matrix4f& dp) override;
         virtual size_t addPoseChangedCallback(std::function<void(const Eigen::Matrix4f&)> f) override;
         virtual void removePoseChangedCallback(size_t id) override;
 
@@ -372,15 +354,12 @@ namespace VirtualRobot
         virtual void setMaterial(const MaterialPtr& material) override;
         virtual MaterialPtr getMaterial() const override;
 
-    protected:
-        virtual void _setSelected(bool selected) override;
-    public:
+        virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
         virtual void removeSelectionChangedCallback(size_t id) override;
 
-        virtual void setScalingFactor(const Eigen::Vector3f& scaleFactor) override;
-        virtual Eigen::Vector3f getScalingFactor() const override;
+        virtual void scale(const Eigen::Vector3f& s) override;
 
         virtual void shrinkFatten(float offset) override;
 
@@ -409,8 +388,6 @@ namespace VirtualRobot
             Creates a triangulated model.
         */
         virtual TriMeshModelPtr getTriMeshModel() const override;
-        //! update trimesh model
-        virtual void createTriMeshModel() override;
 
         //! get number of faces (i.e. triangles) of this object
         virtual int getNumFaces() const override;
@@ -439,9 +416,9 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) override;
 
-        //virtual bool isInVisualizationSet() const override;
     protected:
-        //virtual void setIsInVisualizationSet(bool inSet);
+        //! update trimesh model
+        virtual void createTriMeshModel() override;
 
         bool visible;
         bool updateVisualization;
@@ -453,7 +430,6 @@ namespace VirtualRobot
         std::string filename; //!< if the visualization was build from a file, the filename is stored here
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
-        Eigen::Vector3f scaleFactor;
         TriMeshModelPtr triMeshModel;
         std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
         std::map<unsigned int, std::function<void(bool)>> selectionChangedCallbacks;

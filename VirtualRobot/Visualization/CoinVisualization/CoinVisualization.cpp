@@ -67,7 +67,6 @@ namespace VirtualRobot
         setStyle(DrawStyle::normal);
         setColor(Color::None());
         setSelected(false);
-        setScalingFactor(Eigen::Vector3f::Constant(1.f));
         createTriMeshModel();
     }
 
@@ -300,7 +299,7 @@ namespace VirtualRobot
         return material;
     }
 
-    void CoinVisualization::_setSelected(bool selected)
+    void CoinVisualization::setSelected(bool selected)
     {
         VR_ERROR << "NYI" << std::endl;
     }
@@ -322,15 +321,17 @@ namespace VirtualRobot
         VR_ERROR << "NYI" << std::endl;
     }
 
-    void CoinVisualization::setScalingFactor(const Eigen::Vector3f &scaleFactor)
+    void CoinVisualization::scale(const Eigen::Vector3f &s)
     {
-        THROW_VR_EXCEPTION_IF(scaleFactor.x() <= 0 || scaleFactor.y() <= 0 || scaleFactor.z() <= 0, "Scaling must be >0");
+        THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
         if (!getUpdateVisualizationStatus())
         {
             return;
         }
 
-        scaleNode->scaleFactor.setValue(scaleFactor.x(), scaleFactor.y(), scaleFactor.z());
+        float x, y, z;
+        scaleNode->scaleFactor.getValue().getValue(x, y, z);
+        scaleNode->scaleFactor.setValue(x*s.x(), y*s.y(), z*s.z());
         createTriMeshModel();
     }
 
@@ -451,8 +452,7 @@ namespace VirtualRobot
         p->setVisible(this->isVisible());
         p->setStyle(this->getStyle());
         p->setMaterial(this->getMaterial());
-        p->setScalingFactor(this->getScalingFactor());
-        p->createTriMeshModel();
+        p->scale(this->getScalingFactor());
         p->primitives = this->primitives;
         p->setUpdateVisualization(this->getUpdateVisualizationStatus());
 
