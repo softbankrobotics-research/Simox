@@ -29,8 +29,7 @@ namespace VirtualRobot
         addedManipulators(),
         filename(""),
         boundingBox(false),
-        primitives(),
-        scaleFactor(Eigen::Vector3f(1.f, 1.f, 1.f))
+        primitives()
     {
         setColor(Visualization::Color::None());
     }
@@ -145,7 +144,7 @@ namespace VirtualRobot
         return material;
     }
 
-    void DummyVisualization::_setSelected(bool selected)
+    void DummyVisualization::setSelected(bool selected)
     {
         this->selected = selected;
         for (auto& f : selectionChangedCallbacks)
@@ -175,14 +174,8 @@ namespace VirtualRobot
         }
     }
 
-    void DummyVisualization::setScalingFactor(const Eigen::Vector3f &scaleFactor)
+    void DummyVisualization::scale(const Eigen::Vector3f &)
     {
-        this->scaleFactor = scaleFactor;
-    }
-
-    Eigen::Vector3f DummyVisualization::getScalingFactor() const
-    {
-        return scaleFactor;
     }
 
     void DummyVisualization::shrinkFatten(float offset)
@@ -281,8 +274,6 @@ namespace VirtualRobot
         visu->setStyle(this->getStyle());
         visu->setColor(this->getColor());
         visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->setScalingFactor(this->getScalingFactor());
-        visu->createTriMeshModel();
 
         return VisualizationPtr();
     }
