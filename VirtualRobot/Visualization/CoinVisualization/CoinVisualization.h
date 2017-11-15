@@ -81,15 +81,13 @@ namespace VirtualRobot
         virtual void setMaterial(const MaterialPtr &material) override;
         virtual MaterialPtr getMaterial() const override;
 
-    protected:
-        virtual void _setSelected(bool selected) override;
-    public:
+        virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
         virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
         virtual void removeSelectionChangedCallback(size_t id) override;
 
-        virtual void setScalingFactor(const Eigen::Vector3f &scaleFactor) override;
-        virtual Eigen::Vector3f getScalingFactor() const override;
+        virtual void scale(const Eigen::Vector3f &s) override;
+        Eigen::Vector3f getScalingFactor() const;
 
         virtual void shrinkFatten(float offset) override;
 

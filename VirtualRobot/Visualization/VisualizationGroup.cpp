@@ -109,6 +109,11 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationGroup::applyDisplacement(const Eigen::Matrix4f &dp)
+    {
+        setGlobalPose(getGlobalPose()*dp);
+    }
+
     void VisualizationGroup::setVisible(bool showVisualization)
     {
         for (auto& visu : visualizations)
@@ -222,6 +227,11 @@ namespace VirtualRobot
             }
         }
         return m;
+    }
+
+    void VisualizationGroup::scale(const Eigen::Vector3f &scaleFactor)
+    {
+        // TODO
     }
 
     BoundingBox VisualizationGroup::getBoundingBox() const

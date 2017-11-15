@@ -56,19 +56,18 @@ namespace VirtualRobot
         }
     }
 
-    void CoinVisualizationSet::removeVisualization(const VisualizationPtr &visu)
+    bool CoinVisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
-        if (containsVisualization(visu))
+        if (VisualizationSet::removeVisualization(visu))
         {
-            VisualizationSet::removeVisualization(visu);
             auto visuCoin = visualization_cast<CoinElement>(visu);
             setNode->removeChild(visuCoin->getMainNode());
         }
     }
 
-    void CoinVisualizationSet::removeVisualization(size_t id)
+    bool CoinVisualizationSet::removeVisualization(size_t index)
     {
-        this->removeVisualization(this->getVisualizationAt(id));
+        return this->removeVisualization(this->at(index));
     }
 
     VisualizationPtr CoinVisualizationSet::clone() const
@@ -108,7 +107,7 @@ namespace VirtualRobot
         }
     }
 
-    void CoinVisualizationSet::_setSelected(bool selected)
+    void CoinVisualizationSet::setSelected(bool selected)
     {
         VR_ERROR << "NYI" << std::endl;
     }
@@ -170,11 +169,6 @@ namespace VirtualRobot
     bool CoinVisualizationSet::usedBoundingBoxVisu() const
     {
         return usedBoundingBox;
-    }
-
-    void CoinVisualizationSet::print() const
-    {
-        VR_ERROR << "NYI" << std::endl;
     }
 
     std::string CoinVisualizationSet::toXML(const std::string &basePath, int tabs) const
