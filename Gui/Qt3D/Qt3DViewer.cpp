@@ -23,60 +23,30 @@
 
 #include "Qt3DViewer.h"
 
-#include <QApplication>
+#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
+
 #include <QVBoxLayout>
-
 #include <Qt3DRender/QCamera>
-#include <Qt3DCore/QTransform>
-#include <Qt3DRender/QMaterial>
-#include <Qt3DExtras/QTorusMesh>
-#include <Qt3DExtras/QPhongMaterial>
-#include <Qt3DExtras/QOrbitCameraController>
-
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
 {
-    QVBoxLayout *layout = new QVBoxLayout(parent);
+    QVBoxLayout *layout = new QVBoxLayout(this->parent);
     QWidget *container = QWidget::createWindowContainer(this);
     layout->addWidget(container);
-    parent->setLayout(layout);
+    this->parent->setLayout(layout);
 
-    Qt3DCore::QEntity* scene = new Qt3DCore::QEntity;
+    this->scene = new Qt3DCore::QEntity;
 
-    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(scene);
-    camController->setLinearSpeed( 50.0f );
-    camController->setLookSpeed( 180.0f );
-    camController->setCamera(this->camera());
+    this->camController = new Qt3DExtras::QOrbitCameraController(scene);
+    this->camController->setLinearSpeed( 50.0f );
+    this->camController->setLookSpeed( 180.0f );
+    this->camController->setCamera(this->camera());
 
     this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
     this->camera()->setPosition(QVector3D(0, 0, 20));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
 
-    Qt3DCore::QEntity* torus = new Qt3DCore::QEntity(scene);
-    Qt3DExtras::QTorusMesh* mesh = new Qt3DExtras::QTorusMesh;
-    mesh->setRadius(5);
-    mesh->setMinorRadius(1);
-    mesh->setRings(100);
-    mesh->setSlices(20);
-
-    Qt3DCore::QTransform* transform = new Qt3DCore::QTransform;
-    //transform->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1,0,0), 45.f));
-    QPropertyAnimation *rotateTransformAnimation = new QPropertyAnimation(transform);
-    rotateTransformAnimation->setTargetObject(transform);
-    rotateTransformAnimation->setPropertyName("rotationX");
-    rotateTransformAnimation->setStartValue(QVariant::fromValue(0));
-    rotateTransformAnimation->setEndValue(QVariant::fromValue(360));
-    rotateTransformAnimation->setDuration(10000);
-    rotateTransformAnimation->setLoopCount(-1);
-    rotateTransformAnimation->start();
-
-    Qt3DRender::QMaterial* material = new Qt3DExtras::QPhongMaterial(scene);
-
-    torus->addComponent(mesh);
-    torus->addComponent(transform);
-    torus->addComponent(material);
-
-    setRootEntity(scene);
+    this->setRootEntity(scene);
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
@@ -85,6 +55,8 @@ SimoxGui::Qt3DViewer::~Qt3DViewer()
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
+    VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
+    visu->getEntity()->setParent(this->scene);
 }
 
 void SimoxGui::Qt3DViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)

@@ -28,6 +28,8 @@
 
 #include <QWidget>
 #include <Qt3DExtras/Qt3DWindow>
+#include <Qt3DCore/QEntity>
+#include <Qt3DExtras/QOrbitCameraController>
 
 namespace SimoxGui
 {
@@ -59,6 +61,8 @@ namespace SimoxGui
 
     private:
         QWidget* parent;
+        Qt3DCore::QEntity* scene;
+        Qt3DExtras::QOrbitCameraController* camController;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
