@@ -1151,6 +1151,11 @@ namespace VirtualRobot
         std::vector< std::string > tcpNames;
         rapidxml::xml_node<>* node = endeffectorXMLNode->first_node();
 
+        std::vector< std::vector< RobotConfig::Configuration > > configDefinitionsXPostshape;
+        std::vector< std::string > configNamesXPostshape;
+        std::vector< std::string > tcpNamesXPostshape;
+
+
         while (node)
         {
             std::string nodeName = getLowerCase(node->name());
@@ -1174,6 +1179,11 @@ namespace VirtualRobot
             {
                 bool cOK = processConfigurationNodeList(node, configDefinitions, configNames, tcpNames);
                 THROW_VR_EXCEPTION_IF(!cOK, "Invalid Preshape defined in robot's eef tag '" << nodeName << "'." << endl);
+            }
+            else if ("postshape" == nodeName)
+            {
+                bool cOK = processConfigurationNodeList(node, configDefinitionsXPostshape, configNamesXPostshape, tcpNamesXPostshape);
+                THROW_VR_EXCEPTION_IF(!cOK, "Invalid Postshape defined in robot's eef tag '" << nodeName << "'." << endl);
             }
             else
             {
@@ -1207,6 +1217,21 @@ namespace VirtualRobot
             }
             endEffector->registerPreshape(rc);
         }
+
+        // create & register configs x postshapes
+        THROW_VR_EXCEPTION_IF(configDefinitionsXPostshape.size() != configNamesXPostshape.size(), "Invalid Postshape definitions " << endl);
+
+        for (size_t i = 0; i < configDefinitionsXPostshape.size(); i++)
+        {
+            RobotConfigPtr rc(new RobotConfig(robo, configNamesXPostshape[i], configDefinitionsXPostshape[i]));
+            if (!tcpNamesXPostshape[i].empty())
+            {
+                rc->setTCP(tcpNamesXPostshape[i]);
+            }
+            endEffector->registerPostshape(rc);
+        }
+
+
 
         return endEffector;
     }

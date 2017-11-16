@@ -113,12 +113,73 @@ namespace VirtualRobot
 
         for (std::vector<ActorDefinition>::iterator n = actors.begin(); n != actors.end(); n++)
         {
-            float oldV =  n->robotNode->getJointValue();
-            float v = oldV + angle * n->directionAndSpeed;
+
 
             actorStatus[n->robotNode] = eMoving;
 
-            if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
+
+            // ahhh! need to compute the range and see if what is low and high ranges!
+            float limitHi,limitLo;
+            std::string preshape=eef->getActivePreshape();
+            std::string postshape=eef->getActivePostshape();
+
+
+            if (preshape=="none" )
+            {
+                limitLo= n->robotNode->getJointLimitLo();
+            }
+            else
+            {
+                std::map<std::string, float> mapPreshape=eef->getPreshape(preshape)->getRobotNodeJointValueMap();
+                limitLo=mapPreshape[n->robotNode->getName()];
+                //we check that the limit of the preshape is inside the joint limits, otherwise, we set it to the closer limit.
+                if (limitLo > n->robotNode->getJointLimitHi())
+                {
+                    limitLo=n->robotNode->getJointLimitHi();
+                }
+                else if(limitLo < n->robotNode->getJointLimitLo())
+                {
+                     limitLo=n->robotNode->getJointLimitLo();
+                }
+
+            }
+            if (postshape=="none")
+            {
+                limitHi= n->robotNode->getJointLimitHi();
+            }
+            else
+            {
+                 std::map<std::string, float> mapPostshape=eef->getPostshape(postshape)->getRobotNodeJointValueMap();
+                 limitHi=mapPostshape[n->robotNode->getName()];
+
+                 //we check that the limit of the postshape is inside the joint limits, otherwise, we set it to the closer limit.
+                 if (limitHi > n->robotNode->getJointLimitHi())
+                 {
+                     limitHi=n->robotNode->getJointLimitHi();
+                 }
+                 else if(limitHi < n->robotNode->getJointLimitLo())
+                 {
+                      limitHi=n->robotNode->getJointLimitLo();
+                 }
+            }
+
+            //It's possible that depending on the pre post shape definitons, limitLo is higher that limitHi
+
+            float oldV =  n->robotNode->getJointValue();
+            float v = oldV + angle * n->directionAndSpeed;
+
+            bool condition;
+            if(limitHi <limitLo  )
+            {
+                condition=v <= limitLo && v >= limitHi;
+            }
+            else
+            {
+                condition=v <= limitHi && v >= limitLo;
+            }
+
+            //if (v <= n->robotNode->getJointLimitHi() && v >= n->robotNode->getJointLimitLo())
+            if (condition)
             {
                 robot->setJointValue(n->robotNode, v);
                 //n->robotNode->setJointValue(v);

@@ -19,7 +19,7 @@
 namespace VirtualRobot
 {
 
-    EndEffector::EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr, std::vector< RobotConfigPtr > preshapes) :
+    EndEffector::EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr, std::vector< RobotConfigPtr > preshapes,std::vector< RobotConfigPtr > postshapes) :
         name(nameString),
         actors(actorsVector),
         statics(staticPartVector),
@@ -42,6 +42,14 @@ namespace VirtualRobot
         {
             registerPreshape(preshapes[i]);
         }
+
+        for (size_t i = 0; i < postshapes.size(); i++)
+        {
+            registerPostshape(postshapes[i]);
+        }
+
+        activePreshape="none";
+        activePostshape="none";
     }
 
     EndEffector::~EndEffector()
@@ -66,6 +74,7 @@ namespace VirtualRobot
         std::vector<RobotNodePtr> newStatics(statics.size());
         std::vector<EndEffectorActorPtr> newActors(actors.size());
         std::vector<RobotConfigPtr> newPreshapes;
+        std::vector<RobotConfigPtr> newPostshapes;
 
         for (size_t i = 0; i < statics.size(); i++)
         {
@@ -78,6 +87,7 @@ namespace VirtualRobot
         }
 
         std::map< std::string, RobotConfigPtr >::iterator prI = preshapes.begin();
+        std::map< std::string, RobotConfigPtr >::iterator postI = postshapes.begin();
 
         while (prI != preshapes.end())
         {
@@ -85,9 +95,14 @@ namespace VirtualRobot
             prI++;
         }
 
+        while (postI != postshapes.end())
+        {
+            newPostshapes.push_back(postI->second->clone(newRobot));
+            postI++;
+        }
 
 
-        EndEffectorPtr eef(new EndEffector(name, newActors, newStatics, newBase, newTCP, newGCP, newPreshapes));
+        EndEffectorPtr eef(new EndEffector(name, newActors, newStatics, newBase, newTCP, newGCP, newPreshapes,newPostshapes));
         newRobot->registerEndEffector(eef);
 
         // set current config to new eef
@@ -125,7 +140,6 @@ namespace VirtualRobot
         {
             loop++;
             finished = true;
-
             for (unsigned int i = 0; i < actors.size(); i++)
             {
                 // Perform another step towards closing this actor
@@ -152,11 +166,11 @@ namespace VirtualRobot
                     actorCollisionStatus[i] = false;
                 }
             }
+
         }
 
         return result;
     }
-
 
     EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectPtr obstacle, float stepSize /*= 0.02*/)
     {
@@ -342,11 +356,121 @@ namespace VirtualRobot
             RobotPtr robot = getRobot();
             VR_ASSERT(robot);
             robot->setJointValues(ps);
+            activePreshape=name;
             return true;
         }
 
         return false;
     }
+
+    bool EndEffector::setActivePreshape(std::string name)
+    {
+        if (name=="none")
+        {
+            activePreshape=name;
+            return true;
+        }
+
+        if (!hasPreshape(name))
+        {
+            return false;
+        }
+
+        RobotConfigPtr ps = getPreshape(name);
+
+        if (ps)
+        {
+            RobotPtr robot = getRobot();
+            VR_ASSERT(robot);
+            robot->setJointValues(ps);
+            activePreshape=name;
+            return true;
+        }
+
+        return false;
+    }
+
+    void EndEffector::registerPostshape(RobotConfigPtr postshape)
+    {
+        THROW_VR_EXCEPTION_IF(!postshape, "NULL data...");
+        std::vector< RobotNodePtr > nodes = postshape->getNodes();
+        // don't be too strict!
+        /*for (size_t i=0;i<nodes.size();i++)
+        {
+            THROW_VR_EXCEPTION_IF(!hasNode(nodes[i]), "Node " << nodes[i]->getName() << " is not part of EEF " << getName() );
+        }*/
+        postshapes[postshape->getName()] = postshape;
+    }
+
+    VirtualRobot::RobotConfigPtr EndEffector::getPostshape(const std::string& name)
+    {
+        if (!hasPostshape(name))
+        {
+            return RobotConfigPtr();
+        }
+
+        return (postshapes.find(name))->second;
+    }
+
+    bool EndEffector::hasPostshape(const std::string& name)
+    {
+        return (postshapes.find(name) != postshapes.end());
+    }
+
+    bool EndEffector::setPostshape(const std::string& name)
+    {
+        if (!hasPostshape(name))
+        {
+            return false;
+        }
+
+        RobotConfigPtr ps = getPostshape(name);
+
+        if (ps)
+        {
+            RobotPtr robot = getRobot();
+            VR_ASSERT(robot);
+            robot->setJointValues(ps);
+            activePostshape=name;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool EndEffector::setActivePostshape(std::string name)
+    {
+        if (name=="none")
+        {
+            activePostshape=name;
+            return true;
+        }
+
+        if (!hasPostshape(name))
+        {
+            return false;
+        }
+
+        activePostshape=name;
+        return true;
+
+    }
+
+    std::vector<std::string> EndEffector::getPostshapes()
+    {
+        std::vector<std::string> res;
+        std::map< std::string, RobotConfigPtr >::iterator it = postshapes.begin();
+
+        while (it != postshapes.end())
+        {
+            res.push_back(it->first);
+            it++;
+        }
+
+        return res;
+    }
+
+
 
     bool EndEffector::hasNode(RobotNodePtr node)
     {
@@ -550,6 +674,16 @@ namespace VirtualRobot
         }
 
         return res;
+    }
+
+    std::string EndEffector::getActivePreshape()
+    {
+        return activePreshape;
+    }
+
+    std::string EndEffector::getActivePostshape()
+    {
+        return activePostshape;
     }
 
     std::string EndEffector::toXML(int ident /*= 1*/)

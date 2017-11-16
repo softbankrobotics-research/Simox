@@ -27,6 +27,8 @@
 
 #include <sstream>
 
+#include <unistd.h>
+
 #include <VirtualRobot/ui_GraspEditor.h>
 
 
@@ -162,6 +164,8 @@ namespace VirtualRobot
         connect(UI->pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
         connect(UI->pushButtonLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
         connect(UI->comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
+        connect(UI->comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape(int)));
+        connect(UI->comboBoxEndEffectorPS_2, SIGNAL(activated(int)), this, SLOT(selectPostshape(int)));
         connect(UI->comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
         connect(UI->pushButtonAddGrasp, SIGNAL(clicked()), this, SLOT(addGrasp()));
         connect(UI->pushButtonRenameGrasp, SIGNAL(clicked()), this, SLOT(renameGrasp()));
@@ -516,9 +520,71 @@ namespace VirtualRobot
             updateGraspBox();
         }
 
+        UI->comboBoxEndEffectorPS->clear();
+        UI->comboBoxEndEffectorPS_2->clear();
+
+        std::vector<std::string> ps = currentEEF->getPreshapes();
+        UI->comboBoxEndEffectorPS->addItem(QString("none"));
+        for (unsigned int i = 0; i < ps.size(); i++)
+        {
+            UI->comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
+        }
+
+        ps = currentEEF->getPostshapes();
+        UI->comboBoxEndEffectorPS_2->addItem(QString("none"));
+        for (unsigned int i = 0; i < ps.size(); i++)
+        {
+            UI->comboBoxEndEffectorPS_2->addItem(QString(ps[i].c_str()));
+        }
+
+
+
         buildVisu();
 
     }
+
+    void GraspEditorWindow::selectPreshape(int nr)
+    {
+        cout << "Selecting EEF preshape nr " << nr << endl;
+
+        if (!currentEEF || nr==0)
+            return;
+
+        nr--; // first entry is "none"
+
+        std::vector<std::string> ps = currentEEF->getPreshapes();
+        if (nr < 0 || nr >= (int)ps.size())
+        {
+            return;
+        }
+
+        VirtualRobot::RobotConfigPtr c = currentEEF->getPreshape(ps.at(nr));
+
+        robotEEF->setConfig(c);
+        currentEEF->setActivePreshape(ps.at(nr));
+    }
+
+    void GraspEditorWindow::selectPostshape(int nr)
+    {
+        cout << "Selecting EEF posthape nr " << nr << endl;
+
+        if (!currentEEF || nr==0)
+            return;
+
+        nr--; // first entry is "none"
+
+        std::vector<std::string> ps = currentEEF->getPostshapes();
+        if (nr < 0 || nr >= (int)ps.size())
+        {
+            return;
+        }
+
+        VirtualRobot::RobotConfigPtr c = currentEEF->getPostshape(ps.at(nr));
+
+        robotEEF->setConfig(c);
+        currentEEF->setActivePostshape(ps.at(nr));
+    }
+
 
     void GraspEditorWindow::selectGrasp(int n)
     {
@@ -618,12 +684,50 @@ namespace VirtualRobot
 
     void GraspEditorWindow::closeEEF()
     {
-        if (robotEEF_EEF)
+        if (robotEEF_EEF && object)
         {
+
             robotEEF_EEF->closeActors(object);
         }
 
-        m_pExViewer->scheduleRedraw();
+         m_pExViewer->scheduleRedraw();
+
+// Modif JBS Aug2017 to visualize how hand closes
+//            SceneObjectSetPtr obstacles(new SceneObjectSet("", object->getCollisionChecker()));
+//            obstacles->addSceneObject(object);
+
+//            std::vector<EndEffectorActorPtr> actors;
+//            robotEEF_EEF->getActors(actors);
+//            std::vector<bool> actorCollisionStatus(actors.size(), false);
+//            EndEffector::ContactInfoVector result;
+
+//            bool finished = false;
+//            int loop = 0;
+//            int counter = 0;
+//            while (!finished)
+//            {
+//                loop++;
+//                finished = true;
+//                robotEEF_EEF->closeActorsStep(obstacles, actorCollisionStatus, result, finished, loop);
+
+//                if(counter == 10)
+//                {
+//                    counter=0;
+//                    sleep(1);
+//                }
+//                m_pExViewer->scheduleRedraw();
+//                counter++;
+
+ //       return result;
+//            }
+
+//            return;
+
+//        }
+
+
+
+
     }
 
     void GraspEditorWindow::openEEF()

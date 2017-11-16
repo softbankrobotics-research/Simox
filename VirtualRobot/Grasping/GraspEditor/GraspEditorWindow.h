@@ -63,6 +63,8 @@ namespace VirtualRobot
         void selectObject(std::string file = "");
         void saveObject();
         void selectEEF(int n);
+        void selectPreshape(int nr);
+        void selectPostshape(int nr);
         void selectGrasp(int n);
 
         void closeEEF();

@@ -118,6 +118,7 @@ void showRobotWindow::setupUI()
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openHand()));
     connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
     connect(UI.comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape(int)));
+    connect(UI.comboBoxEndEffectorPS_2, SIGNAL(activated(int)), this, SLOT(selectPostshape(int)));
 
     connect(UI.checkBoxPhysicsCoM, SIGNAL(clicked()), this, SLOT(displayPhysics()));
     connect(UI.checkBoxPhysicsInertia, SIGNAL(clicked()), this, SLOT(displayPhysics()));
@@ -1050,6 +1051,7 @@ void showRobotWindow::selectEEF(int nr)
     cout << "Selecting EEF nr " << nr << endl;
 
      UI.comboBoxEndEffectorPS->clear();
+     UI.comboBoxEndEffectorPS_2->clear();
      currentEEF.reset();
 
     if (nr < 0 || nr >= (int)eefs.size())
@@ -1064,6 +1066,14 @@ void showRobotWindow::selectEEF(int nr)
     {
         UI.comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
     }
+
+    ps = currentEEF->getPostshapes();
+    UI.comboBoxEndEffectorPS_2->addItem(QString("none"));
+    for (unsigned int i = 0; i < ps.size(); i++)
+    {
+        UI.comboBoxEndEffectorPS_2->addItem(QString(ps[i].c_str()));
+    }
+
 }
 
 void showRobotWindow::selectPreshape(int nr)
@@ -1084,8 +1094,29 @@ void showRobotWindow::selectPreshape(int nr)
     VirtualRobot::RobotConfigPtr c = currentEEF->getPreshape(ps.at(nr));
 
     robot->setConfig(c);
+    currentEEF->setActivePreshape(ps.at(nr));
 }
 
+void showRobotWindow::selectPostshape(int nr)
+{
+    cout << "Selecting EEF posthape nr " << nr << endl;
+
+    if (!currentEEF || nr==0)
+        return;
+
+    nr--; // first entry is "none"
+
+    std::vector<std::string> ps = currentEEF->getPostshapes();
+    if (nr < 0 || nr >= (int)ps.size())
+    {
+        return;
+    }
+
+    VirtualRobot::RobotConfigPtr c = currentEEF->getPostshape(ps.at(nr));
+
+    robot->setConfig(c);
+    currentEEF->setActivePostshape(ps.at(nr));
+}
 void showRobotWindow::updateEEFBox()
 {
     UI.comboBoxEndEffector->clear();

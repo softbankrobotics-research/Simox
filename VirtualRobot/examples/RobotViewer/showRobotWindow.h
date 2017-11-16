@@ -62,6 +62,7 @@ public slots:
     void openHand();
     void selectEEF(int nr);
     void selectPreshape(int nr);
+    void selectPostshape(int nr);
     void selectRobot();
     void displayPhysics();
     void exportVRML();

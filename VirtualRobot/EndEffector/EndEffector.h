@@ -57,7 +57,7 @@ namespace VirtualRobot
         //! We need an Eigen::aligned_allocator here, otherwise access to a std::vector could crash
         typedef std::vector< ContactInfo, Eigen::aligned_allocator<ContactInfo> > ContactInfoVector;
 
-        EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr = RobotNodePtr(), std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >());
+        EndEffector(const std::string& nameString, const std::vector<EndEffectorActorPtr>& actorsVector, const std::vector<RobotNodePtr>& staticPartVector, RobotNodePtr baseNodePtr, RobotNodePtr tcpNodePtr, RobotNodePtr gcpNodePtr = RobotNodePtr(), std::vector< RobotConfigPtr > preshapes = std::vector< RobotConfigPtr >(),std::vector< RobotConfigPtr > postshapes = std::vector< RobotConfigPtr >());
 
         virtual ~EndEffector();
         /*!
@@ -147,10 +147,46 @@ namespace VirtualRobot
         */
         bool setPreshape(const std::string& name);
 
+        bool setActivePreshape(std::string name);
         /*!
             Returns vector of all registered preshape names.
         */
         std::vector<std::string> getPreshapes();
+
+        std::string getActivePreshape();
+
+        /*!
+            Register a postshape to this EEF. An exception is thrown if postshape covers joints that are not part of this eef.
+            If there is already a postshape with name postshape->getName(), it is replaced.
+        */
+        void registerPostshape(RobotConfigPtr postshape);
+
+        RobotConfigPtr getPostshape(const std::string& name);
+
+        bool hasPostshape(const std::string& name);
+
+        std::string getActivePostshape();
+
+        /*!
+            Set joints of this eef to postshape with given name.
+            \param name The name of the registered postshape.
+            \return false if postshape was not registered, otherwise true
+        */
+        bool setPostshape(const std::string& name);
+
+        /*!
+            Sets the postshape that it wil be used when opening and closing. If "none", it uses joint angles full range.
+            \return false if preshape was not registered, otherwise true
+        */
+        bool setActivePostshape(std::string name);
+        /*!
+            Returns vector of all registered postshape names.
+        */
+        std::vector<std::string> getPostshapes();
+
+
+
+
 
         /*!
             Check, if node is part of this eef.
@@ -187,6 +223,9 @@ namespace VirtualRobot
         std::vector<EndEffectorActorPtr> actors;
         std::vector<RobotNodePtr> statics;
         std::map< std::string, RobotConfigPtr > preshapes;
+        std::map< std::string, RobotConfigPtr > postshapes;
+        std::string activePreshape;
+        std::string activePostshape;
         RobotNodePtr baseNode;
         RobotNodePtr tcpNode;
         RobotNodePtr gcpNode;
