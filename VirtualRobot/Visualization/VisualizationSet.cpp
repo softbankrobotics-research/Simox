@@ -177,13 +177,7 @@ namespace VirtualRobot
         {
             clonedVisus.push_back(visu->clone());
         }
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
-        visu->setVisible(this->isVisible());
-        visu->setStyle(this->getStyle());
-        visu->setColor(this->getColor());
-        visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
-        return visu;
+        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
     }
 
     void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
