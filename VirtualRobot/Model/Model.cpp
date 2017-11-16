@@ -5,6 +5,7 @@
 #include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
 #include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationSet.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
 #include "../Trajectory.h"
@@ -24,7 +25,10 @@ namespace VirtualRobot
                                                                      collisionChecker(),
                                                                      modelNodeMap(), 
                                                                      modelNodeSetMap(),
-                                                                     filename("")
+                                                                     filename(""),
+                                                                     visualizationNodeSetFull(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({})),
+                                                                     visualizationNodeSetCollision(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({})),
+                                                                     visualizationAttachmentSet(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({}))
     {
     }
 
@@ -60,10 +64,12 @@ namespace VirtualRobot
                 {
                     collisionChecker = link->getCollisionChecker();
                 }
+                addToVisualization(link);
             }
 
             modelNodeMap[node->getName()] = node;
         }
+        updateAttachmentVisualization();
     }
 
     void Model::deregisterModelNode(const ModelNodePtr& node)
@@ -78,6 +84,12 @@ namespace VirtualRobot
                 modelNodeMap.erase(i);
             }
         }
+        if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+        {
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
+            removeFromVisualization(link);
+        }
+        updateAttachmentVisualization();
     }
 
     bool Model::hasModelNode(const ModelNodePtr& node) const
@@ -1098,31 +1110,119 @@ namespace VirtualRobot
 
     VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType, bool addAttachments) const
     {
-        std::vector<VisualizationPtr> collectedVisualizationNodes;
-        std::vector<ModelLinkPtr> links = getLinks();
-        for (auto l: links)
+        if (!addAttachments)
         {
-            VisualizationPtr v = l->getVisualization(visuType);
-            if (!v)
-                continue;
-            collectedVisualizationNodes.push_back(v);
+            return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
         }
 
-        if (addAttachments)
+        // since a visualization can only be in one set, we need to chache the created sets
+        // this is done using weak pointers to allow destruction of unused sets
+        static std::weak_ptr<VisualizationSet> combinedSetFull;
+        static std::weak_ptr<VisualizationSet> combinedSetCollision;
+        VisualizationSetPtr ret;
+        if (visuType == ModelLink::VisualizationType::Full)
         {
-            for (const auto & node : getModelNodes())
+            VisualizationSetPtr tmp = combinedSetFull.lock();
+            if (tmp)
             {
-                for (const auto & attachement : node->getAttachmentsWithVisualisation())
-                {
-                    VisualizationPtr v = attachement->getVisualisation();
-                    if (!v)
-                        continue;
-                    collectedVisualizationNodes.push_back(v);
-                }
+                ret = tmp;
+            }
+            else
+            {
+                ret = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({visualizationNodeSetFull});
+                combinedSetFull = ret;
+            }
+        }
+        else
+        {
+            VisualizationSetPtr tmp = combinedSetCollision.lock();
+            if (tmp)
+            {
+                ret = tmp;
+            }
+            else
+            {
+                ret = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({visualizationNodeSetCollision});
+                combinedSetCollision = ret;
             }
         }
 
-        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(collectedVisualizationNodes);
+        updateAttachmentVisualization();
+
+        if (!visualizationAttachmentSet->isInVisualizationSet())
+        {
+            ret->addVisualization(visualizationAttachmentSet);
+        }
+        else if (ret->size() < 2)
+        {
+            ret->addVisualization(visualizationAttachmentSet->clone());
+        }
+
+        return ret;
+    }
+
+    VisualizationSetPtr Model::getVisualizationVisualization() const
+    {
+        updateAttachmentVisualization();
+        return visualizationAttachmentSet;
+    }
+
+    void Model::updateAttachmentVisualization() const
+    {
+        auto visusInAttachmentSet = visualizationAttachmentSet->getVisualizations();
+        std::set<VisualizationPtr> inVisuSet(visusInAttachmentSet.begin(), visusInAttachmentSet.end());
+        for (const auto & node : getModelNodes())
+        {
+            for (const auto & attachement : node->getAttachmentsWithVisualisation())
+            {
+                VisualizationPtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
+
+                auto it = inVisuSet.find(v);
+                if (it == inVisuSet.end())
+                {
+                    visualizationAttachmentSet->addVisualization(v);
+                    inVisuSet.insert(v);
+                }
+                else
+                {
+                    inVisuSet.erase(it);
+                }
+            }
+        }
+        for (const auto& v : inVisuSet)
+        {
+            visualizationAttachmentSet->removeVisualization(v);
+        }
+    }
+
+    void Model::addToVisualization(const ModelLinkPtr &link)
+    {
+        auto visuFull = link->getVisualization(ModelLink::VisualizationType::Full);
+        if (visuFull)
+        {
+            visualizationNodeSetFull->addVisualization(visuFull);
+        }
+        auto visuCollision = link->getVisualization(ModelLink::VisualizationType::Collision);
+        if (visuCollision)
+        {
+            visualizationNodeSetCollision->addVisualization(visuCollision);
+        }
+    }
+
+    void Model::removeFromVisualization(const ModelLinkPtr &link)
+    {
+        auto visuFull = link->getVisualization(ModelLink::VisualizationType::Full);
+        if (visuFull)
+        {
+            visualizationNodeSetFull->removeVisualization(visuFull);
+        }
+        auto visuCollision = link->getVisualization(ModelLink::VisualizationType::Collision);
+        if (visuCollision)
+        {
+            visualizationNodeSetCollision->removeVisualization(visuCollision);
+        }
     }
 
     void Model::_clone(ModelPtr newModel, const ModelNodePtr &startNode, const CollisionCheckerPtr &collisionChecker, bool cloneRNS, bool cloneEEF, float scaling) const

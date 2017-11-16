@@ -693,14 +693,29 @@ namespace VirtualRobot
         std::vector<EndEffectorPtr> getEndEffectors() const;
 
         /**
-         * @param linkVisuType The type of link visualization (e.g. collision).
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
+         * Get the VisualizationSet which represents the robot.
+         * This set is updated internally (@see setUpdateVisualization).
+         *
+         * @param visuType The type of link visualization (e.g. collision).
+         * @param addAttachments If true, the attachments of all robot nodes are added to the set visualization.
+         *                       This can only be done for one visuType at the same time.
+         *                       If the attachments are added to a visualization of an other type, a cloned version of the attachments is added (this means the attachments are not updated).
+         *                       If the set with the other type of visualizations is destructed, the real attachments are added again.
+         *                       For example:
+         *                       auto visuSet0 = model->getVisualization(VirtualRobot::ModelLink::Collision, false);  // no attachments added
+         *                       auto visuSet1 = model->getVisualization(VirtualRobot::ModelLink::Full, true);        // attachments are updated
+         *                       auto visuSet2 = model->getVisualization(VirtualRobot::ModelLink::Collision, true);   // attachments are not updated
+         *                       visuSet1.reset();
+         *                       auto visuSet3 = model->getVisualization(VirtualRobot::ModelLink::Collision, true);   // attachments are updated
          * @return A visualization of this model's links.
          */
         VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full, bool addAttachments = true) const;
+        VisualizationSetPtr getVisualizationVisualization() const;
+        void updateAttachmentVisualization() const;
 
     protected:
+        void addToVisualization(const ModelLinkPtr &link);
+        void removeFromVisualization(const ModelLinkPtr& link);
 
         virtual void _clone(ModelPtr newModel,
                     const ModelNodePtr& startNode,
@@ -724,6 +739,10 @@ namespace VirtualRobot
         std::vector< RobotConfigPtr > configs;
 
         std::string filename;
+
+        VisualizationSetPtr visualizationNodeSetFull;
+        VisualizationSetPtr visualizationNodeSetCollision;
+        VisualizationSetPtr visualizationAttachmentSet;
     };
 }
 
