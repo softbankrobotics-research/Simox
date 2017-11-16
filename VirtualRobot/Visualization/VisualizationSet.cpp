@@ -105,7 +105,14 @@ namespace VirtualRobot
 
     bool VisualizationSet::isSelected() const
     {
-
+        for (auto& visu : visualizations)
+        {
+            if (!visu->isSelected())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     void VisualizationSet::scale(const Eigen::Vector3f &s)
