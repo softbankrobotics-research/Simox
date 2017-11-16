@@ -6,12 +6,39 @@
 
 #include "Qt3DVisualization.h"
 
+#include <Qt3DExtras/QTorusMesh>
+#include <Qt3DExtras/QPhongMaterial>
+#include <QPropertyAnimation>
+
 namespace VirtualRobot
 {
-
     Qt3DVisualization::Qt3DVisualization()
     {
+        this->entity = new Qt3DCore::QEntity();
+        this->transformation = new Qt3DCore::QTransform;
+        this->material = new Qt3DExtras::QPhongMaterial(this->entity);
 
+        //EXEMPLARY CONTENT/////////////////////////////////////////////////////
+        Qt3DExtras::QTorusMesh* mesh = new Qt3DExtras::QTorusMesh;
+        mesh->setRadius(5);
+        mesh->setMinorRadius(1);
+        mesh->setRings(100);
+        mesh->setSlices(20);
+        //this->transformation->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1,0,0), 45.f));
+        QPropertyAnimation *rotateTransformAnimation = new QPropertyAnimation(this->transformation);
+        rotateTransformAnimation->setTargetObject(this->transformation);
+        rotateTransformAnimation->setPropertyName("rotationX");
+        rotateTransformAnimation->setStartValue(QVariant::fromValue(0));
+        rotateTransformAnimation->setEndValue(QVariant::fromValue(360));
+        rotateTransformAnimation->setDuration(10000);
+        rotateTransformAnimation->setLoopCount(-1);
+        rotateTransformAnimation->start();
+        this->entity->addComponent(mesh);
+        ///////////////////////////////////////////////////////////////////////
+
+
+        this->entity->addComponent(transformation);
+        this->entity->addComponent(material);
     }
 
     Qt3DVisualization::~Qt3DVisualization()
@@ -150,6 +177,11 @@ namespace VirtualRobot
 
     bool Qt3DVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
+    }
+
+    Qt3DCore::QEntity *Qt3DVisualization::getEntity()
+    {
+        return this->entity;
     }
 
     void Qt3DVisualization::createTriMeshModel()
