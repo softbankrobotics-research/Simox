@@ -44,6 +44,9 @@ namespace VirtualRobot
 
         virtual VisualizationPtr clone() const override = 0;
 
+        virtual void addVisualization(const VisualizationPtr& visu) override;
+        virtual bool removeVisualization(const VisualizationPtr &visu) override;
+
         virtual Eigen::Matrix4f getGlobalPose() const override;
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;

@@ -30,6 +30,22 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::addVisualization(const VisualizationPtr &visu)
+    {
+        VisualizationGroup::addVisualization(visu);
+        visu->setIsInVisualizationSet(true);
+    }
+
+    bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
+    {
+        if (VisualizationGroup::removeVisualization(visu))
+        {
+            visu->setIsInVisualizationSet(false);
+            return true;
+        }
+        return false;
+    }
+
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
     {
         return VisualizationGroup::getGlobalPose();
