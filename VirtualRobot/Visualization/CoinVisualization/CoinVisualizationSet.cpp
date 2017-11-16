@@ -63,12 +63,9 @@ namespace VirtualRobot
         {
             auto visuCoin = visualization_cast<CoinElement>(visu);
             setNode->removeChild(visuCoin->getMainNode());
+            return true;
         }
-    }
-
-    bool CoinVisualizationSet::removeVisualization(size_t index)
-    {
-        return this->removeVisualization(this->at(index));
+        return false;
     }
 
     VisualizationPtr CoinVisualizationSet::clone() const

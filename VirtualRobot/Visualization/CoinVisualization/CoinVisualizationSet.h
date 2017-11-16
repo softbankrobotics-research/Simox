@@ -48,7 +48,6 @@ namespace VirtualRobot
 
         virtual void addVisualization(const VisualizationPtr& visu) override;
         virtual bool removeVisualization(const VisualizationPtr& visu) override;
-        virtual bool removeVisualization(size_t index) override;
 
         virtual VisualizationPtr clone() const override;
 
