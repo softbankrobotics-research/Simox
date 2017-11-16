@@ -107,13 +107,12 @@ namespace VirtualRobot
 
     void CoinVisualizationSet::setSelected(bool selected)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VisualizationSet::setSelected(selected);
     }
 
     bool CoinVisualizationSet::isSelected() const
     {
-        VR_ERROR << "NYI" << std::endl;
-        return false;
+        return VisualizationSet::isSelected();
     }
 
     size_t CoinVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
