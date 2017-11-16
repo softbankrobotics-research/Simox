@@ -6,6 +6,7 @@
 
 
 #include "CoinVisualizationSet.h"
+#include "CoinVisualizationFactory.h"
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
@@ -79,7 +80,7 @@ namespace VirtualRobot
         {
             clonedVisus.push_back(visu->clone());
         }
-        return VisualizationPtr(new CoinVisualizationSet(clonedVisus));
+        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
     }
 
     void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
