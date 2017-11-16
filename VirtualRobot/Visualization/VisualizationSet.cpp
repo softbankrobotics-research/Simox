@@ -16,7 +16,6 @@ namespace VirtualRobot
         : VisualizationGroup(visualizations),
           Visualization()
     {
-        // TODO
         for (auto& visu : visualizations)
         {
             visu->setIsInVisualizationSet(true);
