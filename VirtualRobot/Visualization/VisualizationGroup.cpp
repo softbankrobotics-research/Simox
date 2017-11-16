@@ -222,7 +222,14 @@ namespace VirtualRobot
 
     void VisualizationGroup::scale(const Eigen::Vector3f &scaleFactor)
     {
-        // TODO
+        Eigen::Vector3f gpos = getGlobalPosition();
+        for (auto& visu : visualizations)
+        {
+            Eigen::Matrix4f visuGp = visu->getGlobalPose();
+            visuGp.block<3, 1>(0, 3) = gpos + (visuGp.block<3, 1>(0, 3) - gpos).cwiseProduct(scaleFactor);
+            visu->setGlobalPose(visuGp);
+            visu->scale(scaleFactor);
+        }
     }
 
     BoundingBox VisualizationGroup::getBoundingBox() const
