@@ -110,7 +110,7 @@ namespace VirtualRobot
 
     void VisualizationSet::scale(const Eigen::Vector3f &s)
     {
-
+        VisualizationGroup::scale(s);
     }
 
     void VisualizationSet::shrinkFatten(float offset)
