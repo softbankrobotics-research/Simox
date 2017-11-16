@@ -645,14 +645,7 @@ namespace VirtualRobot
     void Model::setUpdateVisualization(bool enable)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
-
-        for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
-        {
-            ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
-            if (link && link->getVisualization())
-				link->getVisualization()->setUpdateVisualization(enable);
-        }
+        getVisualization(VirtualRobot::ModelLink::Full, true)->setUpdateVisualization(enable);
     }
 
     void Model::setUpdateCollisionModel(bool enable)
@@ -667,20 +660,12 @@ namespace VirtualRobot
 				link->getCollisionModel()->setUpdateVisualization(enable);
         }
     }
-	
-	bool Model::getUpdateVisualization() const
-	{
-		WriteLockPtr w = getWriteLock();
-		std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
 
-		for (auto mn : modelNodes)
-		{
-			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
-            if (link && link->getVisualization())
-				return link->getVisualization()->getUpdateVisualizationStatus();
-		}
-		return true;
-	}
+    bool Model::getUpdateVisualization() const
+    {
+        WriteLockPtr w = getWriteLock();
+        return getVisualization(VirtualRobot::ModelLink::Full, true)->getUpdateVisualizationStatus();
+    }
 
 	bool Model::getUpdateCollisionModel() const
 	{
