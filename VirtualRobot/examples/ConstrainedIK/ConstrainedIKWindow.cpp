@@ -150,8 +150,8 @@ void ConstrainedIKWindow::collisionModel()
 
     viewer->clearLayer("robotLayer");
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-    viewer->addVisualization("robotLayer", "robot", visu);
+    VisualizationSetPtr visu = robot->getVisualization(colModel);
+    viewer->addVisualization("robotLayer", visu);
     viewer->viewAll();
 }
 
@@ -163,18 +163,10 @@ void ConstrainedIKWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int ConstrainedIKWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void ConstrainedIKWindow::quit()
 {
     std::cout << "ConstrainedIKWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void ConstrainedIKWindow::updateKCBox()
@@ -388,8 +380,9 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("tsrLayer");
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
-    viewer->addVisualization("tsrLayer", "tsr", visu);
+    VisualizationPtr visu = tsrConstraint->getVisualization();
+    visu->setColor(color);
+    viewer->addVisualization("tsrLayer", visu);
 }
 
 void ConstrainedIKWindow::randomTSR(bool quiet)
@@ -496,8 +489,9 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("poseLayer");
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
-    viewer->addVisualization("poseLayer", "pose", visu);
+    VisualizationPtr visu = positionConstraint->getVisualization();
+    visu->setColor(color);
+    viewer->addVisualization("poseLayer", visu);
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)
