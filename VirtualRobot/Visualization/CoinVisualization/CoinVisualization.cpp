@@ -150,7 +150,7 @@ namespace VirtualRobot
         {
             mainNode->addChild(visualizationNode);
         }
-        else if (index >= 0)
+        else if (!showVisualization && index >= 0)
         {
             mainNode->removeChild(index);
         }
