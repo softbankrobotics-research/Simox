@@ -11,7 +11,7 @@
 namespace VirtualRobot
 {
 
-    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : visualizations()
+    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : Frame(), visualizations()
     {
         std::copy_if(visualizations.begin(), visualizations.end(), std::back_inserter(this->visualizations), [](const VisualizationPtr& visu) {
             if (visu->isInVisualizationSet())
@@ -84,29 +84,20 @@ namespace VirtualRobot
         return visualizations.size();
     }
 
-    Eigen::Matrix4f VisualizationGroup::getGlobalPose() const
-    {
-        // TODO
-        return Eigen::Matrix4f::Identity();
-    }
-
     void VisualizationGroup::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        // TODO
         Eigen::Matrix4f oldM = this->getGlobalPose();
         Eigen::Matrix4f dp = m * oldM.inverse();
-        if (oldM.hasNaN())
-        {
-            std::cout << "NaN" << std::endl;
-        }
-        if (dp.hasNaN())
-        {
-            std::cout << "NaN" << std::endl;
-        }
         for (auto& visu : visualizations)
         {
-            visu->applyDisplacement(dp);
+            visu->setGlobalPose(dp * visu->getGlobalPose());
         }
+        setGlobalPoseNoUpdate(m);
+    }
+
+    void VisualizationGroup::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
+    {
+        globalPose = m;
     }
 
     void VisualizationGroup::applyDisplacement(const Eigen::Matrix4f &dp)

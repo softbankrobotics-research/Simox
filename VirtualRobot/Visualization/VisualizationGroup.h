@@ -33,7 +33,7 @@
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationGroup
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationGroup : public Frame
     {
     protected:
         VisualizationGroup(const std::vector<VisualizationPtr>& visualizations);
@@ -51,8 +51,8 @@ namespace VirtualRobot
         virtual bool empty() const;
         virtual size_t size() const;
 
-        virtual Eigen::Matrix4f getGlobalPose() const;
         virtual void setGlobalPose(const Eigen::Matrix4f &m);
+        virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f &m);
         virtual void applyDisplacement(const Eigen::Matrix4f &dp);
 
         virtual void setVisible(bool showVisualization);
