@@ -92,6 +92,11 @@ bool Constraint::checkTolerances()
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
 }
 
+bool Constraint::usingCollisionModel()
+{
+    return false;
+}
+
 void Constraint::addEqualityConstraint(unsigned int id, bool soft)
 {
     OptimizationFunctionSetup setup;
