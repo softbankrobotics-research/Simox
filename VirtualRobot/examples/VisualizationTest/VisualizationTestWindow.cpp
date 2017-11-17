@@ -1,6 +1,8 @@
 #include "VisualizationTestWindow.h"
 #include "../../VirtualRobotException.h"
 
+#include "../../Visualization/VisualizationFactory.h"
+
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
@@ -31,6 +33,9 @@ void VisualizationTestWindow::setupUI()
     SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
+
+    VirtualRobot::VisualizationPtr visu = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createBox(1.0f, 1.0f, 1.0f);
+    viewer->addVisualization("test", visu);
 }
 
 int VisualizationTestWindow::main()

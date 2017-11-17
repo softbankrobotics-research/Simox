@@ -62,6 +62,12 @@ namespace VirtualRobot
         virtual VisualizationPtr createVisualization() const override;
         virtual void cleanup() override;
         virtual std::string getVisualizationType() const override;
+
+        static std::string getName();
+        static VisualizationFactoryPtr createInstance(void *);
+
+    private:
+        static SubClassRegistry registry;
     };
 
     typedef std::shared_ptr<Qt3DVisualizationFactory> Qt3DVisualizationFactoryPtr;
