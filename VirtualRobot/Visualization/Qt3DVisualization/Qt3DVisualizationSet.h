@@ -54,7 +54,7 @@ namespace VirtualRobot
         virtual void _removeAllManipulators() override;
     };
 
-    typedef std::shared_ptr<Qt3DVisualizationSet> Qt3DVisualizationPtr;
+    typedef std::shared_ptr<Qt3DVisualizationSet> Qt3DVisualizationSetPtr;
 }
 
 #endif

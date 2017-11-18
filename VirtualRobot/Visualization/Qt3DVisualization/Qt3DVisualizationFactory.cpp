@@ -6,6 +6,7 @@
 
 #include "Qt3DVisualizationFactory.h"
 #include "Qt3DVisualization.h"
+#include "Qt3DVisualizationSet.h"
 
 namespace VirtualRobot
 {
@@ -44,7 +45,7 @@ namespace VirtualRobot
 
     VisualizationSetPtr Qt3DVisualizationFactory::createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const
     {
-        return VisualizationPtr(new Qt3DVisualization());
+        return VisualizationSetPtr(new Qt3DVisualizationSet(visualizations));
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createBox(float width, float height, float depth) const
@@ -64,12 +65,14 @@ namespace VirtualRobot
 
     VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
     {
-        return VisualizationPtr(new Qt3DVisualization());
+        std::vector<VisualizationPtr> visualisations;
+        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
     }
 
     VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const
     {
-        return VisualizationPtr(new Qt3DVisualization());
+        std::vector<VisualizationPtr> visualisations;
+        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
@@ -109,12 +112,14 @@ namespace VirtualRobot
 
     VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const
     {
-        return VisualizationPtr(new Qt3DVisualization());
+        std::vector<VisualizationPtr> visualisations;
+        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
     }
 
     VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Vector3f> &points, float radius) const
     {
-        return VisualizationPtr(new Qt3DVisualization());
+        std::vector<VisualizationPtr> visualisations;
+        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
