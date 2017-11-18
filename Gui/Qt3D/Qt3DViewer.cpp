@@ -55,36 +55,72 @@ SimoxGui::Qt3DViewer::~Qt3DViewer()
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
-    VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
-    visu->getEntity()->setParent(this->scene);
+    requestLayer(layer).addVisualization(visualization);
 }
 
 void SimoxGui::Qt3DViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
+    requestLayer(layer).removeVisualization(visualization);
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllVisualizations() const
 {
+    std::vector<VirtualRobot::VisualizationPtr> tmpVisualizations;
+    for (const auto& entry : layers)
+    {
+        auto& layerVisualizations = entry.second.visualizations;
+        tmpVisualizations.insert(tmpVisualizations.end(), layerVisualizations.begin(), layerVisualizations.end());
+    }
+    return tmpVisualizations;
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllVisualizations(const std::string &layer) const
 {
+    auto it = layers.find(layer);
+    if (it != layers.end())
+    {
+        return std::vector<VirtualRobot::VisualizationPtr>();
+    }
+    else
+    {
+        auto& v = it->second.visualizations;
+        return std::vector<VirtualRobot::VisualizationPtr>(v.begin(), v.end());
+    }
 }
 
 bool SimoxGui::Qt3DViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
 {
+    for (const auto& entry : layers)
+    {
+        if (entry.second.hasVisualization(visualization))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool SimoxGui::Qt3DViewer::hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const
 {
+    auto it = layers.find(layer);
+    if (it != layers.end())
+    {
+        return false;
+    }
+    else
+    {
+        return it->second.hasVisualization(visualization);
+    }
 }
 
 void SimoxGui::Qt3DViewer::clearLayer(const std::string &layer)
 {
+    requestLayer(layer).clear();
 }
 
 bool SimoxGui::Qt3DViewer::hasLayer(const std::string &layer) const
 {
+    return layers.find(layer) != layers.end();
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected() const
@@ -121,4 +157,65 @@ void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization:
 
 VirtualRobot::Visualization::Color SimoxGui::Qt3DViewer::getBackgroundColor() const
 {
+}
+
+SimoxGui::Qt3DViewer::Layer &SimoxGui::Qt3DViewer::requestLayer(const std::string &name)
+{
+    auto it = layers.find(name);
+    if (it != layers.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        Layer& l = layers[name];
+        l.layerMainNode->setParent(this->scene);
+        return l;
+    }
+}
+
+SimoxGui::Qt3DViewer::Layer::Layer() : layerMainNode(new Qt3DCore::QNode)
+{
+
+}
+
+SimoxGui::Qt3DViewer::Layer::~Layer()
+{
+    this->clear();
+    delete this->layerMainNode;
+}
+
+void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::VisualizationPtr &visualization)
+{
+    if (!hasVisualization(visualization))
+    {
+        visualizations.insert(visualization);
+        VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
+        visu->getEntity()->setParent(this->layerMainNode);
+    }
+}
+
+void SimoxGui::Qt3DViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+{
+    auto it = visualizations.find(visualization);
+    if (it != visualizations.end())
+    {
+        visualizations.erase(it);
+        VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
+        visu->getEntity()->setParent((Qt3DCore::QNode*) nullptr);
+    }
+}
+
+bool SimoxGui::Qt3DViewer::Layer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
+{
+    return visualizations.find(visualization) != visualizations.end();
+}
+
+void SimoxGui::Qt3DViewer::Layer::clear()
+{
+    for(Qt3DCore::QNode* node : layerMainNode->childNodes())
+    {
+        node->setParent((Qt3DCore::QNode*) nullptr);
+    }
+    visualizations.clear();
 }

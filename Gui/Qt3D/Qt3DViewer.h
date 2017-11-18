@@ -26,9 +26,11 @@
 
 #include "../ViewerInterface.h"
 
+#include <unordered_set>
 #include <QWidget>
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DCore/QEntity>
+#include <Qt3DCore/QNode>
 #include <Qt3DExtras/QOrbitCameraController>
 
 namespace SimoxGui
@@ -60,6 +62,23 @@ namespace SimoxGui
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
     private:
+        struct Layer
+        {
+            Layer();
+            ~Layer();
+
+            void addVisualization(const VirtualRobot::VisualizationPtr& visualization);
+            void removeVisualization(const VirtualRobot::VisualizationPtr& visualization);
+            bool hasVisualization(const VirtualRobot::VisualizationPtr& visualization) const;
+
+            void clear();
+
+            std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
+            Qt3DCore::QNode* layerMainNode;
+        };
+        Layer& requestLayer(const std::string& name);
+        std::map<std::string, Layer> layers;
+
         QWidget* parent;
         Qt3DCore::QEntity* scene;
         Qt3DExtras::QOrbitCameraController* camController;
