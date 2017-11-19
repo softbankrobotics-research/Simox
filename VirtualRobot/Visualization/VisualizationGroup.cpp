@@ -10,20 +10,12 @@
 
 namespace VirtualRobot
 {
-
-    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : Frame(), visualizations()
+    VisualizationGroup::VisualizationGroup()
     {
-        std::copy_if(visualizations.begin(), visualizations.end(), std::back_inserter(this->visualizations), [](const VisualizationPtr& visu) {
-            if (visu->isInVisualizationSet())
-            {
-                VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        });
+    }
+
+    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : Frame(), visualizations(visualizations)
+    {
     }
 
     VisualizationGroup::~VisualizationGroup()

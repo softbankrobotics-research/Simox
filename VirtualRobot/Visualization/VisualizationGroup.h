@@ -35,10 +35,10 @@ namespace VirtualRobot
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationGroup : public Frame
     {
-    protected:
+    public:
+        VisualizationGroup();
         VisualizationGroup(const std::vector<VisualizationPtr>& visualizations);
 
-    public:
         virtual ~VisualizationGroup();
 
         virtual void addVisualization(const VisualizationPtr& visu);
