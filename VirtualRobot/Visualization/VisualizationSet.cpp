@@ -13,12 +13,12 @@ namespace VirtualRobot
 {
 
     VisualizationSet::VisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationGroup(visualizations),
+        : VisualizationGroup(),
           Visualization()
     {
         for (auto& visu : visualizations)
         {
-            visu->setIsInVisualizationSet(true);
+            addVisualization(visu);
         }
     }
 
@@ -32,8 +32,15 @@ namespace VirtualRobot
 
     void VisualizationSet::addVisualization(const VisualizationPtr &visu)
     {
-        VisualizationGroup::addVisualization(visu);
-        visu->setIsInVisualizationSet(true);
+        if (visu->isInVisualizationSet())
+        {
+            VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
+        }
+        else
+        {
+            VisualizationGroup::addVisualization(visu);
+            visu->setIsInVisualizationSet(true);
+        }
     }
 
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
