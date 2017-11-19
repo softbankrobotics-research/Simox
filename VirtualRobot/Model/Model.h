@@ -710,7 +710,7 @@ namespace VirtualRobot
          * @return A visualization of this model's links.
          */
         VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full, bool addAttachments = true) const;
-        VisualizationSetPtr getVisualizationVisualization() const;
+        VisualizationSetPtr getAttachmentVisualization() const;
         void updateAttachmentVisualization() const;
 
     protected:

@@ -1146,7 +1146,7 @@ namespace VirtualRobot
         return ret;
     }
 
-    VisualizationSetPtr Model::getVisualizationVisualization() const
+    VisualizationSetPtr Model::getAttachmentVisualization() const
     {
         updateAttachmentVisualization();
         return visualizationAttachmentSet;
