@@ -32,7 +32,7 @@ namespace VirtualRobot
         friend class ModelNode;
         friend class ModelStructureFactory;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
@@ -41,7 +41,6 @@ namespace VirtualRobot
          */
         ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
-    public:
         virtual ~ModelStructure();
 
         /*!

@@ -31,7 +31,7 @@ namespace VirtualRobot
     {
         friend class ModelNode;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
@@ -40,7 +40,6 @@ namespace VirtualRobot
          */
         Sensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
-    public:
         /*!
          * Destructor.
          */

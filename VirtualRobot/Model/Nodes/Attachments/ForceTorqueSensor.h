@@ -32,7 +32,7 @@ namespace VirtualRobot
         friend class ModelNode;
         friend class ForceTorqueSensorFactory;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
@@ -41,7 +41,6 @@ namespace VirtualRobot
          */
         ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
-    public:
         /*!
          * Destructor.
          */
