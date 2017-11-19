@@ -64,10 +64,6 @@ namespace VirtualRobot
         virtual std::string getType();
 
         virtual ModelNodeAttachmentPtr clone();
-
-
-    private:
-        void initVisualization();
     };
     
     typedef std::shared_ptr<Sensor> SensorPtr;

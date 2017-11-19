@@ -83,9 +83,6 @@ namespace VirtualRobot
 
     protected:
         Eigen::VectorXf forceTorqueValues;
-
-    private:
-        void initVisualization();
     };
     
     typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;

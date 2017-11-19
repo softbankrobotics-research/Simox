@@ -39,7 +39,7 @@ namespace VirtualRobot
 
     public:
         /*!
-         * Constructor.
+         * Creates a frame visualization (default).
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \param \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
@@ -97,15 +97,9 @@ namespace VirtualRobot
          *
          * @return The visualisation.
          */
-        virtual VisualizationNodePtr getVisualisation()
-        {
-            return visu;
-        }
+        virtual VisualizationNodePtr getVisualisation();
 
-        virtual void setVisualization(VisualizationNodePtr visu)
-        {
-            this->visu = visu;
-        }
+        virtual void setVisualization(VisualizationNodePtr visu);
 
         /*!
          * Get the type of this attachment.
@@ -154,9 +148,6 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3);
 
     protected:
-
-        virtual void initVisualization();
-
         virtual void setParent(const ModelNodePtr &node)
         {
             if (node)
@@ -173,6 +164,9 @@ namespace VirtualRobot
         Eigen::Matrix4f localTransformation;
         std::string visualizationType;
         VisualizationNodePtr visu;
+
+    private:
+        void initVisualization();
     };
 }
 

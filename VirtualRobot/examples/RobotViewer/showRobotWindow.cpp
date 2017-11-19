@@ -23,6 +23,7 @@
 
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
+    // TODO get rid of this hack.
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
 #endif
@@ -161,7 +162,7 @@ void showRobotWindow::robotFullModel()
     bool showFullModel = UI.checkBoxFullModel->checkState() == Qt::Checked;
 
     robot->setupVisualization(showFullModel, true);
-
+    rebuildVisualization();
 }
 
 void showRobotWindow::rebuildVisualization()

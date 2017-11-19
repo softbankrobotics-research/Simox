@@ -4589,19 +4589,18 @@ namespace VirtualRobot
         for (auto l: links)
         {
             VisualizationNodePtr v = l->getVisualization(visuType);
-            if (!v)
-                continue;
-            collectedVisualizationNodes.push_back(v);
+            if (v)
+            {
+                collectedVisualizationNodes.push_back(v);
+            }
         }
 
         // attachments
-        for (const auto & node : model->getModelNodes())
+        for (const auto & attachment : model->getAttachments())
         {
-            for (const auto & attachement : node->getAttachmentsWithVisualisation())
+            VisualizationNodePtr v = attachment->getVisualisation();
+            if (v)
             {
-                VisualizationNodePtr v = attachement->getVisualisation();
-                if (!v)
-                    continue;
                 collectedVisualizationNodes.push_back(v);
             }
         }

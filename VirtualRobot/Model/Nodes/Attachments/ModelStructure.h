@@ -55,7 +55,7 @@ namespace VirtualRobot
 
         /*!
          * Get the type of this attachment.
-         * This is used to seperate different attached attachments.
+         * This is used to separate different attached attachments.
          *
          * @return "ModelStructure".
          */

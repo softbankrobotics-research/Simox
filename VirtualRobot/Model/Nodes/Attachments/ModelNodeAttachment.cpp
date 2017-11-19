@@ -80,5 +80,15 @@ namespace VirtualRobot
         std::string name = getName();
         setVisualization(factory->createCoordSystem(1, &name));
     }
+
+    VisualizationNodePtr ModelNodeAttachment::getVisualisation()
+    {
+        return visu;
+    }
+
+    void ModelNodeAttachment::setVisualization(VisualizationNodePtr visu)
+    {
+        this->visu = visu;
+    }
 }
 

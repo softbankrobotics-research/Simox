@@ -9,7 +9,6 @@ namespace VirtualRobot
         , forceTorqueValues(6)
     {
         forceTorqueValues.setZero();
-        initVisualization();
     }
 
 
@@ -33,27 +32,6 @@ namespace VirtualRobot
         ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation, visualizationType));
         result->updateSensors(forceTorqueValues);
         return result;
-    }
-
-    void ForceTorqueSensor::initVisualization()
-    {
-        VisualizationFactoryPtr factory;
-        if (visualizationType.empty())
-        {
-            factory = VirtualRobot::VisualizationFactory::first(NULL);
-        } else
-        {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!factory)
-        {
-            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
-            return;
-        }
-
-        std::string name = getName();
-        setVisualization(factory->createCoordSystem(1, &name));
     }
 
     Eigen::Vector3f ForceTorqueSensor::getForce() const

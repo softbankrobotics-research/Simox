@@ -62,6 +62,10 @@ namespace VirtualRobot
             {
                 setVisualization(createLinkVisualization(std::static_pointer_cast<ModelLink>(node), factory));
             }
+            else
+            {
+                VR_ERROR << "Could not initialize Visualization for node '" << node->getName() << "'" << endl;
+            }
         }
 
     }

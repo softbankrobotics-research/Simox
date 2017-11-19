@@ -35,7 +35,8 @@ namespace VirtualRobot
             EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
             Frame(const std::string &name = std::string());
-            ~Frame();
+
+            virtual ~Frame();
 
             /*!
              * \brief getGlobalPose Returns the pose in global coordinate system.
