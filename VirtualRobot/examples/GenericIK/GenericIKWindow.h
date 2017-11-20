@@ -8,7 +8,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/IK/GazeIK.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -31,9 +30,6 @@ class GenericIKWindow : public QMainWindow
 public:
     GenericIKWindow(std::string& sRobotFilename);
     ~GenericIKWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
