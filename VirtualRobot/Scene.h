@@ -163,7 +163,7 @@ namespace VirtualRobot
          *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
          * @return A visualization of this model's links.
          */
-        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;
+        VisualizationGroupPtr getAllVisualizations(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;
 
         /*!
             Creates an XML string that describes this scene.

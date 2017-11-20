@@ -454,7 +454,7 @@ namespace VirtualRobot
         return name;
     }
 
-    VisualizationSetPtr Scene::getVisualization(ModelLink::VisualizationType visuType , bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, bool addAttachments) const
+    VisualizationGroupPtr Scene::getAllVisualizations(ModelLink::VisualizationType visuType , bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, bool addAttachments) const
     {
         std::vector<VisualizationPtr> collectedVisualizationNodes;
 
@@ -504,7 +504,7 @@ namespace VirtualRobot
             //todo
         }
 
-        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(collectedVisualizationNodes);
+        return VisualizationGroupPtr(new VisualizationGroup(collectedVisualizationNodes));
     }
 
     std::vector< RobotPtr > Scene::getRobots() const
