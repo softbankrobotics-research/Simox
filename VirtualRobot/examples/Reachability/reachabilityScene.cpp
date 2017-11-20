@@ -3,14 +3,9 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Workspace/Manipulability.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
-
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
 
 #include <string>
 #include <iostream>
@@ -192,7 +187,10 @@ int main(int argc, char* argv[])
     }
 
     reachabilityWindow rw(filenameRob, filenameReach, axisTCP);
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
+
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
