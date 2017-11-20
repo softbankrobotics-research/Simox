@@ -7,7 +7,6 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
 
 #include "../../../Gui/ViewerInterface.h"
@@ -27,8 +26,6 @@ class stabilityWindow : public QMainWindow
 public:
     stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset);
     ~stabilityWindow();
-
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */

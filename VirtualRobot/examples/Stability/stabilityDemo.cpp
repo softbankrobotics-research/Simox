@@ -40,8 +40,10 @@ int main(int argc, char* argv[])
     cout << "Using robot file " << filenameRob << ", link set:" << linkset << ", joint set: " << jointset << endl;
 
     stabilityWindow rw(filenameRob, linkset, jointset);
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
 
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
