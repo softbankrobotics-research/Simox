@@ -572,6 +572,8 @@ namespace VirtualRobot
         {
             std::vector<Eigen::Vector2f> vertices;
             std::vector<Segment2D> segments;
+
+            VisualizationPtr getVisualization(const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
         };
         typedef std::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
 

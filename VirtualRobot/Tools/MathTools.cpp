@@ -2,6 +2,7 @@
 #include "MathTools.h"
 #include "../VirtualRobotException.h"
 #include "../Visualization/VisualizationFactory.h"
+#include "../Visualization/TriMeshModel.h"
 #include <float.h>
 #include <string.h>
 #include <cmath>
@@ -1918,6 +1919,20 @@ namespace VirtualRobot
         gp.block<3, 1>(0, 3) = p;
         visu->setGlobalPose(gp);
         return visu;
+    }
+
+    VisualizationPtr MathTools::ConvexHull2D::getVisualization(const Plane &p, const Eigen::Vector3f &offset) const
+    {
+        std::vector<Eigen::Vector3f> cvHull3d;
+
+        for (size_t u = 0; u < vertices.size(); u++)
+        {
+            Eigen::Vector3f pt3d = MathTools::planePoint3D(vertices[u], p);
+            pt3d += offset;
+            cvHull3d.push_back(pt3d);
+        }
+
+        return VisualizationFactory::getGlobalVisualizationFactory()->createPolygon(cvHull3d);
     }
 
 
