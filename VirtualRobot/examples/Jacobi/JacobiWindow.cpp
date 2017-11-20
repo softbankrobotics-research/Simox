@@ -1,7 +1,7 @@
 
 #include "JacobiWindow.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 #include "Gui/ViewerFactory.h"
@@ -37,13 +37,13 @@ JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box->getVisualization());
 
     box2 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box2", box2->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box2->getVisualization());
 
     box3 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box3", box3->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box3->getVisualization());
 
     box2TCP();
 
@@ -253,7 +253,7 @@ void JacobiWindow::collisionModel()
 
     if (visualization)
     {
-        viewer->addVisualization(boxVisuLayer, "colModel", visualization);
+        viewer->addVisualization(boxVisuLayer, visualization);
     }
 
     viewer->viewAll();
@@ -267,19 +267,11 @@ void JacobiWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int JacobiWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void JacobiWindow::quit()
 {
     std::cout << "JacobiWindow: Closing" << std::endl;
     this->close();
     timer->stop();
-    viewer->stop();
 }
 
 void JacobiWindow::updateKCBox()
