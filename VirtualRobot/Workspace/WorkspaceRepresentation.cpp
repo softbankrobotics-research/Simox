@@ -1321,7 +1321,7 @@ namespace VirtualRobot
         return result;
     }
 
-    VisualizationPtr WorkspaceRepresentation::getVisualization(const ColorMapPtr cm, bool transformToGlobalPose, float maxZGlobal) const
+    VisualizationPtr WorkspaceRepresentation::getVisualization(const ColorMapPtr& cm, bool transformToGlobalPose, float maxZGlobal) const
     {
         auto factory = VisualizationFactory::getGlobalVisualizationFactory();
         if (numVoxels[0] <= 0 || numVoxels[1] <= 0 || numVoxels[2] <= 0)

@@ -423,7 +423,7 @@ namespace VirtualRobot
 
         virtual VolumeInfo computeVolumeInformation();
 
-        VisualizationPtr getVisualization(const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) const;
+        VisualizationPtr getVisualization(const ColorMapPtr &cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) const;
     protected:
 
         /*!
