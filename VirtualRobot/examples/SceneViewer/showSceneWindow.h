@@ -7,7 +7,6 @@
 #include "../../../VirtualRobot/Model/Nodes/ModelNode.h"
 #include "../../../VirtualRobot/XML/SceneIO.h"
 #include "../../../VirtualRobot/Visualization/VisualizationFactory.h"
-#include "../../../VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "../../../VirtualRobot/Model/Obstacle.h"
 
 #include "../../../Gui/ViewerInterface.h"
@@ -28,9 +27,6 @@ class showSceneWindow : public QMainWindow
 public:
     showSceneWindow(std::string& sSceneFile);
     ~showSceneWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */

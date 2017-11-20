@@ -106,14 +106,14 @@ void showSceneWindow::buildVisu()
         visuType = ModelLink::VisualizationType::Collision;
     }
 
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, visuType);
-    viewer->addVisualization("scene", "scene", visu);
+
+    viewer->addVisualizations("scene", scene->getAllVisualizations(visuType));
 
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &rootText);
-        viewer->addVisualization("scene", "coord", visuCoord);
+        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(&rootText, 2.f);
+        viewer->addVisualization("scene", visuCoord);
     }
 
     updateGraspVisu();
@@ -127,24 +127,17 @@ void showSceneWindow::updateGraspVisu()
     if (UI.comboBoxGrasp->currentIndex() > 0 && currentObject && currentEEF && currentGrasp)
     {
         std::string t = currentGrasp->getName();
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &t);
+        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(&t, 2.f);
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
-        VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visuCoord, gp);
-        viewer->addVisualization("grasps", "current-grasp", visuCoord);
+        visuCoord->applyDisplacement(gp);
+        viewer->addVisualization("grasps", visuCoord);
     }
-}
-
-int showSceneWindow::main()
-{
-    viewer->start(this);
-    return 0;
 }
 
 
 void showSceneWindow::quit()
 {
     std::cout << "showSceneWindow: Closing" << std::endl;
-    viewer->stop();
     this->close();
 }
 
