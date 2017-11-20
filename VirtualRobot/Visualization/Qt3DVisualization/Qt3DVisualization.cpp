@@ -18,12 +18,13 @@ namespace VirtualRobot
         this->transformation = new Qt3DCore::QTransform;
         this->material = new Qt3DExtras::QPhongMaterial(this->entity);
 
-        //EXEMPLARY CONTENT/////////////////////////////////////////////////////
+        /*//EXEMPLARY CONTENT/////////////////////////////////////////////////////
         Qt3DExtras::QTorusMesh* mesh = new Qt3DExtras::QTorusMesh;
         mesh->setRadius(5);
         mesh->setMinorRadius(1);
         mesh->setRings(100);
         mesh->setSlices(20);
+        this->entity->addComponent(mesh);
         //this->transformation->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1,0,0), 45.f));
         QPropertyAnimation *rotateTransformAnimation = new QPropertyAnimation(this->transformation);
         rotateTransformAnimation->setTargetObject(this->transformation);
@@ -33,8 +34,7 @@ namespace VirtualRobot
         rotateTransformAnimation->setDuration(10000);
         rotateTransformAnimation->setLoopCount(-1);
         rotateTransformAnimation->start();
-        this->entity->addComponent(mesh);
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////*/
 
 
         this->entity->addComponent(transformation);
@@ -49,6 +49,8 @@ namespace VirtualRobot
     void Qt3DVisualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
         Visualization::setGlobalPose(m);
+        this->transformation->setMatrix(QMatrix4x4(m.data()));
+        this->transformation->setTranslation(QVector3D(*(m.data() + 3), *(m.data() + 7), *(m.data() + 11)));
     }
 
     size_t Qt3DVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
