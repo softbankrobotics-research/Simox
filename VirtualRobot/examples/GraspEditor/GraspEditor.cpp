@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
     VR_INFO << "Robot file: " << filenameRob << endl;
 
     GraspEditorWindow rw(filenameObj, filenameRob);
+    rw.show();
+    rw.raise();
 
-    rw.main();
-
-    return 0;
-
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
