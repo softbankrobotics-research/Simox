@@ -2,10 +2,6 @@
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/RuntimeEnvironment.h"
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
-
 #include <string>
 #include <iostream>
 #include <Eigen/Core>
@@ -89,9 +85,9 @@ int main(int argc, char* argv[])
     cout << "Using reachability file from " << filenameReach << endl;
 
     ReachabilityMapWindow rw(filenameRob, filenameReach, fileObj, eef);
+    rw.show();
+    rw.raise();
 
-    rw.main();
-
-    return 0;
-
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
