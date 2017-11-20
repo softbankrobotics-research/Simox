@@ -520,6 +520,32 @@ namespace VirtualRobot
         return res;
     }
 
+    VisualizationPtr CoinVisualizationFactory::createPolygon(const std::vector<Eigen::Vector3f> &points) const
+    {
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+
+        // A shape hints tells the ordering of polygons.
+        // This ensures double-sided lighting.
+        SoShapeHints *myHints = new SoShapeHints;
+        myHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+        res->addChild(myHints);
+
+        SoCoordinate3 *myCoords = new SoCoordinate3;
+        for (size_t i=0; i<points.size(); ++i)
+        {
+            myCoords->point.set1Value(i, points[i].x(), points[i].y(), points[i].z());
+        }
+        res->addChild(myCoords);
+
+        SoFaceSet *myFaceSet = new SoFaceSet;
+        myFaceSet->numVertices.set1Value(0, points.size());
+        res->addChild(myFaceSet);
+
+        res->unrefNoDelete();
+        return VisualizationPtr(new CoinVisualization(res));
+    }
+
     VisualizationPtr CoinVisualizationFactory::createGrid(float extend, const std::string &textureFile) const
     {
         SoSeparator* res = new SoSeparator();

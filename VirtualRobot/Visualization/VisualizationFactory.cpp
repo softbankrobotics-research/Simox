@@ -196,6 +196,11 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
+    VisualizationPtr VisualizationFactory::createPolygon(const std::vector<Eigen::Vector3f> &) const
+    {
+        return VisualizationPtr(new DummyVisualization);
+    }
+
     VisualizationPtr VisualizationFactory::createGrid(float, const std::string&) const
     {
         return VisualizationPtr(new DummyVisualization);

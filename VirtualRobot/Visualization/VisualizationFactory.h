@@ -75,6 +75,7 @@ namespace VirtualRobot
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f>& points, float radius) const;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;
         virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr& model) const;
+        virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f>& points) const;
         virtual VisualizationPtr createGrid(float extend, const std::string& textureFile = "") const;
         virtual VisualizationPtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f) const;
         virtual VisualizationPtr createText(const std::string& text, bool billboard = false, float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) const;
