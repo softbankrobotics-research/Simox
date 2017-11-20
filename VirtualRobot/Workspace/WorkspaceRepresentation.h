@@ -296,6 +296,8 @@ namespace VirtualRobot
             Eigen::MatrixXi entries;
             float minBounds[2]; // in global coord system
             float maxBounds[2]; // in global coord system
+
+            virtual VisualizationPtr getVisualization(const ColorMap& cm, const Eigen::Vector3f &normal, float maxEntry) const;
         };
         typedef std::shared_ptr<WorkspaceCut2D> WorkspaceCut2DPtr;
 
