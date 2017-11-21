@@ -1,10 +1,11 @@
-
+﻿
 #ifndef __ShowRobot_WINDOW_H_
 #define __ShowRobot_WINDOW_H_
 
 #include "../../Model/Model.h"
 #include "../../VirtualRobotException.h"
 #include "../../Model/Nodes/ModelNode.h"
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include "../../XML/ModelIO.h"
 #include "../../Visualization/VisualizationFactory.h"
 #include "../../Model/Obstacle.h"
@@ -43,13 +44,9 @@ public slots:
     /*!< Overriding the close event, so we know when the window was closed by the user. */
     void closeEvent(QCloseEvent* event);
 
-    void resetSceneryAll();
+    void resetRobot();
     void rebuildVisualization();
     void loadRobot();
-    void selectJoint(int nr);
-    void selectRNS(int nr);
-    void jointValueChanged(int pos);
-    void showCoordSystem();
     void robotStructure();
     void robotCoordSystems();
     void robotFullModel();
@@ -65,11 +62,8 @@ public slots:
 
 protected:
     void setupUI();
-    void updateJointBox();
-    void updateRNSBox();
     void updateEEFBox();
     void displayTriangles();
-    void updatRobotInfo();
     Ui::MainWindowShowRobot UI;
 
     SimoxGui::ViewerInterfacePtr viewer;
@@ -77,7 +71,6 @@ protected:
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
 
-    std::vector < VirtualRobot::ModelNodePtr > allNodes;
     std::vector < VirtualRobot::ModelNodePtr > currentNodes;
 
     std::vector < VirtualRobot::ModelNodeSetPtr > robotNodeSets;
@@ -92,6 +85,36 @@ protected:
     bool physicsInertiaEnabled;
 
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
+
+
+private slots:
+    // updates the joint table and link list based on the selected nodesets.
+    void updateModelNodeControls();
+    // updates all joint values based on all joint table sliders.
+    void updateJoints();
+
+private:
+    // A slider that adjusts it's tooltip based on current jointvalues
+    class JointValueSlider : public QSlider
+    {
+    public:
+        explicit JointValueSlider(VirtualRobot::ModelJointPtr joint, Qt::Orientation orientation, QWidget *parent = 0)
+            : QSlider(orientation, parent), joint(joint)
+        {
+            setMouseTracking(true);
+        }
+    protected:
+        virtual void mouseMoveEvent(QMouseEvent *e)
+        {
+            QSlider::mouseMoveEvent(e);
+            QString text = QString("min: ") + QString::number(joint->getJointLimitLow()) +
+                    QString("\ncurrent: ") + QString::number(joint->getJointValue()) +
+                    QString("\nmax: ") + QString::number(joint->getJointLimitHigh());
+            QToolTip::showText(mapToGlobal(e->pos()),  text, this);
+        }
+    private:
+        VirtualRobot::ModelJointPtr joint;
+    };
 };
 
 #endif

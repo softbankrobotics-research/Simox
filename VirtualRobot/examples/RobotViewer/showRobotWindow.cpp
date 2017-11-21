@@ -31,8 +31,6 @@
 using namespace std;
 using namespace VirtualRobot;
 
-float TIMER_MS = 30.0f;
-
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     : QMainWindow(NULL)
 {
@@ -40,9 +38,8 @@ showRobotWindow::showRobotWindow(std::string& sRobotFilename)
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
 
-    setupUI();
-
     loadRobot();
+    setupUI();
 
     viewer->viewAll();
 }
@@ -61,8 +58,25 @@ void showRobotWindow::setupUI()
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
-    connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
-    connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
+    // joint sets
+    UI.cBoxJointSets->clear();
+    UI.cBoxJointSets->addItem("All");
+    for (auto & js : robot->getJointSets())
+    {
+        UI.cBoxJointSets->addItem(QString::fromStdString(js->getName()));
+    }
+    // link sets
+    UI.cBoxLinkSets->clear();
+    UI.cBoxLinkSets->addItem("All");
+    for (auto & ls : robot->getLinkSets())
+    {
+        UI.cBoxLinkSets->addItem(QString::fromStdString(ls->getName()));
+    }
+
+    updateModelNodeControls();
+
+    connect(UI.btnLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
+    connect(UI.btnResetRobot, SIGNAL(clicked()), this, SLOT(resetRobot()));
 
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
     connect(UI.ExportVRML20, SIGNAL(clicked()), this, SLOT(exportVRML()));
@@ -80,28 +94,25 @@ void showRobotWindow::setupUI()
     UI.checkBoxFullModel->setChecked(true);
     connect(UI.checkBoxFullModel, SIGNAL(clicked()), this, SLOT(robotFullModel()));
     connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked()), this, SLOT(robotCoordSystems()));
-    connect(UI.checkBoxShowCoordSystem, SIGNAL(clicked()), this, SLOT(showCoordSystem()));
-    connect(UI.comboBoxRobotNodeSet, SIGNAL(activated(int)), this, SLOT(selectRNS(int)));
-    connect(UI.comboBoxJoint, SIGNAL(activated(int)), this, SLOT(selectJoint(int)));
-    connect(UI.horizontalSliderPos, SIGNAL(valueChanged(int)), this, SLOT(jointValueChanged(int)));
 
+    connect(UI.cBoxJointSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
+    connect(UI.cBoxLinkSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
+
+    rebuildVisualization();
 }
 
-void showRobotWindow::resetSceneryAll()
+void showRobotWindow::resetRobot()
 {
-    if (!robot)
-    {
-        return;
-    }
+    if (!robot) return;
 
-    for (auto& j:allNodes)
+    std::map<std::string, float> jv;
+    for (auto& j: robot->getJoints())
     {
-        ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(j);
-        if (joint)
-            joint->setJointValue(0.0f);
+        jv[j->getName()] = 0.0f;
     }
+    robot->setJointValues(jv);
 
-    selectJoint(UI.comboBoxJoint->currentIndex());
+    updateModelNodeControls();
 }
 
 void showRobotWindow::displayTriangles()
@@ -134,7 +145,7 @@ void showRobotWindow::displayTriangles()
         trisJointCol = ml->getNumFaces(true);
     }
 
-    if (UI.checkBoxColModel->checkState() == Qt::Checked)
+    if (UI.checkBoxColModel->isChecked())
     {
         text1 = tr("Total\t:") + QString::number(trisAllCol);
         text2 = tr("RobotNodeSet:\t") + QString::number(trisRNSCol);
@@ -159,7 +170,7 @@ void showRobotWindow::robotFullModel()
         return;
     }
 
-    bool showFullModel = UI.checkBoxFullModel->checkState() == Qt::Checked;
+    bool showFullModel = UI.checkBoxFullModel->isChecked();
 
     robot->setupVisualization(showFullModel, true);
     rebuildVisualization();
@@ -174,14 +185,13 @@ void showRobotWindow::rebuildVisualization()
 
     viewer->clearLayer("robotLayer");
 
-    useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
+    useColModel = UI.checkBoxColModel->isChecked();
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
     VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
     viewer->addVisualization("robotLayer", "robot", visu);
 
-    selectJoint(UI.comboBoxJoint->currentIndex());
 
     UI.checkBoxStructure->setEnabled(!useColModel);
     UI.checkBoxRobotSensors->setEnabled(!useColModel);
@@ -307,164 +317,6 @@ void showRobotWindow::quit()
     viewer->stop();
 }
 
-void showRobotWindow::updateJointBox()
-{
-    UI.comboBoxJoint->clear();
-
-    for (unsigned int i = 0; i < currentNodes.size(); i++)
-    {
-        UI.comboBoxJoint->addItem(QString(currentNodes[i]->getName().c_str()));
-    }
-}
-
-void showRobotWindow::updateRNSBox()
-{
-    UI.comboBoxRobotNodeSet->clear();
-    UI.comboBoxRobotNodeSet->addItem(QString("<All>"));
-
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
-    {
-        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSets[i]->getName().c_str()));
-    }
-}
-
-void showRobotWindow::selectRNS(int nr)
-{
-    currentRobotNodeSet.reset();
-    cout << "Selecting RNS nr " << nr << endl;
-
-    if (nr <= 0)
-    {
-        // all joints
-        currentNodes = allNodes;
-    }
-    else
-    {
-        nr--;
-
-        if (nr >= (int)robotNodeSets.size())
-        {
-            return;
-        }
-
-        currentRobotNodeSet = robotNodeSets[nr];
-
-        currentNodes = currentRobotNodeSet->getModelNodes();
-
-        //std::cout << "COM:" << currentRobotSet->getCoM();
-        /*cout << "HIGHLIGHTING rns " << currentRobotNodeSet->getName() << endl;
-        if (visualization)
-        {
-
-            robot->highlight(visualization,false);
-            currentRobotNodeSet->highlight(visualization,true);
-        }*/
-    }
-
-    updateJointBox();
-    selectJoint(0);
-    displayTriangles();
-}
-
-void showRobotWindow::selectJoint(int nr)
-{
-    //todo
-    /*
-    if (currentRobotNode)
-    {
-        currentRobotNode->showBoundingBox(false);
-    }
-    */
-
-    currentRobotNode.reset();
-    cout << "Selecting Joint nr " << nr << endl;
-
-    if (nr < 0 || nr >= (int)currentNodes.size())
-    {
-        return;
-    }
-
-    currentRobotNode = currentNodes[nr];
-    //todo
-    /*
-    currentRobotNode->showBoundingBox(true, true);
-    */
-    currentRobotNode->print();
-    ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(currentRobotNode);
-    float mi = 0.0f;
-    float ma = 0.0f;
-    float j = 0.0f;
-    if (joint)
-    {
-        mi = joint->getJointLimitLow();
-        ma = joint->getJointLimitHigh();
-        j = joint->getJointValue();
-    }
-    QString qMin = QString::number(mi);
-    QString qMax = QString::number(ma);
-    UI.labelMinPos->setText(qMin);
-    UI.labelMaxPos->setText(qMax);
-
-    UI.lcdNumberJointValue->display((double)j);
-
-    if (fabs(ma - mi) > 0 && joint)
-    {
-        UI.horizontalSliderPos->setEnabled(true);
-        int pos = (int)((j - mi) / (ma - mi) * 1000.0f);
-        UI.horizontalSliderPos->setValue(pos);
-    }
-    else
-    {
-        UI.horizontalSliderPos->setValue(500);
-        UI.horizontalSliderPos->setEnabled(false);
-    }
-    //todo
-    /*
-    if (currentRobotNodes[nr]->showCoordinateSystemState())
-    {
-        UI.checkBoxShowCoordSystem->setCheckState(Qt::Checked);
-    }
-    else
-    {
-        UI.checkBoxShowCoordSystem->setCheckState(Qt::Unchecked);
-    }
-
-    cout << "HIGHLIGHTING node " << currentRobotNodes[nr]->getName() << endl;
-
-    if (visualization)
-    {
-        // todo
-        //robot->highlight(visualization, false);
-        //currentRobotNode->highlight(visualization, true);
-    }
-    */
-    displayTriangles();
-}
-
-void showRobotWindow::jointValueChanged(int pos)
-{
-    ModelJointPtr joint = dynamic_pointer_cast<ModelJoint>(currentRobotNode);
-    if (!joint)
-        return;
-
-    float fPos = joint->getJointLimitLow() + (float)pos / 1000.0f * (joint->getJointLimitHigh() - joint->getJointLimitLow());
-    joint->setJointValue(fPos);
-    UI.lcdNumberJointValue->display((double)fPos);
-}
-
-void showRobotWindow::showCoordSystem()
-{
-    // todo
-    /*
-    float size = 0.75f;
-    currentRobotNode->showCoordinateSystem(UI.checkBoxShowCoordSystem->checkState() == Qt::Checked, size);
-    */
-    // rebuild visualization
-    rebuildVisualization();
-}
-
-
-
 void showRobotWindow::selectRobot()
 {
     string supportedExtensions = RobotImporterFactory::getAllExtensions();
@@ -484,9 +336,7 @@ void showRobotWindow::selectRobot()
 
 void showRobotWindow::loadRobot()
 {
-    viewer->clearLayer("robotLayer");
-
-    cout << "Loading Robot from " << robotFilename << endl;
+    VR_INFO << "Loading Robot from " << robotFilename << endl;
     currentEEF.reset();
     currentRobotNode.reset();
     currentNodes.clear();
@@ -511,7 +361,7 @@ void showRobotWindow::loadRobot()
 
             if (!importer)
             {
-                cout << " ERROR while grabbing importer" << endl;
+                VR_WARNING << " ERROR while grabbing importer" << endl;
                 return;
             }
 
@@ -522,64 +372,61 @@ void showRobotWindow::loadRobot()
         }
     }
 
-
     if (!robot)
     {
-        cout << " ERROR while creating robot" << endl;
+        VR_WARNING << " ERROR while creating robot" << endl;
         return;
     }
-
-    updatRobotInfo();
 }
 
-void showRobotWindow::updatRobotInfo()
+void showRobotWindow::updateModelNodeControls()
 {
-    if (!robot)
+    std::vector<ModelJointPtr> joints = (UI.cBoxJointSets->currentIndex() == 0) ? robot->getJoints() : robot->getJointSet(UI.cBoxJointSets->currentText().toStdString())->getJoints();
+    std::vector<ModelLinkPtr> links = (UI.cBoxLinkSets->currentIndex() == 0) ? robot->getLinks() : robot->getLinkSet(UI.cBoxLinkSets->currentText().toStdString())->getLinks();
+
+    // joints tab
+    // joint table
+    UI.tableJoints->clear();
+    UI.tableJoints->setRowCount(joints.size());
+    UI.tableJoints->setColumnCount(2);
+    UI.tableJoints->setHorizontalHeaderLabels({"Name", "Joint Value"});
+    for (int i = 0; i < joints.size(); i++)
     {
-        return;
+        QTableWidgetItem *item = new QTableWidgetItem(QString::fromStdString(joints[i]->getName()));
+        UI.tableJoints->setItem(i, 0, item);
+
+        QSlider *slider = new JointValueSlider(joints[i], Qt::Horizontal);
+        slider->setRange(0, 1000);
+        float sliderValue = 1000 * ((joints[i]->getJointValue() - joints[i]->getJointLimitLow()) / (joints[i]->getJointLimitHigh() - joints[i]->getJointLimitLow()));
+        slider->setValue(sliderValue);
+        slider->setTracking(true);
+        slider->setEnabled(joints[i]->getJointLimitHigh() - joints[i]->getJointLimitLow() != 0.0);
+        UI.tableJoints->setCellWidget(i, 1, slider);
+
+        connect(slider, SIGNAL(valueChanged(int)), this, SLOT(updateJoints()));
     }
 
-    UI.checkBoxColModel->setChecked(false);
-    UI.checkBoxFullModel->setChecked(true);
-    UI.checkBoxPhysicsCoM->setChecked(false);
-    UI.checkBoxPhysicsInertia->setChecked(false);
-    UI.checkBoxRobotCoordSystems->setChecked(false);
-    UI.checkBoxShowCoordSystem->setChecked(false);
-    UI.checkBoxStructure->setChecked(false);
-
-    // get nodes
-    allNodes = robot->getModelNodes();
-    robotNodeSets = robot->getModelNodeSets();
-    eefs = robot->getEndEffectors();
-    updateEEFBox();
-    updateRNSBox();
-    selectRNS(0);
-
-    if (allNodes.size() == 0)
+    // links tab
+    // link list
+    UI.listLinks->clear();
+    for (std::size_t i = 0; i < links.size(); i++)
     {
-        selectJoint(-1);
+        UI.listLinks->addItem(QString::fromStdString(links[i]->getName()));
     }
-    else
-    {
-        selectJoint(0);
-    }
+}
 
-    if (eefs.size() == 0)
+void showRobotWindow::updateJoints()
+{
+    std::map<std::string, float> jointValues;
+    for (int i = 0; i < UI.tableJoints->rowCount(); i++)
     {
-        selectEEF(-1);
+        std::string name = UI.tableJoints->item(i, 0)->text().toStdString();
+        QSlider* slider = ((QSlider*) UI.tableJoints->cellWidget(i, 1));
+        float ratio = (float)(slider->value() - slider->minimum()) / (slider->maximum() - slider->minimum());
+        float value = robot->getJoint(name)->getJointLimitLow() + ratio * (robot->getJoint(name)->getJointLimitHigh() - robot->getJoint(name)->getJointLimitLow());
+        jointValues[name] = value;
     }
-    else
-    {
-        selectEEF(0);
-    }
-
-    displayTriangles();
-
-    // build visualization
-    rebuildVisualization();
-    robotStructure();
-    displayPhysics();
-    viewer->viewAll();
+    robot->setJointValues(jointValues);
 }
 
 void showRobotWindow::robotStructure()
