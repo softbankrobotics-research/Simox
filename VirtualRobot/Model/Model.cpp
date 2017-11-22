@@ -18,14 +18,11 @@
 
 namespace VirtualRobot
 {
-    Model::Model(const std::string& name, const std::string& type) : Frame(name), type(type), scaling(1.0f),
-                                                                     threadsafe(true), mutex(),
-                                                                     rootNode(),
-                                                                     collisionChecker(),
-                                                                     modelNodeMap(), 
-                                                                     modelNodeSetMap(),
-                                                                     filename("")
+    Model::Model(const std::string &name, const std::string &type)
+            : Frame(name), type(type), scaling(1.0f), threadsafe(true), mutex(), rootNode(), collisionChecker(),
+              modelNodeMap(), modelNodeSetMap(), filename(""), visualizationValid(true)
     {
+
     }
 
     Model::~Model()
@@ -63,6 +60,7 @@ namespace VirtualRobot
             }
 
             modelNodeMap[node->getName()] = node;
+            invalidateVisualization();
         }
     }
 
@@ -76,6 +74,7 @@ namespace VirtualRobot
             if (i != modelNodeMap.end())
             {
                 modelNodeMap.erase(i);
+                invalidateVisualization();
             }
         }
     }
@@ -623,10 +622,6 @@ namespace VirtualRobot
             ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
             if (link && link->getVisualization())
                 link->getVisualization()->setupVisualization(showVisualization, showAttachedVisualizations);
-            else if (link)
-            {
-                // todo setup visualization
-            }
         }
     }
 
@@ -1098,13 +1093,15 @@ namespace VirtualRobot
 
     VisualizationPtr Model::getVisualization(ModelLink::VisualizationType linkVisuType, std::string visualizationType)
     {
-        if (!visualization || this->visuType != linkVisuType)
+        if (!visualizationValid || !visualization || this->visuType != linkVisuType)
         {
             VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, NULL);
-            if (!v)
-                return visualization;
-            visualization = v->createVisualization(shared_from_this(), linkVisuType);
-            this->visuType = linkVisuType;
+            if (v)
+            {
+                visualization = v->createVisualization(shared_from_this(), linkVisuType);
+                this->visuType = linkVisuType;
+                visualizationValid = true;
+            }
         }
 
         return visualization;
@@ -1406,6 +1403,11 @@ namespace VirtualRobot
                 return a;
         }
         return ModelNodeAttachmentPtr();
+    }
+
+    void Model::invalidateVisualization()
+    {
+        visualizationValid = false;
     }
 
 }

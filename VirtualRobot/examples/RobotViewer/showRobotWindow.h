@@ -45,11 +45,10 @@ public slots:
     void closeEvent(QCloseEvent* event);
 
     void resetRobot();
-    void rebuildVisualization();
+    void render();
     void loadRobot();
-    void robotStructure();
-    void robotCoordSystems();
-    void robotFullModel();
+    void attachStructure(bool attach);
+    void attachFrames(bool attach);
     void showSensors();
     void closeHand();
     void openHand();
@@ -60,7 +59,7 @@ public slots:
     void exportVRML();
     void exportXML();
 
-protected:
+private:
     void setupUI();
     void updateEEFBox();
     void displayTriangles();
@@ -84,12 +83,16 @@ protected:
     bool physicsCoMEnabled;
     bool physicsInertiaEnabled;
 
+    std::string robotLayer;
+
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 
 
 private slots:
     // updates the joint table and link list based on the selected nodesets.
     void updateModelNodeControls();
+    // updates the joint/link set comboboxes based on the current robot
+    void updateModelNodeSets();
     // updates all joint values based on all joint table sliders.
     void updateJoints();
 

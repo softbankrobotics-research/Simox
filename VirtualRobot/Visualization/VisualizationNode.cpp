@@ -9,7 +9,6 @@
 #include "VisualizationNode.h"
 #include "TriMeshModel.h"
 
-#include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/XML/BaseIO.h"
 

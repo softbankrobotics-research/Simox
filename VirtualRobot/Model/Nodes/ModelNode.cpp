@@ -365,6 +365,7 @@ namespace VirtualRobot
         if (attachment->getVisualisation())
         {
             attachmentsWithVisualisation.push_back(attachment);
+            getModel()->invalidateVisualization();
         }
 
         return true;
@@ -411,8 +412,8 @@ namespace VirtualRobot
             attachments[attachment->getType()].erase(std::find(attachments[attachment->getType()].begin(), attachments[attachment->getType()].end(), attachment));
             if (attachment->getVisualisation())
             {
-                attachmentsWithVisualisation.erase(std::find(attachmentsWithVisualisation.begin(),
-                                                   attachmentsWithVisualisation.end(), attachment));
+                attachmentsWithVisualisation.erase(std::find(attachmentsWithVisualisation.begin(), attachmentsWithVisualisation.end(), attachment));
+                getModel()->invalidateVisualization();
             }
 
             return true;

@@ -216,7 +216,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>326</width>
-                    <height>265</height>
+                    <height>279</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -441,79 +441,6 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0" rowspan="3">
-            <widget class="QFrame" name="frameVisualization">
-             <layout class="QFormLayout" name="formLayout">
-              <property name="horizontalSpacing">
-               <number>3</number>
-              </property>
-              <property name="verticalSpacing">
-               <number>3</number>
-              </property>
-              <property name="leftMargin">
-               <number>3</number>
-              </property>
-              <property name="topMargin">
-               <number>3</number>
-              </property>
-              <property name="rightMargin">
-               <number>3</number>
-              </property>
-              <property name="bottomMargin">
-               <number>3</number>
-              </property>
-              <item row="2" column="0" colspan="2">
-               <widget class="QCheckBox" name="checkBoxStructure">
-                <property name="text">
-                 <string>Robot structure</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0" colspan="2">
-               <widget class="QCheckBox" name="checkBoxRobotCoordSystems">
-                <property name="text">
-                 <string>Frames</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0" colspan="2">
-               <widget class="QCheckBox" name="checkBoxRobotSensors">
-                <property name="text">
-                 <string>Sensors</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QCheckBox" name="checkBoxPhysicsCoM">
-                <property name="text">
-                 <string>CoM</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="QCheckBox" name="checkBoxPhysicsInertia">
-                <property name="text">
-                 <string>Inertia</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="2">
-               <widget class="QRadioButton" name="checkBoxColModel">
-                <property name="text">
-                 <string>Collision model</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" colspan="2">
-               <widget class="QRadioButton" name="checkBoxFullModel">
-                <property name="text">
-                 <string>IV Model</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QFrame" name="frame_5">
              <property name="sizePolicy">
@@ -566,6 +493,86 @@
                <widget class="QLabel" name="labelInfo3">
                 <property name="text">
                  <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0" rowspan="3">
+            <widget class="QFrame" name="frameVisualization">
+             <layout class="QGridLayout" name="gridLayout">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <item row="2" column="1">
+               <widget class="QCheckBox" name="checkBoxRobotSensors">
+                <property name="text">
+                 <string>Sensors</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QRadioButton" name="radioBtnNoVisu">
+                <property name="text">
+                 <string>None</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QCheckBox" name="checkBoxPhysicsInertia">
+                <property name="text">
+                 <string>Inertia</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QCheckBox" name="checkBoxStructure">
+                <property name="text">
+                 <string>kinematic</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QRadioButton" name="radioBtnFullVisu">
+                <property name="text">
+                 <string>Full</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QRadioButton" name="radioBtnCollisionVisu">
+                <property name="text">
+                 <string>Collision</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QCheckBox" name="checkBoxRobotCoordSystems">
+                <property name="text">
+                 <string>Frames</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="QCheckBox" name="checkBoxPhysicsCoM">
+                <property name="text">
+                 <string>CoM</string>
                 </property>
                </widget>
               </item>

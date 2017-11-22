@@ -428,7 +428,9 @@ namespace VirtualRobot
         //                            const VisualizationNodePtr& comModel = VisualizationNodePtr());
 
         /*!
-         * Setup the full model visualization.
+         * Enable/Disable visualization of the model's links and its attached visualizations.
+         * Note: Attached visualizations are VisualizationNodes managed by the link's main VisualizationNodes
+         * and are not to be confused with ModelNodeAttachments.
          *
          * @param showVisualization If false, the visualization is disabled.
          * @param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
@@ -574,7 +576,7 @@ namespace VirtualRobot
 
         /*!
          * Attach a new ModelNode to this model.
-         * This registeres the node to this model.
+         * This registers the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNode The node to attach the new child at.
@@ -583,7 +585,7 @@ namespace VirtualRobot
 
         /*!
          * Attach a new ModelNode to this model.
-         * This registeres the node to this model.
+         * This registers the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
@@ -702,6 +704,12 @@ namespace VirtualRobot
          */
         VisualizationPtr getVisualization(VirtualRobot::ModelLink::VisualizationType linkVisuType = VirtualRobot::ModelLink::Full, std::string visualizationType = "");
 
+        /**
+         * Causes a rebuild of this model's visualization on the next call to Model::getVisualization instead of returning
+         * a cached visualization. Usually the Model and ModelNode classes take care of invalidating this model's visualization when it's needed.
+         */
+        void invalidateVisualization();
+
     protected:
 
         virtual void _clone(ModelPtr newModel,
@@ -729,6 +737,7 @@ namespace VirtualRobot
 
         VisualizationPtr visualization;
         ModelLink::VisualizationType visuType;
+        bool visualizationValid; // set this to true whenever the visualization has changed (e.g. new attachment, new visu type etc.).
     };
 }
 

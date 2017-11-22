@@ -97,9 +97,9 @@ namespace VirtualRobot
         virtual VisualizationNodePtr getAttachedVisualization(const std::string& name);
 
         /*!
-            Setup the visualization of this object.
-            \param showVisualization If false, the visualization is disabled.
-            \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
+         * Enable/Disable this visualizations and its attached visualizations.
+         * \param showVisualization If false, the visualization is disabled.
+         * \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
         */
         virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
 
