@@ -73,7 +73,7 @@ namespace MotionPlanning
                  VirtualRobot::EndEffectorPtr eef,
                  VirtualRobot::ObstaclePtr object,
                  VirtualRobot::BasicGraspQualityMeasurePtr measure,
-				 std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
+                 std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
                  float probabGraspHypothesis = 0.1f,
                  float graspQualityMinScore = 0.01f);
 
@@ -235,7 +235,7 @@ namespace MotionPlanning
         float calculateGraspScore(const Eigen::VectorXf& c, int nId = -1, bool bStoreGraspInfoOnSuccess = false);
 
 
-		std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
+        std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
 
         virtual Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID) override;
 

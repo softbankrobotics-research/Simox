@@ -292,8 +292,8 @@ namespace VirtualRobot
         virtual void setNRows();
 
 
-		ModelNodePtr getTcpNode(FramePtr tcp);
-		bool updateParents(FramePtr tcp);
+        ModelNodePtr getTcpNode(FramePtr tcp);
+        bool updateParents(FramePtr tcp);
 
         float invParam;
         std::vector<FramePtr> tcp_set;

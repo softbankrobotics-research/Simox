@@ -93,8 +93,8 @@ namespace VirtualRobot
         float height;
         bool considerCoMHeight;
 
-		JointSetPtr joints;
-		LinkSetPtr bodies;
+        JointSetPtr joints;
+        LinkSetPtr bodies;
 
         float minimumStability;
         float maxSupportDistance;

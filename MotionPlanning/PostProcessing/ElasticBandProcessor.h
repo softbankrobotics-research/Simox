@@ -54,19 +54,19 @@ namespace MotionPlanning
         void setWeights (Eigen::VectorXf w);
 
 
-		/*!
-		 * Writes ext and int forces of point i to given variables.
-		 */
-		void getForces(unsigned int i, Eigen::Vector3f &internalForce, Eigen::Vector3f &externalForce);
+        /*!
+         * Writes ext and int forces of point i to given variables.
+         */
+        void getForces(unsigned int i, Eigen::Vector3f &internalForce, Eigen::Vector3f &externalForce);
 
-		Eigen::Vector3f getWSpacePoint(const Eigen::VectorXf& fc);
+        Eigen::Vector3f getWSpacePoint(const Eigen::VectorXf& fc);
 
     protected:
 
         bool getCSpaceForce(const Eigen::Vector3f &f, Eigen::VectorXf &fc, float factor, float maxForce);
-        
-		bool getWSpaceForce(const Eigen::VectorXf& fc, Eigen::Vector3f &f);
-    
+
+        bool getWSpaceForce(const Eigen::VectorXf& fc, Eigen::Vector3f &f);
+
         bool getObstacleForce(Eigen::Vector3f& f);
         bool initSolution();
 

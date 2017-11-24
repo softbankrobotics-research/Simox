@@ -60,7 +60,7 @@ namespace VirtualRobot
 
         RobotPtr robot;
         JointSetPtr nodeSet;
-		FramePtr eef;
+        FramePtr eef;
 
         Eigen::Matrix4f transformation;
         Eigen::Matrix4f eefOffset;

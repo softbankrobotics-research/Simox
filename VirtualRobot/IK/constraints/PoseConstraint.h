@@ -32,7 +32,7 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT PoseConstraint : public Constraint
     {
-	public:
+    public:
         PoseConstraint(const RobotPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Matrix4f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All,
                        float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);

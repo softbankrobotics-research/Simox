@@ -42,8 +42,8 @@ namespace VirtualRobot
 
     protected:
         ModelPtr robot;
-		JointSetPtr nodeSet;
-		FramePtr eef;
+        JointSetPtr nodeSet;
+        FramePtr eef;
         Eigen::Matrix3f target;
 
         DifferentialIKPtr ik;

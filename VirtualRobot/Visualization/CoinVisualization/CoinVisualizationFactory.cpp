@@ -109,9 +109,9 @@ namespace VirtualRobot
     void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
         if (!SoDB::isInitialized())
-		{
+        {
             SoDB::init();
-		}
+        }
 #ifdef SIMOX_USE_SOQT
         SoQt::init(argc, argv, appName.c_str());
 #endif
@@ -4453,19 +4453,19 @@ namespace VirtualRobot
     }
 
     VisualizationPtr CoinVisualizationFactory::getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets)
-	{
-		VR_ASSERT(scene);
+    {
+        VR_ASSERT(scene);
 
-		std::vector<VisualizationNodePtr> collectedVisualizationNodes;
+        std::vector<VisualizationNodePtr> collectedVisualizationNodes;
 
         if (addModels)
-		{
-			std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
-			// collect all robotnodes
+        {
+            std::vector<VirtualRobot::ModelPtr> collectedRobots = scene->getRobots();
+            // collect all robotnodes
             //std::vector<VirtualRobot::ModelLinkPtr> collectedRobotNodes;
 
-			for (size_t i = 0; i < collectedRobots.size(); i++)
-			{
+            for (size_t i = 0; i < collectedRobots.size(); i++)
+            {
                 std::vector<ModelLinkPtr> links = collectedRobots[i]->getLinks();
                 for (auto l:links)
                 {
@@ -4476,23 +4476,23 @@ namespace VirtualRobot
 
                 }
                 //collectedRobotNodes.insert(collectedRobotNodes.begin(), collectedRobotNodes.end(), links.begin());
-			}
+            }
 
             /*for (size_t i = 0; i < collectedRobotNodes.size(); i++)
-			{
+            {
                 VisualizationNodePtr v = collectedRobotNodes[i]->getVisualization(visuType);
                 if (v)
                     collectedVisualizationNodes.push_back(v);
             }*/
-		}
+        }
 
-		if (addObstacles)
-		{
-			std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
+        if (addObstacles)
+        {
+            std::vector<VirtualRobot::ObstaclePtr> collectedObstacles = scene->getObstacles();
             //std::vector<VirtualRobot::ModelLinkPtr> collectedObstacleNodes;
 
-			for (size_t i = 0; i < collectedObstacles.size(); i++)
-			{
+            for (size_t i = 0; i < collectedObstacles.size(); i++)
+            {
                 //auto links = collectedObstacles[i]->getLinks();
                 std::vector<ModelLinkPtr> links = collectedObstacles[i]->getLinks();
                 for (auto l:links)
@@ -4511,15 +4511,15 @@ namespace VirtualRobot
                 if (v)
                     collectedVisualizationNodes.push_back(v);
             }*/
-		}
+        }
 
-		if (addManipulationObjects)
-		{
-			std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
+        if (addManipulationObjects)
+        {
+            std::vector<VirtualRobot::ManipulationObjectPtr> collectedManipulationObjects = scene->getManipulationObjects();
             //std::vector<VirtualRobot::ModelLinkPtr> collectedManipNodes;
 
-			for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
-			{
+            for (size_t i = 0; i < collectedManipulationObjects.size(); i++)
+            {
                 //auto links = collectedManipulationObjects[i]->getLinks();
                 std::vector<ModelLinkPtr> links = collectedManipulationObjects[i]->getLinks();
                 for (auto l:links)
@@ -4537,44 +4537,44 @@ namespace VirtualRobot
                 if (v)
                     collectedVisualizationNodes.push_back(v);
             }*/
-		}
+        }
 
-		if (addTrajectories)
-		{
-			std::vector<VirtualRobot::TrajectoryPtr> collectedTrajectories = scene->getTrajectories();
+        if (addTrajectories)
+        {
+            std::vector<VirtualRobot::TrajectoryPtr> collectedTrajectories = scene->getTrajectories();
 
-			for (size_t i = 0; i < collectedTrajectories.size(); i++)
-			{
+            for (size_t i = 0; i < collectedTrajectories.size(); i++)
+            {
                 VisualizationNodePtr v = collectedTrajectories[i]->getVisualization();
                 if (v)
                     collectedVisualizationNodes.push_back(v);
-			}
-		}
+            }
+        }
 
-		if (addSceneObjectSets)
-		{
+        if (addSceneObjectSets)
+        {
             VR_INFO << "addSceneObjectSets: nyi" << endl;
             //todo
             /*
             std::vector<VirtualRobot::LinkSetPtr> collectedSceneObjectSets = scene->getModelNodeSets();
 
-			for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
-			{
-				std::vector< ModelNodePtr > sos = collectedSceneObjectSets[i]->getModelNodes();
+            for (size_t i = 0; i < collectedSceneObjectSets.size(); i++)
+            {
+                std::vector< ModelNodePtr > sos = collectedSceneObjectSets[i]->getModelNodes();
 
-				for (size_t j = 0; j < sos.size(); j++)
-				{
+                for (size_t j = 0; j < sos.size(); j++)
+                {
                     VisualizationNodePtr v = sos[j]->getVisualization(visuType);
                     if (v)
                         collectedVisualizationNodes.push_back(v);
-				}
+                }
 
             }*/
-		}
+        }
 
-		CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
-		return visualization;
-	}
+        CoinVisualizationPtr visualization(new CoinVisualization(collectedVisualizationNodes));
+        return visualization;
+    }
 
     VisualizationPtr CoinVisualizationFactory::createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {

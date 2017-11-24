@@ -79,9 +79,9 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-		virtual bool hasModelNode(const ModelNodePtr& node) const;
-		virtual bool hasLink(const ModelLinkPtr& link) const;
-		virtual bool hasJoint(const ModelJointPtr& joint) const;
+        virtual bool hasModelNode(const ModelNodePtr& node) const;
+        virtual bool hasLink(const ModelLinkPtr& link) const;
+        virtual bool hasJoint(const ModelJointPtr& joint) const;
 
         /*!
          * Check, if the node is registered to this model.
@@ -294,8 +294,8 @@ namespace VirtualRobot
          *
          * @return The current root node.
          */
-		virtual ModelNodePtr getRootNode() const;
-		virtual ModelLinkPtr getFirstLink() const;
+        virtual ModelNodePtr getRootNode() const;
+        virtual ModelLinkPtr getFirstLink() const;
 
         /*!
          * Get the type of this model.
@@ -443,7 +443,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateVisualization(bool enable);
-		bool getUpdateVisualization() const;
+        bool getUpdateVisualization() const;
 
         /*!
          * Enables/Disables the visualization updates of the collision model.
@@ -451,7 +451,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateCollisionModel(bool enable);
-		bool getUpdateCollisionModel() const;
+        bool getUpdateCollisionModel() const;
 
         /*!
          * Get the complete setup of all model nodes (i.e. the current configuration of the model).
@@ -566,12 +566,12 @@ namespace VirtualRobot
          * @param collisionChecker The new model can be registered to a different collision checker. If not set, the collision checker of the original model is used.
          * @param scaling Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode, 
-										const std::string& newModelType,
-                                        const std::string& newModelName, 
-										bool cloneRNS = true,
-										bool cloneEEF = true,
-										const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
+        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode,
+                                        const std::string& newModelType,
+                                        const std::string& newModelName,
+                                        bool cloneRNS = true,
+                                        bool cloneEEF = true,
+                                        const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
                                         float scaling = 1.0f) const;
 
         /*!
@@ -688,9 +688,9 @@ namespace VirtualRobot
                                CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                                float scaling = 1.0f) const;
 
-		bool hasEndEffector(const EndEffectorPtr &eef) const;
-		bool hasEndEffector(const std::string &name) const;
-		void registerEndEffector(const EndEffectorPtr &eef);
+        bool hasEndEffector(const EndEffectorPtr &eef) const;
+        bool hasEndEffector(const std::string &name) const;
+        void registerEndEffector(const EndEffectorPtr &eef);
         void deregisterEndEffector(const EndEffectorPtr &eef);
 
         EndEffectorPtr getEndEffector(const std::string &name) const;
@@ -722,7 +722,7 @@ namespace VirtualRobot
         float scaling;
 
         bool threadsafe;
-		mutable std::recursive_mutex mutex;
+        mutable std::recursive_mutex mutex;
 
         ModelNodePtr rootNode;
 
