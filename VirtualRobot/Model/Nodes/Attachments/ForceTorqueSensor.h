@@ -62,9 +62,9 @@ namespace VirtualRobot
          *
          * @return "forcetorque".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() override;
 
 
         void updateSensors(const Eigen::VectorXf& newForceTorque);
@@ -84,7 +84,7 @@ namespace VirtualRobot
     protected:
         Eigen::VectorXf forceTorqueValues;
     };
-    
+
     typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 }
 

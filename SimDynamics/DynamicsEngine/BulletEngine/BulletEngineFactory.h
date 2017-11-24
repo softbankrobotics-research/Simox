@@ -42,10 +42,10 @@ namespace SimDynamics
         BulletEngineFactory();
         virtual ~BulletEngineFactory();
 
-        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
+        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr()) override;
 
-        virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o);
-        virtual DynamicsModelPtr createRobot(VirtualRobot::RobotPtr robot);
+        virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o) override;
+        virtual DynamicsModelPtr createRobot(VirtualRobot::RobotPtr robot) override;
 
         // AbstractFactoryMethod
     public:

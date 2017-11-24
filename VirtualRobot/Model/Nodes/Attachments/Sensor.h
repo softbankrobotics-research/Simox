@@ -61,11 +61,11 @@ namespace VirtualRobot
          *
          * @return "Sensor".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() override;
     };
-    
+
     typedef std::shared_ptr<Sensor> SensorPtr;
 }
 

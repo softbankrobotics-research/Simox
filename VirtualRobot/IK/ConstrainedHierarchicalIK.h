@@ -36,8 +36,8 @@ namespace VirtualRobot
                                   const JointSetPtr& nodeSet,
                                   float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
-        bool initialize();
-        bool solveStep();
+        virtual bool initialize() override;
+        virtual bool solveStep() override;
 
     protected:
         JointSetPtr nodeSet;

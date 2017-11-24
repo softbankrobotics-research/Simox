@@ -38,25 +38,25 @@ class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtEx
         CoinViewer(QWidget *parent);
         ~CoinViewer();
 
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization);
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization);
-        virtual void removeVisualization(const std::string &layer, const std::string &id);
+        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization) override;
+        virtual void removeVisualization(const std::string &layer, const std::string &id) override;
 
-        virtual void clearLayer(const std::string &layer);
+        virtual void clearLayer(const std::string &layer) override;
 
-        virtual bool hasLayer(const std::string &layer);
+        virtual bool hasLayer(const std::string &layer) override;
 
         bool hasLayerID(const std::string &layer, const std::string &id);
 
-        virtual QImage getScreenshot();
+        virtual QImage getScreenshot() override;
 
 
-        virtual void start(QWidget *mainWindow);
-        virtual void stop();
+        virtual void start(QWidget *mainWindow) override;
+        virtual void stop() override;
 
-        virtual void resetView();
+        virtual void resetView() override;
 
-        virtual void viewAll();
+        virtual void viewAll() override;
 
     protected:
         void addLayer(const std::string &layer);
@@ -75,4 +75,4 @@ class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtEx
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }
 
-#endif 
+#endif

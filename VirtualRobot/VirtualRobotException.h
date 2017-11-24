@@ -48,7 +48,7 @@ namespace VirtualRobot
 
         virtual ~VirtualRobotException() throw();
 
-        virtual const char* what() const throw();
+        virtual const char* what() const throw() override;
         //virtual const char * what() const;
 
     protected:

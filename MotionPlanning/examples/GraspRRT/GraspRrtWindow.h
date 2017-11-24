@@ -48,7 +48,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 

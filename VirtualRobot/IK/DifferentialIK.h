@@ -188,7 +188,7 @@ namespace VirtualRobot
         /*!
             Computes the complete error vector, considering all TCPs and goals.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
         void updateError(Eigen::VectorXf& error, float stepSize = 1.0f);
 
         /*! @brief Returns the pseudo inverse of the Jacobian matrix for a given tcp of the robot.
@@ -197,7 +197,7 @@ namespace VirtualRobot
          * \f[ J^t \cdot \left( J \cdot J^t \right)^{-1}.\f]. Update: In order to improve stability, we are now using singular value decomposition (SVD).
          */
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode = IKSolver::All);
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix() override;
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
 
         void updateJacobianMatrix(Eigen::MatrixXf& jac);
@@ -279,7 +279,7 @@ namespace VirtualRobot
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
-        virtual bool checkTolerances();
+        virtual bool checkTolerances() override;
 
         /*!
             Initializes the internal data structures according to setGoal setup.
@@ -287,7 +287,7 @@ namespace VirtualRobot
         */
         virtual void initialize();
 
-        virtual void print();
+        virtual void print() override;
     protected:
         virtual void setNRows();
 

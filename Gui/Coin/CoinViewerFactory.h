@@ -39,7 +39,7 @@ namespace SimoxGui
         CoinViewerFactory();
         virtual ~CoinViewerFactory();
 
-        ViewerInterfacePtr createViewer(QWidget *parent = NULL);
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) override;
 
     protected:
 

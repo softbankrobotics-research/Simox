@@ -26,7 +26,10 @@
 #include "../DynamicsRobot.h"
 #include "BulletObject.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "btBulletDynamicsCommon.h"
+#pragma GCC diagnostic pop
 
 namespace SimDynamics
 {
@@ -100,20 +103,20 @@ namespace SimDynamics
 
         std::vector<LinkInfo> getLinks();
 
-        virtual void actuateNode(VirtualRobot::ModelJointPtr node, double jointValue);
-        virtual void actuateNodeVel(VirtualRobot::ModelJointPtr node, double jointVelocity);
+        virtual void actuateNode(VirtualRobot::ModelJointPtr node, double jointValue) override;
+        virtual void actuateNodeVel(VirtualRobot::ModelJointPtr node, double jointVelocity) override;
 
         /*!
             Usually this method is called by the framework in every tick to perform joint actuation.
             \param dt Timestep
         */
-        virtual void actuateJoints(double dt);
-        virtual void updateSensors(double dt);
+        virtual void actuateJoints(double dt) override;
+        virtual void updateSensors(double dt) override;
 
-        virtual double getJointAngle(VirtualRobot::ModelJointPtr rn);
-        virtual double getJointSpeed(VirtualRobot::ModelJointPtr rn);
-        virtual double getJointTargetSpeed(VirtualRobot::ModelJointPtr rn);
-        virtual double getNodeTarget(VirtualRobot::ModelJointPtr node);
+        virtual double getJointAngle(VirtualRobot::ModelJointPtr rn) override;
+        virtual double getJointSpeed(VirtualRobot::ModelJointPtr rn) override;
+        virtual double getJointTargetSpeed(VirtualRobot::ModelJointPtr rn) override;
+        virtual double getNodeTarget(VirtualRobot::ModelJointPtr node) override;
 
         /*!
          * \brief getJointTorques retrieves the torques in the given joint.
@@ -147,27 +150,27 @@ namespace SimDynamics
         /*!
             Returns the CoM pose, which is reported by bullet
         */
-        virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::ModelLinkPtr& rn);
-        virtual Eigen::Vector3f getComGlobal(const VirtualRobot::LinkSetPtr& set);
-        virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::LinkSetPtr& set);
+        virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::ModelLinkPtr& rn) override;
+        virtual Eigen::Vector3f getComGlobal(const VirtualRobot::LinkSetPtr& set) override;
+        virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::LinkSetPtr& set) override;
 
         /*!
          * Returns the linear momentum in Ns for the bodies in the nodeset.
          */
-        virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::LinkSetPtr& set);
+        virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::LinkSetPtr& set) override;
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset
          */
-        virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::LinkSetPtr& set);
+        virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::LinkSetPtr& set) override;
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset relative to the CoM
          */
-        virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::LinkSetPtr& set);
+        virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::LinkSetPtr& set) override;
 
         // experimental...
-        virtual void ensureKinematicConstraints();
+        virtual void ensureKinematicConstraints() override;
 
         /*!
             Returns link where the given node is the joint node.
@@ -203,10 +206,10 @@ namespace SimDynamics
         void buildBulletModels(bool enableJointMotors);
 
         //! creates a link and attaches object to internal data structure
-        virtual bool attachObject(const std::string& nodeName, DynamicsObjectPtr object);
+        virtual bool attachObject(const std::string& nodeName, DynamicsObjectPtr object) override;
         LinkInfoPtr attachObjectLink(const std::string& nodeName, DynamicsObjectPtr object);
 
-        virtual bool detachObject(DynamicsObjectPtr object);
+        virtual bool detachObject(DynamicsObjectPtr object) override;
 
 
         //void createLink( VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, VirtualRobot::RobotNodePtr bodyB, Eigen::Matrix4f &trafoA2J, Eigen::Matrix4f &trafoJ2B, bool enableJointMotors = true );
@@ -219,7 +222,7 @@ namespace SimDynamics
         //void createLink(VirtualRobot::RobotNodePtr node1, VirtualRobot::RobotNodePtr node2, bool enableJointMotors);
 
         // ensure that all robot nodes, which are not actuated directly, are at the correct pose
-        void setPoseNonActuatedRobotNodes();
+        virtual void setPoseNonActuatedRobotNodes() override;
 
         // process all ignoreCollision tags of physics section of RobotNode. Adds according collision disabled information to physics engine.
         void addIgnoredCollisionModels(VirtualRobot::ModelLinkPtr rn);

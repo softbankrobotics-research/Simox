@@ -44,7 +44,7 @@ namespace VirtualRobot
             \param filename The urdf model file
             \param loadMode Load only structure, with collision model, or full visualization
         */
-        virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull);
+        virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull) override;
 
         /*!
             \param useColModelsIfNoVisuModel If set (standard), a missing visualization is compensated by using the collision model (e.g. when the visu loading failed)
@@ -67,12 +67,10 @@ namespace VirtualRobot
     private:
         static SubClassRegistry registry;
 
-
         // RobotImporterFactory interface
     public:
-        virtual std::string getFileExtension();
-        virtual std::string getFileFilter();
-
+        virtual std::string getFileExtension() override;
+        virtual std::string getFileFilter() override;
 
     protected:
         template<typename L>

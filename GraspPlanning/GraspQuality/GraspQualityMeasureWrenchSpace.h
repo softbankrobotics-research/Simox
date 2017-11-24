@@ -65,7 +65,7 @@ namespace GraspPlanning
             with f_max_ows = max distance of OWS hull center to one of its facets
             -> also known as "epsilon" quality == radius of larges enclosing 6D ball
         */
-        virtual float getGraspQuality();
+        virtual float getGraspQuality() override;
 
         /*!
             Volume grasp quality ratio of GWS volume / OWS volume
@@ -76,7 +76,7 @@ namespace GraspPlanning
         /*
             Checks if wrench space origin is inside GWS-Hull
         */
-        virtual bool isGraspForceClosure();
+        virtual bool isGraspForceClosure() override;
 
         /*
             Returns the internally calculated convex hull object (ObjectWrenchSpace)
@@ -120,14 +120,14 @@ namespace GraspPlanning
         the contact points are normalized by subtracting the COM
         the contact normals are normalize to unit length
         */
-        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints);
-        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints);
+        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints) override;
+        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints) override;
 
-        virtual bool calculateGraspQuality();
-        virtual bool calculateObjectProperties();
+        virtual bool calculateGraspQuality() override;
+        virtual bool calculateObjectProperties() override;
 
         //! Returns description of this object
-        virtual std::string getName();
+        virtual std::string getName() override;
 
         virtual float getOWSMinOffset()
         {

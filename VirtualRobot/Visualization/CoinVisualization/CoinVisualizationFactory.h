@@ -65,14 +65,14 @@ namespace VirtualRobot
             Initialises SoDB and SoQt.
             Sets the COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE environment variable to enable a Coin3D transparency extension.
         */
-        virtual void init(int &argc, char* argv[], const std::string &appName);
+        virtual void init(int &argc, char* argv[], const std::string &appName) override;
 
 
-        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray());
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray()) override;
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f) override;
         virtual VisualizationNodePtr getVisualizationFromSTLFile(const std::string& filename, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
         virtual VisualizationNodePtr getVisualizationFromCoin3DFile(const std::string& filename, bool boundingBox = false);
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
+        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f) override;
         virtual VisualizationNodePtr getVisualizationFromString(const std::string& modelString, bool boundingBox = false);
 
 
@@ -81,35 +81,35 @@ namespace VirtualRobot
         virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
 
 
-        virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createCircle(float radius, float circleCompletion, float width, float colorR = 1.0f, float colorG = 0.5f, float colorB = 0.5f, size_t numberOfCircleParts = 30);
-        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, const Eigen::Matrix4f &pose = Eigen::Matrix4f::Identity(), float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
-        virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false);
-        virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f);
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines = true);
-        virtual VisualizationNodePtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 5.0f, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero());
-        virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
+        virtual VisualizationNodePtr createBox(float width, float height, float depth, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createCircle(float radius, float circleCompletion, float width, float colorR = 1.0f, float colorG = 0.5f, float colorB = 0.5f, size_t numberOfCircleParts = 30) override;
+        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, const Eigen::Matrix4f &pose = Eigen::Matrix4f::Identity(), float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) override;
+        virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false) override;
+        virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
+        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f) override;
+        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, bool showNormals, Eigen::Matrix4f& pose, bool showLines = true) override;
+        virtual VisualizationNodePtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 5.0f, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) override;
+        virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
         virtual VisualizationNodePtr createPlaneGrid(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, const std::string &textureFile = std::string()) override;
-        virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray());
-        virtual VisualizationNodePtr createCircleArrow(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30);
-        virtual VisualizationNodePtr createTrajectory(TrajectoryPtr t, Color colorNode = Color::Blue(), Color colorLine = Color::Gray(), float nodeSize = 15.0f, float lineSize = 4.0f);
-        virtual VisualizationNodePtr createText(const std::string& text, bool billboard = false, float scaling = 1.0f, Color c = Color::Black(), float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f);
-        virtual VisualizationNodePtr createConstraintVisualization(const ConstraintPtr &constraint, const Color& color);
-        virtual VisualizationNodePtr createTorus(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30);
-        virtual VisualizationNodePtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true);
+        virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray()) override;
+        virtual VisualizationNodePtr createCircleArrow(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30) override;
+        virtual VisualizationNodePtr createTrajectory(TrajectoryPtr t, Color colorNode = Color::Blue(), Color colorLine = Color::Gray(), float nodeSize = 15.0f, float lineSize = 4.0f) override;
+        virtual VisualizationNodePtr createText(const std::string& text, bool billboard = false, float scaling = 1.0f, Color c = Color::Black(), float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) override;
+        virtual VisualizationNodePtr createConstraintVisualization(const ConstraintPtr &constraint, const Color& color) override;
+        virtual VisualizationNodePtr createTorus(float radius, float tubeRadius, float completion = 1, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, float transparency = 0.0f, int sides = 8, int rings = 30) override;
+        virtual VisualizationNodePtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) override;
 
         virtual VisualizationNodePtr createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) override;
 
 
-        virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true);
+        virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true) override;
 
-        virtual VisualizationPtr createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType);
-        virtual VisualizationPtr createGraspSetVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType);
+        virtual VisualizationPtr createVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType) override;
+        virtual VisualizationPtr createGraspSetVisualization(const GraspSetPtr &graspSet, const EndEffectorPtr &eef, const Eigen::Matrix4f& pose, ModelLink::VisualizationType visuType) override;
 
 
         /*!
@@ -122,23 +122,23 @@ namespace VirtualRobot
             \param axesWidth The width of the axes.
             \return A VisualizationNode containing the visualization.
         */
-        virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f);
+        virtual VisualizationNodePtr createEllipse(float x, float y, float z, bool showAxes = true, float axesHeight = 4.0f, float axesWidth = 8.0f) override;
         /*!
             Move local visualization by homogeneous matrix m. MM is used.
         */
-        virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m);
-        virtual void applyDisplacement(VisualizationPtr o, Eigen::Matrix4f& m);
+        virtual void applyDisplacement(VisualizationNodePtr o, Eigen::Matrix4f& m) override;
+        virtual void applyDisplacement(VisualizationPtr o, Eigen::Matrix4f& m) override;
 
         /*!
             Create an empty VisualizationNode.
         */
-        virtual VisualizationNodePtr createVisualization();
+        virtual VisualizationNodePtr createVisualization() override;
 
         /*!
             Create a united visualization. Internally all visualizations are copied and added to one SoSeparator.
             All visualizations have to be of type CoinVisualizationNode.
         */
-        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations) const;
+        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& visualizations) const override;
 
 
         static SoSeparator* CreateConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 5.0f, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero());
@@ -451,7 +451,7 @@ namespace VirtualRobot
             Here, a manual cleanup can be called, no Coin3D access possible after this.
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
-        virtual void cleanup();
+        virtual void cleanup() override;
 
         static std::shared_ptr<CoinVisualizationFactory> getGlobalCoinVisualizationFactory()
         {
@@ -476,7 +476,7 @@ namespace VirtualRobot
 
         // AbstractFactoryMethod
     public:
-        virtual std::string getVisualizationType();
+        virtual std::string getVisualizationType() override;
         static std::string getName();
         static std::shared_ptr<VisualizationFactory> createInstance(void*);
 

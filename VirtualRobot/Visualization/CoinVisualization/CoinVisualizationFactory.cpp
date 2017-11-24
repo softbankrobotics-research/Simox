@@ -1142,7 +1142,7 @@ namespace VirtualRobot
 
             // SoDataSensor interface
         public:
-            void dyingReference()
+            virtual void dyingReference() override
             {
                 //std::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
                 std::unique_lock<std::mutex> scoped_lock(CoinVisualizationFactory::globalTextureCacheMutex);

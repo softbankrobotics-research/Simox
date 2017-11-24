@@ -59,25 +59,30 @@ namespace VirtualRobot
         {
         }
 
-        Eigen::VectorXd getConfig(double s) const {
+        virtual Eigen::VectorXd getConfig(double s) const override
+        {
             s /= length;
             s = std::max(0.0, std::min(1.0, s));
             return (1.0 - s) * start + s * end;
         }
 
-        Eigen::VectorXd getTangent(double /* s */) const {
+        virtual Eigen::VectorXd getTangent(double /* s */) const override
+        {
             return (end - start) / length;
         }
 
-        Eigen::VectorXd getCurvature(double /* s */) const {
+        virtual Eigen::VectorXd getCurvature(double /* s */) const override
+        {
             return Eigen::VectorXd::Zero(start.size());
         }
 
-        list<double> getSwitchingPoints() const {
+        virtual list<double> getSwitchingPoints() const override
+        {
             return list<double>();
         }
 
-        LinearPathSegment* clone() const {
+        virtual LinearPathSegment* clone() const override
+        {
             return new LinearPathSegment(*this);
         }
 
@@ -128,22 +133,26 @@ namespace VirtualRobot
             y = startDirection;
         }
 
-        Eigen::VectorXd getConfig(double s) const {
+        virtual Eigen::VectorXd getConfig(double s) const override
+        {
             const double angle = s / radius;
             return center + radius * (x * cos(angle) + y * sin(angle));
         }
 
-        Eigen::VectorXd getTangent(double s) const {
+        virtual Eigen::VectorXd getTangent(double s) const override
+        {
             const double angle = s / radius;
             return - x * sin(angle) + y * cos(angle);
         }
 
-        Eigen::VectorXd getCurvature(double s) const {
+        virtual Eigen::VectorXd getCurvature(double s) const override
+        {
             const double angle = s / radius;
             return - 1.0 / radius * (x * cos(angle) + y * sin(angle));
         }
 
-        list<double> getSwitchingPoints() const {
+        virtual list<double> getSwitchingPoints() const override
+        {
             list<double> switchingPoints;
             const double dim = x.size();
             for(unsigned int i = 0; i < dim; i++) {
@@ -160,7 +169,8 @@ namespace VirtualRobot
             return switchingPoints;
         }
 
-        CircularPathSegment* clone() const {
+        virtual CircularPathSegment* clone() const override
+        {
             return new CircularPathSegment(*this);
         }
 

@@ -60,7 +60,7 @@ namespace GraspPlanning
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of generated grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>());
+        virtual int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>()) override;
 
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;

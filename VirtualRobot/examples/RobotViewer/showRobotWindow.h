@@ -42,7 +42,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
 
     void resetRobot();
     void render();
@@ -107,7 +107,7 @@ private:
             setMouseTracking(true);
         }
     protected:
-        virtual void mouseMoveEvent(QMouseEvent *e)
+        virtual void mouseMoveEvent(QMouseEvent *e) override
         {
             QSlider::mouseMoveEvent(e);
             QString text = QString("min: ") + QString::number(joint->getJointLimitLow()) +

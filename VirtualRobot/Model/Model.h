@@ -329,8 +329,8 @@ namespace VirtualRobot
          *
          * @return The global pose.
          */
-        virtual Eigen::Matrix4f getGlobalPose() const;
-        virtual Eigen::Vector3f getGlobalPosition() const;
+        virtual Eigen::Matrix4f getGlobalPose() const override;
+        virtual Eigen::Vector3f getGlobalPosition() const override;
 
 
         /*!

@@ -20,7 +20,10 @@ class btShapeHull;
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btVector3.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
+#pragma GCC diagnostic pop
 
 /// OpenGL shape drawing
 class GL_ShapeDrawer

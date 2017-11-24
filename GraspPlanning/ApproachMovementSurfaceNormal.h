@@ -57,7 +57,7 @@ namespace GraspPlanning
         virtual ~ApproachMovementSurfaceNormal();
 
         //! Creates a new pose for approaching
-        virtual Eigen::Matrix4f createNewApproachPose();
+        virtual Eigen::Matrix4f createNewApproachPose() override;
 
         //!  Returns a position with normal on the surface of the object
         bool getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir);

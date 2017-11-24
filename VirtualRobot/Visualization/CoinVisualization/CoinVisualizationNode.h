@@ -44,33 +44,33 @@ namespace VirtualRobot
     public:
         CoinVisualizationNode(SoNode* visualizationNode, float margin = 0.0f);
         ~CoinVisualizationNode();
-        virtual TriMeshModelPtr getTriMeshModel();
+        virtual TriMeshModelPtr getTriMeshModel() override;
 
         SoNode* getCoinVisualization();
 
-        virtual void setGlobalPose(const Eigen::Matrix4f& m);
+        virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
 
-        virtual void print();
+        virtual void print() override;
 
-        virtual void scale(Eigen::Vector3f& scaleFactor);
+        virtual void scale(Eigen::Vector3f& scaleFactor) override;
 
         /*!
             Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
             If there is already a visualization attached with the given name, it is quietly replaced.
         */
-        virtual void attachVisualization(const std::string& name, VisualizationNodePtr v);
+        virtual void attachVisualization(const std::string& name, VisualizationNodePtr v) override;
 
         /*!
             Remove an attached visualization.
         */
-        virtual void detachVisualization(const std::string& name);
+        virtual void detachVisualization(const std::string& name) override;
 
         /*!
             Setup the visualization of this object.
             \param showVisualization If false, the visualization is disabled.
             \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
         */
-        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations) override;
 
 
         /*!
@@ -79,18 +79,18 @@ namespace VirtualRobot
                 \param scaling Scale Can be set to create a scaled version of this visual data.
                 Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
             */
-        virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
+        virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f) override;
 
-        virtual std::string getType();
+        virtual std::string getType() override;
 
         /*!
             Saves model file to model path. By default VRML models are generated.
             \param modelPath The directory.
             \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl).
         */
-        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
-        virtual void shrinkFatten(float offset);
-        virtual void createTriMeshModel();
+        virtual bool saveModel(const std::string& modelPath, const std::string& filename) override;
+        virtual void shrinkFatten(float offset) override;
+        virtual void createTriMeshModel() override;
 
     protected:
 

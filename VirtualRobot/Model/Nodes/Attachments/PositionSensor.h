@@ -62,13 +62,13 @@ namespace VirtualRobot
          *
          * @return "position".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() override;
 
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
     };
-    
+
     typedef std::shared_ptr<PositionSensor> PositionSensorPtr;
 }
 

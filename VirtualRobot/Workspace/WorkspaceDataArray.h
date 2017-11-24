@@ -61,19 +61,19 @@ namespace VirtualRobot
         ~WorkspaceDataArray();
 
         //! Return the amount of data in bytes
-        unsigned int getSizeTr() const;
-        unsigned int getSizeRot() const;
+        virtual unsigned int getSizeTr() const override;
+        virtual unsigned int getSizeRot() const override;
 
-        void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace);
+        virtual void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) override;
 
-        inline void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
-                             unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value);
+        virtual inline void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
+                             unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value) override;
 
-        inline void setDatum(unsigned int x[6], unsigned char value);
+        virtual inline void setDatum(unsigned int x[6], unsigned char value) override;
 
-        void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels);
+        virtual void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) override;
 
-        void increaseDatum(float x[], const WorkspaceRepresentation* workspace);
+        virtual void increaseDatum(float x[], const WorkspaceRepresentation* workspace) override;
 
         inline void increaseDatum(unsigned int x0, unsigned int x1, unsigned int x2,
                                   unsigned int x3, unsigned int x4, unsigned int x5);
@@ -82,44 +82,44 @@ namespace VirtualRobot
         /*!
             Set rotation data for given x,y,z position.
         */
-        void setDataRot(unsigned char* data, unsigned int x, unsigned int y, unsigned int z);
+        virtual void setDataRot(unsigned char* data, unsigned int x, unsigned int y, unsigned int z) override;
         /*!
             Get rotation data for given x,y,z position.
         */
-        const unsigned char* getDataRot(unsigned int x, unsigned int y, unsigned int z);
+        virtual const unsigned char* getDataRot(unsigned int x, unsigned int y, unsigned int z) override;
 
-        unsigned char get(float x[], const WorkspaceRepresentation* workspace);
+        virtual unsigned char get(float x[], const WorkspaceRepresentation* workspace) override;
 
         int getMaxSummedAngleReachablity();
 
         //! Simulates a multi-dimensional array access
-        inline unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
-                                 unsigned int x3, unsigned int x4, unsigned int x5);
+        virtual inline unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
+                                 unsigned int x3, unsigned int x4, unsigned int x5) override;
 
         //! Simulates a multi-dimensional array access
-        inline unsigned char get(unsigned int x[6]);
+        virtual inline unsigned char get(unsigned int x[6]) override;
 
-        bool hasEntry(unsigned int x, unsigned int y, unsigned int z);
+        virtual bool hasEntry(unsigned int x, unsigned int y, unsigned int z) override;
 
         // Set all entries to 0
-        void clear();
-        void binarize();
+        virtual void clear() override;
+        virtual void binarize() override;
 
-        void bisectData();
+        virtual void bisectData() override;
 
-        unsigned int getSize(int dim)
+        virtual unsigned int getSize(int dim) override
         {
             return sizes[dim];
         }
 
-        unsigned char** getRawData()
+        virtual unsigned char** getRawData() override
         {
             return data;
         }
 
-        WorkspaceData* clone();
+        virtual WorkspaceData* clone() override;
 
-        bool save(std::ofstream& file);
+        virtual bool save(std::ofstream& file) override;
     protected:
 
         void ensureData(unsigned int x, unsigned int y, unsigned int z);

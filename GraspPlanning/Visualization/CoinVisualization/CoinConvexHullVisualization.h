@@ -53,7 +53,7 @@ namespace GraspPlanning
 
         SoSeparator* getCoinVisualization();
 
-        virtual VirtualRobot::VisualizationPtr getVisualization();
+        virtual VirtualRobot::VisualizationPtr getVisualization() override;
 
 
     protected:

@@ -48,7 +48,7 @@ namespace MotionPlanning
         virtual ~ElasticBandProcessor();
 
         //! A wrapper to the standard interface.
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        virtual CSpacePathPtr optimize(int optimizeSteps) override;
 
         //! could also be used to disable specific dimensions
         void setWeights (Eigen::VectorXf w);

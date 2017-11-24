@@ -26,7 +26,10 @@
 #include "../../SimDynamics.h"
 #include "BulletEngine.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include <btBulletCollisionCommon.h>
+#pragma GCC diagnostic pop
 
 #include <VirtualRobot/Model/Frame.h>
 
@@ -42,8 +45,8 @@ namespace SimDynamics
     {
         SimoxCollisionDispatcher(BulletEngine* engine, btCollisionConfiguration* collisionConfiguration);
         virtual ~SimoxCollisionDispatcher();
-        virtual bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1);
-        virtual bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1);
+        virtual bool needsCollision(const btCollisionObject *body0, const btCollisionObject *body1) override;
+        virtual bool needsResponse(const btCollisionObject* body0,const btCollisionObject* body1) override;
 
     protected:
         BulletEngine* engine;

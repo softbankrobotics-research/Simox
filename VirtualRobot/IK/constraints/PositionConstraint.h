@@ -36,9 +36,9 @@ namespace VirtualRobot
         PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Vector3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 3.0f);
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
-        bool checkTolerances();
+        virtual double optimizationFunction(unsigned int id) override;
+        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        virtual bool checkTolerances() override;
 
         Eigen::Vector3f getTarget();
 
