@@ -32,14 +32,14 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
     //resize(1100, 768);
-    cam2Renderer = NULL;
-    cam2Buffer = NULL;
-    cam2DepthBuffer = NULL;
+    cam2Renderer = nullptr;
+    cam2Buffer = nullptr;
+    cam2DepthBuffer = nullptr;
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
@@ -112,9 +112,9 @@ showCamWindow::~showCamWindow()
     sceneSep->unref();
     cam1VoxelSep->unref();
 
-    UI.cam1->setScene(NULL);
+    UI.cam1->setScene(nullptr);
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
-    UI.cam2->setScene(NULL);
+    UI.cam2->setScene(nullptr);
 
     delete [] cam2Buffer;
     delete [] cam2DepthBuffer;
@@ -183,7 +183,7 @@ void showCamWindow::rebuildVisualization()
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
     visualization = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel));
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -402,11 +402,11 @@ void showCamWindow::updateCameras()
 {
     cam1.reset();
     cam2.reset();
-    cam2Renderer = NULL;
+    cam2Renderer = nullptr;
     delete []cam2Buffer;
-    cam2Buffer = NULL;
+    cam2Buffer = nullptr;
     delete [] cam2DepthBuffer;
-    cam2DepthBuffer = NULL;
+    cam2DepthBuffer = nullptr;
 
     if (!robot)
     {

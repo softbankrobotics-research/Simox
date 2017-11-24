@@ -87,7 +87,7 @@ namespace VirtualRobot
         virtual VisualizationNodePtr createSphere(float radius, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
         virtual VisualizationNodePtr createCylinder(float radius, float height, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
         virtual VisualizationNodePtr createCircle(float radius, float circleCompletion, float width, float colorR = 1.0f, float colorG = 0.5f, float colorB = 0.5f, size_t numberOfCircleParts = 30) override;
-        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = NULL, const Eigen::Matrix4f &pose = Eigen::Matrix4f::Identity(), float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) override;
+        virtual VisualizationNodePtr createCoordSystem(float scaling = 1.0f, std::string* text = nullptr, const Eigen::Matrix4f &pose = Eigen::Matrix4f::Identity(), float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) override;
         virtual VisualizationNodePtr createBoundingBox(const BoundingBox& bbox, bool wireFrame = false) override;
         virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f) override;
         virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr model, Eigen::Matrix4f& pose, float scaleX = 1.0f, float scaleY = 1.0f, float scaleZ = 1.0f) override;
@@ -145,7 +145,7 @@ namespace VirtualRobot
         static SoSeparator* CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 4.0f);
         static SoSeparator* CreatePolygonVisualization(const std::vector<Eigen::Vector3f>& points, VisualizationFactory::PhongMaterial mat, VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 4.0f);
         static SoSeparator* CreatePlaneVisualization(const Eigen::Vector3f& position, const Eigen::Vector3f& normal, float extend, float transparency, bool grid = true,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f, const std::string &textureFile = std::string());
-        static SoSeparator* CreateCoordSystemVisualization(float scaling = 1.0f, std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
+        static SoSeparator* CreateCoordSystemVisualization(float scaling = 1.0f, std::string* text = nullptr, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10);
         static SoSeparator* CreateBoundingBox(SoNode* ivModel, bool wireFrame = false);
         static SoSeparator* CreateGrid(float width, float depth, float widthMosaic, float depthMosaic, bool InvertNormal, const char* pFileName, float Transparency);
         static SoSeparator* CreateBBoxVisualization(const BoundingBox& bbox, bool wireFrame = false);
@@ -171,13 +171,13 @@ namespace VirtualRobot
             \return A separator containing the visualization.
         */
         static SoSeparator* CreateEllipse(float x, float y, float z,
-                                          SoMaterial* matBody = NULL,
+                                          SoMaterial* matBody = nullptr,
                                           bool showAxes = true,
                                           float axesHeight = 4.0f,
                                           float axesWidth = 8.0f,
-                                          SoMaterial* matAxisX = NULL,
-                                          SoMaterial* matAxisY = NULL,
-                                          SoMaterial* matAxisZ = NULL
+                                          SoMaterial* matAxisX = nullptr,
+                                          SoMaterial* matAxisY = nullptr,
+                                          SoMaterial* matAxisZ = nullptr
                                          );
 
         static SoSeparator* Create2DMap(const Eigen::MatrixXf& d, float extendCellX, float extendCellY, const VirtualRobot::ColorMap cm = VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), bool drawZeroCells = false, bool drawLines = true);
@@ -455,7 +455,7 @@ namespace VirtualRobot
 
         static std::shared_ptr<CoinVisualizationFactory> getGlobalCoinVisualizationFactory()
         {
-            return std::dynamic_pointer_cast<CoinVisualizationFactory>(VisualizationFactory::first(NULL));
+            return std::dynamic_pointer_cast<CoinVisualizationFactory>(VisualizationFactory::first(nullptr));
         }
 
     protected:

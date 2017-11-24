@@ -215,7 +215,7 @@ namespace VirtualRobot
 
 
     // returns position on path for time t (0<=t<=1)
-    void Trajectory::interpolate(float t, Eigen::VectorXf& storePathPos, int* storeIndex /*= NULL*/) const
+    void Trajectory::interpolate(float t, Eigen::VectorXf& storePathPos, int* storeIndex /*= nullptr*/) const
     {
         storePathPos.resize(dimension);
 
@@ -248,7 +248,7 @@ namespace VirtualRobot
         {
             storePathPos = getPoint(0);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = 0;
             }
@@ -259,7 +259,7 @@ namespace VirtualRobot
         {
             storePathPos = getPoint(getNrOfPoints() - 1);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = (int)path.size() - 1;
             }
@@ -308,7 +308,7 @@ namespace VirtualRobot
 
         storePathPos = c1 + (c2 - c1) * factor; // storePos = startPos + factor*segment
 
-        if (storeIndex != NULL)
+        if (storeIndex != nullptr)
         {
             *storeIndex = startIndex;
         }
@@ -436,11 +436,11 @@ namespace VirtualRobot
 
         if (visualizationFactoryName.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationFactoryName, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationFactoryName, nullptr);
         }
 
         if (!visualizationFactory)

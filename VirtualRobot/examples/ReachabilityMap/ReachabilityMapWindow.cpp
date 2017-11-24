@@ -39,7 +39,7 @@ float TIMER_MS = 30.0f;
 //#define ENDLESS
 
 ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -93,7 +93,7 @@ ReachabilityMapWindow::~ReachabilityMapWindow()
 void ReachabilityMapWindow::setupUI()
 {
     UI.setupUi(this);
-    SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::fromName(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::fromName(VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr);
     THROW_VR_EXCEPTION_IF(!factory,"Could not create ViewerFactory.");
     viewer = factory->createViewer(UI.frameViewer);
 

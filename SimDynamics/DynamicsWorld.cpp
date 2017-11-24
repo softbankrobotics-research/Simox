@@ -74,7 +74,7 @@ namespace SimDynamics
 
     DynamicsWorld::DynamicsWorld(DynamicsEngineConfigPtr config)
     {
-        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(NULL);
+        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(nullptr);
         THROW_VR_EXCEPTION_IF(!factory, "No Physics Engine Found. Re-Compile with engine support...");
         engine = factory->createEngine(config);
         THROW_VR_EXCEPTION_IF(!engine, "Could not create Physics Engine.");
@@ -98,7 +98,7 @@ namespace SimDynamics
     {
         SIMDYNAMICS_ASSERT(o);
 
-        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(NULL);
+        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(nullptr);
         SIMDYNAMICS_ASSERT(factory);
 
         return factory->createObject(o);
@@ -123,7 +123,7 @@ namespace SimDynamics
     {
         SIMDYNAMICS_ASSERT(rob);
 
-        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(NULL);
+        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(nullptr);
         SIMDYNAMICS_ASSERT(factory);
 
         return factory->createRobot(rob);

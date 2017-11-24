@@ -184,7 +184,7 @@ namespace VirtualRobot
         {
             return VisualizationNodePtr();
         }
-        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = NULL, const Eigen::Matrix4f &/*pose*/ = Eigen::Matrix4f::Identity(), float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
+        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = nullptr, const Eigen::Matrix4f &/*pose*/ = Eigen::Matrix4f::Identity(), float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
         {
             return VisualizationNodePtr();
         }
@@ -309,7 +309,7 @@ namespace VirtualRobot
         */
         static VisualizationFactoryPtr getGlobalVisualizationFactory()
         {
-            return VisualizationFactory::first(NULL);
+            return VisualizationFactory::first(nullptr);
         }
 
         /**

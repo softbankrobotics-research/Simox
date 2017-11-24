@@ -39,7 +39,7 @@ namespace VirtualRobot
         A RobotImporter can be used to import robots from various data formats.
          By default the Simox XML-based RobotImporter can be retrieved as follows:
          \code
-         RobotImporterPtr imp = RobotImporterFactory::fromName("SimoxXML", NULL);
+         RobotImporterPtr imp = RobotImporterFactory::fromName("SimoxXML", nullptr);
          RobotPtr robot = imp->loadFromFile(filename);
          \endcode
 

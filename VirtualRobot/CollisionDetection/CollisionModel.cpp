@@ -243,7 +243,7 @@ namespace VirtualRobot
             if (model)
             {
                 std::string type = visualization->getType();
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(type, NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(type, nullptr);
 
                 if (visualizationFactory)
                 {

@@ -46,7 +46,7 @@ namespace SimoxGui
             ;
         }
 
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) = 0;
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) = 0;
     };
     typedef std::shared_ptr<ViewerFactory> ViewerFactoryPtr;
 

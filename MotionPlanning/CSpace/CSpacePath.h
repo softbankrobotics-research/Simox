@@ -90,10 +90,10 @@ namespace MotionPlanning
 
         /*!
             return position on path for time t (0<=t<=1)
-            If storeIndex!=NULL the index of the last path point is stored.
+            If storeIndex!=nullptr the index of the last path point is stored.
             This method consideres weighting of c-space dimensions!
          */
-        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = NULL) const override;
+        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = nullptr) const override;
 
         //! return time t (0<=t<=1) for path entry with number nr
         virtual float getTime(unsigned int nr);

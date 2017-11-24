@@ -32,7 +32,7 @@ using namespace std;
 using namespace VirtualRobot;
 
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL), robotLayer("robot-layer")
+    : QMainWindow(nullptr), robotLayer("robot-layer")
 {
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
@@ -54,7 +54,7 @@ void showRobotWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -326,7 +326,7 @@ void showRobotWindow::loadRobot()
         {
             QFileInfo fileInfo(robotFilename.c_str());
             std::string suffix(fileInfo.suffix().toLatin1());
-            RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+            RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, nullptr);
 
             if (!importer)
             {

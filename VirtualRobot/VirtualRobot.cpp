@@ -21,7 +21,7 @@ namespace VirtualRobot
     void init(int &argc, char* argv[], const std::string &appName)
     {
         globalAppName = appName;
-        std::shared_ptr<VisualizationFactory> v = VisualizationFactory::first(NULL);
+        std::shared_ptr<VisualizationFactory> v = VisualizationFactory::first(nullptr);
         if (v)
         {
             v->init(argc, argv, globalAppName);

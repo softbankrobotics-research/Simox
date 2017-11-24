@@ -127,7 +127,7 @@ namespace GraspPlanning
         FILE* outfile = stdout;     /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 # else
-        FILE* outfile = NULL;       /* output from qh_produce_output()*/
+        FILE* outfile = nullptr;       /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 #endif
         FILE* errfile = stderr;     /* error messages from qhull code */
@@ -159,11 +159,11 @@ namespace GraspPlanning
         {
             facetT* facet_list = qh facet_list;
             //int convexNumFaces = qh num_facets;
-            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
 
             qh_triangulate(); // need this for triangulated output!
             //int convexNumFaces2 = qh num_facets;
-            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
             /*
             cout << "Numfacets1:" << convexNumFaces << endl;
             cout << "Numvertices1:" << convexNumVert << endl;
@@ -319,7 +319,7 @@ namespace GraspPlanning
         FILE* outfile = stdout;     /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 # else
-        FILE* outfile = NULL;       /* output from qh_produce_output()*/
+        FILE* outfile = nullptr;       /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 #endif
         FILE* errfile = stderr;     /* error messages from qhull code */
@@ -353,11 +353,11 @@ namespace GraspPlanning
         {
             facetT* facet_list = qh facet_list;
             //int convexNumFaces = qh num_facets;
-            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
 
             qh_triangulate(); // need this for triangulated output!
             //int convexNumFaces2 = qh num_facets;
-            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
             double pCenter[6];
 
             for (int u = 0; u < 6; u++)

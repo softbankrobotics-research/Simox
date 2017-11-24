@@ -45,9 +45,9 @@ namespace MotionPlanning
         {
 #ifdef __LP64__
             // This is for machines with 64Bit addresses and 32Bit int datatype
-            randomSeed = (unsigned int)(time(NULL) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
+            randomSeed = (unsigned int)(time(nullptr) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
 #else
-            randomSeed = (unsigned int)(time(NULL) + (int)this) % 10000;
+            randomSeed = (unsigned int)(time(nullptr) + (int)this) % 10000;
 #endif
         }
 

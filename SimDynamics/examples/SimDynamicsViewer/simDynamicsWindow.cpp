@@ -34,7 +34,7 @@ using namespace VirtualRobot;
 using namespace SimDynamics;
 
 SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -122,7 +122,7 @@ void SimDynamicsWindow::setupUI()
     UI.setupUi(this);
 
     viewer.reset(new SimDynamics::BulletCoinQtViewer(UI.frameViewer, dynamicsWorld));
-    //viewer->initSceneGraph(UI.frameViewer, NULL);//sceneSep);
+    //viewer->initSceneGraph(UI.frameViewer, nullptr);//sceneSep);
     connect(UI.checkBoxColModel, SIGNAL(clicked()), this, SLOT(buildVisualization()));
     connect(UI.checkBoxActuation, SIGNAL(clicked()), this, SLOT(actuation()));
     connect(UI.checkBoxCom, SIGNAL(clicked()), this, SLOT(comVisu()));

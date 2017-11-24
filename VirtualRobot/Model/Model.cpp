@@ -566,7 +566,7 @@ namespace VirtualRobot
 
     void Model::attachStructure(std::string visualizationType)
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
         for (const auto & node : getModelNodes())
         {
             std::string attachmentName = node->getName() + "_structure";
@@ -585,7 +585,7 @@ namespace VirtualRobot
 
     void Model::attachFrames(std::string visualizationType)
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), nullptr);
         for (const auto & joint : getJoints())
         {
             std::string attachmentName = joint->getName() + "_frame";
@@ -1095,7 +1095,7 @@ namespace VirtualRobot
     {
         if (!visualizationValid || !visualization || this->visuType != linkVisuType)
         {
-            VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, NULL);
+            VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, nullptr);
             if (v)
             {
                 visualization = v->createVisualization(shared_from_this(), linkVisuType);

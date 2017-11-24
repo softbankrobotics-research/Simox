@@ -233,7 +233,7 @@ namespace VirtualRobot
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)

@@ -99,7 +99,7 @@ namespace SimDynamics
 
         /*!
             Initialize the engine with this configuration.
-            \param config Either a standard init (could be NULL), or if config is of type BulletEngineConfig, Bullet specific parameters will be considered.
+            \param config Either a standard init (could be nullptr), or if config is of type BulletEngineConfig, Bullet specific parameters will be considered.
         */
         virtual bool init(DynamicsEngineConfigPtr config) override;
         virtual bool init(BulletEngineConfigPtr config);

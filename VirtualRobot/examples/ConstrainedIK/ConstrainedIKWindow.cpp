@@ -55,7 +55,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     robotFilename = sRobotFilename;
 
@@ -74,7 +74,7 @@ ConstrainedIKWindow::~ConstrainedIKWindow()
 void ConstrainedIKWindow::setupUI()
 {
     UI.setupUi(this);
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 

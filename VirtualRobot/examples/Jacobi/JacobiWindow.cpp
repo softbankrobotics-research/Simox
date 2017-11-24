@@ -24,7 +24,7 @@ float TIMER_MS = 30.0f;
 #endif
 
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL), boxVisuLayer("box-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -58,7 +58,7 @@ JacobiWindow::~JacobiWindow()
 void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL)->createViewer(UI.frameViewer);
+    viewer = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr)->createViewer(UI.frameViewer);
     viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));

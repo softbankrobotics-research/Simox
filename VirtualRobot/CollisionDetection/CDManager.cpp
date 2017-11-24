@@ -16,7 +16,7 @@ namespace VirtualRobot
 
     CDManager::CDManager(const CollisionCheckerPtr &colChecker)
     {
-        if (colChecker == NULL)
+        if (colChecker == nullptr)
         {
             this->colChecker = VirtualRobot::CollisionChecker::getGlobalCollisionChecker();
         }

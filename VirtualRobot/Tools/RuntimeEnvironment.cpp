@@ -454,7 +454,7 @@ namespace VirtualRobot
 
     void RuntimeEnvironment::cleanup()
     {
-        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
 
         if (visualizationFactory)
         {

@@ -41,7 +41,7 @@ namespace MotionPlanning
     void Sampler::enableMetricWeights(const Eigen::VectorXf& /*weights*/)
     {
         /*delete [] m_pMetricWeights;
-        m_pMetricWeights = NULL;
+        m_pMetricWeights = nullptr;
         if (pWeights && dimension>0)
         {
             m_pMetricWeights = new float[dimension];

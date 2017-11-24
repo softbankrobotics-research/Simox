@@ -311,7 +311,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(scaling <= 0, "Scaling must be >0");
 
-        SoSeparator* newModel = NULL;
+        SoSeparator* newModel = nullptr;
 
         if (visualization)
         {

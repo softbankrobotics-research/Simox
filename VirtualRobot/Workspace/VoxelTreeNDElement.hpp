@@ -51,12 +51,12 @@ namespace VirtualRobot
             VR_ASSERT(master);
             this->tree = master;
 
-            entry = NULL;
+            entry = nullptr;
 
             if (level >= (tree->getMaxLevels() - 1))
             {
                 leaf = true;
-                children = NULL;
+                children = nullptr;
             }
             else
             {
@@ -66,7 +66,7 @@ namespace VirtualRobot
 
                 for (int i = 0; i < master->getNumChildren(); i++)
                 {
-                    children[i] = NULL;
+                    children[i] = nullptr;
                 }
             }
 
@@ -154,7 +154,7 @@ namespace VirtualRobot
         };
 
         /*!
-            Returns pointer to element when existing. NULL if not.
+            Returns pointer to element when existing. nullptr if not.
         */
         T* getEntry(float p[N])
         {
@@ -167,7 +167,7 @@ namespace VirtualRobot
 
             if (indx < 0 || !children[indx])
             {
-                return NULL;
+                return nullptr;
             }
 
             return children[indx]->getEntry(p);
@@ -185,7 +185,7 @@ namespace VirtualRobot
 
             if (indx < 0 || !children[indx])
             {
-                return NULL;
+                return nullptr;
             }
 
             return children[indx]->getLeaf(pos);
@@ -203,8 +203,8 @@ namespace VirtualRobot
             int numChildren = tree->getNumChildren();
             std::vector<int> c = getAllChildrenIndx(pos);
             std::vector<int>::iterator it = c.begin();
-            T* maxEntry = NULL;
-            VoxelTreeNDElement* maxElement = NULL;
+            T* maxEntry = nullptr;
+            VoxelTreeNDElement* maxElement = nullptr;
 
             while (it != c.end())
             {
@@ -410,7 +410,7 @@ namespace VirtualRobot
             deleteData();
 
 
-            entry = NULL;
+            entry = nullptr;
             leaf = false;
             //this->level = data.level;
             //this->maxLevels = data.maxLevels;
@@ -425,7 +425,7 @@ namespace VirtualRobot
 
                 for (int i = 0; i < tree->getNumChildren(); i++)
                 {
-                    children[i] = NULL;
+                    children[i] = nullptr;
                 }
 
                 for (int i = 0; i < num_children; i++)
@@ -448,7 +448,7 @@ namespace VirtualRobot
             }
             else
             {
-                children = NULL;
+                children = nullptr;
                 entry = new T(data.entry);
             }
 
@@ -472,7 +472,7 @@ namespace VirtualRobot
                 }
 
                 cout << endl;
-                return NULL;
+                return nullptr;
             }
 
 #ifdef VoxelTreeNDElement_DEBUG_OUTPUT
@@ -662,8 +662,8 @@ namespace VirtualRobot
             }
 
             delete entry;
-            children = NULL;
-            entry = NULL;
+            children = nullptr;
+            entry = nullptr;
         }
 
         VoxelTreeNDElement<T, N>* getNextChild(int startIndex, int& storeElementNr)
@@ -679,7 +679,7 @@ namespace VirtualRobot
                 }
             }
 
-            return NULL;
+            return nullptr;
         }
 
         VoxelTreeNDElement** children;

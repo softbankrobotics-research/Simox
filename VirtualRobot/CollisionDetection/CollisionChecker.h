@@ -81,9 +81,9 @@ namespace VirtualRobot
 #define CREATE_CALCULATE_DISTANCE(param1, param2)\
         inline float calculateDistance(param1 m1, param2 m2)\
         {\
-            return calculateDistance(getCollisionModel(m1), getCollisionModel(m2), tmpV1, tmpV2, NULL, NULL);\
+            return calculateDistance(getCollisionModel(m1), getCollisionModel(m2), tmpV1, tmpV2, nullptr, nullptr);\
         }\
-        inline float calculateDistance(param1 m1, param2 m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL)\
+        inline float calculateDistance(param1 m1, param2 m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = nullptr, int* trID2 = nullptr)\
         {\
             return calculateDistance(getCollisionModel(m1), getCollisionModel(m2), P1, P2, trID1, trID2);\
         }
@@ -97,28 +97,28 @@ namespace VirtualRobot
 
         inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const std::vector<CollisionModelPtr>& m2)
         {
-            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(m1, m2, tmpV1, tmpV2, nullptr, nullptr);
         }
         inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const CollisionModelPtr& m2)
         {
-            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(m1, m2, tmpV1, tmpV2, nullptr, nullptr);
         }
         inline float calculateDistance(const CollisionModelPtr& m1, const std::vector<CollisionModelPtr>& m2)
         {
-            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(m1, m2, tmpV1, tmpV2, nullptr, nullptr);
         }
         inline float calculateDistance(const CollisionModelPtr& m1, const CollisionModelPtr& m2)
         {
-            return calculateDistance(m1, m2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(m1, m2, tmpV1, tmpV2, nullptr, nullptr);
         }
 
-        virtual float calculateDistance(const std::vector<CollisionModelPtr>& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual float calculateDistance(const CollisionModelPtr& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL)
+        virtual float calculateDistance(const std::vector<CollisionModelPtr>& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = nullptr, int* trID2 = nullptr);
+        virtual float calculateDistance(const CollisionModelPtr& m1, const std::vector<CollisionModelPtr>& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = nullptr, int* trID2 = nullptr);
+        inline float calculateDistance(const std::vector<CollisionModelPtr>& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = nullptr, int* trID2 = nullptr)
         {
             return calculateDistance(m2, m1, P1, P2, trID1, trID2);
         }
-        virtual float calculateDistance(const CollisionModelPtr& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
+        virtual float calculateDistance(const CollisionModelPtr& m1, const CollisionModelPtr& m2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = nullptr, int* trID2 = nullptr);
 
 
         /*!
@@ -147,7 +147,7 @@ namespace VirtualRobot
         {
             return checkCollision(model2, model1);
         }
-        virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2); //, Eigen::Vector3f *storeContact = NULL);
+        virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2); //, Eigen::Vector3f *storeContact = nullptr);
 
         /*!
             Store all vertices of colModel whose distance to p is smaller than maxDist.

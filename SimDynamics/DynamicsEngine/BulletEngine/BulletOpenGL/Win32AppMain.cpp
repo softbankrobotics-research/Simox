@@ -203,7 +203,7 @@ void RedirectIOToConsole()
 
     *stdout = *fp;
 
-    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdout, nullptr, _IONBF, 0);
 
     // redirect unbuffered STDIN to the console
 
@@ -215,7 +215,7 @@ void RedirectIOToConsole()
 
     *stdin = *fp;
 
-    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdin, nullptr, _IONBF, 0);
 
     // redirect unbuffered STDERR to the console
 
@@ -227,7 +227,7 @@ void RedirectIOToConsole()
 
     *stderr = *fp;
 
-    setvbuf(stderr, NULL, _IONBF, 0);
+    setvbuf(stderr, nullptr, _IONBF, 0);
 
     // make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog
 
@@ -271,10 +271,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    wc.lpszMenuName = NULL;
+    wc.lpszMenuName = nullptr;
     wc.lpszClassName = "BulletPhysics";
     RegisterClass(&wc);
 
@@ -284,7 +284,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
                //      0, 0, 640, 480,
                0, 0, 1024, 768,
-               NULL, NULL, hInstance, NULL);
+               nullptr, nullptr, hInstance, nullptr);
 
     // enable OpenGL for the window
     EnableOpenGL(hWnd, &hDC, &hRC);
@@ -309,7 +309,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     {
 
         // check for messages
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
 
             // handle or dispatch messages
@@ -648,7 +648,7 @@ void DisableOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 {
     sOpenGLInitialized = false;
 
-    wglMakeCurrent(NULL, NULL);
+    wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(hRC);
     ReleaseDC(hWnd, hDC);
 }

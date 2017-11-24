@@ -42,14 +42,14 @@ QWidget* win;
 
 void show(std::vector<VisualizationPtr> &visus)
 {
-    if (win == NULL)
+    if (win == nullptr)
     {
         printf("Could not create window.\n");
         exit(-3);
     }
 
     SimoxGui::ViewerInterfacePtr viewer;
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(win);
 

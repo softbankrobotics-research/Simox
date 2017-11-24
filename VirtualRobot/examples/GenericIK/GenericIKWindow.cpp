@@ -27,7 +27,7 @@ float TIMER_MS = 30.0f;
 #endif
 
 GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
 
@@ -56,7 +56,7 @@ void GenericIKWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr);
     viewer = factory->createViewer(UI.frameViewer);
     viewer->viewAll();
 

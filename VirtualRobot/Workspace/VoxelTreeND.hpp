@@ -238,7 +238,7 @@ namespace VirtualRobot
         {
             THROW_VR_EXCEPTION_IF(!file, "File could not be read.");
 
-            VoxelTreeND<T, N>* tree = NULL;
+            VoxelTreeND<T, N>* tree = nullptr;
 
             try
             {
@@ -339,7 +339,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }
 
                     // read levels
@@ -351,7 +351,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }
                     // read pos
                     dataSize = sizeof(float)*N;
@@ -362,7 +362,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }
                     // read extends
                     dataSize = sizeof(float)*N;
@@ -373,7 +373,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }*/
                     // read leaf
                     bool leaf = false;
@@ -386,7 +386,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }
 
                     d.children.clear();
@@ -403,7 +403,7 @@ namespace VirtualRobot
                             bzip2->close();
                             file.close();
                             delete tree;
-                            return NULL;
+                            return nullptr;
                         }
                     }
                     else
@@ -419,7 +419,7 @@ namespace VirtualRobot
                             bzip2->close();
                             file.close();
                             delete tree;
-                            return NULL;
+                            return nullptr;
                         }
 
                         for (int i = 0; i < numChildren; i++)
@@ -437,7 +437,7 @@ namespace VirtualRobot
                         bzip2->close();
                         file.close();
                         delete tree;
-                        return NULL;
+                        return nullptr;
                     }
 
                 }
@@ -695,13 +695,13 @@ namespace VirtualRobot
 
                 if (!currentElement)
                 {
-                    return NULL;
+                    return nullptr;
                 }
 
                 if (!currentElement->isLeaf())
                 {
                     VR_ERROR << "not at leaf element..." << endl;
-                    return NULL;
+                    return nullptr;
                 }
 
                 currentElement = elementStack.back();
@@ -723,7 +723,7 @@ namespace VirtualRobot
 
                 if (!currentElement)
                 {
-                    return NULL;    // no more elements
+                    return nullptr;    // no more elements
                 }
 
                 // go down
@@ -741,7 +741,7 @@ namespace VirtualRobot
                 if (!currentElement || !currentElement->isLeaf())
                 {
                     VR_ERROR << "Could not determine next leaf element" << endl;
-                    return NULL;
+                    return nullptr;
                 }
                 else
                 {

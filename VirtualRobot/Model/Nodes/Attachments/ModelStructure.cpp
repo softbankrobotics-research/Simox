@@ -38,10 +38,10 @@ namespace VirtualRobot
         VisualizationFactoryPtr factory;
         if (visualizationType.empty())
         {
-            factory = VirtualRobot::VisualizationFactory::first(NULL);
+            factory = VirtualRobot::VisualizationFactory::first(nullptr);
         } else
         {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, NULL);
+            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, nullptr);
         }
         if (!factory)
         {

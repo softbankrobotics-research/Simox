@@ -257,7 +257,7 @@ namespace MotionPlanning
     {
         if (!n)
         {
-            MOTIONPLANNING_ERROR << ": NULL node" << std::endl;
+            MOTIONPLANNING_ERROR << ": nullptr node" << std::endl;
             return;
         }
 
@@ -324,7 +324,7 @@ namespace MotionPlanning
             }
         }
 
-        if (storeDist != NULL)
+        if (storeDist != nullptr)
         {
             *storeDist = sqrtf(dist2);
         }

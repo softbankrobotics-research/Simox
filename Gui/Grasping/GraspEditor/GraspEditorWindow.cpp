@@ -38,7 +38,7 @@ namespace VirtualRobot
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
                                          bool embeddedGraspEditor)
-        : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
+        : QMainWindow(nullptr), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
 
@@ -97,7 +97,7 @@ namespace VirtualRobot
     {
         UI->setupUi(this);
 
-        SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+        SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
         THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
         viewer = viewerFactory->createViewer(UI->frameViewer);
 
@@ -169,7 +169,7 @@ namespace VirtualRobot
                 if (tcp)
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    VisualizationNodePtr visu = f->createCoordSystem(1.0f, NULL, tcpGP);
+                    VisualizationNodePtr visu = f->createCoordSystem(1.0f, nullptr, tcpGP);
                     viewer->addVisualization("eefLayer", "eef-coord", visu);
                 }
             }

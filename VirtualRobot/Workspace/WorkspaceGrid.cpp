@@ -20,7 +20,7 @@ namespace VirtualRobot
         minY = fMinY;
         maxY = fMaxY;
         discretizeSize = fDiscretizeSize;
-        data = NULL;
+        data = nullptr;
 
         if (fMinX >= fMaxX || fMinY >= fMaxY)
         {

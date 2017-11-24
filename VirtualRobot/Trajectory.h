@@ -120,9 +120,9 @@ namespace VirtualRobot
 
         /*!
          return position on trajectory for time t (0<=t<=1)
-         If storeIndex!=NULL the index of the last trajectory point is stored
+         If storeIndex!=nullptr the index of the last trajectory point is stored
          */
-        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = NULL) const;
+        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = nullptr) const;
 
 
         /*!

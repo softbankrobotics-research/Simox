@@ -121,7 +121,7 @@ namespace VirtualRobot
          * @param frame A reference to the robot node that defines the new reference.
          * @details If iCoord::set has not been called before, the pose is set to the
          * unit marix.
-         * @throw VirtualRobotException An exception is thrown if frame is NULL.
+         * @throw VirtualRobotException An exception is thrown if frame is nullptr.
          */
         void changeFrame(const RobotNodePtr& frame);
 
@@ -141,7 +141,7 @@ namespace VirtualRobot
          * @returns A homogeneous matrix of the pose
          * @sa getPose()
          * @details If you are only interested in the translational part use iCoord::getPosition() or Matrix4f::block<3,1>(0,3).
-         * @throw VirtualRobotException An exception is thrown if frame is NULL.
+         * @throw VirtualRobotException An exception is thrown if frame is nullptr.
          */
         Eigen::Matrix4f getInFrame(const RobotNodePtr& frame) const;
 

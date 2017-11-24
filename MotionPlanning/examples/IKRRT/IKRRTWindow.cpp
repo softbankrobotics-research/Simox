@@ -39,7 +39,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -127,7 +127,7 @@ void IKRRTWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -527,7 +527,7 @@ void IKRRTWindow::reachVisu()
 
         /*
             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();
-            SoNode* visualisationNode = NULL;
+            SoNode* visualisationNode = nullptr;
             if (visualization)
                 visualisationNode = visualization->getCoinVisualization();
 

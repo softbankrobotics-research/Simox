@@ -362,7 +362,7 @@ namespace VirtualRobot
         SoNode* coinVisualization = SoDB::readAll(&soInput);
 
         // check if the visualization was read
-        if (NULL == coinVisualization)
+        if (nullptr == coinVisualization)
         {
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return;
@@ -812,7 +812,7 @@ namespace VirtualRobot
             result->addChild(tmp2);
         }
 
-        if (text != NULL)
+        if (text != nullptr)
         {
             SoSeparator* textSep = new SoSeparator();
             SoTranslation* moveT = new SoTranslation();
@@ -1000,7 +1000,7 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
-        res->addChild(CreateEllipse(x, y, z, NULL, showAxes, axesHeight, axesWidth));
+        res->addChild(CreateEllipse(x, y, z, nullptr, showAxes, axesHeight, axesWidth));
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(res));
         res->unref();
         return visualizationNode;
@@ -1466,13 +1466,13 @@ namespace VirtualRobot
     SoNode* CoinVisualizationFactory::getCoinVisualization(const ModelPtr &model, ModelLink::VisualizationType visuType)
     {
         if (!model)
-            return NULL;
+            return nullptr;
 
         VisualizationPtr v = model->getVisualization(visuType);
         CoinVisualizationPtr cv = std::dynamic_pointer_cast<CoinVisualization>(v);
         if (cv)
             return cv->getCoinVisualization();
-        return NULL;
+        return nullptr;
     }
 
     SoNode* CoinVisualizationFactory::getCoinVisualization(const ModelLinkPtr &object, ModelLink::VisualizationType visuType)
@@ -2434,7 +2434,7 @@ namespace VirtualRobot
 
         if (!reachSpace || reachSpace->numVoxels[0] <= 0 || reachSpace->numVoxels[1] <= 0 || reachSpace->numVoxels[2] <= 0)
         {
-            return NULL;
+            return nullptr;
         }
 
         //float x[6];
@@ -2499,7 +2499,7 @@ namespace VirtualRobot
 
         if (entryRot.size() == 0)
         {
-            return NULL;
+            return nullptr;
         }
 
         SoSeparator* res = new SoSeparator;
@@ -3717,7 +3717,7 @@ namespace VirtualRobot
     bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer)
     {
         //SbTime t1 = SbTime::getTimeOfDay(); // for profiling
-        if (!renderer || !cam || !scene || buffer == NULL)
+        if (!renderer || !cam || !scene || buffer == nullptr)
         {
             return false;
         }
@@ -4397,7 +4397,7 @@ namespace VirtualRobot
     {
         if (!n)
         {
-            return NULL;
+            return nullptr;
         }
 
         bool copyImages = true;

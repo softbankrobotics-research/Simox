@@ -80,12 +80,12 @@ namespace PQP
 
     PQP_Model::~PQP_Model()
     {
-        if (b != NULL)
+        if (b != nullptr)
         {
             delete [] b;
         }
 
-        if (tris != NULL)
+        if (tris != nullptr)
         {
             delete [] tris;
         }

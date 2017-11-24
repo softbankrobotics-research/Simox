@@ -33,7 +33,7 @@ float TIMER_MS = 30.0f;
 #endif
 
 reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP)
-    : QMainWindow(NULL), robotVisuLayerName("robot-layer"), wsVisuLayerName("ws-layer")
+    : QMainWindow(nullptr), robotVisuLayerName("robot-layer"), wsVisuLayerName("ws-layer")
 {
     VR_INFO << " start " << endl;
 
@@ -66,7 +66,7 @@ void reachabilityWindow::setupUI()
 {
     UI.setupUi(this);
     // viewerfactories and visualizationfactories of the same type share the same name (e.g. "inventor" for coin).
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr);
 
     viewer = viewerFactory->createViewer(UI.frameViewer);
     viewer->viewAll();

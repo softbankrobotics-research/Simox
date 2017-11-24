@@ -29,7 +29,7 @@ namespace VirtualRobot
     }
 
     CollisionModelPQP::CollisionModelPQP(const CollisionModelPQP &orig) :
-        CollisionModelImplementation(orig.modelData, NULL, orig.id)
+        CollisionModelImplementation(orig.modelData, nullptr, orig.id)
     {
         pqpModel = orig.pqpModel;
     }

@@ -169,7 +169,7 @@ namespace VirtualRobot
             c = o->getCollisionModel()->clone();
         }
 
-        auto rnf = ModelNodeFixedFactory::createInstance(NULL);
+        auto rnf = ModelNodeFixedFactory::createInstance(nullptr);
         ModelNodePtr newRN = rnf->createModelNode(model, name, v, c, 0, 0, 0, transformation, Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
         rn->attachChild(newRN);
         newRN->initialize(rn);

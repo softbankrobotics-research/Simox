@@ -146,7 +146,7 @@ namespace VirtualRobot
         if (sensorType=="frame" || sensorType=="Frame")
             sensorType = "modelnodeattachment";
 
-        ModelNodeAttachmentFactoryPtr sensorFactory = ModelNodeAttachmentFactory::fromName(sensorType, NULL);
+        ModelNodeAttachmentFactoryPtr sensorFactory = ModelNodeAttachmentFactory::fromName(sensorType, nullptr);
 
         if (sensorFactory)
         {
@@ -282,7 +282,7 @@ namespace VirtualRobot
             bool fileOK = searchFile(filename, basePath);
             THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
 
-            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxURDF", NULL);
+            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxURDF", nullptr);
             if (!rf)
             {
                 THROW_VR_EXCEPTION("Could not instanciate URDF loader, most likely Simox was not compiled with URDF support...");
@@ -304,7 +304,7 @@ namespace VirtualRobot
             bool fileOK = searchFile(filename, basePath);
             THROW_VR_EXCEPTION_IF(!fileOK, "Could not find file " << filename);
 
-            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxXML", NULL);
+            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxXML", nullptr);
             THROW_VR_EXCEPTION_IF(!rf, "Could not instanciate SimoxXML loader...");
             robot = rf->loadFromFile(filename, loadMode);
 
@@ -527,13 +527,13 @@ namespace VirtualRobot
             }
             else if (visualizationNodes.size() > 1)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
                 visualizationNode = visualizationFactory->createUnitedVisualization(visualizationNodes);
             }
 
             else if (primitives.size() != 0)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
                 visualizationNode = visualizationFactory->getVisualizationFromPrimitives(primitives);
             }
 
@@ -570,7 +570,7 @@ namespace VirtualRobot
                     //THROW_VR_EXCEPTION_IF(!attr, "Missing 'type' attribute in <CoordinateAxis> tag of node " << tagName << "." << endl)
                     if (!attr)
                     {
-                        VisualizationFactoryPtr f = VisualizationFactory::first(NULL);
+                        VisualizationFactoryPtr f = VisualizationFactory::first(nullptr);
 
                         if (f)
                         {
@@ -587,7 +587,7 @@ namespace VirtualRobot
                     }
 
                     getLowerCase(visuCoordType);
-                    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuCoordType, NULL);
+                    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuCoordType, nullptr);
 
                     if (!visualizationNode)
                     {
@@ -663,7 +663,7 @@ namespace VirtualRobot
                 }
                 else
                 {
-                    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, NULL);
+                    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(collisionFileType, nullptr);
 
                     if (visualizationFactory)
                     {
@@ -677,7 +677,7 @@ namespace VirtualRobot
             }
             else if (primitives.size() != 0)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
                 visualizationNode = visualizationFactory->getVisualizationFromPrimitives(primitives);
             }
 
@@ -714,9 +714,9 @@ namespace VirtualRobot
 
             if (!attr)
             {
-                if (VisualizationFactory::first(NULL))
+                if (VisualizationFactory::first(nullptr))
                 {
-                    tmpFileType = VisualizationFactory::first(NULL)->getDescription();
+                    tmpFileType = VisualizationFactory::first(nullptr)->getDescription();
                     getLowerCase(tmpFileType);
                 }
                 else
@@ -747,7 +747,7 @@ namespace VirtualRobot
 
             if (visuFile != "")
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(fileType, NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(fileType, nullptr);
 
                 if (visualizationFactory)
                 {
@@ -1451,7 +1451,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
         THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
-        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("modelnodeattachment", NULL);
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("modelnodeattachment", nullptr);
         THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate ModelNodeAttachment factory for creating frames...");
 
         ModelNodeAttachmentPtr mf = mff->createAttachment(frameName, transformMatrix);

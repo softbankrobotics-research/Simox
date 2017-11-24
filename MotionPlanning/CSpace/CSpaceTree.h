@@ -101,7 +101,7 @@ namespace MotionPlanning
           \param config the configuration
           \param parentID ID of the parent
           \param calcDistance if set, the distance to obstacles is calculated and stored in the node (be careful: expensive), otherwise the dist is set to -1.0
-          \return pointer to the new node on success, otherwise NULL
+          \return pointer to the new node on success, otherwise nullptr
         */
         virtual CSpaceNodePtr appendNode(const Eigen::VectorXf& config, int parentID, bool calcDistance = false);
 
@@ -111,11 +111,11 @@ namespace MotionPlanning
         /*!
             get ID of nearest neighbor
           \param config configuration
-          \param storeDist pointer to float for storing the distance (if not NULL)
+          \param storeDist pointer to float for storing the distance (if not nullptr)
           \return ID of nearest neighbor
         */
-        virtual unsigned int getNearestNeighborID(const Eigen::VectorXf& config, float* storeDist = NULL);
-        virtual CSpaceNodePtr getNearestNeighbor(const Eigen::VectorXf& config, float* storeDist = NULL);
+        virtual unsigned int getNearestNeighborID(const Eigen::VectorXf& config, float* storeDist = nullptr);
+        virtual CSpaceNodePtr getNearestNeighbor(const Eigen::VectorXf& config, float* storeDist = nullptr);
 
         /*!
             append a path to the tree (without any checks)
@@ -124,12 +124,12 @@ namespace MotionPlanning
           \param config
           \param storeLastAddedID if given, the id of the last added node is stored here
         */
-        virtual bool appendPath(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID = NULL);
+        virtual bool appendPath(const CSpaceNodePtr &startNode, const Eigen::VectorXf& config, int* storeLastAddedID = nullptr);
 
         /*!
         Append the given path to this tree. No checks are performed.
         */
-        virtual bool appendPath(const CSpaceNodePtr &startNode, const CSpacePathPtr &path, int* storeLastAddedID = NULL);
+        virtual bool appendPath(const CSpaceNodePtr &startNode, const CSpacePathPtr &path, int* storeLastAddedID = nullptr);
 
         /*!
             Append a path to the tree until a collision is detected

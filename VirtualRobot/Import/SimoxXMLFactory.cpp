@@ -356,7 +356,7 @@ namespace VirtualRobot
 
         // limitless attribute
        rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
-       if (llAttr != NULL)
+       if (llAttr != nullptr)
        {
            limitless = BaseIO::isTrue(llAttr->value());
            float dist = jointLimitHi/float(M_PI)*180.0f - jointLimitLo/float(M_PI)*180.0f;
@@ -445,9 +445,9 @@ namespace VirtualRobot
         }
 
         rapidxml::xml_node<>* node = jointXMLNode->first_node();
-        rapidxml::xml_node<>* tmpXMLNodeAxis = NULL;
-        rapidxml::xml_node<>* tmpXMLNodeTranslation = NULL;
-        rapidxml::xml_node<>* limitsNode = NULL;
+        rapidxml::xml_node<>* tmpXMLNodeAxis = nullptr;
+        rapidxml::xml_node<>* tmpXMLNodeTranslation = nullptr;
+        rapidxml::xml_node<>* limitsNode = nullptr;
 
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
@@ -730,7 +730,7 @@ namespace VirtualRobot
         Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 
         rapidxml::xml_node<>* node = robotNodeXMLNode->first_node();
-        rapidxml::xml_node<>* jointNodeXML = NULL;
+        rapidxml::xml_node<>* jointNodeXML = nullptr;
 
         std::vector< rapidxml::xml_node<>* > sensorTags;
 
@@ -886,7 +886,7 @@ namespace VirtualRobot
 
             if (useColModel && visuFile != "")
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, nullptr);
 
                 if (visualizationFactory)
                 {
@@ -1115,7 +1115,7 @@ namespace VirtualRobot
 
         //std::vector<rapidxml::xml_node<>* > robotNodeSetNodes;
         //std::vector<rapidxml::xml_node<>* > endeffectorNodes;
-        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(NULL, 0, false);
+        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(nullptr, 0, false);
 
         while (XMLNode)
         {
@@ -1171,7 +1171,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);
             }
 
-            XMLNode = XMLNode->next_sibling(NULL, 0, false);
+            XMLNode = XMLNode->next_sibling(nullptr, 0, false);
         }
 
         THROW_VR_EXCEPTION_IF(robotNodes.empty(), "No RobotNodes defined in Robot.");

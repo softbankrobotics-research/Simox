@@ -35,14 +35,14 @@ namespace MotionPlanning
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, cspace, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::JointSetPtr robotNodeSet, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, robotNodeSet, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 

@@ -199,7 +199,7 @@ namespace VirtualRobot
         {
             if ((*i)->getType() != VisualizationFactory::getName())
             {
-                f = VisualizationFactory::fromName((*i)->getType(), NULL);
+                f = VisualizationFactory::fromName((*i)->getType(), nullptr);
                 break;
             }
 
