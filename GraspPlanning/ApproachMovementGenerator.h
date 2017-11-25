@@ -49,7 +49,7 @@ namespace GraspPlanning
             \param eef The eef.
             \param graspPreshape An optional preshape that can be used in order to "open" the eef.
         */
-        ApproachMovementGenerator(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "");
+        ApproachMovementGenerator(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, std::string graspPres = "");
 
         //! destructor
         virtual ~ApproachMovementGenerator();
@@ -61,7 +61,7 @@ namespace GraspPlanning
         virtual bool setEEFToRandomApproachPose();
 
         //! This robot is moved around
-        VirtualRobot::RobotPtr getEEFRobotClone();
+        const VirtualRobot::RobotPtr& getEEFRobotClone();
 
         //! move EEF to pose (uses coord system of GCP)
         bool setEEFPose(const Eigen::Matrix4f& pose);
@@ -75,17 +75,17 @@ namespace GraspPlanning
 
         std::string getGCPJoint();
 
-        VirtualRobot::ModelPtr getObject();
+        const VirtualRobot::ModelPtr& getObject();
 
         /*!
             This is the cloned eef!
         */
-        VirtualRobot::EndEffectorPtr getEEF();
-        VirtualRobot::EndEffectorPtr getEEFOriginal();
+        const VirtualRobot::EndEffectorPtr& getEEF();
+        const VirtualRobot::EndEffectorPtr& getEEFOriginal();
 
-        Eigen::Vector3f getApproachDirGlobal();
+        const Eigen::Vector3f& getApproachDirGlobal();
 
-        std::string getName();
+        const std::string& getName();
 
         // opens hand by setting the preshape (if defined) or just opening the actors in case no preshape has been defined
         virtual void openHand();
