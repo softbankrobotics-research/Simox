@@ -77,19 +77,19 @@ namespace MotionPlanning
         /*!
             Add visualization of a path in cspace.
         */
-        virtual bool addCSpacePath(CSpacePathPtr path, RrtWorkspaceVisualization::ColorSet colorSet = eBlue) = 0;
-        virtual void setPathStyle(float lineSize = 4.0f, float nodeSize = 15.0f, float renderComplexity = 1.0f);
+        virtual bool addCSpacePath(const CSpacePathPtr& path, RrtWorkspaceVisualization::ColorSet colorSet = eBlue);
+        virtual void setPathStyle(float lineSize = 4.0f, float nodeSize = 15.0f, float /*renderComplexity*/ = 1.0f);
 
         /*!
             Add visualization of a tree (e.g an RRT) in cspace.
         */
-        virtual bool addTree(CSpaceTreePtr tree, RrtWorkspaceVisualization::ColorSet colorSet = eRed) = 0;
-        virtual void setTreeStyle(float lineSize = 1.0f, float nodeSize = 15.0f, float renderComplexity = 0.1f);
+        virtual bool addTree(const CSpaceTreePtr &tree, RrtWorkspaceVisualization::ColorSet colorSet = eRed);
+        virtual void setTreeStyle(float lineSize = 1.0f, float nodeSize = 15.0f, float /*renderComplexity*/ = 0.1f);
 
         /*!
             Add visualization of a configuration in cspace.
         */
-        virtual bool addConfiguration(const Eigen::VectorXf& c, RrtWorkspaceVisualization::ColorSet colorSet = eGreen, float nodeSizeFactor = 1.0f) = 0;
+        virtual bool addConfiguration(const Eigen::VectorXf& c, RrtWorkspaceVisualization::ColorSet colorSet = eGreen, float nodeSizeFactor = 1.0f);
 
         /*!
             Set the custom line and node color. Does not affect already added trees or paths.
@@ -103,7 +103,7 @@ namespace MotionPlanning
 
         virtual VirtualRobot::VisualizationSetPtr getVisualization()
         {
-            return VirtualRobot::VisualizationSetPtr();
+            return visualization;
         }
 
     protected:
@@ -116,8 +116,8 @@ namespace MotionPlanning
 
         std::string TCPName;
 
-        float pathLineSize, pathNodeSize, pathRenderComplexity;
-        float treeLineSize, treeNodeSize, treeRenderComplexity;
+        float pathLineSize, pathNodeSize;
+        float treeLineSize, treeNodeSize;
 
         struct RenderColors
         {
@@ -126,6 +126,8 @@ namespace MotionPlanning
 
         std::map<ColorSet, RenderColors> colors;
         std::map<int, ColorSet> treeNodeStatusColor;
+
+        VirtualRobot::VisualizationSetPtr visualization;
     };
 
     typedef std::shared_ptr<RrtWorkspaceVisualization> RrtWorkspaceVisualizationPtr;
