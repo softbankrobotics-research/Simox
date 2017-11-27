@@ -31,9 +31,19 @@
 
 namespace VirtualRobot {
 
+/**
+ * @brief The CollisionCheckConstraint is a simple constraint for considering collisions during solving the inverse kinematics.
+ *
+ * This constraint does not provide a gradient. It only rejects invalid configurations in the function checkTolerances().
+ */
 class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckConstraint : public Constraint
 {
 public:
+    /**
+     * @brief CollisionCheckConstraint
+     * @param rns RobotNodeSet used for the IK
+     * @param cdm Already configured collision manager. Will be used for the collision check.
+     */
     CollisionCheckConstraint(const VirtualRobot::RobotNodeSetPtr & rns, const VirtualRobot::CDManagerPtr &cdm);
 
     // JacobiProvider interface
