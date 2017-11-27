@@ -30,7 +30,6 @@
 
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
-    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
 
 // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
@@ -160,8 +159,8 @@ void GraspRrtWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        viewer->addVisualization("scene", "scene", v);
+        auto v = scene->getAllVisualizations(colModel);
+        viewer->addVisualizations("scene", v);
     }
 
     viewer->clearLayer("grasps");
@@ -169,8 +168,8 @@ void GraspRrtWindow::buildVisu()
     if (UI.checkBoxGrasps->isChecked() && eef && grasps.size()>0)
     {
         GraspSetPtr gs(new GraspSet("tmp", robot->getName(), eef->getName(), grasps));
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, targetObject->getGlobalPose(), ModelLink::Full);
-        viewer->addVisualization("scene", "scene", v);
+        auto v = gs->getVisualization(ModelLink::Full, eef, targetObject->getGlobalPose());
+        viewer->addVisualization("scene", v);
     }
 
 /*
@@ -193,18 +192,11 @@ void GraspRrtWindow::buildVisu()
     redraw();
 }
 
-int GraspRrtWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void GraspRrtWindow::quit()
 {
     std::cout << "GraspRrtWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void GraspRrtWindow::loadSceneWindow()
@@ -637,12 +629,7 @@ void GraspRrtWindow::buildRRTVisu()
     }
 
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-    #ifdef Simox_USE_COIN_VISUALIZATION
-        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
-    #else
-        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-    #endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, eef->getTcp()->getName()));
 
 
     if (UI.checkBoxShowRRT->isChecked())
@@ -669,7 +656,7 @@ void GraspRrtWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","solution", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 
