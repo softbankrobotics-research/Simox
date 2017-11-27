@@ -1,6 +1,6 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/RuntimeEnvironment.h"
+#include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <string>
 #include <iostream>
