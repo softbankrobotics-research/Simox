@@ -413,6 +413,7 @@ namespace VirtualRobot
         }
 
     protected:
+        ModelNode();
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
 
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) = 0;

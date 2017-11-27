@@ -581,4 +581,9 @@ namespace VirtualRobot
 
         return result;
     }
+
+    ModelNode::ModelNode()
+    {
+
+    }
 }

@@ -136,6 +136,12 @@ namespace VirtualRobot
         return delta;
     }
 
+    ModelJoint::ModelJoint() :
+        ModelNode()
+    {
+
+    }
+
     float ModelJoint::getJointValueOffset() const
     {
         // never updated -> no lock needed
