@@ -418,7 +418,6 @@ namespace VirtualRobot
 
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) = 0;
 
-    private:
         ModelWeakPtr model;
 
         ModelNodeWeakPtr parent;
