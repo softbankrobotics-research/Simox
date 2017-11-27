@@ -225,7 +225,7 @@ if (SimDynamics_DYNAMICSENGINE)
 	TARGET_LINK_LIBRARIES (simox-simdynamics BulletOpenGLSupport)
 	SET (SimDynamics_BULLET_OpenGL TRUE PARENT_SCOPE) # inform parent scope about BulletOpenGLSupport
   ENDIF(SimDynamics_BULLET_OpenGL)
-  TARGET_LINK_LIBRARIES (simox-simdynamics ${Simox_EXTERNAL_LIBRARIES} simox-virtualrobot ${SimDynamics_PHYSICS_LIBRARIES})
+  TARGET_LINK_LIBRARIES (simox-simdynamics ${Simox_EXTERNAL_LIBRARIES} simox-virtualrobot simox-gui ${SimDynamics_PHYSICS_LIBRARIES})
 
   # .DLL path
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})

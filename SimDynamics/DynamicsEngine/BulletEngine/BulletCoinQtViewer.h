@@ -44,6 +44,8 @@
 #include <QtWidgets/QFrame>
 #endif
 
+#include <string>
+
 namespace SimDynamics
 {
 
@@ -239,6 +241,9 @@ namespace SimDynamics
         int updateTimerIntervalMS;
 
         std::shared_ptr <std::recursive_mutex> engineMutexPtr;
+
+        std::map<std::string, VirtualRobot::VisualizationPtr> robotVisus;
+        std::map<std::string, VirtualRobot::VisualizationPtr> linkVisus;
     };
 
     typedef std::shared_ptr<BulletCoinQtViewer> BulletCoinQtViewerPtr;
