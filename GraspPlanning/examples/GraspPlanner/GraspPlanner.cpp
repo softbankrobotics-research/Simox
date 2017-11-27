@@ -59,7 +59,9 @@ int main(int argc, char* argv[])
 
     GraspPlannerWindow rw(robFile, eef, preshape, objFile);
 
-    rw.main();
+    rw.show();
+    rw.raise();
 
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

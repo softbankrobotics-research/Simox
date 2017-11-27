@@ -114,16 +114,16 @@ void GraspPlannerWindow::buildVisu()
     // eef
     if (eefCloned)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, colModel);
-        viewer->addVisualization("robotLayer", "robot", visu);
+        VisualizationSetPtr visu = eefCloned->getVisualization(colModel);
+        viewer->addVisualization("robotLayer", visu);
     }
 
     // object
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
-        viewer->addVisualization("objectLayer", "object", visu);
+        VisualizationSetPtr visu = object->getVisualization(colModel);
+        viewer->addVisualization("objectLayer", visu);
     }
 
     // friction cones
@@ -138,7 +138,7 @@ void GraspPlannerWindow::buildVisu()
         float scaling = 30.0f;
 
         VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", "cones", visu);
+        viewer->addVisualization("frictionLayer", visu);
 
         // add approach dir visu
         for (size_t i = 0; i < contacts.size(); i++)
@@ -150,8 +150,8 @@ void GraspPlannerWindow::buildVisu()
             Eigen::Matrix4f ma;
             ma.setIdentity();
             ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
-            VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visu, ma);
-            viewer->addVisualization("frictionLayer", name.str(), visu);
+            visu->applyDisplacement(ma);
+            viewer->addVisualization("frictionLayer", visu);
         }
     }
 
@@ -159,15 +159,9 @@ void GraspPlannerWindow::buildVisu()
     viewer->clearLayer("graspsetLayer");
     if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
-        viewer->addVisualization("graspsetLayer", "grasps", visu);
+        VisualizationSetPtr visu = grasps->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
+        viewer->addVisualization("graspsetLayer", visu);
     }
-}
-
-int GraspPlannerWindow::main()
-{
-    viewer->start(this);
-    return 0;
 }
 
 
@@ -175,7 +169,6 @@ void GraspPlannerWindow::quit()
 {
     std::cout << "GraspPlannerWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void GraspPlannerWindow::loadObject()
