@@ -7,11 +7,15 @@
 using namespace std;
 using namespace VirtualRobot;
 
-void startMTPlanning(const std::string &robotFile)
+int startMTPlanning(const std::string &robotFile)
 {
-    MTPlanningWindow* agfw = new MTPlanningWindow(robotFile);
-    agfw->main();
-    delete agfw;
+    MTPlanningWindow agfw(robotFile);
+
+    agfw.show();
+    agfw.raise();
+
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
 
 int main(int argc, char** argv)
@@ -27,9 +31,10 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    int status = 1;
     try
     {
-        startMTPlanning(robotFile);
+        status = startMTPlanning(robotFile);
     }
     catch (std::exception e)
     {
@@ -42,5 +47,5 @@ int main(int argc, char** argv)
 
     cout << " --- END --- " << endl;
 
-    return 0;
+    return status;
 }

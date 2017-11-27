@@ -133,20 +133,12 @@ void MTPlanningWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int MTPlanningWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void MTPlanningWindow::quit()
 {
     std::cout << "MTPlanningWindow: Closing" << std::endl;
     this->close();
     timer1->stop();
     timer2->stop();
-    viewer->stop();
 }
 
 
