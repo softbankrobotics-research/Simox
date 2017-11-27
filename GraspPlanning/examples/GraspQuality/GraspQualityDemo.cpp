@@ -32,7 +32,9 @@ int main(int argc, char* argv[])
 
     GraspQualityWindow rw(robFile, objFile);
 
-    rw.main();
+    rw.show();
+    rw.raise();
 
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
