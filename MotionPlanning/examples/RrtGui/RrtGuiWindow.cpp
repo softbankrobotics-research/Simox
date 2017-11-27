@@ -9,12 +9,12 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Planner/BiRrt.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+#include <MotionPlanning/Visualization/RrtWorkspaceVisualization.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
 #include <time.h>
@@ -165,8 +165,8 @@ void RrtGuiWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        viewer->addVisualization("scene", "scenefile", v);
+        auto v = scene->getAllVisualizations(colModel);
+        viewer->addVisualizations("scene", v);
     }
 
     viewer->clearLayer("start-goal");
@@ -175,14 +175,14 @@ void RrtGuiWindow::buildVisu()
     {        
         if (robotStart)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotStart, colModel);
-            viewer->addVisualization("start-goal", "start", v);
+            auto v = robotStart->getVisualization(colModel);
+            viewer->addVisualization("start-goal", v);
         }
 
         if (robotGoal)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotGoal, colModel);
-            viewer->addVisualization("start-goal", "goal", v);
+            auto v = robotGoal->getVisualization(colModel);
+            viewer->addVisualization("start-goal", v);
         }
     }
 
@@ -191,18 +191,11 @@ void RrtGuiWindow::buildVisu()
     redraw();
 }
 
-int RrtGuiWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void RrtGuiWindow::quit()
 {
     std::cout << "RrtGuiWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void RrtGuiWindow::loadSceneWindow()
@@ -554,13 +547,7 @@ void RrtGuiWindow::buildRRTVisu()
         return;
     }
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-
-#ifdef Simox_USE_COIN_VISUALIZATION
-    w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
-#else
-    VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-#endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -588,7 +575,7 @@ void RrtGuiWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","workspace", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 
