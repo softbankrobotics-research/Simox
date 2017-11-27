@@ -36,6 +36,10 @@ ConstrainedOptimizationIK::ConstrainedOptimizationIK(RobotPtr& robot, const Robo
     functionValueTolerance(1e-6),
     optimizationValueTolerance(1e-4)
 {
+
+
+
+
     setRandomSamplingDisplacementFactor(1);
 
     clearSeeds();
@@ -97,7 +101,12 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     bool updateCollisionModel = robot->getUpdateCollisionModelStatus();
 
     robot->setUpdateVisualization(false);
-    robot->setUpdateCollisionModel(false);
+    bool collisionModelUsed = false;
+    for(auto& c : constraints)
+    {
+        collisionModelUsed |= c->usingCollisionModel();
+    }
+    robot->setUpdateCollisionModel(collisionModelUsed);
 
     std::vector<double> bestJointValues;
     double currentMinError = std::numeric_limits<double>::max();

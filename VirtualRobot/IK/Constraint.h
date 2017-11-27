@@ -80,6 +80,8 @@ namespace VirtualRobot
         virtual Eigen::VectorXf getError(float stepSize = 1.0f);
         virtual bool checkTolerances();
 
+        virtual bool usingCollisionModel();
+
     protected:
         void addEqualityConstraint(unsigned int id, bool soft=false);
         void addInequalityConstraint(unsigned int id, bool soft=false);
