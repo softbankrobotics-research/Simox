@@ -46,27 +46,27 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     m(1, 3) = 1500.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
     visuObjects.back()->setGlobalPose(m);
-    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, false));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 700.0f;
     m(1, 3) = 900.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(300.0f));
     visuObjects.back()->setGlobalPose(m);
-    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, false));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 0.0f;
     m(1, 3) = 2000.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, false));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 500.0f;
     m(1, 3) = 1500.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, false));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     viewer->addVisualizations("obstacles", obstacleVisu);
 

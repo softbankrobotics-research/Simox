@@ -709,9 +709,8 @@ namespace VirtualRobot
          *                       auto visuSet3 = model->getVisualization(VirtualRobot::ModelLink::Collision, true);   // attachments are updated
          * @return A visualization of this model's links.
          */
-        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full, bool addAttachments = true) const;
-        VisualizationSetPtr getAttachmentVisualization() const;
-        void updateAttachmentVisualization() const;
+        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full) const;
+        VisualizationGroupPtr getAllAttachmentVisualizations() const;
 
     protected:
         void addToVisualization(const ModelLinkPtr &link);
@@ -742,7 +741,6 @@ namespace VirtualRobot
 
         VisualizationSetPtr visualizationNodeSetFull;
         VisualizationSetPtr visualizationNodeSetCollision;
-        VisualizationSetPtr visualizationAttachmentSet;
     };
 }
 

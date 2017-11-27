@@ -463,8 +463,13 @@ namespace VirtualRobot
             std::vector<VirtualRobot::RobotPtr> robots = getRobots();
             for (auto& robot : robots)
             {
-                auto visu = robot->getVisualization(visuType, addAttachments);
+                auto visu = robot->getVisualization(visuType);
                 collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = robot->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
             }
         }
 
@@ -473,8 +478,13 @@ namespace VirtualRobot
             std::vector<VirtualRobot::ObstaclePtr> obstacles = getObstacles();
             for (auto& obstacle : obstacles)
             {
-                auto visu = obstacle->getVisualization(visuType, addAttachments);
+                auto visu = obstacle->getVisualization(visuType);
                 collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = obstacle->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
             }
         }
 
@@ -483,8 +493,13 @@ namespace VirtualRobot
             std::vector<VirtualRobot::ManipulationObjectPtr> manipulationObjects = getManipulationObjects();
             for (auto& manipulationObject : manipulationObjects)
             {
-                auto visu = manipulationObject->getVisualization(visuType, addAttachments);
+                auto visu = manipulationObject->getVisualization(visuType);
                 collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = manipulationObject->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
             }
         }
 

@@ -27,8 +27,7 @@ namespace VirtualRobot
                                                                      modelNodeSetMap(),
                                                                      filename(""),
                                                                      visualizationNodeSetFull(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({})),
-                                                                     visualizationNodeSetCollision(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({})),
-                                                                     visualizationAttachmentSet(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({}))
+                                                                     visualizationNodeSetCollision(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({}))
     {
     }
 
@@ -69,7 +68,6 @@ namespace VirtualRobot
 
             modelNodeMap[node->getName()] = node;
         }
-        updateAttachmentVisualization();
     }
 
     void Model::deregisterModelNode(const ModelNodePtr& node)
@@ -89,7 +87,6 @@ namespace VirtualRobot
             ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
             removeFromVisualization(link);
         }
-        updateAttachmentVisualization();
     }
 
     bool Model::hasModelNode(const ModelNodePtr& node) const
@@ -645,7 +642,7 @@ namespace VirtualRobot
     void Model::setUpdateVisualization(bool enable)
     {
         WriteLockPtr w = getWriteLock();
-        getVisualization(VirtualRobot::ModelLink::Full, true)->setUpdateVisualization(enable);
+        getVisualization(VirtualRobot::ModelLink::Full)->setUpdateVisualization(enable);
     }
 
     void Model::setUpdateCollisionModel(bool enable)
@@ -664,7 +661,7 @@ namespace VirtualRobot
     bool Model::getUpdateVisualization() const
     {
         WriteLockPtr w = getWriteLock();
-        return getVisualization(VirtualRobot::ModelLink::Full, true)->getUpdateVisualizationStatus();
+        return getVisualization(VirtualRobot::ModelLink::Full)->getUpdateVisualizationStatus();
     }
 
 	bool Model::getUpdateCollisionModel() const
@@ -1093,69 +1090,14 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType, bool addAttachments) const
+    VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType) const
     {
-        if (!addAttachments)
-        {
-            return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
-        }
-
-        // since a visualization can only be in one set, we need to chache the created sets
-        // this is done using weak pointers to allow destruction of unused sets
-        static std::weak_ptr<VisualizationSet> combinedSetFull;
-        static std::weak_ptr<VisualizationSet> combinedSetCollision;
-        VisualizationSetPtr ret;
-        if (visuType == ModelLink::VisualizationType::Full)
-        {
-            VisualizationSetPtr tmp = combinedSetFull.lock();
-            if (tmp)
-            {
-                ret = tmp;
-            }
-            else
-            {
-                ret = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({visualizationNodeSetFull});
-                combinedSetFull = ret;
-            }
-        }
-        else
-        {
-            VisualizationSetPtr tmp = combinedSetCollision.lock();
-            if (tmp)
-            {
-                ret = tmp;
-            }
-            else
-            {
-                ret = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({visualizationNodeSetCollision});
-                combinedSetCollision = ret;
-            }
-        }
-
-        updateAttachmentVisualization();
-
-        if (!visualizationAttachmentSet->isInVisualizationSet())
-        {
-            ret->addVisualization(visualizationAttachmentSet);
-        }
-        else if (ret->size() < 2)
-        {
-            ret->addVisualization(visualizationAttachmentSet->clone());
-        }
-
-        return ret;
+        return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
     }
 
-    VisualizationSetPtr Model::getAttachmentVisualization() const
+    VisualizationGroupPtr Model::getAllAttachmentVisualizations() const
     {
-        updateAttachmentVisualization();
-        return visualizationAttachmentSet;
-    }
-
-    void Model::updateAttachmentVisualization() const
-    {
-        auto visusInAttachmentSet = visualizationAttachmentSet->getVisualizations();
-        std::set<VisualizationPtr> inVisuSet(visusInAttachmentSet.begin(), visusInAttachmentSet.end());
+        VisualizationGroupPtr ret(new VisualizationGroup);
         for (const auto & node : getModelNodes())
         {
             for (const auto & attachement : node->getAttachmentsWithVisualisation())
@@ -1164,22 +1106,10 @@ namespace VirtualRobot
                 if (!v)
                     continue;
 
-                auto it = inVisuSet.find(v);
-                if (it == inVisuSet.end())
-                {
-                    visualizationAttachmentSet->addVisualization(v);
-                    inVisuSet.insert(v);
-                }
-                else
-                {
-                    inVisuSet.erase(it);
-                }
+                ret->addVisualization(v);
             }
         }
-        for (const auto& v : inVisuSet)
-        {
-            visualizationAttachmentSet->removeVisualization(v);
-        }
+        return ret;
     }
 
     void Model::addToVisualization(const ModelLinkPtr &link)

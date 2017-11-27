@@ -747,7 +747,7 @@ namespace VirtualRobot
             RobotPtr r = createEefRobot(getName(), getName());
             FramePtr tcpN = r->getEndEffector(getName())->getTcp();
             r->setGlobalPoseForModelNode(tcpN, pose);
-            return r->getVisualization(visuType, false);
+            return r->getVisualization(visuType);
         }
     }
 
