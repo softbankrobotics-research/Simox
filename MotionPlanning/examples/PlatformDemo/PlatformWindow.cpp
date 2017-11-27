@@ -15,6 +15,7 @@
 #include "MotionPlanning/Planner/BiRrt.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include "MotionPlanning/PostProcessing/ElasticBandProcessor.h"
+#include <MotionPlanning/Visualization/RrtWorkspaceVisualization.h>
 
 #include <QFileDialog>
 
@@ -31,7 +32,6 @@ using namespace std;
 using namespace VirtualRobot;
 
 #ifdef Simox_USE_COIN_VISUALIZATION
-    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
@@ -110,8 +110,8 @@ void PlatformWindow::buildVisu()
 
     if (scene)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        viewer->addVisualization("scene", "scenefile", v);
+        auto v = scene->getAllVisualizations(colModel);
+        viewer->addVisualizations("scene", v);
     }
 
     buildRRTVisu();
@@ -119,18 +119,11 @@ void PlatformWindow::buildVisu()
     redraw();
 }
 
-int PlatformWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void PlatformWindow::quit()
 {
     std::cout << "PlatformWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void PlatformWindow::loadSceneWindow()
@@ -287,8 +280,9 @@ void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vecto
         from.block(0,3,3,1) = a;
         to.block(0,3,3,1) = b;
 
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f, 1.0f, 0.2f, 0.2f);
-        viewer->addVisualization("dist", "rob-obstacle", v);
+        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f);
+        v->setColor(Visualization::Color(1.0f, 0.2f, 0.2f));
+        viewer->addVisualization("dist", v);
     }
 }
 
@@ -301,13 +295,7 @@ void PlatformWindow::buildRRTVisu()
         return;
     }
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-
-#ifdef Simox_USE_COIN_VISUALIZATION
-    w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
-#else
-    VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-#endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -340,7 +328,7 @@ void PlatformWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","workspace", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 
@@ -393,20 +381,24 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         externalForce.normalize();
         resultingForce.normalize();
         VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
-        VisualizationPtr v1 = f->createArrow(internalForce, l1, 2.0f, Visualization::Color::Blue());
-        VisualizationPtr v2 = f->createArrow(internalForce, l1, 2.0f, Visualization::Color::Blue());
-        VisualizationPtr v3 = f->createArrow(externalForce, l2, 2.0f, Visualization::Color::Green());
-        VisualizationPtr v4 = f->createArrow(resultingForce, l1+l2, 2.0f, Visualization::Color::Red());
+        VisualizationPtr v1 = f->createArrow(internalForce, l1, 2.0f);
+        v1->setColor(Visualization::Color::Blue());
+        VisualizationPtr v2 = f->createArrow(internalForce, l1, 2.0f);
+        v2->setColor(Visualization::Color::Blue());
+        VisualizationPtr v3 = f->createArrow(externalForce, l2, 2.0f);
+        v3->setColor(Visualization::Color::Green());
+        VisualizationPtr v4 = f->createArrow(resultingForce, l1+l2, 2.0f);
+        v4->setColor(Visualization::Color::Red());
 
-        f->applyDisplacement(v1, m);
-        f->applyDisplacement(v2, m);
-        f->applyDisplacement(v3, m);
-        f->applyDisplacement(v4, m);
+        v1->applyDisplacement(m);
+        v2->applyDisplacement(m);
+        v3->applyDisplacement(m);
+        v4->applyDisplacement(m);
 
-        viewer->addVisualization("forces", "f1", v1);
-        viewer->addVisualization("forces", "f2", v2);
-        viewer->addVisualization("forces", "f3", v3);
-        viewer->addVisualization("forces", "f4", v4);
+        viewer->addVisualization("forces", v1);
+        viewer->addVisualization("forces", v2);
+        viewer->addVisualization("forces", v3);
+        viewer->addVisualization("forces", v4);
 
         /*
 
