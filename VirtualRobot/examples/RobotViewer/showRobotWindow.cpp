@@ -60,6 +60,7 @@ void showRobotWindow::setupUI()
 
     updateModelNodeSets();
     updateModelNodeControls();
+    displayTriangles();
 
     connect(UI.btnLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.btnResetRobot, SIGNAL(clicked()), this, SLOT(resetRobot()));
@@ -82,6 +83,10 @@ void showRobotWindow::setupUI()
 
     connect(UI.cBoxJointSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
     connect(UI.cBoxLinkSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
+    connect(UI.cBoxLinkSets, SIGNAL(currentIndexChanged(int)), this, SLOT(displayTriangles()));
+    connect(UI.listLinks, SIGNAL(currentTextChanged(QString)), this, SLOT(displayTriangles()));
+    connect(UI.radioBtnCollisionVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
+    connect(UI.radioBtnFullVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
 
     render();
 }
@@ -102,45 +107,44 @@ void showRobotWindow::resetRobot()
 
 void showRobotWindow::displayTriangles()
 {
+    if (!robot) return;
+
     QString text1, text2, text3;
     int trisAllFull, trisRNSFull, trisJointFull;
     trisAllFull = trisRNSFull = trisJointFull = 0;
     int trisAllCol, trisRNSCol, trisJointCol;
     trisAllCol = trisRNSCol = trisJointCol = 0;
 
-    if (robot)
-    {
-        trisAllFull = robot->getNumFaces(false);
-        trisAllCol = robot->getNumFaces(true);
-        trisRNSFull = trisAllFull;
-        trisRNSCol = trisAllCol;
-    }
+    trisAllFull = robot->getNumFaces(false);
+    trisAllCol = robot->getNumFaces(true);
+    trisRNSFull = trisAllFull;
+    trisRNSCol = trisAllCol;
 
-    LinkSetPtr ls = dynamic_pointer_cast<LinkSet>(currentRobotNodeSet);
-    if (ls)
+    if (robot->hasLinkSet(UI.cBoxLinkSets->currentText().toStdString()))
     {
+        LinkSetPtr ls = robot->getLinkSet(UI.cBoxLinkSets->currentText().toStdString());
         trisRNSFull = ls->getNumFaces(false);
         trisRNSCol = ls->getNumFaces(true);
     }
 
-    ModelLinkPtr ml = dynamic_pointer_cast<ModelLink>(currentRobotNode);
-    if (ml)
+    if (UI.listLinks->currentItem() && robot->hasLink(UI.listLinks->currentItem()->text().toStdString()))
     {
+        ModelLinkPtr ml = robot->getLink(UI.listLinks->currentItem()->text().toStdString());
         trisJointFull = ml->getNumFaces(false);
         trisJointCol = ml->getNumFaces(true);
     }
 
     if (UI.radioBtnCollisionVisu->isChecked())
     {
-        text1 = tr("Total\t:") + QString::number(trisAllCol);
-        text2 = tr("RobotNodeSet:\t") + QString::number(trisRNSCol);
-        text3 = tr("Joint:\t") + QString::number(trisJointCol);
+        text1 = "Total: " + QString::number(trisAllCol);
+        text2 = UI.cBoxLinkSets->currentText() + ": " + QString::number(trisRNSCol);
+        text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": " + QString::number(trisJointCol) : "";
     }
     else
     {
-        text1 = tr("Total:\t") + QString::number(trisAllFull);
-        text2 = tr("RobotNodeSet:\t") + QString::number(trisRNSFull);
-        text3 = tr("Joint:\t") + QString::number(trisJointFull);
+        text1 = "Total: " + QString::number(trisAllFull);
+        text2 = UI.cBoxLinkSets->currentText() + ": " + QString::number(trisRNSFull);
+        text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": " + QString::number(trisJointFull) : "";
     }
 
     UI.labelInfo1->setText(text1);
@@ -281,9 +285,6 @@ void showRobotWindow::loadRobot()
 {
     VR_INFO << "Loading Robot from " << robotFilename << endl;
     currentEEF.reset();
-    currentRobotNode.reset();
-    currentNodes.clear();
-    currentRobotNodeSet.reset();
     robot.reset();
 
     try

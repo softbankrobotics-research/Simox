@@ -58,11 +58,11 @@ public slots:
     void attachPhysicsInformation(bool attach);
     void exportVRML();
     void exportXML();
+    void displayTriangles();
 
 private:
     void setupUI();
     void updateEEFBox();
-    void displayTriangles();
     Ui::MainWindowShowRobot UI;
 
     SimoxGui::ViewerInterfacePtr viewer;
@@ -70,13 +70,8 @@ private:
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
 
-    std::vector < VirtualRobot::ModelNodePtr > currentNodes;
-
-    std::vector < VirtualRobot::ModelNodeSetPtr > robotNodeSets;
     std::vector < VirtualRobot::EndEffectorPtr > eefs;
     VirtualRobot::EndEffectorPtr currentEEF;
-    VirtualRobot::ModelNodeSetPtr currentRobotNodeSet;
-    VirtualRobot::ModelNodePtr currentRobotNode;
 
     bool useColModel;
     bool structureEnabled;
