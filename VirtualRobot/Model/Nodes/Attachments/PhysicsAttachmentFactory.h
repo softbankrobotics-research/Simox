@@ -20,53 +20,46 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MODELSTRUCTUREFACTORY_H
-#define MODELSTRUCTUREFACTORY_H
+
+#ifndef SIMOX_PHYSICSATTACHMENTFACTORY_H
+#define SIMOX_PHYSICSATTACHMENTFACTORY_H
 
 #include "ModelNodeAttachmentFactory.h"
-#include "ModelStructure.h"
+#include "PhysicsAttachment.h"
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelStructureFactory : public ModelNodeAttachmentFactory
+    class PhysicsAttachmentFactory : public ModelNodeAttachmentFactory
     {
     protected:
-        /*!
-         * Constructor.
-         */
-        ModelStructureFactory();
+    public:
+        PhysicsAttachmentFactory() {};
 
     public:
+        virtual ~PhysicsAttachmentFactory() {};
+
         /*!
-         * Destructor.
+         * \return "PhysicsAttachment"
          */
-        virtual ~ModelStructureFactory();
-
+        static std::string getName();
+        static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
 
         /*!
-         * Creates a ModelStructure attachment.
+         * Creates a PhysicsAttachment.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          *                          If not given or empty then the global VisualizationFactory will be used.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "") override;
-
-        // AbstractFactoryMethod
-    public:
-        /*!
-         * \return "ModelStructure"
-         */
-        static std::string getName();
-        static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
+        ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform,
+                                                std::string visualizationType) override;
 
     private:
         static SubClassRegistry registry;
     };
-    typedef std::shared_ptr<ModelStructureFactory> ModelStructureFactoryPtr;
+
+    typedef std::shared_ptr<PhysicsAttachmentFactory> PhysicsAttachmentFactoryPtr;
 }
 
-
-
-#endif // MODELSTRUCTUREFACTORY_H
+#endif //SIMOX_PHYSICSATTACHMENTFACTORY_H

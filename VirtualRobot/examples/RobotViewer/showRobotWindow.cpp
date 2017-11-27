@@ -71,9 +71,6 @@ void showRobotWindow::setupUI()
     connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
     connect(UI.comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape(int)));
 
-    connect(UI.checkBoxPhysicsCoM, SIGNAL(clicked()), this, SLOT(displayPhysics()));
-    connect(UI.checkBoxPhysicsInertia, SIGNAL(clicked()), this, SLOT(displayPhysics()));
-
     connect(UI.radioBtnCollisionVisu, SIGNAL(clicked()), this, SLOT(render()));
     connect(UI.radioBtnFullVisu, SIGNAL(clicked()), this, SLOT(render()));
     connect(UI.radioBtnNoVisu, SIGNAL(clicked()), this, SLOT(render()));
@@ -81,6 +78,7 @@ void showRobotWindow::setupUI()
     connect(UI.checkBoxRobotSensors, SIGNAL(clicked()), this, SLOT(showSensors()));
     connect(UI.checkBoxStructure, SIGNAL(clicked(bool)), this, SLOT(attachStructure(bool)));
     connect(UI.checkBoxRobotCoordSystems, SIGNAL(clicked(bool)), this, SLOT(attachFrames(bool)));
+    connect(UI.checkBoxPhysics, SIGNAL(clicked(bool)), this, SLOT(attachPhysicsInformation(bool)));
 
     connect(UI.cBoxJointSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
     connect(UI.cBoxLinkSets, SIGNAL(currentIndexChanged(int)), this, SLOT(updateModelNodeControls()));
@@ -167,49 +165,25 @@ void showRobotWindow::render()
 
 void showRobotWindow::showSensors()
 {
-    if (!robot)
-    {
-        return;
-    }
+    if (!robot) return;
 
-    bool showSensors = UI.checkBoxRobotSensors->isChecked();
+    // TODO
 
-    //todo
-    /*
-
-    std::vector<SensorPtr> sensors = robot->getSensors();
-
-    for (size_t i = 0; i < sensors.size(); i++)
-    {
-        sensors[i]->setupVisualization(showSensors, showSensors);
-        sensors[i]->showCoordinateSystem(showSensors);
-    }
-    */
-
-    // rebuild visualization
     render();
 }
 
 
 
-void showRobotWindow::displayPhysics()
+void showRobotWindow::attachPhysicsInformation(bool attach)
 {
-    if (!robot)
-    {
-        return;
-    }
+    if (!robot) return;
 
-    physicsCoMEnabled = UI.checkBoxPhysicsCoM->checkState() == Qt::Checked;
-    physicsInertiaEnabled = UI.checkBoxPhysicsInertia->checkState() == Qt::Checked;
+    if (attach)
+        robot->attachPhysicsInformation();
+    else
+        robot->detachPhysicsInformation();
 
-    //todo
-    /*
-    robot->showPhysicsInformation(physicsCoMEnabled, physicsInertiaEnabled);
-    */
-
-    // rebuild visualization
     render();
-
 }
 
 void showRobotWindow::exportVRML()

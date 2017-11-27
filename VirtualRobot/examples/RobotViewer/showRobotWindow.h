@@ -55,7 +55,7 @@ public slots:
     void selectEEF(int nr);
     void selectPreshape(int nr);
     void selectRobot();
-    void displayPhysics();
+    void attachPhysicsInformation(bool attach);
     void exportVRML();
     void exportXML();
 

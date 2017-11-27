@@ -29,10 +29,6 @@ namespace VirtualRobot
         return "ModelStructure";
     }
 
-    /**
-    * \return new instance of CoinVisualizationFactory and call SoDB::init()
-    * if it has not already been called.
-    */
     std::shared_ptr<ModelNodeAttachmentFactory> ModelStructureFactory::createInstance(void*)
     {
         std::shared_ptr<ModelNodeAttachmentFactory> attachFactory(new ModelStructureFactory());

@@ -386,7 +386,7 @@ namespace VirtualRobot
 
         /*!
          * A convenience function to detach ModelStructures.
-         * This function basically reverts calls to attachStructure()
+         * This function basically reverts calls to attachStructure().
          */
         void detachStructure();
 
@@ -400,9 +400,24 @@ namespace VirtualRobot
 
         /*!
          * A convenience function to detach ModelNodeAttachments / Frames.
-         * This function basically reverts calls to attachFrames()
+         * This function basically reverts calls to attachFrames().
          */
         void detachFrames();
+
+        /*!
+         * A convenience function that creates and attaches a PhysicsAttachment to each link.
+         * Each attached PhysicsAttachment inherits the name of its corresponding link appended by "_physics".
+         * Links with zero or negative mass will be skipped.
+         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
+         *                          If not given, the default visualization factory is used.
+         */
+        void attachPhysicsInformation(std::string visualizationType = "");
+
+        /*!
+         * A convenience function to detach PhysicsAttachments.
+         * This function basically reverts calls to attachPhysicsInformation().
+         */
+        void detachPhysicsInformation();
 
         // TODO: move to Visualization factory
         /*!
