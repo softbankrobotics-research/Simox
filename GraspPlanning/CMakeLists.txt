@@ -78,19 +78,6 @@ Visualization/ConvexHullVisualization.h
 )
 
 
-if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
-	SET(SOURCES
-	${SOURCES}
-	Visualization/CoinVisualization/CoinConvexHullVisualization.cpp
-	)
-
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/CoinVisualization/CoinConvexHullVisualization.h
-	)
-endif ()
-
-
 INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 

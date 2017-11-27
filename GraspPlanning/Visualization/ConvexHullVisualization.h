@@ -49,17 +49,19 @@ namespace GraspPlanning
         ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
         ConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
-        virtual VirtualRobot::VisualizationSetPtr getVisualization() = 0;
+        ~ConvexHullVisualization() = default;
 
-        /*!
-        */
-        virtual ~ConvexHullVisualization();
+        virtual VirtualRobot::VisualizationPtr getVisualization();
 
     protected:
+        static VirtualRobot::VisualizationPtr createConvexHullVisualization(const VirtualRobot::MathTools::ConvexHull3DPtr& convHull);
+        static VirtualRobot::VisualizationPtr createConvexHullVisualization(const VirtualRobot::MathTools::ConvexHull6DPtr& convHull, bool buseFirst3Coords);
 
         VirtualRobot::MathTools::ConvexHull3DPtr convHull3D;
         VirtualRobot::MathTools::ConvexHull6DPtr convHull6D;
         bool useFirst3Coords;
+
+        VirtualRobot::VisualizationPtr visualization;
     };
 
     typedef std::shared_ptr<ConvexHullVisualization> ConvexHullVisualizationPtr;
