@@ -65,7 +65,7 @@ namespace VirtualRobot
     {
     }
 
-    float CollisionChecker::calculateDistance(const std::vector<CollisionModelPtr>& colModels1, const std::vector<CollisionModelPtr>& colModels2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
+    float CollisionChecker::calculateDistanceP(const std::vector<CollisionModelPtr>& colModels1, const std::vector<CollisionModelPtr>& colModels2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         if (colModels1.size() == 0 || colModels2.size() == 0)
         {
@@ -86,7 +86,7 @@ namespace VirtualRobot
 
             while (it2 != colModels2.end())
             {
-                float fRes = calculateDistance(*it1, *it2, v1, v2, &trID1_r, &trID2_r);
+                float fRes = calculateDistanceP(*it1, *it2, v1, v2, &trID1_r, &trID2_r);
 
                 if (fRes <= fResult)
                 {
@@ -114,7 +114,7 @@ namespace VirtualRobot
         return fResult;
     }
 
-    float CollisionChecker::calculateDistance(const CollisionModelPtr& model1, const std::vector<CollisionModelPtr>& colModels, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
+    float CollisionChecker::calculateDistanceP(const CollisionModelPtr& model1, const std::vector<CollisionModelPtr>& colModels, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         if (colModels.size() == 0)
         {
@@ -131,7 +131,7 @@ namespace VirtualRobot
 
         while (it != colModels.end())
         {
-            float fRes = calculateDistance(model1, *it, v1, v2, &trID1_r, &trID2_r);
+            float fRes = calculateDistanceP(model1, *it, v1, v2, &trID1_r, &trID2_r);
 
             if (fRes <= fResult)
             {
@@ -156,7 +156,7 @@ namespace VirtualRobot
         return fResult;
     }
 
-    float CollisionChecker::calculateDistance(const CollisionModelPtr& model1, const CollisionModelPtr& model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
+    float CollisionChecker::calculateDistanceP(const CollisionModelPtr& model1, const CollisionModelPtr& model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         VR_ASSERT(model1 && model2);
         VR_ASSERT_MESSAGE(model1->getCollisionChecker() == model2->getCollisionChecker(), "Collision models are linked to different Collision Checker instances");
@@ -168,7 +168,7 @@ namespace VirtualRobot
 
 
 
-    bool CollisionChecker::checkCollision(const std::vector<CollisionModelPtr>& model1, const CollisionModelPtr& model2)
+    bool CollisionChecker::checkCollisionP(const std::vector<CollisionModelPtr>& model1, const CollisionModelPtr& model2)
     {
         if (model1.size() == 0)
         {
@@ -180,7 +180,7 @@ namespace VirtualRobot
 
         while (it1 != model1.end())
         {
-            if (checkCollision(*it1, model2))
+            if (checkCollisionP(*it1, model2))
             {
                 return true;
             }
@@ -191,7 +191,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CollisionChecker::checkCollision(const std::vector<CollisionModelPtr>& vColModels1, const std::vector<CollisionModelPtr>& vColModels2)
+    bool CollisionChecker::checkCollisionP(const std::vector<CollisionModelPtr>& vColModels1, const std::vector<CollisionModelPtr>& vColModels2)
     {
         if (vColModels1.size() == 0 || vColModels2.size() == 0)
         {
@@ -207,7 +207,7 @@ namespace VirtualRobot
 
             while (it2 != vColModels2.end())
             {
-                if (checkCollision(*it1, *it2))
+                if (checkCollisionP(*it1, *it2))
                 {
                     return true;
                 }
@@ -221,7 +221,7 @@ namespace VirtualRobot
         return false;
     }
 
-    bool CollisionChecker::checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2)
+    bool CollisionChecker::checkCollisionP(const CollisionModelPtr& model1, const CollisionModelPtr& model2)
     {
         if (!model1 || !model2)
             return false;
