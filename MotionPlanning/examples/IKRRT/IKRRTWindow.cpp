@@ -16,6 +16,7 @@
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
 #include <QFileDialog>
 #include <Eigen/Geometry>
+#include <MotionPlanning/Visualization/RrtWorkspaceVisualization.h>
 
 #include <time.h>
 #include <vector>
@@ -27,7 +28,6 @@
 
 #ifdef Simox_USE_COIN_VISUALIZATION
     #include "../../../Gui/Coin/CoinViewerFactory.h"
-    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
 
 // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
@@ -192,13 +192,11 @@ void IKRRTWindow::closeEvent(QCloseEvent* event)
 void IKRRTWindow::saveScreenshot()
 {
     static int counter = 0;
-    SbString framefile;
-
-    framefile.sprintf("renderFrame_%06d.png", counter);
-    counter++;
+    std::stringstream ss;
+    ss << "renderFrame_" << counter++ << ".png";
     redraw();
     QImage i = viewer->getScreenshot();
-    bool bRes = i.save(framefile.getString(), "BMP");
+    bool bRes = i.save(QString::fromUtf8(ss.str().c_str()), "BMP");
 
     if (bRes)
     {
@@ -224,25 +222,23 @@ void IKRRTWindow::buildVisu()
 
     if (robot)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-        viewer->addVisualization("scene", "robot", v);
+        VisualizationSetPtr v = robot->getVisualization(colModel);
+        viewer->addVisualization("scene", v);
     }
 
     if (object)
     {
         ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel2);
-        viewer->addVisualization("scene", "object", v);
+        VisualizationSetPtr v = object->getVisualization(colModel2);
+        viewer->addVisualization("scene", v);
     }
 
     if (obstacles.size() > 0)
     {
         for (size_t i = 0; i < obstacles.size(); i++)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(obstacles.at(i), colModel);
-            std::stringstream s;
-            s << "obstacle-" << i;
-            viewer->addVisualization("scene", s.str(), v);
+            VisualizationSetPtr v = obstacles.at(i)->getVisualization(colModel);
+            viewer->addVisualization("scene", v);
         }
     }
 
@@ -253,18 +249,11 @@ void IKRRTWindow::buildVisu()
     redraw();
 }
 
-int IKRRTWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void IKRRTWindow::quit()
 {
     std::cout << "IKRRTWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void IKRRTWindow::loadScene()
@@ -454,12 +443,7 @@ void IKRRTWindow::buildRRTVisu()
         return;
     }
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-    #ifdef Simox_USE_COIN_VISUALIZATION
-        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
-    #else
-        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-    #endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, eef->getTcpName()));
 
     if (tree)
     {
@@ -474,14 +458,14 @@ void IKRRTWindow::buildRRTVisu()
     //w->addCSpacePath(solution);
     if (solutionOptimized)
     {
-        w->addCSpacePath(solutionOptimized, MotionPlanning::CoinRrtWorkspaceVisualization::eGreen);
+        w->addCSpacePath(solutionOptimized, MotionPlanning::RrtWorkspaceVisualization::eGreen);
     }
 
     //w->addConfiguration(startConfig,MotionPlanning::CoinRrtWorkspaceVisualization::eGreen,3.0f);
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","solution", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 
@@ -491,8 +475,8 @@ void IKRRTWindow::buildGraspSetVisu()
 
     if (UI.checkBoxGraspSet->isChecked() && eef && graspSet && object)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(graspSet, eef, object->getGlobalPose(), ModelLink::Full);
-        viewer->addVisualization("grasps", "all-grasps", v);
+        VisualizationSetPtr v = graspSet->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
+        viewer->addVisualization("grasps", v);
     }
 
     // show reachable graps
@@ -503,8 +487,8 @@ void IKRRTWindow::buildGraspSetVisu()
 
         if (rg->getSize() > 0)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(rg, eef, object->getGlobalPose(), ModelLink::Full);
-            viewer->addVisualization("grasps", "reachable-grasps", v);
+            VisualizationSetPtr v = rg->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
+            viewer->addVisualization("grasps", v);
         }
     }
 }
@@ -522,8 +506,8 @@ void IKRRTWindow::reachVisu()
     if (UI.checkBoxReachabilitySpace->checkState() == Qt::Checked)
     {
         ColorMapPtr cm(new ColorMap(ColorMap::eRed));
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, cm, true);
-        viewer->addVisualization("reach", "reachability", v);
+        VisualizationPtr v = reachSpace->getVisualization(cm, true);
+        viewer->addVisualization("reach", v);
 
         /*
             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();
