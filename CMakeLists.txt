@@ -32,7 +32,7 @@ endif()
 
 MESSAGE(STATUS "** Simox build directory: ${Simox_BUILD_DIRECTORY}")
 add_subdirectory(VirtualRobot)
-set (SIMOX_EXPORT_TARGET_LIST simox-virtualrobot)
+list (APPEND SIMOX_EXPORT_TARGET_LIST simox-virtualrobot)
 list (APPEND Simox_LIBRARIES simox-virtualrobot)
 list(APPEND SIMOX_EXPORT_TARGET_LIST ColCheckerPQP)
 if (Simox_BUILD_MotionPlanning)
