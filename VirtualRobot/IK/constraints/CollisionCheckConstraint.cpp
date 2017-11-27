@@ -32,7 +32,7 @@ CollisionCheckConstraint::CollisionCheckConstraint(const RobotNodeSetPtr &rns, c
     zeroVec(Eigen::VectorXf::Zero(rns->getSize()))
 {
     for (int i = 0; i < rns->getSize(); ++i) {
-        zeroVec(i) = 0.000001;
+        zeroVec(i) = 1e-10;
     }
     addOptimizationFunction(0, false);
 }
@@ -42,20 +42,16 @@ CollisionCheckConstraint::CollisionCheckConstraint(const RobotNodeSetPtr &rns, c
 bool CollisionCheckConstraint::checkTolerances()
 {
     bool result = !cdm->isInCollision();
-    if(!result)
-        VR_INFO << "Collision!" << std::endl;
     return result;
 }
 
 double CollisionCheckConstraint::optimizationFunction(unsigned int id)
 {
-//    VR_INFO << "cost" << std::endl;
     return 0;
 }
 
 Eigen::VectorXf CollisionCheckConstraint::optimizationGradient(unsigned int id)
 {
-//    VR_INFO << "grad" << std::endl;
     return zeroVec;
 }
 
