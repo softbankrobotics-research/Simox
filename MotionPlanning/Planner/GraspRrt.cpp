@@ -68,7 +68,7 @@ namespace MotionPlanning
         // todo: is this value a good guess?
         tryGraspsDistance2 = 600.0f * 600.0f;
 
-        gcpOject = VirtualRobot::Obstacle::createBox(1.0f, 1.0f, 1.0f, VirtualRobot::VisualizationFactory::Color::Red(), "", eef->getCollisionChecker());
+        gcpOject = VirtualRobot::Obstacle::createBox(1.0f, 1.0f, 1.0f, VirtualRobot::Visualization::Color::Red(), "", eef->getCollisionChecker());
     }
 
     GraspRrt::~GraspRrt()

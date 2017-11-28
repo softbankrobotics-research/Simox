@@ -64,7 +64,7 @@ namespace VirtualRobot
         //! returns entry of discretized square (x/y)
         int getCellEntry(int cellX, int cellY);
         bool getCellEntry(int cellX, int cellY, int& nStoreEntry, GraspPtr& storeGrasp);
-        bool getCellEntry(int cellX, int cellY, int& nStoreEntry, std::vector<GraspPtr>& storeGrasps);
+        bool getCellEntry(int cellX, int cellY, int& nStoreEntry, std::vector<GraspPtr>& storeGrasps) const;
         /*!
             sets the entry to value, if the current value is lower
         */
@@ -72,7 +72,7 @@ namespace VirtualRobot
         void setCellEntry(int cellX, int cellY, int value, GraspPtr pGrasp);
 
 
-        int getMaxEntry();
+        int getMaxEntry() const;
 
         /*!
             This method sets the grid value to nValue and checks if the neighbors have a lower value and in case the value of the neighbors is set to nValue.
@@ -103,13 +103,15 @@ namespace VirtualRobot
         /*!
             Get extends in global coord system.
         */
-        void getExtends(float& storeMinX, float& storeMaxX, float& storeMinY, float& storeMaxY);
+        void getExtends(float& storeMinX, float& storeMaxX, float& storeMinY, float& storeMaxY) const;
 
 
         /*!
             Number of cells in x and y
         */
-        void getCells(int& storeCellsX, int& storeCellsY);
+        void getCells(int& storeCellsX, int& storeCellsY) const;
+
+        VisualizationPtr getVisualization(const VirtualRobot::ColorMap& cm) const;
 
 
     protected:
@@ -120,10 +122,10 @@ namespace VirtualRobot
         */
         void setEntries(std::vector<WorkspaceRepresentation::WorkspaceCut2DTransformationPtr>& wsData, Eigen::Matrix4f& graspGlobal, GraspPtr grasp);
 
-        inline int getDataPos(int x, int y)
+        inline int getDataPos(int x, int y) const
         {
             return (x * gridSizeY + y);
-        };
+        }
         float minX, maxX; // in global coord system
         float minY, maxY; // in global coord system
         float discretizeSize;

@@ -1,6 +1,6 @@
 
 #include "GenericIKWindow.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "Gui/ViewerFactory.h"
 
@@ -38,7 +38,7 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
     box->attachFrames();
-    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box->getVisualization());
 
     box2TCP();
 
@@ -175,10 +175,10 @@ void GenericIKWindow::collisionModel()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visualization = robot->getVisualization(colModel);
+    VisualizationSetPtr visualization = robot->getVisualization(colModel);
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayer, "robot", visualization);
+        viewer->addVisualization(robotVisuLayer, visualization);
     }
 }
 
@@ -190,18 +190,10 @@ void GenericIKWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int GenericIKWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void GenericIKWindow::quit()
 {
     std::cout << "GenericIKWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
     timer->stop();
 }
 

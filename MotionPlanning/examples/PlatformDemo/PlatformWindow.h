@@ -7,7 +7,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/SceneIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
 
@@ -38,9 +37,6 @@ public:
                    const std::string& colModelRob,
                    const std::string& colModelEnv);
     ~PlatformWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
     void redraw();
 

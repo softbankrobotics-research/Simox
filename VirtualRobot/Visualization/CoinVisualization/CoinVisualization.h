@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Manfred Kroehnert, Nikolaus Vahrenkamp
-* @copyright  2010, 2011 Manfred Kroehnert, Nikolaus Vahrenkamp
+* @author     Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
+* @copyright  2010, 2011, 2017 Manfred Kroehnert, Nikolaus Vahrenkamp, ADrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -25,58 +25,137 @@
 
 #include "../../Model/Model.h"
 #include "../Visualization.h"
-
-#include <Inventor/nodes/SoSelection.h>
-#include <Inventor/nodes/SoMaterial.h>
+#include "CoinElement.h"
 
 class SoNode;
+class SoGroup;
+class SoDrawStyle;
+class SoTransform;
+class SoMaterial;
+class SoSeparator;
+class SoScale;
+class SoCallbackAction;
+class SoPrimitiveVertex;
 
 namespace VirtualRobot
 {
+    class TriMeshModel;
 
-    /*!
-        A Coin3D based implementation of a visualization.
-    */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization, public CoinElement
     {
+        friend class CoinVisualizationFactory;
+        friend class CoinVisualizationSet;
+    protected:
+        CoinVisualization(SoNode* visuNode);
     public:
-        //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-        CoinVisualization(const VisualizationNodePtr visualizationNode);
-        CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
         virtual ~CoinVisualization();
 
+        virtual SoNode* getMainNode() const override;
+    protected:
         /*!
-            To see the visualizations in an SoExaminerViewer enable an highlight render action
-            e.g. viewer->setGLRenderAction(new SoLineHighlightRenderAction);
+            Replace current visualization of this node.
+            Be careful: any former grabbed trimeshmodels do no longer represent the new datastructure!
         */
-        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable) override;
-        virtual bool highlight(unsigned int which, bool enable) override;
-        virtual bool highlight(bool enable);
-        virtual bool highlight(SoNode* visu, bool enable);
+        virtual void setVisualization(SoNode* newVisu);
+        SoNode* getCoinVisualization() const;
 
-        virtual void colorize(VisualizationFactory::Color c) override;
-        virtual void setTransparency(float transparency) override;
+    public:
+        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
+        //virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
+        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
+        virtual void removePoseChangedCallback(size_t id) override;
 
-        virtual VisualizationPtr clone() override;
+        virtual void setVisible(bool showVisualization) override;
+        virtual bool isVisible() const override;
 
-        SoNode* getCoinVisualization(bool selectable=true);
+        virtual void setUpdateVisualization(bool enable) override;
+        virtual bool getUpdateVisualizationStatus() const override;
 
-        void exportToVRML2(std::string filename, bool useRotation=true);
+        virtual void setStyle(DrawStyle s) override;
+        virtual DrawStyle getStyle() const override;
 
-        static std::string getFactoryName()
-        {
-            return "inventor";
-        }
+        // needed to only override transparency
+        // (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
+        virtual void setColor(const Color &c) override;
+        virtual Color getColor() const override;
+
+        virtual void setMaterial(const MaterialPtr &material) override;
+        virtual MaterialPtr getMaterial() const override;
+
+        virtual void setSelected(bool selected) override;
+        virtual bool isSelected() const override;
+        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
+        virtual void removeSelectionChangedCallback(size_t id) override;
+
+        virtual void scale(const Eigen::Vector3f &s) override;
+        Eigen::Vector3f getScalingFactor() const;
+
+        virtual void shrinkFatten(float offset) override;
 
     protected:
-        bool buildVisualization();
+        virtual void _addManipulator(ManipulatorType t) override;
+        virtual void _removeManipulator(ManipulatorType t) override;
+        virtual void _removeAllManipulators() override;
+    public:
+        virtual bool hasManipulator(ManipulatorType t) const override;
+        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
 
-        bool isSelectable;
-        SoSelection* selection;
-        SoSeparator* visuRoot;
+        virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        SoMaterial *color;
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
+
+        virtual BoundingBox getBoundingBox() const override;
+
+        virtual TriMeshModelPtr getTriMeshModel() const override;
+
+        virtual int getNumFaces() const override;
+
+        virtual VisualizationPtr clone() const override;
+
+        virtual void print() const override;
+
+        virtual std::string toXML(const std::string &basePath, int tabs) const override;
+        virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
+
+        virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
+
+    protected:
+        /**
+         * This method constructs an instance of TriMeshModel and stores it in
+         * CoinVisualizationNode::triMeshModel.
+         * If CoinVisualizationMode::visualization is invalid VirtualRobotException
+         * is thrown.
+         * Otherwise CoinVisualizationNode::InventorTriangleCB() is called on the
+         * Inventor graph stored in CoinVisualizationNode::visualization.
+         */
+        virtual void createTriMeshModel() override;
+        //virtual void setIsInVisualizationSet(bool inSet) override;
+
+        static void InventorTriangleCB(void* data, SoCallbackAction* action,
+                                       const SoPrimitiveVertex* v1,
+                                       const SoPrimitiveVertex* v2,
+                                       const SoPrimitiveVertex* v3);
+        static SoGroup* convertSoFileChildren(SoGroup* orig);
+        static SoNode* copyNode(SoNode* n);
+
+        SoSeparator* mainNode;
+        SoTransform* transformNode;
+        SoScale* scaleNode;
+        SoMaterial* materialNode;
+        SoNode* materialNodeNone;
+        SoDrawStyle* drawStyleNode;
+        SoNode* visualizationNode;
+
+        bool updateVisualization;
+        DrawStyle style;
+        MaterialPtr material;
+        std::string filename; //!< if the visualization was build from a file, the filename is stored here
+        bool boundingBox; //!< Indicates, if the bounding box model was used
+        std::vector<Primitive::PrimitivePtr> primitives;
+        TriMeshModelPtr triMeshModel;
+        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
     };
 
     typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;

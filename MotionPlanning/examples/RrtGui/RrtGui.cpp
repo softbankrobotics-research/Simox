@@ -3,7 +3,7 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <string>
@@ -104,8 +104,10 @@ int main(int argc, char* argv[])
 
     RrtGuiWindow rw(filenameScene, startConfig, goalConfig, rnsName, colModel1, colModel2, colModel3);
 
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
 
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

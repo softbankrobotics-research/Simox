@@ -5,6 +5,7 @@
 #include "Model/LinkSet.h"
 #include "Trajectory.h"
 #include "XML/BaseIO.h"
+#include <VirtualRobot/Visualization/VisualizationGroup.h>
 
 namespace VirtualRobot
 {
@@ -453,30 +454,90 @@ namespace VirtualRobot
         return name;
     }
 
-    VisualizationPtr Scene::getVisualization(ModelLink::VisualizationType linkVisuType , bool addModels, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, std::string visualizationType)
+    VisualizationGroupPtr Scene::getAllVisualizations(ModelLink::VisualizationType visuType , bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, bool addAttachments) const
     {
-        VisualizationFactoryPtr v = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory() : VisualizationFactory::fromName(visualizationType, nullptr);
-        if (!v)
-            return VisualizationPtr();
-        return v->getVisualization(shared_from_this(), linkVisuType , addModels, addObstacles, addManipulationObjects, addTrajectories, addSceneObjectSets);
+        std::vector<VisualizationPtr> collectedVisualizationNodes;
+
+        if (addRobots)
+        {
+            std::vector<VirtualRobot::RobotPtr> robots = getRobots();
+            for (auto& robot : robots)
+            {
+                auto visu = robot->getVisualization(visuType);
+                collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = robot->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
+            }
+        }
+
+        if (addObstacles)
+        {
+            std::vector<VirtualRobot::ObstaclePtr> obstacles = getObstacles();
+            for (auto& obstacle : obstacles)
+            {
+                auto visu = obstacle->getVisualization(visuType);
+                collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = obstacle->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
+            }
+        }
+
+        if (addManipulationObjects)
+        {
+            std::vector<VirtualRobot::ManipulationObjectPtr> manipulationObjects = getManipulationObjects();
+            for (auto& manipulationObject : manipulationObjects)
+            {
+                auto visu = manipulationObject->getVisualization(visuType);
+                collectedVisualizationNodes.push_back(visu);
+                if (addAttachments)
+                {
+                    auto attachments = manipulationObject->getAllAttachmentVisualizations()->getVisualizations();
+                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                }
+            }
+        }
+
+        if (addTrajectories)
+        {
+            std::vector<VirtualRobot::TrajectoryPtr> trajectories = getTrajectories();
+            for (auto& trajectory : trajectories)
+            {
+                auto visu = trajectory->getVisualization();
+                collectedVisualizationNodes.push_back(visu);
+            }
+        }
+
+        if (addSceneObjectSets)
+        {
+            VR_WARNING << "nyi" << endl;
+            //todo
+        }
+
+        return VisualizationGroupPtr(new VisualizationGroup(collectedVisualizationNodes));
     }
 
-    std::vector< RobotPtr > Scene::getRobots()
+    std::vector< RobotPtr > Scene::getRobots() const
     {
         return robots;
     }
 
-    std::vector< ObstaclePtr > Scene::getObstacles()
+    std::vector< ObstaclePtr > Scene::getObstacles() const
     {
         return obstacles;
     }
 
-    std::vector< TrajectoryPtr > Scene::getTrajectories()
+    std::vector< TrajectoryPtr > Scene::getTrajectories() const
     {
         return trajectories;
     }
 
-    std::vector< TrajectoryPtr > Scene::getTrajectories(const std::string& robotName)
+    std::vector< TrajectoryPtr > Scene::getTrajectories(const std::string& robotName) const
     {
         std::vector< TrajectoryPtr > res;
 
@@ -524,7 +585,7 @@ namespace VirtualRobot
         return false;
     }
 
-    std::vector< ManipulationObjectPtr > Scene::getManipulationObjects()
+    std::vector< ManipulationObjectPtr > Scene::getManipulationObjects() const
     {
         return manipulationObjects;
     }

@@ -9,21 +9,12 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/JointSet.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
-#include <string.h>
+#include <Gui/ViewerFactory.h>
+
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
-#include <QtOpenGL/QtOpenGL>
-
-#include <Inventor/sensors/SoTimerSensor.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/SoOffscreenRenderer.h>
 
 #include <vector>
 
@@ -35,9 +26,6 @@ class showCamWindow : public QMainWindow
 public:
     showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name);
     ~showCamWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
@@ -57,12 +45,6 @@ public slots:
 
     void selectRobot();
 
-
-    SoQtExaminerViewer* getExaminerViewer()
-    {
-        return viewer;
-    };
-
     void updateRobotY(int pos);
     void renderCam();
 
@@ -75,12 +57,11 @@ protected:
 
     void updatRobotInfo();
     Ui::MainWindowCamera UI;
-    SoQtExaminerViewer* viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    SoSeparator* sceneSep;
-    SoSeparator* robotSep;
-    SoSeparator* extraSep;
-    SoSeparator* cam1VoxelSep;
+    VirtualRobot::VisualizationGroupPtr obstacleVisu;
+    VirtualRobot::VisualizationPtr robotVisu;
+    VirtualRobot::VisualizationPtr cam1pclVisu;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;
@@ -88,7 +69,6 @@ protected:
     std::string cam2Name;
     VirtualRobot::FramePtr cam1;
     VirtualRobot::FramePtr cam2;
-    SoOffscreenRenderer* cam2Renderer;
 
     std::vector<VirtualRobot::ObstaclePtr> visuObjects;
     std::vector<VirtualRobot::ObstaclePtr> voxelObjects;
@@ -96,8 +76,10 @@ protected:
     std::vector<unsigned char> cam1RGBBuffer;
     std::vector<float> cam1DepthBuffer;
     std::vector<Eigen::Vector3f> cam1PointCloud;
-    unsigned char* cam2Buffer;
-    float* cam2DepthBuffer;
+    std::vector<unsigned char> cam2RGBBuffer;
+    std::vector<float> cam2DepthBuffer;
+    std::vector<Eigen::Vector3f> cam2PointCloud;
+
     std::vector < VirtualRobot::ModelJointPtr > allRobotNodes;
     std::vector < VirtualRobot::ModelJointPtr > currentRobotNodes;
     std::vector < VirtualRobot::JointSetPtr > robotNodeSets;
@@ -105,18 +87,6 @@ protected:
     VirtualRobot::ModelJointPtr currentRobotNode;
 
     bool useColModel;
-
-    std::shared_ptr<VirtualRobot::CoinVisualization> visualization;
-
-    struct DepthRenderData
-    {
-        float* buffer;
-        std::size_t w;
-        std::size_t h;
-    };
-    DepthRenderData userdata2;
-
-    static void getDepthImage(void *userdata);
 };
 
 #endif

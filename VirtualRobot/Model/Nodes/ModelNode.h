@@ -413,7 +413,7 @@ namespace VirtualRobot
         }
 
     protected:
-        ModelNode();
+        ModelNode() = default;
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
 
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) = 0;
@@ -426,7 +426,6 @@ namespace VirtualRobot
         Eigen::Matrix4f staticTransformation;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
-        std::vector<ModelNodeAttachmentPtr> attachmentsWithVisualisation;
     };
 }
 

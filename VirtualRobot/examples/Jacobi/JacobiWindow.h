@@ -7,7 +7,6 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "Gui/ViewerInterface.h"
 
 #include <string.h>
@@ -26,9 +25,6 @@ class JacobiWindow : public QMainWindow
 public:
     JacobiWindow(std::string& sRobotFilename);
     ~JacobiWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
     SimoxGui::ViewerInterfacePtr getViewer()
     {

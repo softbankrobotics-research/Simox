@@ -31,7 +31,7 @@ IF(DOXYGEN_FOUND)
                          "${CMAKE_CURRENT_SOURCE_DIR}/../VirtualRobot")
 
     # consider visualization setup
-    IF (Simox_USE_COIN_VISUALIZATION)
+    IF (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
         SET (CMAKE_DOXYGEN_INPUT_LIST  ${CMAKE_DOXYGEN_INPUT_LIST}
                                         "${CMAKE_CURRENT_SOURCE_DIR}/../VirtualRobot/Visualization/CoinVisualization"
                                         "${CMAKE_CURRENT_SOURCE_DIR}/../GraspPlanning/Visualization/CoinVisualization"

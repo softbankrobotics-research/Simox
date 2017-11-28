@@ -71,12 +71,12 @@ namespace VirtualRobot
 
         static ModelPtr processModelDescription(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, ModelIO::RobotDescription loadMode);
 
-        static VisualizationNodePtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
+        static VisualizationPtr processVisualizationTag(rapidxml::xml_node<char>* visuXMLNode, const std::string& tagName, const std::string& basePath, bool& useAsColModel);
         static CollisionModelPtr processCollisionTag(rapidxml::xml_node<char>* colXMLNode, const std::string& tagName, const std::string& basePath);
         static std::vector<Primitive::PrimitivePtr> processPrimitives(rapidxml::xml_node<char>* primitivesXMLNode);
         static void processPhysicsTag(rapidxml::xml_node<char>* physicsXMLNode, const std::string& nodeName, ModelLink::Physics& physics);
         static RobotNodeSetPtr processModelNodeSet(rapidxml::xml_node<char>* setXMLNode, ModelPtr robo, const std::string& robotRootNode, int& robotNodeSetCounter);
-        static std::vector<VisualizationNodePtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
+        static std::vector<VisualizationPtr> processVisuFiles(rapidxml::xml_node<char>* visualizationXMLNode, const std::string& basePath, std::string& fileType);
 
         /*!
          * \brief loadNodeSets Loads one or multiple ModelNodeSets / JointSets / LinkSets from the given file and registers them to the robot

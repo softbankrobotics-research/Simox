@@ -79,9 +79,9 @@ namespace VirtualRobot
         RobotNodePtr createJointNode(RobotPtr robot, J urdfJoint);
         Eigen::Matrix4f convertPose(urdf::Pose& p);
         template<typename Geom>
-        VirtualRobot::VisualizationNodePtr convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath);
+        VirtualRobot::VisualizationPtr convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath);
         template<typename Visu>
-        VirtualRobot::VisualizationNodePtr convertVisuArray(std::vector<Visu> visu_array, const std::string& basePath);
+        VirtualRobot::VisualizationPtr convertVisuArray(std::vector<Visu> visu_array, const std::string& basePath);
         std::string getFilename(const std::string& f, const std::string& basePath);
 
         bool useColModelsIfNoVisuModel;

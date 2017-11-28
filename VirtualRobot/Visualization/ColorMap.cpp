@@ -180,18 +180,18 @@ namespace VirtualRobot
         return lhs.position < rhs.position;
     }
 
-    VirtualRobot::VisualizationFactory::Color ColorMap::getColor(float position) const
+    VirtualRobot::Visualization::Color ColorMap::getColor(float position) const
     {
-        VirtualRobot::VisualizationFactory::Color c;
+        VirtualRobot::Visualization::Color c;
         getColor(position, c);
         return c;
     }
 
-    bool ColorMap::getColor(float position, VirtualRobot::VisualizationFactory::Color& storeColor) const
+    bool ColorMap::getColor(float position, VirtualRobot::Visualization::Color& storeColor) const
     {
         if ((position >= 0.0) && (position <= 1.0))
         {
-            VirtualRobot::VisualizationFactory::Color colorA, colorB;
+            VirtualRobot::Visualization::Color colorA, colorB;
             float FA, FB, FT;
 
             for (unsigned int i = 0, j = 1; j < intervals.size(); i++, j++)
@@ -218,11 +218,11 @@ namespace VirtualRobot
                 }
         }
 
-        storeColor = VirtualRobot::VisualizationFactory::Color::None();
+        storeColor = VirtualRobot::Visualization::Color::None();
         return false;
     }
 
-    ColorMap ColorMap::customColorMap(std::vector< VirtualRobot::VisualizationFactory::Color > colors)
+    ColorMap ColorMap::customColorMap(std::vector< VirtualRobot::Visualization::Color > colors)
     {
         VR_ASSERT(colors.size() > 0);
         ColorMap c;

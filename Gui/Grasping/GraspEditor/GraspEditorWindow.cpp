@@ -157,8 +157,8 @@ namespace VirtualRobot
         {
             if (robotEEF)
             {
-                VisualizationPtr visu = f->getVisualization(robotEEF, colModel);
-                viewer->addVisualization("eefLayer", "eef", visu);
+                VisualizationSetPtr visu = robotEEF->getVisualization(colModel);
+                viewer->addVisualization("eefLayer", visu);
             }
         }
         else
@@ -169,8 +169,9 @@ namespace VirtualRobot
                 if (tcp)
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    VisualizationNodePtr visu = f->createCoordSystem(1.0f, nullptr, tcpGP);
-                    viewer->addVisualization("eefLayer", "eef-coord", visu);
+                    VisualizationPtr visu = f->createCoordSystem(nullptr);
+                    visu->setGlobalPose(tcpGP);
+                    viewer->addVisualization("eefLayer", visu);
                 }
             }
         }
@@ -178,26 +179,18 @@ namespace VirtualRobot
 
         if (object)
         {
-            VisualizationPtr visu = f->getVisualization(object, colModel);
-            viewer->addVisualization("objectLayer", "object", visu);
+            VisualizationSetPtr visu = object->getVisualization(colModel);
+            viewer->addVisualization("objectLayer", visu);
         }
 
         buildGraspSetVisu();
     }
-
-    int GraspEditorWindow::main()
-    {
-        viewer->start(this);
-        return 0;
-    }
-
 
     void GraspEditorWindow::quit()
     {
         std::cout << "GraspEditorWindow: Closing" << std::endl;
         this->close();
         timer->stop();
-        viewer->stop();
     }
 
     void GraspEditorWindow::selectRobot()
@@ -654,8 +647,8 @@ namespace VirtualRobot
             GraspSetPtr gs = currentGraspSet->clone();
             gs->removeGrasp(currentGrasp);
 
-            VisualizationPtr visu = f->createGraspSetVisualization(gs, robotEEF_EEF, object->getGlobalPose(), ModelLink::VisualizationType::Full);
-            viewer->addVisualization("graspsetLayer", "graspset", visu);
+            VisualizationSetPtr visu = gs->getVisualization(ModelLink::VisualizationType::Full, robotEEF_EEF, object->getGlobalPose());
+            viewer->addVisualization("graspsetLayer", visu);
         }
     }
 

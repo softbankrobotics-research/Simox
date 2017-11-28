@@ -7,7 +7,6 @@
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
 #include "../../Import/SimoxXMLFactory.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 
 #include <QFileDialog>
@@ -162,9 +161,9 @@ void showRobotWindow::render()
     viewer->clearLayer(robotLayer);
     ModelLink::VisualizationType visuType = (UI.radioBtnCollisionVisu->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, visuType);
-    viewer->addVisualization(robotLayer, "robot", visu);
-    robot->setupVisualization(!UI.radioBtnNoVisu->isChecked(), !UI.radioBtnNoVisu->isChecked());
+    auto visu = robot->getVisualization(visuType);
+    viewer->addVisualization("robotLayer", visu);
+    robot->setupVisualization(!UI.radioBtnNoVisu->isChecked());
 }
 
 void showRobotWindow::showSensors()
@@ -246,18 +245,10 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int showRobotWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void showRobotWindow::quit()
 {
     std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void showRobotWindow::selectRobot()

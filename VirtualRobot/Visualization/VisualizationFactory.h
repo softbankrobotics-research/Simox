@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Manfred Kroehnert, Nikolaus Vahrenkamp
-* @copyright  2010,2011 Manfred Kroehnert, Nikolaus Vahrenkamp
+* @author     Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
+* @copyright  2010,2011,2017 Manfred Kroehnert, Nikolaus Vahrenkamp, Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
@@ -30,295 +30,104 @@
 #include "../Tools/MathTools.h"
 #include "../Model/Nodes/ModelLink.h"
 #include "../EndEffector/EndEffector.h"
+#include "Visualization.h"
+#include "VisualizationSet.h"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <string>
+#include <memory>
 
 namespace VirtualRobot
 {
-    class VisualizationNode;
-
     class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public ::AbstractFactoryMethod<VisualizationFactory, void*>
     {
     public:
+        VisualizationFactory();
+        virtual ~VisualizationFactory();
 
-        struct Color
-        {
-            Color()
-            {
-                transparency = 0.0f;
-                r = g = b = 0.5f;
-            }
-            Color(float r, float g, float b, float transparency = 0.0f): r(r), g(g), b(b), transparency(transparency) {}
-            float r, g, b;
-            float transparency;
-            bool isNone() const
-            {
-                return transparency >= 1.0f;
-            }
-            static Color Blue(float transparency = 0.0f)
-            {
-                return Color(0.2f, 0.2f, 1.0f, transparency);
-            }
-            static Color Red(float transparency = 0.0f)
-            {
-                return Color(1.0f, 0.2f, 0.2f, transparency);
-            }
-            static Color Green(float transparency = 0.0f)
-            {
-                return Color(0.2f, 1.0f, 0.2f, transparency);
-            }
-            static Color Black(float transparency = 0.0f)
-            {
-                return Color(0, 0, 0, transparency);
-            }
-            static Color Gray()
-            {
-                return Color(0.5f, 0.5f, 0.5f, 0);
-            }
-            static Color None()
-            {
-                return Color(0.0f, 0.0f, 0.0f, 1.0f);
-            }
-        };
+        virtual void init(int &argc, char* argv[], const std::string &appName);
 
-        struct PhongMaterial
-        {
-            PhongMaterial() {}
-            Color emission;
-            Color ambient;
-            Color diffuse;
-            Color specular;
-            float shininess;
-            Color reflective;
-            float reflectivity;
-            Color transparent;
-            float transparency;
-            float refractionIndex;
-        };
+        virtual VisualizationPtr createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false) const;
+        virtual VisualizationPtr createVisualizationFromFile(const std::string& filename, bool boundingBox = false) const;
+        virtual VisualizationPtr createVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false) const;
 
-        VisualizationFactory()
-        {
-            ;
-        }
-        virtual ~VisualizationFactory()
-        {
-            ;
-        }
-
-        virtual void init(int &/*argc*/, char* /*argv*/[], const std::string &/*appName*/)
-        {
-        }
-
-        virtual VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& /*primitives*/, bool /*boundingBox*/ = false, Color /*color*/ = Color::Gray())
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::string& /*filename*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr getVisualizationFromFile(const std::ifstream& /*ifs*/, bool /*boundingBox*/ = false, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
-        {
-            return VisualizationNodePtr();
-        }
-
-        virtual VisualizationPtr getVisualization(const ScenePtr &scene, ModelLink::VisualizationType visuType, bool addModels = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true)
-        {
-            return VisualizationPtr();
-        }
-
-        virtual VisualizationPtr getVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
-        {
-            if (robot)
-                return robot->getVisualization(visuType);
-            return VisualizationPtr();
-        }
-
-        virtual VisualizationPtr createGraspSetVisualization(const GraspSetPtr &/*graspSet*/, const EndEffectorPtr &/*eef*/, const Eigen::Matrix4f& /*pose*/, ModelLink::VisualizationType /*visuType*/)
-        {
-            return VisualizationPtr();
-        }
-
-        virtual VisualizationPtr createVisualization(const ModelPtr &robot, ModelLink::VisualizationType visuType)
-        {
-            return VisualizationPtr();
-        }
+        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations) const;
 
         /*!
             A box, dimensions are given in mm.
         */
-        virtual VisualizationNodePtr createBox(float /*width*/, float /*height*/, float /*depth*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createLine(const Eigen::Vector3f& /*from*/, const Eigen::Vector3f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createLine(const Eigen::Matrix4f& /*from*/, const Eigen::Matrix4f& /*to*/, float /*width*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createSphere(float /*radius*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createCircle(float /*radius*/, float /*circleCompletion*/, float /*width*/, float /*colorR*/ = 1.0f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, size_t /*numberOfCircleParts*/ = 30)
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createBox(float width, float height, float depth) const;
+        virtual VisualizationPtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f) const;
+        virtual VisualizationPtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f>& from, const std::vector<Eigen::Matrix4f>& to, float width = 1.0f) const;
+        virtual VisualizationPtr createSphere(float radius) const;
+        virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts = 30) const;
 
-        virtual VisualizationNodePtr createTorus(float /*radius*/, float /*tubeRadius*/, float /*completion*/ = 1.0f, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, float /*transparency*/ = 0.0f, int /*sides*/ = 8, int /*rings*/ = 30)
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion = 1.0f, int sides = 8, int rings = 30) const;
 
-        virtual VisualizationNodePtr createCircleArrow(float /*radius*/, float /*tubeRadius*/, float /*completion*/ = 1, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f, float /*transparency*/ = 0.0f, int /*sides*/ = 8, int /*rings*/ = 30)
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion = 1, int sides = 8, int rings = 30) const;
 
-        virtual VisualizationNodePtr createCylinder(float /*radius*/, float /*height*/, float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
+        virtual VisualizationPtr createCylinder(float radius, float height) const;
+        virtual VisualizationPtr createCoordSystem(std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) const;
+        virtual VisualizationPtr createPoint(float radius) const;
+        virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f>& points, float radius) const;
+        virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;
+        virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr& model) const;
+        virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f>& points) const;
+        inline VisualizationPtr createPlane(const MathTools::Plane& p, float extend, const std::string& texture = "") const
         {
-            return VisualizationNodePtr();
+            return createPlane(p.p, p.n, extend, texture);
         }
-        virtual VisualizationNodePtr createCoordSystem(float /*scaling*/ = 1.0f, std::string* /*text*/ = nullptr, const Eigen::Matrix4f &/*pose*/ = Eigen::Matrix4f::Identity(), float /*axisLength*/ = 100.0f, float /*axisSize*/ = 3.0f, int /*nrOfBlocks*/ = 10)
+        virtual VisualizationPtr createPlane(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend, const std::string& texture = "") const;
+        inline VisualizationPtr createGrid(const MathTools::Plane& p, float extend) const
         {
-            return VisualizationNodePtr();
+            return createPlane(p, extend, "images/Floor.png");
         }
-        virtual VisualizationNodePtr createBoundingBox(const BoundingBox& /*bbox*/, bool /*wireFrame*/ = false)
+        inline VisualizationPtr createGrid(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend) const
         {
-            return VisualizationNodePtr();
+            return createPlane(point, normal, extend, "images/Floor.png");
         }
-        virtual VisualizationNodePtr createVertexVisualization(const Eigen::Vector3f& /*position*/, float /*radius*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, Eigen::Matrix4f& /*pose*/, float /*scaleX*/ = 1.0f, float /*scaleY*/ = 1.0f, float /*scaleZ*/ = 1.0f)
-        {
-	        return VisualizationNodePtr();
-        }
-        
-        virtual VisualizationNodePtr createTriMeshModelVisualization(TriMeshModelPtr /*model*/, bool /*showNormals*/, Eigen::Matrix4f& /*pose*/, bool /*showLines*/ = true)
-        {
-            return VisualizationNodePtr();
-        }
-
-        virtual VisualizationNodePtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr ch, MathTools::Plane& p, VisualizationFactory::Color colorInner = VisualizationFactory::Color::Blue(), VisualizationFactory::Color colorLine = VisualizationFactory::Color::Black(), float lineSize = 5.0f, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero())
-        {
-            return VisualizationNodePtr();
-        }
-
-        virtual VisualizationNodePtr createPlane(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/,  float /*colorR*/ = 0.5f, float /*colorG*/ = 0.5f, float /*colorB*/ = 0.5f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createPlaneGrid(const Eigen::Vector3f& /*position*/, const Eigen::Vector3f& /*normal*/, float /*extend*/, float /*transparency*/, const std::string &textureFile = std::string())
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createPlane(const MathTools::Plane& plane, float extend, float transparency,  float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f)
-        {
-            return createPlane(plane.p, plane.n, extend, transparency, colorR, colorG, colorB);
-        }
-        virtual VisualizationNodePtr createPlaneGrid(const MathTools::Plane& plane, float extend, float transparency, const std::string &textureFile = std::string())
-        {
-            return createPlaneGrid(plane.p, plane.n, extend, transparency, textureFile);
-        }
-        virtual VisualizationNodePtr createArrow(const Eigen::Vector3f& /*n*/, float /*length*/ = 50.0f, float /*width*/ = 2.0f, const Color& /*color*/ = Color::Gray())
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createTrajectory(TrajectoryPtr /*t*/, Color /*colorNode*/ = Color::Blue(), Color /*colorLine*/ = Color::Gray(), float /*nodeSize*/ = 15.0f, float /*lineSize*/ = 4.0f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createText(const std::string& /*text*/, bool /*billboard*/ = false, float /*scaling*/ = 1.0f, Color /*c*/ = Color::Black(), float /*offsetX*/ = 20.0f, float /*offsetY*/ = 20.0f, float /*offsetZ*/ = 0.0f)
-        {
-            return VisualizationNodePtr();
-        }
-        virtual VisualizationNodePtr createConstraintVisualization(const ConstraintPtr &/*constraint*/, const Color& /*color*/)
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f) const;
+        virtual VisualizationPtr createText(const std::string& text, bool billboard = false, float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) const;
+        virtual VisualizationPtr createCone(float baseRadius, float height) const;
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
             \param y The extend in y direction must be >= 1e-6
             \param z The extend in z direction must be >= 1e-6
-            \param showAxes If true, the axes are visualized
-            \param axesHeight The height of the axes (measured from the body surface)
-            \param axesWidth The width of the axes.
             \return A VisualizationNode containing the visualization.
         */
-        virtual VisualizationNodePtr createEllipse(float /*x*/, float /*y*/, float /*z*/, bool /*showAxes*/ = true, float /*axesHeight*/ = 4.0f, float /*axesWidth*/ = 8.0f)
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createEllipse(float x, float y, float z) const;
 
-        virtual VisualizationNodePtr createContactVisualization(VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true)
-        {
-            return VisualizationNodePtr();
-        }
-
-        virtual VisualizationNodePtr createReachabilityVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMapPtr cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10)
-        {
-            return VisualizationNodePtr();
-        }
-
-
-
-        /*!
-            Move local visualization by homogeneous matrix m. (MM)
-        */
-        virtual void applyDisplacement(VisualizationNodePtr /*o*/, Eigen::Matrix4f& /*m*/) {}
-        virtual void applyDisplacement(VisualizationPtr /*o*/, Eigen::Matrix4f& /*m*/) {}
+        virtual VisualizationPtr createContactVisualization(const VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) const;
+        virtual VisualizationPtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr& hull, const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
 
         /*!
             Create an empty VisualizationNode.
         */
-        virtual VisualizationNodePtr createVisualization()
-        {
-            return VisualizationNodePtr();
-        }
-
-        /*!
-            Create a united visualization.
-        */
-        virtual VisualizationNodePtr createUnitedVisualization(const std::vector<VisualizationNodePtr>& /*visualizations*/) const
-        {
-            return VisualizationNodePtr();
-        }
+        virtual VisualizationPtr createVisualization() const;
 
         /*!
             Here, a manual cleanup can be called, visualization engine access may not be possible after calling this method.
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
-        virtual void cleanup()
-        {
-            ;
-        }
+        virtual void cleanup();
 
         /*! 
         * Use this method to get the VisualizationFactory singleton according to your compile setup.
         * @see CoinVisualizationFactory
         * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
         */
-        static VisualizationFactoryPtr getGlobalVisualizationFactory()
-        {
-            return VisualizationFactory::first(nullptr);
-        }
+        static VisualizationFactoryPtr getGlobalVisualizationFactory();
 
         /**
          * A dynamicly bound version of getName().
          * @return the visualization type that is supported by this factory.
          */
-        virtual std::string getVisualizationType() = 0;
+        virtual std::string getVisualizationType() const;
     };
-    typedef std::shared_ptr<VisualizationFactory::Color> ColorPtr;
 
 } // namespace VirtualRobot
 

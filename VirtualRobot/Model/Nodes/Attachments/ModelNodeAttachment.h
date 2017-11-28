@@ -25,7 +25,7 @@
 
 #include "../../Model.h"
 #include "../../Frame.h"
-#include "../../../Visualization/VisualizationNode.h"
+#include "../../../Visualization/Visualization.h"
 
 #include <cstdint>
 #include <string>
@@ -37,15 +37,16 @@ namespace VirtualRobot
         friend class ModelNode;
         friend class ModelNodeAttachmentFactory;
 
-    public:
+    protected:
         /*!
-         * Creates a frame visualization (default).
+         * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \param \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          */
         ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
 
+    public:
         /*!
          * Destructor.
          */
@@ -97,9 +98,9 @@ namespace VirtualRobot
          *
          * @return The visualisation.
          */
-        virtual VisualizationNodePtr getVisualisation();
+        virtual VisualizationPtr getVisualisation();
 
-        virtual void setVisualization(VisualizationNodePtr visu);
+        virtual void setVisualization(VisualizationPtr visu);
 
         /*!
          * Get the type of this attachment.
@@ -163,7 +164,7 @@ namespace VirtualRobot
         ModelNodeWeakPtr node;
         Eigen::Matrix4f localTransformation;
         std::string visualizationType;
-        VisualizationNodePtr visu;
+        VisualizationPtr visu;
 
     private:
         void initVisualization();

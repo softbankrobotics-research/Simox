@@ -65,7 +65,7 @@ namespace VirtualRobot
             \param colChecker If not specified, the global singleton instance is used. Only useful, when parallel collision checks should be performed.
             \param id A user id.
         */
-        CollisionModel(const VisualizationNodePtr &visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666, float margin = 0.0f);
+        CollisionModel(const VisualizationPtr &visu, const std::string& name = "", CollisionCheckerPtr colChecker = CollisionCheckerPtr(), int id = 666, float margin = 0.0f);
         /*!Standard Destructor
         */
         virtual ~CollisionModel();
@@ -111,7 +111,7 @@ namespace VirtualRobot
 
         CollisionModelPtr clone(const CollisionCheckerPtr &colChecker = CollisionCheckerPtr(), float scaling = 1.0f, bool deepVisuCopy = true);
 
-        void setVisualization(const VisualizationNodePtr visu);
+        void setVisualization(const VisualizationPtr visu);
 
         int getId();
 
@@ -122,8 +122,8 @@ namespace VirtualRobot
         void setUpdateVisualization(bool enable);
         bool getUpdateVisualizationStatus();
 
-        VisualizationNodePtr getVisualization();
-        VisualizationNodePtr getModelDataVisualization();
+        VisualizationPtr getVisualization();
+        VisualizationPtr getModelDataVisualization();
 
         //! get number of faces (i.e. triangles) of this object
         virtual int getNumFaces();
@@ -172,13 +172,13 @@ namespace VirtualRobot
 
     protected:
         // internal constructor needed for flat copy of internal collision model
-        CollisionModel(const VisualizationNodePtr &visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
+        CollisionModel(const VisualizationPtr &visu, const std::string& name, CollisionCheckerPtr colChecker, int id, InternalCollisionModelPtr collisionModel);
 
         //! delete all data
         void destroyData();
-        VisualizationNodePtr visualization;         // this is the modified visualization
-        VisualizationNodePtr origVisualization;         // this is the original visualization
-        VisualizationNodePtr modelVisualization;    // this is the visualization of the trimeshmodel
+        VisualizationPtr visualization;         // this is the modified visualization
+        VisualizationPtr origVisualization;         // this is the original visualization
+        VisualizationPtr modelVisualization;    // this is the visualization of the trimeshmodel
         bool updateVisualization;
         TriMeshModelPtr model;
         float margin;                        // inflates the model with this margin (in mm)

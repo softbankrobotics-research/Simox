@@ -24,6 +24,7 @@
 #include "PositionConstraint.h"
 
 #include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 using namespace VirtualRobot;
 
@@ -125,7 +126,16 @@ bool PositionConstraint::checkTolerances()
     throw std::logic_error{ss.str()};
 }
 
-Eigen::Vector3f PositionConstraint::getTarget()
+Eigen::Vector3f PositionConstraint::getTarget() const
 {
     return target;
+}
+
+VisualizationPtr PositionConstraint::getVisualization() const
+{
+    auto v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(50);
+    Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+    gp.block<3, 1>(0, 3) = getTarget();
+    v->setGlobalPose(gp);
+    return v;
 }

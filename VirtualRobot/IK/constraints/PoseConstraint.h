@@ -46,12 +46,14 @@ namespace VirtualRobot
 
         virtual bool getRobotPoseForConstraint(Eigen::Matrix4f& pose) override;
 
-        const Eigen::Matrix4f& getTarget();
+        const Eigen::Matrix4f& getTarget() const;
 
         void updateTarget(const Eigen::Matrix4f& newTarget);
 
         virtual double optimizationFunction(unsigned int id) override;
         virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+
+        virtual VisualizationPtr getVisualization() const override;
 
     protected:
         double positionOptimizationFunction();

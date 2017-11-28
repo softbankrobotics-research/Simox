@@ -10,7 +10,7 @@
 #include "../Model/Nodes/ModelNode.h"
 #include "../Model/Nodes/ModelJoint.h"
 #include "../Model/Nodes/ModelLink.h"
-#include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationSet.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../Visualization/ColorMap.h"
@@ -1321,6 +1321,98 @@ namespace VirtualRobot
         return result;
     }
 
+    VisualizationPtr WorkspaceRepresentation::getVisualization(const ColorMapPtr& cm, bool transformToGlobalPose, float maxZGlobal) const
+    {
+        auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        if (numVoxels[0] <= 0 || numVoxels[1] <= 0 || numVoxels[2] <= 0)
+        {
+            return factory->createVisualization();
+        }
+
+        Eigen::Vector3f size;
+        size(0) = spaceSize[0] / numVoxels[0];
+        size(1) = spaceSize[1] / numVoxels[1];
+        size(2) = spaceSize[2] / numVoxels[2];
+        float minS = size(0);
+
+        if (size(1) < minS)
+        {
+            minS = size(1);
+        }
+
+        if (size(2) < minS)
+        {
+            minS = size(2);
+        }
+
+
+        float radius = minS * 0.5f * 0.75f;
+        Eigen::Vector3f voxelPosition;
+        int maxValue = getMaxSummedAngleReachablity();
+
+        Eigen::Vector3f resPos;
+        int step = 1;
+
+        std::vector<Eigen::Vector3f> points;
+        std::vector<VirtualRobot::Visualization::Color> colors;
+
+        for (int a = 0; a < numVoxels[0]; a += step)
+        {
+            voxelPosition(0) = minBounds[0] + (a + 0.5f) * size(0);
+
+            for (int b = 0; b < numVoxels[1]; b += step)
+            {
+                voxelPosition(1) = minBounds[1] + (b + 0.5f) * size(1);
+
+                int cSize = numVoxels[2];
+
+                for (int c = 0; c < cSize; c += step)
+                {
+                    voxelPosition(2) = minBounds[2] + (c + 0.5f) * size(2);
+
+                    int value = sumAngleReachabilities(a, b, c);
+
+                    if (value > 0)
+                    {
+                        resPos = voxelPosition;
+
+                        if (transformToGlobalPose)
+                        {
+                            toGlobalVec(resPos);
+                        }
+
+                        if (resPos(2)>maxZGlobal)
+                            continue;
+
+                        float intensity = (float)value;
+
+                        if (maxValue > 0)
+                        {
+                            intensity /= maxValue;
+                        }
+
+                        if (intensity > 1.0f)
+                        {
+                            intensity = 1.0f;
+                        }
+
+                        points.push_back(resPos);
+                        colors.push_back(cm->getColor(intensity));
+                    }
+                }
+            }
+        }
+
+        auto pointCloud = factory->createPointCloud(points, radius);
+        auto visus = pointCloud->getVisualizations();
+        for (size_t i=0; i<visus.size(); ++i)
+        {
+            visus[i]->setColor(colors.at(i));
+        }
+
+        return pointCloud;
+    }
+
     Eigen::Matrix4f WorkspaceRepresentation::getPoseFromVoxel(float v[6], bool transformToGlobalPose /*= true*/)
     {
         float x[6];
@@ -1473,7 +1565,7 @@ namespace VirtualRobot
         return data->get(a, b, c, d, e, f);
     }
 
-    int WorkspaceRepresentation::getMaxSummedAngleReachablity()
+    int WorkspaceRepresentation::getMaxSummedAngleReachablity() const
     {
         int maxValue = 0;
 
@@ -2270,6 +2362,123 @@ namespace VirtualRobot
         {
             threads[i].join();
         }
+    }
+
+    VisualizationPtr WorkspaceRepresentation::WorkspaceCut2D::getVisualization(const ColorMap &cm, const Eigen::Vector3f& normal, float maxEntry) const
+    {
+        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        // set z component
+        gp(2, 3) = referenceGlobalPose(2, 3);
+
+        int nX = entries.rows();
+        int nY = entries.cols();
+
+        float sizeX = (maxBounds[0] - minBounds[0]) / static_cast<float>(nX);
+        float sizeY = (maxBounds[1] - minBounds[1]) / static_cast<float>(nY);
+
+        float cubeWidth;
+        float cubeHeight;
+        float cubeDepth;
+        if (normal(0) > 0)
+        {
+            cubeWidth = sizeX;
+            cubeHeight = 1.f;
+            cubeDepth = sizeY;
+        }
+        else if (normal(1) > 0)
+        {
+            cubeWidth = 1.f;
+            cubeHeight = sizeY;
+            cubeDepth = sizeX;
+        }
+        else
+        {
+            cubeWidth = sizeX;
+            cubeHeight = sizeY;
+            cubeDepth = 1.f;
+        }
+        VisualizationPtr cube = visualizationFactory->createBox(cubeWidth, cubeHeight, cubeDepth);
+
+        std::vector<Eigen::Vector3f> cubeLinesFrom, cubeLinesTo;
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        VisualizationPtr cubeLines = visualizationFactory->createLineSet(cubeLinesFrom, cubeLinesTo);
+
+        if (maxEntry==0.0f)
+        {
+            maxEntry = entries.maxCoeff();
+            if (maxEntry == 0)
+            {
+                maxEntry = 1;
+            }
+        }
+
+        std::vector<VisualizationPtr> visus;
+
+        for (int x = 0; x < nX; x++)
+        {
+            float xPos = minBounds[0] + (float)x * sizeX + 0.5f * sizeX; // center of voxel
+
+            for (int y = 0; y < nY; y++)
+            {
+                int v = entries(x, y);
+
+                if (v > 0)
+                {
+                    float yPos = minBounds[1] + (float)y * sizeY + 0.5f * sizeY; // center of voxel
+                    gp(0, 3) = xPos;
+                    gp(1, 3) = yPos;
+
+                    float intensity = (float)v;
+                    intensity /= maxEntry;
+
+                    if (intensity > 1.0f)
+                    {
+                        intensity = 1.0f;
+                    }
+
+                    VirtualRobot::Visualization::Color color = cm.getColor(intensity);
+
+                    if (intensity > 0)
+                    {
+                        visus.push_back(cube->clone());
+                        visus.back()->setGlobalPose(gp);
+                        visus.back()->setColor(color);
+
+                        visus.push_back(cubeLines->clone());
+                        visus.back()->setGlobalPose(gp);
+                        visus.back()->setColor(VirtualRobot::Visualization::Color::Black());
+                    }
+                }
+            }
+        }
+        return visualizationFactory->createVisualisationSet(visus);
     }
 
 } // namespace VirtualRobot

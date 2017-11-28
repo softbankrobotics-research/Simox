@@ -14,23 +14,28 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @package    Gui
-* @author     Nikolaus Vahrenkamp
-* @copyright  2017 Nikolaus Vahrenkamp
+* @package    VirtualRobot
+* @author     Adrian Knobloch
+* @copyright  2017 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_ViewerSelection_h_
-#define _Gui_ViewerSelection_h_
+#ifndef _VirtualRobot_CoinElement_h_
+#define _VirtualRobot_CoinElement_h_
 
-// does not work as expected
-//#ifdef Simox_USE_COIN_VISUALIZATION
-//#include "Coin/CoinViewerFactory.h"
-//namespace SimoxGui
-//{
-//    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib may not be loaded since it is not referenced by the application)
-//    SimoxGui::CoinViewerFactory __viewerfactory;
-//}
-//#endif
+#include <VirtualRobot/VirtualRobot.h>
+#include <memory>
 
-#endif
+class SoNode;
+
+namespace VirtualRobot
+{
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinElement
+    {
+    public:
+        virtual SoNode* getMainNode() const = 0;
+    };
+    typedef std::shared_ptr<CoinElement> CoinElementPtr;
+} // namespace VirtualRobot
+
+#endif // _VirtualRobot_CoinVisualization_h_

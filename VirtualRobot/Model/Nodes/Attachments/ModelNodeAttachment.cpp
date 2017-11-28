@@ -1,6 +1,7 @@
 
 #include "ModelNodeAttachment.h"
 #include "../../XML/BaseIO.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
 {
@@ -62,14 +63,7 @@ namespace VirtualRobot
 
     void ModelNodeAttachment::initVisualization()
     {
-        VisualizationFactoryPtr factory;
-        if (visualizationType.empty())
-        {
-            factory = VirtualRobot::VisualizationFactory::first(nullptr);
-        } else
-        {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, nullptr);
-        }
+        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (!factory)
         {
@@ -78,15 +72,15 @@ namespace VirtualRobot
         }
 
         std::string name = getName();
-        setVisualization(factory->createCoordSystem(1, &name));
+        setVisualization(factory->createCoordSystem(&name));
     }
 
-    VisualizationNodePtr ModelNodeAttachment::getVisualisation()
+    VisualizationPtr ModelNodeAttachment::getVisualisation()
     {
         return visu;
     }
 
-    void ModelNodeAttachment::setVisualization(VisualizationNodePtr visu)
+    void ModelNodeAttachment::setVisualization(VisualizationPtr visu)
     {
         this->visu = visu;
     }

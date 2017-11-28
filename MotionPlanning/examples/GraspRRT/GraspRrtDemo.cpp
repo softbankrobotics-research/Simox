@@ -6,7 +6,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <string>
@@ -157,7 +156,9 @@ int main(int argc, char** argv)
 
     GraspRrtWindow rw(filenameScene, startConfig, goalObject, rnsName, rnsNameB, eefName, eefNameB, colModel1, colModel1B, colModel2, colModel2B, colModel3);
 
-    rw.main();
+    rw.show();
+    rw.raise();
 
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

@@ -27,6 +27,8 @@
 #include "SimoxGuiImportExport.h"
 
 #include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Visualization/Visualization.h>
+#include <VirtualRobot/Visualization/VisualizationGroup.h>
 
 #include <QtGui/QtGui>
 #include <QImage>
@@ -38,22 +40,41 @@ namespace SimoxGui
 
 class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 {
-    public:
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationPtr &visualization) = 0;
-        virtual void addVisualization(const std::string &layer, const std::string &id, const VirtualRobot::VisualizationNodePtr &visualization) = 0;
-        virtual void removeVisualization(const std::string &layer, const std::string &id) = 0;
+public:
+    virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) = 0;
+    virtual void addVisualizations(const std::string &layer, const VirtualRobot::VisualizationGroupPtr &visualizations)
+    {
+        addVisualizations(layer, visualizations->getVisualizations());
+    }
+    virtual void addVisualizations(const std::string &layer, const std::vector<VirtualRobot::VisualizationPtr> &visualizations)
+    {
+        for (const auto& visu : visualizations)
+        {
+            addVisualization(layer, visu);
+        }
+    }
+    virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) = 0;
+    virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const = 0;
+    virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const = 0;
+    virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const = 0;
+    virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const = 0;
 
-        virtual void clearLayer(const std::string &layer) = 0;
+    virtual void clearLayer(const std::string &layer) = 0;
+    virtual bool hasLayer(const std::string &layer) const = 0;
 
-        virtual bool hasLayer(const std::string &layer) = 0;
+    virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const = 0;
+    virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const = 0;
 
-        virtual void start(QWidget *mainWindow) = 0;
-        virtual void stop() = 0;
-        virtual QImage getScreenshot() = 0;
+    virtual QImage getScreenshot() const = 0;
 
-        virtual void resetView() = 0;
+    virtual void resetView() = 0;
+    virtual void viewAll() = 0;
 
-        virtual void viewAll() = 0;
+    virtual void setAntialiasing(unsigned short quality) = 0;
+    virtual unsigned short getAntialiasing() const = 0;
+
+    virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) = 0;
+    virtual VirtualRobot::Visualization::Color getBackgroundColor() const = 0;
 };
 typedef std::shared_ptr<ViewerInterface> ViewerInterfacePtr;
 

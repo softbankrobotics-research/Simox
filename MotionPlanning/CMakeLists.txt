@@ -77,19 +77,6 @@ ApproachDiscretization.h
 )
 #../VirtualRobot/definesVR.h
 
-
-if (Simox_USE_COIN_VISUALIZATION)
-	SET(SOURCES
-	${SOURCES}
-	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.cpp
-	)
-
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h
-	)
-endif (Simox_USE_COIN_VISUALIZATION)
-
 INCLUDE_DIRECTORIES(.. ${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 

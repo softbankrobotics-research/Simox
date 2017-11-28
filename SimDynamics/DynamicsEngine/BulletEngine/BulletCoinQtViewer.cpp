@@ -1,8 +1,6 @@
 #include "BulletCoinQtViewer.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 
 using namespace VirtualRobot;
 using namespace SimoxGui;
@@ -95,10 +93,8 @@ namespace SimDynamics
             bulletEngine->getFloorInfo(floorPos, floorUp, floorExtendMM, floorDepthMM);
             MathTools::Plane p(floorPos, floorUp);
 
-            VisualizationNodePtr v = VisualizationFactory::getGlobalVisualizationFactory()->createPlaneGrid(p, floorExtendMM, 0.0f);
-            std::string f1("floor");
-            std::string f2("floor");
-            CoinViewer::addVisualization(f1, f2, v);
+            VisualizationPtr v = p.getVisualization(floorExtendMM);
+            CoinViewer::addVisualization("floor", v);
         }
 
         viewAll();
@@ -175,7 +171,8 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(robot);
         removeSimDynamicsVisualization(robot);
-        CoinViewer::addVisualization("robots", robot->getName(), robot->getVisualization(visuType));
+        robotVisus[robot->getName()] = robot->getVisualization(visuType);
+        CoinViewer::addVisualization("robots", robotVisus[robot->getName()]);
     }
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType)
@@ -183,7 +180,8 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(so);
         removeSimDynamicsVisualization(so);
-        CoinViewer::addVisualization("links", so->getName(), so->getVisualization(visuType));
+        linkVisus[so->getName()] = so->getVisualization(visuType);
+        CoinViewer::addVisualization("links", linkVisus[so->getName()]);
     }
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType)
@@ -211,28 +209,48 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
-        CoinViewer::removeVisualization("robots", o->getName());
+        auto it = robotVisus.find(o->getName());
+        if (it != robotVisus.end())
+        {
+            CoinViewer::removeVisualization("robots", it->second);
+            robotVisus.erase(it);
+        }
     }
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(ModelLinkPtr o)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o);
-        CoinViewer::removeVisualization("links", o->getName());
+        auto it = linkVisus.find(o->getName());
+        if (it != linkVisus.end())
+        {
+            CoinViewer::removeVisualization("links", it->second);
+            linkVisus.erase(it);
+        }
     }
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsObjectPtr o)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(o && o->getSceneObject());
-        CoinViewer::removeVisualization("links", o->getSceneObject()->getName());
+        auto it = linkVisus.find(o->getSceneObject()->getName());
+        if (it != linkVisus.end())
+        {
+            CoinViewer::removeVisualization("links", it->second);
+            linkVisus.erase(it);
+        }
     }
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsModelPtr r)
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(r && r->getRobot());
-        CoinViewer::removeVisualization("robots", r->getRobot()->getName());
+        auto it = robotVisus.find(r->getRobot()->getName());
+        if (it != robotVisus.end())
+        {
+            CoinViewer::removeVisualization("robots", it->second);
+            robotVisus.erase(it);
+        }
     }
 
     void BulletCoinQtViewer::stopCB()
@@ -321,7 +339,7 @@ namespace SimDynamics
     void BulletCoinQtViewer::setAntiAliasing(int steps)
     {
         MutexLockPtr lock = getScopedLock();
-        CoinViewer::setAntialiasing(true, steps);
+        CoinViewer::setAntialiasing(steps);
     }
 
 }

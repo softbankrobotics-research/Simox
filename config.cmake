@@ -222,16 +222,16 @@ IF (NOT Simox_CONFIGURED)
         FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
     endif()
 
-    #### VISUALIZATION Coin3D+Qt+SoQt
-    #################################
+    #### VISUALIZATION
+    ##################
+    SET (Simox_VISUALIZATION_TYPE "Coin3D" CACHE STRING "Possible options: None, Coin3D")
     SET (Simox_VISUALIZATION FALSE)
     SET (Simox_VISUALIZATION_LIBS "")
     SET (Simox_VISUALIZATION_INCLUDE_PATHS "")
-    SET (Simox_VISUALIZATION_COMPILE_FLAGS "")
+    SET (Simox_VISUALIZATION_COMPILE_FLAGS "-DSimox_VISUALIZATION_TYPE=${Simox_VISUALIZATION_TYPE}")
     
-    OPTION(Simox_USE_COIN_VISUALIZATION "Use Coin3D for visualization" ON)
-    
-    if (Simox_USE_COIN_VISUALIZATION)
+    if (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
+        MESSAGE(STATUS "Using Coin3D for visualization.")
         MESSAGE(STATUS "Searching Coin3D, Qt and SoQt...")
         
         ##### Coin3D
@@ -241,7 +241,7 @@ IF (NOT Simox_CONFIGURED)
             SET (Simox_VISUALIZATION TRUE)
             SET (Simox_VISUALIZATION_LIBS ${COIN3D_LIBRARIES})
             SET (Simox_VISUALIZATION_INCLUDE_PATHS ${COIN3D_INCLUDE_DIRS} )
-            SET (Simox_VISUALIZATION_COMPILE_FLAGS "-DCOIN_DLL -DSimox_USE_COIN_VISUALIZATION")
+            SET (Simox_VISUALIZATION_COMPILE_FLAGS "${Simox_VISUALIZATION_COMPILE_FLAGS} -DCOIN_DLL -DSimox_VISUALIZATION -DSimox_USE_COIN_VISUALIZATION")
         endif (COIN3D_FOUND)
         
         
@@ -302,9 +302,9 @@ IF (NOT Simox_CONFIGURED)
     endif()
     
     if (Simox_BUILD_Gui)
-        SET (Simox_GUI True)
+        SET (Simox_GUI TRUE)
     else()
-        SET (Simox_GUI False)
+        SET (Simox_GUI FALSE)
     endif()
 
     

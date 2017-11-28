@@ -47,10 +47,13 @@ CollisionDetection/CollisionModel.cpp
 CollisionDetection/CDManager.cpp
 EndEffector/EndEffector.cpp
 EndEffector/EndEffectorActor.cpp
+Visualization/VisualizationFactory.cpp
+Visualization/VisualizationSet.cpp
+Visualization/VisualizationGroup.cpp
 Visualization/Visualization.cpp
-Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
+Visualization/OffscreenRenderer.cpp
 XML/BaseIO.cpp
 XML/ModelIO.cpp
 XML/SceneIO.cpp
@@ -155,11 +158,13 @@ CollisionDetection/CollisionCheckerImplementation.h
 EndEffector/EndEffector.h
 EndEffector/EndEffectorActor.h
 Visualization/VisualizationFactory.h
+Visualization/VisualizationSet.h
+Visualization/VisualizationGroup.h
 Visualization/Visualization.h
-Visualization/VisualizationNode.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
+Visualization/OffscreenRenderer.h
 XML/BaseIO.h
 XML/ModelIO.h
 XML/SceneIO.h
@@ -276,20 +281,23 @@ if (Simox_USE_NLOPT AND NLOPT_FOUND)
     )
 endif ()
 
-if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
+if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
 
     SET(SOURCES
     ${SOURCES}
     Visualization/CoinVisualization/CoinVisualizationFactory.cpp
-    Visualization/CoinVisualization/CoinVisualizationNode.cpp
     Visualization/CoinVisualization/CoinVisualization.cpp
+    Visualization/CoinVisualization/CoinVisualizationSet.cpp
+    Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
     )
 
     SET(INCLUDES
     ${INCLUDES}
     Visualization/CoinVisualization/CoinVisualizationFactory.h
-    Visualization/CoinVisualization/CoinVisualizationNode.h
     Visualization/CoinVisualization/CoinVisualization.h
+    Visualization/CoinVisualization/CoinVisualizationSet.h
+    Visualization/CoinVisualization/CoinOffscreenRenderer.h
+    Visualization/CoinVisualization/CoinElement.h
     )
 
     if(BUILD_TESTING)

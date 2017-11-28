@@ -34,7 +34,7 @@
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel : public std::enable_shared_from_this<TriMeshModel>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -52,9 +52,9 @@ namespace VirtualRobot
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, 
 								Eigen::Vector3f& normal,
-                                VisualizationFactory::Color color1 = VisualizationFactory::Color::Gray(),
-                                VisualizationFactory::Color color2 = VisualizationFactory::Color::Gray(),
-                                VisualizationFactory::Color color3 = VisualizationFactory::Color::Gray());
+                                Visualization::Color color1 = Visualization::Color::Gray(),
+                                Visualization::Color color2 = Visualization::Color::Gray(),
+                                Visualization::Color color3 = Visualization::Color::Gray());
         void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, 
 								Eigen::Vector4f& vertexColor1, 
 								Eigen::Vector4f& vertexColor2, 
@@ -64,9 +64,9 @@ namespace VirtualRobot
         void addFace(const TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
         int addNormal(const Eigen::Vector3f& normal);
-        int addColor(const VisualizationFactory::Color& color);
+        int addColor(const Visualization::Color& color);
         int addColor(const Eigen::Vector4f& color);
-        int addMaterial(const VisualizationFactory::PhongMaterial& material);
+        int addMaterial(const Visualization::PhongMaterial& material);
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
 
         void clear();
@@ -95,7 +95,7 @@ namespace VirtualRobot
         size_t removeUnusedVertices();
 
         // Overwrite all colors
-        void setColor(VisualizationFactory::Color color);
+        void setColor(Visualization::Color color);
 
         void print();
         void printNormals();
@@ -106,15 +106,17 @@ namespace VirtualRobot
         bool checkFacesHaveSameEdge(const TriangleFace& face1, const TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
         unsigned int checkAndCorrectNormals(bool inverted);
 
+        VisualizationPtr getVisualization(bool showNormals = false, bool showLines = true);
+
         virtual void scale(Eigen::Vector3f& scaleFactor);
         TriMeshModelPtr clone() const;
         TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor) const;
 
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> vertices;
-        std::vector<VisualizationFactory::Color> colors;
+        std::vector<Visualization::Color> colors;
         std::vector<TriangleFace> faces;
-        std::vector<VisualizationFactory::PhongMaterial> materials;
+        std::vector<Visualization::PhongMaterial> materials;
         BoundingBox boundingBox;        
     };
 } // namespace VirtualRobot

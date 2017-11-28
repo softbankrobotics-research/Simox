@@ -9,7 +9,7 @@
 #include <urdf_parser/urdf_parser.h>
 
 #include "../../Visualization/VisualizationFactory.h"
-#include "../../Visualization/VisualizationNode.h"
+#include "../../Visualization/Visualization.h"
 #include "../../Model/ModelFactory.h"
 #include "../../Model/Nodes/ModelJoint.h"
 #include "../../Model/Nodes/ModelJointFixed.h"
@@ -211,10 +211,10 @@ namespace VirtualRobot
     }
 
     template<typename Geom>
-    VirtualRobot::VisualizationNodePtr SimoxURDFFactory::convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath)
+    VirtualRobot::VisualizationPtr SimoxURDFFactory::convertVisu(Geom g, urdf::Pose& pose, const std::string& basePath)
     {
         const float scale = 1000.0f; // mm
-        VirtualRobot::VisualizationNodePtr res;
+        VirtualRobot::VisualizationPtr res;
         VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (!g)
@@ -252,7 +252,8 @@ namespace VirtualRobot
             {
                 auto m = static_cast<Mesh*>(g.get());
                 std::string filename = getFilename(m->filename, basePath);
-                res = factory->getVisualizationFromFile(filename, false, m->scale.x, m->scale.y, m->scale.z);
+                res = factory->createVisualizationFromFile(filename, false);
+                res->scale(Eigen::Vector3f(m->scale.x, m->scale.y, m->scale.z));
                 if (res)
                     res->setFilename(filename, false);
             }
@@ -270,16 +271,16 @@ namespace VirtualRobot
 				// inventor and urdf differ in the conventions for cylinders
                 p = p * MathTools::axisangle2eigen4f(Eigen::Vector3f::UnitX(), M_PI_2);
             }
-            factory->applyDisplacement(res, p);
+            res->applyDisplacement(p);
         }
 
         return res;
     }
 
     template<typename Visu>
-    VisualizationNodePtr SimoxURDFFactory::convertVisuArray(std::vector<Visu> visu_array, const string &basePath)
+    VisualizationPtr SimoxURDFFactory::convertVisuArray(std::vector<Visu> visu_array, const string &basePath)
     {
-        VirtualRobot::VisualizationNodePtr res;
+        VirtualRobot::VisualizationPtr res;
         VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
 
         if (visu_array.size()==0)
@@ -287,16 +288,16 @@ namespace VirtualRobot
             return res;
         }
 
-        std::vector< VisualizationNodePtr > visus;
+        std::vector< VisualizationPtr > visus;
         for (size_t i=0; i<visu_array.size(); i++)
         {
-            VirtualRobot::VisualizationNodePtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
+            VirtualRobot::VisualizationPtr v = convertVisu(visu_array[i]->geometry, visu_array[i]->origin, basePath);
             if (v)
             {
                 visus.push_back(v);
             }
         }
-        res = factory->createUnitedVisualization(visus);
+        res = factory->createVisualisationSet(visus);
         return res;
     }
 
@@ -314,7 +315,7 @@ namespace VirtualRobot
         std::string name = urdfBody->name;
         Eigen::Matrix4f preJointTransform = Eigen::Matrix4f::Identity();
 
-        VirtualRobot::VisualizationNodePtr rnVisu;
+        VirtualRobot::VisualizationPtr rnVisu;
         VirtualRobot::CollisionModelPtr rnCol;
 
         if (loadMode == ModelIO::RobotDescription::eFull && (urdfBody->visual || urdfBody->visual_array.size()>1))
@@ -329,7 +330,7 @@ namespace VirtualRobot
 
         if ((loadMode == ModelIO::RobotDescription::eFull  || loadMode == ModelIO::RobotDescription::eCollisionModel) && (urdfBody->collision || urdfBody->collision_array.size()>1) )
         {
-            VisualizationNodePtr v;
+            VisualizationPtr v;
             if (urdfBody->collision_array.size() > 1)
             {
                 v = convertVisuArray(urdfBody->collision_array, basePath);

@@ -8,7 +8,7 @@
 #include <VirtualRobot/Workspace/Manipulability.h>
 #include <VirtualRobot/Workspace/WorkspaceGrid.h>
 #include <Gui/ViewerFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
+#include <VirtualRobot/Visualization/ColorMap.h>
 
 #include <time.h>
 #include <vector>
@@ -19,10 +19,6 @@
 #include <QFileDialog>
 
 #include <Eigen/Geometry>
-
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
 
 using namespace std;
 using namespace VirtualRobot;
@@ -243,19 +239,17 @@ void ReachabilityMapWindow::buildReachVisu()
     int maxCoeff = cutData->entries.maxCoeff();
     VR_INFO << "Max coeff:" << maxCoeff << endl;
 
-    SoNode *node = CoinVisualizationFactory::getCoinVisualization(cutData, VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), maxCoeff);
-    CoinVisualizationPtr v(new CoinVisualization(VisualizationNodePtr(new CoinVisualizationNode(node))));
-
+    auto v = cutData->getVisualization(VirtualRobot::ColorMap(VirtualRobot::ColorMap::eHot), Eigen::Vector3f::UnitZ(), maxCoeff);
 
     if (v)
     {
         if (reachSpace->getBaseNode())
         {
             Eigen::Matrix4f gp = reachSpace->getBaseNode()->getGlobalPose();
-            VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(v, gp);
+            v->applyDisplacement(gp);
         }
 
-        viewer->addVisualization(reachVisuLayer, "reachability", v);
+        viewer->addVisualization(reachVisuLayer, v);
     }
 
 }
@@ -273,7 +267,7 @@ void ReachabilityMapWindow::buildRobotVisu()
 
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayer, "robot", visualization);
+        viewer->addVisualization(robotVisuLayer, visualization);
     }
 }
 
@@ -290,7 +284,7 @@ void ReachabilityMapWindow::buildObjectVisu()
 
     if (visuObject)
     {
-        viewer->addVisualization(objectVisuLayer, "object", visuObject);
+        viewer->addVisualization(objectVisuLayer, visuObject);
     }
 
     if (environment)
@@ -299,7 +293,7 @@ void ReachabilityMapWindow::buildObjectVisu()
 
         if (visuEnv)
         {
-            viewer->addVisualization(objectVisuLayer, "environment", visuEnv);
+            viewer->addVisualization(objectVisuLayer, visuEnv);
         }
     }
 }
@@ -330,21 +324,20 @@ void ReachabilityMapWindow::buildGraspVisu()
             return;
         }
 
-        // TODO here, we have to use coin explicitly because the visufactory-interface does not have a grasp render method.
-        SoNode* node = CoinVisualizationFactory::CreateGraspVisualization(g, eef, graspObject->getGlobalPose());
-        CoinVisualizationPtr v(new CoinVisualization(VisualizationNodePtr(new CoinVisualizationNode(node))));
+        auto v = g->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, eef, graspObject->getGlobalPose());
 
         if (v)
         {
-            viewer->addVisualization(graspVisuLayer, "grasp", v);
+            viewer->addVisualization(graspVisuLayer, v);
         }
     }
     else
     {
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, graspObject->getGlobalPose(), ModelLink::Full);
+        auto v = gs->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full, eef, graspObject->getGlobalPose());
+
         if (v)
         {
-            viewer->addVisualization(graspVisuLayer, "grasp", v);
+            viewer->addVisualization(graspVisuLayer, v);
         }
     }
 }
@@ -357,13 +350,11 @@ void ReachabilityMapWindow::buildReachGridVisu()
     }
 
     viewer->clearLayer(reachMapVisuLayer);
-    // TODO here, we have to use coin explicitly because the visufactory-interface does not have a reach grid render method.
-    SoNode* node = CoinVisualizationFactory::getCoinVisualization(reachGrid, VirtualRobot::ColorMap::eHot, true);
-    CoinVisualizationPtr v(new CoinVisualization(VisualizationNodePtr(new CoinVisualizationNode(node))));
+    auto v = reachGrid->getVisualization(VirtualRobot::ColorMap::eHot);
 
     if (v)
     {
-        viewer->addVisualization(reachMapVisuLayer, "reachmap", v);
+        viewer->addVisualization(reachMapVisuLayer, v);
     }
 }
 
@@ -571,6 +562,7 @@ void ReachabilityMapWindow::loadReachFile(std::string filename)
         }
         catch (...)
         {
+            VR_ERROR << "Coulkd not load reachability file..." << endl;
         }
     }
 

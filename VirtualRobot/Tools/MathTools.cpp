@@ -1,6 +1,8 @@
 
 #include "MathTools.h"
 #include "../VirtualRobotException.h"
+#include "../Visualization/VisualizationFactory.h"
+#include "../Visualization/TriMeshModel.h"
 #include <float.h>
 #include <string.h>
 #include <cmath>
@@ -1828,7 +1830,7 @@ namespace VirtualRobot
         else
             resF(2) = float(asin(p));
 
-        VR_ASSERT (!isnan(resF(2)));
+        VR_ASSERT (!std::isnan(resF(2)));
 
         if (resF(0)<0)
             resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI

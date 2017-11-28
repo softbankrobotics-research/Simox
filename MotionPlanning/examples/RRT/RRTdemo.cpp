@@ -30,8 +30,6 @@ using namespace MotionPlanning;
     #include "../../../Gui/Coin/CoinViewerFactory.h"
     // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
     SimoxGui::CoinViewerFactory f;
-
-    #include "MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h"
 #endif
 
 
@@ -40,7 +38,7 @@ using namespace MotionPlanning;
 bool useColModel = false;
 QWidget* win;
 
-void show(std::vector<VisualizationPtr> &visus)
+int show(std::vector<VisualizationSetPtr> &visus)
 {
     if (win == nullptr)
     {
@@ -59,20 +57,21 @@ void show(std::vector<VisualizationPtr> &visus)
     {
         std::stringstream vn;
         vn << "rrt-" << i;
-        viewer->addVisualization("rrt", vn.str(), n);
+        viewer->addVisualization("rrt", n);
         i++;
     }
 
     // show everything
     viewer->viewAll();
 
-    viewer->start(win);
+    win->show();
+    win->raise();
 
-    // clean up
-    viewer.reset();
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
 
-void startRRTVisualization()
+int startRRTVisualization()
 {
 
     // create robot
@@ -83,7 +82,7 @@ void startRRTVisualization()
 
     if (!robot)
     {
-        return;
+        return 1;
     }
 
 
@@ -163,7 +162,7 @@ void startRRTVisualization()
     if (!ok)
     {
         cout << "planning failed..." << endl;
-        return;
+        return 1;
     }
 
     CSpacePathPtr solution = rrt->getSolution();
@@ -174,18 +173,15 @@ void startRRTVisualization()
     // display robot
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visualisationRobot = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel);
+    VisualizationSetPtr visualisationRobot = robot->getVisualization(colModel);
 
 
     // display obstacle
-    VisualizationPtr visualisationObstacle = VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(o, colModel);
+    VisualizationSetPtr visualisationObstacle = o->getVisualization(colModel);
 
     // show rrt visu
 
-    RrtWorkspaceVisualizationPtr w;
-#ifdef Simox_USE_COIN_VISUALIZATION
-    w.reset(new CoinRrtWorkspaceVisualization(robot, cspace, "EndPoint"));
-#endif
+    RrtWorkspaceVisualizationPtr w(new RrtWorkspaceVisualization(robot, cspace, "EndPoint"));
 
     w->addTree(tree);
 #ifdef USE_BIRRT
@@ -196,14 +192,14 @@ void startRRTVisualization()
     w->addConfiguration(start, RrtWorkspaceVisualization::eGreen, 3.0f);
     w->addConfiguration(goal, RrtWorkspaceVisualization::eGreen, 3.0f);
 
-    VisualizationPtr visuRrt = w->getVisualization();
+    VisualizationSetPtr visuRrt = w->getVisualization();
 
-    std::vector<VisualizationPtr> visus;
+    std::vector<VisualizationSetPtr> visus;
     visus.push_back(visualisationRobot);
     visus.push_back(visualisationObstacle);
     visus.push_back(visuRrt);
 
-    show(visus);
+    return show(visus);
 }
 
 int main(int argc, char** argv)
@@ -213,9 +209,11 @@ int main(int argc, char** argv)
     win->resize(640,480);
     cout << " --- START --- " << endl;
 
+    int status = 1;
+
     try
     {
-        startRRTVisualization();
+        status = startRRTVisualization();
     }
     catch (VirtualRobot::VirtualRobotException v)
     {
@@ -232,5 +230,5 @@ int main(int argc, char** argv)
 
     cout << " --- END --- " << endl;
 
-    return 0;
+    return status;
 }

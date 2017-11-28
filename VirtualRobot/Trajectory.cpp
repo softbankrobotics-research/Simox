@@ -349,7 +349,7 @@ namespace VirtualRobot
         return path.at(pos);
     }
 
-    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::FramePtr r)
+    std::vector<Eigen::Matrix4f > Trajectory::createWorkspaceTrajectory(VirtualRobot::FramePtr r) const
     {
         VR_ASSERT(rns);
 
@@ -376,7 +376,7 @@ namespace VirtualRobot
             result.push_back(r->getGlobalPose());
         }
 
-		rns->setJointValues(jv);
+        rns->setJointValues(jv);
         return result;
     }
 
@@ -430,26 +430,27 @@ namespace VirtualRobot
         return rns;
     }
 
-    VisualizationNodePtr Trajectory::getVisualization(std::string visualizationFactoryName)
+    VisualizationSetPtr Trajectory::getVisualization(Visualization::Color colorNode, Visualization::Color colorLine, float nodeSize, float lineSize) const
     {
-        VisualizationFactoryPtr visualizationFactory;
+        std::vector<Eigen::Matrix4f> ws = createWorkspaceTrajectory();
 
-        if (visualizationFactoryName.empty())
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        std::vector<VisualizationPtr> visus;
+        for (auto& p : ws)
         {
-            visualizationFactory = VisualizationFactory::first(nullptr);
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationFactoryName, nullptr);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationFactoryName << endl;
-            return VisualizationNodePtr();
+            auto v = visualizationFactory->createSphere(nodeSize);
+            v->setColor(colorNode);
+            v->setGlobalPose(p);
+            visus.push_back(v);
         }
 
-        return visualizationFactory->createTrajectory(shared_from_this());
+        std::vector<Eigen::Matrix4f> from(ws.begin()+1, ws.end());
+        std::vector<Eigen::Matrix4f> to(ws.begin(), ws.end()-1);
+        auto visuLines = visualizationFactory->createLineSet(from, to, lineSize);
+        visuLines->setColor(colorLine);
+        visus.push_back(visuLines);
+
+        return visualizationFactory->createVisualisationSet(visus);
     }
 
     std::string Trajectory::getRobotName() const

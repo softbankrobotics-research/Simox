@@ -50,7 +50,7 @@ namespace VirtualRobot
         addTriangleWithFace(vertex1, vertex2, vertex3, normal);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, VisualizationFactory::Color color1, VisualizationFactory::Color color2, VisualizationFactory::Color color3)
+    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, Visualization::Color color1, Visualization::Color color2, Visualization::Color color3)
     {
         this->addVertex(vertex1);
         this->addVertex(vertex2);
@@ -91,9 +91,9 @@ namespace VirtualRobot
     void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
-        VisualizationFactory::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
-        VisualizationFactory::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
-        VisualizationFactory::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
+        Visualization::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
+        Visualization::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
+        Visualization::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
         addTriangleWithFace(vertex1, vertex2, vertex3, normal, color1, color2, color3);
     }
 
@@ -180,7 +180,7 @@ namespace VirtualRobot
     /**
      * This method adds a color to the internal data structure TriMeshModel::colors
      */
-    int TriMeshModel::addColor(const VisualizationFactory::Color& color)
+    int TriMeshModel::addColor(const Visualization::Color& color)
     {
         colors.push_back(color);
         return colors.size() - 1;
@@ -192,13 +192,13 @@ namespace VirtualRobot
      */
     int TriMeshModel::addColor(const Eigen::Vector4f& color)
     {
-        return addColor(VisualizationFactory::Color(color(0), color(1), color(2), color(3)));
+        return addColor(Visualization::Color(color(0), color(1), color(2), color(3)));
     }
 
     /**
      * This method converts and adds a color to the internal data structure TriMeshModel::materials
      */
-    int TriMeshModel::addMaterial(const VisualizationFactory::PhongMaterial& material)
+    int TriMeshModel::addMaterial(const Visualization::PhongMaterial& material)
     {
         materials.push_back(material);
         return materials.size() - 1;
@@ -470,7 +470,7 @@ namespace VirtualRobot
 
     }
 
-    void TriMeshModel::setColor(VisualizationFactory::Color color)
+    void TriMeshModel::setColor(Visualization::Color color)
     {
         colors.clear();
         for (size_t i=0; i<vertices.size(); i++)
@@ -670,6 +670,58 @@ namespace VirtualRobot
         }
 
         return flippedFacesCount;
+    }
+
+    VisualizationPtr TriMeshModel::getVisualization(bool showNormals, bool showLines)
+    {
+        std::vector<VisualizationPtr> visus;
+        const auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        visus.push_back(factory->createTriMeshModel(shared_from_this()));
+
+        std::vector<VisualizationPtr> normals;
+        if (showNormals)
+        {
+            static VisualizationPtr arrow = factory->createArrow(Eigen::Vector3f::UnitZ(), 30.0f, 1.5f);
+
+            normals.reserve(faces.size());
+
+            for (const auto& face : faces)
+            {
+                auto v = (vertices.at(face.id1) +
+                          vertices.at(face.id2) +
+                          vertices.at(face.id3)) / 3.f;
+                auto& normal = face.normal;
+                auto q = MathTools::getRotation(Eigen::Vector3f::UnitZ(), normal);
+                Eigen::Matrix4f gp = MathTools::quat2eigen4f(q);
+                gp.block<3, 1>(0, 3) = v;
+                auto arrowLocal = arrow->clone();
+                arrowLocal->setGlobalPose(gp);
+                normals.push_back(arrowLocal);
+            }
+        }
+        visus.push_back(factory->createVisualisationSet(normals));
+
+        std::vector<Eigen::Vector3f> linesFrom, linesTo;
+        if (showLines)
+        {
+            linesFrom.reserve(faces.size() * 3);
+            linesTo.reserve(faces.size() * 3);
+            for (const auto& face : faces)
+            {
+                linesFrom.push_back(vertices.at(face.id1));
+                linesTo.push_back(vertices.at(face.id2));
+
+                linesFrom.push_back(vertices.at(face.id2));
+                linesTo.push_back(vertices.at(face.id3));
+
+                linesFrom.push_back(vertices.at(face.id3));
+                linesTo.push_back(vertices.at(face.id1));
+            }
+        }
+        visus.push_back(factory->createLineSet(linesFrom, linesTo, 4.f));
+        visus.back()->setColor(Visualization::Color::Black());
+
+        return factory->createVisualisationSet(visus);
     }
 
 

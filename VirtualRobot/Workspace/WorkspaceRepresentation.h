@@ -258,7 +258,7 @@ namespace VirtualRobot
         /*!
             Returns the maximum that can be achieved by calling sumAngleReachabilities()
         */
-        virtual int getMaxSummedAngleReachablity();
+        virtual int getMaxSummedAngleReachablity() const;
 
         /*!
             Returns true if for the given 3d position is at least one entry >0
@@ -296,6 +296,8 @@ namespace VirtualRobot
             Eigen::MatrixXi entries;
             float minBounds[2]; // in global coord system
             float maxBounds[2]; // in global coord system
+
+            virtual VisualizationPtr getVisualization(const ColorMap& cm, const Eigen::Vector3f &normal, float maxEntry) const;
         };
         typedef std::shared_ptr<WorkspaceCut2D> WorkspaceCut2DPtr;
 
@@ -422,6 +424,8 @@ namespace VirtualRobot
         bool getPoseFromVoxel(unsigned int x[], float v[]) const;
 
         virtual VolumeInfo computeVolumeInformation();
+
+        VisualizationPtr getVisualization(const ColorMapPtr &cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10) const;
     protected:
 
         /*!

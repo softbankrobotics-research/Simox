@@ -3,7 +3,6 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 #include <string>
@@ -30,7 +29,9 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filename);
     JacobiWindow rw(filename);
 
-    rw.main();
+    rw.show();
+    rw.raise();
 
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
