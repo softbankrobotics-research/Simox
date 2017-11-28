@@ -202,8 +202,6 @@ namespace VirtualRobot
 
             Eigen::Vector3f p;  // point
             Eigen::Vector3f n;  // normal (unit length)
-
-            virtual VisualizationPtr getVisualization(float extend, bool gird = false) const;
         };
 
         //! Create a floor plane
@@ -572,8 +570,6 @@ namespace VirtualRobot
         {
             std::vector<Eigen::Vector2f> vertices;
             std::vector<Segment2D> segments;
-
-            VisualizationPtr getVisualization(const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
         };
         typedef std::shared_ptr<ConvexHull2D> ConvexHull2DPtr;
 

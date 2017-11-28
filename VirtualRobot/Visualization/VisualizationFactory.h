@@ -76,7 +76,19 @@ namespace VirtualRobot
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;
         virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr& model) const;
         virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f>& points) const;
-        virtual VisualizationPtr createGrid(float extend, const std::string& textureFile = "") const;
+        inline VisualizationPtr createPlane(const MathTools::Plane& p, float extend, const std::string& texture = "") const
+        {
+            return createPlane(p.p, p.n, extend, texture);
+        }
+        virtual VisualizationPtr createPlane(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend, const std::string& texture = "") const;
+        inline VisualizationPtr createGrid(const MathTools::Plane& p, float extend) const
+        {
+            return createPlane(p, extend, "images/Floor.png");
+        }
+        inline VisualizationPtr createGrid(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend) const
+        {
+            return createPlane(point, normal, extend, "images/Floor.png");
+        }
         virtual VisualizationPtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f) const;
         virtual VisualizationPtr createText(const std::string& text, bool billboard = false, float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) const;
         virtual VisualizationPtr createCone(float baseRadius, float height) const;
@@ -90,6 +102,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createEllipse(float x, float y, float z) const;
 
         virtual VisualizationPtr createContactVisualization(const VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) const;
+        virtual VisualizationPtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr& hull, const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
 
         /*!
             Create an empty VisualizationNode.

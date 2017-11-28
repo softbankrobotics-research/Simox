@@ -73,8 +73,9 @@ namespace VirtualRobot
         //virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f> & points, float radius) const override;
         virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr &model) const override;
         static SoNode* createTriMeshModelCoin(const TriMeshModelPtr &model);
-        virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f> &points) const;
-        virtual VisualizationPtr createGrid(float extend, const std::string& textureFile) const override;
+        virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f> &points) const override;
+        virtual VisualizationPtr createPlane(const Eigen::Vector3f &point, const Eigen::Vector3f &normal, float extend, const std::string& texture) const override;
+        static VisualizationPtr createTexturedPlane(float extend, const std::string& texture);
         virtual VisualizationPtr createArrow(const Eigen::Vector3f &n, float length, float width) const override;
         virtual VisualizationPtr createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const override;
         virtual VisualizationPtr createCone(float baseRadius, float height) const override;

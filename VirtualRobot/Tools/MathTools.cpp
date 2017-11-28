@@ -1910,31 +1910,6 @@ namespace VirtualRobot
         return r;
     }
 
-    VisualizationPtr MathTools::Plane::getVisualization(float extend, bool gird) const
-    {
-        VisualizationPtr visu = gird ? VisualizationFactory::getGlobalVisualizationFactory()->createGrid(extend) :
-                                       VisualizationFactory::getGlobalVisualizationFactory()->createBox(extend, 1.f, extend);
-        auto r = getRotation(Eigen::Vector3f::UnitZ(), n);
-        Eigen::Matrix4f gp = MathTools::quat2eigen4f(r);
-        gp.block<3, 1>(0, 3) = p;
-        visu->setGlobalPose(gp);
-        return visu;
-    }
-
-    VisualizationPtr MathTools::ConvexHull2D::getVisualization(const Plane &p, const Eigen::Vector3f &offset) const
-    {
-        std::vector<Eigen::Vector3f> cvHull3d;
-
-        for (size_t u = 0; u < vertices.size(); u++)
-        {
-            Eigen::Vector3f pt3d = MathTools::planePoint3D(vertices[u], p);
-            pt3d += offset;
-            cvHull3d.push_back(pt3d);
-        }
-
-        return VisualizationFactory::getGlobalVisualizationFactory()->createPolygon(cvHull3d);
-    }
-
 
 } // namespace
 

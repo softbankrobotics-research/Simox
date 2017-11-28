@@ -10,6 +10,7 @@
 #include "VirtualRobot/Model/Nodes/ModelLink.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 //#ifdef USE_NLOPT
 //#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -49,7 +50,7 @@ stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string
     setupUI();
 
     MathTools::Plane p =  MathTools::getFloorPlane();
-    auto pv = p.getVisualization(10000.0f, false);
+    auto pv = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createGrid(p, 10000.0f);
     viewer->addVisualization("floor", pv);
 
     loadRobot();
@@ -249,7 +250,7 @@ void stabilityWindow::updateSupportVisu()
         }
 
         MathTools::ConvexHull2DPtr cv = MathTools::createConvexHull2D(points2D);
-        auto sv = cv->getVisualization(p, Eigen::Vector3f(0, 0, 2.0f));
+        auto sv = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createConvexHull2DVisualization(cv, p, Eigen::Vector3f(0, 0, 2.0f));
         sv->setColor(Visualization::Color::Blue());
         viewer->addVisualization("support", sv);
     }

@@ -201,7 +201,7 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createGrid(float, const std::string&) const
+    VisualizationPtr VisualizationFactory::createPlane(const Eigen::Vector3f &, const Eigen::Vector3f &, float, const std::string &) const
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -230,6 +230,20 @@ namespace VirtualRobot
     {
         //TODO implement using primitives
         return VisualizationPtr(new DummyVisualization);
+    }
+
+    VisualizationPtr VisualizationFactory::createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr &hull, const MathTools::Plane &p, const Eigen::Vector3f &offset) const
+    {
+        std::vector<Eigen::Vector3f> cvHull3d;
+
+        for (size_t u = 0; u < hull->vertices.size(); u++)
+        {
+            Eigen::Vector3f pt3d = MathTools::planePoint3D(hull->vertices[u], p);
+            pt3d += offset;
+            cvHull3d.push_back(pt3d);
+        }
+
+        return VisualizationFactory::getGlobalVisualizationFactory()->createPolygon(cvHull3d);
     }
 
     VisualizationPtr VisualizationFactory::createVisualization() const
