@@ -161,9 +161,11 @@ void showRobotWindow::render()
     viewer->clearLayer(robotLayer);
     ModelLink::VisualizationType visuType = (UI.radioBtnCollisionVisu->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    auto visu = robot->getVisualization(visuType);
-    viewer->addVisualization("robotLayer", visu);
-    robot->setupVisualization(!UI.radioBtnNoVisu->isChecked());
+    if (!UI.radioBtnNoVisu->isChecked())
+    {
+        auto visu = robot->getVisualization(visuType);
+        viewer->addVisualization(robotLayer, visu);
+    }
 }
 
 void showRobotWindow::showSensors()
