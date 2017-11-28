@@ -45,7 +45,7 @@ namespace VirtualRobot
         }
         if (!factory)
         {
-            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
+            VR_ERROR << "Could not create VisualizationFactory with type '" << visualizationType << "'." << endl;
             return;
         }
 
@@ -72,33 +72,7 @@ namespace VirtualRobot
 
     VisualizationNodePtr ModelStructure::createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory)
     {
-        VisualizationNodePtr v;
-        if (joint->getType() == ModelNode::ModelNodeType::JointRevolute)
-        {
-            ModelJointRevolutePtr revoluteJoint = std::static_pointer_cast<ModelJointRevolute>(joint);
-            Eigen::Vector3f rotationAxis = revoluteJoint->getJointRotationAxisInJointCoordSystem();
-
-            v = factory->createCylinder(5, 15);
-
-            // rotate the ellipse back to its initial orientation.
-            Eigen::Matrix4f rotation = revoluteJoint->getGlobalPose().inverse();
-            rotation.block<3,1>(0,3) = Eigen::Vector3f::Zero();
-            factory->applyDisplacement(v, rotation);
-            // here , the ellipse is now aligned parallel to the global y-axis.
-            // Now rotate it such that it is aligned parallel to the joint's rotation axis.
-            rotation.setIdentity();
-            Eigen::Vector3f alignment;
-            alignment(0) = rotationAxis(1);
-            alignment(1) = rotationAxis(2);
-            alignment(2) = rotationAxis(0);
-            Eigen::Affine3f transform(Eigen::AngleAxisf(float(M_PI / 2.0), alignment));
-            rotation = transform * rotation;
-            factory->applyDisplacement(v, rotation);
-        }
-        else
-        {
-            // wip
-        }
+        VisualizationNodePtr v = factory->createSphere(7.5f);
         return v;
     }
 

@@ -50,10 +50,10 @@ public slots:
     void attachStructure(bool attach);
     void attachFrames(bool attach);
     void showSensors();
-    void closeHand();
-    void openHand();
-    void selectEEF(int nr);
-    void selectPreshape(int nr);
+    void closeEEF();
+    void openEEF();
+    void selectEEF();
+    void selectPreshape();
     void selectRobot();
     void attachPhysicsInformation(bool attach);
     void exportVRML();

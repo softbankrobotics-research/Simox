@@ -60,17 +60,18 @@ void showRobotWindow::setupUI()
 
     updateModelNodeSets();
     updateModelNodeControls();
+    updateEEFBox();
     displayTriangles();
 
     connect(UI.btnLoadRobot, SIGNAL(clicked()), this, SLOT(selectRobot()));
     connect(UI.btnResetRobot, SIGNAL(clicked()), this, SLOT(resetRobot()));
 
-    connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
+    connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
     connect(UI.ExportVRML20, SIGNAL(clicked()), this, SLOT(exportVRML()));
     connect(UI.ExportXML, SIGNAL(clicked()), this, SLOT(exportXML()));
-    connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openHand()));
-    connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
-    connect(UI.comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape(int)));
+    connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
+    connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF()));
+    connect(UI.comboBoxEndEffectorPS, SIGNAL(activated(int)), this, SLOT(selectPreshape()));
 
     connect(UI.radioBtnCollisionVisu, SIGNAL(clicked()), this, SLOT(render()));
     connect(UI.radioBtnFullVisu, SIGNAL(clicked()), this, SLOT(render()));
@@ -255,7 +256,6 @@ int showRobotWindow::main()
 
 void showRobotWindow::quit()
 {
-    std::cout << "ShowRobotWindow: Closing" << std::endl;
     this->close();
     viewer->stop();
 }
@@ -275,6 +275,7 @@ void showRobotWindow::selectRobot()
         loadRobot();
         updateModelNodeSets();
         updateModelNodeControls();
+        updateEEFBox();
         render();
     }
 }
@@ -284,7 +285,6 @@ void showRobotWindow::selectRobot()
 void showRobotWindow::loadRobot()
 {
     VR_INFO << "Loading Robot from " << robotFilename << endl;
-    currentEEF.reset();
     robot.reset();
 
     try
@@ -363,14 +363,14 @@ void showRobotWindow::updateModelNodeSets()
 {
     // joint sets
     UI.cBoxJointSets->clear();
-    UI.cBoxJointSets->addItem("All");
+    UI.cBoxJointSets->addItem("<All>");
     for (auto & js : robot->getJointSets())
     {
         UI.cBoxJointSets->addItem(QString::fromStdString(js->getName()));
     }
     // link sets
     UI.cBoxLinkSets->clear();
-    UI.cBoxLinkSets->addItem("All");
+    UI.cBoxLinkSets->addItem("<All>");
     for (auto & ls : robot->getLinkSets())
     {
         UI.cBoxLinkSets->addItem(QString::fromStdString(ls->getName()));
@@ -415,69 +415,71 @@ void showRobotWindow::attachFrames(bool attach)
     render();
 }
 
-void showRobotWindow::closeHand()
+void showRobotWindow::closeEEF()
 {
-    if (currentEEF)
+    if (robot->hasEndEffector(UI.comboBoxEndEffector->currentText().toStdString()))
     {
+        EndEffectorPtr currentEEF = robot->getEndEffector(UI.comboBoxEndEffector->currentText().toStdString());
         currentEEF->closeActors();
     }
 }
 
-void showRobotWindow::openHand()
+void showRobotWindow::openEEF()
 {
-    if (currentEEF)
+    if (robot->hasEndEffector(UI.comboBoxEndEffector->currentText().toStdString()))
     {
-        currentEEF->openActors();
+        EndEffectorPtr currentEEF = robot->getEndEffector(UI.comboBoxEndEffector->currentText().toStdString());
+        if (currentEEF->hasPreshape(UI.comboBoxEndEffectorPS->currentText().toStdString()))
+        {
+            robot->setConfig(currentEEF->getPreshape(UI.comboBoxEndEffectorPS->currentText().toStdString()));
+        }
+        else
+        {
+            currentEEF->openActors();
+        }
     }
 }
 
-void showRobotWindow::selectEEF(int nr)
+void showRobotWindow::selectEEF()
 {
-    cout << "Selecting EEF nr " << nr << endl;
-
-     UI.comboBoxEndEffectorPS->clear();
-     currentEEF.reset();
-
-    if (nr < 0 || nr >= (int)eefs.size())
-    {        
+    UI.comboBoxEndEffectorPS->clear();
+    if (!robot->hasEndEffector(UI.comboBoxEndEffector->currentText().toStdString()))
+    {
         return;
     }
-    currentEEF = eefs[nr];
 
+    EndEffectorPtr currentEEF = robot->getEndEffector(UI.comboBoxEndEffector->currentText().toStdString());
     std::vector<std::string> ps = currentEEF->getPreshapes();
-    UI.comboBoxEndEffectorPS->addItem(QString("none"));
+    UI.comboBoxEndEffectorPS->addItem(QString("<none>"));
     for (unsigned int i = 0; i < ps.size(); i++)
     {
         UI.comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
     }
 }
 
-void showRobotWindow::selectPreshape(int nr)
+void showRobotWindow::selectPreshape()
 {
-    cout << "Selecting EEF preshape nr " << nr << endl;
-
-    if (!currentEEF || nr==0)
+    if (!robot->hasEndEffector(UI.comboBoxEndEffector->currentText().toStdString()))
+    {
         return;
-
-    nr--; // first entry is "none"
-
-    std::vector<std::string> ps = currentEEF->getPreshapes();
-    if (nr < 0 || nr >= (int)ps.size())
+    }
+    EndEffectorPtr currentEEF = robot->getEndEffector(UI.comboBoxEndEffector->currentText().toStdString());
+    if (!currentEEF->hasPreshape(UI.comboBoxEndEffectorPS->currentText().toStdString()))
     {
         return;
     }
 
-    VirtualRobot::RobotConfigPtr c = currentEEF->getPreshape(ps.at(nr));
-
-    robot->setConfig(c);
+    robot->setConfig(currentEEF->getPreshape(UI.comboBoxEndEffectorPS->currentText().toStdString()));
 }
 
 void showRobotWindow::updateEEFBox()
 {
-    UI.comboBoxEndEffector->clear();
+    if (!robot) return;
 
-    for (unsigned int i = 0; i < eefs.size(); i++)
+    UI.comboBoxEndEffector->clear();
+    for (auto && eef : robot->getEndEffectors())
     {
-        UI.comboBoxEndEffector->addItem(QString(eefs[i]->getName().c_str()));
+        UI.comboBoxEndEffector->addItem(QString::fromStdString(eef->getName()));
     }
+    selectEEF();
 }
