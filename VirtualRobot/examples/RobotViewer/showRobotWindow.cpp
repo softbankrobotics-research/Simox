@@ -86,6 +86,7 @@ void showRobotWindow::setupUI()
     connect(UI.listLinks, SIGNAL(currentTextChanged(QString)), this, SLOT(displayTriangles()));
     connect(UI.radioBtnCollisionVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
     connect(UI.radioBtnFullVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
+    connect(UI.radioBtnNoVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
 
     render();
 }
@@ -138,6 +139,12 @@ void showRobotWindow::displayTriangles()
         text1 = "Total: " + QString::number(trisAllCol);
         text2 = UI.cBoxLinkSets->currentText() + ": " + QString::number(trisRNSCol);
         text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": " + QString::number(trisJointCol) : "";
+    }
+    else if (UI.radioBtnNoVisu->isChecked())
+    {
+        text1 = "Total: 0";
+        text2 = UI.cBoxLinkSets->currentText() + ": 0";
+        text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": 0" : "";
     }
     else
     {
