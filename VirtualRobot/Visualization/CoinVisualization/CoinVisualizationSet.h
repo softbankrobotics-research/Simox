@@ -72,16 +72,21 @@ namespace VirtualRobot
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
 
+        virtual TriMeshModelPtr getTriMeshModel() const override;
+
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
     protected:
+        virtual void createTriMeshModel() override;
+
         SoSeparator* setNode;
         std::string filename;
         bool usedBoundingBox;
         std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+        TriMeshModelPtr triMeshModel;
     };
 
     typedef std::shared_ptr<CoinVisualizationSet> CoinVisualizationSetPtr;

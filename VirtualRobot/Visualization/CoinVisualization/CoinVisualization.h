@@ -44,6 +44,7 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization, public CoinElement
     {
         friend class CoinVisualizationFactory;
+        friend class CoinVisualizationSet;
     protected:
         CoinVisualization(SoNode* visuNode);
     public:
@@ -108,15 +109,6 @@ namespace VirtualRobot
         virtual BoundingBox getBoundingBox() const override;
 
         virtual TriMeshModelPtr getTriMeshModel() const override;
-        /**
-         * This method constructs an instance of TriMeshModel and stores it in
-         * CoinVisualizationNode::triMeshModel.
-         * If CoinVisualizationMode::visualization is invalid VirtualRobotException
-         * is thrown.
-         * Otherwise CoinVisualizationNode::InventorTriangleCB() is called on the
-         * Inventor graph stored in CoinVisualizationNode::visualization.
-         */
-        virtual void createTriMeshModel() override;
 
         virtual int getNumFaces() const override;
 
@@ -130,6 +122,15 @@ namespace VirtualRobot
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
     protected:
+        /**
+         * This method constructs an instance of TriMeshModel and stores it in
+         * CoinVisualizationNode::triMeshModel.
+         * If CoinVisualizationMode::visualization is invalid VirtualRobotException
+         * is thrown.
+         * Otherwise CoinVisualizationNode::InventorTriangleCB() is called on the
+         * Inventor graph stored in CoinVisualizationNode::visualization.
+         */
+        virtual void createTriMeshModel() override;
         //virtual void setIsInVisualizationSet(bool inSet) override;
 
         static void InventorTriangleCB(void* data, SoCallbackAction* action,

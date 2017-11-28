@@ -74,10 +74,6 @@ namespace VirtualRobot
 
         virtual BoundingBox getBoundingBox() const;
 
-        virtual TriMeshModelPtr getTriMeshModel() const;
-
-        virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const;
-
         virtual int getNumFaces() const;
 
         virtual void print() const;

@@ -93,7 +93,7 @@ namespace VirtualRobot
 
         virtual BoundingBox getBoundingBox() const override;
 
-        virtual TriMeshModelPtr getTriMeshModel() const override;
+        virtual TriMeshModelPtr getTriMeshModel() const override = 0;
 
         virtual int getNumFaces() const override;
 
@@ -137,6 +137,8 @@ namespace VirtualRobot
         virtual void setFilename(const std::string &filename, bool boundingBox) override;
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+
+        virtual TriMeshModelPtr getTriMeshModel() const override;
 
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;

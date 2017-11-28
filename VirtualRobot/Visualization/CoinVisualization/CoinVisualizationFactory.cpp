@@ -439,6 +439,7 @@ namespace VirtualRobot
 
     SoNode *CoinVisualizationFactory::createTriMeshModelCoin(const TriMeshModelPtr &model)
     {
+        VR_ASSERT(model);
         const unsigned long numStrips = model->faces.size();
         const std::vector<int32_t> numVertices(numStrips, 3);
 

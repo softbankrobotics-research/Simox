@@ -7,10 +7,15 @@
 
 #include "CoinVisualizationSet.h"
 #include "CoinVisualizationFactory.h"
+#include "CoinVisualization.h"
+#include "../../VirtualRobotException.h"
+#include "../TriMeshModel.h"
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoUnits.h>
+#include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/nodes/SoShape.h>
 
 #include <algorithm>
 
@@ -26,7 +31,8 @@ namespace VirtualRobot
         : VisualizationSet(visualizations),
           setNode(new SoSeparator),
           filename(""),
-          usedBoundingBox(false)
+          usedBoundingBox(false),
+          triMeshModel(nullptr)
     {
         setNode->ref();
         for (auto& visu : this->getVisualizations())
@@ -34,6 +40,7 @@ namespace VirtualRobot
             auto visuCoin = visualization_cast<CoinElement>(visu);
             setNode->addChild(visuCoin->getMainNode());
         }
+        createTriMeshModel();
     }
 
     CoinVisualizationSet::~CoinVisualizationSet()
@@ -55,6 +62,7 @@ namespace VirtualRobot
             setNode->addChild(visuCoin->getMainNode());
             VisualizationSet::addVisualization(visu);
         }
+        createTriMeshModel();
     }
 
     bool CoinVisualizationSet::removeVisualization(const VisualizationPtr &visu)
@@ -63,6 +71,7 @@ namespace VirtualRobot
         {
             auto visuCoin = visualization_cast<CoinElement>(visu);
             setNode->removeChild(visuCoin->getMainNode());
+            createTriMeshModel();
             return true;
         }
         return false;
@@ -166,6 +175,30 @@ namespace VirtualRobot
     bool CoinVisualizationSet::usedBoundingBoxVisu() const
     {
         return usedBoundingBox;
+    }
+
+    TriMeshModelPtr CoinVisualizationSet::getTriMeshModel() const
+    {
+        VR_ASSERT(triMeshModel);
+        return triMeshModel;
+    }
+
+    void CoinVisualizationSet::createTriMeshModel()
+    {
+        THROW_VR_EXCEPTION_IF(!getMainNode(), "CoinVisualizationNode::createTriMeshModel(): no Coin model present!");
+
+        if (triMeshModel)
+        {
+            triMeshModel->clear();
+        }
+        else
+        {
+            triMeshModel.reset(new TriMeshModel());
+        }
+
+        SoCallbackAction ca;
+        ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualization::InventorTriangleCB, triMeshModel.get());
+        ca.apply(getMainNode());
     }
 
     std::string CoinVisualizationSet::toXML(const std::string &basePath, int tabs) const

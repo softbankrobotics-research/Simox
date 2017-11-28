@@ -234,16 +234,6 @@ namespace VirtualRobot
         return b;
     }
 
-    TriMeshModelPtr VisualizationGroup::getTriMeshModel() const
-    {
-        // TODO
-    }
-
-    std::vector<Primitive::PrimitivePtr> VisualizationGroup::getPrimitives() const
-    {
-        // TODO
-    }
-
     int VisualizationGroup::getNumFaces() const
     {
         int n = 0;

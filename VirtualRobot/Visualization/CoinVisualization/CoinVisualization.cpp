@@ -581,9 +581,6 @@ namespace VirtualRobot
         }
 
         SbMatrix mm = action->getModelMatrix();
-        SbMatrix scale;
-        scale.setScale(1000.0f); // simox operates in mm, coin3d in m
-        mm = mm.multRight(scale);
         SbVec3f triangle[3];
         mm.multVecMatrix(v1->getPoint(), triangle[0]);
         mm.multVecMatrix(v2->getPoint(), triangle[1]);

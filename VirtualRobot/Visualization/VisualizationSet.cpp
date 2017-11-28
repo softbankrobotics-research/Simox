@@ -8,6 +8,7 @@
 #include "VisualizationSet.h"
 #include "Visualization.h"
 #include "VisualizationFactory.h"
+#include "TriMeshModel.h"
 
 namespace VirtualRobot
 {
@@ -153,17 +154,18 @@ namespace VirtualRobot
 
     std::vector<Primitive::PrimitivePtr> VisualizationSet::getPrimitives() const
     {
-        return VisualizationGroup::getPrimitives();
+        std::vector<Primitive::PrimitivePtr> ret;
+        for (const auto& visu : visualizations)
+        {
+            auto p = visu->getPrimitives();
+            ret.insert(ret.end(), p.begin(), p.end());
+        }
+        return ret;
     }
 
     BoundingBox VisualizationSet::getBoundingBox() const
     {
         return VisualizationGroup::getBoundingBox();
-    }
-
-    TriMeshModelPtr VisualizationSet::getTriMeshModel() const
-    {
-        return VisualizationGroup::getTriMeshModel();
     }
 
     int VisualizationSet::getNumFaces() const
@@ -282,6 +284,11 @@ namespace VirtualRobot
     bool DummyVisualizationSet::usedBoundingBoxVisu() const
     {
         return usedBoundingBox;
+    }
+
+    TriMeshModelPtr DummyVisualizationSet::getTriMeshModel() const
+    {
+        return TriMeshModelPtr(new TriMeshModel);
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const
