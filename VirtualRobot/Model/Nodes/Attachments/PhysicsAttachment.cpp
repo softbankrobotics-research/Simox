@@ -145,6 +145,7 @@ namespace VirtualRobot
                 }
 
                 visuNodeInertia = factory->createEllipse(xl, yl, zl);
+                visuNodeInertia->setTransparency(0.5f);
                 // TODO show axes
                 // visuNodeInertia = factory->createEllipse(xl, yl, zl, true, axesSize, axesSize * 2.0f);
 
