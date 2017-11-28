@@ -184,9 +184,9 @@ Eigen::Vector3f TSRConstraint::getPositionError()
     Eigen::Vector3f current = T.block<3,1>(0,3);
     Eigen::Vector3f target;
     target <<
-        ((current.x() <= bounds(0, 0))? bounds(0, 0) : bounds(0, 1)),
-        ((current.y() <= bounds(1, 0))? bounds(1, 0) : bounds(1, 1)),
-        ((current.z() <= bounds(2, 0))? bounds(2, 0) : bounds(2, 1));
+        ((current.x() <= bounds(0, 0)) ? bounds(0,0) : (current.x() >= bounds(0,1) ? bounds(0,1) : current.x())),
+        ((current.y() <= bounds(1, 0)) ? bounds(1,0) : (current.y() >= bounds(1,1) ? bounds(1,1) : current.y())),
+        ((current.z() <= bounds(2, 0)) ? bounds(2,0) : (current.z() >= bounds(2,1) ? bounds(2,1) : current.z()));
 
     return current - target;
 }
@@ -202,9 +202,9 @@ Eigen::Vector3f TSRConstraint::getOrientationError()
 
     Eigen::Vector3f target;
     target <<
-        ((current.x() <= bounds(3, 0))? bounds(3, 0) : bounds(3, 1)),
-        ((current.y() <= bounds(4, 0))? bounds(4, 0) : bounds(4, 1)),
-        ((current.z() <= bounds(5, 0))? bounds(5, 0) : bounds(5, 1));
+        ((current.x() <= bounds(3, 0)) ? bounds(3,0) : (current.x() >= bounds(3,1) ? bounds(3,1) : current.x())),
+        ((current.y() <= bounds(4, 0)) ? bounds(4,0) : (current.y() >= bounds(4,1) ? bounds(4,1) : current.y())),
+        ((current.z() <= bounds(5, 0)) ? bounds(5,0) : (current.z() >= bounds(5,1) ? bounds(5,1) : current.z()));
 
     return current - target;
 }
