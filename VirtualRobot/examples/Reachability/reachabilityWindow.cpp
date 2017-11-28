@@ -4,9 +4,10 @@
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/Workspace/Manipulability.h"
 #include "VirtualRobot/IK/PoseQualityExtendedManipulability.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/Visualization/ColorMap.h>
 #include <Gui/ViewerFactory.h>
 
 #include <QFileDialog>
@@ -161,7 +162,7 @@ void reachabilityWindow::reachVisu()
     }
 
     viewer->clearLayer(wsVisuLayerName);
-    VisualizationNodePtr wsVisuNode;
+    VisualizationPtr wsVisuNode;
 
     if (UI.checkBoxReachabilityVisu->checkState() == Qt::Checked)
     {
@@ -191,7 +192,7 @@ void reachabilityWindow::reachVisu()
         reachSpace->getWorkspaceExtends(minBB, maxBB);
         float zDist = maxBB(2) - minBB(2);
         float maxZ =  minBB(2) + heightPercent*zDist - reachSpace->getDiscretizeParameterTranslation();
-        wsVisuNode = VisualizationFactory::getGlobalVisualizationFactory()->createReachabilityVisualization(reachSpace, ColorMapPtr(new ColorMap(VirtualRobot::ColorMap::eHot)), true, maxZ);
+        wsVisuNode = reachSpace->getVisualization(ColorMapPtr(new ColorMap(VirtualRobot::ColorMap::type::eHot)), true, maxZ);
 
     } else
     {
@@ -200,7 +201,7 @@ void reachabilityWindow::reachVisu()
     }
     if (wsVisuNode)
     {
-        viewer->addVisualization(wsVisuLayerName, "ws-node", wsVisuNode);
+        viewer->addVisualization(wsVisuLayerName, wsVisuNode);
     }
 }
 
@@ -227,14 +228,8 @@ void reachabilityWindow::buildVisu()
 
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayerName, "robot-node", visualization);
+        viewer->addVisualization(robotVisuLayerName, visualization);
     }
-}
-
-int reachabilityWindow::main()
-{
-    viewer->start(this);
-    return 0;
 }
 
 
@@ -242,7 +237,6 @@ void reachabilityWindow::quit()
 {
     std::cout << "reachabilityWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void reachabilityWindow::updateRNSBox()

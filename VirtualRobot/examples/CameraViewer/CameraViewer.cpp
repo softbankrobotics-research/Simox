@@ -21,8 +21,6 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    cout << " --- START --- " << endl;
-
     //std::string cam1Name("DepthCameraSim");
     std::string cam1Name("EyeRightCameraSim");
     std::string cam2Name("EyeLeftCameraSim");
@@ -39,10 +37,12 @@ int main(int argc, char* argv[])
         cam2Name = VirtualRobot::RuntimeEnvironment::getValue("cam2");
     }
 
-    cout << "Robot file:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
+    VR_INFO << "Robot file:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
     showCamWindow rw(filename, cam1Name, cam2Name);
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
 
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

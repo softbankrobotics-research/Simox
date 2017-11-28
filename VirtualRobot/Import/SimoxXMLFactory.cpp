@@ -16,7 +16,7 @@
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
 #include "../Visualization/VisualizationFactory.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "../Model/ModelFactory.h"
 
@@ -375,7 +375,7 @@ namespace VirtualRobot
 
     ModelLinkPtr SimoxXMLFactory::processLinkNode(const std::string& robotNodeName,
         RobotPtr robot,
-        VisualizationNodePtr visualizationNode,
+        VisualizationPtr visualizationNode,
         CollisionModelPtr collisionModel,
         ModelLink::Physics& physics,
         const Eigen::Matrix4f& transformationMatrix
@@ -722,7 +722,7 @@ namespace VirtualRobot
         // collision information
         bool colProcessed = false;
 
-        VisualizationNodePtr visualizationNode;
+        VisualizationPtr visualizationNode;
         CollisionModelPtr collisionModel;
         RobotNodePtr robotNode;
         ModelLink::Physics physics;
@@ -752,14 +752,14 @@ namespace VirtualRobot
                         std::string colModelName = robotNodeName;
                         colModelName += "_VISU_ColModel";
                         // clone model
-                        VisualizationNodePtr visualizationNodeClone = visualizationNode->clone();
+                        VisualizationPtr visualizationNodeClone = visualizationNode->clone();
                         collisionModel.reset(new CollisionModel(visualizationNodeClone, colModelName, CollisionCheckerPtr()));
                         colProcessed = true;
                     }
                 }
                 else if (loadMode == ModelIO::eCollisionModel)
                 {
-                    VisualizationNodePtr visualizationNodeCM = checkUseAsColModel(node, robotNodeName, basePath);
+                    VisualizationPtr visualizationNodeCM = checkUseAsColModel(node, robotNodeName, basePath);
 
                     if (visualizationNodeCM)
                     {
@@ -845,7 +845,7 @@ namespace VirtualRobot
     }
 
 
-    VisualizationNodePtr SimoxXMLFactory::checkUseAsColModel(rapidxml::xml_node<>* visuXMLNode, const std::string& /*robotNodeName*/, const std::string& basePath)
+    VisualizationPtr SimoxXMLFactory::checkUseAsColModel(rapidxml::xml_node<>* visuXMLNode, const std::string& /*robotNodeName*/, const std::string& basePath)
     {
         bool enableVisu = true;
         //bool coordAxis = false;
@@ -855,7 +855,7 @@ namespace VirtualRobot
         std::string visuFileType = "";
         std::string visuFile = "";
         rapidxml::xml_attribute<>* attr;
-        VisualizationNodePtr visualizationNode;
+        VisualizationPtr visualizationNode;
 
         if (!visuXMLNode)
         {
@@ -890,7 +890,7 @@ namespace VirtualRobot
 
                 if (visualizationFactory)
                 {
-                    visualizationNode = visualizationFactory->getVisualizationFromFile(visuFile);
+                    visualizationNode = visualizationFactory->createVisualizationFromFile(visuFile);
                 }
                 else
                 {

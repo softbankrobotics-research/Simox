@@ -79,6 +79,8 @@ namespace VirtualRobot
         return ss.str();
     }
 
+
+
     ModelNodePtr ModelJointFixed::_clone(ModelPtr newModel, float scaling)
     {
         ModelJointFixedPtr result(new ModelJointFixed(newModel, name, getStaticTransformation()));

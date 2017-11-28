@@ -26,7 +26,7 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/Tools/RuntimeEnvironment.h"
 
 #include <string>
@@ -42,7 +42,6 @@ using namespace VirtualRobot;
 int main(int argc, char* argv[])
 {
     VirtualRobot::init(argc, argv, "Constrained IK Demo");
-    std::cout << " --- START --- " << std::endl;
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
@@ -50,11 +49,12 @@ int main(int argc, char* argv[])
 
     std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
-    std::cout << "Using robot file " << filename << std::endl;
+    VR_INFO << "Using robot file " << filename << std::endl;
 
     ConstrainedIKWindow rw(filename);
+    rw.show();
+    rw.raise();
 
-    rw.main();
-
-    return 0;
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

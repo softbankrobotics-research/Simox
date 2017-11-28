@@ -1,6 +1,8 @@
 #include "SupportPolygon.h"
 #include "../Model/Nodes/ModelLink.h"
 #include "../CollisionDetection/CollisionChecker.h"
+#include <VirtualRobot/Visualization/Visualization.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 using namespace std;
 
@@ -60,12 +62,12 @@ namespace VirtualRobot
         return suportPolygonFloor;
     }
 
-    VirtualRobot::MathTools::ConvexHull2DPtr SupportPolygon::getSupportPolygon2D()
+    VirtualRobot::MathTools::ConvexHull2DPtr SupportPolygon::getSupportPolygon2D() const
     {
         return suportPolygonFloor;
     }
 
-    VirtualRobot::MathTools::Plane SupportPolygon::getFloorPlane()
+    VirtualRobot::MathTools::Plane SupportPolygon::getFloorPlane() const
     {
         return floor;
     }
@@ -179,6 +181,41 @@ namespace VirtualRobot
     VirtualRobot::LinkSetPtr SupportPolygon::getContactModels()
     {
         return contactModels;
+    }
+
+    VisualizationPtr SupportPolygon::getVisualization() const
+    {
+        auto visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        std::vector<VisualizationPtr> visus;
+
+        MathTools::ConvexHull2DPtr convexHull = getSupportPolygon2D();
+        MathTools::Plane floor = getFloorPlane();
+
+        if (convexHull)
+        {
+            std::vector<Eigen::Vector3f> from;
+            std::vector<Eigen::Vector3f> to;
+            for (size_t i = 0; i < convexHull->segments.size(); i++)
+            {
+                int i1 = convexHull->segments[i].id1;
+                int i2 = convexHull->segments[i].id2;
+
+                from.emplace_back(convexHull->vertices[i1].x(), convexHull->vertices[i1].y(), floor.p.z());
+                to.emplace_back(convexHull->vertices[i2].x(), convexHull->vertices[i2].y(), floor.p.z());
+            }
+
+            visus.push_back(visualizationFactory->createLineSet(from, to, 3));
+
+            Eigen::Vector2f center = MathTools::getConvexHullCenter(convexHull);
+            Eigen::Matrix4f gpSphere = Eigen::Matrix4f::Identity();
+            gpSphere(0, 3) = center.x();
+            gpSphere(1, 3) = center.y();
+            gpSphere(2, 3) = floor.p.z();
+            visus.push_back(visualizationFactory->createSphere(10));
+            visus.back()->setGlobalPose(gpSphere);
+        }
+
+        return visualizationFactory->createVisualisationSet(visus);
     }
 
 } // namespace VirtualRobot

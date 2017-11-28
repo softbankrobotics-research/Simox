@@ -1,8 +1,5 @@
 
 #include "GraspQualityWindow.h"
-#ifdef Simox_USE_COIN_VISUALIZATION
-#include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
-#endif
 
 #include "GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
@@ -14,7 +11,9 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/VisualizationNode.h"
+#include "VirtualRobot/Visualization/Visualization.h"
+
+#include <GraspPlanning/Visualization/ConvexHullVisualization.h>
 
 #include <QFileDialog>
 #include <Eigen/Geometry>
@@ -145,16 +144,16 @@ void GraspQualityWindow::buildVisu()
     // robot
     if (robot)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-        viewer->addVisualization("robotLayer", "robot", visu);
+        VisualizationSetPtr visu = robot->getVisualization(colModel);
+        viewer->addVisualization("robotLayer", visu);
     }
 
     // object
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
-        viewer->addVisualization("objectLayer", "object", visu);
+        VisualizationSetPtr visu = object->getVisualization(colModel);
+        viewer->addVisualization("objectLayer", visu);
     }
 
     // friction cones
@@ -168,16 +167,9 @@ void GraspQualityWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", "cones", visu);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        viewer->addVisualization("frictionLayer", visu);
     }
-}
-
-int GraspQualityWindow::main()
-{
-    viewer->start(this);
-
-    return 0;
 }
 
 
@@ -185,7 +177,6 @@ void GraspQualityWindow::quit()
 {
     std::cout << "GraspQualityWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
     timer->stop();
 }
 
@@ -508,12 +499,10 @@ void GraspQualityWindow::showGWS()
         return;
     }
 
-    GraspPlanning::ConvexHullVisualizationPtr chv;
-    GraspPlanning::ConvexHullVisualizationPtr chv2;
-#ifdef Simox_USE_COIN_VISUALIZATION
-    chv.reset(new GraspPlanning::CoinConvexHullVisualization(ch, true));
-    chv2.reset(new GraspPlanning::CoinConvexHullVisualization(ch, false));
-#endif
+    GraspPlanning::ConvexHullVisualizationPtr chv(new GraspPlanning::ConvexHullVisualization(ch, true));
+    GraspPlanning::ConvexHullVisualizationPtr chv2(new GraspPlanning::ConvexHullVisualization(ch, false));
+    viewer->addVisualization("gws", chv->getVisualization());
+    viewer->addVisualization("ows", chv2->getVisualization());
 }
 
 void GraspQualityWindow::showOWS()

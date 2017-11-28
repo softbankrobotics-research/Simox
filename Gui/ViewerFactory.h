@@ -15,7 +15,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    Gui
-* @author     Nikolaus Vahrenkamp
+* @author     Nikolaus Vahrenkamp, Adrian Knobloch
 * @copyright  2016 Nikolaus Vahrenkamp
 *             GNU Lesser General Public License
 *
@@ -36,17 +36,12 @@ namespace SimoxGui
     class SIMOX_GUI_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
     {
     public:
-
         ViewerFactory()
         {
-            ;
         }
-        virtual ~ViewerFactory()
-        {
-            ;
-        }
+        virtual ~ViewerFactory() = default;
 
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) = 0;
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) const = 0;
     };
     typedef std::shared_ptr<ViewerFactory> ViewerFactoryPtr;
 

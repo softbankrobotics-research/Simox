@@ -40,7 +40,9 @@ namespace VirtualRobot
         virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
         virtual bool checkTolerances() override;
 
-        Eigen::Vector3f getTarget();
+        Eigen::Vector3f getTarget() const;
+
+        virtual VisualizationPtr getVisualization() const override;
 
     protected:
         RobotPtr robot;

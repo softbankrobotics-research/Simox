@@ -4,6 +4,8 @@
 #include "../ModelJointPrismatic.h"
 #include "../ModelJointFixed.h"
 
+#include "../../../Visualization/VisualizationFactory.h"
+
 namespace VirtualRobot
 {
     VirtualRobot::ModelStructure::ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
@@ -35,14 +37,8 @@ namespace VirtualRobot
 
     void ModelStructure::initVisualization()
     {
-        VisualizationFactoryPtr factory;
-        if (visualizationType.empty())
-        {
-            factory = VirtualRobot::VisualizationFactory::first(nullptr);
-        } else
-        {
-            factory = VirtualRobot::VisualizationFactory::fromName(visualizationType, nullptr);
-        }
+        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
+
         if (!factory)
         {
             VR_ERROR << "Could not create VisualizationFactory with type '" << visualizationType << "'." << endl;
@@ -70,27 +66,25 @@ namespace VirtualRobot
 
     }
 
-    VisualizationNodePtr ModelStructure::createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory)
+    VisualizationPtr ModelStructure::createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory)
     {
-        VisualizationNodePtr v = factory->createSphere(7.5f);
-        return v;
+        return factory->createSphere(7.5f);
     }
 
-    VisualizationNodePtr ModelStructure::createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory)
+    VisualizationPtr ModelStructure::createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory)
     {
-        VisualizationNodePtr v;
+        VisualizationPtr v;
         ModelNodePtr parent = link->getParentNode(ModelNode::ModelNodeType::Joint);
         if (parent)
         {
-            std::vector<VisualizationNodePtr> lines;
             std::vector<ModelNodePtr> children = link->getChildNodes(ModelNode::ModelNodeType::Joint);
+            std::vector<Eigen::Matrix4f> from, to;
             for (const auto & child : children)
             {
-                Eigen::Matrix4f localStartPose = link->toLocalCoordinateSystem(parent->getGlobalPose());
-                Eigen::Matrix4f localEndPose = link->toLocalCoordinateSystem(child->getGlobalPose());
-                lines.push_back(factory->createLine(localStartPose, localEndPose, 2.0f));
+                from.push_back(link->toLocalCoordinateSystem(parent->getGlobalPose()));
+                to.push_back(link->toLocalCoordinateSystem(child->getGlobalPose()));
             }
-            v = factory->createUnitedVisualization(lines);
+            v = factory->createLineSet(from, to, 2.f);
         }
         return v;
     }

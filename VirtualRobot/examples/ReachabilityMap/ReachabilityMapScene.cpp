@@ -2,10 +2,6 @@
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
-
 #include <string>
 #include <iostream>
 #include <Eigen/Core>
@@ -25,15 +21,16 @@ int main(int argc, char* argv[])
 
     cout << " --- START --- " << endl;
 
+    std::string filenameReach;
     std::string eef;
 #ifdef ICUB
     std::string filenameRob("robots/iCub/iCub.xml");
     std::string fileObj("objects/iCub/LegoXWing_RightHand_300.xml");
-    std::sting filenameReach ("reachability/iCub_HipLeftArm.bin");
+    filenameReach = "reachability/iCub_HipLeftArm.bin";
 #else
     std::string filenameRob("robots/Armar3/Armar3.xml");
-    std::string fileObj("objects/iv/plate.xml");
-    std::string filenameReach("workspace/armar3_leftArm_reachability.bin");
+    std::string fileObj("objects/Hammer.xml");
+    filenameReach = "workspace/armar3_leftArm_reachability.bin";
     eef = "Hand L";
 #endif
 
@@ -88,9 +85,9 @@ int main(int argc, char* argv[])
     cout << "Using reachability file from " << filenameReach << endl;
 
     ReachabilityMapWindow rw(filenameRob, filenameReach, fileObj, eef);
+    rw.show();
+    rw.raise();
 
-    rw.main();
-
-    return 0;
-
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

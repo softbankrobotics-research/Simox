@@ -57,7 +57,7 @@ namespace VirtualRobot
 
     }
 
-    EndEffectorPtr EndEffector::clone(const RobotPtr &newRobot)
+    EndEffectorPtr EndEffector::clone(const RobotPtr &newRobot) const
     {
         if (!newRobot)
         {
@@ -85,7 +85,7 @@ namespace VirtualRobot
             newActors[i] = actors[i]->clone(newRobot);
         }
 
-        std::map< std::string, RobotConfigPtr >::iterator prI = preshapes.begin();
+        auto prI = preshapes.begin();
 
         while (prI != preshapes.end())
         {
@@ -107,7 +107,7 @@ namespace VirtualRobot
     }
 
 
-    std::string EndEffector::getName()
+    std::string EndEffector::getName() const
     {
         return name;
     }
@@ -255,7 +255,7 @@ namespace VirtualRobot
         return r->getType();
     }
 
-    VirtualRobot::RobotPtr EndEffector::createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr /*collisionChecker=CollisionCheckerPtr()*/)
+    VirtualRobot::RobotPtr EndEffector::createEefRobot(const std::string& newRobotType, const std::string& newRobotName, CollisionCheckerPtr /*collisionChecker=CollisionCheckerPtr()*/) const
     {
         RobotPtr r = getRobot();
         THROW_VR_EXCEPTION_IF(!r, "No robot defined in EEF");
@@ -413,7 +413,7 @@ namespace VirtualRobot
         return false;
     }
 
-    VirtualRobot::RobotConfigPtr EndEffector::getConfiguration()
+    VirtualRobot::RobotConfigPtr EndEffector::getConfiguration() const
     {
         VirtualRobot::RobotConfigPtr result(new VirtualRobot::RobotConfig(getRobot(), getName()));
         std::vector< ModelJointPtr > rn = getJoints();
@@ -729,6 +729,26 @@ namespace VirtualRobot
         }
 
         return contactCount;
+    }
+
+    VisualizationPtr EndEffector::getVisualization(ModelLink::VisualizationType visuType, const Eigen::Matrix4f& pose) const
+    {
+        FramePtr tcp = getTcp();
+
+        if (!tcp)
+        {
+            VR_ERROR << " No tcp in eef " << getName() << endl;
+            auto sphere = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(5);
+            sphere->setGlobalPose(pose);
+            return sphere;
+        }
+        else
+        {
+            RobotPtr r = createEefRobot(getName(), getName());
+            FramePtr tcpN = r->getEndEffector(getName())->getTcp();
+            r->setGlobalPoseForModelNode(tcpN, pose);
+            return r->getVisualization(visuType);
+        }
     }
 
 

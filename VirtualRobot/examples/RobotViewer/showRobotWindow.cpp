@@ -7,7 +7,6 @@
 #include "../../Model/LinkSet.h"
 #include "../../Model/JointSet.h"
 #include "../../Import/SimoxXMLFactory.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationFactory.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 
 #include <QFileDialog>
@@ -88,6 +87,7 @@ void showRobotWindow::setupUI()
     connect(UI.listLinks, SIGNAL(currentTextChanged(QString)), this, SLOT(displayTriangles()));
     connect(UI.radioBtnCollisionVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
     connect(UI.radioBtnFullVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
+    connect(UI.radioBtnNoVisu, SIGNAL(clicked(bool)), this, SLOT(displayTriangles()));
 
     render();
 }
@@ -141,6 +141,12 @@ void showRobotWindow::displayTriangles()
         text2 = UI.cBoxLinkSets->currentText() + ": " + QString::number(trisRNSCol);
         text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": " + QString::number(trisJointCol) : "";
     }
+    else if (UI.radioBtnNoVisu->isChecked())
+    {
+        text1 = "Total: 0";
+        text2 = UI.cBoxLinkSets->currentText() + ": 0";
+        text3 = UI.listLinks->currentItem() ? UI.listLinks->currentItem()->text() + ": 0" : "";
+    }
     else
     {
         text1 = "Total: " + QString::number(trisAllFull);
@@ -163,9 +169,14 @@ void showRobotWindow::render()
     viewer->clearLayer(robotLayer);
     ModelLink::VisualizationType visuType = (UI.radioBtnCollisionVisu->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, visuType);
-    viewer->addVisualization(robotLayer, "robot", visu);
-    robot->setupVisualization(!UI.radioBtnNoVisu->isChecked(), !UI.radioBtnNoVisu->isChecked());
+    if (!UI.radioBtnNoVisu->isChecked())
+    {
+        auto visu = robot->getVisualization(visuType);
+        viewer->addVisualization(robotLayer, visu);
+    }
+    // We always render attachments because they can be unchecked easily anyways
+    VisualizationGroupPtr attachmentVisus = robot->getAllAttachmentVisualizations();
+    viewer->addVisualizations(robotLayer, attachmentVisus);
 }
 
 void showRobotWindow::showSensors()
@@ -247,17 +258,9 @@ void showRobotWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int showRobotWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void showRobotWindow::quit()
 {
     this->close();
-    viewer->stop();
 }
 
 void showRobotWindow::selectRobot()

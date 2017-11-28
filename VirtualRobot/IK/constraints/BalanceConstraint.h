@@ -70,13 +70,15 @@ namespace VirtualRobot
         virtual bool checkTolerances() override;
 
         bool getRobotPoseForConstraint(ModelPtr& robot, Eigen::Matrix4f& pose);
-        Eigen::Vector3f getCoM();
-        SupportPolygonPtr getSupportPolygon();
+        Eigen::Vector3f getCoM() const;
+        SupportPolygonPtr getSupportPolygon() const;
 
         void setCoMHeight(float height);
 
         virtual double optimizationFunction(unsigned int id) override;
         virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+
+        virtual VisualizationPtr getVisualization() const override;
 
     protected:
         void initialize(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,

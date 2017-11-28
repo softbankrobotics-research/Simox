@@ -1,6 +1,7 @@
 #include "Primitive.h"
 #include "../Tools/MathTools.h"
 #include "../XML/BaseIO.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 #include <boost/format.hpp>
 
@@ -50,12 +51,26 @@ namespace VirtualRobot
                        tabs);
         }
 
+        VisualizationPtr Box::getVisualization() const
+        {
+            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createBox(width, height, depth);
+            visu->setGlobalPose(transform);
+            return visu;
+        }
+
         std::string Sphere::toXMLString(int tabs)
         {
             return getXMLString(
-                       "Sphere",
-                       (boost::format("radius=\"%f\"") % radius).str(),
-                       tabs);
+                        "Sphere",
+                        (boost::format("radius=\"%f\"") % radius).str(),
+                        tabs);
+        }
+
+        VisualizationPtr Sphere::getVisualization() const
+        {
+            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(radius);
+            visu->setGlobalPose(transform);
+            return visu;
         }
 
         std::string Cylinder::toXMLString(int tabs)
@@ -64,6 +79,13 @@ namespace VirtualRobot
                        "Cylinder",
                        (boost::format("radius=\"%f\" height=\"%f\"") % radius % height).str(),
                        tabs);
+        }
+
+        VisualizationPtr Cylinder::getVisualization() const
+        {
+            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createCylinder(radius, height);
+            visu->setGlobalPose(transform);
+            return visu;
         }
 
     } //namespace Primitive

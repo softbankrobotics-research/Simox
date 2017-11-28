@@ -61,7 +61,7 @@ namespace VirtualRobot
                           CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                           float scaling = 1.0f) const;
 
-        static ObstaclePtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        static ObstaclePtr create(const std::string& name, const VisualizationPtr& visualization = VisualizationPtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
             Create a standard obstacle.
@@ -72,7 +72,7 @@ namespace VirtualRobot
             \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
             \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ObstaclePtr createBox(float width, float height, float depth, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        static ObstaclePtr createBox(float width, float height, float depth, Visualization::Color color = Visualization::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
         /*!
             Create a standard obstacle.
             \param radius The radius of the sphere.
@@ -80,7 +80,7 @@ namespace VirtualRobot
             \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
             \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ObstaclePtr createSphere(float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        static ObstaclePtr createSphere(float radius, Visualization::Color color = Visualization::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
         /*!
             Create a standard obstacle.
             \param radius The radius of the cylinder.
@@ -89,7 +89,7 @@ namespace VirtualRobot
             \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
             \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ObstaclePtr createCylinder(float radius, float height, VisualizationFactory::Color color = VisualizationFactory::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        static ObstaclePtr createCylinder(float radius, float height, Visualization::Color color = Visualization::Color::Red(), const std::string& visualizationType = "", const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
         Create a standard obstacle from a mesh.

@@ -10,9 +10,11 @@
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/ManipulationObject.h>
 #include <string.h>
-#include <QtGui>
+#include <QtGlobal>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QtWidgets>
+#else
+#include <QtGui>
 #endif
 #include <QtCore/QtCore>
 #include <QTimer>
@@ -38,9 +40,6 @@ namespace VirtualRobot
     public:
         GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false);
         virtual ~GraspEditorWindow();
-
-        /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-        int main();
 
     public slots:
         /*! Closes the window and exits SoQt runloop. */

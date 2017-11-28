@@ -95,7 +95,7 @@ namespace VirtualRobot
         ModelLink(const ModelWeakPtr& model,
                   const std::string& name,
                   const Eigen::Matrix4f& localTransformation,
-                  const VisualizationNodePtr& visualization = VisualizationNodePtr(),
+                  const VisualizationPtr& visualization = VisualizationPtr(),
                   const CollisionModelPtr& collisionModel = CollisionModelPtr(),
                   const Physics& p = Physics(),
                   const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
@@ -137,7 +137,7 @@ namespace VirtualRobot
          * @param visualization The new visualisation.
          * @param keepUpdateVisualization If true, update visualisation of visualization is set to the status of the previous model.
          */
-        void setVisualization(const VisualizationNodePtr& visualization, bool keepUpdateVisualization = true);
+        void setVisualization(const VisualizationPtr& visualization, bool keepUpdateVisualization = true);
 
         /*!
          * Get visualization object.
@@ -145,7 +145,7 @@ namespace VirtualRobot
          * @param visuType Set the type of visualization.
          * @return The visualisation of this link.
          */
-        VisualizationNodePtr getVisualization(VisualizationType visuType = VisualizationType::Full);
+        VisualizationPtr getVisualization(VisualizationType visuType = VisualizationType::Full) const;
 
         /*!
          * Get number of faces (i.e. triangles) of this object.
@@ -268,7 +268,7 @@ namespace VirtualRobot
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments) override;
 
     private:
-        VisualizationNodePtr visualizationModel;
+        VisualizationPtr visualizationModel;
         CollisionModelPtr collisionModel;
         ModelLink::Physics physics;
         CollisionCheckerPtr collisionChecker;

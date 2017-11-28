@@ -218,9 +218,9 @@ namespace VirtualRobot
         return weakModel.lock();
     }
 
-    ModelNodePtr &ModelNodeSet::getNode(int i)
+    ModelNodePtr &ModelNodeSet::getNode(size_t i)
     {
-        THROW_VR_EXCEPTION_IF((i >= (int)modelNodes.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (modelNodes.size() - 1));
+        THROW_VR_EXCEPTION_IF((i >= (int)modelNodes.size()), "Index out of bounds:" << i << ", (should be between 0 and " << (modelNodes.size() - 1));
         return modelNodes.at(i);
     }
 

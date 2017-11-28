@@ -10,13 +10,10 @@
 #include "../../Visualization/VisualizationFactory.h"
 #include "../../Model/Obstacle.h"
 #include "../../Model/ModelNodeSet.h"
-#include "../../Visualization/CoinVisualization/CoinVisualizationNode.h"
-#include "../../Visualization/CoinVisualization/CoinVisualization.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
 #include "../../../Gui/ViewerInterface.h"
 #include "../../../Gui/ViewerFactory.h"
-#include "../../../Gui/ViewerSelection.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -33,9 +30,6 @@ class showRobotWindow : public QMainWindow
 public:
     showRobotWindow(std::string& sRobotFilename);
     ~showRobotWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */

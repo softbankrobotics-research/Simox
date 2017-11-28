@@ -89,7 +89,7 @@ namespace VirtualRobot
         return preshape;
     }
 
-    Eigen::Matrix4f Grasp::getTransformation()
+    Eigen::Matrix4f Grasp::getTransformation() const
     {
         return poseTcp;
     }
@@ -166,6 +166,13 @@ namespace VirtualRobot
     void Grasp::setConfiguration(std::map< std::string, float >& c)
     {
         eefConfiguration = c;
+    }
+
+    VisualizationPtr Grasp::getVisualization(ModelLink::VisualizationType visuType, const EndEffectorPtr& eef, const Eigen::Matrix4f &pose) const
+    {
+        VR_ASSERT(eef);
+        Eigen::Matrix4f mat = pose * getTransformation().inverse();
+        return eef->getVisualization(visuType, mat);
     }
 
     std::map< std::string, float > Grasp::getConfiguration()

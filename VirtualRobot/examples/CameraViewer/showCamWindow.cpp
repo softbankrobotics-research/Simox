@@ -1,12 +1,14 @@
-
 #include "showCamWindow.h"
-#include "VirtualRobot/EndEffector/EndEffector.h"
-#include "VirtualRobot/Model/Nodes/ModelJoint.h"
+#include <VirtualRobot/EndEffector/EndEffector.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Import/RobotImporterFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Visualization/OffscreenRenderer.h>
 
 #include <QFileDialog>
+#include <QGraphicsScene>
+
 #include <Eigen/Geometry>
 
 #include <time.h>
@@ -14,17 +16,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "Inventor/actions/SoLineHighlightRenderAction.h"
-#include <Inventor/nodes/SoShapeHints.h>
-#include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoUnits.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoPointSet.h>
-
 #include <sstream>
-
-//#include <GL/gl.h>
 
 using namespace std;
 using namespace VirtualRobot;
@@ -32,28 +24,20 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
-    : QMainWindow(nullptr)
+    : QMainWindow(nullptr),
+      obstacleVisu(new VirtualRobot::VisualizationGroup),
+      robotVisu(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization())
 {
     VR_INFO << " start " << endl;
-    //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
-    //resize(1100, 768);
-    cam2Renderer = nullptr;
-    cam2Buffer = nullptr;
-    cam2DepthBuffer = nullptr;
+    setupUI();
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
     this->cam1Name = cam1Name;
     this->cam2Name = cam2Name;
-    sceneSep = new SoSeparator;
-    sceneSep->ref();
-    /*SoUnits *u = new SoUnits;
-    u->units = SoUnits::MILLIMETERS;
-    sceneSep->addChild(u);*/
-    robotSep = new SoSeparator;
-    extraSep = new SoSeparator;
-    sceneSep->addChild(extraSep);
+
+
     //add objects
     Eigen::Matrix4f m;
     m.setIdentity();
@@ -62,83 +46,51 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     m(1, 3) = 1500.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::ModelLink::VisualizationType::Full));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 700.0f;
     m(1, 3) = 900.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(300.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::ModelLink::VisualizationType::Full));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 0.0f;
     m(1, 3) = 2000.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::ModelLink::VisualizationType::Full));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 500.0f;
     m(1, 3) = 1500.0f;
     m(2, 3) = 2000.0f;
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
     visuObjects.back()->setGlobalPose(m);
-    extraSep->addChild(VirtualRobot::CoinVisualizationFactory::getCoinVisualization(visuObjects.back(), VirtualRobot::ModelLink::VisualizationType::Full));
+    obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
-    /*SoShapeHints * shapeHints = new SoShapeHints;
-    shapeHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
-    shapeHints->shapeType = SoShapeHints::UNKNOWN_SHAPE_TYPE;
-    sceneSep->addChild(shapeHints);*/
-    /*SoLightModel * lightModel = new SoLightModel;
-    lightModel->model = SoLightModel::BASE_COLOR;
-    sceneSep->addChild(lightModel);*/
-
-    sceneSep->addChild(robotSep);
-
-    cam1VoxelSep = new SoSeparator;
-    cam1VoxelSep->ref();
-    sceneSep->addChild(cam1VoxelSep);
-
-    setupUI();
+    viewer->addVisualizations("obstacles", obstacleVisu);
 
     loadRobot();
 
     viewer->viewAll();
 }
 
-
 showCamWindow::~showCamWindow()
 {
     robot.reset();
-    sceneSep->unref();
-    cam1VoxelSep->unref();
 
     UI.cam1->setScene(nullptr);
-    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
     UI.cam2->setScene(nullptr);
-
-    delete [] cam2Buffer;
-    delete [] cam2DepthBuffer;
 }
-
-
 
 void showCamWindow::setupUI()
 {
     UI.setupUi(this);
     //centralWidget()->setLayout(UI.gridLayoutViewer);
-    viewer = new SoQtExaminerViewer(UI.frameViewer, "", TRUE, SoQtExaminerViewer::BUILD_POPUP);
 
-    // setup
-    viewer->setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
-    viewer->setAccumulationBuffer(true);
-
-    viewer->setAntialiasing(true, 4);
-
-    viewer->setGLRenderAction(new SoLineHighlightRenderAction);
-    viewer->setTransparencyType(SoGLRenderAction::BLEND);
-    viewer->setFeedbackVisibility(true);
-    viewer->setSceneGraph(sceneSep);
-    viewer->viewAll();
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
+    THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
+    viewer = viewerFactory->createViewer(UI.frameViewer);
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
@@ -164,7 +116,10 @@ void showCamWindow::resetSceneryAll()
     }
 
     for (auto & n:allRobotNodes)
-        n->setJointValue(0.0f);
+    {
+        n->setJointValueNoUpdate(0.0f);
+    }
+    robot->applyJointValues();
 
     selectJoint(UI.comboBoxJoint->currentIndex());
 }
@@ -176,26 +131,14 @@ void showCamWindow::rebuildVisualization()
         return;
     }
 
-    robotSep->removeAllChildren();
     //setRobotModelShape(UI.checkBoxColModel->state() == QCheckBox::On);
     useColModel = false;
     //bool sensors = UI.checkBoxRobotSensors->checkState() == Qt::Checked;
     ModelLink::VisualizationType colModel = useColModel ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
-    visualization = std::dynamic_pointer_cast<VirtualRobot::CoinVisualization>(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization(robot, colModel));
-    SoNode* visualisationNode = nullptr;
-
-    if (visualization)
-    {
-        visualisationNode = visualization->getCoinVisualization();
-    }
-
-    if (visualisationNode)
-    {
-        robotSep->addChild(visualisationNode);
-    }
-
-    selectJoint(UI.comboBoxJoint->currentIndex());
+    viewer->clearLayer("robot");
+    robotVisu = robot->getVisualization(colModel);
+    viewer->addVisualization("robot", robotVisu);
 }
 
 void showCamWindow::showRobot()
@@ -209,18 +152,10 @@ void showCamWindow::closeEvent(QCloseEvent* event)
     QMainWindow::closeEvent(event);
 }
 
-int showCamWindow::main()
-{
-    SoQt::show(this);
-    SoQt::mainLoop();
-    return 0;
-}
-
 void showCamWindow::quit()
 {
     std::cout << "CShowRobotWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
 }
 
 void showCamWindow::updateJointBox()
@@ -327,13 +262,8 @@ void showCamWindow::selectJoint(int nr)
         UI.horizontalSliderPos->setEnabled(false);
     }
 
-    cout << "HIGHLIGHTING node " << currentRobotNodes[nr]->getName() << endl;
-
-    if (visualization)
-    {
-        //robot->highlight(visualization, false);
-        //currentRobotNode->highlight(visualization, true);
-    }
+    // TODO
+    //cout << "HIGHLIGHTING node " << currentRobotNodes[nr]->getName() << endl;
 
 }
 
@@ -370,7 +300,6 @@ void showCamWindow::selectRobot()
 
 void showCamWindow::loadRobot()
 {
-    robotSep->removeAllChildren();
     cout << "Loading Robot from " << robotFilename << endl;
     currentRobotNode.reset();
     currentRobotNodes.clear();
@@ -402,11 +331,6 @@ void showCamWindow::updateCameras()
 {
     cam1.reset();
     cam2.reset();
-    cam2Renderer = nullptr;
-    delete []cam2Buffer;
-    cam2Buffer = nullptr;
-    delete [] cam2DepthBuffer;
-    cam2DepthBuffer = nullptr;
 
     if (!robot)
     {
@@ -433,26 +357,13 @@ void showCamWindow::updateCameras()
 
     if (cam2)
     {
-        cam2Renderer = CoinVisualizationFactory::createOffscreenRenderer(UI.cam2->size().width(), UI.cam2->size().height());
-        cam2Buffer = new unsigned char [UI.cam2->size().width() * UI.cam2->size().height() * 3];
-
-        cam2DepthBuffer = new float [UI.cam2->size().width() * UI.cam2->size().height()];
-
-        userdata2.buffer = cam2DepthBuffer;
-        userdata2.w = UI.cam2->size().width();
-        userdata2.h = UI.cam2->size().height();
-
-        cam2Renderer->getGLRenderAction()->setPassCallback(getDepthImage, &userdata2);
-        cam2Renderer->getGLRenderAction()->setNumPasses(2);
+        const auto pixelCount = UI.cam2->size().width() * UI.cam2->size().height();
+        cam2RGBBuffer.resize(pixelCount*3);
+        cam2DepthBuffer.resize(pixelCount);
+        cam2PointCloud.resize(pixelCount);
     }
 
     renderCam();
-}
-
-//Zeye is negative
-float convertDepthToZEye(float depth, float zNear, float zFar)
-{
-    return -zFar*zNear/(zFar + depth*(zNear - zFar));
 }
 
 void showCamWindow::renderCam()
@@ -461,22 +372,21 @@ void showCamWindow::renderCam()
     const float zFar = 100000;
     const float fov = M_PI / 4;
     const float maxZCut = UI.doubleSpinBoxDepthLinClip->value();
-//    const float voxelSize= 10.f;
-//    float focal =  static_cast<float>(UI.cam1->size().height()) / (2 * std::tan(fov / 2));
+
+    std::vector<VisualizationPtr> scene = obstacleVisu->getVisualizations();
+    scene.push_back(robotVisu);
 
     if (cam1)
     {
-
-        //always clean up voxel (we don't want to include the voxels in the depth image)
-        cam1VoxelSep->removeAllChildren();
         voxelObjects.clear();
 
-        //render image
-        CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(
-            cam1,sceneSep,UI.cam1->width(),UI.cam1->height(),
-            cam1RGBBuffer, cam1DepthBuffer,
-            cam1PointCloud,zNear,zFar, M_PI/4,0
-        );
+        OffscreenRenderer::getGlobalOffscreenRenderer()->renderOffscreen(cam1->getGlobalPose(),
+                                                                         scene,
+                                                                         UI.cam1->size().width(), UI.cam1->size().height(),
+                                                                         true, cam1RGBBuffer,
+                                                                         true, cam1DepthBuffer,
+                                                                         true, cam1PointCloud,
+                                                                         zNear, zFar, fov);
 
         if(UI.checkBoxDepthCam1->isChecked())
         {
@@ -502,21 +412,29 @@ void showCamWindow::renderCam()
         delete oldScene;
     }
 
-    if (cam2 && cam2Renderer)
+    if (cam2)
     {
-        CoinVisualizationFactory::renderOffscreen(cam2Renderer, cam2, sceneSep, &cam2Buffer, zNear, zFar, fov);
+        OffscreenRenderer::getGlobalOffscreenRenderer()->renderOffscreen(cam2->getGlobalPose(),
+                                                                         scene,
+                                                                         UI.cam2->size().width(), UI.cam2->size().height(),
+                                                                         true, cam2RGBBuffer,
+                                                                         true, cam2DepthBuffer,
+                                                                         true, cam2PointCloud,
+                                                                         zNear, zFar, fov);
         if(UI.checkBoxDepthCam2->isChecked())
         {
             //transform
             for(std::size_t index = 0; index < static_cast<std::size_t>(UI.cam2->size().width()*UI.cam2->size().height()); ++index)
             {
-                const unsigned char value = cam2DepthBuffer[index]*255* UI.doubleSpinBoxNonLinFactor->value();
-                cam2Buffer[3*index] = value;
-                cam2Buffer[3*index+1] = value;
-                cam2Buffer[3*index+2] = value;
+                const float distance = cam2DepthBuffer.at(index);
+                const unsigned char value = (distance>=maxZCut)?255:distance/maxZCut*255.f;
+
+                cam2RGBBuffer.at(3 * index    ) = value;
+                cam2RGBBuffer.at(3 * index + 1) = value;
+                cam2RGBBuffer.at(3 * index + 2) = value;
             }
         }
-        QImage img2(cam2Buffer, UI.cam2->size().width(), UI.cam2->size().height(), QImage::Format_RGB888);
+        QImage img2(cam2RGBBuffer.data(), UI.cam2->size().width(), UI.cam2->size().height(), QImage::Format_RGB888);
         //UI.cam2->setPixmap(QPixmap::fromImage(img2));
 
         QGraphicsScene* scene = new QGraphicsScene();
@@ -527,43 +445,24 @@ void showCamWindow::renderCam()
         delete oldScene;
     }
     //draw voxel
+    viewer->clearLayer("pcl");
     if (cam1 && UI.checkBoxShowDepthVoxel->isChecked())
     {
-        Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
-        rotation(0,0) = 0;
-        rotation(0,1) = -1;
+//        Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
+//        rotation(0,0) = 0;
+//        rotation(0,1) = -1;
 
-        rotation(1,0) = 1;
-        rotation(1,1) = 0;
-        Eigen::Matrix4f cam1Transform = cam1->getGlobalPose() * rotation;
+//        rotation(1,0) = 1;
+//        rotation(1,1) = 0;
+        Eigen::Matrix4f cam1Transform = cam1->getGlobalPose();// * rotation;
 
 
-        SoSeparator* pclSep = new SoSeparator;
-        cam1VoxelSep->addChild(pclSep);
-
-        SoCoordinate3* pclCoords = new SoCoordinate3;
-        pclSep->addChild(pclCoords);
-        std::vector<SbVec3f> coords;
-        coords.reserve(cam1PointCloud.size());
-        std::transform(
-            cam1PointCloud.begin(), cam1PointCloud.end(), std::back_inserter(coords),
-            [&cam1Transform](const Eigen::Vector3f & voxel)
+        for (auto& p : cam1PointCloud)
         {
-            Eigen::Vector4f voxelInWorld = cam1Transform* Eigen::Vector4f(voxel(0), voxel(1), voxel(2), 1.f);
-            return SbVec3f {
-                voxelInWorld(0)/1000,
-                voxelInWorld(1)/1000,
-                voxelInWorld(2)/1000
-            };
+            p = (cam1Transform* Eigen::Vector4f(p(0), p(1), p(2), 1.f)).block<3, 1>(0, 0);
         }
-        );
-        pclCoords->point.setValues(0, coords.size(), coords.data());
-
-        SoDrawStyle* pclStye = new SoDrawStyle;
-        pclStye->pointSize = 4;
-        pclSep->addChild(pclStye);
-
-        pclSep->addChild(new SoPointSet);
+        cam1pclVisu = VisualizationFactory::getGlobalVisualizationFactory()->createPointCloud(cam1PointCloud, 4.f);
+        viewer->addVisualization("pcl", cam1pclVisu);
     }
 }
 
@@ -594,11 +493,5 @@ void showCamWindow::updatRobotInfo()
     rebuildVisualization();
 
     viewer->viewAll();
-}
-
-void showCamWindow::getDepthImage(void *userdata)
-{
-    DepthRenderData* ud = reinterpret_cast<DepthRenderData*>(userdata);
-    glReadPixels(0, 0, ud->w, ud->h, GL_DEPTH_COMPONENT, GL_FLOAT, ud->buffer);
 }
 

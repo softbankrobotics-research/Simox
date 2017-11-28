@@ -8,7 +8,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/SceneIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
 #include "VirtualRobot/Model/Obstacle.h"
@@ -37,9 +36,6 @@ class GraspPlannerWindow : public QMainWindow
 public:
     GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile);
     ~GraspPlannerWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
@@ -86,8 +82,8 @@ protected:
     GraspPlanning::ApproachMovementSurfaceNormalPtr approach;
     GraspPlanning::GenericGraspPlannerPtr planner;
 
-    VirtualRobot::CoinVisualizationPtr visualizationRobot;
-    VirtualRobot::CoinVisualizationPtr visualizationObject;
+    VirtualRobot::VisualizationPtr visualizationRobot;
+    VirtualRobot::VisualizationPtr visualizationObject;
 };
 
 #endif

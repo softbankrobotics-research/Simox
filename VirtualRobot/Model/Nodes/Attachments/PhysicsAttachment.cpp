@@ -2,7 +2,7 @@
 
 #include "../ModelLink.h"
 #include "../../../Visualization/TriMeshModel.h"
-#include "../../../Visualization/VisualizationNode.h"
+#include "../../../Visualization/VisualizationFactory.h"
 
 #include <Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h>
 
@@ -36,32 +36,35 @@ namespace VirtualRobot
         }
 
 
-        VisualizationNodePtr visuNodeCoM;
+        VisualizationPtr visuNodeCoM;
         // visualize CoM
         {
-            VisualizationNodePtr comModel1 = factory->createSphere(7.05f, 1.0f, 0.2f, 0.2f);
-            VisualizationNodePtr comModel2 = factory->createBox(10.0f, 10.0f, 10.0f, 0.2f, 0.2f, 1.0f);
-            std::vector<VisualizationNodePtr> v;
+            VisualizationPtr comModel1 = factory->createSphere(7.05f);
+            comModel1->setColor(Visualization::Color::Red());
+            VisualizationPtr comModel2 = factory->createBox(10.0f, 10.0f, 10.0f);
+            comModel2->setColor(Visualization::Color::Blue());
+            std::vector<VisualizationPtr> v;
             v.push_back(comModel1);
             v.push_back(comModel2);
-            visuNodeCoM = factory->createUnitedVisualization(v);
+            visuNodeCoM = factory->createVisualisationSet(v);
 
             std::stringstream ss;
             ss << "COM: " << getName();
             std::string t = ss.str();
-            VisualizationNodePtr vText = factory->createText(t, true, 1.0f, VisualizationFactory::Color::Blue(), 0, 10.0f, 0);
+            VisualizationPtr vText = factory->createText(t, true, 0, 10.0f, 0);
+            vText->setColor(Visualization::Color::Blue());
             v.clear();
             v.push_back(visuNodeCoM);
             v.push_back(vText);
-            visuNodeCoM = factory->createUnitedVisualization(v);
+            visuNodeCoM = factory->createVisualisationSet(v);
 
             Eigen::Vector3f comLocation = node->getCoMLocal();
             Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
             m.block(0, 3, 3, 1) = comLocation;
-            factory->applyDisplacement(visuNodeCoM, m);
+            visuNodeCoM->applyDisplacement(m);
         }
 
-        VisualizationNodePtr visuNodeInertia;
+        VisualizationPtr visuNodeInertia;
         // visualize inertia
         {
             Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(node->getInertiaMatrix());
@@ -141,13 +144,15 @@ namespace VirtualRobot
                     zl = zl / maxAx * maxSize;
                 }
 
-                visuNodeInertia = factory->createEllipse(xl, yl, zl, true, axesSize, axesSize * 2.0f);
+                visuNodeInertia = factory->createEllipse(xl, yl, zl);
+                // TODO show axes
+                // visuNodeInertia = factory->createEllipse(xl, yl, zl, true, axesSize, axesSize * 2.0f);
 
                 Eigen::Vector3f comLocation = node->getCoMLocal();
                 Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
                 m.block(0, 3, 3, 1) = comLocation;
                 m.block(0, 0, 3, 3) = eigensolver.eigenvectors().block(0, 0, 3, 3); // rotate according to EV
-                factory->applyDisplacement(visuNodeInertia, m);
+                visuNodeInertia->applyDisplacement(m);
             }
             else
             {
@@ -155,11 +160,11 @@ namespace VirtualRobot
             }
         }
 
-        std::vector<VisualizationNodePtr> visus;
+        std::vector<VisualizationPtr> visus;
         visus.push_back(visuNodeCoM);
         visus.push_back(visuNodeInertia);
 
-        setVisualization(factory->createUnitedVisualization(visus));
+        setVisualization(factory->createVisualisationSet(visus));
     }
 
     void PhysicsAttachment::setParent(const VirtualRobot::ModelNodePtr &node)

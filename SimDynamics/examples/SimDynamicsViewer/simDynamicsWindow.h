@@ -9,8 +9,7 @@
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Model/Obstacle.h>
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
 
 #include "SimDynamics/DynamicsEngine/BulletEngine/BulletCoinQtViewer.h"
@@ -32,9 +31,6 @@ class SimDynamicsWindow : public QMainWindow
 public:
     SimDynamicsWindow(std::string& sRobotFilename);
     ~SimDynamicsWindow();
-
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */

@@ -3,7 +3,7 @@
 #include "Nodes/ModelJoint.h"
 #include "../VirtualRobotException.h"
 #include "../CollisionDetection/CollisionChecker.h"
-#include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationSet.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../Model/Obstacle.h"
 #include "../CollisionDetection/CollisionModel.h"
@@ -41,7 +41,7 @@ namespace VirtualRobot
     {
         auto visus = getVisualizations();
         auto colModels = getCollisionModels();
-        VisualizationNodePtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createUnitedVisualization(visus);
+        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visus);
         CollisionModelPtr colModel = CollisionModel::CreateUnitedCollisionModel(colModels);
         ObstaclePtr result = Obstacle::create(name, visu, colModel);
         return result;
@@ -187,16 +187,15 @@ namespace VirtualRobot
         return res;
     }
 
-    std::vector<VisualizationNodePtr> ModelSet::getVisualizations() const
+    std::vector<VisualizationPtr> ModelSet::getVisualizations() const
     {
-        std::vector<VisualizationNodePtr> res;
+        std::vector<VisualizationPtr> res;
         for (const ModelPtr &m : models)
         {
-            if (!m->getVisualization(ModelLink::Full))
+            auto visu = m->getVisualization(ModelLink::Full);
+            if (!visu)
                 continue;
-            std::vector<VisualizationNodePtr> cm = m->getVisualization(ModelLink::Full)->getVisualizationNodes();
-            if (cm.size()>0)
-                res.insert(res.end(), cm.begin(), cm.end());
+            res.push_back(visu);
         }
         return res;
     }

@@ -98,7 +98,7 @@ namespace VirtualRobot
         */
         ManipulationObjectPtr clone(const std::string& name, const CollisionCheckerPtr &colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
-        static ManipulationObjectPtr create(const std::string& name, const VisualizationNodePtr& visualization = VisualizationNodePtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
+        static ManipulationObjectPtr create(const std::string& name, const VisualizationPtr& visualization = VisualizationPtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!
         Create a standard obstacle from a mesh.

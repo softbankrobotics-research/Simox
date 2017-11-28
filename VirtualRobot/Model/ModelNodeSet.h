@@ -111,7 +111,7 @@ namespace VirtualRobot
          */
         ModelPtr getModel() const;
 
-        ModelNodePtr& operator[](int i)
+        ModelNodePtr& operator[](size_t i)
         {
             return getNode(i);
         }
@@ -122,7 +122,7 @@ namespace VirtualRobot
          * @param i The position of the node to get.
          * @return The node.
          */
-        ModelNodePtr& getNode(int i);
+        ModelNodePtr& getNode(size_t i);
 
         /*!
          * Iterator starting at the first object of this set.

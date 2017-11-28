@@ -84,13 +84,15 @@ namespace VirtualRobot
         /*!
             Applies transformation to this bbox. Reorders min and max values according to pose.
         */
-        void transform(Eigen::Matrix4f& pose);
+        void transform(const Eigen::Matrix4f &pose);
 
-        void scale(Eigen::Vector3f& scaleFactor);
+        void scale(const Eigen::Vector3f& scaleFactor);
 
         std::string toXML(int tabs = 2, bool skipMatrixTag = false);
 
         void enlarge (const Eigen::Vector3f &v);
+
+        VisualizationPtr getVisualization(bool wireFrame = false) const;
     protected:
         Eigen::Vector3f min;
         Eigen::Vector3f max;

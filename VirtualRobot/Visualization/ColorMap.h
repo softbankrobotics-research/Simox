@@ -48,11 +48,11 @@ namespace VirtualRobot
             \param position A value between 0 and 1.
             \return The corresponding color values (r,g,b,transparency values are in [0..1])
         */
-        VirtualRobot::VisualizationFactory::Color getColor(float position) const;
-        bool getColor(float position, VirtualRobot::VisualizationFactory::Color& storeColor) const;
+        VirtualRobot::Visualization::Color getColor(float position) const;
+        bool getColor(float position, VirtualRobot::Visualization::Color& storeColor) const;
 
         //! Custom color maps can be created with this method.
-        static ColorMap customColorMap(std::vector< VirtualRobot::VisualizationFactory::Color > colors);
+        static ColorMap customColorMap(std::vector< VirtualRobot::Visualization::Color > colors);
 
     protected:
         ColorMap();
@@ -63,7 +63,7 @@ namespace VirtualRobot
         struct ColorKey
         {
             unsigned int index;
-            VisualizationFactory::Color color; // internally alpha values are stored in the transparency variable
+            Visualization::Color color; // internally alpha values are stored in the transparency variable
             float position;
         };
         void sort();

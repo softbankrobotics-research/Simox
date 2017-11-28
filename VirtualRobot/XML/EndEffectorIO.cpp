@@ -8,7 +8,7 @@
 #include "../Model/Nodes/ModelJointPrismatic.h"
 #include "../Model/Nodes/ModelJointRevolute.h"
 #include "../Visualization/VisualizationFactory.h"
-#include "../Visualization/VisualizationNode.h"
+#include "../Visualization/Visualization.h"
 #include "../Visualization/TriMeshModel.h"
 #include "../Model/ModelConfig.h"
 #include "../Tools/RuntimeEnvironment.h"

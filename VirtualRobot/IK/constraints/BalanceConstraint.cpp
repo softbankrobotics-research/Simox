@@ -24,6 +24,7 @@
 #include "BalanceConstraint.h"
 
 #include <VirtualRobot/Tools/MathTools.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 using namespace VirtualRobot;
 
@@ -271,6 +272,28 @@ Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int /*id*/)
     return differnentiableStability->evaluateOptimizationGradient(com, comIK->getJacobianMatrix());
 }
 
+VisualizationPtr BalanceConstraint::getVisualization() const
+{
+    std::vector<VisualizationPtr> visus;
+    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+    Eigen::Vector3f com = getCoM();
+
+    Eigen::MatrixX4f gp1 = Eigen::Matrix4f::Identity();
+    gp1(0, 3) = com(0);
+    gp1(1, 3) = com(1);
+    visus.push_back(visualizationFactory->createSphere(10));
+    visus.back()->setGlobalPose(gp1);
+
+    Eigen::MatrixX4f gp2 = Eigen::Matrix4f::Identity();
+    gp1(0, 3) = com(0);
+    gp1(1, 3) = com(1);
+    gp2(2, 3) = com(2);
+    visus.push_back(getSupportPolygon()->getVisualization());
+    visus.back()->setGlobalPose(gp2);
+
+    return visualizationFactory->createVisualisationSet(visus);
+}
+
 Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
 {
     return comIK->getJacobianMatrix();
@@ -309,12 +332,12 @@ bool BalanceConstraint::checkTolerances()
     return (supportPolygon->getStabilityIndex(bodies, supportPolygonUpdates) >= minimumStability);
 }
 
-Eigen::Vector3f BalanceConstraint::getCoM()
+Eigen::Vector3f BalanceConstraint::getCoM() const
 {
     return bodies->getCoM();
 }
 
-SupportPolygonPtr BalanceConstraint::getSupportPolygon()
+SupportPolygonPtr BalanceConstraint::getSupportPolygon() const
 {
     return supportPolygon;
 }
