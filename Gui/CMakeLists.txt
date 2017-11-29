@@ -32,7 +32,7 @@ if (Simox_VISUALIZATION)
 
   set(INCLUDES ${INCLUDES} ${UI_HEADERS})
 
-  SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
+  SET(SOURCES ${SOURCES} ViewerFactory.cpp ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
   SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
 
   list(APPEND INCLUDES

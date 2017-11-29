@@ -13,6 +13,8 @@
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/Visualization.h"
 
+#include <Gui/ViewerFactory.h>
+
 #include <GraspPlanning/Visualization/ConvexHullVisualization.h>
 
 #include <QFileDialog>
@@ -23,12 +25,6 @@
 #include <iostream>
 #include <cmath>
 #include <sstream>
-
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
 
 using namespace std;
 using namespace VirtualRobot;
@@ -92,7 +88,7 @@ void GraspQualityWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(nullptr);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 

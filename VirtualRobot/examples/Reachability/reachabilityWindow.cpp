@@ -26,13 +26,6 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 reachabilityWindow::reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP)
     : QMainWindow(nullptr), robotVisuLayerName("robot-layer"), wsVisuLayerName("ws-layer")
 {
@@ -66,8 +59,7 @@ reachabilityWindow::~reachabilityWindow()
 void reachabilityWindow::setupUI()
 {
     UI.setupUi(this);
-    // viewerfactories and visualizationfactories of the same type share the same name (e.g. "inventor" for coin).
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
 
     viewer = viewerFactory->createViewer(UI.frameViewer);
     viewer->viewAll();

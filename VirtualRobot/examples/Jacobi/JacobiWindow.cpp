@@ -16,13 +16,6 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     : QMainWindow(nullptr), boxVisuLayer("box-layer")
 {
@@ -58,7 +51,7 @@ JacobiWindow::~JacobiWindow()
 void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr)->createViewer(UI.frameViewer);
+    viewer = SimoxGui::ViewerFactory::getInstance()->createViewer(UI.frameViewer);
     viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));

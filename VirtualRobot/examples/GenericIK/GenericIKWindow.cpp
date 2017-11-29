@@ -19,13 +19,6 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
     : QMainWindow(nullptr), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
 {
@@ -56,7 +49,7 @@ void GenericIKWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), nullptr);
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::getInstance();
     viewer = factory->createViewer(UI.frameViewer);
     viewer->viewAll();
 

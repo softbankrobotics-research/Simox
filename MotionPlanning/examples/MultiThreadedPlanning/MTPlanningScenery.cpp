@@ -24,14 +24,6 @@ using namespace MotionPlanning;
 
 #define SHORTEN_LOOP 600
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f2;
-#endif
-
-
 MTPlanningScenery::MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer)
     : viewer(viewer)
 {
