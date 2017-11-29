@@ -45,11 +45,6 @@
 #include "../../Import/MeshImport/STLReader.h"
 #include "../../XML/BaseIO.h"
 
-/**
-* register this class in the super class factory
-*/
-VirtualRobot::VisualizationFactory::SubClassRegistry VirtualRobot::CoinVisualizationFactory::registry(VirtualRobot::CoinVisualizationFactory::getName(), &VirtualRobot::CoinVisualizationFactory::createInstance);
-
 namespace VirtualRobot
 {
     void CoinVisualizationFactory::init(int &argc, char *argv[], const std::string &appName)

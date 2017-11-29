@@ -103,10 +103,9 @@ namespace VirtualRobot
         /*!
         Create a standard obstacle from a mesh.
         \param mesh The mesh.
-        \param visualizationType Here the type of visualization can be specified (e.g. "Inventor"). If empty, the first registered visualization type (which is usually the only one) is used.
         \param colChecker Only needed if you plan to use the collision checker in parallel. If not given, the object is registered with the global singleton collision checker.
         */
-        static ManipulationObjectPtr createFromMesh(const TriMeshModelPtr &mesh, const std::string &name = std::string(), const std::string &visualizationType = std::string(), const CollisionCheckerPtr &colChecker = CollisionCheckerPtr());
+        static ManipulationObjectPtr createFromMesh(const TriMeshModelPtr &mesh, const std::string &name = std::string(), const CollisionCheckerPtr &colChecker = CollisionCheckerPtr());
 
     protected:
 

@@ -1323,7 +1323,7 @@ namespace VirtualRobot
 
     VisualizationPtr WorkspaceRepresentation::getVisualization(const ColorMapPtr& cm, bool transformToGlobalPose, float maxZGlobal) const
     {
-        auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        auto factory = VisualizationFactory::getInstance();
         if (numVoxels[0] <= 0 || numVoxels[1] <= 0 || numVoxels[2] <= 0)
         {
             return factory->createVisualization();
@@ -2366,7 +2366,7 @@ namespace VirtualRobot
 
     VisualizationPtr WorkspaceRepresentation::WorkspaceCut2D::getVisualization(const ColorMap &cm, const Eigen::Vector3f& normal, float maxEntry) const
     {
-        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         // set z component

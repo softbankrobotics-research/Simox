@@ -28,8 +28,8 @@ namespace VirtualRobot
                                                                      modelNodeMap(), 
                                                                      modelNodeSetMap(),
                                                                      filename(""),
-                                                                     visualizationNodeSetFull(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({})),
-                                                                     visualizationNodeSetCollision(VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({}))
+                                                                     visualizationNodeSetFull(VisualizationFactory::getInstance()->createVisualisationSet({})),
+                                                                     visualizationNodeSetCollision(VisualizationFactory::getInstance()->createVisualisationSet({}))
     {
     }
 
@@ -576,13 +576,13 @@ namespace VirtualRobot
             rootNode->updatePose(true, true);
     }
 
-    void Model::attachStructure(std::string visualizationType)
+    void Model::attachStructure()
     {
         ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
         for (const auto & node : getModelNodes())
         {
             std::string attachmentName = node->getName() + "_structure";
-            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
             node->attach(attachment);
         }
     }
@@ -595,13 +595,13 @@ namespace VirtualRobot
         }
     }
 
-    void Model::attachFrames(std::string visualizationType)
+    void Model::attachFrames()
     {
         ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), nullptr);
         for (const auto & joint : getJoints())
         {
             std::string attachmentName = joint->getName() + "_frame";
-            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
             joint->attach(attachment);
         }
     }
@@ -614,7 +614,7 @@ namespace VirtualRobot
         }
     }
 
-    void Model::attachPhysicsInformation(std::string visualizationType)
+    void Model::attachPhysicsInformation()
     {
         ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
         for (auto &&link : getLinks())
@@ -623,7 +623,7 @@ namespace VirtualRobot
                 continue;
 
             std::string attachmentName = link->getName() + "_physics";
-            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
             link->attach(attachment);
         }
     }

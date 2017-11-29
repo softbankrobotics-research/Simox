@@ -133,7 +133,7 @@ void GraspPlannerWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
         viewer->addVisualization("frictionLayer", visu);
 
         // add approach dir visu
@@ -141,7 +141,7 @@ void GraspPlannerWindow::buildVisu()
         {
             std::stringstream name;
             name << "arrow-" << i;
-            VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
+            VisualizationPtr visu = VisualizationFactory::getInstance()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
 
             Eigen::Matrix4f ma;
             ma.setIdentity();

@@ -185,7 +185,7 @@ namespace VirtualRobot
 
     VisualizationPtr SupportPolygon::getVisualization() const
     {
-        auto visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        auto visualizationFactory = VisualizationFactory::getInstance();
         std::vector<VisualizationPtr> visus;
 
         MathTools::ConvexHull2DPtr convexHull = getSupportPolygon2D();

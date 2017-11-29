@@ -3,8 +3,8 @@
 
 namespace VirtualRobot
 {
-    Sensor::Sensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : ModelNodeAttachment(name, localTransformation, visualizationType)
+    Sensor::Sensor(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : ModelNodeAttachment(name, localTransformation)
     {
     }
 
@@ -26,7 +26,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr Sensor::clone()
     {
-        ModelNodeAttachmentPtr result(new Sensor(name, localTransformation, visualizationType));
+        ModelNodeAttachmentPtr result(new Sensor(name, localTransformation));
         return result;
     }
 }

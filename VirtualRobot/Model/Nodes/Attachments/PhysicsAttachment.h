@@ -37,7 +37,7 @@ namespace VirtualRobot
         friend class PhysicsAttachmentFactory;
 
     public:
-        PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation, const std::string &visualizationType);
+        PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation);
 
         void enableVisualization(bool CoM, bool inertia);
 

@@ -158,7 +158,7 @@ VisualizationPtr TSRConstraint::getVisualization() const
     float height = fabs(bounds(1, 0) - bounds(1, 1));
     float depth = fabs(bounds(2, 0) - bounds(2, 1));
 
-    auto v = VisualizationFactory::getGlobalVisualizationFactory()->createBox(width, height, depth);
+    auto v = VisualizationFactory::getInstance()->createBox(width, height, depth);
     v->setGlobalPose(getTransformation());
     return v;
 }

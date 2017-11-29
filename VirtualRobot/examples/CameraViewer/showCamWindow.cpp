@@ -26,7 +26,7 @@ float TIMER_MS = 30.0f;
 showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
     : QMainWindow(nullptr),
       obstacleVisu(new VirtualRobot::VisualizationGroup),
-      robotVisu(VisualizationFactory::getGlobalVisualizationFactory()->createVisualization())
+      robotVisu(VisualizationFactory::getInstance()->createVisualization())
 {
     VR_INFO << " start " << endl;
     setupUI();
@@ -461,7 +461,7 @@ void showCamWindow::renderCam()
         {
             p = (cam1Transform* Eigen::Vector4f(p(0), p(1), p(2), 1.f)).block<3, 1>(0, 0);
         }
-        cam1pclVisu = VisualizationFactory::getGlobalVisualizationFactory()->createPointCloud(cam1PointCloud, 4.f);
+        cam1pclVisu = VisualizationFactory::getInstance()->createPointCloud(cam1PointCloud, 4.f);
         viewer->addVisualization("pcl", cam1pclVisu);
     }
 }

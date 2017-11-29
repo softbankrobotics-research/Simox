@@ -245,7 +245,7 @@ namespace VirtualRobot
 
             if (model)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
                 if (visualizationFactory)
                 {
@@ -278,7 +278,7 @@ namespace VirtualRobot
 
         ss << ">\n";
 
-        std::string fileType = VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType();
+        std::string fileType = VisualizationFactory::getInstance()->getVisualizationType();
 
         if (!filename.empty())
         {
@@ -349,7 +349,7 @@ namespace VirtualRobot
             return CollisionModelPtr();
         }
 
-        VisualizationPtr vc = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visus);
+        VisualizationPtr vc = VisualizationFactory::getInstance()->createVisualisationSet(visus);
         return CollisionModelPtr(new CollisionModel(vc, "", colChecker));
     }
 

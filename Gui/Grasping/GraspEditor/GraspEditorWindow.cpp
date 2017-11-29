@@ -143,7 +143,7 @@ namespace VirtualRobot
 
         showCoordSystem();
         ModelLink::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-        VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr f = VisualizationFactory::getInstance();
         if (!f)
             return;
 
@@ -634,7 +634,7 @@ namespace VirtualRobot
 
         if (UI->checkBoxGraspSet->isChecked() && robotEEF && robotEEF_EEF && currentGraspSet && object)
         {
-            VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+            VisualizationFactoryPtr f = VisualizationFactory::getInstance();
             if (!f)
                 return;
 

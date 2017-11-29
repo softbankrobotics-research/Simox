@@ -307,7 +307,7 @@ namespace VirtualRobot
         {
             std::string tmpFilename = filename;
             BaseIO::makeRelativePath(basePath, tmpFilename);
-            ss << pre << t << "<File type='" << VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType() << "'>" << tmpFilename << "</File>\n";
+            ss << pre << t << "<File type='" << VisualizationFactory::getInstance()->getVisualizationType() << "'>" << tmpFilename << "</File>\n";
         }
         else if (primitives.size() != 0)
         {

@@ -298,14 +298,14 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     kinChain->setJointValues(start);
     Eigen::Matrix4f gp = rn->getGlobalPose();
-    VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f);
+    VisualizationPtr v = VisualizationFactory::getInstance()->createSphere(30.0f);
     v->setColor(Visualization::Color::Red());
     v->applyDisplacement(gp);
     viewer->addVisualization("startgoal", v);
 
     kinChain->setJointValues(goal);
     Eigen::Matrix4f gp2 = rn->getGlobalPose();
-    VisualizationPtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f);
+    VisualizationPtr v2 = VisualizationFactory::getInstance()->createSphere(30.0f);
     v2->setColor(Visualization::Color::Blue());
     v2->applyDisplacement(gp2);
     viewer->addVisualization("startgoal", v2);
@@ -313,14 +313,14 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
 
     std::stringstream nameStartText;
     nameStartText << "start-" << id;
-    VisualizationPtr v1t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameStartText.str(), true, 10.0f, 0, 0);
+    VisualizationPtr v1t = VisualizationFactory::getInstance()->createText(nameStartText.str(), true, 10.0f, 0, 0);
     v1t->applyDisplacement(gp);
     v1t->scale(Eigen::Vector3f::Constant(7.f));
     viewer->addVisualization("startgoal", v1t);
 
     std::stringstream nameGoalText;
     nameGoalText << "goal-" << id;
-    VisualizationPtr v2t = VisualizationFactory::getGlobalVisualizationFactory()->createText(nameGoalText.str(), true, 10.0f, 0, 0);
+    VisualizationPtr v2t = VisualizationFactory::getInstance()->createText(nameGoalText.str(), true, 10.0f, 0, 0);
     v2t->applyDisplacement(gp2);
     v2t->scale(Eigen::Vector3f::Constant(7.f));
     viewer->addVisualization("startgoal", v2t);
@@ -556,52 +556,52 @@ void MTPlanningScenery::addBBCube()
     Eigen::Vector3f p3b(x2,y2,z2);
     Eigen::Vector3f p4b(x1,y2,z2);
 
-    VisualizationPtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize);
+    VisualizationPtr v1 = VisualizationFactory::getInstance()->createLine(p1, p2, lineSize);
     v1->setColor(Visualization::Color::Black());
-    VisualizationPtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p3, lineSize);
+    VisualizationPtr v2 = VisualizationFactory::getInstance()->createLine(p2, p3, lineSize);
     v2->setColor(Visualization::Color::Black());
-    VisualizationPtr v3 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p4, lineSize);
+    VisualizationPtr v3 = VisualizationFactory::getInstance()->createLine(p3, p4, lineSize);
     v3->setColor(Visualization::Color::Black());
-    VisualizationPtr v4 = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p1, lineSize);
+    VisualizationPtr v4 = VisualizationFactory::getInstance()->createLine(p4, p1, lineSize);
     v4->setColor(Visualization::Color::Black());
     viewer->addVisualization("bbox", v1);
     viewer->addVisualization("bbox", v2);
     viewer->addVisualization("bbox", v3);
     viewer->addVisualization("bbox", v4);
 
-    VisualizationPtr v1b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p2b, lineSize);
+    VisualizationPtr v1b = VisualizationFactory::getInstance()->createLine(p1b, p2b, lineSize);
     v1b->setColor(Visualization::Color::Black());
-    VisualizationPtr v2b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p3b, lineSize);
+    VisualizationPtr v2b = VisualizationFactory::getInstance()->createLine(p2b, p3b, lineSize);
     v2b->setColor(Visualization::Color::Black());
-    VisualizationPtr v3b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize);
+    VisualizationPtr v3b = VisualizationFactory::getInstance()->createLine(p3b, p4b, lineSize);
     v3b->setColor(Visualization::Color::Black());
-    VisualizationPtr v4b = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p1b, lineSize);
+    VisualizationPtr v4b = VisualizationFactory::getInstance()->createLine(p4b, p1b, lineSize);
     v4b->setColor(Visualization::Color::Black());
     viewer->addVisualization("bbox", v1b);
     viewer->addVisualization("bbox", v2b);
     viewer->addVisualization("bbox", v3b);
     viewer->addVisualization("bbox", v4b);
 
-    VisualizationPtr v1c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1, p2, lineSize);
+    VisualizationPtr v1c = VisualizationFactory::getInstance()->createLine(p1, p2, lineSize);
     v1c->setColor(Visualization::Color::Black());
-    VisualizationPtr v2c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2, p2b, lineSize);
+    VisualizationPtr v2c = VisualizationFactory::getInstance()->createLine(p2, p2b, lineSize);
     v2c->setColor(Visualization::Color::Black());
-    VisualizationPtr v3c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p2b, p1b, lineSize);
+    VisualizationPtr v3c = VisualizationFactory::getInstance()->createLine(p2b, p1b, lineSize);
     v3c->setColor(Visualization::Color::Black());
-    VisualizationPtr v4c = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p1b, p1, lineSize);
+    VisualizationPtr v4c = VisualizationFactory::getInstance()->createLine(p1b, p1, lineSize);
     v4c->setColor(Visualization::Color::Black());
     viewer->addVisualization("bbox", v1c);
     viewer->addVisualization("bbox", v2c);
     viewer->addVisualization("bbox", v3c);
     viewer->addVisualization("bbox", v4c);
 
-    VisualizationPtr v1d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4, p3, lineSize);
+    VisualizationPtr v1d = VisualizationFactory::getInstance()->createLine(p4, p3, lineSize);
     v1d->setColor(Visualization::Color::Black());
-    VisualizationPtr v2d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3, p3b, lineSize);
+    VisualizationPtr v2d = VisualizationFactory::getInstance()->createLine(p3, p3b, lineSize);
     v2d->setColor(Visualization::Color::Black());
-    VisualizationPtr v3d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p3b, p4b, lineSize);
+    VisualizationPtr v3d = VisualizationFactory::getInstance()->createLine(p3b, p4b, lineSize);
     v3d->setColor(Visualization::Color::Black());
-    VisualizationPtr v4d = VisualizationFactory::getGlobalVisualizationFactory()->createLine(p4b, p4, lineSize);
+    VisualizationPtr v4d = VisualizationFactory::getInstance()->createLine(p4b, p4, lineSize);
     v4d->setColor(Visualization::Color::Black());
     viewer->addVisualization("bbox", v1d);
     viewer->addVisualization("bbox", v2d);

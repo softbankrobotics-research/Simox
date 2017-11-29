@@ -379,10 +379,8 @@ namespace VirtualRobot
         /*!
          * A convenience function that creates and attaches a ModelStructure to each joint.
          * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, the default visualization factory is used.
          */
-        void attachStructure(std::string visualizationType = "");
+        void attachStructure();
 
         /*!
          * A convenience function to detach ModelStructures.
@@ -393,10 +391,8 @@ namespace VirtualRobot
         /*!
          * A convenience function that creates and attaches a ModelNodeAttachment to each joint, representing a frame.
          * Each attached ModelNodeAttachment inherits the name of its corresponding joint appended by "_frame".
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, the default visualization factory is used.
          */
-        void attachFrames(std::string visualizationType = "");
+        void attachFrames();
 
         /*!
          * A convenience function to detach ModelNodeAttachments / Frames.
@@ -408,10 +404,8 @@ namespace VirtualRobot
          * A convenience function that creates and attaches a PhysicsAttachment to each link.
          * Each attached PhysicsAttachment inherits the name of its corresponding link appended by "_physics".
          * Links with zero or negative mass will be skipped.
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, the default visualization factory is used.
          */
-        void attachPhysicsInformation(std::string visualizationType = "");
+        void attachPhysicsInformation();
 
         /*!
          * A convenience function to detach PhysicsAttachments.
@@ -419,17 +413,7 @@ namespace VirtualRobot
          */
         void detachPhysicsInformation();
 
-        // TODO: move to Visualization factory
-        /*!
-         * Convenient method for highlighting the visualization of this model.
-         * It is automatically checked whether the collision model or the full model is part of the visualization.
-         *
-         * @param visualization The visualization for which the highlighting should be performed.
-         * @param enable On or off
-         */
-        //virtual void highlight(const VisualizationPtr& visualization, bool enable);
-
-        // TODO: move to Visualization factory
+        // TODO: implement using attachments
         /*!
          * Display some physics debugging information.
          *

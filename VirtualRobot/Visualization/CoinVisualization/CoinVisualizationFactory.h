@@ -103,7 +103,6 @@ namespace VirtualRobot
         typedef std::map<std::pair<size_t, std::string>, void*> TextureCacheMap;
 
     private:
-        static SubClassRegistry registry;
         static std::mutex globalTextureCacheMutex;
         static TextureCacheMap globalTextureCache;
     };

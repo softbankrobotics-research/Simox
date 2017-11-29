@@ -13,17 +13,20 @@
 
 #include <fstream>
 
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "CoinVisualization/CoinVisualizationFactory.h"
+
+    using GlobalFactory = VirtualRobot::CoinVisualizationFactory;
+#else
+    using GlobalFactory = VirtualRobot::VisualizationFactory;
+#endif
+
 namespace VirtualRobot
 {
-
-    VisualizationFactory::VisualizationFactory()
+    VisualizationFactoryPtr VisualizationFactory::getInstance()
     {
-        ;
-    }
-
-    VisualizationFactory::~VisualizationFactory()
-    {
-        ;
+        static VisualizationFactoryPtr instance(new GlobalFactory);
+        return instance;
     }
 
     void VisualizationFactory::init(int &, char *[], const std::string &)
@@ -243,7 +246,7 @@ namespace VirtualRobot
             cvHull3d.push_back(pt3d);
         }
 
-        return VisualizationFactory::getGlobalVisualizationFactory()->createPolygon(cvHull3d);
+        return VisualizationFactory::getInstance()->createPolygon(cvHull3d);
     }
 
     VisualizationPtr VisualizationFactory::createVisualization() const
@@ -254,11 +257,6 @@ namespace VirtualRobot
     void VisualizationFactory::cleanup()
     {
         ;
-    }
-
-    VisualizationFactoryPtr VisualizationFactory::getGlobalVisualizationFactory()
-    {
-        return VisualizationFactory::first(NULL);
     }
 
     std::string VisualizationFactory::getVisualizationType() const

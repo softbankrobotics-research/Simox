@@ -4,8 +4,8 @@
 
 namespace VirtualRobot
 {
-    PositionSensor::PositionSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : Sensor(name, localTransformation, visualizationType)
+    PositionSensor::PositionSensor(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : Sensor(name, localTransformation)
     {
     }
 
@@ -25,7 +25,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr PositionSensor::clone()
     {
-        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation, visualizationType));
+        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation));
         return result;
     }
 

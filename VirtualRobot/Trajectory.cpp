@@ -434,7 +434,7 @@ namespace VirtualRobot
     {
         std::vector<Eigen::Matrix4f> ws = createWorkspaceTrajectory();
 
-        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
         std::vector<VisualizationPtr> visus;
         for (auto& p : ws)
         {

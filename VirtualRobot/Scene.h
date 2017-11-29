@@ -158,9 +158,7 @@ namespace VirtualRobot
         std::string getName() const;
 
         /**
-         * @param linkVisuType The type of link visualization (e.g. collision).
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
+         * @param visuType The type of link visualization (e.g. collision).
          * @return A visualization of this model's links.
          */
         VisualizationGroupPtr getAllVisualizations(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;

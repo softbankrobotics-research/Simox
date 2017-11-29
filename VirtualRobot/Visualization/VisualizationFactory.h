@@ -24,7 +24,6 @@
 #define _VirtualRobot_VisualizationFactory_h_
 
 #include "../Model/Model.h"
-#include "../Tools/AbstractFactoryMethod.h"
 #include "../Tools/BoundingBox.h"
 #include "../Model/Primitive.h"
 #include "../Tools/MathTools.h"
@@ -40,11 +39,19 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public ::AbstractFactoryMethod<VisualizationFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory
     {
     public:
-        VisualizationFactory();
-        virtual ~VisualizationFactory();
+        /*!
+        * Use this method to get the VisualizationFactory singleton according to your compile setup.
+        * @see CoinVisualizationFactory
+        * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
+        */
+        static VisualizationFactoryPtr getInstance();
+    protected:
+        VisualizationFactory() = default;
+    public:
+        virtual ~VisualizationFactory() = default;
 
         virtual void init(int &argc, char* argv[], const std::string &appName);
 
@@ -114,13 +121,6 @@ namespace VirtualRobot
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
         virtual void cleanup();
-
-        /*! 
-        * Use this method to get the VisualizationFactory singleton according to your compile setup.
-        * @see CoinVisualizationFactory
-        * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
-        */
-        static VisualizationFactoryPtr getGlobalVisualizationFactory();
 
         /**
          * A dynamicly bound version of getName().

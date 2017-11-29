@@ -140,7 +140,7 @@ Eigen::VectorXf PoseConstraint::optimizationGradient(unsigned int id)
 
 VisualizationPtr PoseConstraint::getVisualization() const
 {
-    auto v = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(50);
+    auto v = VisualizationFactory::getInstance()->createSphere(50);
     Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
     gp.block<3, 1>(0, 3) = getTarget().block<3, 1>(0, 3);
     v->setGlobalPose(gp);

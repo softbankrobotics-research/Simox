@@ -275,7 +275,7 @@ Eigen::VectorXf BalanceConstraint::optimizationGradient(unsigned int /*id*/)
 VisualizationPtr BalanceConstraint::getVisualization() const
 {
     std::vector<VisualizationPtr> visus;
-    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+    VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
     Eigen::Vector3f com = getCoM();
 
     Eigen::MatrixX4f gp1 = Eigen::Matrix4f::Identity();

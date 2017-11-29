@@ -86,7 +86,7 @@ namespace VirtualRobot
         {
             clonedVisus.push_back(visu->clone());
         }
-        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)

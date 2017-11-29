@@ -852,7 +852,6 @@ namespace VirtualRobot
         //float coordAxisFactor = 1.0f;
         //std::string coordAxisText = "";
         //std::string visuCoordType = "";
-        std::string visuFileType = "";
         std::string visuFile = "";
         rapidxml::xml_attribute<>* attr;
         VisualizationPtr visualizationNode;
@@ -875,10 +874,6 @@ namespace VirtualRobot
 
             if (visuFileXMLNode)
             {
-                attr = visuFileXMLNode->first_attribute("type", 0, false);
-                THROW_VR_EXCEPTION_IF(!attr, "Missing 'type' attribute in <Visualization> tag." << endl);
-                visuFileType = attr->value();
-                BaseIO::getLowerCase(visuFileType);
                 visuFile = BaseIO::processFileNode(visuFileXMLNode, basePath);
             }
 
@@ -886,16 +881,8 @@ namespace VirtualRobot
 
             if (useColModel && visuFile != "")
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, nullptr);
-
-                if (visualizationFactory)
-                {
-                    visualizationNode = visualizationFactory->createVisualizationFromFile(visuFile);
-                }
-                else
-                {
-                    VR_WARNING << "VisualizationFactory of type '" << visuFileType << "' not present. Ignoring Visualization data." << endl;
-                }
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
+                visualizationNode = visualizationFactory->createVisualizationFromFile(visuFile);
             }
         }
 

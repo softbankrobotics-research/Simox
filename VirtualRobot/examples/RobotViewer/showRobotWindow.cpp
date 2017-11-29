@@ -392,7 +392,7 @@ void showRobotWindow::attachStructure(bool attach)
     if (!robot) return;
 
     if (attach)
-        robot->attachStructure(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
+        robot->attachStructure();
     else
         robot->detachStructure();
 
@@ -404,7 +404,7 @@ void showRobotWindow::attachFrames(bool attach)
     if (!robot) return;
 
     if (attach)
-        robot->attachFrames(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType());
+        robot->attachFrames();
     else
         robot->detachFrames();
 

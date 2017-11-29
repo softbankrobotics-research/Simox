@@ -44,7 +44,7 @@ stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string
     setupUI();
 
     MathTools::Plane p =  MathTools::getFloorPlane();
-    auto pv = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createGrid(p, 10000.0f);
+    auto pv = VirtualRobot::VisualizationFactory::getInstance()->createGrid(p, 10000.0f);
     viewer->addVisualization("floor", pv);
 
     loadRobot();
@@ -178,9 +178,9 @@ void stabilityWindow::updateCoM()
         return;
 
     // Draw CoM
-    VisualizationPtr sphere = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f);
+    VisualizationPtr sphere = VisualizationFactory::getInstance()->createSphere(30.0f);
     sphere->setColor(VirtualRobot::Visualization::Color{1.0f, 0.2f, 0.2f});
-    VisualizationPtr box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f);
+    VisualizationPtr box = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
     box->setColor(VirtualRobot::Visualization::Color{1.0f, 0.2f, 0.2f});
     sphere->applyDisplacement(globalPoseCoM);
     box->applyDisplacement(globalPoseCoM);
@@ -189,9 +189,9 @@ void stabilityWindow::updateCoM()
 
     // Draw CoM projection
     globalPoseCoM(2, 3) = 0;
-    VisualizationPtr sphere2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f);
+    VisualizationPtr sphere2 = VisualizationFactory::getInstance()->createSphere(30.0f);
     sphere2->setColor(VirtualRobot::Visualization::Color{0.2f, 0.2f, 1.0f});
-    VisualizationPtr box2 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f);
+    VisualizationPtr box2 = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
     box2->setColor(VirtualRobot::Visualization::Color{0.2f, 0.2f, 1.0f});
     sphere2->applyDisplacement(globalPoseCoM);
     box2->applyDisplacement(globalPoseCoM);
@@ -202,9 +202,9 @@ void stabilityWindow::updateCoM()
     Eigen::Matrix4f targCom;
     targCom.setIdentity();
     targCom.block(0,3,2,1) = comTarget;
-    VisualizationPtr sphere3 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f);
+    VisualizationPtr sphere3 = VisualizationFactory::getInstance()->createSphere(30.0f);
     sphere3->setColor(VirtualRobot::Visualization::Color{0.2f, 1.0f, 0.2f});
-    VisualizationPtr box3 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f);
+    VisualizationPtr box3 = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
     box3->setColor(VirtualRobot::Visualization::Color{0.2f, 1.0f, 0.2f});
     sphere3->applyDisplacement(targCom);
     box3->applyDisplacement(targCom);
@@ -244,7 +244,7 @@ void stabilityWindow::updateSupportVisu()
         }
 
         MathTools::ConvexHull2DPtr cv = MathTools::createConvexHull2D(points2D);
-        auto sv = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createConvexHull2DVisualization(cv, p, Eigen::Vector3f(0, 0, 2.0f));
+        auto sv = VirtualRobot::VisualizationFactory::getInstance()->createConvexHull2DVisualization(cv, p, Eigen::Vector3f(0, 0, 2.0f));
         sv->setColor(Visualization::Color::Blue());
         viewer->addVisualization("support", sv);
     }

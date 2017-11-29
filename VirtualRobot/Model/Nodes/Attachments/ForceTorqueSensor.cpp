@@ -4,8 +4,8 @@
 
 namespace VirtualRobot
 {
-    ForceTorqueSensor::ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : Sensor(name, localTransformation, visualizationType)
+    ForceTorqueSensor::ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : Sensor(name, localTransformation)
         , forceTorqueValues(6)
     {
         forceTorqueValues.setZero();
@@ -29,7 +29,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr ForceTorqueSensor::clone()
     {
-        ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation, visualizationType));
+        ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation));
         result->updateSensors(forceTorqueValues);
         return result;
     }

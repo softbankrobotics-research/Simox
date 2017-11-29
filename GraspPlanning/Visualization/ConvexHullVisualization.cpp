@@ -30,7 +30,7 @@ namespace GraspPlanning
 
     VirtualRobot::VisualizationPtr ConvexHullVisualization::createConvexHullVisualization(const VirtualRobot::MathTools::ConvexHull3DPtr &convHull)
     {
-        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory();
+        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getInstance();
         if (!convHull || convHull->vertices.size() == 0 || convHull->faces.size() == 0)
         {
             return visualizationFactory->createVisualization();
@@ -63,7 +63,7 @@ namespace GraspPlanning
 
     VirtualRobot::VisualizationPtr ConvexHullVisualization::createConvexHullVisualization(const VirtualRobot::MathTools::ConvexHull6DPtr &convHull, bool buseFirst3Coords)
     {
-        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory();
+        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getInstance();
         if (!convHull || convHull->vertices.size() == 0 || convHull->faces.size() == 0)
         {
             return visualizationFactory->createVisualization();

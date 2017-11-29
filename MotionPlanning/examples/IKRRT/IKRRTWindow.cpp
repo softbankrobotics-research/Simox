@@ -209,7 +209,7 @@ void IKRRTWindow::buildVisu()
 
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
-    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    VisualizationFactoryPtr f = VisualizationFactory::getInstance();
     if (!f)
         return;
 

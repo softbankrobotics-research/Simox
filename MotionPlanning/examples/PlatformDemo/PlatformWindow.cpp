@@ -98,7 +98,7 @@ void PlatformWindow::buildVisu()
 
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
-    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    VisualizationFactoryPtr f = VisualizationFactory::getInstance();
     if (!f)
         return;
 
@@ -274,7 +274,7 @@ void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vecto
         from.block(0,3,3,1) = a;
         to.block(0,3,3,1) = b;
 
-        VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createLine(from, to, 5.0f);
+        VisualizationPtr v = VisualizationFactory::getInstance()->createLine(from, to, 5.0f);
         v->setColor(Visualization::Color(1.0f, 0.2f, 0.2f));
         viewer->addVisualization("dist", v);
     }
@@ -374,7 +374,7 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         internalForce.normalize();
         externalForce.normalize();
         resultingForce.normalize();
-        VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr f = VisualizationFactory::getInstance();
         VisualizationPtr v1 = f->createArrow(internalForce, l1, 2.0f);
         v1->setColor(Visualization::Color::Blue());
         VisualizationPtr v2 = f->createArrow(internalForce, l1, 2.0f);

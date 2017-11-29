@@ -11,9 +11,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNodeAttachmentPtr ModelNodeAttachmentFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform, std::string visualizationType)
+    ModelNodeAttachmentPtr ModelNodeAttachmentFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform)
     {
-        ModelNodeAttachmentPtr m(new ModelNodeAttachment(name, localTransform, visualizationType));
+        ModelNodeAttachmentPtr m(new ModelNodeAttachment(name, localTransform));
         return m;
     }
 

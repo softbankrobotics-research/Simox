@@ -163,7 +163,7 @@ void GraspQualityWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
         viewer->addVisualization("frictionLayer", visu);
     }
 }

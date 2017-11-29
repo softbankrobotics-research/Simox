@@ -39,7 +39,7 @@ namespace MotionPlanning
 
     void RrtWorkspaceVisualization::init()
     {
-        visualization = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet({});
+        visualization = VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({});
 
         setPathStyle();
         setTreeStyle();
@@ -91,7 +91,7 @@ namespace MotionPlanning
 
     bool RrtWorkspaceVisualization::addTree(const CSpaceTreePtr& tree, RrtWorkspaceVisualization::ColorSet colorSet)
     {
-        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory();
+        const auto visualizationFactory = VirtualRobot::VisualizationFactory::getInstance();
         if (!tree)
         {
             return false;
@@ -208,7 +208,7 @@ namespace MotionPlanning
         Eigen::Matrix4f m = TCPNode->getGlobalPose();
         m.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity();
 
-        auto visu = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createPoint(nodeSolutionSize);
+        auto visu = VirtualRobot::VisualizationFactory::getInstance()->createPoint(nodeSolutionSize);
         visu->setGlobalPose(m);
         visu->setColor(colorNode);
 
@@ -297,11 +297,11 @@ namespace MotionPlanning
             }
         }
 
-        auto visuPoints = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createPointCloud(points, nodeSolutionSize);
+        auto visuPoints = VirtualRobot::VisualizationFactory::getInstance()->createPointCloud(points, nodeSolutionSize);
         visuPoints->setColor(nodeColor);
         visualization->addVisualization(visuPoints);
 
-        auto visuLines = VirtualRobot::VisualizationFactory::getGlobalVisualizationFactory()->createLineSet(from, to, lineSolutionSize);
+        auto visuLines = VirtualRobot::VisualizationFactory::getInstance()->createLineSet(from, to, lineSolutionSize);
         visuLines->setColor(lineColor);
         visualization->addVisualization(visuLines);
 

@@ -42,9 +42,8 @@ namespace VirtualRobot
          * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
-         * \param \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          */
-        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
+        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
     public:
         /*!
@@ -163,7 +162,6 @@ namespace VirtualRobot
 
         ModelNodeWeakPtr node;
         Eigen::Matrix4f localTransformation;
-        std::string visualizationType;
         VisualizationPtr visu;
 
     private:

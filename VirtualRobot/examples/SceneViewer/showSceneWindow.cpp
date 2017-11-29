@@ -106,7 +106,7 @@ void showSceneWindow::buildVisu()
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(&rootText, 2.f);
+        VisualizationPtr visuCoord = VisualizationFactory::getInstance()->createCoordSystem(&rootText, 2.f);
         viewer->addVisualization("scene", visuCoord);
     }
 
@@ -121,7 +121,7 @@ void showSceneWindow::updateGraspVisu()
     if (UI.comboBoxGrasp->currentIndex() > 0 && currentObject && currentEEF && currentGrasp)
     {
         std::string t = currentGrasp->getName();
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(&t, 2.f);
+        VisualizationPtr visuCoord = VisualizationFactory::getInstance()->createCoordSystem(&t, 2.f);
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
         visuCoord->applyDisplacement(gp);
         viewer->addVisualization("grasps", visuCoord);

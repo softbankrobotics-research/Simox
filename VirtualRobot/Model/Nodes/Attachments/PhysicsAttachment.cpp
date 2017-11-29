@@ -8,8 +8,8 @@
 
 namespace VirtualRobot
 {
-    PhysicsAttachment::PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation, const std::string &visualizationType)
-            : ModelNodeAttachment(name, localTransformation, visualizationType)
+    PhysicsAttachment::PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation)
+            : ModelNodeAttachment(name, localTransformation)
     {
         initVisualization();
     }
@@ -26,14 +26,7 @@ namespace VirtualRobot
             return;
         }
 
-        VisualizationFactoryPtr factory = visualizationType.empty() ? VisualizationFactory::getGlobalVisualizationFactory()
-                                                                    : VisualizationFactory::fromName(visualizationType, nullptr);
-
-        if (!factory)
-        {
-            VR_WARNING << "Error while retrieving VisualizationFactory with name '" << visualizationType << "'! Skipping visualization..." << std::endl;
-            return;
-        }
+        VisualizationFactoryPtr factory = VisualizationFactory::getInstance();
 
 
         VisualizationPtr visuNodeCoM;

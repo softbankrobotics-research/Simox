@@ -5,8 +5,8 @@
 
 namespace VirtualRobot
 {
-    ModelNodeAttachment::ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : Frame(name), localTransformation(localTransformation), visualizationType(visualizationType)
+    ModelNodeAttachment::ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : Frame(name), localTransformation(localTransformation)
     {
         initVisualization();
     }
@@ -29,7 +29,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr ModelNodeAttachment::clone()
     {
-        ModelNodeAttachmentPtr result(new ModelNodeAttachment(name, localTransformation,visualizationType));
+        ModelNodeAttachmentPtr result(new ModelNodeAttachment(name, localTransformation));
         return result;
     }
 
@@ -63,14 +63,7 @@ namespace VirtualRobot
 
     void ModelNodeAttachment::initVisualization()
     {
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
-
-        if (!factory)
-        {
-            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
-            return;
-        }
-
+        VisualizationFactoryPtr factory = VisualizationFactory::getInstance();
         std::string name = getName();
         setVisualization(factory->createCoordSystem(&name));
     }

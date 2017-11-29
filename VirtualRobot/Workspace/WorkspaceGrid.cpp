@@ -486,7 +486,7 @@ namespace VirtualRobot
 
     VisualizationPtr WorkspaceGrid::getVisualization(const ColorMap &cm) const
     {
-        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
         Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
         float minX, maxX, minY, maxY;
