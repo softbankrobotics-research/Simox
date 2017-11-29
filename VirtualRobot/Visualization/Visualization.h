@@ -40,12 +40,7 @@ namespace VirtualRobot
     template<typename T>
     static inline std::shared_ptr<T> visualization_cast(const VisualizationPtr& visu)
     {
-    #ifdef NDEBUG
-        auto vc = std::static_pointer_cast<T>(visu);
-    #else
         auto vc = std::dynamic_pointer_cast<T>(visu);
-        VR_ASSERT(vc);
-    #endif
         return vc;
     }
 
