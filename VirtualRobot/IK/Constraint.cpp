@@ -1,5 +1,6 @@
 #include "Constraint.h"
 #include "../VirtualRobotException.h"
+#include "../Visualization/VisualizationFactory.h"
 
 using namespace VirtualRobot;
 
@@ -91,6 +92,17 @@ Eigen::VectorXf Constraint::getError(float /*stepSize*/)
 bool Constraint::checkTolerances()
 {
     THROW_VR_EXCEPTION("Constraint does not support Jacobian-based solvers.");
+}
+
+VisualizationPtr Constraint::getVisualization() const
+{
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
+    return VisualizationFactory::getInstance()->createVisualization();
 }
 
 void Constraint::addEqualityConstraint(unsigned int id, bool soft)

@@ -78,16 +78,7 @@ namespace VirtualRobot
         virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
         virtual bool checkTolerances() override;
 
-        virtual VisualizationPtr getVisualization() const
-        {
-            static bool printed = false;
-            if (!printed)
-            {
-                VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-                printed = true;
-            }
-            return VisualizationPtr();
-        }
+        virtual VisualizationPtr getVisualization() const;
 
     protected:
         void addEqualityConstraint(unsigned int id, bool soft=false);
