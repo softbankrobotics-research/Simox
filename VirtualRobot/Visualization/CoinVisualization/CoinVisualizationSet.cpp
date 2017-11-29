@@ -126,38 +126,73 @@ namespace VirtualRobot
 
     size_t CoinVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_removeAllManipulators()
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     bool CoinVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 
     std::vector<Visualization::ManipulatorType> CoinVisualizationSet::getAddedManipulatorTypes() const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return std::vector<ManipulatorType>();
     }
 
@@ -203,19 +238,34 @@ namespace VirtualRobot
 
     std::string CoinVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return "";
     }
 
     std::string CoinVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return "";
     }
 
     bool CoinVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 } // namespace VirtualRobot

@@ -80,7 +80,12 @@ namespace VirtualRobot
 
         virtual VisualizationPtr getVisualization() const
         {
-            VR_WARNING << "NYI" << std::endl;
+            static bool printed = false;
+            if (!printed)
+            {
+                VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+                printed = true;
+            }
             return VisualizationPtr();
         }
 

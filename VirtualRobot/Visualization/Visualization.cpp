@@ -336,7 +336,12 @@ namespace VirtualRobot
 
     bool DummyVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        VR_ERROR << "NYI..." << endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 
