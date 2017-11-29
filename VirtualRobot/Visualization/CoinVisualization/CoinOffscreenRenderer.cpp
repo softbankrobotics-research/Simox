@@ -9,6 +9,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoUnits.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -68,24 +69,26 @@ namespace VirtualRobot
         //render
         // add all to a inventor scene graph
         SoSeparator* root = new SoSeparator;
+        SoUnits* unitNode = new SoUnits;
+        unitNode->units = SoUnits::MILLIMETERS;
+        root->addChild(unitNode);
         root->ref();
         root->addChild(new SoDirectionalLight);
 
         //setup cam
-        float sc = 0.001f;//cam has to be in m but values are in mm. (if the cam is set to mm with a unit node the robot visu disapperars)
-        SoPerspectiveCamera* camInMeters = new SoPerspectiveCamera;
+        SoPerspectiveCamera* cam = new SoPerspectiveCamera;
         Eigen::Vector3f camPos = camPose.block<3, 1>(0, 3);
-        camInMeters->position.setValue(camPos[0]*sc, camPos[1]*sc, camPos[2]*sc);
+        cam->position.setValue(camPos[0], camPos[1], camPos[2]);
         SbRotation align(SbVec3f(1, 0, 0), (float)(M_PI)); // first align from  default direction -z to +z by rotating with 180 degree around x axis
         SbRotation align2(SbVec3f(0, 0, 1), (float)(-M_PI / 2.0)); // align up vector by rotating with -90 degree around z axis
         SbRotation trans(getSbMatrix(camPose)); // get rotation from global pose
-        camInMeters->orientation.setValue(align2 * align * trans); // perform total transformation
-        camInMeters->nearDistance.setValue(sc*zNear);
-        camInMeters->farDistance.setValue(sc*zFar);
-        camInMeters->heightAngle.setValue(vertFov);
-        camInMeters->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
+        cam->orientation.setValue(align2 * align * trans); // perform total transformation
+        cam->nearDistance.setValue(zNear);
+        cam->farDistance.setValue(zFar);
+        cam->heightAngle.setValue(vertFov);
+        cam->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
 
-        root->addChild(camInMeters);
+        root->addChild(cam);
 
         SoSeparator* sceneSep = new SoSeparator;
         root->addChild(sceneSep);
