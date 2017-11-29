@@ -241,11 +241,6 @@ namespace VirtualRobot
         return "inventor";
     }
 
-    OffscreenRendererPtr CoinOffscreenRenderer::createInstance(void *)
-    {
-        return OffscreenRendererPtr(new CoinOffscreenRenderer());
-    }
-
     SbMatrix CoinOffscreenRenderer::getSbMatrix(const Eigen::Matrix4f &m) const
     {
         SbMatrix res(reinterpret_cast<const SbMat*>(m.data()));

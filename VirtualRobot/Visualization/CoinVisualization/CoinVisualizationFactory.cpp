@@ -945,14 +945,4 @@ namespace VirtualRobot
     {
         return "inventor";
     }
-
-    VisualizationFactoryPtr CoinVisualizationFactory::createInstance(void *)
-    {
-        if (!SoDB::isInitialized())
-        {
-            SoDB::init();
-        }
-
-        return VisualizationFactoryPtr(new CoinVisualizationFactory());
-    }
 } // namespace VirtualRobot

@@ -101,8 +101,6 @@ namespace VirtualRobot
          */
         virtual std::string getVisualizationType() const override;
 
-        static OffscreenRendererPtr createInstance(void*);
-
     protected:
         SbMatrix getSbMatrix(const Eigen::Matrix4f& m) const;
 

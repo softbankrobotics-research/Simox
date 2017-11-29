@@ -98,7 +98,6 @@ namespace VirtualRobot
         // AbstractFactoryMethod
     public:
         static std::string getName();
-        static VisualizationFactoryPtr createInstance(void*);
 
         typedef std::map<std::pair<size_t, std::string>, void*> TextureCacheMap;
 
