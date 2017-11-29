@@ -1,7 +1,19 @@
 #include "OffscreenRenderer.h"
 
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "CoinVisualization/CoinOffscreenRenderer.h"
+
+    using GlobalFactory = VirtualRobot::CoinOffscreenRenderer;
+#endif
+
 namespace VirtualRobot
 {
+    OffscreenRendererPtr OffscreenRenderer::getInstance()
+    {
+        static OffscreenRendererPtr instance(new GlobalFactory);
+        return instance;
+    }
+
     void OffscreenRenderer::init(int &, char *[], const std::string &)
     {
     }
@@ -49,11 +61,6 @@ namespace VirtualRobot
 
     void OffscreenRenderer::cleanup()
     {
-    }
-
-    OffscreenRendererPtr OffscreenRenderer::getGlobalOffscreenRenderer()
-    {
-        return OffscreenRenderer::first(NULL);
     }
 
     std::string OffscreenRenderer::getVisualizationType() const

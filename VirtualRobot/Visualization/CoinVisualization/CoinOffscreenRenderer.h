@@ -118,8 +118,6 @@ namespace VirtualRobot
             unsigned int h;
         };
         static void getZBuffer(void* userdata);
-
-        static SubClassRegistry registry;
     };
 } // namespace VirtualRobot
 

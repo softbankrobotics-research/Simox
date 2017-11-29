@@ -19,11 +19,6 @@
 #endif
 #include <GL/gl.h>
 
-/**
-* register this class in the super class factory
-*/
-VirtualRobot::OffscreenRenderer::SubClassRegistry VirtualRobot::CoinOffscreenRenderer::registry(VirtualRobot::CoinOffscreenRenderer::getName(), &VirtualRobot::CoinOffscreenRenderer::createInstance);
-
 namespace VirtualRobot
 {
     void CoinOffscreenRenderer::init(int &, char *[], const std::string &)

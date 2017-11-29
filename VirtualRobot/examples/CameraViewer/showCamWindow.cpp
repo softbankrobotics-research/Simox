@@ -380,7 +380,7 @@ void showCamWindow::renderCam()
     {
         voxelObjects.clear();
 
-        OffscreenRenderer::getGlobalOffscreenRenderer()->renderOffscreen(cam1->getGlobalPose(),
+        OffscreenRenderer::getInstance()->renderOffscreen(cam1->getGlobalPose(),
                                                                          scene,
                                                                          UI.cam1->size().width(), UI.cam1->size().height(),
                                                                          true, cam1RGBBuffer,
@@ -414,7 +414,7 @@ void showCamWindow::renderCam()
 
     if (cam2)
     {
-        OffscreenRenderer::getGlobalOffscreenRenderer()->renderOffscreen(cam2->getGlobalPose(),
+        OffscreenRenderer::getInstance()->renderOffscreen(cam2->getGlobalPose(),
                                                                          scene,
                                                                          UI.cam2->size().width(), UI.cam2->size().height(),
                                                                          true, cam2RGBBuffer,
