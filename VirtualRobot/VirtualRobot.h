@@ -318,7 +318,15 @@ namespace VirtualRobot
 #define VR_INFO std::cout <<__FILE__ << ":" << __LINE__ << ": "
 #define VR_WARNING std::cerr <<__FILE__ << ":" << __LINE__ << " -Warning- "
 #define VR_ERROR std::cerr <<__FILE__ << ":" << __LINE__ << " - ERROR - "
-
+#define VR_ERROR_ONCE(stream)  {\
+    static bool printed = false;\
+    if (!printed) \
+    { \
+        VR_ERROR << stream << std::endl; \
+        printed = true; \
+    } \
+}
+#define VR_ERROR_ONCE_NYI VR_ERROR_ONCE(__FILE__ << " " << __LINE__ << " - " << __FUNCTION__)
 
 #ifdef NDEBUG
 
