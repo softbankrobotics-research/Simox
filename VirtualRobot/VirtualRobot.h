@@ -326,7 +326,7 @@ namespace VirtualRobot
         printed = true; \
     } \
 }
-#define VR_ERROR_ONCE_NYI VR_ERROR_ONCE(__FILE__ << " " << __LINE__ << " - " << __FUNCTION__)
+#define VR_ERROR_ONCE_NYI VR_ERROR_ONCE(__FILE__ << " " << __LINE__ << " - " << __FUNCTION__ << "(): Not yet implemented!")
 
 #ifdef NDEBUG
 
