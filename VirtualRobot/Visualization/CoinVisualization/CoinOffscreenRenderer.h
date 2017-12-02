@@ -101,9 +101,6 @@ namespace VirtualRobot
          */
         virtual std::string getVisualizationType() const override;
 
-    protected:
-        SbMatrix getSbMatrix(const Eigen::Matrix4f& m) const;
-
     private:
         /**
          * @brief Used for a Coin3d callback to store the zBuffer.

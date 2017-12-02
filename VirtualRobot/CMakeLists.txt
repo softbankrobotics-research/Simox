@@ -289,6 +289,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualization.cpp
     Visualization/CoinVisualization/CoinVisualizationSet.cpp
     Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
+    Visualization/CoinVisualization/CoinUtil.cpp
     )
 
     SET(INCLUDES
@@ -298,6 +299,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationSet.h
     Visualization/CoinVisualization/CoinOffscreenRenderer.h
     Visualization/CoinVisualization/CoinElement.h
+    Visualization/CoinVisualization/CoinUtil.h
     )
 
     if(BUILD_TESTING)
