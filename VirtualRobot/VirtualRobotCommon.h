@@ -46,7 +46,7 @@
 #include <VirtualRobot/Visualization/ColorMap.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/XML/BaseIO.h>
-#include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/XML/ObjectIO.h>
 #include <VirtualRobot/IK/IKSolver.h>
