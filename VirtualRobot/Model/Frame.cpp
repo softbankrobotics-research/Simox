@@ -1,5 +1,6 @@
 #include "Frame.h"
 
+#include "Model.h"
 
 namespace VirtualRobot
 {
@@ -70,7 +71,12 @@ Eigen::Matrix4f Frame::getTransformationTo(const FramePtr& otherObject)
 
 Eigen::Matrix4f Frame::getTransformationFrom(const FramePtr& otherObject)
 {
-	return otherObject->getGlobalPose().inverse() * getGlobalPose();
+    return otherObject->getGlobalPose().inverse() * getGlobalPose();
+}
+
+Eigen::Matrix4f Frame::getPoseInRootFrame(const ModelPtr &model)
+{
+    return model->getRootNode()->toLocalCoordinateSystem(getGlobalPose());
 }
 
 } //namespace VirtualRobot

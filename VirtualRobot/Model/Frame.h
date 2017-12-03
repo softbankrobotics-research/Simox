@@ -98,6 +98,7 @@ namespace VirtualRobot
 			* @return The transform matrix.
 			*/
 			Eigen::Matrix4f getTransformationFrom(const FramePtr& otherObject);
+            Eigen::Matrix4f getPoseInRootFrame(const ModelPtr& model);
 
         protected:
             Eigen::Matrix4f globalPose;
