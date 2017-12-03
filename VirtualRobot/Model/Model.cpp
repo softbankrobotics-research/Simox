@@ -224,6 +224,19 @@ namespace VirtualRobot
         }
     }
 
+    std::vector<std::string> Model::getModelNodeNames() const
+    {
+        auto nodes = getModelNodes();
+        std::vector<std::string> result(nodes.size());
+        size_t i = 0;
+        for(auto& s : nodes)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
     void Model::registerModelNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
@@ -438,6 +451,45 @@ namespace VirtualRobot
             JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(it.second);
             if (ls)
                 result.push_back(ls);
+        }
+        return result;
+    }
+
+    std::vector<std::string> Model::getModelNodeSetNames() const
+    {
+        auto sets = getModelNodeSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
+    std::vector<std::string> Model::getLinkSetNames() const
+    {
+        auto sets = getLinkSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
+    std::vector<std::string> Model::getJointSetNames() const
+    {
+        auto sets = getJointSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
         }
         return result;
     }

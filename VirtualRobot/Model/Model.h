@@ -157,6 +157,8 @@ namespace VirtualRobot
         virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
                                    ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
+        virtual std::vector<std::string> getModelNodeNames() const;
+
         /*!
          * Register a new ModelNodeSet to this model.
          * Note: This does not register the nodes of the given nodeSet.
@@ -237,6 +239,9 @@ namespace VirtualRobot
         virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
         virtual std::vector<LinkSetPtr> getLinkSets() const;
         virtual std::vector<JointSetPtr> getJointSets() const;
+        virtual std::vector<std::string> getModelNodeSetNames() const;
+        virtual std::vector<std::string> getLinkSetNames() const;
+        virtual std::vector<std::string> getJointSetNames() const;
 
         /*!
             Registers the ModelConfig to this robot. If a config  with the same name is already registered nothing happens.
