@@ -846,7 +846,7 @@ namespace MotionPlanning
 //        if (!(robotJoints[dim]->isTranslationalJoint()))
 //        {
 //            // rotational joint
-//            if (abs((double)(robotJoints[dim]->getJointLimitHi() - robotJoints[dim]->getJointLimitLo())) > (1.9999999999999 * M_PI))
+//            if (abs((double)(robotJoints[dim]->getJointLimitHigh() - robotJoints[dim]->getJointLimitLow())) > (1.9999999999999 * M_PI))
 //            {
 //                return true;
 //            }
