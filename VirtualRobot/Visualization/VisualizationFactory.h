@@ -68,6 +68,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f) const;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f) const;
         virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& points, float width = 1.0f) const;
         virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f>& from, const std::vector<Eigen::Matrix4f>& to, float width = 1.0f) const;
         virtual VisualizationPtr createSphere(float radius) const;
         virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts = 30) const;

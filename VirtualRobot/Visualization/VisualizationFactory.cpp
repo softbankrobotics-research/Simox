@@ -99,13 +99,23 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
+    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width) const
     {
         VR_ASSERT(from.size() == to.size());
         std::vector<VisualizationPtr> visus;
         for (size_t i = 0; i<from.size(); ++i)
         {
             visus.push_back(createLine(from[i], to[i], width));
+        }
+        return createVisualisationSet(visus);
+    }
+
+    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &points, float width) const
+    {
+        std::vector<VisualizationPtr> visus;
+        for (size_t i = 0; i<points.size()-1; ++i)
+        {
+            visus.push_back(createLine(points[i], points[i+1], width));
         }
         return createVisualisationSet(visus);
     }
