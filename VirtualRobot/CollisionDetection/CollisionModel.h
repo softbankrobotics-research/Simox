@@ -200,7 +200,7 @@ namespace VirtualRobot
         std::shared_ptr< CollisionModelDummy > collisionModelImplementation;
 #endif
     };
-
+    typedef std::vector<CollisionModelPtr> CollisionModelVec;
 } // namespace VirtualRobot
 
 #endif // _VirtualRobot_CollisionModel_h_
