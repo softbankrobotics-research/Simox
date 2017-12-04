@@ -115,26 +115,53 @@ BOOST_AUTO_TEST_CASE(testJacobianRadianToMMfactor)
     BOOST_REQUIRE(fileOK);
 
     RobotPtr robot = RobotIO::loadRobot(filename);
-    std::cout << "robot loaded" << std::endl;
-
     RobotNodeSetPtr rns = robot->getRobotNodeSet("RightArm");
 
-    //Eigen::VectorXf vel(6);
-    //vel << 1, 0, 0, 1, 0, 0;
+    std::cout << "robot loaded" << std::endl;
+    {
+        robot->setRadianToMMfactor(1);
 
-    VirtualRobot::DifferentialIK ik(rns, RobotNodePtr(), JacobiProvider::eSVDDamped);
-    ik.setRadianToMMfactor(10);
-    Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
-    Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi);
-    //std::cout << jacobi << std::endl;
-    //std::cout << invjac << std::endl;
+        VirtualRobot::DifferentialIK ik(rns, RobotNodePtr(), JacobiProvider::eSVDDamped);
+        Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
+        Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi);
+        Eigen::MatrixXf test = jacobi * invjac;
+        std::cout << test << std::endl;
 
-    //Eigen::VectorXf radVel = invjac * vel;
-    //std::cout << radVel << std::endl;
+        float error = (test - Eigen::MatrixXf::Identity(6, 6)).squaredNorm();
+        std::cout << "error: " << error << std::endl;
+        //check that error is big for SVDDamped when radians are not scaled up
+        BOOST_CHECK_GE(error, 0.1);
+    }
+    {
+        robot->setRadianToMMfactor(10);
 
-    //Eigen::VectorXf check = jacobi * radVel;
-    //std::cout << check << std::endl;
-    std::cout << jacobi * invjac << std::endl;
+        VirtualRobot::DifferentialIK ik(rns, RobotNodePtr(), JacobiProvider::eSVDDamped);
+        Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
+        Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi);
+        Eigen::MatrixXf test = jacobi * invjac;
+        std::cout << test << std::endl;
+
+        float error = (test - Eigen::MatrixXf::Identity(6, 6)).squaredNorm();
+        std::cout << "error: " << error << std::endl;
+        //check that error is small when radians are scaled up
+        BOOST_CHECK_LE(error, 0.01);
+        //check that error is still existant for SVDDamped
+        BOOST_CHECK_GE(error, 1e-6);
+    }
+    {
+        robot->setRadianToMMfactor(10);
+
+        VirtualRobot::DifferentialIK ik(rns, RobotNodePtr(), JacobiProvider::eSVD);
+        Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
+        Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi);
+        Eigen::MatrixXf test = jacobi * invjac;
+        std::cout << test << std::endl;
+
+        float error = (test - Eigen::MatrixXf::Identity(6, 6)).squaredNorm();
+        std::cout << "error: " << error << std::endl;
+        //check that error is very small for SVD
+        BOOST_CHECK_LE(error, 0.01);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
