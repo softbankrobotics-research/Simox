@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Robot Type="Armar3" RootNode="Armar3_Base">
-	
+<Robot Type="Armar3" RootNode="Armar3_Base" RadianToMMfactor="10">
 	<RobotNode name="Armar3_Base">
 		<Visualization enable="true">
 			<CoordinateAxis  type="Inventor" enable="false" scaling="20"/>

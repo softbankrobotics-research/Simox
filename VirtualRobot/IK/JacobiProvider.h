@@ -93,13 +93,19 @@ namespace VirtualRobot
          * \brief print Print current status of the IK solver
          */
         virtual void print();
+        float getRadianToMMfactor() const;
+        void setRadianToMMfactor(float value);
+
     protected:
+        virtual void updatePseudoInverseJacobianMatrixInternal(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
+        virtual void updatePseudoInverseJacobianMatrixDInternal(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
 
         std::string name;
         RobotNodeSetPtr rns;
         InverseJacobiMethod inverseMethod;
         bool initialized;
         Eigen::VectorXf jointWeights;
+        float radianToMMfactor = 1;
 
     };
 

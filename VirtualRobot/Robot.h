@@ -402,6 +402,9 @@ namespace VirtualRobot
 
         float getScaling();
         void setScaling(float scaling);
+        float getRadianToMMfactor() const;
+        void setRadianToMMfactor(float value);
+
     protected:
         Robot();
         /*!
@@ -422,6 +425,8 @@ namespace VirtualRobot
 
         mutable boost::recursive_mutex mutex;
         bool use_mutex;
+
+        float radianToMMfactor = 10;
 
     };
 

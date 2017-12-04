@@ -17,10 +17,15 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <VirtualRobot/RuntimeEnvironment.h>
+
+
 BOOST_AUTO_TEST_SUITE(RobotNode)
 
 #define MAX_ERROR 0.3f
 #define STEP_SIZE 0.001f
+
+using namespace VirtualRobot;
 
 BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
 {
@@ -101,6 +106,35 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     //std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
     BOOST_CHECK(((jacobian.block<3, 2>(0, 0) -  DiffQuot).array().abs() < MAX_ERROR).all());
 
+}
+
+BOOST_AUTO_TEST_CASE(testJacobianRadianToMMfactor)
+{
+    std::string filename = "robots/ArmarIII/ArmarIII.xml";
+    bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
+    BOOST_REQUIRE(fileOK);
+
+    RobotPtr robot = RobotIO::loadRobot(filename);
+    std::cout << "robot loaded" << std::endl;
+
+    RobotNodeSetPtr rns = robot->getRobotNodeSet("RightArm");
+
+    //Eigen::VectorXf vel(6);
+    //vel << 1, 0, 0, 1, 0, 0;
+
+    VirtualRobot::DifferentialIK ik(rns, RobotNodePtr(), JacobiProvider::eSVDDamped);
+    ik.setRadianToMMfactor(10);
+    Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
+    Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi);
+    //std::cout << jacobi << std::endl;
+    //std::cout << invjac << std::endl;
+
+    //Eigen::VectorXf radVel = invjac * vel;
+    //std::cout << radVel << std::endl;
+
+    //Eigen::VectorXf check = jacobi * radVel;
+    //std::cout << check << std::endl;
+    std::cout << jacobi * invjac << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

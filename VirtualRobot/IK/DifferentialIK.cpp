@@ -42,6 +42,8 @@ namespace VirtualRobot
         positionMaxStep = -1.0f;
 
         tmpUpdateErrorDelta.resize(6);
+
+        radianToMMfactor = _rns->getRobot()->getRadianToMMfactor();
     }
 
 

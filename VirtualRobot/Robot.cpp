@@ -431,7 +431,17 @@ namespace VirtualRobot
         this->getRootNode()->updatePose(this->getGlobalPose());
         //rootNode->updatePose(globalPose);
     }
-
+    
+    float Robot::getRadianToMMfactor() const
+    {
+        return radianToMMfactor;
+    }
+    
+    void Robot::setRadianToMMfactor(float value)
+    {
+        radianToMMfactor = value;
+    }
+    
     /**
      * This method stores all nodes belonging to the robot in \p storeNodes.
      * If there are no registered nodes \p storeNodes will be empty.

@@ -110,6 +110,20 @@ namespace VirtualRobot
 
     void JacobiProvider::updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter) const
     {
+        Eigen::MatrixXf m2 = m;
+        Eigen::VectorXf R(6);
+        R << 1, 1, 1, radianToMMfactor, radianToMMfactor, radianToMMfactor;
+        //std::cout << "m2: " << m2 << std::endl;
+        m2 = R.asDiagonal() * m2;
+        //std::cout << "m2: " << m2 << std::endl;
+        updatePseudoInverseJacobianMatrixInternal(invJac, m2, invParameter);
+        //std::cout << "invJac: " << invJac << std::endl;
+        invJac = invJac * R.asDiagonal();
+        //std::cout << "invJac: " << invJac << std::endl;
+    }
+
+    void JacobiProvider::updatePseudoInverseJacobianMatrixInternal(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter) const
+    {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
 #endif
@@ -189,8 +203,15 @@ namespace VirtualRobot
 #endif
     }
 
-
     void JacobiProvider::updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter) const
+    {
+        Eigen::MatrixXd m2 = m;
+        m2.block(3, 0, 3, m2.cols()) *= radianToMMfactor;
+        updatePseudoInverseJacobianMatrixDInternal(invJac, m2, invParameter);
+        invJac.block(0, 3, m2.rows(), 3) *= radianToMMfactor;
+    }
+
+    void JacobiProvider::updatePseudoInverseJacobianMatrixDInternal(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter) const
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();
@@ -288,6 +309,16 @@ namespace VirtualRobot
         cout << "IK solver:" << name << endl;
         cout << "==========================" << endl;
         cout << "RNS:" << rns->getName() << " with " << rns->getSize() << " joints" << endl;
+    }
+
+    float JacobiProvider::getRadianToMMfactor() const
+    {
+        return radianToMMfactor;
+    }
+
+    void JacobiProvider::setRadianToMMfactor(float value)
+    {
+        radianToMMfactor = value;
     }
 
     bool JacobiProvider::isInitialized()
