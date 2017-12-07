@@ -50,7 +50,7 @@ namespace VirtualRobot
 
 
 
-        std::vector <Eigen::VectorXf> getPoints();
+        const std::vector<Eigen::VectorXf> &getPoints() const;
 
 
         /*!
