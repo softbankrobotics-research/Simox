@@ -436,7 +436,7 @@ namespace VirtualRobot
                 break;
 
             case urdf::Joint::PRISMATIC:
-                result = prismaticNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, axis, idVec3, physics);
+                result = prismaticNodeFactory->createRobotNode(robo, name, rnVisu, rnCol, limitLo, limitHi, 0, preJointTransform, idVec3, axis, physics);
                 break;
 
            case urdf::Joint::FIXED:
