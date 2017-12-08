@@ -48,7 +48,7 @@ namespace Saba
             \param modeA Specify the RRT method that should be used to build the first tree
             \param modeB Specify the RRT method that should be used to build the second tree
         */
-        BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect);
+        BiRrt(CSpacePtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect, float samplingSize = -1);
         virtual ~BiRrt();
 
         /*!
