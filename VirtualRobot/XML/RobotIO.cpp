@@ -972,11 +972,11 @@ namespace VirtualRobot
 
         // build robot
         RobotPtr robo(new LocalRobot(robotName, robotType));
-        attr = robotXMLNode->first_attribute("RadianToMMfactor", 0, false);
+        /*attr = robotXMLNode->first_attribute("RadianToMMfactor", 0, false);
         if(attr)
         {
             robo->setRadianToMMfactor(atof(attr->value()));
-        }
+        }*/
         return robo;
     }
 
