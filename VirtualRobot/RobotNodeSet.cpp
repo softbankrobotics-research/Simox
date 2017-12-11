@@ -368,6 +368,13 @@ namespace VirtualRobot
         return res;
     }
 
+    Eigen::VectorXf RobotNodeSet::getJointValuesEigen() const
+    {
+        Eigen::VectorXf res;
+        getJointValues(res);
+        return res;
+    }
+
 
     void RobotNodeSet::respectJointLimits(std::vector<float>& jointValues) const
     {

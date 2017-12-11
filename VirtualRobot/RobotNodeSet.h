@@ -92,6 +92,7 @@ namespace VirtualRobot
         virtual unsigned int getSize() const;
 
         std::vector<float> getJointValues() const;
+        Eigen::VectorXf getJointValuesEigen() const;
         void getJointValues(std::vector<float>& fillVector) const;
         void getJointValues(Eigen::VectorXf& fillVector) const;
         void getJointValues(RobotConfigPtr fillVector) const;

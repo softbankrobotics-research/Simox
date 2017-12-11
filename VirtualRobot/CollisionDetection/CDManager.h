@@ -57,6 +57,7 @@ namespace VirtualRobot
     public:
         //! if pColChecker is not set, the global collision checker is used
         CDManager(CollisionCheckerPtr colChecker = CollisionCheckerPtr());
+        CDManager(const CDManager&) = default;
 
         virtual ~CDManager();
 

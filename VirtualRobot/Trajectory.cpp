@@ -20,6 +20,11 @@ namespace VirtualRobot
         reset();
     }
 
+    std::vector<Eigen::VectorXf> const& Trajectory::getPoints() const
+    {
+        return path;
+    }
+
     void Trajectory::reset()
     {
         path.clear();

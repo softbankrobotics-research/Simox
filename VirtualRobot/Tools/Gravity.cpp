@@ -12,7 +12,10 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
     rns(rnsJoints),
     rnsBodies(rnsBodies)
 {
-    THROW_VR_EXCEPTION_IF(!robot || !rns || !rnsBodies || rns->getSize()==0, "NULL data");
+    THROW_VR_EXCEPTION_IF(!robot, "!robot");
+    THROW_VR_EXCEPTION_IF(!rns, "!rnsJoints");
+    THROW_VR_EXCEPTION_IF(!rnsBodies, "!rnsBodies");
+    THROW_VR_EXCEPTION_IF(rns->getSize()==0, "joints node set is empty");
 
 
     nodes = rns->getAllRobotNodes();
