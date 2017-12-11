@@ -216,7 +216,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>326</width>
-                    <height>239</height>
+                    <height>232</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -313,7 +313,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>326</width>
-                    <height>239</height>
+                    <height>232</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -443,19 +443,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="ExportVRML20">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Export to single VRML file</string>
-             </property>
-             <property name="text">
-              <string>Export VRML</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QFrame" name="frame_5">
              <property name="sizePolicy">
@@ -494,7 +481,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>231</width>
-                   <height>115</height>
+                   <height>150</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_2">

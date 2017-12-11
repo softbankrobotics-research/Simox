@@ -59,7 +59,6 @@ void showRobotWindow::setupUI()
     connect(UI.btnResetRobot, SIGNAL(clicked()), this, SLOT(resetRobot()));
 
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeEEF()));
-    connect(UI.ExportVRML20, SIGNAL(clicked()), this, SLOT(exportVRML()));
     connect(UI.ExportXML, SIGNAL(clicked()), this, SLOT(exportXML()));
     connect(UI.pushButtonOpen, SIGNAL(clicked()), this, SLOT(openEEF()));
     connect(UI.comboBoxEndEffector, SIGNAL(activated(int)), this, SLOT(selectEEF()));
@@ -194,33 +193,6 @@ void showRobotWindow::attachPhysicsInformation(bool attach)
 
     render();
 }
-
-void showRobotWindow::exportVRML()
-{
-    if (!robot)
-    {
-        return;
-    }
-
-
-    // todo: remove?
-
-    // VRML
-    /*
-    QString fi = QFileDialog::getSaveFileName(this, tr("VRML 2.0 File"), QString(), tr("VRML Files (*.wrl)"));
-    std::string s = std::string(fi.toLatin1());
-
-    if (!s.empty())
-    {
-        if (!boost::algorithm::ends_with(s, ".wrl"))
-            s += ".wrl";
-        ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-        visualization = robot->getVisualization<CoinVisualization>(colModel);
-        visualization->exportToVRML2(s);
-    }
-    */
-}
-
 
 void showRobotWindow::exportXML()
 {

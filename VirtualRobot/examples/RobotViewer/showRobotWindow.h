@@ -50,7 +50,6 @@ public slots:
     void selectPreshape();
     void selectRobot();
     void attachPhysicsInformation(bool attach);
-    void exportVRML();
     void exportXML();
     void displayTriangles();
 
