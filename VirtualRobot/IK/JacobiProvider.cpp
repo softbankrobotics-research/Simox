@@ -145,7 +145,7 @@ namespace VirtualRobot
     void JacobiProvider::updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter, VectorXf regularization) const
     {
         Eigen::MatrixXf m2 = m;
-        VR_ASSERT(regularization.rows() == 0 || regularization.rows() == m2.rows())
+        VR_ASSERT(regularization.rows() == 0 || regularization.rows() == m2.rows());
         if(regularization.rows() != m2.rows())
         {
             regularization = VectorXf::Ones(m2.rows());
@@ -240,7 +240,7 @@ namespace VirtualRobot
     void JacobiProvider::updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter, Eigen::VectorXd regularization) const
     {
         Eigen::MatrixXd m2 = m;
-        VR_ASSERT(regularization.rows() == 0 || regularization.rows() == m2.rows())
+        VR_ASSERT(regularization.rows() == 0 || regularization.rows() == m2.rows());
         if(regularization.rows() != m2.rows())
         {
             regularization = VectorXd::Ones(m2.rows());
