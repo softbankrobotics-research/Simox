@@ -304,8 +304,8 @@ namespace VirtualRobot
 
 #ifdef NDEBUG
 
-#define VR_ASSERT(a)
-#define VR_ASSERT_MESSAGE(a,b)
+#define VR_ASSERT(a) do{}while(false)
+#define VR_ASSERT_MESSAGE(a,b) do{}while(false)
 
 #else
 	/*!
