@@ -919,7 +919,6 @@ namespace VirtualRobot
                 boost::filesystem::path filenameBasePath(basePath);
 
                 boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
-                VR_INFO << "Searching robot: " << filenameNewComplete.string() << endl;
 
                 try
                 {
@@ -930,6 +929,7 @@ namespace VirtualRobot
                     THROW_VR_EXCEPTION("Error while processing file <" << filenameNewComplete.string() << ">." << endl);
                 }
 
+                VR_INFO << "Loading robot part: " << filenameNewComplete.string() << endl;
                 RobotPtr r = loadRobotSimoxXML(filenameNewComplete.string(), loadMode);
                 THROW_VR_EXCEPTION_IF(!r, "Could not add child-from-robot due to failed loading of robot from file" << childrenFromRobot[i].filename);
                 RobotNodePtr root = r->getRootNode();
@@ -949,8 +949,6 @@ namespace VirtualRobot
 
                 for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
                 {
-                    //(*ns)->clone(robo);
-
                     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(*ns);
                     if (js)
                     {

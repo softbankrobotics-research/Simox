@@ -617,7 +617,7 @@ namespace VirtualRobot
                 std::string nodeNameAttr = processNameAttribute(node);
                 THROW_VR_EXCEPTION_IF(nodeNameAttr.empty(), "Missing name attribute for <Node> belonging to Robot node set " << parentName);
                 RobotNodePtr robotNode = robot->getModelNode(nodeNameAttr);
-                THROW_VR_EXCEPTION_IF(!robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot");
+                THROW_VR_EXCEPTION_IF(!robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot '" << robot->getName() << "'");
                 nodeList.push_back(robotNode);
             }
             else
