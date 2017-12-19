@@ -43,6 +43,7 @@ namespace VirtualRobot
     {
         if (selection)
         {
+            selection->deselectAll();
             selection->unref();
         }
         if (visuRoot)
