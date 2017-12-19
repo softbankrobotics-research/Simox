@@ -431,7 +431,17 @@ namespace VirtualRobot
         this->getRootNode()->updatePose(this->getGlobalPose());
         //rootNode->updatePose(globalPose);
     }
-
+    
+    /*float Robot::getRadianToMMfactor() const
+    {
+        return radianToMMfactor;
+    }
+    
+    void Robot::setRadianToMMfactor(float value)
+    {
+        radianToMMfactor = value;
+    }*/
+    
     /**
      * This method stores all nodes belonging to the robot in \p storeNodes.
      * If there are no registered nodes \p storeNodes will be empty.
@@ -837,6 +847,7 @@ namespace VirtualRobot
         result->setGlobalPose(getGlobalPose());
         result->filename = filename;
         result->type = type;
+        //result->radianToMMfactor = radianToMMfactor;
         return result;
     }
 
@@ -1089,6 +1100,7 @@ namespace VirtualRobot
     {
         std::stringstream ss;
         ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
+        //ss << "<Robot Type='" << this->type << "' RootNode='" << this->getRootNode()->getName() << "' RadianToMMfactor='" << this->radianToMMfactor << "'>" << endl << endl;
         ss << "<Robot Type='" << this->type << "' RootNode='" << this->getRootNode()->getName() << "'>" << endl << endl;
         std::vector<RobotNodePtr> nodes = getRobotNodes();
 
