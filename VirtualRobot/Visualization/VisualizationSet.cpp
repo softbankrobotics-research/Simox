@@ -44,6 +44,11 @@ namespace VirtualRobot
         }
     }
 
+    bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
+    {
+        return VisualizationGroup::containsVisualization(visu);
+    }
+
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
         if (VisualizationGroup::removeVisualization(visu))
@@ -54,6 +59,36 @@ namespace VirtualRobot
         return false;
     }
 
+    bool VisualizationSet::removeVisualization(size_t index)
+    {
+        return this->removeVisualization(this->at(index));
+    }
+
+    std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
+    {
+        return VisualizationGroup::getVisualizations();
+    }
+
+    VisualizationPtr VisualizationSet::at(size_t index) const
+    {
+        return VisualizationGroup::at(index);
+    }
+
+    VisualizationPtr VisualizationSet::operator[](size_t index) const
+    {
+        return VisualizationGroup::operator [](index);
+    }
+
+    bool VisualizationSet::empty() const
+    {
+        return VisualizationGroup::empty();
+    }
+
+    size_t VisualizationSet::size() const
+    {
+        return VisualizationGroup::size();
+    }
+
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
     {
         return VisualizationGroup::getGlobalPose();
@@ -62,6 +97,11 @@ namespace VirtualRobot
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
         VisualizationGroup::setGlobalPose(m);
+    }
+
+    void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
+    {
+        VisualizationGroup::setGlobalPoseNoUpdate(m);
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
