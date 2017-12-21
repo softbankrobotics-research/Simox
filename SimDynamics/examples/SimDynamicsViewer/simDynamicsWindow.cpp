@@ -22,13 +22,6 @@
 
 #include <sstream>
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 using namespace std;
 using namespace VirtualRobot;
 using namespace SimDynamics;
@@ -68,7 +61,7 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     setupUI();
 
     // optional visualizations (not considered by dynamics)
-    VisualizationPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem();
+    VisualizationPtr v = VisualizationFactory::getInstance()->createCoordSystem();
     v->scale(Eigen::Vector3f::Constant(10.0f));
     viewer->addVisualization("coordsystem", v);
 
@@ -236,7 +229,7 @@ void SimDynamicsWindow::comVisu()
         std::string name;
         name = n[i]->getName() + "-COM";
 
-        VisualizationPtr vn = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(&name);
+        VisualizationPtr vn = VisualizationFactory::getInstance()->createCoordSystem(&name);
         vn->setGlobalPose(cp);
         vn->scale(Eigen::Vector3f::Constant(5.f));
         //comVisuMap[n[i]] = vn;
@@ -483,7 +476,7 @@ void SimDynamicsWindow::updateJointInfo()
         /*SoSeparator* forceA = new SoSeparator;
         SoSeparator* arrowForceA = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());*/
 
-        VisualizationPtr vn = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(n, l, w);
+        VisualizationPtr vn = VisualizationFactory::getInstance()->createArrow(n, l, w);
         vn->setColor(Visualization::Color::Red());
         /*
         cout << "FORCE_A: " << linkInfo.dynNode1->getRigidBody()->getTotalForce()[0] << "," << linkInfo.dynNode1->getRigidBody()->getTotalForce()[1] << "," << linkInfo.dynNode1->getRigidBody()->getTotalForce()[2] << endl;
@@ -538,7 +531,7 @@ void SimDynamicsWindow::updateJointInfo()
         w = 5.0f;
         /*SoSeparator* forceB = new SoSeparator;
         SoSeparator* arrowForceB = CoinVisualizationFactory::CreateArrow(n, l, w, VisualizationFactory::Color::Red());*/
-        VisualizationPtr vnB = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(n, l, w);
+        VisualizationPtr vnB = VisualizationFactory::getInstance()->createArrow(n, l, w);
         vnB->setColor(Visualization::Color::Red());
 
 
@@ -818,7 +811,7 @@ void SimDynamicsWindow::updateContactVisu()
         p1(0,3) = c[i].posGlobalB(0);
         p1(1,3) = c[i].posGlobalB(1);
         p1(2,3) = c[i].posGlobalB(2);
-        VisualizationPtr v1 = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(c[i].normalGlobalB, 50.0f);
+        VisualizationPtr v1 = VisualizationFactory::getInstance()->createArrow(c[i].normalGlobalB, 50.0f);
         v1->applyDisplacement(p1);
         viewer->addVisualization("contacts", v1);
 
@@ -826,7 +819,7 @@ void SimDynamicsWindow::updateContactVisu()
         p1(0,3) = c[i].posGlobalA(0);
         p1(1,3) = c[i].posGlobalA(1);
         p1(2,3) = c[i].posGlobalA(2);
-        VisualizationPtr v2 = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(-c[i].normalGlobalB, 50.0f);
+        VisualizationPtr v2 = VisualizationFactory::getInstance()->createArrow(-c[i].normalGlobalB, 50.0f);
         v2->applyDisplacement(p2);
         viewer->addVisualization("contacts", v2);
 

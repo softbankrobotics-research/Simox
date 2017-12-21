@@ -93,7 +93,7 @@ namespace SimDynamics
             bulletEngine->getFloorInfo(floorPos, floorUp, floorExtendMM, floorDepthMM);
             MathTools::Plane p(floorPos, floorUp);
 
-            VisualizationPtr v = p.getVisualization(floorExtendMM);
+            VisualizationPtr v = VisualizationFactory::getInstance()->createPlane(p, floorExtendMM);
             CoinViewer::addVisualization("floor", v);
         }
 
