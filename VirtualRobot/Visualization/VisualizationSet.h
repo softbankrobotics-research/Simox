@@ -93,7 +93,7 @@ namespace VirtualRobot
 
         virtual BoundingBox getBoundingBox() const override;
 
-        virtual TriMeshModelPtr getTriMeshModel() const override = 0;
+        virtual TriMeshModelPtr getTriMeshModel() const override;
 
         virtual int getNumFaces() const override;
 
@@ -103,9 +103,6 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override = 0;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override = 0;
-
-    protected:
-        virtual void createTriMeshModel() override;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet
@@ -138,6 +135,9 @@ namespace VirtualRobot
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
 
+        /**
+         * Calculate and return one TriMesh model containing all visualizations of this set
+         */
         virtual TriMeshModelPtr getTriMeshModel() const override;
 
         virtual std::string toXML(const std::string &basePath, int tabs) const override;

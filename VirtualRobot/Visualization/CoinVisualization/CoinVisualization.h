@@ -130,7 +130,7 @@ namespace VirtualRobot
          * Otherwise CoinVisualizationNode::InventorTriangleCB() is called on the
          * Inventor graph stored in CoinVisualizationNode::visualization.
          */
-        virtual void createTriMeshModel() override;
+        void createTriMeshModel();
         //virtual void setIsInVisualizationSet(bool inSet) override;
 
         static void InventorTriangleCB(void* data, SoCallbackAction* action,
