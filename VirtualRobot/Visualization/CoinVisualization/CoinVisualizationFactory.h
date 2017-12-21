@@ -56,7 +56,7 @@ namespace VirtualRobot
         VisualizationPtr createVisualizationFromSTLFile(const std::string& filename, bool boundingBox) const;
         VisualizationPtr createVisualizationFromSoInput(SoInput& soInput, bool boundingBox, bool freeDuplicateTextures = true) const;
     public:
-        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const override;
+        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr> &visualizations = std::vector<VisualizationPtr>()) const override;
         virtual VisualizationPtr createBox(float width, float height, float depth) const override;
         virtual VisualizationPtr createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const override;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
