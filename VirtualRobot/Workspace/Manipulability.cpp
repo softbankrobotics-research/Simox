@@ -7,6 +7,7 @@
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
+#include <VirtualRobot/XML/RobotIO.h>
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -754,11 +755,12 @@ namespace VirtualRobot
 
         for (int i = 0; i < numThreads; i++)
         {
+            // each thread gets a cloned robot
+            CollisionCheckerPtr cc(new CollisionChecker());
+            RobotPtr clonedRobot = VirtualRobot::RobotIO::loadRobot(this->robot->getFilename(), RobotIO::eCollisionModel);
             threads[i] = std::thread([=] ()
             {
-                // each thread gets a cloned robot
-                CollisionCheckerPtr cc(new CollisionChecker());
-                RobotPtr clonedRobot = this->robot->clone("clonedRobot_" + std::to_string(i), cc);
+
                 clonedRobot->setUpdateVisualization(false);
                 RobotNodeSetPtr clonedNodeSet = clonedRobot->getRobotNodeSet(this->nodeSet->getName());
                 RobotNodePtr clonedTcpNode = clonedRobot->getRobotNode(this->tcpNode->getName());
@@ -839,6 +841,7 @@ namespace VirtualRobot
                         VR_WARNING << "Could not find collision-free configuration...";
                     }
                 }
+                VR_INFO << "Thread " << i << " finished" << std::endl;
             });
         }
 
