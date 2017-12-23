@@ -80,8 +80,8 @@ namespace VirtualRobot
         void setEntryCheckNeighbors(float x, float y, int value, GraspPtr grasp);
 
         //! tries to find a random position with a entry >= minEntry
-        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops = 50);
-        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops = 50);
+        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops = 50, int* entries = NULL);
+        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops = 50, int* entries = NULL);
 
         /*!
             Clear all entries.

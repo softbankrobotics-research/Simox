@@ -360,7 +360,7 @@ namespace VirtualRobot
         }
     }*/
 
-    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops /*= 50*/)
+    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops /*= 50*/, int* entries)
     {
         if (!data)
         {
@@ -376,11 +376,13 @@ namespace VirtualRobot
             x = rand() % gridSizeX;
             y = rand() % gridSizeY;
             getCellEntry(x, y, nEntry, storeGrasp);
-
+            if(entries)
+                *entries = nEntry;
             if (nEntry >= minEntry)
             {
                 storeXGlobal = minX + ((float)x + 0.5f) * discretizeSize;
                 storeYGlobal = minY + ((float)y + 0.5f) * discretizeSize;
+
                 return true;
             }
 
@@ -392,7 +394,7 @@ namespace VirtualRobot
     }
 
 
-    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops /*= 50*/)
+    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops /*= 50*/, int *entries)
     {
         if (!data)
         {
@@ -408,7 +410,8 @@ namespace VirtualRobot
             x = rand() % gridSizeX;
             y = rand() % gridSizeY;
             getCellEntry(x, y, nEntry, storeGrasps);
-
+            if(entries)
+                *entries = nEntry;
             if (nEntry >= minEntry)
             {
                 storeXGlobal = minX + ((float)x + 0.5f) * discretizeSize;

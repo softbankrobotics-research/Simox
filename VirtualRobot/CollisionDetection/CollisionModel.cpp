@@ -134,7 +134,11 @@ namespace VirtualRobot
         if(deepVisuMesh || !this->collisionModelImplementation)
             p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, margin));
         else
+        {
             p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, this->collisionModelImplementation));
+            if(visualization)
+                p->visualization = visualization->clone(true, scaling);
+        }
         p->margin = margin;
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());

@@ -17,8 +17,8 @@ using namespace VirtualRobot;
 namespace Saba
 {
 
-    BiRrt::BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA, RrtMethod modeB)
-        : Rrt(cspace, modeA)
+    BiRrt::BiRrt(CSpacePtr cspace, RrtMethod modeA, RrtMethod modeB, float samplingSize)
+        : Rrt(cspace, modeA, 0.1, samplingSize)
     {
         rrtMode2 = modeB;
         tree2.reset(new CSpaceTree(cspace));
