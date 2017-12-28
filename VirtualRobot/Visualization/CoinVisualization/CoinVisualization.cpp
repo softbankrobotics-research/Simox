@@ -451,9 +451,7 @@ namespace VirtualRobot
 
     VisualizationPtr CoinVisualization::clone() const
     {
-        SoNode* deepCopiedNode = copyNode(visualizationNode);
-        VR_ASSERT(deepCopiedNode);
-        CoinVisualizationPtr p(new CoinVisualization(deepCopiedNode));
+        CoinVisualizationPtr p(new CoinVisualization(visualizationNode));
         p->setGlobalPose(this->getGlobalPose());
         p->setVisible(this->isVisible());
         p->setStyle(this->getStyle());

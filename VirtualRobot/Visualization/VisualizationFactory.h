@@ -59,7 +59,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createVisualizationFromFile(const std::string& filename, bool boundingBox = false) const;
         virtual VisualizationPtr createVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false) const;
 
-        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations) const;
+        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations = std::vector<VisualizationPtr>()) const;
 
         /*!
             A box, dimensions are given in mm.

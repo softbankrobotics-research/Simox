@@ -44,6 +44,11 @@ namespace VirtualRobot
         }
     }
 
+    bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
+    {
+        return VisualizationGroup::containsVisualization(visu);
+    }
+
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
         if (VisualizationGroup::removeVisualization(visu))
@@ -54,6 +59,36 @@ namespace VirtualRobot
         return false;
     }
 
+    bool VisualizationSet::removeVisualization(size_t index)
+    {
+        return this->removeVisualization(this->at(index));
+    }
+
+    std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
+    {
+        return VisualizationGroup::getVisualizations();
+    }
+
+    VisualizationPtr VisualizationSet::at(size_t index) const
+    {
+        return VisualizationGroup::at(index);
+    }
+
+    VisualizationPtr VisualizationSet::operator[](size_t index) const
+    {
+        return VisualizationGroup::operator [](index);
+    }
+
+    bool VisualizationSet::empty() const
+    {
+        return VisualizationGroup::empty();
+    }
+
+    size_t VisualizationSet::size() const
+    {
+        return VisualizationGroup::size();
+    }
+
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
     {
         return VisualizationGroup::getGlobalPose();
@@ -62,6 +97,11 @@ namespace VirtualRobot
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
         VisualizationGroup::setGlobalPose(m);
+    }
+
+    void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
+    {
+        VisualizationGroup::setGlobalPoseNoUpdate(m);
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -168,6 +208,52 @@ namespace VirtualRobot
         return VisualizationGroup::getBoundingBox();
     }
 
+    Eigen::Vector3f transformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
+    {
+        return (transform * Eigen::Vector4f(pos.x(), pos.y(), pos.z(), 1)).block<3, 1>(0, 0);
+    }
+
+    TriMeshModelPtr VisualizationSet::getTriMeshModel() const
+    {
+        TriMeshModelPtr mesh(new TriMeshModel);
+        for (const auto& visu : getVisualizations())
+        {
+            const auto& tm = visu->getTriMeshModel();
+            Eigen::Matrix4f transform = visu->getGlobalPose() * getGlobalPose().inverse();
+            for (const auto& face : tm->faces)
+            {
+                TriangleFace cloned;
+                cloned.id1 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id1)));
+                cloned.id2 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id2)));
+                cloned.id3 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id3)));
+
+                cloned.normal = face.normal;
+
+                if (tm->colors.size() > face.idColor1 && tm->colors.size() > face.idColor2 && tm->colors.size() > face.idColor3)
+                {
+                    cloned.idColor1 = mesh->addColor(tm->colors.at(face.idColor1));
+                    cloned.idColor2 = mesh->addColor(tm->colors.at(face.idColor2));
+                    cloned.idColor3 = mesh->addColor(tm->colors.at(face.idColor3));
+                }
+
+                if (tm->normals.size() > face.idNormal1 && tm->normals.size() > face.idNormal2 && tm->normals.size() > face.idNormal3)
+                {
+                    cloned.idNormal1 = mesh->addNormal(tm->normals.at(face.idNormal1));
+                    cloned.idNormal2 = mesh->addNormal(tm->normals.at(face.idNormal2));
+                    cloned.idNormal3 = mesh->addNormal(tm->normals.at(face.idNormal3));
+                }
+
+                if (tm->materials.size() > face.idMaterial)
+                {
+                    cloned.idMaterial = mesh->addMaterial(tm->materials.at(face.idMaterial));
+                }
+
+                mesh->addFace(cloned);
+            }
+        }
+        return mesh;
+    }
+
     int VisualizationSet::getNumFaces() const
     {
         return VisualizationGroup::getNumFaces();
@@ -176,14 +262,6 @@ namespace VirtualRobot
     void VisualizationSet::print() const
     {
         VisualizationGroup::print();
-    }
-
-    void VisualizationSet::createTriMeshModel()
-    {
-        for (auto& visu : visualizations)
-        {
-            visu->createTriMeshModel();
-        }
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)

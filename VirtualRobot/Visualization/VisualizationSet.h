@@ -34,7 +34,7 @@
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : public VisualizationGroup, virtual public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : protected VisualizationGroup, virtual public Visualization
     {
     protected:
         VisualizationSet(const std::vector<VisualizationPtr>& visualizations);
@@ -44,11 +44,19 @@ namespace VirtualRobot
 
         virtual VisualizationPtr clone() const override = 0;
 
-        virtual void addVisualization(const VisualizationPtr& visu) override;
-        virtual bool removeVisualization(const VisualizationPtr &visu) override;
+        virtual void addVisualization(const VisualizationPtr& visu);
+        virtual bool containsVisualization(const VisualizationPtr& visu) const;
+        virtual bool removeVisualization(const VisualizationPtr &visu);
+        virtual bool removeVisualization(size_t index);
+        virtual std::vector<VisualizationPtr> getVisualizations() const;
+        virtual VisualizationPtr at(size_t index) const;
+        virtual VisualizationPtr operator[] (size_t index) const;
+        virtual bool empty() const;
+        virtual size_t size() const;
 
         virtual Eigen::Matrix4f getGlobalPose() const override;
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
+        virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f &m);
         virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
         virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override = 0;
         virtual void removePoseChangedCallback(size_t id) override = 0;
@@ -93,7 +101,7 @@ namespace VirtualRobot
 
         virtual BoundingBox getBoundingBox() const override;
 
-        virtual TriMeshModelPtr getTriMeshModel() const override = 0;
+        virtual TriMeshModelPtr getTriMeshModel() const override;
 
         virtual int getNumFaces() const override;
 
@@ -103,9 +111,6 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override = 0;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override = 0;
-
-    protected:
-        virtual void createTriMeshModel() override;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet
@@ -138,6 +143,9 @@ namespace VirtualRobot
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
 
+        /**
+         * Calculate and return one TriMesh model containing all visualizations of this set
+         */
         virtual TriMeshModelPtr getTriMeshModel() const override;
 
         virtual std::string toXML(const std::string &basePath, int tabs) const override;

@@ -296,9 +296,8 @@ namespace VirtualRobot
          * If a visualization is in a set, it is only selecable and manipulateable using the set.
          */
         virtual bool isInVisualizationSet() const;
+
     protected:
-        //! update trimesh model
-        virtual void createTriMeshModel() = 0;
         virtual void setIsInVisualizationSet(bool inSet);
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
@@ -379,9 +378,6 @@ namespace VirtualRobot
         */
         virtual BoundingBox getBoundingBox() const override;
 
-        /*!
-            Creates a triangulated model.
-        */
         virtual TriMeshModelPtr getTriMeshModel() const override;
 
         //! get number of faces (i.e. triangles) of this object
@@ -413,7 +409,7 @@ namespace VirtualRobot
 
     protected:
         //! update trimesh model
-        virtual void createTriMeshModel() override;
+        void createTriMeshModel();
 
         bool visible;
         bool updateVisualization;
