@@ -15,3 +15,8 @@
 	<Node name="Hip Yaw_link"/>
 	<Node name="Head_Tilt_link"/>
 </LinkSet>
+
+<LinkSet name="LeftHandColModel" kinematicRoot="Wrist 2 L" tcp="TCP L">
+	<Node name="Hand Palm 1 L_link"/>
+	<Node name="Hand Palm 2 L_link"/>
+</LinkSet>
