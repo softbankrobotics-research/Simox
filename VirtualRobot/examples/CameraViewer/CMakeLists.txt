@@ -32,7 +32,7 @@ IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 
     find_package(OpenGL REQUIRED)
     if(OPENGL_FOUND)
-        include_directories(${OPENGL_INCLUDE_DIR})
+        include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
         TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OPENGL_LIBRARIES})
     endif(OPENGL_FOUND)
 
