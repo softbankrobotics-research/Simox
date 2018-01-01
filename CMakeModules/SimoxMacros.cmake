@@ -18,10 +18,10 @@ function(setupSimoxExternalLibraries)
     endif()
   ENDIF()
   INCLUDE_DIRECTORIES(${Simox_INCLUDE_DIRS})
-  INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+  INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
   ADD_DEFINITIONS( ${Simox_EXTERNAL_LIBRARY_FLAGS} )
   LINK_DIRECTORIES( ${Simox_LIBRARY_DIRS} )
-  
+
   FOREACH(f ${Simox_EXTERNAL_CMAKE_INCLUDE})
       MESSAGE(STATUS " * Simox_EXTERNAL_CMAKE_INCLUDE: ${f}")
       INCLUDE(${f})
@@ -39,8 +39,8 @@ endfunction()
 
 
 function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
-    setupSimoxExternalLibraries() 
-    
+    setupSimoxExternalLibraries()
+
     if (Simox_USE_QT4)
         MESSAGE (STATUS "Qt4 Moc'ing: ${mocFiles}")
         MESSAGE (STATUS "Qt4 ui files: ${uiFiles}")
@@ -54,7 +54,7 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
         qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
         qt5_wrap_ui(generatedUiFiles ${uiFiles})
     endif()
-    
+
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})

@@ -10,7 +10,7 @@ FIND_PACKAGE(urdfdom)
 
 if (tinyxml_library AND URDF_FOUND)
 
-    include_directories(${tinyxml_include_dirs})
+    include_directories(SYSTEM ${tinyxml_include_dirs})
     link_directories(${tinyxml_library_dirs})
     add_definitions(${tinyxml_cflags})
     add_definitions("-DTIXML_USE_STL")
