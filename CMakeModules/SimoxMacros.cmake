@@ -34,7 +34,7 @@ function(VirtualRobotApplication name srcs incs)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs})
-    TARGET_LINK_LIBRARIES(${name} VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
 endfunction()
 
 
@@ -58,7 +58,7 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
-    TARGET_LINK_LIBRARIES(${name} VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
 endfunction()
 
 
@@ -89,14 +89,14 @@ endfunction()
 function(SimoxApplication name srcs incs)
     VirtualRobotApplication("${name}" "${srcs}" "${incs}")
     # add Saba and GraspStudio
-    TARGET_LINK_LIBRARIES(${name} GraspStudio Saba)
+    TARGET_LINK_LIBRARIES(${name} PUBLIC GraspStudio Saba)
 endfunction()
 
 
 function(SimoxQtApplication name srcs incs mocFiles uiFiles)
     VirtualRobotQtApplication("${name}" "${srcs}" "${incs}" "${mocFiles}" "${uiFiles}")  
     # add Saba and GraspStudio
-    TARGET_LINK_LIBRARIES(${name} GraspStudio Saba)
+    TARGET_LINK_LIBRARIES(${name} PUBLIC GraspStudio Saba)
 endfunction()
 
 
