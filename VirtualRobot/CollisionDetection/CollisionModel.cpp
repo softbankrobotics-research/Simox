@@ -80,7 +80,7 @@ namespace VirtualRobot
 
     void CollisionModel::inflateModel(float value)
     {
-        if((margin != value) || (origVisualization && !model))
+        if(std::abs(margin - value) < 0.01f || (origVisualization && !model))
         {
             visualization = origVisualization->clone(true);
             visualization->shrinkFatten(value);
@@ -137,9 +137,17 @@ namespace VirtualRobot
         {
             p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, this->collisionModelImplementation));
             if(visualization)
-                p->visualization = visualization->clone(true, scaling);
+            {
+                p->visualization = visualization->clone(false, scaling);
+                p->margin = margin;
+            }
+            else
+            {
+                p->origVisualization->clone(deepVisuMesh, scaling);
+                p->inflateModel(margin);
+            }
+
         }
-        p->margin = margin;
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());
         return p;

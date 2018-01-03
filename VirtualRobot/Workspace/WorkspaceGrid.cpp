@@ -487,5 +487,64 @@ namespace VirtualRobot
         storeCellsY = gridSizeY;
     }
 
+    float WorkspaceGrid::getDiscretizeSize() const
+    {
+        return discretizeSize;
+    }
+
+    Eigen::Vector2f WorkspaceGrid::getMin() const
+    {
+        return Eigen::Vector2f(minX, minY);
+    }
+
+    Eigen::Vector2f WorkspaceGrid::getMax() const
+    {
+        return Eigen::Vector2f(maxX, maxY);
+    }
+
+    WorkspaceGridPtr WorkspaceGrid::MergeWorkspaceGrids(const std::vector<WorkspaceGridPtr> &grids)
+    {
+        VR_ASSERT(reachGrids.size() >= 2);
+        float totalMaxX = std::numeric_limits<float>::min();
+        float totalMinX = std::numeric_limits<float>::max();
+        float totalMaxY = std::numeric_limits<float>::min();
+        float totalMinY = std::numeric_limits<float>::max();
+        for(auto& grid : grids)
+        {
+//            VR_INFO << "min: " << grid->getMin() << " max: " << grid->getMax() << endl;
+            totalMinX = std::min(grid->getMin()(0), totalMinX);
+            totalMinY = std::min(grid->getMin()(1), totalMinY);
+            totalMaxX = std::max(grid->getMax()(0), totalMaxX);
+            totalMaxY = std::max(grid->getMax()(1), totalMaxY);
+        }
+        WorkspaceGridPtr resultGrid(new WorkspaceGrid(totalMinX, totalMaxX, totalMinY, totalMaxY, grids.at(0)->getDiscretizeSize()));
+//        VR_INFO << "minx : " << totalMinX << " maxX: " << totalMaxX << " step size: " << resultGrid->getDiscretizeSize() << endl;
+//        int sameValueCount =  0;
+//        int totalValueCount = 0;
+        for(float x = totalMinX; x < totalMaxX; x += resultGrid->getDiscretizeSize())
+        {
+            for(float y = totalMinY; y < totalMaxY; y += resultGrid->getDiscretizeSize())
+            {
+                int min = std::numeric_limits<int>::max();
+                GraspPtr grasp;
+                for(auto& grid : grids)
+                {
+                    int score;
+                    GraspPtr tmpGrasp;
+                    if(grid->getEntry(x, y, score, tmpGrasp))
+                    {
+                        grasp = tmpGrasp;
+                    }
+                    min = std::min(score, min);
+                }
+//                totalValueCount++;
+                resultGrid->setEntry(x, y, min, grasp);
+            }
+        }
+//        VR_INFO << "Same value percentage: " << (100.f * sameValueCount/totalValueCount) << endl;
+        return resultGrid;
+
+    }
+
 } //  namespace
 

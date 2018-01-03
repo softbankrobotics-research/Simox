@@ -112,6 +112,16 @@ namespace VirtualRobot
         void getCells(int& storeCellsX, int& storeCellsY);
 
 
+        float getDiscretizeSize() const;
+        Eigen::Vector2f getMin() const;
+        Eigen::Vector2f getMax() const;
+
+        /**
+         * @brief Creates the intersection between multiple grids into one grid by considering for each x,y position the worst values of all grids.
+         * @param reachGrids grids for different grasp poses or object poses
+         * @return new, merged grid
+         */
+        static WorkspaceGridPtr MergeWorkspaceGrids(const std::vector<WorkspaceGridPtr>& reachGrids);
     protected:
         /*!
             Adds data stored in reachability transformations. This data defines transformations from robot base system to grasping pose,

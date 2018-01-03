@@ -476,9 +476,13 @@ namespace VirtualRobot
             visualizationModel->setUpdateVisualization(enable);
         }
 
-        if (collisionModel)
+        if(enable) // only activate but not deactivate update of collision model with this function
         {
-            collisionModel->setUpdateVisualization(enable);
+            updateCollisionModel = enable;
+            if (collisionModel)
+            {
+                collisionModel->setUpdateVisualization(enable);
+            }
         }
     }
     void SceneObject::setUpdateCollisionModel(bool enable)
@@ -513,7 +517,7 @@ namespace VirtualRobot
 
         if (collisionModel)
         {
-            collisionModel->setUpdateVisualization(updateVisualization);
+            collisionModel->setUpdateVisualization(updateCollisionModel);
             collisionModel->setGlobalPose(globalPose);
         }
     }
