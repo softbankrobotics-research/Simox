@@ -30,8 +30,10 @@ namespace VirtualRobot
 
         if (!isKinematicRoot(this->kinematicRoot))
         {
-            VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '" << kinematicRoot->getName() << "': Falling back to robot root node" << endl;
             this->kinematicRoot = rob->getRootNode();
+            VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
+                       << kinematicRoot->getName() << "': Falling back to robot root node '"
+                       <<  this->kinematicRoot->getName() << "'" << endl;
         }
 
         if (!tcp && robotNodes.size() > 0)
