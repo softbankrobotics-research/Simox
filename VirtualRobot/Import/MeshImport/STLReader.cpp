@@ -577,7 +577,7 @@ namespace VirtualRobot
 
         // read number of triangles
         char dummy[100];
-        if(4 != std::fread(dummy, 1, 80, in))
+        if(80 != std::fread(dummy, 1, 80, in))
         {
             throw std::runtime_error{__FILE__ " error in line " + std::to_string(__LINE__) + " failed to read 80 bytes."};
         }
