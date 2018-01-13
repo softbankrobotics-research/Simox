@@ -90,6 +90,22 @@ namespace VirtualRobot
         */
         MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT slerp(const MathTools::Quaternion& q1, const MathTools::Quaternion& q2, float alpha);
 
+        float fmod(float value, float boundLow, float boundHigh);
+
+        float angleMod2PI(float value);
+
+        float angleModPI(float value);
+
+        float angleModX(float value, float center);
+
+        float Lerp(float a, float b, float f);
+
+        float ILerp(float a, float b, float f);
+
+        float AngleLerp(float a, float b, float f);
+
+        float AngleDelta(float angle1, float angle2);
+
         /************************************************************************/
         /* SPHERICAL COORDINATES                                                */
         /************************************************************************/
