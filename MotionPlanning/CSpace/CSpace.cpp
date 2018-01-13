@@ -13,7 +13,7 @@
 #include <fstream>
 #include <iomanip>
 #include <time.h>
-
+#include <VirtualRobot/MathTools.h>
 #define GET_RANDOM_DATA_FROM_64BIT_ADDRESS(a) (int)(0xFF & (long)a) | (0xFF00 & ((long)a >> 16))
 
 using namespace std;
@@ -108,7 +108,7 @@ namespace Saba
 
         checkForBorderlessDimensions(checkForBorderlessDims);
 
-        SABA_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
+//        SABA_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
 
         // allocate configs
         maxNodes = maxConfigs;
@@ -315,10 +315,7 @@ namespace Saba
             if (borderLessDimension[i])
             {
                 // borderless
-                if (fabs(dist) > M_PI)
-                {
-                    dist = 2.0f * (float)M_PI - fabs(dist);
-                }
+                dist = fabs(VirtualRobot::MathTools::AngleDelta(c1[i], c2[i]));
             }
 
             if (useMetricWeights && !forceDisablingMetricWeights)
