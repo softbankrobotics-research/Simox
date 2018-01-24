@@ -504,7 +504,7 @@ namespace VirtualRobot
 
     WorkspaceGridPtr WorkspaceGrid::MergeWorkspaceGrids(const std::vector<WorkspaceGridPtr> &grids)
     {
-        VR_ASSERT(reachGrids.size() >= 2);
+        VR_ASSERT(grids.size() >= 2);
         float totalMaxX = std::numeric_limits<float>::min();
         float totalMinX = std::numeric_limits<float>::max();
         float totalMaxY = std::numeric_limits<float>::min();
