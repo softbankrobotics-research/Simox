@@ -66,7 +66,7 @@ namespace VirtualRobot
 
         void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace);
 
-        inline void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
+        void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
                              unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value);
 
         inline void setDatum(unsigned int x[6], unsigned char value);
