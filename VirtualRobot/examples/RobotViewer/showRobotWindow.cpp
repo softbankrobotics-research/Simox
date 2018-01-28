@@ -111,6 +111,7 @@ void showRobotWindow::setupUI()
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(selectRobot()));
+    connect(UI.pushButtonReLoad, SIGNAL(clicked()), this, SLOT(reloadRobot()));
 
     connect(UI.pushButtonClose, SIGNAL(clicked()), this, SLOT(closeHand()));
     connect(UI.ExportVRML20, SIGNAL(clicked()), this, SLOT(exportVRML()));
@@ -725,6 +726,13 @@ void showRobotWindow::selectRobot()
         loadRobot();
     }
 }
+void showRobotWindow::reloadRobot()
+{
+    if (!m_sRobotFilename.empty())
+    {
+        loadRobot();
+    }
+}
 
 void showRobotWindow::testPerformance(RobotPtr robot, RobotNodeSetPtr rns)
 {
@@ -858,7 +866,7 @@ void showRobotWindow::loadRobot()
     }
 
     // just a simple test that inverts the kinematic structure of the robot
-#if 0 
+#if 0
     if (robot->hasRobotNode("Index L J1"))
         robot = RobotFactory::cloneInversed(robot, "Index L J1");
 #endif
@@ -1056,7 +1064,7 @@ void showRobotWindow::selectEEF(int nr)
      currentEEF.reset();
 
     if (nr < 0 || nr >= (int)eefs.size())
-    {        
+    {
         return;
     }
     currentEEF = eefs[nr];
