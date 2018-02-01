@@ -1,9 +1,6 @@
 PROJECT(Simox)
 
-cmake_minimum_required(VERSION 2.8.3)
-if(NOT ("${CMAKE_VERSION}" VERSION_LESS 2.8.12))
-    cmake_policy(SET CMP0022 OLD) # avoid INTERFACE_LINK_LIBRARIES warnings
-ENDIF()
+cmake_minimum_required(VERSION 2.8.12)
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
