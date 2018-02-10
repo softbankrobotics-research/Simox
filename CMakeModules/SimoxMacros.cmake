@@ -43,17 +43,26 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
         qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
         qt4_wrap_ui(generatedUiFiles ${uiFiles})
     else()
-        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
-        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
-        # need this option to work around a qt/boost bug
-        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-        qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        if(NOT "${CMAKE_VERSION}" VERSION_GREATER 3.9)
+            MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+            MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+            # need this option to work around a qt/boost bug
+            qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+            qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        else()
+            set(generatedUiFiles ${uiFiles})
+            set(generatedMocFiles ${mocFiles})
+        endif()
     endif()
 
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
     TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    if (NOT Simox_USE_QT4 AND "${CMAKE_VERSION}" VERSION_GREATER 3.10.0)
+        set_target_properties(${name} PROPERTIES AUTOMOC TRUE)
+        set_target_properties(${name} PROPERTIES AUTOUIC TRUE)
+    endif()
 endfunction()
 
 
@@ -67,17 +76,26 @@ function(VirtualRobotQtLibrary name srcs incs mocFiles uiFiles)
         qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
         qt4_wrap_ui(generatedUiFiles ${uiFiles})
     else()
-        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
-        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
-        # need this option to work around a qt/boost bug
-        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-        qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        if(NOT "${CMAKE_VERSION}" VERSION_GREATER 3.9)
+            MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+            MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+            # need this option to work around a qt/boost bug
+            qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+            qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        else()
+            set(generatedUiFiles ${uiFiles})
+            set(generatedMocFiles ${mocFiles})
+        endif()
     endif()
 
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## LIBRARY ##############################
     ADD_LIBRARY(${name} SHARED ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
     TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    if (NOT Simox_USE_QT4 AND "${CMAKE_VERSION}" VERSION_GREATER 3.10.0)
+        set_target_properties(${name} PROPERTIES AUTOMOC TRUE)
+        set_target_properties(${name} PROPERTIES AUTOUIC TRUE)
+    endif()
 endfunction()
 
 
