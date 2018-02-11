@@ -13,6 +13,7 @@ function(setupSimoxExternalLibraries)
     
     if (Simox_USE_QT4)
         FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
+        include(${QT_USE_FILE})
         else()
         FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
     endif()
