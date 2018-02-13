@@ -77,6 +77,12 @@ namespace SimDynamics
          */
         virtual void applyForce(const Eigen::Vector3f& force);
 
+        ///
+        /// \brief applyImpulse Applies an impulse
+        /// \param impulse the impulse that is being applied to the node
+        ///
+        virtual void applyImpulse(const Eigen::Vector3f& impulse);
+
         /*!
          * \brief applyTorque Applies an external torque on this object. The torque is applied at the CoM position.
          * \param torque The torque to apply (value with respect to one second). The torque will be deleted after one simulation step.

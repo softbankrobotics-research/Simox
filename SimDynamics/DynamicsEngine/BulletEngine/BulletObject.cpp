@@ -378,6 +378,20 @@ namespace SimDynamics
         rigidBody->applyCentralForce(btVel);
     }
 
+    void BulletObject::applyImpulse(const Eigen::Vector3f& impulse)
+    {
+        MutexLockPtr lock = getScopedLock();
+
+        if (!rigidBody)
+        {
+            return;
+        }
+
+        btVector3 btVel = BulletEngine::getVecBullet(impulse, false);
+        rigidBody->activate();
+        rigidBody->applyCentralImpulse(btVel);
+    }
+
     void BulletObject::applyTorque(const Eigen::Vector3f& torque)
     {
         MutexLockPtr lock = getScopedLock();

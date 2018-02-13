@@ -12,9 +12,12 @@ namespace SimDynamics
 
     BulletEngineConfig::BulletEngineConfig() : DynamicsEngineConfig()
     {
-        bulletObjectRestitution = btScalar(0.0);
+        //bulletObjectRestitution = btScalar(0.0);
+        bulletObjectRestitution = btScalar(0.8);
+
         bulletObjectFriction = btScalar(0.5f);
         bulletObjectDampingLinear = btScalar(0.05f);
+        //bulletObjectDampingLinear = btScalar(0.9f);
         bulletObjectDampingAngular = btScalar(0.85f);
         //            bulletObjectDampingAngular = btScalar(0.1f);
         bulletObjectDeactivation = btScalar(5.0);//1.0);
@@ -314,8 +317,10 @@ namespace SimDynamics
 
         groundObject->setFriction(friction);
 
+
         BulletObjectPtr groundObjectBt(new BulletObject(groundObject));
         floor = groundObjectBt;
+
 
         addObject(groundObjectBt);
     }

@@ -89,6 +89,11 @@ namespace SimDynamics
 
     }
 
+    void DynamicsObject::applyImpulse(const Eigen::Vector3f& impulse)
+    {
+
+    }
+
     void DynamicsObject::applyTorque(const Eigen::Vector3f& torque)
     {
 
