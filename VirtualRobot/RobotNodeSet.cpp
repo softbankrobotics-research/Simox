@@ -28,10 +28,26 @@ namespace VirtualRobot
 
         if (!isKinematicRoot(this->kinematicRoot))
         {
+            std::string oldRootName = "(null)";
+            if(this->kinematicRoot)
+            {
+                oldRootName = this->kinematicRoot->getName();
+            }
             this->kinematicRoot = rob->getRootNode();
-            VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
-                       << kinematicRoot->getName() << "': Falling back to robot root node '"
-                       <<  this->kinematicRoot->getName() << "'" << endl;
+            if(this->kinematicRoot)
+            {
+                VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
+                           << oldRootName << "': Falling back to robot root node '"
+                           <<  this->kinematicRoot->getName() << "'" << endl;
+            }
+            else
+            {
+                std::stringstream str;
+                str << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
+                    << oldRootName  << "': Can't fall back to robot root node (it is null)";
+                VR_ERROR << str.str() << endl;
+                throw std::invalid_argument{str.str()};
+            }
         }
 
         if (!tcp && robotNodes.size() > 0)
