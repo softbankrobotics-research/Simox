@@ -12,15 +12,13 @@ namespace VirtualRobot
 {
 
     RobotNodeSet::RobotNodeSet(const std::string& name,
-                               RobotWeakPtr robot,
+                               RobotWeakPtr r,
                                const std::vector< RobotNodePtr >& robotNodes,
                                const RobotNodePtr kinematicRoot /*= RobotNodePtr()*/,
                                const RobotNodePtr tcp /*= RobotNodePtr()*/)
-        : SceneObjectSet(name, robotNodes.size() > 0 ? robotNodes[0]->getCollisionChecker() : CollisionCheckerPtr())
+        : SceneObjectSet(name, robotNodes.size() > 0 ? robotNodes[0]->getCollisionChecker() : CollisionCheckerPtr()),
+          robotNodes{robotNodes}, robot{r}, kinematicRoot{kinematicRoot}, tcp{tcp}
     {
-        this->robotNodes = robotNodes;
-        this->kinematicRoot = kinematicRoot;
-        this->tcp = tcp;
         RobotPtr rob = robot.lock();
 
         if (!kinematicRoot && robotNodes.size() > 0)
@@ -41,7 +39,6 @@ namespace VirtualRobot
             this->tcp = robotNodes[robotNodes.size() - 1];
         }
 
-        this->robot = robot;
 
         // now, the objects are stored in the parent's (SceneObjectSet) data structure, so that the methods of SceneObjectSet do work
         for (size_t i = 0; i < robotNodes.size(); i++)
