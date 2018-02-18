@@ -1,7 +1,7 @@
 
 # Build and helper macros
 
-function(setupSimoxExternalLibraries)
+macro(setupSimoxExternalLibraries)
   IF (Simox_VISUALIZATION)
     # we need to check for Qt
     IF(NOT "$ENV{QT_QMAKE_EXECUTABLE}" STREQUAL "")
@@ -22,7 +22,7 @@ function(setupSimoxExternalLibraries)
   INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
   ADD_DEFINITIONS( ${Simox_EXTERNAL_LIBRARY_FLAGS} )
   LINK_DIRECTORIES( ${Simox_LIBRARY_DIRS} )
-endfunction()
+endmacro()
 
 
 function(VirtualRobotApplication name srcs incs)
