@@ -1,7 +1,7 @@
 
 # Build and helper macros
 
-function(setupSimoxExternalLibraries)
+macro(setupSimoxExternalLibraries)
   IF (Simox_VISUALIZATION)
     # we need to check for Qt
     IF(NOT "$ENV{QT_QMAKE_EXECUTABLE}" STREQUAL "")
@@ -13,6 +13,7 @@ function(setupSimoxExternalLibraries)
     
     if (Simox_USE_QT4)
         FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
+        include(${QT_USE_FILE})
         else()
         FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
     endif()
@@ -21,12 +22,7 @@ function(setupSimoxExternalLibraries)
   INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
   ADD_DEFINITIONS( ${Simox_EXTERNAL_LIBRARY_FLAGS} )
   LINK_DIRECTORIES( ${Simox_LIBRARY_DIRS} )
-
-  FOREACH(f ${Simox_EXTERNAL_CMAKE_INCLUDE})
-      MESSAGE(STATUS " * Simox_EXTERNAL_CMAKE_INCLUDE: ${f}")
-      INCLUDE(${f})
-  ENDFOREACH(f) 
-endfunction()
+endmacro()
 
 
 function(VirtualRobotApplication name srcs incs)
@@ -34,7 +30,7 @@ function(VirtualRobotApplication name srcs incs)
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs})
-    TARGET_LINK_LIBRARIES(${name} VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
 endfunction()
 
 
@@ -48,17 +44,24 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
         qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
         qt4_wrap_ui(generatedUiFiles ${uiFiles})
     else()
-        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
-        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
-        # need this option to work around a qt/boost bug
-        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-        qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        if(NOT "${CMAKE_VERSION}" VERSION_GREATER 3.9)
+            MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+            MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+            # need this option to work around a qt/boost bug
+            qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+            qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        else()
+            set(CMAKE_AUTOMOC "YES")
+            set(CMAKE_AUTOUIC "YES")
+            set(generatedUiFiles ${uiFiles})
+            set(generatedMocFiles ${mocFiles})
+        endif()
     endif()
 
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
     ################################## EXECUTABLE ##############################
     ADD_EXECUTABLE(${name} ${srcs} ${incs} ${generatedUiFiles} ${generatedMocFiles})
-    TARGET_LINK_LIBRARIES(${name} VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${name} PUBLIC VirtualRobot ${Simox_EXTERNAL_LIBRARIES})
 endfunction()
 
 
@@ -72,11 +75,18 @@ function(VirtualRobotQtLibrary name srcs incs mocFiles uiFiles)
         qt4_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
         qt4_wrap_ui(generatedUiFiles ${uiFiles})
     else()
-        MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
-        MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
-        # need this option to work around a qt/boost bug
-        qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-        qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        if(NOT "${CMAKE_VERSION}" VERSION_GREATER 3.9)
+            MESSAGE (STATUS "Qt5 Moc'ing: ${mocFiles}")
+            MESSAGE (STATUS "Qt5 ui files: ${uiFiles}")
+            # need this option to work around a qt/boost bug
+            qt5_wrap_cpp(generatedMocFiles ${mocFiles} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+            qt5_wrap_ui(generatedUiFiles ${uiFiles})
+        else()
+            set(generatedUiFiles ${uiFiles})
+            set(generatedMocFiles ${mocFiles})
+            set(CMAKE_AUTOMOC "YES")
+            set(CMAKE_AUTOUIC "YES")
+        endif()
     endif()
 
     INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
@@ -89,14 +99,14 @@ endfunction()
 function(SimoxApplication name srcs incs)
     VirtualRobotApplication("${name}" "${srcs}" "${incs}")
     # add Saba and GraspStudio
-    TARGET_LINK_LIBRARIES(${name} GraspStudio Saba)
+    TARGET_LINK_LIBRARIES(${name} PUBLIC GraspStudio Saba)
 endfunction()
 
 
 function(SimoxQtApplication name srcs incs mocFiles uiFiles)
     VirtualRobotQtApplication("${name}" "${srcs}" "${incs}" "${mocFiles}" "${uiFiles}")  
     # add Saba and GraspStudio
-    TARGET_LINK_LIBRARIES(${name} GraspStudio Saba)
+    TARGET_LINK_LIBRARIES(${name} PUBLIC GraspStudio Saba)
 endfunction()
 
 

@@ -12,15 +12,13 @@ namespace VirtualRobot
 {
 
     RobotNodeSet::RobotNodeSet(const std::string& name,
-                               RobotWeakPtr robot,
+                               RobotWeakPtr r,
                                const std::vector< RobotNodePtr >& robotNodes,
                                const RobotNodePtr kinematicRoot /*= RobotNodePtr()*/,
                                const RobotNodePtr tcp /*= RobotNodePtr()*/)
-        : SceneObjectSet(name, robotNodes.size() > 0 ? robotNodes[0]->getCollisionChecker() : CollisionCheckerPtr())
+        : SceneObjectSet(name, robotNodes.size() > 0 ? robotNodes[0]->getCollisionChecker() : CollisionCheckerPtr()),
+          robotNodes{robotNodes}, robot{r}, kinematicRoot{kinematicRoot}, tcp{tcp}
     {
-        this->robotNodes = robotNodes;
-        this->kinematicRoot = kinematicRoot;
-        this->tcp = tcp;
         RobotPtr rob = robot.lock();
 
         if (!kinematicRoot && robotNodes.size() > 0)
@@ -30,8 +28,26 @@ namespace VirtualRobot
 
         if (!isKinematicRoot(this->kinematicRoot))
         {
-            VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '" << kinematicRoot->getName() << "': Falling back to robot root node" << endl;
+            std::string oldRootName = "(null)";
+            if(this->kinematicRoot)
+            {
+                oldRootName = this->kinematicRoot->getName();
+            }
             this->kinematicRoot = rob->getRootNode();
+            if(this->kinematicRoot)
+            {
+                VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
+                           << oldRootName << "': Falling back to robot root node '"
+                           <<  this->kinematicRoot->getName() << "'" << endl;
+            }
+            else
+            {
+                std::stringstream str;
+                str << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
+                    << oldRootName  << "': Can't fall back to robot root node (it is null)";
+                VR_ERROR << str.str() << endl;
+                throw std::invalid_argument{str.str()};
+            }
         }
 
         if (!tcp && robotNodes.size() > 0)
@@ -39,7 +55,6 @@ namespace VirtualRobot
             this->tcp = robotNodes[robotNodes.size() - 1];
         }
 
-        this->robot = robot;
 
         // now, the objects are stored in the parent's (SceneObjectSet) data structure, so that the methods of SceneObjectSet do work
         for (size_t i = 0; i < robotNodes.size(); i++)

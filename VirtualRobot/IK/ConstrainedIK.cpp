@@ -116,6 +116,7 @@ bool ConstrainedIK::solve(bool stepwise)
             if (hardConstraints[constraint] && !constraint->checkTolerances())
             {
                 goalReached = false;
+                break;
             }
         }
 
@@ -134,6 +135,7 @@ bool ConstrainedIK::solve(bool stepwise)
         }
     }
 
+    VR_INFO << "A hard contraints failed to me the tolerance criterion after the maximum number of iterations" << std::endl;
     running = false;
     return false;
 }

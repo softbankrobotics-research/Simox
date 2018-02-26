@@ -104,9 +104,9 @@ namespace SimDynamics
         return factory->createObject(o);
     }
 
-    void DynamicsWorld::createFloorPlane(const Eigen::Vector3f& pos /*= Eigen::Vector3f(0,0,0)*/, const Eigen::Vector3f& up /*= Eigen::Vector3f(0,0,1.0f)*/)
+    void DynamicsWorld::createFloorPlane(const Eigen::Vector3f& pos /*= Eigen::Vector3f(0,0,0)*/, const Eigen::Vector3f& up /*= Eigen::Vector3f(0,0,1.0f)*/, float friction)
     {
-        engine->createFloorPlane(pos, up);
+        engine->createFloorPlane(pos, up, friction);
     }
 
     bool DynamicsWorld::addRobot(DynamicsRobotPtr r)

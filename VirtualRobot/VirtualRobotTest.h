@@ -52,7 +52,11 @@ struct OutputConfiguration
     std::ofstream logFile;
 };
 
-BOOST_GLOBAL_FIXTURE(OutputConfiguration);
+#if  BOOST_VERSION  < 106200
+    BOOST_GLOBAL_FIXTURE(OutputConfiguration)
+#else
+    BOOST_GLOBAL_FIXTURE(OutputConfiguration);
+#endif
 #endif
 
 #endif /* _VirtualRobot_Test_h_ */

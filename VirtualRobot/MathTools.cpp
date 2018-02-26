@@ -1980,7 +1980,7 @@ namespace VirtualRobot
         else
             resF(2) = asin(p);
 
-        VR_ASSERT (!isnan(resF(2)));
+        VR_ASSERT (!boost::math::isnan(resF(2)));
 
         if (resF(0)<0)
             resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI

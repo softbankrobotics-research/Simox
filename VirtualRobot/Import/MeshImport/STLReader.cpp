@@ -43,6 +43,8 @@
 
 #include <float.h>
 #include <fstream>
+#include <stdexcept>
+#include <string>
 
 namespace VirtualRobot
 {
@@ -514,7 +516,10 @@ namespace VirtualRobot
             int i;
             unsigned char c[4];
         } ic;
-        /*size_t bytesRead =*/ fread((char*)ic.c, 1, 4, _in);
+        if(4 != std::fread((char*)ic.c, 1, 4, _in))
+        {
+            throw std::runtime_error{__FILE__ " error in line " + std::to_string(__LINE__) + " failed to read 4 bytes."};
+        }
 
         if (_swap)
         {
@@ -532,7 +537,10 @@ namespace VirtualRobot
             float f;
             unsigned char c[4];
         } fc;
-        /*size_t bytesRead =*/ fread((char*)fc.c, 1, 4, _in);
+        if(4 != std::fread((char*)fc.c, 1, 4, _in))
+        {
+            throw std::runtime_error{__FILE__ " error in line " + std::to_string(__LINE__) + " failed to read 4 bytes."};
+        }
 
         if (_swap)
         {
@@ -569,7 +577,10 @@ namespace VirtualRobot
 
         // read number of triangles
         char dummy[100];
-        /*size_t bytesRead =*/ fread(dummy, 1, 80, in);
+        if(80 != std::fread(dummy, 1, 80, in))
+        {
+            throw std::runtime_error{__FILE__ " error in line " + std::to_string(__LINE__) + " failed to read 80 bytes."};
+        }
         size_t nT = read_int(in, swapFlag);
 
 

@@ -63,6 +63,7 @@ public slots:
     void selectEEF(int nr);
     void selectPreshape(int nr);
     void selectRobot();
+    void reloadRobot();
     void displayPhysics();
     void exportVRML();
     void exportXML();
