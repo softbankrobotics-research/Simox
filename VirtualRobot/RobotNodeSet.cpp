@@ -20,11 +20,11 @@ namespace VirtualRobot
           robotNodes{robotNodes}, robot{r}, kinematicRoot{kinematicRoot}, tcp{tcp}
     {
         RobotPtr rob = robot.lock();
-        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
 
 
         if (!kinematicRoot && robotNodes.size() > 0)
         {
+            THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
             this->kinematicRoot = rob->getRootNode();
         }
 
@@ -35,6 +35,7 @@ namespace VirtualRobot
             {
                 oldRootName = this->kinematicRoot->getName();
             }
+            THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
             this->kinematicRoot = rob->getRootNode();
             if(this->kinematicRoot)
             {
