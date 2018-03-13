@@ -66,10 +66,10 @@ namespace VirtualRobot
 
         virtual void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) override;
 
-        virtual inline void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
+        virtual void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
                              unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value) override;
 
-        virtual inline void setDatum(unsigned int x[6], unsigned char value) override;
+        virtual void setDatum(unsigned int x[6], unsigned char value) override;
 
         virtual void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) override;
 

@@ -20,7 +20,10 @@ Gravity::Gravity(VirtualRobot::ModelPtr robot, VirtualRobot::JointSetPtr rnsJoin
     rns(rnsJoints),
     rnsBodies(rnsBodies)
 {
-    THROW_VR_EXCEPTION_IF(!robot || !rns || !rnsBodies || rns->getSize()==0, "NULL data");
+    THROW_VR_EXCEPTION_IF(!robot, "!robot");
+    THROW_VR_EXCEPTION_IF(!rns, "!rnsJoints");
+    THROW_VR_EXCEPTION_IF(!rnsBodies, "!rnsBodies");
+    THROW_VR_EXCEPTION_IF(rns->getSize()==0, "joints node set is empty");
 
 
     nodes = rns->getJoints();
@@ -42,75 +45,15 @@ Gravity::Gravity(VirtualRobot::ModelPtr robot, VirtualRobot::JointSetPtr rnsJoin
         }
     }
 
-    gravityDataHelperRoot = GravityData::create(robot->getRootNode(), nodes, nodesBodies, gravityDataHelperVec);
-
-    children.resize(nodes.size(), nodesBodies.size());
-    // build children map
-    unsigned int a = 0;
-    unsigned int b = 0;
-    for (auto& node : nodes)
-    {
-        b=0;
-        for (auto& body : nodesBodies)
-        {
-            if (node->hasChild(body, true) /*|| node == body*/)
-            {
-                children(a,b) = 1;
-            } else
-                children(a,b) = 0;
-            b++;
-        }
-        a++;
-    }
-
+    gravityDataHelperRoot = GravityData::create(robot->getRootNode(), nodes, nodesBodies, gravityDataHelperVec);   
 }
 
 Gravity::~Gravity()
 {
 }
 
+
 void Gravity::computeGravityTorque(std::vector<float> &storeValues)
-{
-    storeValues.resize(rns->getSize());
-
-    unsigned int pos = 0;
-    unsigned int a = 0;
-    unsigned int b = 0;
-    for (auto& node : nodes)
-    {
-        VirtualRobot::ModelJointRevolutePtr rnRevolute = std::dynamic_pointer_cast<VirtualRobot::ModelJointRevolute>(node);
-        Eigen::Vector3f axisGlobal = rnRevolute->getJointRotationAxis();
-        Eigen::Vector3f jointPosGlobal = rnRevolute->getGlobalPose().block(0, 3, 3, 1);
-        axisGlobal.normalize();
-
-        float gravityJoint = 0;
-
-        b = 0;
-        for (auto& body : nodesBodies)
-        {
-            if (children(a,b) == 1) //node->hasChild(body, true))
-            {
-                Eigen::Vector3f comGlobal = body->getCoMGlobal();
-                VirtualRobot::MathTools::BaseLine<Eigen::Vector3f> l(jointPosGlobal, axisGlobal);
-                Eigen::Vector3f pointOnAxis = VirtualRobot::MathTools::nearestPointOnLine<Eigen::Vector3f>(l, comGlobal);
-                Eigen::Vector3f r = comGlobal - pointOnAxis; // vector from axis to com (change sign?)
-                r *= 0.001f; // mm -> m
-                Eigen::Vector3f F(0, 0, -9.81f);
-                F *= body->getMass();
-                gravityJoint += (r.cross(F)).dot(axisGlobal);
-            }
-            b++;
-        }
-
-        // gravity compensation: invert the gravity torque
-        gravityJoint *= -1.0f;
-        storeValues[pos] = gravityJoint;
-        pos++;
-        a++;
-    }
-}
-
-void Gravity::computeGravityTorqueOptimized(std::vector<float> &storeValues)
 {
     storeValues.resize(gravityDataHelperVec.size());
     Eigen::Vector3f comGlobal;

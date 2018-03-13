@@ -25,7 +25,7 @@ endif()
 
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)
-    INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
     ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
@@ -88,6 +88,7 @@ IK/constraints/TSRConstraint.cpp
 IK/constraints/ReferenceConfigurationConstraint.cpp
 IK/constraints/JointLimitAvoidanceConstraint.cpp
 IK/constraints/CoMConstraint.cpp
+IK/constraints/CollisionCheckConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
 Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
@@ -199,6 +200,7 @@ IK/constraints/TSRConstraint.h
 IK/constraints/ReferenceConfigurationConstraint.h
 IK/constraints/JointLimitAvoidanceConstraint.h
 IK/constraints/CoMConstraint.h
+IK/constraints/CollisionCheckConstraint.h
 Workspace/WorkspaceData.h
 Workspace/WorkspaceDataArray.h
 Workspace/WorkspaceRepresentation.h

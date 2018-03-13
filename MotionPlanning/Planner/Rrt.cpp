@@ -13,7 +13,7 @@ using namespace VirtualRobot;
 namespace MotionPlanning
 {
 
-    Rrt::Rrt(CSpaceSampledPtr cspace, RrtMethod mode, float probabilityExtendToGoal)
+    Rrt::Rrt(CSpacePtr cspace, RrtMethod mode, float probabilityExtendToGoal, float samplingSize)
         : MotionPlanner(std::dynamic_pointer_cast<CSpace>(cspace))
     {
         rrtMode = mode;
@@ -32,8 +32,12 @@ namespace MotionPlanning
         }
 
         extendGoToGoal = probabilityExtendToGoal;
-
-        this->extendStepSize = cspace->getSamplingSize();
+        CSpaceSampledPtr sampledCSpace = std::dynamic_pointer_cast<CSpaceSampled>(cspace);
+        if(samplingSize > 0)
+            this->extendStepSize = samplingSize;
+        else if(sampledCSpace)
+            this->extendStepSize = sampledCSpace->getSamplingSize();
+        else MOTIONPLANNING_ERROR << "Sampling size neither set from cspace nor from parameter";
         tmpConfig.setZero(dimension);
         lastAddedID = -1;
     }

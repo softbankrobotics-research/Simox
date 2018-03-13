@@ -80,8 +80,8 @@ namespace VirtualRobot
         void setEntryCheckNeighbors(float x, float y, int value, GraspPtr grasp);
 
         //! tries to find a random position with a entry >= minEntry
-        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops = 50);
-        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops = 50);
+        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops = 50, int* entries = NULL);
+        bool getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops = 50, int* entries = NULL);
 
         /*!
             Clear all entries.
@@ -114,6 +114,16 @@ namespace VirtualRobot
         VisualizationPtr getVisualization(const VirtualRobot::ColorMap& cm) const;
 
 
+        float getDiscretizeSize() const;
+        Eigen::Vector2f getMin() const;
+        Eigen::Vector2f getMax() const;
+
+        /**
+         * @brief Creates the intersection between multiple grids into one grid by considering for each x,y position the worst values of all grids.
+         * @param reachGrids grids for different grasp poses or object poses
+         * @return new, merged grid
+         */
+        static WorkspaceGridPtr MergeWorkspaceGrids(const std::vector<WorkspaceGridPtr>& reachGrids);
     protected:
         /*!
             Adds data stored in reachability transformations. This data defines transformations from robot base system to grasping pose,

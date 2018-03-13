@@ -196,12 +196,11 @@ namespace VirtualRobot
          * @details The pseudo inverse \f$J^{+}\f$ can be calculated from the Jacobian matrix \f$ J \f$ using the following formula:
          * \f[ J^t \cdot \left( J \cdot J^t \right)^{-1}.\f]. Update: In order to improve stability, we are now using singular value decomposition (SVD).
          */
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode = IKSolver::All);
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix() override;
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const FramePtr& tcp, IKSolver::CartesianSelection mode = IKSolver::All);
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
 
         void updateJacobianMatrix(Eigen::MatrixXf& jac);
-        void updateJacobianMatrix(Eigen::MatrixXf& jac, FramePtr tcp, IKSolver::CartesianSelection mode);
+        void updateJacobianMatrix(Eigen::MatrixXf& jac, const FramePtr& tcp, IKSolver::CartesianSelection mode);
         //Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m);
 
 

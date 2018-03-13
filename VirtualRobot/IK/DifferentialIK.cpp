@@ -303,9 +303,9 @@ namespace VirtualRobot
         return jac;
     }
 
-    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jac, FramePtr tcp, IKSolver::CartesianSelection mode)
+    void DifferentialIK::updateJacobianMatrix(Eigen::MatrixXf& jac, const FramePtr &tcpParam, IKSolver::CartesianSelection mode)
     {
-
+        FramePtr tcp = tcpParam;
         if (!initialized)
         {
             initialize();
@@ -351,7 +351,7 @@ namespace VirtualRobot
             tcp = this->getDefaultTCP();
         }
 
-		if (!updateParents(tcp))
+                if (!updateParents(tcp))
         {
             VR_ERROR << "tcp not linked to robotNode!!!" << endl;
             jac.setZero();
@@ -363,7 +363,7 @@ namespace VirtualRobot
         tmpUpdateJacobianPosition.setZero();
         tmpUpdateJacobianOrientation.setZero();
 
-		ModelNodePtr tcpRN = getTcpNode(tcp);
+                ModelNodePtr tcpRN = getTcpNode(tcp);
 
         // Iterate over all degrees of freedom
         for (size_t i = 0; i < nDoF; i++)
@@ -506,18 +506,12 @@ namespace VirtualRobot
         }*/
     }
 
-
-    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix()
-    {
-        return getPseudoInverseJacobianMatrix(FramePtr());
-    }
-
     Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode)
     {
         return getPseudoInverseJacobianMatrix(FramePtr(), mode);
     }
 
-    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode)
+    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(const FramePtr& tcp, IKSolver::CartesianSelection mode)
     {
 #ifdef CHECK_PERFORMANCE
         clock_t startT = clock();

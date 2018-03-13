@@ -30,7 +30,8 @@ IF (NOT Simox_CONFIGURED)
     set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
         "Installation directory for CMake files")
 
-    set(Simox_BUILD_EXAMPLES ON CACHE BOOL "Build example applications")
+    # Almost all examples require soqt. It will be set to ON if soqt is found.
+    set(Simox_BUILD_EXAMPLES OFF CACHE BOOL "Build example applications")
  
     # Make relative paths absolute (needed later on) 
     # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
@@ -150,6 +151,18 @@ IF (NOT Simox_CONFIGURED)
     ############################# SETUP MODULES #############################
     MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
 
+    ### RBDL
+    OPTION (Simox_USE_RBDL "Use RBDL" OFF)
+    if (Simox_USE_RBDL)
+        FIND_PACKAGE (RBDL)
+        if (RBDL_FOUND)
+            MESSAGE(STATUS "RBDL found at: ${RBDL_INCLUDE_DIR}")
+            SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${RBDL_INCLUDE_DIR})
+            SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${RBDL_LIBRARIES})
+        else ()
+            MESSAGE(STATUS "RBDL not found!")
+        endif ()
+    endif()
     
     #urdf
     OPTION (Simox_USE_URDF "Use URDF" ON)
@@ -212,6 +225,7 @@ IF (NOT Simox_CONFIGURED)
             SET(Simox_USE_QT5 ON)
         else()
             FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
+            include(${QT_USE_FILE})
             IF (QT_FOUND)
                 SET(Simox_USE_QT4 ON)
             endif()
@@ -220,6 +234,7 @@ IF (NOT Simox_CONFIGURED)
         FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui)
     else()
         FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtOpenGL QtCore QtGui)
+        include(${QT_USE_FILE})
     endif()
 
     #### VISUALIZATION

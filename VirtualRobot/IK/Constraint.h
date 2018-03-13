@@ -80,6 +80,8 @@ namespace VirtualRobot
 
         virtual VisualizationPtr getVisualization() const;
 
+        virtual bool usingCollisionModel();
+
     protected:
         void addEqualityConstraint(unsigned int id, bool soft=false);
         void addInequalityConstraint(unsigned int id, bool soft=false);

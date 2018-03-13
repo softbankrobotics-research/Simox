@@ -105,6 +105,11 @@ VisualizationPtr Constraint::getVisualization() const
     return VisualizationFactory::getInstance()->createVisualization();
 }
 
+bool Constraint::usingCollisionModel()
+{
+    return false;
+}
+
 void Constraint::addEqualityConstraint(unsigned int id, bool soft)
 {
     OptimizationFunctionSetup setup;

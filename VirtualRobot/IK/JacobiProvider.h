@@ -26,6 +26,7 @@
 #include "../Model/Model.h"
 #include "../Model/Nodes/ModelNode.h"
 #include "../Model/JointSet.h"
+#include "IKSolver.h"
 
 #include <string>
 #include <vector>
@@ -59,18 +60,21 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) = 0;
         virtual Eigen::MatrixXd getJacobianMatrixD(const FramePtr &tcp);
 
-        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m) const;
-        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m) const;
-        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter) const;
-        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, double invParameter) const;
-        virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
-        virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
-        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD();
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const FramePtr &tcp);
-        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(const FramePtr &tcp);
+        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, const Eigen::VectorXf regularization = Eigen::VectorXf()) const;
+        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, const Eigen::VectorXd regularization = Eigen::VectorXd()) const;
+        virtual Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf& m, float invParameter, const Eigen::VectorXf regularization = Eigen::VectorXf()) const;
+        virtual Eigen::MatrixXd computePseudoInverseJacobianMatrixD(const Eigen::MatrixXd& m, double invParameter, const Eigen::VectorXd regularization = Eigen::VectorXd()) const;
+        virtual void updatePseudoInverseJacobianMatrix(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f, Eigen::VectorXf regularization = Eigen::VectorXf()) const;
+        virtual void updatePseudoInverseJacobianMatrixD(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0, Eigen::VectorXd regularization = Eigen::VectorXd()) const;
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const Eigen::VectorXf regularization = Eigen::VectorXf());
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(const Eigen::VectorXd regularization = Eigen::VectorXd());
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const FramePtr &tcp, const Eigen::VectorXf regularization = Eigen::VectorXf());
+        virtual Eigen::MatrixXd getPseudoInverseJacobianMatrixD(const FramePtr &tcp, const Eigen::VectorXd regularization = Eigen::VectorXd());
+
+        virtual Eigen::VectorXf getJacobiRegularization(IKSolver::CartesianSelection mode = IKSolver::All);
 
         JointSetPtr getJointSet();
+
 
         /*!
             The error vector. the value depends on the implementation.
@@ -90,13 +94,28 @@ namespace VirtualRobot
          * \brief print Print current status of the IK solver
          */
         virtual void print();
+
+        float getDampedSvdLambda() const;
+        void setDampedSvdLambda(float value);
+
+        float getJacobiMMRegularization() const;
+        void setJacobiMMRegularization(float value);
+
+        float getJacobiRadianRegularization() const;
+        void setJacobiRadianRegularization(float value);
+
     protected:
+        virtual void updatePseudoInverseJacobianMatrixInternal(Eigen::MatrixXf& invJac, const Eigen::MatrixXf& m, float invParameter = 0.0f) const;
+        virtual void updatePseudoInverseJacobianMatrixDInternal(Eigen::MatrixXd& invJac, const Eigen::MatrixXd& m, double invParameter = 0.0) const;
 
         std::string name;
         JointSetPtr rns;
         InverseJacobiMethod inverseMethod;
         bool initialized;
         Eigen::VectorXf jointWeights;
+        float dampedSvdLambda;
+        float jacobiMMRegularization;
+        float jacobiRadianRegularization;
 
     };
 

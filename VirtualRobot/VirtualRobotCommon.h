@@ -42,7 +42,6 @@
 #include <VirtualRobot/Nodes/ConditionedLock.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/Visualization.h>
-#include <VirtualRobot/Visualization/VisualizationNode.h>
 #include <VirtualRobot/Visualization/ColorMap.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/XML/BaseIO.h>

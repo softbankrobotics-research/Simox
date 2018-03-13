@@ -5,6 +5,7 @@
 #include "VirtualRobot/Grasping/Grasp.h"
 
 #include <algorithm>
+#include <random>
 #include <float.h>
 #include <cstdlib>
 #include <random>
