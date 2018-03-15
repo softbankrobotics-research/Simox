@@ -2,6 +2,7 @@
 
 #include "../CoinVisualization/CoinVisualization.h"
 #include "CoinUtil.h"
+#include "../../../Tools/MathTools.h"
 
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/SbViewportRegion.h>
@@ -48,16 +49,9 @@ namespace VirtualRobot
         const unsigned int numPixel=width*height;
         //required to get the zBuffer
         DepthRenderData userdata;
-        std::vector<float> zBuffer;
+        std::vector<float> zBuffer(numPixel);
         if(calculateDepth)
         {
-            if(renderDepthImage)
-            {
-                //we can overwrite the depth image. maybe it already has enough mem
-                std::swap(zBuffer,depthImage);
-            }
-            zBuffer.resize(numPixel);
-
             userdata.h = height;
             userdata.w = width;
             userdata.buffer = zBuffer.data();
@@ -81,9 +75,8 @@ namespace VirtualRobot
         Eigen::Vector3f camPos = camPose.block<3, 1>(0, 3);
         cam->position.setValue(camPos[0], camPos[1], camPos[2]);
         SbRotation align(SbVec3f(1, 0, 0), (float)(M_PI)); // first align from  default direction -z to +z by rotating with 180 degree around x axis
-        SbRotation align2(SbVec3f(0, 0, 1), (float)(-M_PI / 2.0)); // align up vector by rotating with -90 degree around z axis
         SbRotation trans(CoinUtil::getSbMatrix(camPose)); // get rotation from global pose
-        cam->orientation.setValue(align2 * align * trans); // perform total transformation
+        cam->orientation.setValue(align * trans); // perform total transformation
         cam->nearDistance.setValue(zNear);
         cam->farDistance.setValue(zFar);
         cam->heightAngle.setValue(vertFov);
@@ -119,12 +112,19 @@ namespace VirtualRobot
             const unsigned char* glBuffer = offscreenRenderer.getBuffer();
             const unsigned int numValues = numPixel*3;
             rgbImage.resize(numValues);
-            std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
+            for (unsigned int y=0; y<height; ++y)
+            {
+                std::copy(glBuffer+y*width*3, glBuffer+y*width*3 + width*3 , rgbImage.begin() + (height-y-1) * width*3);
+            }
         }
         //per pixel
         if(!calculateDepth)
         {
             return true;
+        }
+        if (renderDepthImage)
+        {
+            depthImage.resize(numPixel);
         }
         if(renderPointcloud)
         {
@@ -140,6 +140,7 @@ namespace VirtualRobot
             for(unsigned int x=0;x<static_cast<std::size_t>(width);++x)
             {
                 const unsigned int pixelIndex = x+width*y;
+                const unsigned int pixelIndexOut = x+width*(height-y-1);
                 const float bufferVal = zBuffer.at(pixelIndex);
                 /*
                 // projection matrix (https://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml)
@@ -201,18 +202,18 @@ namespace VirtualRobot
                 {
                     if(-zEye < zFar)
                     {
-                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                        depthImage.at(pixelIndexOut) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
                     }
                     else
                     {
-                        zBuffer.at(pixelIndex) = nanValue;
+                        depthImage.at(pixelIndexOut) = nanValue;
                     }
                 }
 
                 if(renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
-                    auto& point = pointCloud.at(pixelIndex);
+                    auto& point = pointCloud.at(pixelIndexOut);
                     if(-zEye < zFar)
                     {
                         point[0] = -xEye;
@@ -227,11 +228,6 @@ namespace VirtualRobot
                     }
                 }
             }
-        }
-
-        if(renderDepthImage)
-        {
-            depthImage = std::move(zBuffer);
         }
         return true;
     }

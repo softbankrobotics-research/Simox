@@ -44,27 +44,27 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     m(2, 3) = 1500.0f;
 
     m(1, 3) = 1500.0f;
-    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
+    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f, Visualization::Color::Red()));
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 700.0f;
     m(1, 3) = 900.0f;
-    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(300.0f));
+    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(300.0f, Visualization::Color::Green()));
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 0.0f;
     m(1, 3) = 2000.0f;
     m(2, 3) = 2000.0f;
-    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
+    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f, Visualization::Color::Blue()));
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
     m(0, 3) = 500.0f;
     m(1, 3) = 1500.0f;
     m(2, 3) = 2000.0f;
-    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f));
+    visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(200.0f, Visualization::Color(1.f, 1.0f, 0.2f, 0.f)));
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
@@ -406,7 +406,7 @@ void showCamWindow::renderCam()
 
         QGraphicsScene* scene = new QGraphicsScene();
         //scene->addPixmap(QPixmap::fromImage(qimg2.mirrored(true,false))); // we need to mirror the image, since different coord systems are assumed
-        scene->addPixmap(QPixmap::fromImage(img1.mirrored(false, true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
+        scene->addPixmap(QPixmap::fromImage(img1)); // we need to mirror the image as the output from the renderer is of "left-bottom" type
         QGraphicsScene* oldScene = UI.cam1->scene();
         UI.cam1->setScene(scene);
         delete oldScene;
@@ -426,8 +426,7 @@ void showCamWindow::renderCam()
             //transform
             for(std::size_t index = 0; index < static_cast<std::size_t>(UI.cam2->size().width()*UI.cam2->size().height()); ++index)
             {
-                const float distance = cam2DepthBuffer.at(index);
-                const unsigned char value = (distance>=maxZCut)?255:distance/maxZCut*255.f;
+                const unsigned char value = cam2DepthBuffer.at(index)*255* UI.doubleSpinBoxNonLinFactor->value();
 
                 cam2RGBBuffer.at(3 * index    ) = value;
                 cam2RGBBuffer.at(3 * index + 1) = value;
@@ -439,7 +438,7 @@ void showCamWindow::renderCam()
 
         QGraphicsScene* scene = new QGraphicsScene();
         //scene->addPixmap(QPixmap::fromImage(qimg2.mirrored(true,false))); // we need to mirror the image, since different coord systems are assumed
-        scene->addPixmap(QPixmap::fromImage(img2.mirrored(false, true))); // we need to mirror the image as the output from the renderer is of "left-bottom" type
+        scene->addPixmap(QPixmap::fromImage(img2)); // we need to mirror the image as the output from the renderer is of "left-bottom" type
         QGraphicsScene* oldScene = UI.cam2->scene();
         UI.cam2->setScene(scene);
         delete oldScene;
@@ -456,12 +455,15 @@ void showCamWindow::renderCam()
 //        rotation(1,1) = 0;
         Eigen::Matrix4f cam1Transform = cam1->getGlobalPose();// * rotation;
 
-
+        std::vector<Eigen::Vector3f> globalPointCloud;
         for (auto& p : cam1PointCloud)
         {
-            p = (cam1Transform* Eigen::Vector4f(p(0), p(1), p(2), 1.f)).block<3, 1>(0, 0);
+            if (std::isfinite(p(0)) && std::isfinite(p(1)) && std::isfinite(p(2)))
+            {
+                globalPointCloud.push_back((cam1Transform* Eigen::Vector4f(p(0), p(1), p(2), 1.f)).block<3, 1>(0, 0));
+            }
         }
-        cam1pclVisu = VisualizationFactory::getInstance()->createPointCloud(cam1PointCloud, 4.f);
+        cam1pclVisu = VisualizationFactory::getInstance()->createPointCloud(globalPointCloud, 4.f);
         viewer->addVisualization("pcl", cam1pclVisu);
     }
 }

@@ -13,7 +13,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    VirtualRobot::init(argc, argv, "RobotViewer");
+    VirtualRobot::init(argc, argv, "CameraViewer");
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::considerKey("cam1");
@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::print();
 
     //std::string cam1Name("DepthCameraSim");
-    std::string cam1Name("EyeRightCameraSim");
-    std::string cam2Name("EyeLeftCameraSim");
+    std::string cam1Name("EyeRightCamera");
+    std::string cam2Name("EyeLeftCamera");
 
     std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
