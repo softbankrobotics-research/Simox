@@ -38,9 +38,9 @@ namespace VirtualRobot
         CoMConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const Eigen::Vector3f& target, float tolerance);
         CoMConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const Eigen::Vector2f& target, float tolerance);
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
-        bool checkTolerances();
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        bool checkTolerances() override;
 
         void updateTarget(const Eigen::Vector3f& target);
         void updateTarget(const Eigen::Vector2f& target);

@@ -44,7 +44,7 @@ namespace SimDynamics
 
         /*!
         */
-        virtual ~BulletRobot();
+        ~BulletRobot() override;
 
         struct LinkInfo
         {
@@ -100,20 +100,20 @@ namespace SimDynamics
 
         std::vector<LinkInfo> getLinks();
 
-        virtual void actuateNode(VirtualRobot::RobotNodePtr node, double jointValue);
-        virtual void actuateNodeVel(VirtualRobot::RobotNodePtr node, double jointVelocity);
+        void actuateNode(VirtualRobot::RobotNodePtr node, double jointValue) override;
+        void actuateNodeVel(VirtualRobot::RobotNodePtr node, double jointVelocity) override;
 
         /*!
             Usually this method is called by the framework in every tick to perform joint actuation.
             \param dt Timestep
         */
-        virtual void actuateJoints(double dt);
-        virtual void updateSensors(double dt);
+        void actuateJoints(double dt) override;
+        void updateSensors(double dt) override;
 
-        virtual double getJointAngle(VirtualRobot::RobotNodePtr rn);
-        virtual double getJointSpeed(VirtualRobot::RobotNodePtr rn);
-        virtual double getJointTargetSpeed(VirtualRobot::RobotNodePtr rn);
-        virtual double getNodeTarget(VirtualRobot::RobotNodePtr node);
+        double getJointAngle(VirtualRobot::RobotNodePtr rn) override;
+        double getJointSpeed(VirtualRobot::RobotNodePtr rn) override;
+        double getJointTargetSpeed(VirtualRobot::RobotNodePtr rn) override;
+        double getNodeTarget(VirtualRobot::RobotNodePtr node) override;
 
         /*!
          * \brief getJointTorques retrieves the torques in the given joint.
@@ -147,27 +147,27 @@ namespace SimDynamics
         /*!
             Returns the CoM pose, which is reported by bullet
         */
-        virtual Eigen::Matrix4f getComGlobal(const VirtualRobot::RobotNodePtr& rn);
-        virtual Eigen::Vector3f getComGlobal(const VirtualRobot::RobotNodeSetPtr& set);
-        virtual Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        Eigen::Matrix4f getComGlobal(const VirtualRobot::RobotNodePtr& rn) override;
+        Eigen::Vector3f getComGlobal(const VirtualRobot::RobotNodeSetPtr& set) override;
+        Eigen::Vector3f getComVelocityGlobal(const VirtualRobot::RobotNodeSetPtr& set) override;
 
         /*!
          * Returns the linear momentum in Ns for the bodies in the nodeset.
          */
-        virtual Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        Eigen::Vector3f getLinearMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set) override;
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset
          */
-        virtual Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set);
+        Eigen::Vector3f getAngularMomentumGlobal(const VirtualRobot::RobotNodeSetPtr& set) override;
 
         /*!
          * Returns the angular momentum in Nms for the bodies in the nodeset relative to the CoM
          */
-        virtual Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set);
+        Eigen::Vector3f getAngularMomentumLocal(const VirtualRobot::RobotNodeSetPtr& set) override;
 
         // experimental...
-        virtual void ensureKinematicConstraints();
+        void ensureKinematicConstraints() override;
 
         /*!
             Returns link where the given node is the joint node.
@@ -203,10 +203,10 @@ namespace SimDynamics
         void buildBulletModels(bool enableJointMotors);
 
         //! creates a link and attaches object to internal data structure
-        virtual bool attachObject(const std::string& nodeName, DynamicsObjectPtr object);
+        bool attachObject(const std::string& nodeName, DynamicsObjectPtr object) override;
         LinkInfoPtr attachObjectLink(const std::string& nodeName, DynamicsObjectPtr object);
 
-        virtual bool detachObject(DynamicsObjectPtr object);
+        bool detachObject(DynamicsObjectPtr object) override;
 
 
         //void createLink( VirtualRobot::RobotNodePtr bodyA, VirtualRobot::RobotNodePtr joint, VirtualRobot::RobotNodePtr bodyB, Eigen::Matrix4f &trafoA2J, Eigen::Matrix4f &trafoJ2B, bool enableJointMotors = true );

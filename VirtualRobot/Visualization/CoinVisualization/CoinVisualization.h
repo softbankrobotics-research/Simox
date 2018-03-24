@@ -44,21 +44,21 @@ namespace VirtualRobot
 
         CoinVisualization(const VisualizationNodePtr visualizationNode);
         CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes);
-        virtual ~CoinVisualization();
+        ~CoinVisualization() override;
 
         /*!
             To see the visualizations in an SoExaminerViewer enable an highlight render action
             e.g. viewer->setGLRenderAction(new SoLineHighlightRenderAction);
         */
-        virtual bool highlight(VisualizationNodePtr visualizationNode, bool enable);
-        virtual bool highlight(unsigned int which, bool enable);
+        bool highlight(VisualizationNodePtr visualizationNode, bool enable) override;
+        bool highlight(unsigned int which, bool enable) override;
         virtual bool highlight(bool enable);
         virtual bool highlight(SoNode* visu, bool enable);
 
-        virtual void colorize(VisualizationFactory::Color c);
-        virtual void setTransparency(float transparency);
+        void colorize(VisualizationFactory::Color c) override;
+        void setTransparency(float transparency) override;
 
-        virtual VisualizationPtr clone();
+        VisualizationPtr clone() override;
 
         SoNode* getCoinVisualization(bool selectable=true);
 

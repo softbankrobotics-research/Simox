@@ -41,19 +41,19 @@ namespace VirtualRobot
 
         void setVisualization(const SceneObjectSetPtr& visualizationNodeSet);
 
-        Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-        Eigen::VectorXf getError(float stepSize = 1.0f);
-        bool checkTolerances();
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
-        bool getRobotPoseForConstraint(Eigen::Matrix4f& pose);
+        bool getRobotPoseForConstraint(Eigen::Matrix4f& pose) override;
 
         const Eigen::Matrix4f& getTarget();
 
         void updateTarget(const Eigen::Matrix4f& newTarget);
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
     protected:
         double positionOptimizationFunction();

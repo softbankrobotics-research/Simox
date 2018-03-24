@@ -95,7 +95,7 @@ namespace VirtualRobot
 
         // instantiation not allowed
         RobotIO();
-        virtual ~RobotIO();
+        ~RobotIO() override;
 
         static RobotPtr processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotDescription loadMode = eFull);
         static RobotPtr processRobotAttributes(rapidxml::xml_node<char>* robotXMLNode, std::string& robotRoot);

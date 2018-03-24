@@ -38,7 +38,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~KinematicChain();
+        ~KinematicChain() override;
 
 
     private:

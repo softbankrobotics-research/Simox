@@ -87,9 +87,9 @@ public:
         m_type = GL_TEXT_CONTROL;
     }
 
-    virtual ~GL_TextControl() {}
+    ~GL_TextControl() override {}
 
-    virtual void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime);
+    void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime) override;
 };
 
 
@@ -114,7 +114,7 @@ public:
         m_type = GL_TOGGLE_CONTROL;
     }
 
-    virtual void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime);
+    void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime) override;
 };
 
 struct GL_SliderControl : public GL_DialogControl
@@ -140,7 +140,7 @@ public:
         m_type = GL_SLIDER_CONTROL;
     }
 
-    virtual void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime);
+    void draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime) override;
 
     btScalar    btGetFraction()
     {

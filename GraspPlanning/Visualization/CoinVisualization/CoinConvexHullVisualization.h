@@ -49,7 +49,7 @@ namespace GraspStudio
         CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
         CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
-        ~CoinConvexHullVisualization();
+        ~CoinConvexHullVisualization() override;
 
         SoSeparator* getCoinVisualization();
 

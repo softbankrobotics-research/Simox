@@ -68,7 +68,7 @@ namespace VirtualRobot
         /*!
             Creates a deep copy of this data structure. A ReachabilityPtr is returned.
         */
-        virtual WorkspaceRepresentationPtr clone();
+        WorkspaceRepresentationPtr clone() override;
 
     protected:
 

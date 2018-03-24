@@ -177,18 +177,18 @@ namespace VirtualRobot
             see <a href="http://graphics.ucsd.edu/courses/cse169_w05/CSE169_13.ppt">this lecture</a>.
         */
         virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp, IKSolver::CartesianSelection mode);
-        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) override;
         virtual Eigen::MatrixXf getJacobianMatrix(IKSolver::CartesianSelection mode);
 
         /*!
             Computes the complete Jacobian that considers all defined TCPs and goal poses.
         */
-        virtual Eigen::MatrixXf getJacobianMatrix();
+        Eigen::MatrixXf getJacobianMatrix() override;
 
         /*!
             Computes the complete error vector, considering all TCPs and goals.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
         void updateError(Eigen::VectorXf& error, float stepSize = 1.0f);
 
         /*! @brief Returns the pseudo inverse of the Jacobian matrix for a given tcp of the robot.
@@ -279,7 +279,7 @@ namespace VirtualRobot
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
-        virtual bool checkTolerances();
+        bool checkTolerances() override;
 
         /*!
             Initializes the internal data structures according to setGoal setup.
@@ -287,7 +287,7 @@ namespace VirtualRobot
         */
         virtual void initialize();
 
-        virtual void print();
+        void print() override;
     protected:
         virtual void setNRows();
 

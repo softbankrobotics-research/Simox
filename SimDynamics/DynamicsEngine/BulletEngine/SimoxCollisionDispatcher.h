@@ -42,9 +42,9 @@ namespace SimDynamics
     struct SIMDYNAMICS_IMPORT_EXPORT SimoxCollisionDispatcher : public btCollisionDispatcher
     {
         SimoxCollisionDispatcher(BulletEngine* engine, btCollisionConfiguration* collisionConfiguration);
-        virtual ~SimoxCollisionDispatcher();
-        virtual bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1);
-        virtual bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1);
+        ~SimoxCollisionDispatcher() override;
+        bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1) override;
+        bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1) override;
 
     protected:
         BulletEngine* engine;

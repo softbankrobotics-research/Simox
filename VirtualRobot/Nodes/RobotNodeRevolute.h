@@ -76,16 +76,16 @@ namespace VirtualRobot
                           RobotNodeType type = Generic);
         /*!
         */
-        virtual ~RobotNodeRevolute();
+        ~RobotNodeRevolute() override;
 
-        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+        bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>()) override;
 
         /*!
         Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
-        virtual bool isRotationalJoint() const;
+        bool isRotationalJoint() const override;
         /*!
             Standard: In global coordinate system.
             \param coordSystem When not set the axis is transformed to global coordinate system. Otherwise any scene object can be used as coord system.
@@ -121,22 +121,22 @@ namespace VirtualRobot
             \param globalPose The new global pose. The joint value is *not* determined from this pose. The RobotNodeActuator is responsible for setting the corresponding joint value
             \param updateChildren Usually it is assumed that all RobotNodes are updated this way (updateChildren=false). If not, the children poses can be updated according to this node (updateCHildren=true).
         */
-        virtual void updateVisualizationPose(const Eigen::Matrix4f& globalPose, bool updateChildren = false);
+        void updateVisualizationPose(const Eigen::Matrix4f& globalPose, bool updateChildren = false) override;
 
         //! Checks if nodeType constraints are fulfilled. Otherwise an exception is thrown. Called on initialization.
-        virtual void checkValidRobotNodeType();
+        void checkValidRobotNodeType() override;
 
         RobotNodeRevolute() {};
 
-        virtual void updateTransformationMatrices(const Eigen::Matrix4f& parentPose);
+        void updateTransformationMatrices(const Eigen::Matrix4f& parentPose) override;
 
         Eigen::Vector3f jointRotationAxis;          // eRevoluteJoint  (given in local joint coord system)
 
-        virtual RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling);
+        RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling) override;
         /*!
             Derived classes add custom XML tags here
         */
-        virtual std::string _toXML(const std::string& modelPath);
+        std::string _toXML(const std::string& modelPath) override;
 
         Eigen::Matrix4f tmpRotMat;
     };

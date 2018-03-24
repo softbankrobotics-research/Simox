@@ -68,10 +68,10 @@ namespace VirtualRobot
         BalanceConstraint(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
                           float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
 
-        Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-        Eigen::VectorXf getError(float stepSize = 1.0f);
-        bool checkTolerances();
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
         bool getRobotPoseForConstraint(RobotPtr& robot, Eigen::Matrix4f& pose);
         Eigen::Vector3f getCoM();
@@ -79,8 +79,8 @@ namespace VirtualRobot
 
         void setCoMHeight(float height);
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
     protected:
         void initialize(const RobotPtr& robot, const RobotNodeSetPtr& joints, const RobotNodeSetPtr& bodies, const SceneObjectSetPtr& contactNodes,

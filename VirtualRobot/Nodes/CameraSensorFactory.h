@@ -38,16 +38,16 @@ namespace VirtualRobot
     {
     public:
         CameraSensorFactory();
-        virtual ~CameraSensorFactory();
+        ~CameraSensorFactory() override;
 
         //! Standard init method
-        virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
-                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const;
+        SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
+                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const override;
 
         /*!
             Create sensor from XML tag.
         */
-        virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const;
+        SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const override;
 
         // AbstractFactoryMethod
     public:

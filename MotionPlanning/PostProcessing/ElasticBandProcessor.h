@@ -45,10 +45,10 @@ namespace Saba
                              VirtualRobot::RobotNodePtr node,               // the distance for this node is considered
                              VirtualRobot::SceneObjectSetPtr obstacles,     // these obstacles are considered for path smoothing
                              bool verbose = false);
-        virtual ~ElasticBandProcessor();
+        ~ElasticBandProcessor() override;
 
         //! A wrapper to the standard interface.
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         //! could also be used to disable specific dimensions
         void setWeights (Eigen::VectorXf w);

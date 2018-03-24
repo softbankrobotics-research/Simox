@@ -52,7 +52,7 @@ namespace GraspStudio
         GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspStudio::GraspQualityMeasurePtr graspQuality, GraspStudio::ApproachMovementGeneratorPtr approach, float minQuality = 0.0f, bool forceClosure = true);
 
         // destructor
-        virtual ~GenericGraspPlanner();
+        ~GenericGraspPlanner() override;
 
         /*!
             Creates new grasps.
@@ -60,7 +60,7 @@ namespace GraspStudio
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of generated grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
+        int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr()) override;
 
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;

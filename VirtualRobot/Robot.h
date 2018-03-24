@@ -64,7 +64,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~Robot();
+        ~Robot() override;
 
         /*!
             The root node is the first RobotNode of this robot.
@@ -110,14 +110,14 @@ namespace VirtualRobot
             \p enableInertial If true, a visualization of the inertial matrix is shown (if given).
             \p comModel If set, this visualization is used to display the CoM location. If not set, a standard marker is used.
         */
-        void showPhysicsInformation(bool enableCoM, bool enableInertial, VisualizationNodePtr comModel = VisualizationNodePtr());
+        void showPhysicsInformation(bool enableCoM, bool enableInertial, VisualizationNodePtr comModel = VisualizationNodePtr()) override;
 
         /*!
             Setup the full model visualization.
             \param showVisualization If false, the visualization is disabled.
             \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
         */
-        void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        void setupVisualization(bool showVisualization, bool showAttachedVisualizations) override;
 
 
         virtual std::string getName();
@@ -126,13 +126,13 @@ namespace VirtualRobot
         /*!
         Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
         /*!
             Enables/Disables the visualization updates of collision model and visualization model.
         */
-        void setUpdateVisualization(bool enable);
-        void setUpdateCollisionModel(bool enable);
+        void setUpdateVisualization(bool enable) override;
+        void setUpdateCollisionModel(bool enable) override;
 
         boost::shared_ptr<Robot> shared_from_this() const;
         //boost::shared_ptr<Robot> shared_from_this() const { return boost::static_pointer_cast<Robot>(SceneObject::shared_from_this()); }
@@ -182,7 +182,7 @@ namespace VirtualRobot
 
         virtual std::vector< CollisionModelPtr > getCollisionModels();
 
-        virtual CollisionCheckerPtr getCollisionChecker();
+        CollisionCheckerPtr getCollisionChecker() override;
 
         /*!
           Convenient method for highlighting the visualization of this robot.
@@ -197,13 +197,13 @@ namespace VirtualRobot
             get number of faces (i.e. triangles) of this object
             \p collisionModel Indicates weather the faces of the collision model or the full model should be returned.
         */
-        virtual int getNumFaces(bool collisionModel = false);
+        int getNumFaces(bool collisionModel = false) override;
 
         /*!
             Set the global position of this robot
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues) = 0;
-        void setGlobalPose(const Eigen::Matrix4f& globalPose);
+        void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
 
         /*!
             Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
@@ -215,11 +215,11 @@ namespace VirtualRobot
         /*!
             Return center of mass of this robot in local coordinate frame. All RobotNodes of this robot are considered according to their mass.
         */
-        virtual Eigen::Vector3f getCoMLocal();
+        Eigen::Vector3f getCoMLocal() override;
         /*!
             Return Center of Mass of this robot in global coordinates. All RobotNodes of this robot are considered according to their mass.
         */
-        virtual Eigen::Vector3f getCoMGlobal();
+        Eigen::Vector3f getCoMGlobal() override;
 
         /*!
             Return accumulated mass of this robot.
@@ -468,37 +468,37 @@ namespace VirtualRobot
     {
     public:
         LocalRobot(const std::string& name, const std::string& type = "");
-        virtual ~LocalRobot();
+        ~LocalRobot() override;
 
-        virtual void setRootNode(RobotNodePtr node);
-        virtual RobotNodePtr getRootNode() const;
+        void setRootNode(RobotNodePtr node) override;
+        RobotNodePtr getRootNode() const override;
 
-        virtual void registerRobotNode(RobotNodePtr node);
-        virtual void deregisterRobotNode(RobotNodePtr node);
-        virtual bool hasRobotNode(const std::string& robotNodeName);
-        virtual bool hasRobotNode(RobotNodePtr node);
-        virtual RobotNodePtr getRobotNode(const std::string& robotNodeName) const;
-        virtual void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) const;
+        void registerRobotNode(RobotNodePtr node) override;
+        void deregisterRobotNode(RobotNodePtr node) override;
+        bool hasRobotNode(const std::string& robotNodeName) override;
+        bool hasRobotNode(RobotNodePtr node) override;
+        RobotNodePtr getRobotNode(const std::string& robotNodeName) const override;
+        void getRobotNodes(std::vector< RobotNodePtr >& storeNodes, bool clearVector = true) const override;
 
-        virtual void registerRobotNodeSet(RobotNodeSetPtr nodeSet);
-        virtual void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet);
-        virtual bool hasRobotNodeSet(const std::string& name);
-        virtual RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName) const;
-        virtual void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet) const;
+        void registerRobotNodeSet(RobotNodeSetPtr nodeSet) override;
+        void deregisterRobotNodeSet(RobotNodeSetPtr nodeSet) override;
+        bool hasRobotNodeSet(const std::string& name) override;
+        RobotNodeSetPtr getRobotNodeSet(const std::string& nodeSetName) const override;
+        void getRobotNodeSets(std::vector<RobotNodeSetPtr>& storeNodeSet) const override;
 
-        virtual void registerEndEffector(EndEffectorPtr endEffector);
-        virtual bool hasEndEffector(const std::string& endEffectorName);
-        virtual EndEffectorPtr getEndEffector(const std::string& endEffectorName);
-        virtual void getEndEffectors(std::vector<EndEffectorPtr>& storeEEF);
+        void registerEndEffector(EndEffectorPtr endEffector) override;
+        bool hasEndEffector(const std::string& endEffectorName) override;
+        EndEffectorPtr getEndEffector(const std::string& endEffectorName) override;
+        void getEndEffectors(std::vector<EndEffectorPtr>& storeEEF) override;
 
-        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues = true);
-        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose);
-        virtual Eigen::Matrix4f getGlobalPose() const;
+        void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyJointValues = true) override;
+        void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
+        Eigen::Matrix4f getGlobalPose() const override;
 
     protected:
         //Eigen::Matrix4f globalPose; //!< The pose of this robot in the world
         RobotNodePtr rootNode;
-        virtual void applyJointValuesNoLock();
+        void applyJointValuesNoLock() override;
 
         std::map< std::string, RobotNodePtr > robotNodeMap;
         std::map< std::string, RobotNodeSetPtr > robotNodeSetMap;
