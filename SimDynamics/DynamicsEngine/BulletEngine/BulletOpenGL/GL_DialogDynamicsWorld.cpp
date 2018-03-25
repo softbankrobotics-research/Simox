@@ -16,12 +16,15 @@ subject to the following restrictions:
 
 #include "GL_DialogDynamicsWorld.h"
 #include "GL_DialogWindow.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.h"
 #include "BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.h"
 #include "BulletCollision/CollisionShapes/btBox2dShape.h"
 #include "BulletCollision/CollisionShapes/btConvex2dShape.h"
 #include "BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h"
+#pragma GCC diagnostic pop
 
 GL_DialogDynamicsWorld::GL_DialogDynamicsWorld()
 {

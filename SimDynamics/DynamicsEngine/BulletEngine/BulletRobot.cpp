@@ -15,15 +15,12 @@
 #include <VirtualRobot/Model/Nodes/Attachments/ForceTorqueSensor.h>
 //#include <VirtualRobot/Nodes/ContactSensor.h>
 
-// either hinge or generic6DOF constraints can be used
-//#define USE_BULLET_GENERIC_6DOF_CONSTRAINT
 
 //#define DEBUG_FIXED_OBJECTS
 //#define DEBUG_SHOW_LINKS
 using namespace VirtualRobot;
 using namespace std;
 
-//#define PRINT_TEST_DEBUG_MESSAGES
 
 namespace SimDynamics
 {
@@ -46,17 +43,16 @@ namespace SimDynamics
 
             if (ftSensor)
             {
-                VirtualRobot::ModelNodePtr node = ftSensor->getParent();
-                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to ModelNode")
-                VirtualRobot::ModelJointPtr nodeJ = std::dynamic_pointer_cast<ModelJoint>(node);
-                THROW_VR_EXCEPTION_IF(!nodeJ, "parent of sensor could not be casted to ModelJoint")
+                VirtualRobot::RobotNodePtr node = ftSensor->getParent();
+                THROW_VR_EXCEPTION_IF(!node, "parent of sensor could not be casted to RobotNode");
 
-                if (!hasLink(nodeJ))
+                if (!hasLink(node))
                 {
                     VR_WARNING << "Ignoring FT sensor " << ftSensor->getName() << ". Must be linked to a joint" << endl;
                 } else
                 {
-                    const LinkInfo& link = getLink(nodeJ);
+                    auto joint = std::dynamic_pointer_cast<VirtualRobot::ModelJoint>(node);
+                    const LinkInfo& link = getLink(joint);
                     enableForceTorqueFeedback(link);
                     std::cout << "Found force torque sensor: " << node->getName() << std::endl;
                 }

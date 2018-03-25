@@ -75,14 +75,12 @@ namespace VirtualRobot
         // Interface for Jacobian-based solvers (default implementations)
         virtual Eigen::MatrixXf getJacobianMatrix() override;
         virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
-        virtual bool checkTolerances();
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        virtual bool checkTolerances() override;
 
-        virtual VisualizationPtr getVisualization() const
-        {
-            VR_WARNING << "NYI" << std::endl;
-            return VisualizationPtr();
-        }
+        virtual VisualizationPtr getVisualization() const;
+
+        virtual bool usingCollisionModel();
 
     protected:
         void addEqualityConstraint(unsigned int id, bool soft=false);

@@ -15,6 +15,8 @@ using namespace SimDynamics;
 
 int main(int argc, char* argv[])
 {
+    VirtualRobot::init(argc, argv, "Bullet Debug Viewer");
+
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();

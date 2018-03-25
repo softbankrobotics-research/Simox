@@ -163,7 +163,7 @@ namespace VirtualRobot
         /*!
             Creates a deep copy of this data structure. A ManipulabilityPtr is returned.
         */
-        virtual WorkspaceRepresentationPtr clone();
+        virtual WorkspaceRepresentationPtr clone() override;
 
         /*!
             Appends a number of random TCP poses to workspace Data (multithreaded).
@@ -172,22 +172,22 @@ namespace VirtualRobot
             \param numThreads number of worker threads used behind the scenes to append random TCP poses to workspace data.
             \param checkForSelfCollisions Build a collision-free configuration. If true, random configs are generated until one is collision-free.
         */
-        virtual void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true);
+        virtual void addRandomTCPPoses(unsigned int loops, unsigned int numThreads, bool checkForSelfCollisions = true) override;
 
     protected:
 
-        virtual bool customLoad(std::ifstream& file);
-        virtual bool customSave(std::ofstream& file);
-        virtual void customPrint();
+        virtual bool customLoad(std::ifstream& file) override;
+        virtual bool customSave(std::ofstream& file) override;
+        virtual void customPrint() override;
 
-        virtual void customInitialize();
+        virtual void customInitialize() override;
 
         bool customStringRead(std::ifstream& file, std::string& res);
 
         float getCurrentManipulability(PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt = RobotNodeSetPtr(), RobotNodeSetPtr selfDistDyn = RobotNodeSetPtr());
 
-        void addPose(const Eigen::Matrix4f& p);
-        void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure);
+        virtual void addPose(const Eigen::Matrix4f& p) override;
+        virtual void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure) override;
         void addPose(const Eigen::Matrix4f& p, PoseQualityMeasurementPtr qualMeasure, RobotNodeSetPtr selfDistSt, RobotNodeSetPtr selfDistDyn);
         PoseQualityMeasurementPtr measure;
 

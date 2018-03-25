@@ -12,9 +12,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNodeAttachmentPtr ForceTorqueSensorFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform, std::string visualizationType)
+    ModelNodeAttachmentPtr ForceTorqueSensorFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform)
     {
-        ForceTorqueSensorPtr m(new ForceTorqueSensor(name, localTransform, visualizationType));
+        ForceTorqueSensorPtr m(new ForceTorqueSensor(name, localTransform));
         return m;
     }
 

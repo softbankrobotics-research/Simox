@@ -51,7 +51,7 @@ namespace VirtualRobot
      */
     float BaseIO::convertToFloat(const char* s)
     {
-        THROW_VR_EXCEPTION_IF(NULL == s, "Passing Null string to convertToFloat()");
+        THROW_VR_EXCEPTION_IF(nullptr == s, "Passing Null string to convertToFloat()");
         std::stringstream floatStream;
         floatStream << std::string(s);
         float result;
@@ -66,7 +66,7 @@ namespace VirtualRobot
 
     int BaseIO::convertToInt(const char* s)
     {
-        THROW_VR_EXCEPTION_IF(NULL == s, "Passing Null string to convertToInt()");
+        THROW_VR_EXCEPTION_IF(nullptr == s, "Passing Null string to convertToInt()");
         std::stringstream intStream;
         intStream << std::string(s);
         int result;
@@ -166,7 +166,7 @@ namespace VirtualRobot
             return;
         }
 
-        rapidxml::xml_node<>* trXMLNode = NULL;
+        rapidxml::xml_node<>* trXMLNode = nullptr;
         std::string nodeName = getLowerCase(transformXMLNode->name());
 
         if (nodeName == "transform")
@@ -434,7 +434,7 @@ namespace VirtualRobot
             attr = node->first_attribute("unitsTime", 0, false);
         }
 
-        return (attr != NULL);
+        return (attr != nullptr);
     }
 
     void BaseIO::getAllAttributes(rapidxml::xml_node<char>* node, const std::string& attrString, std::vector<std::string>& storeValues)
@@ -576,7 +576,7 @@ namespace VirtualRobot
      */
     std::string BaseIO::getLowerCase(const char* c)
     {
-        THROW_VR_EXCEPTION_IF(NULL == c, "Passing Null string to getLowerCase()");
+        THROW_VR_EXCEPTION_IF(nullptr == c, "Passing Null string to getLowerCase()");
         std::string res = c;
         getLowerCase(res);
         return res;
@@ -617,7 +617,7 @@ namespace VirtualRobot
                 std::string nodeNameAttr = processNameAttribute(node);
                 THROW_VR_EXCEPTION_IF(nodeNameAttr.empty(), "Missing name attribute for <Node> belonging to Robot node set " << parentName);
                 RobotNodePtr robotNode = robot->getModelNode(nodeNameAttr);
-                THROW_VR_EXCEPTION_IF(!robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot");
+                THROW_VR_EXCEPTION_IF(!robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot '" << robot->getName() << "'");
                 nodeList.push_back(robotNode);
             }
             else

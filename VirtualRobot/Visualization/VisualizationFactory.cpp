@@ -13,17 +13,20 @@
 
 #include <fstream>
 
+#ifdef Simox_USE_COIN_VISUALIZATION
+    #include "CoinVisualization/CoinVisualizationFactory.h"
+
+    using GlobalFactory = VirtualRobot::CoinVisualizationFactory;
+#else
+    using GlobalFactory = VirtualRobot::VisualizationFactory;
+#endif
+
 namespace VirtualRobot
 {
-
-    VisualizationFactory::VisualizationFactory()
+    VisualizationFactoryPtr VisualizationFactory::getInstance()
     {
-        ;
-    }
-
-    VisualizationFactory::~VisualizationFactory()
-    {
-        ;
+        static VisualizationFactoryPtr instance(new GlobalFactory);
+        return instance;
     }
 
     void VisualizationFactory::init(int &, char *[], const std::string &)
@@ -96,13 +99,23 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
+    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width) const
     {
         VR_ASSERT(from.size() == to.size());
         std::vector<VisualizationPtr> visus;
         for (size_t i = 0; i<from.size(); ++i)
         {
             visus.push_back(createLine(from[i], to[i], width));
+        }
+        return createVisualisationSet(visus);
+    }
+
+    VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &points, float width) const
+    {
+        std::vector<VisualizationPtr> visus;
+        for (size_t i = 0; i<points.size()-1; ++i)
+        {
+            visus.push_back(createLine(points[i], points[i+1], width));
         }
         return createVisualisationSet(visus);
     }
@@ -196,7 +209,12 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createGrid(float, const std::string&) const
+    VisualizationPtr VisualizationFactory::createPolygon(const std::vector<Eigen::Vector3f> &) const
+    {
+        return VisualizationPtr(new DummyVisualization);
+    }
+
+    VisualizationPtr VisualizationFactory::createPlane(const Eigen::Vector3f &, const Eigen::Vector3f &, float, const std::string &) const
     {
         return VisualizationPtr(new DummyVisualization);
     }
@@ -227,6 +245,20 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
+    VisualizationPtr VisualizationFactory::createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr &hull, const MathTools::Plane &p, const Eigen::Vector3f &offset) const
+    {
+        std::vector<Eigen::Vector3f> cvHull3d;
+
+        for (size_t u = 0; u < hull->vertices.size(); u++)
+        {
+            Eigen::Vector3f pt3d = MathTools::planePoint3D(hull->vertices[u], p);
+            pt3d += offset;
+            cvHull3d.push_back(pt3d);
+        }
+
+        return VisualizationFactory::getInstance()->createPolygon(cvHull3d);
+    }
+
     VisualizationPtr VisualizationFactory::createVisualization() const
     {
         return VisualizationPtr(new DummyVisualization);
@@ -235,11 +267,6 @@ namespace VirtualRobot
     void VisualizationFactory::cleanup()
     {
         ;
-    }
-
-    VisualizationFactoryPtr VisualizationFactory::getGlobalVisualizationFactory()
-    {
-        return VisualizationFactory::first(NULL);
     }
 
     std::string VisualizationFactory::getVisualizationType() const

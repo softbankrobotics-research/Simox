@@ -42,7 +42,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
     void resetSceneryAll();
 
     void updateVisu();
@@ -72,7 +72,6 @@ protected:
     void setupEnvironment();
 
     Ui::MainWindowReachability UI;
-    SoQtExaminerViewer* examinerViewer; /*!< Viewer to display the 3D model of the robot and the environment. */
     SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     std::string robotVisuLayer;

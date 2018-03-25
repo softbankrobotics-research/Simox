@@ -19,8 +19,8 @@ BOOST_AUTO_TEST_SUITE(Compression)
 
 BOOST_AUTO_TEST_CASE(testInvalidCreation)
 {
-    std::istream* is = NULL;
-    std::ostream* os = NULL;
+    std::istream* is = nullptr;
+    std::ostream* os = nullptr;
     BOOST_CHECK_THROW(new VirtualRobot::CompressionBZip2(is), VirtualRobot::VirtualRobotException);
     BOOST_CHECK_THROW(new VirtualRobot::CompressionBZip2(os), VirtualRobot::VirtualRobotException);
 }
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(testNullBlock)
     std::stringstream ios;
     unsigned char blockN[BLOCK_SIZE_COMPRESSION_TEST];
     memset(blockN, 0, sizeof(unsigned char)*BLOCK_SIZE_COMPRESSION_TEST);
-    VirtualRobot::CompressionBZip2* bzip2 = NULL;
+    VirtualRobot::CompressionBZip2* bzip2 = nullptr;
     BOOST_CHECK_NO_THROW(bzip2 = new VirtualRobot::CompressionBZip2((std::ostream*)(&ios)));
 
     bool ok = false;
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(testNullBlock)
     ios.seekg(0);
     unsigned char blockN2[BLOCK_SIZE_COMPRESSION_TEST];
     memset(blockN2, 1, sizeof(unsigned char)*BLOCK_SIZE_COMPRESSION_TEST);
-    VirtualRobot::CompressionBZip2* bzip2b = NULL;
+    VirtualRobot::CompressionBZip2* bzip2b = nullptr;
     BOOST_CHECK_NO_THROW(bzip2b = new VirtualRobot::CompressionBZip2((std::istream*)(&ios)));
 
     ok = false;
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(testNullBlock)
 
 BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
 {
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(nullptr));
     // COMPRESS
     std::stringstream ios;
     unsigned char blockN[NR_BLOCKS_COMPRESSION_TEST][BLOCK_SIZE_COMPRESSION_TEST];
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
         }
     }
 
-    VirtualRobot::CompressionBZip2* bzip2 = NULL;
+    VirtualRobot::CompressionBZip2* bzip2 = nullptr;
     BOOST_CHECK_NO_THROW(bzip2 = new VirtualRobot::CompressionBZip2((std::ostream*)(&ios)));
 
     bool ok = false;
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
 
     // set position to start
     ios.seekg(0);
-    VirtualRobot::CompressionBZip2* bzip2b = NULL;
+    VirtualRobot::CompressionBZip2* bzip2b = nullptr;
     BOOST_CHECK_NO_THROW(bzip2b = new VirtualRobot::CompressionBZip2((std::istream*)(&ios)));
 
     ok = false;
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(testCorrectEnding)
     std::stringstream ios;
     unsigned char blockN[sizeSmall];
     memset(blockN, 0, sizeof(unsigned char)*sizeSmall);
-    VirtualRobot::CompressionBZip2* bzip2 = NULL;
+    VirtualRobot::CompressionBZip2* bzip2 = nullptr;
     BOOST_CHECK_NO_THROW(bzip2 = new VirtualRobot::CompressionBZip2((std::ostream*)(&ios)));
 
     bool ok = false;
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(testCorrectEnding)
     ios.seekg(0);
     unsigned char blockN2[sizeSmall];
     memset(blockN2, 1, sizeof(unsigned char)*sizeSmall);
-    VirtualRobot::CompressionBZip2* bzip2b = NULL;
+    VirtualRobot::CompressionBZip2* bzip2b = nullptr;
     BOOST_CHECK_NO_THROW(bzip2b = new VirtualRobot::CompressionBZip2((std::istream*)(&ios)));
 
     ok = false;

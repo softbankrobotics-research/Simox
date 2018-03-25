@@ -150,7 +150,7 @@ namespace VirtualRobot
         {
             mainNode->addChild(visualizationNode);
         }
-        else if (index >= 0)
+        else if (!showVisualization && index >= 0)
         {
             mainNode->removeChild(index);
         }
@@ -301,24 +301,24 @@ namespace VirtualRobot
 
     void CoinVisualization::setSelected(bool selected)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     bool CoinVisualization::isSelected() const
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return false;
     }
 
     size_t CoinVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return 0;
     }
 
     void CoinVisualization::removeSelectionChangedCallback(size_t id)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void CoinVisualization::scale(const Eigen::Vector3f &s)
@@ -362,28 +362,33 @@ namespace VirtualRobot
 
     void CoinVisualization::_addManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualization::_removeManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void CoinVisualization::_removeAllManipulators()
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     bool CoinVisualization::hasManipulator(Visualization::ManipulatorType t) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return false;
     }
 
     std::vector<Visualization::ManipulatorType> CoinVisualization::getAddedManipulatorTypes() const
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return std::vector<ManipulatorType>();
     }
 
@@ -446,8 +451,7 @@ namespace VirtualRobot
 
     VisualizationPtr CoinVisualization::clone() const
     {
-        SoNode* deepCopiedNode = copyNode(visualizationNode);
-        CoinVisualizationPtr p(new CoinVisualization(deepCopiedNode));
+        CoinVisualizationPtr p(new CoinVisualization(visualizationNode));
         p->setGlobalPose(this->getGlobalPose());
         p->setVisible(this->isVisible());
         p->setStyle(this->getStyle());
@@ -489,13 +493,13 @@ namespace VirtualRobot
 
     std::string CoinVisualization::toXML(const std::string &basePath, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
     std::string CoinVisualization::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
@@ -580,9 +584,6 @@ namespace VirtualRobot
         }
 
         SbMatrix mm = action->getModelMatrix();
-        SbMatrix scale;
-        scale.setScale(1000.0f); // simox operates in mm, coin3d in m
-        mm = mm.multRight(scale);
         SbVec3f triangle[3];
         mm.multVecMatrix(v1->getPoint(), triangle[0]);
         mm.multVecMatrix(v2->getPoint(), triangle[1]);

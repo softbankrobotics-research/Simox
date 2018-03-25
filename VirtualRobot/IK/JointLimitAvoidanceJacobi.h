@@ -49,12 +49,12 @@ namespace VirtualRobot
             Translational Joints are ignored (error = 0)
             \param stepSize The error can be reduced by this factor.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
 
         /*!
          *  Not used, only implemented because of superclass JacobiProvider, always returns true
          */
-        bool checkTolerances();
+        virtual bool checkTolerances() override;
 
     protected:
         std::vector<ModelJointPtr> nodes;

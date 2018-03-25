@@ -70,7 +70,7 @@ namespace MotionPlanning
             \param mode Specify the RRT method that should be used
             \param probabilityExtendToGoal Specify how often the goal node should be used instead of a random config (value must be between 0 and 1)
         */
-        Rrt(CSpaceSampledPtr cspace, RrtMethod mode = eConnect, float probabilityExtendToGoal = 0.1f);
+        Rrt(CSpacePtr cspace, RrtMethod mode = eConnect, float probabilityExtendToGoal = 0.1f, float samplingSize = -1);
         virtual ~Rrt();
 
         /*!
@@ -79,17 +79,17 @@ namespace MotionPlanning
             \param bQuiet Print some info or not.
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        virtual bool plan(bool bQuiet = false) override;
 
-        virtual void printConfig(bool printOnlyParams = false);
+        virtual void printConfig(bool printOnlyParams = false) override;
 
-        virtual void reset();
+        virtual void reset() override;
 
         //! set start configuration
-        virtual bool setStart(const Eigen::VectorXf& c);
+        virtual bool setStart(const Eigen::VectorXf& c) override;
 
         //! set goal configuration
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        virtual bool setGoal(const Eigen::VectorXf& c) override;
 
         void setProbabilityExtendToGoal(float p);
 
@@ -97,7 +97,7 @@ namespace MotionPlanning
 
     protected:
 
-        virtual bool createSolution(bool bQuiet = false);
+        virtual bool createSolution(bool bQuiet = false) override;
 
         CSpaceTreePtr tree;                 //!< the rrt on which are operating
 

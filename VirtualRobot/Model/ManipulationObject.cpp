@@ -220,37 +220,14 @@ namespace VirtualRobot
 
     VirtualRobot::ManipulationObjectPtr ManipulationObject::createFromMesh(const TriMeshModelPtr &mesh,
                                                                            const std::string &name,
-                                                                           const std::string &visualizationType,
                                                                            const CollisionCheckerPtr &colChecker)
     {
         THROW_VR_EXCEPTION_IF(!mesh, "Null data");
 
         ManipulationObjectPtr result;
-        VisualizationFactoryPtr visualizationFactory;
-
-        if (visualizationType.empty())
-        {
-            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
-            return result;
-        }
-
 
         VisualizationPtr visu = mesh->getVisualization();
-
-        if (!visu)
-        {
-            VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;
-            return result;
-        }
+        VR_ASSERT(visu);
 
         //int id = idCounter;
         //idCounter++;

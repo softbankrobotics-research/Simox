@@ -59,7 +59,8 @@ namespace VirtualRobot
         virtual ~Model();
 
         /*!
-         * Register a new node to this model
+         * Registers a new node to this model (if not already registered).
+         * Note: This does not register the node's children or parent.
          *
          * @param node The new node.
          */
@@ -78,9 +79,9 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-		virtual bool hasModelNode(const ModelNodePtr& node) const;
-		virtual bool hasLink(const ModelLinkPtr& link) const;
-		virtual bool hasJoint(const ModelJointPtr& joint) const;
+        virtual bool hasModelNode(const ModelNodePtr& node) const;
+        virtual bool hasLink(const ModelLinkPtr& link) const;
+        virtual bool hasJoint(const ModelJointPtr& joint) const;
 
         /*!
          * Check, if the node is registered to this model.
@@ -156,8 +157,11 @@ namespace VirtualRobot
         virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
                                    ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
+        virtual std::vector<std::string> getModelNodeNames() const;
+
         /*!
          * Register a new ModelNodeSet to this model.
+         * Note: This does not register the nodes of the given nodeSet.
          *
          * @param nodeSet The new node set.
          */
@@ -235,6 +239,9 @@ namespace VirtualRobot
         virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
         virtual std::vector<LinkSetPtr> getLinkSets() const;
         virtual std::vector<JointSetPtr> getJointSets() const;
+        virtual std::vector<std::string> getModelNodeSetNames() const;
+        virtual std::vector<std::string> getLinkSetNames() const;
+        virtual std::vector<std::string> getJointSetNames() const;
 
         /*!
             Registers the ModelConfig to this robot. If a config  with the same name is already registered nothing happens.
@@ -292,8 +299,8 @@ namespace VirtualRobot
          *
          * @return The current root node.
          */
-		virtual ModelNodePtr getRootNode() const;
-		virtual ModelLinkPtr getFirstLink() const;
+        virtual ModelNodePtr getRootNode() const;
+        virtual ModelLinkPtr getFirstLink() const;
 
         /*!
          * Get the type of this model.
@@ -327,8 +334,8 @@ namespace VirtualRobot
          *
          * @return The global pose.
          */
-        virtual Eigen::Matrix4f getGlobalPose() const;
-        virtual Eigen::Vector3f getGlobalPosition() const;
+        virtual Eigen::Matrix4f getGlobalPose() const override;
+        virtual Eigen::Vector3f getGlobalPosition() const override;
 
 
         /*!
@@ -377,42 +384,41 @@ namespace VirtualRobot
         /*!
          * A convenience function that creates and attaches a ModelStructure to each joint.
          * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, the default visualization factory is used.
          */
-        void attachStructure(std::string visualizationType = "");
+        void attachStructure();
 
         /*!
          * A convenience function to detach ModelStructures.
-         * This function basically reverts calls to attachStructure()
+         * This function basically reverts calls to attachStructure().
          */
         void detachStructure();
 
         /*!
          * A convenience function that creates and attaches a ModelNodeAttachment to each joint, representing a frame.
          * Each attached ModelNodeAttachment inherits the name of its corresponding joint appended by "_frame".
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not given, the default visualization factory is used.
          */
-        void attachFrames(std::string visualizationType = "");
+        void attachFrames();
 
         /*!
          * A convenience function to detach ModelNodeAttachments / Frames.
-         * This function basically reverts calls to attachFrames()
+         * This function basically reverts calls to attachFrames().
          */
         void detachFrames();
 
-        // TODO: move to Visualization factory
         /*!
-         * Convenient method for highlighting the visualization of this model.
-         * It is automatically checked whether the collision model or the full model is part of the visualization.
-         *
-         * @param visualization The visualization for which the highlighting should be performed.
-         * @param enable On or off
+         * A convenience function that creates and attaches a PhysicsAttachment to each link.
+         * Each attached PhysicsAttachment inherits the name of its corresponding link appended by "_physics".
+         * Links with zero or negative mass will be skipped.
          */
-        //virtual void highlight(const VisualizationPtr& visualization, bool enable);
+        void attachPhysicsInformation();
 
-        // TODO: move to Visualization factory
+        /*!
+         * A convenience function to detach PhysicsAttachments.
+         * This function basically reverts calls to attachPhysicsInformation().
+         */
+        void detachPhysicsInformation();
+
+        // TODO: implement using attachments
         /*!
          * Display some physics debugging information.
          *
@@ -426,7 +432,9 @@ namespace VirtualRobot
         //                            const VisualizationNodePtr& comModel = VisualizationNodePtr());
 
         /*!
-         * Setup the full model visualization.
+         * Enable/Disable visualization of the model's links and its attached visualizations.
+         * Note: Attached visualizations are VisualizationNodes managed by the link's main VisualizationNodes
+         * and are not to be confused with ModelNodeAttachments.
          *
          * @param showVisualization If false, the visualization is disabled.
          * @param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
@@ -439,7 +447,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateVisualization(bool enable);
-		bool getUpdateVisualization() const;
+        bool getUpdateVisualization() const;
 
         /*!
          * Enables/Disables the visualization updates of the collision model.
@@ -447,7 +455,7 @@ namespace VirtualRobot
          * @param enable Set to true, to enable the updates and to false, to disable the updates.
          */
         void setUpdateCollisionModel(bool enable);
-		bool getUpdateCollisionModel() const;
+        bool getUpdateCollisionModel() const;
 
         /*!
          * Get the complete setup of all model nodes (i.e. the current configuration of the model).
@@ -562,17 +570,17 @@ namespace VirtualRobot
          * @param collisionChecker The new model can be registered to a different collision checker. If not set, the collision checker of the original model is used.
          * @param scaling Can be set to create a scaled version of this model. Scaling is applied on kinematic, visual, and collision data.
          */
-        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode, 
-										const std::string& newModelType,
-                                        const std::string& newModelName, 
-										bool cloneRNS = true,
-										bool cloneEEF = true,
-										const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
+        virtual ModelPtr extractSubPart(const ModelNodePtr& startNode,
+                                        const std::string& newModelType,
+                                        const std::string& newModelName,
+                                        bool cloneRNS = true,
+                                        bool cloneEEF = true,
+                                        const CollisionCheckerPtr& collisionChecker = CollisionCheckerPtr(),
                                         float scaling = 1.0f) const;
 
         /*!
          * Attach a new ModelNode to this model.
-         * This registeres the node to this model.
+         * This registers the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNode The node to attach the new child at.
@@ -581,7 +589,7 @@ namespace VirtualRobot
 
         /*!
          * Attach a new ModelNode to this model.
-         * This registeres the node to this model.
+         * This registers the node to this model.
          *
          * @param newNode The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
@@ -684,23 +692,27 @@ namespace VirtualRobot
                                CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                                float scaling = 1.0f) const;
 
-		bool hasEndEffector(const EndEffectorPtr &eef) const;
-		bool hasEndEffector(const std::string &name) const;
-		void registerEndEffector(const EndEffectorPtr &eef);
+        bool hasEndEffector(const EndEffectorPtr &eef) const;
+        bool hasEndEffector(const std::string &name) const;
+        void registerEndEffector(const EndEffectorPtr &eef);
         void deregisterEndEffector(const EndEffectorPtr &eef);
 
         EndEffectorPtr getEndEffector(const std::string &name) const;
         std::vector<EndEffectorPtr> getEndEffectors() const;
 
         /**
-         * @param linkVisuType The type of link visualization (e.g. collision).
-         * @param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
-         *                          If not set, the default VisualizationFactory (@see VisualizationFactory::getGlobalVisualizationFactory()) will be used.
+         * Get the VisualizationSet which represents the robot.
+         * This set is updated internally (@see setUpdateVisualization).
+         *
+         * @param visuType The type of link visualization (e.g. collision).
          * @return A visualization of this model's links.
          */
-        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full, bool addAttachments = true) const;
+        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = VirtualRobot::ModelLink::Full) const;
+        VisualizationGroupPtr getAllAttachmentVisualizations() const;
 
     protected:
+        void addToVisualization(const ModelLinkPtr &link);
+        void removeFromVisualization(const ModelLinkPtr& link);
 
         virtual void _clone(ModelPtr newModel,
                     const ModelNodePtr& startNode,
@@ -712,7 +724,7 @@ namespace VirtualRobot
         float scaling;
 
         bool threadsafe;
-		mutable std::recursive_mutex mutex;
+        mutable std::recursive_mutex mutex;
 
         ModelNodePtr rootNode;
 
@@ -724,6 +736,9 @@ namespace VirtualRobot
         std::vector< RobotConfigPtr > configs;
 
         std::string filename;
+
+        VisualizationSetPtr visualizationNodeSetFull;
+        VisualizationSetPtr visualizationNodeSetCollision;
     };
 }
 

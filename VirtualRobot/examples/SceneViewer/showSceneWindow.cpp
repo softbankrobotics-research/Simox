@@ -18,18 +18,8 @@
 using namespace std;
 using namespace VirtualRobot;
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#elif Simox_USE_QT3D_VISUALIZATION
-    #include "../../../Gui/Qt3D/Qt3DViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise qt3d Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::Qt3DViewerFactory f;
-#endif
-
 showSceneWindow::showSceneWindow(std::string& sSceneFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -52,7 +42,7 @@ void showSceneWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -110,13 +100,13 @@ void showSceneWindow::buildVisu()
         visuType = ModelLink::VisualizationType::Collision;
     }
 
-    VisualizationSetPtr visu = scene->getVisualization(visuType);
-    viewer->addVisualization("scene", visu);
+
+    viewer->addVisualizations("scene", scene->getAllVisualizations(visuType));
 
     if (UI.checkBoxRoot->isChecked())
     {
         std::string rootText = "ROOT";
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &rootText);
+        VisualizationPtr visuCoord = VisualizationFactory::getInstance()->createCoordSystem(&rootText, 2.f);
         viewer->addVisualization("scene", visuCoord);
     }
 
@@ -131,24 +121,17 @@ void showSceneWindow::updateGraspVisu()
     if (UI.comboBoxGrasp->currentIndex() > 0 && currentObject && currentEEF && currentGrasp)
     {
         std::string t = currentGrasp->getName();
-        VisualizationPtr visuCoord = VisualizationFactory::getGlobalVisualizationFactory()->createCoordSystem(2.0f, &t);
+        VisualizationPtr visuCoord = VisualizationFactory::getInstance()->createCoordSystem(&t, 2.f);
         Eigen::Matrix4f gp = currentGrasp->getTcpPoseGlobal(currentObject->getGlobalPose());
         visuCoord->applyDisplacement(gp);
         viewer->addVisualization("grasps", visuCoord);
     }
 }
 
-int showSceneWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void showSceneWindow::quit()
 {
     std::cout << "showSceneWindow: Closing" << std::endl;
-    viewer->stop();
     this->close();
 }
 

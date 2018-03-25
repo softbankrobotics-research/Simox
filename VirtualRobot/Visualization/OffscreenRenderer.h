@@ -24,15 +24,21 @@
 #define _VirtualRobot_OffscreenRenderer_h_
 
 #include "../VirtualRobot.h"
-#include "../Tools/AbstractFactoryMethod.h"
 
 #include <Eigen/Core>
 #include <string>
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT OffscreenRenderer  : public ::AbstractFactoryMethod<OffscreenRenderer, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT OffscreenRenderer
     {
+    public:
+        /*!
+        * Use this method to get the OffscreenRenderer singleton according to your compile setup.
+        */
+        static OffscreenRendererPtr getInstance();
+    protected:
+        OffscreenRenderer() = default;
     public:
         virtual ~OffscreenRenderer() = default;
 
@@ -93,12 +99,6 @@ namespace VirtualRobot
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
         virtual void cleanup();
-
-        /*! 
-        * Use this method to get the OffscreenRenderer singleton according to your compile setup.
-        * Usually there is only one OffscreenRenderer type registered, so we can safely return the first entry.
-        */
-        static OffscreenRendererPtr getGlobalOffscreenRenderer();
 
         /**
          * A dynamicly bound version of getName().

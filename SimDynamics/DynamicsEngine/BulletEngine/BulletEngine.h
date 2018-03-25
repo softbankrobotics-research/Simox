@@ -27,7 +27,10 @@
 #include "../DynamicsEngine.h"
 #include "BulletRobot.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "btBulletDynamicsCommon.h"
+#pragma GCC diagnostic pop
 
 namespace internal
 {
@@ -88,17 +91,17 @@ namespace SimDynamics
         */
         virtual ~BulletEngine();
 
-        virtual bool addObject(DynamicsObjectPtr o);
-        virtual bool removeObject(DynamicsObjectPtr o);
+        virtual bool addObject(DynamicsObjectPtr o) override;
+        virtual bool removeObject(DynamicsObjectPtr o) override;
 
-        virtual bool addModel(DynamicsModelPtr r);
-        virtual bool removeRobot(DynamicsModelPtr r);
+        virtual bool addModel(DynamicsModelPtr r) override;
+        virtual bool removeRobot(DynamicsModelPtr r) override;
 
         /*!
             Initialize the engine with this configuration.
-            \param config Either a standard init (could be NULL), or if config is of type BulletEngineConfig, Bullet specific parameters will be considered.
+            \param config Either a standard init (could be nullptr), or if config is of type BulletEngineConfig, Bullet specific parameters will be considered.
         */
-        virtual bool init(DynamicsEngineConfigPtr config);
+        virtual bool init(DynamicsEngineConfigPtr config) override;
         virtual bool init(BulletEngineConfigPtr config);
 
         virtual bool cleanup();
@@ -109,7 +112,7 @@ namespace SimDynamics
             Set floor
             \param friction If <=0.0, the standard friction parameter for novel objects is used.
         */
-        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction = 0.0f);
+        virtual void createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction = 0.0f) override;
 
         /*!
             dt and fixedTimeStep are given in seconds.
@@ -118,7 +121,7 @@ namespace SimDynamics
 
         btDynamicsWorld* getBulletWorld();
 
-        virtual std::vector<DynamicsEngine::DynamicsContactInfo> getContacts();
+        virtual std::vector<DynamicsEngine::DynamicsContactInfo> getContacts() override;
 
         void print();
 
@@ -133,8 +136,8 @@ namespace SimDynamics
         */
         double getSimTime();
 
-        virtual bool attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object);
-        virtual bool detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object);
+        virtual bool attachObjectToRobot(DynamicsModelPtr r, const std::string& nodeName, DynamicsObjectPtr object) override;
+        virtual bool detachObjectFromRobot(DynamicsModelPtr r, DynamicsObjectPtr object) override;
 
 
         /*!
@@ -159,7 +162,7 @@ namespace SimDynamics
             {
                 engine = e;
             }
-            virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
+            virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
             {
                 VR_ASSERT(engine);
                 VR_ASSERT(static_cast<btCollisionObject*>(proxy0->m_clientObject));
@@ -199,8 +202,8 @@ namespace SimDynamics
 
         // btActionInterface interface
     public:
-        void updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep);
-        void debugDraw(btIDebugDraw *debugDrawer);
+        virtual void updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep) override;
+        virtual void debugDraw(btIDebugDraw *debugDrawer) override;
     };
 
     typedef std::shared_ptr<BulletEngine> BulletEnginePtr;

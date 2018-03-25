@@ -104,13 +104,13 @@ namespace MotionPlanning
             Recursion is performed maximal recursionMaxDepth times, since an array of temporary variables is used,
             in order to avoid slow allocating/deallocating of memory.
         */
-        bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2);
+        virtual bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2) override;
 
         /*!
         Create a path from start to goal without any checks.
         Intermediate configurations are added according to the current implementation of the cspace.
         */
-        virtual CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal);
+        virtual CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal) override;
 
         /*!
             Create a path from start to the goal configuration.
@@ -119,7 +119,7 @@ namespace MotionPlanning
             \param goal The goal
             \param storeAddedLength The length of the valid path is stored here (1.0 means the complete path from start to goal was valid)
         */
-        virtual CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength);
+        virtual CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength) override;
 
 
     protected:

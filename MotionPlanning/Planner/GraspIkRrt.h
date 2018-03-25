@@ -58,16 +58,16 @@ namespace MotionPlanning
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        virtual bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false);
+        virtual void printConfig(bool printOnlyParams = false) override;
 
         //! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        virtual bool setGoal(const Eigen::VectorXf& c) override;
 
         //! reset the planner
-        virtual void reset();
+        virtual void reset() override;
 
     protected:
 

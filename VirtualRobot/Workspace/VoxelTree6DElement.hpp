@@ -47,10 +47,10 @@ namespace VirtualRobot
         {
             for (int i = 0; i < 64; i++)
             {
-                children[i] = NULL;
+                children[i] = nullptr;
             }
 
-            entry = NULL;
+            entry = nullptr;
             leaf = false;
             memcpy(&(this->pos[0]), &(p[0]), sizeof(float) * 6);
             memcpy(&(this->extends[0]), &(extends[0]), sizeof(float) * 6);
@@ -149,7 +149,7 @@ namespace VirtualRobot
 
             if (indx < 0 || !children[indx])
             {
-                return NULL;
+                return nullptr;
             }
 
             return children[indx]->getEntry(p);
@@ -174,7 +174,7 @@ namespace VirtualRobot
             if (indx < 0)
             {
                 VR_ERROR << "Node do not cover this pos" << endl;
-                return NULL;
+                return nullptr;
             }
 
             if (children[indx])

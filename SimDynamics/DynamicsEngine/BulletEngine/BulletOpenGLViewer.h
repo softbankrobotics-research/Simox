@@ -55,11 +55,11 @@ namespace SimDynamics
         BulletOpenGLViewer(DynamicsWorldPtr world);
         virtual ~BulletOpenGLViewer();
 
-        virtual void clientMoveAndDisplay();
-        virtual void displayCallback();
-        virtual void keyboardCallback(unsigned char key, int x, int y);
-        virtual void initPhysics();
-        virtual void myinit();
+        virtual void clientMoveAndDisplay() override;
+        virtual void displayCallback() override;
+        virtual void keyboardCallback(unsigned char key, int x, int y) override;
+        virtual void initPhysics() override;
+        virtual void myinit() override;
 
         virtual void enableContraintsDebugDrawing();
     protected:

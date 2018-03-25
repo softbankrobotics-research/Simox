@@ -22,12 +22,6 @@
 
 #include "Gui/ui_GraspEditor.h"
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 using namespace std;
 using namespace VirtualRobot;
 
@@ -38,7 +32,7 @@ namespace VirtualRobot
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
                                          bool embeddedGraspEditor)
-        : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
+        : QMainWindow(nullptr), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
 
@@ -97,7 +91,7 @@ namespace VirtualRobot
     {
         UI->setupUi(this);
 
-        SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+        SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
         THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
         viewer = viewerFactory->createViewer(UI->frameViewer);
 
@@ -149,7 +143,7 @@ namespace VirtualRobot
 
         showCoordSystem();
         ModelLink::VisualizationType colModel = (UI->checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
-        VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr f = VisualizationFactory::getInstance();
         if (!f)
             return;
 
@@ -169,7 +163,7 @@ namespace VirtualRobot
                 if (tcp)
                 {
                     Eigen::Matrix4f tcpGP = tcp->getGlobalPose();
-                    VisualizationPtr visu = f->createCoordSystem(NULL);
+                    VisualizationPtr visu = f->createCoordSystem(nullptr);
                     visu->setGlobalPose(tcpGP);
                     viewer->addVisualization("eefLayer", visu);
                 }
@@ -185,7 +179,6 @@ namespace VirtualRobot
 
         buildGraspSetVisu();
     }
-
 
     void GraspEditorWindow::quit()
     {
@@ -641,7 +634,7 @@ namespace VirtualRobot
 
         if (UI->checkBoxGraspSet->isChecked() && robotEEF && robotEEF_EEF && currentGraspSet && object)
         {
-            VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+            VisualizationFactoryPtr f = VisualizationFactory::getInstance();
             if (!f)
                 return;
 

@@ -49,7 +49,7 @@ namespace MotionPlanning
             MOTIONPLANNING_ERROR << "CSpacePath::movePosition: wrong pos" << std::endl;
             return false;
         }
-        if (moveVector==NULL)
+        if (moveVector==nullptr)
         {
             MOTIONPLANNING_ERROR << "CSpacePath::movePosition: NULL moveVec" << std::endl;
             return false;
@@ -207,7 +207,7 @@ namespace MotionPlanning
     // returns number of added nodes
     int CSpacePath::checkIntermediatePositions(unsigned int startPos, float samplingDist, CSpaceSampled *cspace)
     {
-        if (cspace==NULL)
+        if (cspace==nullptr)
             return 0;
 
         float dist = 0.0f;
@@ -286,7 +286,7 @@ namespace MotionPlanning
     }
 
     // returns position on path for time t (0<=t<=1)
-    void CSpacePath::interpolate(float t, Eigen::VectorXf& storePathPos, int* storeIndex /*= NULL*/) const
+    void CSpacePath::interpolate(float t, Eigen::VectorXf& storePathPos, int* storeIndex /*= nullptr*/) const
     {
         storePathPos.resize(dimension);
 
@@ -318,7 +318,7 @@ namespace MotionPlanning
         {
             storePathPos = getPoint(0);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = 0;
             }
@@ -329,7 +329,7 @@ namespace MotionPlanning
         {
             storePathPos = getPoint(getNrOfPoints() - 1);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = (int)path.size();
             }
@@ -400,7 +400,7 @@ namespace MotionPlanning
             }
         }
 
-        if (storeIndex != NULL)
+        if (storeIndex != nullptr)
         {
             *storeIndex = startIndex;
         }

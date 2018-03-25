@@ -269,7 +269,7 @@ namespace VirtualRobot
         std::vector<rapidxml::xml_node<char>* > trajectoryNodes;
 
 
-        rapidxml::xml_node<>* XMLNode = sceneXMLNode->first_node(NULL, 0, false);
+        rapidxml::xml_node<>* XMLNode = sceneXMLNode->first_node(nullptr, 0, false);
 
         while (XMLNode)
         {
@@ -320,7 +320,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);
             }
 
-            XMLNode = XMLNode->next_sibling(NULL, 0, false);
+            XMLNode = XMLNode->next_sibling(nullptr, 0, false);
         }
 
         // process all modelSetNodes

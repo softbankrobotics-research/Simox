@@ -45,9 +45,9 @@ namespace MotionPlanning
         {
 #ifdef __LP64__
             // This is for machines with 64Bit addresses and 32Bit int datatype
-            randomSeed = (unsigned int)(time(NULL) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
+            randomSeed = (unsigned int)(time(nullptr) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
 #else
-            randomSeed = (unsigned int)(time(NULL) + (int)this) % 10000;
+            randomSeed = (unsigned int)(time(nullptr) + (int)this) % 10000;
 #endif
         }
 
@@ -632,18 +632,10 @@ namespace MotionPlanning
         else
         {
             // borderless mode
-
             // we map 'start' and 'end' to [0,2pi] (temporarily)
-            float start = q1[dim] - robotJoints[dim]->getJointLimitLow();
-            float end = q2[dim] - robotJoints[dim]->getJointLimitLow();
-
+            float start = q1[dim];
+            float end = q2[dim];
             float res = interpolateRotational(start, end , step);
-            // using fmod is okay here, because 'start' and 'end' where mapped to [0,2pi] and therefore 'res' is also in [0,2pi]
-            res = (float)fmod((double)res, 2.0 * M_PI);
-
-            // map back to original interval
-            res = res + robotJoints[dim]->getJointLimitLow();
-
             return res;
         }
 
@@ -656,38 +648,27 @@ namespace MotionPlanning
 
     float CSpace::interpolateRotational(float a, float b, float step)
     {
-        //return (a + step * (b - a));
-
-        float angle;
-
-        if (fabs(a - b) < M_PI)
+        auto fmod = [](float value, float boundLow, float boundHigh)
         {
-            //std::cout << "interpolateRotational: If 1" << std::endl;
-            angle = interpolateLinear(a, b, step);
-        }
-        else if (a < b)
-        {
-            //std::cout << "interpolateRotational: If 2" << std::endl;
-            angle = a - step * (a + 2.0f * (float)M_PI - b);
+            value = std::fmod(value - boundLow, boundHigh - boundLow) + boundLow;
+            if (value < boundLow)
+            {
+                value += boundHigh - boundLow;
+            }
+            return value;
+        };
 
-        }
-        else
+        auto lerp = [](float a, float b, float f)
         {
-            //std::cout << "interpolateRotational: If 3" << std::endl;
-            angle = a + step * (b + 2.0f * (float)M_PI - a);
-        }
+            return a * (1 - f) + b * f;
+        };
 
-        if (angle < 0)
+        auto angleLerp = [&](float a, float b, float f)
         {
-            angle += 2.0f * (float)M_PI;
-        }
-
-        if (angle >= 2.0f * (float)M_PI)
-        {
-            angle -= 2.0f * (float)M_PI;
-        }
-
-        return angle;
+            b = fmod(b, a - M_PI, a + M_PI);
+            return lerp(a, b, f);
+        };
+        return angleLerp(a, b, step);
     }
 
 
@@ -846,7 +827,7 @@ namespace MotionPlanning
 //        if (!(robotJoints[dim]->isTranslationalJoint()))
 //        {
 //            // rotational joint
-//            if (abs((double)(robotJoints[dim]->getJointLimitHi() - robotJoints[dim]->getJointLimitLo())) > (1.9999999999999 * M_PI))
+//            if (abs((double)(robotJoints[dim]->getJointLimitHigh() - robotJoints[dim]->getJointLimitLow())) > (1.9999999999999 * M_PI))
 //            {
 //                return true;
 //            }

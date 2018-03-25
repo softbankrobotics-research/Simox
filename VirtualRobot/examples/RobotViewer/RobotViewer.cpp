@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::print();
 
     std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
-    VR_INFO << "Robot file: " << filename << endl;
+    VR_INFO << "Using robot file: " << filename << std::endl;
 
     showRobotWindow rw(filename);
     rw.show();

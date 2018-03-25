@@ -4,6 +4,7 @@
 #include "../Visualization/TriMeshModel.h"
 #include "../Visualization/Visualization.h"
 #include "../XML/BaseIO.h"
+#include "../VirtualRobotException.h"
 #include <algorithm>
 
 
@@ -80,7 +81,7 @@ namespace VirtualRobot
 
     void CollisionModel::inflateModel(float value)
     {
-        if((margin != value) || (origVisualization && !model))
+        if(std::abs(margin - value) < 0.01f || (origVisualization && !model))
         {
             visualization = origVisualization->clone();
             visualization->shrinkFatten(value);
@@ -137,8 +138,24 @@ namespace VirtualRobot
         if(deepVisuMesh || !this->collisionModelImplementation)
             p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, margin));
         else
+        {
             p.reset(new CollisionModel(visuOrigNew, nameNew, colChecker, idNew, this->collisionModelImplementation));
-        p->margin = margin;
+            if(visualization)
+            {
+                p->visualization = visualization->clone();
+                p->visualization->scale(Eigen::Vector3f::Constant(scaling));
+                p->margin = margin;
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << "Fix this " << __FILE__ << ":" << __LINE__;
+                THROW_VR_EXCEPTION(ss.str());
+//                p->origVisualization->clone(deepVisuMesh, scaling);
+//                p->inflateModel(margin);
+            }
+
+        }
         p->setGlobalPose(getGlobalPose());
         p->setUpdateVisualization(getUpdateVisualizationStatus());
         return p;
@@ -245,7 +262,7 @@ namespace VirtualRobot
 
             if (model)
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
                 if (visualizationFactory)
                 {
@@ -278,7 +295,7 @@ namespace VirtualRobot
 
         ss << ">\n";
 
-        std::string fileType = VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType();
+        std::string fileType = VisualizationFactory::getInstance()->getVisualizationType();
 
         if (!filename.empty())
         {
@@ -349,7 +366,7 @@ namespace VirtualRobot
             return CollisionModelPtr();
         }
 
-        VisualizationPtr vc = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visus);
+        VisualizationPtr vc = VisualizationFactory::getInstance()->createVisualisationSet(visus);
         return CollisionModelPtr(new CollisionModel(vc, "", colChecker));
     }
 

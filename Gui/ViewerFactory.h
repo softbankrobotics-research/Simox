@@ -24,7 +24,6 @@
 #define _Gui_ViewerFactory_h_
 
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
 #include <string>
 
 #include "ViewerInterface.h"
@@ -32,18 +31,22 @@
 
 namespace SimoxGui
 {
+    class ViewerFactory;
+    using ViewerFactoryPtr = std::shared_ptr<ViewerFactory>;
 
-    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory  : public ::AbstractFactoryMethod<ViewerFactory, void*>
+    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory
     {
     public:
-        ViewerFactory()
-        {
-        }
+        static ViewerFactoryPtr getInstance();
+
+    protected:
+        ViewerFactory() = default;
+
+    public:
         virtual ~ViewerFactory() = default;
 
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = NULL) const = 0;
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) const = 0;
     };
-    typedef std::shared_ptr<ViewerFactory> ViewerFactoryPtr;
 
 } // namespace SimoxGui
 

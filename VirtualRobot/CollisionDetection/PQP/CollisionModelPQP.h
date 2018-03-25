@@ -62,13 +62,13 @@ namespace VirtualRobot
             return pqpModel;
         }
 
-        virtual void print();
-        virtual std::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const;
+        virtual void print() override;
+        virtual std::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const override;
     protected:
         CollisionModelPQP(const CollisionModelPQP& orig);
 
         //! delete all data
-        virtual void destroyData();
+        virtual void destroyData() override;
         void createPQPModel();
 
         std::shared_ptr<PQP::PQP_Model> pqpModel;

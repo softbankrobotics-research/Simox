@@ -15,7 +15,7 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
 ########################### TESTING #####################################
 MACRO(ADD_MP_TEST TEST_NAME)
-    INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
     if (NOT Boost_USE_STATIC_LIBS)
@@ -77,20 +77,7 @@ ApproachDiscretization.h
 )
 #../VirtualRobot/definesVR.h
 
-
-if (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
-	SET(SOURCES
-	${SOURCES}
-	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.cpp
-	)
-
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h
-	)
-endif ()
-
-INCLUDE_DIRECTORIES(.. ${Simox_EXTERNAL_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
 ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
 
 ADD_LIBRARY (${PROJECT_NAME} SHARED ${SOURCES} ${INCLUDES})

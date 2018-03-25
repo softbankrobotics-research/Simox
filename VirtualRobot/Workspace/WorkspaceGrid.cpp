@@ -2,6 +2,7 @@
 #include "WorkspaceGrid.h"
 #include "../VirtualRobotException.h"
 #include "../Model/ManipulationObject.h"
+#include <VirtualRobot/Visualization/ColorMap.h>
 
 #include <iostream>
 #include <algorithm>
@@ -20,7 +21,7 @@ namespace VirtualRobot
         minY = fMinY;
         maxY = fMaxY;
         discretizeSize = fDiscretizeSize;
-        data = NULL;
+        data = nullptr;
 
         if (fMinX >= fMaxX || fMinY >= fMaxY)
         {
@@ -172,7 +173,7 @@ namespace VirtualRobot
         return true;
     }
 
-    bool WorkspaceGrid::getCellEntry(int cellX, int cellY, int& storeEntry, std::vector<GraspPtr>& storeGrasps)
+    bool WorkspaceGrid::getCellEntry(int cellX, int cellY, int& storeEntry, std::vector<GraspPtr>& storeGrasps) const
     {
         if (!data)
         {
@@ -285,7 +286,7 @@ namespace VirtualRobot
         }
     }
 
-    int WorkspaceGrid::getMaxEntry()
+    int WorkspaceGrid::getMaxEntry() const
     {
         if (!data)
         {
@@ -359,7 +360,7 @@ namespace VirtualRobot
         }
     }*/
 
-    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops /*= 50*/)
+    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, GraspPtr& storeGrasp, int maxLoops /*= 50*/, int* entries)
     {
         if (!data)
         {
@@ -375,7 +376,8 @@ namespace VirtualRobot
             x = rand() % gridSizeX;
             y = rand() % gridSizeY;
             getCellEntry(x, y, nEntry, storeGrasp);
-
+            if(entries)
+                *entries = nEntry;
             if (nEntry >= minEntry)
             {
                 storeXGlobal = minX + ((float)x + 0.5f) * discretizeSize;
@@ -391,7 +393,7 @@ namespace VirtualRobot
     }
 
 
-    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops /*= 50*/)
+    bool WorkspaceGrid::getRandomPos(int minEntry, float& storeXGlobal, float& storeYGlobal, std::vector<GraspPtr>& storeGrasps, int maxLoops /*= 50*/, int *entries)
     {
         if (!data)
         {
@@ -407,7 +409,8 @@ namespace VirtualRobot
             x = rand() % gridSizeX;
             y = rand() % gridSizeY;
             getCellEntry(x, y, nEntry, storeGrasps);
-
+            if(entries)
+                *entries = nEntry;
             if (nEntry >= minEntry)
             {
                 storeXGlobal = minX + ((float)x + 0.5f) * discretizeSize;
@@ -469,7 +472,7 @@ namespace VirtualRobot
         return true;
     }
 
-    void WorkspaceGrid::getExtends(float& storeMinX, float& storeMaxX, float& storeMinY, float& storeMaxY)
+    void WorkspaceGrid::getExtends(float& storeMinX, float& storeMaxX, float& storeMinY, float& storeMaxY) const
     {
         storeMinX = minX;
         storeMaxX = maxX;
@@ -477,10 +480,170 @@ namespace VirtualRobot
         storeMaxY = maxY;
     }
 
-    void WorkspaceGrid::getCells(int& storeCellsX, int& storeCellsY)
+    void WorkspaceGrid::getCells(int& storeCellsX, int& storeCellsY) const
     {
         storeCellsX = gridSizeX;
         storeCellsY = gridSizeY;
+    }
+
+    float WorkspaceGrid::getDiscretizeSize() const
+    {
+        return discretizeSize;
+    }
+
+    Eigen::Vector2f WorkspaceGrid::getMin() const
+    {
+        return Eigen::Vector2f(minX, minY);
+    }
+
+    Eigen::Vector2f WorkspaceGrid::getMax() const
+    {
+        return Eigen::Vector2f(maxX, maxY);
+    }
+
+    WorkspaceGridPtr WorkspaceGrid::MergeWorkspaceGrids(const std::vector<WorkspaceGridPtr> &grids)
+    {
+        VR_ASSERT(grids.size() >= 2);
+        float totalMaxX = std::numeric_limits<float>::min();
+        float totalMinX = std::numeric_limits<float>::max();
+        float totalMaxY = std::numeric_limits<float>::min();
+        float totalMinY = std::numeric_limits<float>::max();
+        for(auto& grid : grids)
+        {
+//            VR_INFO << "min: " << grid->getMin() << " max: " << grid->getMax() << endl;
+            totalMinX = std::min(grid->getMin()(0), totalMinX);
+            totalMinY = std::min(grid->getMin()(1), totalMinY);
+            totalMaxX = std::max(grid->getMax()(0), totalMaxX);
+            totalMaxY = std::max(grid->getMax()(1), totalMaxY);
+        }
+        WorkspaceGridPtr resultGrid(new WorkspaceGrid(totalMinX, totalMaxX, totalMinY, totalMaxY, grids.at(0)->getDiscretizeSize()));
+//        VR_INFO << "minx : " << totalMinX << " maxX: " << totalMaxX << " step size: " << resultGrid->getDiscretizeSize() << endl;
+//        int sameValueCount =  0;
+//        int totalValueCount = 0;
+        for(float x = totalMinX; x < totalMaxX; x += resultGrid->getDiscretizeSize())
+        {
+            for(float y = totalMinY; y < totalMaxY; y += resultGrid->getDiscretizeSize())
+            {
+                int min = std::numeric_limits<int>::max();
+                GraspPtr grasp;
+                for(auto& grid : grids)
+                {
+                    int score;
+                    GraspPtr tmpGrasp;
+                    if(grid->getEntry(x, y, score, tmpGrasp))
+                    {
+                        grasp = tmpGrasp;
+                    }
+                    min = std::min(score, min);
+                }
+//                totalValueCount++;
+                resultGrid->setEntry(x, y, min, grasp);
+            }
+        }
+//        VR_INFO << "Same value percentage: " << (100.f * sameValueCount/totalValueCount) << endl;
+        return resultGrid;
+
+    }
+
+    VisualizationPtr WorkspaceGrid::getVisualization(const ColorMap &cm) const
+    {
+        const VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        float minX, maxX, minY, maxY;
+        getExtends(minX, maxX, minY, maxY);
+        gp(0, 3) = minX;
+        gp(1, 3) = minY;
+
+        int nX, nY;
+        getCells(nX, nY);
+        float sizeX = (maxX - minX) / (float)nX;
+        float sizeY = (maxY - minY) / (float)nY;
+
+        float cubeWidth = sizeX;
+        float cubeHeight = sizeY;
+        float cubeDepth = 1.0f;
+
+        VisualizationPtr cube = visualizationFactory->createBox(cubeWidth, cubeHeight, cubeDepth);
+
+        std::vector<Eigen::Vector3f> cubeLinesFrom, cubeLinesTo;
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, cubeHeight/2.f, -cubeDepth/2.f);
+
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(-cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(cubeWidth/2.f, -cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesFrom.emplace_back(cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        cubeLinesTo.emplace_back(-cubeWidth/2.f, cubeHeight/2.f, cubeDepth/2.f);
+        VisualizationPtr cubeLines = visualizationFactory->createLineSet(cubeLinesFrom, cubeLinesTo);
+
+        int maxEntry = getMaxEntry();
+
+        if (maxEntry == 0)
+        {
+            maxEntry = 1;
+        }
+
+        std::vector<VisualizationPtr> visus;
+
+        for (int x = 0; x < nX; x++)
+        {
+            float xPos = minX + (float)x * sizeX + 0.5f * sizeX; // center of voxel
+
+            for (int y = 0; y < nY; y++)
+            {
+                int v;
+                std::vector<GraspPtr> grasps;
+                bool ok = getCellEntry(x, y, v, grasps);
+
+                if (ok && v > 0)
+                {
+                    float yPos = minY + (float)y * sizeY + 0.5f * sizeY; // center of voxel
+                    gp(0, 3) = xPos;
+                    gp(1, 3) = yPos;
+
+                    float intensity = (float)v;
+                    intensity /= maxEntry;
+                    if (intensity > 1.0f)
+                    {
+                        intensity = 1.0f;
+                    }
+
+                    VirtualRobot::Visualization::Color color = cm.getColor(intensity);
+
+                    if (intensity > 0)
+                    {
+                        visus.push_back(cube->clone());
+                        visus.back()->setGlobalPose(gp);
+                        visus.back()->setColor(color);
+
+                        visus.push_back(cubeLines->clone());
+                        visus.back()->setGlobalPose(gp);
+                        visus.back()->setColor(VirtualRobot::Visualization::Color::Black());
+                    }
+                }
+            }
+        }
+
+        return visualizationFactory->createVisualisationSet(visus);
     }
 
 } //  namespace

@@ -40,30 +40,30 @@ namespace VirtualRobot
 
 	}
 
-	ModelNodeSetPtr ModelNodeSet::clone(ModelPtr newModel)
+	ModelNodeSetPtr ModelNodeSet::clone(ModelPtr model)
 	{
         std::vector<ModelNodePtr> newModelNodes;
         for (auto &n: modelNodes)
         {
-            THROW_VR_EXCEPTION_IF(!newModel->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
-            ModelNodePtr no = newModel->getModelNode(n->getName());
-            VR_ASSERT(no);
-            newModelNodes.push_back(no);
+            THROW_VR_EXCEPTION_IF(!model->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            ModelNodePtr newModelNode = model->getModelNode(n->getName());
+            VR_ASSERT(newModelNode);
+            newModelNodes.push_back(newModelNode);
         }
         ModelNodePtr newKinRoot;
         if (kinematicRoot)
         {
-            newKinRoot = newModel->getModelNode(kinematicRoot->getName());
+            newKinRoot = model->getModelNode(kinematicRoot->getName());
             VR_ASSERT(newKinRoot);
         }
         ModelNodePtr newTcp;
         if (tcp)
         {
-            newTcp = newModel->getModelNode(tcp->getName());
+            newTcp = model->getModelNode(tcp->getName());
             VR_ASSERT(newTcp);
         }
 
-        ModelNodeSetPtr result = ModelNodeSet::createModelNodeSet(newModel, name, newModelNodes, newKinRoot, newTcp, true);
+        ModelNodeSetPtr result = ModelNodeSet::createModelNodeSet(model, name, newModelNodes, newKinRoot, newTcp, true);
 
         return result;
 	}
@@ -218,9 +218,9 @@ namespace VirtualRobot
         return weakModel.lock();
     }
 
-    ModelNodePtr &ModelNodeSet::getNode(int i)
+    ModelNodePtr &ModelNodeSet::getNode(size_t i)
     {
-        THROW_VR_EXCEPTION_IF((i >= (int)modelNodes.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (modelNodes.size() - 1));
+        THROW_VR_EXCEPTION_IF((i >= (int)modelNodes.size()), "Index out of bounds:" << i << ", (should be between 0 and " << (modelNodes.size() - 1));
         return modelNodes.at(i);
     }
 

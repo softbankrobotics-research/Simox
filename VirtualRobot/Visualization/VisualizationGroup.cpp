@@ -10,20 +10,12 @@
 
 namespace VirtualRobot
 {
-
-    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : visualizations()
+    VisualizationGroup::VisualizationGroup()
     {
-        std::copy_if(visualizations.begin(), visualizations.end(), std::back_inserter(this->visualizations), [](const VisualizationPtr& visu) {
-            if (visu->isInVisualizationSet())
-            {
-                VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        });
+    }
+
+    VisualizationGroup::VisualizationGroup(const std::vector<VisualizationPtr> &visualizations) : Frame(), visualizations(visualizations)
+    {
     }
 
     VisualizationGroup::~VisualizationGroup()
@@ -84,29 +76,20 @@ namespace VirtualRobot
         return visualizations.size();
     }
 
-    Eigen::Matrix4f VisualizationGroup::getGlobalPose() const
-    {
-        // TODO
-        return Eigen::Matrix4f::Identity();
-    }
-
     void VisualizationGroup::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        // TODO
         Eigen::Matrix4f oldM = this->getGlobalPose();
         Eigen::Matrix4f dp = m * oldM.inverse();
-        if (oldM.hasNaN())
-        {
-            std::cout << "NaN" << std::endl;
-        }
-        if (dp.hasNaN())
-        {
-            std::cout << "NaN" << std::endl;
-        }
         for (auto& visu : visualizations)
         {
-            visu->applyDisplacement(dp);
+            visu->setGlobalPose(dp * visu->getGlobalPose());
         }
+        setGlobalPoseNoUpdate(m);
+    }
+
+    void VisualizationGroup::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
+    {
+        globalPose = m;
     }
 
     void VisualizationGroup::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -231,7 +214,14 @@ namespace VirtualRobot
 
     void VisualizationGroup::scale(const Eigen::Vector3f &scaleFactor)
     {
-        // TODO
+        Eigen::Vector3f gpos = getGlobalPosition();
+        for (auto& visu : visualizations)
+        {
+            Eigen::Matrix4f visuGp = visu->getGlobalPose();
+            visuGp.block<3, 1>(0, 3) = gpos + (visuGp.block<3, 1>(0, 3) - gpos).cwiseProduct(scaleFactor);
+            visu->setGlobalPose(visuGp);
+            visu->scale(scaleFactor);
+        }
     }
 
     BoundingBox VisualizationGroup::getBoundingBox() const
@@ -242,16 +232,6 @@ namespace VirtualRobot
             b.addPoints(visu->getBoundingBox().getPoints());
         }
         return b;
-    }
-
-    TriMeshModelPtr VisualizationGroup::getTriMeshModel() const
-    {
-        // TODO
-    }
-
-    std::vector<Primitive::PrimitivePtr> VisualizationGroup::getPrimitives() const
-    {
-        // TODO
     }
 
     int VisualizationGroup::getNumFaces() const

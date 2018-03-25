@@ -9,12 +9,12 @@
 #include "VirtualRobot/CollisionDetection/CDManager.h"
 #include "VirtualRobot/XML/ObjectIO.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/Planner/Rrt.h"
 #include "MotionPlanning/Planner/BiRrt.h"
 #include "MotionPlanning/PostProcessing/ShortcutProcessor.h"
-#include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
+#include <MotionPlanning/Visualization/RrtWorkspaceVisualization.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
 #include <time.h>
@@ -23,12 +23,6 @@
 #include <cmath>
 #include <sstream>
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 using namespace std;
 using namespace VirtualRobot;
 
@@ -36,7 +30,7 @@ using namespace VirtualRobot;
 
 RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
                            const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -106,7 +100,7 @@ void RrtGuiWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -159,14 +153,14 @@ void RrtGuiWindow::buildVisu()
 
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
-    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    VisualizationFactoryPtr f = VisualizationFactory::getInstance();
     if (!f)
         return;
 
     if (scene)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        viewer->addVisualization("scene", "scenefile", v);
+        auto v = scene->getAllVisualizations(colModel);
+        viewer->addVisualizations("scene", v);
     }
 
     viewer->clearLayer("start-goal");
@@ -175,14 +169,14 @@ void RrtGuiWindow::buildVisu()
     {        
         if (robotStart)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotStart, colModel);
-            viewer->addVisualization("start-goal", "start", v);
+            auto v = robotStart->getVisualization(colModel);
+            viewer->addVisualization("start-goal", v);
         }
 
         if (robotGoal)
         {
-            VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robotGoal, colModel);
-            viewer->addVisualization("start-goal", "goal", v);
+            auto v = robotGoal->getVisualization(colModel);
+            viewer->addVisualization("start-goal", v);
         }
     }
 
@@ -191,18 +185,11 @@ void RrtGuiWindow::buildVisu()
     redraw();
 }
 
-int RrtGuiWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void RrtGuiWindow::quit()
 {
     std::cout << "RrtGuiWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void RrtGuiWindow::loadSceneWindow()
@@ -554,13 +541,7 @@ void RrtGuiWindow::buildRRTVisu()
         return;
     }
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-
-#ifdef Simox_USE_COIN_VISUALIZATION
-    w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
-#else
-    VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-#endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, rns->getTCP()->getName()));
 
     if (UI.checkBoxShowRRT->isChecked())
     {
@@ -588,7 +569,7 @@ void RrtGuiWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","workspace", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 

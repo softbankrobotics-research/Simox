@@ -41,7 +41,7 @@ namespace MotionPlanning
         virtual ~ShortcutProcessor();
 
         //! A wrapper to the standard interface. Calls shortenSolutionRandom().
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        virtual CSpacePathPtr optimize(int optimizeSteps) override;
 
         /*!
             Creates a shortened CSpace path.

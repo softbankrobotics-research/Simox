@@ -53,7 +53,7 @@ namespace VirtualRobot
 
         VisualizationPtr Box::getVisualization() const
         {
-            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createBox(width, height, depth);
+            auto visu = VisualizationFactory::getInstance()->createBox(width, height, depth);
             visu->setGlobalPose(transform);
             return visu;
         }
@@ -68,7 +68,7 @@ namespace VirtualRobot
 
         VisualizationPtr Sphere::getVisualization() const
         {
-            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(radius);
+            auto visu = VisualizationFactory::getInstance()->createSphere(radius);
             visu->setGlobalPose(transform);
             return visu;
         }
@@ -83,7 +83,7 @@ namespace VirtualRobot
 
         VisualizationPtr Cylinder::getVisualization() const
         {
-            auto visu = VisualizationFactory::getGlobalVisualizationFactory()->createCylinder(radius, height);
+            auto visu = VisualizationFactory::getInstance()->createCylinder(radius, height);
             visu->setGlobalPose(transform);
             return visu;
         }

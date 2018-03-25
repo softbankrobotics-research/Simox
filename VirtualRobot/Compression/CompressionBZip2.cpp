@@ -129,8 +129,8 @@
 
 #define BZ_SETERR(eee)                    \
     {                                         \
-        if (bzerror != NULL) *bzerror = eee;   \
-        if (bzf != NULL) bzf->lastErr = eee;   \
+        if (bzerror != nullptr) *bzerror = eee;   \
+        if (bzf != nullptr) bzf->lastErr = eee;   \
     }
 
 #define BZ_RAND_DECLS                          \
@@ -366,10 +366,10 @@ namespace VirtualRobot
     {
         this->mode = eCompress;
         this->ofs = ofs;
-        ifs = NULL;
-        THROW_VR_EXCEPTION_IF(!ofs, "Stream NULL");
+        ifs = nullptr;
+        THROW_VR_EXCEPTION_IF(!ofs, "Stream nullptr");
         THROW_VR_EXCEPTION_IF(!this->ofs->good(), "Stream not good");
-        bzFileData = NULL;
+        bzFileData = nullptr;
         bzFileData = BZ2_bzWriteOpen(&currentError, this->ofs);
         THROW_VR_EXCEPTION_IF(!bzFileData, "Could not initialize compression...");
     }
@@ -378,11 +378,11 @@ namespace VirtualRobot
     {
         this->mode = eUncompress;
         this->ifs = ifs;
-        ofs = NULL;
-        THROW_VR_EXCEPTION_IF(!ifs, "Stream NULL");
+        ofs = nullptr;
+        THROW_VR_EXCEPTION_IF(!ifs, "Stream nullptr");
         THROW_VR_EXCEPTION_IF(!this->ifs->good(), "Stream not good");
-        bzFileData = NULL;
-        bzFileData = BZ2_bzReadOpen(&currentError, this->ifs, 0, 0, NULL, 0);
+        bzFileData = nullptr;
+        bzFileData = BZ2_bzReadOpen(&currentError, this->ifs, 0, 0, nullptr, 0);
         THROW_VR_EXCEPTION_IF(!bzFileData, "Could not initialize compression...");
     }
 
@@ -398,10 +398,10 @@ namespace VirtualRobot
     {
         if (mode == eCompress && bzFileData && ofs)
         {
-            BZ2_bzWriteClose(&currentError, bzFileData, 0, NULL, NULL);
+            BZ2_bzWriteClose(&currentError, bzFileData, 0, nullptr, nullptr);
             //ofs->close();
             //fclose (dataFile);
-            bzFileData = NULL;
+            bzFileData = nullptr;
 
             if (currentError < 0) //== BZ_IO_ERROR) {
             {
@@ -412,7 +412,7 @@ namespace VirtualRobot
         else if (mode == eUncompress && bzFileData && ifs)
         {
             BZ2_bzReadClose(&currentError, bzFileData);
-            bzFileData = NULL;
+            bzFileData = nullptr;
             //fclose (dataFile);
         }
 
@@ -3204,9 +3204,9 @@ case lll: s->state = lll;                      \
             s->save_zj          = 0;
             s->save_gSel        = 0;
             s->save_gMinlen     = 0;
-            s->save_gLimit      = NULL;
-            s->save_gBase       = NULL;
-            s->save_gPerm       = NULL;
+            s->save_gLimit      = nullptr;
+            s->save_gBase       = nullptr;
+            s->save_gPerm       = nullptr;
         }
 
         /*restore from the save area*/
@@ -3278,7 +3278,7 @@ case lll: s->state = lll;                      \
                                   ((1 + s->blockSize100k * 100000) >> 1) * sizeof(UChar)
                               );
 
-                    if (s->ll16 == NULL || s->ll4 == NULL)
+                    if (s->ll16 == nullptr || s->ll4 == nullptr)
                     {
                         RETURN(BZ_MEM_ERROR);
                     }
@@ -3287,7 +3287,7 @@ case lll: s->state = lll;                      \
                 {
                     s->tt  = (UInt32*)BZALLOC(s->blockSize100k * 100000 * sizeof(Int32));
 
-                    if (s->tt == NULL)
+                    if (s->tt == nullptr)
                     {
                         RETURN(BZ_MEM_ERROR);
                     }
@@ -3993,31 +3993,31 @@ save_state_and_return:
      int   workFactor)
     {
         Int32   ret;
-        bzFile* bzf = NULL;
+        bzFile* bzf = nullptr;
 
         BZ_SETERR(BZ_OK);
 
-        if (f == NULL ||
+        if (f == nullptr ||
             (blockSize100k < 1 || blockSize100k > 9) ||
             (workFactor < 0 || workFactor > 250) ||
             (verbosity < 0 || verbosity > 4))
         {
             BZ_SETERR(BZ_PARAM_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         if (!f || f->bad())
         {
             BZ_SETERR(BZ_IO_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         bzf = (bzFile*)malloc(sizeof(bzFile));
 
-        if (bzf == NULL)
+        if (bzf == nullptr)
         {
             BZ_SETERR(BZ_MEM_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         BZ_SETERR(BZ_OK);
@@ -4026,17 +4026,17 @@ save_state_and_return:
 
         bzf->bufN          = 0;
 
-        bzf->handleIn        = NULL;
+        bzf->handleIn        = nullptr;
 
         bzf->handleOut        = f;
 
         bzf->writing       = BZ_True;
 
-        bzf->strm.bzalloc  = NULL;
+        bzf->strm.bzalloc  = nullptr;
 
-        bzf->strm.bzfree   = NULL;
+        bzf->strm.bzfree   = nullptr;
 
-        bzf->strm.opaque   = NULL;
+        bzf->strm.opaque   = nullptr;
 
         if (workFactor == 0)
         {
@@ -4050,7 +4050,7 @@ save_state_and_return:
         {
             BZ_SETERR(ret);
             free(bzf);
-            return NULL;
+            return nullptr;
         };
 
         bzf->strm.avail_in = 0;
@@ -4075,7 +4075,7 @@ save_state_and_return:
             return BZ_CONFIG_ERROR;
         }
 
-        if (strm == NULL ||
+        if (strm == nullptr ||
             blockSize100k < 1 || blockSize100k > 9 ||
             workFactor < 0 || workFactor > 250)
         {
@@ -4087,52 +4087,52 @@ save_state_and_return:
             workFactor = 30;
         }
 
-        if (strm->bzalloc == NULL)
+        if (strm->bzalloc == nullptr)
         {
             strm->bzalloc = default_bzalloc;
         }
 
-        if (strm->bzfree == NULL)
+        if (strm->bzfree == nullptr)
         {
             strm->bzfree = default_bzfree;
         }
 
         s = (EState*)BZALLOC(sizeof(EState));
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_MEM_ERROR;
         }
 
         s->strm = strm;
 
-        s->arr1 = NULL;
-        s->arr2 = NULL;
-        s->ftab = NULL;
+        s->arr1 = nullptr;
+        s->arr2 = nullptr;
+        s->ftab = nullptr;
 
         n       = 100000 * blockSize100k;
         s->arr1 = (UInt32*)BZALLOC(n                  * sizeof(UInt32));
         s->arr2 = (UInt32*)BZALLOC((n + BZ_N_OVERSHOOT) * sizeof(UInt32));
         s->ftab = (UInt32*)BZALLOC(65537              * sizeof(UInt32));
 
-        if (s->arr1 == NULL || s->arr2 == NULL || s->ftab == NULL)
+        if (s->arr1 == nullptr || s->arr2 == nullptr || s->ftab == nullptr)
         {
-            if (s->arr1 != NULL)
+            if (s->arr1 != nullptr)
             {
                 BZFREE(s->arr1);
             }
 
-            if (s->arr2 != NULL)
+            if (s->arr2 != nullptr)
             {
                 BZFREE(s->arr2);
             }
 
-            if (s->ftab != NULL)
+            if (s->ftab != nullptr)
             {
                 BZFREE(s->ftab);
             }
 
-            if (s       != NULL)
+            if (s       != nullptr)
             {
                 BZFREE(s);
             }
@@ -4151,7 +4151,7 @@ save_state_and_return:
 
         s->block             = (UChar*)s->arr2;
         s->mtfv              = (UInt16*)s->arr1;
-        s->zbits             = NULL;
+        s->zbits             = nullptr;
         s->ptr               = (UInt32*)s->arr1;
 
         strm->state          = s;
@@ -4235,7 +4235,7 @@ save_state_and_return:
 
         BZ_SETERR(BZ_OK);
 
-        if (bzf == NULL || buf == NULL || len < 0)
+        if (bzf == nullptr || buf == nullptr || len < 0)
         {
             BZ_SETERR(BZ_PARAM_ERROR);
             return;
@@ -4308,7 +4308,7 @@ save_state_and_return:
      unsigned int* nbytes_out)
     {
         BZ2_bzWriteClose64(bzerror, b, abandon,
-                           nbytes_in, NULL, nbytes_out, NULL);
+                           nbytes_in, nullptr, nbytes_out, nullptr);
     }
 
 
@@ -4324,7 +4324,7 @@ save_state_and_return:
         Int32   n, ret;
         bzFile* bzf = (bzFile*)b;
 
-        if (bzf == NULL)
+        if (bzf == nullptr)
         {
             BZ_SETERR(BZ_OK);
             return;
@@ -4343,22 +4343,22 @@ save_state_and_return:
             return;
         };
 
-        if (nbytes_in_lo32 != NULL)
+        if (nbytes_in_lo32 != nullptr)
         {
             *nbytes_in_lo32 = 0;
         }
 
-        if (nbytes_in_hi32 != NULL)
+        if (nbytes_in_hi32 != nullptr)
         {
             *nbytes_in_hi32 = 0;
         }
 
-        if (nbytes_out_lo32 != NULL)
+        if (nbytes_out_lo32 != nullptr)
         {
             *nbytes_out_lo32 = 0;
         }
 
-        if (nbytes_out_hi32 != NULL)
+        if (nbytes_out_hi32 != nullptr)
         {
             *nbytes_out_hi32 = 0;
         }
@@ -4408,22 +4408,22 @@ save_state_and_return:
             };
         }
 
-        if (nbytes_in_lo32 != NULL)
+        if (nbytes_in_lo32 != nullptr)
         {
             *nbytes_in_lo32 = bzf->strm.total_in_lo32;
         }
 
-        if (nbytes_in_hi32 != NULL)
+        if (nbytes_in_hi32 != nullptr)
         {
             *nbytes_in_hi32 = bzf->strm.total_in_hi32;
         }
 
-        if (nbytes_out_lo32 != NULL)
+        if (nbytes_out_lo32 != nullptr)
         {
             *nbytes_out_lo32 = bzf->strm.total_out_lo32;
         }
 
-        if (nbytes_out_hi32 != NULL)
+        if (nbytes_out_hi32 != nullptr)
         {
             *nbytes_out_hi32 = bzf->strm.total_out_hi32;
         }
@@ -4438,14 +4438,14 @@ save_state_and_return:
     {
         EState* s;
 
-        if (strm == NULL)
+        if (strm == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
 
         s = (EState*)strm->state;
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
@@ -4455,24 +4455,24 @@ save_state_and_return:
             return BZ_PARAM_ERROR;
         }
 
-        if (s->arr1 != NULL)
+        if (s->arr1 != nullptr)
         {
             BZFREE(s->arr1);
         }
 
-        if (s->arr2 != NULL)
+        if (s->arr2 != nullptr)
         {
             BZFREE(s->arr2);
         }
 
-        if (s->ftab != NULL)
+        if (s->ftab != nullptr)
         {
             BZFREE(s->ftab);
         }
 
         BZFREE(strm->state);
 
-        strm->state = NULL;
+        strm->state = nullptr;
 
         return BZ_OK;
     }
@@ -4482,14 +4482,14 @@ save_state_and_return:
     {
         DState* s;
 
-        if (strm == NULL)
+        if (strm == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
 
         s = (DState*)strm->state;
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
@@ -4499,23 +4499,23 @@ save_state_and_return:
             return BZ_PARAM_ERROR;
         }
 
-        if (s->tt   != NULL)
+        if (s->tt   != nullptr)
         {
             BZFREE(s->tt);
         }
 
-        if (s->ll16 != NULL)
+        if (s->ll16 != nullptr)
         {
             BZFREE(s->ll16);
         }
 
-        if (s->ll4  != NULL)
+        if (s->ll4  != nullptr)
         {
             BZFREE(s->ll4);
         }
 
         BZFREE(strm->state);
-        strm->state = NULL;
+        strm->state = nullptr;
 
         return BZ_OK;
     }
@@ -4526,14 +4526,14 @@ save_state_and_return:
         Bool progress;
         EState* s;
 
-        if (strm == NULL)
+        if (strm == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
 
         s = (EState*)strm->state;
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
@@ -4878,34 +4878,34 @@ preswitch:
      void* unused,
      int   nUnused)
     {
-        bzFile* bzf = NULL;
+        bzFile* bzf = nullptr;
         int     ret;
 
         BZ_SETERR(BZ_OK);
 
-        if (f == NULL ||
+        if (f == nullptr ||
             (smallValue != 0 && smallValue != 1) ||
             (verbosity < 0 || verbosity > 4) ||
-            (unused == NULL && nUnused != 0) ||
-            (unused != NULL && (nUnused < 0 || nUnused > BZ_MAX_UNUSED)))
+            (unused == nullptr && nUnused != 0) ||
+            (unused != nullptr && (nUnused < 0 || nUnused > BZ_MAX_UNUSED)))
         {
             BZ_SETERR(BZ_PARAM_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         // if (ferror(f))
         if (!f->good())
         {
             BZ_SETERR(BZ_IO_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         bzf = (CompressionBZip2::bzFile*)malloc(sizeof(bzFile));
 
-        if (bzf == NULL)
+        if (bzf == nullptr)
         {
             BZ_SETERR(BZ_MEM_ERROR);
-            return NULL;
+            return nullptr;
         };
 
         BZ_SETERR(BZ_OK);
@@ -4914,17 +4914,17 @@ preswitch:
 
         bzf->handleIn       = f;
 
-        bzf->handleOut      = NULL;
+        bzf->handleOut      = nullptr;
 
         bzf->bufN          = 0;
 
         bzf->writing       = BZ_False;
 
-        bzf->strm.bzalloc  = NULL;
+        bzf->strm.bzalloc  = nullptr;
 
-        bzf->strm.bzfree   = NULL;
+        bzf->strm.bzfree   = nullptr;
 
-        bzf->strm.opaque   = NULL;
+        bzf->strm.opaque   = nullptr;
 
         while (nUnused > 0)
         {
@@ -4940,7 +4940,7 @@ preswitch:
         {
             BZ_SETERR(ret);
             free(bzf);
-            return NULL;
+            return nullptr;
         };
 
         bzf->strm.avail_in = bzf->bufN;
@@ -4960,7 +4960,7 @@ preswitch:
 
         BZ_SETERR(BZ_OK);
 
-        if (bzf == NULL)
+        if (bzf == nullptr)
         {
             BZ_SETERR(BZ_OK);
             return;
@@ -5018,7 +5018,7 @@ preswitch:
 
         BZ_SETERR(BZ_OK);
 
-        if (bzf == NULL || buf == NULL || len < 0)
+        if (bzf == nullptr || buf == nullptr || len < 0)
         {
             BZ_SETERR(BZ_PARAM_ERROR);
             return 0;
@@ -5129,14 +5129,14 @@ preswitch:
         Bool    corrupt;
         DState* s;
 
-        if (strm == NULL)
+        if (strm == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
 
         s = (DState*)strm->state;
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
@@ -5776,7 +5776,7 @@ return_notr:
             return BZ_CONFIG_ERROR;
         }
 
-        if (strm == NULL)
+        if (strm == nullptr)
         {
             return BZ_PARAM_ERROR;
         }
@@ -5791,19 +5791,19 @@ return_notr:
             return BZ_PARAM_ERROR;
         }
 
-        if (strm->bzalloc == NULL)
+        if (strm->bzalloc == nullptr)
         {
             strm->bzalloc = default_bzalloc;
         }
 
-        if (strm->bzfree == NULL)
+        if (strm->bzfree == nullptr)
         {
             strm->bzfree = default_bzfree;
         }
 
         s = (DState*)BZALLOC(sizeof(DState));
 
-        if (s == NULL)
+        if (s == nullptr)
         {
             return BZ_MEM_ERROR;
         }
@@ -5819,9 +5819,9 @@ return_notr:
         strm->total_out_lo32     = 0;
         strm->total_out_hi32     = 0;
         s->smallDecompress = (Bool)smallValue;
-        s->ll4                   = NULL;
-        s->ll16                  = NULL;
-        s->tt                    = NULL;
+        s->ll4                   = nullptr;
+        s->ll16                  = nullptr;
+        s->tt                    = nullptr;
         s->currBlockNo           = 0;
         s->verbosity             = verbosity;
 
@@ -5866,7 +5866,7 @@ return_notr:
 
     void CompressionBZip2::default_bzfree(void* /*opaque*/, void* addr)
     {
-        if (addr != NULL)
+        if (addr != nullptr)
         {
             free(addr);
         }

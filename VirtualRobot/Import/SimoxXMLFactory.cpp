@@ -356,7 +356,7 @@ namespace VirtualRobot
 
         // limitless attribute
        rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
-       if (llAttr != NULL)
+       if (llAttr != nullptr)
        {
            limitless = BaseIO::isTrue(llAttr->value());
            float dist = jointLimitHi/float(M_PI)*180.0f - jointLimitLo/float(M_PI)*180.0f;
@@ -445,9 +445,9 @@ namespace VirtualRobot
         }
 
         rapidxml::xml_node<>* node = jointXMLNode->first_node();
-        rapidxml::xml_node<>* tmpXMLNodeAxis = NULL;
-        rapidxml::xml_node<>* tmpXMLNodeTranslation = NULL;
-        rapidxml::xml_node<>* limitsNode = NULL;
+        rapidxml::xml_node<>* tmpXMLNodeAxis = nullptr;
+        rapidxml::xml_node<>* tmpXMLNodeTranslation = nullptr;
+        rapidxml::xml_node<>* limitsNode = nullptr;
 
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
@@ -730,7 +730,7 @@ namespace VirtualRobot
         Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 
         rapidxml::xml_node<>* node = robotNodeXMLNode->first_node();
-        rapidxml::xml_node<>* jointNodeXML = NULL;
+        rapidxml::xml_node<>* jointNodeXML = nullptr;
 
         std::vector< rapidxml::xml_node<>* > sensorTags;
 
@@ -852,7 +852,6 @@ namespace VirtualRobot
         //float coordAxisFactor = 1.0f;
         //std::string coordAxisText = "";
         //std::string visuCoordType = "";
-        std::string visuFileType = "";
         std::string visuFile = "";
         rapidxml::xml_attribute<>* attr;
         VisualizationPtr visualizationNode;
@@ -875,10 +874,6 @@ namespace VirtualRobot
 
             if (visuFileXMLNode)
             {
-                attr = visuFileXMLNode->first_attribute("type", 0, false);
-                THROW_VR_EXCEPTION_IF(!attr, "Missing 'type' attribute in <Visualization> tag." << endl);
-                visuFileType = attr->value();
-                BaseIO::getLowerCase(visuFileType);
                 visuFile = BaseIO::processFileNode(visuFileXMLNode, basePath);
             }
 
@@ -886,16 +881,8 @@ namespace VirtualRobot
 
             if (useColModel && visuFile != "")
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, NULL);
-
-                if (visualizationFactory)
-                {
-                    visualizationNode = visualizationFactory->createVisualizationFromFile(visuFile);
-                }
-                else
-                {
-                    VR_WARNING << "VisualizationFactory of type '" << visuFileType << "' not present. Ignoring Visualization data." << endl;
-                }
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
+                visualizationNode = visualizationFactory->createVisualizationFromFile(visuFile);
             }
         }
 
@@ -932,7 +919,6 @@ namespace VirtualRobot
                 boost::filesystem::path filenameBasePath(basePath);
 
                 boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
-                VR_INFO << "Searching robot: " << filenameNewComplete.string() << endl;
 
                 try
                 {
@@ -943,6 +929,7 @@ namespace VirtualRobot
                     THROW_VR_EXCEPTION("Error while processing file <" << filenameNewComplete.string() << ">." << endl);
                 }
 
+                VR_INFO << "Loading robot part: " << filenameNewComplete.string() << endl;
                 RobotPtr r = loadRobotSimoxXML(filenameNewComplete.string(), loadMode);
                 THROW_VR_EXCEPTION_IF(!r, "Could not add child-from-robot due to failed loading of robot from file" << childrenFromRobot[i].filename);
                 RobotNodePtr root = r->getRootNode();
@@ -962,8 +949,6 @@ namespace VirtualRobot
 
                 for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
                 {
-                    //(*ns)->clone(robo);
-
                     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(*ns);
                     if (js)
                     {
@@ -1115,7 +1100,7 @@ namespace VirtualRobot
 
         //std::vector<rapidxml::xml_node<>* > robotNodeSetNodes;
         //std::vector<rapidxml::xml_node<>* > endeffectorNodes;
-        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(NULL, 0, false);
+        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(nullptr, 0, false);
 
         while (XMLNode)
         {
@@ -1171,7 +1156,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);
             }
 
-            XMLNode = XMLNode->next_sibling(NULL, 0, false);
+            XMLNode = XMLNode->next_sibling(nullptr, 0, false);
         }
 
         THROW_VR_EXCEPTION_IF(robotNodes.empty(), "No RobotNodes defined in Robot.");

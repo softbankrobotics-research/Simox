@@ -68,7 +68,7 @@ namespace MotionPlanning
         // todo: is this value a good guess?
         tryGraspsDistance2 = 600.0f * 600.0f;
 
-        gcpOject = VirtualRobot::Obstacle::createBox(1.0f, 1.0f, 1.0f, VirtualRobot::Visualization::Color::Red(), "", eef->getCollisionChecker());
+        gcpOject = VirtualRobot::Obstacle::createBox(1.0f, 1.0f, 1.0f, VirtualRobot::Visualization::Color::Red(), eef->getCollisionChecker());
     }
 
     GraspRrt::~GraspRrt()
@@ -268,7 +268,7 @@ namespace MotionPlanning
         cspace->getRobot()->setUpdateVisualization(false);
 
         clock_t startClock = clock();
-        //time_t startTime = time(NULL);
+        //time_t startTime = time(nullptr);
 
         bool bStopLoop = false;
 
@@ -297,7 +297,7 @@ namespace MotionPlanning
         }
         while (!bStopLoop);
 
-        //time_t endTime = time(NULL);
+        //time_t endTime = time(nullptr);
         clock_t endClock = clock();
 
         //long diffClock = (long)(((float)(endClock - startClock) / (float)CLOCKS_PER_SEC) * 1000.0);
@@ -482,7 +482,7 @@ namespace MotionPlanning
         MathTools::Eigen::Matrix4f2PosQuat(mObjPose, m_pTmpPose);
         CSpaceNode *nnNode = findNearestNeighborCart(m_pTmpPose);
 
-        if (nnNode == NULL)
+        if (nnNode == nullptr)
             return eError;
 
         // mark nn node, so it will never be selected again in findNearestNeighborCart()

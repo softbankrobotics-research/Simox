@@ -8,7 +8,6 @@
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/VisualizationSet.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <Gui/ViewerInterface.h>
 
@@ -29,15 +28,12 @@ public:
     reachabilityWindow(std::string& sRobotFile, std::string& reachFile, Eigen::Vector3f& axisTCP);
     ~reachabilityWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
-
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
     void resetSceneryAll();
     void selectRobot();
     void createReach();

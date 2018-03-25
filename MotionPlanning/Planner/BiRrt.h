@@ -48,31 +48,31 @@ namespace MotionPlanning
             \param modeA Specify the RRT method that should be used to build the first tree
             \param modeB Specify the RRT method that should be used to build the second tree
         */
-        BiRrt(CSpaceSampledPtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect);
+        BiRrt(CSpacePtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect, float samplingSize = -1);
         virtual ~BiRrt();
 
         /*!
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        virtual bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false);
+        virtual void printConfig(bool printOnlyParams = false) override;
 
-        virtual void reset();
+        virtual void reset() override;
 
         //! set start configuration
-        virtual bool setStart(const Eigen::VectorXf& c);
+        virtual bool setStart(const Eigen::VectorXf& c) override;
 
         //! set goal configuration
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        virtual bool setGoal(const Eigen::VectorXf& c) override;
 
         CSpaceTreePtr getTree2();
 
     protected:
 
-        virtual bool createSolution(bool bQuiet = false);
+        virtual bool createSolution(bool bQuiet = false) override;
 
         CSpaceTreePtr tree2;                    //!< the second tree
 

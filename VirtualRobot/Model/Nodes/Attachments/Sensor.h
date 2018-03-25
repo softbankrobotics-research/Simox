@@ -31,16 +31,14 @@ namespace VirtualRobot
     {
         friend class ModelNode;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
-         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use. If empty, the default visualization factory is used.
          */
-        Sensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
+        Sensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
-    public:
         /*!
          * Destructor.
          */
@@ -62,15 +60,11 @@ namespace VirtualRobot
          *
          * @return "Sensor".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
-
-
-    private:
-        void initVisualization();
+        virtual ModelNodeAttachmentPtr clone() override;
     };
-    
+
     typedef std::shared_ptr<Sensor> SensorPtr;
 }
 

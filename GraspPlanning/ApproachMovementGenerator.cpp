@@ -15,8 +15,8 @@ using namespace std;
 namespace GraspPlanning
 {
 
-    ApproachMovementGenerator::ApproachMovementGenerator(VirtualRobot::ModelPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape)
-        : object(object), eef(eef), graspPreshape(graspPreshape)
+    ApproachMovementGenerator::ApproachMovementGenerator(VirtualRobot::ModelPtr obj, VirtualRobot::EndEffectorPtr endef, std::string graspPres)
+        : object{std::move(obj)}, eef{std::move(endef)}, graspPreshape{std::move(graspPres)}
     {
         name = "ApproachMovementGenerator";
         THROW_VR_EXCEPTION_IF(!object, "NULL object?!");
@@ -49,7 +49,7 @@ namespace GraspPlanning
     }
 
 
-    VirtualRobot::RobotPtr ApproachMovementGenerator::getEEFRobotClone()
+    const VirtualRobot::RobotPtr& ApproachMovementGenerator::getEEFRobotClone()
     {
         return eefRobot;
     }
@@ -102,27 +102,27 @@ namespace GraspPlanning
         return eef_cloned->getGCP()->getName();
     }
 
-    VirtualRobot::ModelPtr ApproachMovementGenerator::getObject()
+    const VirtualRobot::ModelPtr& ApproachMovementGenerator::getObject()
     {
         return object;
     }
 
-    VirtualRobot::EndEffectorPtr ApproachMovementGenerator::getEEF()
+    const VirtualRobot::EndEffectorPtr& ApproachMovementGenerator::getEEF()
     {
         return eef_cloned;
     }
 
-    VirtualRobot::EndEffectorPtr ApproachMovementGenerator::getEEFOriginal()
+    const VirtualRobot::EndEffectorPtr& ApproachMovementGenerator::getEEFOriginal()
     {
         return eef;
     }
 
-    Eigen::Vector3f ApproachMovementGenerator::getApproachDirGlobal()
+    const Eigen::Vector3f& ApproachMovementGenerator::getApproachDirGlobal()
     {
         return approachDirGlobal;
     }
 
-    std::string ApproachMovementGenerator::getName()
+    const std::string& ApproachMovementGenerator::getName()
     {
         return name;
     }

@@ -3,14 +3,9 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Workspace/Manipulability.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
-
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/SoQt.h>
 
 #include <string>
 #include <iostream>
@@ -103,7 +98,7 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 
     reachSpace->print();
 
-    time_t time_now = time(NULL);
+    time_t time_now = time(nullptr);
     struct tm* timeinfo;
     timeinfo = localtime(&time_now);
     char buffer [255];
@@ -113,11 +108,13 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
     while (true)
     {
         //reachSpace->addRandomTCPPoses(steps);
+        VR_INFO << "Adding " << steps << " new random poses" << std::endl;
         reachSpace->addRandomTCPPoses(steps, QThread::idealThreadCount() < 1 ? 1 : QThread::idealThreadCount(), true);
 
         reachSpace->print();
         std::stringstream ss;
         ss << buffer << "_" << nr << ".bin";
+        VR_INFO << "Saving current state of reachability map to " << ss.str() << std::endl;
         reachSpace->save(ss.str());
         nr++;
     }
@@ -192,7 +189,10 @@ int main(int argc, char* argv[])
     }
 
     reachabilityWindow rw(filenameRob, filenameReach, axisTCP);
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
+
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

@@ -42,9 +42,9 @@ namespace VirtualRobot
     public:
         ConstrainedOptimizationIK(RobotPtr& robot, const JointSetPtr& nodeSet, float timeout = 0.5, float globalTolerance = std::numeric_limits<float>::quiet_NaN());
 
-        bool initialize();
-        bool solve(bool stepwise = false);
-        bool solveStep();
+        virtual bool initialize() override;
+        virtual bool solve(bool stepwise = false) override;
+        virtual bool solveStep() override;
 
         /**
          * This factor limits the interval around the initial robot configuration where random samplings are placed.

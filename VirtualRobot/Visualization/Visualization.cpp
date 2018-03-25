@@ -307,7 +307,7 @@ namespace VirtualRobot
         {
             std::string tmpFilename = filename;
             BaseIO::makeRelativePath(basePath, tmpFilename);
-            ss << pre << t << "<File type='" << VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType() << "'>" << tmpFilename << "</File>\n";
+            ss << pre << t << "<File type='" << VisualizationFactory::getInstance()->getVisualizationType() << "'>" << tmpFilename << "</File>\n";
         }
         else if (primitives.size() != 0)
         {
@@ -336,7 +336,12 @@ namespace VirtualRobot
 
     bool DummyVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        VR_ERROR << "NYI..." << endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 

@@ -33,19 +33,18 @@ namespace SimoxGui
     */
     class SIMOX_GUI_IMPORT_EXPORT CoinViewerFactory  : public ViewerFactory
     {
-    public:
+        friend class ViewerFactory;
+    protected:
         CoinViewerFactory() = default;
+
+    public:
         virtual ~CoinViewerFactory() = default;
 
-        ViewerInterfacePtr createViewer(QWidget *parent = NULL) const override;
-
-        static std::string getName();
-        static ViewerFactoryPtr createInstance(void*);
-    private:
-        static SubClassRegistry registry;
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) const override;
     };
 
     typedef std::shared_ptr<CoinViewerFactory> CoinViewerFactoryPtr;
+
 
 } // namespace SimoxGui
 

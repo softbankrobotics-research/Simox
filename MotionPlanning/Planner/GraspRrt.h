@@ -73,7 +73,7 @@ namespace MotionPlanning
                  VirtualRobot::EndEffectorPtr eef,
                  VirtualRobot::ObstaclePtr object,
                  VirtualRobot::BasicGraspQualityMeasurePtr measure,
-				 std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
+                 std::vector<VirtualRobot::ModelPtr> graspCollisionObjects,
                  float probabGraspHypothesis = 0.1f,
                  float graspQualityMinScore = 0.01f);
 
@@ -83,17 +83,17 @@ namespace MotionPlanning
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        virtual bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false);
-        virtual bool setStart(const Eigen::VectorXf& c);
+        virtual void printConfig(bool printOnlyParams = false) override;
+        virtual bool setStart(const Eigen::VectorXf& c) override;
 
         //! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        virtual bool setGoal(const Eigen::VectorXf& c) override;
 
         //! reset the planner
-        virtual void reset();
+        virtual void reset() override;
 
         /*!
             Returns the internal representation of the pose sphere.
@@ -235,9 +235,9 @@ namespace MotionPlanning
         float calculateGraspScore(const Eigen::VectorXf& c, int nId = -1, bool bStoreGraspInfoOnSuccess = false);
 
 
-		std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
+        std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
 
-        virtual Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID);
+        virtual Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID) override;
 
         void printGraspInfo(GraspInfo& GrInfo);
 

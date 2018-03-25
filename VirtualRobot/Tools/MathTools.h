@@ -114,6 +114,7 @@ namespace VirtualRobot
         */
         void VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y, Eigen::Matrix4f& m);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(float r, float p, float y);
+        Eigen::Matrix3f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen3f(float r, float p, float y);
 
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT rpy2eigen4f(const Eigen::Vector3f &rpy);
 
@@ -202,8 +203,6 @@ namespace VirtualRobot
 
             Eigen::Vector3f p;  // point
             Eigen::Vector3f n;  // normal (unit length)
-
-            virtual VisualizationPtr getVisualization(float extend, bool gird = false) const;
         };
 
         //! Create a floor plane

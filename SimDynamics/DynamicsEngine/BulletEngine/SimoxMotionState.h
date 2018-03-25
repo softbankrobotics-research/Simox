@@ -26,7 +26,10 @@
 #include "../../SimDynamics.h"
 #include "../DynamicsObject.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include <btBulletCollisionCommon.h>
+#pragma GCC diagnostic pop
 
 //#include <VirtualRobot/Nodes/RobotNodeActuator.h>
 #include <VirtualRobot/Model/Frame.h>
@@ -76,7 +79,7 @@ namespace SimDynamics
             Bullet sets and gets the rigid body world pose using
             setWorldTransform() and getWorldTransform().
         */
-        virtual void setWorldTransform(const btTransform& worldPose);
+        virtual void setWorldTransform(const btTransform& worldPose) override;
 
         /*!
             Interface for getting poses of rigid body and VirtualRobot objects.
@@ -84,7 +87,7 @@ namespace SimDynamics
             Bullet sets and gets the rigid body world pose using
             setWorldTransform() and getWorldTransform().
         */
-        virtual void getWorldTransform(btTransform& worldPose) const;
+        virtual void getWorldTransform(btTransform& worldPose) const override;
 
         /*!
             Set center of mass.

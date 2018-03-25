@@ -51,7 +51,7 @@ namespace VirtualRobot
             \param maxLoops How often should we try.
             \return true on success
         */
-        virtual bool solve(const Eigen::Matrix4f& globalPose, CartesianSelection selection = All, int maxLoops = 1);
+        virtual bool solve(const Eigen::Matrix4f& globalPose, CartesianSelection selection = All, int maxLoops = 1) override;
 
         /*!
             This method solves the IK up to the specified max error. On success, the joints of the the corresponding RobotNodeSet are set to the IK solution.
@@ -76,7 +76,7 @@ namespace VirtualRobot
         //! This method is called by the constructor and can be used in derived classes for initialization.
         virtual void _init();
 
-        virtual bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1);
+        virtual bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1) override;
 
         FramePtr coordSystem;
         JacobiProvider::InverseJacobiMethod invJacMethod;

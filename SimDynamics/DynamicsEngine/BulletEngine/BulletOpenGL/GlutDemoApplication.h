@@ -26,11 +26,11 @@ public:
 
     BT_DECLARE_ALIGNED_ALLOCATOR();
 
-    void specialKeyboard(int key, int x, int y);
+    virtual void specialKeyboard(int key, int x, int y) override;
 
-    virtual void swapBuffers();
+    virtual void swapBuffers() override;
 
-    virtual void    updateModifierKeys();
+    virtual void updateModifierKeys() override;
 
 };
 #endif //GLUT_DEMO_APPLICATION_H

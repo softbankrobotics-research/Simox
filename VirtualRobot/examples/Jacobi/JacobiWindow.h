@@ -7,7 +7,6 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "Gui/ViewerInterface.h"
 
 #include <string.h>
@@ -27,9 +26,6 @@ public:
     JacobiWindow(std::string& sRobotFilename);
     ~JacobiWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
-
     SimoxGui::ViewerInterfacePtr getViewer()
     {
         return viewer;
@@ -40,7 +36,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
     void collisionModel();

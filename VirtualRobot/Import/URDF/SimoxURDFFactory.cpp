@@ -215,7 +215,7 @@ namespace VirtualRobot
     {
         const float scale = 1000.0f; // mm
         VirtualRobot::VisualizationPtr res;
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr factory = VisualizationFactory::getInstance();
 
         if (!g)
         {
@@ -281,7 +281,7 @@ namespace VirtualRobot
     VisualizationPtr SimoxURDFFactory::convertVisuArray(std::vector<Visu> visu_array, const string &basePath)
     {
         VirtualRobot::VisualizationPtr res;
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
+        VisualizationFactoryPtr factory = VisualizationFactory::getInstance();
 
         if (visu_array.size()==0)
         {

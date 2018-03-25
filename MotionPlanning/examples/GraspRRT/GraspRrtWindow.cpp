@@ -28,15 +28,6 @@
 #include <sstream>
 
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
-
-// need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
-
 using namespace std;
 using namespace VirtualRobot;
 
@@ -46,7 +37,7 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
                                const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                                const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
                                const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -111,7 +102,7 @@ void GraspRrtWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -154,14 +145,14 @@ void GraspRrtWindow::buildVisu()
     viewer->clearLayer("scene");
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
 
-    VisualizationFactoryPtr f = VisualizationFactory::getGlobalVisualizationFactory();
+    VisualizationFactoryPtr f = VisualizationFactory::getInstance();
     if (!f)
         return;
 
     if (scene)
     {
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(scene, colModel);
-        viewer->addVisualization("scene", "scene", v);
+        auto v = scene->getAllVisualizations(colModel);
+        viewer->addVisualizations("scene", v);
     }
 
     viewer->clearLayer("grasps");
@@ -169,8 +160,8 @@ void GraspRrtWindow::buildVisu()
     if (UI.checkBoxGrasps->isChecked() && eef && grasps.size()>0)
     {
         GraspSetPtr gs(new GraspSet("tmp", robot->getName(), eef->getName(), grasps));
-        VisualizationSetPtr v = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(gs, eef, targetObject->getGlobalPose(), ModelLink::Full);
-        viewer->addVisualization("scene", "scene", v);
+        auto v = gs->getVisualization(ModelLink::Full, eef, targetObject->getGlobalPose());
+        viewer->addVisualization("scene", v);
     }
 
 /*
@@ -193,18 +184,11 @@ void GraspRrtWindow::buildVisu()
     redraw();
 }
 
-int GraspRrtWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
 
 void GraspRrtWindow::quit()
 {
     std::cout << "GraspRrtWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void GraspRrtWindow::loadSceneWindow()
@@ -637,12 +621,7 @@ void GraspRrtWindow::buildRRTVisu()
     }
 
 
-    MotionPlanning::RrtWorkspaceVisualizationPtr w;
-    #ifdef Simox_USE_COIN_VISUALIZATION
-        w.reset(new MotionPlanning::CoinRrtWorkspaceVisualization(robot, cspace, eef->getGCP()->getName()));
-    #else
-        VR_ERROR << "NO VISUALIZATION IMPLEMENTATION SPECIFIED..." << endl;
-    #endif
+    MotionPlanning::RrtWorkspaceVisualizationPtr w(new MotionPlanning::RrtWorkspaceVisualization(robot, cspace, eef->getTcp()->getName()));
 
 
     if (UI.checkBoxShowRRT->isChecked())
@@ -669,7 +648,7 @@ void GraspRrtWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt","solution", wv);
+        viewer->addVisualization("rrt", wv);
     }
 }
 

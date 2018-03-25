@@ -22,6 +22,8 @@ subject to the following restrictions:
 
 #include "GlutStuff.h"
 #include "GL_ShapeDrawer.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "BulletCollision/CollisionShapes/btPolyhedralConvexShape.h"
 #include "BulletCollision/CollisionShapes/btTriangleMeshShape.h"
 #include "BulletCollision/CollisionShapes/btBoxShape.h"
@@ -36,6 +38,7 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionShapes/btStaticPlaneShape.h"
 #include "BulletCollision/CollisionShapes/btMultiSphereShape.h"
 #include "BulletCollision/CollisionShapes/btConvexPolyhedron.h"
+#pragma GCC diagnostic pop
 
 ///
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
@@ -213,7 +216,7 @@ public:
     {
     }
 
-    virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex)
+    virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex) override
     {
 
         (void)triangleIndex;
@@ -255,7 +258,7 @@ public:
 class TriangleGlDrawcallback : public btInternalTriangleIndexCallback
 {
 public:
-    virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int  triangleIndex)
+    virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int  triangleIndex) override
     {
         (void)triangleIndex;
         (void)partId;

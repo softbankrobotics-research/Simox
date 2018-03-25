@@ -36,16 +36,16 @@ namespace VirtualRobot
                       const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
                       float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
-        Eigen::MatrixXf getJacobianMatrix();
+        virtual Eigen::MatrixXf getJacobianMatrix() override;
         Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
-        Eigen::VectorXf getError(float stepSize = 1.0f);
-        bool checkTolerances();
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        virtual bool checkTolerances() override;
 
         const Eigen::Matrix4f& getTransformation() const;
         const Eigen::Matrix<float, 6, 2>& getBounds() const;
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
+        virtual double optimizationFunction(unsigned int id) override;
+        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
         virtual VisualizationPtr getVisualization() const override;
 
@@ -62,7 +62,7 @@ namespace VirtualRobot
 
         RobotPtr robot;
         JointSetPtr nodeSet;
-		FramePtr eef;
+        FramePtr eef;
 
         Eigen::Matrix4f transformation;
         Eigen::Matrix4f eefOffset;

@@ -8,18 +8,18 @@
 #include "VisualizationSet.h"
 #include "Visualization.h"
 #include "VisualizationFactory.h"
+#include "TriMeshModel.h"
 
 namespace VirtualRobot
 {
 
     VisualizationSet::VisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationGroup(visualizations),
+        : VisualizationGroup(),
           Visualization()
     {
-        // TODO
         for (auto& visu : visualizations)
         {
-            visu->setIsInVisualizationSet(true);
+            addVisualization(visu);
         }
     }
 
@@ -31,6 +31,64 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::addVisualization(const VisualizationPtr &visu)
+    {
+        if (visu->isInVisualizationSet())
+        {
+            VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
+        }
+        else
+        {
+            VisualizationGroup::addVisualization(visu);
+            visu->setIsInVisualizationSet(true);
+        }
+    }
+
+    bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
+    {
+        return VisualizationGroup::containsVisualization(visu);
+    }
+
+    bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
+    {
+        if (VisualizationGroup::removeVisualization(visu))
+        {
+            visu->setIsInVisualizationSet(false);
+            return true;
+        }
+        return false;
+    }
+
+    bool VisualizationSet::removeVisualization(size_t index)
+    {
+        return this->removeVisualization(this->at(index));
+    }
+
+    std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
+    {
+        return VisualizationGroup::getVisualizations();
+    }
+
+    VisualizationPtr VisualizationSet::at(size_t index) const
+    {
+        return VisualizationGroup::at(index);
+    }
+
+    VisualizationPtr VisualizationSet::operator[](size_t index) const
+    {
+        return VisualizationGroup::operator [](index);
+    }
+
+    bool VisualizationSet::empty() const
+    {
+        return VisualizationGroup::empty();
+    }
+
+    size_t VisualizationSet::size() const
+    {
+        return VisualizationGroup::size();
+    }
+
     Eigen::Matrix4f VisualizationSet::getGlobalPose() const
     {
         return VisualizationGroup::getGlobalPose();
@@ -39,6 +97,11 @@ namespace VirtualRobot
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
         VisualizationGroup::setGlobalPose(m);
+    }
+
+    void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
+    {
+        VisualizationGroup::setGlobalPoseNoUpdate(m);
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -106,12 +169,19 @@ namespace VirtualRobot
 
     bool VisualizationSet::isSelected() const
     {
-
+        for (auto& visu : visualizations)
+        {
+            if (!visu->isSelected())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     void VisualizationSet::scale(const Eigen::Vector3f &s)
     {
-
+        VisualizationGroup::scale(s);
     }
 
     void VisualizationSet::shrinkFatten(float offset)
@@ -124,7 +194,13 @@ namespace VirtualRobot
 
     std::vector<Primitive::PrimitivePtr> VisualizationSet::getPrimitives() const
     {
-        return VisualizationGroup::getPrimitives();
+        std::vector<Primitive::PrimitivePtr> ret;
+        for (const auto& visu : visualizations)
+        {
+            auto p = visu->getPrimitives();
+            ret.insert(ret.end(), p.begin(), p.end());
+        }
+        return ret;
     }
 
     BoundingBox VisualizationSet::getBoundingBox() const
@@ -132,9 +208,50 @@ namespace VirtualRobot
         return VisualizationGroup::getBoundingBox();
     }
 
+    Eigen::Vector3f transformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
+    {
+        return (transform * Eigen::Vector4f(pos.x(), pos.y(), pos.z(), 1)).block<3, 1>(0, 0);
+    }
+
     TriMeshModelPtr VisualizationSet::getTriMeshModel() const
     {
-        return VisualizationGroup::getTriMeshModel();
+        TriMeshModelPtr mesh(new TriMeshModel);
+        for (const auto& visu : getVisualizations())
+        {
+            const auto& tm = visu->getTriMeshModel();
+            Eigen::Matrix4f transform = visu->getGlobalPose() * getGlobalPose().inverse();
+            for (const auto& face : tm->faces)
+            {
+                TriangleFace cloned;
+                cloned.id1 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id1)));
+                cloned.id2 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id2)));
+                cloned.id3 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id3)));
+
+                cloned.normal = face.normal;
+
+                if (tm->colors.size() > face.idColor1 && tm->colors.size() > face.idColor2 && tm->colors.size() > face.idColor3)
+                {
+                    cloned.idColor1 = mesh->addColor(tm->colors.at(face.idColor1));
+                    cloned.idColor2 = mesh->addColor(tm->colors.at(face.idColor2));
+                    cloned.idColor3 = mesh->addColor(tm->colors.at(face.idColor3));
+                }
+
+                if (tm->normals.size() > face.idNormal1 && tm->normals.size() > face.idNormal2 && tm->normals.size() > face.idNormal3)
+                {
+                    cloned.idNormal1 = mesh->addNormal(tm->normals.at(face.idNormal1));
+                    cloned.idNormal2 = mesh->addNormal(tm->normals.at(face.idNormal2));
+                    cloned.idNormal3 = mesh->addNormal(tm->normals.at(face.idNormal3));
+                }
+
+                if (tm->materials.size() > face.idMaterial)
+                {
+                    cloned.idMaterial = mesh->addMaterial(tm->materials.at(face.idMaterial));
+                }
+
+                mesh->addFace(cloned);
+            }
+        }
+        return mesh;
     }
 
     int VisualizationSet::getNumFaces() const
@@ -145,14 +262,6 @@ namespace VirtualRobot
     void VisualizationSet::print() const
     {
         VisualizationGroup::print();
-    }
-
-    void VisualizationSet::createTriMeshModel()
-    {
-        for (auto& visu : visualizations)
-        {
-            visu->createTriMeshModel();
-        }
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
@@ -171,13 +280,7 @@ namespace VirtualRobot
         {
             clonedVisus.push_back(visu->clone());
         }
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(clonedVisus);
-        visu->setVisible(this->isVisible());
-        visu->setStyle(this->getStyle());
-        visu->setColor(this->getColor());
-        visu->setFilename(this->getFilename(), this->usedBoundingBoxVisu());
-        visu->setUpdateVisualization(this->getUpdateVisualizationStatus());
-        return visu;
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
@@ -207,13 +310,23 @@ namespace VirtualRobot
 
     size_t DummyVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return 0;
     }
 
     void DummyVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
@@ -259,6 +372,11 @@ namespace VirtualRobot
     bool DummyVisualizationSet::usedBoundingBoxVisu() const
     {
         return usedBoundingBox;
+    }
+
+    TriMeshModelPtr DummyVisualizationSet::getTriMeshModel() const
+    {
+        return TriMeshModelPtr(new TriMeshModel);
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const

@@ -25,7 +25,7 @@ namespace VirtualRobot
     CollisionCheckerPQP::~CollisionCheckerPQP()
     {
         delete pqpChecker;
-        pqpChecker = NULL;
+        pqpChecker = nullptr;
     }
 
 
@@ -160,7 +160,7 @@ namespace VirtualRobot
     }
     bool CollisionCheckerPQP::CheckContinuousCollision( CollisionModelPtr model1, SbMatrix &mGoalPose1, CollisionModelPtr model2, SbMatrix &mGoalPose2, float &fStoreTOC )
     {
-        if (model1==NULL || model2==NULL)
+        if (model1==nullptr || model2==nullptr)
         {
             printf ("CollisionCheckerPQP:CheckContinuousCollision - NULL data...\n");
             return false;
@@ -173,7 +173,7 @@ namespace VirtualRobot
 
         PQP::PQP_ModelPtr m1 = model1->getCollisionModelImplementation()->GetModel();
         PQP::PQP_ModelPtr m2 = model2->getCollisionModelImplementation()->GetModel();
-        if (m1==NULL || m2==NULL)
+        if (m1==nullptr || m2==nullptr)
         {
             printf ("CollisionCheckerPQP:CheckContinuousCollision - NULL internal data...\n");
             return false;

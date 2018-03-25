@@ -1,9 +1,6 @@
 PROJECT(Simox)
 
-cmake_minimum_required(VERSION 2.8.3)
-if(NOT ("${CMAKE_VERSION}" VERSION_LESS 2.8.12))
-    cmake_policy(SET CMP0022 OLD) # avoid INTERFACE_LINK_LIBRARIES warnings
-ENDIF()
+cmake_minimum_required(VERSION 2.8.12)
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
@@ -32,7 +29,7 @@ endif()
 
 MESSAGE(STATUS "** Simox build directory: ${Simox_BUILD_DIRECTORY}")
 add_subdirectory(VirtualRobot)
-set (SIMOX_EXPORT_TARGET_LIST simox-virtualrobot)
+list (APPEND SIMOX_EXPORT_TARGET_LIST simox-virtualrobot)
 list (APPEND Simox_LIBRARIES simox-virtualrobot)
 list(APPEND SIMOX_EXPORT_TARGET_LIST ColCheckerPQP)
 if (Simox_BUILD_MotionPlanning)
@@ -67,7 +64,6 @@ endif()
   MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARY_DIRS:${Simox_EXTERNAL_LIBRARY_DIRS}")
   MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARIES:${Simox_EXTERNAL_LIBRARIES}")
   MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARY_FLAGS:${Simox_EXTERNAL_LIBRARY_FLAGS}")
-  MESSAGE(STATUS "** Simox_EXTERNAL_CMAKE_INCLUDE:${Simox_EXTERNAL_CMAKE_INCLUDE}")
 
 add_subdirectory(doc)
 

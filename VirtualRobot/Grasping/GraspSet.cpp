@@ -250,7 +250,7 @@ namespace VirtualRobot
             visual.push_back(graspVisu);
         }
 
-        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(visual);
+        return VisualizationFactory::getInstance()->createVisualisationSet(visual);
     }
 
 } //  namespace

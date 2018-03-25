@@ -120,7 +120,7 @@ void CommandLineArguments::GetCmdLineArgument<char*>(const char* arg_name, char*
     }
     else
     {
-        val = NULL;
+        val = nullptr;
     }
 }
 

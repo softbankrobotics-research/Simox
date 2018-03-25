@@ -1,7 +1,7 @@
 
 #include "JacobiWindow.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 #include "Gui/ViewerFactory.h"
@@ -16,15 +16,8 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL), boxVisuLayer("box-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -37,13 +30,13 @@ JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box->getVisualization());
 
     box2 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box2", box2->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box2->getVisualization());
 
     box3 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, "box3", box3->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box3->getVisualization());
 
     box2TCP();
 
@@ -58,7 +51,7 @@ JacobiWindow::~JacobiWindow()
 void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
-    viewer = SimoxGui::ViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL)->createViewer(UI.frameViewer);
+    viewer = SimoxGui::ViewerFactory::getInstance()->createViewer(UI.frameViewer);
     viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
@@ -253,7 +246,7 @@ void JacobiWindow::collisionModel()
 
     if (visualization)
     {
-        viewer->addVisualization(boxVisuLayer, "colModel", visualization);
+        viewer->addVisualization(boxVisuLayer, visualization);
     }
 
     viewer->viewAll();
@@ -267,19 +260,11 @@ void JacobiWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int JacobiWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void JacobiWindow::quit()
 {
     std::cout << "JacobiWindow: Closing" << std::endl;
     this->close();
     timer->stop();
-    viewer->stop();
 }
 
 void JacobiWindow::updateKCBox()

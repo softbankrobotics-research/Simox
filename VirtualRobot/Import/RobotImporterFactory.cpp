@@ -46,7 +46,7 @@ string RobotImporterFactory::getAllFileFilters()
         vector<string> filter;
         for(string subclass: RobotImporterFactory::getSubclassList())
         {
-            filter.push_back(RobotImporterFactory::fromName(subclass, NULL)->getFileFilter());
+            filter.push_back(RobotImporterFactory::fromName(subclass, nullptr)->getFileFilter());
         }
         return boost::algorithm::join(filter, ";;");
     }
@@ -56,7 +56,7 @@ string RobotImporterFactory::getAllFileFilters()
         vector<string> filter;
         for(string subclass : RobotImporterFactory::getSubclassList())
         {
-            string extension = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
+            string extension = RobotImporterFactory::fromName(subclass, nullptr)->getFileExtension();
             filter.push_back("*." + extension);
         }
         return boost::algorithm::join(filter, " ");
@@ -66,7 +66,7 @@ string RobotImporterFactory::getAllFileFilters()
     {
         for(string subclass: RobotImporterFactory::getSubclassList())
         {
-            string subclassType = RobotImporterFactory::fromName(subclass, NULL)->getFileExtension();
+            string subclassType = RobotImporterFactory::fromName(subclass, nullptr)->getFileExtension();
 
             if (type.compare(subclassType) == 0)
             {

@@ -1,8 +1,5 @@
 
 #include "GraspQualityWindow.h"
-#ifdef Simox_USE_COIN_VISUALIZATION
-#include "GraspPlanning/Visualization/CoinVisualization/CoinConvexHullVisualization.h"
-#endif
 
 #include "GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
@@ -16,6 +13,10 @@
 #include "VirtualRobot/XML/ModelIO.h"
 #include "VirtualRobot/Visualization/Visualization.h"
 
+#include <Gui/ViewerFactory.h>
+
+#include <GraspPlanning/Visualization/ConvexHullVisualization.h>
+
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
@@ -25,19 +26,13 @@
 #include <cmath>
 #include <sstream>
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 using namespace std;
 using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
 GraspQualityWindow::GraspQualityWindow(std::string& robFile, std::string& objFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -93,7 +88,7 @@ void GraspQualityWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -145,16 +140,16 @@ void GraspQualityWindow::buildVisu()
     // robot
     if (robot)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-        viewer->addVisualization("robotLayer", "robot", visu);
+        VisualizationSetPtr visu = robot->getVisualization(colModel);
+        viewer->addVisualization("robotLayer", visu);
     }
 
     // object
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
-        viewer->addVisualization("objectLayer", "object", visu);
+        VisualizationSetPtr visu = object->getVisualization(colModel);
+        viewer->addVisualization("objectLayer", visu);
     }
 
     // friction cones
@@ -168,16 +163,9 @@ void GraspQualityWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", "cones", visu);
+        VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        viewer->addVisualization("frictionLayer", visu);
     }
-}
-
-int GraspQualityWindow::main()
-{
-    viewer->start(this);
-
-    return 0;
 }
 
 
@@ -185,7 +173,6 @@ void GraspQualityWindow::quit()
 {
     std::cout << "GraspQualityWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
     timer->stop();
 }
 
@@ -508,12 +495,10 @@ void GraspQualityWindow::showGWS()
         return;
     }
 
-    GraspPlanning::ConvexHullVisualizationPtr chv;
-    GraspPlanning::ConvexHullVisualizationPtr chv2;
-#ifdef Simox_USE_COIN_VISUALIZATION
-    chv.reset(new GraspPlanning::CoinConvexHullVisualization(ch, true));
-    chv2.reset(new GraspPlanning::CoinConvexHullVisualization(ch, false));
-#endif
+    GraspPlanning::ConvexHullVisualizationPtr chv(new GraspPlanning::ConvexHullVisualization(ch, true));
+    GraspPlanning::ConvexHullVisualizationPtr chv2(new GraspPlanning::ConvexHullVisualization(ch, false));
+    viewer->addVisualization("gws", chv->getVisualization());
+    viewer->addVisualization("ows", chv2->getVisualization());
 }
 
 void GraspQualityWindow::showOWS()

@@ -48,7 +48,6 @@ namespace VirtualRobot
 
         virtual void addVisualization(const VisualizationPtr& visu) override;
         virtual bool removeVisualization(const VisualizationPtr& visu) override;
-        virtual bool removeVisualization(size_t index) override;
 
         virtual VisualizationPtr clone() const override;
 
@@ -78,7 +77,6 @@ namespace VirtualRobot
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
-    protected:
         SoSeparator* setNode;
         std::string filename;
         bool usedBoundingBox;

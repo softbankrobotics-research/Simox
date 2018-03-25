@@ -3,14 +3,14 @@
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/Workspace/Reachability.h"
 #include "VirtualRobot/XML/ModelIO.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationNode.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/CollisionDetection/CollisionChecker.h"
 #include "VirtualRobot/Tools/BoundingBox.h"
 #include "VirtualRobot/IK/CoMIK.h"
 #include "VirtualRobot/Model/Nodes/ModelLink.h"
 #include "VirtualRobot/Model/Nodes/ModelJoint.h"
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 //#ifdef USE_NLOPT
 //#include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -25,12 +25,6 @@
 #include <iostream>
 #include <cmath>
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 #include <sstream>
 using namespace std;
 using namespace VirtualRobot;
@@ -38,7 +32,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -50,8 +44,8 @@ stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string
     setupUI();
 
     MathTools::Plane p =  MathTools::getFloorPlane();
-    VisualizationNodePtr pv = VisualizationFactory::getGlobalVisualizationFactory()->createPlane(p.p, p.n, 10000.0f, 0.0f);
-    viewer->addVisualization("floor", "floor", pv);
+    auto pv = VirtualRobot::VisualizationFactory::getInstance()->createGrid(p, 10000.0f);
+    viewer->addVisualization("floor", pv);
 
     loadRobot();
 
@@ -71,7 +65,7 @@ void stabilityWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -157,7 +151,7 @@ void stabilityWindow::buildVisu()
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
     VisualizationPtr visu = robot->getVisualization(colModel);
-    viewer->addVisualization("robot", robot->getName(), visu);
+    viewer->addVisualization("robot", visu);
 
     updateCoM();
     updateSupportVisu();
@@ -184,32 +178,38 @@ void stabilityWindow::updateCoM()
         return;
 
     // Draw CoM
-    VisualizationNodePtr sphere = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 1.0f, 0.2f, 0.2f);
-    VisualizationNodePtr box = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 1.0f, 0.2f, 0.2f);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere, globalPoseCoM);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box, globalPoseCoM);
-    viewer->addVisualization("com", "com-box", box);
-    viewer->addVisualization("com", "com-sphere", sphere);
+    VisualizationPtr sphere = VisualizationFactory::getInstance()->createSphere(30.0f);
+    sphere->setColor(VirtualRobot::Visualization::Color{1.0f, 0.2f, 0.2f});
+    VisualizationPtr box = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
+    box->setColor(VirtualRobot::Visualization::Color{1.0f, 0.2f, 0.2f});
+    sphere->applyDisplacement(globalPoseCoM);
+    box->applyDisplacement(globalPoseCoM);
+    viewer->addVisualization("com", box);
+    viewer->addVisualization("com", sphere);
 
     // Draw CoM projection
     globalPoseCoM(2, 3) = 0;
-    VisualizationNodePtr sphere2 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0.2f, 0.2f, 1.0f);
-    VisualizationNodePtr box2 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 0.2f, 0.2f, 1.0f);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere2, globalPoseCoM);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box2, globalPoseCoM);
-    viewer->addVisualization("com", "projected-com-box", box2);
-    viewer->addVisualization("com", "projected-com-sphere", sphere2);
+    VisualizationPtr sphere2 = VisualizationFactory::getInstance()->createSphere(30.0f);
+    sphere2->setColor(VirtualRobot::Visualization::Color{0.2f, 0.2f, 1.0f});
+    VisualizationPtr box2 = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
+    box2->setColor(VirtualRobot::Visualization::Color{0.2f, 0.2f, 1.0f});
+    sphere2->applyDisplacement(globalPoseCoM);
+    box2->applyDisplacement(globalPoseCoM);
+    viewer->addVisualization("com", box2);
+    viewer->addVisualization("com", sphere2);
 
     // target com
     Eigen::Matrix4f targCom;
     targCom.setIdentity();
     targCom.block(0,3,2,1) = comTarget;
-    VisualizationNodePtr sphere3 = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(30.0f, 0.2f, 1.0f, 0.2f);
-    VisualizationNodePtr box3 = VisualizationFactory::getGlobalVisualizationFactory()->createBox(50.0f, 50.0f, 50.0f, 0.2f, 1.0f, 0.2f);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(sphere3, targCom);
-    VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(box3, targCom);
-    viewer->addVisualization("com", "target-com-box", box3);
-    viewer->addVisualization("com", "target-com-sphere", sphere3);
+    VisualizationPtr sphere3 = VisualizationFactory::getInstance()->createSphere(30.0f);
+    sphere3->setColor(VirtualRobot::Visualization::Color{0.2f, 1.0f, 0.2f});
+    VisualizationPtr box3 = VisualizationFactory::getInstance()->createBox(50.0f, 50.0f, 50.0f);
+    box3->setColor(VirtualRobot::Visualization::Color{0.2f, 1.0f, 0.2f});
+    sphere3->applyDisplacement(targCom);
+    box3->applyDisplacement(targCom);
+    viewer->addVisualization("com", box3);
+    viewer->addVisualization("com", sphere3);
 }
 
 
@@ -244,8 +244,9 @@ void stabilityWindow::updateSupportVisu()
         }
 
         MathTools::ConvexHull2DPtr cv = MathTools::createConvexHull2D(points2D);
-        VisualizationNodePtr sv = VisualizationFactory::getGlobalVisualizationFactory()->createConvexHull2DVisualization(cv, p, VisualizationFactory::Color::Blue(), VisualizationFactory::Color::Black(), 6.0f, Eigen::Vector3f(0, 0, 2.0f));
-        viewer->addVisualization("support", "support-plane", sv);
+        auto sv = VirtualRobot::VisualizationFactory::getInstance()->createConvexHull2DVisualization(cv, p, Eigen::Vector3f(0, 0, 2.0f));
+        sv->setColor(Visualization::Color::Blue());
+        viewer->addVisualization("support", sv);
     }
 }
 
@@ -384,17 +385,9 @@ void stabilityWindow::selectLinkSet(int nr)
 }
 
 
-int stabilityWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void stabilityWindow::quit()
 {
     std::cout << "stabilityWindow: Closing" << std::endl;
-    viewer->stop();
     this->close();
 }
 

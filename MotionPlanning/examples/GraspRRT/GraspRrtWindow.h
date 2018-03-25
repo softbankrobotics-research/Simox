@@ -7,7 +7,6 @@
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/XML/SceneIO.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h"
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/Model/ManipulationObject.h"
 
@@ -39,16 +38,13 @@ public:
                    const std::string& colModelEnv);
     ~GraspRrtWindow();
 
-    /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
-    int main();
-
     void redraw();
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 

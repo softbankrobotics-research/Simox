@@ -48,7 +48,7 @@ namespace VirtualRobot
 
         virtual ~VirtualRobotException() throw();
 
-        virtual const char* what() const throw();
+        virtual const char* what() const throw() override;
         //virtual const char * what() const;
 
     protected:
@@ -72,7 +72,7 @@ namespace VirtualRobot
 #define THROW_VR_EXCEPTION_IF(condition, messageString) do{if (condition) THROW_VR_EXCEPTION(messageString);}while(0);
 
 #ifdef WIN32
-#pragma warning(default:4275)  
+#pragma warning(default:4275)
 #endif
 
 #endif // _VirtualRobot_VirtualRobotException_h_

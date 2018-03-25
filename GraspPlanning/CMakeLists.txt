@@ -6,11 +6,10 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
 
+MESSAGE (STATUS "***** CONFIGURING project simox-graspplanning *****")
+
 INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
-
-
-MESSAGE (STATUS "***** CONFIGURING project simox-graspplanning *****")
 
 MACRO(ADD_GRASPPLANNING_TEST TEST_NAME)
         if (NOT Boost_USE_STATIC_LIBS)
@@ -76,19 +75,6 @@ GraspQuality/GraspQualityMeasure.h
 GraspQuality/GraspQualityMeasureWrenchSpace.h
 Visualization/ConvexHullVisualization.h
 )
-
-
-if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
-	SET(SOURCES
-	${SOURCES}
-	Visualization/CoinVisualization/CoinConvexHullVisualization.cpp
-	)
-
-	SET(INCLUDES
-	${INCLUDES}
-	Visualization/CoinVisualization/CoinConvexHullVisualization.h
-	)
-endif ()
 
 
 INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})

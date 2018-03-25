@@ -32,16 +32,14 @@ namespace VirtualRobot
         friend class ModelNode;
         friend class ModelStructureFactory;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
-         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use. If empty, the default visualization factory is used.
          */
-        ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
+        ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
-    public:
         virtual ~ModelStructure();
 
         /*!
@@ -56,13 +54,13 @@ namespace VirtualRobot
 
         /*!
          * Get the type of this attachment.
-         * This is used to seperate different attached attachments.
+         * This is used to separate different attached attachments.
          *
          * @return "ModelStructure".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() override;
 
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
 
@@ -73,7 +71,7 @@ namespace VirtualRobot
 
         // ModelNodeAttachment interface
     protected:
-        virtual void setParent(const ModelNodePtr &node);
+        virtual void setParent(const ModelNodePtr &node) override;
     };
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;

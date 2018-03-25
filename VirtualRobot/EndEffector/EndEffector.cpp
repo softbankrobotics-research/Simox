@@ -738,7 +738,7 @@ namespace VirtualRobot
         if (!tcp)
         {
             VR_ERROR << " No tcp in eef " << getName() << endl;
-            auto sphere = VisualizationFactory::getGlobalVisualizationFactory()->createSphere(5);
+            auto sphere = VisualizationFactory::getInstance()->createSphere(5);
             sphere->setGlobalPose(pose);
             return sphere;
         }
@@ -747,7 +747,7 @@ namespace VirtualRobot
             RobotPtr r = createEefRobot(getName(), getName());
             FramePtr tcpN = r->getEndEffector(getName())->getTcp();
             r->setGlobalPoseForModelNode(tcpN, pose);
-            return r->getVisualization(visuType, false);
+            return r->getVisualization(visuType);
         }
     }
 

@@ -5,8 +5,11 @@
 
 #include "GlutStuff.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
+#pragma GCC diagnostic pop
 
 void    GlutDemoApplication::updateModifierKeys()
 {

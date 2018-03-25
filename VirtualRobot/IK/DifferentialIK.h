@@ -188,7 +188,7 @@ namespace VirtualRobot
         /*!
             Computes the complete error vector, considering all TCPs and goals.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
         void updateError(Eigen::VectorXf& error, float stepSize = 1.0f);
 
         /*! @brief Returns the pseudo inverse of the Jacobian matrix for a given tcp of the robot.
@@ -196,12 +196,11 @@ namespace VirtualRobot
          * @details The pseudo inverse \f$J^{+}\f$ can be calculated from the Jacobian matrix \f$ J \f$ using the following formula:
          * \f[ J^t \cdot \left( J \cdot J^t \right)^{-1}.\f]. Update: In order to improve stability, we are now using singular value decomposition (SVD).
          */
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(FramePtr tcp, IKSolver::CartesianSelection mode = IKSolver::All);
-        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const FramePtr& tcp, IKSolver::CartesianSelection mode = IKSolver::All);
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
 
         void updateJacobianMatrix(Eigen::MatrixXf& jac);
-        void updateJacobianMatrix(Eigen::MatrixXf& jac, FramePtr tcp, IKSolver::CartesianSelection mode);
+        void updateJacobianMatrix(Eigen::MatrixXf& jac, const FramePtr& tcp, IKSolver::CartesianSelection mode);
         //Eigen::MatrixXf computePseudoInverseJacobianMatrix(const Eigen::MatrixXf &m);
 
 
@@ -279,7 +278,7 @@ namespace VirtualRobot
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
-        virtual bool checkTolerances();
+        virtual bool checkTolerances() override;
 
         /*!
             Initializes the internal data structures according to setGoal setup.
@@ -287,13 +286,13 @@ namespace VirtualRobot
         */
         virtual void initialize();
 
-        virtual void print();
+        virtual void print() override;
     protected:
         virtual void setNRows();
 
 
-		ModelNodePtr getTcpNode(FramePtr tcp);
-		bool updateParents(FramePtr tcp);
+        ModelNodePtr getTcpNode(FramePtr tcp);
+        bool updateParents(FramePtr tcp);
 
         float invParam;
         std::vector<FramePtr> tcp_set;

@@ -151,34 +151,34 @@ namespace VirtualRobot
 
         if (this == newNode.get())
         {
-            VR_WARNING << "Trying to attach object to it self object! name: " << getName() << std::endl;
+            VR_WARNING << "Trying to attach a node to itself! name: " << getName() << std::endl;
             return false;
         }
 
         if (hasChild(newNode))
         {
-            VR_WARNING << " Trying to attach already attached object: " << getName() << "->"
+            VR_WARNING << " Trying to attach an already attached node: " << getName() << "->"
                        << newNode->getName() << std::endl;
             return true; // no error
         }
 
         if (newNode->getParentNode())
         {
-            VR_WARNING << " Trying to attach object that has already a parent: " << getName() << "->"
+            VR_WARNING << " Trying to attach a node that already has a parent: " << getName() << "->"
                        << newNode->getName() << ", child's parent:" << newNode->getParentNode()->getName() << std::endl;
             return false;
         }
 
         if (hasChild(newNode->getName()))
         {
-            VR_ERROR << " Trying to attach object with name: " << newNode->getName() << " to "
+            VR_ERROR << " Trying to attach a node with name: " << newNode->getName() << " to "
                      << getName() << ", but a child with same name is already present!" << std::endl;
             return false;
         }
 
 		if (getModel() != newNode->getModel())
 		{
-			VR_ERROR << " Trying to attach model with different parent:" << newNode->getName() << std::endl;
+			VR_ERROR << " Trying to attach a node that belongs to a different model. New node: " << newNode->getName() << " Model: " << newNode->getModel()->getName() << std::endl;
 			return false;
 		}
 		ModelPtr m = getModel();
@@ -469,7 +469,7 @@ namespace VirtualRobot
         return std::string(); // TODO
     }*/
 
-    ModelNodePtr ModelNode::clone(ModelPtr newModel, bool cloneChildren, bool cloneAttachments, RobotNodePtr initializeWithParent, float scaling)
+    ModelNodePtr ModelNode::clone(ModelPtr newModel, bool cloneChildren, bool cloneAttachments, ModelNodePtr parentNode, float scaling)
     {
         ReadLockPtr lock = getModel()->getReadLock();
 
@@ -569,9 +569,9 @@ namespace VirtualRobot
             it++;
         }*/
 
-        if (initializeWithParent)
+        if (parentNode)
         {
-            initializeWithParent->attachChild(result, false);
+            parentNode->attachChild(result, false);
         }
 
         newModel->registerModelNode(result);

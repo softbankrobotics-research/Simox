@@ -104,8 +104,10 @@ int main(int argc, char* argv[])
 
     RrtGuiWindow rw(filenameScene, startConfig, goalConfig, rnsName, colModel1, colModel2, colModel3);
 
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
 
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

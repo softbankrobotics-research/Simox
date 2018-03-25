@@ -62,9 +62,9 @@ namespace GraspPlanning
 
         virtual VirtualRobot::MathTools::ContactPoint getSampledObjectPointsCenter();
 
-        virtual std::string getName();
+        virtual std::string getName() override;
 
-        virtual bool isValid();
+        virtual bool isValid() override;
 
         virtual ContactConeGeneratorPtr getConeGenerator();
     protected:

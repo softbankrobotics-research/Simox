@@ -23,9 +23,9 @@ bool runtimeDisplayed = false;
 bool optiTimeDisplayed = false;
 
 MTPlanningWindow::MTPlanningWindow(const std::string &robotFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
-    scene = NULL;
+    scene = nullptr;
 
     setupLayoutMTPlanning(robotFile);
 
@@ -40,7 +40,7 @@ MTPlanningWindow::MTPlanningWindow(const std::string &robotFile)
 
 MTPlanningWindow::~MTPlanningWindow()
 {
-    if (scene != NULL)
+    if (scene != nullptr)
     {
         delete scene;
     }
@@ -101,7 +101,7 @@ void MTPlanningWindow::setupLayoutMTPlanning(const std::string &robotFile)
     UI.setupUi(this);
 
     // setup
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -133,20 +133,12 @@ void MTPlanningWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int MTPlanningWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void MTPlanningWindow::quit()
 {
     std::cout << "MTPlanningWindow: Closing" << std::endl;
     this->close();
     timer1->stop();
     timer2->stop();
-    viewer->stop();
 }
 
 

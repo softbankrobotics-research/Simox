@@ -1,21 +1,17 @@
 
 #include "PositionSensor.h"
 #include "../../XML/BaseIO.h"
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
 {
-    PositionSensor::PositionSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : Sensor(name, localTransformation, visualizationType)
+    PositionSensor::PositionSensor(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : Sensor(name, localTransformation)
     {
-        initVisualization();
     }
-
 
     PositionSensor::~PositionSensor()
     {
     }
-
 
     bool PositionSensor::isAttachable(const ModelNodePtr &node)
     {
@@ -29,24 +25,9 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr PositionSensor::clone()
     {
-        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation, visualizationType));
+        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation));
         return result;
     }
-
-    void PositionSensor::initVisualization()
-    {
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
-
-        if (!factory)
-        {
-            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
-            return;
-        }
-
-        std::string name = getName();
-        setVisualization(factory->createCoordSystem(&name));
-    }
-
 
     std::string PositionSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
     {

@@ -7,7 +7,7 @@ IF (SimDynamics_USE_BULLET_USE_GLUT)
 	message("GLUT_INCLUDE_DIR:${GLUT_INCLUDE_DIR}")
 	# create the executable
 	SimoxApplication(${PROJECT_NAME} "BulletDebugViewerGlut.cpp" "")
-        TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-simdynamics BulletOpenGLSupport ${Simox_EXTERNAL_LIBRARIES})
+        TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE simox-simdynamics BulletOpenGLSupport ${Simox_EXTERNAL_LIBRARIES})
 ELSE(SimDynamics_USE_BULLET_USE_GLUT)
 
 	IF(WIN32)
@@ -18,7 +18,7 @@ ELSE(SimDynamics_USE_BULLET_USE_GLUT)
 		#"Win32BasicDemo.cpp"
 		SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
 		SimoxApplication(${PROJECT_NAME} ${SRC} "")
-		TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-simdynamics BulletOpenGLSupport)
+		TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE simox-simdynamics BulletOpenGLSupport)
 	ELSE(WIN32)
 		MESSAGE (STATUS " * !GLUT only supported on windows so far... Skipping BulletDebugViewer")
 	ENDIF(WIN32)

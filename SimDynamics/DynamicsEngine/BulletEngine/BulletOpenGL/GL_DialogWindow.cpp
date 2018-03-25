@@ -18,7 +18,10 @@ subject to the following restrictions:
 
 
 #include "GLDebugFont.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "btBulletDynamicsCommon.h"
+#pragma GCC diagnostic pop
 
 #include <stdio.h> // for sprintf()
 

@@ -48,7 +48,7 @@ namespace VirtualRobot
         virtual Eigen::MatrixXf getJacobianMatrix() override;
         virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override; // ignored for CoM IK but needed for interface
 
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
 
         Eigen::VectorXf computeStep(float stepSize);
         bool computeSteps(float stepSize, float minumChange, int maxNStep);
@@ -61,11 +61,11 @@ namespace VirtualRobot
 
         bool isValid(const Eigen::VectorXf& v) const;
 
-        virtual bool checkTolerances();
+        virtual bool checkTolerances() override;
         void checkImprovements(bool enable);
         bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
 
-        virtual void print();
+        virtual void print() override;
     private:
         FramePtr coordSystem;
         LinkSetPtr rnsBodies;

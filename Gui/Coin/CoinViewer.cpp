@@ -133,12 +133,22 @@ namespace SimoxGui
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
     {
-        std::cout << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer) const
     {
-        std::cout << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     QImage CoinViewer::getScreenshot() const

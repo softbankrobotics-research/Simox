@@ -1,16 +1,14 @@
 
 #include "ForceTorqueSensor.h"
 #include "../../XML/BaseIO.h"
-#include <VirtualRobot/Visualization/VisualizationFactory.h>
 
 namespace VirtualRobot
 {
-    ForceTorqueSensor::ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation, std::string visualizationType)
-        : Sensor(name, localTransformation, visualizationType)
+    ForceTorqueSensor::ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation)
+        : Sensor(name, localTransformation)
         , forceTorqueValues(6)
     {
         forceTorqueValues.setZero();
-        initVisualization();
     }
 
 
@@ -31,23 +29,9 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr ForceTorqueSensor::clone()
     {
-        ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation, visualizationType));
+        ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation));
         result->updateSensors(forceTorqueValues);
         return result;
-    }
-
-    void ForceTorqueSensor::initVisualization()
-    {
-        VisualizationFactoryPtr factory = VisualizationFactory::getGlobalVisualizationFactory();
-
-        if (!factory)
-        {
-            VR_ERROR << "Could not create VisualizationFactory with type " << visualizationType << endl;
-            return;
-        }
-
-        std::string name = getName();
-        setVisualization(factory->createCoordSystem(&name));
     }
 
     Eigen::Vector3f ForceTorqueSensor::getForce() const

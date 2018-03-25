@@ -60,7 +60,7 @@ namespace VirtualRobot
             float width;
             float height;
             float depth;
-            std::string toXMLString(int tabs = 0);
+            virtual std::string toXMLString(int tabs = 0) override;
             virtual VisualizationPtr getVisualization() const;
         };
 
@@ -71,7 +71,7 @@ namespace VirtualRobot
             Sphere() : Primitive(TYPE) {}
             Sphere(float radius) : Primitive(TYPE), radius(radius) {}
             float radius;
-            std::string toXMLString(int tabs = 0);
+            virtual std::string toXMLString(int tabs = 0) override;
             virtual VisualizationPtr getVisualization() const;
         };
 
@@ -83,7 +83,7 @@ namespace VirtualRobot
             Cylinder(float radius, float height) : Primitive(TYPE), radius(radius), height(height) {}
             float radius;
             float height;
-            std::string toXMLString(int tabs = 0);
+            virtual std::string toXMLString(int tabs = 0) override;
             virtual VisualizationPtr getVisualization() const;
         };
 

@@ -118,7 +118,7 @@ using namespace VirtualRobot;
     {
         if (ik)
         {
-            Eigen::MatrixXf ijac = ik->getDifferentialIK()->getPseudoInverseJacobianMatrix();
+            Eigen::MatrixXf ijac = ik->getDifferentialIK()->getPseudoInverseJacobianMatrix(FramePtr());
             fc = ijac.leftCols<3>() * f; // only force
         }
         else

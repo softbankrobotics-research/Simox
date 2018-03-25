@@ -6,10 +6,16 @@
 
 
 #include "CoinVisualizationSet.h"
+#include "CoinVisualizationFactory.h"
+#include "CoinVisualization.h"
+#include "../../VirtualRobotException.h"
+#include "../TriMeshModel.h"
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoMatrixTransform.h>
 #include <Inventor/nodes/SoUnits.h>
+#include <Inventor/actions/SoCallbackAction.h>
+#include <Inventor/nodes/SoShape.h>
 
 #include <algorithm>
 
@@ -62,12 +68,9 @@ namespace VirtualRobot
         {
             auto visuCoin = visualization_cast<CoinElement>(visu);
             setNode->removeChild(visuCoin->getMainNode());
+            return true;
         }
-    }
-
-    bool CoinVisualizationSet::removeVisualization(size_t index)
-    {
-        return this->removeVisualization(this->at(index));
+        return false;
     }
 
     VisualizationPtr CoinVisualizationSet::clone() const
@@ -79,7 +82,7 @@ namespace VirtualRobot
         {
             clonedVisus.push_back(visu->clone());
         }
-        return VisualizationPtr(new CoinVisualizationSet(clonedVisus));
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
@@ -109,49 +112,83 @@ namespace VirtualRobot
 
     void CoinVisualizationSet::setSelected(bool selected)
     {
-        VR_ERROR << "NYI" << std::endl;
+        VisualizationSet::setSelected(selected);
     }
 
     bool CoinVisualizationSet::isSelected() const
     {
-        VR_ERROR << "NYI" << std::endl;
-        return false;
+        return VisualizationSet::isSelected();
     }
 
     size_t CoinVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     void CoinVisualizationSet::_removeAllManipulators()
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
     }
 
     bool CoinVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 
     std::vector<Visualization::ManipulatorType> CoinVisualizationSet::getAddedManipulatorTypes() const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return std::vector<ManipulatorType>();
     }
 
@@ -171,21 +208,37 @@ namespace VirtualRobot
         return usedBoundingBox;
     }
 
+
     std::string CoinVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return "";
     }
 
     std::string CoinVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return "";
     }
 
     bool CoinVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        VR_ERROR << "NYI" << std::endl;
+        static bool printed = false;
+        if (!printed)
+        {
+            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+            printed = true;
+        }
         return false;
     }
 } // namespace VirtualRobot

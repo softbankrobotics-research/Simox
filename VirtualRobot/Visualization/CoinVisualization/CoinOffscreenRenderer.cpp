@@ -1,6 +1,8 @@
 #include "CoinOffscreenRenderer.h"
 
 #include "../CoinVisualization/CoinVisualization.h"
+#include "CoinUtil.h"
+#include "../../../Tools/MathTools.h"
 
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/SbViewportRegion.h>
@@ -9,6 +11,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoUnits.h>
 
 #ifdef WIN32
 /* gl.h assumes windows.h is already included */
@@ -18,11 +21,6 @@
 #  include <windows.h>
 #endif
 #include <GL/gl.h>
-
-/**
-* register this class in the super class factory
-*/
-VirtualRobot::OffscreenRenderer::SubClassRegistry VirtualRobot::CoinOffscreenRenderer::registry(VirtualRobot::CoinOffscreenRenderer::getName(), &VirtualRobot::CoinOffscreenRenderer::createInstance);
 
 namespace VirtualRobot
 {
@@ -51,16 +49,9 @@ namespace VirtualRobot
         const unsigned int numPixel=width*height;
         //required to get the zBuffer
         DepthRenderData userdata;
-        std::vector<float> zBuffer;
+        std::vector<float> zBuffer(numPixel);
         if(calculateDepth)
         {
-            if(renderDepthImage)
-            {
-                //we can overwrite the depth image. maybe it already has enough mem
-                std::swap(zBuffer,depthImage);
-            }
-            zBuffer.resize(numPixel);
-
             userdata.h = height;
             userdata.w = width;
             userdata.buffer = zBuffer.data();
@@ -73,24 +64,25 @@ namespace VirtualRobot
         //render
         // add all to a inventor scene graph
         SoSeparator* root = new SoSeparator;
+        SoUnits* unitNode = new SoUnits;
+        unitNode->units = SoUnits::MILLIMETERS;
+        root->addChild(unitNode);
         root->ref();
         root->addChild(new SoDirectionalLight);
 
         //setup cam
-        float sc = 0.001f;//cam has to be in m but values are in mm. (if the cam is set to mm with a unit node the robot visu disapperars)
-        SoPerspectiveCamera* camInMeters = new SoPerspectiveCamera;
+        SoPerspectiveCamera* cam = new SoPerspectiveCamera;
         Eigen::Vector3f camPos = camPose.block<3, 1>(0, 3);
-        camInMeters->position.setValue(camPos[0]*sc, camPos[1]*sc, camPos[2]*sc);
+        cam->position.setValue(camPos[0], camPos[1], camPos[2]);
         SbRotation align(SbVec3f(1, 0, 0), (float)(M_PI)); // first align from  default direction -z to +z by rotating with 180 degree around x axis
-        SbRotation align2(SbVec3f(0, 0, 1), (float)(-M_PI / 2.0)); // align up vector by rotating with -90 degree around z axis
-        SbRotation trans(getSbMatrix(camPose)); // get rotation from global pose
-        camInMeters->orientation.setValue(align2 * align * trans); // perform total transformation
-        camInMeters->nearDistance.setValue(sc*zNear);
-        camInMeters->farDistance.setValue(sc*zFar);
-        camInMeters->heightAngle.setValue(vertFov);
-        camInMeters->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
+        SbRotation trans(CoinUtil::getSbMatrix(camPose)); // get rotation from global pose
+        cam->orientation.setValue(align * trans); // perform total transformation
+        cam->nearDistance.setValue(zNear);
+        cam->farDistance.setValue(zFar);
+        cam->heightAngle.setValue(vertFov);
+        cam->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
 
-        root->addChild(camInMeters);
+        root->addChild(cam);
 
         SoSeparator* sceneSep = new SoSeparator;
         root->addChild(sceneSep);
@@ -120,12 +112,19 @@ namespace VirtualRobot
             const unsigned char* glBuffer = offscreenRenderer.getBuffer();
             const unsigned int numValues = numPixel*3;
             rgbImage.resize(numValues);
-            std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
+            for (unsigned int y=0; y<height; ++y)
+            {
+                std::copy(glBuffer+y*width*3, glBuffer+y*width*3 + width*3 , rgbImage.begin() + (height-y-1) * width*3);
+            }
         }
         //per pixel
         if(!calculateDepth)
         {
             return true;
+        }
+        if (renderDepthImage)
+        {
+            depthImage.resize(numPixel);
         }
         if(renderPointcloud)
         {
@@ -141,6 +140,7 @@ namespace VirtualRobot
             for(unsigned int x=0;x<static_cast<std::size_t>(width);++x)
             {
                 const unsigned int pixelIndex = x+width*y;
+                const unsigned int pixelIndexOut = x+width*(height-y-1);
                 const float bufferVal = zBuffer.at(pixelIndex);
                 /*
                 // projection matrix (https://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml)
@@ -202,18 +202,18 @@ namespace VirtualRobot
                 {
                     if(-zEye < zFar)
                     {
-                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                        depthImage.at(pixelIndexOut) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
                     }
                     else
                     {
-                        zBuffer.at(pixelIndex) = nanValue;
+                        depthImage.at(pixelIndexOut) = nanValue;
                     }
                 }
 
                 if(renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
-                    auto& point = pointCloud.at(pixelIndex);
+                    auto& point = pointCloud.at(pixelIndexOut);
                     if(-zEye < zFar)
                     {
                         point[0] = -xEye;
@@ -229,11 +229,6 @@ namespace VirtualRobot
                 }
             }
         }
-
-        if(renderDepthImage)
-        {
-            depthImage = std::move(zBuffer);
-        }
         return true;
     }
 
@@ -244,17 +239,6 @@ namespace VirtualRobot
     std::string CoinOffscreenRenderer::getVisualizationType() const
     {
         return "inventor";
-    }
-
-    OffscreenRendererPtr CoinOffscreenRenderer::createInstance(void *)
-    {
-        return OffscreenRendererPtr(new CoinOffscreenRenderer());
-    }
-
-    SbMatrix CoinOffscreenRenderer::getSbMatrix(const Eigen::Matrix4f &m) const
-    {
-        SbMatrix res(reinterpret_cast<const SbMat*>(m.data()));
-        return res;
     }
 
     void CoinOffscreenRenderer::getZBuffer(void *userdata)

@@ -32,16 +32,14 @@ namespace VirtualRobot
         friend class ModelNode;
         friend class ForceTorqueSensorFactory;
 
-    protected:
+    public:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
-         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use. If empty, the default visualization factory is used.
          */
-        ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity(), std::string visualizationType = "");
+        ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
-    public:
         /*!
          * Destructor.
          */
@@ -63,9 +61,9 @@ namespace VirtualRobot
          *
          * @return "forcetorque".
          */
-        virtual std::string getType();
+        virtual std::string getType() override;
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() override;
 
 
         void updateSensors(const Eigen::VectorXf& newForceTorque);
@@ -84,11 +82,8 @@ namespace VirtualRobot
 
     protected:
         Eigen::VectorXf forceTorqueValues;
-
-    private:
-        void initVisualization();
     };
-    
+
     typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 }
 

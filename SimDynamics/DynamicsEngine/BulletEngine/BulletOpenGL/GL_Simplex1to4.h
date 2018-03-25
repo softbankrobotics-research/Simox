@@ -15,9 +15,12 @@ subject to the following restrictions:
 #ifndef GL_SIMPLEX_1TO4_H
 #define GL_SIMPLEX_1TO4_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "BulletCollision/CollisionShapes/btTetrahedronShape.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btSimplexSolverInterface.h"
+#pragma GCC diagnostic pop
 
 ///GL_Simplex1to4 is a class to debug a Simplex Solver with 1 to 4 points.
 ///Can be used by GJK.

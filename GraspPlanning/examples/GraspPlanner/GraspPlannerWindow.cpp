@@ -16,6 +16,8 @@
 #include "VirtualRobot/Import/SimoxXMLFactory.h"
 #include <GraspPlanning/GraspQuality/GraspEvaluationPoseUncertainty.h>
 
+#include <Gui/ViewerFactory.h>
+
 #include <QFileDialog>
 #include <QProgressDialog>
 
@@ -27,12 +29,6 @@
 #include <cmath>
 #include <sstream>
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 
 using namespace std;
 using namespace VirtualRobot;
@@ -41,12 +37,12 @@ using namespace GraspPlanning;
 float TIMER_MS = 30.0f;
 
 GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
     // init the random number generator
-    srand(time(NULL));
+    srand(time(nullptr));
 
     this->robotFile = robFile;
     this->objectFile = objFile;
@@ -74,7 +70,7 @@ void GraspPlannerWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -114,16 +110,16 @@ void GraspPlannerWindow::buildVisu()
     // eef
     if (eefCloned)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(eefCloned, colModel);
-        viewer->addVisualization("robotLayer", "robot", visu);
+        VisualizationSetPtr visu = eefCloned->getVisualization(colModel);
+        viewer->addVisualization("robotLayer", visu);
     }
 
     // object
     viewer->clearLayer("objectLayer");
     if (object)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(object, colModel);
-        viewer->addVisualization("objectLayer", "object", visu);
+        VisualizationSetPtr visu = object->getVisualization(colModel);
+        viewer->addVisualization("objectLayer", visu);
     }
 
     // friction cones
@@ -137,21 +133,21 @@ void GraspPlannerWindow::buildVisu()
         float height = cg->getConeHeight();
         float scaling = 30.0f;
 
-        VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", "cones", visu);
+        VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
+        viewer->addVisualization("frictionLayer", visu);
 
         // add approach dir visu
         for (size_t i = 0; i < contacts.size(); i++)
         {
             std::stringstream name;
             name << "arrow-" << i;
-            VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
+            VisualizationPtr visu = VisualizationFactory::getInstance()->createArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f);
 
             Eigen::Matrix4f ma;
             ma.setIdentity();
             ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
-            VisualizationFactory::getGlobalVisualizationFactory()->applyDisplacement(visu, ma);
-            viewer->addVisualization("frictionLayer", name.str(), visu);
+            visu->applyDisplacement(ma);
+            viewer->addVisualization("frictionLayer", visu);
         }
     }
 
@@ -159,15 +155,9 @@ void GraspPlannerWindow::buildVisu()
     viewer->clearLayer("graspsetLayer");
     if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
     {
-        VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createGraspSetVisualization(grasps, eef, object->getGlobalPose(), ModelLink::Full);
-        viewer->addVisualization("graspsetLayer", "grasps", visu);
+        VisualizationSetPtr visu = grasps->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
+        viewer->addVisualization("graspsetLayer", visu);
     }
-}
-
-int GraspPlannerWindow::main()
-{
-    viewer->start(this);
-    return 0;
 }
 
 
@@ -175,7 +165,6 @@ void GraspPlannerWindow::quit()
 {
     std::cout << "GraspPlannerWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void GraspPlannerWindow::loadObject()

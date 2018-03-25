@@ -47,10 +47,9 @@ namespace VirtualRobot
          * Creates a ModelStructure attachment.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
-         * \param visualizationType The name of the VisualizationFactory (@see VisualizationFactory::fromName()) to use.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity(), std::string visualizationType = "") override;
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) override;
 
         // AbstractFactoryMethod
     public:

@@ -5,6 +5,7 @@
 #include "LinkSet.h"
 #include "Nodes/ModelJoint.h"
 #include "../Visualization/Visualization.h"
+#include "../Visualization/VisualizationSet.h"
 #include "../CollisionDetection/CollisionModel.h"
 #include "ModelConfig.h"
 #include "../Trajectory.h"
@@ -12,6 +13,8 @@
 #include "../Model/Nodes/Attachments/ModelNodeAttachment.h"
 #include "../Model/Nodes/Attachments/ModelNodeAttachmentFactory.h"
 #include "../Model/Nodes/Attachments/ModelStructureFactory.h"
+#include "../Model/Nodes/Attachments/PhysicsAttachment.h"
+#include "../Model/Nodes/Attachments/PhysicsAttachmentFactory.h"
 #include "../Model/Nodes/Attachments/Sensor.h"
 
 #include <algorithm>
@@ -24,7 +27,9 @@ namespace VirtualRobot
                                                                      collisionChecker(),
                                                                      modelNodeMap(), 
                                                                      modelNodeSetMap(),
-                                                                     filename("")
+                                                                     filename(""),
+                                                                     visualizationNodeSetFull(VisualizationFactory::getInstance()->createVisualisationSet({})),
+                                                                     visualizationNodeSetCollision(VisualizationFactory::getInstance()->createVisualisationSet({}))
     {
     }
 
@@ -60,6 +65,7 @@ namespace VirtualRobot
                 {
                     collisionChecker = link->getCollisionChecker();
                 }
+                addToVisualization(link);
             }
 
             modelNodeMap[node->getName()] = node;
@@ -77,6 +83,11 @@ namespace VirtualRobot
             {
                 modelNodeMap.erase(i);
             }
+        }
+        if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+        {
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
+            removeFromVisualization(link);
         }
     }
 
@@ -213,6 +224,19 @@ namespace VirtualRobot
         }
     }
 
+    std::vector<std::string> Model::getModelNodeNames() const
+    {
+        auto nodes = getModelNodes();
+        std::vector<std::string> result(nodes.size());
+        size_t i = 0;
+        for(auto& s : nodes)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
     void Model::registerModelNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
@@ -263,7 +287,7 @@ namespace VirtualRobot
 
 	bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
 	{
-		return nodeSet && getModelNodeSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasModelNodeSet(nodeSet->getName());
 	}
 
 	bool Model::hasModelNodeSet(const std::string& name) const
@@ -275,7 +299,7 @@ namespace VirtualRobot
 
 	bool Model::hasJointSet(const JointSetPtr& nodeSet) const
 	{
-		return nodeSet && getJointSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasJointSet(nodeSet->getName());
 	}
 
 	bool Model::hasJointSet(const std::string & name) const
@@ -287,7 +311,7 @@ namespace VirtualRobot
 
 	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
 	{
-		return nodeSet && getLinkSet(nodeSet->getName()) == nodeSet;
+        return nodeSet && hasLinkSet(nodeSet->getName());
 	}
 
 	bool Model::hasLinkSet(const std::string & name) const
@@ -431,6 +455,45 @@ namespace VirtualRobot
         return result;
     }
 
+    std::vector<std::string> Model::getModelNodeSetNames() const
+    {
+        auto sets = getModelNodeSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
+    std::vector<std::string> Model::getLinkSetNames() const
+    {
+        auto sets = getLinkSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
+    std::vector<std::string> Model::getJointSetNames() const
+    {
+        auto sets = getJointSets();
+        std::vector<std::string> result(sets.size());
+        size_t i = 0;
+        for(auto& s : sets)
+        {
+            result.at(i) = s->getName();
+            i++;
+        }
+        return result;
+    }
+
     void Model::setRootNode(const ModelNodePtr& node, bool updatePose)
     {
         if (!node)
@@ -565,14 +628,14 @@ namespace VirtualRobot
             rootNode->updatePose(true, true);
     }
 
-    void Model::attachStructure(std::string visualizationType)
+    void Model::attachStructure()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
         for (const auto & node : getModelNodes())
         {
             std::string attachmentName = node->getName() + "_structure";
-            ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
-            node->attach(attachement);
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
+            node->attach(attachment);
         }
     }
 
@@ -584,14 +647,14 @@ namespace VirtualRobot
         }
     }
 
-    void Model::attachFrames(std::string visualizationType)
+    void Model::attachFrames()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = VirtualRobot::ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), NULL);
+        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), nullptr);
         for (const auto & joint : getJoints())
         {
             std::string attachmentName = joint->getName() + "_frame";
-            ModelNodeAttachmentPtr attachement = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity(), visualizationType);
-            joint->attach(attachement);
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
+            joint->attach(attachment);
         }
     }
 
@@ -603,15 +666,27 @@ namespace VirtualRobot
         }
     }
 
-    /*void Model::highlight(const VisualizationPtr& visualization, bool enable)
+    void Model::attachPhysicsInformation()
     {
-        // TODO: add Attachment
-    }*/
+        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
+        for (auto &&link : getLinks())
+        {
+            if (link->getMass() <= 0)
+                continue;
 
-    /*void Model::showPhysicsInformation(bool enableCoM, bool enableInertial, const VisualizationNodePtr& comModel)
+            std::string attachmentName = link->getName() + "_physics";
+            ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
+            link->attach(attachment);
+        }
+    }
+
+    void Model::detachPhysicsInformation()
     {
-        // TODO: add Attachment
-    }*/
+        for (auto &&link : getLinks())
+        {
+            link->detach(link->getName() + "_physics");
+        }
+    }
 
     void Model::setupVisualization(bool showVisualization)
     {
@@ -633,14 +708,7 @@ namespace VirtualRobot
     void Model::setUpdateVisualization(bool enable)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
-
-        for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
-        {
-            ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(*iterator);
-            if (link && link->getVisualization())
-				link->getVisualization()->setUpdateVisualization(enable);
-        }
+        getVisualization(VirtualRobot::ModelLink::Full)->setUpdateVisualization(enable);
     }
 
     void Model::setUpdateCollisionModel(bool enable)
@@ -655,20 +723,12 @@ namespace VirtualRobot
 				link->getCollisionModel()->setUpdateVisualization(enable);
         }
     }
-	
-	bool Model::getUpdateVisualization() const
-	{
-		WriteLockPtr w = getWriteLock();
-		std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
 
-		for (auto mn : modelNodes)
-		{
-			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
-            if (link && link->getVisualization())
-				return link->getVisualization()->getUpdateVisualizationStatus();
-		}
-		return true;
-	}
+    bool Model::getUpdateVisualization() const
+    {
+        WriteLockPtr w = getWriteLock();
+        return getVisualization(VirtualRobot::ModelLink::Full)->getUpdateVisualizationStatus();
+    }
 
 	bool Model::getUpdateCollisionModel() const
 	{
@@ -1096,33 +1156,54 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType, bool addAttachments) const
+    VisualizationSetPtr Model::getVisualization(ModelLink::VisualizationType visuType) const
     {
-        std::vector<VisualizationPtr> collectedVisualizationNodes;
-        std::vector<ModelLinkPtr> links = getLinks();
-        for (auto l: links)
-        {
-            VisualizationPtr v = l->getVisualization(visuType);
-            if (!v)
-                continue;
-            collectedVisualizationNodes.push_back(v);
-        }
+        return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
+    }
 
-        if (addAttachments)
+    VisualizationGroupPtr Model::getAllAttachmentVisualizations() const
+    {
+        VisualizationGroupPtr ret(new VisualizationGroup);
+        for (const auto & node : getModelNodes())
         {
-            for (const auto & node : getModelNodes())
+            for (const auto & attachement : node->getAttachmentsWithVisualisation())
             {
-                for (const auto & attachement : node->getAttachmentsWithVisualisation())
-                {
-                    VisualizationPtr v = attachement->getVisualisation();
-                    if (!v)
-                        continue;
-                    collectedVisualizationNodes.push_back(v);
-                }
+                VisualizationPtr v = attachement->getVisualisation();
+                if (!v)
+                    continue;
+
+                ret->addVisualization(v);
             }
         }
+        return ret;
+    }
 
-        return VisualizationFactory::getGlobalVisualizationFactory()->createVisualisationSet(collectedVisualizationNodes);
+    void Model::addToVisualization(const ModelLinkPtr &link)
+    {
+        auto visuFull = link->getVisualization(ModelLink::VisualizationType::Full);
+        if (visuFull)
+        {
+            visualizationNodeSetFull->addVisualization(visuFull);
+        }
+        auto visuCollision = link->getVisualization(ModelLink::VisualizationType::Collision);
+        if (visuCollision)
+        {
+            visualizationNodeSetCollision->addVisualization(visuCollision);
+        }
+    }
+
+    void Model::removeFromVisualization(const ModelLinkPtr &link)
+    {
+        auto visuFull = link->getVisualization(ModelLink::VisualizationType::Full);
+        if (visuFull)
+        {
+            visualizationNodeSetFull->removeVisualization(visuFull);
+        }
+        auto visuCollision = link->getVisualization(ModelLink::VisualizationType::Collision);
+        if (visuCollision)
+        {
+            visualizationNodeSetCollision->removeVisualization(visuCollision);
+        }
     }
 
     void Model::_clone(ModelPtr newModel, const ModelNodePtr &startNode, const CollisionCheckerPtr &collisionChecker, bool cloneRNS, bool cloneEEF, float scaling) const
@@ -1140,8 +1221,8 @@ namespace VirtualRobot
             colChecker = this->getCollisionChecker();
         }
 
-        ModelNodePtr rootNew = startNode->clone(newModel, true, true, ModelNodePtr(), scaling);
-        THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed...");
+        ModelNodePtr rootNew = startNode->clone(newModel, true, true, ModelNodePtr(), scaling); // This also clones (and registers) all children to the new model.
+        THROW_VR_EXCEPTION_IF(!rootNew, "Cloning failed...");
         newModel->setRootNode(rootNew);
         newModel->setScaling(scaling);
 

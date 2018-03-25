@@ -292,11 +292,17 @@
           <height>27</height>
          </rect>
         </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
         <property name="maximum">
-         <double>1000.000000000000000</double>
+         <double>10.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
         <property name="value">
-         <double>10.000000000000000</double>
+         <double>0.100000000000000</double>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="doubleSpinBoxDepthLinClip">
@@ -345,7 +351,7 @@
      <x>0</x>
      <y>0</y>
      <width>1178</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

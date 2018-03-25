@@ -2,6 +2,7 @@
 #include "MathTools.h"
 #include "../VirtualRobotException.h"
 #include "../Visualization/VisualizationFactory.h"
+#include "../Visualization/TriMeshModel.h"
 #include <float.h>
 #include <string.h>
 #include <cmath>
@@ -17,6 +18,182 @@
 
 namespace VirtualRobot
 {
+
+    /*
+    void MathTools::Quat2RPY(float *PosQuat, float *storeResult)
+    {
+        if (storeResult==NULL || PosQuat==NULL)
+            return;
+        float tmpPose[7];
+        tmpPose[0] = 0;
+        tmpPose[1] = 0;
+        tmpPose[2] = 0;
+        tmpPose[3] = PosQuat[0];
+        tmpPose[4] = PosQuat[1];
+        tmpPose[5] = PosQuat[2];
+        tmpPose[6] = PosQuat[3];
+        SbMatrix m;
+        PosQuat2SbMatrix(tmpPose,m);
+        SbMatrix2PosRPY(m,tmpPose);
+        storeResult[0] = tmpPose[3];
+        storeResult[1] = tmpPose[4];
+        storeResult[2] = tmpPose[5];
+    }
+
+    void MathTools::PosQuat2PosRPY(float *PosQuat, float *storePosRPY)
+    {
+        if (storePosRPY==NULL || PosQuat==NULL)
+            return;
+        SbMatrix m;
+        PosQuat2SbMatrix(PosQuat,m);
+        SbMatrix2PosRPY(m,storePosRPY);
+    }
+
+    bool MathTools::PosEulerZXZ2SbMatrix(const float* PosEulerZXZ, SbMatrix &storeResult)
+    {
+        float posRPY[6];
+        if (!PosEulerZXZ2PosRPY(PosEulerZXZ,posRPY))
+            return false;
+        PosRPY2SbMatrix(posRPY,storeResult);
+        return true;
+    }
+
+    bool MathTools::PosEulerZXZ2PosRPY(const float* PosEulerZXZ, float* PosRPY)
+    {
+        // Euler ZXZ to Matrix conversion
+        Matrix res(3,3);
+        const double psi = PosEulerZXZ[3];
+        const double theta = PosEulerZXZ[4];
+        const double phi = PosEulerZXZ[5];
+        double sa, ca, sb, cb, sc, cc;
+
+        sa = sin(psi);
+        ca = cos(psi);
+        sb = sin(theta);
+        cb = cos(theta);
+        sc = sin(phi);
+        cc = cos(phi);
+
+        res(1, 1) = ca * cc - sa * cb * sc;
+        res(1, 2) = -ca * sc - sa * cb * cc;
+        res(1, 3) = sa * sb;
+        //res(1, 4) = 0.0;
+
+        res(2, 1) = sa * cc + ca * cb * sc;
+        res(2, 2) = -sa * sc + ca * cb * cc;
+        res(2, 3) = -ca * sb;
+        //res(2, 4) = 0.0;
+
+        res(3, 1) = sb * sc;
+        res(3, 2) = sb * cc;
+        res(3, 3) = cb;
+        //res(3, 4) = 0.0;
+
+
+
+        { // Matrix To Roll-Pitch-Yaw conversion
+            double alpha, beta, gamma;
+            beta = atan2(-res(3, 1), sqrt(res(1, 1) * res(1, 1) + res(2, 1) * res(2, 1)));
+
+            if (fabs(beta - M_PI_2) < 1e-4)
+            {
+                alpha = 0;
+                gamma = atan2(res(1, 2), res(2, 2));
+            }
+            else if (fabs(beta - (-M_PI_2)) < 1e-4)
+            {
+                alpha = 0;
+                gamma = -atan2(res(1, 2), res(2, 2));
+            }
+            else
+            {
+                alpha = atan2(res(2, 1) / cos(beta), res(1, 1) / cos(beta));
+                gamma = atan2(res(3, 2) / cos(beta), res(3, 3) / cos(beta));
+            }
+
+            PosRPY[0] = PosEulerZXZ[0];
+            PosRPY[1] = PosEulerZXZ[1];
+            PosRPY[2] = PosEulerZXZ[2];
+            PosRPY[3] = (float)gamma;
+            PosRPY[4] = (float)beta;
+            PosRPY[5] = (float)alpha;
+
+        }
+        return true;
+    }
+
+
+    void MathTools::SbMatrix2PosEulerZXZ(const SbMatrix& mat, float *storeResult)
+    {
+        if (storeResult==NULL)
+            return;
+        SbMatrix A = mat.transpose();
+
+        storeResult[0] = A[0][3];
+        storeResult[1] = A[1][3];
+        storeResult[2] = A[2][3];
+        if (A[2][2] < 1.0)
+        {
+            if (A[2][2]>-1.0)
+            {
+                storeResult[3] = atan2(A[0][2], -A[1][2]);
+                storeResult[4] = acos(A[2][2]);
+                storeResult[5] = atan2(A[2][0], A[2][1]);
+            } else
+            {
+                storeResult[3] = -atan2(-A[0][1], A[0][0]);
+                storeResult[4] = (float)M_PI;
+                storeResult[5] = 0;
+            }
+        } else
+        {
+            storeResult[3] = 0;
+            storeResult[4] = atan2(-A[0][1], A[0][0]);
+            storeResult[5] = 0;
+        }
+    }
+
+    */
+
+    /*
+    void MathTools::Rpy2Quat(const float *rpy, float *storeQuat, bool switchWToFront)
+    {
+        if (rpy==NULL || storeQuat==NULL)
+            return;
+        float posArray[6];
+        SbMatrix resRPY;
+        posArray[0] = 0.0f;
+        posArray[1] = 0.0f;
+        posArray[2] = 0.0f;
+        posArray[3] = rpy[0];
+        posArray[4] = rpy[1];
+        posArray[5] = rpy[2];
+        MathTools::PosRPY2SbMatrix(posArray,resRPY);
+        MathTools::SbMatrix2Quat(resRPY,storeQuat,switchWToFront);
+    }
+
+    void MathTools::PosRPY2PosQuat(float *PosRPY, float *storePosQuat)
+    {
+        if (PosRPY==NULL || storePosQuat==NULL)
+            return;
+        SbMatrix resRPY;
+        MathTools::PosRPY2SbMatrix(PosRPY,resRPY);
+        MathTools::SbMatrix2PosQuat(resRPY,storePosQuat);
+    }
+
+
+    void MathTools::crossProduct (float *v1, float *v2, float *storeRes)
+    {
+        float a = v1[1]*v2[2] - v1[2]*v2[1];
+        float b = v1[2]*v2[0] - v1[0]*v2[2];
+        float c = v1[0]*v2[1] - v1[1]*v2[0];
+
+        storeRes[0] = a;
+        storeRes[1] = b;
+        storeRes[2] = c;
+    }
+    */
+
 
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen4f2rpy(const Eigen::Matrix4f& m, float x[6])
     {
@@ -64,37 +241,6 @@ namespace VirtualRobot
         eigen4f2rpy(m, storeRPY);
         return storeRPY;
     }
-
-    /*Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen3f2rpy(const Eigen::Matrix3f& m)
-    {
-        float alpha, beta, gamma;
-        beta = atan2(-m(2, 0),  sqrtf(m(0, 0) * m(0, 0) + m(1, 0) * m(1, 0)));
-
-        if (fabs(beta - (float)M_PI * 0.5f) < 1e-10)
-        {
-            alpha = 0;
-            gamma = atan2(m(0, 1), m(1, 1));
-        }
-        else if (fabs(beta + (float)M_PI * 0.5f) < 1e-10)
-        {
-            alpha = 0;
-            gamma = -atan2(m(0, 1), m(1, 1));
-        }
-        else
-        {
-            float cb = 1.0f / cosf(beta);
-            alpha = atan2(m(1, 0) * cb, m(0, 0) * cb);
-            gamma = atan2(m(2, 1) * cb, m(2, 2) * cb);
-        }
-        Eigen::Vector3f res;
-        res(0) = gamma;
-        res(1) = beta;
-        res(2) = alpha;
-
-        return res;
-    }*/
-
-
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::eigen3f2rpy(const Eigen::Matrix3f& m)
     {
         Eigen::Matrix4f m2 = Eigen::Matrix4f::Identity();
@@ -154,6 +300,33 @@ namespace VirtualRobot
     {
         Eigen::Matrix4f m;
         rpy2eigen4f(r,p,y,m);
+        return m;
+    }
+
+    Eigen::Matrix3f MathTools::rpy2eigen3f(float r, float p, float y)
+    {
+        Eigen::Matrix3f m;
+        float salpha, calpha, sbeta, cbeta, sgamma, cgamma;
+
+        sgamma = sinf(r);
+        cgamma = cosf(r);
+        sbeta = sinf(p);
+        cbeta = cosf(p);
+        salpha = sinf(y);
+        calpha = cosf(y);
+
+        m(0, 0) = (float)(calpha * cbeta);
+        m(0, 1) = (float)(calpha * sbeta * sgamma - salpha * cgamma);
+        m(0, 2) = (float)(calpha * sbeta * cgamma + salpha * sgamma);
+
+        m(1, 0) = (float)(salpha * cbeta);
+        m(1, 1) = (float)(salpha * sbeta * sgamma + calpha * cgamma);
+        m(1, 2) = (float)(salpha * sbeta * cgamma - calpha * sgamma);
+
+        m(2, 0) = (float) - sbeta;
+        m(2, 1) = (float)(cbeta * sgamma);
+        m(2, 2) = (float)(cbeta * cgamma);
+
         return m;
     }
 
@@ -591,13 +764,12 @@ namespace VirtualRobot
         //m(3,3) = w*w + x*x + y*y + z*z;*/
     }
 
-
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2eigen4f(float x, float y, float z, float w, Eigen::Matrix4f& m)
     {
         m = quat2eigen4f(x,y,z,w);
     }
 
-    std::string VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag)
+    std::string MathTools::getTransformXMLString(const Eigen::Matrix3f& m, int tabs, bool skipMatrixTag)
     {
         std::string t;
 
@@ -609,7 +781,7 @@ namespace VirtualRobot
         return getTransformXMLString(m, t, skipMatrixTag);
     }
 
-    std::string VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag)
+    std::string MathTools::getTransformXMLString(const Eigen::Matrix4f& m, int tabs, bool skipMatrixTag)
     {
         std::string t;
 
@@ -621,7 +793,7 @@ namespace VirtualRobot
         return getTransformXMLString(m, t, skipMatrixTag);
     }
 
-    std::string VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getTransformXMLString(const Eigen::Matrix4f& m, const std::string& tabs, bool skipMatrixTag)
+    std::string MathTools::getTransformXMLString(const Eigen::Matrix4f& m, const std::string& tabs, bool skipMatrixTag)
     {
         std::stringstream ss;
 
@@ -643,7 +815,7 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    std::string VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag)
+    std::string MathTools::getTransformXMLString(const Eigen::Matrix3f& m, const std::string& tabs, bool skipMatrixTag)
     {
         std::stringstream ss;
 
@@ -664,14 +836,14 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::transformPosition(const Eigen::Vector3f& pos, const Eigen::Matrix4f& m)
+    Eigen::Vector3f MathTools::transformPosition(const Eigen::Vector3f& pos, const Eigen::Matrix4f& m)
     {
         Eigen::Vector4f t(pos.x(), pos.y(), pos.z(), 1);
         t = m * t;
         return t.head(3);
     }
 
-    Eigen::Vector2f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::transformPosition(const Eigen::Vector2f& pos, const Eigen::Matrix4f& m)
+    Eigen::Vector2f MathTools::transformPosition(const Eigen::Vector2f& pos, const Eigen::Matrix4f& m)
     {
         Eigen::Vector4f t(pos.x(), pos.y(), 0, 1);
         t = m * t;
@@ -1907,17 +2079,6 @@ namespace VirtualRobot
         r(1,3)=y;
         r(2,3)=z;
         return r;
-    }
-
-    VisualizationPtr MathTools::Plane::getVisualization(float extend, bool gird) const
-    {
-        VisualizationPtr visu = gird ? VisualizationFactory::getGlobalVisualizationFactory()->createGrid(extend) :
-                                       VisualizationFactory::getGlobalVisualizationFactory()->createBox(extend, 1.f, extend);
-        auto r = getRotation(Eigen::Vector3f::UnitZ(), n);
-        Eigen::Matrix4f gp = MathTools::quat2eigen4f(r);
-        gp.block<3, 1>(0, 3) = p;
-        visu->setGlobalPose(gp);
-        return visu;
     }
 
 

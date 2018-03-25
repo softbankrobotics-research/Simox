@@ -675,7 +675,7 @@ namespace VirtualRobot
     VisualizationPtr TriMeshModel::getVisualization(bool showNormals, bool showLines)
     {
         std::vector<VisualizationPtr> visus;
-        const auto factory = VisualizationFactory::getGlobalVisualizationFactory();
+        const auto factory = VisualizationFactory::getInstance();
         visus.push_back(factory->createTriMeshModel(shared_from_this()));
 
         std::vector<VisualizationPtr> normals;

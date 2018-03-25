@@ -43,25 +43,10 @@ namespace VirtualRobot
         return m;
     }
 
-    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createBox(float width, float height, float depth, Visualization::Color color, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
-        VisualizationFactoryPtr visualizationFactory;
-
-        if (visualizationType.empty())
-        {
-            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
-            return result;
-        }
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
         /*
         std::vector<Primitive::PrimitivePtr> primitives;
@@ -71,13 +56,8 @@ namespace VirtualRobot
         VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
         */
         VisualizationPtr visu = visualizationFactory->createBox(width, height, depth);
+        VR_ASSERT(visu);
         visu->setColor(color);
-
-        if (!visu)
-        {
-            VR_ERROR << "Could not create box visualization with visu type " << visualizationType << endl;
-            return result;
-        }
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
@@ -96,27 +76,13 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createSphere(float radius, Visualization::Color color, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
-        VisualizationFactoryPtr visualizationFactory;
-
-        if (visualizationType.empty())
-        {
-            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
-            return result;
-        }
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
         VisualizationPtr visu = visualizationFactory->createSphere(radius);
+        VR_ASSERT(visu);
         visu->setColor(color);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
@@ -124,11 +90,6 @@ namespace VirtualRobot
         primitives.push_back(p);
         VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
         */
-        if (!visu)
-        {
-            VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;
-            return result;
-        }
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
@@ -147,27 +108,13 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, Visualization::Color color, const std::string& visualizationType, const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createCylinder(float radius, float height, Visualization::Color color, const CollisionCheckerPtr& colChecker)
     {
         ObstaclePtr result;
-        VisualizationFactoryPtr visualizationFactory;
-
-        if (visualizationType.empty())
-        {
-            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
-            return result;
-        }
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::getInstance();
 
         VisualizationPtr visu = visualizationFactory->createCylinder(radius, height);
+        VR_ASSERT(visu);
         visu->setColor(color);
 
         /*std::vector<Primitive::PrimitivePtr> primitives;
@@ -175,11 +122,6 @@ namespace VirtualRobot
         primitives.push_back(p);
         VisualizationNodePtr visu = visualizationFactory->getVisualizationFromPrimitives(primitives,false,color);
         */
-        if (!visu)
-        {
-            VR_ERROR << "Could not create cylinder visualization with visu type " << visualizationType << endl;
-            return result;
-        }
 
         //TriMeshModelPtr trimesh = visu->getTriMeshModel();
 
@@ -198,36 +140,13 @@ namespace VirtualRobot
     }
 
 
-    VirtualRobot::ObstaclePtr Obstacle::createFromMesh(const TriMeshModelPtr& mesh, const std::string& visualizationType , const CollisionCheckerPtr& colChecker)
+    VirtualRobot::ObstaclePtr Obstacle::createFromMesh(const TriMeshModelPtr& mesh, const CollisionCheckerPtr& colChecker)
     {
         THROW_VR_EXCEPTION_IF(!mesh, "Null data");
 
         ObstaclePtr result;
-        VisualizationFactoryPtr visualizationFactory;
-
-        if (visualizationType.empty())
-        {
-            visualizationFactory = VisualizationFactory::getGlobalVisualizationFactory();
-        }
-        else
-        {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
-        }
-
-        if (!visualizationFactory)
-        {
-            VR_ERROR << "Could not create factory for visu type " << visualizationType << endl;
-            return result;
-        }
-
-
         VisualizationPtr visu = mesh->getVisualization();
-
-        if (!visu)
-        {
-            VR_ERROR << "Could not create sphere visualization with visu type " << visualizationType << endl;
-            return result;
-        }
+        VR_ASSERT(visu);
 
         //int id = idCounter;
         //idCounter++;

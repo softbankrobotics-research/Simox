@@ -13,7 +13,7 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
-    VirtualRobot::init(argc, argv, "RobotViewer");
+    VirtualRobot::init(argc, argv, "CameraViewer");
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::considerKey("cam1");
@@ -21,11 +21,9 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    cout << " --- START --- " << endl;
-
     //std::string cam1Name("DepthCameraSim");
-    std::string cam1Name("EyeRightCameraSim");
-    std::string cam2Name("EyeLeftCameraSim");
+    std::string cam1Name("EyeRightCamera");
+    std::string cam2Name("EyeLeftCamera");
 
     std::string filename = VirtualRobot::RuntimeEnvironment::checkValidFileParameter("robot", "robots/Armar3/Armar3.xml");
 
@@ -39,10 +37,12 @@ int main(int argc, char* argv[])
         cam2Name = VirtualRobot::RuntimeEnvironment::getValue("cam2");
     }
 
-    cout << "Robot file:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
+    VR_INFO << "Robot file:" << filename << ", cam1:" << cam1Name << ", cam2:" << cam2Name << endl;
     showCamWindow rw(filename, cam1Name, cam2Name);
-    rw.main();
 
-    return 0;
+    rw.show();
+    rw.raise();
 
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

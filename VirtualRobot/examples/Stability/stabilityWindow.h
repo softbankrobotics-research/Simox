@@ -7,7 +7,6 @@
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
 #include <VirtualRobot/XML/SceneIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
-#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Model/Obstacle.h>
 
 #include "../../../Gui/ViewerInterface.h"
@@ -28,13 +27,11 @@ public:
     stabilityWindow(const std::string& robotFile, const std::string linkset, const std::string &jointset);
     ~stabilityWindow();
 
-    int main();
-
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event) override;
     void resetSceneryAll();
     void selectRobot();
     void collisionModel();

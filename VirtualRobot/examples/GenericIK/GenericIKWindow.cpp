@@ -1,6 +1,6 @@
 
 #include "GenericIKWindow.h"
-#include "VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h"
+#include "VirtualRobot/Visualization/VisualizationFactory.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "Gui/ViewerFactory.h"
 
@@ -19,15 +19,8 @@ using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
-// load static factories from SimoxGui-lib.
-// TODO this workaround is actually something one should avoid
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include <Gui/Coin/CoinViewerFactory.h>
-    SimoxGui::CoinViewerFactory f;
-#endif
-
 GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer"), robotVisuLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
 
@@ -38,7 +31,7 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
     box->attachFrames();
-    viewer->addVisualization(boxVisuLayer, "box", box->getVisualization());
+    viewer->addVisualization(boxVisuLayer, box->getVisualization());
 
     box2TCP();
 
@@ -56,7 +49,7 @@ void GenericIKWindow::setupUI()
 {
     UI.setupUi(this);
 
-    SimoxGui::ViewerFactoryPtr factory = SimoxGui::CoinViewerFactory::fromName(VisualizationFactory::getGlobalVisualizationFactory()->getVisualizationType(), NULL);
+    SimoxGui::ViewerFactoryPtr factory = SimoxGui::ViewerFactory::getInstance();
     viewer = factory->createViewer(UI.frameViewer);
     viewer->viewAll();
 
@@ -178,7 +171,7 @@ void GenericIKWindow::collisionModel()
     VisualizationSetPtr visualization = robot->getVisualization(colModel);
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayer, "robot", visualization);
+        viewer->addVisualization(robotVisuLayer, visualization);
     }
 }
 
@@ -190,18 +183,10 @@ void GenericIKWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int GenericIKWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void GenericIKWindow::quit()
 {
     std::cout << "GenericIKWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
     timer->stop();
 }
 

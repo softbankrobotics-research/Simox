@@ -16,8 +16,10 @@ subject to the following restrictions:
 
 #include "DemoApplication.h"
 #include "LinearMath/btIDebugDraw.h"
-#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
+#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 #include "BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h"//picking
 #include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"//picking
 
@@ -27,10 +29,13 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionShapes/btCompoundShape.h"
 #include "BulletCollision/CollisionShapes/btUniformScalingShape.h"
 #include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
-#include "GL_ShapeDrawer.h"
+
 #include "LinearMath/btQuickprof.h"
 #include "LinearMath/btDefaultMotionState.h"
 #include "LinearMath/btSerializer.h"
+#pragma GCC diagnostic pop
+
+#include "GL_ShapeDrawer.h"
 #include "GLDebugFont.h"
 
 
@@ -1564,8 +1569,10 @@ void DemoApplication::renderme()
 
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include "BulletCollision/BroadphaseCollision/btAxisSweep3.h"
-
+#pragma GCC diagnostic pop
 
 void    DemoApplication::clientResetScene()
 {

@@ -42,20 +42,13 @@
 #include <iostream>
 #include <sstream>
 
-#ifdef Simox_USE_COIN_VISUALIZATION
-    #include "../../../Gui/Coin/CoinViewerFactory.h"
-    // need this to ensure that static Factory methods are called across library boundaries (otherwise coin Gui lib is not loaded since it is not referenced by us)
-    SimoxGui::CoinViewerFactory f;
-#endif
-
-
 using namespace std;
 using namespace VirtualRobot;
 
 float TIMER_MS = 30.0f;
 
 ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     robotFilename = sRobotFilename;
 
@@ -74,7 +67,7 @@ ConstrainedIKWindow::~ConstrainedIKWindow()
 void ConstrainedIKWindow::setupUI()
 {
     UI.setupUi(this);
-    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::first(NULL);
+    SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
@@ -150,8 +143,8 @@ void ConstrainedIKWindow::collisionModel()
 
     viewer->clearLayer("robotLayer");
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
-    VisualizationSetPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->getVisualization(robot, colModel);
-    viewer->addVisualization("robotLayer", "robot", visu);
+    VisualizationSetPtr visu = robot->getVisualization(colModel);
+    viewer->addVisualization("robotLayer", visu);
     viewer->viewAll();
 }
 
@@ -163,18 +156,10 @@ void ConstrainedIKWindow::closeEvent(QCloseEvent* event)
 }
 
 
-int ConstrainedIKWindow::main()
-{
-    viewer->start(this);
-    return 0;
-}
-
-
 void ConstrainedIKWindow::quit()
 {
     std::cout << "ConstrainedIKWindow: Closing" << std::endl;
     this->close();
-    viewer->stop();
 }
 
 void ConstrainedIKWindow::updateKCBox()
@@ -388,8 +373,9 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("tsrLayer");
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(tsrConstraint, color);
-    viewer->addVisualization("tsrLayer", "tsr", visu);
+    VisualizationPtr visu = tsrConstraint->getVisualization();
+    visu->setColor(color);
+    viewer->addVisualization("tsrLayer", visu);
 }
 
 void ConstrainedIKWindow::randomTSR(bool quiet)
@@ -496,8 +482,9 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     Visualization::Color color(1, 0, 0, 0.5);
 
     viewer->clearLayer("poseLayer");
-    VisualizationPtr visu = VisualizationFactory::getGlobalVisualizationFactory()->createConstraintVisualization(positionConstraint, color);
-    viewer->addVisualization("poseLayer", "pose", visu);
+    VisualizationPtr visu = positionConstraint->getVisualization();
+    visu->setColor(color);
+    viewer->addVisualization("poseLayer", visu);
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)

@@ -45,11 +45,6 @@
 #include "../../Import/MeshImport/STLReader.h"
 #include "../../XML/BaseIO.h"
 
-/**
-* register this class in the super class factory
-*/
-VirtualRobot::VisualizationFactory::SubClassRegistry VirtualRobot::CoinVisualizationFactory::registry(VirtualRobot::CoinVisualizationFactory::getName(), &VirtualRobot::CoinVisualizationFactory::createInstance);
-
 namespace VirtualRobot
 {
     void CoinVisualizationFactory::init(int &argc, char *argv[], const std::string &appName)
@@ -439,6 +434,7 @@ namespace VirtualRobot
 
     SoNode *CoinVisualizationFactory::createTriMeshModelCoin(const TriMeshModelPtr &model)
     {
+        VR_ASSERT(model);
         const unsigned long numStrips = model->faces.size();
         const std::vector<int32_t> numVertices(numStrips, 3);
 
@@ -520,12 +516,61 @@ namespace VirtualRobot
         return res;
     }
 
-    VisualizationPtr CoinVisualizationFactory::createGrid(float extend, const std::string &textureFile) const
+    VisualizationPtr CoinVisualizationFactory::createPolygon(const std::vector<Eigen::Vector3f> &points) const
+    {
+        SoSeparator* res = new SoSeparator;
+        res->ref();
+
+        // A shape hints tells the ordering of polygons.
+        // This ensures double-sided lighting.
+        SoShapeHints *myHints = new SoShapeHints;
+        myHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+        res->addChild(myHints);
+
+        SoCoordinate3 *myCoords = new SoCoordinate3;
+        for (size_t i=0; i<points.size(); ++i)
+        {
+            myCoords->point.set1Value(i, points[i].x(), points[i].y(), points[i].z());
+        }
+        res->addChild(myCoords);
+
+        SoFaceSet *myFaceSet = new SoFaceSet;
+        myFaceSet->numVertices.set1Value(0, points.size());
+        res->addChild(myFaceSet);
+
+        res->unrefNoDelete();
+        return VisualizationPtr(new CoinVisualization(res));
+    }
+
+    std::vector<Eigen::Vector3f> createPlanePoints(float extend)
+    {
+        std::vector<Eigen::Vector3f> points;
+        points.reserve(4);
+        points.emplace_back(extend/2.f, extend/2.f, 0.f);
+        points.emplace_back(-extend/2.f, extend/2.f, 0.f);
+        points.emplace_back(-extend/2.f, -extend/2.f, 0.f);
+        points.emplace_back(extend/2.f, -extend/2.f, 0.f);
+        return points;
+    }
+
+
+    VisualizationPtr CoinVisualizationFactory::createPlane(const Eigen::Vector3f &point, const Eigen::Vector3f &normal, float extend, const std::string &texture) const
+    {
+        VisualizationPtr visu = texture.empty() ? createPolygon(createPlanePoints(extend))
+                                                : createTexturedPlane(extend, texture);
+        auto r = MathTools::getRotation(Eigen::Vector3f::UnitZ(), normal);
+        Eigen::Matrix4f gp = MathTools::quat2eigen4f(r);
+        gp.block<3, 1>(0, 3) = point;
+        visu->setGlobalPose(gp);
+        return visu;
+    }
+
+    VisualizationPtr CoinVisualizationFactory::createTexturedPlane(float extend, const std::string &texture)
     {
         SoSeparator* res = new SoSeparator();
         res->ref();
 
-        std::string tf = textureFile;
+        std::string tf = texture;
         if (tf.empty() || !RuntimeEnvironment::getDataFileAbsolute(tf))
         {
             tf  = "images/Floor.png";
@@ -533,22 +578,19 @@ namespace VirtualRobot
         }
         else
         {
-            tf = textureFile;
+            tf = texture;
         }
 
-        float width = extend;
-        float depth = extend;
         float widthMosaic = extend / 500.0f;
         float depthMosaic = extend / 500.0f;
 
         SoMaterial* pSoMaterial = new SoMaterial;
-        float x = width / 2.0f;
-        float z = depth / 2.0f;
         SoCoordinate3* pImagePlaneSoCoordinate3 = new SoCoordinate3;
-        pImagePlaneSoCoordinate3->point.set1Value(0, SbVec3f(x, z, 0.0f));
-        pImagePlaneSoCoordinate3->point.set1Value(1, SbVec3f(-x, z, 0.0f));
-        pImagePlaneSoCoordinate3->point.set1Value(2, SbVec3f(-x, -z, 0.0f));
-        pImagePlaneSoCoordinate3->point.set1Value(3, SbVec3f(x, -z, 0.0f));
+        auto planePoints = createPlanePoints(extend);
+        for (size_t i=0; i<planePoints.size(); ++i)
+        {
+            pImagePlaneSoCoordinate3->point.set1Value(i, SbVec3f(planePoints[i].x(), planePoints[i].y(), planePoints[i].z()));
+        }
         SoFaceSet* pSoFaceSet = new SoFaceSet;
         pSoFaceSet->numVertices.set1Value(0, 4);
         SoTextureCoordinate2* pSoTextureCoordinate2 = new SoTextureCoordinate2;
@@ -902,15 +944,5 @@ namespace VirtualRobot
     std::string CoinVisualizationFactory::getName()
     {
         return "inventor";
-    }
-
-    VisualizationFactoryPtr CoinVisualizationFactory::createInstance(void *)
-    {
-        if (!SoDB::isInitialized())
-        {
-            SoDB::init();
-        }
-
-        return VisualizationFactoryPtr(new CoinVisualizationFactory());
     }
 } // namespace VirtualRobot

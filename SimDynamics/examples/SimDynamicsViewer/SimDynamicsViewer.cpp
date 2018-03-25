@@ -40,8 +40,9 @@ int main(int argc, char* argv[])
 
     SimDynamicsWindow rw(filename);
 
-    rw.main();
+    rw.show();
+    rw.raise();
 
-    return 0;
-
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }

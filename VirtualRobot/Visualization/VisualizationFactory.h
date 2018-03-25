@@ -24,7 +24,6 @@
 #define _VirtualRobot_VisualizationFactory_h_
 
 #include "../Model/Model.h"
-#include "../Tools/AbstractFactoryMethod.h"
 #include "../Tools/BoundingBox.h"
 #include "../Model/Primitive.h"
 #include "../Tools/MathTools.h"
@@ -40,11 +39,19 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory  : public ::AbstractFactoryMethod<VisualizationFactory, void*>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationFactory
     {
     public:
-        VisualizationFactory();
-        virtual ~VisualizationFactory();
+        /*!
+        * Use this method to get the VisualizationFactory singleton according to your compile setup.
+        * @see CoinVisualizationFactory
+        * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
+        */
+        static VisualizationFactoryPtr getInstance();
+    protected:
+        VisualizationFactory() = default;
+    public:
+        virtual ~VisualizationFactory() = default;
 
         virtual void init(int &argc, char* argv[], const std::string &appName);
 
@@ -52,7 +59,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createVisualizationFromFile(const std::string& filename, bool boundingBox = false) const;
         virtual VisualizationPtr createVisualizationFromFile(const std::ifstream& ifs, bool boundingBox = false) const;
 
-        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations) const;
+        virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations = std::vector<VisualizationPtr>()) const;
 
         /*!
             A box, dimensions are given in mm.
@@ -61,6 +68,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createLine(const Eigen::Vector3f& from, const Eigen::Vector3f& to, float width = 1.0f) const;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width = 1.0f) const;
         virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width = 1.0f) const;
+        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f>& points, float width = 1.0f) const;
         virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f>& from, const std::vector<Eigen::Matrix4f>& to, float width = 1.0f) const;
         virtual VisualizationPtr createSphere(float radius) const;
         virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts = 30) const;
@@ -75,7 +83,20 @@ namespace VirtualRobot
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f>& points, float radius) const;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;
         virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr& model) const;
-        virtual VisualizationPtr createGrid(float extend, const std::string& textureFile = "") const;
+        virtual VisualizationPtr createPolygon(const std::vector<Eigen::Vector3f>& points) const;
+        inline VisualizationPtr createPlane(const MathTools::Plane& p, float extend, const std::string& texture = "") const
+        {
+            return createPlane(p.p, p.n, extend, texture);
+        }
+        virtual VisualizationPtr createPlane(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend, const std::string& texture = "") const;
+        inline VisualizationPtr createGrid(const MathTools::Plane& p, float extend) const
+        {
+            return createPlane(p, extend, "images/Floor.png");
+        }
+        inline VisualizationPtr createGrid(const Eigen::Vector3f& point, const Eigen::Vector3f& normal, float extend) const
+        {
+            return createPlane(point, normal, extend, "images/Floor.png");
+        }
         virtual VisualizationPtr createArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f) const;
         virtual VisualizationPtr createText(const std::string& text, bool billboard = false, float offsetX = 20.0f, float offsetY = 20.0f, float offsetZ = 0.0f) const;
         virtual VisualizationPtr createCone(float baseRadius, float height) const;
@@ -89,6 +110,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createEllipse(float x, float y, float z) const;
 
         virtual VisualizationPtr createContactVisualization(const VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) const;
+        virtual VisualizationPtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr& hull, const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
 
         /*!
             Create an empty VisualizationNode.
@@ -100,13 +122,6 @@ namespace VirtualRobot
             Usually no need to call cleanup explicitly, since cleanup is performed automatically at application exit.
         */
         virtual void cleanup();
-
-        /*! 
-        * Use this method to get the VisualizationFactory singleton according to your compile setup.
-        * @see CoinVisualizationFactory
-        * Usually there is only one VisualizationFactory type registered, so we can safely return the first entry.
-        */
-        static VisualizationFactoryPtr getGlobalVisualizationFactory();
 
         /**
          * A dynamicly bound version of getName().

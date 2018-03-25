@@ -25,7 +25,7 @@ endif()
 
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)
-    INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
     INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
     ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
@@ -88,6 +88,7 @@ IK/constraints/TSRConstraint.cpp
 IK/constraints/ReferenceConfigurationConstraint.cpp
 IK/constraints/JointLimitAvoidanceConstraint.cpp
 IK/constraints/CoMConstraint.cpp
+IK/constraints/CollisionCheckConstraint.cpp
 Workspace/WorkspaceDataArray.cpp
 Workspace/WorkspaceRepresentation.cpp
 Workspace/Reachability.cpp
@@ -124,6 +125,8 @@ Model/Nodes/Attachments/ModelNodeAttachment.cpp
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.cpp
 Model/Nodes/Attachments/ModelStructure.cpp
 Model/Nodes/Attachments/ModelStructureFactory.cpp
+Model/Nodes/Attachments/PhysicsAttachment.cpp
+Model/Nodes/Attachments/PhysicsAttachmentFactory.cpp
 Model/Nodes/Attachments/Sensor.cpp
 Model/Nodes/Attachments/PositionSensor.cpp
 Model/Nodes/Attachments/PositionSensorFactory.cpp
@@ -197,6 +200,7 @@ IK/constraints/TSRConstraint.h
 IK/constraints/ReferenceConfigurationConstraint.h
 IK/constraints/JointLimitAvoidanceConstraint.h
 IK/constraints/CoMConstraint.h
+IK/constraints/CollisionCheckConstraint.h
 Workspace/WorkspaceData.h
 Workspace/WorkspaceDataArray.h
 Workspace/WorkspaceRepresentation.h
@@ -243,6 +247,8 @@ Model/Nodes/Attachments/ForceTorqueSensor.h
 Model/Nodes/Attachments/ForceTorqueSensorFactory.h
 Model/Nodes/Attachments/ModelStructure.h
 Model/Nodes/Attachments/ModelStructureFactory.h
+Model/Nodes/Attachments/PhysicsAttachment.h
+Model/Nodes/Attachments/PhysicsAttachmentFactory.h
 Tools/AbstractFactoryMethod.h
 Tools/ConditionedLock.h
 Tools/MathTools.h
@@ -285,6 +291,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualization.cpp
     Visualization/CoinVisualization/CoinVisualizationSet.cpp
     Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
+    Visualization/CoinVisualization/CoinUtil.cpp
     )
 
     SET(INCLUDES
@@ -294,6 +301,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationSet.h
     Visualization/CoinVisualization/CoinOffscreenRenderer.h
     Visualization/CoinVisualization/CoinElement.h
+    Visualization/CoinVisualization/CoinUtil.h
     )
 
     if(BUILD_TESTING)
