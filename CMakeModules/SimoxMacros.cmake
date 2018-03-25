@@ -62,17 +62,6 @@ function(VirtualRobotQtApplication name srcs incs mocFiles uiFiles)
         SET (SIMOX_VISU_GUI_LIB simox-gui)
     endif()
     TARGET_LINK_LIBRARIES(${name} simox-virtualrobot ${Simox_EXTERNAL_LIBRARIES} ${SIMOX_VISU_GUI_LIB})
-
-    #Not sure why this is necessary, but I get linker errors otherwise
-    target_link_libraries(${PROJECT_NAME}
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::3DCore
-        Qt5::3DExtras
-        Qt5::3DRender
-        Qt5::3DInput
-    )
 endfunction()
 
 
