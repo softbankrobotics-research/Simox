@@ -75,7 +75,7 @@ namespace VirtualRobot
 
         Qt3DCore::QEntity* getEntity();
     protected:
-        virtual void createTriMeshModel() override;
+        virtual void createTriMeshModel();
         virtual void _addManipulator(ManipulatorType t) override;
         virtual void _removeManipulator(ManipulatorType t) override;
         virtual void _removeAllManipulators() override;
