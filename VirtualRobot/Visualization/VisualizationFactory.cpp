@@ -17,6 +17,10 @@
     #include "CoinVisualization/CoinVisualizationFactory.h"
 
     using GlobalFactory = VirtualRobot::CoinVisualizationFactory;
+#elif Simox_USE_QT3D_VISUALIZATION
+    #include "Qt3DVisualizaton/Qt3DVisualizationFactory.h"
+
+    using GlobalFactory = VirtualRobot::Qt3DVisualizationFactory;
 #else
     using GlobalFactory = VirtualRobot::VisualizationFactory;
 #endif
