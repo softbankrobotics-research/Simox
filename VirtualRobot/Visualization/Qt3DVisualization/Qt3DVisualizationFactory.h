@@ -53,7 +53,6 @@ namespace VirtualRobot
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const override;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f> &points, float radius) const override;
         virtual VisualizationPtr createTriMeshModel(const TriMeshModelPtr &model) const override;
-        virtual VisualizationPtr createGrid(float extend, const std::string &textureFile) const override;
         virtual VisualizationPtr createArrow(const Eigen::Vector3f &n, float length, float width) const override;
         virtual VisualizationPtr createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const override;
         virtual VisualizationPtr createCone(float baseRadius, float height) const override;
@@ -64,10 +63,6 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const override;
 
         static std::string getName();
-        static VisualizationFactoryPtr createInstance(void *);
-
-    private:
-        static SubClassRegistry registry;
     };
 
     typedef std::shared_ptr<Qt3DVisualizationFactory> Qt3DVisualizationFactoryPtr;

@@ -127,11 +127,6 @@ namespace VirtualRobot
         return VisualizationPtr(new Qt3DVisualization());
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createGrid(float extend, const std::string &textureFile) const
-    {
-        return VisualizationPtr(new Qt3DVisualization());
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
     {
         return VisualizationPtr(new Qt3DVisualization());
@@ -174,10 +169,5 @@ namespace VirtualRobot
     std::string Qt3DVisualizationFactory::getName()
     {
         return "qt3d";
-    }
-
-    VisualizationFactoryPtr Qt3DVisualizationFactory::createInstance(void *)
-    {
-        return VisualizationFactoryPtr(new Qt3DVisualizationFactory());
     }
 }
