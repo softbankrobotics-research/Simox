@@ -19,6 +19,7 @@
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
+#include <QToolTip>
 
 #include <vector>
 
