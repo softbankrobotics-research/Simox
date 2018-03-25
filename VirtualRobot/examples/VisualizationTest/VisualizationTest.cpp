@@ -1,14 +1,17 @@
 #include "VisualizationTestWindow.h"
-#include <QApplication>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 int main(int argc, char* argv[])
 {
-    QApplication testWindowApplication(argc, argv);
+    VirtualRobot::init(argc, argv, "Simox Visualization Test");
+
+    VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
+    VirtualRobot::RuntimeEnvironment::print();
 
     VisualizationTestWindow testWindow;
     testWindow.show();
+    testWindow.raise();
 
-    testWindow.main();
-
-    return testWindowApplication.exec();
+    VR_ASSERT(qApp);
+    return qApp->exec();
 }
