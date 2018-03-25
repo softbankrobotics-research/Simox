@@ -4,6 +4,8 @@
     #include "CoinVisualization/CoinOffscreenRenderer.h"
 
     using GlobalFactory = VirtualRobot::CoinOffscreenRenderer;
+#else
+    using GlobalFactory = VirtualRobot::OffscreenRenderer;
 #endif
 
 namespace VirtualRobot
