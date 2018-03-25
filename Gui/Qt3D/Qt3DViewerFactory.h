@@ -35,7 +35,7 @@ namespace SimoxGui
     {
         friend class ViewerFactory;
     protected:
-        Qt3DViewerFactory();
+        Qt3DViewerFactory() = default;
 
     public:
         virtual ~Qt3DViewerFactory() = default;
