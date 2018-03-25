@@ -10,12 +10,6 @@
 
 namespace VirtualRobot
 {
-    /**
-    * register this class in the super class factory
-    */
-    VirtualRobot::VisualizationFactory::SubClassRegistry VirtualRobot::Qt3DVisualizationFactory::registry(VirtualRobot::Qt3DVisualizationFactory::getName(),
-                                                                                                          &VirtualRobot::Qt3DVisualizationFactory::createInstance);
-
     Qt3DVisualizationFactory::Qt3DVisualizationFactory()
     {
     }
