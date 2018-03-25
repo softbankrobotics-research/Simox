@@ -20,9 +20,9 @@
 *             GNU Lesser General Public License
 *
 */
-
 #ifndef _Gui_Qt3DViewerFactory_h_
 #define _Gui_Qt3DViewerFactory_h_
+
 
 #include "../ViewerFactory.h"
 
@@ -33,18 +33,14 @@ namespace SimoxGui
     */
     class SIMOX_GUI_IMPORT_EXPORT Qt3DViewerFactory  : public ViewerFactory
     {
-    public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
+        friend class ViewerFactory;
+    protected:
         Qt3DViewerFactory();
-        virtual ~Qt3DViewerFactory();
 
-        virtual ViewerInterfacePtr createViewer(QWidget *parent) const override;
     public:
-        static std::string getName();
-        static ViewerFactoryPtr createInstance(void*);
-    private:
-        static SubClassRegistry registry;
+        virtual ~Qt3DViewerFactory() = default;
+
+        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) const override;
     };
 
     typedef std::shared_ptr<Qt3DViewerFactory> Qt3DViewerFactoryPtr;

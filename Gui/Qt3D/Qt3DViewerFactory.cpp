@@ -26,40 +26,8 @@
 
 namespace SimoxGui
 {
-
-    Qt3DViewerFactory::Qt3DViewerFactory()
-    {
-    }
-
-    Qt3DViewerFactory::~Qt3DViewerFactory()
-    {
-    }
-
     ViewerInterfacePtr Qt3DViewerFactory::createViewer(QWidget *parent) const
     {
-        Qt3DViewerPtr v(new Qt3DViewer(parent));
-        return v;
-    }
-
-    /**
-    * register this class in the super class factory
-    */
-    ViewerFactory::SubClassRegistry Qt3DViewerFactory::registry(Qt3DViewerFactory::getName(), &Qt3DViewerFactory::createInstance);
-
-    /**
-    * \return "qt3d"
-    */
-    std::string Qt3DViewerFactory::getName()
-    {
-        return "qt3d";
-    }
-
-    /**
-    * \return new instance of Qt3DVisualizationFactory
-    */
-    ViewerFactoryPtr Qt3DViewerFactory::createInstance(void*)
-    {
-        Qt3DViewerFactoryPtr qt3DFactory(new Qt3DViewerFactory());
-        return qt3DFactory;
+        return Qt3DViewerPtr(new Qt3DViewer(parent));
     }
 }
