@@ -5,6 +5,7 @@
 */
 
 #include "Qt3DVisualizationSet.h"
+#include "Qt3DVisualizationFactory.h"
 
 namespace VirtualRobot
 {
@@ -18,7 +19,7 @@ namespace VirtualRobot
 
     void Qt3DVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        Qt3DVisualizationSet::setGlobalPose(m);
+        VisualizationSet::setGlobalPose(m);
     }
 
     size_t Qt3DVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
@@ -59,6 +60,16 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationSet::clone() const
     {
+        std::cout << "Set: clone()" << std::endl;
+
+        std::vector<VisualizationPtr> clonedVisus;
+        const auto& visus = getVisualizations();
+        clonedVisus.reserve(visus.size());
+        for (const auto& visu : visus)
+        {
+            clonedVisus.push_back(visu->clone());
+        }
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     std::string Qt3DVisualizationSet::toXML(const std::string &basePath, int tabs) const
