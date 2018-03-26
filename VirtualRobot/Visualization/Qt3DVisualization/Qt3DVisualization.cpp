@@ -163,6 +163,7 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualization::clone() const
     {
+        return VisualizationPtr(new Qt3DVisualization());
     }
 
     void Qt3DVisualization::print() const
