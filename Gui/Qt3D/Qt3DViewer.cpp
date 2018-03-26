@@ -191,7 +191,10 @@ void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::Visualiza
     {
         visualizations.insert(visualization);
         VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
-        visu->getEntity()->setParent(this->layerMainNode);
+        if(visu)
+        {
+            visu->getEntity()->setParent(this->layerMainNode);
+        }
     }
 }
 
@@ -202,7 +205,10 @@ void SimoxGui::Qt3DViewer::Layer::removeVisualization(const VirtualRobot::Visual
     {
         visualizations.erase(it);
         VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
-        visu->getEntity()->setParent((Qt3DCore::QNode*) nullptr);
+        if(visu)
+        {
+            visu->getEntity()->setParent((Qt3DCore::QNode*) nullptr);
+        }
     }
 }
 
