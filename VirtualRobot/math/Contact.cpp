@@ -33,6 +33,12 @@ Contact::Contact(Eigen::Vector3f position, Eigen::Vector3f normal)
 {
 }
 
+Contact::Contact(float px, float py, float pz, float nx, float ny, float nz)
+    : position(px, py, pz), normal(nx, ny, nz)
+{
+
+}
+
 Contact Contact::Normalized()
 {
     return Contact(position, normal.normalized());
