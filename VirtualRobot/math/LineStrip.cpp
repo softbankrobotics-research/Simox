@@ -33,14 +33,14 @@ LineStrip::LineStrip(Vec3ListPtr points, float minT, float maxT)
 }
 
 
-Vec3 LineStrip::Get(float t)
+Eigen::Vector3f LineStrip::Get(float t)
 {
     int i; float f;
     GetIndex(t,  i,  f);
     return points->at(i) * (1 - f) + points->at(i+1) * f;
 }
 
-Vec3 LineStrip::GetDirection(int i)
+Eigen::Vector3f LineStrip::GetDirection(int i)
 {
     return points->at(i+1) - points->at(i);
 }

@@ -32,18 +32,18 @@ namespace math
     {
     public:
         Contact();
-        Contact(Vec3 position, Vec3 normal);
+        Contact(Eigen::Vector3f position, Eigen::Vector3f normal);
 
-        Vec3 Position() {  return position;  }
-        Vec3 Normal() {  return normal;  }
+        Eigen::Vector3f Position() {  return position;  }
+        Eigen::Vector3f Normal() {  return normal;  }
 
         Contact Normalized();
 
         std::string ToString();
         static Contact Lerp(Contact a, Contact b, float f);
     private:
-        Vec3 position;
-        Vec3 normal;
+        Eigen::Vector3f position;
+        Eigen::Vector3f normal;
     };
 }
 

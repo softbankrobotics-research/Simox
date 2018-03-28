@@ -39,13 +39,13 @@ float WeightedFloatAverage::WeightSum()
 {
     return weightSum;
 }
-void math::WeightedVec3Average::Add(Vec3 value, float weight)
+void math::WeightedVec3Average::Add(Eigen::Vector3f value, float weight)
 {
     sum += value * weight;
     weightSum += weight;
 }
 
-Vec3 WeightedVec3Average::Average()
+Eigen::Vector3f WeightedVec3Average::Average()
 {
     return sum / weightSum;
 }

@@ -31,22 +31,22 @@ namespace math
             : public AbstractFunctionR1R3
     {
     public:
-        LinearContinuedBezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3);
+        LinearContinuedBezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3);
 
-        Vec3 P0() {return p0; }
-        Vec3 P1() {return p1; }
-        Vec3 P2() {return p2; }
-        Vec3 P3() {return p3; }
+        Eigen::Vector3f P0() {return p0; }
+        Eigen::Vector3f P1() {return p1; }
+        Eigen::Vector3f P2() {return p2; }
+        Eigen::Vector3f P3() {return p3; }
 
 
-        Vec3 Get(float t) override;
-        Vec3 GetDerivative(float t) override;
+        Eigen::Vector3f Get(float t) override;
+        Eigen::Vector3f GetDerivative(float t) override;
 
     private:
-        Vec3 p0;
-        Vec3 p1;
-        Vec3 p2;
-        Vec3 p3;
+        Eigen::Vector3f p0;
+        Eigen::Vector3f p1;
+        Eigen::Vector3f p2;
+        Eigen::Vector3f p3;
 
     };
 }

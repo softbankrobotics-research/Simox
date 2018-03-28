@@ -34,17 +34,17 @@ namespace math
     class MarchingCubes
     {
     public:
-        void Init(int size, Vec3 center, Vec3 start, int steps, float stepLength, GridCacheFloat3Ptr cache);
+        void Init(int size, Eigen::Vector3f center, Eigen::Vector3f start, int steps, float stepLength, GridCacheFloat3Ptr cache);
         PrimitivePtr Process(float isolevel);
         void Process(float isolevel, PrimitivePtr primitive); //TODO ref
         PrimitivePtr ProcessSingleSurfaceOptimized(float isolevel, Index3 start);
         void ProcessSingleSurfaceOptimized(float isolevel, PrimitivePtr primitive, Index3 start);
-        static PrimitivePtr Calculate(Vec3 center, Vec3 start, int steps, float stepLength, SimpleAbstractFunctionR3R1Ptr modelPtr, float isolevel);
+        static PrimitivePtr Calculate(Eigen::Vector3f center, Eigen::Vector3f start, int steps, float stepLength, SimpleAbstractFunctionR3R1Ptr modelPtr, float isolevel);
 
     private:
       struct GridCell{
           public:
-              Vec3 P[8];
+              Eigen::Vector3f P[8];
       };
 
       typedef boost::shared_ptr<Array3D<GridCell>> Array3DGridCellPtr;
@@ -60,13 +60,13 @@ namespace math
 
 
       float GetVal(int x, int y, int z, int i);
-      Vec3 GetPos(int x, int y, int z, int i);
+      Eigen::Vector3f GetPos(int x, int y, int z, int i);
       void AddAndMark(int x, int y, int z, FringePtr fringe, Array3DBoolPtr marked);
       bool IsValidIndex(int x, int y, int z);
 
       int Polygonise(int x, int y, int z, float isolevel);
 
-      static Vec3 VertexInterp(float isolevel, Vec3 p1, Vec3 p2, float valp1, float valp2);
+      static Eigen::Vector3f VertexInterp(float isolevel, Eigen::Vector3f p1, Eigen::Vector3f p2, float valp1, float valp2);
 
       void Build(PrimitivePtr res, int tianglesNum);
 

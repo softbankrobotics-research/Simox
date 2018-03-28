@@ -23,7 +23,7 @@
 using namespace math;
 
 
-DataR3R1::DataR3R1(Vec3 position, float value)
+DataR3R1::DataR3R1(Eigen::Vector3f position, float value)
     :position(position), value(value)
 {
 }

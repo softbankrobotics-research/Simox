@@ -34,25 +34,25 @@ class GaussianImplicitSurface3D :
 public:
     //GaussianImplicitSurface3D();
     void Calculate(std::vector<DataR3R1> samples, float noise);
-    float Get(Vec3 pos) override;
+    float Get(Eigen::Vector3f pos) override;
 
 private:
-    MatrixXf covariance;
-    VectorXf alpha;
+    Eigen::MatrixXf covariance;
+    Eigen::VectorXf alpha;
     std::vector<DataR3R1> samples;
     float R;
-    Vec3 mean;
+    Eigen::Vector3f mean;
 
 
-    float Predict(Vec3 pos);
-    static MatrixXf CalculateCovariance(std::vector<Vec3> points, float R, float noise);
+    float Predict(Eigen::Vector3f pos);
+    static Eigen::MatrixXf CalculateCovariance(std::vector<Eigen::Vector3f> points, float R, float noise);
     //static VectorXf Cholesky(MatrixXf matrix);
     //static VectorXf FitModel(MatrixXf L, List<DataR3R1> targets);
     //VectorXf SpdMatrixSolve(MatrixXf a, bool IsUpper, VectorXf b);
-    static VectorXf MatrixSolve(MatrixXf a, VectorXf b);
-    static float Kernel(Vec3 p1, Vec3 p2, float R);
+    static Eigen::VectorXf MatrixSolve(Eigen::MatrixXf a, Eigen::VectorXf b);
+    static float Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R);
     //static double[,] Transpose(double[,] a)
-    static Vec3 Average(std::vector<DataR3R1> samples);
+    static Eigen::Vector3f Average(std::vector<DataR3R1> samples);
 };
 }
 

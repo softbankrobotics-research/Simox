@@ -24,11 +24,11 @@ using namespace math;
 
 
 Contact::Contact()
-    : position(Vec3(0,0,0)), normal(Vec3(0,0,0))
+    : position(Eigen::Vector3f(0,0,0)), normal(Eigen::Vector3f(0,0,0))
 {
 }
 
-Contact::Contact(Vec3 position, Vec3 normal)
+Contact::Contact(Eigen::Vector3f position, Eigen::Vector3f normal)
     : position(position), normal(normal)
 {
 }

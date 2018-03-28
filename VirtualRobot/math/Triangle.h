@@ -31,28 +31,28 @@ namespace math
     {
     public:
         Triangle();//TODO
-        Triangle(Vec3 p1, Vec3 p2, Vec3 p3);
+        Triangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3);
 
-        Vec3 P1() const {return p1;}
-        Vec3 P2() const {return p2;}
-        Vec3 P3() const {return p3;}
+        Eigen::Vector3f P1() const {return p1;}
+        Eigen::Vector3f P2() const {return p2;}
+        Eigen::Vector3f P3() const {return p3;}
 
         std::string ToString();
 
-        Vec3 Normal() const;
+        Eigen::Vector3f Normal() const;
 
         Triangle Flipped();
 
-        Vec3 Centroid();
+        Eigen::Vector3f Centroid();
         std::vector<Triangle> Subdivide(int depth);
 
-        static void Subdivide(int depth, Vec3 p1, Vec3 p2, Vec3 p3, std::vector<Triangle> &list);
+        static void Subdivide(int depth, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, std::vector<Triangle> &list);
 
-        Triangle Transform(Vec3 center, float unitLength);
+        Triangle Transform(Eigen::Vector3f center, float unitLength);
     private:
-        Vec3 p1;
-        Vec3 p2;
-        Vec3 p3;
+        Eigen::Vector3f p1;
+        Eigen::Vector3f p2;
+        Eigen::Vector3f p3;
     };
 }
 

@@ -30,25 +30,25 @@ namespace math
     public:
 
 
-        static Vec3 GetOrthonormalVectors(Vec3 vec, Vec3& dir1, Vec3& dir2);
+        static Eigen::Vector3f GetOrthonormalVectors(Eigen::Vector3f vec, Eigen::Vector3f& dir1, Eigen::Vector3f& dir2);
         static float ShiftAngle0_2PI(float a);
         static void GetIndex(float t, float minT, float maxT, int count, int& i, float& f);
         static float FastDistribution(float x, float sigma2);
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
-        static Vec3 Lerp(Vec3 a, Vec3 b, float f);
+        static Eigen::Vector3f Lerp(Eigen::Vector3f a, Eigen::Vector3f b, float f);
         static float Lerp(float a, float b, int min, int max, int val);
-        static float Angle(Vec2 v);
+        static float Angle(Eigen::Vector2f v);
         static int Sign(float x);
-        static void AssertNormalized(Vec3 vec, float epsilon = 0.05f);
+        static void AssertNormalized(Eigen::Vector3f vec, float epsilon = 0.05f);
         static std::vector<float> FloatRange(float start, float end, int steps);
-        static std::vector<Vec3> VectorRangeSymmetric(float start, float end, int steps);
-        static std::vector<Vec3> VectorRange(std::vector<float> xvals, std::vector<float> yvals, std::vector<float> zvals);
-        static float SmallestAngle(Vec3 a, Vec3 b);
-        static Vec3 CwiseMin(Vec3 a, Vec3 b);
-        static Vec3 CwiseMax(Vec3 a, Vec3 b);
-        static Vec3 CwiseDivide(Vec3 a, Vec3 b);
-        static Vec3 Average(std::vector<Vec3> vectors);
+        static std::vector<Eigen::Vector3f> VectorRangeSymmetric(float start, float end, int steps);
+        static std::vector<Eigen::Vector3f> VectorRange(std::vector<float> xvals, std::vector<float> yvals, std::vector<float> zvals);
+        static float SmallestAngle(Eigen::Vector3f a, Eigen::Vector3f b);
+        static Eigen::Vector3f CwiseMin(Eigen::Vector3f a, Eigen::Vector3f b);
+        static Eigen::Vector3f CwiseMax(Eigen::Vector3f a, Eigen::Vector3f b);
+        static Eigen::Vector3f CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b);
+        static Eigen::Vector3f Average(std::vector<Eigen::Vector3f> vectors);
         static void Swap(float &a,float &b);
 
     private:

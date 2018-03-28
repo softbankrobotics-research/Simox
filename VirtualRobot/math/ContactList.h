@@ -31,7 +31,7 @@ namespace math
     {
     public:
         ContactList();
-        std::vector<Vec3> GetPoints();
+        std::vector<Eigen::Vector3f> GetPoints();
         Contact Last();
         std::string ToString();
 

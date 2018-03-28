@@ -29,10 +29,10 @@ AbstractFunctionR2R3::AbstractFunctionR2R3()
 {
 }
 
-Vec3 AbstractFunctionR2R3::GetNormal(float u, float v)
+Eigen::Vector3f AbstractFunctionR2R3::GetNormal(float u, float v)
 {
-    Vec3 dduVec = GetDdu(u, v);
-    Vec3 ddvVec = GetDdv(u, v);
+    Eigen::Vector3f dduVec = GetDdu(u, v);
+    Eigen::Vector3f ddvVec = GetDdv(u, v);
     return dduVec.cross(ddvVec);
 }
 
@@ -46,17 +46,17 @@ Contact AbstractFunctionR2R3::GetContact(float u, float v)
      return Contact(GetPoint(u, v), GetNormal(u, v));
 }
 
-Vec3 AbstractFunctionR2R3::GetNormal(Vec2 uv) { return GetNormal(uv.x(), uv.y()); }
+Eigen::Vector3f AbstractFunctionR2R3::GetNormal(Eigen::Vector2f uv) { return GetNormal(uv.x(), uv.y()); }
 
-Vec3 AbstractFunctionR2R3::GetDdu(Vec2 uv) { return GetDdu(uv.x(), uv.y()); }
+Eigen::Vector3f AbstractFunctionR2R3::GetDdu(Eigen::Vector2f uv) { return GetDdu(uv.x(), uv.y()); }
 
-Vec3 AbstractFunctionR2R3::GetDdv(Vec2 uv) { return GetDdv(uv.x(), uv.y()); }
+Eigen::Vector3f AbstractFunctionR2R3::GetDdv(Eigen::Vector2f uv) { return GetDdv(uv.x(), uv.y()); }
 
-Vec2 AbstractFunctionR2R3::GetUVFromPos(Vec3 pos)
+Eigen::Vector2f AbstractFunctionR2R3::GetUVFromPos(Eigen::Vector3f pos)
 {
     float u, v;
     GetUV(pos,  u,  v);
-    return  Vec2(u, v);
+    return  Eigen::Vector2f(u, v);
 }
 
-Vec3 AbstractFunctionR2R3::GetVector(Vec2 pos, Vec2 dir) { return GetDdu(pos) * dir.x() + GetDdv(pos) * dir.y(); }
+Eigen::Vector3f AbstractFunctionR2R3::GetVector(Eigen::Vector2f pos, Eigen::Vector2f dir) { return GetDdu(pos) * dir.x() + GetDdv(pos) * dir.y(); }

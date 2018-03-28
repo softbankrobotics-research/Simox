@@ -34,7 +34,7 @@ using namespace math;
 static const float eps = 0.0001f;
 
 
-void MarchingCubes::Init(int size, Vec3 /*center*/, Vec3 /*start*/, int /*steps*/, float /*stepLength*/, GridCacheFloat3Ptr cache)
+void MarchingCubes::Init(int size, Eigen::Vector3f /*center*/, Eigen::Vector3f /*start*/, int /*steps*/, float /*stepLength*/, GridCacheFloat3Ptr cache)
 {
     _size = size;
     _grids = Array3DGridCellPtr(new Array3D<GridCell>(size));
@@ -45,14 +45,14 @@ void MarchingCubes::Init(int size, Vec3 /*center*/, Vec3 /*start*/, int /*steps*
             {
                 GridCell cell = GridCell();
 
-                cell.P[0] = Vec3(i, j, k);
-                cell.P[1] = Vec3(i + 1, j, k);
-                cell.P[2] = Vec3(i + 1, j + 1, k);
-                cell.P[3] = Vec3(i, j + 1, k);
-                cell.P[4] = Vec3(i, j, k + 1);
-                cell.P[5] = Vec3(i + 1, j, k + 1);
-                cell.P[6] = Vec3(i + 1, j + 1, k + 1);
-                cell.P[7] = Vec3(i, j + 1, k + 1);
+                cell.P[0] = Eigen::Vector3f(i, j, k);
+                cell.P[1] = Eigen::Vector3f(i + 1, j, k);
+                cell.P[2] = Eigen::Vector3f(i + 1, j + 1, k);
+                cell.P[3] = Eigen::Vector3f(i, j + 1, k);
+                cell.P[4] = Eigen::Vector3f(i, j, k + 1);
+                cell.P[5] = Eigen::Vector3f(i + 1, j, k + 1);
+                cell.P[6] = Eigen::Vector3f(i + 1, j + 1, k + 1);
+                cell.P[7] = Eigen::Vector3f(i, j + 1, k + 1);
 
                 _grids->Set(i,j,k,cell);
             }
@@ -122,7 +122,7 @@ void MarchingCubes::ProcessSingleSurfaceOptimized(float isolevel, PrimitivePtr p
     }
 }
 
-PrimitivePtr MarchingCubes::Calculate(Vec3 center, Vec3 start, int steps, float stepLength, SimpleAbstractFunctionR3R1Ptr modelPtr, float isolevel)
+PrimitivePtr MarchingCubes::Calculate(Eigen::Vector3f center, Eigen::Vector3f start, int steps, float stepLength, SimpleAbstractFunctionR3R1Ptr modelPtr, float isolevel)
 {
     int size = steps * 2;
     start = (start - center) / stepLength;
@@ -130,7 +130,7 @@ PrimitivePtr MarchingCubes::Calculate(Vec3 center, Vec3 start, int steps, float 
     MarchingCubes mc =  MarchingCubes();
     std::function<float(Index3)> getData = [steps, stepLength, center, modelPtr](Index3 index)
     {
-        Vec3 pos = Vec3((index.X() - steps) * stepLength + center.x(),
+        Eigen::Vector3f pos = Eigen::Vector3f((index.X() - steps) * stepLength + center.x(),
                         (index.Y() - steps) * stepLength + center.y(),
                         (index.Z() - steps) * stepLength + center.z());
         return modelPtr->Get(pos);
@@ -147,7 +147,7 @@ PrimitivePtr MarchingCubes::Calculate(Vec3 center, Vec3 start, int steps, float 
            (t.P2()-t.P3()).squaredNorm() > eps &&
            (t.P3()-t.P1()).squaredNorm() > eps)
         {
-           result->push_back(t.Transform(- Vec3(1, 1, 1) * stepLength * steps + center, stepLength));
+           result->push_back(t.Transform(- Eigen::Vector3f(1, 1, 1) * stepLength * steps + center, stepLength));
         }
     }
     newSize = result->size();
@@ -180,7 +180,7 @@ float MarchingCubes::GetVal(int x, int y, int z, int i)
     return 0;
 }
 
-Vec3 MarchingCubes::GetPos(int x, int y, int z, int i)
+Eigen::Vector3f MarchingCubes::GetPos(int x, int y, int z, int i)
 {
     return _grids->Get(x, y, z).P[i];
 }
@@ -200,7 +200,7 @@ bool MarchingCubes::IsValidIndex(int x, int y, int z)
 
 int MarchingCubes::Polygonise(int x, int y, int z, float isolevel)
 {
-    Vec3 vertlist[12];
+    Eigen::Vector3f vertlist[12];
     int i, ntriang = 0;
     unsigned int cubeindex = 0; //TODO unsigned char == C# char?
 
@@ -254,7 +254,7 @@ int MarchingCubes::Polygonise(int x, int y, int z, float isolevel)
     return ntriang;
 }
 
-Vec3 MarchingCubes::VertexInterp(float isolevel, Vec3 p1, Vec3 p2, float valp1, float valp2)
+Eigen::Vector3f MarchingCubes::VertexInterp(float isolevel, Eigen::Vector3f p1, Eigen::Vector3f p2, float valp1, float valp2)
 {
     if (std::abs(isolevel - valp1) < 0.00001f)
         return p1;
@@ -267,7 +267,7 @@ Vec3 MarchingCubes::VertexInterp(float isolevel, Vec3 p1, Vec3 p2, float valp1, 
     float y = (float)(p1.y() + mu * (p2.y() - p1.y()));
     float z = (float)(p1.z() + mu * (p2.z() - p1.z()));
 
-    return  Vec3(x, y, z);
+    return  Eigen::Vector3f(x, y, z);
 }
 
 void MarchingCubes::Build(PrimitivePtr res, int tianglesNum)

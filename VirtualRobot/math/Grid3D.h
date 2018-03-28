@@ -28,21 +28,21 @@ namespace math
     class Grid3D
     {
     public:
-         Vec3 P1() { return p1;  }
-         Vec3 P2() { return p2;  }
+         Eigen::Vector3f P1() { return p1;  }
+         Eigen::Vector3f P2() { return p2;  }
          int StepsX() { return stepsX;  }
          int StepsY() { return stepsY;  }
          int StepsZ() { return stepsZ;  }
 
-        Grid3D(Vec3 p1, Vec3 p2, int stepsX, int stepsY, int stepsZ);
-        static Grid3DPtr CreateFromBox(Vec3 p1, Vec3 p2, float stepLength);
+        Grid3D(Eigen::Vector3f p1, Eigen::Vector3f p2, int stepsX, int stepsY, int stepsZ);
+        static Grid3DPtr CreateFromBox(Eigen::Vector3f p1, Eigen::Vector3f p2, float stepLength);
 
-        Vec3 Get(int x, int y, int z);
-        std::vector<Vec3> AllGridPoints();
+        Eigen::Vector3f Get(int x, int y, int z);
+        std::vector<Eigen::Vector3f> AllGridPoints();
 
     private :
-        Vec3 p1;
-        Vec3 p2;
+        Eigen::Vector3f p1;
+        Eigen::Vector3f p2;
         int stepsX;
         int stepsY;
         int stepsZ;

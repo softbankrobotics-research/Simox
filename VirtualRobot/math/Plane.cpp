@@ -23,33 +23,33 @@
 
 using namespace math;
 
-Plane::Plane(Vec3 pos, Vec3 dir1, Vec3 dir2)
+Plane::Plane(Eigen::Vector3f pos, Eigen::Vector3f dir1, Eigen::Vector3f dir2)
     : pos(pos), dir1(dir1), dir2(dir2)
 {
 }
 
-Vec3 Plane::GetPoint(float u, float v)
+Eigen::Vector3f Plane::GetPoint(float u, float v)
 {
     return pos + u * dir1 + v * dir2;
 }
 
-Vec3 Plane::GetDdu(float, float)
+Eigen::Vector3f Plane::GetDdu(float, float)
 {
     return dir1;
 }
 
-Vec3 Plane::GetDdv(float, float)
+Eigen::Vector3f Plane::GetDdv(float, float)
 {
     return dir2;
 }
 
-void Plane::GetUV(Vec3 pos, float& u, float& v)
+void Plane::GetUV(Eigen::Vector3f pos, float& u, float& v)
 {
     float w;
     GetUVW(pos,u,v,w);
 }
 
-Vec3 Plane::GetNormal()
+Eigen::Vector3f Plane::GetNormal()
 {
     return dir1.cross(dir2);
 }
@@ -69,11 +69,11 @@ ImplicitPlane Plane::ToImplicit()
     return ImplicitPlane::FromPositionNormal(pos, GetNormal());
 }
 
-Matrix3f Plane::GetRotationMatrix()
+Eigen::Matrix3f Plane::GetRotationMatrix()
 {
     Helpers::AssertNormalized(dir1);
     Helpers::AssertNormalized(dir2);
-    Matrix3f result;
+    Eigen::Matrix3f result;
     result << dir1 , dir2 , GetNormal();
     return result;
 }
@@ -85,18 +85,18 @@ std::string Plane::ToString()
     return ss.str();
 }
 
-void Plane::GetUVW(Vec3 pos, float& u, float& v, float& w)
+void Plane::GetUVW(Eigen::Vector3f pos, float& u, float& v, float& w)
 {
-    Vec3 rotated = GetRotationMatrix().transpose() * (pos - this->pos);
+    Eigen::Vector3f rotated = GetRotationMatrix().transpose() * (pos - this->pos);
     u = rotated.x();
     v = rotated.y();
     w = rotated.z();
 
 }
 
-Plane Plane::FromNormal(Vec3 pos, Vec3 normal)
+Plane Plane::FromNormal(Eigen::Vector3f pos, Eigen::Vector3f normal)
 {
-    Vec3 d1, d2;
+    Eigen::Vector3f d1, d2;
     Helpers::GetOrthonormalVectors(normal, d1,d2);
     return Plane(pos, d1, d2);
 }

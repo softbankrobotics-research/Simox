@@ -40,10 +40,10 @@ namespace math
         LineStrip(Vec3ListPtr points, float minT, float maxT);
 
         bool InLimits(float t);
-         Vec3 Get(float t) override;
+         Eigen::Vector3f Get(float t) override;
 
     private:
-        Vec3 GetDirection(int i);
+        Eigen::Vector3f GetDirection(int i);
         void GetIndex(float t,  int& i, float& f);
 
     };

@@ -25,7 +25,7 @@
 using namespace math;
 
 
-Grid3D::Grid3D(Vec3 p1, Vec3 p2, int stepsX, int stepsY, int stepsZ)
+Grid3D::Grid3D(Eigen::Vector3f p1, Eigen::Vector3f p2, int stepsX, int stepsY, int stepsZ)
 {
     this->p1 = p1;
     this->p2 = p2;
@@ -34,22 +34,22 @@ Grid3D::Grid3D(Vec3 p1, Vec3 p2, int stepsX, int stepsY, int stepsZ)
     this->stepsZ = stepsZ;
 }
 
-Grid3DPtr Grid3D::CreateFromBox(Vec3 p1, Vec3 p2, float stepLength)
+Grid3DPtr Grid3D::CreateFromBox(Eigen::Vector3f p1, Eigen::Vector3f p2, float stepLength)
 {
-    Vec3 steps = (p2 - p1) / stepLength;
+    Eigen::Vector3f steps = (p2 - p1) / stepLength;
     return Grid3DPtr(new  Grid3D(p1, p2, std::round(steps.x()), std::round(steps.y()), std::round(steps.z())));
 }
 
 
-Vec3 Grid3D::Get(int x, int y, int z){
-    return Vec3(Helpers::Lerp(p1.x(), p2.x(), 0, stepsX, x),
+Eigen::Vector3f Grid3D::Get(int x, int y, int z){
+    return Eigen::Vector3f(Helpers::Lerp(p1.x(), p2.x(), 0, stepsX, x),
                 Helpers::Lerp(p1.y(), p2.y(), 0, stepsY, y),
                 Helpers::Lerp(p1.z(), p2.z(), 0, stepsZ, z));
 }
 
-std::vector<Vec3> Grid3D::AllGridPoints()
+std::vector<Eigen::Vector3f> Grid3D::AllGridPoints()
 {
-    std::vector<Vec3> points;
+    std::vector<Eigen::Vector3f> points;
     for (int x = 0; x <= stepsX; x++)
     {
         for (int y = 0; y <= stepsY; y++)

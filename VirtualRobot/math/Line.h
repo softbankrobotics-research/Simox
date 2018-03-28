@@ -30,25 +30,25 @@ namespace math
     class Line
     {
     public:
-        Line(Vec3 pos, Vec3 dir);
-        Vec3 Pos(){return pos;}
-        Vec3 Dir(){return dir;}
+        Line(Eigen::Vector3f pos, Eigen::Vector3f dir);
+        Eigen::Vector3f Pos(){return pos;}
+        Eigen::Vector3f Dir(){return dir;}
 
         Line Normalized();
-        Vec3 Get(float t);
-        Vec3 GetDerivative(float t);
-        Vec3 GetClosestPoint(Vec3 p);
-        float GetT(Vec3 p);
+        Eigen::Vector3f Get(float t);
+        Eigen::Vector3f GetDerivative(float t);
+        Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p);
+        float GetT(Eigen::Vector3f p);
         std::string ToString();
 
         bool IntersectsTriangle(Triangle tri, float& t);
         bool IntersectsPrimitive(PrimitivePtr p, float& t);
 
-        static Line FromPoints(Vec3 p1, Vec3 p2);
+        static Line FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2);
 
     private:
-        Vec3 pos;
-        Vec3 dir;
+        Eigen::Vector3f pos;
+        Eigen::Vector3f dir;
     };
 }
 

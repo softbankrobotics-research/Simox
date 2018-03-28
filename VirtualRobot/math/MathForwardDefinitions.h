@@ -62,18 +62,13 @@ private:
 namespace math{
 
 
-    typedef Eigen::Vector2f Vec2;
-    typedef boost::shared_ptr<Vec2> Vec2Ptr;
-    typedef Eigen::Vector3f Vec3;
-    typedef boost::shared_ptr<Vec3> Vec3Ptr;
-    typedef Eigen::Matrix3f Matrix3f;
-    typedef boost::shared_ptr<Matrix3f> Matrix3fPtr;
-    typedef Eigen::MatrixXf MatrixXf;
-    typedef boost::shared_ptr<MatrixXf> MatrixXfPtr;
-    typedef Eigen::VectorXf VectorXf;
-    typedef boost::shared_ptr<VectorXf> VectorXfPtr;
-    typedef Nullable<float> floatOpt;
-    typedef Nullable<Vec3> Vec3Opt;
+    //typedef Eigen::Vector2f Eigen::Vector2f;
+    //typedef Eigen::Vector3f Eigen::Vector3f;
+    //typedef Eigen::Matrix3f Matrix3f;
+    //typedef Eigen::MatrixXf MatrixXf;
+    //typedef Eigen::VectorXf VectorXf;
+    //typedef Nullable<float> floatOpt;
+    typedef Nullable<Eigen::Vector3f> Vec3Opt;
 
     class AbstractFunctionR1R2;
     typedef boost::shared_ptr<AbstractFunctionR1R2> AbstractFunctionR1R2Ptr;
@@ -156,7 +151,7 @@ namespace math{
     class EdgeTracer;
     typedef boost::shared_ptr<EdgeTracer> EdgeTracerPtr;
     class EdgeFeature;
-    typedef boost::shared_ptr<std::vector<Vec3>> Vec3ListPtr;
+    typedef boost::shared_ptr<std::vector<Eigen::Vector3f>> Vec3ListPtr;
     class Edge;
     typedef boost::shared_ptr<Edge> EdgePtr;
 

@@ -45,15 +45,15 @@ public:
 
     ImplicitPlane Normalize();
     ImplicitPlane Flipped();
-    Vec3 GetNormal();
-    Vec3 GetClosestPoint(Vec3 v);
-    static ImplicitPlane FromPositionNormal(Vec3 pos, Vec3 normal);
+    Eigen::Vector3f GetNormal();
+    Eigen::Vector3f GetClosestPoint(Eigen::Vector3f v);
+    static ImplicitPlane FromPositionNormal(Eigen::Vector3f pos, Eigen::Vector3f normal);
     static ImplicitPlane FromContact(Contact c);
 
     // https://de.wikipedia.org/wiki/Schnittgerade
     Line Intersect(Plane plane);
 
-    float Get(Vec3 pos);
+    float Get(Eigen::Vector3f pos);
 
 private:
     float a;

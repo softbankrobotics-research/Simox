@@ -41,11 +41,11 @@ namespace math
     class WeightedVec3Average
     {
     public:
-        void Add(Vec3 value, float weight);
-        Vec3 Average();
+        void Add(Eigen::Vector3f value, float weight);
+        Eigen::Vector3f Average();
         float WeightSum();
     private:
-        Vec3 sum;
+        Eigen::Vector3f sum;
         float weightSum = 0;
     };
 }

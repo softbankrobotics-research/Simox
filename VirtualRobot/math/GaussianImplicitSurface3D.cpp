@@ -28,19 +28,19 @@ using namespace math;
 void GaussianImplicitSurface3D::Calculate(std::vector<DataR3R1> samples, float noise)
 {
     std::vector<DataR3R1> shiftedSamples;
-    std::vector<Vec3> points;
-    VectorXf values(samples.size());
+    std::vector<Eigen::Vector3f> points;
+    Eigen::VectorXf values(samples.size());
     int i = 0;
     mean = Average(samples);
     for(DataR3R1 d : samples){
-        Vec3 shiftedPos = d.Position()- mean;
+        Eigen::Vector3f shiftedPos = d.Position()- mean;
         shiftedSamples.push_back(DataR3R1(shiftedPos, d.Value()));
         points.push_back(shiftedPos);
         values(i++) = d.Value();
     }
     R = 0;
-    for(Vec3 p1 : points){
-        for(Vec3 p2 : points){
+    for(Eigen::Vector3f p1 : points){
+        for(Eigen::Vector3f p2 : points){
             if((p1-p2).norm() > R) R= (p1-p2).norm();
         }
     }
@@ -54,14 +54,14 @@ void GaussianImplicitSurface3D::Calculate(std::vector<DataR3R1> samples, float n
 
 }
 
-float GaussianImplicitSurface3D::Get(Vec3 pos)
+float GaussianImplicitSurface3D::Get(Eigen::Vector3f pos)
 {
     return Predict(pos);
 }
 
-float GaussianImplicitSurface3D::Predict(Vec3 pos)
+float GaussianImplicitSurface3D::Predict(Eigen::Vector3f pos)
 {
-    VectorXf Cux(samples.size());
+    Eigen::VectorXf Cux(samples.size());
     int i = 0;
     pos = pos - mean;
     for (DataR3R1 d : samples){
@@ -71,9 +71,9 @@ float GaussianImplicitSurface3D::Predict(Vec3 pos)
 
 }
 
-MatrixXf GaussianImplicitSurface3D::CalculateCovariance(std::vector<Vec3> points, float R, float noise)
+Eigen::MatrixXf GaussianImplicitSurface3D::CalculateCovariance(std::vector<Eigen::Vector3f> points, float R, float noise)
 {
-    MatrixXf covariance = MatrixXf(points.size(), points.size());
+    Eigen::MatrixXf covariance = Eigen::MatrixXf(points.size(), points.size());
 
     for (size_t i = 0; i < points.size(); i++)
     {
@@ -93,21 +93,21 @@ MatrixXf GaussianImplicitSurface3D::CalculateCovariance(std::vector<Vec3> points
 
 
 
-VectorXf GaussianImplicitSurface3D::MatrixSolve(MatrixXf a, VectorXf b)
+Eigen::VectorXf GaussianImplicitSurface3D::MatrixSolve(Eigen::MatrixXf a, Eigen::VectorXf b)
 {
     return a.colPivHouseholderQr().solve(b);
 }
 
 
-float GaussianImplicitSurface3D::Kernel(Vec3 p1, Vec3 p2, float R)
+float GaussianImplicitSurface3D::Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R)
 {
     float r = (p1-p2).norm();
     return 2 * r*r*r + 3 * R * r*r + R*R*R;
 }
 
-Vec3 GaussianImplicitSurface3D::Average(std::vector<DataR3R1> samples)
+Eigen::Vector3f GaussianImplicitSurface3D::Average(std::vector<DataR3R1> samples)
 {
-    Vec3 sum = Vec3(0,0,0);
+    Eigen::Vector3f sum = Eigen::Vector3f(0,0,0);
     if (samples.size() == 0) return sum;
     for(DataR3R1 d : samples){
         sum += d.Position();

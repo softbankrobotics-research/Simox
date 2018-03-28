@@ -31,7 +31,7 @@ namespace math
               public std::vector<Triangle>
       {
          public:
-              void AddTriangle(Vec3 v1, Vec3 v2, Vec3 v3);
+              void AddTriangle(Eigen::Vector3f v1, Eigen::Vector3f v2, Eigen::Vector3f v3);
           private:
       };
 

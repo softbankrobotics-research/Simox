@@ -27,7 +27,7 @@ AbstractFunctionR1R3::AbstractFunctionR1R3()
 }
 
 
-float AbstractFunctionR1R3::FindClosestPoint(Vec3 p, float t1, float t2, int segments)
+float AbstractFunctionR1R3::FindClosestPoint(Eigen::Vector3f p, float t1, float t2, int segments)
 {
     float minT = t1;
     float minD = (Get(minT)-p).squaredNorm();
@@ -60,12 +60,12 @@ float AbstractFunctionR1R3::MoveLengthOnCurve(float x, float l, int steps)
 
 float AbstractFunctionR1R3::GetLength(float t1, float t2, int steps)
 {
-    Vec3 p0 = Get(t1);
+    Eigen::Vector3f p0 = Get(t1);
     float l = 0;
     for (int i = 1; i <= steps; i++)
     {
         float t = t1 + (t2 - t1) / steps * i;
-        Vec3 p1 = Get(t);
+        Eigen::Vector3f p1 = Get(t);
         l += (p1 - p0).norm();
         p0 = p1;
     }
@@ -73,9 +73,9 @@ float AbstractFunctionR1R3::GetLength(float t1, float t2, int steps)
 }
 
 
-std::vector<Vec3> AbstractFunctionR1R3::Sample(float t1, float t2, int segments)
+std::vector<Eigen::Vector3f> AbstractFunctionR1R3::Sample(float t1, float t2, int segments)
 {
-    std::vector<Vec3> result;
+    std::vector<Eigen::Vector3f> result;
     for(float f : Segments(t1, t2, segments)){
         result.push_back(Get(f));
     }

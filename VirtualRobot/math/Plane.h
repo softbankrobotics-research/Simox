@@ -38,34 +38,34 @@ class Plane :
 {
 
 public:
-    Plane(Vec3 pos, Vec3 dir1, Vec3 dir2);
+    Plane(Eigen::Vector3f pos, Eigen::Vector3f dir1, Eigen::Vector3f dir2);
 
 
-    Vec3 Pos() {return pos;}
-    Vec3 Dir1(){return dir1;}
-    Vec3 Dir2(){return dir2;}
+    Eigen::Vector3f Pos() {return pos;}
+    Eigen::Vector3f Dir1(){return dir1;}
+    Eigen::Vector3f Dir2(){return dir2;}
 
 
-    Vec3 GetPoint(float u, float v) override;
-    Vec3 GetDdu(float u, float v) override;
-    Vec3 GetDdv(float u, float v) override;
-    void GetUV(Vec3 pos, float &u, float &v) override;
-    Vec3 GetNormal();
+    Eigen::Vector3f GetPoint(float u, float v) override;
+    Eigen::Vector3f GetDdu(float u, float v) override;
+    Eigen::Vector3f GetDdv(float u, float v) override;
+    void GetUV(Eigen::Vector3f pos, float &u, float &v) override;
+    Eigen::Vector3f GetNormal();
     Plane SwappedDirections();
     Plane Normalized();
     ImplicitPlane ToImplicit();
-    Matrix3f GetRotationMatrix();
+    Eigen::Matrix3f GetRotationMatrix();
     std::string ToString();
-    void GetUVW(Vec3 pos, float &u, float &v, float &w);
-    float GetW(Vec3 pos);
+    void GetUVW(Eigen::Vector3f pos, float &u, float &v, float &w);
+    float GetW(Eigen::Vector3f pos);
     float Intersect(Line line, bool* exists);
     Line Intersect(Plane p2);
 
-    static Plane FromNormal(Vec3 pos, Vec3 normal);
+    static Plane FromNormal(Eigen::Vector3f pos, Eigen::Vector3f normal);
 private:
-    Vec3 pos;
-    Vec3 dir1;
-    Vec3 dir2;
+    Eigen::Vector3f pos;
+    Eigen::Vector3f dir1;
+    Eigen::Vector3f dir2;
 
 };
 }

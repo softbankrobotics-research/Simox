@@ -29,9 +29,9 @@ ContactList::ContactList()
 {
 }
 
-std::vector<Vec3> ContactList::GetPoints()
+std::vector<Eigen::Vector3f> ContactList::GetPoints()
 {
-    std::vector<Vec3> points;
+    std::vector<Eigen::Vector3f> points;
     for(Contact c: *this){
         points.push_back(c.Position());
     }

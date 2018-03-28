@@ -40,7 +40,7 @@ void GaussianObjectModelNormals::Update()
     std::cout<<"contacts"<<contacts->size()<<std::endl;
     if(contacts->size()==1){
         Contact c = contacts->at(0);
-        Vec3 dir1, dir2;
+        Eigen::Vector3f dir1, dir2;
         contacts->push_back(Contact(c.Position()+Helpers::GetOrthonormalVectors(c.Normal(),dir1,dir2),c.Normal()));
     }
     gpModel->Calculate(*contacts,noise,normalNoise,normalScale);

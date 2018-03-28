@@ -31,7 +31,7 @@ namespace math
     class SimpleAbstractFunctionR3R1
     {
     public:
-        virtual float Get(Vec3 pos) = 0;
+        virtual float Get(Eigen::Vector3f pos) = 0;
 
     private:
     };

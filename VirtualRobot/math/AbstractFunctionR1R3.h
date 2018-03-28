@@ -32,11 +32,11 @@ namespace math
     {
     public:
         AbstractFunctionR1R3();
-        virtual Vec3 GetDerivative(float t)= 0;
-        float FindClosestPoint(Vec3 p, float t1, float t2, int segments);
+        virtual Eigen::Vector3f GetDerivative(float t)= 0;
+        float FindClosestPoint(Eigen::Vector3f p, float t1, float t2, int segments);
         float MoveLengthOnCurve(float x, float l, int steps);
         float GetLength(float t1, float t2, int steps);
-        std::vector<Vec3> Sample(float t1, float t2, int segments);
+        std::vector<Eigen::Vector3f> Sample(float t1, float t2, int segments);
         std::vector<float> Segments(float t1, float t2, int segments);
     private:
     };

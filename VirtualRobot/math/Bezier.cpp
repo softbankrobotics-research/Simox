@@ -21,17 +21,17 @@
 #include "Bezier.h"
 
 using namespace math;
-math::Bezier::Bezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3)
+math::Bezier::Bezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3)
     : p0(p0), p1(p1), p2(p2), p3(p3)
 {
 }
 
-Vec3 math::Bezier::Get(float t)
+Eigen::Vector3f math::Bezier::Get(float t)
 {
     return CubicBezierPoint(p0, p1, p2, p3, t);
 }
 
-Vec3 math::Bezier::GetDerivative(float t)
+Eigen::Vector3f math::Bezier::GetDerivative(float t)
 {
     return CubicBezierDerivative(p0, p1, p2, p3, t);
 }
@@ -46,14 +46,14 @@ float math::Bezier::Pow2(float x)
     return x * x;
 }
 
-Vec3 math::Bezier::CubicBezierPoint(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, float t)
+Eigen::Vector3f math::Bezier::CubicBezierPoint(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t)
 {
     return Pow3(1 - t) * p0 + 3 * t * Pow2(1 - t) * p1 + 3 * Pow2(t) * (1 - t) * p2 + Pow3(t) * p3;
 }
 
-std::vector<Vec3> math::Bezier::CubicBezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, int steps)
+std::vector<Eigen::Vector3f> math::Bezier::CubicBezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, int steps)
 {
-    std::vector<Vec3> points;
+    std::vector<Eigen::Vector3f> points;
     for (int i = 0; i <= steps; i++)
     {
        points.push_back(CubicBezierPoint(p0, p1, p2, p3, 1.f / steps * i));
@@ -61,7 +61,7 @@ std::vector<Vec3> math::Bezier::CubicBezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, 
     return points;
 }
 
-Vec3 math::Bezier::CubicBezierDerivative(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, float t)
+Eigen::Vector3f math::Bezier::CubicBezierDerivative(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t)
 {
     return -3 * Pow2(1 - t) * p0 + 3 * Pow2(1 - t) * p1 - 6 * (1 - t) * t * p1 + 6 * (1 - t) * t * p2 - 3 * Pow2(t) * p2 + 3 * Pow2(t) * p3;
 }

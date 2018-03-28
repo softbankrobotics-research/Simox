@@ -33,9 +33,9 @@ class AbstractFunctionR1R2
 {
 public:
     AbstractFunctionR1R2();
-    virtual Vec2 Get(float t) = 0;
-    virtual Vec2 GetDerivative(float t)= 0;
-    Vec2 GetNormalizedNormal(float t);
+    virtual Eigen::Vector2f Get(float t) = 0;
+    virtual Eigen::Vector2f GetDerivative(float t)= 0;
+    Eigen::Vector2f GetNormalizedNormal(float t);
 
 private:
 };

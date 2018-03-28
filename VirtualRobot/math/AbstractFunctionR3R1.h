@@ -31,9 +31,9 @@ namespace math
             public SimpleAbstractFunctionR3R1
     {
     public:
-       virtual float GetDdx(Vec3 pos) = 0;
-       virtual float GetDdy(Vec3 pos) = 0;
-       virtual float GetDdz(Vec3 pos) = 0;
+       virtual float GetDdx(Eigen::Vector3f pos) = 0;
+       virtual float GetDdy(Eigen::Vector3f pos) = 0;
+       virtual float GetDdz(Eigen::Vector3f pos) = 0;
 
     private:
     };

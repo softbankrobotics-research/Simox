@@ -27,7 +27,7 @@ using namespace math;
 
 
 
-Line::Line(Vec3 pos, Vec3 dir)
+Line::Line(Eigen::Vector3f pos, Eigen::Vector3f dir)
     : pos(pos), dir(dir)
 {
 }
@@ -37,22 +37,22 @@ Line Line::Normalized()
     return Line(pos, dir.normalized());
 }
 
-Vec3 Line::Get(float t)
+Eigen::Vector3f Line::Get(float t)
 {
     return pos + t * dir;
 }
 
-Vec3 Line::GetDerivative(float)
+Eigen::Vector3f Line::GetDerivative(float)
 {
     return dir;
 }
 
-Vec3 Line::GetClosestPoint(Vec3 p)
+Eigen::Vector3f Line::GetClosestPoint(Eigen::Vector3f p)
 {
     return pos - (pos - p).dot(dir) * dir / dir.squaredNorm();
 }
 
-float Line::GetT(Vec3 p)
+float Line::GetT(Eigen::Vector3f p)
 {
     return (p - pos).dot(dir) / dir.squaredNorm();
 
@@ -70,13 +70,13 @@ std::string Line::ToString()
 bool Line::IntersectsTriangle(Triangle tri, float &out)
 {
     const float EPS = 0.000; //TODO
-    Vec3 e1, e2;  //Edge1, Edge2
-    Vec3 P, Q, T;
+    Eigen::Vector3f e1, e2;  //Edge1, Edge2
+    Eigen::Vector3f P, Q, T;
     float det, inv_det, u, v;
     float t;
-    Vec3 V1 = tri.P1();
-    Vec3 V2 = tri.P2();
-    Vec3 V3 = tri.P3();
+    Eigen::Vector3f V1 = tri.P1();
+    Eigen::Vector3f V2 = tri.P2();
+    Eigen::Vector3f V3 = tri.P3();
 
     //Find vectors for two edges sharing V1
     e1 = V2 -V1;
@@ -130,7 +130,7 @@ bool Line::IntersectsPrimitive(PrimitivePtr p, float &out)
     return out < FLT_MAX;
 }
 
-Line Line::FromPoints(Vec3 p1, Vec3 p2)
+Line Line::FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2)
 {
     return Line(p1, p2 - p1);
 }

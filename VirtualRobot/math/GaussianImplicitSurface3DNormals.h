@@ -36,35 +36,35 @@ class GaussianImplicitSurface3DNormals :
 public:
     GaussianImplicitSurface3DNormals();
     void Calculate(ContactList samples, float noise, float normalNoise, float normalScale);
-    float Get(Vec3 pos) override;
+    float Get(Eigen::Vector3f pos) override;
 
 private:
-    MatrixXf covariance;
-    VectorXf alpha;
+    Eigen::MatrixXf covariance;
+    Eigen::VectorXf alpha;
     ContactList samples;
     float R;
     float R3;
-    Vec3 mean;
+    Eigen::Vector3f mean;
 
-    MatrixXf Cinv;
+    Eigen::MatrixXf Cinv;
 
-    float Predict(Vec3 pos);
-    static MatrixXf CalculateCovariance(std::vector<Vec3> points, float R, float noise, float normalNoise);
+    float Predict(Eigen::Vector3f pos);
+    static Eigen::MatrixXf CalculateCovariance(std::vector<Eigen::Vector3f> points, float R, float noise, float normalNoise);
     //static VectorXf Cholesky(MatrixXf matrix);
     //static VectorXf FitModel(MatrixXf L, List<DataR3R1> targets);
     //VectorXf SpdMatrixSolve(MatrixXf a, bool IsUpper, VectorXf b);
-    static VectorXf MatrixSolve(MatrixXf a, VectorXf b);
-    static float Kernel(Vec3 p1, Vec3 p2, float R);
-    static float Kernel(Vec3 p1, Vec3 p2, float R, int i, int j);
+    static Eigen::VectorXf MatrixSolve(Eigen::MatrixXf a, Eigen::VectorXf b);
+    static float Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R);
+    static float Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i, int j);
     static float Kernel_dx(float x, float y, float z, float r, float R);
     static float Kernel_dxdy(float x, float y, float z, float r, float R);
     static float Kernel_ddx(float x, float y, float z, float r, float R);
-    static float Kernel_di(Vec3 p1, Vec3 p2, float R, int i);
-    static float Kernel_dj(Vec3 p1, Vec3 p2, float R, int i);
-    static float Kernel_didj(Vec3 p1, Vec3 p2, float R, int i, int j);
+    static float Kernel_di(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i);
+    static float Kernel_dj(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i);
+    static float Kernel_didj(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i, int j);
     static void swap(float &x, float &y,float &z, int index);
-    static Vec3 Average(ContactList samples);
-    VectorXf getCux(Vec3 pos);
+    static Eigen::Vector3f Average(ContactList samples);
+    Eigen::VectorXf getCux(Eigen::Vector3f pos);
 };
 }
 

@@ -31,8 +31,8 @@ namespace math
 class SimpleAbstractFunctionR2R3
 {
 public:
-    virtual Vec3 GetPoint(float u, float v) = 0;
-    Vec3 GetPoint(Vec3 uv){return GetPoint(uv.x(),uv.y());}
+    virtual Eigen::Vector3f GetPoint(float u, float v) = 0;
+    Eigen::Vector3f GetPoint(Eigen::Vector3f uv){return GetPoint(uv.x(),uv.y());}
 
 private:
 };

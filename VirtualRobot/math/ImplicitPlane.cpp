@@ -40,21 +40,21 @@ ImplicitPlane ImplicitPlane::Flipped()
      return ImplicitPlane(-a, -b, -c, -d);
 }
 
-Vec3 ImplicitPlane::GetNormal()
+Eigen::Vector3f ImplicitPlane::GetNormal()
 {
-    return Vec3(a, b, c);
+    return Eigen::Vector3f(a, b, c);
 }
 
-Vec3 ImplicitPlane::GetClosestPoint(Vec3 v)
+Eigen::Vector3f ImplicitPlane::GetClosestPoint(Eigen::Vector3f v)
 {
-    Vec3 normal = GetNormal();
+    Eigen::Vector3f normal = GetNormal();
     float d = this->d - v.dot(normal);
     float denominator = a * a + b * b + c * c;
     return normal * d / denominator + v;
 
 }
 
-ImplicitPlane ImplicitPlane::FromPositionNormal(Vec3 pos, Vec3 normal)
+ImplicitPlane ImplicitPlane::FromPositionNormal(Eigen::Vector3f pos, Eigen::Vector3f normal)
 {
     return ImplicitPlane(normal.x(), normal.y(), normal.z(), normal.dot(pos));
 
@@ -68,25 +68,25 @@ ImplicitPlane ImplicitPlane::FromContact(Contact c)
 Line ImplicitPlane::Intersect(Plane plane)
 {
 
-        Vec3 n = GetNormal();
-        Vec3 p = plane.Pos();
-        Vec3 u = plane.Dir1();
-        Vec3 v = plane.Dir2();
+        Eigen::Vector3f n = GetNormal();
+        Eigen::Vector3f p = plane.Pos();
+        Eigen::Vector3f u = plane.Dir1();
+        Eigen::Vector3f v = plane.Dir2();
         if (std::abs(n.dot(u)) < std::abs(n.dot(v)))
         {
-            Vec3 tmp = u;
+            Eigen::Vector3f tmp = u;
             u = v;
             v = tmp;
         }
 
-        Vec3 pos = p + (d - n.dot(p)) / n.dot(u) * u;
-        Vec3 dir = v - n.dot(v) / n.dot(u) * u;
+        Eigen::Vector3f pos = p + (d - n.dot(p)) / n.dot(u) * u;
+        Eigen::Vector3f dir = v - n.dot(v) / n.dot(u) * u;
         return Line(pos, dir);
 
 }
 
 
-float ImplicitPlane::Get(Vec3 pos)
+float ImplicitPlane::Get(Eigen::Vector3f pos)
 {
  return GetNormal().dot(pos - GetClosestPoint(pos));
 }

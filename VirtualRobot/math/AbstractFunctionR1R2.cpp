@@ -23,7 +23,7 @@
 
 using namespace math;
 
-Vec2 math::AbstractFunctionR1R2::GetNormalizedNormal(float t){
+Eigen::Vector2f math::AbstractFunctionR1R2::GetNormalizedNormal(float t){
     Eigen::Rotation2Df rot(M_PI_2);
     return (rot * GetDerivative(t)).normalized();
 }

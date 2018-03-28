@@ -37,36 +37,36 @@ public:
 
     AbstractFunctionR2R3();
 
-    virtual Vec3 GetDdu(float u, float v)= 0;
-    virtual Vec3 GetDdv(float u, float v)= 0;
+    virtual Eigen::Vector3f GetDdu(float u, float v)= 0;
+    virtual Eigen::Vector3f GetDdv(float u, float v)= 0;
 
-    Vec3 GetNormal(float u, float v);
+    Eigen::Vector3f GetNormal(float u, float v);
 
     Plane GetContactPlane(float u, float v);
 
     Contact GetContact(float u, float v);
-    virtual void GetUV(Vec3 pos, float &u, float &v)= 0;
+    virtual void GetUV(Eigen::Vector3f pos, float &u, float &v)= 0;
 
-    Vec3 GetNormal(Vec2 uv);
-    Vec3 GetDdu(Vec2 uv);
-    Vec3 GetDdv(Vec2 uv);
-    Plane GetContactPlane(Vec2 uv) ;
-    Contact GetContact(Vec2 uv) ;
-    Vec2 GetUVFromPos(Vec3 pos) ;
-    Vec3 GetVector(Vec2 pos, Vec2 dir);
+    Eigen::Vector3f GetNormal(Eigen::Vector2f uv);
+    Eigen::Vector3f GetDdu(Eigen::Vector2f uv);
+    Eigen::Vector3f GetDdv(Eigen::Vector2f uv);
+    Plane GetContactPlane(Eigen::Vector2f uv) ;
+    Contact GetContact(Eigen::Vector2f uv) ;
+    Eigen::Vector2f GetUVFromPos(Eigen::Vector3f pos) ;
+    Eigen::Vector3f GetVector(Eigen::Vector2f pos, Eigen::Vector2f dir);
 
-    float GetSquareDistance(Vec3 pos, ProjectionType projection);
+    float GetSquareDistance(Eigen::Vector3f pos, ProjectionType projection);
 
-    float GetDistance(Vec3 pos, ProjectionType projection);
+    float GetDistance(Eigen::Vector3f pos, ProjectionType projection);
 
-    Vec3 GetPointOnFunction(Vec3 pos, ProjectionType projection);
-    Vec3 ProjectPointOntoFunction(Vec3 pos);
-    Vec3 FindClosestPoint(Vec3 pos, float epsilon = 0.001f);
-    LineR2 ProjectVectorToUV(Vec3 pos, Vec3 dir);
+    Eigen::Vector3f GetPointOnFunction(Eigen::Vector3f pos, ProjectionType projection);
+    Eigen::Vector3f ProjectPointOntoFunction(Eigen::Vector3f pos);
+    Eigen::Vector3f FindClosestPoint(Eigen::Vector3f pos, float epsilon = 0.001f);
+    LineR2 ProjectVectorToUV(Eigen::Vector3f pos, Eigen::Vector3f dir);
 
 
 private:
-   // void Step(Vec3 pos, float u0, float v0, float& u1,  float& v1);
+   // void Step(Eigen::Vector3f pos, float u0, float v0, float& u1,  float& v1);
 };
 }
 

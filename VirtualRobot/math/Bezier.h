@@ -32,24 +32,24 @@ namespace math
             public AbstractFunctionR1R3
     {
     public:
-        Bezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3);
+        Bezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3);
 
-        Vec3 P0(){return p0;}
-        Vec3 P1(){return p1;}
-        Vec3 P2(){return p2;}
-        Vec3 P3(){return p3;}
+        Eigen::Vector3f P0(){return p0;}
+        Eigen::Vector3f P1(){return p1;}
+        Eigen::Vector3f P2(){return p2;}
+        Eigen::Vector3f P3(){return p3;}
 
-        Vec3 Get(float t) override;
-        Vec3 GetDerivative(float t);
-        static Vec3 CubicBezierPoint(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, float t);
-        static std::vector<Vec3> CubicBezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, int steps);
-        static Vec3 CubicBezierDerivative(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, float t);
+        Eigen::Vector3f Get(float t) override;
+        Eigen::Vector3f GetDerivative(float t);
+        static Eigen::Vector3f CubicBezierPoint(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t);
+        static std::vector<Eigen::Vector3f> CubicBezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, int steps);
+        static Eigen::Vector3f CubicBezierDerivative(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t);
 
     private:
-        Vec3 p0;
-        Vec3 p1;
-        Vec3 p2;
-        Vec3 p3;
+        Eigen::Vector3f p0;
+        Eigen::Vector3f p1;
+        Eigen::Vector3f p2;
+        Eigen::Vector3f p3;
 
         static float Pow3(float x);
         static float Pow2(float x);

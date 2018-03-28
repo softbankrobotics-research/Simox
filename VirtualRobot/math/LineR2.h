@@ -33,26 +33,26 @@ namespace math
 class LineR2
 {
 public:
-    LineR2(Vec3 pos, Vec3 dir);
+    LineR2(Eigen::Vector3f pos, Eigen::Vector3f dir);
 
-    Vec3 Pos(){return pos;}
-    Vec3 Dir(){return dir;}
+    Eigen::Vector3f Pos(){return pos;}
+    Eigen::Vector3f Dir(){return dir;}
 
     LineR2 Normalized ();
-    Vec3 Get(float t);
-    Vec3 GetDerivative(float t);
-    Vec3 GetClosestPoint(Vec3 p);
-    float GetT(Vec3 p);
+    Eigen::Vector3f Get(float t);
+    Eigen::Vector3f GetDerivative(float t);
+    Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p);
+    float GetT(Eigen::Vector3f p);
     std::string ToString();
     //Vec3Opt Intersect(const LineR2& l2);
-    //static bool Intersect(const Vec3& pos1, const Vec3& dir1, const Vec3& pos2, const Vec3& dir2, float& t,float& u);
+    //static bool Intersect(const Eigen::Vector3f& pos1, const Eigen::Vector3f& dir1, const Eigen::Vector3f& pos2, const Eigen::Vector3f& dir2, float& t,float& u);
 
     //static bool Intersect(LineR2 l1, LineR2 l2, out float t, out float u);
 
 
 private:
-    Vec3 pos;
-    Vec3 dir;
+    Eigen::Vector3f pos;
+    Eigen::Vector3f dir;
 
 };
 }
