@@ -201,7 +201,7 @@ namespace VirtualRobot
         std::cout << "saveModel()" << std::endl;
     }
 
-    Qt3DCore::QEntity *Qt3DVisualization::getEntity()
+    Qt3DCore::QEntity *Qt3DVisualization::getEntity() const
     {
         std::cout << "getEntity() =" << std::endl;
         std::cout << this->entity << std::endl;
