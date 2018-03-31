@@ -50,7 +50,11 @@ namespace VirtualRobot
     VisualizationPtr Qt3DVisualizationFactory::createBox(float width, float height, float depth) const
     {
         std::cout << "Box" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(cuboid);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const
