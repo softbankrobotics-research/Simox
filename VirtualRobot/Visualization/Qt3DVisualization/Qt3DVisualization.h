@@ -24,11 +24,8 @@
 #define _VirtualRobot_Qt3DVisualization_h_
 
 #include "../Visualization.h"
-
-#include <Gui/Qt3D/Qt3DViewer.h>
 #include "Qt3DElement.h"
 
-#include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
 #include <Qt3DRender/QMaterial>
 
@@ -36,6 +33,8 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization, public Qt3DElement
     {
+        friend class Qt3DVisualizationFactory;
+        friend class Qt3DVisualizationSet;
     public:
         Qt3DVisualization();
         ~Qt3DVisualization();
