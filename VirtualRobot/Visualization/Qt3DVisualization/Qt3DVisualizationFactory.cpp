@@ -8,6 +8,9 @@
 #include "Qt3DVisualization.h"
 #include "Qt3DVisualizationSet.h"
 
+#include <Qt3DExtras/QCuboidMesh>
+#include <Qt3DRender/QSceneLoader>
+
 namespace VirtualRobot
 {
     Qt3DVisualizationFactory::Qt3DVisualizationFactory()
@@ -30,9 +33,13 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::string &filename, bool boundingBox) const
     {
-        std::cout << "File" << std::endl;
+        std::cout << "Qt3DFile" << std::endl;
         std::cout << filename << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        Qt3DRender::QSceneLoader* sceneLoader = new Qt3DRender::QSceneLoader(visu->getEntity());
+        visu->getEntity()->addComponent(sceneLoader);
+        sceneLoader->setSource(QUrl(QString::fromStdString("file://" + filename)));
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::ifstream &ifs, bool boundingBox) const
@@ -51,7 +58,6 @@ namespace VirtualRobot
     {
         std::cout << "Box" << std::endl;
         Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
-
         Qt3DVisualizationPtr visu(new Qt3DVisualization());
         visu->getEntity()->addComponent(cuboid);
         return visu;
