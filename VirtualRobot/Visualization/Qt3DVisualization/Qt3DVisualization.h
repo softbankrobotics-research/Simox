@@ -26,6 +26,7 @@
 #include "../Visualization.h"
 
 #include <Gui/Qt3D/Qt3DViewer.h>
+#include "Qt3DElement.h"
 
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
@@ -33,7 +34,7 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization, public Qt3DElement
     {
     public:
         Qt3DVisualization();
@@ -73,7 +74,7 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
-        Qt3DCore::QEntity* getEntity();
+        virtual Qt3DCore::QEntity* getEntity() const override;
     protected:
         virtual void createTriMeshModel();
         virtual void _addManipulator(ManipulatorType t) override;
