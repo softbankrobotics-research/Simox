@@ -321,6 +321,7 @@ elseif (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
     Visualization/Qt3DVisualization/Qt3DVisualizationFactory.h
     Visualization/Qt3DVisualization/Qt3DVisualization.h
     Visualization/Qt3DVisualization/Qt3DVisualizationSet.h
+    Visualization/Qt3DVisualization/Qt3DElement.h
     )
 
     if(BUILD_TESTING)
