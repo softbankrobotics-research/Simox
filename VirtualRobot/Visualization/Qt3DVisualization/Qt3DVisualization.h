@@ -27,7 +27,7 @@
 #include "Qt3DElement.h"
 
 #include <Qt3DCore/QTransform>
-#include <Qt3DRender/QMaterial>
+#include <Qt3DExtras/QPhongMaterial>
 
 namespace VirtualRobot
 {
@@ -83,7 +83,7 @@ namespace VirtualRobot
     private:
         Qt3DCore::QEntity* entity;
         Qt3DCore::QTransform* transformation;
-        Qt3DRender::QMaterial* material;
+        Qt3DExtras::QPhongMaterial* material;
     };
 
     typedef std::shared_ptr<Qt3DVisualization> Qt3DVisualizationPtr;

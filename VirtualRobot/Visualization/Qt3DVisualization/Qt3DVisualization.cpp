@@ -7,7 +7,6 @@
 #include "Qt3DVisualization.h"
 
 #include <Qt3DExtras/QTorusMesh>
-#include <Qt3DExtras/QPhongMaterial>
 #include <QPropertyAnimation>
 
 #include "../TriMeshModel.h"
@@ -19,6 +18,8 @@ namespace VirtualRobot
         this->entity = new Qt3DCore::QEntity();
         this->transformation = new Qt3DCore::QTransform;
         this->material = new Qt3DExtras::QPhongMaterial(this->entity);
+
+        this->material->setAmbient(QColor(80, 80, 80));
 
         this->entity->addComponent(transformation);
         this->entity->addComponent(material);
