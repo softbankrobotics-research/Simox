@@ -58,6 +58,10 @@ namespace VirtualRobot
     {
         std::cout << "Box" << std::endl;
         Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
+        cuboid->setXExtent(width);
+        cuboid->setYExtent(height);
+        cuboid->setZExtent(depth);
+
         Qt3DVisualizationPtr visu(new Qt3DVisualization());
         visu->getEntity()->addComponent(cuboid);
         return visu;
