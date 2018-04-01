@@ -33,7 +33,7 @@ namespace VirtualRobot
     {
         std::cout << "setGlobalPose()" << std::endl;
         Visualization::setGlobalPose(m);
-        this->transformation->setMatrix(QMatrix4x4(m.data()));
+        this->transformation->setMatrix(QMatrix4x4(m.data()).transposed());
     }
 
     size_t Qt3DVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
