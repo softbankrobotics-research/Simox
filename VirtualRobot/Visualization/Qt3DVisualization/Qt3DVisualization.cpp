@@ -119,7 +119,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
-        std::cout << "scale()" << std::endl;
+        std::cout << "scale() " << scaleFactor  << std::endl;
     }
 
     void Qt3DVisualization::shrinkFatten(float offset)
@@ -171,6 +171,7 @@ namespace VirtualRobot
     int Qt3DVisualization::getNumFaces() const
     {
         std::cout << "getNumFaces()" << std::endl;
+        return 0;
     }
 
     VisualizationPtr Qt3DVisualization::clone() const
