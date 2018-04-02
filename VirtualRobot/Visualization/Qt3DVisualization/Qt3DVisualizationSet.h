@@ -25,6 +25,8 @@
 
 #include "../VisualizationSet.h"
 
+#include <Qt3DCore/QEntity>
+
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualizationSet : public VisualizationSet
@@ -32,6 +34,10 @@ namespace VirtualRobot
     public:
         Qt3DVisualizationSet(const std::vector<VisualizationPtr>& visualizations);
         ~Qt3DVisualizationSet();
+
+
+        virtual void addVisualization(const VisualizationPtr& visu) override;
+        virtual bool removeVisualization(const VisualizationPtr& visu) override;
 
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
@@ -48,10 +54,14 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
+        Qt3DCore::QEntity* getEntity();
     protected:
         virtual void _addManipulator(ManipulatorType t) override;
         virtual void _removeManipulator(ManipulatorType t) override;
         virtual void _removeAllManipulators() override;
+
+    private:
+        Qt3DCore::QEntity* entity;
     };
 
     typedef std::shared_ptr<Qt3DVisualizationSet> Qt3DVisualizationSetPtr;
