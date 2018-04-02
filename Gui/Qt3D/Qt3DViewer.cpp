@@ -24,9 +24,13 @@
 #include "Qt3DViewer.h"
 
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
+#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualizationSet.h>
+
 
 #include <QVBoxLayout>
 #include <Qt3DRender/QCamera>
+#include <Qt3DExtras/qforwardrenderer.h>
+#include <Qt3DRender/QDirectionalLight>
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
 {
@@ -38,13 +42,21 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->scene = new Qt3DCore::QEntity;
 
     this->camController = new Qt3DExtras::QOrbitCameraController(scene);
-    this->camController->setLinearSpeed( 50.0f );
+    this->camController->setLinearSpeed( 500.0f );
     this->camController->setLookSpeed( 180.0f );
     this->camController->setCamera(this->camera());
 
-    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
-    this->camera()->setPosition(QVector3D(0, 0, 20));
+    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 10000.0f);
+    this->camera()->setPosition(QVector3D(0, 0, 3000));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
+
+    Qt3DCore::QEntity *lightEntity = new Qt3DCore::QEntity(scene);
+
+    Qt3DRender::QDirectionalLight* light = new Qt3DRender::QDirectionalLight(lightEntity);
+    light->setIntensity(1.0f);
+    light->setWorldDirection(QVector3D(-1.0f, -1.0f, -1.0f));
+
+    lightEntity->addComponent(light);
 
     this->setRootEntity(scene);
 }
@@ -141,6 +153,7 @@ void SimoxGui::Qt3DViewer::resetView()
 
 void SimoxGui::Qt3DViewer::viewAll()
 {
+
 }
 
 void SimoxGui::Qt3DViewer::setAntialiasing(unsigned short quality)
@@ -153,6 +166,7 @@ unsigned short SimoxGui::Qt3DViewer::getAntialiasing() const
 
 void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
 {
+    this->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));
 }
 
 VirtualRobot::Visualization::Color SimoxGui::Qt3DViewer::getBackgroundColor() const
@@ -194,6 +208,18 @@ void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::Visualiza
         if(visu)
         {
             visu->getEntity()->setParent(this->layerMainNode);
+        }
+        else
+        {
+            VirtualRobot::Qt3DVisualizationSet* visu = dynamic_cast<VirtualRobot::Qt3DVisualizationSet*>(visualization.get());
+            if(visu)
+            {
+                visu->getEntity()->setParent(this->layerMainNode);
+            }
+            else
+            {
+                std::cout << "COULD NOT ADD!!" << std::endl;
+            }
         }
     }
 }
