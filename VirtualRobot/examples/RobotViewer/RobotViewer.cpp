@@ -4,6 +4,8 @@
 
 int main(int argc, char* argv[])
 {
+    QApplication qApp2(argc, argv);
+
     VirtualRobot::init(argc, argv, "Simox Robot Viewer");
 
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
