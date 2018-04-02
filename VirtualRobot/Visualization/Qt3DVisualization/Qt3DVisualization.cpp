@@ -153,9 +153,9 @@ namespace VirtualRobot
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
         additionalScale <<
-             scaleFactor[0], 0.0f, 0.0f, 0.0f,
-             0.0f, scaleFactor[1], 0.0f, 0.0f,
-             0.0f, 0.0f, scaleFactor[2], 0.0f,
+             scaleFactor[0] * 1000.0f, 0.0f, 0.0f, 0.0f,
+             0.0f, scaleFactor[1] * 1000.0f, 0.0f, 0.0f,
+             0.0f, 0.0f, scaleFactor[2] * 1000.0f, 0.0f,
              0.0f, 0.0f, 0.0f, 1.0f;
         applyPose();
     }
