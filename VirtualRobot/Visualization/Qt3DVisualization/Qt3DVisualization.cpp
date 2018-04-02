@@ -59,7 +59,6 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        std::cout << "setGlobalPose()" << std::endl;
         Visualization::setGlobalPose(m);
         this->transformation->setMatrix(QMatrix4x4(m.data()).transposed());
     }
@@ -204,7 +203,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualization::clone() const
     {
-        std::cout << "clone()" << std::endl;
         Qt3DVisualizationPtr clonedVisu(new Qt3DVisualization());
 
         for(auto component : this->getEntity()->components())
@@ -251,8 +249,6 @@ namespace VirtualRobot
 
     Qt3DCore::QEntity *Qt3DVisualization::getEntity() const
     {
-        std::cout << "getEntity() =" << std::endl;
-        std::cout << this->entity << std::endl;
         return this->entity;
     }
 
