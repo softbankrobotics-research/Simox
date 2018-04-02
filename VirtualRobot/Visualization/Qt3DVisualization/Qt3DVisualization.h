@@ -28,6 +28,7 @@
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/QPhongMaterial>
+#include <Qt3DRender/Qt3DRender>
 
 namespace VirtualRobot
 {
@@ -84,6 +85,43 @@ namespace VirtualRobot
         Qt3DCore::QEntity* entity;
         Qt3DCore::QTransform* transformation;
         Qt3DExtras::QPhongMaterial* material;
+
+        enum ComponentTypes {
+            // Lights
+            LightDirectional = 1,
+            LightPoint,
+            LightSpot,
+            // Materials
+            MaterialDiffuseMap,
+            MaterialDiffuseSpecularMap,
+            MaterialGooch,
+            MaterialNormalDiffuseMap,
+            MaterialNormalDiffuseMapAlpha,
+            MaterialNormalDiffuseSpecularMap,
+            MaterialPerVertexColor,
+            MaterialPhongAlpha,
+            MaterialPhong,
+            MaterialGeneric,
+            // Meshes
+            MeshCuboid,
+            MeshCustom,
+            MeshCylinder,
+            MeshPlane,
+            MeshSphere,
+            MeshTorus,
+            MeshGeneric,
+            // Transforms
+            Transform,
+            // Other
+            ObjectPicker,
+            SceneLoader,
+            Unknown = 1000
+        };
+        Qt3DCore::QComponent *duplicateComponent(Qt3DCore::QComponent *component) const;
+        Qt3DVisualization::ComponentTypes componentType(Qt3DCore::QComponent *component) const;
+        Qt3DRender::QAttribute *copyAttribute(Qt3DRender::QAttribute *oldAtt, QMap<Qt3DRender::QBuffer *, Qt3DRender::QBuffer *> &bufferMap) const;
+        void copyLockProperties(const QObject *source, QObject *target) const;
+        static const QByteArray lockPropertySuffix8() { return QByteArrayLiteral("_editorPropertyLock"); }
     };
 
     typedef std::shared_ptr<Qt3DVisualization> Qt3DVisualizationPtr;
