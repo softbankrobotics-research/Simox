@@ -47,6 +47,11 @@ namespace VirtualRobot
         this->material = new Qt3DExtras::QPhongMaterial(this->entity);
 
         this->material->setAmbient(QColor(80, 80, 80));
+        additionalScale <<
+             1.0f, 0.0f, 0.0f, 0.0f,
+             0.0f, 1.0f, 0.0f, 0.0f,
+             0.0f, 0.0f, 1.0f, 0.0f,
+             0.0f, 0.0f, 0.0f, 1.0f;
 
         this->entity->addComponent(transformation);
         this->entity->addComponent(material);
@@ -60,7 +65,8 @@ namespace VirtualRobot
     void Qt3DVisualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
         Visualization::setGlobalPose(m);
-        this->transformation->setMatrix(QMatrix4x4(m.data()).transposed());
+        this->globalPose = m;
+        applyPose();
     }
 
     size_t Qt3DVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
@@ -146,12 +152,17 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
-        std::cout << "scale() " << scaleFactor  << std::endl;
+        additionalScale <<
+             scaleFactor[0], 0.0f, 0.0f, 0.0f,
+             0.0f, scaleFactor[1], 0.0f, 0.0f,
+             0.0f, 0.0f, scaleFactor[2], 0.0f,
+             0.0f, 0.0f, 0.0f, 1.0f;
+        applyPose();
     }
 
     void Qt3DVisualization::shrinkFatten(float offset)
     {
-        std::cout << "shrinkFatten()" << std::endl;
+        std::cout << "shrinkFatten() " << offset << std::endl;
     }
 
     bool Qt3DVisualization::hasManipulator(Visualization::ManipulatorType t) const
@@ -270,6 +281,12 @@ namespace VirtualRobot
     void Qt3DVisualization::_removeAllManipulators()
     {
         std::cout << "_removeAllManipulators()" << std::endl;
+    }
+
+    void Qt3DVisualization::applyPose()
+    {
+        Eigen::Matrix4f result = globalPose * additionalScale;
+        this->transformation->setMatrix(QMatrix4x4(result.data()).transposed());
     }
 
     Qt3DCore::QComponent *Qt3DVisualization::duplicateComponent(Qt3DCore::QComponent *component) const

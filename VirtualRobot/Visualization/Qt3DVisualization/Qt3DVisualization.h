@@ -82,6 +82,11 @@ namespace VirtualRobot
         virtual void _removeAllManipulators() override;
 
     private:
+
+        void applyPose();
+        Eigen::Matrix4f additionalScale;
+        Eigen::Matrix4f globalPose;
+
         Qt3DCore::QEntity* entity;
         Qt3DCore::QTransform* transformation;
         Qt3DExtras::QPhongMaterial* material;
