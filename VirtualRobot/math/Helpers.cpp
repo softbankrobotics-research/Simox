@@ -72,11 +72,16 @@ float Helpers::Lerp(float a, float b, float f)
     return a * (1 - f) + b * f;
 }
 
-Eigen::Vector3f Helpers::Lerp(Eigen::Vector3f a, Eigen::Vector3f b, float f)
+Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b, float f)
 {
     return Eigen::Vector3f(Lerp(a(0), b(0), f),
                 Lerp(a(1), b(1), f),
-                Lerp(a(2), b(2), f));
+                           Lerp(a(2), b(2), f));
+}
+
+Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
+{
+    return a.slerp(f, b);
 }
 
 float Helpers::Lerp(float a, float b, int min, int max, int val)
@@ -170,4 +175,12 @@ void Helpers::Swap(float &a,float &b)
     float t = a;
     a = b;
     b = t;
+}
+
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Quaternionf &ori)
+{
+    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+    pose.block<3,3>(0,0) = ori.toRotationMatrix();
+    pose.block<3,1>(0,3) = pos;
+    return pose;
 }

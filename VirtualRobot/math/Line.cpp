@@ -135,6 +135,11 @@ Line Line::FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2)
     return Line(p1, p2 - p1);
 }
 
+Line Line::FromPoses(const Eigen::Matrix4f &p1, const Eigen::Matrix4f &p2)
+{
+    return FromPoints(p1.block<3,1>(0,3), p2.block<3,1>(0,3));
+}
+
 
 
 

@@ -36,7 +36,8 @@ namespace math
         static float FastDistribution(float x, float sigma2);
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
-        static Eigen::Vector3f Lerp(Eigen::Vector3f a, Eigen::Vector3f b, float f);
+        static Eigen::Vector3f Lerp(const Eigen::Vector3f& a, const Eigen::Vector3f& b, float f);
+        static Eigen::Quaternionf Lerp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
         static float Lerp(float a, float b, int min, int max, int val);
         static float Angle(Eigen::Vector2f v);
         static int Sign(float x);
@@ -50,6 +51,7 @@ namespace math
         static Eigen::Vector3f CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b);
         static Eigen::Vector3f Average(std::vector<Eigen::Vector3f> vectors);
         static void Swap(float &a,float &b);
+        static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
 
     private:
     };
