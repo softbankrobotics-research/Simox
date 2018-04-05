@@ -38,6 +38,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+#include <Inventor/nodes/SoUnits.h>
 
 #include "../TriMeshModel.h"
 #include "../../Tools/RuntimeEnvironment.h"
@@ -173,7 +174,13 @@ namespace VirtualRobot
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return createVisualization();
         }
-        VisualizationPtr visu(new CoinVisualization(coinVisualization));
+        // the input uses meters here
+        SoSeparator *sep = new SoSeparator;
+        SoUnits *unit = new SoUnits;
+       unit->units = SoUnits::METERS;
+       sep->addChild(unit);
+       sep->addChild(coinVisualization);
+        VisualizationPtr visu(new CoinVisualization(sep));
 
         if (boundingBox)
         {
@@ -185,7 +192,7 @@ namespace VirtualRobot
             boost::filesystem::path p(soInput.getCurFileName());
             boost::filesystem::path dir = p.parent_path();
 
-            RemoveDuplicateTextures(coinVisualization, dir.string());
+            RemoveDuplicateTextures(sep, dir.string());
         }
         return visu;
     }
