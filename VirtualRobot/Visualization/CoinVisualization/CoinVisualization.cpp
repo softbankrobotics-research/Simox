@@ -441,7 +441,16 @@ namespace VirtualRobot
 
         SoCallbackAction ca;
         ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualization::InventorTriangleCB, triMeshModel.get());
-        ca.apply(getMainNode());
+        // I dont know if i have to set mm here, but to make shure mm is used i set it.
+        // I would say the triMesh calculation should work, if meters are set here and the scaling in the callback is removed (mm values in the nodes are used as m values which results in an upscaling)
+        SoSeparator *sep = new SoSeparator;
+        sep->ref();
+        SoUnits *unitNode = new SoUnits;
+        unitNode->units = SoUnits::MILLIMETERS;
+        sep->addChild(unitNode);
+        sep->addChild(getMainNode());
+        ca.apply(sep);
+        sep->unref();
     }
 
     int CoinVisualization::getNumFaces() const
@@ -584,6 +593,9 @@ namespace VirtualRobot
         }
 
         SbMatrix mm = action->getModelMatrix();
+        SbMatrix scale;
+        scale.setScale(1000.f); //simox operates in mm, coin3d in m
+        mm = mm.multRight(scale);
         SbVec3f triangle[3];
         mm.multVecMatrix(v1->getPoint(), triangle[0]);
         mm.multVecMatrix(v2->getPoint(), triangle[1]);
