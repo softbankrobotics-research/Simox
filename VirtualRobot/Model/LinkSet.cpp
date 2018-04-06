@@ -154,7 +154,8 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
-            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes[i]);
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(modelNodes.at(i));
+            VR_ASSERT(link);
             collisionModels.push_back(link->getCollisionModel());
         }
 

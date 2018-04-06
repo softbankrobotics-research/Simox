@@ -332,7 +332,7 @@ namespace VirtualRobot
     {
         for (size_t i = 0; i < sets.size(); i++)
         {
-            if (colChecker->checkCollision(m, sets[i]))
+            if (m && sets.at(i) && colChecker->checkCollision(m, sets.at(i)))
             {
                 return true;
             }

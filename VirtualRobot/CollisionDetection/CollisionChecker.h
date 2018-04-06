@@ -206,6 +206,7 @@ namespace VirtualRobot
     private:
         inline CollisionModelPtr getCollisionModel(const CollisionModelPtr& c)
         {
+            VR_ASSERT(m);
             return c;
         }
         inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<CollisionModelPtr>& c)
@@ -215,6 +216,7 @@ namespace VirtualRobot
 
         inline CollisionModelPtr getCollisionModel(const ModelNodePtr& m)
         {
+            VR_ASSERT(m);
             if (!ModelNode::checkNodeOfType(m, ModelNode::ModelNodeType::Link))
                 return CollisionModelPtr();
             return std::static_pointer_cast<ModelLink>(m)->getCollisionModel();
@@ -222,14 +224,17 @@ namespace VirtualRobot
 
         inline std::vector<CollisionModelPtr> getCollisionModel(const ModelPtr& m)
         {
+            VR_ASSERT(m);
             return m->getCollisionModels();
         }
         inline std::vector<CollisionModelPtr> getCollisionModel(const ModelSetPtr& m)
         {
+            VR_ASSERT(m);
             return getCollisionModel(m->getModels());
         }
         inline std::vector<CollisionModelPtr> getCollisionModel(const LinkSetPtr& m)
         {
+            VR_ASSERT(m);
             return m->getCollisionModels();
         }
 
@@ -238,6 +243,7 @@ namespace VirtualRobot
             std::vector<CollisionModelPtr> mVec;
             for (auto mTmp : m)
             {
+                VR_ASSERT(mTmp);
                 std::vector<CollisionModelPtr> tmp = mTmp->getCollisionModels();
                 mVec.insert(mVec.end(), tmp.begin(), tmp.end());
             }
@@ -248,6 +254,7 @@ namespace VirtualRobot
             std::vector<CollisionModelPtr> mVec;
             for (auto mTmp : m)
             {
+                VR_ASSERT(mTmp);
                 if (!ModelNode::checkNodeOfType(mTmp, ModelNode::ModelNodeType::Link))
                     continue;
                 mVec.push_back(std::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
