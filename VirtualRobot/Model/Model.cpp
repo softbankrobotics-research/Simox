@@ -243,7 +243,7 @@ namespace VirtualRobot
         if (nodeSet)
         {
             THROW_VR_EXCEPTION_IF(hasModelNodeSet(nodeSet->getName()),
-                                  "There are (at least) two model nodes with name <" + nodeSet->getName()
+                                  "There are (at least) two model node sets with name <" + nodeSet->getName()
                                   + "> defined, the second one is skipped!");
             modelNodeSetMap[nodeSet->getName()] = nodeSet;
         }
