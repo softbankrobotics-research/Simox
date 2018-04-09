@@ -206,7 +206,7 @@ namespace VirtualRobot
     private:
         inline CollisionModelPtr getCollisionModel(const CollisionModelPtr& c)
         {
-            VR_ASSERT(m);
+            VR_ASSERT(c);
             return c;
         }
         inline std::vector<CollisionModelPtr> getCollisionModel(const std::vector<CollisionModelPtr>& c)
