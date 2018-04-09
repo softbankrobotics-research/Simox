@@ -41,8 +41,14 @@ int main(int argc, char* argv[])
     std::string colModel("Left HandArm ColModel");
     std::string colModelRob("BodyHeadLegsColModel");
 #endif
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameScene);
-    VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameReach);
+    if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameScene))
+    {
+        VR_ERROR << "Could not get absolute path of file: " << filenameScene << std::endl;
+    }
+    if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(filenameReach))
+    {
+        VR_ERROR << "Could not get absolute path of file: " << filenameReach << std::endl;
+    }
 
     VirtualRobot::RuntimeEnvironment::considerKey("scene");
     VirtualRobot::RuntimeEnvironment::considerKey("reachability");

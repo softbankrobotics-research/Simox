@@ -173,8 +173,9 @@ namespace VirtualRobot
 
     void WorkspaceRepresentation::load(const std::string& filename)
     {
+        std::cout << "Loading: " << filename << std::endl;
         std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
-        THROW_VR_EXCEPTION_IF(!file, "File could not be read.");
+        THROW_VR_EXCEPTION_IF(!file, "File \"" + filename + "\" could not be read.");
         reset();
 
         try
