@@ -129,9 +129,8 @@ namespace VirtualRobot
     {
     }
 
-    Qt3DCore::QEntity *Qt3DVisualizationSet::getEntity()
+    Qt3DCore::QEntity *Qt3DVisualizationSet::getEntity() const
     {
-        std::cout << "getEntity() =" << std::endl;
         std::cout << this->entity << std::endl;
         return this->entity;
     }

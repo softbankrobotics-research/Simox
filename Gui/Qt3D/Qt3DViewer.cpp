@@ -25,6 +25,7 @@
 
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualizationSet.h>
+#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DElement.h>
 
 
 #include <QVBoxLayout>
@@ -204,22 +205,10 @@ void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::Visualiza
     if (!hasVisualization(visualization))
     {
         visualizations.insert(visualization);
-        VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
+        VirtualRobot::Qt3DElement* visu = dynamic_cast<VirtualRobot::Qt3DElement*>(visualization.get());
         if(visu)
         {
             visu->getEntity()->setParent(this->layerMainNode);
-        }
-        else
-        {
-            VirtualRobot::Qt3DVisualizationSet* visu = dynamic_cast<VirtualRobot::Qt3DVisualizationSet*>(visualization.get());
-            if(visu)
-            {
-                visu->getEntity()->setParent(this->layerMainNode);
-            }
-            else
-            {
-                std::cout << "COULD NOT ADD!!" << std::endl;
-            }
         }
     }
 }
@@ -230,7 +219,7 @@ void SimoxGui::Qt3DViewer::Layer::removeVisualization(const VirtualRobot::Visual
     if (it != visualizations.end())
     {
         visualizations.erase(it);
-        VirtualRobot::Qt3DVisualization* visu = dynamic_cast<VirtualRobot::Qt3DVisualization*>(visualization.get());
+        VirtualRobot::Qt3DElement* visu = dynamic_cast<VirtualRobot::Qt3DElement*>(visualization.get());
         if(visu)
         {
             visu->getEntity()->setParent((Qt3DCore::QNode*) nullptr);
