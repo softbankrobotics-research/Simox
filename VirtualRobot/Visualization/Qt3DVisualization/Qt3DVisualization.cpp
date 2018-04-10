@@ -81,12 +81,12 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setVisible(bool showVisualization)
     {
-        std::cout << "setVisible()" << std::endl;
+        this->entity->setEnabled(showVisualization);
     }
 
     bool Qt3DVisualization::isVisible() const
     {
-        std::cout << "isVisible()" << std::endl;
+        return this->entity->isEnabled();
     }
 
     void Qt3DVisualization::setUpdateVisualization(bool enable)
