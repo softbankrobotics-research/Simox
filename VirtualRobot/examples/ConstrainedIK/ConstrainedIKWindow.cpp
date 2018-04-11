@@ -389,7 +389,7 @@ void ConstrainedIKWindow::randomTSR(bool quiet)
     // Apply random joint angles
     for(unsigned int i = 0; i < kc->getSize(); i++)
     {
-        ModelJointPtr node = js->getNode(i);
+        ModelJointPtr node = js->getJoint(i);
 
         float v = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) * (rand()%1000 / 1000.0);
         node->setJointValue(v);
@@ -498,7 +498,7 @@ void ConstrainedIKWindow::randomPose(bool quiet)
     // Apply random joint angles
     for(unsigned int i = 0; i < kc->getSize(); i++)
     {
-        ModelJointPtr node = js->getNode(i);
+        ModelJointPtr node = js->getJoint(i);
 
         float v = node->getJointLimitLow() + (node->getJointLimitHigh() - node->getJointLimitLow()) * (rand()%1000 / 1000.0);
         node->setJointValue(v);
@@ -641,7 +641,7 @@ void ConstrainedIKWindow::performanceEvaluation()
 
         for(unsigned int i = 0; i < kc->getSize(); i++)
         {
-            totalJointAngles += fabs(js->getNode(i)->getJointValue());
+            totalJointAngles += fabs(js->getJoint(i)->getJointValue());
         }
     }
 

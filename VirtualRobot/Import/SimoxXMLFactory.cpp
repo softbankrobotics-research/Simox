@@ -952,7 +952,7 @@ namespace VirtualRobot
                     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(*ns);
                     if (js)
                     {
-                        JointSetPtr rns = js->clone(robo);
+                        JointSetPtr rns = std::static_pointer_cast<JointSet>(js->clone(robo));
                         if (rns && !robo->hasJointSet(rns))
                         {
                             robo->registerJointSet(rns);
@@ -962,7 +962,7 @@ namespace VirtualRobot
                     LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(*ns);
                     if (ls)
                     {
-                        LinkSetPtr rns = ls->clone(robo);
+                        LinkSetPtr rns = std::static_pointer_cast<LinkSet>(ls->clone(robo));
                         if (rns && !robo->hasLinkSet(rns))
                         {
                             robo->registerLinkSet(rns);

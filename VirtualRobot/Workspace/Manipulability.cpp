@@ -810,8 +810,8 @@ namespace VirtualRobot
                         for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = (float) std::rand() * randMult; // value from 0 to 1
-                            minJ = (*nodeSet)[l]->getJointLimitLow();
-                            maxJ = (*nodeSet)[l]->getJointLimitHigh();
+                            minJ = nodeSet->getJoint(l)->getJointLimitLow();
+                            maxJ = nodeSet->getJoint(l)->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
                         }
 

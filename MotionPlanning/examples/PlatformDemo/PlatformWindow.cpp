@@ -447,7 +447,7 @@ void PlatformWindow::optimizeSolution(postProcessingMethod postProcessing, int n
         }
         case eElasticBands:
         {
-            ModelLinkPtr n = colModelRob->getNode(0);
+            ModelLinkPtr n = colModelRob->getLink(0);
             VR_INFO << "using elsatic band processor with node " << n->getName() << endl;
             MotionPlanning::ElasticBandProcessorPtr postProcessing(new MotionPlanning::ElasticBandProcessor(solutionOptimized, cspace, n, colModelEnv, false));
             // specific to armar3:
@@ -562,7 +562,7 @@ void PlatformWindow::sliderSolution(int pos)
     d2 << "Pos: ";
 
     for (unsigned int i=0;i<rns->getSize();i++)
-        d2 << rns->getNode(i)->getJointValue() << ", ";
+        d2 << rns->getJoint(i)->getJointValue() << ", ";
     QString t2(d2.str().c_str());
     UI.labelPos->setText(t2);
 

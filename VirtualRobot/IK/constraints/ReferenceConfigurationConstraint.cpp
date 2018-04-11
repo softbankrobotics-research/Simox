@@ -80,7 +80,7 @@ double ReferenceConfigurationConstraint::optimizationFunction(unsigned int /*id*
     float v;
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        ModelJointPtr node = nodeSet->getNode(i);
+        ModelJointPtr node = nodeSet->getJoint(i);
         v = (node->getJointValue() - reference(i));
         value += v * v;
     }
@@ -94,7 +94,7 @@ Eigen::VectorXf ReferenceConfigurationConstraint::optimizationGradient(unsigned 
 
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        gradient(i) = 2 * (nodeSet->getNode(i)->getJointValue() - reference(i));
+        gradient(i) = 2 * (nodeSet->getJoint(i)->getJointValue() - reference(i));
     }
 
     return optimizationFunctionFactor * gradient;

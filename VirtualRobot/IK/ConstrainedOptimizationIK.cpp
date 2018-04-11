@@ -60,8 +60,8 @@ bool ConstrainedOptimizationIK::initialize()
 
     for(int i = 0; i < size; i++)
     {
-        low[i] = nodeSet->getNode(i)->getJointLimitLow();
-        high[i] = nodeSet->getNode(i)->getJointLimitHigh();
+        low[i] = nodeSet->getJoint(i)->getJointLimitLow();
+        high[i] = nodeSet->getJoint(i)->getJointLimitHigh();
     }
 
     optimizer->set_lower_bounds(low);
@@ -127,7 +127,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             for(int i = 0; i < size; i++)
             {
                 float t = (rand()%1001) / 1000.0f;
-                x[i] = initialConfig(i) + randomSamplingDisplacementFactor * (nodeSet->getNode(i)->getJointLimitLow() + t * (nodeSet->getNode(i)->getJointLimitHigh() - nodeSet->getNode(i)->getJointLimitLow()) - initialConfig(i));
+                x[i] = initialConfig(i) + randomSamplingDisplacementFactor * (nodeSet->getJoint(i)->getJointLimitLow() + t * (nodeSet->getJoint(i)->getJointLimitHigh() - nodeSet->getJoint(i)->getJointLimitLow()) - initialConfig(i));
             }
         }
         else
@@ -138,7 +138,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try zero configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), 0.0f));
+                        x[i] = std::max(nodeSet->getJoint(i)->getJointLimitLow(), std::min(nodeSet->getJoint(i)->getJointLimitHigh(), 0.0f));
                     }
                     break;
 
@@ -146,7 +146,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     // Try initial configuration
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), initialConfig(i)));
+                        x[i] = std::max(nodeSet->getJoint(i)->getJointLimitLow(), std::min(nodeSet->getJoint(i)->getJointLimitHigh(), initialConfig(i)));
                     }
                     break;
 
@@ -155,7 +155,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
                     Eigen::VectorXf s = seeds[attempt].second;
                     for(int i = 0; i < size; i++)
                     {
-                        x[i] = std::max(nodeSet->getNode(i)->getJointLimitLow(), std::min(nodeSet->getNode(i)->getJointLimitHigh(), s(i)));
+                        x[i] = std::max(nodeSet->getJoint(i)->getJointLimitLow(), std::min(nodeSet->getJoint(i)->getJointLimitHigh(), s(i)));
                     }
                     break;
             }
@@ -163,9 +163,9 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             // Check initial configuration against joint limits
             for(unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
-                if(x[i] < nodeSet->getNode(i)->getJointLimitLow() || x[i] > nodeSet->getNode(i)->getJointLimitHigh())
+                if(x[i] < nodeSet->getJoint(i)->getJointLimitLow() || x[i] > nodeSet->getJoint(i)->getJointLimitHigh())
                 {
-                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits: joints['" << nodeSet->getNode(i)->getName() << "'] = " << x[i] << ", Limits = [" << nodeSet->getNode(i)->getJointLimitLow() << ", " << nodeSet->getNode(i)->getJointLimitHigh() << "]");
+                    THROW_VR_EXCEPTION("Initial configuration outside of joint limits: joints['" << nodeSet->getJoint(i)->getName() << "'] = " << x[i] << ", Limits = [" << nodeSet->getJoint(i)->getJointLimitLow() << ", " << nodeSet->getJoint(i)->getJointLimitHigh() << "]");
                 }
             }
         }
@@ -190,7 +190,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
         for(int i = 0; i < size; i++)
         {
-            nodeSet->getNode(i)->setJointValue(float(x[i]));
+            nodeSet->getJoint(i)->setJointValue(float(x[i]));
         }
         double currentError;
         bool success = hardOptimizationFunction(x, currentError);

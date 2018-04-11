@@ -259,7 +259,7 @@ void GenericIKWindow::selectKC(int nr)
     }*/
     box2TCP();
 
-    JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+    JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
     if (kc->getNode(kc->getSize() - 1)->isTranslationalJoint())
     {
         ikGazeSolver.reset(new GazeIK(jointSet, std::dynamic_pointer_cast<ModelJointPrismatic>(kc->getNode(kc->getSize() - 1))));
@@ -355,7 +355,7 @@ void GenericIKWindow::solve()
     {
 #ifdef USE_NLOPT
         cout << "Solving with Constrained IK" << endl;
-        JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+        JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(), kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
         ConstrainedOptimizationIK solver(robot, jointSet);
 
         PoseConstraintPtr pc(new PoseConstraint(robot, jointSet, tcp, targetPose, s));
@@ -392,7 +392,7 @@ void GenericIKWindow::solve()
     UI.labelOri->setText(qd3);
 
     cout << "Joint values:" << endl;
-    std::vector<ModelJointPtr> joints = kc->getModelJoints();
+    std::vector<ModelJointPtr> joints = kc->getJoints();
 
     for (size_t i = 0; i < joints.size(); i++)
     {

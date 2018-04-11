@@ -907,8 +907,8 @@ namespace VirtualRobot
             for (unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
                 rndValue = (float)rand() * randMult; // value from 0 to 1
-                minJ = (*nodeSet)[i]->getJointLimitLow();
-                maxJ = (*nodeSet)[i]->getJointLimitHigh();
+                minJ = nodeSet->getJoint(i)->getJointLimitLow();
+                maxJ = nodeSet->getJoint(i)->getJointLimitHigh();
                 v[i] = minJ + ((maxJ - minJ) * rndValue);
             }
 
@@ -1164,7 +1164,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION("Robot does not know basenode:" << baseNode->getName());
         }
 
-        THROW_VR_EXCEPTION_IF(nodeSet->hasModelNode(baseNode->getName()), " baseNode is part of RobotNodeSet! This is not a good idea, since the globalPose of the baseNode will change during buildup of WorkspaceRepresentation data...");
+        THROW_VR_EXCEPTION_IF(nodeSet->hasNode(baseNode->getName()), " baseNode is part of RobotNodeSet! This is not a good idea, since the globalPose of the baseNode will change during buildup of WorkspaceRepresentation data...");
         this->staticCollisionModel = staticCollisionModel;
         this->dynamicCollisionModel = dynamicCollisionModel;
 
@@ -2322,8 +2322,8 @@ namespace VirtualRobot
                         for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = (float) std::rand() * randMult; // value from 0 to 1
-                            minJ = (*nodeSet)[l]->getJointLimitLow();
-                            maxJ = (*nodeSet)[l]->getJointLimitHigh();
+                            minJ = nodeSet->getJoint(l)->getJointLimitLow();
+                            maxJ = nodeSet->getJoint(l)->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
                         }
 

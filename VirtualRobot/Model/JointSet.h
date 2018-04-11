@@ -25,36 +25,13 @@
 
 #include "../Model/Model.h"
 #include "ModelNodeSet.h"
+#include "Nodes/ModelJoint.h"
 
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT JointSet : public ModelNodeSet
     {
-    protected:
-        /*!
-         * Initialize this set with a vector of ModelNodes.
-         *
-         * @param name The name of this JointSet.
-         * @param model The associated model.
-         * @param modelNodes The model nodes to add to this JointSet.
-         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
-         *                         kinematicRoot does not have to be a node of this set.
-         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
-         * @param tcp   The tcp.
-         *              If not given, the last entry of modelNodes will be set as the tcp.
-         */
-        JointSet(const std::string& name,
-                     const ModelWeakPtr& model,
-                     const std::vector<ModelNodePtr>& modelNodes,
-                     const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const FramePtr tcp = FramePtr());
-
     public:
-        /*!
-         * Destructor.
-         */
-        virtual ~JointSet();
-
         /*!
          * Create a new JointSet.
          *
@@ -73,7 +50,7 @@ namespace VirtualRobot
          */
         static JointSetPtr createJointSet(const ModelPtr& model,
                                                   const std::string& name,
-                                                  const std::vector<std::string>& modelNodeNames,
+                                                  const std::vector<std::string>& jointNames,
                                                   const std::string& kinematicRootName = "",
                                                   const std::string& tcpName = "",
                                                   bool registerToModel = false);
@@ -105,32 +82,60 @@ namespace VirtualRobot
                                                   const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
 
-
-
+    protected:
         /*!
-         * Get all nodes of this set.
+         * Initialize this set with a vector of ModelNodes.
          *
-         * @return The nodes contained in this set.
+         * @param name The name of this JointSet.
+         * @param model The associated model.
+         * @param modelNodes The model nodes to add to this JointSet.
+         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
+         *                         kinematicRoot does not have to be a node of this set.
+         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
+         * @param tcp   The tcp.
+         *              If not given, the last entry of modelNodes will be set as the tcp.
          */
-        const std::vector<ModelJointPtr> getJoints() const;
+        JointSet(const std::string& name,
+                     const ModelWeakPtr& model,
+                     const std::vector<ModelJointPtr> &jointNodes,
+                     const ModelNodePtr kinematicRoot = ModelNodePtr(),
+                     const FramePtr tcp = FramePtr());
 
+    public:
         /*!
-         * Print out some information.
+         * Destructor.
          */
-        void print() const;
+        virtual ~JointSet();
 
-		ModelJointPtr& operator[](int i)
-		{
-			return getNode(i);
-		}
+        virtual ModelNodePtr getNode(size_t i) const override;
+        ModelJointPtr getJoint(size_t i) const;
 
-		/*!
-		* Get the node at position i.
-		*
-		* @param i The position of the node to get.
-		* @return The node.
-		*/
-		ModelJointPtr& getNode(int i);
+        virtual bool hasNode(const ModelNodePtr &node) const override;
+        virtual bool hasNode(const std::string &nodeName) const override;
+        inline bool hasJoint(const ModelJointPtr &joint) const
+        {
+            return hasNode(joint);
+        }
+        inline bool hasJoint(const std::string &linkName) const
+        {
+            return hasNode(linkName);
+        }
+
+        virtual std::vector<ModelNodePtr> getNodes() const override;
+        virtual std::vector<ModelJointPtr> getJoints() const override;
+        virtual std::vector<ModelLinkPtr> getLinks() const override;
+
+        virtual unsigned int getSize() const override;
+
+        virtual ModelNodePtr getKinematicRoot() const override;
+        virtual void setKinematicRoot(const ModelNodePtr &modelNode) override;
+
+        virtual FramePtr getTCP() const override;
+
+        virtual void print() const override;
+        virtual std::string toXML(int tabs) const override;
+
+        virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const override;
 
         /*!
          * Get the joint values of all contained joints.
@@ -201,7 +206,7 @@ namespace VirtualRobot
          *
          * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
          */
-        virtual void setJointValues(const std::vector<float>& jointValues);
+        void setJointValues(const std::vector<float>& jointValues);
 
         /*!
          * Set joint values [rad].
@@ -209,36 +214,21 @@ namespace VirtualRobot
          *
          * @param jointValues A vector with joint values, size must be equal to number of joints in this RobotNodeSet.
         */
-        virtual void setJointValues(const Eigen::VectorXf& jointValues);
+        void setJointValues(const Eigen::VectorXf& jointValues);
 
         /*!
          * Set joints that are within the given ModelConfig. Joints of this NodeSet that are not stored in jointValues remain untouched.
          *
          * @param config The config to get the joint values from.
          */
-        virtual void setJointValues(const ModelConfigPtr& config);
+        void setJointValues(const ModelConfigPtr& config);
         
-        std::vector< std::string > getNodeNames() const;
         std::map< std::string, float > getJointValueMap() const;
-
-        /*!
-         * Create a XML string to represent this JointSet.
-         *
-         * @param tabs The number of tabs to start each line with.
-         * @return The generated XML string.
-         */
-        virtual std::string toXML(int tabs) const override;
-        /*!
-         * Clones this JointSet and registers it to the given model.
-         * All joints of this JointSet must be already registered at the given model.
-         * Note: this does not deep copy the joints, thus the cloned JointSet will point to the same joints.
-         *
-         * @param model The model the cloned JointSet will be registered to.
-        */
-        JointSetPtr clone(ModelPtr model);
 
     private:
         std::vector<ModelJointPtr> joints;
+        ModelNodePtr kinematicRoot;
+        FramePtr tcp;
     };
 }
 

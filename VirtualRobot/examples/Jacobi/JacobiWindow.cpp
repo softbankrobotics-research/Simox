@@ -316,7 +316,7 @@ void JacobiWindow::selectKC(int nr)
 
     UI.label_TCP->setText(nameQ);
     UI.label_NrJoints->setText(qd);
-    std::vector<RobotNodePtr> nodes = kc->getModelNodes();
+    std::vector<RobotNodePtr> nodes = kc->getNodes();
     elbow.reset();
 
     for (size_t i = 0; i < nodes.size(); i++)
@@ -389,7 +389,7 @@ void JacobiWindow::jacobiTest()
 
     cout << "---- TEST JACOBI ----" << endl;
     JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
-                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+                             kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
     DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
@@ -413,7 +413,7 @@ void JacobiWindow::jacobiTest2()
     //n.push_back(elbow);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
     JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
-                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+                             kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
     DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();

@@ -20,6 +20,7 @@ namespace VirtualRobot
           staticTransformation(staticTransformation),
           attachments()
     {
+        VR_ASSERT(model.lock());
     }
 
     ModelNode::~ModelNode()
@@ -135,7 +136,7 @@ namespace VirtualRobot
 
         while (p = p->getParentNode(type))
         {
-            if (!set || set->hasModelNode(p))
+            if (!set || set->hasNode(p))
             {
                 result.push_back(p);
             }
