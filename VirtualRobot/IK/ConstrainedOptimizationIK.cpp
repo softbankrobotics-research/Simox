@@ -110,6 +110,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
     std::vector<double> bestJointValues;
     double currentMinError = std::numeric_limits<double>::max();
+    AdditionalOutputData currentMinOutput;
     assert(maxIterations >= 0);
     for(unsigned int attempt = 0; attempt < static_cast<std::size_t>(maxIterations); attempt++)
     {
@@ -192,7 +193,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             nodeSet->getNode(i)->setJointValue(x[i]);
         }
         double currentError;
-        bool success = hardOptimizationFunction(x, currentError);
+        AdditionalOutputData d;
+        bool success = hardOptimizationFunction(x, currentError, d);
         // We determine success based on hard constraints only
         if(success)
         {
@@ -207,6 +209,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
         {
             currentMinError = currentError;
             bestJointValues = x;
+            currentMinOutput = d;
         }
     }
     if(bestJointValues.size() > 0)
@@ -217,6 +220,10 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
     robot->updatePose(true);
+
+    std::cout << "FAILURE, miminal error: " << currentMinError << std::endl;
+    currentMinOutput.print();
+
     return false;
 }
 
@@ -297,7 +304,7 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
     return setup.constraint->optimizationFunction(setup.id);
 }
 
-bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x, double & error)
+bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x, double & error, AdditionalOutputData &data)
 {
     if(x != currentX)
     {
@@ -307,6 +314,7 @@ bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<doubl
     }
     bool result = true;
     error = 0;
+
     for(auto &constraint : constraints)
     {
         for(auto &function : constraint->getOptimizationFunctions())
@@ -317,8 +325,12 @@ bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<doubl
                 continue;
             }
 
-            result &= function.constraint->checkTolerances();
-            error += function.constraint->optimizationFunction(function.id);
+            bool r = function.constraint->checkTolerances();
+            result &= r;
+            double e = function.constraint->optimizationFunction(function.id);
+            error += e;
+
+            data.data.push_back({typeid(*(function.constraint)).name(), r, e});
         }
     }
 

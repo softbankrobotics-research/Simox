@@ -61,7 +61,26 @@ namespace VirtualRobot
         double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient);
         double optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup);
 
-        bool hardOptimizationFunction(const std::vector<double> &x, double &error);
+        struct AdditionalOutputData
+        {
+            struct ConstraintInfo
+            {
+                std::string constraintName;
+                bool success;
+                double error;
+            };
+
+            std::vector<ConstraintInfo> data;
+
+            void print()
+            {
+                for (ConstraintInfo c : data)
+                {
+                    std::cout << "Constraint: " << c.constraintName << " Error: " << c.error << " Success: " << c.success << std::endl;
+                }
+            }
+        };
+        bool hardOptimizationFunction(const std::vector<double> &x, double &error, AdditionalOutputData &data);
 
     protected:
         RobotNodeSetPtr nodeSet;
@@ -78,6 +97,7 @@ namespace VirtualRobot
 
         float functionValueTolerance;
         float optimizationValueTolerance;
+
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;

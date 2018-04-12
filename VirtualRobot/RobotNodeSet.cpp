@@ -415,7 +415,8 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(jointValues.size() != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         RobotPtr rob = robot.lock();
-        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
+        // commented out to avoid exception in headIK in armarx --> works anyway!?
+//        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
@@ -438,7 +439,8 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(static_cast<std::size_t>(jointValues.rows()) != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
         RobotPtr rob = robot.lock();
-        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
+        // commented out to avoid exception in headIK in armarx --> works anyway!?
+//        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
@@ -460,7 +462,8 @@ namespace VirtualRobot
     {
         VR_ASSERT(jointValues);
         RobotPtr rob = robot.lock();
-        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
+        // commented out to avoid exception in headIK in armarx --> works anyway!?
+//        THROW_VR_EXCEPTION_IF(rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
