@@ -79,6 +79,8 @@ public slots:
 
     void evalRobustness();
 
+    void evalRobustnessAll();
+
 protected:
 
     void loadRobot();
