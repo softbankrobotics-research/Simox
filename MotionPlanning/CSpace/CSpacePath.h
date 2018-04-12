@@ -54,7 +54,7 @@ namespace Saba
         CSpacePath(CSpacePtr cspace, const std::string& name = "");
 
         //! Destructor
-        virtual ~CSpacePath();
+        ~CSpacePath() override;
 
 
 
@@ -70,7 +70,7 @@ namespace Saba
             Return euclidean c-space length of complete path.
             Any weights that may be defined in the corresponding c-space are considered.
         */
-        virtual float getLength() const;
+        float getLength() const override;
 
         /*!
             Return euclidean c-space length of complete path
@@ -93,7 +93,7 @@ namespace Saba
             If storeIndex!=NULL the index of the last path point is stored.
             This method consideres weighting of c-space dimensions!
          */
-        virtual void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = NULL) const;
+        void interpolate(float t, Eigen::VectorXf& storePos, int* storeIndex = NULL) const override;
 
         //! return time t (0<=t<=1) for path entry with number nr
         virtual float getTime(unsigned int nr);

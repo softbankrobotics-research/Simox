@@ -57,7 +57,7 @@ namespace Collada
     struct ColladaWalker : pugi::xml_tree_walker
     {
         ColladaWalker(StructureMap structureMap, XmlMap physicsMap) : structureMap(structureMap), physicsMap(physicsMap) {}
-        virtual bool for_each(pugi::xml_node& node) = 0;
+        bool for_each(pugi::xml_node& node) override = 0;
         StructureMap structureMap;
         XmlMap physicsMap;
     };

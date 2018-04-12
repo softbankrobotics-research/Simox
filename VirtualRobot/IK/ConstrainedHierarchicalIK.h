@@ -36,8 +36,8 @@ namespace VirtualRobot
     public:
         ConstrainedHierarchicalIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
-        bool initialize();
-        bool solveStep();
+        bool initialize() override;
+        bool solveStep() override;
 
     protected:
         RobotNodeSetPtr nodeSet;

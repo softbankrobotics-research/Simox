@@ -41,7 +41,7 @@ public:
                    const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                    const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
                    const std::string& colModelEnv);
-    ~GraspRrtWindow();
+    ~GraspRrtWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -52,7 +52,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 

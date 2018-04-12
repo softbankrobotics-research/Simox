@@ -46,9 +46,9 @@ namespace VirtualRobot
         VirtualRobotException(const std::string& what);
         VirtualRobotException(const char* what);
 
-        virtual ~VirtualRobotException() throw();
+        ~VirtualRobotException() noexcept override;
 
-        virtual const char* what() const throw();
+        const char* what() const noexcept override;
         //virtual const char * what() const;
 
     protected:

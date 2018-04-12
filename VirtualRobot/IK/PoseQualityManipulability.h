@@ -55,7 +55,7 @@ namespace VirtualRobot
         /*!
             Returns the manipulability of the current configuration.
         */
-        virtual float getPoseQuality();
+        float getPoseQuality() override;
         virtual float getManipulability(ManipulabilityIndexType i);
 
         /*!
@@ -64,7 +64,7 @@ namespace VirtualRobot
             See derived classes for details.
             \param direction A 3d or 6d vector with the Cartesian direction to investigate.
         */
-        virtual float getPoseQuality(const Eigen::VectorXf& direction);
+        float getPoseQuality(const Eigen::VectorXf& direction) override;
         virtual float getManipulability(const Eigen::VectorXf& direction, int considerFirstSV = -1);
 
         /*!
@@ -95,11 +95,11 @@ namespace VirtualRobot
         */
         virtual void penalizeJointLimits(bool enable, float k = 50.0f);
 
-        virtual bool consideringJointLimits();
+        bool consideringJointLimits() override;
 
         static std::string getTypeName();
 
-        virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
+        PoseQualityMeasurementPtr clone(RobotPtr newRobot) override;
 
     protected:
 

@@ -57,7 +57,7 @@ namespace VirtualRobot
         PoseQualityExtendedManipulability(VirtualRobot::RobotNodeSetPtr rns, PoseQualityManipulability::ManipulabilityIndexType i = PoseQualityManipulability::eMinMaxRatio);
         ~PoseQualityExtendedManipulability();
 
-        virtual float getPoseQuality();
+        float getPoseQuality() override;
 
         float getPoseQuality(PoseQualityManipulability::ManipulabilityIndexType i, int considerFirstSV);
 
@@ -66,8 +66,8 @@ namespace VirtualRobot
             The current configuration of the corresponding RNS is analyzed and the quality is returned.
             \param direction A 3d or 6d vector with the Cartesian direction to investigate.
         */
-        virtual float getPoseQuality(const Eigen::VectorXf& direction);
-        virtual float getManipulability(const Eigen::VectorXf& direction, int considerFirstSV = -1);
+        float getPoseQuality(const Eigen::VectorXf& direction) override;
+        float getManipulability(const Eigen::VectorXf& direction, int considerFirstSV = -1) override;
 
 
         struct extManipData
@@ -134,9 +134,9 @@ namespace VirtualRobot
         static std::string getTypeName();
 
         //! Indicates if joint limits are considered.
-        virtual bool consideringJointLimits();
+        bool consideringJointLimits() override;
 
-        virtual PoseQualityMeasurementPtr clone(RobotPtr newRobot);
+        PoseQualityMeasurementPtr clone(RobotPtr newRobot) override;
 
         void getSelfDistParameters(float &storeAlpha, float &storeBeta);
 

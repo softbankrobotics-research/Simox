@@ -29,7 +29,7 @@ class stabilityWindow : public QMainWindow
     Q_OBJECT
 public:
     stabilityWindow(std::string& sRobotFile);
-    ~stabilityWindow();
+    ~stabilityWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -38,7 +38,7 @@ public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
     void resetSceneryAll();
     void selectRobot();
     void collisionModel();

@@ -114,7 +114,7 @@ namespace VirtualRobot
 
         // instantiation not allowed
         ObjectIO();
-        virtual ~ObjectIO();
+        ~ObjectIO() override;
 
         static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
     };

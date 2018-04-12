@@ -38,9 +38,9 @@ namespace VirtualRobot
     {
     public:
         SimoxXMLFactory();
-        virtual ~SimoxXMLFactory();
+        ~SimoxXMLFactory() override;
 
-        virtual RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull);
+        RobotPtr loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode = RobotIO::eFull) override;
 
         // AbstractFactoryMethod
     public:
@@ -52,8 +52,8 @@ namespace VirtualRobot
 
         // RobotImporterFactory interface
     public:
-        virtual std::string getFileFilter();
-        virtual std::string getFileExtension();
+        std::string getFileFilter() override;
+        std::string getFileExtension() override;
     };
 
 } // namespace VirtualRobot

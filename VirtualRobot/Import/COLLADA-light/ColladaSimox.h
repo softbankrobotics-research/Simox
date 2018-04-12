@@ -30,7 +30,7 @@ namespace Collada
         ColladaSimoxRobotNode(VirtualRobot::RobotPtr simoxRobot, float scaleFactor) ;
 
         ~ColladaSimoxRobotNode();
-        virtual void initialize();
+        void initialize() override;
         VirtualRobot::RobotPtr simoxRobot;
         VirtualRobot::RobotNodePtr simoxRobotNode;
         float scaleFactor;
@@ -43,7 +43,7 @@ namespace Collada
         float scaleFactor;
     public:
         ColladaSimoxRobot(float scaleFactor) ;
-        virtual ColladaRobotNodePtr robotNodeFactory()
+        ColladaRobotNodePtr robotNodeFactory() override
         {
             return ColladaRobotNodePtr(new ColladaSimoxRobotNode(simoxRobot, scaleFactor));
         }

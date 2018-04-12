@@ -38,10 +38,10 @@ namespace Saba
     public:
 
         ShortcutProcessor(CSpacePathPtr path, CSpaceSampledPtr cspace, bool verbose = false);
-        virtual ~ShortcutProcessor();
+        ~ShortcutProcessor() override;
 
         //! A wrapper to the standard interface. Calls shortenSolutionRandom().
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         /*!
             Creates a shortened CSpace path.

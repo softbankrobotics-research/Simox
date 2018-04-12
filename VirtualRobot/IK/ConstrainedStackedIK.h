@@ -38,9 +38,9 @@ namespace VirtualRobot
         ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
                              JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
-        bool initialize();
+        bool initialize() override;
 
-        virtual bool solveStep();
+        bool solveStep() override;
 
     protected:
         RobotNodeSetPtr nodeSet;

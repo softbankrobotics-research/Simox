@@ -39,8 +39,8 @@ namespace VirtualRobot
         void setReferenceConfiguration(const Eigen::VectorXf &config);
         Eigen::VectorXf getReferenceConfiguration();
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
     protected:
         RobotPtr robot;

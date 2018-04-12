@@ -34,7 +34,7 @@ class GenericIKWindow : public QMainWindow
     Q_OBJECT
 public:
     GenericIKWindow(std::string& sRobotFilename);
-    ~GenericIKWindow();
+    ~GenericIKWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -44,7 +44,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
     void collisionModel();

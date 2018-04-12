@@ -37,7 +37,7 @@ class RrtGuiWindow : public QMainWindow
 public:
     RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf, const std::string& rns,
                  const std::string& colModelRob1, const std::string& colModelRob2, const std::string& colModelEnv);
-    ~RrtGuiWindow();
+    ~RrtGuiWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -48,7 +48,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 

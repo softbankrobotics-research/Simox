@@ -55,20 +55,20 @@ namespace VirtualRobot
         CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id);
         /*!Standard Destructor
         */
-        virtual ~CollisionModelPQP();
+        ~CollisionModelPQP() override;
 
         boost::shared_ptr<PQP::PQP_Model> getPQPModel()
         {
             return pqpModel;
         }
 
-        virtual void print();
-        virtual boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const;
+        void print() override;
+        boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const override;
     protected:
         CollisionModelPQP(const CollisionModelPQP& orig);
 
         //! delete all data
-        virtual void destroyData();
+        void destroyData() override;
         void createPQPModel();
 
         boost::shared_ptr<PQP::PQP_Model> pqpModel;

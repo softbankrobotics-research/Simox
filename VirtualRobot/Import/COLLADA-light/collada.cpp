@@ -124,7 +124,7 @@ namespace Collada
             this->sensorMap = _sensorMap;
         }
 #endif
-        bool for_each(pugi::xml_node& node)
+        bool for_each(pugi::xml_node& node) override
         {
             if (depth() + 1 > (int)stack.size())
             {

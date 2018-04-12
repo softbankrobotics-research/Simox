@@ -48,7 +48,7 @@ namespace GraspStudio
         GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
 
         // destructor
-        virtual ~GraspQualityMeasure();
+        ~GraspQualityMeasure() override;
 
 
         /*
@@ -62,9 +62,9 @@ namespace GraspStudio
 
         virtual VirtualRobot::MathTools::ContactPoint getSampledObjectPointsCenter();
 
-        virtual std::string getName();
+        std::string getName() override;
 
-        virtual bool isValid();
+        bool isValid() override;
 
         virtual ContactConeGeneratorPtr getConeGenerator();
     protected:

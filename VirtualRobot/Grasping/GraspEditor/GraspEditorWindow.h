@@ -43,7 +43,7 @@ namespace VirtualRobot
         Q_OBJECT
     public:
         GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false);
-        virtual ~GraspEditorWindow();
+        ~GraspEditorWindow() override;
 
         /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
         int main();
@@ -53,7 +53,7 @@ namespace VirtualRobot
         void quit();
 
         /*!< Overriding the close event, so we know when the window was closed by the user. */
-        void closeEvent(QCloseEvent* event);
+        void closeEvent(QCloseEvent* event) override;
 
         void resetSceneryAll();
         void loadObject();

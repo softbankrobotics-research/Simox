@@ -55,10 +55,10 @@ namespace GraspStudio
         */
         ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
         //! destructor
-        virtual ~ApproachMovementSurfaceNormal();
+        ~ApproachMovementSurfaceNormal() override;
 
         //! Creates a new pose for approaching
-        virtual Eigen::Matrix4f createNewApproachPose();
+        Eigen::Matrix4f createNewApproachPose() override;
 
         //!  Returns a position with normal on the surface of the object
         bool getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir);

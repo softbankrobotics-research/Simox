@@ -42,9 +42,9 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~ManipulationObject();
+        ~ManipulationObject() override;
 
-        virtual void print(bool printDecoration = true);
+        void print(bool printDecoration = true) override;
 
         bool hasGraspSet(GraspSetPtr graspSet);
         bool hasGraspSet(const std::string& robotType, const std::string& eef);

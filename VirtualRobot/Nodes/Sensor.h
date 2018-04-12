@@ -67,7 +67,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~Sensor();
+        ~Sensor() override;
 
 
         RobotNodePtr getRobotNode() const;
@@ -89,12 +89,12 @@ namespace VirtualRobot
         /*!
             Calling this SceneObject method will cause an exception, since Sensors are controlled via their RobotNode parent.
         */
-        virtual void setGlobalPose(const Eigen::Matrix4f& pose);
+        void setGlobalPose(const Eigen::Matrix4f& pose) override;
 
         /*!
             Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
 
         /*!
@@ -114,9 +114,9 @@ namespace VirtualRobot
         /*!
             Compute/Update the transformations of this sensor. Therefore the parent is queried for its pose.
         */
-        virtual void updatePose(bool updateChildren = true);
+        void updatePose(bool updateChildren = true) override;
 
-        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+        bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>()) override;
 
         virtual std::string toXML(const std::string& modelPath, int tabs = 1);
 
@@ -126,7 +126,7 @@ namespace VirtualRobot
         /*!
             Update the pose according to parent pose
         */
-        virtual void updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren = true);
+        void updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren = true) override;
 
         Sensor() {};
 
@@ -141,7 +141,7 @@ namespace VirtualRobot
         */
         virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling) = 0;
 
-        virtual SceneObject* _clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const
+        SceneObject* _clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const override
         {
             THROW_VR_EXCEPTION("Cloning not allowed this way...");
         }

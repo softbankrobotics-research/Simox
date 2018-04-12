@@ -47,7 +47,7 @@ namespace GraspStudio
 
         GraspQualityMeasureWrenchSpace(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
         // destructor
-        ~GraspQualityMeasureWrenchSpace();
+        ~GraspQualityMeasureWrenchSpace() override;
 
 
         /*!
@@ -63,7 +63,7 @@ namespace GraspStudio
             with f_max_ows = max distance of OWS hull center to one of its facets
             -> also known as "epsilon" quality == radius of larges enclosing 6D ball
         */
-        virtual float getGraspQuality();
+        float getGraspQuality() override;
 
         /*!
             Volume grasp quality ratio of GWS volume / OWS volume
@@ -74,7 +74,7 @@ namespace GraspStudio
         /*
             Checks if wrench space origin is inside GWS-Hull
         */
-        virtual bool isGraspForceClosure();
+        bool isGraspForceClosure() override;
 
         /*
             Returns the internally calculated convex hull object (ObjectWrenchSpace)
@@ -118,14 +118,14 @@ namespace GraspStudio
         the contact points are normalized by subtracting the COM
         the contact normals are normalize to unit length
         */
-        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints);
-        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints);
+        void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints) override;
+        void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints) override;
 
-        virtual bool calculateGraspQuality();
-        virtual bool calculateObjectProperties();
+        bool calculateGraspQuality() override;
+        bool calculateObjectProperties() override;
 
         //! Returns description of this object
-        virtual std::string getName();
+        std::string getName() override;
 
         virtual float getOWSMinOffset()
         {
