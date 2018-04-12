@@ -72,12 +72,14 @@ namespace VirtualRobot
 
             std::vector<ConstraintInfo> data;
 
-            void print()
+            std::string toString()
             {
+                std::stringstream ss;
                 for (ConstraintInfo c : data)
                 {
-                    std::cout << "Constraint: " << c.constraintName << " Error: " << c.error << " Success: " << c.success << std::endl;
+                    ss << "Constraint: " << c.constraintName << " Error: " << c.error << " Success: " << c.success << "\n";
                 }
+                return ss.str();
             }
         };
         bool hardOptimizationFunction(const std::vector<double> &x, double &error, AdditionalOutputData &data);
