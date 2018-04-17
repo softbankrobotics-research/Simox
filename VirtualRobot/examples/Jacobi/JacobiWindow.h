@@ -1,6 +1,5 @@
 
-#ifndef __Jacobi_WINDOW_H_
-#define __Jacobi_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -96,4 +95,3 @@ protected:
     bool useColModel;
 };
 
-#endif // __Jacobi_WINDOW_H_

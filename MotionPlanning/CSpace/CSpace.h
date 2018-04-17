@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_cspace_h_
-#define _saba_cspace_h_
+#pragma once
 
 #include "../Saba.h"
 #include "VirtualRobot/Robot.h"
@@ -364,4 +363,3 @@ namespace Saba
 
 } // namespace
 
-#endif // _saba_cspace_h

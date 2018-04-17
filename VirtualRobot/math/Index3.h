@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_Index3
-#define math_HapticExplorationLibrary_Index3
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -60,4 +59,3 @@ static Index3 operator /(Index3 a, int f);*/
 
 }
 
-#endif // math_HapticExplorationLibrary_Index3

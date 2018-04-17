@@ -1,6 +1,5 @@
 
-#ifndef _CollisionModelDummy_h_
-#define _CollisionModelDummy_h_
+#pragma once
 
 #include "../../VirtualRobotImportExport.h"
 #include "../CollisionModelImplementation.h"
@@ -60,4 +59,3 @@ namespace VirtualRobot
 
 }
 
-#endif

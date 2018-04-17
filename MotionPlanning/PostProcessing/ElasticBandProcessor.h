@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_ElasticBandProcessor_h__
-#define __Saba_ElasticBandProcessor_h__
+#pragma once
 
 #include "../Saba.h"
 #include "PathProcessor.h"
@@ -93,4 +92,3 @@ namespace Saba
 
 }// namespace
 
-#endif // __Saba_ElasticBandProcessor_h__

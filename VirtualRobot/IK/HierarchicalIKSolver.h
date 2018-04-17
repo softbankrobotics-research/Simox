@@ -1,5 +1,4 @@
-#ifndef HIERARCHICALIKSOLVER_H
-#define HIERARCHICALIKSOLVER_H
+#pragma once
 
 #include "HierarchicalIK.h"
 
@@ -22,4 +21,3 @@ protected:
 };
 
 typedef boost::shared_ptr<HierarchicalIKSolver> HierarchicalIKSolverPtr;
-#endif // HIERARCHICALIKSOLVER_H

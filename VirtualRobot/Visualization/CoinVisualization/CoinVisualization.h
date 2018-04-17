@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinVisualization_h_
-#define _VirtualRobot_CoinVisualization_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 #include "../Visualization.h"
@@ -83,4 +82,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CoinVisualization_h_

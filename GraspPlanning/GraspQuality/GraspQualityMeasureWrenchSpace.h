@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GRASP_QUALTIY_MEASURE_WRENCH_H__
-#define __GRASP_QUALTIY_MEASURE_WRENCH_H__
+#pragma once
 
 #include "../GraspStudio.h"
 #include "GraspQualityMeasure.h"
@@ -171,4 +170,3 @@ namespace GraspStudio
 
 } // namespace
 
-#endif /* __GRASP_QUALTIY_MEASURE_WRENCH_H__ */

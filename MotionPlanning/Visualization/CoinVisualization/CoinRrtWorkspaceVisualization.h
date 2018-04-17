@@ -17,8 +17,7 @@
 //----------------------------------------------------------------------
 
 
-#ifndef _Saba_CoinRrtWorkspaceVisualization_h_
-#define _Saba_CoinRrtWorkspaceVisualization_h_
+#pragma once
 
 
 #include "../../Saba.h"
@@ -90,4 +89,3 @@ namespace Saba
 
 } // namespace Saba
 
-#endif // _Saba_CoinRrtWorkspaceVisualization_h_

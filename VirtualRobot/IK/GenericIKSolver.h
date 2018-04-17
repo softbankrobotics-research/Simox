@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_GenericIKSolver_h_
-#define _VirtualRobot_GenericIKSolver_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "AdvancedIKSolver.h"
@@ -94,4 +93,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<GenericIKSolver> GenericIKSolverPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_GenericIKSolver_h_

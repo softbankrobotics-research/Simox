@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_Helpers
-#define math_Helpers
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -57,4 +56,3 @@ namespace math
     };
 }
 
-#endif // math_Helpers

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_MotionPlanner_h
-#define _Saba_MotionPlanner_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpace.h"
@@ -159,4 +158,3 @@ namespace Saba
     };
 }
 
-#endif // _Saba_MotionPlanner_

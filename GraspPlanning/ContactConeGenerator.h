@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __CONTACT_CONE_GENARTOR_H__
-#define __CONTACT_CONE_GENARTOR_H__
+#pragma once
 
 #include "GraspStudio.h"
 #include <VirtualRobot/MathTools.h>
@@ -81,4 +80,3 @@ namespace GraspStudio
     };
 }
 
-#endif /* __CONTACT_CONE_GENARTOR_H__ */

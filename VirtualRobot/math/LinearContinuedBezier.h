@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_LinearContinuedBezier
-#define math_LinearContinuedBezier
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "Bezier.h"
@@ -51,4 +50,3 @@ namespace math
     };
 }
 
-#endif // math_LinearContinuedBezier

@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_ReferenceConfigurationConstraint_h_
-#define _VirtualRobot_ReferenceConfigurationConstraint_h_
+#pragma once
 
 #include "VirtualRobot/IK/Constraint.h"
 
@@ -51,4 +50,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<ReferenceConfigurationConstraint> ReferenceConfigurationConstraintPtr;
 }
 
-#endif

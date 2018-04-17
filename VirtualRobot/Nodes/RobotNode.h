@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotNode_h_
-#define _VirtualRobot_RobotNode_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../VirtualRobotException.h"
@@ -408,4 +407,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_RobotNode_h_

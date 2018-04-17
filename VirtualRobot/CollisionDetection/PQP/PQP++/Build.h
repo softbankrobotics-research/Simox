@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_BUILD_H
-#define PQP_BUILD_H
+#pragma once
 
 #include "PQP.h"
 
@@ -72,4 +71,3 @@ namespace PQP
     };
 }
 
-#endif

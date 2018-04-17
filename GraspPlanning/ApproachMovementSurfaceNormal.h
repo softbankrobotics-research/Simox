@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__
-#define __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__
+#pragma once
 
 #include "GraspStudio.h"
 #include "ApproachMovementGenerator.h"
@@ -78,4 +77,3 @@ namespace GraspStudio
     };
 }
 
-#endif /* __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__ */

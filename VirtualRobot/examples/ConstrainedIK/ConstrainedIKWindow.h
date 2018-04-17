@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef __Constrained_WINDOW_H_
-#define __Constrained_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -123,4 +122,3 @@ protected:
     VirtualRobot::BalanceConstraintPtr balanceConstraint;
 };
 
-#endif // __Constrained_WINDOW_H_

@@ -1,5 +1,4 @@
-#ifndef __INVENTOR_COLLADA__
-#define __INVENTOR_COLLADA__
+#pragma once
 
 #include "collada.h"
 #include <Inventor/nodes/SoSeparator.h>
@@ -56,4 +55,3 @@ namespace Collada
     };
 }//namespace
 
-#endif

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GraspStudio_ConvexHullVisualization_h_
-#define _GraspStudio_ConvexHullVisualization_h_
+#pragma once
 
 #include "../GraspStudio.h"
 #include <VirtualRobot/VirtualRobot.h>
@@ -62,4 +61,3 @@ namespace GraspStudio
 
 } // namespace GraspStudio
 
-#endif // _GraspStudio_ConvexHullVisualization_h_

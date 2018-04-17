@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionModelPQP_h_
-#define _VirtualRobot_CollisionModelPQP_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 
@@ -78,4 +77,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_CollisionModelPQP_h_

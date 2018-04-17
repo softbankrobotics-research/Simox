@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SceneIO_h_
-#define _VirtualRobot_SceneIO_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "BaseIO.h"
@@ -79,4 +78,3 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_SceneIO_h_

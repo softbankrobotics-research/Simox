@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_h_
-#define _SimDynamics_h_
+#pragma once
 
 
 /*! \defgroup SimDynamics The Dynamic Simulation Library
@@ -95,4 +94,3 @@ namespace SimDynamics
 
 }
 
-#endif // _SimDynamics_h_

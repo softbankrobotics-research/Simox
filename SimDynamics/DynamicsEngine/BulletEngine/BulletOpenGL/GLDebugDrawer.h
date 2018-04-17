@@ -1,5 +1,4 @@
-#ifndef GL_DEBUG_DRAWER_H
-#define GL_DEBUG_DRAWER_H
+#pragma once
 
 #include "LinearMath/btIDebugDraw.h"
 
@@ -37,4 +36,3 @@ public:
 
 };
 
-#endif//GL_DEBUG_DRAWER_H

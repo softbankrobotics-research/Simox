@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ContactSensor_h_
-#define _VirtualRobot_ContactSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -108,4 +107,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_ForceTorqueSensor_h_

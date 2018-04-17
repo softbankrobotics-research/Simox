@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __APPROACH_MOVEMENT_GENERATOR_H__
-#define __APPROACH_MOVEMENT_GENERATOR_H__
+#pragma once
 
 #include "GraspStudio.h"
 #include <VirtualRobot/VirtualRobot.h>
@@ -109,4 +108,3 @@ namespace GraspStudio
 
 }
 
-#endif /* __APPROACH_MOVEMENT_GENERATOR_H__ */

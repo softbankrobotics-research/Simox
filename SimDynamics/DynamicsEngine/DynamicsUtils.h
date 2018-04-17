@@ -1,5 +1,4 @@
-#ifndef __DYNAMICS_UTILS__H__
-#define __DYNAMICS_UTILS__H__
+#pragma once
 
 #include <iostream>
 #include "../SimDynamics.h"
@@ -154,4 +153,3 @@ namespace SimDynamics
 }
 
 
-#endif

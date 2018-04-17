@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Scene_h_
-#define _VirtualRobot_Scene_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "SceneObject.h"
@@ -288,4 +287,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Scene_h_

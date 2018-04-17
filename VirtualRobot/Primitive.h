@@ -1,5 +1,4 @@
-#ifndef PRIMITIVE_H
-#define PRIMITIVE_H
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <Eigen/Geometry>
@@ -66,4 +65,3 @@ namespace VirtualRobot
     } //namespace Primitive
 } //namespace VirtualRobot
 
-#endif // PRIMITIVE_H

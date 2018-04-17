@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_RrtWorkspaceVisualization_h_
-#define _Saba_RrtWorkspaceVisualization_h_
+#pragma once
 
 #include "../Saba.h"
 #include "VirtualRobot/VirtualRobot.h"
@@ -125,4 +124,3 @@ namespace Saba
 
 } // namespace Saba
 
-#endif // _Saba_RrtWorkspaceVisualization_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_PathProcessingThread_h__
-#define __Saba_PathProcessingThread_h__
+#pragma once
 
 #include "../Saba.h"
 
@@ -99,4 +98,3 @@ namespace Saba
 
 }
 
-#endif // _PostprocessingThread_h

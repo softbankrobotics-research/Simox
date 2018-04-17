@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ObjectIO_h_
-#define _VirtualRobot_ObjectIO_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "BaseIO.h"
@@ -121,4 +120,3 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_ObjectIO_h_

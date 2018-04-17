@@ -12,8 +12,7 @@ subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
-#ifndef GLUT_STUFF_H
-#define GLUT_STUFF_H
+#pragma once
 
 #ifdef _WIN32//for glut.h
 #include <windows.h>
@@ -83,4 +82,3 @@ int glutmain(int argc, char** argv, int width, int height, const char* title, De
 #define btglVertex3 glVertex3d
 #endif
 
-#endif //GLUT_STUFF_H

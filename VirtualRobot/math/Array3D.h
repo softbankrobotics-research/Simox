@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_Array3D
-#define math_Array3D
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -74,4 +73,3 @@ namespace math
     };
 }
 
-#endif //math_Array3D

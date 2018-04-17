@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletObject_h_
-#define _SimDynamics_BulletObject_h_
+#pragma once
 
 #include "../DynamicsObject.h"
 #include "SimoxMotionState.h"
@@ -117,4 +116,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_BulletObject_h_

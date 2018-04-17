@@ -36,8 +36,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _VirtualRobot_Path_h_
-#define _VirtualRobot_Path_h_
+#pragma once
 
 #include <list>
 #include <Eigen/Core>
@@ -90,4 +89,3 @@ namespace VirtualRobot
     };
 }
 
-#endif // _VirtualRobot_Path_h_

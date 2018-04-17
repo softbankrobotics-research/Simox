@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_DataR3R1
-#define math_DataR3R1
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -39,4 +38,3 @@ namespace math
     };
 }
 
-#endif // math_DataR3R1

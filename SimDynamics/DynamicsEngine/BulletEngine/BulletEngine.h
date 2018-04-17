@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletEngine_h_
-#define _SimDynamics_BulletEngine_h_
+#pragma once
 
 #include <VirtualRobot/SceneObject.h>
 #include "../DynamicsEngine.h"
@@ -206,4 +205,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_BulletEngine_h_

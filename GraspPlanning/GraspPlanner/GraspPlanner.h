@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GENERAL_GRASP_PLANNER_H__
-#define __GENERAL_GRASP_PLANNER_H__
+#pragma once
 
 #include <GraspPlanning/GraspStudio.h>
 #include <GraspPlanning/GraspPlanner/GraspPlannerEvaluation.h>
@@ -81,4 +80,3 @@ namespace GraspStudio
     };
 }
 
-#endif /* __GENERAL_GRASP_PLANNER_H__ */

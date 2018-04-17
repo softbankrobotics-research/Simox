@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CSpaceSampled_h
-#define _Saba_CSpaceSampled_h
+#pragma once
 
 #include "../Saba.h"
 #include "CSpace.h"
@@ -131,4 +130,3 @@ namespace Saba
 
 }
 
-#endif // _Saba_CSpaceSampled_h

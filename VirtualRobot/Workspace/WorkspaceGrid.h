@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _WORKSPACE_GRID_H_
-#define _WORKSPACE_GRID_H_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include <string>
@@ -148,4 +147,3 @@ namespace VirtualRobot
     };
 
 }
-#endif // _WORKSPACE_GRID_H_

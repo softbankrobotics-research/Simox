@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_ContactList
-#define math_HapticExplorationLibrary_ContactList
+#pragma once
 
 #include "Contact.h"
 
@@ -39,4 +38,3 @@ namespace math
     };
 }
 
-#endif // math_HapticExplorationLibrary_ContactList

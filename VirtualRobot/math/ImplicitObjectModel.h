@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_ImplicitObjectModel
-#define math_ImplicitObjectModel
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "ContactList.h"
@@ -47,4 +46,3 @@ protected:
 };
 }
 
-#endif // math_ImplicitObjectModel

@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_DiffIK_h_
-#define _VirtualRobot_DiffIK_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -339,4 +338,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<DifferentialIK> DifferentialIKPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_DiffIK_h_

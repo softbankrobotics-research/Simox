@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_WorkspaceDataArray_h_
-#define _VirtualRobot_WorkspaceDataArray_h_
+#pragma once
 
 #include "WorkspaceData.h"
 #include "../VirtualRobot.h"
@@ -150,4 +149,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _WorkspaceData_h_

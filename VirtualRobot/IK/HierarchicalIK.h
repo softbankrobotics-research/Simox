@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_HierarchicalIK_h_
-#define _VirtualRobot_HierarchicalIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
@@ -73,5 +72,4 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_HierarchicalIK_h_
 

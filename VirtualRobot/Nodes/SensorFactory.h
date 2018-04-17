@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SensorFactory_h_
-#define _VirtualRobot_SensorFactory_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../VirtualRobot.h"
@@ -76,4 +75,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_SensorFactory_h_

@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_GaussianObjectModelNormals
-#define math_GaussianObjectModelNormals
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -51,4 +50,3 @@ namespace math
      };
 }
 
-#endif // math_GaussianObjectModelNormals

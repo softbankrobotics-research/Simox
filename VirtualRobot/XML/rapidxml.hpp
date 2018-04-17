@@ -1,5 +1,4 @@
-#ifndef RAPIDXML_HPP_INCLUDED
-#define RAPIDXML_HPP_INCLUDED
+#pragma once
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13
@@ -2962,4 +2961,3 @@ after_data_node:
 #pragma warning(pop)
 #endif
 
-#endif

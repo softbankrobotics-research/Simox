@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotFactory_h_
-#define _VirtualRobot_RobotFactory_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "MathTools.h"
@@ -142,4 +141,3 @@ namespace VirtualRobot
     };
 }
 
-#endif // _VirtualRobot_RobotFactory_h_

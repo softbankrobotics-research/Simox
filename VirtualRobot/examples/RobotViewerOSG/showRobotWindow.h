@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __ShowRobot_WINDOW_H_
-#define __ShowRobot_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -121,4 +120,3 @@ protected:
 
 };
 
-#endif // __ShowRobot_WINDOW_H_

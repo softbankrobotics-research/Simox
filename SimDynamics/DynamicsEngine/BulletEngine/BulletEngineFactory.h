@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletEngineFactory_h_
-#define _SimDynamics_BulletEngineFactory_h_
+#pragma once
 
 #include "../DynamicsEngineFactory.h"
 #include "BulletEngine.h"
@@ -57,4 +56,3 @@ namespace SimDynamics
 
 } // namespace VirtualRobot
 
-#endif // _SimDynamics_BulletEngineFactory_h_

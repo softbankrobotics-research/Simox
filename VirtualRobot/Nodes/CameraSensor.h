@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CameraSensor_h_
-#define _VirtualRobot_CameraSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -80,4 +79,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CameraSensor_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_PositionSensor_h_
-#define _VirtualRobot_PositionSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -82,4 +81,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_PositionSensor_h_

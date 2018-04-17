@@ -1,6 +1,5 @@
 
-#ifndef __GraspQuality_WINDOW_H_
-#define __GraspQuality_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -130,4 +129,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
 };
 
-#endif // __GraspQuality_WINDOW_H_

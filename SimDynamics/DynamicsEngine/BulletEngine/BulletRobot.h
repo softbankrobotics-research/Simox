@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletRobot_h_
-#define _SimDynamics_BulletRobot_h_
+#pragma once
 
 #include "../DynamicsRobot.h"
 #include "BulletObject.h"
@@ -242,4 +241,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_BulletRobot_h_

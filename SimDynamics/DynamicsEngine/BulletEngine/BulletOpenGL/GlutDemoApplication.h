@@ -14,8 +14,7 @@ subject to the following restrictions:
 */
 
 
-#ifndef GLUT_DEMO_APPLICATION_H
-#define GLUT_DEMO_APPLICATION_H
+#pragma once
 
 #include "DemoApplication.h"
 
@@ -33,5 +32,4 @@ public:
     void    updateModifierKeys() override;
 
 };
-#endif //GLUT_DEMO_APPLICATION_H
 

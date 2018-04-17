@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_GaussianImplicitSurface3D
-#define math_GaussianImplicitSurface3D
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "DataR3R1.h"
@@ -56,4 +55,3 @@ private:
 };
 }
 
-#endif // math_GaussianImplicitSurface3D

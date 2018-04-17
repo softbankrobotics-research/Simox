@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_TSRConstraint_h_
-#define _VirtualRobot_TSRConstraint_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -79,4 +78,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
 }
 
-#endif

@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_PoseConstraint_h_
-#define _VirtualRobot_PoseConstraint_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -85,4 +84,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<PoseConstraint> PoseConstraintPtr;
 }
 
-#endif

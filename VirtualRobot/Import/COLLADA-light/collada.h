@@ -1,5 +1,4 @@
-#ifndef __COLLADA_SIMOX_IMPORT_H__
-#define __COLLADA_SIMOX_IMPORT_H__
+#pragma once
 
 
 #include "pugixml/pugixml.hpp"
@@ -149,4 +148,3 @@ namespace Collada
 
 }
 
-#endif

@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VR_GRAPH_GENERATOR_H_
-#define _VR_GRAPH_GENERATOR_H_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "MathTools.h"
@@ -107,4 +106,3 @@ namespace VirtualRobot
 
 }
 
-#endif /* _VR_GRAPH_GENERATOR_H_ */

@@ -1,6 +1,5 @@
 
-#ifndef __ShowRobot_WINDOW_H_
-#define __ShowRobot_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -109,4 +108,3 @@ protected:
     void testPerformance(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns);
 };
 
-#endif // __ShowRobot_WINDOW_H_

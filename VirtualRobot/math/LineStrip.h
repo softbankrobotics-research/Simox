@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_LineStrip
-#define math_LineStrip
+#pragma once
 #include "MathForwardDefinitions.h"
 
 #include "SimpleAbstractFunctionR1R3.h"
@@ -49,4 +48,3 @@ namespace math
     };
 }
 
-#endif // math_LineStrip

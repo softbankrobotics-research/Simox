@@ -61,8 +61,7 @@
 
 */
 
-#ifndef STBI_INCLUDE_STB_IMAGE_H
-#define STBI_INCLUDE_STB_IMAGE_H
+#pragma once
 
 // To get a header file for this, either cut and paste the header,
 // or create stb_image.h, #define STBI_HEADER_FILE_ONLY, and
@@ -329,4 +328,3 @@ extern void stbi_install_YCbCr_to_RGB(stbi_YCbCr_to_RGB_run func);
 //
 //
 ////   end header file   /////////////////////////////////////////////////////
-#endif // STBI_INCLUDE_STB_IMAGE_H

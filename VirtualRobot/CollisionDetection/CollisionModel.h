@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionModel_h_
-#define _VirtualRobot_CollisionModel_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../MathTools.h"
@@ -203,4 +202,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CollisionModel_h_

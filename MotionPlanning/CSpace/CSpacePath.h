@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_CSpacePath_h
-#define _saba_CSpacePath_h
+#pragma once
 
 #include "../Saba.h"
 #include <vector>
@@ -109,4 +108,3 @@ namespace Saba
 } // namespace Saba
 
 
-#endif // _saba_CSpacePath_h

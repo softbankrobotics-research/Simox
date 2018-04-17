@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_SimpleAbstractFunctionR3R1
-#define math_HapticExplorationLibrary_SimpleAbstractFunctionR3R1
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -37,4 +36,3 @@ namespace math
     };
 }
 
-#endif // math_HapticExplorationLibrary_SimpleAbstractFunctionR3R1

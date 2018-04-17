@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_BasicDefinitions_h_
-#define _VirtualRobot_BasicDefinitions_h_
+#pragma once
 
 #include "VirtualRobotImportExport.h"
 
@@ -332,4 +331,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_BasicDefinitions_h_

@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_MathForwardDefinitions
-#define math_HapticExplorationLibrary_MathForwardDefinitions
+#pragma once
 
 //scale intern sizes to milimeters
 #define HAPTIC_EXPLORATION_SCALE 40
@@ -216,4 +215,3 @@ namespace explorationControllers{
 
 
 
-#endif // math_HapticExplorationLibrary_MathForwardDefinitions

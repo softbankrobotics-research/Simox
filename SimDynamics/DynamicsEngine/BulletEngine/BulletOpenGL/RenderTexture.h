@@ -13,8 +13,7 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef RENDER_TEXTURE_H
-#define RENDER_TEXTURE_H
+#pragma once
 
 #include "LinearMath/btVector3.h"
 #include "GLDebugFont.h"
@@ -78,5 +77,4 @@ public:
 
 };
 
-#endif //RENDER_TEXTURE_H
 

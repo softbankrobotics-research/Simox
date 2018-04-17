@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_Contact
-#define math_HapticExplorationLibrary_Contact
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include <sstream>
@@ -48,4 +47,3 @@ namespace math
     };
 }
 
-#endif // math_HapticExplorationLibrary_Contact

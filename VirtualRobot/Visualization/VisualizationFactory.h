@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VisualizationFactory_h_
-#define _VirtualRobot_VisualizationFactory_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../AbstractFactoryMethod.h"
@@ -250,4 +249,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_VisualizationFactory_h_

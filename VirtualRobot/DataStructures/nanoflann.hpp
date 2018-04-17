@@ -43,8 +43,7 @@
   *   - <a href="http://jlblancoc.github.io/nanoflann/" >Doxygen documentation</a>
   */
 
-#ifndef  NANOFLANN_HPP_
-#define  NANOFLANN_HPP_
+#pragma once
 
 #include <vector>
 #include <cassert>
@@ -1395,4 +1394,3 @@ namespace nanoflann
 } // end of NS
 
 
-#endif /* NANOFLANN_HPP_ */

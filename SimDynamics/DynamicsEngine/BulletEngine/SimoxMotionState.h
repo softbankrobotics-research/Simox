@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_SimoxMotionState_h_
-#define _SimDynamics_SimoxMotionState_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "../DynamicsObject.h"
@@ -132,5 +131,4 @@ namespace SimDynamics
 }
 
 
-#endif // _SimDynamics_SimoxMotionState_h_
 

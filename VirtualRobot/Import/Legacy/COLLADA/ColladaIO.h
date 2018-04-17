@@ -1,5 +1,4 @@
-#ifndef COLLADAIO_H
-#define COLLADAIO_H
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -46,4 +45,3 @@ namespace VirtualRobot
 
 }
 
-#endif

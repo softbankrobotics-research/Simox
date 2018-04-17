@@ -1,6 +1,5 @@
 
-#ifndef __MTPlanning_WINDOW_H_
-#define __MTPlanning_WINDOW_H_
+#pragma once
 
 #include "MotionPlanning/Saba.h"
 
@@ -95,4 +94,3 @@ protected:
     QPushButton *optiShowButton;*/
 };
 
-#endif // __MTPlanning_WINDOW_H_

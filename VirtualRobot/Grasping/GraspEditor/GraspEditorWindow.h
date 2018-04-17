@@ -1,6 +1,5 @@
 
-#ifndef __GraspEditor_WINDOW_H_
-#define __GraspEditor_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -132,4 +131,3 @@ namespace VirtualRobot
     };
 
 }
-#endif // __GraspEditor_WINDOW_H_

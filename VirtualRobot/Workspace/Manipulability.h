@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Manipulability_h_
-#define _VirtualRobot_Manipulability_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Workspace/WorkspaceRepresentation.h>
@@ -209,5 +208,4 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_Manipulability_h_
 

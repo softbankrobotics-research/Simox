@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_OrientationConstraint_h_
-#define _VirtualRobot_OrientationConstraint_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -57,6 +56,5 @@ namespace VirtualRobot
     typedef boost::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
 }
 
-#endif
 
 

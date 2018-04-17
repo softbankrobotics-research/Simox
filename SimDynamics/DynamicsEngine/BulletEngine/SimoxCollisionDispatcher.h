@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_SimoxCollisionDispatcher_h_
-#define _SimDynamics_SimoxCollisionDispatcher_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "BulletEngine.h"
@@ -52,5 +51,4 @@ namespace SimDynamics
 }
 
 
-#endif // _SimDynamics_SimoxCollisionDispatcher_h_
 

@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _SimDynamics_BulletCoinQtViewer_h_
-#define _SimDynamics_BulletCoinQtViewer_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "../../DynamicsWorld.h"
@@ -260,4 +259,3 @@ namespace SimDynamics
 
 } // namespace
 
-#endif // _SimDynamics_BulletCoinQtViewer_h_

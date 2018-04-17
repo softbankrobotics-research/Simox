@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_WeightedAverage
-#define math_WeightedAverage
+#pragma once
 
 
 #include "MathForwardDefinitions.h"
@@ -50,4 +49,3 @@ namespace math
     };
 }
 
-#endif // math_WeightedAverage

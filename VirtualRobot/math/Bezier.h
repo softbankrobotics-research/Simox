@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_Bezier
-#define math_Bezier
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -56,4 +55,3 @@ namespace math
     };
 }
 
-#endif //math_Bezier

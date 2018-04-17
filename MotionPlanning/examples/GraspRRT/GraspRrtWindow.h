@@ -1,5 +1,4 @@
-#ifndef __GraspRrt_WINDOW_H__
-#define __GraspRrt_WINDOW_H__
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -154,4 +153,3 @@ protected:
     Saba::CSpaceSampledPtr test_cspace;
 };
 
-#endif // __GraspRrt_WINDOW_H__

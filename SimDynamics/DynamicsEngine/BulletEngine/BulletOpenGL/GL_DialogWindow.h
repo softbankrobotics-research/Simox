@@ -13,8 +13,7 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef GL_DIALOG_WINDOW_H
-#define GL_DIALOG_WINDOW_H
+#pragma once
 
 class btCollisionObject;
 
@@ -285,4 +284,3 @@ public:
     }
 };
 
-#endif //GL_DIALOG_WINDOW_H

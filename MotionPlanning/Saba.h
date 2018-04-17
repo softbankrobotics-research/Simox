@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_h_
-#define _Saba_h_
+#pragma once
 
 
 /*! \defgroup Saba The Sampling-Based Motion Planning Library
@@ -129,4 +128,3 @@ namespace Saba
 
 }
 
-#endif // _Saba_h_

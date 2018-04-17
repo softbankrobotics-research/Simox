@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_BalanceConstraint_h_
-#define _VirtualRobot_BalanceConstraint_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/IK/Constraint.h>
@@ -114,4 +113,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
 }
 
-#endif

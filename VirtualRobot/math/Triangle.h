@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_Triangle
-#define math_Triangle
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -56,4 +55,3 @@ namespace math
     };
 }
 
-#endif //math_Triangle

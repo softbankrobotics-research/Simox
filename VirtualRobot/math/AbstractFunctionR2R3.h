@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_AbstractFunctionR2R3
-#define math_HapticExplorationLibrary_AbstractFunctionR2R3
+#pragma once
 
 #include "SimpleAbstractFunctionR2R3.h"
 
@@ -70,4 +69,3 @@ private:
 };
 }
 
-#endif // math_HapticExplorationLibrary_AbstractFunctionR2R3

@@ -1,5 +1,4 @@
-#ifndef __Platform_WINDOW_H__
-#define __Platform_WINDOW_H__
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -147,4 +146,3 @@ protected:
     Saba::BiRrtPtr rrt;
 };
 
-#endif // __Platform_WINDOW_H__

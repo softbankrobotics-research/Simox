@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_GaussianImplicitSurfaceNormals3D
-#define math_GaussianImplicitSurfaceNormals3D
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "Contact.h"
@@ -68,4 +67,3 @@ private:
 };
 }
 
-#endif // math_GaussianImplicitSurface3DNormals

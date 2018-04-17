@@ -13,8 +13,7 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef DEBUG_CAST_RESULT_H
-#define DEBUG_CAST_RESULT_H
+#pragma once
 
 #include "BulletCollision/NarrowPhaseCollision/btConvexCast.h"
 #include "LinearMath/btTransform.h"
@@ -88,4 +87,3 @@ struct btDebugCastResult : public btConvexCast::CastResult
 };
 
 
-#endif //DEBUG_CAST_RESULT_H

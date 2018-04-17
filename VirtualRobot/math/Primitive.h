@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_Primitives
-#define math_Primitives
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "Triangle.h"
@@ -37,4 +36,3 @@ namespace math
 
 }
 
-#endif // math_Primitive

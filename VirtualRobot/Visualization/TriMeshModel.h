@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_TriMeshModel_h_
-#define _VirtualRobot_TriMeshModel_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Visualization/VisualizationFactory.h"
@@ -113,4 +112,3 @@ namespace VirtualRobot
     };
 } // namespace VirtualRobot
 
-#endif /* _VirtualRobot_TriMeshModel_h_ */

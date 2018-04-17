@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_GridCacheFloat3
-#define math_GridCacheFloat3
+#pragma once
 
 #include "MathForwardDefinitions.h"
 
@@ -43,4 +42,3 @@ public:
     };
 }
 
-#endif // math_GridCacheFloat3

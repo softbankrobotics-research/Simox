@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SimoxCOLLADAFactory_h_
-#define _VirtualRobot_SimoxCOLLADAFactory_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Robot.h"
@@ -58,4 +57,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_SimoxCOLLADAFactory_h_

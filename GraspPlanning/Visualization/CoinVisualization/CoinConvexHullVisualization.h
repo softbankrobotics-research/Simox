@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CoinConvexHullVisualization_h_
-#define _Saba_CoinConvexHullVisualization_h_
+#pragma once
 
 
 #include "../../GraspStudio.h"
@@ -69,4 +68,3 @@ namespace GraspStudio
 
 } // namespace Saba
 
-#endif // _Saba_CoinConvexHullVisualization_h_

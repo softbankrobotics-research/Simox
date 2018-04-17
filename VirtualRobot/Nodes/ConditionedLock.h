@@ -1,5 +1,4 @@
-#ifndef __CONDITIONED_LOCK__
-#define __CONDITIONED_LOCK__
+#pragma once
 
 
 
@@ -34,4 +33,3 @@ typedef ConditionedLock<boost::unique_lock<boost::recursive_mutex> > WriteLock;
 typedef boost::shared_ptr< ReadLock > ReadLockPtr;
 typedef boost::shared_ptr< WriteLock > WriteLockPtr;
 
-#endif

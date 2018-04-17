@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __PoseQualityManipulability_H_
-#define __PoseQualityManipulability_H_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -119,4 +118,3 @@ namespace VirtualRobot
 
 }
 
-#endif // __PoseQualityManipulability_H_

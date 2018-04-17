@@ -1,6 +1,5 @@
 
-#ifndef __SimDynamics_WINDOW_H_
-#define __SimDynamics_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -119,4 +118,3 @@ protected:
     std::atomic_uint_fast64_t simuStepCount{0};
 };
 
-#endif // __SimDynamics_WINDOW_H_

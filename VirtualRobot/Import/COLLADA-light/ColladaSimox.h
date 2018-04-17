@@ -1,5 +1,4 @@
-#ifndef __COLLADA_SIMOX_H__
-#define __COLLADA_SIMOX_H__
+#pragma once
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -62,4 +61,3 @@ namespace Collada
 } //namespace
 
 
-#endif

@@ -1,6 +1,5 @@
 
-#ifndef __IKRRT_WINDOW_H_
-#define __IKRRT_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -135,4 +134,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
 };
 
-#endif // __IKRRT_WINDOW_H_

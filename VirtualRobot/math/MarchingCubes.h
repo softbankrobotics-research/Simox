@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_MarchingCubes
-#define math_MarchingCubes
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "Array3D.h"
@@ -73,4 +72,3 @@ namespace math
     };
 }
 
-#endif // math_MarchingCubes

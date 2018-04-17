@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_GraspRrt_h
-#define _Saba_GraspRrt_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -276,5 +275,4 @@ namespace Saba
 
 }
 
-#endif // _GraspRRTPlanner_h_
 

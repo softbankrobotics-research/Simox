@@ -1,6 +1,5 @@
 
-#ifndef __reachabilityScene_WINDOW_H_
-#define __reachabilityScene_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -102,4 +101,3 @@ protected:
 
 };
 
-#endif // __reachabilityScene_WINDOW_H_

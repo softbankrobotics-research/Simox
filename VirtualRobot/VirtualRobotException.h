@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VirtualRobotException_h_
-#define _VirtualRobot_VirtualRobotException_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include <string>
@@ -75,4 +74,3 @@ namespace VirtualRobot
 #pragma warning(default:4275)  
 #endif
 
-#endif // _VirtualRobot_VirtualRobotException_h_

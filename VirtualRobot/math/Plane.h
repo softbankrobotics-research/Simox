@@ -18,8 +18,7 @@
 *             GNU General Public License
 */
 
-#ifndef math_HapticExplorationLibrary_Plane
-#define math_HapticExplorationLibrary_Plane
+#pragma once
 
 #include "MathForwardDefinitions.h"
 #include "AbstractFunctionR2R3.h"
@@ -70,4 +69,3 @@ private:
 };
 }
 
-#endif // math_HapticExplorationLibrary_Plane

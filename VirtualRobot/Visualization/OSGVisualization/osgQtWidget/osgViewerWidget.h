@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_OSGQtWidget_h_
-#define _VirtualRobot_OSGQtWidget_h_
+#pragma once
 
 
 #include "../../../VirtualRobotImportExport.h"
@@ -137,4 +136,3 @@ protected:
 };*/
 
 
-#endif // _VirtualRobot_OSGQtWidget_h_

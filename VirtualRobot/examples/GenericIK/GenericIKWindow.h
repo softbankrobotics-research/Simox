@@ -1,6 +1,5 @@
 
-#ifndef __Generic_WINDOW_H_
-#define __Generic_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -89,4 +88,3 @@ protected:
     bool useColModel;
 };
 
-#endif // __Generic_WINDOW_H_

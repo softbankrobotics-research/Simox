@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ContactSensorFactory_h_
-#define _VirtualRobot_ContactSensorFactory_h_
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 #include "../SceneObject.h"
@@ -58,4 +57,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_ContactSensorFactory_h_

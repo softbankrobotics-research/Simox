@@ -21,8 +21,7 @@
  * @brief Defines iterators for the COLLADA container classes in order to use boost.foreach, boost::copy etc.
  */
 
-#ifndef __NONINVASIVE_RANDOM_ACCESS_ITERATORS_H__
-#define __NONINVASIVE_RANDOM_ACCESS_ITERATORS_H__
+#pragma once
 
 #include <boost/iterator/iterator_facade.hpp>
 
@@ -151,4 +150,3 @@ namespace boost
 
 }
 
-#endif

@@ -11,8 +11,7 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-#ifndef HEADER_PUGICONFIG_HPP
-#define HEADER_PUGICONFIG_HPP
+#pragma once
 
 // Uncomment this to enable wchar_t mode
 // #define PUGIXML_WCHAR_MODE
@@ -45,8 +44,6 @@
 
 // Uncomment this to enable long long support
 // #define PUGIXML_HAS_LONG_LONG
-
-#endif
 
 /**
  * Copyright (c) 2006-2016 Arseny Kapoulkine

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_Rrt_h
-#define _Saba_Rrt_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -121,5 +120,4 @@ namespace Saba
 
 } // namespace
 
-#endif // _Saba_RRT_h
 

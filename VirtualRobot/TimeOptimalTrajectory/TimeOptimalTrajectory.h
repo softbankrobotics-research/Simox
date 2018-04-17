@@ -36,8 +36,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _VirtualRobot_TimeOptimalTrajectory_h_
-#define _VirtualRobot_TimeOptimalTrajectory_h_
+#pragma once
 
 #include <Eigen/Core>
 #include "Path.h"
@@ -108,4 +107,3 @@ namespace VirtualRobot
     };
 }
 
-#endif // _VirtualRobot_TimeOptimalTrajectory_h_

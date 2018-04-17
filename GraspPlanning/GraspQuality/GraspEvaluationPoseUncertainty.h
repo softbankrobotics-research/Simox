@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _GraspStudio_GraspEvaluationPoseUncertainty_h_
-#define _GraspStudio_GraspEvaluationPoseUncertainty_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobotCommon.h>
 
@@ -154,4 +153,3 @@ typedef boost::shared_ptr<GraspEvaluationPoseUncertainty> GraspEvaluationPoseUnc
 
 }
 
-#endif
