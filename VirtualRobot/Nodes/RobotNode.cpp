@@ -263,6 +263,32 @@ namespace VirtualRobot
         }
     }
 
+    void RobotNode::copyPoseFrom(const RobotNodePtr &other)
+    {
+        jointValue = other->jointValue;
+        //the following code was manually inlined from
+        //SceneObject::copyPoseFrom(other);
+        //the function is not called directly, since this
+        //would increase the runtime of the whole function
+        //by a factor > 2
+        globalPose = other->globalPose;
+        if (visualizationModel && updateVisualization)
+        {
+            visualizationModel->setGlobalPose(globalPose);
+        }
+        if (collisionModel && updateCollisionModel)
+        {
+            collisionModel->setGlobalPose(globalPose);
+        }
+    }
+
+    void RobotNode::copyPoseFrom(const SceneObjectPtr &sceneobj)
+    {
+        RobotNodePtr other = boost::dynamic_pointer_cast<RobotNode>(sceneobj);
+        THROW_VR_EXCEPTION_IF(!other, "The given SceneObject is no RobotNode");
+        copyPoseFrom(other);
+    }
+
     void RobotNode::updatePose(const Eigen::Matrix4f& globalPose, bool updateChildren)
     {
         THROW_VR_EXCEPTION_IF(!initialized, "Not initialized");

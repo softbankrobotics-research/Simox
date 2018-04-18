@@ -361,6 +361,7 @@ namespace VirtualRobot
         //! Compute the global pose of this object
         virtual void updatePose(bool updateChildren = true);
 
+        virtual void copyPoseFrom(const SceneObjectPtr& other);
         /*!
             Saves model files (visu and col model, if present) to model path.
             \param modelPath The path where the model files should be stored.

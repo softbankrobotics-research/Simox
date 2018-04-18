@@ -301,6 +301,9 @@ namespace VirtualRobot
         */
         void updatePose(bool updateChildren = true) override;
 
+        void copyPoseFrom(const SceneObjectPtr& sceneobj) override;
+
+        void copyPoseFrom(const RobotNodePtr& other);
 
         /*!
             Automatically propagate the joint value to another joint.

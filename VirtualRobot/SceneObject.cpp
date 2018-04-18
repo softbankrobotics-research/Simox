@@ -137,6 +137,22 @@ namespace VirtualRobot
             }
     }
 
+    void SceneObject::copyPoseFrom(const SceneObjectPtr &other)
+    {
+        //if you change code here, you have to update
+        //void RobotNode::copyPoseFrom(const RobotNodePtr &other)
+        //since this code is inlined in the other function
+        globalPose = other->globalPose;
+        if (visualizationModel && updateVisualization)
+        {
+            visualizationModel->setGlobalPose(globalPose);
+        }
+        if (collisionModel && updateCollisionModel)
+        {
+            collisionModel->setGlobalPose(globalPose);
+        }
+    }
+
     void SceneObject::updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren)
     {
         globalPose = parentPose;
