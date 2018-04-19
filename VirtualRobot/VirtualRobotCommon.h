@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Common_h_
-#define _VirtualRobot_Common_h_
+#pragma once
 
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
@@ -89,4 +88,3 @@
 #include <VirtualRobot/Compression/CompressionBZip2.h>
 #include <VirtualRobot/SphereApproximator.h>
 
-#endif // _VirtualRobot_Common_h_

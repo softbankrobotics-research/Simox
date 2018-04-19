@@ -11,8 +11,7 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-#ifndef SOURCE_PUGIXML_CPP
-#define SOURCE_PUGIXML_CPP
+#pragma once
 
 #include "pugixml.hpp"
 
@@ -12499,8 +12498,6 @@ namespace pugi
 #undef PUGI__ENDSEG
 #undef PUGI__THROW_ERROR
 #undef PUGI__CHECK_ERROR
-
-#endif
 
 /**
  * Copyright (c) 2006-2016 Arseny Kapoulkine

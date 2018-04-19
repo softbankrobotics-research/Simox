@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_PathProcessor_h__
-#define __Saba_PathProcessor_h__
+#pragma once
 
 #include "../Saba.h"
 
@@ -71,4 +70,3 @@ namespace Saba
 
 } // namespace
 
-#endif // __Saba_CPathProcessor_h__

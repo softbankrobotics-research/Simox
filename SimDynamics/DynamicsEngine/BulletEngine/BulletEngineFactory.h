@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletEngineFactory_h_
-#define _SimDynamics_BulletEngineFactory_h_
+#pragma once
 
 #include "../DynamicsEngineFactory.h"
 #include "BulletEngine.h"
@@ -40,12 +39,12 @@ namespace SimDynamics
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         BulletEngineFactory();
-        virtual ~BulletEngineFactory();
+        ~BulletEngineFactory() override;
 
-        virtual DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr());
+        DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr()) override;
 
-        virtual DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o);
-        virtual DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot);
+        DynamicsObjectPtr createObject(VirtualRobot::SceneObjectPtr o) override;
+        DynamicsRobotPtr createRobot(VirtualRobot::RobotPtr robot) override;
 
         // AbstractFactoryMethod
     public:
@@ -57,4 +56,3 @@ namespace SimDynamics
 
 } // namespace VirtualRobot
 
-#endif // _SimDynamics_BulletEngineFactory_h_

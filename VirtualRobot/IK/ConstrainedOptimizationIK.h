@@ -21,8 +21,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedOptimizationIK_h_
-#define _VirtualRobot_ConstrainedOptimizationIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -44,9 +43,9 @@ namespace VirtualRobot
     public:
         ConstrainedOptimizationIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float timeout = 0.5, float globalTolerance = std::numeric_limits<float>::quiet_NaN());
 
-        bool initialize();
-        bool solve(bool stepwise = false);
-        bool solveStep();
+        bool initialize() override;
+        bool solve(bool stepwise = false) override;
+        bool solveStep() override;
 
         /**
          * This factor limits the interval around the initial robot configuration where random samplings are placed.
@@ -61,7 +60,26 @@ namespace VirtualRobot
         double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient);
         double optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup);
 
-        bool hardOptimizationFunction(const std::vector<double> &x, double &error);
+        struct AdditionalOutputData
+        {
+            struct ConstraintInfo
+            {
+                std::string constraintName;
+                bool success;
+                double error;
+            };
+
+            std::vector<ConstraintInfo> data;
+
+            void print()
+            {
+                for (ConstraintInfo c : data)
+                {
+                    std::cout << "Constraint: " << c.constraintName << " Error: " << c.error << " Success: " << c.success << std::endl;
+                }
+            }
+        };
+        bool hardOptimizationFunction(const std::vector<double> &x, double &error, AdditionalOutputData &data);
 
     protected:
         RobotNodeSetPtr nodeSet;
@@ -78,10 +96,10 @@ namespace VirtualRobot
 
         float functionValueTolerance;
         float optimizationValueTolerance;
+
     };
 
     typedef boost::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
 }
 
-#endif
 

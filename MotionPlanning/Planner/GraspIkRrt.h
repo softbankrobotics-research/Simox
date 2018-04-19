@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_GraspIkRrt_h
-#define _Saba_GraspIkRrt_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -52,22 +51,22 @@ namespace Saba
             \param probabSampleGoal Probability with which a goal config is created during planning loop.
         */
         GraspIkRrt(CSpaceSampledPtr cspace, VirtualRobot::ManipulationObjectPtr object, VirtualRobot::AdvancedIKSolverPtr ikSolver, VirtualRobot::GraspSetPtr graspSet, float probabSampleGoal = 0.1f);
-        virtual ~GraspIkRrt();
+        ~GraspIkRrt() override;
 
         /*!
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false);
+        void printConfig(bool printOnlyParams = false) override;
 
         //! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        bool setGoal(const Eigen::VectorXf& c) override;
 
         //! reset the planner
-        virtual void reset();
+        void reset() override;
 
     protected:
 
@@ -94,6 +93,5 @@ namespace Saba
 
 } // namespace
 
-#endif // _Saba_RRT_h
 
 

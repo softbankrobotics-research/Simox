@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionCheckerPQP_h_
-#define _VirtualRobot_CollisionCheckerPQP_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 
@@ -48,10 +47,10 @@ namespace VirtualRobot
         friend class CollisionChecker;
 
         CollisionCheckerPQP();
-        virtual ~CollisionCheckerPQP();
+        ~CollisionCheckerPQP() override;
 
-        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL);
-        virtual bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2); //, Eigen::Vector3f *storeContact = NULL);
+        float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL) override;
+        bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) override; //, Eigen::Vector3f *storeContact = NULL);
 
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
@@ -116,4 +115,3 @@ namespace VirtualRobot
 } // namespace
 
 
-#endif

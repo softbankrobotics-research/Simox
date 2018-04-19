@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_EndEffectorActor_h_
-#define _VirtualRobot_EndEffectorActor_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "EndEffector.h"
@@ -133,4 +132,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_EndEffectorActor_h_

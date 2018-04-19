@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _CONVEX_HULL_GENERATOR_H_
-#define _CONVEX_HULL_GENERATOR_H_
+#pragma once
 
 #include "GraspStudio.h"
 #include "VirtualRobot/MathTools.h"
@@ -66,4 +65,3 @@ namespace GraspStudio
 
 }
 
-#endif /* _CONVEX_HULL_GENERATOR_H_ */

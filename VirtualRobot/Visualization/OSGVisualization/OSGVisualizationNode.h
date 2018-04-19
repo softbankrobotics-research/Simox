@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_OSGVisualizationNode_h_
-#define _VirtualRobot_OSGVisualizationNode_h_
+#pragma once
 
 #include "../../VirtualRobotImportExport.h"
 #include "../VisualizationNode.h"
@@ -135,4 +134,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_OSGVisualizationNode_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotNode_h_
-#define _VirtualRobot_RobotNode_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../VirtualRobotException.h"
@@ -93,7 +92,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~RobotNode();
+        ~RobotNode() override;
 
 
         RobotPtr getRobot() const;
@@ -137,17 +136,17 @@ namespace VirtualRobot
             Be sure all children are created and registered to robot before calling initialize.
             Usually RobotFactory manages the initialization.
         */
-        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+        bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>()) override;
 
         /*!
             Calling this method will cause an exception, since RobotNodes are controlled via joint values.
         */
-        virtual void setGlobalPose(const Eigen::Matrix4f& pose);
+        void setGlobalPose(const Eigen::Matrix4f& pose) override;
 
         /*
             This call locks the robot's mutex.
         */
-        virtual Eigen::Matrix4f getGlobalPose() const;
+        Eigen::Matrix4f getGlobalPose() const override;
 
         /*!
             The pose of this node in the root coordinate system of the robot.
@@ -172,13 +171,13 @@ namespace VirtualRobot
                                     Then a visualziationNode has to be built and the \p visualizationType specifies which type of visualization should be used.
                                     If not given, the first registered visaulizationfactory is used.
         */
-        virtual void showCoordinateSystem(bool enable, float scaling = 1.0f, std::string* text = NULL, const std::string& visualizationType = "");
+        void showCoordinateSystem(bool enable, float scaling = 1.0f, std::string* text = NULL, const std::string& visualizationType = "") override;
 
 
         /*!
             Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
         float getJointLimitLo();
         float getJointLimitHi();
@@ -300,8 +299,11 @@ namespace VirtualRobot
             Compute/Update the transformations of this joint and all child joints. Therefore the parent is queried for its pose.
             This method is called by the robot in order to update the pose matrices.
         */
-        virtual void updatePose(bool updateChildren = true);
+        void updatePose(bool updateChildren = true) override;
 
+        void copyPoseFrom(const SceneObjectPtr& sceneobj) override;
+
+        void copyPoseFrom(const RobotNodePtr& other);
 
         /*!
             Automatically propagate the joint value to another joint.
@@ -346,7 +348,7 @@ namespace VirtualRobot
         /*!
             Update the pose according to parent
         */
-        virtual void updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren = true);
+        void updatePose(const Eigen::Matrix4f& parentPose, bool updateChildren = true) override;
 
 
         /*!
@@ -393,7 +395,7 @@ namespace VirtualRobot
         */
         virtual RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling) = 0;
 
-        virtual SceneObject* _clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const
+        SceneObject* _clone(const std::string& /*name*/, CollisionCheckerPtr /*colChecker*/ = CollisionCheckerPtr(), float /*scaling*/ = 1.0f) const override
         {
             THROW_VR_EXCEPTION("Cloning not allowed this way...");
         }
@@ -408,4 +410,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_RobotNode_h_

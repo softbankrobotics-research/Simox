@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_ElasticBandProcessor_h__
-#define __Saba_ElasticBandProcessor_h__
+#pragma once
 
 #include "../Saba.h"
 #include "PathProcessor.h"
@@ -45,10 +44,10 @@ namespace Saba
                              VirtualRobot::RobotNodePtr node,               // the distance for this node is considered
                              VirtualRobot::SceneObjectSetPtr obstacles,     // these obstacles are considered for path smoothing
                              bool verbose = false);
-        virtual ~ElasticBandProcessor();
+        ~ElasticBandProcessor() override;
 
         //! A wrapper to the standard interface.
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         //! could also be used to disable specific dimensions
         void setWeights (Eigen::VectorXf w);
@@ -93,4 +92,3 @@ namespace Saba
 
 }// namespace
 
-#endif // __Saba_ElasticBandProcessor_h__

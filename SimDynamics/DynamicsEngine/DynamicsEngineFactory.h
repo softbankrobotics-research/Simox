@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_DynamicsEngineFactory_h_
-#define _SimDynamics_DynamicsEngineFactory_h_
+#pragma once
 
 #include "../SimDynamics.h"
 #include "DynamicsEngine.h"
@@ -72,4 +71,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_DynamicsEngineFactory_h_

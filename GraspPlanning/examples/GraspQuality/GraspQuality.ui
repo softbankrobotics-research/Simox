@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1079</width>
-    <height>819</height>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -508,6 +508,22 @@
        </property>
        <property name="text">
         <string>Visualization</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonEvaluateAll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>750</y>
+         <width>201</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Evaluates robustness of all grasps and saves the updated grasp qualities in the file of the current object.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Evaluate All Grasps and Save</string>
        </property>
       </widget>
      </widget>

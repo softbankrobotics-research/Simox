@@ -1,6 +1,5 @@
 
-#ifndef __reachabilityScene_WINDOW_H_
-#define __reachabilityScene_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -33,7 +32,7 @@ class ReachabilityMapWindow : public QMainWindow
     Q_OBJECT
 public:
     ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef);
-    ~ReachabilityMapWindow();
+    ~ReachabilityMapWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -43,7 +42,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
     void resetSceneryAll();
 
     void updateVisu();
@@ -102,4 +101,3 @@ protected:
 
 };
 
-#endif // __reachabilityScene_WINDOW_H_

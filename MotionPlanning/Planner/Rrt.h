@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_Rrt_h
-#define _Saba_Rrt_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -71,7 +70,7 @@ namespace Saba
             \param probabilityExtendToGoal Specify how often the goal node should be used instead of a random config (value must be between 0 and 1)
         */
         Rrt(CSpacePtr cspace, RrtMethod mode = eConnect, float probabilityExtendToGoal = 0.1f, float samplingSize = -1);
-        virtual ~Rrt();
+        ~Rrt() override;
 
         /*!
             Do the planning (blocking method). On success the Rrt can be accessed with the getTree() method and the
@@ -79,17 +78,17 @@ namespace Saba
             \param bQuiet Print some info or not.
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false);
+        bool plan(bool bQuiet = false) override;
 
-        virtual void printConfig(bool printOnlyParams = false);
+        void printConfig(bool printOnlyParams = false) override;
 
-        virtual void reset();
+        void reset() override;
 
         //! set start configuration
-        virtual bool setStart(const Eigen::VectorXf& c);
+        bool setStart(const Eigen::VectorXf& c) override;
 
         //! set goal configuration
-        virtual bool setGoal(const Eigen::VectorXf& c);
+        bool setGoal(const Eigen::VectorXf& c) override;
 
         void setProbabilityExtendToGoal(float p);
 
@@ -97,7 +96,7 @@ namespace Saba
 
     protected:
 
-        virtual bool createSolution(bool bQuiet = false);
+        bool createSolution(bool bQuiet = false) override;
 
         CSpaceTreePtr tree;                 //!< the rrt on which are operating
 
@@ -121,5 +120,4 @@ namespace Saba
 
 } // namespace
 
-#endif // _Saba_RRT_h
 

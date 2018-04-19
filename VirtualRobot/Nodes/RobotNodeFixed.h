@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotNodeFixed_h_
-#define _VirtualRobot_RobotNodeFixed_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -73,29 +72,28 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~RobotNodeFixed();
+        ~RobotNodeFixed() override;
 
-        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+        bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>()) override;
 
         /*!
         Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
     protected:
         //! Checks if nodeType constraints are fulfilled. Otherwise an exception is thrown. Called on initialization.
-        virtual void checkValidRobotNodeType();
+        void checkValidRobotNodeType() override;
 
         RobotNodeFixed() {};
-        virtual void updateTransformationMatrices(const Eigen::Matrix4f& parentPose);
-        virtual RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling);
+        void updateTransformationMatrices(const Eigen::Matrix4f& parentPose) override;
+        RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling) override;
         /*!
             Derived classes add custom XML tags here
         */
-        virtual std::string _toXML(const std::string& modelPath);
+        std::string _toXML(const std::string& modelPath) override;
 
     };
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_RobotNodeFixed_h_

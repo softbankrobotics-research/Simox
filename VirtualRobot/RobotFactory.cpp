@@ -352,7 +352,7 @@ namespace VirtualRobot
         typedef std::map < RobotNodePtr,
                 Eigen::Matrix4f,
                 std::less<RobotNodePtr>,
-                Eigen::aligned_allocator<std::pair<const int, Eigen::Matrix4f> > >
+                Eigen::aligned_allocator<std::pair<const RobotNodePtr, Eigen::Matrix4f> > >
                 NodeTransformationMapT;
 
         NodeTransformationMapT localTransformations;

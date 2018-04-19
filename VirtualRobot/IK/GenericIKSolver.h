@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_GenericIKSolver_h_
-#define _VirtualRobot_GenericIKSolver_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "AdvancedIKSolver.h"
@@ -50,7 +49,7 @@ namespace VirtualRobot
             \param maxLoops How often should we try.
             \return true on success
         */
-        virtual bool solve(const Eigen::Matrix4f& globalPose, CartesianSelection selection = All, int maxLoops = 1);
+        bool solve(const Eigen::Matrix4f& globalPose, CartesianSelection selection = All, int maxLoops = 1) override;
 
         /*!
             This method solves the IK up to the specified max error. On success, the joints of the the corresponding RobotNodeSet are set to the IK solution.
@@ -59,8 +58,8 @@ namespace VirtualRobot
             \param maxLoops How often should we try.
             \return On success: The grasp for which an IK-solution was found, otherwise an empty GraspPtr
         */
-        virtual GraspPtr solve(ManipulationObjectPtr object, CartesianSelection selection = All, int maxLoops = 1);
-        virtual bool solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection = All, int maxLoops = 1);
+        GraspPtr solve(ManipulationObjectPtr object, CartesianSelection selection = All, int maxLoops = 1) override;
+        bool solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection = All, int maxLoops = 1) override;
 
         void setupJacobian(float stepSize, int maxLoops);
 
@@ -76,7 +75,7 @@ namespace VirtualRobot
         //! This method is called by the constructor and can be used in derived classes for initialization.
         virtual void _init();
 
-        virtual bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1);
+        bool _sampleSolution(const Eigen::Matrix4f& globalPose, CartesianSelection selection, int maxLoops = 1) override;
 
         RobotNodePtr coordSystem;
         JacobiProvider::InverseJacobiMethod invJacMethod;
@@ -94,4 +93,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<GenericIKSolver> GenericIKSolverPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_GenericIKSolver_h_

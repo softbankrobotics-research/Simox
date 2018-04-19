@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_FeetPosture_h_
-#define _VirtualRobot_FeetPosture_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -93,4 +92,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif

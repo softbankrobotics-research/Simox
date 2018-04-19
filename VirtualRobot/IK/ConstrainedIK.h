@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedIK_h_
-#define _VirtualRobot_ConstrainedIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -95,4 +94,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<ConstrainedIK> ConstrainedIKPtr;
 }
 
-#endif

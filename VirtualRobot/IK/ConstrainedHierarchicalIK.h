@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedHierarchicalIK_h_
-#define _VirtualRobot_ConstrainedHierarchicalIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -36,8 +35,8 @@ namespace VirtualRobot
     public:
         ConstrainedHierarchicalIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
 
-        bool initialize();
-        bool solveStep();
+        bool initialize() override;
+        bool solveStep() override;
 
     protected:
         RobotNodeSetPtr nodeSet;
@@ -52,4 +51,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;
 }
 
-#endif

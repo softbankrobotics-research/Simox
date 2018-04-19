@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VoxelTree6DElement_h_
-#define _VirtualRobot_VoxelTree6DElement_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -274,4 +273,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_VoxelTree6DElement_h_

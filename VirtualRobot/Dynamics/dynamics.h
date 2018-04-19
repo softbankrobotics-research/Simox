@@ -1,5 +1,4 @@
-#ifndef _DYNAMICS_H_
-#define _DYNAMICS_H__
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 
@@ -61,4 +60,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<Dynamics> DynamicsPtr;
 }
 
-#endif

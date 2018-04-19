@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _SimDynamics_BulletOpenGLViewer_h_
-#define _SimDynamics_BulletOpenGLViewer_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "../../DynamicsWorld.h"
@@ -53,13 +52,13 @@ namespace SimDynamics
     {
     public:
         BulletOpenGLViewer(DynamicsWorldPtr world);
-        virtual ~BulletOpenGLViewer();
+        ~BulletOpenGLViewer() override;
 
-        virtual void clientMoveAndDisplay();
-        virtual void displayCallback();
-        virtual void keyboardCallback(unsigned char key, int x, int y);
-        virtual void initPhysics();
-        virtual void myinit();
+        void clientMoveAndDisplay() override;
+        void displayCallback() override;
+        void keyboardCallback(unsigned char key, int x, int y) override;
+        void initPhysics() override;
+        void myinit() override;
 
         virtual void enableContraintsDebugDrawing();
     protected:
@@ -86,4 +85,3 @@ namespace SimDynamics
 
 } // namespace
 
-#endif // _SimDynamics_BulletOpenGLViewer_h_

@@ -1094,7 +1094,7 @@ namespace VirtualRobot
 
             // SoDataSensor interface
         public:
-            void dyingReference()
+            void dyingReference() override
             {
                 boost::mutex::scoped_lock lock(CoinVisualizationFactory::globalTextureCacheMutex);
                 CoinVisualizationFactory::globalTextureCache.erase(std::make_pair(filesize, path));
@@ -1102,7 +1102,7 @@ namespace VirtualRobot
             }
 
         private:
-            ~DeleteTextureCallBack(){}
+            ~DeleteTextureCallBack() override{}
             std::string nodeName;
             std::string path;
             size_t filesize;

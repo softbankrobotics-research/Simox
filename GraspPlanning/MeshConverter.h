@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MESHCONVERTER_H
-#define MESHCONVERTER_H
+#pragma once
 
 #include "GraspStudio.h"
 #include <vector>
@@ -51,4 +50,3 @@ namespace GraspStudio
 
     };
 }
-#endif // MESHCONVERTER_H

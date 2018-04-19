@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Obstacle_h_
-#define _VirtualRobot_Obstacle_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "CollisionDetection/CollisionModel.h"
@@ -47,7 +46,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~Obstacle();
+        ~Obstacle() override;
 
         virtual void print(bool printDecoration = true);
 
@@ -104,7 +103,7 @@ namespace VirtualRobot
 
     protected:
 
-        virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
+        Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const override;
 
         std::string filename;
 
@@ -116,4 +115,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Obstacle_h_

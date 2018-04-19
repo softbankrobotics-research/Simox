@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotNodePrismatic_h_
-#define _VirtualRobot_RobotNodePrismatic_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -75,16 +74,16 @@ namespace VirtualRobot
                            RobotNodeType type = Generic);
         /*!
         */
-        virtual ~RobotNodePrismatic();
+        ~RobotNodePrismatic() override;
 
-        virtual bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>());
+        bool initialize(SceneObjectPtr parent = SceneObjectPtr(), const std::vector<SceneObjectPtr>& children = std::vector<SceneObjectPtr>()) override;
 
         /*!
         Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
-        virtual bool isTranslationalJoint() const;
+        bool isTranslationalJoint() const override;
 
         /*!
             In global coord system.
@@ -113,21 +112,21 @@ namespace VirtualRobot
             \param globalPose The new global pose. The joint value is *not* determined from this pose. The RobotNodeActuator is responsible for setting the corresponding joint value
             \param updateChildren Usually it is assumed that all RobotNodes are updated this way (updateChildren=false). If not, the children poses can be updated according to this node (updateCHildren=true).
         */
-        virtual void updateVisualizationPose(const Eigen::Matrix4f& globalPose, bool updateChildren = false);
+        void updateVisualizationPose(const Eigen::Matrix4f& globalPose, bool updateChildren = false) override;
 
         //! Checks if nodeType constraints are fulfilled. Otherwise an exception is thrown. Called on initialization.
-        virtual void checkValidRobotNodeType();
+        void checkValidRobotNodeType() override;
 
         RobotNodePrismatic() {};
-        virtual void updateTransformationMatrices(const Eigen::Matrix4f& parentPose);
+        void updateTransformationMatrices(const Eigen::Matrix4f& parentPose) override;
 
         Eigen::Vector3f jointTranslationDirection;  // used when ePrismaticJoint (local coord system)
 
-        virtual RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling);
+        RobotNodePtr _clone(const RobotPtr newRobot, const VisualizationNodePtr visualizationModel, const CollisionModelPtr collisionModel, CollisionCheckerPtr colChecker, float scaling) override;
         /*!
             Derived classes add custom XML tags here
         */
-        virtual std::string _toXML(const std::string& modelPath);
+        std::string _toXML(const std::string& modelPath) override;
 
         bool visuScaling;
         Eigen::Vector3f visuScaleFactor;
@@ -139,4 +138,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_RobotNodePrismatic_h_

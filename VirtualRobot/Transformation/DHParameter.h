@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_DHParameters_h_
-#define _VirtualRobot_DHParameters_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include <Eigen/Core>
@@ -183,4 +182,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_DHParameters_h_

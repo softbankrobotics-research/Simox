@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_TSRConstraint_h_
-#define _VirtualRobot_TSRConstraint_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -38,16 +37,16 @@ namespace VirtualRobot
                       const Eigen::Matrix4f& transformation, const Eigen::Matrix4f& eefOffset, const Eigen::Matrix<float, 6, 2>& bounds,
                       float tolerancePosition = 5.0f, float toleranceRotation = 3.0f / 180.0f * M_PI);
 
-        Eigen::MatrixXf getJacobianMatrix();
-        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp);
-        Eigen::VectorXf getError(float stepSize = 1.0f);
-        bool checkTolerances();
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
         const Eigen::Matrix4f& getTransformation();
         const Eigen::Matrix<float, 6, 2>& getBounds();
 
-        double optimizationFunction(unsigned int id);
-        Eigen::VectorXf optimizationGradient(unsigned int id);
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
     protected:
         double positionOptimizationFunction();
@@ -79,4 +78,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
 }
 
-#endif

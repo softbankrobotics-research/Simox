@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotIO_h_
-#define _VirtualRobot_RobotIO_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Units.h"
@@ -95,7 +94,7 @@ namespace VirtualRobot
 
         // instantiation not allowed
         RobotIO();
-        virtual ~RobotIO();
+        ~RobotIO() override;
 
         static RobotPtr processRobot(rapidxml::xml_node<char>* robotXMLNode, const std::string& basePath, RobotDescription loadMode = eFull);
         static RobotPtr processRobotAttributes(rapidxml::xml_node<char>* robotXMLNode, std::string& robotRoot);
@@ -135,4 +134,3 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_RobotIO_h_

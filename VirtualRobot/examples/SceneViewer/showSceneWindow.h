@@ -1,6 +1,5 @@
 
-#ifndef __ShowScene_WINDOW_H_
-#define __ShowScene_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -31,7 +30,7 @@ class showSceneWindow : public QMainWindow
     Q_OBJECT
 public:
     showSceneWindow(std::string& sSceneFile);
-    ~showSceneWindow();
+    ~showSceneWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -41,7 +40,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
     void loadScene();
@@ -95,4 +94,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 };
 
-#endif // __ShowScene_WINDOW_H_

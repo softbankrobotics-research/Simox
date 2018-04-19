@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_JointLimitAvoidanceConstraint_h_
-#define _VirtualRobot_JointLimitAvoidanceConstraint_h_
+#pragma once
 
 #include "VirtualRobot/IK/constraints/ReferenceConfigurationConstraint.h"
 
@@ -39,4 +38,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;
 }
 
-#endif

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RobotNodeSet_h_
-#define _VirtualRobot_RobotNodeSet_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "Nodes/RobotNode.h"
@@ -89,7 +88,7 @@ namespace VirtualRobot
         /*!
             The number of associated robot nodes.
         */
-        virtual unsigned int getSize() const;
+        unsigned int getSize() const override;
 
         std::vector<float> getJointValues() const;
         Eigen::VectorXf getJointValuesEigen() const;
@@ -191,18 +190,18 @@ namespace VirtualRobot
         bool nodesSufficient(std::vector<RobotNodePtr> nodes) const;
 
 
-        virtual std::string toXML(int tabs);
+        std::string toXML(int tabs) override;
 
         //! this is forbidden for RobotNodeSets, a call will throw an exception
-        virtual bool addSceneObject(SceneObjectPtr sceneObject);
+        bool addSceneObject(SceneObjectPtr sceneObject) override;
         //! this is forbidden for RobotNodeSets, a call will throw an exception
-        virtual bool addSceneObjects(SceneObjectSetPtr sceneObjectSet);
+        bool addSceneObjects(SceneObjectSetPtr sceneObjectSet) override;
         //! this is forbidden for RobotNodeSets, a call will throw an exception
-        virtual bool addSceneObjects(RobotNodeSetPtr robotNodeSet);
+        bool addSceneObjects(RobotNodeSetPtr robotNodeSet) override;
         //! this is forbidden for RobotNodeSets, a call will throw an exception
-        virtual bool addSceneObjects(std::vector<RobotNodePtr> robotNodes);
+        bool addSceneObjects(std::vector<RobotNodePtr> robotNodes) override;
         //! this is forbidden for RobotNodeSets, a call will throw an exception
-        virtual bool removeSceneObject(SceneObjectPtr sceneObject);
+        bool removeSceneObject(SceneObjectPtr sceneObject) override;
 
     protected:
         /*!
@@ -233,4 +232,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_RobotNodeSet_h_

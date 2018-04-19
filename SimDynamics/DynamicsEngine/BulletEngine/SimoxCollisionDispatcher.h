@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_SimoxCollisionDispatcher_h_
-#define _SimDynamics_SimoxCollisionDispatcher_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "BulletEngine.h"
@@ -42,9 +41,9 @@ namespace SimDynamics
     struct SIMDYNAMICS_IMPORT_EXPORT SimoxCollisionDispatcher : public btCollisionDispatcher
     {
         SimoxCollisionDispatcher(BulletEngine* engine, btCollisionConfiguration* collisionConfiguration);
-        virtual ~SimoxCollisionDispatcher();
-        virtual bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1);
-        virtual bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1);
+        ~SimoxCollisionDispatcher() override;
+        bool    needsCollision(const btCollisionObject *body0, const btCollisionObject *body1) override;
+        bool    needsResponse(const btCollisionObject* body0,const btCollisionObject* body1) override;
 
     protected:
         BulletEngine* engine;
@@ -52,5 +51,4 @@ namespace SimDynamics
 }
 
 
-#endif // _SimDynamics_SimoxCollisionDispatcher_h_
 

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CogIK_h_
-#define _VirtualRobot_CogIK_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Nodes/RobotNode.h"
@@ -46,10 +45,10 @@ namespace VirtualRobot
         void setGoal(const Eigen::VectorXf& goal, float tolerance = 5.0f);
 
         Eigen::MatrixXf getJacobianOfCoM(RobotNodePtr node);
-        virtual Eigen::MatrixXf getJacobianMatrix();
-        virtual Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp); // ignored for CoM IK but needed for interface
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(SceneObjectPtr tcp) override; // ignored for CoM IK but needed for interface
 
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f);
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
 
         Eigen::VectorXf computeStep(float stepSize);
         bool computeSteps(float stepSize, float minumChange, int maxNStep);
@@ -62,11 +61,11 @@ namespace VirtualRobot
 
         bool isValid(const Eigen::VectorXf& v) const;
 
-        virtual bool checkTolerances();
+        bool checkTolerances() override;
         void checkImprovements(bool enable);
         bool solveIK(float stepSize = 0.2f, float minChange = 0.0f, int maxSteps = 50);
 
-        virtual void print();
+        void print() override;
     private:
         RobotNodePtr coordSystem;
         RobotNodeSetPtr rnsBodies;
@@ -89,4 +88,3 @@ namespace VirtualRobot
 }
 
 
-#endif

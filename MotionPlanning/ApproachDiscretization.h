@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _SABA_APPROACH_DISCRETIZATION_H_
-#define _SABA_APPROACH_DISCRETIZATION_H_
+#pragma once
 
 #include "Saba.h"
 
@@ -113,4 +112,3 @@ namespace Saba
 
 }
 
-#endif /* _SABA_APPROACH_DISCRETIZATION_H_ */

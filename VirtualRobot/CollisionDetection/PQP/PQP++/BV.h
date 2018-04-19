@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_BV_H
-#define PQP_BV_H
+#pragma once
 
 #include <math.h>
 #include "Tri.h"
@@ -114,6 +113,5 @@ namespace PQP
 
 } // namespace
 
-#endif
 
 

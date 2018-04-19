@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_OBB_DISJOINT
-#define PQP_OBB_DISJOINT
+#pragma once
 
 #include "MatVec.h"
 #include "PQP_Compile.h"
@@ -286,7 +285,6 @@ namespace PQP
     };
 
 } // namespace
-#endif
 
 
 

@@ -1,5 +1,4 @@
-#ifndef RAPIDXML_HPP_INCLUDED
-#define RAPIDXML_HPP_INCLUDED
+#pragma once
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13
@@ -82,7 +81,7 @@ namespace rapidxml
 
         //! Gets human readable description of error.
         //! \return Pointer to null terminated description of the error.
-        virtual const char* what() const throw()
+        const char* what() const throw() override
         {
             return m_what;
         }
@@ -2962,4 +2961,3 @@ after_data_node:
 #pragma warning(pop)
 #endif
 
-#endif

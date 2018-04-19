@@ -150,6 +150,8 @@ void GraspQualityWindow::setupUI()
 
     connect(UI.comboBoxEEF, SIGNAL(activated(int)), this, SLOT(selectEEF(int)));
     connect(UI.comboBoxGrasp, SIGNAL(activated(int)), this, SLOT(selectGrasp(int)));
+
+    connect(UI.pushButtonEvaluateAll, SIGNAL(clicked()), this, SLOT(evalRobustnessAll()));
 }
 
 
@@ -261,6 +263,53 @@ void GraspQualityWindow::evalRobustness()
     if (eef && grasp)
         VR_INFO << "#### Robustness for eef " << eef->getName() << ", grasp " << grasp->getName() << endl;
     re.print();
+}
+
+void GraspQualityWindow::evalRobustnessAll()
+{
+    int numSamples = UI.sbSamples->value();
+    float varMM = UI.sbVariationMM->value();
+    float varDeg = UI.sbVariationDeg->value();
+
+    std::vector<GraspSetPtr> sets = object->getAllGraspSets();
+    for (GraspSetPtr set : sets)
+    {
+        VirtualRobot::EndEffectorPtr eef = robot->getEndEffector(set->getEndEffector());
+        std::vector<GraspPtr> grasps = set->getGrasps();
+        for (GraspPtr grasp : grasps)
+        {
+            GraspStudio::GraspEvaluationPoseUncertainty::PoseUncertaintyConfig c;
+            c.init(varMM, varDeg);
+            GraspStudio::GraspEvaluationPoseUncertaintyPtr eval(new GraspStudio::GraspEvaluationPoseUncertainty(c));
+
+            VR_INFO << "Setting object pose to grasp " << grasp->getName() << endl;
+            Eigen::Matrix4f pos =  eef->getTcp()->getGlobalPose();
+            pos = grasp->getObjectTargetPoseGlobal(pos);
+            object->setGlobalPose(pos);
+
+            VirtualRobot::EndEffector::ContactInfoVector contacts;
+            eef->openActors();
+            contacts = eef->closeActors(object);
+
+            VR_INFO << contacts.size() << endl;
+            if (contacts.size() == 0)
+                continue;
+            std::vector<Eigen::Matrix4f> evalPoses = eval->generatePoses(object->getGlobalPose(), contacts, numSamples );
+
+            VR_INFO << evalPoses.size() << endl;
+            if (evalPoses.size()==0)
+                continue;
+
+            GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults re = eval->evaluatePoses(eef, object, evalPoses, qualityMeasure);
+            if (eef && grasp)
+                VR_INFO << "#### Robustness for eef " << eef->getName() << ", grasp " << grasp->getName() << endl;
+            re.print();
+
+            grasp->setQuality(re.avgQuality);
+        }
+    }
+
+    ObjectIO::saveManipulationObject(object, objectFile + "_new.xml");
 }
 
 void GraspQualityWindow::selectObject()

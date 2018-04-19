@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_PositionSensor_h_
-#define _VirtualRobot_PositionSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -55,16 +54,16 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~PositionSensor();
+        ~PositionSensor() override;
 
 
         /*!
             Print status information.
         */
-        virtual void print(bool printChildren = false, bool printDecoration = true) const;
+        void print(bool printChildren = false, bool printDecoration = true) const override;
 
 
-        virtual std::string toXML(const std::string& modelPath, int tabs);
+        std::string toXML(const std::string& modelPath, int tabs) override;
 
     protected:
 
@@ -74,7 +73,7 @@ namespace VirtualRobot
         /*!
         Derived classes must implement their clone method here.
         */
-        virtual SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling);
+        SensorPtr _clone(const RobotNodePtr newRobotNode, const VisualizationNodePtr visualizationModel, float scaling) override;
 
     };
 
@@ -82,4 +81,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_PositionSensor_h_

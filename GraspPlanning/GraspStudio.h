@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GraspStudio_h_
-#define _GraspStudio_h_
+#pragma once
 
 
 /*! \defgroup GraspStudio The Grasp Planning Library
@@ -108,4 +107,3 @@ namespace GraspStudio
 
 }
 
-#endif // _GraspStudio_h_

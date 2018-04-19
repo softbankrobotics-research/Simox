@@ -1,6 +1,5 @@
 
-#ifndef __IKRRT_WINDOW_H_
-#define __IKRRT_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -36,7 +35,7 @@ class IKRRTWindow : public QMainWindow
     Q_OBJECT
 public:
     IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob);
-    ~IKRRTWindow();
+    ~IKRRTWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -47,7 +46,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
 
@@ -135,4 +134,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
 };
 
-#endif // __IKRRT_WINDOW_H_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedStackedIK_h_
-#define _VirtualRobot_ConstrainedStackedIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -38,9 +37,9 @@ namespace VirtualRobot
         ConstrainedStackedIK(RobotPtr& robot, const RobotNodeSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
                              JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
 
-        bool initialize();
+        bool initialize() override;
 
-        virtual bool solveStep();
+        bool solveStep() override;
 
     protected:
         RobotNodeSetPtr nodeSet;
@@ -56,4 +55,3 @@ namespace VirtualRobot
     typedef boost::shared_ptr<ConstrainedStackedIK> ConstrainedStackedIKPtr;
 }
 
-#endif

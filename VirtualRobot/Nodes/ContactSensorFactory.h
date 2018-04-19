@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ContactSensorFactory_h_
-#define _VirtualRobot_ContactSensorFactory_h_
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 #include "../SceneObject.h"
@@ -37,16 +36,16 @@ namespace VirtualRobot
     {
     public:
         ContactSensorFactory();
-        virtual ~ContactSensorFactory();
+        ~ContactSensorFactory() override;
 
         //! Standard init method
-        virtual SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
-                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const;
+        SensorPtr createSensor(RobotNodePtr node, const std::string& name, VisualizationNodePtr visualization = VisualizationNodePtr(),
+                                       const Eigen::Matrix4f& rnTrafo = Eigen::Matrix4f::Identity()) const override;
 
         /*!
           Create sensor from XML tag.
           */
-        virtual SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const;
+        SensorPtr createSensor(RobotNodePtr node, rapidxml::xml_node<char>* sensorXMLNode, RobotIO::RobotDescription loadMode = RobotIO::eFull, const std::string basePath = std::string()) const override;
 
         // AbstractFactoryMethod
     public:
@@ -58,4 +57,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_ContactSensorFactory_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinVisualizationNode_h_
-#define _VirtualRobot_CoinVisualizationNode_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 #include "../VisualizationNode.h"
@@ -45,34 +44,34 @@ namespace VirtualRobot
         friend class CoinVisualizationFactory;
     public:
         CoinVisualizationNode(SoNode* visualizationNode, float margin = 0.0f);
-        ~CoinVisualizationNode();
-        virtual TriMeshModelPtr getTriMeshModel();
+        ~CoinVisualizationNode() override;
+        TriMeshModelPtr getTriMeshModel() override;
 
         SoNode* getCoinVisualization();
 
-        virtual void setGlobalPose(const Eigen::Matrix4f& m);
+        void setGlobalPose(const Eigen::Matrix4f& m) override;
 
-        virtual void print();
+        void print() override;
 
-        virtual void scale(Eigen::Vector3f& scaleFactor);
+        void scale(Eigen::Vector3f& scaleFactor) override;
 
         /*!
             Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.
             If there is already a visualization attached with the given name, it is quietly replaced.
         */
-        virtual void attachVisualization(const std::string& name, VisualizationNodePtr v);
+        void attachVisualization(const std::string& name, VisualizationNodePtr v) override;
 
         /*!
             Remove an attached visualization.
         */
-        virtual void detachVisualization(const std::string& name);
+        void detachVisualization(const std::string& name) override;
 
         /*!
             Setup the visualization of this object.
             \param showVisualization If false, the visualization is disabled.
             \param showAttachedVisualizations If false, the visualization of any attached optional visualizations is disabled.
         */
-        virtual void setupVisualization(bool showVisualization, bool showAttachedVisualizations);
+        void setupVisualization(bool showVisualization, bool showAttachedVisualizations) override;
 
 
         /*!
@@ -81,9 +80,9 @@ namespace VirtualRobot
                 \param scaling Scale Can be set to create a scaled version of this visual data.
                 Since the underlying implementation may be able to re-use the visualization data, a deep copy may not be necessary in some cases.
             */
-        virtual VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f);
+        VisualizationNodePtr clone(bool deepCopy = true, float scaling = 1.0f) override;
 
-        virtual std::string getType()
+        std::string getType() override
         {
             return CoinVisualizationFactory::getName();
         }
@@ -93,9 +92,9 @@ namespace VirtualRobot
             \param modelPath The directory.
             \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl).
         */
-        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
-        virtual void shrinkFatten(float offset);
-        virtual void createTriMeshModel();
+        bool saveModel(const std::string& modelPath, const std::string& filename) override;
+        void shrinkFatten(float offset) override;
+        void createTriMeshModel() override;
 
     protected:
 
@@ -126,4 +125,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CoinVisualizationNode_h_

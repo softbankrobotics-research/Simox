@@ -1,6 +1,5 @@
 
-#ifndef __Jacobi_WINDOW_H_
-#define __Jacobi_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -31,7 +30,7 @@ class JacobiWindow : public QMainWindow
     Q_OBJECT
 public:
     JacobiWindow(std::string& sRobotFilename);
-    ~JacobiWindow();
+    ~JacobiWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -46,7 +45,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
     void collisionModel();
@@ -96,4 +95,3 @@ protected:
     bool useColModel;
 };
 
-#endif // __Jacobi_WINDOW_H_

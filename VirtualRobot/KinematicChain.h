@@ -1,5 +1,4 @@
-#ifndef _VirtualRobot_KinematicChain_h_
-#define _VirtualRobot_KinematicChain_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "Nodes/RobotNode.h"
@@ -38,7 +37,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~KinematicChain();
+        ~KinematicChain() override;
 
 
     private:
@@ -49,4 +48,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_KinematicChain_h_

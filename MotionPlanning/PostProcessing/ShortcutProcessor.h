@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __Saba_ShortcutProcessor_h__
-#define __Saba_ShortcutProcessor_h__
+#pragma once
 
 #include "../Saba.h"
 #include "PathProcessor.h"
@@ -38,10 +37,10 @@ namespace Saba
     public:
 
         ShortcutProcessor(CSpacePathPtr path, CSpaceSampledPtr cspace, bool verbose = false);
-        virtual ~ShortcutProcessor();
+        ~ShortcutProcessor() override;
 
         //! A wrapper to the standard interface. Calls shortenSolutionRandom().
-        virtual CSpacePathPtr optimize(int optimizeSteps);
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         /*!
             Creates a shortened CSpace path.
@@ -90,4 +89,3 @@ namespace Saba
 
 }// namespace
 
-#endif // __Saba_ShortcutProcessor_h__

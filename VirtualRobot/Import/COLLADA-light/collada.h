@@ -1,5 +1,4 @@
-#ifndef __COLLADA_SIMOX_IMPORT_H__
-#define __COLLADA_SIMOX_IMPORT_H__
+#pragma once
 
 
 #include "pugixml/pugixml.hpp"
@@ -57,7 +56,7 @@ namespace Collada
     struct ColladaWalker : pugi::xml_tree_walker
     {
         ColladaWalker(StructureMap structureMap, XmlMap physicsMap) : structureMap(structureMap), physicsMap(physicsMap) {}
-        virtual bool for_each(pugi::xml_node& node) = 0;
+        bool for_each(pugi::xml_node& node) override = 0;
         StructureMap structureMap;
         XmlMap physicsMap;
     };
@@ -149,4 +148,3 @@ namespace Collada
 
 }
 
-#endif

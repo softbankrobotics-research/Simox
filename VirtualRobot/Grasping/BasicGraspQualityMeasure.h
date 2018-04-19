@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __BASIC_GRASP_QUALTIY_MEASURE_H__
-#define __BASIC_GRASP_QUALTIY_MEASURE_H__
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../EndEffector/EndEffector.h"
@@ -97,4 +96,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif /* __BASIC_GRASP_QUALTIY_MEASURE_H__ */

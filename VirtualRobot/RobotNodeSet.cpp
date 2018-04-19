@@ -21,8 +21,10 @@ namespace VirtualRobot
     {
         RobotPtr rob = robot.lock();
 
+
         if (!kinematicRoot && robotNodes.size() > 0)
         {
+            THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
             this->kinematicRoot = rob->getRootNode();
         }
 
@@ -33,6 +35,7 @@ namespace VirtualRobot
             {
                 oldRootName = this->kinematicRoot->getName();
             }
+            THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
             this->kinematicRoot = rob->getRootNode();
             if(this->kinematicRoot)
             {
@@ -412,7 +415,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(jointValues.size() != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         RobotPtr rob = robot.lock();
-        VR_ASSERT(rob);
+        THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
@@ -435,7 +438,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(static_cast<std::size_t>(jointValues.rows()) != robotNodes.size(), "Wrong vector dimension (robotNodes:" << robotNodes.size() << ", jointValues: " << jointValues.size() << ")" << endl);
         RobotPtr rob = robot.lock();
-        VR_ASSERT(rob);
+        THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)
@@ -457,7 +460,7 @@ namespace VirtualRobot
     {
         VR_ASSERT(jointValues);
         RobotPtr rob = robot.lock();
-        VR_ASSERT(rob);
+        THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
         for (unsigned int i = 0; i < robotNodes.size(); i++)

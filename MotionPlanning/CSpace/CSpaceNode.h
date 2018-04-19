@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CSpaceNode_h
-#define _Saba_CSpaceNode_h
+#pragma once
 
 #include "../Saba.h"
 #include <vector>
@@ -62,4 +61,3 @@ namespace Saba
 
 } // nameaspace
 
-#endif // _Saba_CSpaceNode_h

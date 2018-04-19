@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CoinConvexHullVisualization_h_
-#define _Saba_CoinConvexHullVisualization_h_
+#pragma once
 
 
 #include "../../GraspStudio.h"
@@ -49,7 +48,7 @@ namespace GraspStudio
         CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull6DPtr convHull, bool useFirst3Coords = true);
         CoinConvexHullVisualization(VirtualRobot::MathTools::ConvexHull3DPtr convHull);
 
-        ~CoinConvexHullVisualization();
+        ~CoinConvexHullVisualization() override;
 
         SoSeparator* getCoinVisualization();
 
@@ -69,4 +68,3 @@ namespace GraspStudio
 
 } // namespace Saba
 
-#endif // _Saba_CoinConvexHullVisualization_h_

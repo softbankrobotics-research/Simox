@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _saba_cspacetree_h
-#define _saba_cspacetree_h
+#pragma once
 
 #include "../Saba.h"
 #include <iostream>
@@ -188,4 +187,3 @@ namespace Saba
 
 } // namespace Saba
 
-#endif // _saba_cspacetree_h

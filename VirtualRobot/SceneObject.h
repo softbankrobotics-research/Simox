@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SceneObject_h_
-#define _VirtualRobot_SceneObject_h_
+#pragma once
 
 #include "VirtualRobot.h"
 #include "VirtualRobotException.h"
@@ -362,6 +361,7 @@ namespace VirtualRobot
         //! Compute the global pose of this object
         virtual void updatePose(bool updateChildren = true);
 
+        virtual void copyPoseFrom(const SceneObjectPtr& other);
         /*!
             Saves model files (visu and col model, if present) to model path.
             \param modelPath The path where the model files should be stored.
@@ -432,4 +432,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_SceneObject_h_

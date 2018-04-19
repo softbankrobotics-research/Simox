@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_PlanningThread_h
-#define _Saba_PlanningThread_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -93,4 +92,3 @@ namespace Saba
     };
 
 }
-#endif // _Saba_PlanningThread_h

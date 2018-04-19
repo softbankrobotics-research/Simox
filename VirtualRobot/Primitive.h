@@ -1,5 +1,4 @@
-#ifndef PRIMITIVE_H
-#define PRIMITIVE_H
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <Eigen/Geometry>
@@ -37,7 +36,7 @@ namespace VirtualRobot
             float width;
             float height;
             float depth;
-            std::string toXMLString(int tabs = 0);
+            std::string toXMLString(int tabs = 0) override;
         };
 
         class VIRTUAL_ROBOT_IMPORT_EXPORT Sphere : public Primitive
@@ -47,7 +46,7 @@ namespace VirtualRobot
             Sphere() : Primitive(TYPE) {}
             Sphere(float radius) : Primitive(TYPE), radius(radius) {}
             float radius;
-            std::string toXMLString(int tabs = 0);
+            std::string toXMLString(int tabs = 0) override;
         };
 
         class VIRTUAL_ROBOT_IMPORT_EXPORT Cylinder : public Primitive
@@ -58,7 +57,7 @@ namespace VirtualRobot
             Cylinder(float radius, float height) : Primitive(TYPE), radius(radius), height(height) {}
             float radius;
             float height;
-            std::string toXMLString(int tabs = 0);
+            std::string toXMLString(int tabs = 0) override;
         };
 
         typedef boost::shared_ptr<Primitive> PrimitivePtr;
@@ -66,4 +65,3 @@ namespace VirtualRobot
     } //namespace Primitive
 } //namespace VirtualRobot
 
-#endif // PRIMITIVE_H

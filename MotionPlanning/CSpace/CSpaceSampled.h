@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_CSpaceSampled_h
-#define _Saba_CSpaceSampled_h
+#pragma once
 
 #include "../Saba.h"
 #include "CSpace.h"
@@ -71,7 +70,7 @@ namespace Saba
         */
         CSpaceSampled(VirtualRobot::RobotPtr robot, VirtualRobot::CDManagerPtr collisionManager, VirtualRobot::RobotNodeSetPtr robotNodes, unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
 
-        virtual ~CSpaceSampled();
+        ~CSpaceSampled() override;
 
         //! sets sampling step size (used when adding new paths in CSpace)
         void setSamplingSize(float fSize);
@@ -90,7 +89,7 @@ namespace Saba
 
 
 
-        virtual CSpacePtr clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed = 0);
+        CSpacePtr clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed = 0) override;
 
         /*!
             Checks the middle configuration and when it is not invalid (in collision or constraints are violated) the path is split
@@ -98,13 +97,13 @@ namespace Saba
             Recursion is performed maximal recursionMaxDepth times, since an array of temporary variables is used,
             in order to avoid slow allocating/deallocating of memory.
         */
-        bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2);
+        bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2) override;
 
         /*!
         Create a path from start to goal without any checks.
         Intermediate configurations are added according to the current implementation of the cspace.
         */
-        virtual CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal);
+        CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal) override;
 
         /*!
             Create a path from start to the goal configuration.
@@ -113,7 +112,7 @@ namespace Saba
             \param goal The goal
             \param storeAddedLength The length of the valid path is stored here (1.0 means the complete path from start to goal was valid)
         */
-        virtual CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength);
+        CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength) override;
 
 
     protected:
@@ -131,4 +130,3 @@ namespace Saba
 
 }
 
-#endif // _Saba_CSpaceSampled_h

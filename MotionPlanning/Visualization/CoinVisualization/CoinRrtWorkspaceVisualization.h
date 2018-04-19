@@ -17,8 +17,7 @@
 //----------------------------------------------------------------------
 
 
-#ifndef _Saba_CoinRrtWorkspaceVisualization_h_
-#define _Saba_CoinRrtWorkspaceVisualization_h_
+#pragma once
 
 
 #include "../../Saba.h"
@@ -45,25 +44,25 @@ namespace Saba
         CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName);
         CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName);
 
-        ~CoinRrtWorkspaceVisualization();
+        ~CoinRrtWorkspaceVisualization() override;
 
 
         /*!
             Add visualization of a path in cspace.
         */
-        virtual bool addCSpacePath(CSpacePathPtr path, RrtWorkspaceVisualization::ColorSet colorSet = eBlue);
+        bool addCSpacePath(CSpacePathPtr path, RrtWorkspaceVisualization::ColorSet colorSet = eBlue) override;
         //void setPathStyle(float lineSize = 4.0f, float nodeSize= 15.0f, float renderComplexity = 1.0f);
 
         /*!
             Add visualization of a tree (e.g an RRT) in cspace.
         */
-        virtual bool addTree(CSpaceTreePtr tree, RrtWorkspaceVisualization::ColorSet colorSet = eRed);
+        bool addTree(CSpaceTreePtr tree, RrtWorkspaceVisualization::ColorSet colorSet = eRed) override;
         //void setTreeStyle(float lineSize = 1.0f, float nodeSize= 15.0f, float renderComplexity = 0.1f);
 
         /*!
             Add visualization of a configuration in cspace.
         */
-        virtual bool addConfiguration(const Eigen::VectorXf& c, RrtWorkspaceVisualization::ColorSet colorSet = eGreen, float nodeSizeFactor = 1.0f);
+        bool addConfiguration(const Eigen::VectorXf& c, RrtWorkspaceVisualization::ColorSet colorSet = eGreen, float nodeSizeFactor = 1.0f) override;
 
         /*!
             Set the custom line and node color. Does not affect already added trees or paths.
@@ -73,7 +72,7 @@ namespace Saba
         /*!
             Clears all visualizations.
         */
-        virtual void reset();
+        void reset() override;
 
 
         SoSeparator* getCoinVisualization();
@@ -90,4 +89,3 @@ namespace Saba
 
 } // namespace Saba
 
-#endif // _Saba_CoinRrtWorkspaceVisualization_h_

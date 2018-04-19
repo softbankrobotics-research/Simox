@@ -1,6 +1,5 @@
 
-#ifndef __ShowRobot_WINDOW_H_
-#define __ShowRobot_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -103,4 +102,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization;
 };
 
-#endif // __ShowRobot_WINDOW_H_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_SimoxMotionState_h_
-#define _SimDynamics_SimoxMotionState_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "../DynamicsObject.h"
@@ -67,7 +66,7 @@ namespace SimDynamics
         /*!
             Destructor.
         */
-        virtual ~SimoxMotionState();
+        ~SimoxMotionState() override;
 
         /*!
             Interface for changing poses of rigid body and VirtualRobot objects.
@@ -75,7 +74,7 @@ namespace SimDynamics
             Bullet sets and gets the rigid body world pose using
             setWorldTransform() and getWorldTransform().
         */
-        virtual void setWorldTransform(const btTransform& worldPose);
+        void setWorldTransform(const btTransform& worldPose) override;
 
         /*!
             Interface for getting poses of rigid body and VirtualRobot objects.
@@ -83,7 +82,7 @@ namespace SimDynamics
             Bullet sets and gets the rigid body world pose using
             setWorldTransform() and getWorldTransform().
         */
-        virtual void getWorldTransform(btTransform& worldPose) const;
+        void getWorldTransform(btTransform& worldPose) const override;
 
         /*!
             Set center of mass.
@@ -132,5 +131,4 @@ namespace SimDynamics
 }
 
 
-#endif // _SimDynamics_SimoxMotionState_h_
 

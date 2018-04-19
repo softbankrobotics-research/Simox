@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Saba_ConfigConstraint_h
-#define _Saba_ConfigConstraint_h
+#pragma once
 
 #include "../Saba.h"
 #include "../CSpace/CSpace.h"
@@ -57,4 +56,3 @@ namespace Saba
 
 }
 
-#endif // _Saba_ConfigConstraint_h

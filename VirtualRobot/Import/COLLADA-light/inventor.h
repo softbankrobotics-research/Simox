@@ -1,5 +1,4 @@
-#ifndef __INVENTOR_COLLADA__
-#define __INVENTOR_COLLADA__
+#pragma once
 
 #include "collada.h"
 #include <Inventor/nodes/SoSeparator.h>
@@ -16,7 +15,7 @@ namespace Collada
         InventorRobotNode();
         ~InventorRobotNode();
         void visualizeBoundingBox();
-        virtual void initialize();
+        void initialize() override;
     private:
         bool m_bOwn;
     };
@@ -27,7 +26,7 @@ namespace Collada
     struct InventorWalker : ColladaWalker
     {
         InventorWalker(StructureMap _structureMap, XmlMap physicsMap, SoSeparator* _root) : ColladaWalker(_structureMap, physicsMap), root(_root) {}
-        virtual bool for_each(pugi::xml_node& node);
+        bool for_each(pugi::xml_node& node) override;
 
         SoSeparator* root;
         std::vector<SoSeparator*> stack;
@@ -41,19 +40,18 @@ namespace Collada
     private:
     public:
         InventorRobot(SoSeparator* _root) : root(_root) {}
-        virtual ColladaRobotNodePtr robotNodeFactory()
+        ColladaRobotNodePtr robotNodeFactory() override
         {
             return ColladaRobotNodePtr(new InventorRobotNode(root));
         }
-        virtual ColladaWalkerPtr visualSceneWalkerFactory(StructureMap structureMap, XmlMap physicsMap)
+        ColladaWalkerPtr visualSceneWalkerFactory(StructureMap structureMap, XmlMap physicsMap) override
         {
             return ColladaWalkerPtr(new InventorWalker(structureMap, physicsMap, root));
         }
-        virtual void addCollisionModel(ColladaRobotNodePtr robotNode, pugi::xml_node shapeNode);
+        void addCollisionModel(ColladaRobotNodePtr robotNode, pugi::xml_node shapeNode) override;
     protected:
         SoSeparator* root;
         InventorRobot() {};
     };
 }//namespace
 
-#endif

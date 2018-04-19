@@ -1,6 +1,5 @@
 
-#ifndef _MTPlanning_SCENERY_H_
-#define _MTPlanning_SCENERY_H_
+#pragma once
 
 #include <string.h>
 #include <time.h>
@@ -125,4 +124,3 @@ protected:
     */
 };
 
-#endif // _MTPlanning_SCENERY_H_

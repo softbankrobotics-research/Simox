@@ -1,6 +1,5 @@
 
-#ifndef __SimDynamics_WINDOW_H_
-#define __SimDynamics_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -37,7 +36,7 @@ class SimDynamicsWindow : public QMainWindow
     Q_OBJECT
 public:
     SimDynamicsWindow(std::string& sRobotFilename);
-    ~SimDynamicsWindow();
+    ~SimDynamicsWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -47,7 +46,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
     void buildVisualization();
@@ -119,4 +118,3 @@ protected:
     std::atomic_uint_fast64_t simuStepCount{0};
 };
 
-#endif // __SimDynamics_WINDOW_H_

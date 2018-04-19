@@ -1,6 +1,5 @@
 
-#ifndef __GraspQuality_WINDOW_H_
-#define __GraspQuality_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
@@ -37,7 +36,7 @@ class GraspQualityWindow : public QMainWindow
     Q_OBJECT
 public:
     GraspQualityWindow(std::string& robotFile, std::string& objectFile);
-    ~GraspQualityWindow();
+    ~GraspQualityWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -47,7 +46,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
 
@@ -78,6 +77,8 @@ public slots:
     void selectObject();
 
     void evalRobustness();
+
+    void evalRobustnessAll();
 
 protected:
 
@@ -128,4 +129,3 @@ protected:
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
 };
 
-#endif // __GraspQuality_WINDOW_H_
