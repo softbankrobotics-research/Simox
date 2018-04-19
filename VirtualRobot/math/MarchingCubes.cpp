@@ -90,7 +90,7 @@ PrimitivePtr MarchingCubes::ProcessSingleSurfaceOptimized(float isolevel, Index3
     return res;
 }
 
-//TODO do we use this?
+
 void MarchingCubes::ProcessSingleSurfaceOptimized(float isolevel, PrimitivePtr primitive, Index3 start) //TODO ref
 {
     FringePtr fringe = FringePtr(new std::queue<Index3>);
@@ -98,6 +98,7 @@ void MarchingCubes::ProcessSingleSurfaceOptimized(float isolevel, PrimitivePtr p
     primitive->clear();
     Array3DBoolPtr marked = Array3DBoolPtr(new Array3D<bool>(_size + 1));
     marked->Set(start,true);
+    bool foundSurface = false;
     while (fringe->size() > 0)
     {
         Index3 index = fringe->front();
@@ -108,9 +109,10 @@ void MarchingCubes::ProcessSingleSurfaceOptimized(float isolevel, PrimitivePtr p
         int triNum = Polygonise(i, j, k, isolevel);
         if (triNum > 0)
         {
-            Build(primitive, triNum);//TODO ref
+            Build(primitive, triNum);
+            foundSurface = true;
         }
-        if (triNum > 0 || fringe->size() == 0)
+        if (triNum > 0 || !foundSurface)
         {
             AddAndMark(i + 1, j, k, fringe, marked);
             AddAndMark(i - 1, j, k, fringe, marked);
@@ -126,8 +128,8 @@ PrimitivePtr MarchingCubes::Calculate(Eigen::Vector3f center, Eigen::Vector3f st
 {
     int size = steps * 2;
     start = (start - center) / stepLength;
-    Index3 startIndex =  Index3((int)start.x() + steps, (int)start.y() + steps, (int)start.z() + steps);
-    MarchingCubes mc =  MarchingCubes();
+    Index3 startIndex = Index3((int)start.x() + steps, (int)start.y() + steps, (int)start.z() + steps);
+    MarchingCubes mc = MarchingCubes();
     std::function<float(Index3)> getData = [steps, stepLength, center, modelPtr](Index3 index)
     {
         Eigen::Vector3f pos = Eigen::Vector3f((index.X() - steps) * stepLength + center.x(),
