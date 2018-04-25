@@ -194,7 +194,7 @@ namespace VirtualRobot
          * @param limitless wheter this node has joint limits or not.
          */
         virtual void setLimitless(bool limitless);
-        bool isLimitless();
+        bool isLimitless() const;
 
         /**
          * @param target the target joint value in [rad]

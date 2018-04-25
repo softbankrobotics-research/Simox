@@ -598,7 +598,7 @@ namespace VirtualRobot
         this->limitless = limitless;
     }
 
-    bool RobotNode::isLimitless()
+    bool RobotNode::isLimitless() const
     {
         return limitless;
     }
