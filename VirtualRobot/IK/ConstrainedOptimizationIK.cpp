@@ -222,7 +222,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->updatePose(true);
 
     std::cout << "FAILURE, miminal error: " << currentMinError << std::endl;
-    currentMinOutput.print();
+    std::cout << currentMinOutput.toString() << std::endl;
 
     return false;
 }
