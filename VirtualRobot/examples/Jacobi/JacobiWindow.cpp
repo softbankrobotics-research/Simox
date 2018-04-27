@@ -17,7 +17,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
-    : QMainWindow(nullptr), boxVisuLayer("box-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer"), robotLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -244,9 +244,10 @@ void JacobiWindow::collisionModel()
 
     VisualizationSetPtr visualization = robot->getVisualization(colModel);
 
+    viewer->clearLayer(robotLayer);
     if (visualization)
     {
-        viewer->addVisualization(boxVisuLayer, visualization);
+        viewer->addVisualization(robotLayer, visualization);
     }
 
     viewer->viewAll();
