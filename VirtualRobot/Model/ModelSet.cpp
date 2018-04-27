@@ -39,8 +39,22 @@ namespace VirtualRobot
 
     ObstaclePtr ModelSet::createStaticObstacle(const std::string &name) const
     {
-        auto visus = getVisualizations();
-        auto colModels = getCollisionModels();
+        const auto origVisus = getVisualizations();
+        std::vector<VisualizationPtr> visus;
+        visus.reserve(origVisus.size());
+        for (const auto& v : origVisus)
+        {
+            visus.push_back(v->clone());
+        }
+
+        const auto origColModels = getCollisionModels();
+        std::vector<CollisionModelPtr> colModels;
+        colModels.reserve(origColModels.size());
+        for (const auto& c : origColModels)
+        {
+            colModels.push_back(c->clone());
+        }
+
         VisualizationPtr visu = VisualizationFactory::getInstance()->createVisualisationSet(visus);
         CollisionModelPtr colModel = CollisionModel::CreateUnitedCollisionModel(colModels);
         ObstaclePtr result = Obstacle::create(name, visu, colModel);
