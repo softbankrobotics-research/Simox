@@ -15,6 +15,8 @@ using namespace VirtualRobot;
 
 int main(int argc, char* argv[])
 {
+    VirtualRobot::init(argc, argv, "load Robot");
+
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
