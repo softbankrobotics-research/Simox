@@ -52,7 +52,6 @@ void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
     viewer = SimoxGui::ViewerFactory::getInstance()->createViewer(UI.frameViewer);
-    viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -226,8 +225,6 @@ void JacobiWindow::resetSceneryAll()
         configMap[joint] = 0.0f;
     }
     robot->setJointValues(configMap);
-
-    viewer->viewAll();
 }
 
 
@@ -249,8 +246,6 @@ void JacobiWindow::collisionModel()
     {
         viewer->addVisualization(robotLayer, visualization);
     }
-
-    viewer->viewAll();
 }
 
 
@@ -397,7 +392,6 @@ void JacobiWindow::jacobiTest()
 
     j->setGoal(targetPose, RobotNodePtr(), IKSolver::All);
     j->computeSteps(0.2f, 0, 50);
-    viewer->viewAll();
     cout << "---- END TEST JACOBI ----" << endl;
 }
 
@@ -423,7 +417,6 @@ void JacobiWindow::jacobiTest2()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, elbow, IKSolver::Z);
     j->computeSteps(0.2f, 0, 40);
-    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -468,7 +461,6 @@ void JacobiWindow::jacobiTestBi()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, tcp2, IKSolver::Position);
     j->computeSteps(0.2f, 0, 50);
-    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -538,6 +530,5 @@ void JacobiWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    viewer->viewAll();
 }
 
