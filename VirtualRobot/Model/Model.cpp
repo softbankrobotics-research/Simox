@@ -1056,7 +1056,47 @@ namespace VirtualRobot
 
     void Model::print()
     {
-        // TODO: implement print
+        std::cout << "******** Model ********" << std::endl;
+        std::cout << "* Name: " << name << std::endl;
+        std::cout << "* Type: " << type << std::endl;
+
+        if (this->getRootNode())
+        {
+            std::cout << "* Root Node: " << this->getRootNode()->getName() << std::endl;
+        }
+        else
+        {
+            std::cout << "* Root Node: not set" << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        if (this->getRootNode())
+        {
+            this->getRootNode()->print(true, true);
+        }
+
+        std::cout << std::endl;
+
+        std::vector<RobotNodeSetPtr> nodeSets = this->getModelNodeSets();
+
+        if (nodeSets.size() > 0)
+        {
+            std::cout << "* NodeSets:" << std::endl;
+
+            std::vector<RobotNodeSetPtr>::iterator iter = nodeSets.begin();
+
+            while (iter != nodeSets.end())
+            {
+                std::cout << "----------------------------------" << std::endl;
+                (*iter)->print();
+                iter++;
+            }
+
+            std::cout << std::endl;
+        }
+
+        std::cout << "******** Model ********" << std::endl;
     }
 
     ReadLockPtr Model::getReadLock() const
