@@ -251,7 +251,14 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
     unsigned int size = gradient.size();
     Eigen::VectorXf grad = Eigen::VectorXf::Zero(size);
     double value = 0;
-
+    Eigen::VectorXf scalingVec(nodeSet->getSize());
+    int i = 0;
+    for(const VirtualRobot::RobotNodePtr & node : nodeSet->getAllRobotNodes())
+    {
+        scalingVec(i) = node->isRotationalJoint() ? 1 : 1.0f/57.f;
+        i++;
+    }
+    scalingVec = scalingVec.transpose();
     for(auto &constraint : constraints)
     {
         for(auto &function : constraint->getOptimizationFunctions())
@@ -260,7 +267,7 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
 
             if(size > 0)
             {
-                grad += function.constraint->optimizationGradient(function.id);
+                grad += function.constraint->optimizationGradient(function.id) * scalingVec;
             }
         }
     }

@@ -73,6 +73,7 @@ namespace VirtualRobot
         float toleranceRotation;
 
         float posRotTradeoff;
+        Eigen::VectorXf scalingVec;
     };
 
     typedef boost::shared_ptr<TSRConstraint> TSRConstraintPtr;
