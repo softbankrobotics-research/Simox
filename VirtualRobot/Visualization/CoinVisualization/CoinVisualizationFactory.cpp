@@ -3858,7 +3858,8 @@ namespace VirtualRobot
             pointCloud.resize(numPixel);
         }
 
-        const float focalLength = static_cast<float>(height) / (2 * std::tan(vertFov / 2));
+        const float focalLengthX = static_cast<float>(width) / (2 * std::tan(vertFov * camInMeters->aspectRatio.getValue() / 2));
+        const float focalLengthY = static_cast<float>(height) / (2 * std::tan(vertFov / 2));
 
         assert(0<=height);
         for(unsigned int y=0;y<static_cast<std::size_t>(height);++y)
@@ -3921,14 +3922,14 @@ namespace VirtualRobot
                 //the cam is at (x,y)=(0,0) => shift x and y to image center
                 const float xShifted = static_cast<float>(x) - static_cast<float>(width ) / 2.f;
                 const float yShifted = static_cast<float>(y) - static_cast<float>(height) / 2.f;
-                const float xEye = xShifted / focalLength * (zEye);
-                const float yEye = yShifted / focalLength * (zEye);
+                const float xEye = xShifted / focalLengthX * (zEye);
+                const float yEye = yShifted / focalLengthY * (zEye);
 
                 if(renderDepthImage)
                 {
                     if(-zEye < zFar)
                     {
-                        zBuffer.at(pixelIndex) = std::sqrt(xEye * xEye + yEye * yEye + zEye * zEye);
+                        zBuffer.at(pixelIndex) = -zEye;
                     }
                     else
                     {
