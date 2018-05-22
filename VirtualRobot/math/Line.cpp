@@ -22,6 +22,7 @@
 #include "Triangle.h"
 #include "Primitive.h"
 #include "float.h"
+#include "Helpers.h"
 
 using namespace math;
 

@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "AbstractFunctionR1R3.h"
 #include "MathForwardDefinitions.h"
 
 
@@ -27,6 +28,7 @@ namespace math
 {
 
     class Line
+            : public AbstractFunctionR1R3
     {
     public:
         Line(Eigen::Vector3f pos, Eigen::Vector3f dir);
@@ -34,8 +36,8 @@ namespace math
         Eigen::Vector3f Dir(){return dir;}
 
         Line Normalized();
-        Eigen::Vector3f Get(float t);
-        Eigen::Vector3f GetDerivative(float t);
+        Eigen::Vector3f Get(float t) override;
+        Eigen::Vector3f GetDerivative(float t) override;
         Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p);
         float GetT(Eigen::Vector3f p);
         std::string ToString();

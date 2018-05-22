@@ -31,7 +31,6 @@ namespace math
 class AbstractFunctionR1R2
 {
 public:
-    AbstractFunctionR1R2();
     virtual Eigen::Vector2f Get(float t) = 0;
     virtual Eigen::Vector2f GetDerivative(float t)= 0;
     Eigen::Vector2f GetNormalizedNormal(float t);
