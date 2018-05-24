@@ -48,6 +48,8 @@ namespace math
         static Line FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2);
         static Line FromPoses(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2);
 
+        Line Transform(const Eigen::Matrix4f& pose);
+
     private:
         Eigen::Vector3f pos;
         Eigen::Vector3f dir;
