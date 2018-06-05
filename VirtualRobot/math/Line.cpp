@@ -22,6 +22,7 @@
 #include "Triangle.h"
 #include "Primitive.h"
 #include "float.h"
+#include "Helpers.h"
 
 using namespace math;
 
@@ -138,6 +139,11 @@ Line Line::FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2)
 Line Line::FromPoses(const Eigen::Matrix4f &p1, const Eigen::Matrix4f &p2)
 {
     return FromPoints(p1.block<3,1>(0,3), p2.block<3,1>(0,3));
+}
+
+Line Line::Transform(const Eigen::Matrix4f &pose)
+{
+    return Line(pos + pose.block<3,1>(0,3), pose.block<3, 3>(0, 0) * dir);
 }
 
 

@@ -31,12 +31,14 @@ namespace math
 
         static Eigen::Vector3f GetOrthonormalVectors(Eigen::Vector3f vec, Eigen::Vector3f& dir1, Eigen::Vector3f& dir2);
         static float ShiftAngle0_2PI(float a);
+        static float AngleModPI(float value);
         static void GetIndex(float t, float minT, float maxT, int count, int& i, float& f);
         static float FastDistribution(float x, float sigma2);
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
         static Eigen::Vector3f Lerp(const Eigen::Vector3f& a, const Eigen::Vector3f& b, float f);
         static Eigen::Quaternionf Lerp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
+        static float ILerp(float a, float b, float f);
         static float Lerp(float a, float b, int min, int max, int val);
         static float Angle(Eigen::Vector2f v);
         static int Sign(float x);
@@ -51,6 +53,7 @@ namespace math
         static Eigen::Vector3f Average(std::vector<Eigen::Vector3f> vectors);
         static void Swap(float &a,float &b);
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
+        static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori);
 
     private:
     };
