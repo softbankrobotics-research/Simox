@@ -469,20 +469,25 @@ void showRobotWindow::exportVRML()
     return;
 
 #endif
-    // VRML
+
     QString fi = QFileDialog::getSaveFileName(this, tr("VRML 2.0 File"), QString(), tr("VRML Files (*.wrl)"));
     std::string s = std::string(fi.toLatin1());
 
     if (!s.empty())
     {
         if (!boost::algorithm::ends_with(s, ".wrl"))
+        {
             s += ".wrl";
+        }
+
         SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
+
+        // Use currently selected node as origin
         robot->setGlobalPoseForRobotNode(robot->getRobotNode(UI.comboBoxJoint->currentText().toStdString()), Eigen::Matrix4f::Identity());
         VR_INFO << "Using selected node " << UI.comboBoxJoint->currentText().toStdString() << " as origin for exported model." << endl;
-        visualization = robot->getVisualization<CoinVisualization>(colModel);
 
-        visualization->exportToVRML2(s, false);
+        visualization = robot->getVisualization<CoinVisualization>(colModel);
+        visualization->exportToVRML2(s);
     }
 }
 

@@ -43,6 +43,11 @@ float Helpers::ShiftAngle0_2PI(float a)
     return a;
 }
 
+float Helpers::AngleModPI(float value)
+{
+    return ShiftAngle0_2PI(value + M_PI) - M_PI;
+}
+
 void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float &f)
 {
     if (minT == maxT)
@@ -82,6 +87,11 @@ Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b
 Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
 {
     return a.slerp(f, b);
+}
+
+float Helpers::ILerp(float a, float b, float f)
+{
+    return (f - a) / (b - a);
 }
 
 float Helpers::Lerp(float a, float b, int min, int max, int val)
@@ -183,4 +193,33 @@ Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Qua
     pose.block<3,3>(0,0) = ori.toRotationMatrix();
     pose.block<3,1>(0,3) = pos;
     return pose;
+}
+
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Matrix3f &ori)
+{
+    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+    pose.block<3,3>(0,0) = ori;
+    pose.block<3,1>(0,3) = pos;
+    return pose;
+}
+
+
+Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f & source, const Eigen::Vector3f & target)
+{
+    Eigen::Vector3f src = source.normalized();
+    Eigen::Vector3f tgt = target.normalized();
+    float angle = acos(src.dot(tgt));
+    if(fabs(angle) < 0.001f)
+    {
+        return Eigen::Matrix3f::Identity();
+    }
+    Eigen::Vector3f axis = src.cross(tgt);
+    axis.normalize();
+    return Eigen::AngleAxisf(angle, axis).toRotationMatrix();
+}
+
+Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget)
+{
+    Eigen::Vector3f vec = ori * localSource;
+    return GetRotationMatrix(vec, globalTarget) * ori;
 }
