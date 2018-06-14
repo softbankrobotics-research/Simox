@@ -92,6 +92,15 @@ namespace VirtualRobot
 
         std::string toXML(int tabs = 2, bool skipMatrixTag = false);
 
+        /*!
+         * \brief isInside Checks whether the given point lies within the bounding box. The given vector can contain
+         * entries that are none, if this is the case the respective dimension is ignored and the point is only tested
+         * for the remaining non-nan dimensions.
+         * \param point the point to test
+         * \return True if the point lies within the bounding box. False if not.
+         */
+        bool isInside(Eigen::Vector3f point) const;
+
     protected:
         Eigen::Vector3f min;
         Eigen::Vector3f max;

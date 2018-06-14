@@ -216,4 +216,35 @@ namespace VirtualRobot
 
             return ss.str();
     }
+
+    bool BoundingBox::isInside(Eigen::Vector3f point) const
+    {
+        Eigen::Vector3f p0(min(0), min(1), min(2));
+        Eigen::Vector3f p1(min(0), min(1), max(2));
+        Eigen::Vector3f p2(min(0), max(1), min(2));
+        Eigen::Vector3f p4(max(0), min(1), min(2));
+
+        Eigen::Vector3f v01 = p0 - p1;
+        Eigen::Vector3f v02 = p0 - p2;
+        Eigen::Vector3f v04 = p0 - p4;
+
+        point(0) = std::isnan(point(0)) ? (max(0) + min(0)) / 2 : point(0);
+        point(1) = std::isnan(point(1)) ? (max(1) + min(1)) / 2 : point(1);
+        point(2) = std::isnan(point(2)) ? (max(2) + min(2)) / 2 : point(2);
+
+        auto isBetween = [](float x, float a, float b) {
+            if (a <= b)
+            {
+                return a <= x && x <= b;
+            }
+            else
+            {
+                return b <= x && x <= a;
+            }
+        };
+
+        return isBetween(v01.dot(point), v01.dot(p0), v01.dot(p1))
+                && isBetween(v02.dot(point), v02.dot(p0), v02.dot(p2))
+                && isBetween(v04.dot(point), v04.dot(p0), v04.dot(p4));
+    }
 }
