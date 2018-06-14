@@ -202,3 +202,24 @@ Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Mat
     pose.block<3,1>(0,3) = pos;
     return pose;
 }
+
+
+Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f & source, const Eigen::Vector3f & target)
+{
+    Eigen::Vector3f src = source.normalized();
+    Eigen::Vector3f tgt = target.normalized();
+    float angle = acos(src.dot(tgt));
+    if(fabs(angle) < 0.001f)
+    {
+        return Eigen::Matrix3f::Identity();
+    }
+    Eigen::Vector3f axis = src.cross(tgt);
+    axis.normalize();
+    return Eigen::AngleAxisf(angle, axis).toRotationMatrix();
+}
+
+Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget)
+{
+    Eigen::Vector3f vec = ori * localSource;
+    return GetRotationMatrix(vec, globalTarget) * ori;
+}
