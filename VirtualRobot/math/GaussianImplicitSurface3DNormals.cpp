@@ -1,28 +1,46 @@
+/*
+* This file is part of ArmarX.
+*
+* ArmarX is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* ArmarX is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+* @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+* @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
+*             GNU General Public License
+*/
+
 #include "GaussianImplicitSurface3DNormals.h"
+#include <cmath>
 
 using namespace math;
 
-GaussianImplicitSurface3DNormals::GaussianImplicitSurface3DNormals()
-{
+GaussianImplicitSurface3DNormals::GaussianImplicitSurface3DNormals(KernelType kernelType)
+    : kernel(KernelWithDerivatives::Create(kernelType)) {}
 
-}
-
-void GaussianImplicitSurface3DNormals::Calculate(ContactList samples, float noise, float normalNoise, float normalScale)
+void GaussianImplicitSurface3DNormals::Calculate(const ContactList& samples, float noise, float normalNoise, float normalScale)
 {
     ContactList shiftedSamples;
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector3f> pointsOriginal;
-    mean = Average(samples);
-    for(Contact d : samples){        
-        Eigen::Vector3f shiftedPos = d.Position()- mean;
+    for(const auto& d : samples){        
+        Eigen::Vector3f shiftedPos = d.Position();
         shiftedSamples.push_back(Contact(shiftedPos, d.Normal()*normalScale));
         points.push_back(shiftedPos);
         pointsOriginal.push_back(d.Position());
     }
     R = 0;
-    for(Eigen::Vector3f p1 : points){
-        for(Eigen::Vector3f p2 : points){
-            if((p1-p2).norm() > R) R= (p1-p2).norm();
+    for (const Eigen::Vector3f& p1 : points) {
+        for (const Eigen::Vector3f& p2 : points) {
+            R = std::max(R, (p1-p2).squaredNorm());
         }
     }
     R = std::sqrt(R);
@@ -46,27 +64,26 @@ float GaussianImplicitSurface3DNormals::Get(Eigen::Vector3f pos)
     return Predict(pos);
 }
 
-Eigen::VectorXf GaussianImplicitSurface3DNormals::getCux(Eigen::Vector3f pos)
+Eigen::VectorXf GaussianImplicitSurface3DNormals::getCux(const Eigen::Vector3f& pos)
 {
      Eigen::VectorXf Cux (samples.size() * 4);
      for (std::size_t i = 0; i < samples.size(); i++)
      {
-        Cux(i * 4) = Kernel(pos, samples.at(i).Position(), R);
-        Cux(i * 4 + 1) = Kernel_dj(pos, samples.at(i).Position(), R, 0);
-        Cux(i * 4 + 2) = Kernel_dj(pos, samples.at(i).Position(), R, 1);
-        Cux(i * 4 + 3) = Kernel_dj(pos, samples.at(i).Position(), R, 2);
+        Cux(i * 4) = kernel->Kernel(pos, samples.at(i).Position(), R);
+        Cux(i * 4 + 1) = kernel->Kernel_dj(pos, samples.at(i).Position(), R, 0);
+        Cux(i * 4 + 2) = kernel->Kernel_dj(pos, samples.at(i).Position(), R, 1);
+        Cux(i * 4 + 3) = kernel->Kernel_dj(pos, samples.at(i).Position(), R, 2);
     }
     return Cux;//VectorXf;
 }
-float GaussianImplicitSurface3DNormals::Predict(Eigen::Vector3f pos)
+float GaussianImplicitSurface3DNormals::Predict(const Eigen::Vector3f& pos)
 {
     Eigen::VectorXf Cux(4*samples.size());
-    pos = pos - mean;
     Cux=getCux(pos);
     return Cux.dot(alpha);
 
 }
-Eigen::MatrixXf GaussianImplicitSurface3DNormals::CalculateCovariance(std::vector<Eigen::Vector3f> points, float R, float noise, float normalNoise)
+Eigen::MatrixXf GaussianImplicitSurface3DNormals::CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise, float normalNoise)
 {
     Eigen::MatrixXf covariance = Eigen::MatrixXf(points.size()*4, points.size()*4);
 
@@ -74,17 +91,14 @@ Eigen::MatrixXf GaussianImplicitSurface3DNormals::CalculateCovariance(std::vecto
     {
         for (size_t j = i; j < points.size()*4; j++)
         {
-            float cov = Kernel(points.at(i/4), points.at(j/4), R, i%4 , j%4);
+            float cov = kernel->Kernel(points.at(i/4), points.at(j/4), R, i%4 , j%4);
             covariance(i, j) = cov;
             covariance(j, i) = cov;
         }
     }
     for (size_t i = 0; i < points.size(); i++)
     {
-        if(i%4==0){
-         covariance(i, i) += i % 4 == 0 ? noise*noise : normalNoise;
-        }
-
+         covariance(i, i) += i % 4 == 0 ? noise*noise : normalNoise*normalNoise;
     }
     return covariance;   
 }    
@@ -92,100 +106,3 @@ Eigen::VectorXf GaussianImplicitSurface3DNormals::MatrixSolve(Eigen::MatrixXf a,
 {
     return a.colPivHouseholderQr().solve(b);
 }
-
-Eigen::Vector3f GaussianImplicitSurface3DNormals::Average(ContactList samples)
-{
-    Eigen::Vector3f sum = Eigen::Vector3f(0,0,0);
-    if (samples.size() == 0) return sum;
-    for(Contact d : samples){
-        sum += d.Position();
-    }
-    return sum / samples.size();
-}
-
-float GaussianImplicitSurface3DNormals::Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R)
-{
-    float r = (p1-p2).norm();
-    return 2 * r*r*r + 3 * R * r*r + R*R*R;
-}
-
-float GaussianImplicitSurface3DNormals::Kernel_dx(float x, float /*y*/, float /*z*/, float r, float R)
-{
-    return 6 * x * (r + R);
-}
-
-float GaussianImplicitSurface3DNormals::Kernel_ddx(float x, float /*y*/, float /*z*/, float r, float R)
-{
-    if (r == 0) return 6 * R;
-    return 6 * (R + r) + 6 * x * x / r;
-}
-
-float GaussianImplicitSurface3DNormals::Kernel_dxdy(float x, float y, float /*z*/, float r, float /*R*/)
-{
-    if (r == 0) return 0;
-    return 6 * x * y / r;
-}
-
-
-float GaussianImplicitSurface3DNormals::Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i, int j)
-{
-    if (i == 0 && j == 0) return Kernel(p1, p2, R);
-    if (i == 0) return Kernel_dj(p1, p2, R, j - 1);
-    if (j == 0) return Kernel_di(p1, p2, R, i - 1);
-    return Kernel_didj(p1, p2, R, i - 1, j - 1);
-}
-
-float GaussianImplicitSurface3DNormals::Kernel_di(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i)
-{
-    float r = (p1-p2).norm();
-    float x = p1.x() - p2.x();
-    float y = p1.y() - p2.y();
-    float z = p1.z() - p2.z();
-    swap(x, y, z, i);
-    return Kernel_dx(x, y, z, r, R);
-}
-float GaussianImplicitSurface3DNormals::Kernel_dj(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int j)
-{
-   float r = (p1-p2).norm();
-   float x = p1.x() - p2.x();
-   float y = p1.y() - p2.y();
-   float z = p1.z() - p2.z();
-   swap(x, y, z, j);
-   return -Kernel_dx(x, y, z, r, R);
-}
-
-float GaussianImplicitSurface3DNormals::Kernel_didj(Eigen::Vector3f p1, Eigen::Vector3f p2, float R, int i, int j)
-{
-   float r = (p1-p2).norm();
-   float x = p1.x() - p2.x();
-   float y = p1.y() - p2.y();
-   float z = p1.z() - p2.z();
-   if (i == j)
-   {
-       swap(x, y, z, i);       
-       return -Kernel_ddx(x, y, z, r, R);
-   }
-    std::vector<float> a(3);
-    a.at(0)=x;
-    a.at(1)=y;
-    a.at(2)=z;
-
-    x = a.at(i);
-    y = a.at(j);
-    z = a.at(3 - i - j);
-    return -Kernel_dxdy(x, y, z, r, R);
-
-}
-
-
-void GaussianImplicitSurface3DNormals::swap(float &x, float &y, float &z, int index) //TODO ref
-{
-   switch (index)
-   {
-       case 0: break;
-       case 1: math::Helpers::Swap(x, y); break;
-       case 2: math::Helpers::Swap(x, z); break;
-       default: throw std::invalid_argument("index must be >= 0 and <= 2" );
-    }
-}
-

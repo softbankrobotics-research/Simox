@@ -13,7 +13,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+* @author     Martin Miller (martin dot miller at student dot kit dot edu)
 * @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
 *             GNU General Public License
 */
@@ -23,6 +23,8 @@
 #include "MathForwardDefinitions.h"
 #include "DataR3R1.h"
 #include "SimpleAbstractFunctionR3R1.h"
+#include "Kernels.h"
+#include <memory>
 
 namespace math
 {
@@ -31,27 +33,23 @@ class GaussianImplicitSurface3D :
         public SimpleAbstractFunctionR3R1
 {
 public:
-    //GaussianImplicitSurface3D();
-    void Calculate(std::vector<DataR3R1> samples, float noise);
+    GaussianImplicitSurface3D(std::unique_ptr<KernelWithDerivatives> kernel);
+    void Calculate(const std::vector<DataR3R1>& samples, float noise);
     float Get(Eigen::Vector3f pos) override;
+    float GetVariance(const Eigen::Vector3f& pos);
 
 private:
-    Eigen::MatrixXf covariance;
-    Eigen::VectorXf alpha;
+    Eigen::MatrixXd covariance;
+    Eigen::MatrixXd covariance_inv;
+    Eigen::VectorXd alpha;
     std::vector<DataR3R1> samples;
     float R;
-    Eigen::Vector3f mean;
+    
+    std::unique_ptr<KernelWithDerivatives> kernel;
 
-
-    float Predict(Eigen::Vector3f pos);
-    static Eigen::MatrixXf CalculateCovariance(std::vector<Eigen::Vector3f> points, float R, float noise);
-    //static VectorXf Cholesky(MatrixXf matrix);
-    //static VectorXf FitModel(MatrixXf L, List<DataR3R1> targets);
-    //VectorXf SpdMatrixSolve(MatrixXf a, bool IsUpper, VectorXf b);
-    static Eigen::VectorXf MatrixSolve(Eigen::MatrixXf a, Eigen::VectorXf b);
-    static float Kernel(Eigen::Vector3f p1, Eigen::Vector3f p2, float R);
-    //static double[,] Transpose(double[,] a)
-    static Eigen::Vector3f Average(std::vector<DataR3R1> samples);
+    float Predict(const Eigen::Vector3f& pos) const;
+    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise);
+    void MatrixInvert(const Eigen::VectorXd& b);
 };
 }
 
