@@ -1,20 +1,20 @@
-PROJECT ( VisualizationTest )
+PROJECT ( SimpleCube )
 
 INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
 
 IF(Simox_VISUALIZATION AND Simox_GUI)
 
         # the variable "demo_SRCS" contains all .cpp files of this project
-        FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/VisualizationTest.cpp ${PROJECT_SOURCE_DIR}/VisualizationTestWindow.cpp)
-        FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/VisualizationTestWindow.h)
+        FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/SimpleCube.cpp ${PROJECT_SOURCE_DIR}/SimpleCubeWindow.cpp)
+        FILE(GLOB demo_INCS ${PROJECT_SOURCE_DIR}/SimpleCubeWindow.h)
 
   ################################## moc'ing ##############################
   set(GUI_MOC_HDRS
-      ${PROJECT_SOURCE_DIR}/VisualizationTestWindow.h
+      ${PROJECT_SOURCE_DIR}/SimpleCubeWindow.h
   )
 
   set(GUI_UIS
-      ${PROJECT_SOURCE_DIR}/VisualizationTest.ui
+      ${PROJECT_SOURCE_DIR}/SimpleCube.ui
   )
 
         # create the executable

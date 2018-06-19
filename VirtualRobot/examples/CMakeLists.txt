@@ -20,4 +20,4 @@ ADD_SUBDIRECTORY(ReachabilityMap)
 ADD_SUBDIRECTORY(LoadURDFRobot)
 
 #Visualization Testing
-ADD_SUBDIRECTORY(VisualizationTest)
+ADD_SUBDIRECTORY(VisualizationTests)

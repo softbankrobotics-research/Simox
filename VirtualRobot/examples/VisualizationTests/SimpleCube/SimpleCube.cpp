@@ -1,4 +1,4 @@
-#include "VisualizationTestWindow.h"
+#include "SimpleCubeWindow.h"
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
 int main(int argc, char* argv[])
@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
     VirtualRobot::RuntimeEnvironment::print();
 
-    VisualizationTestWindow testWindow;
+    SimpleCubeWindow testWindow;
     testWindow.show();
     testWindow.raise();
 

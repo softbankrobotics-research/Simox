@@ -1,22 +1,22 @@
-#include "VisualizationTestWindow.h"
+#include "SimpleCubeWindow.h"
 #include "../../VirtualRobotException.h"
 
 #include "../../Visualization/VisualizationFactory.h"
 
-VisualizationTestWindow::VisualizationTestWindow()
+SimpleCubeWindow::SimpleCubeWindow()
     : QMainWindow(NULL)
 {
     setupUI();
 }
 
 
-VisualizationTestWindow::~VisualizationTestWindow()
+SimpleCubeWindow::~SimpleCubeWindow()
 {
 
 }
 
 
-void VisualizationTestWindow::setupUI()
+void SimpleCubeWindow::setupUI()
 {
     UI.setupUi(this);
 
@@ -29,7 +29,7 @@ void VisualizationTestWindow::setupUI()
     viewer->viewAll();
 }
 
-int VisualizationTestWindow::main()
+int SimpleCubeWindow::main()
 {
 
 }

@@ -2,14 +2,14 @@
 
 #include "../../../Gui/ViewerFactory.h"
 
-#include "ui_VisualizationTest.h"
+#include "ui_SimpleCube.h"
 
-class VisualizationTestWindow : public QMainWindow
+class SimpleCubeWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    VisualizationTestWindow();
-    ~VisualizationTestWindow();
+    SimpleCubeWindow();
+    ~SimpleCubeWindow();
     int main();
 
 protected:
