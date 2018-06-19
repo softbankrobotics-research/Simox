@@ -3,6 +3,8 @@
 
 int main(int argc, char* argv[])
 {
+    QApplication qapp(argc, argv);
+
     VirtualRobot::init(argc, argv, "Simox Visualization Test");
 
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
