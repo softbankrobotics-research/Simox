@@ -642,6 +642,11 @@ namespace VirtualRobot
         return physics.localCoM;
     }
 
+    void SceneObject::setCoMLocal(const Eigen::Vector3f &comLocal)
+    {
+        physics.localCoM = comLocal;
+    }
+
     Eigen::Vector3f SceneObject::getCoMGlobal()
     {
         Eigen::Vector3f result = getCoMLocal();
