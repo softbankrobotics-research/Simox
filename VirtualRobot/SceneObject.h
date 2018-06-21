@@ -246,6 +246,14 @@ namespace VirtualRobot
             Return Center of Mass in local coordinate frame. This method does not consider children.
         */
         virtual Eigen::Vector3f getCoMLocal();
+
+        /**
+         * @brief Set a new position for the CoM of this bode.
+         * @note Use with caution! Some algorithm/systems checks this value only on start up, e.g. the physics simulation.
+         * @param comLocal Center of Mass in local frame.
+         * @see getComLocal()
+         */
+        void setCoMLocal(const Eigen::Vector3f& comLocal);
         /*!
             Return Center of Mass in global coordinates. This method does not consider children.
         */
