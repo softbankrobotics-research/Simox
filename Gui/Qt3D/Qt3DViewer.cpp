@@ -47,7 +47,7 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->camController->setLookSpeed( 180.0f );
     this->camController->setCamera(this->camera());
 
-    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 10000.0f);
+    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 100000.0f);
     this->camera()->setPosition(QVector3D(0, 0, 3000));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
 
@@ -154,7 +154,7 @@ void SimoxGui::Qt3DViewer::resetView()
 
 void SimoxGui::Qt3DViewer::viewAll()
 {
-
+    this->camera()->viewAll();
 }
 
 void SimoxGui::Qt3DViewer::setAntialiasing(unsigned short quality)
