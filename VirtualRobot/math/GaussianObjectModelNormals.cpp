@@ -22,13 +22,14 @@
 
 #include "GaussianObjectModelNormals.h"
 #include "MathForwardDefinitions.h"
+#include "Kernels.h"
 
 using namespace math;
 
 GaussianObjectModelNormals::GaussianObjectModelNormals(float noise, float normalNoise, float normalScale)
    : noise(noise), normalNoise(normalNoise), normalScale(normalScale)
 {
-    model = gpModel = GaussianImplicitSurface3DNormalsPtr(new GaussianImplicitSurface3DNormals());
+    model = gpModel = GaussianImplicitSurface3DNormalsPtr(new GaussianImplicitSurface3DNormals(KernelType::WilliamsPlus));
 }
 void GaussianObjectModelNormals::AddContact(Contact contact)
 {

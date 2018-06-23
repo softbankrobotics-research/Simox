@@ -1157,5 +1157,16 @@ namespace VirtualRobot
         this->scaling = scaling;
     }
 
+    void Robot::inflateCollisionModel(float inflationInMM)
+    {
+        for(auto& node : getRobotNodes())
+        {
+            if(node->getCollisionModel())
+            {
+                node->getCollisionModel()->inflateModel(inflationInMM);
+            }
+        }
+    }
+
 } // namespace VirtualRobot
 

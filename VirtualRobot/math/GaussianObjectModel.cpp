@@ -20,13 +20,14 @@
 
 #include "GaussianObjectModel.h"
 #include "MathForwardDefinitions.h"
+#include "Kernels.h"
 
 using namespace math;
 
 GaussianObjectModel::GaussianObjectModel(float noise)
    : noise(noise)
 {
-    model = gpModel = GaussianImplicitSurface3DPtr(new GaussianImplicitSurface3D());
+    model = gpModel = GaussianImplicitSurface3DPtr(new GaussianImplicitSurface3D(std::unique_ptr<WilliamsPlusKernel>(new WilliamsPlusKernel)));
 }
 
 void GaussianObjectModel::AddContact(Contact contact)

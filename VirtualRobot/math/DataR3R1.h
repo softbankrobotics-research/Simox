@@ -13,7 +13,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+* @author     Martin Miller (martin dot miller at student dot kit dot edu)
 * @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
 *             GNU General Public License
 */
@@ -28,8 +28,8 @@ namespace math
     class DataR3R1
     {
     public:
-        Eigen::Vector3f Position(){return position;}
-        float Value(){return value;}
+        Eigen::Vector3f Position() const { return position; }
+        float Value() const { return value; }
         DataR3R1(Eigen::Vector3f position, float value);
         std::string ToString();
     private:
