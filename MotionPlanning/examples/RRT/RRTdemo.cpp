@@ -218,11 +218,11 @@ int main(int /*argc*/, char** /*argv*/)
     {
         startRRTVisualization();
     }
-    catch (VirtualRobot::VirtualRobotException v)
+    catch(const VirtualRobot::VirtualRobotException &v)
     {
         std::cout << "VirtualRobot Exception: " << v.what() << std::endl ;
     }
-    catch (std::exception e)
+    catch(const std::exception &e)
     {
         std::cout << "Exception: " << e.what() << std::endl ;
     }

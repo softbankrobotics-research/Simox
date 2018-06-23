@@ -109,7 +109,7 @@ namespace VirtualRobot
         {
             dest  = new unsigned char[/*2 * */size];
         }
-        catch (std::exception e)
+        catch(const std::exception &e)
         {
             VR_ERROR << "Error:" << e.what() << endl << "Could not assign " << size << " bytes of memory. Reduce size of WorkspaceRepresentation data..." << endl;
             throw;

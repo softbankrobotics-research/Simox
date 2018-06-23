@@ -701,7 +701,7 @@ void ReachabilityMapWindow::setupEnvironment()
     {
         environment = ObjectIO::loadManipulationObject(objectFile);
     }
-    catch (VirtualRobotException e)
+    catch(const VirtualRobotException &e)
     {
         VR_ERROR << "Could not load " << objectFile << endl;
         return;
@@ -732,7 +732,7 @@ void ReachabilityMapWindow::loadObjectFile(std::string filename)
     {
         graspObject = ObjectIO::loadManipulationObject(filename);
     }
-    catch (VirtualRobotException e)
+    catch(const VirtualRobotException &e)
     {
         VR_ERROR << "Could not load " << filename << endl;
         return;
