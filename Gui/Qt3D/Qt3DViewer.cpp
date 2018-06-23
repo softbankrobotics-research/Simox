@@ -60,6 +60,7 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     lightEntity->addComponent(light);
 
     this->setRootEntity(scene);
+    this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 1.0f));
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
@@ -68,7 +69,9 @@ SimoxGui::Qt3DViewer::~Qt3DViewer()
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
+    this->scene->dumpObjectTree();
     requestLayer(layer).addVisualization(visualization);
+    this->scene->dumpObjectTree();
 }
 
 void SimoxGui::Qt3DViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
