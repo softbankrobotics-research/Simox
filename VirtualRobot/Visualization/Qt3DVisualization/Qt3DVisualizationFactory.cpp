@@ -9,6 +9,7 @@
 #include "Qt3DVisualizationSet.h"
 
 #include <Qt3DExtras/QCuboidMesh>
+#include <Qt3DExtras/QCylinderMesh>
 #include <Qt3DRender/QSceneLoader>
 
 namespace VirtualRobot
@@ -120,7 +121,14 @@ namespace VirtualRobot
     VisualizationPtr Qt3DVisualizationFactory::createCylinder(float radius, float height) const
     {
         std::cout << "Cylinder" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DExtras::QCylinderMesh* cylinder = new Qt3DExtras::QCylinderMesh();
+        cylinder->setRadius(radius);
+        cylinder->setLength(height);
+        cylinder->setSlices(64);
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(cylinder);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const
