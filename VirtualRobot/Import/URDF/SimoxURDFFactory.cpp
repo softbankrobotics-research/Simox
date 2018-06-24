@@ -343,13 +343,13 @@ namespace VirtualRobot
             }
         }
 
-        if (useColModelsIfNoVisuModel)
+        /*if (useColModelsIfNoVisuModel)
         {
             if (rnCol && rnCol->getVisualization() && (!rnVisu || rnVisu->getNumFaces() == 0))
             {
                 rnVisu = rnCol->getVisualization()->clone();
             }
-        }
+        }*/
 
         VirtualRobot::ModelLink::Physics physics;
 
