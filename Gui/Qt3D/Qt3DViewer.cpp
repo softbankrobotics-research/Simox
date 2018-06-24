@@ -43,21 +43,25 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->scene = new Qt3DCore::QEntity;
 
     this->camController = new Qt3DExtras::QOrbitCameraController(scene);
-    this->camController->setLinearSpeed( 500.0f );
+    this->camController->setLinearSpeed( 3000.0f );
     this->camController->setLookSpeed( 180.0f );
     this->camController->setCamera(this->camera());
 
     this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 100000.0f);
-    this->camera()->setPosition(QVector3D(0, 0, 3000));
+    this->camera()->setPosition(QVector3D(0, 0, 2000));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
 
-    Qt3DCore::QEntity *lightEntity = new Qt3DCore::QEntity(scene);
+    Qt3DCore::QEntity *lightEntity1 = new Qt3DCore::QEntity(scene);
+    Qt3DRender::QDirectionalLight* light1 = new Qt3DRender::QDirectionalLight(lightEntity1);
+    light1->setIntensity(1.0f);
+    light1->setWorldDirection(QVector3D(-1.0f, -1.0f, -1.0f));
+    lightEntity1->addComponent(light1);
 
-    Qt3DRender::QDirectionalLight* light = new Qt3DRender::QDirectionalLight(lightEntity);
-    light->setIntensity(1.0f);
-    light->setWorldDirection(QVector3D(-1.0f, -1.0f, -1.0f));
-
-    lightEntity->addComponent(light);
+    Qt3DCore::QEntity *lightEntity2 = new Qt3DCore::QEntity(scene);
+    Qt3DRender::QDirectionalLight* light2 = new Qt3DRender::QDirectionalLight(lightEntity2);
+    light2->setIntensity(1.0f);
+    light2->setWorldDirection(QVector3D(1.0f, 1.0f, 1.0f));
+    lightEntity2->addComponent(light2);
 
     this->setRootEntity(scene);
     this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 1.0f));
@@ -170,7 +174,7 @@ unsigned short SimoxGui::Qt3DViewer::getAntialiasing() const
 
 void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
 {
-    this->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));
+    this->defaultFrameGraph()->setClearColor(QColor(QRgb(0xB2B2B2)));
 }
 
 VirtualRobot::Visualization::Color SimoxGui::Qt3DViewer::getBackgroundColor() const
