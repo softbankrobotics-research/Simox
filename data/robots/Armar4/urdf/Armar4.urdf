@@ -9,7 +9,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb1_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -28,7 +28,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb2_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -47,7 +47,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho1_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -66,7 +66,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho2_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -85,7 +85,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho3_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -104,7 +104,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho4_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho4_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -123,7 +123,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Wri1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Wri1_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -142,7 +142,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Wri2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Wri2_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>
@@ -1328,7 +1328,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Torso_Pitch_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Torso2_joint_visu.dae" scale="1 1 1"/>
 			</geometry>
 		</visual>
 		<collision>

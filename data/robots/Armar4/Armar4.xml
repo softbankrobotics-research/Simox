@@ -4,14 +4,4 @@
 	
 	<URDF>urdf/Armar4.urdf</URDF>
 
-	<!--Sensors>sensors/Armar4-sensors-ft.xml</Sensors-->
-	
-        <EndEffector>endeffectors/Armar4-eef-hands.xml</EndEffector>
-        <EndEffector>endeffectors/Armar4-eef-feet.xml</EndEffector>
-
-        <Frame>frames/Armar4-frames.xml</Frame>
-
-        <NodeSet>nodesets/Armar4-jointsets.xml</NodeSet>
-        <NodeSet>nodesets/Armar4-linksets.xml</NodeSet>
-
 </ModelDescription>
