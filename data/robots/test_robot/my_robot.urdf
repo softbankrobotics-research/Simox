@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="origins">
+	<link name="ltorso">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="Armar4.dae" scale="1 1 1" />
+            </geometry>
+        </visual>
+    </link>
+    <link name="mtorso">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="MMM.dae" scale="1.5 1.5 1.5" />
+            </geometry>
+        </visual>
+    </link>
+	<link name="utorso">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="MMM.dae" scale="1.5 1.5 1.5" />
+            </geometry>
+        </visual>
+    </link>
+
+	<joint name="back_bky" type="revolute">
+        <origin xyz="1 0.4 0" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+        <parent link="ltorso" />
+        <child link="mtorso" />
+        <limit effort="206.843" velocity="12" lower="-0.610691" upper="0.438427" />
+    </joint>
+
+	<joint name="back_bkx" type="revolute">
+        <origin xyz="-2 0 0" rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <parent link="mtorso" />
+        <child link="utorso" />
+        <limit effort="200" velocity="12" lower="-0.698132" upper="0.698132" />
+    </joint>
+
+</robot>
