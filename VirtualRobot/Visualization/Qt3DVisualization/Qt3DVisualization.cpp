@@ -113,7 +113,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setColor(const Visualization::Color &c)
     {
-        std::cout << "setColor()" << std::endl;
+        this->material->setAmbient(QColor((int)(c.r * 255.0f), (int)(c.g * 255.0f), (int)(c.b * 255.0f)));
     }
 
     Visualization::Color Qt3DVisualization::getColor() const
