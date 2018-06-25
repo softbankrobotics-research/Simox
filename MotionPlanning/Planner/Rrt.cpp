@@ -4,6 +4,7 @@
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
+#include <VirtualRobot/Random.h>
 #include <time.h>
 
 
@@ -72,7 +73,6 @@ namespace Saba
             }
         }
 
-        float rand_mult = (float)(1.0 / (double)(RAND_MAX));
         float r;
 
         if (!isInitialized())
@@ -108,7 +108,7 @@ namespace Saba
         {
             // CHOOSE A RANDOM CONFIGURATION
             // check if we want to go to the goal directly or extend randomly
-            r = (float)rand() * rand_mult;
+            r = VirtualRobot::RandomFloat();
 
             if (r <= extendGoToGoal)
             {

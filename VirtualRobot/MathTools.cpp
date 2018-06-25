@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <algorithm>
 
+#include <VirtualRobot/Random.h>
 
 
 #include <Eigen/Geometry>
@@ -955,8 +956,8 @@ namespace VirtualRobot
 
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::randomPointInTriangle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3)
     {
-        float b0 = (float)rand() / (float)(RAND_MAX);
-        float b1 = (1.0f - b0) * (float)rand() / (float)(RAND_MAX);
+        float b0 = RandomFloat();
+        float b1 = (1.0f - b0) * RandomFloat();
         float b2 = 1 - b0 - b1;
 
         return v1 * b0  + v2 * b1 + v3 * b2;

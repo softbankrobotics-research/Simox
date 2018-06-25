@@ -13,6 +13,7 @@
 #include "../ManipulationObject.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
+#include <VirtualRobot/Random.h>
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -878,8 +879,6 @@ namespace VirtualRobot
 
     bool WorkspaceRepresentation::setRobotNodesToRandomConfig(VirtualRobot::RobotNodeSetPtr nodeSet, bool checkForSelfCollisions /*= true*/)
     {
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
-
         if (!nodeSet)
         {
             nodeSet = this->nodeSet;
@@ -901,7 +900,7 @@ namespace VirtualRobot
         {
             for (unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
-                rndValue = (float)rand() * randMult; // value from 0 to 1
+                rndValue = RandomFloat(); // value from 0 to 1
                 minJ = (*nodeSet)[i]->getJointLimitLo();
                 maxJ = (*nodeSet)[i]->getJointLimitHi();
                 v[i] = minJ + ((maxJ - minJ) * rndValue);
@@ -2183,7 +2182,6 @@ namespace VirtualRobot
 
         std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
         for (int i = 0; i < numThreads; i++)
         {
@@ -2222,7 +2220,7 @@ namespace VirtualRobot
                     {
                         for (int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
-                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            rndValue = RandomFloat(); // value from 0 to 1
                             minJ = (*nodeSet)[l]->getJointLimitLo();
                             maxJ = (*nodeSet)[l]->getJointLimitHi();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);

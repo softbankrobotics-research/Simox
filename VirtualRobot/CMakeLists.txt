@@ -145,6 +145,7 @@ Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 VirtualRobot.cpp
 Tools/Gravity.cpp
+Random.cpp
 
 math/Contact.cpp
 math/ContactList.cpp
@@ -293,6 +294,7 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
+Random.h
 
 math/MathForwardDefinitions.h
 math/Contact.h

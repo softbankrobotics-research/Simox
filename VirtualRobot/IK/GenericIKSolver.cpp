@@ -11,6 +11,8 @@
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CDManager.h"
 
+#include <VirtualRobot/Random.h>
+
 #include <algorithm>
 
 using namespace Eigen;
@@ -85,12 +87,11 @@ namespace VirtualRobot
     void GenericIKSolver::setJointsRandom()
     {
         std::vector<float> jv;
-        float rn = 1.0f / (float)RAND_MAX;
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
             RobotNodePtr ro =  rns->getNode(i);
-            float r = (float)rand() * rn;
+            float r = RandomFloat();
             float v = ro->getJointLimitLo() + (ro->getJointLimitHi() - ro->getJointLimitLo()) * r;
             jv.push_back(v);
         }

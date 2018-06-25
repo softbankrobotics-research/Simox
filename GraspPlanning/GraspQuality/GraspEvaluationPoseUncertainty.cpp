@@ -1,5 +1,6 @@
 #include <Eigen/Geometry>
 #include "GraspEvaluationPoseUncertainty.h"
+#include <VirtualRobot/Random.h>
 
 #include <algorithm>
 #include <random>
@@ -125,14 +126,13 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     }
 
     Eigen::Matrix4f m;
-    std::default_random_engine generator;
     std::normal_distribution<double> normalDistribution(0.0,0.5);
     std::uniform_real_distribution<double> uniformDistribution(0.0,1);
     for (int j=0;j<numPoses; j++)
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = config.useNormalDistribution ? normalDistribution(generator) : uniformDistribution(generator);
+            float r = config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit()) : uniformDistribution(VirtualRobot::PRNG64Bit());
             tmpPose[i] = start[i] + r*dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
