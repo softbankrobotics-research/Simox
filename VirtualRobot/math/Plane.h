@@ -44,7 +44,7 @@ public:
     Eigen::Vector3f Dir1(){return dir1;}
     Eigen::Vector3f Dir2(){return dir2;}
 
-
+    Plane Transform(const Eigen::Matrix4f &transform);
     Eigen::Vector3f GetPoint(float u, float v) override;
     Eigen::Vector3f GetDdu(float u, float v) override;
     Eigen::Vector3f GetDdv(float u, float v) override;
