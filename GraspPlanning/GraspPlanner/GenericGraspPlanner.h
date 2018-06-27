@@ -61,6 +61,7 @@ namespace GraspStudio
         */
         int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr()) override;
 
+        VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
 
@@ -77,7 +78,6 @@ namespace GraspStudio
 
         bool timeout();
 
-        VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
 
         VirtualRobot::SceneObjectPtr object;
         VirtualRobot::EndEffectorPtr eef;

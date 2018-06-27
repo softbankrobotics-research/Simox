@@ -159,17 +159,7 @@ namespace Saba
         */
         void requestStop();
 
-        //! get random seed
-
-        unsigned int getRandomSeed() const
-        {
-            return randomSeed;
-        }
-
-        void setRandomSeed(unsigned int random_seed)
-        {
-            randomSeed = random_seed;
-        }
+        void setRandomSeed(unsigned int random_seed);
 
         //! checks complete solution path (with the pathCheck methods provided by the CSpace implementation)
         virtual bool checkSolution(CSpacePathPtr path, bool verbose = false);
@@ -346,9 +336,6 @@ namespace Saba
 
         std::vector<VirtualRobot::RobotNodePtr> robotJoints;        //!< joints of the robot that we are manipulating
 
-        unsigned int randomSeed;
-
-        float randMult;
         bool useMetricWeights;
         bool checkForBorderlessDims;
         std::vector< bool > borderLessDimension;         // store borderless state

@@ -76,7 +76,6 @@ BOOST_AUTO_TEST_CASE(testNullBlock)
 
 BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
 {
-    srand((unsigned int)time(NULL));
     // COMPRESS
     std::stringstream ios;
     unsigned char blockN[NR_BLOCKS_COMPRESSION_TEST][BLOCK_SIZE_COMPRESSION_TEST];

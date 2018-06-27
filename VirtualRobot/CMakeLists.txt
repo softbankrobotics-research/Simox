@@ -145,6 +145,7 @@ Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 VirtualRobot.cpp
 Tools/Gravity.cpp
+Random.cpp
 
 math/Contact.cpp
 math/ContactList.cpp
@@ -159,6 +160,7 @@ math/AbstractFunctionR1R6.cpp
 math/AbstractFunctionR2R3.cpp
 math/CompositeFunctionR1R6.cpp
 math/LinearInterpolatedOrientation.cpp
+math/FitPlane.cpp
 math/Plane.cpp
 math/Triangle.cpp
 math/ImplicitPlane.cpp
@@ -293,6 +295,7 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
+Random.h
 
 math/MathForwardDefinitions.h
 math/Contact.h
@@ -315,6 +318,7 @@ math/SimpleAbstractFunctionR2R3.h
 math/SimpleAbstractFunctionR3R1.h
 math/CompositeFunctionR1R6.h
 math/LinearInterpolatedOrientation.h
+math/FitPlane.h
 math/Plane.h
 math/Triangle.h
 math/ImplicitPlane.h

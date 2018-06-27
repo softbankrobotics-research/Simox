@@ -21,7 +21,7 @@
 #include "AbstractFunctionR2R3.h"
 #include "Contact.h"
 #include "Plane.h"
-
+#include <stdexcept>
 
 using namespace math;
 
@@ -60,3 +60,33 @@ Eigen::Vector2f AbstractFunctionR2R3::GetUVFromPos(Eigen::Vector3f pos)
 }
 
 Eigen::Vector3f AbstractFunctionR2R3::GetVector(Eigen::Vector2f pos, Eigen::Vector2f dir) { return GetDdu(pos) * dir.x() + GetDdv(pos) * dir.y(); }
+
+float AbstractFunctionR2R3::GetDistance(Eigen::Vector3f pos, AbstractFunctionR2R3::ProjectionType projection)
+{
+    return (GetPointOnFunction(pos, projection) - pos).norm();
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::GetPointOnFunction(Eigen::Vector3f pos, AbstractFunctionR2R3::ProjectionType projection)
+{
+    switch (projection)
+    {
+        case SimpleProjection:
+            return ProjectPointOntoFunction(pos);
+        case FindClosestPointType:
+            return FindClosestPoint(pos);
+        default:
+            throw std::runtime_error("invalid case");
+    }
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::ProjectPointOntoFunction(Eigen::Vector3f pos)
+{
+    float u, v;
+    GetUV(pos, u, v);
+    return GetPoint(u, v);
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::FindClosestPoint(Eigen::Vector3f pos, float epsilon)
+{
+    throw std::runtime_error("FindClosestPoint is not implemented");
+}

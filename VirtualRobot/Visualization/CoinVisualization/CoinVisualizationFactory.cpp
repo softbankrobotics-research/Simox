@@ -1745,25 +1745,27 @@ namespace VirtualRobot
         }
         else if (colorMode)
         {
-            int32_t* matInx = new int32_t[model->faces.size() * 3];
+            int32_t* matInx = new int32_t[model->faces.size() * 4];
 
             for (size_t i = 0; i < model->faces.size(); i++)
             {
                 if (model->faces[i].idColor1 < model->colors.size())
                 {
-                    matInx[i * 3] = model->faces[i].idColor1;
-                    matInx[i * 3 + 1] = model->faces[i].idColor2;
-                    matInx[i * 3 + 2] = model->faces[i].idColor3;
+                    matInx[i * 4] = model->faces[i].idColor1;
+                    matInx[i * 4 + 1] = model->faces[i].idColor2;
+                    matInx[i * 4 + 2] = model->faces[i].idColor3;
+                    matInx[i * 4 + 3] = SO_END_FACE_INDEX;
                 }
                 else
                 {
-                    matInx[i * 3] = 0;
-                    matInx[i * 3 + 1] = 0;
-                    matInx[i * 3 + 2] = 0;
+                    matInx[i * 4] = 0;
+                    matInx[i * 4 + 1] = 0;
+                    matInx[i * 4 + 2] = 0;
+                    matInx[i * 4 + 3] = SO_END_FACE_INDEX;
                 }
             }
 
-            myFaceSet->materialIndex.setValues(0, model->faces.size() * 3, matInx);
+            myFaceSet->materialIndex.setValues(0, model->faces.size() * 4, matInx);
             delete[] matInx;
         }
 

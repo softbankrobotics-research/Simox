@@ -7,6 +7,7 @@
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
+#include <VirtualRobot/Random.h>
 #include <time.h>
 
 
@@ -126,9 +127,8 @@ namespace Saba
 
     bool GraspIkRrt::doPlanningCycle()
     {
-        static const float rMult = (float)(1.0 / (double)(RAND_MAX));
         ExtensionResult resA, resB;
-        float r = (float)rand() * rMult;
+        float r = RandomFloat();
 
         if (r <= sampleGoalProbab || tree2->getNrOfNodes() == 0)
         {

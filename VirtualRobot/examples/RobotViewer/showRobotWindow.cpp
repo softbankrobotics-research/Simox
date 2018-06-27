@@ -1016,7 +1016,6 @@ void showRobotWindow::openHand()
 
     if (robot)
     {
-        float randMult = (float)(1.0 / (double)(RAND_MAX));
         std::vector<RobotNodePtr> rn = robot->getRobotNodes();
         std::vector<RobotNodePtr> rnJoints;
 
@@ -1037,7 +1036,7 @@ void showRobotWindow::openHand()
 
             for (size_t j = 0; j < rnJoints.size(); j++)
             {
-                float t = (float)rand() * randMult; // value from 0 to 1
+                float t = RandomFloat(); // value from 0 to 1
                 t = rnJoints[j]->getJointLimitLo() + (rnJoints[j]->getJointLimitHi() - rnJoints[j]->getJointLimitLo()) * t;
                 jv.push_back(t);
             }

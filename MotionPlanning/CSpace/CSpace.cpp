@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <time.h>
 #include <VirtualRobot/MathTools.h>
+#include <VirtualRobot/Random.h>
 #define GET_RANDOM_DATA_FROM_64BIT_ADDRESS(a) (int)(0xFF & (long)a) | (0xFF00 & ((long)a >> 16))
 
 using namespace std;
@@ -38,19 +39,10 @@ namespace Saba
         robo = robot;
         cdm = collisionManager;
 
-        if (randomSeed == 0)
+        if (randomSeed != 0)
         {
-#ifdef __LP64__
-            // This is for machines with 64Bit addresses and 32Bit int datatype
-            randomSeed = (unsigned int)(time(NULL) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
-#else
-            randomSeed = (unsigned int)(time(NULL) + (int)this) % 10000;
-#endif
+            VirtualRobot::PRNG64Bit().seed(randomSeed);
         }
-
-        this->randomSeed = randomSeed;
-
-        randMult = (float)(1.0 / (double)(RAND_MAX));
 
         useMetricWeights = false;
         multiThreaded = false;
@@ -62,8 +54,6 @@ namespace Saba
         {
             THROW_SABA_EXCEPTION("CSpace: Initialization fails: NO ROBOT");
         }
-
-        srand(randomSeed);
         //std::cout << "Using random seed: " << m_randomSeed << std::endl;
 
         dimension = 0;
@@ -137,6 +127,11 @@ namespace Saba
     void CSpace::requestStop()
     {
         stopPathCheck = true;
+    }
+
+    void CSpace::setRandomSeed(unsigned int random_seed)
+    {
+        VirtualRobot::PRNG64Bit().seed(random_seed);
     }
 
     void CSpace::reset()
@@ -670,7 +665,7 @@ namespace Saba
     {
         SABA_ASSERT(dim <= dimension)
 
-        float res = (float)rand() * randMult; // value from 0 to 1
+        float res = VirtualRobot::RandomFloat(); // value from 0 to 1
         res = boundaryMin[dim] + (boundaryDist[dim] * res);
         return res;
     }
@@ -691,7 +686,7 @@ namespace Saba
 
                 for (unsigned int i = 0; i < dimension; i++)
                 {
-                    t = (float)rand() * randMult; // value from 0 to 1
+                    t = VirtualRobot::RandomFloat(); // value from 0 to 1
                     config[i] = boundaryMin[i] + (boundaryDist[i] * t);
                 }
             }
