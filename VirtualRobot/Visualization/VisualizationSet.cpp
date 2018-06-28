@@ -403,11 +403,6 @@ namespace VirtualRobot
         return usedBoundingBox;
     }
 
-    TriMeshModelPtr DummyVisualizationSet::getTriMeshModel() const
-    {
-        return TriMeshModelPtr(new TriMeshModel);
-    }
-
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
         VR_ERROR_ONCE_NYI;

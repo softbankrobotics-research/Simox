@@ -134,11 +134,6 @@ namespace VirtualRobot
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
 
-        /**
-         * Calculate and return one TriMesh model containing all visualizations of this set
-         */
-        virtual TriMeshModelPtr getTriMeshModel() const override;
-
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
 
