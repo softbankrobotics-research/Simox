@@ -171,6 +171,7 @@ math/Kernels.cpp
 math/GaussianImplicitSurface3D.cpp
 math/GaussianImplicitSurface3DNormals.cpp
 math/DataR3R1.cpp
+math/DataR3R2.cpp
 math/Helpers.cpp
 math/Index3.cpp
 math/MarchingCubes.cpp
@@ -329,6 +330,7 @@ math/Kernels.h
 math/GaussianImplicitSurface3D.h
 math/GaussianImplicitSurface3DNormals.h
 math/DataR3R1.h
+math/DataR3R2.h
 math/Helpers.h
 math/Index3.h
 math/Array3D.h

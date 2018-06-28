@@ -31,4 +31,5 @@ ADD_VR_TEST( VirtualRobotMeshImportTest )
 ADD_VR_TEST( VirtualRobotTimeOptimalTrajectoryTest )
 
 ADD_VR_TEST( MathGaussianImplicitSurface3DNormalsTest )
+ADD_VR_TEST( MathGaussianImplicitSurface3DTest )
 ADD_VR_TEST( MathFitPlaneTest )

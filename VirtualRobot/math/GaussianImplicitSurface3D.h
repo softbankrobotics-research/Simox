@@ -22,6 +22,7 @@
 
 #include "MathForwardDefinitions.h"
 #include "DataR3R1.h"
+#include "DataR3R2.h"
 #include "SimpleAbstractFunctionR3R1.h"
 #include "Kernels.h"
 #include <memory>
@@ -35,6 +36,7 @@ class GaussianImplicitSurface3D :
 public:
     GaussianImplicitSurface3D(std::unique_ptr<KernelWithDerivatives> kernel);
     void Calculate(const std::vector<DataR3R1>& samples, float noise);
+    void Calculate(const std::vector<DataR3R2>& samples);
     float Get(Eigen::Vector3f pos) override;
     float GetVariance(const Eigen::Vector3f& pos);
 
@@ -42,13 +44,13 @@ private:
     Eigen::MatrixXd covariance;
     Eigen::MatrixXd covariance_inv;
     Eigen::VectorXd alpha;
-    std::vector<DataR3R1> samples;
+    std::vector<DataR3R2> samples;
     float R;
     
     std::unique_ptr<KernelWithDerivatives> kernel;
 
     float Predict(const Eigen::Vector3f& pos) const;
-    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise);
+    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, const std::vector<float>& noise);
     void MatrixInvert(const Eigen::VectorXd& b);
 };
 }

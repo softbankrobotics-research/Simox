@@ -56,6 +56,7 @@ namespace math
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori);
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f &source, const Eigen::Vector3f &target);
         static Eigen::Matrix3f RotateOrientationToFitVector(const Eigen::Matrix3f& ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget);
+        static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
 
     private:
     };

@@ -30,14 +30,26 @@ GaussianImplicitSurface3D::GaussianImplicitSurface3D(std::unique_ptr<KernelWithD
 
 void GaussianImplicitSurface3D::Calculate(const std::vector<DataR3R1>& samples, float noise)
 {
+    std::vector<DataR3R2> samples2;
+    for(const DataR3R1& d: samples)
+    {
+        samples2.push_back(DataR3R2(d.Position(), d.Value(), noise));
+    }
+    Calculate(samples2);
+}
+
+void GaussianImplicitSurface3D::Calculate(const std::vector<DataR3R2>& samples)
+{
     this->samples = samples;
     std::vector<Eigen::Vector3f> points;
     Eigen::VectorXd values(samples.size());
+    std::vector<float> noise;
     int i = 0;
 
     for(const auto& d: samples){
         points.push_back(d.Position());
-        values(i++) = d.Value();
+        values(i++) = d.Value1();
+        noise.push_back(d.Value2());
     }
 
     R = 0;
@@ -81,7 +93,7 @@ float GaussianImplicitSurface3D::Predict(const Eigen::Vector3f& pos) const
     return Cux.dot(alpha);
 }
 
-void GaussianImplicitSurface3D::CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise)
+void GaussianImplicitSurface3D::CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, const std::vector<float>& noise)
 {
     covariance = Eigen::MatrixXd(points.size(), points.size());
 
@@ -96,7 +108,7 @@ void GaussianImplicitSurface3D::CalculateCovariance(const std::vector<Eigen::Vec
     }
     for (size_t i = 0; i < points.size(); i++)
     {
-        covariance(i, i) += noise * noise;
+        covariance(i, i) += noise.at(i) * noise.at(i);
     }
 }
 

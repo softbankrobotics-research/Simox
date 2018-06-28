@@ -223,3 +223,8 @@ Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori
     Eigen::Vector3f vec = ori * localSource;
     return GetRotationMatrix(vec, globalTarget) * ori;
 }
+
+Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
+{
+    return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
+}
