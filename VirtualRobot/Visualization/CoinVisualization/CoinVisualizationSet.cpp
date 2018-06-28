@@ -85,31 +85,6 @@ namespace VirtualRobot
         return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
-    void CoinVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
-    {
-        VisualizationSet::setGlobalPose(m);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t CoinVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
-    {
-        static unsigned int id = 0;
-        poseChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void CoinVisualizationSet::removePoseChangedCallback(size_t id)
-    {
-        auto it = poseChangedCallbacks.find(id);
-        if (it != poseChangedCallbacks.end())
-        {
-            poseChangedCallbacks.erase(it);
-        }
-    }
-
     void CoinVisualizationSet::setSelected(bool selected)
     {
         VisualizationSet::setSelected(selected);
@@ -118,21 +93,6 @@ namespace VirtualRobot
     bool CoinVisualizationSet::isSelected() const
     {
         return VisualizationSet::isSelected();
-    }
-
-    size_t CoinVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR_ONCE_NYI;
-            printed = true;
-        }
-    }
-
-    void CoinVisualizationSet::removeSelectionChangedCallback(size_t id)
-    {
-        VR_ERROR_ONCE_NYI;
     }
 
     void CoinVisualizationSet::_addManipulator(Visualization::ManipulatorType t)

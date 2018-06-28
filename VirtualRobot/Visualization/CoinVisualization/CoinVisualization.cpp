@@ -116,26 +116,6 @@ namespace VirtualRobot
         transformNode->translation.setValue(m(0, 3), m(1, 3), m(2, 3));
         MathTools::Quaternion q = MathTools::eigen4f2quat(m);
         transformNode->rotation.setValue(q.x, q.y, q.z, q.w);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t CoinVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
-    {
-        static unsigned int id = 0;
-        poseChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void CoinVisualization::removePoseChangedCallback(size_t id)
-    {
-        auto it = poseChangedCallbacks.find(id);
-        if (it != poseChangedCallbacks.end())
-        {
-            poseChangedCallbacks.erase(it);
-        }
     }
 
     void CoinVisualization::setVisible(bool showVisualization)
@@ -301,6 +281,7 @@ namespace VirtualRobot
 
     void CoinVisualization::setSelected(bool selected)
     {
+        Visualization::setSelected(selected);
         VR_ERROR_ONCE_NYI;
     }
 
@@ -308,17 +289,6 @@ namespace VirtualRobot
     {
         VR_ERROR_ONCE_NYI;
         return false;
-    }
-
-    size_t CoinVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        VR_ERROR_ONCE_NYI;
-        return 0;
-    }
-
-    void CoinVisualization::removeSelectionChangedCallback(size_t id)
-    {
-        VR_ERROR_ONCE_NYI;
     }
 
     void CoinVisualization::scale(const Eigen::Vector3f &s)

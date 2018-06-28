@@ -152,8 +152,8 @@ namespace VirtualRobot
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& m);
         virtual void applyDisplacement(const Eigen::Matrix4f& dp);
-        virtual size_t addPoseChangedCallback(std::function<void(const Eigen::Matrix4f&)> f) = 0;
-        virtual void removePoseChangedCallback(size_t id) = 0;
+        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f);
+        virtual void removePoseChangedCallback(size_t id);
 
         /*!
             Set the visibility of this visualisation.
@@ -195,10 +195,10 @@ namespace VirtualRobot
         {
             this->setSelected(false);
         }
-        virtual void setSelected(bool selected) = 0;
+        virtual void setSelected(bool selected);
         virtual bool isSelected() const = 0;
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
-        virtual void removeSelectionChangedCallback(size_t id) = 0;
+        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f);
+        virtual void removeSelectionChangedCallback(size_t id);
 
         virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
 
@@ -273,6 +273,9 @@ namespace VirtualRobot
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
         virtual void _removeAllManipulators() = 0;
+
+        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+        std::map<unsigned int, std::function<void(bool)>> selectionChangedCallbacks;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization
@@ -288,10 +291,6 @@ namespace VirtualRobot
         /*!
         */
         virtual ~DummyVisualization() override = default;
-
-        virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
-        virtual size_t addPoseChangedCallback(std::function<void(const Eigen::Matrix4f&)> f) override;
-        virtual void removePoseChangedCallback(size_t id) override;
 
         /*!
             Set the visibility of this visualisation.
@@ -319,8 +318,6 @@ namespace VirtualRobot
 
         virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
-        virtual void removeSelectionChangedCallback(size_t id) override;
 
         virtual void scale(const Eigen::Vector3f& s) override;
 
@@ -391,8 +388,6 @@ namespace VirtualRobot
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
-        std::map<unsigned int, std::function<void(bool)>> selectionChangedCallbacks;
     };
 
 } // namespace VirtualRobot

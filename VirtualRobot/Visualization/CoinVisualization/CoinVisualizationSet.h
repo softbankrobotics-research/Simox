@@ -51,14 +51,8 @@ namespace VirtualRobot
 
         virtual VisualizationPtr clone() const override;
 
-        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
-        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
-        virtual void removePoseChangedCallback(size_t id) override;
-
         virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
-        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
-        virtual void removeSelectionChangedCallback(size_t id) override;
 
     protected:
         virtual void _addManipulator(ManipulatorType t) override;
@@ -80,7 +74,6 @@ namespace VirtualRobot
         SoSeparator* setNode;
         std::string filename;
         bool usedBoundingBox;
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
     };
 
     typedef std::shared_ptr<CoinVisualizationSet> CoinVisualizationSetPtr;

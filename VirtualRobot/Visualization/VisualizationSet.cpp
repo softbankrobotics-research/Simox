@@ -94,6 +94,10 @@ namespace VirtualRobot
     void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
     {
         globalPose = m;
+        for (auto& f : poseChangedCallbacks)
+        {
+            f.second(m);
+        }
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -218,6 +222,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setSelected(bool selected)
     {
+        Visualization::setSelected(selected);
         for (auto& visu : visualizations)
         {
             visu->setSelected(selected);
@@ -355,42 +360,6 @@ namespace VirtualRobot
             clonedVisus.push_back(visu->clone());
         }
         return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
-    }
-
-    void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
-    {
-        VisualizationSet::setGlobalPose(m);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t DummyVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
-    {
-        static size_t id = 0;
-        poseChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void DummyVisualizationSet::removePoseChangedCallback(size_t id)
-    {
-        auto it = poseChangedCallbacks.find(id);
-        if (it != poseChangedCallbacks.end())
-        {
-            poseChangedCallbacks.erase(it);
-        }
-    }
-
-    size_t DummyVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        VR_ERROR_ONCE_NYI;
-        return 0;
-    }
-
-    void DummyVisualizationSet::removeSelectionChangedCallback(size_t id)
-    {
-        VR_ERROR_ONCE_NYI;
     }
 
     void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)

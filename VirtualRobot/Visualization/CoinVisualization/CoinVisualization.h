@@ -62,8 +62,6 @@ namespace VirtualRobot
     public:
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         //virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
-        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
-        virtual void removePoseChangedCallback(size_t id) override;
 
         virtual void setVisible(bool showVisualization) override;
         virtual bool isVisible() const override;
@@ -84,8 +82,6 @@ namespace VirtualRobot
 
         virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
-        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
-        virtual void removeSelectionChangedCallback(size_t id) override;
 
         virtual void scale(const Eigen::Vector3f &s) override;
         Eigen::Vector3f getScalingFactor() const;
@@ -155,7 +151,6 @@ namespace VirtualRobot
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
     };
 
     typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;

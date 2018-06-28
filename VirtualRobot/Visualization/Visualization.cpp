@@ -37,6 +37,10 @@ namespace VirtualRobot
     void Visualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
         globalPose = m;
+        for (auto& f : poseChangedCallbacks)
+        {
+            f.second(m);
+        }
     }
 
     void Visualization::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -44,28 +48,43 @@ namespace VirtualRobot
         this->setGlobalPose(this->getGlobalPose() * dp);
     }
 
-    void DummyVisualization::setGlobalPose(const Eigen::Matrix4f &m)
-    {
-        Visualization::setGlobalPose(m);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t DummyVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
+    size_t Visualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
     {
         static size_t id = 0;
         poseChangedCallbacks[id] = f;
         return id++;
     }
 
-    void DummyVisualization::removePoseChangedCallback(size_t id)
+    void Visualization::removePoseChangedCallback(size_t id)
     {
         auto it = poseChangedCallbacks.find(id);
         if (it != poseChangedCallbacks.end())
         {
             poseChangedCallbacks.erase(it);
+        }
+    }
+
+    void Visualization::setSelected(bool selected)
+    {
+        for (auto& f : selectionChangedCallbacks)
+        {
+            f.second(selected);
+        }
+    }
+
+    size_t Visualization::addSelectionChangedCallback(std::function<void (bool)> f)
+    {
+        static unsigned int id = 0;
+        selectionChangedCallbacks[id] = f;
+        return id++;
+    }
+
+    void Visualization::removeSelectionChangedCallback(size_t id)
+    {
+        auto it = selectionChangedCallbacks.find(id);
+        if (it != selectionChangedCallbacks.end())
+        {
+            selectionChangedCallbacks.erase(it);
         }
     }
 
@@ -136,32 +155,13 @@ namespace VirtualRobot
 
     void DummyVisualization::setSelected(bool selected)
     {
+        Visualization::setSelected(selected);
         this->selected = selected;
-        for (auto& f : selectionChangedCallbacks)
-        {
-            f.second(selected);
-        }
     }
 
     bool DummyVisualization::isSelected() const
     {
         return selected;
-    }
-
-    size_t DummyVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        static unsigned int id = 0;
-        selectionChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void DummyVisualization::removeSelectionChangedCallback(size_t id)
-    {
-        auto it = selectionChangedCallbacks.find(id);
-        if (it != selectionChangedCallbacks.end())
-        {
-            selectionChangedCallbacks.erase(it);
-        }
     }
 
     void DummyVisualization::scale(const Eigen::Vector3f &)
