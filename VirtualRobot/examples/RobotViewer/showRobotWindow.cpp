@@ -175,7 +175,7 @@ void showRobotWindow::showSensors()
 {
     if (!robot) return;
 
-    // TODO
+    VR_ERROR_ONCE_NYI;
 
     render();
 }

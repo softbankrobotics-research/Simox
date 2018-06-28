@@ -384,23 +384,13 @@ namespace VirtualRobot
 
     size_t DummyVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
+        VR_ERROR_ONCE_NYI;
         return 0;
     }
 
     void DummyVisualizationSet::removeSelectionChangedCallback(size_t id)
     {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
+        VR_ERROR_ONCE_NYI;
     }
 
     void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
