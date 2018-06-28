@@ -36,11 +36,14 @@ namespace VirtualRobot
 
     void Visualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        globalPose = m;
-        for (auto& f : poseChangedCallbacks)
+        if (m != globalPose)
         {
-            f.second(m);
+            for (auto& f : poseChangedCallbacks)
+            {
+                f.second(m);
+            }
         }
+        globalPose = m;
     }
 
     void Visualization::applyDisplacement(const Eigen::Matrix4f &dp)
@@ -66,9 +69,12 @@ namespace VirtualRobot
 
     void Visualization::setSelected(bool selected)
     {
-        for (auto& f : selectionChangedCallbacks)
+        if (isSelected() != selected)
         {
-            f.second(selected);
+            for (auto& f : selectionChangedCallbacks)
+            {
+                f.second(selected);
+            }
         }
     }
 
