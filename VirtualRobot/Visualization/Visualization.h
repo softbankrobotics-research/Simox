@@ -138,7 +138,7 @@ namespace VirtualRobot
         /*!
         Constructor
         */
-        Visualization() : Frame(), inVisualizationSet(false)
+        Visualization() : Frame()
         {
         }
 
@@ -211,38 +211,17 @@ namespace VirtualRobot
         };
         void addManipulator(ManipulatorType t)
         {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be added to visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_addManipulator(t);
-            }
+            this->_addManipulator(t);
         }
         void removeManipulator(ManipulatorType t)
         {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be removed from visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_removeManipulator(t);
-            }
+            this->_removeManipulator(t);
         }
         virtual bool hasManipulator(ManipulatorType t) const = 0;
         virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const = 0;
         void removeAllManipulators()
         {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be removed from visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_removeAllManipulators();
-            }
+            this->_removeAllManipulators();
         }
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const = 0;
@@ -290,20 +269,10 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) = 0;
 
-        /**
-         * @brief setIsInVisualizationSet Internally used function to determinate if this visualization is in a set.
-         *
-         * If a visualization is in a set, it is only selecable and manipulateable using the set.
-         */
-        virtual bool isInVisualizationSet() const;
-
     protected:
-        virtual void setIsInVisualizationSet(bool inSet);
         virtual void _addManipulator(ManipulatorType t) = 0;
         virtual void _removeManipulator(ManipulatorType t) = 0;
         virtual void _removeAllManipulators() = 0;
-
-        bool inVisualizationSet;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization

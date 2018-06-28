@@ -101,7 +101,7 @@ void showSceneWindow::buildVisu()
     }
 
 
-    viewer->addVisualizations("scene", scene->getAllVisualizations(visuType));
+    viewer->addVisualization("scene", scene->getVisualization(visuType));
 
     if (UI.checkBoxRoot->isChecked())
     {

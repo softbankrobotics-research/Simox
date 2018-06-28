@@ -14,8 +14,7 @@ namespace VirtualRobot
 {
 
     VisualizationSet::VisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationGroup(),
-          Visualization()
+        : Visualization()
     {
         for (auto& visu : visualizations)
         {
@@ -25,35 +24,27 @@ namespace VirtualRobot
 
     VisualizationSet::~VisualizationSet()
     {
-        for (auto& visu : visualizations)
-        {
-            visu->setIsInVisualizationSet(false);
-        }
     }
 
     void VisualizationSet::addVisualization(const VisualizationPtr &visu)
     {
-        if (visu->isInVisualizationSet())
+        if (!containsVisualization(visu))
         {
-            VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
-        }
-        else
-        {
-            VisualizationGroup::addVisualization(visu);
-            visu->setIsInVisualizationSet(true);
+            visualizations.push_back(visu);
         }
     }
 
     bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
     {
-        return VisualizationGroup::containsVisualization(visu);
+        return std::find(visualizations.begin(), visualizations.end(), visu) != visualizations.end();
     }
 
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
-        if (VisualizationGroup::removeVisualization(visu))
+        auto it = std::find(visualizations.begin(), visualizations.end(), visu);
+        if (it != visualizations.end())
         {
-            visu->setIsInVisualizationSet(false);
+            visualizations.erase(it);
             return true;
         }
         return false;
@@ -66,97 +57,163 @@ namespace VirtualRobot
 
     std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
     {
-        return VisualizationGroup::getVisualizations();
+        return visualizations;
     }
 
     VisualizationPtr VisualizationSet::at(size_t index) const
     {
-        return VisualizationGroup::at(index);
+        return visualizations.at(index);
     }
 
     VisualizationPtr VisualizationSet::operator[](size_t index) const
     {
-        return VisualizationGroup::operator [](index);
+        return visualizations[index];
     }
 
     bool VisualizationSet::empty() const
     {
-        return VisualizationGroup::empty();
+        return visualizations.empty();
     }
 
     size_t VisualizationSet::size() const
     {
-        return VisualizationGroup::size();
-    }
-
-    Eigen::Matrix4f VisualizationSet::getGlobalPose() const
-    {
-        return VisualizationGroup::getGlobalPose();
+        return visualizations.size();
     }
 
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        VisualizationGroup::setGlobalPose(m);
+        Eigen::Matrix4f oldM = this->getGlobalPose();
+        Eigen::Matrix4f dp = m * oldM.inverse();
+        for (auto& visu : visualizations)
+        {
+            visu->setGlobalPose(dp * visu->getGlobalPose());
+        }
+        setGlobalPoseNoUpdate(m);
     }
 
     void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
     {
-        VisualizationGroup::setGlobalPoseNoUpdate(m);
+        globalPose = m;
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
     {
-        VisualizationGroup::applyDisplacement(dp);
+        setGlobalPose(getGlobalPose()*dp);
     }
 
     void VisualizationSet::setVisible(bool showVisualization)
     {
-        VisualizationGroup::setVisible(showVisualization);
+        for (auto& visu : visualizations)
+        {
+            visu->setVisible(showVisualization);
+        }
     }
 
     bool VisualizationSet::isVisible() const
     {
-        return VisualizationGroup::isVisible();
+        for (auto& visu : visualizations)
+        {
+            if (visu->isVisible())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void VisualizationSet::setUpdateVisualization(bool enable)
     {
-        VisualizationGroup::setUpdateVisualization(enable);
+        for (auto& visu : visualizations)
+        {
+            visu->setUpdateVisualization(enable);
+        }
     }
 
     bool VisualizationSet::getUpdateVisualizationStatus() const
     {
-        return VisualizationGroup::getUpdateVisualizationStatus();
+        for (auto& visu : visualizations)
+        {
+            if (visu->getUpdateVisualizationStatus())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void VisualizationSet::setStyle(Visualization::DrawStyle s)
     {
-        VisualizationGroup::setStyle(s);
+        for (auto& visu : visualizations)
+        {
+            visu->setStyle(s);
+        }
     }
 
     Visualization::DrawStyle VisualizationSet::getStyle() const
     {
-        return VisualizationGroup::getStyle();
+        if (visualizations.empty())
+        {
+            return Visualization::DrawStyle::undefined;
+        }
+        Visualization::DrawStyle s = visualizations[0]->getStyle();
+        for (auto& visu : visualizations)
+        {
+            if (s != visu->getStyle())
+            {
+                return Visualization::DrawStyle::undefined;
+            }
+        }
+        return s;
     }
 
     void VisualizationSet::setColor(const Visualization::Color &c)
     {
-        VisualizationGroup::setColor(c);
+        for (auto& visu : visualizations)
+        {
+            visu->setColor(c);
+        }
     }
 
     Visualization::Color VisualizationSet::getColor() const
     {
-        return VisualizationGroup::getColor();
+        if (visualizations.empty())
+        {
+            return Visualization::Color::None();
+        }
+        Visualization::Color c = visualizations[0]->getColor();
+        for (auto& visu : visualizations)
+        {
+            if (c != visu->getColor())
+            {
+                return Visualization::Color::None();
+            }
+        }
+        return c;
     }
 
     void VisualizationSet::setMaterial(const MaterialPtr &material)
     {
-        VisualizationGroup::setMaterial(material);
+        for (auto& visu : visualizations)
+        {
+            visu->setMaterial(material);
+        }
     }
 
     Visualization::MaterialPtr VisualizationSet::getMaterial() const
     {
-        return VisualizationGroup::getMaterial();
+        if (visualizations.empty())
+        {
+            return Visualization::MaterialPtr(new Visualization::NoneMaterial);
+        }
+        Visualization::MaterialPtr m = visualizations[0]->getMaterial();
+        for (auto& visu : visualizations)
+        {
+            if (m != visu->getMaterial())
+            {
+                return Visualization::MaterialPtr(new Visualization::NoneMaterial);
+            }
+        }
+        return m;
     }
 
     void VisualizationSet::setSelected(bool selected)
@@ -179,9 +236,16 @@ namespace VirtualRobot
         return true;
     }
 
-    void VisualizationSet::scale(const Eigen::Vector3f &s)
+    void VisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
     {
-        VisualizationGroup::scale(s);
+        Eigen::Vector3f gpos = getGlobalPosition();
+        for (auto& visu : visualizations)
+        {
+            Eigen::Matrix4f visuGp = visu->getGlobalPose();
+            visuGp.block<3, 1>(0, 3) = gpos + (visuGp.block<3, 1>(0, 3) - gpos).cwiseProduct(scaleFactor);
+            visu->setGlobalPose(visuGp);
+            visu->scale(scaleFactor);
+        }
     }
 
     void VisualizationSet::shrinkFatten(float offset)
@@ -205,7 +269,12 @@ namespace VirtualRobot
 
     BoundingBox VisualizationSet::getBoundingBox() const
     {
-        return VisualizationGroup::getBoundingBox();
+        BoundingBox b;
+        for (auto& visu : visualizations)
+        {
+            b.addPoints(visu->getBoundingBox().getPoints());
+        }
+        return b;
     }
 
     Eigen::Vector3f transformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
@@ -256,12 +325,17 @@ namespace VirtualRobot
 
     int VisualizationSet::getNumFaces() const
     {
-        return VisualizationGroup::getNumFaces();
+        int n = 0;
+        for (auto& visu : visualizations)
+        {
+            n += visu->getNumFaces();
+        }
+        return n;
     }
 
     void VisualizationSet::print() const
     {
-        VisualizationGroup::print();
+        VR_ERROR_ONCE_NYI;
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
@@ -381,19 +455,19 @@ namespace VirtualRobot
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
     bool DummyVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return false;
     }
 

@@ -161,7 +161,7 @@ namespace VirtualRobot
          * @param visuType The type of link visualization (e.g. collision).
          * @return A visualization of this model's links.
          */
-        VisualizationGroupPtr getAllVisualizations(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;
+        VisualizationSetPtr getVisualization(VirtualRobot::ModelLink::VisualizationType visuType = ModelLink::Full, bool addRobots = true, bool addObstacles = true, bool addManipulationObjects = true, bool addTrajectories = true, bool addSceneObjectSets = true, bool addAttachments = true) const;
 
         /*!
             Creates an XML string that describes this scene.

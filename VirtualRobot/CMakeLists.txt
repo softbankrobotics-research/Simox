@@ -49,7 +49,6 @@ EndEffector/EndEffector.cpp
 EndEffector/EndEffectorActor.cpp
 Visualization/VisualizationFactory.cpp
 Visualization/VisualizationSet.cpp
-Visualization/VisualizationGroup.cpp
 Visualization/Visualization.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
@@ -160,7 +159,6 @@ EndEffector/EndEffector.h
 EndEffector/EndEffectorActor.h
 Visualization/VisualizationFactory.h
 Visualization/VisualizationSet.h
-Visualization/VisualizationGroup.h
 Visualization/Visualization.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h

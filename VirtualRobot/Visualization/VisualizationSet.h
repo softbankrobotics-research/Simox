@@ -24,7 +24,6 @@
 #define _VirtualRobot_VisualizationSet_h_
 
 #include "Visualization.h"
-#include "VisualizationGroup.h"
 #include "../Tools/BoundingBox.h"
 
 #include <vector>
@@ -34,7 +33,7 @@
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : protected VisualizationGroup, virtual public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : virtual public Visualization
     {
     protected:
         VisualizationSet(const std::vector<VisualizationPtr>& visualizations);
@@ -54,7 +53,7 @@ namespace VirtualRobot
         virtual bool empty() const;
         virtual size_t size() const;
 
-        virtual Eigen::Matrix4f getGlobalPose() const override;
+        //virtual Eigen::Matrix4f getGlobalPose() const override;
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f &m);
         virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
@@ -81,7 +80,7 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override = 0;
         virtual void removeSelectionChangedCallback(size_t id) override = 0;
 
-        virtual void scale(const Eigen::Vector3f &s) override;
+        virtual void scale(const Eigen::Vector3f &scaleFactor) override;
 
         virtual void shrinkFatten(float offset) override;
 
@@ -111,6 +110,9 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override = 0;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override = 0;
+
+    protected:
+        std::vector<VisualizationPtr> visualizations;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet

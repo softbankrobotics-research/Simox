@@ -151,8 +151,8 @@ void GraspRrtWindow::buildVisu()
 
     if (scene)
     {
-        auto v = scene->getAllVisualizations(colModel);
-        viewer->addVisualizations("scene", v);
+        auto v = scene->getVisualization(colModel);
+        viewer->addVisualization("scene", v);
     }
 
     viewer->clearLayer("grasps");

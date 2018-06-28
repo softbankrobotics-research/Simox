@@ -546,6 +546,8 @@ namespace VirtualRobot
     {
         WriteLockPtr w = getWriteLock();
         this->globalPose = globalPose;
+        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
+        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
 
         if (applyValues)
         {
@@ -1201,9 +1203,9 @@ namespace VirtualRobot
         return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
     }
 
-    VisualizationGroupPtr Model::getAllAttachmentVisualizations() const
+    VisualizationSetPtr Model::getAllAttachmentVisualizations() const
     {
-        VisualizationGroupPtr ret(new VisualizationGroup);
+        VisualizationSetPtr ret(VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({}));
         for (const auto & node : getModelNodes())
         {
             for (const auto & attachement : node->getAttachmentsWithVisualisation())

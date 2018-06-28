@@ -44,16 +44,6 @@ namespace VirtualRobot
         this->setGlobalPose(this->getGlobalPose() * dp);
     }
 
-    bool Visualization::isInVisualizationSet() const
-    {
-        return inVisualizationSet;
-    }
-
-    void Visualization::setIsInVisualizationSet(bool inSet)
-    {
-        inVisualizationSet = inSet;
-    }
-
     void DummyVisualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
         Visualization::setGlobalPose(m);

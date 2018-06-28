@@ -5,7 +5,7 @@
 #include "Model/LinkSet.h"
 #include "Trajectory.h"
 #include "XML/BaseIO.h"
-#include <VirtualRobot/Visualization/VisualizationGroup.h>
+#include <VirtualRobot/Visualization/VisualizationSet.h>
 
 namespace VirtualRobot
 {
@@ -454,9 +454,9 @@ namespace VirtualRobot
         return name;
     }
 
-    VisualizationGroupPtr Scene::getAllVisualizations(ModelLink::VisualizationType visuType , bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, bool addAttachments) const
+    VisualizationSetPtr Scene::getVisualization(ModelLink::VisualizationType visuType , bool addRobots, bool addObstacles, bool addManipulationObjects, bool addTrajectories, bool addSceneObjectSets, bool addAttachments) const
     {
-        std::vector<VisualizationPtr> collectedVisualizationNodes;
+        VisualizationSetPtr sceneVisu(VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({}));
 
         if (addRobots)
         {
@@ -464,11 +464,11 @@ namespace VirtualRobot
             for (auto& robot : robots)
             {
                 auto visu = robot->getVisualization(visuType);
-                collectedVisualizationNodes.push_back(visu);
+                sceneVisu->addVisualization(visu);
                 if (addAttachments)
                 {
-                    auto attachments = robot->getAllAttachmentVisualizations()->getVisualizations();
-                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                    auto attachments = robot->getAllAttachmentVisualizations();
+                    sceneVisu->addVisualization(attachments);
                 }
             }
         }
@@ -479,11 +479,11 @@ namespace VirtualRobot
             for (auto& obstacle : obstacles)
             {
                 auto visu = obstacle->getVisualization(visuType);
-                collectedVisualizationNodes.push_back(visu);
+                sceneVisu->addVisualization(visu);
                 if (addAttachments)
                 {
-                    auto attachments = obstacle->getAllAttachmentVisualizations()->getVisualizations();
-                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                    auto attachments = obstacle->getAllAttachmentVisualizations();
+                    sceneVisu->addVisualization(attachments);
                 }
             }
         }
@@ -494,11 +494,11 @@ namespace VirtualRobot
             for (auto& manipulationObject : manipulationObjects)
             {
                 auto visu = manipulationObject->getVisualization(visuType);
-                collectedVisualizationNodes.push_back(visu);
+                sceneVisu->addVisualization(visu);
                 if (addAttachments)
                 {
-                    auto attachments = manipulationObject->getAllAttachmentVisualizations()->getVisualizations();
-                    collectedVisualizationNodes.insert(collectedVisualizationNodes.end(), attachments.begin(), attachments.end());
+                    auto attachments = manipulationObject->getAllAttachmentVisualizations();
+                    sceneVisu->addVisualization(attachments);
                 }
             }
         }
@@ -509,17 +509,16 @@ namespace VirtualRobot
             for (auto& trajectory : trajectories)
             {
                 auto visu = trajectory->getVisualization();
-                collectedVisualizationNodes.push_back(visu);
+                sceneVisu->addVisualization(visu);
             }
         }
 
         if (addSceneObjectSets)
         {
-            VR_WARNING << "nyi" << endl;
-            //todo
+            VR_ERROR_ONCE_NYI
         }
 
-        return VisualizationGroupPtr(new VisualizationGroup(collectedVisualizationNodes));
+        return sceneVisu;
     }
 
     std::vector< RobotPtr > Scene::getRobots() const
