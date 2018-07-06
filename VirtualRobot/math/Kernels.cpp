@@ -86,24 +86,6 @@ void KernelWithDerivatives::swap(float &x, float &y, float &z, int index) const
     }
 }
 
-std::unique_ptr<KernelWithDerivatives> KernelWithDerivatives::Create(KernelType kernelType)
-{
-    switch (kernelType)
-    {
-        case KernelType::WilliamsPlus:
-            return std::unique_ptr<KernelWithDerivatives>(new WilliamsPlusKernel);
-            break;
-        case KernelType::WilliamsMinus:
-            return std::unique_ptr<KernelWithDerivatives>(new WilliamsMinusKernel);
-            break;
-        case KernelType::Gauss:
-            return std::unique_ptr<KernelWithDerivatives>(new GaussianKernel(1.f));
-            break;
-        default:
-            throw std::runtime_error("Not a valid kernel");
-    }
-}
-
 GaussianKernel::GaussianKernel(float lengthScale)
     : lengthScale(lengthScale) {}
 

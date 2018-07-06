@@ -170,6 +170,7 @@ math/ImplicitObjectModel.cpp
 math/Kernels.cpp
 math/GaussianImplicitSurface3D.cpp
 math/GaussianImplicitSurface3DNormals.cpp
+math/GaussianImplicitSurface3DCombined.cpp
 math/DataR3R1.cpp
 math/DataR3R2.cpp
 math/Helpers.cpp
@@ -329,6 +330,7 @@ math/GaussianObjectModelNormals.h
 math/Kernels.h
 math/GaussianImplicitSurface3D.h
 math/GaussianImplicitSurface3DNormals.h
+math/GaussianImplicitSurface3DCombined.h
 math/DataR3R1.h
 math/DataR3R2.h
 math/Helpers.h

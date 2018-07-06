@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(testGPIS)
         samples.push_back(DataR3R2(Helpers::CreateVectorFromCylinderCoords(3, Helpers::Lerp(0, 2*M_PI, 0, 10, i), 0), -1, 0.1f));
     }
 
-    GaussianImplicitSurface3D gpis(KernelWithDerivatives::Create(KernelType::Gauss));
+    GaussianImplicitSurface3D gpis(std::unique_ptr<GaussianKernel>(new GaussianKernel(1.f)));
     gpis.Calculate(samples);
     //std::cout << gpis.Get(Vec3(0,0,0)) << std::endl;
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(testGPISNoise)
     samples.push_back(DataR3R2(1, 0, 0, 0, 0.1f));
     samples.push_back(DataR3R2(1, 0, 0, 1, 0.1f));
 
-    GaussianImplicitSurface3D gpis(KernelWithDerivatives::Create(KernelType::Gauss));
+    GaussianImplicitSurface3D gpis(std::unique_ptr<GaussianKernel>(new GaussianKernel(1.f)));
     gpis.Calculate(samples);
     //std::cout << gpis.Get(Vec3(0,0,0)) << std::endl;
     //std::cout << gpis.Get(Vec3(1,0,0)) << std::endl;

@@ -35,28 +35,29 @@ class GaussianImplicitSurface3DNormals :
         public SimpleAbstractFunctionR3R1
 {
 public:
-    GaussianImplicitSurface3DNormals(KernelType kernelType);
+    GaussianImplicitSurface3DNormals(std::unique_ptr<KernelWithDerivatives> kernel);
     void Calculate(const ContactList& samples, float noise, float normalNoise, float normalScale);
     float Get(Eigen::Vector3f pos) override;
+    float GetVariance(const Eigen::Vector3f& pos);
 
 private:
-    Eigen::MatrixXf covariance;
-    Eigen::VectorXf alpha;
+    Eigen::MatrixXd covariance;
+    Eigen::MatrixXd covariance_inv;
+    Eigen::VectorXd alpha;
+
     ContactList samples;
     float R;
     float R3;
     std::unique_ptr<KernelWithDerivatives> kernel;
 
-    Eigen::MatrixXf Cinv;
-
     float Predict(const Eigen::Vector3f& pos);
-    Eigen::MatrixXf CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise, float normalNoise);
+    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, float R, float noise, float normalNoise);
     //static VectorXf Cholesky(MatrixXf matrix);
     //static VectorXf FitModel(MatrixXf L, List<DataR3R1> targets);
     //VectorXf SpdMatrixSolve(MatrixXf a, bool IsUpper, VectorXf b);
-    static Eigen::VectorXf MatrixSolve(Eigen::MatrixXf a, Eigen::VectorXf b);
+    void MatrixInvert(const Eigen::VectorXd& b);
     static Eigen::Vector3f Average(const ContactList& samples);
-    Eigen::VectorXf getCux(const Eigen::Vector3f& pos);
+    Eigen::VectorXd getCux(const Eigen::Vector3f& pos);
 };
 }
 

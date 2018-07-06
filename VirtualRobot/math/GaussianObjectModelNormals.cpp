@@ -30,7 +30,7 @@ using namespace math;
 GaussianObjectModelNormals::GaussianObjectModelNormals(float noise, float normalNoise, float normalScale)
    : noise(noise), normalNoise(normalNoise), normalScale(normalScale)
 {
-    model = gpModel = GaussianImplicitSurface3DNormalsPtr(new GaussianImplicitSurface3DNormals(KernelType::WilliamsPlus));
+    model = gpModel = GaussianImplicitSurface3DNormalsPtr(new GaussianImplicitSurface3DNormals(std::unique_ptr<WilliamsPlusKernel>(new WilliamsPlusKernel)));
 }
 void GaussianObjectModelNormals::AddContact(Contact contact)
 {
