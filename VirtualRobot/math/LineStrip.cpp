@@ -26,11 +26,9 @@ using namespace math;
 
 
 
-LineStrip::LineStrip(Vec3ListPtr points, float minT, float maxT)
+LineStrip::LineStrip(const std::vector<Eigen::Vector3f> &points, float minT, float maxT)
+    : points(points), minT(minT), maxT(maxT)
 {
-    this->points = points;
-    this->minT = minT;
-    this->maxT = maxT;
 }
 
 
@@ -38,16 +36,16 @@ Eigen::Vector3f LineStrip::Get(float t)
 {
     int i; float f;
     GetIndex(t,  i,  f);
-    return points->at(i) * (1 - f) + points->at(i+1) * f;
+    return points.at(i) * (1 - f) + points.at(i+1) * f;
 }
 
 Eigen::Vector3f LineStrip::GetDirection(int i)
 {
-    return points->at(i+1) - points->at(i);
+    return points.at(i+1) - points.at(i);
 }
 
 void LineStrip::GetIndex(float t, int &i, float &f)
 {
-    Helpers::GetIndex(t, minT, maxT, points->size(),  i,  f);
+    Helpers::GetIndex(t, minT, maxT, points.size(),  i,  f);
 }
 
