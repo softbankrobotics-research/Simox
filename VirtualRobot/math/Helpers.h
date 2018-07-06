@@ -1,22 +1,23 @@
-/*
-* This file is part of ArmarX.
-*
-* ArmarX is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License version 2 as
-* published by the Free Software Foundation.
-*
-* ArmarX is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-* @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
-* @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
-*             GNU General Public License
-*/
+/**
+ * This file is part of Simox.
+ *
+ * Simox is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * Simox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+ * @copyright  2018 Simon Ottenhaus
+ *             GNU Lesser General Public License
+ */
 
 #pragma once
 
@@ -56,6 +57,8 @@ namespace math
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori);
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f &source, const Eigen::Vector3f &target);
         static Eigen::Matrix3f RotateOrientationToFitVector(const Eigen::Matrix3f& ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget);
+        static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
+        static Eigen::Matrix4f TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f& offset);
 
     private:
     };

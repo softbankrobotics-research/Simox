@@ -22,6 +22,7 @@ namespace Saba
 
 
         planningTime = 0.0f;
+        planningTimeout = std::numeric_limits<float>::max();
 
         stopSearch = false;
         maxCycles = 50000;              // stop if cycles are exceeded
@@ -166,6 +167,11 @@ namespace Saba
         }
 
         return true;
+    }
+
+    void MotionPlanner::setPlanningTimeout(float timeoutMs)
+    {
+        this->planningTimeout = timeoutMs;
     }
 
     void MotionPlanner::setMaxCycles(unsigned int mc)

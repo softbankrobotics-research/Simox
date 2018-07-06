@@ -27,6 +27,7 @@
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/ConstrainedHierarchicalIK.h"
 #include "VirtualRobot/IK/ConstrainedStackedIK.h"
+#include <VirtualRobot/Random.h>
 
 #ifdef USE_NLOPT
 #include "VirtualRobot/IK/ConstrainedOptimizationIK.h"
@@ -581,7 +582,8 @@ void ConstrainedIKWindow::enableBalance()
 
 void ConstrainedIKWindow::performanceEvaluation()
 {
-    srand(UI.evaluationRandomSeed->value());
+
+    VirtualRobot::PRNG64Bit().seed(UI.evaluationRandomSeed->value());
 
     ConstrainedIKPtr ik;
     int ikSolver = UI.ikSolver->currentIndex();

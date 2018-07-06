@@ -145,6 +145,7 @@ Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 VirtualRobot.cpp
 Tools/Gravity.cpp
+Random.cpp
 
 math/Contact.cpp
 math/ContactList.cpp
@@ -159,15 +160,18 @@ math/AbstractFunctionR1R6.cpp
 math/AbstractFunctionR2R3.cpp
 math/CompositeFunctionR1R6.cpp
 math/LinearInterpolatedOrientation.cpp
+math/FitPlane.cpp
 math/Plane.cpp
 math/Triangle.cpp
 math/ImplicitPlane.cpp
 math/GaussianObjectModel.cpp
 math/GaussianObjectModelNormals.cpp
 math/ImplicitObjectModel.cpp
+math/Kernels.cpp
 math/GaussianImplicitSurface3D.cpp
 math/GaussianImplicitSurface3DNormals.cpp
 math/DataR3R1.cpp
+math/DataR3R2.cpp
 math/Helpers.cpp
 math/Index3.cpp
 math/MarchingCubes.cpp
@@ -292,6 +296,7 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
+Random.h
 
 math/MathForwardDefinitions.h
 math/Contact.h
@@ -314,15 +319,18 @@ math/SimpleAbstractFunctionR2R3.h
 math/SimpleAbstractFunctionR3R1.h
 math/CompositeFunctionR1R6.h
 math/LinearInterpolatedOrientation.h
+math/FitPlane.h
 math/Plane.h
 math/Triangle.h
 math/ImplicitPlane.h
 math/ImplicitObjectModel.cpp
 math/GaussianObjectModel.h
 math/GaussianObjectModelNormals.h
+math/Kernels.h
 math/GaussianImplicitSurface3D.h
 math/GaussianImplicitSurface3DNormals.h
 math/DataR3R1.h
+math/DataR3R2.h
 math/Helpers.h
 math/Index3.h
 math/Array3D.h

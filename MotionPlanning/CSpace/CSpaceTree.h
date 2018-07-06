@@ -178,7 +178,6 @@ namespace Saba
 
 
         bool updateChildren;                    // CSpaceNode child management
-        float randMult;
 
         std::map<unsigned int, CSpaceNodePtr > idNodeMapping; // mapping id<->node
 

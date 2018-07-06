@@ -133,6 +133,8 @@ namespace Saba
         //! returns true, when start and goal config have been set
         virtual bool isInitialized();
 
+        void setPlanningTimeout(float timeoutMs);
+
     protected:
 
         //! create the solution
@@ -155,6 +157,7 @@ namespace Saba
         std::string name;                   //!< Name of this planner (standard: "Motion Planner")
 
         float planningTime;                 //! Planning time in milliseconds
+        float planningTimeout;              //! Timeout after which the planning aboits
     };
 }
 

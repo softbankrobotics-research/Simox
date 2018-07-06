@@ -1,22 +1,23 @@
-/*
-* This file is part of ArmarX.
-*
-* ArmarX is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License version 2 as
-* published by the Free Software Foundation.
-*
-* ArmarX is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-* @author     Martin Miller (martin dot miller at student dot kit dot edu)
-* @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
-*             GNU General Public License
-*/
+/**
+ * This file is part of Simox.
+ *
+ * Simox is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * Simox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+ * @copyright  2018 Simon Ottenhaus
+ *             GNU Lesser General Public License
+ */
 
 #include "Plane.h"
 #include "Helpers.h"
@@ -101,6 +102,7 @@ Plane Plane::FromNormal(Eigen::Vector3f pos, Eigen::Vector3f normal)
     return Plane(pos, d1, d2);
 }
 
-
-
-
+math::Plane math::Plane::Transform(const Eigen::Matrix4f &transform)
+{
+    return Plane((transform * Eigen::Vector4f(pos(0), pos(1), pos(2), 1)).block<3,1>(0,0), transform.block<3,3>(0,0) * dir1, transform.block<3,3>(0,0) * dir2);
+}

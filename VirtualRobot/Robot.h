@@ -404,6 +404,13 @@ namespace VirtualRobot
         //float getRadianToMMfactor() const;
         //void setRadianToMMfactor(float value);
 
+        /**
+         * @brief Inflates the collision models of all robot nodes of this robot. Useful for motion planning with a safety margin.
+         * @param inflationInMM The collision model is inflated by this value. This value is absolute to the original collision model.
+         * Repetitive inflation with the same value has no effect.
+         */
+        void inflateCollisionModel(float inflationInMM);
+
     protected:
         Robot();
         /*!

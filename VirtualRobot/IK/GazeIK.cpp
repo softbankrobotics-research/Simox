@@ -2,6 +2,7 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Random.h>
 
 #include <algorithm>
 #include <float.h>
@@ -216,7 +217,6 @@ namespace VirtualRobot
         }
 
         std::vector<float> jv;
-        float rn = 1.0f / (float)RAND_MAX;
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
@@ -225,7 +225,7 @@ namespace VirtualRobot
 
             if (ro->isRotationalJoint())
             {
-                float r = (float)rand() * rn;
+                float r = RandomFloat();
                 v = ro->getJointLimitLo() + (ro->getJointLimitHi() - ro->getJointLimitLo()) * r;
             }
 

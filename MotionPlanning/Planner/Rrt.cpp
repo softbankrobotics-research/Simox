@@ -4,6 +4,7 @@
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
+#include <VirtualRobot/Random.h>
 #include <time.h>
 
 
@@ -72,7 +73,6 @@ namespace Saba
             }
         }
 
-        float rand_mult = (float)(1.0 / (double)(RAND_MAX));
         float r;
 
         if (!isInitialized())
@@ -108,7 +108,7 @@ namespace Saba
         {
             // CHOOSE A RANDOM CONFIGURATION
             // check if we want to go to the goal directly or extend randomly
-            r = (float)rand() * rand_mult;
+            r = VirtualRobot::RandomFloat();
 
             if (r <= extendGoToGoal)
             {
@@ -186,6 +186,14 @@ namespace Saba
             }
 
             cycles++;
+            clock_t currentClock = clock();
+
+            long diffClock = (long)(((float)(currentClock - startClock) / (float)CLOCKS_PER_SEC) * 1000.0);
+            if(diffClock > planningTimeout)
+            {
+                std::cout << "Encountered timeout of " << planningTimeout << " ms - aborting" << std::endl;
+                return false;
+            }
 
         }
         while (!stopSearch && cycles < maxCycles && !found);

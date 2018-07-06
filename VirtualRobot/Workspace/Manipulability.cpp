@@ -8,6 +8,8 @@
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
 #include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/Random.h>
+
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -751,7 +753,6 @@ namespace VirtualRobot
 
         std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
         for (int i = 0; i < numThreads; i++)
         {
@@ -807,7 +808,7 @@ namespace VirtualRobot
                     {
                         for (int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
-                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            rndValue = RandomFloat(); // value from 0 to 1
                             minJ = (*nodeSet)[l]->getJointLimitLo();
                             maxJ = (*nodeSet)[l]->getJointLimitHi();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);

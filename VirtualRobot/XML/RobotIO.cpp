@@ -1067,6 +1067,10 @@ namespace VirtualRobot
             {
                 endeffectorNodes.push_back(XMLNode);
             }
+            else if("robotinfo" == nodeName)
+            {
+                //skip
+            }
             else
             {
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);

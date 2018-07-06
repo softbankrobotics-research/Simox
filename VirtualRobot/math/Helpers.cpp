@@ -1,22 +1,23 @@
-/*
-* This file is part of ArmarX.
-*
-* ArmarX is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License version 2 as
-* published by the Free Software Foundation.
-*
-* ArmarX is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-* @author     Martin Miller (martin dot miller at student dot kit dot edu)
-* @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
-*             GNU General Public License
-*/
+/**
+ * This file is part of Simox.
+ *
+ * Simox is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * Simox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+ * @copyright  2018 Simon Ottenhaus
+ *             GNU Lesser General Public License
+ */
 
 #include "Helpers.h"
 #include <stdexcept>
@@ -222,4 +223,15 @@ Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori
 {
     Eigen::Vector3f vec = ori * localSource;
     return GetRotationMatrix(vec, globalTarget) * ori;
+}
+
+Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
+{
+    return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
+}
+
+Eigen::Matrix4f math::Helpers::TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f &offset)
+{
+    pose.block<3, 1>(0, 3) += offset;
+    return pose;
 }

@@ -27,7 +27,6 @@ namespace Saba
         }
 
         this->cspace = cspace;
-        randMult = (float)(1.0 / (double)(RAND_MAX));
         updateChildren = false;
 
         dimension = cspace->getDimension();

@@ -1,27 +1,28 @@
-/*
-* This file is part of ArmarX.
-*
-* ArmarX is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License version 2 as
-* published by the Free Software Foundation.
-*
-* ArmarX is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-* @author     Martin Miller (martin dot miller at student dot kit dot edu)
-* @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
-*             GNU General Public License
-*/
+/**
+ * This file is part of Simox.
+ *
+ * Simox is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * Simox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author     Simon Ottenhaus (simon dot ottenhaus at kit dot edu)
+ * @copyright  2018 Simon Ottenhaus
+ *             GNU Lesser General Public License
+ */
 
 #include "AbstractFunctionR2R3.h"
 #include "Contact.h"
 #include "Plane.h"
-
+#include <stdexcept>
 
 using namespace math;
 
@@ -60,3 +61,33 @@ Eigen::Vector2f AbstractFunctionR2R3::GetUVFromPos(Eigen::Vector3f pos)
 }
 
 Eigen::Vector3f AbstractFunctionR2R3::GetVector(Eigen::Vector2f pos, Eigen::Vector2f dir) { return GetDdu(pos) * dir.x() + GetDdv(pos) * dir.y(); }
+
+float AbstractFunctionR2R3::GetDistance(Eigen::Vector3f pos, AbstractFunctionR2R3::ProjectionType projection)
+{
+    return (GetPointOnFunction(pos, projection) - pos).norm();
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::GetPointOnFunction(Eigen::Vector3f pos, AbstractFunctionR2R3::ProjectionType projection)
+{
+    switch (projection)
+    {
+        case SimpleProjection:
+            return ProjectPointOntoFunction(pos);
+        case FindClosestPointType:
+            return FindClosestPoint(pos);
+        default:
+            throw std::runtime_error("invalid case");
+    }
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::ProjectPointOntoFunction(Eigen::Vector3f pos)
+{
+    float u, v;
+    GetUV(pos, u, v);
+    return GetPoint(u, v);
+}
+
+Eigen::Vector3f AbstractFunctionR2R3::FindClosestPoint(Eigen::Vector3f pos, float epsilon)
+{
+    throw std::runtime_error("FindClosestPoint is not implemented");
+}
