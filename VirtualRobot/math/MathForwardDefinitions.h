@@ -128,6 +128,8 @@ namespace math{
     typedef boost::shared_ptr<GaussianImplicitSurface3D> GaussianImplicitSurface3DPtr;
     class GaussianImplicitSurface3DNormals;
     typedef boost::shared_ptr<GaussianImplicitSurface3DNormals> GaussianImplicitSurface3DNormalsPtr;
+    class GaussianImplicitSurface3DCombined;
+    typedef boost::shared_ptr<GaussianImplicitSurface3DCombined> GaussianImplicitSurface3DCombinedPtr;
     class DataR3R1;
     typedef boost::shared_ptr<DataR3R1> DataR3R1Ptr;
     class DataR3R2;

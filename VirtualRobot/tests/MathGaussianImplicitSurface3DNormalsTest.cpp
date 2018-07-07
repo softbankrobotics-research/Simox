@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(testGPIS)
     ContactList contacts;
     contacts.push_back(Contact(1,0,0,1,0,0));
     contacts.push_back(Contact(0,1,0,0,1,0));
-    GaussianImplicitSurface3DNormals gpis(KernelType::WilliamsPlus);
+    GaussianImplicitSurface3DNormals gpis(std::unique_ptr<WilliamsPlusKernel>(new WilliamsPlusKernel));
     gpis.Calculate(contacts, 0, 0, 1);
     BOOST_CHECK_LE(gpis.Get(Vec3(0,0,0)), -0.2);
     BOOST_CHECK_LE(abs(gpis.Get(Vec3(1,0,0))), 0.001);
