@@ -159,6 +159,8 @@ math/AbstractFunctionR1R3.cpp
 math/AbstractFunctionR1R6.cpp
 math/AbstractFunctionR2R3.cpp
 math/CompositeFunctionR1R6.cpp
+math/TransformedFunctionR1R3.cpp
+math/TransformedFunctionR2R3.cpp
 math/LinearInterpolatedOrientation.cpp
 math/FitPlane.cpp
 math/Plane.cpp
@@ -313,6 +315,8 @@ math/AbstractFunctionR1R6.h
 math/AbstractFunctionR1Ori.h
 math/AbstractFunctionR2R3.h
 math/AbstractFunctionR3R1.h
+math/TransformedFunctionR1R3.h
+math/TransformedFunctionR2R3.h
 math/SimpleAbstractFunctionR1R3.h
 math/SimpleAbstractFunctionR1R6.h
 math/SimpleAbstractFunctionR1Ori.h
