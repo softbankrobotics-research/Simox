@@ -142,19 +142,11 @@ PrimitivePtr MarchingCubes::Calculate(Eigen::Vector3f center, Eigen::Vector3f st
     mc.Init(size, center, start, steps, stepLength, GridCacheFloat3Ptr(new GridCacheFloat3(size+1, getData)));
     PrimitivePtr triangles = mc.ProcessSingleSurfaceOptimized(isolevel, startIndex);
 
-    int oldSize = triangles->size();
-    int newSize;
     PrimitivePtr result = PrimitivePtr(new Primitive());
-    for(Triangle t : *triangles){
-        if((t.P1()-t.P2()).squaredNorm() > eps &&
-           (t.P2()-t.P3()).squaredNorm() > eps &&
-           (t.P3()-t.P1()).squaredNorm() > eps)
-        {
-           result->push_back(t.Transform(- Eigen::Vector3f(1, 1, 1) * stepLength * steps + center, stepLength));
-        }
+    for (Triangle t : *triangles)
+    {
+        result->push_back(t.Transform(- Eigen::Vector3f(1, 1, 1) * stepLength * steps + center, stepLength));
     }
-    newSize = result->size();
-    std::cout << "MC deleted " << oldSize - newSize << " out of " << oldSize << " triangles" << std::endl; //TODO why do we throw away triangles here?
     return result;
 }
 
