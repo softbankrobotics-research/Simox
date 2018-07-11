@@ -24,7 +24,7 @@ void ViewAllWindow::setupUI()
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
-    visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(5000.0f, 5000.0f, 5000.0f);
+    visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(5.0f, 5.0f, 5.0f);
     viewer->addVisualization("test", visu);
     viewer->viewAll();
 
