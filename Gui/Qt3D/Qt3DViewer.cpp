@@ -42,9 +42,9 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
     this->scene = new Qt3DCore::QEntity;
 
-    this->camController = new Qt3DExtras::QOrbitCameraController(scene);
-    this->camController->setLinearSpeed( 3000.0f );
-    this->camController->setLookSpeed( 180.0f );
+    this->camController = new Qt3DCustomCameraController(scene);
+    this->camController->setLinearSpeed( 3500.0f );
+    this->camController->setLookSpeed( 240.0f );
     this->camController->setCamera(this->camera());
 
     this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 100000.0f);
