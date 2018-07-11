@@ -43,8 +43,9 @@ void ViewAllWindow::update()
     }
     else
     {
-        std::cout << "add" << std::endl;
+        std::cout << "add & view all" << std::endl;
         viewer->addVisualization("test", visu);
+        viewer->viewAll();
         toggle = true;
     }
 }
