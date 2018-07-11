@@ -50,6 +50,7 @@ EndEffector/EndEffectorActor.cpp
 Visualization/VisualizationFactory.cpp
 Visualization/VisualizationSet.cpp
 Visualization/Visualization.cpp
+Visualization/SelectionGroup.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
 Visualization/OffscreenRenderer.cpp
@@ -160,6 +161,7 @@ EndEffector/EndEffectorActor.h
 Visualization/VisualizationFactory.h
 Visualization/VisualizationSet.h
 Visualization/Visualization.h
+Visualization/SelectionGroup.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h
@@ -290,6 +292,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualizationSet.cpp
     Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
     Visualization/CoinVisualization/CoinUtil.cpp
+    Visualization/CoinVisualization/CoinSelectionGroup.cpp
     )
 
     SET(INCLUDES
@@ -298,8 +301,8 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinVisualization.h
     Visualization/CoinVisualization/CoinVisualizationSet.h
     Visualization/CoinVisualization/CoinOffscreenRenderer.h
-    Visualization/CoinVisualization/CoinElement.h
     Visualization/CoinVisualization/CoinUtil.h
+    Visualization/CoinVisualization/CoinSelectionGroup.h
     )
 
     if(BUILD_TESTING)

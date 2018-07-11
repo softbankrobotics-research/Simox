@@ -14,7 +14,9 @@ namespace VirtualRobot
 {
 
     VisualizationSet::VisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : Visualization()
+        : Visualization(),
+          filename(""),
+          usedBoundingBox(false)
     {
         for (auto& visu : visualizations)
         {
@@ -24,6 +26,18 @@ namespace VirtualRobot
 
     VisualizationSet::~VisualizationSet()
     {
+    }
+
+    VisualizationPtr VisualizationSet::clone() const
+    {
+        std::vector<VisualizationPtr> clonedVisus;
+        const auto& visus = getVisualizations();
+        clonedVisus.reserve(visus.size());
+        for (const auto& visu : visus)
+        {
+            clonedVisus.push_back(visu->clone());
+        }
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     void VisualizationSet::addVisualization(const VisualizationPtr &visu)
@@ -218,10 +232,22 @@ namespace VirtualRobot
 
     void VisualizationSet::setSelected(bool selected)
     {
-        Visualization::setSelected(selected);
+        bool changed = false;
         for (auto& visu : visualizations)
         {
-            visu->setSelected(selected);
+            if (changed || visu->isSelected() != selected)
+            {
+                changed = true;
+                visu->setSelected(selected);
+            }
+        }
+
+        if (changed)
+        {
+            for (auto& f : selectionChangedCallbacks)
+            {
+                f.second(selected);
+            }
         }
     }
 
@@ -235,6 +261,31 @@ namespace VirtualRobot
             }
         }
         return true;
+    }
+
+    void VisualizationSet::setSelectionGroup(const SelectionGroupPtr &group)
+    {
+        for (auto& visu : visualizations)
+        {
+            visu->setSelectionGroup(group);
+        }
+    }
+
+    SelectionGroupPtr VisualizationSet::getSelectionGroup() const
+    {
+        SelectionGroupPtr g;
+        for (const auto& visu : visualizations)
+        {
+            if (!g)
+            {
+                g = visu->getSelectionGroup();
+            }
+            else if (g != visu->getSelectionGroup())
+            {
+                return SelectionGroupPtr();
+            }
+        }
+        return g;
     }
 
     void VisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
@@ -266,6 +317,22 @@ namespace VirtualRobot
             ret.insert(ret.end(), p.begin(), p.end());
         }
         return ret;
+    }
+
+    void VisualizationSet::setFilename(const std::string &filename, bool boundingBox)
+    {
+        this->filename = filename;
+        usedBoundingBox = boundingBox;
+    }
+
+    std::string VisualizationSet::getFilename() const
+    {
+        return filename;
+    }
+
+    bool VisualizationSet::usedBoundingBoxVisu() const
+    {
+        return usedBoundingBox;
     }
 
     BoundingBox VisualizationSet::getBoundingBox() const
@@ -340,67 +407,8 @@ namespace VirtualRobot
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationSet(visualizations),
-          selected(false),
-          filename(""),
-          usedBoundingBox(false)
+        : VisualizationSet(visualizations)
     {
-    }
-
-    VisualizationPtr DummyVisualizationSet::clone() const
-    {
-        std::vector<VisualizationPtr> clonedVisus;
-        clonedVisus.reserve(visualizations.size());
-        for (auto& visu : visualizations)
-        {
-            clonedVisus.push_back(visu->clone());
-        }
-        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
-    }
-
-    void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
-    {
-        addedManipulators.insert(t);
-    }
-
-    void DummyVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        auto pos = addedManipulators.find(t);
-        if (pos != addedManipulators.end())
-        {
-            addedManipulators.erase(pos);
-        }
-    }
-
-    void DummyVisualizationSet::_removeAllManipulators()
-    {
-        addedManipulators.clear();
-    }
-
-    bool DummyVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        return addedManipulators.find(t) != addedManipulators.end();
-    }
-
-    std::vector<Visualization::ManipulatorType> DummyVisualizationSet::getAddedManipulatorTypes() const
-    {
-        return std::vector<ManipulatorType>(addedManipulators.begin(), addedManipulators.end());
-    }
-
-    void DummyVisualizationSet::setFilename(const std::string &filename, bool boundingBox)
-    {
-        this->filename = filename;
-        usedBoundingBox = boundingBox;
-    }
-
-    std::string DummyVisualizationSet::getFilename() const
-    {
-        return filename;
-    }
-
-    bool DummyVisualizationSet::usedBoundingBoxVisu() const
-    {
-        return usedBoundingBox;
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const

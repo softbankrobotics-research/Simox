@@ -25,7 +25,6 @@
 
 #include "../../Model/Model.h"
 #include "../Visualization.h"
-#include "CoinElement.h"
 
 class SoNode;
 class SoGroup;
@@ -41,16 +40,17 @@ namespace VirtualRobot
 {
     class TriMeshModel;
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization, public CoinElement
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualization : public Visualization
     {
         friend class CoinVisualizationFactory;
         friend class CoinVisualizationSet;
     protected:
         CoinVisualization(SoNode* visuNode);
     public:
+        virtual void init() override;
         virtual ~CoinVisualization();
 
-        virtual SoNode* getMainNode() const override;
+        SoNode* getMainNode() const;
     protected:
         /*!
             Replace current visualization of this node.
@@ -80,21 +80,10 @@ namespace VirtualRobot
         virtual void setMaterial(const MaterialPtr &material) override;
         virtual MaterialPtr getMaterial() const override;
 
-        virtual void setSelected(bool selected) override;
-        virtual bool isSelected() const override;
-
         virtual void scale(const Eigen::Vector3f &s) override;
         Eigen::Vector3f getScalingFactor() const;
 
         virtual void shrinkFatten(float offset) override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
@@ -151,6 +140,7 @@ namespace VirtualRobot
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
+        SelectionGroupPtr selectionGroup;
     };
 
     typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;

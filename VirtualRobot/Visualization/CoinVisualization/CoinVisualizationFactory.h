@@ -57,6 +57,7 @@ namespace VirtualRobot
         VisualizationPtr createVisualizationFromSoInput(SoInput& soInput, bool boundingBox, bool freeDuplicateTextures = true) const;
     public:
         virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr> &visualizations = std::vector<VisualizationPtr>()) const override;
+        virtual SelectionGroupPtr createSelectionGroup() const override;
         virtual VisualizationPtr createBox(float width, float height, float depth) const override;
         virtual VisualizationPtr createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const override;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
@@ -102,6 +103,7 @@ namespace VirtualRobot
         typedef std::map<std::pair<size_t, std::string>, void*> TextureCacheMap;
 
     private:
+        static VisualizationPtr createVisualizationFromSoNode(SoNode* node);
         static std::mutex globalTextureCacheMutex;
         static TextureCacheMap globalTextureCache;
     };

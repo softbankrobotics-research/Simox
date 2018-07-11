@@ -1,6 +1,7 @@
 #include "CoinOffscreenRenderer.h"
 
-#include "../CoinVisualization/CoinVisualization.h"
+#include "CoinVisualization.h"
+#include "CoinVisualizationSet.h"
 #include "CoinUtil.h"
 #include "../../../Tools/MathTools.h"
 
@@ -88,7 +89,7 @@ namespace VirtualRobot
         root->addChild(sceneSep);
         for (const auto& visu : scene)
         {
-            sceneSep->addChild(visualization_cast<CoinElement>(visu)->getMainNode());
+            addToSceneGraph(sceneSep, visu);
         }
 
         static bool renderErrorPrinted = false;
@@ -239,6 +240,22 @@ namespace VirtualRobot
     std::string CoinOffscreenRenderer::getVisualizationType() const
     {
         return "inventor";
+    }
+
+    void CoinOffscreenRenderer::addToSceneGraph(SoSeparator *sceneGraph, const VisualizationPtr &visu)
+    {
+        VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VisualizationSet>(visu);
+        if (set)
+        {
+            for (const auto& v : set->getVisualizations())
+            {
+                addToSceneGraph(sceneGraph, v);
+            }
+        }
+        else
+        {
+            sceneGraph->removeChild(std::static_pointer_cast<CoinVisualization>(visu)->getMainNode());
+        }
     }
 
     void CoinOffscreenRenderer::getZBuffer(void *userdata)

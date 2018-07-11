@@ -29,6 +29,7 @@
 #include <string>
 
 class SbMatrix;
+class SoSeparator;
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT CoinOffscreenRenderer  : public OffscreenRenderer
@@ -102,6 +103,7 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const override;
 
     private:
+        static void addToSceneGraph(SoSeparator* sceneGraph, const VisualizationPtr& visu);
         /**
          * @brief Used for a Coin3d callback to store the zBuffer.
          * @see renderOffscreen

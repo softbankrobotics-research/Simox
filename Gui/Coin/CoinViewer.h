@@ -26,6 +26,8 @@
 
 #include "../ViewerInterface.h"
 
+#include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
+
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoUnits.h>
@@ -71,22 +73,30 @@ namespace SimoxGui
             ~Layer();
 
             void addVisualization(const VirtualRobot::VisualizationPtr& visu);
-            void removeVisualization(const VirtualRobot::VisualizationPtr& visu);
+            bool removeVisualization(const VirtualRobot::VisualizationPtr& visu);
             bool hasVisualization(const VirtualRobot::VisualizationPtr& visu) const;
 
             void clear();
 
             std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
-            SoSeparator* layerMainNode;
         };
 
         Layer& requestLayer(const std::string& name);
+
+        void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
+        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization);
 
         QWidget *parent;
 
         SoSeparator *sceneSep;
         SoUnits *unitNode;
         std::map<std::string, Layer> layers;
+        struct SelectionGroupData
+        {
+            SoSeparator* node;
+            size_t callbackId;
+        };
+        std::map<std::shared_ptr<VirtualRobot::CoinSelectionGroup>, SelectionGroupData> selectionGroups;
 
         VirtualRobot::Visualization::Color backgroundColor;
     };

@@ -25,7 +25,6 @@
 
 #include "../../Model/Model.h"
 #include "../VisualizationSet.h"
-#include "CoinElement.h"
 
 class SoNode;
 class SoSeparator;
@@ -35,45 +34,19 @@ namespace VirtualRobot
     /*!
         A Coin3D based implementation of a visualization.
     */
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualizationSet : public VisualizationSet, public CoinElement
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinVisualizationSet : public VisualizationSet
     {
         friend class CoinVisualizationFactory;
     protected:
         CoinVisualizationSet(const std::vector<VisualizationPtr>& visualizations);
 
     public:
-        virtual ~CoinVisualizationSet() override;
-
-        virtual SoNode* getMainNode() const override;
-
-        virtual void addVisualization(const VisualizationPtr& visu) override;
-        virtual bool removeVisualization(const VisualizationPtr& visu) override;
-
-        virtual VisualizationPtr clone() const override;
-
-        virtual void setSelected(bool selected) override;
-        virtual bool isSelected() const override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
-    public:
-        virtual void setFilename(const std::string &filename, bool boundingBox) override;
-        virtual std::string getFilename() const override;
-        virtual bool usedBoundingBoxVisu() const override;
+        virtual ~CoinVisualizationSet() override = default;
 
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
-
-        SoSeparator* setNode;
-        std::string filename;
-        bool usedBoundingBox;
     };
 
     typedef std::shared_ptr<CoinVisualizationSet> CoinVisualizationSetPtr;

@@ -16,26 +16,36 @@
 *
 * @package    VirtualRobot
 * @author     Adrian Knobloch
-* @copyright  2017 Adrian Knobloch
+* @copyright  2018 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinElement_h_
-#define _VirtualRobot_CoinElement_h_
+#ifndef _VirtualRobot_CoinSelectionGroup_h_
+#define _VirtualRobot_CoinSelectionGroup_h_
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <memory>
-
-class SoNode;
+#include "../SelectionGroup.h"
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinElement
+
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CoinSelectionGroup : public SelectionGroup
     {
+        friend class CoinVisualizationFactory;
+    protected:
+        CoinSelectionGroup();
+
     public:
-        virtual SoNode* getMainNode() const = 0;
+        virtual ~CoinSelectionGroup() override = default;
+
+        size_t addVisualizationAddedCallback(std::function<void (const VisualizationPtr &)> f);
+        void removeVisualizationAddedCallback(size_t id);
+
+    protected:
+        virtual void addVisualization(const VisualizationPtr& visu) override;
+
+        std::map<size_t, std::function<void(const VisualizationPtr&)>> visualizationAddedCallbacks;
     };
-    typedef std::shared_ptr<CoinElement> CoinElementPtr;
+
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CoinVisualization_h_
+#endif // _VirtualRobot_CoinSelectionGroup_h_

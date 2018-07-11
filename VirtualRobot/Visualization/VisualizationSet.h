@@ -41,7 +41,7 @@ namespace VirtualRobot
     public:
         virtual ~VisualizationSet() override;
 
-        virtual VisualizationPtr clone() const override = 0;
+        virtual VisualizationPtr clone() const override;
 
         virtual void addVisualization(const VisualizationPtr& visu);
         virtual bool containsVisualization(const VisualizationPtr& visu) const;
@@ -75,24 +75,18 @@ namespace VirtualRobot
 
         virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
+        virtual void setSelectionGroup(const SelectionGroupPtr& group) override;
+        virtual SelectionGroupPtr getSelectionGroup() const override;
 
         virtual void scale(const Eigen::Vector3f &scaleFactor) override;
 
         virtual void shrinkFatten(float offset) override;
 
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override = 0;
-        virtual void _removeManipulator(ManipulatorType t) override = 0;
-        virtual void _removeAllManipulators() override = 0;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override = 0;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override = 0;
-
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        virtual void setFilename(const std::string &filename, bool boundingBox) override = 0;
-        virtual std::string getFilename() const override = 0;
-        virtual bool usedBoundingBoxVisu() const override = 0;
+        virtual void setFilename(const std::string &filename, bool boundingBox);
+        virtual std::string getFilename() const;
+        virtual bool usedBoundingBoxVisu() const;
 
         virtual BoundingBox getBoundingBox() const override;
 
@@ -109,6 +103,8 @@ namespace VirtualRobot
 
     protected:
         std::vector<VisualizationPtr> visualizations;
+        std::string filename;
+        bool usedBoundingBox;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet
@@ -120,30 +116,10 @@ namespace VirtualRobot
     public:
         virtual ~DummyVisualizationSet() override = default;
 
-        virtual VisualizationPtr clone() const override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
-
-        virtual void setFilename(const std::string &filename, bool boundingBox) override;
-        virtual std::string getFilename() const override;
-        virtual bool usedBoundingBoxVisu() const override;
-
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
-
-    protected:
-        bool selected;
-        std::set<ManipulatorType> addedManipulators;
-        std::string filename;
-        bool usedBoundingBox;
     };
 
 } // namespace VirtualRobot

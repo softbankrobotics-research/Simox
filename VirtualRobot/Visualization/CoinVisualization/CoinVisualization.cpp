@@ -60,13 +60,11 @@ namespace VirtualRobot
         mainNode->addChild(materialNodeNone);
         mainNode->addChild(drawStyleNode);
         mainNode->addChild(visualizationNode);
+    }
 
-        setGlobalPose(Eigen::Matrix4f::Identity());
-        setVisible(true);
-        setUpdateVisualization(true);
-        setStyle(DrawStyle::normal);
-        setColor(Color::None());
-        setSelected(false);
+    void CoinVisualization::init()
+    {
+        Visualization::init();
         createTriMeshModel();
     }
 
@@ -279,18 +277,6 @@ namespace VirtualRobot
         return material;
     }
 
-    void CoinVisualization::setSelected(bool selected)
-    {
-        Visualization::setSelected(selected);
-        VR_ERROR_ONCE_NYI;
-    }
-
-    bool CoinVisualization::isSelected() const
-    {
-        VR_ERROR_ONCE_NYI;
-        return false;
-    }
-
     void CoinVisualization::scale(const Eigen::Vector3f &s)
     {
         THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
@@ -328,38 +314,6 @@ namespace VirtualRobot
             auto visuNode = CoinVisualizationFactory::createTriMeshModelCoin(getTriMeshModel());
             setVisualization(visuNode);
         }
-    }
-
-    void CoinVisualization::_addManipulator(Visualization::ManipulatorType t)
-    {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
-    }
-
-    void CoinVisualization::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
-    void CoinVisualization::_removeAllManipulators()
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
-    bool CoinVisualization::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        VR_ERROR_ONCE_NYI;
-        return false;
-    }
-
-    std::vector<Visualization::ManipulatorType> CoinVisualization::getAddedManipulatorTypes() const
-    {
-        VR_ERROR_ONCE_NYI;
-        return std::vector<ManipulatorType>();
     }
 
     std::vector<Primitive::PrimitivePtr> CoinVisualization::getPrimitives() const
@@ -431,6 +385,7 @@ namespace VirtualRobot
     VisualizationPtr CoinVisualization::clone() const
     {
         CoinVisualizationPtr p(new CoinVisualization(visualizationNode));
+        p->init();
         p->setGlobalPose(this->getGlobalPose());
         p->setVisible(this->isVisible());
         p->setStyle(this->getStyle());

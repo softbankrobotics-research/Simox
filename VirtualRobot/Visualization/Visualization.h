@@ -37,16 +37,10 @@ namespace VirtualRobot
 {
     class BoundingBox;
 
-    template<typename T>
-    static inline std::shared_ptr<T> visualization_cast(const VisualizationPtr& visu)
-    {
-        auto vc = std::dynamic_pointer_cast<T>(visu);
-        return vc;
-    }
-
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame, public std::enable_shared_from_this<Visualization>
     {
         friend class VisualizationSet;
+        friend class SelectionGroup;
     public:
         struct Color
         {
@@ -138,11 +132,11 @@ namespace VirtualRobot
         /*!
         Constructor
         */
-        Visualization() : Frame()
-        {
-        }
+        Visualization();
 
     public:
+        virtual void init();
+
         /*!
         */
         virtual ~Visualization() = default;
@@ -196,33 +190,18 @@ namespace VirtualRobot
             this->setSelected(false);
         }
         virtual void setSelected(bool selected);
-        virtual bool isSelected() const = 0;
+        virtual bool isSelected() const;
         virtual size_t addSelectionChangedCallback(std::function<void (bool)> f);
         virtual void removeSelectionChangedCallback(size_t id);
+    protected:
+        virtual void executeSelectionChangedCallbacks(bool selected);
+    public:
+        virtual void setSelectionGroup(const SelectionGroupPtr& group);
+        virtual SelectionGroupPtr getSelectionGroup() const;
 
         virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
 
         virtual void shrinkFatten(float offset) = 0;
-
-        enum ManipulatorType
-        {
-            position,
-            rotation
-        };
-        void addManipulator(ManipulatorType t)
-        {
-            this->_addManipulator(t);
-        }
-        void removeManipulator(ManipulatorType t)
-        {
-            this->_removeManipulator(t);
-        }
-        virtual bool hasManipulator(ManipulatorType t) const = 0;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const = 0;
-        void removeAllManipulators()
-        {
-            this->_removeAllManipulators();
-        }
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const = 0;
 
@@ -270,12 +249,9 @@ namespace VirtualRobot
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) = 0;
 
     protected:
-        virtual void _addManipulator(ManipulatorType t) = 0;
-        virtual void _removeManipulator(ManipulatorType t) = 0;
-        virtual void _removeAllManipulators() = 0;
-
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
-        std::map<unsigned int, std::function<void(bool)>> selectionChangedCallbacks;
+        std::map<size_t, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+        std::map<size_t, std::function<void(bool)>> selectionChangedCallbacks;
+        SelectionGroupPtr selectionGroup;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization
@@ -288,6 +264,8 @@ namespace VirtualRobot
         DummyVisualization();
 
     public:
+        virtual void init() override;
+
         /*!
         */
         virtual ~DummyVisualization() override = default;
@@ -316,20 +294,9 @@ namespace VirtualRobot
         virtual void setMaterial(const MaterialPtr& material) override;
         virtual MaterialPtr getMaterial() const override;
 
-        virtual void setSelected(bool selected) override;
-        virtual bool isSelected() const override;
-
         virtual void scale(const Eigen::Vector3f& s) override;
 
         virtual void shrinkFatten(float offset) override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
@@ -382,8 +349,6 @@ namespace VirtualRobot
         DrawStyle style;
         Color color;
         MaterialPtr material;
-        bool selected;
-        std::set<ManipulatorType> addedManipulators;
         std::string filename; //!< if the visualization was build from a file, the filename is stored here
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;

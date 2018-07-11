@@ -24,6 +24,8 @@
 #include "CoinViewer.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
+#include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/Qt/SoQt.h>
 #include <QGLWidget>
@@ -64,11 +66,16 @@ namespace SimoxGui
     void CoinViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
     {
         requestLayer(layer).addVisualization(visualization);
+        _addVisualization(visualization);
     }
 
     void CoinViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
     {
-        requestLayer(layer).removeVisualization(visualization);
+        bool removed = requestLayer(layer).removeVisualization(visualization);
+        if (removed)
+        {
+            _removeVisualization(visualization);
+        }
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllVisualizations() const
@@ -123,7 +130,12 @@ namespace SimoxGui
 
     void CoinViewer::clearLayer(const std::string &layer)
     {
-        requestLayer(layer).clear();
+        auto& l = requestLayer(layer);
+        for (const auto & v : l.visualizations)
+        {
+            _removeVisualization(v);
+        }
+        l.clear();
     }
 
     bool CoinViewer::hasLayer(const std::string &layer) const
@@ -219,21 +231,88 @@ namespace SimoxGui
         else
         {
             Layer& l = layers[name];
-            sceneSep->addChild(l.layerMainNode);
             return l;
         }
     }
 
-    CoinViewer::Layer::Layer() : layerMainNode(new SoSeparator)
+    void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)
     {
-        layerMainNode->ref();
+        VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
+        if (set)
+        {
+            for (const auto& v : set->getVisualizations())
+            {
+                _addVisualization(v);
+            }
+        }
+        else
+        {
+            auto selectionGroup = std::static_pointer_cast<VirtualRobot::CoinSelectionGroup>(visualization->getSelectionGroup());
+            auto it = selectionGroups.find(selectionGroup);
+            SoSeparator* node = nullptr;
+            if (it == selectionGroups.end())
+            {
+                auto id = selectionGroup->addVisualizationAddedCallback([this](const VirtualRobot::VisualizationPtr& visu)
+                {
+                    _removeVisualization(visu);
+                    _addVisualization(visu);
+                });
+                SelectionGroupData& d = selectionGroups[selectionGroup];
+                d.callbackId = id;
+                d.node = new SoSeparator;
+                node = d.node;
+                node->ref();
+                sceneSep->addChild(node);
+            }
+            else
+            {
+                node = it->second.node;
+            }
+            node->addChild(std::static_pointer_cast<VirtualRobot::CoinVisualization>(visualization)->getMainNode());
+        }
+    }
+
+    void CoinViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+    {
+        VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
+        if (set)
+        {
+            for (const auto& v : set->getVisualizations())
+            {
+                _removeVisualization(v);
+            }
+        }
+        else
+        {
+            auto selectionGroup = std::static_pointer_cast<VirtualRobot::CoinSelectionGroup>(visualization->getSelectionGroup());
+            auto it = selectionGroups.find(selectionGroup);
+            if (it != selectionGroups.end())
+            {
+                SelectionGroupData& d = it->second;
+                d.node->removeChild(std::static_pointer_cast<VirtualRobot::CoinVisualization>(visualization)->getMainNode());
+                if (d.node->getNumChildren() <= 0)
+                {
+                    sceneSep->removeChild(d.node);
+                    d.node->unref();
+                    d.node = nullptr;
+                    it->first->removeVisualizationAddedCallback(d.callbackId);
+                    selectionGroups.erase(it);
+                }
+            }
+            else
+            {
+                VR_WARNING << "Visualization was not added. ignoring..." << std::endl;
+            }
+        }
+    }
+
+    CoinViewer::Layer::Layer()
+    {
     }
 
 
     CoinViewer::Layer::~Layer()
     {
-        layerMainNode->removeAllChildren();
-        layerMainNode->unref();
     }
 
 
@@ -242,19 +321,19 @@ namespace SimoxGui
         if (!hasVisualization(visu))
         {
             visualizations.insert(visu);
-            layerMainNode->addChild(VirtualRobot::visualization_cast<VirtualRobot::CoinElement>(visu)->getMainNode());
         }
     }
 
 
-    void CoinViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visu)
+    bool CoinViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visu)
     {
         auto it = visualizations.find(visu);
         if (it != visualizations.end())
         {
             visualizations.erase(it);
-            layerMainNode->removeChild(VirtualRobot::visualization_cast<VirtualRobot::CoinElement>(visu)->getMainNode());
+            return true;
         }
+        return false;
     }
 
 
@@ -266,7 +345,6 @@ namespace SimoxGui
 
     void CoinViewer::Layer::clear()
     {
-        layerMainNode->removeAllChildren();
         visualizations.clear();
     }
 

@@ -170,6 +170,7 @@ namespace VirtualRobot
     class Obstacle;
     class VisualizationSet;
     class Visualization;
+    class SelectionGroup;
     class VisualizationFactory;
     class OffscreenRenderer;
     class Scene;
@@ -235,6 +236,8 @@ namespace VirtualRobot
     typedef std::shared_ptr<Obstacle> ObstaclePtr;
     typedef std::shared_ptr<VisualizationSet> VisualizationSetPtr;
     typedef std::shared_ptr<Visualization> VisualizationPtr;
+    typedef std::weak_ptr<Visualization> VisualizationWeakPtr;
+    typedef std::shared_ptr<SelectionGroup> SelectionGroupPtr;
     typedef std::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
     typedef std::shared_ptr<OffscreenRenderer> OffscreenRendererPtr;
     typedef std::shared_ptr<WorkspaceData> WorkspaceDataPtr;

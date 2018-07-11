@@ -61,6 +61,8 @@ namespace VirtualRobot
 
         virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr>& visualizations = std::vector<VisualizationPtr>()) const;
 
+        virtual SelectionGroupPtr createSelectionGroup() const;
+
         /*!
             A box, dimensions are given in mm.
         */
