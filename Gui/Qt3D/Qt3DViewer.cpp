@@ -76,7 +76,7 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
-    delete(scene);
+    //delete(scene);
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
