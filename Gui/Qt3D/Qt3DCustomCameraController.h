@@ -23,11 +23,12 @@
 #ifndef _Gui_Qt3DCustomCameraController_h_
 #define _Gui_Qt3DCustomCameraController_h_
 
+#include "../SimoxGuiImportExport.h"
 #include <Qt3DExtras/QAbstractCameraController>
 
 namespace SimoxGui
 {
-    class Qt3DCustomCameraController : public Qt3DExtras::QAbstractCameraController
+    class SIMOX_GUI_IMPORT_EXPORT Qt3DCustomCameraController : public Qt3DExtras::QAbstractCameraController
     {
     public:
         Qt3DCustomCameraController(Qt3DCore::QNode *parent = nullptr);

@@ -16,7 +16,7 @@
 *
 * @package    Gui
 * @author     Philipp Schmidt
-* @copyright  2017 Philipp Schmidt
+* @copyright  2018 Philipp Schmidt
 *             GNU Lesser General Public License
 *
 */
