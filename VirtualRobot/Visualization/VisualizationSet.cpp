@@ -24,6 +24,11 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::init()
+    {
+        setGlobalPoseNoUpdate(Eigen::Matrix4f::Identity());
+    }
+
     VisualizationSet::~VisualizationSet()
     {
     }

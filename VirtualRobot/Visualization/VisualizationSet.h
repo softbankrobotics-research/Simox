@@ -39,6 +39,7 @@ namespace VirtualRobot
         VisualizationSet(const std::vector<VisualizationPtr>& visualizations);
 
     public:
+        virtual void init() override;
         virtual ~VisualizationSet() override;
 
         virtual VisualizationPtr clone() const override;
