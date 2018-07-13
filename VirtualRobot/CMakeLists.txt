@@ -51,6 +51,7 @@ Visualization/VisualizationFactory.cpp
 Visualization/VisualizationSet.cpp
 Visualization/Visualization.cpp
 Visualization/SelectionGroup.cpp
+Visualization/SelectionManager.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
 Visualization/OffscreenRenderer.cpp
@@ -162,6 +163,7 @@ Visualization/VisualizationFactory.h
 Visualization/VisualizationSet.h
 Visualization/Visualization.h
 Visualization/SelectionGroup.h
+Visualization/SelectionManager.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
 Visualization/TriangleFace.h

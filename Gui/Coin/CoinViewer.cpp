@@ -26,6 +26,7 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
+#include <VirtualRobot/Visualization/SelectionManager.h>
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoPath.h>
@@ -37,12 +38,17 @@
 
 SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
 {
-   // See which child of selection got picked
-   SoFullPath *p = static_cast<SoFullPath*>(pick->getPath());
+    auto selectionMode = VirtualRobot::SelectionManager::getInstance()->getSelectionMode();
+    if (selectionMode == VirtualRobot::SelectionManager::SelectionMode::eNone)
+    {
+        return NULL;
+    }
+    // See which child of selection got picked
+    SoFullPath *p = static_cast<SoFullPath*>(pick->getPath());
 
-   //Make sure we didn't select a manipulator
-   for (int i = 0; i < p->getLength(); i++)
-   {
+    //Make sure we didn't select a manipulator
+    for (int i = 0; i < p->getLength(); i++)
+    {
        SoNode* n = p->getNode(i);
 
        if (n->isOfType(SoTransformManip::getClassTypeId()))
@@ -52,19 +58,19 @@ SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
            //therefore return an empty path
            return new SoPath;
        }
-   }
+    }
 
-   int depthSelectionNode=0;
-   for (; depthSelectionNode<p->getLength(); ++depthSelectionNode)
-   {
+    int depthSelectionNode=0;
+    for (; depthSelectionNode<p->getLength(); ++depthSelectionNode)
+    {
        if (p->getNode(depthSelectionNode)->getName() == SbName("selectionNode"))
        {
            break;
        }
-   }
-   SoNode* n = p->getNode(depthSelectionNode + 1); // get SelectionGroup node
-   p->truncate(depthSelectionNode+2);
-   return p;
+    }
+    SoNode* n = p->getNode(depthSelectionNode + 1); // get SelectionGroup node
+    p->truncate(depthSelectionNode+2);
+    return p;
 }
 
 void selectionCallback(void*, SoPath* p)
@@ -106,6 +112,7 @@ namespace SimoxGui
         selectionNode->setPickFilterCallback(pickFilterCB);
         selectionNode->addSelectionCallback(selectionCallback, NULL);
         selectionNode->addDeselectionCallback(deselectionCallback, NULL);
+        selectionNode->policy = SoSelection::SHIFT;
 
         sceneSep->addChild(selectionNode);
 
@@ -117,10 +124,17 @@ namespace SimoxGui
         viewAll();
         setAntialiasing(4);
         setBackgroundColor(VirtualRobot::Visualization::Color::None());
+
+        selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
+        {
+            _removeVisualization(visu, old);
+            _addVisualization(visu);
+        });
     }
 
     CoinViewer::~CoinViewer()
     {
+        VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
         sceneSep->removeAllChildren();
         selectionNode->removeAllChildren();
         sceneSep->unref();
@@ -231,7 +245,6 @@ namespace SimoxGui
         std::vector<VirtualRobot::VisualizationPtr> visus;
         if (hasLayer(layer))
         {
-            auto l = requestLayer(layer);
             const SoPathList* selectedNodes = selectionNode->getList();
             for (int i=0; i<selectedNodes->getLength(); ++i)
             {
@@ -241,7 +254,7 @@ namespace SimoxGui
                 VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(userData);
                 for (const auto& v : s->getVisualizations())
                 {
-                    if (l.hasVisualization(v))
+                    if (hasVisualization(layer, v))
                     {
                         visus.push_back(v);
                     }
@@ -340,11 +353,6 @@ namespace SimoxGui
             SoSeparator* node = nullptr;
             if (it == selectionGroups.end())
             {
-                auto visuAddedId = selectionGroup->addVisualizationAddedCallback([this](const VirtualRobot::VisualizationPtr& visu)
-                {
-                    _removeVisualization(visu);
-                    _addVisualization(visu);
-                });
                 auto selectionChangedId = selectionGroup->addSelectionChangedCallbacks([this,selectionGroup](bool selected)
                 {
                     SelectionGroupData& d = selectionGroups[selectionGroup];
@@ -358,7 +366,6 @@ namespace SimoxGui
                     }
                 });
                 SelectionGroupData& d = selectionGroups[selectionGroup];
-                d.visuAddedCallbackId = visuAddedId;
                 d.selectionChangedCallbackId = selectionChangedId;
                 d.node = new SoSeparator;
                 node = d.node;
@@ -378,7 +385,7 @@ namespace SimoxGui
         }
     }
 
-    void CoinViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+    void CoinViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr &group)
     {
         VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
         if (set)
@@ -390,7 +397,7 @@ namespace SimoxGui
         }
         else
         {
-            auto selectionGroup = std::static_pointer_cast<VirtualRobot::CoinSelectionGroup>(visualization->getSelectionGroup());
+            auto selectionGroup = std::static_pointer_cast<VirtualRobot::CoinSelectionGroup>(group ? group : visualization->getSelectionGroup());
             auto it = selectionGroups.find(selectionGroup);
             if (it != selectionGroups.end())
             {
@@ -398,17 +405,20 @@ namespace SimoxGui
                 d.node->removeChild(std::static_pointer_cast<VirtualRobot::CoinVisualization>(visualization)->getMainNode());
                 if (d.node->getNumChildren() <= 0)
                 {
+                    if (selectionNode->isSelected(d.node))
+                    {
+                        selectionNode->deselect(d.node);
+                    }
                     selectionNode->removeChild(d.node);
                     d.node->unref();
                     d.node = nullptr;
-                    it->first->removeVisualizationAddedCallback(d.visuAddedCallbackId);
                     it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
                     selectionGroups.erase(it);
                 }
             }
             else
             {
-                VR_WARNING << "Visualization was not added. ignoring..." << std::endl;
+                VR_WARNING << "Could not remove not added visualization. ignoring..." << std::endl;
             }
         }
     }

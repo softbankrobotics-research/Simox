@@ -91,7 +91,7 @@ namespace VirtualRobot
 
     SelectionGroupPtr VisualizationFactory::createSelectionGroup() const
     {
-        return SelectionGroupPtr(new DummySelectionGroup);
+        return SelectionGroupPtr(new SelectionGroup);
     }
 
     VisualizationPtr VisualizationFactory::createBox(float, float, float) const

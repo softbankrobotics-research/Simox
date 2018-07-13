@@ -1,16 +1,8 @@
 #include "SelectionGroup.h"
+#include "SelectionManager.h"
 
 namespace VirtualRobot
 {
-
-    SelectionGroup::SelectionGroup()
-    {
-    }
-
-    SelectionGroup::~SelectionGroup()
-    {
-    }
-
     bool SelectionGroup::isSelected() const
     {
         return selected;
@@ -18,6 +10,11 @@ namespace VirtualRobot
 
     void SelectionGroup::setSelected(bool selected)
     {
+        if (selected && SelectionManager::getInstance()->getSelectionMode() == SelectionManager::SelectionMode::eNone)
+        {
+            VR_WARNING << "Selection disabled." << std::endl;
+            return;
+        }
         if (this->selected != selected)
         {
             for (const auto& visuWeak : visualizations)
@@ -34,6 +31,7 @@ namespace VirtualRobot
             }
         }
         this->selected = selected;
+        SelectionManager::getInstance()->setSelected(shared_from_this(), selected);
     }
 
     std::vector<VisualizationPtr> SelectionGroup::getVisualizations()
@@ -56,6 +54,10 @@ namespace VirtualRobot
 
     void SelectionGroup::addVisualization(const VisualizationPtr &visu)
     {
+        if (visualizations.empty() && isSelected())
+        {
+            SelectionManager::getInstance()->setSelected(shared_from_this(), true);
+        }
         visualizations.push_back(visu);
     }
 
@@ -67,6 +69,10 @@ namespace VirtualRobot
         if (it != visualizations.end())
         {
             visualizations.erase(it);
+        }
+        if (visualizations.empty())
+        {
+            SelectionManager::getInstance()->removeSelectionGroup(shared_from_this());
         }
     }
 }

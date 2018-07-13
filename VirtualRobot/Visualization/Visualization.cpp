@@ -9,6 +9,7 @@
 
 #include "Visualization.h"
 #include "SelectionGroup.h"
+#include "SelectionManager.h"
 #include "TriMeshModel.h"
 #include "../Tools/BoundingBox.h"
 
@@ -125,9 +126,16 @@ namespace VirtualRobot
     void Visualization::setSelectionGroup(const SelectionGroupPtr &group)
     {
         VR_ASSERT(selectionGroup);
+        bool selected = selectionGroup->isSelected();
+        auto oldGroup = selectionGroup;
         selectionGroup->removeVisualization(shared_from_this());
         selectionGroup = group ? group : VisualizationFactory::getInstance()->createSelectionGroup();
         selectionGroup->addVisualization(shared_from_this());
+        SelectionManager::getInstance()->emitSlectionGroupChanged(shared_from_this(), oldGroup, selectionGroup);
+        if (selectionGroup->isSelected() != selected)
+        {
+            executeSelectionChangedCallbacks(selectionGroup->isSelected());
+        }
     }
 
     SelectionGroupPtr Visualization::getSelectionGroup() const

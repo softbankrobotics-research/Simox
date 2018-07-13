@@ -27,18 +27,20 @@
 #include "../VirtualRobot.h"
 
 #include <vector>
+#include <memory>
 
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT SelectionGroup
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SelectionGroup : public std::enable_shared_from_this<SelectionGroup>
     {
         friend class Visualization;
+        friend class VisualizationFactory;
     protected:
-        SelectionGroup();
+        SelectionGroup() = default;
 
     public:
-        virtual ~SelectionGroup();
+        virtual ~SelectionGroup() = default;
 
         inline void select()
         {
@@ -59,14 +61,6 @@ namespace VirtualRobot
 
         std::vector<VisualizationWeakPtr> visualizations;
         bool selected;
-    };
-
-    class VIRTUAL_ROBOT_IMPORT_EXPORT DummySelectionGroup : public SelectionGroup
-    {
-    public:
-        DummySelectionGroup() : SelectionGroup()
-        {
-        }
     };
 
 } // namespace VirtualRobot

@@ -85,7 +85,7 @@ namespace SimoxGui
         Layer& requestLayer(const std::string& name);
 
         void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
-        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization);
+        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group = nullptr);
 
         QWidget *parent;
 
@@ -96,12 +96,13 @@ namespace SimoxGui
         struct SelectionGroupData
         {
             SoSeparator* node;
-            size_t visuAddedCallbackId;
             size_t selectionChangedCallbackId;
         };
         std::map<std::shared_ptr<VirtualRobot::CoinSelectionGroup>, SelectionGroupData> selectionGroups;
 
         VirtualRobot::Visualization::Color backgroundColor;
+
+        size_t selectionGroupChangedCallbackId;
     };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }

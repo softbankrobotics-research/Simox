@@ -38,16 +38,9 @@ namespace VirtualRobot
         virtual ~CoinSelectionGroup() override = default;
         virtual void setSelected(bool selected) override;
 
-        size_t addVisualizationAddedCallback(std::function<void (const VisualizationPtr &)> f);
-        void removeVisualizationAddedCallback(size_t id);
-
         size_t addSelectionChangedCallbacks(std::function<void (bool)> f);
         void removeSelectionChangedCallbacks(size_t id);
 
-    protected:
-        virtual void addVisualization(const VisualizationPtr& visu) override;
-
-        std::map<size_t, std::function<void(const VisualizationPtr&)>> visualizationAddedCallbacks;
         std::map<size_t, std::function<void(bool)>> selectionChangedCallbacks;
     };
 
