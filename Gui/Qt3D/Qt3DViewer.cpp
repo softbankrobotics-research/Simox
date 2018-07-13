@@ -41,12 +41,17 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
     this->scene = new Qt3DCore::QEntity;
 
-    /*//For antialiasing
-    Qt3DRender::QRenderStateSet *multiSampleRenderStateSet = new Qt3DRender::QRenderStateSet;
+    //For antialiasing
+    Qt3DRender::QRenderStateSet *renderStateSet = new Qt3DRender::QRenderStateSet;
+
     Qt3DRender::QMultiSampleAntiAliasing *msaa = new Qt3DRender::QMultiSampleAntiAliasing;
-    multiSampleRenderStateSet->addRenderState(msaa);
-    this->activeFrameGraph()->setParent(multiSampleRenderStateSet);
-    this->setActiveFrameGraph(multiSampleRenderStateSet);*/
+    renderStateSet->addRenderState(msaa);
+    Qt3DRender::QDepthTest *depthTest = new Qt3DRender::QDepthTest;
+    depthTest->setDepthFunction(Qt3DRender::QDepthTest::LessOrEqual);
+    renderStateSet->addRenderState(depthTest);
+
+    this->activeFrameGraph()->setParent(renderStateSet);
+    this->setActiveFrameGraph(renderStateSet);
 
     //For screenshots
     this->capture = new Qt3DRender::QRenderCapture;
