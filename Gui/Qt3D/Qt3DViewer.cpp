@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DRender/QDirectionalLight>
+#include <Qt3DRender/QMultiSampleAntiAliasing>
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
 {
@@ -39,6 +40,13 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->parent->setLayout(layout);
 
     this->scene = new Qt3DCore::QEntity;
+
+    /*//For antialiasing
+    Qt3DRender::QRenderStateSet *multiSampleRenderStateSet = new Qt3DRender::QRenderStateSet;
+    Qt3DRender::QMultiSampleAntiAliasing *msaa = new Qt3DRender::QMultiSampleAntiAliasing;
+    multiSampleRenderStateSet->addRenderState(msaa);
+    this->activeFrameGraph()->setParent(multiSampleRenderStateSet);
+    this->setActiveFrameGraph(multiSampleRenderStateSet);*/
 
     //For screenshots
     this->capture = new Qt3DRender::QRenderCapture;
@@ -204,22 +212,13 @@ void SimoxGui::Qt3DViewer::viewAll()
 
 void SimoxGui::Qt3DViewer::setAntialiasing(unsigned short quality)
 {
-    static bool printed = false;
-    if (!printed)
-    {
-        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-        printed = true;
-    }
+
 }
 
 unsigned short SimoxGui::Qt3DViewer::getAntialiasing() const
 {
-    static bool printed = false;
-    if (!printed)
-    {
-        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-        printed = true;
-    }
+    //qt3d does 4 sampling steps
+    return 4;
 }
 
 void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
