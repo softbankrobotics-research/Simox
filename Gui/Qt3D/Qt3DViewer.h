@@ -32,7 +32,6 @@
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QNode>
-#include <Qt3DExtras/QOrbitCameraController>
 #include <Qt3DRender/QRenderCapture>
 
 namespace SimoxGui

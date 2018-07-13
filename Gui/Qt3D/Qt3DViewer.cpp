@@ -27,10 +27,8 @@
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualizationSet.h>
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DElement.h>
 
-
 #include <QVBoxLayout>
-#include <Qt3DRender/QCamera>
-#include <Qt3DExtras/qforwardrenderer.h>
+#include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DRender/QDirectionalLight>
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
@@ -76,7 +74,6 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
-    //delete(scene);
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
