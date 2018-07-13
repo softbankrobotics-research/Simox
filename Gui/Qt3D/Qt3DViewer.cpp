@@ -65,17 +65,18 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
     this->setRootEntity(scene);
     this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 1.0f));
+    this->viewAll();
+    this->setAntialiasing(4);
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
+    delete(scene);
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
-    this->scene->dumpObjectTree();
     requestLayer(layer).addVisualization(visualization);
-    this->scene->dumpObjectTree();
 }
 
 void SimoxGui::Qt3DViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
@@ -145,18 +146,37 @@ bool SimoxGui::Qt3DViewer::hasLayer(const std::string &layer) const
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected() const
 {
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected(const std::string &layer) const
 {
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
 }
 
 QImage SimoxGui::Qt3DViewer::getScreenshot() const
 {
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
 }
 
 void SimoxGui::Qt3DViewer::resetView()
 {
+    this->viewAll();
 }
 
 void SimoxGui::Qt3DViewer::viewAll()
@@ -166,19 +186,40 @@ void SimoxGui::Qt3DViewer::viewAll()
 
 void SimoxGui::Qt3DViewer::setAntialiasing(unsigned short quality)
 {
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
 }
 
 unsigned short SimoxGui::Qt3DViewer::getAntialiasing() const
 {
+    static bool printed = false;
+    if (!printed)
+    {
+        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
+        printed = true;
+    }
 }
 
 void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
 {
-    this->defaultFrameGraph()->setClearColor(QColor(QRgb(0xB2B2B2)));
+    backgroundColor = color;
+    if (color.isNone() || color.isTransparencyOnly())
+    {
+        this->defaultFrameGraph()->setClearColor(QColor(QRgb(0xffffff)));
+    }
+    else
+    {
+        this->defaultFrameGraph()->setClearColor(QColor(color.r, color.g, color.b));
+    }
 }
 
 VirtualRobot::Visualization::Color SimoxGui::Qt3DViewer::getBackgroundColor() const
 {
+    return backgroundColor;
 }
 
 SimoxGui::Qt3DViewer::Layer &SimoxGui::Qt3DViewer::requestLayer(const std::string &name)

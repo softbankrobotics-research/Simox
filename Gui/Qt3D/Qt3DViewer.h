@@ -83,6 +83,7 @@ namespace SimoxGui
         QWidget* parent;
         Qt3DCore::QEntity* scene;
         Qt3DCustomCameraController* camController;
+        VirtualRobot::Visualization::Color backgroundColor;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
