@@ -33,6 +33,7 @@
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QNode>
 #include <Qt3DExtras/QOrbitCameraController>
+#include <Qt3DRender/QRenderCapture>
 
 namespace SimoxGui
 {
@@ -83,6 +84,7 @@ namespace SimoxGui
         QWidget* parent;
         Qt3DCore::QEntity* scene;
         Qt3DCustomCameraController* camController;
+        Qt3DRender::QRenderCapture* capture;
         VirtualRobot::Visualization::Color backgroundColor;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;

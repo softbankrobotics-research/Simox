@@ -42,6 +42,11 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
     this->scene = new Qt3DCore::QEntity;
 
+    //For screenshots
+    this->capture = new Qt3DRender::QRenderCapture;
+    this->activeFrameGraph()->setParent(this->capture);
+    this->setActiveFrameGraph(this->capture);
+
     this->camController = new Qt3DCustomCameraController(scene);
     this->camController->setLinearSpeed( 3500.0f );
     this->camController->setLookSpeed( 240.0f );
@@ -166,11 +171,27 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected
 
 QImage SimoxGui::Qt3DViewer::getScreenshot() const
 {
-    static bool printed = false;
-    if (!printed)
+    Qt3DRender::QRenderCaptureReply *reply = this->capture->requestCapture();
+
+    //Wait for completion or 3000ms timeout event
+    QTimer timer;
+    timer.setSingleShot(true);
+    QEventLoop loop;
+    connect(reply, SIGNAL(completed()), &loop, SLOT(quit()));
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timer.start(3000);
+    loop.exec();
+
+    if(timer.isActive())
     {
-        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-        printed = true;
+        QImage result = reply->image();
+        delete reply;
+        return result;
+    }
+    else
+    {
+        VR_ERROR << "Timeout while capturing screenshot!" << std::endl;
+        return QImage();
     }
 }
 
