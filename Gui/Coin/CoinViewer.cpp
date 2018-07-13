@@ -27,10 +27,62 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/SoPath.h>
 #include <Inventor/Qt/SoQt.h>
+#include <Inventor/manips/SoTransformManip.h>
 #include <QGLWidget>
 
 #include <iostream>
+
+SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
+{
+   // See which child of selection got picked
+   SoFullPath *p = static_cast<SoFullPath*>(pick->getPath());
+
+   //Make sure we didn't select a manipulator
+   for (int i = 0; i < p->getLength(); i++)
+   {
+       SoNode* n = p->getNode(i);
+
+       if (n->isOfType(SoTransformManip::getClassTypeId()))
+       {
+           //Path includes a manipulator, so just ignore it
+           //returning NULL would lead to a deselection of all objects
+           //therefore return an empty path
+           return new SoPath;
+       }
+   }
+
+   int depthSelectionNode=0;
+   for (; depthSelectionNode<p->getLength(); ++depthSelectionNode)
+   {
+       if (p->getNode(depthSelectionNode)->getName() == SbName("selectionNode"))
+       {
+           break;
+       }
+   }
+   SoNode* n = p->getNode(depthSelectionNode + 1); // get SelectionGroup node
+   p->truncate(depthSelectionNode+2);
+   return p;
+}
+
+void selectionCallback(void*, SoPath* p)
+{
+    auto n = p->getNode(p->getLength()-1);
+    VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(n->getUserData());
+    VR_ASSERT(s);
+    s->setSelected(true);
+}
+
+void deselectionCallback(void*, SoPath* p)
+{
+    auto n = p->getNode(p->getLength()-1);
+    VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(n->getUserData());
+    VR_ASSERT(s);
+    s->setSelected(false);
+}
+
 
 namespace SimoxGui
 {
@@ -38,13 +90,24 @@ namespace SimoxGui
         : SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
           parent(parent),
           sceneSep(new SoSeparator),
-          unitNode(new SoUnits)
+          unitNode(new SoUnits),
+          selectionNode(new SoSelection)
     {
         sceneSep->ref();
+        sceneSep->setName(SbName("sceneSep"));
         unitNode->ref();
+        unitNode->setName(SbName("unitNode"));
+        selectionNode->ref();
+        selectionNode->setName(SbName("selectionNode"));
 
         unitNode->units = SoUnits::MILLIMETERS;
         sceneSep->addChild(unitNode);
+
+        selectionNode->setPickFilterCallback(pickFilterCB);
+        selectionNode->addSelectionCallback(selectionCallback, NULL);
+        selectionNode->addDeselectionCallback(deselectionCallback, NULL);
+
+        sceneSep->addChild(selectionNode);
 
         SoQtExaminerViewer::setAccumulationBuffer(true);
         SoQtExaminerViewer::setGLRenderAction(new SoLineHighlightRenderAction);
@@ -59,8 +122,10 @@ namespace SimoxGui
     CoinViewer::~CoinViewer()
     {
         sceneSep->removeAllChildren();
+        selectionNode->removeAllChildren();
         sceneSep->unref();
         unitNode->unref();
+        selectionNode->unref();
     }
 
     void CoinViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
@@ -145,22 +210,45 @@ namespace SimoxGui
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
     {
-        static bool printed = false;
-        if (!printed)
+        std::vector<VirtualRobot::VisualizationPtr> visus;
+        const SoPathList* selectedNodes = selectionNode->getList();
+        for (int i=0; i<selectedNodes->getLength(); ++i)
         {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
+            SoPath* p = reinterpret_cast<SoPath*>(selectedNodes->get(i));
+            auto userData = p->getNode(p->getLength()-1)->getUserData();
+            VR_ASSERT(userData);
+            VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(userData);
+            for (const auto& v : s->getVisualizations())
+            {
+                visus.push_back(v);
+            }
         }
+        return visus;
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer) const
     {
-        static bool printed = false;
-        if (!printed)
+        std::vector<VirtualRobot::VisualizationPtr> visus;
+        if (hasLayer(layer))
         {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
+            auto l = requestLayer(layer);
+            const SoPathList* selectedNodes = selectionNode->getList();
+            for (int i=0; i<selectedNodes->getLength(); ++i)
+            {
+                SoPath* p = reinterpret_cast<SoPath*>(selectedNodes->get(i));
+                auto userData = p->getNode(p->getLength()-1)->getUserData();
+                VR_ASSERT(userData);
+                VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(userData);
+                for (const auto& v : s->getVisualizations())
+                {
+                    if (l.hasVisualization(v))
+                    {
+                        visus.push_back(v);
+                    }
+                }
+            }
         }
+        return visus;
     }
 
     QImage CoinViewer::getScreenshot() const
@@ -252,17 +340,35 @@ namespace SimoxGui
             SoSeparator* node = nullptr;
             if (it == selectionGroups.end())
             {
-                auto id = selectionGroup->addVisualizationAddedCallback([this](const VirtualRobot::VisualizationPtr& visu)
+                auto visuAddedId = selectionGroup->addVisualizationAddedCallback([this](const VirtualRobot::VisualizationPtr& visu)
                 {
                     _removeVisualization(visu);
                     _addVisualization(visu);
                 });
+                auto selectionChangedId = selectionGroup->addSelectionChangedCallbacks([this,selectionGroup](bool selected)
+                {
+                    SelectionGroupData& d = selectionGroups[selectionGroup];
+                    if (selected && !selectionNode->isSelected(d.node))
+                    {
+                        selectionNode->select(d.node);
+                    }
+                    else if (!selected && selectionNode->isSelected(d.node))
+                    {
+                        selectionNode->deselect(d.node);
+                    }
+                });
                 SelectionGroupData& d = selectionGroups[selectionGroup];
-                d.callbackId = id;
+                d.visuAddedCallbackId = visuAddedId;
+                d.selectionChangedCallbackId = selectionChangedId;
                 d.node = new SoSeparator;
                 node = d.node;
                 node->ref();
-                sceneSep->addChild(node);
+                node->setUserData(selectionGroup.get());
+                static int i=0;
+                std::stringstream ss;
+                ss << "GroupNode_" << i++;
+                node->setName(SbName(ss.str().c_str()));
+                selectionNode->addChild(node);
             }
             else
             {
@@ -292,10 +398,11 @@ namespace SimoxGui
                 d.node->removeChild(std::static_pointer_cast<VirtualRobot::CoinVisualization>(visualization)->getMainNode());
                 if (d.node->getNumChildren() <= 0)
                 {
-                    sceneSep->removeChild(d.node);
+                    selectionNode->removeChild(d.node);
                     d.node->unref();
                     d.node = nullptr;
-                    it->first->removeVisualizationAddedCallback(d.callbackId);
+                    it->first->removeVisualizationAddedCallback(d.visuAddedCallbackId);
+                    it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
                     selectionGroups.erase(it);
                 }
             }

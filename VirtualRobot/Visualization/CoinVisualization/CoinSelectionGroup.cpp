@@ -8,6 +8,18 @@ namespace VirtualRobot
     {
     }
 
+    void CoinSelectionGroup::setSelected(bool selected)
+    {
+        if (selected != isSelected())
+        {
+            for (auto& f : selectionChangedCallbacks)
+            {
+                f.second(selected);
+            }
+        }
+        SelectionGroup::setSelected(selected);
+    }
+
     size_t CoinSelectionGroup::addVisualizationAddedCallback(std::function<void (const VisualizationPtr &)> f)
     {
         static size_t id = 0;
@@ -21,6 +33,22 @@ namespace VirtualRobot
         if (it != visualizationAddedCallbacks.end())
         {
             visualizationAddedCallbacks.erase(it);
+        }
+    }
+
+    size_t CoinSelectionGroup::addSelectionChangedCallbacks(std::function<void (bool)> f)
+    {
+        static size_t id = 0;
+        selectionChangedCallbacks[id] = f;
+        return id++;
+    }
+
+    void CoinSelectionGroup::removeSelectionChangedCallbacks(size_t id)
+    {
+        auto it = selectionChangedCallbacks.find(id);
+        if (it != selectionChangedCallbacks.end())
+        {
+            selectionChangedCallbacks.erase(it);
         }
     }
 

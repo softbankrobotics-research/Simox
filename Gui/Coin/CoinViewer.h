@@ -31,6 +31,7 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoUnits.h>
+#include <Inventor/nodes/SoSelection.h>
 
 #include <unordered_set>
 
@@ -90,11 +91,13 @@ namespace SimoxGui
 
         SoSeparator *sceneSep;
         SoUnits *unitNode;
+        SoSelection* selectionNode;
         std::map<std::string, Layer> layers;
         struct SelectionGroupData
         {
             SoSeparator* node;
-            size_t callbackId;
+            size_t visuAddedCallbackId;
+            size_t selectionChangedCallbackId;
         };
         std::map<std::shared_ptr<VirtualRobot::CoinSelectionGroup>, SelectionGroupData> selectionGroups;
 

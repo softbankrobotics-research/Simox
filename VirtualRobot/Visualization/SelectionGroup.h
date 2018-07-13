@@ -53,17 +53,6 @@ namespace VirtualRobot
 
         virtual std::vector<VisualizationPtr> getVisualizations();
 
-//        enum ManipulatorType
-//        {
-//            position,
-//            rotation
-//        };
-//        virtual void addManipulator(ManipulatorType t);
-//        virtual void removeManipulator(ManipulatorType t);
-//        virtual void removeAllManipulators();
-//        virtual bool hasManipulator(ManipulatorType t) const = 0;
-//        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const = 0;
-
     protected:
         virtual void addVisualization(const VisualizationPtr& visu);
         virtual void removeVisualization(const VisualizationPtr& visu);
