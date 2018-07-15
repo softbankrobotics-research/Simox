@@ -24,7 +24,6 @@
 #define _VirtualRobot_VisualizationSet_h_
 
 #include "Visualization.h"
-#include "VisualizationGroup.h"
 #include "../Tools/BoundingBox.h"
 
 #include <vector>
@@ -34,15 +33,16 @@
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : protected VisualizationGroup, virtual public Visualization
+    class VIRTUAL_ROBOT_IMPORT_EXPORT VisualizationSet : virtual public Visualization
     {
     protected:
         VisualizationSet(const std::vector<VisualizationPtr>& visualizations);
 
     public:
+        virtual void init() override;
         virtual ~VisualizationSet() override;
 
-        virtual VisualizationPtr clone() const override = 0;
+        virtual VisualizationPtr clone() const override;
 
         virtual void addVisualization(const VisualizationPtr& visu);
         virtual bool containsVisualization(const VisualizationPtr& visu) const;
@@ -54,12 +54,10 @@ namespace VirtualRobot
         virtual bool empty() const;
         virtual size_t size() const;
 
-        virtual Eigen::Matrix4f getGlobalPose() const override;
+        //virtual Eigen::Matrix4f getGlobalPose() const override;
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
         virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f &m);
         virtual void applyDisplacement(const Eigen::Matrix4f &dp) override;
-        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override = 0;
-        virtual void removePoseChangedCallback(size_t id) override = 0;
 
         virtual void setVisible(bool showVisualization) override;
         virtual bool isVisible() const override;
@@ -78,26 +76,18 @@ namespace VirtualRobot
 
         virtual void setSelected(bool selected) override;
         virtual bool isSelected() const override;
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override = 0;
-        virtual void removeSelectionChangedCallback(size_t id) override = 0;
+        virtual void setSelectionGroup(const SelectionGroupPtr& group) override;
+        virtual SelectionGroupPtr getSelectionGroup() const override;
 
-        virtual void scale(const Eigen::Vector3f &s) override;
+        virtual void scale(const Eigen::Vector3f &scaleFactor) override;
 
         virtual void shrinkFatten(float offset) override;
 
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override = 0;
-        virtual void _removeManipulator(ManipulatorType t) override = 0;
-        virtual void _removeAllManipulators() override = 0;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override = 0;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override = 0;
-
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        virtual void setFilename(const std::string &filename, bool boundingBox) override = 0;
-        virtual std::string getFilename() const override = 0;
-        virtual bool usedBoundingBoxVisu() const override = 0;
+        virtual void setFilename(const std::string &filename, bool boundingBox);
+        virtual std::string getFilename() const;
+        virtual bool usedBoundingBoxVisu() const;
 
         virtual BoundingBox getBoundingBox() const override;
 
@@ -111,6 +101,11 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override = 0;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override = 0;
+
+    protected:
+        std::vector<VisualizationPtr> visualizations;
+        std::string filename;
+        bool usedBoundingBox;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet
@@ -122,43 +117,10 @@ namespace VirtualRobot
     public:
         virtual ~DummyVisualizationSet() override = default;
 
-        virtual VisualizationPtr clone() const override;
-
-        virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
-        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f) override;
-        virtual void removePoseChangedCallback(size_t id) override;
-
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
-        virtual void removeSelectionChangedCallback(size_t id) override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
-
-        virtual void setFilename(const std::string &filename, bool boundingBox) override;
-        virtual std::string getFilename() const override;
-        virtual bool usedBoundingBoxVisu() const override;
-
-        /**
-         * Calculate and return one TriMesh model containing all visualizations of this set
-         */
-        virtual TriMeshModelPtr getTriMeshModel() const override;
-
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
-
-    protected:
-        bool selected;
-        std::set<ManipulatorType> addedManipulators;
-        std::string filename;
-        bool usedBoundingBox;
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
     };
 
 } // namespace VirtualRobot

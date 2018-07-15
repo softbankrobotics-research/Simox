@@ -133,8 +133,6 @@ void MTPlanningScenery::buildScene()
         o->setGlobalPose(m);
         environmentModels.push_back(o);
         VisualizationSetPtr v = o->getVisualization(ModelLink::Full);
-        std::stringstream on;
-        on << "Obstacle-" << i;
         viewer->addVisualization("obstacles", v);
     }
 

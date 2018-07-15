@@ -81,7 +81,7 @@
 //#include <VirtualRobot/VirtualRobotTest.h>
 #include <VirtualRobot/ManipulationObject.h>
 #include <VirtualRobot/BoundingBox.h>
-#include <VirtualRobot/RuntimeEnvironment.h>
+#include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Compression/CompressionRLE.h>
 #include <VirtualRobot/Compression/CompressionBZip2.h>
 #include <VirtualRobot/SphereApproximator.h>

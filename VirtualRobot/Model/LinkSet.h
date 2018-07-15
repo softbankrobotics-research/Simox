@@ -30,31 +30,7 @@ namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT LinkSet : public ModelNodeSet
     {
-    protected:
-        /*!
-         * Initialize this set with a vector of ModelNodes.
-         *
-         * @param name The name of this LinkSet.
-         * @param model The associated model.
-         * @param modelNodes The model nodes to add to this LinkSet.
-         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
-         *                         kinematicRoot does not have to be a node of this set.
-         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
-         * @param tcp   The tcp.
-         *              If not given, the last entry of modelNodes will be set as the tcp.
-         */
-        LinkSet(const std::string& name,
-                     const ModelWeakPtr& model,
-                     const std::vector<ModelNodePtr>& modelNodes,
-                     const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const FramePtr tcp = FramePtr());
-
     public:
-        /*!
-         * Destructor.
-         */
-        virtual ~LinkSet();
-
         /*!
          * Create a new LinkSet.
          *
@@ -73,10 +49,11 @@ namespace VirtualRobot
          */
         static LinkSetPtr createLinkSet(const ModelPtr& model,
                                         const std::string& name,
-                                        const std::vector<std::string>& modelNodeNames,
+                                        const std::vector<std::string>& linkNames,
                                         const std::string& kinematicRootName = "",
                                         const std::string& tcpName = "",
                                         bool registerToModel = false);
+
         /*!
          * Create a new LinkSet.
          *
@@ -98,6 +75,7 @@ namespace VirtualRobot
                                                   const ModelNodePtr kinematicRoot = ModelNodePtr(),
                                                   const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
+
         static LinkSetPtr createLinkSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelLinkPtr>& modelNodes,
@@ -105,83 +83,71 @@ namespace VirtualRobot
                                                   const FramePtr tcp = FramePtr(),
                                                   bool registerToModel = false);
 
+    protected:
         /*!
-         * Get all nodes of this set.
+         * Initialize this set with a vector of ModelNodes.
          *
-         * @return The nodes contained in this set.
+         * @param name The name of this LinkSet.
+         * @param model The associated model.
+         * @param modelNodes The model nodes to add to this LinkSet.
+         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
+         *                         kinematicRoot does not have to be a node of this set.
+         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
+         * @param tcp   The tcp.
+         *              If not given, the last entry of modelNodes will be set as the tcp.
          */
-        const std::vector<ModelLinkPtr> getLinks() const;
+        LinkSet(const std::string& name,
+                     const ModelWeakPtr& model,
+                     const std::vector<ModelLinkPtr>& linkNodes,
+                     const ModelNodePtr &kinematicRoot = ModelLinkPtr(),
+                     const FramePtr& tcp = FramePtr());
 
-		ModelLinkPtr& operator[](int i)
-		{
-			return getNode(i);
-		}
-
-		/*!
-		* Get the node at position i.
-		*
-		* @param i The position of the node to get.
-		* @return The node.
-		*/
-		ModelLinkPtr& getNode(int i);
-		ModelLinkPtr& getLink(int i);
-
-
+    public:
         /*!
-         * Print out some information.
+         * Destructor.
          */
-        void print() const;
+        virtual ~LinkSet();
 
-        /*!
-         * Get the collision models of all contained nodes.
-         *
-         * @return The collision models.
-         */
-        std::vector<CollisionModelPtr> getCollisionModels();
+        virtual ModelNodePtr getNode(size_t i) const override;
+        ModelLinkPtr getLink(size_t i) const;
 
-        CollisionCheckerPtr getCollisionChecker() const;
+        virtual bool hasNode(const ModelNodePtr &node) const override;
+        virtual bool hasNode(const std::string &nodeName) const override;
+        inline bool hasLink(const ModelLinkPtr &link) const
+        {
+            return hasNode(link);
+        }
+        inline bool hasLink(const std::string &linkName) const
+        {
+            return hasNode(linkName);
+        }
 
-        /*!
-         * Get number of faces (i.e. triangles) of this object.
-         *
-         * @param collisionModel Indicates weather the faces of the collision model or the full model should be returned.
-         */
-        virtual int getNumFaces(bool collisionModel = false);
+        virtual std::vector<ModelNodePtr> getNodes() const override;
+        virtual std::vector<ModelJointPtr> getJoints() const override;
+        virtual std::vector<ModelLinkPtr> getLinks() const override;
 
-        /*!
-         * Return center of mass of this node set.
-         *
-         * @return The CoM in global coordinate system.
-         */
-        Eigen::Vector3f getCoM();
+        virtual unsigned int getSize() const override;
 
-        /*!
-         * Return accumulated mass of this node set.
-         *
-         * @return The mass.
-         */
-        float getMass();
+        virtual ModelNodePtr getKinematicRoot() const override;
+        virtual void setKinematicRoot(const ModelNodePtr &modelNode) override;
 
-        /*!
-         * Create a XML string to represent this LinkSet.
-         *
-         * @param tabs The number of tabs to start each line with.
-         * @return The generated XML string.
-         */
+        virtual FramePtr getTCP() const override;
+
+        virtual void print() const override;
         virtual std::string toXML(int tabs) const override;
 
-        /*!
-         * Clones this LinkSet and registers it to the given model.
-         * All links of this LinkSet must be already registered at the given model.
-         * Note: this method does not deep copy the links, thus the cloned LinkSet will point to the same links.
-         *
-         * @param model The model the cloned LinkSet will be registered to.
-        */
-        LinkSetPtr clone(ModelPtr model);
+        virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const override;
 
+        std::vector<CollisionModelPtr> getCollisionModels() const;
+        CollisionCheckerPtr getCollisionChecker() const;
+        int getNumFaces(bool collisionModel);
+        Eigen::Vector3f getCoM();
+        float getMass();
 
     protected:
         std::vector<ModelLinkPtr> links;
+        ModelNodePtr kinematicRoot;
+        FramePtr tcp;
     };
 }
 

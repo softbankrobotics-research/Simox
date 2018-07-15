@@ -37,16 +37,10 @@ namespace VirtualRobot
 {
     class BoundingBox;
 
-    template<typename T>
-    static inline std::shared_ptr<T> visualization_cast(const VisualizationPtr& visu)
-    {
-        auto vc = std::dynamic_pointer_cast<T>(visu);
-        return vc;
-    }
-
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame, public std::enable_shared_from_this<Visualization>
     {
         friend class VisualizationSet;
+        friend class SelectionGroup;
     public:
         struct Color
         {
@@ -138,11 +132,11 @@ namespace VirtualRobot
         /*!
         Constructor
         */
-        Visualization() : Frame(), inVisualizationSet(false)
-        {
-        }
+        Visualization();
 
     public:
+        virtual void init();
+
         /*!
         */
         virtual ~Visualization() = default;
@@ -152,8 +146,8 @@ namespace VirtualRobot
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& m);
         virtual void applyDisplacement(const Eigen::Matrix4f& dp);
-        virtual size_t addPoseChangedCallback(std::function<void(const Eigen::Matrix4f&)> f) = 0;
-        virtual void removePoseChangedCallback(size_t id) = 0;
+        virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f);
+        virtual void removePoseChangedCallback(size_t id);
 
         /*!
             Set the visibility of this visualisation.
@@ -195,55 +189,19 @@ namespace VirtualRobot
         {
             this->setSelected(false);
         }
-        virtual void setSelected(bool selected) = 0;
-        virtual bool isSelected() const = 0;
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
-        virtual void removeSelectionChangedCallback(size_t id) = 0;
+        virtual void setSelected(bool selected);
+        virtual bool isSelected() const;
+        virtual size_t addSelectionChangedCallback(std::function<void (bool)> f);
+        virtual void removeSelectionChangedCallback(size_t id);
+    protected:
+        virtual void executeSelectionChangedCallbacks(bool selected);
+    public:
+        virtual void setSelectionGroup(const SelectionGroupPtr& group);
+        virtual SelectionGroupPtr getSelectionGroup() const;
 
         virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
 
         virtual void shrinkFatten(float offset) = 0;
-
-        enum ManipulatorType
-        {
-            position,
-            rotation
-        };
-        void addManipulator(ManipulatorType t)
-        {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be added to visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_addManipulator(t);
-            }
-        }
-        void removeManipulator(ManipulatorType t)
-        {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be removed from visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_removeManipulator(t);
-            }
-        }
-        virtual bool hasManipulator(ManipulatorType t) const = 0;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const = 0;
-        void removeAllManipulators()
-        {
-            if (this->isInVisualizationSet())
-            {
-                VR_WARNING << "Manipulator could not be removed from visualization, because it is part of a set." << std::endl;
-            }
-            else
-            {
-                this->_removeAllManipulators();
-            }
-        }
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const = 0;
 
@@ -290,20 +248,10 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) = 0;
 
-        /**
-         * @brief setIsInVisualizationSet Internally used function to determinate if this visualization is in a set.
-         *
-         * If a visualization is in a set, it is only selecable and manipulateable using the set.
-         */
-        virtual bool isInVisualizationSet() const;
-
     protected:
-        virtual void setIsInVisualizationSet(bool inSet);
-        virtual void _addManipulator(ManipulatorType t) = 0;
-        virtual void _removeManipulator(ManipulatorType t) = 0;
-        virtual void _removeAllManipulators() = 0;
-
-        bool inVisualizationSet;
+        std::map<size_t, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+        std::map<size_t, std::function<void(bool)>> selectionChangedCallbacks;
+        SelectionGroupPtr selectionGroup;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization
@@ -316,13 +264,11 @@ namespace VirtualRobot
         DummyVisualization();
 
     public:
+        virtual void init() override;
+
         /*!
         */
         virtual ~DummyVisualization() override = default;
-
-        virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
-        virtual size_t addPoseChangedCallback(std::function<void(const Eigen::Matrix4f&)> f) override;
-        virtual void removePoseChangedCallback(size_t id) override;
 
         /*!
             Set the visibility of this visualisation.
@@ -348,22 +294,9 @@ namespace VirtualRobot
         virtual void setMaterial(const MaterialPtr& material) override;
         virtual MaterialPtr getMaterial() const override;
 
-        virtual void setSelected(bool selected) override;
-        virtual bool isSelected() const override;
-        virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) override;
-        virtual void removeSelectionChangedCallback(size_t id) override;
-
         virtual void scale(const Eigen::Vector3f& s) override;
 
         virtual void shrinkFatten(float offset) override;
-
-    protected:
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
-    public:
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
@@ -416,14 +349,10 @@ namespace VirtualRobot
         DrawStyle style;
         Color color;
         MaterialPtr material;
-        bool selected;
-        std::set<ManipulatorType> addedManipulators;
         std::string filename; //!< if the visualization was build from a file, the filename is stored here
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
-        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
-        std::map<unsigned int, std::function<void(bool)>> selectionChangedCallbacks;
     };
 
 } // namespace VirtualRobot

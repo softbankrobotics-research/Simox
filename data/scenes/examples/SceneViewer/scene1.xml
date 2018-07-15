@@ -5,20 +5,20 @@
 	<Robot name="Armar3" initConfig="start">
         <File>robots/Armar3/Armar3.xml</File>
         <Configuration name="start">
-            <Node name="Shoulder 1 L_joint" unit="radian" value="-0.85"/>
-            <Node name="Shoulder 2 L_joint" unit="radian" value="-0.8"/>
-            <Node name="Upperarm L_joint" unit="radian" value="-0.85"/>
-            <Node name="Shoulder 1 R_joint" unit="radian" value="-0.85"/>
-            <Node name="Shoulder 2 R_joint" unit="radian" value="0.8"/>
-            <Node name="Upperarm R_joint" unit="radian" value="0.85"/>
+            <Node name="Shoulder 1 L" unit="radian" value="-0.85"/>
+            <Node name="Shoulder 2 L" unit="radian" value="-0.8"/>
+            <Node name="Upperarm L" unit="radian" value="-0.85"/>
+            <Node name="Shoulder 1 R" unit="radian" value="-0.85"/>
+            <Node name="Shoulder 2 R" unit="radian" value="0.8"/>
+            <Node name="Upperarm R" unit="radian" value="0.85"/>
         </Configuration>
         <Configuration name="other config">
-            <Node name="Shoulder 1 L_joint" unit="radian" value="0.5"/>
-            <Node name="Shoulder 2 L_joint" unit="radian" value="0.5"/>
-            <Node name="Upperarm L_joint" unit="radian" value="0.5"/>
-            <Node name="Shoulder 1 R_joint" unit="radian" value="0.5"/>
-            <Node name="Shoulder 2 R_joint" unit="radian" value="-0.5"/>
-            <Node name="Upperarm R_joint" unit="radian" value="-0.5"/>
+            <Node name="Shoulder 1 L" unit="radian" value="0.5"/>
+            <Node name="Shoulder 2 L" unit="radian" value="0.5"/>
+            <Node name="Upperarm L" unit="radian" value="0.5"/>
+            <Node name="Shoulder 1 R" unit="radian" value="0.5"/>
+            <Node name="Shoulder 2 R" unit="radian" value="-0.5"/>
+            <Node name="Upperarm R" unit="radian" value="-0.5"/>
         </Configuration>
         <GlobalPose>
             <Transform>

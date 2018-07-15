@@ -60,13 +60,11 @@ namespace VirtualRobot
         mainNode->addChild(materialNodeNone);
         mainNode->addChild(drawStyleNode);
         mainNode->addChild(visualizationNode);
+    }
 
-        setGlobalPose(Eigen::Matrix4f::Identity());
-        setVisible(true);
-        setUpdateVisualization(true);
-        setStyle(DrawStyle::normal);
-        setColor(Color::None());
-        setSelected(false);
+    void CoinVisualization::init()
+    {
+        Visualization::init();
         createTriMeshModel();
     }
 
@@ -116,26 +114,6 @@ namespace VirtualRobot
         transformNode->translation.setValue(m(0, 3), m(1, 3), m(2, 3));
         MathTools::Quaternion q = MathTools::eigen4f2quat(m);
         transformNode->rotation.setValue(q.x, q.y, q.z, q.w);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t CoinVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
-    {
-        static unsigned int id = 0;
-        poseChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void CoinVisualization::removePoseChangedCallback(size_t id)
-    {
-        auto it = poseChangedCallbacks.find(id);
-        if (it != poseChangedCallbacks.end())
-        {
-            poseChangedCallbacks.erase(it);
-        }
     }
 
     void CoinVisualization::setVisible(bool showVisualization)
@@ -299,28 +277,6 @@ namespace VirtualRobot
         return material;
     }
 
-    void CoinVisualization::setSelected(bool selected)
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
-    bool CoinVisualization::isSelected() const
-    {
-        VR_ERROR_ONCE_NYI;
-        return false;
-    }
-
-    size_t CoinVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        VR_ERROR_ONCE_NYI;
-        return 0;
-    }
-
-    void CoinVisualization::removeSelectionChangedCallback(size_t id)
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
     void CoinVisualization::scale(const Eigen::Vector3f &s)
     {
         THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
@@ -358,38 +314,6 @@ namespace VirtualRobot
             auto visuNode = CoinVisualizationFactory::createTriMeshModelCoin(getTriMeshModel());
             setVisualization(visuNode);
         }
-    }
-
-    void CoinVisualization::_addManipulator(Visualization::ManipulatorType t)
-    {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
-    }
-
-    void CoinVisualization::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
-    void CoinVisualization::_removeAllManipulators()
-    {
-        VR_ERROR_ONCE_NYI;
-    }
-
-    bool CoinVisualization::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        VR_ERROR_ONCE_NYI;
-        return false;
-    }
-
-    std::vector<Visualization::ManipulatorType> CoinVisualization::getAddedManipulatorTypes() const
-    {
-        VR_ERROR_ONCE_NYI;
-        return std::vector<ManipulatorType>();
     }
 
     std::vector<Primitive::PrimitivePtr> CoinVisualization::getPrimitives() const
@@ -441,7 +365,16 @@ namespace VirtualRobot
 
         SoCallbackAction ca;
         ca.addTriangleCallback(SoShape::getClassTypeId(), &CoinVisualization::InventorTriangleCB, triMeshModel.get());
-        ca.apply(getMainNode());
+        // I dont know if i have to set mm here, but to make shure mm is used i set it.
+        // I would say the triMesh calculation should work, if meters are set here and the scaling in the callback is removed (mm values in the nodes are used as m values which results in an upscaling)
+        SoSeparator *sep = new SoSeparator;
+        sep->ref();
+        SoUnits *unitNode = new SoUnits;
+        unitNode->units = SoUnits::MILLIMETERS;
+        sep->addChild(unitNode);
+        sep->addChild(getMainNode());
+        ca.apply(sep);
+        sep->unref();
     }
 
     int CoinVisualization::getNumFaces() const
@@ -452,6 +385,7 @@ namespace VirtualRobot
     VisualizationPtr CoinVisualization::clone() const
     {
         CoinVisualizationPtr p(new CoinVisualization(visualizationNode));
+        p->init();
         p->setGlobalPose(this->getGlobalPose());
         p->setVisible(this->isVisible());
         p->setStyle(this->getStyle());
@@ -584,6 +518,9 @@ namespace VirtualRobot
         }
 
         SbMatrix mm = action->getModelMatrix();
+        SbMatrix scale;
+        scale.setScale(1000.f); //simox operates in mm, coin3d in m
+        mm = mm.multRight(scale);
         SbVec3f triangle[3];
         mm.multVecMatrix(v1->getPoint(), triangle[0]);
         mm.multVecMatrix(v2->getPoint(), triangle[1]);

@@ -9,6 +9,7 @@
 
 #include "Visualization.h"
 #include "VisualizationSet.h"
+#include "SelectionGroup.h"
 #include "TriMeshModel.h"
 
 #include <fstream>
@@ -80,27 +81,42 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationFactory::createVisualizationFromFile(const std::ifstream &, bool) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationSetPtr VisualizationFactory::createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const
     {
-        return VisualizationSetPtr(new DummyVisualizationSet(visualizations));
+        VisualizationSetPtr v(new DummyVisualizationSet(visualizations));
+        v->init();
+        return v;
+    }
+
+    SelectionGroupPtr VisualizationFactory::createSelectionGroup() const
+    {
+        return SelectionGroupPtr(new SelectionGroup);
     }
 
     VisualizationPtr VisualizationFactory::createBox(float, float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createLine(const Eigen::Vector3f &, const Eigen::Vector3f &, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f &, const Eigen::Matrix4f &, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width) const
@@ -137,27 +153,37 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationFactory::createSphere(float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createCircle(float, float, float, size_t) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createTorus(float, float, float, int, int) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createCircleArrow(float, float, float, int, int) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createCylinder(float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const
@@ -181,7 +207,9 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationFactory::createPoint(float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationSetPtr VisualizationFactory::createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const
@@ -210,43 +238,59 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationFactory::createTriMeshModel(const TriMeshModelPtr&) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createPolygon(const std::vector<Eigen::Vector3f> &) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createPlane(const Eigen::Vector3f &, const Eigen::Vector3f &, float, const std::string &) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createArrow(const Eigen::Vector3f &, float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createText(const std::string &, bool, float, float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createCone(float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createEllipse(float, float, float) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createContactVisualization(const EndEffector::ContactInfoVector &, float, float, bool) const
     {
         //TODO implement using primitives
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     VisualizationPtr VisualizationFactory::createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr &hull, const MathTools::Plane &p, const Eigen::Vector3f &offset) const
@@ -265,7 +309,9 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationFactory::createVisualization() const
     {
-        return VisualizationPtr(new DummyVisualization);
+        VisualizationPtr v(new DummyVisualization);
+        v->init();
+        return v;
     }
 
     void VisualizationFactory::cleanup()

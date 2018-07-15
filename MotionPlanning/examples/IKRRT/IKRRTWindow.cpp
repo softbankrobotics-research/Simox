@@ -532,7 +532,7 @@ void IKRRTWindow::loadReach()
     catch (VirtualRobotException& e)
     {
         cout << " ERROR while loading reach space" << endl;
-        cout << e.what();
+        cout << e.what() << endl;
         reachSpace.reset();
         return;
     }

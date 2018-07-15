@@ -17,7 +17,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 JacobiWindow::JacobiWindow(std::string& sRobotFilename)
-    : QMainWindow(nullptr), boxVisuLayer("box-layer")
+    : QMainWindow(nullptr), boxVisuLayer("box-layer"), robotLayer("robot-layer")
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -52,7 +52,6 @@ void JacobiWindow::setupUI()
 {
     UI.setupUi(this);
     viewer = SimoxGui::ViewerFactory::getInstance()->createViewer(UI.frameViewer);
-    viewer->viewAll();
 
     connect(UI.pushButtonReset, SIGNAL(clicked()), this, SLOT(resetSceneryAll()));
     connect(UI.pushButtonLoad, SIGNAL(clicked()), this, SLOT(loadRobot()));
@@ -226,8 +225,6 @@ void JacobiWindow::resetSceneryAll()
         configMap[joint] = 0.0f;
     }
     robot->setJointValues(configMap);
-
-    viewer->viewAll();
 }
 
 
@@ -244,12 +241,11 @@ void JacobiWindow::collisionModel()
 
     VisualizationSetPtr visualization = robot->getVisualization(colModel);
 
+    viewer->clearLayer(robotLayer);
     if (visualization)
     {
-        viewer->addVisualization(boxVisuLayer, visualization);
+        viewer->addVisualization(robotLayer, visualization);
     }
-
-    viewer->viewAll();
 }
 
 
@@ -316,7 +312,7 @@ void JacobiWindow::selectKC(int nr)
 
     UI.label_TCP->setText(nameQ);
     UI.label_NrJoints->setText(qd);
-    std::vector<RobotNodePtr> nodes = kc->getModelNodes();
+    std::vector<RobotNodePtr> nodes = kc->getNodes();
     elbow.reset();
 
     for (size_t i = 0; i < nodes.size(); i++)
@@ -389,14 +385,13 @@ void JacobiWindow::jacobiTest()
 
     cout << "---- TEST JACOBI ----" << endl;
     JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
-                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+                             kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
     DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
 
     j->setGoal(targetPose, RobotNodePtr(), IKSolver::All);
     j->computeSteps(0.2f, 0, 50);
-    viewer->viewAll();
     cout << "---- END TEST JACOBI ----" << endl;
 }
 
@@ -413,7 +408,7 @@ void JacobiWindow::jacobiTest2()
     //n.push_back(elbow);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
     JointSetPtr jointSet = JointSet::createJointSet(kc->getModel(), kc->getName(),
-                             kc->getModelJoints(), kc->getKinematicRoot(), kc->getTCP());
+                             kc->getJoints(), kc->getKinematicRoot(), kc->getTCP());
     DifferentialIKPtr j(new DifferentialIK(jointSet));
 
     Eigen::Matrix4f targetPose = box->getGlobalPose();
@@ -422,7 +417,6 @@ void JacobiWindow::jacobiTest2()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, elbow, IKSolver::Z);
     j->computeSteps(0.2f, 0, 40);
-    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -467,7 +461,6 @@ void JacobiWindow::jacobiTestBi()
     j->setGoal(targetPose, tcp, IKSolver::Position);
     j->setGoal(targetPose2, tcp2, IKSolver::Position);
     j->computeSteps(0.2f, 0, 50);
-    viewer->viewAll();
 
     cout << "---- END TEST JACOBI ----" << endl;
 }
@@ -537,6 +530,5 @@ void JacobiWindow::loadRobot()
 
     // build visualization
     collisionModel();
-    viewer->viewAll();
 }
 

@@ -25,7 +25,7 @@ float TIMER_MS = 30.0f;
 
 showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
     : QMainWindow(nullptr),
-      obstacleVisu(new VirtualRobot::VisualizationGroup),
+      obstacleVisu(VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({})),
       robotVisu(VisualizationFactory::getInstance()->createVisualization())
 {
     VR_INFO << " start " << endl;
@@ -68,7 +68,7 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
-    viewer->addVisualizations("obstacles", obstacleVisu);
+    viewer->addVisualization("obstacles", obstacleVisu);
 
     loadRobot();
 

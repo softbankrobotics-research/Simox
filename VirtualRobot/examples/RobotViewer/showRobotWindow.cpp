@@ -167,15 +167,15 @@ void showRobotWindow::render()
         viewer->addVisualization(robotLayer, visu);
     }
     // We always render attachments because they can be unchecked easily anyways
-    VisualizationGroupPtr attachmentVisus = robot->getAllAttachmentVisualizations();
-    viewer->addVisualizations(robotLayer, attachmentVisus);
+    auto attachmentVisus = robot->getAllAttachmentVisualizations();
+    viewer->addVisualization(robotLayer, attachmentVisus);
 }
 
 void showRobotWindow::showSensors()
 {
     if (!robot) return;
 
-    // TODO
+    VR_ERROR_ONCE_NYI;
 
     render();
 }

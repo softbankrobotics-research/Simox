@@ -25,35 +25,15 @@
 
 #include "../Model/Model.h"
 
+#include <vector>
+
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ModelNodeSet
     {
-    protected:
-        /*!
-         * Initialize this set with a vector of ModelNodes.
-         *
-         * @param name The name of this ModelNodeSet.
-         * @param model The associated model.
-         * @param modelNodes The model nodes to add to this ModelNodeSet.
-         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
-         *                         kinematicRoot does not have to be a node of this set.
-         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
-         * @param tcp   The tcp.
-         *              If not given, the last entry of modelNodes will be set as the tcp.
-         */
-        ModelNodeSet(const std::string& name,
-                     const ModelWeakPtr& model,
-                     const std::vector<ModelNodePtr>& modelNodes,
-                     const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                     const FramePtr tcp = FramePtr());
-
+    private:
+        class Implementation;
     public:
-        /*!
-         * Destructor.
-         */
-        virtual ~ModelNodeSet();
-
         /*!
          * Create a new ModelNodeSet.
          *
@@ -76,6 +56,7 @@ namespace VirtualRobot
                                                   const std::string& kinematicRootName = "",
                                                   const std::string& tcpName = "",
                                                   bool registerToModel = false);
+
         /*!
          * Create a new ModelNodeSet.
          *
@@ -94,9 +75,35 @@ namespace VirtualRobot
         static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
-                                                  const ModelNodePtr kinematicRoot = ModelNodePtr(),
-                                                  const FramePtr tcp = FramePtr(),
+                                                  const ModelNodePtr& kinematicRoot = ModelNodePtr(),
+                                                  const FramePtr& tcp = FramePtr(),
                                                   bool registerToModel = false);
+
+    protected:
+        /*!
+         * Initialize this set with a vector of ModelNodes.
+         *
+         * @param name The name of this ModelNodeSet.
+         * @param model The associated model.
+         * @param modelNodes The model nodes to add to this ModelNodeSet.
+         * @param kinematicRoot    This specifies the first node of the model's kinematic tree to be used for updating all members of this set.
+         *                         kinematicRoot does not have to be a node of this set.
+         *                         If not given, the first entry of modelNodes will be set as the kinematic root.
+         * @param tcp   The tcp.
+         *              If not given, the last entry of modelNodes will be set as the tcp.
+         */
+        ModelNodeSet(const std::string& name,
+                     const ModelWeakPtr& model,
+                     const std::vector<ModelNodePtr>& modelNodes,
+                     const ModelNodePtr& kinematicRoot = ModelNodePtr(),
+                     const FramePtr& tcp = FramePtr());
+
+    public:
+        /*!
+         * Destructor.
+         */
+        virtual ~ModelNodeSet();
+
         /*!
          * Get the name of this ModelNodeSet.
          *
@@ -111,32 +118,17 @@ namespace VirtualRobot
          */
         ModelPtr getModel() const;
 
-        ModelNodePtr& operator[](size_t i)
-        {
-            return getNode(i);
-        }
-
         /*!
          * Get the node at position i.
          *
          * @param i The position of the node to get.
          * @return The node.
          */
-        ModelNodePtr& getNode(size_t i);
-
-        /*!
-         * Iterator starting at the first object of this set.
-         *
-         * @return The iterator.
-         */
-        std::vector<ModelNodePtr>::iterator begin();
-
-        /*!
-         * Iterator starting at the last object of this set.
-         *
-         * @return The iterator.
-         */
-        std::vector<ModelNodePtr>::iterator end();
+        virtual ModelNodePtr getNode(size_t i) const = 0;
+        inline ModelNodePtr operator[](size_t i) const
+        {
+            return getNode(i);
+        }
 
         /*!
          * Check, if this set contains the given node.
@@ -144,7 +136,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is contained; false otherwise.
          */
-        bool hasModelNode(const ModelNodePtr& node) const;
+        virtual bool hasNode(const ModelNodePtr& node) const = 0;
 
         /*!
          * Check, if this set contains the given node.
@@ -152,14 +144,17 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if the node is contained; false otherwise.
          */
-        bool hasModelNode(const std::string &nodeName) const;
+        virtual bool hasNode(const std::string &nodeName) const = 0;
 
         /*!
          * Get all nodes of this set.
          *
          * @return The nodes contained in this set.
          */
-        const std::vector<ModelNodePtr> getModelNodes() const;
+        virtual std::vector<ModelNodePtr> getNodes() const = 0;
+        virtual std::vector<ModelJointPtr> getJoints() const = 0;
+        virtual std::vector<ModelLinkPtr> getLinks() const = 0;
+        std::vector<std::string> getNodeNames() const;
 
         /*!
          * Returns the topmost node of the robot's kinematic tree to be used for updating all members of this set.
@@ -167,35 +162,35 @@ namespace VirtualRobot
          *
          * @return The kinematic root.
          */
-        ModelNodePtr getKinematicRoot() const;
+        virtual ModelNodePtr getKinematicRoot() const = 0;
 
         /*!
          * Set a new kinematic root.
          *
          * @param modelNode The new kinematic root.
          */
-        void setKinematicRoot(const RobotNodePtr & modelNode);
+        virtual void setKinematicRoot(const ModelNodePtr & modelNode) = 0;
 
         /*!
          * Returns the TCP.
          *
          * @return The new tcp.
          */
-        FramePtr getTCP() const;
+        virtual FramePtr getTCP() const = 0;
 
         /*!
          * Print out some information.
          */
-        void print() const;
+        virtual void print() const = 0;
 
         /*!
          * Get the size of this set.
          *
          * @return The number of associated model nodes.
          */
-        virtual unsigned int getSize() const;
+        virtual unsigned int getSize() const = 0;
 
-        std::vector< std::string > getNodeNames() const;
+        std::vector< std::string > getModelNodeNames() const;
 
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
@@ -204,7 +199,7 @@ namespace VirtualRobot
          * @param  nodes The nodes to check.
          * @return True, if the nodes are sufficient; false otherwise.
          */
-        bool nodesSufficient(const std::vector<ModelNodePtr>& nodes) const;
+        virtual bool nodesSufficient(const std::vector<ModelNodePtr>& nodes) const;
 
         /*!
          * Create a XML string to represent this ModelNodeSet.
@@ -212,11 +207,7 @@ namespace VirtualRobot
          * @param tabs The number of tabs to start each line with.
          * @return The generated XML string.
          */
-        virtual std::string toXML(int tabs) const;
-
-        std::vector<ModelJointPtr> getModelJoints() const;
-
-        std::vector<ModelLinkPtr> getModelLinks() const;
+        virtual std::string toXML(int tabs) const = 0;
 
 		/*!
 		 * Clones this ModelNodeSet and registers it to the given model.
@@ -224,15 +215,50 @@ namespace VirtualRobot
 		 * Note: this method does not deep copy the nodes, thus the cloned ModelNodeSet will point to the same nodes.
 		 *
 		 * @param model The model the cloned ModelNodeSet will be registered to.
+         * @param newName The new Name of the set. If empty the old name will be used. (be aware, that only one set with the same name can be registered to a model)
+         * @param registerToModel Override the default behaviour of registering the set to the model.
 		*/
-        ModelNodeSetPtr clone(ModelPtr model);
+        virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const = 0;
 
     protected:
-        static ModelNodePtr checkKinematicRoot(const std::string &name, ModelPtr model);
-        static ModelNodePtr checkTcp(const std::string &name, ModelPtr model);
+        static ModelNodePtr checkKinematicRoot(const std::string &name, const ModelPtr& model);
+        static FramePtr checkTcp(const std::string &tcpName, const ModelPtr& model);
 
         std::string name;
         ModelWeakPtr weakModel;
+    };
+
+    class ModelNodeSet::Implementation : public ModelNodeSet
+    {
+    public:
+        Implementation(const std::string& name,
+                     const ModelWeakPtr& model,
+                     const std::vector<ModelNodePtr>& modelNodes,
+                     const ModelNodePtr& kinematicRoot = ModelNodePtr(),
+                     const FramePtr& tcp = FramePtr());
+
+        virtual ModelNodePtr getNode(size_t i) const override;
+
+        virtual bool hasNode(const ModelNodePtr &node) const override;
+        virtual bool hasNode(const std::string &nodeName) const override;
+
+        virtual std::vector<ModelNodePtr> getNodes() const override;
+        virtual std::vector<ModelJointPtr> getJoints() const override;
+        virtual std::vector<ModelLinkPtr> getLinks() const override;
+
+        virtual unsigned int getSize() const override;
+
+        virtual ModelNodePtr getKinematicRoot() const override;
+        virtual void setKinematicRoot(const ModelNodePtr &modelNode) override;
+
+        virtual FramePtr getTCP() const override;
+
+        virtual void print() const override;
+        virtual std::string toXML(int tabs) const override;
+
+        virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const override;
+
+    protected:
         std::vector<ModelNodePtr> modelNodes;
         ModelNodePtr kinematicRoot;
         FramePtr tcp;

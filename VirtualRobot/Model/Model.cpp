@@ -243,7 +243,7 @@ namespace VirtualRobot
         if (nodeSet)
         {
             THROW_VR_EXCEPTION_IF(hasModelNodeSet(nodeSet->getName()),
-                                  "There are (at least) two model nodes with name <" + nodeSet->getName()
+                                  "There are (at least) two model node sets with name <" + nodeSet->getName()
                                   + "> defined, the second one is skipped!");
             modelNodeSetMap[nodeSet->getName()] = nodeSet;
         }
@@ -546,6 +546,8 @@ namespace VirtualRobot
     {
         WriteLockPtr w = getWriteLock();
         this->globalPose = globalPose;
+        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
+        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
 
         if (applyValues)
         {
@@ -1056,7 +1058,47 @@ namespace VirtualRobot
 
     void Model::print()
     {
-        // TODO: implement print
+        std::cout << "******** Model ********" << std::endl;
+        std::cout << "* Name: " << name << std::endl;
+        std::cout << "* Type: " << type << std::endl;
+
+        if (this->getRootNode())
+        {
+            std::cout << "* Root Node: " << this->getRootNode()->getName() << std::endl;
+        }
+        else
+        {
+            std::cout << "* Root Node: not set" << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        if (this->getRootNode())
+        {
+            this->getRootNode()->print(true, true);
+        }
+
+        std::cout << std::endl;
+
+        std::vector<RobotNodeSetPtr> nodeSets = this->getModelNodeSets();
+
+        if (nodeSets.size() > 0)
+        {
+            std::cout << "* NodeSets:" << std::endl;
+
+            std::vector<RobotNodeSetPtr>::iterator iter = nodeSets.begin();
+
+            while (iter != nodeSets.end())
+            {
+                std::cout << "----------------------------------" << std::endl;
+                (*iter)->print();
+                iter++;
+            }
+
+            std::cout << std::endl;
+        }
+
+        std::cout << "******** Model ********" << std::endl;
     }
 
     ReadLockPtr Model::getReadLock() const
@@ -1161,9 +1203,9 @@ namespace VirtualRobot
         return visuType == ModelLink::VisualizationType::Full ? visualizationNodeSetFull : visualizationNodeSetCollision;
     }
 
-    VisualizationGroupPtr Model::getAllAttachmentVisualizations() const
+    VisualizationSetPtr Model::getAllAttachmentVisualizations() const
     {
-        VisualizationGroupPtr ret(new VisualizationGroup);
+        VisualizationSetPtr ret(VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({}));
         for (const auto & node : getModelNodes())
         {
             for (const auto & attachement : node->getAttachmentsWithVisualisation())
@@ -1238,7 +1280,7 @@ namespace VirtualRobot
                     JointSetPtr js = std::dynamic_pointer_cast<JointSet>(it->second);
                     if (js)
                     {
-                        JointSetPtr rns = js->clone(newModel);
+                        JointSetPtr rns = std::static_pointer_cast<JointSet>(js->clone(newModel));
 
                         if (rns && !newModel->hasJointSet(rns))
                         {
@@ -1249,7 +1291,7 @@ namespace VirtualRobot
                     LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(it->second);
                     if (ls)
                     {
-                        LinkSetPtr rns = ls->clone(newModel);
+                        LinkSetPtr rns = std::static_pointer_cast<LinkSet>(ls->clone(newModel));
                         if (rns && !newModel->hasLinkSet(rns))
                         {
                             newModel->registerLinkSet(rns);

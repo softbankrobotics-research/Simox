@@ -213,7 +213,7 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
-            ModelJointPtr r = rns->getNode(i);
+            ModelJointPtr r = rns->getJoint(i);
             VR_ASSERT(r);
             float d = r->getJointLimitHigh() - r->getJointLimitLow();
             d = d * d;

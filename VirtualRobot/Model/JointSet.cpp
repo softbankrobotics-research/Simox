@@ -5,136 +5,232 @@
 
 namespace VirtualRobot
 {
-
-    JointSet::JointSet(const std::string &name, const ModelWeakPtr& model, const std::vector<ModelNodePtr> &modelNodes,
-                               const ModelNodePtr kinematicRoot, const FramePtr tcp) :
-        ModelNodeSet(name, model, modelNodes, kinematicRoot, tcp)
-    {
-        for (size_t i = 0; i < modelNodes.size(); i++)
-        {
-            ModelJointPtr j = std::static_pointer_cast<ModelJoint>(modelNodes[i]);
-            THROW_VR_EXCEPTION_IF(!j, "Only joints allowed in joint sets.");
-            joints.push_back(j);
-        }
-    }
-
-	JointSet::~JointSet()
-	{
-	}
-
-    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
-    {
-		THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
-		THROW_VR_EXCEPTION_IF(modelNodeNames.empty(), "Empty set of ModelNode names provided.");
-
-        // model nodes
-        std::vector<ModelNodePtr> modelNodes = model->getModelNodes(modelNodeNames);
-        for (size_t i = 0; i < modelNodes.size(); i++)
-        {
-            THROW_VR_EXCEPTION_IF(!(modelNodes.at(i)->getType() & ModelNode::Joint), "ModelNode "+ modelNodeNames[i] + " not of type Joint.");
-        }
-
-        ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);
-        ModelNodePtr tcp = checkTcp(tcpName, model);
-
-        JointSetPtr mns = createJointSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
-        return mns;
-    }
-	
-    JointSetPtr JointSet::clone(ModelPtr model)
-	{
-        std::vector<ModelJointPtr> newModelNodes;
-        for (auto &n: joints)
-        {
-            THROW_VR_EXCEPTION_IF(!model->hasJoint(n->getName()), "Cannot clone, new model does not contain joint " << n->getName());
-            ModelJointPtr no = model->getJoint(n->getName());
-            VR_ASSERT(no);
-            newModelNodes.push_back(no);
-        }
-        ModelNodePtr newKinRoot;
-        if (kinematicRoot)
-        {
-            newKinRoot = model->getModelNode(kinematicRoot->getName());
-            VR_ASSERT(newKinRoot);
-        }
-        ModelNodePtr newTcp;
-        if (tcp)
-        {
-            newTcp = model->getModelNode(tcp->getName());
-            VR_ASSERT(newTcp);
-        }
-
-        JointSetPtr result = JointSet::createJointSet(model, name, newModelNodes, newKinRoot, newTcp, true);
-        return result;
-	}
-
-    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelJointPtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
-    {
-        std::vector<ModelNodePtr> js;
-        for (unsigned int i = 0; i < modelNodes.size(); i++)
-        {
-            ModelNodePtr j = std::static_pointer_cast<ModelNode>(modelNodes[i]);
-            js.push_back(j);
-        }
-        return createJointSet(model, name, js, kinematicRoot, tcp, registerToModel);
-    }
-
-    JointSetPtr JointSet::createJointSet(const ModelPtr& model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    JointSetPtr JointSet::createJointSet(const ModelPtr &model, const std::string &name, const std::vector<std::string> &jointNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
-        if (modelNodes.empty())
+        // model nodes
+        std::vector<ModelJointPtr> jointNodes;
+        jointNodes.reserve(jointNames.size());
+        for (const auto& nodeName : jointNames)
         {
-            VR_WARNING << "Empty set of ModelNodes provided." << endl;
-        }
-        else
-        {
-            for (size_t i = 0; i < modelNodes.size(); i++)
-            {
-                THROW_VR_EXCEPTION_IF(model != modelNodes[i]->getModel(), "Model " + modelNodes[i]->getName() + " does not belong to the given model.");
-            }
+            ModelJointPtr node = model->getJoint(nodeName);
+            THROW_VR_EXCEPTION_IF(!node, "No Joint with name " + nodeName + " found.");
+            jointNodes.push_back(node);
         }
 
+        // kinematic root
+        // We do not check whether the given kinematic root is actually a root node.
+        ModelNodePtr kinematicRoot = checkKinematicRoot(kinematicRootName, model);
+
+        //tcp
+        FramePtr tcp = checkTcp(tcpName, model);
+
+        return createJointSet(model, name, jointNodes, kinematicRoot, tcp, registerToModel);
+    }
+
+    JointSetPtr JointSet::createJointSet(const ModelPtr &model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    {
+        std::vector<ModelJointPtr> joints;
+        for (const auto & node : modelNodes)
+        {
+            ModelJointPtr joint = std::dynamic_pointer_cast<ModelJoint>(node);
+            joints.push_back(joint);
+        }
+        return createJointSet(model, name, joints, kinematicRoot, tcp, registerToModel);
+    }
+
+    JointSetPtr JointSet::createJointSet(const ModelPtr &model, const std::string &name, const std::vector<ModelJointPtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    {
         JointSetPtr mns(new JointSet(name, model, modelNodes, kinematicRoot, tcp));
 
         if (registerToModel)
         {
-            THROW_VR_EXCEPTION_IF(model->hasJointSet(mns), "JointSet with name " + name + " already present in the model");
-            model->registerJointSet(mns);
+            THROW_VR_EXCEPTION_IF(model->hasModelNodeSet(mns), "NodeSet with name " + name + " already present in the model");
+            model->registerModelNodeSet(mns);
         }
 
         return mns;
+    }
+
+    std::vector<ModelNodePtr> convertToNode(const std::vector<ModelJointPtr> &jointNodes)
+    {
+        std::vector<ModelNodePtr> ret;
+        ret.reserve(jointNodes.size());
+        for (const auto& n : jointNodes)
+        {
+            ret.push_back(n);
+        }
+        return ret;
+    }
+
+    JointSet::JointSet(const std::string &name, const ModelWeakPtr &model, const std::vector<ModelJointPtr> &jointNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp) :
+        ModelNodeSet(name, model, convertToNode(jointNodes), kinematicRoot, tcp),
+        joints(jointNodes),
+        kinematicRoot(kinematicRoot),
+        tcp(tcp)
+    {
+        if (!joints.empty())
+        {
+            if (!tcp)
+            {
+                this->tcp = joints.at(joints.size()-1);
+            }
+
+            if (!kinematicRoot)
+            {
+                this->kinematicRoot = joints.at(0);
+            }
+        }
+    }
+
+    JointSet::~JointSet()
+    {
+
+    }
+
+    ModelNodePtr JointSet::getNode(size_t i) const
+    {
+        return joints.at(i);
+    }
+
+    ModelJointPtr JointSet::getJoint(size_t i) const
+    {
+        return joints.at(i);
+    }
+
+    bool JointSet::hasNode(const ModelNodePtr &node) const
+    {
+        return std::find(joints.begin(), joints.end(), node) != joints.end();
+    }
+
+    bool JointSet::hasNode(const std::string &nodeName) const
+    {
+        for (const auto& node : getJoints())
+        {
+            if (node->getName() == nodeName)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector<ModelNodePtr> JointSet::getNodes() const
+    {
+        return convertToNode(joints);
+    }
+
+    std::vector<ModelJointPtr> JointSet::getJoints() const
+    {
+        return joints;
+    }
+
+    std::vector<ModelLinkPtr> JointSet::getLinks() const
+    {
+        return std::vector<ModelLinkPtr>();
+    }
+
+    unsigned int JointSet::getSize() const
+    {
+        return joints.size();
+    }
+
+    ModelNodePtr JointSet::getKinematicRoot() const
+    {
+        return kinematicRoot;
+    }
+
+    void JointSet::setKinematicRoot(const ModelNodePtr &modelNode)
+    {
+        THROW_VR_EXCEPTION_IF(!modelNode, "New kinematicRoot does not exist.");
+        kinematicRoot = modelNode;
+    }
+
+    FramePtr JointSet::getTCP() const
+    {
+        return tcp;
     }
 
     void JointSet::print() const
     {
         std::cout << "----------------------------------------------" << endl;
         std::cout << "JointSet:" << endl;
-        std::cout << "Name: " << name << endl;
+        std::cout << "Name: " << getName() << endl;
 
-        std::string modelName = "-";
-        if (ModelPtr model = weakModel.lock())
-        {
-            modelName = model->getName();
-        }
+        std::string modelName = getModel()->getName();
 
         std::cout << "Model Name: " << modelName << endl;
-        std::cout << "Kinematic root: " << kinematicRoot->getName() << endl;
-        std::cout << "TCP: " << tcp->getName() << endl;
+        std::cout << "Kinematic root: " << (getKinematicRoot() ? getKinematicRoot()->getName() : "") << endl;
+        std::cout << "TCP: " << (getTCP() ? getTCP()->getName() : "") << endl;
         std::cout << "ModelNodes:" << endl;
 
-        for (const ModelNodePtr & node : modelNodes)
+        for (const auto& node : getJoints())
         {
             cout << "--ModelNode Name: " << node->getName() << endl;
         }
         std::cout << "----------------------------------------------" << endl;
     }
 
-	ModelJointPtr &JointSet::getNode(int i)
-	{
-		THROW_VR_EXCEPTION_IF((i >= (int)joints.size() || i < 0), "Index out of bounds:" << i << ", (should be between 0 and " << (joints.size() - 1));
-		return joints.at(i);
-	}
+    std::string JointSet::toXML(int tabs) const
+    {
+        std::stringstream ss;
+        std::string t = "\t";
+        std::string pre = "";
+
+        for (int i = 0; i < tabs; i++)
+        {
+            pre += "\t";
+        }
+
+        std::string krName = "";
+        if (getKinematicRoot())
+        {
+            krName = getKinematicRoot()->getName();
+        }
+        std::string tcpName = "";
+        if (getTCP())
+        {
+            tcpName = getTCP()->getName();
+        }
+        ss << pre << "<JointSet name='" << getName() << "' kinematicRoot='" << krName << "' tcp='" << tcpName << "' >\n";
+
+        for (const auto& n : getJoints())
+        {
+            ss << pre << t << "<Node name='" << n->getName() << "'/>\n";
+        }
+
+        ss << pre << "</JointSet>\n";
+        return ss.str();
+    }
+
+    ModelNodeSetPtr JointSet::clone(const ModelPtr &model, const std::string &newName, bool registerToModel) const
+    {
+        std::vector<ModelJointPtr> newModelJoints;
+        for (const auto &n : getJoints())
+        {
+            THROW_VR_EXCEPTION_IF(!model->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            ModelJointPtr newModelJoint = model->getJoint(n->getName());
+            THROW_VR_EXCEPTION_IF(!newModelJoint, "The node \"" << n->getName() << "\" is not a link in the new model.");
+            newModelJoints.push_back(newModelJoint);
+        }
+        ModelNodePtr newKinRoot = nullptr;
+        if (getKinematicRoot())
+        {
+            newKinRoot = checkKinematicRoot(getKinematicRoot()->getName(), model);
+            VR_ASSERT(newKinRoot);
+        }
+        FramePtr newTcp = nullptr;
+        if (getTCP())
+        {
+            newTcp = checkTcp(getTCP()->getName(), model);
+            VR_ASSERT(newTcp);
+        }
+
+        JointSetPtr result = JointSet::createJointSet(model, (newName.empty() ? getName() : newName), newModelJoints, newKinRoot, newTcp, registerToModel);
+
+        return result;
+    }
 
     std::vector<float> JointSet::getJointValues() const
     {
@@ -151,7 +247,7 @@ namespace VirtualRobot
             fillVector.clear();
         }
 
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
 
         for (const ModelJointPtr & joint : modelJoints)
         {
@@ -182,9 +278,9 @@ namespace VirtualRobot
 
     void JointSet::respectJointLimits(std::vector<float>& jointValues) const
     {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         for (size_t i = 0; i < modelJoints.size(); i++)
         {
@@ -194,10 +290,10 @@ namespace VirtualRobot
 
     void JointSet::respectJointLimits(Eigen::VectorXf& jointValues) const
     {
-        THROW_VR_EXCEPTION_IF(jointValues.size() != getModelJoints().size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+        THROW_VR_EXCEPTION_IF(jointValues.size() != getJoints().size(),
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         for (size_t i = 0; i < modelJoints.size(); i++)
         {
             modelJoints[i]->respectJointLimits(jointValues[i]);
@@ -206,9 +302,9 @@ namespace VirtualRobot
 
     bool JointSet::checkJointLimits(const std::vector<float>& jointValues, bool verbose) const
     {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         for (size_t i = 0; i < modelJoints.size(); i++)
         {
@@ -222,9 +318,9 @@ namespace VirtualRobot
 
     bool JointSet::checkJointLimits(const Eigen::VectorXf& jointValues, bool verbose) const
     {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         for (size_t i = 0; i < modelJoints.size(); i++)
         {
@@ -238,9 +334,9 @@ namespace VirtualRobot
 
     void JointSet::setJointValues(const std::vector<float>& jointValues)
     {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         ModelPtr model = weakModel.lock();
         VR_ASSERT(model);
@@ -263,9 +359,9 @@ namespace VirtualRobot
 
     void JointSet::setJointValues(const Eigen::VectorXf& jointValues)
     {
-        std::vector<ModelJointPtr> modelJoints = getModelJoints();
+        std::vector<ModelJointPtr> modelJoints = getJoints();
         THROW_VR_EXCEPTION_IF(jointValues.size() != modelJoints.size(),
-                              "Wrong vector dimension (modelNodes:" << getModelJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
+                              "Wrong vector dimension (modelNodes:" << getJoints().size() << ", jointValues: " << jointValues.size() << ")" << endl);
 
         ModelPtr model = weakModel.lock();
         VR_ASSERT(model);
@@ -290,36 +386,6 @@ namespace VirtualRobot
     {
         config->setJointValues(getModel());
     }
-
-    std::string JointSet::toXML(int tabs) const
-    {
-        std::stringstream ss;
-        std::string t = "\t";
-        std::string pre = "";
-
-        for (int i = 0; i < tabs; i++)
-        {
-            pre += "\t";
-        }
-
-        ss << pre << "<JointSet name='" << name << "' kinematicRoot='" << kinematicRoot << "' tcp='" << tcp << "' >\n";
-
-        for (size_t i = 0; i < modelNodes.size(); i++)
-        {
-            ss << pre << t << "<Node name='" << modelNodes[i]->getName() << "'/>\n";
-        }
-
-        ss << pre << "</JointSet>\n";
-        return ss.str();
-    }
-
-    std::vector<std::string> JointSet::getNodeNames() const
-    {
-        std::vector<std::string> res;
-        for (auto n: joints)
-            res.push_back(n->getName());
-        return res;
-    }
     
     std::map<std::string, float> JointSet::getJointValueMap() const
     {
@@ -330,11 +396,4 @@ namespace VirtualRobot
         }
         return res;
     }
-
-
-    const std::vector<ModelJointPtr> JointSet::getJoints() const
-    {
-        return joints;
-    }
-
 }

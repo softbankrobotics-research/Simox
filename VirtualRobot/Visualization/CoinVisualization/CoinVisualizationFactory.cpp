@@ -7,6 +7,8 @@
 */
 #include "CoinVisualizationFactory.h"
 
+#include "CoinSelectionGroup.h"
+
 #ifdef SIMOX_USE_SOQT
 #include <Inventor/Qt/SoQt.h>
 #endif
@@ -38,6 +40,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+#include <Inventor/nodes/SoUnits.h>
 
 #include "../TriMeshModel.h"
 #include "../../Tools/RuntimeEnvironment.h"
@@ -173,7 +176,13 @@ namespace VirtualRobot
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return createVisualization();
         }
-        VisualizationPtr visu(new CoinVisualization(coinVisualization));
+        // the input uses meters here
+        SoSeparator *sep = new SoSeparator;
+        SoUnits *unit = new SoUnits;
+        unit->units = SoUnits::METERS;
+        sep->addChild(unit);
+        sep->addChild(coinVisualization);
+        VisualizationPtr visu = createVisualizationFromSoNode(sep);
 
         if (boundingBox)
         {
@@ -185,14 +194,21 @@ namespace VirtualRobot
             boost::filesystem::path p(soInput.getCurFileName());
             boost::filesystem::path dir = p.parent_path();
 
-            RemoveDuplicateTextures(coinVisualization, dir.string());
+            RemoveDuplicateTextures(sep, dir.string());
         }
         return visu;
     }
 
     VisualizationSetPtr CoinVisualizationFactory::createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const
     {
-        return VisualizationSetPtr(new CoinVisualizationSet(visualizations));
+        VisualizationSetPtr v(new CoinVisualizationSet(visualizations));
+        v->init();
+        return v;
+    }
+
+    SelectionGroupPtr CoinVisualizationFactory::createSelectionGroup() const
+    {
+        return SelectionGroupPtr(new CoinSelectionGroup);
     }
 
     VisualizationPtr CoinVisualizationFactory::createBox(float width, float height, float depth) const
@@ -202,7 +218,7 @@ namespace VirtualRobot
         c->height = height;
         c->depth = depth;
 
-        return VisualizationPtr(new CoinVisualization(c));
+        return createVisualizationFromSoNode(c);
     }
 
     VisualizationPtr CoinVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const
@@ -235,7 +251,7 @@ namespace VirtualRobot
         lineSet->startIndex.setValue(0);
         s->addChild(lineSet);
         s->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(s));
+        return createVisualizationFromSoNode(s);
     }
 
     VisualizationPtr CoinVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const
@@ -250,7 +266,7 @@ namespace VirtualRobot
         SoSphere* s = new SoSphere();
         s->radius = radius;
 
-        return VisualizationPtr(new CoinVisualization(s));
+        return createVisualizationFromSoNode(s);
     }
 
     VisualizationPtr CoinVisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
@@ -283,7 +299,7 @@ namespace VirtualRobot
         s->addChild(lineSet);
         s->unrefNoDelete();
 
-        return VisualizationPtr(new CoinVisualization(s));
+        return createVisualizationFromSoNode(s);
     }
 
     VisualizationPtr CoinVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const
@@ -405,7 +421,7 @@ namespace VirtualRobot
         SoCylinder* c = new SoCylinder();
         c->radius = radius;
         c->height = height;
-        return VisualizationPtr(new CoinVisualization(c));
+        return createVisualizationFromSoNode(c);
     }
 
     VisualizationPtr CoinVisualizationFactory::createPoint(float radius) const
@@ -424,12 +440,12 @@ namespace VirtualRobot
         res->addChild(s);
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     VisualizationPtr CoinVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
     {
-        return VisualizationPtr(new CoinVisualization(createTriMeshModelCoin(model)));
+        return createVisualizationFromSoNode(createTriMeshModelCoin(model));
     }
 
     SoNode *CoinVisualizationFactory::createTriMeshModelCoin(const TriMeshModelPtr &model)
@@ -539,7 +555,7 @@ namespace VirtualRobot
         res->addChild(myFaceSet);
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     std::vector<Eigen::Vector3f> createPlanePoints(float extend)
@@ -611,7 +627,7 @@ namespace VirtualRobot
         res->addChild(pSoFaceSet);
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     VisualizationPtr CoinVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
@@ -649,7 +665,7 @@ namespace VirtualRobot
         res->addChild(cone);
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     VisualizationPtr CoinVisualizationFactory::createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const
@@ -677,7 +693,7 @@ namespace VirtualRobot
         textNode->string.set(text2.getString());
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     VisualizationPtr CoinVisualizationFactory::createCone(float baseRadius, float height) const
@@ -685,7 +701,7 @@ namespace VirtualRobot
         SoCone* cone = new SoCone();
         cone->bottomRadius.setValue(baseRadius);
         cone->height.setValue(height);
-        return VisualizationPtr(new CoinVisualization(cone));
+        return createVisualizationFromSoNode(cone);
     }
 
     VisualizationPtr CoinVisualizationFactory::createEllipse(float x, float y, float z) const
@@ -726,7 +742,7 @@ namespace VirtualRobot
         result->addChild(sp);
 
         result->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(result));
+        return createVisualizationFromSoNode(result);
     }
 
     VisualizationPtr CoinVisualizationFactory::createContactVisualization(const EndEffector::ContactInfoVector &contacts, float frictionConeHeight, float frictionConeRadius, bool scaleAccordingToApproachDir) const
@@ -823,12 +839,12 @@ namespace VirtualRobot
         }
 
         res->unrefNoDelete();
-        return VisualizationPtr(new CoinVisualization(res));
+        return createVisualizationFromSoNode(res);
     }
 
     VisualizationPtr CoinVisualizationFactory::createVisualization() const
     {
-        return VisualizationPtr(new CoinVisualization(new SoSeparator));
+        return createVisualizationFromSoNode(new SoSeparator);
     }
 
     void CoinVisualizationFactory::cleanup()
@@ -944,5 +960,12 @@ namespace VirtualRobot
     std::string CoinVisualizationFactory::getName()
     {
         return "inventor";
+    }
+
+    VisualizationPtr CoinVisualizationFactory::createVisualizationFromSoNode(SoNode *node)
+    {
+        VisualizationPtr v(new CoinVisualization(node));
+        v->init();
+        return v;
     }
 } // namespace VirtualRobot

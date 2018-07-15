@@ -169,8 +169,9 @@ namespace VirtualRobot
     class TriMeshModel;
     class Obstacle;
     class VisualizationSet;
-    class VisualizationGroup;
     class Visualization;
+    class SelectionGroup;
+    class SelectionManager;
     class VisualizationFactory;
     class OffscreenRenderer;
     class Scene;
@@ -235,8 +236,11 @@ namespace VirtualRobot
     typedef std::shared_ptr<TriMeshModel> TriMeshModelPtr;
     typedef std::shared_ptr<Obstacle> ObstaclePtr;
     typedef std::shared_ptr<VisualizationSet> VisualizationSetPtr;
-    typedef std::shared_ptr<VisualizationGroup> VisualizationGroupPtr;
     typedef std::shared_ptr<Visualization> VisualizationPtr;
+    typedef std::weak_ptr<Visualization> VisualizationWeakPtr;
+    typedef std::shared_ptr<SelectionGroup> SelectionGroupPtr;
+    typedef std::weak_ptr<SelectionGroup> SelectionGroupWeakPtr;
+    typedef std::shared_ptr<SelectionManager> SelectionManagerPtr;
     typedef std::shared_ptr<VisualizationFactory> VisualizationFactoryPtr;
     typedef std::shared_ptr<OffscreenRenderer> OffscreenRendererPtr;
     typedef std::shared_ptr<WorkspaceData> WorkspaceDataPtr;

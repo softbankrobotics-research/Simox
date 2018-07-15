@@ -59,7 +59,7 @@ protected:
     Ui::MainWindowCamera UI;
     SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
-    VirtualRobot::VisualizationGroupPtr obstacleVisu;
+    VirtualRobot::VisualizationSetPtr obstacleVisu;
     VirtualRobot::VisualizationPtr robotVisu;
     VirtualRobot::VisualizationPtr cam1pclVisu;
 

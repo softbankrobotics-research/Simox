@@ -21,3 +21,5 @@ ADD_SUBDIRECTORY(LoadURDFRobot)
 
 #Visualization Testing
 ADD_SUBDIRECTORY(VisualizationTests)
+
+ADD_SUBDIRECTORY(SelectionDemo)

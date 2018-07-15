@@ -14,8 +14,9 @@ namespace VirtualRobot
 {
 
     VisualizationSet::VisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationGroup(),
-          Visualization()
+        : Visualization(),
+          filename(""),
+          usedBoundingBox(false)
     {
         for (auto& visu : visualizations)
         {
@@ -23,37 +24,46 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::init()
+    {
+        setGlobalPoseNoUpdate(Eigen::Matrix4f::Identity());
+    }
+
     VisualizationSet::~VisualizationSet()
     {
-        for (auto& visu : visualizations)
+    }
+
+    VisualizationPtr VisualizationSet::clone() const
+    {
+        std::vector<VisualizationPtr> clonedVisus;
+        const auto& visus = getVisualizations();
+        clonedVisus.reserve(visus.size());
+        for (const auto& visu : visus)
         {
-            visu->setIsInVisualizationSet(false);
+            clonedVisus.push_back(visu->clone());
         }
+        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
     }
 
     void VisualizationSet::addVisualization(const VisualizationPtr &visu)
     {
-        if (visu->isInVisualizationSet())
+        if (!containsVisualization(visu))
         {
-            VR_WARNING << "Could not add visu to set, because it is already part of a set." << std::endl;
-        }
-        else
-        {
-            VisualizationGroup::addVisualization(visu);
-            visu->setIsInVisualizationSet(true);
+            visualizations.push_back(visu);
         }
     }
 
     bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
     {
-        return VisualizationGroup::containsVisualization(visu);
+        return std::find(visualizations.begin(), visualizations.end(), visu) != visualizations.end();
     }
 
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
-        if (VisualizationGroup::removeVisualization(visu))
+        auto it = std::find(visualizations.begin(), visualizations.end(), visu);
+        if (it != visualizations.end())
         {
-            visu->setIsInVisualizationSet(false);
+            visualizations.erase(it);
             return true;
         }
         return false;
@@ -66,104 +76,183 @@ namespace VirtualRobot
 
     std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
     {
-        return VisualizationGroup::getVisualizations();
+        return visualizations;
     }
 
     VisualizationPtr VisualizationSet::at(size_t index) const
     {
-        return VisualizationGroup::at(index);
+        return visualizations.at(index);
     }
 
     VisualizationPtr VisualizationSet::operator[](size_t index) const
     {
-        return VisualizationGroup::operator [](index);
+        return visualizations[index];
     }
 
     bool VisualizationSet::empty() const
     {
-        return VisualizationGroup::empty();
+        return visualizations.empty();
     }
 
     size_t VisualizationSet::size() const
     {
-        return VisualizationGroup::size();
-    }
-
-    Eigen::Matrix4f VisualizationSet::getGlobalPose() const
-    {
-        return VisualizationGroup::getGlobalPose();
+        return visualizations.size();
     }
 
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        VisualizationGroup::setGlobalPose(m);
+        Eigen::Matrix4f oldM = this->getGlobalPose();
+        Eigen::Matrix4f dp = m * oldM.inverse();
+        for (auto& visu : visualizations)
+        {
+            visu->setGlobalPose(dp * visu->getGlobalPose());
+        }
+        setGlobalPoseNoUpdate(m);
     }
 
     void VisualizationSet::setGlobalPoseNoUpdate(const Eigen::Matrix4f &m)
     {
-        VisualizationGroup::setGlobalPoseNoUpdate(m);
+        Visualization::setGlobalPose(m);
     }
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
     {
-        VisualizationGroup::applyDisplacement(dp);
+        setGlobalPose(getGlobalPose()*dp);
     }
 
     void VisualizationSet::setVisible(bool showVisualization)
     {
-        VisualizationGroup::setVisible(showVisualization);
+        for (auto& visu : visualizations)
+        {
+            visu->setVisible(showVisualization);
+        }
     }
 
     bool VisualizationSet::isVisible() const
     {
-        return VisualizationGroup::isVisible();
+        for (auto& visu : visualizations)
+        {
+            if (visu->isVisible())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void VisualizationSet::setUpdateVisualization(bool enable)
     {
-        VisualizationGroup::setUpdateVisualization(enable);
+        for (auto& visu : visualizations)
+        {
+            visu->setUpdateVisualization(enable);
+        }
     }
 
     bool VisualizationSet::getUpdateVisualizationStatus() const
     {
-        return VisualizationGroup::getUpdateVisualizationStatus();
+        for (auto& visu : visualizations)
+        {
+            if (visu->getUpdateVisualizationStatus())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void VisualizationSet::setStyle(Visualization::DrawStyle s)
     {
-        VisualizationGroup::setStyle(s);
+        for (auto& visu : visualizations)
+        {
+            visu->setStyle(s);
+        }
     }
 
     Visualization::DrawStyle VisualizationSet::getStyle() const
     {
-        return VisualizationGroup::getStyle();
+        if (visualizations.empty())
+        {
+            return Visualization::DrawStyle::undefined;
+        }
+        Visualization::DrawStyle s = visualizations[0]->getStyle();
+        for (auto& visu : visualizations)
+        {
+            if (s != visu->getStyle())
+            {
+                return Visualization::DrawStyle::undefined;
+            }
+        }
+        return s;
     }
 
     void VisualizationSet::setColor(const Visualization::Color &c)
     {
-        VisualizationGroup::setColor(c);
+        for (auto& visu : visualizations)
+        {
+            visu->setColor(c);
+        }
     }
 
     Visualization::Color VisualizationSet::getColor() const
     {
-        return VisualizationGroup::getColor();
+        if (visualizations.empty())
+        {
+            return Visualization::Color::None();
+        }
+        Visualization::Color c = visualizations[0]->getColor();
+        for (auto& visu : visualizations)
+        {
+            if (c != visu->getColor())
+            {
+                return Visualization::Color::None();
+            }
+        }
+        return c;
     }
 
     void VisualizationSet::setMaterial(const MaterialPtr &material)
     {
-        VisualizationGroup::setMaterial(material);
+        for (auto& visu : visualizations)
+        {
+            visu->setMaterial(material);
+        }
     }
 
     Visualization::MaterialPtr VisualizationSet::getMaterial() const
     {
-        return VisualizationGroup::getMaterial();
+        if (visualizations.empty())
+        {
+            return Visualization::MaterialPtr(new Visualization::NoneMaterial);
+        }
+        Visualization::MaterialPtr m = visualizations[0]->getMaterial();
+        for (auto& visu : visualizations)
+        {
+            if (m != visu->getMaterial())
+            {
+                return Visualization::MaterialPtr(new Visualization::NoneMaterial);
+            }
+        }
+        return m;
     }
 
     void VisualizationSet::setSelected(bool selected)
     {
+        bool changed = false;
         for (auto& visu : visualizations)
         {
-            visu->setSelected(selected);
+            if (changed || visu->isSelected() != selected)
+            {
+                changed = true;
+                visu->setSelected(selected);
+            }
+        }
+
+        if (changed)
+        {
+            for (auto& f : selectionChangedCallbacks)
+            {
+                f.second(selected);
+            }
         }
     }
 
@@ -179,9 +268,41 @@ namespace VirtualRobot
         return true;
     }
 
-    void VisualizationSet::scale(const Eigen::Vector3f &s)
+    void VisualizationSet::setSelectionGroup(const SelectionGroupPtr &group)
     {
-        VisualizationGroup::scale(s);
+        for (auto& visu : visualizations)
+        {
+            visu->setSelectionGroup(group);
+        }
+    }
+
+    SelectionGroupPtr VisualizationSet::getSelectionGroup() const
+    {
+        SelectionGroupPtr g;
+        for (const auto& visu : visualizations)
+        {
+            if (!g)
+            {
+                g = visu->getSelectionGroup();
+            }
+            else if (g != visu->getSelectionGroup())
+            {
+                return SelectionGroupPtr();
+            }
+        }
+        return g;
+    }
+
+    void VisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
+    {
+        Eigen::Vector3f gpos = getGlobalPosition();
+        for (auto& visu : visualizations)
+        {
+            Eigen::Matrix4f visuGp = visu->getGlobalPose();
+            visuGp.block<3, 1>(0, 3) = gpos + (visuGp.block<3, 1>(0, 3) - gpos).cwiseProduct(scaleFactor);
+            visu->setGlobalPose(visuGp);
+            visu->scale(scaleFactor);
+        }
     }
 
     void VisualizationSet::shrinkFatten(float offset)
@@ -203,9 +324,30 @@ namespace VirtualRobot
         return ret;
     }
 
+    void VisualizationSet::setFilename(const std::string &filename, bool boundingBox)
+    {
+        this->filename = filename;
+        usedBoundingBox = boundingBox;
+    }
+
+    std::string VisualizationSet::getFilename() const
+    {
+        return filename;
+    }
+
+    bool VisualizationSet::usedBoundingBoxVisu() const
+    {
+        return usedBoundingBox;
+    }
+
     BoundingBox VisualizationSet::getBoundingBox() const
     {
-        return VisualizationGroup::getBoundingBox();
+        BoundingBox b;
+        for (auto& visu : visualizations)
+        {
+            b.addPoints(visu->getBoundingBox().getPoints());
+        }
+        return b;
     }
 
     Eigen::Vector3f transformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
@@ -256,144 +398,39 @@ namespace VirtualRobot
 
     int VisualizationSet::getNumFaces() const
     {
-        return VisualizationGroup::getNumFaces();
+        int n = 0;
+        for (auto& visu : visualizations)
+        {
+            n += visu->getNumFaces();
+        }
+        return n;
     }
 
     void VisualizationSet::print() const
     {
-        VisualizationGroup::print();
+        VR_ERROR_ONCE_NYI;
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)
-        : VisualizationSet(visualizations),
-          selected(false),
-          filename(""),
-          usedBoundingBox(false)
+        : VisualizationSet(visualizations)
     {
-    }
-
-    VisualizationPtr DummyVisualizationSet::clone() const
-    {
-        std::vector<VisualizationPtr> clonedVisus;
-        clonedVisus.reserve(visualizations.size());
-        for (auto& visu : visualizations)
-        {
-            clonedVisus.push_back(visu->clone());
-        }
-        return VisualizationFactory::getInstance()->createVisualisationSet(clonedVisus);
-    }
-
-    void DummyVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
-    {
-        VisualizationSet::setGlobalPose(m);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t DummyVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
-    {
-        static size_t id = 0;
-        poseChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void DummyVisualizationSet::removePoseChangedCallback(size_t id)
-    {
-        auto it = poseChangedCallbacks.find(id);
-        if (it != poseChangedCallbacks.end())
-        {
-            poseChangedCallbacks.erase(it);
-        }
-    }
-
-    size_t DummyVisualizationSet::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
-        return 0;
-    }
-
-    void DummyVisualizationSet::removeSelectionChangedCallback(size_t id)
-    {
-        static bool printed = false;
-        if (!printed)
-        {
-            VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-            printed = true;
-        }
-    }
-
-    void DummyVisualizationSet::_addManipulator(Visualization::ManipulatorType t)
-    {
-        addedManipulators.insert(t);
-    }
-
-    void DummyVisualizationSet::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        auto pos = addedManipulators.find(t);
-        if (pos != addedManipulators.end())
-        {
-            addedManipulators.erase(pos);
-        }
-    }
-
-    void DummyVisualizationSet::_removeAllManipulators()
-    {
-        addedManipulators.clear();
-    }
-
-    bool DummyVisualizationSet::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        return addedManipulators.find(t) != addedManipulators.end();
-    }
-
-    std::vector<Visualization::ManipulatorType> DummyVisualizationSet::getAddedManipulatorTypes() const
-    {
-        return std::vector<ManipulatorType>(addedManipulators.begin(), addedManipulators.end());
-    }
-
-    void DummyVisualizationSet::setFilename(const std::string &filename, bool boundingBox)
-    {
-        this->filename = filename;
-        usedBoundingBox = boundingBox;
-    }
-
-    std::string DummyVisualizationSet::getFilename() const
-    {
-        return filename;
-    }
-
-    bool DummyVisualizationSet::usedBoundingBoxVisu() const
-    {
-        return usedBoundingBox;
-    }
-
-    TriMeshModelPtr DummyVisualizationSet::getTriMeshModel() const
-    {
-        return TriMeshModelPtr(new TriMeshModel);
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, int tabs) const
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
     std::string DummyVisualizationSet::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return "";
     }
 
     bool DummyVisualizationSet::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        // TODO
+        VR_ERROR_ONCE_NYI;
         return false;
     }
 

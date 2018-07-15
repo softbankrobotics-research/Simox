@@ -34,7 +34,9 @@ namespace VirtualRobot
     void CDManager::addCollisionModel(const ModelPtr &m)
     {
         VR_ASSERT(m);
-        addCollisionModel(m->getLinkSet());
+        auto linkset = m->getLinkSet();
+        VR_ASSERT(linkset);
+        addCollisionModel(linkset);
         // store model ptr to avoid destruction of model if no otehr reference is kept in the system
         models.push_back(m);
     }
@@ -51,9 +53,10 @@ namespace VirtualRobot
 
             for (size_t i = 0; i < colModels.size(); i++)
             {
-                if (m != colModels[i])
+                if (m != colModels.at(i))
                 {
-                    addCollisionModelPair(colModels[i], m);
+                    auto m1 = colModels.at(i);
+                    addCollisionModelPair(m1, m);
                 }
             }
 
@@ -332,7 +335,7 @@ namespace VirtualRobot
     {
         for (size_t i = 0; i < sets.size(); i++)
         {
-            if (colChecker->checkCollision(m, sets[i]))
+            if (m && sets.at(i) && colChecker->checkCollision(m, sets.at(i)))
             {
                 return true;
             }

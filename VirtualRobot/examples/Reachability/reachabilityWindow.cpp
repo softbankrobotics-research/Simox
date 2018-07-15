@@ -482,7 +482,7 @@ void reachabilityWindow::createReach()
     float maxB[6];// ={1000.0f,1000.0f,1000.0f,(float)M_PI,(float)M_PI,(float)M_PI};
 
     JointSetPtr currentJointSet = JointSet::createJointSet(currentRobotNodeSet->getModel(), currentRobotNodeSet->getName(),
-                             currentRobotNodeSet->getModelJoints(), currentRobotNodeSet->getKinematicRoot(), currentRobotNodeSet->getTCP());
+                             currentRobotNodeSet->getJoints(), currentRobotNodeSet->getKinematicRoot(), currentRobotNodeSet->getTCP());
     reachSpaceTest->checkForParameters(currentJointSet, 1000, minB, maxB, baseNode, tcpNode);
 
     //float ex = currentRobotNodeSet->getMaximumExtension();

@@ -30,7 +30,7 @@ namespace VirtualRobot
             // get all joints that influence the body
             std::vector<RobotNodePtr> parentsN = bodyNodes[i]->getAllParents(rns);
             // maybe this node is joint and body
-            if (rnsJoints->hasModelNode(bodyNodes[i]->getName()))
+            if (rnsJoints->hasNode(bodyNodes[i]->getName()))
                 parentsN.push_back(bodyNodes[i]);
             bodyNodeParents[bodyNodes[i]] = parentsN;
         }

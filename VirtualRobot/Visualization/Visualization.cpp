@@ -8,6 +8,8 @@
 
 
 #include "Visualization.h"
+#include "SelectionGroup.h"
+#include "SelectionManager.h"
 #include "TriMeshModel.h"
 #include "../Tools/BoundingBox.h"
 
@@ -25,17 +27,44 @@ namespace VirtualRobot
         updateVisualization(true),
         style(Visualization::DrawStyle::normal),
         material(new NoneMaterial),
-        selected(false),
-        addedManipulators(),
         filename(""),
         boundingBox(false),
         primitives()
     {
-        setColor(Visualization::Color::None());
+    }
+
+    void DummyVisualization::init()
+    {
+        Visualization::init();
+        createTriMeshModel();
+    }
+
+    Visualization::Visualization() : Frame()
+    {
+    }
+
+    void VirtualRobot::Visualization::init()
+    {
+        selectionGroup = VisualizationFactory::getInstance()->createSelectionGroup();
+        selectionGroup->addVisualization(shared_from_this());
+
+        setGlobalPose(Eigen::Matrix4f::Identity());
+        setVisible(true);
+        setUpdateVisualization(true);
+        setStyle(DrawStyle::normal);
+        setColor(Color::None());
+        setSelected(false);
     }
 
     void Visualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
+        if (m != globalPose)
+        {
+            for (auto& f : poseChangedCallbacks)
+            {
+                f.second(m);
+            }
+        }
         globalPose = m;
     }
 
@@ -44,39 +73,75 @@ namespace VirtualRobot
         this->setGlobalPose(this->getGlobalPose() * dp);
     }
 
-    bool Visualization::isInVisualizationSet() const
-    {
-        return inVisualizationSet;
-    }
-
-    void Visualization::setIsInVisualizationSet(bool inSet)
-    {
-        inVisualizationSet = inSet;
-    }
-
-    void DummyVisualization::setGlobalPose(const Eigen::Matrix4f &m)
-    {
-        Visualization::setGlobalPose(m);
-        for (auto& f : poseChangedCallbacks)
-        {
-            f.second(m);
-        }
-    }
-
-    size_t DummyVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
+    size_t Visualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
     {
         static size_t id = 0;
         poseChangedCallbacks[id] = f;
         return id++;
     }
 
-    void DummyVisualization::removePoseChangedCallback(size_t id)
+    void Visualization::removePoseChangedCallback(size_t id)
     {
         auto it = poseChangedCallbacks.find(id);
         if (it != poseChangedCallbacks.end())
         {
             poseChangedCallbacks.erase(it);
         }
+    }
+
+    void Visualization::setSelected(bool selected)
+    {
+        getSelectionGroup()->setSelected(selected);
+    }
+
+    bool Visualization::isSelected() const
+    {
+        return getSelectionGroup()->isSelected();
+    }
+
+    size_t Visualization::addSelectionChangedCallback(std::function<void (bool)> f)
+    {
+        static unsigned int id = 0;
+        selectionChangedCallbacks[id] = f;
+        return id++;
+    }
+
+    void Visualization::removeSelectionChangedCallback(size_t id)
+    {
+        auto it = selectionChangedCallbacks.find(id);
+        if (it != selectionChangedCallbacks.end())
+        {
+            selectionChangedCallbacks.erase(it);
+        }
+    }
+
+    void Visualization::executeSelectionChangedCallbacks(bool selected)
+    {
+        for (auto& f : selectionChangedCallbacks)
+        {
+            f.second(selected);
+        }
+    }
+
+    void Visualization::setSelectionGroup(const SelectionGroupPtr &group)
+    {
+        VR_ASSERT(selectionGroup);
+        bool selected = selectionGroup->isSelected();
+        auto oldGroup = selectionGroup;
+        selectionGroup->removeVisualization(shared_from_this());
+        selectionGroup = group ? group : VisualizationFactory::getInstance()->createSelectionGroup();
+        selectionGroup->addVisualization(shared_from_this());
+        SelectionManager::getInstance()->emitSlectionGroupChanged(shared_from_this(), oldGroup, selectionGroup);
+        if (selectionGroup->isSelected() != selected)
+        {
+            executeSelectionChangedCallbacks(selectionGroup->isSelected());
+        }
+    }
+
+    SelectionGroupPtr Visualization::getSelectionGroup() const
+    {
+        VR_ASSERT(selectionGroup); // A Visualization must have a selection group, but a VisualizationSet not!
+        return selectionGroup;
     }
 
     void DummyVisualization::setVisible(bool showVisualization)
@@ -144,38 +209,9 @@ namespace VirtualRobot
         return material;
     }
 
-    void DummyVisualization::setSelected(bool selected)
-    {
-        this->selected = selected;
-        for (auto& f : selectionChangedCallbacks)
-        {
-            f.second(selected);
-        }
-    }
-
-    bool DummyVisualization::isSelected() const
-    {
-        return selected;
-    }
-
-    size_t DummyVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
-    {
-        static unsigned int id = 0;
-        selectionChangedCallbacks[id] = f;
-        return id++;
-    }
-
-    void DummyVisualization::removeSelectionChangedCallback(size_t id)
-    {
-        auto it = selectionChangedCallbacks.find(id);
-        if (it != selectionChangedCallbacks.end())
-        {
-            selectionChangedCallbacks.erase(it);
-        }
-    }
-
     void DummyVisualization::scale(const Eigen::Vector3f &)
     {
+        VR_ERROR_ONCE_NYI;
     }
 
     void DummyVisualization::shrinkFatten(float offset)
@@ -183,36 +219,6 @@ namespace VirtualRobot
         this->createTriMeshModel();
         this->getTriMeshModel()->mergeVertices();
         this->getTriMeshModel()->fattenShrink(offset);
-    }
-
-    void DummyVisualization::_addManipulator(Visualization::ManipulatorType t)
-    {
-        addedManipulators.insert(t);
-    }
-
-    void DummyVisualization::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        auto pos = addedManipulators.find(t);
-        if (pos != addedManipulators.end())
-        {
-            addedManipulators.erase(pos);
-        }
-    }
-
-    void DummyVisualization::_removeAllManipulators()
-    {
-        addedManipulators.clear();
-    }
-
-    bool DummyVisualization::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        auto pos = addedManipulators.find(t);
-        return pos != addedManipulators.end();
-    }
-
-    std::vector<Visualization::ManipulatorType> DummyVisualization::getAddedManipulatorTypes() const
-    {
-        return std::vector<ManipulatorType>(addedManipulators.begin(), addedManipulators.end());
     }
 
     std::vector<Primitive::PrimitivePtr> DummyVisualization::getPrimitives() const
@@ -268,6 +274,7 @@ namespace VirtualRobot
     VisualizationPtr DummyVisualization::clone() const
     {
         VisualizationPtr visu(new DummyVisualization);
+        visu->init();
 
         visu->setVisible(this->isVisible());
         visu->setUpdateVisualization(this->getUpdateVisualizationStatus());

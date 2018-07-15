@@ -90,7 +90,7 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
-            ModelJointPtr ro =  rns->getNode(i);
+            ModelJointPtr ro =  rns->getJoint(i);
             float r = (float)rand() * rn;
             float v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
             jv.push_back(v);

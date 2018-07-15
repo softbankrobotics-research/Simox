@@ -20,7 +20,7 @@ namespace VirtualRobot
         VR_ASSERT(nodes.size() > 0);
         VR_ASSERT(virtualTranslationJoint);
         VR_ASSERT(virtualTranslationJoint->getParentNode());
-        VR_ASSERT(rns->hasModelNode(virtualTranslationJoint->getName()));
+        VR_ASSERT(rns->hasNode(virtualTranslationJoint->getName()));
         enableJLA = true;
         maxLoops = 50; // nr of seeds for gradient descent
         maxPosError = 5.0f; //mm
@@ -219,7 +219,7 @@ namespace VirtualRobot
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
-            ModelJointPtr ro =  rns->getNode(i);
+            ModelJointPtr ro =  rns->getJoint(i);
             float v = ro->getJointValue();
 
             if (ro->getType() == ModelNode::ModelNodeType::JointRevolute)

@@ -79,6 +79,7 @@ protected:
 
     bool useColModel;
     std::string boxVisuLayer;
+    std::string robotLayer;
         QTimer* timer;
 };
 

@@ -28,7 +28,6 @@
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Visualization/Visualization.h>
-#include <VirtualRobot/Visualization/VisualizationGroup.h>
 
 #include <QtGui/QtGui>
 #include <QImage>
@@ -42,10 +41,6 @@ class SIMOX_GUI_IMPORT_EXPORT ViewerInterface
 {
 public:
     virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) = 0;
-    virtual void addVisualizations(const std::string &layer, const VirtualRobot::VisualizationGroupPtr &visualizations)
-    {
-        addVisualizations(layer, visualizations->getVisualizations());
-    }
     virtual void addVisualizations(const std::string &layer, const std::vector<VirtualRobot::VisualizationPtr> &visualizations)
     {
         for (const auto& visu : visualizations)
