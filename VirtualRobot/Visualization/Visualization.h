@@ -200,6 +200,10 @@ namespace VirtualRobot
         virtual size_t addSelectionChangedCallback(std::function<void(bool)> f) = 0;
         virtual void removeSelectionChangedCallback(size_t id) = 0;
 
+        inline void scale(float scaleFactor)
+        {
+            scale(Eigen::Vector3f(scaleFactor, scaleFactor, scaleFactor));
+        }
         virtual void scale(const Eigen::Vector3f& scaleFactor) = 0;
 
         virtual void shrinkFatten(float offset) = 0;
