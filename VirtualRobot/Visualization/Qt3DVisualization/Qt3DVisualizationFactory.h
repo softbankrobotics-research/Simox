@@ -25,8 +25,12 @@
 
 #include "../VisualizationFactory.h"
 
+#include <memory>
+
 namespace VirtualRobot
 {
+    class Qt3DVisualization;
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualizationFactory  : public VisualizationFactory
     {
     public:
@@ -38,6 +42,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createVisualizationFromFile(const std::string &filename, bool boundingBox) const override;
         virtual VisualizationPtr createVisualizationFromFile(const std::ifstream &ifs, bool boundingBox) const override;
         virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const override;
+        virtual SelectionGroupPtr createSelectionGroup() const override;
         virtual VisualizationPtr createBox(float width, float height, float depth) const override;
         virtual VisualizationPtr createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const override;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
@@ -63,6 +68,9 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const override;
 
         static std::string getName();
+
+    protected:
+        static std::shared_ptr<Qt3DVisualization> createQt3DVisualization();
     };
 
     typedef std::shared_ptr<Qt3DVisualizationFactory> Qt3DVisualizationFactoryPtr;

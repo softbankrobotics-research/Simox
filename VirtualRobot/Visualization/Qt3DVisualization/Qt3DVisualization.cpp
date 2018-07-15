@@ -37,6 +37,7 @@
 #include <QPropertyAnimation>
 
 #include "../TriMeshModel.h"
+#include "../../VirtualRobotException.h"
 
 namespace VirtualRobot
 {
@@ -177,7 +178,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
-        THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
+        THROW_VR_EXCEPTION_IF(scaleFactor.x() <= 0 || scaleFactor.y() <= 0 || scaleFactor.z() <= 0, "Scaling must be >0");
         if (!getUpdateVisualizationStatus())
         {
             return;
@@ -197,16 +198,6 @@ namespace VirtualRobot
         }
 
         std::cout << "shrinkFatten() " << offset << std::endl;
-    }
-
-    bool Qt3DVisualization::hasManipulator(Visualization::ManipulatorType t) const
-    {
-        std::cout << "hasManipulator()" << std::endl;
-    }
-
-    std::vector<Visualization::ManipulatorType> Qt3DVisualization::getAddedManipulatorTypes() const
-    {
-        std::cout << "getAddedManipulatorTypes()" << std::endl;
     }
 
     std::vector<Primitive::PrimitivePtr> Qt3DVisualization::getPrimitives() const
@@ -269,6 +260,7 @@ namespace VirtualRobot
             }
         }
 
+        clonedVisu->init();
         return clonedVisu;
     }
 
@@ -316,21 +308,6 @@ namespace VirtualRobot
                 }
             }
         }
-    }
-
-    void Qt3DVisualization::_addManipulator(Visualization::ManipulatorType t)
-    {
-        std::cout << "_addManipulator()" << std::endl;
-    }
-
-    void Qt3DVisualization::_removeManipulator(Visualization::ManipulatorType t)
-    {
-        std::cout << "_removeManipulator()" << std::endl;
-    }
-
-    void Qt3DVisualization::_removeAllManipulators()
-    {
-        std::cout << "_removeAllManipulators()" << std::endl;
     }
 
     void Qt3DVisualization::applyPose()

@@ -24,7 +24,6 @@
 #define _VirtualRobot_Qt3DVisualization_h_
 
 #include "../Visualization.h"
-#include "Qt3DElement.h"
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DExtras/QPhongMaterial>
@@ -32,12 +31,12 @@
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization, public Qt3DElement
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DVisualization : public Visualization
     {
         friend class Qt3DVisualizationFactory;
-        friend class Qt3DVisualizationSet;
-    public:
+    protected:
         Qt3DVisualization();
+    public:
         ~Qt3DVisualization();
 
         virtual void setGlobalPose(const Eigen::Matrix4f &m) override;
@@ -59,8 +58,6 @@ namespace VirtualRobot
         virtual void removeSelectionChangedCallback(size_t id) override;
         virtual void scale(const Eigen::Vector3f &scaleFactor) override;
         virtual void shrinkFatten(float offset) override;
-        virtual bool hasManipulator(ManipulatorType t) const override;
-        virtual std::vector<ManipulatorType> getAddedManipulatorTypes() const override;
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
         virtual void setFilename(const std::string &filename, bool boundingBox) override;
         virtual std::string getFilename() const override;
@@ -74,12 +71,9 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
 
-        virtual Qt3DCore::QEntity* getEntity() const override;
+        Qt3DCore::QEntity* getEntity() const;
     protected:
         virtual void createTriMeshModel();
-        virtual void _addManipulator(ManipulatorType t) override;
-        virtual void _removeManipulator(ManipulatorType t) override;
-        virtual void _removeAllManipulators() override;
 
     private:
 

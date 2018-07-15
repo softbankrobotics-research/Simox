@@ -25,7 +25,7 @@
 
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualizationSet.h>
-#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DElement.h>
+#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DSelectionGroup.h>
 
 #include <QVBoxLayout>
 #include <Qt3DExtras/QForwardRenderer>
@@ -92,11 +92,16 @@ SimoxGui::Qt3DViewer::~Qt3DViewer()
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
     requestLayer(layer).addVisualization(visualization);
+    _addVisualization(visualization);
 }
 
 void SimoxGui::Qt3DViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
 {
-    requestLayer(layer).removeVisualization(visualization);
+    bool removed = requestLayer(layer).removeVisualization(visualization);
+    if (removed)
+    {
+        _removeVisualization(visualization);
+    }
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllVisualizations() const
@@ -151,7 +156,12 @@ bool SimoxGui::Qt3DViewer::hasVisualization(const std::string &layer, const Virt
 
 void SimoxGui::Qt3DViewer::clearLayer(const std::string &layer)
 {
-    requestLayer(layer).clear();
+    auto l = requestLayer(layer);
+    for (const auto & v : l.visualizations)
+    {
+        _removeVisualization(v);
+    }
+    l.clear();
 }
 
 bool SimoxGui::Qt3DViewer::hasLayer(const std::string &layer) const
@@ -161,22 +171,12 @@ bool SimoxGui::Qt3DViewer::hasLayer(const std::string &layer) const
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected() const
 {
-    static bool printed = false;
-    if (!printed)
-    {
-        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-        printed = true;
-    }
+    VR_ERROR_ONCE_NYI;
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected(const std::string &layer) const
 {
-    static bool printed = false;
-    if (!printed)
-    {
-        VR_ERROR << __FILE__ << " " << __LINE__ << ": NYI" << std::endl;
-        printed = true;
-    }
+    VR_ERROR_ONCE_NYI;
 }
 
 QImage SimoxGui::Qt3DViewer::getScreenshot() const
@@ -254,20 +254,63 @@ SimoxGui::Qt3DViewer::Layer &SimoxGui::Qt3DViewer::requestLayer(const std::strin
     else
     {
         Layer& l = layers[name];
-        l.layerMainNode->setParent(this->scene);
         return l;
     }
 }
 
-SimoxGui::Qt3DViewer::Layer::Layer() : layerMainNode(new Qt3DCore::QNode)
+void SimoxGui::Qt3DViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)
 {
+    VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
+    if (set)
+    {
+        for (const auto& v : set->getVisualizations())
+        {
+            _addVisualization(v);
+        }
+    }
+    else
+    {
+        auto selectionGroup = std::static_pointer_cast<VirtualRobot::Qt3DSelectionGroup>(visualization->getSelectionGroup());
+        auto it = selectionGroups.find(selectionGroup);
+        if (it == selectionGroups.end())
+        {
+            auto selectionChangedId = selectionGroup->addSelectionChangedCallbacks([this,selectionGroup](bool selected)
+            {
+                SelectionGroupData& d = selectionGroups[selectionGroup];
+                VR_ERROR_ONCE_NYI;
+            });
+            SelectionGroupData& d = selectionGroups[selectionGroup];
+            d.selectionChangedCallbackId = selectionChangedId;
 
+            selectionGroup->getNode()->setParent(scene);
+        }
+        // TODO add visualization to filter
+    }
+}
+
+void SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+{
+    VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
+    if (set)
+    {
+        for (const auto& v : set->getVisualizations())
+        {
+            _removeVisualization(v);
+        }
+    }
+    else
+    {
+        // TODO remove visualization from filter
+    }
+}
+
+SimoxGui::Qt3DViewer::Layer::Layer()
+{
 }
 
 SimoxGui::Qt3DViewer::Layer::~Layer()
 {
     this->clear();
-    delete this->layerMainNode;
 }
 
 void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::VisualizationPtr &visualization)
@@ -275,25 +318,20 @@ void SimoxGui::Qt3DViewer::Layer::addVisualization(const VirtualRobot::Visualiza
     if (!hasVisualization(visualization))
     {
         visualizations.insert(visualization);
-        VirtualRobot::Qt3DElement* visu = dynamic_cast<VirtualRobot::Qt3DElement*>(visualization.get());
-        if(visu)
-        {
-            visu->getEntity()->setParent(this->layerMainNode);
-        }
     }
 }
 
-void SimoxGui::Qt3DViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+bool SimoxGui::Qt3DViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
 {
     auto it = visualizations.find(visualization);
     if (it != visualizations.end())
     {
         visualizations.erase(it);
-        VirtualRobot::Qt3DElement* visu = dynamic_cast<VirtualRobot::Qt3DElement*>(visualization.get());
-        if(visu)
-        {
-            visu->getEntity()->setParent((Qt3DCore::QNode*) nullptr);
-        }
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -304,9 +342,5 @@ bool SimoxGui::Qt3DViewer::Layer::hasVisualization(const VirtualRobot::Visualiza
 
 void SimoxGui::Qt3DViewer::Layer::clear()
 {
-    for(Qt3DCore::QNode* node : layerMainNode->childNodes())
-    {
-        node->setParent((Qt3DCore::QNode*) nullptr);
-    }
     visualizations.clear();
 }

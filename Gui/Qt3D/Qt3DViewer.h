@@ -34,6 +34,10 @@
 #include <Qt3DCore/QNode>
 #include <Qt3DRender/QRenderCapture>
 
+namespace VirtualRobot {
+    class Qt3DSelectionGroup;
+}
+
 namespace SimoxGui
 {
 
@@ -69,15 +73,18 @@ namespace SimoxGui
             ~Layer();
 
             void addVisualization(const VirtualRobot::VisualizationPtr& visualization);
-            void removeVisualization(const VirtualRobot::VisualizationPtr& visualization);
+            bool removeVisualization(const VirtualRobot::VisualizationPtr& visualization);
             bool hasVisualization(const VirtualRobot::VisualizationPtr& visualization) const;
 
             void clear();
 
             std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
-            Qt3DCore::QNode* layerMainNode;
         };
         Layer& requestLayer(const std::string& name);
+
+        void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
+        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization);
+
         std::map<std::string, Layer> layers;
 
         QWidget* parent;
@@ -85,6 +92,12 @@ namespace SimoxGui
         Qt3DCustomCameraController* camController;
         Qt3DRender::QRenderCapture* capture;
         VirtualRobot::Visualization::Color backgroundColor;
+
+        struct SelectionGroupData
+        {
+            size_t selectionChangedCallbackId;
+        };
+        std::map<std::shared_ptr<VirtualRobot::Qt3DSelectionGroup>, SelectionGroupData> selectionGroups;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
