@@ -69,12 +69,18 @@ namespace VirtualRobot
 
     size_t Qt3DVisualization::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
     {
-        std::cout << "addPoseChangedCallback()" << std::endl;
+        static unsigned int id = 0;
+        poseChangedCallbacks[id] = f;
+        return id++;
     }
 
     void Qt3DVisualization::removePoseChangedCallback(size_t id)
     {
-        std::cout << "removePoseChangedCallback()" << std::endl;
+        auto it = poseChangedCallbacks.find(id);
+        if (it != poseChangedCallbacks.end())
+        {
+            poseChangedCallbacks.erase(it);
+        }
     }
 
     void Qt3DVisualization::setVisible(bool showVisualization)
@@ -299,6 +305,10 @@ namespace VirtualRobot
     {
         Eigen::Matrix4f result = globalPose * scaleMatrix;
         this->transformation->setMatrix(QMatrix4x4(result.data()).transposed());
+        for (auto& f : poseChangedCallbacks)
+        {
+            f.second(result);
+        }
     }
 
     Qt3DCore::QComponent *Qt3DVisualization::duplicateComponent(Qt3DCore::QComponent *component) const

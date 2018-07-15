@@ -91,6 +91,8 @@ namespace VirtualRobot
         Qt3DCore::QTransform* transformation;
         Qt3DExtras::QPhongMaterial* material;
 
+        std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+
         enum ComponentTypes {
             // Lights
             LightDirectional = 1,
