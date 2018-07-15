@@ -39,20 +39,14 @@ namespace VirtualRobot
         Qt3DSelectionGroup();
 
     public:
-        virtual ~Qt3DSelectionGroup() override;
+        virtual ~Qt3DSelectionGroup() override = default;
         virtual void setSelected(bool selected) override;
 
         size_t addSelectionChangedCallbacks(std::function<void (bool)> f);
         void removeSelectionChangedCallbacks(size_t id);
 
-        virtual void addVisualization(const VisualizationPtr &visu) override;
-        virtual void removeVisualization(const VisualizationPtr &visu) override;
-
-        Qt3DCore::QNode *getNode() const;
-
     protected:
         std::map<size_t, std::function<void(bool)>> selectionChangedCallbacks;
-        Qt3DCore::QNode* node;
     };
 
 } // namespace VirtualRobot

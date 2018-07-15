@@ -26,6 +26,7 @@
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualizationSet.h>
 #include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DSelectionGroup.h>
+#include <VirtualRobot/Visualization/SelectionManager.h>
 
 #include <QVBoxLayout>
 #include <Qt3DExtras/QForwardRenderer>
@@ -83,6 +84,12 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 0.0f));
     this->viewAll();
     this->setAntialiasing(4);
+
+    selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
+    {
+        _removeVisualization(visu, old);
+        _addVisualization(visu);
+    });
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
@@ -271,6 +278,7 @@ void SimoxGui::Qt3DViewer::_addVisualization(const VirtualRobot::VisualizationPt
     else
     {
         auto selectionGroup = std::static_pointer_cast<VirtualRobot::Qt3DSelectionGroup>(visualization->getSelectionGroup());
+        Qt3DCore::QNode* node = nullptr;
         auto it = selectionGroups.find(selectionGroup);
         if (it == selectionGroups.end())
         {
@@ -279,16 +287,24 @@ void SimoxGui::Qt3DViewer::_addVisualization(const VirtualRobot::VisualizationPt
                 SelectionGroupData& d = selectionGroups[selectionGroup];
                 VR_ERROR_ONCE_NYI;
             });
+
             SelectionGroupData& d = selectionGroups[selectionGroup];
             d.selectionChangedCallbackId = selectionChangedId;
-
-            selectionGroup->getNode()->setParent(scene);
+            d.node = new Qt3DCore::QNode;
+            node = d.node;
+            node->setParent(scene);
+            d.objectCount = 0;
         }
-        // TODO add visualization to filter
+        else
+        {
+            node = it->second.node;
+        }
+        it->second.objectCount++;
+        std::static_pointer_cast<VirtualRobot::Qt3DVisualization>(visualization)->getEntity()->setParent(node);
     }
 }
 
-void SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization)
+void SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr &group)
 {
     VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
     if (set)
@@ -300,7 +316,25 @@ void SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::Visualizatio
     }
     else
     {
-        // TODO remove visualization from filter
+        auto selectionGroup = std::static_pointer_cast<VirtualRobot::Qt3DSelectionGroup>(group ? group : visualization->getSelectionGroup());
+        auto it = selectionGroups.find(selectionGroup);
+        if (it != selectionGroups.end())
+        {
+            SelectionGroupData& d = it->second;
+            std::static_pointer_cast<VirtualRobot::Qt3DVisualization>(visualization)->getEntity()->setParent(new Qt3DCore::QNode);
+            d.objectCount--;
+            if (d.objectCount <= 0)
+            {
+                d.node->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
+                d.node = nullptr;
+                it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
+                selectionGroups.erase(it);
+            }
+        }
+        else
+        {
+            VR_WARNING << "Could not remove not added visualization. ignoring..." << std::endl;
+        }
     }
 }
 

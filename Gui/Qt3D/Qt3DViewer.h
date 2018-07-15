@@ -83,7 +83,7 @@ namespace SimoxGui
         Layer& requestLayer(const std::string& name);
 
         void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
-        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization);
+        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group = nullptr);
 
         std::map<std::string, Layer> layers;
 
@@ -96,8 +96,12 @@ namespace SimoxGui
         struct SelectionGroupData
         {
             size_t selectionChangedCallbackId;
+            Qt3DCore::QNode* node;
+            size_t objectCount;
         };
         std::map<std::shared_ptr<VirtualRobot::Qt3DSelectionGroup>, SelectionGroupData> selectionGroups;
+
+        size_t selectionGroupChangedCallbackId;
     };
     typedef std::shared_ptr<Qt3DViewer> Qt3DViewerPtr;
 }
