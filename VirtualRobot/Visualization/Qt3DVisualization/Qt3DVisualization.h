@@ -84,7 +84,7 @@ namespace VirtualRobot
     private:
 
         void applyPose();
-        Eigen::Matrix4f additionalScale;
+        Eigen::Matrix4f scaleMatrix;
         Eigen::Matrix4f globalPose;
 
         Qt3DCore::QEntity* entity;

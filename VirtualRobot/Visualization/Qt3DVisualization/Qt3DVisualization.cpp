@@ -43,20 +43,18 @@ namespace VirtualRobot
     Qt3DVisualization::Qt3DVisualization()
     {
         this->entity = new Qt3DCore::QEntity();
-        this->transformation = new Qt3DCore::QTransform;
-        this->material = new Qt3DExtras::QPhongMaterial(this->entity);
 
-        this->material->setAmbient(QColor(80, 80, 80));
-        additionalScale <<
-             1000.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, 1000.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, 1000.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-        this->globalPose = Eigen::Matrix4f::Identity();
-        applyPose();
+        this->transformation = new Qt3DCore::QTransform;
+
+        this->material = new Qt3DExtras::QPhongMaterial(this->entity);
+        this->setColor(Color(0.33f, 0.33f, 0.33f));
 
         this->entity->addComponent(transformation);
         this->entity->addComponent(material);
+
+        this->scaleMatrix = Eigen::Matrix4f::Identity();
+        this->globalPose = Eigen::Matrix4f::Identity();
+        applyPose();
     }
 
     Qt3DVisualization::~Qt3DVisualization()
@@ -154,11 +152,9 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
-        additionalScale <<
-             scaleFactor[0] * 1000.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, scaleFactor[1] * 1000.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, scaleFactor[2] * 1000.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
+        scaleMatrix(0, 0) *= scaleFactor[0];
+        scaleMatrix(1, 1) *= scaleFactor[1];
+        scaleMatrix(2, 2) *= scaleFactor[2];
         applyPose();
     }
 
@@ -303,7 +299,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::applyPose()
     {
-        Eigen::Matrix4f result = globalPose * additionalScale;
+        Eigen::Matrix4f result = globalPose * scaleMatrix;
         this->transformation->setMatrix(QMatrix4x4(result.data()).transposed());
     }
 
