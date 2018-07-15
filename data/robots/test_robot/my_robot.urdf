@@ -4,7 +4,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="Armar4.dae" scale="1 1 1" />
+                <mesh filename="Armar4.dae" scale="1000 1000 1000" />
             </geometry>
         </visual>
     </link>
@@ -12,7 +12,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="MMM.dae" scale="1.5 1.5 1.5" />
+                <mesh filename="MMM.dae" scale="1500 1500 1500" />
             </geometry>
         </visual>
     </link>
@@ -20,7 +20,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="MMM.dae" scale="1.5 1.5 1.5" />
+                <mesh filename="MMM.dae" scale="1500 1500 1500" />
             </geometry>
         </visual>
     </link>
