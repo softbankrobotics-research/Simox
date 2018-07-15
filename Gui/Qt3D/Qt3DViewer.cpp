@@ -80,7 +80,7 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     lightEntity2->addComponent(light2);
 
     this->setRootEntity(scene);
-    this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 1.0f));
+    this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 0.0f));
     this->viewAll();
     this->setAntialiasing(4);
 }
@@ -235,7 +235,7 @@ void SimoxGui::Qt3DViewer::setBackgroundColor(const VirtualRobot::Visualization:
     }
     else
     {
-        this->defaultFrameGraph()->setClearColor(QColor(color.r, color.g, color.b));
+        this->defaultFrameGraph()->setClearColor(QColor((int)(color.r * 255.0f), (int)(color.g * 255.0f), (int)(color.b * 255.0f)));
     }
 }
 
