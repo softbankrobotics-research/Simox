@@ -43,23 +43,21 @@ namespace VirtualRobot
     Qt3DVisualization::Qt3DVisualization()
     {
         this->entity = new Qt3DCore::QEntity();
-
-        this->transformation = new Qt3DCore::QTransform;
-
+        this->transformation = new Qt3DCore::QTransform(this->entity);
         this->material = new Qt3DExtras::QPhongMaterial(this->entity);
-        this->setColor(Color(0.33f, 0.33f, 0.33f));
-
         this->entity->addComponent(transformation);
         this->entity->addComponent(material);
 
         this->scaleMatrix = Eigen::Matrix4f::Identity();
         this->globalPose = Eigen::Matrix4f::Identity();
         applyPose();
+
+        this->setColor(Color(0.33f, 0.33f, 0.33f));
     }
 
     Qt3DVisualization::~Qt3DVisualization()
     {
-
+        delete this->entity;
     }
 
     void Qt3DVisualization::setGlobalPose(const Eigen::Matrix4f &m)
