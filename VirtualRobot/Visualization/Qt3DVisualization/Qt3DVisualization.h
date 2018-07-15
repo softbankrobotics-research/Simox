@@ -92,6 +92,7 @@ namespace VirtualRobot
         Qt3DExtras::QPhongMaterial* material;
 
         std::map<unsigned int, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
+        bool updateVisualization;
 
         enum ComponentTypes {
             // Lights

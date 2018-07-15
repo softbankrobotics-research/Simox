@@ -53,6 +53,7 @@ namespace VirtualRobot
         applyPose();
 
         this->setColor(Color(0.33f, 0.33f, 0.33f));
+        this->setUpdateVisualization(true);
     }
 
     Qt3DVisualization::~Qt3DVisualization()
@@ -85,6 +86,11 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setVisible(bool showVisualization)
     {
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         this->entity->setEnabled(showVisualization);
     }
 
@@ -95,16 +101,21 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setUpdateVisualization(bool enable)
     {
-        std::cout << "setUpdateVisualization()" << std::endl;
+        this->updateVisualization = enable;
     }
 
     bool Qt3DVisualization::getUpdateVisualizationStatus() const
     {
-        std::cout << "getUpdateVisualizationStatus()" << std::endl;
+        return this->updateVisualization;
     }
 
     void Qt3DVisualization::setStyle(Visualization::DrawStyle s)
     {
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         std::cout << "setStyle()" << std::endl;
     }
 
@@ -115,6 +126,11 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setColor(const Visualization::Color &c)
     {
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         this->material->setAmbient(QColor((int)(c.r * 255.0f), (int)(c.g * 255.0f), (int)(c.b * 255.0f)));
     }
 
@@ -125,6 +141,11 @@ namespace VirtualRobot
 
     void Qt3DVisualization::setMaterial(const Visualization::MaterialPtr &material)
     {
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         std::cout << "setMaterial()" << std::endl;
     }
 
@@ -156,6 +177,12 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
+        THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         scaleMatrix(0, 0) *= scaleFactor[0];
         scaleMatrix(1, 1) *= scaleFactor[1];
         scaleMatrix(2, 2) *= scaleFactor[2];
@@ -164,6 +191,11 @@ namespace VirtualRobot
 
     void Qt3DVisualization::shrinkFatten(float offset)
     {
+        if (!getUpdateVisualizationStatus())
+        {
+            return;
+        }
+
         std::cout << "shrinkFatten() " << offset << std::endl;
     }
 
