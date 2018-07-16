@@ -9,13 +9,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb1_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -28,13 +28,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb2_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Elb2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Elb2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -47,13 +47,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho1_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -66,13 +66,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho2_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -85,13 +85,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho3_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho3_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -104,13 +104,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho4_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho4_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Sho4_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Sho4_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -123,13 +123,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Wri1_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Wri1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/sphere10.stl" scale="1 1 1"/>
+				<mesh filename="stl/sphere10.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -142,13 +142,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Wri2_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Wri2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmL_Wri2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmL_Wri2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -161,13 +161,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Elb1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Elb1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Elb1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Elb1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -180,13 +180,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Elb2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Elb2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Elb2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Elb2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -199,13 +199,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -218,13 +218,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -237,13 +237,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho3_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -256,13 +256,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho4_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho4_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Sho4_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Sho4_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -275,13 +275,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Wri1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Wri1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/sphere10.stl" scale="1 1 1"/>
+				<mesh filename="stl/sphere10.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -294,13 +294,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Wri2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Wri2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ArmR_Wri2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/ArmR_Wri2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -320,13 +320,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeL_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeL_1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeL_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeL_1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -339,13 +339,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeL_2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeL_2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeL_2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeL_2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -358,13 +358,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeR_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeR_1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeR_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeR_1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -377,13 +377,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeR_2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeR_2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/EyeR_2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/EyeR_2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -396,13 +396,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Index1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Index1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Index1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Index1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -415,13 +415,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Index2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Index2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Index2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Index2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -434,13 +434,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Middle1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Middle1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Middle1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Middle1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -453,13 +453,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Middle2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Middle2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Middle2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Middle2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -472,13 +472,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Pinky1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Pinky1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Pinky1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Pinky1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -491,13 +491,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Pinky2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Pinky2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Pinky2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Pinky2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -510,13 +510,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Ring1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Ring1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Ring1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Ring1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -529,13 +529,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Ring2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Ring2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Ring2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Ring2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -548,13 +548,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -567,13 +567,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -586,13 +586,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb3_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandL_Finger_Thumb3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandL_Finger_Thumb3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -619,13 +619,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Index1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Index1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Index1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Index1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -638,13 +638,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Index2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Index2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Index2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Index2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -657,13 +657,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Middle1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Middle1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Middle1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Middle1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -676,13 +676,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Middle2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Middle2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Middle2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Middle2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -695,13 +695,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Ring1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Ring1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Ring1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Ring1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -714,13 +714,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Ring2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Ring2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Ring2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Ring2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -733,13 +733,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-                                <mesh filename="stl/HandR_Finger_Pinky1_joint_visu.stl" scale="1 1 1"/>
+                                <mesh filename="stl/HandR_Finger_Pinky1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-                                <mesh filename="stl/HandR_Finger_Pinky1_joint_col.stl" scale="1 1 1"/>
+                                <mesh filename="stl/HandR_Finger_Pinky1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -752,13 +752,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-                                <mesh filename="stl/HandR_Finger_Pinky2_joint_visu.stl" scale="1 1 1"/>
+                                <mesh filename="stl/HandR_Finger_Pinky2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-                                <mesh filename="stl/HandR_Finger_Pinky2_joint_col.stl" scale="1 1 1"/>
+                                <mesh filename="stl/HandR_Finger_Pinky2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -771,13 +771,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -790,13 +790,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -809,13 +809,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb3_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/HandR_Finger_Thumb3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/HandR_Finger_Thumb3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -842,13 +842,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Head_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Head_1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Head_1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Head_1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -861,13 +861,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Head_2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Head_2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Head_2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Head_2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -880,7 +880,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/sphere10.stl" scale="1 1 1"/>
+				<mesh filename="stl/sphere10.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -893,13 +893,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Ank2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Ank2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Ank2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Ank2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -919,13 +919,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Heel_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Heel_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Heel_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Heel_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -938,13 +938,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -957,13 +957,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -976,13 +976,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip3_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Hip3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Hip3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -995,13 +995,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Knee_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Knee_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Knee_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Knee_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1021,13 +1021,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Toe2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Toe2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Toe2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Toe2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1040,13 +1040,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Toe_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Toe_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegL_Toe_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegL_Toe_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1059,7 +1059,7 @@
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/sphere10.stl" scale="1 1 1"/>
+				<mesh filename="stl/sphere10.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1072,13 +1072,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Ank2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Ank2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Ank2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Ank2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1098,13 +1098,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Heel_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Heel_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Heel_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Heel_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1117,13 +1117,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip1_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1136,13 +1136,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1155,13 +1155,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip3_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Hip3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Hip3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1174,13 +1174,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Knee_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Knee_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Knee_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Knee_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1200,13 +1200,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Toe2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Toe2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Toe2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Toe2_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1219,13 +1219,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Toe_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Toe_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/LegR_Toe_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/LegR_Toe_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1238,13 +1238,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_1_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_1_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_1_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_1_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1257,13 +1257,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_2_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_2_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_2_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1276,13 +1276,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_3_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_3_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Neck_3_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Neck_3_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1302,13 +1302,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Root_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Root_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Root_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Root_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1328,13 +1328,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Torso2_joint_visu.dae" scale="1 1 1"/>
+				<mesh filename="stl/Torso2_joint_visu.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Torso_Pitch_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Torso_Pitch_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1347,13 +1347,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Torso_Yaw_joint_visu.stl" scale="1 1 1"/>
+				<mesh filename="stl/Torso_Yaw_joint_visu.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/Torso_Yaw_joint_col.stl" scale="1 1 1"/>
+				<mesh filename="stl/Torso_Yaw_joint_col.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
