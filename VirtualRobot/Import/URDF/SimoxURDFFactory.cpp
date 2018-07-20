@@ -100,14 +100,12 @@ namespace VirtualRobot
 
 
         VirtualRobot::RobotPtr robo(new VirtualRobot::LocalRobot(robotName, robotType));
-        std::map<std::string, boost::shared_ptr<Link> > bodies = urdfModel->links_;
-        std::map<std::string, boost::shared_ptr<Joint> > joints = urdfModel->joints_;
-        std::map<std::string, boost::shared_ptr<Link> >::iterator itBodies = bodies.begin();
 
-        while (itBodies != bodies.end())
+        for (const auto& bodyPair : urdfModel->links_)
         {
-            boost::shared_ptr<Link> body = itBodies->second;
+            const auto& body = bodyPair.second;
             RobotNodePtr nodeVisual = createBodyNode(robo, body, basePath, useColModelsIfNoVisuModel);
+
             allNodes.push_back(nodeVisual);
             allNodesMap[body->name] = nodeVisual;
             std::vector<std::string> childrenlist;
@@ -121,21 +119,18 @@ namespace VirtualRobot
             //for (size_t i=0;i<body->child_links.size();i++)
             //    childrenlist.push_back(body->child_links[i]->name);
             childrenMap[nodeVisual] = childrenlist;
-            itBodies++;
         }
 
-        std::map<std::string, boost::shared_ptr<Joint> >::iterator itJoints = joints.begin();
 
-        while (itJoints != joints.end())
+        for (const auto& jointPair : urdfModel->joints_)
         {
-            boost::shared_ptr<Joint> joint = itJoints->second;
+            const auto& joint = jointPair.second;
             RobotNodePtr nodeJoint = createJointNode(robo, joint);
             allNodes.push_back(nodeJoint);
             allNodesMap[joint->name] = nodeJoint;
             std::vector<std::string> childrenlist;
             childrenlist.push_back(joint->child_link_name);
             childrenMap[nodeJoint] = childrenlist;
-            itJoints++;
         }
 
         RobotNodePtr rootNode = allNodesMap[urdfModel->getRoot()->name];
@@ -198,12 +193,12 @@ namespace VirtualRobot
             boost::filesystem::path p_base(package_base);
             result = (p_base / p_f).string();
         }
-
         return result;
     }
 
     VirtualRobot::VisualizationNodePtr SimoxURDFFactory::convertVisu(boost::shared_ptr<Geometry> g, urdf::Pose& pose, const std::string& basePath)
     {
+
         const float scale = 1000.0f; // mm
         VirtualRobot::VisualizationNodePtr res;
         boost::shared_ptr<VisualizationFactory> factory = CoinVisualizationFactory::createInstance(NULL);
