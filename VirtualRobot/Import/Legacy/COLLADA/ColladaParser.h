@@ -25,12 +25,14 @@
 #include <1.5/dom/domCOLLADA.h>
 #include <1.5/dom/domInstance_kinematics_scene.h>
 #include <1.5/dom/domTechnique.h>
-#include <boost/foreach.hpp>
 #include "ColladaIterators.h"
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/shared_ptr.hpp>
+#endif
 #include <ostream>
 #include "../VirtualRobotImportExport.h"
 

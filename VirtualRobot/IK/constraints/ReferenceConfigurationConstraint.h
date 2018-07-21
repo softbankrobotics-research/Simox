@@ -25,8 +25,6 @@
 
 #include "VirtualRobot/IK/Constraint.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ReferenceConfigurationConstraint : public Constraint, public boost::enable_shared_from_this<ReferenceConfigurationConstraint>

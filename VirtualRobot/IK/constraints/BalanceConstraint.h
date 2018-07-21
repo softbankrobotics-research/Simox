@@ -28,8 +28,6 @@
 #include <VirtualRobot/IK/CoMIK.h>
 #include <VirtualRobot/IK/SupportPolygon.h>
 
-#include <boost/shared_ptr.hpp>
-
 class SoSeparator;
 class SoNode;
 

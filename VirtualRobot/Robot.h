@@ -28,7 +28,6 @@
 #include "Nodes/RobotNode.h"
 #include "Nodes/RobotNodeRevolute.h"
 #include "Nodes/ConditionedLock.h"
-#include <boost/pointer_cast.hpp>
 
 #include <string>
 #include <map>

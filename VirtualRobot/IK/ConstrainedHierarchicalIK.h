@@ -26,7 +26,6 @@
 #include "VirtualRobot/IK/ConstrainedIK.h"
 #include "VirtualRobot/IK/HierarchicalIK.h"
 
-#include <boost/shared_ptr.hpp>
 
 namespace VirtualRobot
 {

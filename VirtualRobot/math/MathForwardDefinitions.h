@@ -24,7 +24,9 @@
 //scale intern sizes to milimeters
 #define HAPTIC_EXPLORATION_SCALE 40
 
+#ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
 #include <boost/shared_ptr.hpp>
+#endif
 #include <Eigen/Dense>
 #include <stdexcept>
 #include <vector>

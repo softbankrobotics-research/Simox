@@ -27,8 +27,6 @@
 #include "VirtualRobot/IK/Constraint.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT PositionConstraint : public Constraint, public boost::enable_shared_from_this<PositionConstraint>

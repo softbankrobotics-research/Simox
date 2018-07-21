@@ -27,8 +27,6 @@
 #include "VirtualRobot/IK/JacobiProvider.h"
 #include "VirtualRobot/IK/StackedIK.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace VirtualRobot
 {
     class VIRTUAL_ROBOT_IMPORT_EXPORT ConstrainedStackedIK : public ConstrainedIK, public boost::enable_shared_from_this<ConstrainedStackedIK>

@@ -25,7 +25,6 @@
 
 #include "VirtualRobot/IK/constraints/ReferenceConfigurationConstraint.h"
 
-#include <boost/shared_ptr.hpp>
 
 namespace VirtualRobot
 {

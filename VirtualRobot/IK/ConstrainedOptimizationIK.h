@@ -27,8 +27,6 @@
 #include "VirtualRobot/IK/ConstrainedIK.h"
 #include "VirtualRobot/IK/Constraint.h"
 
-#include <boost/shared_ptr.hpp>
-
 namespace nlopt
 {
     class opt;

@@ -10,7 +10,6 @@
 #include <VirtualRobot/Nodes/RobotNodePrismaticFactory.h>
 #include <VirtualRobot/Nodes/PositionSensor.h>
 #include "ColladaParser.h"
-#include <boost/shared_ptr.hpp>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
