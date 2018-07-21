@@ -25,8 +25,9 @@
 #include "AbstractFunctionR1Ori.h"
 #include "MathForwardDefinitions.h"
 
+#ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
 #include <boost/shared_ptr.hpp>
-
+#endif
 namespace math
 {
 
