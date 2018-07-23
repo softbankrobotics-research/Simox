@@ -20,32 +20,28 @@
  */
 
 #pragma once
-#include "MathForwardDefinitions.h"
 
-#include "SimpleAbstractFunctionR1R3.h"
+#include "AbstractFunctionR2R3.h"
+
 
 
 namespace math
 {
-
-    class LineStrip
-            : public SimpleAbstractFunctionR1R3
+    class TransformedFunctionR2R3 :
+            public AbstractFunctionR2R3
     {
     public:
+        TransformedFunctionR2R3(const Eigen::Matrix4f& transformation, AbstractFunctionR2R3Ptr func);
 
-        int Count() { return points.size(); }
-
-        LineStrip(const std::vector<Eigen::Vector3f>& points, float minT, float maxT);
-
-        bool InLimits(float t);
-        Eigen::Vector3f Get(float t) override;
+        Eigen::Vector3f GetPoint(float u, float v) override;
+        Eigen::Vector3f GetDdu(float u, float v) override;
+        Eigen::Vector3f GetDdv(float u, float v) override;
+        void GetUV(Eigen::Vector3f pos, float& u, float& v) override;
 
     private:
-        Eigen::Vector3f GetDirection(int i);
-        void GetIndex(float t,  int& i, float& f);
-
-        std::vector<Eigen::Vector3f> points;
-        float minT, maxT;
+        const Eigen::Matrix4f transformation;
+        const Eigen::Matrix4f inv;
+        const AbstractFunctionR2R3Ptr func;
 
     };
 }

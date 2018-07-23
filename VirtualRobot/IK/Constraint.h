@@ -25,8 +25,6 @@
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
 
-#include <boost/shared_ptr.hpp>
-
 class SoSeparator;
 
 namespace VirtualRobot

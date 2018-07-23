@@ -24,7 +24,9 @@
 //scale intern sizes to milimeters
 #define HAPTIC_EXPLORATION_SCALE 40
 
+#ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
 #include <boost/shared_ptr.hpp>
+#endif
 #include <Eigen/Dense>
 #include <stdexcept>
 #include <vector>
@@ -128,6 +130,8 @@ namespace math{
     typedef boost::shared_ptr<GaussianImplicitSurface3D> GaussianImplicitSurface3DPtr;
     class GaussianImplicitSurface3DNormals;
     typedef boost::shared_ptr<GaussianImplicitSurface3DNormals> GaussianImplicitSurface3DNormalsPtr;
+    class GaussianImplicitSurface3DCombined;
+    typedef boost::shared_ptr<GaussianImplicitSurface3DCombined> GaussianImplicitSurface3DCombinedPtr;
     class DataR3R1;
     typedef boost::shared_ptr<DataR3R1> DataR3R1Ptr;
     class DataR3R2;

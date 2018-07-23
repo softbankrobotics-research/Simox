@@ -25,8 +25,9 @@
 #include "AbstractFunctionR1Ori.h"
 #include "MathForwardDefinitions.h"
 
+#ifndef Q_MOC_RUN // workaround for some bug in some QT/boost versions
 #include <boost/shared_ptr.hpp>
-
+#endif
 namespace math
 {
 
@@ -35,6 +36,7 @@ namespace math
     {
     public:
         LinearInterpolatedOrientation(const Eigen::Quaternionf& startOri, const Eigen::Quaternionf& endOri, float startT, float endT, bool clamp);
+        LinearInterpolatedOrientation(const Eigen::Matrix3f& startOri, const Eigen::Matrix3f& endOri, float startT, float endT, bool clamp);
         Eigen::Quaternionf Get(float t) override;
         Eigen::Vector3f GetDerivative(float t) override;
 
@@ -45,6 +47,8 @@ namespace math
         float endT;
         bool clamp;
         Eigen::Vector3f derivative;
+        Eigen::Vector3f axis;
+        float angle;
 
     };
 }

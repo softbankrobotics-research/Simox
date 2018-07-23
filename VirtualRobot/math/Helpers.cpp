@@ -235,3 +235,14 @@ Eigen::Matrix4f math::Helpers::TranslatePose(Eigen::Matrix4f pose, const Eigen::
     pose.block<3, 1>(0, 3) += offset;
     return pose;
 }
+
+Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
+{
+    return (transform * Eigen::Vector4f(pos(0), pos(1), pos(2), 1)).block<3,1>(0,0);
+}
+
+Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f& dir)
+{
+    return transform.block<3,3>(0,0) * dir;
+}
+

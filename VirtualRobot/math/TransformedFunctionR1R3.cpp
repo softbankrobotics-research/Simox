@@ -19,34 +19,27 @@
  *             GNU Lesser General Public License
  */
 
-#pragma once
-#include "MathForwardDefinitions.h"
 
-#include "SimpleAbstractFunctionR1R3.h"
+#include "TransformedFunctionR1R3.h"
+#include "Helpers.h"
+
+using namespace math;
 
 
-namespace math
+
+TransformedFunctionR1R3::TransformedFunctionR1R3(const Eigen::Matrix4f& transformation, AbstractFunctionR1R3Ptr func)
+    : transformation(transformation), func(func)
 {
 
-    class LineStrip
-            : public SimpleAbstractFunctionR1R3
-    {
-    public:
-
-        int Count() { return points.size(); }
-
-        LineStrip(const std::vector<Eigen::Vector3f>& points, float minT, float maxT);
-
-        bool InLimits(float t);
-        Eigen::Vector3f Get(float t) override;
-
-    private:
-        Eigen::Vector3f GetDirection(int i);
-        void GetIndex(float t,  int& i, float& f);
-
-        std::vector<Eigen::Vector3f> points;
-        float minT, maxT;
-
-    };
 }
 
+
+Eigen::Vector3f TransformedFunctionR1R3::Get(float t)
+{
+    return Helpers::TransformPosition(transformation, func->Get(t));
+}
+
+Eigen::Vector3f TransformedFunctionR1R3::GetDerivative(float t)
+{
+    return Helpers::TransformDirection(transformation, func->GetDerivative(t));
+}

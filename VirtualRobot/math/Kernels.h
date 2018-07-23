@@ -26,13 +26,10 @@
 
 namespace math
 {
-enum class KernelType { Gauss, WilliamsPlus, WilliamsMinus };
 
 class KernelWithDerivatives
 {
 public:
-    static std::unique_ptr<KernelWithDerivatives> Create(KernelType kernel);
-
     virtual float Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const = 0;
     virtual float Kernel_dx(float x, float y, float z, float r, float R) const = 0;
     virtual float Kernel_ddx(float x, float y, float z, float r, float R) const = 0;

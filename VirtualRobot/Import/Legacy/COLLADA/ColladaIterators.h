@@ -23,8 +23,10 @@
 
 #pragma once
 
-#include <boost/iterator/iterator_facade.hpp>
 
+#ifndef Q_MOC_RUN
+#include <boost/iterator/iterator_facade.hpp>
+#endif
 //namespace VirtualRobot {
 
 template <class T>

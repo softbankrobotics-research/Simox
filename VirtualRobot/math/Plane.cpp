@@ -104,5 +104,5 @@ Plane Plane::FromNormal(Eigen::Vector3f pos, Eigen::Vector3f normal)
 
 math::Plane math::Plane::Transform(const Eigen::Matrix4f &transform)
 {
-    return Plane((transform * Eigen::Vector4f(pos(0), pos(1), pos(2), 1)).block<3,1>(0,0), transform.block<3,3>(0,0) * dir1, transform.block<3,3>(0,0) * dir2);
+    return Plane(Helpers::TransformPosition(transform, pos), Helpers::TransformDirection(transform, dir1), Helpers::TransformDirection(transform, dir2));
 }

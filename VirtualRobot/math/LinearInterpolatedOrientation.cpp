@@ -22,16 +22,24 @@
 #include "Helpers.h"
 #include "LinearInterpolatedOrientation.h"
 
+//#include <iostream>
+
 using namespace math;
 
 LinearInterpolatedOrientation::LinearInterpolatedOrientation(const Eigen::Quaternionf &startOri, const Eigen::Quaternionf &endOri, float startT, float endT, bool clamp)
     :startOri(startOri), endOri(endOri), startT(startT), endT(endT), clamp(clamp)
 {
     Eigen::AngleAxisf aa(endOri * startOri.inverse());
-    float angle = Helpers::AngleModPI(aa.angle());
+    angle = Helpers::AngleModPI(aa.angle());
+    axis = aa.axis();
     Eigen::Vector3f oriDelta = fabs(angle) < 0.01 ? Eigen::Vector3f::Zero() : Eigen::Vector3f(aa.axis() * angle);
 
     derivative = oriDelta / (endT - startT);
+}
+
+LinearInterpolatedOrientation::LinearInterpolatedOrientation(const Eigen::Matrix3f &startOri, const Eigen::Matrix3f &endOri, float startT, float endT, bool clamp)
+    : LinearInterpolatedOrientation(Eigen::Quaternionf(startOri), Eigen::Quaternionf(endOri), startT, endT, clamp)
+{
 }
 
 
@@ -42,11 +50,15 @@ Eigen::Quaternionf math::LinearInterpolatedOrientation::Get(float t)
         return startOri;
     }
     float f = Helpers::ILerp(startT, endT, t);
+    //std::cout << "before clamp: " << f << std::endl;
     if(clamp)
     {
-        f = Helpers::Clamp(f, 0, 1);
+        f = Helpers::Clamp(0, 1, f);
     }
-    Helpers::Lerp(startOri, endOri, f);
+    //std::cout << "after clamp: " << f << std::endl;
+    //Helpers::Lerp(startOri, endOri, f);
+    Eigen::AngleAxisf aa(f * angle, axis);
+    return Eigen::Quaternionf(aa * startOri);
 }
 
 Eigen::Vector3f math::LinearInterpolatedOrientation::GetDerivative(float t)

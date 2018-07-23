@@ -159,6 +159,8 @@ math/AbstractFunctionR1R3.cpp
 math/AbstractFunctionR1R6.cpp
 math/AbstractFunctionR2R3.cpp
 math/CompositeFunctionR1R6.cpp
+math/TransformedFunctionR1R3.cpp
+math/TransformedFunctionR2R3.cpp
 math/LinearInterpolatedOrientation.cpp
 math/FitPlane.cpp
 math/Plane.cpp
@@ -170,6 +172,7 @@ math/ImplicitObjectModel.cpp
 math/Kernels.cpp
 math/GaussianImplicitSurface3D.cpp
 math/GaussianImplicitSurface3DNormals.cpp
+math/GaussianImplicitSurface3DCombined.cpp
 math/DataR3R1.cpp
 math/DataR3R2.cpp
 math/Helpers.cpp
@@ -312,6 +315,8 @@ math/AbstractFunctionR1R6.h
 math/AbstractFunctionR1Ori.h
 math/AbstractFunctionR2R3.h
 math/AbstractFunctionR3R1.h
+math/TransformedFunctionR1R3.h
+math/TransformedFunctionR2R3.h
 math/SimpleAbstractFunctionR1R3.h
 math/SimpleAbstractFunctionR1R6.h
 math/SimpleAbstractFunctionR1Ori.h
@@ -329,6 +334,7 @@ math/GaussianObjectModelNormals.h
 math/Kernels.h
 math/GaussianImplicitSurface3D.h
 math/GaussianImplicitSurface3DNormals.h
+math/GaussianImplicitSurface3DCombined.h
 math/DataR3R1.h
 math/DataR3R2.h
 math/Helpers.h

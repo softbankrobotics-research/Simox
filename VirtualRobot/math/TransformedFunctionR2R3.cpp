@@ -19,33 +19,38 @@
  *             GNU Lesser General Public License
  */
 
-#include "LineStrip.h"
+
+#include "TransformedFunctionR2R3.h"
 #include "Helpers.h"
 
 using namespace math;
 
 
 
-LineStrip::LineStrip(const std::vector<Eigen::Vector3f> &points, float minT, float maxT)
-    : points(points), minT(minT), maxT(maxT)
+TransformedFunctionR2R3::TransformedFunctionR2R3(const Eigen::Matrix4f& transformation, AbstractFunctionR2R3Ptr func)
+    : transformation(transformation), inv(transformation.inverse()), func(func)
 {
+
 }
 
 
-Eigen::Vector3f LineStrip::Get(float t)
+
+Eigen::Vector3f math::TransformedFunctionR2R3::GetPoint(float u, float v)
 {
-    int i; float f;
-    GetIndex(t,  i,  f);
-    return points.at(i) * (1 - f) + points.at(i+1) * f;
+    return Helpers::TransformPosition(transformation, func->GetPoint(u, v));
 }
 
-Eigen::Vector3f LineStrip::GetDirection(int i)
+Eigen::Vector3f math::TransformedFunctionR2R3::GetDdu(float u, float v)
 {
-    return points.at(i+1) - points.at(i);
+    return Helpers::TransformDirection(transformation, func->GetDdu(u, v));
 }
 
-void LineStrip::GetIndex(float t, int &i, float &f)
+Eigen::Vector3f math::TransformedFunctionR2R3::GetDdv(float u, float v)
 {
-    Helpers::GetIndex(t, minT, maxT, points.size(),  i,  f);
+    return Helpers::TransformDirection(transformation, func->GetDdv(u, v));
 }
 
+void math::TransformedFunctionR2R3::GetUV(Eigen::Vector3f pos, float& u, float& v)
+{
+    func->GetUV(Helpers::TransformPosition(inv, pos), u, v);
+}

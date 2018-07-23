@@ -144,7 +144,7 @@ Line Line::FromPoses(const Eigen::Matrix4f &p1, const Eigen::Matrix4f &p2)
 
 Line Line::Transform(const Eigen::Matrix4f &pose)
 {
-    return Line(pos + pose.block<3,1>(0,3), pose.block<3, 3>(0, 0) * dir);
+    return Line(Helpers::TransformPosition(pose, pos), Helpers::TransformDirection(pose, dir));
 }
 
 
