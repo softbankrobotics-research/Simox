@@ -246,3 +246,10 @@ Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, co
     return transform.block<3,3>(0,0) * dir;
 }
 
+float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, float rad2mmFactor)
+{
+    Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
+    float dist = (a.block<3, 1>(0, 3) - b.block<3, 1>(0, 3)).norm();
+    return dist + AngleModPI(aa.angle()) * rad2mmFactor;
+}
+
