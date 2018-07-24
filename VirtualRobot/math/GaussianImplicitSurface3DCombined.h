@@ -22,6 +22,7 @@
 
 #include "MathForwardDefinitions.h"
 #include "DataR3R1.h"
+#include "DataR3R2.h"
 #include "Contact.h"
 #include "Helpers.h"
 #include "SimpleAbstractFunctionR3R1.h"
@@ -37,6 +38,7 @@ class GaussianImplicitSurface3DCombined :
 public:
     GaussianImplicitSurface3DCombined(std::unique_ptr<KernelWithDerivatives> kernel);
     void Calculate(const ContactList& normalSamples, const std::vector<DataR3R1>& samples, float noise, float normalNoise, float normalScale);
+    void Calculate(const ContactList& normalSamples, const std::vector<DataR3R2>& samples, float normalNoise, float normalScale);
     float Get(Eigen::Vector3f pos) override;
     float GetVariance(const Eigen::Vector3f& pos);
 
@@ -46,14 +48,14 @@ private:
     Eigen::VectorXd alpha;
 
     ContactList normalSamples;
-    std::vector<DataR3R1> samples;
+    std::vector<DataR3R2> samples;
 
     float R;
     float R3;
     std::unique_ptr<KernelWithDerivatives> kernel;
 
     float Predict(const Eigen::Vector3f& pos);
-    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, const std::vector<Eigen::Vector3f>& normalPoints, float R, float noise, float normalNoise);
+    void CalculateCovariance(const std::vector<Eigen::Vector3f>& points, const std::vector<Eigen::Vector3f>& normalPoints, float R, const std::vector<float>& noise, float normalNoise);
     //static VectorXf Cholesky(MatrixXf matrix);
     //static VectorXf FitModel(MatrixXf L, List<DataR3R1> targets);
     //VectorXf SpdMatrixSolve(MatrixXf a, bool IsUpper, VectorXf b);
