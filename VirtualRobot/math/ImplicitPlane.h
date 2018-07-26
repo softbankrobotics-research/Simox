@@ -49,6 +49,7 @@ public:
     Eigen::Vector3f GetClosestPoint(Eigen::Vector3f v);
     static ImplicitPlane FromPositionNormal(Eigen::Vector3f pos, Eigen::Vector3f normal);
     static ImplicitPlane FromContact(Contact c);
+    float GetSignedDistance(const Eigen::Vector3f& p);
 
     // https://de.wikipedia.org/wiki/Schnittgerade
     Line Intersect(Plane plane);
