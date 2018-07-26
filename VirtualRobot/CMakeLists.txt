@@ -71,6 +71,7 @@ Visualization/Visualization.cpp
 Visualization/VisualizationNode.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
+Visualization/TriMeshUtils.cpp
 XML/BaseIO.cpp
 XML/RobotIO.cpp
 XML/SceneIO.cpp
@@ -216,6 +217,7 @@ Visualization/Visualization.h
 Visualization/VisualizationNode.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
+Visualization/TriMeshUtils.h
 XML/BaseIO.h
 XML/RobotIO.h
 XML/SceneIO.h
