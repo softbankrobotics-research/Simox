@@ -28,11 +28,22 @@ GaussianImplicitSurface3DCombined::GaussianImplicitSurface3DCombined(std::unique
 
 void GaussianImplicitSurface3DCombined::Calculate(const ContactList& normalSamples, const std::vector<DataR3R1>& samples, float noise, float normalNoise, float normalScale)
 {
+    std::vector<DataR3R2> samples2;
+    for(const auto& d: samples)
+    {
+        samples2.push_back(DataR3R2(d.Position(), d.Value(), noise));
+    }
+    Calculate(normalSamples, samples2, normalNoise, normalScale);
+}
+
+void GaussianImplicitSurface3DCombined::Calculate(const ContactList& normalSamples, const std::vector<DataR3R2>& samples, float normalNoise, float normalScale)
+{
     ContactList shiftedNormalSamples;
-    std::vector<DataR3R1> shiftedSamples;
+    std::vector<DataR3R2> shiftedSamples;
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector3f> pointsNormalOriginal;
     std::vector<Eigen::Vector3f> pointsOriginal;
+    std::vector<float> noise;
     for (const auto& d : normalSamples)
     {        
         const Eigen::Vector3f pos = d.Position();
@@ -44,9 +55,10 @@ void GaussianImplicitSurface3DCombined::Calculate(const ContactList& normalSampl
     for (const auto& d : samples)
     {        
         const Eigen::Vector3f pos = d.Position();
-        shiftedSamples.emplace_back(pos, d.Value());
+        shiftedSamples.emplace_back(pos, d.Value1(), d.Value2());
         points.push_back(pos);
         pointsOriginal.push_back(pos);
+        noise.push_back(d.Value2());
     }
 
     R = 0;
@@ -64,15 +76,15 @@ void GaussianImplicitSurface3DCombined::Calculate(const ContactList& normalSampl
     Eigen::VectorXd y(samples.size() + normalSamples.size() * 4);
     for (size_t i = 0; i < samples.size(); i++)
     {
-        y(i) = samples.at(i).Value();
+        y(i) = samples[i].Value1();
     }
 
     for (uint i = 0; i < normalSamples.size(); i++)
     {
          y(samples.size() + i * 4) = 0;
-         y(samples.size() + i * 4 + 1) = normalSamples.at(i).Normal().x();
-         y(samples.size() + i * 4 + 2) = normalSamples.at(i).Normal().y();
-         y(samples.size() + i * 4 + 3) = normalSamples.at(i).Normal().z();
+         y(samples.size() + i * 4 + 1) = normalSamples[i].Normal().x();
+         y(samples.size() + i * 4 + 2) = normalSamples[i].Normal().y();
+         y(samples.size() + i * 4 + 3) = normalSamples[i].Normal().z();
     }
 
     MatrixInvert(y);
@@ -92,15 +104,15 @@ Eigen::VectorXd GaussianImplicitSurface3DCombined::getCux(const Eigen::Vector3f&
     Eigen::VectorXd Cux (samples.size() + normalSamples.size() * 4);
     for (std::size_t i = 0; i < samples.size(); i++)
     {
-        Cux(i) = kernel->Kernel(pos, samples.at(i).Position(), R);
+        Cux(i) = kernel->Kernel(pos, samples[i].Position(), R);
     }
 
     for (std::size_t i = 0; i < normalSamples.size(); i++)
     {
-        Cux(samples.size() + i * 4) = kernel->Kernel(pos, normalSamples.at(i).Position(), R);
-        Cux(samples.size() + i * 4 + 1) = kernel->Kernel_dj(pos, normalSamples.at(i).Position(), R, 0);
-        Cux(samples.size() + i * 4 + 2) = kernel->Kernel_dj(pos, normalSamples.at(i).Position(), R, 1);
-        Cux(samples.size() + i * 4 + 3) = kernel->Kernel_dj(pos, normalSamples.at(i).Position(), R, 2);
+        Cux(samples.size() + i * 4) = kernel->Kernel(pos, normalSamples[i].Position(), R);
+        Cux(samples.size() + i * 4 + 1) = kernel->Kernel_dj(pos, normalSamples[i].Position(), R, 0);
+        Cux(samples.size() + i * 4 + 2) = kernel->Kernel_dj(pos, normalSamples[i].Position(), R, 1);
+        Cux(samples.size() + i * 4 + 3) = kernel->Kernel_dj(pos, normalSamples[i].Position(), R, 2);
     }
     return Cux;
 }
@@ -112,7 +124,7 @@ float GaussianImplicitSurface3DCombined::Predict(const Eigen::Vector3f& pos)
     return Cux.dot(alpha);
 }
 
-void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Eigen::Vector3f>& points, const std::vector<Eigen::Vector3f>& normalPoints, float R, float noise, float normalNoise)
+void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Eigen::Vector3f>& points, const std::vector<Eigen::Vector3f>& normalPoints, float R, const std::vector<float>& noise, float normalNoise)
 {
     covariance = Eigen::MatrixXd(points.size() + normalPoints.size() * 4, points.size() + normalPoints.size() * 4);
 
@@ -121,7 +133,7 @@ void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Ei
     {
         for (size_t j = i; j < points.size(); j++)
         {
-            const float cov = kernel->Kernel(points.at(i), points.at(j), R);
+            const float cov = kernel->Kernel(points[i], points[j], R);
             covariance(i, j) = cov;
             covariance(j, i) = cov;
         }
@@ -132,7 +144,7 @@ void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Ei
     {
         for (size_t j = i; j < normalPoints.size() * 4; j++)
         {
-            const float cov = kernel->Kernel(normalPoints.at(i/4), normalPoints.at(j/4), R, i%4 , j%4);
+            const float cov = kernel->Kernel(normalPoints[i/4], normalPoints[j/4], R, i%4 , j%4);
             covariance(points.size() + i, points.size() + j) = cov;
             covariance(points.size() + j, points.size() + i) = cov;
         }
@@ -143,7 +155,7 @@ void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Ei
     {
         for (size_t j = 0; j < normalPoints.size() * 4; j++)
         {
-            const float cov = kernel->Kernel(points.at(i), normalPoints.at(j/4), R, 0, j%4);
+            const float cov = kernel->Kernel(points[i], normalPoints[j/4], R, 0, j%4);
             covariance(i, points.size() + j) = cov;
             covariance(points.size() + j, i) = cov;
         }
@@ -152,13 +164,14 @@ void GaussianImplicitSurface3DCombined::CalculateCovariance(const std::vector<Ei
     // Noise for points
     for (size_t i = 0; i < points.size(); i++)
     {
-        covariance(i, i) += noise * noise;
+        covariance(i, i) += noise[i] * noise[i];
     }
 
     // Noise for Points + Normal
     for (size_t i = 0; i < normalPoints.size(); i++)
     {
-        covariance(points.size() + i, points.size() + i) += (i % 4 == 0 ? noise*noise : normalNoise*normalNoise);
+        // TODO: fix normalNoise
+        covariance(points.size() + i, points.size() + i) += (i % 4 == 0 ? normalNoise*normalNoise : normalNoise*normalNoise);
     }
 }
 
