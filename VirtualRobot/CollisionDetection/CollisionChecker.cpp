@@ -337,9 +337,14 @@ namespace VirtualRobot
         std::vector< CollisionModelPtr > vColModels1 = model1->getCollisionModels();
         std::vector< CollisionModelPtr > vColModels2 = model2->getCollisionModels();
 
-        if (vColModels1.size() == 0 || vColModels2.size() == 0)
+        if (vColModels1.size() == 0)
         {
-            VR_WARNING << "no internal data..." << endl;
+            VR_WARNING << "no internal data for " << model1->getName() << endl;
+            return false;
+        }
+        if ( vColModels2.size() == 0)
+        {
+            VR_WARNING << "no internal data for " << model2->getName() << endl;
             return false;
         }
 

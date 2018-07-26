@@ -48,6 +48,10 @@ namespace VirtualRobot
 
     bool CollisionCheckerPQP::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) //, Eigen::Vector3f *storeContact)
     {
+        BOOST_ASSERT(model1);
+        BOOST_ASSERT(model2);
+        BOOST_ASSERT(model1->getCollisionModelImplementation());
+        BOOST_ASSERT(model2->getCollisionModelImplementation());
         boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
         boost::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
         VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
