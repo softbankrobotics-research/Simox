@@ -43,6 +43,12 @@
 
 namespace VirtualRobot
 {
+    /**
+     * @brief Implementation of paper:
+     * Tobias Kunz and Mike Stilman
+     * Time-Optimal Trajectory Generation for Path Following with Bounded Acceleration and Velocity
+     * Robotics: Science and Systems. 2012.
+     */
     class TimeOptimalTrajectory
     {
     public:
