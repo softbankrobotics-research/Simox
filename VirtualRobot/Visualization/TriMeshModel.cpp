@@ -31,6 +31,8 @@ namespace VirtualRobot
         }
     }
 
+
+
     /**
      * This method adds the vertices \p vertex1,
      * \p vertex2 and \p vertex3 to TriMeshModel::vertices and creates a new
@@ -40,14 +42,15 @@ namespace VirtualRobot
      * \param vertex2 second vertex to use in the calculation
      * \param vertex3 third vertex to use in the calculation
      */
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         addTriangleWithFace(vertex1, vertex2, vertex3, normal);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, VisualizationFactory::Color color1, VisualizationFactory::Color color2, VisualizationFactory::Color color3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal, const VisualizationFactory::Color &color1, const VisualizationFactory::Color &color2, const VisualizationFactory::Color &color3)
     {
+//        VR_INFO << vertex1 << "\n\n" << vertex2 << "\n\n" << vertex3 << "\n\n" << std::endl;
         this->addVertex(vertex1);
         this->addVertex(vertex2);
         this->addVertex(vertex3);
@@ -84,13 +87,26 @@ namespace VirtualRobot
         this->addFace(face);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, const Eigen::Vector4f& vertexColor1, const Eigen::Vector4f& vertexColor2, const Eigen::Vector4f& vertexColor3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         VisualizationFactory::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
         VisualizationFactory::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
         VisualizationFactory::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
         addTriangleWithFace(vertex1, vertex2, vertex3, normal, color1, color2, color3);
+    }
+
+    void TriMeshModel::addMesh(const TriMeshModel &mesh)
+    {
+
+
+        for(auto & face : mesh.faces)
+        {
+            addTriangleWithFace(mesh.vertices.at(face.id1), mesh.vertices.at(face.id2), mesh.vertices.at(face.id3),
+                                face.normal, mesh.colors.at(face.idColor1), mesh.colors.at(face.idColor2), mesh.colors.at(face.idColor3));
+        }
+//        VR_INFO << " size after : " << vertices.size() << std::endl;
+
     }
 
 
@@ -104,7 +120,7 @@ namespace VirtualRobot
      *
      * \return normal vector
      */
-    Eigen::Vector3f TriMeshModel::CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3)
+    Eigen::Vector3f TriMeshModel::CreateNormal(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3)
     {
         static bool warningPrinted = false;
         // calculate normal

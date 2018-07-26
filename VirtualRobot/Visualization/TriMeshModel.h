@@ -48,19 +48,21 @@ namespace VirtualRobot
         };
         TriMeshModel(std::vector <triangle>& triangles);
 
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal,
-                                 VisualizationFactory::Color color1 = VisualizationFactory::Color::Gray(),
-                                 VisualizationFactory::Color color2 = VisualizationFactory::Color::Gray(),
-                                 VisualizationFactory::Color color3 = VisualizationFactory::Color::Gray());
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
-        static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
+
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3);
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal,
+                                 const VisualizationFactory::Color &color1 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color &color2 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color &color3 = VisualizationFactory::Color::Gray());
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, const Eigen::Vector4f& vertexColor1, const Eigen::Vector4f& vertexColor2, const Eigen::Vector4f& vertexColor3);
+        void addMesh(const TriMeshModel& mesh);
+        static Eigen::Vector3f CreateNormal(const Eigen::Vector3f &vertex1, const Eigen::Vector3f &vertex2, const Eigen::Vector3f &vertex3);
         void addFace(const MathTools::TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
         int addNormal(const Eigen::Vector3f& normal);
         int addColor(const VisualizationFactory::Color& color);
         int addColor(const Eigen::Vector4f& color);
-        int addMaterial(const VisualizationFactory::PhongMaterial& material);
+        int addMaterial(const VisualizationFactory::PhongMaterial& material);        
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
         void clear();
         void flipVertexOrientations();
