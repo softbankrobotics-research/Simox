@@ -298,8 +298,15 @@ namespace VirtualRobot
             for (auto attribute : geometry->attributes())
             {
                 std::cout << attribute->name().toStdString() << std::endl;
-                Qt3DRender::QBuffer *buffer = attribute->buffer();
-                const QByteArray &data = buffer->data();
+                auto buffer = attribute->buffer();
+                auto generator = attribute->buffer()->dataGenerator();
+                QByteArray data;
+
+                if (generator)
+                    data = (*generator.data())();
+                else
+                    data = buffer->data();
+
                 std::cout << data.size() << std::endl;
 
                 for(auto i = 0; i < data.size() / sizeof(float); i++)
