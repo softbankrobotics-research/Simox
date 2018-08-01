@@ -42,6 +42,9 @@ namespace VirtualRobot
 
         struct triangle
         {
+            triangle() = default;
+            triangle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3) :
+                vertex1(v1), vertex2(v2), vertex3(v3){}
             Eigen::Vector3f vertex1;
             Eigen::Vector3f vertex2;
             Eigen::Vector3f vertex3;

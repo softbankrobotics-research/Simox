@@ -30,10 +30,14 @@ namespace VirtualRobot {
 class TriMeshUtils
 {
 public:
-    TriMeshUtils();
+    static void CreateBoxTriangles(std::vector<TriMeshModel::triangle> &triangles, const Eigen::Matrix4f &globalPose, float width = 50.f, float height = 50.f, float depth = 50.f);
     static std::vector<TriMeshModel::triangle> CreateBoxTriangles(const Eigen::Matrix4f &globalPose, float width = 50.f, float height = 50.f, float depth = 50.f);
-    static TriMeshModelPtr CreateBox(const Eigen::Matrix4f &globalPose, float width = 50.f, float height = 50.f, float depth = 50.f, const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray());
-    static TriMeshModelPtr CreateSparseBoxGrid(const Eigen::Matrix4f &globalPose, const std::vector<Eigen::Vector3f>& positions, float width = 50.f, float height = 50.f, float depth = 50.f, const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray());
+    static TriMeshModelPtr CreateBox(const Eigen::Matrix4f &globalPose, float width = 50.f, float height = 50.f, float depth = 50.f,
+                                     const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray(), const std::vector<VisualizationFactory::Color>& colors = {});
+    static TriMeshModelPtr CreateSparseBoxGrid(const Eigen::Matrix4f &globalPose, const std::vector<Eigen::Vector3f>& positions,
+                                               float width = 50.f, float height = 50.f, float depth = 50.f,
+                                               const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray(),
+                                               const std::vector<VisualizationFactory::Color>& colors = {});
 
 };
 
