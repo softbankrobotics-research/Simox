@@ -37,6 +37,7 @@
 #include <QPropertyAnimation>
 
 #include "../TriMeshModel.h"
+#include "../../VirtualRobotException.h"
 
 namespace VirtualRobot
 {
@@ -177,7 +178,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
     {
-        THROW_VR_EXCEPTION_IF(s.x() <= 0 || s.y() <= 0 || s.z() <= 0, "Scaling must be >0");
+        THROW_VR_EXCEPTION_IF(scaleFactor.x() <= 0 || scaleFactor.y() <= 0 || scaleFactor.z() <= 0, "Scaling must be >0");
         if (!getUpdateVisualizationStatus())
         {
             return;

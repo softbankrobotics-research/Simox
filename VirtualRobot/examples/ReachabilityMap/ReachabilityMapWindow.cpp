@@ -360,8 +360,8 @@ void ReachabilityMapWindow::closeEvent(QCloseEvent* event)
 
 int ReachabilityMapWindow::main()
 {
-    SoQt::show(this);
-    SoQt::mainLoop();
+    /*SoQt::show(this);
+    SoQt::mainLoop();*/
     return 0;
 }
 
@@ -370,7 +370,7 @@ void ReachabilityMapWindow::quit()
 {
     std::cout << "ReachabilityMapWindow: Closing" << std::endl;
     this->close();
-    SoQt::exitMainLoop();
+    //SoQt::exitMainLoop();
 }
 
 void ReachabilityMapWindow::updateEEFBox()
