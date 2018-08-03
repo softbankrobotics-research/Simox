@@ -39,13 +39,12 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::ifstream &ifs, bool boundingBox) const
     {
-        std::cout << "FileStream" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return VisualizationPtr(new Qt3DVisualization());
     }
 
     VisualizationSetPtr Qt3DVisualizationFactory::createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const
     {
-        std::cout << "Create Set" << std::endl;
         return VisualizationSetPtr(new Qt3DVisualizationSet(visualizations));
     }
 
