@@ -62,14 +62,84 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const
     {
-        std::cout << "Line" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        auto *geometry = new Qt3DRender::QGeometry();
+
+        QByteArray bufferBytes;
+        bufferBytes.resize(3 * 2 * sizeof(float));
+        float *positions = reinterpret_cast<float*>(bufferBytes.data());
+        *positions++ = from.x();
+        *positions++ = from.y();
+        *positions++ = from.z();
+        *positions++ = to.x();
+        *positions++ = to.y();
+        *positions++ = to.z();
+
+        auto *buf = new Qt3DRender::QBuffer(geometry);
+        buf->setData(bufferBytes);
+
+        auto *positionAttribute = new Qt3DRender::QAttribute(geometry);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+        positionAttribute->setVertexBaseType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setVertexSize(3);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(buf);
+        positionAttribute->setByteStride(3 * sizeof(float));
+        positionAttribute->setCount(2);
+        geometry->addAttribute(positionAttribute);
+
+        QByteArray indexBytes;
+        indexBytes.resize(2 * sizeof(unsigned int));
+        unsigned int *indices = reinterpret_cast<unsigned int*>(indexBytes.data());
+        *indices++ = 0;
+        *indices++ = 1;
+
+        auto *indexBuffer = new Qt3DRender::QBuffer(geometry);
+        indexBuffer->setData(indexBytes);
+
+        auto *indexAttribute = new Qt3DRender::QAttribute(geometry);
+        indexAttribute->setVertexBaseType(Qt3DRender::QAttribute::UnsignedInt);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexBuffer);
+        indexAttribute->setCount(2);
+        geometry->addAttribute(indexAttribute);
+
+        auto *line = new Qt3DRender::QGeometryRenderer();
+        line->setGeometry(geometry);
+        line->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(line);
+
+        /*auto *material = new Qt3DRender::QMaterial();
+
+        auto *effect = new Qt3DRender::QEffect();
+        auto *gl3Technique = new Qt3DRender::QTechnique();
+        auto *gl3Pass = new Qt3DRender::QRenderPass();
+
+        auto *lineWidth = new Qt3DRender::QLineWidth();
+        lineWidth->setValue(width);
+        gl3Pass->addRenderState(lineWidth);
+
+        gl3Technique->addRenderPass(gl3Pass);
+        gl3Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        gl3Technique->graphicsApiFilter()->setMajorVersion(3);
+        gl3Technique->graphicsApiFilter()->setMinorVersion(1);
+        gl3Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::CoreProfile);
+
+        effect->addTechnique(gl3Technique);
+        material->setEffect(effect);
+
+        visu->getEntity()->removeComponent(visu->material);
+        visu->getEntity()->addComponent(material);*/
+
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const
     {
-        std::cout << "Line" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Eigen::Vector3f fromVec = from.block<3, 1>(0, 3);
+        Eigen::Vector3f toVec = to.block<3, 1>(0, 3);
+        return createLine(fromVec, toVec, width);
     }
 
     VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
