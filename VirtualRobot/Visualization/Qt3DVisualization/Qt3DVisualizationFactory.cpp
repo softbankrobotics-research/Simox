@@ -150,7 +150,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createCylinder(float radius, float height) const
     {
-        std::cout << "Cylinder" << std::endl;
         Qt3DExtras::QCylinderMesh* cylinder = new Qt3DExtras::QCylinderMesh();
         cylinder->setRadius(radius);
         cylinder->setLength(height);
