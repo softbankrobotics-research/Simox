@@ -176,6 +176,11 @@ namespace VirtualRobot
         return true;
     }
 
+    inline bool ends_with(std::string const & value, std::string const & ending)
+    {
+        if (ending.size() > value.size()) return false;
+        return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+    }
 
     ModelPtr ModelIO::loadModel(const std::string &xmlFile, ModelIO::RobotDescription loadMode)
     {
@@ -187,25 +192,40 @@ namespace VirtualRobot
             return ModelPtr();
         }
 
-        // load file
-        std::ifstream in(fullFile.c_str());
+        VirtualRobot::ModelPtr res;
 
-        if (!in.is_open())
+        if (ends_with(fullFile, ".urdf"))
         {
-            VR_ERROR << "Could not open XML file:" << fullFile << endl;
-            return ModelPtr();
+            RobotImporterFactoryPtr rf = RobotImporterFactory::fromName("SimoxURDF", nullptr);
+            if (!rf)
+            {
+                THROW_VR_EXCEPTION("Could not instanciate URDF loader, most likely Simox was not compiled with URDF support...");
+            }
+
+            res = rf->loadFromFile(fullFile, loadMode);
         }
+        else
+        {
+            // load file
+            std::ifstream in(fullFile.c_str());
 
-        std::stringstream buffer;
-        buffer << in.rdbuf();
-        std::string robotXML(buffer.str());
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
-        std::string basePath = filenameBasePath.string();
+            if (!in.is_open())
+            {
+                VR_ERROR << "Could not open XML file:" << fullFile << endl;
+                return ModelPtr();
+            }
 
-        in.close();
+            std::stringstream buffer;
+            buffer << in.rdbuf();
+            std::string robotXML(buffer.str());
+            boost::filesystem::path filenameBaseComplete(xmlFile);
+            boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+            std::string basePath = filenameBasePath.string();
 
-        VirtualRobot::ModelPtr res = createRobotModelFromString(robotXML, basePath, loadMode);
+            in.close();
+
+            res = createRobotModelFromString(robotXML, basePath, loadMode);
+        }
 
         if (!res)
         {
