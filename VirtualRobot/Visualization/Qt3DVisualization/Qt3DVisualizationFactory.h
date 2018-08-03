@@ -34,7 +34,6 @@ namespace VirtualRobot
         ~Qt3DVisualizationFactory();
 
         virtual void init(int &argc, char *argv[], const std::string &appName) override;
-        virtual VisualizationPtr createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox) const override;
         virtual VisualizationPtr createVisualizationFromFile(const std::string &filename, bool boundingBox) const override;
         virtual VisualizationPtr createVisualizationFromFile(const std::ifstream &ifs, bool boundingBox) const override;
         virtual VisualizationSetPtr createVisualisationSet(const std::vector<VisualizationPtr> &visualizations) const override;

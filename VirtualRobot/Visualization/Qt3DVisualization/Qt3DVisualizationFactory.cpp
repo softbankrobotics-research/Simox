@@ -26,12 +26,6 @@ namespace VirtualRobot
     {
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox) const
-    {
-        std::cout << "Primitives" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::string &filename, bool boundingBox) const
     {
         std::cout << "Qt3DFile" << std::endl;
