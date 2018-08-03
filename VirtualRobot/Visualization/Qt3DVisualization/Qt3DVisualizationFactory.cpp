@@ -142,20 +142,6 @@ namespace VirtualRobot
         return createLine(fromVec, toVec, width);
     }
 
-    VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
-    {
-        std::cout << "LineSet" << std::endl;
-        std::vector<VisualizationPtr> visualisations;
-        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const
-    {
-        std::cout << "LineSet" << std::endl;
-        std::vector<VisualizationPtr> visualisations;
-        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
     {
         std::cout << "Sphere" << std::endl;

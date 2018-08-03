@@ -40,8 +40,6 @@ namespace VirtualRobot
         virtual VisualizationPtr createBox(float width, float height, float depth) const override;
         virtual VisualizationPtr createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const override;
         virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
-        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const override;
-        virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const override;
         virtual VisualizationPtr createSphere(float radius) const override;
         virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const override;
         virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const override;
