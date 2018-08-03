@@ -279,36 +279,6 @@ namespace VirtualRobot
         return VisualizationPtr(new CoinVisualization(s));
     }
 
-    VisualizationPtr CoinVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const
-    {
-        // create torus
-        VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
-        VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
-        completion = std::min<float>(1.0f, completion);
-        completion = std::max<float>(-1.0f, completion);
-        int sign = completion >=0?1:-1;
-        float torusCompletion = completion - 1.0f/rings*sign;
-        if(torusCompletion * sign < 0)
-            torusCompletion = 0;
-        auto torus = createTorus(radius, tubeRadius, torusCompletion);
-
-        // create Arrow
-        float angle0 = (float)(rings-2)/rings * 2 * M_PI * completion;
-        float x0 = radius * cos(angle0);
-        float y0 = radius * sin(angle0);
-        float angle1 = (float)(rings-1)/rings * 2 * M_PI * completion;
-
-
-        auto arrow = createArrow(Eigen::Vector3f::UnitY()*sign, 0, tubeRadius);
-        Eigen::Matrix4f gp = MathTools::axisangle2eigen4f(Eigen::Vector3f(0, 0, 1), angle1);
-        gp(0, 3) = x0;
-        gp(1, 3) = y0;
-        gp(2, 3) = 0.f;
-        arrow->setGlobalPose(gp);
-
-        return createVisualisationSet({torus, arrow});
-    }
-
     VisualizationPtr CoinVisualizationFactory::createCylinder(float radius, float height) const
     {
         SoCylinder* c = new SoCylinder();
