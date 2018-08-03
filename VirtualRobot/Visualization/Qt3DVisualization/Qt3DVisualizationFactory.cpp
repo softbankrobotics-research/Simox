@@ -162,8 +162,7 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createPoint(float radius) const
     {
-        std::cout << "Point" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        return createSphere(radius);
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
