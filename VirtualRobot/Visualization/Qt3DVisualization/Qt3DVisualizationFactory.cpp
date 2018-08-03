@@ -185,20 +185,6 @@ namespace VirtualRobot
         return VisualizationPtr(new Qt3DVisualization());
     }
 
-    VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const
-    {
-        std::cout << "PointCloud" << std::endl;
-        std::vector<VisualizationPtr> visualisations;
-        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Vector3f> &points, float radius) const
-    {
-        std::cout << "PointCloud" << std::endl;
-        std::vector<VisualizationPtr> visualisations;
-        return VisualizationSetPtr(new Qt3DVisualizationSet(visualisations));
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
     {
         std::cout << "TriMesh" << std::endl;
