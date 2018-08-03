@@ -179,12 +179,6 @@ namespace VirtualRobot
         return visu;
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const
-    {
-        std::cout << "CoordSystem" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createPoint(float radius) const
     {
         std::cout << "Point" << std::endl;

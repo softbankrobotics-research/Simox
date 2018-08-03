@@ -45,7 +45,6 @@ namespace VirtualRobot
         virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const override;
         virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const override;
         virtual VisualizationPtr createCylinder(float radius, float height) const override;
-        virtual VisualizationPtr createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const override;
         virtual VisualizationPtr createPoint(float radius) const override;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const override;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f> &points, float radius) const override;
