@@ -50,7 +50,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createBox(float width, float height, float depth) const
     {
-        std::cout << "Box" << std::endl;
         Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
         cuboid->setXExtent(width);
         cuboid->setYExtent(height);
