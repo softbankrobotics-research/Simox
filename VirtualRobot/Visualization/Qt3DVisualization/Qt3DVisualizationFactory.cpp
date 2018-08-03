@@ -10,6 +10,7 @@
 
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QCylinderMesh>
+#include <Qt3DExtras/QSphereMesh>
 #include <Qt3DRender/QSceneLoader>
 
 namespace VirtualRobot
@@ -137,8 +138,14 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
     {
-        std::cout << "Sphere" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DExtras::QSphereMesh *sphere = new Qt3DExtras::QSphereMesh();
+        sphere->setRadius(radius);
+        sphere->setRings(64);
+        sphere->setSlices(64);
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(sphere);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
