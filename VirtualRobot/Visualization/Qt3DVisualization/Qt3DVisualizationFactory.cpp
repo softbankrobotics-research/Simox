@@ -148,12 +148,6 @@ namespace VirtualRobot
         return visu;
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
-    {
-        std::cout << "Circle" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const
     {
         std::cout << "Torus" << std::endl;

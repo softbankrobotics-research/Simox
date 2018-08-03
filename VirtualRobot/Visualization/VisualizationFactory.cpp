@@ -142,9 +142,34 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createCircle(float, float, float, size_t) const
+    VisualizationPtr VisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        std::vector<Eigen::Vector3f> points;
+
+        circleCompletion = std::min<float>(1.0f, circleCompletion);
+        circleCompletion = std::max<float>(-1.0f, circleCompletion);
+
+        for (size_t i = 0; i < numberOfCircleParts; ++i)
+        {
+            float angle0 = static_cast<float>(i)/static_cast<float>(numberOfCircleParts) * 2 * M_PI * circleCompletion;
+            float x0 = radius * cos(angle0);
+            float y0 = radius * sin(angle0);
+            points.push_back(Eigen::Vector3f(x0, y0, 0));
+        }
+
+        std::vector<Eigen::Vector3f> toPoints(points);
+        if(circleCompletion == 1.0f || circleCompletion == -1.0f)
+        {
+            toPoints.push_back(toPoints.front());
+        }
+        else
+        {
+            points.erase(points.end());
+        }
+        toPoints.erase(toPoints.begin());
+
+
+        return createLineSet(points, toPoints, width);
     }
 
     VisualizationPtr VisualizationFactory::createTorus(float, float, float, int, int) const
