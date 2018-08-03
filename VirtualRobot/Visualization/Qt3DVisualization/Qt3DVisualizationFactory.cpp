@@ -135,13 +135,6 @@ namespace VirtualRobot
         return visu;
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const
-    {
-        Eigen::Vector3f fromVec = from.block<3, 1>(0, 3);
-        Eigen::Vector3f toVec = to.block<3, 1>(0, 3);
-        return createLine(fromVec, toVec, width);
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
     {
         std::cout << "Sphere" << std::endl;

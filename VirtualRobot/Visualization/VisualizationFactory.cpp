@@ -98,9 +98,11 @@ namespace VirtualRobot
         return VisualizationPtr(new DummyVisualization);
     }
 
-    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f &, const Eigen::Matrix4f &, float) const
+    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width) const
     {
-        return VisualizationPtr(new DummyVisualization);
+        Eigen::Vector3f fromVec = from.block<3, 1>(0, 3);
+        Eigen::Vector3f toVec = to.block<3, 1>(0, 3);
+        return createLine(fromVec, toVec, width);
     }
 
     VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width) const

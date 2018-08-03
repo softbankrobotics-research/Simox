@@ -238,13 +238,6 @@ namespace VirtualRobot
         return VisualizationPtr(new CoinVisualization(s));
     }
 
-    VisualizationPtr CoinVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const
-    {
-        Eigen::Vector3f fromVec = from.block<3, 1>(0, 3);
-        Eigen::Vector3f toVec = to.block<3, 1>(0, 3);
-        return createLine(fromVec, toVec, width);
-    }
-
     VisualizationPtr CoinVisualizationFactory::createSphere(float radius) const
     {
         SoSphere* s = new SoSphere();
