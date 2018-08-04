@@ -191,8 +191,27 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createEllipse(float x, float y, float z) const
     {
-        std::cout << "Ellipse" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        // check for min size
+        float minSize = 1e-6f;
+
+        if (x < minSize)
+        {
+            x = minSize;
+        }
+
+        if (y < minSize)
+        {
+            y = minSize;
+        }
+
+        if (z < minSize)
+        {
+            z = minSize;
+        }
+
+        Qt3DVisualizationPtr visu = createSphere(1.0f);
+        visu->scale(Eigen::Vector3f(x, y, z));
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createContactVisualization(const EndEffector::ContactInfoVector &contacts, float frictionConeHeight, float frictionConeRadius, bool scaleAccordingToApproachDir) const
