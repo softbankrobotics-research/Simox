@@ -11,6 +11,7 @@
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QCylinderMesh>
 #include <Qt3DExtras/QSphereMesh>
+#include <Qt3DExtras/QConeMesh>
 #include <Qt3DRender/QSceneLoader>
 
 namespace VirtualRobot
@@ -185,8 +186,13 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createCone(float baseRadius, float height) const
     {
-        std::cout << "Cone" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DExtras::QConeMesh* cone = new Qt3DExtras::QConeMesh();
+        cone->setBottomRadius(baseRadius);
+        cone->setLength(height);
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(cone);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createEllipse(float x, float y, float z) const
@@ -209,7 +215,7 @@ namespace VirtualRobot
             z = minSize;
         }
 
-        Qt3DVisualizationPtr visu = createSphere(1.0f);
+        VisualizationPtr visu = createSphere(1.0f);
         visu->scale(Eigen::Vector3f(x, y, z));
         return visu;
     }
