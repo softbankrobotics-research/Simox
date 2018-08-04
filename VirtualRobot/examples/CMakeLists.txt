@@ -16,7 +16,7 @@ ADD_SUBDIRECTORY(Reachability)
 ADD_SUBDIRECTORY(Stability)
 ADD_SUBDIRECTORY(GraspEditor)
 
-ADD_SUBDIRECTORY(ReachabilityMap)
+#ADD_SUBDIRECTORY(ReachabilityMap)
 ADD_SUBDIRECTORY(LoadURDFRobot)
 
 #Visualization Testing
