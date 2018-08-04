@@ -112,7 +112,7 @@ void BulletRobotLogger::log(btScalar dt)
 
     for (unsigned int i = 0; i < jointNodes->getSize(); i++)
     {
-        const VirtualRobot::ModelJointPtr& node = (*jointNodes)[i];
+        const VirtualRobot::ModelJointPtr& node = jointNodes->getJoint(i);
         actualAngle(i)    = float(robot->getJointAngle(node));
         // bullet changes the sign???
         actualVelocity(i) = float(-robot->getJointSpeed(node));

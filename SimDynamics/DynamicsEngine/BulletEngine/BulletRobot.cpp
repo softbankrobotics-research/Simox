@@ -1087,7 +1087,7 @@ namespace SimDynamics
         if (!hasLink(rn))
         {
             //VR_ERROR << "No link with node " << rn->getName() << endl;
-            return 0.0f;
+            return 0.0;
         }
 
         LinkInfo link = getLink(rn);
@@ -1104,6 +1104,8 @@ namespace SimDynamics
 
             return slider->getTargetLinMotorVelocity() * 1000; // / BulletObject::ScaleFactor; m -> mm
         }
+        VR_ASSERT(false);
+        return 0.0;
     }
 
     double BulletRobot::getJointSpeed(VirtualRobot::ModelJointPtr rn)
@@ -1263,7 +1265,7 @@ namespace SimDynamics
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
-            ModelLinkPtr node = (*set)[i];
+            ModelLinkPtr node = set->getLink(i);
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
             Eigen::Matrix4f pose = bo->getComGlobal();
             com += node->getMass() * pose.block(0, 3, 3, 1);
@@ -1282,7 +1284,7 @@ namespace SimDynamics
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
-            ModelLinkPtr node = (*set)[i];
+            ModelLinkPtr node = set->getLink(i);
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
             Eigen::Vector3f vel = bo->getLinearVelocity();
 
@@ -1320,7 +1322,7 @@ namespace SimDynamics
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
-            ModelLinkPtr node = (*set)[i];
+            ModelLinkPtr node = set->getLink(i);
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
             Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
 
@@ -1337,7 +1339,7 @@ namespace SimDynamics
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
-            ModelLinkPtr node = (*set)[i];
+            ModelLinkPtr node = set->getLink(i);
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
             Eigen::Vector3f vel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
             Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
@@ -1362,7 +1364,7 @@ namespace SimDynamics
 
         for (unsigned int i = 0; i < set->getSize(); i++)
         {
-            ModelLinkPtr node = (*set)[i];
+            ModelLinkPtr node = set->getLink(i);
             BulletObjectPtr bo = std::dynamic_pointer_cast<BulletObject>(getDynamicsRobotNode(node));
             Eigen::Vector3f bodyVel = bo->getLinearVelocity() / 1000.0  * BulletObject::ScaleFactor;
             Eigen::Vector3f ang = bo->getAngularVelocity() / 1000.0  * BulletObject::ScaleFactor;
