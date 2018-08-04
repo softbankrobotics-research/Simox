@@ -75,7 +75,7 @@ namespace VirtualRobot
         *positions++ = to.y();
         *positions++ = to.z();
 
-        auto *buf = new Qt3DRender::QBuffer(geometry);
+        auto *buf = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::VertexBuffer, geometry);
         buf->setData(bufferBytes);
 
         auto *positionAttribute = new Qt3DRender::QAttribute(geometry);
@@ -94,7 +94,7 @@ namespace VirtualRobot
         *indices++ = 0;
         *indices++ = 1;
 
-        auto *indexBuffer = new Qt3DRender::QBuffer(geometry);
+        auto *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::IndexBuffer, geometry);
         indexBuffer->setData(indexBytes);
 
         auto *indexAttribute = new Qt3DRender::QAttribute(geometry);
