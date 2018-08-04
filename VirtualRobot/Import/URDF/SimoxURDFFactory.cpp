@@ -325,7 +325,10 @@ namespace VirtualRobot
                 // visual points to first entry in array
                 rnVisu = convertVisuArray(urdfBody->visual_array, basePath);
             } else
-                rnVisu = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
+            {
+                auto tmp = convertVisu(urdfBody->visual->geometry, urdfBody->visual->origin, basePath);
+                rnVisu = VisualizationFactory::getInstance()->createVisualisationSet({tmp});
+            }
         }
 
         if ((loadMode == ModelIO::RobotDescription::eFull  || loadMode == ModelIO::RobotDescription::eCollisionModel) && (urdfBody->collision || urdfBody->collision_array.size()>1) )
@@ -335,7 +338,10 @@ namespace VirtualRobot
             {
                 v = convertVisuArray(urdfBody->collision_array, basePath);
             } else
-                v = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
+            {
+                auto tmp = convertVisu(urdfBody->collision->geometry, urdfBody->collision->origin, basePath);
+                v = VisualizationFactory::getInstance()->createVisualisationSet({tmp});
+            }
 
             if (v)
             {
