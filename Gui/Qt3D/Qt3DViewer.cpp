@@ -94,6 +94,10 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
+    for (const auto& l : layers)
+    {
+        clearLayer(l.first);
+    }
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
@@ -321,11 +325,12 @@ void SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::Visualizatio
         if (it != selectionGroups.end())
         {
             SelectionGroupData& d = it->second;
-            std::static_pointer_cast<VirtualRobot::Qt3DVisualization>(visualization)->getEntity()->setParent(new Qt3DCore::QNode);
+            std::static_pointer_cast<VirtualRobot::Qt3DVisualization>(visualization)->getEntity()->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
             d.objectCount--;
             if (d.objectCount <= 0)
             {
                 d.node->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
+                delete d.node;
                 d.node = nullptr;
                 it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
                 selectionGroups.erase(it);
