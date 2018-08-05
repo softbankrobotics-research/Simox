@@ -49,10 +49,6 @@ namespace VirtualRobot
     void Qt3DVisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
         VisualizationSet::setGlobalPose(m);
-        for (auto& visu : this->getVisualizations())
-        {
-            visu->setGlobalPose(m);
-        }
     }
 
     size_t Qt3DVisualizationSet::addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f)
