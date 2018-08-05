@@ -181,8 +181,27 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
     {
-        std::cout << "Arrow" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Eigen::Vector3f n2 = n;
+        if (n2.norm()<1e-10)
+            n2 << 0,0,1;
+        n2.normalize();
+        float coneHeight = width * 6.0f;
+        float coneBottomRadius = width * 2.5f;
+        float baseLength = length - coneHeight;
+        baseLength = std::max(0.0f, baseLength);
+        Eigen::Matrix4f rotation = MathTools::quat2eigen4f(MathTools::getRotation(Eigen::Vector3f::UnitY(), n));
+        Eigen::Matrix4f cylinderPosition = Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f conePosition = Eigen::Matrix4f::Identity();
+        cylinderPosition(1, 3) = baseLength * 0.5f;
+        conePosition(1, 3) = baseLength * 0.5f + length * 0.5f;
+
+        auto cylinder = createCylinder(width, baseLength);
+        cylinder->setGlobalPose(rotation * cylinderPosition);
+
+        auto cone = createCone(coneBottomRadius, coneHeight);
+        cone->setGlobalPose(rotation * conePosition);
+
+        return createVisualisationSet({cylinder, cone});
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const
