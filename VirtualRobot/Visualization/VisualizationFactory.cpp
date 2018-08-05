@@ -112,11 +112,11 @@ namespace VirtualRobot
         return v;
     }
 
-    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f &, const Eigen::Matrix4f &, float) const
+    VisualizationPtr VisualizationFactory::createLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width) const
     {
-        VisualizationPtr v(new DummyVisualization);
-        v->init();
-        return v;
+        Eigen::Vector3f fromVec = from.block<3, 1>(0, 3);
+        Eigen::Vector3f toVec = to.block<3, 1>(0, 3);
+        return createLine(fromVec, toVec, width);
     }
 
     VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f>& from, const std::vector<Eigen::Vector3f>& to, float width) const
@@ -158,25 +158,148 @@ namespace VirtualRobot
         return v;
     }
 
-    VisualizationPtr VisualizationFactory::createCircle(float, float, float, size_t) const
+    VisualizationPtr VisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
     {
-        VisualizationPtr v(new DummyVisualization);
-        v->init();
-        return v;
+        std::vector<Eigen::Vector3f> points;
+
+        circleCompletion = std::min<float>(1.0f, circleCompletion);
+        circleCompletion = std::max<float>(-1.0f, circleCompletion);
+
+        for (size_t i = 0; i < numberOfCircleParts; ++i)
+        {
+            float angle0 = static_cast<float>(i)/static_cast<float>(numberOfCircleParts) * 2 * M_PI * circleCompletion;
+            float x0 = radius * cos(angle0);
+            float y0 = radius * sin(angle0);
+            points.push_back(Eigen::Vector3f(x0, y0, 0));
+        }
+
+        std::vector<Eigen::Vector3f> toPoints(points);
+        if(circleCompletion == 1.0f || circleCompletion == -1.0f)
+        {
+            toPoints.push_back(toPoints.front());
+        }
+        else
+        {
+            points.erase(points.end());
+        }
+        toPoints.erase(toPoints.begin());
+
+
+        return createLineSet(points, toPoints, width);
     }
 
-    VisualizationPtr VisualizationFactory::createTorus(float, float, float, int, int) const
+    VisualizationPtr VisualizationFactory::createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const
     {
-        VisualizationPtr v(new DummyVisualization);
-        v->init();
-        return v;
+        VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
+        VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
+
+        if(fabs(completion) <= 0.01)
+        {
+            return createVisualization();
+        }
+        TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
+
+        triMesh->addColor(VirtualRobot::Visualization::Color(0, 0, 0, 0));
+
+        int numVerticesPerRow = sides + 1;
+        int numVerticesPerColumn = rings + 1;
+
+        float theta = 0.0f;
+        float phi = 0.0f;
+        float verticalAngularStride = (float)(M_PI * 2.0f) / (float)rings;
+        float horizontalAngularStride = ((float)M_PI * 2.0f) / (float)sides;
+
+        for (int verticalIt = 0; verticalIt < numVerticesPerColumn; verticalIt++)
+        {
+            theta = verticalAngularStride * verticalIt * completion;
+
+            for (int horizontalIt = 0; horizontalIt < numVerticesPerRow; horizontalIt++)
+            {
+                phi = horizontalAngularStride * horizontalIt;
+
+                // position
+                float x = (float)cos(theta) * (radius + tubeRadius * (float)cos(phi));
+                float y = (float)sin(theta) * (radius + tubeRadius * (float)cos(phi));
+                float z = tubeRadius * (float)sin(phi);
+                triMesh->addVertex(Eigen::Vector3f(x, y, z));
+            }
+        }
+
+
+        for (int verticalIt = 0; verticalIt < rings; verticalIt++)
+        {
+            for (int horizontalIt = 0; horizontalIt < sides; horizontalIt++)
+            {
+                short lt = (short)(horizontalIt + verticalIt * (numVerticesPerRow));
+                short rt = (short)((horizontalIt + 1) + verticalIt * (numVerticesPerRow));
+
+                short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
+                short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
+                TriangleFace face;
+                face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
+                                                                     triMesh->vertices[rt],
+                                                                     triMesh->vertices[lb]);
+                face.id1 = lt;
+                face.idColor1 = 0;
+
+                face.id2 = rt;
+
+                face.idColor2 = 0;
+
+                face.id3 = lb;
+
+                face.idColor3 = 0;
+
+                triMesh->addFace(face);
+
+
+                TriangleFace face2;
+                face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
+                                                                      triMesh->vertices[rb],
+                                                                      triMesh->vertices[lb]);
+                face2.id1 = rt;
+                face2.idColor1 = 0;
+
+                face2.id2 = rb;
+
+                face2.idColor2 = 0;
+
+                face2.id3 = lb;
+
+                face2.idColor3 = 0;
+
+                triMesh->addFace(face2);
+            }
+        }
+
+        return triMesh->getVisualization(false, true);
     }
 
-    VisualizationPtr VisualizationFactory::createCircleArrow(float, float, float, int, int) const
+    VisualizationPtr VisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const
     {
-        VisualizationPtr v(new DummyVisualization);
-        v->init();
-        return v;
+        completion = std::min<float>(1.0f, completion);
+        completion = std::max<float>(-1.0f, completion);
+        int sign = completion >= 0 ? 1 : -1;
+        float torusCompletion = completion - 1.0f  /rings * sign;
+        if(torusCompletion * sign < 0)
+            torusCompletion = 0;
+        auto torus = createTorus(radius, tubeRadius, torusCompletion);
+
+        // create Arrow
+        float angle0 = (float)(rings - 2) / rings * 2 * M_PI * completion;
+        float x0 = radius * cos(angle0);
+        float y0 = radius * sin(angle0);
+        float angle1 = (float)(rings - 1) / rings * 2 * M_PI * completion;
+
+
+        auto arrow = createArrow(Eigen::Vector3f::UnitY() * sign, 0, tubeRadius);
+        Eigen::Matrix4f gp = MathTools::axisangle2eigen4f(Eigen::Vector3f(0, 0, 1), angle1);
+        gp(0, 3) = x0;
+        gp(1, 3) = y0;
+        gp(2, 3) = 0.0f;
+        arrow->setGlobalPose(gp);
+
+        return createVisualisationSet({torus, arrow});
     }
 
     VisualizationPtr VisualizationFactory::createCylinder(float, float) const

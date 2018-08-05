@@ -60,13 +60,13 @@ namespace VirtualRobot
         virtual SelectionGroupPtr createSelectionGroup() const override;
         virtual VisualizationPtr createBox(float width, float height, float depth) const override;
         virtual VisualizationPtr createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const override;
-        virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
+        //virtual VisualizationPtr createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const override;
         //virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const override;
         //virtual VisualizationSetPtr createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const override;
         virtual VisualizationPtr createSphere(float radius) const override;
         virtual VisualizationPtr createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const override;
-        virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion = 1.0f, int sides = 8, int rings = 30) const override;
-        virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const override;
+        //virtual VisualizationPtr createTorus(float radius, float tubeRadius, float completion = 1.0f, int sides = 8, int rings = 30) const override;
+        //virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const override;
         virtual VisualizationPtr createCylinder(float radius, float height) const override;
         //virtual VisualizationPtr createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const override;
         virtual VisualizationPtr createPoint(float radius) const override;

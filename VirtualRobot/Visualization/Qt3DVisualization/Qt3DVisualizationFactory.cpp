@@ -11,6 +11,8 @@
 
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QCylinderMesh>
+#include <Qt3DExtras/QSphereMesh>
+#include <Qt3DExtras/QConeMesh>
 #include <Qt3DRender/QSceneLoader>
 
 namespace VirtualRobot
@@ -27,13 +29,6 @@ namespace VirtualRobot
     {
     }
 
-    VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr> &primitives, bool boundingBox) const
-    {
-        std::cout << "Primitives" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
-    }
-
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::string &filename, bool boundingBox) const
     {
         std::cout << "Qt3DFile" << std::endl;
@@ -47,7 +42,7 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::ifstream &ifs, bool boundingBox) const
     {
-        std::cout << "FileStream" << std::endl;
+        VR_ERROR_ONCE_NYI;
         auto visu = createQt3DVisualization();
         return visu;
     }
@@ -66,7 +61,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createBox(float width, float height, float depth) const
     {
-        std::cout << "Box" << std::endl;
         Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
         cuboid->setXExtent(width);
         cuboid->setYExtent(height);
@@ -79,61 +73,93 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const
     {
-        std::cout << "Line" << std::endl;
+        auto *geometry = new Qt3DRender::QGeometry();
+
+        QByteArray bufferBytes;
+        bufferBytes.resize(3 * 2 * sizeof(float));
+        float *positions = reinterpret_cast<float*>(bufferBytes.data());
+        *positions++ = from.x();
+        *positions++ = from.y();
+        *positions++ = from.z();
+        *positions++ = to.x();
+        *positions++ = to.y();
+        *positions++ = to.z();
+
+        auto *buf = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::VertexBuffer, geometry);
+        buf->setData(bufferBytes);
+
+        auto *positionAttribute = new Qt3DRender::QAttribute(geometry);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+        positionAttribute->setVertexBaseType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setVertexSize(3);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(buf);
+        positionAttribute->setByteStride(3 * sizeof(float));
+        positionAttribute->setCount(2);
+        geometry->addAttribute(positionAttribute);
+
+        QByteArray indexBytes;
+        indexBytes.resize(2 * sizeof(unsigned int));
+        unsigned int *indices = reinterpret_cast<unsigned int*>(indexBytes.data());
+        *indices++ = 0;
+        *indices++ = 1;
+
+        auto *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::IndexBuffer, geometry);
+        indexBuffer->setData(indexBytes);
+
+        auto *indexAttribute = new Qt3DRender::QAttribute(geometry);
+        indexAttribute->setVertexBaseType(Qt3DRender::QAttribute::UnsignedInt);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexBuffer);
+        indexAttribute->setCount(2);
+        geometry->addAttribute(indexAttribute);
+
+        auto *line = new Qt3DRender::QGeometryRenderer();
+        line->setGeometry(geometry);
+        line->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
+
         auto visu = createQt3DVisualization();
+        visu->getEntity()->addComponent(line);
+
+        /*auto *material = new Qt3DRender::QMaterial();
+
+        auto *effect = new Qt3DRender::QEffect();
+        auto *gl3Technique = new Qt3DRender::QTechnique();
+        auto *gl3Pass = new Qt3DRender::QRenderPass();
+
+        auto *lineWidth = new Qt3DRender::QLineWidth();
+        lineWidth->setValue(width);
+        gl3Pass->addRenderState(lineWidth);
+
+        gl3Technique->addRenderPass(gl3Pass);
+        gl3Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        gl3Technique->graphicsApiFilter()->setMajorVersion(3);
+        gl3Technique->graphicsApiFilter()->setMinorVersion(1);
+        gl3Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::CoreProfile);
+
+        effect->addTechnique(gl3Technique);
+        material->setEffect(effect);
+
+        visu->getEntity()->removeComponent(visu->material);
+        visu->getEntity()->addComponent(material);*/
+
         return visu;
-    }
-
-    VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Matrix4f &from, const Eigen::Matrix4f &to, float width) const
-    {
-        std::cout << "Line" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
-    {
-        std::cout << "LineSet" << std::endl;
-        return VisualizationFactory::createLineSet(from, to, width);
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const
-    {
-        std::cout << "LineSet" << std::endl;
-        return VisualizationFactory::createLineSet(from, to, width);
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
     {
-        std::cout << "Sphere" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
-    }
+        Qt3DExtras::QSphereMesh *sphere = new Qt3DExtras::QSphereMesh();
+        sphere->setRadius(radius);
+        sphere->setRings(64);
+        sphere->setSlices(64);
 
-    VisualizationPtr Qt3DVisualizationFactory::createCircle(float radius, float circleCompletion, float width, size_t numberOfCircleParts) const
-    {
-        std::cout << "Circle" << std::endl;
         auto visu = createQt3DVisualization();
-        return visu;
-    }
-
-    VisualizationPtr Qt3DVisualizationFactory::createTorus(float radius, float tubeRadius, float completion, int sides, int rings) const
-    {
-        std::cout << "Torus" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
-    }
-
-    VisualizationPtr Qt3DVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const
-    {
-        std::cout << "CircleArrow" << std::endl;
-        auto visu = createQt3DVisualization();
+        visu->getEntity()->addComponent(sphere);
         return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createCylinder(float radius, float height) const
     {
-        std::cout << "Cylinder" << std::endl;
         Qt3DExtras::QCylinderMesh* cylinder = new Qt3DExtras::QCylinderMesh();
         cylinder->setRadius(radius);
         cylinder->setLength(height);
@@ -146,21 +172,7 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createPoint(float radius) const
     {
-        std::cout << "Point" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Matrix4f> &points, float radius) const
-    {
-        std::cout << "PointCloud" << std::endl;
-        return VisualizationFactory::createPointCloud(points, radius);
-    }
-
-    VisualizationSetPtr Qt3DVisualizationFactory::createPointCloud(const std::vector<Eigen::Vector3f> &points, float radius) const
-    {
-        std::cout << "PointCloud" << std::endl;
-        return VisualizationFactory::createPointCloud(points, radius);
+        return createSphere(radius);
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
@@ -186,15 +198,37 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createCone(float baseRadius, float height) const
     {
-        std::cout << "Cone" << std::endl;
+        Qt3DExtras::QConeMesh* cone = new Qt3DExtras::QConeMesh();
+        cone->setBottomRadius(baseRadius);
+        cone->setLength(height);
+
         auto visu = createQt3DVisualization();
+        visu->getEntity()->addComponent(cone);
         return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createEllipse(float x, float y, float z) const
     {
-        std::cout << "Ellipse" << std::endl;
-        auto visu = createQt3DVisualization();
+        // check for min size
+        float minSize = 1e-6f;
+
+        if (x < minSize)
+        {
+            x = minSize;
+        }
+
+        if (y < minSize)
+        {
+            y = minSize;
+        }
+
+        if (z < minSize)
+        {
+            z = minSize;
+        }
+
+        VisualizationPtr visu = createSphere(1.0f);
+        visu->scale(Eigen::Vector3f(x, y, z));
         return visu;
     }
 
