@@ -80,7 +80,7 @@ namespace VirtualRobot
         virtual VisualizationPtr createCircleArrow(float radius, float tubeRadius, float completion = 1, int sides = 8, int rings = 30) const;
 
         virtual VisualizationPtr createCylinder(float radius, float height) const;
-        virtual VisualizationPtr createCoordSystem(std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, int nrOfBlocks = 10) const;
+        virtual VisualizationPtr createCoordSystem(std::string* text = NULL, float axisLength = 100.0f, float axisSize = 3.0f, float blockLength=10.f, bool arrow=false) const;
         virtual VisualizationPtr createPoint(float radius) const;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Matrix4f>& points, float radius) const;
         virtual VisualizationSetPtr createPointCloud(const std::vector<Eigen::Vector3f>& points, float radius) const;

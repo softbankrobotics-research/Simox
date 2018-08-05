@@ -186,16 +186,84 @@ namespace VirtualRobot
         return v;
     }
 
-    VisualizationPtr VisualizationFactory::createCoordSystem(std::string *text, float axisLength, float axisSize, int nrOfBlocks) const
+    VisualizationPtr VisualizationFactory::createCoordSystem(std::string *text, float axisLength, float axisSize, float blockLength, bool arrow) const
     {
         std::vector<VisualizationPtr> visus;
 
-        visus.push_back(createArrow(Eigen::Vector3f::UnitX(), axisLength, axisSize));
-        visus.back()->setColor(Visualization::Color::Red());
-        visus.push_back(createArrow(Eigen::Vector3f::UnitY(), axisLength, axisSize));
-        visus.back()->setColor(Visualization::Color::Green());
-        visus.push_back(createArrow(Eigen::Vector3f::UnitZ(), axisLength, axisSize));
-        visus.back()->setColor(Visualization::Color::Blue());
+        if (arrow)
+        {
+            visus.push_back(createArrow(Eigen::Vector3f::UnitX(), axisLength, axisSize));
+            Eigen::Matrix4f xPos = Eigen::Matrix4f::Identity();
+            xPos(0,3) = axisLength/2 + axisSize/2.f;
+            visus.back()->setGlobalPose(xPos);
+
+            visus.push_back(createArrow(Eigen::Vector3f::UnitY(), axisLength, axisSize));
+            Eigen::Matrix4f yPos = Eigen::Matrix4f::Identity();
+            yPos(1,3) = axisLength/2 + axisSize/2.f;
+            visus.back()->setGlobalPose(yPos);
+
+            visus.push_back(createArrow(Eigen::Vector3f::UnitZ(), axisLength, axisSize));
+            Eigen::Matrix4f zPos = Eigen::Matrix4f::Identity();
+            zPos(2,3) = axisLength/2 + axisSize/2.f;
+            visus.back()->setGlobalPose(zPos);
+        }
+        else
+        {
+            {
+                visus.push_back(createBox(axisLength, axisSize, axisSize));
+                Eigen::Matrix4f xPos = Eigen::Matrix4f::Identity();
+                xPos(0,3) = axisLength/2 + axisSize/2.f;
+                visus.back()->setGlobalPose(xPos);
+
+                visus.push_back(createBox(axisSize, axisLength, axisSize));
+                Eigen::Matrix4f yPos = Eigen::Matrix4f::Identity();
+                yPos(1,3) = axisLength/2 + axisSize/2.f;
+                visus.back()->setGlobalPose(yPos);
+
+                visus.push_back(createBox(axisSize, axisSize, axisLength));
+                Eigen::Matrix4f zPos = Eigen::Matrix4f::Identity();
+                zPos(2,3) = axisLength/2 + axisSize/2.f;
+                visus.back()->setGlobalPose(zPos);
+            }
+
+            if (blockLength > 0.f && blockLength < axisLength)
+            {
+                float blockSize = axisSize + 0.5f;
+                float blockWidth = 0.1f;
+
+                if (axisSize > 10.0f)
+                {
+                    blockSize += axisSize / 10.0f;
+                    blockWidth += axisSize / 10.0f;
+                }
+
+                unsigned int nrOfBlocks = static_cast<unsigned int>(axisLength/blockLength);
+                if (axisLength - nrOfBlocks*blockLength < 0.0001 && nrOfBlocks > 0)
+                {
+                    nrOfBlocks--;
+                }
+                for (unsigned int i=1; i<=nrOfBlocks; ++i)
+                {
+                    visus.push_back(createBox(blockWidth, blockSize, blockSize));
+                    Eigen::Matrix4f xPos = Eigen::Matrix4f::Identity();
+                    xPos(0,3) = static_cast<float>(i)*blockLength + axisSize/2.f;
+                    visus.back()->setGlobalPose(xPos);
+
+                    visus.push_back(createBox(blockSize, blockWidth, blockSize));
+                    Eigen::Matrix4f yPos = Eigen::Matrix4f::Identity();
+                    yPos(1,3) = static_cast<float>(i)*blockLength + axisSize/2.f;
+                    visus.back()->setGlobalPose(yPos);
+
+                    visus.push_back(createBox(blockSize, blockSize, blockWidth));
+                    Eigen::Matrix4f zPos = Eigen::Matrix4f::Identity();
+                    zPos(2,3) = static_cast<float>(i)*blockLength + axisSize/2.f;
+                    visus.back()->setGlobalPose(zPos);
+                }
+            }
+        }
+        visus[0]->setColor(Visualization::Color::Red());
+        visus[1]->setColor(Visualization::Color::Green());
+        visus[2]->setColor(Visualization::Color::Blue());
 
         if (text)
         {
