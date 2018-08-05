@@ -20,11 +20,11 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab1">
+      <widget class="QWidget" name="tab2">
        <attribute name="title">
-        <string>Layer Demo</string>
+        <string>Factory Demo</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout1">
+       <layout class="QGridLayout" name="gridLayout2">
         <item row="0" column="0">
          <widget class="QFrame" name="frameViewer1">
           <property name="frameShape">
@@ -37,11 +37,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab2">
+      <widget class="QWidget" name="tab1">
        <attribute name="title">
-        <string>Factory Demo</string>
+        <string>Layer Demo</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout2">
+       <layout class="QGridLayout" name="gridLayout1">
         <item row="0" column="0">
          <widget class="QFrame" name="frameViewer2">
           <property name="frameShape">

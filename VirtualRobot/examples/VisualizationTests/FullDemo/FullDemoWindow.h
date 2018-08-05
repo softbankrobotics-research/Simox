@@ -14,7 +14,7 @@ public:
 
 protected:
 
-    SimoxGui::ViewerInterfacePtr viewer1;
+    SimoxGui::ViewerInterfacePtr factoryDemoViewer;
     SimoxGui::ViewerInterfacePtr viewer2;
 
     void setupUI();
