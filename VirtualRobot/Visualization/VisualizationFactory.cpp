@@ -256,7 +256,7 @@ namespace VirtualRobot
             }
         }
 
-        return triMesh->getVisualization(false, true);
+        return triMesh->getVisualization(false, false);
     }
 
     VisualizationPtr VisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, int sides, int rings) const
