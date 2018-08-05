@@ -163,7 +163,14 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createPoint(float radius) const
     {
-        return createSphere(radius);
+        Qt3DExtras::QSphereMesh *sphere = new Qt3DExtras::QSphereMesh();
+        sphere->setRadius(radius);
+        sphere->setRings(2);
+        sphere->setSlices(4);
+
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+        visu->getEntity()->addComponent(sphere);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
