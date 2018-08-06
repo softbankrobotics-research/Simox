@@ -19,7 +19,7 @@
 #include <QtCore/QtCore>
 #include <QTimer>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 
 
 #include <vector>
@@ -86,7 +86,7 @@ protected:
 
     Ui::MainWindowGraspQuality UI;
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::ModelPtr robot;
     VirtualRobot::ManipulationObjectPtr object;

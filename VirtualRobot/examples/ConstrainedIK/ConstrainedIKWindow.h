@@ -94,7 +94,7 @@ protected:
     void computeTSRError();
 
     Ui::MainWindowConstrainedIKDemo UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;

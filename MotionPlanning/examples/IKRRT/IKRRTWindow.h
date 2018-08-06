@@ -18,7 +18,7 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include <vector>
@@ -84,7 +84,7 @@ protected:
     void buildRrtVisu();
     void saveScreenshot();
     Ui::MainWindowIKRRT UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;

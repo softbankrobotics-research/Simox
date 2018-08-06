@@ -12,7 +12,7 @@
 #include "../../Model/ModelNodeSet.h"
 #include "../../Model/Nodes/Attachments/ModelNodeAttachment.h"
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include <string.h>
@@ -58,7 +58,7 @@ private:
     void updateEEFBox();
     Ui::MainWindowShowRobot UI;
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;

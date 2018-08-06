@@ -10,7 +10,7 @@
 #include "VirtualRobot/Model/Obstacle.h"
 #include "VirtualRobot/Grasping/Grasp.h"
 #include "VirtualRobot/Grasping/GraspSet.h"
-#include "Gui/ViewerInterface.h"
+#include "Gui/AbstractViewer.h"
 
 #include <string.h>
 #include <vector>
@@ -72,7 +72,7 @@ protected:
     void setupEnvironment();
 
     Ui::MainWindowReachability UI;
-    SimoxGui::ViewerInterfacePtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
+    SimoxGui::AbstractViewerPtr viewer; /*!< Viewer to display the 3D model of the robot and the environment. */
 
     std::string robotVisuLayer;
     std::string reachVisuLayer;

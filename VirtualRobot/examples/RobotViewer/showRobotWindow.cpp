@@ -164,11 +164,11 @@ void showRobotWindow::render()
     if (!UI.radioBtnNoVisu->isChecked())
     {
         auto visu = robot->getVisualization(visuType);
-        viewer->addVisualization(robotLayer, visu);
+        viewer->addVisualization(visu, robotLayer);
     }
     // We always render attachments because they can be unchecked easily anyways
     auto attachmentVisus = robot->getAllAttachmentVisualizations();
-    viewer->addVisualization(robotLayer, attachmentVisus);
+    viewer->addVisualization(attachmentVisus, robotLayer);
 }
 
 void showRobotWindow::showSensors()

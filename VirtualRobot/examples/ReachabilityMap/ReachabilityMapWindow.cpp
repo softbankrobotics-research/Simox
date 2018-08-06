@@ -242,7 +242,7 @@ void ReachabilityMapWindow::buildReachVisu()
             v->applyDisplacement(gp);
         }
 
-        viewer->addVisualization(reachVisuLayer, v);
+        viewer->addVisualization(v, reachVisuLayer);
     }
 
 }
@@ -260,7 +260,7 @@ void ReachabilityMapWindow::buildRobotVisu()
 
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayer, visualization);
+        viewer->addVisualization(visualization, robotVisuLayer);
     }
 }
 
@@ -277,7 +277,7 @@ void ReachabilityMapWindow::buildObjectVisu()
 
     if (visuObject)
     {
-        viewer->addVisualization(objectVisuLayer, visuObject);
+        viewer->addVisualization(visuObject, objectVisuLayer);
     }
 
     if (environment)
@@ -286,7 +286,7 @@ void ReachabilityMapWindow::buildObjectVisu()
 
         if (visuEnv)
         {
-            viewer->addVisualization(objectVisuLayer, visuEnv);
+            viewer->addVisualization(visuEnv, objectVisuLayer);
         }
     }
 }
@@ -321,7 +321,7 @@ void ReachabilityMapWindow::buildGraspVisu()
 
         if (v)
         {
-            viewer->addVisualization(graspVisuLayer, v);
+            viewer->addVisualization(v, graspVisuLayer);
         }
     }
     else
@@ -330,7 +330,7 @@ void ReachabilityMapWindow::buildGraspVisu()
 
         if (v)
         {
-            viewer->addVisualization(graspVisuLayer, v);
+            viewer->addVisualization(v, graspVisuLayer);
         }
     }
 }
@@ -347,7 +347,7 @@ void ReachabilityMapWindow::buildReachGridVisu()
 
     if (v)
     {
-        viewer->addVisualization(reachMapVisuLayer, v);
+        viewer->addVisualization(v, reachMapVisuLayer);
     }
 }
 

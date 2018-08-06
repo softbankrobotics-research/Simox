@@ -41,7 +41,7 @@ private:
     void setupUI();
     Ui::MainWindowSelectionDemo UI;
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
     VirtualRobot::VisualizationPtr box_red;
     VirtualRobot::VisualizationPtr box_green;
     VirtualRobot::VisualizationPtr box_blue;

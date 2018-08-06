@@ -21,7 +21,7 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include <vector>
@@ -100,7 +100,7 @@ protected:
     void testInit();
 
     Ui::MainWindowGraspRRTDemo UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
 

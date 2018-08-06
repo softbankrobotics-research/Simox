@@ -9,7 +9,7 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Model/Obstacle.h>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include <QtCore/QtGlobal>
@@ -61,7 +61,7 @@ protected:
     void selectLinkSet(const std::string &linkset);
 
     Ui::MainWindowStability UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     Eigen::Vector2f comTarget;
 

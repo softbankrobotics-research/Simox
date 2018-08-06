@@ -135,91 +135,12 @@ namespace SimoxGui
     CoinViewer::~CoinViewer()
     {
         VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
+        removeAllLayer();
         sceneSep->removeAllChildren();
         selectionNode->removeAllChildren();
         sceneSep->unref();
         unitNode->unref();
         selectionNode->unref();
-    }
-
-    void CoinViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
-    {
-        requestLayer(layer).addVisualization(visualization);
-        _addVisualization(visualization);
-    }
-
-    void CoinViewer::removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)
-    {
-        bool removed = requestLayer(layer).removeVisualization(visualization);
-        if (removed)
-        {
-            _removeVisualization(visualization);
-        }
-    }
-
-    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllVisualizations() const
-    {
-        std::vector<VirtualRobot::VisualizationPtr> visus;
-        for (const auto& entry : layers)
-        {
-            auto& layerVisus = entry.second.visualizations;
-            visus.insert(visus.end(), layerVisus.begin(), layerVisus.end());
-        }
-        return visus;
-    }
-
-    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllVisualizations(const std::string &layer) const
-    {
-        auto it = layers.find(layer);
-        if (it != layers.end())
-        {
-            return std::vector<VirtualRobot::VisualizationPtr>();
-        }
-        else
-        {
-            auto& v = it->second.visualizations;
-            return std::vector<VirtualRobot::VisualizationPtr>(v.begin(), v.end());
-        }
-    }
-
-    bool CoinViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
-    {
-        for (const auto& entry : layers)
-        {
-            if (entry.second.hasVisualization(visualization))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool CoinViewer::hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const
-    {
-        auto it = layers.find(layer);
-        if (it != layers.end())
-        {
-            return false;
-        }
-        else
-        {
-            return it->second.hasVisualization(visualization);
-        }
-    }
-
-    void CoinViewer::clearLayer(const std::string &layer)
-    {
-        auto& l = requestLayer(layer);
-        for (const auto & v : l.visualizations)
-        {
-            _removeVisualization(v);
-        }
-        l.clear();
-    }
-
-    bool CoinViewer::hasLayer(const std::string &layer) const
-    {
-        return layers.find(layer) != layers.end();
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
@@ -240,7 +161,7 @@ namespace SimoxGui
         return visus;
     }
 
-    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer) const
+    std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer, bool recursive) const
     {
         std::vector<VirtualRobot::VisualizationPtr> visus;
         if (hasLayer(layer))
@@ -254,7 +175,7 @@ namespace SimoxGui
                 VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(userData);
                 for (const auto& v : s->getVisualizations())
                 {
-                    if (hasVisualization(layer, v))
+                    if (hasVisualization(v, layer, recursive))
                     {
                         visus.push_back(v);
                     }
@@ -322,29 +243,12 @@ namespace SimoxGui
         return backgroundColor;
     }
 
-    CoinViewer::Layer &CoinViewer::requestLayer(const std::string &name)
-    {
-        auto it = layers.find(name);
-        if (it != layers.end())
-        {
-            return it->second;
-        }
-        else
-        {
-            Layer& l = layers[name];
-            return l;
-        }
-    }
-
     void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)
     {
         VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
         if (set)
         {
-            for (const auto& v : set->getVisualizations())
-            {
-                _addVisualization(v);
-            }
+            VR_ASSERT(false);
         }
         else
         {
@@ -390,10 +294,7 @@ namespace SimoxGui
         VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
         if (set)
         {
-            for (const auto& v : set->getVisualizations())
-            {
-                _removeVisualization(v);
-            }
+            VR_ASSERT(false);
         }
         else
         {
@@ -422,47 +323,4 @@ namespace SimoxGui
             }
         }
     }
-
-    CoinViewer::Layer::Layer()
-    {
-    }
-
-
-    CoinViewer::Layer::~Layer()
-    {
-    }
-
-
-    void CoinViewer::Layer::addVisualization(const VirtualRobot::VisualizationPtr &visu)
-    {
-        if (!hasVisualization(visu))
-        {
-            visualizations.insert(visu);
-        }
-    }
-
-
-    bool CoinViewer::Layer::removeVisualization(const VirtualRobot::VisualizationPtr &visu)
-    {
-        auto it = visualizations.find(visu);
-        if (it != visualizations.end())
-        {
-            visualizations.erase(it);
-            return true;
-        }
-        return false;
-    }
-
-
-    bool CoinViewer::Layer::hasVisualization(const VirtualRobot::VisualizationPtr &visu) const
-    {
-        return visualizations.find(visu) != visualizations.end();
-    }
-
-
-    void CoinViewer::Layer::clear()
-    {
-        visualizations.clear();
-    }
-
 }

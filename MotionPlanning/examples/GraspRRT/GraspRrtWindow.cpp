@@ -152,7 +152,7 @@ void GraspRrtWindow::buildVisu()
     if (scene)
     {
         auto v = scene->getVisualization(colModel);
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
     viewer->clearLayer("grasps");
@@ -161,7 +161,7 @@ void GraspRrtWindow::buildVisu()
     {
         GraspSetPtr gs(new GraspSet("tmp", robot->getName(), eef->getName(), grasps));
         auto v = gs->getVisualization(ModelLink::Full, eef, targetObject->getGlobalPose());
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
 /*
@@ -648,7 +648,7 @@ void GraspRrtWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt", wv);
+        viewer->addVisualization(wv, "rrt");
     }
 }
 

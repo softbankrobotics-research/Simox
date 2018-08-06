@@ -31,7 +31,7 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
     box->attachFrames();
-    viewer->addVisualization(boxVisuLayer, box->getVisualization());
+    viewer->addVisualization(box->getVisualization(), boxVisuLayer);
 
     box2TCP();
 
@@ -171,7 +171,7 @@ void GenericIKWindow::collisionModel()
     VisualizationSetPtr visualization = robot->getVisualization(colModel);
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayer, visualization);
+        viewer->addVisualization(visualization, robotVisuLayer);
     }
 }
 

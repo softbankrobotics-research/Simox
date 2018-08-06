@@ -37,7 +37,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_box_red->setChecked(selected);
     });
-    viewer->addVisualization("boxes", box_red);
+    viewer->addVisualization(box_red, "boxes");
     box_green = factory->createBox(1000, 1000, 1000);
     box_green->setColor(Visualization::Color::Green());
     box_green->setGlobalPose(Eigen::Matrix4f::Identity() + 1*disp);
@@ -45,7 +45,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_box_green->setChecked(selected);
     });
-    viewer->addVisualization("boxes", box_green);
+    viewer->addVisualization(box_green, "boxes");
     box_blue = factory->createBox(1000, 1000, 1000);
     box_blue->setColor(Visualization::Color::Blue());
     box_blue->setGlobalPose(Eigen::Matrix4f::Identity() + 2*disp);
@@ -53,7 +53,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_box_blue->setChecked(selected);
     });
-    viewer->addVisualization("boxes", box_blue);
+    viewer->addVisualization(box_blue, "boxes");
 
     cylinder_red = factory->createCylinder(500, 1000);
     cylinder_red->setColor(Visualization::Color::Red());
@@ -62,7 +62,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_cylinder_red->setChecked(selected);
     });
-    viewer->addVisualization("cylinders", cylinder_red);
+    viewer->addVisualization(cylinder_red, "cylinders");
     cylinder_green = factory->createCylinder(500, 1000);
     cylinder_green->setColor(Visualization::Color::Green());
     cylinder_green->setGlobalPose(Eigen::Matrix4f::Identity() + 4*disp);
@@ -70,7 +70,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_cylinder_green->setChecked(selected);
     });
-    viewer->addVisualization("cylinders", cylinder_green);
+    viewer->addVisualization(cylinder_green, "cylinders");
 
     cone_blue = factory->createCone(500, 1000);
     cone_blue->setColor(Visualization::Color::Blue());
@@ -79,7 +79,7 @@ void showDemoWindow::setupUI()
     {
         UI.checkBox_cone_blue->setChecked(selected);
     });
-    viewer->addVisualization("cones", cone_blue);
+    viewer->addVisualization(cone_blue, "cones");
 
     boxes = factory->createVisualisationSet({box_red, box_green, box_blue});
     cylinders = factory->createVisualisationSet({cylinder_red, cylinder_green});

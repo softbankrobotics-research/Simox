@@ -160,7 +160,7 @@ void RrtGuiWindow::buildVisu()
     if (scene)
     {
         auto v = scene->getVisualization(colModel);
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
     viewer->clearLayer("start-goal");
@@ -170,13 +170,13 @@ void RrtGuiWindow::buildVisu()
         if (robotStart)
         {
             auto v = robotStart->getVisualization(colModel);
-            viewer->addVisualization("start-goal", v);
+            viewer->addVisualization(v, "start-goal");
         }
 
         if (robotGoal)
         {
             auto v = robotGoal->getVisualization(colModel);
-            viewer->addVisualization("start-goal", v);
+            viewer->addVisualization(v, "start-goal");
         }
     }
 
@@ -569,7 +569,7 @@ void RrtGuiWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt", wv);
+        viewer->addVisualization(wv, "rrt");
     }
 }
 

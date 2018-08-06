@@ -144,7 +144,7 @@ void ConstrainedIKWindow::collisionModel()
     viewer->clearLayer("robotLayer");
     ModelLink::VisualizationType colModel = ModelLink::VisualizationType::Full;
     VisualizationSetPtr visu = robot->getVisualization(colModel);
-    viewer->addVisualization("robotLayer", visu);
+    viewer->addVisualization(visu, "robotLayer");
     viewer->viewAll();
 }
 
@@ -375,7 +375,7 @@ void ConstrainedIKWindow::updateTSR(double /*value*/)
     viewer->clearLayer("tsrLayer");
     VisualizationPtr visu = tsrConstraint->getVisualization();
     visu->setColor(color);
-    viewer->addVisualization("tsrLayer", visu);
+    viewer->addVisualization(visu, "tsrLayer");
 }
 
 void ConstrainedIKWindow::randomTSR(bool quiet)
@@ -484,7 +484,7 @@ void ConstrainedIKWindow::updatePose(double /*value*/)
     viewer->clearLayer("poseLayer");
     VisualizationPtr visu = positionConstraint->getVisualization();
     visu->setColor(color);
-    viewer->addVisualization("poseLayer", visu);
+    viewer->addVisualization(visu, "poseLayer");
 }
 
 void ConstrainedIKWindow::randomPose(bool quiet)

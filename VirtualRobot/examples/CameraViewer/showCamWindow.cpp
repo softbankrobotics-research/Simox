@@ -68,7 +68,7 @@ showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name,
     visuObjects.back()->setGlobalPose(m);
     obstacleVisu->addVisualization(visuObjects.back()->getVisualization(VirtualRobot::ModelLink::VisualizationType::Full));
 
-    viewer->addVisualization("obstacles", obstacleVisu);
+    viewer->addVisualization(obstacleVisu, "obstacles");
 
     loadRobot();
 
@@ -138,7 +138,7 @@ void showCamWindow::rebuildVisualization()
 
     viewer->clearLayer("robot");
     robotVisu = robot->getVisualization(colModel);
-    viewer->addVisualization("robot", robotVisu);
+    viewer->addVisualization(robotVisu, "robot");
 }
 
 void showCamWindow::showRobot()
@@ -464,7 +464,7 @@ void showCamWindow::renderCam()
             }
         }
         cam1pclVisu = VisualizationFactory::getInstance()->createPointCloud(globalPointCloud, 4.f);
-        viewer->addVisualization("pcl", cam1pclVisu);
+        viewer->addVisualization(cam1pclVisu, "pcl");
     }
 }
 

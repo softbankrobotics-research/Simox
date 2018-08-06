@@ -216,14 +216,14 @@ void IKRRTWindow::buildVisu()
     if (robot)
     {
         VisualizationSetPtr v = robot->getVisualization(colModel);
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
     if (object)
     {
         ModelLink::VisualizationType colModel2 = (UI.checkBoxColModel->isChecked()) ? ModelLink::Collision : ModelLink::Full;
         VisualizationSetPtr v = object->getVisualization(colModel2);
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
     if (obstacles.size() > 0)
@@ -231,7 +231,7 @@ void IKRRTWindow::buildVisu()
         for (size_t i = 0; i < obstacles.size(); i++)
         {
             VisualizationSetPtr v = obstacles.at(i)->getVisualization(colModel);
-            viewer->addVisualization("scene", v);
+            viewer->addVisualization(v, "scene");
         }
     }
 
@@ -458,7 +458,7 @@ void IKRRTWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt", wv);
+        viewer->addVisualization(wv, "rrt");
     }
 }
 
@@ -469,7 +469,7 @@ void IKRRTWindow::buildGraspSetVisu()
     if (UI.checkBoxGraspSet->isChecked() && eef && graspSet && object)
     {
         VisualizationSetPtr v = graspSet->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
-        viewer->addVisualization("grasps", v);
+        viewer->addVisualization(v, "grasps");
     }
 
     // show reachable graps
@@ -481,7 +481,7 @@ void IKRRTWindow::buildGraspSetVisu()
         if (rg->getSize() > 0)
         {
             VisualizationSetPtr v = rg->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
-            viewer->addVisualization("grasps", v);
+            viewer->addVisualization(v, "grasps");
         }
     }
 }
@@ -500,7 +500,7 @@ void IKRRTWindow::reachVisu()
     {
         ColorMapPtr cm(new ColorMap(ColorMap::eRed));
         VisualizationPtr v = reachSpace->getVisualization(cm, true);
-        viewer->addVisualization("reach", v);
+        viewer->addVisualization(v, "reach");
 
         /*
             std::shared_ptr<VirtualRobot::CoinVisualization> visualization = reachSpace->getVisualization<CoinVisualization>();

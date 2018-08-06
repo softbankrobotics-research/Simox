@@ -193,7 +193,7 @@ void reachabilityWindow::reachVisu()
     }
     if (wsVisuNode)
     {
-        viewer->addVisualization(wsVisuLayerName, wsVisuNode);
+        viewer->addVisualization(wsVisuNode, wsVisuLayerName);
     }
 }
 
@@ -220,7 +220,7 @@ void reachabilityWindow::buildVisu()
 
     if (visualization)
     {
-        viewer->addVisualization(robotVisuLayerName, visualization);
+        viewer->addVisualization(visualization, robotVisuLayerName);
     }
 }
 
@@ -764,7 +764,7 @@ void reachabilityWindow::updateQualityInfo()
     UI.labelPose->setText(manipString.c_str());
 }
 
-SimoxGui::ViewerInterfacePtr reachabilityWindow::getViewer() const
+SimoxGui::AbstractViewerPtr reachabilityWindow::getViewer() const
 {
     return viewer;
 }
