@@ -301,7 +301,7 @@ namespace VirtualRobot
 
     void Qt3DVisualization::createTriMeshModel()
     {
-        std::cout << "createTriMeshModel()" << std::endl;
+        /*std::cout << "createTriMeshModel()" << std::endl;
         QList<Qt3DRender::QGeometry*> geometrys = this->entity->findChildren<Qt3DRender::QGeometry*>();
         for(Qt3DRender::QGeometry* geometry : geometrys)
         {
@@ -324,7 +324,7 @@ namespace VirtualRobot
                     std::cout << *(float*)(&(data.constData()[i * sizeof(float)])) << std::endl;
                 }
             }
-        }
+        }*/
     }
 
     void Qt3DVisualization::_addManipulator(Visualization::ManipulatorType t)
