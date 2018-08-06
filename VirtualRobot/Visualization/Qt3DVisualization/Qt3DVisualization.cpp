@@ -132,7 +132,8 @@ namespace VirtualRobot
             return;
         }
 
-        this->material->setAmbient(QColor((int)(c.r * 255.0f), (int)(c.g * 255.0f), (int)(c.b * 255.0f)));
+        this->material->setAmbient(QColor((int)(0.2f * c.r * 255.0f), (int)(0.2f * c.g * 255.0f), (int)(0.2f * c.b * 255.0f)));
+        this->material->setDiffuse(QColor((int)(c.r * 255.0f), (int)(c.g * 255.0f), (int)(c.b * 255.0f)));
     }
 
     Visualization::Color Qt3DVisualization::getColor() const
