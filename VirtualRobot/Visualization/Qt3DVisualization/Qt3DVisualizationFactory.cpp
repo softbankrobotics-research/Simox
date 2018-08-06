@@ -14,6 +14,7 @@
 #include <Qt3DExtras/QSphereMesh>
 #include <Qt3DExtras/QConeMesh>
 #include <Qt3DRender/QSceneLoader>
+//#include <Qt3DExtras/QPerVertexColorMaterial>
 
 namespace VirtualRobot
 {
@@ -178,10 +179,84 @@ namespace VirtualRobot
     {
         Qt3DVisualizationPtr visu(new Qt3DVisualization());
 
+        Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(visu->getEntity());
+        Qt3DRender::QGeometry *customGeometry = new Qt3DRender::QGeometry(customMeshRenderer);
+
+        Qt3DRender::QBuffer *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, customGeometry);
+        Qt3DRender::QBuffer *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, customGeometry);
+
+        QByteArray vertexBufferData;
+        vertexBufferData.resize(model->vertices.size() * 3 * sizeof(float));
+
+        QByteArray indexBufferData;
+        indexBufferData.resize(model->faces.size() * 3 * sizeof(ushort));
+
+        float *rawVertexArray = reinterpret_cast<float *>(vertexBufferData.data());
+        int vertex_idx = 0;
+        ushort *rawIndexArray = reinterpret_cast<ushort *>(indexBufferData.data());
+        ushort index_idx = 0;
+
+        for(auto vertex: model->vertices)
+        {
+            rawVertexArray[vertex_idx++] = vertex.x();
+            rawVertexArray[vertex_idx++] = vertex.y();
+            rawVertexArray[vertex_idx++] = vertex.z();
+        }
+        for(auto face : model->faces)
+        {
+            rawIndexArray[index_idx++] = (ushort) face.id1;
+            rawIndexArray[index_idx++] = (ushort) face.id2;
+            rawIndexArray[index_idx++] = (ushort) face.id3;
+        }
+
+        vertexBuffer->setData(vertexBufferData);
+        indexBuffer->setData(indexBufferData);
+
+        // Attributes
+        Qt3DRender::QAttribute *positionAttribute = new Qt3DRender::QAttribute(customGeometry);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(vertexBuffer);
+        positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setDataSize(3);
+        positionAttribute->setByteOffset(0);
+        positionAttribute->setByteStride(3 * sizeof(float));
+        positionAttribute->setCount(model->vertices.size() * 3);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+
+        Qt3DRender::QAttribute *indexAttribute = new Qt3DRender::QAttribute(customGeometry);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexBuffer);
+        indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
+        indexAttribute->setDataSize(1);
+        indexAttribute->setByteOffset(0);
+        indexAttribute->setByteStride(0);
+        indexAttribute->setCount(model->faces.size() * 3);
+
+        customGeometry->addAttribute(positionAttribute);
+        customGeometry->addAttribute(indexAttribute);
+
+        customMeshRenderer->setInstanceCount(1);
+        customMeshRenderer->setFirstInstance(0);
+        customMeshRenderer->setVertexCount(model->faces.size() * 3);
+        customMeshRenderer->setFirstVertex(0);
+
+        customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+        customMeshRenderer->setGeometry(customGeometry);
+
+        visu->getEntity()->addComponent(customMeshRenderer);
+
+        return visu;
+
+        //Implementation including vertex normals and vertex color.
+        //TriMesh does not guarantee that colors or normals exist.
+        //Therefore we only use safe vertex data in the implementation above.
+
+        /*Qt3DVisualizationPtr visu(new Qt3DVisualization());
+
         Qt3DCore::QEntity* customMeshEntity = new Qt3DCore::QEntity(visu->getEntity());
         Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(customMeshEntity);
         Qt3DRender::QGeometry *customGeometry = new Qt3DRender::QGeometry(customMeshRenderer);
-        Qt3DRender::QMaterial *material = new Qt3DRender::QPerVertexColorMaterial(customMeshEntity);
+        Qt3DRender::QMaterial *material = new Qt3DExtras::QPerVertexColorMaterial(customMeshEntity);
 
         Qt3DRender::QBuffer *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, customGeometry);
         Qt3DRender::QBuffer *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, customGeometry);
@@ -195,7 +270,7 @@ namespace VirtualRobot
         float *rawVertexArray = reinterpret_cast<float *>(vertexBufferData.data());
         int vertex_idx = 0;
         ushort *rawIndexArray = reinterpret_cast<ushort *>(indexBufferData.data());
-        int index_idx = 0;
+        ushort index_idx = 0;
 
         for(auto face : model->faces)
         {
@@ -203,7 +278,7 @@ namespace VirtualRobot
             {
                 Eigen::Vector3f vertex = model->vertices.at(vertexID == 0 ? face.id1 : (vertexID == 1 ? face.id2 : face.id3));
                 Eigen::Vector3f normal = model->normals.at(vertexID == 0 ? face.idNormal1 : (vertexID == 1 ? face.idNormal2 : face.idNormal3));
-                Eigen::Vector3f color = model->colors.at(vertexID == 0 ? face.idColor1 : (vertexID == 1 ? face.idColor2 : face.idColor3));
+                Visualization::Color color = model->colors.at(vertexID == 0 ? face.idColor1 : (vertexID == 1 ? face.idColor2 : face.idColor3));
 
                 rawVertexArray[vertex_idx++] = vertex[0];
                 rawVertexArray[vertex_idx++] = vertex[1];
@@ -211,9 +286,9 @@ namespace VirtualRobot
                 rawVertexArray[vertex_idx++] = normal[0];
                 rawVertexArray[vertex_idx++] = normal[1];
                 rawVertexArray[vertex_idx++] = normal[2];
-                rawVertexArray[vertex_idx++] = color[0];
-                rawVertexArray[vertex_idx++] = color[1];
-                rawVertexArray[vertex_idx++] = color[2];
+                rawVertexArray[vertex_idx++] = color.r;
+                rawVertexArray[vertex_idx++] = color.g;
+                rawVertexArray[vertex_idx++] = color.b;
 
                 rawIndexArray[index_idx] = index_idx++;
             }
@@ -255,7 +330,7 @@ namespace VirtualRobot
 
         Qt3DRender::QAttribute *indexAttribute = new Qt3DRender::QAttribute(customGeometry);
         indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
-        indexAttribute->setBuffer(indexDataBuffer);
+        indexAttribute->setBuffer(indexBuffer);
         indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
         indexAttribute->setDataSize(1);
         indexAttribute->setByteOffset(0);
@@ -268,16 +343,17 @@ namespace VirtualRobot
         customGeometry->addAttribute(indexAttribute);
 
         customMeshRenderer->setInstanceCount(1);
-        customMeshRenderer->setBaseVertex(0);
-        customMeshRenderer->setBaseInstance(0);
+        customMeshRenderer->setFirstInstance(0);
+        customMeshRenderer->setVertexCount(model->faces.size() * 3);
+        customMeshRenderer->setFirstVertex(0);
+
         customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
         customMeshRenderer->setGeometry(customGeometry);
-        customMeshRenderer->setPrimitiveCount(model->faces.size() * 3);
 
         customMeshEntity->addComponent(customMeshRenderer);
         customMeshEntity->addComponent(material);
 
-        return visu;
+        return visu;*/
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
