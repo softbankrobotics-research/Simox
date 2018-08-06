@@ -89,8 +89,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationSet::clone() const
     {
-        std::cout << "Set: clone()" << std::endl;
-
         std::vector<VisualizationPtr> clonedVisus;
         const auto& visus = getVisualizations();
         clonedVisus.reserve(visus.size());
@@ -127,7 +125,6 @@ namespace VirtualRobot
 
     Qt3DCore::QEntity *Qt3DVisualizationSet::getEntity() const
     {
-        std::cout << this->entity << std::endl;
         return this->entity;
     }
 }

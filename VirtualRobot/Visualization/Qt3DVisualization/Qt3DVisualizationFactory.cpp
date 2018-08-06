@@ -33,8 +33,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::string &filename, bool boundingBox) const
     {
-        std::cout << "Qt3DFile" << std::endl;
-        std::cout << filename << std::endl;
         Qt3DVisualizationPtr visu(new Qt3DVisualization());
         Qt3DRender::QSceneLoader* sceneLoader = new Qt3DRender::QSceneLoader(visu->getEntity());
         visu->getEntity()->addComponent(sceneLoader);
