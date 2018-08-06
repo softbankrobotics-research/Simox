@@ -7,6 +7,7 @@
 #include "Qt3DVisualizationFactory.h"
 #include "Qt3DVisualization.h"
 #include "Qt3DVisualizationSet.h"
+#include "../TriMeshModel.h"
 #include "Qt3DSelectionGroup.h"
 
 #include <Qt3DExtras/QCuboidMesh>
@@ -14,6 +15,7 @@
 #include <Qt3DExtras/QSphereMesh>
 #include <Qt3DExtras/QConeMesh>
 #include <Qt3DRender/QSceneLoader>
+#include <Qt3DExtras/QExtrudedTextMesh>
 
 namespace VirtualRobot
 {
@@ -31,8 +33,6 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createVisualizationFromFile(const std::string &filename, bool boundingBox) const
     {
-        std::cout << "Qt3DFile" << std::endl;
-        std::cout << filename << std::endl;
         Qt3DVisualizationPtr visu = createQt3DVisualization();
         Qt3DRender::QSceneLoader* sceneLoader = new Qt3DRender::QSceneLoader(visu->getEntity());
         visu->getEntity()->addComponent(sceneLoader);
@@ -172,28 +172,239 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createPoint(float radius) const
     {
-        return createSphere(radius);
+        Qt3DExtras::QSphereMesh *sphere = new Qt3DExtras::QSphereMesh();
+        sphere->setRadius(radius);
+        sphere->setRings(2);
+        sphere->setSlices(4);
+
+        auto visu = createQt3DVisualization();
+        visu->getEntity()->addComponent(sphere);
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
     {
-        std::cout << "TriMesh" << std::endl;
         auto visu = createQt3DVisualization();
+
+        Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(visu->getEntity());
+        Qt3DRender::QGeometry *customGeometry = new Qt3DRender::QGeometry(customMeshRenderer);
+
+        Qt3DRender::QBuffer *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, customGeometry);
+        Qt3DRender::QBuffer *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, customGeometry);
+
+        QByteArray vertexBufferData;
+        vertexBufferData.resize(model->vertices.size() * 3 * sizeof(float));
+
+        QByteArray indexBufferData;
+        indexBufferData.resize(model->faces.size() * 3 * sizeof(ushort));
+
+        float *rawVertexArray = reinterpret_cast<float *>(vertexBufferData.data());
+        int vertex_idx = 0;
+        ushort *rawIndexArray = reinterpret_cast<ushort *>(indexBufferData.data());
+        ushort index_idx = 0;
+
+        for(auto vertex: model->vertices)
+        {
+            rawVertexArray[vertex_idx++] = vertex.x();
+            rawVertexArray[vertex_idx++] = vertex.y();
+            rawVertexArray[vertex_idx++] = vertex.z();
+        }
+        for(auto face : model->faces)
+        {
+            rawIndexArray[index_idx++] = (ushort) face.id1;
+            rawIndexArray[index_idx++] = (ushort) face.id2;
+            rawIndexArray[index_idx++] = (ushort) face.id3;
+        }
+
+        vertexBuffer->setData(vertexBufferData);
+        indexBuffer->setData(indexBufferData);
+
+        // Attributes
+        Qt3DRender::QAttribute *positionAttribute = new Qt3DRender::QAttribute(customGeometry);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(vertexBuffer);
+        positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setDataSize(3);
+        positionAttribute->setByteOffset(0);
+        positionAttribute->setByteStride(3 * sizeof(float));
+        positionAttribute->setCount(model->vertices.size() * 3);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+
+        Qt3DRender::QAttribute *indexAttribute = new Qt3DRender::QAttribute(customGeometry);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexBuffer);
+        indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
+        indexAttribute->setDataSize(1);
+        indexAttribute->setByteOffset(0);
+        indexAttribute->setByteStride(0);
+        indexAttribute->setCount(model->faces.size() * 3);
+
+        customGeometry->addAttribute(positionAttribute);
+        customGeometry->addAttribute(indexAttribute);
+
+        customMeshRenderer->setInstanceCount(1);
+        customMeshRenderer->setFirstInstance(0);
+        customMeshRenderer->setVertexCount(model->faces.size() * 3);
+        customMeshRenderer->setFirstVertex(0);
+
+        customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+        customMeshRenderer->setGeometry(customGeometry);
+
+        visu->getEntity()->addComponent(customMeshRenderer);
+
         return visu;
+
+        //Implementation including vertex normals and vertex color.
+        //TriMesh does not guarantee that colors or normals exist.
+        //Therefore we only use safe vertex data in the implementation above.
+
+        /*auto visu = createQt3DVisualization();
+
+        Qt3DCore::QEntity* customMeshEntity = new Qt3DCore::QEntity(visu->getEntity());
+        Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(customMeshEntity);
+        Qt3DRender::QGeometry *customGeometry = new Qt3DRender::QGeometry(customMeshRenderer);
+        Qt3DRender::QMaterial *material = new Qt3DExtras::QPerVertexColorMaterial(customMeshEntity);
+
+        Qt3DRender::QBuffer *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, customGeometry);
+        Qt3DRender::QBuffer *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, customGeometry);
+
+        QByteArray vertexBufferData;
+        vertexBufferData.resize(model->faces.size() * (3 + 3 + 3) * sizeof(float));
+
+        QByteArray indexBufferData;
+        indexBufferData.resize(model->faces.size() * 3 * sizeof(ushort));
+
+        float *rawVertexArray = reinterpret_cast<float *>(vertexBufferData.data());
+        int vertex_idx = 0;
+        ushort *rawIndexArray = reinterpret_cast<ushort *>(indexBufferData.data());
+        ushort index_idx = 0;
+
+        for(auto face : model->faces)
+        {
+            for(unsigned int vertexID = 0; vertexID < 3; vertexID++)
+            {
+                Eigen::Vector3f vertex = model->vertices.at(vertexID == 0 ? face.id1 : (vertexID == 1 ? face.id2 : face.id3));
+                Eigen::Vector3f normal = model->normals.at(vertexID == 0 ? face.idNormal1 : (vertexID == 1 ? face.idNormal2 : face.idNormal3));
+                Visualization::Color color = model->colors.at(vertexID == 0 ? face.idColor1 : (vertexID == 1 ? face.idColor2 : face.idColor3));
+
+                rawVertexArray[vertex_idx++] = vertex[0];
+                rawVertexArray[vertex_idx++] = vertex[1];
+                rawVertexArray[vertex_idx++] = vertex[2];
+                rawVertexArray[vertex_idx++] = normal[0];
+                rawVertexArray[vertex_idx++] = normal[1];
+                rawVertexArray[vertex_idx++] = normal[2];
+                rawVertexArray[vertex_idx++] = color.r;
+                rawVertexArray[vertex_idx++] = color.g;
+                rawVertexArray[vertex_idx++] = color.b;
+
+                rawIndexArray[index_idx] = index_idx++;
+            }
+        }
+
+        vertexBuffer->setData(vertexBufferData);
+        indexBuffer->setData(indexBufferData);
+
+        // Attributes
+        Qt3DRender::QAttribute *positionAttribute = new Qt3DRender::QAttribute(customGeometry);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(vertexBuffer);
+        positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setDataSize(3);
+        positionAttribute->setByteOffset(0);
+        positionAttribute->setByteStride(9 * sizeof(float));
+        positionAttribute->setCount(model->faces.size() * 3);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+
+        Qt3DRender::QAttribute *normalAttribute = new Qt3DRender::QAttribute(customGeometry);
+        normalAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        normalAttribute->setBuffer(vertexBuffer);
+        normalAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        normalAttribute->setDataSize(3);
+        normalAttribute->setByteOffset(3 * sizeof(float));
+        normalAttribute->setByteStride(9 * sizeof(float));
+        normalAttribute->setCount(model->faces.size() * 3);
+        normalAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
+
+        Qt3DRender::QAttribute *colorAttribute = new Qt3DRender::QAttribute(customGeometry);
+        colorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        colorAttribute->setBuffer(vertexBuffer);
+        colorAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        colorAttribute->setDataSize(3);
+        colorAttribute->setByteOffset(6 * sizeof(float));
+        colorAttribute->setByteStride(9 * sizeof(float));
+        colorAttribute->setCount(model->faces.size() * 3);
+        colorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
+
+        Qt3DRender::QAttribute *indexAttribute = new Qt3DRender::QAttribute(customGeometry);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexBuffer);
+        indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
+        indexAttribute->setDataSize(1);
+        indexAttribute->setByteOffset(0);
+        indexAttribute->setByteStride(0);
+        indexAttribute->setCount(model->faces.size() * 3);
+
+        customGeometry->addAttribute(positionAttribute);
+        customGeometry->addAttribute(normalAttribute);
+        customGeometry->addAttribute(colorAttribute);
+        customGeometry->addAttribute(indexAttribute);
+
+        customMeshRenderer->setInstanceCount(1);
+        customMeshRenderer->setFirstInstance(0);
+        customMeshRenderer->setVertexCount(model->faces.size() * 3);
+        customMeshRenderer->setFirstVertex(0);
+
+        customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+        customMeshRenderer->setGeometry(customGeometry);
+
+        customMeshEntity->addComponent(customMeshRenderer);
+        customMeshEntity->addComponent(material);
+
+        return visu;*/
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
     {
-        std::cout << "Arrow" << std::endl;
-        auto visu = createQt3DVisualization();
-        return visu;
+        Eigen::Vector3f n2 = n;
+        if (n2.norm()<1e-10)
+            n2 << 0,0,1;
+        n2.normalize();
+        float coneHeight = width * 6.0f;
+        float coneBottomRadius = width * 2.5f;
+        float baseLength = length - coneHeight;
+        baseLength = std::max(0.0f, baseLength);
+        Eigen::Matrix4f rotation = MathTools::quat2eigen4f(MathTools::getRotation(Eigen::Vector3f::UnitY(), n));
+        Eigen::Matrix4f cylinderPosition = Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f conePosition = Eigen::Matrix4f::Identity();
+        cylinderPosition(1, 3) = baseLength * 0.5f;
+        conePosition(1, 3) = baseLength * 0.5f + length * 0.5f;
+
+        auto cylinder = createCylinder(width, baseLength);
+        cylinder->setGlobalPose(rotation * cylinderPosition);
+
+        auto cone = createCone(coneBottomRadius, coneHeight);
+        cone->setGlobalPose(rotation * conePosition);
+
+        return createVisualisationSet({cylinder, cone});
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const
     {
-        std::cout << "Text" << std::endl;
         auto visu = createQt3DVisualization();
-        return visu;
+
+        auto *textMesh = new Qt3DExtras::QExtrudedTextMesh(visu->getEntity());
+        textMesh->setDepth(.65f);
+        textMesh->setText(QString::fromStdString(text));
+
+        Eigen::Matrix4f textOffset = Eigen::Matrix4f::Identity();
+        textOffset(0, 3) = offsetX;
+        textOffset(1, 3) = offsetY;
+        textOffset(2, 3) = offsetZ;
+        visu->setGlobalPose(textOffset);
+        visu->scale(10.0f);
+
+        visu->getEntity()->addComponent(textMesh);
+        return createVisualisationSet({visu});
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createCone(float baseRadius, float height) const

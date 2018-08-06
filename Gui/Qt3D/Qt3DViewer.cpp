@@ -30,7 +30,7 @@
 
 #include <QVBoxLayout>
 #include <Qt3DExtras/QForwardRenderer>
-#include <Qt3DRender/QDirectionalLight>
+#include <Qt3DRender/QPointLight>
 #include <Qt3DRender/QMultiSampleAntiAliasing>
 
 SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
@@ -68,17 +68,14 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->camera()->setPosition(QVector3D(0, 0, 2000));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
 
-    Qt3DCore::QEntity *lightEntity1 = new Qt3DCore::QEntity(scene);
-    Qt3DRender::QDirectionalLight* light1 = new Qt3DRender::QDirectionalLight(lightEntity1);
-    light1->setIntensity(1.0f);
-    light1->setWorldDirection(QVector3D(-1.0f, -1.0f, -1.0f));
-    lightEntity1->addComponent(light1);
-
-    Qt3DCore::QEntity *lightEntity2 = new Qt3DCore::QEntity(scene);
-    Qt3DRender::QDirectionalLight* light2 = new Qt3DRender::QDirectionalLight(lightEntity2);
-    light2->setIntensity(1.0f);
-    light2->setWorldDirection(QVector3D(1.0f, 1.0f, 1.0f));
-    lightEntity2->addComponent(light2);
+    auto lightEntity = new Qt3DCore::QEntity(scene);
+    auto light = new Qt3DRender::QPointLight(lightEntity);
+    light->setIntensity(1.0f);
+    lightEntity->addComponent(light);
+    auto lightTransform = new Qt3DCore::QTransform(lightEntity);
+    lightTransform->setTranslation(this->camera()->position());
+    connect(this->camera(), &Qt3DRender::QCamera::positionChanged, lightTransform, &Qt3DCore::QTransform::setTranslation);
+    lightEntity->addComponent(lightTransform);
 
     this->setRootEntity(scene);
     this->setBackgroundColor(VirtualRobot::Visualization::Color(0.8f, 0.8f, 0.8f, 0.0f));
