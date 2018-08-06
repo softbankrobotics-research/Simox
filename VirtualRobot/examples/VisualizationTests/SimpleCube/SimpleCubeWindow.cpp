@@ -25,7 +25,7 @@ void SimpleCubeWindow::setupUI()
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
     VirtualRobot::VisualizationPtr visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 1.0f, 1.0f);
-    viewer->addVisualization("test", visu);
+    viewer->addVisualization(visu, "test");
     viewer->viewAll();
 }
 

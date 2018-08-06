@@ -25,7 +25,7 @@ void LayersWindow::setupUI()
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
     VirtualRobot::VisualizationPtr visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 1.0f, 1.0f);
-    viewer->addVisualization("test", visu);
+    viewer->addVisualization(visu, "test");
     viewer->viewAll();
 
     QTimer *timer = new QTimer(this);
@@ -45,7 +45,7 @@ void LayersWindow::update()
     {
         std::cout << "add" << std::endl;
         VirtualRobot::VisualizationPtr visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 1.0f, 1.0f);
-        viewer->addVisualization("test", visu);
+        viewer->addVisualization(visu, "test");
         toggle = true;
     }
 }

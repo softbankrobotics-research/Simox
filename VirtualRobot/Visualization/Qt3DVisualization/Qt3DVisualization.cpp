@@ -117,12 +117,12 @@ namespace VirtualRobot
             return;
         }
 
-        std::cout << "setStyle()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     Visualization::DrawStyle Qt3DVisualization::getStyle() const
     {
-        std::cout << "getStyle()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void Qt3DVisualization::setColor(const Visualization::Color &c)
@@ -137,7 +137,7 @@ namespace VirtualRobot
 
     Visualization::Color Qt3DVisualization::getColor() const
     {
-        std::cout << "getColor()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void Qt3DVisualization::setMaterial(const Visualization::MaterialPtr &material)
@@ -147,33 +147,33 @@ namespace VirtualRobot
             return;
         }
 
-        std::cout << "setMaterial()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     Visualization::MaterialPtr Qt3DVisualization::getMaterial() const
     {
-        std::cout << "getMaterial()" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return MaterialPtr(new PhongMaterial());
     }
 
     void Qt3DVisualization::setSelected(bool selected)
     {
-        std::cout << "setSelected()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     bool Qt3DVisualization::isSelected() const
     {
-        std::cout << "isSelected()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     size_t Qt3DVisualization::addSelectionChangedCallback(std::function<void (bool)> f)
     {
-        std::cout << "addSelectionChangedCallback()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void Qt3DVisualization::removeSelectionChangedCallback(size_t id)
     {
-        std::cout << "removeSelectionChangedCallback()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void Qt3DVisualization::scale(const Eigen::Vector3f &scaleFactor)
@@ -197,43 +197,43 @@ namespace VirtualRobot
             return;
         }
 
-        std::cout << "shrinkFatten() " << offset << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     std::vector<Primitive::PrimitivePtr> Qt3DVisualization::getPrimitives() const
     {
-        std::cout << "getPrimitives()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     void Qt3DVisualization::setFilename(const std::string &filename, bool boundingBox)
     {
-        std::cout << "setFilename()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     std::string Qt3DVisualization::getFilename() const
     {
-        std::cout << "getFilename()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     bool Qt3DVisualization::usedBoundingBoxVisu() const
     {
-        std::cout << "usedBoundingBoxVisu()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     BoundingBox Qt3DVisualization::getBoundingBox() const
     {
-        std::cout << "getBoundingBox()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     TriMeshModelPtr Qt3DVisualization::getTriMeshModel() const
     {
-        std::cout << "getTriMeshModel()" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return TriMeshModelPtr(new TriMeshModel());
     }
 
     int Qt3DVisualization::getNumFaces() const
     {
-        std::cout << "getNumFaces()" << std::endl;
+        VR_ERROR_ONCE_NYI;
         return 0;
     }
 
@@ -266,22 +266,22 @@ namespace VirtualRobot
 
     void Qt3DVisualization::print() const
     {
-        std::cout << "print()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     std::string Qt3DVisualization::toXML(const std::string &basePath, int tabs) const
     {
-        std::cout << "toXML()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     std::string Qt3DVisualization::toXML(const std::string &basePath, const std::string &filename, int tabs) const
     {
-        std::cout << "toXML2()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     bool Qt3DVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
-        std::cout << "saveModel()" << std::endl;
+        VR_ERROR_ONCE_NYI;
     }
 
     Qt3DCore::QEntity *Qt3DVisualization::getEntity() const
@@ -291,7 +291,6 @@ namespace VirtualRobot
 
     void Qt3DVisualization::createTriMeshModel()
     {
-        std::cout << "createTriMeshModel()" << std::endl;
         QList<Qt3DRender::QGeometry*> geometrys = this->entity->findChildren<Qt3DRender::QGeometry*>();
         for(Qt3DRender::QGeometry* geometry : geometrys)
         {

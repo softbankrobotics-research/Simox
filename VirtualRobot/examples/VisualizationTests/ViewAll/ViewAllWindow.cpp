@@ -25,7 +25,7 @@ void ViewAllWindow::setupUI()
     viewer = viewerFactory->createViewer(UI.frameViewer);
 
     visu = VirtualRobot::VisualizationFactory::getInstance()->createBox(5.0f, 5.0f, 5.0f);
-    viewer->addVisualization("test", visu);
+    viewer->addVisualization(visu, "test");
     viewer->viewAll();
 
     QTimer *timer = new QTimer(this);
@@ -44,7 +44,7 @@ void ViewAllWindow::update()
     else
     {
         std::cout << "add & view all" << std::endl;
-        viewer->addVisualization("test", visu);
+        viewer->addVisualization(visu, "test");
         viewer->viewAll();
         toggle = true;
     }

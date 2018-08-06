@@ -14,7 +14,7 @@ public:
 
 protected:
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
     void setupUI();
     Ui::MainWindow UI;
     bool toggle;

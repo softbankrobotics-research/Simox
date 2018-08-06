@@ -263,27 +263,6 @@ void showRobotWindow::loadRobot()
     {
     }
 
-//    if (!robot)
-//    {
-//        try
-//        {
-//            QFileInfo fileInfo(robotFilename.c_str());
-//            std::string suffix(fileInfo.suffix().toLatin1());
-//            RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, nullptr);
-//
-//            if (!importer)
-//            {
-//                VR_WARNING << " ERROR while grabbing importer" << endl;
-//                return;
-//            }
-//
-//            robot = importer->loadFromFile(robotFilename, ModelIO::eFull);
-//        }
-//        catch (VirtualRobotException& /*e*/)
-//        {
-//        }
-//    }
-
     if (!robot)
     {
         VR_WARNING << " ERROR while creating robot" << endl;

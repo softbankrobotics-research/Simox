@@ -24,7 +24,7 @@
 #ifndef _Gui_Qt3DViewer_h_
 #define _Gui_Qt3DViewer_h_
 
-#include "../ViewerInterface.h"
+#include "../AbstractViewer.h"
 //#include "Qt3DCustomCameraController.h"
 
 #include <unordered_set>
@@ -42,51 +42,34 @@ namespace VirtualRobot {
 namespace SimoxGui
 {
 
-    class SIMOX_GUI_IMPORT_EXPORT Qt3DViewer : public ViewerInterface, public Qt3DExtras::Qt3DWindow
+    class SIMOX_GUI_IMPORT_EXPORT Qt3DViewer : public AbstractViewer, public Qt3DExtras::Qt3DWindow
     {
     public:
 
         Qt3DViewer(QWidget *parent);
         ~Qt3DViewer();
 
-        virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
-        virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override;
-        virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const override;
-        virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const override;
-        virtual void clearLayer(const std::string &layer) override;
-        virtual bool hasLayer(const std::string &layer) const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
+
         virtual QImage getScreenshot() const override;
+
         virtual void resetView() override;
         virtual void viewAll() override;
+
         virtual void setAntialiasing(unsigned short quality) override;
         virtual unsigned short getAntialiasing() const override;
+
         virtual void setBackgroundColor(const VirtualRobot::Visualization::Color &color) override;
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
     private:
-        struct Layer
+        virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
         {
-            Layer();
-            ~Layer();
-
-            void addVisualization(const VirtualRobot::VisualizationPtr& visualization);
-            bool removeVisualization(const VirtualRobot::VisualizationPtr& visualization);
-            bool hasVisualization(const VirtualRobot::VisualizationPtr& visualization) const;
-
-            void clear();
-
-            std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
-        };
-        Layer& requestLayer(const std::string& name);
-
-        void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
-        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group = nullptr);
-
-        std::map<std::string, Layer> layers;
+            _removeVisualization(visualization, nullptr);
+        }
+        bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group = nullptr);
 
         QWidget* parent;
         Qt3DCore::QEntity* scene;
