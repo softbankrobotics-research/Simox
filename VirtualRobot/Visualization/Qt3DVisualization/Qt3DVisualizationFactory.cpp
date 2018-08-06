@@ -7,6 +7,7 @@
 #include "Qt3DVisualizationFactory.h"
 #include "Qt3DVisualization.h"
 #include "Qt3DVisualizationSet.h"
+#include "../TriMeshModel.h"
 
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QCylinderMesh>
@@ -175,8 +176,108 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createTriMeshModel(const TriMeshModelPtr &model) const
     {
-        std::cout << "TriMesh" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+
+        Qt3DCore::QEntity* customMeshEntity = new Qt3DCore::QEntity(visu->getEntity());
+        Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(customMeshEntity);
+        Qt3DRender::QGeometry *customGeometry = new Qt3DRender::QGeometry(customMeshRenderer);
+        Qt3DRender::QMaterial *material = new Qt3DRender::QPerVertexColorMaterial(customMeshEntity);
+
+        Qt3DRender::QBuffer *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, customGeometry);
+        Qt3DRender::QBuffer *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, customGeometry);
+
+        QByteArray vertexBufferData;
+        vertexBufferData.resize(model->faces.size() * (3 + 3 + 3) * sizeof(float));
+
+        QByteArray indexBufferData;
+        indexBufferData.resize(model->faces.size() * 3 * sizeof(ushort));
+
+        float *rawVertexArray = reinterpret_cast<float *>(vertexBufferData.data());
+        int vertex_idx = 0;
+        ushort *rawIndexArray = reinterpret_cast<ushort *>(indexBufferData.data());
+        int index_idx = 0;
+
+        for(auto face : model->faces)
+        {
+            for(unsigned int vertexID = 0; vertexID < 3; vertexID++)
+            {
+                Eigen::Vector3f vertex = model->vertices.at(vertexID == 0 ? face.id1 : (vertexID == 1 ? face.id2 : face.id3));
+                Eigen::Vector3f normal = model->normals.at(vertexID == 0 ? face.idNormal1 : (vertexID == 1 ? face.idNormal2 : face.idNormal3));
+                Eigen::Vector3f color = model->colors.at(vertexID == 0 ? face.idColor1 : (vertexID == 1 ? face.idColor2 : face.idColor3));
+
+                rawVertexArray[vertex_idx++] = vertex[0];
+                rawVertexArray[vertex_idx++] = vertex[1];
+                rawVertexArray[vertex_idx++] = vertex[2];
+                rawVertexArray[vertex_idx++] = normal[0];
+                rawVertexArray[vertex_idx++] = normal[1];
+                rawVertexArray[vertex_idx++] = normal[2];
+                rawVertexArray[vertex_idx++] = color[0];
+                rawVertexArray[vertex_idx++] = color[1];
+                rawVertexArray[vertex_idx++] = color[2];
+
+                rawIndexArray[index_idx] = index_idx++;
+            }
+        }
+
+        vertexBuffer->setData(vertexBufferData);
+        indexBuffer->setData(indexBufferData);
+
+        // Attributes
+        Qt3DRender::QAttribute *positionAttribute = new Qt3DRender::QAttribute(customGeometry);
+        positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        positionAttribute->setBuffer(vertexBuffer);
+        positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        positionAttribute->setDataSize(3);
+        positionAttribute->setByteOffset(0);
+        positionAttribute->setByteStride(9 * sizeof(float));
+        positionAttribute->setCount(model->faces.size() * 3);
+        positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+
+        Qt3DRender::QAttribute *normalAttribute = new Qt3DRender::QAttribute(customGeometry);
+        normalAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        normalAttribute->setBuffer(vertexBuffer);
+        normalAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        normalAttribute->setDataSize(3);
+        normalAttribute->setByteOffset(3 * sizeof(float));
+        normalAttribute->setByteStride(9 * sizeof(float));
+        normalAttribute->setCount(model->faces.size() * 3);
+        normalAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
+
+        Qt3DRender::QAttribute *colorAttribute = new Qt3DRender::QAttribute(customGeometry);
+        colorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+        colorAttribute->setBuffer(vertexBuffer);
+        colorAttribute->setDataType(Qt3DRender::QAttribute::Float);
+        colorAttribute->setDataSize(3);
+        colorAttribute->setByteOffset(6 * sizeof(float));
+        colorAttribute->setByteStride(9 * sizeof(float));
+        colorAttribute->setCount(model->faces.size() * 3);
+        colorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
+
+        Qt3DRender::QAttribute *indexAttribute = new Qt3DRender::QAttribute(customGeometry);
+        indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+        indexAttribute->setBuffer(indexDataBuffer);
+        indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
+        indexAttribute->setDataSize(1);
+        indexAttribute->setByteOffset(0);
+        indexAttribute->setByteStride(0);
+        indexAttribute->setCount(model->faces.size() * 3);
+
+        customGeometry->addAttribute(positionAttribute);
+        customGeometry->addAttribute(normalAttribute);
+        customGeometry->addAttribute(colorAttribute);
+        customGeometry->addAttribute(indexAttribute);
+
+        customMeshRenderer->setInstanceCount(1);
+        customMeshRenderer->setBaseVertex(0);
+        customMeshRenderer->setBaseInstance(0);
+        customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+        customMeshRenderer->setGeometry(customGeometry);
+        customMeshRenderer->setPrimitiveCount(model->faces.size() * 3);
+
+        customMeshEntity->addComponent(customMeshRenderer);
+        customMeshEntity->addComponent(material);
+
+        return visu;
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createArrow(const Eigen::Vector3f &n, float length, float width) const
