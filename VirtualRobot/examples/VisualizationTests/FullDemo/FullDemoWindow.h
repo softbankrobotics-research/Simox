@@ -15,9 +15,11 @@ public:
 protected:
 
     SimoxGui::ViewerInterfacePtr factoryDemoViewer;
-    SimoxGui::ViewerInterfacePtr viewer2;
+    SimoxGui::ViewerInterfacePtr screenshotViewer;
 
     void setupUI();
     Ui::MainWindow UI;
+private slots:
+    void on_pushButton_clicked();
 };
 
