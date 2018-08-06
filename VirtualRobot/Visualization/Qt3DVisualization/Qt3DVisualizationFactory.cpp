@@ -14,6 +14,7 @@
 #include <Qt3DExtras/QSphereMesh>
 #include <Qt3DExtras/QConeMesh>
 #include <Qt3DRender/QSceneLoader>
+#include <Qt3DExtras/QExtrudedTextMesh>
 //#include <Qt3DExtras/QPerVertexColorMaterial>
 
 namespace VirtualRobot
@@ -383,8 +384,21 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createText(const std::string &text, bool billboard, float offsetX, float offsetY, float offsetZ) const
     {
-        std::cout << "Text" << std::endl;
-        return VisualizationPtr(new Qt3DVisualization());
+        Qt3DVisualizationPtr visu(new Qt3DVisualization());
+
+        auto *textMesh = new Qt3DExtras::QExtrudedTextMesh(visu->getEntity());
+        textMesh->setDepth(.65f);
+        textMesh->setText(QString::fromStdString(text));
+
+        Eigen::Matrix4f textOffset = Eigen::Matrix4f::Identity();
+        textOffset(0, 3) = offsetX;
+        textOffset(1, 3) = offsetY;
+        textOffset(2, 3) = offsetZ;
+        visu->setGlobalPose(textOffset);
+        visu->scale(10.0f);
+
+        visu->getEntity()->addComponent(textMesh);
+        return createVisualisationSet({visu});
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createCone(float baseRadius, float height) const
