@@ -7,7 +7,7 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Nodes/ModelNode.h"
 #include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "Gui/ViewerInterface.h"
+#include "Gui/AbstractViewer.h"
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -26,7 +26,7 @@ public:
     JacobiWindow(std::string& sRobotFilename);
     ~JacobiWindow();
 
-    SimoxGui::ViewerInterfacePtr getViewer()
+    SimoxGui::AbstractViewerPtr getViewer()
     {
         return viewer;
     }
@@ -63,7 +63,7 @@ protected:
 
 
     Ui::MainWindowJacobiDemo UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::ModelPtr robot;
     std::string robotFilename;

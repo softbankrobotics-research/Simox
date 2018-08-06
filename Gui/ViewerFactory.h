@@ -26,7 +26,7 @@
 #include <VirtualRobot/VirtualRobot.h>
 #include <string>
 
-#include "ViewerInterface.h"
+#include "AbstractViewer.h"
 
 
 namespace SimoxGui
@@ -45,7 +45,7 @@ namespace SimoxGui
     public:
         virtual ~ViewerFactory() = default;
 
-        virtual ViewerInterfacePtr createViewer(QWidget *parent = nullptr) const = 0;
+        virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const = 0;
     };
 
 } // namespace SimoxGui

@@ -141,7 +141,7 @@ void GraspQualityWindow::buildVisu()
     if (robot)
     {
         VisualizationSetPtr visu = robot->getVisualization(colModel);
-        viewer->addVisualization("robotLayer", visu);
+        viewer->addVisualization(visu, "robotLayer");
     }
 
     // object
@@ -149,7 +149,7 @@ void GraspQualityWindow::buildVisu()
     if (object)
     {
         VisualizationSetPtr visu = object->getVisualization(colModel);
-        viewer->addVisualization("objectLayer", visu);
+        viewer->addVisualization(visu, "objectLayer");
     }
 
     // friction cones
@@ -164,7 +164,7 @@ void GraspQualityWindow::buildVisu()
         float scaling = 30.0f;
 
         VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", visu);
+        viewer->addVisualization(visu, "frictionLayer");
     }
 }
 
@@ -497,8 +497,8 @@ void GraspQualityWindow::showGWS()
 
     GraspPlanning::ConvexHullVisualizationPtr chv(new GraspPlanning::ConvexHullVisualization(ch, true));
     GraspPlanning::ConvexHullVisualizationPtr chv2(new GraspPlanning::ConvexHullVisualization(ch, false));
-    viewer->addVisualization("gws", chv->getVisualization());
-    viewer->addVisualization("ows", chv2->getVisualization());
+    viewer->addVisualization(chv->getVisualization(), "gws");
+    viewer->addVisualization(chv2->getVisualization(), "ows");
 }
 
 void GraspQualityWindow::showOWS()

@@ -393,7 +393,9 @@ namespace VirtualRobot
             visus.push_back(createText(*text, false, 2.f, 2.f, 0.f));
         }
 
-        return createVisualisationSet(visus);
+        auto set = createVisualisationSet(visus);
+        set->setSelectionGroup(createSelectionGroup());
+        return set;
     }
 
     VisualizationPtr VisualizationFactory::createPoint(float) const

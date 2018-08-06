@@ -9,7 +9,7 @@
 #include <VirtualRobot/XML/ModelIO.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Model/Obstacle.h>
-#include <Gui/ViewerInterface.h>
+#include <Gui/AbstractViewer.h>
 
 #include <string.h>
 #include <QtCore/QtGlobal>
@@ -60,7 +60,7 @@ public slots:
     void openHand();
     void selectEEF(int nr);*/
 
-    SimoxGui::ViewerInterfacePtr getViewer() const;
+    SimoxGui::AbstractViewerPtr getViewer() const;
 
 protected:
     void loadRobot();
@@ -77,7 +77,7 @@ protected:
     void updateEEFBox();
     void displayTriangles();*/
     Ui::MainWindowReachability UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFile;

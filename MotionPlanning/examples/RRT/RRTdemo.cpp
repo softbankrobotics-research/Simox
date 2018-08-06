@@ -12,7 +12,7 @@
 
 #include <VirtualRobot/Import/SimoxXMLFactory.h>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include "string"
@@ -38,7 +38,7 @@ int show(std::vector<VisualizationSetPtr> &visus)
         exit(-3);
     }
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
     SimoxGui::ViewerFactoryPtr viewerFactory = SimoxGui::ViewerFactory::getInstance();
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     viewer = viewerFactory->createViewer(win);
@@ -49,7 +49,7 @@ int show(std::vector<VisualizationSetPtr> &visus)
     {
         std::stringstream vn;
         vn << "rrt-" << i;
-        viewer->addVisualization("rrt", n);
+        viewer->addVisualization(n, "rrt");
         i++;
     }
 

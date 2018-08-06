@@ -14,7 +14,7 @@
 
 #include "VirtualRobot/Model/ModelSet.h"
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 using namespace VirtualRobot;
@@ -23,7 +23,7 @@ using namespace MotionPlanning;
 class MTPlanningScenery
 {
 public:
-    MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer);
+    MTPlanningScenery(const std::string &robotFile, SimoxGui::AbstractViewerPtr viewer);
     ~MTPlanningScenery();
 
     void loadRobotMTPlanning(bool bMultiCollisionCheckers);
@@ -71,7 +71,7 @@ protected:
     std::string colModel;
     std::string kinChainName;
 
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     bool plannersStarted;
     bool optimizeStarted;

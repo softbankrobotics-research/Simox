@@ -30,13 +30,13 @@ JacobiWindow::JacobiWindow(std::string& sRobotFilename)
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, box->getVisualization());
+    viewer->addVisualization(box->getVisualization(), boxVisuLayer);
 
     box2 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, box2->getVisualization());
+    viewer->addVisualization(box2->getVisualization(), boxVisuLayer);
 
     box3 = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    viewer->addVisualization(boxVisuLayer, box3->getVisualization());
+    viewer->addVisualization(box3->getVisualization(), boxVisuLayer);
 
     box2TCP();
 
@@ -244,7 +244,7 @@ void JacobiWindow::collisionModel()
     viewer->clearLayer(robotLayer);
     if (visualization)
     {
-        viewer->addVisualization(robotLayer, visualization);
+        viewer->addVisualization(visualization, robotLayer);
     }
 }
 

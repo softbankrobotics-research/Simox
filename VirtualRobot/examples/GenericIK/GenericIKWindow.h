@@ -11,7 +11,7 @@
 #include "VirtualRobot/IK/GenericIKSolver.h"
 #include "VirtualRobot/IK/GazeIK.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
-#include "Gui/ViewerInterface.h"
+#include "Gui/AbstractViewer.h"
 
 #include <string.h>
 
@@ -59,7 +59,7 @@ protected:
     void updatBoxPos(float x, float y, float z, float a, float b, float g);
 
     Ui::MainWindowGenericIKDemo UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     VirtualRobot::RobotPtr robot;
     std::string robotFilename;

@@ -9,9 +9,9 @@
 
 namespace SimoxGui
 {
-    ViewerInterfacePtr CoinViewerFactory::createViewer(QWidget *parent) const
+    AbstractViewerPtr CoinViewerFactory::createViewer(QWidget *parent) const
     {
-        return ViewerInterfacePtr(new CoinViewer(parent));
+        return AbstractViewerPtr(new CoinViewer(parent));
     }
 
 } // namespace SimoxGui

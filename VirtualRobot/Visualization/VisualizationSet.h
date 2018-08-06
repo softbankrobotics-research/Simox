@@ -102,10 +102,19 @@ namespace VirtualRobot
 
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override = 0;
 
+        size_t addVisualizationAddedCallback(std::function<void (const VisualizationPtr&)> f);
+        void removeVisualizationAddedCallback(size_t id);
+
+        size_t addVisualizationRemovedCallback(std::function<void (const VisualizationPtr&)> f);
+        void removeVisualizationRemovedCallback(size_t id);
+
     protected:
         std::vector<VisualizationPtr> visualizations;
         std::string filename;
         bool usedBoundingBox;
+
+        std::map<size_t, std::function<void(const VisualizationPtr&)>> visualizationAddedCallbacks;
+        std::map<size_t, std::function<void(const VisualizationPtr&)>> visualizationRemovedCallbacks;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualizationSet : public VisualizationSet

@@ -105,7 +105,7 @@ void PlatformWindow::buildVisu()
     if (scene)
     {
         auto v = scene->getVisualization(colModel);
-        viewer->addVisualization("scene", v);
+        viewer->addVisualization(v, "scene");
     }
 
     buildRRTVisu();
@@ -276,7 +276,7 @@ void PlatformWindow::updateDistVisu(const Eigen::Vector3f &a, const Eigen::Vecto
 
         VisualizationPtr v = VisualizationFactory::getInstance()->createLine(from, to, 5.0f);
         v->setColor(Visualization::Color(1.0f, 0.2f, 0.2f));
-        viewer->addVisualization("dist", v);
+        viewer->addVisualization(v, "dist");
     }
 }
 
@@ -322,7 +322,7 @@ void PlatformWindow::buildRRTVisu()
     VisualizationSetPtr wv = w->getVisualization();
     if (wv)
     {
-        viewer->addVisualization("rrt", wv);
+        viewer->addVisualization(wv, "rrt");
     }
 }
 
@@ -389,10 +389,10 @@ void PlatformWindow::showOptizerForces(MotionPlanning::ElasticBandProcessorPtr p
         v3->applyDisplacement(m);
         v4->applyDisplacement(m);
 
-        viewer->addVisualization("forces", v1);
-        viewer->addVisualization("forces", v2);
-        viewer->addVisualization("forces", v3);
-        viewer->addVisualization("forces", v4);
+        viewer->addVisualization(v1, "forces");
+        viewer->addVisualization(v2, "forces");
+        viewer->addVisualization(v3, "forces");
+        viewer->addVisualization(v4, "forces");
 
         /*
 

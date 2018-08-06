@@ -111,7 +111,7 @@ void GraspPlannerWindow::buildVisu()
     if (eefCloned)
     {
         VisualizationSetPtr visu = eefCloned->getVisualization(colModel);
-        viewer->addVisualization("robotLayer", visu);
+        viewer->addVisualization(visu, "robotLayer");
     }
 
     // object
@@ -119,7 +119,7 @@ void GraspPlannerWindow::buildVisu()
     if (object)
     {
         VisualizationSetPtr visu = object->getVisualization(colModel);
-        viewer->addVisualization("objectLayer", visu);
+        viewer->addVisualization(visu, "objectLayer");
     }
 
     // friction cones
@@ -134,7 +134,7 @@ void GraspPlannerWindow::buildVisu()
         float scaling = 30.0f;
 
         VisualizationPtr visu = VisualizationFactory::getInstance()->createContactVisualization(contacts, height * scaling, radius * scaling, true);
-        viewer->addVisualization("frictionLayer", visu);
+        viewer->addVisualization(visu, "frictionLayer");
 
         // add approach dir visu
         for (size_t i = 0; i < contacts.size(); i++)
@@ -147,7 +147,7 @@ void GraspPlannerWindow::buildVisu()
             ma.setIdentity();
             ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
             visu->applyDisplacement(ma);
-            viewer->addVisualization("frictionLayer", visu);
+            viewer->addVisualization(visu, "frictionLayer");
         }
     }
 
@@ -156,7 +156,7 @@ void GraspPlannerWindow::buildVisu()
     if (UI.checkBoxGrasps->isChecked() && object && grasps && grasps->getSize()>0)
     {
         VisualizationSetPtr visu = grasps->getVisualization(ModelLink::Full, eef, object->getGlobalPose());
-        viewer->addVisualization("graspsetLayer", visu);
+        viewer->addVisualization(visu, "graspsetLayer");
     }
 }
 

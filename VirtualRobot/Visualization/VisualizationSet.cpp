@@ -50,6 +50,10 @@ namespace VirtualRobot
         if (!containsVisualization(visu))
         {
             visualizations.push_back(visu);
+            for (auto& f : visualizationAddedCallbacks)
+            {
+                f.second(visu);
+            }
         }
     }
 
@@ -64,6 +68,11 @@ namespace VirtualRobot
         if (it != visualizations.end())
         {
             visualizations.erase(it);
+
+            for (auto& f : visualizationRemovedCallbacks)
+            {
+                f.second(visu);
+            }
             return true;
         }
         return false;
@@ -409,6 +418,39 @@ namespace VirtualRobot
     void VisualizationSet::print() const
     {
         VR_ERROR_ONCE_NYI;
+    }
+
+    void VisualizationSet::removeVisualizationRemovedCallback(size_t id)
+    {
+        auto it = visualizationRemovedCallbacks.find(id);
+        if (it != visualizationRemovedCallbacks.end())
+        {
+            visualizationRemovedCallbacks.erase(it);
+        }
+    }
+
+    size_t VisualizationSet::addVisualizationRemovedCallback(std::function<void (const VisualizationPtr&)> f)
+    {
+        static size_t id = 0;
+        visualizationRemovedCallbacks[id] = f;
+        return id++;
+    }
+
+    void VisualizationSet::removeVisualizationAddedCallback(size_t id)
+    {
+        auto it = visualizationAddedCallbacks.find(id);
+        if (it != visualizationAddedCallbacks.end())
+        {
+            visualizationAddedCallbacks.erase(it);
+        }
+    }
+
+    size_t VisualizationSet::addVisualizationAddedCallback(std::function<void (const VisualizationPtr&)> f)
+    {
+
+        static size_t id = 0;
+        visualizationAddedCallbacks[id] = f;
+        return id++;
     }
 
     DummyVisualizationSet::DummyVisualizationSet(const std::vector<VisualizationPtr> &visualizations)

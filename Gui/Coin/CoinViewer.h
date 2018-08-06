@@ -24,7 +24,7 @@
 #ifndef _Gui_CoinViewer_h_
 #define _Gui_CoinViewer_h_
 
-#include "../ViewerInterface.h"
+#include "../AbstractViewer.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 
@@ -37,24 +37,14 @@
 
 namespace SimoxGui
 {
-    class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public ViewerInterface, public SoQtExaminerViewer
+    class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public AbstractViewer, public SoQtExaminerViewer
     {
     public:
         CoinViewer(QWidget *parent);
         ~CoinViewer();
 
-        virtual void addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
-        virtual void removeVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer) const override;
-        virtual bool hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const override;
-        virtual bool hasVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization) const override;
-
-        virtual void clearLayer(const std::string &layer) override;
-        virtual bool hasLayer(const std::string &layer) const override;
-
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
-        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer) const override;
+        virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
 
         virtual QImage getScreenshot() const override;
 
@@ -68,31 +58,18 @@ namespace SimoxGui
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
     protected:
-        struct Layer
+        virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
+        virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
         {
-            Layer();
-            ~Layer();
-
-            void addVisualization(const VirtualRobot::VisualizationPtr& visu);
-            bool removeVisualization(const VirtualRobot::VisualizationPtr& visu);
-            bool hasVisualization(const VirtualRobot::VisualizationPtr& visu) const;
-
-            void clear();
-
-            std::unordered_set<VirtualRobot::VisualizationPtr> visualizations;
-        };
-
-        Layer& requestLayer(const std::string& name);
-
-        void _addVisualization(const VirtualRobot::VisualizationPtr &visualization);
-        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group = nullptr);
+            _removeVisualization(visualization, nullptr);
+        }
+        bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
 
         QWidget *parent;
 
         SoSeparator *sceneSep;
         SoUnits *unitNode;
         SoSelection* selectionNode;
-        std::map<std::string, Layer> layers;
         struct SelectionGroupData
         {
             SoSeparator* node;

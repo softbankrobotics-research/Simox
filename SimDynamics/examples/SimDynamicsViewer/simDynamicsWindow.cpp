@@ -63,7 +63,7 @@ SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
     // optional visualizations (not considered by dynamics)
     VisualizationPtr v = VisualizationFactory::getInstance()->createCoordSystem();
     v->scale(Eigen::Vector3f::Constant(10.0f));
-    viewer->addVisualization("coordsystem", v);
+    viewer->addVisualization(v, "coordsystem");
 
     loadRobot(robotFilename);
 
@@ -233,7 +233,7 @@ void SimDynamicsWindow::comVisu()
         vn->setGlobalPose(cp);
         vn->scale(Eigen::Vector3f::Constant(5.f));
         //comVisuMap[n[i]] = vn;
-        viewer->addVisualization("coords", vn);
+        viewer->addVisualization(vn, "coords");
     }
 
 }
@@ -502,7 +502,7 @@ void SimDynamicsWindow::updateJointInfo()
         forceSep->addChild(forceA);*/
 
         vn->applyDisplacement(comGlobal);
-        viewer->addVisualization("force", vn);
+        viewer->addVisualization(vn, "force");
 
         //Eigen::Vector3f jointGlobal = linkInfo.nodeJoint->getGlobalPose().block(0, 3, 3, 1);
         //Eigen::Vector3f comBGlobal = linkInfo.nodeB->getCoMGlobal();
@@ -544,7 +544,7 @@ void SimDynamicsWindow::updateJointInfo()
         forceSep->addChild(forceB);*/
 
         vnB->applyDisplacement(comGlobal);
-        viewer->addVisualization("force", vnB);
+        viewer->addVisualization(vnB, "force");
 
 
 
@@ -813,7 +813,7 @@ void SimDynamicsWindow::updateContactVisu()
         p1(2,3) = c[i].posGlobalB(2);
         VisualizationPtr v1 = VisualizationFactory::getInstance()->createArrow(c[i].normalGlobalB, 50.0f);
         v1->applyDisplacement(p1);
-        viewer->addVisualization("contacts", v1);
+        viewer->addVisualization(v1, "contacts");
 
         Eigen::Matrix4f p2 = Eigen::Matrix4f::Identity();
         p1(0,3) = c[i].posGlobalA(0);
@@ -821,7 +821,7 @@ void SimDynamicsWindow::updateContactVisu()
         p1(2,3) = c[i].posGlobalA(2);
         VisualizationPtr v2 = VisualizationFactory::getInstance()->createArrow(-c[i].normalGlobalB, 50.0f);
         v2->applyDisplacement(p2);
-        viewer->addVisualization("contacts", v2);
+        viewer->addVisualization(v2, "contacts");
 
         /*SoSeparator* normal = new SoSeparator;
         SoMatrixTransform* m = new SoMatrixTransform;

@@ -31,7 +31,7 @@
 #include <btBulletDynamicsCommon.h>
 #include <LinearMath/btQuickprof.h>
 
-#include <Gui/ViewerInterface.h>
+#include <Gui/AbstractViewer.h>
 #include <Gui/Coin/CoinViewer.h>
 
 //todo: use qtimer

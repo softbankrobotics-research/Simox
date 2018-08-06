@@ -22,7 +22,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include "ui_MTPlanning.h"
@@ -67,7 +67,7 @@ protected:
     QTimer* timer2;
 
     Ui::MainWindowMTPlanning UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
 
     MTPlanningScenery* scene;
 

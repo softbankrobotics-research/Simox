@@ -45,7 +45,7 @@ stabilityWindow::stabilityWindow(const std::string& robotFile, const std::string
 
     MathTools::Plane p =  MathTools::getFloorPlane();
     auto pv = VirtualRobot::VisualizationFactory::getInstance()->createGrid(p, 10000.0f);
-    viewer->addVisualization("floor", pv);
+    viewer->addVisualization(pv, "floor");
 
     loadRobot();
 
@@ -151,7 +151,7 @@ void stabilityWindow::buildVisu()
     ModelLink::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? ModelLink::VisualizationType::Collision : ModelLink::VisualizationType::Full;
 
     VisualizationPtr visu = robot->getVisualization(colModel);
-    viewer->addVisualization("robot", visu);
+    viewer->addVisualization(visu, "robot");
 
     updateCoM();
     updateSupportVisu();
@@ -184,8 +184,8 @@ void stabilityWindow::updateCoM()
     box->setColor(VirtualRobot::Visualization::Color{1.0f, 0.2f, 0.2f});
     sphere->applyDisplacement(globalPoseCoM);
     box->applyDisplacement(globalPoseCoM);
-    viewer->addVisualization("com", box);
-    viewer->addVisualization("com", sphere);
+    viewer->addVisualization(box, "com");
+    viewer->addVisualization(sphere, "com");
 
     // Draw CoM projection
     globalPoseCoM(2, 3) = 0;
@@ -195,8 +195,8 @@ void stabilityWindow::updateCoM()
     box2->setColor(VirtualRobot::Visualization::Color{0.2f, 0.2f, 1.0f});
     sphere2->applyDisplacement(globalPoseCoM);
     box2->applyDisplacement(globalPoseCoM);
-    viewer->addVisualization("com", box2);
-    viewer->addVisualization("com", sphere2);
+    viewer->addVisualization(box2, "com");
+    viewer->addVisualization(sphere2, "com");
 
     // target com
     Eigen::Matrix4f targCom;
@@ -208,8 +208,8 @@ void stabilityWindow::updateCoM()
     box3->setColor(VirtualRobot::Visualization::Color{0.2f, 1.0f, 0.2f});
     sphere3->applyDisplacement(targCom);
     box3->applyDisplacement(targCom);
-    viewer->addVisualization("com", box3);
-    viewer->addVisualization("com", sphere3);
+    viewer->addVisualization(box3, "com");
+    viewer->addVisualization(sphere3, "com");
 }
 
 
@@ -246,7 +246,7 @@ void stabilityWindow::updateSupportVisu()
         MathTools::ConvexHull2DPtr cv = MathTools::createConvexHull2D(points2D);
         auto sv = VirtualRobot::VisualizationFactory::getInstance()->createConvexHull2DVisualization(cv, p, Eigen::Vector3f(0, 0, 2.0f));
         sv->setColor(Visualization::Color::Blue());
-        viewer->addVisualization("support", sv);
+        viewer->addVisualization(sv, "support");
     }
 }
 

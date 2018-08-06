@@ -96,7 +96,7 @@ namespace VirtualRobot
         // Indicates whether this program is started embedded
         bool embeddedGraspEditor;
 
-        SimoxGui::ViewerInterfacePtr viewer;
+        SimoxGui::AbstractViewerPtr viewer;
 
         VirtualRobot::RobotPtr robot;
         VirtualRobot::RobotPtr robotEEF;

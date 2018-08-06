@@ -23,7 +23,7 @@
 
 #include <vector>
 
-#include "../../../Gui/ViewerInterface.h"
+#include "../../../Gui/AbstractViewer.h"
 #include "../../../Gui/ViewerFactory.h"
 
 #include "ui_PlatformDemo.h"
@@ -99,7 +99,7 @@ protected:
     void showOptizerForces(MotionPlanning::ElasticBandProcessorPtr postProcessing, MotionPlanning::CSpacePathPtr s);
 
     Ui::MainWindowPlatformdemo UI;
-    SimoxGui::ViewerInterfacePtr viewer;
+    SimoxGui::AbstractViewerPtr viewer;
     VirtualRobot::RobotPtr robot;
     MotionPlanning::CSpaceSampledPtr cspace;
     Eigen::VectorXf startConfig;

@@ -24,7 +24,7 @@ using namespace MotionPlanning;
 
 #define SHORTEN_LOOP 600
 
-MTPlanningScenery::MTPlanningScenery(const std::string &robotFile, SimoxGui::ViewerInterfacePtr viewer)
+MTPlanningScenery::MTPlanningScenery(const std::string &robotFile, SimoxGui::AbstractViewerPtr viewer)
     : viewer(viewer)
 {
     robotModelVisuColModel = true;
@@ -133,7 +133,7 @@ void MTPlanningScenery::buildScene()
         o->setGlobalPose(m);
         environmentModels.push_back(o);
         VisualizationSetPtr v = o->getVisualization(ModelLink::Full);
-        viewer->addVisualization("obstacles", v);
+        viewer->addVisualization(v, "obstacles");
     }
 
     environment.reset(new ModelSet("ObstacleModels", environmentModels));
@@ -299,14 +299,14 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     VisualizationPtr v = VisualizationFactory::getInstance()->createSphere(30.0f);
     v->setColor(Visualization::Color::Red());
     v->applyDisplacement(gp);
-    viewer->addVisualization("startgoal", v);
+    viewer->addVisualization(v, "startgoal");
 
     kinChain->setJointValues(goal);
     Eigen::Matrix4f gp2 = rn->getGlobalPose();
     VisualizationPtr v2 = VisualizationFactory::getInstance()->createSphere(30.0f);
     v2->setColor(Visualization::Color::Blue());
     v2->applyDisplacement(gp2);
-    viewer->addVisualization("startgoal", v2);
+    viewer->addVisualization(v2, "startgoal");
     //SoMatrixTransform* mt2 = CoinVisualizationFactory::getMatrixTransform(gp); //no transformation -> our scene is already in MM units
 
     std::stringstream nameStartText;
@@ -314,14 +314,14 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     VisualizationPtr v1t = VisualizationFactory::getInstance()->createText(nameStartText.str(), true, 10.0f, 0, 0);
     v1t->applyDisplacement(gp);
     v1t->scale(Eigen::Vector3f::Constant(7.f));
-    viewer->addVisualization("startgoal", v1t);
+    viewer->addVisualization(v1t, "startgoal");
 
     std::stringstream nameGoalText;
     nameGoalText << "goal-" << id;
     VisualizationPtr v2t = VisualizationFactory::getInstance()->createText(nameGoalText.str(), true, 10.0f, 0, 0);
     v2t->applyDisplacement(gp2);
     v2t->scale(Eigen::Vector3f::Constant(7.f));
-    viewer->addVisualization("startgoal", v2t);
+    viewer->addVisualization(v2t, "startgoal");
 }
 
 
@@ -521,7 +521,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
     if ((int)robots.size() == 1)
     {
         VisualizationSetPtr v = robots[0]->getVisualization(robotModelVisuColModel ? ModelLink::Full : ModelLink::Collision);
-        viewer->addVisualization("robot", v);
+        viewer->addVisualization(v, "robot");
     }
 
     int trFull = pRobot->getNumFaces(false);
@@ -562,10 +562,10 @@ void MTPlanningScenery::addBBCube()
     v3->setColor(Visualization::Color::Black());
     VisualizationPtr v4 = VisualizationFactory::getInstance()->createLine(p4, p1, lineSize);
     v4->setColor(Visualization::Color::Black());
-    viewer->addVisualization("bbox", v1);
-    viewer->addVisualization("bbox", v2);
-    viewer->addVisualization("bbox", v3);
-    viewer->addVisualization("bbox", v4);
+    viewer->addVisualization(v1, "bbox");
+    viewer->addVisualization(v2, "bbox");
+    viewer->addVisualization(v3, "bbox");
+    viewer->addVisualization(v4, "bbox");
 
     VisualizationPtr v1b = VisualizationFactory::getInstance()->createLine(p1b, p2b, lineSize);
     v1b->setColor(Visualization::Color::Black());
@@ -575,10 +575,10 @@ void MTPlanningScenery::addBBCube()
     v3b->setColor(Visualization::Color::Black());
     VisualizationPtr v4b = VisualizationFactory::getInstance()->createLine(p4b, p1b, lineSize);
     v4b->setColor(Visualization::Color::Black());
-    viewer->addVisualization("bbox", v1b);
-    viewer->addVisualization("bbox", v2b);
-    viewer->addVisualization("bbox", v3b);
-    viewer->addVisualization("bbox", v4b);
+    viewer->addVisualization(v1b, "bbox");
+    viewer->addVisualization(v2b, "bbox");
+    viewer->addVisualization(v3b, "bbox");
+    viewer->addVisualization(v4b, "bbox");
 
     VisualizationPtr v1c = VisualizationFactory::getInstance()->createLine(p1, p2, lineSize);
     v1c->setColor(Visualization::Color::Black());
@@ -588,10 +588,10 @@ void MTPlanningScenery::addBBCube()
     v3c->setColor(Visualization::Color::Black());
     VisualizationPtr v4c = VisualizationFactory::getInstance()->createLine(p1b, p1, lineSize);
     v4c->setColor(Visualization::Color::Black());
-    viewer->addVisualization("bbox", v1c);
-    viewer->addVisualization("bbox", v2c);
-    viewer->addVisualization("bbox", v3c);
-    viewer->addVisualization("bbox", v4c);
+    viewer->addVisualization(v1c, "bbox");
+    viewer->addVisualization(v2c, "bbox");
+    viewer->addVisualization(v3c, "bbox");
+    viewer->addVisualization(v4c, "bbox");
 
     VisualizationPtr v1d = VisualizationFactory::getInstance()->createLine(p4, p3, lineSize);
     v1d->setColor(Visualization::Color::Black());
@@ -601,10 +601,10 @@ void MTPlanningScenery::addBBCube()
     v3d->setColor(Visualization::Color::Black());
     VisualizationPtr v4d = VisualizationFactory::getInstance()->createLine(p4b, p4, lineSize);
     v4d->setColor(Visualization::Color::Black());
-    viewer->addVisualization("bbox", v1d);
-    viewer->addVisualization("bbox", v2d);
-    viewer->addVisualization("bbox", v3d);
-    viewer->addVisualization("bbox", v4d);
+    viewer->addVisualization(v1d, "bbox");
+    viewer->addVisualization(v2d, "bbox");
+    viewer->addVisualization(v3d, "bbox");
+    viewer->addVisualization(v4d, "bbox");
 }
 
 
@@ -641,7 +641,7 @@ void MTPlanningScenery::checkPlanningThreads()
                     VisualizationSetPtr wv = w->getVisualization();
                     if (wv)
                     {
-                        viewer->addVisualization("solution", wv);
+                        viewer->addVisualization(wv, "solution");
                     }
                 }
                 else
@@ -679,7 +679,7 @@ void MTPlanningScenery::checkOptimizeThreads()
                     VisualizationSetPtr wv = w->getVisualization();
                     if (wv)
                     {
-                        viewer->addVisualization("solution", wv);
+                        viewer->addVisualization(wv, "solution");
                     }
                 }
             }
