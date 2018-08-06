@@ -63,7 +63,7 @@ namespace SimoxGui
         {
             _removeVisualization(visualization, nullptr);
         }
-        void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
+        bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
 
         QWidget *parent;
 

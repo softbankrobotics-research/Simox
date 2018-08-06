@@ -127,8 +127,10 @@ namespace SimoxGui
 
         selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
         {
-            _removeVisualization(visu, old);
-            _addVisualization(visu);
+            if (_removeVisualization(visu, old))
+            {
+                _addVisualization(visu);
+            }
         });
     }
 
@@ -289,7 +291,7 @@ namespace SimoxGui
         }
     }
 
-    void CoinViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr &group)
+    bool CoinViewer::_removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr &group)
     {
         VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
         if (set)
@@ -316,10 +318,11 @@ namespace SimoxGui
                     it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
                     selectionGroups.erase(it);
                 }
+                return true;
             }
             else
             {
-                VR_WARNING << "Could not remove not added visualization. ignoring..." << std::endl;
+                return false;
             }
         }
     }
