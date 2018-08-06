@@ -57,6 +57,7 @@ namespace VirtualRobot
         virtual bool isSelected() const override;
         virtual size_t addSelectionChangedCallback(std::function<void (bool)> f) override;
         virtual void removeSelectionChangedCallback(size_t id) override;
+        inline void scale(float scaleFactor) {scale(Eigen::Vector3f(scaleFactor, scaleFactor, scaleFactor));}
         virtual void scale(const Eigen::Vector3f &scaleFactor) override;
         virtual void shrinkFatten(float offset) override;
         virtual bool hasManipulator(ManipulatorType t) const override;
