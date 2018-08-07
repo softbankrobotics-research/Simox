@@ -8,6 +8,8 @@
 #include <iterator>
 #include <functional>
 
+#include <VirtualRobot/Visualization/TriMeshModel.h>
+
 FullDemoWindow::FullDemoWindow()
     : QMainWindow(NULL)
 {
@@ -401,17 +403,38 @@ void FullDemoWindow::setupUI()
 
         /*VirtualRobot::VisualizationPtr visu1 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.stl");
         visu1->scale(1000.0f);
-        triMeshViewer->addVisualization("test", visu1);*/
+        triMeshViewer->addVisualization("test", visu1);
 
         triMeshVisu = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Torso2_joint_visu.dae");
         triMeshVisu->scale(1000.0f);
         triMeshViewer->addVisualization("test", triMeshVisu);
 
-        /*VirtualRobot::VisualizationPtr visu3 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.obj");
+        VirtualRobot::VisualizationPtr visu3 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.obj");
         triMeshViewer->addVisualization("test", visu3);
 
         VirtualRobot::VisualizationPtr visu4 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.x3d");
         triMeshViewer->addVisualization("test", visu4);*/
+
+        VirtualRobot::TriMeshModelPtr triMesh = VirtualRobot::TriMeshModelPtr(new VirtualRobot::TriMeshModel());
+        triMesh->addVertex(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(1.0f, 0.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(0.0f, 1.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(1.0f, 1.0f, 0.0f));
+
+        triMesh->addFace(0, 1, 3);
+        triMesh->addFace(3, 2, 0);
+
+        auto triMeshVisu = triMesh->getVisualization(false, true);
+        triMeshVisu->scale(100.0f);
+        Eigen::Matrix4f mat;
+        mat <<
+             1.0f, 0.0f, 0.0f, 200.0f,
+             0.0f, 1.0f, 0.0f, 200.0f,
+             0.0f, 0.0f, 1.0f, 200.0f,
+             0.0f, 0.0f, 0.0f, 1.0f;
+        triMeshVisu->setGlobalPose(mat);
+
+        triMeshViewer->addVisualization("test", triMeshVisu);
 
         triMeshViewer->viewAll();
     }
