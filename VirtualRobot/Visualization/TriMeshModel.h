@@ -64,12 +64,32 @@ namespace VirtualRobot
         void addFace(const TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
         int addNormal(const Eigen::Vector3f& normal);
-        int addColor(const Visualization::Color& color);
+        unsigned int addColor(const Visualization::Color& color);
         int addColor(const Eigen::Vector4f& color);
         int addMaterial(const Visualization::PhongMaterial& material);
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
-
         void clear();
+        /**
+         * @brief Checks all faces for existence of normals. Creates the normals in case they are missing.
+         * @return Number of created normals
+         */
+        int addMissingNormals();
+
+        /**
+         * @brief  Checks all faces for existence of colors.
+         * First, mergeVertices() is called. Then, if no color is found,
+         * a face with the same vertex is searched and that color is used (if available).
+         * Otherwise sets color to the given color.
+         * @param color Default Color
+         * @return Number of created colors entries
+         */
+        int addMissingColors(const Visualization::Color &color = Visualization::Color::Gray());
+
+        /**
+         * @brief Smoothes the normal surface by calculating the average of all face-normals of one vertex.
+         * Calls first mergeVertices().
+         */
+        void smoothNormalSurface();
         void flipVertexOrientations();
         /**
          * @brief Merges vertices that are close together (mergeThreshold).
@@ -86,7 +106,7 @@ namespace VirtualRobot
          * of all the faces the vertex is used in.
          * @param offset All vertexes are moved about this offset in mm.
          */
-        void fattenShrink(float offset);
+        void fattenShrink(float offset, bool updateNormals = false);
 
         /*!
          * \brief removeUnusedVertices Checks if vertices are used by faces. May rearrange vertices vector!
