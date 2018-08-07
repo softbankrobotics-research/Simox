@@ -74,7 +74,7 @@ void TriMeshUtils::CreateBoxTriangles(std::vector<TriMeshModel::triangle> &trian
         -1.0f, 1.0f, 1.0f,
         1.0f,-1.0f, 1.0f
     };
-    triangles.resize(12*3);
+    triangles.resize(12);
     std::array<Eigen::Vector3f, 3> vertices;
     for (int i = 0; i < 12; i++) {
         for (int j = 0; j < 3; ++j) {
