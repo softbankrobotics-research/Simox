@@ -16,9 +16,14 @@ protected:
 
     SimoxGui::ViewerInterfacePtr factoryDemoViewer;
     SimoxGui::ViewerInterfacePtr screenshotViewer;
+    SimoxGui::ViewerInterfacePtr triMeshViewer;
 
+    VirtualRobot::VisualizationPtr triMeshVisu;
     void setupUI();
     Ui::MainWindow UI;
+private slots:
+    void on_pushButton_2_clicked();
+
 private slots:
     void on_pushButton_clicked();
 };
