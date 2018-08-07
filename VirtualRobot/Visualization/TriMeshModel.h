@@ -61,7 +61,7 @@ namespace VirtualRobot
         void addMesh(const TriMeshModel& mesh);
         static Eigen::Vector3f CreateNormal(const Eigen::Vector3f &vertex1, const Eigen::Vector3f &vertex2, const Eigen::Vector3f &vertex3);
         void addFace(const MathTools::TriangleFace& face);
-        unsigned int addVertex(const Eigen::Vector3f& vertex);
+        int addVertex(const Eigen::Vector3f& vertex);
         unsigned int addNormal(const Eigen::Vector3f& normal);
         unsigned int addColor(const VisualizationFactory::Color& color);
         unsigned int addColor(const Eigen::Vector4f& color);

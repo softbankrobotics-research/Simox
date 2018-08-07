@@ -167,7 +167,7 @@ namespace VirtualRobot
     /**
     * This method adds a vertex to the internal data structure TriMeshModel::vertices.
     */
-    unsigned int TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
+    int TriMeshModel::addVertex(const Eigen::Vector3f& vertex)
     {
         if (std::isnan(vertex[0]) || std::isnan(vertex[1]) || std::isnan(vertex[2]))
         {
