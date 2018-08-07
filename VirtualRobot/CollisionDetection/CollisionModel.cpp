@@ -118,6 +118,8 @@ namespace VirtualRobot
         if (visualization && updateVisualization)
         {
             visualization->setGlobalPose(m);
+            BOOST_ASSERT(origVisualization);
+            origVisualization->setGlobalPose(m);
         }
     }
 
