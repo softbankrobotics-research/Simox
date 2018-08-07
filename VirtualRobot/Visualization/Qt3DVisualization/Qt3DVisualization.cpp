@@ -301,13 +301,18 @@ namespace VirtualRobot
 
     void Qt3DVisualization::createTriMeshModel()
     {
-        /*std::cout << "createTriMeshModel()" << std::endl;
-        QList<Qt3DRender::QGeometry*> geometrys = this->entity->findChildren<Qt3DRender::QGeometry*>();
-        for(Qt3DRender::QGeometry* geometry : geometrys)
+        QList<Qt3DRender::QGeometryRenderer*> renderer = this->entity->findChildren<Qt3DRender::QGeometryRenderer*>();
+        std::cout << "Found " << renderer.size() << " renderers" << std::endl;
+
+        for(Qt3DRender::QGeometryRenderer* render : renderer)
         {
+            std::cout << "Primitive Type: " << render->primitiveType() << std::endl;
+            Qt3DRender::QGeometry* geometry = render->geometry();
+            std::cout << "Geometry: " << geometry->objectName().toStdString() << std::endl;
             for (auto attribute : geometry->attributes())
             {
-                std::cout << attribute->name().toStdString() << std::endl;
+                std::cout << attribute->name().toStdString() << ", size: ";
+
                 auto buffer = attribute->buffer();
                 auto generator = attribute->buffer()->dataGenerator();
                 QByteArray data;
@@ -319,12 +324,13 @@ namespace VirtualRobot
 
                 std::cout << data.size() << std::endl;
 
-                for(auto i = 0; i < data.size() / sizeof(float); i++)
+                /*for(auto i = 0; i < data.size() / sizeof(float); i++)
                 {
                     std::cout << *(float*)(&(data.constData()[i * sizeof(float)])) << std::endl;
-                }
+                }*/
             }
-        }*/
+            std::cout << std::endl;
+        }
     }
 
     void Qt3DVisualization::_addManipulator(Visualization::ManipulatorType t)
