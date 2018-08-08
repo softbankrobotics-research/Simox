@@ -49,6 +49,11 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     Qt3DRender::QDepthTest *depthTest = new Qt3DRender::QDepthTest;
     depthTest->setDepthFunction(Qt3DRender::QDepthTest::LessOrEqual);
     renderStateSet->addRenderState(depthTest);
+    //Not necessary to disable/enable face culling. Standard seems to be disabled.
+    //Do it anyway to be safe
+    Qt3DRender::QCullFace *cullFace = new Qt3DRender::QCullFace;
+    cullFace->setMode(Qt3DRender::QCullFace::NoCulling);
+    renderStateSet->addRenderState(cullFace);
 
     this->activeFrameGraph()->setParent(renderStateSet);
     this->setActiveFrameGraph(renderStateSet);
