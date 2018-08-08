@@ -18,7 +18,7 @@ protected:
     SimoxGui::ViewerInterfacePtr screenshotViewer;
     SimoxGui::ViewerInterfacePtr triMeshViewer;
 
-    VirtualRobot::VisualizationPtr triMeshVisu;
+    VirtualRobot::VisualizationPtr model;
     void setupUI();
     Ui::MainWindow UI;
 private slots:
