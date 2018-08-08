@@ -105,6 +105,13 @@ namespace VirtualRobot
             {
                 return Color(-1.f, -1.f, -1.f, transparency);
             }
+            static Color Random()
+            {
+                float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+                float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+                float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+                return Color(r, g, b, 0.0f);
+            }
         };
 
         struct Material
