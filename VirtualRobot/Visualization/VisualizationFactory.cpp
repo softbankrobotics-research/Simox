@@ -183,7 +183,7 @@ namespace VirtualRobot
         }
         TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
 
-        triMesh->addColor(VirtualRobot::Visualization::Color(0, 0, 0, 0));
+        triMesh->addColor(VirtualRobot::Visualization::Color::Gray());
 
         int numVerticesPerRow = sides + 1;
         int numVerticesPerColumn = rings + 1;
