@@ -35,6 +35,19 @@ Eigen::Matrix4f getPosition(int index)
     return mat;
 }
 
+Eigen::Matrix4f getPosition2(int index)
+{
+    Eigen::Matrix4f mat;
+
+    mat <<
+         1.0f, 0.0f, 0.0f, 200.0f + (index / 2) * 600.0f + (index % 2) * 150.0f,
+         0.0f, 1.0f, 0.0f, 80.0f,
+         0.0f, 0.0f, 1.0f, 800.0f - (index % 2) * 400.0f,
+         0.0f, 0.0f, 0.0f, 1.0f;
+
+    return mat;
+}
+
 void FullDemoWindow::setupUI()
 {
     UI.setupUi(this);
@@ -327,114 +340,39 @@ void FullDemoWindow::setupUI()
     }
 
     {
-        Eigen::Matrix4f xmat, ymat, zmat, xmataxis, ymataxis, zmataxis;
-
-        xmat <<
-             1.0f, 0.0f, 0.0f, 1000.0f,
-             0.0f, 1.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, 1.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        xmataxis <<
-             1.0f, 0.0f, 0.0f, 500.0f,
-             0.0f, 1.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, 1.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        ymat <<
-             1.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, 1.0f, 0.0f, 1000.0f,
-             0.0f, 0.0f, 1.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        ymataxis <<
-             1.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, 1.0f, 0.0f, 500.0f,
-             0.0f, 0.0f, 1.0f, 0.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        zmat <<
-             1.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, 1.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, 1.0f, 1000.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        zmataxis <<
-             1.0f, 0.0f, 0.0f, 0.0f,
-             0.0f, 1.0f, 0.0f, 0.0f,
-             0.0f, 0.0f, 1.0f, 500.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-
-        VirtualRobot::VisualizationPtr visuX = VirtualRobot::VisualizationFactory::getInstance()->createBox(0.02f, 0.02f, 0.02f);
-        visuX->setGlobalPose(xmat);
-        visuX->setColor(VirtualRobot::Visualization::Color(1.0f, 0.0f, 0.0f));
-        visuX->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuX);
-
-        VirtualRobot::VisualizationPtr visuXaxis = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 0.002f, 0.002f);
-        visuXaxis->setGlobalPose(xmataxis);
-        visuXaxis->setColor(VirtualRobot::Visualization::Color(1.0f, 0.0f, 0.0f));
-        visuXaxis->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuXaxis);
-
-        VirtualRobot::VisualizationPtr visuY = VirtualRobot::VisualizationFactory::getInstance()->createBox(0.02f, 0.02f, 0.02f);
-        visuY->setGlobalPose(ymat);
-        visuY->setColor(VirtualRobot::Visualization::Color(0.0f, 1.0f, 0.0f));
-        visuY->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuY);
-
-        VirtualRobot::VisualizationPtr visuYaxis = VirtualRobot::VisualizationFactory::getInstance()->createBox(0.002f, 1.0f, 0.002f);
-        visuYaxis->setGlobalPose(ymataxis);
-        visuYaxis->setColor(VirtualRobot::Visualization::Color(0.0f, 1.0f, 0.0f));
-        visuYaxis->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuYaxis);
-
-        VirtualRobot::VisualizationPtr visuZ = VirtualRobot::VisualizationFactory::getInstance()->createBox(0.02f, 0.02f, 0.02f);
-        visuZ->setGlobalPose(zmat);
-        visuZ->setColor(VirtualRobot::Visualization::Color(0.0f, 0.0f, 1.0f));
-        visuZ->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuZ);
-
-        VirtualRobot::VisualizationPtr visuZaxis = VirtualRobot::VisualizationFactory::getInstance()->createBox(0.002f, 0.002f, 1.0f);
-        visuZaxis->setGlobalPose(zmataxis);
-        visuZaxis->setColor(VirtualRobot::Visualization::Color(0.0f, 0.0f, 1.0f));
-        visuZaxis->scale(1000.0f);
-        triMeshViewer->addVisualization("axis", visuZaxis);
-
-        /*VirtualRobot::VisualizationPtr visu1 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.stl");
-        visu1->scale(1000.0f);
-        triMeshViewer->addVisualization("test", visu1);
-
-        triMeshVisu = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Torso2_joint_visu.dae");
-        triMeshVisu->scale(1000.0f);
-        triMeshViewer->addVisualization("test", triMeshVisu);
-
-        VirtualRobot::VisualizationPtr visu3 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.obj");
-        triMeshViewer->addVisualization("test", visu3);
-
-        VirtualRobot::VisualizationPtr visu4 = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/ArmL_Elb1_joint_visu.x3d");
-        triMeshViewer->addVisualization("test", visu4);*/
+        int index = 0;
+        auto text1 = VirtualRobot::VisualizationFactory::getInstance()->createText("Simple TriMesh", false, 0.0f, 0.0f, 0.0f);
+        text1->setGlobalPose(getPosition2(index++));
+        text1->scale(3.0f);
+        triMeshViewer->addVisualization("test", text1);
 
         VirtualRobot::TriMeshModelPtr triMesh = VirtualRobot::TriMeshModelPtr(new VirtualRobot::TriMeshModel());
         triMesh->addVertex(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
         triMesh->addVertex(Eigen::Vector3f(1.0f, 0.0f, 0.0f));
         triMesh->addVertex(Eigen::Vector3f(0.0f, 1.0f, 0.0f));
         triMesh->addVertex(Eigen::Vector3f(1.0f, 1.0f, 0.0f));
-
         triMesh->addFace(0, 1, 3);
         triMesh->addFace(3, 2, 0);
-
-        auto triMeshVisu = triMesh->getVisualization(false, true);
+        VirtualRobot::VisualizationPtr triMeshVisu = triMesh->getVisualization(false, true);
         triMeshVisu->scale(100.0f);
-        Eigen::Matrix4f mat;
-        mat <<
-             1.0f, 0.0f, 0.0f, 200.0f,
-             0.0f, 1.0f, 0.0f, 200.0f,
-             0.0f, 0.0f, 1.0f, 200.0f,
-             0.0f, 0.0f, 0.0f, 1.0f;
-        triMeshVisu->setGlobalPose(mat);
-
+        triMeshVisu->setGlobalPose(getPosition2(index++));
         triMeshViewer->addVisualization("test", triMeshVisu);
+
+        VirtualRobot::VisualizationPtr text2 = VirtualRobot::VisualizationFactory::getInstance()->createText("Complex Model", false, 0.0f, 0.0f, 0.0f);
+        text2->setGlobalPose(getPosition2(index++));
+        text2->scale(3.0f);
+        triMeshViewer->addVisualization("test", text2);
+
+        VirtualRobot::VisualizationPtr model = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Torso2_joint_visu.dae");
+        model->scale(1000.0f);
+        model->setGlobalPose(getPosition2(index++));
+        model->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, 3 * M_PI / 4.0f, 0.0f));
+        triMeshViewer->addVisualization("test", model);
+
+        VirtualRobot::VisualizationPtr text3 = VirtualRobot::VisualizationFactory::getInstance()->createText("Complex TriMesh", false, 0.0f, 0.0f, 0.0f);
+        text3->setGlobalPose(getPosition2(index++));
+        text3->scale(3.0f);
+        triMeshViewer->addVisualization("test", text3);
 
         triMeshViewer->viewAll();
     }
@@ -454,4 +392,9 @@ void FullDemoWindow::on_pushButton_clicked()
 }
 void FullDemoWindow::on_pushButton_2_clicked()
 {
+    VirtualRobot::VisualizationPtr model = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Torso2_joint_visu.dae");
+    model->scale(1000.0f);
+    model->setGlobalPose(getPosition2(6));
+    model->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, 3 * M_PI / 4.0f, 0.0f));
+    triMeshViewer->addVisualization("test", model->getTriMeshModel()->getVisualization());
 }
