@@ -65,45 +65,59 @@ namespace VirtualRobot
 
     VisualizationPtr Qt3DVisualizationFactory::createLine(const Eigen::Vector3f &from, const Eigen::Vector3f &to, float width) const
     {
+        std::vector<Eigen::Vector3f> fromVec;
+        fromVec.push_back(from);
+        std::vector<Eigen::Vector3f> toVec;
+        toVec.push_back(to);
+        return createLineSet(fromVec, toVec, width);
+    }
+
+    VisualizationSetPtr VirtualRobot::Qt3DVisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &from, const std::vector<Eigen::Vector3f> &to, float width) const
+    {
+        VR_ASSERT(from.size() == to.size());
+
         auto *geometry = new Qt3DRender::QGeometry();
 
-        QByteArray bufferBytes;
-        bufferBytes.resize(3 * 2 * sizeof(float));
-        float *positions = reinterpret_cast<float*>(bufferBytes.data());
-        *positions++ = from.x();
-        *positions++ = from.y();
-        *positions++ = from.z();
-        *positions++ = to.x();
-        *positions++ = to.y();
-        *positions++ = to.z();
+        auto *vertexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::VertexBuffer, geometry);
+        auto *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::IndexBuffer, geometry);
 
-        auto *buf = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::VertexBuffer, geometry);
-        buf->setData(bufferBytes);
+        QByteArray vertexData;
+        vertexData.resize(from.size() * 2 * 3 * sizeof(float));
+        QByteArray indexData;
+        indexData.resize(from.size() * 2 * sizeof(unsigned int));
+
+        float *positions = reinterpret_cast<float*>(vertexData.data());
+        ushort *indices = reinterpret_cast<ushort*>(indexData.data());
+
+        for(int i = 0; i < from.size(); i++)
+        {
+            *positions++ = from[i].x();
+            *positions++ = from[i].y();
+            *positions++ = from[i].z();
+            *positions++ = to[i].x();
+            *positions++ = to[i].y();
+            *positions++ = to[i].z();
+            *indices++ = (ushort) (i * 2);
+            *indices++ = (ushort) (i * 2 + 1);
+        }
+
+        vertexBuffer->setData(vertexData);
+        indexBuffer->setData(indexData);
 
         auto *positionAttribute = new Qt3DRender::QAttribute(geometry);
         positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
         positionAttribute->setVertexBaseType(Qt3DRender::QAttribute::Float);
         positionAttribute->setVertexSize(3);
         positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
-        positionAttribute->setBuffer(buf);
-        positionAttribute->setByteStride(3 * sizeof(float));
-        positionAttribute->setCount(2);
+        positionAttribute->setBuffer(vertexBuffer);
+        positionAttribute->setCount(from.size() * 2);
         geometry->addAttribute(positionAttribute);
 
-        QByteArray indexBytes;
-        indexBytes.resize(2 * sizeof(unsigned int));
-        unsigned int *indices = reinterpret_cast<unsigned int*>(indexBytes.data());
-        *indices++ = 0;
-        *indices++ = 1;
-
-        auto *indexBuffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::BufferType::IndexBuffer, geometry);
-        indexBuffer->setData(indexBytes);
-
         auto *indexAttribute = new Qt3DRender::QAttribute(geometry);
-        indexAttribute->setVertexBaseType(Qt3DRender::QAttribute::UnsignedInt);
+        indexAttribute->setVertexBaseType(Qt3DRender::QAttribute::UnsignedShort);
         indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
         indexAttribute->setBuffer(indexBuffer);
-        indexAttribute->setCount(2);
+        indexAttribute->setCount(from.size() * 2);
         geometry->addAttribute(indexAttribute);
 
         auto *line = new Qt3DRender::QGeometryRenderer();
@@ -135,7 +149,7 @@ namespace VirtualRobot
         visu->getEntity()->removeComponent(visu->material);
         visu->getEntity()->addComponent(material);*/
 
-        return visu;
+        return createVisualisationSet({visu});
     }
 
     VisualizationPtr Qt3DVisualizationFactory::createSphere(float radius) const
