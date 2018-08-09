@@ -8,28 +8,28 @@
 namespace VirtualRobot
 {
 
-    CollisionModelPQP::CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker, int id)
-        : CollisionModelImplementation(modelData, colChecker, id)
+    CollisionModelPQP::CollisionModelPQP(TriMeshModelPtr modelData, CollisionCheckerPtr colChecker)
+        : CollisionModelImplementation(modelData, colChecker)
     {
-        if (!colChecker)
-        {
-            colChecker = CollisionChecker::getGlobalCollisionChecker();
-        }
+//        if (!colChecker)
+//        {
+//            colChecker = CollisionChecker::getGlobalCollisionChecker();
+//        }
 
-        if (!colChecker)
-        {
-            VR_WARNING << "no col checker..." << endl;
-        }
-        else
-        {
-            colCheckerPQP = colChecker->getCollisionCheckerImplementation();
-        }
+//        if (!colChecker)
+//        {
+//            VR_WARNING << "no col checker..." << endl;
+//        }
+//        else
+//        {
+//            colCheckerPQP = colChecker->getCollisionCheckerImplementation();
+//        }
 
         createPQPModel();
     }
 
     CollisionModelPQP::CollisionModelPQP(const CollisionModelPQP &orig) :
-        CollisionModelImplementation(orig.modelData, NULL, orig.id)
+        CollisionModelImplementation(orig.modelData, NULL)
     {
         pqpModel = orig.pqpModel;
     }
