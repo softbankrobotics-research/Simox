@@ -31,9 +31,11 @@ void TriMeshUtils::CreateBoxTriangles(std::vector<TriMeshModel::triangle> &trian
     auto h = height/2;
     auto d = depth/2;
 
+    Eigen::Vector3f globalPos = globalPose.block<3,1>(0,3);
+    Eigen::Matrix3f globalOrientation = globalPose.block<3,3>(0,0);
     auto transf = [&](Eigen::Vector3f& pos)
     {
-        pos = globalPose.block<3,3>(0,0) * pos + globalPose.block<3,1>(0,3);
+        pos = globalOrientation * pos + globalPos;
     };
 
     static const float rawVertices[] = {
@@ -76,16 +78,19 @@ void TriMeshUtils::CreateBoxTriangles(std::vector<TriMeshModel::triangle> &trian
     };
     triangles.resize(12);
     std::array<Eigen::Vector3f, 3> vertices;
+    auto currentPointer = &rawVertices[0];
     for (int i = 0; i < 12; i++) {
         for (int j = 0; j < 3; ++j) {
-            int offset = i*9+j*3;
             auto& v = vertices.at(j);
-            v.x() = rawVertices[offset+0]*w;
-            v.y() = rawVertices[offset+1]*h;
-            v.z() = rawVertices[offset+2]*d;
+            v.x() = (*currentPointer++)*w;
+            v.y() = (*currentPointer++)*h;
+            v.z() = (*currentPointer++)*d;
             transf(v);
         }
-        triangles.at(i) = {vertices.at(0), vertices.at(1), vertices.at(2)};
+        auto& t = triangles.at(i);
+        t.vertex1 = vertices.at(0);
+        t.vertex2 = vertices.at(1);
+        t.vertex3 = vertices.at(2);
     }
 }
 
