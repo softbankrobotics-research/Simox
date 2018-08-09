@@ -5,8 +5,7 @@
 // Date:    03.08.2009
 // *****************************************************************
 
-#ifndef ABSTRACT_FACTORY_METHOD_H
-#define ABSTRACT_FACTORY_METHOD_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -152,4 +151,3 @@ private:
     std::string description;
 };
 
-#endif /* ABSTRACT_FACTORY_METHOD_H */

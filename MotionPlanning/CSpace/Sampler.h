@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_sampler_h
-#define _MotionPlanning_sampler_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpace.h"
@@ -42,6 +41,7 @@ namespace MotionPlanning
         virtual ~Sampler();
 
         virtual void sample(Eigen::VectorXf& stroreConfig, CSpacePtr space) = 0;
+        //virtual void sample(std::vector<float> &storeConfig, CSpacePtr cspace) = 0;
 
         /*!
             Enable metric weighting. This can be useful for different variance in each dimension.
@@ -73,4 +73,3 @@ namespace MotionPlanning
 
 }
 
-#endif // _MotionPlanning_sampler_h

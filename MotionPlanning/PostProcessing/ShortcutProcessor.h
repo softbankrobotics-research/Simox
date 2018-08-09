@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __MotionPlanning_ShortcutProcessor_h__
-#define __MotionPlanning_ShortcutProcessor_h__
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "PathProcessor.h"
@@ -38,10 +37,10 @@ namespace MotionPlanning
     public:
 
         ShortcutProcessor(CSpacePathPtr path, CSpaceSampledPtr cspace, bool verbose = false);
-        virtual ~ShortcutProcessor();
+        ~ShortcutProcessor() override;
 
         //! A wrapper to the standard interface. Calls shortenSolutionRandom().
-        virtual CSpacePathPtr optimize(int optimizeSteps) override;
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         /*!
             Creates a shortened CSpace path.
@@ -59,6 +58,7 @@ namespace MotionPlanning
             Slow method, shortenSolutionRandom() gets similar results but is much faster.
         */
         void doPathPruning();
+
 
         /*!
             This method randomly choses a start and endpoint. The linear path between can be checked for validity in order to check for a shortcut.
@@ -89,4 +89,3 @@ namespace MotionPlanning
 
 }// namespace
 
-#endif // __MotionPlanning_ShortcutProcessor_h__

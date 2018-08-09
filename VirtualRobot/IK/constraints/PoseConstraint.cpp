@@ -64,7 +64,7 @@ Eigen::MatrixXf PoseConstraint::getJacobianMatrix()
     return ik->getJacobianMatrix(eef, cartesianSelection);
 }
 
-Eigen::MatrixXf PoseConstraint::getJacobianMatrix(FramePtr tcp)
+Eigen::MatrixXf PoseConstraint::getJacobianMatrix(const FramePtr &tcp)
 {
     if (tcp->getName() != eef->getName())
     {

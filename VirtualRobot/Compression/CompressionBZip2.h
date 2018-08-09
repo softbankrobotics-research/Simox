@@ -25,8 +25,7 @@
    Copyright (C) 1996-2010 Julian Seward <jseward@bzip.org>
 */
 
-#ifndef _VirtualRobot_Compression_BZIP2_h_
-#define _VirtualRobot_Compression_BZIP2_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -505,4 +504,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif

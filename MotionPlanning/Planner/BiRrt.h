@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_BiRrt_h
-#define _MotionPlanning_BiRrt_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
@@ -49,30 +48,30 @@ namespace MotionPlanning
             \param modeB Specify the RRT method that should be used to build the second tree
         */
         BiRrt(CSpacePtr cspace, RrtMethod modeA = eConnect, RrtMethod modeB = eConnect, float samplingSize = -1);
-        virtual ~BiRrt();
+        ~BiRrt() override;
 
         /*!
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false) override;
+        bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false) override;
+        void printConfig(bool printOnlyParams = false) override;
 
-        virtual void reset() override;
+        void reset() override;
 
         //! set start configuration
-        virtual bool setStart(const Eigen::VectorXf& c) override;
+        bool setStart(const Eigen::VectorXf& c) override;
 
         //! set goal configuration
-        virtual bool setGoal(const Eigen::VectorXf& c) override;
+        bool setGoal(const Eigen::VectorXf& c) override;
 
         CSpaceTreePtr getTree2();
 
     protected:
 
-        virtual bool createSolution(bool bQuiet = false) override;
+        bool createSolution(bool bQuiet = false) override;
 
         CSpaceTreePtr tree2;                    //!< the second tree
 
@@ -82,6 +81,5 @@ namespace MotionPlanning
 
 } // namespace
 
-#endif // _MotionPlanning_RRT_h
 
 

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Visualization_h_
-#define _VirtualRobot_Visualization_h_
+#pragma once
 
 #include "../Model/Frame.h"
 #include "../Model/Primitive.h"
@@ -361,4 +360,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_Visualization_h_

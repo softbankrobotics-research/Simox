@@ -319,7 +319,7 @@ namespace VirtualRobot
                     (vhandles[0] != vhandles[2]) &&
                     (vhandles[1] != vhandles[2]))
                 {
-                    TriangleFace f;
+                    MathTools::TriangleFace f;
                     f.set(vhandles[0], vhandles[1], vhandles[2]);
 
                     if (facet_normal)
@@ -488,7 +488,7 @@ namespace VirtualRobot
                 (vhandles[0] != vhandles[2]) &&
                 (vhandles[1] != vhandles[2]))
             {
-                TriangleFace f;
+                MathTools::TriangleFace f;
                 f.set(vhandles[0], vhandles[1], vhandles[2]);
                 //if (facet_normal) {
                 unsigned int noId = t->normals.size();

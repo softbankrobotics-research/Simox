@@ -21,8 +21,7 @@
  * @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
  *             GNU General Public License
  */
-#ifndef _VirtualRobot_KDTREEPOINTCLOUD_H
-#define _VirtualRobot_KDTREEPOINTCLOUD_H
+#pragma once
 
 namespace VirtualRobot
 {
@@ -69,4 +68,3 @@ namespace VirtualRobot
     };
 
 }
-#endif

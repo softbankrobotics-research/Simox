@@ -299,7 +299,7 @@ Eigen::MatrixXf BalanceConstraint::getJacobianMatrix()
     return comIK->getJacobianMatrix();
 }
 
-Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(FramePtr tcp)
+Eigen::MatrixXf BalanceConstraint::getJacobianMatrix(const FramePtr &tcp)
 {
     return comIK->getJacobianMatrix(tcp);
 }

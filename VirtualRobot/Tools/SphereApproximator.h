@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VR_GRAPH_GENERATOR_H_
-#define _VR_GRAPH_GENERATOR_H_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Visualization/TriMeshModel.h"
@@ -68,7 +67,7 @@ namespace VirtualRobot
         struct SphereApproximation
         {
             std::vector< Eigen::Vector3f >  vertices;
-            std::vector< TriangleFace >  faces;
+            std::vector< MathTools::TriangleFace >  faces;
             std::map<int, FaceIndex> mapVerticeIndxToFaceIndx;
         };
 
@@ -89,7 +88,7 @@ namespace VirtualRobot
         struct GraphData
         {
             std::vector<Eigen::Vector3f> vertices;
-            std::vector<TriangleFace> faces;
+            std::vector<MathTools::TriangleFace> faces;
         };
         bool check_same_clock_dir(const Eigen::Vector3f& pt1, const Eigen::Vector3f& pt2, const Eigen::Vector3f& pt3, const Eigen::Vector3f& norm);
 
@@ -108,4 +107,3 @@ namespace VirtualRobot
 
 }
 
-#endif /* _VR_GRAPH_GENERATOR_H_ */

@@ -1,17 +1,16 @@
-#ifndef __Platform_WINDOW_H__
-#define __Platform_WINDOW_H__
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
-#include "GraspPlanning/GraspPlanning.h"
-#include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
+#include <GraspPlanning/GraspPlanning.h>
+#include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
 
 #include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
@@ -23,8 +22,8 @@
 
 #include <vector>
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/AbstractViewer.h>
+#include <Gui/ViewerFactory.h>
 
 #include "ui_PlatformDemo.h"
 
@@ -36,16 +35,15 @@ public:
                    const std::string& rns,
                    const std::string& colModelRob,
                    const std::string& colModelEnv);
-    ~PlatformWindow();
+    ~PlatformWindow() override;
 
     void redraw();
-
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 
@@ -57,6 +55,7 @@ public slots:
 
     void buildVisu();
     void optimizeSolutionPressed();
+
 
     void plan();
 
@@ -109,8 +108,11 @@ protected:
     VirtualRobot::ModelSetPtr colModelEnv;
     std::vector< VirtualRobot::RobotConfigPtr > configs;
     std::vector< VirtualRobot::ObstaclePtr > obstacles;
+
+
     std::string sceneFile;
     VirtualRobot::ScenePtr scene;
+
     VirtualRobot::CDManagerPtr cdmPlayback;
     MotionPlanning::CSpacePathPtr solution;
     MotionPlanning::CSpacePathPtr solutionOptimized;
@@ -119,4 +121,3 @@ protected:
     MotionPlanning::BiRrtPtr rrt;
 };
 
-#endif

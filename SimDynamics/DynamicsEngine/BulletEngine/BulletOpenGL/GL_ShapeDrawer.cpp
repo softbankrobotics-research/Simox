@@ -216,7 +216,7 @@ public:
     {
     }
 
-    virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex) override
+    void processTriangle(btVector3* triangle, int partId, int triangleIndex) override
     {
 
         (void)triangleIndex;
@@ -258,7 +258,7 @@ public:
 class TriangleGlDrawcallback : public btInternalTriangleIndexCallback
 {
 public:
-    virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int  triangleIndex) override
+    void internalProcessTriangleIndex(btVector3* triangle, int partId, int  triangleIndex) override
     {
         (void)triangleIndex;
         (void)partId;

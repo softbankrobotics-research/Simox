@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobotImportExportSymbols_h
-#define _VirtualRobotImportExportSymbols_h
+#pragma once
 
 namespace VirtualRobot
 {
@@ -37,5 +36,4 @@ namespace VirtualRobot
 #endif
 }
 
-#endif
 

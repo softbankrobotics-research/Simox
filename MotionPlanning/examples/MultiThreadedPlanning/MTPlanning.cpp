@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     {
         status = startMTPlanning(robotFile);
     }
-    catch (std::exception e)
+    catch(const std::exception &e)
     {
         std::cout << "Exception: " << e.what() << std::endl ;
     }

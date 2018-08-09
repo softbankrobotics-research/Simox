@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ForceTorqueSensorFactory_h_
-#define _VirtualRobot_ForceTorqueSensorFactory_h_
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "ForceTorqueSensor.h"
@@ -63,4 +62,3 @@ namespace VirtualRobot
 }
 
 
-#endif

@@ -7,6 +7,7 @@
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
+#include <VirtualRobot/Random.h>
 #include <time.h>
 
 
@@ -126,9 +127,8 @@ namespace MotionPlanning
 
     bool GraspIkRrt::doPlanningCycle()
     {
-        static const float rMult = (float)(1.0 / (double)(RAND_MAX));
         ExtensionResult resA, resB;
-        float r = (float)rand() * rMult;
+        float r = RandomFloat();
 
         if (r <= sampleGoalProbab || tree2->getNrOfNodes() == 0)
         {
@@ -228,6 +228,14 @@ namespace MotionPlanning
             }
 
             cycles++;
+            clock_t currentClock = clock();
+
+            long diffClock = (long)(((float)(currentClock - startClock) / (float)CLOCKS_PER_SEC) * 1000.0);
+            if(diffClock > planningTimeout)
+            {
+                std::cout << "Encountered timeout of " << planningTimeout << " ms - aborting" << std::endl;
+                return false;
+            }
         }
         while (!stopSearch && cycles < maxCycles && !found);
 

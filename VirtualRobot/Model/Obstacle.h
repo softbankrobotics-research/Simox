@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Obstacle_h_
-#define _VirtualRobot_Obstacle_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Model/Model.h"
@@ -112,4 +111,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Obstacle_h_

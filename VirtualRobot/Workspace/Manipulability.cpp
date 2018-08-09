@@ -10,6 +10,8 @@
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/IK/PoseQualityExtendedManipulability.h>
 #include <VirtualRobot/XML/ModelIO.h>
+#include <VirtualRobot/Random.h>
+
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -753,9 +755,8 @@ namespace VirtualRobot
 
         std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
-        for (unsigned int i = 0; i < numThreads; i++)
+        for (size_t i = 0; i < numThreads; i++)
         {
             // each thread gets a cloned robot
             CollisionCheckerPtr cc(new CollisionChecker());
@@ -796,7 +797,7 @@ namespace VirtualRobot
                 PoseQualityMeasurementPtr clonedMeasure  = this->measure->clone(clonedRobot);
 
                 // now sample some configs and add them to the workspace data
-                for (unsigned int j = 0; j < numPosesPerThread; j++)
+                for (size_t j = 0; j < numPosesPerThread; j++)
                 {
                     float rndValue;
                     float minJ, maxJ;
@@ -807,9 +808,9 @@ namespace VirtualRobot
 
                     for (int k = 0; k < maxLoops; k++)
                     {
-                        for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
+                        for (size_t l = 0; l < clonedNodeSet->getSize(); l++)
                         {
-                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            rndValue = RandomFloat(); // value from 0 to 1
                             minJ = nodeSet->getJoint(l)->getJointLimitLow();
                             maxJ = nodeSet->getJoint(l)->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
@@ -848,7 +849,7 @@ namespace VirtualRobot
         }
 
         // wait for all threads to finish
-        for (unsigned int i = 0; i < numThreads; i++)
+        for (size_t i = 0; i < numThreads; i++)
         {
             threads[i].join();
         }

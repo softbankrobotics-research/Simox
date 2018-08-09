@@ -1,21 +1,24 @@
 
-#ifndef _MTPlanning_SCENERY_H_
-#define _MTPlanning_SCENERY_H_
+#pragma once
 
 #include <string.h>
 #include <time.h>
 
 #include <MotionPlanning/Planner/PlanningThread.h>
 #include <MotionPlanning/PostProcessing/PathProcessingThread.h>
+
 #include <MotionPlanning/CSpace/CSpaceSampled.h>
 #include <MotionPlanning/CSpace/CSpaceNode.h>
 #include <MotionPlanning/Planner/MotionPlanner.h>
 #include <MotionPlanning/Planner/BiRrt.h>
 
+#define ROBOT_DIM 3
+#define SHORTEN_LOOP 600
+
 #include "VirtualRobot/Model/ModelSet.h"
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/AbstractViewer.h>
+#include <Gui/ViewerFactory.h>
 
 using namespace VirtualRobot;
 using namespace MotionPlanning;
@@ -60,6 +63,12 @@ public:
     }
 
     int getThreads();
+    ///////////////////////////////////////////////////////////////////
+    //Sequential planing
+    //void loadRobotSTPlanning();
+    //void plan(int index);
+    //void optimizeSolution(int solutionIndex);
+    //void showSolution(CRrtSolution *solToShow, int solutionIndex);
 
 protected:
 
@@ -84,6 +93,7 @@ protected:
     std::vector<CSpacePathPtr> optiSolutions;
     //std::map<VisualizationPtr > visualisations;
     std::vector<RobotPtr> robots;
+    //std::vector<RobotNodeSetPtr> colModelRobots;
 
     std::vector< Eigen::VectorXf > startPositions;
     std::vector< Eigen::VectorXf > goalPositions;
@@ -91,9 +101,11 @@ protected:
     ModelSetPtr environment;
     ObstaclePtr environmentUnited;
 
+
+
     bool robotModelVisuColModel;
+
 
     std::string TCPName;
 };
 
-#endif

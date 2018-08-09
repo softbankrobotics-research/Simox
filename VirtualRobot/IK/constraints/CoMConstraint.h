@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_CoMConstraint_h_
-#define _VirtualRobot_CoMConstraint_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -37,9 +36,9 @@ namespace VirtualRobot
         CoMConstraint(const RobotPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const Eigen::Vector3f& target, float tolerance);
         CoMConstraint(const RobotPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const Eigen::Vector2f& target, float tolerance);
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
-        virtual bool checkTolerances() override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        bool checkTolerances() override;
 
         void updateTarget(const Eigen::Vector3f& target);
         void updateTarget(const Eigen::Vector2f& target);
@@ -58,5 +57,4 @@ namespace VirtualRobot
     typedef std::shared_ptr<CoMConstraint> CoMConstraintPtr;
 }
 
-#endif
 

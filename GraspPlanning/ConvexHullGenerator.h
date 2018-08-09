@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_CONVEX_HULL_GENERATOR_H_
-#define _GRASP_PLANNING_CONVEX_HULL_GENERATOR_H_
+#pragma once
 
 #include "GraspPlanning.h"
 #include "VirtualRobot/Tools/MathTools.h"
@@ -66,4 +65,3 @@ namespace GraspPlanning
 
 }
 
-#endif /* _CONVEX_HULL_GENERATOR_H_ */

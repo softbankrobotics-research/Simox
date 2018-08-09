@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VisualizationFactory_h_
-#define _VirtualRobot_VisualizationFactory_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Tools/BoundingBox.h"
@@ -134,4 +133,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_VisualizationFactory_h_

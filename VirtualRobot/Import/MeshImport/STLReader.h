@@ -3,8 +3,7 @@
     Have a look at www.openmesh.org.
 */
 
-#ifndef __VirtualRobot_STLREADER_H__
-#define __VirtualRobot_STLREADER_H__
+#pragma once
 
 
 #include "VirtualRobot/Model/Model.h"
@@ -85,4 +84,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<STLReader> STLReaderPtr;
 }
 
-#endif

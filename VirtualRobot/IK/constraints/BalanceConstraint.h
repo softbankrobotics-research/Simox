@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_BalanceConstraint_h_
-#define _VirtualRobot_BalanceConstraint_h_
+#pragma once
 
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/IK/Constraint.h>
@@ -64,10 +63,10 @@ namespace VirtualRobot
         BalanceConstraint(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const SupportPolygonPtr& supportPolygon,
                           float tolerance = 0.1f, float minimumStability = 0.5f, float maxSupportDistance = 10.0f, bool supportPolygonUpdates = true, bool considerCoMHeight = false);
 
-        virtual Eigen::MatrixXf getJacobianMatrix() override;
-        Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
-        virtual bool checkTolerances() override;
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(const FramePtr& tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
         bool getRobotPoseForConstraint(ModelPtr& robot, Eigen::Matrix4f& pose);
         Eigen::Vector3f getCoM() const;
@@ -75,10 +74,10 @@ namespace VirtualRobot
 
         void setCoMHeight(float height);
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
-        virtual VisualizationPtr getVisualization() const override;
+        VisualizationPtr getVisualization() const override;
 
     protected:
         void initialize(const ModelPtr& robot, const JointSetPtr& joints, const LinkSetPtr& bodies, const LinkSetPtr& contactNodes,
@@ -111,4 +110,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<BalanceConstraint> BalanceConstraintPtr;
 }
 
-#endif

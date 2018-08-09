@@ -7,6 +7,7 @@
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/Grasping/BasicGraspQualityMeasure.h>
+#include <VirtualRobot/Random.h>
 #include <algorithm>
 #include <float.h>
 #include <time.h>
@@ -147,7 +148,6 @@ namespace MotionPlanning
 
     bool GraspRrt::doPlanningCycle()
     {
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
         if (!plannerInitialized)
         {
@@ -159,7 +159,7 @@ namespace MotionPlanning
         // CHOOSE A RANDOM CONFIGURATION
         // check if we want to go to the goal directly or extend randomly
         bool bDoNormalConnect = true;
-        float r = (float)rand() * randMult;
+        float r = VirtualRobot::RandomFloat();
 
         if (r <= probabGraspHypothesis)
         {

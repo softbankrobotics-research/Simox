@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Trajectory_h_
-#define _VirtualRobot_Trajectory_h_
+#pragma once
 
 #include "Model/Model.h"
 #include "Tools/MathTools.h"
@@ -174,4 +173,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif /* _VirtualRobot_Trajectory_h_ */

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionChecker_h_
-#define _VirtualRobot_CollisionChecker_h_
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 #include "../Model/Model.h"
@@ -262,6 +261,14 @@ namespace VirtualRobot
             return mVec;
         }
 
+        // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++
+        friend class Cleanup;
+        class Cleanup
+        {
+        public:
+            ~Cleanup();
+        };
+
         bool initialized;
         bool automaticSizeCheck;
 
@@ -279,4 +286,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CollisionChecker_h_

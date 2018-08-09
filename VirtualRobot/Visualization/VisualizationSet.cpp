@@ -373,7 +373,7 @@ namespace VirtualRobot
             Eigen::Matrix4f transform = visu->getGlobalPose() * getGlobalPose().inverse();
             for (const auto& face : tm->faces)
             {
-                TriangleFace cloned;
+                MathTools::TriangleFace cloned;
                 cloned.id1 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id1)));
                 cloned.id2 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id2)));
                 cloned.id3 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id3)));

@@ -111,6 +111,7 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
 
     std::vector<double> bestJointValues;
     double currentMinError = std::numeric_limits<double>::max();
+    AdditionalOutputData currentMinOutput;
     assert(maxIterations >= 0);
     for(unsigned int attempt = 0; attempt < static_cast<std::size_t>(maxIterations); attempt++)
     {
@@ -193,7 +194,8 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             nodeSet->getJoint(i)->setJointValue(float(x[i]));
         }
         double currentError;
-        bool success = hardOptimizationFunction(x, currentError);
+        AdditionalOutputData d;
+        bool success = hardOptimizationFunction(x, currentError, d);
         // We determine success based on hard constraints only
         if(success)
         {
@@ -201,13 +203,14 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
             robot->setUpdateVisualization(updateVisualization);
             robot->setUpdateCollisionModel(updateCollisionModel);
             nodeSet->setJointValues(std::vector<float>(x.begin(), x.end()));
-			robot->applyJointValues();
+            robot->applyJointValues();
             return true;
         }
         else if(currentMinError > currentError)
         {
             currentMinError = currentError;
             bestJointValues = x;
+            currentMinOutput = d;
         }
     }
     if(bestJointValues.size() > 0)
@@ -218,6 +221,10 @@ bool ConstrainedOptimizationIK::solve(bool stepwise)
     robot->setUpdateVisualization(updateVisualization);
     robot->setUpdateCollisionModel(updateCollisionModel);
     robot->applyJointValues();
+
+    std::cout << "FAILURE, miminal error: " << currentMinError << std::endl;
+    std::cout << currentMinOutput.toString() << std::endl;
+
     return false;
 }
 
@@ -245,6 +252,16 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
     unsigned int size = gradient.size();
     Eigen::VectorXf grad = Eigen::VectorXf::Zero(size);
     double value = 0;
+    Eigen::VectorXf scalingVec(nodeSet->getSize());
+    if (size == nodeSet->getSize())
+    {
+        int i = 0;
+        for(const auto & node : nodeSet->getJoints())
+        {
+            scalingVec(i) = node->isRotationalJoint() ? 1 : 1.0f/57.f;
+            i++;
+        }
+    }
 
     for(auto &constraint : constraints)
     {
@@ -254,7 +271,13 @@ double ConstrainedOptimizationIK::optimizationFunction(const std::vector<double>
 
             if(size > 0)
             {
-                grad += function.constraint->optimizationGradient(function.id);
+                Eigen::VectorXf g = function.constraint->optimizationGradient(function.id);
+                for (int i = 0; i < g.size(); i++)
+                {
+                    g(i) *= scalingVec(i);
+                }
+
+                grad += g;
             }
         }
     }
@@ -298,7 +321,7 @@ double ConstrainedOptimizationIK::optimizationConstraint(const std::vector<doubl
     return setup.constraint->optimizationFunction(setup.id);
 }
 
-bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x, double & error)
+bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<double> &x, double & error, AdditionalOutputData &data)
 {
     if(x != currentX)
     {
@@ -318,8 +341,12 @@ bool ConstrainedOptimizationIK::hardOptimizationFunction(const std::vector<doubl
                 continue;
             }
 
-            result &= function.constraint->checkTolerances();
-            error += function.constraint->optimizationFunction(function.id);
+            bool r = function.constraint->checkTolerances();
+            result &= r;
+            double e = function.constraint->optimizationFunction(function.id);
+            error += e;
+
+            data.data.push_back({typeid(*(function.constraint)).name(), r, e});
         }
     }
 

@@ -81,7 +81,8 @@ namespace VirtualRobot
 
     void CollisionModel::inflateModel(float value)
     {
-        if(std::abs(margin - value) < 0.01f || (origVisualization && !model))
+        float diff = std::abs(margin - value);
+        if(diff > 0.01f || (origVisualization && !model))
         {
             visualization = origVisualization->clone();
             visualization->shrinkFatten(value);
@@ -118,6 +119,8 @@ namespace VirtualRobot
         if (visualization && updateVisualization)
         {
             visualization->setGlobalPose(m);
+            BOOST_ASSERT(origVisualization);
+            origVisualization->setGlobalPose(m);
         }
     }
 

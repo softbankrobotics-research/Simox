@@ -36,8 +36,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _VirtualRobot_TimeOptimalTrajectory_h_
-#define _VirtualRobot_TimeOptimalTrajectory_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "Path.h"
@@ -46,6 +45,12 @@
 
 namespace VirtualRobot
 {
+    /**
+     * @brief Implementation of paper:
+     * Tobias Kunz and Mike Stilman
+     * Time-Optimal Trajectory Generation for Path Following with Bounded Acceleration and Velocity
+     * Robotics: Science and Systems. 2012.
+     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT TimeOptimalTrajectory
     {
     public:
@@ -110,4 +115,3 @@ namespace VirtualRobot
     };
 }
 
-#endif // _VirtualRobot_TimeOptimalTrajectory_h_

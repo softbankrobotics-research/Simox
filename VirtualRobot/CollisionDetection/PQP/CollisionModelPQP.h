@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionModelPQP_h_
-#define _VirtualRobot_CollisionModelPQP_h_
+#pragma once
 
 #include "../../Model/Model.h"
 
@@ -55,20 +54,20 @@ namespace VirtualRobot
         CollisionModelPQP(const TriMeshModelPtr &modelData, CollisionCheckerPtr colChecker, int id);
         /*!Standard Destructor
         */
-        virtual ~CollisionModelPQP();
+        ~CollisionModelPQP() override;
 
         std::shared_ptr<PQP::PQP_Model> getPQPModel()
         {
             return pqpModel;
         }
 
-        virtual void print() override;
-        virtual std::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const override;
+        void print() override;
+        std::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const override;
     protected:
         CollisionModelPQP(const CollisionModelPQP& orig);
 
         //! delete all data
-        virtual void destroyData() override;
+        void destroyData() override;
         void createPQPModel();
 
         std::shared_ptr<PQP::PQP_Model> pqpModel;
@@ -78,4 +77,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_CollisionModelPQP_h_

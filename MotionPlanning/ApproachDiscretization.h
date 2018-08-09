@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _MotionPlanning_APPROACH_DISCRETIZATION_H_
-#define _MotionPlanning_APPROACH_DISCRETIZATION_H_
+#pragma once
 
 #include "MotionPlanning.h"
 
@@ -113,4 +112,3 @@ namespace MotionPlanning
 
 }
 
-#endif /* _MotionPlanning_APPROACH_DISCRETIZATION_H_ */

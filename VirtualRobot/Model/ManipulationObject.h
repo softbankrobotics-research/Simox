@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ManipulationObject_h_
-#define _VirtualRobot_ManipulationObject_h_
+#pragma once
 
 #include "Model.h"
 #include "Obstacle.h"
@@ -42,9 +41,9 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~ManipulationObject();
+        ~ManipulationObject() override;
 
-        virtual void print(bool printDecoration = true) override;
+        void print(bool printDecoration = true) override;
 
         bool hasGraspSet(const GraspSetPtr &graspSet);
         bool hasGraspSet(const std::string& robotType, const std::string& eef);
@@ -114,4 +113,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif

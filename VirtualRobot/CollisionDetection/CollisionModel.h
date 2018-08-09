@@ -20,12 +20,12 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionModel_h_
-#define _VirtualRobot_CollisionModel_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Tools/MathTools.h"
 #include "../Tools/BoundingBox.h"
+#include "../VirtualRobot.h"
 
 #include <string>
 #include <vector>
@@ -203,4 +203,3 @@ namespace VirtualRobot
     typedef std::vector<CollisionModelPtr> CollisionModelVec;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CollisionModel_h_

@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cmath>
 #include <sstream>
+#include <iomanip>
 
 
 using namespace std;
@@ -127,7 +128,6 @@ void GraspPlannerWindow::buildVisu()
     bool fc = (UI.checkBoxCones->isChecked());
     if (fc && contacts.size() > 0 && qualityMeasure)
     {
-
         ContactConeGeneratorPtr cg = qualityMeasure->getConeGenerator();
         float radius = cg->getConeRadius();
         float height = cg->getConeHeight();
@@ -293,6 +293,7 @@ void GraspPlannerWindow::closeEEF()
         float qual = qualityMeasure->getGraspQuality();
         bool isFC = qualityMeasure->isGraspForceClosure();
         std::stringstream ss;
+        ss << std::setprecision(3);
         ss << "Grasp Nr " << grasps->getSize() << "\nQuality: " << qual << "\nForce closure: ";
 
         if (isFC)

@@ -21,8 +21,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedOptimizationIK_h_
-#define _VirtualRobot_ConstrainedOptimizationIK_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -41,10 +40,11 @@ namespace VirtualRobot
     {
     public:
         ConstrainedOptimizationIK(RobotPtr& robot, const JointSetPtr& nodeSet, float timeout = 0.5, float globalTolerance = std::numeric_limits<float>::quiet_NaN());
+        ~ConstrainedOptimizationIK() override = default;
 
-        virtual bool initialize() override;
-        virtual bool solve(bool stepwise = false) override;
-        virtual bool solveStep() override;
+        bool initialize() override;
+        bool solve(bool stepwise = false) override;
+        bool solveStep() override;
 
         /**
          * This factor limits the interval around the initial robot configuration where random samplings are placed.
@@ -59,7 +59,28 @@ namespace VirtualRobot
         double optimizationFunction(const std::vector<double> &x, std::vector<double> &gradient);
         double optimizationConstraint(const std::vector<double> &x, std::vector<double> &gradient, const OptimizationFunctionSetup &setup);
 
-        bool hardOptimizationFunction(const std::vector<double> &x, double &error);
+        struct AdditionalOutputData
+        {
+            struct ConstraintInfo
+            {
+                std::string constraintName;
+                bool success;
+                double error;
+            };
+
+            std::vector<ConstraintInfo> data;
+
+            std::string toString()
+            {
+                std::stringstream ss;
+                for (ConstraintInfo c : data)
+                {
+                    ss << "Constraint: " << c.constraintName << " Error: " << c.error << " Success: " << c.success << "\n";
+                }
+                return ss.str();
+            }
+        };
+        bool hardOptimizationFunction(const std::vector<double> &x, double &error, AdditionalOutputData &data);
 
     protected:
         OptimizerPtr optimizer;
@@ -80,5 +101,4 @@ namespace VirtualRobot
     typedef std::shared_ptr<ConstrainedOptimizationIK> ConstrainedOptimizationIKPtr;
 }
 
-#endif
 

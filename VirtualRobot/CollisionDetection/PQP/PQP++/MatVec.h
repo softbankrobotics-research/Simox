@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_MATVEC_H
-#define PQP_MATVEC_H
+#pragma once
 
 #include <math.h>
 #include <stdio.h>
@@ -1037,5 +1036,4 @@ namespace PQP
 
 } // namespace
 
-#endif
 // MATVEC_H

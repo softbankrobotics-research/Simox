@@ -26,13 +26,22 @@ namespace VirtualRobot
 
     namespace
     {
-		std::mutex mutex;
+        std::mutex mutex;
     }
 
     VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerPtr CollisionChecker::__globalCollisionChecker;
 
+    CollisionChecker::Cleanup::~Cleanup()
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        CollisionChecker::__globalCollisionChecker.reset();
+    }
+
+
     CollisionCheckerPtr CollisionChecker::getGlobalCollisionChecker()
     {
+        static Cleanup _Cleanup;
+
         if (true)
         {
             std::lock_guard<std::mutex> lock(mutex);

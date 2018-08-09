@@ -1,14 +1,14 @@
 #include <Eigen/Geometry>
 #include "GraspEvaluationPoseUncertainty.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/CollisionDetection/CollisionChecker.h"
-#include "VirtualRobot/Grasping/Grasp.h"
+#include <VirtualRobot/Random.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/CollisionDetection/CollisionChecker.h>
+#include <VirtualRobot/Grasping/Grasp.h>
 
 #include <algorithm>
 #include <random>
 #include <float.h>
 #include <cstdlib>
-#include <random>
 
 using namespace Eigen;
 using namespace VirtualRobot;
@@ -129,14 +129,13 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     }
 
     Eigen::Matrix4f m;
-    std::default_random_engine generator;
     std::normal_distribution<double> normalDistribution(0.0,0.5);
     std::uniform_real_distribution<double> uniformDistribution(0.0,1);
     for (int j=0;j<numPoses; j++)
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = config.useNormalDistribution ? float(normalDistribution(generator)) : float(uniformDistribution(generator));
+            float r = config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit()) : uniformDistribution(VirtualRobot::PRNG64Bit());
             tmpPose[i] = start[i] + r*dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
@@ -161,7 +160,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
                 cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
             centerPose += contacts[i].contactPointObstacleGlobal;
     }
-    centerPose /= float(contacts.size());
+    centerPose /= contacts.size();
     if (config.verbose)
         cout << "using contact center pose:\n" << centerPose << endl;
 
@@ -193,10 +192,8 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
         eef->openActors();
     o->setGlobalPose(objectPose);
 
-    std::vector<ModelPtr> m;
-    m.push_back(o);
     // check for initial collision
-    if (o->getCollisionChecker()->checkCollision(m, eefColModel))
+    if (o->getCollisionChecker()->checkCollision(o->getCollisionModels(), eefColModel))
     {
         result.initialCollision = true;
         return result;

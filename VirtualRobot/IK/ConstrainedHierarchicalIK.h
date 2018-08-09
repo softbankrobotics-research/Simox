@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedHierarchicalIK_h_
-#define _VirtualRobot_ConstrainedHierarchicalIK_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -34,13 +33,13 @@ namespace VirtualRobot
     public:
         ConstrainedHierarchicalIK(ModelPtr& robot,
                                   const JointSetPtr& nodeSet,
-                                  float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.1);
+                                  float stepSize = 0.2f, int maxIterations = 1000, float stall_epsilon = 0.0001f, float raise_epsilon = 0.1f);
+        ~ConstrainedHierarchicalIK() override = default;
 
-        virtual bool initialize() override;
-        virtual bool solveStep() override;
+        bool initialize() override;
+        bool solveStep() override;
 
     protected:
-        JointSetPtr nodeSet;
         HierarchicalIKPtr ik;
 
         std::vector<JacobiProviderPtr> jacobians;
@@ -52,4 +51,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ConstrainedHierarchicalIK> ConstrainedHierarchicalIKPtr;
 }
 
-#endif

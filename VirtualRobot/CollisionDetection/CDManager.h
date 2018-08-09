@@ -24,8 +24,7 @@
 *
 */
 
-#ifndef _VirtualRobot_CDManager_h_
-#define _VirtualRobot_CDManager_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "CollisionModel.h"
@@ -146,5 +145,4 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_CDManager_h_
 

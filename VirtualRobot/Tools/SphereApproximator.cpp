@@ -39,7 +39,7 @@ namespace VirtualRobot
     {
         for (int i = 0; i < (int)storeResult.faces.size(); i++)
         {
-			TriangleFace f = storeResult.faces[i];
+            MathTools::TriangleFace f = storeResult.faces[i];
             FaceIndex fi;
 
             if (storeResult.mapVerticeIndxToFaceIndx.find(f.id1) == storeResult.mapVerticeIndxToFaceIndx.end())
@@ -128,7 +128,7 @@ namespace VirtualRobot
         }
 
         // structure describing a tetrahedron
-		TriangleFace f[4];
+        MathTools::TriangleFace f[4];
         f[0].set(1, 2, 3);
         f[1].set(1, 4, 2);
         f[2].set(3, 2, 4);
@@ -160,7 +160,7 @@ namespace VirtualRobot
         }
 
         // Join vertices to create a unit octahedron
-		TriangleFace f[8];
+        MathTools::TriangleFace f[8];
         f[0].set(1, 5, 3);
         f[1].set(3, 5, 2);
         f[2].set(2, 5, 4);
@@ -207,7 +207,7 @@ namespace VirtualRobot
 
 
         // Structure for unit icosahedron
-		TriangleFace f[20];
+        MathTools::TriangleFace f[20];
         f[0].set(5,  8,  9);
         f[1].set(5, 10,  8);
         f[2].set(6, 12,  7);
@@ -241,7 +241,7 @@ namespace VirtualRobot
     void SphereApproximator::subDivide(GraphData& gd)
     {
         // buffer new faces
-        vector<TriangleFace> newFaces;
+        vector<MathTools::TriangleFace> newFaces;
 
         // gp through all faces and subdivide
         for (int f = 0 ; f < int(gd.faces.size()) ; f++)
@@ -313,7 +313,7 @@ namespace VirtualRobot
             }
 
             // Create new faces with orig vertices plus midpoints
-			TriangleFace fa[4];
+            MathTools::TriangleFace fa[4];
             fa[0].set(nA, nA_m, nC_m);
             fa[1].set(nA_m, nB, nB_m);
             fa[2].set(nC_m, nB_m, nC);
@@ -569,7 +569,7 @@ namespace VirtualRobot
     VirtualRobot::TriMeshModelPtr SphereApproximator::generateTriMesh(const SphereApproximation& a)
     {
         Eigen::Vector3f v1, v2, v3;
-		TriangleFace f;
+        MathTools::TriangleFace f;
 
         int nVertices = (int)a.vertices.size();
         int nFaces = (int)a.faces.size();

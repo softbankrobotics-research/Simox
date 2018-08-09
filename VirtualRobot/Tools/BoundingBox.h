@@ -20,17 +20,19 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_BoundingBox_h_
-#define _VirtualRobot_BoundingBox_h_
+#pragma once
 
 #include "../VirtualRobot.h"
-
 #include <Eigen/Core>
 #include <vector>
 
 namespace VirtualRobot
 {
 
+    namespace MathTools
+    {
+        class Plane;
+    }
     /*!
         An axis oriented bounding box.
         Todo: Some parts of this class are similar to MathTools::OOBB.
@@ -39,6 +41,7 @@ namespace VirtualRobot
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        friend class CollisionChecker;
 
         BoundingBox();
         BoundingBox(const std::vector< Eigen::Vector3f >& p);
@@ -90,6 +93,14 @@ namespace VirtualRobot
 
         std::string toXML(int tabs = 2, bool skipMatrixTag = false);
 
+        /*!
+         * \brief isInside Checks whether the given point lies within the bounding box. The given vector can contain
+         * entries that are none, if this is the case the respective dimension is ignored and the point is only tested
+         * for the remaining non-nan dimensions.
+         * \param point the point to test
+         * \return True if the point lies within the bounding box. False if not.
+         */
+        bool isInside(Eigen::Vector3f point) const;
         void enlarge (const Eigen::Vector3f &v);
 
         VisualizationPtr getVisualization(bool wireFrame = false) const;
@@ -100,4 +111,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif /* _VirtualRobot_BoundingBox_h_ */

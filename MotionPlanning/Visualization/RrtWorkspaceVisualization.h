@@ -20,12 +20,11 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_RrtWorkspaceVisualization_h_
-#define _MotionPlanning_RrtWorkspaceVisualization_h_
+#pragma once
 
 #include "../MotionPlanning.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -116,8 +115,8 @@ namespace MotionPlanning
 
         std::string TCPName;
 
-        float pathLineSize, pathNodeSize;
-        float treeLineSize, treeNodeSize;
+        float pathLineSize, pathNodeSize, pathRenderComplexity;
+        float treeLineSize, treeNodeSize, treeRenderComplexity;
 
         struct RenderColors
         {
@@ -133,5 +132,3 @@ namespace MotionPlanning
     typedef std::shared_ptr<RrtWorkspaceVisualization> RrtWorkspaceVisualizationPtr;
 
 } // namespace MotionPlanning
-
-#endif // _MotionPlanning_RrtWorkspaceVisualization_h_

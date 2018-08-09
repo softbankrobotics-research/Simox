@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_MESHCONVERTER_H
-#define _GRASP_PLANNING_MESHCONVERTER_H
+#pragma once
 
 #include "GraspPlanning.h"
 #include <vector>
@@ -51,4 +50,3 @@ namespace GraspPlanning
 
     };
 }
-#endif // MESHCONVERTER_H

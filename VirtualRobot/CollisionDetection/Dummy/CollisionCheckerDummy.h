@@ -1,6 +1,5 @@
 
-#ifndef _VirtualRobot_CollisionCheckerDummy_h_
-#define _VirtualRobot_CollisionCheckerDummy_h_
+#pragma once
 
 #include "../../VirtualRobotImportExport.h"
 #include "../CollisionCheckerImplementation.h"
@@ -80,4 +79,3 @@ namespace VirtualRobot
 
 }
 
-#endif // _VirtualRobot_CollisionCheckerDummy_h_

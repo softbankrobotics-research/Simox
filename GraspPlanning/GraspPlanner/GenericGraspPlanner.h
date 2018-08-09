@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_GENERIC_GRASP_PLANNER_H_
-#define _GRASP_PLANNING_GENERIC_GRASP_PLANNER_H_
+#pragma once
 
 #include "../GraspPlanning.h"
 #include "GraspPlanner.h"
@@ -52,7 +51,7 @@ namespace GraspPlanning
         GenericGraspPlanner(const VirtualRobot::GraspSetPtr &graspSet, const GraspPlanning::GraspQualityMeasurePtr &graspQuality, const GraspPlanning::ApproachMovementGeneratorPtr &approach, float minQuality = 0.0f, bool forceClosure = true);
 
         // destructor
-        virtual ~GenericGraspPlanner();
+        ~GenericGraspPlanner() override;
 
         /*!
             Creates new grasps.
@@ -60,8 +59,9 @@ namespace GraspPlanning
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of generated grasps.
         */
-        virtual int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>()) override;
+        int plan(int nrGrasps, int timeOutMS = 0, std::vector<VirtualRobot::ModelPtr> obstacles = std::vector<VirtualRobot::ModelPtr>()) override;
 
+        VirtualRobot::GraspPtr planGrasp(const std::vector<VirtualRobot::ModelPtr> &obstacles = std::vector<VirtualRobot::ModelPtr>());
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
 
@@ -78,7 +78,6 @@ namespace GraspPlanning
 
         bool timeout();
 
-        VirtualRobot::GraspPtr planGrasp(const std::vector<VirtualRobot::ModelPtr> &obstacles);
 
         VirtualRobot::ModelPtr object;
         VirtualRobot::EndEffectorPtr eef;
@@ -95,4 +94,3 @@ namespace GraspPlanning
     };
 }
 
-#endif /* __GENERIC_GRASP_PLANNER_H__ */

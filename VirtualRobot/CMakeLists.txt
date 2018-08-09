@@ -54,6 +54,7 @@ Visualization/SelectionGroup.cpp
 Visualization/SelectionManager.cpp
 Visualization/ColorMap.cpp
 Visualization/TriMeshModel.cpp
+Visualization/TriMeshUtils.cpp
 Visualization/OffscreenRenderer.cpp
 XML/BaseIO.cpp
 XML/ModelIO.cpp
@@ -149,6 +150,43 @@ Scene.cpp
 VirtualRobotException.cpp
 VirtualRobot.cpp
 Tools/Gravity.cpp
+Random.cpp
+
+math/Contact.cpp
+math/ContactList.cpp
+math/Line.cpp
+math/LineStrip.cpp
+math/Bezier.cpp
+math/LinearContinuedBezier.cpp
+math/LineR2.cpp
+math/AbstractFunctionR1R2.cpp
+math/AbstractFunctionR1R3.cpp
+math/AbstractFunctionR1R6.cpp
+math/AbstractFunctionR2R3.cpp
+math/CompositeFunctionR1R6.cpp
+math/TransformedFunctionR1R3.cpp
+math/TransformedFunctionR2R3.cpp
+math/LinearInterpolatedOrientation.cpp
+math/FitPlane.cpp
+math/Plane.cpp
+math/Triangle.cpp
+math/ImplicitPlane.cpp
+math/GaussianObjectModel.cpp
+math/GaussianObjectModelNormals.cpp
+math/ImplicitObjectModel.cpp
+math/Kernels.cpp
+math/GaussianImplicitSurface3D.cpp
+math/GaussianImplicitSurface3DNormals.cpp
+math/GaussianImplicitSurface3DCombined.cpp
+math/DataR3R1.cpp
+math/DataR3R2.cpp
+math/Helpers.cpp
+math/Index3.cpp
+math/MarchingCubes.cpp
+math/Primitive.cpp
+math/WeightedAverage.cpp
+math/Grid3D.cpp
+math/GridCacheFloat3.cpp
 )
 
 SET(INCLUDES
@@ -166,7 +204,7 @@ Visualization/SelectionGroup.h
 Visualization/SelectionManager.h
 Visualization/ColorMap.h
 Visualization/TriMeshModel.h
-Visualization/TriangleFace.h
+Visualization/TriMeshUtils.h
 Visualization/OffscreenRenderer.h
 XML/BaseIO.h
 XML/ModelIO.h
@@ -272,8 +310,70 @@ Trajectory.h
 Scene.h
 VirtualRobot.h
 Tools/Gravity.h
+Random.h
+
+math/MathForwardDefinitions.h
+math/Contact.h
+math/ContactList.h
+math/Line.h
+math/LineStrip.h
+math/Bezier.h
+math/LinearContinuedBezier.h
+math/LineR2.h
+math/AbstractFunctionR1R2.h
+math/AbstractFunctionR1R3.h
+math/AbstractFunctionR1R6.h
+math/AbstractFunctionR1Ori.h
+math/AbstractFunctionR2R3.h
+math/AbstractFunctionR3R1.h
+math/TransformedFunctionR1R3.h
+math/TransformedFunctionR2R3.h
+math/SimpleAbstractFunctionR1R3.h
+math/SimpleAbstractFunctionR1R6.h
+math/SimpleAbstractFunctionR1Ori.h
+math/SimpleAbstractFunctionR2R3.h
+math/SimpleAbstractFunctionR3R1.h
+math/CompositeFunctionR1R6.h
+math/LinearInterpolatedOrientation.h
+math/FitPlane.h
+math/Plane.h
+math/Triangle.h
+math/ImplicitPlane.h
+math/ImplicitObjectModel.cpp
+math/GaussianObjectModel.h
+math/GaussianObjectModelNormals.h
+math/Kernels.h
+math/GaussianImplicitSurface3D.h
+math/GaussianImplicitSurface3DNormals.h
+math/GaussianImplicitSurface3DCombined.h
+math/DataR3R1.h
+math/DataR3R2.h
+math/Helpers.h
+math/Index3.h
+math/Array3D.h
+math/MarchingCubes.h
+math/Primitive.h
+math/Grid3D.h
+math/GridCacheFloat3.h
+math/WeightedAverage.h
 
 )
+
+if (Simox_USE_RBDL AND RBDL_FOUND)
+    SET(SOURCES
+        ${SOURCES}
+        Dynamics/dynamics.cpp
+    )
+
+    SET(INCLUDES
+        ${INCLUDES}
+        Dynamics/dynamics.h
+    )
+
+    if(BUILD_TESTING)
+        ADD_SUBDIRECTORY(Dynamics/tests)
+    endif()
+endif ()
 
 if (Simox_USE_NLOPT AND NLOPT_FOUND)
     SET(SOURCES ${SOURCES}
@@ -295,6 +395,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinOffscreenRenderer.cpp
     Visualization/CoinVisualization/CoinUtil.cpp
     Visualization/CoinVisualization/CoinSelectionGroup.cpp
+#    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.cpp
     )
 
     SET(INCLUDES
@@ -305,6 +406,7 @@ if (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")
     Visualization/CoinVisualization/CoinOffscreenRenderer.h
     Visualization/CoinVisualization/CoinUtil.h
     Visualization/CoinVisualization/CoinSelectionGroup.h
+#    Workspace/ReachabilityInversion/Visualization/InverseReachabilityCoinVisualization.h
     )
 
     if(BUILD_TESTING)

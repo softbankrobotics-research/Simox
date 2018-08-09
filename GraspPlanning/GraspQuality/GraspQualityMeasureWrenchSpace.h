@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_WRENCH_H_
-#define _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_WRENCH_H_
+#pragma once
 
 #include "../GraspPlanning.h"
 #include "GraspQualityMeasure.h"
@@ -49,7 +48,7 @@ namespace GraspPlanning
 		*/
         GraspQualityMeasureWrenchSpace(const VirtualRobot::ModelPtr &object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
         // destructor
-        ~GraspQualityMeasureWrenchSpace();
+        ~GraspQualityMeasureWrenchSpace() override;
 
 
         /*!
@@ -65,7 +64,7 @@ namespace GraspPlanning
             with f_max_ows = max distance of OWS hull center to one of its facets
             -> also known as "epsilon" quality == radius of larges enclosing 6D ball
         */
-        virtual float getGraspQuality() override;
+        float getGraspQuality() override;
 
         /*!
             Volume grasp quality ratio of GWS volume / OWS volume
@@ -76,7 +75,7 @@ namespace GraspPlanning
         /*
             Checks if wrench space origin is inside GWS-Hull
         */
-        virtual bool isGraspForceClosure() override;
+        bool isGraspForceClosure() override;
 
         /*
             Returns the internally calculated convex hull object (ObjectWrenchSpace)
@@ -120,14 +119,14 @@ namespace GraspPlanning
         the contact points are normalized by subtracting the COM
         the contact normals are normalize to unit length
         */
-        virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints) override;
-        virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints) override;
+        void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints) override;
+        void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints) override;
 
-        virtual bool calculateGraspQuality() override;
-        virtual bool calculateObjectProperties() override;
+        bool calculateGraspQuality() override;
+        bool calculateObjectProperties() override;
 
         //! Returns description of this object
-        virtual std::string getName() override;
+        std::string getName() override;
 
         virtual float getOWSMinOffset()
         {
@@ -173,4 +172,3 @@ namespace GraspPlanning
 
 } // namespace
 
-#endif /* __GRASP_QUALTIY_MEASURE_WRENCH_H__ */

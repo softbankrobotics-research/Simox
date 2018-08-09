@@ -511,6 +511,11 @@ namespace VirtualRobot
         return getPseudoInverseJacobianMatrix(FramePtr(), mode);
     }
 
+    Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix()
+    {
+        return getPseudoInverseJacobianMatrix(FramePtr());
+    }
+
     Eigen::MatrixXf DifferentialIK::getPseudoInverseJacobianMatrix(const FramePtr& tcp, IKSolver::CartesianSelection mode)
     {
 #ifdef CHECK_PERFORMANCE

@@ -167,7 +167,7 @@ namespace VirtualRobot
         // write triangles
         for (size_t i=0; i<t->faces.size(); i++)
         {
-            TriangleFace& face = t->faces.at(i);
+            MathTools::TriangleFace& face = t->faces.at(i);
             auto& p1 = t->vertices.at(face.id1);
             auto& p2 = t->vertices.at(face.id2);
             auto& p3 = t->vertices.at(face.id3);

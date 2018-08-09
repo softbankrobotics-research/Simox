@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __MotionPlanning_PathProcessor_h__
-#define __MotionPlanning_PathProcessor_h__
+#pragma once
 
 #include "../MotionPlanning.h"
 
@@ -71,4 +70,3 @@ namespace MotionPlanning
 
 } // namespace
 
-#endif // __MotionPlanning_CPathProcessor_h__

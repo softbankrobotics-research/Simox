@@ -25,6 +25,7 @@
 
 #include "../../Tools/ConditionedLock.h"
 #include "ModelNode.h"
+#include "../../VirtualRobot.h"
 
 namespace VirtualRobot
 {

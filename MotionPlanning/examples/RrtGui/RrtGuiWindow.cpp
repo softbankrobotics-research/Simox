@@ -390,7 +390,7 @@ void RrtGuiWindow::selectColModelEnv(const std::string& colModel)
     {
         if (r->getName() == colModel)
         {
-            selectColModelEnv(r);
+            selectColModelEnv(i);
             UI.comboBoxColModelEnv->setCurrentIndex(i);
             return;
         }
@@ -515,21 +515,29 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         VR_WARNING << mns->getName() << " is not a linkset" << endl;
 }
 
-void RrtGuiWindow::selectColModelEnv(ModelSetPtr &mns)
+void RrtGuiWindow::selectColModelEnv(int nr)
 {
+    // TODO check functionality
     colModelEnv.clear();
 
-    if (mns->getSize()!=1)
+    if (!scene)
     {
-        VR_ERROR << "Model sets with size != currently not supported... Envirnment will be ignored for collision checking..." << endl;
         return;
     }
-    ModelPtr o = mns->getModel(0);
+
+    std::vector<ModelSetPtr> rnss = scene->getModelSets();
+
+    if (nr < 0 || nr >= (int)rnss.size())
+    {
+        return;
+    }
+
+    ModelPtr o = rnss[nr]->getModel(0);
     std::vector<ModelLinkPtr> links = o->getLinks();
     if (links.size()>0)
         this->colModelEnv = links;
     else
-        VR_WARNING << mns->getModel(0)->getName() << " does not provide links" << endl;
+        VR_WARNING << rnss[nr]->getModel(0)->getName() << " does not provide links" << endl;
 }
 
 void RrtGuiWindow::buildRRTVisu()

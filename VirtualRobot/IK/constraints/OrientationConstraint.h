@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_OrientationConstraint_h_
-#define _VirtualRobot_OrientationConstraint_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -36,9 +35,9 @@ namespace VirtualRobot
         OrientationConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Matrix3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 1.0f * M_PI / 180.0f, bool soft=false);
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
-        virtual bool checkTolerances() override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        bool checkTolerances() override;
 
     protected:
         ModelPtr robot;
@@ -55,6 +54,5 @@ namespace VirtualRobot
     typedef std::shared_ptr<OrientationConstraint> OrientationConstraintPtr;
 }
 
-#endif
 
 

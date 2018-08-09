@@ -1,14 +1,14 @@
 
-#ifndef __IKRRT_WINDOW_H_
-#define __IKRRT_WINDOW_H_
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
 #include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
@@ -18,8 +18,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/AbstractViewer.h>
+#include <Gui/ViewerFactory.h>
 
 #include <vector>
 
@@ -30,7 +30,7 @@ class IKRRTWindow : public QMainWindow
     Q_OBJECT
 public:
     IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob);
-    ~IKRRTWindow();
+    ~IKRRTWindow() override;
 
     void redraw();
 public slots:
@@ -38,7 +38,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
 
@@ -74,6 +74,7 @@ protected:
     void loadReach();
 
     void setupUI();
+    QString formatString(const char* s, float f);
 
     void buildGraspSetVisu();
 
@@ -119,4 +120,3 @@ protected:
     //VirtualRobot::VisualizationPtr visualizationObject;
 };
 
-#endif

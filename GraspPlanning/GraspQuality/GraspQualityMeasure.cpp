@@ -56,8 +56,8 @@ namespace GraspPlanning
         }
 
         int nLoopCount = 0;
-        std::vector<TriangleFace> vFaceCopy = model->faces;
-        std::vector<TriangleFace>::iterator iFaceIter;
+        std::vector<VirtualRobot::MathTools::TriangleFace> vFaceCopy = model->faces;
+        std::vector<VirtualRobot::MathTools::TriangleFace>::iterator iFaceIter;
 
         while (nLoopCount < nFaces && vFaceCopy.size() > 0)
         {

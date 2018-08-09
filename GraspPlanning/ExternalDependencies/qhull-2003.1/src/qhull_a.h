@@ -19,8 +19,7 @@
        use '#include qhull/qhull_a.h' to avoid name clashes
 */
 
-#ifndef qhDEFqhulla
-#define qhDEFqhulla
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -124,4 +123,3 @@ void    qh_allstatH(void);
 void    qh_freebuffers(void);
 void    qh_initbuffers(coordT* points, int numpoints, int dim, boolT ismalloc);
 
-#endif /* qhDEFqhulla */

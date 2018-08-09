@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_JacobiProvider_h_
-#define _VirtualRobot_JacobiProvider_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Model/Nodes/ModelNode.h"
@@ -122,4 +121,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<JacobiProvider> JacobiProviderPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_JacobiProvider_h_

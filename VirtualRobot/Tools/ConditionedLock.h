@@ -1,5 +1,4 @@
-#ifndef __CONDITIONED_LOCK__
-#define __CONDITIONED_LOCK__
+#pragma once
 
 #include <memory>
 #include <mutex>
@@ -35,4 +34,3 @@ typedef ConditionedLock<std::unique_lock<std::recursive_mutex> > WriteLock;
 typedef std::shared_ptr< ReadLock > ReadLockPtr;
 typedef std::shared_ptr< WriteLock > WriteLockPtr;
 
-#endif

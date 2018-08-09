@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ForceTorqueSensor_h_
-#define _VirtualRobot_ForceTorqueSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -87,4 +86,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 }
 
-#endif

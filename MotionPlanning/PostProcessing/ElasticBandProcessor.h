@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __MotionPlanning_ElasticBandProcessor_h__
-#define __MotionPlanning_ElasticBandProcessor_h__
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "PathProcessor.h"
@@ -45,10 +44,10 @@ namespace MotionPlanning
                              VirtualRobot::ModelLinkPtr node,               // the distance for this node is considered
                              VirtualRobot::ModelSetPtr obstacles,     // these obstacles are considered for path smoothing
                              bool verbose = false);
-        virtual ~ElasticBandProcessor();
+        ~ElasticBandProcessor() override;
 
         //! A wrapper to the standard interface.
-        virtual CSpacePathPtr optimize(int optimizeSteps) override;
+        CSpacePathPtr optimize(int optimizeSteps) override;
 
         //! could also be used to disable specific dimensions
         void setWeights (Eigen::VectorXf w);
@@ -93,4 +92,3 @@ namespace MotionPlanning
 
 }// namespace
 
-#endif // __MotionPlanning_ElasticBandProcessor_h__

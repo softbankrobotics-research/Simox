@@ -346,7 +346,7 @@ namespace VirtualRobot
 
                 short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
                 short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
-                TriangleFace face;
+                MathTools::TriangleFace face;
                 face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
                                                                      triMesh->vertices[rt],
                                                                      triMesh->vertices[lb]);
@@ -364,7 +364,7 @@ namespace VirtualRobot
                 triMesh->addFace(face);
 
 
-                TriangleFace face2;
+                MathTools::TriangleFace face2;
                 face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
                                                                       triMesh->vertices[rb],
                                                                       triMesh->vertices[lb]);

@@ -14,8 +14,7 @@ subject to the following restrictions:
 */
 
 
-#ifndef GLUT_DEMO_APPLICATION_H
-#define GLUT_DEMO_APPLICATION_H
+#pragma once
 
 #include "DemoApplication.h"
 
@@ -26,12 +25,11 @@ public:
 
     BT_DECLARE_ALIGNED_ALLOCATOR();
 
-    virtual void specialKeyboard(int key, int x, int y) override;
+    void specialKeyboard(int key, int x, int y) override;
 
-    virtual void swapBuffers() override;
+    void swapBuffers() override;
 
-    virtual void updateModifierKeys() override;
+    void updateModifierKeys() override;
 
 };
-#endif //GLUT_DEMO_APPLICATION_H
 

@@ -21,18 +21,15 @@
 *
 */
 
-#ifndef _GraspStudio_GraspEvaluationPoseUncertainty_h_
-#define _GraspStudio_GraspEvaluationPoseUncertainty_h_
+#pragma once
 
-#include "VirtualRobot/VirtualRobot.h"
+#include <VirtualRobot/VirtualRobot.h>
 
 #include "../GraspPlanning.h"
 #include "GraspQualityMeasure.h"
 
 #include <string>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 namespace GraspPlanning
 {
@@ -155,4 +152,3 @@ typedef std::shared_ptr<GraspEvaluationPoseUncertainty> GraspEvaluationPoseUncer
 
 }
 
-#endif

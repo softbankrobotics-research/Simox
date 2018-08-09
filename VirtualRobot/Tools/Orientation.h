@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Orientation_h_
-#define _VirtualRobot_Orientation_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "MathTools.h"
@@ -59,4 +58,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif

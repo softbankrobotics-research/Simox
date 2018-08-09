@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_AdvancedIKSolver_h_
-#define _VirtualRobot_AdvancedIKSolver_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -53,6 +52,8 @@ namespace VirtualRobot
 			\param collisionModels Optionoal: use this models for collisiond etection
         */
         AdvancedIKSolver(const JointSetPtr &rns, const LinkSetPtr &collisionModels = LinkSetPtr());
+
+        ~AdvancedIKSolver() override = default;
 
 		/*! Steup the model links that should be used for collision detection
 		*/
@@ -90,7 +91,7 @@ namespace VirtualRobot
             \param maxErrorPositionMM The maximum position error that is allowed, given in millimeter.
             \param maxErrorOrientationRad The maximum orientation error that is allowed, given in radian (0.02 is approx 1 degree).
         */
-        virtual void setMaximumError(float maxErrorPositionMM = 1.0f, float maxErrorOrientationRad = 0.02);
+        virtual void setMaximumError(float maxErrorPositionMM = 1.0f, float maxErrorOrientationRad = 0.02f);
 
         /*!
             When set, the reachability data is used to quickly decide if a given pose or grasp is reachable or not.
@@ -144,6 +145,9 @@ namespace VirtualRobot
         */
         virtual bool checkReachable(const Eigen::Matrix4f& globalPose);
 
+
+        LinkSetPtr getLinkSet() const;
+
     protected:
 
 
@@ -153,7 +157,7 @@ namespace VirtualRobot
             return solve(globalPose, selection, maxLoops);
         }
 
-		LinkSetPtr colSet;
+        LinkSetPtr colSet;
         CDManagerPtr cdm;
 
         float maxErrorPositionMM;
@@ -165,4 +169,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<AdvancedIKSolver> AdvancedIKSolverPtr;
 } // namespace VirtualRobot
 
-#endif

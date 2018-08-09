@@ -14,8 +14,7 @@ subject to the following restrictions:
 */
 
 
-#ifndef GL_DIALOG_DYNAMICS_WORLD_H
-#define GL_DIALOG_DYNAMICS_WORLD_H
+#pragma once
 
 class btDiscreteDynamicsWorld;
 class GL_DialogWindow;
@@ -88,4 +87,3 @@ public:
 
 };
 
-#endif //GL_DIALOG_DYNAMICS_WORLD_H

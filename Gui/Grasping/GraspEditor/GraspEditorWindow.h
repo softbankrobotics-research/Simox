@@ -1,7 +1,7 @@
 
-#ifndef __GraspEditor_WINDOW_H_
-#define __GraspEditor_WINDOW_H_
+#pragma once
 
+#include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Model/Nodes/ModelNode.h>
@@ -19,7 +19,7 @@
 #include <QtCore/QtCore>
 #include <QTimer>
 
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/ViewerFactory.h>
 
 #include <vector>
 
@@ -39,14 +39,14 @@ namespace VirtualRobot
         Q_OBJECT
     public:
         GraspEditorWindow(std::string& objFile, std::string& robotFile, bool embeddedGraspEditor = false);
-        virtual ~GraspEditorWindow();
+        ~GraspEditorWindow() override;
 
     public slots:
         /*! Closes the window and exits SoQt runloop. */
         void quit();
 
         /*!< Overriding the close event, so we know when the window was closed by the user. */
-        virtual void closeEvent(QCloseEvent* event) override;
+        void closeEvent(QCloseEvent* event) override;
 
         void loadObject();
         void loadRobot();
@@ -81,6 +81,7 @@ namespace VirtualRobot
     protected:
 
         void setupUI();
+        QString formatString(const char* s, float f);
 
         void updateEEFBox();
         void updateGraspBox();
@@ -115,4 +116,3 @@ namespace VirtualRobot
     };
 
 }
-#endif // __GraspEditor_WINDOW_H_

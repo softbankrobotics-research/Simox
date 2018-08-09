@@ -468,5 +468,7 @@ namespace VirtualRobot
         models2.push_back(m2);
         VirtualRobot::LinkSetPtr cms2 = VirtualRobot::LinkSet::createLinkSet(m2->getModel(), "", models2);
         addCollisionModelPair(cms, cms2);
+
     }
+
 }

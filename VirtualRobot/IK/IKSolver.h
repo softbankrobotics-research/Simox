@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_IKSolver_h_
-#define _VirtualRobot_IKSolver_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Model/Nodes/ModelNode.h"
@@ -56,11 +55,13 @@ namespace VirtualRobot
         };
 
         IKSolver(const JointSetPtr &rns);
+        virtual ~IKSolver() = default;
 
-		JointSetPtr getJointSet();
-		FramePtr getTcp();
+        JointSetPtr getJointSet() const;
+        FramePtr getTcp() const;
 
-		void setVerbose(bool enable);
+        virtual void setVerbose(bool enable);
+        bool isVerbose() const;
 
 	protected:
 		JointSetPtr rns;
@@ -72,4 +73,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_IKSolver_h_

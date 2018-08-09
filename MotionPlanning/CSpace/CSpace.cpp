@@ -13,7 +13,8 @@
 #include <fstream>
 #include <iomanip>
 #include <time.h>
-
+#include <VirtualRobot/Tools/MathTools.h>
+#include <VirtualRobot/Random.h>
 #define GET_RANDOM_DATA_FROM_64BIT_ADDRESS(a) (int)(0xFF & (long)a) | (0xFF00 & ((long)a >> 16))
 
 using namespace std;
@@ -41,19 +42,10 @@ namespace MotionPlanning
         robo = robot;
         cdm = collisionManager;
 
-        if (randomSeed == 0)
+        if (randomSeed != 0)
         {
-#ifdef __LP64__
-            // This is for machines with 64Bit addresses and 32Bit int datatype
-            randomSeed = (unsigned int)(time(nullptr) + (GET_RANDOM_DATA_FROM_64BIT_ADDRESS(this))) % 10000;
-#else
-            randomSeed = (unsigned int)(time(nullptr) + (int)this) % 10000;
-#endif
+            VirtualRobot::PRNG64Bit().seed(randomSeed);
         }
-
-        this->randomSeed = randomSeed;
-
-        randMult = (float)(1.0 / (double)(RAND_MAX));
 
         useMetricWeights = false;
         multiThreaded = false;
@@ -65,8 +57,6 @@ namespace MotionPlanning
         {
             THROW_MOTIONPLANNING_EXCEPTION("CSpace: Initialization fails: NO ROBOT");
         }
-
-        srand(randomSeed);
         //std::cout << "Using random seed: " << m_randomSeed << std::endl;
 
         dimension = 0;
@@ -111,7 +101,7 @@ namespace MotionPlanning
 
         checkForBorderlessDimensions(checkForBorderlessDims);
 
-        MOTIONPLANNING_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
+//        MOTIONPLANNING_INFO << " dimension: " << dimension << ", random Seed: " << randomSeed << endl;
 
         // allocate configs
         maxNodes = maxConfigs;
@@ -140,6 +130,11 @@ namespace MotionPlanning
     void CSpace::requestStop()
     {
         stopPathCheck = true;
+    }
+
+    void CSpace::setRandomSeed(unsigned int random_seed)
+    {
+        VirtualRobot::PRNG64Bit().seed(random_seed);
     }
 
     void CSpace::reset()
@@ -243,7 +238,7 @@ namespace MotionPlanning
 
     void CSpace::setBoundaries(const Eigen::VectorXf& min, const Eigen::VectorXf& max)
     {
-		MOTIONPLANNING_ASSERT(min.rows() == dimension);
+        MOTIONPLANNING_ASSERT(min.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -254,7 +249,7 @@ namespace MotionPlanning
 
     void CSpace::setBoundary(unsigned int dim, float min, float max)
     {
-		MOTIONPLANNING_ASSERT(dim < dimension);
+        MOTIONPLANNING_ASSERT(dim < dimension);
 
         if (min > max)
         {
@@ -271,7 +266,7 @@ namespace MotionPlanning
 
     void CSpace::setMetricWeights(const Eigen::VectorXf& weights)
     {
-		MOTIONPLANNING_ASSERT(weights.rows() == dimension);
+        MOTIONPLANNING_ASSERT(weights.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -305,8 +300,8 @@ namespace MotionPlanning
 
     float CSpace::calcDist2(const Eigen::VectorXf& c1, const Eigen::VectorXf& c2, bool forceDisablingMetricWeights)
     {
-		MOTIONPLANNING_ASSERT(c1.rows() == dimension);
-		MOTIONPLANNING_ASSERT(c2.rows() == dimension);
+        MOTIONPLANNING_ASSERT(c1.rows() == dimension);
+        MOTIONPLANNING_ASSERT(c2.rows() == dimension);
 
         float res = 0.0f;
         float dist;
@@ -318,10 +313,7 @@ namespace MotionPlanning
             if (borderLessDimension[i])
             {
                 // borderless
-                if (fabs(dist) > M_PI)
-                {
-                    dist = 2.0f * (float)M_PI - fabs(dist);
-                }
+                dist = fabs(VirtualRobot::MathTools::AngleDelta(c1[i], c2[i]));
             }
 
             if (useMetricWeights && !forceDisablingMetricWeights)
@@ -341,9 +333,9 @@ namespace MotionPlanning
 
     void CSpace::generateNewConfig(const Eigen::VectorXf& randomConfig, const Eigen::VectorXf& nearestConfig, Eigen::VectorXf& storeNewConfig, float stepSize, float preCalculatedDist /*=-1.0*/)
     {
-		MOTIONPLANNING_ASSERT(randomConfig.rows() == dimension);
-		MOTIONPLANNING_ASSERT(nearestConfig.rows() == dimension);
-		MOTIONPLANNING_ASSERT(storeNewConfig.rows() == dimension);
+        MOTIONPLANNING_ASSERT(randomConfig.rows() == dimension);
+        MOTIONPLANNING_ASSERT(nearestConfig.rows() == dimension);
+        MOTIONPLANNING_ASSERT(storeNewConfig.rows() == dimension);
 
         if (preCalculatedDist < 0)
         {
@@ -368,9 +360,9 @@ namespace MotionPlanning
 
     void CSpace::getDirectionVector(const Eigen::VectorXf& c1, const Eigen::VectorXf& c2, Eigen::VectorXf& storeDir, float length)
     {
-		MOTIONPLANNING_ASSERT(c1.rows() == dimension);
-		MOTIONPLANNING_ASSERT(c2.rows() == dimension);
-		MOTIONPLANNING_ASSERT(storeDir.rows() == dimension);
+        MOTIONPLANNING_ASSERT(c1.rows() == dimension);
+        MOTIONPLANNING_ASSERT(c2.rows() == dimension);
+        MOTIONPLANNING_ASSERT(storeDir.rows() == dimension);
         float l = calcDist(c1, c2);
 
         if (l == 0.0)
@@ -406,7 +398,7 @@ namespace MotionPlanning
         }
 
         // set configuration (joint values)
-		robotNodes->setJointValues(config);
+        robotNodes->setJointValues(config);
         float d = cdm?cdm->getDistance():1.0f;
 
         if (multiThreaded)
@@ -457,7 +449,7 @@ namespace MotionPlanning
         }
 
         // set configuration (joint values)
-		robotNodes->setJointValues(config);
+        robotNodes->setJointValues(config);
         bool res = cdm?cdm->isInCollision():false;
 
         if (multiThreaded)
@@ -483,7 +475,7 @@ namespace MotionPlanning
 
     bool CSpace::isInBoundary(const Eigen::VectorXf& config)
     {
-		MOTIONPLANNING_ASSERT(config.rows() == dimension);
+        MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         // check boundaries
         for (unsigned int i = 0; i < dimension; i++)
@@ -499,7 +491,7 @@ namespace MotionPlanning
 
     bool CSpace::isConfigValid(const Eigen::VectorXf& config, bool checkBorders, bool checkCollisions, bool checkConstraints)
     {
-		MOTIONPLANNING_ASSERT(config.rows() == dimension);
+        MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         // check boundaries
         if (checkBorders && !isInBoundary(config))
@@ -562,7 +554,7 @@ namespace MotionPlanning
 
     void CSpace::respectBoundaries(Eigen::VectorXf& config)
     {
-		MOTIONPLANNING_ASSERT(config.rows() == dimension);
+        MOTIONPLANNING_ASSERT(config.rows() == dimension);
 
         for (unsigned int i = 0; i < dimension; i++)
         {
@@ -614,9 +606,9 @@ namespace MotionPlanning
 
     float CSpace::interpolate(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2, int dim, float step)
     {
-		MOTIONPLANNING_ASSERT(q1.rows() == dimension);
-		MOTIONPLANNING_ASSERT(q2.rows() == dimension);
-        MOTIONPLANNING_ASSERT(dim >= 0 && dim < (int)robotJoints.size())
+        MOTIONPLANNING_ASSERT(q1.rows() == dimension);
+        MOTIONPLANNING_ASSERT(q2.rows() == dimension);
+        MOTIONPLANNING_ASSERT_MESSAGE((dim >= 0 && dim < (int)robotJoints.size()),  static_cast<std::stringstream&>(std::stringstream() << "Dim " << dim << " out of bounds..." << endl).str().c_str());
 
         // translational joint
         if (robotJoints[dim]->getType() == VirtualRobot::ModelNode::ModelNodeType::JointPrismatic)
@@ -676,7 +668,7 @@ namespace MotionPlanning
     {
         MOTIONPLANNING_ASSERT(dim <= dimension)
 
-        float res = (float)rand() * randMult; // value from 0 to 1
+        float res = VirtualRobot::RandomFloat(); // value from 0 to 1
         res = boundaryMin[dim] + (boundaryDist[dim] * res);
         return res;
     }
@@ -697,7 +689,7 @@ namespace MotionPlanning
 
                 for (unsigned int i = 0; i < dimension; i++)
                 {
-                    t = (float)rand() * randMult; // value from 0 to 1
+                    t = VirtualRobot::RandomFloat(); // value from 0 to 1
                     config[i] = boundaryMin[i] + (boundaryDist[i] * t);
                 }
             }

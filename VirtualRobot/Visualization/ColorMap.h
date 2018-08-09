@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ColorMap_h_
-#define _VirtualRobot_ColorMap_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "VisualizationFactory.h"
@@ -78,4 +77,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_ColorMap_h_

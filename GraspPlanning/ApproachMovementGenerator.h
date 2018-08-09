@@ -20,11 +20,10 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_H_
-#define _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_H_
+#pragma once
 
 #include "GraspPlanning.h"
-#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Model/Model.h>
 #include <vector>
 #include <string>
@@ -108,4 +107,3 @@ protected:
 
 }
 
-#endif /* __APPROACH_MOVEMENT_GENERATOR_H__ */

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_CSpaceSampled_h
-#define _MotionPlanning_CSpaceSampled_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "CSpace.h"
@@ -74,7 +73,7 @@ namespace MotionPlanning
                       const VirtualRobot::JointSetPtr &robotNodes,
                       unsigned int maxConfigs = 50000, unsigned int randomSeed = 0);
 
-        virtual ~CSpaceSampled();
+        ~CSpaceSampled() override;
 
         //! sets sampling step size (used when adding new paths in CSpace)
         void setSamplingSize(float fSize);
@@ -93,7 +92,7 @@ namespace MotionPlanning
 
 
 
-        virtual CSpacePtr clone(const VirtualRobot::CollisionCheckerPtr &newColChecker,
+        CSpacePtr clone(const VirtualRobot::CollisionCheckerPtr &newColChecker,
                                 const VirtualRobot::RobotPtr &newRobot,
                                 const VirtualRobot::CDManagerPtr &newCDM,
                                 unsigned int newRandomSeed = 0) override;
@@ -104,13 +103,13 @@ namespace MotionPlanning
             Recursion is performed maximal recursionMaxDepth times, since an array of temporary variables is used,
             in order to avoid slow allocating/deallocating of memory.
         */
-        virtual bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2) override;
+        bool isPathValid(const Eigen::VectorXf& q1, const Eigen::VectorXf& q2) override;
 
         /*!
         Create a path from start to goal without any checks.
         Intermediate configurations are added according to the current implementation of the cspace.
         */
-        virtual CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal) override;
+        CSpacePathPtr createPath(const Eigen::VectorXf& start, const Eigen::VectorXf& goal) override;
 
         /*!
             Create a path from start to the goal configuration.
@@ -119,7 +118,7 @@ namespace MotionPlanning
             \param goal The goal
             \param storeAddedLength The length of the valid path is stored here (1.0 means the complete path from start to goal was valid)
         */
-        virtual CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength) override;
+        CSpacePathPtr createPathUntilInvalid(const Eigen::VectorXf& start, const Eigen::VectorXf& goal, float& storeAddedLength) override;
 
 
     protected:
@@ -137,4 +136,3 @@ namespace MotionPlanning
 
 }
 
-#endif // _MotionPlanning_CSpaceSampled_h

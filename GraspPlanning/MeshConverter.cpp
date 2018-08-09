@@ -183,7 +183,7 @@ namespace GraspPlanning
             }
 
             // create face
-            TriangleFace face;
+            VirtualRobot::MathTools::TriangleFace face;
             face.id1 = id1;
             face.id2 = id2;
             face.id3 = id3;
@@ -241,7 +241,7 @@ namespace GraspPlanning
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-                TriangleFace face;
+                VirtualRobot::MathTools::TriangleFace face;
                 face.id1 = id4;
                 face.id2 = tm->faces[faceIdx].id2;
                 face.id3 = tm->faces[faceIdx].id3;
@@ -258,7 +258,7 @@ namespace GraspPlanning
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-				TriangleFace face;
+                VirtualRobot::MathTools::TriangleFace face;
                 face.id1 = tm->faces[faceIdx].id1;
                 face.id2 = id4;
                 face.id3 = tm->faces[faceIdx].id3;
@@ -275,7 +275,7 @@ namespace GraspPlanning
                 id4 = tm->vertices.size() - 1;
 
                 // add new face
-				TriangleFace face;
+                VirtualRobot::MathTools::TriangleFace face;
                 face.id1 = tm->faces[faceIdx].id1;
                 face.id2 = tm->faces[faceIdx].id2;
                 face.id3 = id4;

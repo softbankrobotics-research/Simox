@@ -219,6 +219,15 @@ namespace MotionPlanning
             cycles++;
             switched = !switched;
 
+            clock_t currentClock = clock();
+
+            long diffClock = (long)(((float)(currentClock - startClock) / (float)CLOCKS_PER_SEC) * 1000.0);
+            if(diffClock > planningTimeout)
+            {
+                std::cout << "Encountered timeout of " << planningTimeout << " ms - aborting" << std::endl;
+                return false;
+            }
+
         }
         while (!stopSearch && cycles < maxCycles && !found);
 

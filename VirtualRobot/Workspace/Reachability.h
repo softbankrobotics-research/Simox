@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Reachability_h_
-#define _VirtualRobot_Reachability_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "WorkspaceRepresentation.h"
@@ -68,7 +67,7 @@ namespace VirtualRobot
         /*!
             Creates a deep copy of this data structure. A ReachabilityPtr is returned.
         */
-        virtual WorkspaceRepresentationPtr clone() override;
+        WorkspaceRepresentationPtr clone() override;
 
     protected:
 
@@ -77,4 +76,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _Reachability_h_

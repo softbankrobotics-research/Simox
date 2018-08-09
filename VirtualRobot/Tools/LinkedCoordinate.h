@@ -21,8 +21,7 @@
 *             GNU General Public License
 */
 
-#ifndef _LinkedCoordinate_h_
-#define _LinkedCoordinate_h_
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 #include "../Model/Nodes/ModelNode.h"
@@ -173,4 +172,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _LinkedCoordinate_h_
