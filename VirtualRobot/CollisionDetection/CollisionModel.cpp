@@ -144,8 +144,7 @@ namespace VirtualRobot
                 p->margin = margin;
             }
             else
-            {
-                p->origVisualization->clone(deepVisuMesh, scaling);
+            {                
                 p->inflateModel(margin);
             }
 
