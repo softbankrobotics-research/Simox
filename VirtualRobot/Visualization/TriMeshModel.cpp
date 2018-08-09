@@ -855,6 +855,9 @@ namespace VirtualRobot
         r->vertices = vertices;
         r->faces = faces;
         r->boundingBox = boundingBox;
+        r->colors = colors;
+        r->materials = materials;
+        r->normals = normals;
         r->scale(scaleFactor);
         return r;
     }
