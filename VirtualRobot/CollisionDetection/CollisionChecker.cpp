@@ -461,6 +461,40 @@ namespace VirtualRobot
         }
     }
 
+    bool CollisionChecker::checkCollision(CollisionModelPtr model, const Eigen::Vector3f &point, float tolerance)
+    {
+        VR_ASSERT(model);
+        VR_ASSERT_MESSAGE(model->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
+        VR_ASSERT(isInitialized());
+
+        return collisionCheckerImplementation->checkCollision(model, point, tolerance);//, storeContact);
+    }
+
+    bool CollisionChecker::checkCollision(SceneObjectSetPtr modelSet, const Eigen::Vector3f &point, float tolerance)
+    {
+        VR_ASSERT(model1);
+        VR_ASSERT_MESSAGE(modelSet->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
+        VR_ASSERT(isInitialized());
+
+        std::vector< CollisionModelPtr > vColModels1 = modelSet->getCollisionModels();
+
+        if (vColModels1.size() == 0)
+        {
+            VR_WARNING << "no internal data for " << modelSet->getName() << endl;
+            return false;
+        }
+
+
+        for(auto & col : vColModels1)
+        {
+            if(checkCollision(col, point, tolerance))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     bool CollisionChecker::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2)
     {
         VR_ASSERT(model1 && model2);

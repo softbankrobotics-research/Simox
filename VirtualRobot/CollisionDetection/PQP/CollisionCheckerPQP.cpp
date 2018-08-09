@@ -17,6 +17,16 @@ namespace VirtualRobot
     CollisionCheckerPQP::CollisionCheckerPQP(): CollisionCheckerImplementation()
     {
         automaticSizeCheck = true;
+
+        PQP::PQP_REAL a[3] = {0.0f,0.0f,0.00001f};
+        PQP::PQP_REAL b[3] = {0.0f,0.00001f,0.00001f};
+        PQP::PQP_REAL c[3] = {0.0f,0.00001f,0.0f};
+
+
+        pointModel.reset(new PQP::PQP_Model());
+        pointModel->BeginModel();
+        pointModel->AddTri(a,b,c,CollisionModelImplementation::NextId());
+        pointModel->EndModel();
         pqpChecker = new PQP::PQP_Checker();
     }
 
@@ -90,6 +100,47 @@ namespace VirtualRobot
 
         return ((bool)(result.Colliding() != 0));
     }
+
+    bool CollisionCheckerPQP::checkCollision(CollisionModelPtr model1, const Eigen::Vector3f &point, float tolerance)
+    {
+        BOOST_ASSERT(model1);
+        BOOST_ASSERT(model1->getCollisionModelImplementation());
+        boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
+        VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
+
+        PQP::PQP_REAL R1[3][3];
+        PQP::PQP_REAL T1[3];
+        PQP::PQP_REAL R2[3][3];
+        PQP::PQP_REAL T2[3];
+        Eigen::Matrix4f pointPose = Eigen::Matrix4f::Identity();
+        pointPose.block<3,1>(0,3) = point;
+        __convEigen2Ar(model1->getCollisionModelImplementation()->getGlobalPose(), R1, T1);
+        __convEigen2Ar(pointPose, R2, T2);
+        if(tolerance == 0.0f)
+        {
+            PQP::PQP_CollideResult result;
+
+            pqpChecker->PQP_Collide(&result,
+                                    R1, T1, m1.get(),
+                                    R2, T2, pointModel.get(),
+                                    PQP::PQP_FIRST_CONTACT);
+            return ((bool)(result.Colliding() != 0));
+        }
+        else
+        {
+            PQP::PQP_ToleranceResult result;
+            pqpChecker->PQP_Tolerance(&result,
+                                      R1, T1, m1.get(),
+                                      R2, T2, pointModel.get(),
+                                      50);
+
+
+
+            return ((bool)(result.CloserThanTolerance() != 0));
+        }
+    }
+
+
     //
     // bool CollisionCheckerPQP::GetAllCollisonTriangles (SceneObjectSetPtr model1, SceneObjectSetPtr model2, std::vector<int> &storePairs)
     // {
@@ -345,3 +396,5 @@ namespace VirtualRobot
     }*/
 
 } // namespace
+
+
