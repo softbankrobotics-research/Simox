@@ -106,7 +106,7 @@ namespace VirtualRobot
         BOOST_ASSERT(model1);
         BOOST_ASSERT(model1->getCollisionModelImplementation());
         boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
-        VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
+        VR_ASSERT_MESSAGE(m1, "NULL data in ColChecker!");
 
         PQP::PQP_REAL R1[3][3];
         PQP::PQP_REAL T1[3];

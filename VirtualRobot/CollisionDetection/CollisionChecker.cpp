@@ -472,7 +472,7 @@ namespace VirtualRobot
 
     bool CollisionChecker::checkCollision(SceneObjectSetPtr modelSet, const Eigen::Vector3f &point, float tolerance)
     {
-        VR_ASSERT(model1);
+        VR_ASSERT(modelSet);
         VR_ASSERT_MESSAGE(modelSet->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
         VR_ASSERT(isInitialized());
 
