@@ -10,7 +10,7 @@
 #include "../XML/BaseIO.h"
 #include <cmath>
 #include <iomanip>
-
+#include <boost/optional/optional_io.hpp>
 #include <algorithm>
 
 #include <Eigen/Core>
@@ -125,6 +125,16 @@ namespace VirtualRobot
 
     }
 
+    bool RobotNode::getEnforceJointLimits() const
+    {
+        return enforceJointLimits;
+    }
+
+    void RobotNode::setEnforceJointLimits(bool value)
+    {
+        enforceJointLimits = value;
+    }
+
     RobotPtr RobotNode::getRobot() const
     {
         RobotPtr result(robot);
@@ -181,15 +191,17 @@ namespace VirtualRobot
         }
         else
         {
-            // non-limitless joint: clamp to borders
-            if (q < jointLimitLo)
+            if(enforceJointLimits)// non-limitless joint: clamp to borders
             {
-                q = jointLimitLo;
-            }
+                if (q < jointLimitLo)
+                {
+                    q = jointLimitLo;
+                }
 
-            if (q > jointLimitHi)
-            {
-                q = jointLimitHi;
+                if (q > jointLimitHi)
+                {
+                    q = jointLimitHi;
+                }
             }
         }
 
