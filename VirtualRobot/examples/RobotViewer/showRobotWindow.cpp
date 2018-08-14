@@ -628,7 +628,7 @@ void showRobotWindow::selectJoint(int nr)
     float j = currentRobotNode->getJointValue();
     UI.lcdNumberJointValue->display((double)j);
 
-    if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint()))
+    if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint() || currentRobotNode->isMetaJoint()))
     {
         UI.horizontalSliderPos->setEnabled(true);
         int pos = (int)((j - mi) / (ma - mi) * 1000.0f);

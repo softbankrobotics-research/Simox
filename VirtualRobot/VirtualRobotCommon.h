@@ -35,6 +35,8 @@
 #include <VirtualRobot/Nodes/RobotNodePrismaticFactory.h>
 #include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 #include <VirtualRobot/Nodes/RobotNodeRevoluteFactory.h>
+#include <VirtualRobot/Nodes/RobotNodeMeta.h>
+#include <VirtualRobot/Nodes/RobotNodeMetaFactory.h>
 #include <VirtualRobot/Nodes/RobotNodeFixed.h>
 #include <VirtualRobot/Nodes/RobotNodeFixedFactory.h>
 #include <VirtualRobot/Nodes/RobotNodeActuator.h>

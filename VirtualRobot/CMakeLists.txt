@@ -55,6 +55,8 @@ Nodes/RobotNodePrismatic.cpp
 Nodes/RobotNodePrismaticFactory.cpp
 Nodes/RobotNodeRevolute.cpp
 Nodes/RobotNodeRevoluteFactory.cpp
+Nodes/RobotNodeMeta.cpp
+Nodes/RobotNodeMetaFactory.cpp
 Nodes/RobotNodeFixed.cpp
 Nodes/RobotNodeFixedFactory.cpp
 Nodes/RobotNodeActuator.cpp
@@ -199,6 +201,8 @@ Nodes/RobotNodePrismatic.h
 Nodes/RobotNodePrismaticFactory.h
 Nodes/RobotNodeRevolute.h
 Nodes/RobotNodeRevoluteFactory.h
+Nodes/RobotNodeMeta.h
+Nodes/RobotNodeMetaFactory.h
 Nodes/RobotNodeFixed.h
 Nodes/RobotNodeFixedFactory.h
 Nodes/RobotNodeActuator.h

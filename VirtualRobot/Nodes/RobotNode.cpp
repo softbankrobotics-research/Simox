@@ -48,6 +48,7 @@ namespace VirtualRobot
         //globalPosePostJoint = Eigen::Matrix4f::Identity();
         jointValue = 0.0f;
         limitless = false;
+        dependent = false;
     }
 
 
@@ -414,6 +415,7 @@ namespace VirtualRobot
 
         cout << "* Limits: Lo: " << jointLimitLo << ", Hi: " << jointLimitHi << endl;
         cout << "* Limitless: " << (limitless ? "true" : "false") << endl;
+        cout << "* Dependent: " << (dependent ? "true" : "false") << endl;
         std::cout << "* max velocity " << maxVelocity  << " [m/s]" << std::endl;
         std::cout << "* max acceleration " << maxAcceleration  << " [m/s^2]" << std::endl;
         std::cout << "* max torque " << maxTorque  << " [Nm]" << std::endl;
@@ -562,6 +564,7 @@ namespace VirtualRobot
         result->setMaxAcceleration(maxAcceleration);
         result->setMaxTorque(maxTorque);
         result->setLimitless(limitless);
+        result->setDependent(dependent);
 
         std::map< std::string, float>::iterator it = propagatedJointValues.begin();
 
@@ -605,6 +608,11 @@ namespace VirtualRobot
         return false;
     }
 
+    bool RobotNode::isMetaJoint() const
+    {
+        return false;
+    }
+
     void RobotNode::setLimitless(bool limitless)
     {
         this->limitless = limitless;
@@ -613,6 +621,16 @@ namespace VirtualRobot
     bool RobotNode::isLimitless() const
     {
         return limitless;
+    }
+
+    void RobotNode::setDependent(bool dependent)
+    {
+        dependent = true;
+    }
+
+    bool RobotNode::isDependent() const
+    {
+        return dependent;
     }
 
     float RobotNode::getDelta(float target)

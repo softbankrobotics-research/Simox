@@ -189,12 +189,19 @@ namespace VirtualRobot
 
         virtual bool isTranslationalJoint() const;
         virtual bool isRotationalJoint() const;
+        virtual bool isMetaJoint() const;
 
         /**
          * @param limitless wheter this node has joint limits or not.
          */
         virtual void setLimitless(bool limitless);
         bool isLimitless() const;
+
+        /**
+         * @param dependent wheter the joint value of this node depends on another joint
+         */
+        virtual void setDependent(bool dependent);
+        bool isDependent() const;
 
         /**
          * @param target the target joint value in [rad]
@@ -375,6 +382,7 @@ namespace VirtualRobot
         float jointLimitLo, jointLimitHi;
         bool enforceJointLimits = true;
         bool limitless; // whether this joint has limits or not (ignored if nodeType != Joint).
+        bool dependent; // whether this joint depends on another joint or not (ignored if nodeType != Joint)
         DHParameter optionalDHParameter;            // When the joint is defined via DH parameters they are stored here
         float maxVelocity;          //! given in m/s
         float maxAcceleration;      //! given in m/s^2

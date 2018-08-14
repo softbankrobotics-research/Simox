@@ -9,13 +9,15 @@
 #include "../Nodes/SensorFactory.h"
 #include "../Nodes/RobotNodeFixedFactory.h"
 #include "../Nodes/RobotNodePrismatic.h"
+#include "../Nodes/RobotNodeMeta.h"
 #include "../Transformation/DHParameter.h"
 #include "../Visualization/VisualizationFactory.h"
 #include "../Visualization/TriMeshModel.h"
 #include "../RobotConfig.h"
 #include "../RuntimeEnvironment.h"
-#include "rapidxml.hpp"
 
+#include "rapidxml.hpp"
+#include "exprtk.hpp"
 
 #include <vector>
 #include <fstream>
@@ -233,6 +235,9 @@ namespace VirtualRobot
         float initialvalue = 0.0f;
         std::string jointType;
 
+        bool dependent = false;
+        std::map<std::string, std::string> dependency_functions;
+
         RobotNodePtr robotNode;
 
         if (!jointXMLNode)
@@ -272,6 +277,13 @@ namespace VirtualRobot
         if (attr)
         {
             initialvalue = convertToFloat(attr->value());
+        }
+
+        attr = jointXMLNode->first_attribute("dependent", 0, false);
+
+        if (attr)
+        {
+            dependent = isTrue(attr->value());
         }
 
         rapidxml::xml_node<>* node = jointXMLNode->first_node();
@@ -479,6 +491,39 @@ namespace VirtualRobot
                 scaleVisuFactor[1] = getFloatByAttributeName(node, "y");
                 scaleVisuFactor[2] = getFloatByAttributeName(node, "z");
             }
+            else if (nodeName == "dependency")
+            {
+                THROW_VR_EXCEPTION_IF(jointType != "meta", "Dependencies can only be specified for meta-type joints (" << nodeName << ")" << endl);
+
+                rapidxml::xml_attribute<>* attrChild;
+                attrChild = node->first_attribute("child", 0, false);
+                THROW_VR_EXCEPTION_IF(!attrChild, "Dependency needs a child name (" << nodeName << ")" << endl);
+                std::string child(attrChild->value());
+
+                rapidxml::xml_attribute<>* attrFunc;
+                attrFunc = node->first_attribute("function", 0, false);
+                THROW_VR_EXCEPTION_IF(!attrFunc, "Dependency needs a function specification (" << nodeName << ")" << endl);
+                std::string function(attrFunc->value());
+
+                // Warn about experimental feature
+                VR_WARNING << "Meta-joints and joint dependencies are experimental!" << endl;
+
+                // Check if the given dependency function is valid
+                exprtk::symbol_table<float> symbol_table;
+                symbol_table.create_variable("x");
+                symbol_table.add_constants();
+
+                exprtk::expression<float> expression;
+                expression.register_symbol_table(symbol_table);
+
+                exprtk::parser<float> parser;
+                if (!parser.compile(function, expression))
+                {
+                    THROW_VR_EXCEPTION("Invalid dependency function for joint " << nodeName << " (dependent child node " << child << ")" << endl);
+                }
+
+                dependency_functions[child] = function;
+            }
             else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in <Joint> tag of RobotNode <" << robotNodeName << ">." << endl);
@@ -538,7 +583,6 @@ namespace VirtualRobot
             if (scaleVisu)
             {
                 THROW_VR_EXCEPTION_IF(scaleVisuFactor.norm() == 0.0f, "Zero scale factor");
-
             }
         }
 
@@ -566,10 +610,11 @@ namespace VirtualRobot
         robotNode->setMaxAcceleration(maxAcceleration);
         robotNode->setMaxTorque(maxTorque);
         robotNode->setLimitless(limitless);
+        robotNode->setDependent(dependent);
 
         robotNode->jointValue = initialvalue;
 
-        if (robotNode->isRotationalJoint() || robotNode->isTranslationalJoint())
+        if (robotNode->isRotationalJoint() || robotNode->isTranslationalJoint() || robotNode->isMetaJoint())
         {
             if (robotNode->jointValue < robotNode->jointLimitLo)
             {
@@ -578,6 +623,16 @@ namespace VirtualRobot
             else if (robotNode->jointValue > robotNode->jointLimitHi)
             {
                 robotNode->jointValue = robotNode->jointLimitHi;
+            }
+        }
+
+        if (robotNode->isMetaJoint())
+        {
+            boost::shared_ptr<RobotNodeMeta> rnm = boost::dynamic_pointer_cast<RobotNodeMeta>(robotNode);
+
+            if (rnm)
+            {
+                rnm->setDependencies(dependency_functions);
             }
         }
 
