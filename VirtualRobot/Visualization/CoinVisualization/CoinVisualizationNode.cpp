@@ -318,7 +318,7 @@ namespace VirtualRobot
             newModel = new SoSeparator;
             newModel->ref();
 
-            if (scaling != 1.0)
+            if (scaling != 1.0f)
             {
                 SoScale* s = new SoScale;
                 s->scaleFactor.setValue(scaling, scaling, scaling);
@@ -505,7 +505,7 @@ namespace VirtualRobot
         {
             triMeshModel.reset();
             getTriMeshModel()->mergeVertices();
-            getTriMeshModel()->fattenShrink(offset);
+            getTriMeshModel()->fattenShrink(offset, true);
 
             scaledVisualization->removeChild(scaledVisualization->findChild(visualization));
             visualization->unref();

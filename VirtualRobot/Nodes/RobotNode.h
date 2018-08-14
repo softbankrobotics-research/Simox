@@ -339,7 +339,10 @@ namespace VirtualRobot
         */
         virtual void setJointValueNoUpdate(float q);
 
-        protected:
+        bool getEnforceJointLimits() const;
+        void setEnforceJointLimits(bool value);
+
+    protected:
         /*!
             Queries parent for global pose and updates visualization accordingly
         */
@@ -370,6 +373,7 @@ namespace VirtualRobot
 
         float jointValueOffset;
         float jointLimitLo, jointLimitHi;
+        bool enforceJointLimits = true;
         bool limitless; // whether this joint has limits or not (ignored if nodeType != Joint).
         DHParameter optionalDHParameter;            // When the joint is defined via DH parameters they are stored here
         float maxVelocity;          //! given in m/s

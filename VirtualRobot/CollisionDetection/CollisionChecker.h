@@ -144,7 +144,17 @@ namespace VirtualRobot
         */
         virtual bool checkCollision(SceneObjectPtr model1, SceneObjectPtr model2);
 
-
+        /**
+         * @brief checks collision between a sphere (modeled by point + tolerance).
+         * @node The check only performs
+         * a collision check of triangles, not if the sphere is inside the given model!
+         * @param model
+         * @param point
+         * @param tolerance
+         * @return true, if the sphere is in collision with the model
+         */
+        virtual bool checkCollision(CollisionModelPtr model, const Eigen::Vector3f & point, float tolerance);
+        virtual bool checkCollision(SceneObjectSetPtr modelSet, const Eigen::Vector3f & point, float tolerance);
 
         /*!
             Does the underlying collision detection library support discrete collision detection.

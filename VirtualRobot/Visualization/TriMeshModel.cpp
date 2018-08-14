@@ -459,10 +459,10 @@ namespace VirtualRobot
 
     size_t TriMeshModel::removeUnusedVertices()
     {
-        int size = vertices.size();
-        int faceCount = faces.size();
+        auto size = vertices.size();
+        auto faceCount = faces.size();
         std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
-        for (int j = 0; j < faceCount; ++j)
+        for (size_t j = 0; j < faceCount; ++j)
         {
             MathTools::TriangleFace& face = faces.at(j);
             vertex2FaceMap[face.id1].insert(&faces.at(j));
@@ -471,7 +471,7 @@ namespace VirtualRobot
         }
 
         std::vector<Eigen::Vector3f> newVertices;
-        std::map<size_t, size_t> oldNewIndexMap;
+        std::map<u_int, u_int> oldNewIndexMap;
 
         for (size_t i=0; i<vertex2FaceMap.size(); i++ )
         {
@@ -480,12 +480,12 @@ namespace VirtualRobot
             {
                 Eigen::Vector3f &v = vertices.at(i);
                 newVertices.push_back(v);
-                oldNewIndexMap[i] = newVertices.size()-1;
+                oldNewIndexMap[i] = (u_int)newVertices.size()-1;
             }
         }
 
         // update faceID
-        for (int j = 0; j < faceCount; ++j)
+        for (size_t j = 0; j < faceCount; ++j)
         {
             MathTools::TriangleFace& face = faces.at(j);
             face.id1 = oldNewIndexMap[face.id1];
@@ -494,7 +494,7 @@ namespace VirtualRobot
         }
         size_t removed = vertices.size() - newVertices.size();
 
-        vertices = newVertices;
+        vertices.swap(newVertices);
         return removed;
     }
 
@@ -502,12 +502,7 @@ namespace VirtualRobot
     {
         size_t i;
         size_t size = this->faces.size();
-//        std::vector<bool> visited(vertices.size(), false);
-        std::vector<std::pair<Eigen::Vector3f,int>> averageNormals(vertices.size(), std::make_pair(Eigen::Vector3f::Zero(), 0));
-//        for (i = 0; i < vertices.size(); ++i)
-//        {
-//            offsets.at(i) = std::make_pair(Eigen::Vector3f::Zero(), 0);
-//        }
+        std::vector<Eigen::Vector3f> averageNormals(vertices.size(), Eigen::Vector3f::Zero());
         for (i = 0; i < size; ++i)
         {
             MathTools::TriangleFace& face = faces.at(i);
@@ -532,7 +527,7 @@ namespace VirtualRobot
                 Eigen::Vector3f p1p2 = -p1 + p2;
                 Eigen::Vector3f p1p3 = -p1 + p3;
                 float angle = MathTools::getAngle(p1p2, p1p3);
-                averageNormals.at(face.id1).first += normal1.normalized() * angle;
+                averageNormals.at(face.id1) += normal1.normalized() * angle;
             }
             if(normal2.norm() > 0)
             {
@@ -540,7 +535,7 @@ namespace VirtualRobot
                 Eigen::Vector3f p2p3 = -p2 + p3;
                 float angle = MathTools::getAngle(p2p1, p2p3);
 
-                averageNormals.at(face.id2).first += normal2.normalized() * angle;
+                averageNormals.at(face.id2) += normal2.normalized() * angle;
             }
             if(normal3.norm() > 0)
             {
@@ -548,24 +543,24 @@ namespace VirtualRobot
                 Eigen::Vector3f p3p1 = -p3 + p1;
                 float angle = MathTools::getAngle(p3p2, p3p1);
 
-                averageNormals.at(face.id3).first += normal3.normalized() * angle;
+                averageNormals.at(face.id3) += normal3.normalized() * angle;
             }
-//            visited.at(face.id1) = true;
-//            visited.at(face.id2) = true;
-//            visited.at(face.id3) = true;
         }
-
+        for(auto & n : averageNormals)
+        {
+            n.normalize();
+        }
 
 
         for (i = 0; i < vertices.size(); ++i)
         {
             auto& p = vertices.at(i);
-            auto& pair = averageNormals.at(i);
-            if(averageNormals.at(i).first.norm() > 0)
+            auto& normal = averageNormals.at(i);
+            if(averageNormals.at(i).norm() > 0)
             {
-                if(std::isnan(pair.first[0]) || std::isnan(pair.first[1]) || std::isnan(pair.first[2]))
-                    std::cout << "NAN in " << i << " : " << pair.first  << std::endl;
-                p += pair.first.normalized() * offset;
+                if(std::isnan(normal[0]) || std::isnan(normal[1]) || std::isnan(normal[2]))
+                    std::cout << "NAN in " << i << " : " << normal  << std::endl;
+                p += normal * offset;
             }
         }
 
@@ -576,9 +571,9 @@ namespace VirtualRobot
             for (i = 0; i < size; ++i)
             {
                 MathTools::TriangleFace& face = faces.at(i);
-                face.idNormal1 = addNormal(averageNormals.at(face.id1).first.normalized());
-                face.idNormal2 = addNormal(averageNormals.at(face.id2).first.normalized());
-                face.idNormal3 = addNormal(averageNormals.at(face.id3).first.normalized());
+                face.idNormal1 = addNormal(averageNormals.at(face.id1));
+                face.idNormal2 = addNormal(averageNormals.at(face.id2));
+                face.idNormal3 = addNormal(averageNormals.at(face.id3));
             }
         }
 
@@ -860,6 +855,9 @@ namespace VirtualRobot
         r->vertices = vertices;
         r->faces = faces;
         r->boundingBox = boundingBox;
+        r->colors = colors;
+        r->materials = materials;
+        r->normals = normals;
         r->scale(scaleFactor);
         return r;
     }
