@@ -109,6 +109,13 @@ namespace VirtualRobot
             The global pose defines the position of the object in the world. For non-joint objects it is identical with the visualization frame.
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
+        virtual Eigen::Vector3f getGlobalPosition() const;
+        virtual Eigen::Matrix3f getGlobalOrientation() const;
+
+        virtual Eigen::Matrix4f getGlobalPose(const Eigen::Matrix4f& localPose) const;
+        virtual Eigen::Vector3f getGlobalPosition(const Eigen::Vector3f& localPosition) const;
+        virtual Eigen::Vector3f getGlobalDirection(const Eigen::Vector3f& localDircetion) const;
+        virtual Eigen::Matrix3f getGlobalOrientation(const Eigen::Matrix3f& localOrientation) const;
 
         /*!
             Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)

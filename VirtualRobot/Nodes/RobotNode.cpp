@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <boost/optional/optional_io.hpp>
 #include <algorithm>
+#include "../math/Helpers.h"
 
 #include <Eigen/Core>
 
@@ -906,6 +907,31 @@ namespace VirtualRobot
         RobotPtr r = getRobot();
         ReadLockPtr lock = r->getReadLock();
         return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
+    }
+
+    Eigen::Matrix3f RobotNode::getOrientationInRootFrame() const
+    {
+        return getPoseInRootFrame().block<3,3>(0,0);
+    }
+
+    Eigen::Matrix4f RobotNode::getPoseInRootFrame(const Eigen::Matrix4f &localPose) const
+    {
+        return getPoseInRootFrame() * localPose;
+    }
+
+    Eigen::Vector3f RobotNode::getPositionInRootFrame(const Eigen::Vector3f &localPosition) const
+    {
+        return ::math::Helpers::TransformPosition(getPoseInRootFrame(), localPosition);
+    }
+
+    Eigen::Vector3f RobotNode::getDirectionInRootFrame(const Eigen::Vector3f &localPosition) const
+    {
+        return ::math::Helpers::TransformDirection(getPoseInRootFrame(), localPosition);
+    }
+
+    Eigen::Matrix3f RobotNode::getOrientationInRootFrame(const Eigen::Matrix3f& localOrientation) const
+    {
+        return ::math::Helpers::TransformOrientation(getPoseInRootFrame(), localOrientation);
     }
 
     RobotNode::RobotNodeType RobotNode::getType()

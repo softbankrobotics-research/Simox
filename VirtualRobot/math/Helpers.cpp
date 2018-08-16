@@ -20,6 +20,7 @@
  */
 
 #include "Helpers.h"
+#include "LinearInterpolatedOrientation.h"
 #include <stdexcept>
 using namespace math;
 
@@ -61,11 +62,6 @@ void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float
     f -= i;
 }
 
-float Helpers::FastDistribution(float x, float sigma2)
-{
-    return std::exp(-x*x /2 /sigma2);
-}
-
 float Helpers::Clamp(float min, float max, float value)
 {
     if (value < min) return min;
@@ -81,13 +77,18 @@ float Helpers::Lerp(float a, float b, float f)
 Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b, float f)
 {
     return Eigen::Vector3f(Lerp(a(0), b(0), f),
-                Lerp(a(1), b(1), f),
+                           Lerp(a(1), b(1), f),
                            Lerp(a(2), b(2), f));
 }
 
 Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
 {
-    return a.slerp(f, b);
+    return LinearInterpolatedOrientation(a, b, 0, 1, false).Get(f);
+}
+
+Eigen::Quaternionf Helpers::LerpClamp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f)
+{
+    return LinearInterpolatedOrientation(a, b, 0, 1, true).Get(f);
 }
 
 float Helpers::ILerp(float a, float b, float f)
@@ -246,10 +247,25 @@ Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, co
     return transform.block<3,3>(0,0) * dir;
 }
 
+Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori)
+{
+    return transform.block<3,3>(0,0) * ori;
+}
+
 float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, float rad2mmFactor)
 {
     Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
     float dist = (a.block<3, 1>(0, 3) - b.block<3, 1>(0, 3)).norm();
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
+}
+
+Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 1>(0, 3);
+}
+
+Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 3>(0, 0);
 }
 
