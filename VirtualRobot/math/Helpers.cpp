@@ -61,11 +61,6 @@ void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float
     f -= i;
 }
 
-float Helpers::FastDistribution(float x, float sigma2)
-{
-    return std::exp(-x*x /2 /sigma2);
-}
-
 float Helpers::Clamp(float min, float max, float value)
 {
     if (value < min) return min;
@@ -256,5 +251,15 @@ float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, floa
     Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
     float dist = (a.block<3, 1>(0, 3) - b.block<3, 1>(0, 3)).norm();
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
+}
+
+Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 1>(0, 3);
+}
+
+Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 3>(0, 0);
 }
 

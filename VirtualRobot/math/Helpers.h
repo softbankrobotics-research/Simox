@@ -34,7 +34,6 @@ namespace math
         static float ShiftAngle0_2PI(float a);
         static float AngleModPI(float value);
         static void GetIndex(float t, float minT, float maxT, int count, int& i, float& f);
-        static float FastDistribution(float x, float sigma2);
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
         static Eigen::Vector3f Lerp(const Eigen::Vector3f& a, const Eigen::Vector3f& b, float f);
@@ -63,6 +62,8 @@ namespace math
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f &ori);
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
+        static Eigen::Vector3f GetPosition(const Eigen::Matrix4f& pose);
+        static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
 
     private:
     };
