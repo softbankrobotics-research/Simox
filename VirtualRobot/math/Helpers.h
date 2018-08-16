@@ -61,6 +61,7 @@ namespace math
         static Eigen::Matrix4f TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f& offset);
         static Eigen::Vector3f TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f &pos);
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);
+        static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f &ori);
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
     private:

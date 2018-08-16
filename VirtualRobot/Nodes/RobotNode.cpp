@@ -895,12 +895,6 @@ namespace VirtualRobot
         return globalPose;
     }
 
-    Eigen::Matrix4f RobotNode::getGlobalPose(const Eigen::Matrix4f &localPose) const
-    {
-        ReadLockPtr lock = getRobot()->getReadLock();
-        return globalPose * localPose;
-    }
-
     Eigen::Matrix4f RobotNode::getPoseInRootFrame() const
     {
         RobotPtr r = getRobot();
@@ -913,6 +907,11 @@ namespace VirtualRobot
         RobotPtr r = getRobot();
         ReadLockPtr lock = r->getReadLock();
         return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
+    }
+
+    Eigen::Matrix3f RobotNode::getOrientationInRootFrame() const
+    {
+        return getPoseInRootFrame().block<3,3>(0,0);
     }
 
     Eigen::Matrix4f RobotNode::getPoseInRootFrame(const Eigen::Matrix4f &localPose) const
@@ -928,6 +927,11 @@ namespace VirtualRobot
     Eigen::Vector3f RobotNode::getDirectionInRootFrame(const Eigen::Vector3f &localPosition) const
     {
         return ::math::Helpers::TransformDirection(getPoseInRootFrame(), localPosition);
+    }
+
+    Eigen::Matrix3f RobotNode::getOrientationInRootFrame(const Eigen::Matrix3f& localOrientation) const
+    {
+        return ::math::Helpers::TransformOrientation(getPoseInRootFrame(), localOrientation);
     }
 
     RobotNode::RobotNodeType RobotNode::getType()

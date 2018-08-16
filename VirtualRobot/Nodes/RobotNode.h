@@ -143,12 +143,13 @@ namespace VirtualRobot
         */
         void setGlobalPose(const Eigen::Matrix4f& pose) override;
 
+        // Make all all overloads of getGlobalPose from SceneObject avaliable in RobotNode.
+        // If the using statement is not present RobotNode::getGlobalPose(const Eigen::Matrix4f& localPose) cannot be called.
+        using SceneObject::getGlobalPose;
         /*
             This call locks the robot's mutex.
         */
-        Eigen::Matrix4f getGlobalPose() const override;
-
-        Eigen::Matrix4f getGlobalPose(const Eigen::Matrix4f& localPose) const override;
+        virtual Eigen::Matrix4f getGlobalPose() const override;
 
         /*!
             The pose of this node in the root coordinate system of the robot.
@@ -165,9 +166,13 @@ namespace VirtualRobot
         */
         virtual Eigen::Vector3f getPositionInRootFrame() const;
 
-        Eigen::Matrix4f getPoseInRootFrame(const Eigen::Matrix4f& localPose) const;
-        Eigen::Vector3f getPositionInRootFrame(const Eigen::Vector3f& localPosition) const;
-        Eigen::Vector3f getDirectionInRootFrame(const Eigen::Vector3f& localPosition) const;
+        virtual Eigen::Matrix3f getOrientationInRootFrame() const;
+
+
+        virtual Eigen::Matrix4f getPoseInRootFrame(const Eigen::Matrix4f& localPose) const;
+        virtual Eigen::Vector3f getPositionInRootFrame(const Eigen::Vector3f& localPosition) const;
+        virtual Eigen::Vector3f getDirectionInRootFrame(const Eigen::Vector3f& localPosition) const;
+        virtual Eigen::Matrix3f getOrientationInRootFrame(const Eigen::Matrix3f& localOrientation) const;
 
         /*!
             Display the coordinate system of this RobotNode. This is the global pose of it's visualization.
