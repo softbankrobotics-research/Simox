@@ -148,6 +148,8 @@ namespace VirtualRobot
         */
         Eigen::Matrix4f getGlobalPose() const override;
 
+        Eigen::Matrix4f getGlobalPose(const Eigen::Matrix4f& localPose) const override;
+
         /*!
             The pose of this node in the root coordinate system of the robot.
             \return The pose in root frame
@@ -155,12 +157,17 @@ namespace VirtualRobot
         */
         virtual Eigen::Matrix4f getPoseInRootFrame() const;
 
+
         /*!
             The position of this node in the root coordinate system of the robot.
             \return The position in root frame
 
         */
         virtual Eigen::Vector3f getPositionInRootFrame() const;
+
+        Eigen::Matrix4f getPoseInRootFrame(const Eigen::Matrix4f& localPose) const;
+        Eigen::Vector3f getPositionInRootFrame(const Eigen::Vector3f& localPosition) const;
+        Eigen::Vector3f getDirectionInRootFrame(const Eigen::Vector3f& localPosition) const;
 
         /*!
             Display the coordinate system of this RobotNode. This is the global pose of it's visualization.

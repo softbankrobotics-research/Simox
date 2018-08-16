@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 #include <Eigen/Dense>
+#include "math/Helpers.h"
 
 
 
@@ -635,6 +636,21 @@ namespace VirtualRobot
     Eigen::Matrix4f SceneObject::getGlobalPose() const
     {
         return globalPose;
+    }
+
+    Eigen::Matrix4f SceneObject::getGlobalPose(const Eigen::Matrix4f &localPose) const
+    {
+        return getGlobalPose() * localPose;
+    }
+
+    Eigen::Vector3f SceneObject::getGlobalPosition(const Eigen::Vector3f &localPosition) const
+    {
+        return math::Helpers::TransformPosition(getGlobalPose(), localPosition);
+    }
+
+    Eigen::Vector3f SceneObject::getGlobalDirection(const Eigen::Vector3f &localPosition) const
+    {
+        return math::Helpers::TransformDirection(getGlobalPose(), localPosition);
     }
 
     Eigen::Vector3f SceneObject::getCoMLocal()

@@ -110,6 +110,10 @@ namespace VirtualRobot
         */
         virtual Eigen::Matrix4f getGlobalPose() const;
 
+        virtual Eigen::Matrix4f getGlobalPose(const Eigen::Matrix4f& localPose) const;
+        Eigen::Vector3f getGlobalPosition(const Eigen::Vector3f& localPosition) const;
+        Eigen::Vector3f getGlobalDirection(const Eigen::Vector3f& localPosition) const;
+
         /*!
             Usually it is checked weather the object is linked to a parent. This check can be omitted (be careful, just do this if you know the effects)
             \param pose The new pose of this object
