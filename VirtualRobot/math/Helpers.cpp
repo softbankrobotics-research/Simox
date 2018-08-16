@@ -81,9 +81,14 @@ Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b
                            Lerp(a(2), b(2), f));
 }
 
-Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f, bool clamp)
+Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
 {
-    return LinearInterpolatedOrientation(a, b, 0, 1, clamp).Get(f);
+    return LinearInterpolatedOrientation(a, b, 0, 1, false).Get(f);
+}
+
+Eigen::Quaternionf Helpers::LerpClamp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f)
+{
+    return LinearInterpolatedOrientation(a, b, 0, 1, true).Get(f);
 }
 
 float Helpers::ILerp(float a, float b, float f)

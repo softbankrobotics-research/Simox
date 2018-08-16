@@ -37,7 +37,8 @@ namespace math
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
         static Eigen::Vector3f Lerp(const Eigen::Vector3f& a, const Eigen::Vector3f& b, float f);
-        static Eigen::Quaternionf Lerp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f, bool clamp);
+        static Eigen::Quaternionf Lerp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
+        static Eigen::Quaternionf LerpClamp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
         static float ILerp(float a, float b, float f);
         static float Lerp(float a, float b, int min, int max, int val);
         static float Angle(Eigen::Vector2f v);
