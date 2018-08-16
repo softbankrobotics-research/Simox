@@ -20,6 +20,7 @@
  */
 
 #include "Helpers.h"
+#include "LinearInterpolatedOrientation.h"
 #include <stdexcept>
 using namespace math;
 
@@ -76,13 +77,13 @@ float Helpers::Lerp(float a, float b, float f)
 Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b, float f)
 {
     return Eigen::Vector3f(Lerp(a(0), b(0), f),
-                Lerp(a(1), b(1), f),
+                           Lerp(a(1), b(1), f),
                            Lerp(a(2), b(2), f));
 }
 
-Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
+Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f, bool clamp)
 {
-    return a.slerp(f, b);
+    return LinearInterpolatedOrientation(a, b, 0, 1, clamp).Get(f);
 }
 
 float Helpers::ILerp(float a, float b, float f)
