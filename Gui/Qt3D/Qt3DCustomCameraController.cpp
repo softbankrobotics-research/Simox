@@ -22,6 +22,7 @@
 */
 
 #include "Qt3DCustomCameraController.h"
+#include <cmath>
 
 SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent)
@@ -30,6 +31,9 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode
     , mouseDevice(new Qt3DInput::QMouseDevice(this))
     , mouseHandler(new Qt3DInput::QMouseHandler(this))
     , frameAction(new Qt3DLogic::QFrameAction(this))
+    , pressed(false)
+    , posX(0)
+    , posY(0)
 {
     keyboardHandler->setSourceDevice(keyboardDevice);
     keyboardHandler->setFocus(true);
@@ -43,15 +47,35 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode
     mouseHandler->setSourceDevice(mouseDevice);
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::pressed,
                      this, [=] (Qt3DInput::QMouseEvent *event) {
+        posX = event->x();
+        posY = event->y();
+        pressed = true;
     });
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::released,
                      this, [=] (Qt3DInput::QMouseEvent *event) {
+        pressed = false;
     });
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::pressAndHold,
                      this, [=] (Qt3DInput::QMouseEvent *event) {
     });
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::positionChanged,
                      this, [=] (Qt3DInput::QMouseEvent *event) {
+        if(!pressed)
+            return;
+
+        float yaw = (event->x() - posX) * 0.5f;
+        float pitch = (event->y() - posY) * 0.5f;
+        pitch = (pitch > 89.0f) ? 89.0f : (pitch < - 89.0f) ? -89.0f : pitch;
+
+        this->camera->panAboutViewCenter(-yaw);
+        this->camera->tiltAboutViewCenter(pitch);
+
+        /*QVector2D newPos(event->x(), event->y());
+        QVector2D oldPos(posX, posY);
+        this->camera->rollAboutViewCenter(std::acos(QVector2D::dotProduct(oldPos, newPos) / (oldPos.length() * newPos.length())));*/
+
+        posY = event->y();
+        posX = event->x();
     });
 
     this->addComponent(frameAction);

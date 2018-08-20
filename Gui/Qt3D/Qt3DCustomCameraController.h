@@ -51,6 +51,10 @@ namespace SimoxGui
         Qt3DInput::QMouseDevice *mouseDevice;
         Qt3DInput::QMouseHandler *mouseHandler;
         Qt3DLogic::QFrameAction *frameAction;
+
+        int posX;
+        int posY;
+        bool pressed;
     };
 }
 
