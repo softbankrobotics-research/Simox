@@ -25,7 +25,7 @@
 #define _Gui_Qt3DViewer_h_
 
 #include "../ViewerInterface.h"
-//#include "Qt3DCustomCameraController.h"
+#include "Qt3DCustomCameraController.h"
 
 #include <unordered_set>
 #include <QWidget>
@@ -83,7 +83,7 @@ namespace SimoxGui
 
         QWidget* parent;
         Qt3DCore::QEntity* scene;
-        Qt3DExtras::QOrbitCameraController* camController;
+        Qt3DCustomCameraController* camController;
         Qt3DRender::QRenderCapture* capture;
         VirtualRobot::Visualization::Color backgroundColor;
     };

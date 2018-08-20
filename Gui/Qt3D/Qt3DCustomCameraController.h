@@ -24,18 +24,33 @@
 #define _Gui_Qt3DCustomCameraController_h_
 
 #include "../SimoxGuiImportExport.h"
-#include <Qt3DExtras/QAbstractCameraController>
+
+#include <Qt3DCore/QEntity>
+#include <Qt3DRender/QCamera>
+#include <Qt3DInput/QKeyboardDevice>
+#include <Qt3DInput/QKeyboardHandler>
+#include <Qt3DInput/QMouseDevice>
+#include <Qt3DInput/QMouseHandler>
+#include <Qt3DLogic/QFrameAction>
 
 namespace SimoxGui
 {
-    class SIMOX_GUI_IMPORT_EXPORT Qt3DCustomCameraController : public Qt3DExtras::QAbstractCameraController
+    class SIMOX_GUI_IMPORT_EXPORT Qt3DCustomCameraController : public Qt3DCore::QEntity
     {
     public:
         Qt3DCustomCameraController(Qt3DCore::QNode *parent = nullptr);
-        ~Qt3DCustomCameraController() = default;
+        ~Qt3DCustomCameraController();
+
+        void setCamera(Qt3DRender::QCamera* camera);
 
     private:
-        void moveCamera(const QAbstractCameraController::InputState &state, float dt) override;
+        Qt3DRender::QCamera* camera;
+
+        Qt3DInput::QKeyboardDevice *keyboardDevice;
+        Qt3DInput::QKeyboardHandler *keyboardHandler;
+        Qt3DInput::QMouseDevice *mouseDevice;
+        Qt3DInput::QMouseHandler *mouseHandler;
+        Qt3DLogic::QFrameAction *frameAction;
     };
 }
 
