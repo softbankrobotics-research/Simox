@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJointPrismatic_h_
-#define _VirtualRobot_ModelJointPrismatic_h_
+#pragma once
 
 #include "ModelJoint.h"
 
@@ -92,5 +91,3 @@ namespace VirtualRobot
         Eigen::Vector3f translationDirection;
     };
 }
-
-#endif // _VirtualRobot_ModelJointPrismatic_h_

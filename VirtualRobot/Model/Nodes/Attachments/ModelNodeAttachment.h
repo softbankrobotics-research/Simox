@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeAttachment_h_
-#define _VirtualRobot_ModelNodeAttachment_h_
+#pragma once
 
 #include "../../Model.h"
 #include "../../Frame.h"
@@ -168,6 +167,3 @@ namespace VirtualRobot
         void initVisualization();
     };
 }
-
-
-#endif // _VirtualRobot_ModelNodeAttachment_h_

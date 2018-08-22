@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_PositionSensorFactory_h_
-#define _VirtualRobot_PositionSensorFactory_h_
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "PositionSensor.h"
@@ -61,6 +60,3 @@ namespace VirtualRobot
     };
     typedef std::shared_ptr<PositionSensorFactory> PositionSensorFactoryPtr;
 }
-
-
-#endif

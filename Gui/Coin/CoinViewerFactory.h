@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_CoinViewerFactory_h_
-#define _Gui_CoinViewerFactory_h_
+#pragma once
 
 
 #include "../ViewerFactory.h"
@@ -47,5 +46,3 @@ namespace SimoxGui
 
 
 } // namespace SimoxGui
-
-#endif

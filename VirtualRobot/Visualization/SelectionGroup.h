@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SelectionGroup_h_
-#define _VirtualRobot_SelectionGroup_h_
+#pragma once
 
 #include "Visualization.h"
 #include "../VirtualRobot.h"
@@ -64,5 +63,3 @@ namespace VirtualRobot
     };
 
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_SelectionGroup_h_

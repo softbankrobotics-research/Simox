@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelFactory_h_
-#define _VirtualRobot_ModelFactory_h_
+#pragma once
 
 #include "Model.h"
 #include "../Tools/MathTools.h"
@@ -112,5 +111,3 @@ namespace VirtualRobot
 
     typedef ModelFactory RobotFactory;
 }
-
-#endif // _VirtualRobot_ModelFactory_h_

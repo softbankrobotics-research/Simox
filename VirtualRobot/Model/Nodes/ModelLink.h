@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelLink_h_
-#define _VirtualRobot_ModelLink_h_
+#pragma once
 
 #include "ModelNode.h"
 
@@ -274,5 +273,3 @@ namespace VirtualRobot
         CollisionCheckerPtr collisionChecker;
     };
 }
-
-#endif

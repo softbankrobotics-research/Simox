@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimoxGuiImportExportSymbols_h
-#define _SimoxGuiImportExportSymbols_h
+#pragma once
 
 namespace SimoxGui
 {
@@ -38,6 +37,3 @@ namespace SimoxGui
 #  define SIMOX_GUI_IMPORT_EXPORT
 #endif
 }
-
-#endif
-

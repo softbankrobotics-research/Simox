@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJoint_h_
-#define _VirtualRobot_ModelJoint_h_
+#pragma once
 
 #include "../../Tools/ConditionedLock.h"
 #include "ModelNode.h"
@@ -213,5 +212,3 @@ namespace VirtualRobot
         std::map< std::string, float > propagatedJointValues;
     };
 }
-
-#endif

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeAttachmentFactory_h_
-#define _VirtualRobot_ModelNodeAttachmentFactory_h_
+#pragma once
 
 #include "../../Model/Model.h"
 #include "../../Tools/AbstractFactoryMethod.h"
@@ -60,5 +59,3 @@ namespace VirtualRobot
     };
     typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
 }
-
-#endif

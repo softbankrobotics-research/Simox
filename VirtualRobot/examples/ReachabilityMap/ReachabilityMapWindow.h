@@ -1,6 +1,5 @@
 
-#ifndef __reachabilityScene_WINDOW_H_
-#define __reachabilityScene_WINDOW_H_
+#pragma once
 
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/Model/Model.h"
@@ -99,5 +98,3 @@ protected:
     VirtualRobot::RobotNodePtr currentRobotNode;
 
 };
-
-#endif // __reachabilityScene_WINDOW_H_

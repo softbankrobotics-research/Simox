@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelIO_h_
-#define _VirtualRobot_ModelIO_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Model/Model.h"
@@ -136,5 +135,3 @@ namespace VirtualRobot
     };
 
 }
-
-#endif // _VirtualRobot_ModelIO_h_

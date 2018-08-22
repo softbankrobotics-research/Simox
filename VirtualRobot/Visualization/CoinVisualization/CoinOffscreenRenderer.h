@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinOffscreenRenderer_h_
-#define _VirtualRobot_CoinOffscreenRenderer_h_
+#pragma once
 
 #include "../OffscreenRenderer.h"
 
@@ -117,5 +116,3 @@ namespace VirtualRobot
         static void getZBuffer(void* userdata);
     };
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_CoinOffscreenRenderer_h_

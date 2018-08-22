@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJointRevolute_h_
-#define _VirtualRobot_ModelJointRevolute_h_
+#pragma once
 
 #include "ModelJoint.h"
 
@@ -93,5 +92,3 @@ namespace VirtualRobot
         Eigen::Vector3f axis;
     };
 }
-
-#endif // _VirtualRobot_ModelJointRevolute_h_

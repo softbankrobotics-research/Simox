@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelSet_h_
-#define _VirtualRobot_ModelSet_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -145,5 +144,3 @@ namespace VirtualRobot
         std::vector<ModelPtr> models;
     };
 }
-
-#endif

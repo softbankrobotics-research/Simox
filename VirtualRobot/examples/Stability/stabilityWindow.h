@@ -1,6 +1,5 @@
 
-#ifndef __stabilityScene_WINDOW_H_
-#define __stabilityScene_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -81,5 +80,3 @@ protected:
 
     bool useColModel;
 };
-
-#endif

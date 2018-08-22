@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_PositionSensor_h_
-#define _VirtualRobot_PositionSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -70,5 +69,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<PositionSensor> PositionSensorPtr;
 }
-
-#endif

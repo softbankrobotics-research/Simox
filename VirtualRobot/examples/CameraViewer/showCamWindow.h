@@ -1,6 +1,5 @@
 
-#ifndef __ShowRobot_WINDOW_H_
-#define __ShowRobot_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/Model/Model.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -88,5 +87,3 @@ protected:
 
     bool useColModel;
 };
-
-#endif

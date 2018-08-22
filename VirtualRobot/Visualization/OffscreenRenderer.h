@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_OffscreenRenderer_h_
-#define _VirtualRobot_OffscreenRenderer_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -107,5 +106,3 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const;
     };
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_OffscreenRenderer_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinVisualizationSet_h_
-#define _VirtualRobot_CoinVisualizationSet_h_
+#pragma once
 
 #include "../../Model/Model.h"
 #include "../VisualizationSet.h"
@@ -52,5 +51,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<CoinVisualizationSet> CoinVisualizationSetPtr;
 
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_CoinVisualizationSet_h_

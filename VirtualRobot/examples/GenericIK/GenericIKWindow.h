@@ -1,6 +1,5 @@
 
-#ifndef __Generic_WINDOW_H_
-#define __Generic_WINDOW_H_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Model/Obstacle.h"
@@ -78,5 +77,3 @@ protected:
 
     QTimer* timer;
 };
-
-#endif

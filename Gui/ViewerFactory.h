@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_ViewerFactory_h_
-#define _Gui_ViewerFactory_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <string>
@@ -49,5 +48,3 @@ namespace SimoxGui
     };
 
 } // namespace SimoxGui
-
-#endif

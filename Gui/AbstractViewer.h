@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _SimoxGui_ViewerInterface_h_
-#define _SimoxGui_ViewerInterface_h_
+#pragma once
 
 #include "SimoxGuiImportExport.h"
 
@@ -172,6 +171,3 @@ protected:
 typedef std::shared_ptr<AbstractViewer> AbstractViewerPtr;
 
 }
-
-#endif
-

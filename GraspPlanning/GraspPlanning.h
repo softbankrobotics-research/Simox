@@ -20,9 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GraspPlanning_h_
-#define _GraspPlanning_h_
-
+#pragma once
 
 /*! \defgroup GraspPlanning The Grasp Planning Library
 GraspPlanning offers algorithms for grasp scoring and planning covering 3D force space calculations and a full
@@ -107,5 +105,3 @@ namespace GraspPlanning
 #endif
 
 }
-
-#endif

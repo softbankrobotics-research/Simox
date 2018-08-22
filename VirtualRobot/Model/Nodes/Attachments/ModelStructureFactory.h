@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MODELSTRUCTUREFACTORY_H
-#define MODELSTRUCTUREFACTORY_H
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "ModelStructure.h"
@@ -64,7 +63,3 @@ namespace VirtualRobot
     };
     typedef std::shared_ptr<ModelStructureFactory> ModelStructureFactoryPtr;
 }
-
-
-
-#endif // MODELSTRUCTUREFACTORY_H

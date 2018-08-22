@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Model_h_
-#define _VirtualRobot_Model_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "Nodes/ModelNode.h"
@@ -741,5 +740,3 @@ namespace VirtualRobot
         VisualizationSetPtr visualizationNodeSetCollision;
     };
 }
-
-#endif // _VirtualRobot_Model_h_

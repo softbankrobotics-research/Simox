@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Sensor_h_
-#define _VirtualRobot_Sensor_h_
+#pragma once
 
 #include "ModelNodeAttachment.h"
 
@@ -67,5 +66,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<Sensor> SensorPtr;
 }
-
-#endif

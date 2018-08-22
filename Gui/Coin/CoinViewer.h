@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _Gui_CoinViewer_h_
-#define _Gui_CoinViewer_h_
+#pragma once
 
 #include "../AbstractViewer.h"
 
@@ -83,5 +82,3 @@ namespace SimoxGui
     };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }
-
-#endif 

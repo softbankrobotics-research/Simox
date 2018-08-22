@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MODELSTRUCTURE_H
-#define MODELSTRUCTURE_H
+#pragma once
 
 #include "ModelNodeAttachment.h"
 
@@ -76,5 +75,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;
 }
-
-#endif // MODELSTRUCTUREATTACHMENT_H

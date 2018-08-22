@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef SIMOX_PHYSICSATTACHMENT_H
-#define SIMOX_PHYSICSATTACHMENT_H
+#pragma once
 
 #include "ModelNodeAttachment.h"
 
@@ -57,5 +56,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<PhysicsAttachment> PhysicsAttachmentPtr;
 }
-
-#endif //SIMOX_PHYSICSATTACHMENT_H

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinSelectionGroup_h_
-#define _VirtualRobot_CoinSelectionGroup_h_
+#pragma once
 
 #include "../SelectionGroup.h"
 
@@ -45,5 +44,3 @@ namespace VirtualRobot
     };
 
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_CoinSelectionGroup_h_

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNode_h_
-#define _VirtualRobot_ModelNode_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 #include "../Frame.h"
@@ -428,5 +427,3 @@ namespace VirtualRobot
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
     };
 }
-
-#endif // _VirtualRobot_ModelNode_h_

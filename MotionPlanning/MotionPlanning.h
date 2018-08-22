@@ -20,9 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_h_
-#define _MotionPlanning_h_
-
+#pragma once
 
 /*! \defgroup MotionPlanning The Sampling-Based Motion Planning Library
 The Sampling-based Motion Planning Library MotionPlanning offers state-of-the-art algorithms for planning collision-free motions
@@ -130,5 +128,3 @@ namespace MotionPlanning
 #endif
 
 }
-
-#endif

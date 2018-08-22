@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Frame_h_
-#define _VirtualRobot_Frame_h_
+#pragma once
 
 #include "../../VirtualRobot/VirtualRobot.h"
 #include <Eigen/Geometry>
@@ -106,5 +105,3 @@ namespace VirtualRobot
         };
 
 } //namespace VirtualRobot
-
-#endif
