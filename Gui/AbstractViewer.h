@@ -118,10 +118,7 @@ protected:
                     }
                 }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         void clear(bool recursive=true)
         {
