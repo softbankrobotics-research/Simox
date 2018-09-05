@@ -33,7 +33,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
     {
         if (body->getMass() <= 0)
         {
-            THROW_VR_EXCEPTION("No mass for body" << body->getName());
+            THROW_VR_EXCEPTION("No mass for body '" << body->getName() << "' mass: " << body->getMass());
         }
     }
 
