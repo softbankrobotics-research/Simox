@@ -363,9 +363,9 @@ void FullDemoWindow::setupUI()
         text2->scale(3.0f);
         triMeshViewer->addVisualization("test", text2);
 
-        model = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Torso2_joint_visu.dae");
+        model = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Head_2_joint_visu.dae");
         //model = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 1.0f, 1.0f);
-        model->scale(1000.0f);
+        model->scale(2500.0f);
         model->setGlobalPose(getPosition2(index++));
         model->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, 3 * M_PI / 4.0f, 0.0f));
         triMeshViewer->addVisualization("test", model);
@@ -396,6 +396,6 @@ void FullDemoWindow::on_pushButton_2_clicked()
     VirtualRobot::TriMeshModelPtr triMesh = model->getTriMeshModel();
     auto visu = triMesh->getVisualization(false, true);
     visu->setGlobalPose(getPosition2(5));
-    visu->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, - M_PI / 4.0f, 0.0f));
+    visu->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, (3 * M_PI) / 4.0f, 0.0f));
     triMeshViewer->addVisualization("test", visu);
 }
