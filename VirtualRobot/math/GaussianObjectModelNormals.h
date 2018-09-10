@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 
 #include "Contact.h"
@@ -30,7 +31,7 @@
 namespace math
 {
 
-    class GaussianObjectModelNormals :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GaussianObjectModelNormals :
             public ImplicitObjectModel
     {
     public:

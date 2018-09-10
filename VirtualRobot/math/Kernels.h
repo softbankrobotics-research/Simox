@@ -21,13 +21,14 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 #include <memory>
 
 namespace math
 {
 
-class KernelWithDerivatives
+class VIRTUAL_ROBOT_IMPORT_EXPORT KernelWithDerivatives
 {
 public:
     virtual float Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const = 0;
@@ -42,7 +43,7 @@ public:
     void swap(float &x, float &y, float &z, int index) const;
 };
 
-class GaussianKernel : public KernelWithDerivatives {
+class VIRTUAL_ROBOT_IMPORT_EXPORT GaussianKernel : public KernelWithDerivatives {
 public:
     GaussianKernel(float lengthScale);
     float Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const override;
@@ -54,14 +55,14 @@ private:
     float lengthScale;
 };
 
-class WilliamsPlusKernel : public KernelWithDerivatives {
+class VIRTUAL_ROBOT_IMPORT_EXPORT WilliamsPlusKernel : public KernelWithDerivatives {
     float Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const override;
     float Kernel_dx(float x, float y, float z, float r, float R) const override;
     float Kernel_ddx(float x, float y, float z, float r, float R) const override;
     float Kernel_dxdy(float x, float y, float z, float r, float R) const override;
 };
 
-class WilliamsMinusKernel : public KernelWithDerivatives {
+class VIRTUAL_ROBOT_IMPORT_EXPORT WilliamsMinusKernel : public KernelWithDerivatives {
     float Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const override;
     float Kernel_dx(float x, float y, float z, float r, float R) const override;
     float Kernel_ddx(float x, float y, float z, float r, float R) const override;

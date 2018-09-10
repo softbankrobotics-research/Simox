@@ -21,13 +21,14 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 #include "ContactList.h"
 #include "SimpleAbstractFunctionR3R1.h"
 
 namespace math
 {
-class ImplicitObjectModel
+class VIRTUAL_ROBOT_IMPORT_EXPORT ImplicitObjectModel
 {
 public:
     ContactListPtr Contacts() {return contacts;}

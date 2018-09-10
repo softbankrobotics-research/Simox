@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 
 
@@ -29,7 +30,7 @@
 namespace math
 {
 
-class AbstractFunctionR1R2
+class VIRTUAL_ROBOT_IMPORT_EXPORT AbstractFunctionR1R2
 {
 public:
     virtual Eigen::Vector2f Get(float t) = 0;

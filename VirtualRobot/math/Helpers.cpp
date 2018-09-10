@@ -231,10 +231,11 @@ Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, fl
     return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
 }
 
-Eigen::Matrix4f math::Helpers::TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f &offset)
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
 {
-    pose.block<3, 1>(0, 3) += offset;
-    return pose;
+    Eigen::Matrix4f p = pose;
+    p.block<3, 1>(0, 3) += offset;
+    return p;
 }
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
