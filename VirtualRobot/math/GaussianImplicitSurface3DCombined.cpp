@@ -79,7 +79,7 @@ void GaussianImplicitSurface3DCombined::Calculate(const ContactList& normalSampl
         y(i) = samples[i].Value1();
     }
 
-    for (uint i = 0; i < normalSamples.size(); i++)
+    for (size_t i = 0; i < normalSamples.size(); i++)
     {
          y(samples.size() + i * 4) = 0;
          y(samples.size() + i * 4 + 1) = normalSamples[i].Normal().x();

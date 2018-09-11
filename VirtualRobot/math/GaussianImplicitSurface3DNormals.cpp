@@ -51,7 +51,7 @@ void GaussianImplicitSurface3DNormals::Calculate(const ContactList& samples, flo
     CalculateCovariance(points, R, noise, normalNoise);
 
     Eigen::VectorXd values(samples.size() * 4);
-    for (uint i = 0; i < samples.size(); i++)
+    for (unsigned int i = 0; i < samples.size(); i++)
     {
          values(i * 4) = 0;
          values(i * 4 + 1) = samples.at(i).Normal().x();

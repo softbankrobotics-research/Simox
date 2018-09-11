@@ -21,11 +21,12 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 
 namespace math
 {
-    class SimpleAbstractFunctionR1Ori
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SimpleAbstractFunctionR1Ori
     {
     public:
         virtual Eigen::Quaternionf Get(float t) = 0;
