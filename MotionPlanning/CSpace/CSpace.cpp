@@ -573,8 +573,7 @@ namespace Saba
     {
         if (freeNodes.size() == 0)
         {
-            SABA_ERROR << " Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")" << std::endl;
-            return CSpaceNodePtr();
+            THROW_SABA_EXCEPTION(" Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")");
         }
 
         // get free node
