@@ -208,7 +208,7 @@ namespace Saba
                 generateNewConfig(goal, tmpConfig, tmpConfig, colCheckDist, dist);
                 LOCAL_DEBUG("--> " << endl << tmpConfig << endl);
 
-                if (!(isConfigValid(tmpConfig, false, true, true)))
+                if (!(isConfigValid(tmpConfig, true, true, true)))
                 {
                     return p;
                 }
