@@ -38,12 +38,13 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include <list>
 #include <Eigen/Core>
 
 namespace VirtualRobot
 {
-    class PathSegment
+    class VIRTUAL_ROBOT_IMPORT_EXPORT PathSegment
     {
     public:
         PathSegment(double length = 0.0) :
@@ -69,7 +70,7 @@ namespace VirtualRobot
 
 
 
-    class Path
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Path
     {
     public:
         Path(const std::list<Eigen::VectorXd> &path, double maxDeviation = 0.0);

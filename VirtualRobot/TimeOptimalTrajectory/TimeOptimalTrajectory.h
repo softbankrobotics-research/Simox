@@ -38,6 +38,7 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include <Eigen/Core>
 #include "Path.h"
 
@@ -49,7 +50,7 @@ namespace VirtualRobot
      * Time-Optimal Trajectory Generation for Path Following with Bounded Acceleration and Velocity
      * Robotics: Science and Systems. 2012.
      */
-    class TimeOptimalTrajectory
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TimeOptimalTrajectory
     {
     public:
         // Generates a time-optimal trajectory

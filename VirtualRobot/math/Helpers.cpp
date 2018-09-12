@@ -231,10 +231,11 @@ Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, fl
     return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
 }
 
-Eigen::Matrix4f math::Helpers::TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f &offset)
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
 {
-    pose.block<3, 1>(0, 3) += offset;
-    return pose;
+    Eigen::Matrix4f p = pose;
+    p.block<3, 1>(0, 3) += offset;
+    return p;
 }
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
@@ -267,5 +268,23 @@ Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
 Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
 {
     return pose.block<3, 3>(0, 0);
+}
+
+Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
+{
+    if(maxLen.rows() != 1 && maxLen.rows() != vec.rows())
+    {
+        throw std::invalid_argument("maxLen.rows != 1 and != maxLen.rows");
+    }
+    float scale = 1;
+    for(int i = 0; i < vec.rows(); i++)
+    {
+        int j = maxLen.rows() == 1 ? 0 : i;
+        if(std::abs(vec(i)) > maxLen(j) && maxLen(j) >= 0)
+        {
+            scale = std::min(scale, maxLen(j) / std::abs(vec(i)));
+        }
+    }
+    return vec / scale;
 }
 

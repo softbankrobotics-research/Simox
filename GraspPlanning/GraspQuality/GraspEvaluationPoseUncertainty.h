@@ -37,7 +37,7 @@ namespace GraspStudio
 	This class implements the paper:
 	Jonathan Weisz and Peter K. Allen, "Pose Error Robust Grasping from Contact Wrench Space Metrics", 2012 IEEE International Conference on Robotics and Automation
 */
-class GraspEvaluationPoseUncertainty : public boost::enable_shared_from_this<GraspEvaluationPoseUncertainty>
+class GRASPSTUDIO_IMPORT_EXPORT GraspEvaluationPoseUncertainty : public boost::enable_shared_from_this<GraspEvaluationPoseUncertainty>
 {
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

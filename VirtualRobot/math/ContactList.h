@@ -20,13 +20,13 @@
  */
 
 #pragma once
-
+#include "../VirtualRobot.h"
 #include "Contact.h"
 
 namespace math
 {
 
-    class ContactList :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT ContactList :
             public std::vector<Contact>
     {
     public:
