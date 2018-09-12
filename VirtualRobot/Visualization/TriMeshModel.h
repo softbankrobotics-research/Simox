@@ -29,11 +29,12 @@
 #include <Eigen/Core>
 #include <vector>
 #include <utility>
+#include <memory>
 
 namespace VirtualRobot
 {
 
-    class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel : std::enable_shared_from_this<TriMeshModel>
+    class VIRTUAL_ROBOT_IMPORT_EXPORT TriMeshModel : public std::enable_shared_from_this<TriMeshModel>
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
