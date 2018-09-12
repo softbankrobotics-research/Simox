@@ -1,6 +1,7 @@
 #include "BulletCoinQtViewer.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationFactory.h>
+#include <Inventor/sensors/SoTimerSensor.h>
 
 using namespace VirtualRobot;
 using namespace SimoxGui;
@@ -94,7 +95,7 @@ namespace SimDynamics
             MathTools::Plane p(floorPos, floorUp);
 
             VisualizationPtr v = VisualizationFactory::getInstance()->createPlane(p, floorExtendMM);
-            CoinViewer::addVisualization("floor", v);
+            CoinViewer::addVisualization(v, "floor");
         }
 
         viewAll();
@@ -172,7 +173,7 @@ namespace SimDynamics
         VR_ASSERT(robot);
         removeSimDynamicsVisualization(robot);
         robotVisus[robot->getName()] = robot->getVisualization(visuType);
-        CoinViewer::addVisualization("robots", robotVisus[robot->getName()]);
+        CoinViewer::addVisualization(robotVisus[robot->getName()], "robots");
     }
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType)
@@ -181,7 +182,7 @@ namespace SimDynamics
         VR_ASSERT(so);
         removeSimDynamicsVisualization(so);
         linkVisus[so->getName()] = so->getVisualization(visuType);
-        CoinViewer::addVisualization("links", linkVisus[so->getName()]);
+        CoinViewer::addVisualization(linkVisus[so->getName()], "links");
     }
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType)
@@ -212,7 +213,7 @@ namespace SimDynamics
         auto it = robotVisus.find(o->getName());
         if (it != robotVisus.end())
         {
-            CoinViewer::removeVisualization("robots", it->second);
+            CoinViewer::removeVisualization(it->second, "robots");
             robotVisus.erase(it);
         }
     }
@@ -224,7 +225,7 @@ namespace SimDynamics
         auto it = linkVisus.find(o->getName());
         if (it != linkVisus.end())
         {
-            CoinViewer::removeVisualization("links", it->second);
+            CoinViewer::removeVisualization(it->second, "links");
             linkVisus.erase(it);
         }
     }
@@ -236,7 +237,7 @@ namespace SimDynamics
         auto it = linkVisus.find(o->getSceneObject()->getName());
         if (it != linkVisus.end())
         {
-            CoinViewer::removeVisualization("links", it->second);
+            CoinViewer::removeVisualization(it->second, "links");
             linkVisus.erase(it);
         }
     }
@@ -248,7 +249,7 @@ namespace SimDynamics
         auto it = robotVisus.find(r->getRobot()->getName());
         if (it != robotVisus.end())
         {
-            CoinViewer::removeVisualization("robots", it->second);
+            CoinViewer::removeVisualization(it->second, "robots");
             robotVisus.erase(it);
         }
     }

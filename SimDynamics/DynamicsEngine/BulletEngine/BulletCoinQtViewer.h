@@ -54,10 +54,9 @@ namespace SimDynamics
         /*!
             Call this method to initialize the 3d viewer.
             \param embedViewer The 3d viewer will be embedded in this QFrame.
-            \param scene The scene that should be displayed.
             \param antiAliasingSteps If >0, anti aliasing is enabled. The parameter defines the number of rendering steps. This may slow down rendering on old gfx cards.
         */
-        virtual void initSceneGraph(QFrame* embedViewer, SoNode* scene, int antiAliasingSteps = 0);
+        virtual void initSceneGraph(QWidget* embedViewer, int antiAliasingSteps = 0);
 
         /*!
             In this mode, the time between two updates is measures and the engine is stepped accordingly. (standard)
@@ -82,8 +81,6 @@ namespace SimDynamics
             \param updateTimerIntervalMS The timer interval in milliseconds.
         */
         void setUpdateInterval(int updateTimerIntervalMS);
-
-        void viewAll();
 
         /*!
             Visualize dynamics object.
