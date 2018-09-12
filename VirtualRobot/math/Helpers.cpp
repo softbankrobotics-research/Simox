@@ -270,3 +270,21 @@ Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
     return pose.block<3, 3>(0, 0);
 }
 
+Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
+{
+    if(maxLen.rows() != 1 && maxLen.rows() != vec.rows())
+    {
+        throw std::invalid_argument("maxLen.rows != 1 and != maxLen.rows");
+    }
+    float scale = 1;
+    for(int i = 0; i < vec.rows(); i++)
+    {
+        int j = maxLen.rows() == 1 ? 0 : i;
+        if(std::abs(vec(i)) > maxLen(j) && maxLen(j) >= 0)
+        {
+            scale = std::min(scale, maxLen(j) / std::abs(vec(i)));
+        }
+    }
+    return vec / scale;
+}
+

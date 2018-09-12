@@ -65,6 +65,7 @@ namespace math
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
         static Eigen::Vector3f GetPosition(const Eigen::Matrix4f& pose);
         static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
+        static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
 
     private:
     };
