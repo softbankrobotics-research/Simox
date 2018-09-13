@@ -849,10 +849,7 @@ namespace VirtualRobot
 
     void CoinVisualizationFactory::cleanup()
     {
-        if (SoDB::isInitialized())
-        {
-            SoDB::finish();
-        }
+        SoQt::done();
     }
 
     std::string CoinVisualizationFactory::getVisualizationType() const
