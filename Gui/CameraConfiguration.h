@@ -31,12 +31,15 @@
 
 namespace SimoxGui
 {
+class CoinViewerFactory;
 
 class SIMOX_GUI_IMPORT_EXPORT CameraConfiguration
 {
-public:
+    friend class CoinViewerFactory;
+protected:
     CameraConfiguration() : pose(Eigen::Matrix4f::Identity()) {}
 
+public:
     Eigen::Matrix4f pose;
 };
 typedef std::shared_ptr<CameraConfiguration> CameraConfigurationPtr;

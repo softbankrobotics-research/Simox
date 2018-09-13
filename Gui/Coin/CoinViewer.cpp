@@ -22,6 +22,7 @@
 */
 
 #include "CoinViewer.h"
+#include "../ViewerFactory.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
@@ -257,7 +258,7 @@ namespace SimoxGui
 
     CameraConfigurationPtr CoinViewer::getCameraConfiguration() const
     {
-        CameraConfigurationPtr c(new CameraConfiguration);
+        CameraConfigurationPtr c = SimoxGui::ViewerFactory::getInstance()->createCameraConfiguration();
         auto rot = SoQtExaminerViewer::getCamera()->orientation.getValue();
         float x, y, z, w;
         rot.getValue(x, y, z, w);
