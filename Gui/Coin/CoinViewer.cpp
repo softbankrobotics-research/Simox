@@ -35,6 +35,7 @@
 #include <QGLWidget>
 
 #include <iostream>
+#include <chrono>
 
 SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
 {
@@ -325,5 +326,22 @@ namespace SimoxGui
                 return false;
             }
         }
+    }
+
+    void CoinViewer::actualRedraw()
+    {
+        // require lock
+        auto start = std::chrono::system_clock::now();
+        auto l = getScopedLock();
+        auto end = std::chrono::system_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        if (elapsed.count() > 50)
+        {
+            VR_WARNING << " Redraw lock time:" << elapsed.count() << std::endl;
+        }
+
+        // Render normal scenegraph.
+        SoQtExaminerViewer::actualRedraw();
     }
 }

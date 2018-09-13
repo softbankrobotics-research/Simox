@@ -76,7 +76,20 @@ public:
     virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) = 0;
     virtual VirtualRobot::Visualization::Color getBackgroundColor() const = 0;
 
+    /*!
+     * If set, the drawing is protected by this mutex. This overwrites the default mutex.
+     */
+    void setMutex(std::shared_ptr<std::recursive_mutex> m);
+
+
+    /*!
+     * \return This lock allows to safely access the viewer's scene graph.
+     */
+    std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock();
+
 protected:
+
+    std::shared_ptr<std::recursive_mutex> mutex;
     virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
     virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
 

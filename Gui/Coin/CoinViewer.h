@@ -64,6 +64,11 @@ namespace SimoxGui
         }
         bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
 
+        /*!
+        * \brief actualRedraw Reimplement the redraw method in order to lock engine mutex
+        */
+        void actualRedraw(void) override;
+
         QWidget *parent;
 
         SoSeparator *sceneSep;
