@@ -24,6 +24,7 @@
 #pragma once
 
 #include "SimoxGuiImportExport.h"
+#include "CameraConfiguration.h"
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Visualization/Visualization.h>
@@ -75,6 +76,9 @@ public:
 
     virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) = 0;
     virtual VirtualRobot::Visualization::Color getBackgroundColor() const = 0;
+
+    virtual void setCameraConfiguration(const CameraConfigurationPtr&) = 0;
+    virtual CameraConfigurationPtr getCameraConfiguration() const = 0;
 
     /*!
      * If set, the drawing is protected by this mutex. This overwrites the default mutex.

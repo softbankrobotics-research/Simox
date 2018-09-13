@@ -40,6 +40,7 @@ namespace SimoxGui
         virtual ~CoinViewerFactory() = default;
 
         virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const override;
+        CameraConfigurationPtr createCameraConfiguration() const override;
     };
 
     typedef std::shared_ptr<CoinViewerFactory> CoinViewerFactoryPtr;

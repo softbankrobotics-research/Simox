@@ -56,6 +56,9 @@ namespace SimoxGui
         virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) override;
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
+        void setCameraConfiguration(const CameraConfigurationPtr& config) override;
+        CameraConfigurationPtr getCameraConfiguration() const override;
+
     protected:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override

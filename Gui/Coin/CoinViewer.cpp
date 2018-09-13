@@ -27,11 +27,13 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 #include <VirtualRobot/Visualization/SelectionManager.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoPath.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/manips/SoTransformManip.h>
+#include <Inventor/nodes/SoCamera.h>
 #include <QGLWidget>
 
 #include <iostream>
@@ -244,6 +246,27 @@ namespace SimoxGui
     VirtualRobot::Visualization::Color CoinViewer::getBackgroundColor() const
     {
         return backgroundColor;
+    }
+
+    void CoinViewer::setCameraConfiguration(const CameraConfigurationPtr &c)
+    {
+        SoQtExaminerViewer::getCamera()->position.setValue(c->pose(0, 3), c->pose(1, 3), c->pose(2, 3));
+        VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(c->pose);
+        SoQtExaminerViewer::getCamera()->orientation.setValue(q.x, q.y, q.z, q.w);
+    }
+
+    CameraConfigurationPtr CoinViewer::getCameraConfiguration() const
+    {
+        CameraConfigurationPtr c(new CameraConfiguration);
+        auto rot = SoQtExaminerViewer::getCamera()->orientation.getValue();
+        float x, y, z, w;
+        rot.getValue(x, y, z, w);
+        c->pose = VirtualRobot::MathTools::quat2eigen4f(x, y, z, w);
+        auto pos = SoQtExaminerViewer::getCamera()->position.getValue();
+        c->pose(0, 3) = pos[0];
+        c->pose(1, 3) = pos[1];
+        c->pose(2, 3) = pos[2];
+        return c;
     }
 
     void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)

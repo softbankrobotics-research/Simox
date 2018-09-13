@@ -15,40 +15,30 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    Gui
-* @author     Nikolaus Vahrenkamp, Adrian Knobloch
-* @copyright  2016 Nikolaus Vahrenkamp
+* @author     Adrian Knobloch
+* @copyright  2018 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
+
 #pragma once
 
-#include <VirtualRobot/VirtualRobot.h>
-#include <string>
+#include "SimoxGuiImportExport.h"
 
-#include "AbstractViewer.h"
+#include <Eigen/Core>
 
+#include <memory>
 
 namespace SimoxGui
 {
-    class ViewerFactory;
-    using ViewerFactoryPtr = std::shared_ptr<ViewerFactory>;
 
-    class CameraConfiguration;
-    using CameraConfigurationPtr = std::shared_ptr<CameraConfiguration>;
+class SIMOX_GUI_IMPORT_EXPORT CameraConfiguration
+{
+public:
+    CameraConfiguration() : pose(Eigen::Matrix4f::Identity()) {}
 
-    class SIMOX_GUI_IMPORT_EXPORT ViewerFactory
-    {
-    public:
-        static ViewerFactoryPtr getInstance();
+    Eigen::Matrix4f pose;
+};
+typedef std::shared_ptr<CameraConfiguration> CameraConfigurationPtr;
 
-    protected:
-        ViewerFactory() = default;
-
-    public:
-        virtual ~ViewerFactory() = default;
-
-        virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const = 0;
-        virtual CameraConfigurationPtr createCameraConfiguration() const = 0;
-    };
-
-} // namespace SimoxGui
+}

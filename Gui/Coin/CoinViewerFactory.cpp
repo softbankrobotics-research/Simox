@@ -6,12 +6,18 @@
 
 #include "CoinViewerFactory.h"
 #include "CoinViewer.h"
+#include "../CameraConfiguration.h"
 
 namespace SimoxGui
 {
     AbstractViewerPtr CoinViewerFactory::createViewer(QWidget *parent) const
     {
         return AbstractViewerPtr(new CoinViewer(parent));
+    }
+
+    CameraConfigurationPtr CoinViewerFactory::createCameraConfiguration() const
+    {
+        return CameraConfigurationPtr(new CameraConfiguration);
     }
 
 } // namespace SimoxGui
