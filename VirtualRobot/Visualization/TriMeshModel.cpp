@@ -386,7 +386,7 @@ namespace VirtualRobot
             query_pt[1] = p1[1];
             query_pt[2] = p1[2];
             const size_t nMatches = index.radiusSearch(&query_pt[0],search_radius, ret_matches, params);
-            for (int k = 0; k < nMatches; ++k)
+            for (size_t k = 0; k < nMatches; ++k)
             {
                 int foundIndex = ret_matches.at(k).first;
                 auto& faces = vertex2FaceMap[foundIndex];
@@ -471,7 +471,7 @@ namespace VirtualRobot
         }
 
         std::vector<Eigen::Vector3f> newVertices;
-        std::map<u_int, u_int> oldNewIndexMap;
+        std::map<unsigned int, unsigned int> oldNewIndexMap;
 
         for (size_t i=0; i<vertex2FaceMap.size(); i++ )
         {
@@ -480,7 +480,7 @@ namespace VirtualRobot
             {
                 Eigen::Vector3f &v = vertices.at(i);
                 newVertices.push_back(v);
-                oldNewIndexMap[i] = (u_int)newVertices.size()-1;
+                oldNewIndexMap[i] = (unsigned int)newVertices.size()-1;
             }
         }
 

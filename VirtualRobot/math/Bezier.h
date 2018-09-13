@@ -21,14 +21,14 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
-
 #include "AbstractFunctionR1R3.h"
 
 namespace math
 {
 
-    class Bezier :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Bezier :
             public AbstractFunctionR1R3
     {
     public:
