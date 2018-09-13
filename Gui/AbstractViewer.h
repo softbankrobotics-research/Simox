@@ -55,7 +55,7 @@ public:
 
     void addLayer(const std::string& layer);
     void removeLayer(const std::string& layer);
-    void removeAllLayer();
+    void removeAllLayers();
     bool hasLayer(const std::string &layer) const;
 
     void clearLayer(const std::string &layer, bool recursive=false);

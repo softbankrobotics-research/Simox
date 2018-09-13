@@ -140,7 +140,7 @@ namespace SimoxGui
     CoinViewer::~CoinViewer()
     {
         VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
-        removeAllLayer();
+        removeAllLayers();
         sceneSep->removeAllChildren();
         selectionNode->removeAllChildren();
         sceneSep->unref();

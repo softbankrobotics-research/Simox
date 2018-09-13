@@ -114,7 +114,7 @@ void SimoxGui::AbstractViewer::removeLayer(const std::string &layer)
     }
 }
 
-void SimoxGui::AbstractViewer::removeAllLayer()
+void SimoxGui::AbstractViewer::removeAllLayers()
 {
     baseLayer.clear(true);
 }
