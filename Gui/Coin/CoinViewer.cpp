@@ -129,6 +129,9 @@ namespace SimoxGui
         setAntialiasing(4);
         setBackgroundColor(VirtualRobot::Visualization::Color::None());
 
+        setAlphaChannel(true);
+        setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
+
         selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
         {
             if (_removeVisualization(visu, old))
