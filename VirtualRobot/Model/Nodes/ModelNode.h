@@ -67,11 +67,11 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param staticTransformation The transformation from the parent of this node to this node.
+         * @param localTransformation The transformation from the parent of this node to this node.
          */
         ModelNode(const ModelWeakPtr& model,
                   const std::string& name,
-                  const Eigen::Matrix4f& staticTransformation);
+                  const Eigen::Matrix4f& localTransformation);
 
     public:
         /*!
@@ -226,7 +226,7 @@ namespace VirtualRobot
          *
          * @return The local transformation.
          */
-        Eigen::Matrix4f getStaticTransformation() const;
+        virtual Eigen::Matrix4f getLocalTransformation() const;
 
         /*!
          * Get the transformation performed by this node.
@@ -239,10 +239,10 @@ namespace VirtualRobot
         /*!
          * Set a new preJoint/preVisualization transformation.
          *
-         * @param staticTransformation The new transformation.
+         * @param localTransformation The new transformation.
          * @param updatePose If set to true, the pose of all children will be updated recursively.
          */
-        virtual void setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose = true);
+        virtual void setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose = true);
 
         /*!
          * Get the globalPose of this node.
@@ -422,7 +422,7 @@ namespace VirtualRobot
         ModelNodeWeakPtr parent;
         std::vector<ModelNodePtr> children;
 
-        Eigen::Matrix4f staticTransformation;
+        Eigen::Matrix4f localTransformation;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
     };

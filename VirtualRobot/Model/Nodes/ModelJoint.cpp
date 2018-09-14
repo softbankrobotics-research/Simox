@@ -5,10 +5,10 @@ namespace VirtualRobot
 {
     ModelJoint::ModelJoint(const ModelWeakPtr& model,
                            const std::string& name,
-                           const Eigen::Matrix4f& staticTransformation,
+                           const Eigen::Matrix4f& localTransformation,
                            float jointLimitLo,
                            float jointLimitHi,
-                           float jointValueOffset) : ModelNode(model, name, staticTransformation),
+                           float jointValueOffset) : ModelNode(model, name, localTransformation),
                                                      jointValue(0),
                                                      jointValueOffset(jointValueOffset),
                                                      jointLimitLo(jointLimitLo),

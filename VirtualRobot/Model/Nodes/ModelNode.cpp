@@ -11,13 +11,13 @@ namespace VirtualRobot
 {
     ModelNode::ModelNode(const ModelWeakPtr& model, 
         const std::string& name,
-        const Eigen::Matrix4f& staticTransformation)
+        const Eigen::Matrix4f& localTransformation)
         : Frame(name),
          // initialized(false),
           model(model),
           parent(ModelNodeWeakPtr()),
           children(),
-          staticTransformation(staticTransformation),
+          localTransformation(localTransformation),
           attachments()
     {
         VR_ASSERT(model.lock());
@@ -264,21 +264,21 @@ namespace VirtualRobot
         return false;
     }
 
-    Eigen::Matrix4f ModelNode::getStaticTransformation() const
+    Eigen::Matrix4f ModelNode::getLocalTransformation() const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        return staticTransformation;
+        return localTransformation;
     }
 
     Eigen::Matrix4f ModelNode::getNodeTransformation() const
     {
-        return getStaticTransformation();
+        return getLocalTransformation();
     }
 
-    void ModelNode::setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose)
+    void ModelNode::setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose)
     {
         WriteLockPtr w = getModel()->getWriteLock();
-        this->staticTransformation = staticTransformation;
+        this->localTransformation = localTransformation;
 
         if (updatePose)
         {
