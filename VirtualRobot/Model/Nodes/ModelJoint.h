@@ -116,14 +116,14 @@ namespace VirtualRobot
          *
          * @return The upper joint limit in rad/mm.
          */
-        float getJointLimitHigh() const;
+        virtual float getJointLimitHigh() const;
 
         /*!
          * Get the lower joint limit.
          *
          * @return The lower joint limit in rad/mm.
          */
-        float getJointLimitLow() const;
+        virtual float getJointLimitLow() const;
 
         /*!
          * Set maximum velocity of this joint in rad/s or m/s.

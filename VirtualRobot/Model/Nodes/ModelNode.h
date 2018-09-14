@@ -194,7 +194,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if this node has a child with the given name; false otherwise.
          */
-        bool hasChild(const std::string& nodeName, bool recursive = false) const;
+        virtual bool hasChild(const std::string& nodeName, bool recursive = false) const;
 
         /*!
          * Attach a new Child to this node.
