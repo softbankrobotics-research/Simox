@@ -914,6 +914,17 @@ namespace VirtualRobot
         return collisionChecker;
     }
 
+    void Model::inflateCollisionModel(float inflationInMM)
+    {
+        for(auto& node : getLinks())
+        {
+            if(node->getCollisionModel())
+            {
+                node->getCollisionModel()->inflateModel(inflationInMM);
+            }
+        }
+    }
+
     float Model::getMass() const
     {
         ReadLockPtr r = getReadLock();
