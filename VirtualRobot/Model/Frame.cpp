@@ -64,19 +64,24 @@ Eigen::Vector3f Frame::toGlobalCoordinateSystemVec(const Eigen::Vector3f& positi
 	return result;
 }
 
-Eigen::Matrix4f Frame::getTransformationTo(const FramePtr& otherObject)
+Eigen::Matrix4f Frame::getTransformationTo(const FramePtr& otherObject) const
 {
 	return getGlobalPose().inverse() * otherObject->getGlobalPose();
 }
 
-Eigen::Matrix4f Frame::getTransformationFrom(const FramePtr& otherObject)
+Eigen::Matrix4f Frame::getTransformationFrom(const FramePtr& otherObject) const
 {
     return otherObject->getGlobalPose().inverse() * getGlobalPose();
 }
 
-Eigen::Matrix4f Frame::getPoseInRootFrame(const ModelPtr &model)
+Eigen::Matrix4f Frame::getPoseInFrame(const FramePtr &frame) const
 {
-    return model->getRootNode()->toLocalCoordinateSystem(getGlobalPose());
+    return frame->toLocalCoordinateSystem(getGlobalPose());
+}
+
+Eigen::Vector3f Frame::getPositionInFrame(const FramePtr &frame) const
+{
+    return frame->toLocalCoordinateSystemVec(getGlobalPosition());
 }
 
 } //namespace VirtualRobot

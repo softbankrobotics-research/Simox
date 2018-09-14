@@ -88,7 +88,7 @@ namespace VirtualRobot
 			* @param otherObject The object to transform to.
 			* @return The transform matrix.
 			*/
-			Eigen::Matrix4f getTransformationTo(const FramePtr& otherObject);
+            Eigen::Matrix4f getTransformationTo(const FramePtr& otherObject) const;
 
 			/*!
 			* Returns the transformation matrix from otherObject to this object.
@@ -96,8 +96,10 @@ namespace VirtualRobot
 			* @param otherObject The object to transform from.
 			* @return The transform matrix.
 			*/
-			Eigen::Matrix4f getTransformationFrom(const FramePtr& otherObject);
-            Eigen::Matrix4f getPoseInRootFrame(const ModelPtr& model);
+            Eigen::Matrix4f getTransformationFrom(const FramePtr& otherObject) const;
+
+            Eigen::Matrix4f getPoseInFrame(const FramePtr& frame) const;
+            Eigen::Vector3f getPositionInFrame(const FramePtr& frame) const;
 
         protected:
             Eigen::Matrix4f globalPose;
