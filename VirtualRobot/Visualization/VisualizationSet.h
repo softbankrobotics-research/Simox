@@ -109,6 +109,7 @@ namespace VirtualRobot
 
     protected:
         std::vector<VisualizationPtr> visualizations;
+        std::map<VisualizationPtr, size_t> childVisualizationChangedCallbacks;
         std::string filename;
         bool usedBoundingBox;
 

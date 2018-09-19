@@ -50,6 +50,23 @@ namespace VirtualRobot
         if (!containsVisualization(visu))
         {
             visualizations.push_back(visu);
+            {
+                auto visuPtr = visu.get();
+                auto id = visu->addSelectionChangedCallback([this, visuPtr](bool selected)
+                {
+                    for (auto& v : visualizations)
+                    {
+                        if (v.get() != visuPtr && !v->isSelected())
+                        {
+                            // if one other visualization is not selected, the selection change of this visualization does not change the selected state of the set
+                            return;
+                        }
+                    }
+
+                    executeSelectionChangedCallbacks(selected);
+                });
+                childVisualizationChangedCallbacks[visu] = id;
+            }
             for (auto& f : visualizationAddedCallbacks)
             {
                 f.second(visu);
