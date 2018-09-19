@@ -165,28 +165,6 @@ namespace SimDynamics
          */
         void addStepCallback(BulletStepCallback callback, void* data);
 
-        //! If set, all actions are protected with this mutex
-        virtual void setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr);
-
-        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
-
-        /*!
-        This lock can be used to protect data access. It locks the mutex until deletion.
-        If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
-        \see setMutex
-
-        Exemplary usage:
-        {
-            MutexLockPtr lock = getScopedLock();
-            // now the mutex is locked
-
-            // access data
-            // ...
-
-        } // end of scope -> lock gets deleted and mutex is released automatically
-        */
-        MutexLockPtr getScopedLock();
-
     protected:
 
         //checks if physics engine is enabled and performes a time step.

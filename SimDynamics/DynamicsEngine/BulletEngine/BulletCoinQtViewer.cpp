@@ -108,7 +108,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::stepPhysics()
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
 
         //simple dynamics world doesn't handle fixed-time-stepping
         double ms = getDeltaTimeMicroseconds();
@@ -169,7 +169,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(RobotPtr robot, VirtualRobot::ModelLink::VisualizationType visuType)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(robot);
         removeSimDynamicsVisualization(robot);
         robotVisus[robot->getName()] = robot->getVisualization(visuType);
@@ -178,7 +178,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(ModelLinkPtr so, VirtualRobot::ModelLink::VisualizationType visuType)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(so);
         removeSimDynamicsVisualization(so);
         linkVisus[so->getName()] = so->getVisualization(visuType);
@@ -187,7 +187,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsObjectPtr o, VirtualRobot::ModelLink::VisualizationType visuType)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(o);
         ModelLinkPtr so = o->getSceneObject();
         addSimDynamicsVisualization(so, visuType);
@@ -200,7 +200,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::addSimDynamicsVisualization(DynamicsModelPtr r, VirtualRobot::ModelLink::VisualizationType visuType)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(r);
         RobotPtr ro = r->getRobot();
         addSimDynamicsVisualization(ro, visuType);
@@ -208,7 +208,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(RobotPtr o)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(o);
         auto it = robotVisus.find(o->getName());
         if (it != robotVisus.end())
@@ -220,7 +220,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(ModelLinkPtr o)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(o);
         auto it = linkVisus.find(o->getName());
         if (it != linkVisus.end())
@@ -232,7 +232,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsObjectPtr o)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(o && o->getSceneObject());
         auto it = linkVisus.find(o->getSceneObject()->getName());
         if (it != linkVisus.end())
@@ -244,7 +244,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::removeSimDynamicsVisualization(DynamicsModelPtr r)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(r && r->getRobot());
         auto it = robotVisus.find(r->getRobot()->getName());
         if (it != robotVisus.end())
@@ -256,7 +256,7 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::stopCB()
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
 
         if (timer)
             timer->stop();
@@ -264,14 +264,14 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::setBulletSimTimeStepMsec(int msec)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(msec > 0);
         bulletTimeStepMsec = msec;
     }
 
     void BulletCoinQtViewer::setBulletSimMaxSubSteps(int n)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         VR_ASSERT(n > 0);
         bulletMaxSubSteps = n;
     }
@@ -283,12 +283,12 @@ namespace SimDynamics
 
     void BulletCoinQtViewer::stopEngine()
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         enablePhysicsUpdates = false;
     }
     void BulletCoinQtViewer::startEngine()
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         enablePhysicsUpdates = true;
     }
 
@@ -320,26 +320,9 @@ namespace SimDynamics
         }
     }
 
-    void BulletCoinQtViewer::setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr)
-    {
-        this->engineMutexPtr = engineMutexPtr;
-    }
-
-    BulletCoinQtViewer::MutexLockPtr BulletCoinQtViewer::getScopedLock()
-    {
-        std::shared_ptr< std::unique_lock<std::recursive_mutex> > scoped_lock;
-
-        if (engineMutexPtr)
-        {
-            scoped_lock.reset(new std::unique_lock<std::recursive_mutex>(*engineMutexPtr));
-        }
-
-        return scoped_lock;
-    }
-
     void BulletCoinQtViewer::setAntiAliasing(int steps)
     {
-        MutexLockPtr lock = getScopedLock();
+        auto lock = getScopedLock();
         CoinViewer::setAntialiasing(steps);
     }
 
