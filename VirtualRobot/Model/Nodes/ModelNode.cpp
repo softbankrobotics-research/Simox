@@ -126,21 +126,22 @@ namespace VirtualRobot
         }
     }
 
-    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, ModelNodeType type)
+    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, ModelNodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
-        ModelNodePtr p = shared_from_this();
+        ModelNodePtr p = p->getParentNode(type);
 
-        while (p = p->getParentNode(type))
+        do
         {
             if (!set || set->hasNode(p))
             {
                 result.push_back(p);
             }
         }
+        while (p = p->getParentNode(type));
 
         return result;
     }

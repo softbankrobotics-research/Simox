@@ -178,7 +178,7 @@ namespace VirtualRobot
          * @return The ModelNodes.
         */
         virtual std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
-                                                        ModelNodeType type = ModelNodeType::Node);
+                                                        ModelNodeType type = ModelNodeType::Node) const;
 
         /*!
          * Check if node is a child from this node.
@@ -186,7 +186,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if node is a child from this node; false otherwise.
          */
-        bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
+        virtual bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
 
         /*!
          * Check if this node has a child with the given name.
