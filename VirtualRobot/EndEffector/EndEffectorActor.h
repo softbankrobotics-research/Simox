@@ -101,7 +101,7 @@ namespace VirtualRobot
         bool isColliding(const EndEffectorPtr &obstacle);
         bool isColliding(const EndEffectorPtr &eef, const EndEffectorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts);
 
-        std::vector< ModelNodePtr > getModelNodes() const;
+        std::vector< ModelNodePtr > getNodes() const;
         std::vector< ModelLinkPtr > getLinks() const;
         std::vector< ModelJointPtr > getJoints() const;
 

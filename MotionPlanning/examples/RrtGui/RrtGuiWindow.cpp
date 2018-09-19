@@ -264,7 +264,7 @@ void RrtGuiWindow::loadScene()
     qtext = "<none>";
     UI.comboBoxColModelEnv->addItem(qtext);
 
-    std::vector<RobotNodeSetPtr> rnss = robot->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rnss = robot->getNodeSets();
     UI.comboBoxColModelRobot->clear();
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
@@ -319,7 +319,7 @@ void RrtGuiWindow::selectRNS(const std::string& rns)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -341,7 +341,7 @@ void RrtGuiWindow::selectColModelRobA(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -362,7 +362,7 @@ void RrtGuiWindow::selectColModelRobB(const std::string& colModel)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     for (size_t i = 0; i < rnss.size(); i++)
     {
@@ -452,7 +452,7 @@ void RrtGuiWindow::selectRNS(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
@@ -476,14 +476,14 @@ void RrtGuiWindow::selectColModelRobA(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    ModelNodeSetPtr mns = robot->getModelNodeSet(rnss[nr]->getName());
+    ModelNodeSetPtr mns = robot->getNodeSet(rnss[nr]->getName());
     LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
     if (ls)
         this->colModelRobA = ls;
@@ -500,14 +500,14 @@ void RrtGuiWindow::selectColModelRobB(int nr)
         return;
     }
 
-    std::vector< RobotNodeSetPtr > rnss = robot->getModelNodeSets();
+    std::vector< RobotNodeSetPtr > rnss = robot->getNodeSets();
 
     if (nr < 0 || nr >= (int)rnss.size())
     {
         return;
     }
 
-    ModelNodeSetPtr mns = robot->getModelNodeSet(rnss[nr]->getName());
+    ModelNodeSetPtr mns = robot->getNodeSet(rnss[nr]->getName());
     LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(mns);
     if (ls)
         this->colModelRobB = ls;

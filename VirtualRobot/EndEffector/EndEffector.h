@@ -173,7 +173,7 @@ namespace VirtualRobot
         RobotConfigPtr getConfiguration() const;
 
         //! Return all associated model nodes
-        std::vector< ModelNodePtr > getModelNodes() const;
+        std::vector< ModelNodePtr > getNodes() const;
         //! Return all associated links
         std::vector< ModelLinkPtr > getLinks() const;
         //! Return all associated joints

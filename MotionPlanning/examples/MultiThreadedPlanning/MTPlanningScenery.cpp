@@ -489,7 +489,7 @@ void MTPlanningScenery::loadRobotMTPlanning(bool bMultiCollisionCheckers)
             return;
         }
 
-        RobotNodeSetPtr kinChain = pRobot->getModelNodeSet(kinChainName);
+        RobotNodeSetPtr kinChain = pRobot->getNodeSet(kinChainName);
 
         if (!kinChain)
         {

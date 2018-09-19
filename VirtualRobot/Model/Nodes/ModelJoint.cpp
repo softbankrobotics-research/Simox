@@ -217,7 +217,7 @@ namespace VirtualRobot
 
         for (auto it = propagatedJointValues.begin(); it != propagatedJointValues.end(); it++)
         {
-            ModelNodePtr node = modelShared->getModelNode(it->first);
+            ModelNodePtr node = modelShared->getNode(it->first);
 
             if (!node || !checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
             {

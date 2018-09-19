@@ -599,7 +599,7 @@ namespace VirtualRobot
         return robot->getConfigurations();
     }
 	
-    VirtualRobot::ModelNodeSetPtr Scene::getModelNodeSet(const std::string& robot, const std::string rns)
+    VirtualRobot::ModelNodeSetPtr Scene::getNodeSet(const std::string& robot, const std::string rns)
     {
         RobotPtr r = getRobot(robot);
 
@@ -609,7 +609,7 @@ namespace VirtualRobot
             return RobotNodeSetPtr();
         }
 
-        return r->getModelNodeSet(rns);
+        return r->getNodeSet(rns);
     }
 
 

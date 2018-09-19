@@ -63,14 +63,14 @@ namespace VirtualRobot
          *
          * @param node The new node.
          */
-        virtual void registerModelNode(const ModelNodePtr& node);
+        virtual void registerNode(const ModelNodePtr& node);
 
         /*!
          * Deregister the given ModelNode.
          *
          * @param node The node to deregister.
          */
-        virtual void deregisterModelNode(const ModelNodePtr& node);
+        virtual void deregisterNode(const ModelNodePtr& node);
 
         /*!
          * Check, if the ModelNode is registered to this model.
@@ -78,7 +78,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const ModelNodePtr& node) const;
+        virtual bool hasNode(const ModelNodePtr& node) const;
         virtual bool hasLink(const ModelLinkPtr& link) const;
         virtual bool hasJoint(const ModelJointPtr& joint) const;
 
@@ -88,7 +88,7 @@ namespace VirtualRobot
          * @param modelNodeName The name of the node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const std::string& modelNodeName) const;
+        virtual bool hasNode(const std::string& modelNodeName) const;
         virtual bool hasJoint(const std::string& jointName) const;
         virtual bool hasLink(const std::string& linkName) const;
 
@@ -101,7 +101,7 @@ namespace VirtualRobot
          *@see getLink
          *@see getJoint
          */
-        virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
+        virtual ModelNodePtr getNode(const std::string& modelNodeName) const;
         virtual ModelLinkPtr getLink(const std::string& modelNodeName) const;
         virtual ModelJointPtr getJoint(const std::string& modelNodeName) const;
 
@@ -136,7 +136,7 @@ namespace VirtualRobot
          * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes(ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
+        virtual std::vector< ModelNodePtr > getNodes(ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
         /*!
          * Get all nodes by names.
@@ -144,7 +144,7 @@ namespace VirtualRobot
          * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes(const std::vector< std::string > & nodeNames) const;
+        virtual std::vector< ModelNodePtr > getNodes(const std::vector< std::string > & nodeNames) const;
 
           /*!
          * Get all nodes, registered to this model.
@@ -153,10 +153,10 @@ namespace VirtualRobot
          * @param clearVector If true, the vector is cleared bevor storing nodes.
          * @param type If set, only nodes of this type are returned.
          */
-        virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
+        virtual void getNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
                                    ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
 
-        virtual std::vector<std::string> getModelNodeNames() const;
+        virtual std::vector<std::string> getNodeNames() const;
 
         /*!
          * Register a new ModelNodeSet to this model.
@@ -164,7 +164,7 @@ namespace VirtualRobot
          *
          * @param nodeSet The new node set.
          */
-        virtual void registerModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void registerNodeSet(const ModelNodeSetPtr& nodeSet);
         virtual void registerJointSet(const JointSetPtr& nodeSet);
         virtual void registerLinkSet(const LinkSetPtr& nodeSet);
 
@@ -173,7 +173,7 @@ namespace VirtualRobot
          *
          * @param nodeSet The node set to deregister.
          */
-        virtual void deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void deregisterNodeSet(const ModelNodeSetPtr& nodeSet);
         virtual void deregisterJointSet(const JointSetPtr& nodeSet);
         virtual void deregisterLinkSet(const LinkSetPtr& nodeSet);
 
@@ -183,7 +183,7 @@ namespace VirtualRobot
          * @param nodeSet The node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const;
+        virtual bool hasNodeSet(const ModelNodeSetPtr& nodeSet) const;
         virtual bool hasJointSet(const JointSetPtr& nodeSet) const;
         virtual bool hasLinkSet(const LinkSetPtr& nodeSet) const;
 
@@ -193,7 +193,7 @@ namespace VirtualRobot
          * @param nodeSet The name of the node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(const std::string& name) const;
+        virtual bool hasNodeSet(const std::string& name) const;
         virtual bool hasJointSet(const std::string& name) const;
         virtual bool hasLinkSet(const std::string& name) const;
 
@@ -203,7 +203,7 @@ namespace VirtualRobot
          * @param modelNodeName The name of the ModelNodeSet.
          * @return A pointer to the ModelNodeSet.
          */
-        virtual ModelNodeSetPtr getModelNodeSet(const std::string& nodeSetName) const;
+        virtual ModelNodeSetPtr getNodeSet(const std::string& nodeSetName) const;
         virtual JointSetPtr getJointSet(const std::string& nodeSetName) const;
         virtual LinkSetPtr getLinkSet(const std::string& nodeSetName) const;
 
@@ -235,10 +235,10 @@ namespace VirtualRobot
          *
          * @return The registered node sets.
          */
-        virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
+        virtual std::vector<ModelNodeSetPtr> getNodeSets() const;
         virtual std::vector<LinkSetPtr> getLinkSets() const;
         virtual std::vector<JointSetPtr> getJointSets() const;
-        virtual std::vector<std::string> getModelNodeSetNames() const;
+        virtual std::vector<std::string> getNodeSetNames() const;
         virtual std::vector<std::string> getLinkSetNames() const;
         virtual std::vector<std::string> getJointSetNames() const;
 
@@ -343,7 +343,7 @@ namespace VirtualRobot
          * @param node The frame/node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
-        virtual void setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.

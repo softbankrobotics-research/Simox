@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(testRobotNodePrismaticTransformation)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    VirtualRobot::ModelNodePtr r1 = rob->getModelNode(node1);
-    VirtualRobot::ModelNodePtr r2 = rob->getModelNode(node2);
+    VirtualRobot::ModelNodePtr r1 = rob->getNode(node1);
+    VirtualRobot::ModelNodePtr r2 = rob->getNode(node2);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
     Eigen::Matrix4f m1 = r1->getGlobalPose();

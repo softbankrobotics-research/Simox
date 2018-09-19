@@ -43,7 +43,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelJointFixed();
+        virtual ~ModelJointFixed() override;
 
         virtual ModelNodeType getType() const override;
 

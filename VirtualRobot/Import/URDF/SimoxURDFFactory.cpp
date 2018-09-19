@@ -387,7 +387,7 @@ namespace VirtualRobot
 
         result.reset(new ModelLink(robo, name, preJointTransform, rnVisu, rnCol, physics));
 
-        robo->registerModelNode(result);
+        robo->registerNode(result);
 
         return result;
     }
@@ -450,7 +450,7 @@ namespace VirtualRobot
             result->setMaxTorque(urdfJoint->limits->effort);
         }
 
-        robo->registerModelNode(result);
+        robo->registerNode(result);
         return result;
     }
 

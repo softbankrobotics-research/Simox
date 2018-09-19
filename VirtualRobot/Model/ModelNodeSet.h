@@ -189,8 +189,6 @@ namespace VirtualRobot
          */
         virtual unsigned int getSize() const = 0;
 
-        std::vector< std::string > getModelNodeNames() const;
-
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
          * A set of nodes is sufficient, if it contains atleast all nodes of this ModelNodeSet.

@@ -279,13 +279,13 @@ namespace VirtualRobot
             if (version[0] > 1 || (version[0] == 1 &&  version[1] > 0))
             {
                 FileIO::readString(tmpString, file);
-                if (tmpString.empty() || !robot->hasModelNode(tmpString))
+                if (tmpString.empty() || !robot->hasNode(tmpString))
                 {
                     VR_WARNING << "Base node not given/known:" << tmpString << endl;
                 }
                 else
                 {
-                    baseNode = robot->getModelNode(tmpString);
+                    baseNode = robot->getNode(tmpString);
                     THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Node");
                 }
             }
@@ -1158,7 +1158,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot->hasFrame(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
         this->baseNode = baseNode;
 
-        if (baseNode && !robot->hasModelNode(baseNode))
+        if (baseNode && !robot->hasNode(baseNode))
         {
             THROW_VR_EXCEPTION("Robot does not know basenode:" << baseNode->getName());
         }
@@ -1634,7 +1634,7 @@ namespace VirtualRobot
             return false;
         }
 
-        if (baseNode && !robot->hasModelNode(baseNode))
+        if (baseNode && !robot->hasNode(baseNode))
         {
             VR_ERROR << "robot does not know baseNode:" << baseNode->getName() << endl;
             return false;

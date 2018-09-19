@@ -494,7 +494,7 @@ void reachabilityWindow::createReach()
     UICreate.doubleSpinBoxMaxZ->setValue(maxB[2]);
 
 
-    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getModelNodeSets();
+    std::vector < VirtualRobot::RobotNodeSetPtr > allRNS = robot->getNodeSets();
 
     for (size_t i = 0; i < allRNS.size(); i++)
     {

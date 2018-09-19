@@ -51,7 +51,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelJointPrismatic();
+        virtual ~ModelJointPrismatic() override;
 
         virtual ModelNodeType getType() const override;
 

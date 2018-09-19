@@ -77,7 +77,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelNode();
+        virtual ~ModelNode() override;
 
         /*!
          * Initialize ModelNode. Here pointers to parent and children are created from names.

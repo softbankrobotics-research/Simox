@@ -318,7 +318,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     Eigen::Matrix4f mGrasp = g->getTcpPoseGlobal(o->getGlobalPose());
 
     // apply grasp
-    eef->getRobot()->setGlobalPoseForModelNode(eef->getTcp(), mGrasp);
+    eef->getRobot()->setGlobalPoseForNode(eef->getTcp(), mGrasp);
 
     if (graspPS)
     {

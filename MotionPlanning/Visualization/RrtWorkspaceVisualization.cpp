@@ -240,7 +240,7 @@ namespace MotionPlanning
     void RrtWorkspaceVisualization::setTCPName(const std::string TCPName)
     {
         this->TCPName = TCPName;
-        TCPNode = robot->getModelNode(TCPName);
+        TCPNode = robot->getNode(TCPName);
 
         if (!TCPNode)
         {

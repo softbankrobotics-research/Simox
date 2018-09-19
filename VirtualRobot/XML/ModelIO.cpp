@@ -115,12 +115,12 @@ namespace VirtualRobot
             } else
             {
                 sensorAttached = attr->value();
-                if (!robot->hasModelNode(sensorAttached))
+                if (!robot->hasNode(sensorAttached))
                 {
                     VR_WARNING << "Attached node " << sensorAttached << " not available in model " << robot->getName() << "!" << endl;
                     return false;
                 }
-                attachedToModelNode = robot->getModelNode(sensorAttached);
+                attachedToModelNode = robot->getNode(sensorAttached);
             }
         }
         else
@@ -479,7 +479,7 @@ namespace VirtualRobot
 
         if (!rootNodeName.empty())
         {
-            kinRoot = robo->getModelNode(rootNodeName);
+            kinRoot = robo->getNode(rootNodeName);
         }
 
         FramePtr tcp;
@@ -1372,8 +1372,8 @@ namespace VirtualRobot
                 std::string nameStr("node");
                 std::string parentNodeName = BaseIO::processStringAttribute(nameStr, node, false);
                 THROW_VR_EXCEPTION_IF(parentNodeName.empty(), "Parent name must not be empty");
-                THROW_VR_EXCEPTION_IF(!robo->hasModelNode(parentNodeName), "Robot does not node model node with name " + parentNodeName + " in frame " + frameName);
-                parentNode = robo->getModelNode(parentNodeName);
+                THROW_VR_EXCEPTION_IF(!robo->hasNode(parentNodeName), "Robot does not node model node with name " + parentNodeName + " in frame " + frameName);
+                parentNode = robo->getNode(parentNodeName);
             } else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in Frame <" << frameName << ">." << endl);

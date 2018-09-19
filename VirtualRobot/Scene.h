@@ -152,7 +152,7 @@ namespace VirtualRobot
         ModelSetPtr getModelSet(const std::string & name);
 
 
-        ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
+        ModelNodeSetPtr getNodeSet(const std::string& robot, const std::string rns);
 
         std::string getName() const;
 

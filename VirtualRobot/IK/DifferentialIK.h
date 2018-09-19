@@ -55,8 +55,8 @@ namespace VirtualRobot
         @code
         // define a kinematic chain for bimanual manipulation.
         std::vector<RobotNodePtr> nBi;
-        nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L")));
-        nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R")));
+        nBi.push_back(robot->getNode(std::string("Shoulder 1 L")));
+        nBi.push_back(robot->getNode(std::string("Shoulder 1 R")));
         // ...
         RobotNodeSetPtr kcBi = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTestBi"),nBi);
 

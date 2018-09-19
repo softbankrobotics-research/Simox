@@ -945,7 +945,7 @@ namespace VirtualRobot
                     (*eef)->clone(robo);
                 }
 
-                std::vector<RobotNodeSetPtr> nodeSets = r->getModelNodeSets();
+                std::vector<RobotNodeSetPtr> nodeSets = r->getNodeSets();
 
                 for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
                 {
@@ -971,9 +971,9 @@ namespace VirtualRobot
                     }
 
                     ModelNodeSetPtr rns = (*ns)->clone(robo);
-                    if (rns && !robo->hasModelNodeSet(rns))
+                    if (rns && !robo->hasNodeSet(rns))
                     {
-                        robo->registerModelNodeSet(rns);
+                        robo->registerNodeSet(rns);
                     }
                 }
 
@@ -999,7 +999,7 @@ namespace VirtualRobot
         }
 
         std::vector<RobotNodePtr> nodes;
-        robo->getModelNodes(nodes);
+        robo->getNodes(nodes);
         RobotNodePtr root = robo->getRootNode();
 
         for (size_t i = 0; i < nodes.size(); i++)

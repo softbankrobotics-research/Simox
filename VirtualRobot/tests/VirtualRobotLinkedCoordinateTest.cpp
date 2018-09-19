@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE(testIntelligentCoordinate)
 
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
-    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node1);
-    VirtualRobot::RobotNodePtr r2 = rob->getModelNode(node2);
+    VirtualRobot::RobotNodePtr r1 = rob->getNode(node1);
+    VirtualRobot::RobotNodePtr r2 = rob->getNode(node2);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
 

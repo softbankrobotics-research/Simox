@@ -16,7 +16,7 @@ namespace VirtualRobot
         modelNodes.reserve(modelNodeNames.size());
         for (const auto& nodeName : modelNodeNames)
         {
-            ModelNodePtr node = model->getModelNode(nodeName);
+            ModelNodePtr node = model->getNode(nodeName);
             THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + nodeName + " found.");
             modelNodes.push_back(node);
         }
@@ -39,8 +39,8 @@ namespace VirtualRobot
 
         if (registerToModel)
         {
-            THROW_VR_EXCEPTION_IF(model->hasModelNodeSet(mns), "NodeSet with name " + name + " already present in the model");
-            model->registerModelNodeSet(mns);
+            THROW_VR_EXCEPTION_IF(model->hasNodeSet(mns), "NodeSet with name " + name + " already present in the model");
+            model->registerNodeSet(mns);
         }
 
         return mns;
@@ -108,18 +108,6 @@ namespace VirtualRobot
         return names;
     }
 
-
-    std::vector<std::string> ModelNodeSet::getModelNodeNames() const
-    {
-        std::vector<std::string> res;
-        for (const auto& n : getNodes())
-        {
-            res.push_back(n->getName());
-        }
-        return res;
-    }
-
-
     bool ModelNodeSet::nodesSufficient(const std::vector<ModelNodePtr> &nodes) const
     {
         bool tcpOk = false;
@@ -186,7 +174,7 @@ namespace VirtualRobot
         VR_ASSERT(model);
         if (!name.empty())
         {
-            ModelNodePtr node = model->getModelNode(name);
+            ModelNodePtr node = model->getNode(name);
             THROW_VR_EXCEPTION_IF(!node, "No root node with name " + name + " found.");
             return node;
         }
@@ -200,7 +188,7 @@ namespace VirtualRobot
         VR_ASSERT(model);
         if (!tcpName.empty())
         {
-            FramePtr f = model->getModelNode(tcpName);
+            FramePtr f = model->getNode(tcpName);
             if (!f)
             {
                 f = model->getAttachment(tcpName);
@@ -357,8 +345,8 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> newModelNodes;
         for (const auto &n : getNodes())
         {
-            THROW_VR_EXCEPTION_IF(!model->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
-            ModelNodePtr newModelNode = model->getModelNode(n->getName());
+            THROW_VR_EXCEPTION_IF(!model->hasNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            ModelNodePtr newModelNode = model->getNode(n->getName());
             VR_ASSERT(newModelNode);
             newModelNodes.push_back(newModelNode);
         }

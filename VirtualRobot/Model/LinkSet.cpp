@@ -48,8 +48,8 @@ namespace VirtualRobot
 
         if (registerToModel)
         {
-            THROW_VR_EXCEPTION_IF(model->hasModelNodeSet(mns), "NodeSet with name " + name + " already present in the model");
-            model->registerModelNodeSet(mns);
+            THROW_VR_EXCEPTION_IF(model->hasNodeSet(mns), "NodeSet with name " + name + " already present in the model");
+            model->registerNodeSet(mns);
         }
 
         return mns;
@@ -211,7 +211,7 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> newModelLinks;
         for (const auto &n : getLinks())
         {
-            THROW_VR_EXCEPTION_IF(!model->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            THROW_VR_EXCEPTION_IF(!model->hasNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
             ModelLinkPtr newModelLink = model->getLink(n->getName());
             THROW_VR_EXCEPTION_IF(!newModelLink, "The node \"" << n->getName() << "\" is not a link in the new model.");
             newModelLinks.push_back(newModelLink);

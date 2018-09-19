@@ -245,7 +245,7 @@ void GraspPlannerWindow::plan()
     if (grasps->getSize() > 0 && eefCloned && eefCloned->getEndEffector(eefName))
     {
         Eigen::Matrix4f mGrasp = grasps->getGrasp(grasps->getSize() - 1)->getTcpPoseGlobal(object->getGlobalPose());
-        eefCloned->setGlobalPoseForModelNode(eefCloned->getEndEffector(eefName)->getTcp(), mGrasp);
+        eefCloned->setGlobalPoseForNode(eefCloned->getEndEffector(eefName)->getTcp(), mGrasp);
     }
 
     if (nrGrasps > 0)

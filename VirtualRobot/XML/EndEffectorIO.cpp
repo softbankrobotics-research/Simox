@@ -72,7 +72,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!baseNodeName.empty(), "Endeffector tag has more than one <base> tag. Value of the first one is: " + baseNodeName);
                 baseNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(baseNodeName.empty(), "Endeffector tag does not specify a <base> tag.");
-                baseNode = robo->getModelNode(baseNodeName);
+                baseNode = robo->getNode(baseNodeName);
                 THROW_VR_EXCEPTION_IF(!baseNode, "base associated with <Endeffector> not available in the robot model.");
             }
             else if ("tcp" == attributeName)
@@ -80,7 +80,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!tcpNodeName.empty(), "Endeffector tag has more than one <tcp> tag. Value of the first one is: " + tcpNodeName);
                 tcpNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(tcpNodeName.empty(), "Endeffector tag does not specify a <tcp> tag.");
-                tcpNode = robo->getModelNode(tcpNodeName);
+                tcpNode = robo->getNode(tcpNodeName);
                 THROW_VR_EXCEPTION_IF(!tcpNode, "tcp associated with <Endeffector> not available in the robot model.");
             }
             else if ("gcp" == attributeName)
@@ -88,7 +88,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(!gcpNodeName.empty(), "Endeffector tag has more than one <gcp> tag. Value of the first one is: " + gcpNodeName);
                 gcpNodeName = attr->value();
                 THROW_VR_EXCEPTION_IF(gcpNodeName.empty(), "Endeffector tag does not specify a <gcp> tag.");
-                gcpNode = robo->getModelNode(gcpNodeName);
+                gcpNode = robo->getNode(gcpNodeName);
                 THROW_VR_EXCEPTION_IF(!gcpNode, "gcp associated with <Endeffector> not available in the robot model.");
             }
             else
@@ -229,7 +229,7 @@ namespace VirtualRobot
                 EndEffectorActor::ActorDefinition actor;
                 std::string nodeNameAttr = processNameAttribute(node, true);
                 THROW_VR_EXCEPTION_IF(nodeNameAttr.empty(), "Missing name attribute for <Node> belonging to Robot node set " << parentName);
-                actor.robotNode = robot->getModelNode(nodeNameAttr);
+                actor.robotNode = robot->getNode(nodeNameAttr);
                 THROW_VR_EXCEPTION_IF(!actor.robotNode, "<node> tag with name '" << nodeNameAttr << "' not present in the current robot");
                 actor.directionAndSpeed = processFloatAttribute(speedname, node, true);
 

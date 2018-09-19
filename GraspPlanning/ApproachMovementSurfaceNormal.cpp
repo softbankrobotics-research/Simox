@@ -218,7 +218,7 @@ namespace GraspPlanning
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
             tcp = eef_cloned->getGCP();
-        eefRobot->setGlobalPoseForModelNode(tcp, pose);
+        eefRobot->setGlobalPoseForNode(tcp, pose);
         return true;
     }
 }

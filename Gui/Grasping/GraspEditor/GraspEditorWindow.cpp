@@ -600,7 +600,7 @@ namespace VirtualRobot
         if (robotEEF && robotEEF_EEF && currentGrasp && object)
         {
             FramePtr tcp = robotEEF_EEF->getTcp();
-            robotEEF->setGlobalPoseForModelNode(tcp, p);
+            robotEEF->setGlobalPoseForNode(tcp, p);
             Eigen::Matrix4f objP = object->getGlobalPose();
             Eigen::Matrix4f pLocal = tcp->toLocalCoordinateSystem(objP);
             currentGrasp->setTransformation(pLocal);

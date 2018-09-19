@@ -66,8 +66,8 @@ namespace VirtualRobot
 
 
         // register root
-        if (!model->hasModelNode(rootNode->getName()))
-            model->registerModelNode(rootNode);
+        if (!model->hasNode(rootNode->getName()))
+            model->registerNode(rootNode);
         model->setRootNode(rootNode, false);
 
         // go through tree and attach nodes according to parent-child mapping
@@ -89,9 +89,9 @@ namespace VirtualRobot
                             break;
                         }
                     THROW_VR_EXCEPTION_IF(!c, "Corrupt children map, could not find node with name " + childName);
-                    if (!model->hasModelNode(c))
+                    if (!model->hasNode(c))
                     {
-                        model->registerModelNode(c);
+                        model->registerNode(c);
                     }
                     currentNode->attachChild(c, false);
                     openNodes.push_back(c);
@@ -109,7 +109,7 @@ namespace VirtualRobot
             }
         }
         THROW_VR_EXCEPTION_IF(openNodes.size() != 0, "Internal error");
-        THROW_VR_EXCEPTION_IF(model->getModelNodes().size() != modelNodes.size(), "Could not attach all model nodes to model");
+        THROW_VR_EXCEPTION_IF(model->getNodes().size() != modelNodes.size(), "Could not attach all model nodes to model");
 
         for (size_t i = 0; i < modelNodes.size(); i++)
         {
@@ -148,7 +148,7 @@ namespace VirtualRobot
 
         std::string name = o->getName();
 
-        if (model->hasModelNode(name))
+        if (model->hasNode(name))
         {
             VR_WARNING << "RN with name " << name << " already present" << endl;
             return false;
@@ -183,13 +183,13 @@ namespace VirtualRobot
             return false;
         }
 
-        if (!model->hasModelNode(rn))
+        if (!model->hasNode(rn))
         {
             return false;
         }
 
         rn->getParent()->detachChild(rn);
-        model->deregisterModelNode(rn);
+        model->deregisterNode(rn);
         return true;
     }
 

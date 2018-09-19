@@ -157,7 +157,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(robot);
         VR_ASSERT(node);
-        VR_ASSERT(robot->hasModelNode(node));
+        VR_ASSERT(robot->hasNode(node));
 
         robotNodeActuationTarget target;
         target.actuation.modes.position = 1;
@@ -193,7 +193,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(robot);
         VR_ASSERT(node);
-        VR_ASSERT(robot->hasModelNode(node));
+        VR_ASSERT(robot->hasNode(node));
 
         //if (!hasDynamicsRobotNode(node))
         //    createDynamicsNode(node);
@@ -254,7 +254,7 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(robot);
         VR_ASSERT(node);
-        VR_ASSERT(robot->hasModelNode(node));
+        VR_ASSERT(robot->hasNode(node));
 
         //if (!hasDynamicsRobotNode(node))
         //    createDynamicsNode(node);

@@ -102,7 +102,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelLink();
+        virtual ~ModelLink() override;
 
         //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 

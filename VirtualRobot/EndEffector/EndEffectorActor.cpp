@@ -53,7 +53,7 @@ namespace VirtualRobot
             ActorDefinition a;
             a.colMode = actors[i].colMode;
             a.directionAndSpeed = actors[i].directionAndSpeed;
-            a.robotNode = newRobot->getModelNode(actors[i].robotNode->getName());
+            a.robotNode = newRobot->getNode(actors[i].robotNode->getName());
             newDef.push_back(a);
         }
 
@@ -449,7 +449,7 @@ namespace VirtualRobot
     }
 
 
-    std::vector< ModelNodePtr > EndEffectorActor::getModelNodes() const
+    std::vector< ModelNodePtr > EndEffectorActor::getNodes() const
     {
         std::vector< ModelNodePtr > res;
 

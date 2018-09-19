@@ -262,7 +262,7 @@ void SimDynamicsWindow::updateJoints()
 
     robotNodes.clear();
     UI.comboBoxRobotNode->clear();
-    std::vector<RobotNodePtr> nodes = robot->getModelNodes();
+    std::vector<RobotNodePtr> nodes = robot->getNodes();
 
     for (size_t i = 0; i < nodes.size(); i++)
     {

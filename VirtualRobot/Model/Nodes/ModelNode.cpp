@@ -184,8 +184,8 @@ namespace VirtualRobot
 			return false;
 		}
 		ModelPtr m = getModel();
-		if (!m->hasModelNode(newNode))
-			m->registerModelNode(newNode);
+		if (!m->hasNode(newNode))
+			m->registerNode(newNode);
         children.push_back(newNode);
         newNode->parent = shared_from_this();
 
@@ -241,8 +241,8 @@ namespace VirtualRobot
         {
             WriteLockPtr w = getModel()->getWriteLock();
 			ModelPtr m = getModel();
-			if (m->hasModelNode(node))
-				m->deregisterModelNode(node);
+			if (m->hasNode(node))
+				m->deregisterNode(node);
 
             children.erase(std::find(children.begin(), children.end(), node));
             node->parent.reset();
@@ -576,7 +576,7 @@ namespace VirtualRobot
             parentNode->attachChild(result, false);
         }
 
-        newModel->registerModelNode(result);
+        newModel->registerNode(result);
 
         newModel->applyJointValues();
 
