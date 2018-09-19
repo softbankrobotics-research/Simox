@@ -298,6 +298,9 @@ namespace SimoxGui
                     {
                         selectionNode->deselect(d.node);
                     }
+
+                    // Force visualization update
+                    selectionNode->touch();
                 });
                 SelectionGroupData& d = selectionGroups[selectionGroup];
                 d.selectionChangedCallbackId = selectionChangedId;
@@ -340,6 +343,8 @@ namespace SimoxGui
                     {
                         selectionNode->deselect(d.node);
                     }
+                    // Force visualization update
+                    selectionNode->touch();
                     selectionNode->removeChild(d.node);
                     d.node->unref();
                     d.node = nullptr;
