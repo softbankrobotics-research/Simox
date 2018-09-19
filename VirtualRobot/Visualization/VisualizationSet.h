@@ -84,9 +84,9 @@ namespace VirtualRobot
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        virtual void setFilename(const std::string &filename, bool boundingBox);
-        virtual std::string getFilename() const;
-        virtual bool usedBoundingBoxVisu() const;
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
 
         virtual BoundingBox getBoundingBox() const override;
 
