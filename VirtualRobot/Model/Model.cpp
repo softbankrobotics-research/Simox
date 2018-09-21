@@ -51,7 +51,7 @@ namespace VirtualRobot
                                       + "> defined!");
             }
 
-            if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+            if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                 if (collisionChecker)
@@ -84,7 +84,7 @@ namespace VirtualRobot
                 modelNodeMap.erase(i);
             }
         }
-        if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+        if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
         {
             ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
             removeFromVisualization(link);
@@ -183,7 +183,7 @@ namespace VirtualRobot
         return res;
     }
 
-    std::vector<ModelNodePtr> Model::getNodes(ModelNode::ModelNodeType type) const
+    std::vector<ModelNodePtr> Model::getNodes(ModelNode::NodeType type) const
     {
         ReadLockPtr r = getReadLock();
         std::vector<ModelNodePtr> result;
@@ -205,7 +205,7 @@ namespace VirtualRobot
         return modelNodes;
     }
 
-    void Model::getNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector, ModelNode::ModelNodeType type) const
+    void Model::getNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector, ModelNode::NodeType type) const
     {
         ReadLockPtr r = getReadLock();
         if (clearVector)
@@ -601,7 +601,7 @@ namespace VirtualRobot
             return res;
         }
 
-        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -693,7 +693,7 @@ namespace VirtualRobot
     void Model::setupVisualization(bool showVisualization)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -716,7 +716,7 @@ namespace VirtualRobot
     void Model::setUpdateCollisionModel(bool enable)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -734,7 +734,7 @@ namespace VirtualRobot
 
 	bool Model::getUpdateCollisionModel() const
 	{
-        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
         for (auto mn : modelNodes)
 		{
 			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
@@ -756,8 +756,8 @@ namespace VirtualRobot
         {
             ModelNodePtr rn = *iterator;
 
-            if (ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointPrismatic)
-                ||ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointRevolute))
+            if (ModelNode::checkNodeOfType(rn, ModelNode::NodeType::JointPrismatic)
+                ||ModelNode::checkNodeOfType(rn, ModelNode::NodeType::JointRevolute))
             {
                 ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(rn);
                 r->setConfig(joint, joint->getJointValue());
@@ -784,7 +784,7 @@ namespace VirtualRobot
     {
         if (node)
         {
-            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint),
+            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint),
                                   "Can not set joint value of node <" + node->getName() + ">.");
             THROW_VR_EXCEPTION_IF(!hasNode(node), "Node <" + node->getName() + "> is not part of the model.");
 
@@ -808,7 +808,7 @@ namespace VirtualRobot
             THROW_VR_EXCEPTION_IF(!hasNode(it->first), "Node <" + it->first + "> is not part of the model.");
 
             ModelNodePtr node = getNode(it->first);
-            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint),
+            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint),
                                   "Can not set joint value of node <" + node->getName() + ">.");
 
             ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(node);
@@ -855,7 +855,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 res += link->getNumFaces(collisionModel);
@@ -872,7 +872,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 if (collisionModel && link->getCollisionModel())
@@ -897,7 +897,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 if (link && link->getCollisionModel())
@@ -932,7 +932,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 mass += link->getMass();
@@ -1338,7 +1338,7 @@ namespace VirtualRobot
 
 
         std::vector<ModelNodePtr> allNodes;
-        startNode->collectAllNodes(allNodes, ModelNode::ModelNodeType::Joint);
+        startNode->collectAllNodes(allNodes, ModelNode::NodeType::Joint);
 
         for (size_t i = 0; i < allNodes.size(); i++)
         {

@@ -35,7 +35,7 @@ namespace VirtualRobot
 
         for (size_t i = 0; i < nDoF; i++)
         {
-            if (nodes[i]->getType() == ModelNode::ModelNodeType::JointRevolute)
+            if (nodes[i]->getType() == ModelNode::NodeType::JointRevolute)
             {
                 float l = nodes[i]->getJointLimitHigh() - nodes[i]->getJointLimitLow();
                 float target = nodes[i]->getJointLimitLow() + l * 0.5f;

@@ -216,7 +216,7 @@ namespace VirtualRobot
         inline CollisionModelPtr getCollisionModel(const ModelNodePtr& m)
         {
             VR_ASSERT(m);
-            if (!ModelNode::checkNodeOfType(m, ModelNode::ModelNodeType::Link))
+            if (!ModelNode::checkNodeOfType(m, ModelNode::NodeType::Link))
                 return CollisionModelPtr();
             return std::static_pointer_cast<ModelLink>(m)->getCollisionModel();
         }
@@ -254,7 +254,7 @@ namespace VirtualRobot
             for (auto mTmp : m)
             {
                 VR_ASSERT(mTmp);
-                if (!ModelNode::checkNodeOfType(mTmp, ModelNode::ModelNodeType::Link))
+                if (!ModelNode::checkNodeOfType(mTmp, ModelNode::NodeType::Link))
                     continue;
                 mVec.push_back(std::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
             }

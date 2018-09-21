@@ -20,9 +20,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNode::ModelNodeType ModelJointRevolute::getType() const
+    ModelNode::NodeType ModelJointRevolute::getType() const
     {
-        return ModelNode::ModelNodeType::JointRevolute;
+        return ModelNode::NodeType::JointRevolute;
     }
 
     Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(FramePtr coordSystem) const

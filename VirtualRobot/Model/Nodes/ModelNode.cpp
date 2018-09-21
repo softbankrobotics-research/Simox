@@ -53,7 +53,7 @@ namespace VirtualRobot
         return ModelNodePtr();
     }
 
-    ModelNodePtr ModelNode::getParentNode(ModelNodeType type) const
+    ModelNodePtr ModelNode::getParentNode(NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
@@ -78,12 +78,12 @@ namespace VirtualRobot
         return parentLink;
     }
 
-    std::vector<ModelNodePtr> ModelNode::getChildNodes(ModelNodeType type) const
+    std::vector<ModelNodePtr> ModelNode::getChildNodes(NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
-        if (type == ModelNode::ModelNodeType::Node)
+        if (type == ModelNode::NodeType::Node)
         {
             return children;
         }
@@ -106,7 +106,7 @@ namespace VirtualRobot
         return childLinks;
     }
 
-    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, ModelNodeType type, bool clearVector)
+    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, NodeType type, bool clearVector)
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
@@ -126,7 +126,7 @@ namespace VirtualRobot
         }
     }
 
-    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, ModelNodeType type) const
+    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getParentNode

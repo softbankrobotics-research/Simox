@@ -496,7 +496,7 @@ namespace VirtualRobot
         else if (nodeSetType == "linkset")
             rns = LinkSet::createLinkSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
         else
-            rns = ModelNodeSet::createModelNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+            rns = ModelNodeSet::createNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
 
         return rns;
     }

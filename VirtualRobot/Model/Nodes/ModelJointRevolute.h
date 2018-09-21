@@ -54,7 +54,7 @@ namespace VirtualRobot
          */
         virtual ~ModelJointRevolute() override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * Get the joint axis in defined coordinate system.

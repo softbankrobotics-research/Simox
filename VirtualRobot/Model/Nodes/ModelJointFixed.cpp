@@ -13,9 +13,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNode::ModelNodeType ModelJointFixed::getType() const
+    ModelNode::NodeType ModelJointFixed::getType() const
     {
-        return ModelNode::ModelNodeType::JointFixed;
+        return ModelNode::NodeType::JointFixed;
     }
 
     void ModelJointFixed::setJointValue(float)

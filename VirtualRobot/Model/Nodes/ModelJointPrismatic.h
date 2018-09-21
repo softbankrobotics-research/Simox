@@ -53,7 +53,7 @@ namespace VirtualRobot
          */
         virtual ~ModelJointPrismatic() override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * In global coord system.

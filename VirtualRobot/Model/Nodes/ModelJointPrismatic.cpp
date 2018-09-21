@@ -21,9 +21,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNode::ModelNodeType ModelJointPrismatic::getType() const
+    ModelNode::NodeType ModelJointPrismatic::getType() const
     {
-        return ModelNode::ModelNodeType::JointPrismatic;
+        return ModelNode::NodeType::JointPrismatic;
     }
 
     Eigen::Vector3f ModelJointPrismatic::getJointTranslationDirection(FramePtr coordSystem) const

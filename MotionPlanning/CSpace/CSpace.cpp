@@ -611,7 +611,7 @@ namespace MotionPlanning
         MOTIONPLANNING_ASSERT_MESSAGE((dim >= 0 && dim < (int)robotJoints.size()),  static_cast<std::stringstream&>(std::stringstream() << "Dim " << dim << " out of bounds..." << endl).str().c_str());
 
         // translational joint
-        if (robotJoints[dim]->getType() == VirtualRobot::ModelNode::ModelNodeType::JointPrismatic)
+        if (robotJoints[dim]->getType() == VirtualRobot::ModelNode::NodeType::JointPrismatic)
         {
             return interpolateLinear(q1[dim], q2[dim], step);
         }

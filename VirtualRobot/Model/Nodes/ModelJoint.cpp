@@ -219,7 +219,7 @@ namespace VirtualRobot
         {
             ModelNodePtr node = modelShared->getNode(it->first);
 
-            if (!node || !checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
+            if (!node || !checkNodeOfType(node, ModelNode::NodeType::Joint))
             {
                 VR_WARNING << "Could not propagate joint value from " << getName()
                            << " to " << it->first << " because dependent joint does not exist..." << std::endl;

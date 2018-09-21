@@ -106,7 +106,7 @@ namespace VirtualRobot
 
         //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * Get the collision model of this link.

@@ -7,7 +7,7 @@
 
 namespace VirtualRobot
 {
-    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr &model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
+    ModelNodeSetPtr ModelNodeSet::createNodeSet(const ModelPtr &model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -28,12 +28,12 @@ namespace VirtualRobot
         //tcp
         FramePtr tcp = checkTcp(tcpName, model);
 
-        ModelNodeSetPtr mns = createModelNodeSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
+        ModelNodeSetPtr mns = createNodeSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
         return mns;
     }
 
 
-    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr &model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr &kinematicRoot, const FramePtr &tcp, bool registerToModel)
+    ModelNodeSetPtr ModelNodeSet::createNodeSet(const ModelPtr &model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr &kinematicRoot, const FramePtr &tcp, bool registerToModel)
     {
         ModelNodeSetPtr mns(new Implementation(name, model, modelNodes, kinematicRoot, tcp));
 
@@ -65,7 +65,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(model.lock() != node->getModel(), "Model " + node->getName() + " does not belong to the given model.");
 
                 // assert, that all model links have the same collision checker
-                if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+                if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
                 {
                     ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                     if (!collisionChecker)
@@ -250,7 +250,7 @@ namespace VirtualRobot
         std::vector<ModelJointPtr> modelJoints;
         for (ModelNodePtr node : getNodes())
         {
-            if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
+            if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint))
             {
                 ModelJointPtr modelJoint = std::static_pointer_cast<ModelJoint>(node);
                 modelJoints.push_back(modelJoint);
@@ -264,7 +264,7 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> modelLinks;
         for (ModelNodePtr node : getNodes())
         {
-            if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                 modelLinks.push_back(link);
@@ -363,7 +363,7 @@ namespace VirtualRobot
             VR_ASSERT(newTcp);
         }
 
-        ModelNodeSetPtr result = ModelNodeSet::createModelNodeSet(model, (newName.empty() ? getName() : newName), newModelNodes, newKinRoot, newTcp, registerToModel);
+        ModelNodeSetPtr result = ModelNodeSet::createNodeSet(model, (newName.empty() ? getName() : newName), newModelNodes, newKinRoot, newTcp, registerToModel);
 
         return result;
     }

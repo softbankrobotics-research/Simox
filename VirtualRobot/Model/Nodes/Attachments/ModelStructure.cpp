@@ -65,10 +65,10 @@ namespace VirtualRobot
     VisualizationPtr ModelStructure::createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory)
     {
         VisualizationPtr v;
-        ModelNodePtr parent = link->getParentNode(ModelNode::ModelNodeType::Joint);
+        ModelNodePtr parent = link->getParentNode(ModelNode::NodeType::Joint);
         if (parent)
         {
-            std::vector<ModelNodePtr> children = link->getChildNodes(ModelNode::ModelNodeType::Joint);
+            std::vector<ModelNodePtr> children = link->getChildNodes(ModelNode::NodeType::Joint);
             std::vector<Eigen::Matrix4f> from, to;
             for (const auto & child : children)
             {

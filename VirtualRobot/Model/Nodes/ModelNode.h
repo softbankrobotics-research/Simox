@@ -49,7 +49,7 @@ namespace VirtualRobot
          *
          * Each sub/main type is only allowed to use one bit.
          */
-        enum ModelNodeType : uint16_t
+        enum NodeType : uint16_t
         {
             Node            = 0x0000,
 
@@ -94,7 +94,7 @@ namespace VirtualRobot
          *
          * @return The type of this node.
          */
-        virtual ModelNodeType getType() const = 0;
+        virtual NodeType getType() const = 0;
 
         /*!
          * Get the corresponding Model.
@@ -136,7 +136,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The parent node.
          */
-        ModelNodePtr getParentNode(ModelNodeType type = ModelNodeType::Node) const;
+        ModelNodePtr getParentNode(NodeType type = NodeType::Node) const;
 
         /*!
          * Get all child Nodes.
@@ -154,7 +154,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The child Nodes.
          */
-        std::vector<ModelNodePtr> getChildNodes(ModelNodeType type = ModelNodeType::Node) const;
+        std::vector<ModelNodePtr> getChildNodes(NodeType type = NodeType::Node) const;
 
         /*!
          * All children and their children (and so on) are collected.
@@ -166,7 +166,7 @@ namespace VirtualRobot
          * @param clearVector If true, the store vector is cleared.
         */
         void collectAllNodes(std::vector<ModelNodePtr>& storeNodes,
-                             ModelNodeType type = ModelNodeType::Node,
+                             NodeType type = NodeType::Node,
                              bool clearVector = true);
 
         /*!
@@ -178,7 +178,7 @@ namespace VirtualRobot
          * @return The ModelNodes.
         */
         virtual std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
-                                                        ModelNodeType type = ModelNodeType::Node) const;
+                                                        NodeType type = NodeType::Node) const;
 
         /*!
          * Check if node is a child from this node.
@@ -389,26 +389,26 @@ namespace VirtualRobot
          * @param type The type to check.
          * @return True, if the node has the given type; false otherwise.
          */
-        inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type)
+        inline static bool checkNodeOfType(const ModelNodePtr& node, NodeType type)
         {
             return (node->getType() & type) == type;
         }
 
         virtual bool isJoint()
         {
-            return (getType() & ModelNodeType::Joint)!=0;
+            return (getType() & NodeType::Joint)!=0;
         }
         virtual bool isTranslationalJoint()
         {
-            return (getType() == ModelNodeType::JointPrismatic);
+            return (getType() == NodeType::JointPrismatic);
         }
         virtual bool isRotationalJoint()
         {
-            return (getType() == ModelNodeType::JointRevolute);
+            return (getType() == NodeType::JointRevolute);
         }
         virtual bool isLink()
         {
-            return (getType() & ModelNodeType::Link)!=0;
+            return (getType() & NodeType::Link)!=0;
         }
 
     protected:

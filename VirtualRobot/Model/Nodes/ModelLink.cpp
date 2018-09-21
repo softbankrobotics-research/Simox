@@ -150,9 +150,9 @@ namespace VirtualRobot
     }
 
 
-    ModelNode::ModelNodeType ModelLink::getType() const
+    ModelNode::NodeType ModelLink::getType() const
     {
-        return ModelNode::ModelNodeType::Link;
+        return ModelNode::NodeType::Link;
     }
 
     CollisionModelPtr ModelLink::getCollisionModel() const

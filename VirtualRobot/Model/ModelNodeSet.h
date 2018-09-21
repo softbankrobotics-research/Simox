@@ -49,7 +49,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static ModelNodeSetPtr createNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<std::string>& modelNodeNames,
                                                   const std::string& kinematicRootName = "",
@@ -71,7 +71,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static ModelNodeSetPtr createNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr& kinematicRoot = ModelNodePtr(),

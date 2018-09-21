@@ -381,7 +381,7 @@ namespace VirtualRobot
             {
 
                 // Calculus for rotational joints is different as for prismatic joints.
-                if (dof->getType() == ModelNode::ModelNodeType::JointRevolute)
+                if (dof->getType() == ModelNode::NodeType::JointRevolute)
                 {
                     // get axis
                     ModelJointRevolutePtr revolute = std::dynamic_pointer_cast<ModelJointRevolute>(dof);
@@ -420,7 +420,7 @@ namespace VirtualRobot
                         tmpUpdateJacobianOrientation.block(0, i, 3, 1) = axis;
                     }
                 }
-                else if (dof->getType() == ModelNode::ModelNodeType::JointPrismatic)
+                else if (dof->getType() == ModelNode::NodeType::JointPrismatic)
                 {
                     // -> prismatic joint
                     ModelJointPrismaticPtr prismatic = std::dynamic_pointer_cast<ModelJointPrismatic>(dof);

@@ -222,7 +222,7 @@ namespace VirtualRobot
             ModelJointPtr ro =  rns->getJoint(i);
             float v = ro->getJointValue();
 
-            if (ro->getType() == ModelNode::ModelNodeType::JointRevolute)
+            if (ro->getType() == ModelNode::NodeType::JointRevolute)
             {
                 float r = RandomFloat();
                 v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
