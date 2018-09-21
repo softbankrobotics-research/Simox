@@ -100,6 +100,14 @@ namespace VirtualRobot
         return this->removeVisualization(this->at(index));
     }
 
+    void VisualizationSet::removeAllVisualizations()
+    {
+        while (!visualizations.empty())
+        {
+            removeVisualization(visualizations.back());
+        }
+    }
+
     std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
     {
         return visualizations;

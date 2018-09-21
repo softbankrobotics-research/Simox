@@ -47,6 +47,7 @@ namespace VirtualRobot
         virtual bool containsVisualization(const VisualizationPtr& visu) const;
         virtual bool removeVisualization(const VisualizationPtr &visu);
         virtual bool removeVisualization(size_t index);
+        virtual void removeAllVisualizations();
         virtual std::vector<VisualizationPtr> getVisualizations() const;
         virtual VisualizationPtr at(size_t index) const;
         virtual VisualizationPtr operator[] (size_t index) const;
