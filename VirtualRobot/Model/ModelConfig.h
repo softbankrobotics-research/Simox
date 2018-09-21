@@ -75,6 +75,10 @@ namespace VirtualRobot
             \return A shared_ptr instance of the internally stored weak pointer.
         */
         ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
             Appends a configuration to this instance.

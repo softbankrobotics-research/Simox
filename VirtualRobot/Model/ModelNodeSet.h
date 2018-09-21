@@ -116,6 +116,10 @@ namespace VirtualRobot
          * @return The model.
          */
         ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
          * Get the node at position i.

@@ -102,6 +102,10 @@ namespace VirtualRobot
          * @return A pointer to the model.
          */
         ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
          * Check if this node is initialized.
