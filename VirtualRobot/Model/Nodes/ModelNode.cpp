@@ -345,6 +345,21 @@ namespace VirtualRobot
         }
     }
 
+    void ModelNode::copyPoseFrom(const ModelNodePtr &other)
+    {
+        globalPose = other->getGlobalPose();
+
+        updatePoseInternally(false, true);
+
+        for (auto it = attachments.begin(); it != attachments.end(); it++)
+        {
+            for (const ModelNodeAttachmentPtr & attachment : it->second)
+            {
+                attachment->update(globalPose);
+            }
+        }
+    }
+
     void ModelNode::updatePoseInternally(bool updateChildren, bool updateAttachments)
     {
     }

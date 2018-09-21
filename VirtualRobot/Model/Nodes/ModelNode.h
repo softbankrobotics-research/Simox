@@ -281,6 +281,8 @@ namespace VirtualRobot
          */
         void updatePose(bool updateChildren = true, bool updateAttachments = true);
 
+        virtual void copyPoseFrom(const ModelNodePtr& other);
+
         /*!
          * Attach a new attachment to this node.
          * This method first checks, if the attachment is attachable.

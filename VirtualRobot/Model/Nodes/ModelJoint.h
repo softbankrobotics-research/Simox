@@ -81,6 +81,8 @@ namespace VirtualRobot
          */
         virtual float getJointValue() const;
 
+        virtual void copyPoseFrom(const ModelNodePtr& other) override;
+
         /*!
          * Checks if jointValue is within joint limits. If verbose is set a warning is printed.
          *

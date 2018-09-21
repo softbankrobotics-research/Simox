@@ -56,6 +56,12 @@ namespace VirtualRobot
         return jointValue;
     }
 
+    void ModelJoint::copyPoseFrom(const ModelNodePtr &other)
+    {
+        VR_ASSERT(ModelNode::checkNodeOfType(other, ModelNode::Joint));
+        jointValue = std::static_pointer_cast<ModelJoint>(other)->getJointValue();
+    }
+
     bool ModelJoint::checkJointLimits(float jointValue, bool verbose) const
     {
         bool res = true;
