@@ -89,7 +89,7 @@ public:
     /*!
      * \return This lock allows to safely access the viewer's scene graph.
      */
-    std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock();
+    std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock() const;
 
 protected:
 

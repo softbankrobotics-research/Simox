@@ -119,7 +119,7 @@ namespace VirtualRobot
         return true;
     }
 
-    VirtualRobot::ModelPtr ModelConfig::getModel()
+    VirtualRobot::ModelPtr ModelConfig::getModel() const
     {
         return model.lock();
     }

@@ -172,7 +172,7 @@ void SimoxGui::AbstractViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
     mutex = m;
 }
 
-std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock()
+std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock() const
 {
     std::shared_ptr<std::lock_guard<std::recursive_mutex>> l;
 

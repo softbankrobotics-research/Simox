@@ -332,7 +332,7 @@ namespace VirtualRobot
         return false;
     }
 
-    VirtualRobot::RobotPtr Scene::getRobot(const std::string& name)
+    VirtualRobot::RobotPtr Scene::getRobot(const std::string& name) const
     {
         for (std::vector< RobotPtr >::const_iterator i = robots.begin(); i != robots.end(); i++)
         {
@@ -346,7 +346,7 @@ namespace VirtualRobot
         return RobotPtr();
     }
 
-    VirtualRobot::ObstaclePtr Scene::getObstacle(const std::string& name)
+    VirtualRobot::ObstaclePtr Scene::getObstacle(const std::string& name) const
     {
         for (std::vector< ObstaclePtr >::const_iterator i = obstacles.begin(); i != obstacles.end(); i++)
         {
@@ -574,7 +574,7 @@ namespace VirtualRobot
 
     }
 
-    bool Scene::hasModelSet(const std::string &name)
+    bool Scene::hasModelSet(const std::string &name) const
     {
         for (auto &m : modelSets)
         {
@@ -599,7 +599,7 @@ namespace VirtualRobot
         return robot->getConfigurations();
     }
 	
-    VirtualRobot::ModelNodeSetPtr Scene::getNodeSet(const std::string& robot, const std::string rns)
+    VirtualRobot::ModelNodeSetPtr Scene::getNodeSet(const std::string& robot, const std::string rns) const
     {
         RobotPtr r = getRobot(robot);
 
@@ -614,12 +614,12 @@ namespace VirtualRobot
 
 
 
-    std::vector<ModelSetPtr> Scene::getModelSets()
+    std::vector<ModelSetPtr> Scene::getModelSets() const
     {
         return modelSets;
     }
 
-    ModelSetPtr Scene::getModelSet(const std::string &name)
+    ModelSetPtr Scene::getModelSet(const std::string &name) const
     {
         if (!hasModelSet(name))
         {

@@ -65,7 +65,7 @@ namespace VirtualRobot
         bool hasRobot(RobotPtr robot) const;
         bool hasRobot(const std::string& name) const;
 
-        RobotPtr getRobot(const std::string& name);
+        RobotPtr getRobot(const std::string& name) const;
 
         std::vector< RobotPtr > getRobots() const;
 
@@ -121,7 +121,7 @@ namespace VirtualRobot
         bool hasObstacle(ObstaclePtr obstacle) const;
         bool hasObstacle(const std::string& name) const;
 
-        ObstaclePtr getObstacle(const std::string& name);
+        ObstaclePtr getObstacle(const std::string& name) const;
 
         std::vector< ObstaclePtr > getObstacles() const;
 
@@ -146,13 +146,13 @@ namespace VirtualRobot
 
         void registerModelSet(const ModelSetPtr modelSet);
         void deRegisterModelSet(const std::string &name);
-        bool hasModelSet(const std::string &name);
+        bool hasModelSet(const std::string &name) const;
 
-        std::vector<ModelSetPtr> getModelSets();
-        ModelSetPtr getModelSet(const std::string & name);
+        std::vector<ModelSetPtr> getModelSets() const;
+        ModelSetPtr getModelSet(const std::string & name) const;
 
 
-        ModelNodeSetPtr getNodeSet(const std::string& robot, const std::string rns);
+        ModelNodeSetPtr getNodeSet(const std::string& robot, const std::string rns) const;
 
         std::string getName() const;
 
