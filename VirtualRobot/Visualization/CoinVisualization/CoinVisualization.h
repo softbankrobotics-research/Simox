@@ -47,7 +47,7 @@ namespace VirtualRobot
         CoinVisualization(SoNode* visuNode);
     public:
         virtual void init() override;
-        virtual ~CoinVisualization();
+        virtual ~CoinVisualization() override;
 
         SoNode* getMainNode() const;
     protected:

@@ -308,6 +308,7 @@ namespace VirtualRobot
         //! optional filename tag
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+        virtual std::vector<std::string> getTextureFiles() const override;
 
         /*!
             Returns (current) bounding box in global coordinate system.
