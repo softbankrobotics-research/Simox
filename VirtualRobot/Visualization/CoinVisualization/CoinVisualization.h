@@ -139,7 +139,6 @@ namespace VirtualRobot
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
-        SelectionGroupPtr selectionGroup;
     };
 
     typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;
