@@ -26,6 +26,12 @@
 #include <Inventor/actions/SoToVRML2Action.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/nodes/SoImage.h>
+#include <Inventor/nodes/SoTexture3.h>
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+
+#include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 namespace VirtualRobot
 {
@@ -335,6 +341,139 @@ namespace VirtualRobot
     bool CoinVisualization::usedBoundingBoxVisu() const
     {
         return boundingBox;
+    }
+
+    void CoinVisualization::getTextureFiles(std::vector<std::string>& storeFilenames) const
+    {
+        auto node = getCoinVisualization();
+        if (!node || getFilename().empty())
+        {
+            return;
+        }
+        getTextureFiles(node, storeFilenames, getFilename());
+    }
+
+    std::string GetAbsolutePath(const std::string& filename, const std::string& origFile)
+    {
+        if (filename.empty())
+        {
+            //ARMARX_INFO_S << "Empty relative name"; // skip
+            return std::string();
+        }
+
+        if (!origFile.empty())
+        {
+            return filename;
+        }
+        else
+        {
+            boost::filesystem::path filepath(filename);
+            boost::filesystem::path absOrigFileDirPath(origFile);
+            return boost::filesystem::canonical(filepath, absOrigFileDirPath.remove_filename()).string();
+        }
+    }
+
+    void CoinVisualization::getTextureFiles(SoNode* node, std::vector<std::string>& storeFilenames, const std::string& origFile) const
+    {
+        if (node->getTypeId() == SoFile::getClassTypeId())
+        {
+            // get filename
+            SoFile* fileNode = static_cast<SoFile*>(node);
+            SbString fileNodeName = fileNode->getFullName();
+
+            if (!fileNodeName)
+            {
+                VR_INFO << "Empty file?!" << std::endl;
+                SbString s2 = fileNode->name.getValue();
+
+                if (!s2)
+                {
+                    VR_INFO << "Empty relative name" << std::endl;
+                }
+                else
+                {
+                    storeFilenames.push_back(s2.getString());
+                }
+            }
+            else
+            {
+                storeFilenames.push_back(fileNodeName.getString());
+            }
+
+            // process file data
+            SoGroup* fileChildren = fileNode->copyChildren();
+            getTextureFiles(fileChildren, storeFilenames, fileNodeName.getString());
+        }
+        else if (node->getTypeId().isDerivedFrom(SoGroup::getClassTypeId()))
+        {
+            SoGroup* groupNode = static_cast<SoGroup*>(node);
+
+            // process group node
+            for (int i = 0; i < groupNode->getNumChildren(); i++)
+            {
+                getTextureFiles(groupNode->getChild(i), storeFilenames, origFile);
+            }
+        }
+        else if (node->getTypeId() == SoImage::getClassTypeId())
+        {
+            // get image filename
+            std::string imageFilename = static_cast<SoImage*>(node)->filename.getValue().getString();
+            storeFilenames.push_back(GetAbsolutePath(imageFilename, origFile));
+        }
+        else if (node->getTypeId() == SoTexture2::getClassTypeId())
+        {
+            // get filename
+            std::string texture2Filename = static_cast<SoTexture2*>(node)->filename.getValue().getString();
+            storeFilenames.push_back(GetAbsolutePath(texture2Filename, origFile));
+        }
+        else if (node->getTypeId() == SoTexture3::getClassTypeId())
+        {
+            VR_WARNING << "Texture3 nyi..." << std::endl;
+        }
+        else //if (node->getTypeId() == SoVRMLImageTexture::getClassTypeId())
+        {
+            SoSearchAction sa;
+            sa.setType(SoVRMLImageTexture::getClassTypeId());
+            sa.setInterest(SoSearchAction::ALL);
+            sa.setSearchingAll(TRUE);
+            sa.apply(node);
+
+            SoPathList& pathList = sa.getPaths();
+            if (pathList.getLength() <= 0)
+            {
+                return;
+            }
+            SoFullPath* p = static_cast<SoFullPath*>(pathList[0]);
+            if (!p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId()))
+            {
+                return;
+            }
+            SoVRMLImageTexture* texture = static_cast<SoVRMLImageTexture*>(p->getTail());
+            if (texture->url.getNum() <= 0)
+            {
+                return;
+            }
+            for (int i = 0; i < texture->url.getNum(); ++i)
+            {
+                std::string path = GetAbsolutePath(texture->url[i].getString(), origFile);
+                if (!path.empty() && boost::filesystem::exists(path))
+                {
+                    storeFilenames.push_back(path);
+                    break;
+                }
+                if (i == texture->url.getNum() - 1)
+                {
+                    std::vector<std::string> textures;
+                    for (int j = 0; j < texture->url.getNum(); ++j)
+                    {
+                        textures.push_back(texture->url[j].getString());
+                    }
+                    VR_ERROR << "Could not make any of the texture paths absolute: " << boost::join(textures, ", ") << std::endl;
+                }
+            }
+
+            //        ARMARX_IMPORTANT_S << "VRML ImageTexture of node: " << node->getName().getString() << " : " << texture->url[0].getString() << VAROUT(origFile) << VAROUT(storeFilenames);
+        }
     }
 
     BoundingBox CoinVisualization::getBoundingBox() const

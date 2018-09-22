@@ -374,6 +374,14 @@ namespace VirtualRobot
         return usedBoundingBox;
     }
 
+    void VisualizationSet::getTextureFiles(std::vector<std::string> &storeFilenames) const
+    {
+        for (auto& visu : visualizations)
+        {
+            visu->getTextureFiles(storeFilenames);
+        }
+    }
+
     BoundingBox VisualizationSet::getBoundingBox() const
     {
         BoundingBox b;

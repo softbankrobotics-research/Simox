@@ -88,6 +88,7 @@ namespace VirtualRobot
         virtual void setFilename(const std::string &filename, bool boundingBox) override;
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const override;
 
         virtual BoundingBox getBoundingBox() const override;
 

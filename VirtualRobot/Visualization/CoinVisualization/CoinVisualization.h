@@ -89,7 +89,11 @@ namespace VirtualRobot
         virtual void setFilename(const std::string &filename, bool boundingBox) override;
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const override;
+    protected:
+        void getTextureFiles(SoNode* node, std::vector<std::string>& storeFilenames, const std::string &origFile) const;
 
+    public:
         virtual BoundingBox getBoundingBox() const override;
 
         virtual TriMeshModelPtr getTriMeshModel() const override;
