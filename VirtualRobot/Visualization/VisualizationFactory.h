@@ -112,6 +112,9 @@ namespace VirtualRobot
 
         virtual VisualizationPtr createContactVisualization(const VirtualRobot::EndEffector::ContactInfoVector& contacts, float frictionConeHeight = 30.0f,  float frictionConeRadius = 15.0f, bool scaleAccordingToApproachDir = true) const;
         virtual VisualizationPtr createConvexHull2DVisualization(const MathTools::ConvexHull2DPtr& hull, const MathTools::Plane& p, const Eigen::Vector3f& offset = Eigen::Vector3f::Zero()) const;
+        virtual VisualizationPtr create2DHeightMap(const Eigen::MatrixXf& d, float extendCellX, float extendCellY, float heightZ, const VirtualRobot::ColorMap& cm, bool drawZeroCells, bool drawLines) const;
+        virtual VisualizationPtr create2DMap(const Eigen::MatrixXf& d, float extendCellX, float extendCellY, const VirtualRobot::ColorMap cm, bool drawZeroCells, bool drawLines) const;
+
 
         /*!
             Create an empty VisualizationNode.
