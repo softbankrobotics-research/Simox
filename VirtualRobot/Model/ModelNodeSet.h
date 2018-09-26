@@ -221,6 +221,8 @@ namespace VirtualRobot
 		*/
         virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const = 0;
 
+        virtual bool isKinematicChain() const;
+
     protected:
         static ModelNodePtr checkKinematicRoot(const std::string &name, const ModelPtr& model);
         static FramePtr checkTcp(const std::string &tcpName, const ModelPtr& model);

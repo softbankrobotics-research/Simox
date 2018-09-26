@@ -168,6 +168,36 @@ namespace VirtualRobot
         return true;
     }
 
+    bool ModelNodeSet::isKinematicChain() const
+    {
+        auto root = getKinematicRoot();
+        auto nodes = getNodes();
+        if (nodes.size() == 0)
+        {
+            if (root)
+            {
+                VR_WARNING << "NodeSet has zero nodes, but a kinematic root." << std::endl;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        if (root != nodes.at(0))
+        {
+            return false;
+        }
+        for (size_t i=0; i < nodes.size()-1; ++i)
+        {
+            if (nodes.at(i+1)->getParentNode() != nodes.at(i))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     ModelNodePtr ModelNodeSet::checkKinematicRoot(const std::string &name, const ModelPtr &model)
     {
