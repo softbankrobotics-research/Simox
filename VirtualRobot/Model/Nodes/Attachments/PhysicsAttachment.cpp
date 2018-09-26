@@ -9,9 +9,19 @@
 namespace VirtualRobot
 {
     PhysicsAttachment::PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation)
-            : ModelNodeAttachment(name, localTransformation)
+            : CustomVisualizationAttachment(name, nullptr, localTransformation)
     {
         initVisualization();
+    }
+
+    std::string PhysicsAttachment::getType() const
+    {
+        return "PhysicsAttachment";
+    }
+
+    ModelNodeAttachmentPtr PhysicsAttachment::clone() const
+    {
+        return ModelNodeAttachmentPtr(new PhysicsAttachment(name, localTransformation));
     }
 
     void PhysicsAttachment::initVisualization()
@@ -165,10 +175,5 @@ namespace VirtualRobot
     {
         ModelNodeAttachment::setParent(node);
         initVisualization();
-    }
-
-    bool PhysicsAttachment::isAttachable(const VirtualRobot::ModelNodePtr &node)
-    {
-        return node->isLink();
     }
 }

@@ -380,6 +380,17 @@ namespace VirtualRobot
          */
         virtual void applyJointValues();
 
+        void showStructure(bool show)
+        {
+            if (show)
+            {
+                attachStructure();
+            }
+            else
+            {
+                detachStructure();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a ModelStructure to each joint.
          * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
@@ -392,18 +403,40 @@ namespace VirtualRobot
          */
         void detachStructure();
 
+        void showCoordinateSystems(bool show)
+        {
+            if (show)
+            {
+                attachCoordinateSystems();
+            }
+            else
+            {
+                detachCoordinateSystems();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a ModelNodeAttachment to each joint, representing a frame.
          * Each attached ModelNodeAttachment inherits the name of its corresponding joint appended by "_frame".
          */
-        void attachFrames();
+        void attachCoordinateSystems();
 
         /*!
          * A convenience function to detach ModelNodeAttachments / Frames.
          * This function basically reverts calls to attachFrames().
          */
-        void detachFrames();
+        void detachCoordinateSystems();
 
+        void showPhysicsInformation(bool show)
+        {
+            if (show)
+            {
+                attachPhysicsInformation();
+            }
+            else
+            {
+                detachPhysicsInformation();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a PhysicsAttachment to each link.
          * Each attached PhysicsAttachment inherits the name of its corresponding link appended by "_physics".

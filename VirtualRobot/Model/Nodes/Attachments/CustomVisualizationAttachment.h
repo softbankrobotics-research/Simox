@@ -15,33 +15,39 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Nikolaus Vahrenkamp
-* @copyright  2017 Nikolaus Vahrenkamp
+* @author     Adrian Knobloch
+* @copyright  2016 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
 #pragma once
 
-#include "Sensor.h"
+#include "../../../Visualization/Visualization.h"
+#include "ModelNodeAttachment.h"
+
+#include <cstdint>
+#include <string>
 
 namespace VirtualRobot
 {
-    class ForceTorqueSensor : public Sensor
+    class CustomVisualizationAttachment : public ModelNodeAttachment
     {
-        friend class ForceTorqueSensorFactory;
+        friend class CustomVisualizationAttachmentFactory;
 
-    public:
+    protected:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
+         * \param visu The visualization to use and update in this attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          */
-        ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
+        CustomVisualizationAttachment(const std::string &name, VirtualRobot::VisualizationPtr visu, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
+    public:
         /*!
          * Destructor.
          */
-        virtual ~ForceTorqueSensor() override;
+        virtual ~CustomVisualizationAttachment() override;
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -54,34 +60,34 @@ namespace VirtualRobot
         virtual bool isAttachable(const ModelNodePtr &node) const override;
 
         /*!
+         * Update the values of the Attachment.
+         * This method is called by the node to inform the attachment about a change.
+         */
+        virtual void update(const Eigen::Matrix4f &parentPose) override;
+
+        /*!
+         * Get the visualisation of this attachment.
+         * If this attachment does not have a visualisation, a null pointer is returned.
+         *
+         * @return The visualisation.
+         */
+        virtual VisualizationPtr getVisualisation() const override;
+
+        virtual void setVisualization(VisualizationPtr visu);
+
+        /*!
          * Get the type of this attachment.
          * This is used to seperate different attached attachments.
          *
-         * @return "forcetorque".
+         * @return The type of this attachment.
          */
         virtual std::string getType() const override;
 
         virtual ModelNodeAttachmentPtr clone() const override;
 
-
-        void updateSensors(const Eigen::VectorXf& newForceTorque);
-
-
-        const Eigen::VectorXf& getForceTorque() const;
-        Eigen::Vector3f getForce() const;
-        Eigen::Vector3f getTorque() const;
-
-        /**
-         * Projects torque on joint axis
-         */
-        Eigen::Vector3f getAxisTorque() const;
-
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const override;
-
     protected:
-        Eigen::VectorXf forceTorqueValues;
+        VisualizationPtr visu;
     };
 
-    typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
+    using CustomVisualizationAttachmentPtr = std::shared_ptr<CustomVisualizationAttachment>;
 }
-

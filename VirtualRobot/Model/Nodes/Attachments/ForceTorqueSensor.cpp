@@ -17,17 +17,17 @@ namespace VirtualRobot
     }
 
 
-    bool ForceTorqueSensor::isAttachable(const ModelNodePtr &node)
+    bool ForceTorqueSensor::isAttachable(const ModelNodePtr &node) const
     {
         return true;
     }
 
-    std::string ForceTorqueSensor::getType()
+    std::string ForceTorqueSensor::getType() const
     {
         return "forcetorque";
     }
 
-    ModelNodeAttachmentPtr ForceTorqueSensor::clone()
+    ModelNodeAttachmentPtr ForceTorqueSensor::clone() const
     {
         ForceTorqueSensorPtr result(new ForceTorqueSensor(name, localTransformation));
         result->updateSensors(forceTorqueValues);
@@ -44,12 +44,12 @@ namespace VirtualRobot
         return forceTorqueValues.tail(3);
     }
 
-    const Eigen::VectorXf& ForceTorqueSensor::getForceTorque()
+    const Eigen::VectorXf& ForceTorqueSensor::getForceTorque() const
     {
         return forceTorqueValues;
     }
 
-    Eigen::Vector3f ForceTorqueSensor::getAxisTorque()
+    Eigen::Vector3f ForceTorqueSensor::getAxisTorque() const
     {
         Eigen::Vector3f torqueVector = forceTorqueValues.tail(3);
 
@@ -66,7 +66,7 @@ namespace VirtualRobot
         forceTorqueValues = newForceTorque;
     }
 
-    std::string ForceTorqueSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    std::string ForceTorqueSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs) const
     {
         std::string t;
 

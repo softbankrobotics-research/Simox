@@ -16,6 +16,7 @@
 #include "../Model/Nodes/Attachments/PhysicsAttachment.h"
 #include "../Model/Nodes/Attachments/PhysicsAttachmentFactory.h"
 #include "../Model/Nodes/Attachments/Sensor.h"
+#include "Nodes/Attachments/CoordinateSystemFactory.h"
 
 #include <algorithm>
 
@@ -632,7 +633,8 @@ namespace VirtualRobot
 
     void Model::attachStructure()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
         for (const auto & node : getNodes())
         {
             std::string attachmentName = node->getName() + "_structure";
@@ -649,28 +651,30 @@ namespace VirtualRobot
         }
     }
 
-    void Model::attachFrames()
+    void Model::attachCoordinateSystems()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), nullptr);
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(CoordinateSystemFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
         for (const auto & joint : getJoints())
         {
-            std::string attachmentName = joint->getName() + "_frame";
+            std::string attachmentName = joint->getName() + "_coordSystem";
             ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
             joint->attach(attachment);
         }
     }
 
-    void Model::detachFrames()
+    void Model::detachCoordinateSystems()
     {
         for (const auto & joint : getJoints())
         {
-            joint->detach(joint->getName() + "_frame");
+            joint->detach(joint->getName() + "_coordSystem");
         }
     }
 
     void Model::attachPhysicsInformation()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
         for (auto &&link : getLinks())
         {
             if (link->getMass() <= 0)

@@ -15,33 +15,38 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Nikolaus Vahrenkamp
-* @copyright  2017 Nikolaus Vahrenkamp
+* @author     Adrian Knobloch
+* @copyright  2016 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
 #pragma once
 
-#include "Sensor.h"
+#include "../../../Visualization/Visualization.h"
+#include "ModelNodeAttachment.h"
+
+#include <cstdint>
+#include <string>
 
 namespace VirtualRobot
 {
-    class ForceTorqueSensor : public Sensor
+    class FrameAttachment : public ModelNodeAttachment
     {
-        friend class ForceTorqueSensorFactory;
+        friend class FrameAttachmentFactory;
 
-    public:
+    protected:
         /*!
          * Constructor.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          */
-        ForceTorqueSensor(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
+        FrameAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
+    public:
         /*!
          * Destructor.
          */
-        virtual ~ForceTorqueSensor() override;
+        virtual ~FrameAttachment() override;
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -57,31 +62,12 @@ namespace VirtualRobot
          * Get the type of this attachment.
          * This is used to seperate different attached attachments.
          *
-         * @return "forcetorque".
+         * @return The type of this attachment.
          */
         virtual std::string getType() const override;
 
         virtual ModelNodeAttachmentPtr clone() const override;
-
-
-        void updateSensors(const Eigen::VectorXf& newForceTorque);
-
-
-        const Eigen::VectorXf& getForceTorque() const;
-        Eigen::Vector3f getForce() const;
-        Eigen::Vector3f getTorque() const;
-
-        /**
-         * Projects torque on joint axis
-         */
-        Eigen::Vector3f getAxisTorque() const;
-
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const override;
-
-    protected:
-        Eigen::VectorXf forceTorqueValues;
     };
 
-    typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
+    using FrameAttachmentPtr = std::shared_ptr<FrameAttachment>;
 }
-

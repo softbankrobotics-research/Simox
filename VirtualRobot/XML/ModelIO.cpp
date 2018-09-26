@@ -1384,8 +1384,8 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
         THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
-        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("modelnodeattachment", nullptr);
-        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate ModelNodeAttachment factory for creating frames...");
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("FrameAttachment", nullptr);
+        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate FrameAttachment factory for creating frames...");
 
         ModelNodeAttachmentPtr mf = mff->createAttachment(frameName, transformMatrix);
 

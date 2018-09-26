@@ -13,23 +13,23 @@ namespace VirtualRobot
     {
     }
 
-    bool PositionSensor::isAttachable(const ModelNodePtr &node)
+    bool PositionSensor::isAttachable(const ModelNodePtr &node) const
     {
         return true;
     }
 
-    std::string PositionSensor::getType()
+    std::string PositionSensor::getType() const
     {
         return "position";
     }
 
-    ModelNodeAttachmentPtr PositionSensor::clone()
+    ModelNodeAttachmentPtr PositionSensor::clone() const
     {
         ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation));
         return result;
     }
 
-    std::string PositionSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs)
+    std::string PositionSensor::toXML(const std::string &basePath, const std::string &modelPathRelative, int tabs) const
     {
         std::string t;
 

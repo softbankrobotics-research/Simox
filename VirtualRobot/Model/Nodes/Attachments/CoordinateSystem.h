@@ -15,45 +15,47 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Harry
-* @copyright  2017 Nikolaus Vahrenkamp
+* @author     Adrian Knobloch
+* @copyright  2016 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
-
 #pragma once
 
 #include "CustomVisualizationAttachment.h"
 
+#include <cstdint>
+#include <string>
+
 namespace VirtualRobot
 {
-    /**
-     * An attachment visualizing the CoM and/or the inertia tensor when attached to a ModelLink.
-     */
-    class PhysicsAttachment : public CustomVisualizationAttachment
+    class CoordinateSystem : public CustomVisualizationAttachment
     {
-        friend class PhysicsAttachmentFactory;
+        friend class CoordinateSystemFactory;
+
+    protected:
+        /*!
+         * Constructor.
+         * \param name  The name of the attachment.
+         * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
+         */
+        CoordinateSystem(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
     public:
-        PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation);
+        /*!
+         * Destructor.
+         */
+        virtual ~CoordinateSystem() override;
 
         /*!
          * Get the type of this attachment.
-         * This is used to separate different attached attachments.
+         * This is used to seperate different attached attachments.
          *
-         * @return "PhysicsAttachment".
+         * @return The type of this attachment.
          */
         virtual std::string getType() const override;
+
         virtual ModelNodeAttachmentPtr clone() const override;
-
-        void enableVisualization(bool CoM, bool inertia);
-
-    protected:
-        void setParent(const ModelNodePtr &node) override;
-
-    private:
-        void initVisualization();
     };
-
-    typedef std::shared_ptr<PhysicsAttachment> PhysicsAttachmentPtr;
+    using CoordinateSystemPtr = std::shared_ptr<CoordinateSystem>;
 }

@@ -30,7 +30,7 @@ GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
     loadRobot();
 
     box = Obstacle::createBox(30.0f, 30.0f, 30.0f);
-    box->attachFrames();
+    box->attachCoordinateSystems();
     viewer->addVisualization(box->getVisualization(), boxVisuLayer);
 
     box2TCP();

@@ -15,35 +15,35 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 * @package    VirtualRobot
-* @author     Harry
-* @copyright  2017 Nikolaus Vahrenkamp
+* @author     Adrian Knobloch
+* @copyright  2016 Adrian Knobloch
 *             GNU Lesser General Public License
 *
 */
 #pragma once
 
 #include "ModelNodeAttachmentFactory.h"
-#include "ModelStructure.h"
+#include "CustomVisualizationAttachment.h"
 
 namespace VirtualRobot
 {
-    class VIRTUAL_ROBOT_IMPORT_EXPORT ModelStructureFactory : public ModelNodeAttachmentFactory
+    class VIRTUAL_ROBOT_IMPORT_EXPORT CustomVisualizationAttachmentFactory : public ModelNodeAttachmentFactory
     {
     protected:
         /*!
          * Constructor.
          */
-        ModelStructureFactory();
+        CustomVisualizationAttachmentFactory();
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelStructureFactory() override;
+        virtual ~CustomVisualizationAttachmentFactory() override;
 
 
         /*!
-         * Creates a ModelStructure attachment.
+         * Creates a ForceTorqueSensor attachment.
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \return  A fully initialized attachment.
@@ -52,14 +52,11 @@ namespace VirtualRobot
 
         // AbstractFactoryMethod
     public:
-        /*!
-         * \return "ModelStructure"
-         */
         static std::string getName();
         static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
 
     private:
         static SubClassRegistry registry;
     };
-    typedef std::shared_ptr<ModelStructureFactory> ModelStructureFactoryPtr;
+    typedef std::shared_ptr<CustomVisualizationAttachmentFactory> CustomVisualizationAttachmentFactoryPtr;
 }

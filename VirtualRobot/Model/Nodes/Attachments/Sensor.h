@@ -28,7 +28,6 @@ namespace VirtualRobot
 {
     class Sensor : public ModelNodeAttachment
     {
-        friend class ModelNode;
 
     public:
         /*!
@@ -41,27 +40,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~Sensor();
-
-        /*!
-         * Checks if this attachment is attachable to the given node.
-         * Mostly determined on the basis of the node type.
-         *
-         * @param node The node to check, if this attachment is attachable.
-         *
-         * @return True, if this attachment is attachable; false otherwise.
-         */
-        virtual bool isAttachable(const ModelNodePtr &node) override;
-
-        /*!
-         * Get the type of this attachment.
-         * This is used to seperate different attached attachments.
-         *
-         * @return "Sensor".
-         */
-        virtual std::string getType() override;
-
-        virtual ModelNodeAttachmentPtr clone() override;
+        virtual ~Sensor() override;
     };
 
     typedef std::shared_ptr<Sensor> SensorPtr;
