@@ -94,7 +94,7 @@ namespace VirtualRobot
                                            std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                            std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
                                            ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
-        static RobotNodePtr processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
+        static std::pair<RobotNodePtr, RobotNodePtr> processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
                                              RobotPtr robo,
                                              const std::string& basePath,
                                              int& robotNodeCounter,

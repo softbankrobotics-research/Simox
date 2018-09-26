@@ -224,7 +224,18 @@ namespace VirtualRobot
 
             in.close();
 
-            res = createRobotModelFromString(robotXML, basePath, loadMode);
+            try
+            {
+                res = createRobotModelFromString(robotXML, basePath, loadMode);
+            }
+            catch (...)
+            {
+            }
+
+            if (!res)
+            {
+                res = SimoxXMLFactory::createRobotFromSimoxXMLString(robotXML, basePath, loadMode);
+            }
         }
 
         if (!res)
