@@ -402,19 +402,19 @@ namespace VirtualRobot
 
         virtual bool isJoint()
         {
-            return (getType() & NodeType::Joint)!=0;
+            return checkNodeOfType(shared_from_this(), NodeType::Joint);
         }
         virtual bool isTranslationalJoint()
         {
-            return (getType() == NodeType::JointPrismatic);
+            return checkNodeOfType(shared_from_this(), NodeType::JointPrismatic);
         }
         virtual bool isRotationalJoint()
         {
-            return (getType() == NodeType::JointRevolute);
+            return checkNodeOfType(shared_from_this(), NodeType::JointRevolute);
         }
         virtual bool isLink()
         {
-            return (getType() & NodeType::Link)!=0;
+            return checkNodeOfType(shared_from_this(), NodeType::Link);
         }
 
     protected:
