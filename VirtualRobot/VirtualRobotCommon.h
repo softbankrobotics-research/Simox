@@ -58,7 +58,7 @@
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/Grasping/BasicGraspQualityMeasure.h>
-#include <VirtualRobot/AbstractFactoryMethod.h>
+#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Tools/MathTools.h>
 #include <VirtualRobot/Model/Model.h>
