@@ -3,7 +3,7 @@
 # This script defines:
 #   BULLET_FOUND, set to 1 if found
 #   BULLET_LIBRARIES
-#   BULLET_INCLUDE_DIR
+#   BULLET_INCLUDE_DIRS
 #   BULLET_*_LIBRARY, one for each library (for example, "BULLET_BulletCollision_LIBRARY").
 #   BULLET_*_LIBRARY_debug, one for each library.
 #   BULLET_DEMOS_INCLUDE_DIR - Directory containing the Demos headers
@@ -16,15 +16,15 @@
 # You can also use Bullet out of a source tree by specifying BULLET_SOURCE_DIR
 # and BULLET_BUILD_DIR (in environment or CMake).
 
-
 SET( BULLET_ROOT "" CACHE PATH "Bullet install dir, parent of both header files and binaries." )
 SET( BULLET_BUILD_DIR "" CACHE PATH "Parent directory of Bullet binary file directories such as src/BulletCollision." )
 SET( BULLET_SOURCE_DIR "" CACHE PATH "Parent directory of Bullet header file directories such as src or include." )
 
-#UNSET( BULLET_INCLUDE_DIR CACHE )
-MARK_AS_ADVANCED( BULLET_INCLUDE_DIR )
-FIND_PATH( BULLET_INCLUDE_DIR btBulletCollisionCommon.h
+#UNSET( BULLET_INCLUDE_DIRS CACHE )
+MARK_AS_ADVANCED( BULLET_INCLUDE_DIRS )
+FIND_PATH( BULLET_INCLUDE_DIRS btBulletCollisionCommon.h
     PATHS
+        $ENV{Bullet_DIR}
         ${BULLET_ROOT}
         $ENV{BULLET_ROOT}
         ${BULLET_SOURCE_DIR}
@@ -33,33 +33,34 @@ FIND_PATH( BULLET_INCLUDE_DIR btBulletCollisionCommon.h
     PATH_SUFFIXES
         /BulletCollision
         /src
+        ../src
         /include
         /include/bullet
         /src/BulletCollision
         /include/BulletCollision
         /include/bullet/BulletCollision
     )
-IF( BULLET_INCLUDE_DIR )
-    #SET( BULLET_DEMOS_INCLUDE_DIR ${BULLET_INCLUDE_DIR}/../Demos/OpenGL )
+IF( BULLET_INCLUDE_DIRS )
+    #SET( BULLET_DEMOS_INCLUDE_DIR ${BULLET_INCLUDE_DIRS}/../Demos/OpenGL )
     FIND_PATH( BULLET_OPENGL_INCLUDE_DIR DemoApplication.h
     PATHS
-        ${BULLET_INCLUDE_DIR}
-        ${BULLET_INCLUDE_DIR}/..
-        ${BULLET_INCLUDE_DIR}/../OpenGL
-        ${BULLET_INCLUDE_DIR}/OpenGL
-        ${BULLET_INCLUDE_DIR}/../Demos/OpenGL
+        ${BULLET_INCLUDE_DIRS}
+        ${BULLET_INCLUDE_DIRS}/..
+        ${BULLET_INCLUDE_DIRS}/../OpenGL
+        ${BULLET_INCLUDE_DIRS}/OpenGL
+        ${BULLET_INCLUDE_DIRS}/../Demos/OpenGL
     )
     FIND_PATH( BULLET_DEMOS_INCLUDE_DIR GlutDemoApplication.h
     PATHS
-        ${BULLET_INCLUDE_DIR}
-        ${BULLET_INCLUDE_DIR}/..
-        ${BULLET_INCLUDE_DIR}/../OpenGL
-        ${BULLET_INCLUDE_DIR}/OpenGL
-        ${BULLET_INCLUDE_DIR}/../Demos/OpenGL
+        ${BULLET_INCLUDE_DIRS}
+        ${BULLET_INCLUDE_DIRS}/..
+        ${BULLET_INCLUDE_DIRS}/../OpenGL
+        ${BULLET_INCLUDE_DIRS}/OpenGL
+        ${BULLET_INCLUDE_DIRS}/../Demos/OpenGL
     )
     MESSAGE (STATUS " **** BULLET_OPENGL_INCLUDE_DIR: ${BULLET_OPENGL_INCLUDE_DIR}")
     MESSAGE (STATUS " **** BULLET_DEMOS_INCLUDE_DIR: ${BULLET_DEMOS_INCLUDE_DIR}")
-ENDIF( BULLET_INCLUDE_DIR )
+ENDIF( BULLET_INCLUDE_DIRS )
 
 MACRO( FIND_BULLET_LIBRARY_DIRNAME LIBNAME DIRNAME )
     #UNSET( BULLET_${LIBNAME}_LIBRARY CACHE )
@@ -70,6 +71,7 @@ MACRO( FIND_BULLET_LIBRARY_DIRNAME LIBNAME DIRNAME )
         NAMES
             ${LIBNAME}
         PATHS
+            $ENV{Bullet_DIR}
             ${BULLET_ROOT}
             $ENV{BULLET_ROOT}
             ${BULLET_BUILD_DIR}
@@ -97,6 +99,7 @@ MACRO( FIND_BULLET_LIBRARY_DIRNAME LIBNAME DIRNAME )
             ${LIBNAME}_Debug
             ${LIBNAME}
         PATHS
+            $ENV{Bullet_DIR}
             ${BULLET_ROOT}
             $ENV{BULLET_ROOT}
             ${BULLET_BUILD_DIR}
@@ -149,9 +152,9 @@ MARK_AS_ADVANCED( BULLET_LIBRARIES )
 MARK_AS_ADVANCED( BULLET_LIBRARIES_debug )
 
 SET( BULLET_FOUND 0 )
-IF( BULLET_INCLUDE_DIR AND BULLET_LIBRARIES )
+IF( BULLET_INCLUDE_DIRS AND BULLET_LIBRARIES )
     SET( BULLET_FOUND 1 )
-ENDIF( BULLET_INCLUDE_DIR AND BULLET_LIBRARIES )
+ENDIF( BULLET_INCLUDE_DIRS AND BULLET_LIBRARIES )
 
 
 # Possible future support for collision-only (no dynamics)
