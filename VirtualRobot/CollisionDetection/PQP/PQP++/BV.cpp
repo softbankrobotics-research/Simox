@@ -196,15 +196,13 @@ namespace PQP
 
             // grow minx / maxx / miny / maxy
             {
-                PQP_REAL x;
-                PQP_REAL y;
                 for (i = 0; i < num_points; i++)
                 {
                     // grow minx
                     if (P[i][0] < minx)
                     {
                         const PQP_REAL dz = P[i][2] - cz;
-                        x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                        const PQP_REAL x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (x < minx)
                         {
@@ -216,7 +214,7 @@ namespace PQP
                     if (P[i][0] > maxx)
                     {
                         const PQP_REAL dz = P[i][2] - cz;
-                        x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
+                        const PQP_REAL x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (x > maxx)
                         {
@@ -228,7 +226,7 @@ namespace PQP
                     if (P[i][1] < miny)
                     {
                         const PQP_REAL dz = P[i][2] - cz;
-                        y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                        const PQP_REAL y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (y < miny)
                         {
@@ -240,7 +238,7 @@ namespace PQP
                     if (P[i][1] > maxy)
                     {
                         const PQP_REAL dz = P[i][2] - cz;
-                        y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
+                        const PQP_REAL y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (y > maxy)
                         {
