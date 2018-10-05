@@ -155,7 +155,6 @@ namespace PQP
             // compute an initial length of rectangle along x direction
             // find minx and maxx as starting points
 
-            PQP_REAL dz;
             {
                 int x_minindex = 0;
                 int x_maxindex = 0;
@@ -171,6 +170,7 @@ namespace PQP
                     }
                 }
 
+                PQP_REAL dz;
                 dz = P[x_minindex][2] - cz;
                 minx = P[x_minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
                 dz = P[x_maxindex][2] - cz;
@@ -185,7 +185,7 @@ namespace PQP
                     // grow minx
                     if (P[i][0] < minx)
                     {
-                        dz = P[i][2] - cz;
+                        const PQP_REAL dz = P[i][2] - cz;
                         x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (x < minx)
@@ -197,7 +197,7 @@ namespace PQP
                     // grow maxx
                     if (P[i][0] > maxx)
                     {
-                        dz = P[i][2] - cz;
+                        const PQP_REAL dz = P[i][2] - cz;
                         x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (x > maxx)
@@ -226,6 +226,7 @@ namespace PQP
                     }
                 }
 
+                PQP_REAL dz;
                 dz = P[y_minindex][2] - cz;
                 miny = P[y_minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
                 dz = P[y_maxindex][2] - cz;
@@ -240,7 +241,7 @@ namespace PQP
                     // grow miny
                     if (P[i][1] < miny)
                     {
-                        dz = P[i][2] - cz;
+                        const PQP_REAL dz = P[i][2] - cz;
                         y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (y < miny)
@@ -252,7 +253,7 @@ namespace PQP
                     // grow maxy
                     if (P[i][1] > maxy)
                     {
-                        dz = P[i][2] - cz;
+                        const PQP_REAL dz = P[i][2] - cz;
                         y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                         if (y > maxy)
