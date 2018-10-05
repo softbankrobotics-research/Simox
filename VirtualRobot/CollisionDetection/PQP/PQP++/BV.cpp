@@ -152,12 +152,10 @@ namespace PQP
                 cz = (PQP_REAL)0.5 * (maxz + minz);
             }
 
-
             // compute an initial length of rectangle along x direction
-
             // find minx and maxx as starting points
 
-            PQP_REAL x, dz;
+            PQP_REAL dz;
             {
                 int x_minindex = 0;
                 int x_maxindex = 0;
@@ -180,39 +178,39 @@ namespace PQP
             }
 
             // grow minx / maxx
-
-            for (i = 0; i < num_points; i++)
             {
-                // grow minx
-                if (P[i][0] < minx)
+                PQP_REAL x;
+                for (i = 0; i < num_points; i++)
                 {
-                    dz = P[i][2] - cz;
-                    x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
-
-                    if (x < minx)
+                    // grow minx
+                    if (P[i][0] < minx)
                     {
-                        minx = x;
+                        dz = P[i][2] - cz;
+                        x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
+
+                        if (x < minx)
+                        {
+                            minx = x;
+                        }
                     }
-                }
 
-                // grow maxx
-                if (P[i][0] > maxx)
-                {
-                    dz = P[i][2] - cz;
-                    x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
-
-                    if (x > maxx)
+                    // grow maxx
+                    if (P[i][0] > maxx)
                     {
-                        maxx = x;
+                        dz = P[i][2] - cz;
+                        x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
+
+                        if (x > maxx)
+                        {
+                            maxx = x;
+                        }
                     }
                 }
             }
 
             // compute an initial length of rectangle along y direction
-
             // find miny and maxy as starting points
 
-            PQP_REAL y;
             {
                 int y_minindex = 0;
                 int y_maxindex = 0;
@@ -235,30 +233,32 @@ namespace PQP
             }
 
             // grow miny / maxy
-
-            for (i = 0; i < num_points; i++)
             {
-                // grow miny
-                if (P[i][1] < miny)
+                PQP_REAL y;
+                for (i = 0; i < num_points; i++)
                 {
-                    dz = P[i][2] - cz;
-                    y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
-
-                    if (y < miny)
+                    // grow miny
+                    if (P[i][1] < miny)
                     {
-                        miny = y;
+                        dz = P[i][2] - cz;
+                        y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
+
+                        if (y < miny)
+                        {
+                            miny = y;
+                        }
                     }
-                }
 
-                // grow maxy
-                if (P[i][1] > maxy)
-                {
-                    dz = P[i][2] - cz;
-                    y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
-
-                    if (y > maxy)
+                    // grow maxy
+                    if (P[i][1] > maxy)
                     {
-                        maxy = y;
+                        dz = P[i][2] - cz;
+                        y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
+
+                        if (y > maxy)
+                        {
+                            maxy = y;
+                        }
                     }
                 }
             }
