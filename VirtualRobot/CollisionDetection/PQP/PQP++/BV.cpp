@@ -128,27 +128,30 @@ namespace PQP
 
 #if PQP_BV_TYPE & RSS_TYPE
         {
-            PQP_REAL minx, maxx, miny, maxy, minz, maxz, c[3];
+            PQP_REAL minx, maxx, miny, maxy, c[3];
 
             // compute thickness, which determines radius, and z of rectangle corner
             PQP_REAL cz, radsqr;
-            minz = maxz = P[0][2];
-
-            for (i = 1; i < num_points; i++)
             {
-                if (P[i][2] < minz)
+                PQP_REAL minz = P[0][2];
+                PQP_REAL maxz = P[0][2];
+
+                for (i = 1; i < num_points; i++)
                 {
-                    minz = P[i][2];
+                    if (P[i][2] < minz)
+                    {
+                        minz = P[i][2];
+                    }
+                    else if (P[i][2] > maxz)
+                    {
+                        maxz = P[i][2];
+                    }
                 }
-                else if (P[i][2] > maxz)
-                {
-                    maxz = P[i][2];
-                }
+                r = (PQP_REAL)0.5 * (maxz - minz);
+                radsqr = r * r;
+                cz = (PQP_REAL)0.5 * (maxz + minz);
             }
 
-            r = (PQP_REAL)0.5 * (maxz - minz);
-            radsqr = r * r;
-            cz = (PQP_REAL)0.5 * (maxz + minz);
 
             // compute an initial length of rectangle along x direction
 
