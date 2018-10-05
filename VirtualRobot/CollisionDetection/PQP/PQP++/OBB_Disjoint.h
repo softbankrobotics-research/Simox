@@ -69,27 +69,23 @@ namespace PQP
             PQP_REAL t, s;
             int r;
             PQP_REAL Bf[3][3];
-            const PQP_REAL reps = (PQP_REAL)1e-6;
 
-            // Bf = fabs(B)
-            Bf[0][0] = myfabs(B[0][0]);
-            Bf[0][0] += reps;
-            Bf[0][1] = myfabs(B[0][1]);
-            Bf[0][1] += reps;
-            Bf[0][2] = myfabs(B[0][2]);
-            Bf[0][2] += reps;
-            Bf[1][0] = myfabs(B[1][0]);
-            Bf[1][0] += reps;
-            Bf[1][1] = myfabs(B[1][1]);
-            Bf[1][1] += reps;
-            Bf[1][2] = myfabs(B[1][2]);
-            Bf[1][2] += reps;
-            Bf[2][0] = myfabs(B[2][0]);
-            Bf[2][0] += reps;
-            Bf[2][1] = myfabs(B[2][1]);
-            Bf[2][1] += reps;
-            Bf[2][2] = myfabs(B[2][2]);
-            Bf[2][2] += reps;
+            {
+                static constexpr PQP_REAL reps = (PQP_REAL)1e-6;
+
+                // Bf = fabs(B)
+                Bf[0][0] = std::abs(B[0][0]) + reps;
+                Bf[0][1] = std::abs(B[0][1]) + reps;
+                Bf[0][2] = std::abs(B[0][2]) + reps;
+
+                Bf[1][0] = std::abs(B[1][0]) + reps;
+                Bf[1][1] = std::abs(B[1][1]) + reps;
+                Bf[1][2] = std::abs(B[1][2]) + reps;
+
+                Bf[2][0] = std::abs(B[2][0]) + reps;
+                Bf[2][1] = std::abs(B[2][1]) + reps;
+                Bf[2][2] = std::abs(B[2][2]) + reps;
+            }
 
             // if any of these tests are one-sided, then the polyhedra are disjoint
             r = 1;
