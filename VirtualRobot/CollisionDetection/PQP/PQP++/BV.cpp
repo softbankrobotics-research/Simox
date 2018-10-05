@@ -176,10 +176,11 @@ namespace PQP
                 maxx = P[x_maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
             }
 
-            // grow minx
+            // grow minx / maxx
 
             for (i = 0; i < num_points; i++)
             {
+                // grow minx
                 if (P[i][0] < minx)
                 {
                     dz = P[i][2] - cz;
@@ -190,12 +191,8 @@ namespace PQP
                         minx = x;
                     }
                 }
-            }
 
-            // grow maxx
-
-            for (i = 0; i < num_points; i++)
-            {
+                // grow maxx
                 if (P[i][0] > maxx)
                 {
                     dz = P[i][2] - cz;
@@ -234,10 +231,11 @@ namespace PQP
                 maxy = P[y_maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
             }
 
-            // grow miny
+            // grow miny / maxy
 
             for (i = 0; i < num_points; i++)
             {
+                // grow miny
                 if (P[i][1] < miny)
                 {
                     dz = P[i][2] - cz;
@@ -248,12 +246,8 @@ namespace PQP
                         miny = y;
                     }
                 }
-            }
 
-            // grow maxy
-
-            for (i = 0; i < num_points; i++)
-            {
+                // grow maxy
                 if (P[i][1] > maxy)
                 {
                     dz = P[i][2] - cz;
