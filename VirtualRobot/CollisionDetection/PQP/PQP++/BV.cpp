@@ -152,12 +152,15 @@ namespace PQP
                 cz = (PQP_REAL)0.5 * (maxz + minz);
             }
 
-            // compute an initial length of rectangle along x direction
-            // find minx and maxx as starting points
+            // compute an initial length of rectangle along x / y direction
+            // find minx and maxx / miny and maxy as starting points
 
             {
                 int x_minindex = 0;
                 int x_maxindex = 0;
+                int y_minindex = 0;
+                int y_maxindex = 0;
+
                 for (i = 1; i < num_points; i++)
                 {
                     if (P[i][0] < P[x_minindex][0])
@@ -168,23 +171,7 @@ namespace PQP
                     {
                         x_maxindex = i;
                     }
-                }
 
-                PQP_REAL dz;
-                dz = P[x_minindex][2] - cz;
-                minx = P[x_minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
-                dz = P[x_maxindex][2] - cz;
-                maxx = P[x_maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
-            }
-
-            // compute an initial length of rectangle along y direction
-            // find miny and maxy as starting points
-
-            {
-                int y_minindex = 0;
-                int y_maxindex = 0;
-                for (i = 1; i < num_points; i++)
-                {
                     if (P[i][1] < P[y_minindex][1])
                     {
                         y_minindex = i;
@@ -196,6 +183,11 @@ namespace PQP
                 }
 
                 PQP_REAL dz;
+                dz = P[x_minindex][2] - cz;
+                minx = P[x_minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                dz = P[x_maxindex][2] - cz;
+                maxx = P[x_maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
+
                 dz = P[y_minindex][2] - cz;
                 miny = P[y_minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
                 dz = P[y_maxindex][2] - cz;
