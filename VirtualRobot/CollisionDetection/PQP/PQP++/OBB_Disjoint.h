@@ -40,6 +40,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "MatVec.h"
 #include "PQP_Compile.h"
 
@@ -66,7 +68,7 @@ namespace PQP
         int
         obb_disjoint(PQP_REAL B[3][3], PQP_REAL T[3], PQP_REAL a[3], PQP_REAL b[3])
         {
-            PQP_REAL t, s;
+            PQP_REAL s;
             int r;
             PQP_REAL Bf[3][3];
 
@@ -91,9 +93,8 @@ namespace PQP
             r = 1;
 
             // A1 x A2 = A0
-            t = myfabs(T[0]);
 
-            r &= (t <=
+            r &= (std::abs(T[0]) <=
                   (a[0] + b[0] * Bf[0][0] + b[1] * Bf[0][1] + b[2] * Bf[0][2]));
 
             if (!r)
@@ -103,9 +104,8 @@ namespace PQP
 
             // B1 x B2 = B0
             s = T[0] * B[0][0] + T[1] * B[1][0] + T[2] * B[2][0];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (b[0] + a[0] * Bf[0][0] + a[1] * Bf[1][0] + a[2] * Bf[2][0]));
 
             if (!r)
@@ -114,9 +114,8 @@ namespace PQP
             }
 
             // A2 x A0 = A1
-            t = myfabs(T[1]);
 
-            r &= (t <=
+            r &= (std::abs(T[1]) <=
                   (a[1] + b[0] * Bf[1][0] + b[1] * Bf[1][1] + b[2] * Bf[1][2]));
 
             if (!r)
@@ -125,9 +124,8 @@ namespace PQP
             }
 
             // A0 x A1 = A2
-            t = myfabs(T[2]);
 
-            r &= (t <=
+            r &= (std::abs(T[2]) <=
                   (a[2] + b[0] * Bf[2][0] + b[1] * Bf[2][1] + b[2] * Bf[2][2]));
 
             if (!r)
@@ -137,9 +135,8 @@ namespace PQP
 
             // B2 x B0 = B1
             s = T[0] * B[0][1] + T[1] * B[1][1] + T[2] * B[2][1];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (b[1] + a[0] * Bf[0][1] + a[1] * Bf[1][1] + a[2] * Bf[2][1]));
 
             if (!r)
@@ -149,9 +146,8 @@ namespace PQP
 
             // B0 x B1 = B2
             s = T[0] * B[0][2] + T[1] * B[1][2] + T[2] * B[2][2];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (b[2] + a[0] * Bf[0][2] + a[1] * Bf[1][2] + a[2] * Bf[2][2]));
 
             if (!r)
@@ -161,9 +157,8 @@ namespace PQP
 
             // A0 x B0
             s = T[2] * B[1][0] - T[1] * B[2][0];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[1] * Bf[2][0] + a[2] * Bf[1][0] +
                    b[1] * Bf[0][2] + b[2] * Bf[0][1]));
 
@@ -174,9 +169,8 @@ namespace PQP
 
             // A0 x B1
             s = T[2] * B[1][1] - T[1] * B[2][1];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[1] * Bf[2][1] + a[2] * Bf[1][1] +
                    b[0] * Bf[0][2] + b[2] * Bf[0][0]));
 
@@ -187,9 +181,8 @@ namespace PQP
 
             // A0 x B2
             s = T[2] * B[1][2] - T[1] * B[2][2];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[1] * Bf[2][2] + a[2] * Bf[1][2] +
                    b[0] * Bf[0][1] + b[1] * Bf[0][0]));
 
@@ -200,9 +193,8 @@ namespace PQP
 
             // A1 x B0
             s = T[0] * B[2][0] - T[2] * B[0][0];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[2][0] + a[2] * Bf[0][0] +
                    b[1] * Bf[1][2] + b[2] * Bf[1][1]));
 
@@ -213,9 +205,8 @@ namespace PQP
 
             // A1 x B1
             s = T[0] * B[2][1] - T[2] * B[0][1];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[2][1] + a[2] * Bf[0][1] +
                    b[0] * Bf[1][2] + b[2] * Bf[1][0]));
 
@@ -226,9 +217,8 @@ namespace PQP
 
             // A1 x B2
             s = T[0] * B[2][2] - T[2] * B[0][2];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[2][2] + a[2] * Bf[0][2] +
                    b[0] * Bf[1][1] + b[1] * Bf[1][0]));
 
@@ -239,9 +229,8 @@ namespace PQP
 
             // A2 x B0
             s = T[1] * B[0][0] - T[0] * B[1][0];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[1][0] + a[1] * Bf[0][0] +
                    b[1] * Bf[2][2] + b[2] * Bf[2][1]));
 
@@ -252,9 +241,8 @@ namespace PQP
 
             // A2 x B1
             s = T[1] * B[0][1] - T[0] * B[1][1];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[1][1] + a[1] * Bf[0][1] +
                    b[0] * Bf[2][2] + b[2] * Bf[2][0]));
 
@@ -265,9 +253,8 @@ namespace PQP
 
             // A2 x B2
             s = T[1] * B[0][2] - T[0] * B[1][2];
-            t = myfabs(s);
 
-            r &= (t <=
+            r &= (std::abs(s) <=
                   (a[0] * Bf[1][2] + a[1] * Bf[0][2] +
                    b[0] * Bf[2][1] + b[1] * Bf[2][0]));
 
