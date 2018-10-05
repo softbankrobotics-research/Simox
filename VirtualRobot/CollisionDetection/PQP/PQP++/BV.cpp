@@ -38,28 +38,19 @@
 
 \**************************************************************************/
 
+#include <algorithm>
+
 #include <stdlib.h>
 #include <math.h>
+
 #include "BV.h"
 #include "MatVec.h"
 #include "RectDist.h"
 #include "OBB_Disjoint.h"
 
+
 namespace PQP
 {
-
-    inline
-    PQP_REAL
-    BV::MaxOfTwo(PQP_REAL a, PQP_REAL b)
-    {
-        if (a > b)
-        {
-            return a;
-        }
-
-        return b;
-    }
-
     void
     BV::FitToTris(PQP_REAL O[3][3], Tri* tris, int num_tris)
     {
@@ -177,9 +168,9 @@ namespace PQP
 
         PQP_REAL x, dz;
         dz = P[minindex][2] - cz;
-        minx = P[minindex][0] + sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+        minx = P[minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
         dz = P[maxindex][2] - cz;
-        maxx = P[maxindex][0] - sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+        maxx = P[maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
         // grow minx
 
@@ -188,7 +179,7 @@ namespace PQP
             if (P[i][0] < minx)
             {
                 dz = P[i][2] - cz;
-                x = P[i][0] + sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+                x = P[i][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                 if (x < minx)
                 {
@@ -204,7 +195,7 @@ namespace PQP
             if (P[i][0] > maxx)
             {
                 dz = P[i][2] - cz;
-                x = P[i][0] - sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+                x = P[i][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                 if (x > maxx)
                 {
@@ -233,9 +224,9 @@ namespace PQP
 
         PQP_REAL y;
         dz = P[minindex][2] - cz;
-        miny = P[minindex][1] + sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+        miny = P[minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
         dz = P[maxindex][2] - cz;
-        maxy = P[maxindex][1] - sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+        maxy = P[maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
         // grow miny
 
@@ -244,7 +235,7 @@ namespace PQP
             if (P[i][1] < miny)
             {
                 dz = P[i][2] - cz;
-                y = P[i][1] + sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+                y = P[i][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
 
                 if (y < miny)
                 {
@@ -260,7 +251,7 @@ namespace PQP
             if (P[i][1] > maxy)
             {
                 dz = P[i][2] - cz;
-                y = P[i][1] - sqrt(MaxOfTwo(radsqr - dz * dz, 0));
+                y = P[i][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
 
                 if (y > maxy)
                 {
@@ -287,7 +278,7 @@ namespace PQP
                     t = (a * u - dx) * (a * u - dx) +
                         (a * u - dy) * (a * u - dy) +
                         (cz - P[i][2]) * (cz - P[i][2]);
-                    u = u - sqrt(MaxOfTwo(radsqr - t, 0));
+                    u = u - sqrt(std::max(radsqr - t, 0.f));
 
                     if (u > 0)
                     {
@@ -303,7 +294,7 @@ namespace PQP
                     t = (a * u - dx) * (a * u - dx) +
                         (-a * u - dy) * (-a * u - dy) +
                         (cz - P[i][2]) * (cz - P[i][2]);
-                    u = u - sqrt(MaxOfTwo(radsqr - t, 0));
+                    u = u - sqrt(std::max(radsqr - t, 0.f));
 
                     if (u > 0)
                     {
@@ -322,7 +313,7 @@ namespace PQP
                     t = (-a * u - dx) * (-a * u - dx) +
                         (a * u - dy) * (a * u - dy) +
                         (cz - P[i][2]) * (cz - P[i][2]);
-                    u = u - sqrt(MaxOfTwo(radsqr - t, 0));
+                    u = u - sqrt(std::max(radsqr - t, 0.f));
 
                     if (u > 0)
                     {
@@ -338,7 +329,7 @@ namespace PQP
                     t = (-a * u - dx) * (-a * u - dx) +
                         (-a * u - dy) * (-a * u - dy) +
                         (cz - P[i][2]) * (cz - P[i][2]);
-                    u = u - sqrt(MaxOfTwo(radsqr - t, 0));
+                    u = u - sqrt(std::max(radsqr - t, 0.f));
 
                     if (u > 0)
                     {

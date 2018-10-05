@@ -78,8 +78,6 @@ namespace PQP
         void     FitToTris(PQP_REAL O[3][3], Tri* tris, int num_tris);
 
         MatVec pqp_math;
-        PQP_REAL MaxOfTwo(PQP_REAL a, PQP_REAL b);
-
     };
 
     inline
