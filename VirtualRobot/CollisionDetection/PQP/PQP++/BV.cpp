@@ -251,7 +251,6 @@ namespace PQP
             // corners may have some points which are not covered - grow lengths if
             // necessary
 
-            PQP_REAL dx, dy, u, t;
             PQP_REAL a = sqrt((PQP_REAL)0.5);
 
             for (i = 0; i < num_points; i++)
@@ -260,10 +259,10 @@ namespace PQP
                 {
                     if (P[i][1] > maxy)
                     {
-                        dx = P[i][0] - maxx;
-                        dy = P[i][1] - maxy;
-                        u = dx * a + dy * a;
-                        t = (a * u - dx) * (a * u - dx) +
+                        const PQP_REAL dx = P[i][0] - maxx;
+                        const PQP_REAL dy = P[i][1] - maxy;
+                        PQP_REAL u = dx * a + dy * a;
+                        const PQP_REAL t = (a * u - dx) * (a * u - dx) +
                                 (a * u - dy) * (a * u - dy) +
                                 (cz - P[i][2]) * (cz - P[i][2]);
                         u = u - sqrt(std::max(radsqr - t, 0.f));
@@ -276,10 +275,10 @@ namespace PQP
                     }
                     else if (P[i][1] < miny)
                     {
-                        dx = P[i][0] - maxx;
-                        dy = P[i][1] - miny;
-                        u = dx * a - dy * a;
-                        t = (a * u - dx) * (a * u - dx) +
+                        const PQP_REAL dx = P[i][0] - maxx;
+                        const PQP_REAL dy = P[i][1] - miny;
+                        PQP_REAL u = dx * a - dy * a;
+                        const PQP_REAL t = (a * u - dx) * (a * u - dx) +
                                 (-a * u - dy) * (-a * u - dy) +
                                 (cz - P[i][2]) * (cz - P[i][2]);
                         u = u - sqrt(std::max(radsqr - t, 0.f));
@@ -295,10 +294,10 @@ namespace PQP
                 {
                     if (P[i][1] > maxy)
                     {
-                        dx = P[i][0] - minx;
-                        dy = P[i][1] - maxy;
-                        u = dy * a - dx * a;
-                        t = (-a * u - dx) * (-a * u - dx) +
+                        const PQP_REAL dx = P[i][0] - minx;
+                        const PQP_REAL dy = P[i][1] - maxy;
+                        PQP_REAL u = dy * a - dx * a;
+                        const PQP_REAL t = (-a * u - dx) * (-a * u - dx) +
                                 (a * u - dy) * (a * u - dy) +
                                 (cz - P[i][2]) * (cz - P[i][2]);
                         u = u - sqrt(std::max(radsqr - t, 0.f));
@@ -311,10 +310,10 @@ namespace PQP
                     }
                     else if (P[i][1] < miny)
                     {
-                        dx = P[i][0] - minx;
-                        dy = P[i][1] - miny;
-                        u = -dx * a - dy * a;
-                        t = (-a * u - dx) * (-a * u - dx) +
+                        const PQP_REAL dx = P[i][0] - minx;
+                        const PQP_REAL dy = P[i][1] - miny;
+                        PQP_REAL u = -dx * a - dy * a;
+                        const PQP_REAL t = (-a * u - dx) * (-a * u - dx) +
                                 (-a * u - dy) * (-a * u - dy) +
                                 (cz - P[i][2]) * (cz - P[i][2]);
                         u = u - sqrt(std::max(radsqr - t, 0.f));
