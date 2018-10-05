@@ -154,26 +154,27 @@ namespace PQP
 
             // find minx and maxx as starting points
 
-            int minindex, maxindex;
-            minindex = maxindex = 0;
-
-            for (i = 1; i < num_points; i++)
-            {
-                if (P[i][0] < P[minindex][0])
-                {
-                    minindex = i;
-                }
-                else if (P[i][0] > P[maxindex][0])
-                {
-                    maxindex = i;
-                }
-            }
-
             PQP_REAL x, dz;
-            dz = P[minindex][2] - cz;
-            minx = P[minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
-            dz = P[maxindex][2] - cz;
-            maxx = P[maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
+            {
+                int x_minindex = 0;
+                int x_maxindex = 0;
+                for (i = 1; i < num_points; i++)
+                {
+                    if (P[i][0] < P[x_minindex][0])
+                    {
+                        x_minindex = i;
+                    }
+                    else if (P[i][0] > P[x_maxindex][0])
+                    {
+                        x_maxindex = i;
+                    }
+                }
+
+                dz = P[x_minindex][2] - cz;
+                minx = P[x_minindex][0] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                dz = P[x_maxindex][2] - cz;
+                maxx = P[x_maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
+            }
 
             // grow minx
 
@@ -211,25 +212,27 @@ namespace PQP
 
             // find miny and maxy as starting points
 
-            minindex = maxindex = 0;
-
-            for (i = 1; i < num_points; i++)
-            {
-                if (P[i][1] < P[minindex][1])
-                {
-                    minindex = i;
-                }
-                else if (P[i][1] > P[maxindex][1])
-                {
-                    maxindex = i;
-                }
-            }
-
             PQP_REAL y;
-            dz = P[minindex][2] - cz;
-            miny = P[minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
-            dz = P[maxindex][2] - cz;
-            maxy = P[maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
+            {
+                int y_minindex = 0;
+                int y_maxindex = 0;
+                for (i = 1; i < num_points; i++)
+                {
+                    if (P[i][1] < P[y_minindex][1])
+                    {
+                        y_minindex = i;
+                    }
+                    else if (P[i][1] > P[y_maxindex][1])
+                    {
+                        y_maxindex = i;
+                    }
+                }
+
+                dz = P[y_minindex][2] - cz;
+                miny = P[y_minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                dz = P[y_maxindex][2] - cz;
+                maxy = P[y_maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
+            }
 
             // grow miny
 
