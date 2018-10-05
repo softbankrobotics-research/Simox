@@ -48,15 +48,6 @@
 namespace PQP
 {
 
-    BV::BV()
-    {
-        first_child = 0;
-    }
-
-    BV::~BV()
-    {
-    }
-
     inline
     PQP_REAL
     BV::MaxOfTwo(PQP_REAL a, PQP_REAL b)
