@@ -194,9 +194,10 @@ namespace PQP
                 maxy = P[y_maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
             }
 
-            // grow minx / maxx
+            // grow minx / maxx / miny / maxy
             {
                 PQP_REAL x;
+                PQP_REAL y;
                 for (i = 0; i < num_points; i++)
                 {
                     // grow minx
@@ -222,14 +223,7 @@ namespace PQP
                             maxx = x;
                         }
                     }
-                }
-            }
 
-            // grow miny / maxy
-            {
-                PQP_REAL y;
-                for (i = 0; i < num_points; i++)
-                {
                     // grow miny
                     if (P[i][1] < miny)
                     {
