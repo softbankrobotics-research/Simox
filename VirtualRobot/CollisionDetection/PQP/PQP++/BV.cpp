@@ -177,6 +177,31 @@ namespace PQP
                 maxx = P[x_maxindex][0] - sqrt(std::max(radsqr - dz * dz, 0.f));
             }
 
+            // compute an initial length of rectangle along y direction
+            // find miny and maxy as starting points
+
+            {
+                int y_minindex = 0;
+                int y_maxindex = 0;
+                for (i = 1; i < num_points; i++)
+                {
+                    if (P[i][1] < P[y_minindex][1])
+                    {
+                        y_minindex = i;
+                    }
+                    else if (P[i][1] > P[y_maxindex][1])
+                    {
+                        y_maxindex = i;
+                    }
+                }
+
+                PQP_REAL dz;
+                dz = P[y_minindex][2] - cz;
+                miny = P[y_minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
+                dz = P[y_maxindex][2] - cz;
+                maxy = P[y_maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
+            }
+
             // grow minx / maxx
             {
                 PQP_REAL x;
@@ -206,31 +231,6 @@ namespace PQP
                         }
                     }
                 }
-            }
-
-            // compute an initial length of rectangle along y direction
-            // find miny and maxy as starting points
-
-            {
-                int y_minindex = 0;
-                int y_maxindex = 0;
-                for (i = 1; i < num_points; i++)
-                {
-                    if (P[i][1] < P[y_minindex][1])
-                    {
-                        y_minindex = i;
-                    }
-                    else if (P[i][1] > P[y_maxindex][1])
-                    {
-                        y_maxindex = i;
-                    }
-                }
-
-                PQP_REAL dz;
-                dz = P[y_minindex][2] - cz;
-                miny = P[y_minindex][1] + sqrt(std::max(radsqr - dz * dz, 0.f));
-                dz = P[y_maxindex][2] - cz;
-                maxy = P[y_maxindex][1] - sqrt(std::max(radsqr - dz * dz, 0.f));
             }
 
             // grow miny / maxy
