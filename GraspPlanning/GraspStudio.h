@@ -73,6 +73,7 @@ namespace GraspStudio
 
     class GraspQualityMeasure;
     class GraspQualityMeasureWrenchSpace;
+    class GraspQualityMeasureWrenchSpaceNotNormalized;
     class ContactConeGenerator;
 
     class GraspQualityMeasure;
@@ -83,6 +84,7 @@ namespace GraspStudio
 
     typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
     typedef boost::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
+    typedef boost::shared_ptr<GraspQualityMeasureWrenchSpaceNotNormalized> GraspQualityMeasureWrenchSpaceNotNormalizedPtr;
     typedef boost::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
     typedef boost::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
     typedef boost::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;
