@@ -20,16 +20,34 @@ SET( BULLET_ROOT "" CACHE PATH "Bullet install dir, parent of both header files 
 SET( BULLET_BUILD_DIR "" CACHE PATH "Parent directory of Bullet binary file directories such as src/BulletCollision." )
 SET( BULLET_SOURCE_DIR "" CACHE PATH "Parent directory of Bullet header file directories such as src or include." )
 
+set(BULLET_SEARCH_PATHS)
+macro(add_bullet_search_path p)
+    if(NOT "${p}" STREQUAL "")
+        set(BULLET_SEARCH_PATHS ${BULLET_SEARCH_PATHS} ${p})
+    endif()
+endmacro()
+
+add_bullet_search_path("C:/Program Files/BULLET_PHYSICS")
+
+add_bullet_search_path("$ENV{Bullet_DIR}")
+add_bullet_search_path("${Bullet_DIR}")
+
+add_bullet_search_path("$ENV{BULLET_DIR}")
+add_bullet_search_path("${BULLET_DIR}")
+
+add_bullet_search_path("$ENV{BULLET_ROOT}")
+add_bullet_search_path("${BULLET_ROOT}")
+
+add_bullet_search_path("$ENV{BULLET_SOURCE_DIR}")
+add_bullet_search_path("${BULLET_SOURCE_DIR}")
+
+message(STATUS "Searching bullet using these base paths: ${BULLET_SEARCH_PATHS}")
+
 #UNSET( BULLET_INCLUDE_DIRS CACHE )
 MARK_AS_ADVANCED( BULLET_INCLUDE_DIRS )
 FIND_PATH( BULLET_INCLUDE_DIRS btBulletCollisionCommon.h
     PATHS
-        $ENV{Bullet_DIR}
-        ${BULLET_ROOT}
-        $ENV{BULLET_ROOT}
-        ${BULLET_SOURCE_DIR}
-        $ENV{BULLET_SOURCE_DIR}
-        "C:/Program Files/BULLET_PHYSICS"
+        ${BULLET_SEARCH_PATHS}
     PATH_SUFFIXES
         /BulletCollision
         /src
@@ -39,7 +57,17 @@ FIND_PATH( BULLET_INCLUDE_DIRS btBulletCollisionCommon.h
         /src/BulletCollision
         /include/BulletCollision
         /include/bullet/BulletCollision
+    NO_DEFAULT_PATH
+)
+
+if(NOT BULLET_INCLUDE_DIRS)
+    FIND_PATH( BULLET_INCLUDE_DIRS btBulletCollisionCommon.h
+        PATH_SUFFIXES
+            bullet
     )
+endif()
+
+MESSAGE (STATUS " **** BULLET_INCLUDE_DIRS: ${BULLET_INCLUDE_DIRS}")
 IF( BULLET_INCLUDE_DIRS )
     #SET( BULLET_DEMOS_INCLUDE_DIR ${BULLET_INCLUDE_DIRS}/../Demos/OpenGL )
     FIND_PATH( BULLET_OPENGL_INCLUDE_DIR DemoApplication.h
@@ -71,12 +99,7 @@ MACRO( FIND_BULLET_LIBRARY_DIRNAME LIBNAME DIRNAME )
         NAMES
             ${LIBNAME}
         PATHS
-            $ENV{Bullet_DIR}
-            ${BULLET_ROOT}
-            $ENV{BULLET_ROOT}
-            ${BULLET_BUILD_DIR}
-            $ENV{BULLET_BUILD_DIR}
-            "C:/Program Files/BULLET_PHYSICS"
+            ${BULLET_SEARCH_PATHS}
         PATH_SUFFIXES
             ./src/${DIRNAME}
             ./Extras/${DIRNAME}
@@ -99,12 +122,7 @@ MACRO( FIND_BULLET_LIBRARY_DIRNAME LIBNAME DIRNAME )
             ${LIBNAME}_Debug
             ${LIBNAME}
         PATHS
-            $ENV{Bullet_DIR}
-            ${BULLET_ROOT}
-            $ENV{BULLET_ROOT}
-            ${BULLET_BUILD_DIR}
-            $ENV{BULLET_BUILD_DIR}
-            "C:/Program Files/BULLET_PHYSICS"
+            ${BULLET_SEARCH_PATHS}
         PATH_SUFFIXES
             ./src/${DIRNAME}
             ./Extras/${DIRNAME}
