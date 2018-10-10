@@ -123,8 +123,6 @@ Model/Nodes/ModelJoint.cpp
 Model/Nodes/ModelJointFixed.cpp
 Model/Nodes/ModelJointPrismatic.cpp
 Model/Nodes/ModelJointRevolute.cpp
-Model/Nodes/Attachments/FrameAttachment.cpp
-Model/Nodes/Attachments/FrameAttachmentFactory.cpp
 Model/Nodes/Attachments/CustomVisualizationAttachment.cpp
 Model/Nodes/Attachments/CustomVisualizationAttachmentFactory.cpp
 Model/Nodes/Attachments/CoordinateSystem.cpp
@@ -282,8 +280,6 @@ Model/Nodes/ModelJoint.h
 Model/Nodes/ModelJointFixed.h
 Model/Nodes/ModelJointPrismatic.h
 Model/Nodes/ModelJointRevolute.h
-Model/Nodes/Attachments/FrameAttachment.h
-Model/Nodes/Attachments/FrameAttachmentFactory.h
 Model/Nodes/Attachments/ModelNodeAttachment.h
 Model/Nodes/Attachments/ModelNodeAttachmentFactory.h
 Model/Nodes/Attachments/CustomVisualizationAttachment.h
