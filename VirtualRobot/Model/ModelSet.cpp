@@ -17,11 +17,11 @@ namespace VirtualRobot
             name(name),
             models(models)
     {
-        for (size_t i = 0; i< models.size(); i++)
+        if (models.size() > 1)
         {
-            for (size_t j = i+1; j < models.size(); j++)
+            for (size_t i = 1; i < models.size(); i++)
             {
-                VR_ASSERT(models[i]->getCollisionChecker() == models[j]->getCollisionChecker());
+                VR_ASSERT(models[0]->getCollisionChecker() == models[i]->getCollisionChecker());
             }
         }
     }
@@ -29,7 +29,16 @@ namespace VirtualRobot
     ModelSet::~ModelSet()
 	{
 
-	}
+    }
+
+    void ModelSet::addModel(const ModelPtr &model)
+    {
+        if (models.size() >= 1)
+        {
+            VR_ASSERT(models[0]->getCollisionChecker() == model->getCollisionChecker());
+        }
+        models.push_back(model);
+    }
 
     ModelSetPtr ModelSet::clone(const std::string &name)
 	{

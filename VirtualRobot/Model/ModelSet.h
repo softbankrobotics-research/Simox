@@ -43,6 +43,12 @@ namespace VirtualRobot
          */
         virtual ~ModelSet();
 
+        inline void addRobot(const RobotPtr& robot)
+        {
+            addModel(robot);
+        }
+        virtual void addModel(const ModelPtr& model);
+
         /*!
          * Get the name of this ModelSet.
          *
