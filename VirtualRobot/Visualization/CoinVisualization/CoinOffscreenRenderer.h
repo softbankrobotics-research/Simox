@@ -64,7 +64,8 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImage, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN,
+                VirtualRobot::Visualization::Color backroundColor = VirtualRobot::Visualization::Color::None()
                 ) const override;
 
         //virtual bool renderOffscreenRgbImage
