@@ -22,8 +22,8 @@
 */
 #pragma once
 
-#include "../../Model/Model.h"
-#include "../../Tools/AbstractFactoryMethod.h"
+#include "../../Model.h"
+#include "../../../Tools/AbstractFactoryMethod.h"
 #include "ModelNodeAttachment.h"
 
 namespace VirtualRobot
