@@ -128,7 +128,10 @@ namespace VirtualRobot
 
         virtual ModelNodeAttachmentPtr clone() const = 0;
 
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const {}
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const
+        {
+            return "";
+        }
 
     protected:
         virtual void setParent(const ModelNodePtr &node)
