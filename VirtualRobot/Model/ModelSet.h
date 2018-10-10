@@ -132,9 +132,9 @@ namespace VirtualRobot
          */
         virtual std::string toXML(int tabs) const;
 
-        std::vector<ModelJointPtr> getModelJoints() const;
-
-        std::vector<ModelLinkPtr> getModelLinks() const;
+        std::vector<ModelJointPtr> getJoints() const;
+        std::vector<ModelLinkPtr> getLinks() const;
+        std::vector<ModelNodePtr> getNodes() const;
 
         CollisionCheckerPtr getCollisionChecker() const;
 

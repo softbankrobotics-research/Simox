@@ -155,7 +155,7 @@ namespace VirtualRobot
         return ss.str();
     }
     
-    std::vector<ModelJointPtr> ModelSet::getModelJoints() const
+    std::vector<ModelJointPtr> ModelSet::getJoints() const
     {
         std::vector<ModelJointPtr> modelJoints;
         for (const ModelPtr &node : models)
@@ -169,7 +169,7 @@ namespace VirtualRobot
         return modelJoints;
     }
 
-    std::vector<ModelLinkPtr> ModelSet::getModelLinks() const
+    std::vector<ModelLinkPtr> ModelSet::getLinks() const
     {
         std::vector<ModelLinkPtr> modelLinks;
         for (const ModelPtr &node : models)
@@ -181,6 +181,17 @@ namespace VirtualRobot
             }
         }
         return modelLinks;
+    }
+
+    std::vector<ModelNodePtr> ModelSet::getNodes() const
+    {
+        std::vector<ModelNodePtr> nodes;
+        for (const ModelPtr &model : models)
+        {
+            auto jm = model->getNodes();
+            nodes.insert(nodes.end(), jm.begin(), jm.end());
+        }
+        return nodes;
     }
 
     CollisionCheckerPtr ModelSet::getCollisionChecker() const
