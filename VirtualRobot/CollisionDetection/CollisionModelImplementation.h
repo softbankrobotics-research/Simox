@@ -27,7 +27,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <atomic>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -48,19 +47,12 @@ namespace VirtualRobot
         /*!Standard Constructor
         If collision checks should be done in parallel, different CollisionCheckers can be specified.
         */
-        CollisionModelImplementation(TriMeshModelPtr modelData, CollisionCheckerPtr /*pColChecker*/)
+        CollisionModelImplementation(TriMeshModelPtr modelData, CollisionCheckerPtr /*pColChecker*/, int id)
         {
             this->modelData = modelData;
+            this->id = id;
+        };
 
-            this->id = NextId();
-        }
-
-        static int NextId()
-        {
-            // use globally unique id
-            static std::atomic<int> idCounter{0};
-            return idCounter++;
-        }
         /*!Standard Destructor
         */
         virtual ~CollisionModelImplementation() {}
@@ -82,13 +74,14 @@ namespace VirtualRobot
         virtual void print()
         {
             cout << "Dummy Collision Model Implementation..." << endl;
-        }
+        };
 
         TriMeshModelPtr getTriMeshModel()
         {
             return modelData;
         }
-        inline int getId() const { return id;}
+
+
         virtual boost::shared_ptr<CollisionModelImplementation> clone(bool deepCopy = false) const = 0;
     protected:
 
