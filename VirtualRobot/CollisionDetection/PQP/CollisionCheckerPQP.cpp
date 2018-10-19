@@ -25,7 +25,7 @@ namespace VirtualRobot
 
         pointModel.reset(new PQP::PQP_Model());
         pointModel->BeginModel();
-        pointModel->AddTri(a,b,c,CollisionModelImplementation::NextId());
+        pointModel->AddTri(a,b,c,99999998);
         pointModel->EndModel();
         pqpChecker = new PQP::PQP_Checker();
     }
