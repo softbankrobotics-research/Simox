@@ -38,3 +38,36 @@ JointLimitAvoidanceConstraint::JointLimitAvoidanceConstraint(const RobotPtr &rob
 
     setReferenceConfiguration(reference);
 }
+
+double JointLimitAvoidanceConstraint::optimizationFunction(unsigned int /*id*/)
+{
+    double value = 0;
+
+    float v;
+    for(size_t i = 0; i < nodeSet->getSize(); i++)
+    {
+        RobotNodePtr node = nodeSet->getNode(i);
+        if(node->isLimitless())
+            continue;
+        v = (node->getJointValue() - reference(i));
+        value += v * v;
+    }
+
+    return optimizationFunctionFactor * value;
+}
+
+Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int /*id*/)
+{
+    Eigen::VectorXf gradient(nodeSet->getSize());
+
+    for(size_t i = 0; i < nodeSet->getSize(); i++)
+    {
+        RobotNodePtr node = nodeSet->getNode(i);
+        if(!node->isLimitless())
+            gradient(i) = 2 * (node->getJointValue() - reference(i));
+        else
+            gradient(i) = 0.0f;
+    }
+
+    return optimizationFunctionFactor * gradient;
+}
