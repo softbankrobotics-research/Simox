@@ -58,7 +58,7 @@ namespace VirtualRobot
 
         if (colChecker != sceneObject->getCollisionChecker())
         {
-            VR_WARNING << " col model belongs to different instance of collision checker, in: " << name << endl;
+            VR_WARNING << " col model belongs to different instance of collision checker, in: '" << name << "'" << endl;
             return false;
         }
 
