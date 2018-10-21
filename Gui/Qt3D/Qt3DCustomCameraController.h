@@ -38,10 +38,11 @@ namespace SimoxGui
     class SIMOX_GUI_IMPORT_EXPORT Qt3DCustomCameraController : public Qt3DCore::QEntity
     {
     public:
-        Qt3DCustomCameraController(Qt3DCore::QNode *parent = nullptr);
+        Qt3DCustomCameraController(QSize windowSize, float sensitivity = 1.0f, Qt3DCore::QNode *parent = nullptr);
         ~Qt3DCustomCameraController();
 
         void setCamera(Qt3DRender::QCamera* camera);
+        void setWindowSize(QSize size);
 
     private:
         Qt3DRender::QCamera* camera;
@@ -54,6 +55,10 @@ namespace SimoxGui
 
         int posX;
         int posY;
+        float pantiltrollratio;
+        bool leftOfCenter;
+        float sensitivity;
+        QSize windowSize;
         bool pressed;
     };
 }

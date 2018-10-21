@@ -63,7 +63,7 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->activeFrameGraph()->setParent(this->capture);
     this->setActiveFrameGraph(this->capture);
 
-    this->camController = new Qt3DCustomCameraController(scene);
+    this->camController = new Qt3DCustomCameraController(this->size(), 1.0f, scene);
     this->camController->setCamera(this->camera());
 
     this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 10.0f, 100000.0f);
@@ -87,6 +87,12 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
+}
+
+void SimoxGui::Qt3DViewer::resizeEvent(QResizeEvent *ev)
+{
+  Qt3DExtras::Qt3DWindow::resizeEvent(ev);
+  this->camController->setWindowSize(this->size());
 }
 
 void SimoxGui::Qt3DViewer::addVisualization(const std::string &layer, const VirtualRobot::VisualizationPtr &visualization)

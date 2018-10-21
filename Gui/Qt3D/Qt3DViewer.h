@@ -63,6 +63,9 @@ namespace SimoxGui
         virtual void setBackgroundColor(const VirtualRobot::Visualization::Color &color) override;
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
+    protected:
+      void resizeEvent(QResizeEvent *ev) override;
+
     private:
         struct Layer
         {

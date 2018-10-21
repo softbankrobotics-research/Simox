@@ -24,7 +24,7 @@
 #include "Qt3DCustomCameraController.h"
 #include <cmath>
 
-SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode *parent)
+SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(QSize windowSize, float sensitivity, Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent)
     , keyboardDevice(new Qt3DInput::QKeyboardDevice(this))
     , keyboardHandler(new Qt3DInput::QKeyboardHandler(this))
@@ -34,6 +34,10 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode
     , pressed(false)
     , posX(0)
     , posY(0)
+    , pantiltrollratio(0.0f)
+    , sensitivity(sensitivity)
+    , windowSize(windowSize)
+    , leftOfCenter(false)
 {
     keyboardHandler->setSourceDevice(keyboardDevice);
     keyboardHandler->setFocus(true);
@@ -49,6 +53,14 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode
                      this, [=] (Qt3DInput::QMouseEvent *event) {
         posX = event->x();
         posY = event->y();
+
+        int xDiffToCenter = abs(posX - (this->windowSize.width() / 2));
+        int yDiffToCenter = abs(posY - (this->windowSize.height() / 2));
+        float diffVecLenght = sqrt(xDiffToCenter * xDiffToCenter + yDiffToCenter * yDiffToCenter);
+        float windowLength = sqrt(this->windowSize.width() * this->windowSize.width() + this->windowSize.height() * this->windowSize.height()) / 2;
+        pantiltrollratio = std::min(1.0f, diffVecLenght / windowLength);
+        leftOfCenter = posX <= (this->windowSize.width() / 2);
+
         pressed = true;
     });
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::released,
@@ -67,12 +79,9 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode
         float pitch = (event->y() - posY) * 0.5f;
         pitch = (pitch > 89.0f) ? 89.0f : (pitch < - 89.0f) ? -89.0f : pitch;
 
-        this->camera->panAboutViewCenter(-yaw);
-        this->camera->tiltAboutViewCenter(pitch);
-
-        /*QVector2D newPos(event->x(), event->y());
-        QVector2D oldPos(posX, posY);
-        this->camera->rollAboutViewCenter(std::acos(QVector2D::dotProduct(oldPos, newPos) / (oldPos.length() * newPos.length())));*/
+        this->camera->panAboutViewCenter(-yaw * sensitivity * (1 - pantiltrollratio));
+        this->camera->tiltAboutViewCenter(pitch * sensitivity * (1 - pantiltrollratio));
+        this->camera->rollAboutViewCenter(pitch * sensitivity * pantiltrollratio * (leftOfCenter ? -1.0f : 1.0f));
 
         posY = event->y();
         posX = event->x();
@@ -97,4 +106,9 @@ void SimoxGui::Qt3DCustomCameraController::setCamera(Qt3DRender::QCamera *camera
         camera->setParent(this);
         this->camera = camera;
     }
+}
+
+void SimoxGui::Qt3DCustomCameraController::setWindowSize(QSize size)
+{
+    this->windowSize = size;
 }
