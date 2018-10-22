@@ -150,7 +150,7 @@ namespace VirtualRobot
 
         // Create a node used for clearing the required buffers.
         clearBuffers = new Qt3DRender::QClearBuffers(renderTargetSelector);
-        clearBuffers->setClearColor(QColor(100, 100, 100, 255));
+        clearBuffers->setClearColor(QColor(255, 255, 255, 255));
         clearBuffers->setBuffers(Qt3DRender::QClearBuffers::ColorDepthBuffer);
 
         // Create a viewport node. The viewport here just covers the entire render area.
