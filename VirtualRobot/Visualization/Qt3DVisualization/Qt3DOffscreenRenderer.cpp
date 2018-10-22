@@ -1,5 +1,11 @@
 #include "Qt3DOffscreenRenderer.h"
 
+#include "../CoinVisualization/CoinVisualization.h"
+#include "Qt3DElement.h"
+
+#include <QTimer>
+#include <QEventLoop>
+
 namespace VirtualRobot
 {
     void Qt3DOffscreenRenderer::init(int &, char *[], const std::string &)
@@ -13,7 +19,53 @@ namespace VirtualRobot
                                                 bool renderPointcloud, std::vector<Eigen::Vector3f> &pointCloud,
                                                 float zNear, float zFar, float vertFov, float nanValue) const
     {
-        return false;
+        // Root entity in the 3D scene.
+        Qt3DCore::QEntity *rootEntity = new Qt3DCore::QEntity();
+
+        // Set up a camera
+        Qt3DRender::QCamera *cameraEntity = new Qt3DRender::QCamera(rootEntity);
+        cameraEntity->lens()->setPerspectiveProjection((vertFov / M_PI) * 180.0f, static_cast<float>(width)/static_cast<float>(height), zNear, zFar);
+        cameraEntity->setProjectionMatrix(QMatrix4x4(camPose.data()).transposed());
+
+        //Add all visualizations to the scene
+        for (const auto& visu : scene)
+        {
+
+            visualization_cast<Qt3DElement>(visu->clone())->getEntity()->setParent(rootEntity);
+        }
+
+        // Create the offscreen engine. This is the object which is responsible for handling the 3D scene itself.
+        OffscreenEngine offscreenEngine(cameraEntity, QSize(width, height));
+        // Set our scene to be rendered by the offscreen engine.
+        offscreenEngine.setSceneRoot(rootEntity);
+
+        Qt3DRender::QRenderCaptureReply *reply = offscreenEngine.getRenderCapture()->requestCapture();
+        //Wait for completion or 3000ms timeout event
+        QTimer timer;
+        timer.setSingleShot(true);
+        QEventLoop loop;
+        QObject::connect(reply, SIGNAL(completed()), &loop, SLOT(quit()));
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.start(3000);
+        loop.exec();
+
+        if(timer.isActive())
+        {
+            QImage result = reply->image();
+            result = result.convertToFormat(QImage::Format_RGB888);
+
+            const unsigned char* imageBuffer = result.constBits();
+            const unsigned int numValues = result.byteCount();
+            rgbImage.resize(numValues);
+            memcpy(&rgbImage[0], imageBuffer, numValues);
+
+            delete reply;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void Qt3DOffscreenRenderer::cleanup()
