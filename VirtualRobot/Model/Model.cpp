@@ -38,44 +38,63 @@ namespace VirtualRobot
     {
     }
 
-    void Model::registerNode(const ModelNodePtr& node)
+    void Model::registerNode(const ModelNodePtr& node, bool registerChildren, bool addToVisu)
     {
         WriteLockPtr w = getWriteLock();
-        if (node)
+        VR_ASSERT(node);
+        if (hasNode(node->getName()))
         {
-            if (hasNode(node->getName()))
+            if (node == getNode(node->getName()))
             {
-                if (node == getNode(node->getName()))
-                    return;
-                THROW_VR_EXCEPTION_IF(hasNode(node->getName()),
-                                      "There are (at least) two model nodes with name <" + node->getName()
-                                      + "> defined!");
+                return;
             }
+            THROW_VR_EXCEPTION_IF(hasNode(node->getName()),
+                                  "There are (at least) two model nodes with name <" + node->getName()
+                                  + "> defined!");
+        }
 
-            if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
+        if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
+        {
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
+            if (collisionChecker)
             {
-                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
-                if (collisionChecker)
-                {
-                    THROW_VR_EXCEPTION_IF(link->getCollisionChecker() != collisionChecker,
-                                          "Collision checker of node <" + node->getName()
-                                          + "> does not match the collision checker of other nodes of model <"
-                                          + getName() + ">.");
-                }
-                else
-                {
-                    collisionChecker = link->getCollisionChecker();
-                }
+                THROW_VR_EXCEPTION_IF(link->getCollisionChecker() != collisionChecker,
+                                      "Collision checker of node <" + node->getName()
+                                      + "> does not match the collision checker of other nodes of model <"
+                                      + getName() + ">.");
+            }
+            else
+            {
+                collisionChecker = link->getCollisionChecker();
+            }
+            if (addToVisu)
+            {
                 addToVisualization(link);
             }
+        }
 
-            modelNodeMap[node->getName()] = node;
+        modelNodeMap[node->getName()] = node;
+
+        if (registerChildren)
+        {
+            for (const auto& n : node->getChildNodes())
+            {
+                registerNode(n, true);
+            }
         }
     }
 
-    void Model::deregisterNode(const ModelNodePtr& node)
+    void Model::deregisterNode(const ModelNodePtr& node, bool deregisterChildren)
     {
         WriteLockPtr w = getWriteLock();
+        VR_ASSERT(node);
+        if (deregisterChildren)
+        {
+            for (const auto& n : node->getChildNodes())
+            {
+                deregisterNode(n, true);
+            }
+        }
         if (node)
         {
             auto i = modelNodeMap.find(node->getName());
@@ -141,7 +160,7 @@ namespace VirtualRobot
         auto search = modelNodeMap.find(modelNodeName);
         if (search == modelNodeMap.end())
         {
-            //VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
+            VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
             return RobotNodePtr();
         }
 
@@ -550,7 +569,7 @@ namespace VirtualRobot
         visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
         visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
 
-        if (applyValues)
+        if (applyValues && !rootNode->getParentNode())
         {
             rootNode->updatePose(true, true);
         }
@@ -963,50 +982,63 @@ namespace VirtualRobot
         return result;
     }
 
-    void Model::attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode)
+    void Model::attachModelTo(const ModelPtr &newModel, const ModelNodePtr& existingNode)
     {
         WriteLockPtr w = getWriteLock();
+        VR_ASSERT(existingNode);
         THROW_VR_EXCEPTION_IF(!hasNode(existingNode), "Model does not have node <" + existingNode->getName() + ">.");
-        if (!hasNode(newNode))
+        if (!isModelAttached(newModel))
         {
-            registerNode(newNode);
+            auto newNode = newModel->getRootNode();
+            THROW_VR_EXCEPTION_IF(newNode->getParentNode(), "The model <" + newModel->getName() + "> is already attached to a model.");
+            oldLocalTransformOfAttachedModels.insert({newModel, newNode->getLocalTransformation()});
+            newNode->setLocalTransformation(getGlobalPose().inverse() * newNode->getGlobalPose());
+            registerNode(newNode, true, false);
+            existingNode->attachChild(newNode);
         }
-        existingNode->attachChild(newNode);
     }
 
-    void Model::attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName)
+    void Model::detachModel(const ModelPtr &model)
     {
         WriteLockPtr w = getWriteLock();
-        THROW_VR_EXCEPTION_IF(!hasNode(existingNodeName), "Model does not have node <" + existingNodeName + ">.");
-        attachNodeTo(newNode, getNode(existingNodeName));
-    }
-
-    void Model::detachNode(const ModelNodePtr& node)
-    {
-        WriteLockPtr w = getWriteLock();
-        if (hasNode(node))
+        if (isModelAttached(model))
         {
+            auto node = model->getRootNode();
             ModelNodePtr parent = node->getParentNode();
-
-            std::vector<ModelNodePtr> toDetach;
-            node->collectAllNodes(toDetach);
-
+            VR_ASSERT(hasNode(parent));
             parent->detachChild(node);
+            deregisterNode(node, true);
+            node->setLocalTransformation(oldLocalTransformOfAttachedModels.at(model));
+            oldLocalTransformOfAttachedModels.erase(model);
+        }
+    }
 
-            for (ModelNodePtr n : toDetach)
+    bool Model::isModelAttached(const ModelPtr &model) const
+    {
+        return oldLocalTransformOfAttachedModels.find(model) != oldLocalTransformOfAttachedModels.end();
+    }
+
+    std::vector<ModelPtr> Model::getAttachedModels() const
+    {
+        std::vector<ModelPtr> models;
+        std::transform(
+            oldLocalTransformOfAttachedModels.begin(),
+            oldLocalTransformOfAttachedModels.end(),
+            std::back_inserter(models),
+            [](const std::map<ModelPtr,Eigen::Matrix4f>::value_type &pair){return pair.first;});
+        return models;
+    }
+
+    ModelPtr Model::getAttachedModel(const std::string &name) const
+    {
+        for (const auto& mp : oldLocalTransformOfAttachedModels)
+        {
+            if (mp.first->getName() == name)
             {
-                deregisterNode(n);
+                return mp.first;
             }
         }
-    }
-
-    void Model::detachNode(const std::string& nodeName)
-    {
-        ReadLockPtr r = getReadLock();
-        if (hasNode(nodeName))
-        {
-            detachNode(getNode(nodeName));
-        }
+        return nullptr;
     }
 
     void Model::setFilename(const std::string& filename)

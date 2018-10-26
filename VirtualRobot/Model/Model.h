@@ -40,6 +40,7 @@ namespace VirtualRobot
      */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
+        friend class ModelNode;
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -55,7 +56,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~Model();
+        ~Model() override;
 
         /*!
          * Registers a new node to this model (if not already registered).
@@ -63,14 +64,14 @@ namespace VirtualRobot
          *
          * @param node The new node.
          */
-        virtual void registerNode(const ModelNodePtr& node);
+        virtual void registerNode(const ModelNodePtr& node, bool registerChildren=false, bool addToVisualization=true);
 
         /*!
          * Deregister the given ModelNode.
          *
          * @param node The node to deregister.
          */
-        virtual void deregisterNode(const ModelNodePtr& node);
+        virtual void deregisterNode(const ModelNodePtr& node, bool deregisterChildren=false);
 
         /*!
          * Check, if the ModelNode is registered to this model.
@@ -618,38 +619,38 @@ namespace VirtualRobot
                                         float scaling = 1.0f) const;
 
         /*!
-         * Attach a new ModelNode to this model.
-         * This registers the node to this model.
+         * Attach a new Model to this model.
+         * This registers all nodes to this model.
          *
-         * @param newNode The node to attach.
+         * @param newModel The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode);
+        void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
 
         /*!
-         * Attach a new ModelNode to this model.
-         * This registers the node to this model.
+         * Attach a new Model to this model.
+         * This registers all nodes to this model.
          *
-         * @param newNode The node to attach.
+         * @param newModel The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
          */
-        void attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName);
+        inline void attachModelTo(const ModelPtr& newModel, const std::string& existingNodeName)
+        {
+            attachModelTo(newModel, getNode(existingNodeName));
+        }
 
         /*!
-         * Removes the node from this model.
-         * This also removes all its children and deregisters the nodes.
+         * Removes the model from this model.
+         * This also deregisters the nodes.
          *
-         * @param node The node to remove.
+         * @param model The node to remove.
          */
-        void detachNode(const ModelNodePtr& node);
+        void detachModel(const ModelPtr& model);
 
-        /*!
-         * Removes the node from this model.
-         * This also removes all its children and deregisters the nodes.
-         *
-         * @param nodeName The name of the node to remove.
-         */
-        void detachNode(const std::string& nodeName);
+        bool isModelAttached(const ModelPtr& model) const;
+
+        std::vector<ModelPtr> getAttachedModels() const;
+        ModelPtr getAttachedModel(const std::string& name) const;
 
         /*!
          * Just storing the filename.
@@ -773,6 +774,8 @@ namespace VirtualRobot
         std::map<std::string, ModelNodeSetPtr> modelNodeSetMap;
         std::map<std::string, EndEffectorPtr> eefMap;
         std::vector< RobotConfigPtr > configs;
+        // An entry is created for each attached model, so we use this map to check if a model is attached
+        std::map<ModelPtr, Eigen::Matrix4f> oldLocalTransformOfAttachedModels;
 
         std::string filename;
 

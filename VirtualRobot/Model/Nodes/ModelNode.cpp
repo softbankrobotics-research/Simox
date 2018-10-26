@@ -309,7 +309,9 @@ namespace VirtualRobot
 
     void ModelNode::updatePose(bool updateChildren, bool updateAttachments)
     {
-        WriteLockPtr w = getModel()->getWriteLock();
+        ModelPtr thisModel = getModel();
+        // we only need to lock this model here, even if it is attached to another model, because this algorithm is recursive
+        WriteLockPtr w = thisModel->getWriteLock();
         ModelNodePtr parentShared = getParentNode();
 
         if (parentShared)
@@ -334,6 +336,15 @@ namespace VirtualRobot
                     attachment->update(globalPose);
                 }
             }
+        }
+
+        // If a model is attached to an other model the models of the nodes at the attachement location differ.
+        // At this location we need to set the global pose of the model, but not the global pose of its nodes,
+        // because these will be updated in the tree of the new model.
+        ModelPtr parentModel = parentShared ? parentShared->getModel() : nullptr;
+        if (parentModel && thisModel != parentModel)
+        {
+            thisModel->setGlobalPose(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose(), false);
         }
 
         if (updateChildren)
