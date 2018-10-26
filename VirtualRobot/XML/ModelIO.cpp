@@ -224,9 +224,14 @@ namespace VirtualRobot
 
             in.close();
 
+            VR_INFO << "Trying to load Simox v3 xml." << std::endl;
             try
             {
                 res = createRobotModelFromString(robotXML, basePath, loadMode);
+            }
+            catch (VirtualRobotException& e)
+            {
+                VR_ERROR << e.what() << std::endl;
             }
             catch (...)
             {
@@ -234,6 +239,7 @@ namespace VirtualRobot
 
             if (!res)
             {
+                VR_INFO << "Failed. Trying to load Simox v2 xml." << std::endl;
                 res = SimoxXMLFactory::createRobotFromSimoxXMLString(robotXML, basePath, loadMode);
             }
         }
