@@ -224,6 +224,27 @@ namespace VirtualRobot
         links.at(0)->setMass(mass);
     }
 
+    CollisionModelPtr Obstacle::getCollisionModel() const
+    {
+        const auto ms = getCollisionModels();
+        VR_ASSERT(ms.size() == 1);
+        return ms[0];
+    }
+
+    ModelLink::Physics::SimulationType Obstacle::getSimulationType() const
+    {
+        const auto l = getLinks();
+        VR_ASSERT(l.size() == 1);
+        return l[0]->getSimulationType();
+    }
+
+    void Obstacle::setSimulationType(ModelLink::Physics::SimulationType simType)
+    {
+        const auto l = getLinks();
+        VR_ASSERT(l.size() == 1);
+        l[0]->setSimulationType(simType);
+    }
+
 } //  namespace
 
 

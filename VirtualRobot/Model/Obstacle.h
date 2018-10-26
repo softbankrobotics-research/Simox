@@ -99,6 +99,11 @@ namespace VirtualRobot
 
         virtual void setMass(float mass);
 
+        virtual CollisionModelPtr getCollisionModel() const;
+
+        virtual ModelLink::Physics::SimulationType getSimulationType() const;
+        virtual void setSimulationType(ModelLink::Physics::SimulationType simType);
+
     protected:
 
         //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
