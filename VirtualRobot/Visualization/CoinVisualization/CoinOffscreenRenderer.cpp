@@ -254,7 +254,7 @@ namespace VirtualRobot
         }
         else
         {
-            sceneGraph->removeChild(std::static_pointer_cast<CoinVisualization>(visu)->getMainNode());
+            sceneGraph->addChild(std::static_pointer_cast<CoinVisualization>(visu)->getMainNode());
         }
     }
 
