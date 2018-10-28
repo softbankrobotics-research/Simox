@@ -1,6 +1,7 @@
 #include "FullDemoWindow.h"
 #include "../../VirtualRobotException.h"
 
+
 #include "../../Visualization/VisualizationFactory.h"
 
 #include <random>
@@ -9,6 +10,7 @@
 #include <functional>
 
 #include <VirtualRobot/Visualization/TriMeshModel.h>
+#include <VirtualRobot/Visualization/OffscreenRenderer.h>
 
 FullDemoWindow::FullDemoWindow()
     : QMainWindow(NULL)
@@ -398,4 +400,30 @@ void FullDemoWindow::on_pushButton_2_clicked()
     visu->setGlobalPose(getPosition2(5));
     visu->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, (3 * M_PI) / 4.0f, 0.0f));
     triMeshViewer->addVisualization("test", visu);
+}
+
+void FullDemoWindow::on_pushButton_3_clicked()
+{
+    std::vector<VirtualRobot::VisualizationPtr> scene;
+    scene.push_back(VirtualRobot::VisualizationFactory::getInstance()->createBox(500.0f, 500.0f, 500.0f));
+
+    std::vector<unsigned char> buffer;
+    Eigen::Matrix4f mat;
+    mat <<
+         1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f;
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label01->size().width(), UI.label01->size().height(), buffer);
+    QImage img01(buffer.data(), UI.label01->size().width(), UI.label01->size().height(), QImage::Format_RGB888);
+    UI.label01->setPixmap(QPixmap::fromImage(img01));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label02->size().width(), UI.label02->size().height(), buffer);
+    QImage img02(buffer.data(), UI.label02->size().width(), UI.label02->size().height(), QImage::Format_RGB888);
+    UI.label02->setPixmap(QPixmap::fromImage(img02));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label03->size().width(), UI.label03->size().height(), buffer);
+    QImage img03(buffer.data(), UI.label03->size().width(), UI.label03->size().height(), QImage::Format_RGB888);
+    UI.label03->setPixmap(QPixmap::fromImage(img03));
 }
