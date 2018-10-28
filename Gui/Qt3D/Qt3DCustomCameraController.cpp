@@ -49,6 +49,10 @@ SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(QSize windowSiz
     });
 
     mouseHandler->setSourceDevice(mouseDevice);
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::wheel,
+                     this, [=] (Qt3DInput::QWheelEvent *event) {
+        this->camera->translate(QVector3D(0, 0, event->angleDelta().y()), Qt3DRender::QCamera::DontTranslateViewCenter);
+    });
     QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::pressed,
                      this, [=] (Qt3DInput::QMouseEvent *event) {
         posX = event->x();
