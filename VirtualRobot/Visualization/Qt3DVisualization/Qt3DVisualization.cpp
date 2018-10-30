@@ -228,8 +228,88 @@ namespace VirtualRobot
 
     TriMeshModelPtr Qt3DVisualization::getTriMeshModel() const
     {
-        std::cout << "getTriMeshModel()" << std::endl;
-        return TriMeshModelPtr(new TriMeshModel());
+        TriMeshModelPtr triMesh(new TriMeshModel());
+        unsigned int globalIndexCounter = 0;
+
+        for(Qt3DRender::QGeometryRenderer* render : this->entity->findChildren<Qt3DRender::QGeometryRenderer*>())
+        {
+            if(render->primitiveType() == Qt3DRender::QGeometryRenderer::PrimitiveType::Triangles)
+            {
+                Qt3DRender::QAttribute *vertexAttribute = nullptr;
+                QByteArray vertexData;
+                Qt3DRender::QAttribute *normalAttribute = nullptr;
+                QByteArray normalData;
+                Qt3DRender::QAttribute *indexAttribute = nullptr;
+                QByteArray indexData;
+
+                for (Qt3DRender::QAttribute *attribute : render->geometry()->attributes())
+                {
+                    auto buffer = attribute->buffer();
+                    auto generator = attribute->buffer()->dataGenerator();
+                    auto name = attribute->name();
+                    auto type = attribute->attributeType();
+
+                    if(type == Qt3DRender::QAttribute::VertexAttribute)
+                    {
+                        if(name.compare(Qt3DRender::QAttribute::defaultPositionAttributeName()) == 0)
+                        {
+                            if (generator)
+                                vertexData = (*generator.data())();
+                            else
+                                vertexData = buffer->data();
+                            vertexAttribute = attribute;
+                        }
+                        else if(name.compare(Qt3DRender::QAttribute::defaultNormalAttributeName()) == 0)
+                        {
+                            if (generator)
+                                normalData = (*generator.data())();
+                            else
+                                normalData = buffer->data();
+                            normalAttribute = attribute;
+                        }
+                    }
+                    else if(type == Qt3DRender::QAttribute::IndexAttribute)
+                    {
+                        if (generator)
+                            indexData = (*generator.data())();
+                        else
+                            indexData = buffer->data();
+                        indexAttribute = attribute;
+                    }
+                }
+
+                if(vertexAttribute && normalAttribute && indexAttribute)
+                {
+                    if(indexAttribute->vertexBaseType() == Qt3DRender::QAttribute::UnsignedShort)
+                    {
+                        ushort *rawIndexArray = reinterpret_cast<ushort *>(indexData.data());
+                        float *rawVertexArray = reinterpret_cast<float *>(vertexData.data());
+                        float *rawNormalArray = reinterpret_cast<float *>(normalData.data());
+
+                        for(unsigned int i = vertexAttribute->byteOffset(); i < vertexAttribute->count() * (vertexAttribute->byteStride() / sizeof(float)); i += (vertexAttribute->byteStride() / sizeof(float)))
+                        {
+                            triMesh->addVertex(MathTools::transformPosition(Eigen::Vector3f(rawVertexArray[i], rawVertexArray[i + 1], rawVertexArray[i + 2]), scaleMatrix));
+                        }
+                        for(unsigned int i = normalAttribute->byteOffset(); i < normalAttribute->count() * (normalAttribute->byteStride() / sizeof(float)); i += (normalAttribute->byteStride() / sizeof(float)))
+                        {
+                            //triMesh->addNormal(MathTools::transformPosition(Eigen::Vector3f(rawNormalArray[i], rawNormalArray[i + 1], rawNormalArray[i + 2]), scaleMatrix).normalized());
+                            triMesh->addNormal(Eigen::Vector3f(rawNormalArray[i], rawNormalArray[i + 1], rawNormalArray[i + 2]));
+                        }
+                        for(unsigned int i = 0; i < indexAttribute->count(); i += 3)
+                        {
+                            triMesh->addFace(globalIndexCounter + rawIndexArray[i], globalIndexCounter + rawIndexArray[i + 1], globalIndexCounter + rawIndexArray[i + 2]);
+                        }
+                        globalIndexCounter += vertexAttribute->count();
+                    }
+                    else if(indexAttribute->vertexBaseType() == Qt3DRender::QAttribute::UnsignedInt)
+                    {
+                        std::cout << "Unsigned Integer Index Buffer detected" << std::endl;
+                    }
+                }
+            }
+        }
+
+        return triMesh;
     }
 
     int Qt3DVisualization::getNumFaces() const
@@ -292,13 +372,18 @@ namespace VirtualRobot
 
     void Qt3DVisualization::createTriMeshModel()
     {
-        /*std::cout << "createTriMeshModel()" << std::endl;
-        QList<Qt3DRender::QGeometry*> geometrys = this->entity->findChildren<Qt3DRender::QGeometry*>();
-        for(Qt3DRender::QGeometry* geometry : geometrys)
+        QList<Qt3DRender::QGeometryRenderer*> renderer = this->entity->findChildren<Qt3DRender::QGeometryRenderer*>();
+        std::cout << "Found " << renderer.size() << " renderers" << std::endl;
+
+        for(Qt3DRender::QGeometryRenderer* render : renderer)
         {
+            std::cout << "Primitive Type: " << render->primitiveType() << std::endl;
+            Qt3DRender::QGeometry* geometry = render->geometry();
+            std::cout << "Geometry: " << geometry->objectName().toStdString() << std::endl;
             for (auto attribute : geometry->attributes())
             {
-                std::cout << attribute->name().toStdString() << std::endl;
+                std::cout << attribute->name().toStdString() << ", size: ";
+
                 auto buffer = attribute->buffer();
                 auto generator = attribute->buffer()->dataGenerator();
                 QByteArray data;
@@ -310,12 +395,13 @@ namespace VirtualRobot
 
                 std::cout << data.size() << std::endl;
 
-                for(auto i = 0; i < data.size() / sizeof(float); i++)
+                /*for(auto i = 0; i < data.size() / sizeof(float); i++)
                 {
                     std::cout << *(float*)(&(data.constData()[i * sizeof(float)])) << std::endl;
-                }
+                }*/
             }
-        }*/
+            std::cout << std::endl;
+        }
     }
 
     void Qt3DVisualization::applyPose()

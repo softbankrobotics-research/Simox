@@ -17,5 +17,6 @@ protected:
     SimoxGui::AbstractViewerPtr viewer;
     void setupUI();
     Ui::MainWindow UI;
+    VirtualRobot::VisualizationPtr triMeshVisu;
 };
 

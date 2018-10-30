@@ -55,13 +55,13 @@ if (Simox_VISUALIZATION)
         list(APPEND INCLUDES
             Qt3D/Qt3DViewer.h
             Qt3D/Qt3DViewerFactory.h
-            #Qt3D/Qt3DCustomCameraController.h
+            Qt3D/Qt3DCustomCameraController.h
         )
 
         list(APPEND SOURCES
             Qt3D/Qt3DViewer.cpp
             Qt3D/Qt3DViewerFactory.cpp
-            #Qt3D/Qt3DCustomCameraController.cpp
+            Qt3D/Qt3DCustomCameraController.cpp
         )
     ENDIF()
 

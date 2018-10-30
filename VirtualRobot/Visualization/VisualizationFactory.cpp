@@ -132,23 +132,27 @@ namespace VirtualRobot
 
     VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Vector3f> &points, float width) const
     {
-        std::vector<VisualizationPtr> visus;
-        for (size_t i = 0; i<points.size()-1; ++i)
+        std::vector<Eigen::Vector3f> from;
+        std::vector<Eigen::Vector3f> to;
+        for (size_t i = 0; i < points.size() - 1; ++i)
         {
-            visus.push_back(createLine(points[i], points[i+1], width));
+            from.push_back(points[i]);
+            to.push_back(points[i + 1]);
         }
-        return createVisualisationSet(visus);
+        return createLineSet(from, to, width);
     }
 
     VisualizationSetPtr VisualizationFactory::createLineSet(const std::vector<Eigen::Matrix4f> &from, const std::vector<Eigen::Matrix4f> &to, float width) const
     {
         VR_ASSERT(from.size() == to.size());
-        std::vector<VisualizationPtr> visus;
-        for (size_t i = 0; i<from.size(); ++i)
+        std::vector<Eigen::Vector3f> fromVec;
+        std::vector<Eigen::Vector3f> toVec;
+        for (size_t i = 0; i < from.size(); ++i)
         {
-            visus.push_back(createLine(from[i], to[i], width));
+            fromVec.push_back(from[i].block<3, 1>(0, 3));
+            toVec.push_back(to[i].block<3, 1>(0, 3));
         }
-        return createVisualisationSet(visus);
+        return createLineSet(fromVec, toVec, width);
     }
 
     VisualizationPtr VisualizationFactory::createSphere(float) const
@@ -199,7 +203,7 @@ namespace VirtualRobot
         }
         TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
 
-        triMesh->addColor(VirtualRobot::Visualization::Color(0, 0, 0, 0));
+        triMesh->addColor(VirtualRobot::Visualization::Color::Gray());
 
         int numVerticesPerRow = sides + 1;
         int numVerticesPerColumn = rings + 1;

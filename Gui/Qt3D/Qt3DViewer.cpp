@@ -50,6 +50,11 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     Qt3DRender::QDepthTest *depthTest = new Qt3DRender::QDepthTest;
     depthTest->setDepthFunction(Qt3DRender::QDepthTest::LessOrEqual);
     renderStateSet->addRenderState(depthTest);
+    //Not necessary to disable/enable face culling. Standard seems to be disabled.
+    //Do it anyway to be safe
+    Qt3DRender::QCullFace *cullFace = new Qt3DRender::QCullFace;
+    cullFace->setMode(Qt3DRender::QCullFace::NoCulling);
+    renderStateSet->addRenderState(cullFace);
 
     this->activeFrameGraph()->setParent(renderStateSet);
     this->setActiveFrameGraph(renderStateSet);
@@ -59,12 +64,10 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
     this->activeFrameGraph()->setParent(this->capture);
     this->setActiveFrameGraph(this->capture);
 
-    this->camController = new Qt3DExtras::QOrbitCameraController(scene);
-    this->camController->setLinearSpeed( 3500.0f );
-    this->camController->setLookSpeed( 240.0f );
+    this->camController = new Qt3DCustomCameraController(this->size(), 1.0f, scene);
     this->camController->setCamera(this->camera());
 
-    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 0.1f, 100000.0f);
+    this->camera()->lens()->setPerspectiveProjection(45.0f, 16.0f / 9.0f, 10.0f, 100000.0f);
     this->camera()->setPosition(QVector3D(0, 0, 2000));
     this->camera()->setViewCenter(QVector3D(0, 0, 0));
 
@@ -89,6 +92,12 @@ SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), pa
             _addVisualization(visu);
         }
     });
+}
+
+void SimoxGui::Qt3DViewer::resizeEvent(QResizeEvent *ev)
+{
+  Qt3DExtras::Qt3DWindow::resizeEvent(ev);
+  this->camController->setWindowSize(this->size());
 }
 
 SimoxGui::Qt3DViewer::~Qt3DViewer()

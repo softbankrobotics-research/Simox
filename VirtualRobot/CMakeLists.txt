@@ -318,6 +318,7 @@ elseif (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
     Visualization/Qt3DVisualization/Qt3DVisualization.cpp
     Visualization/Qt3DVisualization/Qt3DVisualizationSet.cpp
     Visualization/Qt3DVisualization/Qt3DSelectionGroup.cpp
+    Visualization/Qt3DVisualization/Qt3DOffscreenRenderer.cpp
     )
 
     SET(INCLUDES
@@ -326,6 +327,7 @@ elseif (Simox_VISUALIZATION AND Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
     Visualization/Qt3DVisualization/Qt3DVisualization.h
     Visualization/Qt3DVisualization/Qt3DVisualizationSet.h
     Visualization/Qt3DVisualization/Qt3DSelectionGroup.h
+    Visualization/Qt3DVisualization/Qt3DOffscreenRenderer.h
     )
 
     if(BUILD_TESTING)

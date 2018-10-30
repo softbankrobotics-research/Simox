@@ -1,12 +1,16 @@
 #include "FullDemoWindow.h"
 #include "../../VirtualRobotException.h"
 
+
 #include "../../Visualization/VisualizationFactory.h"
 
 #include <random>
 #include <algorithm>
 #include <iterator>
 #include <functional>
+
+#include <VirtualRobot/Visualization/TriMeshModel.h>
+#include <VirtualRobot/Visualization/OffscreenRenderer.h>
 
 FullDemoWindow::FullDemoWindow()
     : QMainWindow(NULL)
@@ -33,6 +37,19 @@ Eigen::Matrix4f getPosition(int index)
     return mat;
 }
 
+Eigen::Matrix4f getPosition2(int index)
+{
+    Eigen::Matrix4f mat;
+
+    mat <<
+         1.0f, 0.0f, 0.0f, 200.0f + (index / 2) * 600.0f + (index % 2) * 150.0f,
+         0.0f, 1.0f, 0.0f, 80.0f,
+         0.0f, 0.0f, 1.0f, 800.0f - (index % 2) * 400.0f,
+         0.0f, 0.0f, 0.0f, 1.0f;
+
+    return mat;
+}
+
 void FullDemoWindow::setupUI()
 {
     UI.setupUi(this);
@@ -43,6 +60,7 @@ void FullDemoWindow::setupUI()
     THROW_VR_EXCEPTION_IF(!viewerFactory,"No viewer factory?!");
     factoryDemoViewer = viewerFactory->createViewer(UI.frameViewer1);
     screenshotViewer = viewerFactory->createViewer(UI.frameViewer2);
+    triMeshViewer = viewerFactory->createViewer(UI.frameViewer3);
 
     {
         int index = 0;
@@ -322,6 +340,45 @@ void FullDemoWindow::setupUI()
         screenshotViewer->addVisualization(pointCloud1, "testLayer");
         screenshotViewer->viewAll();
     }
+
+    {
+        int index = 0;
+        auto text1 = VirtualRobot::VisualizationFactory::getInstance()->createText("Simple TriMesh", false, 0.0f, 0.0f, 0.0f);
+        text1->setGlobalPose(getPosition2(index++));
+        text1->scale(3.0f);
+        triMeshViewer->addVisualization(text1, "test");
+
+        VirtualRobot::TriMeshModelPtr triMesh = VirtualRobot::TriMeshModelPtr(new VirtualRobot::TriMeshModel());
+        triMesh->addVertex(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(1.0f, 0.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(0.0f, 1.0f, 0.0f));
+        triMesh->addVertex(Eigen::Vector3f(1.0f, 1.0f, 0.0f));
+        triMesh->addFace(0, 1, 3);
+        triMesh->addFace(3, 2, 0);
+        VirtualRobot::VisualizationPtr triMeshVisu = triMesh->getVisualization(false, true);
+        triMeshVisu->scale(100.0f);
+        triMeshVisu->setGlobalPose(getPosition2(index++));
+        triMeshViewer->addVisualization(triMeshVisu, "test");
+
+        VirtualRobot::VisualizationPtr text2 = VirtualRobot::VisualizationFactory::getInstance()->createText("Complex Model", false, 0.0f, 0.0f, 0.0f);
+        text2->setGlobalPose(getPosition2(index++));
+        text2->scale(3.0f);
+        triMeshViewer->addVisualization(text2, "test");
+
+        model = VirtualRobot::VisualizationFactory::getInstance()->createVisualizationFromFile("/home/philipp/simox/data/robots/Armar4/urdf/stl/Head_2_joint_visu.dae");
+        //model = VirtualRobot::VisualizationFactory::getInstance()->createBox(1.0f, 1.0f, 1.0f);
+        model->scale(2500.0f);
+        model->setGlobalPose(getPosition2(index++));
+        model->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, 3 * M_PI / 4.0f, 0.0f));
+        triMeshViewer->addVisualization(model, "test");
+
+        VirtualRobot::VisualizationPtr text3 = VirtualRobot::VisualizationFactory::getInstance()->createText("Complex TriMesh", false, 0.0f, 0.0f, 0.0f);
+        text3->setGlobalPose(getPosition2(index++));
+        text3->scale(3.0f);
+        triMeshViewer->addVisualization(text3, "test");
+
+        triMeshViewer->viewAll();
+    }
 }
 
 int FullDemoWindow::main()
@@ -329,10 +386,42 @@ int FullDemoWindow::main()
 
 }
 
-
-
 void FullDemoWindow::on_pushButton_clicked()
 {
     QImage image = screenshotViewer->getScreenshot();
     UI.label->setPixmap(QPixmap::fromImage(image));
+}
+void FullDemoWindow::on_pushButton_2_clicked()
+{
+    VirtualRobot::TriMeshModelPtr triMesh = model->getTriMeshModel();
+    auto visu = triMesh->getVisualization(false, true);
+    visu->setGlobalPose(getPosition2(5));
+    visu->applyDisplacement(VirtualRobot::MathTools::rpy2eigen4f(0.0f, (3 * M_PI) / 4.0f, 0.0f));
+    triMeshViewer->addVisualization(visu, "test");
+}
+
+void FullDemoWindow::on_pushButton_3_clicked()
+{
+    std::vector<VirtualRobot::VisualizationPtr> scene;
+    scene.push_back(VirtualRobot::VisualizationFactory::getInstance()->createBox(500.0f, 500.0f, 500.0f));
+
+    std::vector<unsigned char> buffer;
+    Eigen::Matrix4f mat;
+    mat <<
+         1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f;
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label01->size().width(), UI.label01->size().height(), buffer);
+    QImage img01(buffer.data(), UI.label01->size().width(), UI.label01->size().height(), QImage::Format_RGB888);
+    UI.label01->setPixmap(QPixmap::fromImage(img01));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label02->size().width(), UI.label02->size().height(), buffer);
+    QImage img02(buffer.data(), UI.label02->size().width(), UI.label02->size().height(), QImage::Format_RGB888);
+    UI.label02->setPixmap(QPixmap::fromImage(img02));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label03->size().width(), UI.label03->size().height(), buffer);
+    QImage img03(buffer.data(), UI.label03->size().width(), UI.label03->size().height(), QImage::Format_RGB888);
+    UI.label03->setPixmap(QPixmap::fromImage(img03));
 }

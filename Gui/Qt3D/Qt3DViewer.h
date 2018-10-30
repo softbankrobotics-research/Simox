@@ -25,7 +25,7 @@
 #define _Gui_Qt3DViewer_h_
 
 #include "../AbstractViewer.h"
-//#include "Qt3DCustomCameraController.h"
+#include "Qt3DCustomCameraController.h"
 
 #include <unordered_set>
 #include <QWidget>
@@ -63,6 +63,9 @@ namespace SimoxGui
         virtual void setBackgroundColor(const VirtualRobot::Visualization::Color &color) override;
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
+    protected:
+      void resizeEvent(QResizeEvent *ev) override;
+
     private:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
@@ -73,7 +76,7 @@ namespace SimoxGui
 
         QWidget* parent;
         Qt3DCore::QEntity* scene;
-        Qt3DExtras::QOrbitCameraController* camController;
+        Qt3DCustomCameraController* camController;
         Qt3DRender::QRenderCapture* capture;
         VirtualRobot::Visualization::Color backgroundColor;
 

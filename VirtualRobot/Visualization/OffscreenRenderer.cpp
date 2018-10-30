@@ -4,6 +4,10 @@
     #include "CoinVisualization/CoinOffscreenRenderer.h"
 
     using GlobalFactory = VirtualRobot::CoinOffscreenRenderer;
+#elif Simox_USE_QT3D_VISUALIZATION
+    #include "Qt3DVisualization/Qt3DOffscreenRenderer.h"
+
+    using GlobalFactory = VirtualRobot::Qt3DOffscreenRenderer;
 #else
     using GlobalFactory = VirtualRobot::OffscreenRenderer;
 #endif

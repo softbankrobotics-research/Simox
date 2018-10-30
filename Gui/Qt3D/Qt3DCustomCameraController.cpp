@@ -22,43 +22,97 @@
 */
 
 #include "Qt3DCustomCameraController.h"
-#include <Qt3DRender/QCamera>
+#include <cmath>
 
-SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(Qt3DCore::QNode *parent)
-    :QAbstractCameraController(parent)
+SimoxGui::Qt3DCustomCameraController::Qt3DCustomCameraController(QSize windowSize, float sensitivity, Qt3DCore::QNode *parent)
+    : Qt3DCore::QEntity(parent)
+    , keyboardDevice(new Qt3DInput::QKeyboardDevice(this))
+    , keyboardHandler(new Qt3DInput::QKeyboardHandler(this))
+    , mouseDevice(new Qt3DInput::QMouseDevice(this))
+    , mouseHandler(new Qt3DInput::QMouseHandler(this))
+    , frameAction(new Qt3DLogic::QFrameAction(this))
+    , pressed(false)
+    , posX(0)
+    , posY(0)
+    , pantiltrollratio(0.0f)
+    , sensitivity(sensitivity)
+    , windowSize(windowSize)
+    , leftOfCenter(false)
 {
+    keyboardHandler->setSourceDevice(keyboardDevice);
+    keyboardHandler->setFocus(true);
+    QObject::connect(keyboardHandler, &Qt3DInput::QKeyboardHandler::pressed,
+                     this, [=] (Qt3DInput::QKeyEvent *event) {
+    });
+    QObject::connect(keyboardHandler, &Qt3DInput::QKeyboardHandler::released,
+                     this, [=] (Qt3DInput::QKeyEvent *event) {
+    });
+
+    mouseHandler->setSourceDevice(mouseDevice);
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::wheel,
+                     this, [=] (Qt3DInput::QWheelEvent *event) {
+        this->camera->translate(QVector3D(0, 0, event->angleDelta().y()), Qt3DRender::QCamera::DontTranslateViewCenter);
+    });
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::pressed,
+                     this, [=] (Qt3DInput::QMouseEvent *event) {
+        posX = event->x();
+        posY = event->y();
+
+        int xDiffToCenter = abs(posX - (this->windowSize.width() / 2));
+        int yDiffToCenter = abs(posY - (this->windowSize.height() / 2));
+        float diffVecLenght = sqrt(xDiffToCenter * xDiffToCenter + yDiffToCenter * yDiffToCenter);
+        float windowLength = sqrt(this->windowSize.width() * this->windowSize.width() + this->windowSize.height() * this->windowSize.height()) / 2;
+        pantiltrollratio = std::min(1.0f, diffVecLenght / windowLength);
+        leftOfCenter = posX <= (this->windowSize.width() / 2);
+
+        pressed = true;
+    });
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::released,
+                     this, [=] (Qt3DInput::QMouseEvent *event) {
+        pressed = false;
+    });
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::pressAndHold,
+                     this, [=] (Qt3DInput::QMouseEvent *event) {
+    });
+    QObject::connect(mouseHandler, &Qt3DInput::QMouseHandler::positionChanged,
+                     this, [=] (Qt3DInput::QMouseEvent *event) {
+        if(!pressed)
+            return;
+
+        float yaw = (event->x() - posX) * 0.5f;
+        float pitch = (event->y() - posY) * 0.5f;
+        pitch = (pitch > 89.0f) ? 89.0f : (pitch < - 89.0f) ? -89.0f : pitch;
+
+        this->camera->panAboutViewCenter(-yaw * sensitivity * (1 - pantiltrollratio));
+        this->camera->tiltAboutViewCenter(pitch * sensitivity * (1 - pantiltrollratio));
+        this->camera->rollAboutViewCenter(pitch * sensitivity * pantiltrollratio * (leftOfCenter ? -1.0f : 1.0f));
+
+        posY = event->y();
+        posX = event->x();
+    });
+
+    this->addComponent(frameAction);
+    QObject::connect(frameAction, &Qt3DLogic::QFrameAction::triggered,
+                         this, [=] (float dt) {
+
+    });
 }
 
-void SimoxGui::Qt3DCustomCameraController::moveCamera(const Qt3DExtras::QAbstractCameraController::InputState &state, float dt)
+SimoxGui::Qt3DCustomCameraController::~Qt3DCustomCameraController()
 {
-    Qt3DRender::QCamera *theCamera = camera();
 
-    if (theCamera == nullptr)
-        return;
+}
 
-    if (state.leftMouseButtonActive)
+void SimoxGui::Qt3DCustomCameraController::setCamera(Qt3DRender::QCamera *camera)
+{
+    if (camera && this->camera != camera)
     {
-        if(state.shiftKeyActive || state.altKeyActive)
-        {
-            // Translate
-            theCamera->translate(QVector3D(-1.0f * state.rxAxisValue * linearSpeed(), -1.0f * state.ryAxisValue * linearSpeed(), 0) * dt);
-        }
-        else
-        {
-            // Orbit
-            theCamera->panAboutViewCenter(-1.0f * (state.rxAxisValue * lookSpeed()) * dt);
-            theCamera->tiltAboutViewCenter(-1.0f * (state.ryAxisValue * lookSpeed()) * dt);
-        }
+        camera->setParent(this);
+        this->camera = camera;
     }
-    else if(state.rightMouseButtonActive)
-    {
-        theCamera->rollAboutViewCenter(-1.0f * (state.ryAxisValue * lookSpeed()) * dt);
-    }
-    else if(state.middleMouseButtonActive)
-    {
-        theCamera->viewAll();
-    }
+}
 
-    // Translate
-    theCamera->translate(QVector3D(0, 0, state.tzAxisValue * linearSpeed() * 1.5f) * dt, theCamera->DontTranslateViewCenter);
+void SimoxGui::Qt3DCustomCameraController::setWindowSize(QSize size)
+{
+    this->windowSize = size;
 }
