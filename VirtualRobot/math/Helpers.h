@@ -67,6 +67,9 @@ namespace math
         static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
 
+        static float rad2deg(float rad);
+        static float deg2rad(float deg);
+
     private:
     };
 }

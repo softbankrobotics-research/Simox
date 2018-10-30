@@ -548,7 +548,7 @@ endif()
 #-----------------------------------------------------------------------------------
 
 ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
-TARGET_LINK_LIBRARIES(VirtualRobot ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
+TARGET_LINK_LIBRARIES(VirtualRobot PUBLIC ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
 target_include_directories(VirtualRobot SYSTEM PUBLIC ${Simox_EXTERNAL_INCLUDE_DIRS})
 
 # .DLL path

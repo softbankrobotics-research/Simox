@@ -7,7 +7,6 @@
 #include "../../SceneObjectSet.h"
 #include "PQP.h"
 #include "../../VirtualRobotException.h"
-
 namespace VirtualRobot
 {
 
@@ -25,7 +24,7 @@ namespace VirtualRobot
 
         pointModel.reset(new PQP::PQP_Model());
         pointModel->BeginModel();
-        pointModel->AddTri(a,b,c,CollisionModelImplementation::NextId());
+        pointModel->AddTri(a,b,c,99999998);
         pointModel->EndModel();
         pqpChecker = new PQP::PQP_Checker();
     }
@@ -64,7 +63,8 @@ namespace VirtualRobot
         BOOST_ASSERT(model2->getCollisionModelImplementation());
         boost::shared_ptr<PQP::PQP_Model> m1 = model1->getCollisionModelImplementation()->getPQPModel();
         boost::shared_ptr<PQP::PQP_Model> m2 = model2->getCollisionModelImplementation()->getPQPModel();
-        VR_ASSERT_MESSAGE(m1 && m2, "NULL data in ColChecker!");
+        BOOST_ASSERT_MSG(m1, "NULL data in ColChecker in m1!");
+        BOOST_ASSERT_MSG(m2, "NULL data in ColChecker in m2!");
 
         PQP::PQP_CollideResult result;
         PQP::PQP_REAL R1[3][3];

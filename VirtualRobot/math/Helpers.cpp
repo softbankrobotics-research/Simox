@@ -288,3 +288,12 @@ Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eig
     return vec / scale;
 }
 
+float Helpers::rad2deg(float rad)
+{
+    return rad * (float)(180.0 / M_PI);
+}
+
+float Helpers::deg2rad(float deg)
+{
+    return deg * (float)(M_PI / 180.0);
+}
