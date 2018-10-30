@@ -20,11 +20,10 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeAttachmentFactory_h_
-#define _VirtualRobot_ModelNodeAttachmentFactory_h_
+#pragma once
 
-#include "../../Model/Model.h"
-#include "../../Tools/AbstractFactoryMethod.h"
+#include "../../Model.h"
+#include "../../../Tools/AbstractFactoryMethod.h"
 #include "ModelNodeAttachment.h"
 
 namespace VirtualRobot
@@ -35,13 +34,13 @@ namespace VirtualRobot
         /*!
          * Constructor.
          */
-        ModelNodeAttachmentFactory();
+        ModelNodeAttachmentFactory() = default;
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachmentFactory();
+        virtual ~ModelNodeAttachmentFactory() = default;
 
         /*!
          * Creates an attachment.
@@ -49,16 +48,11 @@ namespace VirtualRobot
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity());
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) const = 0;
         // AbstractFactoryMethod
-    public:
-        static std::string getName();
-        static std::shared_ptr<ModelNodeAttachmentFactory> createInstance(void*);
 
     private:
         static SubClassRegistry registry;
     };
     typedef std::shared_ptr<ModelNodeAttachmentFactory> ModelNodeAttachmentFactoryPtr;
 }
-
-#endif

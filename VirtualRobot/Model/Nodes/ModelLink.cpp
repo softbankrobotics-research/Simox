@@ -150,9 +150,9 @@ namespace VirtualRobot
     }
 
 
-    ModelNode::ModelNodeType ModelLink::getType() const
+    ModelNode::NodeType ModelLink::getType() const
     {
-        return ModelNode::ModelNodeType::Link;
+        return ModelNode::NodeType::Link;
     }
 
     CollisionModelPtr ModelLink::getCollisionModel() const
@@ -350,7 +350,7 @@ namespace VirtualRobot
         if (collisionModel)
             clonedCol = collisionModel->clone(newModel->getCollisionChecker(), scaling);
         Physics clonedPhysics = physics.clone(scaling);
-        ModelLinkPtr result(new ModelLink(newModel, name, this->getStaticTransformation(), clonedVisu, clonedCol, clonedPhysics, newModel->getCollisionChecker()));
+        ModelLinkPtr result(new ModelLink(newModel, name, this->getLocalTransformation(), clonedVisu, clonedCol, clonedPhysics, newModel->getCollisionChecker()));
         return result;
     }
 
@@ -485,10 +485,10 @@ namespace VirtualRobot
         std::string pre = "\t";
         std::string pre2 = "\t\t";
         ss << pre << "<ModelNode name='" << name << "'>\n";
-        if (!this->getStaticTransformation().isIdentity())
+        if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;
-            ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
+            ss << BaseIO::toXML(getLocalTransformation(), "\t\t\t");
             ss << pre2 << "</Transform>" << endl;
         }
 

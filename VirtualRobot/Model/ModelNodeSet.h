@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeSet_h_
-#define _VirtualRobot_ModelNodeSet_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -50,7 +49,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static ModelNodeSetPtr createNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<std::string>& modelNodeNames,
                                                   const std::string& kinematicRootName = "",
@@ -72,7 +71,7 @@ namespace VirtualRobot
          * @param registerToModel If true, the new ModelNodeSet is registered to the model.
          * @return The newly created ModelNodeSet.
          */
-        static ModelNodeSetPtr createModelNodeSet(const ModelPtr& model,
+        static ModelNodeSetPtr createNodeSet(const ModelPtr& model,
                                                   const std::string& name,
                                                   const std::vector<ModelNodePtr>& modelNodes,
                                                   const ModelNodePtr& kinematicRoot = ModelNodePtr(),
@@ -117,6 +116,10 @@ namespace VirtualRobot
          * @return The model.
          */
         ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
          * Get the node at position i.
@@ -190,8 +193,6 @@ namespace VirtualRobot
          */
         virtual unsigned int getSize() const = 0;
 
-        std::vector< std::string > getModelNodeNames() const;
-
         /*!
          * Returns true, if nodes (only name strings are checked) are sufficient for building this rns.
          * A set of nodes is sufficient, if it contains atleast all nodes of this ModelNodeSet.
@@ -219,6 +220,8 @@ namespace VirtualRobot
          * @param registerToModel Override the default behaviour of registering the set to the model.
 		*/
         virtual ModelNodeSetPtr clone(const ModelPtr& model, const std::string& newName = "", bool registerToModel = true) const = 0;
+
+        virtual bool isKinematicChain() const;
 
     protected:
         static ModelNodePtr checkKinematicRoot(const std::string &name, const ModelPtr& model);
@@ -264,5 +267,3 @@ namespace VirtualRobot
         FramePtr tcp;
     };
 }
-
-#endif // _VirtualRobot_ModelNodeSet_h_

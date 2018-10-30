@@ -14,8 +14,7 @@ subject to the following restrictions:
 */
 
 
-#ifndef WIN32_DEMO_APPLICATION_H
-#define WIN32_DEMO_APPLICATION_H
+#pragma once
 
 
 #include "DemoApplication.h"
@@ -39,4 +38,3 @@ public:
 
 };
 
-#endif //WIN32_DEMO_APPLICATION_H

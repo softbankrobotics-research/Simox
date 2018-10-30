@@ -5,10 +5,10 @@ namespace VirtualRobot
 {
     ModelJoint::ModelJoint(const ModelWeakPtr& model,
                            const std::string& name,
-                           const Eigen::Matrix4f& staticTransformation,
+                           const Eigen::Matrix4f& localTransformation,
                            float jointLimitLo,
                            float jointLimitHi,
-                           float jointValueOffset) : ModelNode(model, name, staticTransformation),
+                           float jointValueOffset) : ModelNode(model, name, localTransformation),
                                                      jointValue(0),
                                                      jointValueOffset(jointValueOffset),
                                                      jointLimitLo(jointLimitLo),
@@ -54,6 +54,13 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getModel()->getReadLock();
         return jointValue;
+    }
+
+    void ModelJoint::copyPoseFrom(const ModelNodePtr &other)
+    {
+        VR_ASSERT(ModelNode::checkNodeOfType(other, ModelNode::Joint));
+        jointValue = std::static_pointer_cast<ModelJoint>(other)->getJointValue();
+        ModelNode::copyPoseFrom(other);
     }
 
     bool ModelJoint::checkJointLimits(float jointValue, bool verbose) const
@@ -217,9 +224,9 @@ namespace VirtualRobot
 
         for (auto it = propagatedJointValues.begin(); it != propagatedJointValues.end(); it++)
         {
-            ModelNodePtr node = modelShared->getModelNode(it->first);
+            ModelNodePtr node = modelShared->getNode(it->first);
 
-            if (!node || !checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
+            if (!node || !checkNodeOfType(node, ModelNode::NodeType::Joint))
             {
                 VR_WARNING << "Could not propagate joint value from " << getName()
                            << " to " << it->first << " because dependent joint does not exist..." << std::endl;

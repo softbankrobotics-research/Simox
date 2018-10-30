@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelConfig_h_
-#define _VirtualRobot_ModelConfig_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -75,7 +74,11 @@ namespace VirtualRobot
             The model.
             \return A shared_ptr instance of the internally stored weak pointer.
         */
-        ModelPtr getModel();
+        ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
             Appends a configuration to this instance.
@@ -141,4 +144,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_ModelConfig_h_

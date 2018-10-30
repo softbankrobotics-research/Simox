@@ -12,6 +12,8 @@
 #include "../CollisionDetection/CollisionChecker.h"
 #include "../CollisionDetection/CDManager.h"
 
+#include <VirtualRobot/Random.h>
+
 #include <algorithm>
 
 using namespace Eigen;
@@ -73,12 +75,12 @@ namespace VirtualRobot
         return false;
     }
 
-    VirtualRobot::GraspPtr GenericIKSolver::solve(ManipulationObjectPtr object, CartesianSelection selection /*= All*/, int maxLoops)
+    VirtualRobot::GraspPtr GenericIKSolver::solve(const ManipulationObjectPtr &object, CartesianSelection selection /*= All*/, int maxLoops)
     {
         return AdvancedIKSolver::solve(object, selection, maxLoops);
     }
 
-    bool GenericIKSolver::solve(ManipulationObjectPtr object, GraspPtr grasp, CartesianSelection selection /*= All*/, int maxLoops)
+    bool GenericIKSolver::solve(const ManipulationObjectPtr &object, GraspPtr grasp, CartesianSelection selection /*= All*/, int maxLoops)
     {
         return AdvancedIKSolver::solve(object, grasp, selection, maxLoops);
     }
@@ -86,12 +88,11 @@ namespace VirtualRobot
     void GenericIKSolver::setJointsRandom()
     {
         std::vector<float> jv;
-        float rn = 1.0f / (float)RAND_MAX;
 
         for (unsigned int i = 0; i < rns->getSize(); i++)
         {
             ModelJointPtr ro =  rns->getJoint(i);
-            float r = (float)rand() * rn;
+            float r = RandomFloat();
             float v = ro->getJointLimitLow() + (ro->getJointLimitHigh() - ro->getJointLimitLow()) * r;
             jv.push_back(v);
         }
@@ -116,6 +117,7 @@ namespace VirtualRobot
 
     bool GenericIKSolver::trySolve()
     {
+
         if (jacobian->solveIK(jacobianStepSize, 0.0, jacobianMaxLoops))
         {
             if (cdm)
@@ -139,6 +141,7 @@ namespace VirtualRobot
         jacobian.reset(new DifferentialIK(rns, coordSystem, invJacMethod));
         jacobianStepSize = 0.3f;
         jacobianMaxLoops = 50;
+
     }
 
     void GenericIKSolver::setupJacobian(float stepSize, int maxLoops)

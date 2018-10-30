@@ -119,7 +119,7 @@ namespace VirtualRobot
         return true;
     }
 
-    VirtualRobot::ModelPtr ModelConfig::getModel()
+    VirtualRobot::ModelPtr ModelConfig::getModel() const
     {
         return model.lock();
     }
@@ -270,7 +270,7 @@ namespace VirtualRobot
         // first check if all nodes are present
         while (i != jv.end())
         {
-            if (!r->hasModelNode(i->first))
+            if (!r->hasNode(i->first))
             {
                 return false;
             }

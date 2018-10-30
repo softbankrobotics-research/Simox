@@ -26,31 +26,31 @@ namespace VirtualRobot
     TriMeshModel::TriMeshModel()
     {
     }
-	/*
+
     TriMeshModel::TriMeshModel(std::vector <triangle>& triangles)
     {
         for (size_t i = 0; i < triangles.size(); i++)
         {
             addTriangleWithFace(triangles[i].vertex1, triangles[i].vertex2, triangles[i].vertex3);
         }
-    }*/
+    }
 
     /**
      * This method adds the vertices \p vertex1,
      * \p vertex2 and \p vertex3 to TriMeshModel::vertices and creates a new
-     * TriangleFace instance which is added to TriMeshModel::faces.
+     * MathTools::TriangleFace instance which is added to TriMeshModel::faces.
      *
      * \param vertex1 first vertex to use in the calculation
      * \param vertex2 second vertex to use in the calculation
      * \param vertex3 third vertex to use in the calculation
      */
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         addTriangleWithFace(vertex1, vertex2, vertex3, normal);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal, Visualization::Color color1, Visualization::Color color2, Visualization::Color color3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal, const Visualization::Color &color1, const Visualization::Color &color2, const Visualization::Color &color3)
     {
         this->addVertex(vertex1);
         this->addVertex(vertex2);
@@ -70,7 +70,7 @@ namespace VirtualRobot
         }
 
         // create face
-        TriangleFace face;
+        MathTools::TriangleFace face;
         face.id1 = this->vertices.size() - 3;
         face.id2 = this->vertices.size() - 2;
         face.id3 = this->vertices.size() - 1;
@@ -88,13 +88,26 @@ namespace VirtualRobot
         this->addFace(face);
     }
 
-    void TriMeshModel::addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3)
+    void TriMeshModel::addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, const Eigen::Vector4f& vertexColor1, const Eigen::Vector4f& vertexColor2, const Eigen::Vector4f& vertexColor3)
     {
         Eigen::Vector3f normal = TriMeshModel::CreateNormal(vertex1, vertex2, vertex3);
         Visualization::Color color1(vertexColor1(0), vertexColor1(1), vertexColor1(2), vertexColor1(4));
         Visualization::Color color2(vertexColor2(0), vertexColor2(1), vertexColor2(2), vertexColor2(4));
         Visualization::Color color3(vertexColor3(0), vertexColor3(1), vertexColor3(2), vertexColor3(4));
         addTriangleWithFace(vertex1, vertex2, vertex3, normal, color1, color2, color3);
+    }
+
+    void TriMeshModel::addMesh(const TriMeshModel &mesh)
+    {
+
+
+        for(auto & face : mesh.faces)
+        {
+            addTriangleWithFace(mesh.vertices.at(face.id1), mesh.vertices.at(face.id2), mesh.vertices.at(face.id3),
+                                face.normal, mesh.colors.at(face.idColor1), mesh.colors.at(face.idColor2), mesh.colors.at(face.idColor3));
+        }
+//        VR_INFO << " size after : " << vertices.size() << std::endl;
+
     }
 
 
@@ -108,7 +121,7 @@ namespace VirtualRobot
      *
      * \return normal vector
      */
-    Eigen::Vector3f TriMeshModel::CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3)
+    Eigen::Vector3f TriMeshModel::CreateNormal(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3)
     {
         static bool warningPrinted = false;
         // calculate normal
@@ -137,14 +150,14 @@ namespace VirtualRobot
     /**
      * This method adds a face to the internal data structure TriMeshModel::faces.
      */
-    void TriMeshModel::addFace(const TriangleFace& face)
+    void TriMeshModel::addFace(const MathTools::TriangleFace& face)
     {
         faces.push_back(face);
     }
 
     void TriMeshModel::addFace(unsigned int id0, unsigned int id1, unsigned int id2)
     {
-        TriangleFace f;
+        MathTools::TriangleFace f;
         f.id1 = id0;
         f.id2 = id1;
         f.id3 = id2;
@@ -170,7 +183,7 @@ namespace VirtualRobot
     /**
     * This method adds a normal to the internal data structure TriMeshModel::normals.
     */
-    int TriMeshModel::addNormal(const Eigen::Vector3f& normal)
+    unsigned int TriMeshModel::addNormal(const Eigen::Vector3f& normal)
     {
         normals.push_back(normal);
         return normals.size() - 1;
@@ -190,7 +203,7 @@ namespace VirtualRobot
     /**
      * This method converts and adds a color to the internal data structure TriMeshModel::colors
      */
-    int TriMeshModel::addColor(const Eigen::Vector4f& color)
+    unsigned int TriMeshModel::addColor(const Eigen::Vector4f& color)
     {
         return addColor(Visualization::Color(color(0), color(1), color(2), color(3)));
     }
@@ -198,7 +211,7 @@ namespace VirtualRobot
     /**
      * This method converts and adds a color to the internal data structure TriMeshModel::materials
      */
-    int TriMeshModel::addMaterial(const Visualization::PhongMaterial& material)
+    unsigned int TriMeshModel::addMaterial(const Visualization::PhongMaterial& material)
     {
         materials.push_back(material);
         return materials.size() - 1;
@@ -218,7 +231,7 @@ namespace VirtualRobot
         boundingBox.clear();
     }
 
-    int TriMeshModel::addMissingNormals()
+    unsigned int TriMeshModel::addMissingNormals()
     {
         int counter = 0;
         for(auto& face : faces)
@@ -262,7 +275,7 @@ namespace VirtualRobot
         return counter;
     }
 
-    int TriMeshModel::addMissingColors(const Visualization::Color &color)
+    unsigned int TriMeshModel::addMissingColors(const Visualization::Color &color)
     {
         mergeVertices();
         int counter = 0;
@@ -316,12 +329,12 @@ namespace VirtualRobot
 
 
     /**
-     * This method calls TriangleFace::flipOrientation() on each entry in
+     * This method calls MathTools::TriangleFace::flipOrientation() on each entry in
      * TriMeshModel::faces.
      */
     void TriMeshModel::flipVertexOrientations()
     {
-        std::for_each(faces.begin(), faces.end(), std::mem_fun_ref(&TriangleFace::flipOrientation));
+        std::for_each(faces.begin(), faces.end(), std::mem_fun_ref(&MathTools::TriangleFace::flipOrientation));
     }
 
 
@@ -331,10 +344,10 @@ namespace VirtualRobot
     {
         int size = vertices.size();
         int faceCount = faces.size();
-        std::vector<std::set<TriangleFace*>> vertex2FaceMap(size);
+        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
         for (int j = 0; j < faceCount; ++j)
         {
-            TriangleFace& face = faces.at(j);
+            MathTools::TriangleFace& face = faces.at(j);
             vertex2FaceMap[face.id1].insert(&faces.at(j));
             vertex2FaceMap[face.id2].insert(&faces.at(j));
             vertex2FaceMap[face.id3].insert(&faces.at(j));
@@ -378,7 +391,7 @@ namespace VirtualRobot
             {
                 int foundIndex = ret_matches.at(k).first;
                 auto& faces = vertex2FaceMap[foundIndex];
-                for(TriangleFace* facePtr : faces)
+                for(MathTools::TriangleFace* facePtr : faces)
                 {
                     bool found = false;
                     if(facePtr->id1 == foundIndex)
@@ -415,7 +428,7 @@ namespace VirtualRobot
                 if((p1-p2).norm() < mergeThreshold)
                 {
 //                    deleted.at(k) = true;
-                    for(TriangleFace* facePtr : vertex2FaceMap[k])
+                    for(MathTools::TriangleFace* facePtr : vertex2FaceMap[k])
                     {
                         bool found = false;
                         if(facePtr->id1 == k)
@@ -449,10 +462,10 @@ namespace VirtualRobot
     {
         int size = vertices.size();
         int faceCount = faces.size();
-        std::vector<std::set<TriangleFace*>> vertex2FaceMap(size);
+        std::vector<std::set<MathTools::TriangleFace*>> vertex2FaceMap(size);
         for (int j = 0; j < faceCount; ++j)
         {
-            TriangleFace& face = faces.at(j);
+            MathTools::TriangleFace& face = faces.at(j);
             vertex2FaceMap[face.id1].insert(&faces.at(j));
             vertex2FaceMap[face.id2].insert(&faces.at(j));
             vertex2FaceMap[face.id3].insert(&faces.at(j));
@@ -463,7 +476,7 @@ namespace VirtualRobot
 
         for (size_t i=0; i<vertex2FaceMap.size(); i++ )
         {
-            std::set<TriangleFace*> &fs = vertex2FaceMap.at(i);
+            std::set<MathTools::TriangleFace*> &fs = vertex2FaceMap.at(i);
             if (fs.size()>0)
             {
                 Eigen::Vector3f &v = vertices.at(i);
@@ -475,7 +488,7 @@ namespace VirtualRobot
         // update faceID
         for (int j = 0; j < faceCount; ++j)
         {
-            TriangleFace& face = faces.at(j);
+            MathTools::TriangleFace& face = faces.at(j);
             face.id1 = oldNewIndexMap[face.id1];
             face.id2 = oldNewIndexMap[face.id2];
             face.id3 = oldNewIndexMap[face.id3];
@@ -498,7 +511,7 @@ namespace VirtualRobot
 //        }
         for (i = 0; i < size; ++i)
         {
-            TriangleFace& face = faces.at(i);
+            MathTools::TriangleFace& face = faces.at(i);
             auto& p1 = vertices.at(face.id1);
             auto& p2 = vertices.at(face.id2);
             auto& p3 = vertices.at(face.id3);
@@ -553,9 +566,6 @@ namespace VirtualRobot
             {
                 if(std::isnan(pair.first[0]) || std::isnan(pair.first[1]) || std::isnan(pair.first[2]))
                     std::cout << "NAN in " << i << " : " << pair.first  << std::endl;
-//                pair.first[0] = limitTo(pair.first[0], 1);
-//                pair.first[1] = limitTo(pair.first[1], 1);
-//                pair.first[2] = limitTo(pair.first[2], 1);
                 p += pair.first.normalized() * offset;
             }
         }
@@ -566,7 +576,7 @@ namespace VirtualRobot
             normals.reserve(size);
             for (i = 0; i < size; ++i)
             {
-                TriangleFace& face = faces.at(i);
+                MathTools::TriangleFace& face = faces.at(i);
                 face.idNormal1 = addNormal(averageNormals.at(face.id1).first.normalized());
                 face.idNormal2 = addNormal(averageNormals.at(face.id2).first.normalized());
                 face.idNormal3 = addNormal(averageNormals.at(face.id3).first.normalized());
@@ -644,13 +654,13 @@ namespace VirtualRobot
     /**
      * This method checks if the faces \p face1 and \p face2 share one common edge.
      *
-     * \param face1 first TriangleFace to use in comparison
-     * \param face2 second TriangleFace to use in comparison
+     * \param face1 first MathTools::TriangleFace to use in comparison
+     * \param face2 second MathTools::TriangleFace to use in comparison
      * \param commonVertexIds contains a list of
      *
      * \return true if both faces share the same edge and false if not
      */
-    bool TriMeshModel::checkFacesHaveSameEdge(const TriangleFace& face1, const TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const
+    bool TriMeshModel::checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const
     {
         commonVertexIds.clear();
         Eigen::Vector2i vertexIds;
@@ -726,7 +736,7 @@ namespace VirtualRobot
      */
     unsigned int TriMeshModel::checkAndCorrectNormals(bool inverted)
     {
-        TriangleFace* f1, *f2;
+        MathTools::TriangleFace* f1, *f2;
         int a1, a2, b1, b2;
         int flippedFacesCount = 0;
 

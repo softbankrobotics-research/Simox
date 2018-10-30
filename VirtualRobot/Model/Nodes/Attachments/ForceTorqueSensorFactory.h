@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ForceTorqueSensorFactory_h_
-#define _VirtualRobot_ForceTorqueSensorFactory_h_
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "ForceTorqueSensor.h"
@@ -40,7 +39,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ForceTorqueSensorFactory();
+        virtual ~ForceTorqueSensorFactory() override;
 
 
         /*!
@@ -49,7 +48,7 @@ namespace VirtualRobot
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) override;
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) const override;
 
         // AbstractFactoryMethod
     public:
@@ -63,4 +62,3 @@ namespace VirtualRobot
 }
 
 
-#endif

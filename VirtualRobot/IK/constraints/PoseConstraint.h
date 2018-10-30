@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_PoseConstraint_h_
-#define _VirtualRobot_PoseConstraint_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -39,21 +38,21 @@ namespace VirtualRobot
 
         void setVisualization(const LinkSetPtr& visualizationNodeSet);
 
-        virtual Eigen::MatrixXf getJacobianMatrix() override;
-        Eigen::MatrixXf getJacobianMatrix(FramePtr tcp);
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
-        virtual bool checkTolerances() override;
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(const FramePtr& tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
-        virtual bool getRobotPoseForConstraint(Eigen::Matrix4f& pose) override;
+        bool getRobotPoseForConstraint(Eigen::Matrix4f& pose) override;
 
         const Eigen::Matrix4f& getTarget() const;
 
         void updateTarget(const Eigen::Matrix4f& newTarget);
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
-        virtual VisualizationPtr getVisualization() const override;
+        VisualizationPtr getVisualization() const override;
 
     protected:
         double positionOptimizationFunction();
@@ -85,4 +84,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<PoseConstraint> PoseConstraintPtr;
 }
 
-#endif

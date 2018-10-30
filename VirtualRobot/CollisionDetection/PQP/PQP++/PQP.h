@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_H
-#define PQP_H
+#pragma once
 
 #include "PQP_Compile.h"
 #include "PQP_Internal.h"
@@ -356,7 +355,6 @@ namespace PQP
     };
 
 } // namespace
-#endif
 
 
 

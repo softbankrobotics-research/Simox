@@ -19,8 +19,7 @@
  * Thanks!
  ******************************************************************************/
 
-#ifndef COMMAND_LINE_ARGS_H
-#define COMMAND_LINE_ARGS_H
+#pragma once
 
 /******************************************************************************
  * Command-line parsing
@@ -124,4 +123,3 @@ void CommandLineArguments::GetCmdLineArgument<char*>(const char* arg_name, char*
     }
 }
 
-#endif //COMMAND_LINE_ARGS_H

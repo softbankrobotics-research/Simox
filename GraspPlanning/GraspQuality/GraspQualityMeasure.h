@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_H_
-#define _GRASP_PLANNING_GRASP_QUALTIY_MEASURE_H_
+#pragma once
 
 #include "../GraspPlanning.h"
 #include "../ConvexHullGenerator.h"
@@ -48,7 +47,7 @@ namespace GraspPlanning
         GraspQualityMeasure(VirtualRobot::ModelPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
 
         // destructor
-        virtual ~GraspQualityMeasure();
+        ~GraspQualityMeasure() override;
 
 
         /*
@@ -62,9 +61,9 @@ namespace GraspPlanning
 
         virtual VirtualRobot::MathTools::ContactPoint getSampledObjectPointsCenter();
 
-        virtual std::string getName() override;
+        std::string getName() override;
 
-        virtual bool isValid() override;
+        bool isValid() override;
 
         virtual ContactConeGeneratorPtr getConeGenerator();
     protected:
@@ -86,4 +85,3 @@ namespace GraspPlanning
 
 } // namespace
 
-#endif /* __GRASP_QUALTIY_MEASURE_H__ */

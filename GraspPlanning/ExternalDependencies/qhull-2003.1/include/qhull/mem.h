@@ -14,8 +14,7 @@
    copyright (c) 1993-2003, The Geometry Center
 */
 
-#ifndef qhDEFmem
-#define qhDEFmem
+#pragma once
 
 /*-<a                             href="qh-mem.htm#TOC"
   >-------------------------------</a><a name="NOmem">-</a>
@@ -172,4 +171,3 @@ void qh_memsetup(void);
 void qh_memsize(int size);
 void qh_memstatistics(FILE* fp);
 
-#endif /* qhDEFmem */

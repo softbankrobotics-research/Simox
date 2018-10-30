@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNode_h_
-#define _VirtualRobot_ModelNode_h_
+#pragma once
 
 #include "../../VirtualRobot.h"
 #include "../Frame.h"
@@ -50,7 +49,7 @@ namespace VirtualRobot
          *
          * Each sub/main type is only allowed to use one bit.
          */
-        enum ModelNodeType : uint16_t
+        enum NodeType : uint16_t
         {
             Node            = 0x0000,
 
@@ -68,17 +67,17 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param staticTransformation The transformation from the parent of this node to this node.
+         * @param localTransformation The transformation from the parent of this node to this node.
          */
         ModelNode(const ModelWeakPtr& model,
                   const std::string& name,
-                  const Eigen::Matrix4f& staticTransformation);
+                  const Eigen::Matrix4f& localTransformation);
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNode();
+        virtual ~ModelNode() override;
 
         /*!
          * Initialize ModelNode. Here pointers to parent and children are created from names.
@@ -95,7 +94,7 @@ namespace VirtualRobot
          *
          * @return The type of this node.
          */
-        virtual ModelNodeType getType() const = 0;
+        virtual NodeType getType() const = 0;
 
         /*!
          * Get the corresponding Model.
@@ -103,6 +102,10 @@ namespace VirtualRobot
          * @return A pointer to the model.
          */
         ModelPtr getModel() const;
+        inline RobotPtr getRobot() const
+        {
+            return getModel();
+        }
 
         /*!
          * Check if this node is initialized.
@@ -137,7 +140,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The parent node.
          */
-        ModelNodePtr getParentNode(ModelNodeType type = ModelNodeType::Node) const;
+        ModelNodePtr getParentNode(NodeType type = NodeType::Node) const;
 
         /*!
          * Get all child Nodes.
@@ -155,7 +158,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The child Nodes.
          */
-        std::vector<ModelNodePtr> getChildNodes(ModelNodeType type = ModelNodeType::Node) const;
+        std::vector<ModelNodePtr> getChildNodes(NodeType type = NodeType::Node) const;
 
         /*!
          * All children and their children (and so on) are collected.
@@ -167,7 +170,7 @@ namespace VirtualRobot
          * @param clearVector If true, the store vector is cleared.
         */
         void collectAllNodes(std::vector<ModelNodePtr>& storeNodes,
-                             ModelNodeType type = ModelNodeType::Node,
+                             NodeType type = NodeType::Node,
                              bool clearVector = true);
 
         /*!
@@ -179,7 +182,7 @@ namespace VirtualRobot
          * @return The ModelNodes.
         */
         virtual std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
-                                                        ModelNodeType type = ModelNodeType::Node);
+                                                        NodeType type = NodeType::Node) const;
 
         /*!
          * Check if node is a child from this node.
@@ -187,7 +190,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if node is a child from this node; false otherwise.
          */
-        bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
+        virtual bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
 
         /*!
          * Check if this node has a child with the given name.
@@ -195,7 +198,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if this node has a child with the given name; false otherwise.
          */
-        bool hasChild(const std::string& nodeName, bool recursive = false) const;
+        virtual bool hasChild(const std::string& nodeName, bool recursive = false) const;
 
         /*!
          * Attach a new Child to this node.
@@ -227,7 +230,7 @@ namespace VirtualRobot
          *
          * @return The local transformation.
          */
-        Eigen::Matrix4f getStaticTransformation() const;
+        virtual Eigen::Matrix4f getLocalTransformation() const;
 
         /*!
          * Get the transformation performed by this node.
@@ -240,10 +243,10 @@ namespace VirtualRobot
         /*!
          * Set a new preJoint/preVisualization transformation.
          *
-         * @param staticTransformation The new transformation.
+         * @param localTransformation The new transformation.
          * @param updatePose If set to true, the pose of all children will be updated recursively.
          */
-        virtual void setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose = true);
+        virtual void setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose = true);
 
         /*!
          * Get the globalPose of this node.
@@ -277,6 +280,8 @@ namespace VirtualRobot
          * @param updateAttachments If set to true, the attachments are updated.
          */
         void updatePose(bool updateChildren = true, bool updateAttachments = true);
+
+        virtual void copyPoseFrom(const ModelNodePtr& other);
 
         /*!
          * Attach a new attachment to this node.
@@ -390,26 +395,26 @@ namespace VirtualRobot
          * @param type The type to check.
          * @return True, if the node has the given type; false otherwise.
          */
-        inline static bool checkNodeOfType(const ModelNodePtr& node, ModelNodeType type)
+        inline static bool checkNodeOfType(const ModelNodePtr& node, NodeType type)
         {
             return (node->getType() & type) == type;
         }
 
         virtual bool isJoint()
         {
-            return (getType() & ModelNodeType::Joint)!=0;
+            return checkNodeOfType(shared_from_this(), NodeType::Joint);
         }
         virtual bool isTranslationalJoint()
         {
-            return (getType() == ModelNodeType::JointPrismatic);
+            return checkNodeOfType(shared_from_this(), NodeType::JointPrismatic);
         }
         virtual bool isRotationalJoint()
         {
-            return (getType() == ModelNodeType::JointRevolute);
+            return checkNodeOfType(shared_from_this(), NodeType::JointRevolute);
         }
         virtual bool isLink()
         {
-            return (getType() & ModelNodeType::Link)!=0;
+            return checkNodeOfType(shared_from_this(), NodeType::Link);
         }
 
     protected:
@@ -423,10 +428,8 @@ namespace VirtualRobot
         ModelNodeWeakPtr parent;
         std::vector<ModelNodePtr> children;
 
-        Eigen::Matrix4f staticTransformation;
+        Eigen::Matrix4f localTransformation;
 
         std::map<std::string, std::vector<ModelNodeAttachmentPtr>> attachments;
     };
 }
-
-#endif // _VirtualRobot_ModelNode_h_

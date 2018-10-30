@@ -22,19 +22,23 @@
 */
 
 #include "CoinViewer.h"
+#include "../ViewerFactory.h"
 
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualization.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinVisualizationSet.h>
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 #include <VirtualRobot/Visualization/SelectionManager.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoPath.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/manips/SoTransformManip.h>
+#include <Inventor/nodes/SoCamera.h>
 #include <QGLWidget>
 
 #include <iostream>
+#include <chrono>
 
 SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
 {
@@ -125,6 +129,9 @@ namespace SimoxGui
         setAntialiasing(4);
         setBackgroundColor(VirtualRobot::Visualization::Color::None());
 
+        setAlphaChannel(true);
+        setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
+
         selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
         {
             if (_removeVisualization(visu, old))
@@ -137,7 +144,7 @@ namespace SimoxGui
     CoinViewer::~CoinViewer()
     {
         VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
-        removeAllLayer();
+        removeAllLayers();
         sceneSep->removeAllChildren();
         selectionNode->removeAllChildren();
         sceneSep->unref();
@@ -245,6 +252,27 @@ namespace SimoxGui
         return backgroundColor;
     }
 
+    void CoinViewer::setCameraConfiguration(const CameraConfigurationPtr &c)
+    {
+        SoQtExaminerViewer::getCamera()->position.setValue(c->pose(0, 3), c->pose(1, 3), c->pose(2, 3));
+        VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(c->pose);
+        SoQtExaminerViewer::getCamera()->orientation.setValue(q.x, q.y, q.z, q.w);
+    }
+
+    CameraConfigurationPtr CoinViewer::getCameraConfiguration() const
+    {
+        CameraConfigurationPtr c = SimoxGui::ViewerFactory::getInstance()->createCameraConfiguration();
+        auto rot = SoQtExaminerViewer::getCamera()->orientation.getValue();
+        float x, y, z, w;
+        rot.getValue(x, y, z, w);
+        c->pose = VirtualRobot::MathTools::quat2eigen4f(x, y, z, w);
+        auto pos = SoQtExaminerViewer::getCamera()->position.getValue();
+        c->pose(0, 3) = pos[0];
+        c->pose(1, 3) = pos[1];
+        c->pose(2, 3) = pos[2];
+        return c;
+    }
+
     void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)
     {
         VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
@@ -270,6 +298,9 @@ namespace SimoxGui
                     {
                         selectionNode->deselect(d.node);
                     }
+
+                    // Force visualization update
+                    selectionNode->touch();
                 });
                 SelectionGroupData& d = selectionGroups[selectionGroup];
                 d.selectionChangedCallbackId = selectionChangedId;
@@ -312,6 +343,8 @@ namespace SimoxGui
                     {
                         selectionNode->deselect(d.node);
                     }
+                    // Force visualization update
+                    selectionNode->touch();
                     selectionNode->removeChild(d.node);
                     d.node->unref();
                     d.node = nullptr;
@@ -325,5 +358,22 @@ namespace SimoxGui
                 return false;
             }
         }
+    }
+
+    void CoinViewer::actualRedraw()
+    {
+        // require lock
+        auto start = std::chrono::system_clock::now();
+        auto l = getScopedLock();
+        auto end = std::chrono::system_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        if (elapsed.count() > 50)
+        {
+            VR_WARNING << " Redraw lock time:" << elapsed.count() << std::endl;
+        }
+
+        // Render normal scenegraph.
+        SoQtExaminerViewer::actualRedraw();
     }
 }

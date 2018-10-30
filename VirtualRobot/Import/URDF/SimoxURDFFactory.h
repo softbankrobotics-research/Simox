@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_SimoxURDFFactory_h_
-#define _VirtualRobot_SimoxURDFFactory_h_
+#pragma once
 
 #include "../../VirtualRobotImportExport.h"
 #include "../../Model/Model.h"
@@ -89,4 +88,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif

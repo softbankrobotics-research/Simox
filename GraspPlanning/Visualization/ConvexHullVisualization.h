@@ -20,13 +20,11 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_ConvexHullVisualization_h_
-#define _GRASP_PLANNING_ConvexHullVisualization_h_
+#pragma once
 
 #include "../GraspPlanning.h"
-#include "../../VirtualRobot/Model/Model.h"
-#include "../../VirtualRobot/Tools/MathTools.h"
-#include "../../VirtualRobot/Visualization/VisualizationSet.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Tools/MathTools.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -65,8 +63,4 @@ namespace GraspPlanning
     };
 
     typedef std::shared_ptr<ConvexHullVisualization> ConvexHullVisualizationPtr;
-
 } // namespace GraspPlanning
-
-
-#endif

@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_TRI_H
-#define PQP_TRI_H
+#pragma once
 
 #include "PQP_Compile.h"
 namespace PQP
@@ -55,4 +54,3 @@ namespace PQP
 
 }
 
-#endif

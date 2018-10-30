@@ -62,7 +62,7 @@ Eigen::MatrixXf TSRConstraint::getJacobianMatrix()
     return ik->getJacobianMatrix();
 }
 
-Eigen::MatrixXf TSRConstraint::getJacobianMatrix(FramePtr tcp)
+Eigen::MatrixXf TSRConstraint::getJacobianMatrix(const FramePtr &tcp)
 {
     if (tcp->getName() != eef->getName())
     {
@@ -76,6 +76,7 @@ Eigen::VectorXf TSRConstraint::getError(float stepSize)
 {
     float d_w[6];
     Eigen::MatrixXf eef_global = eef->getGlobalPose();
+
     Eigen::MatrixXf T = transformation.inverse() * eef_global * eefOffset;
     MathTools::eigen4f2rpy(T, d_w);
 
@@ -186,7 +187,8 @@ Eigen::VectorXf TSRConstraint::orientationOptimizationGradient()
 {
     Eigen::MatrixXf J = ik->getJacobianMatrix(eef).block(3, 0, 3, nodeSet->getSize());
     Eigen::VectorXf e = getOrientationError();
-    return 2 * e.transpose() * J;
+    Eigen::VectorXf result = 2 * e.transpose() * J;
+    return result;
 }
 
 Eigen::Vector3f TSRConstraint::getPositionError()

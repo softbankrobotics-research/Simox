@@ -36,7 +36,7 @@ namespace VirtualRobot
             p,
             colChecker ? colChecker : CollisionChecker::getGlobalCollisionChecker()));
 
-        m->registerModelNode(node);
+        m->registerNode(node);
         m->setRootNode(node);
         m->setGlobalPose(Eigen::Matrix4f::Identity());
 
@@ -182,7 +182,7 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         ModelNodePtr startNode = getRootNode();
-        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(!hasNode(startNode), " StartJoint is not part of this robot");
         THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
         ObstaclePtr result(new Obstacle(name));
@@ -222,6 +222,27 @@ namespace VirtualRobot
         auto links = getLinks();
         THROW_VR_EXCEPTION_IF(links.size()!=1, "Expecting model with exactly one link...");
         links.at(0)->setMass(mass);
+    }
+
+    CollisionModelPtr Obstacle::getCollisionModel() const
+    {
+        const auto ms = getCollisionModels();
+        VR_ASSERT(ms.size() == 1);
+        return ms[0];
+    }
+
+    ModelLink::Physics::SimulationType Obstacle::getSimulationType() const
+    {
+        const auto l = getLinks();
+        VR_ASSERT(l.size() == 1);
+        return l[0]->getSimulationType();
+    }
+
+    void Obstacle::setSimulationType(ModelLink::Physics::SimulationType simType)
+    {
+        const auto l = getLinks();
+        VR_ASSERT(l.size() == 1);
+        l[0]->setSimulationType(simType);
     }
 
 } //  namespace

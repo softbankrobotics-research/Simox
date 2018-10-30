@@ -17,7 +17,7 @@ namespace VirtualRobot
                                                 bool renderRgbImage, std::vector<unsigned char> &rgbImage,
                                                 bool renderDepthImage, std::vector<float> &depthImage,
                                                 bool renderPointcloud, std::vector<Eigen::Vector3f> &pointCloud,
-                                                float zNear, float zFar, float vertFov, float nanValue) const
+                                                float zNear, float zFar, float vertFov, float nanValue, Visualization::Color backgroundColor) const
     {
         // Root entity in the 3D scene.
         Qt3DCore::QEntity *rootEntity = new Qt3DCore::QEntity();

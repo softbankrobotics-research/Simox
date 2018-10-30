@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _Gui_CoinViewer_h_
-#define _Gui_CoinViewer_h_
+#pragma once
 
 #include "../AbstractViewer.h"
 
@@ -57,6 +56,9 @@ namespace SimoxGui
         virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) override;
         virtual VirtualRobot::Visualization::Color getBackgroundColor() const override;
 
+        void setCameraConfiguration(const CameraConfigurationPtr& config) override;
+        CameraConfigurationPtr getCameraConfiguration() const override;
+
     protected:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
@@ -64,6 +66,11 @@ namespace SimoxGui
             _removeVisualization(visualization, nullptr);
         }
         bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
+
+        /*!
+        * \brief actualRedraw Reimplement the redraw method in order to lock engine mutex
+        */
+        void actualRedraw(void) override;
 
         QWidget *parent;
 
@@ -83,5 +90,3 @@ namespace SimoxGui
     };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }
-
-#endif 

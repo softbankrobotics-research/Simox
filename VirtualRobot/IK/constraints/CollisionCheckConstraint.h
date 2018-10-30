@@ -21,8 +21,7 @@
  * @copyright  http://www.gnu.org/licenses/gpl-2.0.txt
  *             GNU General Public License
  */
-#ifndef _VirtualRobot_COLLISIONCHECKCONSTRAINT_H
-#define _VirtualRobot_COLLISIONCHECKCONSTRAINT_H
+#pragma once
 
 #include "../Constraint.h"
 #include "../../Model/JointSet.h"
@@ -61,4 +60,3 @@ protected:
 
 } // namespace VirtualRobot
 
-#endif // COLLISIONCHECKCONSTRAINT_H

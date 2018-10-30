@@ -20,10 +20,9 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_SimoxXMLFactory_h_
-#define _VirtualRobot_SimoxXMLFactory_h_
+#pragma once
 
-#include "../Model/Model.h"
+#include "../VirtualRobot.h"
 #include "../Model/Model.h"
 #include "RobotImporterFactory.h"
 
@@ -36,7 +35,7 @@ namespace VirtualRobot
     {
     public:
         SimoxXMLFactory();
-        virtual ~SimoxXMLFactory();
+        ~SimoxXMLFactory() override;
 
         virtual RobotPtr loadFromFile(const std::string& filename, ModelIO::RobotDescription loadMode = ModelIO::eFull) override;
 
@@ -95,7 +94,7 @@ namespace VirtualRobot
                                            std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                            std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
                                            ModelIO::RobotDescription loadMode = ModelIO::RobotDescription::eFull);
-        static RobotNodePtr processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
+        static std::pair<RobotNodePtr, RobotNodePtr> processRobotNode(rapidxml::xml_node<char>* robotNodeXMLNode,
                                              RobotPtr robo,
                                              const std::string& basePath,
                                              int& robotNodeCounter,
@@ -126,4 +125,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_SimoxXMLFactory_h_

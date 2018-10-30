@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Grasp_h_
-#define _VirtualRobot_Grasp_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "VirtualRobot/EndEffector/EndEffector.h"
@@ -133,4 +132,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Grasp_h_

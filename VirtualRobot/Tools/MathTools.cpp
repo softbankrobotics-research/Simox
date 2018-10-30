@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <algorithm>
 
+#include <VirtualRobot/Random.h>
 
 
 #include <Eigen/Geometry>
@@ -965,8 +966,8 @@ namespace VirtualRobot
 
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::randomPointInTriangle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3)
     {
-        float b0 = (float)rand() / (float)(RAND_MAX);
-        float b1 = (1.0f - b0) * (float)rand() / (float)(RAND_MAX);
+        float b0 = RandomFloat();
+        float b1 = (1.0f - b0) * RandomFloat();
         float b2 = 1 - b0 - b1;
 
         return v1 * b0  + v2 * b1 + v3 * b2;
@@ -2080,6 +2081,59 @@ namespace VirtualRobot
         r(2,3)=z;
         return r;
     }
+
+    float MathTools::fmod(float value, float boundLow, float boundHigh)
+    {
+        value = std::fmod(value - boundLow, boundHigh - boundLow) + boundLow;
+        if (value < boundLow)
+        {
+            value += boundHigh - boundLow;
+        }
+        return value;
+    }
+
+    float MathTools::angleMod2PI(float value)
+    {
+        return fmod(value, 0, 2 * M_PI);
+    }
+
+    float MathTools::angleModPI(float value)
+    {
+        return angleMod2PI(value + M_PI) - M_PI;
+    }
+
+    float MathTools::angleModX(float value, float center)
+    {
+        return angleMod2PI(value + M_PI - center) - M_PI + center;
+    }
+
+    float MathTools::Lerp(float a, float b, float f)
+    {
+        return a * (1 - f) + b * f;
+    }
+
+    float MathTools::ILerp(float a, float b, float f)
+    {
+        return (f - a) / (b - a);
+    }
+
+    float MathTools::AngleLerp(float a, float b, float f)
+    {
+        b = fmod(b, a - M_PI, a + M_PI);
+        return Lerp(a, b, f);
+    }
+
+    float MathTools::AngleDelta(float angle1, float angle2)
+    {
+        return angleModPI(angle2 - angle1);
+    }
+
+
+
+
+
+
+
 
 
 } // namespace

@@ -1,15 +1,14 @@
 
-#ifndef __RrtGui_WINDOW_H_
-#define __RrtGui_WINDOW_H_
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
 #include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
@@ -19,8 +18,8 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/AbstractViewer.h>
+#include <Gui/ViewerFactory.h>
 
 #include <vector>
 
@@ -32,16 +31,15 @@ class RrtGuiWindow : public QMainWindow
 public:
     RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf, const std::string& rns,
                  const std::string& colModelRob1, const std::string& colModelRob2, const std::string& colModelEnv);
-    ~RrtGuiWindow();
+    ~RrtGuiWindow() override;
 
     void redraw();
-
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 
@@ -51,7 +49,7 @@ public slots:
 
     void selectColModelRobA(int nr);
     void selectColModelRobB(int nr);
-    void selectColModelEnv(VirtualRobot::ModelSetPtr &mns);
+    void selectColModelEnv(int nr);
 
     void colModel();
     void solutionSelected();
@@ -69,6 +67,7 @@ protected:
     void loadScene();
 
     void setupUI();
+    QString formatString(const char* s, float f);
     void buildRRTVisu();
     void selectStart(const std::string& conf);
     void selectGoal(const std::string& conf);
@@ -78,7 +77,6 @@ protected:
     void selectColModelRobA(const std::string& colModel);
     void selectColModelRobB(const std::string& colModel);
     void selectColModelEnv(const std::string& colModel);
-
     Ui::MainWindowRRTDemo UI;
 
     SimoxGui::AbstractViewerPtr viewer;
@@ -105,8 +103,5 @@ protected:
     MotionPlanning::CSpacePathPtr solutionOptimized;
     MotionPlanning::CSpaceTreePtr tree;
     MotionPlanning::CSpaceTreePtr tree2;
-
-    //QTimer* timer;
 };
 
-#endif

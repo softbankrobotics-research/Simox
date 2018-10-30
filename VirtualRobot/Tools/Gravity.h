@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_Gravity_h_
-#define _VirtualRobot_Gravity_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 
@@ -79,5 +78,4 @@ namespace VirtualRobot
 
 }
 
-#endif
 

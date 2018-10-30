@@ -1389,7 +1389,7 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
         VR_ASSERT(robot);
-        std::vector<RobotNodePtr> rns = robot->getModelNodes();
+        std::vector<RobotNodePtr> rns = robot->getNodes();
         std::vector<RobotNodePtr> actuatedNodes;
         std::vector<RobotNodePtr> notActuatedNodes;
         size_t i;

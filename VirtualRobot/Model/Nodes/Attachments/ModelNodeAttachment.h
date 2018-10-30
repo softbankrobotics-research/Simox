@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelNodeAttachment_h_
-#define _VirtualRobot_ModelNodeAttachment_h_
+#pragma once
 
 #include "../../Model.h"
 #include "../../Frame.h"
@@ -43,13 +42,15 @@ namespace VirtualRobot
          * \param name  The name of the attachment.
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          */
-        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
+        ModelNodeAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity())
+                : Frame(name), localTransformation(localTransformation)
+        {}
 
     public:
         /*!
          * Destructor.
          */
-        virtual ~ModelNodeAttachment();
+        virtual ~ModelNodeAttachment() override = default;
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -59,37 +60,18 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(const ModelNodePtr &node);
+        virtual bool isAttachable(const ModelNodePtr &node) const = 0;
 
         /*!
          * Update the values of the Attachment.
          * This method is called by the node to inform the attachment about a change.
          */
-        /*virtual void update()
-        {
-            ModelNodePtr nodeShared = node.lock();
-
-            if (nodeShared)
-            {
-                updatePose(nodeShared->getGlobalPose());
-            }
-        }*/
         virtual void update(const Eigen::Matrix4f &parentPose)
         {
             WriteLockPtr lock = getModel()->getWriteLock();
             this->globalPose = parentPose * localTransformation;
-            if (visu)
-                visu->setGlobalPose(globalPose);
         }
 
-        /*!
-         * Get the globalPose of this node.
-         *
-         * This call locks the model's mutex.
-         *
-         * @return The global pose.
-         */
-        virtual Eigen::Matrix4f getGlobalPose() const override;
 
         /*!
          * Get the visualisation of this attachment.
@@ -97,9 +79,10 @@ namespace VirtualRobot
          *
          * @return The visualisation.
          */
-        virtual VisualizationPtr getVisualisation();
-
-        virtual void setVisualization(VisualizationPtr visu);
+        virtual VisualizationPtr getVisualisation() const
+        {
+            return nullptr;
+        }
 
         /*!
          * Get the type of this attachment.
@@ -107,7 +90,7 @@ namespace VirtualRobot
          *
          * @return The type of this attachment.
          */
-        virtual std::string getType();
+        virtual std::string getType() const = 0;
 
         /*!
          * Get the node, this attachment is attached to.
@@ -143,9 +126,12 @@ namespace VirtualRobot
             return ModelPtr();
         }
 
-        virtual ModelNodeAttachmentPtr clone();
+        virtual ModelNodeAttachmentPtr clone() const = 0;
 
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3);
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const
+        {
+            return "";
+        }
 
     protected:
         virtual void setParent(const ModelNodePtr &node)
@@ -153,6 +139,7 @@ namespace VirtualRobot
             if (node)
             {
                 this->node = node;
+                update(node->getGlobalPose());
             }
             else
             {
@@ -162,12 +149,5 @@ namespace VirtualRobot
 
         ModelNodeWeakPtr node;
         Eigen::Matrix4f localTransformation;
-        VisualizationPtr visu;
-
-    private:
-        void initVisualization();
     };
 }
-
-
-#endif // _VirtualRobot_ModelNodeAttachment_h_

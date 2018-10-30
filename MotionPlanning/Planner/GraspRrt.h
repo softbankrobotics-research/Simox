@@ -20,15 +20,14 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_GraspRrt_h
-#define _MotionPlanning_GraspRrt_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
 #include "../CSpace/CSpaceNode.h"
 #include "../ApproachDiscretization.h"
-#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/Model/Model.h>
@@ -77,23 +76,23 @@ namespace MotionPlanning
                  float probabGraspHypothesis = 0.1f,
                  float graspQualityMinScore = 0.01f);
 
-        virtual ~GraspRrt();
+        ~GraspRrt() override;
 
         /*!
             do the planning (blocking method)
             \return true if solution was found, otherwise false
         */
-        virtual bool plan(bool bQuiet = false) override;
+        bool plan(bool bQuiet = false) override;
 
 
-        virtual void printConfig(bool printOnlyParams = false) override;
-        virtual bool setStart(const Eigen::VectorXf& c) override;
+        void printConfig(bool printOnlyParams = false) override;
+        bool setStart(const Eigen::VectorXf& c) override;
 
         //! This is not allowed here, since we sample goal configurations during planning: If called an exception is thrown
-        virtual bool setGoal(const Eigen::VectorXf& c) override;
+        bool setGoal(const Eigen::VectorXf& c) override;
 
         //! reset the planner
-        virtual void reset() override;
+        void reset() override;
 
         /*!
             Returns the internal representation of the pose sphere.
@@ -237,7 +236,7 @@ namespace MotionPlanning
 
         std::vector<VirtualRobot::ModelPtr> graspCollisionObjects; //!< These objects are considered as obstacles when closing the hand. The targetObject is handled explicitly and must not be part of these object set.
 
-        virtual Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID) override;
+        Rrt::ExtensionResult connectComplete(Eigen::VectorXf& c, CSpaceTreePtr tree, int& storeLastAddedID) override;
 
         void printGraspInfo(GraspInfo& GrInfo);
 
@@ -276,5 +275,4 @@ namespace MotionPlanning
 
 }
 
-#endif // _GraspRRTPlanner_h_
 

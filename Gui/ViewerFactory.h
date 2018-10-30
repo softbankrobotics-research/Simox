@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_ViewerFactory_h_
-#define _Gui_ViewerFactory_h_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <string>
@@ -33,6 +32,9 @@ namespace SimoxGui
 {
     class ViewerFactory;
     using ViewerFactoryPtr = std::shared_ptr<ViewerFactory>;
+
+    class CameraConfiguration;
+    using CameraConfigurationPtr = std::shared_ptr<CameraConfiguration>;
 
     class SIMOX_GUI_IMPORT_EXPORT ViewerFactory
     {
@@ -46,8 +48,7 @@ namespace SimoxGui
         virtual ~ViewerFactory() = default;
 
         virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const = 0;
+        virtual CameraConfigurationPtr createCameraConfiguration() const = 0;
     };
 
 } // namespace SimoxGui
-
-#endif

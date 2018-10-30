@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Obstacle_h_
-#define _VirtualRobot_Obstacle_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Model/Model.h"
@@ -100,6 +99,11 @@ namespace VirtualRobot
 
         virtual void setMass(float mass);
 
+        virtual CollisionModelPtr getCollisionModel() const;
+
+        virtual ModelLink::Physics::SimulationType getSimulationType() const;
+        virtual void setSimulationType(ModelLink::Physics::SimulationType simType);
+
     protected:
 
         //virtual Obstacle* _clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr()) const;
@@ -112,4 +116,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Obstacle_h_

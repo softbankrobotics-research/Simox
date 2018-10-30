@@ -263,4 +263,9 @@ namespace VirtualRobot
         return reachabilitySpace->isReachable(globalPose);
     }
 
+    LinkSetPtr AdvancedIKSolver::getLinkSet() const
+    {
+        return colSet;
+    }
+
 } // namespace VirtualRobot

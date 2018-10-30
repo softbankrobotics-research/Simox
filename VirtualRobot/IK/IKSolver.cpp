@@ -11,19 +11,24 @@ namespace VirtualRobot
     }
 
 
-	VirtualRobot::FramePtr IKSolver::getTcp()
+    VirtualRobot::FramePtr IKSolver::getTcp() const
 	{
 		return tcp;
 	}
 
-	VirtualRobot::JointSetPtr IKSolver::getJointSet()
+    VirtualRobot::JointSetPtr IKSolver::getJointSet() const
 	{
 		return rns;
 	}
 
 	void IKSolver::setVerbose(bool enable)
 	{
-		verbose = enable;
-	}
+        verbose = enable;
+    }
+
+    bool IKSolver::isVerbose() const
+    {
+        return verbose;
+    }
 
 } // namespace VirtualRobot

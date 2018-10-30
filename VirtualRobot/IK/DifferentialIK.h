@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_DiffIK_h_
-#define _VirtualRobot_DiffIK_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -56,8 +55,8 @@ namespace VirtualRobot
         @code
         // define a kinematic chain for bimanual manipulation.
         std::vector<RobotNodePtr> nBi;
-        nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L")));
-        nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R")));
+        nBi.push_back(robot->getNode(std::string("Shoulder 1 L")));
+        nBi.push_back(robot->getNode(std::string("Shoulder 1 R")));
         // ...
         RobotNodeSetPtr kcBi = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTestBi"),nBi);
 
@@ -177,18 +176,18 @@ namespace VirtualRobot
             see <a href="http://graphics.ucsd.edu/courses/cse169_w05/CSE169_13.ppt">this lecture</a>.
         */
         virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp, IKSolver::CartesianSelection mode);
-        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
+        Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
         virtual Eigen::MatrixXf getJacobianMatrix(IKSolver::CartesianSelection mode);
 
         /*!
             Computes the complete Jacobian that considers all defined TCPs and goal poses.
         */
-        virtual Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix() override;
 
         /*!
             Computes the complete error vector, considering all TCPs and goals.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
         void updateError(Eigen::VectorXf& error, float stepSize = 1.0f);
 
         /*! @brief Returns the pseudo inverse of the Jacobian matrix for a given tcp of the robot.
@@ -197,6 +196,7 @@ namespace VirtualRobot
          * \f[ J^t \cdot \left( J \cdot J^t \right)^{-1}.\f]. Update: In order to improve stability, we are now using singular value decomposition (SVD).
          */
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(const FramePtr& tcp, IKSolver::CartesianSelection mode = IKSolver::All);
+        virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix();
         virtual Eigen::MatrixXf getPseudoInverseJacobianMatrix(IKSolver::CartesianSelection mode);
 
         void updateJacobianMatrix(Eigen::MatrixXf& jac);
@@ -278,7 +278,7 @@ namespace VirtualRobot
 
         //! When considering large errors, the translational part can be cut to this length. Set to <= 0 to ignore cutting (standard)
         virtual void setMaxPositionStep(float s);
-        virtual bool checkTolerances() override;
+        bool checkTolerances() override;
 
         /*!
             Initializes the internal data structures according to setGoal setup.
@@ -286,7 +286,7 @@ namespace VirtualRobot
         */
         virtual void initialize();
 
-        virtual void print() override;
+        void print() override;
     protected:
         virtual void setNRows();
 
@@ -340,4 +340,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<DifferentialIK> DifferentialIKPtr;
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_DiffIK_h_

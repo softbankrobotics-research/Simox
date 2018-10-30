@@ -6,12 +6,12 @@ namespace VirtualRobot
 {
     ModelJointRevolute::ModelJointRevolute(const ModelWeakPtr& model,
         const std::string& name,
-        const Eigen::Matrix4f& staticTransformation,
+        const Eigen::Matrix4f& localTransformation,
         float jointLimitLo,
         float jointLimitHi,
         const Eigen::Vector3f& axis,
         float jointValueOffset)
-            : ModelJoint(model, name, staticTransformation, jointLimitLo, jointLimitHi, jointValueOffset),
+            : ModelJoint(model, name, localTransformation, jointLimitLo, jointLimitHi, jointValueOffset),
               axis(axis)
     {
     }
@@ -20,9 +20,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNode::ModelNodeType ModelJointRevolute::getType() const
+    ModelNode::NodeType ModelJointRevolute::getType() const
     {
-        return ModelNode::ModelNodeType::JointRevolute;
+        return ModelNode::NodeType::JointRevolute;
     }
 
     Eigen::Vector3f ModelJointRevolute::getJointRotationAxis(FramePtr coordSystem) const
@@ -50,12 +50,12 @@ namespace VirtualRobot
         Eigen::Matrix4f tmpRotMat = Eigen::Matrix4f::Identity();
         tmpRotMat.block(0, 0, 3, 3) = Eigen::AngleAxisf(jointValue + jointValueOffset,
                                                         getJointRotationAxisInJointCoordSystem()).matrix();
-        return getStaticTransformation() * tmpRotMat;
+        return getLocalTransformation() * tmpRotMat;
     }
 
     ModelNodePtr ModelJointRevolute::_clone(ModelPtr newModel, float scaling)
     {
-        Eigen::Matrix4f st = getStaticTransformation();
+        Eigen::Matrix4f st = getLocalTransformation();
         ModelJointRevolutePtr result(new ModelJointRevolute(newModel, name, st, jointLimitLo, jointLimitHi, axis, jointValueOffset));
         result->setLimitless(limitless);
         return result;
@@ -68,10 +68,10 @@ namespace VirtualRobot
         std::string pre2 = "\t\t";
         std::string pre3 = "\t\t\t";
         ss << pre << "<ModelNode name='" << name << "'>\n";
-        if (!this->getStaticTransformation().isIdentity())
+        if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;
-            ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
+            ss << BaseIO::toXML(getLocalTransformation(), "\t\t\t");
             ss << pre2 << "</Transform>" << endl;
         }
         ss << pre2 << "<Joint type='revolute'>\n";

@@ -36,8 +36,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _VirtualRobot_Path_h_
-#define _VirtualRobot_Path_h_
+#pragma once
 
 #include "VirtualRobot/VirtualRobot.h"
 
@@ -92,4 +91,3 @@ namespace VirtualRobot
     };
 }
 
-#endif // _VirtualRobot_Path_h_

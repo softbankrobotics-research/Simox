@@ -419,7 +419,7 @@ void stabilityWindow::jointValueChanged(int pos)
 
     updateCoM();
 
-    /*RobotNodePtr p = robot->getModelNode("Foot2 L");
+    /*RobotNodePtr p = robot->getNode("Foot2 L");
     if (p)
     {
         BoundingBox bbox = p->getCollisionModel()->getBoundingBox(true);

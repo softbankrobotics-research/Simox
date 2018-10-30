@@ -65,9 +65,9 @@ namespace VirtualRobot
             return EndEffectorPtr();
         }
 
-        RobotNodePtr newBase = newRobot->getModelNode(baseNode->getName());
-        RobotNodePtr newTCP = newRobot->getModelNode(tcpNode->getName());
-        RobotNodePtr newGCP = newRobot->getModelNode(gcpNode->getName());
+        RobotNodePtr newBase = newRobot->getNode(baseNode->getName());
+        RobotNodePtr newTCP = newRobot->getNode(tcpNode->getName());
+        RobotNodePtr newGCP = newRobot->getNode(gcpNode->getName());
         THROW_VR_EXCEPTION_IF(!newBase, " New robot does not own a base node with name " << baseNode->getName());
         THROW_VR_EXCEPTION_IF(!newTCP, " New robot does not own a tcp node with name " << tcpNode->getName());
         THROW_VR_EXCEPTION_IF(!newGCP, " New robot does not own a gcp node with name " << gcpNode->getName());
@@ -259,7 +259,7 @@ namespace VirtualRobot
     {
         RobotPtr r = getRobot();
         THROW_VR_EXCEPTION_IF(!r, "No robot defined in EEF");
-        RobotNodePtr baseNode = r->getModelNode(getBaseNodeName());
+        RobotNodePtr baseNode = r->getNode(getBaseNodeName());
         THROW_VR_EXCEPTION_IF(!baseNode, "no base node with name " << getBaseNodeName());
 
         // don't clone robotNodeSets and EEFs here
@@ -426,7 +426,7 @@ namespace VirtualRobot
         return result;
     }
 
-    std::vector< ModelNodePtr > EndEffector::getModelNodes() const
+    std::vector< ModelNodePtr > EndEffector::getNodes() const
     {
         // avoid double entries
         std::map< ModelNodePtr, ModelNodePtr > mapR;
@@ -438,7 +438,7 @@ namespace VirtualRobot
 
         while (iA != actors.end())
         {
-            std::vector< RobotNodePtr > rn = (*iA)->getModelNodes();
+            std::vector< RobotNodePtr > rn = (*iA)->getNodes();
 
             for (size_t i = 0; i < rn.size(); i++)
             {
@@ -471,7 +471,7 @@ namespace VirtualRobot
 
     std::vector< ModelLinkPtr > EndEffector::getLinks() const
     {
-        std::vector< ModelNodePtr > allNodes = getModelNodes();
+        std::vector< ModelNodePtr > allNodes = getNodes();
         std::vector< ModelLinkPtr > res;
         for (auto n : allNodes)
         {
@@ -484,7 +484,7 @@ namespace VirtualRobot
 
     std::vector< ModelJointPtr > EndEffector::getJoints() const
     {
-        std::vector< ModelNodePtr > allNodes = getModelNodes();
+        std::vector< ModelNodePtr > allNodes = getNodes();
         std::vector< ModelJointPtr > res;
         for (auto n : allNodes)
         {
@@ -746,7 +746,7 @@ namespace VirtualRobot
         {
             RobotPtr r = createEefRobot(getName(), getName());
             FramePtr tcpN = r->getEndEffector(getName())->getTcp();
-            r->setGlobalPoseForModelNode(tcpN, pose);
+            r->setGlobalPoseForNode(tcpN, pose);
             return r->getVisualization(visuType);
         }
     }

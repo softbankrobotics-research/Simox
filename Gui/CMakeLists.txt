@@ -39,6 +39,7 @@ if (Simox_VISUALIZATION)
       SimoxGuiImportExport.h
       AbstractViewer.h
       ViewerFactory.h
+      CameraConfiguration.h
   )
 
     IF (Simox_VISUALIZATION_TYPE STREQUAL "Coin3D")

@@ -36,7 +36,7 @@ void LinkedCoordinate::set(const RobotNodePtr& frame, const Eigen::Matrix4f& pos
         THROW_VR_EXCEPTION(boost::format("RobotNodePtr not assigned (LinkedCoordinate::%1%)") %  BOOST_CURRENT_FUNCTION);
     }
 
-    if (!this->robot->hasModelNode(frame))
+    if (!this->robot->hasNode(frame))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % frame->getName() % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
@@ -48,12 +48,12 @@ void LinkedCoordinate::set(const RobotNodePtr& frame, const Eigen::Matrix4f& pos
 
 void LinkedCoordinate::set(const std::string& frame, const Eigen::Matrix4f& pose)
 {
-    if (!this->robot->hasModelNode(frame))
+    if (!this->robot->hasNode(frame))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % frame % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    this->set(this->robot->getModelNode(frame), pose);
+    this->set(this->robot->getNode(frame), pose);
 }
 
 
@@ -80,7 +80,7 @@ void LinkedCoordinate::changeFrame(const RobotNodePtr& destination)
         THROW_VR_EXCEPTION(boost::format("RobotNodePtr not assigned (LinkedCoordinate::%1%)") % BOOST_CURRENT_FUNCTION);
     }
 
-    if (!this->robot->hasModelNode(destination))
+    if (!this->robot->hasNode(destination))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination->getName() % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
@@ -99,12 +99,12 @@ void LinkedCoordinate::changeFrame(const RobotNodePtr& destination)
 
 void LinkedCoordinate::changeFrame(const std::string& destination)
 {
-    if (!this->robot->hasModelNode(destination))
+    if (!this->robot->hasNode(destination))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    this->changeFrame(this->robot->getModelNode(destination));
+    this->changeFrame(this->robot->getNode(destination));
 }
 
 Eigen::Matrix4f LinkedCoordinate::getInFrame(const RobotNodePtr& destination) const
@@ -114,7 +114,7 @@ Eigen::Matrix4f LinkedCoordinate::getInFrame(const RobotNodePtr& destination) co
         THROW_VR_EXCEPTION(boost::format("RobotNodePtr not assigned (LinkedCoordinate::%1%)") % BOOST_CURRENT_FUNCTION);
     }
 
-    if (!this->robot->hasModelNode(destination))
+    if (!this->robot->hasNode(destination))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination->getName() % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
@@ -125,12 +125,12 @@ Eigen::Matrix4f LinkedCoordinate::getInFrame(const RobotNodePtr& destination) co
 
 Eigen::Matrix4f LinkedCoordinate::getInFrame(const std::string& destination) const
 {
-    if (!this->robot->hasModelNode(destination))
+    if (!this->robot->hasNode(destination))
     {
         THROW_VR_EXCEPTION(boost::format("Robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination % this->robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    return LinkedCoordinate::getCoordinateTransformation(this->frame, this->robot->getModelNode(destination), this->robot) * this->pose;
+    return LinkedCoordinate::getCoordinateTransformation(this->frame, this->robot->getNode(destination), this->robot) * this->pose;
 }
 
 
@@ -154,12 +154,12 @@ Eigen::Matrix4f LinkedCoordinate::getCoordinateTransformation(const RobotNodePtr
         THROW_VR_EXCEPTION(boost::format("RobotPtr not assigned (LinkedCoordinate::%1%)") % BOOST_CURRENT_FUNCTION);
     }
 
-    if (!robot->hasModelNode(origin))
+    if (!robot->hasNode(origin))
     {
         THROW_VR_EXCEPTION(boost::format("Origin robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % origin->getName() % robot->getName() % BOOST_CURRENT_FUNCTION);
     }
 
-    if (!robot->hasModelNode(destination))
+    if (!robot->hasNode(destination))
     {
         THROW_VR_EXCEPTION(boost::format("Destination robot node\"%1%\" not a member of robot \"%2%\" (LinkedCoordinate::%3%)") % destination->getName() % robot->getName() % BOOST_CURRENT_FUNCTION);
     }

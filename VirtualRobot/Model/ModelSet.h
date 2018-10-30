@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelSet_h_
-#define _VirtualRobot_ModelSet_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -43,6 +42,12 @@ namespace VirtualRobot
          * Destructor.
          */
         virtual ~ModelSet();
+
+        inline void addRobot(const RobotPtr& robot)
+        {
+            addModel(robot);
+        }
+        virtual void addModel(const ModelPtr& model);
 
         /*!
          * Get the name of this ModelSet.
@@ -127,9 +132,9 @@ namespace VirtualRobot
          */
         virtual std::string toXML(int tabs) const;
 
-        std::vector<ModelJointPtr> getModelJoints() const;
-
-        std::vector<ModelLinkPtr> getModelLinks() const;
+        std::vector<ModelJointPtr> getJoints() const;
+        std::vector<ModelLinkPtr> getLinks() const;
+        std::vector<ModelNodePtr> getNodes() const;
 
         CollisionCheckerPtr getCollisionChecker() const;
 
@@ -145,5 +150,3 @@ namespace VirtualRobot
         std::vector<ModelPtr> models;
     };
 }
-
-#endif

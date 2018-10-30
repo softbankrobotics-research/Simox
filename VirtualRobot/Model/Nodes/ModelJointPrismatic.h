@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJointPrismatic_h_
-#define _VirtualRobot_ModelJointPrismatic_h_
+#pragma once
 
 #include "ModelJoint.h"
 
@@ -35,7 +34,7 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param staticTransformation The transformation from the parent of this node to this node.
+         * @param localTransformation The transformation from the parent of this node to this node.
          * @param jointLimitLo The lower limit of this joint.
          * @param jointLimitHi The upper limit of this joint.
          * @param jointValueOffset The offset for the value of this joint.
@@ -43,7 +42,7 @@ namespace VirtualRobot
          */
         ModelJointPrismatic(const ModelWeakPtr& model,
             const std::string& name,
-            const Eigen::Matrix4f& staticTransformation,
+            const Eigen::Matrix4f& localTransformation,
             float jointLimitLo,
             float jointLimitHi,
             const Eigen::Vector3f& translationDirection,
@@ -52,9 +51,9 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelJointPrismatic();
+        virtual ~ModelJointPrismatic() override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * In global coord system.
@@ -92,5 +91,3 @@ namespace VirtualRobot
         Eigen::Vector3f translationDirection;
     };
 }
-
-#endif // _VirtualRobot_ModelJointPrismatic_h_

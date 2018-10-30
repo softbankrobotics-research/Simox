@@ -13,9 +13,9 @@ namespace VirtualRobot
     {
     }
 
-    ModelNode::ModelNodeType ModelJointFixed::getType() const
+    ModelNode::NodeType ModelJointFixed::getType() const
     {
-        return ModelNode::ModelNodeType::JointFixed;
+        return ModelNode::NodeType::JointFixed;
     }
 
     void ModelJointFixed::setJointValue(float)
@@ -54,10 +54,10 @@ namespace VirtualRobot
         std::string pre = "\t";
         std::string pre2 = "\t\t";
         ss << pre << "<ModelNode name='" << name << "'>\n";
-        if (!this->getStaticTransformation().isIdentity())
+        if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;
-            ss << BaseIO::toXML(getStaticTransformation(), "\t\t\t");
+            ss << BaseIO::toXML(getLocalTransformation(), "\t\t\t");
             ss << pre2 << "</Transform>" << endl;
         }
         ss << pre2 << "<Joint type='fixed'/>\n";
@@ -83,7 +83,7 @@ namespace VirtualRobot
 
     ModelNodePtr ModelJointFixed::_clone(ModelPtr newModel, float scaling)
     {
-        ModelJointFixedPtr result(new ModelJointFixed(newModel, name, getStaticTransformation()));
+        ModelJointFixedPtr result(new ModelJointFixed(newModel, name, getLocalTransformation()));
         return result;
     }
 }

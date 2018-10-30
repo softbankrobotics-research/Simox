@@ -20,16 +20,14 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MODELSTRUCTURE_H
-#define MODELSTRUCTURE_H
+#pragma once
 
-#include "ModelNodeAttachment.h"
+#include "CustomVisualizationAttachment.h"
 
 namespace VirtualRobot
 {
-    class ModelStructure : public ModelNodeAttachment
+    class ModelStructure : public CustomVisualizationAttachment
     {
-        friend class ModelNode;
         friend class ModelStructureFactory;
 
     public:
@@ -40,17 +38,7 @@ namespace VirtualRobot
          */
         ModelStructure(const std::string &name, const Eigen::Matrix4f &localTransformation = Eigen::Matrix4f::Identity());
 
-        virtual ~ModelStructure();
-
-        /*!
-         * Checks if this attachment is attachable to the given node.
-         * Mostly determined on the basis of the node type.
-         *
-         * @param node The node to check, if this attachment is attachable.
-         *
-         * @return True, if this attachment is attachable; false otherwise.
-         */
-        virtual bool isAttachable(const ModelNodePtr &node) override;
+        virtual ~ModelStructure() override;
 
         /*!
          * Get the type of this attachment.
@@ -58,16 +46,16 @@ namespace VirtualRobot
          *
          * @return "ModelStructure".
          */
-        virtual std::string getType() override;
+        virtual std::string getType() const override;
 
-        virtual ModelNodeAttachmentPtr clone() override;
+        virtual ModelNodeAttachmentPtr clone() const override;
 
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const override;
 
     private:
         void initVisualization();
-        VisualizationPtr createJointVisualization(ModelJointPtr joint, VisualizationFactoryPtr factory);
-        VisualizationPtr createLinkVisualization(ModelLinkPtr link, VisualizationFactoryPtr factory);
+        static VisualizationPtr createJointVisualization(const ModelJointPtr& joint);
+        static VisualizationPtr createLinkVisualization(const ModelLinkPtr& link);
 
         // ModelNodeAttachment interface
     protected:
@@ -76,5 +64,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<ModelStructure> ModelStructurePtr;
 }
-
-#endif // MODELSTRUCTUREATTACHMENT_H

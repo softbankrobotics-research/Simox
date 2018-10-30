@@ -17,6 +17,7 @@
 #include "../Model/ManipulationObject.h"
 #include "../Grasping/Grasp.h"
 #include "../Grasping/GraspSet.h"
+#include <VirtualRobot/Random.h>
 #include <fstream>
 #include <cmath>
 #include <float.h>
@@ -113,7 +114,7 @@ namespace VirtualRobot
         {
             dest  = new unsigned char[/*2 * */size];
         }
-        catch (std::exception e)
+        catch(const std::exception &e)
         {
             VR_ERROR << "Error:" << e.what() << endl << "Could not assign " << size << " bytes of memory. Reduce size of WorkspaceRepresentation data..." << endl;
             throw;
@@ -278,13 +279,13 @@ namespace VirtualRobot
             if (version[0] > 1 || (version[0] == 1 &&  version[1] > 0))
             {
                 FileIO::readString(tmpString, file);
-                if (tmpString.empty() || !robot->hasModelNode(tmpString))
+                if (tmpString.empty() || !robot->hasNode(tmpString))
                 {
                     VR_WARNING << "Base node not given/known:" << tmpString << endl;
                 }
                 else
                 {
-                    baseNode = robot->getModelNode(tmpString);
+                    baseNode = robot->getNode(tmpString);
                     THROW_VR_EXCEPTION_IF(!baseNode, "Unknown Base Node");
                 }
             }
@@ -574,7 +575,7 @@ namespace VirtualRobot
             // Collisions
             FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(collisionConfigs));
 
-            // DiscretizeStep
+            // DiscretizeStep*
             FileIO::write<float>(file, discretizeStepTranslation);
             FileIO::write<float>(file, discretizeStepRotation);
 
@@ -883,8 +884,6 @@ namespace VirtualRobot
 
     bool WorkspaceRepresentation::setRobotNodesToRandomConfig(JointSetPtr nodeSet, bool checkForSelfCollisions /*= true*/)
     {
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
-
         if (!nodeSet)
         {
             nodeSet = this->nodeSet;
@@ -906,7 +905,7 @@ namespace VirtualRobot
         {
             for (unsigned int i = 0; i < nodeSet->getSize(); i++)
             {
-                rndValue = (float)rand() * randMult; // value from 0 to 1
+                rndValue = RandomFloat(); // value from 0 to 1
                 minJ = nodeSet->getJoint(i)->getJointLimitLow();
                 maxJ = nodeSet->getJoint(i)->getJointLimitHigh();
                 v[i] = minJ + ((maxJ - minJ) * rndValue);
@@ -1133,7 +1132,7 @@ namespace VirtualRobot
 			float discretizeStepRotation,
             float minBounds[6], float maxBounds[6],
             LinkSetPtr staticCollisionModel,
-			LinkSetPtr dynamicCollisionModel,
+            LinkSetPtr dynamicCollisionModel,
             ModelNodePtr baseNode /*= RobotNodePtr()*/,
             FramePtr tcpNode /*= RobotNodePtr()*/,
             bool adjustOnOverflow /* = true */)
@@ -1159,7 +1158,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot->hasFrame(this->tcpNode), "robot does not know tcp:" << this->tcpNode->getName());
         this->baseNode = baseNode;
 
-        if (baseNode && !robot->hasModelNode(baseNode))
+        if (baseNode && !robot->hasNode(baseNode))
         {
             THROW_VR_EXCEPTION("Robot does not know basenode:" << baseNode->getName());
         }
@@ -1618,7 +1617,7 @@ namespace VirtualRobot
 
     bool WorkspaceRepresentation::checkForParameters(JointSetPtr nodeSet, float steps, float storeMinBounds[6], float storeMaxBounds[6], ModelNodePtr baseNode, FramePtr tcpNode)
     {
-		if (!robot || !nodeSet)// || !nodeSet->isKinematicChain())
+        if (!robot || !nodeSet)// || !nodeSet->isKinematicChain())
         {
             VR_WARNING << "invalid data" << endl;
             return false;
@@ -1635,7 +1634,7 @@ namespace VirtualRobot
             return false;
         }
 
-        if (baseNode && !robot->hasModelNode(baseNode))
+        if (baseNode && !robot->hasNode(baseNode))
         {
             VR_ERROR << "robot does not know baseNode:" << baseNode->getName() << endl;
             return false;
@@ -1680,7 +1679,7 @@ namespace VirtualRobot
             }
         }
 
-		nodeSet->setJointValues(c);
+        nodeSet->setJointValues(c);
 
         robot->setUpdateVisualization(visuSate);
 
@@ -2282,9 +2281,8 @@ namespace VirtualRobot
 
         std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
-        static const float randMult = (float)(1.0 / (double)(RAND_MAX));
 
-        for (unsigned int i = 0; i < numThreads; i++)
+        for (size_t i = 0; i < numThreads; i++)
         {
             threads[i] = std::thread([=] ()
             {
@@ -2308,7 +2306,7 @@ namespace VirtualRobot
                 }
 
                 // now sample some configs and add them to the workspace data
-                for (unsigned int j = 0; j < numPosesPerThread; j++)
+                for (size_t j = 0; j < numPosesPerThread; j++)
                 {
                     float rndValue;
                     float minJ, maxJ;
@@ -2319,9 +2317,9 @@ namespace VirtualRobot
 
                     for (int k = 0; k < maxLoops; k++)
                     {
-                        for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
+                        for (size_t l = 0; l < clonedNodeSet->getSize(); l++)
                         {
-                            rndValue = (float) std::rand() * randMult; // value from 0 to 1
+                            rndValue = RandomFloat(); // value from 0 to 1
                             minJ = nodeSet->getJoint(l)->getJointLimitLow();
                             maxJ = nodeSet->getJoint(l)->getJointLimitHigh();
                             v[l] = minJ + ((maxJ - minJ) * rndValue);
@@ -2359,7 +2357,7 @@ namespace VirtualRobot
         }
 
         // wait for all threads to finish
-        for (unsigned int i = 0; i < numThreads; i++)
+        for (int i = 0; i < numThreads; i++)
         {
             threads[i].join();
         }

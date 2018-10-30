@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_ConfigConstraint_h
-#define _MotionPlanning_ConfigConstraint_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpace.h"
@@ -57,4 +56,3 @@ namespace MotionPlanning
 
 }
 
-#endif // _MotionPlanning_ConfigConstraint_h

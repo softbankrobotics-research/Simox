@@ -34,11 +34,11 @@ namespace VirtualRobot
                                                 bool renderRgbImage, std::vector<unsigned char> &rgbImage,
                                                 bool renderDepthImage, std::vector<float> &depthImage,
                                                 bool renderPointcloud, std::vector<Eigen::Vector3f> &pointCloud,
-                                                float zNear, float zFar, float vertFov, float nanValue) const
+                                                float zNear, float zFar, float vertFov, float nanValue, Visualization::Color backroundColor) const
     {
         SoOffscreenRenderer offscreenRenderer{SbViewportRegion{static_cast<short>(width), static_cast<short>(height)}};
         offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
-        offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
+        offscreenRenderer.setBackgroundColor(SbColor(backroundColor.r, backroundColor.g, backroundColor.b));
         //check input
         if (scene.empty())
         {
@@ -254,7 +254,7 @@ namespace VirtualRobot
         }
         else
         {
-            sceneGraph->removeChild(std::static_pointer_cast<CoinVisualization>(visu)->getMainNode());
+            sceneGraph->addChild(std::static_pointer_cast<CoinVisualization>(visu)->getMainNode());
         }
     }
 

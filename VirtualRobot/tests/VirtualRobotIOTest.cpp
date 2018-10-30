@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Structure)
     BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eStructure));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE(rn.size() > 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Structure)
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_EQUAL(rns.size(), 0);
 }
 
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Full)
     BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eFull));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE(rn.size() > 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Full)
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_EQUAL(rns.size(), 0);
 }
 
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Collision)
     BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2, basePath, ModelIO::RobotDescription::eCollisionModel));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDF_Collision)
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_EQUAL(rns.size(), 0);
 }
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandEEF)
     BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2,basePath, ModelIO::RobotDescription::eStructure));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandEEF)
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_GT(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_EQUAL(rns.size(), 0);
 }
 
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandJS)
     BOOST_REQUIRE_NO_THROW(r = ModelIO::createRobotModelFromString(robotDef2,basePath, ModelIO::RobotDescription::eStructure));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<ModelJointPtr> joints = r->getJoints();
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(testRobotModelFromStringURDFandJS)
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_EQUAL(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_GT(rns.size(), 0);
 
     std::vector<JointSetPtr> js = r->getJointSets();
@@ -213,13 +213,13 @@ BOOST_AUTO_TEST_CASE(testRobotLoadXML)
     BOOST_REQUIRE_NO_THROW(r = SimoxXMLFactory::loadRobotSimoxXML(filename));
     BOOST_REQUIRE(r);
 
-    std::vector<RobotNodePtr> rn = r->getModelNodes();
+    std::vector<RobotNodePtr> rn = r->getNodes();
     BOOST_REQUIRE_GT(rn.size(), 0);
 
     std::vector<EndEffectorPtr> eefs = r->getEndEffectors();
     BOOST_REQUIRE_GT(eefs.size(), 0);
 
-    std::vector<RobotNodeSetPtr> rns = r->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = r->getNodeSets();
     BOOST_REQUIRE_GT(rns.size(), 0);
 }
 

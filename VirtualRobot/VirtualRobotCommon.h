@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Common_h_
-#define _VirtualRobot_Common_h_
+#pragma once
 
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
 #include <VirtualRobot/CollisionDetection/CollisionModel.h>
@@ -30,16 +29,11 @@
 #include <VirtualRobot/CollisionDetection/CollisionCheckerImplementation.h>
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/EndEffector/EndEffectorActor.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/Nodes/RobotNodeFactory.h>
-#include <VirtualRobot/Nodes/RobotNodePrismatic.h>
-#include <VirtualRobot/Nodes/RobotNodePrismaticFactory.h>
-#include <VirtualRobot/Nodes/RobotNodeRevolute.h>
-#include <VirtualRobot/Nodes/RobotNodeRevoluteFactory.h>
-#include <VirtualRobot/Nodes/RobotNodeFixed.h>
-#include <VirtualRobot/Nodes/RobotNodeFixedFactory.h>
-#include <VirtualRobot/Nodes/RobotNodeActuator.h>
-#include <VirtualRobot/Nodes/ConditionedLock.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/Model/Nodes/ModelJointPrismatic.h>
+#include <VirtualRobot/Model/Nodes/ModelJointRevolute.h>
+#include <VirtualRobot/Model/Nodes/ModelJointFixed.h>
+#include <VirtualRobot/Tools/ConditionedLock.h>
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/Visualization/Visualization.h>
 #include <VirtualRobot/Visualization/ColorMap.h>
@@ -64,26 +58,23 @@
 #include <VirtualRobot/Grasping/Grasp.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/Grasping/BasicGraspQualityMeasure.h>
-#include <VirtualRobot/AbstractFactoryMethod.h>
+#include <VirtualRobot/Tools/AbstractFactoryMethod.h>
 #include <VirtualRobot/VirtualRobot.h>
-#include <VirtualRobot/MathTools.h>
-#include <VirtualRobot/Robot.h>
-#include <VirtualRobot/RobotConfig.h>
-#include <VirtualRobot/RobotNodeSet.h>
+#include <VirtualRobot/Tools/MathTools.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/ModelConfig.h>
+#include <VirtualRobot/Model/ModelNodeSet.h>
 #include <VirtualRobot/Trajectory.h>
-#include <VirtualRobot/RobotFactory.h>
-#include <VirtualRobot/SceneObject.h>
-#include <VirtualRobot/SceneObjectSet.h>
+#include <VirtualRobot/Model/ModelFactory.h>
 #include <VirtualRobot/Scene.h>
-#include <VirtualRobot/Obstacle.h>
+#include <VirtualRobot/Model/Obstacle.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/VirtualRobotImportExport.h>
 //#include <VirtualRobot/VirtualRobotTest.h>
-#include <VirtualRobot/ManipulationObject.h>
-#include <VirtualRobot/BoundingBox.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
+#include <VirtualRobot/Tools/BoundingBox.h>
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 #include <VirtualRobot/Compression/CompressionRLE.h>
 #include <VirtualRobot/Compression/CompressionBZip2.h>
-#include <VirtualRobot/SphereApproximator.h>
+#include <VirtualRobot/Tools/SphereApproximator.h>
 
-#endif // _VirtualRobot_Common_h_

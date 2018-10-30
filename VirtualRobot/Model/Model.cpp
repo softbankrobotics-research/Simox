@@ -16,6 +16,7 @@
 #include "../Model/Nodes/Attachments/PhysicsAttachment.h"
 #include "../Model/Nodes/Attachments/PhysicsAttachmentFactory.h"
 #include "../Model/Nodes/Attachments/Sensor.h"
+#include "Nodes/Attachments/CoordinateSystemFactory.h"
 
 #include <algorithm>
 
@@ -37,44 +38,63 @@ namespace VirtualRobot
     {
     }
 
-    void Model::registerModelNode(const ModelNodePtr& node)
+    void Model::registerNode(const ModelNodePtr& node, bool registerChildren, bool addToVisu)
     {
         WriteLockPtr w = getWriteLock();
-        if (node)
+        VR_ASSERT(node);
+        if (hasNode(node->getName()))
         {
-            if (hasModelNode(node->getName()))
+            if (node == getNode(node->getName()))
             {
-                if (node == getModelNode(node->getName()))
-                    return;
-                THROW_VR_EXCEPTION_IF(hasModelNode(node->getName()),
-                                      "There are (at least) two model nodes with name <" + node->getName()
-                                      + "> defined!");
+                return;
             }
+            THROW_VR_EXCEPTION_IF(hasNode(node->getName()),
+                                  "There are (at least) two model nodes with name <" + node->getName()
+                                  + "> defined!");
+        }
 
-            if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+        if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
+        {
+            ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
+            if (collisionChecker)
             {
-                ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
-                if (collisionChecker)
-                {
-                    THROW_VR_EXCEPTION_IF(link->getCollisionChecker() != collisionChecker,
-                                          "Collision checker of node <" + node->getName()
-                                          + "> does not match the collision checker of other nodes of model <"
-                                          + getName() + ">.");
-                }
-                else
-                {
-                    collisionChecker = link->getCollisionChecker();
-                }
+                THROW_VR_EXCEPTION_IF(link->getCollisionChecker() != collisionChecker,
+                                      "Collision checker of node <" + node->getName()
+                                      + "> does not match the collision checker of other nodes of model <"
+                                      + getName() + ">.");
+            }
+            else
+            {
+                collisionChecker = link->getCollisionChecker();
+            }
+            if (addToVisu)
+            {
                 addToVisualization(link);
             }
+        }
 
-            modelNodeMap[node->getName()] = node;
+        modelNodeMap[node->getName()] = node;
+
+        if (registerChildren)
+        {
+            for (const auto& n : node->getChildNodes())
+            {
+                registerNode(n, true);
+            }
         }
     }
 
-    void Model::deregisterModelNode(const ModelNodePtr& node)
+    void Model::deregisterNode(const ModelNodePtr& node, bool deregisterChildren)
     {
         WriteLockPtr w = getWriteLock();
+        VR_ASSERT(node);
+        if (deregisterChildren)
+        {
+            for (const auto& n : node->getChildNodes())
+            {
+                deregisterNode(n, true);
+            }
+        }
         if (node)
         {
             auto i = modelNodeMap.find(node->getName());
@@ -84,19 +104,19 @@ namespace VirtualRobot
                 modelNodeMap.erase(i);
             }
         }
-        if(ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+        if(ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
         {
             ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
             removeFromVisualization(link);
         }
     }
 
-    bool Model::hasModelNode(const ModelNodePtr& node) const
+    bool Model::hasNode(const ModelNodePtr& node) const
     {
-        return node && getModelNode(node->getName()) == node;
+        return node && getNode(node->getName()) == node;
     }
 
-    bool Model::hasModelNode(const std::string& modelNodeName) const
+    bool Model::hasNode(const std::string& modelNodeName) const
     {
         ReadLockPtr r = getReadLock();
         return (modelNodeMap.find(modelNodeName) != modelNodeMap.end());
@@ -134,13 +154,13 @@ namespace VirtualRobot
 		return (i != modelNodeMap.end() && (i->second->isJoint()) && i->second == joint);
 	}
 
-    ModelNodePtr Model::getModelNode(const std::string& modelNodeName) const
+    ModelNodePtr Model::getNode(const std::string& modelNodeName) const
     {
         ReadLockPtr r = getReadLock();
         auto search = modelNodeMap.find(modelNodeName);
         if (search == modelNodeMap.end())
         {
-            //VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
+            VR_WARNING << "No robot node with name <" << modelNodeName << "> registered." << endl;
             return RobotNodePtr();
         }
 
@@ -183,21 +203,21 @@ namespace VirtualRobot
         return res;
     }
 
-    std::vector<ModelNodePtr> Model::getModelNodes(ModelNode::ModelNodeType type) const
+    std::vector<ModelNodePtr> Model::getNodes(ModelNode::NodeType type) const
     {
         ReadLockPtr r = getReadLock();
         std::vector<ModelNodePtr> result;
-        getModelNodes(result, false, type);
+        getNodes(result, false, type);
         return result;
     }
 
-    std::vector<ModelNodePtr> Model::getModelNodes(const std::vector<std::string> &nodeNames) const
+    std::vector<ModelNodePtr> Model::getNodes(const std::vector<std::string> &nodeNames) const
     {
         std::vector<ModelNodePtr> modelNodes;
         modelNodes.reserve(nodeNames.size());
         for (size_t i = 0; i < nodeNames.size(); i++)
         {
-            ModelNodePtr node = getModelNode(nodeNames[i]);
+            ModelNodePtr node = getNode(nodeNames[i]);
             THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + nodeNames[i] + " found.");
             modelNodes.push_back(node);
         }
@@ -205,7 +225,7 @@ namespace VirtualRobot
         return modelNodes;
     }
 
-    void Model::getModelNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector, ModelNode::ModelNodeType type) const
+    void Model::getNodes(std::vector<ModelNodePtr>& storeNodes, bool clearVector, ModelNode::NodeType type) const
     {
         ReadLockPtr r = getReadLock();
         if (clearVector)
@@ -224,9 +244,9 @@ namespace VirtualRobot
         }
     }
 
-    std::vector<std::string> Model::getModelNodeNames() const
+    std::vector<std::string> Model::getNodeNames() const
     {
-        auto nodes = getModelNodes();
+        auto nodes = getNodes();
         std::vector<std::string> result(nodes.size());
         size_t i = 0;
         for(auto& s : nodes)
@@ -237,12 +257,12 @@ namespace VirtualRobot
         return result;
     }
 
-    void Model::registerModelNodeSet(const ModelNodeSetPtr& nodeSet)
+    void Model::registerNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
         if (nodeSet)
         {
-            THROW_VR_EXCEPTION_IF(hasModelNodeSet(nodeSet->getName()),
+            THROW_VR_EXCEPTION_IF(hasNodeSet(nodeSet->getName()),
                                   "There are (at least) two model node sets with name <" + nodeSet->getName()
                                   + "> defined, the second one is skipped!");
             modelNodeSetMap[nodeSet->getName()] = nodeSet;
@@ -251,15 +271,15 @@ namespace VirtualRobot
 
 	void VirtualRobot::Model::registerJointSet(const JointSetPtr & nodeSet)
 	{
-		registerModelNodeSet(nodeSet);
+        registerNodeSet(nodeSet);
 	}
 
 	void VirtualRobot::Model::registerLinkSet(const LinkSetPtr & nodeSet)
 	{
-		registerModelNodeSet(nodeSet);
+        registerNodeSet(nodeSet);
 	}
 
-    void Model::deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet)
+    void Model::deregisterNodeSet(const ModelNodeSetPtr& nodeSet)
     {
         WriteLockPtr w = getWriteLock();
         if (nodeSet)
@@ -276,21 +296,21 @@ namespace VirtualRobot
 
 	void VirtualRobot::Model::deregisterJointSet(const JointSetPtr & nodeSet)
 	{
-		deregisterModelNodeSet(nodeSet);
+        deregisterNodeSet(nodeSet);
 	}
 
 	void VirtualRobot::Model::deregisterLinkSet(const LinkSetPtr & nodeSet)
 	{
-		deregisterModelNodeSet(nodeSet);
+        deregisterNodeSet(nodeSet);
 	}
 
 
-	bool Model::hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const
+    bool Model::hasNodeSet(const ModelNodeSetPtr& nodeSet) const
 	{
-        return nodeSet && hasModelNodeSet(nodeSet->getName());
+        return nodeSet && hasNodeSet(nodeSet->getName());
 	}
 
-	bool Model::hasModelNodeSet(const std::string& name) const
+    bool Model::hasNodeSet(const std::string& name) const
 	{
 		ReadLockPtr r = getReadLock();
 		return modelNodeSetMap.find(name) != modelNodeSetMap.end();
@@ -321,7 +341,7 @@ namespace VirtualRobot
 		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<LinkSet>(mns->second));
 	}
 
-    ModelNodeSetPtr Model::getModelNodeSet(const std::string& nodeSetName) const
+    ModelNodeSetPtr Model::getNodeSet(const std::string& nodeSetName) const
     {
         ReadLockPtr r = getReadLock();
         auto search = modelNodeSetMap.find(nodeSetName);
@@ -337,7 +357,7 @@ namespace VirtualRobot
     LinkSetPtr Model::getLinkSet(const std::string& nodeSetName) const
     {
         ReadLockPtr r = getReadLock();
-        ModelNodeSetPtr res = getModelNodeSet(nodeSetName);
+        ModelNodeSetPtr res = getNodeSet(nodeSetName);
         LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
         if (!ls)
         {
@@ -349,7 +369,7 @@ namespace VirtualRobot
     JointSetPtr Model::getJointSet(const std::string& nodeSetName) const
     {
         ReadLockPtr r = getReadLock();
-        ModelNodeSetPtr res = getModelNodeSet(nodeSetName);
+        ModelNodeSetPtr res = getNodeSet(nodeSetName);
         JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
         if (!ls)
         {
@@ -418,7 +438,7 @@ namespace VirtualRobot
         return ls;
     }
 
-    std::vector<ModelNodeSetPtr> Model::getModelNodeSets() const
+    std::vector<ModelNodeSetPtr> Model::getNodeSets() const
     {
         ReadLockPtr r = getReadLock();
         std::vector<ModelNodeSetPtr> result;
@@ -455,9 +475,9 @@ namespace VirtualRobot
         return result;
     }
 
-    std::vector<std::string> Model::getModelNodeSetNames() const
+    std::vector<std::string> Model::getNodeSetNames() const
     {
-        auto sets = getModelNodeSets();
+        auto sets = getNodeSets();
         std::vector<std::string> result(sets.size());
         size_t i = 0;
         for(auto& s : sets)
@@ -500,7 +520,7 @@ namespace VirtualRobot
         {
             return;
         }
-        if (hasModelNode(node))
+        if (hasNode(node))
         {
             WriteLockPtr w = getWriteLock();
             rootNode = node;
@@ -549,7 +569,7 @@ namespace VirtualRobot
         visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
         visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
 
-        if (applyValues)
+        if (applyValues && !rootNode->getParentNode())
         {
             rootNode->updatePose(true, true);
         }
@@ -567,7 +587,7 @@ namespace VirtualRobot
         return globalPose.block<3, 1>(0, 3);
     }
 
-    void Model::setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode)
+    void Model::setGlobalPoseForNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "No node given.");
         THROW_VR_EXCEPTION_IF(!hasFrame(node), "Frame <" + node->getName() +
@@ -601,7 +621,7 @@ namespace VirtualRobot
             return res;
         }
 
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -632,8 +652,9 @@ namespace VirtualRobot
 
     void Model::attachStructure()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
-        for (const auto & node : getModelNodes())
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelStructureFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
+        for (const auto & node : getNodes())
         {
             std::string attachmentName = node->getName() + "_structure";
             ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
@@ -643,34 +664,36 @@ namespace VirtualRobot
 
     void Model::detachStructure()
     {
-        for (const auto & node : getModelNodes())
+        for (const auto & node : getNodes())
         {
             node->detach(node->getName() + "_structure");
         }
     }
 
-    void Model::attachFrames()
+    void Model::attachCoordinateSystems()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(ModelNodeAttachmentFactory::getName(), nullptr);
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(CoordinateSystemFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
         for (const auto & joint : getJoints())
         {
-            std::string attachmentName = joint->getName() + "_frame";
+            std::string attachmentName = joint->getName() + "_coordSystem";
             ModelNodeAttachmentPtr attachment = attachmentFactory->createAttachment(attachmentName, Eigen::Matrix4f::Identity());
             joint->attach(attachment);
         }
     }
 
-    void Model::detachFrames()
+    void Model::detachCoordinateSystems()
     {
         for (const auto & joint : getJoints())
         {
-            joint->detach(joint->getName() + "_frame");
+            joint->detach(joint->getName() + "_coordSystem");
         }
     }
 
     void Model::attachPhysicsInformation()
     {
-        ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
+        static ModelNodeAttachmentFactoryPtr attachmentFactory = ModelNodeAttachmentFactory::fromName(PhysicsAttachmentFactory::getName(), nullptr);
+        VR_ASSERT(attachmentFactory);
         for (auto &&link : getLinks())
         {
             if (link->getMass() <= 0)
@@ -693,7 +716,7 @@ namespace VirtualRobot
     void Model::setupVisualization(bool showVisualization)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -716,7 +739,7 @@ namespace VirtualRobot
     void Model::setUpdateCollisionModel(bool enable)
     {
         WriteLockPtr w = getWriteLock();
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
 
         for (auto iterator = modelNodes.begin(); modelNodes.end() != iterator; ++ iterator)
         {
@@ -734,7 +757,7 @@ namespace VirtualRobot
 
 	bool Model::getUpdateCollisionModel() const
 	{
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes(ModelNode::ModelNodeType::Link);
+        std::vector<ModelNodePtr> modelNodes = this->getNodes(ModelNode::NodeType::Link);
         for (auto mn : modelNodes)
 		{
 			ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(mn);
@@ -749,15 +772,15 @@ namespace VirtualRobot
         ReadLockPtr rl = getReadLock();
         ModelConfigPtr r(new ModelConfig(shared_from_this(), getName()));
 
-        std::vector<ModelNodePtr> modelNodes = this->getModelNodes();
+        std::vector<ModelNodePtr> modelNodes = this->getNodes();
         std::vector<ModelNodePtr>::const_iterator iterator = modelNodes.begin();
 
         while (modelNodes.end() != iterator)
         {
             ModelNodePtr rn = *iterator;
 
-            if (ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointPrismatic)
-                ||ModelNode::checkNodeOfType(rn, ModelNode::ModelNodeType::JointRevolute))
+            if (ModelNode::checkNodeOfType(rn, ModelNode::NodeType::JointPrismatic)
+                ||ModelNode::checkNodeOfType(rn, ModelNode::NodeType::JointRevolute))
             {
                 ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(rn);
                 r->setConfig(joint, joint->getJointValue());
@@ -784,9 +807,9 @@ namespace VirtualRobot
     {
         if (node)
         {
-            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint),
+            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint),
                                   "Can not set joint value of node <" + node->getName() + ">.");
-            THROW_VR_EXCEPTION_IF(!hasModelNode(node), "Node <" + node->getName() + "> is not part of the model.");
+            THROW_VR_EXCEPTION_IF(!hasNode(node), "Node <" + node->getName() + "> is not part of the model.");
 
             ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(node);
             joint->setJointValue(jointValue);
@@ -795,8 +818,8 @@ namespace VirtualRobot
 
     void Model::setJointValue(const std::string& nodeName, float jointValue)
     {
-        THROW_VR_EXCEPTION_IF(!hasModelNode(nodeName), "Model does not have a node with name <" + nodeName + ">.");
-        setJointValue(getModelNode(nodeName), jointValue);
+        THROW_VR_EXCEPTION_IF(!hasNode(nodeName), "Model does not have a node with name <" + nodeName + ">.");
+        setJointValue(getNode(nodeName), jointValue);
     }
 
     void Model::setJointValues(const std::map<std::string, float>& jointValues)
@@ -805,10 +828,10 @@ namespace VirtualRobot
 
         for (auto it = jointValues.begin(); it != jointValues.end(); ++it)
         {
-            THROW_VR_EXCEPTION_IF(!hasModelNode(it->first), "Node <" + it->first + "> is not part of the model.");
+            THROW_VR_EXCEPTION_IF(!hasNode(it->first), "Node <" + it->first + "> is not part of the model.");
 
-            ModelNodePtr node = getModelNode(it->first);
-            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint),
+            ModelNodePtr node = getNode(it->first);
+            THROW_VR_EXCEPTION_IF(!ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint),
                                   "Can not set joint value of node <" + node->getName() + ">.");
 
             ModelJointPtr joint = std::static_pointer_cast<ModelJoint>(node);
@@ -824,7 +847,7 @@ namespace VirtualRobot
 
         for (auto it = jointValues.begin(); it != jointValues.end(); ++it)
         {
-            THROW_VR_EXCEPTION_IF(!hasModelNode(it->first), "Node <" + it->first->getName() + "> is not part of the model.");
+            THROW_VR_EXCEPTION_IF(!hasNode(it->first), "Node <" + it->first->getName() + "> is not part of the model.");
             (it->first)->setJointValueNoUpdate(it->second);
         }
         applyJointValues();
@@ -855,7 +878,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 res += link->getNumFaces(collisionModel);
@@ -872,7 +895,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 if (collisionModel && link->getCollisionModel())
@@ -897,7 +920,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 if (link && link->getCollisionModel())
@@ -914,6 +937,17 @@ namespace VirtualRobot
         return collisionChecker;
     }
 
+    void Model::inflateCollisionModel(float inflationInMM)
+    {
+        for(auto& node : getLinks())
+        {
+            if(node->getCollisionModel())
+            {
+                node->getCollisionModel()->inflateModel(inflationInMM);
+            }
+        }
+    }
+
     float Model::getMass() const
     {
         ReadLockPtr r = getReadLock();
@@ -921,7 +955,7 @@ namespace VirtualRobot
 
         for (auto it = modelNodeMap.begin(); it != modelNodeMap.end(); ++it)
         {
-            if (ModelNode::checkNodeOfType(it->second, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(it->second, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(it->second);
                 mass += link->getMass();
@@ -940,7 +974,7 @@ namespace VirtualRobot
                                     float scaling) const
     {
         ReadLockPtr r = getReadLock();
-        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(!hasNode(startNode), " StartJoint is not part of this robot");
         THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
         ModelPtr result(new Model(newModelName, newModelType));
@@ -948,50 +982,63 @@ namespace VirtualRobot
         return result;
     }
 
-    void Model::attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode)
+    void Model::attachModelTo(const ModelPtr &newModel, const ModelNodePtr& existingNode)
     {
         WriteLockPtr w = getWriteLock();
-        THROW_VR_EXCEPTION_IF(!hasModelNode(existingNode), "Model does not have node <" + existingNode->getName() + ">.");
-        if (!hasModelNode(newNode))
+        VR_ASSERT(existingNode);
+        THROW_VR_EXCEPTION_IF(!hasNode(existingNode), "Model does not have node <" + existingNode->getName() + ">.");
+        if (!isModelAttached(newModel))
         {
-            registerModelNode(newNode);
+            auto newNode = newModel->getRootNode();
+            THROW_VR_EXCEPTION_IF(newNode->getParentNode(), "The model <" + newModel->getName() + "> is already attached to a model.");
+            oldLocalTransformOfAttachedModels.insert({newModel, newNode->getLocalTransformation()});
+            newNode->setLocalTransformation(getGlobalPose().inverse() * newNode->getGlobalPose());
+            registerNode(newNode, true, false);
+            existingNode->attachChild(newNode);
         }
-        existingNode->attachChild(newNode);
     }
 
-    void Model::attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName)
+    void Model::detachModel(const ModelPtr &model)
     {
         WriteLockPtr w = getWriteLock();
-        THROW_VR_EXCEPTION_IF(!hasModelNode(existingNodeName), "Model does not have node <" + existingNodeName + ">.");
-        attachNodeTo(newNode, getModelNode(existingNodeName));
-    }
-
-    void Model::detachNode(const ModelNodePtr& node)
-    {
-        WriteLockPtr w = getWriteLock();
-        if (hasModelNode(node))
+        if (isModelAttached(model))
         {
+            auto node = model->getRootNode();
             ModelNodePtr parent = node->getParentNode();
-
-            std::vector<ModelNodePtr> toDetach;
-            node->collectAllNodes(toDetach);
-
+            VR_ASSERT(hasNode(parent));
             parent->detachChild(node);
+            deregisterNode(node, true);
+            node->setLocalTransformation(oldLocalTransformOfAttachedModels.at(model));
+            oldLocalTransformOfAttachedModels.erase(model);
+        }
+    }
 
-            for (ModelNodePtr n : toDetach)
+    bool Model::isModelAttached(const ModelPtr &model) const
+    {
+        return oldLocalTransformOfAttachedModels.find(model) != oldLocalTransformOfAttachedModels.end();
+    }
+
+    std::vector<ModelPtr> Model::getAttachedModels() const
+    {
+        std::vector<ModelPtr> models;
+        std::transform(
+            oldLocalTransformOfAttachedModels.begin(),
+            oldLocalTransformOfAttachedModels.end(),
+            std::back_inserter(models),
+            [](const std::map<ModelPtr,Eigen::Matrix4f>::value_type &pair){return pair.first;});
+        return models;
+    }
+
+    ModelPtr Model::getAttachedModel(const std::string &name) const
+    {
+        for (const auto& mp : oldLocalTransformOfAttachedModels)
+        {
+            if (mp.first->getName() == name)
             {
-                deregisterModelNode(n);
+                return mp.first;
             }
         }
-    }
-
-    void Model::detachNode(const std::string& nodeName)
-    {
-        ReadLockPtr r = getReadLock();
-        if (hasModelNode(nodeName))
-        {
-            detachNode(getModelNode(nodeName));
-        }
+        return nullptr;
     }
 
     void Model::setFilename(const std::string& filename)
@@ -1012,7 +1059,7 @@ namespace VirtualRobot
         std::stringstream ss;
         //ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
         ss << "<Model Type='" << this->type << "' RootNode='" << this->getRootNode()->getName() << "'>" << endl << endl;
-        std::vector<ModelNodePtr> nodes = getModelNodes();
+        std::vector<ModelNodePtr> nodes = getNodes();
 
         for (size_t i = 0; i < nodes.size(); i++)
         {
@@ -1023,7 +1070,7 @@ namespace VirtualRobot
 
         if (storeRNS)
         {
-            std::vector<RobotNodeSetPtr> rns = this->getModelNodeSets();
+            std::vector<RobotNodeSetPtr> rns = this->getNodeSets();
 
             for (size_t i = 0; i < rns.size(); i++)
             {
@@ -1080,7 +1127,7 @@ namespace VirtualRobot
 
         std::cout << std::endl;
 
-        std::vector<RobotNodeSetPtr> nodeSets = this->getModelNodeSets();
+        std::vector<RobotNodeSetPtr> nodeSets = this->getNodeSets();
 
         if (nodeSets.size() > 0)
         {
@@ -1206,7 +1253,7 @@ namespace VirtualRobot
     VisualizationSetPtr Model::getAllAttachmentVisualizations() const
     {
         VisualizationSetPtr ret(VirtualRobot::VisualizationFactory::getInstance()->createVisualisationSet({}));
-        for (const auto & node : getModelNodes())
+        for (const auto & node : getNodes())
         {
             for (const auto & attachement : node->getAttachmentsWithVisualisation())
             {
@@ -1253,7 +1300,7 @@ namespace VirtualRobot
         ReadLockPtr r = getReadLock();
         VR_ASSERT(newModel);
         VR_ASSERT(startNode);
-        THROW_VR_EXCEPTION_IF(!hasModelNode(startNode), " StartJoint is not part of this robot");
+        THROW_VR_EXCEPTION_IF(!hasNode(startNode), " StartJoint is not part of this robot");
         THROW_VR_EXCEPTION_IF(scaling <= 0, " Scaling must be >0.");
 
         CollisionCheckerPtr colChecker = collisionChecker;
@@ -1268,7 +1315,7 @@ namespace VirtualRobot
         newModel->setRootNode(rootNew);
         newModel->setScaling(scaling);
 
-        std::vector<ModelNodePtr> rn = newModel->getModelNodes();
+        std::vector<ModelNodePtr> rn = newModel->getNodes();
 
         // check for RNS that are covered by subpart
         if (cloneRNS)
@@ -1300,9 +1347,9 @@ namespace VirtualRobot
                     }
 
                     ModelNodeSetPtr rns = it->second->clone(newModel);
-                    if (rns && !newModel->hasModelNodeSet(rns))
+                    if (rns && !newModel->hasNodeSet(rns))
                     {
-                        newModel->registerModelNodeSet(rns);
+                        newModel->registerNodeSet(rns);
                     }
                 }
             }
@@ -1327,11 +1374,11 @@ namespace VirtualRobot
 
 
         std::vector<ModelNodePtr> allNodes;
-        startNode->collectAllNodes(allNodes, ModelNode::ModelNodeType::Joint);
+        startNode->collectAllNodes(allNodes, ModelNode::NodeType::Joint);
 
         for (size_t i = 0; i < allNodes.size(); i++)
         {
-            ModelNodePtr roN = newModel->getModelNode(allNodes[i]->getName());
+            ModelNodePtr roN = newModel->getNode(allNodes[i]->getName());
 
             if (roN)
             {

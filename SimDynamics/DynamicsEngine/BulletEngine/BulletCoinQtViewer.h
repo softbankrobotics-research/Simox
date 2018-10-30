@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _SimDynamics_BulletCoinQtViewer_h_
-#define _SimDynamics_BulletCoinQtViewer_h_
+#pragma once
 
 #include "../../SimDynamics.h"
 #include "../../DynamicsWorld.h"
@@ -33,9 +32,6 @@
 
 #include <Gui/AbstractViewer.h>
 #include <Gui/Coin/CoinViewer.h>
-
-//todo: use qtimer
-#include <Inventor/sensors/SoTimerSensor.h>
 
 #include <QtCore/QtGlobal>
 #include <QtGui/QtGui>
@@ -54,6 +50,13 @@ namespace SimDynamics
     public:
         BulletCoinQtViewer(QWidget* parent, DynamicsWorldPtr world, int antiAliasingSteps = 0);
         virtual ~BulletCoinQtViewer();
+
+        /*!
+            Call this method to initialize the 3d viewer.
+            \param embedViewer The 3d viewer will be embedded in this QFrame.
+            \param antiAliasingSteps If >0, anti aliasing is enabled. The parameter defines the number of rendering steps. This may slow down rendering on old gfx cards.
+        */
+        virtual void initSceneGraph(QWidget* embedViewer, int antiAliasingSteps = 0);
 
         /*!
             In this mode, the time between two updates is measures and the engine is stepped accordingly. (standard)
@@ -162,31 +165,7 @@ namespace SimDynamics
          */
         void addStepCallback(BulletStepCallback callback, void* data);
 
-        //! If set, all actions are protected with this mutex
-        virtual void setMutex(std::shared_ptr<std::recursive_mutex> engineMutexPtr);
-
-        typedef std::shared_ptr< std::unique_lock<std::recursive_mutex> > MutexLockPtr;
-
-        /*!
-        This lock can be used to protect data access. It locks the mutex until deletion.
-        If no mutex was specified, an empty lock will be returned which does not protect the engine calls (this is the standard behavior).
-        \see setMutex
-
-        Exemplary usage:
-        {
-            MutexLockPtr lock = getScopedLock();
-            // now the mutex is locked
-
-            // access data
-            // ...
-
-        } // end of scope -> lock gets deleted and mutex is released automatically
-        */
-        MutexLockPtr getScopedLock();
-
     protected:
-
-        void initSceneGraph(QWidget* parent, int antiAliasingSteps = 0);
 
         //checks if physics engine is enabled and performes a time step.
         virtual void updatePhysics();
@@ -250,4 +229,3 @@ namespace SimDynamics
 
 } // namespace
 
-#endif

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_cspacetree_h
-#define _MotionPlanning_cspacetree_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include <iostream>
@@ -188,4 +187,3 @@ namespace MotionPlanning
 
 } // namespace MotionPlanning
 
-#endif // _MotionPlanning_cspacetree_h

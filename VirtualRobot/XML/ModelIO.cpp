@@ -115,12 +115,12 @@ namespace VirtualRobot
             } else
             {
                 sensorAttached = attr->value();
-                if (!robot->hasModelNode(sensorAttached))
+                if (!robot->hasNode(sensorAttached))
                 {
                     VR_WARNING << "Attached node " << sensorAttached << " not available in model " << robot->getName() << "!" << endl;
                     return false;
                 }
-                attachedToModelNode = robot->getModelNode(sensorAttached);
+                attachedToModelNode = robot->getNode(sensorAttached);
             }
         }
         else
@@ -224,7 +224,24 @@ namespace VirtualRobot
 
             in.close();
 
-            res = createRobotModelFromString(robotXML, basePath, loadMode);
+            VR_INFO << "Trying to load Simox v3 xml." << std::endl;
+            try
+            {
+                res = createRobotModelFromString(robotXML, basePath, loadMode);
+            }
+            catch (VirtualRobotException& e)
+            {
+                VR_ERROR << e.what() << std::endl;
+            }
+            catch (...)
+            {
+            }
+
+            if (!res)
+            {
+                VR_INFO << "Failed. Trying to load Simox v2 xml." << std::endl;
+                res = SimoxXMLFactory::createRobotFromSimoxXMLString(robotXML, basePath, loadMode);
+            }
         }
 
         if (!res)
@@ -479,7 +496,7 @@ namespace VirtualRobot
 
         if (!rootNodeName.empty())
         {
-            kinRoot = robo->getModelNode(rootNodeName);
+            kinRoot = robo->getNode(rootNodeName);
         }
 
         FramePtr tcp;
@@ -496,7 +513,7 @@ namespace VirtualRobot
         else if (nodeSetType == "linkset")
             rns = LinkSet::createLinkSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
         else
-            rns = ModelNodeSet::createModelNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
+            rns = ModelNodeSet::createNodeSet(robo, nodeSetName, nodeList, kinRoot, tcp, true);
 
         return rns;
     }
@@ -1372,8 +1389,8 @@ namespace VirtualRobot
                 std::string nameStr("node");
                 std::string parentNodeName = BaseIO::processStringAttribute(nameStr, node, false);
                 THROW_VR_EXCEPTION_IF(parentNodeName.empty(), "Parent name must not be empty");
-                THROW_VR_EXCEPTION_IF(!robo->hasModelNode(parentNodeName), "Robot does not node model node with name " + parentNodeName + " in frame " + frameName);
-                parentNode = robo->getModelNode(parentNodeName);
+                THROW_VR_EXCEPTION_IF(!robo->hasNode(parentNodeName), "Robot does not node model node with name " + parentNodeName + " in frame " + frameName);
+                parentNode = robo->getNode(parentNodeName);
             } else
             {
                 THROW_VR_EXCEPTION("XML definition <" << nodeName << "> not supported in Frame <" << frameName << ">." << endl);
@@ -1384,8 +1401,8 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!parentNode, "No parent given in frame " << frameName);
 
         THROW_VR_EXCEPTION_IF(robo->hasFrame(frameName), "Frame names must be unique. Frame with name " << frameName << " already present in robot " << robo->getName());
-        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("modelnodeattachment", nullptr);
-        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate ModelNodeAttachment factory for creating frames...");
+        ModelNodeAttachmentFactoryPtr mff = ModelNodeAttachmentFactory::fromName("FrameAttachment", nullptr);
+        THROW_VR_EXCEPTION_IF(!mff, "Could not instanciate FrameAttachment factory for creating frames...");
 
         ModelNodeAttachmentPtr mf = mff->createAttachment(frameName, transformMatrix);
 

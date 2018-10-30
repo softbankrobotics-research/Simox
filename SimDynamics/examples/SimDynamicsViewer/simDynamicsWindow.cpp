@@ -262,7 +262,7 @@ void SimDynamicsWindow::updateJoints()
 
     robotNodes.clear();
     UI.comboBoxRobotNode->clear();
-    std::vector<RobotNodePtr> nodes = robot->getModelNodes();
+    std::vector<RobotNodePtr> nodes = robot->getNodes();
 
     for (size_t i = 0; i < nodes.size(); i++)
     {
@@ -736,8 +736,8 @@ void SimDynamicsWindow::updateRobotInfo()
     UI.label_RootNodePos->setText(QString::number(rpos(0), 'f', 2) + " / " + QString::number(rpos(1), 'f', 2) + " / " + QString::number(rpos(2), 'f', 2));
     UI.label_RootNodeRPY->setText(QString::number(rrpy(0), 'f', 2) + " / " + QString::number(rrpy(1), 'f', 2) + " / " + QString::number(rrpy(2), 'f', 2));
 
-    Eigen::Vector3f rltpos = robot->getRootNode()->getStaticTransformation().block<3,1>(0,3);
-    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getStaticTransformation());
+    Eigen::Vector3f rltpos = robot->getRootNode()->getLocalTransformation().block<3,1>(0,3);
+    Eigen::Vector3f rltrpy = VirtualRobot::MathTools::eigen4f2rpy(robot->getRootNode()->getLocalTransformation());
     UI.label_RootLocalTransfPos->setText(QString::number(rltpos(0), 'f', 2) + " / " + QString::number(rltpos(1), 'f', 2) + " / " + QString::number(rltpos(2), 'f', 2));
     UI.label_RootLocalTransfRPY->setText(QString::number(rltrpy(0), 'f', 2) + " / " + QString::number(rltrpy(1), 'f', 2) + " / " + QString::number(rltrpy(2), 'f', 2));
 }

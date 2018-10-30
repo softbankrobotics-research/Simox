@@ -24,12 +24,12 @@ namespace VirtualRobot
     {
     }
 
-    bool OffscreenRenderer::renderOffscreen(const Eigen::Matrix4f&, const std::vector<VisualizationPtr>&, unsigned short, unsigned short, bool, std::vector<unsigned char>&, bool, std::vector<float>&, bool, std::vector<Eigen::Vector3f>&, float, float, float, float) const
+    bool OffscreenRenderer::renderOffscreen(const Eigen::Matrix4f&, const std::vector<VisualizationPtr>&, unsigned short, unsigned short, bool, std::vector<unsigned char>&, bool, std::vector<float>&, bool, std::vector<Eigen::Vector3f>&, float, float, float, float, VirtualRobot::Visualization::Color) const
     {
         return false;
     }
 
-    bool OffscreenRenderer::renderOffscreenRgbImage(const Eigen::Matrix4f &cameraPose, const std::vector<VisualizationPtr> &scene, unsigned short width, unsigned short height, std::vector<unsigned char> &rgbImage, float zNear, float zFar, float vertFov, float nanValue) const
+    bool OffscreenRenderer::renderOffscreenRgbImage(const Eigen::Matrix4f &cameraPose, const std::vector<VisualizationPtr> &scene, unsigned short width, unsigned short height, std::vector<unsigned char> &rgbImage, float zNear, float zFar, float vertFov, float nanValue, VirtualRobot::Visualization::Color backgroundColor) const
     {
         auto depthImage = std::vector<float>();
         auto pointCloud = std::vector<Eigen::Vector3f>();
@@ -38,7 +38,8 @@ namespace VirtualRobot
                                true, rgbImage,
                                false, depthImage,
                                false, pointCloud,
-                               zNear, zFar, vertFov, nanValue);
+                               zNear, zFar, vertFov, nanValue,
+                               backgroundColor);
     }
 
     bool OffscreenRenderer::renderOffscreenDepthImage(const Eigen::Matrix4f &cameraPose, const std::vector<VisualizationPtr> &scene, unsigned short width, unsigned short height, std::vector<float> &depthImage, float zNear, float zFar, float vertFov, float nanValue) const

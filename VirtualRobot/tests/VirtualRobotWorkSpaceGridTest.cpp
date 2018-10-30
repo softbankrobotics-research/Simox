@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
     BOOST_REQUIRE(joint1);
     VirtualRobot::FramePtr tcp = rob->getFrame("tcp");
     BOOST_REQUIRE(tcp);
-    VirtualRobot::RobotNodePtr rootNode = rob->getModelNode("root");
+    VirtualRobot::RobotNodePtr rootNode = rob->getNode("root");
     BOOST_REQUIRE(rootNode);
 
     // CHECK ROBOT WORKSPACE

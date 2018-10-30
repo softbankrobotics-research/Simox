@@ -20,12 +20,12 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_PlanningThread_h
-#define _MotionPlanning_PlanningThread_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpaceSampled.h"
 #include "../CSpace/CSpacePath.h"
+#include <VirtualRobot/VirtualRobot.h>
 #include "VirtualRobot/Model/Model.h"
 #include "MotionPlanner.h"
 
@@ -95,4 +95,3 @@ namespace MotionPlanning
     };
 
 }
-#endif // _MotionPlanning_PlanningThread_h

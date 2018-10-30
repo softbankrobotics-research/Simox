@@ -1,17 +1,16 @@
-#ifndef __GraspRrt_WINDOW_H__
-#define __GraspRrt_WINDOW_H__
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
-#include "GraspPlanning/GraspPlanning.h"
-#include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
+#include <GraspPlanning/GraspPlanning.h>
+#include <GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h>
 
 #include "MotionPlanning/MotionPlanning.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
@@ -21,8 +20,7 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/ViewerFactory.h>
 
 #include <vector>
 
@@ -36,7 +34,7 @@ public:
                    const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                    const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
                    const std::string& colModelEnv);
-    ~GraspRrtWindow();
+    ~GraspRrtWindow() override;
 
     void redraw();
 public slots:
@@ -44,7 +42,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void loadSceneWindow();
 
@@ -84,8 +82,11 @@ protected:
 
     planSet planSetA, planSetB;
 
+
     void loadScene();
+
     void setupUI();
+    QString formatString(const char* s, float f);
     void buildRRTVisu();
     void selectStart(const std::string& conf);
     void selectTargetObject(const std::string& conf);
@@ -132,4 +133,3 @@ protected:
     MotionPlanning::CSpaceSampledPtr test_cspace;
 };
 
-#endif

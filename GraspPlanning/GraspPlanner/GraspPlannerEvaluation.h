@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __GENERAL_GRASP_PLANNER_EVALUATION_H__
-#define __GENERAL_GRASP_PLANNER_EVALUATION_H__
+#pragma once
 
 #include "../GraspPlanning.h"
 #include <vector>
@@ -194,4 +193,3 @@ struct GRASPPLANNING_IMPORT_EXPORT GraspPlannerEvaluation
 
 }
 
-#endif

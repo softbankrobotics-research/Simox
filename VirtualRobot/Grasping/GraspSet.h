@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_GraspSet_h_
-#define _VirtualRobot_GraspSet_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "VirtualRobot/CollisionDetection/CollisionModel.h"
@@ -101,4 +100,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_GraspSet_h_

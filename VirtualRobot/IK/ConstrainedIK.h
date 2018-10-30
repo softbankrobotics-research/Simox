@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedIK_h_
-#define _VirtualRobot_ConstrainedIK_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -47,7 +46,8 @@ namespace VirtualRobot
         };
 
     public:
-        ConstrainedIK(ModelPtr& robot, const JointSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001, float raise_epsilon = 0.8);// , bool reduceRobot = false);
+        ConstrainedIK(ModelPtr& robot, const JointSetPtr& nodeSet, int maxIterations = 1000, float stall_epsilon = 0.0001f, float raise_epsilon = 0.8f);// , bool reduceRobot = false);
+        virtual ~ConstrainedIK() = default;
 
         void addConstraint(const ConstraintPtr& constraint, int priority = 0, bool hard_constraint = true);
         void removeConstraint(const ConstraintPtr& constraint);
@@ -94,4 +94,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ConstrainedIK> ConstrainedIKPtr;
 }
 
-#endif

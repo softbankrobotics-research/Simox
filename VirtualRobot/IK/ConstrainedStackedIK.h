@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ConstrainedStackedIK_h_
-#define _VirtualRobot_ConstrainedStackedIK_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/ConstrainedIK.h"
@@ -35,13 +34,13 @@ namespace VirtualRobot
     public:
         ConstrainedStackedIK(RobotPtr& robot, const JointSetPtr& nodeSet, float stepSize = 0.2f, int maxIterations = 1000,
                              JacobiProvider::InverseJacobiMethod method = JacobiProvider::eSVD);
+        ~ConstrainedStackedIK() override = default;
 
-        virtual bool initialize() override;
+        bool initialize() override;
 
-        virtual bool solveStep() override;
+        bool solveStep() override;
 
     protected:
-        JointSetPtr nodeSet;
         StackedIKPtr ik;
 
         std::vector<JacobiProviderPtr> jacobians;
@@ -54,4 +53,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ConstrainedStackedIK> ConstrainedStackedIKPtr;
 }
 
-#endif

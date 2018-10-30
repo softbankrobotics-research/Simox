@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_ReferenceConfigurationConstraint_h_
-#define _VirtualRobot_ReferenceConfigurationConstraint_h_
+#pragma once
 
 #include "VirtualRobot/IK/Constraint.h"
 
@@ -37,8 +36,8 @@ namespace VirtualRobot
         void setReferenceConfiguration(const Eigen::VectorXf &config);
         Eigen::VectorXf getReferenceConfiguration();
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
 
     protected:
         ModelPtr robot;
@@ -49,4 +48,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ReferenceConfigurationConstraint> ReferenceConfigurationConstraintPtr;
 }
 
-#endif

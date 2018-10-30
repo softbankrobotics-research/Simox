@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Scene_h_
-#define _VirtualRobot_Scene_h_
+#pragma once
 
 #include "Model/Model.h"
 #include "Model/Nodes/ModelLink.h"
@@ -66,7 +65,7 @@ namespace VirtualRobot
         bool hasRobot(RobotPtr robot) const;
         bool hasRobot(const std::string& name) const;
 
-        RobotPtr getRobot(const std::string& name);
+        RobotPtr getRobot(const std::string& name) const;
 
         std::vector< RobotPtr > getRobots() const;
 
@@ -122,7 +121,7 @@ namespace VirtualRobot
         bool hasObstacle(ObstaclePtr obstacle) const;
         bool hasObstacle(const std::string& name) const;
 
-        ObstaclePtr getObstacle(const std::string& name);
+        ObstaclePtr getObstacle(const std::string& name) const;
 
         std::vector< ObstaclePtr > getObstacles() const;
 
@@ -147,13 +146,13 @@ namespace VirtualRobot
 
         void registerModelSet(const ModelSetPtr modelSet);
         void deRegisterModelSet(const std::string &name);
-        bool hasModelSet(const std::string &name);
+        bool hasModelSet(const std::string &name) const;
 
-        std::vector<ModelSetPtr> getModelSets();
-        ModelSetPtr getModelSet(const std::string & name);
+        std::vector<ModelSetPtr> getModelSets() const;
+        ModelSetPtr getModelSet(const std::string & name) const;
 
 
-        ModelNodeSetPtr getModelNodeSet(const std::string& robot, const std::string rns);
+        ModelNodeSetPtr getNodeSet(const std::string& robot, const std::string rns) const;
 
         std::string getName() const;
 
@@ -182,4 +181,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_Scene_h_

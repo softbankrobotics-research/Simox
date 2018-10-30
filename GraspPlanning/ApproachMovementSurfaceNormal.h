@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H_
-#define _GRASP_PLANNING_APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H_
+#pragma once
 
 #include "GraspPlanning.h"
 #include "ApproachMovementGenerator.h"
@@ -54,10 +53,10 @@ namespace GraspPlanning
         */
         ApproachMovementSurfaceNormal(const VirtualRobot::ModelPtr &object, const VirtualRobot::EndEffectorPtr &eef, const std::string& graspPreshape = "", float maxRandDist = 0.0f);
         //! destructor
-        virtual ~ApproachMovementSurfaceNormal();
+        ~ApproachMovementSurfaceNormal() override;
 
         //! Creates a new pose for approaching
-        virtual Eigen::Matrix4f createNewApproachPose() override;
+        Eigen::Matrix4f createNewApproachPose() override;
 
         //!  Returns a position with normal on the surface of the object
         bool getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir);
@@ -77,4 +76,3 @@ namespace GraspPlanning
     };
 }
 
-#endif /* __APPROACH_MOVEMENT_GENERATOR_SURFACE_NORMAL_H__ */

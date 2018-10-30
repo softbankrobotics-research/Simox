@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_WorkspaceDataArray_h_
-#define _VirtualRobot_WorkspaceDataArray_h_
+#pragma once
 
 #include "WorkspaceData.h"
 #include "../Model/Model.h"
@@ -58,22 +57,22 @@ namespace VirtualRobot
         //! create Workspace out of file
         WorkspaceDataArray(std::ofstream& file);
 
-        ~WorkspaceDataArray();
+        ~WorkspaceDataArray() override;
 
         //! Return the amount of data in bytes
-        virtual unsigned int getSizeTr() const override;
-        virtual unsigned int getSizeRot() const override;
+        unsigned int getSizeTr() const override;
+        unsigned int getSizeRot() const override;
 
-        virtual void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) override;
+        void setDatum(float x[], unsigned char value, const WorkspaceRepresentation* workspace) override;
 
-        virtual void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
+        void setDatum(unsigned int x0, unsigned int x1, unsigned int x2,
                              unsigned int x3, unsigned int x4, unsigned int x5, unsigned char value) override;
 
-        virtual void setDatum(unsigned int x[6], unsigned char value) override;
+        inline void setDatum(unsigned int x[6], unsigned char value) override;
 
-        virtual void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) override;
+        void setDatumCheckNeighbors(unsigned int x[6], unsigned char value, unsigned int neighborVoxels) override;
 
-        virtual void increaseDatum(float x[], const WorkspaceRepresentation* workspace) override;
+        void increaseDatum(float x[], const WorkspaceRepresentation* workspace) override;
 
         inline void increaseDatum(unsigned int x0, unsigned int x1, unsigned int x2,
                                   unsigned int x3, unsigned int x4, unsigned int x5);
@@ -82,44 +81,44 @@ namespace VirtualRobot
         /*!
             Set rotation data for given x,y,z position.
         */
-        virtual void setDataRot(unsigned char* data, unsigned int x, unsigned int y, unsigned int z) override;
+        void setDataRot(unsigned char* data, unsigned int x, unsigned int y, unsigned int z) override;
         /*!
             Get rotation data for given x,y,z position.
         */
-        virtual const unsigned char* getDataRot(unsigned int x, unsigned int y, unsigned int z) override;
+        const unsigned char* getDataRot(unsigned int x, unsigned int y, unsigned int z) override;
 
-        virtual unsigned char get(float x[], const WorkspaceRepresentation* workspace) override;
+        unsigned char get(float x[], const WorkspaceRepresentation* workspace) override;
 
         int getMaxSummedAngleReachablity();
 
         //! Simulates a multi-dimensional array access
-        virtual inline unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
+        inline unsigned char get(unsigned int x0, unsigned int x1, unsigned int x2,
                                  unsigned int x3, unsigned int x4, unsigned int x5) override;
 
         //! Simulates a multi-dimensional array access
-        virtual inline unsigned char get(unsigned int x[6]) override;
+        inline unsigned char get(unsigned int x[6]) override;
 
-        virtual bool hasEntry(unsigned int x, unsigned int y, unsigned int z) override;
+        bool hasEntry(unsigned int x, unsigned int y, unsigned int z) override;
 
         // Set all entries to 0
-        virtual void clear() override;
-        virtual void binarize() override;
+        void clear() override;
+        void binarize() override;
 
-        virtual void bisectData() override;
+        void bisectData() override;
 
-        virtual unsigned int getSize(int dim) override
+        unsigned int getSize(int dim) override
         {
             return sizes[dim];
         }
 
-        virtual unsigned char** getRawData() override
+        unsigned char** getRawData() override
         {
             return data;
         }
 
-        virtual WorkspaceData* clone() override;
+        WorkspaceData* clone() override;
 
-        virtual bool save(std::ofstream& file) override;
+        bool save(std::ofstream& file) override;
     protected:
 
         void ensureData(unsigned int x, unsigned int y, unsigned int z);
@@ -150,4 +149,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _WorkspaceData_h_

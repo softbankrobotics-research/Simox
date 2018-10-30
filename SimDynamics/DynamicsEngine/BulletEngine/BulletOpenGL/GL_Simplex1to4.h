@@ -12,8 +12,7 @@ subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
-#ifndef GL_SIMPLEX_1TO4_H
-#define GL_SIMPLEX_1TO4_H
+#pragma once
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
@@ -31,7 +30,7 @@ class GL_Simplex1to4 : public btBU_Simplex1to4
 public:
 
     GL_Simplex1to4();
-    virtual ~GL_Simplex1to4();
+    ~GL_Simplex1to4() override;
 
     void    calcClosest(btScalar* m);
 
@@ -42,4 +41,3 @@ public:
 
 };
 
-#endif //GL_SIMPLEX_1TO4_H

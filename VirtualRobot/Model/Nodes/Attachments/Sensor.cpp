@@ -12,22 +12,5 @@ namespace VirtualRobot
     Sensor::~Sensor()
     {
     }
-
-
-    bool Sensor::isAttachable(const ModelNodePtr &node)
-    {
-        return true;
-    }
-
-    std::string Sensor::getType()
-    {
-        return "Sensor";
-    }
-
-    ModelNodeAttachmentPtr Sensor::clone()
-    {
-        ModelNodeAttachmentPtr result(new Sensor(name, localTransformation));
-        return result;
-    }
 }
 

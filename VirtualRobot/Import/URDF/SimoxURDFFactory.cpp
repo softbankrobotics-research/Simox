@@ -168,6 +168,12 @@ namespace VirtualRobot
 
     std::string SimoxURDFFactory::getFilename(const std::string& f, const string &basePath)
     {
+        if (f.find(basePath) == 0)
+        {
+            //f is already absolute
+            return f;
+        }
+
         std::string result = f;
 
         std::string part1 = result.substr(0, 10);
@@ -381,7 +387,7 @@ namespace VirtualRobot
 
         result.reset(new ModelLink(robo, name, preJointTransform, rnVisu, rnCol, physics));
 
-        robo->registerModelNode(result);
+        robo->registerNode(result);
 
         return result;
     }
@@ -444,7 +450,7 @@ namespace VirtualRobot
             result->setMaxTorque(urdfJoint->limits->effort);
         }
 
-        robo->registerModelNode(result);
+        robo->registerNode(result);
         return result;
     }
 

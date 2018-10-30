@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_EndEffector_h_
-#define _VirtualRobot_EndEffector_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -174,7 +173,7 @@ namespace VirtualRobot
         RobotConfigPtr getConfiguration() const;
 
         //! Return all associated model nodes
-        std::vector< ModelNodePtr > getModelNodes() const;
+        std::vector< ModelNodePtr > getNodes() const;
         //! Return all associated links
         std::vector< ModelLinkPtr > getLinks() const;
         //! Return all associated joints
@@ -209,4 +208,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_EndEffector_h_

@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotRobotMacro)
     BOOST_REQUIRE(rob);
 
     const std::string node = "Joint1";
-    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node);
+    VirtualRobot::RobotNodePtr r1 = rob->getNode(node);
     BOOST_REQUIRE(r1);
 }
 

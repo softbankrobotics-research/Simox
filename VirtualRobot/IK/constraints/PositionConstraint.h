@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef _VirtualRobot_PositionConstraint_h_
-#define _VirtualRobot_PositionConstraint_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/Constraint.h"
@@ -36,13 +35,13 @@ namespace VirtualRobot
         PositionConstraint(const ModelPtr& robot, const JointSetPtr& nodeSet, const FramePtr& eef, const Eigen::Vector3f& target,
                        IKSolver::CartesianSelection cartesianSelection = IKSolver::All, float tolerance = 3.0f);
 
-        virtual double optimizationFunction(unsigned int id) override;
-        virtual Eigen::VectorXf optimizationGradient(unsigned int id) override;
-        virtual bool checkTolerances() override;
+        double optimizationFunction(unsigned int id) override;
+        Eigen::VectorXf optimizationGradient(unsigned int id) override;
+        bool checkTolerances() override;
 
         Eigen::Vector3f getTarget() const;
 
-        virtual VisualizationPtr getVisualization() const override;
+        VisualizationPtr getVisualization() const override;
 
     protected:
         RobotPtr robot;
@@ -58,5 +57,4 @@ namespace VirtualRobot
     typedef std::shared_ptr<PositionConstraint> PositionConstraintPtr;
 }
 
-#endif
 

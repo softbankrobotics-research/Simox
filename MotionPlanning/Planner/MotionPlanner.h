@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_MotionPlanner_h
-#define _MotionPlanning_MotionPlanner_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include "../CSpace/CSpace.h"
@@ -134,6 +133,8 @@ namespace MotionPlanning
         //! returns true, when start and goal config have been set
         virtual bool isInitialized();
 
+        void setPlanningTimeout(float timeoutMs);
+
     protected:
 
         //! create the solution
@@ -156,7 +157,7 @@ namespace MotionPlanning
         std::string name;                   //!< Name of this planner (standard: "Motion Planner")
 
         float planningTime;                 //! Planning time in milliseconds
+        float planningTimeout;              //! Timeout after which the planning aboits
     };
 }
 
-#endif // _MotionPlanning_MotionPlanner_

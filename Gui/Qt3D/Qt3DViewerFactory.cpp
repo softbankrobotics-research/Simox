@@ -31,3 +31,8 @@ namespace SimoxGui
         return Qt3DViewerPtr(new Qt3DViewer(parent));
     }
 }
+
+
+SimoxGui::CameraConfigurationPtr SimoxGui::Qt3DViewerFactory::createCameraConfiguration() const
+{
+}

@@ -21,32 +21,32 @@
 *
 */
 
-#ifndef SIMOX_PHYSICSATTACHMENT_H
-#define SIMOX_PHYSICSATTACHMENT_H
+#pragma once
 
-#include "ModelNodeAttachment.h"
+#include "CustomVisualizationAttachment.h"
 
 namespace VirtualRobot
 {
     /**
      * An attachment visualizing the CoM and/or the inertia tensor when attached to a ModelLink.
      */
-    class PhysicsAttachment : public ModelNodeAttachment
+    class PhysicsAttachment : public CustomVisualizationAttachment
     {
-        friend class ModelNode;
         friend class PhysicsAttachmentFactory;
 
     public:
         PhysicsAttachment(const std::string &name, const Eigen::Matrix4f &localTransformation);
 
-        void enableVisualization(bool CoM, bool inertia);
-
-        /**
-         * Attaches this attachment to the given node.
-         * @param node the node.
-         * @return true, if the given node is a ModelLink, false otherwise.
+        /*!
+         * Get the type of this attachment.
+         * This is used to separate different attached attachments.
+         *
+         * @return "PhysicsAttachment".
          */
-        bool isAttachable(const ModelNodePtr &node) override;
+        virtual std::string getType() const override;
+        virtual ModelNodeAttachmentPtr clone() const override;
+
+        void enableVisualization(bool CoM, bool inertia);
 
     protected:
         void setParent(const ModelNodePtr &node) override;
@@ -57,5 +57,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<PhysicsAttachment> PhysicsAttachmentPtr;
 }
-
-#endif //SIMOX_PHYSICSATTACHMENT_H

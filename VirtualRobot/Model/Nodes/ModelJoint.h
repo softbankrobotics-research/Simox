@@ -20,11 +20,11 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJoint_h_
-#define _VirtualRobot_ModelJoint_h_
+#pragma once
 
 #include "../../Tools/ConditionedLock.h"
 #include "ModelNode.h"
+#include "../../VirtualRobot.h"
 
 namespace VirtualRobot
 {
@@ -37,14 +37,14 @@ namespace VirtualRobot
          *
          * @param model A pointer to the Model, which uses this Node.
          * @param name The name of this ModelNode. This name must be unique for the Model.
-         * @param staticTransformation The transformation from the parent of this node to this node.
+         * @param localTransformation The transformation from the parent of this node to this node.
          * @param jointLimitLo The lower limit of this joint.
          * @param jointLimitHi The upper limit of this joint.
          * @param jointValueOffset The offset for the value of this joint.
          */
         ModelJoint(const ModelWeakPtr& model,
                    const std::string& name,
-                   const Eigen::Matrix4f& staticTransformation,
+                   const Eigen::Matrix4f& localTransformation,
                    float jointLimitLo,
                    float jointLimitHi,
                    float jointValueOffset = 0.0f);
@@ -52,7 +52,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelJoint();
+        virtual ~ModelJoint() override;
 
         //virtual ModelNodeType getType() const override;
 
@@ -80,6 +80,8 @@ namespace VirtualRobot
          * @return the joint value in rad/mm.
          */
         virtual float getJointValue() const;
+
+        virtual void copyPoseFrom(const ModelNodePtr& other) override;
 
         /*!
          * Checks if jointValue is within joint limits. If verbose is set a warning is printed.
@@ -116,14 +118,14 @@ namespace VirtualRobot
          *
          * @return The upper joint limit in rad/mm.
          */
-        float getJointLimitHigh() const;
+        virtual float getJointLimitHigh() const;
 
         /*!
          * Get the lower joint limit.
          *
          * @return The lower joint limit in rad/mm.
          */
-        float getJointLimitLow() const;
+        virtual float getJointLimitLow() const;
 
         /*!
          * Set maximum velocity of this joint in rad/s or m/s.
@@ -212,5 +214,3 @@ namespace VirtualRobot
         std::map< std::string, float > propagatedJointValues;
     };
 }
-
-#endif

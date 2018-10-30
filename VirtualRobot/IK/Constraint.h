@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Constraint_h_
-#define _VirtualRobot_Constraint_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
@@ -73,10 +72,10 @@ namespace VirtualRobot
         virtual Eigen::VectorXf optimizationGradient(unsigned int id);
 
         // Interface for Jacobian-based solvers (default implementations)
-        virtual Eigen::MatrixXf getJacobianMatrix() override;
-        virtual Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
-        virtual bool checkTolerances() override;
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(const FramePtr &tcp) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        bool checkTolerances() override;
 
         virtual VisualizationPtr getVisualization() const;
 
@@ -101,4 +100,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<Constraint> ConstraintPtr;
 }
 
-#endif

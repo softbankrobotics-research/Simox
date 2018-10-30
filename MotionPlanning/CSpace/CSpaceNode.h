@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_CSpaceNode_h
-#define _MotionPlanning_CSpaceNode_h
+#pragma once
 
 #include "../MotionPlanning.h"
 #include <vector>
@@ -62,4 +61,3 @@ namespace MotionPlanning
 
 } // nameaspace
 
-#endif // _MotionPlanning_CSpaceNode_h

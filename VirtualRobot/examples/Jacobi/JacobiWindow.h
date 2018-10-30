@@ -1,6 +1,5 @@
 
-#ifndef __Jacobi_WINDOW_H_
-#define __Jacobi_WINDOW_H_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/Model/Obstacle.h"
@@ -82,5 +81,3 @@ protected:
     std::string robotLayer;
         QTimer* timer;
 };
-
-#endif // __Jacobi_WINDOW_H_

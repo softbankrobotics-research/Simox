@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VisualizationSet_h_
-#define _VirtualRobot_VisualizationSet_h_
+#pragma once
 
 #include "Visualization.h"
 #include "../Tools/BoundingBox.h"
@@ -48,6 +47,7 @@ namespace VirtualRobot
         virtual bool containsVisualization(const VisualizationPtr& visu) const;
         virtual bool removeVisualization(const VisualizationPtr &visu);
         virtual bool removeVisualization(size_t index);
+        virtual void removeAllVisualizations();
         virtual std::vector<VisualizationPtr> getVisualizations() const;
         virtual VisualizationPtr at(size_t index) const;
         virtual VisualizationPtr operator[] (size_t index) const;
@@ -85,9 +85,10 @@ namespace VirtualRobot
 
         virtual std::vector<Primitive::PrimitivePtr> getPrimitives() const override;
 
-        virtual void setFilename(const std::string &filename, bool boundingBox);
-        virtual std::string getFilename() const;
-        virtual bool usedBoundingBoxVisu() const;
+        virtual void setFilename(const std::string &filename, bool boundingBox) override;
+        virtual std::string getFilename() const override;
+        virtual bool usedBoundingBoxVisu() const override;
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const override;
 
         virtual BoundingBox getBoundingBox() const override;
 
@@ -110,6 +111,7 @@ namespace VirtualRobot
 
     protected:
         std::vector<VisualizationPtr> visualizations;
+        std::map<VisualizationPtr, size_t> childVisualizationChangedCallbacks;
         std::string filename;
         bool usedBoundingBox;
 
@@ -134,4 +136,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_VisualizationSet_h_

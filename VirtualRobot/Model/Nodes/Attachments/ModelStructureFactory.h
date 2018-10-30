@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef MODELSTRUCTUREFACTORY_H
-#define MODELSTRUCTUREFACTORY_H
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "ModelStructure.h"
@@ -40,7 +39,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelStructureFactory();
+        virtual ~ModelStructureFactory() override;
 
 
         /*!
@@ -49,7 +48,7 @@ namespace VirtualRobot
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \return  A fully initialized attachment.
          */
-        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) override;
+        virtual ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform = Eigen::Matrix4f::Identity()) const override;
 
         // AbstractFactoryMethod
     public:
@@ -64,7 +63,3 @@ namespace VirtualRobot
     };
     typedef std::shared_ptr<ModelStructureFactory> ModelStructureFactoryPtr;
 }
-
-
-
-#endif // MODELSTRUCTUREFACTORY_H

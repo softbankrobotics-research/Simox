@@ -71,6 +71,7 @@ namespace VirtualRobot
         virtual std::string toXML(const std::string &basePath, int tabs) const override;
         virtual std::string toXML(const std::string &basePath, const std::string &filename, int tabs) const override;
         virtual bool saveModel(const std::string &modelPath, const std::string &filename) override;
+        virtual void getTextureFiles(std::vector<std::string> &storeFilenames) const override;
 
         Qt3DCore::QEntity* getEntity() const;
     protected:

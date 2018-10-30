@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Primitive_h_
-#define _VirtualRobot_Primitive_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include <Eigen/Geometry>
@@ -92,4 +91,3 @@ namespace VirtualRobot
     } //namespace Primitive
 } //namespace VirtualRobot
 
-#endif // PRIMITIVE_H

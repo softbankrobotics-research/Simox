@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_COMPILE_H
-#define PQP_COMPILE_H
+#pragma once
 
 // prevents compiler warnings when PQP_REAL is float
 
@@ -107,4 +106,3 @@ namespace PQP
 
 } // namespace
 
-#endif

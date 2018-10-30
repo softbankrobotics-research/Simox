@@ -41,6 +41,7 @@ namespace SimoxGui
         virtual ~Qt3DViewerFactory() = default;
 
         virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const override;
+        virtual CameraConfigurationPtr createCameraConfiguration() const override;
     };
 
     typedef std::shared_ptr<Qt3DViewerFactory> Qt3DViewerFactoryPtr;

@@ -60,7 +60,8 @@ namespace VirtualRobot
             bool renderRgbImage, std::vector<unsigned char>& rgbImage,
             bool renderDepthImage, std::vector<float>& depthImage,
             bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN) const override;
+            float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN,
+            VirtualRobot::Visualization::Color backgroundColor = VirtualRobot::Visualization::Color::None()) const override;
 
         /*!
         Here, a manual cleanup can be called, visualization engine access may not be possible after calling this method.

@@ -7,7 +7,7 @@
 
 namespace VirtualRobot
 {
-    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr &model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
+    ModelNodeSetPtr ModelNodeSet::createNodeSet(const ModelPtr &model, const std::string &name, const std::vector<std::string> &modelNodeNames, const std::string &kinematicRootName, const std::string &tcpName, bool registerToModel)
     {
         THROW_VR_EXCEPTION_IF(!model, "Model not initialized.");
 
@@ -16,7 +16,7 @@ namespace VirtualRobot
         modelNodes.reserve(modelNodeNames.size());
         for (const auto& nodeName : modelNodeNames)
         {
-            ModelNodePtr node = model->getModelNode(nodeName);
+            ModelNodePtr node = model->getNode(nodeName);
             THROW_VR_EXCEPTION_IF(!node, "No ModelNode with name " + nodeName + " found.");
             modelNodes.push_back(node);
         }
@@ -28,19 +28,19 @@ namespace VirtualRobot
         //tcp
         FramePtr tcp = checkTcp(tcpName, model);
 
-        ModelNodeSetPtr mns = createModelNodeSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
+        ModelNodeSetPtr mns = createNodeSet(model, name, modelNodes, kinematicRoot, tcp, registerToModel);
         return mns;
     }
 
 
-    ModelNodeSetPtr ModelNodeSet::createModelNodeSet(const ModelPtr &model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr &kinematicRoot, const FramePtr &tcp, bool registerToModel)
+    ModelNodeSetPtr ModelNodeSet::createNodeSet(const ModelPtr &model, const std::string &name, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr &kinematicRoot, const FramePtr &tcp, bool registerToModel)
     {
         ModelNodeSetPtr mns(new Implementation(name, model, modelNodes, kinematicRoot, tcp));
 
         if (registerToModel)
         {
-            THROW_VR_EXCEPTION_IF(model->hasModelNodeSet(mns), "NodeSet with name " + name + " already present in the model");
-            model->registerModelNodeSet(mns);
+            THROW_VR_EXCEPTION_IF(model->hasNodeSet(mns), "NodeSet with name " + name + " already present in the model");
+            model->registerNodeSet(mns);
         }
 
         return mns;
@@ -65,7 +65,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION_IF(model.lock() != node->getModel(), "Model " + node->getName() + " does not belong to the given model.");
 
                 // assert, that all model links have the same collision checker
-                if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+                if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
                 {
                     ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                     if (!collisionChecker)
@@ -107,18 +107,6 @@ namespace VirtualRobot
         }
         return names;
     }
-
-
-    std::vector<std::string> ModelNodeSet::getModelNodeNames() const
-    {
-        std::vector<std::string> res;
-        for (const auto& n : getNodes())
-        {
-            res.push_back(n->getName());
-        }
-        return res;
-    }
-
 
     bool ModelNodeSet::nodesSufficient(const std::vector<ModelNodePtr> &nodes) const
     {
@@ -180,13 +168,43 @@ namespace VirtualRobot
         return true;
     }
 
+    bool ModelNodeSet::isKinematicChain() const
+    {
+        auto root = getKinematicRoot();
+        auto nodes = getNodes();
+        if (nodes.size() == 0)
+        {
+            if (root)
+            {
+                VR_WARNING << "NodeSet has zero nodes, but a kinematic root." << std::endl;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        if (root != nodes.at(0))
+        {
+            return false;
+        }
+        for (size_t i=0; i < nodes.size()-1; ++i)
+        {
+            if (nodes.at(i+1)->getParentNode() != nodes.at(i))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     ModelNodePtr ModelNodeSet::checkKinematicRoot(const std::string &name, const ModelPtr &model)
     {
         VR_ASSERT(model);
         if (!name.empty())
         {
-            ModelNodePtr node = model->getModelNode(name);
+            ModelNodePtr node = model->getNode(name);
             THROW_VR_EXCEPTION_IF(!node, "No root node with name " + name + " found.");
             return node;
         }
@@ -200,7 +218,7 @@ namespace VirtualRobot
         VR_ASSERT(model);
         if (!tcpName.empty())
         {
-            FramePtr f = model->getModelNode(tcpName);
+            FramePtr f = model->getNode(tcpName);
             if (!f)
             {
                 f = model->getAttachment(tcpName);
@@ -262,7 +280,7 @@ namespace VirtualRobot
         std::vector<ModelJointPtr> modelJoints;
         for (ModelNodePtr node : getNodes())
         {
-            if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Joint))
+            if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Joint))
             {
                 ModelJointPtr modelJoint = std::static_pointer_cast<ModelJoint>(node);
                 modelJoints.push_back(modelJoint);
@@ -276,7 +294,7 @@ namespace VirtualRobot
         std::vector<ModelLinkPtr> modelLinks;
         for (ModelNodePtr node : getNodes())
         {
-            if (ModelNode::checkNodeOfType(node, ModelNode::ModelNodeType::Link))
+            if (ModelNode::checkNodeOfType(node, ModelNode::NodeType::Link))
             {
                 ModelLinkPtr link = std::static_pointer_cast<ModelLink>(node);
                 modelLinks.push_back(link);
@@ -357,8 +375,8 @@ namespace VirtualRobot
         std::vector<ModelNodePtr> newModelNodes;
         for (const auto &n : getNodes())
         {
-            THROW_VR_EXCEPTION_IF(!model->hasModelNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
-            ModelNodePtr newModelNode = model->getModelNode(n->getName());
+            THROW_VR_EXCEPTION_IF(!model->hasNode(n->getName()), "Cannot clone, new model does not contain node " << n->getName());
+            ModelNodePtr newModelNode = model->getNode(n->getName());
             VR_ASSERT(newModelNode);
             newModelNodes.push_back(newModelNode);
         }
@@ -375,7 +393,7 @@ namespace VirtualRobot
             VR_ASSERT(newTcp);
         }
 
-        ModelNodeSetPtr result = ModelNodeSet::createModelNodeSet(model, (newName.empty() ? getName() : newName), newModelNodes, newKinRoot, newTcp, registerToModel);
+        ModelNodeSetPtr result = ModelNodeSet::createNodeSet(model, (newName.empty() ? getName() : newName), newModelNodes, newKinRoot, newTcp, registerToModel);
 
         return result;
     }

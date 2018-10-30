@@ -65,9 +65,9 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     const std::string node1 = "Joint1";
     const std::string node2 = "Joint2";
     const std::string node3 = "Joint3";
-    VirtualRobot::RobotNodePtr r1 = rob->getModelNode(node1);
-    VirtualRobot::RobotNodePtr r2 = rob->getModelNode(node2);
-    VirtualRobot::RobotNodePtr r3 = rob->getModelNode(node3);
+    VirtualRobot::RobotNodePtr r1 = rob->getNode(node1);
+    VirtualRobot::RobotNodePtr r2 = rob->getNode(node2);
+    VirtualRobot::RobotNodePtr r3 = rob->getNode(node3);
     BOOST_REQUIRE(r1);
     BOOST_REQUIRE(r2);
     BOOST_REQUIRE(r3);

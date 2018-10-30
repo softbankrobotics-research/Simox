@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_BVTQ_H
-#define PQP_BVTQ_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -241,6 +240,5 @@ namespace PQP
 
 } // namespace
 
-#endif
 
 

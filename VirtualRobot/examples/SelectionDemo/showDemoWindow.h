@@ -1,6 +1,5 @@
 ﻿
-#ifndef __SelectionDemo_WINDOW_H_
-#define __SelectionDemo_WINDOW_H_
+#pragma once
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <Gui/ViewerFactory.h>
@@ -52,5 +51,3 @@ private:
     VirtualRobot::VisualizationSetPtr boxes, cylinders, cones;
     VirtualRobot::VisualizationSetPtr red, green, blue;
 };
-
-#endif

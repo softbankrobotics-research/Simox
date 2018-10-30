@@ -21,10 +21,10 @@
 *
 */
 
-#ifndef _SimoxGui_ViewerInterface_h_
-#define _SimoxGui_ViewerInterface_h_
+#pragma once
 
 #include "SimoxGuiImportExport.h"
+#include "CameraConfiguration.h"
 
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Visualization/Visualization.h>
@@ -55,7 +55,7 @@ public:
 
     void addLayer(const std::string& layer);
     void removeLayer(const std::string& layer);
-    void removeAllLayer();
+    void removeAllLayers();
     bool hasLayer(const std::string &layer) const;
 
     void clearLayer(const std::string &layer, bool recursive=false);
@@ -77,7 +77,23 @@ public:
     virtual void setBackgroundColor(const VirtualRobot::Visualization::Color& color) = 0;
     virtual VirtualRobot::Visualization::Color getBackgroundColor() const = 0;
 
+    virtual void setCameraConfiguration(const CameraConfigurationPtr&) = 0;
+    virtual CameraConfigurationPtr getCameraConfiguration() const = 0;
+
+    /*!
+     * If set, the drawing is protected by this mutex. This overwrites the default mutex.
+     */
+    void setMutex(std::shared_ptr<std::recursive_mutex> m);
+
+
+    /*!
+     * \return This lock allows to safely access the viewer's scene graph.
+     */
+    std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock() const;
+
 protected:
+
+    std::shared_ptr<std::recursive_mutex> mutex;
     virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
     virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
 
@@ -119,10 +135,7 @@ protected:
                     }
                 }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         void clear(bool recursive=true)
         {
@@ -172,6 +185,3 @@ protected:
 typedef std::shared_ptr<AbstractViewer> AbstractViewerPtr;
 
 }
-
-#endif
-

@@ -823,3 +823,8 @@ namespace VirtualRobot
         }
     }
 }
+
+
+void VirtualRobot::Qt3DVisualization::getTextureFiles(std::vector<std::string> &storeFilenames) const
+{
+}

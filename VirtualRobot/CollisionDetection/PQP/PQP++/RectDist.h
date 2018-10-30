@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_RECTDIST_H
-#define PQP_RECTDIST_H
+#pragma once
 
 #include <math.h>
 #include "MatVec.h"
@@ -814,4 +813,3 @@ namespace PQP
     };
 
 } // namespace
-#endif

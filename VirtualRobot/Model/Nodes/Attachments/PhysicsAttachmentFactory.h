@@ -21,8 +21,7 @@
 *
 */
 
-#ifndef SIMOX_PHYSICSATTACHMENTFACTORY_H
-#define SIMOX_PHYSICSATTACHMENTFACTORY_H
+#pragma once
 
 #include "ModelNodeAttachmentFactory.h"
 #include "PhysicsAttachment.h"
@@ -36,7 +35,7 @@ namespace VirtualRobot
         PhysicsAttachmentFactory() = default;
 
     public:
-        virtual ~PhysicsAttachmentFactory() = default;
+        virtual ~PhysicsAttachmentFactory() override = default;
 
         /*!
          * \return "PhysicsAttachment"
@@ -50,7 +49,7 @@ namespace VirtualRobot
          * \param localTransform    The transformation to apply to the attachment's pose after attaching to a ModelNode.
          * \return  A fully initialized attachment.
          */
-        ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform) override;
+        ModelNodeAttachmentPtr createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform) const override;
 
     private:
         static SubClassRegistry registry;
@@ -58,5 +57,3 @@ namespace VirtualRobot
 
     typedef std::shared_ptr<PhysicsAttachmentFactory> PhysicsAttachmentFactoryPtr;
 }
-
-#endif //SIMOX_PHYSICSATTACHMENTFACTORY_H

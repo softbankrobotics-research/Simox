@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Model_h_
-#define _VirtualRobot_Model_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "Nodes/ModelNode.h"
@@ -41,6 +40,7 @@ namespace VirtualRobot
      */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
+        friend class ModelNode;
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -56,7 +56,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~Model();
+        ~Model() override;
 
         /*!
          * Registers a new node to this model (if not already registered).
@@ -64,14 +64,14 @@ namespace VirtualRobot
          *
          * @param node The new node.
          */
-        virtual void registerModelNode(const ModelNodePtr& node);
+        virtual void registerNode(const ModelNodePtr& node, bool registerChildren=false, bool addToVisualization=true);
 
         /*!
          * Deregister the given ModelNode.
          *
          * @param node The node to deregister.
          */
-        virtual void deregisterModelNode(const ModelNodePtr& node);
+        virtual void deregisterNode(const ModelNodePtr& node, bool deregisterChildren=false);
 
         /*!
          * Check, if the ModelNode is registered to this model.
@@ -79,7 +79,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const ModelNodePtr& node) const;
+        virtual bool hasNode(const ModelNodePtr& node) const;
         virtual bool hasLink(const ModelLinkPtr& link) const;
         virtual bool hasJoint(const ModelJointPtr& joint) const;
 
@@ -89,7 +89,7 @@ namespace VirtualRobot
          * @param modelNodeName The name of the node to check for.
          * @return True, if the node is registered; false otherwise.
          */
-        virtual bool hasModelNode(const std::string& modelNodeName) const;
+        virtual bool hasNode(const std::string& modelNodeName) const;
         virtual bool hasJoint(const std::string& jointName) const;
         virtual bool hasLink(const std::string& linkName) const;
 
@@ -102,7 +102,7 @@ namespace VirtualRobot
          *@see getLink
          *@see getJoint
          */
-        virtual ModelNodePtr getModelNode(const std::string& modelNodeName) const;
+        virtual ModelNodePtr getNode(const std::string& modelNodeName) const;
         virtual ModelLinkPtr getLink(const std::string& modelNodeName) const;
         virtual ModelJointPtr getJoint(const std::string& modelNodeName) const;
 
@@ -137,7 +137,7 @@ namespace VirtualRobot
          * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes(ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
+        virtual std::vector< ModelNodePtr > getNodes(ModelNode::NodeType type = ModelNode::NodeType::Node) const;
 
         /*!
          * Get all nodes by names.
@@ -145,7 +145,7 @@ namespace VirtualRobot
          * @param type If set, only nodes of this type are returned.
          * @return The registered nodes.
          */
-        virtual std::vector< ModelNodePtr > getModelNodes(const std::vector< std::string > & nodeNames) const;
+        virtual std::vector< ModelNodePtr > getNodes(const std::vector< std::string > & nodeNames) const;
 
           /*!
          * Get all nodes, registered to this model.
@@ -154,10 +154,10 @@ namespace VirtualRobot
          * @param clearVector If true, the vector is cleared bevor storing nodes.
          * @param type If set, only nodes of this type are returned.
          */
-        virtual void getModelNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
-                                   ModelNode::ModelNodeType type = ModelNode::ModelNodeType::Node) const;
+        virtual void getNodes(std::vector< ModelNodePtr >& storeNodes, bool clearVector = true,
+                                   ModelNode::NodeType type = ModelNode::NodeType::Node) const;
 
-        virtual std::vector<std::string> getModelNodeNames() const;
+        virtual std::vector<std::string> getNodeNames() const;
 
         /*!
          * Register a new ModelNodeSet to this model.
@@ -165,7 +165,7 @@ namespace VirtualRobot
          *
          * @param nodeSet The new node set.
          */
-        virtual void registerModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void registerNodeSet(const ModelNodeSetPtr& nodeSet);
         virtual void registerJointSet(const JointSetPtr& nodeSet);
         virtual void registerLinkSet(const LinkSetPtr& nodeSet);
 
@@ -174,7 +174,7 @@ namespace VirtualRobot
          *
          * @param nodeSet The node set to deregister.
          */
-        virtual void deregisterModelNodeSet(const ModelNodeSetPtr& nodeSet);
+        virtual void deregisterNodeSet(const ModelNodeSetPtr& nodeSet);
         virtual void deregisterJointSet(const JointSetPtr& nodeSet);
         virtual void deregisterLinkSet(const LinkSetPtr& nodeSet);
 
@@ -184,7 +184,7 @@ namespace VirtualRobot
          * @param nodeSet The node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(const ModelNodeSetPtr& nodeSet) const;
+        virtual bool hasNodeSet(const ModelNodeSetPtr& nodeSet) const;
         virtual bool hasJointSet(const JointSetPtr& nodeSet) const;
         virtual bool hasLinkSet(const LinkSetPtr& nodeSet) const;
 
@@ -194,7 +194,7 @@ namespace VirtualRobot
          * @param nodeSet The name of the node set to check for.
          * @return True, if the node set is registered; false otherwise.
          */
-        virtual bool hasModelNodeSet(const std::string& name) const;
+        virtual bool hasNodeSet(const std::string& name) const;
         virtual bool hasJointSet(const std::string& name) const;
         virtual bool hasLinkSet(const std::string& name) const;
 
@@ -204,7 +204,7 @@ namespace VirtualRobot
          * @param modelNodeName The name of the ModelNodeSet.
          * @return A pointer to the ModelNodeSet.
          */
-        virtual ModelNodeSetPtr getModelNodeSet(const std::string& nodeSetName) const;
+        virtual ModelNodeSetPtr getNodeSet(const std::string& nodeSetName) const;
         virtual JointSetPtr getJointSet(const std::string& nodeSetName) const;
         virtual LinkSetPtr getLinkSet(const std::string& nodeSetName) const;
 
@@ -236,10 +236,10 @@ namespace VirtualRobot
          *
          * @return The registered node sets.
          */
-        virtual std::vector<ModelNodeSetPtr> getModelNodeSets() const;
+        virtual std::vector<ModelNodeSetPtr> getNodeSets() const;
         virtual std::vector<LinkSetPtr> getLinkSets() const;
         virtual std::vector<JointSetPtr> getJointSets() const;
-        virtual std::vector<std::string> getModelNodeSetNames() const;
+        virtual std::vector<std::string> getNodeSetNames() const;
         virtual std::vector<std::string> getLinkSetNames() const;
         virtual std::vector<std::string> getJointSetNames() const;
 
@@ -344,7 +344,7 @@ namespace VirtualRobot
          * @param node The frame/node to set the position relative to.
          * @param globalPoseNode The global pose for the node.
          */
-        virtual void setGlobalPoseForModelNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.
@@ -381,6 +381,17 @@ namespace VirtualRobot
          */
         virtual void applyJointValues();
 
+        void showStructure(bool show)
+        {
+            if (show)
+            {
+                attachStructure();
+            }
+            else
+            {
+                detachStructure();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a ModelStructure to each joint.
          * Each attached ModelStructure inherits the name of its corresponding joint appended by "_structure".
@@ -393,18 +404,40 @@ namespace VirtualRobot
          */
         void detachStructure();
 
+        void showCoordinateSystems(bool show)
+        {
+            if (show)
+            {
+                attachCoordinateSystems();
+            }
+            else
+            {
+                detachCoordinateSystems();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a ModelNodeAttachment to each joint, representing a frame.
          * Each attached ModelNodeAttachment inherits the name of its corresponding joint appended by "_frame".
          */
-        void attachFrames();
+        void attachCoordinateSystems();
 
         /*!
          * A convenience function to detach ModelNodeAttachments / Frames.
          * This function basically reverts calls to attachFrames().
          */
-        void detachFrames();
+        void detachCoordinateSystems();
 
+        void showPhysicsInformation(bool show)
+        {
+            if (show)
+            {
+                attachPhysicsInformation();
+            }
+            else
+            {
+                detachPhysicsInformation();
+            }
+        }
         /*!
          * A convenience function that creates and attaches a PhysicsAttachment to each link.
          * Each attached PhysicsAttachment inherits the name of its corresponding link appended by "_physics".
@@ -552,6 +585,13 @@ namespace VirtualRobot
          */
         virtual CollisionCheckerPtr getCollisionChecker() const;
 
+        /**
+         * @brief Inflates the collision models of all robot nodes of this robot. Useful for motion planning with a safety margin.
+         * @param inflationInMM The collision model is inflated by this value. This value is absolute to the original collision model.
+         * Repetitive inflation with the same value has no effect.
+         */
+        void inflateCollisionModel(float inflationInMM);
+
         /*!
          * Return accumulated mass of this model.
          *
@@ -579,38 +619,38 @@ namespace VirtualRobot
                                         float scaling = 1.0f) const;
 
         /*!
-         * Attach a new ModelNode to this model.
-         * This registers the node to this model.
+         * Attach a new Model to this model.
+         * This registers all nodes to this model.
          *
-         * @param newNode The node to attach.
+         * @param newModel The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachNodeTo(const ModelNodePtr& newNode, const ModelNodePtr& existingNode);
+        void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
 
         /*!
-         * Attach a new ModelNode to this model.
-         * This registers the node to this model.
+         * Attach a new Model to this model.
+         * This registers all nodes to this model.
          *
-         * @param newNode The node to attach.
+         * @param newModel The node to attach.
          * @param existingNodeName The name of the node to attach the new child at.
          */
-        void attachNodeTo(const ModelNodePtr& newNode, const std::string& existingNodeName);
+        inline void attachModelTo(const ModelPtr& newModel, const std::string& existingNodeName)
+        {
+            attachModelTo(newModel, getNode(existingNodeName));
+        }
 
         /*!
-         * Removes the node from this model.
-         * This also removes all its children and deregisters the nodes.
+         * Removes the model from this model.
+         * This also deregisters the nodes.
          *
-         * @param node The node to remove.
+         * @param model The node to remove.
          */
-        void detachNode(const ModelNodePtr& node);
+        void detachModel(const ModelPtr& model);
 
-        /*!
-         * Removes the node from this model.
-         * This also removes all its children and deregisters the nodes.
-         *
-         * @param nodeName The name of the node to remove.
-         */
-        void detachNode(const std::string& nodeName);
+        bool isModelAttached(const ModelPtr& model) const;
+
+        std::vector<ModelPtr> getAttachedModels() const;
+        ModelPtr getAttachedModel(const std::string& name) const;
 
         /*!
          * Just storing the filename.
@@ -734,6 +774,8 @@ namespace VirtualRobot
         std::map<std::string, ModelNodeSetPtr> modelNodeSetMap;
         std::map<std::string, EndEffectorPtr> eefMap;
         std::vector< RobotConfigPtr > configs;
+        // An entry is created for each attached model, so we use this map to check if a model is attached
+        std::map<ModelPtr, Eigen::Matrix4f> oldLocalTransformOfAttachedModels;
 
         std::string filename;
 
@@ -741,5 +783,3 @@ namespace VirtualRobot
         VisualizationSetPtr visualizationNodeSetCollision;
     };
 }
-
-#endif // _VirtualRobot_Model_h_

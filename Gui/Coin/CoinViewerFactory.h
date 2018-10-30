@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _Gui_CoinViewerFactory_h_
-#define _Gui_CoinViewerFactory_h_
+#pragma once
 
 
 #include "../ViewerFactory.h"
@@ -41,11 +40,10 @@ namespace SimoxGui
         virtual ~CoinViewerFactory() = default;
 
         virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const override;
+        CameraConfigurationPtr createCameraConfiguration() const override;
     };
 
     typedef std::shared_ptr<CoinViewerFactory> CoinViewerFactoryPtr;
 
 
 } // namespace SimoxGui
-
-#endif

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_JointSet_h_
-#define _VirtualRobot_JointSet_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "ModelNodeSet.h"
@@ -231,5 +230,3 @@ namespace VirtualRobot
         FramePtr tcp;
     };
 }
-
-#endif // _VirtualRobot_JointSet_h_

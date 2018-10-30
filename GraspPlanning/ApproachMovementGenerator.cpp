@@ -56,13 +56,13 @@ namespace GraspPlanning
 
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
-        //eefRobot->setGlobalPoseForModelNode(eef_cloned->getGCP(), pose);
+        //eefRobot->setGlobalPoseForNode(eef_cloned->getGCP(), pose);
         VirtualRobot::FramePtr tcp;
         if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
             tcp = eef_cloned->getGCP();
-        eefRobot->setGlobalPoseForModelNode(tcp, pose);
+        eefRobot->setGlobalPoseForNode(tcp, pose);
         return true;
     }
 

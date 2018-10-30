@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_EndEffectorActor_h_
-#define _VirtualRobot_EndEffectorActor_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "EndEffector.h"
@@ -102,7 +101,7 @@ namespace VirtualRobot
         bool isColliding(const EndEffectorPtr &obstacle);
         bool isColliding(const EndEffectorPtr &eef, const EndEffectorPtr &obstacle, EndEffector::ContactInfoVector& storeContacts);
 
-        std::vector< ModelNodePtr > getModelNodes() const;
+        std::vector< ModelNodePtr > getNodes() const;
         std::vector< ModelLinkPtr > getLinks() const;
         std::vector< ModelJointPtr > getJoints() const;
 
@@ -135,4 +134,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_EndEffectorActor_h_

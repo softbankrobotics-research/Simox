@@ -1,16 +1,14 @@
 
-#ifndef __GraspPlanner_WINDOW_H_
-#define __GraspPlanner_WINDOW_H_
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
-#include "VirtualRobot/Model/Obstacle.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
 #include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
@@ -24,7 +22,7 @@
 #include <QtGui/QtGui>
 #include <QtCore/QtCore>
 
-#include "../../../Gui/AbstractViewer.h"
+#include <Gui/AbstractViewer.h>
 
 #include <vector>
 
@@ -35,22 +33,26 @@ class GraspPlannerWindow : public QMainWindow
     Q_OBJECT
 public:
     GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile);
-    ~GraspPlannerWindow();
+    ~GraspPlannerWindow() override;
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
+
+
     void closeEEF();
     void openEEF();
     void colModel();
     void frictionConeVisu();
     void showGrasps();
+
     void buildVisu();
+
     void plan();
     void save();
 
@@ -60,6 +62,7 @@ protected:
 
     void loadRobot();
     void loadObject();
+
     void setupUI();
 
     Ui::GraspPlanner UI;
@@ -70,8 +73,12 @@ protected:
     VirtualRobot::RobotPtr eefCloned;
     VirtualRobot::ObstaclePtr object;
     VirtualRobot::EndEffectorPtr eef;
+
     VirtualRobot::GraspSetPtr grasps;
+
+
     VirtualRobot::EndEffector::ContactInfoVector contacts;
+
 
     std::string robotFile;
     std::string objectFile;
@@ -86,4 +93,3 @@ protected:
     VirtualRobot::VisualizationPtr visualizationObject;
 };
 
-#endif

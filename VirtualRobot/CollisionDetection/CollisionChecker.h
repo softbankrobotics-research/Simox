@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CollisionChecker_h_
-#define _VirtualRobot_CollisionChecker_h_
+#pragma once
 
 #include "../VirtualRobotImportExport.h"
 #include "../Model/Model.h"
@@ -31,6 +30,8 @@
 #include "../Model/Nodes/ModelLink.h"
 #include "../Model/Model.h"
 #include "../Model/LinkSet.h"
+#include "CollisionModel.h"
+#include "../Visualization/VisualizationFactory.h"
 
 #include <string>
 #include <vector>
@@ -217,7 +218,7 @@ namespace VirtualRobot
         inline CollisionModelPtr getCollisionModel(const ModelNodePtr& m)
         {
             VR_ASSERT(m);
-            if (!ModelNode::checkNodeOfType(m, ModelNode::ModelNodeType::Link))
+            if (!ModelNode::checkNodeOfType(m, ModelNode::NodeType::Link))
                 return CollisionModelPtr();
             return std::static_pointer_cast<ModelLink>(m)->getCollisionModel();
         }
@@ -255,12 +256,35 @@ namespace VirtualRobot
             for (auto mTmp : m)
             {
                 VR_ASSERT(mTmp);
-                if (!ModelNode::checkNodeOfType(mTmp, ModelNode::ModelNodeType::Link))
+                if (!ModelNode::checkNodeOfType(mTmp, ModelNode::NodeType::Link))
                     continue;
                 mVec.push_back(std::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
             }
             return mVec;
         }
+    public:
+        struct PointAndTolerance
+        {
+            Eigen::Vector3f p;
+            float tolerance;
+        };
+    private:
+        inline std::vector<CollisionModelPtr> getCollisionModel(const PointAndTolerance& p)
+        {
+            CollisionModelPtr m(new CollisionModel(VisualizationFactory::getInstance()->createSphere(p.tolerance)));
+            Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+            pose.block<3, 1>(0, 3) = p.p;
+            m->setGlobalPose(pose);
+            return {m};
+        }
+
+        // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++
+        friend class Cleanup;
+        class Cleanup
+        {
+        public:
+            ~Cleanup();
+        };
 
         bool initialized;
         bool automaticSizeCheck;
@@ -279,4 +303,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CollisionChecker_h_

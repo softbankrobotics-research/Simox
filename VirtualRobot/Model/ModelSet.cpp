@@ -17,11 +17,11 @@ namespace VirtualRobot
             name(name),
             models(models)
     {
-        for (size_t i = 0; i< models.size(); i++)
+        if (models.size() > 1)
         {
-            for (size_t j = i+1; j < models.size(); j++)
+            for (size_t i = 1; i < models.size(); i++)
             {
-                VR_ASSERT(models[i]->getCollisionChecker() == models[j]->getCollisionChecker());
+                VR_ASSERT(models[0]->getCollisionChecker() == models[i]->getCollisionChecker());
             }
         }
     }
@@ -29,7 +29,16 @@ namespace VirtualRobot
     ModelSet::~ModelSet()
 	{
 
-	}
+    }
+
+    void ModelSet::addModel(const ModelPtr &model)
+    {
+        if (models.size() >= 1)
+        {
+            VR_ASSERT(models[0]->getCollisionChecker() == model->getCollisionChecker());
+        }
+        models.push_back(model);
+    }
 
     ModelSetPtr ModelSet::clone(const std::string &name)
 	{
@@ -146,7 +155,7 @@ namespace VirtualRobot
         return ss.str();
     }
     
-    std::vector<ModelJointPtr> ModelSet::getModelJoints() const
+    std::vector<ModelJointPtr> ModelSet::getJoints() const
     {
         std::vector<ModelJointPtr> modelJoints;
         for (const ModelPtr &node : models)
@@ -160,7 +169,7 @@ namespace VirtualRobot
         return modelJoints;
     }
 
-    std::vector<ModelLinkPtr> ModelSet::getModelLinks() const
+    std::vector<ModelLinkPtr> ModelSet::getLinks() const
     {
         std::vector<ModelLinkPtr> modelLinks;
         for (const ModelPtr &node : models)
@@ -172,6 +181,17 @@ namespace VirtualRobot
             }
         }
         return modelLinks;
+    }
+
+    std::vector<ModelNodePtr> ModelSet::getNodes() const
+    {
+        std::vector<ModelNodePtr> nodes;
+        for (const ModelPtr &model : models)
+        {
+            auto jm = model->getNodes();
+            nodes.insert(nodes.end(), jm.begin(), jm.end());
+        }
+        return nodes;
     }
 
     CollisionCheckerPtr ModelSet::getCollisionChecker() const

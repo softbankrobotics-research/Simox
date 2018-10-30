@@ -11,6 +11,7 @@
 #include "VisualizationSet.h"
 #include "SelectionGroup.h"
 #include "TriMeshModel.h"
+#include "ColorMap.h"
 
 #include <fstream>
 
@@ -239,7 +240,7 @@ namespace VirtualRobot
 
                 short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
                 short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
-                TriangleFace face;
+                MathTools::TriangleFace face;
                 face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
                                                                      triMesh->vertices[rt],
                                                                      triMesh->vertices[lb]);
@@ -257,7 +258,7 @@ namespace VirtualRobot
                 triMesh->addFace(face);
 
 
-                TriangleFace face2;
+                MathTools::TriangleFace face2;
                 face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
                                                                       triMesh->vertices[rb],
                                                                       triMesh->vertices[lb]);
@@ -502,6 +503,175 @@ namespace VirtualRobot
         }
 
         return VisualizationFactory::getInstance()->createPolygon(cvHull3d);
+    }
+
+    VisualizationPtr VisualizationFactory::create2DHeightMap(const Eigen::MatrixXf &d, float extendCellX, float extendCellY, float heightZ, const ColorMap &cm, bool drawZeroCells, bool drawLines) const
+    {
+        auto nX = d.rows();
+        auto nY = d.cols();
+
+        VR_ASSERT(nX > 0);
+        VR_ASSERT(nY > 0);
+
+        //Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        float sizeX = extendCellX;
+        float sizeY = extendCellY;
+
+        /*      SoCube *cube = new SoCube();
+                    cube->width = sizeX;
+                    cube->depth = 1.0;
+                    cube->height = sizeY;*/
+
+        float maxEntry = 1.0f;
+
+        if (d.maxCoeff() > 1.0f)
+        {
+            VR_ERROR << "Maximal coefficient must not be >1!" << endl;
+        }
+
+        auto res = createVisualisationSet({});
+
+        for (int x = 1; x < nX; x++)
+        {
+            for (int y = 1; y < nY; y++)
+            {
+                float v1 = d(x - 1, y - 1);
+                float v2 = d(x, y - 1);
+                float v3 = d(x - 1, y);
+                float v4 = d(x, y);
+                float xPos1 = (float)(x - 1) * sizeX + 0.5f * sizeX; // center of voxel
+                float xPos2 = (float)(x) * sizeX + 0.5f * sizeX; // center of voxel
+                float yPos1 = (float)(y - 1) * sizeY + 0.5f * sizeY; // center of voxel
+                float yPos2 = (float)y * sizeY + 0.5f * sizeY; // center of voxel
+                float v = (v1 + v2 + v3 + v4) / 4.0f;
+
+                float intensity1 = (float)v1 / maxEntry;
+                float height1 = intensity1 * heightZ;
+                float intensity2 = (float)v2 / maxEntry;
+                float height2 = intensity2 * heightZ;
+                float intensity3 = (float)v3 / maxEntry;
+                float height3 = intensity3 * heightZ;
+                float intensity4 = (float)v4 / maxEntry;
+                float height4 = intensity4 * heightZ;
+
+                Eigen::Vector3f p1(xPos1, yPos1, height1);
+                Eigen::Vector3f p2(xPos2, yPos1, height2);
+                Eigen::Vector3f p3(xPos1, yPos2, height3);
+                Eigen::Vector3f p4(xPos2, yPos2, height4);
+                std::vector<Eigen::Vector3f> pts;
+                pts.push_back(p1);
+                pts.push_back(p2);
+                pts.push_back(p4);
+                pts.push_back(p3);
+
+                float intensity = (float)v;
+                intensity /= maxEntry;
+
+                if (intensity > 1.0f)
+                {
+                    intensity = 1.0f;
+                }
+
+                if (drawZeroCells || intensity > 0.)
+                {
+                    auto pol = createPolygon(pts);
+                    pol->setColor(cm.getColor(intensity));
+                    res->addVisualization(pol);
+                    if (drawLines)
+                    {
+                        pts.push_back(pts[0]);
+                        auto lines = createLineSet(pts, 4.f);
+                        lines->setColor(Visualization::Color::Black());
+                        res->addVisualization(lines);
+                    }
+                }
+            }
+        }
+
+        Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+        pose.block<3, 1>(0, 3) = Eigen::Vector3f(-extendCellX * nX / 2, -extendCellY * nY / 2, 0);
+        res->setGlobalPose(pose);
+        res->setGlobalPoseNoUpdate(Eigen::Matrix4f::Identity()); // move the global pose to center of the returned visualization
+        return res;
+    }
+
+    VisualizationPtr VisualizationFactory::create2DMap(const Eigen::MatrixXf &d, float extendCellX, float extendCellY, const ColorMap cm, bool drawZeroCells, bool drawLines) const
+    {
+        auto nX = d.rows();
+        auto nY = d.cols();
+
+        VR_ASSERT(nX > 0);
+        VR_ASSERT(nY > 0);
+
+        Eigen::Matrix4f gp = Eigen::Matrix4f::Identity();
+        float sizeX = extendCellX;
+        float sizeY = extendCellY;
+
+
+        float ro, gr, bl;
+
+        float maxEntry = 1.0f;
+
+        if (d.maxCoeff() > 1.0f)
+        {
+            VR_ERROR << "Maximal coefficient must not be >1!" << endl;
+        }
+
+        auto res = createVisualisationSet({});
+
+        for (int x = 0; x < nX; x++)
+        {
+            float xPos = static_cast<float>(x) * sizeX + 0.5f * sizeX; // center of voxel
+
+            for (int y = 0; y < nY; y++)
+            {
+                float v = d(x, y);
+
+                if (drawZeroCells || v > 0)
+                {
+                    float yPos = (float)y * sizeY + 0.5f * sizeY; // center of voxel
+                    gp(0, 3) = xPos;
+                    gp(1, 3) = yPos;// we are in mm unit environment -> no conversion to m needed
+
+                    float intensity = static_cast<float>(v);
+                    intensity /= maxEntry;
+
+                    if (intensity > 1.0f)
+                    {
+                        intensity = 1.0f;
+                    }
+
+                    if (drawZeroCells || intensity > 0)
+                    {
+                        std::vector<Eigen::Vector3f> points;
+                        points.emplace_back(-sizeX / 2, -sizeY / 2, 0.f);
+                        points.emplace_back(-sizeX / 2, sizeY / 2, 0.f);
+                        points.emplace_back(sizeX / 2, sizeY / 2, 0.f);
+                        points.emplace_back(sizeX / 2, -sizeY / 2, 0.f);
+
+                        auto cube = createPolygon(points);
+                        //auto cube = createBox(sizeX, sizeY, 1.f);
+                        cube->setColor(cm.getColor(intensity));
+                        cube->setGlobalPose(gp);
+                        res->addVisualization(cube);
+
+                        if (drawLines)
+                        {
+                            auto lines = createLineSet(points, 4.f);
+                            lines->setColor(Visualization::Color::Black());
+                            lines->setGlobalPose(gp);
+                            res->addVisualization(lines);
+                        }
+                    }
+                }
+            }
+        }
+
+        Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+        pose.block<3, 1>(0, 3) = Eigen::Vector3f(-extendCellX * nX / 2, -extendCellY * nY / 2, 0);
+        res->setGlobalPose(pose);
+        res->setGlobalPoseNoUpdate(Eigen::Matrix4f::Identity()); // move the global pose to center of the returned visualization
+        return res;
     }
 
     VisualizationPtr VisualizationFactory::createVisualization() const

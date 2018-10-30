@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelLink_h_
-#define _VirtualRobot_ModelLink_h_
+#pragma once
 
 #include "ModelNode.h"
 
@@ -103,11 +102,11 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelLink();
+        virtual ~ModelLink() override;
 
         //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * Get the collision model of this link.
@@ -274,5 +273,3 @@ namespace VirtualRobot
         CollisionCheckerPtr collisionChecker;
     };
 }
-
-#endif

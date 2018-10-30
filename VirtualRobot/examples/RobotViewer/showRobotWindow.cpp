@@ -355,9 +355,9 @@ void showRobotWindow::attachFrames(bool attach)
     if (!robot) return;
 
     if (attach)
-        robot->attachFrames();
+        robot->attachCoordinateSystems();
     else
-        robot->detachFrames();
+        robot->detachCoordinateSystems();
 
     render();
 }

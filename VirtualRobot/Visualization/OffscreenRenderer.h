@@ -20,10 +20,10 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_OffscreenRenderer_h_
-#define _VirtualRobot_OffscreenRenderer_h_
+#pragma once
 
 #include "../VirtualRobot.h"
+#include "Visualization.h"
 
 #include <Eigen/Core>
 #include <string>
@@ -69,7 +69,8 @@ namespace VirtualRobot
                 bool renderRgbImage, std::vector<unsigned char>& rgbImage,
                 bool renderDepthImage, std::vector<float>& depthImage,
                 bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN,
+                VirtualRobot::Visualization::Color backroundColor = VirtualRobot::Visualization::Color::None()
                 ) const;
 
         virtual bool renderOffscreenRgbImage
@@ -77,7 +78,8 @@ namespace VirtualRobot
                 const Eigen::Matrix4f& cameraPose, const std::vector<VisualizationPtr>& scene,
                 unsigned short width, unsigned short height,
                 std::vector<unsigned char>& rgbImage,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
+                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN,
+                VirtualRobot::Visualization::Color backroundColor = VirtualRobot::Visualization::Color::None()
                 ) const;
         virtual bool renderOffscreenDepthImage
             (
@@ -107,5 +109,3 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const;
     };
 } // namespace VirtualRobot
-
-#endif // _VirtualRobot_OffscreenRenderer_h_

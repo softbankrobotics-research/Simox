@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_WorkspaceRepresentation_h_
-#define _VirtualRobot_WorkspaceRepresentation_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "WorkspaceData.h"
@@ -500,4 +499,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_WorkspaceRepresentation_h_

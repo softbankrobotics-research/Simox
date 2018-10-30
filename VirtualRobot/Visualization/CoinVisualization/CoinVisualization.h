@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_CoinVisualization_h_
-#define _VirtualRobot_CoinVisualization_h_
+#pragma once
 
 #include "../../Model/Model.h"
 #include "../Visualization.h"
@@ -48,7 +47,7 @@ namespace VirtualRobot
         CoinVisualization(SoNode* visuNode);
     public:
         virtual void init() override;
-        virtual ~CoinVisualization();
+        virtual ~CoinVisualization() override;
 
         SoNode* getMainNode() const;
     protected:
@@ -90,7 +89,11 @@ namespace VirtualRobot
         virtual void setFilename(const std::string &filename, bool boundingBox) override;
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const override;
+    protected:
+        void getTextureFiles(SoNode* node, std::vector<std::string>& storeFilenames, const std::string &origFile) const;
 
+    public:
         virtual BoundingBox getBoundingBox() const override;
 
         virtual TriMeshModelPtr getTriMeshModel() const override;
@@ -140,11 +143,9 @@ namespace VirtualRobot
         bool boundingBox; //!< Indicates, if the bounding box model was used
         std::vector<Primitive::PrimitivePtr> primitives;
         TriMeshModelPtr triMeshModel;
-        SelectionGroupPtr selectionGroup;
     };
 
     typedef std::shared_ptr<CoinVisualization> CoinVisualizationPtr;
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_CoinVisualization_h_

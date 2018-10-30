@@ -50,6 +50,23 @@ namespace VirtualRobot
         if (!containsVisualization(visu))
         {
             visualizations.push_back(visu);
+            {
+                auto visuPtr = visu.get();
+                auto id = visu->addSelectionChangedCallback([this, visuPtr](bool selected)
+                {
+                    for (auto& v : visualizations)
+                    {
+                        if (v.get() != visuPtr && !v->isSelected())
+                        {
+                            // if one other visualization is not selected, the selection change of this visualization does not change the selected state of the set
+                            return;
+                        }
+                    }
+
+                    executeSelectionChangedCallbacks(selected);
+                });
+                childVisualizationChangedCallbacks[visu] = id;
+            }
             for (auto& f : visualizationAddedCallbacks)
             {
                 f.second(visu);
@@ -81,6 +98,14 @@ namespace VirtualRobot
     bool VisualizationSet::removeVisualization(size_t index)
     {
         return this->removeVisualization(this->at(index));
+    }
+
+    void VisualizationSet::removeAllVisualizations()
+    {
+        while (!visualizations.empty())
+        {
+            removeVisualization(visualizations.back());
+        }
     }
 
     std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
@@ -349,6 +374,14 @@ namespace VirtualRobot
         return usedBoundingBox;
     }
 
+    void VisualizationSet::getTextureFiles(std::vector<std::string> &storeFilenames) const
+    {
+        for (auto& visu : visualizations)
+        {
+            visu->getTextureFiles(storeFilenames);
+        }
+    }
+
     BoundingBox VisualizationSet::getBoundingBox() const
     {
         BoundingBox b;
@@ -373,7 +406,7 @@ namespace VirtualRobot
             Eigen::Matrix4f transform = visu->getGlobalPose() * getGlobalPose().inverse();
             for (const auto& face : tm->faces)
             {
-                TriangleFace cloned;
+                MathTools::TriangleFace cloned;
                 cloned.id1 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id1)));
                 cloned.id2 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id2)));
                 cloned.id3 = mesh->addVertex(transformPosition(transform, tm->vertices.at(face.id3)));

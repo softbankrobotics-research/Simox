@@ -242,6 +242,10 @@ namespace VirtualRobot
         return boundingBox;
     }
 
+    void DummyVisualization::getTextureFiles(std::vector<std::string> &) const
+    {
+    }
+
     BoundingBox DummyVisualization::getBoundingBox() const
     {
         TriMeshModelPtr tm = this->getTriMeshModel();

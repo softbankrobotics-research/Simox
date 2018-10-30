@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_RuntimeEnv_h_
-#define _VirtualRobot_RuntimeEnv_h_
+#pragma once
 
 #include "../Model/Model.h"
 
@@ -152,4 +151,3 @@ namespace VirtualRobot
 
 } // namespace
 
-#endif // _VirtualRobot_RuntimeEnv_h_

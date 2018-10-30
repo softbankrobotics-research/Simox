@@ -103,7 +103,7 @@ void SimoxGui::Qt3DViewer::resizeEvent(QResizeEvent *ev)
 SimoxGui::Qt3DViewer::~Qt3DViewer()
 {
     VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
-    removeAllLayer();
+    removeAllLayers();
 }
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected() const
@@ -248,4 +248,13 @@ bool SimoxGui::Qt3DViewer::_removeVisualization(const VirtualRobot::Visualizatio
             return false;
         }
     }
+}
+
+
+void SimoxGui::Qt3DViewer::setCameraConfiguration(const CameraConfigurationPtr &)
+{
+}
+
+SimoxGui::CameraConfigurationPtr SimoxGui::Qt3DViewer::getCameraConfiguration() const
+{
 }

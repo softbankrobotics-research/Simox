@@ -176,13 +176,13 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceNeighbors)
     rnsNames.push_back("joint1");
     VirtualRobot::JointSetPtr rns = VirtualRobot::JointSet::createJointSet(rob, "rns", rnsNames, "", "tcp", true);
     BOOST_REQUIRE(rns);
-    BOOST_REQUIRE(rob->hasModelNodeSet("rns"));
+    BOOST_REQUIRE(rob->hasNodeSet("rns"));
 
     VirtualRobot::ModelJointPtr joint1 = rob->getJoint("joint1");
     BOOST_REQUIRE(joint1);
-    VirtualRobot::RobotNodePtr tcp = rob->getModelNode("tcp");
+    VirtualRobot::RobotNodePtr tcp = rob->getNode("tcp");
     BOOST_REQUIRE(tcp);
-    VirtualRobot::RobotNodePtr rootNode = rob->getModelNode("root");
+    VirtualRobot::RobotNodePtr rootNode = rob->getNode("root");
     BOOST_REQUIRE(rootNode);
 
     // CHECK ROBOT WORKSPACE

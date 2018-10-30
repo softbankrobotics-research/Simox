@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Visualization_h_
-#define _VirtualRobot_Visualization_h_
+#pragma once
 
 #include "../Model/Frame.h"
 #include "../Model/Primitive.h"
@@ -221,6 +220,13 @@ namespace VirtualRobot
         //! optional filename tag
         virtual std::string getFilename() const = 0;
         virtual bool usedBoundingBoxVisu() const = 0;
+        inline std::vector<std::string> getTextureFiles() const
+        {
+            std::vector<std::string> storeFilenames;
+            getTextureFiles(storeFilenames);
+            return storeFilenames;
+        }
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const = 0;
 
         /*!
             Returns (current) bounding box in global coordinate system.
@@ -316,6 +322,7 @@ namespace VirtualRobot
         //! optional filename tag
         virtual std::string getFilename() const override;
         virtual bool usedBoundingBoxVisu() const override;
+        virtual void getTextureFiles(std::vector<std::string>& storeFilenames) const override;
 
         /*!
             Returns (current) bounding box in global coordinate system.
@@ -368,4 +375,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif // _VirtualRobot_Visualization_h_

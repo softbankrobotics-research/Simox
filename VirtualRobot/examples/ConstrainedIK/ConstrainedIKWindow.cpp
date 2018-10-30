@@ -123,7 +123,7 @@ void ConstrainedIKWindow::resetSceneryAll()
         return;
     }
 
-    std::vector<ModelNodePtr> rn = robot->getModelNodes();
+    std::vector<ModelNodePtr> rn = robot->getNodes();
     std::map< std::string, float> v;
     for (auto r : rn )
     {
@@ -171,7 +171,7 @@ void ConstrainedIKWindow::updateKCBox()
         return;
     }
 
-    std::vector<RobotNodeSetPtr> rns = robot->getModelNodeSets();
+    std::vector<RobotNodeSetPtr> rns = robot->getNodeSets();
     kinChains.clear();
 
     for (unsigned int i = 0; i < rns.size(); i++)
@@ -574,7 +574,7 @@ void ConstrainedIKWindow::performanceEvaluation()
         VR_INFO << "Evaluation run " << (i+1) << std::endl;
 
         // Reset joint angles to zero
-        std::vector<RobotNodePtr> rn = robot->getModelNodes();
+        std::vector<RobotNodePtr> rn = robot->getNodes();
         std::map< std::string, float > v;
         for (auto r : rn)
         {

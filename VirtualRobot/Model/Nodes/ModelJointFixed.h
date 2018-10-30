@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ModelJointFixed_h_
-#define _VirtualRobot_ModelJointFixed_h_
+#pragma once
 
 #include "ModelJoint.h"
 
@@ -44,9 +43,9 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ModelJointFixed();
+        virtual ~ModelJointFixed() override;
 
-        virtual ModelNodeType getType() const override;
+        virtual NodeType getType() const override;
 
         /*!
          * Disable changing of joint value.
@@ -111,6 +110,3 @@ namespace VirtualRobot
 
     };
 }
-
-
-#endif // _VirtualRobot_ModelJointFixed_h_

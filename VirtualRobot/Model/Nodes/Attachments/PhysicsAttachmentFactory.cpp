@@ -16,7 +16,7 @@ namespace  VirtualRobot
         return factory;
     }
 
-    ModelNodeAttachmentPtr PhysicsAttachmentFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform)
+    ModelNodeAttachmentPtr PhysicsAttachmentFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform) const
     {
         PhysicsAttachmentPtr attachment(new PhysicsAttachment(name, localTransform));
         return attachment;

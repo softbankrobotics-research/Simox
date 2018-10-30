@@ -1,6 +1,5 @@
 
-#ifndef __MTPlanning_WINDOW_H_
-#define __MTPlanning_WINDOW_H_
+#pragma once
 
 #include "MotionPlanning/MotionPlanning.h"
 
@@ -22,8 +21,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "../../../Gui/AbstractViewer.h"
-#include "../../../Gui/ViewerFactory.h"
+#include <Gui/AbstractViewer.h>
+#include <Gui/ViewerFactory.h>
 
 #include "ui_MTPlanning.h"
 
@@ -35,7 +34,7 @@ class MTPlanningWindow : public QMainWindow
 
 public:
     MTPlanningWindow(const std::string &robotFile);
-    ~MTPlanningWindow();
+    ~MTPlanningWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
     int main();
@@ -45,7 +44,7 @@ public slots:
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     //void loadRobot();
     void buildScene();
@@ -77,4 +76,3 @@ protected:
     clock_t optiEndTime;
 };
 
-#endif

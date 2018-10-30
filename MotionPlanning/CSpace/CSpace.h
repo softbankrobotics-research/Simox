@@ -20,13 +20,13 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _MotionPlanning_cspace_h_
-#define _MotionPlanning_cspace_h_
+#pragma once
 
 #include "../MotionPlanning.h"
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/Model/Nodes/ModelJoint.h"
-#include "VirtualRobot/CollisionDetection/CDManager.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/Model/Nodes/ModelJoint.h>
+#include <VirtualRobot/CollisionDetection/CDManager.h>
 #include <iostream>
 #include <vector>
 
@@ -162,17 +162,7 @@ namespace MotionPlanning
         */
         void requestStop();
 
-        //! get random seed
-
-        unsigned int getRandomSeed() const
-        {
-            return randomSeed;
-        }
-
-        void setRandomSeed(unsigned int random_seed)
-        {
-            randomSeed = random_seed;
-        }
+        void setRandomSeed(unsigned int random_seed);
 
         //! checks complete solution path (with the pathCheck methods provided by the CSpace implementation)
         virtual bool checkSolution(const CSpacePathPtr &path, bool verbose = false);
@@ -352,9 +342,6 @@ namespace MotionPlanning
 
         std::vector<VirtualRobot::ModelJointPtr> robotJoints;        //!< joints of the robot that we are manipulating
 
-        unsigned int randomSeed;
-
-        float randMult;
         bool useMetricWeights;
         bool checkForBorderlessDims;
         std::vector< bool > borderLessDimension;         // store borderless state
@@ -369,4 +356,3 @@ namespace MotionPlanning
 
 } // namespace
 
-#endif // _MotionPlanning_cspace_h

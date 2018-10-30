@@ -1,5 +1,4 @@
-#ifndef _VirtualRobot_Units_h_
-#define _VirtualRobot_Units_h_
+#pragma once
 
 /**
 * @package    VirtualRobot
@@ -237,4 +236,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif /* _VirtualRobot_Units_h_ */

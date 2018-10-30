@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_PositionSensor_h_
-#define _VirtualRobot_PositionSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -29,7 +28,6 @@ namespace VirtualRobot
 {
     class PositionSensor : public Sensor
     {
-        friend class ModelNode;
         friend class PositionSensorFactory;
 
     public:
@@ -43,7 +41,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~PositionSensor();
+        virtual ~PositionSensor() override;
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -53,7 +51,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(const ModelNodePtr &node) override;
+        virtual bool isAttachable(const ModelNodePtr &node) const override;
 
         /*!
          * Get the type of this attachment.
@@ -61,14 +59,12 @@ namespace VirtualRobot
          *
          * @return "position".
          */
-        virtual std::string getType() override;
+        virtual std::string getType() const override;
 
-        virtual ModelNodeAttachmentPtr clone() override;
+        virtual ModelNodeAttachmentPtr clone() const override;
 
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const override;
     };
 
     typedef std::shared_ptr<PositionSensor> PositionSensorPtr;
 }
-
-#endif

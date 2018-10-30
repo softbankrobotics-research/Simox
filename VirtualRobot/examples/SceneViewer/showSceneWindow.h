@@ -1,6 +1,5 @@
 
-#ifndef __ShowScene_WINDOW_H_
-#define __ShowScene_WINDOW_H_
+#pragma once
 
 #include "../../../VirtualRobot/Model/Model.h"
 #include "../../../VirtualRobot/VirtualRobotException.h"
@@ -75,5 +74,3 @@ protected:
 
     VirtualRobot::VisualizationSetPtr visualization;
 };
-
-#endif

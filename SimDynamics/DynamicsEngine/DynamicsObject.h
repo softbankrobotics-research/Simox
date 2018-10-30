@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_DynamicsObject_h_
-#define _SimDynamics_DynamicsObject_h_
+#pragma once
 
 #include "../SimDynamics.h"
 #include <VirtualRobot/Model/Frame.h>
@@ -130,4 +129,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_DynamicsObject_h_

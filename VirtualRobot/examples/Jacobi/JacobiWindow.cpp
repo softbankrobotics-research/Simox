@@ -342,12 +342,12 @@ void JacobiWindow::selectKC(int nr)
 
     if (kc->getTCP()->getName() == std::string("TCP L_joint"))
     {
-        tcp2 = robot->getModelNode(std::string("TCP R_joint"));
+        tcp2 = robot->getNode(std::string("TCP R_joint"));
     }
 
     if (kc->getTCP()->getName() == std::string("TCP R_joint"))
     {
-        tcp2 = robot->getModelNode(std::string("TCP L_joint"));
+        tcp2 = robot->getNode(std::string("TCP L_joint"));
     }
 
     box2TCP();
@@ -434,23 +434,23 @@ void JacobiWindow::jacobiTestBi()
     //n.push_back(tcp2);
     //RobotNodeSetPtr rns = RobotNodeSet::createRobotNodeSet(robot,std::string("jacobiTest"),n);
     std::vector<RobotNodePtr> nBi;
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 1 R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Shoulder 2 R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Underarm L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Underarm R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Elbow L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Elbow R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Upperarm L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Upperarm R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 1 L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 1 R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 2 L_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Wrist 2 R_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Roll_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Pitch_joint")));
-    nBi.push_back(robot->getModelNode(std::string("Hip Yaw_joint")));
+    nBi.push_back(robot->getNode(std::string("Shoulder 1 L_joint")));
+    nBi.push_back(robot->getNode(std::string("Shoulder 1 R_joint")));
+    nBi.push_back(robot->getNode(std::string("Shoulder 2 L_joint")));
+    nBi.push_back(robot->getNode(std::string("Shoulder 2 R_joint")));
+    nBi.push_back(robot->getNode(std::string("Underarm L_joint")));
+    nBi.push_back(robot->getNode(std::string("Underarm R_joint")));
+    nBi.push_back(robot->getNode(std::string("Elbow L_joint")));
+    nBi.push_back(robot->getNode(std::string("Elbow R_joint")));
+    nBi.push_back(robot->getNode(std::string("Upperarm L_joint")));
+    nBi.push_back(robot->getNode(std::string("Upperarm R_joint")));
+    nBi.push_back(robot->getNode(std::string("Wrist 1 L_joint")));
+    nBi.push_back(robot->getNode(std::string("Wrist 1 R_joint")));
+    nBi.push_back(robot->getNode(std::string("Wrist 2 L_joint")));
+    nBi.push_back(robot->getNode(std::string("Wrist 2 R_joint")));
+    nBi.push_back(robot->getNode(std::string("Hip Roll_joint")));
+    nBi.push_back(robot->getNode(std::string("Hip Pitch_joint")));
+    nBi.push_back(robot->getNode(std::string("Hip Yaw_joint")));
     JointSetPtr kcBi = JointSet::createJointSet(robot, std::string("jacobiTestBi"), nBi);
 
     DifferentialIKPtr j(new DifferentialIK(kcBi));

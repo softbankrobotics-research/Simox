@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_Test_h_
-#define _VirtualRobot_Test_h_
+#pragma once
 
 #include <boost/test/unit_test.hpp>
 
@@ -59,4 +58,3 @@ struct OutputConfiguration
 #endif
 #endif
 
-#endif /* _VirtualRobot_Test_h_ */

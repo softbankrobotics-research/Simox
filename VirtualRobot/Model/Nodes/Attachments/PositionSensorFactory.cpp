@@ -12,7 +12,7 @@ namespace VirtualRobot
     {
     }
 
-    ModelNodeAttachmentPtr PositionSensorFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform)
+    ModelNodeAttachmentPtr PositionSensorFactory::createAttachment(const std::string &name, const Eigen::Matrix4f &localTransform) const
     {
         PositionSensorPtr m(new PositionSensor(name, localTransform));
         return m;

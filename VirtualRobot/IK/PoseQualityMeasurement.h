@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef __PoseQualityMeasurement_H_
-#define __PoseQualityMeasurement_H_
+#pragma once
 
 #include "../Model/Model.h"
 #include "../Model/Model.h"
@@ -99,4 +98,3 @@ namespace VirtualRobot
 
 }
 
-#endif // __PoseQualityMeasurement_H_

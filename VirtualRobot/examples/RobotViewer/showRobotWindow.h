@@ -1,6 +1,5 @@
 ﻿
-#ifndef __ShowRobot_WINDOW_H_
-#define __ShowRobot_WINDOW_H_
+#pragma once
 
 #include "../../Model/Model.h"
 #include "../../VirtualRobotException.h"
@@ -108,5 +107,3 @@ private:
         VirtualRobot::ModelJointPtr joint;
     };
 };
-
-#endif

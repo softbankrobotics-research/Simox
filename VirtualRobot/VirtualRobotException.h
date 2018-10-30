@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_VirtualRobotException_h_
-#define _VirtualRobot_VirtualRobotException_h_
+#pragma once
 
 #include "Model/Model.h"
 #include <string>
@@ -46,9 +45,9 @@ namespace VirtualRobot
         VirtualRobotException(const std::string& what);
         VirtualRobotException(const char* what);
 
-        virtual ~VirtualRobotException() throw();
+        ~VirtualRobotException() noexcept override;
 
-        virtual const char* what() const throw() override;
+        const char* what() const noexcept override;
         //virtual const char * what() const;
 
     protected:
@@ -75,4 +74,3 @@ namespace VirtualRobot
 #pragma warning(default:4275)
 #endif
 
-#endif // _VirtualRobot_VirtualRobotException_h_

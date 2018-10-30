@@ -22,8 +22,7 @@
 *
 * The RLE compression/decompression routines are based on the source code of Marcus Geelnard'S Basic Compression Library
 */
-#ifndef _VirtualRobot_Compression_h_
-#define _VirtualRobot_Compression_h_
+#pragma once
 
 #include "../VirtualRobot.h"
 #include "../Model/Model.h"
@@ -65,4 +64,3 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif /* _VirtualRobot_BoundingBox_h_ */

@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_JointLimitAvoidanceJacobi_h_
-#define _VirtualRobot_JointLimitAvoidanceJacobi_h_
+#pragma once
 
 #include "VirtualRobot/Model/Model.h"
 #include "VirtualRobot/IK/JacobiProvider.h"
@@ -41,20 +40,20 @@ namespace VirtualRobot
 
         JointLimitAvoidanceJacobi(JointSetPtr rns, JacobiProvider::InverseJacobiMethod invJacMethod = JacobiProvider::eSVD);
 
-        virtual Eigen::MatrixXf getJacobianMatrix() override;
-        virtual Eigen::MatrixXf getJacobianMatrix(const VirtualRobot::FramePtr &tcp) override;
+        Eigen::MatrixXf getJacobianMatrix() override;
+        Eigen::MatrixXf getJacobianMatrix(const VirtualRobot::FramePtr &tcp) override;
 
         /*!
             Computes the complete error vector that is given by the distance to the center of the joint limits.
             Translational Joints are ignored (error = 0)
             \param stepSize The error can be reduced by this factor.
         */
-        virtual Eigen::VectorXf getError(float stepSize = 1.0f) override;
+        Eigen::VectorXf getError(float stepSize = 1.0f) override;
 
         /*!
          *  Not used, only implemented because of superclass JacobiProvider, always returns true
          */
-        virtual bool checkTolerances() override;
+        bool checkTolerances() override;
 
     protected:
         std::vector<ModelJointPtr> nodes;
@@ -64,5 +63,4 @@ namespace VirtualRobot
 
 } // namespace VirtualRobot
 
-#endif
 

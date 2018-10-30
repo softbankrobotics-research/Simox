@@ -1,14 +1,14 @@
 
-#ifndef __GraspQuality_WINDOW_H_
-#define __GraspQuality_WINDOW_H_
+#pragma once
 
-#include "VirtualRobot/Model/Model.h"
-#include "VirtualRobot/VirtualRobotException.h"
-#include "VirtualRobot/Model/Nodes/ModelNode.h"
-#include "VirtualRobot/XML/SceneIO.h"
-#include "VirtualRobot/Visualization/VisualizationFactory.h"
-#include "VirtualRobot/Model/Obstacle.h"
-#include "VirtualRobot/Model/ManipulationObject.h"
+#include <VirtualRobot/VirtualRobot.h>
+#include <VirtualRobot/Model/Model.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Model/Nodes/ModelNode.h>
+#include <VirtualRobot/XML/SceneIO.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
+#include <VirtualRobot/Model/Obstacle.h>
+#include <VirtualRobot/Model/ManipulationObject.h>
 
 #include "GraspPlanning/GraspPlanning.h"
 #include "GraspPlanning/GraspQuality/GraspQualityMeasureWrenchSpace.h"
@@ -19,7 +19,7 @@
 #include <QtCore/QtCore>
 #include <QTimer>
 
-#include "../../../Gui/AbstractViewer.h"
+#include <Gui/AbstractViewer.h>
 
 
 #include <vector>
@@ -31,14 +31,14 @@ class GraspQualityWindow : public QMainWindow
     Q_OBJECT
 public:
     GraspQualityWindow(std::string& robotFile, std::string& objectFile);
-    ~GraspQualityWindow();
+    ~GraspQualityWindow() override;
 
 public slots:
     /*! Closes the window and exits SoQt runloop. */
     void quit();
 
     /*!< Overriding the close event, so we know when the window was closed by the user. */
-    virtual void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void resetSceneryAll();
 
@@ -70,6 +70,7 @@ public slots:
     void selectObject();
 
     void evalRobustness();
+    void evalRobustnessAll();
 
 protected:
 
@@ -91,7 +92,6 @@ protected:
     VirtualRobot::ModelPtr robot;
     VirtualRobot::ManipulationObjectPtr object;
 
-
     VirtualRobot::EndEffectorPtr eef;
     std::vector< VirtualRobot::EndEffectorPtr > eefs;
     VirtualRobot::GraspPtr grasp;
@@ -111,4 +111,3 @@ protected:
     QTimer* timer;
 };
 
-#endif

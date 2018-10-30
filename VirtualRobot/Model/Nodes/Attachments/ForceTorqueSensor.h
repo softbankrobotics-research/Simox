@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ForceTorqueSensor_h_
-#define _VirtualRobot_ForceTorqueSensor_h_
+#pragma once
 
 #include "Sensor.h"
 
@@ -29,7 +28,6 @@ namespace VirtualRobot
 {
     class ForceTorqueSensor : public Sensor
     {
-        friend class ModelNode;
         friend class ForceTorqueSensorFactory;
 
     public:
@@ -43,7 +41,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~ForceTorqueSensor();
+        virtual ~ForceTorqueSensor() override;
 
         /*!
          * Checks if this attachment is attachable to the given node.
@@ -53,7 +51,7 @@ namespace VirtualRobot
          *
          * @return True, if this attachment is attachable; false otherwise.
          */
-        virtual bool isAttachable(const ModelNodePtr &node) override;
+        virtual bool isAttachable(const ModelNodePtr &node) const override;
 
         /*!
          * Get the type of this attachment.
@@ -61,24 +59,24 @@ namespace VirtualRobot
          *
          * @return "forcetorque".
          */
-        virtual std::string getType() override;
+        virtual std::string getType() const override;
 
-        virtual ModelNodeAttachmentPtr clone() override;
+        virtual ModelNodeAttachmentPtr clone() const override;
 
 
         void updateSensors(const Eigen::VectorXf& newForceTorque);
 
 
-        const Eigen::VectorXf& getForceTorque();
+        const Eigen::VectorXf& getForceTorque() const;
         Eigen::Vector3f getForce() const;
         Eigen::Vector3f getTorque() const;
 
         /**
          * Projects torque on joint axis
          */
-        Eigen::Vector3f getAxisTorque();
+        Eigen::Vector3f getAxisTorque() const;
 
-        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) override;
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", int tabs = 3) const override;
 
     protected:
         Eigen::VectorXf forceTorqueValues;
@@ -87,4 +85,3 @@ namespace VirtualRobot
     typedef std::shared_ptr<ForceTorqueSensor> ForceTorqueSensorPtr;
 }
 
-#endif

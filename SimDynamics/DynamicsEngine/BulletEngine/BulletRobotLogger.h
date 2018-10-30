@@ -1,5 +1,4 @@
-#ifndef __BULLET_LOGGER_H__
-#define __BULLET_LOGGER_H__
+#pragma once
 
 #include <Eigen/Dense>
 #include <VirtualRobot/Model/ModelNodeSet.h>
@@ -89,4 +88,3 @@ namespace SimDynamics
 
 }
 
-#endif

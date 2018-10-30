@@ -13,8 +13,7 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef DEMO_APPLICATION_H
-#define DEMO_APPLICATION_H
+#pragma once
 
 
 #include "GlutStuff.h"
@@ -269,6 +268,5 @@ public:
 
 };
 
-#endif //DEMO_APPLICATION_H
 
 

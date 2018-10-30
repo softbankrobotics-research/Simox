@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _SimDynamics_BulletObject_h_
-#define _SimDynamics_BulletObject_h_
+#pragma once
 
 #include "../DynamicsObject.h"
 #include "SimoxMotionState.h"
@@ -47,7 +46,7 @@ namespace SimDynamics
 
         /*!
         */
-        virtual ~BulletObject();
+        ~BulletObject() override;
 
 
         std::shared_ptr<btRigidBody> getRigidBody();
@@ -56,23 +55,23 @@ namespace SimDynamics
         /*!
             Set world position [MM].
         */
-        virtual void setPosition(const Eigen::Vector3f& posMM) override;
+        void setPosition(const Eigen::Vector3f& posMM) override;
 
         /*!
             Set world pose [mm].
         */
-        virtual void setPose(const Eigen::Matrix4f& pose) override;
+        void setPose(const Eigen::Matrix4f& pose) override;
 
         Eigen::Vector3f getCom()
         {
             return com;
         }
 
-        virtual Eigen::Vector3f getLinearVelocity() override;
-        virtual Eigen::Vector3f getAngularVelocity() override;
+        Eigen::Vector3f getLinearVelocity() override;
+        Eigen::Vector3f getAngularVelocity() override;
 
-        virtual void setLinearVelocity(const Eigen::Vector3f& vel) override;
-        virtual void setAngularVelocity(const Eigen::Vector3f& vel) override;
+        void setLinearVelocity(const Eigen::Vector3f& vel) override;
+        void setAngularVelocity(const Eigen::Vector3f& vel) override;
 
         //! This is the world pose which is set by bullet
         Eigen::Matrix4f getComGlobal();
@@ -81,20 +80,20 @@ namespace SimDynamics
          * \brief applyForce Applies an external force on this object. The force is applied at the CoM position.
          * \param force The force to apply (value with respect to one second). The force will be deleted after one simulation step.
          */
-        virtual void applyForce(const Eigen::Vector3f& force) override;
+        void applyForce(const Eigen::Vector3f& force) override;
 
         /*!
          * \brief applyTorque Applies an external torque on this object. The torque is applied at the CoM position.
          * \param torque The torque to apply (value with respect to one second). The torque will be deleted after one simulation step.
          */
-        virtual void applyTorque(const Eigen::Vector3f& torque) override;
+        void applyTorque(const Eigen::Vector3f& torque) override;
 
-        virtual void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s) override;
+        void setSimType(VirtualRobot::ModelLink::Physics::SimulationType s) override;
 
         /*!
          * \brief activate If object is sleeping, we can activate it here.
          */
-        virtual void activate() override;
+        void activate() override;
 
         //! All object's sizes are scaled by this factor for bullet. (Small objects (<5cm) do not work well with bullet).
         static float ScaleFactor;
@@ -122,4 +121,3 @@ namespace SimDynamics
 
 } // namespace SimDynamics
 
-#endif // _SimDynamics_BulletObject_h_

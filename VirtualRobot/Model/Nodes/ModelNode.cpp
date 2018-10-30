@@ -11,13 +11,13 @@ namespace VirtualRobot
 {
     ModelNode::ModelNode(const ModelWeakPtr& model, 
         const std::string& name,
-        const Eigen::Matrix4f& staticTransformation)
+        const Eigen::Matrix4f& localTransformation)
         : Frame(name),
          // initialized(false),
           model(model),
           parent(ModelNodeWeakPtr()),
           children(),
-          staticTransformation(staticTransformation),
+          localTransformation(localTransformation),
           attachments()
     {
         VR_ASSERT(model.lock());
@@ -53,7 +53,7 @@ namespace VirtualRobot
         return ModelNodePtr();
     }
 
-    ModelNodePtr ModelNode::getParentNode(ModelNodeType type) const
+    ModelNodePtr ModelNode::getParentNode(NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
@@ -78,12 +78,12 @@ namespace VirtualRobot
         return parentLink;
     }
 
-    std::vector<ModelNodePtr> ModelNode::getChildNodes(ModelNodeType type) const
+    std::vector<ModelNodePtr> ModelNode::getChildNodes(NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         //THROW_VR_EXCEPTION_IF(!isInitialized(), "ModelNode \"" + getName() + "\" is not initialized.");
 
-        if (type == ModelNode::ModelNodeType::Node)
+        if (type == ModelNode::NodeType::Node)
         {
             return children;
         }
@@ -106,7 +106,7 @@ namespace VirtualRobot
         return childLinks;
     }
 
-    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, ModelNodeType type, bool clearVector)
+    void ModelNode::collectAllNodes(std::vector<ModelNodePtr>& storeNodes, NodeType type, bool clearVector)
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getChildNodes
@@ -126,21 +126,22 @@ namespace VirtualRobot
         }
     }
 
-    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, ModelNodeType type)
+    std::vector<ModelNodePtr> ModelNode::getAllParents(const ModelNodeSetPtr& set, NodeType type) const
     {
         ReadLockPtr r = getModel()->getReadLock();
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
-        ModelNodePtr p = shared_from_this();
+        ModelNodePtr p = p->getParentNode(type);
 
-        while (p = p->getParentNode(type))
+        do
         {
             if (!set || set->hasNode(p))
             {
                 result.push_back(p);
             }
         }
+        while (p = p->getParentNode(type));
 
         return result;
     }
@@ -183,8 +184,8 @@ namespace VirtualRobot
 			return false;
 		}
 		ModelPtr m = getModel();
-		if (!m->hasModelNode(newNode))
-			m->registerModelNode(newNode);
+		if (!m->hasNode(newNode))
+			m->registerNode(newNode);
         children.push_back(newNode);
         newNode->parent = shared_from_this();
 
@@ -240,8 +241,8 @@ namespace VirtualRobot
         {
             WriteLockPtr w = getModel()->getWriteLock();
 			ModelPtr m = getModel();
-			if (m->hasModelNode(node))
-				m->deregisterModelNode(node);
+			if (m->hasNode(node))
+				m->deregisterNode(node);
 
             children.erase(std::find(children.begin(), children.end(), node));
             node->parent.reset();
@@ -264,21 +265,21 @@ namespace VirtualRobot
         return false;
     }
 
-    Eigen::Matrix4f ModelNode::getStaticTransformation() const
+    Eigen::Matrix4f ModelNode::getLocalTransformation() const
     {
         ReadLockPtr r = getModel()->getReadLock();
-        return staticTransformation;
+        return localTransformation;
     }
 
     Eigen::Matrix4f ModelNode::getNodeTransformation() const
     {
-        return getStaticTransformation();
+        return getLocalTransformation();
     }
 
-    void ModelNode::setStaticTransformation(const Eigen::Matrix4f& staticTransformation, bool updatePose)
+    void ModelNode::setLocalTransformation(const Eigen::Matrix4f& localTransformation, bool updatePose)
     {
         WriteLockPtr w = getModel()->getWriteLock();
-        this->staticTransformation = staticTransformation;
+        this->localTransformation = localTransformation;
 
         if (updatePose)
         {
@@ -308,7 +309,9 @@ namespace VirtualRobot
 
     void ModelNode::updatePose(bool updateChildren, bool updateAttachments)
     {
-        WriteLockPtr w = getModel()->getWriteLock();
+        ModelPtr thisModel = getModel();
+        // we only need to lock this model here, even if it is attached to another model, because this algorithm is recursive
+        WriteLockPtr w = thisModel->getWriteLock();
         ModelNodePtr parentShared = getParentNode();
 
         if (parentShared)
@@ -335,11 +338,35 @@ namespace VirtualRobot
             }
         }
 
+        // If a model is attached to an other model the models of the nodes at the attachement location differ.
+        // At this location we need to set the global pose of the model, but not the global pose of its nodes,
+        // because these will be updated in the tree of the new model.
+        ModelPtr parentModel = parentShared ? parentShared->getModel() : nullptr;
+        if (parentModel && thisModel != parentModel)
+        {
+            thisModel->setGlobalPose(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose(), false);
+        }
+
         if (updateChildren)
         {
             for (const ModelNodePtr & child : getChildNodes())
             {
                 child->updatePose(true, updateAttachments);
+            }
+        }
+    }
+
+    void ModelNode::copyPoseFrom(const ModelNodePtr &other)
+    {
+        globalPose = other->getGlobalPose();
+
+        updatePoseInternally(false, true);
+
+        for (auto it = attachments.begin(); it != attachments.end(); it++)
+        {
+            for (const ModelNodeAttachmentPtr & attachment : it->second)
+            {
+                attachment->update(globalPose);
             }
         }
     }
@@ -575,7 +602,7 @@ namespace VirtualRobot
             parentNode->attachChild(result, false);
         }
 
-        newModel->registerModelNode(result);
+        newModel->registerNode(result);
 
         newModel->applyJointValues();
 

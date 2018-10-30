@@ -20,8 +20,7 @@
 *             GNU Lesser General Public License
 *
 */
-#ifndef _VirtualRobot_ObjectIO_h_
-#define _VirtualRobot_ObjectIO_h_
+#pragma once
 
 #include "../Model/Model.h"
 #include "BaseIO.h"
@@ -114,9 +113,10 @@ namespace VirtualRobot
 
         // instantiation not allowed
         ObjectIO();
-        virtual ~ObjectIO();
+        ~ObjectIO() override;
+
+        static bool processSceneRobot(rapidxml::xml_node<char>* sceneXMLNode, ScenePtr scene, const std::string& basePath);
     };
 
 }
 
-#endif // _VirtualRobot_ObjectIO_h_

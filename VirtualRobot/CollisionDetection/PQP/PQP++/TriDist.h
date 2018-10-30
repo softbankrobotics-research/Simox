@@ -38,8 +38,7 @@
 
 \**************************************************************************/
 
-#ifndef PQP_TRIDIST_H
-#define PQP_TRIDIST_H
+#pragma once
 
 #include "PQP_Compile.h"
 
@@ -76,4 +75,3 @@ namespace PQP
 
 } // namespace
 
-#endif
