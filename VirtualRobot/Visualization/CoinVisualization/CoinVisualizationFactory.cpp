@@ -41,6 +41,7 @@
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 #include <Inventor/nodes/SoUnits.h>
+#include <Inventor/SoInteraction.h>
 
 #include "../TriMeshModel.h"
 #include "../../Tools/RuntimeEnvironment.h"
@@ -59,6 +60,8 @@ namespace VirtualRobot
     #ifdef SIMOX_USE_SOQT
         SoQt::init(argc, argv, appName.c_str());
     #endif
+        SoInteraction::init();
+
         // enable Coin3D extension: transparent settings without color
         (void)coin_setenv("COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE", "1", TRUE);
 
