@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
         "<Robot Type='MyDemoRobotType' StandardName='ExampleRobo' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"
         "   <Joint type='revolute'>"
-        "    <Limits unit='degree' lo='-180' hi='180'/>"
+        "    <Limits unit='degree' lo='-180' hi='180' limitless='true'/>"
         "	  <Axis x='1' y='0' z='0'/>"
         "   </Joint>"
         " </RobotNode>"
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     p1(0) = 0;
     p2(0) = 0.5f;
     d = cspace->interpolate(p1, p2, 0, 0);
-    BOOST_CHECK_CLOSE(d, 0.0f, 0.01f);
+    BOOST_CHECK_LT(std::abs(d), 0.01f);
     d = cspace->interpolate(p1, p2, 0, 1);
     BOOST_CHECK_CLOSE(d, 0.5f, 0.01f);
     d = cspace->interpolate(p1, p2, 0, 0.5f);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     p1(0) = 0;
     p2(0) = -0.5f;
     d = cspace->interpolate(p1, p2, 0, 0);
-    BOOST_CHECK_CLOSE(d, 0.0f, 0.01f);
+    BOOST_CHECK_LT(std::abs(d), 0.01f);
     d = cspace->interpolate(p1, p2, 0, 1);
     BOOST_CHECK_CLOSE(d, -0.5f, 0.01f);
     d = cspace->interpolate(p1, p2, 0, 0.5f);
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     d = cspace->interpolate(p1, p2, 0, 1);
     BOOST_CHECK_CLOSE(d, -0.5f, 0.01f);
     d = cspace->interpolate(p1, p2, 0, 0.5f);
-    BOOST_CHECK_CLOSE(d, 0.0f, 0.01f);
+    BOOST_CHECK_LT(std::abs(d), 0.01f);
 
     p1(0) = -0.5;
     p2(0) = 0.5f;
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(testCSpace)
     d = cspace->interpolate(p1, p2, 0, 1);
     BOOST_CHECK_CLOSE(d, 0.5f, 0.01f);
     d = cspace->interpolate(p1, p2, 0, 0.5f);
-    BOOST_CHECK_CLOSE(d, 0.0f, 0.01f);
+    BOOST_CHECK_LT(std::abs(d), 0.01f);
 
     // traverse border
     p1(0) = -0.75f * (float)M_PI;
