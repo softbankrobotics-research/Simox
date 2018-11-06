@@ -42,27 +42,53 @@ namespace VirtualRobot
 
         struct triangle
         {
+            triangle() = default;
+            triangle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3) :
+                vertex1(v1), vertex2(v2), vertex3(v3){}
             Eigen::Vector3f vertex1;
             Eigen::Vector3f vertex2;
             Eigen::Vector3f vertex3;
         };
         TriMeshModel(std::vector <triangle>& triangles);
 
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector3f& normal,
-                                 VisualizationFactory::Color color1 = VisualizationFactory::Color::Gray(),
-                                 VisualizationFactory::Color color2 = VisualizationFactory::Color::Gray(),
-                                 VisualizationFactory::Color color3 = VisualizationFactory::Color::Gray());
-        void addTriangleWithFace(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3, Eigen::Vector4f& vertexColor1, Eigen::Vector4f& vertexColor2, Eigen::Vector4f& vertexColor3);
-        static Eigen::Vector3f CreateNormal(Eigen::Vector3f& vertex1, Eigen::Vector3f& vertex2, Eigen::Vector3f& vertex3);
+
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3);
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal,
+                                 const VisualizationFactory::Color &color1 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color &color2 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color &color3 = VisualizationFactory::Color::Gray());
+        void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, const Eigen::Vector4f& vertexColor1, const Eigen::Vector4f& vertexColor2, const Eigen::Vector4f& vertexColor3);
+        void addMesh(const TriMeshModel& mesh);
+        static Eigen::Vector3f CreateNormal(const Eigen::Vector3f &vertex1, const Eigen::Vector3f &vertex2, const Eigen::Vector3f &vertex3);
         void addFace(const MathTools::TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
-        int addNormal(const Eigen::Vector3f& normal);
-        int addColor(const VisualizationFactory::Color& color);
-        int addColor(const Eigen::Vector4f& color);
-        int addMaterial(const VisualizationFactory::PhongMaterial& material);
+        unsigned int addNormal(const Eigen::Vector3f& normal);
+        unsigned int addColor(const VisualizationFactory::Color& color);
+        unsigned int addColor(const Eigen::Vector4f& color);
+        unsigned int addMaterial(const VisualizationFactory::PhongMaterial& material);
         void addFace(unsigned int id0, unsigned int id1, unsigned int id2);
         void clear();
+        /**
+         * @brief Checks all faces for existence of normals. Creates the normals in case they are missing.
+         * @return Number of created normals
+         */
+        unsigned int addMissingNormals();
+
+        /**
+         * @brief  Checks all faces for existence of colors.
+         * First, mergeVertices() is called. Then, if no color is found,
+         * a face with the same vertex is searched and that color is used (if available).
+         * Otherwise sets color to the given color.
+         * @param color Default Color
+         * @return Number of created colors entries
+         */
+        unsigned int addMissingColors(const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray());
+
+        /**
+         * @brief Smoothes the normal surface by calculating the average of all face-normals of one vertex.
+         * Calls first mergeVertices().
+         */
+        void smoothNormalSurface();
         void flipVertexOrientations();
         /**
          * @brief Merges vertices that are close together (mergeThreshold).
@@ -70,16 +96,17 @@ namespace VirtualRobot
          * could consist of many individual triangles.
          * All vertex ids stored in faces are updated. This function is quite efficient due to a kd-tree and an inverted face-vertex mapping.
          * @param mergeThreshold If squared Euclidan distance of two points is belong this threshold, two vertices are merged.
-         * @param removeVertices If set, the vertex vextor is chekced for unused vertices. May result in  a reassembled vertex vector.
+         * @param removeVertices If set, the vertex vextor is chekced for unused vertices. May result in a reassembled vertex vector.
          */
-        void mergeVertices(float mergeThreshold = 0.0001, bool removeVertices = true);
+        void mergeVertices(float mergeThreshold = 0.0001f, bool removeVertices = true);
 
         /**
          * @brief fatten or shrink this trimesh. Done by moving a vertex along a normal calculated from the normals
          * of all the faces the vertex is used in.
          * @param offset All vertexes are moved about this offset in mm.
+         * @param updateNormals If true, all normals will be updated with the average normal of all normals beloning to one vertex (from multiple faces)
          */
-        void fattenShrink(float offset);
+        void fattenShrink(float offset, bool updateNormals = false);
 
         /*!
          * \brief removeUnusedVertices Checks if vertices are used by faces. May rearrange vertices vector!

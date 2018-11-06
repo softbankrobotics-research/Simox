@@ -34,11 +34,11 @@ namespace math
         static float ShiftAngle0_2PI(float a);
         static float AngleModPI(float value);
         static void GetIndex(float t, float minT, float maxT, int count, int& i, float& f);
-        static float FastDistribution(float x, float sigma2);
         static float Clamp(float min, float max, float value);
         static float Lerp(float a, float b, float f);
         static Eigen::Vector3f Lerp(const Eigen::Vector3f& a, const Eigen::Vector3f& b, float f);
         static Eigen::Quaternionf Lerp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
+        static Eigen::Quaternionf LerpClamp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f);
         static float ILerp(float a, float b, float f);
         static float Lerp(float a, float b, int min, int max, int val);
         static float Angle(Eigen::Vector2f v);
@@ -58,9 +58,17 @@ namespace math
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f &source, const Eigen::Vector3f &target);
         static Eigen::Matrix3f RotateOrientationToFitVector(const Eigen::Matrix3f& ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget);
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
-        static Eigen::Matrix4f TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f& offset);
+        static Eigen::Matrix4f TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f& offset);
         static Eigen::Vector3f TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f &pos);
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);
+        static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f &ori);
+        static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
+        static Eigen::Vector3f GetPosition(const Eigen::Matrix4f& pose);
+        static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
+        static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
+
+        static float rad2deg(float rad);
+        static float deg2rad(float deg);
 
     private:
     };

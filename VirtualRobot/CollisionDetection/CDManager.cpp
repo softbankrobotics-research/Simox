@@ -58,7 +58,7 @@ namespace VirtualRobot
     {
         if (m)
         {
-            VirtualRobot::SceneObjectSetPtr cms(new VirtualRobot::SceneObjectSet("", colChecker));
+            VirtualRobot::SceneObjectSetPtr cms(new VirtualRobot::SceneObjectSet(m->getName() + "Set", colChecker));
             cms->addSceneObject(m);
             addCollisionModel(cms);
         }

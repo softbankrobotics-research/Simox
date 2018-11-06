@@ -573,8 +573,7 @@ namespace Saba
     {
         if (freeNodes.size() == 0)
         {
-            SABA_ERROR << " Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")" << std::endl;
-            return CSpaceNodePtr();
+            THROW_SABA_EXCEPTION(" Could not create new nodes... (maxNodes exceeded:" << maxNodes << ")");
         }
 
         // get free node
@@ -625,6 +624,8 @@ namespace Saba
             float start = q1[dim];
             float end = q2[dim];
             float res = interpolateRotational(start, end , step);
+            // change to actual defined borders
+            res = VirtualRobot::MathTools::angleModX(res, 0.5f*(boundaryMax[dim]+boundaryMin[dim]));
             return res;
         }
 

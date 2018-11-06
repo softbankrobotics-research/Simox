@@ -1,6 +1,6 @@
 PROJECT ( loadURDFRobot )
 
-if (TARGET VirtualRobotImportUrdf)
+if (tinyxml_library AND URDF_FOUND)
 
   include_directories(SYSTEM ${tinyxml_include_dirs})
   link_directories(${tinyxml_library_dirs})
@@ -17,7 +17,7 @@ if (TARGET VirtualRobotImportUrdf)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER "Examples")
 
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} VirtualRobot VirtualRobotImportUrdf ${URDFDOM_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} VirtualRobot ${URDFDOM_LIBRARIES})
   
   
   #######################################################################################

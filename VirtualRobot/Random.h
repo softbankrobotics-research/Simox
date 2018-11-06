@@ -22,11 +22,12 @@
 */
 #pragma once
 
+#include "VirtualRobot.h"
 #include <random>
 
 namespace VirtualRobot
 {
-    std::mt19937_64& PRNG64Bit();
+    std::mt19937_64 VIRTUAL_ROBOT_IMPORT_EXPORT & PRNG64Bit();
 
     inline typename std::mt19937_64::result_type RandomNumber()
     {

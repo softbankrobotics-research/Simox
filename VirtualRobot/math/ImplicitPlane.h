@@ -22,11 +22,7 @@
 #pragma once
 
 #include "MathForwardDefinitions.h"
-
 #include "AbstractFunctionR3R1.h"
-
-
-
 
 namespace math
 {
@@ -49,11 +45,12 @@ public:
     Eigen::Vector3f GetClosestPoint(Eigen::Vector3f v);
     static ImplicitPlane FromPositionNormal(Eigen::Vector3f pos, Eigen::Vector3f normal);
     static ImplicitPlane FromContact(Contact c);
+    float GetSignedDistance(const Eigen::Vector3f& p);
 
     // https://de.wikipedia.org/wiki/Schnittgerade
     Line Intersect(Plane plane);
 
-    float Get(Eigen::Vector3f pos);
+    float Get(Eigen::Vector3f pos) override;
 
 private:
     float a;

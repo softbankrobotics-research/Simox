@@ -51,6 +51,7 @@ namespace VirtualRobot
 
         float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1 = NULL, int* trID2 = NULL) override;
         bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) override; //, Eigen::Vector3f *storeContact = NULL);
+        bool checkCollision(CollisionModelPtr model1, const Eigen::Vector3f& point, float tolerance = 0.0f) override;
 
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
@@ -110,6 +111,8 @@ namespace VirtualRobot
 
     protected:
         PQP::PQP_Checker* pqpChecker;
+        std::unique_ptr<PQP::PQP_Model> pointModel;
+
     };
 
 } // namespace

@@ -34,7 +34,6 @@ public:
 
     float Get(int x, int y, int z);
 
-
     private:
         Array3DFloatPtr data;
         Array3DBoolPtr valid;

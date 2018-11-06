@@ -337,9 +337,14 @@ namespace VirtualRobot
         std::vector< CollisionModelPtr > vColModels1 = model1->getCollisionModels();
         std::vector< CollisionModelPtr > vColModels2 = model2->getCollisionModels();
 
-        if (vColModels1.size() == 0 || vColModels2.size() == 0)
+        if (vColModels1.size() == 0)
         {
-            VR_WARNING << "no internal data..." << endl;
+            VR_WARNING << "no internal data for " << model1->getName() << endl;
+            return false;
+        }
+        if ( vColModels2.size() == 0)
+        {
+            VR_WARNING << "no internal data for " << model2->getName() << endl;
             return false;
         }
 
@@ -454,6 +459,40 @@ namespace VirtualRobot
         {
             return checkCollision(model1->getCollisionModel(), model2->getCollisionModel());
         }
+    }
+
+    bool CollisionChecker::checkCollision(CollisionModelPtr model, const Eigen::Vector3f &point, float tolerance)
+    {
+        VR_ASSERT(model);
+        VR_ASSERT_MESSAGE(model->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
+        VR_ASSERT(isInitialized());
+
+        return collisionCheckerImplementation->checkCollision(model, point, tolerance);//, storeContact);
+    }
+
+    bool CollisionChecker::checkCollision(SceneObjectSetPtr modelSet, const Eigen::Vector3f &point, float tolerance)
+    {
+        VR_ASSERT(modelSet);
+        VR_ASSERT_MESSAGE(modelSet->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
+        VR_ASSERT(isInitialized());
+
+        std::vector< CollisionModelPtr > vColModels1 = modelSet->getCollisionModels();
+
+        if (vColModels1.size() == 0)
+        {
+            VR_WARNING << "no internal data for " << modelSet->getName() << endl;
+            return false;
+        }
+
+
+        for(auto & col : vColModels1)
+        {
+            if(checkCollision(col, point, tolerance))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool CollisionChecker::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2)

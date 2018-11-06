@@ -66,6 +66,11 @@ ImplicitPlane ImplicitPlane::FromContact(Contact c)
     return FromPositionNormal(c.Position(), c.Normal());
 }
 
+float ImplicitPlane::GetSignedDistance(const Eigen::Vector3f &p)
+{
+    return GetNormal().dot(p) + d;
+}
+
 Line ImplicitPlane::Intersect(Plane plane)
 {
 
