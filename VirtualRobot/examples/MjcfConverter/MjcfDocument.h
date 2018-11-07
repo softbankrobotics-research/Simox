@@ -5,6 +5,8 @@
 
 #include <Eigen/Eigen>
 
+#include <VirtualRobot/Robot.h>
+
 
 namespace VirtualRobot
 {
@@ -41,19 +43,20 @@ namespace mjcf
         
         Element* addNewElement(Element* parent, const std::string& elemName);
         
-        Element* addBodyElement(
-                Element* parent, 
-                const std::string& bodyName = "",
-                const Eigen::Vector3f& pos = Eigen::Vector3f::Zero(),
-                const Eigen::Quaternionf& quat = Eigen::Quaternionf::Identity());
+        Element* addBodyElement(Element* parent, RobotNodePtr node);
+                
         
         
         
         
     private:
 
-        std::string toAttrVal(const Eigen::Vector3f& v);
-        std::string toAttrVal(const Eigen::Quaternionf& v);
+        Element* addJointelement(Element* body, RobotNodePtr node);
+        
+        std::string toAttr(bool b);
+        template <int dim>
+        std::string toAttr(const Eigen::Matrix<float, dim, 1>& v);
+        std::string toAttr(const Eigen::Quaternionf& v);
         
         
         float floatCompPrecision = 1e-6f;
@@ -71,6 +74,15 @@ namespace mjcf
     };
     
     using DocumentPtr = std::unique_ptr<Document>;
+ 
+    
+    template <int dim>
+    std::string Document::toAttr(const Eigen::Matrix<float, dim, 1>& v)
+    {
+        std::stringstream ss;
+        ss << v.format(iofVector);
+        return ss.str();
+    }
     
 }
 }

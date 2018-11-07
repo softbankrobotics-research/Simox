@@ -21,12 +21,18 @@ namespace VirtualRobot
         
     private:
         
-        RobotPtr loadInputFile(const std::string& inputFilename);
+        void loadInputFile(const std::string& inputFilename);
+        void writeOutputFile(const std::string& outputFilename);
         
-        mjcf::DocumentPtr convertToMjcf(RobotPtr robot);
+        void convertToMjcf();
         
-        void writeOutputFile(mjcf::Document& mjcfDoc,
-                             const std::string& outputFilename);
+        mjcf::Element* addNodeBody(RobotNodePtr node);
+        
+        
+        RobotPtr robot;
+        mjcf::DocumentPtr document = nullptr;
+        
+        std::map<std::string, mjcf::Element*> addedBodys;
         
     };
 
