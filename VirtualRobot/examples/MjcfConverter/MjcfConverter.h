@@ -23,9 +23,9 @@ namespace VirtualRobot
         
         RobotPtr loadInputFile(const std::string& inputFilename);
         
-        MjcfDocumentPtr convertToMjcf(RobotPtr robot);
+        mjcf::DocumentPtr convertToMjcf(RobotPtr robot);
         
-        void writeOutputFile(MjcfDocument& mjcfDoc,
+        void writeOutputFile(mjcf::Document& mjcfDoc,
                              const std::string& outputFilename);
         
     };
