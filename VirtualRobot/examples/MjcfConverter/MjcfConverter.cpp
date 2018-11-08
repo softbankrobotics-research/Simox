@@ -1,7 +1,5 @@
 #include "MjcfConverter.h"
 
-#include <tinyxml2.h>
-
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 
@@ -9,6 +7,7 @@
 using namespace VirtualRobot;
 namespace tx = tinyxml2; 
 namespace fs = boost::filesystem;
+using Element = mjcf::Element;
 
 
 MjcfConverter::MjcfConverter()
@@ -72,8 +71,8 @@ void MjcfConverter::loadInputFile()
     if (inputXML->LoadFile(inputFilePath.c_str()))
     {
         std::cout << "ERROR loading XML file: \n" 
-                  << inputXML->GetErrorStr1() << "\n"
-                  << inputXML->GetErrorStr2() << "\n";
+                  << inputXML->ErrorName() << "\n"
+                  << inputXML->ErrorStr() << "\n";
     }
 }
 
@@ -146,7 +145,7 @@ void MjcfConverter::addNodeBodies()
     assert(rootNode);
     
     // add root
-    mjcf::Element* root = document->addBodyElement(document->worldbody(), rootNode);
+    Element* root = document->addBodyElement(document->worldbody(), rootNode);
     nodeBodies[rootNode->getName()] = root;
     assert(root);
     
@@ -236,23 +235,23 @@ void MjcfConverter::addNodeBodyMeshes()
         document->addMeshElement(meshName, dstMeshRelPath.string());
         
         // add geom to body
-        mjcf::Element* body = nodeBodies[node->getName()];
+        Element* body = nodeBodies[node->getName()];
         document->addGeomElement(body, meshName);
     }
 }
 
 
 
-mjcf::Element* MjcfConverter::addNodeBody(RobotNodePtr node)
+Element* MjcfConverter::addNodeBody(RobotNodePtr node)
 {
-    mjcf::Element* element = nodeBodies[node->getName()];
+    Element* element = nodeBodies[node->getName()];
     if (element)
     {
         // break recursion
         return element;
     }
     
-    mjcf::Element* parent = nodeBodies[node->getParent()->getName()];
+    Element* parent = nodeBodies[node->getParent()->getName()];
     if (!parent)
     {
         parent = addNodeBody(robot->getRobotNode(node->getParent()->getName()));
@@ -260,18 +259,37 @@ mjcf::Element* MjcfConverter::addNodeBody(RobotNodePtr node)
     
     element = document->addBodyElement(parent, node);
     nodeBodies[node->getName()] = element;
-    
+
     return element;
 }
 
 void MjcfConverter::mergeEmptyBodies()
 {
+    // merge body leaf nodes with parent if they do not have a geom
     
     
+    // assume we have leaf
     
+    Element* leafBody;
     
+    if (leafBody->FirstChildElement("geom"))
+    {
+        // has geom
+        return;
+    }
     
+    // merge with parent
+    // move all children to parent
     
+    for (tx::XMLNode* child = leafBody->FirstChild();
+         child;
+         child = child->NextSibling())
+    {
+        leafBody->Parent();
+        
+        
+        
+    }
 }
 
 void MjcfConverter::writeOutputFile()

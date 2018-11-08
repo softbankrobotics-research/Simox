@@ -1,9 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <tinyxml2.h>
 
 #include <Eigen/Eigen>
+
+#include <VirtualRobot/Tools/tinyxml2.h>
 
 #include <VirtualRobot/Robot.h>
 

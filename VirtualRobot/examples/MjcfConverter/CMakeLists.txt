@@ -1,11 +1,12 @@
 project(MjcfConverter)
 
-find_package(TinyXML2)
+#find_package(TinyXML2 7.0.0)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 
-if (TINYXML2_FOUND AND Boost_FOUND)
+#if (TINYXML2_FOUND AND Boost_FOUND)
+if (Boost_FOUND)
 
-    include_directories(${TINYXML2_INCLUDE_DIR})
+    #include_directories(${TINYXML2_INCLUDE_DIR})
 
     set(SOURCES
         main.cpp
@@ -20,7 +21,7 @@ if (TINYXML2_FOUND AND Boost_FOUND)
 
     set(LIBS
         VirtualRobot 
-        ${TINYXML2_LIBRARIES}
+    #    ${TINYXML2_LIBRARIES}
         ${BOOST_FILESYSTEM_LIBRARIES}
         ${BOOST_SYSTEM_LIBRARIES}
     )
