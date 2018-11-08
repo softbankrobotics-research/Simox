@@ -64,9 +64,10 @@ void MjcfConverter::loadInputFile()
 {
     assert(!inputFilePath.empty());
     
+    VR_INFO << "Loading robot via RobotIO: " << inputFilePath << std::endl;
     try
     {
-        this->robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eStructure);
+        robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eStructure);
         assert(robot);
     }
     catch (const VirtualRobotException&)
@@ -74,7 +75,8 @@ void MjcfConverter::loadInputFile()
         throw; // rethrow
     }
     
-    inputXML.LoadFile(inputFilePath.string());
+    VR_INFO << "Loading XML file: " << inputFilePath << std::endl;
+    inputXML.LoadFile(inputFilePath);
 }
 
 void MjcfConverter::writeOutputFile()
@@ -95,6 +97,7 @@ void MjcfConverter::convertToMjcf()
     
     document->setModelName(robot->getName());
     document->compiler()->SetAttribute("angle", "radian");
+    document->compiler()->SetAttribute("balanceinertia", "true");
     
     makeEnvironment();
     
@@ -267,27 +270,9 @@ void MjcfConverter::sanitizeMasslessBodies()
 void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 {
     assertElementIsBody(body);
-    
+
     VR_INFO << "- Node '" << body->Attribute("name") << "': " << std::endl;
-    
-    // leaf => end of recursion
-    if (!hasElementChild(body, "body"))
-    {
-        VR_INFO << "  | Leaf";
-        if (!hasMass(body))
-        {
-            VR_INFO << " without mass" << std::endl;
-            sanitizeMasslessLeafBody(body);
-        }
-        else
-        {
-            VR_INFO << std::endl;
-        }
-        return; 
-    }
-    
-    // non-leaf body
-    VR_INFO << "  | Non-leaf" << std::endl;
+    const std::string t = "  | ";
     
     std::string bodyName = body->Attribute("name");
     RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
@@ -295,7 +280,18 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
     
     while (!hasMass(body))
     {
-        VR_INFO << "  | No mass" << std::endl;
+        VR_INFO << t << "Massless" << std::endl;
+        
+        if (!hasElementChild(body, "body"))
+        {
+            // leaf => end of recursion
+            VR_INFO << t << "Leaf" << std::endl;
+            sanitizeMasslessLeafBody(body);
+            return; 
+        }
+        
+        // non-leaf body
+        VR_INFO << t << "Non-leaf" << std::endl;
         
         // check whether there is only one child body
         Element* childBody = body->FirstChildElement("body");
@@ -303,7 +299,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
         {
             std::string childBodyName = childBody->Attribute("name");
             
-            VR_INFO << "  | Single child body => merging '" << childBodyName
+            VR_INFO << t << "Single child body => merging '" << childBodyName
                       << "' into '" << bodyName << "'" << std::endl;
 
             // check child for pose attributes
@@ -340,7 +336,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
             for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
                  grandChild = grandChild->NextSibling())
             {
-                VR_INFO << "  |  | Moving '" << grandChild->Value() << "'" << std::endl;
+                VR_INFO << t << " | Moving '" << grandChild->Value() << "'" << std::endl;
                 
                 // clone grandchild
                 tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
@@ -348,8 +344,6 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
                 // insert to body
                 body->InsertEndChild(grandChildClone);
             }
-            
-            
             
             // update body name
             
@@ -365,14 +359,19 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
             
             // delete child
             body->DeleteChild(childBody);
+            
+            VR_INFO << t << "=> New body name: " << newName.str() << std::endl;
         }
         else
         {
-            VR_WARNING << "  | Massless body with >1 child body: " 
+            VR_WARNING << t << "Massless body with >1 child body: " 
                        << body->Attribute("name") << std::endl;
             break;
         }
     }
+    
+    
+    // recursive descend
     
     for (Element* child = body->FirstChildElement("body");
          child;

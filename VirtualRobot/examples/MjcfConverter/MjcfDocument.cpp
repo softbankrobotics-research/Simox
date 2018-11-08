@@ -167,6 +167,10 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     if (!node->isLimitless())
     {
         Eigen::Vector2f range(node->getJointLimitLow(), node->getJointLimitHigh());
+        if (node->isTranslationalJoint())
+        {
+            range *= lengthScaling;
+        }
         joint->SetAttribute("range", toAttr(range).c_str());
     }
     

@@ -18,11 +18,13 @@ void SimoxXMLDocument::LoadFile(const fs::path& path)
 {
     this->inputFilePath = path;
     
+    VR_INFO << "Loading XML: " << path << std::endl;
     int errID = Base::LoadFile(path.c_str());
     if (errID)
     {
         throw MjcfXmlLoadFileFailed(ErrorName(), ErrorStr());
     }
+    VR_INFO << "Done." << std::endl;
     
     collisionModelFiles.clear();
     visualizationFiles.clear();
@@ -36,6 +38,8 @@ void SimoxXMLDocument::LoadFile(const fs::path& path)
     
     for (fs::path file : includedFiles)
     {
+        VR_INFO << "Loading included XML: " << file << std::endl;
+        
         SimoxXMLDocument includedXML;
         includedXML.LoadFile(file);
         
@@ -105,21 +109,30 @@ bool SimoxXMLVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml
     {
         std::string nodeName = elem.Attribute("name");
         
-        const XMLElement* xmlVisu = elem.FirstChildElement("Visualization");
         const XMLElement* xmlColModel = elem.FirstChildElement("CollisionModel");
 
-        if (xmlColModel)
+        auto storeFileText = [&elem,&nodeName](
+                const char* childTag, 
+                SimoxXMLDocument::NamePathMap& map)
         {
-            std::string filename = xmlColModel->FirstChildElement("File")->GetText();
-            xml.collisionModelFiles[nodeName] = filename;
-        }
+            const XMLElement* child = elem.FirstChildElement(childTag);
+            if (!child)
+            {
+                return;
+            }
+            
+            const XMLElement* file = child->FirstChildElement("File");
+            if (!file)
+            {
+                return;
+            }
+            
+            std::string filename = file->GetText();
+            map[nodeName] = filename;
+        };
         
-        if (xmlVisu)
-        {
-            std::string filename = xmlVisu->FirstChildElement("File")->GetText();
-            xml.visualizationFiles[nodeName] = filename;
-        }
-
+        storeFileText("CollisionModel", xml.collisionModelFiles);
+        storeFileText("Visualization", xml.visualizationFiles);
     }
     else if (isElement(&elem, "ChildFromRobot"))
     {
