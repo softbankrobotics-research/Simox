@@ -42,18 +42,25 @@ namespace mjcf
         Element* keyframe()  { return topLevelElement("keyframe");  }
         
         
-        Element* addNewElement(Element* parent, const std::string& elemName);
+        Element* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);
+        
+        Element* addNewElement(Element* parent, const std::string& elemName, 
+                               bool first = false);
         
         Element* addBodyElement(Element* parent, RobotNodePtr node);
+        
+        Element* addDummyInertial(Element* body);
         Element* addGeomElement(Element* body, const std::string& meshName);
-
+        
         
         Element* addMeshElement(const std::string& name, const std::string& file);
         
+        void setBodyPose(Element* body, const Eigen::Matrix4f& pose);
+        void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
         
         
     private:
-
+        
         /// Gets the top-level element (child of root element) with the given
         /// name. If it does not exist, it is created.
         Element* topLevelElement(const std::string& name);
@@ -68,7 +75,9 @@ namespace mjcf
         std::string toAttr(const Eigen::Quaternionf& v);
         
         
+        float lengthScaling = 0.001f;
         float floatCompPrecision = 1e-6f;
+        float dummyMass = 0.0001f;
         
         Eigen::IOFormat iofVector {5, 0, "", " ", "", "", "", ""};
         

@@ -3,6 +3,8 @@
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 
+#include "utils.h"
+
 
 using namespace VirtualRobot;
 namespace tx = tinyxml2; 
@@ -52,6 +54,12 @@ void MjcfConverter::setPaths(const std::string& inputFilename,
     assert(!inputFileDirectory.empty());
 }
 
+void MjcfConverter::makeEnvironment()
+{
+    document->addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
+                               Eigen::Vector3f(.4f, .6f, .8f));
+}
+
 void MjcfConverter::loadInputFile()
 {
     assert(!inputFilePath.empty());
@@ -70,12 +78,20 @@ void MjcfConverter::loadInputFile()
     
     if (inputXML->LoadFile(inputFilePath.c_str()))
     {
-        std::cout << "ERROR loading XML file: \n" 
-                  << inputXML->ErrorName() << "\n"
-                  << inputXML->ErrorStr() << "\n";
+        throw MjcfXmlLoadFileFailed(inputXML->ErrorName(), inputXML->ErrorStr());
     }
 }
 
+void MjcfConverter::writeOutputFile()
+{
+    assert(!outputFileName.empty());
+    
+    std::cout << std::endl;
+    document->Print();
+    
+    std::cout << "Writing to " << outputFileName << std::endl;
+    document->SaveFile(outputFileName.c_str());
+}
 
 
 void MjcfConverter::convertToMjcf()
@@ -83,23 +99,39 @@ void MjcfConverter::convertToMjcf()
     document.reset(new mjcf::Document());
     
     document->setModelName(robot->getName());
+    document->compiler()->SetAttribute("angle", "radian");
     
+    makeEnvironment();
+    
+    std::cout << "Collecting collision model and visualization files..." << std::endl;
     gatherCollisionAndVisualizationFiles();
 
+    std::cout << "Creating bodies structure ..." << std::endl;
     addNodeBodies();
     
+    std::cout << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
     
+    std::cout << "===========================" << std::endl
+              << "Current model: "             << std::endl
+              << "--------------"              << std::endl;
     document->Print();
+    std::cout << "===========================" << std::endl;
+    
+    std::cout << "Merging empty bodies ..." << std::endl;
+    sanitizeMasslessBodies();
     
     
-    mergeEmptyBodies();
+    std::cout << "Done.";
     
     return; 
 }
 
 void MjcfConverter::gatherCollisionAndVisualizationFiles()
 {
+    nodeCollisionModelFiles.clear();
+    nodeVisualizationFiles.clear();
+    
     tx::XMLNode* xmlRobot = inputXML->FirstChildElement("Robot");
     assert(xmlRobot);
     
@@ -124,21 +156,10 @@ void MjcfConverter::gatherCollisionAndVisualizationFiles()
             nodeCollisionModelFiles[nodeName] = filename;
         }
     }
-    std::cout << "nodeCollisionModelFiles: " << std::endl;
-    for (auto item : nodeCollisionModelFiles)
-    {
-        std::cout << "| " << item.first << ": " << item.second << std::endl;
-    }
-    std::cout << "nodeVisualizationFiles: " << std::endl;
-    for (auto item : nodeVisualizationFiles)
-    {
-        std::cout << "| " << item.first << ": " << item.second << std::endl;
-    }
 }
 
 void MjcfConverter::addNodeBodies()
 {
-    // add bodys
     nodeBodies.clear();
     
     RobotNodePtr rootNode = robot->getRootNode();
@@ -224,7 +245,7 @@ void MjcfConverter::addNodeBodyMeshes()
         }
         else
         {
-            std::cout << "skipping (" << dstMeshPath.string() << " already exists)";
+            std::cout << "skipping (" << dstMeshRelPath.string() << " already exists)";
         }
         std::cout << std::endl;
         
@@ -263,43 +284,141 @@ Element* MjcfConverter::addNodeBody(RobotNodePtr node)
     return element;
 }
 
-void MjcfConverter::mergeEmptyBodies()
+void MjcfConverter::sanitizeMasslessBodies()
 {
     // merge body leaf nodes with parent if they do not have a geom
     
-    
     // assume we have leaf
     
-    Element* leafBody;
+    Element* root = document->worldbody()->FirstChildElement("body");
     
-    if (leafBody->FirstChildElement("geom"))
+    for (Element* body = root->FirstChildElement("body");
+         body;
+         body = body->NextSiblingElement("body"))
     {
-        // has geom
-        return;
-    }
-    
-    // merge with parent
-    // move all children to parent
-    
-    for (tx::XMLNode* child = leafBody->FirstChild();
-         child;
-         child = child->NextSibling())
-    {
-        leafBody->Parent();
-        
-        
-        
+        sanitizeMasslessBodyRecursion(body);
     }
 }
 
-void MjcfConverter::writeOutputFile()
+void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 {
-    assert(!outputFileName.empty());
+    assertElementIsBody(body);
     
-    std::cout << std::endl;
-    document->Print();
+    std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
     
-    std::cout << "Writing to " << outputFileName << std::endl;
-    document->SaveFile(outputFileName.c_str());
+    // leaf => end of recursion
+    if (!hasElement(body, "body"))
+    {
+        std::cout << "  | Leaf";
+        if (!hasMass(body))
+        {
+            std::cout << " without mass" << std::endl;
+            sanitizeMasslessLeafBody(body);
+        }
+        else
+        {
+            std::cout << std::endl;
+        }
+        return; 
+    }
+    
+    // non-leaf body
+    std::cout << "  | Non-leaf";
+    
+    if (!hasMass(body))
+    {
+        std::cout << " without mass" << std::endl;
+        
+        // check whether there is only one child body
+        Element* childBody = body->FirstChildElement("body");
+        if (!childBody->NextSiblingElement("body"))
+        {
+            std::cout << "  | Single child body => merging '" << childBody->Attribute("name")
+                      << "' into '" << body->Attribute("name") << "'" << std::endl;
+            
+            // merge childBody into body => move all its elements here
+            for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
+                 grandChild = grandChild->NextSibling())
+            {
+                std::cout << "  |  | Moving '" << grandChild->Value() << "'" << std::endl;
+                
+                // clone grandchild
+                tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
+                
+                // insert to body
+                body->InsertEndChild(grandChildClone);
+            }
+            
+            // check child for pose attributes
+            if (childBody->Attribute("pos") || childBody->Attribute("quat"))
+            {
+                // update body's transform
+                // get tf from robot node
+                
+                RobotNodePtr bodyNode = robot->getRobotNode(body->Attribute("name"));
+                RobotNodePtr childNode = robot->getRobotNode(childBody->Attribute("name"));
+                
+                Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
+                Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
+                
+                bodyPose = bodyPose * childPose;
+                document->setBodyPose(body, bodyPose);
+                
+                // adapt axis of any joint in body
+                
+                for (Element* joint = body->FirstChildElement("joint"); joint;
+                     joint = joint->NextSiblingElement("joint"))
+                {
+                    Eigen::Vector3f axis = strToVec(joint->Attribute("axis"));
+                    // apply child orientation
+                    axis = childPose.block<3,3>(0, 0) * axis;
+                    document->setJointAxis(joint, axis);
+                }
+            }
+            
+            // delete child
+            body->DeleteChild(childBody);
+        }
+    }
+    else
+    {
+        std::cout << std::endl;
+    }
+    
+    for (Element* child = body->FirstChildElement("body");
+         child;
+         child = child->NextSiblingElement("body"))
+    {
+        sanitizeMasslessBodyRecursion(child);
+    }
+    
 }
+
+void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
+{
+    assert(!hasElement(body, "body"));
+    assert(!hasMass(body));
+    
+    if (body->NoChildren()) // is completely empty?
+    {
+        // leaf without geom: make it a site
+        std::cout << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
+        body->SetValue("site");
+    }
+    else
+    {
+        // add a small mass
+        std::cout << "  | Not empty => Adding dummy inertial." << std::endl;
+        document->addDummyInertial(body);
+    }
+}
+
+
+
+
+
+
+
+
+
 

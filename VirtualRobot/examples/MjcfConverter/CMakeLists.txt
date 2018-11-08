@@ -10,11 +10,17 @@ if (Boost_FOUND)
 
     set(SOURCES
         main.cpp
+        exceptions.cpp
+        utils.cpp
+        
         MjcfConverter.cpp
         MjcfDocument.cpp
     )
     
     set(HEADERS
+        exceptions.h
+        utils.h
+        
         MjcfConverter.h
         MjcfDocument.h
     )

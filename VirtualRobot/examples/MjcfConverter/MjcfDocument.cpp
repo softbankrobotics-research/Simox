@@ -3,6 +3,8 @@
 #include <VirtualRobot/Nodes/RobotNodePrismatic.h>
 #include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 
+#include "utils.h"
+
 
 using namespace VirtualRobot;
 using namespace mjcf;
@@ -19,10 +21,31 @@ void Document::setModelName(const std::string& name)
     root->SetAttribute("model", name.c_str());
 }
 
-Element* Document::addNewElement(Element* parent, const std::string& elemName)
+Element* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2)
+{
+    Element* texSkybox = addNewElement(asset(), "texture");
+    
+    texSkybox->SetAttribute("type", "skybox");
+    texSkybox->SetAttribute("builtin", "gradient");
+    texSkybox->SetAttribute("width", 128);
+    texSkybox->SetAttribute("height", 128);
+    texSkybox->SetAttribute("rgb1", toAttr(rgb1).c_str());
+    texSkybox->SetAttribute("rgb2", toAttr(rgb2).c_str());   
+    
+    return texSkybox;
+}
+
+Element* Document::addNewElement(Element* parent, const std::string& elemName, bool first)
 {
     Element* elem = NewElement(elemName.c_str());
-    parent->InsertEndChild(elem);
+    if (first)
+    {
+        parent->InsertFirstChild(elem);
+    }
+    else
+    {
+        parent->InsertEndChild(elem);
+    }
     return elem;
 }
 
@@ -34,19 +57,7 @@ Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
     if (node->hasParent())
     {
         Eigen::Matrix4f tf = node->getTransformationFrom(node->getParent());
-        Eigen::Vector3f pos = tf.block<3,1>(0, 3);
-        Eigen::Matrix3f oriMat = tf.block<3,3>(0, 0);
-        
-        Eigen::Quaternionf quat(oriMat);
-    
-        if (!pos.isZero(floatCompPrecision))
-        {
-            body->SetAttribute("pos", toAttr(pos).c_str());
-        }
-        if (!quat.isApprox(Eigen::Quaternionf::Identity(), floatCompPrecision))
-        {
-            body->SetAttribute("quat", toAttr(quat).c_str());
-        }
+        setBodyPose(body, tf);
     }
     
     if (node->isRotationalJoint() || node->isTranslationalJoint())
@@ -59,13 +70,15 @@ Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
     return body;
 }
 
+
 Element* Document::addGeomElement(Element* body, const std::string& meshName)
 {
-    assert(std::string(body->Value()) == "body");
+    assertElementIsBody(body);
     
-    Element* geom = addNewElement(body, "geom");
+    Element* geom = addNewElement(body, "geom", true);
     
     geom->SetAttribute("type", "mesh");
+//    geom->SetAttribute("type", "capsule");
     geom->SetAttribute("mesh", meshName.c_str());
     geom->SetAttribute("density", 100);
     
@@ -74,7 +87,7 @@ Element* Document::addGeomElement(Element* body, const std::string& meshName)
 
 Element* Document::addInertialElement(Element* body, RobotNodePtr node)
 {
-    assert(std::string(body->Value()) == "body");
+    assertElementIsBody(body);
     
     Eigen::Matrix3f matrix = node->getInertiaMatrix();
     if (matrix.isIdentity(floatCompPrecision) && node->getMass() < floatCompPrecision)
@@ -109,6 +122,20 @@ Element* Document::addInertialElement(Element* body, RobotNodePtr node)
     return inertial;
 }
 
+Element* Document::addDummyInertial(Element* body)
+{
+    assertElementIsBody(body);
+    
+    Element* inertial = addNewElement(body, "inertial");
+    
+    inertial->SetAttribute("pos", toAttr(Eigen::Vector3f(0, 0, 0)).c_str());
+    inertial->SetAttribute("mass", dummyMass);
+    inertial->SetAttribute("diaginertia", toAttr(Eigen::Vector3f(1, 1, 1)).c_str());
+    
+    return inertial;
+}
+
+
 Element* Document::addJointElement(Element* body, RobotNodePtr node)
 {
     assert(node->isRotationalJoint() xor node->isTranslationalJoint());
@@ -137,7 +164,7 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     }
     
     joint->SetAttribute("type", node->isRotationalJoint() ? "hinge" : "slide");
-    joint->SetAttribute("axis", toAttr(axis).c_str());
+    setJointAxis(joint, axis);
     joint->SetAttribute("limited", toAttr(!node->isLimitless()).c_str());
     
     if (!node->isLimitless())
@@ -159,6 +186,39 @@ Element* Document::addMeshElement(const std::string& name, const std::string& fi
     return mesh;
 }
 
+void Document::setBodyPose(Element* body, const Eigen::Matrix4f& pose)
+{
+    Eigen::Vector3f pos = pose.block<3,1>(0, 3) * lengthScaling;
+    Eigen::Matrix3f oriMat = pose.block<3,3>(0, 0);
+    
+    Eigen::Quaternionf quat(oriMat);
+    
+    if (!pos.isZero(floatCompPrecision))
+    {
+        body->SetAttribute("pos", toAttr(pos).c_str());
+    }
+    else
+    {
+        body->DeleteAttribute("pos");
+    }
+    
+    if (!quat.isApprox(Eigen::Quaternionf::Identity(), floatCompPrecision))
+    {
+        body->SetAttribute("quat", toAttr(quat).c_str());
+    }
+    else
+    {
+        body->DeleteAttribute("quat");
+    }
+}
+
+void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
+{
+    assertElementIs(joint, "joint");
+    joint->SetAttribute("axis", toAttr(axis).c_str());
+}
+
+
 Element* Document::topLevelElement(const std::string& name)
 {
     Element* elem = root->FirstChildElement(name.c_str());
@@ -168,6 +228,7 @@ Element* Document::topLevelElement(const std::string& name)
     }
     return elem;
 }
+
 
 std::string Document::toAttr(bool b)
 {
@@ -181,7 +242,5 @@ std::string Document::toAttr(const Eigen::Quaternionf& quat)
     ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
     return ss.str();
 }
-
-
 
 

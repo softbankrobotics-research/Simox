@@ -5,6 +5,7 @@
 #include <VirtualRobot/Robot.h>
 
 
+#include "exceptions.h"
 #include "MjcfDocument.h"
 
 
@@ -24,6 +25,7 @@ namespace VirtualRobot
         
     private:
         
+        
         void loadInputFile();
         void writeOutputFile();
         
@@ -32,6 +34,8 @@ namespace VirtualRobot
         void setPaths(const std::string& inputFilename, 
                       const std::string& outputDirectory);
         
+        void makeEnvironment();
+        
         void gatherCollisionAndVisualizationFiles();
         void addNodeBodies();
         void addNodeBodyMeshes();
@@ -39,7 +43,12 @@ namespace VirtualRobot
         mjcf::Element* addNodeBody(RobotNodePtr node);
 
 
-        void mergeEmptyBodies();
+        void sanitizeMasslessBodies();
+        void sanitizeMasslessBodyRecursion(mjcf::Element* body);
+        
+        void sanitizeMasslessLeafBody(mjcf::Element* body);
+        
+        
         
 
         // Paths
