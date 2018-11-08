@@ -6,6 +6,7 @@
 
 
 #include "exceptions.h"
+#include "SimoxXMLDocument.h"
 #include "MjcfDocument.h"
 
 
@@ -65,7 +66,7 @@ namespace VirtualRobot
         
         // Input
         
-        std::unique_ptr<tinyxml2::XMLDocument> inputXML;
+        SimoxXMLDocument inputXML;
         RobotPtr robot;
         
         
@@ -77,9 +78,7 @@ namespace VirtualRobot
         // Processing
         
         std::map<std::string, mjcf::Element*> nodeBodies;
-        
-        std::map<std::string, std::string> nodeCollisionModelFiles;
-        std::map<std::string, std::string> nodeVisualizationFiles;
+
         
     };
 

@@ -74,12 +74,7 @@ void MjcfConverter::loadInputFile()
         throw; // rethrow
     }
     
-    inputXML.reset(new tx::XMLDocument());
-    
-    if (inputXML->LoadFile(inputFilePath.c_str()))
-    {
-        throw MjcfXmlLoadFileFailed(inputXML->ErrorName(), inputXML->ErrorStr());
-    }
+    inputXML.LoadFile(inputFilePath.string());
 }
 
 void MjcfConverter::writeOutputFile()
@@ -103,9 +98,6 @@ void MjcfConverter::convertToMjcf()
     
     makeEnvironment();
     
-    std::cout << "Collecting collision model and visualization files..." << std::endl;
-    gatherCollisionAndVisualizationFiles();
-
     std::cout << "Creating bodies structure ..." << std::endl;
     addNodeBodies();
     
@@ -129,36 +121,7 @@ void MjcfConverter::convertToMjcf()
     return; 
 }
 
-void MjcfConverter::gatherCollisionAndVisualizationFiles()
-{
-    nodeCollisionModelFiles.clear();
-    nodeVisualizationFiles.clear();
-    
-    tx::XMLNode* xmlRobot = inputXML->FirstChildElement("Robot");
-    assert(xmlRobot);
-    
-    for (tx::XMLElement* xmlRobotNode = xmlRobot->FirstChildElement("RobotNode");
-         xmlRobotNode;
-         xmlRobotNode = xmlRobotNode->NextSiblingElement("RobotNode"))
-    {
-        std::string nodeName = xmlRobotNode->Attribute("name");
-        
-        tx::XMLElement* xmlVisu = xmlRobotNode->FirstChildElement("Visualization");
-        tx::XMLElement* xmlColModel = xmlRobotNode->FirstChildElement("CollisionModel");
-        
-        if (xmlVisu)
-        {
-            std::string filename = xmlVisu->FirstChildElement("File")->GetText();
-            nodeVisualizationFiles[nodeName] = filename;
-        }
-        
-        if (xmlColModel)
-        {
-            std::string filename = xmlColModel->FirstChildElement("File")->GetText();
-            nodeCollisionModelFiles[nodeName] = filename;
-        }
-    }
-}
+
 
 void MjcfConverter::addNodeBodies()
 {
@@ -185,15 +148,14 @@ void MjcfConverter::addNodeBodyMeshes()
     
     for (RobotNodePtr node : robot->getRobotNodes())
     {
-        auto item = nodeVisualizationFiles.find(node->getName());
-        if (item == nodeVisualizationFiles.end())
+        if (!inputXML.hasVisualizationFile(node))
         {
             continue;
         }
         
         std::cout << "Node " << node->getName() << ":\t";
         
-        fs::path srcMeshPath = item->second;
+        fs::path srcMeshPath = inputXML.collisionModelFile(node);
         
         if (srcMeshPath.is_relative())
         {
@@ -309,7 +271,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
     std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
     
     // leaf => end of recursion
-    if (!hasElement(body, "body"))
+    if (!hasElementChild(body, "body"))
     {
         std::cout << "  | Leaf";
         if (!hasMass(body))
@@ -412,7 +374,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
 {
     
-    assert(!hasElement(body, "body"));
+    assert(!hasElementChild(body, "body"));
     assert(!hasMass(body));
     
     if (body->NoChildren()) // is completely empty?

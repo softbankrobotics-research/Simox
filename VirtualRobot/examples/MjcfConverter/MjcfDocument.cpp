@@ -4,6 +4,7 @@
 #include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 
 #include "utils.h"
+#include "xml_visitors.h"
 
 
 using namespace VirtualRobot;
@@ -142,11 +143,7 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     
     Element* joint = addNewElement(body, "joint");
     
-    {
-        std::stringstream jointName;
-        jointName << node->getName() << "_joint";
-        joint->SetAttribute("name", jointName.str().c_str());
-    }
+    joint->SetAttribute("name", node->getName().c_str());
     
     // get the axis
     Eigen::Vector3f axis;
@@ -262,30 +259,4 @@ std::string Document::toAttr(const Eigen::Quaternionf& quat)
 
 
 
-ContactExcludeVisitor::ContactExcludeVisitor(Document& document) : 
-    document(document)
-{
-}
-
-bool ContactExcludeVisitor::VisitEnter(
-        const tinyxml2::XMLElement& body, const tinyxml2::XMLAttribute*)
-{
-    if (std::string(body.Value()) != "body")
-    {
-        return true;
-    }
-    
-    if (!firstSkipped)
-    {
-        firstSkipped = true;
-        return true;
-    }
-    
-    const Element* parent = body.Parent()->ToElement();
-    assert(parent);
-    
-    document.addContactExclude(*parent, body);
-    
-    return true;
-}
 

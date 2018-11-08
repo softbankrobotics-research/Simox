@@ -6,31 +6,21 @@
 namespace VirtualRobot
 {
 
-void assertElementIs(mjcf::Element* elem, const char* tag)
-{
-    assert(std::strcmp(elem->Value(), tag) == 0);
-}
-
-void assertElementIs(mjcf::Element* elem, const std::string& tag)
-{
-    assert(std::strcmp(elem->Value(), tag.c_str()) == 0);
-}
-
-void assertElementIsBody(mjcf::Element* elem)
+void assertElementIsBody(const mjcf::Element* elem)
 {
     assertElementIs(elem, "body");
 }
 
 
-bool hasElement(mjcf::Element* elem, const std::string& elemName)
+bool hasElementChild(const mjcf::Element* elem, const std::string& elemName)
 {
     return elem->FirstChildElement(elemName.c_str()) != nullptr;
 }
 
-bool hasMass(mjcf::Element* body)
+bool hasMass(const mjcf::Element* body)
 {
     assertElementIsBody(body);
-    return hasElement(body, "geom") || hasElement(body, "inertial");
+    return hasElementChild(body, "geom") || hasElementChild(body, "inertial");
 }
 
 Eigen::Vector3f strToVec(const char* string)
@@ -52,6 +42,16 @@ std::size_t commonPrefixLength(const std::string& a, const std::string& b)
     auto mismatch = std::mismatch(smaller->begin(), smaller->end(), 
                                   bigger->begin()).first;
     return std::size_t(std::distance(smaller->begin(), mismatch));
+}
+
+bool isElement(const mjcf::Element* elem, const char* tag)
+{
+    return std::strcmp(elem->Value(), tag) == 0;
+}
+
+bool isElement(const mjcf::Element* elem, const std::string& tag)
+{
+    return std::strcmp(elem->Value(), tag.c_str()) == 0;
 }
 
 

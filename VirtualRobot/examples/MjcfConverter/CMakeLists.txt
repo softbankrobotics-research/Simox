@@ -12,17 +12,21 @@ if (Boost_FOUND)
         main.cpp
         exceptions.cpp
         utils.cpp
+        xml_visitors.cpp
         
         MjcfConverter.cpp
         MjcfDocument.cpp
+        SimoxXMLDocument.cpp
     )
     
     set(HEADERS
         exceptions.h
         utils.h
+        xml_visitors.h
         
         MjcfConverter.h
         MjcfDocument.h
+        SimoxXMLDocument.h
     )
 
     set(LIBS

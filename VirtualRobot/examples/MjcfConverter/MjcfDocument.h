@@ -23,9 +23,7 @@ namespace mjcf
         
         Document();
         
-        void setModelName(const std::string& name);
-        
-        
+        // Top level elements
         Element* compiler()  { return topLevelElement("compiler");  }
         Element* option()    { return topLevelElement("option");    }
         Element* size()      { return topLevelElement("size");      }
@@ -42,46 +40,67 @@ namespace mjcf
         Element* keyframe()  { return topLevelElement("keyframe");  }
         
         
+        /// Set the name of the Mujoco model.
+        void setModelName(const std::string& name);
+        
+        /// Add a skybox texture asset (only one allowed).
         Element* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);
         
-        Element* addNewElement(Element* parent, const std::string& elemName, 
-                               bool first = false);
+        /// Add a new element with a name (tag) to a parent.
+        /// @param first if true, will be inserted as first, otherweise at end (default)
+        Element* addNewElement(Element* parent, const std::string& elemName, bool first = false);
         
+        
+        /// Add a body element to a parent from a RobotNode.
+        /// Adds inertial and joint element, if necessary.
         Element* addBodyElement(Element* parent, RobotNodePtr node);
         
+        /// Add an inertial element to a body from a RobotNode.
+        Element* addInertialElement(Element* body, RobotNodePtr node);
+        /// Add a dummy inertial element with small mass and identity inertia matrix.
         Element* addDummyInertial(Element* body);
+        /// Add a joint element to a body from a RobotNode.
+        Element* addJointElement(Element* body, RobotNodePtr node);
+        
+        /// Add a geom to a body, referencing a mesh.
         Element* addGeomElement(Element* body, const std::string& meshName);
-        
-        
+        /// Add a mesh asset with a name and a file.
         Element* addMeshElement(const std::string& name, const std::string& file);
         
+        
+        /// Set the pos and quat attribute of a body.
         void setBodyPose(Element* body, const Eigen::Matrix4f& pose);
+        /// Set the axis attribute of a joint.
         void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
         
-        
+        /// Add contact/exclude elements between parent and child bodies, 
+        /// starting from the given body.
         void addContactExcludes(Element* rootBody);
+        /// Add a conact/exclude element between the given bodies.
         Element* addContactExclude(const Element& body1, const Element& body2);
+        
         
     private:
         
-        /// Gets the top-level element (child of root element) with the given
-        /// name. If it does not exist, it is created.
+        /// Gets the top-level element (child of root element) with a name. 
+        /// If it does not exist, it is created.
         Element* topLevelElement(const std::string& name);
         
-        Element* addInertialElement(Element* body, RobotNodePtr node);
-        Element* addJointElement(Element* body, RobotNodePtr node);
         
-        
+        /// Convert to MJCF XML attribute format.
         std::string toAttr(bool b);
         template <int dim>
         std::string toAttr(const Eigen::Matrix<float, dim, 1>& v);
         std::string toAttr(const Eigen::Quaternionf& v);
         
-        
+        /// Scaling for lengths, such as positions and translations.
         float lengthScaling = 0.001f;
+        /// Precision when comparing floats (e.g. with zero).
         float floatCompPrecision = 1e-6f;
+        /// Mass used for dummy inertial elements.
         float dummyMass = 0.0001f;
         
+        /// IOFormat for vectors.
         Eigen::IOFormat iofVector {5, 0, "", " ", "", "", "", ""};
         
         /// The "mujoco" root element.
@@ -104,20 +123,7 @@ namespace mjcf
     }
     
     
-    class ContactExcludeVisitor : public tinyxml2::XMLVisitor
-    {
-    public:
-        ContactExcludeVisitor(Document& document);
-    
-        // XMLVisitor interface
-        virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
-        
-    private:
-        Document& document;
-        bool firstSkipped = false; ///< Used to skip the root element.
-        
-    };
-    
+
     
 }
 }
