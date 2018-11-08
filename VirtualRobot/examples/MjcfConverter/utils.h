@@ -19,5 +19,7 @@ bool hasMass(mjcf::Element* body);
 
 Eigen::Vector3f strToVec(const char* string);
 
+std::size_t commonPrefixLength(const std::string& a, const std::string& b);
+
 }
 

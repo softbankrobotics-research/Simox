@@ -333,8 +333,11 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
         Element* childBody = body->FirstChildElement("body");
         if (!childBody->NextSiblingElement("body"))
         {
-            std::cout << "  | Single child body => merging '" << childBody->Attribute("name")
-                      << "' into '" << body->Attribute("name") << "'" << std::endl;
+            std::string bodyName = body->Attribute("name");
+            std::string childBodyName = childBody->Attribute("name");
+            
+            std::cout << "  | Single child body => merging '" << childBodyName
+                      << "' into '" << bodyName << "'" << std::endl;
             
             // merge childBody into body => move all its elements here
             for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
@@ -355,8 +358,8 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
                 // update body's transform
                 // get tf from robot node
                 
-                RobotNodePtr bodyNode = robot->getRobotNode(body->Attribute("name"));
-                RobotNodePtr childNode = robot->getRobotNode(childBody->Attribute("name"));
+                RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
+                RobotNodePtr childNode = robot->getRobotNode(childBodyName);
                 
                 Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
                 Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
@@ -375,6 +378,16 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
                     document->setJointAxis(joint, axis);
                 }
             }
+            
+            
+            // update body name
+            std::size_t prefixSize = commonPrefixLength(bodyName, childBodyName);
+            
+            std::stringstream newName;
+            newName << bodyName.substr(0, prefixSize)
+                    << bodyName.substr(prefixSize) << "~" << childBodyName.substr(prefixSize);            
+            body->SetAttribute("name", newName.str().c_str());
+            
             
             // delete child
             body->DeleteChild(childBody);
@@ -396,6 +409,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 
 void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
 {
+    
     assert(!hasElement(body, "body"));
     assert(!hasMass(body));
     
