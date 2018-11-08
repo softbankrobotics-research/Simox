@@ -44,14 +44,22 @@ namespace mjcf
         Element* addNewElement(Element* parent, const std::string& elemName);
         
         Element* addBodyElement(Element* parent, RobotNodePtr node);
-                
+        Element* addGeomElement(Element* body, const std::string& meshName);
+
         
+        Element* addMeshElement(const std::string& name, const std::string& file);
         
         
         
     private:
 
-        Element* addJointelement(Element* body, RobotNodePtr node);
+        /// Gets the top-level element (child of root element) with the given
+        /// name. If it does not exist, it is created.
+        Element* topLevelElement(const std::string& name);
+        
+        Element* addInertialElement(Element* body, RobotNodePtr node);
+        Element* addJointElement(Element* body, RobotNodePtr node);
+        
         
         std::string toAttr(bool b);
         template <int dim>
@@ -63,9 +71,7 @@ namespace mjcf
         
         Eigen::IOFormat iofVector {5, 0, "", " ", "", "", "", ""};
         
-        /// Gets the top-level element (child of root element) with the given
-        /// name. If it does not exist, it is created.
-        Element* topLevelElement(const std::string& name);
+        
 
         
         /// The "mujoco" root element.

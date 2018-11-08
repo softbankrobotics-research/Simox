@@ -26,7 +26,7 @@ Element* Document::addNewElement(Element* parent, const std::string& elemName)
     return elem;
 }
 
-Element*Document::addBodyElement(Element* parent, RobotNodePtr node)
+Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
 {
     Element* body = addNewElement(parent, "body");
     body->SetAttribute("name", node->getName().c_str());
@@ -51,13 +51,65 @@ Element*Document::addBodyElement(Element* parent, RobotNodePtr node)
     
     if (node->isRotationalJoint() || node->isTranslationalJoint())
     {
-        addJointelement(body, node);
+        addJointElement(body, node);
     }
-    node->getOptionalDHParameters();
+    
+    addInertialElement(body, node);
+    
     return body;
 }
 
-Element* Document::addJointelement(Element* body, RobotNodePtr node)
+Element* Document::addGeomElement(Element* body, const std::string& meshName)
+{
+    assert(std::string(body->Value()) == "body");
+    
+    Element* geom = addNewElement(body, "geom");
+    
+    geom->SetAttribute("type", "mesh");
+    geom->SetAttribute("mesh", meshName.c_str());
+    geom->SetAttribute("density", 100);
+    
+    return geom;
+}
+
+Element* Document::addInertialElement(Element* body, RobotNodePtr node)
+{
+    assert(std::string(body->Value()) == "body");
+    
+    Eigen::Matrix3f matrix = node->getInertiaMatrix();
+    if (matrix.isIdentity(floatCompPrecision) && node->getMass() < floatCompPrecision)
+    {
+        // dont set an inertial element and let it be derived automatically
+        return nullptr;
+    }
+    
+    Element* inertial = addNewElement(body, "inertial");
+    
+    inertial->SetAttribute("pos", toAttr(Eigen::Vector3f(0, 0, 0)).c_str());
+    
+    inertial->SetAttribute("mass", double(node->getMass()));
+    
+    if (matrix.isDiagonal(floatCompPrecision))
+    {
+        Eigen::Vector3f diag = matrix.diagonal();
+        inertial->SetAttribute("diaginertia", toAttr(diag).c_str());
+    }
+    else
+    {
+        /* from mujoco xml reference:
+         * "Full inertia matrix M. Since M is 3-by-3 and symmetric, it is 
+         * specified using only 6 numbers in the following order: 
+         * M(1,1), M(2,2), M(3,3), M(1,2), M(1,3), M(2,3)." */
+        Eigen::Matrix<float, 6, 1> inertia;
+        inertia << matrix(0, 0), matrix(1, 1), matrix(2, 2),
+                matrix(0, 1), matrix(0, 2), matrix(1, 2);
+        inertial->SetAttribute("fullinertia", toAttr(inertia).c_str());
+    }
+    
+    return inertial;
+}
+
+Element* Document::addJointElement(Element* body, RobotNodePtr node)
 {
     assert(node->isRotationalJoint() xor node->isTranslationalJoint());
     
@@ -97,6 +149,26 @@ Element* Document::addJointelement(Element* body, RobotNodePtr node)
     return joint;
 }
 
+Element* Document::addMeshElement(const std::string& name, const std::string& file)
+{
+    Element* mesh = addNewElement(asset(), "mesh");
+    
+    mesh->SetAttribute("name", name.c_str());
+    mesh->SetAttribute("file", file.c_str());
+    
+    return mesh;
+}
+
+Element* Document::topLevelElement(const std::string& name)
+{
+    Element* elem = root->FirstChildElement(name.c_str());
+    if (!elem)
+    {
+        elem = addNewElement(root, name);
+    }
+    return elem;
+}
+
 std::string Document::toAttr(bool b)
 {
     static const std::string strings[] = { "false", "true" };
@@ -110,14 +182,6 @@ std::string Document::toAttr(const Eigen::Quaternionf& quat)
     return ss.str();
 }
 
-Element* Document::topLevelElement(const std::string& name)
-{
-    Element* elem = root->FirstChildElement(name.c_str());
-    if (!elem)
-    {
-        elem = addNewElement(root, name);
-    }
-    return elem;
-}
+
 
 

@@ -1,3 +1,5 @@
+#include <boost/filesystem.hpp>
+
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/VirtualRobotException.h>
@@ -31,17 +33,14 @@ int main(int argc, char* argv[])
         }
     }
     
-    
-    
-    std::stringstream outputFilename;
-    auto indexDot = inputFilename.find_last_of(".");
-    outputFilename << inputFilename.substr(0, indexDot)
-                   << "_mjcf" << inputFilename.substr(indexDot);
+    boost::filesystem::path outputDir(inputFilename);
+    outputDir.remove_filename();
+    outputDir /= "mjcf";
     
     std::cout << "Input file:  " << inputFilename << std::endl;
-    std::cout << "Output file: " << outputFilename.str() << std::endl;
+    std::cout << "Output dir: " << outputDir << std::endl;
 
     MjcfConverter converter;
-    converter.convert(inputFilename, outputFilename.str());
+    converter.convert(inputFilename, outputDir.string());
     
 }

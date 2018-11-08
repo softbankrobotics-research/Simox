@@ -8,31 +8,76 @@
 
 using namespace VirtualRobot;
 namespace tx = tinyxml2; 
+namespace fs = boost::filesystem;
 
 
 MjcfConverter::MjcfConverter()
 {
 }
 
-void MjcfConverter::convert(const std::string& inputSimoxXmlFile, const std::string& outputMjcfFile)
+void MjcfConverter::convert(const std::string& inputSimoxXmlFile, 
+                            const std::string& outputDirectory)
 {
-    loadInputFile(inputSimoxXmlFile);
+    setPaths(inputSimoxXmlFile, outputDirectory);
+    
+    loadInputFile();
     convertToMjcf();
-    writeOutputFile(outputMjcfFile);
+    writeOutputFile();
 }
 
-void MjcfConverter::loadInputFile(const std::string& inputFilename)
+void MjcfConverter::setPaths(const std::string& inputFilename, 
+                             const std::string& outputDirectory)
 {
+    this->inputFilePath = inputFilename;
+    
+    inputFileDirectory = inputFilePath.parent_path();
+    inputFileName = inputFilePath.filename();
+    
+    this->outputDirectory = outputDirectory;
+    outputFileName = this->outputDirectory / inputFileName;
+    
+    outputMeshRelDirectory = "mesh";
+    
+    
+    auto ensureDirExists = [](const fs::path& path)
+    {
+        if (!fs::exists(path))
+        {
+            fs::create_directory(path);
+        }
+    };
+    
+    ensureDirExists(outputDirectory);
+    ensureDirExists(outputDirectory / outputMeshRelDirectory);
+    
+    assert(!inputFileDirectory.empty());
+}
+
+void MjcfConverter::loadInputFile()
+{
+    assert(!inputFilePath.empty());
+    
     try
     {
-        this->robot = RobotIO::loadRobot(inputFilename, RobotIO::eStructure);
+        this->robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eStructure);
         assert(robot);
     }
     catch (const VirtualRobotException&)
     {
         throw; // rethrow
     }
+    
+    inputXML.reset(new tx::XMLDocument());
+    
+    if (inputXML->LoadFile(inputFilePath.c_str()))
+    {
+        std::cout << "ERROR loading XML file: \n" 
+                  << inputXML->GetErrorStr1() << "\n"
+                  << inputXML->GetErrorStr2() << "\n";
+    }
 }
+
+
 
 void MjcfConverter::convertToMjcf()
 {
@@ -40,85 +85,203 @@ void MjcfConverter::convertToMjcf()
     
     document->setModelName(robot->getName());
     
-    mjcf::Element* worldBody = document->worldbody();
-    assert(worldBody);
+    gatherCollisionAndVisualizationFiles();
+
+    addNodeBodies();
+    
+    addNodeBodyMeshes();
+    
+    document->Print();
+    
+    
+    mergeEmptyBodies();
+    
+    return; 
+}
+
+void MjcfConverter::gatherCollisionAndVisualizationFiles()
+{
+    tx::XMLNode* xmlRobot = inputXML->FirstChildElement("Robot");
+    assert(xmlRobot);
+    
+    for (tx::XMLElement* xmlRobotNode = xmlRobot->FirstChildElement("RobotNode");
+         xmlRobotNode;
+         xmlRobotNode = xmlRobotNode->NextSiblingElement("RobotNode"))
+    {
+        std::string nodeName = xmlRobotNode->Attribute("name");
+        
+        tx::XMLElement* xmlVisu = xmlRobotNode->FirstChildElement("Visualization");
+        tx::XMLElement* xmlColModel = xmlRobotNode->FirstChildElement("CollisionModel");
+        
+        if (xmlVisu)
+        {
+            std::string filename = xmlVisu->FirstChildElement("File")->GetText();
+            nodeVisualizationFiles[nodeName] = filename;
+        }
+        
+        if (xmlColModel)
+        {
+            std::string filename = xmlColModel->FirstChildElement("File")->GetText();
+            nodeCollisionModelFiles[nodeName] = filename;
+        }
+    }
+    std::cout << "nodeCollisionModelFiles: " << std::endl;
+    for (auto item : nodeCollisionModelFiles)
+    {
+        std::cout << "| " << item.first << ": " << item.second << std::endl;
+    }
+    std::cout << "nodeVisualizationFiles: " << std::endl;
+    for (auto item : nodeVisualizationFiles)
+    {
+        std::cout << "| " << item.first << ": " << item.second << std::endl;
+    }
+}
+
+void MjcfConverter::addNodeBodies()
+{
+    // add bodys
+    nodeBodies.clear();
     
     RobotNodePtr rootNode = robot->getRootNode();
     assert(rootNode);
     
-    addedBodys.clear();
-    
     // add root
-    mjcf::Element* root = document->addBodyElement(worldBody, rootNode);
+    mjcf::Element* root = document->addBodyElement(document->worldbody(), rootNode);
+    nodeBodies[rootNode->getName()] = root;
     assert(root);
-    addedBodys[rootNode->getName()] = root;
     
     for (RobotNodePtr node : robot->getRobotNodes())
     {
         addNodeBody(node);
     }
-
-    return; 
 }
+
+void MjcfConverter::addNodeBodyMeshes()
+{
+    bool meshlabserverAviable = system("which meshlabserver > /dev/null 2>&1") == 0;
+    bool notAvailableReported = false;
+    
+    for (RobotNodePtr node : robot->getRobotNodes())
+    {
+        auto item = nodeVisualizationFiles.find(node->getName());
+        if (item == nodeVisualizationFiles.end())
+        {
+            continue;
+        }
+        
+        std::cout << "Node " << node->getName() << ":\t";
+        
+        fs::path srcMeshPath = item->second;
+        
+        if (srcMeshPath.is_relative())
+        {
+            // resolve relative path
+            srcMeshPath = inputFileDirectory / srcMeshPath;
+        }
+        
+        fs::path dstMeshFileName = srcMeshPath.filename();
+        dstMeshFileName.replace_extension("stl");
+        fs::path dstMeshRelPath = outputMeshRelDirectory / dstMeshFileName;
+        fs::path dstMeshPath = outputDirectory / dstMeshRelPath;
+        
+        if (!fs::exists(dstMeshPath))
+        {
+            if (srcMeshPath.extension().string() != "stl")
+            {
+                std::cout << "Converting to .stl: " << srcMeshPath;
+                
+                if (!meshlabserverAviable)
+                {
+                    if (!notAvailableReported)
+                    {
+                        std::cout << std::endl 
+                                  << "Command 'meshlabserver' not available, "
+                                     "cannot convert meshes." << std::endl;
+                        notAvailableReported = true;
+                    }
+                    continue;
+                }
+                
+                // meshlabserver available
+                std::stringstream convertCommand;
+                convertCommand << "meshlabserver"
+                               << " -i " << srcMeshPath.string() 
+                               << " -o " << dstMeshPath.string();
+                
+                // run command
+                int r = system(convertCommand.str().c_str());
+                if (r != 0)
+                {
+                    std::cout << "Command returned with error: " << r << "\n"
+                              << "Command was: " << convertCommand.str() << std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "Copying: " << srcMeshPath << "\n"
+                          << "     to: " << dstMeshPath;
+                fs::copy_file(srcMeshPath, dstMeshPath);
+            }
+        }
+        else
+        {
+            std::cout << "skipping (" << dstMeshPath.string() << " already exists)";
+        }
+        std::cout << std::endl;
+        
+        
+        
+        // add asset
+        std::string meshName = node->getName();
+        document->addMeshElement(meshName, dstMeshRelPath.string());
+        
+        // add geom to body
+        mjcf::Element* body = nodeBodies[node->getName()];
+        document->addGeomElement(body, meshName);
+    }
+}
+
+
 
 mjcf::Element* MjcfConverter::addNodeBody(RobotNodePtr node)
 {
-    int tabs = 0;
-    
-    auto ts = [&tabs]()
-    {
-        std::stringstream ss;
-        for (int i = 0; i < tabs; ++i)
-        {
-            ss << "  ";
-        }
-        return ss.str();
-    };
-    
-    std::cout << ts() << "Process node: " << node->getName();
-    if (node->getParent())
-    {
-        std::cout << " (-> " << node->getParent()->getName() << ")";
-    }
-    else
-    {
-        std::cout << " (no parent)";
-    }
-    std::cout << std::endl;
-    
-    mjcf::Element* element = addedBodys[node->getName()];
+    mjcf::Element* element = nodeBodies[node->getName()];
     if (element)
     {
         // break recursion
-        std::cout << ts() << "- Node " << node->getName() << " already added" << std::endl;
-        std::cout << ts() << "---" << std::endl;
         return element;
     }
     
-    mjcf::Element* parent = addedBodys[node->getParent()->getName()];
+    mjcf::Element* parent = nodeBodies[node->getParent()->getName()];
     if (!parent)
     {
-        tabs++;
-        // recursion to parent until it was found
         parent = addNodeBody(robot->getRobotNode(node->getParent()->getName()));
-        tabs--;
     }
     
-    std::cout << ts() << "- Add node:   " << node->getName() 
-              << " (-> " << node->getParent()->getName() << ")" << std::endl;
-    
     element = document->addBodyElement(parent, node);
-    addedBodys[node->getName()] = element;
+    nodeBodies[node->getName()] = element;
     
-    std::cout << ts() << "---" << std::endl;
     return element;
+}
+
+void MjcfConverter::mergeEmptyBodies()
+{
+    
+    
+    
+    
+    
     
 }
 
-void MjcfConverter::writeOutputFile(const std::string& outputFilename)
+void MjcfConverter::writeOutputFile()
 {
-    std::cout << "Writing to " << outputFilename << std::endl;
+    assert(!outputFileName.empty());
+    
+    std::cout << std::endl;
     document->Print();
-    //docuemnt->SaveFile(outputFilename.c_str());
+    
+    std::cout << "Writing to " << outputFileName << std::endl;
+    document->SaveFile(outputFileName.c_str());
 }
 
