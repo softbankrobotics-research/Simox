@@ -121,6 +121,8 @@ void MjcfConverter::convertToMjcf()
     std::cout << "Merging empty bodies ..." << std::endl;
     sanitizeMasslessBodies();
     
+    std::cout << "Adding contact excludes ..." << std::endl;
+    document->addContactExcludes(nodeBodies[robot->getRootNode()->getName()]);
     
     std::cout << "Done.";
     
@@ -426,11 +428,6 @@ void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
         document->addDummyInertial(body);
     }
 }
-
-
-
-
-
 
 
 

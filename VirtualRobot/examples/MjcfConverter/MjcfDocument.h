@@ -59,6 +59,9 @@ namespace mjcf
         void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
         
         
+        void addContactExcludes(Element* rootBody);
+        Element* addContactExclude(const Element& body1, const Element& body2);
+        
     private:
         
         /// Gets the top-level element (child of root element) with the given
@@ -81,11 +84,11 @@ namespace mjcf
         
         Eigen::IOFormat iofVector {5, 0, "", " ", "", "", "", ""};
         
-        
-
-        
         /// The "mujoco" root element.
         Element* root;
+        
+        
+        friend class ContactExcludeVisitor;
         
     };
     
@@ -99,6 +102,22 @@ namespace mjcf
         ss << v.format(iofVector);
         return ss.str();
     }
+    
+    
+    class ContactExcludeVisitor : public tinyxml2::XMLVisitor
+    {
+    public:
+        ContactExcludeVisitor(Document& document);
+    
+        // XMLVisitor interface
+        virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
+        
+    private:
+        Document& document;
+        bool firstSkipped = false; ///< Used to skip the root element.
+        
+    };
+    
     
 }
 }

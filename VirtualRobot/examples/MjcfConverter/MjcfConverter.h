@@ -48,7 +48,7 @@ namespace VirtualRobot
         
         void sanitizeMasslessLeafBody(mjcf::Element* body);
         
-        
+        void addContactExcludes();
         
 
         // Paths

@@ -219,6 +219,23 @@ void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
 }
 
 
+void Document::addContactExcludes(Element* rootBody)
+{
+    ContactExcludeVisitor visitor(*this);
+    rootBody->Accept(&visitor);
+}
+
+Element* Document::addContactExclude(const Element& body1, const Element& body2)
+{
+    Element* exclude = addNewElement(contact(), "exclude");
+    
+    exclude->SetAttribute("body1", body1.Attribute("name"));
+    exclude->SetAttribute("body2", body2.Attribute("name"));
+    
+    return exclude;
+}
+
+
 Element* Document::topLevelElement(const std::string& name)
 {
     Element* elem = root->FirstChildElement(name.c_str());
@@ -243,4 +260,32 @@ std::string Document::toAttr(const Eigen::Quaternionf& quat)
     return ss.str();
 }
 
+
+
+ContactExcludeVisitor::ContactExcludeVisitor(Document& document) : 
+    document(document)
+{
+}
+
+bool ContactExcludeVisitor::VisitEnter(
+        const tinyxml2::XMLElement& body, const tinyxml2::XMLAttribute*)
+{
+    if (std::string(body.Value()) != "body")
+    {
+        return true;
+    }
+    
+    if (!firstSkipped)
+    {
+        firstSkipped = true;
+        return true;
+    }
+    
+    const Element* parent = body.Parent()->ToElement();
+    assert(parent);
+    
+    document.addContactExclude(*parent, body);
+    
+    return true;
+}
 
