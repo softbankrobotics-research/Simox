@@ -28,7 +28,6 @@ void SimoxXMLDocument::LoadFile(const fs::path& path)
     
     collisionModelFiles.clear();
     visualizationFiles.clear();
-    includedFiles.clear();
     
     XMLNode* xmlRobot = FirstChildElement("Robot");
     assert(xmlRobot);
@@ -36,7 +35,7 @@ void SimoxXMLDocument::LoadFile(const fs::path& path)
     SimoxXMLVisitor visitor(*this);
     xmlRobot->Accept(&visitor);
     
-    for (fs::path file : includedFiles)
+    for (fs::path file : visitor.includedFiles)
     {
         VR_INFO << "Loading included XML: " << file << std::endl;
         
@@ -140,7 +139,7 @@ bool SimoxXMLVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml
         assert(file);
         fs::path relPath = file->GetText();
         
-        xml.includedFiles.push_back(xml.inputFilePath.parent_path() / relPath);
+        includedFiles.push_back(xml.inputFilePath.parent_path() / relPath);
     }
     
     return true;
