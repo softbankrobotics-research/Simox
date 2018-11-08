@@ -3,14 +3,9 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 #include "MjcfConverter.h"
-
+#include "utils.h"
 
 using namespace VirtualRobot;
-
-
-#define VR_INFO    std::cout << "[INFO] "
-#define VR_WARNING std::cerr << "[WARN] "
-#define VR_ERROR   std::cerr << "[ERROR] "
 
 
 int main(int argc, char* argv[])

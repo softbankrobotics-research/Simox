@@ -5,16 +5,20 @@
 
 
 using namespace VirtualRobot;
-namespace tx = tinyxml2;
+using namespace tinyxml2;
+
+namespace fs = boost::filesystem;
 
 
 SimoxXMLDocument::SimoxXMLDocument()
 {
 }
 
-void SimoxXMLDocument::LoadFile(const char* filename)
+void SimoxXMLDocument::LoadFile(const fs::path& path)
 {
-    int errID = Base::LoadFile(filename);
+    this->inputFilePath = path;
+    
+    int errID = Base::LoadFile(path.c_str());
     if (errID)
     {
         throw MjcfXmlLoadFileFailed(ErrorName(), ErrorStr());
@@ -22,18 +26,35 @@ void SimoxXMLDocument::LoadFile(const char* filename)
     
     collisionModelFiles.clear();
     visualizationFiles.clear();
+    includedFiles.clear();
     
-    tx::XMLNode* xmlRobot = FirstChildElement("Robot");
+    XMLNode* xmlRobot = FirstChildElement("Robot");
     assert(xmlRobot);
 
-    RobotNodeVisitor visitor(*this);
+    SimoxXMLVisitor visitor(*this);
     xmlRobot->Accept(&visitor);
+    
+    for (fs::path file : includedFiles)
+    {
+        SimoxXMLDocument includedXML;
+        includedXML.LoadFile(file);
+        
+        auto copyMap = [](const NamePathMap& src, NamePathMap& dst)
+        {
+            for (auto item : src)
+            {
+                dst[item.first] = item.second;
+            }
+        };
+        
+        copyMap(includedXML.collisionModelFiles, this->collisionModelFiles);
+        copyMap(includedXML.visualizationFiles, this->visualizationFiles);
+    }
 }
-
 
 void SimoxXMLDocument::LoadFile(const std::string& filename)
 {
-    LoadFile(filename.c_str());
+    LoadFile(fs::path(filename));
 }
 
 bool SimoxXMLDocument::hasCollisionModelFile(RobotNodePtr robotNode) const
@@ -46,12 +67,12 @@ bool SimoxXMLDocument::hasVisualizationFile(RobotNodePtr robotNode) const
     return hasEntry(robotNode, visualizationFiles);
 }
 
-boost::filesystem::path SimoxXMLDocument::collisionModelFile(RobotNodePtr robotNode) const
+fs::path SimoxXMLDocument::collisionModelFile(RobotNodePtr robotNode) const
 {
     return getEntry(robotNode, collisionModelFiles);
 }
 
-boost::filesystem::path SimoxXMLDocument::visualizationFile(RobotNodePtr robotNode) const
+fs::path SimoxXMLDocument::visualizationFile(RobotNodePtr robotNode) const
 {
     return getEntry(robotNode, visualizationFiles);
 }
@@ -61,42 +82,53 @@ bool SimoxXMLDocument::hasEntry(RobotNodePtr robotNode, const NamePathMap& map) 
     return map.find(robotNode->getName()) != map.end();
 }
 
-boost::filesystem::path SimoxXMLDocument::getEntry(
+fs::path SimoxXMLDocument::getEntry(
         RobotNodePtr robotNode, const SimoxXMLDocument::NamePathMap& map) const
 {
     auto item = map.find(robotNode->getName());
     if (item == map.end())
     {
-        return boost::filesystem::path("");
+        return fs::path("");
     }
     return item->second;
 }
 
 
-RobotNodeVisitor::RobotNodeVisitor(SimoxXMLDocument& document) : 
-    document(document)
+SimoxXMLVisitor::SimoxXMLVisitor(SimoxXMLDocument& document) : 
+    xml(document)
 {
 }
 
-bool RobotNodeVisitor::VisitEnter(const tinyxml2::XMLElement& robotNode, const tinyxml2::XMLAttribute*)
+bool SimoxXMLVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute*)
 {
-    if (isElement(&robotNode, "RobotNode"))
+    if (isElement(&elem, "RobotNode"))
     {
-        std::string nodeName = robotNode.Attribute("name");
-                
-        const tx::XMLElement* xmlVisu = robotNode.FirstChildElement("Visualization");
-        const tx::XMLElement* xmlColModel = robotNode.FirstChildElement("CollisionModel");
+        std::string nodeName = elem.Attribute("name");
+        
+        const XMLElement* xmlVisu = elem.FirstChildElement("Visualization");
+        const XMLElement* xmlColModel = elem.FirstChildElement("CollisionModel");
+
+        if (xmlColModel)
+        {
+            std::string filename = xmlColModel->FirstChildElement("File")->GetText();
+            xml.collisionModelFiles[nodeName] = filename;
+        }
         
         if (xmlVisu)
         {
             std::string filename = xmlVisu->FirstChildElement("File")->GetText();
-            document.visualizationFiles[nodeName] = filename;
+            xml.visualizationFiles[nodeName] = filename;
         }
-        
-        if (xmlColModel)
-        {
-            std::string filename = xmlColModel->FirstChildElement("File")->GetText();
-            document.collisionModelFiles[nodeName] = filename;
-        }
+
     }
+    else if (isElement(&elem, "ChildFromRobot"))
+    {
+        const XMLElement* file = elem.FirstChildElement("File");
+        assert(file);
+        fs::path relPath = file->GetText();
+        
+        xml.includedFiles.push_back(xml.inputFilePath.parent_path() / relPath);
+    }
+    
+    return true;
 }

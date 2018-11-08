@@ -15,15 +15,15 @@ namespace VirtualRobot
 class SimoxXMLDocument : private tinyxml2::XMLDocument
 {
     using Base = tinyxml2::XMLDocument;
-    friend class RobotNodeVisitor;
+    friend class SimoxXMLVisitor;
     
     
 public:
     
     SimoxXMLDocument();
     
-    void LoadFile(const char* filename);
-    void LoadFile(const std::string& filename);
+    void LoadFile(const boost::filesystem::path& path);
+    void LoadFile(const std::string& path);
     
     
     bool hasCollisionModelFile(RobotNodePtr robotNode) const;
@@ -37,28 +37,33 @@ private:
     
     using NamePathMap = std::map<std::string, boost::filesystem::path>;
 
+    
     bool hasEntry(RobotNodePtr robotNode, const NamePathMap& map) const;
     boost::filesystem::path getEntry(RobotNodePtr robotNode, const NamePathMap& map) const;
+    
+    
+    boost::filesystem::path inputFilePath;
     
     NamePathMap collisionModelFiles;
     NamePathMap visualizationFiles;
     
-    
+    std::vector<boost::filesystem::path> includedFiles;
     
 };
 
 
-class RobotNodeVisitor : public tinyxml2::XMLVisitor
+class SimoxXMLVisitor : public tinyxml2::XMLVisitor
 {
 public:
-    RobotNodeVisitor(SimoxXMLDocument& document);
+    SimoxXMLVisitor(SimoxXMLDocument& xml);
     
     virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
     
 private:
-    SimoxXMLDocument& document;
+    SimoxXMLDocument& xml;
     
 };
 
 
 }
+

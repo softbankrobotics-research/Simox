@@ -81,7 +81,7 @@ Element* Document::addGeomElement(Element* body, const std::string& meshName)
     geom->SetAttribute("type", "mesh");
 //    geom->SetAttribute("type", "capsule");
     geom->SetAttribute("mesh", meshName.c_str());
-    geom->SetAttribute("density", 100);
+    //geom->SetAttribute("density", 100);
     
     return geom;
 }
@@ -99,8 +99,8 @@ Element* Document::addInertialElement(Element* body, RobotNodePtr node)
     
     Element* inertial = addNewElement(body, "inertial");
     
-    inertial->SetAttribute("pos", toAttr(Eigen::Vector3f(0, 0, 0)).c_str());
-    
+    Eigen::Vector3f pos = node->getCoMLocal() * lengthScaling;
+    inertial->SetAttribute("pos", toAttr(pos).c_str());
     inertial->SetAttribute("mass", double(node->getMass()));
     
     if (matrix.isDiagonal(floatCompPrecision))

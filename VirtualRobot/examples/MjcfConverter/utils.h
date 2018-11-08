@@ -3,6 +3,11 @@
 #include "MjcfDocument.h"
 
 
+#define VR_INFO    std::cout << "[INFO] "
+#define VR_WARNING std::cout << "[WARN] "
+#define VR_ERROR   std::cout << "[ERROR] "
+
+
 namespace VirtualRobot 
 {
 

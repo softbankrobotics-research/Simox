@@ -81,10 +81,10 @@ void MjcfConverter::writeOutputFile()
 {
     assert(!outputFileName.empty());
     
-    std::cout << std::endl;
+    VR_INFO << std::endl;
     document->Print();
     
-    std::cout << "Writing to " << outputFileName << std::endl;
+    VR_INFO << "Writing to " << outputFileName << std::endl;
     document->SaveFile(outputFileName.c_str());
 }
 
@@ -98,25 +98,25 @@ void MjcfConverter::convertToMjcf()
     
     makeEnvironment();
     
-    std::cout << "Creating bodies structure ..." << std::endl;
+    VR_INFO << "Creating bodies structure ..." << std::endl;
     addNodeBodies();
     
-    std::cout << "Adding meshes and geoms ..." << std::endl;
+    VR_INFO << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
     
-    std::cout << "===========================" << std::endl
+    VR_INFO << "===========================" << std::endl
               << "Current model: "             << std::endl
               << "--------------"              << std::endl;
     document->Print();
-    std::cout << "===========================" << std::endl;
+    VR_INFO << "===========================" << std::endl;
     
-    std::cout << "Merging empty bodies ..." << std::endl;
+    VR_INFO << "Merging empty bodies ..." << std::endl;
     sanitizeMasslessBodies();
     
-    std::cout << "Adding contact excludes ..." << std::endl;
+    VR_INFO << "Adding contact excludes ..." << std::endl;
     document->addContactExcludes(nodeBodies[robot->getRootNode()->getName()]);
     
-    std::cout << "Done.";
+    VR_INFO << "Done.";
     
     return; 
 }
@@ -153,9 +153,9 @@ void MjcfConverter::addNodeBodyMeshes()
             continue;
         }
         
-        std::cout << "Node " << node->getName() << ":\t";
+        VR_INFO << "Node " << node->getName() << ":\t";
         
-        fs::path srcMeshPath = inputXML.collisionModelFile(node);
+        fs::path srcMeshPath = inputXML.visualizationFile(node);
         
         if (srcMeshPath.is_relative())
         {
@@ -172,13 +172,13 @@ void MjcfConverter::addNodeBodyMeshes()
         {
             if (srcMeshPath.extension().string() != "stl")
             {
-                std::cout << "Converting to .stl: " << srcMeshPath;
+                VR_INFO << "Converting to .stl: " << srcMeshPath;
                 
                 if (!meshlabserverAviable)
                 {
                     if (!notAvailableReported)
                     {
-                        std::cout << std::endl 
+                        VR_INFO << std::endl 
                                   << "Command 'meshlabserver' not available, "
                                      "cannot convert meshes." << std::endl;
                         notAvailableReported = true;
@@ -196,22 +196,22 @@ void MjcfConverter::addNodeBodyMeshes()
                 int r = system(convertCommand.str().c_str());
                 if (r != 0)
                 {
-                    std::cout << "Command returned with error: " << r << "\n"
+                    VR_INFO << "Command returned with error: " << r << "\n"
                               << "Command was: " << convertCommand.str() << std::endl;
                 }
             }
             else
             {
-                std::cout << "Copying: " << srcMeshPath << "\n"
+                VR_INFO << "Copying: " << srcMeshPath << "\n"
                           << "     to: " << dstMeshPath;
                 fs::copy_file(srcMeshPath, dstMeshPath);
             }
         }
         else
         {
-            std::cout << "skipping (" << dstMeshRelPath.string() << " already exists)";
+            VR_INFO << "skipping (" << dstMeshRelPath.string() << " already exists)";
         }
-        std::cout << std::endl;
+        VR_INFO << std::endl;
         
         
         
@@ -268,46 +268,79 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 {
     assertElementIsBody(body);
     
-    std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
+    VR_INFO << "- Node '" << body->Attribute("name") << "': " << std::endl;
     
     // leaf => end of recursion
     if (!hasElementChild(body, "body"))
     {
-        std::cout << "  | Leaf";
+        VR_INFO << "  | Leaf";
         if (!hasMass(body))
         {
-            std::cout << " without mass" << std::endl;
+            VR_INFO << " without mass" << std::endl;
             sanitizeMasslessLeafBody(body);
         }
         else
         {
-            std::cout << std::endl;
+            VR_INFO << std::endl;
         }
         return; 
     }
     
     // non-leaf body
-    std::cout << "  | Non-leaf";
+    VR_INFO << "  | Non-leaf" << std::endl;
     
-    if (!hasMass(body))
+    std::string bodyName = body->Attribute("name");
+    RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
+    Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
+    
+    while (!hasMass(body))
     {
-        std::cout << " without mass" << std::endl;
+        VR_INFO << "  | No mass" << std::endl;
         
         // check whether there is only one child body
         Element* childBody = body->FirstChildElement("body");
         if (!childBody->NextSiblingElement("body"))
         {
-            std::string bodyName = body->Attribute("name");
             std::string childBodyName = childBody->Attribute("name");
             
-            std::cout << "  | Single child body => merging '" << childBodyName
+            VR_INFO << "  | Single child body => merging '" << childBodyName
                       << "' into '" << bodyName << "'" << std::endl;
+
+            // check child for pose attributes
+            if (childBody->Attribute("pos") || childBody->Attribute("quat"))
+            {
+                // update body's transform and joint axes
+                
+                RobotNodePtr childNode = robot->getRobotNode(childBodyName);
+                Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
+                
+                // body's pose
+                bodyPose = bodyPose * childPose;
+                document->setBodyPose(body, bodyPose);
+                
+                /* Adapt axes of joints in body:
+                 * The axes will be relative to the new pose. Therefore, the additional rotation
+                 * of the child must be subtracted from the joint axis.
+                 */
+                
+                Eigen::Matrix3f revChildOri = childPose.block<3,3>(0, 0).transpose();
+                
+                for (Element* joint = body->FirstChildElement("joint"); joint;
+                     joint = joint->NextSiblingElement("joint"))
+                {
+                    Eigen::Vector3f axis = strToVec(joint->Attribute("axis"));
+                    // apply child orientation
+                    axis = revChildOri * axis;
+                    document->setJointAxis(joint, axis);
+                }
+            }
+            
             
             // merge childBody into body => move all its elements here
             for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
                  grandChild = grandChild->NextSibling())
             {
-                std::cout << "  |  | Moving '" << grandChild->Value() << "'" << std::endl;
+                VR_INFO << "  |  | Moving '" << grandChild->Value() << "'" << std::endl;
                 
                 // clone grandchild
                 tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
@@ -316,50 +349,29 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
                 body->InsertEndChild(grandChildClone);
             }
             
-            // check child for pose attributes
-            if (childBody->Attribute("pos") || childBody->Attribute("quat"))
-            {
-                // update body's transform
-                // get tf from robot node
-                
-                RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
-                RobotNodePtr childNode = robot->getRobotNode(childBodyName);
-                
-                Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
-                Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
-                
-                bodyPose = bodyPose * childPose;
-                document->setBodyPose(body, bodyPose);
-                
-                // adapt axis of any joint in body
-                
-                for (Element* joint = body->FirstChildElement("joint"); joint;
-                     joint = joint->NextSiblingElement("joint"))
-                {
-                    Eigen::Vector3f axis = strToVec(joint->Attribute("axis"));
-                    // apply child orientation
-                    axis = childPose.block<3,3>(0, 0) * axis;
-                    document->setJointAxis(joint, axis);
-                }
-            }
             
             
             // update body name
-            std::size_t prefixSize = commonPrefixLength(bodyName, childBodyName);
             
             std::stringstream newName;
+            /*
+            std::size_t prefixSize = commonPrefixLength(bodyName, childBodyName);
             newName << bodyName.substr(0, prefixSize)
-                    << bodyName.substr(prefixSize) << "~" << childBodyName.substr(prefixSize);            
+                    << bodyName.substr(prefixSize) << "~" << childBodyName.substr(prefixSize);
+            */
+            newName << bodyName << "~" << childBodyName;
             body->SetAttribute("name", newName.str().c_str());
             
             
             // delete child
             body->DeleteChild(childBody);
         }
-    }
-    else
-    {
-        std::cout << std::endl;
+        else
+        {
+            VR_WARNING << "  | Massless body with >1 child body: " 
+                       << body->Attribute("name") << std::endl;
+            break;
+        }
     }
     
     for (Element* child = body->FirstChildElement("body");
@@ -380,13 +392,13 @@ void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
     if (body->NoChildren()) // is completely empty?
     {
         // leaf without geom: make it a site
-        std::cout << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
+        VR_INFO << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
         body->SetValue("site");
     }
     else
     {
         // add a small mass
-        std::cout << "  | Not empty => Adding dummy inertial." << std::endl;
+        VR_INFO << "  | Not empty => Adding dummy inertial." << std::endl;
         document->addDummyInertial(body);
     }
 }
