@@ -5,10 +5,9 @@
 #include <VirtualRobot/Robot.h>
 
 
-#include "exceptions.h"
-#include "SimoxXMLDocument.h"
-#include "MjcfDocument.h"
-#include "MjcfMasslessBodySanitizer.h"
+#include "mjcf/exceptions.h"
+#include "mjcf/MjcfDocument.h"
+#include "mjcf/MjcfMasslessBodySanitizer.h"
 
 
 namespace VirtualRobot

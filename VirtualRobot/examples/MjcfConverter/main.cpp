@@ -3,7 +3,6 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 #include "MjcfConverter.h"
-#include "utils.h"
 
 using namespace VirtualRobot;
 

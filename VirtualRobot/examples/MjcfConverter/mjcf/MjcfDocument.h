@@ -85,13 +85,7 @@ namespace mjcf
         /// Gets the top-level element (child of root element) with a name. 
         /// If it does not exist, it is created.
         Element* topLevelElement(const std::string& name);
-        
-        
-        /// Convert to MJCF XML attribute format.
-        std::string toAttr(bool b);
-        template <int dim>
-        std::string toAttr(const Eigen::Matrix<float, dim, 1>& v);
-        std::string toAttr(const Eigen::Quaternionf& v);
+
         
         /// Scaling for lengths, such as positions and translations.
         float lengthScaling = 0.001f;
@@ -99,9 +93,6 @@ namespace mjcf
         float floatCompPrecision = 1e-6f;
         /// Mass used for dummy inertial elements.
         float dummyMass = 0.0001f;
-        
-        /// IOFormat for vectors.
-        Eigen::IOFormat iofVector {5, 0, "", " ", "", "", "", ""};
         
         /// The "mujoco" root element.
         Element* root;
@@ -113,14 +104,7 @@ namespace mjcf
     
     using DocumentPtr = std::unique_ptr<Document>;
  
-    
-    template <int dim>
-    std::string Document::toAttr(const Eigen::Matrix<float, dim, 1>& v)
-    {
-        std::stringstream ss;
-        ss << v.format(iofVector);
-        return ss.str();
-    }
+
     
     
 

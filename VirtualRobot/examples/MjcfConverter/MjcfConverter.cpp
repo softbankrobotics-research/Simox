@@ -3,8 +3,8 @@
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 
-#include "utils.h"
-#include "xml_visitors.h"
+#include "mjcf/utils.h"
+#include "mjcf/xml_visitors.h"
 
 
 

@@ -256,19 +256,3 @@ Element* Document::topLevelElement(const std::string& name)
 }
 
 
-std::string Document::toAttr(bool b)
-{
-    static const std::string strings[] = { "false", "true" };
-    return strings[int(b)];
-}
-
-std::string Document::toAttr(const Eigen::Quaternionf& quat)
-{
-    std::stringstream ss;
-    ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
-    return ss.str();
-}
-
-
-
-

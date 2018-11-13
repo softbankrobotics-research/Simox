@@ -36,94 +36,31 @@ void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
 {
     assertElementIsBody(body);
 
-    std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
-    const std::string t = "  | ";
-    
     std::string bodyName = body->Attribute("name");
     RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
-    Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
+    Eigen::Matrix4f accChildPose = Eigen::Matrix4f::Identity();
     
     while (!hasMass(body))
     {
-        std::cout << t << "Massless" << std::endl;
+        std::cout << t << bodyName << ": \t";
         
         if (!hasElementChild(body, "body"))
         {
             // leaf => end of recursion
-            std::cout << t << "Leaf" << std::endl;
             sanitizeLeafBody(body);
-            return; 
+            return;
         }
         
         // non-leaf body
-        std::cout << t << "Non-leaf" << std::endl;
-        
         // check whether there is only one child body
         Element* childBody = body->FirstChildElement("body");
         if (!childBody->NextSiblingElement("body"))
         {
-            std::string childBodyName = childBody->Attribute("name");
-            
-            std::cout << t << "Single child body => merging '" << childBodyName
-                      << "' into '" << bodyName << "'" << std::endl;
-
-            // check child for pose attributes
-            if (childBody->Attribute("pos") || childBody->Attribute("quat"))
-            {
-                // update body's transform and joint axes
-                
-                RobotNodePtr childNode = robot->getRobotNode(childBodyName);
-                Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
-                
-                // body's pose
-                bodyPose = bodyPose * childPose;
-                document->setBodyPose(body, bodyPose);
-                
-                /* Adapt axes of joints in body:
-                 * The axes will be relative to the new pose. Therefore, the additional rotation
-                 * of the child must be subtracted from the joint axis.
-                 */
-                
-                Eigen::Matrix3f revChildOri = childPose.block<3,3>(0, 0).transpose();
-                
-                for (Element* joint = body->FirstChildElement("joint"); joint;
-                     joint = joint->NextSiblingElement("joint"))
-                {
-                    Eigen::Vector3f axis = strToVec(joint->Attribute("axis"));
-                    // apply child orientation
-                    axis = revChildOri * axis;
-                    document->setJointAxis(joint, axis);
-                }
-            }
-            
-            
-            // merge childBody into body => move all its elements here
-            for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
-                 grandChild = grandChild->NextSibling())
-            {
-                std::cout << t << " | Moving '" << grandChild->Value() << "'" << std::endl;
-                
-                // clone grandchild
-                tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
-                
-                // insert to body
-                body->InsertEndChild(grandChildClone);
-            }
-            
-            // update body name
-            MergedBodySet& bodySet = getMergedBodySetWith(bodyName);
-            bodySet.addBody(childBodyName);
-            body->SetAttribute("name", bodySet.getMergedBodyName().c_str());
-            
-            // delete child
-            body->DeleteChild(childBody);
-            
-            std::cout << t << "=> New body name: " << bodySet.getMergedBodyName() << std::endl;
+            mergeBodies(body, childBody, accChildPose);
         }
         else
         {
-            std::cout << "[WARN]" << t << "Massless body with >1 child body: " 
-                       << body->Attribute("name") << std::endl;
+            std::cout << "[WARN] Massless body with >1 child bodies." << std::endl;
             break;
         }
     }
@@ -140,6 +77,106 @@ void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
     
 }
 
+void MjcfMasslessBodySanitizer::mergeBodies(Element* body, Element* childBody, 
+                                            Eigen::Matrix4f& accChildPose)
+{
+    std::string childBodyName = childBody->Attribute("name");
+    
+    std::cout << "Merging with '" << childBodyName << "' ";
+
+    RobotNodePtr childNode = robot->getRobotNode(childBodyName);
+    Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
+    
+    // update accumulated child pose
+    // merged child's frame w.r.t. body's frame
+    accChildPose = childPose * accChildPose;
+    Eigen::Matrix3f accChildOri = accChildPose.block<3,3>(0, 0);
+    
+    // merge childBody into body => move all its elements here
+    // while doing this, apply accChildPose to elements
+    for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
+         grandChild = grandChild->NextSibling())
+    {
+        // clone grandchild
+        tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
+        
+        Element* elem = grandChildClone->ToElement();
+        if (elem)
+        {
+            /* Adapt pose/axis elements in child. Their poses/axes will be
+                 * relative to body's frame, so the transformation from body
+                 * to child will be lost. Therefore, apply accChildPose to
+                 * their poses/axes. */
+            
+            if (isElement(elem, "joint"))
+            {
+                // update pos and axis
+                updateChildPos(elem, accChildPose);
+                updateChildAxis(elem, accChildOri);
+            }
+            else if (isElement(elem, "body") 
+                     || isElement(elem, "inertial")
+                     || isElement(elem, "geom") 
+                     || isElement(elem, "site")
+                     || isElement(elem, "camera"))
+            {
+                updateChildPos(elem, accChildPose);
+                updateChildQuat(elem, accChildOri);
+            }
+            else if (isElement(elem, "light"))
+            {
+                updateChildPos(elem, accChildPose);
+                updateChildAxis(elem, accChildOri, "dir");
+            }
+        }
+        
+        // insert to body
+        body->InsertEndChild(grandChildClone);
+    }
+    
+    // update body name
+    MergedBodySet& bodySet = getMergedBodySetWith(body->Attribute("name"));
+    bodySet.addBody(childBodyName);
+    body->SetAttribute("name", bodySet.getMergedBodyName().c_str());
+    
+    std::cout << "(new name: " << bodySet.getMergedBodyName() << ")" << std::endl;
+    
+    // delete child
+    body->DeleteChild(childBody);
+}
+
+void MjcfMasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose)
+{
+    const char* posStr = elem->Attribute("pos");
+    Eigen::Vector3f pos = posStr ? strToVec(posStr) : 
+                                   Eigen::Vector3f::Zero();
+    
+    Eigen::Vector4f posHom;
+    posHom << pos, 1;
+    posHom = accChildPose * posHom;
+    pos = posHom.head<3>();
+    
+    elem->SetAttribute("pos", toAttr(pos).c_str());
+}
+
+void MjcfMasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri)
+{
+    const char* quatStr = elem->Attribute("quat");
+    Eigen::Quaternionf quat = quatStr ? strToQuat(quatStr) : 
+                                        Eigen::Quaternionf::Identity();
+    
+    quat = accChildOri * quat;
+    elem->SetAttribute("quat", toAttr(quat).c_str());
+}
+
+void MjcfMasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
+                                                const char* attrName)
+{
+    Eigen::Vector3f axis = strToVec(elem->Attribute("axis"));
+    axis = accChildOri * axis;
+    elem->SetAttribute(attrName, toAttr(axis).c_str());
+}
+
 void MjcfMasslessBodySanitizer::sanitizeLeafBody(Element* body)
 {
     assert(!hasElementChild(body, "body"));
@@ -148,13 +185,13 @@ void MjcfMasslessBodySanitizer::sanitizeLeafBody(Element* body)
     if (body->NoChildren()) // is completely empty?
     {
         // leaf without geom: make it a site
-        std::cout << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
+        std::cout << "Changing to site." << std::endl;
         body->SetValue("site");
     }
     else
     {
         // add a small mass
-        std::cout << "  | Not empty => Adding dummy inertial." << std::endl;
+        std::cout << "Adding dummy inertial." << std::endl;
         document->addDummyInertial(body);
     }
 }
@@ -197,13 +234,14 @@ MergedBodySet::MergedBodySet(const std::string& bodyName)
 
 void MergedBodySet::addBody(const std::string& bodyName)
 {
-    originalBodyNames.insert(bodyName);
+    originalBodyNames.push_back(bodyName);
     updateMergedBodyName();
 }
 
 bool MergedBodySet::containsBody(const std::string& bodyName) const
 {
-    return originalBodyNames.find(bodyName) != originalBodyNames.end();
+    return std::find(originalBodyNames.begin(), originalBodyNames.end(),
+                     bodyName) != originalBodyNames.end();
 }
 
 const std::string& MergedBodySet::getMergedBodyName() const

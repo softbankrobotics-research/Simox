@@ -30,6 +30,13 @@ Eigen::Vector3f strToVec(const char* string)
     return v;
 }
 
+Eigen::Quaternionf strToQuat(const char* string)
+{
+    Eigen::Quaternionf q;
+    sscanf(string, "%f %f %f %f", &q.w(), &q.x(), &q.y(), &q.z());
+    return q;
+}
+
 std::size_t commonPrefixLength(const std::string& a, const std::string& b)
 {
     const std::string* smaller = &a;
@@ -62,6 +69,19 @@ bool isElement(const mjcf::Element& elem, const char* tag)
 bool isElement(const mjcf::Element& elem, const std::string& tag)
 {
     return std::strcmp(elem.Value(), tag.c_str()) == 0;
+}
+
+std::string toAttr(bool b)
+{
+    static const std::string strings[] = { "false", "true" };
+    return strings[int(b)];
+}
+
+std::string toAttr(const Eigen::Quaternionf& quat)
+{
+    std::stringstream ss;
+    ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
+    return ss.str();
 }
 
 

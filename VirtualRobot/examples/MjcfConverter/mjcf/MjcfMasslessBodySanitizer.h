@@ -26,7 +26,7 @@ namespace mjcf
         void updateMergedBodyName();
         
         std::string mergedBodyName;
-        std::set<std::string> originalBodyNames;
+        std::vector<std::string> originalBodyNames;
         
     };
     
@@ -51,7 +51,16 @@ namespace mjcf
         void sanitizeRecursion(mjcf::Element* body);
         void sanitizeLeafBody(mjcf::Element* body);
         
+        void mergeBodies(Element* body, Element* childBody, Eigen::Matrix4f& accChildPose);
         
+        void updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose);
+        void updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri);
+        void updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
+                             const char* attrName = "axis");
+        
+        
+        
+        const std::string t = "| ";
         
         
         DocumentPtr& document;
