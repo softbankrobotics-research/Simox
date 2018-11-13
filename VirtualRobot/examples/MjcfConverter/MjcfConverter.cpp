@@ -7,13 +7,15 @@
 #include "xml_visitors.h"
 
 
+
 using namespace VirtualRobot;
 namespace tx = tinyxml2; 
 namespace fs = boost::filesystem;
 using Element = mjcf::Element;
 
 
-MjcfConverter::MjcfConverter()
+MjcfConverter::MjcfConverter() :
+    masslessBodySanitizer(document, robot)
 {
 }
 
@@ -23,7 +25,45 @@ void MjcfConverter::convert(const std::string& inputSimoxXmlFile,
     setPaths(inputSimoxXmlFile, outputDirectory);
     
     loadInputFile();
-    convertToMjcf();
+    
+    document.reset(new mjcf::Document());
+    
+    document->setModelName(robot->getName());
+    document->compiler()->SetAttribute("angle", "radian");
+    document->compiler()->SetAttribute("balanceinertia", "true");
+    
+    makeEnvironment();
+    
+    std::cout << "Creating bodies structure ..." << std::endl;
+    addNodeBodies();
+    
+    std::cout << "Adding meshes and geoms ..." << std::endl;
+    addNodeBodyMeshes();
+    
+    std::cout << "===========================" << std::endl
+              << "Current model: "             << std::endl
+              << "--------------"              << std::endl;
+    document->Print();
+    std::cout << "===========================" << std::endl;
+    
+    std::cout << "Merging massless bodies ..." << std::endl;
+    masslessBodySanitizer.sanitize();
+    
+    std::cout << "Adding contact excludes ..." << std::endl;
+    addContactExcludes();
+
+    std::cout << "Adding actuators ..." << std::endl;
+    addActuators();
+    
+    std::cout << "Done.";
+    
+    std::cout << std::endl;
+    std::cout << "===========================" << std::endl
+              << "Output file: "             << std::endl
+              << "------------"              << std::endl;
+    document->Print();
+    std::cout << "===========================" << std::endl;
+    
     writeOutputFile();
 }
 
@@ -80,51 +120,9 @@ void MjcfConverter::loadInputFile()
 void MjcfConverter::writeOutputFile()
 {
     assert(!outputFileName.empty());
-    
-    std::cout << std::endl;
-    document->Print();
-    
     std::cout << "Writing to " << outputFileName << std::endl;
     document->SaveFile(outputFileName.c_str());
 }
-
-
-void MjcfConverter::convertToMjcf()
-{
-    document.reset(new mjcf::Document());
-    
-    document->setModelName(robot->getName());
-    document->compiler()->SetAttribute("angle", "radian");
-    document->compiler()->SetAttribute("balanceinertia", "true");
-    
-    makeEnvironment();
-    
-    std::cout << "Creating bodies structure ..." << std::endl;
-    addNodeBodies();
-    
-    std::cout << "Adding meshes and geoms ..." << std::endl;
-    addNodeBodyMeshes();
-    
-    std::cout << "===========================" << std::endl
-              << "Current model: "             << std::endl
-              << "--------------"              << std::endl;
-    document->Print();
-    std::cout << "===========================" << std::endl;
-    
-    std::cout << "Merging empty bodies ..." << std::endl;
-    sanitizeMasslessBodies();
-    
-    std::cout << "Adding contact excludes ..." << std::endl;
-    document->addContactExcludes(nodeBodies[robot->getRootNode()->getName()]);
-    
-    std::cout << "Adding actuators ..." << std::endl;
-    addActuators();
-    
-    std::cout << "Done.";
-    
-    return; 
-}
-
 
 
 void MjcfConverter::addNodeBodies()
@@ -255,154 +253,16 @@ Element* MjcfConverter::addNodeBody(RobotNodePtr node)
     return element;
 }
 
-void MjcfConverter::sanitizeMasslessBodies()
+void MjcfConverter::addContactExcludes()
 {
-    // merge body leaf nodes with parent if they do not have a geom
+    RobotNodePtr rootNode = robot->getRootNode();
     
-    // assume we have leaf
-    
-    Element* root = document->worldbody()->FirstChildElement("body");
-    
-    for (Element* body = root->FirstChildElement("body");
-         body;
-         body = body->NextSiblingElement("body"))
+    for (RobotNodePtr node : robot->getRobotNodes())
     {
-        sanitizeMasslessBodyRecursion(body);
-    }
-}
-
-void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
-{
-    assertElementIsBody(body);
-
-    std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
-    const std::string t = "  | ";
-    
-    std::string bodyName = body->Attribute("name");
-    RobotNodePtr bodyNode = robot->getRobotNode(bodyName);
-    Eigen::Matrix4f bodyPose = bodyNode->getTransformationFrom(bodyNode->getParent());
-    
-    while (!hasMass(body))
-    {
-        std::cout << t << "Massless" << std::endl;
-        
-        if (!hasElementChild(body, "body"))
+        for (std::string& ignore : node->getPhysics().ignoreCollisions)
         {
-            // leaf => end of recursion
-            std::cout << t << "Leaf" << std::endl;
-            sanitizeMasslessLeafBody(body);
-            return; 
+            
         }
-        
-        // non-leaf body
-        std::cout << t << "Non-leaf" << std::endl;
-        
-        // check whether there is only one child body
-        Element* childBody = body->FirstChildElement("body");
-        if (!childBody->NextSiblingElement("body"))
-        {
-            std::string childBodyName = childBody->Attribute("name");
-            
-            std::cout << t << "Single child body => merging '" << childBodyName
-                      << "' into '" << bodyName << "'" << std::endl;
-
-            // check child for pose attributes
-            if (childBody->Attribute("pos") || childBody->Attribute("quat"))
-            {
-                // update body's transform and joint axes
-                
-                RobotNodePtr childNode = robot->getRobotNode(childBodyName);
-                Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
-                
-                // body's pose
-                bodyPose = bodyPose * childPose;
-                document->setBodyPose(body, bodyPose);
-                
-                /* Adapt axes of joints in body:
-                 * The axes will be relative to the new pose. Therefore, the additional rotation
-                 * of the child must be subtracted from the joint axis.
-                 */
-                
-                Eigen::Matrix3f revChildOri = childPose.block<3,3>(0, 0).transpose();
-                
-                for (Element* joint = body->FirstChildElement("joint"); joint;
-                     joint = joint->NextSiblingElement("joint"))
-                {
-                    Eigen::Vector3f axis = strToVec(joint->Attribute("axis"));
-                    // apply child orientation
-                    axis = revChildOri * axis;
-                    document->setJointAxis(joint, axis);
-                }
-            }
-            
-            
-            // merge childBody into body => move all its elements here
-            for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
-                 grandChild = grandChild->NextSibling())
-            {
-                std::cout << t << " | Moving '" << grandChild->Value() << "'" << std::endl;
-                
-                // clone grandchild
-                tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
-                
-                // insert to body
-                body->InsertEndChild(grandChildClone);
-            }
-            
-            // update body name
-            
-            std::stringstream newName;
-            /*
-            std::size_t prefixSize = commonPrefixLength(bodyName, childBodyName);
-            newName << bodyName.substr(0, prefixSize)
-                    << bodyName.substr(prefixSize) << "~" << childBodyName.substr(prefixSize);
-            */
-            newName << bodyName << "~" << childBodyName;
-            body->SetAttribute("name", newName.str().c_str());
-            
-            
-            // delete child
-            body->DeleteChild(childBody);
-            
-            std::cout << t << "=> New body name: " << newName.str() << std::endl;
-        }
-        else
-        {
-            VR_WARNING << t << "Massless body with >1 child body: " 
-                       << body->Attribute("name") << std::endl;
-            break;
-        }
-    }
-    
-    
-    // recursive descend
-    
-    for (Element* child = body->FirstChildElement("body");
-         child;
-         child = child->NextSiblingElement("body"))
-    {
-        sanitizeMasslessBodyRecursion(child);
-    }
-    
-}
-
-void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
-{
-    
-    assert(!hasElementChild(body, "body"));
-    assert(!hasMass(body));
-    
-    if (body->NoChildren()) // is completely empty?
-    {
-        // leaf without geom: make it a site
-        std::cout << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
-        body->SetValue("site");
-    }
-    else
-    {
-        // add a small mass
-        std::cout << "  | Not empty => Adding dummy inertial." << std::endl;
-        document->addDummyInertial(body);
     }
 }
 

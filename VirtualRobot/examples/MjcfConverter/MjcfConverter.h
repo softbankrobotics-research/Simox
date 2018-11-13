@@ -8,6 +8,7 @@
 #include "exceptions.h"
 #include "SimoxXMLDocument.h"
 #include "MjcfDocument.h"
+#include "MjcfMasslessBodySanitizer.h"
 
 
 namespace VirtualRobot
@@ -30,8 +31,6 @@ namespace VirtualRobot
         void loadInputFile();
         void writeOutputFile();
         
-        void convertToMjcf();
-        
         void setPaths(const std::string& inputFilename, 
                       const std::string& outputDirectory);
         
@@ -43,11 +42,6 @@ namespace VirtualRobot
         void addNodeBodyMeshes();
 
 
-        void sanitizeMasslessBodies();
-        void sanitizeMasslessBodyRecursion(mjcf::Element* body);
-        
-        void sanitizeMasslessLeafBody(mjcf::Element* body);
-        
         void addContactExcludes();
         
         void addActuators();
@@ -81,9 +75,12 @@ namespace VirtualRobot
         
         // Processing
         
-        std::map<std::string, mjcf::Element*> nodeBodies;
-
+        mjcf::MjcfMasslessBodySanitizer masslessBodySanitizer;
         
+        std::map<std::string, mjcf::Element*> nodeBodies;
+        
+        std::map<std::string, std::string> mergedBodyNames;
+
     };
 
 }

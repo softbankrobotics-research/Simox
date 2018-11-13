@@ -16,6 +16,7 @@ if (Boost_FOUND)
         
         MjcfConverter.cpp
         MjcfDocument.cpp
+        MjcfMasslessBodySanitizer.cpp
         SimoxXMLDocument.cpp
     )
     
@@ -26,6 +27,7 @@ if (Boost_FOUND)
         
         MjcfConverter.h
         MjcfDocument.h
+        MjcfMasslessBodySanitizer.h
         SimoxXMLDocument.h
     )
 
