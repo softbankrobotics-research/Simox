@@ -17,7 +17,6 @@ if (Boost_FOUND)
         MjcfConverter.cpp
         MjcfDocument.cpp
         MjcfMasslessBodySanitizer.cpp
-        SimoxXMLDocument.cpp
     )
     
     set(HEADERS
@@ -28,7 +27,6 @@ if (Boost_FOUND)
         MjcfConverter.h
         MjcfDocument.h
         MjcfMasslessBodySanitizer.h
-        SimoxXMLDocument.h
     )
 
     set(LIBS

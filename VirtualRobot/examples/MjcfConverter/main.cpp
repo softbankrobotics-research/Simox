@@ -26,12 +26,12 @@ int main(int argc, char* argv[])
         }
         else
         {
-            VR_INFO << "Something is wrong with " << robFile;
+            std::cout << "Something is wrong with " << robFile;
         }
     }
     else
     {
-        VR_INFO << "Usage: " << argv[0] << " --robot <simox robot file>";
+        std::cout << "Usage: " << argv[0] << " --robot <simox robot file>";
         return 0;
     }
     
@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
     outputDir.remove_filename();
     outputDir /= "mjcf";
     
-    VR_INFO << "Input file:  " << inputFilename << std::endl;
-    VR_INFO << "Output dir: " << outputDir << std::endl;
+    std::cout << "Input file:  " << inputFilename << std::endl;
+    std::cout << "Output dir: " << outputDir << std::endl;
 
     MjcfConverter converter;
     converter.convert(inputFilename, outputDir.string());
