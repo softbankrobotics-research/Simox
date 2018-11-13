@@ -77,7 +77,6 @@ XML/RobotIO.cpp
 XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
-XML/mjcf/exceptions.cpp
 XML/mjcf/MasslessBodySanitizer.cpp
 XML/mjcf/MjcfDocument.cpp
 XML/mjcf/MujocoIO.cpp
@@ -229,7 +228,6 @@ XML/RobotIO.h
 XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
-XML/mjcf/exceptions.h
 XML/mjcf/MasslessBodySanitizer.h
 XML/mjcf/MjcfDocument.h
 XML/mjcf/MujocoIO.h
@@ -563,12 +561,19 @@ ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
 TARGET_LINK_LIBRARIES(VirtualRobot PUBLIC ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
 target_include_directories(VirtualRobot SYSTEM PUBLIC ${Simox_EXTERNAL_INCLUDE_DIRS})
 
+# against undefined reference to boost::filesystem::detail::copy_file
+# source: https://stackoverflow.com/a/3500721
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DBOOST_NO_CXX11_SCOPED_ENUMS)
+
+
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
 # .so path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
 # .lib path (this is needed for setting the DLL-import library path on windows)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+
+
 
 
 #######################################################################################

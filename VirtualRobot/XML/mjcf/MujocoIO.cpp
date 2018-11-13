@@ -4,6 +4,8 @@
 
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/VirtualRobotException.h>
+#include <VirtualRobot/Visualization/TriMeshModel.h>
 
 
 using namespace VirtualRobot;
@@ -20,16 +22,27 @@ MujocoIO::MujocoIO() :
 
 void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::string& basePath, const std::string& meshDir)
 {
+    THROW_VR_EXCEPTION_IF(!robot, "Given RobotPtr robot is null.");
+    THROW_VR_EXCEPTION_IF(filename.empty(), "Given filename is empty.");
+    
     this->robot = robot;
     this->outputDirectory = basePath;
     this->outputFileName = filename;
     this->outputMeshRelDirectory = meshDir;
     
     document.reset(new mjcf::Document());
-    
     document->setModelName(robot->getName());
+    
     document->compiler()->SetAttribute("angle", "radian");
     document->compiler()->SetAttribute("balanceinertia", "true");
+    
+    Element* defaultsClass = document->addDefaultsClass(robot->getName());
+    std::stringstream ss;
+    ss << "Add default values for " << robot->getName() << " here.";
+    defaultsClass->InsertFirstChild(document->NewComment(ss.str().c_str()));
+    
+    document->setNewElementClass(robot->getName(), true);
+    
     
     makeEnvironment();
     
@@ -63,7 +76,10 @@ void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::
     document->Print();
     std::cout << "===========================" << std::endl;
     
-    writeOutputFile();
+    
+    assert(!outputFileName.empty());
+    std::cout << "Writing to " << (outputDirectory / outputFileName) << std::endl;
+    document->SaveFile((outputDirectory / outputFileName).c_str());
 }
 
 
@@ -71,13 +87,6 @@ void MujocoIO::makeEnvironment()
 {
     document->addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
                                Eigen::Vector3f(.4f, .6f, .8f));
-}
-
-void MujocoIO::writeOutputFile()
-{
-    assert(!outputFileName.empty());
-    std::cout << "Writing to " << outputFileName << std::endl;
-    document->SaveFile(outputFileName.c_str());
 }
 
 
@@ -89,7 +98,9 @@ void MujocoIO::addNodeBodies()
     assert(rootNode);
     
     // add root
-    Element* root = document->addBodyElement(document->worldbody(), rootNode);
+    Element* robotRootBody = document->addRobotRootBodyElement(robot->getName());
+    
+    Element* root = document->addBodyElement(robotRootBody, rootNode);
     nodeBodies[rootNode->getName()] = root;
     assert(root);
     
@@ -113,16 +124,10 @@ void MujocoIO::addNodeBodyMeshes()
             continue;
         }
         
-        
         std::cout << "Node " << node->getName() << ":\t";
         
         fs::path srcMeshPath = visualization->getFilename();
-        
-        if (srcMeshPath.is_relative())
-        {
-            // resolve relative path
-            srcMeshPath = inputFileDirectory / srcMeshPath;
-        }
+        assert(srcMeshPath.is_absolute());
         
         fs::path dstMeshFileName = srcMeshPath.filename();
         dstMeshFileName.replace_extension("stl");

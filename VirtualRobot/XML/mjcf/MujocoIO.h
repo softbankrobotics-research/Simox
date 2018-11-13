@@ -5,7 +5,6 @@
 #include <VirtualRobot/Robot.h>
 
 
-#include "exceptions.h"
 #include "MjcfDocument.h"
 #include "MasslessBodySanitizer.h"
 
@@ -29,8 +28,6 @@ namespace mjcf
         
     private:
         
-        
-        void writeOutputFile();
         
         void setPaths(const std::string& inputFilename, 
                       const std::string& outputDirectory);
@@ -56,7 +53,6 @@ namespace mjcf
         
         boost::filesystem::path outputDirectory;
         boost::filesystem::path outputFileName;
-        
         boost::filesystem::path outputMeshRelDirectory;
 
         
@@ -72,7 +68,7 @@ namespace mjcf
         
         // Processing
         
-        mjcf::MjcfMasslessBodySanitizer masslessBodySanitizer;
+        mjcf::MasslessBodySanitizer masslessBodySanitizer;
         
         std::map<std::string, mjcf::Element*> nodeBodies;
         

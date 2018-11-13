@@ -11,15 +11,24 @@ using namespace VirtualRobot;
 using namespace mjcf;
 
 
-Document::Document() : root(NewElement("mujoco"))
+
+
+Document::Document()
 {
     // create root element
+    root = NewElement("mujoco");
     this->InsertEndChild(root);
 }
 
 void Document::setModelName(const std::string& name)
 {
     root->SetAttribute("model", name.c_str());
+}
+
+void Document::setNewElementClass(const std::string& className, bool excludeBody)
+{
+    this->newElementClass = className;
+    this->newElementClassExcludeBody = excludeBody;
 }
 
 Element* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2)
@@ -36,9 +45,22 @@ Element* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Ve
     return texSkybox;
 }
 
-Element* Document::addNewElement(Element* parent, const std::string& elemName, bool first)
+Element* Document::addNewElement(Element* parent, const std::string& elemName, 
+                                 const std::string& className, bool first)
 {
     Element* elem = NewElement(elemName.c_str());
+    
+    if (!className.empty())
+    {
+        elem->SetAttribute("class", className.c_str());
+    }
+    else if (!newElementClass.empty()
+             && !(newElementClassExcludeBody && (isElement(parent, "body") || isElement(elem, "body")))
+             && allowsClassAttr({parent->Value(), elemName}))
+    {
+        elem->SetAttribute("class", newElementClass.c_str());
+    }
+    
     if (first)
     {
         parent->InsertFirstChild(elem);
@@ -48,6 +70,23 @@ Element* Document::addNewElement(Element* parent, const std::string& elemName, b
         parent->InsertEndChild(elem);
     }
     return elem;
+}
+
+Element* Document::addDefaultsClass(const std::string& className)
+{
+    Element* def = addNewElement(default_(), "default", className);
+    
+    return def;
+}
+
+Element* Document::addRobotRootBodyElement(const std::string& robotName)
+{
+    this->robotRootBody_ = addNewElement(worldbody(), "body");
+    
+    robotRootBody_->SetAttribute("name", robotName.c_str());
+    robotRootBody_->SetAttribute("childclass", robotName.c_str());
+    
+    return robotRootBody_;
 }
 
 Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
@@ -76,7 +115,7 @@ Element* Document::addGeomElement(Element* body, const std::string& meshName)
 {
     assertElementIsBody(body);
     
-    Element* geom = addNewElement(body, "geom", true);
+    Element* geom = addNewElement(body, "geom", "", true);
     
     geom->SetAttribute("type", "mesh");
 //    geom->SetAttribute("type", "capsule");
@@ -177,9 +216,9 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     return joint;
 }
 
-Element* Document::addMeshElement(const std::string& name, const std::string& file)
+Element* Document::addMeshElement(const std::string& name, const std::string& file, const std::string& className)
 {
-    Element* mesh = addNewElement(asset(), "mesh");
+    Element* mesh = addNewElement(asset(), "mesh", className);
     
     mesh->SetAttribute("name", name.c_str());
     mesh->SetAttribute("file", file.c_str());
@@ -187,9 +226,9 @@ Element* Document::addMeshElement(const std::string& name, const std::string& fi
     return mesh;
 }
 
-Element*Document::addMotorElement(const std::string& jointName)
+Element*Document::addMotorElement(const std::string& jointName, const std::string& className)
 {
-    Element* motor = addNewElement(actuator(), "motor");
+    Element* motor = addNewElement(actuator(), "motor", className);
     
     motor->SetAttribute("name",  jointName.c_str());
     motor->SetAttribute("joint", jointName.c_str());
@@ -229,6 +268,8 @@ void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
     joint->SetAttribute("axis", toAttr(axis).c_str());
 }
 
+
+
 Element*Document::addContactExclude(const Element& body1, const Element& body2)
 {
     return addContactExclude(body1.Attribute("name"), body2.Attribute("name"));
@@ -245,7 +286,7 @@ Element* Document::addContactExclude(const std::string& body1Name, const std::st
 }
 
 
-Element* Document::topLevelElement(const std::string& name)
+Element* Document::section(const std::string& name)
 {
     Element* elem = root->FirstChildElement(name.c_str());
     if (!elem)
@@ -255,4 +296,59 @@ Element* Document::topLevelElement(const std::string& name)
     return elem;
 }
 
+void Document::setDummyMass(float value)
+{
+    dummyMass = value;
+}
+
+void Document::setFloatCompPrecision(float value)
+{
+    floatCompPrecision = value;
+}
+
+void Document::setLengthScaling(float value)
+{
+    lengthScaling = value;
+}
+
+Element* Document::robotRootBody() const
+{
+    return robotRootBody_;
+}
+
+
+const std::set<Document::ElementType> Document::ELEM_NAMES_WITH_ATTR_CLASS = 
+{
+    {"asset", "mesh"    },
+    {"asset", "material"},
+    
+    {"body", "joint"    },
+    {"body", "geom"     },
+    {"body", "site"     },
+    {"body", "camera"   },
+    {"body", "light"    },
+    
+    {"contact", "pair"  },
+    
+    {"equality", "connect"  },
+    {"equality", "weld"     },
+    {"equality", "joint"    },
+    {"equality", "tendon"   },
+    {"equality", "distance" },
+    
+    {"tendon", "spatial" },
+    {"tendon", "fixed"   },
+    
+    {"actuator", "general"  },
+    {"actuator", "motor"    },
+    {"actuator", "position" },
+    {"actuator", "velocity" },
+    {"actuator", "cylinder" },
+    {"actuator", "muscle"   },
+};
+
+bool Document::allowsClassAttr(const Document::ElementType& type)
+{
+    return ELEM_NAMES_WITH_ATTR_CLASS.find(type) != ELEM_NAMES_WITH_ATTR_CLASS.end();
+}
 

@@ -31,11 +31,11 @@ namespace mjcf
     };
     
 
-    class MjcfMasslessBodySanitizer
+    class MasslessBodySanitizer
     {
     public:
         
-        MjcfMasslessBodySanitizer(DocumentPtr& document, RobotPtr& robot);
+        MasslessBodySanitizer(DocumentPtr& document, RobotPtr& robot);
         
         void sanitize();
         

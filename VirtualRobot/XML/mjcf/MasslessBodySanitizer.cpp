@@ -1,9 +1,7 @@
-#include "MjcfMasslessBodySanitizer.h"
+#include "MasslessBodySanitizer.h"
+#include "utils.h"
 
 #include <boost/algorithm/string/join.hpp>
-
-
-#include "utils.h"
 
 
 using namespace VirtualRobot;
@@ -11,13 +9,13 @@ using namespace mjcf;
 namespace tx = tinyxml2;
 
 
-MjcfMasslessBodySanitizer::MjcfMasslessBodySanitizer(DocumentPtr& document, RobotPtr& robot) :
+MasslessBodySanitizer::MasslessBodySanitizer(DocumentPtr& document, RobotPtr& robot) :
     document(document), robot(robot)
 {
     
 }
 
-void MjcfMasslessBodySanitizer::sanitize()
+void MasslessBodySanitizer::sanitize()
 {
     // merge body leaf nodes with parent if they do not have a mass (inertial or geom)
     
@@ -32,7 +30,7 @@ void MjcfMasslessBodySanitizer::sanitize()
 }
 
 
-void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
+void MasslessBodySanitizer::sanitizeRecursion(Element* body)
 {
     assertElementIsBody(body);
 
@@ -77,7 +75,7 @@ void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
     
 }
 
-void MjcfMasslessBodySanitizer::mergeBodies(Element* body, Element* childBody, 
+void MasslessBodySanitizer::mergeBodies(Element* body, Element* childBody, 
                                             Eigen::Matrix4f& accChildPose)
 {
     std::string childBodyName = childBody->Attribute("name");
@@ -145,7 +143,7 @@ void MjcfMasslessBodySanitizer::mergeBodies(Element* body, Element* childBody,
     body->DeleteChild(childBody);
 }
 
-void MjcfMasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose)
+void MasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose)
 {
     const char* posStr = elem->Attribute("pos");
     Eigen::Vector3f pos = posStr ? strToVec(posStr) : 
@@ -159,7 +157,7 @@ void MjcfMasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matri
     elem->SetAttribute("pos", toAttr(pos).c_str());
 }
 
-void MjcfMasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri)
+void MasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri)
 {
     const char* quatStr = elem->Attribute("quat");
     Eigen::Quaternionf quat = quatStr ? strToQuat(quatStr) : 
@@ -169,7 +167,7 @@ void MjcfMasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matr
     elem->SetAttribute("quat", toAttr(quat).c_str());
 }
 
-void MjcfMasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
+void MasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
                                                 const char* attrName)
 {
     Eigen::Vector3f axis = strToVec(elem->Attribute("axis"));
@@ -177,7 +175,7 @@ void MjcfMasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matr
     elem->SetAttribute(attrName, toAttr(axis).c_str());
 }
 
-void MjcfMasslessBodySanitizer::sanitizeLeafBody(Element* body)
+void MasslessBodySanitizer::sanitizeLeafBody(Element* body)
 {
     assert(!hasElementChild(body, "body"));
     assert(!hasMass(body));
@@ -196,17 +194,17 @@ void MjcfMasslessBodySanitizer::sanitizeLeafBody(Element* body)
     }
 }
 
-const std::vector<MergedBodySet>& MjcfMasslessBodySanitizer::getMergedBodySets() const
+const std::vector<MergedBodySet>& MasslessBodySanitizer::getMergedBodySets() const
 {
     return mergedBodySets;
 }
 
-const std::string& MjcfMasslessBodySanitizer::getMergedBodyName(const std::string& originalBodyName)
+const std::string& MasslessBodySanitizer::getMergedBodyName(const std::string& originalBodyName)
 {
     return getMergedBodySetWith(originalBodyName).getMergedBodyName();
 }
 
-MergedBodySet&MjcfMasslessBodySanitizer::getMergedBodySetWith(const std::string& bodyName)
+MergedBodySet&MasslessBodySanitizer::getMergedBodySetWith(const std::string& bodyName)
 {
     for (auto& set : mergedBodySets)
     {
