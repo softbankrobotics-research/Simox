@@ -67,6 +67,7 @@ namespace mjcf
         /// Add a mesh asset with a name and a file.
         Element* addMeshElement(const std::string& name, const std::string& file);
         
+        Element* addMotorElement(const std::string& jointName);
         
         /// Set the pos and quat attribute of a body.
         void setBodyPose(Element* body, const Eigen::Matrix4f& pose);

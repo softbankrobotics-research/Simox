@@ -37,11 +37,10 @@ namespace VirtualRobot
         
         void makeEnvironment();
         
-        void gatherCollisionAndVisualizationFiles();
         void addNodeBodies();
-        void addNodeBodyMeshes();
-        
         mjcf::Element* addNodeBody(RobotNodePtr node);
+        
+        void addNodeBodyMeshes();
 
 
         void sanitizeMasslessBodies();
@@ -51,7 +50,13 @@ namespace VirtualRobot
         
         void addContactExcludes();
         
+        void addActuators();
+        
+        
+        std::vector<const mjcf::Element*> getAllElements(const std::string& elemName);
 
+        
+        
         // Paths
         
         boost::filesystem::path inputFilePath;
@@ -66,7 +71,6 @@ namespace VirtualRobot
         
         // Input
         
-        SimoxXMLDocument inputXML;
         RobotPtr robot;
         
         

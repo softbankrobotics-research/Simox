@@ -108,8 +108,6 @@ bool SimoxXMLVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml
     {
         std::string nodeName = elem.Attribute("name");
         
-        const XMLElement* xmlColModel = elem.FirstChildElement("CollisionModel");
-
         auto storeFileText = [&elem,&nodeName](
                 const char* childTag, 
                 SimoxXMLDocument::NamePathMap& map)

@@ -187,6 +187,16 @@ Element* Document::addMeshElement(const std::string& name, const std::string& fi
     return mesh;
 }
 
+Element*Document::addMotorElement(const std::string& jointName)
+{
+    Element* motor = addNewElement(actuator(), "motor");
+    
+    motor->SetAttribute("name",  jointName.c_str());
+    motor->SetAttribute("joint", jointName.c_str());
+    
+    return motor;
+}
+
 void Document::setBodyPose(Element* body, const Eigen::Matrix4f& pose)
 {
     Eigen::Vector3f pos = pose.block<3,1>(0, 3) * lengthScaling;

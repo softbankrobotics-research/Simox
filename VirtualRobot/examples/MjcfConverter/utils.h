@@ -13,7 +13,9 @@ namespace VirtualRobot
 
 
 bool isElement(const mjcf::Element* elem, const char* tag);
+bool isElement(const mjcf::Element& elem, const char* tag);
 bool isElement(const mjcf::Element* elem, const std::string& tag);
+bool isElement(const mjcf::Element& elem, const std::string& tag);
 
 bool hasElementChild(const mjcf::Element* elem, const std::string& elemName);
 

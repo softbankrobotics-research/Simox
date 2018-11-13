@@ -46,12 +46,22 @@ std::size_t commonPrefixLength(const std::string& a, const std::string& b)
 
 bool isElement(const mjcf::Element* elem, const char* tag)
 {
-    return std::strcmp(elem->Value(), tag) == 0;
+    return isElement(*elem, tag);
 }
 
 bool isElement(const mjcf::Element* elem, const std::string& tag)
 {
-    return std::strcmp(elem->Value(), tag.c_str()) == 0;
+    return isElement(*elem, tag);
+}
+
+bool isElement(const mjcf::Element& elem, const char* tag)
+{
+    return std::strcmp(elem.Value(), tag) == 0;
+}
+
+bool isElement(const mjcf::Element& elem, const std::string& tag)
+{
+    return std::strcmp(elem.Value(), tag.c_str()) == 0;
 }
 
 

@@ -4,6 +4,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 
 #include "utils.h"
+#include "xml_visitors.h"
 
 
 using namespace VirtualRobot;
@@ -64,29 +65,26 @@ void MjcfConverter::loadInputFile()
 {
     assert(!inputFilePath.empty());
     
-    VR_INFO << "Loading robot via RobotIO: " << inputFilePath << std::endl;
+    std::cout << "Loading robot via RobotIO: " << inputFilePath << std::endl;
     try
     {
-        robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eStructure);
+        robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eFull);
         assert(robot);
     }
     catch (const VirtualRobotException&)
     {
         throw; // rethrow
     }
-    
-    VR_INFO << "Loading XML file: " << inputFilePath << std::endl;
-    inputXML.LoadFile(inputFilePath);
 }
 
 void MjcfConverter::writeOutputFile()
 {
     assert(!outputFileName.empty());
     
-    VR_INFO << std::endl;
+    std::cout << std::endl;
     document->Print();
     
-    VR_INFO << "Writing to " << outputFileName << std::endl;
+    std::cout << "Writing to " << outputFileName << std::endl;
     document->SaveFile(outputFileName.c_str());
 }
 
@@ -101,25 +99,28 @@ void MjcfConverter::convertToMjcf()
     
     makeEnvironment();
     
-    VR_INFO << "Creating bodies structure ..." << std::endl;
+    std::cout << "Creating bodies structure ..." << std::endl;
     addNodeBodies();
     
-    VR_INFO << "Adding meshes and geoms ..." << std::endl;
+    std::cout << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
     
-    VR_INFO << "===========================" << std::endl
+    std::cout << "===========================" << std::endl
               << "Current model: "             << std::endl
               << "--------------"              << std::endl;
     document->Print();
-    VR_INFO << "===========================" << std::endl;
+    std::cout << "===========================" << std::endl;
     
-    VR_INFO << "Merging empty bodies ..." << std::endl;
+    std::cout << "Merging empty bodies ..." << std::endl;
     sanitizeMasslessBodies();
     
-    VR_INFO << "Adding contact excludes ..." << std::endl;
+    std::cout << "Adding contact excludes ..." << std::endl;
     document->addContactExcludes(nodeBodies[robot->getRootNode()->getName()]);
     
-    VR_INFO << "Done.";
+    std::cout << "Adding actuators ..." << std::endl;
+    addActuators();
+    
+    std::cout << "Done.";
     
     return; 
 }
@@ -151,14 +152,17 @@ void MjcfConverter::addNodeBodyMeshes()
     
     for (RobotNodePtr node : robot->getRobotNodes())
     {
-        if (!inputXML.hasVisualizationFile(node))
+        VisualizationNodePtr visualization = node->getVisualization(SceneObject::VisualizationType::Full);
+        
+        if (!visualization)
         {
             continue;
         }
         
-        VR_INFO << "Node " << node->getName() << ":\t";
         
-        fs::path srcMeshPath = inputXML.visualizationFile(node);
+        std::cout << "Node " << node->getName() << ":\t";
+        
+        fs::path srcMeshPath = visualization->getFilename();
         
         if (srcMeshPath.is_relative())
         {
@@ -175,13 +179,13 @@ void MjcfConverter::addNodeBodyMeshes()
         {
             if (srcMeshPath.extension().string() != "stl")
             {
-                VR_INFO << "Converting to .stl: " << srcMeshPath;
+                std::cout << "Converting to .stl: " << srcMeshPath;
                 
                 if (!meshlabserverAviable)
                 {
                     if (!notAvailableReported)
                     {
-                        VR_INFO << std::endl 
+                        std::cout << std::endl 
                                   << "Command 'meshlabserver' not available, "
                                      "cannot convert meshes." << std::endl;
                         notAvailableReported = true;
@@ -199,22 +203,22 @@ void MjcfConverter::addNodeBodyMeshes()
                 int r = system(convertCommand.str().c_str());
                 if (r != 0)
                 {
-                    VR_INFO << "Command returned with error: " << r << "\n"
+                    std::cout << "Command returned with error: " << r << "\n"
                               << "Command was: " << convertCommand.str() << std::endl;
                 }
             }
             else
             {
-                VR_INFO << "Copying: " << srcMeshPath << "\n"
+                std::cout << "Copying: " << srcMeshPath << "\n"
                           << "     to: " << dstMeshPath;
                 fs::copy_file(srcMeshPath, dstMeshPath);
             }
         }
         else
         {
-            VR_INFO << "skipping (" << dstMeshRelPath.string() << " already exists)";
+            std::cout << "skipping (" << dstMeshRelPath.string() << " already exists)";
         }
-        VR_INFO << std::endl;
+        std::cout << std::endl;
         
         
         
@@ -271,7 +275,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
 {
     assertElementIsBody(body);
 
-    VR_INFO << "- Node '" << body->Attribute("name") << "': " << std::endl;
+    std::cout << "- Node '" << body->Attribute("name") << "': " << std::endl;
     const std::string t = "  | ";
     
     std::string bodyName = body->Attribute("name");
@@ -280,18 +284,18 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
     
     while (!hasMass(body))
     {
-        VR_INFO << t << "Massless" << std::endl;
+        std::cout << t << "Massless" << std::endl;
         
         if (!hasElementChild(body, "body"))
         {
             // leaf => end of recursion
-            VR_INFO << t << "Leaf" << std::endl;
+            std::cout << t << "Leaf" << std::endl;
             sanitizeMasslessLeafBody(body);
             return; 
         }
         
         // non-leaf body
-        VR_INFO << t << "Non-leaf" << std::endl;
+        std::cout << t << "Non-leaf" << std::endl;
         
         // check whether there is only one child body
         Element* childBody = body->FirstChildElement("body");
@@ -299,7 +303,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
         {
             std::string childBodyName = childBody->Attribute("name");
             
-            VR_INFO << t << "Single child body => merging '" << childBodyName
+            std::cout << t << "Single child body => merging '" << childBodyName
                       << "' into '" << bodyName << "'" << std::endl;
 
             // check child for pose attributes
@@ -336,7 +340,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
             for (tx::XMLNode* grandChild = childBody->FirstChild(); grandChild;
                  grandChild = grandChild->NextSibling())
             {
-                VR_INFO << t << " | Moving '" << grandChild->Value() << "'" << std::endl;
+                std::cout << t << " | Moving '" << grandChild->Value() << "'" << std::endl;
                 
                 // clone grandchild
                 tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
@@ -360,7 +364,7 @@ void MjcfConverter::sanitizeMasslessBodyRecursion(mjcf::Element* body)
             // delete child
             body->DeleteChild(childBody);
             
-            VR_INFO << t << "=> New body name: " << newName.str() << std::endl;
+            std::cout << t << "=> New body name: " << newName.str() << std::endl;
         }
         else
         {
@@ -391,15 +395,33 @@ void MjcfConverter::sanitizeMasslessLeafBody(mjcf::Element* body)
     if (body->NoChildren()) // is completely empty?
     {
         // leaf without geom: make it a site
-        VR_INFO << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
+        std::cout << "  | Empty => Changing body '" << body->Attribute("name") << "' to site." << std::endl;
         body->SetValue("site");
     }
     else
     {
         // add a small mass
-        VR_INFO << "  | Not empty => Adding dummy inertial." << std::endl;
+        std::cout << "  | Not empty => Adding dummy inertial." << std::endl;
         document->addDummyInertial(body);
     }
+}
+
+void MjcfConverter::addActuators()
+{
+    std::vector<const mjcf::Element*> jointElements = getAllElements("joint");
+    
+    for (auto joint : jointElements)
+    {
+        std::string name = joint->Attribute("name");
+        document->addMotorElement(name);
+    }
+}
+
+std::vector<const mjcf::Element*> MjcfConverter::getAllElements(const std::string& elemName)
+{
+    mjcf::ListElementsVisitor visitor(elemName);
+    document->worldbody()->Accept(&visitor);
+    return visitor.getFoundElements();
 }
 
 
