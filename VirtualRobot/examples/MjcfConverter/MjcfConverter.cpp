@@ -257,12 +257,27 @@ void MjcfConverter::addContactExcludes()
 {
     RobotNodePtr rootNode = robot->getRootNode();
     
+    std::vector<std::pair<std::string, std::string>> excludePairs;
+            
     for (RobotNodePtr node : robot->getRobotNodes())
     {
         for (std::string& ignore : node->getPhysics().ignoreCollisions)
         {
-            
+            // I found an <IgnoreCollision> element referring to a non-existing node.
+            // => check node existence here
+            if (robot->hasRobotNode(ignore))
+            {
+                excludePairs.push_back({node->getName(), ignore});
+            }
         }
+    }
+    
+    // resolve body names and add exludes
+    for (auto& excludePair : excludePairs)
+    {
+        std::string body1 = masslessBodySanitizer.getMergedBodyName(excludePair.first);
+        std::string body2 = masslessBodySanitizer.getMergedBodyName(excludePair.second);
+        document->addContactExclude(body1, body2);
     }
 }
 

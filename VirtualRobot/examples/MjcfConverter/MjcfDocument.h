@@ -74,11 +74,10 @@ namespace mjcf
         /// Set the axis attribute of a joint.
         void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
         
-        /// Add contact/exclude elements between parent and child bodies, 
-        /// starting from the given body.
-        void addContactExcludes(Element* rootBody);
         /// Add a conact/exclude element between the given bodies.
         Element* addContactExclude(const Element& body1, const Element& body2);
+        /// Add a conact/exclude element between the given bodies.
+        Element* addContactExclude(const std::string& body1Name, const std::string& body2Name);
         
         
     private:

@@ -229,19 +229,17 @@ void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
     joint->SetAttribute("axis", toAttr(axis).c_str());
 }
 
-
-void Document::addContactExcludes(Element* rootBody)
+Element*Document::addContactExclude(const Element& body1, const Element& body2)
 {
-    ContactExcludeVisitor visitor(*this);
-    rootBody->Accept(&visitor);
+    return addContactExclude(body1.Attribute("name"), body2.Attribute("name"));
 }
 
-Element* Document::addContactExclude(const Element& body1, const Element& body2)
+Element* Document::addContactExclude(const std::string& body1Name, const std::string& body2Name)
 {
     Element* exclude = addNewElement(contact(), "exclude");
     
-    exclude->SetAttribute("body1", body1.Attribute("name"));
-    exclude->SetAttribute("body2", body2.Attribute("name"));
+    exclude->SetAttribute("body1", body1Name.c_str());
+    exclude->SetAttribute("body2", body2Name.c_str());
     
     return exclude;
 }

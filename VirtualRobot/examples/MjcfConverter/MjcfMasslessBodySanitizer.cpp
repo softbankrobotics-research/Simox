@@ -31,6 +31,7 @@ void MjcfMasslessBodySanitizer::sanitize()
     }
 }
 
+
 void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
 {
     assertElementIsBody(body);
@@ -110,7 +111,7 @@ void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
             }
             
             // update body name
-            MergedBodySet bodySet = getMergedBodySetWith(bodyName);
+            MergedBodySet& bodySet = getMergedBodySetWith(bodyName);
             bodySet.addBody(childBodyName);
             body->SetAttribute("name", bodySet.getMergedBodyName().c_str());
             
@@ -121,7 +122,7 @@ void MjcfMasslessBodySanitizer::sanitizeRecursion(Element* body)
         }
         else
         {
-            VR_WARNING << t << "Massless body with >1 child body: " 
+            std::cout << "[WARN]" << t << "Massless body with >1 child body: " 
                        << body->Attribute("name") << std::endl;
             break;
         }
@@ -158,7 +159,17 @@ void MjcfMasslessBodySanitizer::sanitizeLeafBody(Element* body)
     }
 }
 
-MergedBodySet& MjcfMasslessBodySanitizer::getMergedBodySetWith(const std::string& bodyName)
+const std::vector<MergedBodySet>& MjcfMasslessBodySanitizer::getMergedBodySets() const
+{
+    return mergedBodySets;
+}
+
+const std::string& MjcfMasslessBodySanitizer::getMergedBodyName(const std::string& originalBodyName)
+{
+    return getMergedBodySetWith(originalBodyName).getMergedBodyName();
+}
+
+MergedBodySet&MjcfMasslessBodySanitizer::getMergedBodySetWith(const std::string& bodyName)
 {
     for (auto& set : mergedBodySets)
     {
@@ -169,16 +180,19 @@ MergedBodySet& MjcfMasslessBodySanitizer::getMergedBodySetWith(const std::string
     }
     
     // not found => add
-    MergedBodySet newSet;
-    newSet.addBody(bodyName);
-    mergedBodySets.push_back(newSet);
+    mergedBodySets.push_back(MergedBodySet(bodyName));
     
     return mergedBodySets.back();
 }
 
-const std::vector<MergedBodySet>& MjcfMasslessBodySanitizer::getMergedBodySets() const
+
+MergedBodySet::MergedBodySet()
 {
-    return mergedBodySets;
+}
+
+MergedBodySet::MergedBodySet(const std::string& bodyName)
+{
+    addBody(bodyName);
 }
 
 void MergedBodySet::addBody(const std::string& bodyName)
@@ -199,5 +213,5 @@ const std::string& MergedBodySet::getMergedBodyName() const
 
 void MergedBodySet::updateMergedBodyName()
 {
-    this->mergedBodyName = boost::algorithm::join(originalBodyNames, "~");
+    mergedBodyName = boost::algorithm::join(originalBodyNames, "~");
 }

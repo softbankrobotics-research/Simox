@@ -12,6 +12,9 @@ namespace mjcf
     {
     public:
         
+        MergedBodySet();
+        MergedBodySet(const std::string& bodyName);
+        
         void addBody(const std::string& bodyName);
         bool containsBody(const std::string& bodyName) const;
         
@@ -26,7 +29,7 @@ namespace mjcf
         std::set<std::string> originalBodyNames;
         
     };
-
+    
 
     class MjcfMasslessBodySanitizer
     {
@@ -38,13 +41,17 @@ namespace mjcf
         
         const std::vector<MergedBodySet>& getMergedBodySets() const;
 
+        const std::string& getMergedBodyName(const std::string& originalBodyName);
+        
+        MergedBodySet& getMergedBodySetWith(const std::string& bodyName);
+        
         
     private:
         
         void sanitizeRecursion(mjcf::Element* body);
         void sanitizeLeafBody(mjcf::Element* body);
         
-        MergedBodySet& getMergedBodySetWith(const std::string& bodyName);
+        
         
         
         DocumentPtr& document;
