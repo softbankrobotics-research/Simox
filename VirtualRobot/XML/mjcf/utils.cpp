@@ -23,6 +23,13 @@ bool hasMass(const mjcf::Element* body)
     return hasElementChild(body, "geom") || hasElementChild(body, "inertial");
 }
 
+Eigen::Vector2f strToVec2(const char* string)
+{
+    Eigen::Vector2f v;
+    sscanf(string, "%f %f", &v(0), &v(1));
+    return v;
+}
+
 Eigen::Vector3f strToVec(const char* string)
 {
     Eigen::Vector3f v;
@@ -83,6 +90,7 @@ std::string toAttr(const Eigen::Quaternionf& quat)
     ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
     return ss.str();
 }
+
 
 
 }

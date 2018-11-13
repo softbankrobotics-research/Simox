@@ -24,7 +24,6 @@ namespace mjcf
         Document();
         
         
-        void setLengthScaling(float value);
         void setFloatCompPrecision(float value);
         void setDummyMass(float value);
         
@@ -98,7 +97,10 @@ namespace mjcf
 
         
         /// Set the pos and quat attribute of a body.
-        void setBodyPose(Element* body, const Eigen::Matrix4f& pose);
+        void setElementPose(Element* elem, const Eigen::Matrix4f& pose);
+        void setElementPos(Element* elem, Eigen::Vector3f pos);
+        void setElementQuat(Element* elem, const Eigen::Quaternionf& quat);
+        
         /// Set the axis attribute of a joint.
         void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
 
@@ -126,8 +128,6 @@ namespace mjcf
         Element* section(const std::string& name);
         
         
-        /// Scaling for lengths, such as positions and translations.
-        float lengthScaling = 0.001f;
         /// Precision when comparing floats (e.g. with zero).
         float floatCompPrecision = 1e-6f;
         /// Mass used for dummy inertial elements.

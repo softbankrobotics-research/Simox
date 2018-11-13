@@ -44,9 +44,15 @@ namespace mjcf
         
         void addActuators();
         
+        void scaleLengths();
         
         std::vector<const mjcf::Element*> getAllElements(const std::string& elemName);
 
+        
+        // Paremeters
+        
+        /// Scaling for lengths, such as positions and translations.
+        float lengthScaling = 0.001f;
         
         
         // Paths

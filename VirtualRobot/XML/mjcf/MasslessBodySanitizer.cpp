@@ -154,7 +154,7 @@ void MasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f&
     posHom = accChildPose * posHom;
     pos = posHom.head<3>();
     
-    elem->SetAttribute("pos", toAttr(pos).c_str());
+    document->setElementPos(elem, pos);
 }
 
 void MasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri)
@@ -164,15 +164,24 @@ void MasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f
                                         Eigen::Quaternionf::Identity();
     
     quat = accChildOri * quat;
-    elem->SetAttribute("quat", toAttr(quat).c_str());
+    document->setElementQuat(elem, quat);
 }
 
 void MasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
                                                 const char* attrName)
 {
-    Eigen::Vector3f axis = strToVec(elem->Attribute("axis"));
+    Eigen::Vector3f axis = strToVec(elem->Attribute(attrName));
     axis = accChildOri * axis;
     elem->SetAttribute(attrName, toAttr(axis).c_str());
+    
+    if (strcmp(attrName, "axis") == 0)
+    {
+        document->setJointAxis(elem, axis);
+    }
+    else
+    {
+        elem->SetAttribute(attrName, toAttr(axis).c_str());
+    }
 }
 
 void MasslessBodySanitizer::sanitizeLeafBody(Element* body)

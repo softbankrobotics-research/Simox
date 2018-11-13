@@ -23,6 +23,7 @@ template <int dim>
 std::string toAttr(const Eigen::Matrix<float, dim, 1>& v);
 std::string toAttr(const Eigen::Quaternionf& v);
 
+Eigen::Vector2f strToVec2(const char* string);
 Eigen::Vector3f strToVec(const char* string);
 Eigen::Quaternionf strToQuat(const char* string);
 

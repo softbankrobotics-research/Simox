@@ -67,6 +67,9 @@ void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::
     std::cout << "Adding actuators ..." << std::endl;
     addActuators();
     
+    std::cout << "Scaling lengths by " << lengthScaling << " ..." << std::endl;
+    scaleLengths();
+    
     std::cout << "Done.";
     
     std::cout << std::endl;
@@ -183,7 +186,7 @@ void MujocoIO::addNodeBodyMeshes()
         
         // add asset
         std::string meshName = node->getName();
-        document->addMeshElement(meshName, dstMeshRelPath.string());
+        document->addMeshElement(meshName, (outputDirectory/dstMeshRelPath).string());
         
         // add geom to body
         Element* body = nodeBodies[node->getName()];
@@ -253,14 +256,71 @@ void MujocoIO::addActuators()
     }
 }
 
+struct ScaleLengthVisitor : public tx::XMLVisitor
+{
+    ScaleLengthVisitor(float scaling) : scaling(scaling) {}
+    
+    virtual bool VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute* attr) override;
+    void applyScaling();
+    
+    float scaling;
+    
+    std::vector<const Element*> elementsToModify;
+};
+
+bool ScaleLengthVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute* attr)
+{
+    if (isElement(elem, "joint"))
+    {
+        if (strcmp(elem.Attribute("type"), "hinge")==0
+            && elem.Attribute("range"))
+        {
+            elementsToModify.push_back(&elem);
+        }
+    }
+    else if (elem.Attribute("pos"))
+    {
+        elementsToModify.push_back(&elem);
+    }
+    
+    return true;
+}
+
+void ScaleLengthVisitor::applyScaling()
+{
+    for (auto& elemConst : elementsToModify)
+    {
+        Element* elem = const_cast<Element*>(elemConst);
+        if (isElement(elem, "joint"))
+        {
+            if (strcmp(elem->Attribute("type"), "hinge") == 0)
+            {
+                assert(elem->Attribute("range"));
+                Eigen::Vector2f range = strToVec2(elem->Attribute("range"));
+                range *= scaling;
+                
+                elem->SetAttribute("range", toAttr(range).c_str());
+            }
+        }
+        else if (elemConst->Attribute("pos"))
+        {
+            Eigen::Vector3f pos = strToVec(elemConst->Attribute("pos"));
+            pos *= scaling;
+            elem->SetAttribute("pos", toAttr(pos).c_str());
+        }
+    }
+}
+
+void MujocoIO::scaleLengths()
+{
+    ScaleLengthVisitor visitor(lengthScaling);
+    document->robotRootBody()->Accept(&visitor);
+    visitor.applyScaling();
+}
+
 std::vector<const mjcf::Element*> MujocoIO::getAllElements(const std::string& elemName)
 {
     mjcf::ListElementsVisitor visitor(elemName);
     document->worldbody()->Accept(&visitor);
     return visitor.getFoundElements();
 }
-
-
-
-
-

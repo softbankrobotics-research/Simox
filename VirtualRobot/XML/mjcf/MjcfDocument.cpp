@@ -97,7 +97,7 @@ Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
     if (node->hasParent())
     {
         Eigen::Matrix4f tf = node->getTransformationFrom(node->getParent());
-        setBodyPose(body, tf);
+        setElementPose(body, tf);
     }
     
     if (node->isRotationalJoint() || node->isTranslationalJoint())
@@ -138,7 +138,7 @@ Element* Document::addInertialElement(Element* body, RobotNodePtr node)
     
     Element* inertial = addNewElement(body, "inertial");
     
-    Eigen::Vector3f pos = node->getCoMLocal() * lengthScaling;
+    Eigen::Vector3f pos = node->getCoMLocal();
     inertial->SetAttribute("pos", toAttr(pos).c_str());
     inertial->SetAttribute("mass", double(node->getMass()));
     
@@ -206,10 +206,6 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     if (!node->isLimitless())
     {
         Eigen::Vector2f range(node->getJointLimitLow(), node->getJointLimitHigh());
-        if (node->isTranslationalJoint())
-        {
-            range *= lengthScaling;
-        }
         joint->SetAttribute("range", toAttr(range).c_str());
     }
     
@@ -236,29 +232,38 @@ Element*Document::addMotorElement(const std::string& jointName, const std::strin
     return motor;
 }
 
-void Document::setBodyPose(Element* body, const Eigen::Matrix4f& pose)
+void Document::setElementPose(Element* elem, const Eigen::Matrix4f& pose)
 {
-    Eigen::Vector3f pos = pose.block<3,1>(0, 3) * lengthScaling;
+    Eigen::Vector3f pos = pose.block<3,1>(0, 3);
     Eigen::Matrix3f oriMat = pose.block<3,3>(0, 0);
     
     Eigen::Quaternionf quat(oriMat);
     
+    setElementPos(elem, pos);
+    setElementQuat(elem, quat);
+}
+
+void Document::setElementPos(Element* elem, Eigen::Vector3f pos)
+{
     if (!pos.isZero(floatCompPrecision))
     {
-        body->SetAttribute("pos", toAttr(pos).c_str());
+        elem->SetAttribute("pos", toAttr(pos).c_str());
     }
     else
     {
-        body->DeleteAttribute("pos");
+        elem->DeleteAttribute("pos");
     }
-    
+}
+
+void Document::setElementQuat(Element* elem, const Eigen::Quaternionf& quat)
+{
     if (!quat.isApprox(Eigen::Quaternionf::Identity(), floatCompPrecision))
     {
-        body->SetAttribute("quat", toAttr(quat).c_str());
+        elem->SetAttribute("quat", toAttr(quat).c_str());
     }
     else
     {
-        body->DeleteAttribute("quat");
+        elem->DeleteAttribute("quat");
     }
 }
 
@@ -306,10 +311,6 @@ void Document::setFloatCompPrecision(float value)
     floatCompPrecision = value;
 }
 
-void Document::setLengthScaling(float value)
-{
-    lengthScaling = value;
-}
 
 Element* Document::robotRootBody() const
 {
