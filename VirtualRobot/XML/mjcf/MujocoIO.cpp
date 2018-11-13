@@ -1,30 +1,29 @@
-#include "MjcfConverter.h"
+#include "MujocoIO.h"
+#include "utils.h"
+#include "xml_visitors.h"
 
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
 
-#include "mjcf/utils.h"
-#include "mjcf/xml_visitors.h"
-
-
 
 using namespace VirtualRobot;
+using namespace mjcf;
 namespace tx = tinyxml2; 
 namespace fs = boost::filesystem;
-using Element = mjcf::Element;
 
 
-MjcfConverter::MjcfConverter() :
+
+MujocoIO::MujocoIO() :
     masslessBodySanitizer(document, robot)
 {
 }
 
-void MjcfConverter::convert(const std::string& inputSimoxXmlFile, 
-                            const std::string& outputDirectory)
+void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::string& basePath, const std::string& meshDir)
 {
-    setPaths(inputSimoxXmlFile, outputDirectory);
-    
-    loadInputFile();
+    this->robot = robot;
+    this->outputDirectory = basePath;
+    this->outputFileName = filename;
+    this->outputMeshRelDirectory = meshDir;
     
     document.reset(new mjcf::Document());
     
@@ -67,57 +66,14 @@ void MjcfConverter::convert(const std::string& inputSimoxXmlFile,
     writeOutputFile();
 }
 
-void MjcfConverter::setPaths(const std::string& inputFilename, 
-                             const std::string& outputDirectory)
-{
-    this->inputFilePath = inputFilename;
-    
-    inputFileDirectory = inputFilePath.parent_path();
-    inputFileName = inputFilePath.filename();
-    
-    this->outputDirectory = outputDirectory;
-    outputFileName = this->outputDirectory / inputFileName;
-    
-    outputMeshRelDirectory = "mesh";
-    
-    
-    auto ensureDirExists = [](const fs::path& path)
-    {
-        if (!fs::exists(path))
-        {
-            fs::create_directory(path);
-        }
-    };
-    
-    ensureDirExists(outputDirectory);
-    ensureDirExists(outputDirectory / outputMeshRelDirectory);
-    
-    assert(!inputFileDirectory.empty());
-}
 
-void MjcfConverter::makeEnvironment()
+void MujocoIO::makeEnvironment()
 {
     document->addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
                                Eigen::Vector3f(.4f, .6f, .8f));
 }
 
-void MjcfConverter::loadInputFile()
-{
-    assert(!inputFilePath.empty());
-    
-    std::cout << "Loading robot via RobotIO: " << inputFilePath << std::endl;
-    try
-    {
-        robot = RobotIO::loadRobot(inputFilePath.string(), RobotIO::eFull);
-        assert(robot);
-    }
-    catch (const VirtualRobotException&)
-    {
-        throw; // rethrow
-    }
-}
-
-void MjcfConverter::writeOutputFile()
+void MujocoIO::writeOutputFile()
 {
     assert(!outputFileName.empty());
     std::cout << "Writing to " << outputFileName << std::endl;
@@ -125,7 +81,7 @@ void MjcfConverter::writeOutputFile()
 }
 
 
-void MjcfConverter::addNodeBodies()
+void MujocoIO::addNodeBodies()
 {
     nodeBodies.clear();
     
@@ -143,7 +99,7 @@ void MjcfConverter::addNodeBodies()
     }
 }
 
-void MjcfConverter::addNodeBodyMeshes()
+void MujocoIO::addNodeBodyMeshes()
 {
     bool meshlabserverAviable = system("which meshlabserver > /dev/null 2>&1") == 0;
     bool notAvailableReported = false;
@@ -232,7 +188,7 @@ void MjcfConverter::addNodeBodyMeshes()
 
 
 
-Element* MjcfConverter::addNodeBody(RobotNodePtr node)
+Element* MujocoIO::addNodeBody(RobotNodePtr node)
 {
     Element* element = nodeBodies[node->getName()];
     if (element)
@@ -253,7 +209,7 @@ Element* MjcfConverter::addNodeBody(RobotNodePtr node)
     return element;
 }
 
-void MjcfConverter::addContactExcludes()
+void MujocoIO::addContactExcludes()
 {
     RobotNodePtr rootNode = robot->getRootNode();
     
@@ -281,7 +237,7 @@ void MjcfConverter::addContactExcludes()
     }
 }
 
-void MjcfConverter::addActuators()
+void MujocoIO::addActuators()
 {
     std::vector<const mjcf::Element*> jointElements = getAllElements("joint");
     
@@ -292,7 +248,7 @@ void MjcfConverter::addActuators()
     }
 }
 
-std::vector<const mjcf::Element*> MjcfConverter::getAllElements(const std::string& elemName)
+std::vector<const mjcf::Element*> MujocoIO::getAllElements(const std::string& elemName)
 {
     mjcf::ListElementsVisitor visitor(elemName);
     document->worldbody()->Accept(&visitor);

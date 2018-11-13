@@ -5,29 +5,31 @@
 #include <VirtualRobot/Robot.h>
 
 
-#include "mjcf/exceptions.h"
-#include "mjcf/MjcfDocument.h"
-#include "mjcf/MjcfMasslessBodySanitizer.h"
+#include "exceptions.h"
+#include "MjcfDocument.h"
+#include "MasslessBodySanitizer.h"
 
 
 namespace VirtualRobot
 {
+namespace mjcf
+{
 
-    class MjcfConverter
+
+    class MujocoIO
     {
     public:
         
-        MjcfConverter();
+        MujocoIO();
         
         
-        void convert(const std::string& inputSimoxXmlFile,
-                     const std::string& outputDirectory);
+        void saveMJCF(RobotPtr robot, const std::string& filename, 
+                      const std::string& basePath, const std::string& meshDir);
         
         
     private:
         
         
-        void loadInputFile();
         void writeOutputFile();
         
         void setPaths(const std::string& inputFilename, 
@@ -51,10 +53,6 @@ namespace VirtualRobot
         
         
         // Paths
-        
-        boost::filesystem::path inputFilePath;
-        boost::filesystem::path inputFileName;
-        boost::filesystem::path inputFileDirectory;
         
         boost::filesystem::path outputDirectory;
         boost::filesystem::path outputFileName;
@@ -81,5 +79,6 @@ namespace VirtualRobot
         std::map<std::string, std::string> mergedBodyNames;
 
     };
-
+    
+}
 }

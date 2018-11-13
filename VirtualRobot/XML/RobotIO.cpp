@@ -15,6 +15,7 @@
 #include "../RobotConfig.h"
 #include "../RuntimeEnvironment.h"
 #include "rapidxml.hpp"
+#include "mjcf/MujocoIO.h"
 
 
 #include <vector>
@@ -1512,6 +1513,24 @@ namespace VirtualRobot
         }
 
         return true;
+    }
+    
+    void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename, 
+                           const std::string& basePath, const std::string& meshDir)
+    {
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 
 

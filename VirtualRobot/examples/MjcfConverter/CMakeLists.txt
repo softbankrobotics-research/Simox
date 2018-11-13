@@ -10,23 +10,9 @@ if (Boost_FOUND)
 
     set(SOURCES
         main.cpp
-        MjcfConverter.cpp
-        
-        mjcf/exceptions.cpp
-        mjcf/utils.cpp
-        mjcf/xml_visitors.cpp
-        mjcf/MjcfDocument.cpp
-        mjcf/MjcfMasslessBodySanitizer.cpp
     )
     
     set(HEADERS
-        MjcfConverter.h
-        
-        mjcf/exceptions.h
-        mjcf/utils.h
-        mjcf/xml_visitors.h
-        mjcf/MjcfDocument.h
-        mjcf/MjcfMasslessBodySanitizer.h
     )
 
     set(LIBS

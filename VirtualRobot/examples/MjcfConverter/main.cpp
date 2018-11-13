@@ -2,7 +2,7 @@
 
 #include <VirtualRobot/RuntimeEnvironment.h>
 
-#include "MjcfConverter.h"
+#include <VirtualRobot/XML/RobotIO.h>
 
 using namespace VirtualRobot;
 
@@ -11,9 +11,8 @@ int main(int argc, char* argv[])
 {
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
-//    VirtualRobot::RuntimeEnvironment::print();
 
-    std::string inputFilename;
+    boost::filesystem::path inputFilename;
     
     if (VirtualRobot::RuntimeEnvironment::hasValue("robot"))
     {
@@ -34,14 +33,25 @@ int main(int argc, char* argv[])
         return 0;
     }
     
-    boost::filesystem::path outputDir(inputFilename);
+    boost::filesystem::path outputDir = inputFilename;
     outputDir.remove_filename();
     outputDir /= "mjcf";
     
     std::cout << "Input file:  " << inputFilename << std::endl;
     std::cout << "Output dir: " << outputDir << std::endl;
 
-    MjcfConverter converter;
-    converter.convert(inputFilename, outputDir.string());
+    std::cout << "Loading robot ..." << std::endl;
     
+    RobotPtr robot;
+    try
+    {
+        robot = RobotIO::loadRobot(inputFilename.string(), RobotIO::eFull);
+        assert(robot);
+    }
+    catch (const VirtualRobotException&)
+    {
+        throw; // rethrow
+    }
+    
+    RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string());
 }

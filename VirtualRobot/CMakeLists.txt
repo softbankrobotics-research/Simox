@@ -77,6 +77,12 @@ XML/RobotIO.cpp
 XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
+XML/mjcf/exceptions.cpp
+XML/mjcf/MasslessBodySanitizer.cpp
+XML/mjcf/MjcfDocument.cpp
+XML/mjcf/MujocoIO.cpp
+XML/mjcf/utils.cpp
+XML/mjcf/xml_visitors.cpp
 IK/IKSolver.cpp
 IK/AdvancedIKSolver.cpp
 IK/DifferentialIK.cpp
@@ -223,6 +229,12 @@ XML/RobotIO.h
 XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
+XML/mjcf/exceptions.h
+XML/mjcf/MasslessBodySanitizer.h
+XML/mjcf/MjcfDocument.h
+XML/mjcf/MujocoIO.h
+XML/mjcf/utils.h
+XML/mjcf/xml_visitors.h
 IK/IKSolver.h
 IK/AdvancedIKSolver.h
 IK/DifferentialIK.h

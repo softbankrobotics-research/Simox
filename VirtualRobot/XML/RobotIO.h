@@ -58,19 +58,19 @@ namespace VirtualRobot
         };
 
         /*!
-                Loads robot from file.
-                @param xmlFile The file
-                @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
-                @return Returns an empty pointer, when file access failed.
+            Loads robot from file.
+            @param xmlFile The file
+            @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
+            @return Returns an empty pointer, when file access failed.
         */
         static RobotPtr loadRobot(const std::string& xmlFile, RobotDescription loadMode = eFull);
 
         /*!
-                Creates Robot from string.
-                @param xmlString The input string.
-                @param basePath If any \<childFromRobot\> tags are given, the path for searching the robot files can be specified.
-                @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
-            */
+            Creates Robot from string.
+            @param xmlString The input string.
+            @param basePath If any \<childFromRobot\> tags are given, the path for searching the robot files can be specified.
+            @param loadMode Standard: eFull, When eStructure is used no visualization and collision models are loaded for faster access.
+        */
         static RobotPtr createRobotFromString(const std::string& xmlString, const std::string& basePath = "", RobotDescription loadMode = eFull);
 
 
@@ -84,6 +84,16 @@ namespace VirtualRobot
         static bool saveXML(RobotPtr robot, const std::string& filename, const std::string& basePath, const std::string& modelDir = "models", bool storeEEF = true, bool storeRNS = true, bool storeSensors = true, bool storeModelFiles = true);
 
 
+        /*!
+            @brief saveMJCF
+            @param robot    The robot to save.
+            @param filename The filename without path.
+            @param basePath The directory to store the robot to
+            @param meshDir  The local directory where all mesh files should be stored to.
+         */
+        static void saveMJCF(RobotPtr robot, const std::string& filename, const std::string& basePath, const std::string& meshDir = "mesh");
+        
+        
     protected:
 
         struct ChildFromRobotDef
