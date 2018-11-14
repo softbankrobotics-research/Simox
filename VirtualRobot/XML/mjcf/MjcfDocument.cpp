@@ -4,13 +4,10 @@
 #include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 
 #include "utils.h"
-#include "xml_visitors.h"
 
 
 using namespace VirtualRobot;
 using namespace mjcf;
-
-
 
 
 Document::Document()
@@ -31,9 +28,9 @@ void Document::setNewElementClass(const std::string& className, bool excludeBody
     this->newElementClassExcludeBody = excludeBody;
 }
 
-Element* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2)
+XMLElement* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2)
 {
-    Element* texSkybox = addNewElement(asset(), "texture");
+    XMLElement* texSkybox = addNewElement(asset(), "texture");
     
     texSkybox->SetAttribute("type", "skybox");
     texSkybox->SetAttribute("builtin", "gradient");
@@ -45,10 +42,10 @@ Element* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Ve
     return texSkybox;
 }
 
-Element* Document::addNewElement(Element* parent, const std::string& elemName, 
+XMLElement* Document::addNewElement(XMLElement* parent, const std::string& elemName, 
                                  const std::string& className, bool first)
 {
-    Element* elem = NewElement(elemName.c_str());
+    XMLElement* elem = NewElement(elemName.c_str());
     
     if (!className.empty())
     {
@@ -72,14 +69,14 @@ Element* Document::addNewElement(Element* parent, const std::string& elemName,
     return elem;
 }
 
-Element* Document::addDefaultsClass(const std::string& className)
+XMLElement* Document::addDefaultsClass(const std::string& className)
 {
-    Element* def = addNewElement(default_(), "default", className);
+    XMLElement* def = addNewElement(default_(), "default", className);
     
     return def;
 }
 
-Element* Document::addRobotRootBodyElement(const std::string& robotName)
+XMLElement* Document::addRobotRootBodyElement(const std::string& robotName)
 {
     this->robotRootBody_ = addNewElement(worldbody(), "body");
     
@@ -89,9 +86,9 @@ Element* Document::addRobotRootBodyElement(const std::string& robotName)
     return robotRootBody_;
 }
 
-Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
+XMLElement* Document::addBodyElement(XMLElement* parent, RobotNodePtr node)
 {
-    Element* body = addNewElement(parent, "body");
+    XMLElement* body = addNewElement(parent, "body");
     body->SetAttribute("name", node->getName().c_str());
 
     if (node->hasParent())
@@ -111,21 +108,19 @@ Element* Document::addBodyElement(Element* parent, RobotNodePtr node)
 }
 
 
-Element* Document::addGeomElement(Element* body, const std::string& meshName)
+XMLElement* Document::addGeomElement(XMLElement* body, const std::string& meshName)
 {
     assertElementIsBody(body);
     
-    Element* geom = addNewElement(body, "geom", "", true);
+    XMLElement* geom = addNewElement(body, "geom", "", true);
     
     geom->SetAttribute("type", "mesh");
-//    geom->SetAttribute("type", "capsule");
     geom->SetAttribute("mesh", meshName.c_str());
-    //geom->SetAttribute("density", 100);
     
     return geom;
 }
 
-Element* Document::addInertialElement(Element* body, RobotNodePtr node)
+XMLElement* Document::addInertialElement(XMLElement* body, RobotNodePtr node)
 {
     assertElementIsBody(body);
     
@@ -136,7 +131,7 @@ Element* Document::addInertialElement(Element* body, RobotNodePtr node)
         return nullptr;
     }
     
-    Element* inertial = addNewElement(body, "inertial");
+    XMLElement* inertial = addNewElement(body, "inertial");
     
     Eigen::Vector3f pos = node->getCoMLocal();
     inertial->SetAttribute("pos", toAttr(pos).c_str());
@@ -162,11 +157,11 @@ Element* Document::addInertialElement(Element* body, RobotNodePtr node)
     return inertial;
 }
 
-Element* Document::addDummyInertial(Element* body)
+XMLElement* Document::addDummyInertial(XMLElement* body)
 {
     assertElementIsBody(body);
     
-    Element* inertial = addNewElement(body, "inertial");
+    XMLElement* inertial = addNewElement(body, "inertial");
     
     inertial->SetAttribute("pos", toAttr(Eigen::Vector3f(0, 0, 0)).c_str());
     inertial->SetAttribute("mass", dummyMass);
@@ -176,11 +171,11 @@ Element* Document::addDummyInertial(Element* body)
 }
 
 
-Element* Document::addJointElement(Element* body, RobotNodePtr node)
+XMLElement* Document::addJointElement(XMLElement* body, RobotNodePtr node)
 {
     assert(node->isRotationalJoint() xor node->isTranslationalJoint());
     
-    Element* joint = addNewElement(body, "joint");
+    XMLElement* joint = addNewElement(body, "joint");
     
     joint->SetAttribute("name", node->getName().c_str());
     
@@ -212,9 +207,9 @@ Element* Document::addJointElement(Element* body, RobotNodePtr node)
     return joint;
 }
 
-Element* Document::addMeshElement(const std::string& name, const std::string& file, const std::string& className)
+XMLElement* Document::addMeshElement(const std::string& name, const std::string& file, const std::string& className)
 {
-    Element* mesh = addNewElement(asset(), "mesh", className);
+    XMLElement* mesh = addNewElement(asset(), "mesh", className);
     
     mesh->SetAttribute("name", name.c_str());
     mesh->SetAttribute("file", file.c_str());
@@ -222,9 +217,9 @@ Element* Document::addMeshElement(const std::string& name, const std::string& fi
     return mesh;
 }
 
-Element*Document::addMotorElement(const std::string& jointName, const std::string& className)
+XMLElement*Document::addMotorElement(const std::string& jointName, const std::string& className)
 {
-    Element* motor = addNewElement(actuator(), "motor", className);
+    XMLElement* motor = addNewElement(actuator(), "motor", className);
     
     motor->SetAttribute("name",  jointName.c_str());
     motor->SetAttribute("joint", jointName.c_str());
@@ -232,7 +227,7 @@ Element*Document::addMotorElement(const std::string& jointName, const std::strin
     return motor;
 }
 
-void Document::setElementPose(Element* elem, const Eigen::Matrix4f& pose)
+void Document::setElementPose(XMLElement* elem, const Eigen::Matrix4f& pose)
 {
     Eigen::Vector3f pos = pose.block<3,1>(0, 3);
     Eigen::Matrix3f oriMat = pose.block<3,3>(0, 0);
@@ -243,7 +238,7 @@ void Document::setElementPose(Element* elem, const Eigen::Matrix4f& pose)
     setElementQuat(elem, quat);
 }
 
-void Document::setElementPos(Element* elem, Eigen::Vector3f pos)
+void Document::setElementPos(XMLElement* elem, Eigen::Vector3f pos)
 {
     if (!pos.isZero(floatCompPrecision))
     {
@@ -255,7 +250,7 @@ void Document::setElementPos(Element* elem, Eigen::Vector3f pos)
     }
 }
 
-void Document::setElementQuat(Element* elem, const Eigen::Quaternionf& quat)
+void Document::setElementQuat(XMLElement* elem, const Eigen::Quaternionf& quat)
 {
     if (!quat.isApprox(Eigen::Quaternionf::Identity(), floatCompPrecision))
     {
@@ -267,7 +262,7 @@ void Document::setElementQuat(Element* elem, const Eigen::Quaternionf& quat)
     }
 }
 
-void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
+void Document::setJointAxis(XMLElement* joint, const Eigen::Vector3f& axis)
 {
     assertElementIs(joint, "joint");
     joint->SetAttribute("axis", toAttr(axis).c_str());
@@ -275,14 +270,14 @@ void Document::setJointAxis(Element* joint, const Eigen::Vector3f& axis)
 
 
 
-Element*Document::addContactExclude(const Element& body1, const Element& body2)
+XMLElement*Document::addContactExclude(const XMLElement& body1, const XMLElement& body2)
 {
     return addContactExclude(body1.Attribute("name"), body2.Attribute("name"));
 }
 
-Element* Document::addContactExclude(const std::string& body1Name, const std::string& body2Name)
+XMLElement* Document::addContactExclude(const std::string& body1Name, const std::string& body2Name)
 {
-    Element* exclude = addNewElement(contact(), "exclude");
+    XMLElement* exclude = addNewElement(contact(), "exclude");
     
     exclude->SetAttribute("body1", body1Name.c_str());
     exclude->SetAttribute("body2", body2Name.c_str());
@@ -291,9 +286,9 @@ Element* Document::addContactExclude(const std::string& body1Name, const std::st
 }
 
 
-Element* Document::section(const std::string& name)
+XMLElement* Document::section(const std::string& name)
 {
-    Element* elem = root->FirstChildElement(name.c_str());
+    XMLElement* elem = root->FirstChildElement(name.c_str());
     if (!elem)
     {
         elem = addNewElement(root, name);
@@ -312,7 +307,7 @@ void Document::setFloatCompPrecision(float value)
 }
 
 
-Element* Document::robotRootBody() const
+XMLElement* Document::robotRootBody() const
 {
     return robotRootBody_;
 }

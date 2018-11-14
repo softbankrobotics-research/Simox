@@ -5,23 +5,56 @@
 
 namespace VirtualRobot
 {
-
-void assertElementIsBody(const mjcf::Element* elem)
+namespace mjcf
 {
-    assertElementIs(elem, "body");
+
+bool isElement(const XMLElement* elem, const char* tag)
+{
+    return isElement(*elem, tag);
+}
+
+bool isElement(const XMLElement* elem, const std::string& tag)
+{
+    return isElement(*elem, tag);
+}
+
+bool isElement(const XMLElement& elem, const char* tag)
+{
+    return std::strcmp(elem.Value(), tag) == 0;
+}
+
+bool isElement(const XMLElement& elem, const std::string& tag)
+{
+    return std::strcmp(elem.Value(), tag.c_str()) == 0;
 }
 
 
-bool hasElementChild(const mjcf::Element* elem, const std::string& elemName)
+bool hasElementChild(const XMLElement* elem, const std::string& elemName)
 {
     return elem->FirstChildElement(elemName.c_str()) != nullptr;
 }
 
-bool hasMass(const mjcf::Element* body)
+
+bool hasMass(const XMLElement* body)
 {
     assertElementIsBody(body);
     return hasElementChild(body, "geom") || hasElementChild(body, "inertial");
 }
+
+
+std::string toAttr(bool b)
+{
+    static const std::string strings[] = { "false", "true" };
+    return strings[int(b)];
+}
+
+std::string toAttr(const Eigen::Quaternionf& quat)
+{
+    std::stringstream ss;
+    ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
+    return ss.str();
+}
+
 
 Eigen::Vector2f strToVec2(const char* string)
 {
@@ -44,6 +77,7 @@ Eigen::Quaternionf strToQuat(const char* string)
     return q;
 }
 
+
 std::size_t commonPrefixLength(const std::string& a, const std::string& b)
 {
     const std::string* smaller = &a;
@@ -58,39 +92,12 @@ std::size_t commonPrefixLength(const std::string& a, const std::string& b)
     return std::size_t(std::distance(smaller->begin(), mismatch));
 }
 
-bool isElement(const mjcf::Element* elem, const char* tag)
-{
-    return isElement(*elem, tag);
-}
 
-bool isElement(const mjcf::Element* elem, const std::string& tag)
+void assertElementIsBody(const XMLElement* elem)
 {
-    return isElement(*elem, tag);
-}
-
-bool isElement(const mjcf::Element& elem, const char* tag)
-{
-    return std::strcmp(elem.Value(), tag) == 0;
-}
-
-bool isElement(const mjcf::Element& elem, const std::string& tag)
-{
-    return std::strcmp(elem.Value(), tag.c_str()) == 0;
-}
-
-std::string toAttr(bool b)
-{
-    static const std::string strings[] = { "false", "true" };
-    return strings[int(b)];
-}
-
-std::string toAttr(const Eigen::Quaternionf& quat)
-{
-    std::stringstream ss;
-    ss << quat.w() << " " << quat.x() << " " << quat.y() << " " << quat.z();
-    return ss.str();
+    assertElementIs(elem, "body");
 }
 
 
-
+}
 }

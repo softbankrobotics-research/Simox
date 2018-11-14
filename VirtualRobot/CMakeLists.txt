@@ -81,7 +81,6 @@ XML/mjcf/MasslessBodySanitizer.cpp
 XML/mjcf/MjcfDocument.cpp
 XML/mjcf/MujocoIO.cpp
 XML/mjcf/utils.cpp
-XML/mjcf/xml_visitors.cpp
 IK/IKSolver.cpp
 IK/AdvancedIKSolver.cpp
 IK/DifferentialIK.cpp
@@ -232,7 +231,6 @@ XML/mjcf/MasslessBodySanitizer.h
 XML/mjcf/MjcfDocument.h
 XML/mjcf/MujocoIO.h
 XML/mjcf/utils.h
-XML/mjcf/xml_visitors.h
 IK/IKSolver.h
 IK/AdvancedIKSolver.h
 IK/DifferentialIK.h

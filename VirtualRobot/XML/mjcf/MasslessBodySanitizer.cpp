@@ -19,9 +19,9 @@ void MasslessBodySanitizer::sanitize()
 {
     // merge body leaf nodes with parent if they do not have a mass (inertial or geom)
     
-    Element* root = document->worldbody()->FirstChildElement("body");
+    XMLElement* root = document->worldbody()->FirstChildElement("body");
     
-    for (Element* body = root->FirstChildElement("body");
+    for (XMLElement* body = root->FirstChildElement("body");
          body;
          body = body->NextSiblingElement("body"))
     {
@@ -30,7 +30,7 @@ void MasslessBodySanitizer::sanitize()
 }
 
 
-void MasslessBodySanitizer::sanitizeRecursion(Element* body)
+void MasslessBodySanitizer::sanitizeRecursion(XMLElement* body)
 {
     assertElementIsBody(body);
 
@@ -51,7 +51,7 @@ void MasslessBodySanitizer::sanitizeRecursion(Element* body)
         
         // non-leaf body
         // check whether there is only one child body
-        Element* childBody = body->FirstChildElement("body");
+        XMLElement* childBody = body->FirstChildElement("body");
         if (!childBody->NextSiblingElement("body"))
         {
             mergeBodies(body, childBody, accChildPose);
@@ -66,7 +66,7 @@ void MasslessBodySanitizer::sanitizeRecursion(Element* body)
     
     // recursive descend
     
-    for (Element* child = body->FirstChildElement("body");
+    for (XMLElement* child = body->FirstChildElement("body");
          child;
          child = child->NextSiblingElement("body"))
     {
@@ -75,7 +75,7 @@ void MasslessBodySanitizer::sanitizeRecursion(Element* body)
     
 }
 
-void MasslessBodySanitizer::mergeBodies(Element* body, Element* childBody, 
+void MasslessBodySanitizer::mergeBodies(XMLElement* body, XMLElement* childBody, 
                                             Eigen::Matrix4f& accChildPose)
 {
     std::string childBodyName = childBody->Attribute("name");
@@ -98,7 +98,7 @@ void MasslessBodySanitizer::mergeBodies(Element* body, Element* childBody,
         // clone grandchild
         tx::XMLNode* grandChildClone = grandChild->DeepClone(nullptr);
         
-        Element* elem = grandChildClone->ToElement();
+        XMLElement* elem = grandChildClone->ToElement();
         if (elem)
         {
             /* Adapt pose/axis elements in child. Their poses/axes will be
@@ -143,7 +143,7 @@ void MasslessBodySanitizer::mergeBodies(Element* body, Element* childBody,
     body->DeleteChild(childBody);
 }
 
-void MasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose)
+void MasslessBodySanitizer::updateChildPos(XMLElement* elem, const Eigen::Matrix4f& accChildPose)
 {
     const char* posStr = elem->Attribute("pos");
     Eigen::Vector3f pos = posStr ? strToVec(posStr) : 
@@ -157,7 +157,7 @@ void MasslessBodySanitizer::updateChildPos(Element* elem, const Eigen::Matrix4f&
     document->setElementPos(elem, pos);
 }
 
-void MasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri)
+void MasslessBodySanitizer::updateChildQuat(XMLElement* elem, const Eigen::Matrix3f& accChildOri)
 {
     const char* quatStr = elem->Attribute("quat");
     Eigen::Quaternionf quat = quatStr ? strToQuat(quatStr) : 
@@ -167,7 +167,7 @@ void MasslessBodySanitizer::updateChildQuat(Element* elem, const Eigen::Matrix3f
     document->setElementQuat(elem, quat);
 }
 
-void MasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
+void MasslessBodySanitizer::updateChildAxis(XMLElement* elem, const Eigen::Matrix3f& accChildOri, 
                                                 const char* attrName)
 {
     Eigen::Vector3f axis = strToVec(elem->Attribute(attrName));
@@ -184,7 +184,7 @@ void MasslessBodySanitizer::updateChildAxis(Element* elem, const Eigen::Matrix3f
     }
 }
 
-void MasslessBodySanitizer::sanitizeLeafBody(Element* body)
+void MasslessBodySanitizer::sanitizeLeafBody(XMLElement* body)
 {
     assert(!hasElementChild(body, "body"));
     assert(!hasMass(body));

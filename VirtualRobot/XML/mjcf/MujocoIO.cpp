@@ -1,6 +1,5 @@
 #include "MujocoIO.h"
 #include "utils.h"
-#include "xml_visitors.h"
 
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/XML/RobotIO.h>
@@ -36,7 +35,7 @@ void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::
     document->compiler()->SetAttribute("angle", "radian");
     document->compiler()->SetAttribute("balanceinertia", "true");
     
-    Element* defaultsClass = document->addDefaultsClass(robot->getName());
+    XMLElement* defaultsClass = document->addDefaultsClass(robot->getName());
     std::stringstream ss;
     ss << "Add default values for " << robot->getName() << " here.";
     defaultsClass->InsertFirstChild(document->NewComment(ss.str().c_str()));
@@ -101,9 +100,9 @@ void MujocoIO::addNodeBodies()
     assert(rootNode);
     
     // add root
-    Element* robotRootBody = document->addRobotRootBodyElement(robot->getName());
+    XMLElement* robotRootBody = document->addRobotRootBodyElement(robot->getName());
     
-    Element* root = document->addBodyElement(robotRootBody, rootNode);
+    XMLElement* root = document->addBodyElement(robotRootBody, rootNode);
     nodeBodies[rootNode->getName()] = root;
     assert(root);
     
@@ -189,23 +188,23 @@ void MujocoIO::addNodeBodyMeshes()
         document->addMeshElement(meshName, (outputDirectory/dstMeshRelPath).string());
         
         // add geom to body
-        Element* body = nodeBodies[node->getName()];
+        XMLElement* body = nodeBodies[node->getName()];
         document->addGeomElement(body, meshName);
     }
 }
 
 
 
-Element* MujocoIO::addNodeBody(RobotNodePtr node)
+XMLElement* MujocoIO::addNodeBody(RobotNodePtr node)
 {
-    Element* element = nodeBodies[node->getName()];
+    XMLElement* element = nodeBodies[node->getName()];
     if (element)
     {
         // break recursion
         return element;
     }
     
-    Element* parent = nodeBodies[node->getParent()->getName()];
+    XMLElement* parent = nodeBodies[node->getParent()->getName()];
     if (!parent)
     {
         parent = addNodeBody(robot->getRobotNode(node->getParent()->getName()));
@@ -247,7 +246,7 @@ void MujocoIO::addContactExcludes()
 
 void MujocoIO::addActuators()
 {
-    std::vector<const mjcf::Element*> jointElements = getAllElements("joint");
+    std::vector<const mjcf::XMLElement*> jointElements = getAllElements("joint");
     
     for (auto joint : jointElements)
     {
@@ -265,17 +264,23 @@ struct ScaleLengthVisitor : public tx::XMLVisitor
     
     float scaling;
     
-    std::vector<const Element*> elementsToModify;
+    std::vector<const XMLElement*> elementsToModify;
 };
 
 bool ScaleLengthVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute* attr)
 {
     if (isElement(elem, "joint"))
     {
-        if (strcmp(elem.Attribute("type"), "hinge")==0
-            && elem.Attribute("range"))
+        if (strcmp(elem.Attribute("type"), "hinge") == 0)
         {
-            elementsToModify.push_back(&elem);
+            while (attr && strcmp(attr->Name(), "range") != 0)
+            {
+                attr = attr->Next();
+            }
+            if (attr) // hinge found
+            {
+                
+            }
         }
     }
     else if (elem.Attribute("pos"))
@@ -290,7 +295,7 @@ void ScaleLengthVisitor::applyScaling()
 {
     for (auto& elemConst : elementsToModify)
     {
-        Element* elem = const_cast<Element*>(elemConst);
+        XMLElement* elem = const_cast<XMLElement*>(elemConst);
         if (isElement(elem, "joint"))
         {
             if (strcmp(elem->Attribute("type"), "hinge") == 0)
@@ -318,9 +323,37 @@ void MujocoIO::scaleLengths()
     visitor.applyScaling();
 }
 
-std::vector<const mjcf::Element*> MujocoIO::getAllElements(const std::string& elemName)
+
+
+struct ListElementsVisitor : public tinyxml2::XMLVisitor
 {
-    mjcf::ListElementsVisitor visitor(elemName);
-    document->worldbody()->Accept(&visitor);
-    return visitor.getFoundElements();
+    
+    ListElementsVisitor(const std::string& elementName) : elementName(elementName) {}
+    virtual ~ListElementsVisitor() override {}
+
+    // XMLVisitor interface
+    virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
+    
+    const std::vector<const tinyxml2::XMLElement*>& getFoundElements() const;
+    
+    std::string elementName;
+    std::vector<const tinyxml2::XMLElement*> foundElements;
+};
+
+bool ListElementsVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute*)
+{
+    if (isElement(elem, elementName))
+    {
+        foundElements.push_back(&elem);
+    }
+    return true;
 }
+
+std::vector<const mjcf::XMLElement*> MujocoIO::getAllElements(const std::string& elemName)
+{
+    ListElementsVisitor visitor(elemName);
+    document->worldbody()->Accept(&visitor);
+    return visitor.foundElements;
+}
+
+

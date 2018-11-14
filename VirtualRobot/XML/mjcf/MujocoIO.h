@@ -4,7 +4,6 @@
 
 #include <VirtualRobot/Robot.h>
 
-
 #include "MjcfDocument.h"
 #include "MasslessBodySanitizer.h"
 
@@ -35,7 +34,7 @@ namespace mjcf
         void makeEnvironment();
         
         void addNodeBodies();
-        mjcf::Element* addNodeBody(RobotNodePtr node);
+        mjcf::XMLElement* addNodeBody(RobotNodePtr node);
         
         void addNodeBodyMeshes();
 
@@ -46,7 +45,7 @@ namespace mjcf
         
         void scaleLengths();
         
-        std::vector<const mjcf::Element*> getAllElements(const std::string& elemName);
+        std::vector<const mjcf::XMLElement*> getAllElements(const std::string& elemName);
 
         
         // Paremeters
@@ -64,22 +63,24 @@ namespace mjcf
         
         // Input
         
+        /// The input robot.
         RobotPtr robot;
         
         
         // Output
         
-        mjcf::DocumentPtr document = nullptr;
+        /// The built MJCF document.
+        DocumentPtr document = nullptr;
         
         
         // Processing
         
+        /// Sanitizes massless bodies.
         mjcf::MasslessBodySanitizer masslessBodySanitizer;
         
-        std::map<std::string, mjcf::Element*> nodeBodies;
+        /// Map of robot node names to XML elements.
+        std::map<std::string, mjcf::XMLElement*> nodeBodies;
         
-        std::map<std::string, std::string> mergedBodyNames;
-
     };
     
 }

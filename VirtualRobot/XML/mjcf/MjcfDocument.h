@@ -4,9 +4,8 @@
 
 #include <Eigen/Eigen>
 
-#include <VirtualRobot/Tools/tinyxml2.h>
-
 #include <VirtualRobot/Robot.h>
+#include <VirtualRobot/Tools/tinyxml2.h>
 
 
 namespace VirtualRobot
@@ -14,17 +13,24 @@ namespace VirtualRobot
 namespace mjcf
 {
 
-    using Element = tinyxml2::XMLElement;
+    using XMLElement = tinyxml2::XMLElement;
 
+    /**
+     * @brief A MJCF (Mujoco XML) document.
+     */
     class Document : public tinyxml2::XMLDocument
     {
         
     public:
         
+        /// Constructor.
         Document();
         
         
+        /// Set the precision for float comparison (used e.g. when comparing 
+        /// to zero or identity).
         void setFloatCompPrecision(float value);
+        /// Set the mass set in dummy inertial elements.
         void setDummyMass(float value);
         
         
@@ -41,77 +47,80 @@ namespace mjcf
         void setNewElementClass(const std::string& className, bool excludeBody = true);
         
         
-        // Top level elements
-        Element* compiler()  { return section("compiler");  }
-        Element* option()    { return section("option");    }
-        Element* size()      { return section("size");      }
-        Element* visual()    { return section("visual");    }
-        Element* statistic() { return section("statistic"); }
-        Element* default_()  { return section("default");   }
-        Element* asset()     { return section("asset");     }
-        Element* worldbody() { return section("worldbody"); }
-        Element* contact()   { return section("contact");   }
-        Element* equality()  { return section("equality");  }
-        Element* tendon()    { return section("tendon");    }
-        Element* actuator()  { return section("actuator");  }
-        Element* sensor()    { return section("sensor");    }
-        Element* keyframe()  { return section("keyframe");  }
+        // Section elements (children of top-level 'mujoco' element).
+        XMLElement* compiler()  { return section("compiler");  }
+        XMLElement* option()    { return section("option");    }
+        XMLElement* size()      { return section("size");      }
+        XMLElement* visual()    { return section("visual");    }
+        XMLElement* statistic() { return section("statistic"); }
+        XMLElement* default_()  { return section("default");   }
+        XMLElement* asset()     { return section("asset");     }
+        XMLElement* worldbody() { return section("worldbody"); }
+        XMLElement* contact()   { return section("contact");   }
+        XMLElement* equality()  { return section("equality");  }
+        XMLElement* tendon()    { return section("tendon");    }
+        XMLElement* actuator()  { return section("actuator");  }
+        XMLElement* sensor()    { return section("sensor");    }
+        XMLElement* keyframe()  { return section("keyframe");  }
 
         
         /// Adds a body element to the worldbody with the robot's name as name and childclass.
-        Element* addRobotRootBodyElement(const std::string& robotName);
+        XMLElement* addRobotRootBodyElement(const std::string& robotName);
         /// Get the (least recently added) robot root body.
-        Element* robotRootBody() const;
+        XMLElement* robotRootBody() const;
         
         /// Add a new defaults class with a class name.
-        Element* addDefaultsClass(const std::string& className);
+        XMLElement* addDefaultsClass(const std::string& className);
 
         /// Add a skybox texture asset (only one allowed).
-        Element* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);        
+        XMLElement* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);        
         
         
         /// Add a body element to a parent from a RobotNode.
         /// Adds inertial and joint element, if necessary.
-        Element* addBodyElement(Element* parent, RobotNodePtr node);
+        XMLElement* addBodyElement(XMLElement* parent, RobotNodePtr node);
         
         /// Add an inertial element to a body from a RobotNode.
-        Element* addInertialElement(Element* body, RobotNodePtr node);
+        XMLElement* addInertialElement(XMLElement* body, RobotNodePtr node);
         /// Add a dummy inertial element with small mass and identity inertia matrix.
-        Element* addDummyInertial(Element* body);
+        XMLElement* addDummyInertial(XMLElement* body);
         /// Add a joint element to a body from a RobotNode.
-        Element* addJointElement(Element* body, RobotNodePtr node);
+        XMLElement* addJointElement(XMLElement* body, RobotNodePtr node);
         
         /// Add a geom to a body, referencing a mesh.
-        Element* addGeomElement(Element* body, const std::string& meshName);
+        XMLElement* addGeomElement(XMLElement* body, const std::string& meshName);
         /// Add a mesh asset with a name and a file.
-        Element* addMeshElement(const std::string& name, const std::string& file,
+        XMLElement* addMeshElement(const std::string& name, const std::string& file,
                                 const std::string& className = "");
 
         /// Add a conact/exclude element between the given bodies.
-        Element* addContactExclude(const Element& body1, const Element& body2);
+        XMLElement* addContactExclude(const XMLElement& body1, const XMLElement& body2);
         /// Add a conact/exclude element between the given bodies.
-        Element* addContactExclude(const std::string& body1Name, const std::string& body2Name);
+        XMLElement* addContactExclude(const std::string& body1Name, const std::string& body2Name);
         
-        Element* addMotorElement(const std::string& jointName, const std::string& className = "");
+        XMLElement* addMotorElement(const std::string& jointName, const std::string& className = "");
         
 
         
-        /// Set the pos and quat attribute of a body.
-        void setElementPose(Element* elem, const Eigen::Matrix4f& pose);
-        void setElementPos(Element* elem, Eigen::Vector3f pos);
-        void setElementQuat(Element* elem, const Eigen::Quaternionf& quat);
+        /// Set the pos and quat attribute of an element.
+        void setElementPose(XMLElement* elem, const Eigen::Matrix4f& pose);
+        void setElementPos(XMLElement* elem, Eigen::Vector3f pos);
+        void setElementQuat(XMLElement* elem, const Eigen::Quaternionf& quat);
         
         /// Set the axis attribute of a joint.
-        void setJointAxis(Element* joint, const Eigen::Vector3f& axis);
+        void setJointAxis(XMLElement* joint, const Eigen::Vector3f& axis);
 
         
         
     private:
         
+        /// (ParentTag, ElementTag)
         using ElementType = std::pair<std::string, std::string>;
         
+        /// Element types allowing a class attribute.
         static const std::set<ElementType> ELEM_NAMES_WITH_ATTR_CLASS;
         
+        /// Return true if the given ElementType allows for a class attribute.
         static bool allowsClassAttr(const ElementType& type);
         
         
@@ -120,12 +129,12 @@ namespace mjcf
         /// Add a new element with a name (tag) to a parent.
         /// @param className If not empty, set the class attribute of the new element.
         /// @param first If true, will be inserted as first, otherweise at end (default)
-        Element* addNewElement(Element* parent, const std::string& elemName, 
-                               const std::string& className = "", bool first = false);
+        XMLElement* addNewElement(XMLElement* parent, const std::string& elemName, 
+                                  const std::string& className = "", bool first = false);
         
-        /// Gets the top-level element (child of root element) with a name. 
+        /// Gets the section element (child of root element) with a name.
         /// If it does not exist, it is created.
-        Element* section(const std::string& name);
+        XMLElement* section(const std::string& name);
         
         
         /// Precision when comparing floats (e.g. with zero).
@@ -133,26 +142,24 @@ namespace mjcf
         /// Mass used for dummy inertial elements.
         float dummyMass = 0.0001f;
         
+        
         /// The "mujoco" root element.
-        Element* root;
+        XMLElement* root;
         
         /// The wrapper element of the robot.
-        Element* robotRootBody_;
+        XMLElement* robotRootBody_;
         
+        
+        /// The class added to new elements, if applicable.
         std::string newElementClass = "";
+        /// Indicate whether body elements and their children shall be 
+        /// exluded from setting the class attribute.
         bool newElementClassExcludeBody = true;
         
-        
-        friend class ContactExcludeVisitor;
         
     };
 
     using DocumentPtr = std::unique_ptr<Document>;
- 
-
-    
-    
-
     
 }
 }

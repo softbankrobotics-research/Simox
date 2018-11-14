@@ -48,14 +48,14 @@ namespace mjcf
         
     private:
         
-        void sanitizeRecursion(mjcf::Element* body);
-        void sanitizeLeafBody(mjcf::Element* body);
+        void sanitizeRecursion(mjcf::XMLElement* body);
+        void sanitizeLeafBody(mjcf::XMLElement* body);
         
-        void mergeBodies(Element* body, Element* childBody, Eigen::Matrix4f& accChildPose);
+        void mergeBodies(XMLElement* body, XMLElement* childBody, Eigen::Matrix4f& accChildPose);
         
-        void updateChildPos(Element* elem, const Eigen::Matrix4f& accChildPose);
-        void updateChildQuat(Element* elem, const Eigen::Matrix3f& accChildOri);
-        void updateChildAxis(Element* elem, const Eigen::Matrix3f& accChildOri, 
+        void updateChildPos(XMLElement* elem, const Eigen::Matrix4f& accChildPose);
+        void updateChildQuat(XMLElement* elem, const Eigen::Matrix3f& accChildOri);
+        void updateChildAxis(XMLElement* elem, const Eigen::Matrix3f& accChildOri, 
                              const char* attrName = "axis");
         
         

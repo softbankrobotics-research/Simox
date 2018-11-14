@@ -1,4 +1,4 @@
-project(MjcfConverter)
+project(Simox2Mjcf)
 
 #find_package(TinyXML2 7.0.0)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
