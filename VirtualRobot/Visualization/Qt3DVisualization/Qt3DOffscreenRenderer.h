@@ -50,9 +50,8 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT Qt3DOffscreenRenderer  : public OffscreenRenderer
     {
     public:
-        Qt3DOffscreenRenderer() = default;
-        virtual ~Qt3DOffscreenRenderer() = default;
-
+        Qt3DOffscreenRenderer();
+        virtual ~Qt3DOffscreenRenderer();
         virtual void init(int &/*argc*/, char* /*argv*/[], const std::string &/*appName*/) override;
 
         virtual bool renderOffscreen(const Eigen::Matrix4f& cameraPose, const std::vector<VisualizationPtr>& scene,
@@ -143,6 +142,12 @@ namespace VirtualRobot
             OffscreenSurfaceFrameGraph *offscreenFrameGraph;    // The frame graph, which allows rendering to an offscreen surface.
             Qt3DCore::QNode *sceneRoot;                         // The scene root, which becomes a child of the engine's root entity.
         };
+
+        Qt3DCore::QEntity *rootEntity;
+        Qt3DRender::QCamera *cameraEntity;
+        OffscreenEngine *offscreenEngine;
+
+        Qt3DRender::QRenderCaptureReply *render() const;
     };
 }
 

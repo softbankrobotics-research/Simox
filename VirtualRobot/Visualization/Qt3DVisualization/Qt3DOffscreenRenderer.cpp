@@ -6,10 +6,52 @@
 #include <QTimer>
 #include <QEventLoop>
 
+#include <Qt3DExtras/QCuboidMesh>
+
 namespace VirtualRobot
 {
+    Qt3DOffscreenRenderer::Qt3DOffscreenRenderer()
+    {
+        this->rootEntity = new Qt3DCore::QEntity();
+        this->cameraEntity = new Qt3DRender::QCamera(rootEntity);
+        this->offscreenEngine = new Qt3DOffscreenRenderer::OffscreenEngine(cameraEntity, QSize(640, 480));
+        this->offscreenEngine->setSceneRoot(rootEntity);
+    }
+
+    Qt3DOffscreenRenderer::~Qt3DOffscreenRenderer()
+    {
+        delete this->offscreenEngine;
+        delete this->cameraEntity;
+        delete this->rootEntity;
+    }
+
     void Qt3DOffscreenRenderer::init(int &, char *[], const std::string &)
     {
+        //Render once, because first frame is always emtpy clear buffer
+        auto reply = render();
+        delete reply;
+    }
+
+    Qt3DRender::QRenderCaptureReply *Qt3DOffscreenRenderer::render() const
+    {
+        Qt3DRender::QRenderCaptureReply *reply = this->offscreenEngine->getRenderCapture()->requestCapture();
+        //Wait for completion or 3000ms timeout event
+        QTimer timer;
+        QEventLoop loop;
+        QObject::connect(reply, SIGNAL(completed()), &loop, SLOT(quit()));
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.start(3000);
+        loop.exec();
+
+        if(timer.isActive())
+        {
+            return reply;
+        }
+        else
+        {
+            delete reply;
+            return nullptr;
+        }
     }
 
     bool Qt3DOffscreenRenderer::renderOffscreen(const Eigen::Matrix4f &camPose, const std::vector<VirtualRobot::VisualizationPtr> &scene,
@@ -19,36 +61,34 @@ namespace VirtualRobot
                                                 bool renderPointcloud, std::vector<Eigen::Vector3f> &pointCloud,
                                                 float zNear, float zFar, float vertFov, float nanValue, Visualization::Color backgroundColor) const
     {
-        // Root entity in the 3D scene.
-        Qt3DCore::QEntity *rootEntity = new Qt3DCore::QEntity();
+        this->offscreenEngine->setSize(QSize(width, height));
 
-        // Set up a camera
-        Qt3DRender::QCamera *cameraEntity = new Qt3DRender::QCamera(rootEntity);
-        cameraEntity->lens()->setPerspectiveProjection((vertFov / M_PI) * 180.0f, static_cast<float>(width)/static_cast<float>(height), zNear, zFar);
-        cameraEntity->setProjectionMatrix(QMatrix4x4(camPose.data()).transposed());
+        this->cameraEntity->lens()->setPerspectiveProjection((vertFov / M_PI) * 180.0f, static_cast<float>(width)/static_cast<float>(height), zNear, zFar);
+        //cameraEntity->setProjectionMatrix(QMatrix4x4(camPose.data()).transposed());
+        this->cameraEntity->setPosition(QVector3D(0.0f, 0.0f, 2000.0f));
+        this->cameraEntity->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
+
+
+        // Cuboid shape data
+        Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
+
+        // CuboidMesh Transform
+        Qt3DCore::QTransform *cuboidTransform = new Qt3DCore::QTransform();
+        cuboidTransform->setScale(500.0f);
+
+        Qt3DExtras::QPhongMaterial *cuboidMaterial = new Qt3DExtras::QPhongMaterial();
+        cuboidMaterial->setDiffuse(QColor(QRgb(0x665423)));
+
+        //Cuboid
+        Qt3DCore::QEntity* m_cuboidEntity = new Qt3DCore::QEntity(this->rootEntity);
+        m_cuboidEntity->addComponent(cuboid);
+        m_cuboidEntity->addComponent(cuboidMaterial);
+        m_cuboidEntity->addComponent(cuboidTransform);
 
         //Add all visualizations to the scene
-        for (const auto& visu : scene)
-        {
-            //visualization_cast<Qt3DVisualizationPtr>(visu->clone())->getEntity()->setParent(rootEntity);
-        }
 
-        // Create the offscreen engine. This is the object which is responsible for handling the 3D scene itself.
-        OffscreenEngine offscreenEngine(cameraEntity, QSize(width, height));
-        // Set our scene to be rendered by the offscreen engine.
-        offscreenEngine.setSceneRoot(rootEntity);
-
-        Qt3DRender::QRenderCaptureReply *reply = offscreenEngine.getRenderCapture()->requestCapture();
-        //Wait for completion or 3000ms timeout event
-        QTimer timer;
-        timer.setSingleShot(true);
-        QEventLoop loop;
-        QObject::connect(reply, SIGNAL(completed()), &loop, SLOT(quit()));
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.start(3000);
-        loop.exec();
-
-        if(timer.isActive())
+        Qt3DRender::QRenderCaptureReply *reply = render();
+        if(reply)
         {
             QImage result = reply->image();
             result = result.convertToFormat(QImage::Format_RGB888);
