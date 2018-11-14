@@ -112,7 +112,7 @@ namespace VirtualRobot
             else
             {
                 VR_WARNING << "No 'lo' attribute in <Limits> tag. Assuming -180 [deg]." << endl;
-                jointLimitLo = (float)(-M_PI);
+                jointLimitLo = float(-M_PI);
                 unit = Units("rad");
             }
         }
@@ -132,7 +132,7 @@ namespace VirtualRobot
             else
             {
                 VR_WARNING << "No 'hi' attribute in <Limits> tag. Assuming 180 [deg]." << endl;
-                jointLimitHi = (float)M_PI;
+                jointLimitHi = float(M_PI);
                 unit = Units("rad");
             }
         }
@@ -154,15 +154,15 @@ namespace VirtualRobot
 
         // limitless attribute
         rapidxml::xml_attribute<>* llAttr = limitsXMLNode->first_attribute("limitless");
-        if (llAttr != NULL)
+        if (llAttr != nullptr)
         {
             limitless = isTrue(llAttr->value());
             if (limitless && unit.isAngle() && (unit.toDegree(jointLimitHi) - unit.toDegree(jointLimitLo) != 360))
             {
                 VR_WARNING << "Limitless Joint: Angular distance between 'lo' and 'hi' attributes should equal 2*pi [rad] or 360 [deg]." << endl
                            << "Setting 'lo' to -pi and 'hi' to pi [rad]..." << endl;
-                jointLimitLo = -M_PI;
-                jointLimitHi = M_PI;
+                jointLimitLo = float(-M_PI);
+                jointLimitHi = float(M_PI);
             }
         }
 
@@ -194,7 +194,7 @@ namespace VirtualRobot
         SensorPtr s;
 
 
-        SensorFactoryPtr sensorFactory = SensorFactory::fromName(sensorType, NULL);
+        SensorFactoryPtr sensorFactory = SensorFactory::fromName(sensorType, nullptr);
 
         if (sensorFactory)
         {
@@ -218,8 +218,8 @@ namespace VirtualRobot
                                            Eigen::Matrix4f& transformationMatrix
                                           )
     {
-        float jointLimitLow = (float) - M_PI;
-        float jointLimitHigh = (float)M_PI;
+        float jointLimitLow = float(- M_PI);
+        float jointLimitHigh = float(M_PI);
         bool limitless = false;
 
         Eigen::Matrix4f preJointTransform = transformationMatrix;//Eigen::Matrix4f::Identity();
@@ -239,7 +239,7 @@ namespace VirtualRobot
         if (!jointXMLNode)
         {
             // no <Joint> tag -> fixed joint
-            RobotNodeFactoryPtr fixedNodeFactory = RobotNodeFactory::fromName(RobotNodeFixedFactory::getName(), NULL);
+            RobotNodeFactoryPtr fixedNodeFactory = RobotNodeFactory::fromName(RobotNodeFixedFactory::getName(), nullptr);
 
             if (fixedNodeFactory)
             {
@@ -276,9 +276,9 @@ namespace VirtualRobot
         }
 
         rapidxml::xml_node<>* node = jointXMLNode->first_node();
-        rapidxml::xml_node<>* tmpXMLNodeAxis = NULL;
-        rapidxml::xml_node<>* tmpXMLNodeTranslation = NULL;
-        rapidxml::xml_node<>* limitsNode = NULL;
+        rapidxml::xml_node<>* tmpXMLNodeAxis = nullptr;
+        rapidxml::xml_node<>* tmpXMLNodeTranslation = nullptr;
+        rapidxml::xml_node<>* limitsNode = nullptr;
 
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
@@ -372,7 +372,7 @@ namespace VirtualRobot
 
                 if (uAngle.isDegree())
                 {
-                    factor *= float(M_PI / 180.0f);
+                    factor *= float(M_PI / 180.0);
                 }
 
                 maxVelocity *= factor;
@@ -425,7 +425,7 @@ namespace VirtualRobot
 
                 if (uAngle.isDegree())
                 {
-                    factor *= float(M_PI / 180.0f);
+                    factor *= float(M_PI / 180.0);
                 }
 
                 maxAcceleration *= factor;
@@ -545,7 +545,7 @@ namespace VirtualRobot
 
         //}
 
-        RobotNodeFactoryPtr robotNodeFactory = RobotNodeFactory::fromName(jointType, NULL);
+        RobotNodeFactoryPtr robotNodeFactory = RobotNodeFactory::fromName(jointType, nullptr);
 
         if (robotNodeFactory)
         {
@@ -645,7 +645,7 @@ namespace VirtualRobot
         Eigen::Matrix4f transformMatrix = Eigen::Matrix4f::Identity();
 
         rapidxml::xml_node<>* node = robotNodeXMLNode->first_node();
-        rapidxml::xml_node<>* jointNodeXML = NULL;
+        rapidxml::xml_node<>* jointNodeXML = nullptr;
 
         std::vector< rapidxml::xml_node<>* > sensorTags;
 
@@ -788,7 +788,7 @@ namespace VirtualRobot
 
             if (useColModel && visuFile != "")
             {
-                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, NULL);
+                VisualizationFactoryPtr visualizationFactory = VisualizationFactory::fromName(visuFileType, nullptr);
 
                 if (visualizationFactory)
                 {
@@ -885,7 +885,7 @@ namespace VirtualRobot
 
         int rnsCounter = 0;
 
-        for (int i = 0; i < (int)robotNodeSetNodes.size(); ++i)
+        for (std::size_t i = 0; i < robotNodeSetNodes.size(); ++i)
         {
             RobotNodeSetPtr rns = processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
             //nodeSets.push_back(rns);
@@ -999,7 +999,7 @@ namespace VirtualRobot
 
         //std::vector<rapidxml::xml_node<>* > robotNodeSetNodes;
         //std::vector<rapidxml::xml_node<>* > endeffectorNodes;
-        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(NULL, 0, false);
+        rapidxml::xml_node<>* XMLNode = robotXMLNode->first_node(nullptr, 0, false);
 
         while (XMLNode)
         {
@@ -1077,7 +1077,7 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);
             }
 
-            XMLNode = XMLNode->next_sibling(NULL, 0, false);
+            XMLNode = XMLNode->next_sibling(nullptr, 0, false);
         }
 
         THROW_VR_EXCEPTION_IF(robotNodes.empty(), "No RobotNodes defined in Robot.");
@@ -1518,8 +1518,9 @@ namespace VirtualRobot
     void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename, 
                            const std::string& basePath, const std::string& meshDir)
     {
-        mjcf::MujocoIO mujocoIO;
-        mujocoIO.saveMJCF(robot, filename, basePath, meshDir);
+        mjcf::MujocoIO mujocoIO(robot);
+        mujocoIO.setActuatorType(mjcf::ActuatorType::MOTOR);
+        mujocoIO.saveMJCF(filename, basePath, meshDir);
     }
 
 

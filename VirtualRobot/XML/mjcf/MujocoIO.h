@@ -6,6 +6,7 @@
 
 #include "MjcfDocument.h"
 #include "MasslessBodySanitizer.h"
+#include "utils.h"
 
 
 namespace VirtualRobot
@@ -13,27 +14,30 @@ namespace VirtualRobot
 namespace mjcf
 {
 
-
     class MujocoIO
     {
     public:
         
         /// Constructor.
-        MujocoIO();
+        /// @throws VirtualRobotException if robot is null
+        MujocoIO(RobotPtr robot);
         
         /**
          * @brief Create a Mujoco XML (MJCF) document for the given robot.
-         * @param robot      the robot
          * @param filename   the output filename (without directory)
          * @param basePath   the output directory
          * @param meshRelDir the directory relative to basePath where meshes shall be placed
          */
-        void saveMJCF(RobotPtr robot, const std::string& filename, 
-                      const std::string& basePath, const std::string& meshRelDir);
+        void saveMJCF(const std::string& filename, const std::string& basePath, 
+                      const std::string& meshRelDir);
         
         
         /// Set the scaling for lenghts.
         void setLengthScaling(float value);
+
+        /// Set the actuator type.
+        void setActuatorType(ActuatorType value);
+        
         
     private:
         
@@ -66,7 +70,7 @@ namespace mjcf
         void addActuators();
         
         /// Scale all lengths by lengthScaling.
-        void scaleLengths();
+        void scaleLengths(XMLElement* elem);
         
         std::vector<const mjcf::XMLElement*> getAllElements(const std::string& elemName);
 
@@ -75,6 +79,8 @@ namespace mjcf
         
         /// Scaling for lengths, such as positions and translations.
         float lengthScaling = 0.001f;
+        /// The actuator type.
+        ActuatorType actuatorType = ActuatorType::MOTOR;
         
         
         // Paths
@@ -99,10 +105,13 @@ namespace mjcf
         // Processing
         
         /// Sanitizes massless bodies.
-        mjcf::MasslessBodySanitizer masslessBodySanitizer;
+        mjcf::MasslessBodySanitizer masslessBodySanitizer {document, robot};
         
         /// Map of robot node names to XML elements.
         std::map<std::string, mjcf::XMLElement*> nodeBodies;
+        
+        
+        const std::string t = "| ";
         
     };
     

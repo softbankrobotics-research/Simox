@@ -14,19 +14,15 @@ namespace fs = boost::filesystem;
 
 
 
-MujocoIO::MujocoIO() :
-    masslessBodySanitizer(document, robot)
-{
-}
-
-void MujocoIO::saveMJCF(RobotPtr robot, 
-                        const std::string& filename, const std::string& basePath, 
-                        const std::string& meshRelDir)
+MujocoIO::MujocoIO(RobotPtr robot) : robot(robot) 
 {
     THROW_VR_EXCEPTION_IF(!robot, "Given RobotPtr robot is null.");
+}
+
+void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath, 
+                        const std::string& meshRelDir)
+{
     THROW_VR_EXCEPTION_IF(filename.empty(), "Given filename is empty.");
-    
-    this->robot = robot;
     
     setPaths(filename, basePath, meshRelDir);
     
@@ -46,11 +42,15 @@ void MujocoIO::saveMJCF(RobotPtr robot,
     std::cout << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
     
-    std::cout << "===========================" << std::endl
-              << "Current model: "             << std::endl
-              << "--------------"              << std::endl;
-    document->Print();
-    std::cout << "===========================" << std::endl;
+    bool print = false;
+    if (print)
+    {
+        std::cout << "===========================" << std::endl
+                  << "Current model: "             << std::endl
+                  << "--------------"              << std::endl;
+        document->Print();
+        std::cout << "===========================" << std::endl;
+    }
     
     std::cout << "Merging massless bodies ..." << std::endl;
     masslessBodySanitizer.sanitize();
@@ -62,17 +62,19 @@ void MujocoIO::saveMJCF(RobotPtr robot,
     addActuators();
     
     std::cout << "Scaling lengths by " << lengthScaling << " ..." << std::endl;
-    scaleLengths();
+    scaleLengths(document->robotRootBody());
     
-    std::cout << "Done.";
+    std::cout << "Done." << std::endl;
     
-    std::cout << std::endl;
-    std::cout << "===========================" << std::endl
-              << "Output file: "             << std::endl
-              << "------------"              << std::endl;
-    document->Print();
-    std::cout << "===========================" << std::endl;
-    
+    if (print)
+    {
+        std::cout << std::endl;
+        std::cout << "===========================" << std::endl
+                  << "Output file: "             << std::endl
+                  << "------------"              << std::endl;
+        document->Print();
+        std::cout << "===========================" << std::endl;
+    }
     
     assert(!outputFileName.empty());
     std::cout << "Writing to " << (outputDirectory / outputFileName) << std::endl;
@@ -117,6 +119,9 @@ void MujocoIO::makeDefaultsGroup()
     std::stringstream comment;
     comment << "Add default values for " << robot->getName() << " here.";
     defaultsClass->InsertFirstChild(document->NewComment(comment.str().c_str()));
+    
+    document->addDefaultAttr(defaultsClass, "position", "kp", 1);
+    document->addDefaultAttr(defaultsClass, "velocity", "kv", 1);
 }
 
 
@@ -161,7 +166,7 @@ void MujocoIO::addNodeBodyMeshes()
             continue;
         }
         
-        std::cout << "Node " << node->getName() << ":\t";
+        std::cout << t << "Node " << node->getName() << ":\t";
         
         fs::path srcMeshPath = visualization->getFilename();
         
@@ -190,8 +195,8 @@ void MujocoIO::addNodeBodyMeshes()
                 // meshlabserver available
                 std::stringstream convertCommand;
                 convertCommand << "meshlabserver"
-                               << " -i " << srcMeshPath.string() 
-                               << " -o " << dstMeshPath.string();
+                               << " -i " << srcMeshPath 
+                               << " -o " << dstMeshPath;
                 
                 // run command
                 std::cout << "----------------------------------------------------------" << std::endl;
@@ -287,78 +292,81 @@ void MujocoIO::addActuators()
     for (auto joint : jointElements)
     {
         std::string name = joint->Attribute("name");
-        document->addMotorElement(name);
+        switch (actuatorType)
+        {
+            case ActuatorType::MOTOR:
+                document->addActuatorMotorElement(name);
+                break;
+                
+            case ActuatorType::POSITION:
+            {
+                XMLElement* act = document->addActuatorPositionElement(name);
+                
+                const char* limited = joint->Attribute("limited");
+                if (limited)
+                {
+                    act->SetAttribute("ctrllimited", limited);
+                    
+                    const char* range = joint->Attribute("range");
+                    if (range)
+                    {
+                        act->SetAttribute("ctrlrange", range);
+                    }
+                }
+            }
+                break;
+                
+            case ActuatorType::VELOCITY:
+                document->addActuatorVelocityElement(name);
+                break;
+        }
     }
 }
 
-struct ScaleLengthVisitor : public tx::XMLVisitor
+void MujocoIO::scaleLengths(XMLElement* elem)
 {
-    ScaleLengthVisitor(float scaling) : scaling(scaling) {}
+    assert(elem);
     
-    virtual bool VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute* attr) override;
-    void applyScaling();
-    
-    float scaling;
-    
-    std::vector<const XMLElement*> elementsToModify;
-};
-
-bool ScaleLengthVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute* attr)
-{
     if (isElement(elem, "joint"))
     {
-        if (strcmp(elem.Attribute("type"), "hinge") == 0)
+        if (isAttr(elem, "type", "slide") && hasAttr(elem, "range"))
         {
-            while (attr && strcmp(attr->Name(), "range") != 0)
-            {
-                attr = attr->Next();
-            }
-            if (attr) // hinge found
-            {
-                
-            }
+            std::cout << t << "Scaling range of slide joint " 
+                      << elem->Attribute("name") << std::endl;
+            
+            Eigen::Vector2f range = strToVec2(elem->Attribute("range"));
+            range *= lengthScaling;
+            setAttr(elem, "range", range);
         }
     }
-    else if (elem.Attribute("pos"))
+    else if (isElement(elem, "position")
+             //&& isElement(elem.Parent()->ToElement(), "actuator")
+             && hasAttr(elem, "ctrlrange"))
     {
-        elementsToModify.push_back(&elem);
+        std::cout << t << "Scaling ctrlrange of position actuator " 
+                  << elem->Attribute("name") << std::endl;
+        
+        Eigen::Vector2f ctrlrange = strToVec2(elem->Attribute("ctrlrange"));
+        ctrlrange *= lengthScaling;
+        setAttr(elem, "ctrlrange", ctrlrange);
+    }
+    else if (hasAttr(elem, "pos"))
+    {
+        std::cout << t << "Scaling pos of " << elem->Value() << " element " << std::endl;
+        
+        Eigen::Vector3f pos = strToVec(elem->Attribute("pos"));
+        pos *= lengthScaling;
+        setAttr(elem, "pos", pos);
     }
     
-    return true;
-}
-
-void ScaleLengthVisitor::applyScaling()
-{
-    for (auto& elemConst : elementsToModify)
+    
+    for (XMLElement* child = elem->FirstChildElement();
+         child;
+         child = child->NextSiblingElement())
     {
-        XMLElement* elem = const_cast<XMLElement*>(elemConst);
-        if (isElement(elem, "joint"))
-        {
-            if (strcmp(elem->Attribute("type"), "hinge") == 0)
-            {
-                assert(elem->Attribute("range"));
-                Eigen::Vector2f range = strToVec2(elem->Attribute("range"));
-                range *= scaling;
-                
-                elem->SetAttribute("range", toAttr(range).c_str());
-            }
-        }
-        else if (elemConst->Attribute("pos"))
-        {
-            Eigen::Vector3f pos = strToVec(elemConst->Attribute("pos"));
-            pos *= scaling;
-            elem->SetAttribute("pos", toAttr(pos).c_str());
-        }
+        scaleLengths(child);
     }
 }
-
-void MujocoIO::scaleLengths()
-{
-    ScaleLengthVisitor visitor(lengthScaling);
-    document->robotRootBody()->Accept(&visitor);
-    visitor.applyScaling();
-}
-
 
 
 struct ListElementsVisitor : public tinyxml2::XMLVisitor
@@ -392,9 +400,12 @@ std::vector<const mjcf::XMLElement*> MujocoIO::getAllElements(const std::string&
     return visitor.foundElements;
 }
 
+void MujocoIO::setActuatorType(ActuatorType value)
+{
+    actuatorType = value;
+}
+
 void MujocoIO::setLengthScaling(float value)
 {
     lengthScaling = value;
 }
-
-

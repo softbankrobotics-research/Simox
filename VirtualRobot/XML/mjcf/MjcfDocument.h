@@ -7,6 +7,8 @@
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/Tools/tinyxml2.h>
 
+#include "utils.h"
+
 
 namespace VirtualRobot
 {
@@ -72,6 +74,11 @@ namespace mjcf
         /// Add a new defaults class with a class name.
         XMLElement* addDefaultsClass(const std::string& className);
 
+        template <typename AttrT>
+        XMLElement* addDefaultAttr(XMLElement* defaultsClass, const std::string& elementName, 
+                                      const std::string& attrName, const AttrT& attrValue);
+        
+        
         /// Add a skybox texture asset (only one allowed).
         XMLElement* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);        
         
@@ -98,7 +105,11 @@ namespace mjcf
         /// Add a conact/exclude element between the given bodies.
         XMLElement* addContactExclude(const std::string& body1Name, const std::string& body2Name);
         
-        XMLElement* addMotorElement(const std::string& jointName, const std::string& className = "");
+        XMLElement* addActuatorMotorElement(const std::string& jointName);
+        XMLElement* addActuatorPositionElement(const std::string& jointName, float kp = 0);
+        XMLElement* addActuatorPositionElement(
+                const std::string& jointName, bool ctrlLimited, const Eigen::Vector2f& ctrlRange, float kp = 0);
+        XMLElement* addActuatorVelocityElement(const std::string& jointName, float kv = 0);
         
 
         
@@ -126,15 +137,25 @@ namespace mjcf
         
     private:
         
+        
+        
         /// Add a new element with a name (tag) to a parent.
         /// @param className If not empty, set the class attribute of the new element.
         /// @param first If true, will be inserted as first, otherweise at end (default)
         XMLElement* addNewElement(XMLElement* parent, const std::string& elemName, 
                                   const std::string& className = "", bool first = false);
         
+        /// Return the first child element of parent with the given element name.
+        /// If it does not exist, create it.
+        XMLElement* getOrCreateElement(XMLElement* parent, const std::string& elemName);
+        
         /// Gets the section element (child of root element) with a name.
         /// If it does not exist, it is created.
         XMLElement* section(const std::string& name);
+        
+        XMLElement* addActuatorShortcut(
+                const std::string& type, const std::string& name, const std::string& jointName, 
+                const std::string& paramName = "", float paramValue = 0);
         
         
         /// Precision when comparing floats (e.g. with zero).
@@ -158,6 +179,19 @@ namespace mjcf
         
         
     };
+    
+    template<typename AttrT>
+    XMLElement* Document::addDefaultAttr(
+            XMLElement* defaultsClass, const std::string& elementName, 
+            const std::string& attrName, const AttrT& attrValue)
+    {
+        assertElementIs(defaultsClass, "default");
+        
+        XMLElement* element = getOrCreateElement(defaultsClass, elementName);
+        element->SetAttribute(attrName.c_str(), attrValue);
+        
+        return element;
+    }
 
     using DocumentPtr = std::unique_ptr<Document>;
     

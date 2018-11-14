@@ -3,6 +3,8 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 #include <VirtualRobot/XML/RobotIO.h>
+#include <VirtualRobot/XML/mjcf/MujocoIO.h>
+
 
 using namespace VirtualRobot;
 using VirtualRobot::RuntimeEnvironment;
@@ -15,10 +17,10 @@ void printUsage(const char* argv0)
     std::cout << "Usage: " << argv0 
               << " --robot <simox robot file> "
               << "[--outdir <output directory>] "
-              << "[--meshRelDir <relative mesh directory>]"
-              << std::endl;;
+              << "[--meshRelDir <relative mesh directory>] "
+              << "[--actuator {motor|position|velocity}] "
+              << std::endl;
 }
-
 
 /**
  * Loads a Simox robot and converts it to Mujoco's XML format (MJCF).
@@ -30,6 +32,7 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey("robot");
     RuntimeEnvironment::considerKey("outdir");
     RuntimeEnvironment::considerKey("meshRelDir");
+    RuntimeEnvironment::considerKey("actuator");
     RuntimeEnvironment::processCommandLine(argc, argv);
 
     //RuntimeEnvironment::print();
@@ -61,9 +64,25 @@ int main(int argc, char* argv[])
     std::string meshRelDir = RuntimeEnvironment::checkParameter("meshRelDir", "mesh");
     
     
+    std::string actuatorTypeStr = RuntimeEnvironment::checkParameter("actuator", "motor");
+    mjcf::ActuatorType actuatorType;
+    try
+    {
+        actuatorType = mjcf::toActuatorType(actuatorTypeStr);
+    }
+    catch (const std::out_of_range&)
+    {
+        std::cout << "No actuator '" << actuatorTypeStr << "'" << std::endl;
+        std::cout << "Avaliable: motor|position|velocity" << std::endl;
+        return -1;
+    }
+    
+    
+    
     std::cout << "Input file:      " << inputFilename << std::endl;
     std::cout << "Output dir:      " << outputDir << std::endl;
     std::cout << "Output mesh dir: " << outputDir / meshRelDir << std::endl;
+    //std::cout << "Actuator type: " << actuatorType << std::endl;
 
     std::cout << "Loading robot ..." << std::endl;
     
@@ -78,5 +97,16 @@ int main(int argc, char* argv[])
         throw; // rethrow
     }
     
-    RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string(), meshRelDir);
+    if (false)
+    {
+        // using RobotIO
+        RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string(), meshRelDir);
+    }
+    else
+    {
+        // direct API
+        mjcf::MujocoIO mujocoIO(robot);
+        mujocoIO.setActuatorType(actuatorType);
+        mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
+    }
 }

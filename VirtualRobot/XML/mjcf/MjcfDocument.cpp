@@ -3,8 +3,6 @@
 #include <VirtualRobot/Nodes/RobotNodePrismatic.h>
 #include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 
-#include "utils.h"
-
 
 using namespace VirtualRobot;
 using namespace mjcf;
@@ -42,32 +40,7 @@ XMLElement* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen:
     return texSkybox;
 }
 
-XMLElement* Document::addNewElement(XMLElement* parent, const std::string& elemName, 
-                                 const std::string& className, bool first)
-{
-    XMLElement* elem = NewElement(elemName.c_str());
-    
-    if (!className.empty())
-    {
-        elem->SetAttribute("class", className.c_str());
-    }
-    else if (!newElementClass.empty()
-             && !(newElementClassExcludeBody && (isElement(parent, "body") || isElement(elem, "body")))
-             && allowsClassAttr({parent->Value(), elemName}))
-    {
-        elem->SetAttribute("class", newElementClass.c_str());
-    }
-    
-    if (first)
-    {
-        parent->InsertFirstChild(elem);
-    }
-    else
-    {
-        parent->InsertEndChild(elem);
-    }
-    return elem;
-}
+
 
 XMLElement* Document::addDefaultsClass(const std::string& className)
 {
@@ -217,15 +190,48 @@ XMLElement* Document::addMeshElement(const std::string& name, const std::string&
     return mesh;
 }
 
-XMLElement*Document::addMotorElement(const std::string& jointName, const std::string& className)
+XMLElement* Document::addActuatorMotorElement(const std::string& jointName)
 {
-    XMLElement* motor = addNewElement(actuator(), "motor", className);
+    return addActuatorShortcut("motor", jointName, jointName);
+}
+
+XMLElement*Document::addActuatorPositionElement(const std::string& jointName, float kp)
+{
+    return addActuatorShortcut("position", jointName, jointName, "kp", kp);
+}
+
+XMLElement*Document::addActuatorPositionElement(const std::string& jointName, bool ctrlLimited, 
+                                                const Eigen::Vector2f& ctrlRange, float kp)
+{
+    XMLElement* act = addActuatorPositionElement(jointName, kp);
+    act->SetAttribute("ctrllimited", toAttr(ctrlLimited).c_str());
+    act->SetAttribute("ctrlrange", toAttr(ctrlRange).c_str());
+    return act;
+}
+
+XMLElement*Document::addActuatorVelocityElement(const std::string& jointName, float kv)
+{
+    return addActuatorShortcut("velocity", jointName, jointName, "kv", kv);
+}
+
+
+XMLElement* Document::addActuatorShortcut(
+        const std::string& type, const std::string& name, const std::string& jointName, 
+        const std::string& paramName, float paramValue)
+{
+    XMLElement* motor = addNewElement(actuator(), type.c_str());
     
-    motor->SetAttribute("name",  jointName.c_str());
+    motor->SetAttribute("name",  name.c_str());
     motor->SetAttribute("joint", jointName.c_str());
+    
+    if (!paramName.empty() && paramValue > floatCompPrecision)
+    {
+        motor->SetAttribute(paramName.c_str(), paramValue);
+    }
     
     return motor;
 }
+
 
 void Document::setElementPose(XMLElement* elem, const Eigen::Matrix4f& pose)
 {
@@ -286,14 +292,46 @@ XMLElement* Document::addContactExclude(const std::string& body1Name, const std:
 }
 
 
-XMLElement* Document::section(const std::string& name)
+XMLElement* Document::addNewElement(XMLElement* parent, const std::string& elemName, 
+                                 const std::string& className, bool first)
 {
-    XMLElement* elem = root->FirstChildElement(name.c_str());
-    if (!elem)
+    XMLElement* elem = NewElement(elemName.c_str());
+    
+    if (!className.empty())
     {
-        elem = addNewElement(root, name);
+        elem->SetAttribute("class", className.c_str());
+    }
+    else if (!newElementClass.empty()
+             && !(newElementClassExcludeBody && (isElement(parent, "body") || isElement(elem, "body")))
+             && allowsClassAttr({parent->Value(), elemName}))
+    {
+        elem->SetAttribute("class", newElementClass.c_str());
+    }
+    
+    if (first)
+    {
+        parent->InsertFirstChild(elem);
+    }
+    else
+    {
+        parent->InsertEndChild(elem);
     }
     return elem;
+}
+
+XMLElement* Document::getOrCreateElement(XMLElement* parent, const std::string& elemName)
+{
+    XMLElement* elem = parent->FirstChildElement(elemName.c_str());
+    if (!elem)
+    {
+        elem = addNewElement(parent, elemName);
+    }
+    return elem;
+}
+
+XMLElement* Document::section(const std::string& name)
+{
+    return getOrCreateElement(root, name);
 }
 
 void Document::setDummyMass(float value)
@@ -347,4 +385,5 @@ bool Document::allowsClassAttr(const Document::ElementType& type)
 {
     return ELEM_NAMES_WITH_ATTR_CLASS.find(type) != ELEM_NAMES_WITH_ATTR_CLASS.end();
 }
+
 
