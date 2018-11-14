@@ -471,4 +471,12 @@ namespace VirtualRobot
 
     }
 
+    void CDManager::addCollisionModelPair(const std::vector<ModelLinkPtr> &m1, const std::vector<ModelLinkPtr> &m2)
+    {
+        VR_ASSERT(!m1.empty() && !m2.empty());
+        VirtualRobot::LinkSetPtr cms = VirtualRobot::LinkSet::createLinkSet(m1[0]->getModel(), "", m1);
+        VirtualRobot::LinkSetPtr cms2 = VirtualRobot::LinkSet::createLinkSet(m2[0]->getModel(), "", m2);
+        addCollisionModelPair(cms, cms2);
+    }
+
 }
