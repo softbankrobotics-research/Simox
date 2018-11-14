@@ -78,5 +78,5 @@ int main(int argc, char* argv[])
         throw; // rethrow
     }
     
-    //RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string(), meshRelDir);
+    RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string(), meshRelDir);
 }

@@ -19,34 +19,29 @@ MujocoIO::MujocoIO() :
 {
 }
 
-void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::string& basePath, const std::string& meshDir)
+void MujocoIO::saveMJCF(RobotPtr robot, 
+                        const std::string& filename, const std::string& basePath, 
+                        const std::string& meshRelDir)
 {
     THROW_VR_EXCEPTION_IF(!robot, "Given RobotPtr robot is null.");
     THROW_VR_EXCEPTION_IF(filename.empty(), "Given filename is empty.");
     
     this->robot = robot;
-    this->outputDirectory = basePath;
-    this->outputFileName = filename;
-    this->outputMeshRelDirectory = meshDir;
+    
+    setPaths(filename, basePath, meshRelDir);
     
     document.reset(new mjcf::Document());
     document->setModelName(robot->getName());
     
-    document->compiler()->SetAttribute("angle", "radian");
-    document->compiler()->SetAttribute("balanceinertia", "true");
+    makeCompiler();
     
-    XMLElement* defaultsClass = document->addDefaultsClass(robot->getName());
-    std::stringstream ss;
-    ss << "Add default values for " << robot->getName() << " here.";
-    defaultsClass->InsertFirstChild(document->NewComment(ss.str().c_str()));
-    
+    makeDefaultsGroup();
     document->setNewElementClass(robot->getName(), true);
     
-    
-    makeEnvironment();
+    addSkybox();
     
     std::cout << "Creating bodies structure ..." << std::endl;
-    addNodeBodies();
+    makeNodeBodies();
     
     std::cout << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
@@ -84,15 +79,55 @@ void MujocoIO::saveMJCF(RobotPtr robot, const std::string& filename, const std::
     document->SaveFile((outputDirectory / outputFileName).c_str());
 }
 
+void MujocoIO::setPaths(const std::string& filename, const std::string& basePath, const std::string& meshRelDir)
+{
+    outputDirectory = basePath;
+    outputFileName = filename;
+    outputMeshRelDirectory = meshRelDir;
+    
+    ensureDirectoriesExist();
+}
 
-void MujocoIO::makeEnvironment()
+void MujocoIO::ensureDirectoriesExist()
+{
+    auto ensureDirExists = [](const fs::path& dir, const std::string& errMsgName)
+    {
+        if (!fs::is_directory(dir))
+        {
+            std::cout << "Creating directory: " << dir << std::endl;
+            bool success = fs::create_directories(dir);
+            THROW_VR_EXCEPTION_IF(!success, "Could not create " << errMsgName << ": " << dir);
+        }
+    };
+
+    ensureDirExists(outputDirectory, "output directory");
+    ensureDirExists(outputMeshDirectory(), "output mesh directory");
+}
+
+void MujocoIO::makeCompiler()
+{
+    document->compiler()->SetAttribute("angle", "radian");
+    document->compiler()->SetAttribute("balanceinertia", "true");
+}
+
+void MujocoIO::makeDefaultsGroup()
+{
+    XMLElement* defaultsClass = document->addDefaultsClass(robot->getName());
+    
+    std::stringstream comment;
+    comment << "Add default values for " << robot->getName() << " here.";
+    defaultsClass->InsertFirstChild(document->NewComment(comment.str().c_str()));
+}
+
+
+void MujocoIO::addSkybox()
 {
     document->addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
                                Eigen::Vector3f(.4f, .6f, .8f));
 }
 
 
-void MujocoIO::addNodeBodies()
+void MujocoIO::makeNodeBodies()
 {
     nodeBodies.clear();
     
@@ -129,12 +164,10 @@ void MujocoIO::addNodeBodyMeshes()
         std::cout << "Node " << node->getName() << ":\t";
         
         fs::path srcMeshPath = visualization->getFilename();
-        assert(srcMeshPath.is_absolute());
         
         fs::path dstMeshFileName = srcMeshPath.filename();
         dstMeshFileName.replace_extension("stl");
-        fs::path dstMeshRelPath = outputMeshRelDirectory / dstMeshFileName;
-        fs::path dstMeshPath = outputDirectory / dstMeshRelPath;
+        fs::path dstMeshPath = outputMeshDirectory() / dstMeshFileName;
         
         if (!fs::exists(dstMeshPath))
         {
@@ -161,7 +194,9 @@ void MujocoIO::addNodeBodyMeshes()
                                << " -o " << dstMeshPath.string();
                 
                 // run command
+                std::cout << "----------------------------------------------------------" << std::endl;
                 int r = system(convertCommand.str().c_str());
+                std::cout << "----------------------------------------------------------" << std::endl;
                 if (r != 0)
                 {
                     std::cout << "Command returned with error: " << r << "\n"
@@ -177,7 +212,8 @@ void MujocoIO::addNodeBodyMeshes()
         }
         else
         {
-            std::cout << "skipping (" << dstMeshRelPath.string() << " already exists)";
+            std::cout << "skipping (" << outputMeshRelDirectory / dstMeshFileName 
+                      << " already exists)";
         }
         std::cout << std::endl;
         
@@ -185,7 +221,7 @@ void MujocoIO::addNodeBodyMeshes()
         
         // add asset
         std::string meshName = node->getName();
-        document->addMeshElement(meshName, (outputDirectory/dstMeshRelPath).string());
+        document->addMeshElement(meshName, fs::absolute(dstMeshPath).string());
         
         // add geom to body
         XMLElement* body = nodeBodies[node->getName()];
@@ -354,6 +390,11 @@ std::vector<const mjcf::XMLElement*> MujocoIO::getAllElements(const std::string&
     ListElementsVisitor visitor(elemName);
     document->worldbody()->Accept(&visitor);
     return visitor.foundElements;
+}
+
+void MujocoIO::setLengthScaling(float value)
+{
+    lengthScaling = value;
 }
 
 
