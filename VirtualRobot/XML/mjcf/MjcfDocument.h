@@ -82,6 +82,8 @@ namespace mjcf
         /// Add a skybox texture asset (only one allowed).
         XMLElement* addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen::Vector3f& rgb2);        
         
+        /// Add a mocap body with the given name to the worldbody.
+        XMLElement* addMocapBody(const std::string& name, float geomSize);
         
         /// Add a body element to a parent from a RobotNode.
         /// Adds inertial and joint element, if necessary.
@@ -90,9 +92,11 @@ namespace mjcf
         /// Add an inertial element to a body from a RobotNode.
         XMLElement* addInertialElement(XMLElement* body, RobotNodePtr node);
         /// Add a dummy inertial element with small mass and identity inertia matrix.
-        XMLElement* addDummyInertial(XMLElement* body);
+        XMLElement* addDummyInertial(XMLElement* body, bool first=false);
         /// Add a joint element to a body from a RobotNode.
         XMLElement* addJointElement(XMLElement* body, RobotNodePtr node);
+        /// Add a free joint element to a body.
+        XMLElement* addFreeJointElement(XMLElement* body);
         
         /// Add a geom to a body, referencing a mesh.
         XMLElement* addGeomElement(XMLElement* body, const std::string& meshName);
@@ -111,7 +115,8 @@ namespace mjcf
                 const std::string& jointName, bool ctrlLimited, const Eigen::Vector2f& ctrlRange, float kp = 0);
         XMLElement* addActuatorVelocityElement(const std::string& jointName, float kv = 0);
         
-
+        XMLElement* addEqualityWeld(const std::string& name, const std::string& body1, const std::string& body2,
+                                    const std::string& className="");
         
         /// Set the pos and quat attribute of an element.
         void setElementPose(XMLElement* elem, const Eigen::Matrix4f& pose);

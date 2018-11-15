@@ -19,7 +19,7 @@ void MasslessBodySanitizer::sanitize()
 {
     // merge body leaf nodes with parent if they do not have a mass (inertial or geom)
     
-    XMLElement* root = document->worldbody()->FirstChildElement("body");
+    XMLElement* root = document->robotRootBody();
     
     for (XMLElement* body = root->FirstChildElement("body");
          body;
@@ -58,7 +58,9 @@ void MasslessBodySanitizer::sanitizeRecursion(XMLElement* body)
         }
         else
         {
-            std::cout << "[WARN] Massless body with >1 child bodies." << std::endl;
+            std::cout << "Adding dummy inertial to massless body with >1 child bodies." << std::endl;
+            // add a small mass
+            document->addDummyInertial(body, true);
             break;
         }
     }
@@ -198,7 +200,7 @@ void MasslessBodySanitizer::sanitizeLeafBody(XMLElement* body)
     else
     {
         // add a small mass
-        std::cout << "Adding dummy inertial." << std::endl;
+        std::cout << "Adding dummy inertial to massless leaf body with children." << std::endl;
         document->addDummyInertial(body);
     }
 }

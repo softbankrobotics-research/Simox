@@ -36,6 +36,12 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     
     addSkybox();
     
+    if (withMocapBody)
+    {
+        std::cout << "Adding mocap body ..." << std::endl;
+        addMocapBody();
+    }
+    
     std::cout << "Creating bodies structure ..." << std::endl;
     makeNodeBodies();
     
@@ -135,6 +141,38 @@ void MujocoIO::addSkybox()
 }
 
 
+void MujocoIO::addMocapBody()
+{
+    std::string className = "mocap";
+    float geomSize = 0.01f;
+    
+    std::string bodyName;
+    {
+        std::stringstream ss;
+        ss << robot->getName() << "_Mocap";
+        bodyName = ss.str();
+    }
+    
+    // add defaults class
+    XMLElement* defClass = document->addDefaultsClass(className);
+    
+    document->addDefaultAttr(defClass, "geom", "rgba", 
+                             toAttr(Eigen::Vector4f(.9f, .5f, .5f, .5f)).c_str());
+    
+    document->addDefaultAttr(defClass, "equality", "solimp", 
+                             toAttr(Eigen::Vector3f{.95f, .99f, .001f}).c_str());
+    document->addDefaultAttr(defClass, "equality", "solref", 
+                             toAttr(Eigen::Vector2f{ .02f, 1.f}).c_str());
+    
+    // add body
+    XMLElement* mocap = document->addMocapBody(bodyName, geomSize);
+    mocap->SetAttribute("childclass", className.c_str());
+    
+    // add equality weld constraint
+    document->addEqualityWeld(bodyName, robot->getName(), bodyName, className);
+}
+
+
 void MujocoIO::makeNodeBodies()
 {
     nodeBodies.clear();
@@ -144,6 +182,12 @@ void MujocoIO::makeNodeBodies()
     
     // add root
     XMLElement* robotRootBody = document->addRobotRootBodyElement(robot->getName());
+    
+    if (withMocapBody)
+    {
+        document->addDummyInertial(robotRootBody);
+        document->addFreeJointElement(robotRootBody);
+    }
     
     XMLElement* root = document->addBodyElement(robotRootBody, rootNode);
     nodeBodies[rootNode->getName()] = root;
@@ -449,12 +493,18 @@ std::vector<const mjcf::XMLElement*> MujocoIO::getAllElements(const std::string&
     return visitor.foundElements;
 }
 
+void MujocoIO::setLengthScaling(float value)
+{
+    lengthScaling = value;
+}
+
 void MujocoIO::setActuatorType(ActuatorType value)
 {
     actuatorType = value;
 }
 
-void MujocoIO::setLengthScaling(float value)
+void MujocoIO::setWithMocapBody(bool enabled)
 {
-    lengthScaling = value;
+    withMocapBody = enabled;
 }
+

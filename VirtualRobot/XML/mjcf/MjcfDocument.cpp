@@ -40,6 +40,26 @@ XMLElement* Document::addSkyboxTexture(const Eigen::Vector3f& rgb1, const Eigen:
     return texSkybox;
 }
 
+XMLElement* Document::addMocapBody(const std::string& name, float geomSize)
+{
+    /*
+        <body name="hand-ctrl" mocap="true" >
+            <geom type="box" size="0.01 0.01 0.01" contype="0" conaffinity="0" rgba="0.9 0.5 0.5 0.5" />
+        </body>
+      */
+    XMLElement* mocap = addNewElement(worldbody(), "body");
+    mocap->SetAttribute("name", name.c_str());
+    mocap->SetAttribute("mocap", "true");
+    
+    // add geom for visualization
+    
+    XMLElement* geom = addNewElement(mocap, "geom");
+    geom->SetAttribute("type", "box");
+    setAttr(geom, "size", Eigen::Vector3f{geomSize, geomSize, geomSize});
+    
+    return mocap;
+}
+
 
 
 XMLElement* Document::addDefaultsClass(const std::string& className)
@@ -130,11 +150,11 @@ XMLElement* Document::addInertialElement(XMLElement* body, RobotNodePtr node)
     return inertial;
 }
 
-XMLElement* Document::addDummyInertial(XMLElement* body)
+XMLElement*Document::addDummyInertial(XMLElement* body, bool first)
 {
     assertElementIsBody(body);
     
-    XMLElement* inertial = addNewElement(body, "inertial");
+    XMLElement* inertial = addNewElement(body, "inertial", "", first);
     
     inertial->SetAttribute("pos", toAttr(Eigen::Vector3f(0, 0, 0)).c_str());
     inertial->SetAttribute("mass", dummyMass);
@@ -180,6 +200,12 @@ XMLElement* Document::addJointElement(XMLElement* body, RobotNodePtr node)
     return joint;
 }
 
+XMLElement* Document::addFreeJointElement(XMLElement* body)
+{
+    assertElementIsBody(body);
+    return addNewElement(body, "freejoint");
+}
+
 XMLElement* Document::addMeshElement(const std::string& name, const std::string& file, const std::string& className)
 {
     XMLElement* mesh = addNewElement(asset(), "mesh", className);
@@ -212,6 +238,17 @@ XMLElement*Document::addActuatorPositionElement(const std::string& jointName, bo
 XMLElement*Document::addActuatorVelocityElement(const std::string& jointName, float kv)
 {
     return addActuatorShortcut("velocity", jointName, jointName, "kv", kv);
+}
+
+XMLElement* Document::addEqualityWeld(const std::string& name, const std::string& body1, const std::string& body2, const std::string& className)
+{
+    XMLElement* weld = addNewElement(equality(), "weld", className);
+    
+    weld->SetAttribute("name", name.c_str());
+    weld->SetAttribute("body1", body1.c_str());
+    weld->SetAttribute("body2", body2.c_str());
+    
+    return weld;
 }
 
 

@@ -38,6 +38,16 @@ namespace mjcf
         /// Set the actuator type.
         void setActuatorType(ActuatorType value);
         
+        /**
+         * @brief Enable or disable adding of a mocap body controlling the robot pose.
+         * 
+         * @param enabled If true:
+         * - Add a free joint to the robot root body mocap body
+         * - Add a mocap body in the world body (called <RobotName>_Mocap)
+         * - Add a weld constraint welding them together.
+         */
+        void setWithMocapBody(bool enabled);
+        
         
     private:
         
@@ -53,6 +63,9 @@ namespace mjcf
         void makeDefaultsGroup();
         /// Add a skybox texture asset.
         void addSkybox();
+        
+        /// Add a mocap body with defaults group.
+        void addMocapBody();
         
         /// Construct the body structure corresponding to the robot nodes.
         void makeNodeBodies();
@@ -82,6 +95,9 @@ namespace mjcf
         /// The actuator type.
         ActuatorType actuatorType = ActuatorType::MOTOR;
         
+        /// Add a mocap
+        bool withMocapBody = false;
+        
         
         // Paths
         
@@ -89,6 +105,7 @@ namespace mjcf
         boost::filesystem::path outputFileName;
         boost::filesystem::path outputMeshRelDirectory;
         boost::filesystem::path outputMeshDirectory() { return outputDirectory / outputMeshRelDirectory; }
+        
         
         // Input
         
@@ -100,7 +117,7 @@ namespace mjcf
         
         /// The built MJCF document.
         DocumentPtr document = nullptr;
-        
+
         
         // Processing
         

@@ -19,6 +19,7 @@ void printUsage(const char* argv0)
               << "[--outdir <output directory>] "
               << "[--meshRelDir <relative mesh directory>] "
               << "[--actuator {motor|position|velocity}] "
+              << "[--mocap {y|n}]"
               << std::endl;
 }
 
@@ -33,6 +34,8 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey("outdir");
     RuntimeEnvironment::considerKey("meshRelDir");
     RuntimeEnvironment::considerKey("actuator");
+    RuntimeEnvironment::considerKey("mocap");
+    
     RuntimeEnvironment::processCommandLine(argc, argv);
 
     //RuntimeEnvironment::print();
@@ -77,12 +80,14 @@ int main(int argc, char* argv[])
         return -1;
     }
     
+    bool mocap = RuntimeEnvironment::checkParameter("mocap", "n") == "y";
     
     
     std::cout << "Input file:      " << inputFilename << std::endl;
     std::cout << "Output dir:      " << outputDir << std::endl;
     std::cout << "Output mesh dir: " << outputDir / meshRelDir << std::endl;
     //std::cout << "Actuator type: " << actuatorType << std::endl;
+    std::cout << "With mocap body: " << (mocap ? "yes" : "no ");
 
     std::cout << "Loading robot ..." << std::endl;
     
@@ -107,6 +112,7 @@ int main(int argc, char* argv[])
         // direct API
         mjcf::MujocoIO mujocoIO(robot);
         mujocoIO.setActuatorType(actuatorType);
+        mujocoIO.setWithMocapBody(mocap);
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
 }
