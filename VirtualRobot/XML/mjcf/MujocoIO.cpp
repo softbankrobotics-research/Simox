@@ -257,6 +257,40 @@ XMLElement* MujocoIO::addNodeBody(RobotNodePtr node)
     return element;
 }
 
+struct ParentChildContactExcludeVisitor : public tinyxml2::XMLVisitor
+{
+    
+    ParentChildContactExcludeVisitor(Document& document) : document(document) {}
+    virtual ~ParentChildContactExcludeVisitor() override {}
+
+    virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
+    
+    Document& document;  ///< The document.
+    bool firstSkipped = false;  ///< Used to skip the root element.
+};
+
+bool ParentChildContactExcludeVisitor::VisitEnter(const tinyxml2::XMLElement& body, const tinyxml2::XMLAttribute*)
+{
+    if (!isElement(body, "body"))
+    {
+        return true;
+    }
+    
+    if (!firstSkipped)
+    {
+        firstSkipped = true;
+        return true;
+    }
+    
+    const XMLElement* parent = body.Parent()->ToElement();
+    assert(parent);
+    
+    document.addContactExclude(*parent, body);
+    
+    return true;
+}
+
+
 void MujocoIO::addContactExcludes()
 {
     RobotNodePtr rootNode = robot->getRootNode();
@@ -283,6 +317,9 @@ void MujocoIO::addContactExcludes()
         std::string body2 = masslessBodySanitizer.getMergedBodyName(excludePair.second);
         document->addContactExclude(body1, body2);
     }
+    
+    ParentChildContactExcludeVisitor visitor(*document);
+    document->robotRootBody()->Accept(&visitor);
 }
 
 void MujocoIO::addActuators()
@@ -352,7 +389,16 @@ void MujocoIO::scaleLengths(XMLElement* elem)
     }
     else if (hasAttr(elem, "pos"))
     {
-        std::cout << t << "Scaling pos of " << elem->Value() << " element " << std::endl;
+        std::cout << t << "Scaling pos of " << elem->Value() << " ";
+        if (hasAttr(elem, "name"))
+        {
+            std::cout << "'" << elem->Attribute("name") << "'";
+        }
+        else
+        {
+            std::cout << "element";
+        }
+        std::cout << std::endl;
         
         Eigen::Vector3f pos = strToVec(elem->Attribute("pos"));
         pos *= lengthScaling;

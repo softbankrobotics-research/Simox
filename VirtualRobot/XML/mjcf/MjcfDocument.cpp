@@ -275,8 +275,7 @@ void Document::setJointAxis(XMLElement* joint, const Eigen::Vector3f& axis)
 }
 
 
-
-XMLElement*Document::addContactExclude(const XMLElement& body1, const XMLElement& body2)
+XMLElement* Document::addContactExclude(const XMLElement& body1, const XMLElement& body2)
 {
     return addContactExclude(body1.Attribute("name"), body2.Attribute("name"));
 }

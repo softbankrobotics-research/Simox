@@ -137,7 +137,7 @@ void MasslessBodySanitizer::mergeBodies(XMLElement* body, XMLElement* childBody,
     bodySet.addBody(childBodyName);
     body->SetAttribute("name", bodySet.getMergedBodyName().c_str());
     
-    std::cout << "(new name: " << bodySet.getMergedBodyName() << ")" << std::endl;
+    std::cout << "\t(new name: " << bodySet.getMergedBodyName() << ")" << std::endl;
     
     // delete child
     body->DeleteChild(childBody);
