@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VirtualRobot/Tools/tinyxml2.h>
+#include <VirtualRobot/Util/xml/tinyxml2.h>
 #include <string>
 #include <Eigen/Eigen>
 

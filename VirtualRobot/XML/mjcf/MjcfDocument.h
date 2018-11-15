@@ -5,7 +5,7 @@
 #include <Eigen/Eigen>
 
 #include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Tools/tinyxml2.h>
+#include <VirtualRobot/Util/xml/tinyxml2.h>
 
 #include "utils.h"
 

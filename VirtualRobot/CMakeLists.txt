@@ -151,7 +151,6 @@ Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 Tools/Gravity.cpp
-Tools/tinyxml2.cpp
 math/Contact.cpp
 math/ContactList.cpp
 math/Line.cpp
@@ -187,6 +186,7 @@ math/Primitive.cpp
 math/WeightedAverage.cpp
 math/Grid3D.cpp
 math/GridCacheFloat3.cpp
+Util/xml/tinyxml2.cpp
 )
 
 SET(INCLUDES
@@ -310,7 +310,6 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
-Tools/tinyxml2.h
 math/MathForwardDefinitions.h
 math/Contact.h
 math/ContactList.h
@@ -355,7 +354,7 @@ math/Primitive.h
 math/Grid3D.h
 math/GridCacheFloat3.h
 math/WeightedAverage.h
-
+Util/xml/tinyxml2.h
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
