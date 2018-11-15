@@ -120,6 +120,9 @@ void MujocoIO::makeDefaultsGroup()
     comment << "Add default values for " << robot->getName() << " here.";
     defaultsClass->InsertFirstChild(document->NewComment(comment.str().c_str()));
     
+    document->addDefaultAttr(defaultsClass, "joint", "frictionloss", 1);
+    document->addDefaultAttr(defaultsClass, "joint", "damping", 0);
+    document->addDefaultAttr(defaultsClass, "geom", "condim", 4);
     document->addDefaultAttr(defaultsClass, "position", "kp", 1);
     document->addDefaultAttr(defaultsClass, "velocity", "kv", 1);
 }
