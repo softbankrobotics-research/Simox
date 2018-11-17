@@ -129,42 +129,42 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label11">
+           <widget class="QLabel" name="label04">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label12">
+           <widget class="QLabel" name="label05">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QLabel" name="label13">
+           <widget class="QLabel" name="label06">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label21">
+           <widget class="QLabel" name="label07">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="label22">
+           <widget class="QLabel" name="label08">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="QLabel" name="label23">
+           <widget class="QLabel" name="label09">
             <property name="text">
              <string/>
             </property>

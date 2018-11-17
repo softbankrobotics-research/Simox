@@ -424,4 +424,28 @@ void FullDemoWindow::on_pushButton_3_clicked()
     VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label03->size().width(), UI.label03->size().height(), buffer);
     QImage img03(buffer.data(), UI.label03->size().width(), UI.label03->size().height(), QImage::Format_RGB888);
     UI.label03->setPixmap(QPixmap::fromImage(img03));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label04->size().width(), UI.label04->size().height(), buffer);
+    QImage img04(buffer.data(), UI.label04->size().width(), UI.label04->size().height(), QImage::Format_RGB888);
+    UI.label04->setPixmap(QPixmap::fromImage(img04));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label05->size().width(), UI.label05->size().height(), buffer);
+    QImage img05(buffer.data(), UI.label05->size().width(), UI.label05->size().height(), QImage::Format_RGB888);
+    UI.label05->setPixmap(QPixmap::fromImage(img05));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label06->size().width(), UI.label06->size().height(), buffer);
+    QImage img06(buffer.data(), UI.label06->size().width(), UI.label06->size().height(), QImage::Format_RGB888);
+    UI.label06->setPixmap(QPixmap::fromImage(img06));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label07->size().width(), UI.label07->size().height(), buffer);
+    QImage img07(buffer.data(), UI.label07->size().width(), UI.label07->size().height(), QImage::Format_RGB888);
+    UI.label07->setPixmap(QPixmap::fromImage(img07));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label08->size().width(), UI.label08->size().height(), buffer);
+    QImage img08(buffer.data(), UI.label08->size().width(), UI.label08->size().height(), QImage::Format_RGB888);
+    UI.label08->setPixmap(QPixmap::fromImage(img08));
+
+    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label09->size().width(), UI.label09->size().height(), buffer);
+    QImage img09(buffer.data(), UI.label09->size().width(), UI.label09->size().height(), QImage::Format_RGB888);
+    UI.label09->setPixmap(QPixmap::fromImage(img09));
 }
