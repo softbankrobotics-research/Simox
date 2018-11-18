@@ -148,6 +148,7 @@ namespace VirtualRobot
         OffscreenEngine *offscreenEngine;
 
         Qt3DRender::QRenderCaptureReply *render() const;
+        void addToSceneGraph(const VisualizationPtr &visu) const;
     };
 }
 

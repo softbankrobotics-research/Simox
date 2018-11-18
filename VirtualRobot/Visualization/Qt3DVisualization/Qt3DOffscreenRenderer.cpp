@@ -1,7 +1,8 @@
 #include "Qt3DOffscreenRenderer.h"
 
-#include "../CoinVisualization/CoinVisualization.h"
 #include "Qt3DVisualization.h"
+#include "Qt3DVisualizationSet.h"
+#include "Qt3DVisualizationFactory.h"
 
 #include <QTimer>
 #include <QEventLoop>
@@ -14,6 +15,17 @@ namespace VirtualRobot
     {
         this->rootEntity = new Qt3DCore::QEntity();
         this->cameraEntity = new Qt3DRender::QCamera(rootEntity);
+
+        auto lightEntity = new Qt3DCore::QEntity(rootEntity);
+        auto light = new Qt3DRender::QPointLight(lightEntity);
+        light->setIntensity(1.2f);
+        lightEntity->addComponent(light);
+        auto lightTransform = new Qt3DCore::QTransform(lightEntity);
+        lightTransform->setTranslation(this->cameraEntity->position());
+        QObject::connect(this->cameraEntity, &Qt3DRender::QCamera::positionChanged, lightTransform, &Qt3DCore::QTransform::setTranslation);
+        lightEntity->addComponent(lightTransform);
+
+
         this->offscreenEngine = new Qt3DOffscreenRenderer::OffscreenEngine(cameraEntity, QSize(640, 480));
         this->offscreenEngine->setSceneRoot(rootEntity);
     }
@@ -54,6 +66,25 @@ namespace VirtualRobot
         }
     }
 
+    void Qt3DOffscreenRenderer::addToSceneGraph(const VisualizationPtr &visu) const
+    {
+        VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VisualizationSet>(visu);
+        if (set)
+        {
+            for (const auto& v : set->getVisualizations())
+            {
+                addToSceneGraph(v);
+            }
+        }
+        else
+        {
+            //Qt3DVisualizationPtr visu2 = std::static_pointer_cast<Qt3DVisualization>(visu);
+            //visu2->getEntity()->setParent(this->rootEntity);
+            //auto clonedVisu = visu->clone();
+            std::static_pointer_cast<Qt3DVisualization>(visu)->getEntity()->setParent(rootEntity);
+        }
+    }
+
     bool Qt3DOffscreenRenderer::renderOffscreen(const Eigen::Matrix4f &camPose, const std::vector<VirtualRobot::VisualizationPtr> &scene,
                                                 unsigned short width, unsigned short height,
                                                 bool renderRgbImage, std::vector<unsigned char> &rgbImage,
@@ -65,27 +96,20 @@ namespace VirtualRobot
 
         this->cameraEntity->lens()->setPerspectiveProjection((vertFov / M_PI) * 180.0f, static_cast<float>(width)/static_cast<float>(height), zNear, zFar);
         //cameraEntity->setProjectionMatrix(QMatrix4x4(camPose.data()).transposed());
-        this->cameraEntity->setPosition(QVector3D(0.0f, 0.0f, 2000.0f));
+        this->cameraEntity->setPosition(QVector3D(800.0f, 1000.0f, 2000.0f));
         this->cameraEntity->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 
-
-        // Cuboid shape data
-        Qt3DExtras::QCuboidMesh *cuboid = new Qt3DExtras::QCuboidMesh();
-
-        // CuboidMesh Transform
-        Qt3DCore::QTransform *cuboidTransform = new Qt3DCore::QTransform();
-        cuboidTransform->setScale(500.0f);
-
-        Qt3DExtras::QPhongMaterial *cuboidMaterial = new Qt3DExtras::QPhongMaterial();
-        cuboidMaterial->setDiffuse(QColor(QRgb(0x665423)));
-
-        //Cuboid
-        Qt3DCore::QEntity* m_cuboidEntity = new Qt3DCore::QEntity(this->rootEntity);
-        m_cuboidEntity->addComponent(cuboid);
-        m_cuboidEntity->addComponent(cuboidMaterial);
-        m_cuboidEntity->addComponent(cuboidTransform);
+        /*//Remove all visulizations from current scene
+        for(auto child : rootEntity->children())
+        {
+            child->setParent(nullptr);
+        }*/
 
         //Add all visualizations to the scene
+        for (const auto& visu : scene)
+        {
+            addToSceneGraph(visu);
+        }
 
         Qt3DRender::QRenderCaptureReply *reply = render();
         if(reply)
