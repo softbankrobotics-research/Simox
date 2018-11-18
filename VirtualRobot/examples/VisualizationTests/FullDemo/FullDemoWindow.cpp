@@ -402,28 +402,43 @@ void FullDemoWindow::on_pushButton_2_clicked()
 
 void FullDemoWindow::on_pushButton_3_clicked()
 {
-    std::vector<VirtualRobot::VisualizationPtr> scene;
-    scene.push_back(VirtualRobot::VisualizationFactory::getInstance()->createBox(500.0f, 500.0f, 500.0f));
-
     std::vector<unsigned char> buffer;
     Eigen::Matrix4f mat;
     mat <<
          1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 240.0f,
          0.0f, 0.0f, 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f, 1.0f;
+    Eigen::Matrix4f mat2;
+    mat2 <<
+         1.0f, 0.0f, 0.0f, -400.0f,
+         0.0f, 1.0f, 0.0f, 90.0f,
+         0.0f, 0.0f, 1.0f, 400.0f,
+         0.0f, 0.0f, 0.0f, 1.0f;
 
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label01->size().width(), UI.label01->size().height(), buffer);
-    QImage img01(buffer.data(), UI.label01->size().width(), UI.label01->size().height(), QImage::Format_RGB888);
-    UI.label01->setPixmap(QPixmap::fromImage(img01));
+    std::vector<VirtualRobot::VisualizationPtr> scene;
+    auto cube = VirtualRobot::VisualizationFactory::getInstance()->createBox(500.0f, 500.0f, 500.0f);
+    auto plane = VirtualRobot::VisualizationFactory::getInstance()->createBox(3000.0f, 10.0f, 3000.0f);
+    auto sphere = VirtualRobot::VisualizationFactory::getInstance()->createSphere(150.0f);
 
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label02->size().width(), UI.label02->size().height(), buffer);
-    QImage img02(buffer.data(), UI.label02->size().width(), UI.label02->size().height(), QImage::Format_RGB888);
-    UI.label02->setPixmap(QPixmap::fromImage(img02));
+    cube->setColor(VirtualRobot::Visualization::Color(0.4f, 0.4f, 0.8f));
+    cube->setGlobalPose(mat);
+    plane->setColor(VirtualRobot::Visualization::Color(0.5f, 0.5f, 0.5f));
+    sphere->setColor(VirtualRobot::Visualization::Color(0.3f, 0.8f, 0.3f));
+    sphere->setGlobalPose(mat2);
 
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label03->size().width(), UI.label03->size().height(), buffer);
-    QImage img03(buffer.data(), UI.label03->size().width(), UI.label03->size().height(), QImage::Format_RGB888);
-    UI.label03->setPixmap(QPixmap::fromImage(img03));
+    scene.push_back(cube);
+    scene.push_back(plane);
+    scene.push_back(sphere);
+
+    UI.label01->setText(QString("Color"));
+    UI.label02->setText(QString("Depth"));
+    UI.label03->setText(QString("Normal"));
+
+    UI.label01->setAlignment(Qt::AlignCenter);
+    UI.label02->setAlignment(Qt::AlignCenter);
+    UI.label03->setAlignment(Qt::AlignCenter);
+
 
     VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label04->size().width(), UI.label04->size().height(), buffer);
     QImage img04(buffer.data(), UI.label04->size().width(), UI.label04->size().height(), QImage::Format_RGB888);
@@ -436,16 +451,4 @@ void FullDemoWindow::on_pushButton_3_clicked()
     VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label06->size().width(), UI.label06->size().height(), buffer);
     QImage img06(buffer.data(), UI.label06->size().width(), UI.label06->size().height(), QImage::Format_RGB888);
     UI.label06->setPixmap(QPixmap::fromImage(img06));
-
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label07->size().width(), UI.label07->size().height(), buffer);
-    QImage img07(buffer.data(), UI.label07->size().width(), UI.label07->size().height(), QImage::Format_RGB888);
-    UI.label07->setPixmap(QPixmap::fromImage(img07));
-
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label08->size().width(), UI.label08->size().height(), buffer);
-    QImage img08(buffer.data(), UI.label08->size().width(), UI.label08->size().height(), QImage::Format_RGB888);
-    UI.label08->setPixmap(QPixmap::fromImage(img08));
-
-    VirtualRobot::OffscreenRenderer::getInstance()->renderOffscreenRgbImage(mat, scene, UI.label09->size().width(), UI.label09->size().height(), buffer);
-    QImage img09(buffer.data(), UI.label09->size().width(), UI.label09->size().height(), QImage::Format_RGB888);
-    UI.label09->setPixmap(QPixmap::fromImage(img09));
 }
