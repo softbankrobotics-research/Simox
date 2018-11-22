@@ -115,11 +115,13 @@ namespace VirtualRobot
 
     EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectSetPtr obstacles, float stepSize)
     {
-        std::vector<bool> actorCollisionStatus(actors.size(), false);
+        std::vector<char> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
 
         bool finished = false;
         int loop = 0;
+
+        const auto shared_this = shared_from_this();
 
         while (!finished)
         {
@@ -133,10 +135,7 @@ namespace VirtualRobot
                 {
                     finished = false;
 
-                    if (actors[i]->moveActorCheckCollision(shared_from_this(), result, obstacles, stepSize))
-                    {
-                        actorCollisionStatus[i] = true;
-                    }
+                    actorCollisionStatus[i] = actors[i]->moveActorCheckCollision(shared_this, result, obstacles, stepSize);
                 }
             }
 
