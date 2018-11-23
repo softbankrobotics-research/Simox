@@ -22,12 +22,12 @@
 */
 #pragma once
 
-#include "../GraspStudio.h"
+#include "../GraspPlanning.h"
 #include "GraspQualityMeasure.h"
 
 #include <Eigen/Core>
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     /*!
@@ -39,7 +39,7 @@ namespace GraspStudio
         In this implementation, additionally an object specific wrench space (WS) is calculated, which
         approximatevly represents a "perfect" grasp. This object is used to normalize the quality score.
     */
-    class GRASPSTUDIO_IMPORT_EXPORT GraspQualityMeasureWrenchSpaceNotNormalized : public GraspQualityMeasure
+    class GRASPPLANNING_IMPORT_EXPORT GraspQualityMeasureWrenchSpaceNotNormalized : public GraspQualityMeasure
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

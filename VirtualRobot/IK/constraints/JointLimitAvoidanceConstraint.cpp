@@ -45,9 +45,10 @@ double JointLimitAvoidanceConstraint::optimizationFunction(unsigned int /*id*/)
     double value = 0;
 
     float v;
+    VR_ASSERT(nodeSet->getSize() == reference.size());
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        RobotNodePtr node = nodeSet->getNode(i);
+        auto node = nodeSet->getJoint(i);
         if(node->isLimitless())
             continue;
         v = (node->getJointValue() - reference(i));
@@ -61,9 +62,10 @@ Eigen::VectorXf JointLimitAvoidanceConstraint::optimizationGradient(unsigned int
 {
     Eigen::VectorXf gradient(nodeSet->getSize());
 
+    VR_ASSERT(nodeSet->getSize() == reference.size());
     for(size_t i = 0; i < nodeSet->getSize(); i++)
     {
-        RobotNodePtr node = nodeSet->getNode(i);
+        auto node = nodeSet->getJoint(i);
         if(!node->isLimitless())
             gradient(i) = 2 * (node->getJointValue() - reference(i));
         else

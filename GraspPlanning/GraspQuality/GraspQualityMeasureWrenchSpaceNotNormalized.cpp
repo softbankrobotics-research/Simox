@@ -24,7 +24,7 @@
 using namespace std;
 using namespace VirtualRobot;
 
-namespace GraspStudio
+namespace GraspPlanning
 {
 
     void GraspQualityMeasureWrenchSpaceNotNormalized::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints)
@@ -93,7 +93,7 @@ namespace GraspStudio
 
         if (verbose && printAll)
         {
-            GRASPSTUDIO_INFO << " CENTER of GWS: " << endl;
+            GRASPPLANNING_INFO << " CENTER of GWS: " << endl;
             MathTools::print(convexHullCenterGWS);
         }
 
@@ -188,7 +188,7 @@ namespace GraspStudio
     {
         if (!hull)
         {
-            GRASPSTUDIO_ERROR << "NULL data?!" << endl;
+            GRASPPLANNING_ERROR << "NULL data?!" << endl;
             return VirtualRobot::MathTools::ContactPoint();
         }
 
@@ -335,7 +335,7 @@ namespace GraspStudio
 
         if (verbose)
         {
-            GRASPSTUDIO_INFO << endl;
+            GRASPPLANNING_INFO << endl;
             cout << ": GWS volume    : " << convexHullGWS->volume << endl;
             cout << ": GWS min Offset: " << fResOffsetGWS << endl;
             cout << ": GraspQuality  : " << graspQuality << endl;
