@@ -72,6 +72,7 @@ namespace GraspPlanning
 
     class GraspQualityMeasure;
     class GraspQualityMeasureWrenchSpace;
+    class GraspQualityMeasureWrenchSpaceNotNormalized;
     class ContactConeGenerator;
 
     class GraspQualityMeasure;
@@ -82,6 +83,7 @@ namespace GraspPlanning
 
     typedef std::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
     typedef std::shared_ptr<GraspQualityMeasureWrenchSpace> GraspQualityMeasureWrenchSpacePtr;
+    typedef std::shared_ptr<GraspQualityMeasureWrenchSpaceNotNormalized> GraspQualityMeasureWrenchSpaceNotNormalizedPtr;
     typedef std::shared_ptr<ContactConeGenerator> ContactConeGeneratorPtr;
     typedef std::shared_ptr<GraspQualityMeasure> GraspQualityMeasurePtr;
     typedef std::shared_ptr<ApproachMovementGenerator> ApproachMovementGeneratorPtr;

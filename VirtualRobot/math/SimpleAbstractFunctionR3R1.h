@@ -21,14 +21,13 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
-
-
 
 namespace math
 {
 
-    class SimpleAbstractFunctionR3R1
+    class VIRTUAL_ROBOT_IMPORT_EXPORT SimpleAbstractFunctionR3R1
     {
     public:
         virtual float Get(Eigen::Vector3f pos) = 0;

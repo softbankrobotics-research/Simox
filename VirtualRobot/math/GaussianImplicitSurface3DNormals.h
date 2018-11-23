@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 #include "Contact.h"
 #include "Helpers.h"
@@ -31,7 +32,7 @@
 namespace math
 {
 
-class GaussianImplicitSurface3DNormals :
+class VIRTUAL_ROBOT_IMPORT_EXPORT GaussianImplicitSurface3DNormals :
         public SimpleAbstractFunctionR3R1
 {
 public:

@@ -23,6 +23,7 @@
 
 #include "MathForwardDefinitions.h"
 
+#include "../VirtualRobot.h"
 #include "Contact.h"
 #include "DataR3R1.h"
 #include "GaussianImplicitSurface3D.h"
@@ -31,7 +32,7 @@
 namespace math
 {
 
-    class GaussianObjectModel :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT GaussianObjectModel :
             public ImplicitObjectModel
     {
     public:

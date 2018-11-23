@@ -21,13 +21,14 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "Plane.h"
 #include <Eigen/Dense>
 
 namespace math
 {
 
-    class FitPlane
+    class VIRTUAL_ROBOT_IMPORT_EXPORT FitPlane
     {
     public:
         static Plane Fit(const std::vector<Eigen::Vector3f>& points);

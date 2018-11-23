@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
 #include <sstream>
 
@@ -28,7 +29,7 @@
 
 namespace math
 {
-    class Contact
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Contact
     {
     public:
         Contact();
