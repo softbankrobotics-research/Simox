@@ -32,6 +32,11 @@ namespace VirtualRobot
         return false;
     }
 
+    bool CollisionCheckerDummy::checkCollision(const CollisionModelPtr &model1, const Eigen::Vector3f &point, float tolerance)
+    {
+        return false;
+    }
+
     void CollisionCheckerDummy::setAutomaticSizeCheck(bool checkSizeOnColModelCreation)
     {
 

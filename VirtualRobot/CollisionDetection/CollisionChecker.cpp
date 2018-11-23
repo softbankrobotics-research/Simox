@@ -242,6 +242,33 @@ namespace VirtualRobot
         return collisionCheckerImplementation->checkCollision(model1, model2);//, storeContact);
     }
 
+    bool CollisionChecker::checkCollisionP(const CollisionModelPtr &model1, const CollisionChecker::PointAndTolerance &model2)
+    {
+        if (!model1)
+            return false;
+        VR_ASSERT_MESSAGE(model1->getCollisionChecker() == shared_from_this(), "Collision models are linked to different Collision Checker instances");
+        VR_ASSERT(isInitialized());
+
+        return collisionCheckerImplementation->checkCollision(model1, model2.p, model2.tolerance);
+    }
+
+    bool CollisionChecker::checkCollisionP(const std::vector<CollisionModelPtr> &vColModels1, const CollisionChecker::PointAndTolerance &model2)
+    {
+        if (vColModels1.size() == 0)
+        {
+            VR_WARNING << "no internal data..." << endl;
+            return false;
+        }
+        for (const auto& c : vColModels1)
+        {
+            if (checkCollisionP(c, model2))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     void CollisionChecker::setAutomaticSizeCheck(bool checkSizeOnColModelCreation)
     {

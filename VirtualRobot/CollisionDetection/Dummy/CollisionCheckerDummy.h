@@ -26,6 +26,7 @@ namespace VirtualRobot
         virtual float calculateDistance(const CollisionModelPtr& model1, const CollisionModelPtr& model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2) override;
         //! tests if the two models are colliding
         virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2) override;
+        virtual bool checkCollision(const CollisionModelPtr &model1, const Eigen::Vector3f& point, float tolerance = 0.0f) override;
 
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
