@@ -22,14 +22,24 @@ namespace VirtualRobot
     }
 
 
-    float CollisionCheckerDummy::calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
+    float CollisionCheckerDummy::calculateDistance(const CollisionModelPtr &model1, const CollisionModelPtr &model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2)
     {
         return -1.0f;
     }
 
-    bool CollisionCheckerDummy::checkCollision(CollisionModelPtr model1, CollisionModelPtr model2)
+    bool CollisionCheckerDummy::checkCollision(const CollisionModelPtr &model1, const CollisionModelPtr &model2)
     {
         return false;
+    }
+
+    void CollisionCheckerDummy::setAutomaticSizeCheck(bool checkSizeOnColModelCreation)
+    {
+
+    }
+
+    void CollisionCheckerDummy::enableDebugOutput(bool e)
+    {
+
     }
 
 } // namespace

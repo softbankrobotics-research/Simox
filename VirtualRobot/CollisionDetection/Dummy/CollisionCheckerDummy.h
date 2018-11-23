@@ -17,15 +17,15 @@ namespace VirtualRobot
         friend class CollisionChecker;
 
         CollisionCheckerDummy();
-        virtual ~CollisionCheckerDummy();
+        ~CollisionCheckerDummy() override;
 
         /*! Returns distance of the collision models.
         Collision detected if result is zero.
         Returns -1.0 if no distance calculation lib was specified (e.g. VR_COLLISION_DETECTION_PQP)
         */
-        virtual float calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2);
+        virtual float calculateDistance(const CollisionModelPtr& model1, const CollisionModelPtr& model2, Eigen::Vector3f& P1, Eigen::Vector3f& P2, int* trID1, int* trID2) override;
         //! tests if the two models are colliding
-        virtual bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2);
+        virtual bool checkCollision(const CollisionModelPtr& model1, const CollisionModelPtr& model2) override;
 
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
@@ -75,6 +75,9 @@ namespace VirtualRobot
         {
             return false;
         }
+
+        void setAutomaticSizeCheck(bool checkSizeOnColModelCreation) override;
+        void enableDebugOutput(bool e) override;
     };
 
 }
