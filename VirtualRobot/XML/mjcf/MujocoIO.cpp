@@ -186,7 +186,8 @@ void MujocoIO::makeNodeBodies()
     if (withMocapBody)
     {
         document->addDummyInertial(robotRootBody);
-        document->addFreeJointElement(robotRootBody);
+        XMLElement* joint = document->addFreeJointElement(robotRootBody);
+        joint->SetAttribute("name", robot->getName().c_str());
     }
     
     XMLElement* root = document->addBodyElement(robotRootBody, rootNode);
