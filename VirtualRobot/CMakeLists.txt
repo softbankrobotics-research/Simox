@@ -355,6 +355,7 @@ math/Grid3D.h
 math/GridCacheFloat3.h
 math/WeightedAverage.h
 Util/xml/tinyxml2.h
+Util/json/json.hpp
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
