@@ -99,31 +99,32 @@ namespace VirtualRobot
     {
         this->contactPoints.clear();
         this->contactPointsM.clear();
-        EndEffector::ContactInfoVector::const_iterator objPointsIter;
 
-        for (objPointsIter = contactPoints.begin(); objPointsIter != contactPoints.end(); objPointsIter++)
+        this->contactPoints.reserve(contactPoints.size());
+        this->contactPointsM.reserve(contactPoints.size());
+
+        for (const auto& objPoint : contactPoints)
         {
-            MathTools::ContactPoint point;
+            this->contactPoints.emplace_back();
+            MathTools::ContactPoint& point = this->contactPoints.back();
 
-            point.p = objPointsIter->contactPointObstacleLocal;
+            point.p = objPoint.contactPointObstacleLocal;
             point.p -= centerOfModel;
 
-            point.n = objPointsIter->contactPointFingerLocal - objPointsIter->contactPointObstacleLocal;
+            point.n = objPoint.contactPointFingerLocal - objPoint.contactPointObstacleLocal;
             point.n.normalize();
 
             // store force as projected component of approachDirection
-            Eigen::Vector3f nGlob = objPointsIter->contactPointObstacleGlobal - objPointsIter->contactPointFingerGlobal;
+            const Eigen::Vector3f nGlob = objPoint.contactPointObstacleGlobal - objPoint.contactPointFingerGlobal;
 
             if (nGlob.norm() > 1e-10)
             {
-                point.force = nGlob.dot(objPointsIter->approachDirectionGlobal) / nGlob.norm();
+                point.force = nGlob.dot(objPoint.approachDirectionGlobal) / nGlob.norm();
             }
             else
             {
                 point.force = 0;
             }
-
-            this->contactPoints.push_back(point);
         }
 
         VirtualRobot::MathTools::convertMM2M(this->contactPoints, this->contactPointsM);

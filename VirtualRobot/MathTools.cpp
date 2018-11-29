@@ -849,15 +849,10 @@ namespace VirtualRobot
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::convertMM2M(const std::vector<ContactPoint> points, std::vector<ContactPoint>& storeResult)
     {
         float s = 1.0f / 1000.0f;
-        storeResult.clear();
-        std::vector<ContactPoint>::const_iterator iter1 = points.begin();
-
-        while (iter1 != points.end())
+        storeResult = points;
+        for(auto& p : storeResult)
         {
-            ContactPoint tmp = *iter1;
-            tmp.p *= s;
-            storeResult.push_back(tmp);
-            iter1++;
+            p.p *= s;
         }
     }
 
