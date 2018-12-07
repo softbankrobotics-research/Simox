@@ -360,7 +360,7 @@ namespace VirtualRobot
                                                             vertices.at(i)[1],
                                                             vertices.at(i)[2]});
         }
-        typedef float num_t;
+        using num_t = float;
         // construct a kd-tree index:
         typedef nanoflann::KDTreeSingleIndexAdaptor<
             nanoflann::L2_Simple_Adaptor<num_t, PointCloud<num_t> > ,

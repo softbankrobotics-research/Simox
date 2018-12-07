@@ -177,7 +177,7 @@ PUGI__NS_BEGIN
 	template <typename T> allocation_function xml_memory_management_function_storage<T>::allocate = default_allocate;
 	template <typename T> deallocation_function xml_memory_management_function_storage<T>::deallocate = default_deallocate;
 
-	typedef xml_memory_management_function_storage<int> xml_memory;
+	using xml_memory = xml_memory_management_function_storage<int>;
 PUGI__NS_END
 
 // String utilities
@@ -1424,7 +1424,7 @@ PUGI__NS_BEGIN
 
 	struct utf8_counter
 	{
-		typedef size_t value_type;
+		using value_type = size_t;
 
 		static value_type low(value_type result, uint32_t ch)
 		{
@@ -1445,7 +1445,7 @@ PUGI__NS_BEGIN
 
 	struct utf8_writer
 	{
-		typedef uint8_t* value_type;
+		using value_type = uint8_t *;
 
 		static value_type low(value_type result, uint32_t ch)
 		{
@@ -1490,7 +1490,7 @@ PUGI__NS_BEGIN
 
 	struct utf16_counter
 	{
-		typedef size_t value_type;
+		using value_type = size_t;
 
 		static value_type low(value_type result, uint32_t)
 		{
@@ -1505,7 +1505,7 @@ PUGI__NS_BEGIN
 
 	struct utf16_writer
 	{
-		typedef uint16_t* value_type;
+		using value_type = uint16_t *;
 
 		static value_type low(value_type result, uint32_t ch)
 		{
@@ -1533,7 +1533,7 @@ PUGI__NS_BEGIN
 
 	struct utf32_counter
 	{
-		typedef size_t value_type;
+		using value_type = size_t;
 
 		static value_type low(value_type result, uint32_t)
 		{
@@ -1548,7 +1548,7 @@ PUGI__NS_BEGIN
 
 	struct utf32_writer
 	{
-		typedef uint32_t* value_type;
+		using value_type = uint32_t *;
 
 		static value_type low(value_type result, uint32_t ch)
 		{
@@ -1574,7 +1574,7 @@ PUGI__NS_BEGIN
 
 	struct latin1_writer
 	{
-		typedef uint8_t* value_type;
+		using value_type = uint8_t *;
 
 		static value_type low(value_type result, uint32_t ch)
 		{
@@ -1595,7 +1595,7 @@ PUGI__NS_BEGIN
 
 	struct utf8_decoder
 	{
-		typedef uint8_t type;
+		using type = uint8_t;
 
 		template <typename Traits> static inline typename Traits::value_type process(const uint8_t* data, size_t size, typename Traits::value_type result, Traits)
 		{
@@ -1662,7 +1662,7 @@ PUGI__NS_BEGIN
 
 	template <typename opt_swap> struct utf16_decoder
 	{
-		typedef uint16_t type;
+		using type = uint16_t;
 
 		template <typename Traits> static inline typename Traits::value_type process(const uint16_t* data, size_t size, typename Traits::value_type result, Traits)
 		{
@@ -1714,7 +1714,7 @@ PUGI__NS_BEGIN
 
 	template <typename opt_swap> struct utf32_decoder
 	{
-		typedef uint32_t type;
+		using type = uint32_t;
 
 		template <typename Traits> static inline typename Traits::value_type process(const uint32_t* data, size_t size, typename Traits::value_type result, Traits)
 		{
@@ -1744,7 +1744,7 @@ PUGI__NS_BEGIN
 
 	struct latin1_decoder
 	{
-		typedef uint8_t type;
+		using type = uint8_t;
 
 		template <typename Traits> static inline typename Traits::value_type process(const uint8_t* data, size_t size, typename Traits::value_type result, Traits)
 		{
@@ -1763,30 +1763,30 @@ PUGI__NS_BEGIN
 
 	template <> struct wchar_selector<2>
 	{
-		typedef uint16_t type;
-		typedef utf16_counter counter;
-		typedef utf16_writer writer;
-		typedef utf16_decoder<opt_false> decoder;
+		using type = uint16_t;
+		using counter = utf16_counter;
+		using writer = utf16_writer;
+		using decoder = utf16_decoder<opt_false>;
 	};
 
 	template <> struct wchar_selector<4>
 	{
-		typedef uint32_t type;
-		typedef utf32_counter counter;
-		typedef utf32_writer writer;
-		typedef utf32_decoder<opt_false> decoder;
+		using type = uint32_t;
+		using counter = utf32_counter;
+		using writer = utf32_writer;
+		using decoder = utf32_decoder<opt_false>;
 	};
 
-	typedef wchar_selector<sizeof(wchar_t)>::counter wchar_counter;
-	typedef wchar_selector<sizeof(wchar_t)>::writer wchar_writer;
+	using wchar_counter = wchar_selector<sizeof(wchar_t)>::counter;
+	using wchar_writer = wchar_selector<sizeof(wchar_t)>::writer;
 
 	struct wchar_decoder
 	{
-		typedef wchar_t type;
+		using type = wchar_t;
 
 		template <typename Traits> static inline typename Traits::value_type process(const wchar_t* data, size_t size, typename Traits::value_type result, Traits traits)
 		{
-			typedef wchar_selector<sizeof(wchar_t)>::decoder decoder;
+			using decoder = wchar_selector<sizeof(wchar_t)>::decoder;
 
 			return decoder::process(reinterpret_cast<const typename decoder::type*>(data), size, result, traits);
 		}
@@ -2556,7 +2556,7 @@ PUGI__NS_BEGIN
 		}
 	}
 
-	typedef char_t* (*strconv_pcdata_t)(char_t*);
+	using strconv_pcdata_t = char_t *(*)(char_t *);
 
 	template <typename opt_trim, typename opt_eol, typename opt_escape> struct strconv_pcdata_impl
 	{
@@ -2627,7 +2627,7 @@ PUGI__NS_BEGIN
 		}
 	}
 
-	typedef char_t* (*strconv_attribute_t)(char_t*, char_t);
+	using strconv_attribute_t = char_t *(*)(char_t *, char_t);
 
 	template <typename opt_escape> struct strconv_attribute_impl
 	{
@@ -4493,20 +4493,20 @@ PUGI__NS_BEGIN
 
 	template <typename T> struct make_unsigned;
 
-	template <> struct make_unsigned<int> { typedef unsigned int type; };
-	template <> struct make_unsigned<unsigned int> { typedef unsigned int type; };
-	template <> struct make_unsigned<long> { typedef unsigned long type; };
-	template <> struct make_unsigned<unsigned long> { typedef unsigned long type; };
+	template <> struct make_unsigned<int> { using type = unsigned int; };
+	template <> struct make_unsigned<unsigned int> { using type = unsigned int; };
+	template <> struct make_unsigned<long> { using type = unsigned long; };
+	template <> struct make_unsigned<unsigned long> { using type = unsigned long; };
 
 #ifdef PUGIXML_HAS_LONG_LONG
-	template <> struct make_unsigned<long long> { typedef unsigned long long type; };
-	template <> struct make_unsigned<unsigned long long> { typedef unsigned long long type; };
+	template <> struct make_unsigned<long long> { using type = unsigned long long; };
+	template <> struct make_unsigned<unsigned long long> { using type = unsigned long long; };
 #endif
 
 	template <typename T>
 	PUGI__FN char_t* integer_to_string(char_t* begin, char_t* end, T value)
 	{
-		typedef typename make_unsigned<T>::type U;
+		using U = typename make_unsigned<T>::type;
 
 		bool negative = value < 0;
 
@@ -4630,7 +4630,7 @@ PUGI__NS_BEGIN
 		fseeko64(file, 0, SEEK_SET);
 	#else
 		// if this is a 32-bit OS, long is enough; if this is a unix system, long is 64-bit, which is enough; otherwise we can't do anything anyway.
-		typedef long length_type;
+		using length_type = long;
 
 		fseek(file, 0, SEEK_END);
 		length_type length = ftell(file);
@@ -6864,7 +6864,7 @@ namespace pugi
 		reset();
 
 		using impl::auto_deleter; // MSVC7 workaround
-		typedef int (*fclose_t)(FILE*); // BCC5 workaround
+		using fclose_t = int (*)(FILE *); // BCC5 workaround
 		auto_deleter<FILE, fclose_t> file(fopen(path_, "rb"), fclose);
 
 		return impl::load_file_impl(static_cast<impl::xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
@@ -6875,7 +6875,7 @@ namespace pugi
 		reset();
 
 		using impl::auto_deleter; // MSVC7 workaround
-		typedef int (*fclose_t)(FILE*); // BCC5 workaround
+		using fclose_t = int (*)(FILE *); // BCC5 workaround
 		auto_deleter<FILE, fclose_t> file(impl::open_file_wide(path_, L"rb"), fclose);
 
 		return impl::load_file_impl(static_cast<impl::xml_document_struct*>(_root), file.data, options, encoding, &_buffer);
@@ -6949,7 +6949,7 @@ namespace pugi
 	PUGI__FN bool xml_document::save_file(const char* path_, const char_t* indent, unsigned int flags, xml_encoding encoding) const
 	{
 		using impl::auto_deleter; // MSVC7 workaround
-		typedef int (*fclose_t)(FILE*); // BCC5 workaround
+		using fclose_t = int (*)(FILE *); // BCC5 workaround
 		auto_deleter<FILE, fclose_t> file(fopen(path_, (flags & format_save_file_text) ? "w" : "wb"), fclose);
 
 		return impl::save_file_impl(*this, file.data, indent, flags, encoding);
@@ -6958,7 +6958,7 @@ namespace pugi
 	PUGI__FN bool xml_document::save_file(const wchar_t* path_, const char_t* indent, unsigned int flags, xml_encoding encoding) const
 	{
 		using impl::auto_deleter; // MSVC7 workaround
-		typedef int (*fclose_t)(FILE*); // BCC5 workaround
+		using fclose_t = int (*)(FILE *); // BCC5 workaround
 		auto_deleter<FILE, fclose_t> file(impl::open_file_wide(path_, (flags & format_save_file_text) ? L"w" : L"wb"), fclose);
 
 		return impl::save_file_impl(*this, file.data, indent, flags, encoding);
@@ -7906,7 +7906,7 @@ PUGI__NS_BEGIN
 	{
 	#if defined(__STDC_IEC_559__) || ((FLT_RADIX - 0 == 2) && (FLT_MAX_EXP - 0 == 128) && (FLT_MANT_DIG - 0 == 24))
 		PUGI__STATIC_ASSERT(sizeof(float) == sizeof(uint32_t));
-		typedef uint32_t UI; // BCC5 workaround
+		using UI = uint32_t; // BCC5 workaround
 		union { float f; UI i; } u;
 		u.i = 0x7fc00000;
 		return u.f;

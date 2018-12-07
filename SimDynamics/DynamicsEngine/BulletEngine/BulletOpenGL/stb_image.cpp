@@ -27,12 +27,12 @@
 
 
 // implementation:
-typedef unsigned char  uint8;
-typedef unsigned short uint16;
-typedef   signed short  int16;
-typedef unsigned int   uint32;
-typedef   signed int    int32;
-typedef unsigned int   uint;
+using uint8 = unsigned char;
+using uint16 = unsigned short;
+using int16 = short;
+using uint32 = unsigned int;
+using int32 = int;
+using uint = unsigned int;
 
 // should produce compiler error if size is wrong
 typedef unsigned char validate_uint32[sizeof(uint32) == 4 ? 1 : -1];
@@ -1171,7 +1171,7 @@ return (uint8) x;
 #ifdef STBI_SIMD
 typedef unsigned short stbi_dequantize_t;
 #else
-typedef uint8 stbi_dequantize_t;
+using stbi_dequantize_t = uint8;
 #endif
 
 // .344 seconds on 3*anemones.jpg
@@ -1869,8 +1869,7 @@ return 1;
 
 // static jfif-centered resampling (across block boundaries)
 
-typedef uint8* (*resample_row_func)(uint8* out, uint8* in0, uint8* in1,
-                                    int w, int hs);
+using resample_row_func = uint8 *(*)(uint8 *, uint8 *, uint8 *, int, int);
 
 #define div4(x) ((uint8) ((x) >> 2))
 
