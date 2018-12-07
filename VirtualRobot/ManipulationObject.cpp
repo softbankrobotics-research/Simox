@@ -71,8 +71,8 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE(graspSet, "NULL data");
 
-        for (size_t i = 0; i < graspSets.size(); i++)
-            if (graspSets[i] == graspSet)
+        for (const auto & i : graspSets)
+            if (i == graspSet)
             {
                 return true;
             }
@@ -82,8 +82,8 @@ namespace VirtualRobot
 
     bool ManipulationObject::hasGraspSet(const std::string& robotType, const std::string& eef)
     {
-        for (size_t i = 0; i < graspSets.size(); i++)
-            if (graspSets[i]->getRobotType() == robotType && graspSets[i]->getEndEffector() == eef)
+        for (auto & graspSet : graspSets)
+            if (graspSet->getRobotType() == robotType && graspSet->getEndEffector() == eef)
             {
                 return true;
             }
@@ -102,10 +102,10 @@ namespace VirtualRobot
 
     VirtualRobot::GraspSetPtr ManipulationObject::getGraspSet(const std::string& robotType, const std::string& eefName)
     {
-        for (size_t i = 0; i < graspSets.size(); i++)
-            if (graspSets[i]->getRobotType() == robotType && graspSets[i]->getEndEffector() == eefName)
+        for (auto & graspSet : graspSets)
+            if (graspSet->getRobotType() == robotType && graspSet->getEndEffector() == eefName)
             {
-                return graspSets[i];
+                return graspSet;
             }
 
         return GraspSetPtr();
@@ -113,10 +113,10 @@ namespace VirtualRobot
 
     VirtualRobot::GraspSetPtr ManipulationObject::getGraspSet(const std::string& name)
     {
-        for (size_t i = 0; i < graspSets.size(); i++)
-            if (graspSets[i]->getName() == name)
+        for (auto & graspSet : graspSets)
+            if (graspSet->getName() == name)
             {
-                return graspSets[i];
+                return graspSet;
             }
 
         return GraspSetPtr();
@@ -166,9 +166,9 @@ namespace VirtualRobot
 
             ss << getSceneObjectXMLString(basePath, tabs + 1);
 
-            for (size_t i = 0; i < graspSets.size(); i++)
+            for (auto & graspSet : graspSets)
             {
-                ss << graspSets[i]->getXMLString(tabs + 1) << "\n";
+                ss << graspSet->getXMLString(tabs + 1) << "\n";
             }
         }
 
@@ -208,9 +208,9 @@ namespace VirtualRobot
 
         result->setGlobalPose(getGlobalPose());
 
-        for (size_t i = 0; i < graspSets.size(); i++)
+        for (const auto & graspSet : graspSets)
         {
-            result->addGraspSet(graspSets[i]->clone());
+            result->addGraspSet(graspSet->clone());
         }
 
         return result;

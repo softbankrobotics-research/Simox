@@ -20,9 +20,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!robot.lock(), "NULL robot in RobotConfig");
 
-        for (std::vector< Configuration >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (const auto & config : configs)
         {
-            setConfig((*i));
+            setConfig(config);
         }
     }
 
@@ -32,9 +32,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!robot.lock(), "NULL robot in RobotConfig");
 
-        for (std::map< RobotNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (const auto & config : configs)
         {
-            setConfig(i->first, i->second);
+            setConfig(config.first, config.second);
         }
     }
 
@@ -69,9 +69,9 @@ namespace VirtualRobot
     {
         cout << "  Robot Config <" << name << ">" << endl;
 
-        for (std::map< RobotNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (const auto & config : configs)
         {
-            cout << "  * " << i->first->getName() << ":\t" << i->second << endl;
+            cout << "  * " << config.first->getName() << ":\t" << config.second << endl;
         }
     }
 
@@ -188,9 +188,9 @@ namespace VirtualRobot
 
     bool RobotConfig::hasConfig(const std::string& name) const
     {
-        for (std::map< RobotNodePtr, float >::const_iterator i = configs.begin(); i != configs.end(); i++)
+        for (const auto & config : configs)
         {
-            if (i->first->getName() == name)
+            if (config.first->getName() == name)
             {
                 return true;
             }

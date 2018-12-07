@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE(testNullBlock)
 
     BOOST_CHECK_EQUAL(ios.eof(), true);
 
-    for (int i = 0; i < BLOCK_SIZE_COMPRESSION_TEST; i++)
+    for (unsigned char i : blockN2)
     {
-        BOOST_CHECK_EQUAL(blockN2[i], 0);
+        BOOST_CHECK_EQUAL(i, 0);
     }
 
     delete bzip2;
@@ -95,9 +95,9 @@ BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
 
     bool ok = false;
 
-    for (int j = 0; j < NR_BLOCKS_COMPRESSION_TEST; j++)
+    for (auto & j : blockN)
     {
-        BOOST_CHECK_NO_THROW(ok = bzip2->write((void*)(blockN[j]), BLOCK_SIZE_COMPRESSION_TEST));
+        BOOST_CHECK_NO_THROW(ok = bzip2->write((void*)j, BLOCK_SIZE_COMPRESSION_TEST));
         BOOST_CHECK_EQUAL(ok, true);
     }
 
@@ -115,9 +115,9 @@ BOOST_AUTO_TEST_CASE(testMultipleRandomBlocks)
     ok = false;
     int nrBytes = 0;
 
-    for (int j = 0; j < NR_BLOCKS_COMPRESSION_TEST; j++)
+    for (auto & j : blockN2)
     {
-        BOOST_CHECK_NO_THROW(ok = bzip2b->read((void*)(blockN2[j]), BLOCK_SIZE_COMPRESSION_TEST, nrBytes));
+        BOOST_CHECK_NO_THROW(ok = bzip2b->read((void*)j, BLOCK_SIZE_COMPRESSION_TEST, nrBytes));
         BOOST_CHECK_EQUAL(ok, true);
         BOOST_CHECK_EQUAL(nrBytes, BLOCK_SIZE_COMPRESSION_TEST);
     }
@@ -181,9 +181,9 @@ BOOST_AUTO_TEST_CASE(testCorrectEnding)
     BOOST_CHECK_EQUAL(ok, true);
 
 
-    for (int i = 0; i < sizeSmall; i++)
+    for (unsigned char i : blockN2)
     {
-        BOOST_CHECK_EQUAL(blockN2[i], 0);
+        BOOST_CHECK_EQUAL(i, 0);
     }
 
     BOOST_CHECK_EQUAL(ios.eof(), false);

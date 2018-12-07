@@ -429,14 +429,14 @@ namespace SimDynamics
         std::vector<BulletRobot::LinkInfo> links = btRobot->getLinks();
         std::vector<DynamicsObjectPtr> nodes = btRobot->getDynamicsRobotNodes();
 
-        for (size_t i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
-            addObject(nodes[i]);
+            addObject(node);
         }
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            addLink(links[i]);
+            addLink(link);
         }
 
         return DynamicsEngine::addRobot(r);
@@ -463,19 +463,19 @@ namespace SimDynamics
 
         e->updateRobots(timeStep);
 
-        for (unsigned int i = 0; i < e->callbacks.size(); i++)
+        for (auto & callback : e->callbacks)
         {
-            e->callbacks[i].first(e->callbacks[i].second, timeStep);
+            callback.first(callback.second, timeStep);
         }
     }
 
 
     void BulletEngine::updateRobots(btScalar timeStep)
     {
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            robots[i]->actuateJoints(static_cast<double>(timeStep));
-            robots[i]->updateSensors(static_cast<double>(timeStep));
+            robot->actuateJoints(static_cast<double>(timeStep));
+            robot->updateSensors(static_cast<double>(timeStep));
         }
     }
 
@@ -494,14 +494,14 @@ namespace SimDynamics
         std::vector<DynamicsObjectPtr> nodes = btRobot->getDynamicsRobotNodes();
 
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            removeLink(links[i]);
+            removeLink(link);
         }
 
-        for (size_t i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
-            removeObject(nodes[i]);
+            removeObject(node);
         }
 
         return DynamicsEngine::removeRobot(r);
@@ -516,9 +516,9 @@ namespace SimDynamics
         dynamicsWorld->addConstraint(l.joint.get(), true);
 #endif
 
-        for (size_t i = 0; i < l.disabledCollisionPairs.size(); i++)
+        for (auto & disabledCollisionPair : l.disabledCollisionPairs)
         {
-            this->disableCollision(static_cast<DynamicsObject*>(l.disabledCollisionPairs[i].first.get()), static_cast<DynamicsObject*>(l.disabledCollisionPairs[i].second.get()));
+            this->disableCollision(static_cast<DynamicsObject*>(disabledCollisionPair.first.get()), static_cast<DynamicsObject*>(disabledCollisionPair.second.get()));
         }
 
         return true;
@@ -714,9 +714,9 @@ namespace SimDynamics
 
         std::vector<BulletRobot::LinkInfo> links = br->getLinks(bo);
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            removeLink(links[i]);
+            removeLink(link);
         }
 
         bool res = br->detachObject(object);
@@ -741,9 +741,9 @@ void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, b
 
     updateRobots(deltaTimeStep);
 
-    for (unsigned int i = 0; i < callbacks.size(); i++)
+    for (auto & callback : callbacks)
     {
-        callbacks[i].first(callbacks[i].second, deltaTimeStep);
+        callback.first(callback.second, deltaTimeStep);
     }
     std::chrono::duration<double> diff = (std::chrono::system_clock::now()-start);
 //    cout << "duration: " << diff.count() << endl;

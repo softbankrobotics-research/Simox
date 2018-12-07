@@ -25,9 +25,9 @@ namespace VirtualRobot
 
     TriMeshModel::TriMeshModel(std::vector <triangle>& triangles)
     {
-        for (size_t i = 0; i < triangles.size(); i++)
+        for (auto & triangle : triangles)
         {
-            addTriangleWithFace(triangles[i].vertex1, triangles[i].vertex2, triangles[i].vertex3);
+            addTriangleWithFace(triangle.vertex1, triangle.vertex2, triangle.vertex3);
         }
     }
 
@@ -794,9 +794,9 @@ namespace VirtualRobot
     {
         cout << "TriMeshModel Normals:" << endl;
         std::streamsize pr = cout.precision(2);
-        for (size_t i = 0; i < faces.size(); i++)
+        for (auto & face : faces)
         {
-            cout << "<" << faces[i].normal(0) << "," << faces[i].normal(1) << "," << faces[i].normal(2) << ">,";
+            cout << "<" << face.normal(0) << "," << face.normal(1) << "," << face.normal(2) << ">,";
         }
         cout.precision(pr);
     }
@@ -816,9 +816,9 @@ namespace VirtualRobot
     {
         cout << "TriMeshModel Faces (vertex indices):" << endl;
         std::streamsize pr = cout.precision(2);
-        for (size_t i = 0; i < faces.size(); i++)
+        for (auto & face : faces)
         {
-            cout << faces[i].id1 << "," << faces[i].id2 << "," << faces[i].id3 << endl;
+            cout << face.id1 << "," << face.id2 << "," << face.id3 << endl;
         }
         cout.precision(pr);
     }

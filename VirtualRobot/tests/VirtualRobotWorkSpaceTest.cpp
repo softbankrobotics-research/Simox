@@ -50,9 +50,9 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceEuler)
     BOOST_CHECK_SMALL(x[5], 1e-6f);
 
     // identity, vector -> matrix
-    for (int i = 0; i < 6; i++)
+    for (float & i : x)
     {
-        x[i] = 0.0f;
+        i = 0.0f;
     }
 
     ws->vector2Matrix(x, m);

@@ -219,9 +219,9 @@ namespace VirtualRobot
         Eigen::Matrix4f t;
         t.setIdentity();
 
-        for (std::vector<Eigen::Vector3f >::iterator i = model->vertices.begin(); i != model->vertices.end(); i++)
+        for (auto & vertice : model->vertices)
         {
-            t.block(0, 3, 3, 1) = *i;
+            t.block(0, 3, 3, 1) = vertice;
             t = globalPose * t;
             result.push_back(t.block(0, 3, 3, 1));
         }
@@ -351,16 +351,16 @@ namespace VirtualRobot
         CollisionCheckerPtr colChecker = colModels[0]->getCollisionChecker();
         std::vector<VisualizationNodePtr> visus;
 
-        for (size_t i = 0; i < colModels.size(); i++)
+        for (const auto & colModel : colModels)
         {
-            VisualizationNodePtr v = colModels[i]->getVisualization();
+            VisualizationNodePtr v = colModel->getVisualization();
 
             if (v)
             {
                 visus.push_back(v);
             }
 
-            VR_ASSERT(colModels[i]->getCollisionChecker() == colChecker);
+            VR_ASSERT(colModel->getCollisionChecker() == colChecker);
         }
 
         if (visus.size() == 0)

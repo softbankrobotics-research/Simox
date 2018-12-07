@@ -256,9 +256,9 @@ void showCamWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (auto & currentRobotNode : currentRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentRobotNode->getName().c_str()));
     }
 }
 
@@ -275,9 +275,9 @@ void showCamWindow::updateRNSBox()
     UI.comboBoxRobotNodeSet->clear();
     UI.comboBoxRobotNodeSet->addItem(QString("<All>"));
 
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
+    for (auto & robotNodeSet : robotNodeSets)
     {
-        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSets[i]->getName().c_str()));
+        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSet->getName().c_str()));
     }
 }
 

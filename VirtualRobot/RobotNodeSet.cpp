@@ -60,15 +60,15 @@ namespace VirtualRobot
 
 
         // now, the objects are stored in the parent's (SceneObjectSet) data structure, so that the methods of SceneObjectSet do work
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (const auto & robotNode : robotNodes)
         {
-            SceneObjectPtr cm = boost::dynamic_pointer_cast<SceneObject>(robotNodes[i]);
+            SceneObjectPtr cm = boost::dynamic_pointer_cast<SceneObject>(robotNode);
 
             if (cm)
             {
                 if (colChecker != cm->getCollisionChecker())
                 {
-                    VR_WARNING << "col model of " << robotNodes[i]->getName() << " belongs to different instance of collision checker, in: " << getName().c_str() << endl;
+                    VR_WARNING << "col model of " << robotNode->getName() << " belongs to different instance of collision checker, in: " << getName().c_str() << endl;
                 }
                 else
                 {
@@ -95,10 +95,10 @@ namespace VirtualRobot
         }
         else
         {
-            for (unsigned int i = 0; i < robotNodeNames.size(); i++)
+            for (const auto & robotNodeName : robotNodeNames)
             {
-                RobotNodePtr node = robot->getRobotNode(robotNodeNames[i]);
-                THROW_VR_EXCEPTION_IF(!node, "No robot node with name " << robotNodeNames[i] << " found...");
+                RobotNodePtr node = robot->getRobotNode(robotNodeName);
+                THROW_VR_EXCEPTION_IF(!node, "No robot node with name " << robotNodeName << " found...");
                 robotNodes.push_back(node);
             }
         }
@@ -249,9 +249,9 @@ namespace VirtualRobot
 
     bool RobotNodeSet::hasRobotNode(RobotNodePtr robotNode) const
     {
-        for (unsigned int i = 0; i < robotNodes.size(); i++)
+        for (const auto & i : robotNodes)
         {
-            if (robotNodes[i] == robotNode)
+            if (i == robotNode)
             {
                 return true;
             }
@@ -261,9 +261,9 @@ namespace VirtualRobot
 
     bool RobotNodeSet::hasRobotNode(const std::string &nodeName) const
     {
-        for (unsigned int i = 0; i < robotNodes.size(); i++)
+        for (const auto & robotNode : robotNodes)
         {
-            if (robotNodes[i]->getName() == nodeName)
+            if (robotNode->getName() == nodeName)
             {
                 return true;
             }
@@ -361,9 +361,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!fillVector, "NULL data");
 
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (const auto & robotNode : robotNodes)
         {
-            fillVector->setConfig(robotNodes[i]->getName(), robotNodes[i]->getJointValue());
+            fillVector->setConfig(robotNode->getName(), robotNode->getJointValue());
         }
     }
 
@@ -463,11 +463,11 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
-        for (unsigned int i = 0; i < robotNodes.size(); i++)
+        for (auto & robotNode : robotNodes)
         {
-            if (jointValues->hasConfig(robotNodes[i]->getName()))
+            if (jointValues->hasConfig(robotNode->getName()))
             {
-                robotNodes[i]->setJointValueNoUpdate(jointValues->getConfig(robotNodes[i]->getName()));
+                robotNode->setJointValueNoUpdate(jointValues->getConfig(robotNode->getName()));
             }
         }
 
@@ -744,9 +744,9 @@ namespace VirtualRobot
     {
         RobotNodePtr node;
         VR_ASSERT(robotNode);
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (const auto & i : robotNodes)
         {
-            node = robotNodes.at(i);
+            node = i;
 
             if (node != robotNode && !robotNode->hasChild(node, true))
             {
@@ -772,9 +772,9 @@ namespace VirtualRobot
 
         ss << pre << "<RobotNodeSet name='" << name << "'>\n";
 
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (auto & robotNode : robotNodes)
         {
-            ss << pre << t << "<Node name='" << robotNodes[i]->getName() << "'/>\n";
+            ss << pre << t << "<Node name='" << robotNode->getName() << "'/>\n";
         }
 
         ss << pre << "</RobotNodeSet>\n";

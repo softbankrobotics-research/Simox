@@ -35,8 +35,8 @@ namespace VirtualRobot
     {
         VR_ASSERT_MESSAGE(grasp, "NULL grasp");
 
-        for (size_t i = 0; i < grasps.size(); i++)
-            if (grasps[i] == grasp)
+        for (const auto & i : grasps)
+            if (i == grasp)
             {
                 return true;
             }
@@ -46,9 +46,9 @@ namespace VirtualRobot
 
     bool GraspSet::hasGrasp(const std::string& name)
     {
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (auto & grasp : grasps)
         {
-            if (grasps[i]->getName() == name)
+            if (grasp->getName() == name)
             {
                 return true;
             }
@@ -67,11 +67,11 @@ namespace VirtualRobot
     {
         std::vector<GraspPtr> includedGrasp=grasps->getGrasps();
 
-        for(size_t i=0;i<includedGrasp.size();i++)
+        for(const auto & i : includedGrasp)
         {
-            if(!hasGrasp(includedGrasp.at(i)))
+            if(!hasGrasp(i))
             {
-                addGrasp(includedGrasp.at(i));
+                addGrasp(i);
             }
         }
     }
@@ -125,11 +125,11 @@ namespace VirtualRobot
 
     VirtualRobot::GraspPtr GraspSet::getGrasp(const std::string& name)
     {
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (auto & grasp : grasps)
         {
-            if (grasps[i]->getName() == name)
+            if (grasp->getName() == name)
             {
-                return grasps[i];
+                return grasp;
             }
         }
 
@@ -164,9 +164,9 @@ namespace VirtualRobot
 
         ss << t << "<GraspSet name='" << name << "' RobotType='" << robotType << "' EndEffector='" << eef << "'>\n";
 
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (auto & grasp : grasps)
         {
-            ss << grasps[i]->toXML(tabs + 1);
+            ss << grasp->toXML(tabs + 1);
         }
 
         ss << t << "</GraspSet>\n";
@@ -180,9 +180,9 @@ namespace VirtualRobot
         GraspSetPtr res(new GraspSet(name, robotType, eef));
 
         // clone grasps
-        for (std::vector< GraspPtr >::iterator i = grasps.begin(); i != grasps.end(); i++)
+        for (auto & grasp : grasps)
         {
-            res->addGrasp((*i)->clone());
+            res->addGrasp(grasp->clone());
         }
 
         return res;
@@ -219,9 +219,9 @@ namespace VirtualRobot
     {
         std::vector< GraspPtr > res;
 
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (const auto & grasp : grasps)
         {
-            res.push_back(grasps[i]);
+            res.push_back(grasp);
         }
 
         return res;
@@ -229,9 +229,9 @@ namespace VirtualRobot
 
     void GraspSet::setPreshape(const std::string& preshape)
     {
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (auto & grasp : grasps)
         {
-            grasps[i]->setPreshape(preshape);
+            grasp->setPreshape(preshape);
         }
     }
 

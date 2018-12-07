@@ -227,10 +227,10 @@ namespace GraspStudio
             faceCenter.p.setZero();
             faceCenter.n.setZero();
 
-            for (int j = 0; j < 6; j++)
+            for (int j : faceIter->id)
             {
-                faceCenter.p += (convexHullGWS->vertices)[faceIter->id[j]].p;
-                faceCenter.n += (convexHullGWS->vertices)[faceIter->id[j]].n;
+                faceCenter.p += (convexHullGWS->vertices)[j].p;
+                faceCenter.n += (convexHullGWS->vertices)[j].n;
             }
 
             faceCenter.p /= 6.0f;
@@ -285,9 +285,9 @@ namespace GraspStudio
         float fRes = FLT_MAX;
         int nWrongFacets = 0;
 
-        for (size_t i = 0; i < ch->faces.size(); i++)
+        for (auto & face : ch->faces)
         {
-            const auto dist = ch->faces[i].distNormCenter;
+            const auto dist = face.distNormCenter;
             if (dist > 0)
             {
                 //outside

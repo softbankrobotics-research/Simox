@@ -391,11 +391,11 @@ namespace VirtualRobot
         SceneObjectSetPtr result(new SceneObjectSet(r->getName(), shared_from_this()));
         std::vector<RobotNodePtr> cm = r->getRobotNodes();
 
-        for (size_t i = 0; i < cm.size(); i++)
+        for (auto & i : cm)
         {
-            if (cm[i]->getCollisionModel())
+            if (i->getCollisionModel())
             {
-                result->addSceneObject(cm[i]);
+                result->addSceneObject(i);
             }
         }
 
@@ -779,13 +779,13 @@ namespace VirtualRobot
         // bbox was hit, test all points...
         std::vector< Eigen::Vector3f > pts = colModel->getModelVeticesGlobal();
 
-        for (std::vector< Eigen::Vector3f >::iterator i = pts.begin(); i != pts.end(); i++)
+        for (auto & pt : pts)
         {
-            if (MathTools::getDistancePointPlane(*i, p) <= maxDist)
+            if (MathTools::getDistancePointPlane(pt, p) <= maxDist)
             {
                 MathTools::ContactPoint contact;
                 contact.n = p.n;
-                contact.p = *i;
+                contact.p = pt;
                 storeContatcs.push_back(contact);
             }
         }

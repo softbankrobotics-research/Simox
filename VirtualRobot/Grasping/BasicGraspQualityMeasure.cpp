@@ -147,10 +147,10 @@ namespace VirtualRobot
             return p;
         }
 
-        for (int i = 0; i < (int)contactPoints.size(); i++)
+        for (auto & contactPoint : contactPoints)
         {
-            p.p += contactPoints[i].p;
-            p.n += contactPoints[i].n;
+            p.p += contactPoint.p;
+            p.n += contactPoint.n;
 
         }
 

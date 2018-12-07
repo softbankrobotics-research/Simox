@@ -77,9 +77,9 @@ MTPlanningScenery::~MTPlanningScenery()
 
 void MTPlanningScenery::reset()
 {
-    for (int i = 0; i < (int)robots.size(); i++)
+    for (auto & robot : robots)
     {
-        robots[i].reset();
+        robot.reset();
     }
 
     robots.clear();
@@ -94,30 +94,30 @@ void MTPlanningScenery::reset()
         stopOptimizing();
     }
 
-    for (int i = 0; i < (int)planners.size(); i++)
+    for (auto & planner : planners)
     {
-        planners[i].reset();
+        planner.reset();
     }
 
     planners.clear();
 
-    for (int i = 0; i < (int)CSpaces.size(); i++)
+    for (auto & CSpace : CSpaces)
     {
-        CSpaces[i].reset();
+        CSpace.reset();
     }
 
     CSpaces.clear();
 
-    for (int i = 0; i < (int)planningThreads.size(); i++)
+    for (auto & planningThread : planningThreads)
     {
-        planningThreads[i].reset();
+        planningThread.reset();
     }
 
     planningThreads.clear();
 
-    for (int i = 0; i < (int)optimizeThreads.size(); i++)
+    for (auto & optimizeThread : optimizeThreads)
     {
-        optimizeThreads[i].reset();
+        optimizeThread.reset();
     }
 
     optimizeThreads.clear();
@@ -125,11 +125,11 @@ void MTPlanningScenery::reset()
     solutions.clear();
     optiSolutions.clear();
 
-    for (int i = 0; i < (int)visualisations.size(); i++)
+    for (auto & visualisation : visualisations)
     {
-        if (visualisations[i] != NULL)
+        if (visualisation != NULL)
         {
-            sceneSep->removeChild(visualisations[i]);
+            sceneSep->removeChild(visualisation);
         }
     }
 
@@ -451,14 +451,14 @@ void MTPlanningScenery::stopPlanning()
 {
     cout << "Stopping " << planningThreads.size() << " planning threads..." << endl;
 
-    for (unsigned int i = 0; i < planningThreads.size(); i++)
+    for (auto & planningThread : planningThreads)
     {
-        planningThreads[i]->stop();
+        planningThread->stop();
     }
 
-    for (unsigned int i = 0; i < robots.size(); i++)
+    for (auto & robot : robots)
     {
-        robots[i]->setUpdateVisualization(true);
+        robot->setUpdateVisualization(true);
     }
 
     cout << "... done" << endl;
@@ -476,14 +476,14 @@ void MTPlanningScenery::stopOptimizing()
 
     cout << "Stopping " << optimizeThreads.size() << " optimizing threads..." << endl;
 
-    for (int i = 0; i < (int)optimizeThreads.size(); i++)
+    for (auto & optimizeThread : optimizeThreads)
     {
-        optimizeThreads[i]->stop();
+        optimizeThread->stop();
     }
 
-    for (int i = 0; i < (int)robots.size(); i++)
+    for (auto & robot : robots)
     {
-        robots[i]->setUpdateVisualization(true);
+        robot->setUpdateVisualization(true);
     }
 
     cout << "...done" << endl;
@@ -501,14 +501,14 @@ void MTPlanningScenery::startPlanning()
 
     cout << "Starting " << planningThreads.size() << " planning threads..." << endl;
 
-    for (unsigned int i = 0; i < robots.size(); i++)
+    for (auto & robot : robots)
     {
-        robots[i]->setUpdateVisualization(false);
+        robot->setUpdateVisualization(false);
     }
 
-    for (unsigned int i = 0; i < planningThreads.size(); i++)
+    for (auto & planningThread : planningThreads)
     {
-        planningThreads[i]->start();
+        planningThread->start();
     }
 
     cout << "... done" << endl;
@@ -537,9 +537,9 @@ void MTPlanningScenery::startOptimizing()
 
     if (plannersStarted)
     {
-        for (int i = 0; i < (int)planningThreads.size(); i++)
+        for (auto & planningThread : planningThreads)
         {
-            if (planningThreads[i]->isRunning())
+            if (planningThread->isRunning())
             {
                 cout << "Planning is not finish!..." << endl;
                 return;
@@ -564,16 +564,16 @@ void MTPlanningScenery::startOptimizing()
 
     int j = 0;
 
-    for (unsigned int i = 0; i < robots.size(); i++)
+    for (auto & robot : robots)
     {
-        robots[i]->setUpdateVisualization(false);
+        robot->setUpdateVisualization(false);
     }
 
-    for (unsigned int i = 0; i < optimizeThreads.size(); i++)
+    for (auto & optimizeThread : optimizeThreads)
     {
-        if (optimizeThreads[i])
+        if (optimizeThread)
         {
-            optimizeThreads[i]->start(SHORTEN_LOOP);
+            optimizeThread->start(SHORTEN_LOOP);
             j++;
         }
     }
@@ -852,10 +852,8 @@ void MTPlanningScenery::getThreadCount(int& nWorking, int& nIdle)
     nWorking = 0;
     nIdle = 0;
 
-    for (unsigned int i = 0; i < planningThreads.size(); i++)
+    for (auto pThread : planningThreads)
     {
-        PlanningThreadPtr pThread = planningThreads[i];
-
         if (pThread->isRunning())
         {
             nWorking++;
@@ -873,10 +871,8 @@ void MTPlanningScenery::getOptimizeThreadCount(int& nWorking, int& nIdle)
     nWorking = 0;
     nIdle = 0;
 
-    for (unsigned int i = 0; i < optimizeThreads.size(); i++)
+    for (auto pOptiThread : optimizeThreads)
     {
-        PathProcessingThreadPtr pOptiThread = optimizeThreads[i];
-
         if (pOptiThread && pOptiThread->isRunning())
         {
             nWorking++;

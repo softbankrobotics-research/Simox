@@ -183,9 +183,9 @@ namespace GraspStudio
 
             double pCenter[3];
 
-            for (int u = 0; u < 3; u++)
+            for (double & u : pCenter)
             {
-                pCenter[u] = 0;
+                u = 0;
             }
 
             int nVcertexCount = 0;
@@ -200,9 +200,9 @@ namespace GraspStudio
             }
 
             if (nVcertexCount > 0)
-                for (int u = 0; u < 3; u++)
+                for (double & u : pCenter)
                 {
-                    pCenter[u] /= (float)nVcertexCount;
+                    u /= (float)nVcertexCount;
                 }
 
             result->center[0] = pCenter[0];
@@ -360,16 +360,16 @@ namespace GraspStudio
             /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
             double pCenter[6];
 
-            for (int u = 0; u < 6; u++)
+            for (double & u : pCenter)
             {
-                pCenter[u] = 0;
+                u = 0;
             }
 
             double pZero[6];
 
-            for (int u = 0; u < 6; u++)
+            for (double & u : pZero)
             {
-                pZero[u] = 0;
+                u = 0;
             }
 
             int nVcertexCount = 0;
@@ -384,9 +384,9 @@ namespace GraspStudio
             }
 
             if (nVcertexCount > 0)
-                for (int u = 0; u < 6; u++)
+                for (double & u : pCenter)
                 {
-                    pCenter[u] /= (float)nVcertexCount;
+                    u /= (float)nVcertexCount;
                 }
 
             result->center.p[0] = pCenter[0];

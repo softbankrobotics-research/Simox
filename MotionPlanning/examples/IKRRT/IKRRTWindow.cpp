@@ -311,9 +311,9 @@ void IKRRTWindow::buildVisu()
 
     if (obstacles.size() > 0)
     {
-        for (size_t i = 0; i < obstacles.size(); i++)
+        for (const auto & obstacle : obstacles)
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(obstacles[i], colModel);
+            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(obstacle, colModel);
 
             if (visualisationNode)
             {

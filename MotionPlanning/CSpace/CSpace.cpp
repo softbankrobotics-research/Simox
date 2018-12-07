@@ -842,9 +842,9 @@ namespace Saba
 
     bool CSpace::isSatisfyingConstraints(const Eigen::VectorXf& config)
     {
-        for (size_t i = 0; i < constraints.size(); i++)
+        for (auto & constraint : constraints)
         {
-            if (!constraints[i]->isValid(config))
+            if (!constraint->isValid(config))
             {
                 return false;
             }

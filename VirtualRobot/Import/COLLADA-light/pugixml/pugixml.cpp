@@ -9277,12 +9277,12 @@ PUGI__NS_BEGIN
 				xpath_node_set_raw ls = lhs->eval_node_set(c, stack, nodeset_eval_all);
 				xpath_node_set_raw rs = rhs->eval_node_set(c, stack, nodeset_eval_all);
 
-				for (const xpath_node* li = ls.begin(); li != ls.end(); ++li)
-					for (const xpath_node* ri = rs.begin(); ri != rs.end(); ++ri)
+				for (auto l : ls)
+					for (auto r : rs)
 					{
 						xpath_allocator_capture cri(stack.result);
 
-						if (comp(string_value(*li, stack.result), string_value(*ri, stack.result)))
+						if (comp(string_value(l, stack.result), string_value(r, stack.result)))
 							return true;
 					}
 
@@ -9305,11 +9305,11 @@ PUGI__NS_BEGIN
 					double l = lhs->eval_number(c, stack);
 					xpath_node_set_raw rs = rhs->eval_node_set(c, stack, nodeset_eval_all);
 
-					for (const xpath_node* ri = rs.begin(); ri != rs.end(); ++ri)
+					for (auto r : rs)
 					{
 						xpath_allocator_capture cri(stack.result);
 
-						if (comp(l, convert_string_to_number(string_value(*ri, stack.result).c_str())))
+						if (comp(l, convert_string_to_number(string_value(r, stack.result).c_str())))
 							return true;
 					}
 
@@ -9322,11 +9322,11 @@ PUGI__NS_BEGIN
 					xpath_string l = lhs->eval_string(c, stack);
 					xpath_node_set_raw rs = rhs->eval_node_set(c, stack, nodeset_eval_all);
 
-					for (const xpath_node* ri = rs.begin(); ri != rs.end(); ++ri)
+					for (auto r : rs)
 					{
 						xpath_allocator_capture cri(stack.result);
 
-						if (comp(l, string_value(*ri, stack.result)))
+						if (comp(l, string_value(r, stack.result)))
 							return true;
 					}
 
@@ -9356,17 +9356,17 @@ PUGI__NS_BEGIN
 				xpath_node_set_raw ls = lhs->eval_node_set(c, stack, nodeset_eval_all);
 				xpath_node_set_raw rs = rhs->eval_node_set(c, stack, nodeset_eval_all);
 
-				for (const xpath_node* li = ls.begin(); li != ls.end(); ++li)
+				for (auto li : ls)
 				{
 					xpath_allocator_capture cri(stack.result);
 
-					double l = convert_string_to_number(string_value(*li, stack.result).c_str());
+					double l = convert_string_to_number(string_value(li, stack.result).c_str());
 
-					for (const xpath_node* ri = rs.begin(); ri != rs.end(); ++ri)
+					for (auto r : rs)
 					{
 						xpath_allocator_capture crii(stack.result);
 
-						if (comp(l, convert_string_to_number(string_value(*ri, stack.result).c_str())))
+						if (comp(l, convert_string_to_number(string_value(r, stack.result).c_str())))
 							return true;
 					}
 				}
@@ -9380,11 +9380,11 @@ PUGI__NS_BEGIN
 				double l = lhs->eval_number(c, stack);
 				xpath_node_set_raw rs = rhs->eval_node_set(c, stack, nodeset_eval_all);
 
-				for (const xpath_node* ri = rs.begin(); ri != rs.end(); ++ri)
+				for (auto r : rs)
 				{
 					xpath_allocator_capture cri(stack.result);
 
-					if (comp(l, convert_string_to_number(string_value(*ri, stack.result).c_str())))
+					if (comp(l, convert_string_to_number(string_value(r, stack.result).c_str())))
 						return true;
 				}
 
@@ -9397,11 +9397,11 @@ PUGI__NS_BEGIN
 				xpath_node_set_raw ls = lhs->eval_node_set(c, stack, nodeset_eval_all);
 				double r = rhs->eval_number(c, stack);
 
-				for (const xpath_node* li = ls.begin(); li != ls.end(); ++li)
+				for (auto l : ls)
 				{
 					xpath_allocator_capture cri(stack.result);
 
-					if (comp(convert_string_to_number(string_value(*li, stack.result).c_str()), r))
+					if (comp(convert_string_to_number(string_value(l, stack.result).c_str()), r))
 						return true;
 				}
 
@@ -9939,14 +9939,14 @@ PUGI__NS_BEGIN
 				// self axis preserves the original order
 				if (axis == axis_self) ns.set_type(s.type());
 
-				for (const xpath_node* it = s.begin(); it != s.end(); ++it)
+				for (auto it : s)
 				{
 					size_t size = ns.size();
 
 					// in general, all axes generate elements in a particular order, but there is no order guarantee if axis is applied to two nodes
 					if (axis != axis_self && size != 0) ns.set_type(xpath_node_set::type_unsorted);
 
-					step_fill(ns, *it, stack.result, once, v);
+					step_fill(ns, it, stack.result, once, v);
 					if (_right) apply_predicates(ns, size, stack, eval);
 				}
 			}
@@ -10222,11 +10222,11 @@ PUGI__NS_BEGIN
 
 				xpath_node_set_raw ns = _left->eval_node_set(c, stack, nodeset_eval_all);
 
-				for (const xpath_node* it = ns.begin(); it != ns.end(); ++it)
+				for (auto n : ns)
 				{
 					xpath_allocator_capture cri(stack.result);
 
-					r += convert_string_to_number(string_value(*it, stack.result).c_str());
+					r += convert_string_to_number(string_value(n, stack.result).c_str());
 				}
 
 				return r;
@@ -12059,20 +12059,20 @@ namespace pugi
 
 	PUGI__FN xpath_variable_set::xpath_variable_set()
 	{
-		for (size_t i = 0; i < sizeof(_data) / sizeof(_data[0]); ++i)
-			_data[i] = 0;
+		for (auto & i : _data)
+			i = 0;
 	}
 
 	PUGI__FN xpath_variable_set::~xpath_variable_set()
 	{
-		for (size_t i = 0; i < sizeof(_data) / sizeof(_data[0]); ++i)
-			_destroy(_data[i]);
+		for (auto & i : _data)
+			_destroy(i);
 	}
 
 	PUGI__FN xpath_variable_set::xpath_variable_set(const xpath_variable_set& rhs)
 	{
-		for (size_t i = 0; i < sizeof(_data) / sizeof(_data[0]); ++i)
-			_data[i] = 0;
+		for (auto & i : _data)
+			i = 0;
 
 		_assign(rhs);
 	}

@@ -362,10 +362,10 @@ namespace Saba
 
         CSpaceNodePtr actualNode;
 
-        for (unsigned int i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
             // save ID, configuration and parentID of each node in one row
-            actualNode = nodes[i];
+            actualNode = node;
             file << actualNode->ID << " ";
 
             for (unsigned int j = 0; j < dimension; j++)

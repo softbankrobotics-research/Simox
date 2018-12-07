@@ -326,8 +326,7 @@ const char* StrPair::GetStr()
                     }
                     else {
                         bool entityFound = false;
-                        for( int i = 0; i < NUM_ENTITIES; ++i ) {
-                            const Entity& entity = entities[i];
+                        for(auto entity : entities) {
                             if ( strncmp( p + 1, entity.pattern, entity.length ) == 0
                                     && *( p + entity.length + 1 ) == ';' ) {
                                 // Found an entity - convert.
@@ -2422,8 +2421,8 @@ XMLPrinter::XMLPrinter( FILE* file, bool compact, int depth ) :
         _entityFlag[i] = false;
         _restrictedEntityFlag[i] = false;
     }
-    for( int i=0; i<NUM_ENTITIES; ++i ) {
-        const char entityValue = entities[i].value;
+    for(auto entitie : entities) {
+        const char entityValue = entitie.value;
         const unsigned char flagIndex = (unsigned char)entityValue;
         TIXMLASSERT( flagIndex < ENTITY_RANGE );
         _entityFlag[flagIndex] = true;
@@ -2513,10 +2512,10 @@ void XMLPrinter::PrintString( const char* p, bool restricted )
                         p += toPrint;
                     }
                     bool entityPatternPrinted = false;
-                    for( int i=0; i<NUM_ENTITIES; ++i ) {
-                        if ( entities[i].value == *q ) {
+                    for(auto entitie : entities) {
+                        if ( entitie.value == *q ) {
                             Putc( '&' );
-                            Write( entities[i].pattern, entities[i].length );
+                            Write( entitie.pattern, entitie.length );
                             Putc( ';' );
                             entityPatternPrinted = true;
                             break;

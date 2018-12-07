@@ -134,8 +134,8 @@ void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNode
         }
     }
 
-    for (size_t i = 0; i < bodies.size(); ++i) {
-        if(thisNode == bodies.at(i)){
+    for (const auto & bodie : bodies) {
+        if(thisNode == bodie){
             computeCoM = true;
             //            VR_INFO << "Computing com for " << thisNode->getName() << std::endl;
         }

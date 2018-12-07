@@ -246,12 +246,12 @@ void GenericIKWindow::updateKCBox()
     robot->getRobotNodeSets(rns);
     kinChains.clear();
 
-    for (unsigned int i = 0; i < rns.size(); i++)
+    for (auto & rn : rns)
     {
-        if (rns[i]->isKinematicChain())
+        if (rn->isKinematicChain())
         {
-            UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
-            kinChains.push_back(rns[i]);
+            UI.comboBoxKC->addItem(QString(rn->getName().c_str()));
+            kinChains.push_back(rn);
         }
     }
 }
@@ -428,9 +428,9 @@ void GenericIKWindow::solve()
     cout << "Joint values:" << endl;
     std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (auto & node : nodes)
     {
-        cout << nodes[i]->getJointValue() << endl;
+        cout << node->getJointValue() << endl;
     }
 
     /*

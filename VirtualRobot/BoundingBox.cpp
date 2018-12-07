@@ -147,10 +147,10 @@ namespace VirtualRobot
         result[7] << max(0), max(1), max(2);
         Eigen::Matrix4f m;
 
-        for (int i = 0; i < 8; i++)
+        for (const auto & i : result)
         {
             m.setIdentity();
-            m.block(0, 3, 3, 1) = result[i];
+            m.block(0, 3, 3, 1) = i;
             m = pose * m;
             result3.push_back(m.block(0, 3, 3, 1));
         }

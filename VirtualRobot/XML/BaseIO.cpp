@@ -356,16 +356,16 @@ namespace VirtualRobot
         Units uAngle("rad");
         Units uLength("mm");
 
-        for (size_t i = 0; i < unitsAttr.size(); i++)
+        for (auto & i : unitsAttr)
         {
-            if (unitsAttr[i].isAngle())
+            if (i.isAngle())
             {
-                uAngle = unitsAttr[i];
+                uAngle = i;
             }
 
-            if (unitsAttr[i].isLength())
+            if (i.isLength())
             {
-                uLength = unitsAttr[i];
+                uLength = i;
             }
         }
 
@@ -457,9 +457,9 @@ namespace VirtualRobot
         getAllAttributes(node, "unitsAngle", attrStr);
         getAllAttributes(node, "unitsTime", attrStr);
 
-        for (size_t i = 0; i < attrStr.size(); i++)
+        for (auto & i : attrStr)
         {
-            Units unitsAttribute(getLowerCase(attrStr[i].c_str()));
+            Units unitsAttribute(getLowerCase(i.c_str()));
             result.push_back(unitsAttribute);
         }
 
@@ -1343,16 +1343,16 @@ namespace VirtualRobot
             Units uWeight("kg");
             Units uLength("m");
 
-            for (size_t i = 0; i < unitsAttr.size(); i++)
+            for (auto & i : unitsAttr)
             {
-                if (unitsAttr[i].isWeight())
+                if (i.isWeight())
                 {
-                    uWeight = unitsAttr[i];
+                    uWeight = i;
                 }
 
-                if (unitsAttr[i].isLength())
+                if (i.isLength())
                 {
-                    uLength = unitsAttr[i];
+                    uLength = i;
                 }
             }
 
@@ -1737,11 +1737,11 @@ namespace VirtualRobot
 
         RobotPtr r;
 
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            if (robots[i]->getType() == robotName)
+            if (robot->getType() == robotName)
             {
-                r = robots[i];
+                r = robot;
                 break;
             }
         }

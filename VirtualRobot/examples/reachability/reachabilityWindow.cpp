@@ -272,9 +272,9 @@ void reachabilityWindow::updateRNSBox()
     UI.comboBoxRNS->clear();
 
     //UI.comboBoxRNS->addItem(QString("<All>"));
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
+    for (auto & robotNodeSet : robotNodeSets)
     {
-        UI.comboBoxRNS->addItem(QString(robotNodeSets[i]->getName().c_str()));
+        UI.comboBoxRNS->addItem(QString(robotNodeSet->getName().c_str()));
     }
 
     selectRNS(0);
@@ -314,9 +314,9 @@ void reachabilityWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < allRobotNodes.size(); i++)
+    for (auto & allRobotNode : allRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(allRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(allRobotNode->getName().c_str()));
     }
 
     selectJoint(0);
@@ -427,16 +427,16 @@ void reachabilityWindow::loadRobot()
     robot->getRobotNodeSets(allRNS);
     robotNodeSets.clear();
 
-    for (size_t i = 0; i < allRNS.size(); i++)
+    for (auto & i : allRNS)
     {
-        if (allRNS[i]->isKinematicChain())
+        if (i->isKinematicChain())
         {
-            VR_INFO << " RNS <" << allRNS[i]->getName() << "> is a valid kinematic chain" << endl;
-            robotNodeSets.push_back(allRNS[i]);
+            VR_INFO << " RNS <" << i->getName() << "> is a valid kinematic chain" << endl;
+            robotNodeSets.push_back(i);
         }
         else
         {
-            VR_INFO << " RNS <" << allRNS[i]->getName() << "> is not a valid kinematic chain" << endl;
+            VR_INFO << " RNS <" << i->getName() << "> is not a valid kinematic chain" << endl;
         }
     }
 
@@ -514,10 +514,10 @@ void reachabilityWindow::createReach()
     std::vector < VirtualRobot::RobotNodeSetPtr > allRNS;
     robot->getRobotNodeSets(allRNS);
 
-    for (size_t i = 0; i < allRNS.size(); i++)
+    for (auto & i : allRNS)
     {
-        UICreate.comboBoxColModelDynamic->addItem(QString(allRNS[i]->getName().c_str()));
-        UICreate.comboBoxColModelStatic->addItem(QString(allRNS[i]->getName().c_str()));
+        UICreate.comboBoxColModelDynamic->addItem(QString(i->getName().c_str()));
+        UICreate.comboBoxColModelStatic->addItem(QString(i->getName().c_str()));
     }
 
     UICreate.comboBoxQualityMeasure->addItem(QString("Reachability"));

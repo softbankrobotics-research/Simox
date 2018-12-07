@@ -251,16 +251,16 @@ namespace VirtualRobot
                 // Check joint limits
                 std::vector<RobotNodePtr> nodes = nodeSet->getAllRobotNodes();
 
-                for (std::vector<RobotNodePtr>::iterator n = nodes.begin(); n != nodes.end(); n++)
+                for (auto & node : nodes)
                 {
                     float limits[2];
                     FileIO::readArray<float>(limits, 2, file);
 
                     //limits[0] = (int)(FileIO::read<ioIntTypeRead>(file));
                     //limits[1] = (int)(FileIO::read<ioIntTypeRead>(file));
-                    if (fabs((*n)->getJointLimitLo() - limits[0]) > 0.01 || fabs((*n)->getJointLimitHi() - limits[1]) > 0.01)
+                    if (fabs(node->getJointLimitLo() - limits[0]) > 0.01 || fabs(node->getJointLimitHi() - limits[1]) > 0.01)
                     {
-                        VR_WARNING << "Joint limit mismatch for " << (*n)->getName() << ", min: " << (*n)->getJointLimitLo() << " / " << limits[0] << ", max: " << (*n)->getJointLimitHi() << " / " << limits[1] << std::endl;
+                        VR_WARNING << "Joint limit mismatch for " << node->getName() << ", min: " << node->getJointLimitLo() << " / " << limits[0] << ", max: " << node->getJointLimitHi() << " / " << limits[1] << std::endl;
                     }
                 }
             }
@@ -308,9 +308,9 @@ namespace VirtualRobot
             discretizeStepTranslation = FileIO::read<float>(file);
             discretizeStepRotation = FileIO::read<float>(file);
 
-            for (int i = 0; i < 6; i++)
+            for (int & numVoxel : numVoxels)
             {
-                numVoxels[i] = (int)(FileIO::read<ioIntTypeRead>(file));
+                numVoxel = (int)(FileIO::read<ioIntTypeRead>(file));
             }
 
             //FileIO::readArray<int>(numVoxels, 6, file);
@@ -529,10 +529,10 @@ namespace VirtualRobot
             const std::vector<RobotNodePtr> nodes = nodeSet->getAllRobotNodes();
             FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(nodes.size()));
 
-            for (std::vector<RobotNodePtr>::const_iterator n = nodes.begin(); n != nodes.end(); n++)
+            for (const auto & node : nodes)
             {
-                FileIO::write<float>(file, (*n)->getJointLimitLo());
-                FileIO::write<float>(file, (*n)->getJointLimitHi());
+                FileIO::write<float>(file, node->getJointLimitLo());
+                FileIO::write<float>(file, node->getJointLimitHi());
             }
 
             // TCP name
@@ -576,9 +576,9 @@ namespace VirtualRobot
 
             // Number of voxels
             //FileIO::writeArray<ioIntTypeWrite>(file, numVoxels, 6);
-            for (int i = 0; i < 6; i++)
+            for (int & numVoxel : numVoxels)
             {
-                FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(numVoxels[i]));
+                FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)numVoxel);
             }
 
             FileIO::write<ioIntTypeWrite>(file, (ioIntTypeWrite)(data->getVoxelFilledCount()));
@@ -1056,34 +1056,34 @@ namespace VirtualRobot
             cout << type << " workspace extend (as defined on construction):" << endl;
             cout << "Min boundary (local): ";
 
-            for (int i = 0; i < 6; i++)
+            for (float minBound : minBounds)
             {
-                cout << minBounds[i] << ",";
+                cout << minBound << ",";
             }
 
             cout << endl;
             cout << "Max boundary (local): ";
 
-            for (int i = 0; i < 6; i++)
+            for (float maxBound : maxBounds)
             {
-                cout << maxBounds[i] << ",";
+                cout << maxBound << ",";
             }
 
             cout << endl;
             cout << "6D values achieved during buildup:" << endl;
             cout << "Minimum 6D values: ";
 
-            for (int i = 0; i < 6; i++)
+            for (float achievedMinValue : achievedMinValues)
             {
-                cout << achievedMinValues[i] << ",";
+                cout << achievedMinValue << ",";
             }
 
             cout << endl;
             cout << "Maximum 6D values: ";
 
-            for (int i = 0; i < 6; i++)
+            for (float achievedMaxValue : achievedMaxValues)
             {
-                cout << achievedMaxValues[i] << ",";
+                cout << achievedMaxValue << ",";
             }
 
             cout << endl;
@@ -1397,9 +1397,9 @@ namespace VirtualRobot
                                     int sum = 0;
                                     int count = 0;
 
-                                    for (int i = 0; i < 6; i++)
+                                    for (unsigned int & i : x)
                                     {
-                                        x[i]--;
+                                        i--;
 
                                         if (isCovered(x))
                                         {
@@ -1407,8 +1407,8 @@ namespace VirtualRobot
                                             count++;
                                         }
 
-                                        x[i]++;
-                                        x[i]++;
+                                        i++;
+                                        i++;
 
                                         if (isCovered(x))
                                         {
@@ -1416,7 +1416,7 @@ namespace VirtualRobot
                                             count++;
                                         }
 
-                                        x[i]--;
+                                        i--;
                                     }
 
                                     if (count >= (int)minNeighbors)
@@ -1768,18 +1768,18 @@ namespace VirtualRobot
         storeMinBBox = quadPos[0];
         storeMaxBBox = quadPos[0];
 
-        for (int k = 0; k < 8; k++)
+        for (auto & quadPo : quadPos)
         {
             for (int i = 0; i < 3; i++)
             {
-                if (quadPos[k](i) < storeMinBBox(i))
+                if (quadPo(i) < storeMinBBox(i))
                 {
-                    storeMinBBox(i) = quadPos[k](i);
+                    storeMinBBox(i) = quadPo(i);
                 }
 
-                if (quadPos[k](i) > storeMaxBBox(i))
+                if (quadPo(i) > storeMaxBBox(i))
                 {
-                    storeMaxBBox(i) = quadPos[k](i);
+                    storeMaxBBox(i) = quadPo(i);
                 }
             }
         }

@@ -215,10 +215,10 @@ void GraspRrtWindow::buildVisu()
     {
         SoSeparator* eefVisu = CoinVisualizationFactory::CreateEndEffectorVisualization(eef);
 
-        for (size_t i = 0; i < grasps.size(); i++)
+        for (auto & grasp : grasps)
         {
 
-            Eigen::Matrix4f m = grasps[i]->getTcpPoseGlobal(targetObject->getGlobalPose());
+            Eigen::Matrix4f m = grasp->getTcpPoseGlobal(targetObject->getGlobalPose());
             SoSeparator* sep1 = new SoSeparator();
             SoMatrixTransform* mt = CoinVisualizationFactory::getMatrixTransformScaleMM2M(m);
             sep1->addChild(mt);
@@ -309,9 +309,9 @@ void GraspRrtWindow::loadScene()
 
     UI.comboBoxStart->clear();
 
-    for (size_t i = 0; i < configs.size(); i++)
+    for (auto & config : configs)
     {
-        QString qtext = configs[i]->getName().c_str();
+        QString qtext = config->getName().c_str();
         UI.comboBoxStart->addItem(qtext);
 
     }
@@ -330,9 +330,9 @@ void GraspRrtWindow::loadScene()
 
     UI.comboBoxGoal->clear();
 
-    for (size_t i = 0; i < obstacles.size(); i++)
+    for (auto & obstacle : obstacles)
     {
-        QString qtext = obstacles[i]->getName().c_str();
+        QString qtext = obstacle->getName().c_str();
         UI.comboBoxGoal->addItem(qtext);
 
     }
@@ -345,9 +345,9 @@ void GraspRrtWindow::loadScene()
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
-    for (size_t i = 0; i < soss.size(); i++)
+    for (auto & sos : soss)
     {
-        qtext = soss[i]->getName().c_str();
+        qtext = sos->getName().c_str();
         UI.comboBoxColModelEnv->addItem(qtext);
     }
 
@@ -384,9 +384,9 @@ void GraspRrtWindow::loadScene()
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
 
-    for (size_t i = 0; i < rnss.size(); i++)
+    for (auto & rns : rnss)
     {
-        qtext = rnss[i]->getName().c_str();
+        qtext = rns->getName().c_str();
         UI.comboBoxColModelRobot->addItem(qtext);
         UI.comboBoxColModelRobotStatic->addItem(qtext);
         UI.comboBoxRNS->addItem(qtext);

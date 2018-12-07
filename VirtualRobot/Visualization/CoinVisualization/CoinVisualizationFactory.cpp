@@ -141,9 +141,8 @@ namespace VirtualRobot
 
         Eigen::Matrix4f currentTransform = Eigen::Matrix4f::Identity();
 
-        for (std::vector<Primitive::PrimitivePtr>::const_iterator it = primitives.begin(); it != primitives.end(); it++)
+        for (auto p : primitives)
         {
-            Primitive::PrimitivePtr p = *it;
             currentTransform *= p->transform;
             SoSeparator* soSep = new SoSeparator();
             SoNode* pNode = GetNodeFromPrimitive(p, boundingBox, color);
@@ -1535,9 +1534,9 @@ namespace VirtualRobot
         SoSeparator* res = new SoSeparator;
         res->ref();
 
-        for (size_t i = 0; i < contacts.size(); i++)
+        for (auto & contact : contacts)
         {
-            res->addChild(getCoinVisualization(contacts[i], frictionConeHeight, frictionConeRadius, scaleAccordingToApproachDir));
+            res->addChild(getCoinVisualization(contact, frictionConeHeight, frictionConeRadius, scaleAccordingToApproachDir));
         }
 
         res->unrefNoDelete();
@@ -4028,9 +4027,9 @@ namespace VirtualRobot
 
         std::vector<MathTools::Segment> s = oobb.getSegments();
 
-        for (size_t i = 0; i < s.size(); i++)
+        for (const auto & i : s)
         {
-            sep->addChild(CreateSegmentVisualization(s[i], colorLine, lineSize));
+            sep->addChild(CreateSegmentVisualization(i, colorLine, lineSize));
         }
 
         res->addChild(sep);
@@ -4339,10 +4338,9 @@ namespace VirtualRobot
         SoNode* result = n->copy(TRUE);
 
         // reset the changed ones back
-        for (std::vector<SoSFImage*>::iterator it = changedImages.begin();
-             it != changedImages.end(); it++)
+        for (auto & changedImage : changedImages)
         {
-            (*it)->setDefault(TRUE);
+            changedImage->setDefault(TRUE);
         }
 
         return result;

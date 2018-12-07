@@ -405,9 +405,9 @@ void showSceneWindow::selectRobot(int nr)
 
     std::vector<VirtualRobot::RobotConfigPtr> roc = scene->getRobotConfigs(currentRobot);
 
-    for (size_t i = 0; i < roc.size(); i++)
+    for (auto & i : roc)
     {
-        QString rn = roc[i]->getName().c_str();
+        QString rn = i->getName().c_str();
         UI.comboBoxRobotConfig->addItem(rn);
     }
 
@@ -418,9 +418,9 @@ void showSceneWindow::selectRobot(int nr)
 
     std::vector<VirtualRobot::TrajectoryPtr> tr = scene->getTrajectories(currentRobot->getName());
 
-    for (size_t i = 0; i < tr.size(); i++)
+    for (auto & i : tr)
     {
-        QString rn = tr[i]->getName().c_str();
+        QString rn = i->getName().c_str();
         UI.comboBoxTrajectory->addItem(rn);
     }
 
@@ -432,9 +432,9 @@ void showSceneWindow::selectRobot(int nr)
 
     std::vector<VirtualRobot::EndEffectorPtr> eefs = currentRobot->getEndEffectors();
 
-    for (size_t i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        QString rn = eefs[i]->getName().c_str();
+        QString rn = eef->getName().c_str();
         UI.comboBoxEEF->addItem(rn);
     }
 
@@ -549,25 +549,25 @@ void showSceneWindow::updateGui()
 
     std::vector<VirtualRobot::RobotPtr> robs = scene->getRobots();
 
-    for (size_t i = 0; i < robs.size(); i++)
+    for (auto & rob : robs)
     {
-        QString rn = robs[i]->getName().c_str();
+        QString rn = rob->getName().c_str();
         UI.comboBoxRobot->addItem(rn);
     }
 
     std::vector<VirtualRobot::ManipulationObjectPtr> mos = scene->getManipulationObjects();
 
-    for (size_t i = 0; i < mos.size(); i++)
+    for (auto & mo : mos)
     {
-        QString mn = mos[i]->getName().c_str();
+        QString mn = mo->getName().c_str();
         UI.comboBoxObject->addItem(mn);
     }
 
     std::vector<VirtualRobot::ObstaclePtr> obs = scene->getObstacles();
 
-    for (size_t i = 0; i < obs.size(); i++)
+    for (auto & ob : obs)
     {
-        QString on = obs[i]->getName().c_str();
+        QString on = ob->getName().c_str();
         UI.comboBoxObject->addItem(on);
     }
 

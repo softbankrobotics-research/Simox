@@ -294,9 +294,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxGoal->clear();
     UI.comboBoxStart->clear();
 
-    for (size_t i = 0; i < configs.size(); i++)
+    for (auto & config : configs)
     {
-        QString qtext = configs[i]->getName().c_str();
+        QString qtext = config->getName().c_str();
         UI.comboBoxStart->addItem(qtext);
         UI.comboBoxGoal->addItem(qtext);
     }
@@ -310,9 +310,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
-    for (size_t i = 0; i < soss.size(); i++)
+    for (auto & sos : soss)
     {
-        qtext = soss[i]->getName().c_str();
+        qtext = sos->getName().c_str();
         UI.comboBoxColModelEnv->addItem(qtext);
     }
 
@@ -324,9 +324,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
 
-    for (size_t i = 0; i < rnss.size(); i++)
+    for (auto & rns : rnss)
     {
-        qtext = rnss[i]->getName().c_str();
+        qtext = rns->getName().c_str();
         UI.comboBoxColModelRobot->addItem(qtext);
         UI.comboBoxColModelRobotStatic->addItem(qtext);
         UI.comboBoxRNS->addItem(qtext);

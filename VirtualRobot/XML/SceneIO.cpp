@@ -123,10 +123,10 @@ namespace VirtualRobot
         // create & register node sets
         int rnsNr = 0;
 
-        for (size_t i = 0; i < rnsNodes.size(); i++)
+        for (auto & rnsNode : rnsNodes)
         {
             // registers rns to robot
-            RobotNodeSetPtr r = processRobotNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
+            RobotNodeSetPtr r = processRobotNodeSet(rnsNode, robot, robot->getRootNode()->getName(), rnsNr);
             THROW_VR_EXCEPTION_IF(!r, "Invalid RobotNodeSet definition " << endl);
         }
 
@@ -316,9 +316,9 @@ namespace VirtualRobot
         }
 
         // process all sceneSetNodes
-        for (size_t i = 0; i < sceneSetNodes.size(); i++)
+        for (auto & sceneSetNode : sceneSetNodes)
         {
-            bool r = processSceneObjectSet(sceneSetNodes[i], scene);
+            bool r = processSceneObjectSet(sceneSetNode, scene);
 
             if (!r)
             {
@@ -329,9 +329,9 @@ namespace VirtualRobot
 
 
         // process all trajectories
-        for (size_t i = 0; i < trajectoryNodes.size(); i++)
+        for (auto & trajectoryNode : trajectoryNodes)
         {
-            bool r = processSceneTrajectory(trajectoryNodes[i], scene);
+            bool r = processSceneTrajectory(trajectoryNode, scene);
 
             if (!r)
             {

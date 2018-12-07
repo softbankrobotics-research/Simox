@@ -485,9 +485,9 @@ void ReachabilityMapWindow::updateEEFBox()
 
     std::vector<EndEffectorPtr> eefs = robot->getEndEffectors();
 
-    for (unsigned int i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        UI.comboBoxEEF->addItem(QString(eefs[i]->getName().c_str()));
+        UI.comboBoxEEF->addItem(QString(eef->getName().c_str()));
     }
 
     selectEEF(0);

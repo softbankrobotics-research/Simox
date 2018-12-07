@@ -287,10 +287,10 @@ void showRobotWindow::showSensors()
 
     std::vector<SensorPtr> sensors = robot->getSensors();
 
-    for (size_t i = 0; i < sensors.size(); i++)
+    for (auto & sensor : sensors)
     {
-        sensors[i]->setupVisualization(showSensors, showSensors);
-        sensors[i]->showCoordinateSystem(showSensors);
+        sensor->setupVisualization(showSensors, showSensors);
+        sensor->showCoordinateSystem(showSensors);
     }
 
     // rebuild visualization
@@ -547,9 +547,9 @@ void showRobotWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (auto & currentRobotNode : currentRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentRobotNode->getName().c_str()));
     }
 }
 
@@ -558,9 +558,9 @@ void showRobotWindow::updateRNSBox()
     UI.comboBoxRobotNodeSet->clear();
     UI.comboBoxRobotNodeSet->addItem(QString("<All>"));
 
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
+    for (auto & robotNodeSet : robotNodeSets)
     {
-        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSets[i]->getName().c_str()));
+        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSet->getName().c_str()));
     }
 }
 
@@ -1075,9 +1075,9 @@ void showRobotWindow::selectEEF(int nr)
 
     std::vector<std::string> ps = currentEEF->getPreshapes();
     UI.comboBoxEndEffectorPS->addItem(QString("none"));
-    for (unsigned int i = 0; i < ps.size(); i++)
+    for (auto & p : ps)
     {
-        UI.comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
+        UI.comboBoxEndEffectorPS->addItem(QString(p.c_str()));
     }
 }
 
@@ -1105,8 +1105,8 @@ void showRobotWindow::updateEEFBox()
 {
     UI.comboBoxEndEffector->clear();
 
-    for (unsigned int i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        UI.comboBoxEndEffector->addItem(QString(eefs[i]->getName().c_str()));
+        UI.comboBoxEndEffector->addItem(QString(eef->getName().c_str()));
     }
 }

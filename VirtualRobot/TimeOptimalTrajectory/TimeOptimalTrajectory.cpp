@@ -106,11 +106,11 @@ namespace VirtualRobot
         file1.close();
 
         ofstream file2("trajectory.txt");
-        for(list<TimeOptimalTrajectoryStep>::const_iterator it = trajectory.begin(); it != trajectory.end(); it++) {
-            file2 << it->pathPos << "  " << it->pathVel << endl;
+        for(const auto & it : trajectory) {
+            file2 << it.pathPos << "  " << it.pathVel << endl;
         }
-        for(list<TimeOptimalTrajectoryStep>::const_iterator it = endTrajectory.begin(); it != endTrajectory.end(); it++) {
-            file2 << it->pathPos << "  " << it->pathVel << endl;
+        for(const auto & it : endTrajectory) {
+            file2 << it.pathPos << "  " << it.pathVel << endl;
         }
         file2.close();
     }

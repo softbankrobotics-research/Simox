@@ -330,12 +330,12 @@ void JacobiWindow::updateKCBox()
     robot->getRobotNodeSets(rns);
     kinChains.clear();
 
-    for (unsigned int i = 0; i < rns.size(); i++)
+    for (auto & rn : rns)
     {
-        if (rns[i]->isKinematicChain())
+        if (rn->isKinematicChain())
         {
-            UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
-            kinChains.push_back(rns[i]);
+            UI.comboBoxKC->addItem(QString(rn->getName().c_str()));
+            kinChains.push_back(rn);
         }
     }
 }
@@ -369,26 +369,26 @@ void JacobiWindow::selectKC(int nr)
     std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
     elbow.reset();
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (auto & node : nodes)
     {
-        if ((nodes[i])->getName() == std::string("Elbow L"))
+        if (node->getName() == std::string("Elbow L"))
         {
-            elbow = nodes[i];
+            elbow = node;
         }
 
-        if ((nodes[i])->getName() == std::string("Elbow R"))
+        if (node->getName() == std::string("Elbow R"))
         {
-            elbow = nodes[i];
+            elbow = node;
         }
 
-        if ((nodes[i])->getName() == std::string("TCP L"))
+        if (node->getName() == std::string("TCP L"))
         {
-            elbow = nodes[i];
+            elbow = node;
         }
 
-        if ((nodes[i])->getName() == std::string("TCP R"))
+        if (node->getName() == std::string("TCP R"))
         {
-            elbow = nodes[i];
+            elbow = node;
         }
     }
 

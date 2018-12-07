@@ -912,11 +912,11 @@ namespace Saba
         VirtualRobot::EndEffector::ContactInfoVector contacts;
 
         // we only need the targetObject contacts
-        for (size_t i = 0; i < contactsAll.size(); i++)
+        for (auto & i : contactsAll)
         {
-            if (contactsAll[i].obstacle == targetObject)
+            if (i.obstacle == targetObject)
             {
-                contacts.push_back(contactsAll[i]);
+                contacts.push_back(i);
             }
         }
 
@@ -929,9 +929,9 @@ namespace Saba
                 cout << __FUNCTION__ << ": Low number of contacts -> Zero Grasp Score " << endl;
                 cout << "Fingers: " ;
 
-                for (int i = 0; i < (int)contacts.size(); i++)
+                for (auto & contact : contacts)
                 {
-                    cout << contacts[i].actor->getName() << ", ";
+                    cout << contact.actor->getName() << ", ";
                 }
 
                 cout << endl;

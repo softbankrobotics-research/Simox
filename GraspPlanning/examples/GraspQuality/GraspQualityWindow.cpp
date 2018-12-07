@@ -488,9 +488,9 @@ void GraspQualityWindow::setEEFComboBox()
 
     robot->getEndEffectors(eefs);
 
-    for (size_t i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        QString nameEEF(eefs[i]->getName().c_str());
+        QString nameEEF(eef->getName().c_str());
         UI.comboBoxEEF->addItem(nameEEF);
     }
 }

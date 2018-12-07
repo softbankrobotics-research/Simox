@@ -335,21 +335,21 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (size_t i = 0; i < unitsAttr.size(); i++)
+                for (auto & i : unitsAttr)
                 {
-                    if (unitsAttr[i].isTime())
+                    if (i.isTime())
                     {
-                        uTime = unitsAttr[i];
+                        uTime = i;
                     }
 
-                    if (unitsAttr[i].isLength())
+                    if (i.isLength())
                     {
-                        uLength = unitsAttr[i];
+                        uLength = i;
                     }
 
-                    if (unitsAttr[i].isAngle())
+                    if (i.isAngle())
                     {
-                        uAngle = unitsAttr[i];
+                        uAngle = i;
                     }
                 }
 
@@ -388,21 +388,21 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (size_t i = 0; i < unitsAttr.size(); i++)
+                for (auto & i : unitsAttr)
                 {
-                    if (unitsAttr[i].isTime())
+                    if (i.isTime())
                     {
-                        uTime = unitsAttr[i];
+                        uTime = i;
                     }
 
-                    if (unitsAttr[i].isLength())
+                    if (i.isLength())
                     {
-                        uLength = unitsAttr[i];
+                        uLength = i;
                     }
 
-                    if (unitsAttr[i].isAngle())
+                    if (i.isAngle())
                     {
-                        uAngle = unitsAttr[i];
+                        uAngle = i;
                     }
                 }
 
@@ -438,11 +438,11 @@ namespace VirtualRobot
                 std::vector< Units > unitsAttr = getUnitsAttributes(node);
                 Units uLength("m");
 
-                for (size_t i = 0; i < unitsAttr.size(); i++)
+                for (auto & i : unitsAttr)
                 {
-                    if (unitsAttr[i].isLength())
+                    if (i.isLength())
                     {
-                        uLength = unitsAttr[i];
+                        uLength = i;
                     }
                 }
 
@@ -738,9 +738,9 @@ namespace VirtualRobot
         robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, rntype, transformMatrix);
 
         // process sensors
-        for (size_t i = 0; i < sensorTags.size(); i++)
+        for (auto & sensorTag : sensorTags)
         {
-            processSensor(robotNode, sensorTags[i], loadMode, basePath);
+            processSensor(robotNode, sensorTag, loadMode, basePath);
         }
 
         return robotNode;
@@ -828,9 +828,9 @@ namespace VirtualRobot
             std::vector< ChildFromRobotDef > childrenFromRobot = iter->second;
             RobotNodePtr node = iter->first;
 
-            for (unsigned int i = 0; i < childrenFromRobot.size(); i++)
+            for (auto & i : childrenFromRobot)
             {
-                boost::filesystem::path filenameNew(childrenFromRobot[i].filename);
+                boost::filesystem::path filenameNew(i.filename);
                 boost::filesystem::path filenameBasePath(basePath);
 
                 boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
@@ -846,27 +846,27 @@ namespace VirtualRobot
                 }
 
                 RobotPtr r = loadRobot(filenameNewComplete.string(), loadMode);
-                THROW_VR_EXCEPTION_IF(!r, "Could not add child-from-robot due to failed loading of robot from file" << childrenFromRobot[i].filename);
+                THROW_VR_EXCEPTION_IF(!r, "Could not add child-from-robot due to failed loading of robot from file" << i.filename);
                 RobotNodePtr root = r->getRootNode();
-                THROW_VR_EXCEPTION_IF(!root, "Could not add child-from-robot. No root node in file" << childrenFromRobot[i].filename);
+                THROW_VR_EXCEPTION_IF(!root, "Could not add child-from-robot. No root node in file" << i.filename);
 
                 RobotNodePtr rootNew = root->clone(robo, true, node);
-                THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed. Could not add child-from-robot from file " << childrenFromRobot[i].filename);
+                THROW_VR_EXCEPTION_IF(!rootNew, "Clone failed. Could not add child-from-robot from file " << i.filename);
 
                 std::vector<EndEffectorPtr> eefs;
                 r->getEndEffectors(eefs);
 
-                for (std::vector<EndEffectorPtr>::iterator eef = eefs.begin(); eef != eefs.end(); eef++)
+                for (auto & eef : eefs)
                 {
-                    (*eef)->clone(robo);
+                    eef->clone(robo);
                 }
 
                 std::vector<RobotNodeSetPtr> nodeSets;
                 r->getRobotNodeSets(nodeSets);
 
-                for (std::vector<RobotNodeSetPtr>::iterator ns = nodeSets.begin(); ns != nodeSets.end(); ns++)
+                for (auto & nodeSet : nodeSets)
                 {
-                    (*ns)->clone(robo);
+                    nodeSet->clone(robo);
                 }
 
                 // already performed in root->clone
@@ -877,17 +877,17 @@ namespace VirtualRobot
         }
 
         //std::vector<RobotNodeSetPtr> robotNodeSets
-        for (unsigned int i = 0; i < endeffectorNodes.size(); ++i)
+        for (auto & endeffectorNode : endeffectorNodes)
         {
-            EndEffectorPtr eef = processEndeffectorNode(endeffectorNodes[i], robo);
+            EndEffectorPtr eef = processEndeffectorNode(endeffectorNode, robo);
             robo->registerEndEffector(eef);
         }
 
         int rnsCounter = 0;
 
-        for (std::size_t i = 0; i < robotNodeSetNodes.size(); ++i)
+        for (auto & robotNodeSetNode : robotNodeSetNodes)
         {
-            RobotNodeSetPtr rns = processRobotNodeSet(robotNodeSetNodes[i], robo, robotRoot, rnsCounter);
+            RobotNodeSetPtr rns = processRobotNodeSet(robotNodeSetNode, robo, robotRoot, rnsCounter);
             //nodeSets.push_back(rns);
         }
 
@@ -895,11 +895,11 @@ namespace VirtualRobot
         robo->getRobotNodes(nodes);
         RobotNodePtr root = robo->getRootNode();
 
-        for (size_t i = 0; i < nodes.size(); i++)
+        for (auto & node : nodes)
         {
-            if (nodes[i] != root && !(nodes[i]->getParent()))
+            if (node != root && !(node->getParent()))
             {
-                THROW_VR_EXCEPTION("Node without parent: " << nodes[i]->getName());
+                THROW_VR_EXCEPTION("Node without parent: " << node->getName());
             }
         }
 
@@ -1038,9 +1038,9 @@ namespace VirtualRobot
                 else
                 {
                     // double name check
-                    for (unsigned int i = 0; i < robotNodes.size(); i++)
+                    for (auto & robotNode : robotNodes)
                     {
-                        THROW_VR_EXCEPTION_IF((robotNodes[i]->getName() == n->getName()), "At least two RobotNodes with name <" << n->getName() << "> defined in robot definition");
+                        THROW_VR_EXCEPTION_IF((robotNode->getName() == n->getName()), "At least two RobotNodes with name <" << n->getName() << "> defined in robot definition");
                     }
 
                     childrenMap[n] = childrenNames;
@@ -1506,9 +1506,9 @@ namespace VirtualRobot
         {
             std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
 
-            for (size_t i = 0; i < nodes.size(); i++)
+            for (auto & node : nodes)
             {
-                nodes[i]->saveModelFiles(modelDirComplete.string(), true);
+                node->saveModelFiles(modelDirComplete.string(), true);
             }
         }
 
