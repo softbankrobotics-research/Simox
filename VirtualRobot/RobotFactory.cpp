@@ -302,7 +302,7 @@ namespace VirtualRobot
 
         if (o->getCollisionModel())
         {
-            c = o->getCollisionModel()->clone();
+            c = o->getCollisionModel();
         }
 
         auto rnf = RobotNodeFixedFactory::createInstance(NULL);
