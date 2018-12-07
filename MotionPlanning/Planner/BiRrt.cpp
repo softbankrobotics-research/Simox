@@ -5,7 +5,7 @@
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
-#include <time.h>
+#include <ctime>
 
 
 //#define LOCAL_DEBUG(a) {SABA_INFO << a;};

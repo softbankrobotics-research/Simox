@@ -5,7 +5,7 @@
 #include "../VirtualRobotException.h"
 #include "../Robot.h"
 
-#include <float.h>
+#include <cfloat>
 
 namespace VirtualRobot
 {

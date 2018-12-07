@@ -8,7 +8,7 @@
 #include "VirtualRobot/IK/constraints/PoseConstraint.h"
 #endif
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <sstream>

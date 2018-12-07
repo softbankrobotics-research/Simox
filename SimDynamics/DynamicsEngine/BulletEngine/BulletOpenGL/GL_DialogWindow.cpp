@@ -20,7 +20,7 @@ subject to the following restrictions:
 #include "GLDebugFont.h"
 #include "btBulletDynamicsCommon.h"
 
-#include <stdio.h> // for sprintf()
+#include <cstdio> // for sprintf()
 
 #define USE_ARRAYS 1
 

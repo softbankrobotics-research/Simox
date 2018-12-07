@@ -8,7 +8,7 @@
 // *****************************************************************
 
 #include "SphereApproximator.h"
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "VirtualRobot/Visualization/TriMeshModel.h"
 

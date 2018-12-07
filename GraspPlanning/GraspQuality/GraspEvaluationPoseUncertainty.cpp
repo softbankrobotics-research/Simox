@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include <random>
-#include <float.h>
+#include <cfloat>
 #include <cstdlib>
 
 using namespace Eigen;

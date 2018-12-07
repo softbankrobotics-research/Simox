@@ -5,7 +5,7 @@
 #include <VirtualRobot/Random.h>
 
 #include <algorithm>
-#include <float.h>
+#include <cfloat>
 
 using namespace VirtualRobot;
 using namespace std;

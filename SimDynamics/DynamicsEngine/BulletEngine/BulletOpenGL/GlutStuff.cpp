@@ -66,7 +66,7 @@ static void glutMotionFuncCallback(int x, int y)
 }
 
 
-static void glutDisplayCallback(void)
+static void glutDisplayCallback()
 {
     gDemoApplication->displayCallback();
 }

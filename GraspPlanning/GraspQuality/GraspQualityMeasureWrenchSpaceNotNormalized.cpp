@@ -18,7 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <float.h>
+#include <cfloat>
 
 
 using namespace std;

@@ -91,7 +91,7 @@ namespace VirtualRobot
         }
     }
 
-    TimeOptimalTrajectory::~TimeOptimalTrajectory(void) {
+    TimeOptimalTrajectory::~TimeOptimalTrajectory() {
     }
 
     void TimeOptimalTrajectory::outputPhasePlaneTrajectory() const {

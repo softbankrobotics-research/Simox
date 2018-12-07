@@ -101,7 +101,7 @@ namespace SimDynamics
 
     }
 
-    void BulletOpenGLViewer::myinit(void)
+    void BulletOpenGLViewer::myinit()
     {
 
         GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };

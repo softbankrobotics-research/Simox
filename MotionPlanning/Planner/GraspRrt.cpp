@@ -9,8 +9,8 @@
 #include <VirtualRobot/Grasping/BasicGraspQualityMeasure.h>
 #include <VirtualRobot/Random.h>
 #include <algorithm>
-#include <float.h>
-#include <time.h>
+#include <cfloat>
+#include <ctime>
 
 using namespace std;
 

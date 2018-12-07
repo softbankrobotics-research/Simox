@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <set>
-#include <float.h>
+#include <cfloat>
 #include "../Robot.h"
 
 

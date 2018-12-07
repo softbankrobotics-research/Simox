@@ -6,7 +6,7 @@
 #include "VirtualRobot/Robot.h"
 //#include "MathHelpers.h"
 #include <cmath>
-#include "float.h"
+#include <cfloat>
 #include <iostream>
 #include <string>
 

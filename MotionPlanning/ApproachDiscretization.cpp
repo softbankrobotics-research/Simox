@@ -1,8 +1,8 @@
 #include "ApproachDiscretization.h"
 #include <iostream>
-#include <time.h>
+#include <ctime>
 #include <algorithm>
-#include <limits.h>
+#include <climits>
 
 using namespace std;
 

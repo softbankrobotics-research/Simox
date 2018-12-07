@@ -16,8 +16,8 @@
 #include <VirtualRobot/Random.h>
 #include <fstream>
 #include <cmath>
-#include <float.h>
-#include <limits.h>
+#include <cfloat>
+#include <climits>
 #include <thread>
 
 namespace VirtualRobot

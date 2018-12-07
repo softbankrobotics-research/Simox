@@ -46,7 +46,7 @@ subject to the following restrictions:
 #include "LinearMath/btIDebugDraw.h"
 //for debugmodes
 
-#include <stdio.h> //printf debugging
+#include <cstdio> //printf debugging
 
 //#define USE_DISPLAY_LISTS 1
 #ifdef USE_DISPLAY_LISTS

@@ -4165,7 +4165,7 @@ save_state_and_return:
     }
 
     /*---------------------------------------------------*/
-    int CompressionBZip2::bz_config_ok(void)
+    int CompressionBZip2::bz_config_ok()
     {
         if (sizeof(int)   != 4)
         {

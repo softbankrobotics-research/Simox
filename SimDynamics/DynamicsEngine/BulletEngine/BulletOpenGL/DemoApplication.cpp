@@ -126,7 +126,7 @@ void DemoApplication::overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer)
     m_shapeDrawer = shapeDrawer;
 }
 
-void DemoApplication::myinit(void)
+void DemoApplication::myinit()
 {
 
     GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };

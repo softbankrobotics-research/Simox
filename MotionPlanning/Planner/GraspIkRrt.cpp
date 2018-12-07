@@ -8,7 +8,7 @@
 #include <VirtualRobot/RobotNodeSet.h>
 #include <VirtualRobot/Grasping/GraspSet.h>
 #include <VirtualRobot/Random.h>
-#include <time.h>
+#include <ctime>
 
 
 //#define LOCAL_DEBUG(a) {SABA_INFO << a;};

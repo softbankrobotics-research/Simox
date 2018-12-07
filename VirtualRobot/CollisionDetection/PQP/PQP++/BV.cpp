@@ -40,8 +40,8 @@
 
 #include <algorithm>
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 #include "BV.h"
 #include "MatVec.h"

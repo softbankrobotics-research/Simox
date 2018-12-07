@@ -1,9 +1,9 @@
 
 #include "ConvexHullGenerator.h"
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
-#include <float.h>
+#include <cfloat>
 
 //#define CONVEXHULL_DEBUG_OUTPUT
 

@@ -5,7 +5,7 @@
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
 #include <VirtualRobot/Random.h>
-#include <time.h>
+#include <ctime>
 
 
 using namespace std;

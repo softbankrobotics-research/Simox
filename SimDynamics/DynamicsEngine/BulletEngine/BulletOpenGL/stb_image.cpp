@@ -3,17 +3,17 @@
 #ifndef STBI_HEADER_FILE_ONLY
 
 #ifndef STBI_NO_HDR
-#include <math.h>  // ldexp
-#include <string.h> // strcmp, strtok
+#include <cmath>  // ldexp
+#include <cstring> // strcmp, strtok
 #endif
 
 #ifndef STBI_NO_STDIO
-#include <stdio.h>
+#include <cstdio>
 #endif
-#include <stdlib.h>
+#include <cstdlib>
 #include <memory.h>
-#include <assert.h>
-#include <stdarg.h>
+#include <cassert>
+#include <cstdarg>
 
 #ifndef _MSC_VER
 #ifdef __cplusplus
@@ -2783,7 +2783,7 @@ return 1;
 
 // @TODO: should statically initialize these for optimal thread safety
 static uint8 default_length[288], default_distance[32];
-static void init_defaults(void)
+static void init_defaults()
 {
 int i;   // use <= to match clearly with spec
 

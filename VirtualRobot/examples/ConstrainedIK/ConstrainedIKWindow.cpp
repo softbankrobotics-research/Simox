@@ -38,7 +38,7 @@
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSphere.h>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <sstream>

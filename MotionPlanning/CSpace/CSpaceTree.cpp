@@ -6,11 +6,11 @@
 #include "CSpace.h"
 #include "VirtualRobot/Robot.h"
 #include "VirtualRobot/RobotNodeSet.h"
-#include "float.h"
+#include <cfloat>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
-#include <time.h>
+#include <ctime>
 
 using namespace std;
 

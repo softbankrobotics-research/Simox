@@ -4,7 +4,7 @@
 #include "VirtualRobot/EndEffector/EndEffector.h"
 #include "VirtualRobot/IK/DifferentialIK.h"
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <sstream>

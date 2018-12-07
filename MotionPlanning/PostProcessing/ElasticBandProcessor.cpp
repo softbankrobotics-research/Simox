@@ -3,8 +3,8 @@
 #include "MotionPlanning/CSpace/CSpaceSampled.h"
 #include "MotionPlanning/CSpace/CSpacePath.h"
 #include <vector>
-#include <time.h>
-#include <math.h>
+#include <ctime>
+#include <cmath>
 
 namespace Saba
 {

@@ -9,7 +9,7 @@
 
 
 #include <algorithm>
-#include <float.h>
+#include <cfloat>
 
 //#define CHECK_PERFORMANCE
 

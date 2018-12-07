@@ -1,8 +1,8 @@
 
 #include "MathTools.h"
 #include "VirtualRobotException.h"
-#include <float.h>
-#include <string.h>
+#include <cfloat>
+#include <cstring>
 #include <cmath>
 #include <fstream>
 #include <iomanip>

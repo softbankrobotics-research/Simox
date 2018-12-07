@@ -18,7 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <float.h>
+#include <cfloat>
 // if defined, the inverted contact normals are used
 //#define INVERT_NORMALS
 
