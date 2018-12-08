@@ -68,8 +68,7 @@ namespace VirtualRobot
     }
 
     BasicGraspQualityMeasure::~BasicGraspQualityMeasure()
-    {
-    }
+    = default;
 
     void BasicGraspQualityMeasure::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& /*contactPoints6d*/)
     {

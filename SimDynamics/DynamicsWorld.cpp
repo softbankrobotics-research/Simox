@@ -81,8 +81,7 @@ namespace SimDynamics
     }
 
     DynamicsWorld::~DynamicsWorld()
-    {
-    }
+    = default;
 
     bool DynamicsWorld::addObject(DynamicsObjectPtr o)
     {

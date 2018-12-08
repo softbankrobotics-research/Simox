@@ -29,12 +29,10 @@ namespace VirtualRobot
     std::map<std::string, int> RobotIO::robot_name_counter;
 
     RobotIO::RobotIO()
-    {
-    }
+    = default;
 
     RobotIO::~RobotIO()
-    {
-    }
+    = default;
 
 
 

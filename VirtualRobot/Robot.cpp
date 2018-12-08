@@ -20,12 +20,10 @@ namespace VirtualRobot
     }
 
     Robot::Robot()
-    {
-    }
+    = default;
 
     Robot::~Robot()
-    {
-    }
+    = default;
 
     LocalRobot::~LocalRobot()
     {
@@ -611,7 +609,7 @@ namespace VirtualRobot
 
         while (robotNodes.end() != iterator)
         {
-            (*iterator)->showCoordinateSystem(enable, 1.0f, NULL, type);
+            (*iterator)->showCoordinateSystem(enable, 1.0f, nullptr, type);
             ++iterator;
         }
     }

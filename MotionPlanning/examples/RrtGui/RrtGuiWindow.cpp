@@ -37,7 +37,7 @@ float TIMER_MS = 200.0f;
 
 RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
                            const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -188,7 +188,7 @@ void RrtGuiWindow::buildVisu()
     if (scene)
     {
         visualization = scene->getVisualization<CoinVisualization>(colModel);
-        SoNode* visualisationNode = NULL;
+        SoNode* visualisationNode = nullptr;
 
         if (visualization)
         {

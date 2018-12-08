@@ -24,8 +24,7 @@ namespace Saba
     }
 
     ApproachDiscretization::~ApproachDiscretization()
-    {
-    }
+    = default;
 
     /*
     void ApproachDiscretization::buildIVModel()

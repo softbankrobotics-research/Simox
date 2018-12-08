@@ -28,7 +28,7 @@ using namespace VirtualRobot;
 using namespace SimDynamics;
 
 SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -811,7 +811,7 @@ void SimDynamicsWindow::stopCB()
         SoSensorManager* sensor_mgr = SoDB::getSensorManager();
         sensor_mgr->removeTimerSensor(timerSensor);
         delete timerSensor;
-        timerSensor = NULL;
+        timerSensor = nullptr;
     }
 
     viewer.reset();

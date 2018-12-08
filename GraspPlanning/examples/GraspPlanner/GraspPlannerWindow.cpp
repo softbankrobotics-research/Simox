@@ -43,7 +43,7 @@ using namespace GraspStudio;
 float TIMER_MS = 30.0f;
 
 GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -52,7 +52,7 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
     this->objectFile = objFile;
     this->eefName = eefName;
     this->preshape = preshape;
-    eefVisu = NULL;
+    eefVisu = nullptr;
 
     sceneSep = new SoSeparator;
     sceneSep->ref();

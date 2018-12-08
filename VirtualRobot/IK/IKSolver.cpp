@@ -3,7 +3,6 @@
 namespace VirtualRobot
 {
     IKSolver::IKSolver()
-    {
-    }
+    = default;
 
 } // namespace VirtualRobot

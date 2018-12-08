@@ -35,7 +35,7 @@ namespace VirtualRobot
     CollisionCheckerPQP::~CollisionCheckerPQP()
     {
         delete pqpChecker;
-        pqpChecker = NULL;
+        pqpChecker = nullptr;
     }
 
 

@@ -15,9 +15,7 @@ namespace VirtualRobot
     }
 
     HierarchicalIK::~HierarchicalIK()
-    {
-
-    }
+    = default;
 
     void HierarchicalIK::setVerbose(bool v)
     {

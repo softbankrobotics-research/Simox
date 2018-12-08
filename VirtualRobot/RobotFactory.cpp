@@ -20,12 +20,10 @@ namespace VirtualRobot
 
 
     RobotFactory::RobotFactory()
-    {
-    }
+    = default;
 
     RobotFactory::~RobotFactory()
-    {
-    }
+    = default;
 
 
     RobotPtr RobotFactory::createRobot(const std::string& name, const std::string& type)
@@ -305,7 +303,7 @@ namespace VirtualRobot
             c = o->getCollisionModel();
         }
 
-        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        auto rnf = RobotNodeFixedFactory::createInstance(nullptr);
         RobotNodePtr newRN = rnf->createRobotNode(robot, name, v, c, 0, 0, 0, transformation, Eigen::Vector3f::Zero(), Eigen::Vector3f::Zero(), p);
         rn->attachChild(newRN);
         newRN->initialize(rn);
@@ -644,7 +642,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
         THROW_VR_EXCEPTION_IF(!nodeA, "NULL data");
-        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        auto rnf = RobotNodeFixedFactory::createInstance(nullptr);
         SceneObject::Physics p;
         VisualizationNodePtr v;
         CollisionModelPtr c;
@@ -684,7 +682,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
 
-        auto rnf = RobotNodeFixedFactory::createInstance(NULL);
+        auto rnf = RobotNodeFixedFactory::createInstance(nullptr);
         SceneObject::Physics p;
         VisualizationNodePtr v;
         CollisionModelPtr c;

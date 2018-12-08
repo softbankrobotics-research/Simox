@@ -11,13 +11,11 @@ namespace VirtualRobot
 {
 
     PositionSensorFactory::PositionSensorFactory()
-    {
-    }
+    = default;
 
 
     PositionSensorFactory::~PositionSensorFactory()
-    {
-    }
+    = default;
 
 
     /**

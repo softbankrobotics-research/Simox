@@ -31,8 +31,7 @@ namespace Saba
     }
 
     RrtWorkspaceVisualization::~RrtWorkspaceVisualization()
-    {
-    }
+    = default;
 
     void RrtWorkspaceVisualization::init()
     {

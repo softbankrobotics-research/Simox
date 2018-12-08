@@ -26,17 +26,17 @@ namespace VirtualRobot
     CoinVisualization::CoinVisualization(const VisualizationNodePtr visualizationNode) :
         Visualization(visualizationNode)
     {
-        selection = NULL;
-        visuRoot = NULL;
-        color = NULL;
+        selection = nullptr;
+        visuRoot = nullptr;
+        color = nullptr;
     }
 
     CoinVisualization::CoinVisualization(const std::vector<VisualizationNodePtr>& visualizationNodes) :
         Visualization(visualizationNodes)
     {
-        selection = NULL;
-        visuRoot = NULL;
-        color = NULL;
+        selection = nullptr;
+        visuRoot = nullptr;
+        color = nullptr;
     }
 
     CoinVisualization::~CoinVisualization()

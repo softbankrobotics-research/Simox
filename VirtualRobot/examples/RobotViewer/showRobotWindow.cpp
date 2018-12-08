@@ -26,7 +26,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -255,7 +255,7 @@ void showRobotWindow::rebuildVisualization()
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
 
     visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -845,7 +845,7 @@ void showRobotWindow::loadRobot()
     {
         QFileInfo fileInfo(m_sRobotFilename.c_str());
         std::string suffix(fileInfo.suffix().toLatin1());
-        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, nullptr);
 
         if (!importer)
         {

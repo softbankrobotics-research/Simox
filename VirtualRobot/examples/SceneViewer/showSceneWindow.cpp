@@ -26,7 +26,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showSceneWindow::showSceneWindow(std::string& sSceneFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -172,7 +172,7 @@ void showSceneWindow::buildVisu()
     }
 
     visualization = scene->getVisualization<CoinVisualization>(visuType);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {

@@ -41,8 +41,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
 }
 
 Gravity::~Gravity()
-{
-}
+= default;
 
 
 
@@ -107,12 +106,7 @@ std::map<std::string, float> Gravity::computeGravityTorque()
 }
 
 Gravity::GravityData::GravityData()
-{
-
-
-
-
-}
+= default;
 
 Gravity::GravityDataPtr Gravity::GravityData::create(SceneObjectPtr node, const std::vector<RobotNodePtr> &joints, const std::vector<RobotNodePtr> &bodies, std::vector<Gravity::GravityDataPtr> &dataVec)
 {

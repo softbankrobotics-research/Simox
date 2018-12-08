@@ -11,8 +11,7 @@ namespace VirtualRobot
     }
 
     RobotNodeActuator::~RobotNodeActuator()
-    {
-    }
+    = default;
 
     void RobotNodeActuator::updateVisualizationPose(const Eigen::Matrix4f& pose, bool updateChildren)
     {

@@ -49,9 +49,7 @@ namespace SimDynamics
     }
 
     SimoxMotionState::~SimoxMotionState()
-    {
-
-    }
+    = default;
 
     void SimoxMotionState::setWorldTransform(const btTransform& worldPose)
     {

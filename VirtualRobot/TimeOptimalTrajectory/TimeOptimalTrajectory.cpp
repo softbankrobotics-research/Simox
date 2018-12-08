@@ -91,8 +91,7 @@ namespace VirtualRobot
         }
     }
 
-    TimeOptimalTrajectory::~TimeOptimalTrajectory() {
-    }
+    TimeOptimalTrajectory::~TimeOptimalTrajectory() = default;
 
     void TimeOptimalTrajectory::outputPhasePlaneTrajectory() const {
         ofstream file1("maxVelocity.txt");

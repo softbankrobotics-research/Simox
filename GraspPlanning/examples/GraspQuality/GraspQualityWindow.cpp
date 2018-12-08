@@ -38,7 +38,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 GraspQualityWindow::GraspQualityWindow(std::string& robFile, std::string& objFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 

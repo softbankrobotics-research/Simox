@@ -18,8 +18,7 @@ namespace VirtualRobot
 
 
     CameraSensor::~CameraSensor()
-    {
-    }
+    = default;
 
 
 

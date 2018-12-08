@@ -86,7 +86,7 @@ namespace VirtualRobot
             const std::string& tcpName,
             bool registerToRobot)
     {
-        VR_ASSERT(robot != NULL);
+        VR_ASSERT(robot != nullptr);
         std::vector< RobotNodePtr > robotNodes;
 
         if (robotNodeNames.empty())
@@ -147,7 +147,7 @@ namespace VirtualRobot
             const RobotNodePtr tcp,
             bool registerToRobot)
     {
-        VR_ASSERT(robot != NULL);
+        VR_ASSERT(robot != nullptr);
 
         if (robotNodes.empty() || !robotNodes[0])
         {

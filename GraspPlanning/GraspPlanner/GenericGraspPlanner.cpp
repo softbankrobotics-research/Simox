@@ -34,8 +34,7 @@ namespace GraspStudio
     }
 
     GenericGraspPlanner::~GenericGraspPlanner()
-    {
-    }
+    = default;
 
     int GenericGraspPlanner::plan(int nrGrasps, int timeOutMS, VirtualRobot::SceneObjectSetPtr obstacles)
     {

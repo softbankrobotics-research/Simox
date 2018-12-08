@@ -20,8 +20,7 @@ namespace VirtualRobot
 
 
     TriMeshModel::TriMeshModel()
-    {
-    }
+    = default;
 
     TriMeshModel::TriMeshModel(std::vector <triangle>& triangles)
     {

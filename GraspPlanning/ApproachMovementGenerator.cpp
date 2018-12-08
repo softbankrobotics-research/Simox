@@ -42,8 +42,7 @@ namespace GraspStudio
     }
 
     ApproachMovementGenerator::~ApproachMovementGenerator()
-    {
-    }
+    = default;
 
 
     VirtualRobot::RobotPtr ApproachMovementGenerator::getEEFRobotClone()

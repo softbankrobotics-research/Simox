@@ -91,9 +91,7 @@ namespace SimDynamics
     }
 
     BulletOpenGLViewer::~BulletOpenGLViewer()
-    {
-
-    }
+    = default;
 
     void BulletOpenGLViewer::initPhysics()
     {

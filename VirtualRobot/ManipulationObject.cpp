@@ -14,8 +14,7 @@ namespace VirtualRobot
     }
 
     ManipulationObject::~ManipulationObject()
-    {
-    }
+    = default;
 
     void ManipulationObject::print(bool printDecoration)
     {

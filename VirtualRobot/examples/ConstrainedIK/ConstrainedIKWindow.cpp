@@ -49,7 +49,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     robotFilename = sRobotFilename;
     sceneSep = new SoSeparator();
@@ -165,7 +165,7 @@ void ConstrainedIKWindow::collisionModel()
     robotSep->removeAllChildren();
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(SceneObject::Full);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {

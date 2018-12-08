@@ -45,9 +45,7 @@ namespace VirtualRobot
 
 
     KinematicChain::~KinematicChain()
-    {
-
-    }
+    = default;
 
 
 

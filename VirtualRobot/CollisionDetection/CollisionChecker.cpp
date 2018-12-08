@@ -71,26 +71,25 @@ namespace VirtualRobot
     // class CollisionChecker destructor
     //----------------------------------------------------------------------
     CollisionChecker::~CollisionChecker()
-    {
-    }
+    = default;
 
 
     float CollisionChecker::calculateDistance(SceneObjectSetPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
     float CollisionChecker::calculateDistance(CollisionModelPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
     float CollisionChecker::calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
 
@@ -106,7 +105,7 @@ namespace VirtualRobot
         }
         else
         {
-            return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, nullptr, nullptr);
         }
     }
 
@@ -134,7 +133,7 @@ namespace VirtualRobot
         }
         else
         {
-            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, nullptr, nullptr);
         }
     }
 

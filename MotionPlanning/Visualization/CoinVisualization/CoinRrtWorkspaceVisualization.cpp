@@ -30,14 +30,14 @@ namespace Saba
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, cspace, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, robotNodeSet, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 

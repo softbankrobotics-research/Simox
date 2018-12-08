@@ -15,8 +15,7 @@ namespace SimDynamics
     }
 
     DynamicsRobot::~DynamicsRobot()
-    {
-    }
+    = default;
 
     std::string DynamicsRobot::getName() const
     {

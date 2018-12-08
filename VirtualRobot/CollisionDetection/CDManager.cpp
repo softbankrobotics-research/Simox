@@ -16,7 +16,7 @@ namespace VirtualRobot
 
     CDManager::CDManager(CollisionCheckerPtr colChecker)
     {
-        if (colChecker == NULL)
+        if (colChecker == nullptr)
         {
             this->colChecker = VirtualRobot::CollisionChecker::getGlobalCollisionChecker();
         }
@@ -27,8 +27,7 @@ namespace VirtualRobot
     }
 
     CDManager::~CDManager()
-    {
-    }
+    = default;
 
     void CDManager::addCollisionModel(SceneObjectSetPtr m)
     {

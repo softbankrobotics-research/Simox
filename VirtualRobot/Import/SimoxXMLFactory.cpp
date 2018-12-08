@@ -9,13 +9,11 @@ namespace VirtualRobot
 {
 
     SimoxXMLFactory::SimoxXMLFactory()
-    {
-    }
+    = default;
 
 
     SimoxXMLFactory::~SimoxXMLFactory()
-    {
-    }
+    = default;
 
 
     RobotPtr SimoxXMLFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription loadMode)

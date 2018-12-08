@@ -21,8 +21,7 @@ namespace VirtualRobot
 
 
     PoseQualityMeasurement::~PoseQualityMeasurement()
-    {
-    }
+    = default;
 
     float PoseQualityMeasurement::getPoseQuality()
     {

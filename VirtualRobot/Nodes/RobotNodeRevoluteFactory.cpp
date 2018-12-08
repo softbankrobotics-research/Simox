@@ -13,13 +13,11 @@ namespace VirtualRobot
 {
 
     RobotNodeRevoluteFactory::RobotNodeRevoluteFactory()
-    {
-    }
+    = default;
 
 
     RobotNodeRevoluteFactory::~RobotNodeRevoluteFactory()
-    {
-    }
+    = default;
 
 
     /**

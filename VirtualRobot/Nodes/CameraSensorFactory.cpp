@@ -11,13 +11,11 @@ namespace VirtualRobot
 {
 
     CameraSensorFactory::CameraSensorFactory()
-    {
-    }
+    = default;
 
 
     CameraSensorFactory::~CameraSensorFactory()
-    {
-    }
+    = default;
 
 
     /**

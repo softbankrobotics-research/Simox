@@ -39,8 +39,7 @@ namespace GraspStudio
     }
 
     GraspQualityMeasureWrenchSpace::~GraspQualityMeasureWrenchSpace()
-    {
-    }
+    = default;
 
 
     void GraspQualityMeasureWrenchSpace::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints)

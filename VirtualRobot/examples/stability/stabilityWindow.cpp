@@ -37,7 +37,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 stabilityWindow::stabilityWindow(std::string& sRobotFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -202,7 +202,7 @@ void stabilityWindow::buildVisu()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
     visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {

@@ -25,8 +25,7 @@ namespace VirtualRobot
 
 
     Sensor::~Sensor()
-    {
-    }
+    = default;
 
 
     bool Sensor::initialize(SceneObjectPtr parent, const std::vector<SceneObjectPtr>& children)

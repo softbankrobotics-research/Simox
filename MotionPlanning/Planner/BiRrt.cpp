@@ -26,8 +26,7 @@ namespace Saba
     }
 
     BiRrt::~BiRrt()
-    {
-    }
+    = default;
 
 
     bool BiRrt::plan(bool bQuiet)

@@ -40,7 +40,7 @@ namespace VirtualRobot
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
                                          bool embeddedGraspEditor)
-        : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
+        : QMainWindow(nullptr), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
 
@@ -280,7 +280,7 @@ namespace VirtualRobot
         if (object)
         {
 
-            SoNode* visualisationNode = NULL;
+            SoNode* visualisationNode = nullptr;
             boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
             if (visualizationObject)
                 visualisationNode = visualizationObject->getCoinVisualization();

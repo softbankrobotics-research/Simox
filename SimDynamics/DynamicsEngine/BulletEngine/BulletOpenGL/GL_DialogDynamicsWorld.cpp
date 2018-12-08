@@ -25,10 +25,10 @@ subject to the following restrictions:
 
 GL_DialogDynamicsWorld::GL_DialogDynamicsWorld()
 {
-    m_upperBorder = 0;
-    m_lowerBorder = 0;
+    m_upperBorder = nullptr;
+    m_lowerBorder = nullptr;
 
-    m_pickConstraint = 0;
+    m_pickConstraint = nullptr;
     m_screenWidth = 0;
     m_screenHeight = 0;
 
@@ -196,7 +196,7 @@ GL_DialogWindow*    GL_DialogDynamicsWorld::createDialog(int horPos, int vertPos
     btScalar mass = 100.f;
     btVector3 localInertia;
     boxShape->calculateLocalInertia(mass, localInertia);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, 0, boxShape, localInertia);
+    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, boxShape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
     btTransform trans;
     trans.setIdentity();
@@ -227,7 +227,7 @@ GL_SliderControl* GL_DialogDynamicsWorld::createSlider(GL_DialogWindow* dialog, 
     btScalar mass = .1f;
     btVector3 localInertia;
     boxShape->calculateLocalInertia(mass, localInertia);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, 0, boxShape, localInertia);
+    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, boxShape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
     btTransform trans;
     trans.setIdentity();
@@ -306,7 +306,7 @@ GL_ToggleControl* GL_DialogDynamicsWorld::createToggle(GL_DialogWindow* dialog, 
     btScalar mass = 0.1f;
     btVector3 localInertia;
     boxShape->calculateLocalInertia(mass, localInertia);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, 0, boxShape, localInertia);
+    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, boxShape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
     btTransform trans;
     trans.setIdentity();
@@ -366,7 +366,7 @@ void    GL_DialogDynamicsWorld::draw(btScalar timeStep)
     }
 }
 
-static btRigidBody* pickedBody = 0;//for deactivation state
+static btRigidBody* pickedBody = nullptr;//for deactivation state
 static btScalar mousePickClamping = 111130.f;
 
 //static int gPickingConstraintId = 0;
@@ -455,7 +455,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y)
 
                     btVector3 rayFrom;
 
-                    if (1)//m_ortho)
+                    if (true)//m_ortho)
                     {
                         rayFrom = rayTo;
                         rayFrom.setZ(-100.f);
@@ -565,7 +565,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y)
                     m_dynamicsWorld->removeConstraint(m_pickConstraint);
                     delete m_pickConstraint;
                     //printf("removed constraint %i",gPickingConstraintId);
-                    m_pickConstraint = 0;
+                    m_pickConstraint = nullptr;
                     pickedBody->forceActivationState(ACTIVE_TAG);
                     pickedBody->setDeactivationTime(0.f);
 
@@ -579,7 +579,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y)
                         {
                             GL_SliderControl* sliderControl = (GL_SliderControl*) ctrl;
 
-                            btSliderConstraint* slider = 0;
+                            btSliderConstraint* slider = nullptr;
                             btTypedConstraint* constraint = sliderControl->getConstraint();
 
                             if (constraint->getConstraintType() == SLIDER_CONSTRAINT_TYPE)
@@ -614,7 +614,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y)
 
                     }
 
-                    pickedBody = 0;
+                    pickedBody = nullptr;
 
                 }
 
@@ -643,7 +643,7 @@ btVector3   GL_DialogDynamicsWorld::getRayTo(int x, int y)
     btVector3 cameraTargetPosition(0, 0, 0);
     btVector3 cameraUp(0, -1, 0);
 
-    if (1)//_ortho)
+    if (true)//_ortho)
     {
 
         btScalar aspect;
@@ -754,7 +754,7 @@ void    GL_DialogDynamicsWorld::mouseMotionFunc(int x, int y)
             btVector3 oldPivotInB = p2p->getPivotInB();
             btVector3 newPivotB;
 
-            if (1)//_ortho)
+            if (true)//_ortho)
             {
                 newPivotB = oldPivotInB;
                 newPivotB.setX(newRayTo.getX());

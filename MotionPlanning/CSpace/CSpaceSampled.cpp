@@ -38,8 +38,7 @@ namespace Saba
 
 
     CSpaceSampled::~CSpaceSampled()
-    {
-    }
+    = default;
 
     CSpacePtr CSpaceSampled::clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed)
     {

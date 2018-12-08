@@ -80,9 +80,7 @@ namespace Saba
     }
 
     GraspRrt::~GraspRrt()
-    {
-
-    }
+    = default;
 
 
     void GraspRrt::reset()

@@ -44,8 +44,7 @@ namespace Saba
     }
 
     Rrt::~Rrt()
-    {
-    }
+    = default;
 
 
     bool Rrt::plan(bool bQuiet)

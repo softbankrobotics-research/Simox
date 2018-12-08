@@ -309,7 +309,7 @@ struct ParentChildContactExcludeVisitor : public tinyxml2::XMLVisitor
 {
     
     ParentChildContactExcludeVisitor(Document& document) : document(document) {}
-    virtual ~ParentChildContactExcludeVisitor() override {}
+    virtual ~ParentChildContactExcludeVisitor() override = default;
 
     virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
     
@@ -467,7 +467,7 @@ struct ListElementsVisitor : public tinyxml2::XMLVisitor
 {
     
     ListElementsVisitor(const std::string& elementName) : elementName(elementName) {}
-    virtual ~ListElementsVisitor() override {}
+    virtual ~ListElementsVisitor() override = default;
 
     // XMLVisitor interface
     virtual bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;

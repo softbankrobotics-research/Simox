@@ -9,9 +9,7 @@ namespace GraspStudio
     }
 
     GraspPlanner::~GraspPlanner()
-    {
-
-    }
+    = default;
 
     void GraspPlanner::setVerbose(bool enable)
     {

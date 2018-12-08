@@ -15,8 +15,7 @@ namespace Saba
     }
 
     ShortcutProcessor::~ShortcutProcessor()
-    {
-    }
+    = default;
 
 
 

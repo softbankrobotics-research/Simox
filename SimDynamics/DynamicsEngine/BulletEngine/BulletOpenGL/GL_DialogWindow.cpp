@@ -45,9 +45,7 @@ void    GL_DialogWindow::setScreenSize(int width, int height)
     m_screenHeight = height;
 }
 GL_DialogWindow::~GL_DialogWindow()
-{
-
-}
+= default;
 
 
 

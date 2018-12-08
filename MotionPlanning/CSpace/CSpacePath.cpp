@@ -318,7 +318,7 @@ namespace Saba
         {
             storePathPos = getPoint(0);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = 0;
             }
@@ -329,7 +329,7 @@ namespace Saba
         {
             storePathPos = getPoint(getNrOfPoints() - 1);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = (int)path.size();
             }
@@ -400,7 +400,7 @@ namespace Saba
             }
         }
 
-        if (storeIndex != NULL)
+        if (storeIndex != nullptr)
         {
             *storeIndex = startIndex;
         }

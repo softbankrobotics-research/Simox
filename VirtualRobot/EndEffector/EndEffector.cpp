@@ -45,9 +45,7 @@ namespace VirtualRobot
     }
 
     EndEffector::~EndEffector()
-    {
-
-    }
+    = default;
 
     EndEffectorPtr EndEffector::clone(RobotPtr newRobot)
     {

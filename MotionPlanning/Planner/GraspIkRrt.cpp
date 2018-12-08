@@ -49,8 +49,7 @@ namespace Saba
     }
 
     GraspIkRrt::~GraspIkRrt()
-    {
-    }
+    = default;
 
     bool GraspIkRrt::searchNewGoal()
     {

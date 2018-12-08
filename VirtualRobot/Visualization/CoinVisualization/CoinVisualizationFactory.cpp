@@ -95,13 +95,11 @@ namespace VirtualRobot
     CoinVisualizationFactory::TextureCacheMap CoinVisualizationFactory::globalTextureCache;
 
     CoinVisualizationFactory::CoinVisualizationFactory()
-    {
-    }
+    = default;
 
 
     CoinVisualizationFactory::~CoinVisualizationFactory()
-    {
-    }
+    = default;
 
     void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
     {
@@ -358,7 +356,7 @@ namespace VirtualRobot
         SoNode* coinVisualization = SoDB::readAll(&soInput);
 
         // check if the visualization was read
-        if (NULL == coinVisualization)
+        if (nullptr == coinVisualization)
         {
             std::cerr <<  "Problem reading model from SoInput: "  << soInput.getCurFileName() << std::endl;
             return;
@@ -798,7 +796,7 @@ namespace VirtualRobot
             result->addChild(tmp2);
         }
 
-        if (text != NULL)
+        if (text != nullptr)
         {
             SoSeparator* textSep = new SoSeparator();
             SoTranslation* moveT = new SoTranslation();
@@ -951,7 +949,7 @@ namespace VirtualRobot
         SoUnits* u = new SoUnits();
         u->units = SoUnits::MILLIMETERS;
         res->addChild(u);
-        res->addChild(CreateEllipse(x, y, z, NULL, showAxes, axesHeight, axesWidth));
+        res->addChild(CreateEllipse(x, y, z, nullptr, showAxes, axesHeight, axesWidth));
         VisualizationNodePtr visualizationNode(new CoinVisualizationNode(res));
         res->unref();
         return visualizationNode;
@@ -1101,7 +1099,7 @@ namespace VirtualRobot
             }
 
         private:
-            ~DeleteTextureCallBack() override{}
+            ~DeleteTextureCallBack() override= default;
             std::string nodeName;
             std::string path;
             size_t filesize;
@@ -2347,7 +2345,7 @@ namespace VirtualRobot
 
         if (!reachSpace || reachSpace->numVoxels[0] <= 0 || reachSpace->numVoxels[1] <= 0 || reachSpace->numVoxels[2] <= 0)
         {
-            return NULL;
+            return nullptr;
         }
 
         //float x[6];
@@ -2412,7 +2410,7 @@ namespace VirtualRobot
 
         if (entryRot.size() == 0)
         {
-            return NULL;
+            return nullptr;
         }
 
         SoSeparator* res = new SoSeparator;
@@ -3632,7 +3630,7 @@ namespace VirtualRobot
     bool CoinVisualizationFactory::renderOffscreen(SoOffscreenRenderer* renderer, SoPerspectiveCamera* cam, SoNode* scene, unsigned char** buffer)
     {
         //SbTime t1 = SbTime::getTimeOfDay(); // for profiling
-        if (!renderer || !cam || !scene || buffer == NULL)
+        if (!renderer || !cam || !scene || buffer == nullptr)
         {
             return false;
         }
@@ -4300,7 +4298,7 @@ namespace VirtualRobot
     {
         if (!n)
         {
-            return NULL;
+            return nullptr;
         }
 
         bool copyImages = true;

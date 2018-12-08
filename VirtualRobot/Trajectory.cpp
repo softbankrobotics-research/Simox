@@ -252,7 +252,7 @@ namespace VirtualRobot
         {
             storePathPos = getPoint(0);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = 0;
             }
@@ -263,7 +263,7 @@ namespace VirtualRobot
         {
             storePathPos = getPoint(getNrOfPoints() - 1);
 
-            if (storeIndex != NULL)
+            if (storeIndex != nullptr)
             {
                 *storeIndex = (int)path.size() - 1;
             }
@@ -312,7 +312,7 @@ namespace VirtualRobot
 
         storePathPos = c1 + (c2 - c1) * factor; // storePos = startPos + factor*segment
 
-        if (storeIndex != NULL)
+        if (storeIndex != nullptr)
         {
             *storeIndex = startIndex;
         }

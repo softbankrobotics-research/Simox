@@ -40,7 +40,7 @@ GraspRrtWindow::GraspRrtWindow(const std::string& sceneFile, const std::string& 
                                const std::string& rns, const std::string& rnsB, const std::string& eefName, const std::string& eefNameB,
                                const std::string& colModelRob1, const std::string& colModelRob1B, const std::string& colModelRob2, const std::string& colModelRob2B,
                                const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -196,7 +196,7 @@ void GraspRrtWindow::buildVisu()
     if (scene)
     {
         visualization = scene->getVisualization<CoinVisualization>(colModel);
-        SoNode* visualisationNode = NULL;
+        SoNode* visualisationNode = nullptr;
 
         if (visualization)
         {

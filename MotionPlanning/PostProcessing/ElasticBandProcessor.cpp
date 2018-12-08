@@ -45,8 +45,7 @@ using namespace VirtualRobot;
     }
 
     ElasticBandProcessor::~ElasticBandProcessor()
-    {
-    }
+    = default;
 
     bool ElasticBandProcessor::initSolution()
     {

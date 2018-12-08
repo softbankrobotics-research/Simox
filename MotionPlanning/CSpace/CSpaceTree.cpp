@@ -41,9 +41,7 @@ namespace Saba
     }
 
     CSpaceTree::~CSpaceTree()
-    {
-
-    }
+    = default;
 
     void CSpaceTree::lock()
     {
@@ -323,7 +321,7 @@ namespace Saba
             }
         }
 
-        if (storeDist != NULL)
+        if (storeDist != nullptr)
         {
             *storeDist = sqrtf(dist2);
         }

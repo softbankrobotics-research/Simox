@@ -13,13 +13,11 @@ namespace VirtualRobot
 {
 
     RobotNodeFixedFactory::RobotNodeFixedFactory()
-    {
-    }
+    = default;
 
 
     RobotNodeFixedFactory::~RobotNodeFixedFactory()
-    {
-    }
+    = default;
 
     /**
      * This method creates a VirtualRobot::RobotNodeFixed.

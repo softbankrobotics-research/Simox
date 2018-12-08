@@ -18,9 +18,7 @@ GraspEvaluationPoseUncertainty::GraspEvaluationPoseUncertainty(const PoseUncerta
 }
 
 GraspEvaluationPoseUncertainty::~GraspEvaluationPoseUncertainty()
-{
-
-}
+= default;
 
 std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP)
 {

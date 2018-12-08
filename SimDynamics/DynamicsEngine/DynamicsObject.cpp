@@ -13,8 +13,7 @@ namespace SimDynamics
     }
 
     DynamicsObject::~DynamicsObject()
-    {
-    }
+    = default;
 
     std::string DynamicsObject::getName() const
     {

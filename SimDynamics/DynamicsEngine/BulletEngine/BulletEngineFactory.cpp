@@ -7,13 +7,11 @@ namespace SimDynamics
 {
 
     BulletEngineFactory::BulletEngineFactory()
-    {
-    }
+    = default;
 
 
     BulletEngineFactory::~BulletEngineFactory()
-    {
-    }
+    = default;
 
 
     /**

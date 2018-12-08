@@ -20,12 +20,10 @@ namespace VirtualRobot
 
 
     ObjectIO::ObjectIO()
-    {
-    }
+    = default;
 
     ObjectIO::~ObjectIO()
-    {
-    }
+    = default;
 
     VirtualRobot::ObstaclePtr ObjectIO::loadObstacle(const std::string& xmlFile)
     {

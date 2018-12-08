@@ -42,7 +42,7 @@ PlatformWindow::PlatformWindow(const std::string& sceneFile,
                                const std::string& rns,
                                const std::string& colModelRob,
                                const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -146,7 +146,7 @@ void PlatformWindow::buildVisu()
     if (scene)
     {
         visualization = scene->getVisualization<CoinVisualization>(colModel);
-        SoNode* visualisationNode = NULL;
+        SoNode* visualisationNode = nullptr;
 
         if (visualization)
         {

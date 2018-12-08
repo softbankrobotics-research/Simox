@@ -36,8 +36,7 @@ namespace VirtualRobot
     }
 
     StackedIK::~StackedIK()
-    {
-    }
+    = default;
 
     void StackedIK::setVerbose(bool v)
     {

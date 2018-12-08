@@ -10,7 +10,6 @@ namespace Saba
     }
 
     ConfigurationConstraint::~ConfigurationConstraint()
-    {
-    }
+    = default;
 
 }

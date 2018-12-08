@@ -28,8 +28,7 @@ namespace VirtualRobot
     }
 
     PoseQualityExtendedManipulability::~PoseQualityExtendedManipulability()
-    {
-    }
+    = default;
 
     float PoseQualityExtendedManipulability::getPoseQuality()
     {

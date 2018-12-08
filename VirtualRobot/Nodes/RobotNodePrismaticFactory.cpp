@@ -13,13 +13,11 @@ namespace VirtualRobot
 {
 
     RobotNodePrismaticFactory::RobotNodePrismaticFactory()
-    {
-    }
+    = default;
 
 
     RobotNodePrismaticFactory::~RobotNodePrismaticFactory()
-    {
-    }
+    = default;
 
 
     /**

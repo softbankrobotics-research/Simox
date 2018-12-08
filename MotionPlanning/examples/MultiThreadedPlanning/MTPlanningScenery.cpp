@@ -55,14 +55,14 @@ MTPlanningScenery::MTPlanningScenery()
     kinChainName = "All";
     TCPName = "Visu";
 
-    obstSep = NULL;
+    obstSep = nullptr;
 
     robotFilename = "robots/examples/MultiThreadedPlanning/CartMover.xml";
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFilename);
 
     plannersStarted = false;
     optimizeStarted = false;
-    startEndVisu = NULL;
+    startEndVisu = nullptr;
 
     buildScene();
 }
@@ -127,7 +127,7 @@ void MTPlanningScenery::reset()
 
     for (auto & visualisation : visualisations)
     {
-        if (visualisation != NULL)
+        if (visualisation != nullptr)
         {
             sceneSep->removeChild(visualisation);
         }
@@ -135,12 +135,12 @@ void MTPlanningScenery::reset()
 
     visualisations.clear();
 
-    if (startEndVisu != NULL)
+    if (startEndVisu != nullptr)
     {
         sceneSep->removeChild(startEndVisu);
     }
 
-    startEndVisu = NULL;
+    startEndVisu = nullptr;
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ void MTPlanningScenery::buildScene()
     if (obstSep)
     {
         sceneSep->removeChild(obstSep);
-        obstSep = NULL;
+        obstSep = nullptr;
     }
 
     float fCubeSize = 50.0f;
@@ -213,7 +213,7 @@ void MTPlanningScenery::buildScene()
         o->setGlobalPose(m);
         environment->addSceneObject(o);
         boost::shared_ptr<CoinVisualization> visualization = o->getVisualization<CoinVisualization>();
-        SoNode* visualisationNode = NULL;
+        SoNode* visualisationNode = nullptr;
 
         if (visualization)
         {
@@ -361,9 +361,9 @@ void MTPlanningScenery::buildPlanningThread(bool bMultiCollisionCheckers, int id
     solutions.push_back(CSpacePathPtr());
     optiSolutions.push_back(CSpacePathPtr());
     optimizeThreads.push_back(PathProcessingThreadPtr());
-    visualisations.push_back(NULL);
+    visualisations.push_back(nullptr);
 
-    if (startEndVisu == NULL)
+    if (startEndVisu == nullptr)
     {
         startEndVisu = new SoSeparator();
         sceneSep->addChild(startEndVisu);

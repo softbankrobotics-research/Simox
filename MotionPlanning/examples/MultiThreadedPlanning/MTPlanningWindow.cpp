@@ -31,14 +31,14 @@ bool runtimeDisplayed = false;
 bool optiTimeDisplayed = false;
 
 MTPlanningWindow::MTPlanningWindow()
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     //resize(1100, 768);
 
-    graspObjectSep = NULL;
-    robotSep = NULL;
+    graspObjectSep = nullptr;
+    robotSep = nullptr;
 
-    scene = NULL;
+    scene = nullptr;
 
     scene = new MTPlanningScenery();
     sceneSep = scene->getScene();
@@ -58,7 +58,7 @@ MTPlanningWindow::MTPlanningWindow()
 
 MTPlanningWindow::~MTPlanningWindow()
 {
-    if (scene != NULL)
+    if (scene != nullptr)
     {
         delete scene;
     }

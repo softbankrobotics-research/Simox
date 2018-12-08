@@ -233,8 +233,7 @@ MergedBodySet&MasslessBodySanitizer::getMergedBodySetWith(const std::string& bod
 
 
 MergedBodySet::MergedBodySet()
-{
-}
+= default;
 
 MergedBodySet::MergedBodySet(const std::string& bodyName)
 {

@@ -18,8 +18,7 @@ namespace VirtualRobot
     }
 
     GraspSet::~GraspSet()
-    {
-    }
+    = default;
 
     void GraspSet::addGrasp(GraspPtr grasp)
     {

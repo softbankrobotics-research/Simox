@@ -33,11 +33,11 @@ namespace SimDynamics
     BulletEngine::BulletEngine(boost::shared_ptr <boost::recursive_mutex> engineMutex)
         : DynamicsEngine(engineMutex)
     {
-        collision_config = NULL;
-        dispatcher = NULL;
-        overlappingPairCache = NULL;
-        constraintSolver = NULL;
-        dynamicsWorld = NULL;
+        collision_config = nullptr;
+        dispatcher = nullptr;
+        overlappingPairCache = nullptr;
+        constraintSolver = nullptr;
+        dynamicsWorld = nullptr;
         simTime = 0;
     }
 
@@ -141,17 +141,17 @@ namespace SimDynamics
         }
 
         delete dynamicsWorld;
-        dynamicsWorld = NULL;
+        dynamicsWorld = nullptr;
         delete collision_config;
-        collision_config = NULL;
+        collision_config = nullptr;
         delete dispatcher;
-        dispatcher = NULL;
+        dispatcher = nullptr;
         delete overlappingPairCache;
-        overlappingPairCache = NULL;
+        overlappingPairCache = nullptr;
         delete constraintSolver;
-        constraintSolver = NULL;
+        constraintSolver = nullptr;
         delete collisionFilterCallback;
-        collisionFilterCallback = NULL;
+        collisionFilterCallback = nullptr;
         return true;
     }
 
@@ -256,7 +256,7 @@ namespace SimDynamics
         }
 
         dynamicsWorld->removeRigidBody(btObject->getRigidBody().get());
-        btObject->getRigidBody()->setBroadphaseHandle(NULL);
+        btObject->getRigidBody()->setBroadphaseHandle(nullptr);
         return DynamicsEngine::removeObject(o);
     }
 
