@@ -219,9 +219,31 @@ namespace VirtualRobot
             Qt3DCore::QNode *sceneRoot;                         // The scene root, which becomes a child of the engine's root entity.
         };
 
+        class DeferredOffscreenEngine
+        {
+        public:
+            DeferredOffscreenEngine(Qt3DRender::QCamera *camera, const QSize &size);
+            ~DeferredOffscreenEngine();
+
+            void setSceneRoot(Qt3DCore::QNode *sceneRoot);
+            Qt3DRender::QRenderCapture *getRenderCapture();
+            void setSize(const QSize &size);
+
+        private:
+            // We need all of the following in order to render a scene:
+            Qt3DCore::QAspectEngine *aspectEngine;              // The aspect engine, which holds the scene and related aspects.
+            Qt3DRender::QRenderAspect *renderAspect;            // The render aspect, which deals with rendering the scene.
+            Qt3DLogic::QLogicAspect *logicAspect;               // The logic aspect, which runs jobs to do with synchronising frames.
+            Qt3DRender::QRenderSettings *renderSettings;        // The render settings, which control the general rendering behaviour.
+            Qt3DRender::QRenderCapture *renderCapture;          // The render capture node, which is appended to the frame graph.
+            OffscreenSurfaceDepthFrameGraph *offscreenFrameGraph;    // The frame graph, which allows rendering to an offscreen surface.
+            Qt3DCore::QNode *sceneRoot;                         // The scene root, which becomes a child of the engine's root entity.
+        };
+
         Qt3DCore::QEntity *rootEntity;
         Qt3DRender::QCamera *cameraEntity;
         OffscreenEngine *offscreenEngine;
+        DeferredOffscreenEngine *deferredOffscreenEngine;
 
         Qt3DRender::QRenderCaptureReply *render() const;
         void addToSceneGraph(const VisualizationPtr &visu) const;
