@@ -32,6 +32,10 @@
 #include <QOffscreenSurface>
 #include <Qt3DRender/QRenderSurfaceSelector>
 #include <Qt3DRender/QRenderTargetSelector>
+#include <Qt3DRender/QRenderPassFilter>
+#include <Qt3DRender/QEffect>
+#include <Qt3DRender/QTechnique>
+#include <Qt3DRender/QLayerFilter>
 #include <Qt3DRender/QViewport>
 #include <Qt3DRender/QClearBuffers>
 #include <Qt3DRender/QCameraSelector>
@@ -75,7 +79,6 @@ namespace VirtualRobot
         virtual std::string getVisualizationType() const override;
 
     private:
-        // Encapsulates a 2D texture that a frame graph can render into.
         class TextureRenderTarget : public Qt3DRender::QRenderTarget
         {
         public:
@@ -97,10 +100,6 @@ namespace VirtualRobot
             Qt3DRender::QTexture2D *depthTexture;
         };
 
-        // The OffscreenSurfaceFrameGraph class is where the magic happens.
-        // It is responsible for rendering the scene to an "offscreen" surface (ie. a texture),
-        // rather than directly to a QWindow. This means that the render contents can be
-        // taken and used within other QWidgets.
         class OffscreenSurfaceFrameGraph : public Qt3DRender::QRenderSurfaceSelector
         {
         public:
@@ -119,9 +118,86 @@ namespace VirtualRobot
             Qt3DRender::QCamera *camera;
         };
 
-        // The OffscreenEngine brings together various Qt3D classes that are required in order to
-        // perform basic scene rendering. Of these, the most important for this project is the OffscreenSurfaceFrameGraph.
-        // Render captures can be requested, and the capture contents used within other widgets (see OffscreenEngineDelegate).
+        class GBuffer : public Qt3DRender::QRenderTarget
+        {
+        public:
+            explicit GBuffer(Qt3DCore::QNode *parent = 0);
+
+            enum Attachments {
+                Color = 0,
+                Position,
+                Normal,
+                Depth,
+                AttachmentsCount
+            };
+
+            Qt3DRender::QAbstractTexture *colorTexture() const;
+            Qt3DRender::QAbstractTexture *positionTexture() const;
+            Qt3DRender::QAbstractTexture *normalTexture() const;
+            Qt3DRender::QAbstractTexture *depthTexture() const;
+
+        private:
+            Qt3DRender::QAbstractTexture *m_textures[AttachmentsCount];
+        };
+
+        class FinalShaderEffect : public Qt3DRender::QEffect
+        {
+        public:
+            explicit FinalShaderEffect(Qt3DCore::QNode *parent = 0);
+
+            QList<Qt3DRender::QFilterKey *> passCriteria() const;
+            inline Qt3DRender::QTechnique *gl3Technique() const { return m_gl3Technique; }
+            inline Qt3DRender::QTechnique *gl2Technique() const { return m_gl2Technique; }
+
+        private :
+            Qt3DRender::QTechnique *m_gl3Technique;
+            Qt3DRender::QTechnique *m_gl2Technique;
+            Qt3DRender::QRenderPass *m_gl2Pass;
+            Qt3DRender::QRenderPass *m_gl3Pass;
+            Qt3DRender::QFilterKey *m_passCriterion;
+        };
+
+        class GBufferShaderEffect : public Qt3DRender::QEffect
+        {
+        public:
+            explicit GBufferShaderEffect(Qt3DCore::QNode *parent = 0);
+
+            QList<Qt3DRender::QFilterKey *> passCriteria() const;
+
+        private:
+            Qt3DRender::QTechnique *m_gl3Technique;
+            Qt3DRender::QTechnique *m_gl2Technique;
+            Qt3DRender::QRenderPass *m_gl2Pass;
+            Qt3DRender::QRenderPass *m_gl3Pass;
+            Qt3DRender::QFilterKey *m_passCriterion;
+        };
+
+        class OffscreenSurfaceDepthFrameGraph : public Qt3DRender::QRenderSurfaceSelector
+        {
+        public:
+            OffscreenSurfaceDepthFrameGraph(Qt3DCore::QNode* parent = nullptr, Qt3DRender::QCamera *camera = nullptr, const QSize &size = QSize(500, 500));
+
+            void setSize(const QSize &size);
+            Qt3DCore::QNode *getRenderTargetSelector();
+
+        private:
+            Qt3DRender::QViewport *viewport;
+            Qt3DRender::QLayerFilter *sceneFilter;
+            Qt3DRender::QRenderTargetSelector *gBufferTargetSelector;
+            Qt3DRender::QClearBuffers *clearGBuffer;
+            Qt3DRender::QRenderPassFilter *geometryPassFilter;
+            Qt3DRender::QCameraSelector *sceneCameraSelector;
+            Qt3DRender::QLayerFilter *screenQuadFilter;
+            Qt3DRender::QClearBuffers *clearScreenQuad;
+            Qt3DRender::QRenderPassFilter *finalPassFilter;
+            GBuffer *gBuffer;
+            Qt3DRender::QParameter *sizeParameter;
+
+            TextureRenderTarget *textureTarget;
+            QOffscreenSurface *offscreenSurface;
+            Qt3DRender::QRenderTargetSelector *renderTargetSelector;
+        };
+
         class OffscreenEngine
         {
         public:

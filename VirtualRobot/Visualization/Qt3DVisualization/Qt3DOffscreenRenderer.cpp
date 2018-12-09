@@ -236,6 +236,215 @@ namespace VirtualRobot
         return renderTargetSelector;
     }
 
+    Qt3DOffscreenRenderer::GBuffer::GBuffer(Qt3DCore::QNode *parent)
+        : Qt3DRender::QRenderTarget(parent)
+    {
+        const Qt3DRender::QAbstractTexture::TextureFormat formats[AttachmentsCount] = {
+            Qt3DRender::QAbstractTexture::RGBA32F,
+            // We use RGBA32F for the following two instead of a more fitting format because
+            // OpenGL vendors might not support other formats
+            Qt3DRender::QAbstractTexture::RGBA32F,
+            Qt3DRender::QAbstractTexture::RGBA32F,
+            Qt3DRender::QAbstractTexture::D32F
+        };
+
+        const Qt3DRender::QRenderTargetOutput::AttachmentPoint attachmentPoints[AttachmentsCount] = {
+            Qt3DRender::QRenderTargetOutput::Color0,
+            Qt3DRender::QRenderTargetOutput::Color1,
+            Qt3DRender::QRenderTargetOutput::Color2,
+            Qt3DRender::QRenderTargetOutput::Depth
+        };
+
+        for (int i = 0; i < AttachmentsCount; i++) {
+            Qt3DRender::QRenderTargetOutput *output = new Qt3DRender::QRenderTargetOutput(this);
+
+            m_textures[i] = new Qt3DRender::QTexture2D();
+            m_textures[i]->setFormat(formats[i]);
+            m_textures[i]->setWidth(1024);
+            m_textures[i]->setHeight(1024);Qt3DOffscreenRenderer::GBuffer::
+            m_textures[i]->setGenerateMipMaps(false);
+            m_textures[i]->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::ClampToEdge));
+            m_textures[i]->setMinificationFilter(Qt3DRender::QAbstractTexture::Linear);
+            m_textures[i]->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+
+            output->setTexture(m_textures[i]);
+            output->setAttachmentPoint(attachmentPoints[i]);
+            addOutput(output);
+        }
+    }
+
+    Qt3DRender::QAbstractTexture *Qt3DOffscreenRenderer::GBuffer::colorTexture() const
+    {
+        return m_textures[Color];
+    }
+
+    Qt3DRender::QAbstractTexture *Qt3DOffscreenRenderer::GBuffer::positionTexture() const
+    {
+        return m_textures[Position];
+    }
+
+    Qt3DRender::QAbstractTexture *Qt3DOffscreenRenderer::GBuffer::normalTexture() const
+    {
+        return m_textures[Normal];
+    }
+
+    Qt3DRender::QAbstractTexture *Qt3DOffscreenRenderer::GBuffer::depthTexture() const
+    {
+        return m_textures[Depth];
+    }
+
+    Qt3DOffscreenRenderer::FinalShaderEffect::FinalShaderEffect(Qt3DCore::QNode *parent)
+        : Qt3DRender::QEffect(parent)
+        , m_gl3Technique(new Qt3DRender::QTechnique())
+        , m_gl2Technique(new Qt3DRender::QTechnique())
+        , m_gl2Pass(new Qt3DRender::QRenderPass())
+        , m_gl3Pass(new Qt3DRender::QRenderPass())
+        , m_passCriterion(new Qt3DRender::QFilterKey(this))
+    {
+        m_gl3Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        m_gl3Technique->graphicsApiFilter()->setMajorVersion(3);
+        m_gl3Technique->graphicsApiFilter()->setMinorVersion(1);
+        m_gl3Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::CoreProfile);
+
+        m_gl2Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        m_gl2Technique->graphicsApiFilter()->setMajorVersion(2);
+        m_gl2Technique->graphicsApiFilter()->setMinorVersion(0);
+        m_gl2Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::NoProfile);
+
+        m_passCriterion->setName(QStringLiteral("pass"));
+        m_passCriterion->setValue(QStringLiteral("final"));
+
+        Qt3DRender::QShaderProgram *gl3Shader = new Qt3DRender::QShaderProgram();
+        gl3Shader->setVertexShaderCode(gl3Shader->loadSource(QUrl(QStringLiteral("qrc:/final_gl3.vert"))));
+        gl3Shader->setFragmentShaderCode(gl3Shader->loadSource(QUrl(QStringLiteral("qrc:/final_gl3.frag"))));
+
+        m_gl3Pass->addFilterKey(m_passCriterion);
+        m_gl3Pass->setShaderProgram(gl3Shader);
+        m_gl3Technique->addRenderPass(m_gl3Pass);
+
+        Qt3DRender::QShaderProgram *gl2Shader = new Qt3DRender::QShaderProgram();
+        gl2Shader->setVertexShaderCode(gl2Shader->loadSource(QUrl(QStringLiteral("qrc:/final_gl2.vert"))));
+        gl2Shader->setFragmentShaderCode(gl2Shader->loadSource(QUrl(QStringLiteral("qrc:/final_gl2.frag"))));
+
+        m_gl2Pass->addFilterKey(m_passCriterion);
+        m_gl2Pass->setShaderProgram(gl2Shader);
+        m_gl2Technique->addRenderPass(m_gl2Pass);
+
+        addTechnique(m_gl3Technique);
+        addTechnique(m_gl2Technique);
+    }
+
+    QList<Qt3DRender::QFilterKey *> Qt3DOffscreenRenderer::FinalShaderEffect::passCriteria() const
+    {
+        return QList<Qt3DRender::QFilterKey *>() << m_passCriterion;
+    }
+
+    Qt3DOffscreenRenderer::GBufferShaderEffect::GBufferShaderEffect(Qt3DCore::QNode *parent)
+        : Qt3DRender::QEffect(parent)
+        , m_gl3Technique(new Qt3DRender::QTechnique())
+        , m_gl2Technique(new Qt3DRender::QTechnique())
+        , m_gl2Pass(new Qt3DRender::QRenderPass())
+        , m_gl3Pass(new Qt3DRender::QRenderPass())
+        , m_passCriterion(new Qt3DRender::QFilterKey(this))
+    {
+
+        m_gl3Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::CoreProfile);
+        m_gl3Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        m_gl3Technique->graphicsApiFilter()->setMajorVersion(3);
+        m_gl3Technique->graphicsApiFilter()->setMinorVersion(1);
+
+        m_gl2Technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
+        m_gl2Technique->graphicsApiFilter()->setMajorVersion(2);
+        m_gl2Technique->graphicsApiFilter()->setMinorVersion(0);
+        m_gl2Technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::NoProfile);
+
+
+        m_passCriterion->setName(QStringLiteral("pass"));
+        m_passCriterion->setValue(QStringLiteral("geometry"));
+
+        Qt3DRender::QShaderProgram *gl3Shader = new Qt3DRender::QShaderProgram();
+        gl3Shader->setVertexShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/geometry_gl3.vert"))));
+        gl3Shader->setFragmentShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/geometry_gl3.frag"))));
+
+        m_gl3Pass->addFilterKey(m_passCriterion);
+        m_gl3Pass->setShaderProgram(gl3Shader);
+        m_gl3Technique->addRenderPass(m_gl3Pass);
+
+        Qt3DRender::QShaderProgram *gl2Shader = new Qt3DRender::QShaderProgram();
+        gl2Shader->setVertexShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/geometry_gl2.vert"))));
+        gl2Shader->setFragmentShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/geometry_gl2.frag"))));
+
+        m_gl2Pass->addFilterKey(m_passCriterion);
+        m_gl2Pass->setShaderProgram(gl2Shader);
+        m_gl2Technique->addRenderPass(m_gl2Pass);
+
+        addTechnique(m_gl3Technique);
+        addTechnique(m_gl2Technique);
+    }
+
+    QList<Qt3DRender::QFilterKey *> Qt3DOffscreenRenderer::GBufferShaderEffect::passCriteria() const
+    {
+        return QList<Qt3DRender::QFilterKey *>() << m_passCriterion;
+    }
+
+    Qt3DOffscreenRenderer::OffscreenSurfaceDepthFrameGraph::OffscreenSurfaceDepthFrameGraph(Qt3DCore::QNode *parent, Qt3DRender::QCamera *camera, const QSize &size)
+        : Qt3DRender::QRenderSurfaceSelector(parent)
+    {
+        viewport = new Qt3DRender::QViewport(this);
+        sceneFilter = new Qt3DRender::QLayerFilter(viewport);
+        gBufferTargetSelector = new Qt3DRender::QRenderTargetSelector(sceneFilter);
+        clearGBuffer = new Qt3DRender::QClearBuffers(gBufferTargetSelector);
+        geometryPassFilter = new Qt3DRender::QRenderPassFilter(clearGBuffer);
+        sceneCameraSelector = new Qt3DRender::QCameraSelector(geometryPassFilter);
+        renderTargetSelector = new Qt3DRender::QRenderTargetSelector(viewport);
+        textureTarget = new TextureRenderTarget(renderTargetSelector, size);
+        screenQuadFilter = new Qt3DRender::QLayerFilter(textureTarget);
+        clearScreenQuad = new Qt3DRender::QClearBuffers(screenQuadFilter);
+        finalPassFilter = new Qt3DRender::QRenderPassFilter(clearScreenQuad);
+        sizeParameter = new Qt3DRender::QParameter(QStringLiteral("winSize"), size);
+        gBuffer = new GBuffer(this);
+
+        // Firstly, create the offscreen surface. This will take the place
+        // of a QWindow, allowing us to render our scene without one.
+        offscreenSurface = new QOffscreenSurface();
+        offscreenSurface->setFormat(QSurfaceFormat::defaultFormat());
+        offscreenSurface->create();
+
+        // Hook it up to the frame graph.
+        setSurface(offscreenSurface);
+        setExternalRenderTargetSize(size);
+
+        // Create a texture to render into. This acts as the buffer that
+        // holds the rendered image.
+        renderTargetSelector->setTarget(textureTarget);
+
+        clearGBuffer->setBuffers(Qt3DRender::QClearBuffers::ColorDepthBuffer);
+        clearScreenQuad->setBuffers(Qt3DRender::QClearBuffers::ColorDepthBuffer);
+        clearScreenQuad->setClearColor(QColor(255, 255, 255));
+        gBufferTargetSelector->setTarget(gBuffer);
+
+        finalPassFilter->addParameter(new Qt3DRender::QParameter(QStringLiteral("position"), gBuffer->positionTexture()));
+        finalPassFilter->addParameter(new Qt3DRender::QParameter(QStringLiteral("normal"), gBuffer->normalTexture()));
+        finalPassFilter->addParameter(new Qt3DRender::QParameter(QStringLiteral("color"), gBuffer->colorTexture()));
+        finalPassFilter->addParameter(new Qt3DRender::QParameter(QStringLiteral("depth"), gBuffer->depthTexture()));
+
+        finalPassFilter->addParameter(sizeParameter);
+
+        sceneCameraSelector->setCamera(camera);
+    }
+
+    void Qt3DOffscreenRenderer::OffscreenSurfaceDepthFrameGraph::setSize(const QSize &size)
+    {
+        textureTarget->setSize(size);
+        setExternalRenderTargetSize(size);
+        sizeParameter->setValue(size);
+    }
+
+    Qt3DCore::QNode *Qt3DOffscreenRenderer::OffscreenSurfaceDepthFrameGraph::getRenderTargetSelector()
+    {
+        return renderTargetSelector;
+    }
+
     Qt3DOffscreenRenderer::OffscreenEngine::OffscreenEngine(Qt3DRender::QCamera *camera, const QSize &size)
     {
         sceneRoot = nullptr;
