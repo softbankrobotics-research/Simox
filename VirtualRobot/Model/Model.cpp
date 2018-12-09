@@ -113,7 +113,11 @@ namespace VirtualRobot
 
     bool Model::hasNode(const ModelNodePtr& node) const
     {
-        return node && getNode(node->getName()) == node;
+        ReadLockPtr r = getReadLock();
+        if (!node)
+            return false;
+        auto i = modelNodeMap.find(node->getName());
+        return (i != modelNodeMap.end() && i->second == node);
     }
 
     bool Model::hasNode(const std::string& modelNodeName) const
@@ -307,7 +311,10 @@ namespace VirtualRobot
 
     bool Model::hasNodeSet(const ModelNodeSetPtr& nodeSet) const
 	{
-        return nodeSet && hasNodeSet(nodeSet->getName());
+        if (!nodeSet)
+            return false;
+        auto i = modelNodeSetMap.find(nodeSet->getName());
+        return (i != modelNodeSetMap.end() && i->second == nodeSet);
 	}
 
     bool Model::hasNodeSet(const std::string& name) const
@@ -319,7 +326,10 @@ namespace VirtualRobot
 
 	bool Model::hasJointSet(const JointSetPtr& nodeSet) const
 	{
-        return nodeSet && hasJointSet(nodeSet->getName());
+        if (!nodeSet)
+            return false;
+        auto i = modelNodeSetMap.find(nodeSet->getName());
+        return (i != modelNodeSetMap.end() && i->second == nodeSet);
 	}
 
 	bool Model::hasJointSet(const std::string & name) const
@@ -331,7 +341,10 @@ namespace VirtualRobot
 
 	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
 	{
-        return nodeSet && hasLinkSet(nodeSet->getName());
+        if (!nodeSet)
+            return false;
+        auto i = modelNodeSetMap.find(nodeSet->getName());
+        return (i != modelNodeSetMap.end() && i->second == nodeSet);
 	}
 
 	bool Model::hasLinkSet(const std::string & name) const

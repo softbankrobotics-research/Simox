@@ -48,7 +48,7 @@ namespace VirtualRobot
         {
             if (m->getCollisionChecker() != colChecker)
             {
-                VR_WARNING << "CollisionModel is linked to different instance of collision checker..." << endl;
+                VR_WARNING << "CollisionModel of SceneObjectSet '" << m->getName() << "' is linked to a different instance of collision checker than this CollisionManager..." << endl;
             }
 
             for (size_t i = 0; i < colModels.size(); i++)

@@ -20,6 +20,7 @@
  */
 
 #include "Helpers.h"
+#include "LinearInterpolatedOrientation.h"
 #include <stdexcept>
 using namespace math;
 
@@ -61,11 +62,6 @@ void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float
     f -= i;
 }
 
-float Helpers::FastDistribution(float x, float sigma2)
-{
-    return std::exp(-x*x /2 /sigma2);
-}
-
 float Helpers::Clamp(float min, float max, float value)
 {
     if (value < min) return min;
@@ -81,13 +77,18 @@ float Helpers::Lerp(float a, float b, float f)
 Eigen::Vector3f Helpers::Lerp(const Eigen::Vector3f &a, const Eigen::Vector3f &b, float f)
 {
     return Eigen::Vector3f(Lerp(a(0), b(0), f),
-                Lerp(a(1), b(1), f),
+                           Lerp(a(1), b(1), f),
                            Lerp(a(2), b(2), f));
 }
 
 Eigen::Quaternionf Helpers::Lerp(const Eigen::Quaternionf &a, const Eigen::Quaternionf &b, float f)
 {
-    return a.slerp(f, b);
+    return LinearInterpolatedOrientation(a, b, 0, 1, false).Get(f);
+}
+
+Eigen::Quaternionf Helpers::LerpClamp(const Eigen::Quaternionf& a, const Eigen::Quaternionf& b, float f)
+{
+    return LinearInterpolatedOrientation(a, b, 0, 1, true).Get(f);
 }
 
 float Helpers::ILerp(float a, float b, float f)
@@ -230,10 +231,11 @@ Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, fl
     return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
 }
 
-Eigen::Matrix4f math::Helpers::TranslatePose(Eigen::Matrix4f pose, const Eigen::Vector3f &offset)
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
 {
-    pose.block<3, 1>(0, 3) += offset;
-    return pose;
+    Eigen::Matrix4f p = pose;
+    p.block<3, 1>(0, 3) += offset;
+    return p;
 }
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
@@ -246,6 +248,11 @@ Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, co
     return transform.block<3,3>(0,0) * dir;
 }
 
+Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori)
+{
+    return transform.block<3,3>(0,0) * ori;
+}
+
 float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, float rad2mmFactor)
 {
     Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
@@ -253,3 +260,40 @@ float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, floa
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
 }
 
+Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 1>(0, 3);
+}
+
+Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
+{
+    return pose.block<3, 3>(0, 0);
+}
+
+Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
+{
+    if(maxLen.rows() != 1 && maxLen.rows() != vec.rows())
+    {
+        throw std::invalid_argument("maxLen.rows != 1 and != maxLen.rows");
+    }
+    float scale = 1;
+    for(int i = 0; i < vec.rows(); i++)
+    {
+        int j = maxLen.rows() == 1 ? 0 : i;
+        if(std::abs(vec(i)) > maxLen(j) && maxLen(j) >= 0)
+        {
+            scale = std::min(scale, maxLen(j) / std::abs(vec(i)));
+        }
+    }
+    return vec / scale;
+}
+
+float Helpers::rad2deg(float rad)
+{
+    return rad * (float)(180.0 / M_PI);
+}
+
+float Helpers::deg2rad(float deg)
+{
+    return deg * (float)(M_PI / 180.0);
+}

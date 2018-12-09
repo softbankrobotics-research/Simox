@@ -66,6 +66,12 @@ namespace VirtualRobot
         CollisionChecker();
         virtual ~CollisionChecker();
 
+        struct PointAndTolerance
+        {
+            Eigen::Vector3f p;
+            float tolerance;
+        };
+
         /*!
             Returns distance of the collision models.
             Returns -1.0 if no distance calculation lib was specified (-> Dummy Col Checker)
@@ -120,6 +126,18 @@ namespace VirtualRobot
             return checkCollisionP(getCollisionModel(m1), getCollisionModel(m2));
         }
 
+        // Specialization for collision checking with a point
+        template<typename T1>
+        inline bool checkCollision(const T1& m1, const PointAndTolerance& m2)
+        {
+            return checkCollisionP(getCollisionModel(m1), m2);
+        }
+        template<typename T2>
+        inline bool checkCollision(const PointAndTolerance& m1, const T2& m2)
+        {
+            return checkCollisionP(getCollisionModel(m2), m1);
+        }
+
     private:
         virtual bool checkCollisionP(const std::vector<CollisionModelPtr>& model1, const std::vector<CollisionModelPtr>& model2);
         virtual bool checkCollisionP(const std::vector<CollisionModelPtr>& model1, const CollisionModelPtr& model2);
@@ -128,6 +146,8 @@ namespace VirtualRobot
             return checkCollisionP(model2, model1);
         }
         virtual bool checkCollisionP(const CollisionModelPtr& model1, const CollisionModelPtr& model2); //, Eigen::Vector3f *storeContact = nullptr);
+        virtual bool checkCollisionP(const CollisionModelPtr& model1, const PointAndTolerance& model2);
+        virtual bool checkCollisionP(const std::vector<CollisionModelPtr>& vColModels1, const PointAndTolerance& model2);
 
     public:
         /*!
@@ -261,21 +281,6 @@ namespace VirtualRobot
                 mVec.push_back(std::static_pointer_cast<ModelLink>(mTmp)->getCollisionModel());
             }
             return mVec;
-        }
-    public:
-        struct PointAndTolerance
-        {
-            Eigen::Vector3f p;
-            float tolerance;
-        };
-    private:
-        inline std::vector<CollisionModelPtr> getCollisionModel(const PointAndTolerance& p)
-        {
-            CollisionModelPtr m(new CollisionModel(VisualizationFactory::getInstance()->createSphere(p.tolerance)));
-            Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
-            pose.block<3, 1>(0, 3) = p.p;
-            m->setGlobalPose(pose);
-            return {m};
         }
 
         // see http://en.wikipedia.org/wiki/Singleton_pattern for details about correct implementations of singletons in C++

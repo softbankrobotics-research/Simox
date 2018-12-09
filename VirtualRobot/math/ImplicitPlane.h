@@ -22,11 +22,7 @@
 #pragma once
 
 #include "MathForwardDefinitions.h"
-
 #include "AbstractFunctionR3R1.h"
-
-
-
 
 namespace math
 {
@@ -54,7 +50,7 @@ public:
     // https://de.wikipedia.org/wiki/Schnittgerade
     Line Intersect(Plane plane);
 
-    float Get(Eigen::Vector3f pos);
+    float Get(Eigen::Vector3f pos) override;
 
 private:
     float a;

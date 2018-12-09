@@ -21,7 +21,7 @@ IF(Simox_GUI)
 
     # create the executable
     VirtualRobotQtApplication(${PROJECT_NAME} "${demo_SRCS}" "${demo_INCS}" "${GUI_MOC_HDRS}" "${GUI_UIS}")
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} simox-motionplanning)
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE simox-motionplanning)
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER "Examples")
 

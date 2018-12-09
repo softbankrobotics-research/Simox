@@ -21,13 +21,12 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "SimpleAbstractFunctionR1R3.h"
-
-
 
 namespace math
 {
-    class AbstractFunctionR1R3 :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT AbstractFunctionR1R3 :
             public SimpleAbstractFunctionR1R3
     {
     public:

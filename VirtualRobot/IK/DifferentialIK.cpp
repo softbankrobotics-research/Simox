@@ -149,27 +149,28 @@ namespace VirtualRobot
 
             if (this->targets.find(tcp) != this->targets.end())
             {
-                updateJacobianMatrix(partJacobians[tcp], tcp, this->modes[tcp]);
+                auto& mode = this->modes[tcp];
+                updateJacobianMatrix(partJacobians[tcp], tcp, mode);
                 //updatePartJacobian(tcp, mode, jacobian.block(index, 0,  partJacobians[tcp].rows(), nDoF));
                 //MatrixXf partJacobian = this->getJacobianMatrix(tcp, mode);
                 jacobian.block(index, 0,  partJacobians[tcp].rows(), nDoF) =  partJacobians[tcp];
 
-                if (this->modes[tcp] & IKSolver::X)
+                if (mode & IKSolver::X)
                 {
                     index++;
                 }
 
-                if (this->modes[tcp] & IKSolver::Y)
+                if (mode & IKSolver::Y)
                 {
                     index++;
                 }
 
-                if (this->modes[tcp] & IKSolver::Z)
+                if (mode & IKSolver::Z)
                 {
                     index++;
                 }
 
-                if (this->modes[tcp] & IKSolver::Orientation)
+                if (mode & IKSolver::Orientation)
                 {
                     index += 3;
                 }
@@ -373,11 +374,12 @@ namespace VirtualRobot
             clock_t startT = clock();
 #endif
 
-            RobotNodePtr dof = this->nodes[i];
+            const RobotNodePtr &dof = this->nodes[i];
             //std::vector<RobotNodePtr> parents = parents[tcp];//tcp->getAllParents(this->rns);
 
             //check if the tcp is affected by this DOF
-            if (find(parents[tcpRN].begin(), parents[tcpRN].end(), dof) != parents[tcpRN].end())
+            auto p = parents[tcpRN];
+            if (find(p.begin(), p.end(), dof) != p.end())
             {
 
                 // Calculus for rotational joints is different as for prismatic joints.

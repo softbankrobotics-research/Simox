@@ -19,6 +19,7 @@
  *             GNU Lesser General Public License
  */
 
+#include "../VirtualRobot.h"
 #include "AbstractFunctionR1R2.h"
 #include <Eigen/Geometry>
 

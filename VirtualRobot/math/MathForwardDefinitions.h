@@ -108,7 +108,7 @@ namespace math{
     typedef boost::shared_ptr<class Bezier> BezierPtr;
     typedef boost::shared_ptr<class LinearContinuedBezier> LinearContinuedBezierPtr;
     typedef boost::shared_ptr<class Primitive> PrimitivePtr;
-    typedef boost::shared_ptr<class Index3> Index3Ptr;
+    typedef boost::shared_ptr<struct Index3> Index3Ptr;
     typedef boost::shared_ptr<class AbstractContactFeature> AbstractContactFeaturePtr;
     typedef boost::shared_ptr<class BinContactFeature> BinContactFeaturePtr;
     template<class T> class Array3D;

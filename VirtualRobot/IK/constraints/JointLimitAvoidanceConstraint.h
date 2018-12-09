@@ -31,6 +31,9 @@ namespace VirtualRobot
     {
     public:
         JointLimitAvoidanceConstraint(const RobotPtr& robot, const JointSetPtr& nodeSet);
+    protected:
+        double optimizationFunction(unsigned int) override;
+        Eigen::VectorXf optimizationGradient(unsigned int) override;
     };
 
     typedef std::shared_ptr<JointLimitAvoidanceConstraint> JointLimitAvoidanceConstraintPtr;

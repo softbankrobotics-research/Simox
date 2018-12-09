@@ -57,6 +57,7 @@ GraspPlanner/GenericGraspPlanner.cpp
 GraspQuality/GraspEvaluationPoseUncertainty.cpp
 GraspQuality/GraspQualityMeasure.cpp
 GraspQuality/GraspQualityMeasureWrenchSpace.cpp
+GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.cpp
 Visualization/ConvexHullVisualization.cpp
 )
 
@@ -73,6 +74,7 @@ GraspPlanner/GraspPlannerEvaluation.h
 GraspQuality/GraspEvaluationPoseUncertainty.h
 GraspQuality/GraspQualityMeasure.h
 GraspQuality/GraspQualityMeasureWrenchSpace.h
+GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.h
 Visualization/ConvexHullVisualization.h
 )
 

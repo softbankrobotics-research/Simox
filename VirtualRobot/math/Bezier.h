@@ -21,14 +21,14 @@
 
 #pragma once
 
+#include "../VirtualRobot.h"
 #include "MathForwardDefinitions.h"
-
 #include "AbstractFunctionR1R3.h"
 
 namespace math
 {
 
-    class Bezier :
+    class VIRTUAL_ROBOT_IMPORT_EXPORT Bezier :
             public AbstractFunctionR1R3
     {
     public:
@@ -40,7 +40,7 @@ namespace math
         Eigen::Vector3f P3(){return p3;}
 
         Eigen::Vector3f Get(float t) override;
-        Eigen::Vector3f GetDerivative(float t);
+        Eigen::Vector3f GetDerivative(float t) override;
         static Eigen::Vector3f CubicBezierPoint(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t);
         static std::vector<Eigen::Vector3f> CubicBezier(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, int steps);
         static Eigen::Vector3f CubicBezierDerivative(Eigen::Vector3f p0, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, float t);
