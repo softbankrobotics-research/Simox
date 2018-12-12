@@ -45,317 +45,347 @@ ENDMACRO()
 
 #################################### FILES ##################################
 SET(SOURCES
-CollisionDetection/CollisionChecker.cpp
-CollisionDetection/CollisionModel.cpp
-CollisionDetection/CDManager.cpp
-EndEffector/EndEffector.cpp
-EndEffector/EndEffectorActor.cpp
-Nodes/RobotNode.cpp
-Nodes/RobotNodePrismatic.cpp
-Nodes/RobotNodePrismaticFactory.cpp
-Nodes/RobotNodeRevolute.cpp
-Nodes/RobotNodeRevoluteFactory.cpp
-Nodes/RobotNodeFixed.cpp
-Nodes/RobotNodeFixedFactory.cpp
-Nodes/RobotNodeActuator.cpp
-Nodes/Sensor.cpp
-Nodes/PositionSensor.cpp
-Nodes/ForceTorqueSensor.cpp
-Nodes/ContactSensor.cpp
-Nodes/CameraSensor.cpp
-Nodes/PositionSensorFactory.cpp
-Nodes/ForceTorqueSensorFactory.cpp
-Nodes/ContactSensorFactory.cpp
-Nodes/CameraSensorFactory.cpp
-Visualization/Visualization.cpp
-Visualization/VisualizationNode.cpp
-Visualization/ColorMap.cpp
-Visualization/TriMeshModel.cpp
-Visualization/TriMeshUtils.cpp
-XML/BaseIO.cpp
-XML/RobotIO.cpp
-XML/SceneIO.cpp
-XML/ObjectIO.cpp
-XML/FileIO.cpp
-XML/mjcf/MasslessBodySanitizer.cpp
-XML/mjcf/MjcfDocument.cpp
-XML/mjcf/MujocoIO.cpp
-XML/mjcf/utils.cpp
-IK/IKSolver.cpp
-IK/AdvancedIKSolver.cpp
-IK/DifferentialIK.cpp
-IK/GenericIKSolver.cpp
-IK/CoMIK.cpp
-IK/JacobiProvider.cpp
-IK/PoseQualityMeasurement.cpp
-IK/PoseQualityManipulability.cpp
-IK/PoseQualityExtendedManipulability.cpp
-IK/HierarchicalIK.cpp
-IK/HierarchicalIKSolver.cpp
-IK/JointLimitAvoidanceJacobi.cpp
-IK/GazeIK.cpp
-IK/StackedIK.cpp
-IK/SupportPolygon.cpp
-IK/FeetPosture.cpp
-IK/ConstrainedIK.cpp
-IK/ConstrainedHierarchicalIK.cpp
-IK/ConstrainedStackedIK.cpp
-IK/Constraint.cpp
-IK/constraints/BalanceConstraint.cpp
-IK/constraints/PoseConstraint.cpp
-IK/constraints/PositionConstraint.cpp
-IK/constraints/OrientationConstraint.cpp
-IK/constraints/TSRConstraint.cpp
-IK/constraints/ReferenceConfigurationConstraint.cpp
-IK/constraints/JointLimitAvoidanceConstraint.cpp
-IK/constraints/CoMConstraint.cpp
-IK/constraints/CollisionCheckConstraint.cpp
-Workspace/WorkspaceDataArray.cpp
-Workspace/WorkspaceRepresentation.cpp
-Workspace/Reachability.cpp
-Workspace/Manipulability.cpp
-Workspace/WorkspaceGrid.cpp
-#Workspace/ReachabilityInversion/InverseReachability.cpp
-#Workspace/ReachabilityInversion/OrientedWorkspaceGrid.cpp
-#Workspace/ReachabilityInversion/ReachabilityProcessor.cpp
-#Workspace/ReachabilityInversion/RobotPlacementIK.cpp
-#Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.cpp
-TimeOptimalTrajectory/Path.cpp
-TimeOptimalTrajectory/TimeOptimalTrajectory.cpp
-Grasping/Grasp.cpp
-Grasping/GraspSet.cpp
-Grasping/BasicGraspQualityMeasure.cpp
-MathTools.cpp
-Robot.cpp
-RobotConfig.cpp
-RobotNodeSet.cpp
-Trajectory.cpp
-KinematicChain.cpp
-RobotFactory.cpp
-SceneObject.cpp
-SceneObjectSet.cpp
-Scene.cpp
-Obstacle.cpp
-Primitive.cpp
-VirtualRobotException.cpp
-ManipulationObject.cpp
-BoundingBox.cpp
-RuntimeEnvironment.cpp
-Random.cpp
-LinkedCoordinate.cpp
-SphereApproximator.cpp
-VirtualRobot.cpp
-Compression/CompressionRLE.cpp
-Compression/CompressionBZip2.cpp
-Import/SimoxXMLFactory.cpp
-Import/RobotImporterFactory.cpp
-Import/MeshImport/STLReader.cpp
-Tools/Gravity.cpp
-math/Contact.cpp
-math/ContactList.cpp
-math/Line.cpp
-math/LineStrip.cpp
-math/Bezier.cpp
-math/LinearContinuedBezier.cpp
-math/LineR2.cpp
-math/AbstractFunctionR1R2.cpp
-math/AbstractFunctionR1R3.cpp
-math/AbstractFunctionR1R6.cpp
-math/AbstractFunctionR2R3.cpp
-math/CompositeFunctionR1R6.cpp
-math/TransformedFunctionR1R3.cpp
-math/TransformedFunctionR2R3.cpp
-math/LinearInterpolatedOrientation.cpp
-math/FitPlane.cpp
-math/Plane.cpp
-math/Triangle.cpp
-math/ImplicitPlane.cpp
-math/GaussianObjectModel.cpp
-math/GaussianObjectModelNormals.cpp
-math/ImplicitObjectModel.cpp
-math/Kernels.cpp
-math/GaussianImplicitSurface3D.cpp
-math/GaussianImplicitSurface3DNormals.cpp
-math/GaussianImplicitSurface3DCombined.cpp
-math/DataR3R1.cpp
-math/DataR3R2.cpp
-math/Helpers.cpp
-math/Index3.cpp
-math/MarchingCubes.cpp
-math/Primitive.cpp
-math/WeightedAverage.cpp
-math/Grid3D.cpp
-math/GridCacheFloat3.cpp
-Util/xml/tinyxml2.cpp
+    BoundingBox.cpp
+    KinematicChain.cpp
+    LinkedCoordinate.cpp
+    ManipulationObject.cpp
+    MathTools.cpp
+    Obstacle.cpp
+    Primitive.cpp
+    Random.cpp
+    Robot.cpp
+    RobotConfig.cpp
+    RobotFactory.cpp
+    RobotNodeSet.cpp
+    RuntimeEnvironment.cpp
+    Scene.cpp
+    SceneObject.cpp
+    SceneObjectSet.cpp
+    SphereApproximator.cpp
+    Trajectory.cpp
+    VirtualRobot.cpp
+    VirtualRobotException.cpp
+    
+    CollisionDetection/CDManager.cpp
+    CollisionDetection/CollisionChecker.cpp
+    CollisionDetection/CollisionModel.cpp
+    
+    Compression/CompressionBZip2.cpp
+    Compression/CompressionRLE.cpp
+    
+    EndEffector/EndEffector.cpp
+    EndEffector/EndEffectorActor.cpp
+    
+    Grasping/BasicGraspQualityMeasure.cpp
+    Grasping/Grasp.cpp
+    Grasping/GraspSet.cpp
+    
+    IK/AdvancedIKSolver.cpp
+    IK/CoMIK.cpp
+    IK/ConstrainedHierarchicalIK.cpp
+    IK/ConstrainedIK.cpp
+    IK/ConstrainedStackedIK.cpp
+    IK/Constraint.cpp
+    IK/DifferentialIK.cpp
+    IK/FeetPosture.cpp
+    IK/GazeIK.cpp
+    IK/GenericIKSolver.cpp
+    IK/HierarchicalIK.cpp
+    IK/HierarchicalIKSolver.cpp
+    IK/IKSolver.cpp
+    IK/JacobiProvider.cpp
+    IK/JointLimitAvoidanceJacobi.cpp
+    IK/PoseQualityExtendedManipulability.cpp
+    IK/PoseQualityManipulability.cpp
+    IK/PoseQualityMeasurement.cpp
+    IK/StackedIK.cpp
+    IK/SupportPolygon.cpp
+    IK/constraints/BalanceConstraint.cpp
+    IK/constraints/CollisionCheckConstraint.cpp
+    IK/constraints/CoMConstraint.cpp
+    IK/constraints/JointLimitAvoidanceConstraint.cpp
+    IK/constraints/OrientationConstraint.cpp
+    IK/constraints/PoseConstraint.cpp
+    IK/constraints/PositionConstraint.cpp
+    IK/constraints/ReferenceConfigurationConstraint.cpp
+    IK/constraints/TSRConstraint.cpp
+    
+    Import/MeshImport/STLReader.cpp
+    Import/RobotImporterFactory.cpp
+    Import/SimoxXMLFactory.cpp
+    
+    math/AbstractFunctionR1R2.cpp
+    math/AbstractFunctionR1R3.cpp
+    math/AbstractFunctionR1R6.cpp
+    math/AbstractFunctionR2R3.cpp
+    math/Bezier.cpp
+    math/CompositeFunctionR1R6.cpp
+    math/Contact.cpp
+    math/ContactList.cpp
+    math/DataR3R1.cpp
+    math/DataR3R2.cpp
+    math/FitPlane.cpp
+    math/GaussianImplicitSurface3D.cpp
+    math/GaussianImplicitSurface3DCombined.cpp
+    math/GaussianImplicitSurface3DNormals.cpp
+    math/GaussianObjectModel.cpp
+    math/GaussianObjectModelNormals.cpp
+    math/Grid3D.cpp
+    math/GridCacheFloat3.cpp
+    math/Helpers.cpp
+    math/ImplicitObjectModel.cpp
+    math/ImplicitPlane.cpp
+    math/Index3.cpp
+    math/Kernels.cpp
+    math/Line.cpp
+    math/LinearContinuedBezier.cpp
+    math/LinearInterpolatedOrientation.cpp
+    math/LineR2.cpp
+    math/LineStrip.cpp
+    math/MarchingCubes.cpp
+    math/Plane.cpp
+    math/Primitive.cpp
+    math/TransformedFunctionR1R3.cpp
+    math/TransformedFunctionR2R3.cpp
+    math/Triangle.cpp
+    math/WeightedAverage.cpp
+    
+    Nodes/CameraSensor.cpp
+    Nodes/CameraSensorFactory.cpp
+    Nodes/ContactSensor.cpp
+    Nodes/ContactSensorFactory.cpp
+    Nodes/ForceTorqueSensor.cpp
+    Nodes/ForceTorqueSensorFactory.cpp
+    Nodes/PositionSensor.cpp
+    Nodes/PositionSensorFactory.cpp
+    Nodes/RobotNode.cpp
+    Nodes/RobotNodeActuator.cpp
+    Nodes/RobotNodeFixed.cpp
+    Nodes/RobotNodeFixedFactory.cpp
+    Nodes/RobotNodePrismatic.cpp
+    Nodes/RobotNodePrismaticFactory.cpp
+    Nodes/RobotNodeRevolute.cpp
+    Nodes/RobotNodeRevoluteFactory.cpp
+    Nodes/Sensor.cpp
+    
+    TimeOptimalTrajectory/Path.cpp
+    TimeOptimalTrajectory/TimeOptimalTrajectory.cpp
+    
+    Tools/Gravity.cpp
+    
+    Util/xml/tinyxml2.cpp
+    
+    Visualization/ColorMap.cpp
+    Visualization/TriMeshModel.cpp
+    Visualization/TriMeshUtils.cpp
+    Visualization/Visualization.cpp
+    Visualization/VisualizationNode.cpp
+    
+    Workspace/Manipulability.cpp
+    Workspace/Reachability.cpp
+    Workspace/WorkspaceDataArray.cpp
+    Workspace/WorkspaceGrid.cpp
+    Workspace/WorkspaceRepresentation.cpp
+    #Workspace/ReachabilityInversion/InverseReachability.cpp
+    #Workspace/ReachabilityInversion/OrientedWorkspaceGrid.cpp
+    #Workspace/ReachabilityInversion/ReachabilityProcessor.cpp
+    #Workspace/ReachabilityInversion/RobotPlacementIK.cpp
+    #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.cpp
+    
+    XML/BaseIO.cpp
+    XML/FileIO.cpp
+    XML/ObjectIO.cpp
+    XML/RobotIO.cpp
+    XML/SceneIO.cpp
+    XML/mjcf/MasslessBodySanitizer.cpp
+    XML/mjcf/MjcfDocument.cpp
+    XML/mjcf/MujocoIO.cpp
+    XML/mjcf/utils.cpp
 )
 
 SET(INCLUDES
-CollisionDetection/CollisionChecker.h
-CollisionDetection/CollisionModel.h
-CollisionDetection/CDManager.h
-CollisionDetection/CollisionModelImplementation.h
-CollisionDetection/CollisionCheckerImplementation.h
-EndEffector/EndEffector.h
-EndEffector/EndEffectorActor.h
-Nodes/RobotNode.h
-Nodes/RobotNodeFactory.h
-Nodes/RobotNodePrismatic.h
-Nodes/RobotNodePrismaticFactory.h
-Nodes/RobotNodeRevolute.h
-Nodes/RobotNodeRevoluteFactory.h
-Nodes/RobotNodeFixed.h
-Nodes/RobotNodeFixedFactory.h
-Nodes/RobotNodeActuator.h
-Nodes/ConditionedLock.h
-Nodes/Sensor.h
-Nodes/PositionSensor.h
-Nodes/ForceTorqueSensor.h
-Nodes/CameraSensor.h
-Nodes/SensorFactory.h
-Nodes/PositionSensorFactory.h
-Nodes/ForceTorqueSensorFactory.h
-Nodes/CameraSensorFactory.h
-Transformation/DHParameter.h
-Visualization/VisualizationFactory.h
-Visualization/Visualization.h
-Visualization/VisualizationNode.h
-Visualization/ColorMap.h
-Visualization/TriMeshModel.h
-Visualization/TriMeshUtils.h
-XML/BaseIO.h
-XML/RobotIO.h
-XML/SceneIO.h
-XML/ObjectIO.h
-XML/FileIO.h
-XML/mjcf/MasslessBodySanitizer.h
-XML/mjcf/MjcfDocument.h
-XML/mjcf/MujocoIO.h
-XML/mjcf/utils.h
-IK/IKSolver.h
-IK/AdvancedIKSolver.h
-IK/DifferentialIK.h
-IK/GenericIKSolver.h
-IK/CoMIK.h
-IK/JacobiProvider.h
-IK/PoseQualityMeasurement.h
-IK/PoseQualityManipulability.h
-IK/PoseQualityExtendedManipulability.h
-IK/HierarchicalIK.h
-IK/HierarchicalIKSolver.h
-IK/JointLimitAvoidanceJacobi.h
-IK/GazeIK.h
-IK/StackedIK.h
-IK/SupportPolygon.h
-IK/FeetPosture.h
-IK/ConstrainedIK.h
-IK/ConstrainedHierarchicalIK.h
-IK/ConstrainedStackedIK.h
-IK/Constraint.h
-IK/constraints/BalanceConstraint.h
-IK/constraints/PoseConstraint.h
-IK/constraints/PositionConstraint.h
-IK/constraints/OrientationConstraint.h
-IK/constraints/TSRConstraint.h
-IK/constraints/ReferenceConfigurationConstraint.h
-IK/constraints/JointLimitAvoidanceConstraint.h
-IK/constraints/CoMConstraint.h
-IK/constraints/CollisionCheckConstraint.h
-Workspace/WorkspaceData.h
-Workspace/WorkspaceDataArray.h
-Workspace/WorkspaceRepresentation.h
-Workspace/Reachability.h
-Workspace/Manipulability.h
-Workspace/VoxelTree6D.hpp
-Workspace/VoxelTree6DElement.hpp
-Workspace/VoxelTreeND.hpp
-Workspace/VoxelTreeNDElement.hpp
-Workspace/WorkspaceGrid.h
-#Workspace/ReachabilityInversion/InverseReachability.h
-#Workspace/ReachabilityInversion/OrientedWorkspaceGrid.h
-#Workspace/ReachabilityInversion/ReachabilityProcessor.h
-#Workspace/ReachabilityInversion/RobotPlacementIK.h
-#Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.h
-TimeOptimalTrajectory/Path.h
-TimeOptimalTrajectory/TimeOptimalTrajectory.h
-Grasping/Grasp.h
-Grasping/GraspSet.h
-Grasping/BasicGraspQualityMeasure.h
-AbstractFactoryMethod.h
-VirtualRobot.h
-MathTools.h
-Robot.h
-RobotConfig.h
-RobotNodeSet.h
-Trajectory.h
-KinematicChain.h
-RobotFactory.h
-SceneObject.h
-SceneObjectSet.h
-Scene.h
-Obstacle.h
-Primitive.h
-VirtualRobotException.h
-VirtualRobotImportExport.h
-VirtualRobotTest.h
-ManipulationObject.h
-BoundingBox.h
-RuntimeEnvironment.h
-Random.h
-DataStructures/nanoflann.hpp
-DataStructures/KdTreePointCloud.h
-Compression/CompressionRLE.h
-Compression/CompressionBZip2.h
-SphereApproximator.h
-Import/SimoxXMLFactory.h
-Import/RobotImporterFactory.h
-Import/MeshImport/STLReader.h
-Tools/Gravity.h
-math/MathForwardDefinitions.h
-math/Contact.h
-math/ContactList.h
-math/Line.h
-math/LineStrip.h
-math/Bezier.h
-math/LinearContinuedBezier.h
-math/LineR2.h
-math/AbstractFunctionR1R2.h
-math/AbstractFunctionR1R3.h
-math/AbstractFunctionR1R6.h
-math/AbstractFunctionR1Ori.h
-math/AbstractFunctionR2R3.h
-math/AbstractFunctionR3R1.h
-math/TransformedFunctionR1R3.h
-math/TransformedFunctionR2R3.h
-math/SimpleAbstractFunctionR1R3.h
-math/SimpleAbstractFunctionR1R6.h
-math/SimpleAbstractFunctionR1Ori.h
-math/SimpleAbstractFunctionR2R3.h
-math/SimpleAbstractFunctionR3R1.h
-math/CompositeFunctionR1R6.h
-math/LinearInterpolatedOrientation.h
-math/FitPlane.h
-math/Plane.h
-math/Triangle.h
-math/ImplicitPlane.h
-math/ImplicitObjectModel.cpp
-math/GaussianObjectModel.h
-math/GaussianObjectModelNormals.h
-math/Kernels.h
-math/GaussianImplicitSurface3D.h
-math/GaussianImplicitSurface3DNormals.h
-math/GaussianImplicitSurface3DCombined.h
-math/DataR3R1.h
-math/DataR3R2.h
-math/Helpers.h
-math/Index3.h
-math/Array3D.h
-math/MarchingCubes.h
-math/Primitive.h
-math/Grid3D.h
-math/GridCacheFloat3.h
-math/WeightedAverage.h
-Util/xml/tinyxml2.h
-Util/json/json.hpp
+    AbstractFactoryMethod.h
+    BoundingBox.h
+    KinematicChain.h
+    ManipulationObject.h
+    MathTools.h
+    Obstacle.h
+    Primitive.h
+    Random.h
+    Robot.h
+    RobotConfig.h
+    RobotFactory.h
+    RobotNodeSet.h
+    RuntimeEnvironment.h
+    Scene.h
+    SceneObject.h
+    SceneObjectSet.h
+    SphereApproximator.h
+    Trajectory.h
+    VirtualRobot.h
+    VirtualRobotException.h
+    VirtualRobotImportExport.h
+    VirtualRobotTest.h
+
+    CollisionDetection/CDManager.h
+    CollisionDetection/CollisionChecker.h
+    CollisionDetection/CollisionCheckerImplementation.h
+    CollisionDetection/CollisionModel.h
+    CollisionDetection/CollisionModelImplementation.h
+    
+    Compression/CompressionBZip2.h
+    Compression/CompressionRLE.h
+    
+    DataStructures/KdTreePointCloud.h
+    DataStructures/nanoflann.hpp
+    
+    EndEffector/EndEffector.h
+    EndEffector/EndEffectorActor.h
+    
+    Grasping/BasicGraspQualityMeasure.h
+    Grasping/Grasp.h
+    Grasping/GraspSet.h
+    
+    IK/AdvancedIKSolver.h
+    IK/CoMIK.h
+    IK/ConstrainedHierarchicalIK.h
+    IK/ConstrainedIK.h
+    IK/ConstrainedStackedIK.h
+    IK/Constraint.h
+    IK/DifferentialIK.h
+    IK/FeetPosture.h
+    IK/GazeIK.h
+    IK/GenericIKSolver.h
+    IK/HierarchicalIK.h
+    IK/HierarchicalIKSolver.h
+    IK/IKSolver.h
+    IK/JacobiProvider.h
+    IK/JointLimitAvoidanceJacobi.h
+    IK/PoseQualityExtendedManipulability.h
+    IK/PoseQualityManipulability.h
+    IK/PoseQualityMeasurement.h
+    IK/StackedIK.h
+    IK/SupportPolygon.h
+    IK/constraints/BalanceConstraint.h
+    IK/constraints/CollisionCheckConstraint.h
+    IK/constraints/CoMConstraint.h
+    IK/constraints/JointLimitAvoidanceConstraint.h
+    IK/constraints/OrientationConstraint.h
+    IK/constraints/PoseConstraint.h
+    IK/constraints/PositionConstraint.h
+    IK/constraints/ReferenceConfigurationConstraint.h
+    IK/constraints/TSRConstraint.h
+    
+    Import/MeshImport/STLReader.h
+    Import/RobotImporterFactory.h
+    Import/SimoxXMLFactory.h
+    
+    math/AbstractFunctionR1Ori.h
+    math/AbstractFunctionR1R2.h
+    math/AbstractFunctionR1R3.h
+    math/AbstractFunctionR1R6.h
+    math/AbstractFunctionR2R3.h
+    math/AbstractFunctionR3R1.h
+    math/Array3D.h
+    math/Bezier.h
+    math/CompositeFunctionR1R6.h
+    math/Contact.h
+    math/ContactList.h
+    math/DataR3R1.h
+    math/DataR3R2.h
+    math/FitPlane.h
+    math/GaussianImplicitSurface3D.h
+    math/GaussianImplicitSurface3DCombined.h
+    math/GaussianImplicitSurface3DNormals.h
+    math/GaussianObjectModel.h
+    math/GaussianObjectModelNormals.h
+    math/Grid3D.h
+    math/GridCacheFloat3.h
+    math/Helpers.h
+    math/ImplicitObjectModel.cpp
+    math/ImplicitPlane.h
+    math/Index3.h
+    math/Kernels.h
+    math/Line.h
+    math/LinearContinuedBezier.h
+    math/LinearInterpolatedOrientation.h
+    math/LineR2.h
+    math/LineStrip.h
+    math/MarchingCubes.h
+    math/MathForwardDefinitions.h
+    math/Plane.h
+    math/Primitive.h
+    math/SimpleAbstractFunctionR1Ori.h
+    math/SimpleAbstractFunctionR1R3.h
+    math/SimpleAbstractFunctionR1R6.h
+    math/SimpleAbstractFunctionR2R3.h
+    math/SimpleAbstractFunctionR3R1.h
+    math/TransformedFunctionR1R3.h
+    math/TransformedFunctionR2R3.h
+    math/Triangle.h
+    math/WeightedAverage.h
+    
+    Nodes/CameraSensor.h
+    Nodes/CameraSensorFactory.h
+    Nodes/ConditionedLock.h
+    Nodes/ForceTorqueSensor.h
+    Nodes/ForceTorqueSensorFactory.h
+    Nodes/PositionSensor.h
+    Nodes/PositionSensorFactory.h
+    Nodes/RobotNode.h
+    Nodes/RobotNodeActuator.h
+    Nodes/RobotNodeFactory.h
+    Nodes/RobotNodeFixed.h
+    Nodes/RobotNodeFixedFactory.h
+    Nodes/RobotNodePrismatic.h
+    Nodes/RobotNodePrismaticFactory.h
+    Nodes/RobotNodeRevolute.h
+    Nodes/RobotNodeRevoluteFactory.h
+    Nodes/Sensor.h
+    Nodes/SensorFactory.h
+    
+    TimeOptimalTrajectory/Path.h
+    TimeOptimalTrajectory/TimeOptimalTrajectory.h
+    
+    Tools/Gravity.h
+    
+    Transformation/DHParameter.h
+    
+    Util/json/json.hpp
+    Util/xml/tinyxml2.h
+    
+    Visualization/ColorMap.h
+    Visualization/TriMeshModel.h
+    Visualization/TriMeshUtils.h
+    Visualization/Visualization.h
+    Visualization/VisualizationFactory.h
+    Visualization/VisualizationNode.h
+    
+    Workspace/Manipulability.h
+    Workspace/Reachability.h
+    Workspace/VoxelTree6D.hpp
+    Workspace/VoxelTree6DElement.hpp
+    Workspace/VoxelTreeND.hpp
+    Workspace/VoxelTreeNDElement.hpp
+    Workspace/WorkspaceData.h
+    Workspace/WorkspaceDataArray.h
+    Workspace/WorkspaceGrid.h
+    Workspace/WorkspaceRepresentation.h
+    #Workspace/ReachabilityInversion/InverseReachability.h
+    #Workspace/ReachabilityInversion/OrientedWorkspaceGrid.h
+    #Workspace/ReachabilityInversion/ReachabilityProcessor.h
+    #Workspace/ReachabilityInversion/RobotPlacementIK.h
+    #Workspace/ReachabilityInversion/RobotPlacementTrajectoryIK.h
+    
+    XML/BaseIO.h
+    XML/FileIO.h
+    XML/ObjectIO.h
+    XML/RobotIO.h
+    XML/SceneIO.h
+    XML/mjcf/MasslessBodySanitizer.h
+    XML/mjcf/MjcfDocument.h
+    XML/mjcf/MujocoIO.h
+    XML/mjcf/utils.h
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
