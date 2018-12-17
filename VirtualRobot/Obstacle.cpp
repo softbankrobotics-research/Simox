@@ -41,8 +41,7 @@ namespace VirtualRobot
     }
 
     Obstacle::~Obstacle()
-    {
-    }
+    = default;
 
     int Obstacle::getID()
     {

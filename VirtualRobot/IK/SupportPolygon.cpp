@@ -38,10 +38,10 @@ namespace VirtualRobot
 
         currentContactPoints2D.clear();
 
-        for (size_t u = 0; u < points.size(); u++)
+        for (auto & point : points)
         {
 
-            Eigen::Vector2f pt2d = MathTools::projectPointToPlane2D(points[u].p, floor);
+            Eigen::Vector2f pt2d = MathTools::projectPointToPlane2D(point.p, floor);
             currentContactPoints2D.push_back(pt2d);
         }
         currentContactPoints2D = MathTools::sortPoints(currentContactPoints2D);

@@ -11,13 +11,11 @@ namespace VirtualRobot
 {
 
     ContactSensorFactory::ContactSensorFactory()
-    {
-    }
+    = default;
 
 
     ContactSensorFactory::~ContactSensorFactory()
-    {
-    }
+    = default;
 
 
     /**

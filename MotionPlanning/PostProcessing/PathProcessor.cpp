@@ -13,8 +13,7 @@ namespace Saba
     }
 
     PathProcessor::~PathProcessor()
-    {
-    }
+    = default;
 
     CSpacePathPtr PathProcessor::getOptimizedPath()
     {

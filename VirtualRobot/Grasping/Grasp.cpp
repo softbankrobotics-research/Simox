@@ -15,8 +15,7 @@ namespace VirtualRobot
     }
 
     Grasp::~Grasp()
-    {
-    }
+    = default;
 
     void Grasp::print(bool printDecoration /*= true*/)
     {

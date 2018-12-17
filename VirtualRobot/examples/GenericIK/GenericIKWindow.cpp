@@ -8,7 +8,7 @@
 #include "VirtualRobot/IK/constraints/PoseConstraint.h"
 #endif
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -19,7 +19,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 GenericIKWindow::GenericIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -195,7 +195,7 @@ void GenericIKWindow::collisionModel()
     SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -246,12 +246,12 @@ void GenericIKWindow::updateKCBox()
     robot->getRobotNodeSets(rns);
     kinChains.clear();
 
-    for (unsigned int i = 0; i < rns.size(); i++)
+    for (auto & rn : rns)
     {
-        if (rns[i]->isKinematicChain())
+        if (rn->isKinematicChain())
         {
-            UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
-            kinChains.push_back(rns[i]);
+            UI.comboBoxKC->addItem(QString(rn->getName().c_str()));
+            kinChains.push_back(rn);
         }
     }
 }
@@ -428,9 +428,9 @@ void GenericIKWindow::solve()
     cout << "Joint values:" << endl;
     std::vector<RobotNodePtr> nodes = kc->getAllRobotNodes();
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (auto & node : nodes)
     {
-        cout << nodes[i]->getJointValue() << endl;
+        cout << node->getJointValue() << endl;
     }
 
     /*

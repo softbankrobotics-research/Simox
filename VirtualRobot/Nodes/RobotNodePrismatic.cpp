@@ -77,8 +77,7 @@ namespace VirtualRobot
     }
 
     RobotNodePrismatic::~RobotNodePrismatic()
-    {
-    }
+    = default;
 
 
     bool RobotNodePrismatic::initialize(SceneObjectPtr parent, const std::vector<SceneObjectPtr>& children)

@@ -38,16 +38,14 @@ namespace VirtualRobot
             gcpNode = tcpNode;
         }
 
-        for (size_t i = 0; i < preshapes.size(); i++)
+        for (const auto & preshape : preshapes)
         {
-            registerPreshape(preshapes[i]);
+            registerPreshape(preshape);
         }
     }
 
     EndEffector::~EndEffector()
-    {
-
-    }
+    = default;
 
     EndEffectorPtr EndEffector::clone(RobotPtr newRobot)
     {
@@ -115,11 +113,13 @@ namespace VirtualRobot
 
     EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectSetPtr obstacles, float stepSize)
     {
-        std::vector<bool> actorCollisionStatus(actors.size(), false);
+        std::vector<char> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
 
         bool finished = false;
         int loop = 0;
+
+        const auto shared_this = shared_from_this();
 
         while (!finished)
         {
@@ -133,10 +133,7 @@ namespace VirtualRobot
                 {
                     finished = false;
 
-                    if (actors[i]->moveActorCheckCollision(shared_from_this(), result, obstacles, stepSize))
-                    {
-                        actorCollisionStatus[i] = true;
-                    }
+                    actorCollisionStatus[i] = actors[i]->moveActorCheckCollision(shared_this, result, obstacles, stepSize);
                 }
             }
 
@@ -181,9 +178,9 @@ namespace VirtualRobot
         SceneObjectSetPtr cms(new SceneObjectSet(name, colChecker));
         cms->addSceneObjects(statics);
 
-        for (std::vector<EndEffectorActorPtr>::iterator i = actors.begin(); i != actors.end(); i++)
+        for (auto & actor : actors)
         {
-            cms->addSceneObjects((*i)->getRobotNodes());
+            cms->addSceneObjects(actor->getRobotNodes());
         }
 
         return cms;
@@ -261,16 +258,16 @@ namespace VirtualRobot
 
         cout << " * Static RobotNodes:" << endl;
 
-        for (size_t i = 0; i < statics.size(); i++)
+        for (auto & i : statics)
         {
-            cout << " ** " << statics[i]->getName() << endl;
+            cout << " ** " << i->getName() << endl;
         }
 
         cout << " * Actors:" << endl;
 
-        for (size_t i = 0; i < actors.size(); i++)
+        for (auto & actor : actors)
         {
-            actors[i]->print();
+            actor->print();
         }
 
         cout << endl;
@@ -387,11 +384,11 @@ namespace VirtualRobot
         VirtualRobot::RobotConfigPtr result(new VirtualRobot::RobotConfig(getRobot(), getName()));
         std::vector< RobotNodePtr > rn = getAllNodes();
 
-        for (size_t i = 0; i < rn.size(); i++)
+        for (auto & i : rn)
         {
-            if (rn[i]->isRotationalJoint() || rn[i]->isTranslationalJoint())
+            if (i->isRotationalJoint() || i->isTranslationalJoint())
             {
-                result->setConfig(rn[i]->getName(), rn[i]->getJointValue());
+                result->setConfig(i->getName(), i->getJointValue());
             }
         }
 
@@ -416,9 +413,9 @@ namespace VirtualRobot
         {
             std::vector< RobotNodePtr > rn = (*iA)->getRobotNodes();
 
-            for (size_t i = 0; i < rn.size(); i++)
+            for (const auto & i : rn)
             {
-                mapR[rn[i]] = rn[i];
+                mapR[i] = i;
             }
 
             iA++;
@@ -492,9 +489,9 @@ namespace VirtualRobot
             return false;
         }
 
-        for (size_t j = 0; j < actors.size(); j++)
+        for (const auto & actor : actors)
         {
-            if (!actors[j]->nodesSufficient(nodes))
+            if (!actor->nodesSufficient(nodes))
             {
                 return false;
             }
@@ -507,9 +504,9 @@ namespace VirtualRobot
     {
         float maxActor = 0;
 
-        for (size_t j = 0; j < actors.size(); j++)
+        for (auto & actor : actors)
         {
-            float al = actors[j]->getApproximatedLength();
+            float al = actor->getApproximatedLength();
 
             if (al > maxActor)
             {
@@ -520,11 +517,11 @@ namespace VirtualRobot
 
         BoundingBox bb_all;
 
-        for (size_t j = 0; j < statics.size(); j++)
+        for (auto & j : statics)
         {
-            if (statics[j]->getCollisionModel())
+            if (j->getCollisionModel())
             {
-                BoundingBox bb = statics[j]->getCollisionModel()->getBoundingBox();
+                BoundingBox bb = j->getCollisionModel()->getBoundingBox();
                 bb_all.addPoint(bb.getMin());
                 bb_all.addPoint(bb.getMax());
             }
@@ -609,18 +606,18 @@ namespace VirtualRobot
         {
             ss << tt << "<Static>" << endl;
 
-            for (size_t i = 0; i < statics.size(); i++)
+            for (auto & i : statics)
             {
-                ss << ttt << "<Node name='" << statics[i]->getName() << "'/>" << endl;
+                ss << ttt << "<Node name='" << i->getName() << "'/>" << endl;
             }
 
             ss << tt << "</Static>" << endl;
         }
 
         // Actors
-        for (size_t i = 0; i < actors.size(); i++)
+        for (auto & actor : actors)
         {
-            ss << actors[i]->toXML(ident + 1);
+            ss << actor->toXML(ident + 1);
         }
 
         ss << pre << "</EndEffector>" << endl;
@@ -635,10 +632,8 @@ namespace VirtualRobot
 
         int contactCount = 0;
 
-        for (size_t i = 0; i < statics.size(); i++)
+        for (auto n : statics)
         {
-            RobotNodePtr n = statics[i];
-
             if (!n->getCollisionModel())
                 continue;
             int id1, id2;

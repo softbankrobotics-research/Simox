@@ -14,7 +14,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -40,7 +40,7 @@ namespace VirtualRobot
 
     GraspEditorWindow::GraspEditorWindow(std::string& objFile, std::string& robotFile,
                                          bool embeddedGraspEditor)
-        : QMainWindow(NULL), UI(new Ui::MainWindowGraspEditor)
+        : QMainWindow(nullptr), UI(new Ui::MainWindowGraspEditor)
     {
         VR_INFO << " start " << endl;
 
@@ -280,7 +280,7 @@ namespace VirtualRobot
         if (object)
         {
 
-            SoNode* visualisationNode = NULL;
+            SoNode* visualisationNode = nullptr;
             boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject = object->getVisualization<CoinVisualization>(colModel); 
             if (visualizationObject)
                 visualisationNode = visualizationObject->getCoinVisualization();
@@ -595,9 +595,9 @@ namespace VirtualRobot
     {
         UI->comboBoxEEF->clear();
 
-        for (size_t i = 0; i < eefs.size(); i++)
+        for (auto & eef : eefs)
         {
-            UI->comboBoxEEF->addItem(QString(eefs[i]->getName().c_str()));
+            UI->comboBoxEEF->addItem(QString(eef->getName().c_str()));
         }
     }
 

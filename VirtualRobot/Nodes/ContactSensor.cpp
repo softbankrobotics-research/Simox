@@ -17,8 +17,7 @@ namespace VirtualRobot
 
 
     ContactSensor::~ContactSensor()
-    {
-    }
+    = default;
 
     void ContactSensor::print(bool printChildren, bool printDecoration) const
     {

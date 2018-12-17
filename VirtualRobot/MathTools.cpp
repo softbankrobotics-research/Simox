@@ -1,8 +1,8 @@
 
 #include "MathTools.h"
 #include "VirtualRobotException.h"
-#include <float.h>
-#include <string.h>
+#include <cfloat>
+#include <cstring>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
@@ -849,15 +849,10 @@ namespace VirtualRobot
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::convertMM2M(const std::vector<ContactPoint> points, std::vector<ContactPoint>& storeResult)
     {
         float s = 1.0f / 1000.0f;
-        storeResult.clear();
-        std::vector<ContactPoint>::const_iterator iter1 = points.begin();
-
-        while (iter1 != points.end())
+        storeResult = points;
+        for(auto& p : storeResult)
         {
-            ContactPoint tmp = *iter1;
-            tmp.p *= s;
-            storeResult.push_back(tmp);
-            iter1++;
+            p.p *= s;
         }
     }
 
@@ -948,9 +943,9 @@ namespace VirtualRobot
 
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::print(const std::vector<ContactPoint>& points)
     {
-        for (size_t i = 0; i < points.size(); i++)
+        for (const auto & point : points)
         {
-            print(points[i]);
+            print(point);
         }
     }
 
@@ -1494,21 +1489,21 @@ namespace VirtualRobot
 
         res.x = res.y = res.z = res.w = 0;
 
-        for (size_t i = 0; i < quaternions.size(); i++)
+        for (auto & quaternion : quaternions)
         {
-            if (getDot(res, quaternions[i]) > 0)
+            if (getDot(res, quaternion) > 0)
             {
-                res.x += quaternions[i].x;
-                res.y += quaternions[i].y;
-                res.z += quaternions[i].z;
-                res.w += quaternions[i].w;
+                res.x += quaternion.x;
+                res.y += quaternion.y;
+                res.z += quaternion.z;
+                res.w += quaternion.w;
             }
             else
             {
-                res.x += -quaternions[i].x;
-                res.y += -quaternions[i].y;
-                res.z += -quaternions[i].z;
-                res.w += -quaternions[i].w;
+                res.x += -quaternion.x;
+                res.y += -quaternion.y;
+                res.z += -quaternion.z;
+                res.w += -quaternion.w;
             }
         }
 

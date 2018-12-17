@@ -38,8 +38,8 @@
 
 \**************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include "PQP.h"
 #include "BVTQ.h"
 #include "Build.h"
@@ -63,29 +63,29 @@ namespace PQP
     {
         // no bounding volume tree yet
 
-        b = 0;
+        b = nullptr;
         num_bvs_alloced = 0;
         num_bvs = 0;
 
         // no tri list yet
 
-        tris = 0;
+        tris = nullptr;
         num_tris = 0;
         num_tris_alloced = 0;
 
-        last_tri = 0;
+        last_tri = nullptr;
 
         build_state = PQP_BUILD_STATE_EMPTY;
     }
 
     PQP_Model::~PQP_Model()
     {
-        if (b != NULL)
+        if (b != nullptr)
         {
             delete [] b;
         }
 
-        if (tris != NULL)
+        if (tris != nullptr)
         {
             delete [] tris;
         }
@@ -287,7 +287,7 @@ namespace PQP
 
     PQP_CollideResult::PQP_CollideResult()
     {
-        pairs = 0;
+        pairs = nullptr;
         num_pairs = num_pairs_alloced = 0;
         num_bv_tests = 0;
         num_tri_tests = 0;
@@ -303,7 +303,7 @@ namespace PQP
     {
         num_pairs = num_pairs_alloced = 0;
         delete [] pairs;
-        pairs = 0;
+        pairs = nullptr;
     }
 
     // may increase OR reduce mem usage
@@ -961,7 +961,7 @@ namespace PQP
         pqp_math.McM(min_test.R, R);
         pqp_math.VcV(min_test.T, T);
 
-        while (1)
+        while (true)
         {
             int l1 = o1->child(min_test.b1)->Leaf();
             int l2 = o2->child(min_test.b2)->Leaf();
@@ -1378,7 +1378,7 @@ namespace PQP
         pqp_math.McM(min_test.R, R);
         pqp_math.VcV(min_test.T, T);
 
-        while (1)
+        while (true)
         {
             int l1 = o1->child(min_test.b1)->Leaf();
             int l2 = o2->child(min_test.b2)->Leaf();

@@ -8,11 +8,11 @@
 #include "ConfigurationConstraint.h"
 #include <VirtualRobot/CollisionDetection/CDManager.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include "float.h"
+#include <cfloat>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
-#include <time.h>
+#include <ctime>
 #include <VirtualRobot/MathTools.h>
 #include <VirtualRobot/Random.h>
 #define GET_RANDOM_DATA_FROM_64BIT_ADDRESS(a) (int)(0xFF & (long)a) | (0xFF00 & ((long)a >> 16))
@@ -842,9 +842,9 @@ namespace Saba
 
     bool CSpace::isSatisfyingConstraints(const Eigen::VectorXf& config)
     {
-        for (size_t i = 0; i < constraints.size(); i++)
+        for (auto & constraint : constraints)
         {
-            if (!constraints[i]->isValid(config))
+            if (!constraint->isValid(config))
             {
                 return false;
             }

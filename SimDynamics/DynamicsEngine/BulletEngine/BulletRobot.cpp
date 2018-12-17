@@ -58,8 +58,7 @@ namespace SimDynamics
     }
 
     BulletRobot::~BulletRobot()
-    {
-    }
+    = default;
 
 
 
@@ -75,10 +74,9 @@ namespace SimDynamics
         robotNodes = robot->getRobotNodes();
 
 
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (auto rn : robotNodes)
         {
 
-            RobotNodePtr rn = robotNodes[i];
             CollisionModelPtr colModel = rn->getCollisionModel();
 
             if (colModel)
@@ -174,13 +172,13 @@ namespace SimDynamics
         BulletObjectPtr drn1 = boost::dynamic_pointer_cast<BulletObject>(dynamicRobotNodes[rn]);
         VR_ASSERT(drn1);
 
-        for (size_t i = 0; i < ic.size(); i++)
+        for (const auto & i : ic)
         {
-            RobotNodePtr rn2 = robot->getRobotNode(ic[i]);
+            RobotNodePtr rn2 = robot->getRobotNode(i);
 
             if (!rn2)
             {
-                VR_ERROR << "Error while processing robot node <" << rn->getName() << ">: Ignored collision model <" << ic[i] << "> is not part of robot..." << endl;
+                VR_ERROR << "Error while processing robot node <" << rn->getName() << ">: Ignored collision model <" << i << "> is not part of robot..." << endl;
             }
             else
             {
@@ -456,9 +454,9 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if (links[i].nodeA == node1 && links[i].nodeB == node2)
+            if (link.nodeA == node1 && link.nodeB == node2)
             {
                 return true;
             }
@@ -668,9 +666,9 @@ namespace SimDynamics
         boost::unordered_set<std::string> contactObjectNames;
 
         // this seems stupid and it is, but that is abstract interfaces for you.
-        for (std::vector<SensorPtr>::iterator it = sensors.begin(); it != sensors.end(); it++)
+        for (auto & sensor : sensors)
         {
-            ContactSensorPtr contactSensor = boost::dynamic_pointer_cast<ContactSensor>(*it);
+            ContactSensorPtr contactSensor = boost::dynamic_pointer_cast<ContactSensor>(sensor);
 
             if (contactSensor)
             {
@@ -682,11 +680,8 @@ namespace SimDynamics
         std::vector<SimDynamics::DynamicsEngine::DynamicsContactInfo> contacts = world->getEngine()->getContacts();
         boost::unordered_map<std::string, VirtualRobot::ContactSensor::ContactFrame> frameMap;
 
-        for (std::vector<SimDynamics::DynamicsEngine::DynamicsContactInfo>::iterator it = contacts.begin();
-             it != contacts.end(); it++)
+        for (auto & contact : contacts)
         {
-            const SimDynamics::DynamicsEngine::DynamicsContactInfo& contact = *it;
-
             if (contact.objectAName.empty() || contact.objectBName.empty())
             {
                 continue;
@@ -723,9 +718,9 @@ namespace SimDynamics
         }
 
         // Update forces and torques
-        for (std::vector<SensorPtr>::iterator it = sensors.begin(); it != sensors.end(); it++)
+        for (auto & sensor : sensors)
         {
-            ForceTorqueSensorPtr ftSensor = boost::dynamic_pointer_cast<ForceTorqueSensor>(*it);
+            ForceTorqueSensorPtr ftSensor = boost::dynamic_pointer_cast<ForceTorqueSensor>(sensor);
 
             if (ftSensor)
             {
@@ -741,7 +736,7 @@ namespace SimDynamics
             }
             else
             {
-                ContactSensorPtr contactSensor = boost::dynamic_pointer_cast<ContactSensor>(*it);
+                ContactSensorPtr contactSensor = boost::dynamic_pointer_cast<ContactSensor>(sensor);
 
                 if (contactSensor)
                 {
@@ -758,11 +753,11 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
+            if (link.nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
             {
-                return links[i];
+                return link;
             }
         }
 
@@ -774,11 +769,11 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if ((links[i].dynNode1 == object1 && links[i].dynNode2 == object2) || (links[i].dynNode1 == object2 && links[i].dynNode2 == object1))
+            if ((link.dynNode1 == object1 && link.dynNode2 == object2) || (link.dynNode1 == object2 && link.dynNode2 == object1))
             {
-                return links[i];
+                return link;
             }
         }
 
@@ -791,11 +786,11 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         std::vector<BulletRobot::LinkInfo> result;
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/ || links[i].nodeA == node || links[i].nodeB == node)
+            if (link.nodeJoint == node /*|| links[i].nodeJoint2 == node*/ || link.nodeA == node || link.nodeB == node)
             {
-                result.push_back(links[i]);
+                result.push_back(link);
             }
         }
 
@@ -807,11 +802,11 @@ namespace SimDynamics
         MutexLockPtr lock = getScopedLock();
         std::vector<BulletRobot::LinkInfo> result;
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if (links[i].dynNode1 == node || links[i].dynNode2 == node)
+            if (link.dynNode1 == node || link.dynNode2 == node)
             {
-                result.push_back(links[i]);
+                result.push_back(link);
             }
         }
 
@@ -964,9 +959,9 @@ namespace SimDynamics
             return true; // not a failure, object is not attached
         }
 
-        for (size_t i = 0; i < ls.size(); i++)
+        for (const auto & l : ls)
         {
-            res = res & removeLink(ls[i]);
+            res = res & removeLink(l);
         }
 
         VR_INFO << "Detached object " << object->getName() << " from robot " << robot->getName() << endl;
@@ -977,9 +972,9 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < links.size(); i++)
+        for (auto & link : links)
         {
-            if (links[i].nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
+            if (link.nodeJoint == node /*|| links[i].nodeJoint2 == node*/)
             {
                 return true;
             }

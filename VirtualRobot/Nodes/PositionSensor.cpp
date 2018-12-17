@@ -19,8 +19,7 @@ namespace VirtualRobot
 
 
     PositionSensor::~PositionSensor()
-    {
-    }
+    = default;
 
 
 

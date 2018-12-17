@@ -5,7 +5,7 @@
 #include "../VirtualRobotException.h"
 #include "../Robot.h"
 
-#include <float.h>
+#include <cfloat>
 
 namespace VirtualRobot
 {
@@ -22,14 +22,14 @@ namespace VirtualRobot
 
         bodyNodes = rnsBodies->getAllRobotNodes();
 
-        for (size_t i = 0; i < bodyNodes.size(); i++)
+        for (auto & bodyNode : bodyNodes)
         {
             // get all joints that influence the body
-            std::vector<RobotNodePtr> parentsN = bodyNodes[i]->getAllParents(rns);
+            std::vector<RobotNodePtr> parentsN = bodyNode->getAllParents(rns);
             // maybe this node is joint and body
-            if (rnsJoints->hasRobotNode(bodyNodes[i]))
-                parentsN.push_back(bodyNodes[i]);
-            bodyNodeParents[bodyNodes[i]] = parentsN;
+            if (rnsJoints->hasRobotNode(bodyNode))
+                parentsN.push_back(bodyNode);
+            bodyNodeParents[bodyNode] = parentsN;
         }
 
         if (rnsBodies->getMass() == 0)

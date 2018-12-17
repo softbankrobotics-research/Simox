@@ -41,9 +41,7 @@ namespace VirtualRobot
     }
 
     FeetPosture::~FeetPosture()
-    {
-
-    }
+    = default;
 
     RobotNodeSetPtr FeetPosture::getLeftLeg()
     {

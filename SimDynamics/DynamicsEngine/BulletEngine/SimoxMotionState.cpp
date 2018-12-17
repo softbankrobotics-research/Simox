@@ -49,9 +49,7 @@ namespace SimDynamics
     }
 
     SimoxMotionState::~SimoxMotionState()
-    {
-
-    }
+    = default;
 
     void SimoxMotionState::setWorldTransform(const btTransform& worldPose)
     {
@@ -138,11 +136,11 @@ namespace SimDynamics
                 std::vector<BulletRobot::LinkInfo> links = bdr->getLinks(rn);
 
                 // update all involved joint values
-                for (size_t i = 0; i < links.size(); i++)
+                for (auto & link : links)
                 {
-                    if (links[i].nodeJoint)
+                    if (link.nodeJoint)
                     {
-                        float ja = float(bdr->getJointAngle(links[i].nodeJoint));
+                        float ja = float(bdr->getJointAngle(link.nodeJoint));
 #ifdef _DEBUG
 
                         if (boost::math::isnan(ja))
@@ -152,7 +150,7 @@ namespace SimDynamics
 
 #endif
                         // we can update the joint value via an RobotNodeActuator
-                        RobotNodeActuatorPtr rna(new RobotNodeActuator(links[i].nodeJoint));
+                        RobotNodeActuatorPtr rna(new RobotNodeActuator(link.nodeJoint));
                         rna->updateJointAngle(ja);
                     }
                 }

@@ -5,7 +5,7 @@
 #include "../CSpace/CSpaceTree.h"
 #include "../CSpace/CSpacePath.h"
 #include "VirtualRobot/Robot.h"
-#include <time.h>
+#include <ctime>
 
 
 //#define LOCAL_DEBUG(a) {SABA_INFO << a;};
@@ -26,8 +26,7 @@ namespace Saba
     }
 
     BiRrt::~BiRrt()
-    {
-    }
+    = default;
 
 
     bool BiRrt::plan(bool bQuiet)
@@ -353,14 +352,14 @@ namespace Saba
         // Create the CSpacePath, first start node till bridgeover node, then bridgeover node till goal node
         solution.reset(new CSpacePath(cspace));
 
-        for (unsigned int i = 0; i < tmpSol.size(); i++)
+        for (int i : tmpSol)
         {
-            solution->addPoint(tree->getNode(tmpSol[i])->configuration);
+            solution->addPoint(tree->getNode(i)->configuration);
         }
 
-        for (unsigned int i = 0; i < tmpSol2.size(); i++)
+        for (int i : tmpSol2)
         {
-            solution->addPoint(tree2->getNode(tmpSol2[i])->configuration);
+            solution->addPoint(tree2->getNode(i)->configuration);
         }
 
         if (!bQuiet)

@@ -205,13 +205,13 @@ namespace VirtualRobot
         }
 
         // create list of switching point candidates, calculate total path length and absolute positions of path segments
-        for(list<PathSegment*>::iterator segment = pathSegments.begin(); segment != pathSegments.end(); segment++) {
-            (*segment)->position = length;
-            list<double> localSwitchingPoints = (*segment)->getSwitchingPoints();
+        for(auto & pathSegment : pathSegments) {
+            pathSegment->position = length;
+            list<double> localSwitchingPoints = pathSegment->getSwitchingPoints();
             for(list<double>::const_iterator point = localSwitchingPoints.begin(); point != localSwitchingPoints.end(); point++) {
                 switchingPoints.push_back(make_pair(length + *point, false));
             }
-            length += (*segment)->getLength();
+            length += pathSegment->getLength();
             while(!switchingPoints.empty() && switchingPoints.back().first >= length)
                 switchingPoints.pop_back();
             switchingPoints.push_back(make_pair(length, true));
@@ -223,14 +223,14 @@ namespace VirtualRobot
         length(path.length),
         switchingPoints(path.switchingPoints)
     {
-        for(list<PathSegment*>::const_iterator it = path.pathSegments.begin(); it != path.pathSegments.end(); it++) {
-            pathSegments.push_back((*it)->clone());
+        for(auto pathSegment : path.pathSegments) {
+            pathSegments.push_back(pathSegment->clone());
         }
     }
 
     Path::~Path() {
-        for(list<PathSegment*>::iterator it = pathSegments.begin(); it != pathSegments.end(); it++) {
-            delete *it;
+        for(auto & pathSegment : pathSegments) {
+            delete pathSegment;
         }
     }
 

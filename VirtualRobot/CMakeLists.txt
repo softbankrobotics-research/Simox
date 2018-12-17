@@ -77,6 +77,10 @@ XML/RobotIO.cpp
 XML/SceneIO.cpp
 XML/ObjectIO.cpp
 XML/FileIO.cpp
+XML/mjcf/MasslessBodySanitizer.cpp
+XML/mjcf/MjcfDocument.cpp
+XML/mjcf/MujocoIO.cpp
+XML/mjcf/utils.cpp
 IK/IKSolver.cpp
 IK/AdvancedIKSolver.cpp
 IK/DifferentialIK.cpp
@@ -137,17 +141,16 @@ VirtualRobotException.cpp
 ManipulationObject.cpp
 BoundingBox.cpp
 RuntimeEnvironment.cpp
-Compression/CompressionRLE.cpp
-Compression/CompressionBZip2.cpp
+Random.cpp
 LinkedCoordinate.cpp
 SphereApproximator.cpp
+VirtualRobot.cpp
+Compression/CompressionRLE.cpp
+Compression/CompressionBZip2.cpp
 Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
-VirtualRobot.cpp
 Tools/Gravity.cpp
-Random.cpp
-
 math/Contact.cpp
 math/ContactList.cpp
 math/Line.cpp
@@ -183,6 +186,7 @@ math/Primitive.cpp
 math/WeightedAverage.cpp
 math/Grid3D.cpp
 math/GridCacheFloat3.cpp
+Util/xml/tinyxml2.cpp
 )
 
 SET(INCLUDES
@@ -223,6 +227,10 @@ XML/RobotIO.h
 XML/SceneIO.h
 XML/ObjectIO.h
 XML/FileIO.h
+XML/mjcf/MasslessBodySanitizer.h
+XML/mjcf/MjcfDocument.h
+XML/mjcf/MujocoIO.h
+XML/mjcf/utils.h
 IK/IKSolver.h
 IK/AdvancedIKSolver.h
 IK/DifferentialIK.h
@@ -292,6 +300,7 @@ VirtualRobotTest.h
 ManipulationObject.h
 BoundingBox.h
 RuntimeEnvironment.h
+Random.h
 DataStructures/nanoflann.hpp
 DataStructures/KdTreePointCloud.h
 Compression/CompressionRLE.h
@@ -301,8 +310,6 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
-Random.h
-
 math/MathForwardDefinitions.h
 math/Contact.h
 math/ContactList.h
@@ -347,7 +354,8 @@ math/Primitive.h
 math/Grid3D.h
 math/GridCacheFloat3.h
 math/WeightedAverage.h
-
+Util/xml/tinyxml2.h
+Util/json/json.hpp
 )
 
 if (Simox_USE_RBDL AND RBDL_FOUND)
@@ -551,12 +559,19 @@ ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
 TARGET_LINK_LIBRARIES(VirtualRobot PUBLIC ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
 target_include_directories(VirtualRobot SYSTEM PUBLIC ${Simox_EXTERNAL_INCLUDE_DIRS})
 
+# against undefined reference to boost::filesystem::detail::copy_file
+# source: https://stackoverflow.com/a/3500721
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DBOOST_NO_CXX11_SCOPED_ENUMS)
+
+
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
 # .so path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
 # .lib path (this is needed for setting the DLL-import library path on windows)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simox_LIB_DIR})
+
+
 
 
 #######################################################################################

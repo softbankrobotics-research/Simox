@@ -8,7 +8,7 @@
 // *****************************************************************
 
 #include "SphereApproximator.h"
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "VirtualRobot/Visualization/TriMeshModel.h"
 
@@ -122,9 +122,9 @@ namespace VirtualRobot
         setVec(v[2], -fSqrt3, fSqrt3, -fSqrt3);
         setVec(v[3], fSqrt3, -fSqrt3, -fSqrt3);
 
-        for (int i = 0 ; i < 4 ; i++)
+        for (const auto & i : v)
         {
-            gd.vertices.push_back(v[i]);
+            gd.vertices.push_back(i);
         }
 
         // structure describing a tetrahedron
@@ -134,12 +134,12 @@ namespace VirtualRobot
         f[2].set(3, 2, 4);
         f[3].set(4, 1, 3);
 
-        for (int i = 0 ; i < 4 ; i++)
+        for (auto & i : f)
         {
-            f[i].id1--;
-            f[i].id2--;
-            f[i].id3--;
-            gd.faces.push_back(f[i]);
+            i.id1--;
+            i.id2--;
+            i.id3--;
+            gd.faces.push_back(i);
         }
     }
 
@@ -154,9 +154,9 @@ namespace VirtualRobot
         setVec(v[4], 0, 0, 1);
         setVec(v[5], 0, 0, -1);
 
-        for (int i = 0 ; i < 6 ; i++)
+        for (const auto & i : v)
         {
-            gd.vertices.push_back(v[i]);
+            gd.vertices.push_back(i);
         }
 
         // Join vertices to create a unit octahedron
@@ -170,12 +170,12 @@ namespace VirtualRobot
         f[6].set(2, 4, 6);
         f[7].set(4, 1, 6);
 
-        for (int i = 0 ; i < 8 ; i++)
+        for (auto & i : f)
         {
-            f[i].id1--;
-            f[i].id2--;
-            f[i].id3--;
-            gd.faces.push_back(f[i]);
+            i.id1--;
+            i.id2--;
+            i.id3--;
+            gd.faces.push_back(i);
         }
     }
 
@@ -200,9 +200,9 @@ namespace VirtualRobot
         setVec(v[10], 0, -tau, -one);
         setVec(v[11], 0, tau, -one);
 
-        for (int i = 0 ; i < 12 ; i++)
+        for (const auto & i : v)
         {
-            gd.vertices.push_back(v[i]);
+            gd.vertices.push_back(i);
         }
 
 
@@ -229,12 +229,12 @@ namespace VirtualRobot
         f[18].set(8, 10, 3);
         f[19].set(7,  3, 11);
 
-        for (int i = 0 ; i < 20 ; i++)
+        for (auto & i : f)
         {
-            f[i].id1--;
-            f[i].id2--;
-            f[i].id3--;
-            gd.faces.push_back(f[i]);
+            i.id1--;
+            i.id2--;
+            i.id3--;
+            gd.faces.push_back(i);
         }
     }
 
@@ -319,9 +319,9 @@ namespace VirtualRobot
             fa[2].set(nC_m, nB_m, nC);
             fa[3].set(nA_m, nB_m, nC_m);
 
-            for (int i = 0 ; i < 4 ; i++)
+            for (const auto & i : fa)
             {
-                newFaces.push_back(fa[i]);
+                newFaces.push_back(i);
             }
         }
 

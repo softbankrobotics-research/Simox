@@ -15,9 +15,7 @@ namespace SimDynamics
     }
 
     SimoxCollisionDispatcher::~SimoxCollisionDispatcher()
-    {
-
-    }
+    = default;
     bool SimoxCollisionDispatcher::needsCollision(const btCollisionObject* body0, const btCollisionObject* body1)
     {
         SimDynamics::BulletObject* o0 = static_cast<SimDynamics::BulletObject*>(body0->getUserPointer());

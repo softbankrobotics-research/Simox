@@ -6,7 +6,7 @@
 #include "VirtualRobot/Robot.h"
 //#include "MathHelpers.h"
 #include <cmath>
-#include "float.h"
+#include <cfloat>
 #include <iostream>
 #include <string>
 
@@ -38,8 +38,7 @@ namespace Saba
 
 
     CSpaceSampled::~CSpaceSampled()
-    {
-    }
+    = default;
 
     CSpacePtr CSpaceSampled::clone(VirtualRobot::CollisionCheckerPtr newColChecker, VirtualRobot::RobotPtr newRobot, VirtualRobot::CDManagerPtr newCDM, unsigned int newRandomSeed)
     {

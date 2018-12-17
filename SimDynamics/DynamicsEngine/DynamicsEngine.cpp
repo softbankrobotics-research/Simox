@@ -88,9 +88,9 @@ namespace SimDynamics
 
         if (find(robots.begin(), robots.end(), r) == robots.end())
         {
-            for (size_t i = 0; i < robots.size(); i++)
+            for (auto & robot : robots)
             {
-                if (robots[i]->getRobot() == r->getRobot())
+                if (robot->getRobot() == r->getRobot())
                 {
                     VR_ERROR << "Only one DynamicsWrapper per robot allowed. Robot " << r->getName() << endl;
                     return false;
@@ -332,11 +332,11 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < objects.size(); i++)
+        for (auto & object : objects)
         {
-            if (objects[i]->getName() == objectName)
+            if (object->getName() == objectName)
             {
-                return objects[i];
+                return object;
             }
         }
 
@@ -347,9 +347,9 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < objects.size(); i++)
+        for (auto & object : objects)
         {
-            objects[i]->activate();
+            object->activate();
         }
     }
 
@@ -364,11 +364,11 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            if (robots[i]->getRobot() == r)
+            if (robot->getRobot() == r)
             {
-                return robots[i];
+                return robot;
             }
         }
 
@@ -379,11 +379,11 @@ namespace SimDynamics
     {
         MutexLockPtr lock = getScopedLock();
 
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            if (robots[i]->getName() == robName)
+            if (robot->getName() == robName)
             {
-                return robots[i];
+                return robot;
             }
         }
 

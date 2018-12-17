@@ -48,7 +48,7 @@ namespace SimDynamics
 
         //SoSelection *selection = new SoSelection();
         //sceneGraph->addChild( selection );
-        viewer = NULL;
+        viewer = nullptr;
 
         // register callback
         SoSensorManager* sensor_mgr = SoDB::getSensorManager();
@@ -65,7 +65,7 @@ namespace SimDynamics
     {
         stopCB();
         sceneGraphRoot->unref();
-        sceneGraphRoot = NULL;
+        sceneGraphRoot = nullptr;
     }
 
     void BulletCoinQtViewer::selectionCB(void* userdata, SoPath* path)
@@ -414,7 +414,7 @@ namespace SimDynamics
             SoSensorManager* sensor_mgr = SoDB::getSensorManager();
             sensor_mgr->removeTimerSensor(timerSensor);
             delete timerSensor;
-            timerSensor = NULL;
+            timerSensor = nullptr;
         }
 
         if (sceneGraph)

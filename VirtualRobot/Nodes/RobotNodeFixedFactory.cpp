@@ -13,13 +13,11 @@ namespace VirtualRobot
 {
 
     RobotNodeFixedFactory::RobotNodeFixedFactory()
-    {
-    }
+    = default;
 
 
     RobotNodeFixedFactory::~RobotNodeFixedFactory()
-    {
-    }
+    = default;
 
     /**
      * This method creates a VirtualRobot::RobotNodeFixed.
@@ -28,7 +26,7 @@ namespace VirtualRobot
      */
     RobotNodePtr RobotNodeFixedFactory::createRobotNode(RobotPtr robot, const std::string& nodeName, VisualizationNodePtr visualizationModel, CollisionModelPtr collisionModel, float /*limitLow*/, float /*limitHigh*/, float /*jointValueOffset*/, const Eigen::Matrix4f& preJointTransform, const Eigen::Vector3f& /*axis*/, const Eigen::Vector3f& /*translationDirection*/, const SceneObject::Physics& p, RobotNode::RobotNodeType rntype) const
     {
-        RobotNodePtr robotNode(new RobotNodeFixed(robot, nodeName, preJointTransform, visualizationModel, collisionModel, p, CollisionCheckerPtr(), rntype));
+        RobotNodePtr robotNode(new RobotNodeFixed(robot, nodeName, preJointTransform, visualizationModel, collisionModel, p, (collisionModel ? collisionModel->getCollisionChecker() : CollisionCheckerPtr()), rntype));
 
         return robotNode;
     }

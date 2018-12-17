@@ -31,6 +31,7 @@ namespace math
     public:
         virtual Eigen::Vector3f GetPosition(float t) = 0;
         virtual Eigen::Quaternionf GetOrientation(float t) = 0;
+        Eigen::Matrix4f GetPose(float t);
 
     private:
     };

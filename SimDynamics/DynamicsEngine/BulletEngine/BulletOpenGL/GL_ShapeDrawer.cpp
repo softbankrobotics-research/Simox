@@ -46,7 +46,7 @@ subject to the following restrictions:
 #include "LinearMath/btIDebugDraw.h"
 //for debugmodes
 
-#include <stdio.h> //printf debugging
+#include <cstdio> //printf debugging
 
 //#define USE_DISPLAY_LISTS 1
 #ifdef USE_DISPLAY_LISTS
@@ -776,7 +776,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
                 {
                     if (shape->isConvex())
                     {
-                        const btConvexPolyhedron* poly = shape->isPolyhedral() ? ((btPolyhedralConvexShape*) shape)->getConvexPolyhedron() : 0;
+                        const btConvexPolyhedron* poly = shape->isPolyhedral() ? ((btPolyhedralConvexShape*) shape)->getConvexPolyhedron() : nullptr;
 
                         if (poly)
                         {

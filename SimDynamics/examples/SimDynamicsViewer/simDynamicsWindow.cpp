@@ -9,7 +9,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -28,7 +28,7 @@ using namespace VirtualRobot;
 using namespace SimDynamics;
 
 SimDynamicsWindow::SimDynamicsWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -236,9 +236,9 @@ void SimDynamicsWindow::buildVisualization()
     viewer->addVisualization(dynamicsRobot, colModel);
     viewer->addVisualization(dynamicsObject, colModel);
 
-    for (size_t i = 0; i < dynamicsObjects.size(); i++)
+    for (const auto & dynamicsObject : dynamicsObjects)
     {
-        viewer->addVisualization(dynamicsObjects[i], colModel);
+        viewer->addVisualization(dynamicsObject, colModel);
     }
 
     if (dynamicsObject2)
@@ -263,14 +263,14 @@ void SimDynamicsWindow::comVisu()
     {
         std::vector<RobotNodePtr> n = robot->getRobotNodes();
 
-        for (size_t i = 0; i < n.size(); i++)
+        for (const auto & i : n)
         {
             SoSeparator* sep = new SoSeparator;
             comSep->addChild(sep);
-            Eigen::Matrix4f cp = dynamicsRobot->getComGlobal(n[i]);
+            Eigen::Matrix4f cp = dynamicsRobot->getComGlobal(i);
             sep->addChild(CoinVisualizationFactory::getMatrixTransformScaleMM2M(cp));
             sep->addChild(CoinVisualizationFactory::CreateCoordSystemVisualization(5.0f));
-            comVisuMap[n[i]] = sep;
+            comVisuMap[i] = sep;
         }
     }
 }
@@ -319,12 +319,12 @@ void SimDynamicsWindow::updateJoints()
     UI.comboBoxRobotNode->clear();
     std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (auto & node : nodes)
     {
-        if (nodes[i]->isRotationalJoint() || nodes[i]->isTranslationalJoint())
+        if (node->isRotationalJoint() || node->isTranslationalJoint())
         {
-            robotNodes.push_back(nodes[i]);
-            QString qstr(nodes[i]->getName().c_str());
+            robotNodes.push_back(node);
+            QString qstr(node->getName().c_str());
             UI.comboBoxRobotNode->addItem(qstr);
         }
     }
@@ -811,7 +811,7 @@ void SimDynamicsWindow::stopCB()
         SoSensorManager* sensor_mgr = SoDB::getSensorManager();
         sensor_mgr->removeTimerSensor(timerSensor);
         delete timerSensor;
-        timerSensor = NULL;
+        timerSensor = nullptr;
     }
 
     viewer.reset();
@@ -831,17 +831,17 @@ void SimDynamicsWindow::updateContactVisu()
 
     std::vector<SimDynamics::DynamicsEngine::DynamicsContactInfo> c = dynamicsWorld->getEngine()->getContacts();
 
-    for (size_t i = 0; i < c.size(); i++)
+    for (auto & i : c)
     {
-        cout << "Contact: " << c[i].objectAName << " + " << c[i].objectBName << endl;
+        cout << "Contact: " << i.objectAName << " + " << i.objectBName << endl;
         SoSeparator* normal = new SoSeparator;
         SoMatrixTransform* m = new SoMatrixTransform;
         SbMatrix ma;
         ma.makeIdentity();
-        ma.setTranslate(SbVec3f(c[i].posGlobalB(0), c[i].posGlobalB(1), c[i].posGlobalB(2)));
+        ma.setTranslate(SbVec3f(i.posGlobalB(0), i.posGlobalB(1), i.posGlobalB(2)));
         m->matrix.setValue(ma);
         normal->addChild(m);
-        SoSeparator* n = CoinVisualizationFactory::CreateArrow(c[i].normalGlobalB, 50.0f);
+        SoSeparator* n = CoinVisualizationFactory::CreateArrow(i.normalGlobalB, 50.0f);
 
         if (n)
         {
@@ -851,10 +851,10 @@ void SimDynamicsWindow::updateContactVisu()
         SoSeparator* normal2 = new SoSeparator;
         SoMatrixTransform* m2 = new SoMatrixTransform;
         ma.makeIdentity();
-        ma.setTranslate(SbVec3f(c[i].posGlobalA(0), c[i].posGlobalA(1), c[i].posGlobalA(2)));
+        ma.setTranslate(SbVec3f(i.posGlobalA(0), i.posGlobalA(1), i.posGlobalA(2)));
         m2->matrix.setValue(ma);
         normal2->addChild(m2);
-        SoSeparator* n2 = CoinVisualizationFactory::CreateArrow(-c[i].normalGlobalB, 50.0f);
+        SoSeparator* n2 = CoinVisualizationFactory::CreateArrow(-i.normalGlobalB, 50.0f);
 
         if (n2)
         {

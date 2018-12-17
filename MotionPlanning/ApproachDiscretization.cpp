@@ -1,8 +1,8 @@
 #include "ApproachDiscretization.h"
 #include <iostream>
-#include <time.h>
+#include <ctime>
 #include <algorithm>
-#include <limits.h>
+#include <climits>
 
 using namespace std;
 
@@ -24,8 +24,7 @@ namespace Saba
     }
 
     ApproachDiscretization::~ApproachDiscretization()
-    {
-    }
+    = default;
 
     /*
     void ApproachDiscretization::buildIVModel()
@@ -93,15 +92,15 @@ namespace Saba
         zeroPt.setZero();
         VirtualRobot::SphereApproximator::FaceIndex faceIndx = sphere.mapVerticeIndxToFaceIndx[nIndex];
 
-        for (int i = 0; i < (int)faceIndx.faceIds.size(); i++)
+        for (int faceId : faceIndx.faceIds)
         {
-            VirtualRobot::MathTools::TriangleFace f = sphere.faces[faceIndx.faceIds[i]];
+            VirtualRobot::MathTools::TriangleFace f = sphere.faces[faceId];
 
             //if  (sphereGenerator->check_intersect_tri(sphere.vertices[f.n1],sphere.m_Vertices[f.m_n2],sphere.m_Vertices[f.m_n3],zeroPt,Pose1,storeIntPoint))
             if (sphereGenerator->check_intersect_tri(sphere.vertices[f.id1], sphere.vertices[f.id2], sphere.vertices[f.id3], zeroPt, dir, storeIntPoint))
             {
                 //MarkFace(FaceIndx.m_faceIds[i],true);
-                return faceIndx.faceIds[i];
+                return faceId;
             }
         }
 

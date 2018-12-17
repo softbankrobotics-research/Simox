@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -31,14 +31,14 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showCamWindow::showCamWindow(std::string& sRobotFilename, std::string& cam1Name, std::string& cam2Name)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
     //resize(1100, 768);
-    cam2Renderer = NULL;
-    cam2Buffer = NULL;
-    cam2DepthBuffer = NULL;
+    cam2Renderer = nullptr;
+    cam2Buffer = nullptr;
+    cam2DepthBuffer = nullptr;
 
     useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
@@ -111,9 +111,9 @@ showCamWindow::~showCamWindow()
     sceneSep->unref();
     cam1VoxelSep->unref();
 
-    UI.cam1->setScene(NULL);
+    UI.cam1->setScene(nullptr);
     visuObjects.emplace_back(VirtualRobot::Obstacle::createSphere(400.0f));
-    UI.cam2->setScene(NULL);
+    UI.cam2->setScene(nullptr);
 
     delete [] cam2Buffer;
     delete [] cam2DepthBuffer;
@@ -212,7 +212,7 @@ void showCamWindow::rebuildVisualization()
     SceneObject::VisualizationType colModel = useColModel ? SceneObject::Collision : SceneObject::Full;
 
     visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -256,9 +256,9 @@ void showCamWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (auto & currentRobotNode : currentRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentRobotNode->getName().c_str()));
     }
 }
 
@@ -275,9 +275,9 @@ void showCamWindow::updateRNSBox()
     UI.comboBoxRobotNodeSet->clear();
     UI.comboBoxRobotNodeSet->addItem(QString("<All>"));
 
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
+    for (auto & robotNodeSet : robotNodeSets)
     {
-        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSets[i]->getName().c_str()));
+        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSet->getName().c_str()));
     }
 }
 
@@ -409,7 +409,7 @@ void showCamWindow::loadRobot()
     {
         QFileInfo fileInfo(m_sRobotFilename.c_str());
         std::string suffix(fileInfo.suffix().toLatin1());
-        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, nullptr);
 
         if (!importer)
         {
@@ -442,11 +442,11 @@ void showCamWindow::updateCameras()
 {
     cam1.reset();
     cam2.reset();
-    cam2Renderer = NULL;
+    cam2Renderer = nullptr;
     delete []cam2Buffer;
-    cam2Buffer = NULL;
+    cam2Buffer = nullptr;
     delete [] cam2DepthBuffer;
-    cam2DepthBuffer = NULL;
+    cam2DepthBuffer = nullptr;
 
     if (!robot)
     {

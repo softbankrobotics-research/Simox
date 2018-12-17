@@ -7,8 +7,8 @@
 #include "../Grasping/GraspSet.h"
 #include <fstream>
 #include <cmath>
-#include <float.h>
-#include <limits.h>
+#include <cfloat>
+#include <climits>
 
 namespace VirtualRobot
 {

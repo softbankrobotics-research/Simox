@@ -8,13 +8,11 @@ namespace VirtualRobot
 {
 
     SimoxCOLLADAFactory::SimoxCOLLADAFactory()
-    {
-    }
+    = default;
 
 
     SimoxCOLLADAFactory::~SimoxCOLLADAFactory()
-    {
-    }
+    = default;
 
 
     RobotPtr SimoxCOLLADAFactory::loadFromFile(const std::string& filename, RobotIO::RobotDescription /*loadMode*/)

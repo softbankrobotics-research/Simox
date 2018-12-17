@@ -63,8 +63,7 @@ namespace VirtualRobot
     }
 
     RobotNodeFixed::~RobotNodeFixed()
-    {
-    }
+    = default;
 
     bool RobotNodeFixed::initialize(SceneObjectPtr parent, const std::vector<SceneObjectPtr>& children)
     {

@@ -2,7 +2,7 @@
 #include "MTPlanningWindow.h"
 
 
-#include <string.h>
+#include <cstring>
 #include <iostream>
 using namespace std;
 using namespace VirtualRobot;

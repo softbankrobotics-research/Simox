@@ -71,26 +71,25 @@ namespace VirtualRobot
     // class CollisionChecker destructor
     //----------------------------------------------------------------------
     CollisionChecker::~CollisionChecker()
-    {
-    }
+    = default;
 
 
     float CollisionChecker::calculateDistance(SceneObjectSetPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
     float CollisionChecker::calculateDistance(CollisionModelPtr model1, SceneObjectSetPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
     float CollisionChecker::calculateDistance(CollisionModelPtr model1, CollisionModelPtr model2)
     {
         VR_ASSERT(model1 && model2);
-        return calculateDistance(model1, model2, tmpV1, tmpV2, NULL, NULL);
+        return calculateDistance(model1, model2, tmpV1, tmpV2, nullptr, nullptr);
     }
 
 
@@ -106,7 +105,7 @@ namespace VirtualRobot
         }
         else
         {
-            return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(model1->getCollisionModel(), model2, tmpV1, tmpV2, nullptr, nullptr);
         }
     }
 
@@ -134,7 +133,7 @@ namespace VirtualRobot
         }
         else
         {
-            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, NULL, NULL);
+            return calculateDistance(model1->getCollisionModel(), model2->getCollisionModel(), tmpV1, tmpV2, nullptr, nullptr);
         }
     }
 
@@ -391,11 +390,11 @@ namespace VirtualRobot
         SceneObjectSetPtr result(new SceneObjectSet(r->getName(), shared_from_this()));
         std::vector<RobotNodePtr> cm = r->getRobotNodes();
 
-        for (size_t i = 0; i < cm.size(); i++)
+        for (auto & i : cm)
         {
-            if (cm[i]->getCollisionModel())
+            if (i->getCollisionModel())
             {
-                result->addSceneObject(cm[i]);
+                result->addSceneObject(i);
             }
         }
 
@@ -779,13 +778,13 @@ namespace VirtualRobot
         // bbox was hit, test all points...
         std::vector< Eigen::Vector3f > pts = colModel->getModelVeticesGlobal();
 
-        for (std::vector< Eigen::Vector3f >::iterator i = pts.begin(); i != pts.end(); i++)
+        for (auto & pt : pts)
         {
-            if (MathTools::getDistancePointPlane(*i, p) <= maxDist)
+            if (MathTools::getDistancePointPlane(pt, p) <= maxDist)
             {
                 MathTools::ContactPoint contact;
                 contact.n = p.n;
-                contact.p = *i;
+                contact.p = pt;
                 storeContatcs.push_back(contact);
             }
         }

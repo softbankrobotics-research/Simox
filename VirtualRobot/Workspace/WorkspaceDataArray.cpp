@@ -2,8 +2,8 @@
 
 #include <fstream>
 #include <cmath>
-#include <float.h>
-#include <limits.h>
+#include <cfloat>
+#include <climits>
 
 namespace VirtualRobot
 {
@@ -39,7 +39,7 @@ namespace VirtualRobot
                 {
                     for (unsigned int z = 0; z < size3; z++)
                     {
-                        data[x * sizeTr0 + y * sizeTr1 + z] = NULL;
+                        data[x * sizeTr0 + y * sizeTr1 + z] = nullptr;
                     }
                 }
             }
@@ -94,14 +94,14 @@ namespace VirtualRobot
                     {
                         int pos = x * sizeTr0 + y * sizeTr1 + z;
 
-                        if (other->data[pos] != NULL)
+                        if (other->data[pos] != nullptr)
                         {
                             data[pos] = new unsigned char[(unsigned int)sizeRot];
                             memcpy(data[pos], other->data[pos], (unsigned int)sizeRot * sizeof(unsigned char));
                         }
                         else
                         {
-                            data[pos] = NULL;
+                            data[pos] = nullptr;
                         }
                     }
                 }
@@ -497,7 +497,7 @@ namespace VirtualRobot
                     if (data[x * sizeTr0 + y * sizeTr1 + z])
                     {
                         delete [] data[x * sizeTr0 + y * sizeTr1 + z];
-                        data[x * sizeTr0 + y * sizeTr1 + z] = NULL;
+                        data[x * sizeTr0 + y * sizeTr1 + z] = nullptr;
                     }
                 }
             }
@@ -514,7 +514,7 @@ namespace VirtualRobot
             return false;
         }
 
-        return (data[x * sizeTr0 + y * sizeTr1 + z] != NULL);
+        return (data[x * sizeTr0 + y * sizeTr1 + z] != nullptr);
     }
 
     WorkspaceData* WorkspaceDataArray::clone()
