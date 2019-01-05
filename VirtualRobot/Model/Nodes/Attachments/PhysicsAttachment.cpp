@@ -21,7 +21,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr PhysicsAttachment::clone() const
     {
-        return ModelNodeAttachmentPtr(new PhysicsAttachment(name, localTransformation));
+        return ModelNodeAttachmentPtr(new PhysicsAttachment(getName(), localTransformation));
     }
 
     void PhysicsAttachment::initVisualization()

@@ -414,7 +414,7 @@ namespace VirtualRobot
             if (l)
                 nodes.push_back(n.second);
         }
-        std::string nameLS = std::string("__") + name + std::string("-all-links");
+        std::string nameLS = std::string("__") + getName() + std::string("-all-links");
         std::shared_ptr<Model> m = shared_from_this();
         LinkSetPtr ls = LinkSet::createLinkSet(m, nameLS, nodes);
 
@@ -563,9 +563,9 @@ namespace VirtualRobot
 		if (n.size()==0)
 			return ModelLinkPtr();
 		return std::dynamic_pointer_cast<ModelLink>(n.at(0));
-	}
+    }
 
-	std::string Model::getType() const
+    std::string Model::getType() const
     {
         return type;
     }
@@ -1119,7 +1119,7 @@ namespace VirtualRobot
     void Model::print()
     {
         std::cout << "******** Model ********" << std::endl;
-        std::cout << "* Name: " << name << std::endl;
+        std::cout << "* Name: " << getName() << std::endl;
         std::cout << "* Type: " << type << std::endl;
 
         if (this->getRootNode())
@@ -1217,7 +1217,7 @@ namespace VirtualRobot
         WriteLockPtr w = getWriteLock();
         if (hasEndEffector(eef->getName()))
         {
-            THROW_VR_EXCEPTION("EEF with name " + eef->getName() + " already registered to robot " + name);
+            THROW_VR_EXCEPTION("EEF with name " + eef->getName() + " already registered to robot " + getName());
         }
         eefMap[eef->getName()] = eef;
     }

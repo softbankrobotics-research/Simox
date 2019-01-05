@@ -29,7 +29,7 @@ namespace VirtualRobot
     {
         Eigen::Vector4f result4f = Eigen::Vector4f::Zero();
         result4f.segment(0, 3) = getJointRotationAxisInJointCoordSystem();
-        result4f = globalPose * result4f;
+        result4f = getGlobalPose() * result4f;
 
         if (coordSystem)
         {
@@ -56,7 +56,7 @@ namespace VirtualRobot
     ModelNodePtr ModelJointRevolute::_clone(ModelPtr newModel, float scaling)
     {
         Eigen::Matrix4f st = getLocalTransformation();
-        ModelJointRevolutePtr result(new ModelJointRevolute(newModel, name, st, jointLimitLo, jointLimitHi, axis, jointValueOffset));
+        ModelJointRevolutePtr result(new ModelJointRevolute(newModel, getName(), st, jointLimitLo, jointLimitHi, axis, jointValueOffset));
         result->setLimitless(limitless);
         return result;
     }
@@ -67,7 +67,7 @@ namespace VirtualRobot
         std::string pre = "\t";
         std::string pre2 = "\t\t";
         std::string pre3 = "\t\t\t";
-        ss << pre << "<ModelNode name='" << name << "'>\n";
+        ss << pre << "<ModelNode name='" << getName() << "'>\n";
         if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;

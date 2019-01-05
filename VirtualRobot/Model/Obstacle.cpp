@@ -203,7 +203,7 @@ namespace VirtualRobot
             pre += "\t";
         }
 
-        ss << pre << "<Obstacle name='" << name << "'>\n";
+        ss << pre << "<Obstacle name='" << getName() << "'>\n";
 
         if (getLinks().size()==1)
         {

@@ -114,28 +114,28 @@ namespace VirtualRobot
         this->limitless = limitless;
     }
 
-    bool ModelJoint::isLimitless()
+    bool ModelJoint::isLimitless() const
     {
         return limitless;
     }
 
-    float ModelJoint::getDelta(float target)
+    float ModelJoint::getDelta(float target) const
     {
         float delta = 0.0f;
 
         // we check if the given target value violates our joint limits
-        if (!limitless)
+        if (!isLimitless())
         {
-            if (target < jointLimitLo || target > jointLimitHi)
+            if (target < getJointLimitLow() || target > getJointLimitHigh())
             {
                 return delta;
             }
         }
 
-        delta = target - jointValue;
+        delta = target - getJointValue();
 
         // eventually take the other way around if it is shorter and if this joint is limitless.
-        if (limitless && (std::abs(delta) > M_PI))
+        if (isLimitless() && (std::abs(delta) > M_PI))
         {
             delta = float((-1.0f) * ((delta > 0) - (delta < 0)) * ((2 * M_PI) - std::abs(delta)));
         }

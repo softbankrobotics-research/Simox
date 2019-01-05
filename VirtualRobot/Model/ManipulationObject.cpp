@@ -159,7 +159,7 @@ namespace VirtualRobot
             pre += "\t";
         }
 
-        ss << pre << "<ManipulationObject name='" << name << "'>\n";
+        ss << pre << "<ManipulationObject name='" << getName() << "'>\n";
 
         if (storeLinkToFile && !filename.empty())
         {

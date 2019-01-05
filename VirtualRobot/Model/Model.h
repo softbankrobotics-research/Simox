@@ -625,7 +625,7 @@ namespace VirtualRobot
          * @param newModel The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
+        virtual void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
 
         /*!
          * Attach a new Model to this model.
@@ -645,7 +645,7 @@ namespace VirtualRobot
          *
          * @param model The node to remove.
          */
-        void detachModel(const ModelPtr& model);
+        virtual void detachModel(const ModelPtr& model);
 
         bool isModelAttached(const ModelPtr& model) const;
 

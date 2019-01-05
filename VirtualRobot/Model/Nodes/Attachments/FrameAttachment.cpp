@@ -24,7 +24,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr FrameAttachment::clone() const
     {
-        FrameAttachmentPtr c(new FrameAttachment(name, localTransformation));
+        FrameAttachmentPtr c(new FrameAttachment(getName(), localTransformation));
         return c;
     }
 }

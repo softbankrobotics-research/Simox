@@ -61,7 +61,7 @@ namespace VirtualRobot
     ModelNodePtr ModelJointPrismatic::_clone(ModelPtr newModel, float scaling)
     {
         Eigen::Matrix4f st = getLocalTransformation();
-        ModelJointPrismaticPtr result(new ModelJointPrismatic(newModel, name, st, jointLimitLo, jointLimitHi, translationDirection, jointValueOffset));
+        ModelJointPrismaticPtr result(new ModelJointPrismatic(newModel, getName(), st, jointLimitLo, jointLimitHi, translationDirection, jointValueOffset));
         result->setLimitless(limitless);
         return result;
     }
@@ -72,7 +72,7 @@ namespace VirtualRobot
         std::string pre = "\t";
         std::string pre2 = "\t\t";
         std::string pre3 = "\t\t\t";
-        ss << pre << "<ModelNode name='" << name << "'>\n";
+        ss << pre << "<ModelNode name='" << getName() << "'>\n";
         if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;

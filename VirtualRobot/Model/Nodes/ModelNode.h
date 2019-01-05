@@ -181,7 +181,7 @@ namespace VirtualRobot
          * @param type The type of the nodes to return.
          * @return The ModelNodes.
         */
-        virtual std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
+        std::vector<ModelNodePtr> getAllParents(const ModelNodeSetPtr& set = ModelNodeSetPtr(),
                                                         NodeType type = NodeType::Node) const;
 
         /*!
@@ -190,7 +190,7 @@ namespace VirtualRobot
          * @param node The node to check for.
          * @return True, if node is a child from this node; false otherwise.
          */
-        virtual bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
+        bool hasChild(const ModelNodePtr& node, bool recursive = false) const;
 
         /*!
          * Check if this node has a child with the given name.
@@ -198,7 +198,7 @@ namespace VirtualRobot
          * @param nodeName The name of the node to check for.
          * @return True, if this node has a child with the given name; false otherwise.
          */
-        virtual bool hasChild(const std::string& nodeName, bool recursive = false) const;
+        bool hasChild(const std::string& nodeName, bool recursive = false) const;
 
         /*!
          * Attach a new Child to this node.
@@ -400,22 +400,11 @@ namespace VirtualRobot
             return (node->getType() & type) == type;
         }
 
-        virtual bool isJoint()
-        {
-            return checkNodeOfType(shared_from_this(), NodeType::Joint);
-        }
-        virtual bool isTranslationalJoint()
-        {
-            return checkNodeOfType(shared_from_this(), NodeType::JointPrismatic);
-        }
-        virtual bool isRotationalJoint()
-        {
-            return checkNodeOfType(shared_from_this(), NodeType::JointRevolute);
-        }
-        virtual bool isLink()
-        {
-            return checkNodeOfType(shared_from_this(), NodeType::Link);
-        }
+        virtual bool isJoint() const = 0;
+        virtual bool isTranslationalJoint() const = 0;
+        virtual bool isRotationalJoint() const = 0;
+        virtual bool isFixedJoint() const = 0;
+        virtual bool isLink() const = 0;
 
     protected:
         ModelNode() = default;

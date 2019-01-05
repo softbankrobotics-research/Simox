@@ -132,7 +132,7 @@ namespace VirtualRobot
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
-        ModelNodePtr p = p->getParentNode(type);
+        ModelNodePtr p = getParentNode(type);
 
         do
         {
@@ -141,7 +141,7 @@ namespace VirtualRobot
                 result.push_back(p);
             }
         }
-        while (p = p->getParentNode(type));
+        while ((p = p->getParentNode(type)));
 
         return result;
     }

@@ -49,7 +49,16 @@ namespace VirtualRobot
 
             // methods
             Physics();
-            std::string getString(SimulationType s) const;
+            Physics(const Eigen::Vector3f& localCoM,
+            float massKg,
+            float friction,
+            CoMLocation comLocation,
+            const Eigen::Matrix3f& inertiaMatrix,
+            SimulationType simType,
+            const std::vector< std::string >& ignoreCollisions);
+
+            static std::string simulationType2String(SimulationType s);
+            static SimulationType string2SimulationType(const std::string& s);
 
             void print() const;
 
@@ -107,6 +116,26 @@ namespace VirtualRobot
         //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
         virtual NodeType getType() const override;
+        virtual bool isJoint() const override
+        {
+            return false;
+        }
+        virtual bool isTranslationalJoint() const override
+        {
+            return false;
+        }
+        virtual bool isRotationalJoint() const override
+        {
+            return false;
+        }
+        virtual bool isFixedJoint() const override
+        {
+            return false;
+        }
+        virtual bool isLink() const override
+        {
+            return true;
+        }
 
         /*!
          * Get the collision model of this link.
@@ -152,7 +181,7 @@ namespace VirtualRobot
          * @param collisionModel Indicates weather the faces of the collision model or the full model should be returned.
          * @return The number of faces.
          */
-        virtual int getNumFaces(bool collisionModel = false);
+        int getNumFaces(bool collisionModel = false);
 
         /*!
          * Get the physics information of this node.
@@ -194,14 +223,14 @@ namespace VirtualRobot
          *
          * @return The CoM.
          */
-        virtual Eigen::Vector3f getCoMLocal() const;
+        Eigen::Vector3f getCoMLocal() const;
 
         /*!
          * Return Center of Mass in global coordinates. This method does not consider children.
          *
          * @return The CoM.
          */
-        virtual Eigen::Vector3f getCoMGlobal() const;
+        Eigen::Vector3f getCoMGlobal() const;
 
         /*!
          * Get the mass in Kg.
@@ -259,7 +288,7 @@ namespace VirtualRobot
          */
         virtual std::string toXML(const std::string& basePath, const std::string& modelPathRelative = "models", bool storeAttachments = true) override;
 
-        virtual bool saveModelFiles(const std::string& modelPath);
+        bool saveModelFiles(const std::string& modelPath);
     protected:
         virtual ModelNodePtr _clone(ModelPtr newModel, float scaling = 1.0f) override;
 

@@ -21,7 +21,7 @@ Eigen::Matrix4f Frame::getGlobalPose() const
 
 Eigen::Vector3f Frame::getGlobalPosition() const
 {
-    return globalPose.block<3, 1>(0, 3);
+    return getGlobalPose().block<3, 1>(0, 3);
 }
 
 std::string Frame::getName() const
@@ -36,7 +36,7 @@ void Frame::setName(const std::string & name)
 
 Eigen::Matrix4f Frame::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
 {
-	return globalPose.inverse() * poseGlobal;
+    return getGlobalPose().inverse() * poseGlobal;
 }
 
 Eigen::Vector3f Frame::toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const
@@ -51,7 +51,7 @@ Eigen::Vector3f Frame::toLocalCoordinateSystemVec(const Eigen::Vector3f& positio
 
 Eigen::Matrix4f Frame::toGlobalCoordinateSystem(const Eigen::Matrix4f& poseLocal) const
 {
-	return globalPose * poseLocal;
+    return getGlobalPose() * poseLocal;
 }
 
 Eigen::Vector3f Frame::toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const

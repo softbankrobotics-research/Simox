@@ -55,6 +55,26 @@ namespace VirtualRobot
         virtual ~ModelJoint() override;
 
         //virtual ModelNodeType getType() const override;
+        virtual bool isJoint() const override
+        {
+            return true;
+        }
+        virtual bool isTranslationalJoint() const override
+        {
+            return false;
+        }
+        virtual bool isRotationalJoint() const override
+        {
+            return false;
+        }
+        virtual bool isFixedJoint() const override
+        {
+            return false;
+        }
+        virtual bool isLink() const override
+        {
+            return false;
+        }
 
         /*!
          * Set a joint value [rad/mm].
@@ -111,7 +131,7 @@ namespace VirtualRobot
          *
          * @return The offset.
          */
-        float getJointValueOffset() const;
+        virtual float getJointValueOffset() const;
 
         /*!
          * Get the upper joint limit.
@@ -157,7 +177,7 @@ namespace VirtualRobot
          *
          * @return The maximum velocity in rad/s or m/s, or -1.0f if no value is set.
          */
-        float getMaxVelocity() const;
+        virtual float getMaxVelocity() const;
 
         /*!
          * Maximum acceleration in rad/s^2 or m/s^2.
@@ -165,7 +185,7 @@ namespace VirtualRobot
          *
          * @return The maximum acceleration in rad/s^2 or m/s^2, or -1.0f if no value is set.
          */
-        float getMaxAcceleration() const;
+        virtual float getMaxAcceleration() const;
 
         /*!
          * Maximum torque in Nm.
@@ -173,7 +193,7 @@ namespace VirtualRobot
          *
          * @return The maximum torque in Nm, or -1.0f if no value is set.
          */
-        float getMaxTorque() const;
+        virtual float getMaxTorque() const;
 
         /*!
          * Automatically propagate the joint value to another joint.
@@ -190,14 +210,14 @@ namespace VirtualRobot
          * @param limitless wheter this node has joint limits or not.
          */
         virtual void setLimitless(bool limitless);
-        bool isLimitless();
+        virtual bool isLimitless() const;
 
         /**
          * @param target the target joint value in [rad]
          * @return the signed distance between current and target joint values in [rad].
          *         If the given target value violates joint limits or this robotnode is not a joint, 0.0f is returned instead.
          */
-        virtual float getDelta(float target);
+        float getDelta(float target) const;
 
     protected:
         ModelJoint();
