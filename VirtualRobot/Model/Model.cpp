@@ -383,7 +383,7 @@ namespace VirtualRobot
             {
                 ls = std::dynamic_pointer_cast<LinkSet>(tmp);
             }
-            if (!ls)
+            if (!ls && res)
             {
                 auto links = res->getLinks();
                 if (!links.empty())
@@ -405,7 +405,7 @@ namespace VirtualRobot
             VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
         }
         JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
-        if (!ls)
+        if (!ls && res)
         {
             auto tmp = getNodeSet(nodeSetName + "_jointSet");
             if (tmp)
