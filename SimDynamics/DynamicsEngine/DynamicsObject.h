@@ -43,7 +43,8 @@ namespace SimDynamics
         /*!
             Constructor
         */
-        DynamicsObject(VirtualRobot::ModelLinkPtr o);//, SimulationType type = eDynamic);
+        DynamicsObject(const VirtualRobot::ObstaclePtr& o);//, SimulationType type = eDynamic);
+        DynamicsObject(const VirtualRobot::ModelLinkPtr& o);//, SimulationType type = eDynamic);
 
         /*!
         */
@@ -120,6 +121,7 @@ namespace SimDynamics
     protected:
 
         VirtualRobot::ModelLinkPtr sceneObject;
+        VirtualRobot::ModelPtr model;
 
         std::shared_ptr <std::recursive_mutex> engineMutexPtr;
 

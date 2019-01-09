@@ -30,8 +30,147 @@ namespace SimDynamics
     float BulletObject::ScaleFactor = 2.0f;
     float BulletObject::MassFactor = 0.1f;
 
-    BulletObject::BulletObject(VirtualRobot::ModelLinkPtr o)
+    BulletObject::BulletObject(const ObstaclePtr &o)
         : DynamicsObject(o)
+    {
+        btScalar interatiaFactor = btScalar(1.0);
+#ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
+        interatiaFactor = 5.0f;
+#endif
+
+        btMargin = (btScalar)(0.0001);
+        com.setZero();
+        THROW_VR_EXCEPTION_IF(!o, "NULL object");
+        CollisionModelPtr colModel = o->getCollisionModel();
+        if (!colModel)
+        {
+            VR_INFO << "Building empty collision shape for object " << o->getName() << endl;
+            collisionShape.reset(new btEmptyShape());
+        }
+        else
+        {
+            THROW_VR_EXCEPTION_IF(!colModel, "No CollisionModel, could not create dynamics model...");
+
+            if (o->getName() != "Floor")
+            {
+                std::vector<Primitive::PrimitivePtr> primitives = colModel->getVisualization()->getPrimitives();
+
+                if (primitives.size() > 0)
+                {
+                    //cout << "Object:" << o->getName() << endl;
+                    //o->print();
+
+                    btCompoundShape* compoundShape = new btCompoundShape(true);
+                    std::vector<Primitive::PrimitivePtr>::const_iterator it;
+                    Eigen::Matrix4f currentTransform = Eigen::Matrix4f::Identity();
+
+                    Eigen::Matrix4f localComTransform;
+                    localComTransform.setIdentity();
+                    localComTransform.block(0, 3, 3, 1) = -o->getCoMLocal();
+                    //cout << "localComTransform:\n" << localComTransform << endl;
+
+                    currentTransform = localComTransform;
+
+                    for (it = primitives.begin(); it != primitives.end(); it++)
+                    {
+                        currentTransform *= (*it)->transform;
+                        //currentTransform = localComTransform * (*it)->transform;
+                        //cout << "primitive: (*it)->transform:\n" << (*it)->transform << endl;
+                        //cout << "primitive: currentTransform:\n" << currentTransform << endl;
+
+                        compoundShape->addChildShape(BulletEngine::getPoseBullet(currentTransform), getShapeFromPrimitive(*it));
+                    }
+
+                    collisionShape.reset(compoundShape);
+
+                    // update com
+                    Eigen::Matrix4f comLoc;
+                    comLoc.setIdentity();
+                    comLoc.block(0, 3, 3, 1) = o->getCoMGlobal();
+                    comLoc = (o->getGlobalPose().inverse() * comLoc);
+                    com = comLoc.block(0, 3, 3, 1);
+                }
+                else
+                {
+                    TriMeshModelPtr trimesh;
+                    trimesh = colModel->getTriMeshModel();
+                    THROW_VR_EXCEPTION_IF((!trimesh || trimesh->faces.size() == 0) , "No TriMeshModel, could not create dynamics model...");
+                    collisionShape.reset(createConvexHullShape(trimesh));
+                }
+            }
+            else
+            {
+                // the floor needs a primitive shape, works better with collision handling
+                VirtualRobot::BoundingBox bb = colModel->getBoundingBox();
+                Eigen::Vector3f half_size = (bb.getMax() - bb.getMin()) / 1000.0  * ScaleFactor / 2;
+                btBoxShape* box = new btBoxShape(btVector3(half_size.x(), half_size.y(), half_size.z()));
+                collisionShape.reset(box);
+            }
+        }
+
+        //collisionShape->setMargin(btMargin);
+
+        btScalar mass = o->getMass();
+        btVector3 localInertia;
+
+        if (mass <= 0 && (o->getSimulationType() == VirtualRobot::ModelLink::Physics::eDynamic || o->getSimulationType() == VirtualRobot::ModelLink::Physics::eUnknown))
+        {
+            //THROW_VR_EXCEPTION ("mass == 0 -> SimulationType must not be eDynamic! ");
+            mass = btScalar(1.0f); // give object a dummy mass
+#ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT
+            mass = btScalar(1.0f);
+#endif
+
+            //type = eKinematic;
+            if (colModel)
+            {
+                VR_WARNING << "Object:" << o->getName() << ": mass == 0 -> SimulationType must not be eDynamic! Setting mass to 1" << endl;
+            }
+        }
+
+#ifdef DEBUG_FIXED_OBJECTS
+        cout << "TEST" << endl;
+        mass = 0;
+        localInertia.setValue(0.0f, 0.0f, 0.0f);
+#else
+
+        if (o->getSimulationType() != VirtualRobot::ModelLink::Physics::eDynamic && o->getSimulationType() != VirtualRobot::ModelLink::Physics::eUnknown)
+        {
+            mass = 0;
+            localInertia.setValue(0.0f, 0.0f, 0.0f);
+        }
+        else
+        {
+            if (colModel)
+            {
+                collisionShape->calculateLocalInertia(mass, localInertia);
+            }
+            else
+#ifndef USE_BULLET_GENERIC_6DOF_CONSTRAINT
+                localInertia.setValue(btScalar(1), btScalar(1), btScalar(1)); // give Object a dummy inertia matrix
+
+#else
+                localInertia.setValue(btScalar(1), btScalar(1), btScalar(1)); // give Object a dummy inertia matrix
+#endif
+        }
+
+#endif
+        localInertia *= interatiaFactor;
+        motionState = new SimoxMotionState(o->getFirstLink());
+        btRigidBody::btRigidBodyConstructionInfo btRBInfo(mass*MassFactor, motionState, collisionShape.get(), localInertia);
+        //btRBInfo.m_additionalDamping = true;
+
+        rigidBody.reset(new btRigidBody(btRBInfo));
+        rigidBody->setUserPointer((void*)(this));
+#if 0
+        rigidBody->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        cout << "TEST3" << endl;
+#endif
+
+        setPoseIntern(o->getGlobalPose());
+    }
+
+    BulletObject::BulletObject(const ModelLinkPtr &o) : DynamicsObject (o)
     {
         btScalar interatiaFactor = btScalar(1.0);
 #ifdef USE_BULLET_GENERIC_6DOF_CONSTRAINT

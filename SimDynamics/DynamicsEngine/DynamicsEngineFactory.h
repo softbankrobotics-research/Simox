@@ -56,7 +56,11 @@ namespace SimDynamics
             return DynamicsEnginePtr();
         }
 
-        virtual DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o)
+        virtual DynamicsObjectPtr createObject(const VirtualRobot::ObstaclePtr& o)
+        {
+            return DynamicsObjectPtr(new DynamicsObject(o));
+        }
+        virtual DynamicsObjectPtr createObjectFromLink(const VirtualRobot::ModelLinkPtr& o)
         {
             return DynamicsObjectPtr(new DynamicsObject(o));
         }

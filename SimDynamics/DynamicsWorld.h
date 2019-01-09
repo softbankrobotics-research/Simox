@@ -59,7 +59,8 @@ namespace SimDynamics
             Internally the value of o->getSimulationtype() is queried in order to specify which type of simulation should be performed.
             If the simulation type is not specified a full dynamic object is created (as with eDynamic).
         */
-        static DynamicsObjectPtr CreateDynamicsObject(VirtualRobot::ModelLinkPtr o);
+        static DynamicsObjectPtr CreateDynamicsObject(const VirtualRobot::ObstaclePtr &o);
+        static DynamicsObjectPtr CreateDynamicsObject(const VirtualRobot::ModelLinkPtr& o);
 
         /*!
             Build a dynamic version of your VirtualRobot::Model.

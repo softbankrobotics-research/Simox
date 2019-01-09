@@ -48,7 +48,12 @@ namespace SimDynamics
         return bulletEngine;
     }
 
-    DynamicsObjectPtr BulletEngineFactory::createObject(VirtualRobot::ModelLinkPtr o)
+    DynamicsObjectPtr BulletEngineFactory::createObject(const VirtualRobot::ObstaclePtr& o)
+    {
+        return BulletObjectPtr(new BulletObject(o));
+    }
+
+    DynamicsObjectPtr BulletEngineFactory::createObjectFromLink(const VirtualRobot::ModelLinkPtr &o)
     {
         return BulletObjectPtr(new BulletObject(o));
     }

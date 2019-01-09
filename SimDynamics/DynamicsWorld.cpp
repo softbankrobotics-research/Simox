@@ -94,7 +94,7 @@ namespace SimDynamics
         return engine->removeObject(o);
     }
 
-    DynamicsObjectPtr DynamicsWorld::CreateDynamicsObject(VirtualRobot::ModelLinkPtr o)
+    DynamicsObjectPtr DynamicsWorld::CreateDynamicsObject(const VirtualRobot::ObstaclePtr &o)
     {
         SIMDYNAMICS_ASSERT(o);
 
@@ -102,6 +102,16 @@ namespace SimDynamics
         SIMDYNAMICS_ASSERT(factory);
 
         return factory->createObject(o);
+    }
+
+    DynamicsObjectPtr DynamicsWorld::CreateDynamicsObject(const VirtualRobot::ModelLinkPtr &o)
+    {
+        SIMDYNAMICS_ASSERT(o);
+
+        DynamicsEngineFactoryPtr factory = DynamicsEngineFactory::first(nullptr);
+        SIMDYNAMICS_ASSERT(factory);
+
+        return factory->createObjectFromLink(o);
     }
 
     void DynamicsWorld::createFloorPlane(const Eigen::Vector3f& pos /*= Eigen::Vector3f(0,0,0)*/, const Eigen::Vector3f& up /*= Eigen::Vector3f(0,0,1.0f)*/, float friction)
