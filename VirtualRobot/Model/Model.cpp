@@ -335,8 +335,8 @@ namespace VirtualRobot
 	bool Model::hasJointSet(const std::string & name) const
 	{
 		ReadLockPtr r = getReadLock();
-		auto mns = modelNodeSetMap.find(name);
-		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<JointSet>(mns->second));
+        auto mns = getJointSet(name);
+        return mns.operator bool();
 	}
 
 	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
@@ -350,8 +350,8 @@ namespace VirtualRobot
 	bool Model::hasLinkSet(const std::string & name) const
 	{
 		ReadLockPtr r = getReadLock();
-		auto mns = modelNodeSetMap.find(name);
-		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<LinkSet>(mns->second));
+        auto mns = getLinkSet(name);
+        return mns.operator bool();
 	}
 
     ModelNodeSetPtr Model::getNodeSet(const std::string& nodeSetName) const
@@ -371,10 +371,27 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         ModelNodeSetPtr res = getNodeSet(nodeSetName);
+        if (!res)
+        {
+            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+        }
         LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
         if (!ls)
         {
-            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+            auto tmp = getNodeSet(nodeSetName + "_linkSet");
+            if (tmp)
+            {
+                ls = std::dynamic_pointer_cast<LinkSet>(tmp);
+            }
+            if (!ls)
+            {
+                auto links = res->getLinks();
+                if (!links.empty())
+                {
+                    VR_WARNING << "Node set <" << nodeSetName << "> is no link set. Converting..." << endl;
+                    ls = LinkSet::createLinkSet(res->getModel(), res->getName() + "_linkSet", links, res->getKinematicRoot(), res->getTCP(), true);
+                }
+            }
         }
         return ls;
     }
@@ -383,10 +400,27 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         ModelNodeSetPtr res = getNodeSet(nodeSetName);
+        if (!res)
+        {
+            VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+        }
         JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
         if (!ls)
         {
-            VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+            auto tmp = getNodeSet(nodeSetName + "_jointSet");
+            if (tmp)
+            {
+                ls = std::dynamic_pointer_cast<JointSet>(tmp);
+            }
+            if (!ls)
+            {
+                auto joints = res->getJoints();
+                if (!joints.empty())
+                {
+                    VR_WARNING << "Node set <" << nodeSetName << "> is no joint set. Converting..." << endl;
+                    ls = JointSet::createJointSet(res->getModel(), res->getName() + "_jointSet", joints, res->getKinematicRoot(), res->getTCP(), true);
+                }
+            }
         }
         return ls;
     }
