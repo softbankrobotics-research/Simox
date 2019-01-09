@@ -1083,7 +1083,7 @@ namespace VirtualRobot
         robotRoot = attr->value();
 
         // build robot
-        RobotPtr robo(new Model(robotName, robotType));
+        RobotPtr robo = ModelFactory::createRobot(robotName, robotType);
         return robo;
     }
 

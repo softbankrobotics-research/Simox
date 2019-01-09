@@ -10,8 +10,8 @@
 namespace VirtualRobot
 {
 
-    ManipulationObject::ManipulationObject(const std::string& name)
-        : Obstacle(name)
+    ManipulationObject::ManipulationObject(const std::string& name, const std::string &type)
+        : Obstacle(name, type)
     {
     }
 

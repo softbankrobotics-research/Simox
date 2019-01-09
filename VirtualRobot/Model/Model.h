@@ -41,8 +41,10 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
         friend class ModelNode;
+        friend class ModelFactory;
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    protected:
 
         /*!
          * Constructor.
@@ -53,6 +55,7 @@ namespace VirtualRobot
          */
         Model(const std::string& name, const std::string& type = "");
 
+    public:
         /*!
          * Destructor.
          */

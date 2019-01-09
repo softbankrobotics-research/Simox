@@ -41,15 +41,16 @@ namespace VirtualRobot
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Obstacle : public Model
     {
-    public:
+    protected:
 
         /*! 
         */
-        Obstacle(const std::string& name);
+        Obstacle(const std::string& name, const std::string& type = "Obstacle");
 
+    public:
         /*!
         */
-        virtual ~Obstacle();
+        ~Obstacle() override;
 
         virtual void print(bool printDecoration = true);
 

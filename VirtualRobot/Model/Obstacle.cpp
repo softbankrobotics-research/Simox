@@ -16,8 +16,8 @@ namespace VirtualRobot
     //int Obstacle::idCounter = 20000;
 
 
-    Obstacle::Obstacle(const std::string& name)
-        : Model(name, "Obstacle")
+    Obstacle::Obstacle(const std::string& name, const std::string &type)
+        : Model(name, type)
     {
     }
 
