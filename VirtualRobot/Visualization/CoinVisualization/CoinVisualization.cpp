@@ -511,7 +511,9 @@ namespace VirtualRobot
         SoUnits *unitNode = new SoUnits;
         unitNode->units = SoUnits::MILLIMETERS;
         sep->addChild(unitNode);
-        sep->addChild(getMainNode());
+        sep->addChild(scaleNode);
+        sep->addChild(materialNodeNone);
+        sep->addChild(visualizationNode);
         ca.apply(sep);
         sep->unref();
     }

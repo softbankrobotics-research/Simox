@@ -227,7 +227,7 @@ namespace VirtualRobot
         virtual BoundingBox getBoundingBox() const = 0;
 
         /*!
-            Creates a triangulated model.
+            Returns the TriMeshModel in local coordinate system.
         */
         virtual TriMeshModelPtr getTriMeshModel() const = 0;
 
