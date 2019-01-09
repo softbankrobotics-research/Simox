@@ -162,22 +162,6 @@ namespace VirtualRobot
         return result;
     }
 
-    void Obstacle::print(bool printDecoration /*= true*/)
-    {
-        if (printDecoration)
-        {
-            cout << "**** Obstacle ****" << endl;
-        }
-
-        Model::print();
-        //cout << " * id: " << id << endl;
-
-        if (printDecoration)
-        {
-            cout << endl;
-        }
-    }
-
     ObstaclePtr Obstacle::clone(const std::string &name, CollisionCheckerPtr colChecker, float scaling) const
     {
         ReadLockPtr r = getReadLock();
@@ -192,7 +176,7 @@ namespace VirtualRobot
         return result;
     }
 
-    std::string Obstacle::toXML(const std::string& basePath, int tabs)
+    std::string Obstacle::toXML(const std::string& basePath, const std::string &modelPath, bool storeEEF, bool storeRNS, bool storeAttachments, int tabs)
     {
         std::stringstream ss;
         std::string t = "\t";

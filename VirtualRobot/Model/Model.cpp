@@ -1067,7 +1067,7 @@ namespace VirtualRobot
     }
 
     std::string Model::toXML(const std::string& basePath, const std::string& modelPath,
-                             bool storeEEF, bool storeRNS, bool storeAttachments)
+                             bool storeEEF, bool storeRNS, bool storeAttachments, int tabs)
     {
         std::stringstream ss;
         //ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
@@ -1120,7 +1120,7 @@ namespace VirtualRobot
     {
         std::cout << "******** Model ********" << std::endl;
         std::cout << "* Name: " << getName() << std::endl;
-        std::cout << "* Type: " << type << std::endl;
+        std::cout << "* Type: " << getType() << std::endl;
 
         if (this->getRootNode())
         {

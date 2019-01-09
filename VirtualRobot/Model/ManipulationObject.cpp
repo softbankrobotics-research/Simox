@@ -19,24 +19,14 @@ namespace VirtualRobot
     {
     }
 
-    void ManipulationObject::print(bool printDecoration)
+    void ManipulationObject::print()
     {
-        if (printDecoration)
-        {
-            cout << "**** Manipulation Object ****" << endl;
-        }
-
-        Obstacle::print(false);
+        Obstacle::print();
 
         for (size_t i = 0; i < graspSets.size(); i++)
         {
             cout << "* Grasp set " << i << ":" << endl;
             graspSets[i]->print();
-        }
-
-        if (printDecoration)
-        {
-            cout << endl;
         }
     }
 

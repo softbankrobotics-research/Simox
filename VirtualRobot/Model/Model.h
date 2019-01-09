@@ -681,7 +681,7 @@ namespace VirtualRobot
          * @return The generated XML string.
          */
         virtual std::string toXML(const std::string& basePath = ".", const std::string& modelPath = "models",
-                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true);
+                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true, int tabs = 0);
 
         /*!
          * Print status information.
