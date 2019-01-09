@@ -35,7 +35,10 @@ namespace VirtualRobot
         for (const auto & node : modelNodes)
         {
             ModelJointPtr joint = std::dynamic_pointer_cast<ModelJoint>(node);
-            joints.push_back(joint);
+            if (joint)
+            {
+                joints.push_back(joint);
+            }
         }
         return createJointSet(model, name, joints, kinematicRoot, tcp, registerToModel);
     }
