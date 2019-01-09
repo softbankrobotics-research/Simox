@@ -59,6 +59,8 @@ namespace VirtualRobot
                           CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                           float scaling = 1.0f) const;
 
+        void setName(const std::string& name) override;
+
         static ObstaclePtr create(const std::string& name, const VisualizationPtr& visualization = VisualizationPtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
         /*!

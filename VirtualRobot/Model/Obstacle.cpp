@@ -176,6 +176,12 @@ namespace VirtualRobot
         return result;
     }
 
+    void Obstacle::setName(const std::string &name)
+    {
+        Model::setName(name);
+        getFirstLink()->setName(name);
+    }
+
     std::string Obstacle::toXML(const std::string& basePath, const std::string &modelPath, bool storeEEF, bool storeRNS, bool storeAttachments, int tabs)
     {
         std::stringstream ss;
