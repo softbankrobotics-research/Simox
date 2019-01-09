@@ -1415,7 +1415,7 @@ namespace VirtualRobot
 	bool Model::hasFrame(const std::string & frameName) const
 	{
 		FramePtr f = getFrame(frameName);
-		return f.get()!=0;
+        return f.operator bool();
 	}
 
 	FramePtr Model::getFrame(const std::string & frameName) const
@@ -1431,8 +1431,7 @@ namespace VirtualRobot
 			ModelNodeAttachmentPtr a = n.second->getAttachment(frameName);
 			if (a)
 			{
-				FramePtr f = std::dynamic_pointer_cast<Frame>(a);
-				return f;
+                return a;
 			}
 
 		}
