@@ -143,7 +143,7 @@ namespace VirtualRobot
         /*!
             Sets the position of the internal data structure.
         */
-        virtual void setGlobalPose(const Eigen::Matrix4f& m);
+        virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
         virtual void applyDisplacement(const Eigen::Matrix4f& dp);
         virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f);
         virtual void removePoseChangedCallback(size_t id);

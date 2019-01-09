@@ -609,17 +609,23 @@ namespace VirtualRobot
         threadsafe = flag;
     }
 
-    void Model::setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues)
+    void Model::setGlobalPose(const Eigen::Matrix4f& globalPose)
     {
         WriteLockPtr w = getWriteLock();
-        this->globalPose = globalPose;
-        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
-        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
+        setGlobalPoseNoUpdate(globalPose);
 
-        if (applyValues && !rootNode->getParentNode())
+        if (!rootNode->getParentNode())
         {
             rootNode->updatePose(true, true);
         }
+    }
+
+    void Model::setGlobalPoseNoUpdate(const Eigen::Matrix4f &globalPose)
+    {
+        WriteLockPtr w = getWriteLock();
+        Frame::setGlobalPose(globalPose);
+        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
+        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
     }
 
     Eigen::Matrix4f Model::getGlobalPose() const
@@ -647,7 +653,23 @@ namespace VirtualRobot
         t = t * getGlobalPose();
 
         // set t
-        setGlobalPose(t, true);
+        setGlobalPose(t);
+    }
+
+    void Model::setGlobalPoseForNodeNoUpdate(const FramePtr& node, const Eigen::Matrix4f &globalPoseNode)
+    {
+        THROW_VR_EXCEPTION_IF(!node, "No node given.");
+        THROW_VR_EXCEPTION_IF(!hasFrame(node), "Frame <" + node->getName() +
+                                                   "> is not part of model <" + getName() + ">");
+
+        // get transformation from current to wanted tcp pose
+        Eigen::Matrix4f t = globalPoseNode * node->getGlobalPose().inverse();
+
+        // apply transformation to current global pose of robot
+        t = t * getGlobalPose();
+
+        // set t
+        setGlobalPoseNoUpdate(t);
     }
 
     Eigen::Vector3f Model::getCoMLocal() const

@@ -46,6 +46,10 @@ namespace VirtualRobot
             /** Conveniently returns the translational part of the actual pose stored in this object.
              */
             virtual Eigen::Vector3f getGlobalPosition() const;
+            virtual void setGlobalPose(const Eigen::Matrix4f& pose)
+            {
+                globalPose = pose;
+            }
 
             virtual std::string getName() const;
             virtual void setName(const std::string &name);

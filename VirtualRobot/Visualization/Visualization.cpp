@@ -58,14 +58,14 @@ namespace VirtualRobot
 
     void Visualization::setGlobalPose(const Eigen::Matrix4f &m)
     {
-        if (m != globalPose)
+        if (m != getGlobalPose())
         {
             for (auto& f : poseChangedCallbacks)
             {
                 f.second(m);
             }
         }
-        globalPose = m;
+        Frame::setGlobalPose(m);
     }
 
     void Visualization::applyDisplacement(const Eigen::Matrix4f &dp)

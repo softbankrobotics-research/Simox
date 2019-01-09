@@ -307,6 +307,12 @@ namespace VirtualRobot
         return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
     }
 
+    void ModelNode::setGlobalPose(const Eigen::Matrix4f &pose)
+    {
+        WriteLockPtr w = getModel()->getWriteLock();
+        Frame::setGlobalPose(pose);
+    }
+
     void ModelNode::updatePose(bool updateChildren, bool updateAttachments)
     {
         ModelPtr thisModel = getModel();
@@ -344,7 +350,7 @@ namespace VirtualRobot
         ModelPtr parentModel = parentShared ? parentShared->getModel() : nullptr;
         if (parentModel && thisModel != parentModel)
         {
-            thisModel->setGlobalPose(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose(), false);
+            thisModel->setGlobalPoseNoUpdate(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose());
         }
 
         if (updateChildren)

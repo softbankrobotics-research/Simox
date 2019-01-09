@@ -113,6 +113,8 @@ namespace VirtualRobot
          */
         virtual ~ModelLink() override;
 
+        virtual void setGlobalPose(const Eigen::Matrix4f& pose) override;
+
         //virtual void initialize(const ModelNodePtr& parent, const std::vector<ModelNodePtr>& children) override;
 
         virtual NodeType getType() const override;

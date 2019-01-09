@@ -151,7 +151,7 @@ namespace SimDynamics
             if (sceneObject == model->getRootNode())
             {
                 // do not update visualization here, this will be done in the engine action callback
-                model->setGlobalPose(resPose, false);
+                model->setGlobalPoseNoUpdate(resPose);
             }
 
             // we assume that all models are handled by Bullet, so we do not need to update children

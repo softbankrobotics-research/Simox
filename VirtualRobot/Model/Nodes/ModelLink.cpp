@@ -179,6 +179,16 @@ namespace VirtualRobot
     {
     }
 
+    void ModelLink::setGlobalPose(const Eigen::Matrix4f &pose)
+    {
+        WriteLockPtr w = getModel()->getWriteLock();
+        ModelNode::setGlobalPose(pose);
+        if (visualizationModel)
+            visualizationModel->setGlobalPose(pose);
+        if (collisionModel)
+            collisionModel->setGlobalPose(pose);
+    }
+
 
     ModelNode::NodeType ModelLink::getType() const
     {

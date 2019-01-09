@@ -271,6 +271,8 @@ namespace VirtualRobot
         */
         virtual Eigen::Vector3f getPositionInRootFrame() const;
 
+        virtual void setGlobalPose(const Eigen::Matrix4f& pose) override;
+
         /*!
          * Compute/Update the transformations of this joint and all child joints. Therefore the parent is queried for its pose.
          *

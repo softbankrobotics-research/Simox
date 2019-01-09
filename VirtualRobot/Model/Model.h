@@ -330,7 +330,8 @@ namespace VirtualRobot
          * @param globalPose The new global pose.
          * @param applyValues If true, the global pose of all ModelNodes is adjusted.
          */
-        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues = true);
+        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
+        virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f& globalPose);
 
         /*!
          * Get the global Pose of this model.
@@ -348,6 +349,7 @@ namespace VirtualRobot
          * @param globalPoseNode The global pose for the node.
          */
         virtual void setGlobalPoseForNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForNodeNoUpdate(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.
