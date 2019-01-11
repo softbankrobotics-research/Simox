@@ -614,4 +614,29 @@ namespace VirtualRobot
 
         return result;
     }
+
+    void ModelNode::setName(const std::string &name)
+    {
+        if (name == getName())
+        {
+            return;
+        }
+        ModelPtr modelShared = model.lock();
+        if (modelShared)
+        {
+            auto l = modelShared->getWriteLock();
+            if (modelShared->modelNodeMap.find(name) != modelShared->modelNodeMap.end())
+            {
+                return;
+            }
+            auto value = modelShared->modelNodeMap.at(getName());
+            modelShared->modelNodeMap.erase(getName());
+            modelShared->modelNodeMap[name] = value;
+            Frame::setName(name);
+        }
+        else
+        {
+            Frame::setName(name);
+        }
+    }
 }

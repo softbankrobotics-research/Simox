@@ -408,6 +408,8 @@ namespace VirtualRobot
         virtual bool isFixedJoint() const = 0;
         virtual bool isLink() const = 0;
 
+        virtual void setName(const std::string& name) override;
+
     protected:
         ModelNode() = default;
         virtual void updatePoseInternally(bool updateChildren, bool updateAttachments);
