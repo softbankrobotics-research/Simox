@@ -84,7 +84,11 @@ namespace VirtualRobot
         auto it = std::find(visualizations.begin(), visualizations.end(), visu);
         if (it != visualizations.end())
         {
+            (*it)->removeSelectionChangedCallback(childVisualizationChangedCallbacks[*it]);
+            childVisualizationChangedCallbacks.erase(*it);
+
             visualizations.erase(it);
+
 
             for (auto& f : visualizationRemovedCallbacks)
             {
