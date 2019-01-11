@@ -143,6 +143,8 @@ namespace VirtualRobot
         Eigen::Vector3f getCoM();
         float getMass();
 
+        virtual bool isLinkSet() const override;
+
     protected:
         std::vector<ModelLinkPtr> links;
         ModelNodePtr kinematicRoot;

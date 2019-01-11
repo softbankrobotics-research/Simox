@@ -304,4 +304,9 @@ namespace VirtualRobot
 
         return result;
     }
+
+    bool LinkSet::isLinkSet() const
+    {
+        return true;
+    }
 }

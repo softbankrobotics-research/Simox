@@ -223,6 +223,9 @@ namespace VirtualRobot
 
         virtual bool isKinematicChain() const;
 
+        virtual bool isJointSet() const;
+        virtual bool isLinkSet() const;
+
     protected:
         static ModelNodePtr checkKinematicRoot(const std::string &name, const ModelPtr& model);
         static FramePtr checkTcp(const std::string &tcpName, const ModelPtr& model);

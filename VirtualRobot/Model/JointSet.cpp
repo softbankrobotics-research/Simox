@@ -399,4 +399,9 @@ namespace VirtualRobot
         }
         return res;
     }
+
+    bool JointSet::isJointSet() const
+    {
+        return true;
+    }
 }

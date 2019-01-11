@@ -224,6 +224,8 @@ namespace VirtualRobot
         
         std::map< std::string, float > getJointValueMap() const;
 
+        virtual bool isJointSet() const override;
+
     private:
         std::vector<ModelJointPtr> joints;
         ModelNodePtr kinematicRoot;

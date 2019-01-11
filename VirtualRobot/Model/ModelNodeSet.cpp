@@ -198,6 +198,16 @@ namespace VirtualRobot
         return true;
     }
 
+    bool ModelNodeSet::isJointSet() const
+    {
+        return false;
+    }
+
+    bool ModelNodeSet::isLinkSet() const
+    {
+        return false;
+    }
+
 
     ModelNodePtr ModelNodeSet::checkKinematicRoot(const std::string &name, const ModelPtr &model)
     {
