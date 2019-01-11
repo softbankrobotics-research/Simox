@@ -104,7 +104,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~JointSet();
+        virtual ~JointSet() override;
 
         virtual ModelNodePtr getNode(size_t i) const override;
         ModelJointPtr getJoint(size_t i) const;

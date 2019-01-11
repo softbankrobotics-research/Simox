@@ -105,7 +105,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~LinkSet();
+        virtual ~LinkSet() override;
 
         virtual ModelNodePtr getNode(size_t i) const override;
         ModelLinkPtr getLink(size_t i) const;
