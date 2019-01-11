@@ -45,6 +45,7 @@ namespace VirtualRobot
         materialNodeNone(new SoSeparator),
         drawStyleNode(new SoDrawStyle),
         visualizationNode(visuNode),
+        updateVisualization(true),
         filename(""),
         boundingBox(false)
     {

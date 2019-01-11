@@ -138,7 +138,7 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~Visualization() = default;
+        virtual ~Visualization() override = default;
 
         /*!
             Sets the position of the internal data structure.
