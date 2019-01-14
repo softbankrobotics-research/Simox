@@ -144,6 +144,24 @@ namespace VirtualRobot
         return selectionGroup;
     }
 
+    void Visualization::addMutex(const std::shared_ptr<std::recursive_mutex> &m)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        mutexList.push_back(m);
+        std::sort(mutexList.begin(), mutexList.end());
+    }
+
+    void Visualization::removeMutex(const std::shared_ptr<std::recursive_mutex> &m)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        mutexList.erase(std::remove(mutexList.begin(), mutexList.end(), m), mutexList.end());
+    }
+
+    std::shared_ptr<MultipleMutexLockGuard> Visualization::getScopedLock() const
+    {
+        return std::shared_ptr<MultipleMutexLockGuard>(new MultipleMutexLockGuard(mutexList));
+    }
+
     void DummyVisualization::setVisible(bool showVisualization)
     {
         visible = showVisualization;
@@ -354,6 +372,23 @@ namespace VirtualRobot
             printed = true;
         }
         return false;
+    }
+
+    MultipleMutexLockGuard::MultipleMutexLockGuard(const std::vector<std::shared_ptr<std::recursive_mutex> > &mutexList)
+        : mutexList(mutexList)
+    {
+        for (const auto& m : mutexList)
+        {
+            m->lock();
+        }
+    }
+
+    MultipleMutexLockGuard::~MultipleMutexLockGuard()
+    {
+        for (const auto& m : mutexList)
+        {
+            m->unlock();
+        }
     }
 
 } // namespace VirtualRobot

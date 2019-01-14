@@ -10,6 +10,8 @@
 #include "VisualizationFactory.h"
 #include "TriMeshModel.h"
 
+#include <algorithm>
+
 namespace VirtualRobot
 {
 
@@ -35,6 +37,7 @@ namespace VirtualRobot
 
     VisualizationPtr VisualizationSet::clone() const
     {
+        auto l = getScopedLock();
         std::vector<VisualizationPtr> clonedVisus;
         const auto& visus = getVisualizations();
         clonedVisus.reserve(visus.size());
@@ -47,7 +50,8 @@ namespace VirtualRobot
 
     void VisualizationSet::addVisualization(const VisualizationPtr &visu)
     {
-        if (!containsVisualization(visu))
+        auto l = getScopedLock();
+        if (std::find(visualizations.begin(), visualizations.end(), visu) == visualizations.end())
         {
             visualizations.push_back(visu);
             {
@@ -76,11 +80,13 @@ namespace VirtualRobot
 
     bool VisualizationSet::containsVisualization(const VisualizationPtr &visu) const
     {
+        auto l = getScopedLock();
         return std::find(visualizations.begin(), visualizations.end(), visu) != visualizations.end();
     }
 
     bool VisualizationSet::removeVisualization(const VisualizationPtr &visu)
     {
+        auto l = getScopedLock();
         auto it = std::find(visualizations.begin(), visualizations.end(), visu);
         if (it != visualizations.end())
         {
@@ -101,11 +107,13 @@ namespace VirtualRobot
 
     bool VisualizationSet::removeVisualization(size_t index)
     {
+        auto l = getScopedLock();
         return this->removeVisualization(this->at(index));
     }
 
     void VisualizationSet::removeAllVisualizations()
     {
+        auto l = getScopedLock();
         while (!visualizations.empty())
         {
             removeVisualization(visualizations.back());
@@ -114,31 +122,37 @@ namespace VirtualRobot
 
     std::vector<VisualizationPtr> VisualizationSet::getVisualizations() const
     {
+        auto l = getScopedLock();
         return visualizations;
     }
 
     VisualizationPtr VisualizationSet::at(size_t index) const
     {
+        auto l = getScopedLock();
         return visualizations.at(index);
     }
 
     VisualizationPtr VisualizationSet::operator[](size_t index) const
     {
+        auto l = getScopedLock();
         return visualizations[index];
     }
 
     bool VisualizationSet::empty() const
     {
+        auto l = getScopedLock();
         return visualizations.empty();
     }
 
     size_t VisualizationSet::size() const
     {
+        auto l = getScopedLock();
         return visualizations.size();
     }
 
     void VisualizationSet::setGlobalPose(const Eigen::Matrix4f &m)
     {
+        auto l = getScopedLock();
         Eigen::Matrix4f oldM = this->getGlobalPose();
         Eigen::Matrix4f dp = m * oldM.inverse();
         for (auto& visu : visualizations)
@@ -155,11 +169,13 @@ namespace VirtualRobot
 
     void VisualizationSet::applyDisplacement(const Eigen::Matrix4f &dp)
     {
+        auto l = getScopedLock();
         setGlobalPose(getGlobalPose()*dp);
     }
 
     void VisualizationSet::setVisible(bool showVisualization)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setVisible(showVisualization);
@@ -168,6 +184,7 @@ namespace VirtualRobot
 
     bool VisualizationSet::isVisible() const
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             if (visu->isVisible())
@@ -180,6 +197,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setUpdateVisualization(bool enable)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setUpdateVisualization(enable);
@@ -188,6 +206,7 @@ namespace VirtualRobot
 
     bool VisualizationSet::getUpdateVisualizationStatus() const
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             if (visu->getUpdateVisualizationStatus())
@@ -200,6 +219,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setStyle(Visualization::DrawStyle s)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setStyle(s);
@@ -208,6 +228,7 @@ namespace VirtualRobot
 
     Visualization::DrawStyle VisualizationSet::getStyle() const
     {
+        auto l = getScopedLock();
         if (visualizations.empty())
         {
             return Visualization::DrawStyle::undefined;
@@ -225,6 +246,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setColor(const Visualization::Color &c)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setColor(c);
@@ -233,6 +255,7 @@ namespace VirtualRobot
 
     Visualization::Color VisualizationSet::getColor() const
     {
+        auto l = getScopedLock();
         if (visualizations.empty())
         {
             return Visualization::Color::None();
@@ -250,6 +273,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setMaterial(const MaterialPtr &material)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setMaterial(material);
@@ -258,6 +282,7 @@ namespace VirtualRobot
 
     Visualization::MaterialPtr VisualizationSet::getMaterial() const
     {
+        auto l = getScopedLock();
         if (visualizations.empty())
         {
             return Visualization::MaterialPtr(new Visualization::NoneMaterial);
@@ -275,6 +300,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setSelected(bool selected)
     {
+        auto l = getScopedLock();
         bool changed = false;
         for (auto& visu : visualizations)
         {
@@ -296,6 +322,7 @@ namespace VirtualRobot
 
     bool VisualizationSet::isSelected() const
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             if (!visu->isSelected())
@@ -308,6 +335,7 @@ namespace VirtualRobot
 
     void VisualizationSet::setSelectionGroup(const SelectionGroupPtr &group)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->setSelectionGroup(group);
@@ -316,6 +344,7 @@ namespace VirtualRobot
 
     SelectionGroupPtr VisualizationSet::getSelectionGroup() const
     {
+        auto l = getScopedLock();
         SelectionGroupPtr g;
         for (const auto& visu : visualizations)
         {
@@ -333,6 +362,7 @@ namespace VirtualRobot
 
     void VisualizationSet::scale(const Eigen::Vector3f &scaleFactor)
     {
+        auto l = getScopedLock();
         Eigen::Vector3f gpos = getGlobalPosition();
         for (auto& visu : visualizations)
         {
@@ -345,6 +375,7 @@ namespace VirtualRobot
 
     void VisualizationSet::shrinkFatten(float offset)
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->shrinkFatten(offset);
@@ -353,6 +384,7 @@ namespace VirtualRobot
 
     std::vector<Primitive::PrimitivePtr> VisualizationSet::getPrimitives() const
     {
+        auto l = getScopedLock();
         std::vector<Primitive::PrimitivePtr> ret;
         for (const auto& visu : visualizations)
         {
@@ -364,22 +396,26 @@ namespace VirtualRobot
 
     void VisualizationSet::setFilename(const std::string &filename, bool boundingBox)
     {
+        auto l = getScopedLock();
         this->filename = filename;
         usedBoundingBox = boundingBox;
     }
 
     std::string VisualizationSet::getFilename() const
     {
+        auto l = getScopedLock();
         return filename;
     }
 
     bool VisualizationSet::usedBoundingBoxVisu() const
     {
+        auto l = getScopedLock();
         return usedBoundingBox;
     }
 
     void VisualizationSet::getTextureFiles(std::vector<std::string> &storeFilenames) const
     {
+        auto l = getScopedLock();
         for (auto& visu : visualizations)
         {
             visu->getTextureFiles(storeFilenames);
@@ -388,6 +424,7 @@ namespace VirtualRobot
 
     BoundingBox VisualizationSet::getBoundingBox() const
     {
+        auto l = getScopedLock();
         BoundingBox b;
         for (auto& visu : visualizations)
         {
@@ -403,6 +440,7 @@ namespace VirtualRobot
 
     TriMeshModelPtr VisualizationSet::getTriMeshModel() const
     {
+        auto l = getScopedLock();
         TriMeshModelPtr mesh(new TriMeshModel);
         for (const auto& visu : getVisualizations())
         {
@@ -444,6 +482,7 @@ namespace VirtualRobot
 
     int VisualizationSet::getNumFaces() const
     {
+        auto l = getScopedLock();
         int n = 0;
         for (auto& visu : visualizations)
         {
@@ -459,6 +498,7 @@ namespace VirtualRobot
 
     void VisualizationSet::removeVisualizationRemovedCallback(size_t id)
     {
+        auto l = getScopedLock();
         auto it = visualizationRemovedCallbacks.find(id);
         if (it != visualizationRemovedCallbacks.end())
         {
@@ -466,8 +506,30 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::addMutex(const std::shared_ptr<std::recursive_mutex> &m)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        mutexList.push_back(m);
+        std::sort(mutexList.begin(), mutexList.end());
+        for (const auto& v : getVisualizations())
+        {
+            v->addMutex(m);
+        }
+    }
+
+    void VisualizationSet::removeMutex(const std::shared_ptr<std::recursive_mutex> &m)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        mutexList.erase(std::remove(mutexList.begin(), mutexList.end(), m), mutexList.end());
+        for (const auto& v : getVisualizations())
+        {
+            v->removeMutex(m);
+        }
+    }
+
     size_t VisualizationSet::addVisualizationRemovedCallback(std::function<void (const VisualizationPtr&)> f)
     {
+        auto l = getScopedLock();
         static size_t id = 0;
         visualizationRemovedCallbacks[id] = f;
         return id++;
@@ -475,6 +537,7 @@ namespace VirtualRobot
 
     void VisualizationSet::removeVisualizationAddedCallback(size_t id)
     {
+        auto l = getScopedLock();
         auto it = visualizationAddedCallbacks.find(id);
         if (it != visualizationAddedCallbacks.end())
         {
@@ -484,7 +547,7 @@ namespace VirtualRobot
 
     size_t VisualizationSet::addVisualizationAddedCallback(std::function<void (const VisualizationPtr&)> f)
     {
-
+        auto l = getScopedLock();
         static size_t id = 0;
         visualizationAddedCallbacks[id] = f;
         return id++;
