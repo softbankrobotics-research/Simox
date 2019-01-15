@@ -308,6 +308,8 @@ void MarchingCubes::Build(PrimitivePtr res, int tianglesNum)
         0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0
         };
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wnarrowing"
         const char MarchingCubes::_triTable[256][16] =
         {{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
          {0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -566,5 +568,6 @@ void MarchingCubes::Build(PrimitivePtr res, int tianglesNum)
         {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 };
+	#pragma GCC diagnostic pop
 
 
