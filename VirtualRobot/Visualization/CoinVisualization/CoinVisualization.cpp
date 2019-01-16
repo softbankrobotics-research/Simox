@@ -506,7 +506,8 @@ namespace VirtualRobot
     BoundingBox CoinVisualization::getBoundingBox() const
     {
         auto l = getScopedLock();
-        VirtualRobot::BoundingBox bbox = getTriMeshModel()->boundingBox;
+        VR_ASSERT(triMeshModel);
+        VirtualRobot::BoundingBox bbox = triMeshModel->boundingBox;
         bbox.transform(this->getGlobalPose());
         return bbox;
     }
@@ -515,7 +516,7 @@ namespace VirtualRobot
     {
         auto l = getScopedLock();
         VR_ASSERT(triMeshModel);
-        return triMeshModel;
+        return triMeshModel->clone();
     }
 
     void CoinVisualization::createTriMeshModel()
