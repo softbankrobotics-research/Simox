@@ -32,6 +32,8 @@
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSelection.h>
 
+#include "SoGLHighlightRenderAction.h"
+
 #include <unordered_set>
 
 namespace SimoxGui
@@ -40,7 +42,7 @@ namespace SimoxGui
     {
     public:
         CoinViewer(QWidget *parent);
-        ~CoinViewer();
+        ~CoinViewer() override;
 
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
@@ -59,6 +61,8 @@ namespace SimoxGui
         void setCameraConfiguration(const CameraConfigurationPtr& config) override;
         CameraConfigurationPtr getCameraConfiguration() const override;
 
+        void setMutex(std::shared_ptr<std::recursive_mutex> m) override;
+
     protected:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
@@ -66,6 +70,7 @@ namespace SimoxGui
             _removeVisualization(visualization, nullptr);
         }
         bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
+
 
         /*!
         * \brief actualRedraw Reimplement the redraw method in order to lock engine mutex
@@ -87,6 +92,8 @@ namespace SimoxGui
         VirtualRobot::Visualization::Color backgroundColor;
 
         size_t selectionGroupChangedCallbackId;
+
+        SoGLHighlightRenderAction* highlightRenderAction;
     };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }

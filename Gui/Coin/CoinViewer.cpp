@@ -29,7 +29,6 @@
 #include <VirtualRobot/Visualization/CoinVisualization/CoinSelectionGroup.h>
 #include <VirtualRobot/Visualization/SelectionManager.h>
 #include <VirtualRobot/Tools/MathTools.h>
-#include <Inventor/actions/SoLineHighlightRenderAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoPath.h>
 #include <Inventor/Qt/SoQt.h>
@@ -120,17 +119,19 @@ namespace SimoxGui
 
         sceneSep->addChild(selectionNode);
 
-        SoQtExaminerViewer::setAccumulationBuffer(true);
-        SoQtExaminerViewer::setGLRenderAction(new SoLineHighlightRenderAction);
-        SoQtExaminerViewer::setFeedbackVisibility(true);
         SoQtExaminerViewer::setSceneGraph(sceneSep);
+        SoQtExaminerViewer::setAccumulationBuffer(true);
+        highlightRenderAction = new SoGLHighlightRenderAction(getViewportRegion(), mutex);
+        SoQtExaminerViewer::setGLRenderAction(highlightRenderAction);
+        SoQtExaminerViewer::redrawOnSelectionChange(selectionNode);
+        SoQtExaminerViewer::setFeedbackVisibility(true);
 
         viewAll();
         setAntialiasing(4);
         setBackgroundColor(VirtualRobot::Visualization::Color::None());
 
         setAlphaChannel(true);
-        setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
+        setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
 
         selectionGroupChangedCallbackId = VirtualRobot::SelectionManager::getInstance()->addSelectionGroupChangedCallback([this](const VirtualRobot::VisualizationPtr& visu, const VirtualRobot::SelectionGroupPtr& old, const VirtualRobot::SelectionGroupPtr&)
         {
@@ -150,6 +151,8 @@ namespace SimoxGui
         sceneSep->unref();
         unitNode->unref();
         selectionNode->unref();
+
+        delete highlightRenderAction;
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
@@ -271,6 +274,13 @@ namespace SimoxGui
         c->pose(1, 3) = pos[1];
         c->pose(2, 3) = pos[2];
         return c;
+    }
+
+    void CoinViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
+    {
+        auto l = getScopedLock();
+        highlightRenderAction->setMutex(m);
+        AbstractViewer::setMutex(m);
     }
 
     void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)
