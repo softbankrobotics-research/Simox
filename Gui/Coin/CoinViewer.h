@@ -31,6 +31,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/draggers/SoDragger.h>
 
 #include "SoGLHighlightRenderAction.h"
 
@@ -46,6 +47,8 @@ namespace SimoxGui
 
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
+
+        std::vector<VirtualRobot::SelectionGroupPtr> getAllSelectedGroups() const override;
 
         virtual QImage getScreenshot() const override;
 
@@ -86,8 +89,15 @@ namespace SimoxGui
         {
             SoSeparator* node;
             size_t selectionChangedCallbackId;
+            SoDragger* dragger;
+            size_t manipulatorSetCallbackId;
         };
         std::map<std::shared_ptr<VirtualRobot::CoinSelectionGroup>, SelectionGroupData> selectionGroups;
+        void setDragger(SelectionGroupData &data, VirtualRobot::ManipulatorType t, const VirtualRobot::SelectionGroupPtr &selectionGroup);
+
+        static void manipulatorStartCallback(void* userdata, SoDragger* dragger);
+        static void manipulatorValueChangedCallback(void* userdata, SoDragger* dragger);
+        static void manipulatorFinishCallback(void* userdata, SoDragger* dragger);
 
         VirtualRobot::Visualization::Color backgroundColor;
 

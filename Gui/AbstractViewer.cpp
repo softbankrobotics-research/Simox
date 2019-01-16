@@ -1,5 +1,7 @@
 #include "AbstractViewer.h"
 
+#include <set>
+
 SimoxGui::AbstractViewer::AbstractViewer() : mutex(new std::recursive_mutex), baseLayer(this) {}
 
 void SimoxGui::AbstractViewer::addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
@@ -92,6 +94,17 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::AbstractViewer::getAllVisu
     {
         return l->visualizations;
     }
+}
+
+std::vector<VirtualRobot::SelectionGroupPtr> SimoxGui::AbstractViewer::getAllGroups() const
+{
+    auto visus = getAllVisualizations();
+    std::set<VirtualRobot::SelectionGroupPtr> g;
+    for (const auto& v : visus)
+    {
+        g.insert(v->getSelectionGroup());
+    }
+    return std::vector<VirtualRobot::SelectionGroupPtr>(g.begin(), g.end());
 }
 
 void SimoxGui::AbstractViewer::addLayer(const std::string &layer)

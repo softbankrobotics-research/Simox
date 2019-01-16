@@ -3,6 +3,19 @@
 
 namespace VirtualRobot
 {
+    SelectionGroup::SelectionGroup() :
+        selected(false),
+        manipulator(ManipulatorType::None),
+        defaultManipulationCallbacksAdded(false)
+    {
+        addDefaultManipulationCallbacks();
+    }
+
+    SelectionGroup::~SelectionGroup()
+    {
+        removeDefaultManipulationCallbacks();
+    }
+
     bool SelectionGroup::isSelected() const
     {
         return selected;
@@ -50,6 +63,178 @@ namespace VirtualRobot
             }
         }
         return visus;
+    }
+
+    size_t SelectionGroup::addManipulationStartedCallback(std::function<void (const SelectionGroupPtr &)> f)
+    {
+        static size_t id = 0;
+        manipulationStartedCallbacks[id] = f;
+        return id++;
+    }
+
+    void SelectionGroup::removeManipulationStartedCallback(size_t id)
+    {
+        auto it = manipulationStartedCallbacks.find(id);
+        if (it != manipulationStartedCallbacks.end())
+        {
+            manipulationStartedCallbacks.erase(it);
+        }
+    }
+
+    void SelectionGroup::executeManipulationStartedCallbacks()
+    {
+        auto thisPtr = shared_from_this();
+        for (const auto& f : manipulationStartedCallbacks)
+        {
+            f.second(thisPtr);
+        }
+    }
+
+    size_t SelectionGroup::addManipulationPoseUpdatedCallback(std::function<void (const SelectionGroupPtr &, const Eigen::Matrix4f &)> f)
+    {
+        static size_t id = 0;
+        manipulationPoseUpdatedCallbacks[id] = f;
+        return id++;
+    }
+
+    void SelectionGroup::removeManipulationPoseUpdatedCallback(size_t id)
+    {
+        auto it = manipulationPoseUpdatedCallbacks.find(id);
+        if (it != manipulationPoseUpdatedCallbacks.end())
+        {
+            manipulationPoseUpdatedCallbacks.erase(it);
+        }
+    }
+
+    void SelectionGroup::executeManipulationPoseUpdatedCallback(const Eigen::Matrix4f& transformSinceManipulationStarted)
+    {
+        auto thisPtr = shared_from_this();
+        for (const auto& f : manipulationPoseUpdatedCallbacks)
+        {
+            f.second(thisPtr, transformSinceManipulationStarted);
+        }
+    }
+
+    size_t SelectionGroup::addManipulationFinishedCallback(std::function<void (const SelectionGroupPtr &, const Eigen::Matrix4f &)> f)
+    {
+        static size_t id = 0;
+        manipulationFinishedCallbacks[id] = f;
+        return id++;
+    }
+
+    void SelectionGroup::removeManipulationFinishedCallback(size_t id)
+    {
+        auto it = manipulationFinishedCallbacks.find(id);
+        if (it != manipulationFinishedCallbacks.end())
+        {
+            manipulationFinishedCallbacks.erase(it);
+        }
+    }
+
+    void SelectionGroup::executeManipulationFinishedCallbacks(const Eigen::Matrix4f& transformSinceManipulationStarted)
+    {
+        auto thisPtr = shared_from_this();
+        for (const auto& f : manipulationFinishedCallbacks)
+        {
+            f.second(thisPtr, transformSinceManipulationStarted);
+        }
+    }
+
+    void SelectionGroup::addDefaultManipulationCallbacks()
+    {
+        if (defaultManipulationCallbacksAdded)
+        {
+            return;
+        }
+        defaultManipulationStartedCallbackId = addManipulationStartedCallback([](const SelectionGroupPtr& group)
+        {
+            VR_INFO << "Manipulation started" << std::endl;
+            for (const auto& visu : group->getVisualizations())
+            {
+                group->manipulationCallbackCache[visu.get()] = visu->getGlobalPose();
+                std::cout << visu->getGlobalPose() << std::endl;
+            }
+        });
+        defaultManipulationPoseUpdatedCallbackId = addManipulationPoseUpdatedCallback([](const SelectionGroupPtr& group, const Eigen::Matrix4f& m)
+        {
+            VR_INFO << "Update Pose" << std::endl;
+            for (const auto& visu : group->getVisualizations())
+            {
+                auto it = group->manipulationCallbackCache.find(visu.get());
+                if (it != group->manipulationCallbackCache.end())
+                {
+                    visu->setGlobalPose(m * it->second);
+                    VR_INFO << "m:" << std::endl;
+                    std::cout << m << std::endl;
+                    VR_INFO << "Pose:" << std::endl;
+                    std::cout << visu->getGlobalPose() << std::endl;
+                }
+            }
+        });
+        defaultManipulationFinishedCallbackId = addManipulationFinishedCallback([](const SelectionGroupPtr& group, const Eigen::Matrix4f& m)
+        {
+            for (const auto& visu : group->getVisualizations())
+            {
+                auto it = group->manipulationCallbackCache.find(visu.get());
+                if (it != group->manipulationCallbackCache.end())
+                {
+                    visu->setGlobalPose(m * it->second);
+                    group->manipulationCallbackCache.erase(it);
+                }
+            }
+            VR_INFO << "Manipulation finished" << std::endl;
+        });
+
+        defaultManipulationCallbacksAdded = true;
+    }
+
+    void SelectionGroup::removeDefaultManipulationCallbacks()
+    {
+        if (!defaultManipulationCallbacksAdded)
+        {
+            return;
+        }
+
+        removeManipulationStartedCallback(defaultManipulationStartedCallbackId);
+        removeManipulationPoseUpdatedCallback(defaultManipulationPoseUpdatedCallbackId);
+        removeManipulationFinishedCallback(defaultManipulationFinishedCallbackId);
+
+        defaultManipulationCallbacksAdded = false;
+    }
+
+    size_t SelectionGroup::addManipulatorSetCallback(std::function<void (const SelectionGroupPtr &, ManipulatorType)> f)
+    {
+        static size_t id = 0;
+        manipulatorSetCallbacks[id] = f;
+        return id++;
+    }
+
+    void SelectionGroup::removeManipulatorSetCallback(size_t id)
+    {
+        auto it = manipulatorSetCallbacks.find(id);
+        if (it != manipulatorSetCallbacks.end())
+        {
+            manipulatorSetCallbacks.erase(it);
+        }
+    }
+
+    void SelectionGroup::setManipulator(ManipulatorType t)
+    {
+        if (t == manipulator)
+        {
+            return;
+        }
+        manipulator = t;
+        auto thisPtr = shared_from_this();
+        for (const auto& f : manipulatorSetCallbacks)
+        {
+            f.second(thisPtr, t);
+        }
+    }
+
+    ManipulatorType SelectionGroup::getManipulator() const
+    {
+        return manipulator;
     }
 
     void SelectionGroup::addVisualization(const VisualizationPtr &visu)

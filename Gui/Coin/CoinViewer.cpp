@@ -32,8 +32,9 @@
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoPath.h>
 #include <Inventor/Qt/SoQt.h>
-#include <Inventor/manips/SoTransformManip.h>
+#include <Inventor/draggers/SoTransformerDragger.h>
 #include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoTransform.h>
 #include <QGLWidget>
 
 #include <iostream>
@@ -54,7 +55,7 @@ SoPath* pickFilterCB(void *, const SoPickedPoint* pick)
     {
        SoNode* n = p->getNode(i);
 
-       if (n->isOfType(SoTransformManip::getClassTypeId()))
+       if (n->isOfType(SoTransformerDragger::getClassTypeId()))
        {
            //Path includes a manipulator, so just ignore it
            //returning NULL would lead to a deselection of all objects
@@ -197,6 +198,24 @@ namespace SimoxGui
         return visus;
     }
 
+    std::vector<VirtualRobot::SelectionGroupPtr> CoinViewer::getAllSelectedGroups() const
+    {
+        std::vector<VirtualRobot::SelectionGroupPtr> visus;
+        const SoPathList* selectedNodes = selectionNode->getList();
+        for (int i=0; i<selectedNodes->getLength(); ++i)
+        {
+            SoPath* p = reinterpret_cast<SoPath*>(selectedNodes->get(i));
+            auto userData = p->getNode(p->getLength()-1)->getUserData();
+            VR_ASSERT(userData);
+            VirtualRobot::SelectionGroup* s = reinterpret_cast<VirtualRobot::SelectionGroup*>(userData);
+            if (!s->getVisualizations().empty())
+            {
+                visus.push_back(s->getVisualizations()[0]->getSelectionGroup());
+            }
+        }
+        return visus;
+    }
+
     QImage CoinViewer::getScreenshot() const
     {
         getSceneManager()->render();
@@ -297,7 +316,8 @@ namespace SimoxGui
             SoSeparator* node = nullptr;
             if (it == selectionGroups.end())
             {
-                auto selectionChangedId = selectionGroup->addSelectionChangedCallbacks([this,selectionGroup](bool selected)
+                SelectionGroupData& d = selectionGroups[selectionGroup];
+                d.selectionChangedCallbackId = selectionGroup->addSelectionChangedCallbacks([this,selectionGroup](bool selected)
                 {
                     SelectionGroupData& d = selectionGroups[selectionGroup];
                     if (selected && !selectionNode->isSelected(d.node))
@@ -312,8 +332,11 @@ namespace SimoxGui
                     // Force visualization update
                     selectionNode->touch();
                 });
-                SelectionGroupData& d = selectionGroups[selectionGroup];
-                d.selectionChangedCallbackId = selectionChangedId;
+                d.manipulatorSetCallbackId = selectionGroup->addManipulatorSetCallback([this,selectionGroup](const VirtualRobot::SelectionGroupPtr&, VirtualRobot::ManipulatorType t)
+                {
+                    SelectionGroupData& d = selectionGroups[selectionGroup];
+                    setDragger(d, t, selectionGroup);
+                });
                 d.node = new SoSeparator;
                 node = d.node;
                 node->ref();
@@ -323,6 +346,9 @@ namespace SimoxGui
                 ss << "GroupNode_" << i++;
                 node->setName(SbName(ss.str().c_str()));
                 selectionNode->addChild(node);
+                d.dragger = nullptr;
+
+                setDragger(d, selectionGroup->getManipulator(), selectionGroup);
             }
             else
             {
@@ -349,6 +375,8 @@ namespace SimoxGui
                 d.node->removeChild(std::static_pointer_cast<VirtualRobot::CoinVisualization>(visualization)->getMainNode());
                 if (d.node->getNumChildren() <= 0)
                 {
+                    setDragger(d, VirtualRobot::ManipulatorType::None, selectionGroup);
+
                     if (selectionNode->isSelected(d.node))
                     {
                         selectionNode->deselect(d.node);
@@ -358,7 +386,13 @@ namespace SimoxGui
                     selectionNode->removeChild(d.node);
                     d.node->unref();
                     d.node = nullptr;
+                    if (d.dragger)
+                    {
+                        d.dragger->unref();
+                        d.dragger = nullptr;
+                    }
                     it->first->removeSelectionChangedCallbacks(d.selectionChangedCallbackId);
+                    it->first->removeManipulatorSetCallback(d.manipulatorSetCallbackId);
                     selectionGroups.erase(it);
                 }
                 return true;
@@ -385,5 +419,127 @@ namespace SimoxGui
 
         // Render normal scenegraph.
         SoQtExaminerViewer::actualRedraw();
+    }
+
+    void CoinViewer::setDragger(CoinViewer::SelectionGroupData &data, VirtualRobot::ManipulatorType t, const VirtualRobot::SelectionGroupPtr& selectionGroup)
+    {
+        // delete old dragger
+        if (data.dragger)
+        {
+            if (data.node->findChild(data.dragger) >= 0)
+            {
+                data.node->removeChild(data.dragger);
+            }
+            data.dragger->unref();
+            data.dragger = nullptr;
+        }
+
+        if (t == VirtualRobot::ManipulatorType::None)
+        {
+            // do nothing
+        }
+        else if (t == VirtualRobot::ManipulatorType::TranslateRotate ||
+                 t == VirtualRobot::ManipulatorType::Translate ||
+                 t == VirtualRobot::ManipulatorType::Rotate)
+        {
+            data.dragger = new SoTransformerDragger;
+            data.dragger->ref();
+
+            VirtualRobot::BoundingBox b;
+            for (const auto& v : selectionGroup->getVisualizations())
+            {
+                b.addPoints(v->getBoundingBox().getPoints());
+            }
+            Eigen::Vector3f vec = b.getMax() - b.getMin();
+            Eigen::Vector3f midPoint = b.getMin() + vec/2;
+            SbMatrix m = SbMatrix::identity();
+            float scale = std::max(vec.x(), std::max(vec.y(), vec.z()))/2 + 10;
+            m.setTransform(SbVec3f(midPoint.x(), midPoint.y(), midPoint.z()), SbRotation::identity(), SbVec3f(scale, scale, scale));
+
+            (void) data.dragger->enableValueChangedCallbacks(FALSE);
+            data.dragger->setMotionMatrix(m);
+            data.dragger->setViewportRegion(getViewportRegion());
+            (void) data.dragger->enableValueChangedCallbacks(TRUE);
+
+            data.dragger->addStartCallback(&manipulatorStartCallback, static_cast<void*>(selectionGroup.get()));
+            data.dragger->addValueChangedCallback(&manipulatorValueChangedCallback, static_cast<void*>(selectionGroup.get()));
+            data.dragger->addFinishCallback(&manipulatorFinishCallback, static_cast<void*>(selectionGroup.get()));
+
+            SoSeparator* nullSep = new SoSeparator;
+
+            //Make all scale knobs disappear
+            data.dragger->setPart("scale1", nullSep);
+            data.dragger->setPart("scale2", nullSep);
+            data.dragger->setPart("scale3", nullSep);
+            data.dragger->setPart("scale4", nullSep);
+            data.dragger->setPart("scale5", nullSep);
+            data.dragger->setPart("scale6", nullSep);
+            data.dragger->setPart("scale7", nullSep);
+            data.dragger->setPart("scale8", nullSep);
+
+
+            if (t == VirtualRobot::ManipulatorType::Translate)
+            {
+                data.dragger->setPart("rotator1", nullSep);
+                data.dragger->setPart("rotator2", nullSep);
+                data.dragger->setPart("rotator3", nullSep);
+                data.dragger->setPart("rotator4", nullSep);
+                data.dragger->setPart("rotator5", nullSep);
+                data.dragger->setPart("rotator6", nullSep);
+
+            }
+
+            if (t == VirtualRobot::ManipulatorType::Rotate)
+            {
+                data.dragger->setPart("translator1", nullSep);
+                data.dragger->setPart("translator2", nullSep);
+                data.dragger->setPart("translator3", nullSep);
+                data.dragger->setPart("translator4", nullSep);
+                data.dragger->setPart("translator5", nullSep);
+                data.dragger->setPart("translator6", nullSep);
+            }
+
+            data.node->insertChild(data.dragger, 0);
+        }
+        else
+        {
+            VR_ERROR << "Unsupported dragger type" << std::endl;
+        }
+    }
+
+    void CoinViewer::manipulatorStartCallback(void *userdata, SoDragger *)
+    {
+        VirtualRobot::SelectionGroup* sl = static_cast<VirtualRobot::SelectionGroup*>(userdata);
+        sl->executeManipulationStartedCallbacks();
+    }
+
+    void CoinViewer::manipulatorValueChangedCallback(void *userdata, SoDragger *dragger)
+    {
+        VirtualRobot::SelectionGroup* sl = static_cast<VirtualRobot::SelectionGroup*>(userdata);
+        SbMatrix m = dragger->getStartMotionMatrix().inverse() * dragger->getMotionMatrix();
+        SbVec3f trans, scale;
+        SbRotation rot, scaleOrient;
+        m.getTransform(trans, rot, scale, scaleOrient);
+        float x, y, z, w;
+        rot.getValue(x, y, z, w);
+
+        Eigen::Matrix4f em = VirtualRobot::MathTools::quat2eigen4f(x, y, z, w);
+        em.block<3, 1>(0, 3) = Eigen::Vector3f(trans[0], trans[1], trans[2]);
+        sl->executeManipulationPoseUpdatedCallback(em);
+    }
+
+    void CoinViewer::manipulatorFinishCallback(void *userdata, SoDragger *dragger)
+    {
+        VirtualRobot::SelectionGroup* sl = static_cast<VirtualRobot::SelectionGroup*>(userdata);
+        SbMatrix m = dragger->getStartMotionMatrix().inverse() * dragger->getMotionMatrix();
+        SbVec3f trans, scale;
+        SbRotation rot, scaleOrient;
+        m.getTransform(trans, rot, scale, scaleOrient);
+        float x, y, z, w;
+        rot.getValue(x, y, z, w);
+
+        Eigen::Matrix4f em = VirtualRobot::MathTools::quat2eigen4f(x, y, z, w);
+        em.block<3, 1>(0, 3) = Eigen::Vector3f(trans[0], trans[1], trans[2]);
+        sl->executeManipulationFinishedCallbacks(em);
     }
 }
