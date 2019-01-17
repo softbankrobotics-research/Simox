@@ -176,7 +176,7 @@ namespace VirtualRobot
         }
     }
 
-    void BoundingBox::scale(Eigen::Vector3f& scaleFactor)
+    void BoundingBox::scale(const Eigen::Vector3f& scaleFactor)
     {
         if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
                 std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))

@@ -126,9 +126,9 @@ namespace VirtualRobot
         bool checkFacesHaveSameEdge(const MathTools::TriangleFace& face1, const MathTools::TriangleFace& face2, std::vector<std::pair<int, int> >& commonVertexIds) const;
         unsigned int checkAndCorrectNormals(bool inverted);
 
-        virtual void scale(Eigen::Vector3f& scaleFactor);
+        virtual void scale(const Eigen::Vector3f& scaleFactor);
         TriMeshModelPtr clone() const;
-        TriMeshModelPtr clone(Eigen::Vector3f& scaleFactor) const;
+        TriMeshModelPtr clone(const Eigen::Vector3f& scaleFactor) const;
 
         std::vector<Eigen::Vector3f> normals;
         std::vector<Eigen::Vector3f> vertices;

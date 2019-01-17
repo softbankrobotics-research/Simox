@@ -88,7 +88,7 @@ namespace VirtualRobot
         */
         void transform(Eigen::Matrix4f& pose);
 
-        void scale(Eigen::Vector3f& scaleFactor);
+        void scale(const Eigen::Vector3f& scaleFactor);
 
         std::string toXML(int tabs = 2, bool skipMatrixTag = false);
 

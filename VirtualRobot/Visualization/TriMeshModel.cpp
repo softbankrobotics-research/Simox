@@ -823,7 +823,7 @@ namespace VirtualRobot
     }
 
 
-    void TriMeshModel::scale(Eigen::Vector3f& scaleFactor)
+    void TriMeshModel::scale(const Eigen::Vector3f& scaleFactor)
     {
         if (scaleFactor(0) == 1.0f && scaleFactor(1) == 1.0f && scaleFactor(2) == 1.0f)
         {
@@ -848,7 +848,7 @@ namespace VirtualRobot
         return clone(scaleFactor);
     }
 
-    VirtualRobot::TriMeshModelPtr TriMeshModel::clone(Eigen::Vector3f& scaleFactor) const
+    VirtualRobot::TriMeshModelPtr TriMeshModel::clone(const Eigen::Vector3f& scaleFactor) const
     {
         TriMeshModelPtr r(new TriMeshModel());
         r->vertices = vertices;

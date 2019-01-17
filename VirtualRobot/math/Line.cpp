@@ -34,7 +34,7 @@ Line::Line(Eigen::Vector3f pos, Eigen::Vector3f dir)
 {
 }
 
-Line Line::Normalized()
+Line Line::Normalized() const
 {
     return Line(pos, dir.normalized());
 }
@@ -49,18 +49,18 @@ Eigen::Vector3f Line::GetDerivative(float)
     return dir;
 }
 
-Eigen::Vector3f Line::GetClosestPoint(Eigen::Vector3f p)
+Eigen::Vector3f Line::GetClosestPoint(Eigen::Vector3f p) const
 {
     return pos - (pos - p).dot(dir) * dir / dir.squaredNorm();
 }
 
-float Line::GetT(Eigen::Vector3f p)
+float Line::GetT(Eigen::Vector3f p) const
 {
     return (p - pos).dot(dir) / dir.squaredNorm();
 
 }
 
-std::string Line::ToString()
+std::string Line::ToString() const
 {
     std::stringstream ss;
     ss << "(" << pos << ") (" << dir << ")";
@@ -69,7 +69,7 @@ std::string Line::ToString()
 
 
 //https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-bool Line::IntersectsTriangle(Triangle tri, float &out)
+bool Line::IntersectsTriangle(Triangle tri, float &out) const
 {
     const float EPS = 0.000; //TODO
     Eigen::Vector3f e1, e2;  //Edge1, Edge2
@@ -119,7 +119,7 @@ bool Line::IntersectsTriangle(Triangle tri, float &out)
     return 0;
 }
 
-bool Line::IntersectsPrimitive(PrimitivePtr p, float &out)
+bool Line::IntersectsPrimitive(PrimitivePtr p, float &out) const
 {
     float min = FLT_MAX;
     float t;
@@ -142,7 +142,7 @@ Line Line::FromPoses(const Eigen::Matrix4f &p1, const Eigen::Matrix4f &p2)
     return FromPoints(p1.block<3,1>(0,3), p2.block<3,1>(0,3));
 }
 
-Line Line::Transform(const Eigen::Matrix4f &pose)
+Line Line::Transform(const Eigen::Matrix4f &pose) const
 {
     return Line(Helpers::TransformPosition(pose, pos), Helpers::TransformDirection(pose, dir));
 }
