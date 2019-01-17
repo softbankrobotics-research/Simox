@@ -12,6 +12,10 @@
 #include <Eigen/Geometry>
 #include <VirtualRobot/Util/json/eigen_conversion.hpp>
 
+#if BOOST_VERSION > 105300
+#define BOOST_MESSAGE(msg) BOOST_TEST_MESSAGE(msg)
+#endif
+
 
 namespace Eigen
 {
