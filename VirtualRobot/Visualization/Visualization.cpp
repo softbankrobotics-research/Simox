@@ -157,6 +157,22 @@ namespace VirtualRobot
         mutexList.erase(std::remove(mutexList.begin(), mutexList.end(), m), mutexList.end());
     }
 
+    void Visualization::swapMutex(const std::shared_ptr<std::recursive_mutex> &oldM, const std::shared_ptr<std::recursive_mutex> &newM)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        auto it = std::find(mutexList.begin(), mutexList.end(), oldM);
+        if (it == mutexList.end())
+        {
+            VR_ERROR << "Old mutex not found";
+            mutexList.push_back(newM);
+        }
+        else
+        {
+            *it = newM;
+        }
+        std::sort(mutexList.begin(), mutexList.end());
+    }
+
     std::shared_ptr<MultipleMutexLockGuard> Visualization::getScopedLock() const
     {
         return std::shared_ptr<MultipleMutexLockGuard>(new MultipleMutexLockGuard(mutexList));

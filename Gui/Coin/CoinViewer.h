@@ -64,8 +64,6 @@ namespace SimoxGui
         void setCameraConfiguration(const CameraConfigurationPtr& config) override;
         CameraConfigurationPtr getCameraConfiguration() const override;
 
-        void setMutex(std::shared_ptr<std::recursive_mutex> m) override;
-
     protected:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override

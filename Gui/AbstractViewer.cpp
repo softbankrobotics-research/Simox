@@ -4,6 +4,15 @@
 
 SimoxGui::AbstractViewer::AbstractViewer() : mutex(new std::recursive_mutex), baseLayer(this) {}
 
+SimoxGui::AbstractViewer::~AbstractViewer()
+{
+    auto visus = getAllVisualizations();
+    for (const auto& v : visus)
+    {
+        removeVisualization(v);
+    }
+}
+
 void SimoxGui::AbstractViewer::addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
     auto l = getScopedLock();
@@ -22,15 +31,15 @@ void SimoxGui::AbstractViewer::addVisualizations(const std::vector<VirtualRobot:
 void SimoxGui::AbstractViewer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
     auto l = getScopedLock();
-    visualization->removeMutex(mutex);
     requestLayer(layer).removeVisualization(visualization);
+    visualization->removeMutex(mutex);
 }
 
 void SimoxGui::AbstractViewer::removeVisualizationOnAllLayers(const VirtualRobot::VisualizationPtr &visualization)
 {
     auto l = getScopedLock();
-    visualization->removeMutex(mutex);
     removeVisualizationOnAllLayers(baseLayer, visualization);
+    visualization->removeMutex(mutex);
 }
 
 bool SimoxGui::AbstractViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
@@ -199,25 +208,36 @@ char SimoxGui::AbstractViewer::getLayerSeparator() const
 
 void SimoxGui::AbstractViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
 {
-    if (mutex)
+    std::lock_guard<std::mutex> l(mutexMutex);
+    auto oldMutex = mutex;
+    mutex = m;
+
+    if (oldMutex && m)
     {
         for (const auto& v : getAllVisualizations())
         {
-            v->removeMutex(mutex);
+            v->swapMutex(oldMutex, m);
         }
     }
-    mutex = m;
-    if (mutex)
+    else if (oldMutex)
     {
         for (const auto& v : getAllVisualizations())
         {
-            v->addMutex(mutex);
+            v->removeMutex(oldMutex);
+        }
+    }
+    else if (m)
+    {
+        for (const auto& v : getAllVisualizations())
+        {
+            v->addMutex(m);
         }
     }
 }
 
 std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock() const
 {
+    std::lock_guard<std::mutex> l1(mutexMutex);
     std::shared_ptr<std::lock_guard<std::recursive_mutex>> l;
 
     if (mutex)

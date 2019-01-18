@@ -42,7 +42,7 @@ class SIMOX_GUI_IMPORT_EXPORT AbstractViewer
 {
 public:
     AbstractViewer();
-    virtual ~AbstractViewer() = default;
+    virtual ~AbstractViewer();
 
     void addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer = "");
     inline void addVisualizations(const std::vector<VirtualRobot::VisualizationPtr> &visualizations, const std::string &layer = "");
@@ -89,7 +89,7 @@ public:
     /*!
      * If set, the drawing is protected by this mutex. This overwrites the default mutex.
      */
-    virtual void setMutex(std::shared_ptr<std::recursive_mutex> m);
+    void setMutex(std::shared_ptr<std::recursive_mutex> m);
 
 
     /*!
@@ -97,9 +97,11 @@ public:
      */
     std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock() const;
 
-protected:
-
+private:
     std::shared_ptr<std::recursive_mutex> mutex;
+    mutable std::mutex mutexMutex;
+
+protected:
     virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
     virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;
 

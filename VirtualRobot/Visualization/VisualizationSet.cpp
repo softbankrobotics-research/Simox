@@ -527,6 +527,26 @@ namespace VirtualRobot
         }
     }
 
+    void VisualizationSet::swapMutex(const std::shared_ptr<std::recursive_mutex> &oldM, const std::shared_ptr<std::recursive_mutex> &newM)
+    {
+        std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        auto it = std::find(mutexList.begin(), mutexList.end(), oldM);
+        if (it == mutexList.end())
+        {
+            VR_ERROR << "Old mutex not found";
+            mutexList.push_back(newM);
+        }
+        else
+        {
+            *it = newM;
+        }
+        std::sort(mutexList.begin(), mutexList.end());
+        for (const auto& v : getVisualizations())
+        {
+            v->swapMutex(oldM, newM);
+        }
+    }
+
     size_t VisualizationSet::addVisualizationRemovedCallback(std::function<void (const VisualizationPtr&)> f)
     {
         auto l = getScopedLock();

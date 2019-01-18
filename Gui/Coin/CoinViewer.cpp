@@ -122,7 +122,7 @@ namespace SimoxGui
 
         SoQtExaminerViewer::setSceneGraph(sceneSep);
         SoQtExaminerViewer::setAccumulationBuffer(true);
-        highlightRenderAction = new SoGLHighlightRenderAction(getViewportRegion(), mutex);
+        highlightRenderAction = new SoGLHighlightRenderAction(getViewportRegion(), this);
         SoQtExaminerViewer::setGLRenderAction(highlightRenderAction);
         SoQtExaminerViewer::redrawOnSelectionChange(selectionNode);
         SoQtExaminerViewer::setFeedbackVisibility(true);
@@ -153,6 +153,7 @@ namespace SimoxGui
         unitNode->unref();
         selectionNode->unref();
 
+        SoQtExaminerViewer::setGLRenderAction(nullptr);
         delete highlightRenderAction;
     }
 
@@ -293,13 +294,6 @@ namespace SimoxGui
         c->pose(1, 3) = pos[1];
         c->pose(2, 3) = pos[2];
         return c;
-    }
-
-    void CoinViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
-    {
-        auto l = getScopedLock();
-        highlightRenderAction->setMutex(m);
-        AbstractViewer::setMutex(m);
     }
 
     void CoinViewer::_addVisualization(const VirtualRobot::VisualizationPtr &visualization)

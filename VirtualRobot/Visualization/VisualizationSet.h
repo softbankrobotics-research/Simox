@@ -111,6 +111,7 @@ namespace VirtualRobot
 
         virtual void addMutex(const std::shared_ptr<std::recursive_mutex>& m) override;
         virtual void removeMutex(const std::shared_ptr<std::recursive_mutex>& m) override;
+        virtual void swapMutex(const std::shared_ptr<std::recursive_mutex>& oldM, const std::shared_ptr<std::recursive_mutex>& newM) override;
 
     protected:
         std::vector<VisualizationPtr> visualizations;
