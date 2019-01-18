@@ -148,26 +148,19 @@ namespace VirtualRobot
         }
         defaultManipulationStartedCallbackId = addManipulationStartedCallback([](const SelectionGroupPtr& group)
         {
-            VR_INFO << "Manipulation started" << std::endl;
             for (const auto& visu : group->getVisualizations())
             {
                 group->manipulationCallbackCache[visu.get()] = visu->getGlobalPose();
-                std::cout << visu->getGlobalPose() << std::endl;
             }
         });
         defaultManipulationPoseUpdatedCallbackId = addManipulationPoseUpdatedCallback([](const SelectionGroupPtr& group, const Eigen::Matrix4f& m)
         {
-            VR_INFO << "Update Pose" << std::endl;
             for (const auto& visu : group->getVisualizations())
             {
                 auto it = group->manipulationCallbackCache.find(visu.get());
                 if (it != group->manipulationCallbackCache.end())
                 {
                     visu->setGlobalPose(m * it->second);
-                    VR_INFO << "m:" << std::endl;
-                    std::cout << m << std::endl;
-                    VR_INFO << "Pose:" << std::endl;
-                    std::cout << visu->getGlobalPose() << std::endl;
                 }
             }
         });
@@ -182,7 +175,6 @@ namespace VirtualRobot
                     group->manipulationCallbackCache.erase(it);
                 }
             }
-            VR_INFO << "Manipulation finished" << std::endl;
         });
 
         defaultManipulationCallbacksAdded = true;
