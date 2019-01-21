@@ -12,10 +12,6 @@
 #include <Eigen/Geometry>
 #include <VirtualRobot/Util/json/eigen_conversion.hpp>
 
-#if BOOST_VERSION > 105300
-#define BOOST_MESSAGE(msg) BOOST_TEST_MESSAGE(msg)
-#endif
-
 
 namespace Eigen
 {
@@ -51,7 +47,7 @@ BOOST_AUTO_TEST_CASE(test_matrix)
     json j;
     j = in;
     out = j;
-    BOOST_MESSAGE("JSON: \n" << j.dump(2));
+    BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
     BOOST_CHECK_EQUAL(in, out);
 }
@@ -69,7 +65,7 @@ BOOST_AUTO_TEST_CASE(test_vector)
     json j;
     j = in;
     out = j;
-    BOOST_MESSAGE("JSON: \n" << j.dump(2));
+    BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
     BOOST_CHECK_EQUAL(in, out);
 }
@@ -83,7 +79,7 @@ BOOST_AUTO_TEST_CASE(test_quaternion)
     json j;
     j = in;
     out = j.get<Quaternionf>();
-    BOOST_MESSAGE("JSON: \n" << j.dump(2));
+    BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
     BOOST_CHECK_EQUAL(in, out);
 }
