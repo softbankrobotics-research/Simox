@@ -25,7 +25,10 @@
 using namespace math;
 
 
-Eigen::Vector3f math::Helpers::GetOrthonormalVectors(Eigen::Vector3f vec, Eigen::Vector3f &dir1, Eigen::Vector3f &dir2)
+#define M_PI_F (static_cast<float>(M_PI))
+
+Eigen::Vector3f math::Helpers::GetOrthonormalVectors(
+        Eigen::Vector3f vec, Eigen::Vector3f &dir1, Eigen::Vector3f &dir2)
 {
     vec = vec.normalized();
     dir1 = vec.cross(Eigen::Vector3f(0,0,1));
@@ -41,13 +44,14 @@ Eigen::Vector3f math::Helpers::GetOrthonormalVectors(Eigen::Vector3f vec, Eigen:
 float Helpers::ShiftAngle0_2PI(float a)
 {
     while (a < 0) a += 2*M_PI;
-    while (a > 2*M_PI) a -= 2*M_PI;
+    while (a > 2 * M_PI_F)
+        a -= 2*M_PI;
     return a;
 }
 
 float Helpers::AngleModPI(float value)
 {
-    return ShiftAngle0_2PI(value + M_PI) - M_PI;
+    return ShiftAngle0_2PI(value + M_PI_F) - M_PI_F;
 }
 
 void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float &f)
@@ -58,7 +62,7 @@ void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float
         return;
     }
     f = ((t - minT) / (maxT - minT)) * (count - 1);
-    i = std::max(0, std::min(count - 2, (int)f));
+    i = std::max(0, std::min(count - 2, static_cast<int>(f)));
     f -= i;
 }
 
@@ -99,12 +103,16 @@ float Helpers::ILerp(float a, float b, float f)
 float Helpers::Lerp(float a, float b, int min, int max, int val)
 {
     if (min == max) return a; //TODO
-    return Lerp(a, b, (val - min) / (float)(max - min));
+    return Lerp(a, b, (val - min) / static_cast<float>(max - min));
 }
 
-float Helpers::Angle(Eigen::Vector2f v) { return (float)std::atan2(v.y(), v.x());}
+float Helpers::Angle(Eigen::Vector2f v) 
+{ 
+    return static_cast<float>(std::atan2(v.y(), v.x())); 
+}
 
-int Helpers::Sign(float x){
+int Helpers::Sign(float x)
+{
     return x > 0 ? 1 : (x == 0 ? 0 : -1);
 }
 
@@ -118,7 +126,7 @@ std::vector<float> Helpers::FloatRange(float start, float end, int steps)
 {
     std::vector<float> result;
     for (int i = 0; i < steps+1; ++i) {
-        result.push_back(Lerp(start, end, i/(float) steps));
+        result.push_back(Lerp(start, end, i/static_cast<float>(steps)));
     }
     return result;
 }
@@ -147,7 +155,7 @@ std::vector<Eigen::Vector3f> Helpers::VectorRange(std::vector<float> xvals, std:
 
 float Helpers::SmallestAngle(Eigen::Vector3f a, Eigen::Vector3f b)
 {
-    return (float)std::atan2(a.cross(b).norm(), a.dot(b));
+    return static_cast<float>(std::atan2(a.cross(b).norm(), a.dot(b)));
 }
 
 Eigen::Vector3f Helpers::CwiseMin(Eigen::Vector3f a, Eigen::Vector3f b)
@@ -175,8 +183,9 @@ Eigen::Vector3f Helpers::CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b)
 Eigen::Vector3f Helpers::Average(std::vector<Eigen::Vector3f> vectors)
 {
     Eigen::Vector3f avg = Eigen::Vector3f(0,0,0);
-    if(vectors.size() == 0) return avg;
-    for(Eigen::Vector3f v : vectors){
+    if (vectors.size() == 0) return avg;
+    for (Eigen::Vector3f v : vectors)
+    {
         avg += v;
     }
     avg /= vectors.size();
@@ -220,7 +229,9 @@ Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f & source, const
     return Eigen::AngleAxisf(angle, axis).toRotationMatrix();
 }
 
-Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget)
+Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
+        const Eigen::Matrix3f& ori, const Eigen::Vector3f& localSource, 
+        const Eigen::Vector3f& globalTarget)
 {
     Eigen::Vector3f vec = ori * localSource;
     return GetRotationMatrix(vec, globalTarget) * ori;
@@ -228,7 +239,7 @@ Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori
 
 Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
 {
-    return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
+    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
 }
 
 Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
@@ -290,10 +301,10 @@ Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eig
 
 float Helpers::rad2deg(float rad)
 {
-    return rad * (float)(180.0 / M_PI);
+    return rad * 180.0f / M_PI_F;
 }
 
 float Helpers::deg2rad(float deg)
 {
-    return deg * (float)(M_PI / 180.0);
+    return deg * M_PI_F / 180.0f;
 }
