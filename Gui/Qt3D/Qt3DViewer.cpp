@@ -116,6 +116,11 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::Qt3DViewer::getAllSelected
     VR_ERROR_ONCE_NYI;
 }
 
+std::vector<VirtualRobot::SelectionGroupPtr> SimoxGui::Qt3DViewer::getAllSelectedGroups() const
+{
+    VR_ERROR_ONCE_NYI;
+}
+
 QImage SimoxGui::Qt3DViewer::getScreenshot() const
 {
     Qt3DRender::QRenderCaptureReply *reply = this->capture->requestCapture();
