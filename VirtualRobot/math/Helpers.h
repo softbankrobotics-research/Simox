@@ -62,6 +62,12 @@ namespace math
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
         
         static Eigen::Matrix4f TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f& offset);
+        /// Invert the given pose in-place.
+        static void InvertPose(Eigen::Matrix4f& pose);
+        /// Return the inverted of the given pose.
+        template <typename Derived>
+        static Eigen::Matrix4f InvertedPose(const Eigen::MatrixBase<Derived>& pose);
+        
         static Eigen::Vector3f TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f &pos);
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f &ori);
@@ -69,7 +75,9 @@ namespace math
 
         static Eigen::Vector3f GetPosition(const Eigen::Matrix4f& pose);
         static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
+        
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
+        
 
         static float rad2deg(float rad);
         static float deg2rad(float deg);
@@ -158,6 +166,15 @@ namespace math
                                     const Eigen::RotationBase<RotDerived, 3>& ori)
     {
         return toPose(pos, ori.toRotationMatrix());
+    }
+    
+    
+    template <typename Derived>
+    Eigen::Matrix4f Helpers::InvertedPose(const Eigen::MatrixBase<Derived>& pose)
+    {
+        Eigen::Matrix4f inv = pose;
+        InvertPose(inv);
+        return inv;
     }
     
 }

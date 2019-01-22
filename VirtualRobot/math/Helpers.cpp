@@ -258,6 +258,10 @@ Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
     return oriBlock(pose);
 }
 
+void Helpers::InvertPose(Eigen::Matrix4f& pose)
+{
+    oriBlock(pose).transposeInPlace();
+    posBlock(pose) = - oriBlock(pose) * posBlock(pose);
 }
 
 Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
