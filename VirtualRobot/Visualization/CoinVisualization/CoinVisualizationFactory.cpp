@@ -123,6 +123,9 @@ namespace VirtualRobot
         //(void)coin_setenv("COIN_DEBUG_SOOFFSCREENRENDERER", "1", TRUE);
         //(void)coin_setenv("COIN_DEBUG_GLGLUE", "1", TRUE);
 
+        // Disable async fetching of textures.
+        // This interferes with offscreen rendering (no textures are rendered).
+        SoVRMLImageTexture::setDelayFetchURL(false);
     }
 
     /**
