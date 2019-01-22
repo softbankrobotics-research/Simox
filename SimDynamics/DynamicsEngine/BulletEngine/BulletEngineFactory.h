@@ -43,7 +43,8 @@ namespace SimDynamics
 
         DynamicsEnginePtr createEngine(DynamicsEngineConfigPtr config = DynamicsEngineConfigPtr()) override;
 
-        DynamicsObjectPtr createObject(VirtualRobot::ModelLinkPtr o) override;
+        DynamicsObjectPtr createObject(const VirtualRobot::ObstaclePtr& o) override;
+        DynamicsObjectPtr createObjectFromLink(const VirtualRobot::ModelLinkPtr& o) override;
         DynamicsModelPtr createRobot(VirtualRobot::RobotPtr robot) override;
 
         // AbstractFactoryMethod

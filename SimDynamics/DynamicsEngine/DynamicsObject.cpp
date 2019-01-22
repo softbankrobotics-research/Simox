@@ -1,15 +1,24 @@
 #include "DynamicsObject.h"
 
 #include <VirtualRobot/Model/Frame.h>
+#include <VirtualRobot/Model/Obstacle.h>
 
 namespace SimDynamics
 {
 
-    DynamicsObject::DynamicsObject(VirtualRobot::ModelLinkPtr o)
+    DynamicsObject::DynamicsObject(const VirtualRobot::ObstaclePtr &o)
+    {
+        THROW_VR_EXCEPTION_IF(!o, "NULL object");
+        sceneObject = o->getFirstLink();
+        model = o;
+        //engineMutexPtr.reset(new std::recursive_mutex()); // may be overwritten by another mutex!
+    }
+
+    DynamicsObject::DynamicsObject(const VirtualRobot::ModelLinkPtr &o)
     {
         THROW_VR_EXCEPTION_IF(!o, "NULL object");
         sceneObject = o;
-        //engineMutexPtr.reset(new std::recursive_mutex()); // may be overwritten by another mutex!
+        model = o->getModel();
     }
 
     DynamicsObject::~DynamicsObject()

@@ -37,7 +37,10 @@ namespace VirtualRobot
         for (const auto & node : modelNodes)
         {
             ModelLinkPtr link = std::dynamic_pointer_cast<ModelLink>(node);
-            links.push_back(link);
+            if (link)
+            {
+                links.push_back(link);
+            }
         }
         return createLinkSet(model, name, links, kinematicRoot, tcp, registerToModel);
     }
@@ -300,5 +303,10 @@ namespace VirtualRobot
         }
 
         return result;
+    }
+
+    bool LinkSet::isLinkSet() const
+    {
+        return true;
     }
 }

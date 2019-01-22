@@ -4,6 +4,7 @@
 #include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Visualization/SelectionManager.h>
+#include <VirtualRobot/Visualization/SelectionGroup.h>
 
 using namespace VirtualRobot;
 
@@ -102,6 +103,11 @@ void showDemoWindow::setupUI()
     connect(UI.radioButton_groupShapes, SIGNAL(clicked()), this, SLOT(groupShapes()));
     connect(UI.radioButton_groupColors, SIGNAL(clicked()), this, SLOT(groupColors()));
     connect(UI.radioButton_ungroup, SIGNAL(clicked()), this, SLOT(ungroup()));
+
+    connect(UI.radioButton_manip_none, SIGNAL(clicked()), this, SLOT(manipNone()));
+    connect(UI.radioButton_manip_rotate, SIGNAL(clicked()), this, SLOT(manipRotate()));
+    connect(UI.radioButton_manip_translate, SIGNAL(clicked()), this, SLOT(manipTranslate()));
+    connect(UI.radioButton_manip_translateRotate, SIGNAL(clicked()), this, SLOT(manipTranslateRotate()));
 }
 
 void showDemoWindow::closeEvent(QCloseEvent* event)
@@ -127,6 +133,11 @@ void showDemoWindow::selectionModeChanged(QAbstractButton *button)
     {
         std::cout << "selection mode: eMultiple" << std::endl;
         mode = VirtualRobot::SelectionManager::SelectionMode::eMultiple;
+    }
+    else
+    {
+        VR_ERROR << "Unknown Selection Mode" << std::endl;
+        mode = VirtualRobot::SelectionManager::SelectionMode::eNone;
     }
     VirtualRobot::SelectionManager::getInstance()->setSelectionMode(mode);
 }
@@ -201,6 +212,54 @@ void showDemoWindow::ungroup()
     cylinder_red->setSelectionGroup(factory->createSelectionGroup());
     cylinder_green->setSelectionGroup(factory->createSelectionGroup());
     cone_blue->setSelectionGroup(factory->createSelectionGroup());
+}
+
+void showDemoWindow::manipNone()
+{
+    std::cout << "Set manipulator: None" << std::endl;
+    for (const auto& g : viewer->getAllGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::None);
+    }
+}
+
+void showDemoWindow::manipTranslate()
+{
+    std::cout << "Set manipulator: Translate" << std::endl;
+    for (const auto& g : viewer->getAllGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::None);
+    }
+    for (const auto& g : viewer->getAllSelectedGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::Translate);
+    }
+}
+
+void showDemoWindow::manipRotate()
+{
+    std::cout << "Set manipulator: Rotate" << std::endl;
+    for (const auto& g : viewer->getAllGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::None);
+    }
+    for (const auto& g : viewer->getAllSelectedGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::Rotate);
+    }
+}
+
+void showDemoWindow::manipTranslateRotate()
+{
+    std::cout << "Set manipulator: TranslateRotate" << std::endl;
+    for (const auto& g : viewer->getAllGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::None);
+    }
+    for (const auto& g : viewer->getAllSelectedGroups())
+    {
+        g->setManipulator(VirtualRobot::ManipulatorType::TranslateRotate);
+    }
 }
 
 

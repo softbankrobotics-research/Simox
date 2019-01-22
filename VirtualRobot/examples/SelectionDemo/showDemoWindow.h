@@ -35,6 +35,10 @@ public slots:
     void groupShapes();
     void groupColors();
     void ungroup();
+    void manipNone();
+    void manipTranslate();
+    void manipRotate();
+    void manipTranslateRotate();
 
 private:
     void setupUI();

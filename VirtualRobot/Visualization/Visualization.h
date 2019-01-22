@@ -36,6 +36,19 @@ namespace VirtualRobot
 {
     class BoundingBox;
 
+    /**
+     * @brief The MultipleMutexLockGuard class locks a vector of mutexes in the constructor and unlocks these in the destructor.
+     */
+    class MultipleMutexLockGuard
+    {
+    public:
+        MultipleMutexLockGuard(const std::vector<std::shared_ptr<std::recursive_mutex>>& mutexList);
+        ~MultipleMutexLockGuard();
+
+    protected:
+        std::vector<std::shared_ptr<std::recursive_mutex>> mutexList;
+    };
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT Visualization : public Frame, public std::enable_shared_from_this<Visualization>
     {
         friend class VisualizationSet;
@@ -145,12 +158,12 @@ namespace VirtualRobot
 
         /*!
         */
-        virtual ~Visualization() = default;
+        virtual ~Visualization() override = default;
 
         /*!
             Sets the position of the internal data structure.
         */
-        virtual void setGlobalPose(const Eigen::Matrix4f& m);
+        virtual void setGlobalPose(const Eigen::Matrix4f& m) override;
         virtual void applyDisplacement(const Eigen::Matrix4f& dp);
         virtual size_t addPoseChangedCallback(std::function<void (const Eigen::Matrix4f &)> f);
         virtual void removePoseChangedCallback(size_t id);
@@ -234,7 +247,7 @@ namespace VirtualRobot
         virtual BoundingBox getBoundingBox() const = 0;
 
         /*!
-            Creates a triangulated model.
+            Returns the TriMeshModel in local coordinate system.
         */
         virtual TriMeshModelPtr getTriMeshModel() const = 0;
 
@@ -265,10 +278,18 @@ namespace VirtualRobot
         */
         virtual bool saveModel(const std::string& modelPath, const std::string& filename) = 0;
 
+        virtual void addMutex(const std::shared_ptr<std::recursive_mutex>& m);
+        virtual void removeMutex(const std::shared_ptr<std::recursive_mutex>& m);
+
+        std::shared_ptr<MultipleMutexLockGuard> getScopedLock() const;
+
     protected:
         std::map<size_t, std::function<void(const Eigen::Matrix4f&)>> poseChangedCallbacks;
         std::map<size_t, std::function<void(bool)>> selectionChangedCallbacks;
         SelectionGroupPtr selectionGroup;
+
+        mutable std::mutex mutexListChangeMutex;
+        mutable std::vector<std::shared_ptr<std::recursive_mutex>> mutexList;
     };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT DummyVisualization : virtual public Visualization

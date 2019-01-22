@@ -46,6 +46,10 @@ namespace VirtualRobot
         virtual ~ModelJointFixed() override;
 
         virtual NodeType getType() const override;
+        virtual bool isFixedJoint() const override
+        {
+            return true;
+        }
 
         /*!
          * Disable changing of joint value.

@@ -41,17 +41,16 @@ namespace VirtualRobot
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT Obstacle : public Model
     {
-    public:
+    protected:
 
         /*! 
         */
-        Obstacle(const std::string& name);
+        Obstacle(const std::string& name, const std::string& type = "Obstacle");
 
+    public:
         /*!
         */
-        virtual ~Obstacle();
-
-        virtual void print(bool printDecoration = true);
+        ~Obstacle() override;
 
         /*!
             Clones this object. If no col checker is given, the one of the original object is used.
@@ -59,6 +58,8 @@ namespace VirtualRobot
         ObstaclePtr clone(const std::string& name,
                           CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(),
                           float scaling = 1.0f) const;
+
+        void setName(const std::string& name) override;
 
         static ObstaclePtr create(const std::string& name, const VisualizationPtr& visualization = VisualizationPtr(), const CollisionModelPtr& collisionModel = CollisionModelPtr(), const ModelLink::Physics& p = ModelLink::Physics(), const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
@@ -95,7 +96,8 @@ namespace VirtualRobot
         */
         static ObstaclePtr createFromMesh(const TriMeshModelPtr& mesh, const CollisionCheckerPtr& colChecker = CollisionCheckerPtr());
 
-        virtual std::string toXML(const std::string& basePath, int tabs = 0);
+        virtual std::string toXML(const std::string& basePath, const std::string& modelPath = "models",
+                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true, int tabs = 0) override;
 
         virtual void setMass(float mass);
 

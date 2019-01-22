@@ -52,6 +52,12 @@ namespace VirtualRobot
          */
         virtual ~ModelNodeAttachment() override = default;
 
+        virtual void setGlobalPose(const Eigen::Matrix4f& pose) override
+        {
+            WriteLockPtr w = getModel()->getWriteLock();
+            Frame::setGlobalPose(pose);
+        }
+
         /*!
          * Checks if this attachment is attachable to the given node.
          * Mostly determined on the basis of the node type.

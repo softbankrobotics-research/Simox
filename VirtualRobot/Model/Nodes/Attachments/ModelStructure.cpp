@@ -99,7 +99,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr ModelStructure::clone() const
     {
-        ModelNodeAttachmentPtr result(new ModelStructure(name, localTransformation));
+        ModelNodeAttachmentPtr result(new ModelStructure(getName(), localTransformation));
         return result;
     }
 

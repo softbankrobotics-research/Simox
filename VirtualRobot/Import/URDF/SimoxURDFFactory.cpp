@@ -101,7 +101,7 @@ namespace VirtualRobot
         std::map< VirtualRobot::RobotNodePtr, std::vector<std::string> > childrenMap;
 
 
-        VirtualRobot::RobotPtr robo(new VirtualRobot::Model(robotName, robotType));
+        VirtualRobot::RobotPtr robo = VirtualRobot::ModelFactory::createRobot(robotName, robotType);
         auto bodies = urdfModel.links_;
         auto joints = urdfModel.joints_;
         auto itBodies = bodies.begin();

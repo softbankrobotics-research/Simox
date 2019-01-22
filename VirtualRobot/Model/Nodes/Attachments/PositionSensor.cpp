@@ -25,7 +25,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr PositionSensor::clone() const
     {
-        ModelNodeAttachmentPtr result(new PositionSensor(name, localTransformation));
+        ModelNodeAttachmentPtr result(new PositionSensor(getName(), localTransformation));
         return result;
     }
 
@@ -38,7 +38,7 @@ namespace VirtualRobot
             t += "\t";
         }
         std::stringstream ss;
-        ss << t << "<Sensor type='position' name='" << name <<"'>\n";
+        ss << t << "<Sensor type='position' name='" << getName() <<"'>\n";
         std::string pre2 = t + "\t";
         std::string pre3 = pre2 + "\t";
         ss << pre2 << "<Transform>" << endl;

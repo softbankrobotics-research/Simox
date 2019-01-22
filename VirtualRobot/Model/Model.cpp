@@ -335,8 +335,8 @@ namespace VirtualRobot
 	bool Model::hasJointSet(const std::string & name) const
 	{
 		ReadLockPtr r = getReadLock();
-		auto mns = modelNodeSetMap.find(name);
-		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<JointSet>(mns->second));
+        auto mns = getJointSet(name);
+        return mns.operator bool();
 	}
 
 	bool Model::hasLinkSet(const LinkSetPtr& nodeSet) const
@@ -350,8 +350,8 @@ namespace VirtualRobot
 	bool Model::hasLinkSet(const std::string & name) const
 	{
 		ReadLockPtr r = getReadLock();
-		auto mns = modelNodeSetMap.find(name);
-		return (mns != modelNodeSetMap.end() && std::dynamic_pointer_cast<LinkSet>(mns->second));
+        auto mns = getLinkSet(name);
+        return mns.operator bool();
 	}
 
     ModelNodeSetPtr Model::getNodeSet(const std::string& nodeSetName) const
@@ -371,10 +371,27 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         ModelNodeSetPtr res = getNodeSet(nodeSetName);
+        if (!res)
+        {
+            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+        }
         LinkSetPtr ls = std::dynamic_pointer_cast<LinkSet>(res);
         if (!ls)
         {
-            VR_WARNING << "No link set with name <" << nodeSetName << "> registered." << endl;
+            auto tmp = getNodeSet(nodeSetName + "_linkSet");
+            if (tmp)
+            {
+                ls = std::dynamic_pointer_cast<LinkSet>(tmp);
+            }
+            if (!ls && res)
+            {
+                auto links = res->getLinks();
+                if (!links.empty())
+                {
+                    VR_WARNING << "Node set <" << nodeSetName << "> is no link set. Converting..." << endl;
+                    ls = LinkSet::createLinkSet(res->getModel(), res->getName() + "_linkSet", links, res->getKinematicRoot(), res->getTCP(), true);
+                }
+            }
         }
         return ls;
     }
@@ -383,10 +400,27 @@ namespace VirtualRobot
     {
         ReadLockPtr r = getReadLock();
         ModelNodeSetPtr res = getNodeSet(nodeSetName);
-        JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
-        if (!ls)
+        if (!res)
         {
             VR_WARNING << "No joint set with name <" << nodeSetName << "> registered." << endl;
+        }
+        JointSetPtr ls = std::dynamic_pointer_cast<JointSet>(res);
+        if (!ls && res)
+        {
+            auto tmp = getNodeSet(nodeSetName + "_jointSet");
+            if (tmp)
+            {
+                ls = std::dynamic_pointer_cast<JointSet>(tmp);
+            }
+            if (!ls)
+            {
+                auto joints = res->getJoints();
+                if (!joints.empty())
+                {
+                    VR_WARNING << "Node set <" << nodeSetName << "> is no joint set. Converting..." << endl;
+                    ls = JointSet::createJointSet(res->getModel(), res->getName() + "_jointSet", joints, res->getKinematicRoot(), res->getTCP(), true);
+                }
+            }
         }
         return ls;
     }
@@ -414,7 +448,7 @@ namespace VirtualRobot
             if (l)
                 nodes.push_back(n.second);
         }
-        std::string nameLS = std::string("__") + name + std::string("-all-links");
+        std::string nameLS = std::string("__") + getName() + std::string("-all-links");
         std::shared_ptr<Model> m = shared_from_this();
         LinkSetPtr ls = LinkSet::createLinkSet(m, nameLS, nodes);
 
@@ -563,9 +597,9 @@ namespace VirtualRobot
 		if (n.size()==0)
 			return ModelLinkPtr();
 		return std::dynamic_pointer_cast<ModelLink>(n.at(0));
-	}
+    }
 
-	std::string Model::getType() const
+    std::string Model::getType() const
     {
         return type;
     }
@@ -575,17 +609,23 @@ namespace VirtualRobot
         threadsafe = flag;
     }
 
-    void Model::setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues)
+    void Model::setGlobalPose(const Eigen::Matrix4f& globalPose)
     {
         WriteLockPtr w = getWriteLock();
-        this->globalPose = globalPose;
-        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
-        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
+        setGlobalPoseNoUpdate(globalPose);
 
-        if (applyValues && !rootNode->getParentNode())
+        if (!rootNode->getParentNode())
         {
             rootNode->updatePose(true, true);
         }
+    }
+
+    void Model::setGlobalPoseNoUpdate(const Eigen::Matrix4f &globalPose)
+    {
+        WriteLockPtr w = getWriteLock();
+        Frame::setGlobalPose(globalPose);
+        visualizationNodeSetFull->setGlobalPoseNoUpdate(globalPose);
+        visualizationNodeSetCollision->setGlobalPoseNoUpdate(globalPose);
     }
 
     Eigen::Matrix4f Model::getGlobalPose() const
@@ -613,7 +653,23 @@ namespace VirtualRobot
         t = t * getGlobalPose();
 
         // set t
-        setGlobalPose(t, true);
+        setGlobalPose(t);
+    }
+
+    void Model::setGlobalPoseForNodeNoUpdate(const FramePtr& node, const Eigen::Matrix4f &globalPoseNode)
+    {
+        THROW_VR_EXCEPTION_IF(!node, "No node given.");
+        THROW_VR_EXCEPTION_IF(!hasFrame(node), "Frame <" + node->getName() +
+                                                   "> is not part of model <" + getName() + ">");
+
+        // get transformation from current to wanted tcp pose
+        Eigen::Matrix4f t = globalPoseNode * node->getGlobalPose().inverse();
+
+        // apply transformation to current global pose of robot
+        t = t * getGlobalPose();
+
+        // set t
+        setGlobalPoseNoUpdate(t);
     }
 
     Eigen::Vector3f Model::getCoMLocal() const
@@ -1067,7 +1123,7 @@ namespace VirtualRobot
     }
 
     std::string Model::toXML(const std::string& basePath, const std::string& modelPath,
-                             bool storeEEF, bool storeRNS, bool storeAttachments)
+                             bool storeEEF, bool storeRNS, bool storeAttachments, int tabs)
     {
         std::stringstream ss;
         //ss << "<?xml version='1.0' encoding='UTF-8'?>" << endl << endl;
@@ -1119,8 +1175,8 @@ namespace VirtualRobot
     void Model::print()
     {
         std::cout << "******** Model ********" << std::endl;
-        std::cout << "* Name: " << name << std::endl;
-        std::cout << "* Type: " << type << std::endl;
+        std::cout << "* Name: " << getName() << std::endl;
+        std::cout << "* Type: " << getType() << std::endl;
 
         if (this->getRootNode())
         {
@@ -1217,7 +1273,7 @@ namespace VirtualRobot
         WriteLockPtr w = getWriteLock();
         if (hasEndEffector(eef->getName()))
         {
-            THROW_VR_EXCEPTION("EEF with name " + eef->getName() + " already registered to robot " + name);
+            THROW_VR_EXCEPTION("EEF with name " + eef->getName() + " already registered to robot " + getName());
         }
         eefMap[eef->getName()] = eef;
     }
@@ -1415,7 +1471,7 @@ namespace VirtualRobot
 	bool Model::hasFrame(const std::string & frameName) const
 	{
 		FramePtr f = getFrame(frameName);
-		return f.get()!=0;
+        return f.operator bool();
 	}
 
 	FramePtr Model::getFrame(const std::string & frameName) const
@@ -1431,8 +1487,7 @@ namespace VirtualRobot
 			ModelNodeAttachmentPtr a = n.second->getAttachment(frameName);
 			if (a)
 			{
-				FramePtr f = std::dynamic_pointer_cast<Frame>(a);
-				return f;
+                return a;
 			}
 
 		}

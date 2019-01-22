@@ -30,16 +30,23 @@
 
 namespace VirtualRobot
 {
+    enum ManipulatorType
+    {
+        None,
+        Translate,
+        Rotate,
+        TranslateRotate
+    };
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT SelectionGroup : public std::enable_shared_from_this<SelectionGroup>
     {
         friend class Visualization;
         friend class VisualizationFactory;
     protected:
-        SelectionGroup() = default;
+        SelectionGroup();
 
     public:
-        virtual ~SelectionGroup() = default;
+        virtual ~SelectionGroup();
 
         inline void select()
         {
@@ -54,12 +61,45 @@ namespace VirtualRobot
 
         virtual std::vector<VisualizationPtr> getVisualizations();
 
+        size_t addManipulationStartedCallback(std::function<void (const SelectionGroupPtr &)> f);
+        void removeManipulationStartedCallback(size_t id);
+        void executeManipulationStartedCallbacks();
+
+        size_t addManipulationPoseUpdatedCallback(std::function<void (const SelectionGroupPtr&, const Eigen::Matrix4f &)> f);
+        void removeManipulationPoseUpdatedCallback(size_t id);
+        void executeManipulationPoseUpdatedCallback(const Eigen::Matrix4f& transformSinceManipulationStarted);
+
+        size_t addManipulationFinishedCallback(std::function<void (const SelectionGroupPtr &, const Eigen::Matrix4f &)> f);
+        void removeManipulationFinishedCallback(size_t id);
+        void executeManipulationFinishedCallbacks(const Eigen::Matrix4f& transformSinceManipulationStarted);
+
+        void addDefaultManipulationCallbacks();
+        void removeDefaultManipulationCallbacks();
+
+        size_t addManipulatorSetCallback(std::function<void (const SelectionGroupPtr &, ManipulatorType t)> f);
+        void removeManipulatorSetCallback(size_t id);
+        void setManipulator(ManipulatorType t);
+        ManipulatorType getManipulator() const;
+
     protected:
         virtual void addVisualization(const VisualizationPtr& visu);
         virtual void removeVisualization(const VisualizationPtr& visu);
 
+    private:
         std::vector<VisualizationWeakPtr> visualizations;
         bool selected;
+
+        std::map<size_t, std::function<void(const SelectionGroupPtr &)>> manipulationStartedCallbacks;
+        std::map<size_t, std::function<void(const SelectionGroupPtr &, const Eigen::Matrix4f&)>> manipulationPoseUpdatedCallbacks;
+        std::map<size_t, std::function<void(const SelectionGroupPtr &, const Eigen::Matrix4f&)>> manipulationFinishedCallbacks;
+        std::map<size_t, std::function<void(const SelectionGroupPtr &, ManipulatorType t)>> manipulatorSetCallbacks;
+        ManipulatorType manipulator;
+
+        bool defaultManipulationCallbacksAdded;
+        size_t defaultManipulationStartedCallbackId;
+        size_t defaultManipulationPoseUpdatedCallbackId;
+        size_t defaultManipulationFinishedCallbackId;
+        std::map<Visualization*, Eigen::Matrix4f> manipulationCallbackCache;
     };
 
 } // namespace VirtualRobot

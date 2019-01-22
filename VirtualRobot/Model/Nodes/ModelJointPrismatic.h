@@ -54,6 +54,10 @@ namespace VirtualRobot
         virtual ~ModelJointPrismatic() override;
 
         virtual NodeType getType() const override;
+        virtual bool isTranslationalJoint() const override
+        {
+            return true;
+        }
 
         /*!
          * In global coord system.
@@ -68,7 +72,7 @@ namespace VirtualRobot
          *
          * @return The translation direction in the local coordinate system of this node.
          */
-        Eigen::Vector3f getJointTranslationDirectionJointCoordSystem() const;
+        virtual Eigen::Vector3f getJointTranslationDirectionJointCoordSystem() const;
 
         virtual Eigen::Matrix4f getNodeTransformation() const override;
 

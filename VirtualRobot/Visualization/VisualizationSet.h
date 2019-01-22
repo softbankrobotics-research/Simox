@@ -109,6 +109,9 @@ namespace VirtualRobot
         size_t addVisualizationRemovedCallback(std::function<void (const VisualizationPtr&)> f);
         void removeVisualizationRemovedCallback(size_t id);
 
+        virtual void addMutex(const std::shared_ptr<std::recursive_mutex>& m) override;
+        virtual void removeMutex(const std::shared_ptr<std::recursive_mutex>& m) override;
+
     protected:
         std::vector<VisualizationPtr> visualizations;
         std::map<VisualizationPtr, size_t> childVisualizationChangedCallbacks;

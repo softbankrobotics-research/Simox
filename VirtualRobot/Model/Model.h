@@ -41,8 +41,10 @@ namespace VirtualRobot
     class VIRTUAL_ROBOT_IMPORT_EXPORT Model : public std::enable_shared_from_this<Model>, public Frame
     {
         friend class ModelNode;
+        friend class ModelFactory;
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    protected:
 
         /*!
          * Constructor.
@@ -53,6 +55,7 @@ namespace VirtualRobot
          */
         Model(const std::string& name, const std::string& type = "");
 
+    public:
         /*!
          * Destructor.
          */
@@ -327,7 +330,8 @@ namespace VirtualRobot
          * @param globalPose The new global pose.
          * @param applyValues If true, the global pose of all ModelNodes is adjusted.
          */
-        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues = true);
+        virtual void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
+        virtual void setGlobalPoseNoUpdate(const Eigen::Matrix4f& globalPose);
 
         /*!
          * Get the global Pose of this model.
@@ -345,6 +349,7 @@ namespace VirtualRobot
          * @param globalPoseNode The global pose for the node.
          */
         virtual void setGlobalPoseForNode(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        virtual void setGlobalPoseForNodeNoUpdate(const FramePtr& node, const Eigen::Matrix4f& globalPoseNode);
 
         /*!
          * Return center of mass of this model in local coordinate frame.
@@ -625,7 +630,7 @@ namespace VirtualRobot
          * @param newModel The node to attach.
          * @param existingNode The node to attach the new child at.
          */
-        void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
+        virtual void attachModelTo(const ModelPtr& newModel, const ModelNodePtr& existingNode);
 
         /*!
          * Attach a new Model to this model.
@@ -645,7 +650,7 @@ namespace VirtualRobot
          *
          * @param model The node to remove.
          */
-        void detachModel(const ModelPtr& model);
+        virtual void detachModel(const ModelPtr& model);
 
         bool isModelAttached(const ModelPtr& model) const;
 
@@ -678,7 +683,7 @@ namespace VirtualRobot
          * @return The generated XML string.
          */
         virtual std::string toXML(const std::string& basePath = ".", const std::string& modelPath = "models",
-                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true);
+                                  bool storeEEF = true, bool storeRNS = true, bool storeAttachments = true, int tabs = 0);
 
         /*!
          * Print status information.

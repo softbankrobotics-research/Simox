@@ -21,7 +21,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr PhysicsAttachment::clone() const
     {
-        return ModelNodeAttachmentPtr(new PhysicsAttachment(name, localTransformation));
+        return ModelNodeAttachmentPtr(new PhysicsAttachment(getName(), localTransformation));
     }
 
     void PhysicsAttachment::initVisualization()
@@ -44,27 +44,18 @@ namespace VirtualRobot
         {
             VisualizationPtr comModel1 = factory->createSphere(7.05f);
             comModel1->setColor(Visualization::Color::Red());
-            VisualizationPtr comModel2 = factory->createBox(10.0f, 10.0f, 10.0f);
-            comModel2->setColor(Visualization::Color::Blue());
-            std::vector<VisualizationPtr> v;
-            v.push_back(comModel1);
-            v.push_back(comModel2);
-            visuNodeCoM = factory->createVisualisationSet(v);
 
             std::stringstream ss;
-            ss << "COM: " << getName();
+            ss << "CoM: " << node->getName();
             std::string t = ss.str();
             VisualizationPtr vText = factory->createText(t, true, 0, 10.0f, 0);
             vText->setColor(Visualization::Color::Blue());
-            v.clear();
-            v.push_back(visuNodeCoM);
-            v.push_back(vText);
-            visuNodeCoM = factory->createVisualisationSet(v);
+            visuNodeCoM = factory->createVisualisationSet({comModel1, vText});
 
             Eigen::Vector3f comLocation = node->getCoMLocal();
             Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
             m.block(0, 3, 3, 1) = comLocation;
-            visuNodeCoM->applyDisplacement(m);
+            visuNodeCoM->setGlobalPose(m);
         }
 
         VisualizationPtr visuNodeInertia;

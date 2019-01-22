@@ -45,6 +45,7 @@ namespace VirtualRobot
         materialNodeNone(new SoSeparator),
         drawStyleNode(new SoDrawStyle),
         visualizationNode(visuNode),
+        updateVisualization(true),
         filename(""),
         boundingBox(false)
     {
@@ -94,6 +95,7 @@ namespace VirtualRobot
 
     void CoinVisualization::setVisualization(SoNode *newVisu)
     {
+        auto l = getScopedLock();
         if (newVisu)
         {
             mainNode->removeChild(visualizationNode);
@@ -116,6 +118,8 @@ namespace VirtualRobot
             return;
         }
 
+        auto l = getScopedLock();
+
         Visualization::setGlobalPose(m);
         transformNode->translation.setValue(m(0, 3), m(1, 3), m(2, 3));
         MathTools::Quaternion q = MathTools::eigen4f2quat(m);
@@ -128,6 +132,8 @@ namespace VirtualRobot
         {
             return;
         }
+
+        auto l = getScopedLock();
 
         auto index = mainNode->findChild(visualizationNode);
         if (showVisualization && index < 0)
@@ -142,6 +148,7 @@ namespace VirtualRobot
 
     bool CoinVisualization::isVisible() const
     {
+        auto l = getScopedLock();
         return mainNode->findChild(visualizationNode) >= 0;
     }
 
@@ -162,9 +169,12 @@ namespace VirtualRobot
             return;
         }
 
+        auto l = getScopedLock();
+
         style = s;
         switch (style)
         {
+        case undefined:
         case normal:
             drawStyleNode->style =  SoDrawStyle::FILLED;
             break;
@@ -176,6 +186,7 @@ namespace VirtualRobot
 
     Visualization::DrawStyle CoinVisualization::getStyle() const
     {
+        auto l = getScopedLock();
         return style;
     }
 
@@ -185,6 +196,8 @@ namespace VirtualRobot
         {
             return;
         }
+
+        auto l = getScopedLock();
 
         if (c.isNone())
         {
@@ -223,6 +236,7 @@ namespace VirtualRobot
 
     Visualization::Color CoinVisualization::getColor() const
     {
+        auto l = getScopedLock();
         PhongMaterialPtr m = std::dynamic_pointer_cast<PhongMaterial>(material);
         if (!m)
         {
@@ -241,6 +255,8 @@ namespace VirtualRobot
         {
             return;
         }
+
+        auto l = getScopedLock();
 
         this->material = material;
         auto mNone = std::dynamic_pointer_cast<NoneMaterial>(material);
@@ -280,6 +296,7 @@ namespace VirtualRobot
 
     Visualization::MaterialPtr CoinVisualization::getMaterial() const
     {
+        auto l = getScopedLock();
         return material;
     }
 
@@ -291,6 +308,8 @@ namespace VirtualRobot
             return;
         }
 
+        auto l = getScopedLock();
+
         float x, y, z;
         scaleNode->scaleFactor.getValue().getValue(x, y, z);
         scaleNode->scaleFactor.setValue(x*s.x(), y*s.y(), z*s.z());
@@ -299,6 +318,7 @@ namespace VirtualRobot
 
     Eigen::Vector3f CoinVisualization::getScalingFactor() const
     {
+        auto l = getScopedLock();
         float x, y, z;
         scaleNode->scaleFactor.getValue().getValue(x, y, z);
         return Eigen::Vector3f(x, y, z);
@@ -310,6 +330,8 @@ namespace VirtualRobot
         {
             return;
         }
+
+        auto l = getScopedLock();
 
         if(offset != 0.0f)
         {
@@ -324,27 +346,32 @@ namespace VirtualRobot
 
     std::vector<Primitive::PrimitivePtr> CoinVisualization::getPrimitives() const
     {
+        auto l = getScopedLock();
         return primitives;
     }
 
     void CoinVisualization::setFilename(const std::string &filename, bool boundingBox)
     {
+        auto l = getScopedLock();
         this->filename = filename;
         this->boundingBox = boundingBox;
     }
 
     std::string CoinVisualization::getFilename() const
     {
+        auto l = getScopedLock();
         return filename;
     }
 
     bool CoinVisualization::usedBoundingBoxVisu() const
     {
+        auto l = getScopedLock();
         return boundingBox;
     }
 
     void CoinVisualization::getTextureFiles(std::vector<std::string>& storeFilenames) const
     {
+        auto l = getScopedLock();
         auto node = getCoinVisualization();
         if (!node || getFilename().empty())
         {
@@ -478,19 +505,23 @@ namespace VirtualRobot
 
     BoundingBox CoinVisualization::getBoundingBox() const
     {
-        VirtualRobot::BoundingBox bbox = getTriMeshModel()->boundingBox;
+        auto l = getScopedLock();
+        VR_ASSERT(triMeshModel);
+        VirtualRobot::BoundingBox bbox = triMeshModel->boundingBox;
         bbox.transform(this->getGlobalPose());
         return bbox;
     }
 
     TriMeshModelPtr CoinVisualization::getTriMeshModel() const
     {
+        auto l = getScopedLock();
         VR_ASSERT(triMeshModel);
-        return triMeshModel;
+        return triMeshModel->clone();
     }
 
     void CoinVisualization::createTriMeshModel()
     {
+        auto l = getScopedLock();
         THROW_VR_EXCEPTION_IF(!visualizationNode, "CoinVisualizationNode::createTriMeshModel(): no Coin model present!");
 
         if (triMeshModel)
@@ -511,18 +542,22 @@ namespace VirtualRobot
         SoUnits *unitNode = new SoUnits;
         unitNode->units = SoUnits::MILLIMETERS;
         sep->addChild(unitNode);
-        sep->addChild(getMainNode());
+        sep->addChild(scaleNode);
+        sep->addChild(materialNodeNone);
+        sep->addChild(visualizationNode);
         ca.apply(sep);
         sep->unref();
     }
 
     int CoinVisualization::getNumFaces() const
     {
+        auto l = getScopedLock();
         return static_cast<int>(getTriMeshModel()->faces.size());
     }
 
     VisualizationPtr CoinVisualization::clone() const
     {
+        auto l = getScopedLock();
         CoinVisualizationPtr p(new CoinVisualization(visualizationNode));
         p->init();
         p->setGlobalPose(this->getGlobalPose());
@@ -538,6 +573,7 @@ namespace VirtualRobot
 
     void CoinVisualization::print() const
     {
+        auto l = getScopedLock();
         cout << "  CoinVisualization: ";
 
         if (getTriMeshModel())
@@ -578,6 +614,7 @@ namespace VirtualRobot
 
     bool CoinVisualization::saveModel(const std::string &modelPath, const std::string &filename)
     {
+        auto l = getScopedLock();
         std::string outFile = filename;
         bool vrml = true; // may be changed later according to file extension
 

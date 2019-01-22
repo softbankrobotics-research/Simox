@@ -314,7 +314,7 @@ namespace SimDynamics
         groundObject->getFirstLink()->getVisualization();
         groundObject->getFirstLink()->setSimulationType(VirtualRobot::ModelLink::Physics::eStatic);
 
-        BulletObjectPtr groundObjectBt(new BulletObject(groundObject->getFirstLink()));
+        BulletObjectPtr groundObjectBt(new BulletObject(groundObject));
         floor = groundObjectBt;
 
         addObject(groundObjectBt);

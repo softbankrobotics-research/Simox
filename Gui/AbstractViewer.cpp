@@ -1,9 +1,13 @@
 #include "AbstractViewer.h"
 
-SimoxGui::AbstractViewer::AbstractViewer() : baseLayer(this) {}
+#include <set>
+
+SimoxGui::AbstractViewer::AbstractViewer() : mutex(new std::recursive_mutex), baseLayer(this) {}
 
 void SimoxGui::AbstractViewer::addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
+    auto l = getScopedLock();
+    visualization->addMutex(mutex);
     requestLayer(layer).addVisualization(visualization);
 }
 
@@ -17,21 +21,27 @@ void SimoxGui::AbstractViewer::addVisualizations(const std::vector<VirtualRobot:
 
 void SimoxGui::AbstractViewer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
+    auto l = getScopedLock();
+    visualization->removeMutex(mutex);
     requestLayer(layer).removeVisualization(visualization);
 }
 
 void SimoxGui::AbstractViewer::removeVisualizationOnAllLayers(const VirtualRobot::VisualizationPtr &visualization)
 {
+    auto l = getScopedLock();
+    visualization->removeMutex(mutex);
     removeVisualizationOnAllLayers(baseLayer, visualization);
 }
 
 bool SimoxGui::AbstractViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
 {
+    auto l = getScopedLock();
     return baseLayer.hasVisualization(visualization, true);
 }
 
 bool SimoxGui::AbstractViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer, bool recursive) const
 {
+    auto lock = getScopedLock();
     std::vector<std::string> subLayers = splitLayerString(layer);
     const Layer* l = &baseLayer;
     for (const auto& subL : subLayers)
@@ -51,6 +61,7 @@ bool SimoxGui::AbstractViewer::hasVisualization(const VirtualRobot::Visualizatio
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::AbstractViewer::getAllVisualizations() const
 {
+    auto l = getScopedLock();
     std::vector<VirtualRobot::VisualizationPtr> visus;
     getAllVisualizations(baseLayer, visus);
     return visus;
@@ -58,6 +69,7 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::AbstractViewer::getAllVisu
 
 std::vector<VirtualRobot::VisualizationPtr> SimoxGui::AbstractViewer::getAllVisualizations(const std::string &layer, bool recursive) const
 {
+    auto lock = getScopedLock();
     std::vector<std::string> subLayers = splitLayerString(layer);
     const Layer* l = &baseLayer;
     for (const auto& subL : subLayers)
@@ -84,13 +96,26 @@ std::vector<VirtualRobot::VisualizationPtr> SimoxGui::AbstractViewer::getAllVisu
     }
 }
 
+std::vector<VirtualRobot::SelectionGroupPtr> SimoxGui::AbstractViewer::getAllGroups() const
+{
+    auto visus = getAllVisualizations();
+    std::set<VirtualRobot::SelectionGroupPtr> g;
+    for (const auto& v : visus)
+    {
+        g.insert(v->getSelectionGroup());
+    }
+    return std::vector<VirtualRobot::SelectionGroupPtr>(g.begin(), g.end());
+}
+
 void SimoxGui::AbstractViewer::addLayer(const std::string &layer)
 {
+    auto l = getScopedLock();
     requestLayer(layer);
 }
 
 void SimoxGui::AbstractViewer::removeLayer(const std::string &layer)
 {
+    auto lock = getScopedLock();
     std::vector<std::string> subLayers = splitLayerString(layer);
     Layer* l = &baseLayer;
     std::string lastName = subLayers.back();
@@ -116,11 +141,13 @@ void SimoxGui::AbstractViewer::removeLayer(const std::string &layer)
 
 void SimoxGui::AbstractViewer::removeAllLayers()
 {
+    auto l = getScopedLock();
     baseLayer.clear(true);
 }
 
 bool SimoxGui::AbstractViewer::hasLayer(const std::string &layer) const
 {
+    auto lock = getScopedLock();
     std::vector<std::string> subLayers = splitLayerString(layer);
     const Layer* l = &baseLayer;
     for (const auto& subL : subLayers)
@@ -140,6 +167,7 @@ bool SimoxGui::AbstractViewer::hasLayer(const std::string &layer) const
 
 void SimoxGui::AbstractViewer::clearLayer(const std::string &layer, bool recursive)
 {
+    auto lock = getScopedLock();
     std::vector<std::string> subLayers = splitLayerString(layer);
     Layer* l = &baseLayer;
     for (const auto& subL : subLayers)
@@ -159,17 +187,33 @@ void SimoxGui::AbstractViewer::clearLayer(const std::string &layer, bool recursi
 
 void SimoxGui::AbstractViewer::setLayerSeparator(char sep)
 {
+    auto lock = getScopedLock();
     layerSeparator = sep;
 }
 
 char SimoxGui::AbstractViewer::getLayerSeparator() const
 {
+    auto lock = getScopedLock();
     return layerSeparator;
 }
 
 void SimoxGui::AbstractViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
 {
+    if (mutex)
+    {
+        for (const auto& v : getAllVisualizations())
+        {
+            v->removeMutex(mutex);
+        }
+    }
     mutex = m;
+    if (mutex)
+    {
+        for (const auto& v : getAllVisualizations())
+        {
+            v->addMutex(mutex);
+        }
+    }
 }
 
 std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock() const

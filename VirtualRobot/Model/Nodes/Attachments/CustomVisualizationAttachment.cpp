@@ -49,7 +49,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr CustomVisualizationAttachment::clone() const
     {
-        CustomVisualizationAttachmentPtr c(new CustomVisualizationAttachment(name, visu->clone(), localTransformation));
+        CustomVisualizationAttachmentPtr c(new CustomVisualizationAttachment(getName(), visu->clone(), localTransformation));
         return c;
     }
 }

@@ -31,6 +31,9 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/draggers/SoDragger.h>
+
+#include "SoGLHighlightRenderAction.h"
 
 #include <unordered_set>
 
@@ -40,10 +43,12 @@ namespace SimoxGui
     {
     public:
         CoinViewer(QWidget *parent);
-        ~CoinViewer();
+        ~CoinViewer() override;
 
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
+
+        std::vector<VirtualRobot::SelectionGroupPtr> getAllSelectedGroups() const override;
 
         virtual QImage getScreenshot() const override;
 
@@ -59,6 +64,8 @@ namespace SimoxGui
         void setCameraConfiguration(const CameraConfigurationPtr& config) override;
         CameraConfigurationPtr getCameraConfiguration() const override;
 
+        void setMutex(std::shared_ptr<std::recursive_mutex> m) override;
+
     protected:
         virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) override;
         virtual void _removeVisualization(const VirtualRobot::VisualizationPtr &visualization) override
@@ -66,6 +73,7 @@ namespace SimoxGui
             _removeVisualization(visualization, nullptr);
         }
         bool _removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const VirtualRobot::SelectionGroupPtr& group);
+
 
         /*!
         * \brief actualRedraw Reimplement the redraw method in order to lock engine mutex
@@ -81,12 +89,21 @@ namespace SimoxGui
         {
             SoSeparator* node;
             size_t selectionChangedCallbackId;
+            SoDragger* dragger;
+            size_t manipulatorSetCallbackId;
         };
         std::map<std::shared_ptr<VirtualRobot::CoinSelectionGroup>, SelectionGroupData> selectionGroups;
+        void setDragger(SelectionGroupData &data, VirtualRobot::ManipulatorType t, const VirtualRobot::SelectionGroupPtr &selectionGroup);
+
+        static void manipulatorStartCallback(void* userdata, SoDragger* dragger);
+        static void manipulatorValueChangedCallback(void* userdata, SoDragger* dragger);
+        static void manipulatorFinishCallback(void* userdata, SoDragger* dragger);
 
         VirtualRobot::Visualization::Color backgroundColor;
 
         size_t selectionGroupChangedCallbackId;
+
+        SoGLHighlightRenderAction* highlightRenderAction;
     };
     typedef std::shared_ptr<CoinViewer> CoinViewerPtr;
 }

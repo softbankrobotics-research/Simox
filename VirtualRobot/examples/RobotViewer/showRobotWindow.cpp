@@ -24,9 +24,8 @@ using namespace std;
 using namespace VirtualRobot;
 
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
-    : QMainWindow(nullptr), robotLayer("robot-layer")
+    : QMainWindow(nullptr), rederRobotCoM(false), robotLayer("robot-layer")
 {
-    useColModel = false;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(sRobotFilename);
     robotFilename = sRobotFilename;
 
@@ -169,6 +168,22 @@ void showRobotWindow::render()
     // We always render attachments because they can be unchecked easily anyways
     auto attachmentVisus = robot->getAllAttachmentVisualizations();
     viewer->addVisualization(attachmentVisus, robotLayer);
+
+    if (rederRobotCoM)
+    {
+        auto comSphere = VisualizationFactory::getInstance()->createSphere(7.05f);
+        comSphere->setColor(Visualization::Color::Red());
+
+        auto comText = VisualizationFactory::getInstance()->createText("CoM: Robot", true, 0, 10.0f, 0);
+        comText->setColor(Visualization::Color::Blue());
+
+        auto com = VisualizationFactory::getInstance()->createVisualisationSet({comSphere, comText});
+        Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+        m.block<3, 1>(0, 3) = robot->getCoMGlobal();
+        com->setGlobalPose(m);
+
+        viewer->addVisualization(com);
+    }
 }
 
 void showRobotWindow::showSensors()
@@ -187,9 +202,15 @@ void showRobotWindow::attachPhysicsInformation(bool attach)
     if (!robot) return;
 
     if (attach)
+    {
         robot->attachPhysicsInformation();
+        rederRobotCoM = true;
+    }
     else
+    {
         robot->detachPhysicsInformation();
+        rederRobotCoM = false;
+    }
 
     render();
 }

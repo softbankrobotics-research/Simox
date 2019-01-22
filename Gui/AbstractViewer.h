@@ -42,6 +42,8 @@ class SIMOX_GUI_IMPORT_EXPORT AbstractViewer
 {
 public:
     AbstractViewer();
+    virtual ~AbstractViewer() = default;
+
     void addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer = "");
     inline void addVisualizations(const std::vector<VirtualRobot::VisualizationPtr> &visualizations, const std::string &layer = "");
     void removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer = "");
@@ -52,6 +54,8 @@ public:
 
     std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations() const;
     std::vector<VirtualRobot::VisualizationPtr> getAllVisualizations(const std::string &layer, bool recursive=true) const;
+
+    std::vector<VirtualRobot::SelectionGroupPtr> getAllGroups() const;
 
     void addLayer(const std::string& layer);
     void removeLayer(const std::string& layer);
@@ -65,6 +69,8 @@ public:
 
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const = 0;
     virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const = 0;
+
+    virtual std::vector<VirtualRobot::SelectionGroupPtr> getAllSelectedGroups() const = 0;
 
     virtual QImage getScreenshot() const = 0;
 
@@ -83,7 +89,7 @@ public:
     /*!
      * If set, the drawing is protected by this mutex. This overwrites the default mutex.
      */
-    void setMutex(std::shared_ptr<std::recursive_mutex> m);
+    virtual void setMutex(std::shared_ptr<std::recursive_mutex> m);
 
 
     /*!

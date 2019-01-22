@@ -104,7 +104,7 @@ namespace VirtualRobot
         /*!
          * Destructor.
          */
-        virtual ~JointSet();
+        virtual ~JointSet() override;
 
         virtual ModelNodePtr getNode(size_t i) const override;
         ModelJointPtr getJoint(size_t i) const;
@@ -223,6 +223,8 @@ namespace VirtualRobot
         void setJointValues(const ModelConfigPtr& config);
         
         std::map< std::string, float > getJointValueMap() const;
+
+        virtual bool isJointSet() const override;
 
     private:
         std::vector<ModelJointPtr> joints;

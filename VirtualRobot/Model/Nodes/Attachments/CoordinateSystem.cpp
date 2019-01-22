@@ -20,7 +20,7 @@ namespace VirtualRobot
 
     ModelNodeAttachmentPtr CoordinateSystem::clone() const
     {
-        return ModelNodeAttachmentPtr(new CoordinateSystem(name, localTransformation));
+        return ModelNodeAttachmentPtr(new CoordinateSystem(getName(), localTransformation));
     }
 }
 

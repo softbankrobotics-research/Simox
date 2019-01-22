@@ -132,7 +132,7 @@ namespace VirtualRobot
         // initialisation is checked in getParentNode
         std::vector<ModelNodePtr> result;
 
-        ModelNodePtr p = p->getParentNode(type);
+        ModelNodePtr p = getParentNode(type);
 
         do
         {
@@ -141,7 +141,7 @@ namespace VirtualRobot
                 result.push_back(p);
             }
         }
-        while (p = p->getParentNode(type));
+        while ((p = p->getParentNode(type)));
 
         return result;
     }
@@ -307,6 +307,12 @@ namespace VirtualRobot
         return r->getRootNode()->toLocalCoordinateSystemVec(globalPose.block(0, 3, 3, 1));
     }
 
+    void ModelNode::setGlobalPose(const Eigen::Matrix4f &pose)
+    {
+        WriteLockPtr w = getModel()->getWriteLock();
+        Frame::setGlobalPose(pose);
+    }
+
     void ModelNode::updatePose(bool updateChildren, bool updateAttachments)
     {
         ModelPtr thisModel = getModel();
@@ -344,7 +350,7 @@ namespace VirtualRobot
         ModelPtr parentModel = parentShared ? parentShared->getModel() : nullptr;
         if (parentModel && thisModel != parentModel)
         {
-            thisModel->setGlobalPose(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose(), false);
+            thisModel->setGlobalPoseNoUpdate(parentModel->oldLocalTransformOfAttachedModels.at(thisModel).inverse() * getGlobalPose());
         }
 
         if (updateChildren)
@@ -607,5 +613,30 @@ namespace VirtualRobot
         newModel->applyJointValues();
 
         return result;
+    }
+
+    void ModelNode::setName(const std::string &name)
+    {
+        if (name == getName())
+        {
+            return;
+        }
+        ModelPtr modelShared = model.lock();
+        if (modelShared)
+        {
+            auto l = modelShared->getWriteLock();
+            if (modelShared->modelNodeMap.find(name) != modelShared->modelNodeMap.end())
+            {
+                return;
+            }
+            auto value = modelShared->modelNodeMap.at(getName());
+            modelShared->modelNodeMap.erase(getName());
+            modelShared->modelNodeMap[name] = value;
+            Frame::setName(name);
+        }
+        else
+        {
+            Frame::setName(name);
+        }
     }
 }

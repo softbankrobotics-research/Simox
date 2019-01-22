@@ -66,10 +66,7 @@ private:
     std::vector < VirtualRobot::EndEffectorPtr > eefs;
     VirtualRobot::EndEffectorPtr currentEEF;
 
-    bool useColModel;
-    bool structureEnabled;
-    bool physicsCoMEnabled;
-    bool physicsInertiaEnabled;
+    bool rederRobotCoM;
 
     std::string robotLayer;
 

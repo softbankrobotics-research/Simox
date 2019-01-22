@@ -567,6 +567,9 @@ namespace VirtualRobot
         res->addChild(moveT);
 
         SoAsciiText* textNode = new SoAsciiText();
+        SbString text2(text.c_str());
+        text2.apply(&IVToolsHelper_ReplaceSpaceWithUnderscore);
+        textNode->string.set(text2.getString());
         if (billboard)
         {
             SoVRMLBillboard* bb = new SoVRMLBillboard();
@@ -577,9 +580,6 @@ namespace VirtualRobot
         {
             res->addChild(textNode);
         }
-        SbString text2(*text.c_str());
-        text2.apply(&IVToolsHelper_ReplaceSpaceWithUnderscore);
-        textNode->string.set(text2.getString());
 
         res->unrefNoDelete();
         return createVisualizationFromSoNode(res);

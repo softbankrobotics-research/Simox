@@ -35,15 +35,16 @@ namespace VirtualRobot
 
     class VIRTUAL_ROBOT_IMPORT_EXPORT ManipulationObject : public Obstacle
     {
+    protected:
+
+        ManipulationObject(const std::string& name, const std::string& type = "Manipulation Object");
+
     public:
-
-        ManipulationObject(const std::string& name);
-
         /*!
         */
         ~ManipulationObject() override;
 
-        void print(bool printDecoration = true) override;
+        void print() override;
 
         bool hasGraspSet(const GraspSetPtr &graspSet);
         bool hasGraspSet(const std::string& robotType, const std::string& eef);

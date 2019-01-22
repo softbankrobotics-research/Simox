@@ -46,11 +46,13 @@ if (Simox_VISUALIZATION)
         list(APPEND INCLUDES
             Coin/CoinViewer.h
             Coin/CoinViewerFactory.h
+            Coin/SoGLHighlightRenderAction.h
         )
 
         list(APPEND SOURCES
             Coin/CoinViewer.cpp
             Coin/CoinViewerFactory.cpp
+            Coin/SoGLHighlightRenderAction.cpp
         )
     ELSEIF (Simox_VISUALIZATION_TYPE STREQUAL "Qt3D")
         list(APPEND INCLUDES

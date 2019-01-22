@@ -42,7 +42,8 @@ namespace SimDynamics
         /*!
             Constructor
         */
-        BulletObject(VirtualRobot::ModelLinkPtr o);
+        BulletObject(const VirtualRobot::ObstaclePtr& o);
+        BulletObject(const VirtualRobot::ModelLinkPtr& o);
 
         /*!
         */

@@ -700,7 +700,7 @@ namespace VirtualRobot
         // process obstacles
         for (size_t i = 0; i < obstacles.size(); i++)
         {
-            ss << obstacles[i]->toXML(basePath, 1);
+            ss << obstacles[i]->toXML(basePath, "", false, false, false, 1);
             ss << "\n";
         }
 

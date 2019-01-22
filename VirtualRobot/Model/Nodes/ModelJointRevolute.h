@@ -55,6 +55,10 @@ namespace VirtualRobot
         virtual ~ModelJointRevolute() override;
 
         virtual NodeType getType() const override;
+        virtual bool isRotationalJoint() const override
+        {
+            return true;
+        }
 
         /*!
          * Get the joint axis in defined coordinate system.
@@ -69,7 +73,7 @@ namespace VirtualRobot
          *
          * @return The joint axis in the local coordinate system of this node.
          */
-        Eigen::Vector3f getJointRotationAxisInJointCoordSystem() const;
+        virtual Eigen::Vector3f getJointRotationAxisInJointCoordSystem() const;
 
         virtual Eigen::Matrix4f getNodeTransformation() const override;
 

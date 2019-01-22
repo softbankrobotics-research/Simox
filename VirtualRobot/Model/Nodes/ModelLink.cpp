@@ -18,26 +18,56 @@ namespace VirtualRobot
     {
     }
 
-    std::string ModelLink::Physics::getString(ModelLink::Physics::SimulationType s) const
+    ModelLink::Physics::Physics(const Eigen::Vector3f &localCoM, float massKg, float friction, ModelLink::Physics::CoMLocation comLocation, const Eigen::Matrix3f &inertiaMatrix, ModelLink::Physics::SimulationType simType, const std::vector<std::string> &ignoreCollisions) :
+        localCoM(localCoM),
+        massKg(massKg),
+        friction(friction),
+        comLocation(comLocation),
+        inertiaMatrix(inertiaMatrix),
+        simType(simType),
+        ignoreCollisions(ignoreCollisions)
+    {}
+
+    ModelLink::Physics::SimulationType ModelLink::Physics::string2SimulationType(const std::string &s)
+    {
+        if (s == "Static")
+        {
+            return eStatic;
+        }
+        else if (s == "Kinematic")
+        {
+            return eKinematic;
+        }
+        else if (s == "Dynamic")
+        {
+            return eDynamic;
+        }
+        else
+        {
+            return eUnknown;
+        }
+    }
+
+    std::string ModelLink::Physics::simulationType2String(ModelLink::Physics::SimulationType s)
     {
         std::string r;
 
         switch (s)
         {
-            case eStatic:
-                r = "Static";
-                break;
+        case eStatic:
+            r = "Static";
+            break;
 
-            case eKinematic:
-                r = "Kinematic";
-                break;
+        case eKinematic:
+            r = "Kinematic";
+            break;
 
-            case eDynamic:
-                r = "Dynamic";
-                break;
+        case eDynamic:
+            r = "Dynamic";
+            break;
 
-            default:
-                r = "Unknown";
+        default:
+            r = "Unknown";
         }
 
         return r;
@@ -67,7 +97,7 @@ namespace VirtualRobot
 
         if (simType != eUnknown)
         {
-            ss << ta << "\t<SimulationType value='" << getString(simType) << "'/>\n";
+            ss << ta << "\t<SimulationType value='" << simulationType2String(simType) << "'/>\n";
         }
 
         ss << ta << "\t<Mass unit='kg' value='" << massKg << "'/>\n";
@@ -147,6 +177,16 @@ namespace VirtualRobot
 
     ModelLink::~ModelLink()
     {
+    }
+
+    void ModelLink::setGlobalPose(const Eigen::Matrix4f &pose)
+    {
+        WriteLockPtr w = getModel()->getWriteLock();
+        ModelNode::setGlobalPose(pose);
+        if (visualizationModel)
+            visualizationModel->setGlobalPose(pose);
+        if (collisionModel)
+            collisionModel->setGlobalPose(pose);
     }
 
 
@@ -350,7 +390,7 @@ namespace VirtualRobot
         if (collisionModel)
             clonedCol = collisionModel->clone(newModel->getCollisionChecker(), scaling);
         Physics clonedPhysics = physics.clone(scaling);
-        ModelLinkPtr result(new ModelLink(newModel, name, this->getLocalTransformation(), clonedVisu, clonedCol, clonedPhysics, newModel->getCollisionChecker()));
+        ModelLinkPtr result(new ModelLink(newModel, getName(), this->getLocalTransformation(), clonedVisu, clonedCol, clonedPhysics, newModel->getCollisionChecker()));
         return result;
     }
 
@@ -484,7 +524,7 @@ namespace VirtualRobot
         std::stringstream ss;
         std::string pre = "\t";
         std::string pre2 = "\t\t";
-        ss << pre << "<ModelNode name='" << name << "'>\n";
+        ss << pre << "<ModelNode name='" << getName() << "'>\n";
         if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;

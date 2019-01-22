@@ -198,6 +198,16 @@ namespace VirtualRobot
         return true;
     }
 
+    bool ModelNodeSet::isJointSet() const
+    {
+        return false;
+    }
+
+    bool ModelNodeSet::isLinkSet() const
+    {
+        return false;
+    }
+
 
     ModelNodePtr ModelNodeSet::checkKinematicRoot(const std::string &name, const ModelPtr &model)
     {
@@ -232,7 +242,8 @@ namespace VirtualRobot
     ModelNodeSet::Implementation::Implementation(const std::string &name, const ModelWeakPtr &model, const std::vector<ModelNodePtr> &modelNodes, const ModelNodePtr& kinematicRoot, const FramePtr& tcp) :
         ModelNodeSet(name, model, modelNodes, kinematicRoot, tcp),
         modelNodes(modelNodes),
-        kinematicRoot(kinematicRoot)
+        kinematicRoot(kinematicRoot),
+        tcp(tcp)
     {
         if (!modelNodes.empty())
         {

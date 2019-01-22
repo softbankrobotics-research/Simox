@@ -53,7 +53,7 @@ namespace VirtualRobot
         std::stringstream ss;
         std::string pre = "\t";
         std::string pre2 = "\t\t";
-        ss << pre << "<ModelNode name='" << name << "'>\n";
+        ss << pre << "<ModelNode name='" << getName() << "'>\n";
         if (!this->getLocalTransformation().isIdentity())
         {
             ss << pre2 << "<Transform>" << endl;
@@ -83,7 +83,7 @@ namespace VirtualRobot
 
     ModelNodePtr ModelJointFixed::_clone(ModelPtr newModel, float scaling)
     {
-        ModelJointFixedPtr result(new ModelJointFixed(newModel, name, getLocalTransformation()));
+        ModelJointFixedPtr result(new ModelJointFixed(newModel, getName(), getLocalTransformation()));
         return result;
     }
 }

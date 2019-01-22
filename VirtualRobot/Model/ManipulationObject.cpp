@@ -10,8 +10,8 @@
 namespace VirtualRobot
 {
 
-    ManipulationObject::ManipulationObject(const std::string& name)
-        : Obstacle(name)
+    ManipulationObject::ManipulationObject(const std::string& name, const std::string &type)
+        : Obstacle(name, type)
     {
     }
 
@@ -19,24 +19,14 @@ namespace VirtualRobot
     {
     }
 
-    void ManipulationObject::print(bool printDecoration)
+    void ManipulationObject::print()
     {
-        if (printDecoration)
-        {
-            cout << "**** Manipulation Object ****" << endl;
-        }
-
-        Obstacle::print(false);
+        Obstacle::print();
 
         for (size_t i = 0; i < graspSets.size(); i++)
         {
             cout << "* Grasp set " << i << ":" << endl;
             graspSets[i]->print();
-        }
-
-        if (printDecoration)
-        {
-            cout << endl;
         }
     }
 
@@ -159,7 +149,7 @@ namespace VirtualRobot
             pre += "\t";
         }
 
-        ss << pre << "<ManipulationObject name='" << name << "'>\n";
+        ss << pre << "<ManipulationObject name='" << getName() << "'>\n";
 
         if (storeLinkToFile && !filename.empty())
         {

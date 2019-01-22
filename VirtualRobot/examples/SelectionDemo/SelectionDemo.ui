@@ -328,6 +328,61 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="qBoxManip">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox{border:2px solid gray;border-radius:5px;margin-top: 1ex;} QGroupBox::title{subcontrol-origin: margin;subcontrol-position:top center;padding:0 3px;}</string>
+          </property>
+          <property name="title">
+           <string>Manipulation Mode</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QRadioButton" name="radioButton_manip_none">
+             <property name="text">
+              <string>None</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup_manip</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_manip_translate">
+             <property name="text">
+              <string>Translate</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup_manip</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_manip_rotate">
+             <property name="text">
+              <string>Rotate</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup_manip</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_manip_translateRotate">
+             <property name="text">
+              <string>Translate &amp; Rotate</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup_manip</string>
+             </attribute>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -363,5 +418,6 @@
  <buttongroups>
   <buttongroup name="buttonGroup_selectionMode"/>
   <buttongroup name="buttonGroup_grouping"/>
+  <buttongroup name="buttonGroup_manip"/>
  </buttongroups>
 </ui>
