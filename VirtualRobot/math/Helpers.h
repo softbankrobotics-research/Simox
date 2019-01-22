@@ -62,6 +62,7 @@ namespace math
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
         
         static Eigen::Matrix4f TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f& offset);
+        
         /// Invert the given pose in-place.
         static void InvertPose(Eigen::Matrix4f& pose);
         /// Return the inverted of the given pose.

@@ -203,6 +203,7 @@ Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Mat
 
 Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target)
 {
+    // no normalization needed
     return Eigen::Quaternionf::FromTwoVectors(source, target).toRotationMatrix();
 }
 
