@@ -48,16 +48,19 @@ namespace math
         static std::vector<Eigen::Vector3f> VectorRangeSymmetric(float start, float end, int steps);
         static std::vector<Eigen::Vector3f> VectorRange(std::vector<float> xvals, std::vector<float> yvals, std::vector<float> zvals);
         static float SmallestAngle(Eigen::Vector3f a, Eigen::Vector3f b);
-        static Eigen::Vector3f CwiseMin(Eigen::Vector3f a, Eigen::Vector3f b);
-        static Eigen::Vector3f CwiseMax(Eigen::Vector3f a, Eigen::Vector3f b);
-        static Eigen::Vector3f CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b);
-        static Eigen::Vector3f Average(std::vector<Eigen::Vector3f> vectors);
+        
+        static Eigen::Vector3f CwiseMin(const Eigen::Vector3f& a, const Eigen::Vector3f& b);
+        static Eigen::Vector3f CwiseMax(const Eigen::Vector3f& a, const Eigen::Vector3f& b);
+        static Eigen::Vector3f CwiseDivide(const Eigen::Vector3f& a, const Eigen::Vector3f& b);
+        static Eigen::Vector3f Average(const std::vector<Eigen::Vector3f>& vectors);
         static void Swap(float &a,float &b);
+        
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori);
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f &source, const Eigen::Vector3f &target);
         static Eigen::Matrix3f RotateOrientationToFitVector(const Eigen::Matrix3f& ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget);
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
+        
         static Eigen::Matrix4f TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f& offset);
         static Eigen::Vector3f TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f &pos);
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);

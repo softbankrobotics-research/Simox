@@ -31,10 +31,10 @@ Eigen::Vector3f math::Helpers::GetOrthonormalVectors(
         Eigen::Vector3f vec, Eigen::Vector3f &dir1, Eigen::Vector3f &dir2)
 {
     vec = vec.normalized();
-    dir1 = vec.cross(Eigen::Vector3f(0,0,1));
+    dir1 = vec.cross(Eigen::Vector3f::UnitZ());
     if (dir1.norm() < 0.1f)
     {
-        dir1 = vec.cross(Eigen::Vector3f(0,1,0));
+        dir1 = vec.cross(Eigen::Vector3f::UnitY());
     }
     dir1 = -dir1.normalized();
     dir2 = vec.cross(dir1).normalized();
@@ -158,44 +158,36 @@ float Helpers::SmallestAngle(Eigen::Vector3f a, Eigen::Vector3f b)
     return static_cast<float>(std::atan2(a.cross(b).norm(), a.dot(b)));
 }
 
-Eigen::Vector3f Helpers::CwiseMin(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseMin(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(std::min(a.x(), b.x()),
-                std::min(a.y(), b.y()),
-                std::min(a.z(), b.z()));
+    return a.cwiseMin(b);
 }
 
-Eigen::Vector3f Helpers::CwiseMax(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseMax(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(std::max(a.x(), b.x()),
-                std::max(a.y(), b.y()),
-                std::max(a.z(), b.z()));
-
+    return a.cwiseMax(b);
 }
 
-Eigen::Vector3f Helpers::CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseDivide(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(a.x()/ b.x(),
-                a.y()/ b.y(),
-                a.z()/ b.z());
+    return a.cwiseQuotient(b);
 }
 
-Eigen::Vector3f Helpers::Average(std::vector<Eigen::Vector3f> vectors)
+Eigen::Vector3f Helpers::Average(const std::vector<Eigen::Vector3f>& vectors)
 {
-    Eigen::Vector3f avg = Eigen::Vector3f(0,0,0);
+    Eigen::Vector3f avg = Eigen::Vector3f::Zero();
     if (vectors.size() == 0) return avg;
-    for (Eigen::Vector3f v : vectors)
+    for (const Eigen::Vector3f& v : vectors)
     {
         avg += v;
     }
     avg /= vectors.size();
     return avg;
 }
-void Helpers::Swap(float &a,float &b)
+
+void Helpers::Swap(float& a,float& b)
 {
-    float t = a;
-    a = b;
-    b = t;
+    std::swap(a, b);
 }
 
 Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Quaternionf &ori)
@@ -215,18 +207,9 @@ Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Mat
 }
 
 
-Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f & source, const Eigen::Vector3f & target)
+Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target)
 {
-    Eigen::Vector3f src = source.normalized();
-    Eigen::Vector3f tgt = target.normalized();
-    float angle = acos(src.dot(tgt));
-    if(fabs(angle) < 0.001f)
-    {
-        return Eigen::Matrix3f::Identity();
-    }
-    Eigen::Vector3f axis = src.cross(tgt);
-    axis.normalize();
-    return Eigen::AngleAxisf(angle, axis).toRotationMatrix();
+    return Eigen::Quaternionf::FromTwoVectors(source, target).toRotationMatrix();
 }
 
 Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
@@ -251,7 +234,7 @@ Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const 
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
 {
-    return (transform * Eigen::Vector4f(pos(0), pos(1), pos(2), 1)).block<3,1>(0,0);
+    return (transform * pos.homogeneous()).head<3>();
 }
 
 Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f& dir)
