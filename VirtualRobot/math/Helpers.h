@@ -66,6 +66,7 @@ namespace math
         static Eigen::Vector3f TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f &dir);
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f &ori);
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
+
         static Eigen::Vector3f GetPosition(const Eigen::Matrix4f& pose);
         static Eigen::Matrix3f GetOrientation(const Eigen::Matrix4f& pose);
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
@@ -73,7 +74,91 @@ namespace math
         static float rad2deg(float rad);
         static float deg2rad(float deg);
 
+        
+        /// Get the position block from the given pose.
+        template <typename Derived>
+        static Eigen::Block<Derived, 3, 1> posBlock(Eigen::MatrixBase<Derived>& pose);
+        
+        /// Get the position block from the given pose.
+        template <typename Derived>
+        static const Eigen::Block<const Derived, 3, 1>
+        posBlock(const Eigen::MatrixBase<Derived>& pose);
+    
+        
+        /// Get the orientation block from the given pose.
+        template <typename Derived>
+        static Eigen::Block<Derived, 3, 3> oriBlock(Eigen::MatrixBase<Derived>& pose);
+        
+        /// Get the orientation block from the given pose.
+        template <typename Derived>
+        static const Eigen::Block<const Derived, 3, 3>
+        oriBlock(const Eigen::MatrixBase<Derived>& pose);
+    
+        
+        /// Build a pose matrix from the given position and orientation.
+        template <typename PosDerived, typename RotDerived>
+        static Eigen::Matrix4f toPose(const Eigen::MatrixBase<PosDerived>& pos,
+                                      const Eigen::MatrixBase<RotDerived>& ori);
+        
+        /// Build a pose matrix from the given position and orientation.
+        template <typename PosDerived, typename RotDerived>
+        static Eigen::Matrix4f toPose(const Eigen::MatrixBase<PosDerived>& pos,
+                                      const Eigen::RotationBase<RotDerived, 3>& ori);
+        
     private:
+        
     };
+
+    
+    
+    template <typename Derived>
+    Eigen::Block<Derived, 3, 1> Helpers::posBlock(Eigen::MatrixBase<Derived>& pose)
+    {
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<Derived>, 4, 4);
+        return Eigen::Block<Derived, 3, 1>(pose.derived(), 0, 3);
+    }
+    
+    template <typename Derived>
+    const Eigen::Block<const Derived, 3, 1> Helpers::posBlock(const Eigen::MatrixBase<Derived>& pose)
+    {
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<Derived>, 4, 4);
+        return Eigen::Block<const Derived, 3, 1>(pose.derived(), 0, 3);
+    }
+
+    
+    template <typename Derived>
+    Eigen::Block<Derived, 3, 3> Helpers::oriBlock(Eigen::MatrixBase<Derived>& pose)
+    {
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<Derived>, 4, 4);
+        return Eigen::Block<Derived, 3, 3>(pose.derived(), 0, 0);
+    }
+    
+    template <typename Derived>
+    const Eigen::Block<const Derived, 3, 3> Helpers::oriBlock(const Eigen::MatrixBase<Derived>& pose)
+    {
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<Derived>, 4, 4);
+        return Eigen::Block<const Derived, 3, 3>(pose.derived(), 0, 0);
+    }
+
+    
+    template <typename PosDerived, typename RotDerived>
+    Eigen::Matrix4f Helpers::toPose(const Eigen::MatrixBase<PosDerived>& pos,
+                                    const Eigen::MatrixBase<RotDerived>& ori)
+    {
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<PosDerived>, 3, 1);
+        EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Eigen::MatrixBase<RotDerived>, 3, 3);
+        Eigen::Matrix4f pose = pose.Identity();
+        posBlock(pose) = pos;
+        oriBlock(pose) = ori;
+        return pose;
+    }
+    
+    template <typename PosDerived, typename RotDerived>
+    Eigen::Matrix4f Helpers::toPose(const Eigen::MatrixBase<PosDerived>& pos,
+                                    const Eigen::RotationBase<RotDerived, 3>& ori)
+    {
+        return toPose(pos, ori.toRotationMatrix());
+    }
+    
 }
 
