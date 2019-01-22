@@ -190,20 +190,14 @@ void Helpers::Swap(float& a,float& b)
     std::swap(a, b);
 }
 
-Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Quaternionf &ori)
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori)
 {
-    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
-    pose.block<3,3>(0,0) = ori.toRotationMatrix();
-    pose.block<3,1>(0,3) = pos;
-    return pose;
+    return toPose(pos, ori);
 }
 
-Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Matrix3f &ori)
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori)
 {
-    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
-    pose.block<3,3>(0,0) = ori;
-    pose.block<3,1>(0,3) = pos;
-    return pose;
+    return toPose(pos, ori);
 }
 
 
@@ -225,10 +219,10 @@ Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, fl
     return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
 }
 
-Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f& pose, const Eigen::Vector3f& offset)
 {
     Eigen::Matrix4f p = pose;
-    p.block<3, 1>(0, 3) += offset;
+    posBlock(p) += offset;
     return p;
 }
 
@@ -239,29 +233,31 @@ Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, con
 
 Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f& dir)
 {
-    return transform.block<3,3>(0,0) * dir;
+    return oriBlock(transform) * dir;
 }
 
 Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori)
 {
-    return transform.block<3,3>(0,0) * ori;
+    return oriBlock(transform) * ori;
 }
 
-float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, float rad2mmFactor)
+float Helpers::Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor)
 {
-    Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
-    float dist = (a.block<3, 1>(0, 3) - b.block<3, 1>(0, 3)).norm();
+    Eigen::AngleAxisf aa(oriBlock(b) * oriBlock(a).inverse());
+    float dist = (posBlock(a) - posBlock(b)).norm();
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
 }
 
 Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
 {
-    return pose.block<3, 1>(0, 3);
+    return posBlock(pose);
 }
 
 Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
 {
-    return pose.block<3, 3>(0, 0);
+    return oriBlock(pose);
+}
+
 }
 
 Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
