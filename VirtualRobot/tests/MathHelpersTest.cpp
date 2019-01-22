@@ -68,20 +68,20 @@ BOOST_AUTO_TEST_CASE(test_TransformPosition)
     
     // translation only
     transform.setIdentity();
-    Helpers::posBlock(transform) = translation;
+    Helpers::Position(transform) = translation;
     BOOST_CHECK_EQUAL(Helpers::TransformPosition(transform, vector), 
                       vector + translation);
     
     // rotation only
     transform.setIdentity();
-    Helpers::oriBlock(transform) = rotation.toRotationMatrix();
+    Helpers::Orientation(transform) = rotation.toRotationMatrix();
     BOOST_CHECK_EQUAL(Helpers::TransformPosition(transform, vector), 
                       rotation * vector);
 
     // full transform
     transform.setIdentity();
-    Helpers::posBlock(transform) = translation;
-    Helpers::oriBlock(transform) = rotation.toRotationMatrix();
+    Helpers::Position(transform) = translation;
+    Helpers::Orientation(transform) = rotation.toRotationMatrix();
     BOOST_CHECK_EQUAL(Helpers::TransformPosition(transform, vector), 
                       rotation * vector + translation);
 }
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(test_InvertPose)
     Eigen::Vector3f translation(4, 5, 6);
     Eigen::AngleAxisf rotation(static_cast<float>(M_PI_2), Eigen::Vector3f::UnitY());
     
-    Eigen::Matrix4f pose = Helpers::toPose(translation, rotation);
+    Eigen::Matrix4f pose = Helpers::Pose(translation, rotation);
     Eigen::Matrix4f inv;
     
     // in-place
@@ -149,40 +149,40 @@ using namespace math;
 
 BOOST_AUTO_TEST_CASE(test_posBlock_const)
 {
-    BOOST_CHECK_EQUAL(Helpers::posBlock(const_cast<const Matrix4f&>(pose)), pos);
+    BOOST_CHECK_EQUAL(Helpers::Position(const_cast<const Matrix4f&>(pose)), pos);
 }
 
 BOOST_AUTO_TEST_CASE(test_posBlock_nonconst)
 {
-    BOOST_CHECK_EQUAL(Helpers::posBlock(pose), pos);
+    BOOST_CHECK_EQUAL(Helpers::Position(pose), pos);
     
-    Helpers::posBlock(pose) = pos2;
-    BOOST_CHECK_EQUAL(Helpers::posBlock(pose), pos2);
+    Helpers::Position(pose) = pos2;
+    BOOST_CHECK_EQUAL(Helpers::Position(pose), pos2);
 }
 
 
 BOOST_AUTO_TEST_CASE(test_oriBlock_const)
 {
-    BOOST_CHECK_EQUAL(Helpers::oriBlock(const_cast<const Eigen::Matrix4f&>(pose)), ori);
+    BOOST_CHECK_EQUAL(Helpers::Orientation(const_cast<const Eigen::Matrix4f&>(pose)), ori);
 }
 
 BOOST_AUTO_TEST_CASE(test_oriBlock_nonconst)
 {
-    BOOST_CHECK_EQUAL(Helpers::oriBlock(pose), ori);
+    BOOST_CHECK_EQUAL(Helpers::Orientation(pose), ori);
     
-    Helpers::oriBlock(pose) = ori2;
-    BOOST_CHECK_EQUAL(Helpers::oriBlock(pose), ori2);
+    Helpers::Orientation(pose) = ori2;
+    BOOST_CHECK_EQUAL(Helpers::Orientation(pose), ori2);
 }
 
 
 BOOST_AUTO_TEST_CASE(test_toPose_matrix_and_quaternion)
 {
-    BOOST_CHECK_EQUAL(Helpers::toPose(pos, quat), pose);
+    BOOST_CHECK_EQUAL(Helpers::Pose(pos, quat), pose);
 }
 
 BOOST_AUTO_TEST_CASE(test_toPose_matrix_and_rotation_matrix)
 {
-    BOOST_CHECK_EQUAL(Helpers::toPose(pos, ori), pose);
+    BOOST_CHECK_EQUAL(Helpers::Pose(pos, ori), pose);
 }
 
 

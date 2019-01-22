@@ -192,12 +192,36 @@ void Helpers::Swap(float& a,float& b)
 
 Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori)
 {
-    return toPose(pos, ori);
+    return Pose(pos, ori);
 }
 
 Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori)
 {
-    return toPose(pos, ori);
+    return Pose(pos, ori);
+}
+
+Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
+{
+    return Position(pose);
+}
+
+Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
+{
+    return Orientation(pose);
+}
+
+
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f& pose, const Eigen::Vector3f& offset)
+{
+    Eigen::Matrix4f p = pose;
+    Position(p) += offset;
+    return p;
+}
+
+void Helpers::InvertPose(Eigen::Matrix4f& pose)
+{
+    Orientation(pose).transposeInPlace();
+    Position(pose) = - Orientation(pose) * Position(pose);
 }
 
 
@@ -205,6 +229,11 @@ Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const 
 {
     // no normalization needed
     return Eigen::Quaternionf::FromTwoVectors(source, target).toRotationMatrix();
+}
+
+Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
+{
+    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
 }
 
 Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
@@ -215,17 +244,6 @@ Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
     return GetRotationMatrix(vec, globalTarget) * ori;
 }
 
-Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
-{
-    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
-}
-
-Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f& pose, const Eigen::Vector3f& offset)
-{
-    Eigen::Matrix4f p = pose;
-    posBlock(p) += offset;
-    return p;
-}
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
 {
@@ -234,36 +252,21 @@ Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, con
 
 Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f& dir)
 {
-    return oriBlock(transform) * dir;
+    return Orientation(transform) * dir;
 }
 
 Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori)
 {
-    return oriBlock(transform) * ori;
+    return Orientation(transform) * ori;
 }
 
 float Helpers::Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor)
 {
-    Eigen::AngleAxisf aa(oriBlock(b) * oriBlock(a).inverse());
-    float dist = (posBlock(a) - posBlock(b)).norm();
+    Eigen::AngleAxisf aa(Orientation(b) * Orientation(a).inverse());
+    float dist = (Position(a) - Position(b)).norm();
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
 }
 
-Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
-{
-    return posBlock(pose);
-}
-
-Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
-{
-    return oriBlock(pose);
-}
-
-void Helpers::InvertPose(Eigen::Matrix4f& pose)
-{
-    oriBlock(pose).transposeInPlace();
-    posBlock(pose) = - oriBlock(pose) * posBlock(pose);
-}
 
 Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
 {
