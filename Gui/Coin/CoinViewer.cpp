@@ -145,6 +145,8 @@ namespace SimoxGui
 
     CoinViewer::~CoinViewer()
     {
+        SoQtExaminerViewer::stopAnimating();
+
         VirtualRobot::SelectionManager::getInstance()->removeSelectionGroupChangedCallback(selectionGroupChangedCallbackId);
         removeAllLayers();
         sceneSep->removeAllChildren();
@@ -152,9 +154,6 @@ namespace SimoxGui
         sceneSep->unref();
         unitNode->unref();
         selectionNode->unref();
-
-        SoQtExaminerViewer::setGLRenderAction(nullptr);
-        delete highlightRenderAction;
     }
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
