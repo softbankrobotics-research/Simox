@@ -31,8 +31,8 @@
 #include "SoGLHighlightRenderAction.h"
 #include "../AbstractViewer.h"
 
-SimoxGui::SoGLHighlightRenderAction::SoGLHighlightRenderAction(const SbViewportRegion& viewportregion, AbstractViewer *viewer) :
-    SoGLRenderAction(viewportregion), viewer(viewer), selectedcolor_storage(sizeof(void*), alloc_colorpacker, free_colorpacker)
+SimoxGui::SoGLHighlightRenderAction::SoGLHighlightRenderAction(const SbViewportRegion& viewportregion) :
+    SoGLRenderAction(viewportregion), selectedcolor_storage(sizeof(void*), alloc_colorpacker, free_colorpacker)
 {
 
     this->isVisible = true;
@@ -54,8 +54,6 @@ SimoxGui::SoGLHighlightRenderAction::~SoGLHighlightRenderAction()
 
 void SimoxGui::SoGLHighlightRenderAction::apply(SoNode* node)
 {
-    auto l = viewer->getScopedLock();
-
     //Render complete scene with standard action
     SoGLRenderAction::apply(node);
 

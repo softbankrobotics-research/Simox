@@ -10,9 +10,9 @@
 
 namespace SimoxGui
 {
-    AbstractViewerPtr CoinViewerFactory::createViewer(QWidget *parent) const
+    AbstractViewerPtr CoinViewerFactory::createViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex> &m) const
     {
-        return AbstractViewerPtr(new CoinViewer(parent));
+        return AbstractViewerPtr(new CoinViewer(parent, m));
     }
 
     CameraConfigurationPtr CoinViewerFactory::createCameraConfiguration() const

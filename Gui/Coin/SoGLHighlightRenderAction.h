@@ -65,7 +65,7 @@ namespace SimoxGui
          *
          * @param viewportregion ViewportRegion the Class is initialized with
          */
-        SoGLHighlightRenderAction(const SbViewportRegion& viewportregion, AbstractViewer* viewer);
+        SoGLHighlightRenderAction(const SbViewportRegion& viewportregion);
 
         /**
          * Destructor.
@@ -94,8 +94,6 @@ namespace SimoxGui
         bool getVisible();
 
     private:
-        AbstractViewer* viewer;
-
         bool isVisible;
 
         void drawHighlight(SoPath* pathtothis, const SoPathList* pathlist);

@@ -40,8 +40,9 @@ namespace SimoxGui
 
 class SIMOX_GUI_IMPORT_EXPORT AbstractViewer
 {
+protected:
+    AbstractViewer(const std::shared_ptr<std::recursive_mutex>& m = nullptr);
 public:
-    AbstractViewer();
     virtual ~AbstractViewer();
 
     void addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer = "");
@@ -87,19 +88,12 @@ public:
     virtual CameraConfigurationPtr getCameraConfiguration() const = 0;
 
     /*!
-     * If set, the drawing is protected by this mutex. This overwrites the default mutex.
-     */
-    void setMutex(std::shared_ptr<std::recursive_mutex> m);
-
-
-    /*!
      * \return This lock allows to safely access the viewer's scene graph.
      */
     std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock() const;
 
 private:
     std::shared_ptr<std::recursive_mutex> mutex;
-    mutable std::mutex mutexMutex;
 
 protected:
     virtual void _addVisualization(const VirtualRobot::VisualizationPtr &visualization) = 0;

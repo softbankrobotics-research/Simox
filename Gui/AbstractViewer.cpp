@@ -2,7 +2,12 @@
 
 #include <set>
 
-SimoxGui::AbstractViewer::AbstractViewer() : mutex(new std::recursive_mutex), baseLayer(this) {}
+SimoxGui::AbstractViewer::AbstractViewer(const std::shared_ptr<std::recursive_mutex>& m) :
+    mutex(m),
+    baseLayer(this),
+    layerSeparator('/')
+{
+}
 
 SimoxGui::AbstractViewer::~AbstractViewer()
 {
@@ -206,40 +211,9 @@ char SimoxGui::AbstractViewer::getLayerSeparator() const
     return layerSeparator;
 }
 
-void SimoxGui::AbstractViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
-{
-    std::lock_guard<std::mutex> l(mutexMutex);
-    auto oldMutex = mutex;
-    mutex = m;
-
-    if (oldMutex && m)
-    {
-        for (const auto& v : getAllVisualizations())
-        {
-            v->swapMutex(oldMutex, m);
-        }
-    }
-    else if (oldMutex)
-    {
-        for (const auto& v : getAllVisualizations())
-        {
-            v->removeMutex(oldMutex);
-        }
-    }
-    else if (m)
-    {
-        for (const auto& v : getAllVisualizations())
-        {
-            v->addMutex(m);
-        }
-    }
-}
-
 std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock() const
 {
-    std::lock_guard<std::mutex> l1(mutexMutex);
-    std::shared_ptr<std::lock_guard<std::recursive_mutex>> l;
-
+    std::shared_ptr<std::lock_guard<std::recursive_mutex>> l(nullptr);
     if (mutex)
     {
         l.reset(new std::lock_guard<std::recursive_mutex>(*mutex));

@@ -96,13 +96,16 @@ void deselectionCallback(void*, SoPath* p)
 
 namespace SimoxGui
 {
-    CoinViewer::CoinViewer(QWidget *parent)
-        : SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
+    CoinViewer::CoinViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex>& m)
+        : AbstractViewer(m),
+          SoQtExaminerViewer(parent, "", true, BUILD_POPUP),
           parent(parent),
           sceneSep(new SoSeparator),
           unitNode(new SoUnits),
           selectionNode(new SoSelection)
     {
+        VR_ASSERT(m);
+
         sceneSep->ref();
         sceneSep->setName(SbName("sceneSep"));
         unitNode->ref();
@@ -122,7 +125,7 @@ namespace SimoxGui
 
         SoQtExaminerViewer::setSceneGraph(sceneSep);
         SoQtExaminerViewer::setAccumulationBuffer(true);
-        highlightRenderAction = new SoGLHighlightRenderAction(getViewportRegion(), this);
+        highlightRenderAction = new SoGLHighlightRenderAction(getViewportRegion());
         SoQtExaminerViewer::setGLRenderAction(highlightRenderAction);
         SoQtExaminerViewer::redrawOnSelectionChange(selectionNode);
         SoQtExaminerViewer::setFeedbackVisibility(true);
@@ -158,6 +161,7 @@ namespace SimoxGui
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected() const
     {
+        auto l = getScopedLock();
         std::vector<VirtualRobot::VisualizationPtr> visus;
         const SoPathList* selectedNodes = selectionNode->getList();
         for (int i=0; i<selectedNodes->getLength(); ++i)
@@ -176,6 +180,7 @@ namespace SimoxGui
 
     std::vector<VirtualRobot::VisualizationPtr> CoinViewer::getAllSelected(const std::string &layer, bool recursive) const
     {
+        auto l = getScopedLock();
         std::vector<VirtualRobot::VisualizationPtr> visus;
         if (hasLayer(layer))
         {
@@ -200,6 +205,7 @@ namespace SimoxGui
 
     std::vector<VirtualRobot::SelectionGroupPtr> CoinViewer::getAllSelectedGroups() const
     {
+        auto l = getScopedLock();
         std::vector<VirtualRobot::SelectionGroupPtr> visus;
         const SoPathList* selectedNodes = selectionNode->getList();
         for (int i=0; i<selectedNodes->getLength(); ++i)
@@ -218,6 +224,7 @@ namespace SimoxGui
 
     QImage CoinViewer::getScreenshot() const
     {
+        auto l = getScopedLock();
         getSceneManager()->render();
         getSceneManager()->scheduleRedraw();
         QGLWidget* w = (QGLWidget*)getGLWidget();
@@ -233,11 +240,13 @@ namespace SimoxGui
 
     void CoinViewer::viewAll()
     {
+        auto l = getScopedLock();
         SoQtExaminerViewer::viewAll();
     }
 
     void CoinViewer::setAntialiasing(unsigned short quality)
     {
+        auto l = getScopedLock();
         if (quality == 0)
         {
             SoQtExaminerViewer::setAntialiasing(false, quality);
@@ -250,6 +259,7 @@ namespace SimoxGui
 
     unsigned short CoinViewer::getAntialiasing() const
     {
+        auto l = getScopedLock();
         SbBool enabled;
         int quality;
         SoQtExaminerViewer::getAntialiasing(enabled, quality);
@@ -258,6 +268,7 @@ namespace SimoxGui
 
     void CoinViewer::setBackgroundColor(const VirtualRobot::Visualization::Color &color)
     {
+        auto l = getScopedLock();
         backgroundColor = color;
         if (color.isNone() || color.isTransparencyOnly())
         {
@@ -276,6 +287,7 @@ namespace SimoxGui
 
     void CoinViewer::setCameraConfiguration(const CameraConfigurationPtr &c)
     {
+        auto l = getScopedLock();
         SoQtExaminerViewer::getCamera()->position.setValue(c->pose(0, 3)/1000.f, c->pose(1, 3)/1000.f, c->pose(2, 3)/1000.f);
         VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(c->pose);
         SoQtExaminerViewer::getCamera()->orientation.setValue(q.x, q.y, q.z, q.w);
@@ -283,6 +295,7 @@ namespace SimoxGui
 
     CameraConfigurationPtr CoinViewer::getCameraConfiguration() const
     {
+        auto l = getScopedLock();
         CameraConfigurationPtr c = SimoxGui::ViewerFactory::getInstance()->createCameraConfiguration();
         auto rot = SoQtExaminerViewer::getCamera()->orientation.getValue();
         float x, y, z, w;

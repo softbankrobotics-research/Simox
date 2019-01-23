@@ -41,8 +41,10 @@ namespace SimoxGui
 {
     class SIMOX_GUI_IMPORT_EXPORT CoinViewer : public AbstractViewer, public SoQtExaminerViewer
     {
+        friend class CoinViewerFactory;
+    protected:
+        CoinViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex>& m = std::shared_ptr<std::recursive_mutex>(new std::recursive_mutex));
     public:
-        CoinViewer(QWidget *parent);
         ~CoinViewer() override;
 
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;

@@ -47,7 +47,7 @@ namespace SimoxGui
     public:
         virtual ~ViewerFactory() = default;
 
-        virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr) const = 0;
+        virtual AbstractViewerPtr createViewer(QWidget *parent = nullptr, const std::shared_ptr<std::recursive_mutex>& m = nullptr) const = 0;
         virtual CameraConfigurationPtr createCameraConfiguration() const = 0;
     };
 
