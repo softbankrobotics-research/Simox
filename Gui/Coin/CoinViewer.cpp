@@ -277,7 +277,7 @@ namespace SimoxGui
 
     void CoinViewer::setCameraConfiguration(const CameraConfigurationPtr &c)
     {
-        SoQtExaminerViewer::getCamera()->position.setValue(c->pose(0, 3), c->pose(1, 3), c->pose(2, 3));
+        SoQtExaminerViewer::getCamera()->position.setValue(c->pose(0, 3)/1000.f, c->pose(1, 3)/1000.f, c->pose(2, 3)/1000.f);
         VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(c->pose);
         SoQtExaminerViewer::getCamera()->orientation.setValue(q.x, q.y, q.z, q.w);
     }
@@ -290,9 +290,9 @@ namespace SimoxGui
         rot.getValue(x, y, z, w);
         c->pose = VirtualRobot::MathTools::quat2eigen4f(x, y, z, w);
         auto pos = SoQtExaminerViewer::getCamera()->position.getValue();
-        c->pose(0, 3) = pos[0];
-        c->pose(1, 3) = pos[1];
-        c->pose(2, 3) = pos[2];
+        c->pose(0, 3) = pos[0]*1000.f;
+        c->pose(1, 3) = pos[1]*1000.f;
+        c->pose(2, 3) = pos[2]*1000.f;
         return c;
     }
 
