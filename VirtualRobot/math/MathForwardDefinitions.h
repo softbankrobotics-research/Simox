@@ -31,7 +31,9 @@
 #include <stdexcept>
 #include <vector>
 
-template<class T> class Nullable {
+
+template<class T> class Nullable
+{
 public:
     Nullable(T& value)
         : defined(true), value(value)
@@ -61,7 +63,8 @@ private:
 
 
 
-namespace math{
+namespace math
+{
 
 
     //typedef Eigen::Vector2f Eigen::Vector2f;
@@ -132,7 +135,8 @@ namespace math{
 
 }
 
-namespace sim{
+namespace sim
+{
     class Simulation;
     typedef boost::shared_ptr<Simulation> SimulationPtr;
     class HapticExplorationData;
@@ -158,7 +162,8 @@ namespace sim{
     }
 }
 
-namespace explorationControllers{
+namespace explorationControllers
+{
 
     class AbstractExplorationController;
     typedef boost::shared_ptr<AbstractExplorationController> AbstractExplorationControllerPtr;
