@@ -54,6 +54,14 @@ Eigen::Vector3f Line::GetClosestPoint(Eigen::Vector3f p) const
     return pos - (pos - p).dot(dir) * dir / dir.squaredNorm();
 }
 
+Eigen::Vector3f Line::GetDistanceToPoint(Eigen::Vector3f p) const
+{
+    const Eigen::Vector3f n = dir.normalized();
+    const Eigen::Vector3f pInLine = (p - pos);
+    const float len = (n.transpose() * pInLine);
+    return pInLine - n * len;
+}
+
 float Line::GetT(Eigen::Vector3f p) const
 {
     return (p - pos).dot(dir) / dir.squaredNorm();

@@ -40,6 +40,7 @@ namespace math
         Eigen::Vector3f Get(float t) override;
         Eigen::Vector3f GetDerivative(float t) override;
         Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p) const;
+        Eigen::Vector3f GetDistanceToPoint(Eigen::Vector3f p) const;
         float GetT(Eigen::Vector3f p) const;
         std::string ToString() const;
 
