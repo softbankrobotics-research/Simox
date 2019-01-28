@@ -11,8 +11,7 @@ namespace Saba
     }
 
     Sampler::~Sampler()
-    {
-    }
+    = default;
 
     void Sampler::getUniformlyRandomConfig(Eigen::VectorXf& stroreConfig, CSpacePtr space)
     {

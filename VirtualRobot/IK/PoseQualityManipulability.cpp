@@ -21,8 +21,7 @@ namespace VirtualRobot
 
 
     PoseQualityManipulability::~PoseQualityManipulability()
-    {
-    }
+    = default;
 
 
     Eigen::MatrixXf PoseQualityManipulability::getSingularVectorCartesian()

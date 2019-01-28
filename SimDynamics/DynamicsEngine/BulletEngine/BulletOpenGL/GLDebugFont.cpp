@@ -45,8 +45,8 @@ subject to the following restrictions:
 #endif
 #endif
 
-#include <stdio.h>
-#include <string.h> //for memset
+#include <cstdio>
+#include <cstring> //for memset
 
 extern unsigned char sFontData[];
 static bool sTexturesInitialized = false;

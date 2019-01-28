@@ -33,7 +33,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
     {
         if (body->getMass() <= 0)
         {
-            THROW_VR_EXCEPTION("No mass for body" << body->getName());
+            THROW_VR_EXCEPTION("No mass for body '" << body->getName() << "' mass: " << body->getMass());
         }
     }
 
@@ -41,8 +41,7 @@ Gravity::Gravity(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr rns
 }
 
 Gravity::~Gravity()
-{
-}
+= default;
 
 
 
@@ -107,12 +106,7 @@ std::map<std::string, float> Gravity::computeGravityTorque()
 }
 
 Gravity::GravityData::GravityData()
-{
-
-
-
-
-}
+= default;
 
 Gravity::GravityDataPtr Gravity::GravityData::create(SceneObjectPtr node, const std::vector<RobotNodePtr> &joints, const std::vector<RobotNodePtr> &bodies, std::vector<Gravity::GravityDataPtr> &dataVec)
 {
@@ -134,8 +128,8 @@ void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNode
         }
     }
 
-    for (size_t i = 0; i < bodies.size(); ++i) {
-        if(thisNode == bodies.at(i)){
+    for (const auto & bodie : bodies) {
+        if(thisNode == bodie){
             computeCoM = true;
             //            VR_INFO << "Computing com for " << thisNode->getName() << std::endl;
         }

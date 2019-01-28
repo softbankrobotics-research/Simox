@@ -11,9 +11,9 @@
 // **************************************************************
 
 #include "ContactConeGenerator.h"
-#include <math.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cmath>
+#include <cstdio>
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <fstream>

@@ -22,9 +22,15 @@
  */
 
 #include "SimpleAbstractFunctionR1R6.h"
+#include "Helpers.h"
 
 using namespace armarx;
 
 SimpleAbstractFunctionR1R6::SimpleAbstractFunctionR1R6()
 {
+}
+
+Eigen::Matrix4f math::SimpleAbstractFunctionR1R6::GetPose(float t)
+{
+    return math::Helpers::CreatePose(GetPosition(t), GetOrientation(t));
 }

@@ -20,12 +20,10 @@ namespace VirtualRobot
 
 
     ObjectIO::ObjectIO()
-    {
-    }
+    = default;
 
     ObjectIO::~ObjectIO()
-    {
-    }
+    = default;
 
     VirtualRobot::ObstaclePtr ObjectIO::loadObstacle(const std::string& xmlFile)
     {
@@ -135,9 +133,9 @@ namespace VirtualRobot
             // create & register configs
             std::map< std::string, float > rc;
 
-            for (size_t i = 0; i < configDefinitions.size(); i++)
+            for (auto & configDefinition : configDefinitions)
             {
-                rc[ configDefinitions[i].name ] = configDefinitions[i].value;
+                rc[ configDefinition.name ] = configDefinition.value;
             }
 
             grasp->setConfiguration(rc);
@@ -344,9 +342,9 @@ namespace VirtualRobot
         // build object
         ManipulationObjectPtr object(new ManipulationObject(objName, visualizationNode, collisionModel, physics));
 
-        for (size_t i = 0; i < graspSets.size(); i++)
+        for (const auto & graspSet : graspSets)
         {
-            object->addGraspSet(graspSets[i]);
+            object->addGraspSet(graspSet);
         }
 
         object->setGlobalPose(globalPose);

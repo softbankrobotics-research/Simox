@@ -38,7 +38,7 @@
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoSphere.h>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -49,7 +49,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 ConstrainedIKWindow::ConstrainedIKWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     robotFilename = sRobotFilename;
     sceneSep = new SoSeparator();
@@ -165,7 +165,7 @@ void ConstrainedIKWindow::collisionModel()
     robotSep->removeAllChildren();
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(SceneObject::Full);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -216,12 +216,12 @@ void ConstrainedIKWindow::updateKCBox()
     robot->getRobotNodeSets(rns);
     kinChains.clear();
 
-    for (unsigned int i = 0; i < rns.size(); i++)
+    for (auto & rn : rns)
     {
-        if (rns[i]->isKinematicChain())
+        if (rn->isKinematicChain())
         {
-            UI.comboBoxKC->addItem(QString(rns[i]->getName().c_str()));
-            kinChains.push_back(rns[i]);
+            UI.comboBoxKC->addItem(QString(rn->getName().c_str()));
+            kinChains.push_back(rn);
         }
     }
 }

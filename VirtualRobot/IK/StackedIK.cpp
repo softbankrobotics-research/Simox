@@ -36,8 +36,7 @@ namespace VirtualRobot
     }
 
     StackedIK::~StackedIK()
-    {
-    }
+    = default;
 
     void StackedIK::setVerbose(bool v)
     {
@@ -71,11 +70,11 @@ namespace VirtualRobot
 
         int current_row = 0;
 
-        for (size_t i = 0; i < jacDefs.size(); i++)
+        for (const auto & jacDef : jacDefs)
         {
-            Eigen::MatrixXf J = jacDefs[i]->getJacobianMatrix();
+            Eigen::MatrixXf J = jacDef->getJacobianMatrix();
             jacobian.block(current_row, 0, J.rows(), J.cols()) = J;
-            error.block(current_row, 0, J.rows(), 1) = jacDefs[i]->getError();
+            error.block(current_row, 0, J.rows(), 1) = jacDef->getError();
 
             current_row += J.rows();
         }

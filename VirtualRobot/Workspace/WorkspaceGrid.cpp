@@ -21,7 +21,7 @@ namespace VirtualRobot
         minY = fMinY;
         maxY = fMaxY;
         discretizeSize = fDiscretizeSize;
-        data = NULL;
+        data = nullptr;
 
         if (fMinX >= fMaxX || fMinY >= fMaxY)
         {
@@ -275,13 +275,13 @@ namespace VirtualRobot
 
         float x, y;
 
-        for (int i = 0; i < (int)wsData.size(); i++)
+        for (auto & i : wsData)
         {
-            Eigen::Matrix4f tmpPos2 = graspGlobal * wsData[i]->transformation.inverse();
+            Eigen::Matrix4f tmpPos2 = graspGlobal * i->transformation.inverse();
             x = tmpPos2(0, 3);
             y = tmpPos2(1, 3);
 
-            setEntryCheckNeighbors(x, y, wsData[i]->value, grasp);
+            setEntryCheckNeighbors(x, y, i->value, grasp);
             //setEntry(x,y,vData[i].value);
         }
     }

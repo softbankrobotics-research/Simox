@@ -9,7 +9,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -26,7 +26,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 showRobotWindow::showRobotWindow(std::string& sRobotFilename)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
     //this->setCaption(QString("ShowRobot - KIT - Humanoids Group"));
@@ -255,7 +255,7 @@ void showRobotWindow::rebuildVisualization()
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
 
     visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -287,10 +287,10 @@ void showRobotWindow::showSensors()
 
     std::vector<SensorPtr> sensors = robot->getSensors();
 
-    for (size_t i = 0; i < sensors.size(); i++)
+    for (auto & sensor : sensors)
     {
-        sensors[i]->setupVisualization(showSensors, showSensors);
-        sensors[i]->showCoordinateSystem(showSensors);
+        sensor->setupVisualization(showSensors, showSensors);
+        sensor->showCoordinateSystem(showSensors);
     }
 
     // rebuild visualization
@@ -547,9 +547,9 @@ void showRobotWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (auto & currentRobotNode : currentRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentRobotNode->getName().c_str()));
     }
 }
 
@@ -558,9 +558,9 @@ void showRobotWindow::updateRNSBox()
     UI.comboBoxRobotNodeSet->clear();
     UI.comboBoxRobotNodeSet->addItem(QString("<All>"));
 
-    for (unsigned int i = 0; i < robotNodeSets.size(); i++)
+    for (auto & robotNodeSet : robotNodeSets)
     {
-        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSets[i]->getName().c_str()));
+        UI.comboBoxRobotNodeSet->addItem(QString(robotNodeSet->getName().c_str()));
     }
 }
 
@@ -845,7 +845,7 @@ void showRobotWindow::loadRobot()
     {
         QFileInfo fileInfo(m_sRobotFilename.c_str());
         std::string suffix(fileInfo.suffix().toLatin1());
-        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, NULL);
+        RobotImporterFactoryPtr importer = RobotImporterFactory::fromFileExtension(suffix, nullptr);
 
         if (!importer)
         {
@@ -1075,9 +1075,9 @@ void showRobotWindow::selectEEF(int nr)
 
     std::vector<std::string> ps = currentEEF->getPreshapes();
     UI.comboBoxEndEffectorPS->addItem(QString("none"));
-    for (unsigned int i = 0; i < ps.size(); i++)
+    for (auto & p : ps)
     {
-        UI.comboBoxEndEffectorPS->addItem(QString(ps[i].c_str()));
+        UI.comboBoxEndEffectorPS->addItem(QString(p.c_str()));
     }
 }
 
@@ -1105,8 +1105,8 @@ void showRobotWindow::updateEEFBox()
 {
     UI.comboBoxEndEffector->clear();
 
-    for (unsigned int i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        UI.comboBoxEndEffector->addItem(QString(eefs[i]->getName().c_str()));
+        UI.comboBoxEndEffector->addItem(QString(eef->getName().c_str()));
     }
 }

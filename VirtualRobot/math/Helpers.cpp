@@ -25,13 +25,16 @@
 using namespace math;
 
 
-Eigen::Vector3f math::Helpers::GetOrthonormalVectors(Eigen::Vector3f vec, Eigen::Vector3f &dir1, Eigen::Vector3f &dir2)
+#define M_PI_F (static_cast<float>(M_PI))
+
+Eigen::Vector3f math::Helpers::GetOrthonormalVectors(
+        Eigen::Vector3f vec, Eigen::Vector3f &dir1, Eigen::Vector3f &dir2)
 {
     vec = vec.normalized();
-    dir1 = vec.cross(Eigen::Vector3f(0,0,1));
+    dir1 = vec.cross(Eigen::Vector3f::UnitZ());
     if (dir1.norm() < 0.1f)
     {
-        dir1 = vec.cross(Eigen::Vector3f(0,1,0));
+        dir1 = vec.cross(Eigen::Vector3f::UnitY());
     }
     dir1 = -dir1.normalized();
     dir2 = vec.cross(dir1).normalized();
@@ -41,13 +44,14 @@ Eigen::Vector3f math::Helpers::GetOrthonormalVectors(Eigen::Vector3f vec, Eigen:
 float Helpers::ShiftAngle0_2PI(float a)
 {
     while (a < 0) a += 2*M_PI;
-    while (a > 2*M_PI) a -= 2*M_PI;
+    while (a > 2 * M_PI_F)
+        a -= 2*M_PI;
     return a;
 }
 
 float Helpers::AngleModPI(float value)
 {
-    return ShiftAngle0_2PI(value + M_PI) - M_PI;
+    return ShiftAngle0_2PI(value + M_PI_F) - M_PI_F;
 }
 
 void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float &f)
@@ -58,7 +62,7 @@ void Helpers::GetIndex(float t, float minT, float maxT, int count, int &i, float
         return;
     }
     f = ((t - minT) / (maxT - minT)) * (count - 1);
-    i = std::max(0, std::min(count - 2, (int)f));
+    i = std::max(0, std::min(count - 2, static_cast<int>(f)));
     f -= i;
 }
 
@@ -99,12 +103,16 @@ float Helpers::ILerp(float a, float b, float f)
 float Helpers::Lerp(float a, float b, int min, int max, int val)
 {
     if (min == max) return a; //TODO
-    return Lerp(a, b, (val - min) / (float)(max - min));
+    return Lerp(a, b, (val - min) / static_cast<float>(max - min));
 }
 
-float Helpers::Angle(Eigen::Vector2f v) { return (float)std::atan2(v.y(), v.x());}
+float Helpers::Angle(Eigen::Vector2f v) 
+{ 
+    return static_cast<float>(std::atan2(v.y(), v.x())); 
+}
 
-int Helpers::Sign(float x){
+int Helpers::Sign(float x)
+{
     return x > 0 ? 1 : (x == 0 ? 0 : -1);
 }
 
@@ -118,7 +126,7 @@ std::vector<float> Helpers::FloatRange(float start, float end, int steps)
 {
     std::vector<float> result;
     for (int i = 0; i < steps+1; ++i) {
-        result.push_back(Lerp(start, end, i/(float) steps));
+        result.push_back(Lerp(start, end, i/static_cast<float>(steps)));
     }
     return result;
 }
@@ -147,128 +155,118 @@ std::vector<Eigen::Vector3f> Helpers::VectorRange(std::vector<float> xvals, std:
 
 float Helpers::SmallestAngle(Eigen::Vector3f a, Eigen::Vector3f b)
 {
-    return (float)std::atan2(a.cross(b).norm(), a.dot(b));
+    return static_cast<float>(std::atan2(a.cross(b).norm(), a.dot(b)));
 }
 
-Eigen::Vector3f Helpers::CwiseMin(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseMin(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(std::min(a.x(), b.x()),
-                std::min(a.y(), b.y()),
-                std::min(a.z(), b.z()));
+    return a.cwiseMin(b);
 }
 
-Eigen::Vector3f Helpers::CwiseMax(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseMax(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(std::max(a.x(), b.x()),
-                std::max(a.y(), b.y()),
-                std::max(a.z(), b.z()));
-
+    return a.cwiseMax(b);
 }
 
-Eigen::Vector3f Helpers::CwiseDivide(Eigen::Vector3f a, Eigen::Vector3f b)
+Eigen::Vector3f Helpers::CwiseDivide(const Eigen::Vector3f& a, const Eigen::Vector3f& b)
 {
-    return Eigen::Vector3f(a.x()/ b.x(),
-                a.y()/ b.y(),
-                a.z()/ b.z());
+    return a.cwiseQuotient(b);
 }
 
-Eigen::Vector3f Helpers::Average(std::vector<Eigen::Vector3f> vectors)
+Eigen::Vector3f Helpers::Average(const std::vector<Eigen::Vector3f>& vectors)
 {
-    Eigen::Vector3f avg = Eigen::Vector3f(0,0,0);
-    if(vectors.size() == 0) return avg;
-    for(Eigen::Vector3f v : vectors){
+    Eigen::Vector3f avg = Eigen::Vector3f::Zero();
+    if (vectors.size() == 0) return avg;
+    for (const Eigen::Vector3f& v : vectors)
+    {
         avg += v;
     }
     avg /= vectors.size();
     return avg;
 }
-void Helpers::Swap(float &a,float &b)
+
+void Helpers::Swap(float& a,float& b)
 {
-    float t = a;
-    a = b;
-    b = t;
+    std::swap(a, b);
 }
 
-Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Quaternionf &ori)
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori)
 {
-    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
-    pose.block<3,3>(0,0) = ori.toRotationMatrix();
-    pose.block<3,1>(0,3) = pos;
-    return pose;
+    return Pose(pos, ori);
 }
 
-Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f &pos, const Eigen::Matrix3f &ori)
+Eigen::Matrix4f Helpers::CreatePose(const Eigen::Vector3f& pos, const Eigen::Matrix3f& ori)
 {
-    Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
-    pose.block<3,3>(0,0) = ori;
-    pose.block<3,1>(0,3) = pos;
-    return pose;
+    return Pose(pos, ori);
+}
+
+Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
+{
+    return Position(pose);
+}
+
+Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
+{
+    return Orientation(pose);
 }
 
 
-Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f & source, const Eigen::Vector3f & target)
+Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f& pose, const Eigen::Vector3f& offset)
 {
-    Eigen::Vector3f src = source.normalized();
-    Eigen::Vector3f tgt = target.normalized();
-    float angle = acos(src.dot(tgt));
-    if(fabs(angle) < 0.001f)
-    {
-        return Eigen::Matrix3f::Identity();
-    }
-    Eigen::Vector3f axis = src.cross(tgt);
-    axis.normalize();
-    return Eigen::AngleAxisf(angle, axis).toRotationMatrix();
+    Eigen::Matrix4f p = pose;
+    Position(p) += offset;
+    return p;
 }
 
-Eigen::Matrix3f Helpers::RotateOrientationToFitVector(const Eigen::Matrix3f &ori, const Eigen::Vector3f &localSource, const Eigen::Vector3f &globalTarget)
+void Helpers::InvertPose(Eigen::Matrix4f& pose)
+{
+    Orientation(pose).transposeInPlace();
+    Position(pose) = - Orientation(pose) * Position(pose);
+}
+
+
+Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target)
+{
+    // no normalization needed
+    return Eigen::Quaternionf::FromTwoVectors(source, target).toRotationMatrix();
+}
+
+Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
+{
+    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
+}
+
+Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
+        const Eigen::Matrix3f& ori, const Eigen::Vector3f& localSource, 
+        const Eigen::Vector3f& globalTarget)
 {
     Eigen::Vector3f vec = ori * localSource;
     return GetRotationMatrix(vec, globalTarget) * ori;
 }
 
-Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
-{
-    return Eigen::Vector3f(r * cos(angle), r * sin(angle), z);
-}
-
-Eigen::Matrix4f math::Helpers::TranslatePose(const Eigen::Matrix4f &pose, const Eigen::Vector3f &offset)
-{
-    Eigen::Matrix4f p = pose;
-    p.block<3, 1>(0, 3) += offset;
-    return p;
-}
 
 Eigen::Vector3f Helpers::TransformPosition(const Eigen::Matrix4f& transform, const Eigen::Vector3f& pos)
 {
-    return (transform * Eigen::Vector4f(pos(0), pos(1), pos(2), 1)).block<3,1>(0,0);
+    return (transform * pos.homogeneous()).head<3>();
 }
 
 Eigen::Vector3f Helpers::TransformDirection(const Eigen::Matrix4f& transform, const Eigen::Vector3f& dir)
 {
-    return transform.block<3,3>(0,0) * dir;
+    return Orientation(transform) * dir;
 }
 
 Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori)
 {
-    return transform.block<3,3>(0,0) * ori;
+    return Orientation(transform) * ori;
 }
 
-float Helpers::Distance(const Eigen::Matrix4f &a, const Eigen::Matrix4f &b, float rad2mmFactor)
+float Helpers::Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor)
 {
-    Eigen::AngleAxisf aa(b.block<3,3>(0,0) * a.block<3,3>(0,0).inverse());
-    float dist = (a.block<3, 1>(0, 3) - b.block<3, 1>(0, 3)).norm();
+    Eigen::AngleAxisf aa(Orientation(b) * Orientation(a).inverse());
+    float dist = (Position(a) - Position(b)).norm();
     return dist + AngleModPI(aa.angle()) * rad2mmFactor;
 }
 
-Eigen::Vector3f Helpers::GetPosition(const Eigen::Matrix4f& pose)
-{
-    return pose.block<3, 1>(0, 3);
-}
-
-Eigen::Matrix3f Helpers::GetOrientation(const Eigen::Matrix4f& pose)
-{
-    return pose.block<3, 3>(0, 0);
-}
 
 Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen)
 {
@@ -290,10 +288,10 @@ Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eig
 
 float Helpers::rad2deg(float rad)
 {
-    return rad * (float)(180.0 / M_PI);
+    return rad * 180.0f / M_PI_F;
 }
 
 float Helpers::deg2rad(float deg)
 {
-    return deg * (float)(M_PI / 180.0);
+    return deg * M_PI_F / 180.0f;
 }

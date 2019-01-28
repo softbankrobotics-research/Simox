@@ -116,5 +116,5 @@ bool CoMConstraint::checkTolerances()
         return d.norm() <= tolerance;
     }
 
-    return 0;
+    return false;
 }

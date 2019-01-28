@@ -29,8 +29,7 @@ namespace GraspStudio
     }
 
     ApproachMovementSurfaceNormal::~ApproachMovementSurfaceNormal()
-    {
-    }
+    = default;
 
     bool ApproachMovementSurfaceNormal::getPositionOnObject(Eigen::Vector3f& storePos, Eigen::Vector3f& storeApproachDir)
     {

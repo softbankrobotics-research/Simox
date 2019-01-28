@@ -36,20 +36,21 @@ namespace math
         Eigen::Vector3f Pos(){return pos;}
         Eigen::Vector3f Dir(){return dir;}
 
-        Line Normalized();
+        Line Normalized() const;
         Eigen::Vector3f Get(float t) override;
         Eigen::Vector3f GetDerivative(float t) override;
-        Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p);
-        float GetT(Eigen::Vector3f p);
-        std::string ToString();
+        Eigen::Vector3f GetClosestPoint(Eigen::Vector3f p) const;
+        Eigen::Vector3f GetDistanceToPoint(Eigen::Vector3f p) const;
+        float GetT(Eigen::Vector3f p) const;
+        std::string ToString() const;
 
-        bool IntersectsTriangle(Triangle tri, float& t);
-        bool IntersectsPrimitive(PrimitivePtr p, float& t);
+        bool IntersectsTriangle(Triangle tri, float& t)  const;
+        bool IntersectsPrimitive(PrimitivePtr p, float& t)  const;
 
         static Line FromPoints(Eigen::Vector3f p1, Eigen::Vector3f p2);
         static Line FromPoses(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2);
 
-        Line Transform(const Eigen::Matrix4f& pose);
+        Line Transform(const Eigen::Matrix4f& pose) const;
 
     private:
         Eigen::Vector3f pos;

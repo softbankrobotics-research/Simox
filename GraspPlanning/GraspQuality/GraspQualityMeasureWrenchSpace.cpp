@@ -18,7 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <float.h>
+#include <cfloat>
 // if defined, the inverted contact normals are used
 //#define INVERT_NORMALS
 
@@ -39,8 +39,7 @@ namespace GraspStudio
     }
 
     GraspQualityMeasureWrenchSpace::~GraspQualityMeasureWrenchSpace()
-    {
-    }
+    = default;
 
 
     void GraspQualityMeasureWrenchSpace::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints)
@@ -296,10 +295,10 @@ namespace GraspStudio
             faceCenter.p.setZero();
             faceCenter.n.setZero();
 
-            for (int j = 0; j < 6; j++)
+            for (int j : faceIter->id)
             {
-                faceCenter.p += (convexHullGWS->vertices)[faceIter->id[j]].p;
-                faceCenter.n += (convexHullGWS->vertices)[faceIter->id[j]].n;
+                faceCenter.p += (convexHullGWS->vertices)[j].p;
+                faceCenter.n += (convexHullGWS->vertices)[j].n;
             }
 
             faceCenter.p /= 6.0f;
@@ -406,15 +405,15 @@ namespace GraspStudio
         float fRes = FLT_MAX;
         int nWrongFacets = 0;
 
-        for (size_t i = 0; i < ch->faces.size(); i++)
+        for (auto & face : ch->faces)
         {
-            if (ch->faces[i].distNormCenter > 0)
+            if (face.distNormCenter > 0)
             {
                 nWrongFacets++;
             }
-            else if (-(ch->faces[i].distNormCenter) < fRes)
+            else if (-(face.distNormCenter) < fRes)
             {
-                fRes = -(ch->faces[i].distNormCenter);
+                fRes = -(face.distNormCenter);
             }
         }
 

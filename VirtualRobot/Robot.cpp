@@ -20,12 +20,10 @@ namespace VirtualRobot
     }
 
     Robot::Robot()
-    {
-    }
+    = default;
 
     Robot::~Robot()
-    {
-    }
+    = default;
 
     LocalRobot::~LocalRobot()
     {
@@ -36,9 +34,9 @@ namespace VirtualRobot
         {
             std::vector<SceneObjectPtr> c = it->second->getChildren();
 
-            for (size_t j = 0; j < c.size(); j++)
+            for (const auto & j : c)
             {
-                it->second->detachChild(c[j]);
+                it->second->detachChild(j);
             }
 
             it++;
@@ -75,14 +73,14 @@ namespace VirtualRobot
             std::vector< RobotNodePtr > allNodes;
             node->collectAllRobotNodes(allNodes);
 
-            for (unsigned int i = 0; i < allNodes.size(); i++)
+            for (auto & allNode : allNodes)
             {
-                std::string name = allNodes[i]->getName();
+                std::string name = allNode->getName();
 
                 if (!this->hasRobotNode(name))
                 {
                     VR_WARNING << "Robot node with name <" << name << "> was not registered, adding it to RobotNodeMap" << endl;
-                    registerRobotNode(allNodes[i]);
+                    registerRobotNode(allNode);
                 }
             }
         }
@@ -611,7 +609,7 @@ namespace VirtualRobot
 
         while (robotNodes.end() != iterator)
         {
-            (*iterator)->showCoordinateSystem(enable, 1.0f, NULL, type);
+            (*iterator)->showCoordinateSystem(enable, 1.0f, nullptr, type);
             ++iterator;
         }
     }
@@ -813,13 +811,13 @@ namespace VirtualRobot
         std::vector<RobotNodePtr> allNodes;
         startJoint->collectAllRobotNodes(allNodes);
 
-        for (size_t i = 0; i < allNodes.size(); i++)
+        for (auto & allNode : allNodes)
         {
-            RobotNodePtr roN = result->getRobotNode(allNodes[i]->getName());
+            RobotNodePtr roN = result->getRobotNode(allNode->getName());
 
             if (roN)
             {
-                roN->setJointValueNoUpdate(allNodes[i]->getJointValue());
+                roN->setJointValueNoUpdate(allNode->getJointValue());
             }
         }
 
@@ -1043,15 +1041,15 @@ namespace VirtualRobot
         VirtualRobot::BoundingBox bbox;
         std::vector<RobotNodePtr> rn = getRobotNodes();
 
-        for (size_t i = 0; i < rn.size(); i++)
+        for (auto & i : rn)
         {
-            if (collisionModel && rn[i]->getCollisionModel())
+            if (collisionModel && i->getCollisionModel())
             {
-                bbox.addPoints(rn[i]->getCollisionModel()->getBoundingBox());
+                bbox.addPoints(i->getCollisionModel()->getBoundingBox());
             }
-            else if (!collisionModel && rn[i]->getVisualization())
+            else if (!collisionModel && i->getVisualization())
             {
-                bbox.addPoints(rn[i]->getVisualization()->getBoundingBox());
+                bbox.addPoints(i->getVisualization()->getBoundingBox());
             }
         }
 
@@ -1062,15 +1060,15 @@ namespace VirtualRobot
     {
         std::vector<RobotNodePtr> rn = getRobotNodes();
 
-        for (size_t i = 0; i < rn.size(); i++)
+        for (auto & i : rn)
         {
-            std::vector<SensorPtr> sensors = rn[i]->getSensors();
+            std::vector<SensorPtr> sensors = i->getSensors();
 
-            for (std::vector<SensorPtr>::iterator it = sensors.begin(); it != sensors.end(); it++)
+            for (auto & sensor : sensors)
             {
-                if ((*it)->getName() == name)
+                if (sensor->getName() == name)
                 {
-                    return *it;
+                    return sensor;
                 }
             }
         }
@@ -1083,9 +1081,9 @@ namespace VirtualRobot
         std::vector<SensorPtr> result;
         std::vector<RobotNodePtr> rn = getRobotNodes();
 
-        for (size_t i = 0; i < rn.size(); i++)
+        for (auto & i : rn)
         {
-            std::vector<SensorPtr> s = rn[i]->getSensors();
+            std::vector<SensorPtr> s = i->getSensors();
 
             if (s.size() > 0)
             {
@@ -1104,9 +1102,9 @@ namespace VirtualRobot
         ss << "<Robot Type='" << this->type << "' RootNode='" << this->getRootNode()->getName() << "'>" << endl << endl;
         std::vector<RobotNodePtr> nodes = getRobotNodes();
 
-        for (size_t i = 0; i < nodes.size(); i++)
+        for (auto & node : nodes)
         {
-            ss << nodes[i]->toXML(basePath, modelPath, storeSensors) << endl;
+            ss << node->toXML(basePath, modelPath, storeSensors) << endl;
         }
 
         ss << endl;
@@ -1116,9 +1114,9 @@ namespace VirtualRobot
             std::vector<RobotNodeSetPtr> rns;
             this->getRobotNodeSets(rns);
 
-            for (size_t i = 0; i < rns.size(); i++)
+            for (auto & rn : rns)
             {
-                ss << rns[i]->toXML(1) << endl;
+                ss << rn->toXML(1) << endl;
             }
 
             if (rns.size() > 0)
@@ -1131,9 +1129,9 @@ namespace VirtualRobot
         {
             std::vector<EndEffectorPtr> eefs = this->getEndEffectors();
 
-            for (size_t i = 0; i < eefs.size(); i++)
+            for (auto & eef : eefs)
             {
-                ss << eefs[i]->toXML(1) << endl;
+                ss << eef->toXML(1) << endl;
             }
 
             if (eefs.size() > 0)

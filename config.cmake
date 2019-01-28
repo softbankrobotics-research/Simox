@@ -6,10 +6,10 @@ IF (NOT Simox_CONFIGURED)
 
     # Set up build type
     IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE Debug CACHE STRING
+    SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
         "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
-    ENDIF(NOT CMAKE_BUILD_TYPE)
+    ENDIF()
 
     GET_FILENAME_COMPONENT (CurrentSimoxPath ${CMAKE_CURRENT_LIST_FILE} PATH)
     MESSAGE (STATUS "** Simox_DIR: ${CurrentSimoxPath}")
@@ -50,7 +50,7 @@ IF (NOT Simox_CONFIGURED)
     ############################# VERSION #################################
     set(Simox_MAJOR_VERSION 2)
     set(Simox_MINOR_VERSION 3)
-    set(Simox_PATCH_VERSION 72)
+    set(Simox_PATCH_VERSION 73)
     set(Simox_VERSION
     ${Simox_MAJOR_VERSION}.${Simox_MINOR_VERSION}.${Simox_PATCH_VERSION})
 

@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include <random>
-#include <float.h>
+#include <cfloat>
 #include <cstdlib>
 
 using namespace Eigen;
@@ -18,9 +18,7 @@ GraspEvaluationPoseUncertainty::GraspEvaluationPoseUncertainty(const PoseUncerta
 }
 
 GraspEvaluationPoseUncertainty::~GraspEvaluationPoseUncertainty()
-{
-
-}
+= default;
 
 std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP)
 {
@@ -244,18 +242,18 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
         return res;
 
     res.numPosesTested = results.size();
-    for (size_t i=0;i<results.size();i++)
+    for (auto & result : results)
     {
-        if (results.at(i).initialCollision)
+        if (result.initialCollision)
         {
             res.numColPoses++;
         }
         else
         {
             res.numValidPoses++;
-            res.avgQuality += results.at(i).quality;
-            res.avgQualityCol += results.at(i).quality;
-            if (results.at(i).forceClosure)
+            res.avgQuality += result.quality;
+            res.avgQualityCol += result.quality;
+            if (result.forceClosure)
             {
                 res.forceClosureRate += 1.0f;
                 res.forceClosureRateCol += 1.0f;

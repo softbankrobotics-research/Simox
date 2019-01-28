@@ -65,11 +65,11 @@ namespace PQP
         PQP_REAL d[3];        // (half) dimensions of obb
 #endif
 
-        int first_child;      // positive value is index of first_child bv
+        int first_child{0};      // positive value is index of first_child bv
         // negative value is -(index + 1) of triangle
 
-        BV();
-        ~BV();
+        BV() = default;
+        ~BV() = default;
         int      Leaf()
         {
             return first_child < 0;
@@ -78,8 +78,6 @@ namespace PQP
         void     FitToTris(PQP_REAL O[3][3], Tri* tris, int num_tris);
 
         MatVec pqp_math;
-        PQP_REAL MaxOfTwo(PQP_REAL a, PQP_REAL b);
-
     };
 
     inline

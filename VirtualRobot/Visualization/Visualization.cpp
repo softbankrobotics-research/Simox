@@ -24,8 +24,7 @@ namespace VirtualRobot
     }
 
     Visualization::~Visualization()
-    {
-    }
+    = default;
 
     VirtualRobot::VisualizationPtr Visualization::clone()
     {

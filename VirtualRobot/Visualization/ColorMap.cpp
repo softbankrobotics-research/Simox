@@ -19,13 +19,10 @@ namespace VirtualRobot
     }
 
     ColorMap::ColorMap()
-    {
-    }
+    = default;
 
     ColorMap::~ColorMap()
-    {
-
-    }
+    = default;
     void ColorMap::create(type t)
     {
         colorKeys.clear();

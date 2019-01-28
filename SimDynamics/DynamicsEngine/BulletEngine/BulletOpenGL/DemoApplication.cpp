@@ -58,9 +58,9 @@ extern int gTotalBytesAlignedAllocs;
 DemoApplication::DemoApplication()
 //see btIDebugDraw.h for modes
     :
-    m_dynamicsWorld(0),
-    m_pickConstraint(0),
-    m_shootBoxShape(0),
+    m_dynamicsWorld(nullptr),
+    m_pickConstraint(nullptr),
+    m_shootBoxShape(nullptr),
     m_cameraDistance(15.0),
     m_debugMode(0),
     m_ele(20.f),
@@ -126,7 +126,7 @@ void DemoApplication::overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer)
     m_shapeDrawer = shapeDrawer;
 }
 
-void DemoApplication::myinit(void)
+void DemoApplication::myinit()
 {
 
     GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };
@@ -772,7 +772,7 @@ int gPickingConstraintId = 0;
 btVector3 gOldPickingPos;
 btVector3 gHitPos(-1, -1, -1);
 btScalar gOldPickingDist  = 0.f;
-btRigidBody* pickedBody = 0;//for deactivation state
+btRigidBody* pickedBody = nullptr;//for deactivation state
 
 
 btVector3   DemoApplication::getRayTo(int x, int y)
@@ -1070,10 +1070,10 @@ void DemoApplication::removePickingConstraint()
         m_dynamicsWorld->removeConstraint(m_pickConstraint);
         delete m_pickConstraint;
         //printf("removed constraint %i",gPickingConstraintId);
-        m_pickConstraint = 0;
+        m_pickConstraint = nullptr;
         pickedBody->forceActivationState(ACTIVE_TAG);
         pickedBody->setDeactivationTime(0.f);
-        pickedBody = 0;
+        pickedBody = nullptr;
     }
 }
 

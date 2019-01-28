@@ -20,14 +20,13 @@ namespace VirtualRobot
 
 
     TriMeshModel::TriMeshModel()
-    {
-    }
+    = default;
 
     TriMeshModel::TriMeshModel(std::vector <triangle>& triangles)
     {
-        for (size_t i = 0; i < triangles.size(); i++)
+        for (auto & triangle : triangles)
         {
-            addTriangleWithFace(triangles[i].vertex1, triangles[i].vertex2, triangles[i].vertex3);
+            addTriangleWithFace(triangle.vertex1, triangle.vertex2, triangle.vertex3);
         }
     }
 
@@ -360,7 +359,7 @@ namespace VirtualRobot
                                                             vertices.at(i)[1],
                                                             vertices.at(i)[2]});
         }
-        typedef float num_t;
+        using num_t = float;
         // construct a kd-tree index:
         typedef nanoflann::KDTreeSingleIndexAdaptor<
             nanoflann::L2_Simple_Adaptor<num_t, PointCloud<num_t> > ,
@@ -794,9 +793,9 @@ namespace VirtualRobot
     {
         cout << "TriMeshModel Normals:" << endl;
         std::streamsize pr = cout.precision(2);
-        for (size_t i = 0; i < faces.size(); i++)
+        for (auto & face : faces)
         {
-            cout << "<" << faces[i].normal(0) << "," << faces[i].normal(1) << "," << faces[i].normal(2) << ">,";
+            cout << "<" << face.normal(0) << "," << face.normal(1) << "," << face.normal(2) << ">,";
         }
         cout.precision(pr);
     }
@@ -816,15 +815,15 @@ namespace VirtualRobot
     {
         cout << "TriMeshModel Faces (vertex indices):" << endl;
         std::streamsize pr = cout.precision(2);
-        for (size_t i = 0; i < faces.size(); i++)
+        for (auto & face : faces)
         {
-            cout << faces[i].id1 << "," << faces[i].id2 << "," << faces[i].id3 << endl;
+            cout << face.id1 << "," << face.id2 << "," << face.id3 << endl;
         }
         cout.precision(pr);
     }
 
 
-    void TriMeshModel::scale(Eigen::Vector3f& scaleFactor)
+    void TriMeshModel::scale(const Eigen::Vector3f& scaleFactor)
     {
         if (scaleFactor(0) == 1.0f && scaleFactor(1) == 1.0f && scaleFactor(2) == 1.0f)
         {
@@ -849,7 +848,7 @@ namespace VirtualRobot
         return clone(scaleFactor);
     }
 
-    VirtualRobot::TriMeshModelPtr TriMeshModel::clone(Eigen::Vector3f& scaleFactor) const
+    VirtualRobot::TriMeshModelPtr TriMeshModel::clone(const Eigen::Vector3f& scaleFactor) const
     {
         TriMeshModelPtr r(new TriMeshModel());
         r->vertices = vertices;

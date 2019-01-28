@@ -30,14 +30,14 @@ namespace Saba
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, CSpacePtr cspace, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, cspace, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 
     CoinRrtWorkspaceVisualization::CoinRrtWorkspaceVisualization(VirtualRobot::RobotPtr robot, VirtualRobot::RobotNodeSetPtr robotNodeSet, const std::string& TCPName) :
         RrtWorkspaceVisualization(robot, robotNodeSet, TCPName)
     {
-        visualization = NULL;
+        visualization = nullptr;
         coinInit();
     }
 
@@ -262,9 +262,9 @@ namespace Saba
         Eigen::Vector3f p;
         Eigen::Vector3f p2;
 
-        for (unsigned int i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
-            actualNode = nodes[i];
+            actualNode = node;
 
             // get tcp coords:
             robot->setJointValues(robotNodeSet, actualNode->configuration);
@@ -278,10 +278,10 @@ namespace Saba
         }
 
 
-        for (unsigned int i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
 
-            actualNode = nodes[i];
+            actualNode = node;
             parentid = actualNode->parentID;
 
             // create 3D model for nodes

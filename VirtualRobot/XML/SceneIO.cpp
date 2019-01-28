@@ -14,12 +14,10 @@ namespace VirtualRobot
 
 
     SceneIO::SceneIO()
-    {
-    }
+    = default;
 
     SceneIO::~SceneIO()
-    {
-    }
+    = default;
 
     VirtualRobot::ScenePtr SceneIO::loadScene(const std::string& xmlFile)
     {
@@ -123,10 +121,10 @@ namespace VirtualRobot
         // create & register node sets
         int rnsNr = 0;
 
-        for (size_t i = 0; i < rnsNodes.size(); i++)
+        for (auto & rnsNode : rnsNodes)
         {
             // registers rns to robot
-            RobotNodeSetPtr r = processRobotNodeSet(rnsNodes[i], robot, robot->getRootNode()->getName(), rnsNr);
+            RobotNodeSetPtr r = processRobotNodeSet(rnsNode, robot, robot->getRootNode()->getName(), rnsNr);
             THROW_VR_EXCEPTION_IF(!r, "Invalid RobotNodeSet definition " << endl);
         }
 
@@ -260,7 +258,7 @@ namespace VirtualRobot
         std::vector<rapidxml::xml_node<char>* > trajectoryNodes;
 
 
-        rapidxml::xml_node<>* XMLNode = sceneXMLNode->first_node(NULL, 0, false);
+        rapidxml::xml_node<>* XMLNode = sceneXMLNode->first_node(nullptr, 0, false);
 
         while (XMLNode)
         {
@@ -312,13 +310,13 @@ namespace VirtualRobot
                 THROW_VR_EXCEPTION("XML node of type <" << nodeName_ << "> is not supported. Ignoring contents..." << endl);
             }
 
-            XMLNode = XMLNode->next_sibling(NULL, 0, false);
+            XMLNode = XMLNode->next_sibling(nullptr, 0, false);
         }
 
         // process all sceneSetNodes
-        for (size_t i = 0; i < sceneSetNodes.size(); i++)
+        for (auto & sceneSetNode : sceneSetNodes)
         {
-            bool r = processSceneObjectSet(sceneSetNodes[i], scene);
+            bool r = processSceneObjectSet(sceneSetNode, scene);
 
             if (!r)
             {
@@ -329,9 +327,9 @@ namespace VirtualRobot
 
 
         // process all trajectories
-        for (size_t i = 0; i < trajectoryNodes.size(); i++)
+        for (auto & trajectoryNode : trajectoryNodes)
         {
-            bool r = processSceneTrajectory(trajectoryNodes[i], scene);
+            bool r = processSceneTrajectory(trajectoryNode, scene);
 
             if (!r)
             {

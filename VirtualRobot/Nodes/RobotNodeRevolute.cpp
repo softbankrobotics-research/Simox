@@ -79,8 +79,7 @@ namespace VirtualRobot
 
 
     RobotNodeRevolute::~RobotNodeRevolute()
-    {
-    }
+    = default;
 
     bool RobotNodeRevolute::initialize(SceneObjectPtr parent, const std::vector<SceneObjectPtr>& children)
     {

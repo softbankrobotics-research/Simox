@@ -15,8 +15,7 @@ namespace SimDynamics
     }
 
     DynamicsRobot::~DynamicsRobot()
-    {
-    }
+    = default;
 
     std::string DynamicsRobot::getName() const
     {
@@ -454,12 +453,12 @@ namespace SimDynamics
     void DynamicsRobot::enableSelfCollisions(bool enable)
     {
         // deactivate all self collisions
-        for (size_t i = 0; i < robotNodes.size(); i++)
+        for (const auto & i : robotNodes)
         {
-            auto drn1 = getDynamicsRobotNode(robotNodes.at(i));
-            for (size_t j = 0; j < robotNodes.size(); j++)
+            auto drn1 = getDynamicsRobotNode(i);
+            for (const auto & robotNode : robotNodes)
             {
-                auto drn2 = getDynamicsRobotNode(robotNodes.at(j));
+                auto drn2 = getDynamicsRobotNode(robotNode);
                 if(enable)
                     DynamicsWorld::GetWorld()->getEngine()->enableCollision(drn1.get(), drn2.get());
                 else

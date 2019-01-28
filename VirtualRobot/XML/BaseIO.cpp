@@ -21,12 +21,10 @@ namespace VirtualRobot
     boost::mutex BaseIO::mutex;
 
     BaseIO::BaseIO()
-    {
-    }
+    = default;
 
     BaseIO::~BaseIO()
-    {
-    }
+    = default;
 
     bool BaseIO::isTrue(const char* s)
     {
@@ -52,7 +50,7 @@ namespace VirtualRobot
      */
     float BaseIO::convertToFloat(const char* s)
     {
-        THROW_VR_EXCEPTION_IF(NULL == s, "Passing Null string to convertToFloat()");
+        THROW_VR_EXCEPTION_IF(nullptr == s, "Passing Null string to convertToFloat()");
         std::stringstream floatStream;
         floatStream << std::string(s);
         float result;
@@ -67,7 +65,7 @@ namespace VirtualRobot
 
     int BaseIO::convertToInt(const char* s)
     {
-        THROW_VR_EXCEPTION_IF(NULL == s, "Passing Null string to convertToInt()");
+        THROW_VR_EXCEPTION_IF(nullptr == s, "Passing Null string to convertToInt()");
         std::stringstream intStream;
         intStream << std::string(s);
         int result;
@@ -167,7 +165,7 @@ namespace VirtualRobot
             return;
         }
 
-        rapidxml::xml_node<>* trXMLNode = NULL;
+        rapidxml::xml_node<>* trXMLNode = nullptr;
         std::string nodeName = getLowerCase(transformXMLNode->name());
 
         if (nodeName == "transform")
@@ -356,16 +354,16 @@ namespace VirtualRobot
         Units uAngle("rad");
         Units uLength("mm");
 
-        for (size_t i = 0; i < unitsAttr.size(); i++)
+        for (auto & i : unitsAttr)
         {
-            if (unitsAttr[i].isAngle())
+            if (i.isAngle())
             {
-                uAngle = unitsAttr[i];
+                uAngle = i;
             }
 
-            if (unitsAttr[i].isLength())
+            if (i.isLength())
             {
-                uLength = unitsAttr[i];
+                uLength = i;
             }
         }
 
@@ -430,7 +428,7 @@ namespace VirtualRobot
             attr = node->first_attribute("unitsTime", 0, false);
         }
 
-        return (attr != NULL);
+        return (attr != nullptr);
     }
 
     void BaseIO::getAllAttributes(rapidxml::xml_node<char>* node, const std::string& attrString, std::vector<std::string>& storeValues)
@@ -457,9 +455,9 @@ namespace VirtualRobot
         getAllAttributes(node, "unitsAngle", attrStr);
         getAllAttributes(node, "unitsTime", attrStr);
 
-        for (size_t i = 0; i < attrStr.size(); i++)
+        for (auto & i : attrStr)
         {
-            Units unitsAttribute(getLowerCase(attrStr[i].c_str()));
+            Units unitsAttribute(getLowerCase(i.c_str()));
             result.push_back(unitsAttribute);
         }
 
@@ -572,7 +570,7 @@ namespace VirtualRobot
      */
     std::string BaseIO::getLowerCase(const char* c)
     {
-        THROW_VR_EXCEPTION_IF(NULL == c, "Passing Null string to getLowerCase()");
+        THROW_VR_EXCEPTION_IF(nullptr == c, "Passing Null string to getLowerCase()");
         std::string res = c;
         getLowerCase(res);
         return res;
@@ -1343,16 +1341,16 @@ namespace VirtualRobot
             Units uWeight("kg");
             Units uLength("m");
 
-            for (size_t i = 0; i < unitsAttr.size(); i++)
+            for (auto & i : unitsAttr)
             {
-                if (unitsAttr[i].isWeight())
+                if (i.isWeight())
                 {
-                    uWeight = unitsAttr[i];
+                    uWeight = i;
                 }
 
-                if (unitsAttr[i].isLength())
+                if (i.isLength())
                 {
-                    uLength = unitsAttr[i];
+                    uLength = i;
                 }
             }
 
@@ -1737,11 +1735,11 @@ namespace VirtualRobot
 
         RobotPtr r;
 
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            if (robots[i]->getType() == robotName)
+            if (robot->getType() == robotName)
             {
-                r = robots[i];
+                r = robot;
                 break;
             }
         }

@@ -224,9 +224,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
 
-        for (std::vector< RobotPtr >::const_iterator i = robots.begin(); i != robots.end(); i++)
+        for (const auto & i : robots)
         {
-            if (*i == robot)
+            if (i == robot)
             {
                 return true;
             }
@@ -237,9 +237,9 @@ namespace VirtualRobot
 
     bool Scene::hasRobot(const std::string& name) const
     {
-        for (std::vector< RobotPtr >::const_iterator i = robots.begin(); i != robots.end(); i++)
+        for (const auto & robot : robots)
         {
-            if ((*i)->getName() == name)
+            if (robot->getName() == name)
             {
                 return true;
             }
@@ -252,9 +252,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!obstacle, "NULL data");
 
-        for (std::vector< ObstaclePtr >::const_iterator i = obstacles.begin(); i != obstacles.end(); i++)
+        for (const auto & i : obstacles)
         {
-            if (*i == obstacle)
+            if (i == obstacle)
             {
                 return true;
             }
@@ -265,9 +265,9 @@ namespace VirtualRobot
 
     bool Scene::hasObstacle(const std::string& name) const
     {
-        for (std::vector< ObstaclePtr >::const_iterator i = obstacles.begin(); i != obstacles.end(); i++)
+        for (const auto & obstacle : obstacles)
         {
-            if ((*i)->getName() == name)
+            if (obstacle->getName() == name)
             {
                 return true;
             }
@@ -282,9 +282,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!t, "NULL data");
 
-        for (std::vector< TrajectoryPtr >::const_iterator i = trajectories.begin(); i != trajectories.end(); i++)
+        for (const auto & trajectorie : trajectories)
         {
-            if (*i == t)
+            if (trajectorie == t)
             {
                 return true;
             }
@@ -295,9 +295,9 @@ namespace VirtualRobot
 
     bool Scene::hasTrajectory(const std::string& name) const
     {
-        for (std::vector< TrajectoryPtr >::const_iterator i = trajectories.begin(); i != trajectories.end(); i++)
+        for (const auto & trajectorie : trajectories)
         {
-            if ((*i)->getName() == name)
+            if (trajectorie->getName() == name)
             {
                 return true;
             }
@@ -311,9 +311,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!manipulationObject, "NULL data");
 
-        for (std::vector< ManipulationObjectPtr >::const_iterator i = manipulationObjects.begin(); i != manipulationObjects.end(); i++)
+        for (const auto & i : manipulationObjects)
         {
-            if (*i == manipulationObject)
+            if (i == manipulationObject)
             {
                 return true;
             }
@@ -324,9 +324,9 @@ namespace VirtualRobot
 
     bool Scene::hasManipulationObject(const std::string& name) const
     {
-        for (std::vector< ManipulationObjectPtr >::const_iterator i = manipulationObjects.begin(); i != manipulationObjects.end(); i++)
+        for (const auto & manipulationObject : manipulationObjects)
         {
-            if ((*i)->getName() == name)
+            if (manipulationObject->getName() == name)
             {
                 return true;
             }
@@ -406,9 +406,9 @@ namespace VirtualRobot
 
     void Scene::registerRobotConfig(RobotPtr robot, std::vector<RobotConfigPtr> configs)
     {
-        for (size_t i = 0; i < configs.size(); i++)
+        for (const auto & config : configs)
         {
-            registerRobotConfig(robot, configs[i]);
+            registerRobotConfig(robot, config);
         }
     }
 
@@ -463,9 +463,9 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!config, "NULL data");
         std::vector< RobotConfigPtr > configs = robotConfigs[robot];
 
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (auto & i : configs)
         {
-            if (*i == config)
+            if (i == config)
             {
                 return true;
             }
@@ -479,9 +479,9 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
         std::vector< RobotConfigPtr > configs = robotConfigs[robot];
 
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (auto & config : configs)
         {
-            if ((*i)->getName() == name)
+            if (config->getName() == name)
             {
                 return true;
             }
@@ -493,11 +493,11 @@ namespace VirtualRobot
 
     VirtualRobot::RobotConfigPtr Scene::getRobotConfig(const std::string& robotName, const std::string& name)
     {
-        for (std::map< RobotPtr, std::vector< RobotConfigPtr > >::iterator i = robotConfigs.begin(); i != robotConfigs.end(); i++)
+        for (auto & robotConfig : robotConfigs)
         {
-            if (i->first->getName() == robotName)
+            if (robotConfig.first->getName() == robotName)
             {
-                return getRobotConfig(i->first, name);
+                return getRobotConfig(robotConfig.first, name);
             }
         }
 
@@ -510,11 +510,11 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
         std::vector< RobotConfigPtr > configs = robotConfigs[robot];
 
-        for (std::vector< RobotConfigPtr >::iterator i = configs.begin(); i != configs.end(); i++)
+        for (auto & config : configs)
         {
-            if ((*i)->getName() == name)
+            if (config->getName() == name)
             {
-                return *i;
+                return config;
             }
         }
 
@@ -546,11 +546,11 @@ namespace VirtualRobot
     {
         std::vector< TrajectoryPtr > res;
 
-        for (size_t i = 0; i < trajectories.size(); i++)
+        for (auto & trajectorie : trajectories)
         {
-            if (trajectories[i]->getRobotName() == robotName)
+            if (trajectorie->getRobotName() == robotName)
             {
-                res.push_back(trajectories[i]);
+                res.push_back(trajectorie);
             }
         }
 
@@ -642,9 +642,9 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!sos, "NULL data");
 
-        for (std::vector< SceneObjectSetPtr >::const_iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (const auto & sceneObjectSet : sceneObjectSets)
         {
-            if (*i == sos)
+            if (sceneObjectSet == sos)
             {
                 return true;
             }
@@ -655,9 +655,9 @@ namespace VirtualRobot
 
     bool Scene::hasSceneObjectSet(const std::string& name) const
     {
-        for (std::vector< SceneObjectSetPtr >::const_iterator i = sceneObjectSets.begin(); i != sceneObjectSets.end(); i++)
+        for (const auto & sceneObjectSet : sceneObjectSets)
         {
-            if ((*i)->getName() == name)
+            if (sceneObjectSet->getName() == name)
             {
                 return true;
             }
@@ -698,12 +698,12 @@ namespace VirtualRobot
         ss << "\n";
 
         // process robots
-        for (size_t i = 0; i < robots.size(); i++)
+        for (auto & robot : robots)
         {
-            std::string rob = robots[i]->getName();
-            RobotConfigPtr currentConfig = robots[i]->getConfig();
+            std::string rob = robot->getName();
+            RobotConfigPtr currentConfig = robot->getConfig();
             ss << "\t<Robot name='" << rob << "' initConfig='" << currentConfig->getName() << "'>\n";
-            std::string robFile = robots[i]->getFilename();
+            std::string robFile = robot->getFilename();
 
             if (!basePath.empty())
             {
@@ -713,7 +713,7 @@ namespace VirtualRobot
             ss << "\t\t<File>" << robFile << "</File>\n";
 
             // store global pose (if not identity)
-            Eigen::Matrix4f gp = robots[i]->getGlobalPose();
+            Eigen::Matrix4f gp = robot->getGlobalPose();
 
             if (!gp.isIdentity())
             {
@@ -728,11 +728,11 @@ namespace VirtualRobot
             ss << currentConfig->toXML(2);
 
             // store all other configs for robot
-            std::vector<RobotConfigPtr> rc = getRobotConfigs(robots[i]);
+            std::vector<RobotConfigPtr> rc = getRobotConfigs(robot);
 
-            for (size_t j = 0; j < rc.size(); j++)
+            for (auto & j : rc)
             {
-                ss << rc[j]->toXML(2);
+                ss << j->toXML(2);
             }
 
             ss << "\t</Robot>\n";
@@ -740,30 +740,30 @@ namespace VirtualRobot
         }
 
         // process manipulation objects
-        for (size_t i = 0; i < manipulationObjects.size(); i++)
+        for (auto & manipulationObject : manipulationObjects)
         {
-            ss << manipulationObjects[i]->toXML(basePath, 1, true);
+            ss << manipulationObject->toXML(basePath, 1, true);
             ss << "\n";
         }
 
         // process obstacles
-        for (size_t i = 0; i < obstacles.size(); i++)
+        for (auto & obstacle : obstacles)
         {
-            ss << obstacles[i]->toXML(basePath, 1);
+            ss << obstacle->toXML(basePath, 1);
             ss << "\n";
         }
 
         // process sceneObjectSets
-        for (size_t i = 0; i < sceneObjectSets.size(); i++)
+        for (auto & sceneObjectSet : sceneObjectSets)
         {
-            ss << sceneObjectSets[i]->toXML(1);
+            ss << sceneObjectSet->toXML(1);
             ss << "\n";
         }
 
         // process trajectories
-        for (size_t i = 0; i < trajectories.size(); i++)
+        for (auto & trajectorie : trajectories)
         {
-            ss << trajectories[i]->toXML(1);
+            ss << trajectorie->toXML(1);
             ss << "\n";
         }
 

@@ -16,12 +16,7 @@ LinkedCoordinate::LinkedCoordinate(const LinkedCoordinate& other)
 }
 
 LinkedCoordinate& LinkedCoordinate::operator=(const LinkedCoordinate& other)
-{
-    robot = other.robot;
-    pose = other.pose;
-    frame = other.frame;
-    return *this;
-}
+= default;
 
 LinkedCoordinate::~LinkedCoordinate()
 {

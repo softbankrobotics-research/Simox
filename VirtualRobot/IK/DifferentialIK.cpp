@@ -9,7 +9,7 @@
 
 
 #include <algorithm>
-#include <float.h>
+#include <cfloat>
 
 //#define CHECK_PERFORMANCE
 
@@ -30,11 +30,11 @@ namespace VirtualRobot
         checkImprovement = false;
         nodes =  rns->getAllRobotNodes();
 
-        for (size_t i = 0; i < nodes.size(); i++)
+        for (auto & node : nodes)
         {
-            std::vector<RobotNodePtr> p = nodes[i]->getAllParents(rns);
-            p.push_back(nodes[i]);// if the tcp is not fixed, it must be considered for calculating the Jacobian
-            parents[nodes[i]] = p;
+            std::vector<RobotNodePtr> p = node->getAllParents(rns);
+            p.push_back(node);// if the tcp is not fixed, it must be considered for calculating the Jacobian
+            parents[node] = p;
         }
 
         convertMMtoM = false;
@@ -122,10 +122,8 @@ namespace VirtualRobot
 
         size_t index = 0;
 
-        for (size_t i = 0; i < tcp_set.size(); i++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[i];
-
             if (this->targets.find(tcp) != this->targets.end())
             {
                 auto& mode = this->modes[tcp];
@@ -186,10 +184,8 @@ namespace VirtualRobot
         // compute error
         size_t index = 0;
 
-        for (size_t i = 0; i < tcp_set.size(); i++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[i];
-
             if (this->targets.find(tcp) != this->targets.end())
             {
                 //Eigen::VectorXf delta =
@@ -553,9 +549,8 @@ namespace VirtualRobot
 
         partJacobians.clear();
 
-        for (size_t i = 0; i < tcp_set.size(); i++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[i];
             int partSize = 0;
 
             if (this->modes[tcp] & IKSolver::X)
@@ -613,9 +608,8 @@ namespace VirtualRobot
 
         cout << "TCPs:" << endl;
 
-        for (size_t t = 0; t < tcp_set.size(); t++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[t];
             RobotNodePtr tcpRN = boost::dynamic_pointer_cast<RobotNode>(tcp);
 
             if (!tcpRN)
@@ -830,9 +824,8 @@ namespace VirtualRobot
 
         float res = 0;
 
-        for (size_t i = 0; i < tcp_set.size(); i++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[i];
             res += getErrorPosition(tcp);
         }
 
@@ -844,9 +837,8 @@ namespace VirtualRobot
     {
         bool result = true;
 
-        for (size_t i = 0; i < tcp_set.size(); i++)
+        for (auto tcp : tcp_set)
         {
-            SceneObjectPtr tcp = tcp_set[i];
             float currentErrorPos = getErrorPosition(tcp);
             float maxErrorPos = tolerancePosition[tcp];
             float currentErrorRot = getErrorRotation(tcp);

@@ -125,9 +125,9 @@ namespace VirtualRobot
             // silently skip this error (e.g. device not ready, permission denied etc)
         }
 
-        for (size_t i = 0; i < dataPaths.size(); i++)
+        for (auto & dataPath : dataPaths)
         {
-            boost::filesystem::path p(dataPaths[i]);
+            boost::filesystem::path p(dataPath);
 
             boost::filesystem::path fnComplete = boost::filesystem::operator/(p, fn);
 
@@ -168,9 +168,9 @@ namespace VirtualRobot
         ("data-path", boost::program_options::value< std::vector< std::string > >()->composing(), "Set data path. Multiple data paths are allowed.")
         ;
 
-        for (size_t i = 0; i < processKeys.size(); i++)
+        for (auto & processKey : processKeys)
             desc.add_options()
-            (processKeys[i].c_str(), boost::program_options::value< std::vector< std::string > >(), processKeys[i].c_str())
+            (processKey.c_str(), boost::program_options::value< std::vector< std::string > >(), processKey.c_str())
             ;
 
         boost::program_options::parsed_options parsed =
@@ -187,28 +187,28 @@ namespace VirtualRobot
             //VR_INFO << "Data paths are: " << endl;
             std::vector< std::string > dp = vm["data-path"].as< std::vector< std::string > >();
 
-            for (size_t i = 0; i < dp.size(); i++)
+            for (const auto & i : dp)
             {
-                addDataPath(dp[i]);
+                addDataPath(i);
                 //VR_INFO << dp[i] << "\n";
             }
         }
 
         // process generic keys
-        for (size_t i = 0; i < processKeys.size(); i++)
+        for (auto & processKey : processKeys)
         {
-            if (vm.count(processKeys[i].c_str()))
+            if (vm.count(processKey.c_str()))
             {
-                std::vector< std::string > dp = vm[processKeys[i].c_str()].as< std::vector< std::string > >();
+                std::vector< std::string > dp = vm[processKey.c_str()].as< std::vector< std::string > >();
 
                 if (dp.size() > 1)
                 {
-                    VR_WARNING << "More than one parameter for key " << processKeys[i] << ". taking the first one..." << endl;
+                    VR_WARNING << "More than one parameter for key " << processKey << ". taking the first one..." << endl;
                 }
 
                 if (dp.size() > 0)
                 {
-                    addKeyValuePair(processKeys[i], dp[0]);    // take the first one...
+                    addKeyValuePair(processKey, dp[0]);    // take the first one...
                 }
             }
 
@@ -217,9 +217,9 @@ namespace VirtualRobot
         // collect unrecognized arguments
         std::vector<std::string> options = boost::program_options::collect_unrecognized(parsed.options, boost::program_options::include_positional);
 
-        for (size_t i = 0; i < options.size(); i++)
+        for (const auto & option : options)
         {
-            unrecognizedOptions.push_back(options[i]);
+            unrecognizedOptions.push_back(option);
         }
 
 
@@ -295,18 +295,18 @@ namespace VirtualRobot
         cout << " *********** Simox RuntimeEnvironment ************* " << endl;
         cout << "Data paths:"  << endl;
 
-        for (size_t i = 0; i < dataPaths.size(); i++)
+        for (const auto & dataPath : dataPaths)
         {
-            cout << " * " << dataPaths[i] << endl;
+            cout << " * " << dataPath << endl;
         }
 
         if (processKeys.size() > 0)
         {
             cout << "Known keys:" << endl;
 
-            for (size_t i = 0; i < processKeys.size(); i++)
+            for (const auto & processKey : processKeys)
             {
-                cout << " * " << processKeys[i] << endl;
+                cout << " * " << processKey << endl;
             }
         }
 
@@ -326,9 +326,9 @@ namespace VirtualRobot
         {
             cout << "Unrecognized options:" << endl;
 
-            for (size_t i = 0; i < unrecognizedOptions.size(); i++)
+            for (const auto & unrecognizedOption : unrecognizedOptions)
             {
-                cout << " * <" << unrecognizedOptions[i] << ">" << endl;
+                cout << " * <" << unrecognizedOption << ">" << endl;
             }
         }
 

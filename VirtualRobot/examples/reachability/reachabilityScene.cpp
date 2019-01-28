@@ -103,7 +103,7 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
 
     reachSpace->print();
 
-    time_t time_now = time(NULL);
+    time_t time_now = time(nullptr);
     struct tm* timeinfo;
     timeinfo = localtime(&time_now);
     char buffer [255];

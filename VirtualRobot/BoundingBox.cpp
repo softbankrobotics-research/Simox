@@ -147,10 +147,10 @@ namespace VirtualRobot
         result[7] << max(0), max(1), max(2);
         Eigen::Matrix4f m;
 
-        for (int i = 0; i < 8; i++)
+        for (const auto & i : result)
         {
             m.setIdentity();
-            m.block(0, 3, 3, 1) = result[i];
+            m.block(0, 3, 3, 1) = i;
             m = pose * m;
             result3.push_back(m.block(0, 3, 3, 1));
         }
@@ -176,7 +176,7 @@ namespace VirtualRobot
         }
     }
 
-    void BoundingBox::scale(Eigen::Vector3f& scaleFactor)
+    void BoundingBox::scale(const Eigen::Vector3f& scaleFactor)
     {
         if (std::isnan(min(0)) || std::isnan(min(1)) || std::isnan(min(2)) ||
                 std::isnan(max(0)) || std::isnan(max(1)) || std::isnan(max(2)))

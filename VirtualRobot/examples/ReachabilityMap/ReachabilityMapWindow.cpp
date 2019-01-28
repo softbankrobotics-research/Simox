@@ -10,7 +10,7 @@
 #include <VirtualRobot/Workspace/WorkspaceGrid.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -29,7 +29,7 @@ float TIMER_MS = 30.0f;
 //#define ENDLESS
 
 ReachabilityMapWindow::ReachabilityMapWindow(std::string& sRobotFile, std::string& reachFile, std::string& objFile, std::string& eef)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -338,7 +338,7 @@ void ReachabilityMapWindow::buildRobotVisu()
     }
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = robot->getVisualization<CoinVisualization>();
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -361,7 +361,7 @@ void ReachabilityMapWindow::buildObjectVisu()
     }
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualization = graspObject->getVisualization<CoinVisualization>();
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -485,9 +485,9 @@ void ReachabilityMapWindow::updateEEFBox()
 
     std::vector<EndEffectorPtr> eefs = robot->getEndEffectors();
 
-    for (unsigned int i = 0; i < eefs.size(); i++)
+    for (auto & eef : eefs)
     {
-        UI.comboBoxEEF->addItem(QString(eefs[i]->getName().c_str()));
+        UI.comboBoxEEF->addItem(QString(eef->getName().c_str()));
     }
 
     selectEEF(0);

@@ -107,9 +107,9 @@ namespace VirtualRobot
         robot->getEndEffectors(eefs);
         EndEffectorPtr eef;
 
-        for (size_t i = 0; i < eefs.size(); i++)
+        for (auto & i : eefs)
         {
-            if (eefs[i]->getTcp() == rns->getTCP())
+            if (i->getTcp() == rns->getTCP())
             {
                 if (eef)
                 {
@@ -117,7 +117,7 @@ namespace VirtualRobot
                 }
                 else
                 {
-                    eef = eefs[i];
+                    eef = i;
                 }
             }
         }

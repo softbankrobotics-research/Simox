@@ -17,8 +17,7 @@ namespace VirtualRobot
     }
 
     VirtualRobotException::~VirtualRobotException() throw()
-    {
-    }
+    = default;
 
     const char* VirtualRobotException::what() const throw()
     {

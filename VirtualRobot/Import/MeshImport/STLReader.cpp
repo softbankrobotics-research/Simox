@@ -41,7 +41,7 @@
 // STL
 #include <map>
 
-#include <float.h>
+#include <cfloat>
 #include <fstream>
 #include <stdexcept>
 #include <string>

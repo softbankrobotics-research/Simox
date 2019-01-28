@@ -22,8 +22,7 @@ namespace VirtualRobot
     }
 
     JacobiProvider::~JacobiProvider()
-    {
-    }
+    = default;
 
     MatrixXd JacobiProvider::getJacobianMatrixD()
     {

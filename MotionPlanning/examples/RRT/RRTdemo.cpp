@@ -30,7 +30,7 @@ QWidget* win;
 
 void show(SoNode* n)
 {
-    if (win == NULL)
+    if (win == nullptr)
     {
         printf("Could not create window.\n");
         exit(-3);
@@ -175,7 +175,7 @@ void startRRTVisualization()
     SceneObject::VisualizationType colModel = SceneObject::Full;
 
     boost::shared_ptr<CoinVisualization> visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {

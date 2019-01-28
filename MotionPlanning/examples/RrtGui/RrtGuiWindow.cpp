@@ -17,7 +17,7 @@
 #include <MotionPlanning/Visualization/CoinVisualization/CoinRrtWorkspaceVisualization.h>
 #include <QFileDialog>
 #include <Eigen/Geometry>
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -37,7 +37,7 @@ float TIMER_MS = 200.0f;
 
 RrtGuiWindow::RrtGuiWindow(const std::string& sceneFile, const std::string& sConf, const std::string& gConf,
                            const std::string& rns, const std::string& colModelRob1, const std::string& colModelRob2,  const std::string& colModelEnv)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -188,7 +188,7 @@ void RrtGuiWindow::buildVisu()
     if (scene)
     {
         visualization = scene->getVisualization<CoinVisualization>(colModel);
-        SoNode* visualisationNode = NULL;
+        SoNode* visualisationNode = nullptr;
 
         if (visualization)
         {
@@ -294,9 +294,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxGoal->clear();
     UI.comboBoxStart->clear();
 
-    for (size_t i = 0; i < configs.size(); i++)
+    for (auto & config : configs)
     {
-        QString qtext = configs[i]->getName().c_str();
+        QString qtext = config->getName().c_str();
         UI.comboBoxStart->addItem(qtext);
         UI.comboBoxGoal->addItem(qtext);
     }
@@ -310,9 +310,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxColModelEnv->clear();
     QString qtext;
 
-    for (size_t i = 0; i < soss.size(); i++)
+    for (auto & sos : soss)
     {
-        qtext = soss[i]->getName().c_str();
+        qtext = sos->getName().c_str();
         UI.comboBoxColModelEnv->addItem(qtext);
     }
 
@@ -324,9 +324,9 @@ void RrtGuiWindow::loadScene()
     UI.comboBoxColModelRobotStatic->clear();
     UI.comboBoxRNS->clear();
 
-    for (size_t i = 0; i < rnss.size(); i++)
+    for (auto & rns : rnss)
     {
-        qtext = rnss[i]->getName().c_str();
+        qtext = rns->getName().c_str();
         UI.comboBoxColModelRobot->addItem(qtext);
         UI.comboBoxColModelRobotStatic->addItem(qtext);
         UI.comboBoxRNS->addItem(qtext);

@@ -18,7 +18,7 @@ subject to the following restrictions:
 #include "DemoApplication.h"
 
 //glut is C code, this global gDemoApplication links glut to the C++ demo
-static DemoApplication* gDemoApplication = 0;
+static DemoApplication* gDemoApplication = nullptr;
 
 
 #include "GlutStuff.h"
@@ -66,7 +66,7 @@ static void glutMotionFuncCallback(int x, int y)
 }
 
 
-static void glutDisplayCallback(void)
+static void glutDisplayCallback()
 {
     gDemoApplication->displayCallback();
 }

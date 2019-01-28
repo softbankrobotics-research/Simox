@@ -66,17 +66,17 @@ BOOST_AUTO_TEST_CASE(VoxelTreeEntriesTest)
     VirtualRobot::VoxelTree6D<unsigned char> v(minB, maxB, 20.0f, 1.0f);
     float pos[6];
 
-    for (int i = 0; i < 6; i++)
+    for (float & po : pos)
     {
-        pos[i] = 0;
+        po = 0;
     }
 
     unsigned char* c = v.getEntry(pos);
-    bool isNull = (c == NULL);
+    bool isNull = (c == nullptr);
     BOOST_REQUIRE(isNull);
     v.setEntry(pos, 10);
     c = v.getEntry(pos);
-    isNull = (c == NULL);
+    isNull = (c == nullptr);
     BOOST_REQUIRE(!isNull);
 
     BOOST_REQUIRE_EQUAL(*c, 10);
@@ -101,22 +101,22 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDEntriesTest)
     VirtualRobot::VoxelTreeND<unsigned char, N> v(minB, maxB, discr, true);
     float pos[N];
 
-    for (unsigned int i = 0; i < N; i++)
+    for (float & po : pos)
     {
-        pos[i] = 0;
+        po = 0;
     }
 
     unsigned char* c = v.getEntry(pos);
-    bool isNull = (c == NULL);
+    bool isNull = (c == nullptr);
     BOOST_REQUIRE(isNull);
     v.setEntry(pos, 10);
     c = v.getEntry(pos);
-    isNull = (c == NULL);
+    isNull = (c == nullptr);
     BOOST_REQUIRE(!isNull);
     BOOST_REQUIRE_EQUAL(*c, 10);
 
     VirtualRobot::VoxelTreeNDElement<unsigned char, N>* e = v.getLeafElement(pos);
-    BOOST_REQUIRE(e != NULL);
+    BOOST_REQUIRE(e != nullptr);
     BOOST_REQUIRE(*(e->getEntry()) == 10);
 
     for (unsigned int i = 0; i < N; i++)
@@ -149,17 +149,17 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDSaveLoad)
 
     for (unsigned int i = 0; i < TEST_LOOPS; i++)
     {
-        for (unsigned int j = 0; j < N; j++)
+        for (float & po : pos)
         {
-            pos[j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
+            po = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
         }
 
         v.setEntry(pos, rand() % 255);
     }
 
-    for (unsigned int i = 0; i < N; i++)
+    for (float & po : pos)
     {
-        pos[i] = 17.0f;
+        po = 17.0f;
     }
 
     v.setEntry(pos, 10);
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDSaveLoad)
     v.save("testVoxelTree.bin");
     VirtualRobot::VoxelTreeND<unsigned char, N>* v2 = VirtualRobot::VoxelTreeND<unsigned char, N>::load("testVoxelTree.bin");
     unsigned char* c = v2->getEntry(pos);
-    bool isNull = (c == NULL);
+    bool isNull = (c == nullptr);
     BOOST_REQUIRE(!isNull);
     BOOST_REQUIRE_EQUAL(*c, 10);
 
@@ -194,14 +194,14 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDIterator)
     const int TEST_LOOPS = 10000;
     float pos[TEST_LOOPS][N];
 
-    for (int i = 0; i < TEST_LOOPS; i++)
+    for (auto & po : pos)
     {
-        for (unsigned int j = 0; j < N; j++)
+        for (float & j : po)
         {
-            pos[i][j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
+            j = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
         }
 
-        v.setEntry(pos[i], rand() % 255);
+        v.setEntry(po, rand() % 255);
     }
 
     VirtualRobot::VoxelTreeND<unsigned char, N>::ElementIterator it;
@@ -237,9 +237,9 @@ BOOST_AUTO_TEST_CASE(VoxelTreeNDMem)
 
     float pos[N];
 
-    for (unsigned int j = 0; j < N; j++)
+    for (float & po : pos)
     {
-        pos[j] = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
+        po = float(rand() % 10000) / 10000.0f * 200.0f - 100.0f;
     }
 
     v.setEntry(pos, rand() % 255);

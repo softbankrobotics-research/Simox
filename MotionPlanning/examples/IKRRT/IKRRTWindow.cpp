@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -38,7 +38,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 IKRRTWindow::IKRRTWindow(std::string& sceneFile, std::string& reachFile, std::string& rns, std::string& eef, std::string& colModel, std::string& colModelRob)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -311,9 +311,9 @@ void IKRRTWindow::buildVisu()
 
     if (obstacles.size() > 0)
     {
-        for (size_t i = 0; i < obstacles.size(); i++)
+        for (const auto & obstacle : obstacles)
         {
-            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(obstacles[i], colModel);
+            SoNode* visualisationNode = CoinVisualizationFactory::getCoinVisualization(obstacle, colModel);
 
             if (visualisationNode)
             {

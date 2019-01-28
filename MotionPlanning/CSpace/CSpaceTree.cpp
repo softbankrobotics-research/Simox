@@ -6,11 +6,11 @@
 #include "CSpace.h"
 #include "VirtualRobot/Robot.h"
 #include "VirtualRobot/RobotNodeSet.h"
-#include "float.h"
+#include <cfloat>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
-#include <time.h>
+#include <ctime>
 
 using namespace std;
 
@@ -41,9 +41,7 @@ namespace Saba
     }
 
     CSpaceTree::~CSpaceTree()
-    {
-
-    }
+    = default;
 
     void CSpaceTree::lock()
     {
@@ -323,7 +321,7 @@ namespace Saba
             }
         }
 
-        if (storeDist != NULL)
+        if (storeDist != nullptr)
         {
             *storeDist = sqrtf(dist2);
         }
@@ -362,10 +360,10 @@ namespace Saba
 
         CSpaceNodePtr actualNode;
 
-        for (unsigned int i = 0; i < nodes.size(); i++)
+        for (const auto & node : nodes)
         {
             // save ID, configuration and parentID of each node in one row
-            actualNode = nodes[i];
+            actualNode = node;
             file << actualNode->ID << " ";
 
             for (unsigned int j = 0; j < dimension; j++)

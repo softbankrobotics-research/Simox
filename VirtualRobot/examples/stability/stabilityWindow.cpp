@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -37,7 +37,7 @@ using namespace VirtualRobot;
 float TIMER_MS = 30.0f;
 
 stabilityWindow::stabilityWindow(std::string& sRobotFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -202,7 +202,7 @@ void stabilityWindow::buildVisu()
     useColModel = UI.checkBoxColModel->checkState() == Qt::Checked;
     SceneObject::VisualizationType colModel = (UI.checkBoxColModel->isChecked()) ? SceneObject::Collision : SceneObject::Full;
     visualization = robot->getVisualization<CoinVisualization>(colModel);
-    SoNode* visualisationNode = NULL;
+    SoNode* visualisationNode = nullptr;
 
     if (visualization)
     {
@@ -349,10 +349,10 @@ void stabilityWindow::updateSupportVisu()
         std::vector< Eigen::Vector2f > points2D;
 
         //MathTools::Plane plane2(Eigen::Vector3f(0,0,0),Eigen::Vector3f(0,1.0f,0));
-        for (size_t u = 0; u < points.size(); u++)
+        for (auto & point : points)
         {
 
-            Eigen::Vector2f pt2d = MathTools::projectPointToPlane2D(points[u].p, p);
+            Eigen::Vector2f pt2d = MathTools::projectPointToPlane2D(point.p, p);
             points2D.push_back(pt2d);
         }
 
@@ -371,13 +371,13 @@ void stabilityWindow::updateRNSBox()
     robot->getRobotNodeSets(allRNS);
     robotNodeSets.clear();
 
-    for (size_t i = 0; i < allRNS.size(); i++)
+    for (auto & i : allRNS)
     {
         //if (allRNS[i]->isKinematicChain())
         //{
         //VR_INFO << " RNS <" << allRNS[i]->getName() << "> is a valid kinematic chain" << endl;
-        robotNodeSets.push_back(allRNS[i]);
-        UI.comboBoxRNS->addItem(QString(allRNS[i]->getName().c_str()));
+        robotNodeSets.push_back(i);
+        UI.comboBoxRNS->addItem(QString(i->getName().c_str()));
         /*} else
         {
             VR_INFO << " RNS <" << allRNS[i]->getName() << "> is not a valid kinematic chain" << endl;
@@ -385,9 +385,9 @@ void stabilityWindow::updateRNSBox()
     }
 
 
-    for (unsigned int i = 0; i < allRobotNodes.size(); i++)
+    for (auto & allRobotNode : allRobotNodes)
     {
-        allRobotNodes[i]->showBoundingBox(false);
+        allRobotNode->showBoundingBox(false);
     }
 
 
@@ -447,9 +447,9 @@ void stabilityWindow::updateJointBox()
 {
     UI.comboBoxJoint->clear();
 
-    for (unsigned int i = 0; i < currentRobotNodes.size(); i++)
+    for (auto & currentRobotNode : currentRobotNodes)
     {
-        UI.comboBoxJoint->addItem(QString(currentRobotNodes[i]->getName().c_str()));
+        UI.comboBoxJoint->addItem(QString(currentRobotNode->getName().c_str()));
     }
 
     selectJoint(0);

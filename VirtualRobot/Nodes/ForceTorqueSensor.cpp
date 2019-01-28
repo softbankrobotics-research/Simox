@@ -19,8 +19,7 @@ namespace VirtualRobot
 
 
     ForceTorqueSensor::~ForceTorqueSensor()
-    {
-    }
+    = default;
 
     Eigen::Vector3f ForceTorqueSensor::getForce() const
     {

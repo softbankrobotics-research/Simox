@@ -11,13 +11,11 @@ namespace VirtualRobot
 {
 
     ForceTorqueSensorFactory::ForceTorqueSensorFactory()
-    {
-    }
+    = default;
 
 
     ForceTorqueSensorFactory::~ForceTorqueSensorFactory()
-    {
-    }
+    = default;
 
 
     /**

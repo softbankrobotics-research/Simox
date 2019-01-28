@@ -3,7 +3,7 @@
 
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
-#include <float.h>
+#include <cfloat>
 
 
 
@@ -28,8 +28,7 @@ namespace VirtualRobot
     }
 
     PoseQualityExtendedManipulability::~PoseQualityExtendedManipulability()
-    {
-    }
+    = default;
 
     float PoseQualityExtendedManipulability::getPoseQuality()
     {

@@ -13,13 +13,11 @@ namespace VirtualRobot
 {
 
     RobotNodePrismaticFactory::RobotNodePrismaticFactory()
-    {
-    }
+    = default;
 
 
     RobotNodePrismaticFactory::~RobotNodePrismaticFactory()
-    {
-    }
+    = default;
 
 
     /**
@@ -29,7 +27,7 @@ namespace VirtualRobot
      */
     RobotNodePtr RobotNodePrismaticFactory::createRobotNode(RobotPtr robot, const std::string& nodeName, VisualizationNodePtr visualizationModel, CollisionModelPtr collisionModel, float limitLow, float limitHigh, float jointValueOffset, const Eigen::Matrix4f& preJointTransform, const Eigen::Vector3f& /*axis*/, const Eigen::Vector3f& translationDirection, const SceneObject::Physics& p, RobotNode::RobotNodeType rntype) const
     {
-        RobotNodePtr robotNode(new RobotNodePrismatic(robot, nodeName, limitLow, limitHigh, preJointTransform, translationDirection, visualizationModel, collisionModel, jointValueOffset, p, CollisionCheckerPtr(), rntype));
+        RobotNodePtr robotNode(new RobotNodePrismatic(robot, nodeName, limitLow, limitHigh, preJointTransform, translationDirection, visualizationModel, collisionModel, jointValueOffset, p, (collisionModel ? collisionModel->getCollisionChecker() : CollisionCheckerPtr()), rntype));
 
         return robotNode;
     }

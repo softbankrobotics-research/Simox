@@ -21,7 +21,7 @@
 
 #include <Eigen/Geometry>
 
-#include <time.h>
+#include <ctime>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -43,7 +43,7 @@ using namespace GraspStudio;
 float TIMER_MS = 30.0f;
 
 GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile)
-    : QMainWindow(NULL)
+    : QMainWindow(nullptr)
 {
     VR_INFO << " start " << endl;
 
@@ -52,7 +52,7 @@ GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefNam
     this->objectFile = objFile;
     this->eefName = eefName;
     this->preshape = preshape;
-    eefVisu = NULL;
+    eefVisu = nullptr;
 
     sceneSep = new SoSeparator;
     sceneSep->ref();
@@ -262,15 +262,15 @@ void GraspPlannerWindow::buildVisu()
         }
 
         // add approach dir visu
-        for (size_t i = 0; i < contacts.size(); i++)
+        for (auto & contact : contacts)
         {
             SoSeparator* s = new SoSeparator;
             Eigen::Matrix4f ma;
             ma.setIdentity();
-            ma.block(0, 3, 3, 1) = contacts[i].contactPointFingerGlobal;
+            ma.block(0, 3, 3, 1) = contact.contactPointFingerGlobal;
             SoMatrixTransform* m = CoinVisualizationFactory::getMatrixTransformScaleMM2M(ma);
             s->addChild(m);
-            s->addChild(CoinVisualizationFactory::CreateArrow(contacts[i].approachDirectionGlobal, 10.0f, 1.0f));
+            s->addChild(CoinVisualizationFactory::CreateArrow(contact.approachDirectionGlobal, 10.0f, 1.0f));
             frictionConeSep->addChild(s);
         }
     }

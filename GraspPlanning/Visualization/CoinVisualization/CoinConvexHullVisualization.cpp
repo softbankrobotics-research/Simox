@@ -215,17 +215,17 @@ namespace GraspStudio
 
         for (int i = 0; i < nFaces; i++)
         {
-            for (int j = 0; j < 6; j++)
+            for (int j : convHull->faces[i].id)
             {
                 if (buseFirst3Coords)
                 {
                     //v[j] = convHull->vertices.at(convHull->faces[i].id[j]).p;
-                    vProjectedPoints.push_back(convHull->vertices[ convHull->faces[i].id[j] ].p);
+                    vProjectedPoints.push_back(convHull->vertices[ j ].p);
                 }
                 else
                 {
                     //v[j] = convHull->vertices.at(convHull->faces[i].id[j]).n;
-                    vProjectedPoints.push_back(convHull->vertices[ convHull->faces[i].id[j] ].n);
+                    vProjectedPoints.push_back(convHull->vertices[ j ].n);
                 }
 
             }

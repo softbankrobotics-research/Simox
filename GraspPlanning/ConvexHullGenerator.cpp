@@ -1,9 +1,9 @@
 
 #include "ConvexHullGenerator.h"
 #include <VirtualRobot/Visualization/TriMeshModel.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
-#include <float.h>
+#include <cfloat>
 
 //#define CONVEXHULL_DEBUG_OUTPUT
 
@@ -127,7 +127,7 @@ namespace GraspStudio
         FILE* outfile = stdout;     /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 # else
-        FILE* outfile = NULL;       /* output from qh_produce_output()*/
+        FILE* outfile = nullptr;       /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 #endif
         FILE* errfile = stderr;     /* error messages from qhull code */
@@ -159,11 +159,11 @@ namespace GraspStudio
         {
             facetT* facet_list = qh facet_list;
             //int convexNumFaces = qh num_facets;
-            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
 
             qh_triangulate(); // need this for triangulated output!
             //int convexNumFaces2 = qh num_facets;
-            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
             /*
             cout << "Numfacets1:" << convexNumFaces << endl;
             cout << "Numvertices1:" << convexNumVert << endl;
@@ -183,9 +183,9 @@ namespace GraspStudio
 
             double pCenter[3];
 
-            for (int u = 0; u < 3; u++)
+            for (double & u : pCenter)
             {
-                pCenter[u] = 0;
+                u = 0;
             }
 
             int nVcertexCount = 0;
@@ -200,9 +200,9 @@ namespace GraspStudio
             }
 
             if (nVcertexCount > 0)
-                for (int u = 0; u < 3; u++)
+                for (double & u : pCenter)
                 {
-                    pCenter[u] /= (float)nVcertexCount;
+                    u /= (float)nVcertexCount;
                 }
 
             result->center[0] = pCenter[0];
@@ -319,7 +319,7 @@ namespace GraspStudio
         FILE* outfile = stdout;     /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 # else
-        FILE* outfile = NULL;       /* output from qh_produce_output()*/
+        FILE* outfile = nullptr;       /* output from qh_produce_output()*/
         /* use NULL to skip qh_produce_output() */
 #endif
         FILE* errfile = stderr;     /* error messages from qhull code */
@@ -353,23 +353,23 @@ namespace GraspStudio
         {
             facetT* facet_list = qh facet_list;
             //int convexNumFaces = qh num_facets;
-            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
 
             qh_triangulate(); // need this for triangulated output!
             //int convexNumFaces2 = qh num_facets;
-            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, NULL, false));
+            /*int convexNumVert2 =*/ qh_setsize(qh_facetvertices(facet_list, nullptr, false));
             double pCenter[6];
 
-            for (int u = 0; u < 6; u++)
+            for (double & u : pCenter)
             {
-                pCenter[u] = 0;
+                u = 0;
             }
 
             double pZero[6];
 
-            for (int u = 0; u < 6; u++)
+            for (double & u : pZero)
             {
-                pZero[u] = 0;
+                u = 0;
             }
 
             int nVcertexCount = 0;
@@ -384,9 +384,9 @@ namespace GraspStudio
             }
 
             if (nVcertexCount > 0)
-                for (int u = 0; u < 6; u++)
+                for (double & u : pCenter)
                 {
-                    pCenter[u] /= (float)nVcertexCount;
+                    u /= (float)nVcertexCount;
                 }
 
             result->center.p[0] = pCenter[0];
