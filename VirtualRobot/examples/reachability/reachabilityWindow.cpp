@@ -765,12 +765,10 @@ void reachabilityWindow::updateQualityInfo()
         {
             reachManip = p->getManipulabilityAtPose(p->getTCP()->getGlobalPose());
             poseManip = p->measureCurrentPose();
-        } else
+        }
+        else
         {
-            if (reachSpace->getEntry(p->getTCP()->getGlobalPose())>0)
-                reachManip = 1.0f;
-            else
-                reachManip = 0.0f;
+            reachManip = 0.0f;
         }
     }
     ss3 << "Quality in Reach Data: " << reachManip;
