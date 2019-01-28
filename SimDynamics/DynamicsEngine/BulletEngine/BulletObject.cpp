@@ -208,11 +208,11 @@ namespace SimDynamics
         return result;
     }
 
-    btConvexHullShape* BulletObject::createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh)
+    btCollisionShape* BulletObject::createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh)
     {
         VR_ASSERT(trimesh);
         // create triangle shape
-        btTriangleMesh* btTrimesh = new btTriangleMesh();
+        btTrimesh.reset(new btTriangleMesh());
 
         //com = trimesh->getCOM();
 
@@ -247,25 +247,35 @@ namespace SimDynamics
         Eigen::Matrix4f comConv = sceneObject->getGlobalPoseVisualization() * comLoc;
         com = comConv.block(0,3,3,1);*/
 
-        // build convex hull
-        boost::shared_ptr<btConvexShape> btConvexShape(new btConvexTriangleMeshShape(btTrimesh));
-        btConvexShape->setMargin(btMargin);
 
-        boost::shared_ptr<btShapeHull> btHull(new btShapeHull(btConvexShape.get()));
-        btHull->buildHull(btMargin);
-        btConvexHullShape* btConvex = new btConvexHullShape();
-        btConvex->setLocalScaling(btVector3(1, 1, 1));
 
-        for (int i = 0; i < btHull->numVertices(); i++)
+        if (sceneObject->getSimulationType() == VirtualRobot::SceneObject::Physics::eKinematic)
         {
-            btConvex->addPoint(btHull->getVertexPointer()[i]);
+            // Support concave objects if they are not dynamic
+            return new btBvhTriangleMeshShape(btTrimesh.get(), false);
         }
+        else
+        {
+            // build convex hull
+            boost::shared_ptr<btConvexShape> btConvexShape(new btConvexTriangleMeshShape(btTrimesh.get()));
+            btConvexShape->setMargin(btMargin);
 
-        btConvex->setMargin(btMargin);
+            boost::shared_ptr<btShapeHull> btHull(new btShapeHull(btConvexShape.get()));
+            btHull->buildHull(btMargin);
+            btConvexHullShape* btConvex = new btConvexHullShape();
+            btConvex->setLocalScaling(btVector3(1, 1, 1));
 
-        // trimesh not needed any more
-        delete btTrimesh;
-        return btConvex;
+            for (int i = 0; i < btHull->numVertices(); i++)
+            {
+                btConvex->addPoint(btHull->getVertexPointer()[i]);
+            }
+
+            btConvex->setMargin(btMargin);
+
+            // Trimesh no longer needed
+            btTrimesh.reset();
+            return btConvex;
+        }
     }
 
     boost::shared_ptr<btRigidBody> BulletObject::getRigidBody()

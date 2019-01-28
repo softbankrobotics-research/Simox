@@ -100,10 +100,11 @@ namespace SimDynamics
         void setPoseIntern(const Eigen::Matrix4f& pose);
         btCollisionShape* getShapeFromPrimitive(VirtualRobot::Primitive::PrimitivePtr primitive);
 
-        btConvexHullShape* createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh);
+        btCollisionShape* createConvexHullShape(VirtualRobot::TriMeshModelPtr trimesh);
 
         boost::shared_ptr<btRigidBody> rigidBody;
         boost::shared_ptr<btCollisionShape> collisionShape; // bullet collision shape
+        std::unique_ptr<btTriangleMesh> btTrimesh;
 
         Eigen::Vector3f com; // com offset of trimesh
 
