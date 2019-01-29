@@ -1,3 +1,7 @@
+#include <iostream>
+#include <iomanip>
+#include <ctime>
+
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/VirtualRobotException.h>
 #include <VirtualRobot/Nodes/RobotNode.h>
@@ -35,8 +39,12 @@ using namespace VirtualRobot;
 
 
 
-void endlessExtend(std::string robotFile, std::string reachFile, int steps)
+void endlessExtend(std::string robotFile, std::string reachFile, int steps, unsigned int threads)
 {
+    if(threads == 0)
+    {
+        threads = QThread::idealThreadCount() < 1 ? 1 : static_cast<unsigned int>(QThread::idealThreadCount());
+    }
     VR_INFO << "Extending workspace information, saving each " << steps << " steps." << endl;
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(robotFile);
     VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(reachFile);
@@ -110,15 +118,26 @@ void endlessExtend(std::string robotFile, std::string reachFile, int steps)
     strftime(buffer, 255, "ReachabilityData_ENDLESS_%Y_%m_%d__%H_%M_%S_", timeinfo);
     int nr = 0;
 
+    auto printTime = []
+    {
+        std::time_t t = std::time(nullptr);
+        std::tm tm = *std::localtime(&t);
+        std::cout.imbue(std::locale("en_GB.utf8"));
+        std::cout << std::put_time(&tm, "%c") << '\n';
+    };
+
+
     while (true)
     {
+        printTime();
         //reachSpace->addRandomTCPPoses(steps);
         VR_INFO << "Adding " << steps << " new random poses" << std::endl;
-        reachSpace->addRandomTCPPoses(steps, QThread::idealThreadCount() < 1 ? 1 : QThread::idealThreadCount(), true);
+        reachSpace->addRandomTCPPoses(steps, threads, true);
 
         reachSpace->print();
         std::stringstream ss;
-        ss << buffer << "_" << nr << ".bin";
+        ss << buffer << "_" << std::setfill('0') << std::setw(4) << nr << ".bin";
+        printTime();
         VR_INFO << "Saving current state of reachability map to " << ss.str() << std::endl;
         reachSpace->save(ss.str());
         nr++;
@@ -159,6 +178,7 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::considerKey("robot");
     VirtualRobot::RuntimeEnvironment::considerKey("extendReach");
     VirtualRobot::RuntimeEnvironment::considerKey("extendReachStepsSave");
+    VirtualRobot::RuntimeEnvironment::considerKey("extendReachStepsThreads");
     VirtualRobot::RuntimeEnvironment::considerKey("reachability");
     VirtualRobot::RuntimeEnvironment::considerKey("visualizationTCPAxis");
     VirtualRobot::RuntimeEnvironment::processCommandLine(argc, argv);
@@ -187,8 +207,23 @@ int main(int argc, char* argv[])
     {
         int stepsSave = 100000;
         if (VirtualRobot::RuntimeEnvironment::hasValue("extendReachStepsSave"))
-                stepsSave = VirtualRobot::RuntimeEnvironment::toInt(VirtualRobot::RuntimeEnvironment::getValue("extendReachStepsSave"));
-        endlessExtend(filenameRob, filenameReach, stepsSave);
+        {
+            stepsSave = VirtualRobot::RuntimeEnvironment::toInt(VirtualRobot::RuntimeEnvironment::getValue("extendReachStepsSave"));
+        }
+        unsigned int threads = QThread::idealThreadCount() < 1 ? 1 : static_cast<unsigned int>(QThread::idealThreadCount());
+        if(VirtualRobot::RuntimeEnvironment::hasValue("extendReachStepsThreads"))
+        {
+            int val = VirtualRobot::RuntimeEnvironment::toInt(VirtualRobot::RuntimeEnvironment::getValue("extendReachStepsThreads"));
+            if(val > 0)
+            {
+                threads = static_cast<unsigned int>(val);
+            }
+            else
+            {
+                VR_WARNING << "extendReachStepsThreads was set to the illegal value " << val << "! Using the value " << threads  << " instead";
+            }
+        }
+        endlessExtend(filenameRob, filenameReach, stepsSave, threads);
         return 0;
     }
 
