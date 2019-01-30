@@ -315,6 +315,7 @@ math/Contact.h
 math/ContactList.h
 math/Line.h
 math/LineStrip.h
+math/LineStripR1RM.h
 math/Bezier.h
 math/LinearContinuedBezier.h
 math/LineR2.h
@@ -327,6 +328,7 @@ math/AbstractFunctionR3R1.h
 math/TransformedFunctionR1R3.h
 math/TransformedFunctionR2R3.h
 math/SimpleAbstractFunctionR1R3.h
+math/SimpleAbstractFunctionRNRM.h
 math/SimpleAbstractFunctionR1R6.h
 math/SimpleAbstractFunctionR1Ori.h
 math/SimpleAbstractFunctionR2R3.h
