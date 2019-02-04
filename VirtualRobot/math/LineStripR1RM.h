@@ -34,14 +34,17 @@ namespace math
     public:
         using point_t = Eigen::Matrix<float, M, 1>;
 
-        int Count() { return points.size(); }
+        int Count() const { return points.size(); }
 
         LineStripR1RM(std::vector<point_t> points, float minT, float maxT)
             : points(std::move(points)), minT(minT), maxT(maxT)
         {}
 
-        bool InLimits(float t);
-        point_t Get(float t) override
+        bool InLimits(float t) const
+        {
+            return t >= minT && t <= maxT;
+        }
+        point_t Get(float t) const override
         {
             int i; float f;
             GetIndex(t,  i,  f);
@@ -49,11 +52,11 @@ namespace math
         }
 
     private:
-        point_t GetDirection(int i)
+        point_t GetDirection(int i) const
         {
             return points.at(i+1) - points.at(i);
         }
-        void GetIndex(float t,  int& i, float& f)
+        void GetIndex(float t,  int& i, float& f) const
         {
             Helpers::GetIndex(t, minT, maxT, points.size(),  i,  f);
         }
