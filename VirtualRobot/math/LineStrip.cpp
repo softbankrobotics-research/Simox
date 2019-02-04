@@ -31,6 +31,10 @@ LineStrip::LineStrip(const std::vector<Eigen::Vector3f> &points, float minT, flo
 {
 }
 
+bool LineStrip::InLimits(float t)
+{
+    return t >= minT && t <= maxT;
+}
 
 Eigen::Vector3f LineStrip::Get(float t)
 {
