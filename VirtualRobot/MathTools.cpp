@@ -755,6 +755,12 @@ namespace VirtualRobot
         //m(3,3) = w*w + x*x + y*y + z*z;*/
     }
 
+
+    Eigen::Matrix3f VIRTUAL_ROBOT_IMPORT_EXPORT quat2eigen3f(float qx, float qy, float qz, float qw)
+    {
+        return Eigen::Quaternionf{qw, qx, qy, qz}.toRotationMatrix();
+    }
+
     void VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2eigen4f(float x, float y, float z, float w, Eigen::Matrix4f& m)
     {
         m = quat2eigen4f(x,y,z,w);
