@@ -32,7 +32,7 @@ namespace math
     public:
         using in_t = Eigen::Matrix<float, N, 1>;
         using out_t = Eigen::Matrix<float, M, 1>;
-        virtual out_t Get(in_t t) = 0;
+        virtual out_t Get(in_t t) const = 0;
     private:
     };
 
@@ -42,7 +42,7 @@ namespace math
     public:
         using in_t = float;
         using out_t = Eigen::Matrix<float, M, 1>;
-        virtual out_t Get(in_t t) = 0;
+        virtual out_t Get(in_t t) const = 0;
     private:
     };
 
