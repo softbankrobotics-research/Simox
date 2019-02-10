@@ -26,6 +26,9 @@ BOOST_AUTO_TEST_SUITE(CollisionModel)
 
 BOOST_AUTO_TEST_CASE(testCollisionModel)
 {
+    int argc = 0;
+    VirtualRobot::VisualizationFactory::getInstance()->init(argc,nullptr, "VirtualRobotRobotTest");
+
     VirtualRobot::CollisionCheckerPtr colChecker = VirtualRobot::CollisionChecker::getGlobalCollisionChecker();
     BOOST_REQUIRE(colChecker);
 
