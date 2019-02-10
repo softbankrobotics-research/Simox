@@ -33,8 +33,10 @@
 #include <Qt3DRender/QPointLight>
 #include <Qt3DRender/QMultiSampleAntiAliasing>
 
-SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent) : Qt3DExtras::Qt3DWindow(), parent(parent)
+SimoxGui::Qt3DViewer::Qt3DViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex>& m) : AbstractViewer(m), Qt3DExtras::Qt3DWindow(), parent(parent)
 {
+    VR_ASSERT(m);
+
     QVBoxLayout *layout = new QVBoxLayout(this->parent);
     QWidget *container = QWidget::createWindowContainer(this);
     layout->addWidget(container);

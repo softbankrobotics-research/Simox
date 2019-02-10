@@ -44,10 +44,11 @@ namespace SimoxGui
 
     class SIMOX_GUI_IMPORT_EXPORT Qt3DViewer : public AbstractViewer, public Qt3DExtras::Qt3DWindow
     {
+        friend class Qt3DViewerFactory;
+    protected:
+        Qt3DViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex>& m = std::shared_ptr<std::recursive_mutex>(new std::recursive_mutex));
     public:
-
-        Qt3DViewer(QWidget *parent);
-        ~Qt3DViewer();
+        ~Qt3DViewer() override;
 
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected() const override;
         virtual std::vector<VirtualRobot::VisualizationPtr> getAllSelected(const std::string &layer, bool recursive=true) const override;
