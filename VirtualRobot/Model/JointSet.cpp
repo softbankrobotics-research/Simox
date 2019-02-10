@@ -40,12 +40,14 @@ namespace VirtualRobot
                 joints.push_back(joint);
             }
         }
-        return createJointSet(model, name, joints, kinematicRoot, tcp, registerToModel);
+        return createJointSet(model, name, joints, kinematicRoot,
+                              (tcp || modelNodes.empty())?tcp:*modelNodes.rbegin(),
+                              registerToModel);
     }
 
-    JointSetPtr JointSet::createJointSet(const ModelPtr &model, const std::string &name, const std::vector<ModelJointPtr> &modelNodes, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
+    JointSetPtr JointSet::createJointSet(const ModelPtr &model, const std::string &name, const std::vector<ModelJointPtr> &modelJoints, const ModelNodePtr kinematicRoot, const FramePtr tcp, bool registerToModel)
     {
-        JointSetPtr mns(new JointSet(name, model, modelNodes, kinematicRoot, tcp));
+        JointSetPtr mns(new JointSet(name, model, modelJoints, kinematicRoot, tcp));
 
         if (registerToModel)
         {
