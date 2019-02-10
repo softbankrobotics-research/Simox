@@ -509,6 +509,7 @@ namespace VirtualRobot
     void VisualizationSet::addMutex(const std::shared_ptr<std::recursive_mutex> &m)
     {
         std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        VR_ASSERT(m);
         mutexList.push_back(m);
         std::sort(mutexList.begin(), mutexList.end());
         for (const auto& v : getVisualizations())
@@ -530,6 +531,7 @@ namespace VirtualRobot
     void VisualizationSet::swapMutex(const std::shared_ptr<std::recursive_mutex> &oldM, const std::shared_ptr<std::recursive_mutex> &newM)
     {
         std::lock_guard<std::mutex> l(mutexListChangeMutex);
+        VR_ASSERT(newM);
         auto it = std::find(mutexList.begin(), mutexList.end(), oldM);
         if (it == mutexList.end())
         {
