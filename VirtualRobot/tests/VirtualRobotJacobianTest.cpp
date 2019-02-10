@@ -101,17 +101,17 @@ BOOST_AUTO_TEST_CASE(testJacobianRevoluteJoint)
     DiffQuot.block<3, 1>(0, 1) = (r3->getGlobalPose().block<3, 1>(0, 3) - a.block<3, 1>(0, 3)) / STEP_SIZE;
 
     // Compare both and check if they are similar enough.
-    //std::cout << "Jacobian:\n " << jacobian.block<3,2>(0,0) << std::endl;
-    //std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
-    //std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
+    std::cout << "Jacobian:\n " << jacobian << std::endl;
+    std::cout << "Differential quotient:\n " << DiffQuot << std::endl;
+    std::cout << (  (jacobian.block<3,2>(0,0) -  DiffQuot).array().abs() < 0.2     ).all() << std::endl;
     BOOST_CHECK(((jacobian.block<3, 2>(0, 0) -  DiffQuot).array().abs() < MAX_ERROR).all());
 
 }
-/*
+
 BOOST_AUTO_TEST_CASE(testJacobianRegularization)
 {
     std::cout << "testJacobianRegularization" << std::endl;
-    std::string filename = "robots/ArmarIII/ArmarIII.xml";
+    std::string filename = "robots/Armar3/Armar3.xml";
     bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
     BOOST_REQUIRE(fileOK);
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(testJacobianRegularization)
 
 BOOST_AUTO_TEST_CASE(testJacobianSingularity)
 {
-    std::string filename = "robots/ArmarIII/ArmarIII.xml";
+    std::string filename = "robots/Armar3/Armar3.xml";
     bool fileOK = RuntimeEnvironment::getDataFileAbsolute(filename);
     BOOST_REQUIRE(fileOK);
 
@@ -183,7 +183,8 @@ BOOST_AUTO_TEST_CASE(testJacobianSingularity)
 
     std::cout << "robot loaded" << std::endl;
 
-    Eigen::VectorXf initialJointAngles = rns->getJointValuesEigen();
+    Eigen::VectorXf initialJointAngles;
+    rns->getJointValues(initialJointAngles);
 
     Eigen::VectorXf vel(6);
     vel << 0, 10, 0, 0, 0, 0;
@@ -200,10 +201,12 @@ BOOST_AUTO_TEST_CASE(testJacobianSingularity)
             //std::cout << jacobi << std::endl;
             //std::cout << (jacobi * jointVel).transpose() << std::endl;
             //std::cout << rns->getTCP()->getPositionInRootFrame().transpose() << std::endl;
-            Eigen::Vector3f oldPos = rns->getTCP()->getPositionInRootFrame();
-            rns->setJointValues(rns->getJointValuesEigen() + jointVel);
+            Eigen::Vector3f oldPos = rns->getTCP()->getPositionInRootFrame(robot);
+            Eigen::VectorXf jointAngles;
+            rns->getJointValues(jointAngles);
+            rns->setJointValues(jointAngles + jointVel);
             //std::cout << (rns->getTCP()->getPositionInRootFrame() - oldPos).transpose() << std::endl;
-            Eigen::Vector3f diff = rns->getTCP()->getPositionInRootFrame() - oldPos;
+            Eigen::Vector3f diff = rns->getTCP()->getPositionInRootFrame(robot) - oldPos;
             //std::cout << (vel.topRows(3) - diff).norm() << " " <<  diff.norm() << std::endl;
             maxError = std::max(maxError, diff.norm());
             //std::cout << jointVel.transpose() << std::endl;
@@ -223,16 +226,18 @@ BOOST_AUTO_TEST_CASE(testJacobianSingularity)
             Eigen::MatrixXf jacobi = ik.getJacobianMatrix(rns->getTCP());
             Eigen::MatrixXf invjac = ik.computePseudoInverseJacobianMatrix(jacobi, ik.getJacobiRegularization());
             Eigen::VectorXf jointVel = invjac * vel;
-            //std::cout << (jacobi * jointVel).transpose() << std::endl;
-            //std::cout << rns->getTCP()->getPositionInRootFrame().transpose() << std::endl;
-            Eigen::Vector3f oldPos = rns->getTCP()->getPositionInRootFrame();
-            rns->setJointValues(rns->getJointValuesEigen() + jointVel);
-            //std::cout << (rns->getTCP()->getPositionInRootFrame() - oldPos).norm() << " " << (rns->getTCP()->getPositionInRootFrame() - oldPos).transpose() << std::endl;
-            Eigen::Vector3f diff = rns->getTCP()->getPositionInRootFrame() - oldPos;
-            //std::cout << (vel.topRows(3) - diff).norm() << " " <<  diff.norm() << std::endl;
+            std::cout << (jacobi * jointVel).transpose() << std::endl;
+            std::cout << rns->getTCP()->getPositionInRootFrame(robot).transpose() << std::endl;
+            Eigen::Vector3f oldPos = rns->getTCP()->getPositionInRootFrame(robot);
+            Eigen::VectorXf jointAngles;
+            rns->getJointValues(jointAngles);
+            rns->setJointValues(jointAngles + jointVel);
+            std::cout << (rns->getTCP()->getPositionInRootFrame(robot) - oldPos).norm() << " " << (rns->getTCP()->getPositionInRootFrame(robot) - oldPos).transpose() << std::endl;
+            Eigen::Vector3f diff = rns->getTCP()->getPositionInRootFrame(robot) - oldPos;
+            std::cout << (vel.topRows(3) - diff).norm() << " " <<  diff.norm() << std::endl;
             maxError = std::max(maxError, diff.norm());
-            //std::cout << (rns->getTCP()->getPositionInRootFrame() - oldPos).transpose() << std::endl;
-            //std::cout << jointVel.transpose() << std::endl;
+            std::cout << (rns->getTCP()->getPositionInRootFrame(robot) - oldPos).transpose() << std::endl;
+            std::cout << jointVel.transpose() << std::endl;
         }
         std::cout << "maxError: " << maxError << std::endl;
         BOOST_CHECK_LE(maxError, 50);
@@ -250,7 +255,7 @@ BOOST_AUTO_TEST_CASE(testJacobianSingularity)
             std::cout << (rns->getTCP()->getPositionInRootFrame() - oldPos).transpose() << std::endl;
         }
 
-    }
-}*/
+    }*/
+}
 
 BOOST_AUTO_TEST_SUITE_END()

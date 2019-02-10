@@ -2,7 +2,21 @@
 
 #include <set>
 
-SimoxGui::AbstractViewer::AbstractViewer() : mutex(new std::recursive_mutex), baseLayer(this) {}
+SimoxGui::AbstractViewer::AbstractViewer(const std::shared_ptr<std::recursive_mutex>& m) :
+    mutex(m),
+    baseLayer(this),
+    layerSeparator('/')
+{
+}
+
+SimoxGui::AbstractViewer::~AbstractViewer()
+{
+    auto visus = getAllVisualizations();
+    for (const auto& v : visus)
+    {
+        removeVisualization(v);
+    }
+}
 
 void SimoxGui::AbstractViewer::addVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
@@ -22,15 +36,15 @@ void SimoxGui::AbstractViewer::addVisualizations(const std::vector<VirtualRobot:
 void SimoxGui::AbstractViewer::removeVisualization(const VirtualRobot::VisualizationPtr &visualization, const std::string &layer)
 {
     auto l = getScopedLock();
-    visualization->removeMutex(mutex);
     requestLayer(layer).removeVisualization(visualization);
+    visualization->removeMutex(mutex);
 }
 
 void SimoxGui::AbstractViewer::removeVisualizationOnAllLayers(const VirtualRobot::VisualizationPtr &visualization)
 {
     auto l = getScopedLock();
-    visualization->removeMutex(mutex);
     removeVisualizationOnAllLayers(baseLayer, visualization);
+    visualization->removeMutex(mutex);
 }
 
 bool SimoxGui::AbstractViewer::hasVisualization(const VirtualRobot::VisualizationPtr &visualization) const
@@ -197,29 +211,9 @@ char SimoxGui::AbstractViewer::getLayerSeparator() const
     return layerSeparator;
 }
 
-void SimoxGui::AbstractViewer::setMutex(std::shared_ptr<std::recursive_mutex> m)
-{
-    if (mutex)
-    {
-        for (const auto& v : getAllVisualizations())
-        {
-            v->removeMutex(mutex);
-        }
-    }
-    mutex = m;
-    if (mutex)
-    {
-        for (const auto& v : getAllVisualizations())
-        {
-            v->addMutex(mutex);
-        }
-    }
-}
-
 std::shared_ptr<std::lock_guard<std::recursive_mutex> > SimoxGui::AbstractViewer::getScopedLock() const
 {
-    std::shared_ptr<std::lock_guard<std::recursive_mutex>> l;
-
+    std::shared_ptr<std::lock_guard<std::recursive_mutex>> l(nullptr);
     if (mutex)
     {
         l.reset(new std::lock_guard<std::recursive_mutex>(*mutex));

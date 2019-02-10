@@ -55,6 +55,7 @@
 
 namespace SimoxGui
 {
+    class AbstractViewer;
     class SoGLHighlightRenderAction : public SoGLRenderAction
     {
     public:
@@ -64,7 +65,7 @@ namespace SimoxGui
          *
          * @param viewportregion ViewportRegion the Class is initialized with
          */
-        SoGLHighlightRenderAction(const SbViewportRegion& viewportregion, const std::shared_ptr<std::recursive_mutex>& mutex);
+        SoGLHighlightRenderAction(const SbViewportRegion& viewportregion);
 
         /**
          * Destructor.
@@ -92,27 +93,7 @@ namespace SimoxGui
          */
         bool getVisible();
 
-        void setMutex(const std::shared_ptr<std::recursive_mutex>& m)
-        {
-            auto l = getScopedLock();
-            mutex = m;
-        }
-
-        std::shared_ptr<std::lock_guard<std::recursive_mutex>> getScopedLock()
-        {
-            if (mutex)
-            {
-                return std::shared_ptr<std::lock_guard<std::recursive_mutex>>(new std::lock_guard<std::recursive_mutex>(*mutex));
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
-
     private:
-        std::shared_ptr<std::recursive_mutex> mutex;
-
         bool isVisible;
 
         void drawHighlight(SoPath* pathtothis, const SoPathList* pathlist);

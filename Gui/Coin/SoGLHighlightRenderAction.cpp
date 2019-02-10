@@ -29,9 +29,10 @@
  */
 
 #include "SoGLHighlightRenderAction.h"
+#include "../AbstractViewer.h"
 
-SimoxGui::SoGLHighlightRenderAction::SoGLHighlightRenderAction(const SbViewportRegion& viewportregion, const std::shared_ptr<std::recursive_mutex> &mutex) :
-    SoGLRenderAction(viewportregion), mutex(mutex), selectedcolor_storage(sizeof(void*), alloc_colorpacker, free_colorpacker)
+SimoxGui::SoGLHighlightRenderAction::SoGLHighlightRenderAction(const SbViewportRegion& viewportregion) :
+    SoGLRenderAction(viewportregion), selectedcolor_storage(sizeof(void*), alloc_colorpacker, free_colorpacker)
 {
 
     this->isVisible = true;
@@ -53,8 +54,6 @@ SimoxGui::SoGLHighlightRenderAction::~SoGLHighlightRenderAction()
 
 void SimoxGui::SoGLHighlightRenderAction::apply(SoNode* node)
 {
-    auto l = getScopedLock();
-
     //Render complete scene with standard action
     SoGLRenderAction::apply(node);
 
@@ -85,7 +84,7 @@ void SimoxGui::SoGLHighlightRenderAction::apply(SoNode* node)
 }
 
 void SimoxGui::SoGLHighlightRenderAction::drawHighlight(SoPath* pathtothis,
-        const SoPathList* pathlist)
+                                                        const SoPathList* pathlist)
 {
     // Copied from Coin implementation, no idea what it does
     int oldnumpasses = this->getNumPasses();

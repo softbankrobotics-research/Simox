@@ -280,6 +280,7 @@ namespace VirtualRobot
 
         virtual void addMutex(const std::shared_ptr<std::recursive_mutex>& m);
         virtual void removeMutex(const std::shared_ptr<std::recursive_mutex>& m);
+        virtual void swapMutex(const std::shared_ptr<std::recursive_mutex>& oldM, const std::shared_ptr<std::recursive_mutex>& newM);
 
         std::shared_ptr<MultipleMutexLockGuard> getScopedLock() const;
 

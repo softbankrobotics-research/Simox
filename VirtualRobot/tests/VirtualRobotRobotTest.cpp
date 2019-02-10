@@ -13,7 +13,9 @@
 #include <VirtualRobot/Model/Nodes/ModelJoint.h>
 #include <VirtualRobot/Model/Nodes/Attachments/PositionSensor.h>
 #include <VirtualRobot/Import/SimoxXMLFactory.h>
+#include <VirtualRobot/Visualization/VisualizationFactory.h>
 #include <string>
+
 
 BOOST_AUTO_TEST_SUITE(ModelFactory)
 
@@ -167,6 +169,9 @@ BOOST_AUTO_TEST_CASE(testVirtualRobotInvariantTagPosition)
 
 BOOST_AUTO_TEST_CASE(testVirtualRobotEndeffectorWrongChildTag)
 {
+    int argc = 0;
+    VirtualRobot::VisualizationFactory::getInstance()->init(argc,nullptr, "VirtualRobotRobotTest");
+
     const std::string robotString =
         "<Robot Type='DemoRobotType' StandardName='TestRobot' RootNode='Joint1'>"
         " <RobotNode name='Joint1'>"

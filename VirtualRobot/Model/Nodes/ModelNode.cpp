@@ -134,14 +134,14 @@ namespace VirtualRobot
 
         ModelNodePtr p = getParentNode(type);
 
-        do
+        while(p)
         {
             if (!set || set->hasNode(p))
             {
                 result.push_back(p);
             }
+            p = p->getParentNode(type);
         }
-        while ((p = p->getParentNode(type)));
 
         return result;
     }
