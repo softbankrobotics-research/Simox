@@ -26,7 +26,7 @@
 
 namespace SimoxGui
 {
-    AbstractViewerPtr Qt3DViewerFactory::createViewer(QWidget *parent) const
+    AbstractViewerPtr Qt3DViewerFactory::createViewer(QWidget *parent, const std::shared_ptr<std::recursive_mutex>& m) const
     {
         return Qt3DViewerPtr(new Qt3DViewer(parent));
     }
