@@ -103,7 +103,9 @@ namespace VirtualRobot
             Eigen::Matrix4f getTransformationFrom(const FramePtr& otherObject) const;
 
             Eigen::Matrix4f getPoseInFrame(const FramePtr& frame) const;
+            Eigen::Matrix4f getPoseInRootFrame(const RobotPtr& robot) const;
             Eigen::Vector3f getPositionInFrame(const FramePtr& frame) const;
+            Eigen::Vector3f getPositionInRootFrame(const RobotPtr& robot) const;
 
         protected:
             Eigen::Matrix4f globalPose;

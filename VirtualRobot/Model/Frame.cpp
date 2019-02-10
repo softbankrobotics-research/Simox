@@ -79,9 +79,19 @@ Eigen::Matrix4f Frame::getPoseInFrame(const FramePtr &frame) const
     return frame->toLocalCoordinateSystem(getGlobalPose());
 }
 
+Eigen::Matrix4f Frame::getPoseInRootFrame(const RobotPtr &robot) const
+{
+    return getPoseInFrame(robot->getRootNode());
+}
+
 Eigen::Vector3f Frame::getPositionInFrame(const FramePtr &frame) const
 {
     return frame->toLocalCoordinateSystemVec(getGlobalPosition());
+}
+
+Eigen::Vector3f Frame::getPositionInRootFrame(const RobotPtr &robot) const
+{
+    return getPositionInFrame(robot->getRootNode());
 }
 
 } //namespace VirtualRobot
