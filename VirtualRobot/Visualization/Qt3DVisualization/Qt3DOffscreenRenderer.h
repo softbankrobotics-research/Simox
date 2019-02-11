@@ -25,6 +25,7 @@
 
 #include "../OffscreenRenderer.h"
 
+#include "OffscreenRendering/OffscreenRenderEngine.h"
 
 #include <Qt3DRender/QRenderTarget>
 #include <Qt3DRender/QRenderTargetOutput>
@@ -77,6 +78,8 @@ namespace VirtualRobot
          * @return the visualization type that is supported by this factory.
          */
         virtual std::string getVisualizationType() const override;
+    private:
+        OffscreenRenderEngine* engine;
     };
 }
 

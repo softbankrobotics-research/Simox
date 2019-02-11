@@ -24,10 +24,15 @@
 #define _VirtualRobot_OffscreenRenderEngine_h_
 
 #include "OffscreenRenderEngineFrameGraph.h"
+#include "OffscreenRenderEngineShaderEffect.h"
 
 #include <QSize>
 
 #include <Qt3DCore/QNode>
+#include <Qt3DCore/QEntity>
+#include <Qt3DRender/QPointLight>
+#include <Qt3DCore/QTransform>
+#include <Qt3DRender/QLayer>
 #include <Qt3DRender/QCamera>
 #include <Qt3DRender/QRenderSettings>
 #include <Qt3DRender/QRenderCapture>
@@ -44,7 +49,7 @@ namespace VirtualRobot
     class OffscreenRenderEngine
     {
     public:
-        OffscreenRenderEngine(Qt3DRender::QCamera *camera, const QSize &size);
+        OffscreenRenderEngine(const QSize &size);
         ~OffscreenRenderEngine();
 
         void setSceneRoot(Qt3DCore::QNode *sceneRoot);
@@ -64,6 +69,16 @@ namespace VirtualRobot
         Qt3DRender::QRenderCapture *renderCapture;                          // The render capture node, which is appended to the frame graph.
         OffscreenRenderEngineFrameGraph *offscreenRenderEngineFrameGraph;   // The frame graph, which allows rendering to an offscreen surface.
         Qt3DCore::QNode *sceneRoot;                                         // The scene root, which becomes a child of the engine's root entity.
+
+        // Internal nodes (root node, camera, light, necessary shaders, layers, etc.)
+        Qt3DCore::QEntity *rootEntity;
+        Qt3DRender::QCamera *cameraEntity;
+        Qt3DCore::QEntity *lightEntity;
+        Qt3DRender::QPointLight *light;
+        Qt3DCore::QTransform *lightTransform;
+        Qt3DRender::QLayer *phongLayer;
+        Qt3DRender::QLayer *shaderLayer;
+        OffscreenRenderEngineShaderEffect* depthEncodingShader;
     };
 }
 
