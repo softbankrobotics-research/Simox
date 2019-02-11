@@ -32,6 +32,7 @@ namespace VirtualRobot
     {
         this->engine = new OffscreenRenderEngine(QSize(500, 500));
 
+        //Discard first and second frame, as they sometimes contain only clear color and no content.
         Qt3DRender::QRenderCaptureReply *firstReply = engine->getRenderCapture()->requestCapture();
         Qt3DRender::QRenderCaptureReply *secondReply = engine->getRenderCapture()->requestCapture();
 
@@ -56,8 +57,10 @@ namespace VirtualRobot
                                                 bool renderPointcloud, std::vector<Eigen::Vector3f> &pointCloud,
                                                 float zNear, float zFar, float vertFov, float nanValue, Visualization::Color backgroundColor) const
     {
+        //Set engine to new size
         engine->setSize(QSize(width, height));
 
+        //Request frame
         Qt3DRender::QRenderCaptureReply *reply = engine->getRenderCapture()->requestCapture();
 
         //Wait for completion or 3000ms timeout event
@@ -76,7 +79,7 @@ namespace VirtualRobot
 
             result = result.convertToFormat(QImage::Format_RGB888);
             const unsigned char* imageBuffer = result.constBits();
-            const unsigned int numValues = result.byteCount();
+            const unsigned int numValues = static_cast<unsigned int>(result.byteCount());
             rgbImage.resize(numValues);
             memcpy(&rgbImage[0], imageBuffer, numValues);
             delete reply;
