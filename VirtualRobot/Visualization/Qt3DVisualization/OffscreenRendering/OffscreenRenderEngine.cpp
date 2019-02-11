@@ -2,16 +2,17 @@
 
 #include <VirtualRobot/Tools/RuntimeEnvironment.h>
 
+#include <VirtualRobot/Visualization/VisualizationSet.h>
 
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QPhongMaterial>
 #include <Qt3DRender/QMaterial>
 
-VirtualRobot::OffscreenRenderEngine::OffscreenRenderEngine(const QSize &size)
+VirtualRobot::OffscreenRenderEngine::OffscreenRenderEngine(const QSize &size) : visualizations(std::vector<VirtualRobot::Qt3DVisualizationPtr>())
 {
     // Set up internal nodes (camera, layers, effects, etc.)
-    this->sceneRoot = nullptr;
     this->rootEntity = new Qt3DCore::QEntity();
+    this->sceneRoot = new Qt3DCore::QNode(rootEntity);
 
     // Set up a camera to point at the content of the scene.
     this->cameraEntity = new Qt3DRender::QCamera(this->rootEntity);
@@ -42,45 +43,6 @@ VirtualRobot::OffscreenRenderEngine::OffscreenRenderEngine(const QSize &size)
                                                                                             , QUrl("file:" + QString::fromStdString(gl3FragmentShaderLocation))
                                                                                             , this->rootEntity);
     this->lightEntity->addComponent(this->phongLayer);
-
-    {
-        Qt3DCore::QEntity *cube = new Qt3DCore::QEntity(rootEntity);
-
-        Qt3DExtras::QCuboidMesh *cubeGeometry = new Qt3DExtras::QCuboidMesh(cube);
-        cubeGeometry->setXExtent(500.0f);
-        cubeGeometry->setYExtent(500.0f);
-        cubeGeometry->setZExtent(500.0f);
-
-        Qt3DCore::QTransform *cubeTransform = new Qt3DCore::QTransform(cube);
-        cubeTransform->setTranslation(QVector3D(0.0f, 240.0f, 0.0f));
-
-        Qt3DExtras::QPhongMaterial *cubeMaterial = new Qt3DExtras::QPhongMaterial(cube);
-
-        cube->addComponent(cubeMaterial);
-        cube->addComponent(cubeTransform);
-        cube->addComponent(cubeGeometry);
-        cube->addComponent(phongLayer);
-    }
-
-    {
-        Qt3DCore::QEntity *cube = new Qt3DCore::QEntity(rootEntity);
-
-        Qt3DExtras::QCuboidMesh *cubeGeometry = new Qt3DExtras::QCuboidMesh(cube);
-        cubeGeometry->setXExtent(500.0f);
-        cubeGeometry->setYExtent(500.0f);
-        cubeGeometry->setZExtent(500.0f);
-
-        Qt3DCore::QTransform *cubeTransform = new Qt3DCore::QTransform(cube);
-        cubeTransform->setTranslation(QVector3D(0.0f, 240.0f, 0.0f));
-
-        Qt3DRender::QMaterial *cubeMaterial = new Qt3DRender::QMaterial(cube);
-        cubeMaterial->setEffect(depthEncodingShader);
-
-        cube->addComponent(cubeMaterial);
-        cube->addComponent(cubeTransform);
-        cube->addComponent(cubeGeometry);
-        cube->addComponent(shaderLayer);
-    }
 
     // Set up the engine and the aspects that we want to use.
     aspectEngine = new Qt3DCore::QAspectEngine();
@@ -117,7 +79,8 @@ VirtualRobot::OffscreenRenderEngine::OffscreenRenderEngine(const QSize &size)
 
     offscreenRenderEngineFrameGraph->setViewportLeftLayer(this->phongLayer);
     offscreenRenderEngineFrameGraph->setViewportRightLayer(this->shaderLayer);
-    this->setSceneRoot(rootEntity);
+
+    this->rootEntity->setParent(aspectEngine->rootEntity().data());
 }
 
 VirtualRobot::OffscreenRenderEngine::~OffscreenRenderEngine()
@@ -135,17 +98,82 @@ VirtualRobot::OffscreenRenderEngine::~OffscreenRenderEngine()
     delete aspectEngine;
 }
 
-void VirtualRobot::OffscreenRenderEngine::setSceneRoot(Qt3DCore::QNode *sceneRoot)
+void VirtualRobot::OffscreenRenderEngine::addSceneContent(const std::vector<VirtualRobot::VisualizationPtr> &scene)
 {
-    // Make sure any existing scene root is unparented.
-    if ( this->sceneRoot )
+    for(auto visualization : scene)
     {
-        this->sceneRoot->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
+        addSceneContent(visualization);
     }
 
-    // Parent the incoming scene root to our current root entity.
-    this->sceneRoot = sceneRoot;
-    this->sceneRoot->setParent(aspectEngine->rootEntity().data());
+    //Discard next two frames, as they do not contain updated scene content (FUTURE FIX IN QT3D?).
+    Qt3DRender::QRenderCaptureReply *firstReply = this->getRenderCapture()->requestCapture();
+    Qt3DRender::QRenderCaptureReply *secondReply = this->getRenderCapture()->requestCapture();
+
+    delete firstReply;
+    delete secondReply;
+}
+
+
+void VirtualRobot::OffscreenRenderEngine::addSceneContent(const VirtualRobot::VisualizationPtr &visualization)
+{
+    VirtualRobot::VisualizationSetPtr set = std::dynamic_pointer_cast<VirtualRobot::VisualizationSet>(visualization);
+    if (set)
+    {
+        for (const auto& setVisualization : set->getVisualizations())
+        {
+            addSceneContent(setVisualization);
+        }
+    }
+    else
+    {
+        auto castedVisualization = std::static_pointer_cast<Qt3DVisualization>(visualization);
+
+        auto phongVisuClone = std::static_pointer_cast<Qt3DVisualization>(visualization->clone());
+        auto shaderVisuClone = std::static_pointer_cast<Qt3DVisualization>(visualization->clone());
+        visualizations.push_back(phongVisuClone);
+        visualizations.push_back(shaderVisuClone);
+
+        // For phong, add phong layer and we are good to go
+        phongVisuClone->getEntity()->addComponent(this->phongLayer);
+        phongVisuClone->getEntity()->setParent(this->sceneRoot);
+
+        // For shader, strip all materials and add shader
+        shaderVisuClone->getEntity()->addComponent(this->shaderLayer);
+        shaderVisuClone->getEntity()->setParent(this->sceneRoot);
+
+        //Remove all materials
+        for(auto component : shaderVisuClone->getEntity()->components())
+        {
+            if (qobject_cast<Qt3DRender::QMaterial *>(component))
+            {
+                shaderVisuClone->getEntity()->removeComponent(component);
+            }
+        }
+
+        //Add shader material
+        Qt3DRender::QMaterial *shaderMaterial = new Qt3DRender::QMaterial(shaderVisuClone->getEntity());
+        shaderMaterial->setEffect(this->depthEncodingShader);
+        shaderVisuClone->getEntity()->addComponent(shaderMaterial);
+    }
+}
+
+
+void VirtualRobot::OffscreenRenderEngine::clearSceneContent()
+{
+    // Make sure any existing scene content element is unparented.
+    for(auto visualization : visualizations)
+    {
+        visualization->getEntity()->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
+    }
+
+    VR_ASSERT(sceneRoot->childNodes().size() == 0);
+
+    //Discard next two frames, as they do not contain updated scene content (FUTURE FIX IN QT3D?).
+    Qt3DRender::QRenderCaptureReply *firstReply = this->getRenderCapture()->requestCapture();
+    Qt3DRender::QRenderCaptureReply *secondReply = this->getRenderCapture()->requestCapture();
+
+    delete firstReply;
+    delete secondReply;
 }
 
 Qt3DRender::QRenderCapture* VirtualRobot::OffscreenRenderEngine::getRenderCapture()

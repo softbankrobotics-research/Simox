@@ -26,6 +26,8 @@
 #include "OffscreenRenderEngineFrameGraph.h"
 #include "OffscreenRenderEngineShaderEffect.h"
 
+#include <VirtualRobot/Visualization/Qt3DVisualization/Qt3DVisualization.h>
+
 #include <QSize>
 
 #include <Qt3DCore/QNode>
@@ -52,15 +54,15 @@ namespace VirtualRobot
         OffscreenRenderEngine(const QSize &size);
         ~OffscreenRenderEngine();
 
-        void setSceneRoot(Qt3DCore::QNode *sceneRoot);
+        void addSceneContent(const std::vector<VirtualRobot::VisualizationPtr> &scene);
+        void clearSceneContent();
         Qt3DRender::QRenderCapture *getRenderCapture();
         void setSize(const QSize &size);
 
-        OffscreenRenderEngineFrameGraph *getRenderEngineFrameGraph()
-        {
-            return offscreenRenderEngineFrameGraph;
-        }
     private:
+        void addSceneContent(const VirtualRobot::VisualizationPtr &visualization);
+        std::vector<VirtualRobot::Qt3DVisualizationPtr> visualizations;
+
         // We need all of the following in order to render a scene:
         Qt3DCore::QAspectEngine *aspectEngine;                              // The aspect engine, which holds the scene and related aspects.
         Qt3DRender::QRenderAspect *renderAspect;                            // The render aspect, which deals with rendering the scene.

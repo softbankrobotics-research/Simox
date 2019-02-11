@@ -31,13 +31,6 @@ namespace VirtualRobot
     Qt3DOffscreenRenderer::Qt3DOffscreenRenderer()
     {
         this->engine = new OffscreenRenderEngine(QSize(500, 500));
-
-        //Discard first and second frame, as they sometimes contain only clear color and no content.
-        Qt3DRender::QRenderCaptureReply *firstReply = engine->getRenderCapture()->requestCapture();
-        Qt3DRender::QRenderCaptureReply *secondReply = engine->getRenderCapture()->requestCapture();
-
-        delete firstReply;
-        delete secondReply;
     }
 
     Qt3DOffscreenRenderer::~Qt3DOffscreenRenderer()
@@ -59,6 +52,9 @@ namespace VirtualRobot
     {
         //Set engine to new size
         engine->setSize(QSize(width, height));
+
+        //Add content
+        engine->addSceneContent(scene);
 
         //Request frame
         Qt3DRender::QRenderCaptureReply *reply = engine->getRenderCapture()->requestCapture();
@@ -83,11 +79,13 @@ namespace VirtualRobot
             rgbImage.resize(numValues);
             memcpy(&rgbImage[0], imageBuffer, numValues);
             delete reply;
+            engine->clearSceneContent();
             return true;
         }
         else
         {
             delete reply;
+            engine->clearSceneContent();
             return false;
         }
     }
