@@ -47,36 +47,43 @@ endif()
 
 
 SET(SOURCES
-ConvexHullGenerator.cpp
-ContactConeGenerator.cpp
-ApproachMovementGenerator.cpp
-ApproachMovementSurfaceNormal.cpp
-MeshConverter.cpp
-GraspPlanner/GraspPlanner.cpp
-GraspPlanner/GenericGraspPlanner.cpp
-GraspQuality/GraspEvaluationPoseUncertainty.cpp
-GraspQuality/GraspQualityMeasure.cpp
-GraspQuality/GraspQualityMeasureWrenchSpace.cpp
-GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.cpp
-Visualization/ConvexHullVisualization.cpp
+    ApproachMovementGenerator.cpp
+    ApproachMovementSurfaceNormal.cpp
+    ContactConeGenerator.cpp
+    ConvexHullGenerator.cpp
+    MeshConverter.cpp
+    
+    GraspPlanner/GenericGraspPlanner.cpp
+    GraspPlanner/GraspPlanner.cpp
     GraspPlanner/GraspPlannerEvaluation.cpp
+    
+    GraspQuality/GraspEvaluationPoseUncertainty.cpp
+    GraspQuality/GraspQualityMeasure.cpp
+    GraspQuality/GraspQualityMeasureWrenchSpace.cpp
+    GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.cpp
+    
+    Visualization/ConvexHullVisualization.cpp
 )
 
 SET(INCLUDES
-GraspStudio.h
-ConvexHullGenerator.h
-ContactConeGenerator.h
-ApproachMovementGenerator.h
-ApproachMovementSurfaceNormal.h
-MeshConverter.h
-GraspPlanner/GraspPlanner.h
-GraspPlanner/GenericGraspPlanner.h
-GraspPlanner/GraspPlannerEvaluation.h
-GraspQuality/GraspEvaluationPoseUncertainty.h
-GraspQuality/GraspQualityMeasure.h
-GraspQuality/GraspQualityMeasureWrenchSpace.h
-GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.h
-Visualization/ConvexHullVisualization.h
+    GraspStudio.h
+    
+    ApproachMovementGenerator.h
+    ApproachMovementSurfaceNormal.h
+    ContactConeGenerator.h
+    ConvexHullGenerator.h
+    MeshConverter.h
+    
+    GraspPlanner/GenericGraspPlanner.h
+    GraspPlanner/GraspPlanner.h
+    GraspPlanner/GraspPlannerEvaluation.h
+    
+    GraspQuality/GraspEvaluationPoseUncertainty.h
+    GraspQuality/GraspQualityMeasure.h
+    GraspQuality/GraspQualityMeasureWrenchSpace.h
+    GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.h
+    
+    Visualization/ConvexHullVisualization.h
 )
 
 
