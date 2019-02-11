@@ -321,6 +321,12 @@ namespace VirtualRobot
     VisualizationPtr Qt3DVisualization::clone() const
     {
         Qt3DVisualizationPtr clonedVisu(new Qt3DVisualization());
+        clonedVisu->init();
+
+        for(auto component : clonedVisu->getEntity()->components())
+        {
+            clonedVisu->getEntity()->removeComponent(component);
+        }
 
         for(auto component : this->getEntity()->components())
         {
@@ -341,7 +347,6 @@ namespace VirtualRobot
             }
         }
 
-        clonedVisu->init();
         return clonedVisu;
     }
 
