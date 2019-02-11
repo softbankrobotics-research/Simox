@@ -1,5 +1,6 @@
 #include "OffscreenRenderEngineFrameGraph.h"
 
+
 VirtualRobot::OffscreenRenderEngineFrameGraph::OffscreenRenderEngineFrameGraph(Qt3DCore::QNode* parent, Qt3DRender::QCamera *camera, const QSize &size) :
     Qt3DRender::QRenderSurfaceSelector(parent),
     camera(camera)
@@ -110,4 +111,5 @@ void VirtualRobot::OffscreenRenderEngineFrameGraph::TextureRenderTarget::setSize
 {
     this->size = size;
     texture->setSize(size.width(), size.height());
+    depthTexture->setSize(size.width(), size.height());
 }
