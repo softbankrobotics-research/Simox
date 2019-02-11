@@ -59,6 +59,7 @@ GraspQuality/GraspQualityMeasure.cpp
 GraspQuality/GraspQualityMeasureWrenchSpace.cpp
 GraspQuality/GraspQualityMeasureWrenchSpaceNotNormalized.cpp
 Visualization/ConvexHullVisualization.cpp
+    GraspPlanner/GraspPlannerEvaluation.cpp
 )
 
 SET(INCLUDES
