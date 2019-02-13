@@ -2120,10 +2120,15 @@ namespace VirtualRobot
         float abNorm = ab.norm();
         float acNorm = ac.norm();
         
-        // angle at a, i.e. between ab and ac
-        float alpha = (ab / abNorm).dot(ac / acNorm);
+        // alpha := angle at a, i.e. between ab and ac
+        // => cos(alpha) = ab * ac
+        // => sin(alpha) = sqrt( 1 - cos(alpha)^2 )
+        float cos_alpha = (ab / abNorm).dot(ac / acNorm);
+        float sin_alpha = std::sqrt(1 - cos_alpha * cos_alpha);
         
-        float area = 0.5f * std::sin(alpha) * abNorm * acNorm;
+        // area = 1/2 * sin(alpha) * |ab| * |ac|
+        // (where sin(alpha) * |ab| = distance of b to |ac|)
+        float area = 0.5f * sin_alpha * abNorm * acNorm;
         return area;
     }
 
