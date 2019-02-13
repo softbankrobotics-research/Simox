@@ -2107,6 +2107,22 @@ namespace VirtualRobot
     {
         return angleModPI(angle2 - angle1);
     }
+    
+    float MathTools::getTriangleArea(const Eigen::Vector3f& a, const Eigen::Vector3f& b,
+                                     const Eigen::Vector3f& c)
+    {
+        Eigen::Vector3f ab = b - a;
+        Eigen::Vector3f ac = c - a;
+        
+        float abNorm = ab.norm();
+        float acNorm = ac.norm();
+        
+        // angle at a, i.e. between ab and ac
+        float alpha = (ab / abNorm).dot(ac / acNorm);
+        
+        float area = 0.5f * std::sin(alpha) * abNorm * acNorm;
+        return area;
+    }
 
 
 

@@ -23,11 +23,18 @@ using namespace VirtualRobot;
 namespace GraspStudio
 {
 
-    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef, const std::string& graspPreshape, float maxRandDist)
-        : ApproachMovementGenerator(object, eef, graspPreshape)
+    ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
+            const std::string& graspPreshape, float maxRandDist, bool regardFaceAreas)
+        : ApproachMovementGenerator(object, eef, graspPreshape),
+          randomDistanceMax(maxRandDist),
+          regardFaceAreas(regardFaceAreas)
     {
         name = "ApproachMovementSurfaceNormal";
-        randomDistanceMax = maxRandDist;
+        
+        if (regardFaceAreas)
+        {
+            initFaceAreas();
+        }
     }
 
     ApproachMovementSurfaceNormal::~ApproachMovementSurfaceNormal()
@@ -40,20 +47,40 @@ namespace GraspStudio
             return false;
         }
 
-        std::size_t nRandFace = static_cast<std::size_t>(rand()) % objectModel->faces.size();
-        std::size_t nVert1 = (objectModel->faces[nRandFace]).id1;
-        std::size_t nVert2 = (objectModel->faces[nRandFace]).id2;
-        std::size_t nVert3 = (objectModel->faces[nRandFace]).id3;
+        std::size_t faceIndex = 0;
+        if (!regardFaceAreas)
+        {
+            faceIndex = static_cast<std::size_t>(rand()) % objectModel->faces.size();
+        }
+        else
+        {
+            float ticket = distrib(randomEngine);
+            float currentTotal = 0;
+            
+            // find face that owns the ticket (i.e. face i with total[i-1] < ticket < total[i])
+            std::size_t i = 0;
+            for (i = 0; i < faceSizes.size() && currentTotal < ticket; ++i)
+            {
+                currentTotal += faceSizes[i];
+            }
+            faceIndex = i;
+        }
+
+        std::size_t nVert1 = (objectModel->faces[faceIndex]).id1;
+        std::size_t nVert2 = (objectModel->faces[faceIndex]).id2;
+        std::size_t nVert3 = (objectModel->faces[faceIndex]).id3;
 
         storePos = VirtualRobot::MathTools::randomPointInTriangle(objectModel->vertices[nVert1],
                                                                   objectModel->vertices[nVert2],
                                                                   objectModel->vertices[nVert3]);
+        
         //storePos = (objectModel->vertices[nVert1] + objectModel->vertices[nVert2] + objectModel->vertices[nVert3]) / 3.0f;
         /*position(0) = (objectModel->vertices[nVert1].x + objectModel->vertices[nVert2].x + objectModel->vertices[nVert3].x) / 3.0f;
-        position(1) = (objectModel->vertices[nVert1].y + objectModel->vertices[nVert2].y + objectModel->vertices[nVert3].y) / 3.0f;
-        position(2) = (objectModel->vertices[nVert1].z + objectModel->vertices[nVert2].z + objectModel->vertices[nVert3].z) / 3.0f;*/
-
-        storeApproachDir = (objectModel->faces[nRandFace]).normal;
+          position(1) = (objectModel->vertices[nVert1].y + objectModel->vertices[nVert2].y + objectModel->vertices[nVert3].y) / 3.0f;
+          position(2) = (objectModel->vertices[nVert1].z + objectModel->vertices[nVert2].z + objectModel->vertices[nVert3].z) / 3.0f;*/
+        
+        storeApproachDir = (objectModel->faces[faceIndex]).normal;
+        
         return true;
     }
 
@@ -224,5 +251,22 @@ namespace GraspStudio
             tcp = eef_cloned->getGCP();
         eefRobot->setGlobalPoseForRobotNode(tcp, pose);
         return true;
+    }
+    
+    void ApproachMovementSurfaceNormal::initFaceAreas()
+    {
+        faceSizesTotal = 0;
+        for (const auto& face : objectModel->faces)
+        {
+            float area = MathTools::getTriangleArea(objectModel->vertices[face.id1],
+                    objectModel->vertices[face.id2], objectModel->vertices[face.id3]);
+            
+            faceSizes.push_back(area);
+            faceSizesTotal += area;
+        }
+        
+        std::random_device rd;
+        randomEngine = std::default_random_engine(rd());
+        distrib = std::uniform_real_distribution<float>(0, faceSizesTotal);
     }
 }

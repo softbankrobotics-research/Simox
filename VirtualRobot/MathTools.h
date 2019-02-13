@@ -626,6 +626,8 @@ namespace VirtualRobot
          */
         void VIRTUAL_ROBOT_IMPORT_EXPORT getPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float &storePosDiff, float &storeRotDiffRad);
 
+        float VIRTUAL_ROBOT_IMPORT_EXPORT getTriangleArea(const Eigen::Vector3f& a, const Eigen::Vector3f& b, const Eigen::Vector3f& c);
+        
         /************************************************************************/
         /* CONVEX HULLS                                                         */
         /* More convex hull methods can be found in the GarspStudio lib         */

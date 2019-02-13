@@ -56,7 +56,8 @@ namespace GraspStudio
          * \param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
         */
         ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
-                                      const std::string& graspPreshape = "", float maxRandDist = 0.0f);
+                                      const std::string& graspPreshape = "", float maxRandDist = 0.0f,
+                                      bool regardFaceAreas = false);
         //! Destructor
         virtual ~ApproachMovementSurfaceNormal() override;
 
@@ -77,7 +78,17 @@ namespace GraspStudio
 
     protected:
         
+        /// Fill faceSizes and faceSizesTotal with object model face sizes.
+        void initFaceAreas();
+        
+        
         float randomDistanceMax;
+        
+        bool regardFaceAreas = false;
+        std::vector<float> faceSizes;
+        float faceSizesTotal = 0;
+        std::default_random_engine randomEngine;
+        std::uniform_real_distribution<float> distrib;
 
     };
 }
