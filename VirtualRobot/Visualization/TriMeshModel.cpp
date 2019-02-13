@@ -497,6 +497,18 @@ namespace VirtualRobot
         vertices.swap(newVertices);
         return removed;
     }
+    
+    std::vector<float> TriMeshModel::getFaceAreas() const
+    {
+        std::vector<float> areas;
+        for (const auto& face : faces)
+        {
+            float area = MathTools::getTriangleArea(
+                        vertices.at(face.id1), vertices.at(face.id2), vertices.at(face.id3));
+            areas.push_back(area);
+        }
+        return areas;
+    }
 
     void TriMeshModel::fattenShrink(float offset, bool updateNormals)
     {

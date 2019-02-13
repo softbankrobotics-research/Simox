@@ -118,6 +118,10 @@ namespace VirtualRobot
          * @return Number of removed vertices
          */
         size_t removeUnusedVertices();
+        
+        /// Get the areas of all faces.
+        std::vector<float> getFaceAreas() const;
+        
 
         // Overwrite all colors
         void setColor(VisualizationFactory::Color color);
