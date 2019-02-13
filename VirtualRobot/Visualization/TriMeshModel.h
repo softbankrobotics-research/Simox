@@ -38,19 +38,24 @@ namespace VirtualRobot
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+        /// Constructor.
         TriMeshModel();
-
+        
         struct triangle
         {
             triangle() = default;
             triangle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2, const Eigen::Vector3f& v3) :
-                vertex1(v1), vertex2(v2), vertex3(v3){}
+                vertex1(v1), vertex2(v2), vertex3(v3) {}
             Eigen::Vector3f vertex1;
             Eigen::Vector3f vertex2;
             Eigen::Vector3f vertex3;
         };
-        TriMeshModel(std::vector <triangle>& triangles);
+        /// Construct from vector of triangles.
+        TriMeshModel(const std::vector<triangle>& triangles);
 
+        /// Virtual destructor.
+        virtual ~TriMeshModel() = default;
+        
 
         void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3);
         void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal,
