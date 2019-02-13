@@ -27,6 +27,8 @@
 
 #include <VirtualRobot/SceneObject.h>
 
+#include <memory>
+#include <random>
 #include <vector>
 
 
@@ -53,11 +55,16 @@ namespace GraspStudio
          * \param object The object.
          * \param eef The end effector.
          * \param graspPreshape An optional preshape that can be used in order to "open" the eef.
-         * \param maxRandDist If >0, the resulting apporach pose is randomly moved in the approach direction (away from the object) in order to create different distances to the object.
+         * \param maxRandDist
+         *      If >0, the resulting apporach pose is randomly moved in the approach direction
+         *      (away from the object) in order to create different distances to the object.
+         * \param usefaceAreaDistribution
+         *      If true, the probability of a face being selected is proportional to its area.
+         *      If false, all faces are selected with equal probability.
         */
         ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
                                       const std::string& graspPreshape = "", float maxRandDist = 0.0f,
-                                      bool regardFaceAreas = false);
+                                      bool useFaceAreaDistribution = false);
         //! Destructor
         virtual ~ApproachMovementSurfaceNormal() override;
 
@@ -78,18 +85,19 @@ namespace GraspStudio
 
     protected:
         
-        /// Fill faceSizes and faceSizesTotal with object model face sizes.
-        void initFaceAreas();
-        
-        
         float randomDistanceMax;
         
-        bool regardFaceAreas = false;
-        std::vector<float> faceSizes;
-        float faceSizesTotal = 0;
-        std::default_random_engine randomEngine;
-        std::uniform_real_distribution<float> distrib;
-
+        /// The random engine.
+        std::default_random_engine randomEngine { std::random_device{}() };
+        
+        /// Uniform distribiton over face indices.
+        std::uniform_int_distribution<std::size_t> distribUniform;
+        
+        /// Indicates whether distribFaceAreas shall be used.
+        bool useFaceAreasDistrib = false;
+        /// Distribution with probability of a face proportional to its area.
+        std::discrete_distribution<std::size_t> distribFaceAreas;
+        
     };
 }
 

@@ -24,16 +24,17 @@ namespace GraspStudio
 {
 
     ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
-            const std::string& graspPreshape, float maxRandDist, bool regardFaceAreas)
+            const std::string& graspPreshape, float maxRandDist, bool useFaceAreaDistribution)
         : ApproachMovementGenerator(object, eef, graspPreshape),
           randomDistanceMax(maxRandDist),
-          regardFaceAreas(regardFaceAreas)
+          distribUniform(0, objectModel->faces.size() - 1)
     {
         name = "ApproachMovementSurfaceNormal";
         
-        if (regardFaceAreas)
+        if (useFaceAreaDistribution)
         {
-            initFaceAreas();
+            std::vector<float> areas = objectModel->getFaceAreas();
+            distribFaceAreas = std::discrete_distribution<std::size_t>(areas.begin(), areas.end());
         }
     }
 
@@ -47,24 +48,8 @@ namespace GraspStudio
             return false;
         }
 
-        std::size_t faceIndex = 0;
-        if (!regardFaceAreas)
-        {
-            faceIndex = static_cast<std::size_t>(rand()) % objectModel->faces.size();
-        }
-        else
-        {
-            float ticket = distrib(randomEngine);
-            float currentTotal = 0;
-            
-            // find face that owns the ticket (i.e. face i with total[i-1] < ticket < total[i])
-            std::size_t i = 0;
-            for (i = 0; i < faceSizes.size() && currentTotal < ticket; ++i)
-            {
-                currentTotal += faceSizes[i];
-            }
-            faceIndex = i;
-        }
+        std::size_t faceIndex = useFaceAreasDistrib ? distribFaceAreas(randomEngine)
+                                                    : distribUniform(randomEngine);
 
         std::size_t nVert1 = (objectModel->faces[faceIndex]).id1;
         std::size_t nVert2 = (objectModel->faces[faceIndex]).id2;
@@ -253,20 +238,4 @@ namespace GraspStudio
         return true;
     }
     
-    void ApproachMovementSurfaceNormal::initFaceAreas()
-    {
-        faceSizesTotal = 0;
-        for (const auto& face : objectModel->faces)
-        {
-            float area = MathTools::getTriangleArea(objectModel->vertices[face.id1],
-                    objectModel->vertices[face.id2], objectModel->vertices[face.id3]);
-            
-            faceSizes.push_back(area);
-            faceSizesTotal += area;
-        }
-        
-        std::random_device rd;
-        randomEngine = std::default_random_engine(rd());
-        distrib = std::uniform_real_distribution<float>(0, faceSizesTotal);
-    }
 }
