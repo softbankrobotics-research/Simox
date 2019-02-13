@@ -1,20 +1,15 @@
 #include "ApproachMovementSurfaceNormal.h"
+
 #include <VirtualRobot/VirtualRobot.h>
 #include <VirtualRobot/Robot.h>
-#include <VirtualRobot/Nodes/RobotNode.h>
-#include <VirtualRobot/EndEffector/EndEffector.h>
+#include <VirtualRobot/RobotConfig.h>
 #include <VirtualRobot/MathTools.h>
 #include <VirtualRobot/SceneObjectSet.h>
-#include <VirtualRobot/Visualization/TriMeshModel.h>
 #include <VirtualRobot/CollisionDetection/CollisionChecker.h>
-#include <VirtualRobot/RobotConfig.h>
+#include <VirtualRobot/EndEffector/EndEffector.h>
+#include <VirtualRobot/Nodes/RobotNode.h>
+#include <VirtualRobot/Visualization/TriMeshModel.h>
 
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-
-
-class RobotConfig;
 
 using namespace std;
 using namespace VirtualRobot;
@@ -24,10 +19,10 @@ namespace GraspStudio
 {
 
     ApproachMovementSurfaceNormal::ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
-            const std::string& graspPreshape, float maxRandDist, bool useFaceAreaDistribution)
+            const std::string& graspPreshape, float maxRetreatDist, bool useFaceAreaDistribution)
         : ApproachMovementGenerator(object, eef, graspPreshape),
-          randomDistanceMax(maxRandDist),
-          distribUniform(0, objectModel->faces.size() - 1)
+          distribUniform(0, objectModel->faces.size() - 1),
+          distribRetreatDistance(0, maxRetreatDist)
     {
         name = "ApproachMovementSurfaceNormal";
         
@@ -96,19 +91,17 @@ namespace GraspStudio
 
 
         // check if a random distance is wanted
-        if (randomDistanceMax > 0)
+        if (distribRetreatDistance.max() > 0)
         {
-            float d = static_cast<float>(rand() % 10000) * 0.0001f * randomDistanceMax;
-            Eigen::Vector3f delta = approachDir * d;
+            float distance = distribRetreatDistance(randomEngine);
+            Eigen::Vector3f delta = approachDir * distance;
             updateEEFPose(delta);
 
             if (!eef_cloned->getCollisionChecker()->checkCollision(object, eef->createSceneObjectSet()))
             {
                 poseB = getEEFPose();
             } // else remain at original pose
-
         }
-
 
         // restore original pose
         setEEFPose(pose);

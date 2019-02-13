@@ -63,7 +63,7 @@ namespace GraspStudio
          *      If false, all faces are selected with equal probability.
         */
         ApproachMovementSurfaceNormal(VirtualRobot::SceneObjectPtr object, VirtualRobot::EndEffectorPtr eef,
-                                      const std::string& graspPreshape = "", float maxRandDist = 0.0f,
+                                      const std::string& graspPreshape = "", float maxRetreatDist = 0.0f,
                                       bool useFaceAreaDistribution = false);
         //! Destructor
         virtual ~ApproachMovementSurfaceNormal() override;
@@ -85,8 +85,6 @@ namespace GraspStudio
 
     protected:
         
-        float randomDistanceMax;
-        
         /// The random engine.
         std::default_random_engine randomEngine { std::random_device{}() };
         
@@ -95,8 +93,14 @@ namespace GraspStudio
         
         /// Indicates whether distribFaceAreas shall be used.
         bool useFaceAreasDistrib = false;
+        
         /// Distribution with probability of a face proportional to its area.
+        /// Only initialized if useFaceAreasDistrib is true.
         std::discrete_distribution<std::size_t> distribFaceAreas;
+
+        
+        /// Distribution to draw random retreat distances from.
+        std::uniform_real_distribution<float> distribRetreatDistance;
         
     };
 }
