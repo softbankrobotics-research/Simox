@@ -13,10 +13,12 @@
 #include <cstring>
 #include <iostream>
 
+
 class RobotConfig;
 
 using namespace std;
 using namespace VirtualRobot;
+
 
 namespace GraspStudio
 {
@@ -38,12 +40,14 @@ namespace GraspStudio
             return false;
         }
 
-        int nRandFace = rand() % objectModel->faces.size();
-        int nVert1 = (objectModel->faces[nRandFace]).id1;
-        int nVert2 = (objectModel->faces[nRandFace]).id2;
-        int nVert3 = (objectModel->faces[nRandFace]).id3;
+        std::size_t nRandFace = static_cast<std::size_t>(rand()) % objectModel->faces.size();
+        std::size_t nVert1 = (objectModel->faces[nRandFace]).id1;
+        std::size_t nVert2 = (objectModel->faces[nRandFace]).id2;
+        std::size_t nVert3 = (objectModel->faces[nRandFace]).id3;
 
-        storePos = VirtualRobot::MathTools::randomPointInTriangle(objectModel->vertices[nVert1], objectModel->vertices[nVert2], objectModel->vertices[nVert3]);
+        storePos = VirtualRobot::MathTools::randomPointInTriangle(objectModel->vertices[nVert1],
+                                                                  objectModel->vertices[nVert2],
+                                                                  objectModel->vertices[nVert3]);
         //storePos = (objectModel->vertices[nVert1] + objectModel->vertices[nVert2] + objectModel->vertices[nVert3]) / 3.0f;
         /*position(0) = (objectModel->vertices[nVert1].x + objectModel->vertices[nVert2].x + objectModel->vertices[nVert3].x) / 3.0f;
         position(1) = (objectModel->vertices[nVert1].y + objectModel->vertices[nVert2].y + objectModel->vertices[nVert3].y) / 3.0f;
@@ -82,7 +86,7 @@ namespace GraspStudio
         // check if a random distance is wanted
         if (randomDistanceMax > 0)
         {
-            float d = (float)(rand() % 10000) * 0.0001f * randomDistanceMax;
+            float d = static_cast<float>(rand() % 10000) * 0.0001f * randomDistanceMax;
             Eigen::Vector3f delta = approachDir * d;
             updateEEFPose(delta);
 
@@ -116,7 +120,7 @@ namespace GraspStudio
         //target orientation
         Eigen::Vector3f z = approachDir;
 
-        while (z.norm() < 1e-10)
+        while (z.norm() < 1e-10f)
         {
             z.setRandom();
         }
@@ -144,7 +148,7 @@ namespace GraspStudio
             //random y dir vector
             y.setRandom();
 
-            if (y.norm() < 1e-8)
+            if (y.norm() < 1e-8f)
             {
                 continue;
             }
@@ -153,7 +157,7 @@ namespace GraspStudio
 
             x = y.cross(z);
 
-            if (x.norm() < 1e-8)
+            if (x.norm() < 1e-8f)
             {
                 continue;
             }
@@ -164,7 +168,7 @@ namespace GraspStudio
             // now recalculate y again to obtain a correct base for a right handed coord system
             y = z.cross(x);
 
-            if (y.norm() < 1e-8)
+            if (y.norm() < 1e-8f)
             {
                 continue;
             }
