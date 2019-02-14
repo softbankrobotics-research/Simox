@@ -198,15 +198,20 @@ namespace VirtualRobot
         int getNumFaces(bool collisionModel = false) override;
 
         /*!
-            Set the global position of this robot
+            Set the global pose of this robot
         */
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues) = 0;
         void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
 
         /*!
-            Set the global pose of this robot so that the RobotNode node is at position globalPoseNode
+            Set the global pose of this robot so that the RobotNode node is at pose globalPoseNode.
         */
         virtual void setGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
+        
+        /*!
+            Set the global position of this robot so that the RobotNode node is at position globalPoseNode
+        */
+        virtual void setGlobalPositionForRobotNode(const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode);
 
         //virtual Eigen::Matrix4f getGlobalPose() = 0;
 

@@ -5,6 +5,7 @@
 #include "VirtualRobotException.h"
 #include "CollisionDetection/CollisionChecker.h"
 #include "EndEffector/EndEffector.h"
+#include "math/Helpers.h"
 
 
 namespace VirtualRobot
@@ -825,18 +826,43 @@ namespace VirtualRobot
         return result;
     }
 
-    void Robot::setGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode)
+    void Robot::setGlobalPoseForRobotNode(
+            const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "NULL node");
 
+        if (math::Helpers::Orientation(globalPoseNode).isIdentity())
+        {
+            // set position to avoid accumulating rounding errors when using rotation
+            setGlobalPositionForRobotNode(node, math::Helpers::Position(globalPoseNode));
+            return;
+        }
+        
         // get transformation from current to wanted tcp pose
-        Eigen::Matrix4f t = globalPoseNode * node->getGlobalPose().inverse();
+        Eigen::Matrix4f tf = globalPoseNode * math::Helpers::InvertedPose(node->getGlobalPose());
 
         // apply transformation to current global pose of robot
-        t = t * getGlobalPose();
-
+        tf = tf * getGlobalPose();
+        
+        // re-orthogonolize to keep it a valid transformation matrix
+        math::Helpers::Orientation(tf) = math::Helpers::Orthogonalize(math::Helpers::Orientation(tf));
+        
         // set t
-        setGlobalPose(t);
+        setGlobalPose(tf);
+    }
+    
+    void Robot::setGlobalPositionForRobotNode(
+            const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode)
+    {
+        THROW_VR_EXCEPTION_IF(!node, "NULL node");
+        
+        // get translation from current to wanted tcp pose
+        const Eigen::Vector3f translation = globalPositionNode - node->getGlobalPosition();
+
+        // apply translation to current global position of robot
+        const Eigen::Vector3f robotPosition = getGlobalPosition() + translation;
+        
+        setGlobalPose(math::Helpers::Pose(robotPosition));
     }
 
     VirtualRobot::RobotPtr Robot::clone(const std::string& name, CollisionCheckerPtr collisionChecker, float scaling)
