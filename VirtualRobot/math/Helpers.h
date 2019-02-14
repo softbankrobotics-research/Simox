@@ -132,6 +132,10 @@ namespace math
         /// Transform the orientation by the transform.
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori);
         
+        /// Indicates whether the matrix is orthogonal, i.e. matrix * matrix.transpose = identity.
+        template <typename Derived>
+        static bool IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision = 1e-6f);
+        
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
@@ -210,6 +214,11 @@ namespace math
         return inv;
     }
     
+    template<typename Derived>
+    bool Helpers::IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision)
+    {
+        return (matrix * matrix.transpose()).isIdentity(precision);
+    }
 }
 
 
