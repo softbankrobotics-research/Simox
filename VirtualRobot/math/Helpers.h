@@ -89,7 +89,12 @@ namespace math
         template <typename PosDerived, typename OriDerived>
         static Eigen::Matrix4f 
         Pose(const Eigen::MatrixBase<PosDerived>& pos, const Eigen::RotationBase<OriDerived, 3>& ori);
-
+        
+        /// Build a pose matrix from the given position and identity orientation.
+        template <typename PosDerived>
+        static Eigen::Matrix4f 
+        Pose(const Eigen::MatrixBase<PosDerived>& pos);
+        
         
         /// Legacy shortcut for Pose().
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
@@ -139,7 +144,6 @@ namespace math
     private:
         
     };
-
     
     
     template <typename Derived>
@@ -189,6 +193,12 @@ namespace math
                                   const Eigen::RotationBase<OriDerived, 3>& ori)
     {
         return Pose(pos, ori.toRotationMatrix());
+    }
+    
+    template <typename PosDerived>
+    Eigen::Matrix4f Helpers::Pose(const Eigen::MatrixBase<PosDerived>& pos)
+    {
+        return Pose(pos, Eigen::Matrix3f::Zero());
     }
     
     
