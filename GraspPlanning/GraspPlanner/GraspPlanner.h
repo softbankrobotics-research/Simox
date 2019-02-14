@@ -69,9 +69,13 @@ namespace GraspStudio
          * \brief getEvaluation
          * \return The current evaluation of the grasp planner.
          */
-        GraspPlannerEvaluation getEvaluation();
-
+        GraspPlannerEvaluation getEvaluation() const;
+        /// Clear the evaluation.
+        void clearEvaluation();
+        
+        
     protected:
+        
         bool verbose;
         VirtualRobot::GraspSetPtr graspSet;
         std::vector<VirtualRobot::GraspPtr> plannedGrasps;
