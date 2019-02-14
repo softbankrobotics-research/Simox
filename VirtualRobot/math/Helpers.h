@@ -136,6 +136,11 @@ namespace math
         template <typename Derived>
         static bool IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision = 1e-6f);
         
+        /// Compute the closest orthogonal matrix to the given matrix. 
+        /// (Note: All rotation matrices must be orthogonal.)
+        static Eigen::Matrix3f Orthogonalize(const Eigen::Matrix3f& matrix);
+        
+        
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
