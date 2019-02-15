@@ -11,8 +11,6 @@
 #include <VirtualRobot/VirtualRobotException.h>
 #include <string>
 
-#define M_PIf (static_cast<float>(M_PI))
-
 BOOST_AUTO_TEST_SUITE(MathTools)
 
 
@@ -20,20 +18,20 @@ BOOST_AUTO_TEST_SUITE(MathTools)
     {
         Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
         const int NR_TESTS = 10000;
-        for (int i = 0; i < NR_TESTS; i++)
+        for (int i=0;i<NR_TESTS;i++)
         {
             Eigen::Vector3f ax = Eigen::Vector3f::Random();
             ax.normalize();
-            float ang = rand() % 1000 / 1000.0f * 2.0f * M_PIf - M_PIf;
+            float ang = float(rand() % 1000 / 1000.0f * 2.0f*M_PI -M_PI);
             Eigen::Matrix3f m3 = Eigen::AngleAxisf(ang, ax).matrix();
             m.block(0, 0, 3, 3) = m3;
 
             VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(m);
             Eigen::Vector3f h = VirtualRobot::MathTools::quat2hopf(q);
 
-            BOOST_CHECK_LE(h(0), 2.0f*M_PIf);
-            BOOST_CHECK_LE(h(1), 2.0f*M_PIf);
-            BOOST_CHECK_LE(h(2), M_PIf*0.5f);
+            BOOST_CHECK_LE(h(0), 2.0f*(float)M_PI);
+            BOOST_CHECK_LE(h(1), 2.0f*(float)M_PI);
+            BOOST_CHECK_LE(h(2), (float)M_PI*0.5f);
 
             BOOST_CHECK_GE(h(0), 0.0f);
             BOOST_CHECK_GE(h(1), 0.0f);
@@ -42,9 +40,9 @@ BOOST_AUTO_TEST_SUITE(MathTools)
             VirtualRobot::MathTools::Quaternion q2 = VirtualRobot::MathTools::hopf2quat(h);
 
             VirtualRobot::MathTools::Quaternion qDelta = VirtualRobot::MathTools::getDelta(q, q2);
-            float a = std::abs(VirtualRobot::MathTools::getAngle(qDelta));
+            float a = (float)fabs(VirtualRobot::MathTools::getAngle(qDelta));
             BOOST_CHECK_SMALL(a, 0.01f);
-            if (a > 0.01f)
+            if (a>0.01)
             {
                 std::cout << "H:" << h.transpose() << ", Q:" << q.w << ", " << q.x << "," << q.y << "," << q.z << " / Q2:" << q2.w << ", " << q2.x << "," << q2.y << "," << q2.z << std::endl;
             }
@@ -57,12 +55,12 @@ BOOST_AUTO_TEST_SUITE(MathTools)
         Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
         const int NR_TESTS = 50000;
         const float maxAngHopf = 0.01f;
-        const float maxAngQuat = 2.5f * maxAngHopf;
-        for (int i = 0; i < NR_TESTS; i++)
+        const float maxAngQuat = 2.5f*maxAngHopf;
+        for (int i = 0; i<NR_TESTS; i++)
         {
             Eigen::Vector3f ax = Eigen::Vector3f::Random();
             ax.normalize();
-            float ang = rand() % 1000 / 1000.0f * 2.0f * M_PIf - M_PIf;
+            float ang = float(rand() % 1000 / 1000.0f * 2.0f*M_PI - M_PI);
             Eigen::Matrix3f m3 = Eigen::AngleAxisf(ang, ax).matrix();
             m.block(0, 0, 3, 3) = m3;
             VirtualRobot::MathTools::Quaternion q = VirtualRobot::MathTools::eigen4f2quat(m);
@@ -77,19 +75,19 @@ BOOST_AUTO_TEST_SUITE(MathTools)
             if (h(0) < 0)
                 continue;
             //h(0) = float(2.0f*M_PI) - h(0);
-            if (h(0) > 2.0f * M_PIf)
+            if (h(0) > float(2.0f*M_PI))
                 continue;
             //h(0) = h(0) - float(2.0f*M_PI);
             if (h(1) < 0)
                 continue;
             //h(1) = float(2.0f*M_PI) - h(1);
-            if (h(1) > 2.0f * M_PIf)
+            if (h(1) > float(2.0f*M_PI))
                 continue;
             //h(1) = h(1) - float(2.0f*M_PI);
             if (h(2) < 0)
                 continue;
                 //h(2) = float(M_PI*0.5f) - h(2);
-            if (h(2) > M_PIf * 0.5f)
+            if (h(2) > float(M_PI*0.5f))
                 continue;
                 //h(2) = h(2) - float(M_PI*0.5f);
 
@@ -97,14 +95,14 @@ BOOST_AUTO_TEST_SUITE(MathTools)
             BOOST_CHECK_GE(h(0), 0.0f);
             BOOST_CHECK_GE(h(1), 0.0f);
             BOOST_CHECK_GE(h(2), 0.0f);
-            BOOST_CHECK_LE(h(0), 2.0f * M_PIf);
-            BOOST_CHECK_LE(h(1), 2.0f * M_PIf);
-            BOOST_CHECK_LE(h(2), M_PIf * 0.5f);
+            BOOST_CHECK_LE(h(0), 2.0f*(float)M_PI);
+            BOOST_CHECK_LE(h(1), 2.0f*(float)M_PI);
+            BOOST_CHECK_LE(h(2), (float)M_PI*0.5f);
 
             VirtualRobot::MathTools::Quaternion q2 = VirtualRobot::MathTools::hopf2quat(h);
 
             VirtualRobot::MathTools::Quaternion qDelta = VirtualRobot::MathTools::getDelta(q, q2);
-            float a = std::abs(VirtualRobot::MathTools::getAngle(qDelta));
+            float a = (float)fabs(VirtualRobot::MathTools::getAngle(qDelta));
             BOOST_CHECK_SMALL(a, maxAngQuat);
 
             if (a>maxAngQuat)
@@ -118,9 +116,9 @@ BOOST_AUTO_TEST_SUITE(MathTools)
 
 BOOST_AUTO_TEST_CASE(testMathToolsRPY)
 {
-    float r = M_PIf * 0.25f;
+    float r = (float)M_PI * 0.25f;
     float p = 0;
-    float y = M_PIf * 0.5f;
+    float y = (float)M_PI * 0.5f;
     Eigen::Matrix4f m;
     BOOST_REQUIRE_NO_THROW(VirtualRobot::MathTools::rpy2eigen4f(r, p, y, m));
     float x[6];

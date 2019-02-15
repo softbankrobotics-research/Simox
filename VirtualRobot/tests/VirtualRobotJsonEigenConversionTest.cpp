@@ -46,9 +46,12 @@ BOOST_AUTO_TEST_CASE(test_matrix)
     
     json j;
     j = in;
-    out = j;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
+    out = j;
+    BOOST_CHECK_EQUAL(in, out);
+    
+    out = j.get<Matrix4f>();
     BOOST_CHECK_EQUAL(in, out);
 }
 
@@ -64,9 +67,12 @@ BOOST_AUTO_TEST_CASE(test_vector)
     
     json j;
     j = in;
-    out = j;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
+    out = j;
+    BOOST_CHECK_EQUAL(in, out);
+    
+    out = j.get<Vector3f>();
     BOOST_CHECK_EQUAL(in, out);
 }
 
@@ -78,9 +84,11 @@ BOOST_AUTO_TEST_CASE(test_quaternion)
     
     json j;
     j = in;
-    out = j.get<Quaternionf>();
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
+    // out = j; cannot be correctly resolved
+    
+    out = j.get<Quaternionf>();
     BOOST_CHECK_EQUAL(in, out);
 }
 
