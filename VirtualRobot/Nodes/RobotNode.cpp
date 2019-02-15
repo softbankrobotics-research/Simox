@@ -310,6 +310,29 @@ namespace VirtualRobot
 
         // update collision and visualization model and children
         SceneObject::updatePose(updateChildren);
+
+        // apply propagated joint values
+        if (propagatedJointValues.size() > 0)
+        {
+            RobotPtr r = robot.lock();
+            std::map< std::string, float>::iterator it = propagatedJointValues.begin();
+
+            while (it != propagatedJointValues.end())
+            {
+                RobotNodePtr rn = r->getRobotNode(it->first);
+
+                if (!rn)
+                {
+                    VR_WARNING << "Could not propagate joint value from " << name << " to " << it->first << " because dependent joint does not exist...";
+                }
+                else
+                {
+                    rn->setJointValue(jointValue * it->second);
+                }
+
+                it++;
+            }
+        }
     }
 
     void RobotNode::collectAllRobotNodes(std::vector< RobotNodePtr >& storeNodes)
