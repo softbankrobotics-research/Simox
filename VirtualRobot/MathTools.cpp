@@ -2120,6 +2120,8 @@ namespace VirtualRobot
         float abNorm = ab.norm();
         float acNorm = ac.norm();
         
+        if (abNorm <= 0 || acNorm <= 0) return 0;  // collapsed triangle
+        
         // alpha := angle at a, i.e. between ab and ac
         // => cos(alpha) = ab * ac
         // => sin(alpha) = sqrt( 1 - cos(alpha)^2 )
@@ -2131,13 +2133,6 @@ namespace VirtualRobot
         float area = 0.5f * sin_alpha * abNorm * acNorm;
         return area;
     }
-
-
-
-
-
-
-
 
 
 } // namespace
