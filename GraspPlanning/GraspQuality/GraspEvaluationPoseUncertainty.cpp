@@ -1,6 +1,7 @@
 #include <Eigen/Geometry>
 #include "GraspEvaluationPoseUncertainty.h"
 #include <VirtualRobot/Random.h>
+#include <VirtualRobot/math/Helpers.h>
 
 #include <algorithm>
 #include <random>
@@ -20,13 +21,16 @@ GraspEvaluationPoseUncertainty::GraspEvaluationPoseUncertainty(const PoseUncerta
 GraspEvaluationPoseUncertainty::~GraspEvaluationPoseUncertainty()
 = default;
 
-std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP)
+
+std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
+        const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP)
 {
 	std::vector<Eigen::Matrix4f> result;
-	Eigen::Matrix4f trafoGraspCenterToObjectCenter = objectGP * graspCenterGP.inverse();
+	Eigen::Matrix4f trafoGraspCenterToObjectCenter = objectGP * math::Helpers::InvertedPose(graspCenterGP);
 	Eigen::Matrix4f initPose = graspCenterGP;
 	Eigen::Vector3f rpy;
 	MathTools::eigen4f2rpy(initPose, rpy);
+    
 	float initPoseRPY[6];
 	initPoseRPY[0] = initPose(0, 3);
 	initPoseRPY[1] = initPose(1, 3);
@@ -39,6 +43,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
 	float end[6];
 	float step[6];
 	float tmpPose[6];
+    
 	for (int i = 0; i < 6; i++)
 	{
 		if (config.enableDimension[i])
@@ -88,14 +93,16 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
 }
 
 
-std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses)
+std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
+        const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses)
 {
     std::vector<Eigen::Matrix4f> result;
     //Eigen::Matrix4f trafoGraspCenterToObjectCenter = objectGP * graspCenterGP.inverse();
-    Eigen::Matrix4f trafoGraspCenterToObjectCenter = graspCenterGP.inverse() * objectGP;
+    Eigen::Matrix4f trafoGraspCenterToObjectCenter = math::Helpers::InvertedPose(graspCenterGP) * objectGP;
     Eigen::Matrix4f initPose = graspCenterGP;
     Eigen::Vector3f rpy;
     MathTools::eigen4f2rpy(initPose, rpy);
+    
     float initPoseRPY[6];
     initPoseRPY[0] = initPose(0, 3);
     initPoseRPY[1] = initPose(1, 3);
@@ -124,13 +131,15 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     }
 
     Eigen::Matrix4f m;
-    std::normal_distribution<double> normalDistribution(0.0,0.5);
-    std::uniform_real_distribution<double> uniformDistribution(0.0,1);
-    for (int j=0;j<numPoses; j++)
+    std::normal_distribution<float> normalDistribution(0.0, 0.5);
+    std::uniform_real_distribution<float> uniformDistribution(0.0, 1);
+    
+    for (int j = 0; j < numPoses; j++)
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit()) : uniformDistribution(VirtualRobot::PRNG64Bit());
+            float r = config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit())
+                                                   : uniformDistribution(VirtualRobot::PRNG64Bit());
             tmpPose[i] = start[i] + r*dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
@@ -140,15 +149,18 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
     return result;
 }
 
-std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Eigen::Matrix4f &objectGP, const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses)
+std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
+        const Eigen::Matrix4f &objectGP,
+        const VirtualRobot::EndEffector::ContactInfoVector &contacts,
+        int numPoses)
 {
-    Eigen::Vector3f centerPose;
-    centerPose.setZero();
-    if (contacts.size()==0)
+    Eigen::Vector3f centerPose = centerPose.Zero();
+    if (contacts.empty())
     {
         VR_ERROR << "No contacts" << endl;
         return std::vector<Eigen::Matrix4f>();
     }
+    
     for (size_t i = 0; i < contacts.size(); i++)
     {
             if (config.verbose)
@@ -156,16 +168,16 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const
             centerPose += contacts[i].contactPointObstacleGlobal;
     }
     centerPose /= contacts.size();
+    
     if (config.verbose)
         cout << "using contact center pose:\n" << centerPose << endl;
 
-    Eigen::Matrix4f centerPoseM = Eigen::Matrix4f::Identity();
-    centerPoseM.block(0, 3, 3, 1) = centerPose;
-
-    return generatePoses(objectGP, centerPoseM, numPoses);
+    return generatePoses(objectGP, math::Helpers::Pose(centerPose), numPoses);
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::evaluatePose(EndEffectorPtr eef, ObstaclePtr o, const Matrix4f &objectPose, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
+GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::evaluatePose(
+        EndEffectorPtr eef, ObstaclePtr object, const Matrix4f &objectPose,
+        GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
 {
     PoseEvalResult result;
     result.forceClosure = false;
@@ -184,18 +196,20 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
     {
         eef->getRobot()->setJointValues(preshape);
     } else
+    {
         eef->openActors();
-    o->setGlobalPose(objectPose);
+    }
+    object->setGlobalPose(objectPose);
 
     // check for initial collision
-    if (o->getCollisionChecker()->checkCollision(o->getCollisionModel(), eefColModel))
+    if (object->getCollisionChecker()->checkCollision(object->getCollisionModel(), eefColModel))
     {
         result.initialCollision = true;
         return result;
     }
 
     // collision free
-    EndEffector::ContactInfoVector cont = eef->closeActors(o);
+    EndEffector::ContactInfoVector cont = eef->closeActors(object);
     qm->setContactPoints(cont);
 
     result.quality = qm->getGraspQuality();
@@ -204,7 +218,9 @@ GraspEvaluationPoseUncertainty::PoseEvalResult GraspEvaluationPoseUncertainty::e
     return result;
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluatePoses(EndEffectorPtr eef, ObstaclePtr o, const std::vector<Eigen::Matrix4f> &objectPoses, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
+GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluatePoses(
+        EndEffectorPtr eef, ObstaclePtr object, const std::vector<Eigen::Matrix4f> &objectPoses,
+        GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape)
 {
     PoseEvalResults res;
     res.avgQuality = 0.0f;
@@ -229,20 +245,20 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     }
 
     Eigen::Matrix4f eefRobotPoseInit = eef->getRobot()->getGlobalPose();
-    Eigen::Matrix4f objectPoseInit = o->getGlobalPose();
+    Eigen::Matrix4f objectPoseInit = object->getGlobalPose();
     VirtualRobot::RobotConfigPtr initialConf = eef->getConfiguration();
 
     std::vector<PoseEvalResult> results;
-    for (size_t i=0;i<objectPoses.size();i++)
+    for (const auto& objectPose : objectPoses)
     {
-        results.push_back(evaluatePose(eef,o,objectPoses.at(i),qm,preshape));
+        results.push_back(evaluatePose(eef, object, objectPose, qm, preshape));
     }
 
-    if (results.size()==0)
+    if (results.empty())
         return res;
 
-    res.numPosesTested = results.size();
-    for (auto & result : results)
+    res.numPosesTested = static_cast<int>(results.size());
+    for (const auto& result : results)
     {
         if (result.initialCollision)
         {
@@ -262,26 +278,28 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
         }
     }
 
-    if (res.numValidPoses>0)
+    if (res.numValidPoses > 0)
     {
-        res.forceClosureRate /= float(res.numValidPoses);
-        res.avgQuality /= float(res.numValidPoses);
+        res.forceClosureRate /= static_cast<float>(res.numValidPoses);
+        res.avgQuality /= static_cast<float>(res.numValidPoses);
     }
-    if (res.numPosesTested>0)
+    if (res.numPosesTested > 0)
     {
-        res.forceClosureRateCol /= float(res.numPosesTested);
-        res.avgQualityCol /= float(res.numPosesTested);
+        res.forceClosureRateCol /= static_cast<float>(res.numPosesTested);
+        res.avgQualityCol /= static_cast<float>(res.numPosesTested);
     }
 
     // restore setup
     eef->getRobot()->setGlobalPose(eefRobotPoseInit);
-    o->setGlobalPose(objectPoseInit);
+    object->setGlobalPose(objectPoseInit);
     eef->getRobot()->setConfig(initialConf);
 
     return res;
 }
 
-GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, GraspQualityMeasurePtr qm, int numPoses)
+GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::evaluateGrasp(
+        VirtualRobot::GraspPtr grasp, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr object, 
+        GraspQualityMeasurePtr qm, int numPoses)
 {
     PoseEvalResults res;
     res.avgQuality = 0.0f;
@@ -290,7 +308,7 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     res.numValidPoses = 0;
     res.numColPoses = 0;
 
-    if (!g || !eef || !o || !qm)
+    if (!grasp || !eef || !object || !qm)
     {
         VR_WARNING << "missing parameters"<< endl;
         return res;
@@ -302,15 +320,15 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     }
 
     Eigen::Matrix4f eefRobotPoseInit = eef->getRobot()->getGlobalPose();
-    Eigen::Matrix4f objectPoseInit = o->getGlobalPose();
+    Eigen::Matrix4f objectPoseInit = object->getGlobalPose();
     VirtualRobot::RobotConfigPtr initialConf = eef->getConfiguration();
 
-    std::string graspPreshapeName = g->getPreshapeName();
+    std::string graspPreshapeName = grasp->getPreshapeName();
     VirtualRobot::RobotConfigPtr graspPS;
     if (eef->hasPreshape(graspPreshapeName))
         graspPS = eef->getPreshape(graspPreshapeName);
 
-    Eigen::Matrix4f mGrasp = g->getTcpPoseGlobal(o->getGlobalPose());
+    Eigen::Matrix4f mGrasp = grasp->getTcpPoseGlobal(object->getGlobalPose());
 
     // apply grasp
     eef->getRobot()->setGlobalPoseForRobotNode(eef->getTcp(), mGrasp);
@@ -318,30 +336,55 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     if (graspPS)
     {
         eef->getRobot()->setJointValues(graspPS);
-    } else
-        eef->openActors();
-
-
-    auto contacts = eef->closeActors(o);
-    if(contacts.size() == 0)
+    }
+    else
     {
-        VR_INFO << "No contacts for grasp " << g->getName() << " found" << std::endl;
+        eef->openActors();
+    }
+        
+
+
+    auto contacts = eef->closeActors(object);
+    if (contacts.empty())
+    {
+        VR_INFO << "No contacts for grasp " << grasp->getName() << " found" << std::endl;
         return res;
     }
-    auto poses = generatePoses(o->getGlobalPose(), contacts, numPoses);
-    if(poses.empty())
+    
+    auto poses = generatePoses(object->getGlobalPose(), contacts, numPoses);
+    if (poses.empty())
     {
         VR_INFO << "No poses for grasp found" << std::endl;
         return res;
     }
-    res = evaluatePoses(eef, o, poses, qm, graspPS);
+    res = evaluatePoses(eef, object, poses, qm, graspPS);
 
     // restore setup
     eef->getRobot()->setGlobalPose(eefRobotPoseInit);
-    o->setGlobalPose(objectPoseInit);
+    object->setGlobalPose(objectPoseInit);
     eef->getRobot()->setConfig(initialConf);
 
     return res;
 }
+
+std::ostream& operator<<(std::ostream& os, const GraspEvaluationPoseUncertainty::PoseEvalResults& rhs)
+{
+    os << "Robustness analysis" << endl;
+    os << "Num Poses Tested: \t" << rhs.numPosesTested << endl;
+    os << "Num Poses Valid:  \t" << rhs.numValidPoses << endl;
+    
+    float colPercent = 0.0f;
+    if (rhs.numPosesTested > 0)
+        colPercent = float(rhs.numColPoses) / float(rhs.numPosesTested) * 100.0f;
+    
+    os << "Num Poses initially in collision:\t" << rhs.numColPoses << " (" << colPercent << "%)" << endl;
+    os << "Avg Quality (only col freeposes):\t" << rhs.avgQuality << endl;
+    os << "FC rate (only col free poses):   \t" << rhs.forceClosureRate * 100.0f << "%" << endl;
+    os << "Avg Quality (all poses):         \t" << rhs.avgQualityCol << endl;
+    os << "FC rate (all poses):             \t" << rhs.forceClosureRateCol * 100.0f << "%" << endl;
+    
+    return os;
+}
+
 
 }

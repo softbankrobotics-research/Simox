@@ -30,13 +30,17 @@
 #include <string>
 #include <vector>
 
+
 namespace GraspStudio
 {
 
-/*!
-	This class implements the paper:
-	Jonathan Weisz and Peter K. Allen, "Pose Error Robust Grasping from Contact Wrench Space Metrics", 2012 IEEE International Conference on Robotics and Automation
-*/
+/**
+ *
+ * This class implements the paper:
+ *   Jonathan Weisz and Peter K. Allen,
+ *   "Pose Error Robust Grasping from Contact Wrench Space Metrics",
+ *   2012 IEEE International Conference on Robotics and Automation.
+ */
 class GRASPSTUDIO_IMPORT_EXPORT GraspEvaluationPoseUncertainty : public boost::enable_shared_from_this<GraspEvaluationPoseUncertainty>
 {
 public:
@@ -62,15 +66,15 @@ public:
 			{
                 dimExtends[i] = maxPosDelta; //mm
                 dimExtends[i + 3] = maxOriDelta / 180.0f * float(M_PI); // degrees
-                stepSize[i] = maxPosDelta*0.5f;
-                stepSize[i + 3] = maxOriDelta*0.5f / 180.0f * float(M_PI); // 3 degree
+                stepSize[i] = maxPosDelta * 0.5f;
+                stepSize[i + 3] = maxOriDelta * 0.5f / 180.0f * float(M_PI); // 3 degree
 			}
 		}
 
 		bool enableDimension[6];
 		float dimExtends[6];
 		float stepSize[6];
-        float useNormalDistribution; // normal or uniform distribution
+        bool useNormalDistribution; // normal or uniform distribution
         bool verbose = false;
 
         float posDeltaMM;
@@ -88,59 +92,65 @@ public:
     {
         int numPosesTested = 0.0;
         int numValidPoses = 0.0;
-        int numColPoses = 0.0;        // poses with initial collision
-        int numForceClosurePoses = 0.0;        // poses that have force closure
-        float forceClosureRate = 0.0; // without collision poses
-        float avgQuality = 0.0;       // without collision poses
+        int numColPoses = 0.0;           // poses with initial collision
+        int numForceClosurePoses = 0.0;  // poses that have force closure
+        float forceClosureRate = 0.0;    // without collision poses
+        float avgQuality = 0.0;          // without collision poses
         float forceClosureRateCol = 0.0; // with collision poses
         float avgQualityCol = 0.0;       // with collision poses
 
-        void print()
-        {
-            VR_INFO << "Robustness analysis" << endl;
-            VR_INFO << "Num Poses Tested:" << numPosesTested << endl;
-            VR_INFO << "Num Poses Valid:" << numValidPoses << endl;
-            float colPercent = 0.0f;
-            if (numPosesTested>0)
-                colPercent = float(numColPoses) / float(numPosesTested) * 100.0f;
-            VR_INFO << "Num Poses initially in collision:" << numColPoses << " == " << colPercent << "%" << endl;
-            VR_INFO << "Avg Quality (only col freeposes):" << avgQuality << endl;
-            VR_INFO << "FC rate (only col free poses):" << forceClosureRate * 100.0f << "%" << endl;
-            VR_INFO << "Avg Quality (all poses):" << avgQualityCol << endl;
-            VR_INFO << "FC rate (all poses):" << forceClosureRateCol * 100.0f << "%" << endl;
-        }
+        void print() { VR_INFO << *this << std::endl; }
+        friend std::ostream& operator<<(std::ostream& os, const PoseEvalResults& rhs);
     };
 
-	/*!
-		@brief Initialize the pose quality calculation
-
-	*/
+    
+	/// Construct with the given configuration.
 	GraspEvaluationPoseUncertainty(const PoseUncertaintyConfig& config);
 	
+    /// Destructor.
 	virtual ~GraspEvaluationPoseUncertainty();
 
-	/*!
-        Computes the full set of poses according to configuration.
-		\param objectGP The pose of the object. 
-		\param graspCenterGP This could be the pose of the object or the center of the contact points (as proposed in the paper)
-	*/
-	std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP);
+    
+    // Pose generation
+    
+	/**
+     * Computes the full set of poses according to configuration.
+     * \param objectGP The pose of the object. 
+     * \param graspCenterGP This could be the pose of the object or the center of the contact points (as proposed in the paper)
+	 */
+	std::vector<Eigen::Matrix4f> generatePoses(
+            const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP);
 	
-    /*!
-        Computes a set of poses by randomly sampling within the extends of the configuration.
-        \param objectGP The pose of the object.
-        \param graspCenterGP This could be the pose of the object or the center of the contact points (as proposed in the paper)
-        \param numPoses Number of poses to generate
-    */
-    std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses);
+    /**
+     * Computes a set of poses by randomly sampling within the extends of the configuration.
+     * \param objectGP The pose of the object.
+     * \param graspCenterGP This could be the pose of the object or the center of the contact points (as proposed in the paper)
+     * \param numPoses Number of poses to generate
+     */
+    std::vector<Eigen::Matrix4f> generatePoses(
+            const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP, int numPoses);
 
-    std::vector<Eigen::Matrix4f> generatePoses(const Eigen::Matrix4f &objectGP, const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses);
+    /// Uses the mean of the contact points as grasp center point.
+    std::vector<Eigen::Matrix4f> generatePoses(
+            const Eigen::Matrix4f &objectGP,
+            const VirtualRobot::EndEffector::ContactInfoVector &contacts, int numPoses);
 
-    PoseEvalResult evaluatePose(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const Eigen::Matrix4f &objectPose, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
-    PoseEvalResults evaluatePoses(VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, const std::vector<Eigen::Matrix4f> &objectPoses, GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = VirtualRobot::RobotConfigPtr());
+    
+    // Pose evaluation
+    
+    PoseEvalResult evaluatePose(
+            VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr object, const Eigen::Matrix4f &objectPose,
+            GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = {});
+    
+    PoseEvalResults evaluatePoses(
+            VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr object, const std::vector<Eigen::Matrix4f> &objectPoses,
+            GraspQualityMeasurePtr qm, VirtualRobot::RobotConfigPtr preshape = {});
 
-    PoseEvalResults evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr o, GraspQualityMeasurePtr qm, int numPoses);
+    PoseEvalResults evaluateGrasp(
+            VirtualRobot::GraspPtr grasp, VirtualRobot::EndEffectorPtr eef, VirtualRobot::ObstaclePtr object,
+            GraspQualityMeasurePtr qm, int numPoses);
 
+    
 protected:
 
 	PoseUncertaintyConfig config;
