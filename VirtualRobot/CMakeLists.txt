@@ -311,6 +311,7 @@ Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
 math/MathForwardDefinitions.h
+math/ClampedNormalDistribution.hpp
 math/Contact.h
 math/ContactList.h
 math/Line.h
