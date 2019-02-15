@@ -207,7 +207,7 @@ namespace math
     template <typename PosDerived>
     Eigen::Matrix4f Helpers::Pose(const Eigen::MatrixBase<PosDerived>& pos)
     {
-        return Pose(pos, Eigen::Matrix3f::Zero());
+        return Pose(pos, Eigen::Matrix3f::Identity());
     }
     
     
