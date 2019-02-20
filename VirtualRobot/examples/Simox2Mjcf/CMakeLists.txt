@@ -31,7 +31,7 @@ if (Boost_FOUND)
     # source: https://stackoverflow.com/a/3500721
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DBOOST_NO_CXX11_SCOPED_ENUMS)
     
-    target_link_libraries(${PROJECT_NAME} ${LIBS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
     
     
     #######################################################################################
