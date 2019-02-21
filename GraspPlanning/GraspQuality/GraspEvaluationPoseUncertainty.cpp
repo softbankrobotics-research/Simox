@@ -2,6 +2,7 @@
 #include "GraspEvaluationPoseUncertainty.h"
 #include <VirtualRobot/Random.h>
 #include <VirtualRobot/math/Helpers.h>
+#include <VirtualRobot/math/ClampedNormalDistribution.hpp>
 
 #include <algorithm>
 #include <random>
@@ -15,8 +16,9 @@ namespace GraspStudio {
 
 GraspEvaluationPoseUncertainty::GraspEvaluationPoseUncertainty(const PoseUncertaintyConfig& config)
 {
-	this->config = config;
+    this->_config = config;
 }
+
 
 GraspEvaluationPoseUncertainty::~GraspEvaluationPoseUncertainty()
 = default;
@@ -26,7 +28,7 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
         const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP)
 {
 	std::vector<Eigen::Matrix4f> result;
-	Eigen::Matrix4f trafoGraspCenterToObjectCenter = objectGP * math::Helpers::InvertedPose(graspCenterGP);
+	Eigen::Matrix4f trafoGraspCenterToObjectCenter = objectGP * graspCenterGP.inverse();
 	Eigen::Matrix4f initPose = graspCenterGP;
 	Eigen::Vector3f rpy;
 	MathTools::eigen4f2rpy(initPose, rpy);
@@ -46,11 +48,11 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
     
 	for (int i = 0; i < 6; i++)
 	{
-		if (config.enableDimension[i])
+		if (_config.enableDimension[i])
 		{
-			start[i] = initPoseRPY[i] - config.dimExtends[i];
-			end[i] = initPoseRPY[i] + config.dimExtends[i];
-			step[i] = config.stepSize[i];
+			start[i] = initPoseRPY[i] - _config.dimExtends[i];
+			end[i] = initPoseRPY[i] + _config.dimExtends[i];
+			step[i] = _config.stepSize[i];
 		}
 		else
 		{
@@ -89,7 +91,22 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
 			}
 		}
 	}
-	return result;
+    return result;
+}
+
+std::vector<Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(const Matrix4f& objectGP, const EndEffector::ContactInfoVector& contacts)
+{
+    Eigen::Vector3f centerPos = getMean(contacts);
+    if (centerPos.hasNaN())
+    {
+        VR_ERROR << "No contacts" << endl;
+        return std::vector<Eigen::Matrix4f>();
+    }
+    
+    if (_config.verbose)
+        cout << "using contact center pose:\n" << centerPos << endl;
+
+    return generatePoses(objectGP, math::Helpers::Pose(centerPos));
 }
 
 
@@ -117,12 +134,12 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
     for (int i = 0; i < 6; i++)
     {
         start[i] = initPoseRPY[i];
-        if (config.enableDimension[i])
+        if (_config.enableDimension[i])
         {
-            if (i<3)
-                dist[i] = config.posDeltaMM;
+            if (i < 3)
+                dist[i] = _config.posDeltaMM;
             else
-                dist[i] = config.oriDeltaDeg/180.0f*float(M_PI);
+                dist[i] = _config.oriDeltaDeg * static_cast<float>(M_PI / 180.0);
         }
         else
         {
@@ -131,16 +148,17 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
     }
 
     Eigen::Matrix4f m;
-    std::normal_distribution<float> normalDistribution(0.0, 0.5);
-    std::uniform_real_distribution<float> uniformDistribution(0.0, 1);
+    
+    VirtualRobot::ClampedNormalDistribution<float> normalDistribution(-1, 1);
+    std::uniform_real_distribution<float> uniformDistribution(-1, 1);
     
     for (int j = 0; j < numPoses; j++)
     {
         for (int i = 0; i < 6; i++)
         {
-            float r = config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit())
-                                                   : uniformDistribution(VirtualRobot::PRNG64Bit());
-            tmpPose[i] = start[i] + r*dist[i];
+            float r = _config.useNormalDistribution ? normalDistribution(VirtualRobot::PRNG64Bit())
+                                                    : uniformDistribution(VirtualRobot::PRNG64Bit());
+            tmpPose[i] = start[i] + r * dist[i];
         }
         MathTools::posrpy2eigen4f(tmpPose, m);
         m = m * trafoGraspCenterToObjectCenter;
@@ -154,22 +172,14 @@ std::vector<Eigen::Matrix4f> GraspEvaluationPoseUncertainty::generatePoses(
         const VirtualRobot::EndEffector::ContactInfoVector &contacts,
         int numPoses)
 {
-    Eigen::Vector3f centerPose = centerPose.Zero();
-    if (contacts.empty())
+    Eigen::Vector3f centerPose = getMean(contacts);
+    if (centerPose.hasNaN())
     {
         VR_ERROR << "No contacts" << endl;
         return std::vector<Eigen::Matrix4f>();
     }
     
-    for (size_t i = 0; i < contacts.size(); i++)
-    {
-            if (config.verbose)
-                cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
-            centerPose += contacts[i].contactPointObstacleGlobal;
-    }
-    centerPose /= contacts.size();
-    
-    if (config.verbose)
+    if (_config.verbose)
         cout << "using contact center pose:\n" << centerPose << endl;
 
     return generatePoses(objectGP, math::Helpers::Pose(centerPose), numPoses);
@@ -367,6 +377,37 @@ GraspEvaluationPoseUncertainty::PoseEvalResults GraspEvaluationPoseUncertainty::
     return res;
 }
 
+Vector3f GraspEvaluationPoseUncertainty::getMean(const EndEffector::ContactInfoVector& contacts) const
+{
+    Eigen::Vector3f mean = mean.Zero();
+    if (contacts.empty())
+    {
+        VR_ERROR << "No contacts" << endl;
+        return Eigen::Vector3f::Constant(std::nanf(""));
+    }
+    
+    for (size_t i = 0; i < contacts.size(); i++)
+    {
+            if (_config.verbose)
+                cout << "contact point:" << i << ": \n" << contacts[i].contactPointObstacleGlobal << endl;
+            mean += contacts[i].contactPointObstacleGlobal;
+    }
+    mean /= contacts.size();
+    return mean;
+}
+
+
+GraspEvaluationPoseUncertainty::PoseUncertaintyConfig&GraspEvaluationPoseUncertainty::config()
+{
+    return _config;
+}
+
+const GraspEvaluationPoseUncertainty::PoseUncertaintyConfig&GraspEvaluationPoseUncertainty::config() const
+{
+    return _config;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const GraspEvaluationPoseUncertainty::PoseEvalResults& rhs)
 {
     os << "Robustness analysis" << endl;
@@ -385,6 +426,5 @@ std::ostream& operator<<(std::ostream& os, const GraspEvaluationPoseUncertainty:
     
     return os;
 }
-
 
 }

@@ -53,21 +53,24 @@ public:
             init();
         }
 
-        void init(float maxPosDelta = 10.0f, float maxOriDelta = 5.0f, bool normalDistribution = true)
+        void init(float maxPosDelta = 10.0f, float maxOriDeltaDeg = 5.0f, bool normalDistribution = true,
+                  float stepFactorPos = 0.5f, float stepFactorOri = 0.5f)
 		{
             useNormalDistribution = normalDistribution;
             posDeltaMM = maxPosDelta;
-            oriDeltaDeg = maxOriDelta;
+            oriDeltaDeg = maxOriDeltaDeg;
 			for (int i = 0; i < 6; i++)
 			{
 				enableDimension[i] = true;
 			}
 			for (int i = 0; i < 3; i++)
 			{
-                dimExtends[i] = maxPosDelta; //mm
-                dimExtends[i + 3] = maxOriDelta / 180.0f * float(M_PI); // degrees
-                stepSize[i] = maxPosDelta * 0.5f;
-                stepSize[i + 3] = maxOriDelta * 0.5f / 180.0f * float(M_PI); // 3 degree
+                dimExtends[i] = maxPosDelta;       // mm
+                stepSize[i] = maxPosDelta * stepFactorPos;  // 10 mm => 5 mm steps
+                
+                float maxOriDeltaRad = maxOriDeltaDeg * static_cast<float>(M_PI / 180.0);
+                dimExtends[i + 3] = maxOriDeltaRad;
+                stepSize[i + 3] = maxOriDeltaRad * stepFactorOri; // 5 deg => degree
 			}
 		}
 
@@ -111,6 +114,11 @@ public:
 	virtual ~GraspEvaluationPoseUncertainty();
 
     
+    // Config
+    
+    PoseUncertaintyConfig& config();
+    const PoseUncertaintyConfig& config() const;
+    
     // Pose generation
     
 	/**
@@ -120,6 +128,11 @@ public:
 	 */
 	std::vector<Eigen::Matrix4f> generatePoses(
             const Eigen::Matrix4f &objectGP, const Eigen::Matrix4f &graspCenterGP);
+    
+    /// Uses the mean of the contact points as grasp center point.
+    std::vector<Eigen::Matrix4f> generatePoses(
+            const Eigen::Matrix4f &objectGP,
+            const VirtualRobot::EndEffector::ContactInfoVector &contacts);
 	
     /**
      * Computes a set of poses by randomly sampling within the extends of the configuration.
@@ -153,7 +166,9 @@ public:
     
 protected:
 
-	PoseUncertaintyConfig config;
+    Eigen::Vector3f getMean(const VirtualRobot::EndEffector::ContactInfoVector &contacts) const;
+    
+    PoseUncertaintyConfig _config;
 	
 };
 
