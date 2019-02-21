@@ -84,8 +84,12 @@
 #include <iostream>
 #include <algorithm>
 
+#include <boost/filesystem/path.hpp>
+
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
+
+namespace filesystem = boost::filesystem;
 
 
 namespace VirtualRobot
@@ -214,28 +218,32 @@ namespace VirtualRobot
     * \param boundingBox Use bounding box instead of full model.
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
-    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(const std::string& filename, bool boundingBox, float scaleX, float scaleY, float scaleZ)
+    VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(
+            const std::string& filename, bool boundingBox,
+            float scaleX, float scaleY, float scaleZ)
     {
         // passing an empty string to SoInput and trying to open it aborts the program
         if (filename.empty())
         {
             std::cerr <<  "No filename given" << std::endl;
-            return VisualizationNodePtr();
+            return nullptr;
         }
 
+        filesystem::path filepath(filename);
+        
         // check for STL file (.stl, .stla, .stlb)
         if (filename.length() >= 4)
         {
-            std::string ending = filename.substr(filename.length() - 4, 4);
-            BaseIO::getLowerCase(ending);
+            std::string extension = filepath.extension().string();
+            BaseIO::getLowerCase(extension);
 
-            if (ending == ".stl" || ending == "stla" || ending == "stlb")
+            if (extension == ".stl" || extension == ".stla" || extension == ".stlb")
             {
                 return getVisualizationFromSTLFile(filename, boundingBox, scaleX, scaleY, scaleZ);
             }
         }
 
-        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        if (scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
         {
             VR_WARNING << "Scaling not yet supported for Coin3D files" << endl;
         }
