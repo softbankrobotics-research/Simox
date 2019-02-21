@@ -60,6 +60,11 @@ namespace GraspStudio
           position(2) = (objectModel->vertices[nVert1].z + objectModel->vertices[nVert2].z + objectModel->vertices[nVert3].z) / 3.0f;*/
         
         storeApproachDir = (objectModel->faces[faceIndex]).normal;
+        if (std::abs(storeApproachDir.squaredNorm() - 1) > 1e-6f)
+        {
+            std::cout << "Normal in trimesh not normalized!";
+            storeApproachDir.normalize();
+        }
         
         return true;
     }
@@ -72,6 +77,7 @@ namespace GraspStudio
         Eigen::Vector3f position;
         Eigen::Vector3f approachDir;
 
+        
         if (!getPositionOnObject(position, approachDir))
         {
             GRASPSTUDIO_ERROR << "no position on object?!" << endl;
@@ -81,7 +87,7 @@ namespace GraspStudio
         this->approachDirGlobal = approachDir;
 
         // set new pose
-        setEEFToApproachPose(position,approachDir);
+        setEEFToApproachPose(position, approachDir);
 
 
         // move away until valid
@@ -105,11 +111,12 @@ namespace GraspStudio
 
         // restore original pose
         setEEFPose(pose);
-
+        
         return poseB;
     }
 
-    bool ApproachMovementSurfaceNormal::setEEFToApproachPose(const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir)
+    bool ApproachMovementSurfaceNormal::setEEFToApproachPose(
+            const Eigen::Vector3f& position, const Eigen::Vector3f& approachDir)
     {
         VirtualRobot::RobotNodePtr graspNode = eef_cloned->getGCP();
 
@@ -188,22 +195,23 @@ namespace GraspStudio
         poseFinal.block(0, 2, 3, 1) = z;
 
         setEEFPose(poseFinal);
+        
         return true;
     }
 
-    void ApproachMovementSurfaceNormal::moveEEFAway(const Eigen::Vector3f& approachDir, float step, int maxLoops)
+    void ApproachMovementSurfaceNormal::moveEEFAway(
+            const Eigen::Vector3f& approachDir, float step, int maxLoops)
     {
-        VirtualRobot::SceneObjectSetPtr sos = eef_cloned->createSceneObjectSet();
+        VirtualRobot::SceneObjectSetPtr sceneObjectSet = eef_cloned->createSceneObjectSet();
+        if (!sceneObjectSet) return;
 
-        if (!sos)
-        {
-            return;
-        }
+        CollisionModelPtr objectColModel = object->getCollisionModel();
+        CollisionCheckerPtr eefCollChecker = eef_cloned->getCollisionChecker();
 
-        int loop = 0;
         Eigen::Vector3f delta = approachDir * step;
-
-        while (loop < maxLoops && eef_cloned->getCollisionChecker()->checkCollision(object->getCollisionModel(), sos))
+        int loop = 0;
+        
+        while (loop < maxLoops && eefCollChecker->checkCollision(objectColModel, sceneObjectSet))
         {
             updateEEFPose(delta);
             loop++;
