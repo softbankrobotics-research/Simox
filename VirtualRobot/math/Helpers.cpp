@@ -260,6 +260,24 @@ Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, 
     return Orientation(transform) * ori;
 }
 
+Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
+{
+    auto householder = matrix.householderQr();
+    Eigen::Matrix3f orth = householder.householderQ();
+    
+    // Upper right triangular matrix of matrixQR() is R matrix.
+    // If a diagonal entry of R is negative, the corresponding column 
+    // in Q must be inverted.
+    for (int i = 0; i < matrix.cols(); ++i)
+    {
+        if (householder.matrixQR().diagonal()(i) < 0)
+        {
+            orth.col(i) *= -1;
+        }
+    }
+    return orth;
+}
+
 float Helpers::Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor)
 {
     Eigen::AngleAxisf aa(Orientation(b) * Orientation(a).inverse());

@@ -49,13 +49,15 @@ namespace VirtualRobot
             \param quality A custom quality index.
             \param eefPreshape An optional preshape.
         */
-        Grasp(const std::string& name, const std::string& robotType, const std::string& eef, const Eigen::Matrix4f& poseInTCPCoordSystem, const std::string& creation = std::string(""), float quality = 0.0f, const std::string& eefPreshape = std::string(""));
+        Grasp(const std::string& name, const std::string& robotType, const std::string& eef,
+              const Eigen::Matrix4f& poseInTCPCoordSystem, const std::string& creation = "",
+              float quality = 0.0f, const std::string& eefPreshape = "");
 
         /*!
         */
         virtual ~Grasp();
 
-        void print(bool printDecoration = true);
+        void print(bool printDecoration = true) const;
 
         void setName(const std::string& name);
         void setPreshape(const std::string& preshapeName);
@@ -65,17 +67,17 @@ namespace VirtualRobot
             Note, that this pose is only valid for the current configuration of the robot.
             When the robot moves, the grasping pose will change, and you have to call this method again.
         */
-        Eigen::Matrix4f getTargetPoseGlobal(RobotPtr robot);
+        Eigen::Matrix4f getTargetPoseGlobal(RobotPtr robot) const;
 
         /*!
             Get the global pose that has to be achieved by the tcp in order to apply the grasp on the object at position objectPose.
         */
-        Eigen::Matrix4f getTcpPoseGlobal(const Eigen::Matrix4f& objectPose);
+        Eigen::Matrix4f getTcpPoseGlobal(const Eigen::Matrix4f& objectPose) const;
 
         /*!
             The returned pose is the object pose that have to be set in order to apply a grasp at pose graspingPose.
         */
-        Eigen::Matrix4f getObjectTargetPoseGlobal(const Eigen::Matrix4f& graspingPose);
+        Eigen::Matrix4f getObjectTargetPoseGlobal(const Eigen::Matrix4f& graspingPose) const;
 
         /*!
             Set the transformation of this grasp.
@@ -84,12 +86,12 @@ namespace VirtualRobot
         */
         void setTransformation(const Eigen::Matrix4f& tcp2Object);
 
-        std::string getName();
-        std::string getRobotType();
-        std::string getEefName();
-        std::string getCreationMethod();
-        std::string getPreshapeName();
-        float getQuality();
+        std::string getName() const;
+        std::string getRobotType() const;
+        std::string getEefName() const;
+        std::string getCreationMethod() const;
+        std::string getPreshapeName() const;
+        float getQuality() const;
 
         void setQuality(float q);
 
@@ -98,24 +100,21 @@ namespace VirtualRobot
             The transformation is given in the coordinate system of the tcp (whereas the tcp belongs to the eef).
             This transformation specifies the tcp to object relation.
         */
-        Eigen::Matrix4f getTransformation();
+        Eigen::Matrix4f getTransformation() const;
 
-        std::string toXML(int tabs = 2);
+        std::string toXML(int tabs = 2) const;
 
-        GraspPtr clone();
+        GraspPtr clone() const;
 
-        /*!
-            Returns the (optionally) stored configuration of the fingers / actors.
-        */
-        std::map< std::string, float > getConfiguration();
+        //! Returns the (optionally) stored configuration of the fingers / actors.
+        std::map<std::string, float> getConfiguration() const;
 
-        /*!
-            Optionally the configuration of the fingers / actors can be stored.
+        //! Optionally the configuration of the fingers / actors can be stored.
+        void setConfiguration(const std::map<std::string, float>& config);
 
-        */
-        void setConfiguration(std::map< std::string, float >& c);
-
+        
     protected:
+        
         std::map< std::string, float > eefConfiguration; //!< Optional: the configuration of the actors.
 
         Eigen::Matrix4f poseTcp;    //!< The pose in TCP's coordinate system

@@ -187,3 +187,99 @@ BOOST_AUTO_TEST_CASE(test_toPose_matrix_and_rotation_matrix)
 
 
 BOOST_AUTO_TEST_SUITE_END()
+
+
+struct OrthogonolizeFixture
+{
+    void test(double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist);
+    Eigen::Matrix3f test(Matrix3f matrix, float noiseAmpl);
+    
+    template <typename Distribution>
+    static Eigen::Matrix3f Random(Distribution& distrib)
+    {
+        static std::default_random_engine gen (42);
+        return Eigen::Matrix3f::NullaryExpr([&](int) { return distrib(gen); });
+    }
+};
+
+
+void OrthogonolizeFixture::test(
+        double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist)
+{
+    // construct matrix with double to avoid rounding errors
+    Eigen::AngleAxisd rot(angle, axis);
+    Eigen::Quaterniond quat(rot);
+    
+    Eigen::Matrix3f matrix = quat.toRotationMatrix().cast<float>();
+    
+    Eigen::Matrix3f orth = test(matrix, noiseAmpl);
+    
+    Quaternionf quatOrth(orth);
+    BOOST_MESSAGE("Angular distance: " << quatOrth.angularDistance(quat.cast<float>()));
+    BOOST_CHECK_LE(quatOrth.angularDistance(quat.cast<float>()), precAngularDist);
+}
+
+Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
+{
+    static const float PREC_ORTHOGONAL = 1e-6f;
+    
+    BOOST_MESSAGE("Rotation matrix: \n" << matrix);
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
+    
+    // add noise (random coeffs are in [-1, 1])
+    
+    std::normal_distribution<float> distrib(0, noiseAmpl);
+    matrix += noiseAmpl * this->Random(distrib);
+    
+    BOOST_MESSAGE("Rotation matrix with noise: \n" << matrix);
+    if (noiseAmpl > 0)
+    {
+        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
+    }
+    
+    Eigen::Matrix3f orth = math::Helpers::Orthogonalize(matrix);
+    
+    BOOST_MESSAGE("Orthogonalized: \n" << orth);
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(orth, PREC_ORTHOGONAL));
+    
+    BOOST_MESSAGE("Q * Q.T: (should be Identitiy) \n" << (orth * orth.transpose()));
+    
+    return orth;
+}
+
+
+BOOST_FIXTURE_TEST_SUITE(Orthogonolization, OrthogonolizeFixture)
+
+BOOST_AUTO_TEST_CASE(test_orthogonalize_zero_rotation)
+{
+    test(Eigen::Matrix3f::Identity(), 0);
+    test(Eigen::Matrix3f::Identity(), 0.1f);
+    
+    test(0, Eigen::Vector3d::UnitX(), 0.0f, 0.0f);
+    test(0, Eigen::Vector3d::UnitX(), 1e-3f, 1e-3f);
+}
+
+BOOST_AUTO_TEST_CASE(test_orthogonalize_aligned_axis)
+{
+    test(M_PI / 2, Eigen::Vector3d::UnitX(), 1e-3f, 1e-3f);
+    test(M_PI / 2, Eigen::Vector3d::UnitX(), 0.1f, 0.2f);
+    
+    test(.75 * M_PI, Eigen::Vector3d::UnitZ(), 1e-3f, 1e-3f);
+    test(.75 * M_PI, Eigen::Vector3d::UnitZ(), 0.1f, 0.2f);
+    
+    test(M_PI, Eigen::Vector3d::UnitY(), 1e-3f, 1e-3f);
+    test(M_PI, Eigen::Vector3d::UnitY(), 0.1f, 0.2f);
+}
+
+BOOST_AUTO_TEST_CASE(test_orthogonalize_arbitrary_rotation)
+{
+    test(2.3, Eigen::Vector3d( 0.3, 1., -.5).normalized(), 1e-3f, 1e-3f);
+    test(2.3, Eigen::Vector3d( 0.3, 1., -.5).normalized(), 0.1f, 0.2f);
+    
+    test(1.02, Eigen::Vector3d( -2, .3, -.25).normalized(), 1e-3f, 1e-3f);
+    test(1.02, Eigen::Vector3d( -3,  2, -10).normalized(), 0.1f, 0.2f);
+}
+
+
+BOOST_AUTO_TEST_SUITE_END()
+

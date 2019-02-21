@@ -89,7 +89,12 @@ namespace math
         template <typename PosDerived, typename OriDerived>
         static Eigen::Matrix4f 
         Pose(const Eigen::MatrixBase<PosDerived>& pos, const Eigen::RotationBase<OriDerived, 3>& ori);
-
+        
+        /// Build a pose matrix from the given position and identity orientation.
+        template <typename PosDerived>
+        static Eigen::Matrix4f 
+        Pose(const Eigen::MatrixBase<PosDerived>& pos);
+        
         
         /// Legacy shortcut for Pose().
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
@@ -127,6 +132,15 @@ namespace math
         /// Transform the orientation by the transform.
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori);
         
+        /// Indicates whether the matrix is orthogonal, i.e. matrix * matrix.transpose = identity.
+        template <typename Derived>
+        static bool IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision = 1e-6f);
+        
+        /// Compute the closest orthogonal matrix to the given matrix. 
+        /// (Note: All rotation matrices must be orthogonal.)
+        static Eigen::Matrix3f Orthogonalize(const Eigen::Matrix3f& matrix);
+        
+        
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
@@ -139,7 +153,6 @@ namespace math
     private:
         
     };
-
     
     
     template <typename Derived>
@@ -191,6 +204,12 @@ namespace math
         return Pose(pos, ori.toRotationMatrix());
     }
     
+    template <typename PosDerived>
+    Eigen::Matrix4f Helpers::Pose(const Eigen::MatrixBase<PosDerived>& pos)
+    {
+        return Pose(pos, Eigen::Matrix3f::Identity());
+    }
+    
     
     template <typename Derived>
     Eigen::Matrix4f Helpers::InvertedPose(const Eigen::MatrixBase<Derived>& pose)
@@ -200,6 +219,11 @@ namespace math
         return inv;
     }
     
+    template<typename Derived>
+    bool Helpers::IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision)
+    {
+        return (matrix * matrix.transpose()).isIdentity(precision);
+    }
 }
 
 
