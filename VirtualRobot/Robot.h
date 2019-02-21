@@ -197,38 +197,33 @@ namespace VirtualRobot
         */
         int getNumFaces(bool collisionModel = false) override;
 
-        /*!
-            Set the global pose of this robot
-        */
+        //! Set the global pose of this robot
         virtual void setGlobalPose(const Eigen::Matrix4f& globalPose, bool applyValues) = 0;
         void setGlobalPose(const Eigen::Matrix4f& globalPose) override;
 
-        /*!
-            Set the global pose of this robot so that the RobotNode node is at pose globalPoseNode.
-        */
+        //! Get the global pose of this robot so that the RobotNode node is at pose globalPoseNode.
+        virtual Eigen::Matrix4f getGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode) const;
+        //! Set the global pose of this robot so that the RobotNode node is at pose globalPoseNode.
         virtual void setGlobalPoseForRobotNode(const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode);
         
-        /*!
-            Set the global position of this robot so that the RobotNode node is at position globalPoseNode
-        */
+        //! Get the global position of this robot so that the RobotNode node is at position globalPoseNode
+        virtual Eigen::Matrix4f getGlobalPositionForRobotNode(const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode) const;
+        //! Set the global position of this robot so that the RobotNode node is at position globalPoseNode
         virtual void setGlobalPositionForRobotNode(const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode);
 
         //virtual Eigen::Matrix4f getGlobalPose() = 0;
 
-        /*!
-            Return center of mass of this robot in local coordinate frame. All RobotNodes of this robot are considered according to their mass.
-        */
+        
+        //! Return center of mass of this robot in local coordinate frame. All RobotNodes of this robot are considered according to their mass.
         Eigen::Vector3f getCoMLocal() override;
-        /*!
-            Return Center of Mass of this robot in global coordinates. All RobotNodes of this robot are considered according to their mass.
-        */
+
+        //! Return Center of Mass of this robot in global coordinates. All RobotNodes of this robot are considered according to their mass.
         Eigen::Vector3f getCoMGlobal() override;
 
-        /*!
-            Return accumulated mass of this robot.
-        */
+        //! Return accumulated mass of this robot.
         virtual float getMass();
 
+        
         /*!
             Extract a sub kinematic from this robot and create a new robot instance.
             \param startJoint The kinematic starts with this RobotNode
@@ -251,14 +246,10 @@ namespace VirtualRobot
         virtual RobotPtr clone(const std::string& name, CollisionCheckerPtr collisionChecker = CollisionCheckerPtr(), float scaling = 1.0f);
         virtual RobotPtr clone();
 
-        /*!
-            Just storing the filename.
-        */
+        //! Just storing the filename.
         virtual void setFilename(const std::string& filename);
 
-        /*!
-            Retrieve the stored filename.
-        */
+        //! Retrieve the stored filename.
         virtual std::string getFilename();
 
         /*!

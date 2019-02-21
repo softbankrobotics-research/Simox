@@ -647,7 +647,7 @@ namespace VirtualRobot
     {
         setGlobalPose(globalPose, true);
     }
-
+    
     VirtualRobot::CollisionCheckerPtr Robot::getCollisionChecker()
     {
         std::vector<RobotNodePtr> robotNodes = this->getRobotNodes();
@@ -826,16 +826,15 @@ namespace VirtualRobot
         return result;
     }
 
-    void Robot::setGlobalPoseForRobotNode(
-            const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode)
+    Eigen::Matrix4f Robot::getGlobalPoseForRobotNode(
+            const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode) const
     {
         THROW_VR_EXCEPTION_IF(!node, "NULL node");
-
+        
         if (math::Helpers::Orientation(globalPoseNode).isIdentity())
         {
             // set position to avoid accumulating rounding errors when using rotation
-            setGlobalPositionForRobotNode(node, math::Helpers::Position(globalPoseNode));
-            return;
+            return getGlobalPositionForRobotNode(node, math::Helpers::Position(globalPoseNode));
         }
         
         // get transformation from current to wanted tcp pose
@@ -843,27 +842,40 @@ namespace VirtualRobot
 
         // apply transformation to current global pose of robot
         tf = tf * getGlobalPose();
-        
+
         // re-orthogonolize to keep it a valid transformation matrix
         math::Helpers::Orientation(tf) = math::Helpers::Orthogonalize(math::Helpers::Orientation(tf));
         
-        // set t
-        setGlobalPose(tf);
+        // return tf
+        return tf;
     }
     
-    void Robot::setGlobalPositionForRobotNode(
-            const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode)
+    void Robot::setGlobalPoseForRobotNode(
+            const RobotNodePtr& node, const Eigen::Matrix4f& globalPoseNode)
     {
         THROW_VR_EXCEPTION_IF(!node, "NULL node");
         
+        setGlobalPose(getGlobalPoseForRobotNode(node, globalPoseNode));
+    }
+    
+    Eigen::Matrix4f Robot::getGlobalPositionForRobotNode(
+            const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode) const
+    {
         // get translation from current to wanted tcp pose
         const Eigen::Vector3f translation = globalPositionNode - node->getGlobalPosition();
 
         // apply translation to current global position of robot
         const Eigen::Vector3f robotPosition = getGlobalPosition() + translation;
         
-        setGlobalPose(math::Helpers::Pose(robotPosition));
+        return math::Helpers::Pose(robotPosition);
     }
+    
+    void Robot::setGlobalPositionForRobotNode(
+            const RobotNodePtr& node, const Eigen::Vector3f& globalPositionNode)
+    {
+        setGlobalPose(getGlobalPositionForRobotNode(node, globalPositionNode));
+    }
+    
 
     VirtualRobot::RobotPtr Robot::clone(const std::string& name, CollisionCheckerPtr collisionChecker, float scaling)
     {
