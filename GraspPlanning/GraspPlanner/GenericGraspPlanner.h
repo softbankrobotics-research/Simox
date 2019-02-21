@@ -22,10 +22,13 @@
 */
 #pragma once
 
+#include <chrono>
+
 #include "../GraspStudio.h"
-#include "GraspPlanner.h"
 #include "../ApproachMovementGenerator.h"
 #include "../GraspQuality/GraspQualityMeasure.h"
+#include "GraspPlanner.h"
+
 
 namespace GraspStudio
 {
@@ -48,10 +51,13 @@ namespace GraspStudio
             \param minQuality The quality that must be achieved at minimum by the GraspQualityMesurement module
             \param forceClosure When true, only force closure grasps are generated.
         */
-        GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet, GraspStudio::GraspQualityMeasurePtr graspQuality, GraspStudio::ApproachMovementGeneratorPtr approach, float minQuality = 0.0f, bool forceClosure = true);
+        GenericGraspPlanner(VirtualRobot::GraspSetPtr graspSet,
+                            GraspStudio::GraspQualityMeasurePtr graspQuality,
+                            GraspStudio::ApproachMovementGeneratorPtr approach,
+                            float minQuality = 0.0f, bool forceClosure = true);
 
         // destructor
-        ~GenericGraspPlanner() override;
+        virtual ~GenericGraspPlanner() override;
 
         /*!
             Creates new grasps.
@@ -59,17 +65,19 @@ namespace GraspStudio
             \param timeOutMS The time out in milliseconds. Planning is stopped when this time is exceeded. Disabled when zero.
             \return Number of generated grasps.
         */
-        int plan(int nrGrasps, int timeOutMS = 0, VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr()) override;
+        int plan(int nrGrasps, int timeOutDuration = 0, VirtualRobot::SceneObjectSetPtr obstacles = {}) override;
 
-        VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = VirtualRobot::SceneObjectSetPtr());
+        VirtualRobot::GraspPtr planGrasp(VirtualRobot::SceneObjectSetPtr obstacles = {});
 
         VirtualRobot::EndEffector::ContactInfoVector getContacts() const;
 
         void setParameters(float minQuality, bool forceClosure);
 
-        //! if enabled (default), the planner retreates the hand if the number of contacts is <2.
-        //! During retreat, the contacts are checked if a better situation can be achieved.
-        //! This procedure helps in case the object is small.
+        /** 
+         * if enabled (default), the planner retreates the hand if the number of contacts is <2.
+         * During retreat, the contacts are checked if a better situation can be achieved.
+         * This procedure helps in case the object is small.
+         */
         void setRetreatOnLowContacts(bool enable);
 
     protected:
@@ -82,8 +90,9 @@ namespace GraspStudio
         VirtualRobot::SceneObjectPtr object;
         VirtualRobot::EndEffectorPtr eef;
 
-        clock_t startTime;
-        int timeOutMS;
+        std::chrono::system_clock::time_point startTime;
+        std::chrono::milliseconds timeOutDuration;
+        
         VirtualRobot::EndEffector::ContactInfoVector contacts;
         GraspStudio::GraspQualityMeasurePtr graspQuality;
         GraspStudio::ApproachMovementGeneratorPtr approach;
