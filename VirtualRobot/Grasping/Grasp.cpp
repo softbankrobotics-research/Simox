@@ -9,15 +9,17 @@ namespace VirtualRobot
 {
 
 
-    Grasp::Grasp(const std::string& name, const std::string& robotType, const std::string& eef, const Eigen::Matrix4f& poseInTCPCoordSystem, const std::string& creation, float quality, const std::string& eefPreshape)
-        : poseTcp(poseInTCPCoordSystem), robotType(robotType), eef(eef), name(name), creation(creation), quality(quality), preshape(eefPreshape)
-    {
-    }
+    Grasp::Grasp(const std::string& name, const std::string& robotType, const std::string& eef,
+                 const Eigen::Matrix4f& poseInTCPCoordSystem, const std::string& creation,
+                 float quality, const std::string& eefPreshape)
+        : poseTcp(poseInTCPCoordSystem), robotType(robotType), eef(eef), name(name),
+          creation(creation), quality(quality), preshape(eefPreshape)
+    {}
 
     Grasp::~Grasp()
     = default;
 
-    void Grasp::print(bool printDecoration /*= true*/)
+    void Grasp::print(bool printDecoration /*= true*/) const
     {
         if (printDecoration)
         {
@@ -44,17 +46,17 @@ namespace VirtualRobot
         }
     }
 
-    std::string Grasp::getRobotType()
+    std::string Grasp::getRobotType() const
     {
         return robotType;
     }
 
-    std::string Grasp::getEefName()
+    std::string Grasp::getEefName() const
     {
         return eef;
     }
 
-    Eigen::Matrix4f Grasp::getTargetPoseGlobal(RobotPtr robot)
+    Eigen::Matrix4f Grasp::getTargetPoseGlobal(RobotPtr robot) const
     {
         THROW_VR_EXCEPTION_IF(!robot, "Null data");
         THROW_VR_EXCEPTION_IF(robot->getType() != robotType, "Robot types are not compatible: " << robot->getType() << " != " << robotType);
@@ -77,17 +79,17 @@ namespace VirtualRobot
         return tcpNode->toGlobalCoordinateSystem(poseTcp);
     }
 
-    std::string Grasp::getName()
+    std::string Grasp::getName() const
     {
         return name;
     }
 
-    std::string Grasp::getPreshapeName()
+    std::string Grasp::getPreshapeName() const
     {
         return preshape;
     }
 
-    Eigen::Matrix4f Grasp::getTransformation()
+    Eigen::Matrix4f Grasp::getTransformation() const
     {
         return poseTcp;
     }
@@ -97,7 +99,7 @@ namespace VirtualRobot
         this->name = name;
     }
 
-    std::string Grasp::toXML(int tabs)
+    std::string Grasp::toXML(int tabs) const
     {
         std::stringstream ss;
         std::string t;
@@ -142,31 +144,31 @@ namespace VirtualRobot
         poseTcp = tcp2Object;
     }
 
-    Eigen::Matrix4f Grasp::getTcpPoseGlobal(const Eigen::Matrix4f& objectPose)
+    Eigen::Matrix4f Grasp::getTcpPoseGlobal(const Eigen::Matrix4f& objectPose) const
     {
         Eigen::Matrix4f result = objectPose * poseTcp.inverse();
         return result;
     }
 
-    Eigen::Matrix4f Grasp::getObjectTargetPoseGlobal(const Eigen::Matrix4f& graspingPose)
+    Eigen::Matrix4f Grasp::getObjectTargetPoseGlobal(const Eigen::Matrix4f& graspingPose) const
     {
         Eigen::Matrix4f result = graspingPose * poseTcp;
         return result;
     }
 
-    VirtualRobot::GraspPtr Grasp::clone()
+    VirtualRobot::GraspPtr Grasp::clone() const
     {
         GraspPtr result(new Grasp(name, robotType, eef, poseTcp, creation, quality, preshape));
         result->setConfiguration(eefConfiguration);
         return result;
     }
 
-    void Grasp::setConfiguration(std::map< std::string, float >& c)
+    void Grasp::setConfiguration(const std::map< std::string, float >& config)
     {
-        eefConfiguration = c;
+        eefConfiguration = config;
     }
 
-    std::map< std::string, float > Grasp::getConfiguration()
+    std::map< std::string, float > Grasp::getConfiguration() const
     {
         return eefConfiguration;
     }
@@ -176,7 +178,7 @@ namespace VirtualRobot
         preshape = preshapeName;
     }
 
-    float Grasp::getQuality()
+    float Grasp::getQuality() const
     {
         return quality;
     }
@@ -186,7 +188,7 @@ namespace VirtualRobot
         quality = q;
     }
 
-    std::string Grasp::getCreationMethod()
+    std::string Grasp::getCreationMethod() const
     {
         return creation;
     }

@@ -43,9 +43,10 @@ namespace VirtualRobot
 
         BasicGraspQualityMeasure(VirtualRobot::SceneObjectPtr object);
 
-        // destructor
+        /// Destructor
         virtual ~BasicGraspQualityMeasure();
 
+        
         /*!
             setup contact information
             the contact points are normalized by subtracting the COM
@@ -54,9 +55,7 @@ namespace VirtualRobot
         virtual void setContactPoints(const VirtualRobot::EndEffector::ContactInfoVector& contactPoints);
         virtual void setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints6d);
 
-        /*!
-            Returns calculated grasp quality
-        */
+        //! Returns calculated grasp quality
         virtual float getGraspQuality();
 
 
@@ -79,7 +78,7 @@ namespace VirtualRobot
     protected:
 
 
-        //Object relevant parameters
+        // Object relevant parameters
         Eigen::Vector3f centerOfModel;
         float objectLength;
         float graspQuality;
