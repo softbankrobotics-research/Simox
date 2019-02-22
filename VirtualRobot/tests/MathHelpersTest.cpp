@@ -10,6 +10,7 @@
 #include <VirtualRobot/math/Helpers.h>
 #include <string>
 #include <stdio.h>
+#include <random>
 
 
 using namespace Eigen;
@@ -215,7 +216,7 @@ void OrthogonolizeFixture::test(
     Eigen::Matrix3f orth = test(matrix, noiseAmpl);
     
     Quaternionf quatOrth(orth);
-    BOOST_MESSAGE("Angular distance: " << quatOrth.angularDistance(quat.cast<float>()));
+    BOOST_TEST_MESSAGE("Angular distance: " << quatOrth.angularDistance(quat.cast<float>()));
     BOOST_CHECK_LE(quatOrth.angularDistance(quat.cast<float>()), precAngularDist);
 }
 
@@ -223,7 +224,7 @@ Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
 {
     static const float PREC_ORTHOGONAL = 1e-6f;
     
-    BOOST_MESSAGE("Rotation matrix: \n" << matrix);
+    BOOST_TEST_MESSAGE("Rotation matrix: \n" << matrix);
     BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
     
     // add noise (random coeffs are in [-1, 1])
@@ -231,7 +232,7 @@ Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
     std::normal_distribution<float> distrib(0, noiseAmpl);
     matrix += noiseAmpl * this->Random(distrib);
     
-    BOOST_MESSAGE("Rotation matrix with noise: \n" << matrix);
+    BOOST_TEST_MESSAGE("Rotation matrix with noise: \n" << matrix);
     if (noiseAmpl > 0)
     {
         BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
@@ -239,10 +240,10 @@ Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
     
     Eigen::Matrix3f orth = math::Helpers::Orthogonalize(matrix);
     
-    BOOST_MESSAGE("Orthogonalized: \n" << orth);
+    BOOST_TEST_MESSAGE("Orthogonalized: \n" << orth);
     BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(orth, PREC_ORTHOGONAL));
     
-    BOOST_MESSAGE("Q * Q.T: (should be Identitiy) \n" << (orth * orth.transpose()));
+    BOOST_TEST_MESSAGE("Q * Q.T: (should be Identitiy) \n" << (orth * orth.transpose()));
     
     return orth;
 }
