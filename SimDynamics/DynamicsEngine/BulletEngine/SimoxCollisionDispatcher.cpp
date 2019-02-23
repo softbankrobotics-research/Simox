@@ -10,7 +10,7 @@ namespace SimDynamics
 
 
     SimoxCollisionDispatcher::SimoxCollisionDispatcher(BulletEngine* engine, btCollisionConfiguration* collisionConfiguration)
-        : engine(engine), btCollisionDispatcher(collisionConfiguration)
+        : btCollisionDispatcher(collisionConfiguration), engine(engine)
     {
     }
 

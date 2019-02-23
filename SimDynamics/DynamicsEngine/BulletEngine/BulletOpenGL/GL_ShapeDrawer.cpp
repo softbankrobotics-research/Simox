@@ -534,7 +534,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
                 {
                     const int       s = x >> 4;
                     const GLubyte   b = 180;
-                    GLubyte         c = b + ((s + t & 1) & 1) * (255 - b);
+                    GLubyte         c = b + (((s + t) & 1) & 1) * (255 - b);
                     pi[0] = pi[1] = pi[2] = c;
                     pi += 3;
                 }

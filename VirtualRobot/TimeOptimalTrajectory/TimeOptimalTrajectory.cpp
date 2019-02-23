@@ -326,7 +326,7 @@ namespace VirtualRobot
         list<TimeOptimalTrajectoryStep>::iterator start1 = start2;
         start1--;
         list<TimeOptimalTrajectoryStep> trajectory;
-        double slope;
+        double slope = 0;
         assert(start1->pathPos <= pathPos);
 
         while(start1 != startTrajectory.begin() || pathPos >= 0.0)

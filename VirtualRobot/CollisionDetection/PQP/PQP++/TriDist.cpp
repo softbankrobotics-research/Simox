@@ -234,9 +234,11 @@ namespace PQP
         // Even if these tests fail, it may be helpful to know the closest
         // points found, and whether the triangles were shown disjoint
 
-        PQP_REAL V[3];
-        PQP_REAL Z[3];
-        PQP_REAL minP[3], minQ[3], mindd;
+        PQP_REAL V[3] = {0,0,0};
+        PQP_REAL Z[3] = {0,0,0};
+        PQP_REAL minP[3] = {0,0,0};
+        PQP_REAL minQ[3] = {0,0,0};
+        PQP_REAL mindd = 0;
         int shown_disjoint = 0;
 
         mindd = pqp_math.VdistV2(S[0], T[0]) + 1; // Set first minimum safely high

@@ -100,8 +100,8 @@ namespace Saba
             robot->setUpdateVisualization(false);
         }
 
-        ExtensionResult extResultA;
-        ExtensionResult extResultB;
+        ExtensionResult extResultA = eError;
+        ExtensionResult extResultB = eError;
 
         bool switched = false;
         int* lastIDA = &lastAddedID;

@@ -1,6 +1,7 @@
 
 #include "MTPlanningWindow.h"
 
+#include "ui_MTPlanning.h"
 
 #include <vector>
 #include <iostream>

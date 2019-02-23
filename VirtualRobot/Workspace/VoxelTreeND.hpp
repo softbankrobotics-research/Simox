@@ -76,7 +76,7 @@ namespace VirtualRobot
             memcpy(this->maxExtend, maxExtend, sizeof(float)*N);
             memcpy(this->discretization, discretization, sizeof(float)*N);
 
-            for (int i = 0; i < N; i++)
+            for (unsigned int i = 0; i < N; i++)
             {
                 size[i] = maxExtend[i] - minExtend[i];
                 THROW_VR_EXCEPTION_IF(size[i] <= 0.0f, "Invalid extend parameters?!");
@@ -85,7 +85,7 @@ namespace VirtualRobot
 
             int maxSteps = 0;
 
-            for (int i = 0; i < N; i++)
+            for (unsigned int i = 0; i < N; i++)
             {
                 int steps = (int)(size[i] / discretization[i] + 0.5f);
 
@@ -105,9 +105,9 @@ namespace VirtualRobot
             float newExtend[N];
             memcpy(newExtend, size, sizeof(float)*N);
 
-            for (int a = 0; a < maxLevels; a++)
+            for (unsigned int a = 0; a < maxLevels; a++)
             {
-                for (int b = 0; b < N; b++)
+                for (unsigned int b = 0; b < N; b++)
                 {
                     elementExtends(a, b) = newExtend[b];
                     newExtend[b] *= 0.5f;
@@ -123,7 +123,7 @@ namespace VirtualRobot
                 VR_INFO << "Extends (min/max/size):" << endl;
                 std::streamsize pr = std::cout.precision(2);
 
-                for (int i = 0; i < N; i++)
+                for (unsigned int i = 0; i < N; i++)
                 {
                     cout << std::fixed << minExtend[i] << "," << maxExtend[i] << " -> " << size[i] << endl;
                     cout << std::fixed << "\tdiscretization:" << discretization[i] << ". Max leafs:" << (int)(size[i] / discretization[i] + 0.5f) << endl;
@@ -300,7 +300,7 @@ namespace VirtualRobot
                 int64_t nrElements = FileIO::read<int64_t>(file);
 
                 // id
-                int64_t expectedID = FileIO::read<int64_t>(file);
+                /*int64_t expectedID = */FileIO::read<int64_t>(file);
 
                 // create dummy elements to be filled afterwards
                 float p[N];
@@ -332,7 +332,7 @@ namespace VirtualRobot
                     size_t dataSize = sizeof(unsigned int);
                     bzip2->read((void*)(&(d.id)), dataSize, n);
 
-                    if (n != dataSize)
+                    if (static_cast<size_t>(n) != dataSize)
                     {
                         VR_ERROR << "Invalid number of bytes?!" << endl;
                         bzip2->close();
@@ -379,7 +379,7 @@ namespace VirtualRobot
                     dataSize = sizeof(bool);
                     bzip2->read((void*)(&(leaf)), dataSize, n);
 
-                    if (n != dataSize)
+                    if (static_cast<size_t>(n) != dataSize)
                     {
                         VR_ERROR << "Invalid number of bytes?!" << endl;
                         bzip2->close();
@@ -396,7 +396,7 @@ namespace VirtualRobot
                         dataSize = sizeof(T);
                         bzip2->read((void*)(&(d.entry)), dataSize, n);
 
-                        if (n != dataSize)
+                        if (static_cast<size_t>(n) != dataSize)
                         {
                             VR_ERROR << "Invalid number of bytes?!" << endl;
                             bzip2->close();
@@ -412,7 +412,7 @@ namespace VirtualRobot
 
                         bzip2->read((void*)(&(childIDs[0])), dataSize, n);
 
-                        if (n != dataSize)
+                        if (static_cast<size_t>(n) != dataSize)
                         {
                             VR_ERROR << "Invalid number of bytes?!" << endl;
                             bzip2->close();
@@ -557,7 +557,7 @@ namespace VirtualRobot
                     {
                         // write children ids
                         dataSize = sizeof(unsigned int) * numChildren;
-                        THROW_VR_EXCEPTION_IF(numChildren != d.children.size(), "Internal error, numChildren wrong...");
+                        THROW_VR_EXCEPTION_IF(static_cast<size_t>(numChildren) != d.children.size(), "Internal error, numChildren wrong...");
 
                         for (int j = 0; j < numChildren; j++)
                         {
@@ -806,7 +806,7 @@ namespace VirtualRobot
         */
         float getExtends(int level, int dim)
         {
-            THROW_VR_EXCEPTION_IF(dim >= N || dim < 0, "Index out of bounds");
+            THROW_VR_EXCEPTION_IF(static_cast<size_t>(dim) >= N || dim < 0, "Index out of bounds");
             return elementExtends(level, dim);
         }
         int getNumChildren()
@@ -850,5 +850,4 @@ namespace VirtualRobot
 
 
 
-} // namespace
-
+}

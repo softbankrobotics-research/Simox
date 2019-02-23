@@ -53,9 +53,9 @@ namespace VirtualRobot
     {
     public:
         LinearPathSegment(const Eigen::VectorXd &start, const Eigen::VectorXd &end) :
+            PathSegment((end-start).norm()),
             start(start),
-            end(end),
-            PathSegment((end-start).norm())
+            end(end)
         {
         }
 

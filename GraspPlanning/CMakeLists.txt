@@ -1,22 +1,14 @@
 PROJECT ( GraspStudio )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
-CMAKE_POLICY(VERSION 2.6)
-if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
-endif()
-
 MESSAGE (STATUS "***** CONFIGURING Simox project GraspStudio *****")
 
-INCLUDE (Cxx11Test)
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
 MACRO(ADD_GRASPSTUDIO_TEST TEST_NAME)
-        if (NOT Boost_USE_STATIC_LIBS)
-            ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
-        endif (NOT Boost_USE_STATIC_LIBS)
     	ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-        TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba GraspStudio ${Simox_EXTERNAL_LIBRARIES})
+        if (NOT Boost_USE_STATIC_LIBS)
+            target_compile_definitions(${TEST_NAME} PRIVATE -DBOOST_TEST_DYN_LINK)
+        endif ()
+        TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba GraspStudio boost_unit_test_framework)
     	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
     	SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "GraspStudio Tests")
         ADD_TEST(NAME Saba_${TEST_NAME}
@@ -25,7 +17,6 @@ ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 
 ########### QHULL #################
-OPTION(BUILD_qhull "if on builds qhull external library" OFF)
 IF(NOT BUILD_qhull)
     find_package(QHULL QUIET)
     IF (NOT QHULL_FOUND)
@@ -38,10 +29,8 @@ ENDIF()
 IF(BUILD_qhull)
     ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
     set(QHULL_LIBRARIES simox-qhull)
-    include_directories("ExternalDependencies/qhull-2003.1/include/")
 else()
     find_package(QHULL REQUIRED)
-    include_directories(${QHULL_INCLUDE_DIRS})
 endif()
 ########### END QHULL #################
 
@@ -91,14 +80,15 @@ if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
 	)
 endif ()
 
-
-include_directories(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
-ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
-
-
 ADD_LIBRARY (GraspStudio SHARED ${SOURCES} ${INCLUDES})
 
-TARGET_LINK_LIBRARIES (GraspStudio PUBLIC Saba VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${QHULL_LIBRARIES})
+IF(BUILD_qhull)
+    target_include_directories(GraspStudio PUBLIC "ExternalDependencies/qhull-2003.1/include/")
+else()
+    target_include_directories(GraspStudio PUBLIC ${QHULL_INCLUDE_DIRS})
+endif()
+
+TARGET_LINK_LIBRARIES (GraspStudio PUBLIC Saba VirtualRobot ${QHULL_LIBRARIES})
 
 # .DLL path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
@@ -124,9 +114,9 @@ endif()
 install(TARGETS ${PROJECT_NAME}
   # IMPORTANT: Add the library to the "export-set"
   EXPORT SimoxTargets
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
+  RUNTIME DESTINATION bin COMPONENT bin
+  LIBRARY DESTINATION lib COMPONENT shlib
+  ARCHIVE DESTINATION lib COMPONENT library
   COMPONENT dev)
 
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}

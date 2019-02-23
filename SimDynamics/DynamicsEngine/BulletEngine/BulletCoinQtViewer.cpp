@@ -19,7 +19,7 @@ namespace SimDynamics
 
 
     BulletCoinQtViewer::BulletCoinQtViewer(DynamicsWorldPtr world)
-        : warned_norealtime(false), simModeFixedTimeStep(false)
+        : simModeFixedTimeStep(false), warned_norealtime(false)
     {
         bulletTimeStepMsec = 16; // 60FPS
         bulletMaxSubSteps = 1;

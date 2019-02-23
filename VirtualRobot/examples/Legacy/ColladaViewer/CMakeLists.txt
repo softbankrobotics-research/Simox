@@ -6,7 +6,6 @@ IF(Simox_USE_COIN_VISUALIZATION AND Simox_USE_COLLADA)
     GET_FILENAME_COMPONENT (CurrentPath ${CMAKE_CURRENT_LIST_FILE} PATH)
 
     SET(DEMO_BASE_DIR ${PROJECT_SOURCE_DIR})
-    ADD_DEFINITIONS(-DDEMO_BASE_DIR="${DEMO_BASE_DIR}")
 
 	FILE(GLOB demo_SRCS ${PROJECT_SOURCE_DIR}/RobotViewer.cpp
 	                    ${PROJECT_SOURCE_DIR}/showRobotWindow.cpp
@@ -29,17 +28,16 @@ IF(Simox_USE_COIN_VISUALIZATION AND Simox_USE_COLLADA)
         ${PROJECT_SOURCE_DIR}/RobotViewer.ui
     )
 
-
-
-
-    add_definitions( -DDEMO_PATH=\"${PROJECT_SOURCE_DIR}\" )
-    add_definitions( " -DDOM_DYNAMIC " )
-
 	# create the executable
   VirtualRobotQtApplication(${PROJECT_NAME} "${demo_SRCS}" "${demo_INCS}" "${mocFiles}" "${uiFiles}")
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER "Examples")
-   
+
+  TARGET_COMPILE_DEFINITIONS(${PROJECT_NAME} PUBLIC
+      -DDEMO_BASE_DIR="${DEMO_BASE_DIR}"
+      -DDEMO_PATH="${PROJECT_SOURCE_DIR}"
+      -DDOM_DYNAMIC
+    )
   #######################################################################################
   ############################ Setup for installation ###################################
   #######################################################################################

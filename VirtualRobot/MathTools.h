@@ -392,9 +392,9 @@ namespace VirtualRobot
         */
         struct ContactPoint
         {
-            Eigen::Vector3f p;  // point
-            Eigen::Vector3f n;  // normal
-            float force;
+            Eigen::Vector3f p = Eigen::Vector3f::Zero();  // point
+            Eigen::Vector3f n = Eigen::Vector3f::Zero();  // normal
+            float force = 0;
         };
 
         struct TriangleFace

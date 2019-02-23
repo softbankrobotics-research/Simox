@@ -1,10 +1,11 @@
 cmake_minimum_required (VERSION 2.6)
 project (collada)
-include_directories( "../pugixml" "/usr/include/qt4" "/usr/include/qt4/QT" "/usr/include/qt4/QtCore" "/usr/include/eigen3" )
 
 add_executable(collada ../collada.cpp ../inventor.cpp viewer.cpp ../pugixml/pugixml.cpp)
+
+TARGET_INCLUDE_DIRECTORIES(collada PUBLIC "../pugixml" "/usr/include/qt4" "/usr/include/qt4/QT" "/usr/include/qt4/QtCore" "/usr/include/eigen3" )
 target_link_libraries(collada Coin SoQt boost_system boost_timer)
-add_definitions(-DTIMER_DEBUG)
+target_compile_definitions(collada PUBLIC -DTIMER_DEBUG)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 find_package(Doxygen)
