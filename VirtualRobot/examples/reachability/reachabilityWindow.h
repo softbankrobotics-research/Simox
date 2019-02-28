@@ -53,6 +53,7 @@ public slots:
     void computeVolume();
     void collisionModel();
     void reachVisu();
+    void updateCutAngleSlider();
     void selectRNS(int nr);
     void selectJoint(int nr);
     void jointValueChanged(int pos);

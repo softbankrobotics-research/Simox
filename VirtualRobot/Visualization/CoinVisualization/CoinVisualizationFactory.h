@@ -242,7 +242,7 @@ namespace VirtualRobot
         /*!
             Create a visualization of the reachability data.
         */
-        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10);
+        static SoNode* getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose = true, float maxZGlobal = 1e10, float minAngle = -M_PI, float maxAngle = M_PI);
         /*!
             Creates a visualization of the reachability data. For each 3D point, the orientation with maximum entry is determined and visualized as an arrow. The direction of this arrow is aligned to the param axis.
         */
@@ -284,7 +284,7 @@ namespace VirtualRobot
             Create quads according to cutXY plane. Normal can be UnitX, UnitY or UnitZ.
             \param maxEntry If 0 the maximal entry of the cut plane is used as refernce.
         */
-        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY(), float maxEntry = 0.0f);
+        static SoNode* getCoinVisualization(VirtualRobot::WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal = Eigen::Vector3f::UnitY(), float maxEntry = 0.0f, float minAngle = -M_PI, float maxAngle = M_PI);
 
         /*!
             Create an offscreen renderer object with the given width and height.

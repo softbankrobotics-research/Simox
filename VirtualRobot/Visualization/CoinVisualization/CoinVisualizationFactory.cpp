@@ -2885,7 +2885,7 @@ namespace VirtualRobot
         return res;
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose, float maxZGlobal)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentationPtr reachSpace, const VirtualRobot::ColorMap cm, bool transformToGlobalPose, float maxZGlobal, float minAngle, float maxAngle)
     {
         SoSeparator* res = new SoSeparator;
         res->ref();
@@ -2951,6 +2951,11 @@ namespace VirtualRobot
                         if (resPos(2)>maxZGlobal)
                             continue;
 
+                        float angle = std::atan2(voxelPosition(1), voxelPosition(0));
+                        if (minAngle > angle || maxAngle < angle)
+                        {
+                            continue;
+                        }
                         float intensity = (float)value;
 
                         if (maxValue > 0)
@@ -3203,7 +3208,7 @@ namespace VirtualRobot
 
     }
 
-    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal, float maxEntry)
+    SoNode* CoinVisualizationFactory::getCoinVisualization(WorkspaceRepresentation::WorkspaceCut2DPtr cutXY, VirtualRobot::ColorMap cm, const Eigen::Vector3f& normal, float maxEntry, float minAngle, float maxAngle)
     {
         SoSeparator* res = new SoSeparator;
 
@@ -3289,6 +3294,12 @@ namespace VirtualRobot
                     float yPos = cutXY->minBounds[1] + (float)y * sizeY + 0.5f * sizeY; // center of voxel
                     gp(0, 3) = xPos;
                     gp(1, 3) = yPos;
+
+                    float angle = std::atan2(yPos, xPos);
+                    if (minAngle > angle || maxAngle < angle)
+                    {
+                        continue;
+                    }
 
                     SoSeparator* sep1 = new SoSeparator();
                     SoMatrixTransform* matTr = getMatrixTransform(gp); // we are in mm unit environment -> no conversion to m needed
