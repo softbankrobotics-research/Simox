@@ -232,20 +232,13 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="Visu">
           <attribute name="title">
            <string>Visu</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="4" column="0">
-            <widget class="QCheckBox" name="checkBoxReachabilityCut">
-             <property name="text">
-              <string>Cut Reachability</string>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QCheckBox" name="checkBoxReachabilityVisu">
              <property name="text">
@@ -260,7 +253,28 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="7" column="2">
+            <widget class="QSlider" name="sliderCutReach">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QSlider" name="sliderCutMaxAngle">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Max Angle</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -273,10 +287,24 @@
              </property>
             </spacer>
            </item>
-           <item row="3" column="1" rowspan="2">
-            <widget class="QSlider" name="sliderCutReach">
+           <item row="3" column="0">
+            <widget class="QSlider" name="sliderCutMinAngle">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Min Angle</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QCheckBox" name="checkBoxReachabilityCut">
+             <property name="text">
+              <string>Cut Reachability</string>
              </property>
             </widget>
            </item>
