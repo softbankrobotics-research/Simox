@@ -146,14 +146,24 @@ namespace math
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
         
         
+        /// Convert a value from radian to degree.
         static float rad2deg(float rad);
+        /// Convert a value from degree to radian.
         static float deg2rad(float deg);
         
+        /// Convert a value from radian to degree.
+        template <typename ValueT>
+        static ValueT rad2deg(const ValueT& rad);
+        
+        /// Convert a value from degree to radian.
+        template <typename ValueT>
+        static ValueT deg2rad(const ValueT& deg);
+
         
     private:
         
     };
-    
+
     
     template <typename Derived>
     Eigen::Block<Derived, 3, 1> Helpers::Position(Eigen::MatrixBase<Derived>& pose)
@@ -223,6 +233,19 @@ namespace math
     bool Helpers::IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision)
     {
         return (matrix * matrix.transpose()).isIdentity(precision);
+    }
+    
+    
+    template<typename ValueT>
+    ValueT Helpers::rad2deg(const ValueT& rad)
+    {
+        return rad * (180.0 / M_PI);
+    }
+    
+    template<typename ValueT>
+    ValueT Helpers::deg2rad(const ValueT& deg)
+    {
+        return deg * (M_PI / 180.0);
     }
 }
 
