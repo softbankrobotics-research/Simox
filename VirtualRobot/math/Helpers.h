@@ -140,7 +140,7 @@ namespace math
         template <typename Derived>
         static bool IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision = 1e-6f);
         
-        /// Compute the closest orthogonal matrix to the given matrix. 
+        /// Compute the closest orthogonal matrix to the given matrix.
         /// (Note: All rotation matrices must be orthogonal.)
         static Eigen::Matrix3f Orthogonalize(const Eigen::Matrix3f& matrix);
         
@@ -148,7 +148,6 @@ namespace math
         static Eigen::Matrix3f OrthogonalizeQR(const Eigen::Matrix3f& matrix);
         
         /// Orthogonolize the given matrix using Jacobi SVD decomposition.
-        /// (Currently not recommended since it yields high angular distances to the original matrix.)
         static Eigen::Matrix3f OrthogonalizeSVD(const Eigen::Matrix3f& matrix);
         
         /// Orthogonolize the orientation of the given pose, and sanitize its lower row.
