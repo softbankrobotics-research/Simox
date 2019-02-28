@@ -222,28 +222,44 @@ void OrthogonolizeFixture::test(
 
 Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
 {
-    static const float PREC_ORTHOGONAL = 1e-6f;
+    const float PREC_ORTHOGONAL = 1e-6f;
+    
+    const Eigen::Vector3f pos(3, -1, 2);
+    Eigen::Matrix4f pose = Helpers::Pose(pos, matrix);
+    pose.row(3) << 1, 2, 3, 4;  // destroy last row
     
     BOOST_TEST_MESSAGE("Rotation matrix: \n" << matrix);
     BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
     
-    // add noise (random coeffs are in [-1, 1])
+    BOOST_TEST_MESSAGE("Pose matrix: \n" << pose);
     
+    
+    // add noise (random coeffs are in [-1, 1])
     std::normal_distribution<float> distrib(0, noiseAmpl);
-    matrix += noiseAmpl * this->Random(distrib);
+    const Eigen::Matrix3f noise = noiseAmpl * this->Random(distrib);
+    
+    matrix += noise;
+    Helpers::Orientation(pose) += noise;
     
     BOOST_TEST_MESSAGE("Rotation matrix with noise: \n" << matrix);
     if (noiseAmpl > 0)
     {
         BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
+        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(Helpers::Orientation(pose), PREC_ORTHOGONAL));
     }
     
     Eigen::Matrix3f orth = math::Helpers::Orthogonalize(matrix);
+    Eigen::Matrix4f poseOrth = math::Helpers::Orthogonalize(pose);
     
     BOOST_TEST_MESSAGE("Orthogonalized: \n" << orth);
     BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(orth, PREC_ORTHOGONAL));
-    
     BOOST_TEST_MESSAGE("Q * Q.T: (should be Identitiy) \n" << (orth * orth.transpose()));
+
+    BOOST_TEST_MESSAGE("Orthogonalized pose: \n" << poseOrth);
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(Helpers::Orientation(poseOrth), PREC_ORTHOGONAL));
+    BOOST_CHECK_EQUAL(math::Helpers::Position(poseOrth), pos);
+    BOOST_CHECK_EQUAL(poseOrth.row(3).head<3>(), Eigen::Vector3f::Zero().transpose());
+    BOOST_CHECK_EQUAL(poseOrth(3, 3), 1);
     
     return orth;
 }
