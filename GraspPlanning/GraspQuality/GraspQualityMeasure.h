@@ -44,15 +44,15 @@ namespace GraspStudio
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f, float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
+        /// Constructor.
+        GraspQualityMeasure(VirtualRobot::SceneObjectPtr object, float unitForce = 1.0f,
+                            float frictionConeCoeff = 0.35f, int frictionConeSamples = 8);
 
-        // destructor
-        ~GraspQualityMeasure() override;
+        //! Destructor
+        virtual ~GraspQualityMeasure() override;
 
 
-        /*
-            Checks if grasp is force closure
-        */
+        //! Indicate whether the grasp is in force closure.
         virtual bool isGraspForceClosure() = 0;
 
 
@@ -66,18 +66,20 @@ namespace GraspStudio
         bool isValid() override;
 
         virtual ContactConeGeneratorPtr getConeGenerator();
+        
     protected:
 
-        //Methods
+        // Methods
         bool sampleObjectPoints(int nMaxFaces = 400);
 
-        //Friction cone relevant parameters
+        
+        // Friction cone relevant parameters
         float unitForce;
         float frictionCoeff;
         int frictionConeSamples;
         ContactConeGeneratorPtr coneGenerator;
 
-        //For Object and Grasp Wrench Space Calculation
+        // For Object and Grasp Wrench Space Calculation
         std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPoints;  // in MM
         std::vector<VirtualRobot::MathTools::ContactPoint> sampledObjectPointsM; // converted to M
 

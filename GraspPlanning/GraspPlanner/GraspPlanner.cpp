@@ -21,8 +21,13 @@ namespace GraspStudio
         return plannedGrasps;
     }
 
-    GraspPlannerEvaluation GraspPlanner::getEvaluation()
+    GraspPlannerEvaluation GraspPlanner::getEvaluation() const
     {
         return eval;
+    }
+    
+    void GraspPlanner::clearEvaluation()
+    {
+        this->eval = {};
     }
 }

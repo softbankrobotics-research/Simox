@@ -6,7 +6,9 @@
 #include <VirtualRobot/EndEffector/EndEffector.h>
 #include <VirtualRobot/MathTools.h>
 #include <VirtualRobot/RobotConfig.h>
+#include <VirtualRobot/math/Helpers.h>
 #include <iostream>
+
 using namespace std;
 
 namespace GraspStudio
@@ -53,7 +55,9 @@ namespace GraspStudio
     bool ApproachMovementGenerator::setEEFPose(const Eigen::Matrix4f& pose)
     {
         VirtualRobot::RobotNodePtr tcp;
-        if (!graspPreshape.empty() && eef_cloned->hasPreshape(graspPreshape) && eef_cloned->getPreshape(graspPreshape)->getTCP())
+        if (!graspPreshape.empty()
+            && eef_cloned->hasPreshape(graspPreshape)
+            && eef_cloned->getPreshape(graspPreshape)->getTCP())
             tcp = eef_cloned->getPreshape(graspPreshape)->getTCP();
         else
             tcp = eef_cloned->getGCP();
@@ -63,10 +67,9 @@ namespace GraspStudio
 
     bool ApproachMovementGenerator::updateEEFPose(const Eigen::Vector3f& deltaPosition)
     {
-        Eigen::Matrix4f deltaPose;
-        deltaPose.setIdentity();
-        deltaPose.block(0, 3, 3, 1) = deltaPosition;
-        return updateEEFPose(deltaPose);
+        Eigen::Matrix4f pose = eef_cloned->getGCP()->getGlobalPose();
+        math::Helpers::Position(pose) += deltaPosition;
+        return setEEFPose(pose);
     }
 
     bool ApproachMovementGenerator::updateEEFPose(const Eigen::Matrix4f& deltaPose)
