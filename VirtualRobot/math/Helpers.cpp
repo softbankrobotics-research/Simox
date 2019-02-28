@@ -21,7 +21,12 @@
 
 #include "Helpers.h"
 #include "LinearInterpolatedOrientation.h"
+
+#include <Eigen/SVD>
+
 #include <stdexcept>
+
+
 using namespace math;
 
 
@@ -274,6 +279,26 @@ Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, 
 }
 
 Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
+{
+    return OrthogonalizeQR(matrix);
+}
+
+Eigen::Matrix3f Helpers::OrthogonalizeSVD(const Eigen::Matrix3f& matrix)
+{
+    /* Currently, tests fail for SVD. The returned matrices are orthogonal,
+     * but have high angular distances to the original rotation.
+     * (e.g. 1.06 rad on Identity with noise, where householder QR has 0 rad)
+     */
+    auto svd = matrix.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV);
+    
+    Eigen::Matrix3f orth = svd.matrixU() * svd.matrixV();
+    if (orth.determinant() >= 0)
+        return orth;
+    else
+        return -orth;
+}
+
+Eigen::Matrix3f Helpers::OrthogonalizeQR(const Eigen::Matrix3f& matrix)
 {
     auto householder = matrix.householderQr();
     Eigen::Matrix3f orth = householder.householderQ();
