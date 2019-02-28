@@ -291,6 +291,14 @@ Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
     return orth;
 }
 
+Eigen::Matrix4f Helpers::Orthogonalize(const Eigen::Matrix4f& pose)
+{
+    Eigen::Matrix4f orth = pose;
+    Orientation(orth) = Orthogonalize(Orientation(orth).eval());
+    orth.row(3) << 0, 0, 0, 1;
+    return orth;
+}
+
 float Helpers::Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor)
 {
     Eigen::AngleAxisf aa(Orientation(b) * Orientation(a).inverse());

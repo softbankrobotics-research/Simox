@@ -144,6 +144,9 @@ namespace math
         /// (Note: All rotation matrices must be orthogonal.)
         static Eigen::Matrix3f Orthogonalize(const Eigen::Matrix3f& matrix);
         
+        /// Orthogonolize the orientation of the given pose, and sanitize its lower row.
+        static Eigen::Matrix4f Orthogonalize(const Eigen::Matrix4f& pose);
+        
         
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 

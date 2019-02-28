@@ -844,7 +844,7 @@ namespace VirtualRobot
         tf = tf * getGlobalPose();
 
         // re-orthogonolize to keep it a valid transformation matrix
-        math::Helpers::Orientation(tf) = math::Helpers::Orthogonalize(math::Helpers::Orientation(tf));
+        tf = math::Helpers::Orthogonalize(tf);
         
         // return tf
         return tf;
