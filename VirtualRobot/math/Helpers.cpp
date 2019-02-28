@@ -21,7 +21,12 @@
 
 #include "Helpers.h"
 #include "LinearInterpolatedOrientation.h"
+
+#include <Eigen/SVD>
+
 #include <stdexcept>
+
+
 using namespace math;
 
 
@@ -233,7 +238,20 @@ Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const 
 
 Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
 {
-    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
+    return CartesianFromCylinder(r, angle, z);
+}
+
+Eigen::Vector3f Helpers::CartesianFromCylinder(float radius, float angle, float height)
+{
+    return { radius * std::cos(angle), radius * std::sin(angle), height };
+}
+
+Eigen::Vector3f Helpers::CartesianFromSphere(float radius, float elevation, float azimuth)
+{
+    const float sinElevation = std::sin(elevation);
+    return { radius * sinElevation * std::cos(azimuth),
+             radius * sinElevation * std::sin(azimuth),
+             radius * std::cos(elevation)               };
 }
 
 Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
@@ -262,6 +280,26 @@ Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, 
 
 Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
 {
+    return OrthogonalizeQR(matrix);
+}
+
+Eigen::Matrix3f Helpers::OrthogonalizeSVD(const Eigen::Matrix3f& matrix)
+{
+    /* Currently, tests fail for SVD. The returned matrices are orthogonal,
+     * but have high angular distances to the original rotation.
+     * (e.g. 1.06 rad on Identity with noise, where householder QR has 0 rad)
+     */
+    auto svd = matrix.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV);
+    
+    Eigen::Matrix3f orth = svd.matrixU() * svd.matrixV();
+    if (orth.determinant() >= 0)
+        return orth;
+    else
+        return -orth;
+}
+
+Eigen::Matrix3f Helpers::OrthogonalizeQR(const Eigen::Matrix3f& matrix)
+{
     auto householder = matrix.householderQr();
     Eigen::Matrix3f orth = householder.householderQ();
     
@@ -275,6 +313,14 @@ Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
             orth.col(i) *= -1;
         }
     }
+    return orth;
+}
+
+Eigen::Matrix4f Helpers::Orthogonalize(const Eigen::Matrix4f& pose)
+{
+    Eigen::Matrix4f orth = pose;
+    Orientation(orth) = Orthogonalize(Orientation(orth).eval());
+    orth.row(3) << 0, 0, 0, 1;
     return orth;
 }
 
@@ -306,10 +352,10 @@ Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eig
 
 float Helpers::rad2deg(float rad)
 {
-    return rad * 180.0f / M_PI_F;
+    return rad * (180.0f / M_PI_F);
 }
 
 float Helpers::deg2rad(float deg)
 {
-    return deg * M_PI_F / 180.0f;
+    return deg * (M_PI_F / 180.0f);
 }
