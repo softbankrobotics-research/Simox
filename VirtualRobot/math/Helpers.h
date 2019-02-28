@@ -115,8 +115,12 @@ namespace math
         template <typename Derived>
         static Eigen::Matrix4f InvertedPose(const Eigen::MatrixBase<Derived>& pose);
         
-        /// Get a vector from cylinder coordinates.
+        /// Get a cartesian vector from cylinder coordinates.
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
+        /// Get a cartesian vector from cylinder coordinates.
+        static Eigen::Vector3f CartesianFromCylinder(float radius, float angle, float height);
+        /// Get a cartesian vector from sphere coordinates.
+        static Eigen::Vector3f CartesianFromSphere(float radius, float elevation, float azimuth);
         
         /// Get a rotation matrix rotating source to target.
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target);

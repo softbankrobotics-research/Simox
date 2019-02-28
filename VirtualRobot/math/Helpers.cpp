@@ -233,7 +233,20 @@ Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const 
 
 Eigen::Vector3f Helpers::CreateVectorFromCylinderCoords(float r, float angle, float z)
 {
-    return Eigen::Vector3f(r * std::cos(angle), r * std::sin(angle), z);
+    return CartesianFromCylinder(r, angle, z);
+}
+
+Eigen::Vector3f Helpers::CartesianFromCylinder(float radius, float angle, float height)
+{
+    return { radius * std::cos(angle), radius * std::sin(angle), height };
+}
+
+Eigen::Vector3f Helpers::CartesianFromSphere(float radius, float elevation, float azimuth)
+{
+    const float sinElevation = std::sin(elevation);
+    return { radius * sinElevation * std::cos(azimuth),
+             radius * sinElevation * std::sin(azimuth),
+             radius * std::cos(elevation)               };
 }
 
 Eigen::Matrix3f Helpers::RotateOrientationToFitVector(
