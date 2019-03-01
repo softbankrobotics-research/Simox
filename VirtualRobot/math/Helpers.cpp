@@ -280,18 +280,14 @@ Eigen::Matrix3f Helpers::TransformOrientation(const Eigen::Matrix4f& transform, 
 
 Eigen::Matrix3f Helpers::Orthogonalize(const Eigen::Matrix3f& matrix)
 {
-    return OrthogonalizeQR(matrix);
+    return OrthogonalizeSVD(matrix);
 }
 
 Eigen::Matrix3f Helpers::OrthogonalizeSVD(const Eigen::Matrix3f& matrix)
 {
-    /* Currently, tests fail for SVD. The returned matrices are orthogonal,
-     * but have high angular distances to the original rotation.
-     * (e.g. 1.06 rad on Identity with noise, where householder QR has 0 rad)
-     */
     auto svd = matrix.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV);
     
-    Eigen::Matrix3f orth = svd.matrixU() * svd.matrixV();
+    Eigen::Matrix3f orth = svd.matrixU() * svd.matrixV().transpose();
     if (orth.determinant() >= 0)
         return orth;
     else
