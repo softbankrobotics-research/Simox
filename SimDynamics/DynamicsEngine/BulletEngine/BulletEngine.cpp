@@ -128,14 +128,18 @@ namespace SimDynamics
 
         while (robots.size() > 0)
         {
-            size_t start = robots.size();
             removeRobot(robots[0]);
+#ifndef NDEBUG
+            size_t start = robots.size();
+#endif
             VR_ASSERT(robots.size() < start);
         }
 
         while (objects.size() > 0)
         {
+#ifndef NDEBUG
             size_t start = objects.size();
+#endif
             removeObject(objects[0]);
             VR_ASSERT(objects.size() < start);
         }
@@ -733,7 +737,7 @@ namespace SimDynamics
 } // namespace SimDynamics
 
 #include <chrono>
-void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep)
+void SimDynamics::BulletEngine::updateAction(btCollisionWorld */*collisionWorld*/, btScalar deltaTimeStep)
 {
     auto start = std::chrono::system_clock::now();
     // apply lock
@@ -749,6 +753,6 @@ void SimDynamics::BulletEngine::updateAction(btCollisionWorld *collisionWorld, b
 //    cout << "duration: " << diff.count() << endl;
 }
 
-void SimDynamics::BulletEngine::debugDraw(btIDebugDraw *debugDrawer)
+void SimDynamics::BulletEngine::debugDraw(btIDebugDraw */*debugDrawer*/)
 {
 }

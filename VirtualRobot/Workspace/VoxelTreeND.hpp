@@ -105,7 +105,7 @@ namespace VirtualRobot
             float newExtend[N];
             memcpy(newExtend, size, sizeof(float)*N);
 
-            for (unsigned int a = 0; a < maxLevels; a++)
+            for (unsigned int a = 0; a < static_cast<unsigned>(maxLevels); a++)
             {
                 for (unsigned int b = 0; b < N; b++)
                 {
@@ -285,7 +285,7 @@ namespace VirtualRobot
                 FileIO::readArray<float>(maxExtend, N, file);
                 FileIO::readArray<float>(discretization, N, file);
 
-                for (int i = 0; i < N; i++)
+                for (unsigned int i = 0; i < N; i++)
                 {
                     float s = maxExtend[i] - minExtend[i];
                     THROW_VR_EXCEPTION_IF(s <= 0.0f, "Invalid extend parameters?!");

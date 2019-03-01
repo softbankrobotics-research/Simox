@@ -91,7 +91,7 @@ namespace SimDynamics
         bulletViewer->scheduleRedraw();
     }
 
-    void BulletCoinQtViewer::timerCB(void* data, SoSensor* sensor)
+    void BulletCoinQtViewer::timerCB(void* data, SoSensor* /*sensor*/)
     {
         BulletCoinQtViewer* bulletViewer = static_cast<BulletCoinQtViewer*>(data);
         VR_ASSERT(bulletViewer);

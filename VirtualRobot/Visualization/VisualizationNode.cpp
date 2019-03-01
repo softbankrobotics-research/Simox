@@ -245,7 +245,7 @@ namespace VirtualRobot
         VR_WARNING << "not implemented..." << endl;
     }
 
-    void VisualizationNode::shrinkFatten(float offset)
+    void VisualizationNode::shrinkFatten(float /*offset*/)
     {
         VR_WARNING << "not implemented..." << endl;
     }

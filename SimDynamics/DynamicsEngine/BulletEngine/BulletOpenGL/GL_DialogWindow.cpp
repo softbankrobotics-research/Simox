@@ -49,7 +49,7 @@ GL_DialogWindow::~GL_DialogWindow()
 
 
 
-static void drawLine(int _X0, int _Y0, int _X1, int _Y1, unsigned int _Color0, unsigned int _Color1)
+static void drawLine(int _X0, int _Y0, int _X1, int _Y1, unsigned int _Color0, unsigned int /*_Color1*/)
 {
     const GLfloat dx = +0.5f;
     const GLfloat dy = -0.5f;
@@ -92,7 +92,7 @@ static void drawLine(int _X0, int _Y0, int _X1, int _Y1, unsigned int _Color0, u
     glDisable(GL_LINE_SMOOTH);
 }
 
-static void drawRect(int horStart, int vertStart, int horEnd, int vertEnd, unsigned int argbColor00, unsigned int argbColor10, unsigned int argbColor01, unsigned int argbColor11)
+static void drawRect(int horStart, int vertStart, int horEnd, int vertEnd, unsigned int argbColor00, unsigned int /*argbColor10*/, unsigned int /*argbColor01*/, unsigned int /*argbColor11*/)
 {
     float dx = 0;
     float dy = 0;
@@ -274,7 +274,7 @@ void    GL_DialogWindow::restoreOpenGLState()
 }
 
 
-void    GL_TextControl::draw(int& parentHorPos, int& parentVertPos, btScalar deltaTime)
+void    GL_TextControl::draw(int& parentHorPos, int& parentVertPos, btScalar /*deltaTime*/)
 {
     for (int i = 0; i < m_textLines.size(); i++)
     {
@@ -285,7 +285,7 @@ void    GL_TextControl::draw(int& parentHorPos, int& parentVertPos, btScalar del
 
 
 
-void GL_ToggleControl::draw(int& parentHorPos2, int& parentVertPos2, btScalar deltaTime)
+void GL_ToggleControl::draw(int& parentHorPos2, int& parentVertPos2, btScalar /*deltaTime*/)
 {
 
     int controlHorPos = int(m_toggleBody->getWorldTransform().getOrigin()[0] + m_parentWindow->getScreenWidth() / 2);
@@ -319,7 +319,7 @@ void GL_ToggleControl::draw(int& parentHorPos2, int& parentVertPos2, btScalar de
 
 }
 
-void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2, btScalar deltaTime)
+void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2, btScalar /*deltaTime*/)
 {
 
     int controlHorPos = int(m_sliderBody->getWorldTransform().getOrigin()[0] + m_parentWindow->getScreenWidth() / 2);

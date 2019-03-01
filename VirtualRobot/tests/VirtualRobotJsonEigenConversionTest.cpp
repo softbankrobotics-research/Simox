@@ -32,7 +32,7 @@ using json = nlohmann::json;
 using namespace Eigen;
 
 
-BOOST_AUTO_TEST_SUITE(VirtualRobotJsonEigenConversionTest);
+BOOST_AUTO_TEST_SUITE(VirtualRobotJsonEigenConversionTest)
 
 
 BOOST_AUTO_TEST_CASE(test_matrix4f_non_transform)

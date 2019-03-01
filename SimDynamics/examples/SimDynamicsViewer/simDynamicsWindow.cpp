@@ -137,7 +137,7 @@ void SimDynamicsWindow::timerCB(void* data, SoSensor* /*sensor*/)
     window->UI.label_simuStepCount->setText(QString::number(window->simuStepCount));
 }
 
-void SimDynamicsWindow::stepCB(void *data, btScalar timeStep)
+void SimDynamicsWindow::stepCB(void *data, btScalar /*timeStep*/)
 {
     SimDynamicsWindow* window = static_cast<SimDynamicsWindow*>(data);
     VR_ASSERT(window);

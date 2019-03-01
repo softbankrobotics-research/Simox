@@ -31,7 +31,7 @@ CollisionCheckConstraint::CollisionCheckConstraint(const RobotNodeSetPtr &rns, c
     cdm(cdm),
     zeroVec(Eigen::VectorXf::Zero(rns->getSize()))
 {
-    for (int i = 0; i < rns->getSize(); ++i) {
+    for (unsigned i = 0; i < rns->getSize(); ++i) {
         zeroVec(i) = 1e-10;
     }
     addOptimizationFunction(0, false);
@@ -45,12 +45,12 @@ bool CollisionCheckConstraint::checkTolerances()
     return result;
 }
 
-double CollisionCheckConstraint::optimizationFunction(unsigned int id)
+double CollisionCheckConstraint::optimizationFunction(unsigned int /*id*/)
 {
     return 0;
 }
 
-Eigen::VectorXf CollisionCheckConstraint::optimizationGradient(unsigned int id)
+Eigen::VectorXf CollisionCheckConstraint::optimizationGradient(unsigned int /*id*/)
 {
     return zeroVec;
 }

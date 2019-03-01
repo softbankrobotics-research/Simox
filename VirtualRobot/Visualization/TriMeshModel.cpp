@@ -273,24 +273,11 @@ namespace VirtualRobot
         return static_cast<unsigned int>(counter);
     }
 
-    unsigned int TriMeshModel::addMissingColors(const VisualizationFactory::Color &color)
+    unsigned int TriMeshModel::addMissingColors(const VisualizationFactory::Color &/*color*/)
     {
         mergeVertices();
         int counter = 0;
 
-        auto getColorId = [&](unsigned int vertexId)
-        {
-            for(auto& face : faces)
-            {
-                if(face.id1 == vertexId && face.idColor1 != UINT_MAX)
-                    return face.idColor1;
-                if(face.id2 == vertexId && face.idColor2 != UINT_MAX)
-                    return face.idColor2;
-                if(face.id3 == vertexId && face.idColor3 != UINT_MAX)
-                    return face.idColor3;
-            }
-            return addColor(color);
-        };
         for(auto& face : faces)
         {
             if(face.idColor1 != UINT_MAX && face.idColor2 != UINT_MAX && face.idColor3 != UINT_MAX)
@@ -298,20 +285,16 @@ namespace VirtualRobot
                 continue;
             }
 
-            auto colorId = UINT_MAX;
             if(face.idColor1 == UINT_MAX)
             {
-                colorId = face.idColor1 = getColorId(face.id1);
                 counter++;
             }
             if(face.idColor2 == UINT_MAX)
             {
-                colorId = face.idColor2 = getColorId(face.id2);
                 counter++;
             }
             if(face.idColor3 == UINT_MAX)
             {
-                colorId = face.idColor3 = getColorId(face.id3);
                 counter++;
             }
         }

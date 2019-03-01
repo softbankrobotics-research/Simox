@@ -80,7 +80,6 @@ BOOST_AUTO_TEST_CASE(testWorkSpaceGrid)
 
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
     Eigen::Matrix4f m2 = Eigen::Matrix4f::Identity();
-    float x[6];
     unsigned int v[6];
     float diffRot,diffPos;
     bool poseOK;

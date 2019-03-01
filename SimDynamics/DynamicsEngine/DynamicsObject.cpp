@@ -73,22 +73,22 @@ namespace SimDynamics
         return Eigen::Vector3f::Zero();
     }
 
-    void DynamicsObject::setLinearVelocity(const Eigen::Vector3f& vel)
+    void DynamicsObject::setLinearVelocity(const Eigen::Vector3f& /*vel*/)
     {
 
     }
 
-    void DynamicsObject::setAngularVelocity(const Eigen::Vector3f& vel)
+    void DynamicsObject::setAngularVelocity(const Eigen::Vector3f& /*vel*/)
     {
 
     }
 
-    void DynamicsObject::applyForce(const Eigen::Vector3f& force)
+    void DynamicsObject::applyForce(const Eigen::Vector3f& /*force*/)
     {
 
     }
 
-    void DynamicsObject::applyTorque(const Eigen::Vector3f& torque)
+    void DynamicsObject::applyTorque(const Eigen::Vector3f& /*torque*/)
     {
 
     }

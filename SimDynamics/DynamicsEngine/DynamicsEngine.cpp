@@ -75,7 +75,7 @@ namespace SimDynamics
         return true;
     }
 
-    void DynamicsEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float friction)
+    void DynamicsEngine::createFloorPlane(const Eigen::Vector3f& pos, const Eigen::Vector3f& up, float /*friction*/)
     {
         MutexLockPtr lock = getScopedLock();
         floorPos = pos;

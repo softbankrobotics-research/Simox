@@ -112,9 +112,6 @@ namespace VirtualRobot
                 return;
             }
 
-            const double startDistance = (start - intersection).norm();
-            const double endDistance = (end - intersection).norm();
-
             double distance = std::min((start - intersection).norm(), (end - intersection).norm());
             const double angle = acos(startDirection.dot(endDirection));
 

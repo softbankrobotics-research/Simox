@@ -34,10 +34,7 @@ add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Wpedantic)
 #turn warnings about dangerous stuff into errors
-add_compile_options(-Werror=return-type)
-add_compile_options(-Werror=maybe-uninitialized)
-add_compile_options(-Werror=reorder)
-add_compile_options(-Werror=parentheses)
+add_compile_options(-Werror)
 #######################################################################################
 #options
 OPTION (Simox_USE_RBDL "Use RBDL" OFF)

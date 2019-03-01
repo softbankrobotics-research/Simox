@@ -37,7 +37,7 @@ namespace VirtualRobot
      * CoinVisualizationNode::visualization.
      * If \p visualizationNode is a valid object call SoNode::ref() on it.
      */
-    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode, float margin) :
+    CoinVisualizationNode::CoinVisualizationNode(SoNode* visualizationNode, float /*margin*/) :
         visualization(visualizationNode)
     {
         visualizationAtGlobalPose = new SoSeparator();

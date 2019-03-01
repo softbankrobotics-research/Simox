@@ -359,7 +359,7 @@ namespace VirtualRobot
         return type;
     }
 
-    void Robot::print(bool printChildren, bool printDecoration) const
+    void Robot::print(bool /*printChildren*/, bool /*printDecoration*/) const
     {
         cout << "******** Robot ********" << endl;
         cout << "* Name: " << name << endl;

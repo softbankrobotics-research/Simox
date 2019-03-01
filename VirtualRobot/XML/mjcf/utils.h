@@ -93,7 +93,15 @@ void setAttr(XMLElement& elem, const std::string& name, const AttrT& value)
 }
 
 template <class StringT>
-void assertElementIs(const XMLElement* elem, const StringT tag)
+void assertElementIs(const XMLElement*
+                     #ifndef NDEBUG
+                     elem
+                     #endif
+                     , const StringT
+                     #ifndef NDEBUG
+                     tag
+                     #endif
+                     )
 {
     assert(isElement(elem, tag));
 }

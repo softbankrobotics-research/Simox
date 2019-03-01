@@ -571,8 +571,10 @@ namespace VirtualRobot
         Eigen::Vector3f v1, v2, v3;
         MathTools::TriangleFace f;
 
-        int nVertices = (int)a.vertices.size();
         int nFaces = (int)a.faces.size();
+#ifndef NDEBUG
+        int nVertices = (int)a.vertices.size();
+#endif
         VR_ASSERT(nVertices > 0);
         //int nVertexCount = 0;
 

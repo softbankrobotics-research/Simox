@@ -1133,9 +1133,7 @@ namespace VirtualRobot
                 {
                     SbName name = tex->url[i].getString();
                     std::string texturePath = currentPath + "/" + std::string(tex->url[i].getString());
-                    bool exists = boost::filesystem::exists(texturePath);
                     size_t filesize = getFilesize(texturePath.c_str());
-//                    VR_WARNING << "Texture path: " << texturePath << " file size: " << filesize  << " exists: " << exists << std::endl;
 
                     //              unsigned long key = (unsigned long) ((void*) name.getString());
                     auto it = globalTextureCache.find(std::make_pair(filesize,texturePath));
@@ -2293,7 +2291,21 @@ namespace VirtualRobot
         return node;
     }
 
-    VisualizationNodePtr CoinVisualizationFactory::createCircleArrow(float radius, float tubeRadius, float completion, float colorR, float colorG, float colorB, float transparency, int sides, int rings)
+    VisualizationNodePtr CoinVisualizationFactory::createCircleArrow(
+            float radius,
+            float tubeRadius,
+            float completion,
+            float colorR,
+            float colorG,
+            float colorB,
+            float transparency,
+                                                                     int
+                                                                 #ifndef NDEBUG
+                                                                     sides
+                                                                 #endif
+                                                                     ,
+                                                                     int rings
+                                                                     )
     {
         VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
         VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
