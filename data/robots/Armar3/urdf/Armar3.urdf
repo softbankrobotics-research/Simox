@@ -16,7 +16,7 @@
 		<!-- <collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/cyl2.stl" scale="1 1 1"/>
+				<mesh filename="stl/cyl2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision> -->
 	</link>
@@ -57,13 +57,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/elbow_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/elbow_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/elbow_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/elbow_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -76,13 +76,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/elbow_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/elbow_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/elbow_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/elbow_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -158,13 +158,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/eye_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/eye_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<!--<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/cyl1.stl" scale="1 1 1"/>
+				<mesh filename="stl/cyl1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>-->
 	</link>
@@ -184,13 +184,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/eye_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/eye_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<!--<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/cyl1.stl" scale="1 1 1"/>
+				<mesh filename="stl/cyl1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>-->
 	</link>
@@ -224,13 +224,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/palm1_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/palm1_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/palm1_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/palm1_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -243,13 +243,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/palm1_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/palm1_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/palm1_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/palm1_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -262,13 +262,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/palm2_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/palm2_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/palm2_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/palm2_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -281,13 +281,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/palm2_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/palm2_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/palm2_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/palm2_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -307,13 +307,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/head_base.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/head_base.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/head_base.stl" scale="1 1 1"/>
+				<mesh filename="stl/head_base.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -354,13 +354,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/head.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/head.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/head.stl" scale="1 1 1"/>
+				<mesh filename="stl/head.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -373,13 +373,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/platform_pitch_link.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/platform_pitch_link.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/platform_pitch_link.stl" scale="1 1 1"/>
+				<mesh filename="stl/platform_pitch_link.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -392,13 +392,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/platform_roll_link.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/platform_roll_link.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/platform_roll_link.stl" scale="1 1 1"/>
+				<mesh filename="stl/platform_roll_link.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -411,13 +411,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/torso.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/torso.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/torso.stl" scale="1 1 1"/>
+				<mesh filename="stl/torso.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -430,13 +430,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/index_l1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/index_l1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/index_l1.stl" scale="1 1 1"/>
+				<mesh filename="stl/index_l1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -449,13 +449,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/index_l2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/index_l2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/index_l2.stl" scale="1 1 1"/>
+				<mesh filename="stl/index_l2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -482,13 +482,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/index_r1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/index_r1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/index_r1.stl" scale="1 1 1"/>
+				<mesh filename="stl/index_r1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -501,13 +501,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/index_r2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/index_r2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/index_r2.stl" scale="1 1 1"/>
+				<mesh filename="stl/index_r2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -527,7 +527,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/jaw.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/jaw.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -554,7 +554,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/lid_l_bottom.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/lid_l_bottom.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -567,7 +567,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/lid_l_top.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/lid_l_top.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -580,7 +580,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/lid_r_bottom.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/lid_r_bottom.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -593,7 +593,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/lid_r_top.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/lid_r_top.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -620,13 +620,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/middle_l1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/middle_l1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/middle_l1.stl" scale="1 1 1"/>
+				<mesh filename="stl/middle_l1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -639,13 +639,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/middle_l2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/middle_l2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/middle_l2.stl" scale="1 1 1"/>
+				<mesh filename="stl/middle_l2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -672,13 +672,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/middle_r1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/middle_r1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/middle_r1.stl" scale="1 1 1"/>
+				<mesh filename="stl/middle_r1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -691,13 +691,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/middle_r2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/middle_r2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/middle_r2.stl" scale="1 1 1"/>
+				<mesh filename="stl/middle_r2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -717,13 +717,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/neck_pitch_link.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/neck_pitch_link.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/neck_pitch_link.stl" scale="1 1 1"/>
+				<mesh filename="stl/neck_pitch_link.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -736,13 +736,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/neck_roll_link.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/neck_roll_link.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/neck_roll_link.stl" scale="1 1 1"/>
+				<mesh filename="stl/neck_roll_link.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -755,13 +755,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/neck_yaw_link.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/neck_yaw_link.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/neck_yaw_link.stl" scale="1 1 1"/>
+				<mesh filename="stl/neck_yaw_link.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -774,13 +774,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/pinky_l1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/pinky_l1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/pinky_l1.stl" scale="1 1 1"/>
+				<mesh filename="stl/pinky_l1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -793,13 +793,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/pinky_l2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/pinky_l2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/pinky_l2.stl" scale="1 1 1"/>
+				<mesh filename="stl/pinky_l2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -819,13 +819,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/pinky_r1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/pinky_r1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/pinky_r1.stl" scale="1 1 1"/>
+				<mesh filename="stl/pinky_r1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -838,13 +838,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/pinky_r2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/pinky_r2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/pinky_r2.stl" scale="1 1 1"/>
+				<mesh filename="stl/pinky_r2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -864,13 +864,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/platform.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/platform.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/platform.stl" scale="1 1 1"/>
+				<mesh filename="stl/platform.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -890,13 +890,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/ring_l1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/ring_l1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ring_l1.stl" scale="1 1 1"/>
+				<mesh filename="stl/ring_l1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -909,13 +909,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/ring_l2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/ring_l2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ring_l2.stl" scale="1 1 1"/>
+				<mesh filename="stl/ring_l2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -935,13 +935,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/ring_r1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/ring_r1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ring_r1.stl" scale="1 1 1"/>
+				<mesh filename="stl/ring_r1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -954,13 +954,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/ring_r2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/ring_r2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/ring_r2.stl" scale="1 1 1"/>
+				<mesh filename="stl/ring_r2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -980,13 +980,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/shoulder_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/shoulder_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/shoulder_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/shoulder_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -999,13 +999,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/shoulder_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/shoulder_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/shoulder_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/shoulder_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1018,13 +1018,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/shoulder2_l_rot.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/shoulder2_l_rot.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/shoulder2_l_rot.stl" scale="1 1 1"/>
+				<mesh filename="stl/shoulder2_l_rot.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1037,13 +1037,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/shoulder2_r_rot.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/shoulder2_r_rot.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/shoulder2_r_rot.stl" scale="1 1 1"/>
+				<mesh filename="stl/shoulder2_r_rot.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1070,13 +1070,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/thumb_l1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/thumb_l1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/thumb_l1.stl" scale="1 1 1"/>
+				<mesh filename="stl/thumb_l1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1089,13 +1089,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/thumb_l2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/thumb_l2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/thumb_l2.stl" scale="1 1 1"/>
+				<mesh filename="stl/thumb_l2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1122,13 +1122,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/thumb_r1.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/thumb_r1.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/thumb_r1.stl" scale="1 1 1"/>
+				<mesh filename="stl/thumb_r1.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1141,13 +1141,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/thumb_r2.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/thumb_r2.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/thumb_r2.stl" scale="1 1 1"/>
+				<mesh filename="stl/thumb_r2.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1188,13 +1188,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/underarm_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/underarm_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/underarm_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/underarm_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1207,13 +1207,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/underarm_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/underarm_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/underarm_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/underarm_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1226,13 +1226,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/upperarm_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/upperarm_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/upperarm_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/upperarm_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1245,13 +1245,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/upperarm_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/upperarm_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/upperarm_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/upperarm_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1271,13 +1271,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/wrist1_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist1_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist1_l.stl" scale="1 1 1"/>
+				<mesh filename="stl/wrist1_l.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1290,13 +1290,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/wrist1_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist1_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 		<collision>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="stl/wrist1_r.stl" scale="1 1 1"/>
+				<mesh filename="stl/wrist1_r.stl" scale="1000 1000 1000"/>
 			</geometry>
 		</collision>
 	</link>
@@ -1309,7 +1309,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/wrist2_l.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist2_l.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>
@@ -1322,7 +1322,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 -0 0"/>
 			<geometry>
-				<mesh filename="fullmodel/wrist2_r.iv" scale="1 1 1"/>
+				<mesh filename="fullmodel/wrist2_r.dae" scale="1000 1000 1000"/>
 			</geometry>
 		</visual>
 	</link>

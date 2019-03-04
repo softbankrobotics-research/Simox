@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+    <asset>
+        <contributor>
+            <author>VCGLab</author>
+            <authoring_tool>VCGLib | MeshLab</authoring_tool>
+        </contributor>
+        <up_axis>Y_UP</up_axis>
+        <created>Mo. Mär 4 12:23:45 2019</created>
+        <modified>Mo. Mär 4 12:23:45 2019</modified>
+    </asset>
+    <library_images/>
+    <library_materials/>
+    <library_effects/>
+    <library_geometries>
+        <geometry id="shape0-lib" name="shape0">
+            <mesh>
+                <source id="shape0-lib-positions" name="position">
+                    <float_array id="shape0-lib-positions-array" count="132">-0.0082887 0.0225066 -0.25 0.0082887 -0.0225066 -0.25 -0.00832453 -0.0224934 -0.25 0.0129789 -0.0225103 -0.239736 -0.0130147 -0.0224896 -0.239736 -0.00251791 -0.022498 -0.24 -1.79135e-05 -0.0225 -0.2425 0.00832453 0.0224934 -0.25 0.0130147 0.0224896 -0.239736 -0.0129789 0.0225103 -0.239736 0.00251791 0.022498 -0.24 1.79135e-05 0.0225 -0.2425 0.0224821 -0.0225179 -0.0465 0.0225179 0.0224821 -0.0465 -0.0224821 0.0225179 -0.0465 0.0225179 0.0224821 -0.221236 -0.0225179 -0.0224821 -0.0465 -0.0224821 0.0225179 -0.221236 0.0224821 -0.0225179 -0.221236 -0.0225179 -0.0224821 -0.221236 -0.00248209 0.022502 -0.24 0.00248209 -0.022502 -0.24 1.79135e-05 0.0225 -0.2375 -1.79135e-05 -0.0225 -0.2375 -0.00787439 0.0225063 -0.22967 0.00791021 0.0224937 -0.22967 -0.00791021 -0.0224937 -0.22967 0.00787439 -0.0225063 -0.22967 -0.034759 -0.031706 -0.2125 -0.034706 0.0347613 -0.2125 -0.00146139 0.0485012 -0.2125 -0.00146139 0.0485012 -0.0665 -0.00153622 -0.0454988 -0.2125 0.0317613 0.0347084 -0.2125 0.0317613 0.0347084 -0.0665 -0.0484988 0.00153861 -0.2125 -0.034706 0.0347613 -0.0665 -0.0484988 0.00153861 -0.0665 -0.034759 -0.031706 -0.0665 0.0317084 -0.031759 -0.2125 -0.00153622 -0.0454988 -0.0665 0.0455012 0.00146377 -0.2125 0.0317084 -0.031759 -0.0665 0.0455012 0.00146377 -0.0665</float_array>
+                    <technique_common>
+                        <accessor count="44" source="#shape0-lib-positions-array" stride="3">
+                            <param name="X" type="float"/>
+                            <param name="Y" type="float"/>
+                            <param name="Z" type="float"/>
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="shape0-lib-vertices">
+                    <input semantic="POSITION" source="#shape0-lib-positions"/>
+                </vertices>
+                <triangles count="84">
+                    <input offset="0" semantic="VERTEX" source="#shape0-lib-vertices"/>
+                    <p>0 1 2 3 2 1 4 0 2 5 2 6 3 6 2 4 2 5 0 7 1 8 1 7 3 1 8 9 7 0 10 7 11 9 11 7 8 7 10 4 9 0 12 13 14 15 14 13 16 12 14 17 16 14 15 17 14 18 13 12 18 15 13 19 12 16 19 18 12 19 16 17 9 20 11 6 11 20 21 10 11 21 11 6 9 22 20 5 20 22 5 6 20 8 10 22 23 22 10 9 24 22 8 22 24 5 22 23 23 10 21 25 24 17 26 17 24 15 25 17 19 17 26 26 24 9 25 8 24 4 26 9 3 8 25 18 25 15 27 25 18 3 25 27 19 26 18 27 18 26 3 21 6 3 23 21 4 5 23 3 27 23 4 23 27 4 27 26 28 29 30 31 30 29 32 28 30 33 32 30 34 33 30 34 30 31 28 35 29 36 29 35 36 31 29 37 35 28 36 35 37 38 28 32 37 28 38 33 39 32 40 32 39 38 32 40 33 41 39 42 39 41 40 39 42 43 41 33 42 41 43 43 33 34 42 34 31 40 42 31 36 40 31 42 43 34 36 38 40 36 37 38</p>
+                </triangles>
+            </mesh>
+        </geometry>
+    </library_geometries>
+    <library_visual_scenes>
+        <visual_scene id="VisualSceneNode" name="VisualScene">
+            <node id="node" name="node">
+                <instance_geometry url="#shape0-lib">
+                    <bind_material>
+                        <technique_common/>
+                    </bind_material>
+                </instance_geometry>
+            </node>
+        </visual_scene>
+    </library_visual_scenes>
+    <scene>
+        <instance_visual_scene url="#VisualSceneNode"/>
+    </scene>
+</COLLADA>
