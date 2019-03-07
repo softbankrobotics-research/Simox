@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Eigen/Core>
+
 #include <random>
 
 
@@ -29,6 +31,12 @@ namespace VirtualRobot
         /// with t * stddev being equal to the distance from center to bound.
         ClampedNormalDistribution(RealType min, RealType max, RealType t = 3) :
             _distrib(.5 * (min + max), .5 / t * (max - min)), _min(min), _max(max)
+        {}
+        
+        /// Construct a clamped normal distribution centered between bounds(0) and bounds(1)
+        /// with t * stddev being equal to the distance from center to bound.
+        ClampedNormalDistribution(const Eigen::Matrix<RealType, 2, 1>& bounds, RealType t = 3) :
+            ClampedNormalDistribution(bounds(0), bounds(1), t)
         {}
     
         /// Construct a clamped normal distribution with given parameters.
