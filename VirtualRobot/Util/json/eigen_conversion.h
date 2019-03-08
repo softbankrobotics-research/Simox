@@ -132,13 +132,13 @@ namespace json
     template <typename Derived>
     void to_json(nlohmann::json& j, const MatrixBase<Derived>& matrix)
     {
-        to_json_base(j, matrix);
+        json::to_json_base(j, matrix);
     }
     
     template <typename Derived>
     void from_json(const nlohmann::json& j, MatrixBase<Derived>& matrix)
     {
-        from_json_base(j, matrix);
+        json::from_json_base(j, matrix);
     }
 
     
