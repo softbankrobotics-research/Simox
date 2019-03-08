@@ -88,7 +88,7 @@ namespace Eigen
     
     // IMPLEMENTATION
 
-namespace json
+namespace jsonbase
 {
     // "private" excplititly non-specialized implementation
     // (to make it callable from specialized implementations)
@@ -97,7 +97,7 @@ namespace json
 
     /// Writes the matrix as list of rows.
     template <typename Derived>
-    void to_json_base(nlohmann::json& j, const MatrixBase<Derived>& matrix)
+    void to_json(nlohmann::json& j, const MatrixBase<Derived>& matrix)
     {
         for (int row = 0; row < matrix.rows(); ++row)
         {
@@ -112,7 +112,7 @@ namespace json
     
     /// Reads the matrix from list of rows.
     template <typename Derived>
-    void from_json_base(const nlohmann::json& j, MatrixBase<Derived>& matrix)
+    void from_json(const nlohmann::json& j, MatrixBase<Derived>& matrix)
     {
         using Scalar = typename MatrixBase<Derived>::Scalar;
         using Index = typename MatrixBase<Derived>::Index;
@@ -133,13 +133,13 @@ namespace json
     template <typename Derived>
     void to_json(nlohmann::json& j, const MatrixBase<Derived>& matrix)
     {
-        json::to_json_base(j, matrix);
+        jsonbase::to_json(j, matrix);
     }
     
     template <typename Derived>
     void from_json(const nlohmann::json& j, MatrixBase<Derived>& matrix)
     {
-        json::from_json_base(j, matrix);
+        jsonbase::from_json(j, matrix);
     }
 
     

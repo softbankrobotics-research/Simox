@@ -32,7 +32,7 @@ namespace Eigen
         }
         else
         {
-            json::to_json_base(j, matrix);
+            jsonbase::to_json(j, matrix);
         }
     }
     
@@ -46,7 +46,7 @@ namespace Eigen
         }
         else
         {
-            json::from_json_base(j, matrix);
+            jsonbase::from_json(j, matrix);
         }
     }
 }
