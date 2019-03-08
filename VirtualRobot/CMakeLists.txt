@@ -335,6 +335,7 @@ math/Primitive.cpp
 math/Triangle.cpp
 math/WeightedAverage.cpp
 Util/xml/tinyxml2.cpp
+Util/json/eigen_conversion.cpp
 )
 
 SET(INCLUDES
@@ -508,6 +509,7 @@ math/Triangle.h
 math/WeightedAverage.h
 Util/xml/tinyxml2.h
 Util/json/json.hpp
+Util/json/eigen_conversion.h
 Util/json/eigen_conversion.hpp
 )
 
