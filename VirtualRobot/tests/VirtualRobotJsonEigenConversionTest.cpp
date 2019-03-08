@@ -10,7 +10,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <VirtualRobot/Util/json/eigen_conversion.hpp>
+#include <VirtualRobot/Util/json/eigen_conversion.h>
 
 
 namespace Eigen
@@ -28,7 +28,6 @@ namespace Eigen
 }
 
 
-using json = nlohmann::json;
 using namespace Eigen;
 
 
@@ -44,7 +43,7 @@ BOOST_AUTO_TEST_CASE(test_matrix4f_non_transform)
         in(i) = i;
     }
     
-    json j;
+    nlohmann::json j;
     j = in;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
@@ -61,7 +60,7 @@ BOOST_AUTO_TEST_CASE(test_matrix4f_transform)
                                       AngleAxisf( 1.2f, Eigen::Vector3f(1,2,3).normalized()));
     Matrix4f out = out.Zero();
     
-    json j;
+    nlohmann::json j;
     j = in;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
@@ -82,7 +81,7 @@ BOOST_AUTO_TEST_CASE(test_vector3f)
         in(i) = i;
     }
     
-    json j;
+    nlohmann::json j;
     j = in;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     
@@ -99,7 +98,7 @@ BOOST_AUTO_TEST_CASE(test_quaternionf)
     Quaternionf in { AngleAxisf(static_cast<float>(M_PI), Vector3f(1, 1, 1).normalized()) };
     Quaternionf out = out.Identity();
     
-    json j;
+    nlohmann::json j;
     j = in;
     BOOST_TEST_MESSAGE("JSON: \n" << j.dump(2));
     

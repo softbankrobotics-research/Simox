@@ -31,6 +31,7 @@ namespace Eigen
     
 
     // MatrixBase (non-specialized)
+
     /// Writes the matrix as list of rows.
     template <typename Derived>
     void to_json(nlohmann::json& j, const MatrixBase<Derived>& matrix);
