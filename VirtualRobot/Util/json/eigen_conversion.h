@@ -58,7 +58,7 @@ namespace Eigen
      * @brief Write a 4x4 matrix, with optimization for transformation matrices.
      * 
      * If the matrix is a transformation matrix, writes it as position
-     * (Vector3f) and orientation (Quaternion).
+     * (Vector3f) and orientation (Matrix3f).
      * Otherwise, uses the non-specialized method (list of rows).
      */
     template <>
