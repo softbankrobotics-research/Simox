@@ -73,7 +73,7 @@ float quantile(const std::vector<float>& _values, float p, bool isSorted)
     checkNotEmpty(_values);
     const std::vector<float>& values = isSorted ? _values : sorted(_values);
     
-    float location = p * values.size();
+    float location = p < 1 ? p * values.size() : values.size() - 1;
     
     std::size_t floor = static_cast<std::size_t>(std::floor(location));
     std::size_t ceil = static_cast<std::size_t>(std::ceil(location));
