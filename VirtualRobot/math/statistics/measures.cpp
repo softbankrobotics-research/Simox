@@ -8,6 +8,12 @@
 namespace math { namespace stat
 {
 
+static void checkNotEmpty(const std::vector<float>& values)
+{
+    if (values.empty())
+        throw std::range_error("Given values are empty.");
+}
+
 void sort(std::vector<float>& values)
 {
     std::sort(values.begin(), values.end());
@@ -22,18 +28,19 @@ std::vector<float> sorted(const std::vector<float>& values)
 
 float min(const std::vector<float>& values, bool isSorted)
 {
+    checkNotEmpty(values);
     return isSorted ? values.front() : *std::min_element(values.begin(), values.end());
 }
 
 float max(const std::vector<float>& values, bool isSorted)
 {
+    checkNotEmpty(values);
     return isSorted ? values.back() : *std::max_element(values.begin(), values.end());
 }
 
 float mean(const std::vector<float>& values)
 {
-    if (values.empty() == 0)
-        throw std::range_error("Given values are empty.");
+    checkNotEmpty(values);
     
     float sum = 0;
     for (float v : values)
@@ -50,6 +57,7 @@ float stddev(const std::vector<float>& values)
 
 float stddev(const std::vector<float>& values, float mean)
 {
+    checkNotEmpty(values);
     float sum = 0;
     for (float v : values)
     {
@@ -62,6 +70,7 @@ float stddev(const std::vector<float>& values, float mean)
 
 float quantile(const std::vector<float>& _values, float p, bool isSorted)
 {
+    checkNotEmpty(_values);
     const std::vector<float>& values = isSorted ? _values : sorted(_values);
     
     float location = p * values.size();
@@ -97,6 +106,8 @@ float upperQuartile(const std::vector<float>& values, bool isSorted)
 
 float interquartileRange(const std::vector<float>& _values, bool isSorted)
 {
+    checkNotEmpty(_values);
+    
     const std::vector<float>& values = isSorted ? _values : sorted(_values);
     return interquartileRange(lowerQuartile(values, true), upperQuartile(values, true));
 }
