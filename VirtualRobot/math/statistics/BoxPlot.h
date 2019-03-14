@@ -25,7 +25,6 @@ namespace math { namespace stat
         float minWhisker;
         float lowerQuartile;
         float median;
-        float mean;
         float upperQuartile;
         float maxWhisker;
         float maximum;

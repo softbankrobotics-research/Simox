@@ -22,7 +22,6 @@ void BoxPlot::set(const std::vector<float>& _values, bool isSorted)
     
     this->minimum = stat::min(values, true);
     this->maximum = stat::max(values, true);
-    this->mean = stat::mean(values);
     
     this->lowerQuartile = stat::lowerQuartile(values, true);
     this->median = stat::median(values, true);
