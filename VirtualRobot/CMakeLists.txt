@@ -335,6 +335,7 @@ math/Primitive.cpp
 math/Triangle.cpp
 math/WeightedAverage.cpp
 math/statistics/measures.cpp
+math/statistics/BoxPlot.cpp
 Util/xml/tinyxml2.cpp
 Util/json/eigen_conversion.cpp
 )
@@ -509,6 +510,7 @@ math/TransformedFunctionR2R3.h
 math/Triangle.h
 math/WeightedAverage.h
 math/statistics/measures.h
+math/statistics/BoxPlot.h
 Util/xml/tinyxml2.h
 Util/json/json.hpp
 Util/json/eigen_conversion.h
