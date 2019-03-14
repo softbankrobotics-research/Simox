@@ -27,10 +27,10 @@ void BoxPlot::set(const std::vector<float>& _values, bool isSorted)
     this->median = stat::median(values, true);
     this->upperQuartile = stat::upperQuartile(values, true);
     
-    float iqr = interquartileRange(lowerQuartile, upperQuartile);
+    const float iqr = interquartileRange(lowerQuartile, upperQuartile);
     
-    this->minWhisker = std::max(minimum, lowerQuartile - whisk * iqr);
-    this->maxWhisker = std::min(maximum, upperQuartile + whisk * iqr);
+    this->minWhisker = lowerQuartile - whisk * iqr;
+    this->maxWhisker = upperQuartile + whisk * iqr;
     
     
     // compute outliers and correct whiskers if necessary
@@ -41,7 +41,7 @@ void BoxPlot::set(const std::vector<float>& _values, bool isSorted)
         {
             outliers.push_back(*it);
         }
-        minWhisker = (it != values.end()) ? *it : minimum;
+        minWhisker = (it != values.begin()) ? *it : minimum;
     }
     
     {
@@ -50,7 +50,7 @@ void BoxPlot::set(const std::vector<float>& _values, bool isSorted)
         {
             outliers.push_back(*rit);
         }
-        maxWhisker = (rit != values.rend()) ? *rit : maximum;
+        maxWhisker = (rit != values.rbegin()) ? *rit : maximum;
     }
     
 }
