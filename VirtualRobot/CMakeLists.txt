@@ -334,6 +334,7 @@ math/Plane.cpp
 math/Primitive.cpp
 math/Triangle.cpp
 math/WeightedAverage.cpp
+math/statistics/measures.cpp
 Util/xml/tinyxml2.cpp
 Util/json/eigen_conversion.cpp
 )
@@ -507,6 +508,7 @@ math/TransformedFunctionR1R3.h
 math/TransformedFunctionR2R3.h
 math/Triangle.h
 math/WeightedAverage.h
+math/statistics/measures.h
 Util/xml/tinyxml2.h
 Util/json/json.hpp
 Util/json/eigen_conversion.h
