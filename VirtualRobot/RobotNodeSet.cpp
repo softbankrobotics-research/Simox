@@ -31,13 +31,13 @@ namespace VirtualRobot
         if (!isKinematicRoot(this->kinematicRoot))
         {
             std::string oldRootName = "(null)";
-            if(this->kinematicRoot)
+            if (this->kinematicRoot)
             {
                 oldRootName = this->kinematicRoot->getName();
             }
             THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::RobotNodeSet: Robot is NULL");
             this->kinematicRoot = rob->getRootNode();
-            if(this->kinematicRoot)
+            if (this->kinematicRoot)
             {
                 VR_WARNING << "RobotNodeSet " << name << " initialized with invalid kinematic root '"
                            << oldRootName << "': Falling back to robot root node '"
@@ -60,7 +60,7 @@ namespace VirtualRobot
 
 
         // now, the objects are stored in the parent's (SceneObjectSet) data structure, so that the methods of SceneObjectSet do work
-        for (const auto & robotNode : robotNodes)
+        for (const auto& robotNode : robotNodes)
         {
             SceneObjectPtr cm = boost::dynamic_pointer_cast<SceneObject>(robotNode);
 
@@ -91,11 +91,11 @@ namespace VirtualRobot
 
         if (robotNodeNames.empty())
         {
-            VR_WARNING << " No robot nodes in set '"<<name<<"'..." << endl;
+            VR_WARNING << " No robot nodes in set '" << name << "'..." << endl;
         }
         else
         {
-            for (const auto & robotNodeName : robotNodeNames)
+            for (const auto& robotNodeName : robotNodeNames)
             {
                 RobotNodePtr node = robot->getRobotNode(robotNodeName);
                 THROW_VR_EXCEPTION_IF(!node, "No robot node with name " << robotNodeName << " found...");
@@ -151,7 +151,7 @@ namespace VirtualRobot
 
         if (robotNodes.empty() || !robotNodes[0])
         {
-            VR_WARNING << " No robot nodes in set '"<<name<<"'..." << endl;
+            VR_WARNING << " No robot nodes in set '" << name << "'..." << endl;
         }
         else
         {
@@ -249,7 +249,7 @@ namespace VirtualRobot
 
     bool RobotNodeSet::hasRobotNode(RobotNodePtr robotNode) const
     {
-        for (const auto & i : robotNodes)
+        for (const auto& i : robotNodes)
         {
             if (i == robotNode)
             {
@@ -259,9 +259,9 @@ namespace VirtualRobot
         return false;
     }
 
-    bool RobotNodeSet::hasRobotNode(const std::string &nodeName) const
+    bool RobotNodeSet::hasRobotNode(const std::string& nodeName) const
     {
-        for (const auto & robotNode : robotNodes)
+        for (const auto& robotNode : robotNodes)
         {
             if (robotNode->getName() == nodeName)
             {
@@ -280,8 +280,10 @@ namespace VirtualRobot
     std::vector<std::string> RobotNodeSet::getNodeNames() const
     {
         std::vector<std::string> res;
-        for (auto n: robotNodes)
+        for (auto n : robotNodes)
+        {
             res.push_back(n->getName());
+        }
         return res;
     }
 
@@ -361,7 +363,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!fillVector, "NULL data");
 
-        for (const auto & robotNode : robotNodes)
+        for (const auto& robotNode : robotNodes)
         {
             fillVector->setConfig(robotNode->getName(), robotNode->getJointValue());
         }
@@ -370,7 +372,7 @@ namespace VirtualRobot
     std::map<std::string, float> RobotNodeSet::getJointValueMap() const
     {
         std::map<std::string, float> res;
-        for (auto n: robotNodes)
+        for (auto n : robotNodes)
         {
             res[n->getName()] = n->getJointValue();
         }
@@ -463,7 +465,7 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!rob, "RobotNodeSet::setJointValues: Robot is NULL (The last shared_ptr was deleted)");
         WriteLockPtr lock = rob->getWriteLock();
 
-        for (auto & robotNode : robotNodes)
+        for (auto& robotNode : robotNodes)
         {
             if (jointValues->hasConfig(robotNode->getName()))
             {
@@ -744,7 +746,7 @@ namespace VirtualRobot
     {
         RobotNodePtr node;
         VR_ASSERT(robotNode);
-        for (const auto & i : robotNodes)
+        for (const auto& i : robotNodes)
         {
             node = i;
 
@@ -772,7 +774,7 @@ namespace VirtualRobot
 
         ss << pre << "<RobotNodeSet name='" << name << "'>\n";
 
-        for (auto & robotNode : robotNodes)
+        for (auto& robotNode : robotNodes)
         {
             ss << pre << t << "<Node name='" << robotNode->getName() << "'/>\n";
         }
