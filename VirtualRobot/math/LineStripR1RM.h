@@ -29,16 +29,34 @@ namespace math
 {
     template<int M>
     class LineStripR1RM
-            : public SimpleAbstractFunctionR1RM<M>
+        : public SimpleAbstractFunctionR1RM<M>
     {
     public:
         using point_t = Eigen::Matrix<float, M, 1>;
 
-        int Count() const { return points.size(); }
+        int Count() const
+        {
+            return points.cols();
+        }
 
-        LineStripR1RM(std::vector<point_t> points, float minT, float maxT)
+        LineStripR1RM(Eigen::Matrix < float, M, -1 > points, float minT, float maxT)
             : points(std::move(points)), minT(minT), maxT(maxT)
         {}
+
+        LineStripR1RM(std::vector<point_t> pointv, float minT, float maxT)
+            : points(M, pointv.size()), minT(minT), maxT(maxT)
+        {
+            for (int i = 0; i < Count(); ++i)
+            {
+                points.col(i) = pointv.at(i);
+            }
+        }
+
+        LineStripR1RM(LineStripR1RM&&) = default;
+        LineStripR1RM(const LineStripR1RM&) = default;
+
+        LineStripR1RM& operator=(LineStripR1RM&&) = default;
+        LineStripR1RM& operator=(const LineStripR1RM&) = default;
 
         bool InLimits(float t) const
         {
@@ -46,22 +64,23 @@ namespace math
         }
         point_t Get(float t) const override
         {
-            int i; float f;
+            int i;
+            float f;
             GetIndex(t,  i,  f);
-            return points.at(i) * (1 - f) + points.at(i+1) * f;
+            return points.col(i) * (1 - f) + points.col(i + 1) * f;
         }
 
     private:
         point_t GetDirection(int i) const
         {
-            return points.at(i+1) - points.at(i);
+            return points.col(i + 1) - points.col(i);
         }
         void GetIndex(float t,  int& i, float& f) const
         {
-            Helpers::GetIndex(t, minT, maxT, points.size(),  i,  f);
+            Helpers::GetIndex(t, minT, maxT, Count(),  i,  f);
         }
 
-        std::vector<point_t> points;
+        Eigen::Matrix < float, M, -1 > points;
         float minT, maxT;
     };
     using LineStripR1R1 = LineStripR1RM<1>;
@@ -70,6 +89,6 @@ namespace math
     using LineStripR1R4 = LineStripR1RM<4>;
     using LineStripR1R5 = LineStripR1RM<5>;
     using LineStripR1R6 = LineStripR1RM<6>;
-    using LineStripR1RX = LineStripR1RM<-1>;
+    using LineStripR1RX = LineStripR1RM < -1 >;
 }
 
